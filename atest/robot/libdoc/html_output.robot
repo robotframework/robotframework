@@ -20,10 +20,6 @@ Generated
 Scope
     ${MODEL}[scope]         GLOBAL
 
-Named Args
-    [Template]    Should Be Equal
-    ${MODEL}[named_args]    ${True}
-
 Inits
     [Template]    Should Be Empty
     ${MODEL}[inits]
@@ -31,21 +27,22 @@ Inits
 Keyword Names
     ${MODEL}[keywords][0][name]     Get Hello
     ${MODEL}[keywords][1][name]     Keyword
-    ${MODEL}[keywords][13][name]    Set Name Using Robot Name Attribute
+    ${MODEL}[keywords][14][name]    Set Name Using Robot Name Attribute
 
 Keyword Arguments
-    [Template]    Should Be Equal As Strings
-    ${MODEL}[keywords][0][args]     []
-    ${MODEL}[keywords][1][args]     ['a1=d', '*a2']
-    ${MODEL}[keywords][6][args]     ['arg=hyv\\\\xe4']
-    ${MODEL}[keywords][10][args]    ['arg=hyvä']
-    ${MODEL}[keywords][12][args]    ['a=1', 'b=True', 'c=(1, 2, None)']
-    ${MODEL}[keywords][13][args]    ['a', 'b', '*args', '**kwargs']
+    [Template]    Verify Argument Models
+    ${MODEL}[keywords][0][args]
+    ${MODEL}[keywords][1][args]     a1=d    *a2
+    ${MODEL}[keywords][6][args]     arg=hyv\\xe4
+    ${MODEL}[keywords][10][args]    arg=hyvä
+    ${MODEL}[keywords][12][args]    a=1    b=True    c=(1, 2, None)
+    ${MODEL}[keywords][13][args]    arg=\\ robot \\ escapers\\n\\t\\r \\ \\
+    ${MODEL}[keywords][14][args]    a    b    *args    **kwargs
 
 Embedded Arguments
     [Template]    NONE
-    Should Be Equal    ${MODEL}[keywords][14][name]    Takes \${embedded} \${args}
-    Should Be Empty    ${MODEL}[keywords][14][args]
+    Should Be Equal    ${MODEL}[keywords][15][name]    Takes \${embedded} \${args}
+    Should Be Empty    ${MODEL}[keywords][15][args]
 
 Keyword Documentation
     ${MODEL}[keywords][1][doc]
@@ -107,3 +104,11 @@ User keyword documentation formatting
     ...    <td>bar</td>
     ...    </tr>
     ...    </table>
+
+*** Keywords ***
+Verify Argument Models
+    [Arguments]    ${arg_models}    @{expected_reprs}
+    Should Be True    len($arg_models) == len($expected_reprs)
+    FOR    ${arg_model}    ${expected_repr}    IN ZIP    ${arg_models}    ${expected_reprs}
+       Run Keyword And Continue On Failure    Verify Argument Model    ${arg_model}    ${expected_repr}    json=True
+    END

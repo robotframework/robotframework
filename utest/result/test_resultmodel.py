@@ -1,8 +1,8 @@
 import unittest
-from robot.utils.asserts import (assert_equal, assert_false, assert_raises,
-                                 assert_raises_with_msg, assert_true)
+from robot.utils.asserts import assert_equal, assert_false, assert_raises, assert_true
 
-from robot.result import Message, Keyword, TestCase, TestSuite
+from robot.model import Message
+from robot.result import Keyword, TestCase, TestSuite
 
 
 class TestSuiteStats(unittest.TestCase):
@@ -201,6 +201,55 @@ class TestModel(unittest.TestCase):
         assert_equal(item.skipped, True)
         assert_equal(item.status, 'SKIP')
         assert_raises(ValueError, setattr, item, 'skipped', False)
+
+
+class TestKeywordChildren(unittest.TestCase):
+
+    def test_only_keywords(self):
+        kw = Keyword()
+        for i in range(10):
+            kw.body.create(str(i))
+        assert_equal(kw.children, list(kw.body))
+
+    def test_only_messages(self):
+        kw = Keyword()
+        for i in range(10):
+            kw.messages.create(str(i))
+        assert_equal(kw.children, list(kw.messages))
+
+    def test_order(self):
+        kw = Keyword('parent')
+        m1 = kw.messages.create('m1')
+        k1 = kw.body.create('k1')
+        k2 = kw.body.create('k2')
+        m2 = kw.messages.create('m2')
+        k3 = kw.body.create('k3')
+        assert_equal(kw.children, [m1, k1, k2, m2, k3])
+
+    def test_order_after_modifications(self):
+        kw = Keyword('parent')
+        kw.body.create('k1')
+        kw.messages.create('m1')
+        k2 = kw.body.create('k2')
+        m2 = kw.messages.create('m2')
+        k1 = kw.body[0] = Keyword('k1-new')
+        m1 = kw.messages[0] = Message('m1-new')
+        m3 = Message('m3')
+        kw.messages.append(m3)
+        k3 = Keyword('k3')
+        kw.body.extend([k3])
+        assert_equal(kw.children, [k1, m1, k2, m2, m3, k3])
+        kw.body = [k1, k3]
+        kw.messages = [m1]
+        assert_equal(kw.children, [k1, m1, k3])
+
+    def test_id_with_keyword_parents(self):
+        kw = TestSuite().tests.create().body.create('parent')
+        kw.body = [Keyword('child1'), Keyword('child2')]
+        kw.body[-1].body.create()
+        assert_equal(kw.body[0].id, 's1-t1-k1-k1')
+        assert_equal(kw.body[1].id, 's1-t1-k1-k2')
+        assert_equal(kw.body[1].body[0].id, 's1-t1-k1-k2-k1')
 
 
 if __name__ == '__main__':

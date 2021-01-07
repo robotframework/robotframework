@@ -80,9 +80,9 @@ depending on which libraries or resources are available. A solution to both of
 these problems is specifying the keyword priorities explicitly using the keyword
 :name:`Set Library Search Order` from the BuiltIn_ library.
 
- .. note:: Although the keyword has the word *library* in its name, it works
-           also with resource files. As discussed above, keywords in resources
-           always have higher priority than keywords in libraries, though.
+.. note:: Although the keyword has the word *library* in its name, it works
+          also with resource files. As discussed above, keywords in resources
+          always have higher priority than keywords in libraries, though.
 
 The :name:`Set Library Search Order` accepts an ordered list or libraries and
 resources as arguments. When a keyword name in the test data matches multiple
@@ -279,11 +279,10 @@ __ `Dividing data to several rows`_
 Old for loop syntax
 ~~~~~~~~~~~~~~~~~~~
 
-For loop syntax was enhanced in various ways in Robot Framework 3.1.
-The most noticeable change was that loops nowadays end with the explicit
-`END` marker and keywords inside the loop do not need to be indented.
-In the `space separated plain text format`_ indentation required
-`escaping with a backslash`__ which resulted in quite ugly syntax:
+Prior to Robot Framework 3.1 the for loop syntax was different than nowadays.
+The marker to start the loop was `:FOR` instead of `FOR` and loop contents needed
+to be explicitly marked with a backslash instead of using the `END` marker to end
+the loop. The first example above would look like this using the old syntax:
 
 .. sourcecode:: robotframework
 
@@ -294,57 +293,14 @@ In the `space separated plain text format`_ indentation required
        \    Log    2nd keyword
        Log    Outside loop
 
-Another change, also visible in the example above, was that the for loop
-marker used to be `:FOR` when nowadays just `FOR` is enough. Related to that,
-the `:FOR` marker and also the `IN` separator were case-insensitive but
-nowadays both `FOR` and `IN` are case-sensitive.
-
-Old for loop syntax still worked in Robot Framework 3.1 and only using `IN`
-case-insensitively caused a deprecation warning. In Robot Framework 3.2
-`IN` is case-sensitive and using `:FOR` instead of `FOR`, not closing loops
-with `END`, and escaping keywords inside loops with :codesc:`\\` were all
-deprecated. Users are advised to switch to the new syntax as soon as possible.
-
-When using the `pipe separated format`_, escaping with :codesc:`\\` has not
-been needed:
-
-.. sourcecode:: robotframework
-
-   | *** Test Cases ***
-   | Example
-   | | :FOR | ${animal}    | IN          | cat | dog |
-   | |      | Log          | ${animal}   |
-   | |      | Log          | 2nd keyword |
-   | | Log  | Outside loop |
-
-The above syntax still works with Robot Framework 3.1, but it will not work
-anymore in Robot Framework 3.2. The recommended solution is closing the loop
-with an explicit `END`, but if old Robot Framework versions need to be
-supported then escaping with :codesc:`\\` is needed.
-
-.. sourcecode:: robotframework
-
-   | *** Test Cases ***
-   | Recommended solution, compatible with RF 3.1 and newer
-   | | FOR  | ${animal}    | IN          | cat | dog |
-   | |      | Log          | ${animal}   |
-   | |      | Log          | 2nd keyword |
-   | | END  |              |
-   | | Log  | Outside loop |
-   |
-   | Compatible with RF 3.0.x, causes deprecation warning with RF 3.2.x
-   | | :FOR | ${animal}    | IN          | cat | dog |
-   | | \    | Log          | ${animal}   |
-   | | \    | Log          | 2nd keyword |
-   | | Log  | Outside loop |
-
-__ Escaping_
+The old syntax was deprecated in Robot Framework 3.2 and the support for it was
+removed altogether in Robot Framework 4.0.
 
 Nested for loops
 ~~~~~~~~~~~~~~~~
 
-Having nested for loops is not supported directly, but it is possible to use
-a user keyword inside a for loop and have another for loop there.
+Starting from Robot Framework 4.0, it is possible to use nested for loops
+simply by adding another loop inside a loop:
 
 .. sourcecode:: robotframework
 
@@ -352,14 +308,30 @@ a user keyword inside a for loop and have another for loop there.
    Handle Table
        [Arguments]    @{table}
        FOR    ${row}    IN    @{table}
-           Handle Row    @{row}
+           FOR    ${cell}    IN    @{row}
+               Handle Cell    ${cell}
+           END
        END
 
-   Handle Row
-       [Arguments]    @{row}
-       FOR    ${cell}    IN    @{row}
-           Handle Cell    ${cell}
+There can be multiple nesting levels and one loop can contain several loops:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       FOR    ${root}    IN    r1    r2
+           FOR    ${child}    IN    c1   c2    c3
+               FOR    ${grandchild}    IN    g1    g2
+                   Log Many    ${root}    ${child}    ${grandchild}
+               END
+           END
+           FOR    ${sibling}    IN    s1    s2    s3
+                   Log Many    ${root}    ${sibling}
+           END
        END
+
+With earlier Robot Framework versions nesting for loops was not supported directly,
+but it was possible to have a user keyword inside a loop and have another loop there.
 
 Using several loop variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -493,9 +465,34 @@ For example, the following two test cases do the same thing:
            My Keyword    ${index}    ${item}
        END
 
+Starting from Robot Framework 4.0, it is possible to specify a custom start index
+by using `start=<index>` syntax as the last item of the `FOR ... IN ENUMERATE`
+header:
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   @{LIST}         a    b    c
+   ${START}        10
+
+   *** Test Cases ***
+   For-in-enumerate with start
+       FOR    ${index}    ${item}    IN ENUMERATE    @{LIST}    start=1
+           My Keyword    ${index}    ${item}
+       END
+
+   Start as variable
+       FOR    ${index}    ${item}    IN ENUMERATE    @{LIST}    start=${start}
+           My Keyword    ${index}    ${item}
+       END
+
+The `start=<index>` syntax must be explicitly used in the `FOR` header and it cannot
+itself come from a variable. If the last actual item to enumerate would start with
+`start=`, it needs to be escaped like `start\=`.
+
 Just like with regular for loops, you can loop over multiple values per loop
 iteration as long as the number of values in your list is evenly divisible by
-the number of loop-variables (excluding the first, index variable).
+the number of loop-variables (excluding the first, index variable):
 
 .. sourcecode:: robotframework
 
@@ -597,6 +594,11 @@ variable that then becomes a Python tuple getting items from all lists.
            Length Should Be    ${items}    3
            Log Many    ${items}[0]    ${items}[1]    ${items}[2]
        END
+
+If lists have an unequal number of items, the shortest list defines how
+many iterations there are and values at the end of longer lists are ignored.
+For example, the above examples loop only three times and values `4` and `5`
+in the `${NUM}` list are ignored.
 
 .. note:: Getting lists to iterate over from list variables and using
           just one loop variable are new features in Robot Framework 3.2.
@@ -767,32 +769,155 @@ to make the syntax easier to read.
        Repeat Keyword    42 times    My Keyword
        Repeat Keyword    ${var}    Another Keyword    argument
 
-Conditional execution
----------------------
+.. _if expressions:
 
-In general, it is not recommended to have conditional logic in test
-cases, or even in user keywords, because it can make them hard to
-understand and maintain. Instead, this kind of logic should be in test
-libraries, where it can be implemented using natural programming
-language constructs. However, some conditional logic can be useful at
-times, and even though Robot Framework does not have an actual if/else
-construct, there are several ways to get the same effect.
+If expression
+-------------
 
-- The name of the keyword used as a setup or a teardown of both `test
-  cases`__ and `test suites`__ can be specified using a
-  variable. This facilitates changing them, for example, from
-  the command line.
+Sometimes there is a need to execute some keywords conditionally. Starting
+from Robot Framework 4.0 there is a separate *if expression* syntax, but
+there are also `other ways to execute keywords conditionally`_. Notice that if
+the logic gets complicated, it is typically better to move it into a `test library`_.
+
+Basic `IF` syntax
+~~~~~~~~~~~~~~~~~
+
+Robot Framework's native if expression syntax starts with `IF` (case-sensitive) and
+ends with `END` (case-sensitive). The `IF` marker requires exactly one value that is
+the condition to evaluate. Keywords to execute if the condition is true are on their
+own rows between the `IF` and `END` markers. Indenting keywords in the if block is
+highly recommended but not mandatory.
+
+In the following example keywords :name:`Some keyword` and :name:`Another keyword`
+are executed if `${rc}` is greater than zero:
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Example
+       IF    ${rc} > 0
+           Some keyword
+           Another keyword
+       END
+
+The condition is evaluated in Python so that Python builtins like
+`len()` are available and modules are imported automatically to support usages like
+`platform.system() == 'Linux'` and `math.ceil(${x}) == 1`.
+Normal variables like `${rc}` in the above example are replaced before evaluation, but
+variables are also available in the evaluation namespace using the special `$rc` syntax.
+The latter approach is handy when the string representation of the variable cannot be
+used in the condition directly. For more information and examples related the evaluation
+syntax see the `Evaluating expressions`_ appendix.
+
+`ELSE`
+~~~~~~
+
+Like most other languages supporting conditional execution, Robot Framework `IF`
+syntax also supports `ELSE` branches that are executed if the `IF` condition is
+not true.
+
+In this example :name:`Some keyword` is executed if `${rc}` is greater than
+zero and :name:`Another keyword` is executed otherwise:
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Example
+        IF    ${rc} > 0
+            Some keyword
+        ELSE
+            Another keyword
+        END
+
+`ELSE IF`
+~~~~~~~~~
+
+Robot Framework also supports `ELSE IF` branches that have their own condition
+that is evaluated if the initial condition is not true. There can be any number
+of `ELSE IF` branches and they are gone through in the order they are specified.
+If one of the `ELSE IF` conditions is true, the block following it is executed
+and remaining `ELSE IF` branches are ignored. An optional `ELSE` branch can follow
+`ELSE IF` branches and it is executed if all conditions are false.
+
+In the following example different keyword is executed depending on is `${rc}` positive,
+negative, zero, or something else like a string or `None`:
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Example
+        IF    $rc > 0
+            Positive keyword
+        ELSE IF    $rc < 0
+            Negative keyword
+        ELSE IF    $rc == 0
+            Zero keyword
+        ELSE
+            Fail    Unexpected rc: ${rc}
+        END
+
+Notice that this example uses the `${rc}` variable in the special `$rc` format to
+avoid evaluation failures if it is not a number. See the aforementioned
+`Evaluating expressions`_ appendix for more information about this syntax.
+
+Nested if structures
+~~~~~~~~~~~~~~~~~~~~
+
+If expressions can be nested with other if expressions and with `for loops`_.
+This is illustrated by the following example using advanced features such
+as `for-in-enumerate loop`_, `named-only arguments with user keywords`_ and
+`inline Python evaluation`_ syntax (`${{len(${items})}}`):
+
+.. sourcecode:: robotframework
+
+    *** Keyword ***
+    Log items
+        [Arguments]    @{items}    ${log_values}=True
+        IF    not ${items}
+            Log to console    No items.
+        ELSE IF    len(${items}) == 1
+            IF    ${log_values}
+                Log to console    One item: ${items}[0]
+            ELSE
+                Log to console    One item.
+            END
+        ELSE
+            Log to console    ${{len(${items})}} items.
+            IF    ${log_values}
+                FOR    ${index}    ${item}    IN ENUMERATE    @{items}    start=1
+                    Log to console    Item ${index}: ${item}
+                END
+            END
+        END
+
+    *** Test Cases ***
+    No items
+        Log items
+
+    One item without logging value
+        Log items    xxx    log_values=False
+
+    Multiple items
+        Log items    a    b    c
+
+
+Other ways to execute keywords conditionally
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There are also other methods to execute keywords conditionally:
+
+- The name of the keyword used as a setup or a teardown with tests__, suites__ or
+  keywords__ can be specified using a variable. This facilitates changing them,
+  for example, from the command line.
 
 - The BuiltIn_ keyword :name:`Run Keyword` takes a keyword to actually
-  execute as an argument, and it can thus be a variable. The value of
+  execute as an argument and it can thus be a variable. The value of
   the variable can, for example, be got dynamically from an earlier
   keyword or given from the command line.
 
-- The BuiltIn_ keywords :name:`Run Keyword If` and :name:`Run Keyword
-  Unless` execute a named keyword only if a certain expression is
-  true or false, respectively. They are ideally suited to creating
-  simple if/else constructs. For an example, see the documentation of
-  the former.
+- The BuiltIn_ keywords :name:`Run Keyword If` and :name:`Run Keyword Unless`
+  execute a named keyword only if a certain expression is true or false, respectively.
+  The new if expression syntax explained above is generally recommended, though.
 
 - Another BuiltIn_ keyword, :name:`Set Variable If`, can be used to set
   variables dynamically based on a given expression.
@@ -802,6 +927,7 @@ construct, there are several ways to get the same effect.
 
 __ `Test setup and teardown`_
 __ `Suite setup and teardown`_
+__ `Keyword teardown`_
 
 
 Parallel execution of keywords

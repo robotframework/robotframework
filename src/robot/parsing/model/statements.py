@@ -16,19 +16,22 @@
 import ast
 import re
 
-from robot.utils import normalize_whitespace
+from robot.utils import normalize_whitespace, split_from_equals
+from robot.variables import is_scalar_assign, is_dict_variable, search_variable
 
 from ..lexer import Token
 
 
 class Statement(ast.AST):
     type = None
+    handles_types = ()
     _fields = ('type', 'tokens')
-    _attributes = ('lineno', 'col_offset', 'end_lineno', 'end_col_offset')
+    _attributes = ('lineno', 'col_offset', 'end_lineno', 'end_col_offset', 'errors')
     _statement_handlers = {}
 
-    def __init__(self, tokens):
+    def __init__(self, tokens, errors=()):
         self.tokens = tuple(tokens)
+        self.errors = errors
 
     @property
     def lineno(self):
@@ -48,11 +51,9 @@ class Statement(ast.AST):
 
     @classmethod
     def register(cls, subcls):
-        cls._statement_handlers[subcls.type] = subcls
-        if subcls.type == Token.KEYWORD:
-            cls._statement_handlers[Token.ASSIGN] = subcls
-        if subcls.type == Token.ERROR:
-            cls._statement_handlers[Token.FATAL_ERROR] = subcls
+        types = subcls.handles_types or (subcls.type,)
+        for typ in types:
+            cls._statement_handlers[typ] = subcls
         return subcls
 
     @classmethod
@@ -67,14 +68,14 @@ class Statement(ast.AST):
     def data_tokens(self):
         return [t for t in self.tokens if t.type not in Token.NON_DATA_TOKENS]
 
-    def get_token(self, type):
+    def get_token(self, *types):
         """Return a token with the given ``type``.
 
         If there are no matches, return ``None``. If there are multiple
         matches, return the first match.
         """
         for t in self.tokens:
-            if t.type == type:
+            if t.type in types:
                 return t
         return None
 
@@ -106,15 +107,8 @@ class Statement(ast.AST):
         if line:
             yield line
 
-    @property
-    def error(self):
-        tokens = self.get_tokens(Token.ERROR, Token.FATAL_ERROR)
-        if not tokens:
-            return None
-        if len(tokens) == 1:
-            return tokens[0].error
-        errors = ['%d) %s' % (i+1, t.error) for i, t in enumerate(tokens)]
-        return '\n\n'.join(['Multiple errors:'] + errors)
+    def validate(self):
+        pass
 
     def __len__(self):
         return len(self.tokens)
@@ -181,37 +175,21 @@ class Fixture(Statement):
         return self.get_values(Token.ARGUMENT)
 
 
+@Statement.register
 class SectionHeader(Statement):
+    handles_types = (Token.SETTING_HEADER, Token.VARIABLE_HEADER,
+                     Token.TESTCASE_HEADER, Token.KEYWORD_HEADER,
+                     Token.COMMENT_HEADER)
+
+    @property
+    def type(self):
+        token = self.get_token(*self.handles_types)
+        return token.type
 
     @property
     def name(self):
-        header = self.get_token(self.type)
-        return normalize_whitespace(header.value).strip('* ')
-
-
-@Statement.register
-class SettingSectionHeader(SectionHeader):
-    type = Token.SETTING_HEADER
-
-
-@Statement.register
-class VariableSectionHeader(SectionHeader):
-    type = Token.VARIABLE_HEADER
-
-
-@Statement.register
-class TestCaseSectionHeader(SectionHeader):
-    type = Token.TESTCASE_HEADER
-
-
-@Statement.register
-class KeywordSectionHeader(SectionHeader):
-    type = Token.KEYWORD_HEADER
-
-
-@Statement.register
-class CommentSectionHeader(SectionHeader):
-    type = Token.COMMENT_HEADER
+        token = self.get_token(*self.handles_types)
+        return normalize_whitespace(token.value).strip('* ')
 
 
 @Statement.register
@@ -333,6 +311,27 @@ class Variable(Statement):
     def value(self):
         return self.get_values(Token.ARGUMENT)
 
+    def validate(self):
+        name = self.get_value(Token.VARIABLE)
+        match = search_variable(name, ignore_errors=True)
+        if not match.is_assign(allow_assign_mark=True):
+            self.errors += ("Invalid variable name '%s'." % name,)
+        if match.is_dict_assign(allow_assign_mark=True):
+            self._validate_dict_items()
+
+    def _validate_dict_items(self):
+        for item in self.get_values(Token.ARGUMENT):
+            if not self._is_valid_dict_item(item):
+                self.errors += (
+                    "Invalid dictionary variable item '%s'. "
+                    "Items must use 'name=value' syntax or be dictionary "
+                    "variables themselves." % item,
+                )
+
+    def _is_valid_dict_item(self, item):
+        name, value = split_from_equals(item)
+        return value is not None or is_dict_variable(item)
+
 
 @Statement.register
 class TestCaseName(Statement):
@@ -390,6 +389,7 @@ class Return(MultiValue):
 @Statement.register
 class KeywordCall(Statement):
     type = Token.KEYWORD
+    handles_types = (Token.KEYWORD, Token.ASSIGN)
 
     @property
     def keyword(self):
@@ -414,7 +414,7 @@ class TemplateArguments(Statement):
 
 
 @Statement.register
-class ForLoopHeader(Statement):
+class ForHeader(Statement):
     type = Token.FOR
 
     @property
@@ -430,18 +430,63 @@ class ForLoopHeader(Statement):
         separator = self.get_token(Token.FOR_SEPARATOR)
         return normalize_whitespace(separator.value) if separator else None
 
+    def validate(self):
+        if not self.variables:
+            self._add_error('no loop variables')
+        if not self.flavor:
+            self._add_error("no 'IN' or other valid separator")
+        else:
+            for var in self.variables:
+                if not is_scalar_assign(var):
+                    self._add_error("invalid loop variable '%s'" % var)
+            if not self.values:
+                self._add_error('no loop values')
+
+    def _add_error(self, error):
+        self.errors += ('FOR loop has %s.' % error,)
+
+
+@Statement.register
+class IfHeader(Statement):
+    type = Token.IF
+
     @property
-    def _header(self):
-        return self.get_value(Token.FOR)
+    def condition(self):
+        return self.get_value(Token.ARGUMENT)
+
+    def validate(self):
+        conditions = len(self.get_tokens(Token.ARGUMENT))
+        if conditions == 0:
+            self.errors += ('%s has no condition.' % self.type,)
+        if conditions > 1:
+            self.errors += ('%s has more than one condition.' % self.type,)
+
+
+@Statement.register
+class ElseIfHeader(IfHeader):
+    type = Token.ELSE_IF
+
+
+@Statement.register
+class ElseHeader(Statement):
+    type = Token.ELSE
+
+    @property
+    def condition(self):
+        return None
+
+    def validate(self):
+        if self.get_tokens(Token.ARGUMENT):
+            self.errors += ('ELSE has condition.',)
 
 
 @Statement.register
 class End(Statement):
     type = Token.END
 
-    @property
-    def value(self):
-        return self.get_value(Token.END)
+    def validate(self):
+        if self.get_tokens(Token.ARGUMENT):
+            self.errors += ('END does not accept arguments.',)
 
 
 @Statement.register
@@ -452,6 +497,17 @@ class Comment(Statement):
 @Statement.register
 class Error(Statement):
     type = Token.ERROR
+    handles_types = (Token.ERROR, Token.FATAL_ERROR)
+    _errors = ()
+
+    @property
+    def errors(self):
+        """Errors got from the underlying ``ERROR`` tokens."""
+        return tuple(t.error for t in self.get_tokens(Token.ERROR)) + self._errors
+
+    @errors.setter
+    def errors(self, errors):
+        self._errors = errors
 
 
 class EmptyLine(Statement):

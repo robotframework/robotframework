@@ -40,15 +40,15 @@ class TestUnEscape(unittest.TestCase):
         for inp, exp in [('\\n', '\n'),
                          ('\\\\n', '\\n'),
                          ('\\\\\\n', '\\\n'),
-                         ('\\n ', '\n'),
+                         ('\\n ', '\n '),
                          ('\\\\n ', '\\n '),
-                         ('\\\\\\n ', '\\\n'),
+                         ('\\\\\\n ', '\\\n '),
                          ('\\nx', '\nx'),
                          ('\\\\nx', '\\nx'),
                          ('\\\\\\nx', '\\\nx'),
-                         ('\\n x', '\nx'),
+                         ('\\n x', '\n x'),
                          ('\\\\n x', '\\n x'),
-                         ('\\\\\\n x', '\\\nx')]:
+                         ('\\\\\\n x', '\\\n x')]:
             assert_unescape(inp, exp)
 
     def test_carriage_return(self):

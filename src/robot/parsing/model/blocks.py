@@ -18,11 +18,13 @@ import ast
 from robot.utils import file_writer, is_pathlike, is_string
 
 from .visitor import ModelVisitor
+from ..lexer import Token
 
 
 class Block(ast.AST):
     _fields = ()
-    _attributes = ('lineno', 'col_offset', 'end_lineno', 'end_col_offset')
+    _attributes = ('lineno', 'col_offset', 'end_lineno', 'end_col_offset', 'errors')
+    errors = ()
 
     @property
     def lineno(self):
@@ -43,6 +45,12 @@ class Block(ast.AST):
     def end_col_offset(self):
         statement = LastStatementFinder.find_from(self)
         return statement.end_col_offset if statement else -1
+
+    def validate_model(self):
+        ModelValidator().visit(self)
+
+    def validate(self):
+        pass
 
 
 class File(Block):
@@ -122,13 +130,63 @@ class Keyword(Block):
         return self.header.name
 
 
-class ForLoop(Block):
+class If(Block):
+    """Represents IF structures in the model.
+
+    Used with IF, ELSE_IF and ELSE nodes. The :attr:`type` attribute specifies the type.
+    """
+    _fields = ('header', 'body', 'orelse', 'end')
+
+    def __init__(self, header, body=None, orelse=None, end=None, errors=()):
+        self.header = header
+        self.body = body or []
+        self.orelse = orelse
+        self.end = end
+        self.errors = errors
+
+    @property
+    def type(self):
+        return self.header.type
+
+    @property
+    def condition(self):
+        return self.header.condition
+
+    def validate(self):
+        self._validate_body()
+        if self.type == Token.IF:
+            self._validate_structure()
+            self._validate_end()
+
+    def _validate_body(self):
+        if not self.body:
+            self.errors += ('%s has empty body.' % self.type,)
+
+    def _validate_structure(self):
+        orelse = self.orelse
+        else_seen = False
+        while orelse:
+            if else_seen:
+                if orelse.type == Token.ELSE:
+                    self.errors += ('Multiple ELSE branches.',)
+                else:
+                    self.errors += ('ELSE IF after ELSE.',)
+            else_seen = else_seen or orelse.type == Token.ELSE
+            orelse = orelse.orelse
+
+    def _validate_end(self):
+        if not self.end:
+            self.errors += ('IF has no closing END.',)
+
+
+class For(Block):
     _fields = ('header', 'body', 'end')
 
-    def __init__(self, header, body=None, end=None):
+    def __init__(self, header, body=None, end=None, errors=()):
         self.header = header
         self.body = body or []
         self.end = end
+        self.errors = errors
 
     @property
     def variables(self):
@@ -142,13 +200,11 @@ class ForLoop(Block):
     def flavor(self):
         return self.header.flavor
 
-    @property
-    def _header(self):
-        return self.header._header
-
-    @property
-    def _end(self):
-        return self.end.value if self.end else None
+    def validate(self):
+        if not self.body:
+            self.errors += ('FOR loop has empty body.',)
+        if not self.end:
+            self.errors += ('FOR loop has no closing END.',)
 
 
 class ModelWriter(ModelVisitor):
@@ -171,6 +227,17 @@ class ModelWriter(ModelVisitor):
     def visit_Statement(self, statement):
         for token in statement.tokens:
             self.writer.write(token.value)
+
+
+class ModelValidator(ModelVisitor):
+
+    def visit_Block(self, node):
+        node.validate()
+        ModelVisitor.generic_visit(self, node)
+
+    def visit_Statement(self, node):
+        node.validate()
+        ModelVisitor.generic_visit(self, node)
 
 
 class FirstStatementFinder(ModelVisitor):

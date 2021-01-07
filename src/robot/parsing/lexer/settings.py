@@ -104,7 +104,7 @@ class Settings(object):
 
     def _lex_setting(self, setting, values, name):
         self.settings[name] = values
-        setting.type = name.upper().replace(' ', '_')
+        setting.type = name.upper()
         if name in self.name_and_arguments:
             self._lex_name_and_arguments(values)
         elif name in self.name_arguments_and_with_name:

@@ -6,17 +6,21 @@ Resource                 conversion.resource
 *** Variables ***
 @{LIST}                  foo                       bar
 &{DICT}                  foo=${1}                  bar=${2}
+${u}                     ${{'u' if sys.version_info[0] == 2 else ''}}
 
 *** Test Cases ***
 Integer
     Integer              42                        ${42}
     Integer              -1                        ${-1}
     Integer              9999999999999999999999    ${9999999999999999999999}
+    Integer              ${41}                     ${41}
+    Integer              ${-4.0}                   ${-4}
 
 Invalid integer
     [Template]           Conversion Should Fail
     Integer              foobar
     Integer              1.0
+    Integer              ${None}                   arg_type=None
 
 Integral (abc)
     Integral             42                        ${42}
@@ -27,16 +31,20 @@ Invalid integral (abc)
     [Template]           Conversion Should Fail
     Integral             foobar                    type=integer
     Integral             1.0                       type=integer
+    Integral             ${LIST}                   type=integer    arg_type=list
 
 Float
     Float                1.5                       ${1.5}
     Float                -1                        ${-1.0}
     Float                1e6                       ${1000000.0}
     Float                -1.2e-3                   ${-0.0012}
+    Float                ${4}                      ${4.0}
+    Float                ${-4.1}                   ${-4.1}
 
 Invalid float
     [Template]           Conversion Should Fail
     Float                foobar
+    Float                ${LIST}                   arg_type=list
 
 Real (abc)
     Real                 1.5                       ${1.5}
@@ -52,10 +60,13 @@ Decimal
     Decimal              3.14                      Decimal('3.14')
     Decimal              -1                        Decimal('-1')
     Decimal              1e6                       Decimal('1000000')
+    Decimal              ${1}                      Decimal(1)
+    Decimal              ${1.1}                    Decimal(1.1)
 
 Invalid decimal
     [Template]           Conversion Should Fail
     Decimal              foobar
+    Decimal              ${LIST}                   arg_type=list
 
 Boolean
     Boolean              True                      ${True}
@@ -67,11 +78,18 @@ Boolean
     Boolean              oFF                       ${False}
     Boolean              0                         ${False}
     Boolean              ${EMPTY}                  ${False}
-    Boolean              none                      ${None}
+    Boolean              none                      ${NONE}
+    Boolean              ${1}                      ${1}
+    Boolean              ${1.1}                    ${1.1}
+    Boolean              ${None}                   ${None}
 
-Invalid boolean is accepted as-is
+Invalid boolean string is accepted as-is
     Boolean              FooBar                    'FooBar'
     Boolean              42                        '42'
+
+Invalid boolean
+    [Template]           Conversion Should Fail
+    Boolean              ${LIST}                   arg_type=list
 
 String
     String               Hello, world!             'Hello, world!'
@@ -79,6 +97,21 @@ String
     String               None                      'None'
     String               True                      'True'
     String               []                        '[]'
+    String               1.2                       '1.2'
+    String               2                         '2'
+    String               ${42}                     '42'
+    String               ${None}                   'None'
+    String               ${LIST}                   "[${u}'foo', ${u}'bar']"
+
+Invalid string
+    [Template]           Conversion Should Fail
+    String               ${{type('Bang', (), {'__str__': lambda self: 1/0})()}}
+    ...                  arg_type=Bang             error=ZeroDivisionError: *
+
+Invalid string (non-ASCII byte string)
+    [Tags]               require-py2
+    [Template]           Conversion Should Fail
+    String               ${{'åäö'}}                arg_type=string    error=*
 
 Bytes
     Bytes                foo                       b'foo'
@@ -86,23 +119,28 @@ Bytes
     Bytes                Hyvä esimerkki!           b'Hyv\\xE4 esimerkki!'
     Bytes                None                      b'None'
     Bytes                NONE                      b'NONE'
+    Bytes                ${{b'foo'}}               b'foo'
+    Bytes                ${{bytearray(b'foo')}}    b'foo'
 
 Invalid bytes
     [Template]           Conversion Should Fail
-    Bytes                \u0100                                          error=Character '\u0100' cannot be mapped to a byte.
-    Bytes                \u00ff\u0100\u0101                              error=Character '\u0100' cannot be mapped to a byte.
-    Bytes                Hyvä esimerkki! \u2603                          error=Character '\u2603' cannot be mapped to a byte.
+    Bytes                \u0100                    error=Character '\u0100' cannot be mapped to a byte.
+    Bytes                \u00ff\u0100\u0101        error=Character '\u0100' cannot be mapped to a byte.
+    Bytes                Hyvä esimerkki! \u2603    error=Character '\u2603' cannot be mapped to a byte.
+    Bytes                ${1.3}                    arg_type=float
 
 Bytestring
-    [Tags]    require-py3
+    [Tags]               require-py3
     Bytestring           foo                       b'foo'
     Bytestring           \x00\x01\xFF\u00FF        b'\\x00\\x01\\xFF\\xFF'
     Bytestring           Hyvä esimerkki!           b'Hyv\\xE4 esimerkki!'
     Bytestring           None                      b'None'
     Bytestring           NONE                      b'NONE'
+    Bytestring           ${{b'foo'}}               b'foo'
+    Bytestring           ${{bytearray(b'foo')}}    b'foo'
 
 Invalid bytesstring
-    [Tags]    require-py3
+    [Tags]               require-py3
     [Template]           Conversion Should Fail
     Bytestring           \u0100                    type=bytes            error=Character '\u0100' cannot be mapped to a byte.
     Bytestring           \u00ff\u0100\u0101        type=bytes            error=Character '\u0100' cannot be mapped to a byte.
@@ -114,17 +152,24 @@ Bytearray
     Bytearray            Hyvä esimerkki!           bytearray(b'Hyv\\xE4 esimerkki!')
     Bytearray            None                      bytearray(b'None')
     Bytearray            NONE                      bytearray(b'NONE')
+    Bytearray            ${{b'foo'}}               bytearray(b'foo')
+    Bytearray            ${{bytearray(b'foo')}}    bytearray(b'foo')
 
 Invalid bytearray
     [Template]           Conversion Should Fail
-    Bytearray            \u0100                                          error=Character '\u0100' cannot be mapped to a byte.
-    Bytearray            \u00ff\u0100\u0101                              error=Character '\u0100' cannot be mapped to a byte.
-    Bytearray            Hyvä esimerkki! \u2603                          error=Character '\u2603' cannot be mapped to a byte.
+    Bytearray            \u0100                    error=Character '\u0100' cannot be mapped to a byte.
+    Bytearray            \u00ff\u0100\u0101        error=Character '\u0100' cannot be mapped to a byte.
+    Bytearray            Hyvä esimerkki! \u2603    error=Character '\u2603' cannot be mapped to a byte.
+    Bytearray            ${2123.1021}              arg_type=float
 
 Datetime
     DateTime             2014-06-11T10:07:42       datetime(2014, 6, 11, 10, 7, 42)
     DateTime             20180808144342123456      datetime(2018, 8, 8, 14, 43, 42, 123456)
     DateTime             1975:06:04                datetime(1975, 6, 4)
+    DateTime             ${0}                      datetime.fromtimestamp(0)
+    DateTime             ${1602232445}             datetime.fromtimestamp(1602232445)
+    DateTime             ${0.0}                    datetime.fromtimestamp(0)
+    DateTime             ${1612230445.1}           datetime.fromtimestamp(1612230445.1)
 
 Invalid datetime
     [Template]           Conversion Should Fail
@@ -145,6 +190,8 @@ Invalid date
     Date                 2018                                            error=Invalid timestamp '2018'.
     Date                 2014-06-11T10:07:42                             error=Value is datetime, not date.
     Date                 20180808000000000001                            error=Value is datetime, not date.
+    Date                 ${123}                                          arg_type=integer
+    Date                 ${12.3}                                         arg_type=float
 
 Timedelta
     Timedelta            10                        timedelta(seconds=10)
@@ -157,12 +204,16 @@ Timedelta
     Timedelta            4:3:2.1                   timedelta(seconds=4*60*60 + 3*60 + 2 + 0.1)
     Timedelta            100:00:00                 timedelta(seconds=100*60*60)
     Timedelta            -00:01                    timedelta(seconds=-1)
+    Timedelta            ${21}                     timedelta(seconds=21)
+    Timedelta            ${2.1}                    timedelta(seconds=2.1)
+    Timedelta            ${-2.1}                   timedelta(seconds=-2.1)
 
 Invalid timedelta
     [Template]           Conversion Should Fail
-    Timedelta            foobar                                          error=Invalid time string 'foobar'.
-    Timedelta            1 foo                                           error=Invalid time string '1 foo'.
-    Timedelta            01:02:03:04                                     error=Invalid time string '01:02:03:04'.
+    Timedelta            foobar                    error=Invalid time string 'foobar'.
+    Timedelta            1 foo                     error=Invalid time string '1 foo'.
+    Timedelta            01:02:03:04               error=Invalid time string '01:02:03:04'.
+    Timedelta            ${LIST}                   arg_type=list
 
 Enum
     [Tags]               require-enum
@@ -193,26 +244,42 @@ Invalid Enum
 NoneType
     NoneType             None                      None
     NoneType             NONE                      None
-    NoneType             Hello, world!             'Hello, world!'
-    NoneType             True                      'True'
-    NoneType             []                        '[]'
+
+Invalid NoneType
+    [Template]           Conversion Should Fail
+    NoneType             Hello, world!             type=None
+    NoneType             True                      type=None
+    NoneType             []                        type=None
+
+None
+    None                 None                      None
+    None                 NONE                      None
+
+Invalid None
+    [Template]           Conversion Should Fail
+    None                 Hello, world!             type=None
+    None                 True                      type=None
+    None                 []                        type=None
 
 List
     List                 []                        []
     List                 ['foo', 'bar']            ${LIST}
     List                 [1, 2, 3.14, -42]         [1, 2, 3.14, -42]
     List                 ['\\x00', '\\x52']        ['\\x00', 'R']
+    List                 [{'nested': True}]        [{'nested': True}]
+    List                 ${{[1, 2]}}               [1, 2]
+    List                 ${{(1, 2)}}               [1, 2]
 
 Invalid list
     [Template]           Conversion Should Fail
-    List                 [1, ooops]                                      error=Invalid expression.
-    List                 ()                                              error=Value is tuple, not list.
-    List                 {}                                              error=Value is dictionary, not list.
-    List                 ooops                                           error=Invalid expression.
-    List                 öööps                                           error=Invalid expression.
-    List                 ${EMPTY}                                        error=Invalid expression.
-    List                 !"#¤%&/(inv expr)\=?                            error=Invalid expression.
-    List                 1 / 0                                           error=Invalid expression.
+    List                 [1, ooops]                error=Invalid expression.
+    List                 ()                        error=Value is tuple, not list.
+    List                 {}                        error=Value is dictionary, not list.
+    List                 ooops                     error=Invalid expression.
+    List                 ${EMPTY}                  error=Invalid expression.
+    List                 !"#¤%&/(inv expr)\=?      error=Invalid expression.
+    List                 1 / 0                     error=Invalid expression.
+    List                 ${NONE}                   arg_type=None
 
 Sequence (abc)
     Sequence             []                        []
@@ -234,12 +301,17 @@ Tuple
     Tuple                ()                        ()
     Tuple                ('foo', "bar")            tuple(${LIST})
     Tuple                (1, 2, 3.14, -42)         (1, 2, 3.14, -42)
+    Tuple                (['nested', True],)       (['nested', True],)
+    Tuple                ${{(1, 2)}}               (1, 2)
+    Tuple                ${{[1, 2]}}               (1, 2)
 
 Invalid tuple
     [Template]           Conversion Should Fail
-    Tuple                (1, ooops)                                      error=Invalid expression.
-    Tuple                []                                              error=Value is list, not tuple.
-    Tuple                ooops                                           error=Invalid expression.
+    Tuple                (1, ooops)                error=Invalid expression.
+    Tuple                []                        error=Value is list, not tuple.
+    Tuple                {}                        error=Value is dictionary, not tuple.
+    Tuple                ooops                     error=Invalid expression.
+    Tuple                ${NONE}                   arg_type=None
 
 Dictionary
     Dictionary           {}                        {}
@@ -253,6 +325,7 @@ Invalid dictionary
     Dictionary           True                                            error=Value is boolean, not dict.
     Dictionary           ooops                                           error=Invalid expression.
     Dictionary           {{'not': 'hashable'}: 'xxx'}                    error=Evaluating expression failed: *
+    Dictionary           ${NONE}                                         arg_type=None
 
 Mapping (abc)
     Mapping              {'foo': 1, 2: 'bar'}      {'foo': 1, 2: 'bar'}
@@ -269,17 +342,23 @@ Set
     Set                  set()                     set()
     Set                  {'foo', 'bar'}            {'foo', 'bar'}
     Set                  {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
+    Set                  ${{{1}}}                  {1}
+    Set                  ${{frozenset({1})}}       {1}
+    Set                  ${{[1]}}                  {1}
+    Set                  ${{(1,)}}                 {1}
+    Set                  ${{{1: 2}}}               {1}
 
 Invalid set
     [Tags]               require-py3
     [Template]           Conversion Should Fail
-    Set                  {1, ooops}                                      error=Invalid expression.
-    Set                  {}                                              error=Value is dictionary, not set.
-    Set                  ()                                              error=Value is tuple, not set.
-    Set                  []                                              error=Value is list, not set.
-    Set                  ooops                                           error=Invalid expression.
-    Set                  {{'not', 'hashable'}}                           error=Evaluating expression failed: *
-    Set                  frozenset()                                     error=Invalid expression.
+    Set                  {1, ooops}                error=Invalid expression.
+    Set                  {}                        error=Value is dictionary, not set.
+    Set                  ()                        error=Value is tuple, not set.
+    Set                  []                        error=Value is list, not set.
+    Set                  ooops                     error=Invalid expression.
+    Set                  {{'not', 'hashable'}}     error=Evaluating expression failed: *
+    Set                  frozenset()               error=Invalid expression.
+    Set                  ${NONE}                   arg_type=None
 
 Set (abc)
     [Tags]               require-py3
@@ -306,6 +385,11 @@ Frozenset
     Frozenset            set()                     frozenset()
     Frozenset            {'foo', 'bar'}            frozenset({'foo', 'bar'})
     Frozenset            {1, 2, 3.14, -42}         frozenset({1, 2, 3.14, -42})
+    Frozenset            ${{frozenset({1})}}       frozenset({1})
+    Frozenset            ${{{1}}}                  frozenset({1})
+    Frozenset            ${{[1]}}                  frozenset({1})
+    Frozenset            ${{(1,)}}                 frozenset({1})
+    Frozenset            ${{{1: 2}}}               frozenset({1})
 
 Invalid frozenset
     [Tags]               require-py3
@@ -355,62 +439,32 @@ Invalid positional as named
 
 Varargs
     Varargs              1    2    3               expected=(1, 2, 3)
-    Varargs              ${TRUE}    ${NONE}        expected=(True, None)
+    Varargs              ${1}    ${2.0}            expected=(1, 2)
 
 Invalid varargs
     [Template]           Conversion Should Fail
     Varargs              foobar                    type=integer
+    Varargs              ${NONE}                   type=integer    arg_type=None
 
 Kwargs
     Kwargs               a=1    b=2    c=3         expected={'a': 1, 'b': 2, 'c': 3}
-    Kwargs               x=${TRUE}    y=${NONE}    expected={'x': True, 'y': None}
+    Kwargs               a=${1}    b=${2.0}        expected={'a': 1, 'b': 2}
 
 Invalid Kwargs
     [Template]           Conversion Should Fail
     Kwargs               kwarg=ooops               type=integer
+    Kwargs               kwarg=${1.2}              type=integer    arg_type=float    error=Conversion would lose precision.
 
 Kwonly
     [Tags]               require-py3
     Kwonly               argument=1.0              expected=1.0
+    Kwonly               argument=${1}             expected=1.0
 
 Invalid kwonly
     [Tags]               require-py3
     [Template]           Conversion Should Fail
     Kwonly               argument=foobar           type=float
-
-Non-strings are not converted
-    [Template]           Non-string is not converted
-    Integer
-    Float
-    Boolean
-    Decimal
-    List
-    Tuple
-    Dictionary
-    Set
-    Frozenset
-    Enum
-    Bytes
-    Bytearray
-    DateTime
-    Date
-    Timedelta
-    NoneType
-
-String None is converted to None object
-    [Template]           String None is converted to None object
-    Integer
-    Float
-    Boolean
-    Decimal
-    List
-    Tuple
-    Dictionary
-    Set
-    Frozenset
-    DateTime
-    Date
-    Timedelta
+    Kwonly               argument=${NONE}          type=float    arg_type=None
 
 Invalid type spec causes error
     [Documentation]    FAIL No keyword with name 'Invalid type spec' found.
@@ -435,3 +489,48 @@ Value contains variable
     Varargs              @{value}                  expected=(1, 2, 3)
     &{value} =           Create Dictionary         a=1    b=2    c=3
     Kwargs               &{value}                  expected={'a': 1, 'b': 2, 'c': 3}
+
+Default value is not used if explicit type conversion succeeds
+    Type and default 1    [1, 2]    [1, 2]
+    Type and default 2    42        42
+
+Default value is used if explicit type conversion fails
+    Type and default 1    none       None
+    Type and default 2    FALSE      False
+    Type and default 2    ok also    'ok also'
+    Type and default 3    10         ${{datetime.timedelta(seconds=10)}}
+
+Explicit conversion failure is used if both conversions fail
+    [Template]    Conversion Should Fail
+    Type and default 1    BANG!    type=list         error=Invalid expression.
+    Type and default 3    BANG!    type=timedelta    error=Invalid time string 'BANG!'.
+
+Multiple types using Union
+    [Tags]        require-py3
+    [Template]    Multiple types using Union
+    1             1
+    1.2           1.2
+    NONE          None
+    ${1}          1
+    ${1.2}        1.2
+    ${None}       None
+
+Argument not matching Union tupes
+    [Tags]        require-py3
+    [Template]    Conversion Should Fail
+    Multiple types using Union    invalid    type=integer or None or float
+    Multiple types using Union    ${LIST}    type=integer or None or float    arg_type=list
+
+Multiple types using tuple
+    [Template]    Multiple types using tuple
+    1             1
+    1.2           1.2
+    NONE          None
+    ${1}          1
+    ${1.2}        1.2
+    ${None}       None
+
+Argument not matching tuple tupes
+    [Template]    Conversion Should Fail
+    Multiple types using tuple    invalid    type=integer or None or float
+    Multiple types using tuple    ${LIST}    type=integer or None or float    arg_type=list

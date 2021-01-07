@@ -132,7 +132,7 @@ class TestStringRepr(unittest.TestCase):
             ONLY_FEW_MEMBERS = 1
             SO_THEY_CAN = 2
             BE_PRETTY_LONG = 3
-        self._verify('e: Small { ONLY_FEW_MEMBERS | SO_THEY_CAN | BE_PRETTY_LONG }',
+        self._verify('e: Small',
                      ['e'], types=[Small])
 
     def test_enum_with_many_short_members(self):
@@ -143,7 +143,7 @@ class TestStringRepr(unittest.TestCase):
             FOUR = 4
             FIVE = 5
             SIX = 6
-        self._verify('e: ManyShort { ONE | TWO | THREE | FOUR | FIVE | SIX }',
+        self._verify('e: ManyShort',
                      ['e'], types=[ManyShort])
 
     def test_enum_with_many_long_members(self):
@@ -153,7 +153,7 @@ class TestStringRepr(unittest.TestCase):
             MEANS_THEY_ALL_DO_NOT_FIT = 3
             AND_SOME_ARE_OMITTED = 4
             FROM_THE_END = 5
-        self._verify('e: Big { MANY_MEMBERS | THAT_ARE_LONGISH | ... }',
+        self._verify('e: Big',
                      ['e'], types=[Big])
 
     def _verify(self, expected, positional_or_named=None, **config):

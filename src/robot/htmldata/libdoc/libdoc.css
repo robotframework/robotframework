@@ -94,10 +94,8 @@ a {
 
 .libdoc-details {
     margin-top: 60px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: 2%;
+    padding-right: 2%;
     overflow: auto;
     max-width: 1000px;
 }
@@ -237,6 +235,10 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
     max-width: 320px;
 }
 
+.shortcuts.keyword-wall{
+    flex: unset;
+}
+
 .shortcuts a {
     display: block;
     text-decoration: none;
@@ -252,6 +254,85 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
 .shortcuts a::first-letter {
     font-weight: bold;
     letter-spacing: 0.1em;
+}
+
+.shortcuts.keyword-wall a {
+    padding: 0;
+    padding-right: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.shortcuts.keyword-wall a::after {
+    content: '·';
+    padding-left: 0.5rem;
+}
+
+.arguments-list-container {
+    overflow-y: auto;
+}
+
+
+.arguments-list {
+    display: -ms-inline-grid;
+    display: inline-grid;
+    -ms-grid-columns: 1fr 1fr 1fr;
+    grid-template-columns: auto auto auto;
+    row-gap: 3px;
+}
+
+.typed-dict-annotation > span,
+.enum-type-members span,
+.arguments-list .arg-name {
+    -ms-grid-column: 1;
+    grid-column: 1;
+    border-radius: 3px;
+    white-space: nowrap;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    justify-self: start;
+}
+
+.arguments-list .arg-default-container {
+    -ms-grid-column: 2;
+    grid-column: 2;
+    display: flex;
+}
+
+.optional-key {
+    font-style: italic;
+}
+
+.arguments-list .arg-default-eq {
+    margin-left: 2rem;
+    margin-right: 0.5rem;
+    background: var(--background-color);
+}
+
+.arguments-list .arg-default-value {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border-radius: 3px;
+}
+
+.arguments-list .base-arg-data {
+    display: flex;
+    min-width: 150px;
+}
+
+.arguments-list .arg-type {
+    margin-left: 2rem;
+    -ms-grid-column: 3;
+    grid-column: 3;
+    background: var(--background-color);
+    white-space: nowrap;
+    -webkit-text-size-adjust: none;
+}
+
+.arguments-list .arg-kind {
+  color: transparent;
+  text-shadow: 0 0 0 var(--less-important-text-color);
+  padding: 0;
+  font-size: 0.8em;
 }
 
 @media only screen and (min-width: 900px) {
@@ -274,8 +355,14 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
     .shortcuts.keyword-wall {
         display: flex;
         flex-wrap: wrap;
-        width: 640px;
+        width: 320px;
         max-width: none;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    .shortcuts.keyword-wall {
+        width: 640px;
     }
 }
 
@@ -396,7 +483,7 @@ input.switch:checked + .slider::before {
 }
 @media only screen and (min-width: 899px) {
     .kw-overview {
-        max-width: 400px;
+        max-width: 850px;
         margin-right: 1.5rem;
     }
 }
@@ -405,10 +492,14 @@ input.switch:checked + .slider::before {
     flex-direction: column;
     overflow-y: auto;
 }
+
+.dt-name:link,
 .kw-name:link {
     text-decoration: none;
     color: var(--text-color);
 }
+
+.dt-name:visited,
 .kw-name:visited {
     text-decoration: none;
     color: var(--text-color);
@@ -436,9 +527,23 @@ h4 {
     box-shadow: 0 0 4px var(--robot-highlight);
 }
 
+.data-type-content,
 .keyword-content {
     display: flex;
     flex-direction: column;
+}
+
+.enum-type-members, .dt-usage-list {
+    list-style: none;
+}
+
+.data-type-container {
+    border-top: 1px solid var(--border-color);
+    padding: 0.5rem 1.0rem 0.5rem 1.0rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    scroll-margin-top: 60px;
 }
 
 .kw-row {
@@ -459,10 +564,58 @@ h4 {
 .args {
     min-width: 200px;
 }
-.args span {
+
+.enum-type-members span,
+.args span,
+.args a
+ {
     font-family: monospace;
     background: var(--light-background-color);
     padding: 0 0.1em;
+    font-size: 1.1em;
+}
+
+span.type,
+a.type {
+    font-size: 1em;
+    background: none;
+    padding: 0 0
+}
+
+.arg-type span.or::after {
+    content: ' or ';
+}
+
+span.or {
+    background: none;
+    font-size: 0.7em;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+
+.arg-type span.or:nth-last-of-type(1) {
+    display: none;
+}
+
+
+.typed-dict-item .td-type::after {
+    content: ',';
+}
+
+.typed-dict-item .td-type:nth-last-child(2)::after {
+    content: '';
+}
+
+.td-item::before {
+    content: '  ';
+    white-space: pre;
+}
+
+.typed-dict-item {
+    display: block;
+    padding: 0.4rem;
+    font-family: monospace;
+    background: var(--light-background-color);
     font-size: 1.1em;
 }
 
@@ -491,10 +644,16 @@ h4 {
     background: var(--highlighted-background-color);
     color: var(--highlighted-color);
 }
+
+.data-type {
+    font-style: italic;
+}
+
 .no-match {
     color: var(--less-important-text-color) !important;
 }
 
+.no-match .dt-name,
 .no-match .kw-name {
     color: var(--less-important-text-color);
 }

@@ -601,7 +601,7 @@ least for the following purposes:
 - Statistics__ about test cases (total, passed, failed  are
   automatically collected based on tags).
 - With tags, you can `include or exclude`__ test cases to be executed.
-- With tags, you can specify which test cases are considered `critical`_.
+- With tags, you can specify which test cases should be skipped_.
 
 __ `Configuring statistics`_
 __ `By tag names`_
@@ -895,13 +895,31 @@ all the looped elements even if there are failures.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Template and for
+   Template with for loop
        [Template]    Example keyword
        FOR    ${item}    IN    @{ITEMS}
            ${item}    2nd arg
        END
        FOR    ${index}    IN RANGE    42
            1st arg    ${index}
+       END
+
+Templates with if expression
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`If expression`_ can be also used together with templates.
+This can be useful, for example, when used together with `for loops`_ to
+filter executed arguments.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Template with for and if
+       [Template]    Example keyword
+       FOR    ${item}    IN    @{ITEMS}
+           IF  ${item} < 5
+               ${item}    2nd arg
+           END
        END
 
 Different test case styles

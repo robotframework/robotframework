@@ -32,6 +32,7 @@ class StatusReporter(object):
         self._result.starttime = get_timestamp()
         self._context.start_keyword(self._result)
         self._warn_if_deprecated(self._result.doc, self._result.name)
+        return self
 
     def _warn_if_deprecated(self, doc, name):
         if doc.startswith('*DEPRECATED') and '*' in doc[1:]:
@@ -56,6 +57,9 @@ class StatusReporter(object):
         if failure is not exc_val:
             raise failure
 
+    def mark_as_not_run(self):
+        self._pass_status = 'NOT_RUN'
+
     def _get_status(self, result):
         if result.status == 'SKIP':
             return 'SKIP'
@@ -77,7 +81,10 @@ class StatusReporter(object):
         failure = HandlerExecutionFailed(ErrorDetails(exc_info))
         if failure.timeout:
             context.timeout_occurred = True
-        context.fail(failure.full_message)
+        if failure.skip:
+            context.skip(failure.full_message)
+        else:
+            context.fail(failure.full_message)
         if failure.traceback:
             context.debug(failure.traceback)
         return failure

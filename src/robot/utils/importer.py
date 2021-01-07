@@ -23,6 +23,7 @@ from .encoding import system_decode, system_encode
 from .error import get_error_details
 from .platform import JYTHON, IRONPYTHON, PY2, PY3, PYPY
 from .robotpath import abspath, normpath
+from .robotinspect import is_java_init, is_init
 from .robottypes import type_name, is_unicode
 
 if PY3:
@@ -34,42 +35,66 @@ if JYTHON:
 
 
 class Importer(object):
+    """Utility that can import modules and classes based on names and paths.
+
+    Imported classes can optionally be instantiated automatically.
+    """
 
     def __init__(self, type=None, logger=None):
-        if not logger:
-            from robot.output import LOGGER as logger
+        """
+        :param type:
+            Type of the thing being imported. Used in error and log messages.
+        :param logger:
+            Logger to be notified about successful imports and other events.
+            Currently only needs the ``info`` method, but other level specific
+            methods may be needed in the future. If not given, logging is disabled.
+        """
         self._type = type or ''
-        self._logger = logger
+        self._logger = logger or NoLogger()
         self._importers = (ByPathImporter(logger),
                            NonDottedImporter(logger),
                            DottedImporter(logger))
         self._by_path_importer = self._importers[0]
 
-    def import_class_or_module(self, name, instantiate_with_args=None,
+    def import_class_or_module(self, name_or_path, instantiate_with_args=None,
                                return_source=False):
-        """Imports Python class/module or Java class with given name.
+        """Imports Python class/module or Java class based on the given name or path.
 
-        Class can either live in a module/package or be standalone Java class.
-        In the former case the name is something like 'MyClass' and in the
-        latter it could be 'your.package.YourLibrary'. Python classes always
-        live in a module, but if the module name is exactly same as the class
-        name then simple 'MyLibrary' will import a class.
+        :param name_or_path:
+            Name or path of the module or class to import.
+        :param instantiate_with_args:
+            When arguments are given, imported classes are automatically initialized
+            using them.
+        :param return_source:
+            When true, returns a tuple containing the imported module or class
+            and a path to it. By default returns only the imported module or class.
 
-        Python modules can be imported both using format 'MyModule' and
-        'mymodule.submodule'.
+        The class or module to import can be specified either as a name, in which
+        case it must be in the module search path, or as a path to the file or
+        directory implementing the module. See :meth:`import_class_or_module_by_path`
+        for more information about importing classes and modules by path.
 
-        `name` can also be a path to the imported file/directory. In that case
-        importing is done using `import_class_or_module_by_path` method.
+        Classes can be imported from the module search path using name like
+        ``modulename.ClassName``. If the class name and module name are same, using
+        just ``CommonName`` is enough. When importing a class by a path, the class
+        name and the module name must match.
 
-        If `instantiate_with_args` is not None, imported classes are
-        instantiated with the specified arguments automatically.
+        Optional arguments to use when creating an instance are given as a list.
+        Starting from Robot Framework 4.0, both positional and named arguments are
+        supported (e.g. ``['positional', 'name=value']``) and arguments are converted
+        automatically based on type hints and default values.
+
+        If arguments needed when creating an instance are initially embedded into
+        the name or path like ``Example:arg1:arg2``, separate
+        :func:`~robot.utils.text.split_args_from_name_or_path` function can be
+        used to split them before calling this method.
         """
         try:
-            imported, source = self._import_class_or_module(name)
-            self._log_import_succeeded(imported, name, source)
+            imported, source = self._import_class_or_module(name_or_path)
+            self._log_import_succeeded(imported, name_or_path, source)
             imported = self._instantiate_if_needed(imported, instantiate_with_args)
         except DataError as err:
-            self._raise_import_failed(name, err)
+            self._raise_import_failed(name_or_path, err)
         else:
             return self._handle_return_values(imported, source, return_source)
 
@@ -102,13 +127,20 @@ class Importer(object):
     def import_class_or_module_by_path(self, path, instantiate_with_args=None):
         """Import a Python module or Java class using a file system path.
 
-        When importing a Python file, the path must end with '.py' and the
-        actual file must also exist. When importing Java classes, the path
-        must end with '.java' or '.class'. The class file must exist in both
-        cases and in the former case also the source file must exist.
+        :param path:
+            Path to the module or class to import.
+        :param instantiate_with_args:
+            When arguments are given, imported classes are automatically initialized
+            using them.
 
-        If `instantiate_with_args` is not None, imported classes are
-        instantiated with the specified arguments automatically.
+        When importing a Python file, the path must end with :file:`.py` and the
+        actual file must also exist. When importing Java classes, the path must
+        end with :file:`.java` or :file:`.class`. The Java class file must exist
+        in both cases and in the former case also the source file must exist.
+
+        Use :meth:`import_class_or_module` to support importing also using name,
+        not only path. See the documentation of that function for more information
+        about creating instances automatically.
         """
         try:
             imported, source = self._by_path_importer.import_(path)
@@ -117,8 +149,15 @@ class Importer(object):
         except DataError as err:
             self._raise_import_failed(path, err)
 
+    def _log_import_succeeded(self, item, name, source):
+        import_type = '%s ' % self._type.lower() if self._type else ''
+        item_type = 'module' if inspect.ismodule(item) else 'class'
+        location = ("'%s'" % source) if source else 'unknown location'
+        self._logger.info("Imported %s%s '%s' from %s."
+                          % (import_type, item_type, name, location))
+
     def _raise_import_failed(self, name, error):
-        import_type = '%s ' % self._type if self._type else ''
+        import_type = '%s ' % self._type.lower() if self._type else ''
         msg = "Importing %s'%s' failed: %s" % (import_type, name, error.message)
         if not error.details:
             raise DataError(msg)
@@ -146,17 +185,27 @@ class Importer(object):
         return imported
 
     def _instantiate_class(self, imported, args):
+        spec = self._get_arg_spec(imported)
         try:
-            return imported(*args)
+            positional, named = spec.resolve(args)
+        except ValueError as err:
+            raise DataError(err.args[0])
+        try:
+            return imported(*positional, **dict(named))
         except:
             raise DataError('Creating instance failed: %s\n%s' % get_error_details())
 
-    def _log_import_succeeded(self, item, name, source):
-        import_type = '%s ' % self._type if self._type else ''
-        item_type = 'module' if inspect.ismodule(item) else 'class'
-        location = ("'%s'" % source) if source else 'unknown location'
-        self._logger.info("Imported %s%s '%s' from %s."
-                          % (import_type, item_type, name, location))
+    def _get_arg_spec(self, imported):
+        # Avoid cyclic import. Yuck.
+        from robot.running.arguments import ArgumentSpec, PythonArgumentParser
+
+        init = getattr(imported, '__init__', None)
+        name = imported.__name__
+        if not is_init(init):
+            return ArgumentSpec(name, self._type)
+        if is_java_init(init):
+            return ArgumentSpec(name, self._type, var_positional='varargs')
+        return PythonArgumentParser(self._type).parse(init, name)
 
 
 class _Importer(object):
@@ -298,3 +347,7 @@ class DottedImporter(_Importer):
                             % (parent_name, lib_name))
         imported = self._get_class_from_module(imported, lib_name) or imported
         return self._verify_type(imported), self._get_source(imported)
+
+
+class NoLogger(object):
+    error = warn = info = debug = trace = lambda self, *args, **kws: None

@@ -751,6 +751,20 @@ specifying those values in different cells after the :setting:`[Return]` setting
    Return Three Values
        [Return]    foo    bar    zap
 
+The :setting:`[Return]` setting just defines what the keyword should return after
+all keywords it contains have been executed. Although it is recommended to have it
+at the end of keyword where it logically belongs, its position does not affect how
+it is used. For example, the following keyword works exactly like the one above.
+
+.. sourcecode:: robotframework
+
+   *** Keywords ***
+   Return One Value
+       [Return]    ${value}
+       [Arguments]    ${arg}
+       Do Something    ${arg}
+       ${value} =    Get Some Value
+
 Using special keywords to return
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

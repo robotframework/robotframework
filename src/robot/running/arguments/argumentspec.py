@@ -14,14 +14,22 @@
 #  limitations under the License.
 
 from inspect import isclass
+import re
 import sys
+
+try:
+    from typing import Union
+except ImportError:
+    class Union(object):
+        pass
+
 try:
     from enum import Enum
 except ImportError:    # Standard in Py 3.4+ but can be separately installed
     class Enum(object):
         pass
 
-from robot.utils import setter, py2to3, unicode, unic
+from robot.utils import setter, py3to2, unicode, unic
 
 from .argumentconverter import ArgumentConverter
 from .argumentmapper import ArgumentMapper
@@ -29,7 +37,7 @@ from .argumentresolver import ArgumentResolver
 from .typevalidator import TypeValidator
 
 
-@py2to3
+@py3to2
 class ArgumentSpec(object):
 
     def __init__(self, name=None, type='Keyword', positional_only=None,
@@ -107,11 +115,11 @@ class ArgumentSpec(object):
             yield ArgInfo(ArgInfo.VAR_NAMED, self.var_named,
                           get_type(self.var_named, notset))
 
-    def __unicode__(self):
+    def __str__(self):
         return ', '.join(unicode(arg) for arg in self)
 
 
-@py2to3
+@py3to2
 class ArgInfo(object):
     NOTSET = object()
     POSITIONAL_ONLY = 'POSITIONAL_ONLY'
@@ -122,11 +130,30 @@ class ArgInfo(object):
     NAMED_ONLY = 'NAMED_ONLY'
     VAR_NAMED = 'VAR_NAMED'
 
-    def __init__(self, kind, name='', type=NOTSET, default=NOTSET):
+    def __init__(self, kind, name='', types=NOTSET, default=NOTSET):
         self.kind = kind
         self.name = name
-        self.type = type
+        self.types = types
         self.default = default
+
+    @setter
+    def types(self, typ):
+        if not typ or typ is self.NOTSET:
+            return tuple()
+        if isinstance(typ, tuple):
+            return typ
+        if getattr(typ, '__origin__', None) is Union:
+            return self._get_union_args(typ)
+        return (typ,)
+
+    def _get_union_args(self, union):
+        try:
+            return union.__args__
+        except AttributeError:
+            # Python 3.5.2's typing uses __union_params__ instead
+            # of __args__. This block can likely be safely removed
+            # when Python 3.5 support is dropped
+            return union.__union_params__
 
     @property
     def required(self):
@@ -137,25 +164,25 @@ class ArgInfo(object):
         return False
 
     @property
-    def type_string(self):
-        if self.type is self.NOTSET:
-            return 'NOTSET'
-        if not isclass(self.type):
-            return self.type
-        if issubclass(self.type, Enum):
-            return self._format_enum(self.type)
-        return self.type.__name__
+    def types_reprs(self):
+        return [self._type_repr(t) for t in self.types]
 
-    def _format_enum(self, enum):
-        try:
-            members = list(enum.__members__)
-        except AttributeError:  # old enum module
-            members = [attr for attr in dir(enum) if not attr.startswith('_')]
-        while len(members) > 3 and len(' | '.join(members)) > 42:
-            members[-2:] = ['...']
-        return '%s { %s }' % (enum.__name__, ' | '.join(members))
+    def _type_repr(self, typ):
+        if typ is type(None):
+            return 'None'
+        if isclass(typ):
+            return typ.__name__
+        return re.sub(r'^typing\.(.+)', r'\1', unic(typ))
 
-    def __unicode__(self):
+    @property
+    def default_repr(self):
+        if self.default is self.NOTSET:
+            return None
+        if isinstance(self.default, Enum):
+            return self.default.name
+        return unic(self.default)
+
+    def __str__(self):
         if self.kind == self.POSITIONAL_ONLY_MARKER:
             return '/'
         if self.kind == self.NAMED_ONLY_MARKER:
@@ -165,11 +192,11 @@ class ArgInfo(object):
             ret = '*' + ret
         elif self.kind == self.VAR_NAMED:
             ret = '**' + ret
-        if self.type is not self.NOTSET:
-            ret = '%s: %s' % (ret, self.type_string)
+        if self.types:
+            ret = '%s: %s' % (ret, ' | '.join(self.types_reprs))
             default_sep = ' = '
         else:
             default_sep = '='
         if self.default is not self.NOTSET:
-            ret = '%s%s%s' % (ret, default_sep, unic(self.default))
+            ret = '%s%s%s' % (ret, default_sep, self.default_repr)
         return ret

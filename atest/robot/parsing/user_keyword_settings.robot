@@ -115,8 +115,8 @@ Verify Documentation
 Verify Teardown
     [Arguments]    ${message}
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.kws[0].kws[-1].name}    BuiltIn.Log
-    Check Log Message    ${tc.kws[0].kws[-1].msgs[0]}    ${message}
+    Should Be Equal    ${tc.kws[0].teardown.name}    BuiltIn.Log
+    Check Log Message    ${tc.kws[0].teardown.msgs[0]}    ${message}
 
 Verify Timeout
     [Arguments]    ${timeout}

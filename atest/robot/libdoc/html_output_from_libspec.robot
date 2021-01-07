@@ -1,15 +1,7 @@
 *** Settings ***
 Resource          libdoc_resource.robot
-Suite Setup       Run Libdoc to XML:HTML and to HTML and Parse Models    ${TESTDATADIR}/module.py
+Suite Setup       Run Libdoc to XML with HTML docs and to HTML and Parse Models    ${TESTDATADIR}/module.py
 Test Template     Should Be Equal As Strings
-
-*** Keywords ***
-Run Libdoc to XML:HTML and to HTML and Parse Models
-    [Arguments]    ${library_path}
-    Run Libdoc And Set Output    --format XML:HTML ${library_path} ${OUTXML}
-    Run Libdoc And Parse Model From HTML    ${OUTXML}
-    Set Suite Variable    ${XML-MODEL}    ${MODEL}
-    Run Libdoc And Parse Model From HTML    ${library_path}
 
 *** Test Cases ***
 Name
@@ -24,9 +16,6 @@ Version
 Scope
     ${XML-MODEL}[scope]    ${MODEL}[scope]
 
-Named Args
-    ${XML-MODEL}[named_args]    ${MODEL}[named_args]
-
 Inits
     ${XML-MODEL}[inits]    ${MODEL}[inits]
 
@@ -36,6 +25,7 @@ Keyword Names
     ${XML-MODEL}[keywords][13][name]    ${MODEL}[keywords][13][name]
 
 Keyword Arguments
+    [Template]    List of Dict Should Be Equal
     ${XML-MODEL}[keywords][0][args]    ${MODEL}[keywords][0][args]
     ${XML-MODEL}[keywords][1][args]    ${MODEL}[keywords][1][args]
     ${XML-MODEL}[keywords][6][args]    ${MODEL}[keywords][6][args]
@@ -43,8 +33,11 @@ Keyword Arguments
     ${XML-MODEL}[keywords][12][args]    ${MODEL}[keywords][12][args]
     ${XML-MODEL}[keywords][13][args]    ${MODEL}[keywords][13][args]
 
-Embedded Arguments
+Embedded Arguments names
     ${XML-MODEL}[keywords][14][name]    ${MODEL}[keywords][14][name]
+
+Embedded Arguments arguments
+    [Template]    List of Dict Should Be Equal
     ${XML-MODEL}[keywords][14][args]    ${MODEL}[keywords][14][args]
 
 Keyword Documentation
@@ -69,5 +62,13 @@ Keyword tags
 
 TOC doc
     [Template]    None
-    Run Libdoc to XML:HTML and to HTML and Parse Models    ${TESTDATADIR}/TOCWithInitsAndKeywords.py
+    Run Libdoc to XML with HTML docs and to HTML and Parse Models    ${TESTDATADIR}/TOCWithInitsAndKeywords.py
     Should Be Equal As Strings    ${XML-MODEL}[doc]    ${MODEL}[doc]
+
+*** Keywords ***
+Run Libdoc to XML with HTML docs and to HTML and Parse Models
+    [Arguments]    ${library_path}
+    Run Libdoc And Set Output    --format XML --specdocformat HTML ${library_path} ${OUTXML}
+    Run Libdoc And Parse Model From HTML    ${OUTXML}
+    Set Suite Variable    ${XML-MODEL}    ${MODEL}
+    Run Libdoc And Parse Model From HTML    ${library_path}

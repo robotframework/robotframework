@@ -28,8 +28,8 @@ This package is considered stable.
 from .configurer import SuiteConfigurer
 from .testsuite import TestSuite
 from .testcase import TestCase
-from .keyword import Keyword, Keywords
-from .message import Message
+from .keyword import Keyword, Keywords, Body
+from .message import Message, Messages
 from .modifier import ModelModifier
 from .tags import Tags, TagPattern, TagPatterns
 from .namepatterns import SuiteNamePatterns, TestNamePatterns

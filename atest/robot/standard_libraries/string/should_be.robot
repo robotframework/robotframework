@@ -56,9 +56,25 @@ Should Be Uppercase Positive
 Should Be Uppercase Negative
     Check Test Case    ${TESTNAME}
 
-Should Be Titlecase Positive
+Should Be Title Case Positive
     Check Test Case    ${TESTNAME}
 
-Should Be Titlecase Negative
+Should Be Title Case Negative
     Check Test Case    ${TESTNAME}
 
+Should Be Title Case With Excludes
+    Check Test Case    ${TESTNAME}
+
+Should Be Title Case With Regex Excludes
+    Check Test Case    ${TESTNAME}
+
+Should Be Title Case Works With ASCII Bytes On Python 2
+    [Tags]    require-py2    no-ipy
+    Check Test Case    ${TESTNAME}
+
+Should Be Title Case Does Not Work With ASCII Bytes On Python 2
+    [Tags]    require-py3
+    Check Test Case    ${TESTNAME}
+
+Should Be Title Case Does Not Work With Non-ASCII Bytes
+    Check Test Case    ${TESTNAME}

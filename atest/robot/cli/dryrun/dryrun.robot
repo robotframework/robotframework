@@ -54,15 +54,15 @@ Variables are not checked in when arguments are embedded
 
 Setup/teardown with non-existing variable is ignored
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${SUITE.setup}    ${NONE}
-    Should Be Equal    ${tc.setup}    ${NONE}
-    Should Be Equal    ${tc.teardown}    ${NONE}
+    Setup Should Not Be Defined     ${SUITE}
+    Setup Should Not Be Defined     ${tc}
+    Teardown Should Not Be Defined     ${tc}
 
 Setup/teardown with existing variable is resolved and executed
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Keyword Data    ${tc.setup}    BuiltIn.No Operation    status=NOT_RUN    type=setup
     Check Keyword Data    ${tc.teardown}    Teardown    args=\${nonex arg}    type=teardown
-    Check Keyword Data    ${tc.teardown.keywords[0]}    BuiltIn.Log    args=\${arg}    status=NOT_RUN
+    Check Keyword Data    ${tc.teardown.body[0]}    BuiltIn.Log    args=\${arg}    status=NOT_RUN
 
 User keyword return value
     Check Test Case    ${TESTNAME}
@@ -79,15 +79,15 @@ Test Setup and Teardown
 Keyword Teardown
     ${tc}=    Check Test Case    ${TESTNAME}
     Length Should Be      ${tc.kws}              2
-    Check Keyword Data    ${tc.kws[0].kws[-1]}   Does not exist    status=FAIL    type=teardown
+    Check Keyword Data    ${tc.kws[0].teardown}   Does not exist    status=FAIL    type=teardown
 
 Keyword teardown with non-existing variable is ignored
     Check Test Case    ${TESTNAME}
 
 Keyword teardown with existing variable is resolved and executed
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Keyword Data    ${tc.kws[0].kws[-1]}    Teardown    args=\${I DO NOT EXIST}    type=teardown
-    Check Keyword Data    ${tc.kws[0].kws[-1].kws[0]}    BuiltIn.Log    args=\${arg}    status=NOT_RUN
+    Check Keyword Data    ${tc.kws[0].teardown}    Teardown    args=\${I DO NOT EXIST}    type=teardown
+    Check Keyword Data    ${tc.kws[0].teardown.kws[0]}    BuiltIn.Log    args=\${arg}    status=NOT_RUN
 
 Non-existing keyword name
     Check Test Case    ${TESTNAME}
@@ -116,7 +116,7 @@ Avoid keyword in dry-run
 
 Invalid imports
     Error in file    1    cli/dryrun/dryrun.robot    7
-    ...    Importing test library 'DoesNotExist' failed: *Error: *
+    ...    Importing library 'DoesNotExist' failed: *Error: *
     Error in file    2    cli/dryrun/dryrun.robot    8
     ...    Variable file 'wrong_path.py' does not exist.
     Error in file    3    cli/dryrun/dryrun.robot    9

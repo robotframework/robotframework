@@ -83,7 +83,10 @@ class SuiteVisitor(object):
         suites, tests or keywords (setup and teardown) at all.
         """
         if self.start_suite(suite) is not False:
-            suite.keywords.visit(self)
+            if suite.setup:
+                suite.setup.visit(self)
+            if suite.teardown:
+                suite.teardown.visit(self)
             suite.suites.visit(self)
             suite.tests.visit(self)
             self.end_suite(suite)
@@ -106,7 +109,7 @@ class SuiteVisitor(object):
         calling :func:`start_test` or :func:`end_test` nor visiting keywords.
         """
         if self.start_test(test) is not False:
-            test.keywords.visit(self)
+            test.body.visit(self)
             self.end_test(test)
 
     def start_test(self, test):
@@ -128,8 +131,10 @@ class SuiteVisitor(object):
         child keywords.
         """
         if self.start_keyword(kw) is not False:
-            kw.keywords.visit(self)
-            kw.messages.visit(self)
+            if hasattr(kw, 'body'):
+                kw.body.visit(self)
+            if hasattr(kw, 'messages'):
+                kw.messages.visit(self)
             self.end_keyword(kw)
 
     def start_keyword(self, keyword):

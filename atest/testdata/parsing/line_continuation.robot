@@ -175,7 +175,8 @@ Invalid usage in user keyword
     Invalid Usage In UK
 
 Invalid usage in keyword call
-    [Documentation]    FAIL No keyword with name '\\' found.
+    [Documentation]    FAIL
+    ...   No keyword with name '\\' found. If it is used inside a for loop, remove escaping backslashes and end the loop with 'END'.
     Log Many   1
     ...   2
     \    ...   Does not work anymore in 3.2

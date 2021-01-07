@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.model import Keywords
+from robot.model import Body
 from robot.output import LOGGER
 from robot.result import Keyword as KeywordResult
 from robot.utils import prepr, unic
@@ -29,8 +29,6 @@ from .statusreporter import StatusReporter
 
 
 class LibraryKeywordRunner(object):
-    _executed_in_dry_run = ('BuiltIn.Import Library',
-                            'BuiltIn.Set Library Search Order')
 
     def __init__(self, handler, name=None):
         self._handler = handler
@@ -65,7 +63,9 @@ class LibraryKeywordRunner(object):
                              args=kw.args,
                              assign=tuple(assignment),
                              tags=handler.tags,
-                             type=kw.type)
+                             type=kw.type,
+                             lineno=kw.lineno,
+                             source=kw.source)
 
     def _run(self, context, args):
         if self.pre_run_messages:
@@ -115,10 +115,15 @@ class LibraryKeywordRunner(object):
             self._dry_run(context, kw.args)
 
     def _dry_run(self, context, args):
-        if self._handler.longname in self._executed_in_dry_run:
+        if self._executed_in_dry_run(self._handler):
             self._run(context, args)
         else:
             self._handler.resolve_arguments(args)
+
+    def _executed_in_dry_run(self, handler):
+        return (handler.libname == 'Reserved' or
+                handler.longname in ('BuiltIn.Import Library',
+                                     'BuiltIn.Set Library Search Order'))
 
 
 class EmbeddedArgumentsRunner(LibraryKeywordRunner):
@@ -158,7 +163,7 @@ class RunKeywordRunner(LibraryKeywordRunner):
         StepRunner(context).run_steps(keywords)
 
     def _get_runnable_dry_run_keywords(self, args):
-        keywords = Keywords()
+        keywords = Body()
         for keyword in self._get_dry_run_keywords(args):
             if contains_variable(keyword.name):
                 continue

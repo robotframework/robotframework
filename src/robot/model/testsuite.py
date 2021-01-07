@@ -17,6 +17,7 @@ from robot.utils import setter
 
 from .configurer import SuiteConfigurer
 from .filter import Filter, EmptySuiteRemover
+from .fixture import create_fixture
 from .itemlist import ItemList
 from .keyword import Keyword, Keywords
 from .metadata import Metadata
@@ -44,7 +45,8 @@ class TestSuite(ModelObject):
         self.rpa = rpa
         self.suites = None
         self.tests = None
-        self.keywords = None
+        self.setup = None
+        self.teardown = None
         self._my_visitors = []
 
     @property
@@ -84,9 +86,25 @@ class TestSuite(ModelObject):
         return TestCases(self.test_class, self, tests)
 
     @setter
+    def setup(self, setup):
+        return create_fixture(setup, self, Keyword.SETUP_TYPE)
+
+    @setter
+    def teardown(self, teardown):
+        return create_fixture(teardown, self, Keyword.TEARDOWN_TYPE)
+
+    @property
+    def keywords(self):
+        """Deprecated since Robot Framework 4.0
+
+        Use :attr:`body`, :attr:`setup` or :attr:`teardown` instead.
+        """
+        kws = [kw for kw in [self.setup, self.teardown] if kw]
+        return Keywords(self.keyword_class, self, kws)
+
+    @keywords.setter
     def keywords(self, keywords):
-        """Suite setup and teardown as a :class:`~.Keywords` object."""
-        return Keywords(self.keyword_class, self, keywords)
+        Keywords.raise_deprecation_error()
 
     @property
     def id(self):

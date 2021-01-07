@@ -23,6 +23,7 @@ from javax.lang.model.type import TypeKind
 from javax.tools import DocumentationTool, ToolProvider
 
 from robot.utils import normalize, printable_name, split_tags_from_doc
+from robot.running.arguments import ArgumentSpec
 
 from .model import LibraryDoc, KeywordDoc
 
@@ -91,16 +92,18 @@ class JavaDocBuilder(object):
 
     def _get_keyword_arguments(self, method):
         params = method.getParameters()
+        spec = ArgumentSpec()
         if not params:
-            return []
+            return spec
         names = [param.getSimpleName().toString() for param in params]
         if self._is_varargs(params[-1]):
-            names[-1] = '*' + names[-1]
+            spec.var_positional = names.pop()
         elif self._is_kwargs(params[-1]):
-            names[-1] = '**' + names[-1]
+            spec.var_named = names.pop()
             if len(params) > 1 and self._is_varargs(params[-2]):
-                names[-2] = '*' + names[-2]
-        return names
+                spec.var_positional = names.pop()
+        spec.positional_only = names
+        return spec
 
     def _is_varargs(self, param):
         param_type = param.asType()

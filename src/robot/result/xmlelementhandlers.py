@@ -117,9 +117,18 @@ class KeywordHandler(_Handler):
     tag = 'kw'
 
     def start(self, elem, result):
-        return result.keywords.create(kwname=elem.get('name', ''),
-                                      libname=elem.get('library', ''),
-                                      type=elem.get('type', 'kw'))
+        type_ = elem.get('type', 'kw')
+        if type_ == 'setup':
+            return result.setup.config(kwname=elem.get('name', ''),
+                                       libname=elem.get('library', ''),
+                                       type=type_)
+        elif type_ == 'teardown':
+            return result.teardown.config(kwname=elem.get('name', ''),
+                                          libname=elem.get('library', ''),
+                                          type=type_)
+        return result.body.create(kwname=elem.get('name', ''),
+                                  libname=elem.get('library', ''),
+                                  type=elem.get('type', 'kw'))
 
     def _children(self):
         return [DocHandler(), ArgumentsHandler(), AssignHandler(),

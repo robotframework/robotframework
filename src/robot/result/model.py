@@ -33,10 +33,12 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 """
 
 from itertools import chain
+from operator import attrgetter
 import warnings
 
-from robot.model import TotalStatisticsBuilder
-from robot import model, utils
+from robot import model
+from robot.model import TotalStatisticsBuilder, Messages, Keywords, Body
+from robot.utils import get_elapsed_time, setter
 
 from .configurer import SuiteConfigurer
 from .messagefilter import MessageFilter
@@ -45,37 +47,26 @@ from .suiteteardownfailed import (SuiteTeardownFailureHandler,
                                   SuiteTeardownFailed)
 
 
-# TODO: Should remove model.Message altogether and just implement the whole
-# thing here. Additionally model.Keyword should not have `message_class` at
-# all or it should be None.
-
-class Message(model.Message):
-    """Represents a single log message.
-
-    See the base class for documentation of attributes not documented here.
-    """
-    __slots__ = []
-
-
 class Keyword(model.Keyword):
     """Represents results of a single keyword.
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = ['kwname', 'libname', 'status', 'starttime', 'endtime', 'message']
-    message_class = Message
+    __slots__ = ['kwname', 'libname', 'status', 'starttime', 'endtime', 'message',
+                 'lineno', 'source']
 
-    def __init__(self, kwname='', libname='', doc='', args=(), assign=(),
-                 tags=(), timeout=None, type='kw',  status='FAIL',
-                 starttime=None, endtime=None):
-        model.Keyword.__init__(self, '', doc, args, assign, tags, timeout, type)
+    def __init__(self, kwname='', libname='', doc='', args=(), assign=(), tags=(),
+                 timeout=None, type='kw', status='FAIL', starttime=None, endtime=None,
+                 parent=None, lineno=None, source=None):
+        model.Keyword.__init__(self, '', doc, args, assign, tags, timeout, type, parent)
+        self.messages = None
+        self.body = None
         #: Name of the keyword without library or resource name.
         self.kwname = kwname or ''
         #: Name of the library or resource containing this keyword.
         self.libname = libname or ''
-        #: Execution status as a string. Typically ``PASS`` or ``FAIL``, but
-        #: library keywords have status ``NOT_RUN`` in the dry-ryn mode.
-        #: See also :attr:`passed`.
+        #: Execution status as a string. Typically ``PASS``, ``FAIL`` or ``SKIP``,
+        #: but library keywords have status ``NOT_RUN`` in the dry-ryn mode.
         self.status = status
         #: Keyword execution start time in format ``%Y%m%d %H:%M:%S.%f``.
         self.starttime = starttime
@@ -83,11 +74,45 @@ class Keyword(model.Keyword):
         self.endtime = endtime
         #: Keyword status message. Used only if suite teardowns fails.
         self.message = ''
+        self.lineno = lineno
+        self.source = source
+
+    @setter
+    def body(self, body):
+        """Child keywords as a :class:`~.Body` object."""
+        return Body(self.__class__, self, body)
+
+    @property
+    def keywords(self):
+        """Deprecated since Robot Framework 4.0
+
+        Use :attr:`body`, :attr:`setup` or :attr:`teardown` instead.
+        """
+        kws = list(self.body) + [self.teardown] if self.teardown else []
+        return Keywords(self.keyword_class, self, kws)
+
+    @keywords.setter
+    def keywords(self, keywords):
+        Keywords.raise_deprecation_error()
+
+    @setter
+    def messages(self, messages):
+        """Messages as a :class:`~.model.message.Messages` object."""
+        return Messages(parent=self, messages=messages)
+
+    @property
+    def children(self):
+        """Child :attr:`keywords` and :attr:`messages` in creation order."""
+        # It would be cleaner to store keywords/messages in same `children`
+        # list and turn `keywords` and `messages` to properties that pick items
+        # from it. That would require bigger changes to the model, though.
+        return sorted(chain(self.body, self.messages),
+                      key=attrgetter('_sort_key'))
 
     @property
     def elapsedtime(self):
         """Total execution time in milliseconds."""
-        return utils.get_elapsed_time(self.starttime, self.endtime)
+        return get_elapsed_time(self.starttime, self.endtime)
 
     @property
     def name(self):
@@ -162,7 +187,7 @@ class TestCase(model.TestCase):
     @property
     def elapsedtime(self):
         """Total execution time in milliseconds."""
-        return utils.get_elapsed_time(self.starttime, self.endtime)
+        return get_elapsed_time(self.starttime, self.endtime)
 
     @property
     def passed(self):
@@ -263,8 +288,8 @@ class TestSuite(model.TestSuite):
         to a variable and inspecting it is often a good idea::
 
             stats = suite.statistics
-            print(stats.all.failed)
-            print(stats.all.total)
+            print(stats.failed)
+            print(stats.total)
             print(stats.message)
         """
         return TotalStatisticsBuilder(self, self.rpa).stats
@@ -285,9 +310,9 @@ class TestSuite(model.TestSuite):
     def elapsedtime(self):
         """Total execution time in milliseconds."""
         if self.starttime and self.endtime:
-            return utils.get_elapsed_time(self.starttime, self.endtime)
+            return get_elapsed_time(self.starttime, self.endtime)
         return sum(child.elapsedtime for child in
-                   chain(self.suites, self.tests, self.keywords))
+                   chain(self.suites, self.tests, (self.setup, self.teardown)))
 
     def remove_keywords(self, how):
         """Remove keywords based on the given condition.

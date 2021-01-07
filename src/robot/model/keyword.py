@@ -13,17 +13,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from itertools import chain
-from operator import attrgetter
+import warnings
 
-from robot.utils import setter
+from robot.utils import setter, py3to2
 
+from .fixture import create_fixture
 from .itemlist import ItemList
-from .message import Message, Messages
 from .modelobject import ModelObject
 from .tags import Tags
 
 
+@py3to2
 class Keyword(ModelObject):
     """Base model for a single keyword.
 
@@ -31,32 +31,33 @@ class Keyword(ModelObject):
     :class:`robot.result.model.Keyword`.
     """
     __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type',
-                 '_sort_key', '_next_child_sort_key']
-    KEYWORD_TYPE = 'kw'         #: Normal keyword :attr:`type`.
-    SETUP_TYPE = 'setup'        #: Setup :attr:`type`.
-    TEARDOWN_TYPE = 'teardown'  #: Teardown :attr:`type`.
-    FOR_LOOP_TYPE = 'for'       #: For loop :attr:`type`.
-    FOR_ITEM_TYPE = 'foritem'   #: Single for loop iteration :attr:`type`.
-    keyword_class = None        #: Internal usage only.
-    message_class = Message     #: Internal usage only.
+                 '_teardown', '_sort_key', '_next_child_sort_key']
+    KEYWORD_TYPE  = 'kw'
+    SETUP_TYPE    = 'setup'
+    TEARDOWN_TYPE = 'teardown'
+    FOR_LOOP_TYPE = 'for'
+    FOR_ITEM_TYPE = 'foritem'
+    IF_TYPE       = 'if'
+    ELSE_IF_TYPE  = 'elseif'
+    ELSE_TYPE     = 'else'
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
-                 timeout=None, type=KEYWORD_TYPE):
-        self.parent = None
+                 timeout=None, type=KEYWORD_TYPE, parent=None):
+        self.parent = parent
         self._name = name
         self.doc = doc
         self.args = args      #: Keyword arguments as a list of strings.
         self.assign = assign  #: Assigned variables as a list of strings.
         self.tags = tags
         self.timeout = timeout
-        #: Keyword type as a string. The value is either :attr:`KEYWORD_TYPE`,
-        #: :attr:`SETUP_TYPE`, :attr:`TEARDOWN_TYPE`, :attr:`FOR_LOOP_TYPE` or
-        #: :attr:`FOR_ITEM_TYPE` constant defined on the class level.
+        #: Keyword type as a string. Values defined as constants on the class level.
         self.type = type
-        self.messages = None
-        self.keywords = None
+        self._teardown = None
         self._sort_key = -1
         self._next_child_sort_key = 0
+
+    def __bool__(self):
+        return bool(self.name)
 
     @property
     def name(self):
@@ -66,10 +67,20 @@ class Keyword(ModelObject):
     def name(self, name):
         self._name = name
 
+    @property    # Cannot use @setter because it would create teardowns recursively.
+    def teardown(self):
+        if self._teardown is None:
+            self._teardown = create_fixture(None, self, self.TEARDOWN_TYPE)
+        return self._teardown
+
+    @teardown.setter
+    def teardown(self, teardown):
+        self._teardown = create_fixture(teardown, self, self.TEARDOWN_TYPE)
+
     @setter
     def parent(self, parent):
         """Parent test suite, test case or keyword."""
-        if parent and parent is not self.parent:
+        if parent and parent is not getattr(self, 'parent', None):
             self._sort_key = getattr(parent, '_child_sort_key', -1)
         return parent
 
@@ -83,25 +94,6 @@ class Keyword(ModelObject):
         """Keyword tags as a :class:`~.model.tags.Tags` object."""
         return Tags(tags)
 
-    @setter
-    def keywords(self, keywords):
-        """Child keywords as a :class:`~.Keywords` object."""
-        return Keywords(self.keyword_class or self.__class__, self, keywords)
-
-    @setter
-    def messages(self, messages):
-        """Messages as a :class:`~.model.message.Messages` object."""
-        return Messages(self.message_class, self, messages)
-
-    @property
-    def children(self):
-        """Child :attr:`keywords` and :attr:`messages` in creation order."""
-        # It would be cleaner to store keywords/messages in same `children`
-        # list and turn `keywords` and `messages` to properties that pick items
-        # from it. That would require bigger changes to the model, though.
-        return sorted(chain(self.keywords, self.messages),
-                      key=attrgetter('_sort_key'))
-
     @property
     def id(self):
         """Keyword id in format like ``s1-t3-k1``.
@@ -111,7 +103,10 @@ class Keyword(ModelObject):
         """
         if not self.parent:
             return 'k1'
-        return '%s-k%d' % (self.parent.id, self.parent.keywords.index(self)+1)
+        if hasattr(self.parent, 'body') and self.parent.body:
+            return '%s-k%d' % (self.parent.id, self.parent.body.index(self)+1)
+        fixtures = [kw for kw in (self.parent.setup, self.parent.teardown) if kw]
+        return '%s-k%d' % (self.parent.id, fixtures.index(self)+1)
 
     @property
     def source(self):
@@ -125,55 +120,36 @@ class Keyword(ModelObject):
 class Keywords(ItemList):
     """A list-like object representing keywords in a suite, a test or a keyword.
 
-    Possible setup and teardown keywords are directly available as
-    :attr:`setup` and :attr:`teardown` attributes.
+    Deprecated since Robot Framework 4.0.
     """
     __slots__ = []
 
     def __init__(self, keyword_class=Keyword, parent=None, keywords=None):
+        warnings.warn('`keywords` property has been deprecated in Robot Framework 4.0.',
+                      UserWarning)
         ItemList.__init__(self, keyword_class, {'parent': parent}, keywords)
 
     @property
     def setup(self):
-        """Keyword used as the setup or ``None`` if no setup.
-
-        Can be set to a new setup keyword or ``None`` since RF 3.0.1.
-        """
         return self[0] if (self and self[0].type == 'setup') else None
 
     @setup.setter
     def setup(self, kw):
-        if kw is not None and kw.type != 'setup':
-            raise TypeError("Setup keyword type must be 'setup', "
-                            "got '%s'." % kw.type)
-        if self.setup is not None:
-            self.pop(0)
-        if kw is not None:
-            self.insert(0, kw)
+        self.raise_deprecation_error()
 
     def create_setup(self, *args, **kwargs):
-        self.setup = self._item_class(*args, type='setup', **kwargs)
+        self.raise_deprecation_error()
 
     @property
     def teardown(self):
-        """Keyword used as the teardown or ``None`` if no teardown.
-
-        Can be set to a new teardown keyword or ``None`` since RF 3.0.1.
-        """
         return self[-1] if (self and self[-1].type == 'teardown') else None
 
     @teardown.setter
     def teardown(self, kw):
-        if kw is not None and kw.type != 'teardown':
-            raise TypeError("Teardown keyword type must be 'teardown', "
-                            "got '%s'." % kw.type)
-        if self.teardown is not None:
-            self.pop()
-        if kw is not None:
-            self.append(kw)
+        self.raise_deprecation_error()
 
     def create_teardown(self, *args, **kwargs):
-        self.teardown = self._item_class(*args, type='teardown', **kwargs)
+        self.raise_deprecation_error()
 
     @property
     def all(self):
@@ -187,6 +163,57 @@ class Keywords(ItemList):
         return Keywords(self._item_class, self._common_attrs['parent'], kws)
 
     def __setitem__(self, index, item):
+        self.raise_deprecation_error()
+
+    def create(self, *args, **kwargs):
+        self.raise_deprecation_error()
+
+    def append(self, item):
+        self.raise_deprecation_error()
+
+    def extend(self, items):
+        self.raise_deprecation_error()
+
+    def insert(self, index, item):
+        self.raise_deprecation_error()
+
+    def pop(self, *index):
+        self.raise_deprecation_error()
+
+    def remove(self, item):
+        self.raise_deprecation_error()
+
+    def clear(self):
+        self.raise_deprecation_error()
+
+    def __delitem__(self, index):
+        self.raise_deprecation_error()
+
+    def sort(self):
+        self.raise_deprecation_error()
+
+    def reverse(self):
+        self.raise_deprecation_error()
+
+    @classmethod
+    def raise_deprecation_error(cls):
+        raise AttributeError('The `keywords` property has been deprecated in RF 4.0. '
+                             'Use `body`, `setup` or `teardown` instead.')
+
+
+class Body(ItemList):
+    """A list-like object representing body of a suite, a test or a keyword.
+
+    Body contains the keywords and other structures such as for loops.
+    """
+    __slots__ = []
+
+    def __init__(self, keyword_class=Keyword, parent=None, keywords=None):
+        ItemList.__init__(self, keyword_class, {'parent': parent}, keywords)
+
+    def __setitem__(self, index, item):
         old = self[index]
         ItemList.__setitem__(self, index, item)
         self[index]._sort_key = old._sort_key
+
+    # TODO: add `create_keyword`, `create_for` and `create_if`, deprecate `create`

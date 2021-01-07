@@ -16,7 +16,7 @@
 from io import BytesIO
 import re
 
-from .compat import py2to3
+from .compat import py3to2
 from .platform import IRONPYTHON, PY_VERSION, PY3
 from .robottypes import is_bytes, is_pathlike, is_string
 
@@ -53,7 +53,7 @@ if ET.VERSION < '1.3' and hasattr(ET, 'tostringlist'):
     ET.VERSION = '1.3'
 
 
-@py2to3
+@py3to2
 class ETSource(object):
 
     def __init__(self, source):
@@ -99,7 +99,7 @@ class ETSource(object):
         if self._opened:
             self._opened.close()
 
-    def __unicode__(self):
+    def __str__(self):
         source = self._source
         if self._is_path(source):
             return self._path_to_string(source)

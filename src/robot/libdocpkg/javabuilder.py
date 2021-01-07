@@ -18,6 +18,7 @@ from inspect import cleandoc
 from robot.errors import DataError
 from robot.utils import (JAVA_VERSION, normalize, split_tags_from_doc,
                          printable_name)
+from robot.running.arguments import ArgumentSpec
 
 from .model import LibraryDoc, KeywordDoc
 
@@ -83,16 +84,18 @@ class JavaDocBuilder(object):
 
     def _get_keyword_arguments(self, method):
         params = method.parameters()
+        spec = ArgumentSpec()
         if not params:
-            return []
+            return spec
         names = [p.name() for p in params]
         if self._is_varargs(params[-1]):
-            names[-1] = '*' + names[-1]
+            spec.var_positional = names.pop()
         elif self._is_kwargs(params[-1]):
-            names[-1] = '**' + names[-1]
+            spec.var_named = names.pop()
             if len(params) > 1 and self._is_varargs(params[-2]):
-                names[-2] = '*' + names[-2]
-        return names
+                spec.var_positional = names.pop()
+        spec.positional_only = names
+        return spec
 
     def _is_varargs(self, param):
         return (param.typeName().startswith('java.util.List')

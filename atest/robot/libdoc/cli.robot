@@ -8,13 +8,18 @@ Default format is got from output file extension
     String ${OUTXML}             XML          String    path=${OUTXML}
 
 '*.libspec' extension creates XML file with HTML docs
-    String ${OUTBASE}.libspec    XML:HTML     String    path=${OUTBASE}.libspec
+    String ${OUTBASE}.libspec    LIBSPEC     String    path=${OUTBASE}.libspec
 
 Using --format overrides output file extension
-    -f XmL ${TESTDATADIR}/resource.robot ${OUTHTML}    XML         resource
-    --format hTmL BuiltIn ${OUTBASE}.xxx               HTML        BuiltIn     path=${OUTBASE}.xxx
-    --format XML:HTML String ${OUTXML}                 XML:HTML    String      path=${OUTXML}
-    --format XML String ${OUTBASE}.libspec             XML         String      path=${OUTBASE}.libspec
+    -f XmL ${TESTDATADIR}/resource.robot ${OUTHTML}       XML         resource
+    --format hTmL BuiltIn ${OUTBASE}.xxx                  HTML        BuiltIn     path=${OUTBASE}.xxx
+    --format XML String ${OUTBASE}.libspec                XML         String      path=${OUTBASE}.libspec
+
+Using --specdocformat to specify doc format in output
+    --format XML --specdocformat RAW String ${OUTXML}              XML        String      path=${OUTXML}
+    --format XML --specdocformat HTML String ${OUTXML}             LIBSPEC    String      path=${OUTXML}
+    --format XML --specdocformat RAW String ${OUTBASE}.libspec     XML        String      path=${OUTBASE}.libspec
+    --format XML --specdocformat HTML String ${OUTBASE}.libspec    LIBSPEC    String      path=${OUTBASE}.libspec
 
 Override name and version
     --name MyName --version 42 String ${OUTHTML}    HTML    MyName    42
@@ -23,6 +28,9 @@ Override name and version
 Missing destination subdirectory is created
     String ${NEWDIR_HTML}        HTML    String    path=${NEWDIR_HTML}
     String ${NEWDIR_XML}         XML     String    path=${NEWDIR_XML}
+
+Quiet
+    --quiet String ${OUTHTML}    HTML    String    quiet=True
 
 Relative path with Python libraries
     [Template]    NONE
@@ -37,11 +45,14 @@ Relative path with Python libraries
 
 *** Keywords ***
 Run Libdoc And Verify Created Output File
-    [Arguments]    ${args}   ${format}    ${name}    ${version}=    ${path}=${OUTHTML}
+    [Arguments]    ${args}   ${format}    ${name}    ${version}=    ${path}=${OUTHTML}    ${quiet}=False
     ${stdout} =    Run Libdoc    ${args}
     Run Keyword    ${format} Doc Should Have Been Created    ${path}    ${name}    ${version}
     File Should Have Correct Line Separators    ${path}
-    Path to output should be in stdout    ${path}    ${stdout.rstrip()}
+    Run Keyword If    not ${quiet}
+    ...    Path to output should be in stdout    ${path}    ${stdout.rstrip()}
+    ...    ELSE
+    ...    Should be empty    ${stdout}
     [Teardown]    Remove Output Files
 
 HTML Doc Should Have Been Created
@@ -59,7 +70,7 @@ XML Doc Should Have Been Created
     Format Should Be     ${docformat}
     Run Keyword If       "${version}"    Version Should Match    ${version}
 
-XML:HTML Doc Should Have Been Created
+LIBSPEC Doc Should Have Been Created
     [Arguments]    ${path}    ${name}    ${version}    ${docformat}=HTML
     ${libdoc}=           Parse Xml    ${path}
     Set Test Variable    ${libdoc}

@@ -10,11 +10,11 @@ Run Keyword If test Failed When Test Fails
 
 Run Keyword If test Failed When Test Does Not Fail
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Empty    ${tc.teardown.keywords}
+    Should Be Empty    ${tc.teardown.body}
 
 Run Keyword If Test Failed Can't Be Used In Setup
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Empty    ${tc.setup.keywords}
+    Should Be Empty    ${tc.setup.body}
 
 Run Keyword If Test Failed Can't Be Used in Test
     Check Test Case    ${TEST NAME}

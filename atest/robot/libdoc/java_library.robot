@@ -25,15 +25,15 @@ Generated
 Scope
     Scope Should Be                  GLOBAL
 
-Named Args
-    Named Args Should Be             false
-
 Source Info
     Source Should Be                 ${TESTDATADIR}/Example.java
     Lineno Should Be                 ${None}
 
 Spec version
     Spec version should be correct
+
+Library Tags
+    Specfile Tags Should Be          bar    foo
 
 Init Documentation
     Init Doc Should Start With       0    Creates new Example test library 1

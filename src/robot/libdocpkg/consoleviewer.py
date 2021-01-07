@@ -15,7 +15,7 @@
 
 import textwrap
 
-from robot.utils import MultiMatcher, console_encode
+from robot.utils import MultiMatcher, console_encode, unicode
 from robot.errors import DataError
 
 
@@ -60,10 +60,8 @@ class ConsoleViewer(object):
 
     def _show_intro(self, lib):
         self._header(lib.name, underline='=')
-        named_args = 'supported' if lib.named_args else 'not supported'
         self._data([('Version', lib.version),
-                    ('Scope', lib.scope if lib.type == 'LIBRARY' else None),
-                    ('Named arguments', named_args)])
+                    ('Scope', lib.scope if lib.type == 'LIBRARY' else None)])
         self._doc(lib.doc)
 
     def _show_inits(self, lib):
@@ -74,7 +72,7 @@ class ConsoleViewer(object):
     def _show_keyword(self, kw, show_name=True):
         if show_name:
             self._header(kw.name, underline='-')
-        self._data([('Arguments', '[%s]' % ', '.join(kw.args))])
+        self._data([('Arguments', '[%s]' % unicode(kw.args))])
         self._doc(kw.doc)
 
     def _header(self, name, underline):

@@ -15,7 +15,7 @@
 
 from functools import total_ordering
 
-from robot.utils import py2to3, unicode
+from robot.utils import py3to2, unicode
 
 
 # TODO: When Python 2 support is dropped, we could extend MutableSequence.
@@ -23,7 +23,7 @@ from robot.utils import py2to3, unicode
 
 
 @total_ordering
-@py2to3
+@py3to2
 class ItemList(object):
     __slots__ = ['_item_class', '_common_attrs', '_items']
 
@@ -111,7 +111,7 @@ class ItemList(object):
     def __len__(self):
         return len(self._items)
 
-    def __unicode__(self):
+    def __str__(self):
         return u'[%s]' % ', '.join(unicode(item) for item in self)
 
     def count(self, item):
