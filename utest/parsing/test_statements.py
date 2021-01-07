@@ -558,7 +558,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             ForHeader,
-            for_separator='IN ZIP',
+            flavor='IN ZIP',
             variables=['${value1}', '${value2}'],
             values=['${list1}', '${list2}'],
             separator='  '
