@@ -16,11 +16,9 @@ class BulkLoadRemoteServer(RemoteServer):
     def get_library_information(self):
         info_dict = dict()
         for kw in self.get_keyword_names():
-            kw_dict = dict()
-            kw_dict['args'] = self.get_keyword_arguments(kw)
-            kw_dict['tags'] = self.get_keyword_tags(kw)
-            kw_dict['doc'] = self.get_keyword_documentation(kw)
-            info_dict[kw] = kw_dict
+            info_dict[kw] = dict(args=self.get_keyword_arguments(kw),
+                                 tags=self.get_keyword_tags(kw),
+                                 doc=self.get_keyword_documentation(kw))
         return info_dict
 
 class The10001KeywordsLibrary(object):

@@ -65,15 +65,12 @@ class Remote(object):
         self._uri = uri
         self._client = XmlRpcRemoteClient(uri, timeout)
 
-    def get_keyword_names(self, attempts=2):
-        for i in range(attempts):
-            time.sleep(i)
-            try:
-                return self._client.get_keyword_names()
-            except TypeError as err:
-                error = err
-        raise RuntimeError('Connecting remote server at %s failed: %s'
-                           % (self._uri, error))
+    def get_keyword_names(self):
+        try:
+            return self._client.get_keyword_names()
+        except TypeError as error:
+            raise RuntimeError('Connecting remote server at %s failed: %s'
+                               % (self._uri, error))
 
     def get_keyword_arguments(self, name):
         try:
@@ -240,8 +237,8 @@ class XmlRpcRemoteClient(object):
             try:
                 with self._server as server:
                     self.__kw_cache = server.get_library_information()
-            except:
-                pass # Best efort failed, fall back to regular loading
+            except TypeError:
+                pass # Best effort failed, fall back to regular loading
         return self.__kw_cache
 
     def get_keyword_names(self):
@@ -269,7 +266,7 @@ class XmlRpcRemoteClient(object):
             return server.get_keyword_tags(name)
 
     def get_keyword_documentation(self, name):
-        if self._kw_cache:
+        if name not in ['__intro__', '__init__'] and self._kw_cache:
             return self._kw_cache[name].get('doc', "")
         with self._server as server:
             return server.get_keyword_documentation(name)
