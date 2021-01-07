@@ -67,7 +67,13 @@ Stdout and stderr are not captured when running Run Keyword
     Stdout Should Contain    ${expected}
     Stderr Should Contain    ${expected}
 
-Example
+Run Keyword With Default Argument
+    Check Test Case    ${TEST NAME}
+
+Run Keyword With Embedded Argument
+    Check Test Case    ${TEST NAME}
+
+Run Keyword With UK As Variable
     Check Test Case    ${TEST NAME}
 
 *** Keywords ***
