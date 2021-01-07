@@ -106,6 +106,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         )
 
     def test_Documentation(self):
+        # Documentation    Example documentation
         tokens = [
             Token(Token.DOCUMENTATION),
             Token(Token.SEPARATOR, '    '),
@@ -118,6 +119,8 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             doc='Example documentation'
         )
 
+        # Documentation    First line
+        # ...    Second line
         tokens = [
             Token(Token.DOCUMENTATION),
             Token(Token.SEPARATOR, '    '),
@@ -131,6 +134,28 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             Documentation,
+            doc='First line\nSecond line'
+        )
+
+        # Test
+        #     [Documentation]    First line
+        #     ...    Second line
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.DOCUMENTATION, '[Documentation]'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'First line'),
+            Token(Token.EOL, '\n'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.CONTINUATION, '...'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'Second line'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            Documentation,
+            test_documentation=True,
             doc='First line\nSecond line'
         )
 
@@ -164,6 +189,8 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         )
 
     def test_Tags(self):
+        # Test/Keyword
+        #     [Tags]    tag1    tag2
         tokens = [
             Token(Token.SEPARATOR, '    '),
             Token(Token.TAGS, '[Tags]'),

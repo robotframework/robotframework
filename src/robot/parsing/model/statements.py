@@ -285,18 +285,33 @@ class Documentation(DocumentationOrMetadata):
     type = Token.DOCUMENTATION
 
     @classmethod
-    def from_params(cls, doc, split_on_eol=True, indent='', separator=FOUR_SPACES, eol=EOL):
-        tokens = [
-            Token(Token.DOCUMENTATION),
-            Token(Token.SEPARATOR, separator)
-        ]
+    def from_params(
+            cls,
+            doc,
+            test_documentation=False,
+            split_on_eol=True,
+            indent=FOUR_SPACES,
+            separator=FOUR_SPACES,
+            eol=EOL
+    ):
+        if test_documentation:
+            tokens = [
+                Token(Token.SEPARATOR, indent),
+                Token(Token.DOCUMENTATION, '[Documentation]'),
+                Token(Token.SEPARATOR, separator)
+            ]
+        else:
+            tokens = [
+                Token(Token.DOCUMENTATION),
+                Token(Token.SEPARATOR, separator)
+            ]
         if split_on_eol:
             doc_lines = doc.splitlines()
             if doc_lines:
                 tokens.append(Token(Token.ARGUMENT, doc_lines[0]))
                 tokens.append(Token(Token.EOL, eol))
             for line in doc_lines[1:]:
-                if indent:
+                if test_documentation:
                     tokens.append(Token(Token.SEPARATOR, indent))
                 tokens.append(Token(Token.CONTINUATION, '...'))
                 tokens.append(Token(Token.SEPARATOR, separator))
@@ -318,7 +333,7 @@ class Metadata(DocumentationOrMetadata):
     type = Token.METADATA
 
     @classmethod
-    def from_params(cls, metadata, split_on_eol=True, indent='', separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, metadata, split_on_eol=True, separator=FOUR_SPACES, eol=EOL):
         tokens = [
             Token(Token.METADATA),
             Token(Token.SEPARATOR, separator)
@@ -329,8 +344,6 @@ class Metadata(DocumentationOrMetadata):
                 tokens.append(Token(Token.ARGUMENT, metadata_lines[0]))
                 tokens.append(Token(Token.EOL, eol))
             for line in metadata_lines[1:]:
-                if indent:
-                    tokens.append(Token(Token.SEPARATOR, indent))
                 tokens.append(Token(Token.CONTINUATION, '...'))
                 tokens.append(Token(Token.SEPARATOR, separator))
                 tokens.append(Token(Token.ARGUMENT, line))
