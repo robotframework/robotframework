@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.model import Keywords
+from robot.model import Body
 from robot.output import LOGGER
 from robot.result import Keyword as KeywordResult
 from robot.utils import prepr, unic
@@ -163,7 +163,7 @@ class RunKeywordRunner(LibraryKeywordRunner):
         StepRunner(context).run_steps(keywords)
 
     def _get_runnable_dry_run_keywords(self, args):
-        keywords = Keywords()
+        keywords = Body()
         for keyword in self._get_dry_run_keywords(args):
             if contains_variable(keyword.name):
                 continue

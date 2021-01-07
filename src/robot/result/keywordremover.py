@@ -41,7 +41,7 @@ class _KeywordRemover(SuiteVisitor):
         self._removal_message = RemovalMessage(self._message)
 
     def _clear_content(self, kw):
-        kw.keywords = []
+        kw.body = []
         kw.messages = []
         self._removal_message.set(kw)
 
@@ -70,7 +70,7 @@ class PassedKeywordRemover(_KeywordRemover):
 
     def visit_test(self, test):
         if not self._failed_or_warning_or_error(test):
-            for keyword in test.keywords:
+            for keyword in test.body:
                 self._clear_content(keyword)
 
     def visit_keyword(self, keyword):
@@ -104,8 +104,8 @@ class ForLoopItemsRemover(_KeywordRemover):
 
     def start_keyword(self, kw):
         if kw.type == kw.FOR_LOOP_TYPE:
-            before = len(kw.keywords)
-            kw.keywords = self._remove_keywords(kw.keywords)
+            before = len(kw.body)
+            kw.body = self._remove_keywords(kw.body)
             self._removal_message.set_if_removed(kw, before)
 
     def _remove_keywords(self, keywords):
@@ -117,9 +117,9 @@ class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
     _message = '%d failing step%s removed using --RemoveKeywords option.'
 
     def start_keyword(self, kw):
-        if kw.name == 'BuiltIn.Wait Until Keyword Succeeds' and kw.keywords:
-            before = len(kw.keywords)
-            kw.keywords = self._remove_keywords(list(kw.keywords))
+        if kw.name == 'BuiltIn.Wait Until Keyword Succeeds' and kw.body:
+            before = len(kw.body)
+            kw.body = self._remove_keywords(list(kw.body))
             self._removal_message.set_if_removed(kw, before)
 
     def _remove_keywords(self, keywords):
@@ -156,7 +156,7 @@ class RemovalMessage(object):
         self._message = message
 
     def set_if_removed(self, kw, len_before):
-        removed = len_before - len(kw.keywords)
+        removed = len_before - len(kw.body)
         if removed:
             self.set(kw, self._message % (removed, plural_or_not(removed)))
 

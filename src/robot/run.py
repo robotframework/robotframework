@@ -49,10 +49,10 @@ USAGE = """Robot Framework -- A generic automation framework
 
 Version:  <VERSION>
 
-Usage:  robot [options] data_sources
-   or:  python -m robot [options] data_sources
-   or:  python path/to/robot [options] data_sources
-   or:  java -jar robotframework.jar [options] data_sources
+Usage:  robot [options] paths
+   or:  python -m robot [options] paths
+   or:  python path/to/robot [options] paths
+   or:  java -jar robotframework.jar [options] paths
 
 Robot Framework is a generic open source automation framework for acceptance
 testing, acceptance test-driven development (ATDD) and robotic process
@@ -63,7 +63,7 @@ keywords can also be created using Robot Framework's own syntax.
 
 The easiest way to execute Robot Framework is using the `robot` command created
 as part of the normal installation. Alternatively it is possible to execute
-the `robot` module directly using `python -m robot`, where `python` can be
+the `robot` module directly like `python -m robot`, where `python` can be
 replaced with any supported Python interpreter such as `jython`, `ipy` or
 `python3`. Yet another alternative is running the `robot` directory like
 `python path/to/robot`. Finally, there is a standalone JAR distribution
@@ -470,7 +470,7 @@ def run_cli(arguments=None, exit=True):
     :param arguments: Command line options and arguments as a list of strings.
         Starting from RF 3.1, defaults to ``sys.argv[1:]`` if not given.
     :param exit: If ``True``, call ``sys.exit`` with the return code denoting
-        execution status, otherwise just return the rc. New in RF 3.0.1.
+        execution status, otherwise just return the rc.
 
     Entry point used when running tests from the command line, but can also
     be used by custom scripts that execute tests. Especially useful if the

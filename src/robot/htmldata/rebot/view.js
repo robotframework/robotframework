@@ -119,8 +119,8 @@ function enableStatisticsSorter() {
     });
     $(".statistics").tablesorter({
         sortInitialOrder: 'desc',
-        headers: {0: {sorter:'statName', sortInitialOrder: 'asc'},
-                  5: {sorter: false}}
+        headers: {0: {sorter: 'statName', sortInitialOrder: 'asc'},
+                  6: {sorter: false}}
     });
 }
 

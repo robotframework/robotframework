@@ -41,6 +41,7 @@ class LibdocXmlWriter(object):
         writer.start('keywordspec', attrs)
         writer.element('version', libdoc.version)
         writer.element('doc', libdoc.doc)
+        self._write_tags(libdoc.all_tags, writer)
 
     def _add_source_info(self, attrs, item, outfile, lib_source=None):
         if item.source and item.source != lib_source:
@@ -79,12 +80,15 @@ class LibdocXmlWriter(object):
             writer.element('doc', kw.doc)
             writer.element('shortdoc', kw.shortdoc)
             if kw_type == 'kw' and kw.tags:
-                writer.start('tags')
-                for tag in kw.tags:
-                    writer.element('tag', tag)
-                writer.end('tags')
+                self._write_tags(kw.tags, writer)
             writer.end(kw_type)
         writer.end(list_name)
+
+    def _write_tags(self, tags, writer):
+        writer.start('tags')
+        for tag in tags:
+            writer.element('tag', tag)
+        writer.end('tags')
 
     def _write_arguments(self, kw, writer):
         writer.start('arguments', {'repr': unicode(kw.args)})

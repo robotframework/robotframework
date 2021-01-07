@@ -1,4 +1,5 @@
 import unittest
+import warnings
 from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
                                  assert_raises_with_msg)
 
@@ -94,6 +95,17 @@ class TestTestSuite(unittest.TestCase):
 
     def test_slots(self):
         assert_raises(AttributeError, setattr, self.suite, 'attr', 'value')
+
+    def test_keywords_deprecation(self):
+        s = TestSuite()
+        with warnings.catch_warnings(record=True) as w:
+            s.keywords
+            assert_true('deprecated' in str(w[0].message))
+        try:
+            s.keywords = []
+            raise AssertionError("Atrribute error not raised.")
+        except AttributeError:
+            pass
 
 
 class TestSuiteId(unittest.TestCase):

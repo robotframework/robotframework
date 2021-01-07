@@ -11,16 +11,16 @@ Normal Library Import
 Library Import With Spaces In Name Does Not Work
     Check Test Case    ${TESTNAME}
     Error In File    0    test_libraries/library_import_normal.robot    3
-    ...    Importing test library 'Date Time' failed: *Error: *
+    ...    Importing library 'Date Time' failed: *Error: *
     ...    traceback=None
 
 Importing Library Class Should Have Been Syslogged
     [Tags]    no-standalone
     ${source} =    Normalize Path And Ignore Drive    ${CURDIR}/../../../src/robot/libraries/OperatingSystem
-    Syslog Should Contain Match    | INFO \ |    Imported test library class 'robot.libraries.OperatingSystem' from '${source}*'
+    Syslog Should Contain Match    | INFO \ |    Imported library class 'robot.libraries.OperatingSystem' from '${source}*'
     ${base} =    Normalize Path And Ignore Drive    ${CURDIR}/../../testresources/testlibs
-    Syslog Should Contain Match    | INFO \ |    Imported test library module 'libmodule' from '${base}${/}libmodule*'
-    Syslog Should Contain Match    | INFO \ |    Imported test library class 'libmodule.LibClass2' from '${base}${/}libmodule*'
+    Syslog Should Contain Match    | INFO \ |    Imported library module 'libmodule' from '${base}${/}libmodule*'
+    Syslog Should Contain Match    | INFO \ |    Imported library class 'libmodule.LibClass2' from '${base}${/}libmodule*'
 
 Number Of Keywords In Imported Library Is Reported In Syslog
     Syslog Should Contain    | INFO \ |    Imported library 'libmodule.LibClass1' with arguments [ ] (version <unknown>, class type, TEST scope, 1 keywords)

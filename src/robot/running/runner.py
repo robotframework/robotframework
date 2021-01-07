@@ -137,7 +137,7 @@ class Runner(SuiteVisitor):
             status.test_failed(
                 test_or_task('{Test} case name cannot be empty.',
                              self._settings.rpa))
-        if not status.failed and not test.keywords.normal:
+        if not status.failed and not test.body:
             status.test_failed(
                 test_or_task('{Test} case contains no keywords.',
                              self._settings.rpa))
@@ -145,7 +145,7 @@ class Runner(SuiteVisitor):
         try:
             if not status.failed:
                 StepRunner(self._context,
-                           test.template).run_steps(test.keywords.normal)
+                           test.template).run_steps(test.body)
             else:
                 if status.skipped:
                     status.test_skipped(status.message)
