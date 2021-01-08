@@ -199,21 +199,3 @@ class Keywords(ItemList):
     def raise_deprecation_error(cls):
         raise AttributeError('The `keywords` property has been deprecated in RF 4.0. '
                              'Use `body`, `setup` or `teardown` instead.')
-
-
-class Body(ItemList):
-    """A list-like object representing body of a suite, a test or a keyword.
-
-    Body contains the keywords and other structures such as for loops.
-    """
-    __slots__ = []
-
-    def __init__(self, keyword_class=Keyword, parent=None, keywords=None):
-        ItemList.__init__(self, keyword_class, {'parent': parent}, keywords)
-
-    def __setitem__(self, index, item):
-        old = self[index]
-        ItemList.__setitem__(self, index, item)
-        self[index]._sort_key = old._sort_key
-
-    # TODO: add `create_keyword`, `create_for` and `create_if`, deprecate `create`

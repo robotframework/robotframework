@@ -15,9 +15,10 @@
 
 from robot.utils import setter
 
+from .body import Body
 from .fixture import create_fixture
 from .itemlist import ItemList
-from .keyword import Keyword, Keywords, Body
+from .keyword import Keyword, Keywords
 from .modelobject import ModelObject
 from .tags import Tags
 
