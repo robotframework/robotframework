@@ -308,7 +308,7 @@ class Documentation(DocumentationOrMetadata):
         for line in doc_lines[1:]:
             if not settings_section:
                 tokens.append(Token(Token.SEPARATOR, indent))
-            tokens.append(Token(Token.CONTINUATION, '...'))
+            tokens.append(Token(Token.CONTINUATION))
             tokens.append(Token(Token.SEPARATOR, separator))
             tokens.append(Token(Token.ARGUMENT, line))
             tokens.append(Token(Token.EOL, eol))
@@ -335,7 +335,7 @@ class Metadata(DocumentationOrMetadata):
             tokens.append(Token(Token.ARGUMENT, metadata_lines[0]))
             tokens.append(Token(Token.EOL, eol))
         for line in metadata_lines[1:]:
-            tokens.append(Token(Token.CONTINUATION, '...'))
+            tokens.append(Token(Token.CONTINUATION))
             tokens.append(Token(Token.SEPARATOR, separator))
             tokens.append(Token(Token.ARGUMENT, line))
             tokens.append(Token(Token.EOL, eol))
