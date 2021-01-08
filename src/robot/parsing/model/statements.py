@@ -68,6 +68,15 @@ class Statement(ast.AST):
                 return handlers[token.type](tokens)
         return EmptyLine(tokens)
 
+    @classmethod
+    def from_params(cls, *args, **kwargs):
+        """Create statement from passed parameters. Required and optional arguments
+        should match class properties.
+
+
+        """
+        pass
+
     @property
     def data_tokens(self):
         return [t for t in self.tokens if t.type not in Token.NON_DATA_TOKENS]
@@ -214,28 +223,6 @@ class LibraryImport(Statement):
 
     @classmethod
     def from_params(cls, library, alias=None, separator=FOUR_SPACES, eol=EOL):
-        """Create LibraryImport from passed parameters.
-        Library name will be taken from ``library`` argument.
-        To set custom name for the library use ``alias`` argument.
-
-        Examples:
-
-        ::
-
-            LibraryImport.from_params(name='${LIBRARIES}/Lib.py')
-
-        Creates::
-
-            Library    ${LIBRARIES}/Lib.py
-
-        ::
-
-            LibraryImport.from_params(library='${LIBRARIES}/Lib.py', alias='SecondaryName')
-
-        Creates::
-
-            Library    ${LIBRARIES}/Lib.py    WITH NAME    SecondaryName
-        """
         sep = Token(Token.SEPARATOR, separator)
         tokens = [Token(Token.LIBRARY, 'Library'), sep, Token(Token.NAME, library)]
         if alias is not None:
@@ -266,19 +253,6 @@ class ResourceImport(Statement):
 
     @classmethod
     def from_params(cls, resource, separator=FOUR_SPACES, eol=EOL):
-        """Create ResourceImport from passed parameters.
-        Resource name will be taken from ``resource`` argument.
-
-        Example:
-
-        ::
-
-            ResourceImport.from_params(resource='resource.robot')
-
-        Creates::
-
-            Resource    resource.robot
-        """
         return cls([
             Token(Token.RESOURCE, 'Resource'),
             Token(Token.SEPARATOR, separator),
@@ -297,28 +271,6 @@ class VariablesImport(Statement):
 
     @classmethod
     def from_params(cls, variable_file, args=(), separator=FOUR_SPACES, eol=EOL):
-        """Create VariablesImport from passed parameters.
-        Name will be taken from ``variable_file`` argument.
-        Use ``args`` to pass list of arguments.
-
-        Examples:
-
-        ::
-
-            VariablesImport.from_params(variable_file='variables.py')
-
-        Creates::
-
-            Variables    variables.py
-
-        ::
-
-            VariablesImport.from_params(variable_file='variables.py', args=['${arg1}', 2])
-
-        Creates::
-
-            Variables    variables.py    ${arg1}    2
-        """
         sep = Token(Token.SEPARATOR, separator)
         tokens = [
             Token(Token.VARIABLES, 'Variables'),
@@ -347,31 +299,6 @@ class Documentation(DocumentationOrMetadata):
     @classmethod
     def from_params(cls, doc, indent=FOUR_SPACES, separator=FOUR_SPACES,
                     eol=EOL, settings_section=True):
-        """Create Documentation from passed parameters.
-        Value will be taken from ``doc`` argument. If ``doc`` contains new lines
-        it will be auto splitted using ``...`` continuation markers.
-        Set ``settings_section`` to False to create documentation inside keyword or test.
-
-        Examples:
-
-        ::
-
-            Documentation.from_params(doc='First line of doc\\nSecond line')
-
-        Creates::
-
-            Documentation    First line of doc
-            Second line
-
-        ::
-
-           Documentation.from_params(doc='First line of doc\\nSecond line', settings_section=False)
-
-        Creates::
-
-            [Documentation]    First line of doc
-            ...    Second line
-        """
         if settings_section:
             tokens = [
                 Token(Token.DOCUMENTATION, 'Documentation'),
@@ -408,23 +335,6 @@ class Metadata(DocumentationOrMetadata):
 
     @classmethod
     def from_params(cls, metadata, separator=FOUR_SPACES, eol=EOL):
-        """Create Metadata from passed parameters.
-        Value will be taken from ``metadata`` argument.
-        If ``metadata`` contains new lines it will be auto splitted using ``...``
-        continuation markers.
-
-        Examples:
-
-        ::
-
-            Metadata.from_params(metadata='First line of metadata\\nSecond line')
-
-        Creates::
-
-            Metadata    First line of metadata
-            Second line
-
-        """
         tokens = [
             Token(Token.METADATA, 'Metadata'),
             Token(Token.SEPARATOR, separator)
@@ -456,20 +366,6 @@ class ForceTags(MultiValue):
 
     @classmethod
     def from_params(cls, tags, separator=FOUR_SPACES, eol=EOL):
-        """Create ForceTags from passed parameters.
-        Tags are created from ``tags`` list.
-
-        Examples:
-
-        ::
-
-            ForceTags.from_params(tags=['First tag', 'Second tag'])
-
-        Creates::
-
-            Force Tags    First tag    Second tag
-
-        """
         tokens = [Token(Token.FORCE_TAGS, 'Force Tags')]
         for tag in tags:
             tokens.append(Token(Token.SEPARATOR, separator))
@@ -484,20 +380,6 @@ class DefaultTags(MultiValue):
 
     @classmethod
     def from_params(cls, tags, separator=FOUR_SPACES, eol=EOL):
-        """Create DefaultTags from passed parameters.
-        Tags are created from ``tags`` list.
-
-        Examples:
-
-        ::
-
-            DefaultTags.from_params(tags=['First tag', 'Second tag'])
-
-        Creates::
-
-            Default Tags    First tag    Second tag
-
-        """
         tokens = [Token(Token.DEFAULT_TAGS, 'Default Tags')]
         for tag in tags:
             tokens.append(Token(Token.SEPARATOR, separator))
