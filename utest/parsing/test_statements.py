@@ -134,6 +134,8 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         )
 
     def test_TestTemplate(self):
+        # *** Settings ***
+        # Test Template    Keyword Template
         tokens = [
             Token(Token.TEST_TEMPLATE, 'Test Template'),
             Token(Token.SEPARATOR, '    '),
@@ -147,6 +149,8 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         )
 
     def test_TestTimeout(self):
+        # *** Settings ***
+        # Test Timeout    1 min
         tokens = [
             Token(Token.TEST_TIMEOUT, 'Test Timeout'),
             Token(Token.SEPARATOR, '    '),
@@ -229,6 +233,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         )
 
     def test_LibraryImport(self):
+        # Library    library_name.py
         tokens = [
             Token(Token.LIBRARY, 'Library'),
             Token(Token.SEPARATOR, '    '),
@@ -240,6 +245,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             library='library_name.py'
         )
 
+        # Library    library_name    WITH NAME    anothername
         tokens.extend([
             Token(Token.SEPARATOR, '    '),
             Token(Token.WITH_NAME),
@@ -255,6 +261,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         )
 
     def test_ResourceImport(self):
+        # Resource    path${/}to${/}resource.robot
         tokens = [
             Token(Token.RESOURCE, 'Resource'),
             Token(Token.SEPARATOR, '    '),
@@ -268,6 +275,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         )
 
     def test_VariablesImport(self):
+        # Variables    variables.py
         tokens = [
             Token(Token.VARIABLES, 'Variables'),
             Token(Token.SEPARATOR, '    '),
@@ -280,6 +288,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             variable_file='variables.py'
         )
 
+        # Variables    variables.py    arg1    2
         tokens = [
             Token(Token.VARIABLES, 'Variables'),
             Token(Token.SEPARATOR, '    '),
@@ -329,7 +338,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             doc='First line\nSecond line'
         )
 
-        # Test
+        # Test/Keyword
         #     [Documentation]    First line
         #     ...    Second line
         tokens = [
@@ -565,6 +574,8 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         )
 
     def test_IfHeader(self):
+        # Test/Keyword
+        #     IF    ${var} not in [@{list}]
         tokens = [
             Token(Token.SEPARATOR, '    '),
             Token(Token.IF),
@@ -579,6 +590,8 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         )
 
     def test_ElseIfHeader(self):
+        # Test/Keyword
+        #     ELSE IF    ${var} not in [@{list}]
         tokens = [
             Token(Token.SEPARATOR, '    '),
             Token(Token.ELSE_IF),
@@ -593,6 +606,8 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         )
 
     def test_ElseHeader(self):
+        # Test/Keyword
+        #     ELSE
         tokens = [
             Token(Token.SEPARATOR, '    '),
             Token(Token.ELSE),
