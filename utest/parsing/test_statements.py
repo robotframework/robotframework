@@ -3,6 +3,7 @@ import unittest
 from robot.parsing import Token
 from robot.parsing.model.statements import (
     Statement,
+    SectionHeader,
     LibraryImport,
     ResourceImport,
     VariablesImport,
@@ -56,6 +57,25 @@ def assert_created_statement(tokens, base_class, **params):
 
 
 class TestCreateStatementsFromParams(unittest.TestCase):
+
+    def test_SectionHeader(self):
+        headers = {
+            'Settings': (Token.SETTING_HEADER, '*** Settings ***'),
+            'Variables': (Token.VARIABLE_HEADER, '*** Variables ***'),
+            'Test Cases': (Token.TESTCASE_HEADER, '*** Test Cases ***'),
+            'Keywords': (Token.KEYWORD_HEADER, '*** Keywords ***'),
+            'Comment': (Token.COMMENT_HEADER, '*** Comments ***')
+        }
+        for name, header in headers.items():
+            tokens = [
+                Token(header[0], header[1]),
+                Token(Token.EOL, '\n')
+            ]
+            assert_created_statement(
+                tokens,
+                SectionHeader,
+                name=name
+            )
 
     def test_SuiteSetup(self):
         # Suite Setup    Setup Keyword    ${arg1}    ${arg2}
