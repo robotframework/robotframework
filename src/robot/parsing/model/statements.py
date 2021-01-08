@@ -395,9 +395,9 @@ class ForceTags(MultiValue):
     type = Token.FORCE_TAGS
 
     @classmethod
-    def from_params(cls, tags, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, values, separator=FOUR_SPACES, eol=EOL):
         tokens = [Token(Token.FORCE_TAGS, 'Force Tags')]
-        for tag in tags:
+        for tag in values:
             tokens.append(Token(Token.SEPARATOR, separator))
             tokens.append(Token(Token.ARGUMENT, tag))
         tokens.append(Token(Token.EOL, eol))
@@ -409,9 +409,9 @@ class DefaultTags(MultiValue):
     type = Token.DEFAULT_TAGS
 
     @classmethod
-    def from_params(cls, tags, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, values, separator=FOUR_SPACES, eol=EOL):
         tokens = [Token(Token.DEFAULT_TAGS, 'Default Tags')]
-        for tag in tags:
+        for tag in values:
             tokens.append(Token(Token.SEPARATOR, separator))
             tokens.append(Token(Token.ARGUMENT, tag))
         tokens.append(Token(Token.EOL, eol))
@@ -423,11 +423,11 @@ class SuiteSetup(Fixture):
     type = Token.SUITE_SETUP
 
     @classmethod
-    def from_params(cls, keyword, args=(), separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name, args=(), separator=FOUR_SPACES, eol=EOL):
         tokens = [
             Token(Token.SUITE_SETUP, 'Suite Setup'),
             Token(Token.SEPARATOR, separator),
-            Token(Token.NAME, keyword)
+            Token(Token.NAME, name)
         ]
         for arg in args:
             tokens.append(Token(Token.SEPARATOR, separator))
@@ -441,11 +441,11 @@ class SuiteTeardown(Fixture):
     type = Token.SUITE_TEARDOWN
 
     @classmethod
-    def from_params(cls, keyword, args=(), separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name, args=(), separator=FOUR_SPACES, eol=EOL):
         tokens = [
             Token(Token.SUITE_TEARDOWN, 'Suite Teardown'),
             Token(Token.SEPARATOR, separator),
-            Token(Token.NAME, keyword)
+            Token(Token.NAME, name)
         ]
         for arg in args:
             tokens.append(Token(Token.SEPARATOR, separator))
@@ -459,11 +459,11 @@ class TestSetup(Fixture):
     type = Token.TEST_SETUP
 
     @classmethod
-    def from_params(cls, keyword, args=(), separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name, args=(), separator=FOUR_SPACES, eol=EOL):
         tokens = [
             Token(Token.TEST_SETUP, 'Test Setup'),
             Token(Token.SEPARATOR, separator),
-            Token(Token.NAME, keyword)
+            Token(Token.NAME, name)
         ]
         for arg in args:
             tokens.append(Token(Token.SEPARATOR, separator))
@@ -477,11 +477,11 @@ class TestTeardown(Fixture):
     type = Token.TEST_TEARDOWN
 
     @classmethod
-    def from_params(cls, keyword, args=(), separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name, args=(), separator=FOUR_SPACES, eol=EOL):
         tokens = [
             Token(Token.TEST_TEARDOWN, 'Test Teardown'),
             Token(Token.SEPARATOR, separator),
-            Token(Token.NAME, keyword)
+            Token(Token.NAME, name)
         ]
         for arg in args:
             tokens.append(Token(Token.SEPARATOR, separator))
@@ -495,11 +495,11 @@ class TestTemplate(SingleValue):
     type = Token.TEST_TEMPLATE
 
     @classmethod
-    def from_params(cls, keyword, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, value, separator=FOUR_SPACES, eol=EOL):
         return cls([
             Token(Token.TEST_TEMPLATE, 'Test Template'),
             Token(Token.SEPARATOR, separator),
-            Token(Token.NAME, keyword),
+            Token(Token.NAME, value),
             Token(Token.EOL, eol)
         ])
 
@@ -509,11 +509,11 @@ class TestTimeout(SingleValue):
     type = Token.TEST_TIMEOUT
 
     @classmethod
-    def from_params(cls, timeout, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, value, separator=FOUR_SPACES, eol=EOL):
         return cls([
             Token(Token.TEST_TIMEOUT, 'Test Timeout'),
             Token(Token.SEPARATOR, separator),
-            Token(Token.ARGUMENT, timeout),
+            Token(Token.ARGUMENT, value),
             Token(Token.EOL, eol)
         ])
 
@@ -601,13 +601,13 @@ class Setup(Fixture):
     type = Token.SETUP
 
     @classmethod
-    def from_params(cls, keyword, args=(), indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name, args=(), indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
         sep = Token(Token.SEPARATOR, separator)
         tokens = [
             Token(Token.SEPARATOR, indent),
             Token(Token.SETUP, '[Setup]'),
             sep,
-            Token(Token.NAME, keyword)
+            Token(Token.NAME, name)
         ]
         for arg in args:
             tokens.append(sep)
@@ -621,13 +621,13 @@ class Teardown(Fixture):
     type = Token.TEARDOWN
 
     @classmethod
-    def from_params(cls, keyword, args=(), indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name, args=(), indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
         sep = Token(Token.SEPARATOR, separator)
         tokens = [
             Token(Token.SEPARATOR, indent),
             Token(Token.TEARDOWN, '[Teardown]'),
             sep,
-            Token(Token.NAME, keyword)
+            Token(Token.NAME, name)
         ]
         for arg in args:
             tokens.append(sep)
@@ -641,12 +641,12 @@ class Tags(MultiValue):
     type = Token.TAGS
 
     @classmethod
-    def from_params(cls, tags, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, values, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
         tokens = [
             Token(Token.SEPARATOR, indent),
             Token(Token.TAGS, '[Tags]')
         ]
-        for tag in tags:
+        for tag in values:
             tokens.append(Token(Token.SEPARATOR, separator))
             tokens.append(Token(Token.ARGUMENT, tag))
         tokens.append(Token(Token.EOL, eol))
@@ -658,12 +658,12 @@ class Template(SingleValue):
     type = Token.TEMPLATE
 
     @classmethod
-    def from_params(cls, keyword, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, value, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
         return cls([
             Token(Token.SEPARATOR, indent),
             Token(Token.TEMPLATE, '[Template]'),
             Token(Token.SEPARATOR, separator),
-            Token(Token.NAME, keyword),
+            Token(Token.NAME, value),
             Token(Token.EOL, eol)
         ])
 
@@ -673,12 +673,12 @@ class Timeout(SingleValue):
     type = Token.TIMEOUT
 
     @classmethod
-    def from_params(cls, timeout, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, value, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
         return cls([
             Token(Token.SEPARATOR, indent),
             Token(Token.TIMEOUT, '[Timeout]'),
             Token(Token.SEPARATOR, separator),
-            Token(Token.ARGUMENT, timeout),
+            Token(Token.ARGUMENT, value),
             Token(Token.EOL, eol)
         ])
 
@@ -723,12 +723,12 @@ class KeywordCall(Statement):
     handles_types = (Token.KEYWORD, Token.ASSIGN)
 
     @classmethod
-    def from_params(cls, keyword, assign=(), args=(), indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name, assign=(), args=(), indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
         tokens = [Token(Token.SEPARATOR, indent)]
         for assignment in assign:
             tokens.append(Token(Token.ASSIGN, assignment))
             tokens.append(Token(Token.SEPARATOR, separator))
-        tokens.append(Token(Token.KEYWORD, keyword))
+        tokens.append(Token(Token.KEYWORD, name))
         for arg in args:
             tokens.append(Token(Token.SEPARATOR, separator))
             tokens.append(Token(Token.ARGUMENT, arg))

@@ -92,7 +92,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             SuiteSetup,
-            keyword='Setup Keyword',
+            name='Setup Keyword',
             args=['${arg1}', '${arg2}']
         )
 
@@ -111,7 +111,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             SuiteTeardown,
-            keyword='Teardown Keyword',
+            name='Teardown Keyword',
             args=['${arg1}', '${arg2}']
         )
 
@@ -130,7 +130,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             TestSetup,
-            keyword='Setup Keyword',
+            name='Setup Keyword',
             args=['${arg1}', '${arg2}']
         )
 
@@ -149,7 +149,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             TestTeardown,
-            keyword='Teardown Keyword',
+            name='Teardown Keyword',
             args=['${arg1}', '${arg2}']
         )
 
@@ -165,7 +165,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             TestTemplate,
-            keyword='Keyword Template'
+            value='Keyword Template'
         )
 
     def test_TestTimeout(self):
@@ -180,7 +180,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             TestTimeout,
-            timeout='1 min'
+            value='1 min'
         )
 
     def test_Variable(self):
@@ -229,7 +229,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             Setup,
-            keyword='Setup Keyword',
+            name='Setup Keyword',
             args=['${arg1}']
         )
 
@@ -248,7 +248,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             Teardown,
-            keyword='Teardown Keyword',
+            name='Teardown Keyword',
             args=['${arg1}']
         )
 
@@ -446,7 +446,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             Tags,
-            tags=['tag1', 'tag2']
+            values=['tag1', 'tag2']
         )
 
     def test_ForceTags(self):
@@ -461,7 +461,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             ForceTags,
-            tags=['some tag', 'another_tag']
+            values=['some tag', 'another_tag']
         )
 
     def test_DefaultTags(self):
@@ -476,7 +476,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             DefaultTags,
-            tags=['some tag', 'another_tag']
+            values=['some tag', 'another_tag']
         )
 
     def test_Template(self):
@@ -492,7 +492,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             Template,
-            keyword='Keyword Name'
+            value='Keyword Name'
         )
 
     def test_Timeout(self):
@@ -508,7 +508,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             Timeout,
-            timeout='1 min'
+            value='1 min'
         )
 
     def test_Arguments(self):
@@ -566,7 +566,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             KeywordCall,
-            keyword='Keyword Call',
+            name='Keyword Call',
             assign=['${return1}', '${return2}'],
             args=['${arg1}', '${arg2}']
         )
