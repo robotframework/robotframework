@@ -237,26 +237,42 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         tokens = [
             Token(Token.LIBRARY, 'Library'),
             Token(Token.SEPARATOR, '    '),
-            Token(Token.NAME, 'library_name.py')
+            Token(Token.NAME, 'library_name.py'),
+            Token(Token.EOL, '\n')
         ]
         assert_created_statement(
-            tokens + [Token(Token.EOL, '\n')],
+            tokens,
             LibraryImport,
-            library='library_name.py'
+            name='library_name.py'
         )
 
-        # Library    library_name    WITH NAME    anothername
-        tokens.extend([
+        # Library    library_name.py    127.0.0.1    8080
+        tokens = [
+            Token(Token.LIBRARY, 'Library'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.NAME, 'library_name.py'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, '127.0.0.1'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, '8080'),
+            Token(Token.EOL, '\n')
+        ]
+
+        # Library    library_name.py    WITH NAME    anothername
+        tokens = [
+            Token(Token.LIBRARY, 'Library'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.NAME, 'library_name.py'),
             Token(Token.SEPARATOR, '    '),
             Token(Token.WITH_NAME),
             Token(Token.SEPARATOR, '    '),
             Token(Token.NAME, 'anothername'),
             Token(Token.EOL, '\n')
-        ])
+        ]
         assert_created_statement(
             tokens,
             LibraryImport,
-            library='library_name.py',
+            name='library_name.py',
             alias='anothername'
         )
 

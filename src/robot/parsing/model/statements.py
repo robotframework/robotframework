@@ -222,9 +222,12 @@ class LibraryImport(Statement):
     type = Token.LIBRARY
 
     @classmethod
-    def from_params(cls, library, alias=None, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name, args=(), alias=None, separator=FOUR_SPACES, eol=EOL):
         sep = Token(Token.SEPARATOR, separator)
-        tokens = [Token(Token.LIBRARY, 'Library'), sep, Token(Token.NAME, library)]
+        tokens = [Token(Token.LIBRARY, 'Library'), sep, Token(Token.NAME, name)]
+        for arg in args:
+            tokens.append(sep)
+            tokens.append(Token(Token.ARGUMENT, arg))
         if alias is not None:
             tokens.append(sep)
             tokens.append(Token(Token.WITH_NAME))
