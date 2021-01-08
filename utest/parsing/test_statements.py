@@ -287,7 +287,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             ResourceImport,
-            resource='path${/}to${/}resource.robot'
+            name='path${/}to${/}resource.robot'
         )
 
     def test_VariablesImport(self):
@@ -301,7 +301,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             VariablesImport,
-            variable_file='variables.py'
+            name='variables.py'
         )
 
         # Variables    variables.py    arg1    2
@@ -318,7 +318,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             VariablesImport,
-            variable_file='variables.py',
+            name='variables.py',
             args=['arg1', '2']
         )
 
@@ -333,7 +333,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             Documentation,
-            doc='Example documentation'
+            value='Example documentation'
         )
 
         # Documentation    First line
@@ -351,7 +351,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             Documentation,
-            doc='First line\nSecond line'
+            value='First line\nSecond line'
         )
 
         # Test/Keyword
@@ -373,24 +373,29 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             tokens,
             Documentation,
             settings_section=False,
-            doc='First line\nSecond line'
+            value='First line\nSecond line'
         )
 
     def test_Metadata(self):
         tokens = [
             Token(Token.METADATA, 'Metadata'),
             Token(Token.SEPARATOR, '    '),
-            Token(Token.ARGUMENT, 'Example documentation'),
+            Token(Token.NAME, 'Key'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'Value'),
             Token(Token.EOL, '\n')
         ]
         assert_created_statement(
             tokens,
             Metadata,
-            metadata='Example documentation'
+            name='Key',
+            value='Value'
         )
 
         tokens = [
             Token(Token.METADATA, 'Metadata'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.NAME, 'Key'),
             Token(Token.SEPARATOR, '    '),
             Token(Token.ARGUMENT, 'First line'),
             Token(Token.EOL, '\n'),
@@ -402,7 +407,8 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             Metadata,
-            metadata='First line\nSecond line'
+            name='Key',
+            value='First line\nSecond line'
         )
 
     def test_Tags(self):

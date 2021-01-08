@@ -71,9 +71,16 @@ class Statement(ast.AST):
     @classmethod
     def from_params(cls, *args, **kwargs):
         """Create statement from passed parameters. Required and optional arguments
-        should match class properties.
+        should match class properties. Values are used to create matching tokens.
 
+        There is one notable difference for `Documentation` statement where
+        ``settings_header`` flag is used to determine if statement belongs to settings header
+        or test/keyword.
 
+        Most implementations support following general properties:
+        - `separator` whitespace inserted between each token. Default is ``'    '``.
+        - ``indent`` whitespace inserted before first token. Default is ``'    '``.
+        - ``eol`` end of line sign. Default is ``'\n'``.
         """
         pass
 
@@ -255,11 +262,11 @@ class ResourceImport(Statement):
     type = Token.RESOURCE
 
     @classmethod
-    def from_params(cls, resource, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name, separator=FOUR_SPACES, eol=EOL):
         return cls([
             Token(Token.RESOURCE, 'Resource'),
             Token(Token.SEPARATOR, separator),
-            Token(Token.NAME, resource),
+            Token(Token.NAME, name),
             Token(Token.EOL, eol)
         ])
 
@@ -273,12 +280,12 @@ class VariablesImport(Statement):
     type = Token.VARIABLES
 
     @classmethod
-    def from_params(cls, variable_file, args=(), separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name, args=(), separator=FOUR_SPACES, eol=EOL):
         sep = Token(Token.SEPARATOR, separator)
         tokens = [
             Token(Token.VARIABLES, 'Variables'),
             sep,
-            Token(Token.NAME, variable_file)
+            Token(Token.NAME, name)
         ]
         for arg in args:
             tokens.append(sep)
@@ -300,7 +307,7 @@ class Documentation(DocumentationOrMetadata):
     type = Token.DOCUMENTATION
 
     @classmethod
-    def from_params(cls, doc, indent=FOUR_SPACES, separator=FOUR_SPACES,
+    def from_params(cls, value, indent=FOUR_SPACES, separator=FOUR_SPACES,
                     eol=EOL, settings_section=True):
         if settings_section:
             tokens = [
@@ -313,7 +320,7 @@ class Documentation(DocumentationOrMetadata):
                 Token(Token.DOCUMENTATION, '[Documentation]'),
                 Token(Token.SEPARATOR, separator)
             ]
-        doc_lines = doc.splitlines()
+        doc_lines = value.splitlines()
         if doc_lines:
             tokens.append(Token(Token.ARGUMENT, doc_lines[0]))
             tokens.append(Token(Token.EOL, eol))
@@ -337,18 +344,21 @@ class Metadata(DocumentationOrMetadata):
     type = Token.METADATA
 
     @classmethod
-    def from_params(cls, metadata, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name, value, separator=FOUR_SPACES, eol=EOL):
+        sep = Token(Token.SEPARATOR, separator)
         tokens = [
             Token(Token.METADATA, 'Metadata'),
-            Token(Token.SEPARATOR, separator)
+            sep,
+            Token(Token.NAME, name)
         ]
-        metadata_lines = metadata.splitlines()
+        metadata_lines = value.splitlines()
         if metadata_lines:
+            tokens.append(sep)
             tokens.append(Token(Token.ARGUMENT, metadata_lines[0]))
             tokens.append(Token(Token.EOL, eol))
         for line in metadata_lines[1:]:
             tokens.append(Token(Token.CONTINUATION))
-            tokens.append(Token(Token.SEPARATOR, separator))
+            tokens.append(sep)
             tokens.append(Token(Token.ARGUMENT, line))
             tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
