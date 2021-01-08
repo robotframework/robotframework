@@ -542,7 +542,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         #     FOR  ${value1}  ${value2}  IN ZIP  ${list1}  ${list2}
         tokens = [
             Token(Token.SEPARATOR, '    '),
-            Token(Token.FOR, 'FOR'),
+            Token(Token.FOR),
             Token(Token.SEPARATOR, '  '),
             Token(Token.VARIABLE, '${value1}'),
             Token(Token.SEPARATOR, '  '),

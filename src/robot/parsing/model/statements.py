@@ -735,7 +735,7 @@ class ForHeader(Statement):
     def from_params(cls, variables, values, flavor='IN', indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
         tokens = [
             Token(Token.SEPARATOR, indent),
-            Token(Token.FOR, 'FOR'),
+            Token(Token.FOR),
             Token(Token.SEPARATOR, separator)
         ]
         for variable in variables:
