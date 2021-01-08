@@ -242,7 +242,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
 
         tokens.extend([
             Token(Token.SEPARATOR, '    '),
-            Token(Token.WITH_NAME, 'WITH NAME'),
+            Token(Token.WITH_NAME),
             Token(Token.SEPARATOR, '    '),
             Token(Token.NAME, 'anothername'),
             Token(Token.EOL, '\n')

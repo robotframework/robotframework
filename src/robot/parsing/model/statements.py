@@ -218,7 +218,7 @@ class LibraryImport(Statement):
         tokens = [Token(Token.LIBRARY, 'Library'), sep, Token(Token.NAME, library)]
         if alias is not None:
             tokens.append(sep)
-            tokens.append(Token(Token.WITH_NAME, 'WITH NAME'))
+            tokens.append(Token(Token.WITH_NAME))
             tokens.append(sep)
             tokens.append(Token(Token.NAME, alias))
         tokens.append(Token(Token.EOL, eol))
