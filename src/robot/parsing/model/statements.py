@@ -214,19 +214,9 @@ class SectionHeader(Statement):
                      Token.COMMENT_HEADER)
 
     @classmethod
-    def from_params(cls, name, separator=FOUR_SPACES, eol=EOL):
-        normalized_name = name.replace(' ', '').lower()
-        if normalized_name and normalized_name[-1] == 's':
-            normalized_name = normalized_name[:-1]
-        token_type = {
-            'setting': (Token.SETTING_HEADER, '*** Settings ***'),
-            'variable': (Token.VARIABLE_HEADER, '*** Variables ***'),
-            'testcase': (Token.TESTCASE_HEADER, '*** Test Cases ***'),
-            'keyword': (Token.KEYWORD_HEADER, '*** Keywords ***'),
-            'comment': (Token.COMMENT_HEADER, '*** Comments ***')
-        }[normalized_name]
+    def from_params(cls, type, name, separator=FOUR_SPACES, eol=EOL):
         return cls([
-            Token(token_type[0], token_type[1]),
+            Token(type, name),
             Token('EOL', '\n')
         ])
 

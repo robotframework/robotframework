@@ -60,20 +60,21 @@ class TestCreateStatementsFromParams(unittest.TestCase):
 
     def test_SectionHeader(self):
         headers = {
-            'Settings': (Token.SETTING_HEADER, '*** Settings ***'),
-            'Variables': (Token.VARIABLE_HEADER, '*** Variables ***'),
-            'Test Cases': (Token.TESTCASE_HEADER, '*** Test Cases ***'),
-            'Keywords': (Token.KEYWORD_HEADER, '*** Keywords ***'),
-            'Comment': (Token.COMMENT_HEADER, '*** Comments ***')
+            Token.SETTING_HEADER: '*** Settings ***',
+            Token.VARIABLE_HEADER: '*** Variables ***',
+            Token.TESTCASE_HEADER: '*** Test Cases ***',
+            Token.KEYWORD_HEADER: '*** Keywords ***',
+            Token.COMMENT_HEADER: '*** Comments ***'
         }
-        for name, header in headers.items():
+        for token_type, name in headers.items():
             tokens = [
-                Token(header[0], header[1]),
+                Token(token_type, name),
                 Token(Token.EOL, '\n')
             ]
             assert_created_statement(
                 tokens,
                 SectionHeader,
+                type=token_type,
                 name=name
             )
 
