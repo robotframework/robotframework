@@ -17,7 +17,7 @@ class TestKeyword(unittest.TestCase):
         assert_equal(TestSuite().setup.config(name='KW').id, 's1-k1')
 
     def test_id_with_test_parent(self):
-        assert_equal(TestSuite().tests.create().body.create().id, 's1-t1-k1')
+        assert_equal(TestSuite().tests.create().body.create_keyword().id, 's1-t1-k1')
 
     def test_slots(self):
         assert_raises(AttributeError, setattr, Keyword(), 'attr', 'value')

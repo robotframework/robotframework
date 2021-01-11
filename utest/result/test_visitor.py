@@ -99,12 +99,12 @@ class ItemAdder(SuiteVisitor):
 
     def start_keyword(self, keyword):
         if self.test_started and not self.kw_added:
-            keyword.parent.body.create(kwname='Added by start_keyword')
+            keyword.parent.body.create_keyword(kwname='Added by start_keyword')
             self.kw_added = True
 
     def end_keyword(self, keyword):
         if keyword.name == 'Added by start_keyword':
-            keyword.parent.body.create(kwname='Added by end_keyword')
+            keyword.parent.body.create_keyword(kwname='Added by end_keyword')
 
 
 if __name__ == '__main__':

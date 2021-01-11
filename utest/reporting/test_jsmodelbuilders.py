@@ -106,7 +106,7 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_warning_linking(self):
         msg = Message('Message', 'WARN', timestamp='20111204 22:04:03.210',
-                      parent=TestCase().body.create())
+                      parent=TestCase().body.create_keyword())
         self._verify_message(msg, 'Message', 3, 0)
         links = self.context._msg_links
         assert_equal(len(links), 1)
@@ -115,7 +115,7 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_error_linking(self):
         msg = Message('ERROR Message', 'ERROR', timestamp='20150609 01:02:03.004',
-                      parent=TestCase().body.create('Parent KW').body.create('Child KW'))
+                      parent=TestCase().body.create_keyword('Parent KW').body.create_keyword('Child KW'))
         self._verify_message(msg, 'ERROR Message', 4, 0)
         links = self.context._msg_links
         assert_equal(len(links), 1)
@@ -138,7 +138,7 @@ class TestBuildTestSuite(unittest.TestCase):
         suite.tests = [TestCase(), TestCase(status='PASS')]
         S1 = self._verify_suite(suite.suites[0],
                                 status=0, tests=(t,), stats=(1, 0, 1, 0))
-        suite.tests[0].body = [Keyword(type=Keyword.FOR_LOOP_TYPE), Keyword()]
+        suite.tests[0].body = [Keyword(type=Keyword.FOR_TYPE), Keyword()]
         suite.tests[0].body[0].body = [Keyword(type=Keyword.FOR_ITEM_TYPE)]
         suite.tests[0].body[0].messages = [Message()]
         k = self._verify_keyword(suite.tests[0].body[0].body[0], type=4)
@@ -268,7 +268,7 @@ class TestSplitting(unittest.TestCase):
         suite = TestSuite(name='root')
         suite.setup.config(kwname='k1', type='setup')
         suite.teardown.config(kwname='k2', type='teardown')
-        suite.setup.body.create('k1-k2')
+        suite.setup.body.create_keyword('k1-k2')
         return suite
 
     def test_nested_suite_and_test_keywords(self):
@@ -290,10 +290,10 @@ class TestSplitting(unittest.TestCase):
         sub = TestSuite(name='suite2')
         suite.suites = [self._get_suite_with_tests(), sub]
         sub.setup.config(kwname='kw', type='setup')
-        sub.setup.body.create('skw')
+        sub.setup.body.create_keyword('skw')
         sub.setup.body[0].messages.create('Message')
         sub.tests.create('test', doc='tdoc')
-        sub.tests[0].body.create('koowee', doc='kdoc')
+        sub.tests[0].body.create_keyword('koowee', doc='kdoc')
         return suite
 
     def test_message_linking(self):
@@ -458,7 +458,7 @@ class TestBuildErrors(unittest.TestCase):
         self.errors.messages.create('Linkable', 'WARN',
                                     timestamp='20111206 14:33:00.001')
         context = JsBuildingContext()
-        kw = TestSuite().tests.create().body.create()
+        kw = TestSuite().tests.create().body.create_keyword()
         MessageBuilder(context).build(kw.messages.create('Linkable', 'WARN',
                                       timestamp='20111206 14:33:00.001'))
         model = ErrorsBuilder(context).build(self.errors)

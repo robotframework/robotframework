@@ -208,7 +208,7 @@ class TestKeywordChildren(unittest.TestCase):
     def test_only_keywords(self):
         kw = Keyword()
         for i in range(10):
-            kw.body.create(str(i))
+            kw.body.create_keyword(str(i))
         assert_equal(kw.children, list(kw.body))
 
     def test_only_messages(self):
@@ -220,17 +220,17 @@ class TestKeywordChildren(unittest.TestCase):
     def test_order(self):
         kw = Keyword('parent')
         m1 = kw.messages.create('m1')
-        k1 = kw.body.create('k1')
-        k2 = kw.body.create('k2')
+        k1 = kw.body.create_keyword('k1')
+        k2 = kw.body.create_keyword('k2')
         m2 = kw.messages.create('m2')
-        k3 = kw.body.create('k3')
+        k3 = kw.body.create_keyword('k3')
         assert_equal(kw.children, [m1, k1, k2, m2, k3])
 
     def test_order_after_modifications(self):
         kw = Keyword('parent')
-        kw.body.create('k1')
+        kw.body.create_keyword('k1')
         kw.messages.create('m1')
-        k2 = kw.body.create('k2')
+        k2 = kw.body.create_keyword('k2')
         m2 = kw.messages.create('m2')
         k1 = kw.body[0] = Keyword('k1-new')
         m1 = kw.messages[0] = Message('m1-new')
@@ -244,9 +244,9 @@ class TestKeywordChildren(unittest.TestCase):
         assert_equal(kw.children, [k1, m1, k3])
 
     def test_id_with_keyword_parents(self):
-        kw = TestSuite().tests.create().body.create('parent')
+        kw = TestSuite().tests.create().body.create_keyword('parent')
         kw.body = [Keyword('child1'), Keyword('child2')]
-        kw.body[-1].body.create()
+        kw.body[-1].body.create_keyword()
         assert_equal(kw.body[0].id, 's1-t1-k1-k1')
         assert_equal(kw.body[1].id, 's1-t1-k1-k2')
         assert_equal(kw.body[1].body[0].id, 's1-t1-k1-k2-k1')

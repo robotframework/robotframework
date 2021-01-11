@@ -3,12 +3,14 @@ import os
 from os.path import abspath, normpath, join
 import tempfile
 import unittest
+import warnings
 
 from robot import api, model
 from robot.model.modelobject import ModelObject
-from robot.running.model import TestSuite, TestCase, Keyword, For, If
+from robot.running.model import TestSuite, TestCase, Keyword, For, If, UserKeyword
 from robot.running import TestSuiteBuilder
-from robot.utils.asserts import assert_equal, assert_not_equal, assert_false
+from robot.utils.asserts import (assert_equal, assert_not_equal, assert_false,
+                                 assert_raises, assert_true)
 from robot.utils import unicode
 
 
@@ -31,9 +33,20 @@ class TestModelTypes(unittest.TestCase):
         assert_not_equal(type(test), model.TestCase)
 
     def test_test_case_keyword(self):
-        kw = TestCase().body.create()
+        kw = TestCase().body.create_keyword()
         assert_equal(type(kw), Keyword)
         assert_not_equal(type(kw), model.Keyword)
+
+
+class TestUserKeyword(unittest.TestCase):
+
+    def test_keywords_deprecation(self):
+        uk = UserKeyword('Name')
+        with warnings.catch_warnings(record=True) as w:
+            kws = uk.keywords
+            assert_true('deprecated' in str(w[0].message))
+        assert_raises(AttributeError, kws.append, Keyword())
+        assert_raises(AttributeError, setattr, uk, 'keywords', [])
 
 
 class TestStringRepr(unittest.TestCase):
@@ -55,10 +68,13 @@ class TestStringRepr(unittest.TestCase):
         assert_equal(str(if_), expected)
         assert_equal(unicode(if_), expected)
         assert_equal(repr(if_), repr(expected))
-        if_ = If(u'"\xe4iti" == "mother"', type=If.ELSE_IF_TYPE)
+        if_.orelse = If(u'"\xe4iti" == "mother"')
         expected = u'ELSE IF    "\xe4iti" == "mother"'
-        assert_equal(unicode(if_), expected)
-        assert_equal(repr(if_), repr(expected))
+        assert_equal(unicode(if_.orelse), expected)
+        assert_equal(repr(if_.orelse), repr(expected))
+        if_.orelse.orelse = If(None)
+        assert_equal(unicode(if_.orelse.orelse), 'ELSE')
+        assert_equal(repr(if_.orelse.orelse), repr(u'ELSE'))
 
 
 class TestSuiteFromSources(unittest.TestCase):

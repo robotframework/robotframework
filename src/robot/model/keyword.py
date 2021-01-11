@@ -17,14 +17,15 @@ import warnings
 
 from robot.utils import setter, py3to2
 
+from .body import Body, BodyItem
 from .fixture import create_fixture
 from .itemlist import ItemList
-from .modelobject import ModelObject
 from .tags import Tags
 
 
 @py3to2
-class Keyword(ModelObject):
+@Body.register
+class Keyword(BodyItem):
     """Base model for a single keyword.
 
     Extended by :class:`robot.running.model.Keyword` and
@@ -32,17 +33,9 @@ class Keyword(ModelObject):
     """
     __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type',
                  '_teardown', '_sort_key', '_next_child_sort_key']
-    KEYWORD_TYPE  = 'kw'
-    SETUP_TYPE    = 'setup'
-    TEARDOWN_TYPE = 'teardown'
-    FOR_LOOP_TYPE = 'for'
-    FOR_ITEM_TYPE = 'foritem'
-    IF_TYPE       = 'if'
-    ELSE_IF_TYPE  = 'elseif'
-    ELSE_TYPE     = 'else'
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
-                 timeout=None, type=KEYWORD_TYPE, parent=None):
+                 timeout=None, type=BodyItem.KEYWORD_TYPE, parent=None):
         self.parent = parent
         self._name = name
         self.doc = doc
@@ -120,14 +113,17 @@ class Keyword(ModelObject):
 class Keywords(ItemList):
     """A list-like object representing keywords in a suite, a test or a keyword.
 
-    Deprecated since Robot Framework 4.0.
+    Read-only and deprecated since Robot Framework 4.0.
     """
     __slots__ = []
+    deprecation_message = (
+        "'keywords' attribute is read-only and deprecated since Robot Framework 4.0. "
+        "Use 'body', 'setup' or 'teardown' instead."
+    )
 
-    def __init__(self, keyword_class=Keyword, parent=None, keywords=None):
-        warnings.warn('`keywords` property has been deprecated in Robot Framework 4.0.',
-                      UserWarning)
-        ItemList.__init__(self, keyword_class, {'parent': parent}, keywords)
+    def __init__(self, parent=None, keywords=None):
+        warnings.warn(self.deprecation_message, UserWarning)
+        ItemList.__init__(self, object, {'parent': parent}, keywords)
 
     @property
     def setup(self):
@@ -159,8 +155,7 @@ class Keywords(ItemList):
     @property
     def normal(self):
         """Iterates over normal keywords, omitting setup and teardown."""
-        kws = [kw for kw in self if kw.type not in ('setup', 'teardown')]
-        return Keywords(self._item_class, self._common_attrs['parent'], kws)
+        return [kw for kw in self if kw.type not in ('setup', 'teardown')]
 
     def __setitem__(self, index, item):
         self.raise_deprecation_error()
@@ -197,5 +192,4 @@ class Keywords(ItemList):
 
     @classmethod
     def raise_deprecation_error(cls):
-        raise AttributeError('The `keywords` property has been deprecated in RF 4.0. '
-                             'Use `body`, `setup` or `teardown` instead.')
+        raise AttributeError(cls.deprecation_message)

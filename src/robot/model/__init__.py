@@ -27,6 +27,7 @@ This package is considered stable.
 
 from .body import Body
 from .configurer import SuiteConfigurer
+from .control import For, If
 from .testsuite import TestSuite
 from .testcase import TestCase
 from .keyword import Keyword, Keywords
