@@ -103,7 +103,7 @@ class ForLoopItemsRemover(_KeywordRemover):
     _message = '%d passing step%s removed using --RemoveKeywords option.'
 
     def start_keyword(self, kw):
-        if kw.type == kw.FOR_LOOP_TYPE:
+        if kw.type == kw.FOR_TYPE:
             before = len(kw.body)
             kw.body = self._remove_keywords(kw.body)
             self._removal_message.set_if_removed(kw, before)

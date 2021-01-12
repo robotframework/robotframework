@@ -97,15 +97,11 @@ class TestTestSuite(unittest.TestCase):
         assert_raises(AttributeError, setattr, self.suite, 'attr', 'value')
 
     def test_keywords_deprecation(self):
-        s = TestSuite()
         with warnings.catch_warnings(record=True) as w:
-            s.keywords
+            kws = self.suite.keywords
             assert_true('deprecated' in str(w[0].message))
-        try:
-            s.keywords = []
-            raise AssertionError("Atrribute error not raised.")
-        except AttributeError:
-            pass
+        assert_raises(AttributeError, kws.extend, ())
+        assert_raises(AttributeError, setattr, self.suite, 'keywords', [])
 
 
 class TestSuiteId(unittest.TestCase):

@@ -24,8 +24,10 @@ class ModelObject(with_metaclass(SetterAwareType, object)):
 
     def config(self, **attributes):
         """Configure model object with given attributes.
+
         ``obj.config(name='Example', doc='Something')`` is equivalent to setting
         ``obj.name = 'Example'`` and ``obj.doc = 'Something'``.
+
         New in Robot Framework 4.0.
         """
         for name in attributes:

@@ -91,15 +91,11 @@ class TestTestCase(unittest.TestCase):
         assert_equal(copy.doc, 'New')
 
     def test_keywords_deprecation(self):
-        t = TestCase()
         with warnings.catch_warnings(record=True) as w:
-            t.keywords
+            kws = self.test.keywords
             assert_true('deprecated' in str(w[0].message))
-        try:
-            t.keywords = []
-            raise AssertionError("Atrribute error not raised.")
-        except AttributeError:
-            pass
+        assert_raises(AttributeError, kws.append, Keyword())
+        assert_raises(AttributeError, setattr, self.test, 'keywords', [])
 
 
 class TestStringRepresentation(unittest.TestCase):

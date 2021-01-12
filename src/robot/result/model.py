@@ -37,7 +37,7 @@ from operator import attrgetter
 import warnings
 
 from robot import model
-from robot.model import TotalStatisticsBuilder, Messages, Keywords, Body
+from robot.model import TotalStatisticsBuilder, Messages, Keywords
 from robot.utils import get_elapsed_time, setter
 
 from .configurer import SuiteConfigurer
@@ -47,6 +47,11 @@ from .suiteteardownfailed import (SuiteTeardownFailureHandler,
                                   SuiteTeardownFailed)
 
 
+class Body(model.Body):
+    __slots__ = []
+
+
+@Body.register
 class Keyword(model.Keyword):
     """Represents results of a single keyword.
 
@@ -80,16 +85,16 @@ class Keyword(model.Keyword):
     @setter
     def body(self, body):
         """Child keywords as a :class:`~.Body` object."""
-        return Body(self.__class__, self, body)
+        return Body(self, body)
 
     @property
     def keywords(self):
-        """Deprecated since Robot Framework 4.0
+        """Deprecated since Robot Framework 4.0.
 
-        Use :attr:`body`, :attr:`setup` or :attr:`teardown` instead.
+        Use :attr:`body` or :attr:`teardown` instead.
         """
         kws = list(self.body) + [self.teardown] if self.teardown else []
-        return Keywords(self.keyword_class, self, kws)
+        return Keywords(self, kws)
 
     @keywords.setter
     def keywords(self, keywords):
@@ -169,7 +174,8 @@ class TestCase(model.TestCase):
     See the base class for documentation of attributes not documented here.
     """
     __slots__ = ['status', 'message', 'starttime', 'endtime']
-    keyword_class = Keyword
+    body_class = Body
+    fixture_class = Keyword
 
     def __init__(self, name='', doc='', tags=None, timeout=None, status='FAIL',
                  message='', starttime=None, endtime=None):
@@ -237,7 +243,7 @@ class TestSuite(model.TestSuite):
     """
     __slots__ = ['message', 'starttime', 'endtime']
     test_class = TestCase
-    keyword_class = Keyword
+    fixture_class = Keyword
 
     def __init__(self, name='', doc='', metadata=None, source=None,
                  message='', starttime=None, endtime=None, rpa=False):

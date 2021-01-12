@@ -4,20 +4,24 @@ import re
 from robot import utils
 from robot.api import logger
 from robot.utils.asserts import assert_equal
-from robot.result import (ExecutionResultBuilder, Keyword, TestCase, TestSuite,
-                          Result)
+from robot.result import ExecutionResultBuilder, Keyword, TestCase, TestSuite, Result
 from robot.libraries.BuiltIn import BuiltIn
 
 
 class NoSlotsKeyword(Keyword):
     pass
 
+
 class NoSlotsTestCase(TestCase):
-    keyword_class = NoSlotsKeyword
+    fixture_class = NoSlotsKeyword
+
 
 class NoSlotsTestSuite(TestSuite):
     test_class = NoSlotsTestCase
-    keyword_class = NoSlotsKeyword
+    fixture_class = NoSlotsKeyword
+
+
+NoSlotsTestCase.body_class.keyword_class = NoSlotsKeyword
 
 
 class TestCheckerLibrary:

@@ -126,9 +126,9 @@ class KeywordHandler(_Handler):
             return result.teardown.config(kwname=elem.get('name', ''),
                                           libname=elem.get('library', ''),
                                           type=type_)
-        return result.body.create(kwname=elem.get('name', ''),
-                                  libname=elem.get('library', ''),
-                                  type=elem.get('type', 'kw'))
+        return result.body.create_keyword(kwname=elem.get('name', ''),
+                                          libname=elem.get('library', ''),
+                                          type=elem.get('type', 'kw'))
 
     def _children(self):
         return [DocHandler(), ArgumentsHandler(), AssignHandler(),
