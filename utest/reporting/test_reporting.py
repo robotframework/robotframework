@@ -1,4 +1,3 @@
-import os
 import unittest
 
 from robot.output import LOGGER
@@ -83,9 +82,9 @@ class TestReporting(unittest.TestCase):
     def _get_execution_result(self):
         suite = TestSuite(name=self.EXPECTED_SUITE_NAME)
         tc = suite.tests.create(name=self.EXPECTED_TEST_NAME, status='PASS')
-        tc.body.create(kwname=self.EXPECTED_KEYWORD_NAME, status='PASS')
+        tc.body.create_keyword(kwname=self.EXPECTED_KEYWORD_NAME, status='PASS')
         tc = suite.tests.create(name=self.EXPECTED_FAILING_TEST)
-        kw = tc.body.create(kwname=self.EXPECTED_KEYWORD_NAME)
+        kw = tc.body.create_keyword(kwname=self.EXPECTED_KEYWORD_NAME)
         kw.messages.create(message=self.EXPECTED_DEBUG_MESSAGE,
                            level='DEBUG', timestamp='20201212 12:12:12.000')
         errors = ExecutionErrors()

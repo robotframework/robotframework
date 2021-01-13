@@ -15,9 +15,10 @@
 
 from robot.utils import setter
 
+from .body import Body
 from .fixture import create_fixture
 from .itemlist import ItemList
-from .keyword import Keyword, Keywords, Body
+from .keyword import Keyword, Keywords
 from .modelobject import ModelObject
 from .tags import Tags
 
@@ -29,14 +30,15 @@ class TestCase(ModelObject):
     :class:`robot.result.model.TestCase`.
     """
     __slots__ = ['parent', 'name', 'doc', 'timeout']
-    keyword_class = Keyword  #: Internal usage only
+    body_class = Body
+    fixture_class = Keyword
 
-    def __init__(self, name='', doc='', tags=None, timeout=None):
-        self.parent = None      #: Parent suite.
-        self.name = name        #: Test case name.
-        self.doc = doc          #: Test case documentation.
-        self.timeout = timeout  #: Test case timeout.
+    def __init__(self, name='', doc='', tags=None, timeout=None, parent=None):
+        self.name = name
+        self.doc = doc
+        self.timeout = timeout
         self.tags = tags
+        self.parent = parent
         self.body = None
         self.setup = None
         self.teardown = None
@@ -44,7 +46,7 @@ class TestCase(ModelObject):
     @setter
     def body(self, body):
         """Test case body as a :class:`~.Body` object."""
-        return Body(self.keyword_class, self, body)
+        return self.body_class(self, body)
 
     @setter
     def tags(self, tags):
@@ -65,8 +67,8 @@ class TestCase(ModelObject):
 
         Use :attr:`body`, :attr:`setup` or :attr:`teardown` instead.
         """
-        kws = [kw for kw in [self.setup] + list(self.body) + [self.teardown] if kw]
-        return Keywords(self.keyword_class, self, kws)
+        keywords = [self.setup] + list(self.body) + [self.teardown]
+        return Keywords(self, [kw for kw in keywords if kw])
 
     @keywords.setter
     def keywords(self, keywords):

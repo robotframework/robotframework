@@ -13,11 +13,17 @@ options:
 """
 
 from __future__ import print_function
-import unittest
+import getopt
 import os
 import sys
 import re
-import getopt
+import unittest
+import warnings
+
+
+if not sys.warnoptions:
+    warnings.simplefilter('always')
+    warnings.filterwarnings('ignore', 'Not importing directory .*java', ImportWarning)
 
 
 base = os.path.abspath(os.path.normpath(os.path.split(sys.argv[0])[0]))
@@ -56,7 +62,7 @@ def get_tests(directory=None):
 
 
 def parse_args(argv):
-    docs = 0
+    docs = False
     verbosity = 1
     try:
         options, args = getopt.getopt(argv, 'hH?vqd',
@@ -66,14 +72,14 @@ def parse_args(argv):
     except getopt.error as err:
         usage_exit(err)
     for opt, value in options:
-        if opt in ('-h','-H','-?','--help'):
+        if opt in ('-h', '-H', '-?', '--help'):
             usage_exit()
-        if opt in ('-q','--quit'):
+        if opt in ('-q', '--quiet'):
             verbosity = 0
         if opt in ('-v', '--verbose'):
             verbosity = 2
         if opt in ('-d', '--doc'):
-            docs = 1
+            docs = True
             verbosity = 2
     return docs, verbosity
 

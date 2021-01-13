@@ -34,15 +34,16 @@ class TestSuite(ModelObject):
     """
     __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors', 'rpa']
     test_class = TestCase    #: Internal usage only.
-    keyword_class = Keyword  #: Internal usage only.
+    fixture_class = Keyword  #: Internal usage only.
 
-    def __init__(self, name='', doc='', metadata=None, source=None, rpa=False):
-        self.parent = None  #: Parent suite. ``None`` with the root suite.
+    def __init__(self, name='', doc='', metadata=None, source=None, rpa=False,
+                 parent=None):
         self._name = name
-        self.doc = doc  #: Test suite documentation.
+        self.doc = doc
         self.metadata = metadata
         self.source = source  #: Path to the source file or directory.
-        self.rpa = rpa
+        self.parent = parent  #: Parent suite. ``None`` with the root suite.
+        self.rpa = rpa        #: ``True`` when RPA mode is enabled.
         self.suites = None
         self.tests = None
         self.setup = None
@@ -97,10 +98,10 @@ class TestSuite(ModelObject):
     def keywords(self):
         """Deprecated since Robot Framework 4.0
 
-        Use :attr:`body`, :attr:`setup` or :attr:`teardown` instead.
+        Use :attr:`setup` or :attr:`teardown` instead.
         """
-        kws = [kw for kw in [self.setup, self.teardown] if kw]
-        return Keywords(self.keyword_class, self, kws)
+        keywords = [self.setup, self.teardown]
+        return Keywords(self, [kw for kw in keywords if kw])
 
     @keywords.setter
     def keywords(self, keywords):
