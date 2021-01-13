@@ -16,6 +16,7 @@
 from __future__ import absolute_import
 
 from contextlib import contextmanager
+from functools import wraps
 
 try:
     import httplib
@@ -64,7 +65,44 @@ class Remote(object):
             timeout = timestr_to_secs(timeout)
         self._uri = uri
         self._client = XmlRpcRemoteClient(uri, timeout)
+        self._kw_cache = None
 
+    def _cached(info_type=None, default=None):
+        def decorator(f):
+            @wraps(f)
+            def wrapper(self, name=None):
+                self._build_kw_info_cache()
+                if info_type == 'names':
+                    return self._kw_cache.keys() if self._kw_cache else f(self)
+                elif self._kw_cache:
+                    return self._kw_cache.get(info_type, dict()).get(name, default)
+                else:
+                    try:
+                        return f(self, name)
+                    except TypeError:
+                        return default
+            return wrapper
+        return decorator
+
+    def _build_kw_info_cache(self):
+        """
+        Single attempt to build the cache using get_library_information interface
+        cache structure:
+            { "keyword_name" : { 'args':[], 'tags':[], 'doc':"", 'types':[]},
+              "kw2"          : {...}, etc. }
+        """
+        if self._kw_cache is None:
+            self._kw_cache = False
+            try:
+                self._kw_cache = self._client.get_library_information()
+                self._kw_cache['__intro__'] = dict(
+                    doc=self._client.get_keyword_documentation('__intro__'))
+                self._kw_cache['__init__'] = dict(
+                    doc=self._client.get_keyword_documentation('__init__'))
+            except TypeError:
+                pass # Best effort failed, fall back to regular loading
+
+    @_cached('names')
     def get_keyword_names(self):
         try:
             return self._client.get_keyword_names()
@@ -72,29 +110,21 @@ class Remote(object):
             raise RuntimeError('Connecting remote server at %s failed: %s'
                                % (self._uri, error))
 
+    @_cached('args', default=['*args'])
     def get_keyword_arguments(self, name):
-        try:
-            return self._client.get_keyword_arguments(name)
-        except TypeError:
-            return ['*args']
+        return self._client.get_keyword_arguments(name)
 
+    @_cached('types')
     def get_keyword_types(self, name):
-        try:
-            return self._client.get_keyword_types(name)
-        except TypeError:
-            return None
+        return self._client.get_keyword_types(name)
 
+    @_cached('tags')
     def get_keyword_tags(self, name):
-        try:
-            return self._client.get_keyword_tags(name)
-        except TypeError:
-            return None
+        return self._client.get_keyword_tags(name)
 
+    @_cached('doc')
     def get_keyword_documentation(self, name):
-        try:
-            return self._client.get_keyword_documentation(name)
-        except TypeError:
-            return None
+        return self._client.get_keyword_documentation(name)
 
     def run_keyword(self, name, args, kwargs):
         coercer = ArgumentCoercer()
@@ -207,7 +237,6 @@ class XmlRpcRemoteClient(object):
     def __init__(self, uri, timeout=None):
         self.uri = uri
         self.timeout = timeout
-        self.__kw_cache = None
 
     @property
     @contextmanager
@@ -225,49 +254,27 @@ class XmlRpcRemoteClient(object):
         finally:
             server('close')()
 
-    @property
-    def _kw_cache(self):
-        """
-        returns False or a dict with structure:
-        { "keyword_name" : { 'args':[], 'tags':[], 'doc':"", 'types':[]},
-          "kw2"          : {...}, etc. }
-        """
-        if self.__kw_cache is None:
-            self.__kw_cache = False
-            try:
-                with self._server as server:
-                    self.__kw_cache = server.get_library_information()
-            except TypeError:
-                pass # Best effort failed, fall back to regular loading
-        return self.__kw_cache
+    def get_library_information(self):
+        with self._server as server:
+            return server.get_library_information()
 
     def get_keyword_names(self):
-        if self._kw_cache:
-            return self._kw_cache.keys()
         with self._server as server:
             return server.get_keyword_names()
             
     def get_keyword_arguments(self, name):
-        if self._kw_cache:
-            return self._kw_cache[name].get('args', [])
         with self._server as server:
             return server.get_keyword_arguments(name)
 
     def get_keyword_types(self, name):
-        if self._kw_cache:
-            return self._kw_cache[name].get('types', [])
         with self._server as server:
             return server.get_keyword_types(name)
 
     def get_keyword_tags(self, name):
-        if self._kw_cache:
-            return self._kw_cache[name].get('tags', [])
         with self._server as server:
             return server.get_keyword_tags(name)
 
     def get_keyword_documentation(self, name):
-        if name not in ['__intro__', '__init__'] and self._kw_cache:
-            return self._kw_cache[name].get('doc', "")
         with self._server as server:
             return server.get_keyword_documentation(name)
 
