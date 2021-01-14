@@ -45,9 +45,6 @@ class Keyword(BodyItem):
         self._teardown = None
         self.parent = parent
 
-    def __bool__(self):
-        return self.name is not None
-
     @property
     def name(self):
         return self._name
@@ -58,7 +55,7 @@ class Keyword(BodyItem):
 
     @property    # Cannot use @setter because it would create teardowns recursively.
     def teardown(self):
-        if self._teardown is None:
+        if self._teardown is None and self:
             self._teardown = create_fixture(None, self, self.TEARDOWN_TYPE)
         return self._teardown
 
@@ -77,7 +74,11 @@ class Keyword(BodyItem):
 
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
-        visitor.visit_keyword(self)
+        if self:
+            visitor.visit_keyword(self)
+
+    def __bool__(self):
+        return self.name is not None
 
 
 class Keywords(ItemList):

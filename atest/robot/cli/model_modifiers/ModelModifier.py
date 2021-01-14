@@ -20,5 +20,15 @@ class ModelModifier(SuiteVisitor):
         else:
             suite.tests = [t for t in suite.tests if not t.tags.match('fail')]
 
-    def visit_test(self, test):
+    def start_test(self, test):
         test.tags.add(self.config)
+
+    def start_for(self, for_):
+        if for_.parent.name == 'For In Range Loop In Test':
+            for_.flavor = 'IN'
+            for_.values = ['FOR', 'is', 'modified!']
+
+    def start_if(self, if_):
+        if if_.condition == "'IF' == 'WRONG'":
+            if_.condition = 'True'
+            if_.body[0].config(name='Log', args=['going here!'])

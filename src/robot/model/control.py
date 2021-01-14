@@ -50,6 +50,9 @@ class For(BodyItem):
     def source(self):
         return self.parent.source if self.parent is not None else None
 
+    def visit(self, visitor):
+        visitor.visit_for(self)
+
     def __str__(self):
         variables = '    '.join(self.variables)
         values = '    '.join(self.values)
@@ -59,28 +62,36 @@ class For(BodyItem):
 @py3to2
 @Body.register
 class If(BodyItem):
-    __slots__ = ['condition']
+    __slots__ = ['condition', '_orelse']
     body_class = Body
+    inactive = object()
 
     def __init__(self, condition=None, parent=None):
         self.condition = condition
         self.parent = parent
         self.body = None
-        self.orelse = None
+        self._orelse = None
 
     @setter
     def body(self, body):
         return self.body_class(self, body)
 
-    @setter
+    @property     # Cannot use @setter because it would create orelses recursively.
+    def orelse(self):
+        if self._orelse is None and self:
+            self._orelse = type(self)(condition=self.inactive, parent=self)
+        return self._orelse
+
+    @orelse.setter
     def orelse(self, orelse):
         if orelse is None:
-            return None
-        if not isinstance(orelse, type(self)):
+            self._orelse = None
+        elif not isinstance(orelse, type(self)):
             raise TypeError("Only %s objects accepted, got %s."
                             % (type(self).__name__, type(orelse).__name__))
-        orelse.parent = self
-        return orelse
+        else:
+            orelse.parent = self
+            self._orelse = orelse
 
     @property
     def source(self):
@@ -88,15 +99,26 @@ class If(BodyItem):
 
     @property
     def type(self):
+        if self.condition is self.inactive:
+            return None
         if not isinstance(self.parent, If):
             return self.IF_TYPE
         if self.condition:
             return self.ELSE_IF_TYPE
         return self.ELSE_TYPE
 
+    def visit(self, visitor):
+        if self:
+            visitor.visit_if(self)
+
     def __str__(self):
+        if self.condition is self.inactive:
+            return u'INACTIVE'
         if not isinstance(self.parent, If):
             return u'IF    %s' % self.condition
         if self.condition:
             return u'ELSE IF    %s' % self.condition
         return u'ELSE'
+
+    def __bool__(self):
+        return self.condition is not self.inactive
