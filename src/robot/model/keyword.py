@@ -88,20 +88,6 @@ class Keyword(BodyItem):
         return Tags(tags)
 
     @property
-    def id(self):
-        """Keyword id in format like ``s1-t3-k1``.
-
-        See :attr:`TestSuite.id <robot.model.testsuite.TestSuite.id>` for
-        more information.
-        """
-        if not self.parent:
-            return 'k1'
-        if hasattr(self.parent, 'body') and self.parent.body:
-            return '%s-k%d' % (self.parent.id, self.parent.body.index(self)+1)
-        fixtures = [kw for kw in (self.parent.setup, self.parent.teardown) if kw]
-        return '%s-k%d' % (self.parent.id, fixtures.index(self)+1)
-
-    @property
     def source(self):
         return self.parent.source if self.parent is not None else None
 

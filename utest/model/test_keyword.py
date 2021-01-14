@@ -1,23 +1,51 @@
 import unittest
 import warnings
-from robot.utils.asserts import (assert_equal, assert_none, assert_not_equal,
-                                 assert_true, assert_raises, assert_raises_with_msg)
 
-from robot.model import TestSuite, Message
-from robot.model.keyword import Keyword, Keywords
+from robot.model import TestSuite, TestCase, Keyword, Keywords
 from robot.utils import PY2, unicode
+from robot.utils.asserts import (assert_equal, assert_not_equal, assert_true,
+                                 assert_raises)
 
 
 class TestKeyword(unittest.TestCase):
 
     def test_id_without_parent(self):
         assert_equal(Keyword().id, 'k1')
+        assert_equal(Keyword(type=Keyword.SETUP_TYPE).id, 'k1')
+        assert_equal(Keyword(type=Keyword.TEARDOWN_TYPE).id, 'k1')
 
-    def test_id_with_suite_parent(self):
-        assert_equal(TestSuite().setup.config(name='KW').id, 's1-k1')
+    def test_suite_setup_and_teardown_id(self):
+        suite = TestSuite()
+        assert_equal(suite.setup.id, None)
+        assert_equal(suite.teardown.id, None)
+        suite.teardown.config(name='T')
+        assert_equal(suite.teardown.id, 's1-k1')
+        suite.setup.config(name='S')
+        assert_equal(suite.setup.id, 's1-k1')
+        assert_equal(suite.teardown.id, 's1-k2')
 
-    def test_id_with_test_parent(self):
-        assert_equal(TestSuite().tests.create().body.create_keyword().id, 's1-t1-k1')
+    def test_test_setup_and_teardown_id(self):
+        test = TestSuite().tests.create()
+        assert_equal(test.setup.id, None)
+        assert_equal(test.teardown.id, None)
+        test.setup.config(name='S')
+        test.teardown.config(name='T')
+        assert_equal(test.setup.id, 's1-t1-k1')
+        assert_equal(test.teardown.id, 's1-t1-k2')
+        test.body.create_keyword()
+        assert_equal(test.setup.id, 's1-t1-k1')
+        assert_equal(test.teardown.id, 's1-t1-k3')
+
+    def test_test_body_id(self):
+        kws = [Keyword(), Keyword(), Keyword()]
+        TestSuite().tests.create().body.extend(kws)
+        assert_equal([k.id for k in kws], ['s1-t1-k1', 's1-t1-k2', 's1-t1-k3'])
+
+    def test_id_with_for_and_if_parents(self):
+        t = TestCase()
+        assert_equal(t.body.create_for().body.create_keyword().id, 't1-k1-k1')
+        assert_equal(t.body.create_if().body.create_keyword().id, 't1-k2-k1')
+        assert_equal(t.body.create_if().body.create_for().body.create_keyword().id, 't1-k3-k1-k1')
 
     def test_slots(self):
         assert_raises(AttributeError, setattr, Keyword(), 'attr', 'value')

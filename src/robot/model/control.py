@@ -22,11 +22,11 @@ from .keyword import Keywords
 @py3to2
 @Body.register
 class For(BodyItem):
-    __slots__ = ['variables', 'flavor', 'values', 'parent']
+    __slots__ = ['variables', 'flavor', 'values']
     type = BodyItem.FOR_TYPE
     body_class = Body
 
-    def __init__(self, variables, flavor, values, parent=None):
+    def __init__(self, variables=(), flavor='IN', values=(), parent=None):
         self.variables = variables
         self.flavor = flavor
         self.values = values
@@ -59,7 +59,7 @@ class For(BodyItem):
 @py3to2
 @Body.register
 class If(BodyItem):
-    __slots__ = ['condition', 'parent']
+    __slots__ = ['condition']
     body_class = Body
 
     def __init__(self, condition=None, parent=None):

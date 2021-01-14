@@ -13,23 +13,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import html_escape, py3to2, setter
+from robot.utils import html_escape, py3to2
 
+from .body import BodyItem
 from .itemlist import ItemList
-from .modelobject import ModelObject
 
 
 @py3to2
-class Message(ModelObject):
+class Message(BodyItem):
     """A message created during the test execution.
 
     Can be a log message triggered by a keyword, or a warning or an error
     that occurred during parsing or test execution.
     """
     __slots__ = ['message', 'level', 'html', 'timestamp', '_sort_key']
+    type = BodyItem.MESSAGE_TYPE
 
-    def __init__(self, message='', level='INFO', html=False, timestamp=None,
-                 parent=None):
+    def __init__(self, message='', level='INFO', html=False, timestamp=None, parent=None):
         #: The message content as a string.
         self.message = message
         #: Severity of the message. Either ``TRACE``, ``DEBUG``, ``INFO``,
@@ -54,6 +54,12 @@ class Message(ModelObject):
     def html_message(self):
         """Returns the message content as HTML."""
         return self.message if self.html else html_escape(self.message)
+
+    @property
+    def id(self):
+        if not self.parent:
+            return 'm1'
+        return '%s-m%d' % (self.parent.id, self.parent.messages.index(self) + 1)
 
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""

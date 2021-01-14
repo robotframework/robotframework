@@ -115,7 +115,7 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_error_linking(self):
         msg = Message('ERROR Message', 'ERROR', timestamp='20150609 01:02:03.004',
-                      parent=TestCase().body.create_keyword('Parent KW').body.create_keyword('Child KW'))
+                      parent=TestCase().body.create_keyword().body.create_keyword())
         self._verify_message(msg, 'ERROR Message', 4, 0)
         links = self.context._msg_links
         assert_equal(len(links), 1)
