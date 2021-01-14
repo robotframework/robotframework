@@ -90,7 +90,7 @@ window.testdata = function () {
     }
 
     function createTest(parent, element, strings, index) {
-        var statusElement = element[4];
+        var status = element[4];
         var test = model.Test({
             parent: parent,
             id: 't' + (index + 1),
@@ -101,13 +101,13 @@ window.testdata = function () {
                 return doc;
             },
             timeout: strings.get(element[1]),
-            status: parseStatus(statusElement),
+            status: parseStatus(status),
             message: function () {
-                var msg = createMessage(statusElement, strings);
+                var msg = status.length == 4 ? strings.get(status[3]) : '';
                 this.message = function () { return msg; };
                 return msg;
             },
-            times: model.Times(times(statusElement)),
+            times: model.Times(times(status)),
             tags: tags(element[3], strings),
             isChildrenLoaded: typeof(element[5]) !== 'number'
         });
@@ -115,12 +115,8 @@ window.testdata = function () {
         return test;
     }
 
-    function createMessage(statusElement, strings) {
-        return statusElement.length == 4 ? strings.get(statusElement[3]) : '';
-    }
-
     function createSuite(parent, element, strings, index) {
-        var statusElement = element[5];
+        var status = element[5];
         var suite = model.Suite({
             parent: parent,
             id: 's' + ((index || 0) + 1),
@@ -132,13 +128,13 @@ window.testdata = function () {
                 this.doc = function () { return doc; };
                 return doc;
             },
-            status: parseStatus(statusElement),
+            status: parseStatus(status),
             message: function () {
-                var msg = createMessage(statusElement, strings);
+                var msg = status.length == 4 ? strings.get(status[3]) : '';
                 this.message = function () { return msg; };
                 return msg;
             },
-            times: model.Times(times(statusElement)),
+            times: model.Times(times(status)),
             statistics: suiteStats(util.last(element)),
             metadata: parseMetadata(element[4], strings)
         });
