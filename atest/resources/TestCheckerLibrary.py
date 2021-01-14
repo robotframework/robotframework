@@ -206,7 +206,7 @@ class TestCheckerLibrary:
             assert_equal(act, exp)
 
     def should_contain_keywords(self, item, *kw_names):
-        actual_names = [kw.name for kw in item.body]
+        actual_names = [kw.name for kw in item.kws]
         assert_equal(len(actual_names), len(kw_names), 'Wrong number of keywords')
         for act, exp in zip(actual_names, kw_names):
             assert_equal(act, exp)
@@ -249,8 +249,7 @@ def process_test(test):
     else:
         test.exp_status = 'PASS'
         test.exp_message = '' if 'PASS' not in test.doc else test.doc.split('PASS', 1)[1].lstrip()
-    for kw in test.body:
-        process_keyword(kw)
+    process_body(test.body)
     if test.setup:
         process_keyword(test.setup)
     if test.teardown:
@@ -259,17 +258,20 @@ def process_test(test):
     test.keyword_count = test.kw_count = len(test.body)
 
 
+def process_body(body):
+    for item in body:
+        if isinstance(item, NoSlotsKeyword):
+            process_keyword(item)
+
+
 def process_keyword(kw):
-    if kw is None:
-        return
     if kw.teardown:
         process_keyword(kw.teardown)
-    kw.kws = kw.body
+    kw.kws = [item for item in kw.body.filter(messages=False)]
     kw.msgs = kw.messages
     kw.message_count = kw.msg_count = len(kw.messages)
-    kw.keyword_count = kw.kw_count = len(list(kw.body))
-    for subkw in kw.body:
-        process_keyword(subkw)
+    kw.keyword_count = kw.kw_count = len(kw.kws)
+    process_body(kw.body)
 
 
 def process_errors(errors):

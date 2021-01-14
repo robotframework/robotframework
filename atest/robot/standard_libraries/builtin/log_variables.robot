@@ -132,7 +132,7 @@ Log Variables After Setting New Variables
 
 Log Variables In User Keyword
     ${test} =    Check Test Case    Log Variables
-    Set Test Variable    ${KW}    ${test.body[5].body[1]}
+    Set Test Variable    ${KW}    ${test.body[5].body[2]}
     Set Test Variable    ${INDEX}    ${1}
     Check Variable Message    \${/} = *    pattern=yes
     Check Variable Message    \${:} = ${:}

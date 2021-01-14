@@ -31,8 +31,7 @@ class Keyword(BodyItem):
     Extended by :class:`robot.running.model.Keyword` and
     :class:`robot.result.model.Keyword`.
     """
-    __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type',
-                 '_teardown', '_sort_key', '_next_child_sort_key']
+    __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type', '_teardown']
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
                  timeout=None, type=BodyItem.KEYWORD_TYPE, parent=None):
@@ -44,8 +43,6 @@ class Keyword(BodyItem):
         self.timeout = timeout
         self.type = type
         self._teardown = None
-        self._sort_key = -1
-        self._next_child_sort_key = 0
         self.parent = parent
 
     def __bool__(self):
@@ -68,18 +65,6 @@ class Keyword(BodyItem):
     @teardown.setter
     def teardown(self, teardown):
         self._teardown = create_fixture(teardown, self, self.TEARDOWN_TYPE)
-
-    @setter
-    def parent(self, parent):
-        """Parent test suite, test case or keyword."""
-        if parent and parent is not getattr(self, 'parent', None):
-            self._sort_key = getattr(parent, '_child_sort_key', -1)
-        return parent
-
-    @property
-    def _child_sort_key(self):
-        self._next_child_sort_key += 1
-        return self._next_child_sort_key
 
     @setter
     def tags(self, tags):

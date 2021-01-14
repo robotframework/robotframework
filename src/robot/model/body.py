@@ -62,8 +62,8 @@ class Body(ItemList):
     for_class = None
     if_class = None
 
-    def __init__(self, parent=None, body=None):
-        ItemList.__init__(self, BodyItem, {'parent': parent}, body)
+    def __init__(self, parent=None, items=None):
+        ItemList.__init__(self, BodyItem, {'parent': parent}, items)
 
     @classmethod
     def register(cls, body_class):
@@ -86,7 +86,35 @@ class Body(ItemList):
     def create_if(self, *args, **kwargs):
         return self.append(self.if_class(*args, **kwargs))
 
-    def __setitem__(self, index, item):
-        old = self[index]
-        ItemList.__setitem__(self, index, item)
-        self[index]._sort_key = old._sort_key
+    def filter(self, keywords=None, fors=None, ifs=None, predicate=None):
+        """Filter body items based on type and/or custom predicate.
+
+        To include or exclude items based on types, give matching arguments
+        ``True`` or ``False`` values. For example, to include only keywords, use
+        ``body.filter(keywords=True)`` and to exclude FOR and IF constructs use
+        ``body.filter(fors=False, ifs=False)``. Including and excluding by types
+        at the same time is not supported.
+
+        Custom ``predicate`` is a calleble getting each body item as an argument
+        that must return ``True/False`` depending on should the item be included
+        or not.
+
+        Selected items are returned as a list and the original body is not modified.
+        """
+        return self._filter([(self.keyword_class, keywords),
+                             (self.for_class, fors),
+                             (self.if_class, ifs)], predicate)
+
+    def _filter(self, types, predicate):
+        include = tuple(cls for cls, activated in types if activated is True)
+        exclude = tuple(cls for cls, activated in types if activated is False)
+        if include and exclude:
+            raise ValueError('Items cannot be both included and excluded by type.')
+        items = list(self)
+        if include:
+            items = [item for item in items if isinstance(item, include)]
+        if exclude:
+            items = [item for item in items if not isinstance(item, exclude)]
+        if predicate:
+            items = [item for item in items if predicate(item)]
+        return items

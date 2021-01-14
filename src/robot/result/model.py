@@ -33,11 +33,10 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 """
 
 from itertools import chain
-from operator import attrgetter
 import warnings
 
 from robot import model
-from robot.model import TotalStatisticsBuilder, Messages, Keywords
+from robot.model import TotalStatisticsBuilder, Keywords
 from robot.utils import get_elapsed_time, setter
 
 from .configurer import SuiteConfigurer
@@ -48,6 +47,21 @@ from .suiteteardownfailed import (SuiteTeardownFailureHandler,
 
 
 class Body(model.Body):
+    __slots__ = []
+    message_class = None
+
+    def create_message(self, *args, **kwargs):
+        return self.append(self.message_class(*args, **kwargs))
+
+    def filter(self, keywords=None, fors=None, ifs=None, messages=None, predicate=None):
+        return self._filter([(self.keyword_class, keywords),
+                             (self.for_class, fors),
+                             (self.if_class, ifs),
+                             (self.message_class, messages)], predicate)
+
+
+@Body.register
+class Message(model.Message):
     __slots__ = []
 
 
@@ -64,8 +78,6 @@ class Keyword(model.Keyword):
                  timeout=None, type='kw', status='FAIL', starttime=None, endtime=None,
                  parent=None, lineno=None, source=None):
         model.Keyword.__init__(self, None, doc, args, assign, tags, timeout, type, parent)
-        self.messages = None
-        self.body = None
         #: Name of the keyword without library or resource name.
         self.kwname = kwname
         #: Name of the library or resource containing this keyword.
@@ -81,10 +93,11 @@ class Keyword(model.Keyword):
         self.message = ''
         self.lineno = lineno
         self.source = source
+        self.body = None
 
     @setter
     def body(self, body):
-        """Child keywords as a :class:`~.Body` object."""
+        """Child keywords and messages as a :class:`~.Body` object."""
         return Body(self, body)
 
     @property
@@ -93,26 +106,31 @@ class Keyword(model.Keyword):
 
         Use :attr:`body` or :attr:`teardown` instead.
         """
-        kws = list(self.body) + [self.teardown] if self.teardown else []
-        return Keywords(self, kws)
+        keywords = self.body.filter(messages=False)
+        if self.teardown:
+            keywords.append(self.teardown)
+        return Keywords(self, keywords)
 
     @keywords.setter
     def keywords(self, keywords):
         Keywords.raise_deprecation_error()
 
-    @setter
-    def messages(self, messages):
-        """Messages as a :class:`~.model.message.Messages` object."""
-        return Messages(parent=self, messages=messages)
+    @property
+    def messages(self):
+        """Keyword's messages.
+
+        Starting from Robot Framework 4.0 this is a list generated from messages
+        in :attr:`body`.
+        """
+        return self.body.filter(messages=True)
 
     @property
     def children(self):
-        """Child :attr:`keywords` and :attr:`messages` in creation order."""
-        # It would be cleaner to store keywords/messages in same `children`
-        # list and turn `keywords` and `messages` to properties that pick items
-        # from it. That would require bigger changes to the model, though.
-        return sorted(chain(self.body, self.messages),
-                      key=attrgetter('_sort_key'))
+        """List of child keywords and messages in creation order.
+
+        Deprecated since Robot Framework 4.0. Use :att:`body` instead.
+        """
+        return list(self.body)
 
     @property
     def elapsedtime(self):

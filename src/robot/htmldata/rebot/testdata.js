@@ -5,7 +5,8 @@ window.testdata = function () {
     var _statistics = null;
     var LEVELS = ['TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FAIL', 'SKIP'];
     var STATUSES = ['FAIL', 'PASS', 'NOT_RUN', 'SKIP'];
-    var KEYWORDS = ['KEYWORD', 'SETUP', 'TEARDOWN', 'FOR', 'VAR', 'IF', 'ELSE IF', 'ELSE'];
+    var KEYWORD_TYPES = ['KEYWORD', 'SETUP', 'TEARDOWN', 'FOR', 'VAR', 'IF', 'ELSE IF', 'ELSE'];
+    var MESSAGE_TYPE = 8;
 
     function addElement(elem) {
         if (!elem.id)
@@ -29,11 +30,11 @@ window.testdata = function () {
                 elapsed];
     }
 
-    function message(element, strings) {
-        return addElement(model.Message(LEVELS[element[1]],
-                                        util.timestamp(element[0]),
-                                        strings.get(element[2]),
-                                        strings.get(element[3])));
+    function createMessage(element, strings) {
+        return model.Message(LEVELS[element[2]],
+                             util.timestamp(element[1]),
+                             strings.get(element[3]),
+                             strings.get(element[4]));
     }
 
     function parseStatus(stats) {
@@ -46,10 +47,16 @@ window.testdata = function () {
         };
     }
 
+    function createBodyItem(parent, element, strings, index) {
+        if (element[0] == MESSAGE_TYPE)
+            return createMessage(element, strings);
+        return createKeyword(parent, element, strings, index);
+    }
+
     function createKeyword(parent, element, strings, index) {
         var kw = model.Keyword({
             parent: parent,
-            type: KEYWORDS[element[0]],
+            type: KEYWORD_TYPES[element[0]],
             id: 'k' + (index + 1),
             name: strings.get(element[1]),
             libname: strings.get(element[2]),
@@ -67,13 +74,12 @@ window.testdata = function () {
             isChildrenLoaded: typeof(element[9]) !== 'number'
         });
         lazyPopulateKeywordsFromFile(kw, element[9], strings);
-        kw.populateMessages(Populator(element[10], strings, message));
         return kw;
     }
 
     function lazyPopulateKeywordsFromFile(parent, modelOrIndex, strings) {
         var model, index, populator;
-        var creator = childCreator(parent, createKeyword);
+        var creator = childCreator(parent, createBodyItem);
         if (parent.isChildrenLoaded) {
             model = modelOrIndex;
             populator = Populator(model, strings, creator);
@@ -225,7 +231,10 @@ window.testdata = function () {
 
     function selectFrom(element, type, index) {
         if (type === 'k') {
-            return element.keywords()[index];
+            var keywords = util.filter(element.keywords(), function (kw) {
+                return kw.type != 'message';
+            });
+            return keywords[index];
         } else if (type === 't') {
             return element.tests()[index];
         } else {
@@ -236,8 +245,8 @@ window.testdata = function () {
     function errorIterator() {
         return {
             next: function () {
-                return message(window.output.errors.shift(),
-                               StringStore(window.output.strings));
+                return addElement(createMessage(window.output.errors.shift(),
+                                                StringStore(window.output.strings)));
             },
             hasNext: function () {
                 return window.output.errors.length > 0;

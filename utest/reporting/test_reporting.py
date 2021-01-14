@@ -85,8 +85,8 @@ class TestReporting(unittest.TestCase):
         tc.body.create_keyword(kwname=self.EXPECTED_KEYWORD_NAME, status='PASS')
         tc = suite.tests.create(name=self.EXPECTED_FAILING_TEST)
         kw = tc.body.create_keyword(kwname=self.EXPECTED_KEYWORD_NAME)
-        kw.messages.create(message=self.EXPECTED_DEBUG_MESSAGE,
-                           level='DEBUG', timestamp='20201212 12:12:12.000')
+        kw.body.create_message(message=self.EXPECTED_DEBUG_MESSAGE,
+                               level='DEBUG', timestamp='20201212 12:12:12.000')
         errors = ExecutionErrors()
         errors.messages.create(message=self.EXPECTED_ERROR_MESSAGE,
                                level='ERROR', timestamp='20201212 12:12:12.000')

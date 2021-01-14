@@ -133,8 +133,6 @@ class SuiteVisitor(object):
         if self.start_keyword(kw) is not False:
             if hasattr(kw, 'body'):
                 kw.body.visit(self)
-            if hasattr(kw, 'messages'):
-                kw.messages.visit(self)
             self.end_keyword(kw)
 
     def start_keyword(self, keyword):

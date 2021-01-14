@@ -1,4 +1,4 @@
-***Variables***
+*** Variables ***
 ${NOOP}  No Operation
 @{MANY ARGUMENTS}  hello  1  2  3
 @{ESCAPED}  1  \AND  2  Log Many  x\${escaped}  c:\\temp

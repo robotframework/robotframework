@@ -5,9 +5,9 @@ from os.path import abspath, basename, dirname, join
 
 from robot.utils.asserts import assert_equal, assert_true
 from robot.utils.platform import PY2
-from robot.result import Keyword, TestCase, TestSuite
+from robot.result import Keyword, Message, TestCase, TestSuite
 from robot.result.executionerrors import ExecutionErrors
-from robot.model import Message, Statistics
+from robot.model import Statistics
 from robot.reporting.jsmodelbuilders import *
 from robot.reporting.stringcache import StringIndex
 
@@ -139,16 +139,14 @@ class TestBuildTestSuite(unittest.TestCase):
         S1 = self._verify_suite(suite.suites[0],
                                 status=0, tests=(t,), stats=(1, 0, 1, 0))
         suite.tests[0].body = [Keyword(type=Keyword.FOR_TYPE), Keyword()]
-        suite.tests[0].body[0].body = [Keyword(type=Keyword.FOR_ITEM_TYPE)]
-        suite.tests[0].body[0].messages = [Message()]
+        suite.tests[0].body[0].body = [Keyword(type=Keyword.FOR_ITEM_TYPE), Message()]
         k = self._verify_keyword(suite.tests[0].body[0].body[0], type=4)
         m = self._verify_message(suite.tests[0].body[0].messages[0])
-        k1 = self._verify_keyword(suite.tests[0].body[0],
-                                  type=3, keywords=(k,), messages=(m,))
-        suite.tests[0].body[1].messages = [Message(), Message('msg', level='TRACE')]
+        k1 = self._verify_keyword(suite.tests[0].body[0], type=3, body=(k, m))
+        suite.tests[0].body[1].body = [Message(), Message('msg', level='TRACE')]
         m1 = self._verify_message(suite.tests[0].body[1].messages[0])
         m2 = self._verify_message(suite.tests[0].body[1].messages[1], 'msg', level=0)
-        k2 = self._verify_keyword(suite.tests[0].body[1], messages=(m1, m2))
+        k2 = self._verify_keyword(suite.tests[0].body[1], body=(m1, m2))
         T1 = self._verify_test(suite.tests[0], keywords=(k1, k2))
         T2 = self._verify_test(suite.tests[1], status=1)
         self._verify_suite(suite, status=0, keywords=(K1, K2), suites=(S1,),
@@ -158,15 +156,15 @@ class TestBuildTestSuite(unittest.TestCase):
     def test_timestamps(self):
         suite = TestSuite(starttime='20111205 00:33:33.333')
         suite.setup.config(kwname='s1', starttime='20111205 00:33:33.334')
-        suite.setup.messages.create('Message', timestamp='20111205 00:33:33.343')
-        suite.setup.messages.create(level='DEBUG', timestamp='20111205 00:33:33.344')
+        suite.setup.body.create_message('Message', timestamp='20111205 00:33:33.343')
+        suite.setup.body.create_message(level='DEBUG', timestamp='20111205 00:33:33.344')
         suite.tests.create(starttime='20111205 00:33:34.333')
         context = JsBuildingContext()
         model = SuiteBuilder(context).build(suite)
         self._verify_status(model[5], start=0)
         self._verify_status(model[-2][0][8], start=1)
         self._verify_mapped(model[-2][0][-1], context.strings,
-                            ((10, 2, 'Message'), (11, 1, '')))
+                            ((8, 10, 2, 'Message'), (8, 11, 1, '')))
         self._verify_status(model[-3][0][4], start=1000)
 
     def _verify_status(self, model, status=0, start=None, elapsed=0):
@@ -195,15 +193,15 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def _verify_keyword(self, keyword, type=0, kwname='', libname='', doc='',
                         args='', assign='', tags='', timeout='', status=0,
-                        start=None, elapsed=0, keywords=(), messages=()):
+                        start=None, elapsed=0, body=()):
         status = (status, start, elapsed)
         doc = '<p>%s</p>' % doc if doc else ''
         return self._build_and_verify(KeywordBuilder, keyword, type, kwname,
                                       libname, timeout, doc, args, assign, tags,
-                                      status, keywords, messages)
+                                      status, body)
 
     def _verify_message(self, msg, message='', level=2, timestamp=None):
-        return self._build_and_verify(MessageBuilder, msg, timestamp, level, message)
+        return self._build_and_verify(MessageBuilder, msg, 8, timestamp, level, message)
 
     def _verify_min_message_level(self, expected):
         assert_equal(self.context.min_level, expected)
@@ -254,20 +252,20 @@ class TestSplitting(unittest.TestCase):
     def test_suite_keywords(self):
         suite = self._get_suite_with_keywords()
         expected, _ = self._build_and_remap(suite)
-        expected_split = [expected[-2][0][-2], expected[-2][1][-2]]
-        expected[-2][0][-2], expected[-2][1][-2] = 1, 2
+        expected_split = [expected[-2][0][-1], expected[-2][1][-1]]
+        expected[-2][0][-1], expected[-2][1][-1] = 1, 2
         model, context = self._build_and_remap(suite, split_log=True)
         assert_equal(context.strings, ('*', '*root', '*k1', '*k2'))
         assert_equal(model, expected)
         assert_equal([strings for _, strings in context.split_results],
                      [('*', '*k1-k2'), ('*',)])
         assert_equal([self._to_list(remap(*res)) for res in context.split_results],
-                      expected_split)
+                     expected_split)
 
     def _get_suite_with_keywords(self):
         suite = TestSuite(name='root')
-        suite.setup.config(kwname='k1', type='setup')
-        suite.teardown.config(kwname='k2', type='teardown')
+        suite.setup.config(kwname='k1')
+        suite.teardown.config(kwname='k2')
         suite.setup.body.create_keyword('k1-k2')
         return suite
 
@@ -275,11 +273,11 @@ class TestSplitting(unittest.TestCase):
         suite = self._get_nested_suite_with_tests_and_keywords()
         expected, _ = self._build_and_remap(suite)
         expected_split = [expected[-4][0][-3][0][-1], expected[-4][0][-3][1][-1],
-                          expected[-4][1][-3][0][-1], expected[-4][1][-2][0][-2],
-                          expected[-2][0][-2], expected[-2][1][-2]]
+                          expected[-4][1][-3][0][-1], expected[-4][1][-2][0][-1],
+                          expected[-2][0][-1], expected[-2][1][-1]]
         (expected[-4][0][-3][0][-1], expected[-4][0][-3][1][-1],
-         expected[-4][1][-3][0][-1], expected[-4][1][-2][0][-2],
-         expected[-2][0][-2], expected[-2][1][-2]) = 1, 2, 3, 4, 5, 6
+         expected[-4][1][-3][0][-1], expected[-4][1][-2][0][-1],
+         expected[-2][0][-1], expected[-2][1][-1]) = 1, 2, 3, 4, 5, 6
         model, context = self._build_and_remap(suite, split_log=True)
         assert_equal(model, expected)
         assert_equal([self._to_list(remap(*res)) for res in context.split_results],
@@ -289,26 +287,32 @@ class TestSplitting(unittest.TestCase):
         suite = self._get_suite_with_keywords()
         sub = TestSuite(name='suite2')
         suite.suites = [self._get_suite_with_tests(), sub]
-        sub.setup.config(kwname='kw', type='setup')
-        sub.setup.body.create_keyword('skw')
-        sub.setup.body[0].messages.create('Message')
-        sub.tests.create('test', doc='tdoc')
-        sub.tests[0].body.create_keyword('koowee', doc='kdoc')
+        sub.setup.config(kwname='kw')
+        sub.setup.body.create_keyword('skw').body.create_message('Message')
+        sub.tests.create('test', doc='tdoc').body.create_keyword('koowee', doc='kdoc')
         return suite
 
     def test_message_linking(self):
         suite = self._get_suite_with_keywords()
-        msg = suite.setup.body[0].messages.create(
-                'Message', 'WARN', timestamp='20111204 22:04:03.210')
+        msg1 = suite.setup.body[0].body.create_message(
+            'Message 1', 'WARN', timestamp='20111204 22:04:03.210'
+        )
+        msg2 = suite.tests.create().body.create_keyword().body.create_message(
+            'Message 2', 'ERROR', timestamp='20111204 22:04:04.210'
+        )
         context = JsBuildingContext(split_log=True)
         SuiteBuilder(context).build(suite)
-        errors = ErrorsBuilder(context).build(ExecutionErrors([msg]))
+        errors = ErrorsBuilder(context).build(ExecutionErrors([msg1, msg2]))
         assert_equal(remap(errors, context.strings),
-                      ((0, 3, 'Message', 's1-k1-k1'),))
-        assert_equal(remap(context.link(msg), context.strings), 's1-k1-k1')
+                     ((8, -1000, 3, 'Message 1', 's1-k1-k1'),
+                      (8, 0, 4, 'Message 2', 's1-t1-k1')))
+        assert_equal(remap(context.link(msg1), context.strings), 's1-k1-k1')
+        assert_equal(remap(context.link(msg2), context.strings), 's1-t1-k1')
         assert_true('*s1-k1-k1' in context.strings)
+        assert_true('*s1-t1-k1' in context.strings)
         for res in context.split_results:
             assert_true('*s1-k1-k1' not in res[1])
+            assert_true('*s1-t1-k1' not in res[1])
 
 
 class TestPruneInput(unittest.TestCase):
@@ -323,8 +327,7 @@ class TestPruneInput(unittest.TestCase):
         tc.setup.config(kwname='tcs')
         tc.teardown.config(kwname='tct')
         tc.body = [Keyword(), Keyword(), Keyword()]
-        tc.body[0].body = [Keyword(), Keyword()]
-        tc.body[0].messages = [Message(), Message(), Message()]
+        tc.body[0].body = [Keyword(), Keyword(), Message(), Message(), Message()]
         tc.body[0].teardown.config(kwname='kt')
         s2 = self.suite.suites.create()
         t1 = s2.tests.create()
@@ -341,7 +344,7 @@ class TestPruneInput(unittest.TestCase):
         assert_equal(self.suite.suites[0].tests[0].setup.kwname, 'tcs')
         assert_equal(self.suite.suites[0].tests[0].teardown.kwname, 'tct')
         assert_equal(len(self.suite.suites[0].tests[0].body), 3)
-        assert_equal(len(self.suite.suites[0].tests[0].body[0].body), 2)
+        assert_equal(len(self.suite.suites[0].tests[0].body[0].body), 5)
         assert_equal(len(self.suite.suites[0].tests[0].body[0].messages), 3)
         assert_equal(self.suite.suites[0].tests[0].body[0].teardown.kwname, 'kt')
         assert_equal(len(self.suite.suites[1].tests[0].body), 1)
@@ -371,7 +374,7 @@ class TestPruneInput(unittest.TestCase):
 
     def test_prune_keyword(self):
         kw = self.suite.suites[0].tests[0].body[0]
-        assert_equal(len(kw.body), 2)
+        assert_equal(len(kw.body), 5)
         assert_equal(len(kw.messages), 3)
         KeywordBuilder(JsBuildingContext(prune_input=True)).build(kw)
         assert_equal(len(kw.body), 0)
@@ -452,19 +455,21 @@ class TestBuildErrors(unittest.TestCase):
         context = JsBuildingContext()
         model = ErrorsBuilder(context).build(self.errors)
         model = remap(model, context.strings)
-        assert_equal(model, ((0, 4, 'Error'), (42, 3, 'Warning')))
+        assert_equal(model, ((8, 0, 4, 'Error'), (8, 42, 3, 'Warning')))
 
     def test_linking(self):
         self.errors.messages.create('Linkable', 'WARN',
                                     timestamp='20111206 14:33:00.001')
         context = JsBuildingContext()
-        kw = TestSuite().tests.create().body.create_keyword()
-        MessageBuilder(context).build(kw.messages.create('Linkable', 'WARN',
-                                      timestamp='20111206 14:33:00.001'))
+        msg = TestSuite().tests.create().body.create_keyword().body.create_message(
+            'Linkable', 'WARN', timestamp='20111206 14:33:00.001'
+        )
+        MessageBuilder(context).build(msg)
         model = ErrorsBuilder(context).build(self.errors)
         model = remap(model, context.strings)
-        assert_equal(model, ((-1, 4, 'Error'), (41, 3, 'Warning'),
-                              (0, 3, 'Linkable', 's1-t1-k1')))
+        assert_equal(model, ((8, -1, 4, 'Error'),
+                             (8, 41, 3, 'Warning'),
+                             (8, 0, 3, 'Linkable', 's1-t1-k1')))
 
 
 if __name__ == '__main__':
