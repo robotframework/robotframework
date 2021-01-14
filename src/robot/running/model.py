@@ -324,7 +324,9 @@ class UserKeyword(object):
 
         Use :attr:`body` or :attr:`teardown` instead.
         """
-        kws = list(self.body) + [self.teardown] if self.teardown else []
+        kws = list(self.body)
+        if self.teardown:
+            kws.append(self.teardown)
         return Keywords(self, kws)
 
     @keywords.setter

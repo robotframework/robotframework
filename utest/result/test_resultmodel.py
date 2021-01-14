@@ -1,8 +1,8 @@
 import unittest
-from robot.utils.asserts import assert_equal, assert_false, assert_raises, assert_true
+import warnings
 
-from robot.model import Message
-from robot.result import Keyword, TestCase, TestSuite
+from robot.result import Keyword, Message, TestCase, TestSuite
+from robot.utils.asserts import assert_equal, assert_false, assert_raises, assert_true
 
 
 class TestSuiteStats(unittest.TestCase):
@@ -201,6 +201,17 @@ class TestModel(unittest.TestCase):
         assert_equal(item.skipped, True)
         assert_equal(item.status, 'SKIP')
         assert_raises(ValueError, setattr, item, 'skipped', False)
+
+    def test_keywords_deprecation(self):
+        kw = Keyword()
+        kw.body = [Keyword(), Message(), Keyword(), Keyword(), Message()]
+        kw.teardown.config(kwname='T')
+        with warnings.catch_warnings(record=True) as w:
+            kws = kw.keywords
+            assert_equal(list(kws), [kw.body[0], kw.body[2], kw.body[3], kw.teardown])
+            assert_true('deprecated' in str(w[0].message))
+        assert_raises(AttributeError, kws.append, Keyword())
+        assert_raises(AttributeError, setattr, kw, 'keywords', [])
 
 
 class TestKeywordChildren(unittest.TestCase):

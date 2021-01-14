@@ -108,7 +108,9 @@ class Keywords(ItemList):
 
     def __init__(self, parent=None, keywords=None):
         warnings.warn(self.deprecation_message, UserWarning)
-        ItemList.__init__(self, object, {'parent': parent}, keywords)
+        ItemList.__init__(self, object, {'parent': parent})
+        if keywords:
+            ItemList.extend(self, keywords)
 
     @property
     def setup(self):
