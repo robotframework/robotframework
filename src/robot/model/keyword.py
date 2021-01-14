@@ -36,21 +36,20 @@ class Keyword(BodyItem):
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
                  timeout=None, type=BodyItem.KEYWORD_TYPE, parent=None):
-        self.parent = parent
         self._name = name
         self.doc = doc
-        self.args = args      #: Keyword arguments as a list of strings.
-        self.assign = assign  #: Assigned variables as a list of strings.
+        self.args = args
+        self.assign = assign
         self.tags = tags
         self.timeout = timeout
-        #: Keyword type as a string. Values defined as constants on the class level.
         self.type = type
         self._teardown = None
         self._sort_key = -1
         self._next_child_sort_key = 0
+        self.parent = parent
 
     def __bool__(self):
-        return bool(self.name)
+        return self.name is not None
 
     @property
     def name(self):

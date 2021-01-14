@@ -334,7 +334,7 @@ class UserKeyword(object):
     @property
     def teardown(self):
         if self._teardown is None:
-            self._teardown = Keyword(parent=self, type=Keyword.TEARDOWN_TYPE)
+            self._teardown = Keyword(None, parent=self, type=Keyword.TEARDOWN_TYPE)
         return self._teardown
 
     @setter

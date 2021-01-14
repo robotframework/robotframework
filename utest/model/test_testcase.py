@@ -26,24 +26,24 @@ class TestTestCase(unittest.TestCase):
 
     def test_setup(self):
         assert_equal(self.test.setup.__class__, Keyword)
-        assert_equal(self.test.setup.name, '')
+        assert_equal(self.test.setup.name, None)
         assert_false(self.test.setup)
         self.test.setup.config(name='setup kw')
         assert_equal(self.test.setup.name, 'setup kw')
         assert_true(self.test.setup)
         self.test.setup = None
-        assert_equal(self.test.setup.name, '')
+        assert_equal(self.test.setup.name, None)
         assert_false(self.test.setup)
 
     def test_teardown(self):
         assert_equal(self.test.teardown.__class__, Keyword)
-        assert_equal(self.test.teardown.name, '')
+        assert_equal(self.test.teardown.name, None)
         assert_false(self.test.teardown)
         self.test.teardown.config(name='teardown kw')
         assert_equal(self.test.teardown.name, 'teardown kw')
         assert_true(self.test.teardown)
         self.test.teardown = None
-        assert_equal(self.test.teardown.name, '')
+        assert_equal(self.test.teardown.name, None)
         assert_false(self.test.teardown)
 
     def test_modify_tags(self):

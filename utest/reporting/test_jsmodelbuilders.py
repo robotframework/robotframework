@@ -337,7 +337,7 @@ class TestPruneInput(unittest.TestCase):
         assert_equal(self.suite.setup.kwname, 's')
         assert_equal(self.suite.teardown.kwname, 't')
         assert_equal(self.suite.suites[0].setup.kwname, 's1')
-        assert_equal(self.suite.suites[0].teardown.kwname, '')
+        assert_equal(self.suite.suites[0].teardown.kwname, None)
         assert_equal(self.suite.suites[0].tests[0].setup.kwname, 'tcs')
         assert_equal(self.suite.suites[0].tests[0].teardown.kwname, 'tct')
         assert_equal(len(self.suite.suites[0].tests[0].body), 3)

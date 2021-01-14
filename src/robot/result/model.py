@@ -63,13 +63,13 @@ class Keyword(model.Keyword):
     def __init__(self, kwname='', libname='', doc='', args=(), assign=(), tags=(),
                  timeout=None, type='kw', status='FAIL', starttime=None, endtime=None,
                  parent=None, lineno=None, source=None):
-        model.Keyword.__init__(self, '', doc, args, assign, tags, timeout, type, parent)
+        model.Keyword.__init__(self, None, doc, args, assign, tags, timeout, type, parent)
         self.messages = None
         self.body = None
         #: Name of the keyword without library or resource name.
-        self.kwname = kwname or ''
+        self.kwname = kwname
         #: Name of the library or resource containing this keyword.
-        self.libname = libname or ''
+        self.libname = libname
         #: Execution status as a string. Typically ``PASS``, ``FAIL`` or ``SKIP``,
         #: but library keywords have status ``NOT_RUN`` in the dry-ryn mode.
         self.status = status
@@ -133,6 +133,14 @@ class Keyword(model.Keyword):
         if not self.libname:
             return self.kwname
         return '%s.%s' % (self.libname, self.kwname)
+
+    @name.setter
+    def name(self, name):
+        if name is not None:
+            raise AttributeError("Cannot set 'name' attribute directly. "
+                                 "Set 'kwname' and 'libname' separately instead.")
+        self.kwname = None
+        self.libname = None
 
     @property
     def passed(self):
