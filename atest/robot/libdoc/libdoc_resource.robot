@@ -149,7 +149,7 @@ Verify Arguments Structure
         Run Keyword And Continue On Failure
         ...    Should Be Equal    ${repr}    ${exp_repr}
     END
-    Should Be True    len($arg_elems) == len($expected)
+    Should Be Equal    ${{len($arg_elems)}}    ${{len($expected)}}
 
 Get Element Optional Text
     [Arguments]    ${source}    ${xpath}

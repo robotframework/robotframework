@@ -22,8 +22,8 @@ from javax.lang.model.util import ElementFilter
 from javax.lang.model.type import TypeKind
 from javax.tools import DocumentationTool, ToolProvider
 
+from robot.running import ArgumentSpec
 from robot.utils import normalize, printable_name, split_tags_from_doc
-from robot.running.arguments import ArgumentSpec
 
 from .model import LibraryDoc, KeywordDoc
 
@@ -37,7 +37,6 @@ class JavaDocBuilder(object):
                             doc=self._get_doc(elements, type_element),
                             version=self._get_version(fields),
                             scope=self._get_scope(fields),
-                            named_args=False,
                             doc_format=self._get_doc_format(fields),
                             source=path)
         libdoc.inits = self._initializers(elements, constructors)
