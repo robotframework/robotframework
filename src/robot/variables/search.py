@@ -113,6 +113,10 @@ class VariableMatch(object):
                     and self.start == 0
                     and self.end == len(self.string))
 
+    def is_embedded_variable(self):
+        return bool(self.identifier
+                    and self.base)
+
     def is_scalar_variable(self):
         return self.identifier == '$' and self.is_variable()
 

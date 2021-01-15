@@ -37,9 +37,10 @@ class ArgumentResolver(object):
         positional, named = self._named_resolver.resolve(arguments, variables)
         if self.arg_validator.argspec.name == 'BuiltIn.Run Keyword':
             match = search_variable(positional[0])
-            if not match or not (variables.current.store.__contains__(match.base)) or match.is_variable():
-                positional, named = self._variable_replacer.replace(positional, named,
-                                                                    variables)
+            if variables:
+                if not match or not (variables.current.store.__contains__(match.base)) or match.is_variable() or match.is_embedded_variable():
+                    positional, named = self._variable_replacer.replace(positional, named,
+                                                                        variables)
         else:
             positional, named = self._variable_replacer.replace(positional, named,
                                                                 variables)
