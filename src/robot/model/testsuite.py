@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import setter
+from robot.utils import py3to2, setter
 
 from .configurer import SuiteConfigurer
 from .filter import Filter, EmptySuiteRemover
@@ -26,15 +26,16 @@ from .tagsetter import TagSetter
 from .testcase import TestCase, TestCases
 
 
+@py3to2
 class TestSuite(ModelObject):
     """Base model for single suite.
 
     Extended by :class:`robot.running.model.TestSuite` and
     :class:`robot.result.model.TestSuite`.
     """
-    __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors', 'rpa']
     test_class = TestCase    #: Internal usage only.
     fixture_class = Keyword  #: Internal usage only.
+    __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors', 'rpa']
 
     def __init__(self, name='', doc='', metadata=None, source=None, rpa=False,
                  parent=None):
@@ -191,6 +192,9 @@ class TestSuite(ModelObject):
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_suite(self)
+
+    def __str__(self):
+        return self.name
 
 
 class TestSuites(ItemList):

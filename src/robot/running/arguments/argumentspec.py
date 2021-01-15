@@ -115,6 +115,10 @@ class ArgumentSpec(object):
             yield ArgInfo(ArgInfo.VAR_NAMED, self.var_named,
                           get_type(self.var_named, notset))
 
+    def __bool__(self):
+        return any([self.positional_only, self.positional_or_named, self.var_positional,
+                    self.named_only, self.var_named])
+
     def __str__(self):
         return ', '.join(unicode(arg) for arg in self)
 

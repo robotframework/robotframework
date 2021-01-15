@@ -159,6 +159,7 @@ class TestStringRepr(unittest.TestCase):
     def _verify(self, expected, positional_or_named=None, **config):
         spec = ArgumentSpec(positional_or_named=positional_or_named, **config)
         assert_equal(unicode(spec), expected)
+        assert_equal(bool(spec), bool(expected))
 
 
 class TestArgInfo(unittest.TestCase):

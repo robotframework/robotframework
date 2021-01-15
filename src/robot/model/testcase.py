@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import setter
+from robot.utils import py3to2, setter
 
 from .body import Body
 from .fixture import create_fixture
@@ -23,15 +23,16 @@ from .modelobject import ModelObject
 from .tags import Tags
 
 
+@py3to2
 class TestCase(ModelObject):
     """Base model for a single test case.
 
     Extended by :class:`robot.running.model.TestCase` and
     :class:`robot.result.model.TestCase`.
     """
-    __slots__ = ['parent', 'name', 'doc', 'timeout']
     body_class = Body
     fixture_class = Keyword
+    __slots__ = ['parent', 'name', 'doc', 'timeout']
 
     def __init__(self, name='', doc='', tags=None, timeout=None, parent=None):
         self.name = name
@@ -99,6 +100,9 @@ class TestCase(ModelObject):
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_test(self)
+
+    def __str__(self):
+        return self.name
 
 
 class TestCases(ItemList):

@@ -15,7 +15,7 @@
 
 import warnings
 
-from robot.utils import setter, py3to2
+from robot.utils import setter, py3to2, unicode
 
 from .body import Body, BodyItem
 from .fixture import create_fixture
@@ -31,26 +31,20 @@ class Keyword(BodyItem):
     Extended by :class:`robot.running.model.Keyword` and
     :class:`robot.result.model.Keyword`.
     """
-    __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type',
-                 '_teardown', '_sort_key', '_next_child_sort_key']
+    repr_args = ('name', 'args', 'assign')
+    __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type', '_teardown']
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
                  timeout=None, type=BodyItem.KEYWORD_TYPE, parent=None):
-        self.parent = parent
         self._name = name
         self.doc = doc
-        self.args = args      #: Keyword arguments as a list of strings.
-        self.assign = assign  #: Assigned variables as a list of strings.
+        self.args = args
+        self.assign = assign
         self.tags = tags
         self.timeout = timeout
-        #: Keyword type as a string. Values defined as constants on the class level.
         self.type = type
         self._teardown = None
-        self._sort_key = -1
-        self._next_child_sort_key = 0
-
-    def __bool__(self):
-        return bool(self.name)
+        self.parent = parent
 
     @property
     def name(self):
@@ -62,7 +56,7 @@ class Keyword(BodyItem):
 
     @property    # Cannot use @setter because it would create teardowns recursively.
     def teardown(self):
-        if self._teardown is None:
+        if self._teardown is None and self:
             self._teardown = create_fixture(None, self, self.TEARDOWN_TYPE)
         return self._teardown
 
@@ -71,35 +65,9 @@ class Keyword(BodyItem):
         self._teardown = create_fixture(teardown, self, self.TEARDOWN_TYPE)
 
     @setter
-    def parent(self, parent):
-        """Parent test suite, test case or keyword."""
-        if parent and parent is not getattr(self, 'parent', None):
-            self._sort_key = getattr(parent, '_child_sort_key', -1)
-        return parent
-
-    @property
-    def _child_sort_key(self):
-        self._next_child_sort_key += 1
-        return self._next_child_sort_key
-
-    @setter
     def tags(self, tags):
         """Keyword tags as a :class:`~.model.tags.Tags` object."""
         return Tags(tags)
-
-    @property
-    def id(self):
-        """Keyword id in format like ``s1-t3-k1``.
-
-        See :attr:`TestSuite.id <robot.model.testsuite.TestSuite.id>` for
-        more information.
-        """
-        if not self.parent:
-            return 'k1'
-        if hasattr(self.parent, 'body') and self.parent.body:
-            return '%s-k%d' % (self.parent.id, self.parent.body.index(self)+1)
-        fixtures = [kw for kw in (self.parent.setup, self.parent.teardown) if kw]
-        return '%s-k%d' % (self.parent.id, fixtures.index(self)+1)
 
     @property
     def source(self):
@@ -107,7 +75,15 @@ class Keyword(BodyItem):
 
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
-        visitor.visit_keyword(self)
+        if self:
+            visitor.visit_keyword(self)
+
+    def __bool__(self):
+        return self.name is not None
+
+    def __str__(self):
+        parts = list(self.assign) + [self.name] + list(self.args)
+        return '    '.join(unicode(p) for p in parts)
 
 
 class Keywords(ItemList):
@@ -123,7 +99,9 @@ class Keywords(ItemList):
 
     def __init__(self, parent=None, keywords=None):
         warnings.warn(self.deprecation_message, UserWarning)
-        ItemList.__init__(self, object, {'parent': parent}, keywords)
+        ItemList.__init__(self, object, {'parent': parent})
+        if keywords:
+            ItemList.extend(self, keywords)
 
     @property
     def setup(self):

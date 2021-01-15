@@ -35,9 +35,9 @@ class Token(object):
 
     If :attr:`value` is not given when :class:`Token` is initialized and
     :attr:`type` is :attr:`IF`, :attr:`ELSE_IF`, :attr:`ELSE`, :attr:`FOR`,
-    :attr:`END` or :attr:`CONTINUATION`, the value is automatically set
-    to the correct marker value like ``'IF'`` or ``'ELSE IF'``. If :attr:`type`
-    is :attr:`EOL` in this case, the value is set to ``'\\n'``.
+    :attr:`END`, :attr:`WITH_NAME` or :attr:`CONTINUATION`, the value is
+    automatically set to the correct marker value like ``'IF'`` or ``'ELSE IF'``.
+    If :attr:`type` is :attr:`EOL` in this case, the value is set to ``'\\n'``.
     """
 
     SETTING_HEADER = 'SETTING HEADER'
@@ -143,7 +143,7 @@ class Token(object):
             value = {
                 Token.IF: 'IF', Token.ELSE_IF: 'ELSE IF', Token.ELSE: 'ELSE',
                 Token.FOR: 'FOR', Token.END: 'END', Token.CONTINUATION: '...',
-                Token.EOL: '\n'
+                Token.EOL: '\n', Token.WITH_NAME: 'WITH NAME'
             }.get(type, '')
         self.value = value
         self.lineno = lineno
