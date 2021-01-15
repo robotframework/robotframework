@@ -70,12 +70,14 @@ class Statement(ast.AST):
 
     @classmethod
     def from_params(cls, *args, **kwargs):
-        """Create statement from passed parameters. Required and optional arguments
-        should match class properties. Values are used to create matching tokens.
+        """Create statement from passed parameters.
+
+        Required and optional arguments should match class properties. Values are
+        used to create matching tokens.
 
         There is one notable difference for `Documentation` statement where
-        ``settings_header`` flag is used to determine if statement belongs to settings header
-        or test/keyword.
+        ``settings_header`` flag is used to determine if statement belongs to
+        settings header or test/keyword.
 
         Most implementations support following general properties:
         - `separator` whitespace inserted between each token. Default is four spaces.
