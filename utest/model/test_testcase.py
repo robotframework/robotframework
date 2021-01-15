@@ -107,16 +107,19 @@ class TestStringRepresentation(unittest.TestCase):
         self.ascii = TestCase(name='Kekkonen')
         self.non_ascii = TestCase(name=u'hyv\xe4 nimi')
 
-    def test_unicode(self):
-        assert_equal(unicode(self.empty), '')
-        assert_equal(unicode(self.ascii), 'Kekkonen')
-        assert_equal(unicode(self.non_ascii), u'hyv\xe4 nimi')
+    def test_str(self):
+        for tc, expected in [(self.empty, ''),
+                             (self.ascii, 'Kekkonen'),
+                             (self.non_ascii, u'hyv\xe4 nimi')]:
+            assert_equal(unicode(tc), expected)
+            if PY2:
+                assert_equal(str(tc), unicode(tc).encode('UTF-8'))
 
-    if PY2:
-        def test_str(self):
-            assert_equal(str(self.empty), '')
-            assert_equal(str(self.ascii), 'Kekkonen')
-            assert_equal(str(self.non_ascii), u'hyv\xe4 nimi'.encode('UTF-8'))
+    def test_repr(self):
+        for tc, expected in [(self.empty, "TestCase(name='')"),
+                             (self.ascii, "TestCase(name='Kekkonen')"),
+                             (self.non_ascii, u"TestCase(name=%r)" % u'hyv\xe4 nimi')]:
+            assert_equal(repr(tc), expected)
 
 
 class TestTestCases(unittest.TestCase):

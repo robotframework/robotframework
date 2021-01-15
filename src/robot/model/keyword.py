@@ -15,7 +15,7 @@
 
 import warnings
 
-from robot.utils import setter, py3to2
+from robot.utils import setter, py3to2, unicode
 
 from .body import Body, BodyItem
 from .fixture import create_fixture
@@ -31,6 +31,7 @@ class Keyword(BodyItem):
     Extended by :class:`robot.running.model.Keyword` and
     :class:`robot.result.model.Keyword`.
     """
+    repr_args = ('name', 'args', 'assign')
     __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type', '_teardown']
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
@@ -79,6 +80,10 @@ class Keyword(BodyItem):
 
     def __bool__(self):
         return self.name is not None
+
+    def __str__(self):
+        parts = list(self.assign) + [self.name] + list(self.args)
+        return '    '.join(unicode(p) for p in parts)
 
 
 class Keywords(ItemList):

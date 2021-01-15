@@ -27,6 +27,7 @@ class Message(BodyItem):
     that occurred during parsing or test execution.
     """
     type = BodyItem.MESSAGE_TYPE
+    repr_args = ('message', 'level')
     __slots__ = ['message', 'level', 'html', 'timestamp']
 
     def __init__(self, message='', level='INFO', html=False, timestamp=None, parent=None):

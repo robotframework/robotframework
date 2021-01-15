@@ -22,9 +22,10 @@ from .keyword import Keywords
 @py3to2
 @Body.register
 class For(BodyItem):
-    __slots__ = ['variables', 'flavor', 'values']
     type = BodyItem.FOR_TYPE
     body_class = Body
+    repr_args = ('variables', 'flavor', 'values')
+    __slots__ = ['variables', 'flavor', 'values']
 
     def __init__(self, variables=(), flavor='IN', values=(), parent=None):
         self.variables = variables
@@ -62,9 +63,10 @@ class For(BodyItem):
 @py3to2
 @Body.register
 class If(BodyItem):
-    __slots__ = ['condition', '_orelse']
     body_class = Body
     inactive = object()
+    repr_args = ('condition',)
+    __slots__ = ['condition', '_orelse']
 
     def __init__(self, condition=None, parent=None):
         self.condition = condition
@@ -112,13 +114,16 @@ class If(BodyItem):
             visitor.visit_if(self)
 
     def __str__(self):
-        if self.condition is self.inactive:
-            return u'INACTIVE'
+        if not self:
+            return u'None'
         if not isinstance(self.parent, If):
             return u'IF    %s' % self.condition
         if self.condition:
             return u'ELSE IF    %s' % self.condition
         return u'ELSE'
+
+    def __repr__(self):
+        return BodyItem.__repr__(self) if self else 'If(condition=INACTIVE)'
 
     def __bool__(self):
         return self.condition is not self.inactive
