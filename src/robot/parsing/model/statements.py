@@ -216,7 +216,7 @@ class SectionHeader(Statement):
                      Token.COMMENT_HEADER)
 
     @classmethod
-    def from_params(cls, type, name, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, type, name, eol=EOL):
         return cls([
             Token(type, name),
             Token('EOL', '\n')
