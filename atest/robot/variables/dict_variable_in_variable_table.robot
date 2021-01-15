@@ -15,12 +15,10 @@ Equals is not detected in variable name
 Invalid syntax
     Check Test Case    ${TESTNAME}
     Error In File    0    variables/dict_variable_in_variable_table.robot    16
-    ...    SEPARATOR=
-    ...    Setting variable '\&{BAD SYNTAX 1}' failed: Multiple errors:\n\n
-    ...    1) Invalid dictionary variable item 'this bad'.${SPACE}
-    ...    Items must use 'name=value' syntax or be dictionary variables themselves.\n\n
-    ...    2) Invalid dictionary variable item '\@{bad}'.${SPACE}
-    ...    Items must use 'name=value' syntax or be dictionary variables themselves.
+    ...    SEPARATOR=\n
+    ...    Setting variable '\&{BAD SYNTAX 1}' failed: Multiple errors:
+    ...    - Invalid dictionary variable item 'this bad'. Items must use 'name=value' syntax or be dictionary variables themselves.
+    ...    - Invalid dictionary variable item '\@{bad}'. Items must use 'name=value' syntax or be dictionary variables themselves.
     Error In File    1    variables/dict_variable_in_variable_table.robot    18
     ...    Setting variable '\&{BAD SYNTAX 2}' failed:
     ...    Invalid dictionary variable item 'bad\\=again'.

@@ -8,6 +8,7 @@ class ListenAll:
     def __init__(self, *path):
         path = ':'.join(path) if path else self._get_default_path()
         self.outfile = open(path, 'w')
+        self.start_attrs = []
 
     def _get_default_path(self):
         return os.path.join(os.getenv('TEMPDIR'), 'listen_all.txt')
@@ -16,20 +17,28 @@ class ListenAll:
         metastr = ' '.join('%s: %s' % (k, v) for k, v in attrs['metadata'].items())
         self.outfile.write("SUITE START: %s (%s) '%s' [%s]\n"
                            % (name, attrs['id'], attrs['doc'], metastr))
+        self.start_attrs.append(attrs)
 
     def start_test(self, name, attrs):
         tags = [str(tag) for tag in attrs['tags']]
-        self.outfile.write("TEST START: %s (%s, line %s) '%s' %s\n"
-                           % (name, attrs['id'], attrs['lineno'], attrs['doc'],
-                              tags))
+        self.outfile.write("TEST START: %s (%s, line %d) '%s' %s\n"
+                           % (name, attrs['id'], attrs['lineno'], attrs['doc'], tags))
+        self.start_attrs.append(attrs)
 
     def start_keyword(self, name, attrs):
-        args = [str(arg) for arg in attrs['args']]
         if attrs['assign']:
             assign = '%s = ' % ', '.join(attrs['assign'])
         else:
             assign = ''
-        self.outfile.write("KW START: %s%s %s\n" % (assign, name, args))
+        name = name + ' ' if name else ''
+        if attrs['args']:
+            args = '%s ' % [str(a) for a in attrs['args']]
+        else:
+            args = ''
+        kw_type = 'KW' if attrs['type'] == 'Keyword' else attrs['type'].upper()
+        self.outfile.write("%s START: %s%s%s(line %d)\n"
+                           % (kw_type, assign, name, args, attrs['lineno']))
+        self.start_attrs.append(attrs)
 
     def log_message(self, message):
         msg, level = self._check_message_validity(message)
@@ -51,7 +60,14 @@ class ListenAll:
         return message['message'], message['level']
 
     def end_keyword(self, name, attrs):
-        self.outfile.write("KW END: %s\n" % (attrs['status']))
+        kw_type = 'KW' if attrs['type'] == 'Keyword' else attrs['type'].upper()
+        self.outfile.write("%s END: %s\n" % (kw_type, attrs['status']))
+        self._validate_start_attrs_at_end(attrs)
+
+    def _validate_start_attrs_at_end(self, end_attrs):
+        start_attrs = self.start_attrs.pop()
+        for key in start_attrs:
+            assert end_attrs[key] == start_attrs[key]
 
     def end_test(self, name, attrs):
         if attrs['status'] == 'PASS':
@@ -59,10 +75,12 @@ class ListenAll:
         else:
             self.outfile.write("TEST END: %s %s\n"
                                % (attrs['status'], attrs['message']))
+        self._validate_start_attrs_at_end(attrs)
 
     def end_suite(self, name, attrs):
         self.outfile.write('SUITE END: %s %s\n'
-                            % (attrs['status'], attrs['statistics']))
+                           % (attrs['status'], attrs['statistics']))
+        self._validate_start_attrs_at_end(attrs)
 
     def output_file(self, path):
         self._out_file('Output', path)

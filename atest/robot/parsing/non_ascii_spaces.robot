@@ -37,3 +37,7 @@ In WITH NAME
 
 In FOR separator
     Check Test Case    ${TESTNAME}
+
+In ELSE IF
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[3].kws[0].msgs[0]}    Should be executed

@@ -28,21 +28,24 @@ class DocFormatter(object):
     _header_regexp = re.compile(r'<h([234])>(.+?)</h\1>')
     _name_regexp = re.compile('`(.+?)`')
 
-    def __init__(self, keywords, introduction, doc_format='ROBOT'):
+    def __init__(self, keywords, data_types, introduction, doc_format='ROBOT'):
         self._doc_to_html = DocToHtml(doc_format)
-        self._targets = self._get_targets(keywords, introduction,
+        self._targets = self._get_targets(keywords, data_types, introduction,
                                           robot_format=doc_format == 'ROBOT')
 
-    def _get_targets(self, keywords, introduction, robot_format):
+    def _get_targets(self, keywords, data_types, introduction, robot_format):
         targets = {
             'introduction': 'Introduction',
             'library introduction': 'Introduction',
             'importing': 'Importing',
             'library importing': 'Importing',
-            'keywords': 'Keywords'
+            'keywords': 'Keywords',
+            'data types': 'Data types'
         }
         for kw in keywords:
             targets[kw.name] = kw.name
+        for dt in data_types:
+            targets[dt.name] = dt.name
         if robot_format:
             for header in self._yield_header_targets(introduction):
                 targets[header] = header

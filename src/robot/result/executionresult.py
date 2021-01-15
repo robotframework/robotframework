@@ -73,7 +73,7 @@ class Result(object):
     def return_code(self):
         """Return code (integer) of test execution.
 
-        By default returns the number of failed critical tests (max 250),
+        By default returns the number of failed tests (max 250),
         but can be :func:`configured <configure>` to always return 0.
         """
         if self._status_rc:

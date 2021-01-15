@@ -42,9 +42,7 @@ def get_model(source, data_only=False, curdir=None):
     Use :func:`get_resource_model` or :func:`get_init_model` when parsing
     resource or suite initialization files, respectively.
     """
-    tokens = get_tokens(source, data_only)
-    statements = _tokens_to_statements(tokens, curdir)
-    return _statements_to_model(statements, source)
+    return _get_model(get_tokens, source, data_only, curdir)
 
 
 def get_resource_model(source, data_only=False, curdir=None):
@@ -53,9 +51,7 @@ def get_resource_model(source, data_only=False, curdir=None):
     Otherwise same as :func:`get_model` but the source is considered to be
     a resource file. This affects, for example, what settings are valid.
     """
-    tokens = get_resource_tokens(source, data_only)
-    statements = _tokens_to_statements(tokens, curdir)
-    return _statements_to_model(statements, source)
+    return _get_model(get_resource_tokens, source, data_only, curdir)
 
 
 def get_init_model(source, data_only=False, curdir=None):
@@ -65,9 +61,15 @@ def get_init_model(source, data_only=False, curdir=None):
     a suite initialization file. This affects, for example, what settings are
     valid.
     """
-    tokens = get_init_tokens(source, data_only)
+    return _get_model(get_init_tokens, source, data_only, curdir)
+
+
+def _get_model(token_getter, source, data_only=False, curdir=None):
+    tokens = token_getter(source, data_only)
     statements = _tokens_to_statements(tokens, curdir)
-    return _statements_to_model(statements, source)
+    model = _statements_to_model(statements, source)
+    model.validate_model()
+    return model
 
 
 def _tokens_to_statements(tokens, curdir=None):
@@ -85,6 +87,7 @@ def _tokens_to_statements(tokens, curdir=None):
 
 def _statements_to_model(statements, source=None):
     parser = FileParser(source=source)
+    model = parser.model
     stack = [parser]
     for statement in statements:
         while not stack[-1].handles(statement):
@@ -92,4 +95,4 @@ def _statements_to_model(statements, source=None):
         parser = stack[-1].parse(statement)
         if parser:
             stack.append(parser)
-    return stack[0].model
+    return model

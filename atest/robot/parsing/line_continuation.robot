@@ -68,7 +68,7 @@ Escaped empty cells before line continuation do not work
     Error in file    0    parsing/line_continuation.robot    11
     ...    Non-existing setting '\\'.
     Error in file    1    parsing/line_continuation.robot    43
-    ...    Invalid variable name '\\'.
+    ...    Setting variable '\\' failed: Invalid variable name '\\'.
     Check Test Case    Invalid usage in keyword call
 
 Invalid multiline usage

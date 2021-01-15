@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Any, List, Union
 
 
 class UnknownType(object):
@@ -59,4 +60,8 @@ def F_unknown_types(unknown: UnknownType, unrecognized: Ellipsis):
 
 def G_non_type_annotations(arg: 'One of the usages in PEP-3107',
                            *varargs: 'But surely feels odd...'):
+    pass
+
+
+def H_drop_typing_prefix(a: Any, b: List, c: Union[Any, List]):
     pass

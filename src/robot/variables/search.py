@@ -16,7 +16,7 @@
 import re
 
 from robot.errors import VariableError
-from robot.utils import is_string, py2to3, rstrip
+from robot.utils import is_string, py3to2, rstrip
 
 
 def search_variable(string, identifiers='$@&%*', ignore_errors=False):
@@ -70,7 +70,7 @@ def is_dict_assign(string, allow_assign_mark=False):
     return is_assign(string, '&', allow_assign_mark)
 
 
-@py2to3
+@py3to2
 class VariableMatch(object):
 
     def __init__(self, string, identifier=None, base=None, items=(),
@@ -120,11 +120,6 @@ class VariableMatch(object):
     def is_scalar_variable(self):
         return self.identifier == '$' and self.is_variable()
 
-    # The reason `is_list/dict_variable` check they don't have items is that
-    # at the moment e.g. `@{var}[item]` still returns a scalar value.
-    # This will change in RF 4.0 and then obviously this code must be changed:
-    # https://github.com/robotframework/robotframework/issues/3487
-
     def is_list_variable(self):
         return self.identifier == '@' and self.is_variable()
 
@@ -148,10 +143,10 @@ class VariableMatch(object):
     def is_dict_assign(self, allow_assign_mark=False):
         return self.identifier == '&' and self.is_assign(allow_assign_mark)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.identifier is not None
 
-    def __unicode__(self):
+    def __str__(self):
         if not self:
             return '<no match>'
         items = ''.join('[%s]' % i for i in self.items) if self.items else ''
@@ -183,11 +178,11 @@ class VariableSearcher(object):
             match.end += sum(len(i) for i in self.items) + 2 * len(self.items)
         return match
 
-    def _search(self, string, offset=0):
+    def _search(self, string):
         start = self._find_variable_start(string)
         if start == -1:
             return False
-        self.start = start + offset
+        self.start = start
         self._open_brackets += 1
         self.variable_chars = [string[start], '{']
         start += 2
@@ -290,7 +285,7 @@ def unescape_variable_syntax(item):
     return re.sub(r'(\\+)(?=(.+))', handle_escapes, item)
 
 
-@py2to3
+@py3to2
 class VariableIterator(object):
 
     def __init__(self, string, identifiers='$@&%', ignore_errors=False):
@@ -311,7 +306,7 @@ class VariableIterator(object):
     def __len__(self):
         return sum(1 for _ in self)
 
-    def __nonzero__(self):
+    def __bool__(self):
         try:
             next(iter(self))
         except StopIteration:

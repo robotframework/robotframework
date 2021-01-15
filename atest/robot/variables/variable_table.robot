@@ -49,16 +49,11 @@ Three dots on the same line should be interpreted as string
     Check Test Case     ${TEST NAME}
 
 Invalid variable name
-    Parsing Variable Should Have Failed    0    16
-    ...    Invalid variable name 'Invalid Name'.
-    Parsing Variable Should Have Failed    1    17
-    ...    Invalid variable name '\${}'.
-    Parsing Variable Should Have Failed    2    18
-    ...    Invalid variable name '\${not'.
-    Parsing Variable Should Have Failed    3    19
-    ...    Invalid variable name '\${not}[[]ok]'.
-    Parsing Variable Should Have Failed    4    20
-    ...    Invalid variable name '\${not \${ok}}'.
+    Parsing Variable Should Have Failed    0    16    Invalid Name
+    Parsing Variable Should Have Failed    1    17    \${}
+    Parsing Variable Should Have Failed    2    18    \${not
+    Parsing Variable Should Have Failed    3    19    \${not}[[]ok]
+    Parsing Variable Should Have Failed    4    20    \${not \${ok}}
 
 Scalar catenated from multile values
     Check Test Case     ${TEST NAME}
@@ -82,9 +77,10 @@ Using variable created from non-existing variable in imports fails
 
 *** Keywords ***
 Parsing Variable Should Have Failed
-    [Arguments]    ${index}    ${lineno}    @{message}
+    [Arguments]    ${index}    ${lineno}    ${name}
     Error In File    ${index}    variables/variable_table.robot    ${lineno}
-    ...    @{message}
+    ...    Setting variable '${name}' failed:
+    ...    Invalid variable name '${name}'.
 
 Creating Variable Should Have Failed
     [Arguments]    ${index}    ${name}    ${lineno}    @{message}

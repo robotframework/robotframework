@@ -1831,48 +1831,115 @@ Exceptions provided by Robot Framework
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework provides some exceptions that libraries can use for reporting
-failures and other events. These exceptions exposed via the `robot.api`__ package and
-contain the following:
+failures and other events. These exceptions are exposed via the `robot.api`__
+package and contain the following:
 
 `Failure`
-    Report failed validation.
+    Report failed validation. There is no practical difference in using this exception
+    compared to using the standard `AssertionError`. The main benefit of using this
+    exception is that its name is consistent with other provided exceptions.
 
-    There is no practical difference in using this exception compared to using
-    the standard `AssertionError`. The main benefit of using this exception is
-    that its name is consistent with other provided exceptions.
+`Error`
+    Report error in execution. Failures related to the system not behaving as expected
+    should typically be reported using the `Failure` exception or the standard
+    `AssertionError`. This exception can be used, for example, if the keyword is used
+    incorrectly. There is no practical difference, other than consistent naming with
+    other provided exceptions, compared to using this exception and the standard
+    `RuntimeError`.
 
 `ContinuableFailure`
     Report failed validation but allow continuing execution.
+    See the `Continuable failures`_ section below for more information.
 
-    See the `Continuing test execution despite of failures`_ section below
-    for more information, including how to create a custom exception that
-    has this same behavior.
-
-`Error`
-    Report error in execution.
-
-    Failures related to the system not behaving as expected should typically be
-    reported using the `Failure` exception or the standard `AssertionError`.
-    This exception can be used, for example, if the keyword is used incorrectly.
-    There is no practical difference, other than consistent naming with other
-    provided exceptions, compared to using this exception and the standard
-    `RuntimeError`.
+`SkipExecution`
+    Mark the executed test or task skipped_.
+    See the `Skipping tests`_ section below for more information.
 
 `FatalError`
     Report error that stops the whole execution.
-
-    See the `Stopping test execution`_ section below for more information,
-    including how to create a custom exception that has this same behavior.
-
-
-`SkipExecution`
-    Mark the executed test or task skipped.
-
-    FIXME! Link to skip section once that's written.
+    See the `Stopping test execution`_ section below for more information.
 
 __ https://robot-framework.readthedocs.io/en/master/autodoc/robot.api.html
 
-.. note:: All these exceptions are new in Robot Framework 4.0.
+.. note:: All these exceptions are new in Robot Framework 4.0. Other features than
+          skipping tests, which is also new in Robot Framework 4.0, are available
+          by other means in earlier versions.
+
+Continuable failures
+~~~~~~~~~~~~~~~~~~~~
+
+It is possible to `continue test execution even when there are failures`__.
+The easiest way to do that is using the provided__ `robot.api.ContinuableFailure`
+exception:
+
+.. sourcecode:: python
+
+    from robot.api import ContinuableFailure
+
+
+    def example_keyword():
+        if something_is_wrong():
+            raise ContinuableFailure('Something is wrong but execution can continue.')
+        ...
+
+An alternative is creating a custom exception that has a special
+`ROBOT_CONTINUE_ON_FAILURE` attribute set to a `True` value.
+This is demonstrated by the examples below.
+
+Python:
+
+.. sourcecode:: python
+
+    class MyContinuableError(RuntimeError):
+        ROBOT_CONTINUE_ON_FAILURE = True
+
+Java:
+
+.. sourcecode:: java
+
+    public class MyContinuableError extends RuntimeException {
+        public static final boolean ROBOT_CONTINUE_ON_FAILURE = true;
+    }
+
+__ `Continue on failure`_
+__ `Exceptions provided by Robot Framework`_
+
+Skipping tests
+~~~~~~~~~~~~~~
+
+It is possible to skip_ tests with a library keyword. The easiest way to
+do that is using the provided__ `robot.api.SkipExecution` exception:
+
+.. sourcecode:: python
+
+    from robot.api import SkipExecution
+
+
+    def example_keyword():
+        if test_should_be_skipped():
+            raise SkipExecution('Cannot proceed, skipping test.')
+        ...
+
+An alternative is creating a custom exception that has a special
+`ROBOT_SKIP_EXECUTION` attribute set to a `True` value.
+This is demonstrated by the examples below.
+
+Python:
+
+.. sourcecode:: python
+
+    class MySkippingError(RuntimeError):
+        ROBOT_SKIP_EXECUTION = True
+
+Java:
+
+.. sourcecode:: java
+
+    public class MySkippingError extends RuntimeException {
+        public static final boolean ROBOT_SKIP_EXECUTION = true;
+    }
+
+__ `Exceptions provided by Robot Framework`_
 
 Stopping test execution
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1910,50 +1977,7 @@ Java:
         public static final boolean ROBOT_EXIT_ON_FAILURE = true;
     }
 
-.. note:: The `robot.api.FatalError` exception is new in Robot Framework 4.0.
-
 __ `Stopping test execution gracefully`_
-__ `Exceptions provided by Robot Framework`_
-
-Continuing test execution despite of failures
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-It is possible to `continue test execution even when there are failures`__.
-The easiest way to do that is using the provided__ `robot.api.ContinuableFailure`
-exception:
-
-.. sourcecode:: python
-
-    from robot.api import ContinuableFailure
-
-
-    def example_keyword():
-        if something_is_wrong():
-            raise ContinuableFailure('Something is wrong but execution can continue.')
-        ...
-
-An alternative is creating a custom exception that has a special
-`ROBOT_CONTINUE_ON_FAILURE` attribute set to a `True` value.
-This is demonstrated by the examples below.
-
-Python:
-
-.. sourcecode:: python
-
-    class MyContinuableError(RuntimeError):
-        ROBOT_CONTINUE_ON_FAILURE = True
-
-Java:
-
-.. sourcecode:: java
-
-    public class MyContinuableError extends RuntimeException {
-        public static final boolean ROBOT_CONTINUE_ON_FAILURE = true;
-    }
-
-.. note:: The `robot.api.ContinuableFailure` exception is new in Robot Framework 4.0.
-
-__ `Continue on failure`_
 __ `Exceptions provided by Robot Framework`_
 
 Logging information

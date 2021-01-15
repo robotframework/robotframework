@@ -1,5 +1,5 @@
 *** Setting ***
-Suite Setup       Run Tests    --critical critical    standard_libraries/builtin/run_keyword_based_on_suite_stats
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword_based_on_suite_stats
 Resource          atest_resource.robot
 
 *** Test Case ***

@@ -58,65 +58,54 @@ class FileParser(Parser):
 
 
 class SectionParser(Parser):
+    model_class = None
+
+    def __init__(self, header):
+        Parser.__init__(self, self.model_class(header))
 
     def handles(self, statement):
         return statement.type not in Token.HEADER_TOKENS
 
     def parse(self, statement):
         self.model.body.append(statement)
+        return None
 
 
 class SettingSectionParser(SectionParser):
-
-    def __init__(self, header):
-        SectionParser.__init__(self, SettingSection(header))
+    model_class = SettingSection
 
 
 class VariableSectionParser(SectionParser):
-
-    def __init__(self, header):
-        SectionParser.__init__(self, VariableSection(header))
+    model_class = VariableSection
 
 
 class CommentSectionParser(SectionParser):
-
-    def __init__(self, header):
-        SectionParser.__init__(self, CommentSection(header))
+    model_class = CommentSection
 
 
 class ImplicitCommentSectionParser(SectionParser):
 
-    def __init__(self, statement):
-        SectionParser.__init__(self, CommentSection(body=[statement]))
+    def model_class(self, statement):
+        return CommentSection(body=[statement])
 
 
 class TestCaseSectionParser(SectionParser):
-
-    def __init__(self, header):
-        SectionParser.__init__(self, TestCaseSection(header))
+    model_class = TestCaseSection
 
     def parse(self, statement):
         if statement.type == Token.TESTCASE_NAME:
             parser = TestCaseParser(statement)
-            model = parser.model
-        else:    # Empty lines and comments before first test.
-            parser = None
-            model = statement
-        self.model.body.append(model)
-        return parser
+            self.model.body.append(parser.model)
+            return parser
+        return SectionParser.parse(self, statement)
 
 
 class KeywordSectionParser(SectionParser):
-
-    def __init__(self, header):
-        SectionParser.__init__(self, KeywordSection(header))
+    model_class = KeywordSection
 
     def parse(self, statement):
         if statement.type == Token.KEYWORD_NAME:
             parser = KeywordParser(statement)
-            model = parser.model
-        else:    # Empty lines and comments before first keyword.
-            parser = None
-            model = statement
-        self.model.body.append(model)
-        return parser
+            self.model.body.append(parser.model)
+            return parser
+        return SectionParser.parse(self, statement)

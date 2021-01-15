@@ -76,11 +76,32 @@ Skip In Suite Teardown
 Skip In Directory Suite Teardown
     Check Test Case    ${TEST NAME}
 
+Skip with Run Keyword and Ignore Error
+    Check Test Case    ${TEST NAME}
+
+Skip with Run Keyword and Expect Error
+    Check Test Case    ${TEST NAME}
+
+Skip with Run Keyword and Return Status
+    Check Test Case    ${TEST NAME}
+
+Skip with Wait Until Keyword Succeeds
+    Check Test Case    ${TEST NAME}
+
 Skipped with --skip
     Check Test Case    ${TEST NAME}
 
 Skipped with --SkipOnFailure
     Check Test Case    ${TEST NAME}
+
+Skipped with --SkipOnFailure when Failure in Test Setup
+    Check Test Case    ${TEST NAME}
+
+Skipped with --SkipOnFailure when Failure in Test Teardown
+    Check Test Case    ${TEST NAME}
+
+Skipped with --SkipOnFailure when Set Tags Used in Teardown
+    Check Test Case    Skipped with --SkipOnFailure when Set Tags Used in Teardown
 
 Using Skip Does Not Affect Passing And Failing Tests
     Check Test Case    Passing Test

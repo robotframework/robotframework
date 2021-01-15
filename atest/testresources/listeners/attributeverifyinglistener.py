@@ -15,12 +15,12 @@ START = 'doc starttime '
 END = START + 'endtime elapsedtime status '
 SUITE = 'id longname metadata source tests suites totaltests '
 TEST = 'id longname tags template originalname lineno '
-KW = ' kwname libname args assign tags type '
+KW = ' kwname libname args assign tags type lineno source'
 EXPECTED_TYPES = {'tags': [basestring], 'args': [basestring],
                   'assign': [basestring], 'metadata': {basestring: basestring},
                   'tests': [basestring], 'suites': [basestring],
                   'totaltests': int, 'elapsedtime': (int, long),
-                  'lineno': int}
+                  'lineno': (int, type(None)), 'source': (basestring, type(None))}
 
 
 def start_suite(name, attrs):
@@ -91,6 +91,8 @@ def _format(value):
     if isinstance(value, dict):
         return '{%s}' % ', '.join('%s: %s' % (_format(k), _format(v))
                                   for k, v in value.items())
+    if value is None:
+        return 'None'
     return 'FAILED! Invalid argument type %s.' % type(value)
 
 

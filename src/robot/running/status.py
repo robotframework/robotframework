@@ -15,10 +15,10 @@
 
 from robot.errors import ExecutionFailed, PassExecution
 from robot.model import TagPatterns
-from robot.utils import html_escape, py2to3, unic, test_or_task
+from robot.utils import html_escape, py3to2, unic, test_or_task
 
 
-@py2to3
+@py3to2
 class Failure(object):
 
     def __init__(self):
@@ -29,14 +29,14 @@ class Failure(object):
         self.test_skipped = None
         self.teardown_skipped = None
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(
             self.setup or self.test or self.teardown or
             self.setup_skipped or self.test_skipped or self.teardown_skipped
         )
 
 
-@py2to3
+@py3to2
 class Exit(object):
 
     def __init__(self, failure_mode=False, error_mode=False,
@@ -62,7 +62,7 @@ class Exit(object):
     def teardown_allowed(self):
         return not (self.skip_teardown_mode and self)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.failure or self.error or self.fatal
 
 
@@ -75,6 +75,7 @@ class _ExecutionStatus(object):
         self.exit = parent.exit if parent else Exit(*exit_modes)
         self.skipped = False
         self._teardown_allowed = False
+        self._rpa = False
         if parent:
             parent.children.append(self)
 
@@ -82,6 +83,11 @@ class _ExecutionStatus(object):
         if failure and not isinstance(failure, PassExecution):
             if failure.skip:
                 self.failure.setup_skipped = unic(failure)
+                self.skipped = True
+            elif self._skip_on_failure():
+                msg = self._skip_on_failure_message(
+                    'Setup failed:\n%s' % unic(failure))
+                self.failure.test = msg
                 self.skipped = True
             else:
                 self.failure.setup = unic(failure)
@@ -95,6 +101,11 @@ class _ExecutionStatus(object):
                 self.failure.teardown_skipped = unic(failure)
                 # Keep the Skip status in case the teardown failed
                 self.skipped = self.skipped or failure.skip
+            elif self._skip_on_failure():
+                msg = self._skip_on_failure_message(
+                    'Setup failed:\n%s' % unic(failure))
+                self.failure.test = msg
+                self.skipped = True
             else:
                 self.failure.teardown = unic(failure)
             self.exit.failure_occurred(failure)
@@ -121,6 +132,14 @@ class _ExecutionStatus(object):
         if self.failed:
             return 'FAIL'
         return 'PASS'
+
+    def _skip_on_failure(self):
+        return False
+
+    def _skip_on_failure_message(self, failure):
+        return ("%s failed but its tags matched '--SkipOnFailure' and it was "
+                   "marked skipped.\n\nOriginal failure:\n%s"
+                   % (test_or_task('{Test}', self._rpa), unic(failure)))
 
     @property
     def message(self):
@@ -156,17 +175,16 @@ class TestStatus(_ExecutionStatus):
                  rpa=False):
         _ExecutionStatus.__init__(self, parent)
         self.exit = parent.exit
-        self._skip_on_failure = self._should_skip_on_failure(
-            test, skip_on_failure, critical_tags)
+        self._test = test
+        self._skip_on_failure_tags = skip_on_failure
+        self._critical_tags = critical_tags
         self._rpa = rpa
 
     def test_failed(self, failure):
         if hasattr(failure, 'skip') and failure.skip:
             self.test_skipped(failure)
-        elif self._skip_on_failure:
-            msg = ("%s failed but its tags matched '--SkipOnFailure' and it was "
-                   "marked skipped.\n\nOriginal failure:\n%s"
-                   % (test_or_task('{Test}', self._rpa), unic(failure)))
+        elif self._skip_on_failure():
+            msg = self._skip_on_failure_message(failure)
             self.failure.test = msg
             self.skipped = True
         else:
@@ -177,13 +195,21 @@ class TestStatus(_ExecutionStatus):
         self.skipped = True
         self.failure.test_skipped = unic(reason)
 
-    def _should_skip_on_failure(self, test, skip_on_failure_tags,
-                                critical_tags):
-        critical_pattern = TagPatterns(critical_tags)
-        if critical_pattern and critical_pattern.match(test.tags):
+    def skip_if_needed(self):
+        if not self.skipped and self.failed and self._skip_on_failure():
+            msg = self._skip_on_failure_message(self.failure.test)
+            self.failure.test = msg
+            self.skipped = True
+            return True
+        return False
+
+    def _skip_on_failure(self):
+        critical_pattern = TagPatterns(self._critical_tags)
+        if critical_pattern and critical_pattern.match(self._test.tags):
             return False
-        skip_on_fail_pattern = TagPatterns(skip_on_failure_tags)
-        return skip_on_fail_pattern and skip_on_fail_pattern.match(test.tags)
+        skip_on_fail_pattern = TagPatterns(self._skip_on_failure_tags)
+        return skip_on_fail_pattern and \
+            skip_on_fail_pattern.match(self._test.tags)
 
     def _my_message(self):
         return TestMessage(self).message

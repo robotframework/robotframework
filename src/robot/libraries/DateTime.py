@@ -79,7 +79,7 @@ Examples:
 It is possible to use custom timestamps in both input and output.
 The custom format is same as accepted by Python's
 [http://docs.python.org/library/datetime.html#strftime-strptime-behavior|
-datatime.strptime] function. For example, the default timestamp discussed
+datetime.strptime] function. For example, the default timestamp discussed
 in the previous section would match ``%Y-%m-%d %H:%M:%S.%f``.
 
 When using a custom timestamp in input, it must be specified using
@@ -141,7 +141,7 @@ Examples:
 == Earliest supported date ==
 
 The earliest date that is supported depends on the date format and to some
-extend on the platform:
+extent on the platform:
 
 - Timestamps support year 1900 and above.
 - Python datetime objects support year 1 and above.

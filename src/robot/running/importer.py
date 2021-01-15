@@ -87,7 +87,7 @@ class Importer(object):
                     "(version %s, %s type, %s scope, %d keywords%s)"
                     % (name, seq2str2(args), lib.version or '<unknown>',
                        type, lib.scope, len(lib), listener))
-        if not lib and not lib.has_listener:
+        if not lib:
             LOGGER.warn("Imported library '%s' contains no keywords." % name)
 
     def _copy_library(self, orig, name):

@@ -10,12 +10,7 @@ on:
       - 'src/**'
       - 'utest/**'
       - '!**/*.rst'
-  pull_request:
-    paths:
-      - '.github/workflows/**'
-      - 'src/**'
-      - 'utest/**'
-      - '!**/*.rst'
+
 
 jobs:
   test_using_builtin_python:
@@ -60,7 +55,7 @@ jobs:
           python -m coverage xml -i
         if: always()
 
-      - uses: codecov/codecov-action@e34ee485244a5b5e6e4e1b96daa4a15c9073e4fc
+      - uses: codecov/codecov-action@1fc7722ded4708880a5aea49f2bfafb9336f0c8d
         with:
           name: ${{ matrix.python-version }}-${{ matrix.os }}
         if: always()

@@ -19,7 +19,7 @@ from robot.model import SuiteVisitor
 class SuiteTeardownFailureHandler(SuiteVisitor):
 
     def end_suite(self, suite):
-        teardown = suite.keywords.teardown
+        teardown = suite.teardown
         # Both 'PASS' and 'NOT_RUN' (used in dry-run) statuses are OK.
         if teardown and teardown.status == 'FAIL':
             suite.suite_teardown_failed(teardown.message)

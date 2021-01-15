@@ -5,7 +5,7 @@ window.testdata = function () {
     var _statistics = null;
     var LEVELS = ['TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FAIL', 'SKIP'];
     var STATUSES = ['FAIL', 'PASS', 'NOT_RUN', 'SKIP'];
-    var KEYWORDS = ['KEYWORD', 'SETUP', 'TEARDOWN', 'FOR', 'VAR'];
+    var KEYWORDS = ['KEYWORD', 'SETUP', 'TEARDOWN', 'FOR', 'VAR', 'IF', 'ELSE IF', 'ELSE'];
 
     function addElement(elem) {
         if (!elem.id)
@@ -159,9 +159,9 @@ window.testdata = function () {
     function suiteStats(stats) {
         return {
             total: stats[0],
-            passed: stats[1],
-            failed: stats[2],
-            skipped: stats[3]
+            pass: stats[1],
+            fail: stats[2],
+            skip: stats[3]
         };
     }
 

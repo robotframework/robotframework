@@ -13,13 +13,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import html_escape, py2to3, setter
+from robot.utils import html_escape, py3to2, setter
 
 from .itemlist import ItemList
 from .modelobject import ModelObject
 
 
-@py2to3
+@py3to2
 class Message(ModelObject):
     """A message created during the test execution.
 
@@ -59,7 +59,7 @@ class Message(ModelObject):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_message(self)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.message
 
 

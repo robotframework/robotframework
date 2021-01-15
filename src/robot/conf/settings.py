@@ -24,12 +24,12 @@ from robot.result.keywordremover import KeywordRemover
 from robot.result.flattenkeywordmatcher import validate_flatten_keyword
 from robot.utils import (abspath, create_destination_directory, escape,
                          format_time, get_link_path, html_escape, is_list_like,
-                         py2to3, split_args_from_name_or_path)
+                         py3to2, split_args_from_name_or_path)
 
 from .gatherfailed import gather_failed_tests, gather_failed_suites
 
 
-@py2to3
+@py3to2
 class _BaseSettings(object):
     _cli_opts = {'RPA'              : ('rpa', None),
                  'Name'             : ('name', None),
@@ -310,7 +310,7 @@ class _BaseSettings(object):
     def __contains__(self, setting):
         return setting in self._cli_opts
 
-    def __unicode__(self):
+    def __str__(self):
         return '\n'.join('%s: %s' % (name, self._opts[name])
                          for name in sorted(self._opts))
 
@@ -360,10 +360,6 @@ class _BaseSettings(object):
     @property
     def critical_tags(self):
         return self['Critical']
-
-    @property
-    def non_critical_tags(self):
-        return self['NonCritical']
 
     @property
     def remove_keywords(self):
@@ -574,8 +570,6 @@ class RebotSettings(_BaseSettings):
             'empty_suite_ok': self.process_empty_suite,
             'remove_keywords': self.remove_keywords,
             'log_level': self['LogLevel'],
-            'critical_tags': self.critical_tags,
-            'non_critical_tags': self.non_critical_tags,
             'start_time': self['StartTime'],
             'end_time': self['EndTime']
         }

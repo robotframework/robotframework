@@ -26,6 +26,7 @@ class LibdocXmlWriter(object):
         self._write_start(libdoc, writer)
         self._write_keywords('inits', 'init', libdoc.inits, libdoc.source, writer)
         self._write_keywords('keywords', 'kw', libdoc.keywords, libdoc.source, writer)
+        self._write_data_types(libdoc.data_types, writer)
         self._write_end(writer)
 
     def _write_start(self, libdoc, writer):
@@ -40,6 +41,7 @@ class LibdocXmlWriter(object):
         writer.start('keywordspec', attrs)
         writer.element('version', libdoc.version)
         writer.element('doc', libdoc.doc)
+        self._write_tags(libdoc.all_tags, writer)
 
     def _add_source_info(self, attrs, item, outfile, lib_source=None):
         if item.source and item.source != lib_source:
@@ -72,18 +74,21 @@ class LibdocXmlWriter(object):
     def _write_keywords(self, list_name, kw_type, keywords, lib_source, writer):
         writer.start(list_name)
         for kw in keywords:
-            attrs = self._get_start_attrs(kw_type, kw, lib_source, writer)
+            attrs = self._get_start_attrs(kw, lib_source, writer)
             writer.start(kw_type, attrs)
             self._write_arguments(kw, writer)
             writer.element('doc', kw.doc)
             writer.element('shortdoc', kw.shortdoc)
             if kw_type == 'kw' and kw.tags:
-                writer.start('tags')
-                for tag in kw.tags:
-                    writer.element('tag', tag)
-                writer.end('tags')
+                self._write_tags(kw.tags, writer)
             writer.end(kw_type)
         writer.end(list_name)
+
+    def _write_tags(self, tags, writer):
+        writer.start('tags')
+        for tag in tags:
+            writer.element('tag', tag)
+        writer.end('tags')
 
     def _write_arguments(self, kw, writer):
         writer.start('arguments', {'repr': unicode(kw.args)})
@@ -93,22 +98,51 @@ class LibdocXmlWriter(object):
                                  'repr': unicode(arg)})
             if arg.name:
                 writer.element('name', arg.name)
-            if arg.type is not arg.NOTSET:
-                writer.element('type', arg.type_repr)
+            for type_repr in arg.types_reprs:
+                writer.element('type', type_repr)
             if arg.default is not arg.NOTSET:
                 writer.element('default', arg.default_repr)
             writer.end('arg')
         writer.end('arguments')
 
-    def _get_start_attrs(self, kw_type, kw, lib_source, writer):
-        if kw_type == 'init':
-            attrs = {}
-        else:
-            attrs = {'name': kw.name}
-            if kw.deprecated:
-                attrs['deprecated'] = 'true'
+    def _get_start_attrs(self, kw, lib_source, writer):
+        attrs = {'name': kw.name}
+        if kw.deprecated:
+            attrs['deprecated'] = 'true'
         self._add_source_info(attrs, kw, writer.output, lib_source)
         return attrs
+
+    def _write_data_types(self, data_types, writer):
+        writer.start('datatypes')
+        if data_types.enums:
+            writer.start('enums')
+            for enum in data_types.enums:
+                writer.start('enum', {'name': enum.name})
+                writer.element('doc', enum.doc)
+                writer.start('members')
+                for member in enum.members:
+                    writer.element('member', attrs=member)
+                writer.end('members')
+                writer.end('enum')
+            writer.end('enums')
+        if data_types.typed_dicts:
+            writer.start('typeddicts')
+            for typ_dict in data_types.typed_dicts:
+                writer.start('typeddict', {'name': typ_dict.name})
+                writer.element('doc', typ_dict.doc)
+                writer.start('items')
+                for item in typ_dict.items:
+                    if item['required'] is None:
+                        item.pop('required')
+                    elif item['required']:
+                        item['required'] = 'true'
+                    else:
+                        item['required'] = 'false'
+                    writer.element('item', attrs=item)
+                writer.end('items')
+                writer.end('typeddict')
+            writer.end('typeddicts')
+        writer.end('datatypes')
 
     def _write_end(self, writer):
         writer.end('keywordspec')

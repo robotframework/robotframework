@@ -12,6 +12,11 @@ Dotted
     Stdout Should Be    warnings_and_errors_stdout_dotted.txt
     Stderr Should Be    warnings_and_errors_stderr.txt
 
+Dotted with skip
+    Run tests    --CONSOLE DOTTED --SKIPONFAILURE FAIL --NAME X    misc/pass_and_fail.robot misc/suites
+    Stdout Should Be    dotted_with_skip.txt
+    Stderr Should Be    empty.txt
+
 Dotted with width
     Run tests    --Console dotted --ConsoleWidth 10    misc/suites misc/suites
     Stdout Should Be    warnings_and_errors_stdout_dotted_10.txt
@@ -46,7 +51,7 @@ Invalid
     Stdout Should Be    empty.txt
     Stderr Should Be    warnings_and_errors_stderr.txt
 
-Dotted does not show details for skipped
+Dotted does not show details for skipped after fatal error
     Run tests    -.    running/fatal_exception
     Stdout Should Be    dotted_fatal_error.txt
     Stderr Should Be    empty.txt

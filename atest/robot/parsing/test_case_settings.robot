@@ -123,13 +123,13 @@ Setup and teardown with variables
 
 Override setup and teardown using empty settings
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.setup}    ${NONE}
-    Should Be Equal    ${tc.teardown}    ${NONE}
+    Setup Should Not Be Defined     ${tc}
+    Teardown Should Not Be Defined     ${tc}
 
 Override setup and teardown using NONE
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.setup}    ${NONE}
-    Should Be Equal    ${tc.teardown}    ${NONE}
+    Setup Should Not Be Defined     ${tc}
+    Teardown Should Not Be Defined     ${tc}
 
 Setup and teardown with escaping
     Verify Setup    One backslash \\

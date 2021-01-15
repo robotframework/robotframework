@@ -41,10 +41,39 @@
 </script>
 
 <script type="text/javascript">
+
+    function linkArgs(container, dataTypes, usageName) {
+      container.forEach(function(keyword) {
+        let user = usageName || keyword.name
+          keyword.args.forEach(function (arg) {
+            arg.linked = arg.types.filter(function(value) {
+              return dataTypes.filter(function (dataType) {
+                 if (dataType.name === value) {
+                   if (dataType.usage.indexOf(user) === -1) {
+                    dataType.usage.push(user);
+                   }
+                   return true;
+                 }
+                 return false;
+              })[0];
+            });
+          })
+        }
+      );
+    }
+
     $(document).ready(function() {
         parseTemplates();
         document.title = libdoc.name;
         storage.init('libdoc');
+        libdoc.dataTypes = libdoc.dataTypes.enums.concat(libdoc.dataTypes.typedDicts);
+        libdoc.dataTypes = libdoc.dataTypes.map(function(dt) {
+          dt.usage = [];
+          return dt;
+        })
+        libdoc.dataTypes.sort(compare)
+        linkArgs(libdoc.inits, libdoc.dataTypes, "Importing");
+        linkArgs(libdoc.keywords, libdoc.dataTypes);
         renderTemplate('base', libdoc, $('body'));
         if (libdoc.inits.length) {
             renderTemplate('importing', libdoc);
@@ -52,6 +81,7 @@
         renderTemplate('shortcuts', libdoc);
         renderTemplate('keyword-shortcuts', libdoc);
         renderTemplate('keywords', libdoc);
+        renderTemplate('data-types', libdoc);
         renderTemplate('footer', libdoc);
         const params = util.parseQueryString(window.location.search.slice(1));
         let selectedTag = "";
@@ -59,7 +89,7 @@
             selectedTag = params["tag"];
             tagSearch(selectedTag, window.location.hash);
         }
-        if (libdoc.all_tags.length) {
+        if (libdoc.tags.length) {
           libdoc.selectedTag = selectedTag;
           renderTemplate('tags-shortcuts', libdoc);
         }
@@ -71,6 +101,16 @@
           }
       }, 0);
     });
+
+     function compare( a, b ) {
+      if ( a.name < b.name ){
+        return -1;
+      }
+      if ( a.name > b.name ){
+        return 1;
+      }
+      return 0;
+    }
 
     function parseTemplates() {
         $('script[type="text/x-jquery-tmpl"]').map(function (idx, elem) {
@@ -117,7 +157,10 @@
       document.getElementById('hamburger-menu-input').checked = false;
     }
 
-    function markMatches(pattern, include) {
+    function markMatches(pattern, include, givenSearchTime, callback) {
+       if (givenSearchTime && givenSearchTime !== searchTime) {
+         return;
+       }
         let patternRegexp = util.regexpEscape(pattern);
         if (include.tagsExact) {
             patternRegexp = '^' + patternRegexp + '$';
@@ -125,7 +168,7 @@
         let regexp = new RegExp(patternRegexp, 'i');
         let test = regexp.test.bind(regexp);
         let result = {};
-        let matchCount = 0;
+        let keywordMatchCount = 0;
         result.keywords = util.map(libdoc.keywords, function (kw) {
             kw = $.extend({}, kw);
             kw.hidden =  !(include.name && test(kw.name)) &&
@@ -133,21 +176,27 @@
                           !(include.doc && test($(kw.doc).text())) &&
                           !(include.tags && util.any(util.map(kw.tags, test)));
             if (!kw.hidden)
-                matchCount++;
-            return kw
+                keywordMatchCount++;
+            return kw;
         });
         renderTemplate('keyword-shortcuts', result);
         renderTemplate('keywords', result);
-        if (libdoc.all_tags.length) {
+        if (libdoc.tags.length) {
           libdoc.selectedTag = include.tagsExact ? pattern : "";
           renderTemplate('tags-shortcuts', libdoc);
         }
-        document.getElementById("keyword-statistics-header").innerText = matchCount + ' / ' + result.keywords.length;
-        if (matchCount === 0)
+        document.getElementById("keyword-statistics-header").innerText = keywordMatchCount + ' / ' + result.keywords.length;
+        if (keywordMatchCount === 0)
             $('#keywords-container').find('table').empty();
+        if (callback) {
+          requestAnimationFrame(callback);
+        }
     }
 
-    function highlightMatches(string, include) {
+    function highlightMatches(string, include, givenSearchTime) {
+       if (givenSearchTime && givenSearchTime !== searchTime) {
+         return;
+       }
         const shortcuts = $('#shortcuts-container').find('.match');
         const keywords = $('#keywords-container').find('.match');
         if (include.name) {
@@ -181,16 +230,24 @@
       resetKeywords();
     }
 
+    let searchTime = 0;
+
     function searching() {
+      searchTime = Date.now();
       const value = document.getElementsByClassName('search-input')[0].value;
       const include = {name: true,
                        args: true,
                        doc: true,
                        tags: true};
       if (value) {
-          markMatches(value, include);
-          highlightMatches(value, include);
-          document.getElementById('keyword-shortcuts-container').scrollTop = 0;
+        requestAnimationFrame(function () {
+          markMatches(value, include, searchTime,
+                  function () {
+                    highlightMatches(value, include, searchTime);
+                    document.getElementById('keyword-shortcuts-container').scrollTop = 0;
+                  }
+          );
+        });
       } else {
           resetKeywords();
       }
@@ -224,10 +281,14 @@
     function resetKeywords() {
         renderTemplate('keyword-shortcuts', libdoc);
         renderTemplate('keywords', libdoc);
-        if (libdoc.all_tags.length) {
+        renderTemplate('data-types', libdoc);
+        if (libdoc.tags.length) {
             renderTemplate('tags', libdoc);
         }
         document.getElementById("keyword-statistics-header").innerText = ''+libdoc.keywords.length;
+        if (libdoc.dataTypes.length) {
+          document.getElementById("type-statistics-header").innerText = '' + libdoc.dataTypes.length;
+        }
         history.replaceState && history.replaceState(null, '', location.pathname);
     }
 
@@ -261,6 +322,7 @@
       </div>
       <div id="importing-container"></div>
       <div id="keywords-container"></div>
+      <div id="data-types-container"></div>
       <div id="footer-container"></div>
     </div>
     <a class="libdoc-title" href="#library-documentation-top">
@@ -307,22 +369,11 @@
               <div class="args">
                 <h4>Arguments</h4>
                 <div class="arguments-list-container">
-                <div class="arguments-list">
-                {{each args}}
-                  <span class="arg-name {{if $value.required}}arg-required{{else}}arg-optional{{/if}}" title="Argument name">{{if $value.kind === 'VAR_POSITIONAL'}}*{{/if}}{{if $value.kind === 'VAR_NAMED'}}**{{/if}}${$value.name}</span>
-
-                  {{if $value.default !== null}}
-                  <div class="arg-default-container">
-                  <span class="arg-default-eq">=</span>
-                  <span class="arg-default-value" title="Argument default value">${$value.default}</span>
+                  <div class="arguments-list">
+                  {{each args}}
+                    {{tmpl($value) 'argument-template'}}
+                  {{/each}}
                   </div>
-                  {{/if}}
-
-                  {{if $value.type}}
-                  <span class="arg-type" title="Argument '${$value.name}' will be converter to type ${$value.type}">&lt;${$value.type}&gt;</span>
-                  {{/if}}
-                {{/each}}
-                </div>
                 </div>
               </div>
           {{/if}}
@@ -340,15 +391,16 @@
 <script type="text/x-jquery-tmpl" id="shortcuts-template">
     <div class="keywords-overview">
       <div class="keyword-search-box">
-        <input placeholder="Search" type="text" class="search-input" onkeyup="delay(searching, 500)"/>
+        <input placeholder="Search" type="text" class="search-input" onkeydown="delay(searching, 150)"/>
         <button class="clear-search" onclick="clearSearch()">&#10005;</button>
       </div>
-      {{if all_tags.length}}
+      {{if tags.length}}
       <select id="tags-shortcuts-container" onchange="location = this.value;">
       </select>
       {{/if}}
       <div class="keywords-overview-header-row">
-      <h4>Keywords (<span id="keyword-statistics-header"></span>)</h4>
+      <h4>Keywords (<span id="keyword-statistics-header"></span>)
+      </h4>
       <button id="toggle-keyword-shortcuts" onclick="toggleShortcuts()">+</button>
       </div>
       <ul class="shortcuts" id="keyword-shortcuts-container">
@@ -382,7 +434,7 @@
 
 <script type="text/x-jquery-tmpl" id="tags-shortcuts-template">
   <option value="javascript:clearTagSearch()" {{if selectedTag === ""}}selected{{/if}}>- Show all tags -</option>
-  {{each all_tags}}
+  {{each tags}}
     <option value="javascript:tagSearch('${$value}')" {{if selectedTag === $value}}selected{{/if}}>${$value}</a>
     </option>
   {{/each}}
@@ -418,39 +470,123 @@
               <div class="args">
                 <h4>Arguments</h4>
                 <div class="arguments-list-container">
-                <div class="arguments-list">
-                {{each args}}
-                  <span class="arg-name {{if $value.required}}arg-required{{else}}arg-optional{{/if}}" title="Argument name">{{if $value.kind === 'VAR_POSITIONAL'}}*{{/if}}{{if $value.kind === 'VAR_NAMED'}}**{{/if}}${$value.name}</span>
-
-                  {{if $value.default !== null}}
-                  <div class="arg-default-container">
-                  <span class="arg-default-eq">=</span>
-                  <span class="arg-default-value" title="Argument default value">${$value.default}</span>
+                  <div class="arguments-list">
+                  {{each args}}
+                    {{tmpl($value) 'argument-template'}}
+                  {{/each}}
                   </div>
-                  {{/if}}
-
-                  {{if $value.type}}
-                  <span class="arg-type" title="Argument '${$value.name}' will be converter to type ${$value.type}">&lt;${$value.type}&gt;</span>
-                  {{/if}}
-                {{/each}}
-                </div>
                 </div>
               </div>
             {{/if}}
-            {{if libdoc.all_tags.length}}
-            <div class="tags">
+            {{if libdoc.tags.length && tags.length}}
+              <div class="tags">
                 <h4>Tags</h4>
                 {{each tags}}
-                <a href="javascript:tagSearch('${$value}')"
-                   title="Show keywords with this tag">${$value}</a>{{if $index < tags.length-1}},<br>{{/if}}
+                  <a href="javascript:tagSearch('${$value}')"
+                    title="Show keywords with this tag">${$value}</a>{{if $index < tags.length-1}},<br>{{/if}}
                 {{/each}}
-            </div>
+              </div>
             {{/if}}
           </div>
           {{if doc}}
             <div class="kw-docs">
               <h4>Documentation</h4>
               <div class="kwdoc doc">{{html doc}}</div>
+            </div>
+          {{/if}}
+       </div>
+    </div>
+</script>
+
+<script type="text/x-jquery-tmpl" id="argument-template">
+<span class="arg-name {{if required}}arg-required{{else}}arg-optional{{/if}}" title="Argument name">
+{{if kind === 'VAR_POSITIONAL'}}<span class="arg-kind" title="Variable number of arguments">*</span>{{/if}}
+{{if kind === 'VAR_NAMED'}}<span class="arg-kind" title="Variable number of named arguments">**</span>{{/if}}
+{{if kind === 'NAMED_ONLY'}}<span class="arg-kind" title="Named only argument">&#x1F3F7;</span>{{/if}}
+{{if kind === 'POSITIONAL_ONLY'}}<span class="arg-kind" title="Positional only argument">&#x27F6;</span>{{/if}}
+${name}
+</span>
+
+{{if defaultValue !== null}}
+  <div class="arg-default-container">
+    <span class="arg-default-eq">=</span>
+    <span class="arg-default-value" title="Default value that is used if no value is given">${defaultValue}</span>
+  </div>
+{{/if}}
+
+{{if types.length}}
+  <span class="arg-type" title="Argument '${name}' will be converter to type ${types}">
+    ${( $data.linked = linked ),''}
+    {{each types}}&lt;{{if $data.linked.indexOf($value) > -1}}<a class="type" href="#${$value}">${$value}</a>{{else}}<span class="type">${$value}</span>{{/if}}&gt;<span class="or"></span>{{/each}}
+  </span>
+{{/if}}
+</script>
+
+
+<script type="text/x-jquery-tmpl" id="data-types-template">
+    {{if dataTypes.length}}
+    <h2 id="Data types">Data types</h2>
+    <div class="data-types">
+        {{each dataTypes}}
+        {{tmpl($value) 'data-type-template'}}
+        {{/each}}
+    </div>
+    {{/if}}
+</script>
+
+<script type="text/x-jquery-tmpl" id="data-type-template">
+    <div class="data-type-container {{if hidden}}no-{{/if}}match" id="${name}">
+       <div class="data-type-name">
+            <h2>Type:
+            <a class="dt-name" href="#${encodeURIComponent(name)}"
+               title="Link to this data type">${name}</a>
+            </h2>
+       </div>
+       <div class="data-type-content">
+          {{if members}}
+            <div class="dt-members">
+              <h4>Allowed Values</h4>
+              <ul class="enum-type-members">
+                {{each members}}
+                <li>
+                  <span class="enum-member">${$value.name}</span>
+                </li>
+                {{/each}}
+              </ul>
+            </div>
+          {{else items}}
+            <div class="dt-items">
+              <h4>Dictionary Structure</h4>
+                <div class="typed-dict-annotation">
+                <span class="typed-dict-item"
+                >{{{each items}}<br><span
+                  {{if required !== null}}
+                    class="td-item {{if required}}required-key{{else}}optional-key{{/if}}"
+                    title="{{if required}}required-key{{else}}optional-key{{/if}}"
+                  {{else}}
+                    class="td-item"
+                  {{/if}}
+                 >'${key}': </span>
+                   <span class="td-type">&lt;${type}&gt;</span>{{/each}}<br>}</span>
+                </div>
+            </div>
+          {{/if}}
+          {{if doc}}
+            <div class="dt-docs">
+              <h4>Documentation</h4>
+              <div class="dtdoc doc">{{html doc}}</div>
+            </div>
+          {{/if}}
+          {{if usage}}
+            <div class="dt-usage">
+              <h4>Used in</h4>
+              <ul class="dt-usage-list">
+                {{each usage}}
+                <li>
+                <a href="#${encodeURIComponent($value)}">${$value}</a>
+                </li>
+                {{/each}}
+              </ul>
             </div>
           {{/if}}
        </div>

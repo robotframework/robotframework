@@ -2,3 +2,4 @@
 docutils >= 0.9; platform_python_implementation != 'IronPython'
 enum34; python_version < '3.0'
 jsonschema; platform_python_implementation != 'IronPython' and platform_python_implementation != 'Jython'
+typing_extensions; python_version == '3.6' or python_version == '3.7'

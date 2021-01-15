@@ -150,6 +150,27 @@ Skip in Teardown with Pass Execution in Body
     Pass Execution    First we pass
     [Teardown]    Skip  Then we skip
 
+Skip with Run Keyword and Ignore Error
+    [Documentation]    SKIP Skip from within
+    Run Keyword and Ignore Error    Skip    Skip from within
+    Fail    Should not be executed!
+
+Skip with Run Keyword and Expect Error
+    [Documentation]    SKIP Skip from within
+    Run Keyword and Expect Error    An error that never happens    Skip    Skip from within
+    Fail    Should not be executed!
+
+Skip with Run Keyword and Return Status
+    [Documentation]    SKIP Skip from within
+    Run Keyword and Return Status    Skip    Skip from within
+    Fail    Should not be executed!
+
+Skip with Wait Until Keyword Succeeds
+    [Documentation]    SKIP Skip from within
+    Wait Until Keyword Succeeds    3x    1s
+    ...    Skip    Skip from within
+    Fail    Should not be executed!
+
 Skipped with --skip
     [Documentation]    SKIP ${TEST_OR_TASK} skipped with '--skip' command line option.
     [Tags]    skip-this
@@ -163,6 +184,37 @@ Skipped with --SkipOnFailure
     ...    Ooops, we fail!
     [Tags]    skip-on-failure
     Fail    Ooops, we fail!
+
+Skipped with --SkipOnFailure when Failure in Test Setup
+    [Documentation]    SKIP
+    ...    ${TEST_OR_TASK} failed but its tags matched '--SkipOnFailure' and it was marked skipped.
+    ...
+    ...    Original failure:
+    ...    Setup failed:
+    ...    failure in setup
+    [Tags]    skip-on-failure
+    [Setup]    Fail    failure in setup
+    No Operation
+
+Skipped with --SkipOnFailure when Failure in Test Teardown
+    [Documentation]    SKIP
+    ...    ${TEST_OR_TASK} failed but its tags matched '--SkipOnFailure' and it was marked skipped.
+    ...
+    ...    Original failure:
+    ...    Setup failed:
+    ...    failure in teardown
+    [Tags]    skip-on-failure
+    [Teardown]    Fail    failure in teardown
+    No Operation
+
+Skipped with --SkipOnFailure when Set Tags Used in Teardown
+    [Documentation]    SKIP
+    ...    ${TEST_OR_TASK} failed but its tags matched '--SkipOnFailure' and it was marked skipped.
+    ...
+    ...    Original failure:
+    ...    Ooops, we fail!
+    Fail    Ooops, we fail!
+    [Teardown]    Set Tags    skip-on-failure
 
 --NonCritical Is an Alias for --SkipOnFailure
     [Documentation]    SKIP

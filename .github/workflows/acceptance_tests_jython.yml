@@ -1,6 +1,9 @@
 name: Acceptance tests (Jython)
 
 on:
+  pull_request:
+    paths:
+      - '.github/workflows/acceptance_tests_jython.yml'
   schedule:
     - cron: '0 */12 * * *'
 
@@ -38,7 +41,7 @@ jobs:
           architecture: 'x64'
 
       - name: Setup Java ${{ matrix.java }}
-        uses: actions/setup-java@v1.3.0
+        uses: actions/setup-java@v1.4.3
         with:
           java-version: ${{ matrix.java }}
           architecture: 'x64'
@@ -85,16 +88,25 @@ jobs:
           path: atest/results
         if: always() && job.status == 'failure'
 
-      - name: Upload results
+      - name: Upload results on *nix
         run: |
           echo '<html><head><meta http-equiv = "refresh" content =" 0 ; url = /report.html"></head></html>' > atest/results/index.html
           zip -r -j site.zip atest/results > no_output 2>&1
           curl -s -H "Content-Type: application/zip" -H "Authorization: Bearer ${{ secrets.NETLIFY_TOKEN }}" --data-binary "@site.zip" https://api.netlify.com/api/v1/sites > response.json
-          echo "::set-env name=REPORT_URL::$(cat response.json|python -c "import sys, json; print('https://' + json.load(sys.stdin)['subdomain'] + '.netlify.com')")"
-          echo "::set-env name=JOB_STATUS::$(python -c "print('${{ job.status }}'.lower())")"
-        if: always() && job.status == 'failure'
+          echo "REPORT_URL=$(cat response.json|python -c "import sys, json; print('https://' + json.load(sys.stdin)['subdomain'] + '.netlify.com')")" >> $GITHUB_ENV
+          echo "JOB_STATUS=$(python -c "print('${{ job.status }}'.lower())")" >> $GITHUB_ENV
+        if: always() && job.status == 'failure' && runner.os != 'Windows'
 
-      - uses: octokit/request-action@57ec46afcc4c58c813af3afe67e57ced1ea9f165
+      - name: Upload results on Windows
+        run: |
+          echo '<html><head><meta http-equiv = "refresh" content =" 0 ; url = /report.html"></head></html>' > atest/results/index.html
+          zip -r -j site.zip atest/results > no_output 2>&1
+          curl -s -H "Content-Type: application/zip" -H "Authorization: Bearer ${{ secrets.NETLIFY_TOKEN }}" --data-binary "@site.zip" https://api.netlify.com/api/v1/sites > response.json
+          echo "REPORT_URL=$(cat response.json|python -c "import sys, json; print('https://' + json.load(sys.stdin)['subdomain'] + '.netlify.com')")" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "JOB_STATUS=$(python -c "print('${{ job.status }}'.lower())")" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        if: always() && job.status == 'failure' && runner.os == 'Windows'
+
+      - uses: octokit/request-action@ef2f898a5c7cdffca2a715a6b7e8db895f4d7228
         name: Update status with Github Status API
         id: update_status
         with:

@@ -13,13 +13,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from itertools import chain
 import json
 import re
+from itertools import chain
 
 from robot.model import Tags
-from robot.utils import IRONPYTHON, getshortdoc, get_timestamp, Sortable, setter, unicode
+from robot.utils import (IRONPYTHON, getshortdoc, get_timestamp,
+                         Sortable, setter, unicode)
 
+from .datatypes import DataTypeCatalog
 from .htmlutils import HtmlToText, DocFormatter
 from .writer import LibdocWriter
 from .output import LibdocOutput
@@ -38,6 +40,7 @@ class LibraryDoc(object):
         self.doc_format = doc_format
         self.source = source
         self.lineno = lineno
+        self.data_types = DataTypeCatalog()
         self.inits = []
         self.keywords = []
 
@@ -56,7 +59,10 @@ class LibraryDoc(object):
         entries = re.findall(r'^\s*=\s+(.+?)\s+=\s*$', doc, flags=re.MULTILINE)
         if self.inits:
             entries.append('Importing')
-        entries.append('Keywords')
+        if self.keywords:
+            entries.append('Keywords')
+        if self.data_types:
+            entries.append('Data types')
         return '\n'.join('- `%s`' % entry for entry in entries)
 
     @setter
@@ -65,17 +71,22 @@ class LibraryDoc(object):
 
     @setter
     def inits(self, inits):
-        return self._add_parent(inits)
+        return self._process_keywords(inits)
 
     @setter
     def keywords(self, kws):
-        return self._add_parent(kws)
+        return self._process_keywords(kws)
 
-    def _add_parent(self, kws):
+    def _process_keywords(self, kws):
         for keyword in kws:
+            self._add_types_from_keyword(keyword)
             keyword.parent = self
             keyword.generate_shortdoc()
         return sorted(kws)
+
+    def _add_types_from_keyword(self, keyword):
+        for arg in keyword.args:
+            self.data_types.update(arg.types)
 
     @property
     def all_tags(self):
@@ -86,28 +97,32 @@ class LibraryDoc(object):
             LibdocWriter(format).write(self, outfile)
 
     def convert_docs_to_html(self):
-        formatter = DocFormatter(self.keywords, self.doc, self.doc_format)
+        formatter = DocFormatter(self.keywords, self.data_types, self.doc,
+                                 self.doc_format)
         self._doc = formatter.html(self.doc, intro=True)
         self.doc_format = 'HTML'
         for init in self.inits:
             init.doc = formatter.html(init.doc)
         for keyword in self.keywords:
             keyword.doc = formatter.html(keyword.doc)
+        for type_doc in self.data_types:
+            type_doc.doc = formatter.html(type_doc.doc)
 
     def to_dictionary(self):
         return {
             'name': self.name,
             'doc': self.doc,
             'version': self.version,
+            'generated': get_timestamp(daysep='-', millissep=None),
             'type': self.type,
             'scope': self.scope,
-            'doc_format': self.doc_format,
+            'docFormat': self.doc_format,
             'source': self.source,
             'lineno': self.lineno,
+            'tags': list(self.all_tags),
             'inits': [init.to_dictionary() for init in self.inits],
             'keywords': [kw.to_dictionary() for kw in self.keywords],
-            'generated': get_timestamp(daysep='-', millissep=None),
-            'all_tags': list(self.all_tags)
+            'dataTypes': self.data_types.to_dictionary()
         }
 
     def to_json(self, indent=None):
@@ -183,8 +198,8 @@ class KeywordDoc(Sortable):
     def _arg_to_dict(self, arg):
         return {
             'name': arg.name,
-            'type': arg.type_repr,
-            'default': arg.default_repr,
+            'types': arg.types_reprs,
+            'defaultValue': arg.default_repr,
             'kind': arg.kind,
             'required': arg.required,
             'repr': unicode(arg)

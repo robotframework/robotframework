@@ -34,7 +34,7 @@
     "doc": {
       "type": "string"
     },
-    "doc_format": {
+    "docFormat": {
       "type": "string",
       "enum": [
         "ROBOT",
@@ -52,8 +52,8 @@
       "type": "integer",
       "minimum": -1
     },
-    "all_tags": {
-      "$id": "#/properties/all_tags",
+    "tags": {
+      "$id": "#/properties/tags",
       "type": "array",
       "items": {
         "type": "string"
@@ -73,6 +73,26 @@
         "$ref": "#/definitions/keyword"
       },
       "uniqueItems": true
+    },
+    "dataTypes": {
+      "type": "object",
+      "title": "Keyword schema",
+      "properties": {
+        "enums": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/enumType"
+          },
+          "uniqueItems": true
+        },
+        "typedDicts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/typedDictType"
+          },
+          "uniqueItems": true
+        }
+      }
     }
   },
   "required": [
@@ -82,12 +102,12 @@
     "type",
     "scope",
     "doc",
-    "doc_format",
+    "docFormat",
     "source",
     "lineno",
     "inits",
     "keywords",
-    "all_tags"
+    "tags"
   ],
   "definitions": {
     "keyword": {
@@ -110,7 +130,7 @@
         "args": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/keyword_arg"
+            "$ref": "#/definitions/keywordArg"
           }
         },
         "doc": {
@@ -138,13 +158,13 @@
         }
       }
     },
-    "keyword_arg": {
-      "$id": "#/definitions/keyword_arg",
+    "keywordArg": {
+      "$id": "#/definitions/keywordArg",
       "type": "object",
       "required": [
         "name",
-        "type",
-        "default",
+        "types",
+        "defaultValue",
         "kind",
         "required",
         "repr"
@@ -153,13 +173,13 @@
         "name": {
           "type": "string"
         },
-        "type": {
-          "type": [
-            "string",
-            "null"
-          ]
+        "types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
-        "default": {
+        "defaultValue": {
           "type": [
             "string",
             "null"
@@ -182,6 +202,105 @@
         },
         "repr": {
           "type": "string"
+        }
+      }
+    },
+    "enumType": {
+      "$id": "#/definitions/enumType",
+      "type": "object",
+      "title": "Enum DataType schema",
+      "required": [
+        "name",
+        "type",
+        "doc",
+        "members"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "doc": {
+          "type": "string"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/enumMember"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "enumMember": {
+      "$id": "#/definitions/enum_member",
+      "type": "object",
+      "title": "Enum Member schema",
+      "required": [
+        "name",
+        "value"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "typedDictType": {
+      "$id": "#/definitions/typedDictType",
+      "type": "object",
+      "title": "TypedDict Type schema",
+      "required": [
+        "name",
+        "type",
+        "doc",
+        "items"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "doc": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/typedDictItem"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "typedDictItem": {
+      "$id": "#/definitions/typedDictItem",
+      "type": "object",
+      "title": "TypedDict Item schema",
+      "required": [
+        "key",
+        "type",
+        "required"
+      ],
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "required": {
+          "type": [
+            "boolean",
+            "null"
+          ]
         }
       }
     }

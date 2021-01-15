@@ -26,10 +26,10 @@ XUnit Option Given
     Should Be Equal    ${root.tag}    testsuite
     ${tests} =    Get Elements    ${root}    testcase
     Length Should Be    ${tests}    19
-    Should Be Equal    ${tests[7].attrib['name']}    Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо
+    Element Attribute Should be    ${tests}[7]    name    Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо
     ${failures} =    Get Elements    ${root}    testcase/failure
     Length Should Be    ${failures}    5
-    Should Be Equal    ${failures[0].attrib['message']}    ${MESSAGES}
+    Element Attribute Should be    ${failures}[0]    message    ${MESSAGES}
 
 Times in xUnit output
     Previous Test Should Have Passed    XUnit Option Given

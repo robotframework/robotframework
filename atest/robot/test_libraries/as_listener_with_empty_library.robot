@@ -9,5 +9,6 @@ Empty library should not cause warning when it is listener
     ...     MESSAGE We do nothing
     ...     END TEST
     ...     CLOSE
-    ...     CLOSE\n
+    ...     CLOSE
+    ...     CLOSING GLOBAL\n
     Stderr Should Not Contain     WARN

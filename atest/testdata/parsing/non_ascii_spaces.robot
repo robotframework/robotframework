@@ -71,3 +71,14 @@ In FOR separator
     FOR    ${tag}    IN　ZIP    ${TEST TAGS}
         Fail    Should not be executed
     END
+
+In ELSE IF
+    IF    False
+        Fail    Should not be executed
+    ELSE IF    False
+        Fail    Should not be executed
+    ELSE IF    False
+        Fail    Should not be executed
+    ELSE　IF    True
+        Log    Should be executed
+    END

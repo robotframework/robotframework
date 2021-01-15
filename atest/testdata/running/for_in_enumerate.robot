@@ -17,6 +17,34 @@ Values from list variable
     END
     Should Be True    ${result} == ['0:a', '1:b', '2:c', '3:d']
 
+Start
+    FOR    ${index}    ${item}    IN ENUMERATE    ${1}    ${2}    ${3}    ${4}    ${5}    start=1
+        Should Be Equal    ${index}    ${item}
+    END
+    FOR    ${index}    ${item}    IN ENUMERATE    xxx    start=xxx    start=${100}
+        @{result} =     Create List    @{result}    ${index}:${item}
+    END
+    Should Be True    ${result} == ['100:xxx', '101:start=xxx']
+
+Escape start
+    FOR    ${index}    ${item}    IN ENUMERATE    start=ok    start\=ok
+        Should Be Equal    ${item}    start=ok
+        @{result} =     Create List    @{result}    ${index}
+   END
+    Should Be True    ${result} == [0, 1]
+
+Invalid start
+    [Documentation]    FAIL    ValueError: Invalid FOR IN ENUMERATE start value 'invalid'.
+    FOR    ${index}    ${item}    IN ENUMERATE    xxx    start=invalid
+        Fail    Should not be executed
+    END
+
+Invalid variable in start
+    [Documentation]    FAIL    Variable '${invalid}' not found.
+    FOR    ${index}    ${item}    IN ENUMERATE    xxx    start=${invalid}
+        Fail    Should not be executed
+    END
+
 Index and two items
     @{values} =    Create List    a    b    c    d    e    f
     FOR    ${i}    ${item1}    ${item2}    IN ENUMERATE    @{values}
@@ -51,5 +79,17 @@ Wrong number of variables
     ...    Number of FOR IN ENUMERATE loop values should be multiple of its \
     ...    variables (excluding the index). Got 3 variables but 4 values.
     FOR    ${index}    ${item1}    ${item2}    ${item3}    IN ENUMERATE    @{VALUES}
+        Fail    Should not be executed.
+    END
+
+No values
+    [Documentation]    FAIL    FOR loop has no loop values.
+    FOR    ${index}    ${item}    IN ENUMERATE
+        Fail    Should not be executed.
+    END
+
+No values with start
+    [Documentation]    FAIL    FOR loop has no loop values.
+    FOR    ${index}    ${item}    IN ENUMERATE    start=0
         Fail    Should not be executed.
     END

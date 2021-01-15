@@ -70,7 +70,6 @@ class PythonArgumentParser:
         except Exception:  # Can raise pretty much anything
             return handler.__annotations__
         self._remove_mismatching_type_hints(type_hints, spec.argument_names)
-        self._remove_optional_none_type_hints(type_hints, spec.defaults)
         return type_hints
 
     def _remove_mismatching_type_hints(self, type_hints, argument_names):
@@ -80,20 +79,3 @@ class PythonArgumentParser:
         mismatch = set(type_hints) - set(argument_names)
         for name in mismatch:
             type_hints.pop(name)
-
-    def _remove_optional_none_type_hints(self, type_hints, defaults):
-        # If argument has None as a default, typing.get_type_hints adds
-        # optional None to the information it returns. We don't want that.
-        for arg in defaults:
-            if defaults[arg] is None and arg in type_hints:
-                type_ = type_hints[arg]
-                if getattr(type_, '__origin__', None) is typing.Union:
-                    try:
-                        types = type_.__args__
-                    except AttributeError:
-                        # Python 3.5.2's typing uses __union_params__ instead
-                        # of __args__. This block can likely be safely removed
-                        # when Python 3.5 support is dropped
-                        types = type_.__union_params__
-                    if len(types) == 2 and types[1] is type(None):
-                        type_hints[arg] = types[0]

@@ -91,17 +91,22 @@ Preparation
 Release notes
 -------------
 
-1. Set GitHub user information into shell variables to ease copy-pasting the
-   following command::
+1. Create personal `GitHub access token`__ to be able to access issue tracker
+   programmatically. The token needs only the `repo/public_repo` scope.
+
+2. Set GitHub user information into shell variables to ease running the
+   ``invoke release-notes`` command in the next step::
 
       GITHUB_USERNAME=<username>
-      GITHUB_PASSWORD=<password>
+      GITHUB_ACCESS_TOKEN=<token>
 
-   Alternatively, supply the credentials when running that command.
+   ``<username>`` is your normal GitHub user name and ``<token>`` is the personal
+   access token generated in the previous step. Alternatively this information can
+   be given when running the command in the next step.
 
-2. Generate a template for the release notes::
+3. Generate a template for the release notes::
 
-      invoke release-notes -w -v $VERSION -u $GITHUB_USERNAME -p $GITHUB_PASSWORD
+      invoke release-notes -w -v $VERSION -u $GITHUB_USERNAME -p $GITHUB_ACCESS_TOKEN
 
    The ``-v $VERSION`` option can be omitted if `version is already set
    <Set version_>`__. Omit the ``-w`` option if you just want to get release
@@ -112,9 +117,9 @@ Release notes
    (e.g. ``rc1``) or with a label of an earlier preview release (e.g.
    ``alpha1``, ``beta2``).
 
-2. Fill the missing details in the generated release notes template.
+4. Fill the missing details in the generated release notes template.
 
-3. Make sure that issues have correct information:
+5. Make sure that issues have correct information:
 
    - All issues should have type (bug, enhancement or task) and priority set.
      Notice that issues with the task type are automatically excluded from
@@ -127,15 +132,17 @@ Release notes
    issue tracker than in the generated release notes. This allows re-generating
    the list of issues later if more issues are added.
 
-4. Add, commit and push::
+6. Add, commit and push::
 
       git add doc/releasenotes/rf-$VERSION.rst
       git commit -m "Release notes for $VERSION" doc/releasenotes/rf-$VERSION.rst
       git push
 
-5. Update later if necessary. Writing release notes is typically the biggest
+7. Update later if necessary. Writing release notes is typically the biggest
    task when generating releases, and getting everything done in one go is
    often impossible.
+
+__ https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token
 
 Set version
 -----------

@@ -85,6 +85,12 @@ log files are always created and their default name is
 
    An example of a log file with keyword details visible
 
+.. figure:: src/ExecutingTestCases/log_skipped.png
+   :target: src/ExecutingTestCases/log_skipped.html
+   :width: 500
+
+   An example of a log file with skipped and passed tests
+
 Report file
 ~~~~~~~~~~~
 
@@ -94,13 +100,14 @@ as well as a list of all executed test cases. When both reports and
 logs are generated, the report has links to the log file for easy
 navigation to more detailed information.  It is easy to see the
 overall test execution status from report, because its background
-color is green, if all `critical tests`_ pass, and bright red
-otherwise.
+color is green, if all tests pass and bright red if any test fails.
+Background can also be yellow, which means that all tests were skipped_.
 
 The command line option :option:`--report (-r)` determines where
 report files are created. Similarly as log files, reports are always
 created unless `NONE` is used as a value, and their default
 name is :file:`report.html`.
+FIXME: new screenshots of report / log.
 
 .. figure:: src/ExecutingTestCases/report_passed.png
    :target: src/ExecutingTestCases/report_passed.html
@@ -132,17 +139,9 @@ XUnit output files are not created unless the command line option
 :option:`--xunit (-x)` is used explicitly. This option requires a path to
 the generated xUnit file, relatively to the `output directory`_, as a value.
 
-Because xUnit reports do not have the concept of `non-critical tests`__,
-all tests in an xUnit report will be marked either passed or failed, with no
-distinction between critical and non-critical tests. If this is a problem,
-:option:`--xunitskipnoncritical` option can be used to mark non-critical tests
-as skipped. Skipped tests will get a message containing the actual status and
-possible message of the test case in a format like `FAIL: Error message`.
-
 __ http://en.wikipedia.org/wiki/XUnit
 __ http://jenkins-ci.org
 __ https://wiki.jenkins-ci.org/display/JENKINS/Robot+Framework+Plugin
-__ `Setting criticality`_
 
 Debug file
 ~~~~~~~~~~
@@ -191,7 +190,8 @@ Setting background colors
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 By default the `report file`_ has a green background when all the
-`critical tests`_ pass and a red background otherwise.  These colors
+tests pass, yellow background when all the test have been skipped and
+a red background if there are any test failrues. These colors
 can be customized by using the :option:`--reportbackground` command line
 option, which takes two or three colors separated with a colon as an
 argument::
@@ -206,10 +206,8 @@ allows, for example, using blue instead of green to make backgrounds
 easier to separate for color blind people.
 
 If you specify three colors, the first one will be used when all the
-test succeed, the second when only non-critical tests have failed, and
-the last when there are critical failures. This feature thus allows
-using a separate background color, for example yellow, when
-non-critical tests have failed.
+tests pass, the second when all tests have been skipped, and
+the last when there are any failures.
 
 The specified colors are used as a value for the `body`
 element's `background` CSS property. The value is used as-is and
@@ -565,10 +563,13 @@ in log file similar to failed keywords. Expanding supports the following modes:
    Expand keywords with tags matching the given pattern. Pattern matching
    rules are same as when `removing keywords`_ using the `TAG:<pattern>` mode.
 
+If you need to expand keywords matching different names or patterns, you can
+use the :option:`--expandkeywords` multiple times.
+
 Examples::
 
    robot --expandkeywords name:SeleniumLibrary.CapturePageScreenshot tests.robot
-   rebot --expandkeywords tag:expand output.xml
+   rebot --expandkeywords tag:example --expandkeywords tag:another output.xml
 
 .. note:: The :option:`--expandkeywords` option is new in Robot Framework 3.2.
 
@@ -636,8 +637,8 @@ marks all passed tests that have taken more time than allowed as failed:
 
     class ExecutionTimeChecker(SuiteVisitor):
 
-        def __init__(self, max_seconds):
-            self.max_milliseconds = float(max_seconds) * 1000
+        def __init__(self, max_seconds: float):
+            self.max_milliseconds = max_seconds * 1000
 
         def visit_test(self, test):
             if test.status == 'PASS' and test.elapsedtime > self.max_milliseconds:
@@ -658,6 +659,9 @@ If more than one model modifier is needed, they can be specified by using
 the :option:`--prerebotmodifier` option multiple times. When executing tests,
 it is possible to use :option:`--prerunmodifier` and
 :option:`--prerebotmodifier` options together.
+
+.. note:: Argument conversion based on type hints like `max_seconds: float` in
+          the above example is new in Robot Framework 4.0 and requires Python 3.
 
 System log
 ----------

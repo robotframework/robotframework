@@ -30,7 +30,7 @@
   <h1>Opening Robot Framework report failed</h1>
   <ul>
     <li>Verify that you have <b>JavaScript enabled</b> in your browser.</li>
-    <li>Make sure you are using a <b>modern enough browser</b>. If using Internet Explorer, version 8 or newer is required.</li>
+    <li>Make sure you are using a <b>modern enough browser</b>. If using Internet Explorer, version 11 is required.</li>
     <li>Check are there messages in your browser's <b>JavaScript error log</b>. Please report the problem if you suspect you have encountered a bug.</li>
   </ul>
 </div>
@@ -60,9 +60,9 @@ $(document).ready(function () {
 
 function setBackground(topsuite) {
     var color;
-    if (topsuite.failed)
+    if (topsuite.fail)
         color = window.settings.background.fail;
-    else if (topsuite.passed)
+    else if (topsuite.pass)
         color = window.settings.background.pass;
     else
         color = window.settings.background.skip;
@@ -83,6 +83,16 @@ function addDetails() {
 }
 
 function addCustomSortersForDetails() {
+    $.tablesorter.addParser({
+        id: 'status',
+        type: 'numeric',
+        is: function(s) {
+            return false;  // do not auto-detect
+        },
+        format: function(s) {
+            return {'FAIL': -1, 'SKIP': 0, 'PASS': 1}[s];
+        }
+    });
     $.tablesorter.addParser({
         id: 'times',
         type: 'text',
@@ -231,11 +241,8 @@ function renderSearchSelector(suite, test, include, exclude) {
 function renderSearchDetails(suite, test, include, exclude) {
     var tests = searchTests(util.escape(suite), util.escape(test),
                             util.escape(include), util.escape(exclude));
-    var passed = calculatePassed(tests);
-    var stats = {total: tests.length,
-                 pass: passed,
-                 fail: tests.length - passed,
-                 totalTime: calculateTotalTime(tests)};
+    var stats = calculateStats(tests);
+    stats.totalTime = calculateTotalTime(tests);
     $.tmpl('tagOrTotalDetailsTemplate', stats).appendTo('#details-header');
     drawTestDetailsTable(tests, true);
 }
@@ -286,9 +293,10 @@ function renderTestDetailsHeader() {
 }
 
 function sortByStatus(t1, t2) {
-    if (t1.status != t2.status)
-        return t1.status == 'FAIL' ? -1 : 1;
-    return t1.fullName < t2.fullName ? -1 : 1;
+    if (t1.status == t2.status)
+        return t1.fullName < t2.fullName ? -1 : 1;
+    statuses = {'FAIL': -1, 'SKIP': 0, 'PASS': 1};
+    return statuses[t1.status] < statuses[t2.status] ? -1 : 1;
 }
 
 function getTestsHavingTag(tag) {
@@ -302,11 +310,19 @@ function calculateTotalTime(tests) {
     return util.formatElapsed(total);
 }
 
-function calculatePassed(tests) {
+function calculateStats(tests) {
     var passed = util.filter(tests, function (test) {
         return test.status == 'PASS';
     });
-    return passed.length;
+    var failed = util.filter(tests, function (test) {
+        return test.status == 'FAIL';
+    });
+    return {
+      total: tests.length,
+      pass: passed.length,
+      fail: failed.length,
+      skip: tests.length - passed.length - failed.length
+    };
 }
 
 function renderTestDetails(sortByStatus, target) {
@@ -329,8 +345,8 @@ function renderTestDetailsRows(tests, target) {
 }
 
 function configureTableSorter(sortByStatus) {
-  // FIXME: define sorting by status, PASS, SKIP, FAIL
-    var config = {headers: {5: {sortInitialOrder: 'desc'},
+    var config = {headers: {3: {sorter: 'status'},
+                            5: {sortInitialOrder: 'desc'},
                             6: {sorter: 'times'}},
                   selectorSort: '.details-col-header'};
     if (sortByStatus)
@@ -371,14 +387,14 @@ function hideHiddenDetailsColumns(elem) {
   <table class="details">
     <tr>
       <th>Status:</th>
-      {{if failed}}
+      {{if fail}}
       <td><a href="#totals" onclick="totalDetailSelected()"
-             class="fail">${failed} {{= testOrTask('{test}')}}{{if failed != 1}}s{{/if}} failed</a></td>
-      {{else passed && skipped}}
+             class="fail">${fail} {{= testOrTask('{test}')}}{{if fail != 1}}s{{/if}} failed</a></td>
+      {{else pass && skip}}
       <td><a href="#totals" onclick="totalDetailSelected()"
-             class="pass">${passed} {{= testOrTask('{test}')}}{{if passed != 1}}s{{/if}} passed,
-             ${skipped} {{= testOrTask('{test}')}}{{if skipped != 1}}s{{/if}} skipped</a></td>
-      {{else passed}}
+             class="pass">${pass} {{= testOrTask('{test}')}}{{if pass != 1}}s{{/if}} passed,
+             ${skip} {{= testOrTask('{test}')}}{{if skip != 1}}s{{/if}} skipped</a></td>
+      {{else pass}}
       <td><a href="#totals" onclick="totalDetailSelected()"
              class="pass">All {{= testOrTask('{test}')}}s passed</a></td>
       {{else}}
@@ -466,9 +482,6 @@ function hideHiddenDetailsColumns(elem) {
 <script type="text/x-jquery-tmpl" id="detailsHeaderTemplate">
   <h2 id="${linkTarget}">{{= testOrTask('{Test}')}} Details</h2>
   <ul id="detail-tabs">
-    <li class="${searchTabStatus} detail-tab">
-      <a href="#search" onclick="renderSearchSelector()">Search</a>
-    </li>
     <li class="${totalTabStatus} detail-tab">
       <a href="#totals" onclick="renderTotalSelector()">Totals</a>
     </li>
@@ -477,6 +490,9 @@ function hideHiddenDetailsColumns(elem) {
     </li>
     <li class="${suiteTabStatus} detail-tab">
       <a href="#suites" onclick="renderSuiteSelector()">Suites</a>
+    </li>
+    <li class="${searchTabStatus} detail-tab">
+      <a href="#search" onclick="renderSearchSelector()">Search</a>
     </li>
   </ul>
 </script>
@@ -494,11 +510,11 @@ function hideHiddenDetailsColumns(elem) {
 <script  type="text/x-jquery-tmpl" id="tagDetailsSelectorTemplate">
   <table class="details" id="details-header">
     <tr class="selector">
-      <th>Name:</th>
+      <th>Tag:</th>
       <td id="normal-selector">
         <select id="tag-detail-selector"
                 onchange="tagDetailSelected(this.options[this.selectedIndex].value)">
-          <option value="">Select tag...</option>
+          <option selected disabled hidden>-- Select --</option>
           {{each tags}}
           <option value="${$value.label}"
                   {{if $value.label == selected}}selected="selected"{{/if}}>
@@ -515,11 +531,11 @@ function hideHiddenDetailsColumns(elem) {
 <script  type="text/x-jquery-tmpl" id="suiteDetailsSelectorTemplate">
   <table class="details" id="details-header">
     <tr class="selector">
-      <th>Name:</th>
+      <th>Suite:</th>
       <td id="normal-selector">
         <select id="suite-detail-selector"
                 onchange="suiteDetailSelected(this.options[this.selectedIndex].value)">
-          <option value="">Select suite...</option>
+          <option selected disabled hidden>-- Select --</option>
           {{each suites}}
           <option value="${$value.id}"
                   {{if $value.id == selected}}selected="selected"{{/if}}>
@@ -690,7 +706,7 @@ function hideHiddenDetailsColumns(elem) {
 <script type="text/x-jquery-tmpl" id="tagOrTotalDetailsTemplate">
   <tr>
     <th>Status:</th>
-    <td>${total} total, ${pass} passed, {{if fail}}<span class="fail">${fail} failed</span>{{else}}<span class="pass">0 failed</span>{{/if}}</td>
+    <td>{{tmpl($data) 'suiteStatusMessageTemplate'}}</td>
   </tr>
   {{if doc}}
   <tr>

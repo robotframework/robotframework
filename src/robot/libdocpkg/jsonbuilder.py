@@ -34,9 +34,11 @@ class JsonDocBuilder(object):
                             version=spec['version'],
                             type=spec['type'],
                             scope=spec['scope'],
-                            doc_format=spec['doc_format'],
+                            doc_format=spec['docFormat'],
                             source=spec['source'],
                             lineno=int(spec.get('lineno', -1)))
+        libdoc.data_types.update(spec['dataTypes'].get('enums', []))
+        libdoc.data_types.update(spec['dataTypes'].get('typedDicts', []))
         libdoc.inits = [self._create_keyword(kw) for kw in spec['inits']]
         libdoc.keywords = [self._create_keyword(kw) for kw in spec['keywords']]
         return libdoc
@@ -71,12 +73,11 @@ class JsonDocBuilder(object):
         for arg in arguments:
             name = arg['name']
             setters[arg['kind']](name)
-            default = arg['default']
-            if default:
+            default = arg.get('defaultValue')
+            if default is not None:
                 spec.defaults[name] = default
-            arg_type = arg['type']
-            if arg_type is not None:
-                if not spec.types:
-                    spec.types = {}
-                spec.types[name] = arg_type
+            arg_types = arg['types']
+            if not spec.types:
+                spec.types = {}
+            spec.types[name] = tuple(arg_types)
         return spec

@@ -2,7 +2,7 @@ import sys
 import unittest
 
 from robot.errors import DataError
-from robot.model import Keywords
+from robot.model import Body
 from robot.running.userkeyword import EmbeddedArgumentsHandler
 from robot.running.arguments import EmbeddedArguments, UserKeywordArgumentParser
 from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
@@ -34,7 +34,7 @@ class HandlerDataMock:
     def __init__(self, name, args=[]):
         self.name = name
         self.args = FakeArgs(args)
-        self.keywords = Keywords()
+        self.body = Body()
         self.source = None
         self.lineno = -1
         self.return_value = None

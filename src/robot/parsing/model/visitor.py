@@ -38,13 +38,10 @@ class ModelVisitor(ast.NodeVisitor, VisitorFinder):
     <https://docs.python.org/library/ast.html#ast.NodeVisitor>`__,
     but allows creating ``visit_ClassName`` methods so that the ``ClassName``
     is one of the base classes of the node. For example, this visitor method
-    matches all section headers::
+    matches all statements::
 
-        def visit_SectionHeader(self, node):
+        def visit_Statement(self, node):
             # ...
-
-    If all visitor methods match node classes directly, it is better to use
-    the standard ``ast.NodeVisitor`` instead.
     """
 
     def visit(self, node):
