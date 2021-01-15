@@ -58,6 +58,9 @@ def assert_created_statement(tokens, base_class, **params):
 
 class TestCreateStatementsFromParams(unittest.TestCase):
 
+    def test_Statement(self):
+        self.assertRaises(NotImplementedError, Statement.from_params)
+
     def test_SectionHeader(self):
         headers = {
             Token.SETTING_HEADER: '*** Settings ***',

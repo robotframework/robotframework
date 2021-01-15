@@ -82,7 +82,7 @@ class Statement(ast.AST):
         - ``indent`` whitespace inserted before first token. Default is ``'    '``.
         - ``eol`` end of line sign. Default is ``'\n'``.
         """
-        pass
+        raise NotImplementedError
 
     @property
     def data_tokens(self):
