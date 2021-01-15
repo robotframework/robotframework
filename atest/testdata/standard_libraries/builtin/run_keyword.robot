@@ -84,8 +84,6 @@ Run Keyword With Invalid Keyword Name
     Run Keyword    ${42}    arg 1    arg 2
 
 Run Keyword With Default Argument
-#    ${foo} =      Evaluate    [10, 42]
-#    ${alo}=     Set Variable      Huu
     UK With Default Argument
 
 Run Keyword With Embedded Argument
