@@ -78,9 +78,9 @@ class Statement(ast.AST):
         or test/keyword.
 
         Most implementations support following general properties:
-        - `separator` whitespace inserted between each token. Default is ``'    '``.
-        - ``indent`` whitespace inserted before first token. Default is ``'    '``.
-        - ``eol`` end of line sign. Default is ``'\n'``.
+        - `separator` whitespace inserted between each token. Default is four spaces.
+        - ``indent`` whitespace inserted before first token. Default is four spaces.
+        - ``eol`` end of line sign. Default is ``'\\n'``.
         """
         raise NotImplementedError
 
