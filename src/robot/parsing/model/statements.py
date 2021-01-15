@@ -96,9 +96,9 @@ class Statement(ast.AST):
         If there are no matches, return ``None``. If there are multiple
         matches, return the first match.
         """
-        for t in self.tokens:
-            if t.type in types:
-                return t
+        for token in self.tokens:
+            if token.type in types:
+                return token
         return None
 
     def get_tokens(self, *types):
@@ -131,6 +131,9 @@ class Statement(ast.AST):
 
     def validate(self):
         pass
+
+    def __iter__(self):
+        return iter(self.tokens)
 
     def __len__(self):
         return len(self.tokens)
@@ -216,7 +219,12 @@ class SectionHeader(Statement):
                      Token.COMMENT_HEADER)
 
     @classmethod
-    def from_params(cls, type, name, eol=EOL):
+    def from_params(cls, type, name=None, eol=EOL):
+        if not name:
+            names = ('Settings', 'Variables', 'Test Cases', 'Keywords', 'Comments')
+            name = dict(zip(cls.handles_types, names))[type]
+        if not name.startswith('*'):
+            name = '*** %s ***' % name
         return cls([
             Token(type, name),
             Token('EOL', '\n')
@@ -329,6 +337,7 @@ class Documentation(DocumentationOrMetadata):
                 Token(Token.DOCUMENTATION, '[Documentation]'),
                 Token(Token.SEPARATOR, separator)
             ]
+        multiline_separator = ' ' * (len(tokens[-2].value) + len(separator) - 3)
         doc_lines = value.splitlines()
         if doc_lines:
             tokens.append(Token(Token.ARGUMENT, doc_lines[0]))
@@ -337,8 +346,9 @@ class Documentation(DocumentationOrMetadata):
             if not settings_section:
                 tokens.append(Token(Token.SEPARATOR, indent))
             tokens.append(Token(Token.CONTINUATION))
-            tokens.append(Token(Token.SEPARATOR, separator))
-            tokens.append(Token(Token.ARGUMENT, line))
+            if line:
+                tokens.append(Token(Token.SEPARATOR, multiline_separator))
+                tokens.append(Token(Token.ARGUMENT, line))
             tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 

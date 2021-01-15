@@ -405,7 +405,8 @@ settings section with documentation is added.
             # this test.
             if name == 'Second example':
                 return None
-            # Construct new keyword call statement from tokens.
+            # Construct new keyword call statement from tokens. See `visit_File`
+            # below for an example creating statements using `from_params`.
             new_keyword = KeywordCall([
                 Token(Token.SEPARATOR, '    '),
                 Token(Token.KEYWORD, 'New Keyword'),
@@ -421,26 +422,16 @@ settings section with documentation is added.
             return node
 
         def visit_File(self, node):
-            # Create settings section with documentation.
-            header = SectionHeader([
-                Token(Token.SETTING_HEADER, '*** Settings ***'),
-                Token(Token.EOL)
-            ])
-            documentation = Documentation([
-                Token(Token.DOCUMENTATION, 'Documentation'),
-                Token(Token.SEPARATOR, '    '),
-                Token(Token.ARGUMENT, 'This is pretty advanced'),
-                Token(Token.EOL),
-                Token(Token.CONTINUATION),
-                Token(Token.SEPARATOR, '              '),
-                Token(Token.ARGUMENT, 'but also powerful API!'),
-                Token(Token.EOL)
-            ])
-            empty_line = EmptyLine([
-                Token(Token.EOL)
-            ])
-            body = [documentation, empty_line]
-            settings = SettingSection(header, body)
+            # Create settings section with documentation. Needed header and body
+            # statements are created using `from_params` method. This is typically
+            # more convenient than creating statements based on tokens like above.
+            settings = SettingSection(
+                header=SectionHeader.from_params(Token.SETTING_HEADER),
+                body=[
+                    Documentation.from_params('This is a really\npowerful API!'),
+                    EmptyLine.from_params()
+                ]
+            )
             # Add settings to the beginning of the file.
             node.sections.insert(0, settings)
             # Call `generic_visit` to visit also child nodes.

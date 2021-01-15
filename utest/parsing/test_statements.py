@@ -42,18 +42,25 @@ from robot.utils.asserts import assert_equal
 
 def assert_created_statement(tokens, base_class, **params):
     new_statement = base_class.from_params(**params)
-    assert_equal(
+    assert_statements(
         new_statement,
         base_class(tokens)
     )
-    assert_equal(
+    assert_statements(
         new_statement,
         base_class.from_tokens(tokens)
     )
-    assert_equal(
+    assert_statements(
         new_statement,
         Statement.from_tokens(tokens)
     )
+
+
+def assert_statements(first, second):
+    for t1, t2 in zip(first, second):
+        assert_equal(t1, t2, formatter=repr)
+    assert_equal(first, second)
+    assert_equal(len(first), len(second))
 
 
 class TestCreateStatementsFromParams(unittest.TestCase):
@@ -63,22 +70,33 @@ class TestCreateStatementsFromParams(unittest.TestCase):
 
     def test_SectionHeader(self):
         headers = {
-            Token.SETTING_HEADER: '*** Settings ***',
-            Token.VARIABLE_HEADER: '*** Variables ***',
-            Token.TESTCASE_HEADER: '*** Test Cases ***',
-            Token.KEYWORD_HEADER: '*** Keywords ***',
-            Token.COMMENT_HEADER: '*** Comments ***'
+            Token.SETTING_HEADER: 'Settings',
+            Token.VARIABLE_HEADER: 'Variables',
+            Token.TESTCASE_HEADER: 'Test Cases',
+            Token.KEYWORD_HEADER: 'Keywords',
+            Token.COMMENT_HEADER: 'Comments'
         }
         for token_type, name in headers.items():
             tokens = [
-                Token(token_type, name),
+                Token(token_type, '*** %s ***' % name),
                 Token(Token.EOL, '\n')
             ]
             assert_created_statement(
                 tokens,
                 SectionHeader,
                 type=token_type,
+            )
+            assert_created_statement(
+                tokens,
+                SectionHeader,
+                type=token_type,
                 name=name
+            )
+            assert_created_statement(
+                tokens,
+                SectionHeader,
+                type=token_type,
+                name='*** %s ***' % name
             )
 
     def test_SuiteSetup(self):
@@ -360,44 +378,64 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             value='Example documentation'
         )
 
-        # Documentation    First line
-        # ...    Second line
+        # Documentation    First line.
+        # ...              Second line aligned.
+        # ...
+        # ...              Second paragraph.
         tokens = [
             Token(Token.DOCUMENTATION, 'Documentation'),
             Token(Token.SEPARATOR, '    '),
-            Token(Token.ARGUMENT, 'First line'),
-            Token(Token.EOL, '\n'),
+            Token(Token.ARGUMENT, 'First line.'),
+            Token(Token.EOL),
             Token(Token.CONTINUATION),
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.ARGUMENT, 'Second line'),
-            Token(Token.EOL, '\n')
+            Token(Token.SEPARATOR, '              '),
+            Token(Token.ARGUMENT, 'Second line aligned.'),
+            Token(Token.EOL),
+            Token(Token.CONTINUATION),
+            Token(Token.EOL),
+            Token(Token.CONTINUATION),
+            Token(Token.SEPARATOR, '              '),
+            Token(Token.ARGUMENT, 'Second paragraph.'),
+            Token(Token.EOL),
         ]
         assert_created_statement(
             tokens,
             Documentation,
-            value='First line\nSecond line'
+            value='First line.\nSecond line aligned.\n\nSecond paragraph.'
         )
 
         # Test/Keyword
-        #     [Documentation]    First line
-        #     ...    Second line
+        #     [Documentation]      First line
+        #     ...                  Second line aligned
+        #     ...
+        #     ...                  Second paragraph.
         tokens = [
-            Token(Token.SEPARATOR, '    '),
+            Token(Token.SEPARATOR, '  '),
             Token(Token.DOCUMENTATION, '[Documentation]'),
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.ARGUMENT, 'First line'),
-            Token(Token.EOL, '\n'),
-            Token(Token.SEPARATOR, '    '),
+            Token(Token.SEPARATOR, '      '),
+            Token(Token.ARGUMENT, 'First line.'),
+            Token(Token.EOL),
+            Token(Token.SEPARATOR, '  '),
             Token(Token.CONTINUATION),
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.ARGUMENT, 'Second line'),
-            Token(Token.EOL, '\n')
+            Token(Token.SEPARATOR, '                  '),
+            Token(Token.ARGUMENT, 'Second line aligned.'),
+            Token(Token.EOL),
+            Token(Token.SEPARATOR, '  '),
+            Token(Token.CONTINUATION),
+            Token(Token.EOL),
+            Token(Token.SEPARATOR, '  '),
+            Token(Token.CONTINUATION),
+            Token(Token.SEPARATOR, '                  '),
+            Token(Token.ARGUMENT, 'Second paragraph.'),
+            Token(Token.EOL),
         ]
         assert_created_statement(
             tokens,
             Documentation,
-            settings_section=False,
-            value='First line\nSecond line'
+            value='First line.\nSecond line aligned.\n\nSecond paragraph.\n',
+            indent='  ',
+            separator='      ',
+            settings_section=False
         )
 
     def test_Metadata(self):
