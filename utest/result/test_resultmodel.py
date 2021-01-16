@@ -1,8 +1,8 @@
 import unittest
-from robot.utils.asserts import (assert_equal, assert_false, assert_raises,
-                                 assert_raises_with_msg, assert_true)
+import warnings
 
-from robot.result import Message, Keyword, TestCase, TestSuite
+from robot.result import Keyword, Message, TestCase, TestSuite
+from robot.utils.asserts import assert_equal, assert_false, assert_raises, assert_true
 
 
 class TestSuiteStats(unittest.TestCase):
@@ -202,54 +202,67 @@ class TestModel(unittest.TestCase):
         assert_equal(item.status, 'SKIP')
         assert_raises(ValueError, setattr, item, 'skipped', False)
 
+    def test_keywords_deprecation(self):
+        kw = Keyword()
+        kw.body = [Keyword(), Message(), Keyword(), Keyword(), Message()]
+        kw.teardown.config(kwname='T')
+        with warnings.catch_warnings(record=True) as w:
+            kws = kw.keywords
+            assert_equal(list(kws), [kw.body[0], kw.body[2], kw.body[3], kw.teardown])
+            assert_true('deprecated' in str(w[0].message))
+        assert_raises(AttributeError, kws.append, Keyword())
+        assert_raises(AttributeError, setattr, kw, 'keywords', [])
 
-class TestKeywordChildren(unittest.TestCase):
+
+class TestBody(unittest.TestCase):
 
     def test_only_keywords(self):
         kw = Keyword()
         for i in range(10):
-            kw.keywords.create(str(i))
-        assert_equal(kw.children, list(kw.keywords))
+            kw.body.create_keyword(str(i))
+        assert_equal([k.name for k in kw.body], [str(i) for i in range(10)])
 
     def test_only_messages(self):
         kw = Keyword()
         for i in range(10):
-            kw.messages.create(str(i))
-        assert_equal(kw.children, list(kw.messages))
+            kw.body.create_message(str(i))
+        assert_equal([m.message for m in kw.body], [str(i) for i in range(10)])
 
     def test_order(self):
-        kw = Keyword('parent')
-        m1 = kw.messages.create('m1')
-        k1 = kw.keywords.create('k1')
-        k2 = kw.keywords.create('k2')
-        m2 = kw.messages.create('m2')
-        k3 = kw.keywords.create('k3')
-        assert_equal(kw.children, [m1, k1, k2, m2, k3])
+        kw = Keyword()
+        m1 = kw.body.create_message('m1')
+        k1 = kw.body.create_keyword('k1')
+        k2 = kw.body.create_keyword('k2')
+        m2 = kw.body.create_message('m2')
+        k3 = kw.body.create_keyword('k3')
+        assert_equal(list(kw.body), [m1, k1, k2, m2, k3])
 
     def test_order_after_modifications(self):
         kw = Keyword('parent')
-        kw.keywords.create('k1')
-        kw.messages.create('m1')
-        k2 = kw.keywords.create('k2')
-        m2 = kw.messages.create('m2')
-        k1 = kw.keywords[0] = Keyword('k1-new')
-        m1 = kw.messages[0] = Message('m1-new')
+        kw.body.create_keyword('k1')
+        kw.body.create_message('m1')
+        k2 = kw.body.create_keyword('k2')
+        m2 = kw.body.create_message('m2')
+        k1 = kw.body[0] = Keyword('k1-new')
+        m1 = kw.body[1] = Message('m1-new')
         m3 = Message('m3')
-        kw.messages.append(m3)
+        kw.body.append(m3)
         k3 = Keyword('k3')
-        kw.keywords.extend([k3])
-        assert_equal(kw.children, [k1, m1, k2, m2, m3, k3])
-        kw.keywords = [k1, k3]
-        kw.messages = [m1]
-        assert_equal(kw.children, [k1, m1, k3])
+        kw.body.extend([k3])
+        assert_equal(list(kw.body), [k1, m1, k2, m2, m3, k3])
+        kw.body = [k3, m2, k1]
+        assert_equal(list(kw.body), [k3, m2, k1])
 
-    def test_id_with_keyword_parents(self):
-        kw = TestSuite().tests.create().keywords.create('parent')
-        kw.keywords = [Keyword('child1'), Keyword('child2')]
-        kw.keywords[-1].keywords.create()
-        assert_equal(kw.keywords[0].id, 's1-t1-k1-k1')
-        assert_equal(kw.keywords[1].id, 's1-t1-k1-k2')
-        assert_equal(kw.keywords[1].keywords[0].id, 's1-t1-k1-k2-k1')
+    def test_id(self):
+        kw = TestSuite().tests.create().body.create_keyword()
+        kw.body = [Keyword(), Message(), Keyword()]
+        kw.body[-1].body = [Message(), Keyword(), Message()]
+        assert_equal(kw.body[0].id, 's1-t1-k1-k1')
+        assert_equal(kw.body[1].id, 's1-t1-k1-m1')
+        assert_equal(kw.body[2].id, 's1-t1-k1-k2')
+        assert_equal(kw.body[2].body[0].id, 's1-t1-k1-k2-m1')
+        assert_equal(kw.body[2].body[1].id, 's1-t1-k1-k2-k1')
+        assert_equal(kw.body[2].body[2].id, 's1-t1-k1-k2-m2')
 
 
 if __name__ == '__main__':

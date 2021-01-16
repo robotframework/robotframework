@@ -72,7 +72,7 @@ class _ListenerArgumentsFromItem(ListenerArguments):
         attributes = dict((name, self._get_attribute_value(item, name))
                           for name in self._attribute_names)
         attributes.update(self._get_extra_attributes(item))
-        return item.name, attributes
+        return item.name or '', attributes
 
     def _get_attribute_value(self, item, name):
         value = getattr(item, name)
@@ -126,8 +126,8 @@ class EndTestArguments(StartTestArguments):
 
 
 class StartKeywordArguments(_ListenerArgumentsFromItem):
-    _attribute_names = ('kwname', 'libname', 'doc', 'assign', 'tags',
-                        'starttime', 'lineno', 'source')
+    _attribute_names = ('kwname', 'doc', 'assign', 'tags', 'starttime', 'lineno',
+                        'source')
     _types = {'kw': 'Keyword',
               'setup': 'Setup',
               'teardown': 'Teardown',
@@ -139,7 +139,7 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
 
     def _get_extra_attributes(self, kw):
         args = [a if is_string(a) else unic(a) for a in kw.args]
-        return {'args': args, 'type': self._types[kw.type]}
+        return {'libname': kw.libname or '', 'args': args, 'type': self._types[kw.type]}
 
 
 class EndKeywordArguments(StartKeywordArguments):

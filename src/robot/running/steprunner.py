@@ -38,7 +38,7 @@ class StepRunner(object):
         errors = []
         for step in steps:
             try:
-                self.run_step(step)
+                step.run(self._context, self._templated)
             except ExecutionPassed as exception:
                 exception.set_earlier_failures(errors)
                 raise exception
@@ -53,12 +53,6 @@ class StepRunner(object):
 
     def run_step(self, step, name=None):
         context = self._context
-        if step.type == step.FOR_LOOP_TYPE:
-            runner = ForRunner(context, self._templated, step.flavor)
-            return runner.run(step)
-        if step.type == step.IF_TYPE:
-            runner = IfRunner(context, self._templated)
-            return runner.run(step)
         runner = context.get_runner(name or step.name)
         if context.dry_run:
             return runner.dry_run(step, context)
@@ -72,7 +66,7 @@ class IfRunner(object):
         self._context = context
         self._templated = templated
 
-    def run(self, data, name=None):
+    def run(self, data):
         branch_run = False
         with self._dry_run_recursion_detection(data) as recursive_dry_run:
             while data:
@@ -101,7 +95,7 @@ class IfRunner(object):
                 raise DataError(data.error)
             if self._should_run_branch(data.condition, branch_run, recursive_dry_run):
                 runner = StepRunner(self._context, self._templated)
-                runner.run_steps(data.keywords)
+                runner.run_steps(data.body)
                 return True
             reporter.mark_as_not_run()
             return branch_run
@@ -119,7 +113,7 @@ class IfRunner(object):
         return bool(condition)
 
 
-def ForRunner(context, templated=False, flavor='IN'):
+def ForRunner(context, flavor='IN', templated=False):
     runners = {'IN': ForInRunner,
                'IN RANGE': ForInRangeRunner,
                'IN ZIP': ForInZipRunner,
@@ -135,9 +129,9 @@ class ForInRunner(object):
         self._context = context
         self._templated = templated
 
-    def run(self, data, name=None):
+    def run(self, data):
         result = KeywordResult(kwname=self._get_name(data),
-                               type=data.FOR_LOOP_TYPE,
+                               type=data.type,
                                lineno=data.lineno,
                                source=data.source)
         with StatusReporter(self._context, result):
@@ -267,7 +261,7 @@ class ForInRunner(object):
                                source=data.source)
         runner = StepRunner(self._context, self._templated)
         with StatusReporter(self._context, result):
-            runner.run_steps(data.keywords)
+            runner.run_steps(data.body)
 
     def _map_variables_and_values(self, variables, values):
         if len(variables) == 1 and len(values) != 1:

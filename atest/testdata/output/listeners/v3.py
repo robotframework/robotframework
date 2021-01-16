@@ -42,11 +42,11 @@ def startTest(data, result):
     result.tags.add('[start]')
     result.message = '[start]'
     result.parent.metadata['tests'] += 'x'
-    data.keywords.create('No Operation')
+    data.body.create_keyword('No Operation')
     if data is data.parent.tests[-1] and 'dynamic' not in data.tags:
         new = data.parent.tests.create(name='Added by startTest',
                                        tags=['dynamic', 'start'])
-        new.keywords.create(name='Fail', args=['Dynamically added!'])
+        new.body.create_keyword(name='Fail', args=['Dynamically added!'])
 
 
 def end_test(data, result):
@@ -59,7 +59,7 @@ def end_test(data, result):
         new = data.parent.tests.create(name='Added by end_test',
                                        doc='Dynamic',
                                        tags=['dynamic', 'end'])
-        new.keywords.create(name='Log', args=['Dynamically added!', 'INFO'])
+        new.body.create_keyword(name='Log', args=['Dynamically added!', 'INFO'])
     data.name = data.doc = 'Not visible in results'
 
 

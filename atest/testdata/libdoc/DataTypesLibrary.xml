@@ -7,6 +7,7 @@ It has some in ``__init__`` and others in the `Keywords`.
 
 The DataTypes are the following that should be linked.
 `HttpCredentials` , `GeoLocation` , `Small` and `AssertionOperator`.</doc>
+<tags></tags>
 <inits>
 <init name="Init" lineno="86">
 <arguments repr="credentials: Small = one">

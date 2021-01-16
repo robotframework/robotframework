@@ -41,8 +41,7 @@ class _KeywordRemover(SuiteVisitor):
         self._removal_message = RemovalMessage(self._message)
 
     def _clear_content(self, kw):
-        kw.keywords = []
-        kw.messages = []
+        kw.body.clear()
         self._removal_message.set(kw)
 
     def _failed_or_warning_or_error(self, item):
@@ -70,7 +69,7 @@ class PassedKeywordRemover(_KeywordRemover):
 
     def visit_test(self, test):
         if not self._failed_or_warning_or_error(test):
-            for keyword in test.keywords:
+            for keyword in test.body:
                 self._clear_content(keyword)
 
     def visit_keyword(self, keyword):
@@ -103,32 +102,33 @@ class ForLoopItemsRemover(_KeywordRemover):
     _message = '%d passing step%s removed using --RemoveKeywords option.'
 
     def start_keyword(self, kw):
-        if kw.type == kw.FOR_LOOP_TYPE:
-            before = len(kw.keywords)
-            kw.keywords = self._remove_keywords(kw.keywords)
+        if kw.type == kw.FOR_TYPE:
+            before = len(kw.body)
+            self._remove_keywords(kw.body)
             self._removal_message.set_if_removed(kw, before)
 
-    def _remove_keywords(self, keywords):
-        return [kw for kw in keywords
-                if self._failed_or_warning_or_error(kw) or kw is keywords[-1]]
+    def _remove_keywords(self, body):
+        keywords = body.filter(messages=False)
+        for kw in keywords[:-1]:
+            if not self._failed_or_warning_or_error(kw):
+                body.remove(kw)
 
 
 class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
     _message = '%d failing step%s removed using --RemoveKeywords option.'
 
     def start_keyword(self, kw):
-        if kw.name == 'BuiltIn.Wait Until Keyword Succeeds' and kw.keywords:
-            before = len(kw.keywords)
-            kw.keywords = self._remove_keywords(list(kw.keywords))
+        if kw.name == 'BuiltIn.Wait Until Keyword Succeeds' and kw.body:
+            before = len(kw.body)
+            self._remove_keywords(kw.body)
             self._removal_message.set_if_removed(kw, before)
 
-    def _remove_keywords(self, keywords):
+    def _remove_keywords(self, body):
+        keywords = body.filter(messages=False)
         include_from_end = 2 if keywords[-1].passed else 1
-        return self._kws_with_warnings(keywords[:-include_from_end]) \
-            + keywords[-include_from_end:]
-
-    def _kws_with_warnings(self, keywords):
-        return [kw for kw in keywords if self._warning_or_error(kw)]
+        for kw in keywords[:-include_from_end]:
+            if not self._warning_or_error(kw):
+                body.remove(kw)
 
 
 class WarningAndErrorFinder(SuiteVisitor):
@@ -156,7 +156,7 @@ class RemovalMessage(object):
         self._message = message
 
     def set_if_removed(self, kw, len_before):
-        removed = len_before - len(kw.keywords)
+        removed = len_before - len(kw.body)
         if removed:
             self.set(kw, self._message % (removed, plural_or_not(removed)))
 

@@ -35,34 +35,33 @@ from .tablesetter import VariableTableValue, DictVariableTableValue
 from .variables import Variables
 
 
-# TODO: Change DeprecationWarning to more visible UserWarning in RF 3.3/4.0
-# (whichever comes first) and remove these utils in the next major version.
+# TODO: Remove these utils in RF 4.1.
 
 def is_var(string, identifiers='$@&'):
     """Deprecated since RF 3.2. Use ``is_variable`` instead."""
-    warnings.warn(is_var.__doc__, DeprecationWarning)
+    warnings.warn(is_var.__doc__, UserWarning)
     return is_variable(string, identifiers)
 
 
 def is_scalar_var(string):
     """Deprecated since RF 3.2.  Use ``is_scalar_variable`` instead."""
-    warnings.warn(is_scalar_var.__doc__, DeprecationWarning)
+    warnings.warn(is_scalar_var.__doc__, UserWarning)
     return is_scalar_variable(string)
 
 
 def is_list_var(string):
     """Deprecated since RF 3.2.  Use ``is_list_variable`` instead."""
-    warnings.warn(is_list_var.__doc__, DeprecationWarning)
+    warnings.warn(is_list_var.__doc__, UserWarning)
     return is_list_variable(string)
 
 
 def is_dict_var(string):
     """Deprecated since RF 3.2.  Use ``is_dict_variable`` instead."""
-    warnings.warn(is_dict_var.__doc__, DeprecationWarning)
+    warnings.warn(is_dict_var.__doc__, UserWarning)
     return is_dict_variable(string)
 
 
 def contains_var(string, identifiers='$@&'):
     """Deprecated since RF 3.2.  Use ``contains_variable`` instead."""
-    warnings.warn(contains_var.__doc__, DeprecationWarning)
+    warnings.warn(contains_var.__doc__, UserWarning)
     return contains_variable(string, identifiers)

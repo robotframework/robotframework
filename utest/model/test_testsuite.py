@@ -1,4 +1,5 @@
 import unittest
+import warnings
 from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
                                  assert_raises_with_msg)
 
@@ -95,6 +96,15 @@ class TestTestSuite(unittest.TestCase):
     def test_slots(self):
         assert_raises(AttributeError, setattr, self.suite, 'attr', 'value')
 
+    def test_keywords_deprecation(self):
+        self.suite.setup.config(name='S')
+        with warnings.catch_warnings(record=True) as w:
+            kws = self.suite.keywords
+            assert_equal(len(kws), 1)
+            assert_true('deprecated' in str(w[0].message))
+        assert_raises(AttributeError, kws.extend, ())
+        assert_raises(AttributeError, setattr, self.suite, 'keywords', [])
+
 
 class TestSuiteId(unittest.TestCase):
 
@@ -122,16 +132,19 @@ class TestStringRepresentation(unittest.TestCase):
         self.ascii = TestSuite(name='Kekkonen')
         self.non_ascii = TestSuite(name=u'hyv\xe4 nimi')
 
-    def test_unicode(self):
-        assert_equal(unicode(self.empty), '')
-        assert_equal(unicode(self.ascii), 'Kekkonen')
-        assert_equal(unicode(self.non_ascii), u'hyv\xe4 nimi')
+    def test_str(self):
+        for tc, expected in [(self.empty, ''),
+                             (self.ascii, 'Kekkonen'),
+                             (self.non_ascii, u'hyv\xe4 nimi')]:
+            assert_equal(unicode(tc), expected)
+            if PY2:
+                assert_equal(str(tc), unicode(tc).encode('UTF-8'))
 
-    if PY2:
-        def test_str(self):
-            assert_equal(str(self.empty), '')
-            assert_equal(str(self.ascii), 'Kekkonen')
-            assert_equal(str(self.non_ascii), u'hyv\xe4 nimi'.encode('UTF-8'))
+    def test_repr(self):
+        for tc, expected in [(self.empty, "TestSuite(name='')"),
+                             (self.ascii, "TestSuite(name='Kekkonen')"),
+                             (self.non_ascii, u"TestSuite(name=%r)" % u'hyv\xe4 nimi')]:
+            assert_equal(repr(tc), expected)
 
 
 if __name__ == '__main__':

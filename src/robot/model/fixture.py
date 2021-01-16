@@ -14,13 +14,14 @@
 #  limitations under the License.
 
 def create_fixture(fixture, parent, type):
+    # TestCase and TestSuite have 'fixture_class', Keyword doesn't.
+    fixture_class = getattr(parent, 'fixture_class', parent.__class__)
     if fixture is None:
-        fixture = parent.keyword_class(parent=parent, type=type)
-    elif not isinstance(fixture, parent.keyword_class):
-        raise TypeError("Only %s objects accepted, got %s."
-                        % (parent.keyword_class.__name__,
-                           fixture.__class__.__name__))
-    else:
+        fixture = fixture_class(None, parent=parent, type=type)
+    elif isinstance(fixture, fixture_class):
         fixture.parent = parent
         fixture.type = type
+    else:
+        raise TypeError("Only %s objects accepted, got %s."
+                        % (fixture_class.__name__, fixture.__class__.__name__))
     return fixture

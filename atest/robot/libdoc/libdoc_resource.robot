@@ -149,7 +149,7 @@ Verify Arguments Structure
         Run Keyword And Continue On Failure
         ...    Should Be Equal    ${repr}    ${exp_repr}
     END
-    Should Be True    len($arg_elems) == len($expected)
+    Should Be Equal    ${{len($arg_elems)}}    ${{len($expected)}}
 
 Get Element Optional Text
     [Arguments]    ${source}    ${xpath}
@@ -187,6 +187,11 @@ Keyword Tags Should Be
     [Arguments]    ${index}    @{expected}
     ${kws}=    Get Elements    ${LIBDOC}    xpath=keywords/kw
     ${tags}=   Get Elements Texts    ${kws}[${index}]    xpath=tags/tag
+    Should Be Equal    ${tags}    ${expected}
+
+Specfile Tags Should Be
+    [Arguments]    @{expected}
+    ${tags}    Get Elements Texts    ${LIBDOC}    xpath=tags/tag
     Should Be Equal    ${tags}    ${expected}
 
 Keyword Source Should Be

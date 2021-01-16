@@ -14,7 +14,6 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.model import Keywords
 from robot.output import LOGGER
 from robot.result import Keyword as KeywordResult
 from robot.utils import prepr, unic
@@ -164,23 +163,16 @@ class RunKeywordRunner(LibraryKeywordRunner):
 
     def _dry_run(self, context, args):
         LibraryKeywordRunner._dry_run(self, context, args)
-        keywords = self._get_runnable_dry_run_keywords(args)
+        keywords = [kw for kw in self._get_dry_run_keywords(args)
+                    if not contains_variable(kw.name)]
         StepRunner(context).run_steps(keywords)
-
-    def _get_runnable_dry_run_keywords(self, args):
-        keywords = Keywords()
-        for keyword in self._get_dry_run_keywords(args):
-            if contains_variable(keyword.name):
-                continue
-            keywords.append(keyword)
-        return keywords
 
     def _get_dry_run_keywords(self, args):
         name = self._handler.name
         if name == 'Run Keyword If':
-            return list(self._get_run_kw_if_keywords(args))
+            return self._get_run_kw_if_keywords(args)
         if name == 'Run Keywords':
-            return list(self._get_run_kws_keywords(args))
+            return self._get_run_kws_keywords(args)
         if self._default_dry_run_keywords:
             return self._get_default_run_kw_keywords(args)
         return []

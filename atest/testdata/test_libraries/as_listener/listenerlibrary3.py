@@ -29,7 +29,7 @@ class listenerlibrary3(object):
         result.tags.add('[start]')
         result.message = 'Message: [start]'
         result.parent.metadata['tests'] += 'x'
-        data.keywords.create('No Operation')
+        data.body.create_keyword('No Operation')
 
     def end_test(self, data, result):
         result.doc += ' [end test]'

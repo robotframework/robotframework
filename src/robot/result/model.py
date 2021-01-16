@@ -33,11 +33,10 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 """
 
 from itertools import chain
-from operator import attrgetter
 import warnings
 
 from robot import model
-from robot.model import TotalStatisticsBuilder, Messages, Keywords
+from robot.model import TotalStatisticsBuilder, Keywords
 from robot.utils import get_elapsed_time, setter
 
 from .configurer import SuiteConfigurer
@@ -47,18 +46,26 @@ from .suiteteardownfailed import (SuiteTeardownFailureHandler,
                                   SuiteTeardownFailed)
 
 
-# TODO: Should remove model.Message altogether and just implement the whole
-# thing here. Additionally model.Keyword should not have `message_class` at
-# all or it should be None.
+class Body(model.Body):
+    __slots__ = []
+    message_class = None
 
+    def create_message(self, *args, **kwargs):
+        return self.append(self.message_class(*args, **kwargs))
+
+    def filter(self, keywords=None, fors=None, ifs=None, messages=None, predicate=None):
+        return self._filter([(self.keyword_class, keywords),
+                             (self.for_class, fors),
+                             (self.if_class, ifs),
+                             (self.message_class, messages)], predicate)
+
+
+@Body.register
 class Message(model.Message):
-    """Represents a single log message.
-
-    See the base class for documentation of attributes not documented here.
-    """
     __slots__ = []
 
 
+@Body.register
 class Keyword(model.Keyword):
     """Represents results of a single keyword.
 
@@ -66,19 +73,15 @@ class Keyword(model.Keyword):
     """
     __slots__ = ['kwname', 'libname', 'status', 'starttime', 'endtime', 'message',
                  'lineno', 'source', 'sourcename']
-    keyword_class = None        #: Internal usage only.
-    message_class = Message     #: Internal usage only.
 
     def __init__(self, kwname='', libname='', doc='', args=(), assign=(), tags=(),
                  timeout=None, type='kw', status='FAIL', starttime=None, endtime=None,
                  parent=None, lineno=None, source=None, sourcename=None):
-        model.Keyword.__init__(self, '', doc, args, assign, tags, timeout, type, parent)
-        self.messages = None
-        self.keywords = None
+        model.Keyword.__init__(self, None, doc, args, assign, tags, timeout, type, parent)
         #: Name of the keyword without library or resource name.
-        self.kwname = kwname or ''
+        self.kwname = kwname
         #: Name of the library or resource containing this keyword.
-        self.libname = libname or ''
+        self.libname = libname
         #: Execution status as a string. Typically ``PASS``, ``FAIL`` or ``SKIP``,
         #: but library keywords have status ``NOT_RUN`` in the dry-ryn mode.
         self.status = status
@@ -92,25 +95,44 @@ class Keyword(model.Keyword):
         self.source = source
         self.sourcename = sourcename
         #: sourcename is name of keyword with embedded arguments, from it's definition
+        self.body = None
 
     @setter
+    def body(self, body):
+        """Child keywords and messages as a :class:`~.Body` object."""
+        return Body(self, body)
+
+    @property
+    def keywords(self):
+        """Deprecated since Robot Framework 4.0.
+
+        Use :attr:`body` or :attr:`teardown` instead.
+        """
+        keywords = self.body.filter(messages=False)
+        if self.teardown:
+            keywords.append(self.teardown)
+        return Keywords(self, keywords)
+
+    @keywords.setter
     def keywords(self, keywords):
-        """Child keywords as a :class:`~.Keywords` object."""
-        return Keywords(self.keyword_class or self.__class__, self, keywords)
+        Keywords.raise_deprecation_error()
 
-    @setter
-    def messages(self, messages):
-        """Messages as a :class:`~.model.message.Messages` object."""
-        return Messages(self.message_class, self, messages)
+    @property
+    def messages(self):
+        """Keyword's messages.
+
+        Starting from Robot Framework 4.0 this is a list generated from messages
+        in :attr:`body`.
+        """
+        return self.body.filter(messages=True)
 
     @property
     def children(self):
-        """Child :attr:`keywords` and :attr:`messages` in creation order."""
-        # It would be cleaner to store keywords/messages in same `children`
-        # list and turn `keywords` and `messages` to properties that pick items
-        # from it. That would require bigger changes to the model, though.
-        return sorted(chain(self.keywords, self.messages),
-                      key=attrgetter('_sort_key'))
+        """List of child keywords and messages in creation order.
+
+        Deprecated since Robot Framework 4.0. Use :att:`body` instead.
+        """
+        return list(self.body)
 
     @property
     def elapsedtime(self):
@@ -131,6 +153,14 @@ class Keyword(model.Keyword):
         if not self.libname:
             return self.kwname
         return '%s.%s' % (self.libname, self.kwname)
+
+    @name.setter
+    def name(self, name):
+        if name is not None:
+            raise AttributeError("Cannot set 'name' attribute directly. "
+                                 "Set 'kwname' and 'libname' separately instead.")
+        self.kwname = None
+        self.libname = None
 
     @property
     def passed(self):
@@ -172,7 +202,8 @@ class TestCase(model.TestCase):
     See the base class for documentation of attributes not documented here.
     """
     __slots__ = ['status', 'message', 'starttime', 'endtime']
-    keyword_class = Keyword
+    body_class = Body
+    fixture_class = Keyword
 
     def __init__(self, name='', doc='', tags=None, timeout=None, status='FAIL',
                  message='', starttime=None, endtime=None):
@@ -240,7 +271,7 @@ class TestSuite(model.TestSuite):
     """
     __slots__ = ['message', 'starttime', 'endtime']
     test_class = TestCase
-    keyword_class = Keyword
+    fixture_class = Keyword
 
     def __init__(self, name='', doc='', metadata=None, source=None,
                  message='', starttime=None, endtime=None, rpa=False):
@@ -331,13 +362,6 @@ class TestSuite(model.TestSuite):
     def filter_messages(self, log_level='TRACE'):
         """Remove log messages below the specified ``log_level``."""
         self.visit(MessageFilter(log_level))
-
-    def clear(self):
-        """Remove subsuites, tests, setup and teardown from this suite."""
-        self.suites.clear()
-        self.tests.clear()
-        self.setup = None
-        self.teardown = None
 
     def configure(self, **options):
         """A shortcut to configure a suite using one method call.

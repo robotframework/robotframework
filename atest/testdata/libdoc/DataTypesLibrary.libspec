@@ -4,6 +4,7 @@
 <doc>&lt;p&gt;This Library has Data Types.&lt;/p&gt;
 &lt;p&gt;It has some in &lt;code&gt;__init__&lt;/code&gt; and others in the &lt;a href="#Keywords" class="name"&gt;Keywords&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;The DataTypes are the following that should be linked. &lt;span class="name"&gt;HttpCredentials&lt;/span&gt; , &lt;a href="#GeoLocation" class="name"&gt;GeoLocation&lt;/a&gt; , &lt;a href="#Small" class="name"&gt;Small&lt;/a&gt; and &lt;a href="#AssertionOperator" class="name"&gt;AssertionOperator&lt;/a&gt;.&lt;/p&gt;</doc>
+<tags></tags>
 <inits>
 <init name="Init" lineno="86">
 <arguments repr="credentials: Small = one">

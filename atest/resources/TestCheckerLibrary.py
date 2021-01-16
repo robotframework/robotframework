@@ -4,20 +4,24 @@ import re
 from robot import utils
 from robot.api import logger
 from robot.utils.asserts import assert_equal
-from robot.result import (ExecutionResultBuilder, Keyword, TestCase, TestSuite,
-                          Result)
+from robot.result import ExecutionResultBuilder, Keyword, TestCase, TestSuite, Result
 from robot.libraries.BuiltIn import BuiltIn
 
 
 class NoSlotsKeyword(Keyword):
     pass
 
+
 class NoSlotsTestCase(TestCase):
-    keyword_class = NoSlotsKeyword
+    fixture_class = NoSlotsKeyword
+
 
 class NoSlotsTestSuite(TestSuite):
     test_class = NoSlotsTestCase
-    keyword_class = NoSlotsKeyword
+    fixture_class = NoSlotsKeyword
+
+
+NoSlotsTestCase.body_class.keyword_class = NoSlotsKeyword
 
 
 class TestCheckerLibrary:
@@ -35,8 +39,9 @@ class TestCheckerLibrary:
             ExecutionResultBuilder(path).build(result)
         except:
             set_suite_variable('$SUITE', None)
-            raise RuntimeError('Processing output failed: %s'
-                               % utils.get_error_message())
+            msg, details = utils.get_error_details()
+            logger.info(details)
+            raise RuntimeError('Processing output failed: %s' % msg)
         set_suite_variable('$SUITE', process_suite(result.suite))
         set_suite_variable('$STATISTICS', result.statistics)
         set_suite_variable('$ERRORS', process_errors(result.errors))
@@ -201,7 +206,7 @@ class TestCheckerLibrary:
             assert_equal(act, exp)
 
     def should_contain_keywords(self, item, *kw_names):
-        actual_names = [kw.name for kw in item.keywords]
+        actual_names = [kw.name for kw in item.kws]
         assert_equal(len(actual_names), len(kw_names), 'Wrong number of keywords')
         for act, exp in zip(actual_names, kw_names):
             assert_equal(act, exp)
@@ -213,7 +218,7 @@ class TestCheckerLibrary:
         kw_index = int(config.get('kw_index', 0))
         test = self._get_test_from_suite(suite, name)
         self._check_test_status(test)
-        self.should_contain_keywords(test.keywords[kw_index], *kw_names)
+        self.should_contain_keywords(test.body[kw_index], *kw_names)
         return test
 
     def check_log_message(self, item, msg, level='INFO', html=False, pattern=False):
@@ -244,27 +249,29 @@ def process_test(test):
     else:
         test.exp_status = 'PASS'
         test.exp_message = '' if 'PASS' not in test.doc else test.doc.split('PASS', 1)[1].lstrip()
-    for kw in test.keywords:
-        process_keyword(kw)
+    process_body(test.body)
     if test.setup:
         process_keyword(test.setup)
     if test.teardown:
         process_keyword(test.teardown)
-    test.keywords = test.kws = list(test.keywords.normal)
-    test.keyword_count = test.kw_count = len(test.keywords)
+    test.kws = list(test.body)
+    test.keyword_count = test.kw_count = len(test.body)
+
+
+def process_body(body):
+    for item in body:
+        if isinstance(item, NoSlotsKeyword):
+            process_keyword(item)
 
 
 def process_keyword(kw):
-    if kw is None:
-        return
     if kw.teardown:
         process_keyword(kw.teardown)
-    kw.kws = kw.keywords
+    kw.kws = [item for item in kw.body.filter(messages=False)]
     kw.msgs = kw.messages
     kw.message_count = kw.msg_count = len(kw.messages)
-    kw.keyword_count = kw.kw_count = len(list(kw.keywords.normal))
-    for subkw in kw.keywords:
-        process_keyword(subkw)
+    kw.keyword_count = kw.kw_count = len(kw.kws)
+    process_body(kw.body)
 
 
 def process_errors(errors):

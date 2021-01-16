@@ -1,4 +1,3 @@
-import os
 import unittest
 
 from robot.output import LOGGER
@@ -63,7 +62,7 @@ class TestReporting(unittest.TestCase):
         results = Results(StubSettings(), result)
         _ = results.js_result
         for test in results.result.suite.tests:
-            assert_true(len(test.keywords) > 0)
+            assert_true(len(test.body) > 0)
 
     def test_js_generation_prunes_read_result(self):
         result = self._get_execution_result()
@@ -72,7 +71,7 @@ class TestReporting(unittest.TestCase):
         results._result = result  # Fake reading results
         _ = results.js_result
         for test in result.suite.tests:
-            assert_equal(len(test.keywords), 0)
+            assert_equal(len(test.body), 0)
 
     def _write_results(self, **settings):
         result = self._get_execution_result()
@@ -83,11 +82,11 @@ class TestReporting(unittest.TestCase):
     def _get_execution_result(self):
         suite = TestSuite(name=self.EXPECTED_SUITE_NAME)
         tc = suite.tests.create(name=self.EXPECTED_TEST_NAME, status='PASS')
-        tc.keywords.create(kwname=self.EXPECTED_KEYWORD_NAME, status='PASS')
+        tc.body.create_keyword(kwname=self.EXPECTED_KEYWORD_NAME, status='PASS')
         tc = suite.tests.create(name=self.EXPECTED_FAILING_TEST)
-        kw = tc.keywords.create(kwname=self.EXPECTED_KEYWORD_NAME)
-        kw.messages.create(message=self.EXPECTED_DEBUG_MESSAGE,
-                           level='DEBUG', timestamp='20201212 12:12:12.000')
+        kw = tc.body.create_keyword(kwname=self.EXPECTED_KEYWORD_NAME)
+        kw.body.create_message(message=self.EXPECTED_DEBUG_MESSAGE,
+                               level='DEBUG', timestamp='20201212 12:12:12.000')
         errors = ExecutionErrors()
         errors.messages.create(message=self.EXPECTED_ERROR_MESSAGE,
                                level='ERROR', timestamp='20201212 12:12:12.000')

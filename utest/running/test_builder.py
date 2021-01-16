@@ -60,11 +60,11 @@ class TestBuilding(unittest.TestCase):
         assert_equal(test.template, None)
 
     def test_test_keywords(self):
-        kw = build('pass_and_fail.robot').tests[0].keywords[0]
+        kw = build('pass_and_fail.robot').tests[0].body[0]
         assert_keyword(kw, (), 'My Keyword', ('Pass',))
 
     def test_assign(self):
-        kw = build('non_ascii.robot').tests[1].keywords[0]
+        kw = build('non_ascii.robot').tests[1].body[0]
         assert_keyword(kw, ('${msg} =',), 'Evaluate', (r"u'Fran\\xe7ais'",))
 
     def test_directory_suite(self):
@@ -92,9 +92,9 @@ class TestBuilding(unittest.TestCase):
         test = build('setups_and_teardowns.robot').tests[0]
         assert_keyword(test.setup, name='${TEST SETUP}', type='setup')
         assert_keyword(test.teardown, name='${TEST TEARDOWN}', type='teardown')
-        assert_equal([kw.name for kw in test.keywords],
+        assert_equal([kw.name for kw in test.body],
                       ['Keyword'])
-        assert_equal([kw.name for kw in test.keywords.normal], ['Keyword'])
+        assert_equal([kw.name for kw in test.body], ['Keyword'])
 
     def test_test_timeout(self):
         tests = build('timeouts.robot').tests
@@ -125,12 +125,12 @@ class TestTemplates(unittest.TestCase):
 
     def test_from_setting_table(self):
         test = build('../running/test_template.robot').tests[0]
-        assert_keyword(test.keywords[0], (), 'Should Be Equal', ('Fail', 'Fail'))
+        assert_keyword(test.body[0], (), 'Should Be Equal', ('Fail', 'Fail'))
         assert_equal(test.template, 'Should Be Equal')
 
     def test_from_test_case(self):
         test = build('../running/test_template.robot').tests[3]
-        kws = test.keywords
+        kws = test.body
         assert_keyword(kws[0], (), 'Should Not Be Equal', ('Same', 'Same'))
         assert_keyword(kws[1], (), 'Should Not Be Equal', ('42', '43'))
         assert_keyword(kws[2], (), 'Should Not Be Equal', ('Something', 'Different'))
@@ -138,7 +138,7 @@ class TestTemplates(unittest.TestCase):
 
     def test_no_variable_assign(self):
         test = build('../running/test_template.robot').tests[8]
-        assert_keyword(test.keywords[0], (), 'Expect Exactly Three Args',
+        assert_keyword(test.body[0], (), 'Expect Exactly Three Args',
                        ('${SAME VARIABLE}', 'Variable content', '${VARIABLE}'))
         assert_equal(test.template, 'Expect Exactly Three Args')
 

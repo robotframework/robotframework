@@ -39,12 +39,17 @@ from robot import model
 from robot.conf import RobotSettings
 from robot.model import Keywords
 from robot.output import LOGGER, Output, pyloggingconf
-from robot.utils import seq2str, setter, py3to2
+from robot.utils import seq2str, setter
 
 from .randomizer import Randomizer
-from .steprunner import StepRunner
+from .steprunner import ForRunner, IfRunner, StepRunner
 
 
+class Body(model.Body):
+    __slots__ = []
+
+
+@Body.register
 class Keyword(model.Keyword):
     """Represents a single executable keyword.
 
@@ -54,90 +59,43 @@ class Keyword(model.Keyword):
     See the base class for documentation of attributes not documented here.
     """
     __slots__ = ['lineno']
-    message_class = None  #: Internal usage only.
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(), timeout=None,
-                 type=model.Keyword.KEYWORD_TYPE, lineno=None, parent=None):
+                 type=model.Keyword.KEYWORD_TYPE, parent=None, lineno=None):
         model.Keyword.__init__(self, name, doc, args, assign, tags, timeout, type,
                                parent)
         self.lineno = lineno
 
-    def run(self, context):
-        """Execute the keyword.
-
-        Typically called internally by :meth:`TestSuite.run`.
-        """
+    def run(self, context, templated=None):
         return StepRunner(context).run_step(self)
 
 
-@py3to2
-class For(Keyword):
-    """Represents a for loop in test data.
+@Body.register
+class For(model.For):
+    __slots__ = ['lineno', 'error']
+    body_class = Body
 
-    Contains keywords in the loop body as child :attr:`keywords`.
-    """
-    __slots__ = ['flavor', 'error']
-
-    def __init__(self, variables, flavor, values, lineno=None, parent=None, error=None):
-        Keyword.__init__(self, assign=variables, args=values, type=Keyword.FOR_LOOP_TYPE,
-                         lineno=lineno, parent=parent)
-        self.keywords = None
-        self.flavor = flavor
+    def __init__(self, variables, flavor, values, parent=None, lineno=None, error=None):
+        model.For.__init__(self, variables, flavor, values, parent)
+        self.lineno = lineno
         self.error = error
 
-    @setter
-    def keywords(self, keywords):
-        """Child keywords as a :class:`~.Keywords` object."""
-        return Keywords(Keyword, self, keywords)
-
-    @property
-    def variables(self):
-        return self.assign
-
-    @property
-    def values(self):
-        return self.args
-
-    def __str__(self):
-        variables = '    '.join(self.assign)
-        values = '    '.join(self.values)
-        return u'FOR    %s    %s    %s' % (variables, self.flavor, values)
-
-    def __bool__(self):
-        return True
+    def run(self, context, templated=False):
+        return ForRunner(context, self.flavor, templated).run(self)
 
 
-@py3to2
-class If(Keyword):
-    """Represents an if expression in test data.
+@Body.register
+class If(model.If):
+    __slots__ = ['lineno', 'error']
+    body_class = Body
 
-    Contains keywords in the body as child :attr:`keywords`.
-    """
-    __slots__ = ['orelse', 'error']
-
-    def __init__(self, condition=None, body=None, orelse=None, lineno=None, error=None,
-                 type=Keyword.IF_TYPE):
-        Keyword.__init__(self, args=[condition], type=type, lineno=lineno)
-        self.keywords = body    # FIXME: self.keywords -> self.body
-        self.orelse = orelse
+    def __init__(self, condition, parent=None, lineno=None, error=None):
+        model.If.__init__(self, condition, parent)
+        self.lineno = lineno
         self.error = error
 
-    @setter
-    def keywords(self, keywords):
-        """Child keywords as a :class:`~.Keywords` object."""
-        return Keywords(Keyword, self, keywords)
-
-    @property
-    def condition(self):
-        return self.args[0]
-
-    def __str__(self):
-        types = {self.IF_TYPE: 'IF', self.ELSE_IF_TYPE: 'ELSE IF',
-                 self.ELSE_TYPE: 'ELSE'}
-        return u'%s    %s' % (types[self.type], self.condition)
-
-    def __bool__(self):
-        return True
+    def run(self, context, templated):
+        return IfRunner(context, templated).run(self)
 
 
 class TestCase(model.TestCase):
@@ -146,7 +104,8 @@ class TestCase(model.TestCase):
     See the base class for documentation of attributes not documented here.
     """
     __slots__ = ['template', 'lineno']
-    keyword_class = Keyword  #: Internal usage only.
+    body_class = Body        #: Internal usage only.
+    fixture_class = Keyword  #: Internal usage only.
 
     def __init__(self, name='', doc='', tags=None, timeout=None, template=None,
                  lineno=None):
@@ -164,7 +123,7 @@ class TestSuite(model.TestSuite):
     """
     __slots__ = ['resource']
     test_class = TestCase    #: Internal usage only.
-    keyword_class = Keyword  #: Internal usage only.
+    fixture_class = Keyword  #: Internal usage only.
 
     def __init__(self,  name='', doc='', metadata=None, source=None, rpa=None):
         model.TestSuite.__init__(self, name, doc, metadata, source, rpa)
@@ -349,19 +308,35 @@ class UserKeyword(object):
         self.tags = tags
         self.return_ = return_ or ()
         self.timeout = timeout
-        self.keywords = []
+        self.body = []
         self.lineno = lineno
         self.parent = parent
         self._teardown = None
 
     @setter
+    def body(self, body):
+        """Child keywords as a :class:`~.Body` object."""
+        return Body(self, body)
+
+    @property
+    def keywords(self):
+        """Deprecated since Robot Framework 4.0.
+
+        Use :attr:`body` or :attr:`teardown` instead.
+        """
+        kws = list(self.body)
+        if self.teardown:
+            kws.append(self.teardown)
+        return Keywords(self, kws)
+
+    @keywords.setter
     def keywords(self, keywords):
-        return model.Keywords(Keyword, self, keywords)
+        Keywords.raise_deprecation_error()
 
     @property
     def teardown(self):
         if self._teardown is None:
-            self._teardown = Keyword(parent=self, type=Keyword.TEARDOWN_TYPE)
+            self._teardown = Keyword(None, parent=self, type=Keyword.TEARDOWN_TYPE)
         return self._teardown
 
     @setter
@@ -376,8 +351,7 @@ class UserKeyword(object):
 class Import(object):
     ALLOWED_TYPES = ('Library', 'Resource', 'Variables')
 
-    def __init__(self, type, name, args=(), alias=None, source=None,
-                 lineno=None):
+    def __init__(self, type, name, args=(), alias=None, source=None, lineno=None):
         if type not in self.ALLOWED_TYPES:
             raise ValueError("Invalid import type '%s'. Should be one of %s."
                              % (type, seq2str(self.ALLOWED_TYPES, lastsep=' or ')))
@@ -399,8 +373,7 @@ class Import(object):
     def report_invalid_syntax(self, message, level='ERROR'):
         source = self.source or '<unknown>'
         line = ' on line %s' % self.lineno if self.lineno is not None else ''
-        LOGGER.write("Error in file '%s'%s: %s" % (source, line, message),
-                     level)
+        LOGGER.write("Error in file '%s'%s: %s" % (source, line, message), level)
 
 
 class Imports(model.ItemList):
