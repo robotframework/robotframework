@@ -41,8 +41,7 @@ class _KeywordRemover(SuiteVisitor):
         self._removal_message = RemovalMessage(self._message)
 
     def _clear_content(self, kw):
-        kw.body = []
-        kw.messages = []
+        kw.body.clear()
         self._removal_message.set(kw)
 
     def _failed_or_warning_or_error(self, item):
@@ -105,12 +104,14 @@ class ForLoopItemsRemover(_KeywordRemover):
     def start_keyword(self, kw):
         if kw.type == kw.FOR_TYPE:
             before = len(kw.body)
-            kw.body = self._remove_keywords(kw.body)
+            self._remove_keywords(kw.body)
             self._removal_message.set_if_removed(kw, before)
 
-    def _remove_keywords(self, keywords):
-        return [kw for kw in keywords
-                if self._failed_or_warning_or_error(kw) or kw is keywords[-1]]
+    def _remove_keywords(self, body):
+        keywords = body.filter(messages=False)
+        for kw in keywords[:-1]:
+            if not self._failed_or_warning_or_error(kw):
+                body.remove(kw)
 
 
 class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
@@ -119,16 +120,15 @@ class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
     def start_keyword(self, kw):
         if kw.name == 'BuiltIn.Wait Until Keyword Succeeds' and kw.body:
             before = len(kw.body)
-            kw.body = self._remove_keywords(list(kw.body))
+            self._remove_keywords(kw.body)
             self._removal_message.set_if_removed(kw, before)
 
-    def _remove_keywords(self, keywords):
+    def _remove_keywords(self, body):
+        keywords = body.filter(messages=False)
         include_from_end = 2 if keywords[-1].passed else 1
-        return self._kws_with_warnings(keywords[:-include_from_end]) \
-            + keywords[-include_from_end:]
-
-    def _kws_with_warnings(self, keywords):
-        return [kw for kw in keywords if self._warning_or_error(kw)]
+        for kw in keywords[:-include_from_end]:
+            if not self._warning_or_error(kw):
+                body.remove(kw)
 
 
 class WarningAndErrorFinder(SuiteVisitor):

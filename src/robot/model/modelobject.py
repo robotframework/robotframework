@@ -15,11 +15,12 @@
 
 import copy
 
-from robot.utils import py3to2, SetterAwareType, unicode, with_metaclass
+from robot.utils import py3to2, SetterAwareType, with_metaclass
 
 
 @py3to2
 class ModelObject(with_metaclass(SetterAwareType, object)):
+    repr_args = ('name',)
     __slots__ = []
 
     def config(self, **attributes):
@@ -68,11 +69,9 @@ class ModelObject(with_metaclass(SetterAwareType, object)):
             setattr(copied, name, attributes[name])
         return copied
 
-    def __str__(self):
-        return self.name
-
     def __repr__(self):
-        return repr(unicode(self))
+        args = ['%s=%r' % (n, getattr(self, n)) for n in self.repr_args]
+        return '%s(%s)' % (type(self).__name__, ', '.join(args))
 
     def __setstate__(self, state):
         """Customize attribute updating when using the `copy` module.

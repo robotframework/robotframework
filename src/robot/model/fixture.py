@@ -17,7 +17,7 @@ def create_fixture(fixture, parent, type):
     # TestCase and TestSuite have 'fixture_class', Keyword doesn't.
     fixture_class = getattr(parent, 'fixture_class', parent.__class__)
     if fixture is None:
-        fixture = fixture_class(parent=parent, type=type)
+        fixture = fixture_class(None, parent=parent, type=type)
     elif isinstance(fixture, fixture_class):
         fixture.parent = parent
         fixture.type = type

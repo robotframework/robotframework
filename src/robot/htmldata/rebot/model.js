@@ -5,6 +5,8 @@ window.model = (function () {
         suite.source = data.source;
         suite.relativeSource = data.relativeSource;
         suite.fullName = data.parent ? data.parent.fullName + '.' + data.name : data.name;
+        suite.type = 'suite';
+        suite.template = 'suiteTemplate';
         setStats(suite, data.statistics);
         suite.metadata = data.metadata;
         suite.populateKeywords = createIterablePopulator('Keyword');
@@ -115,6 +117,8 @@ window.model = (function () {
 
     function Test(data) {
         var test = createModelObject(data);
+        test.type = 'test';
+        test.template = 'testTemplate';
         test.fullName = data.parent.fullName + '.' + test.name;
         test.formatParentName = function () { return util.formatParentName(test); };
         test.timeout = data.timeout;
@@ -141,13 +145,13 @@ window.model = (function () {
         var kw = createModelObject(data);
         kw.libname = data.libname;
         kw.type = data.type;
+        kw.template = 'keywordTemplate';
         kw.arguments = data.args;
         kw.assign = data.assign + (data.assign ? ' =' : '');
         kw.tags = data.tags;
         kw.timeout = data.timeout;
-        kw.populateMessages = createIterablePopulator('Message');
         kw.populateKeywords = createIterablePopulator('Keyword');
-        kw.childrenNames = ['keyword', 'message'];
+        kw.childrenNames = ['keyword'];
         kw.isChildrenLoaded = data.isChildrenLoaded;
         kw.callWhenChildrenReady = window.fileLoading.getCallbackHandlerForKeywords(kw);
         kw.children = function () {
@@ -158,13 +162,17 @@ window.model = (function () {
     }
 
     function Message(level, date, text, link) {
-        return {
+        var message = {
+            type: 'message',
+            template: 'messageTemplate',
             level: level,
             time: util.timeFromDate(date),
             date: util.dateFromDate(date),
             text: text,
             link: link
         };
+        message.callWhenChildrenReady = function (callable) { callable(); };
+        return message;
     }
 
     function Times(timedata) {

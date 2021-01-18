@@ -16,8 +16,8 @@
 import os.path
 
 from robot.errors import DataError
+from robot.running import ArgInfo, ArgumentSpec
 from robot.utils import ET, ETSource
-from robot.running.arguments import ArgumentSpec, ArgInfo
 
 from .model import LibraryDoc, KeywordDoc
 from .datatypes import EnumDoc, TypedDictDoc

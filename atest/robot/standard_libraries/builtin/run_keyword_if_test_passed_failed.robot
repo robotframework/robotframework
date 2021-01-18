@@ -14,7 +14,8 @@ Run Keyword If test Failed When Test Does Not Fail
 
 Run Keyword If Test Failed Can't Be Used In Setup
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Empty    ${tc.setup.body}
+    Length Should Be     ${tc.setup.body}       1
+    Check Log Message    ${tc.setup.body[0]}    Keyword 'Run Keyword If Test Failed' can only be used in test teardown.    FAIL
 
 Run Keyword If Test Failed Can't Be Used in Test
     Check Test Case    ${TEST NAME}
