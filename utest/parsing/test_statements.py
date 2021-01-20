@@ -38,7 +38,7 @@ from robot.parsing.model.statements import (
     EmptyLine
 )
 from robot.utils.asserts import assert_equal, assert_true
-from robot.utils.robottypes3 import type_name
+from robot.utils import type_name
 
 
 def assert_created_statement(tokens, base_class, **params):
