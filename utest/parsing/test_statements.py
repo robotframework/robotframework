@@ -37,7 +37,8 @@ from robot.parsing.model.statements import (
     Comment,
     EmptyLine
 )
-from robot.utils.asserts import assert_equal
+from robot.utils.asserts import assert_equal, assert_true
+from robot.utils.robottypes3 import type_name
 
 
 def assert_created_statement(tokens, base_class, **params):
@@ -56,11 +57,21 @@ def assert_created_statement(tokens, base_class, **params):
     )
 
 
-def assert_statements(first, second):
-    for t1, t2 in zip(first, second):
+def compare_statements(first, second):
+    return (isinstance(first, type(second))
+            and first.tokens == second.tokens
+            and first.errors == second.errors)
+
+
+def assert_statements(st1, st2):
+    for t1, t2 in zip(st1, st2):
         assert_equal(t1, t2, formatter=repr)
-    assert_equal(first, second)
-    assert_equal(len(first), len(second))
+    assert_true(
+        compare_statements(st1, st2),
+        'Statements are not equal. %s (%s) != %s (%s)' % (st1, type_name(st1),
+                                                          st2, type_name(st2))
+    )
+    assert_equal(len(st1), len(st2))
 
 
 class TestCreateStatementsFromParams(unittest.TestCase):
