@@ -22,6 +22,17 @@ from .keyword import Keywords
 from .tags import Tags
 
 
+def deprecated(method):
+    def wrapper(self, *args, **kws):
+        """Deprecated."""
+        if self.deprecate_keyword_attributes:
+            warnings.warn(
+                "'%s.%s' is deprecated." % (type(self).__name__, method.__name__)
+            )
+        return method(self, *args, **kws)
+    return wrapper
+
+
 @py3to2
 @Body.register
 class For(BodyItem):
@@ -29,6 +40,7 @@ class For(BodyItem):
     body_class = Body
     repr_args = ('variables', 'flavor', 'values')
     __slots__ = ['variables', 'flavor', 'values']
+    deprecate_keyword_attributes = True
 
     def __init__(self, variables=(), flavor='IN', values=(), parent=None):
         self.variables = variables
@@ -65,42 +77,34 @@ class For(BodyItem):
     # TODO: Remove deprecated Keyword related properties in RF 4.1/5.0.
 
     @property
+    @deprecated
     def name(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'For.name' is deprecated since Robot Framework 4.0. "
-                      "Access 'variables', 'flavor' or 'values' directly or "
-                      "use 'str()' to get a string representation.", UserWarning)
         return '%s %s [ %s ]' % (' | '.join(self.variables), self.flavor,
                                  ' | '.join(self.values))
 
     @property
+    @deprecated
     def doc(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'For.doc' is deprecated since Robot Framework 4.0.", UserWarning)
         return ''
 
     @property
+    @deprecated
     def args(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'For.args' is deprecated since Robot Framework 4.0.", UserWarning)
         return ()
 
     @property
+    @deprecated
     def assign(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'For.assign' is deprecated since Robot Framework 4.0.", UserWarning)
         return ()
 
     @property
+    @deprecated
     def tags(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'For.tags' is deprecated since Robot Framework 4.0.", UserWarning)
         return Tags()
 
     @property
+    @deprecated
     def timeout(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'For.timeout' is deprecated since Robot Framework 4.0.", UserWarning)
         return None
 
 
@@ -111,6 +115,7 @@ class If(BodyItem):
     inactive = object()
     repr_args = ('condition',)
     __slots__ = ['condition', '_orelse']
+    deprecate_keyword_attributes = True
 
     def __init__(self, condition=None, parent=None):
         self.condition = condition
@@ -175,39 +180,31 @@ class If(BodyItem):
     # TODO: Remove deprecated Keyword related properties in RF 4.1/5.0.
 
     @property
+    @deprecated
     def name(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'If.name' is deprecated since Robot Framework 4.0. "
-                      "Access 'condition' directly or use 'str()' to get "
-                      "a string representation.", UserWarning)
         return self.condition
 
     @property
+    @deprecated
     def doc(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'If.doc' is deprecated since Robot Framework 4.0.", UserWarning)
         return ''
 
     @property
+    @deprecated
     def args(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'If.args' is deprecated since Robot Framework 4.0.", UserWarning)
         return ()
 
     @property
+    @deprecated
     def assign(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'If.assign' is deprecated since Robot Framework 4.0.", UserWarning)
         return ()
 
     @property
+    @deprecated
     def tags(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'If.tags' is deprecated since Robot Framework 4.0.", UserWarning)
         return Tags()
 
     @property
+    @deprecated
     def timeout(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'If.timeout' is deprecated since Robot Framework 4.0.", UserWarning)
         return None
