@@ -1,8 +1,9 @@
 import unittest
+import warnings
 
-from robot.model import For, If
+from robot.model import For, If, Tags
 from robot.utils import PY2, unicode
-from robot.utils.asserts import assert_equal
+from robot.utils.asserts import assert_equal, assert_true
 
 
 class TestFor(unittest.TestCase):
@@ -26,6 +27,20 @@ class TestFor(unittest.TestCase):
             assert_equal(repr(for_), exp_repr)
             if PY2:
                 assert_equal(str(for_), unicode(for_).encode('UTF-8'))
+
+    def test_deprecated_keyword_specific_properties(self):
+        for_ = For(['${x}', '${y}'], 'IN', ['a', 'b', 'c', 'd'])
+        tmpl = "'For.%s' is deprecated since Robot Framework 4.0."
+        for name, expected in [('name', '${x} | ${y} IN [ a | b | c | d ]'),
+                               ('doc', ''),
+                               ('args', ()),
+                               ('assign', ()),
+                               ('tags', Tags()),
+                               ('timeout', None)]:
+            with warnings.catch_warnings(record=True) as w:
+                assert_equal(getattr(for_, name), expected)
+                assert_true(str(w[0].message).startswith(tmpl % name))
+                assert_equal(w[0].category, UserWarning)
 
 
 class TestIf(unittest.TestCase):
@@ -55,6 +70,20 @@ class TestIf(unittest.TestCase):
             assert_equal(repr(if_), exp_repr)
             if PY2:
                 assert_equal(str(if_), unicode(if_).encode('UTF-8'))
+
+    def test_deprecated_keyword_specific_properties(self):
+        if_ = If('$x > 0')
+        tmpl = "'If.%s' is deprecated since Robot Framework 4.0."
+        for name, expected in [('name', '$x > 0'),
+                               ('doc', ''),
+                               ('args', ()),
+                               ('assign', ()),
+                               ('tags', Tags()),
+                               ('timeout', None)]:
+            with warnings.catch_warnings(record=True) as w:
+                assert_equal(getattr(if_, name), expected)
+                assert_true(str(w[0].message).startswith(tmpl % name))
+                assert_equal(w[0].category, UserWarning)
 
 
 if __name__ == '__main__':
