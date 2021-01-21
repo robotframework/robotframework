@@ -37,7 +37,7 @@ import os
 
 from robot import model
 from robot.conf import RobotSettings
-from robot.model import Keywords
+from robot.model import Keywords, BodyItem
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.utils import seq2str, setter
 
@@ -61,7 +61,7 @@ class Keyword(model.Keyword):
     __slots__ = ['lineno']
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(), timeout=None,
-                 type=model.Keyword.KEYWORD_TYPE, parent=None, lineno=None):
+                 type=BodyItem.KEYWORD_TYPE, parent=None, lineno=None):
         model.Keyword.__init__(self, name, doc, args, assign, tags, timeout, type,
                                parent)
         self.lineno = lineno
@@ -89,8 +89,9 @@ class If(model.If):
     __slots__ = ['lineno', 'error']
     body_class = Body
 
-    def __init__(self, condition, parent=None, lineno=None, error=None):
-        model.If.__init__(self, condition, parent)
+    def __init__(self, condition=None, type=BodyItem.IF_TYPE, parent=None,
+                 lineno=None, error=None):
+        model.If.__init__(self, condition, type, parent)
         self.lineno = lineno
         self.error = error
 
