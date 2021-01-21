@@ -204,6 +204,7 @@ class Keyword(model.Keyword, StatusMixin):
 
         Deprecated since Robot Framework 4.0. Use :att:`body` instead.
         """
+        warnings.warn("'Keyword.children' is deprecated. Use 'Keyword.body' instead.")
         return list(self.body)
 
     @property
@@ -254,9 +255,7 @@ class TestCase(model.TestCase, StatusMixin):
 
     @property
     def critical(self):
-        warnings.warn("'TestCase.criticality' has been deprecated and always "
-                      " returns 'True'.",
-                      UserWarning)
+        warnings.warn("'TestCase.criticality' is deprecated and always returns 'True'.")
         return True
 
 
