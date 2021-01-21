@@ -20,7 +20,7 @@ from robot.utils import py3to2, SetterAwareType, with_metaclass
 
 @py3to2
 class ModelObject(with_metaclass(SetterAwareType, object)):
-    repr_args = ('name',)
+    repr_args = ()
     __slots__ = []
 
     def config(self, **attributes):
@@ -71,7 +71,10 @@ class ModelObject(with_metaclass(SetterAwareType, object)):
 
     def __repr__(self):
         args = ['%s=%r' % (n, getattr(self, n)) for n in self.repr_args]
-        return '%s(%s)' % (type(self).__name__, ', '.join(args))
+        module = type(self).__module__.split('.')
+        if len(module) > 1 and module[0] == 'robot':
+            module = module[:2]
+        return '%s.%s(%s)' % ('.'.join(module), type(self).__name__, ', '.join(args))
 
     def __setstate__(self, state):
         """Customize attribute updating when using the `copy` module.

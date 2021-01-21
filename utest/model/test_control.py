@@ -24,7 +24,7 @@ class TestFor(unittest.TestCase):
              u"For(variables=[%r], flavor='IN', values=[%r])" % (u'${\xfc}', u'f\xf6\xf6'))
         ]:
             assert_equal(unicode(for_), exp_str)
-            assert_equal(repr(for_), exp_repr)
+            assert_equal(repr(for_), 'robot.model.' + exp_repr)
             if PY2:
                 assert_equal(str(for_), unicode(for_).encode('UTF-8'))
 
@@ -67,7 +67,7 @@ class TestIf(unittest.TestCase):
              u'If(condition=%r)' % u'$x == "\xe4iti"'),
         ]:
             assert_equal(unicode(if_), exp_str)
-            assert_equal(repr(if_), exp_repr)
+            assert_equal(repr(if_), 'robot.model.' + exp_repr)
             if PY2:
                 assert_equal(str(if_), unicode(if_).encode('UTF-8'))
 
