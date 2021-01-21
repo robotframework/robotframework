@@ -182,7 +182,7 @@ def getshortdoc(doc_or_item, linesep='\n'):
 
 # https://bugs.jython.org/issue2772
 if JYTHON and PY_VERSION < (2, 7, 2):
-    trailing_spaces = re.compile('\s+$', re.UNICODE)
+    trailing_spaces = re.compile(r'\s+$', re.UNICODE)
 
     def rstrip(string):
         return trailing_spaces.sub('', string)
