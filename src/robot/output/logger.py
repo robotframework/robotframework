@@ -17,6 +17,7 @@ from contextlib import contextmanager
 import os
 
 from robot.errors import DataError
+from robot.model import If
 
 from .console import ConsoleOutput
 from .filelogger import FileLogger
@@ -245,6 +246,18 @@ class LoggerProxy(AbstractLoggerProxy):
     _methods = ('start_suite', 'end_suite', 'start_test', 'end_test',
                 'start_keyword', 'end_keyword', 'message', 'log_message',
                 'imported', 'output_file', 'close')
+
+    def start_keyword(self, kw):
+        if isinstance(kw, If) and hasattr(self.logger, 'start_if'):
+            self.logger.start_if(kw)
+        else:
+            self.logger.start_keyword(kw)
+
+    def end_keyword(self, kw):
+        if isinstance(kw, If) and hasattr(self.logger, 'end_if'):
+            self.logger.end_if(kw)
+        else:
+            self.logger.end_keyword(kw)
 
 
 LOGGER = Logger()

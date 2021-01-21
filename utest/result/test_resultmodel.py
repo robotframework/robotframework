@@ -1,7 +1,7 @@
 import unittest
 import warnings
 
-from robot.result import Keyword, Message, TestCase, TestSuite
+from robot.result import If, Keyword, Message, TestCase, TestSuite
 from robot.utils.asserts import assert_equal, assert_false, assert_raises, assert_true
 
 
@@ -160,17 +160,23 @@ class TestModel(unittest.TestCase):
     def test_keyword_name_cannot_be_set_directly(self):
         assert_raises(AttributeError, setattr, Keyword(), 'name', 'value')
 
-    def test_test_passed_failed_skipped_propertys(self):
-        self._verify_passed_failed_skipped(TestCase())
+    def test_status_propertys_with_test(self):
+        self._verify_status_propertys(TestCase())
 
-    def test_keyword_passed_failed_skipped_propertys(self):
-        self._verify_passed_failed_skipped(Keyword())
+    def test_status_propertys_with_keyword(self):
+        self._verify_status_propertys(Keyword())
+
+    def test_status_propertys_with_if(self):
+        self._verify_status_propertys(If())
 
     def test_keyword_passed_after_dry_run(self):
-        self._verify_passed_failed_skipped(Keyword(status='NOT_RUN'),
-                                           initial_status='NOT_RUN')
+        self._verify_status_propertys(Keyword(status='NOT_RUN'),
+                                      initial_status='NOT_RUN')
 
-    def _verify_passed_failed_skipped(self, item, initial_status='FAIL'):
+    def _verify_status_propertys(self, item, initial_status='FAIL'):
+        item.starttime = '20210121 17:04:00.000'
+        item.endtime = '20210121 17:04:01.002'
+        assert_equal(item.elapsedtime, 1002)
         assert_equal(item.status, initial_status)
         assert_equal(item.passed, False)
         assert_equal(item.failed, initial_status == 'FAIL')

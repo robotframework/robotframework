@@ -147,7 +147,7 @@ class KeywordBuilder(_Builder):
     def build_keyword(self, kw, split=False):
         self._context.check_expansion(kw)
         kws = list(kw.body)
-        if kw.teardown:
+        if getattr(kw, 'teardown', None):
             kws.append(kw.teardown)
         with self._context.prune_input(kw.body):
             return (KEYWORD_TYPES[kw.type],

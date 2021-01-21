@@ -18,7 +18,7 @@ from contextlib import contextmanager
 
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           ExitForLoop, ContinueForLoop, DataError)
-from robot.result import Keyword as KeywordResult
+from robot.result import If as IfResult, Keyword as KeywordResult
 from robot.output import librarylogger as logger
 from robot.utils import (format_assign_message, frange, get_error_message,
                          is_list_like, is_number, plural_or_not as s,
@@ -88,8 +88,8 @@ class IfRunner(object):
                 self._dry_run_stack.pop()
 
     def _run_if_branch(self, data, branch_run=False, recursive_dry_run=False):
-        result = KeywordResult(kwname=data.condition, type=data.type,
-                               lineno=data.lineno, source=data.source)
+        result = IfResult(data.condition, lineno=data.lineno, source=data.source,
+                          type=data.type)
         with StatusReporter(self._context, result) as reporter:
             if data.error:
                 raise DataError(data.error)

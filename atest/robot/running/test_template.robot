@@ -59,12 +59,12 @@ Invalid FOR
 
 Template With IF
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.kws[0].type}      if
-    Should Be Equal    ${tc.kws[0].status}    NOT_RUN
-    Should Be Equal    ${tc.kws[1].type}      elseif
-    Should Be Equal    ${tc.kws[1].status}    NOT_RUN
-    Should Be Equal    ${tc.kws[2].type}      else
-    Should Be Equal    ${tc.kws[2].status}    PASS
+    Should Be Equal    ${tc.body[0].type}                    if
+    Should Be Equal    ${tc.body[0].status}                  NOT_RUN
+    Should Be Equal    ${tc.body[0].orelse.type}             elseif
+    Should Be Equal    ${tc.body[0].orelse.status}           NOT_RUN
+    Should Be Equal    ${tc.body[0].orelse.orelse.type}      else
+    Should Be Equal    ${tc.body[0].orelse.orelse.status}    PASS
 
 Template With IF Failing
     Check Test Case    ${TESTNAME}

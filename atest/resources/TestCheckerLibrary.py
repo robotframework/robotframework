@@ -4,7 +4,8 @@ import re
 from robot import utils
 from robot.api import logger
 from robot.utils.asserts import assert_equal
-from robot.result import ExecutionResultBuilder, Keyword, TestCase, TestSuite, Result
+from robot.result import ExecutionResultBuilder, If, Keyword, TestCase, TestSuite, Result
+from robot.result.model import Body
 from robot.libraries.BuiltIn import BuiltIn
 
 
@@ -12,16 +13,26 @@ class NoSlotsKeyword(Keyword):
     pass
 
 
+class NoSlotsIf(If):
+    pass
+
+
+class NoSlotsBody(Body):
+    keyword_class = NoSlotsKeyword
+    if_class = NoSlotsIf
+
+
+NoSlotsKeyword.body_class = NoSlotsIf.body_class = NoSlotsBody
+
+
 class NoSlotsTestCase(TestCase):
     fixture_class = NoSlotsKeyword
+    body_class = NoSlotsBody
 
 
 class NoSlotsTestSuite(TestSuite):
-    test_class = NoSlotsTestCase
     fixture_class = NoSlotsKeyword
-
-
-NoSlotsTestCase.body_class.keyword_class = NoSlotsKeyword
+    test_class = NoSlotsTestCase
 
 
 class TestCheckerLibrary:
@@ -262,16 +273,26 @@ def process_body(body):
     for item in body:
         if isinstance(item, NoSlotsKeyword):
             process_keyword(item)
+        elif isinstance(item, NoSlotsIf):
+            process_if(item)
+
+
+def process_if(if_):
+    if_.kws = [item for item in if_.body.filter(messages=False)]
+    if_.keyword_count = if_.kw_count = len(if_.kws)
+    process_body(if_.body)
+    if if_.orelse:
+        process_if(if_.orelse)
 
 
 def process_keyword(kw):
-    if kw.teardown:
-        process_keyword(kw.teardown)
     kw.kws = [item for item in kw.body.filter(messages=False)]
     kw.msgs = kw.messages
     kw.message_count = kw.msg_count = len(kw.messages)
     kw.keyword_count = kw.kw_count = len(kw.kws)
     process_body(kw.body)
+    if kw.teardown:
+        process_keyword(kw.teardown)
 
 
 def process_errors(errors):

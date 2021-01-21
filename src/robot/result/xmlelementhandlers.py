@@ -117,18 +117,46 @@ class KeywordHandler(_Handler):
     tag = 'kw'
 
     def start(self, elem, result):
-        type_ = elem.get('type', 'kw')
-        if type_ == 'setup':
-            return result.setup.config(kwname=elem.get('name', ''),
-                                       libname=elem.get('library', ''),
-                                       type=type_)
-        elif type_ == 'teardown':
-            return result.teardown.config(kwname=elem.get('name', ''),
-                                          libname=elem.get('library', ''),
-                                          type=type_)
+        creator = getattr(self, '_create_%s' % elem.get('type', 'kw'))
+        return creator(elem, result)
+
+    def _create_kw(self, elem, result):
         return result.body.create_keyword(kwname=elem.get('name', ''),
                                           libname=elem.get('library', ''),
-                                          type=elem.get('type', 'kw'))
+                                          type=elem.get('type', 'kw'))    # FIXME: Remove type here
+
+    def _create_setup(self, elem, result):
+        return result.setup.config(kwname=elem.get('name', ''),
+                                   libname=elem.get('library', ''))
+
+    def _create_teardown(self, elem, result):
+        return result.teardown.config(kwname=elem.get('name', ''),
+                                      libname=elem.get('library', ''))
+
+    def _create_if(self, elem, result):
+        return result.body.create_if(condition=elem.get('name'))
+
+    def _create_elseif(self, elem, result):
+        return self._config_orelse(result.body[-1].orelse, elem.get('name'))
+
+    def _config_orelse(self, orelse, condition=None):
+        # In output.xml IF branches are in sequence but in model they are nested.
+        # 'orelse' we got is the first ELSE (IF) branch and we need to find
+        # the correct one configure i.e. the one that isn't yet configured.
+        # Reorganizing output.xml might be a good idea.
+        while orelse:
+            orelse = orelse.orelse
+        orelse.config(condition=condition)
+        return orelse
+
+    def _create_else(self, elem, result):
+        return self._config_orelse(result.body[-1].orelse)
+
+    def _create_for(self, elem, result):
+        return self._create_kw(elem, result)
+
+    def _create_foritem(self, elem, result):
+        return self._create_kw(elem, result)
 
     def _children(self):
         return [DocHandler(), ArgumentsHandler(), AssignHandler(),
