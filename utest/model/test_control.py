@@ -36,7 +36,6 @@ class TestFor(unittest.TestCase):
         not_deprecated = NotDeprecated(['${x}', '${y}'], 'IN', ['a', 'b', 'c', 'd'])
 
         for name, expected in [('name', '${x} | ${y} IN [ a | b | c | d ]'),
-                               ('doc', ''),
                                ('args', ()),
                                ('assign', ()),
                                ('tags', Tags()),
@@ -130,7 +129,6 @@ class TestIf(unittest.TestCase):
         not_deprecated = NotDeprecated('$x > 0')
 
         for name, expected in [('name', '$x > 0'),
-                               ('doc', ''),
                                ('args', ()),
                                ('assign', ()),
                                ('tags', Tags()),

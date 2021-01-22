@@ -4,12 +4,21 @@ import re
 from robot import utils
 from robot.api import logger
 from robot.utils.asserts import assert_equal
-from robot.result import ExecutionResultBuilder, If, Keyword, TestCase, TestSuite, Result
-from robot.result.model import Body
+from robot.result import (ExecutionResultBuilder, For, If, Iteration, Keyword,
+                          Result, ResultVisitor, TestCase, TestSuite)
+from robot.result.model import Body, ForBody
 from robot.libraries.BuiltIn import BuiltIn
 
 
 class NoSlotsKeyword(Keyword):
+    pass
+
+
+class NoSlotsFor(For):
+    pass
+
+
+class NoSlotsIteration(Iteration):
     pass
 
 
@@ -19,10 +28,16 @@ class NoSlotsIf(If):
 
 class NoSlotsBody(Body):
     keyword_class = NoSlotsKeyword
+    for_class = NoSlotsFor
     if_class = NoSlotsIf
 
 
-NoSlotsKeyword.body_class = NoSlotsIf.body_class = NoSlotsBody
+class NoSlotsForBody(ForBody):
+    iteration_class = NoSlotsIteration
+
+
+NoSlotsKeyword.body_class = NoSlotsIteration.body_class = NoSlotsIf.body_class = NoSlotsBody
+NoSlotsFor.body_class = NoSlotsForBody
 
 
 class NoSlotsTestCase(TestCase):
@@ -53,9 +68,10 @@ class TestCheckerLibrary:
             msg, details = utils.get_error_details()
             logger.info(details)
             raise RuntimeError('Processing output failed: %s' % msg)
-        set_suite_variable('$SUITE', process_suite(result.suite))
+        result.visit(ProcessResults())
+        set_suite_variable('$SUITE', result.suite)
         set_suite_variable('$STATISTICS', result.statistics)
-        set_suite_variable('$ERRORS', process_errors(result.errors))
+        set_suite_variable('$ERRORS', result.errors)
 
     def get_test_case(self, name):
         suite = BuiltIn().get_variable_value('${SUITE}')
@@ -240,62 +256,38 @@ class TestCheckerLibrary:
         b.should_be_equal(str(item.html), str(html or level == 'HTML'), 'Wrong HTML status')
 
 
-def process_suite(suite):
-    for subsuite in suite.suites:
-        process_suite(subsuite)
-    for test in suite.tests:
-        process_test(test)
-    for kw in suite.setup, suite.teardown:
-        process_keyword(kw)
-    return suite
+class ProcessResults(ResultVisitor):
 
+    def start_test(self, test):
+        for status in 'FAIL', 'SKIP', 'PASS':
+            if status in test.doc:
+                test.exp_status = status
+                test.exp_message = test.doc.split(status, 1)[1].lstrip()
+                break
+        else:
+            test.exp_status = 'PASS'
+            test.exp_message = ''
+        test.kws = list(test.body)
+        test.keyword_count = test.kw_count = len(test.kws)
 
-def process_test(test):
-    if 'FAIL' in test.doc:
-        test.exp_status = 'FAIL'
-        test.exp_message = test.doc.split('FAIL', 1)[1].lstrip()
-    elif 'SKIP' in test.doc:
-        test.exp_status = 'SKIP'
-        test.exp_message = test.doc.split('SKIP', 1)[1].lstrip()
-    else:
-        test.exp_status = 'PASS'
-        test.exp_message = '' if 'PASS' not in test.doc else test.doc.split('PASS', 1)[1].lstrip()
-    process_body(test.body)
-    if test.setup:
-        process_keyword(test.setup)
-    if test.teardown:
-        process_keyword(test.teardown)
-    test.kws = list(test.body)
-    test.keyword_count = test.kw_count = len(test.body)
+    def start_keyword(self, kw):
+        self._add_kws_and_msgs(kw)
 
+    def _add_kws_and_msgs(self, item):
+        item.kws = item.body.filter(messages=False)
+        item.msgs = item.body.filter(messages=True)
+        item.keyword_count = item.kw_count = len(item.kws)
+        item.message_count = item.msg_count = len(item.msgs)
 
-def process_body(body):
-    for item in body:
-        if isinstance(item, NoSlotsKeyword):
-            process_keyword(item)
-        elif isinstance(item, NoSlotsIf):
-            process_if(item)
+    def start_for(self, for_):
+        self._add_kws_and_msgs(for_)
 
+    def start_iteration(self, iteration):
+        self._add_kws_and_msgs(iteration)
 
-def process_if(if_):
-    if_.kws = [item for item in if_.body.filter(messages=False)]
-    if_.keyword_count = if_.kw_count = len(if_.kws)
-    process_body(if_.body)
-    if if_.orelse:
-        process_if(if_.orelse)
+    def start_if(self, if_):
+        self._add_kws_and_msgs(if_)
 
-
-def process_keyword(kw):
-    kw.kws = [item for item in kw.body.filter(messages=False)]
-    kw.msgs = kw.messages
-    kw.message_count = kw.msg_count = len(kw.messages)
-    kw.keyword_count = kw.kw_count = len(kw.kws)
-    process_body(kw.body)
-    if kw.teardown:
-        process_keyword(kw.teardown)
-
-
-def process_errors(errors):
-    errors.msgs = errors.messages
-    errors.message_count = errors.msg_count = len(errors.messages)
-    return errors
+    def visit_errors(self, errors):
+        errors.msgs = errors.messages
+        errors.message_count = errors.msg_count = len(errors.messages)

@@ -23,7 +23,7 @@ class XmlElementHandler(object):
 
     def start(self, elem):
         handler, result = self._stack[-1]
-        handler = handler.get_child_handler(elem)
+        handler = handler.get_child_handler(elem.tag)
         result = handler.start(elem, result)
         self._stack.append((handler, result))
 
@@ -42,13 +42,13 @@ class ElementHandler(object):
         cls.element_handlers[handler.tag] = handler()
         return handler
 
-    def get_child_handler(self, elem):
-        if elem.tag not in self.children:
+    def get_child_handler(self, tag):
+        if tag not in self.children:
             if not self.tag:
-                raise DataError("Incompatible root element '%s'." % elem.tag)
+                raise DataError("Incompatible root element '%s'." % tag)
             raise DataError("Incompatible child element '%s' for '%s'."
-                            % (elem.tag, self.tag))
-        return self.element_handlers[elem.tag]
+                            % (tag, self.tag))
+        return self.element_handlers[tag]
 
     def start(self, elem, result):
         return result
@@ -92,16 +92,16 @@ class SuiteHandler(ElementHandler):
                                     source=elem.get('source'),
                                     rpa=result.rpa)
 
-    def get_child_handler(self, elem):
-        if elem.tag == 'status':
+    def get_child_handler(self, tag):
+        if tag == 'status':
             return StatusHandler(set_status=False)
-        return ElementHandler.get_child_handler(self, elem)
+        return ElementHandler.get_child_handler(self, tag)
 
 
 @ElementHandler.register
 class TestHandler(ElementHandler):
     tag = 'test'
-    children = frozenset(('doc', 'tags', 'timeout', 'status', 'kw', 'if'))
+    children = frozenset(('doc', 'tags', 'timeout', 'status', 'kw', 'if', 'for'))
 
     def start(self, elem, result):
         return result.tests.create(name=elem.get('name', ''))
@@ -111,7 +111,7 @@ class TestHandler(ElementHandler):
 class KeywordHandler(ElementHandler):
     tag = 'kw'
     children = frozenset(('doc', 'arguments', 'assign', 'tags', 'timeout',
-                          'status', 'msg', 'kw', 'if'))
+                          'status', 'msg', 'kw', 'if', 'for'))
 
     def start(self, elem, result):
         creator = getattr(self, '_create_%s' % elem.get('type', 'kw'))
@@ -119,8 +119,7 @@ class KeywordHandler(ElementHandler):
 
     def _create_kw(self, elem, result):
         return result.body.create_keyword(kwname=elem.get('name', ''),
-                                          libname=elem.get('library', ''),
-                                          type=elem.get('type', 'kw'))    # FIXME: Remove type here
+                                          libname=elem.get('library', ''))
 
     def _create_setup(self, elem, result):
         return result.setup.config(kwname=elem.get('name', ''),
@@ -130,17 +129,29 @@ class KeywordHandler(ElementHandler):
         return result.teardown.config(kwname=elem.get('name', ''),
                                       libname=elem.get('library', ''))
 
-    def _create_for(self, elem, result):
-        return self._create_kw(elem, result)
 
-    def _create_foritem(self, elem, result):
-        return self._create_kw(elem, result)
+@ElementHandler.register
+class ForHandler(ElementHandler):
+    tag = 'for'
+    children = frozenset(('assign', 'arguments', 'doc', 'status', 'iter', 'msg'))
+
+    def start(self, elem, result):
+        return result.body.create_for(flavor=elem.get('flavor'))
+
+
+@ElementHandler.register
+class IterationHandler(ElementHandler):
+    tag = 'iter'
+    children = frozenset(('doc', 'status', 'kw', 'if', 'for', 'msg'))
+
+    def start(self, elem, result):
+        return result.body.create_iteration(info=elem.get('info'))
 
 
 @ElementHandler.register
 class IfHandler(ElementHandler):
     tag = 'if'
-    children = frozenset(('status', 'if', 'kw', 'msg'))
+    children = frozenset(('status', 'kw', 'if', 'for', 'msg'))
 
     def start(self, elem, result):
         creator = getattr(self, '_create_%s' % elem.get('type', 'if'))
@@ -248,7 +259,11 @@ class AssignVarHandler(ElementHandler):
     tag = 'var'
 
     def end(self, elem, result):
-        result.assign += (elem.text or '',)
+        # Handles FOR loops and keywords.
+        if hasattr(result, 'variables'):
+            result.variables += (elem.text or '',)
+        else:
+            result.assign += (elem.text or '',)
 
 
 @ElementHandler.register
@@ -262,7 +277,11 @@ class ArgumentHandler(ElementHandler):
     tag = 'arg'
 
     def end(self, elem, result):
-        result.args += (elem.text or '',)
+        # Handles FOR loops and keywords.
+        if hasattr(result, 'values'):
+            result.values += (elem.text or '',)
+        else:
+            result.args += (elem.text or '',)
 
 
 @ElementHandler.register
@@ -272,7 +291,7 @@ class ErrorsHandler(ElementHandler):
     def start(self, elem, result):
         return result.errors
 
-    def get_child_handler(self, elem):
+    def get_child_handler(self, tag):
         return ErrorMessageHandler()
 
 
@@ -289,5 +308,5 @@ class ErrorMessageHandler(ElementHandler):
 class StatisticsHandler(ElementHandler):
     tag = 'statistics'
 
-    def get_child_handler(self, elem):
+    def get_child_handler(self, tag):
         return self

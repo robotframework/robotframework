@@ -37,7 +37,7 @@ import warnings
 
 from robot import model
 from robot.model import BodyItem, Keywords, TotalStatisticsBuilder
-from robot.model.control import deprecated
+from robot.model.control import deprecated, DeprecatedAttributesMixin
 from robot.utils import get_elapsed_time, setter
 
 from .configurer import SuiteConfigurer
@@ -58,6 +58,26 @@ class Body(model.Body):
                              (self.for_class, fors),
                              (self.if_class, ifs),
                              (self.message_class, messages)], predicate)
+
+
+class ForBody(Body):
+    iteration_class = None
+    __slots__ = []
+
+    def create_iteration(self, *args, **kwargs):
+        return self.append(self.iteration_class(*args, **kwargs))
+
+    def create_keyword(self, *args, **kwargs):
+        raise TypeError("'robot.result.FOR' cannot contain keywords directly. "
+                        "Create an iteration with 'create_iteration' first.")
+
+    def create_for(self, *args, **kwargs):
+        raise TypeError("'robot.result.FOR' cannot contain FORs directly. "
+                        "Create an iteration with 'create_iteration' first.")
+
+    def create_if(self, *args, **kwargs):
+        raise TypeError("'robot.result.FOR' cannot contain IFs directly. "
+                        "Create an iteration with 'create_iteration' first.")
 
 
 @Body.register
@@ -107,35 +127,72 @@ class StatusMixin(object):
         self.status = 'SKIP'
 
 
-@Body.register
-class If(model.If, StatusMixin):
+@ForBody.register
+class Iteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
+    type = BodyItem.FOR_ITEM_TYPE
     body_class = Body
     deprecate_keyword_attributes = False
-    __slots__ = ['status', 'starttime', 'endtime', 'lineno', 'source']
+    repr_args = ('info',)
+    __slots__ = ['info', 'status', 'starttime', 'endtime', 'doc', 'lineno', 'source']
+
+    def __init__(self, info='', status='FAIL', starttime=None, endtime=None, doc='',
+                 parent=None, lineno=None, source=None):
+        self.info = info
+        self.parent = parent
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.doc = doc
+        self.lineno = lineno       # FIXME: Should be removed on result side.
+        self.source = source       # --ii--
+        self.body = None
+
+    @setter
+    def body(self, body):
+        return self.body_class(body)
+
+    def visit(self, visitor):
+        visitor.visit_iteration(self)
+
+    @property
+    @deprecated
+    def name(self):
+        return self.info
+
+
+@Body.register
+class For(model.For, StatusMixin, DeprecatedAttributesMixin):
+    body_class = ForBody
+    deprecate_keyword_attributes = False
+    __slots__ = ['status', 'starttime', 'endtime', 'doc', 'lineno', 'source']
+
+    def __init__(self, variables=(),  flavor='IN', values=(), status='FAIL',
+                 starttime=None, endtime=None, doc='', parent=None, lineno=None,
+                 source=None):
+        model.For.__init__(self, variables, flavor, values, parent)
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.doc = doc
+        self.lineno = lineno       # FIXME: Should be removed on result side.
+        self.source = source       # --ii--
+
+
+@Body.register
+class If(model.If, StatusMixin, DeprecatedAttributesMixin):
+    body_class = Body
+    deprecate_keyword_attributes = False
+    __slots__ = ['status', 'starttime', 'endtime', 'doc', 'lineno', 'source']
 
     def __init__(self, condition=None, status='FAIL', starttime=None, endtime=None,
-                 type=BodyItem.IF_TYPE, parent=None, lineno=None, source=None):
+                 type=BodyItem.IF_TYPE, doc='', parent=None, lineno=None, source=None):
         model.If.__init__(self, condition, type, parent)
         self.status = status
         self.starttime = starttime
         self.endtime = endtime
+        self.doc = doc
         self.lineno = lineno       # FIXME: Should be removed on result side.
         self.source = source
-
-    @property
-    @deprecated
-    def kwname(self):
-        return self.name
-
-    @property
-    @deprecated
-    def libname(self):
-        return None
-
-    @property
-    @deprecated
-    def message(self):
-        return ''
 
 
 @Body.register

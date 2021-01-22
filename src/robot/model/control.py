@@ -33,9 +33,52 @@ def deprecated(method):
     return wrapper
 
 
+class DeprecatedAttributesMixin(object):
+
+    @property
+    @deprecated
+    def name(self):
+        return ''
+
+    @property
+    @deprecated
+    def kwname(self):
+        return self.name
+
+    @property
+    @deprecated
+    def libname(self):
+        return None
+
+    @property
+    @deprecated
+    def args(self):
+        return ()
+
+    @property
+    @deprecated
+    def assign(self):
+        return ()
+
+    @property
+    @deprecated
+    def tags(self):
+        return Tags()
+
+    @property
+    @deprecated
+    def timeout(self):
+        return None
+
+    @property
+    @deprecated
+    def message(self):
+        return ''
+
+
 @py3to2
 @Body.register
-class For(BodyItem):
+class For(BodyItem, DeprecatedAttributesMixin):
     type = BodyItem.FOR_TYPE
     body_class = Body
     repr_args = ('variables', 'flavor', 'values')
@@ -74,43 +117,16 @@ class For(BodyItem):
         values = '    '.join(self.values)
         return u'FOR    %s    %s    %s' % (variables, self.flavor, values)
 
-    # TODO: Remove deprecated Keyword related properties in RF 4.1/5.0.
-
     @property
     @deprecated
     def name(self):
         return '%s %s [ %s ]' % (' | '.join(self.variables), self.flavor,
                                  ' | '.join(self.values))
 
-    @property
-    @deprecated
-    def doc(self):
-        return ''
-
-    @property
-    @deprecated
-    def args(self):
-        return ()
-
-    @property
-    @deprecated
-    def assign(self):
-        return ()
-
-    @property
-    @deprecated
-    def tags(self):
-        return Tags()
-
-    @property
-    @deprecated
-    def timeout(self):
-        return None
-
 
 @py3to2
 @Body.register
-class If(BodyItem):
+class If(BodyItem, DeprecatedAttributesMixin):
     body_class = Body
     repr_args = ('condition', 'type')
     __slots__ = ['condition', 'type', '_orelse']
@@ -170,34 +186,7 @@ class If(BodyItem):
     def __bool__(self):
         return self.type is not None
 
-    # TODO: Remove deprecated Keyword related properties in RF 4.1/5.0.
-
     @property
     @deprecated
     def name(self):
         return self.condition
-
-    @property
-    @deprecated
-    def doc(self):
-        return ''
-
-    @property
-    @deprecated
-    def args(self):
-        return ()
-
-    @property
-    @deprecated
-    def assign(self):
-        return ()
-
-    @property
-    @deprecated
-    def tags(self):
-        return Tags()
-
-    @property
-    @deprecated
-    def timeout(self):
-        return None

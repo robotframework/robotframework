@@ -85,6 +85,24 @@ class XmlLogger(ResultVisitor):
         self._write_status(if_)
         self._writer.end('if')
 
+    def start_for(self, for_):
+        self._writer.start('for', {'flavor': for_.flavor})
+        self._writer.element('doc', for_.doc)
+        self._write_list('assign', 'var', for_.variables)
+        self._write_list('arguments', 'arg', for_.values)
+
+    def end_for(self, for_):
+        self._write_status(for_)
+        self._writer.end('for')
+
+    def start_iteration(self, iteration):
+        self._writer.start('iter', {'info': iteration.info})
+        self._writer.element('doc', iteration.doc)
+
+    def end_iteration(self, iteration):
+        self._write_status(iteration)
+        self._writer.end('iter')
+
     def start_test(self, test):
         self._writer.start('test', {'id': test.id, 'name': test.name})
 

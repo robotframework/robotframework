@@ -35,13 +35,17 @@ class FlattenByTypeMatcher(object):
         if not is_list_like(flatten):
             flatten = [flatten]
         flatten = [f.lower() for f in flatten]
-        self._types = [f for f in flatten if f in ('for', 'foritem')]
+        self.types = set()
+        if 'for' in flatten:
+            self.types.add('for')
+        if 'foritem' in flatten:
+            self.types.add('iter')
 
-    def match(self, kwtype):
-        return kwtype in self._types
+    def match(self, tag):
+        return tag in self.types
 
     def __bool__(self):
-        return bool(self._types)
+        return bool(self.types)
 
 
 @py3to2
