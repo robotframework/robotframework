@@ -22,6 +22,7 @@ class ExecutionErrors(object):
 
     An error might be, for example, that importing a library has failed.
     """
+    id = 'errors'
 
     def __init__(self, messages=None):
         #: A :class:`list-like object <robot.model.itemlist.ItemList>` of
@@ -30,7 +31,7 @@ class ExecutionErrors(object):
 
     @setter
     def messages(self, messages):
-        return ItemList(item_class=Message, items=messages)
+        return ItemList(Message, {'parent': self}, items=messages)
 
     def add(self, other):
         self.messages.extend(other.messages)

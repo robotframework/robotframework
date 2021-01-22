@@ -24,7 +24,7 @@ class TestCreateFixture(unittest.TestCase):
         assert_raises(TypeError, create_fixture, wrong_kw, suite, Keyword.TEARDOWN_TYPE)
 
     def _assert_fixture(self, fixture, exp_parent, exp_type,
-                        exp_class=TestSuite.keyword_class):
+                        exp_class=TestSuite.fixture_class):
         assert_equal(fixture.parent, exp_parent)
         assert_equal(fixture.type, exp_type)
         assert_equal(fixture.__class__, exp_class)

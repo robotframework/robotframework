@@ -59,8 +59,8 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equal(self.keyword.starttime, '20111024 13:41:20.926')
         assert_equal(self.keyword.endtime, '20111024 13:41:20.928')
         assert_equal(self.keyword.timeout, None)
-        assert_equal(len(self.keyword.body), 0)
-        assert_equal(len(self.keyword.messages), 1)
+        assert_equal(len(self.keyword.body), 1)
+        assert_equal(self.keyword.body[0].type, self.keyword.body[0].MESSAGE_TYPE)
 
     def test_user_keyword_is_built(self):
         assert_equal(self.user_keyword.name, 'logs on trace')

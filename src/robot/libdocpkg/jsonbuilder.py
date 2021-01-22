@@ -16,8 +16,8 @@
 import json
 import os.path
 
+from robot.running import ArgInfo, ArgumentSpec
 from robot.errors import DataError
-from robot.running.arguments import ArgumentSpec, ArgInfo
 
 from .model import LibraryDoc, KeywordDoc
 

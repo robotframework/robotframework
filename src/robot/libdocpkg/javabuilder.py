@@ -16,9 +16,9 @@
 from inspect import cleandoc
 
 from robot.errors import DataError
+from robot.running import ArgumentSpec
 from robot.utils import (JAVA_VERSION, normalize, split_tags_from_doc,
                          printable_name)
-from robot.running.arguments import ArgumentSpec
 
 from .model import LibraryDoc, KeywordDoc
 
@@ -31,7 +31,6 @@ class JavaDocBuilder(object):
                             doc=self._get_doc(doc),
                             version=self._get_version(doc),
                             scope=self._get_scope(doc),
-                            named_args=False,
                             doc_format=self._get_doc_format(doc),
                             source=path)
         libdoc.inits = self._initializers(doc)
