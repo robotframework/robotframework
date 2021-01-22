@@ -79,11 +79,11 @@ class XmlLogger(ResultVisitor):
         self._writer.end('kw')
 
     def start_if(self, if_):
-        self._writer.start('kw', {'name': if_.condition, 'type': if_.type})
+        self._writer.start('if', {'condition': if_.condition, 'type': if_.type})
 
     def end_if(self, if_):
         self._write_status(if_)
-        self._writer.end('kw')
+        self._writer.end('if')
 
     def start_test(self, test):
         self._writer.start('test', {'id': test.id, 'name': test.name})

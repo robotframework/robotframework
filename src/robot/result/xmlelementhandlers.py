@@ -130,11 +130,27 @@ class KeywordHandler(ElementHandler):
         return result.teardown.config(kwname=elem.get('name', ''),
                                       libname=elem.get('library', ''))
 
+    def _create_for(self, elem, result):
+        return self._create_kw(elem, result)
+
+    def _create_foritem(self, elem, result):
+        return self._create_kw(elem, result)
+
+
+@ElementHandler.register
+class IfHandler(ElementHandler):
+    tag = 'if'
+    children = frozenset(('status', 'if', 'kw', 'msg'))
+
+    def start(self, elem, result):
+        creator = getattr(self, '_create_%s' % elem.get('type', 'if'))
+        return creator(elem, result)
+
     def _create_if(self, elem, result):
-        return result.body.create_if(condition=elem.get('name'))
+        return result.body.create_if(condition=elem.get('condition'))
 
     def _create_elseif(self, elem, result):
-        return self._config_orelse(result.body[-1].orelse, elem.get('name'))
+        return self._config_orelse(result.body[-1].orelse, elem.get('condition'))
 
     def _config_orelse(self, orelse, condition=None):
         # In output.xml IF branches are in sequence but in model they are nested.
@@ -148,12 +164,6 @@ class KeywordHandler(ElementHandler):
 
     def _create_else(self, elem, result):
         return self._config_orelse(result.body[-1].orelse)
-
-    def _create_for(self, elem, result):
-        return self._create_kw(elem, result)
-
-    def _create_foritem(self, elem, result):
-        return self._create_kw(elem, result)
 
 
 @ElementHandler.register
