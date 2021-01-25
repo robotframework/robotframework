@@ -37,11 +37,11 @@ import warnings
 
 from robot import model
 from robot.model import BodyItem, Keywords, TotalStatisticsBuilder
-from robot.model.control import deprecated, DeprecatedAttributesMixin
 from robot.utils import get_elapsed_time, setter
 
 from .configurer import SuiteConfigurer
 from .messagefilter import MessageFilter
+from .modeldeprecation import deprecated, DeprecatedAttributesMixin
 from .keywordremover import KeywordRemover
 from .suiteteardownfailed import SuiteTeardownFailed, SuiteTeardownFailureHandler
 
@@ -177,6 +177,12 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
         self.lineno = lineno       # FIXME: Should be removed on result side.
         self.source = source       # --ii--
 
+    @property
+    @deprecated
+    def name(self):
+        return '%s %s [ %s ]' % (' | '.join(self.variables), self.flavor,
+                                 ' | '.join(self.values))
+
 
 @Body.register
 class If(model.If, StatusMixin, DeprecatedAttributesMixin):
@@ -193,6 +199,11 @@ class If(model.If, StatusMixin, DeprecatedAttributesMixin):
         self.doc = doc
         self.lineno = lineno       # FIXME: Should be removed on result side.
         self.source = source
+
+    @property
+    @deprecated
+    def name(self):
+        return self.condition
 
 
 @Body.register

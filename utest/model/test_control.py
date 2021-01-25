@@ -28,25 +28,6 @@ class TestFor(unittest.TestCase):
             if PY2:
                 assert_equal(str(for_), unicode(for_).encode('UTF-8'))
 
-    def test_deprecated_keyword_specific_properties(self):
-        class NotDeprecated(For):
-            deprecate_keyword_attributes = False
-
-        deprecated = For(['${x}', '${y}'], 'IN', ['a', 'b', 'c', 'd'])
-        not_deprecated = NotDeprecated(['${x}', '${y}'], 'IN', ['a', 'b', 'c', 'd'])
-
-        for name, expected in [('name', '${x} | ${y} IN [ a | b | c | d ]'),
-                               ('args', ()),
-                               ('assign', ()),
-                               ('tags', Tags()),
-                               ('timeout', None)]:
-            with warnings.catch_warnings(record=True) as w:
-                assert_equal(getattr(not_deprecated, name), expected)
-                assert_equal(len(w), 0)
-                assert_equal(getattr(deprecated, name), expected)
-                assert_equal(str(w[0].message), "'For.%s' is deprecated." % name)
-                assert_equal(w[0].category, UserWarning)
-
 
 class TestIf(unittest.TestCase):
 
@@ -120,25 +101,6 @@ class TestIf(unittest.TestCase):
             assert_equal(repr(if_), 'robot.model.' + exp_repr)
             if PY2:
                 assert_equal(str(if_), unicode(if_).encode('UTF-8'))
-
-    def test_deprecated_keyword_specific_properties(self):
-        class NotDeprecated(If):
-            deprecate_keyword_attributes = False
-
-        deprecated = If('$x > 0')
-        not_deprecated = NotDeprecated('$x > 0')
-
-        for name, expected in [('name', '$x > 0'),
-                               ('args', ()),
-                               ('assign', ()),
-                               ('tags', Tags()),
-                               ('timeout', None)]:
-            with warnings.catch_warnings(record=True) as w:
-                assert_equal(getattr(not_deprecated, name), expected)
-                assert_equal(len(w), 0)
-                assert_equal(getattr(deprecated, name), expected)
-                assert_equal(str(w[0].message), "'If.%s' is deprecated." % name)
-                assert_equal(w[0].category, UserWarning)
 
 
 if __name__ == '__main__':

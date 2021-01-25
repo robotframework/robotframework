@@ -13,72 +13,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import warnings
-
 from robot.utils import setter, py3to2
 
 from .body import Body, BodyItem
 from .keyword import Keywords
-from .tags import Tags
-
-
-def deprecated(method):
-    def wrapper(self, *args, **kws):
-        """Deprecated."""
-        if self.deprecate_keyword_attributes:
-            warnings.warn(
-                "'%s.%s' is deprecated." % (type(self).__name__, method.__name__)
-            )
-        return method(self, *args, **kws)
-    return wrapper
-
-
-class DeprecatedAttributesMixin(object):
-
-    @property
-    @deprecated
-    def name(self):
-        return ''
-
-    @property
-    @deprecated
-    def kwname(self):
-        return self.name
-
-    @property
-    @deprecated
-    def libname(self):
-        return None
-
-    @property
-    @deprecated
-    def args(self):
-        return ()
-
-    @property
-    @deprecated
-    def assign(self):
-        return ()
-
-    @property
-    @deprecated
-    def tags(self):
-        return Tags()
-
-    @property
-    @deprecated
-    def timeout(self):
-        return None
-
-    @property
-    @deprecated
-    def message(self):
-        return ''
 
 
 @py3to2
 @Body.register
-class For(BodyItem, DeprecatedAttributesMixin):
+class For(BodyItem):
     type = BodyItem.FOR_TYPE
     body_class = Body
     repr_args = ('variables', 'flavor', 'values')
@@ -117,16 +60,10 @@ class For(BodyItem, DeprecatedAttributesMixin):
         values = '    '.join(self.values)
         return u'FOR    %s    %s    %s' % (variables, self.flavor, values)
 
-    @property
-    @deprecated
-    def name(self):
-        return '%s %s [ %s ]' % (' | '.join(self.variables), self.flavor,
-                                 ' | '.join(self.values))
-
 
 @py3to2
 @Body.register
-class If(BodyItem, DeprecatedAttributesMixin):
+class If(BodyItem):
     body_class = Body
     repr_args = ('condition', 'type')
     __slots__ = ['condition', 'type', '_orelse']
@@ -185,8 +122,3 @@ class If(BodyItem, DeprecatedAttributesMixin):
 
     def __bool__(self):
         return self.type is not None
-
-    @property
-    @deprecated
-    def name(self):
-        return self.condition

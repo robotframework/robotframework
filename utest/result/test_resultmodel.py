@@ -1,7 +1,8 @@
 import unittest
 import warnings
 
-from robot.result import If, Keyword, Message, TestCase, TestSuite
+from robot.model import Tags
+from robot.result import For, If, Keyword, Message, TestCase, TestSuite
 from robot.utils.asserts import assert_equal, assert_false, assert_raises, assert_true
 
 
@@ -269,6 +270,27 @@ class TestBody(unittest.TestCase):
         assert_equal(kw.body[2].body[0].id, 's1-t1-k1-k2-m1')
         assert_equal(kw.body[2].body[1].id, 's1-t1-k1-k2-k1')
         assert_equal(kw.body[2].body[2].id, 's1-t1-k1-k2-m2')
+
+
+class TestDeprecatedKeywordSpecificAttributes(unittest.TestCase):
+
+    def test_deprecated_keyword_specific_properties(self):
+        for_ = For(['${x}', '${y}'], 'IN', ['a', 'b', 'c', 'd'])
+        for name, expected in [('name', '${x} | ${y} IN [ a | b | c | d ]'),
+                               ('args', ()),
+                               ('assign', ()),
+                               ('tags', Tags()),
+                               ('timeout', None)]:
+            assert_equal(getattr(for_, name), expected)
+
+    def test_if(self):
+        if_ = If('$x > 0')
+        for name, expected in [('name', '$x > 0'),
+                               ('args', ()),
+                               ('assign', ()),
+                               ('tags', Tags()),
+                               ('timeout', None)]:
+            assert_equal(getattr(if_, name), expected)
 
 
 if __name__ == '__main__':
