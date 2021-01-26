@@ -69,8 +69,16 @@ class _Builder(object):
 
     def _build_keywords(self, kws, split=False):
         splitting = self._context.start_splitting_if_needed(split)
-        model = tuple(self._build_keyword(k) for k in kws)
+        model = tuple(self._build_keyword(k) for k in self._flatten_orelse(kws))
         return model if not splitting else self._context.end_splitting(model)
+
+    def _flatten_orelse(self, kws):
+        for kw in kws:
+            yield kw
+            if hasattr(kw, 'orelse'):
+                while kw.orelse:
+                    kw = kw.orelse
+                    yield kw
 
 
 class SuiteBuilder(_Builder):
