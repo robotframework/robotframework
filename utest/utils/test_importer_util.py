@@ -364,7 +364,7 @@ class TestErrorDetails(unittest.TestCase):
     def test_no_traceback(self):
         error = self._failing_import('NoneExisting')
         assert_equal(self._get_traceback(error),
-                      'Traceback (most recent call last):\n  None')
+                     'Traceback (most recent call last):\n  None')
 
     def test_traceback(self):
         path = create_temp_file('tb.py', extra_content='import nonex')
@@ -372,10 +372,10 @@ class TestErrorDetails(unittest.TestCase):
             error = self._failing_import(path)
         finally:
             shutil.rmtree(TESTDIR)
-        assert_equal(self._get_traceback(error),
-                      'Traceback (most recent call last):\n'
-                      '  File "%s", line 5, in <module>\n'
-                      '    import nonex' % path)
+        assert_equal(self._get_traceback(error), '''\
+Traceback (most recent call last):
+  File "%s", line 5, in <module>
+    import nonex''' % path)
 
     def test_pythonpath(self):
         error = self._failing_import('NoneExisting')
@@ -487,11 +487,11 @@ class TestInstantiation(unittest.TestCase):
 
     def test_escape_equals(self):
         lib = Importer().import_class_or_module('libswithargs.Mixed',
-                                                ['default\=b', 'mandatory\=a'])
-        assert_equal(lib.get_args(), ('default\=b', 'mandatory\=a', ''))
+                                                [r'default\=b', r'mandatory\=a'])
+        assert_equal(lib.get_args(), (r'default\=b', r'mandatory\=a', ''))
         lib = Importer().import_class_or_module('libswithargs.Mixed',
-                                                ['default\=b', 'default=a'])
-        assert_equal(lib.get_args(), ('default\=b', 'a', ''))
+                                                [r'default\=b', 'default=a'])
+        assert_equal(lib.get_args(), (r'default\=b', 'a', ''))
 
     def test_escaping_not_needed_if_args_do_not_match_names(self):
         lib = Importer().import_class_or_module('libswithargs.Mixed',

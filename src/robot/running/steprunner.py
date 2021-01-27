@@ -18,7 +18,7 @@ from contextlib import contextmanager
 
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           ExitForLoop, ContinueForLoop, DataError)
-from robot.result import Keyword as KeywordResult
+from robot.result import For as ForResult, If as IfResult, Keyword as KeywordResult
 from robot.output import librarylogger as logger
 from robot.utils import (format_assign_message, frange, get_error_message,
                          is_list_like, is_number, plural_or_not as s,
@@ -88,8 +88,8 @@ class IfRunner(object):
                 self._dry_run_stack.pop()
 
     def _run_if_branch(self, data, branch_run=False, recursive_dry_run=False):
-        result = KeywordResult(kwname=data.condition, type=data.type,
-                               lineno=data.lineno, source=data.source)
+        result = IfResult(data.condition, lineno=data.lineno, source=data.source,
+                          type=data.type)
         with StatusReporter(self._context, result) as reporter:
             if data.error:
                 raise DataError(data.error)
@@ -130,25 +130,23 @@ class ForInRunner(object):
         self._templated = templated
 
     def run(self, data):
-        result = KeywordResult(kwname=self._get_name(data),
-                               type=data.type,
-                               lineno=data.lineno,
-                               source=data.source)
+        result = ForResult(data.variables, data.flavor, data.values,
+                           lineno=data.lineno, source=data.source)
         with StatusReporter(self._context, result):
             if data.error:
                 raise DataError(data.error)
-            self._run(data)
+            self._run(data, result)
 
     def _get_name(self, data):
         return '%s %s [ %s ]' % (' | '.join(data.variables),
                                  self.flavor,
                                  ' | '.join(data.values))
 
-    def _run(self, data):
+    def _run(self, data, result):
         errors = []
         for values in self._get_values_for_rounds(data):
             try:
-                self._run_one_round(data, values)
+                self._run_one_round(values, data, result)
             except ExitForLoop as exception:
                 if exception.earlier_failures:
                     errors.extend(exception.earlier_failures.get_errors())
@@ -250,15 +248,14 @@ class ForInRunner(object):
             'Got %d variables but %d value%s.' % (variables, values, s(values))
         )
 
-    def _run_one_round(self, data, values):
+    def _run_one_round(self, values, data, result):
         variables = self._map_variables_and_values(data.variables, values)
         for name, value in variables:
             self._context.variables[name] = value
-        name = ', '.join(format_assign_message(n, v) for n, v in variables)
-        result = KeywordResult(kwname=name,
-                               type=data.FOR_ITEM_TYPE,
-                               lineno=data.lineno,
-                               source=data.source)
+        info = ', '.join(format_assign_message(n, v) for n, v in variables)
+        result = result.body.create_iteration(info=info,
+                                              lineno=data.lineno,
+                                              source=data.source)
         runner = StepRunner(self._context, self._templated)
         with StatusReporter(self._context, result):
             runner.run_steps(data.body)

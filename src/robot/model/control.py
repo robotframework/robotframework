@@ -13,13 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import warnings
-
 from robot.utils import setter, py3to2
 
 from .body import Body, BodyItem
 from .keyword import Keywords
-from .tags import Tags
 
 
 @py3to2
@@ -29,6 +26,7 @@ class For(BodyItem):
     body_class = Body
     repr_args = ('variables', 'flavor', 'values')
     __slots__ = ['variables', 'flavor', 'values']
+    deprecate_keyword_attributes = True
 
     def __init__(self, variables=(), flavor='IN', values=(), parent=None):
         self.variables = variables
@@ -62,58 +60,18 @@ class For(BodyItem):
         values = '    '.join(self.values)
         return u'FOR    %s    %s    %s' % (variables, self.flavor, values)
 
-    # TODO: Remove deprecated Keyword related properties in RF 4.1/5.0.
-
-    @property
-    def name(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'For.name' is deprecated since Robot Framework 4.0. "
-                      "Access 'variables', 'flavor' or 'values' directly or "
-                      "use 'str()' to get a string representation.", UserWarning)
-        return '%s %s [ %s ]' % (' | '.join(self.variables), self.flavor,
-                                 ' | '.join(self.values))
-
-    @property
-    def doc(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'For.doc' is deprecated since Robot Framework 4.0.", UserWarning)
-        return ''
-
-    @property
-    def args(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'For.args' is deprecated since Robot Framework 4.0.", UserWarning)
-        return ()
-
-    @property
-    def assign(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'For.assign' is deprecated since Robot Framework 4.0.", UserWarning)
-        return ()
-
-    @property
-    def tags(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'For.tags' is deprecated since Robot Framework 4.0.", UserWarning)
-        return Tags()
-
-    @property
-    def timeout(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'For.timeout' is deprecated since Robot Framework 4.0.", UserWarning)
-        return None
-
 
 @py3to2
 @Body.register
 class If(BodyItem):
     body_class = Body
-    inactive = object()
-    repr_args = ('condition',)
-    __slots__ = ['condition', '_orelse']
+    repr_args = ('condition', 'type')
+    __slots__ = ['condition', 'type', '_orelse']
+    deprecate_keyword_attributes = True
 
-    def __init__(self, condition=None, parent=None):
+    def __init__(self, condition=None, type=BodyItem.IF_TYPE, parent=None):
         self.condition = condition
+        self.type = type
         self.parent = parent
         self.body = None
         self._orelse = None
@@ -125,7 +83,7 @@ class If(BodyItem):
     @property     # Cannot use @setter because it would create orelses recursively.
     def orelse(self):
         if self._orelse is None and self:
-            self._orelse = type(self)(condition=self.inactive, parent=self)
+            self._orelse = type(self)(type=None, parent=self)
         return self._orelse
 
     @orelse.setter
@@ -143,15 +101,11 @@ class If(BodyItem):
     def source(self):
         return self.parent.source if self.parent is not None else None
 
-    @property
-    def type(self):
-        if self.condition is self.inactive:
-            return None
-        if not isinstance(self.parent, If):
-            return self.IF_TYPE
-        if self.condition:
-            return self.ELSE_IF_TYPE
-        return self.ELSE_TYPE
+    def config(self, **attributes):
+        BodyItem.config(self, **attributes)
+        if self.type is None:
+            self.type = self.ELSE_IF_TYPE if self.condition else self.ELSE_TYPE
+        return self
 
     def visit(self, visitor):
         if self:
@@ -166,48 +120,5 @@ class If(BodyItem):
             return u'ELSE IF    %s' % self.condition
         return u'ELSE'
 
-    def __repr__(self):
-        return BodyItem.__repr__(self) if self else 'If(condition=INACTIVE)'
-
     def __bool__(self):
-        return self.condition is not self.inactive
-
-    # TODO: Remove deprecated Keyword related properties in RF 4.1/5.0.
-
-    @property
-    def name(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'If.name' is deprecated since Robot Framework 4.0. "
-                      "Access 'condition' directly or use 'str()' to get "
-                      "a string representation.", UserWarning)
-        return self.condition
-
-    @property
-    def doc(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'If.doc' is deprecated since Robot Framework 4.0.", UserWarning)
-        return ''
-
-    @property
-    def args(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'If.args' is deprecated since Robot Framework 4.0.", UserWarning)
-        return ()
-
-    @property
-    def assign(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'If.assign' is deprecated since Robot Framework 4.0.", UserWarning)
-        return ()
-
-    @property
-    def tags(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'If.tags' is deprecated since Robot Framework 4.0.", UserWarning)
-        return Tags()
-
-    @property
-    def timeout(self):
-        """Deprecated since Robot Framework 4.0."""
-        warnings.warn("'If.timeout' is deprecated since Robot Framework 4.0.", UserWarning)
-        return None
+        return self.type is not None

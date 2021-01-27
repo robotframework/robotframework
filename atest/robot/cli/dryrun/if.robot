@@ -6,18 +6,18 @@ Resource          dryrun_resource.robot
 *** Test Cases ***
 IF will not recurse in dry run
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Branch Statuses    ${tc.kws[0]}                  Recursive if         PASS
-    Check Branch Statuses    ${tc.kws[0].kws[0].kws[0]}    Recursive if         NOT_RUN
+    Check Branch Statuses    ${tc.body[0]}                    Recursive if         PASS
+    Check Branch Statuses    ${tc.body[0].body[0].body[0]}    Recursive if         NOT_RUN
 
 ELSE IF will not recurse in dry run
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Branch Statuses    ${tc.kws[0]}                  Recursive else if    PASS
-    Check Branch Statuses    ${tc.kws[0].kws[1].kws[0]}    Recursive else if    NOT_RUN
+    Check Branch Statuses    ${tc.body[0]}                           Recursive else if    PASS
+    Check Branch Statuses    ${tc.body[0].body[0].orelse.body[0]}    Recursive else if    NOT_RUN
 
 ELSE will not recurse in dry run
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Branch Statuses    ${tc.kws[0]}                  Recursive else       PASS
-    Check Branch Statuses    ${tc.kws[0].kws[2].kws[0]}    Recursive else       NOT_RUN
+    Check Branch Statuses    ${tc.body[0]}                                  Recursive else       PASS
+    Check Branch Statuses    ${tc.body[0].body[0].orelse.orelse.body[0]}    Recursive else       NOT_RUN
 
 Dryrun fail inside of IF
     Check Test Case    ${TESTNAME}
@@ -43,10 +43,10 @@ Dryrun fail empty if in non executed branch
 *** Keywords ***
 Check Branch Statuses
     [Arguments]    ${kw}    ${name}    ${status}
-    Should Be Equal    ${kw.name}             ${name}
-    Should Be Equal    ${kw.kws[0].type}      if
-    Should Be Equal    ${kw.kws[0].status}    ${status}
-    Should Be Equal    ${kw.kws[1].type}      elseif
-    Should Be Equal    ${kw.kws[1].status}    ${status}
-    Should Be Equal    ${kw.kws[2].type}      else
-    Should Be Equal    ${kw.kws[2].status}    ${status}
+    Should Be Equal    ${kw.name}                            ${name}
+    Should Be Equal    ${kw.body[0].type}                    if
+    Should Be Equal    ${kw.body[0].status}                  ${status}
+    Should Be Equal    ${kw.body[0].orelse.type}             elseif
+    Should Be Equal    ${kw.body[0].orelse.status}           ${status}
+    Should Be Equal    ${kw.body[0].orelse.orelse.type}      else
+    Should Be Equal    ${kw.body[0].orelse.orelse.status}    ${status}

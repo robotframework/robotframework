@@ -75,7 +75,7 @@ class LinkFormatter(object):
 class LineFormatter(object):
     handles = lambda self, line: True
     newline = '\n'
-    _bold = re.compile('''
+    _bold = re.compile(r'''
 (                         # prefix (group 1)
   (^|\ )                  # begin of line or space
   ["'(]* _?               # optionally any char "'( and optional begin of italic
@@ -88,14 +88,14 @@ class LineFormatter(object):
   ($|\ )                  # end of line or space
 )
 ''', re.VERBOSE)
-    _italic = re.compile('''
+    _italic = re.compile(r'''
 ( (^|\ ) ["'(]* )          # begin of line or space and opt. any char "'(
 _                          # start of italic
 ([^\ _].*?)                # no space or underline and then anything
 _                          # end of italic
 (?= ["').,!?:;]* ($|\ ) )  # opt. any char "').,!?:; and end of line or space
 ''', re.VERBOSE)
-    _code = re.compile('''
+    _code = re.compile(r'''
 ( (^|\ ) ["'(]* )          # same as above with _ changed to ``
 ``
 ([^\ `].*?)
@@ -235,8 +235,8 @@ class ParagraphFormatter(_Formatter):
 
 
 class TableFormatter(_Formatter):
-    _table_line = re.compile('^\| (.* |)\|$')
-    _line_splitter = re.compile(' \|(?= )')
+    _table_line = re.compile(r'^\| (.* |)\|$')
+    _line_splitter = re.compile(r' \|(?= )')
     _format_cell_content = LineFormatter().format
 
     def _handles(self, line):

@@ -40,9 +40,9 @@ class _KeywordRemover(SuiteVisitor):
     def __init__(self):
         self._removal_message = RemovalMessage(self._message)
 
-    def _clear_content(self, kw):
-        kw.body.clear()
-        self._removal_message.set(kw)
+    def _clear_content(self, item):
+        item.body.clear()
+        self._removal_message.set(item)
 
     def _failed_or_warning_or_error(self, item):
         return not item.passed or self._warning_or_error(item)
@@ -57,6 +57,12 @@ class AllKeywordsRemover(_KeywordRemover):
 
     def visit_keyword(self, keyword):
         self._clear_content(keyword)
+
+    def visit_for(self, for_):
+        self._clear_content(for_)
+
+    def visit_if(self, if_):
+        self._clear_content(if_)
 
 
 class PassedKeywordRemover(_KeywordRemover):
@@ -101,17 +107,16 @@ class ByTagKeywordRemover(_KeywordRemover):
 class ForLoopItemsRemover(_KeywordRemover):
     _message = '%d passing step%s removed using --RemoveKeywords option.'
 
-    def start_keyword(self, kw):
-        if kw.type == kw.FOR_TYPE:
-            before = len(kw.body)
-            self._remove_keywords(kw.body)
-            self._removal_message.set_if_removed(kw, before)
+    def start_for(self, for_):
+        before = len(for_.body)
+        self._remove_keywords(for_.body)
+        self._removal_message.set_if_removed(for_, before)
 
     def _remove_keywords(self, body):
-        keywords = body.filter(messages=False)
-        for kw in keywords[:-1]:
-            if not self._failed_or_warning_or_error(kw):
-                body.remove(kw)
+        iterations = body.filter(messages=False)
+        for it in iterations[:-1]:
+            if not self._failed_or_warning_or_error(it):
+                body.remove(it)
 
 
 class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
