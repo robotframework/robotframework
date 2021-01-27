@@ -222,14 +222,19 @@ class TestItemLists(unittest.TestCase):
         assert_equal(len(items), 0)
 
     def test_str(self):
-        assert_equal(str(ItemList(str, items=['foo', 'bar', 'quux'])),
-                     '[foo, bar, quux]')
+        assert_equal(str(ItemList(int, items=[1, 2, 3, 4])), '[1, 2, 3, 4]')
+        assert_equal(str(ItemList(str, items=['foo', 'bar'])), "['foo', 'bar']")
 
     def test_unicode(self):
-        assert_equal(unicode(ItemList(int, items=[1, 2, 3, 4])),
-                     '[1, 2, 3, 4]')
+        assert_equal(unicode(ItemList(int, items=[1, 2, 3, 4])), '[1, 2, 3, 4]')
         assert_equal(unicode(ItemList(unicode, items=[u'hyv\xe4\xe4', u'y\xf6'])),
-                     u'[hyv\xe4\xe4, y\xf6]')
+                     unicode([u'hyv\xe4\xe4', u'y\xf6']))
+
+    def test_repr(self):
+        assert_equal(repr(ItemList(int, items=[1, 2, 3, 4])),
+                     'ItemList(item_class=int, items=[1, 2, 3, 4])')
+        assert_equal(repr(CustomItems(Object)),
+                     'CustomItems(item_class=Object, items=[])')
 
     def test_iter(self):
         numbers = list(range(10))

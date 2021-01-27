@@ -23,7 +23,7 @@ class XmlElementHandler(object):
 
     def start(self, elem):
         handler, result = self._stack[-1]
-        handler = handler.get_child_handler(elem)
+        handler = handler.get_child_handler(elem.tag)
         result = handler.start(elem, result)
         self._stack.append((handler, result))
 
@@ -32,19 +32,23 @@ class XmlElementHandler(object):
         handler.end(elem, result)
 
 
-class _Handler(object):
+class ElementHandler(object):
+    element_handlers = {}
+    tag = None
+    children = frozenset()
 
-    def __init__(self):
-        self._child_handlers = dict((c.tag, c) for c in self._children())
+    @classmethod
+    def register(cls, handler):
+        cls.element_handlers[handler.tag] = handler()
+        return handler
 
-    def _children(self):
-        return []
-
-    def get_child_handler(self, elem):
-        try:
-            return self._child_handlers[elem.tag]
-        except KeyError:
-            raise DataError("Incompatible XML element '%s'." % elem.tag)
+    def get_child_handler(self, tag):
+        if tag not in self.children:
+            if not self.tag:
+                raise DataError("Incompatible root element '%s'." % tag)
+            raise DataError("Incompatible child element '%s' for '%s'."
+                            % (tag, self.tag))
+        return self.element_handlers[tag]
 
     def start(self, elem, result):
         return result
@@ -57,14 +61,14 @@ class _Handler(object):
         return timestamp if timestamp != 'N/A' else None
 
 
-class RootHandler(_Handler):
-
-    def _children(self):
-        return [RobotHandler()]
+class RootHandler(ElementHandler):
+    children = frozenset(('robot',))
 
 
-class RobotHandler(_Handler):
+@ElementHandler.register
+class RobotHandler(ElementHandler):
     tag = 'robot'
+    children = frozenset(('suite', 'statistics', 'errors'))
 
     def start(self, elem, result):
         generator = elem.get('generator', 'unknown').split()[0].upper()
@@ -73,70 +77,108 @@ class RobotHandler(_Handler):
             result.rpa = elem.get('rpa', 'false') == 'true'
         return result
 
-    def _children(self):
-        return [RootSuiteHandler(), StatisticsHandler(), ErrorsHandler()]
 
-
-class SuiteHandler(_Handler):
+@ElementHandler.register
+class SuiteHandler(ElementHandler):
     tag = 'suite'
+    children = frozenset(('doc', 'metadata', 'status', 'kw', 'test', 'suite'))
 
     def start(self, elem, result):
+        if hasattr(result, 'suite'):    # root
+            return result.suite.config(name=elem.get('name', ''),
+                                       source=elem.get('source'),
+                                       rpa=result.rpa)
         return result.suites.create(name=elem.get('name', ''),
                                     source=elem.get('source'),
                                     rpa=result.rpa)
 
-    def _children(self):
-        return [DocHandler(), MetadataHandler(), SuiteStatusHandler(),
-                KeywordHandler(), TestCaseHandler(), self]
+    def get_child_handler(self, tag):
+        if tag == 'status':
+            return StatusHandler(set_status=False)
+        return ElementHandler.get_child_handler(self, tag)
 
 
-class RootSuiteHandler(SuiteHandler):
-
-    def start(self, elem, result):
-        result.suite.name = elem.get('name', '')
-        result.suite.source = elem.get('source')
-        result.suite.rpa = result.rpa
-        return result.suite
-
-    def _children(self):
-        return SuiteHandler._children(self)[:-1] + [SuiteHandler()]
-
-
-class TestCaseHandler(_Handler):
+@ElementHandler.register
+class TestHandler(ElementHandler):
     tag = 'test'
+    children = frozenset(('doc', 'tags', 'timeout', 'status', 'kw', 'if', 'for'))
 
     def start(self, elem, result):
         return result.tests.create(name=elem.get('name', ''))
 
-    def _children(self):
-        return [DocHandler(), TagsHandler(), TimeoutHandler(),
-                TestStatusHandler(), KeywordHandler()]
 
-
-class KeywordHandler(_Handler):
+@ElementHandler.register
+class KeywordHandler(ElementHandler):
     tag = 'kw'
+    children = frozenset(('doc', 'arguments', 'assign', 'tags', 'timeout',
+                          'status', 'msg', 'kw', 'if', 'for'))
 
     def start(self, elem, result):
-        type_ = elem.get('type', 'kw')
-        if type_ == 'setup':
-            return result.setup.config(kwname=elem.get('name', ''),
-                                       libname=elem.get('library', ''),
-                                       type=type_)
-        elif type_ == 'teardown':
-            return result.teardown.config(kwname=elem.get('name', ''),
-                                          libname=elem.get('library', ''),
-                                          type=type_)
+        creator = getattr(self, '_create_%s' % elem.get('type', 'kw'))
+        return creator(elem, result)
+
+    def _create_kw(self, elem, result):
         return result.body.create_keyword(kwname=elem.get('name', ''),
-                                          libname=elem.get('library', ''),
-                                          type=elem.get('type', 'kw'))
+                                          libname=elem.get('library', ''))
 
-    def _children(self):
-        return [DocHandler(), ArgumentsHandler(), AssignHandler(),
-                TagsHandler(), TimeoutHandler(), KeywordStatusHandler(),
-                MessageHandler(), self]
+    def _create_setup(self, elem, result):
+        return result.setup.config(kwname=elem.get('name', ''),
+                                   libname=elem.get('library', ''))
+
+    def _create_teardown(self, elem, result):
+        return result.teardown.config(kwname=elem.get('name', ''),
+                                      libname=elem.get('library', ''))
 
 
-class MessageHandler(_Handler):
+@ElementHandler.register
+class ForHandler(ElementHandler):
+    tag = 'for'
+    children = frozenset(('assign', 'arguments', 'doc', 'status', 'iter', 'msg'))
+
+    def start(self, elem, result):
+        return result.body.create_for(flavor=elem.get('flavor'))
+
+
+@ElementHandler.register
+class IterationHandler(ElementHandler):
+    tag = 'iter'
+    children = frozenset(('doc', 'status', 'kw', 'if', 'for', 'msg'))
+
+    def start(self, elem, result):
+        return result.body.create_iteration(info=elem.get('info'))
+
+
+@ElementHandler.register
+class IfHandler(ElementHandler):
+    tag = 'if'
+    children = frozenset(('status', 'kw', 'if', 'for', 'msg'))
+
+    def start(self, elem, result):
+        creator = getattr(self, '_create_%s' % elem.get('type', 'if'))
+        return creator(elem, result)
+
+    def _create_if(self, elem, result):
+        return result.body.create_if(condition=elem.get('condition'))
+
+    def _create_elseif(self, elem, result):
+        return self._config_orelse(result.body[-1].orelse, elem.get('condition'))
+
+    def _config_orelse(self, orelse, condition=None):
+        # In output.xml IF branches are in sequence but in model they are nested.
+        # 'orelse' we got is the first ELSE (IF) branch and we need to find
+        # the correct one configure i.e. the one that isn't yet configured.
+        # Reorganizing output.xml might be a good idea.
+        while orelse:
+            orelse = orelse.orelse
+        orelse.config(condition=condition)
+        return orelse
+
+    def _create_else(self, elem, result):
+        return self._config_orelse(result.body[-1].orelse)
+
+
+@ElementHandler.register
+class MessageHandler(ElementHandler):
     tag = 'msg'
 
     def end(self, elem, result):
@@ -146,126 +188,114 @@ class MessageHandler(_Handler):
                                    self._timestamp(elem, 'timestamp'))
 
 
-class _StatusHandler(_Handler):
+@ElementHandler.register
+class StatusHandler(ElementHandler):
     tag = 'status'
 
-    def _set_status(self, elem, result):
-        result.status = elem.get('status', 'FAIL')
+    def __init__(self, set_status=True):
+        self.set_status = set_status
 
-    def _set_message(self, elem, result):
-        result.message = elem.text or ''
-
-    def _set_times(self, elem, result):
+    def end(self, elem, result):
+        if self.set_status:
+            result.status = elem.get('status', 'FAIL')
         result.starttime = self._timestamp(elem, 'starttime')
         result.endtime = self._timestamp(elem, 'endtime')
+        if elem.text:
+            result.message = elem.text
 
 
-class KeywordStatusHandler(_StatusHandler):
-
-    def end(self, elem, result):
-        self._set_status(elem, result)
-        self._set_times(elem, result)
-        if result.type == result.TEARDOWN_TYPE:
-            self._set_message(elem, result)
-
-
-class SuiteStatusHandler(_StatusHandler):
-
-    def end(self, elem, result):
-        self._set_message(elem, result)
-        self._set_times(elem, result)
-
-
-class TestStatusHandler(_StatusHandler):
-
-    def end(self, elem, result):
-        self._set_status(elem, result)
-        self._set_message(elem, result)
-        self._set_times(elem, result)
-
-
-class DocHandler(_Handler):
+@ElementHandler.register
+class DocHandler(ElementHandler):
     tag = 'doc'
 
     def end(self, elem, result):
         result.doc = elem.text or ''
 
 
-class MetadataHandler(_Handler):
+@ElementHandler.register
+class MetadataHandler(ElementHandler):
     tag = 'metadata'
-
-    def _children(self):
-        return [MetadataItemHandler()]
+    children = frozenset(('item',))
 
 
-class MetadataItemHandler(_Handler):
+@ElementHandler.register
+class MetadataItemHandler(ElementHandler):
     tag = 'item'
 
     def end(self, elem, result):
         result.metadata[elem.get('name', '')] = elem.text or ''
 
 
-class TagsHandler(_Handler):
+@ElementHandler.register
+class TagsHandler(ElementHandler):
     tag = 'tags'
-
-    def _children(self):
-        return [TagHandler()]
+    children = frozenset(('tag',))
 
 
-class TagHandler(_Handler):
+@ElementHandler.register
+class TagHandler(ElementHandler):
     tag = 'tag'
 
     def end(self, elem, result):
         result.tags.add(elem.text or '')
 
 
-class TimeoutHandler(_Handler):
+@ElementHandler.register
+class TimeoutHandler(ElementHandler):
     tag = 'timeout'
 
     def end(self, elem, result):
         result.timeout = elem.get('value')
 
 
-class AssignHandler(_Handler):
+@ElementHandler.register
+class AssignHandler(ElementHandler):
     tag = 'assign'
-
-    def _children(self):
-        return [AssignVarHandler()]
+    children = frozenset(('var',))
 
 
-class AssignVarHandler(_Handler):
+@ElementHandler.register
+class AssignVarHandler(ElementHandler):
     tag = 'var'
 
     def end(self, elem, result):
-        result.assign += (elem.text or '',)
+        # Handles FOR loops and keywords.
+        if hasattr(result, 'variables'):
+            result.variables += (elem.text or '',)
+        else:
+            result.assign += (elem.text or '',)
 
 
-class ArgumentsHandler(_Handler):
+@ElementHandler.register
+class ArgumentsHandler(ElementHandler):
     tag = 'arguments'
-
-    def _children(self):
-        return [ArgumentHandler()]
+    children = frozenset(('arg',))
 
 
-class ArgumentHandler(_Handler):
+@ElementHandler.register
+class ArgumentHandler(ElementHandler):
     tag = 'arg'
 
     def end(self, elem, result):
-        result.args += (elem.text or '',)
+        # Handles FOR loops and keywords.
+        if hasattr(result, 'values'):
+            result.values += (elem.text or '',)
+        else:
+            result.args += (elem.text or '',)
 
 
-class ErrorsHandler(_Handler):
+@ElementHandler.register
+class ErrorsHandler(ElementHandler):
     tag = 'errors'
 
     def start(self, elem, result):
         return result.errors
 
-    def _children(self):
-        return [ErrorMessageHandler()]
+    def get_child_handler(self, tag):
+        return ErrorMessageHandler()
 
 
-class ErrorMessageHandler(_Handler):
-    tag = 'msg'
+class ErrorMessageHandler(ElementHandler):
 
     def end(self, elem, result):
         result.messages.create(elem.text or '',
@@ -274,8 +304,9 @@ class ErrorMessageHandler(_Handler):
                                self._timestamp(elem, 'timestamp'))
 
 
-class StatisticsHandler(_Handler):
+@ElementHandler.register
+class StatisticsHandler(ElementHandler):
     tag = 'statistics'
 
-    def get_child_handler(self, elem):
+    def get_child_handler(self, tag):
         return self

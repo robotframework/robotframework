@@ -24,7 +24,7 @@ class NoCutting(unittest.TestCase):
         self._assert_no_cutting('bar')
 
     def test_few_short_lines(self):
-        self._assert_no_cutting('foo\nbar\zap\hello World!')
+        self._assert_no_cutting('foo\nbar\nzap\nphello World!')
 
     def test_max_number_of_short_lines(self):
         self._assert_no_cutting('short line\n' * MAX_ERROR_LINES)

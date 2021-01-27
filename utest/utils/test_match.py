@@ -66,7 +66,7 @@ class TestMatcher(unittest.TestCase):
 
     def test_matches_no_pattern(self):
         for string in ['foo', '', ' ', '      ', 'what ever',
-                       'multi\nline\string here', '=\\.)(/23.',
+                       'multi\nline\nstring here', '=\\.)(/23.',
                        'forw/slash/and\\back\\slash']:
             self._matches(string, string), string
 

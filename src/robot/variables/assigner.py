@@ -82,7 +82,7 @@ class AssignmentValidator(object):
 
 
 class VariableAssigner(object):
-    _valid_extended_attr = re.compile('^[_a-zA-Z]\w*$')
+    _valid_extended_attr = re.compile(r'^[_a-zA-Z]\w*$')
 
     def __init__(self, assignment, context):
         self._assignment = assignment

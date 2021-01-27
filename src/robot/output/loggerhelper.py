@@ -142,7 +142,14 @@ class AbstractLoggerProxy(object):
     def __init__(self, logger, method_names=None, prefix=None):
         self.logger = logger
         for name in method_names or self._methods:
-            setattr(self, name, self._get_method(logger, name, prefix))
+            # Allow extending classes to implement some of the messages themselves.
+            if hasattr(self, name):
+                if hasattr(logger, name):
+                    continue
+                target = logger
+            else:
+                target = self
+            setattr(target, name, self._get_method(logger, name, prefix))
 
     def _get_method(self, logger, name, prefix):
         for method_name in self._get_method_names(name, prefix):

@@ -564,7 +564,7 @@ class Date(object):
 
     def _handle_un_supported_f_directive(self, ts, input_format):
         input_format = self._remove_f_from_format(input_format)
-        match = re.search('\d+$', ts)
+        match = re.search(r'\d+$', ts)
         if not match:
             raise ValueError("time data '%s' does not match format '%s%%f'."
                              % (ts, input_format))
