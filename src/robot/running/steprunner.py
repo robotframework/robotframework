@@ -17,7 +17,7 @@ from collections import OrderedDict
 from contextlib import contextmanager
 
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
-                          ExitForLoop, ContinueForLoop, DataError)
+                          ExecutionStatus, ExitForLoop, ContinueForLoop, DataError)
 from robot.result import For as ForResult, If as IfResult, Keyword as KeywordResult
 from robot.output import librarylogger as logger
 from robot.utils import (format_assign_message, frange, get_error_message,
@@ -67,11 +67,8 @@ class IfRunner(object):
         self._templated = templated
 
     def run(self, data):
-        branch_run = False
         with self._dry_run_recursion_detection(data) as recursive_dry_run:
-            while data:
-                branch_run = self._run_if_branch(data, branch_run, recursive_dry_run)
-                data = data.orelse
+            self._run_if_branch(data, recursive_dry_run)
 
     @contextmanager
     def _dry_run_recursion_detection(self, data):
@@ -87,7 +84,7 @@ class IfRunner(object):
             if dry_run:
                 self._dry_run_stack.pop()
 
-    def _run_if_branch(self, data, branch_run=False, recursive_dry_run=False):
+    def _run_if_branch(self, data, recursive_dry_run=False, branch_run=False):
         result = IfResult(data.condition, lineno=data.lineno, source=data.source,
                           type=data.type)
         with StatusReporter(self._context, result) as reporter:
@@ -96,9 +93,11 @@ class IfRunner(object):
             if self._should_run_branch(data.condition, branch_run, recursive_dry_run):
                 runner = StepRunner(self._context, self._templated)
                 runner.run_steps(data.body)
-                return True
-            reporter.mark_as_not_run()
-            return branch_run
+                branch_run = True
+            else:
+                result.branch_status = 'NOT_RUN'
+            if data.orelse:
+                self._run_if_branch(data.orelse, recursive_dry_run, branch_run)
 
     def _should_run_branch(self, condition, branch_run=False, recursive_dry_run=False):
         if self._context.dry_run:

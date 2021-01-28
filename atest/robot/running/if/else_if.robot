@@ -38,8 +38,16 @@ Else if else failing
     Check Branch Status    ${tc.body[0].orelse}           elseif    NOT_RUN
     Check Branch Status    ${tc.body[0].orelse.orelse}    else      FAIL
 
+Invalid
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Branch Status    ${tc.body[0]}                  if        FAIL
+    Should Not Be True     ${tc.body[0].orelse}
+
 *** Keywords ***
 Check Branch Status
     [Arguments]    ${branch}    ${type}    ${status}
     Should Be Equal    ${branch.type}    ${type}
-    Should Be Equal    ${branch.status}    ${status}
+    Should Be Equal    ${branch.branch_status}    ${status}
+    IF   $status != 'NOT_RUN'
+        Should Be Equal    ${branch.status}    ${status}
+    END

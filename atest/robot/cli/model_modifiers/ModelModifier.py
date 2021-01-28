@@ -28,7 +28,15 @@ class ModelModifier(SuiteVisitor):
             for_.flavor = 'IN'
             for_.values = ['FOR', 'is', 'modified!']
 
+    def start_iteration(self, iteration):
+        iteration.info = 'modified'
+
     def start_if(self, if_):
         if if_.condition == "'IF' == 'WRONG'":
             if_.condition = 'True'
-            if_.body[0].config(name='Log', args=['going here!'])
+            # With Robot
+            if if_.body:
+                if_.body[0].config(name='Log', args=['going here!'])
+            # With Rebot
+            else:
+                if_.body.create_keyword().body.create_message('created!')

@@ -82,7 +82,7 @@ class XmlLogger(ResultVisitor):
         self._writer.start('if', {'condition': if_.condition, 'type': if_.type})
 
     def end_if(self, if_):
-        self._write_status(if_)
+        self._write_status(if_, {'branch': if_.branch_status})
         self._writer.end('if')
 
     def start_for(self, for_):

@@ -55,7 +55,9 @@ class _Builder(object):
         self._timestamp = self._context.timestamp
 
     def _get_status(self, item):
-        model = (STATUSES[item.status],
+        # Branch status with IF/ELSE, "normal" status with others.
+        status = getattr(item, 'branch_status', item.status)
+        model = (STATUSES[status],
                  self._timestamp(item.starttime),
                  item.elapsedtime)
         msg = getattr(item, 'message', '')

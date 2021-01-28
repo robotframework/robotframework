@@ -144,5 +144,10 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
 
 class EndKeywordArguments(StartKeywordArguments):
     _attribute_names = ('kwname', 'libname', 'doc', 'args', 'assign', 'tags',
-                        'starttime', 'endtime', 'elapsedtime', 'status',
-                        'lineno', 'source')
+                        'starttime', 'endtime', 'elapsedtime', 'lineno', 'source')
+
+    def _get_extra_attributes(self, kw):
+        attrs = StartKeywordArguments._get_extra_attributes(self, kw)
+        # With IF/ELSE, return branch status, not status of the whole structure.
+        attrs['status'] = getattr(kw, 'branch_status', kw.status)
+        return attrs
