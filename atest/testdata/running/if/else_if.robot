@@ -55,3 +55,10 @@ Else if else failing
   ELSE
      Fail  expected else fail
   END
+
+Invalid
+    [Documentation]    FAIL IF has empty body.
+    IF    False
+    ELSE
+        Log   xxx
+    END
