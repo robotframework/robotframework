@@ -169,19 +169,15 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_if(self):
         test = TestSuite().tests.create()
-        if_ = test.body.create_if(condition='$x > 0')
-        if_.body.create_keyword('x')
-        else_if = if_.orelse.config(condition='$z > 0')
-        else_if.body.create_keyword('y')
+        if_ = test.body.create_if(condition='$x > 0', branch_status='NOT_RUN')
+        else_if = if_.orelse.config(condition='$y > 0', branch_status='PASS')
         else_ = else_if.orelse.config()
         else_.body.create_keyword('z')
         exp_if = (
-            5, '$x &gt; 0', '', '', '', '', '', '', (0, None, 0),
-            ((0, 'x', '', '', '', '', '', '', (0, None, 0), ()),)
+            5, '$x &gt; 0', '', '', '', '', '', '', (2, None, 0), ()
         )
         exp_else_if = (
-            6, '$z &gt; 0', '', '', '', '', '', '', (0, None, 0),
-            ((0, 'y', '', '', '', '', '', '', (0, None, 0), ()),)
+            6, '$y &gt; 0', '', '', '', '', '', '', (1, None, 0), ()
         )
         exp_else = (
             7, '', '', '', '', '', '', '', (0, None, 0),
