@@ -17,16 +17,16 @@ from robot.utils import XmlWriter, NullMarkupWriter, get_timestamp, unic
 from robot.version import get_full_version
 from robot.result.visitor import ResultVisitor
 
-from .loggerhelper import IsLogged
+from .loggerhelper import IsLogged, Message
 
 
 class XmlLogger(ResultVisitor):
 
-    def __init__(self, path, log_level='TRACE', rpa=False, generator='Robot'):
-        self._log_message_is_logged = IsLogged(log_level)
+    def __init__(self, path, rpa=False, generator='Robot', controller=None):
         self._error_message_is_logged = IsLogged('WARN')
         self._writer = self._get_writer(path, rpa, generator)
         self._errors = []
+        self._controller = controller
 
     def _get_writer(self, path, rpa, generator):
         if not path:
@@ -46,15 +46,25 @@ class XmlLogger(ResultVisitor):
         self._writer.close()
 
     def set_log_level(self, level):
-        return self._log_message_is_logged.set_level(level)
+        return self._controller.set_level(level)
 
     def message(self, msg):
         if self._error_message_is_logged(msg.level):
             self._errors.append(msg)
 
     def log_message(self, msg):
-        if self._log_message_is_logged(msg.level):
+        if not self._controller.message_is_logged(msg.level):
+            return
+        if self._controller.any_keyword_started:
             self._write_message(msg)
+            return
+        if self._error_message_is_logged(msg.level):
+            return  # Don't report a warning message twice
+        self.message(Message('Message from outside of any keyword in test "' +
+                             self._controller.current_test.name +
+                             '"\n' + 
+                             msg.message, 
+                             level='WARN'))
 
     def _write_message(self, msg):
         attrs = {'timestamp': msg.timestamp or 'N/A', 'level': msg.level}
@@ -63,6 +73,8 @@ class XmlLogger(ResultVisitor):
         self._writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):
+        if self._controller and not self._controller.keyword_is_logged():
+            return
         attrs = {'name': kw.kwname, 'library': kw.libname}
         if kw.type != 'kw':
             attrs['type'] = kw.type
@@ -73,6 +85,8 @@ class XmlLogger(ResultVisitor):
         self._write_list('assign', 'var', kw.assign)
 
     def end_keyword(self, kw):
+        if self._controller and not self._controller.keyword_is_logged():
+            return
         if kw.timeout:
             self._writer.element('timeout', attrs={'value': unic(kw.timeout)})
         self._write_status(kw)
