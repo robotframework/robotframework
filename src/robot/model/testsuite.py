@@ -35,6 +35,7 @@ class TestSuite(ModelObject):
     """
     test_class = TestCase    #: Internal usage only.
     fixture_class = Keyword  #: Internal usage only.
+    repr_args = ('name',)
     __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors', 'rpa']
 
     def __init__(self, name='', doc='', metadata=None, source=None, rpa=False,

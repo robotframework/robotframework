@@ -144,7 +144,7 @@ class TestStringRepresentation(unittest.TestCase):
         for tc, expected in [(self.empty, "TestSuite(name='')"),
                              (self.ascii, "TestSuite(name='Kekkonen')"),
                              (self.non_ascii, u"TestSuite(name=%r)" % u'hyv\xe4 nimi')]:
-            assert_equal(repr(tc), expected)
+            assert_equal(repr(tc), 'robot.model.' + expected)
 
 
 if __name__ == '__main__':

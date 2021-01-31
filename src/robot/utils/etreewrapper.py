@@ -92,7 +92,7 @@ class ETSource(object):
         return not (is_string(source) or is_bytes(source))
 
     def _find_encoding(self, source):
-        match = re.match("\s*<\?xml .*encoding=(['\"])(.*?)\\1.*\?>", source)
+        match = re.match(r"\s*<\?xml .*encoding=(['\"])(.*?)\1.*\?>", source)
         return match.group(2) if match else 'UTF-8'
 
     def __exit__(self, exc_type, exc_value, exc_trace):

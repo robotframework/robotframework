@@ -32,6 +32,7 @@ class TestCase(ModelObject):
     """
     body_class = Body
     fixture_class = Keyword
+    repr_args = ('name',)
     __slots__ = ['parent', 'name', 'doc', 'timeout']
 
     def __init__(self, name='', doc='', tags=None, timeout=None, parent=None):

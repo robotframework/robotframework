@@ -55,7 +55,9 @@ class _Builder(object):
         self._timestamp = self._context.timestamp
 
     def _get_status(self, item):
-        model = (STATUSES[item.status],
+        # Branch status with IF/ELSE, "normal" status with others.
+        status = getattr(item, 'branch_status', item.status)
+        model = (STATUSES[status],
                  self._timestamp(item.starttime),
                  item.elapsedtime)
         msg = getattr(item, 'message', '')
@@ -69,8 +71,16 @@ class _Builder(object):
 
     def _build_keywords(self, kws, split=False):
         splitting = self._context.start_splitting_if_needed(split)
-        model = tuple(self._build_keyword(k) for k in kws)
+        model = tuple(self._build_keyword(k) for k in self._flatten_orelse(kws))
         return model if not splitting else self._context.end_splitting(model)
+
+    def _flatten_orelse(self, kws):
+        for kw in kws:
+            yield kw
+            if hasattr(kw, 'orelse'):
+                while kw.orelse:
+                    kw = kw.orelse
+                    yield kw
 
 
 class SuiteBuilder(_Builder):
@@ -147,7 +157,7 @@ class KeywordBuilder(_Builder):
     def build_keyword(self, kw, split=False):
         self._context.check_expansion(kw)
         kws = list(kw.body)
-        if kw.teardown:
+        if getattr(kw, 'teardown', None):
             kws.append(kw.teardown)
         with self._context.prune_input(kw.body):
             return (KEYWORD_TYPES[kw.type],
