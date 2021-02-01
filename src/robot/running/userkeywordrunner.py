@@ -249,3 +249,8 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
     def _trace_log_args_message(self, variables):
         args = ['${%s}' % arg for arg, _ in self.embedded_args]
         return self._format_trace_log_args_message(args, variables)
+
+    def _get_result(self, kw, assignment, variables):
+        result = UserKeywordRunner._get_result(self, kw, assignment, variables)
+        result.sourcename = self._handler.name
+        return result

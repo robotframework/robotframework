@@ -142,6 +142,11 @@ class EmbeddedArgumentsRunner(LibraryKeywordRunner):
     def _dry_run(self, context, args):
         return LibraryKeywordRunner._dry_run(self, context, self._embedded_args)
 
+    def _get_result(self, kw, assignment):
+        result = LibraryKeywordRunner._get_result(self, kw, assignment)
+        result.sourcename = self._handler.name
+        return result
+
 
 class RunKeywordRunner(LibraryKeywordRunner):
 

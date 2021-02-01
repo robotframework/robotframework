@@ -230,11 +230,11 @@ class Keyword(model.Keyword, StatusMixin):
     """
     body_class = Body
     __slots__ = ['kwname', 'libname', 'status', 'starttime', 'endtime', 'message',
-                 'lineno', 'source']
+                 'lineno', 'source', 'sourcename']
 
     def __init__(self, kwname='', libname='', doc='', args=(), assign=(), tags=(),
                  timeout=None, type=BodyItem.KEYWORD_TYPE, status='FAIL', starttime=None,
-                 endtime=None, parent=None, lineno=None, source=None):
+                 endtime=None, parent=None, lineno=None, source=None, sourcename=None):
         model.Keyword.__init__(self, None, doc, args, assign, tags, timeout, type, parent)
         #: Name of the keyword without library or resource name.
         self.kwname = kwname
@@ -251,6 +251,8 @@ class Keyword(model.Keyword, StatusMixin):
         self.message = ''
         self.lineno = lineno    # FIXME: Should be removed on result side.
         self.source = source
+        self.sourcename = sourcename
+        #: sourcename is name of keyword with embedded arguments, from it's definition
         self.body = None
 
     @setter
