@@ -19,7 +19,7 @@ from .jsbuildingcontext import JsBuildingContext
 from .jsexecutionresult import JsExecutionResult
 
 
-STATUSES = {'FAIL': 0, 'PASS': 1, 'NOT_RUN': 2, 'SKIP': 3}
+STATUSES = {'FAIL': 0, 'PASS': 1, 'SKIP': 2, 'NOT RUN': 3}
 KEYWORD_TYPES = {'kw': 0, 'setup': 1, 'teardown': 2, 'for': 3, 'foritem': 4,
                  'if': 5, 'elseif': 6, 'else': 7}
 MESSAGE_TYPE = 8

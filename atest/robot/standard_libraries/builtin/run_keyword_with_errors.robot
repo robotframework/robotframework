@@ -29,7 +29,7 @@ Ignore Error With User Keyword When Keyword Fails
     Check Log Message    ${tc.kws[0].kws[0].kws[0].kws[0].msgs[0]}    Hello world
     Check Log Message    ${tc.kws[0].kws[0].kws[1].msgs[0]}    Expected failure in UK    FAIL
     Length Should Be     ${tc.kws[0].kws[0].kws}    3
-    Should Be Equal      ${tc.kws[0].kws[0].kws[-1].status}    NOT_RUN
+    Should Be Equal      ${tc.kws[0].kws[0].kws[-1].status}    NOT RUN
 
 Ignore Error With Arguments That Needs To Be Escaped
     Check Test Case    ${TEST NAME}
@@ -105,7 +105,7 @@ Expect Error With User Keyword When Keyword Fails
     Check Log Message    ${tc.kws[0].kws[0].kws[0].kws[0].msgs[0]}    Hello world
     Check Log Message    ${tc.kws[0].kws[0].kws[1].msgs[0]}    Expected failure in UK    FAIL
     Length Should Be     ${tc.kws[0].kws[0].kws}    3
-    Should Be Equal      ${tc.kws[0].kws[0].kws[-1].status}    NOT_RUN
+    Should Be Equal      ${tc.kws[0].kws[0].kws[-1].status}    NOT RUN
 
 Expect Error With Arguments That Needs To Be Escaped
     ${tc} =    Check Test Case    ${TEST NAME}

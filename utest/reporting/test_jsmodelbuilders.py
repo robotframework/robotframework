@@ -169,12 +169,12 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_if(self):
         test = TestSuite().tests.create()
-        if_ = test.body.create_if(condition='$x > 0', branch_status='NOT_RUN')
+        if_ = test.body.create_if(condition='$x > 0', branch_status='NOT RUN')
         else_if = if_.orelse.config(condition='$y > 0', branch_status='PASS')
         else_ = else_if.orelse.config()
         else_.body.create_keyword('z')
         exp_if = (
-            5, '$x &gt; 0', '', '', '', '', '', '', (2, None, 0), ()
+            5, '$x &gt; 0', '', '', '', '', '', '', (3, None, 0), ()
         )
         exp_else_if = (
             6, '$y &gt; 0', '', '', '', '', '', '', (1, None, 0), ()
@@ -189,7 +189,7 @@ class TestBuildTestSuite(unittest.TestCase):
         assert_equal(model, (status, start, elapsed))
 
     def _verify_suite(self, suite, name='', doc='', metadata=(), source='',
-                      relsource='', status=3, message='', start=None, elapsed=0,
+                      relsource='', status=2, message='', start=None, elapsed=0,
                       suites=(), tests=(), keywords=(), stats=(0, 0, 0, 0)):
         status = (status, start, elapsed, message) \
                 if message else (status, start, elapsed)

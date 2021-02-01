@@ -65,6 +65,6 @@ Failure in FOR iteration
 Should Not Be Run
     [Arguments]    ${steps}    ${expected count}=1
     FOR    ${step}    IN    @{steps}
-        Should Be Equal    ${step.status}    NOT_RUN
+        Should Be Equal    ${step.status}    NOT RUN
     END
     Length Should Be    ${steps}    ${expected count}

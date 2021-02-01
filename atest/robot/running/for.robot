@@ -108,7 +108,7 @@ Failure inside FOR
     Should be equal       ${loop.kws[0].kws[0].status}     PASS
     Check log message     ${loop.kws[0].kws[1].msgs[0]}    Here we fail!    FAIL
     Should be equal       ${loop.kws[0].kws[1].status}     FAIL
-    Should be equal       ${loop.kws[0].kws[2].status}     NOT_RUN
+    Should be equal       ${loop.kws[0].kws[2].status}     NOT RUN
     Should be equal       ${loop.kws[0].status}            FAIL
     Length should be      ${loop.kws[0].kws}               3
     ${loop} =    Check test and get loop    ${TEST NAME} 2
@@ -121,7 +121,7 @@ Failure inside FOR
     Should be equal       ${loop.kws[2].status}            PASS
     Check log message     ${loop.kws[3].kws[0].msgs[0]}    Before Check
     Check log message     ${loop.kws[3].kws[1].msgs[0]}    Failure with 4    FAIL
-    Should be equal       ${loop.kws[3].kws[2].status}     NOT_RUN
+    Should be equal       ${loop.kws[3].kws[2].status}     NOT RUN
     Length should be      ${loop.kws[3].kws}               3
     Should be equal       ${loop.kws[3].status}            FAIL
 

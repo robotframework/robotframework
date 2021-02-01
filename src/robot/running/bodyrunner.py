@@ -109,7 +109,7 @@ class IfRunner(object):
             if run:
                 branch_run = True
             else:
-                result.branch_status = 'NOT_RUN'
+                result.branch_status = result.NOT_RUN
             if data.orelse:
                 self._run_if_branch(data.orelse, recursive_dry_run, branch_run)
             if error:

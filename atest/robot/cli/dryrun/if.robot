@@ -7,17 +7,17 @@ Resource          dryrun_resource.robot
 IF will not recurse in dry run
     ${tc}=    Check Test Case    ${TESTNAME}
     Check Branch Statuses    ${tc.body[0]}                    Recursive if         PASS
-    Check Branch Statuses    ${tc.body[0].body[0].body[0]}    Recursive if         NOT_RUN
+    Check Branch Statuses    ${tc.body[0].body[0].body[0]}    Recursive if         NOT RUN
 
 ELSE IF will not recurse in dry run
     ${tc}=    Check Test Case    ${TESTNAME}
     Check Branch Statuses    ${tc.body[0]}                           Recursive else if    PASS
-    Check Branch Statuses    ${tc.body[0].body[0].orelse.body[0]}    Recursive else if    NOT_RUN
+    Check Branch Statuses    ${tc.body[0].body[0].orelse.body[0]}    Recursive else if    NOT RUN
 
 ELSE will not recurse in dry run
     ${tc}=    Check Test Case    ${TESTNAME}
     Check Branch Statuses    ${tc.body[0]}                                  Recursive else       PASS
-    Check Branch Statuses    ${tc.body[0].body[0].orelse.orelse.body[0]}    Recursive else       NOT_RUN
+    Check Branch Statuses    ${tc.body[0].body[0].orelse.orelse.body[0]}    Recursive else       NOT RUN
 
 Dryrun fail inside of IF
     Check Test Case    ${TESTNAME}

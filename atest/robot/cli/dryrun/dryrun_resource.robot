@@ -10,7 +10,7 @@ Keyword should have been skipped with tag
 Keyword should have been validated
     [Arguments]    ${kw}
     Check Keyword Data    ${kw}           resource.This is validated
-    Check Keyword Data    ${kw.kws[0]}    BuiltIn.Log    status=NOT_RUN    args=This is validated
+    Check Keyword Data    ${kw.kws[0]}    BuiltIn.Log    status=NOT RUN    args=This is validated
 
 Last keyword should have been validated
     ${tc} =    Get test case    ${TEST NAME}

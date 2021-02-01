@@ -24,7 +24,7 @@ Failed Steps Are Not Removed
     Should Be Equal     ${tc.kws[0].kws[0].name}              \${num} = 4
     Should Be Equal     ${tc.kws[0].kws[0].status}            FAIL
     Length Should Be    ${tc.kws[0].kws[0].kws}               3
-    Should Be Equal     ${tc.kws[0].kws[0].kws[-1].status}    NOT_RUN
+    Should Be Equal     ${tc.kws[0].kws[0].kws[-1].status}    NOT RUN
 
 Steps With Warning Are Not Removed
     ${tc}=    Check Test Case    Variables in values

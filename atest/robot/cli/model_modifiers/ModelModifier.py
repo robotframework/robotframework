@@ -38,6 +38,6 @@ class ModelModifier(SuiteVisitor):
             if not hasattr(if_, 'status'):
                 if_.body[0].config(name='Log', args=['going here!'])
             # With Rebot
-            elif if_.branch_status == 'NOT_RUN':
+            elif if_.branch_status == 'NOT RUN':
                 if_.condition = 'modified'
                 if_.body[0].body.create_message('created!')

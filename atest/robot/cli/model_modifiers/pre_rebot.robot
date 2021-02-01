@@ -72,7 +72,7 @@ Modify IF
     [Setup]    Should Be Equal    ${PREV TEST NAME}    Modify FOR
     ${tc} =    Check Test Case    If structure
     Should Be Equal      ${tc.body[0].condition}         modified
-    Should Be Equal      ${tc.body[0].body[0].status}    NOT_RUN
+    Should Be Equal      ${tc.body[0].body[0].status}    NOT RUN
     Check Log Message    ${tc.body[0].body[0].msgs[0]}   created!
 
 *** Keywords ***

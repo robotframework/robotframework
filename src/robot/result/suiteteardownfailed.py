@@ -20,10 +20,10 @@ class SuiteTeardownFailureHandler(SuiteVisitor):
 
     def end_suite(self, suite):
         teardown = suite.teardown
-        # Both 'PASS' and 'NOT_RUN' (used in dry-run) statuses are OK.
-        if teardown and teardown.status == 'FAIL':
+        # Both 'PASS' and 'NOT RUN' statuses are OK.
+        if teardown and teardown.status == teardown.FAIL:
             suite.suite_teardown_failed(teardown.message)
-        if teardown and teardown.status == 'SKIP':
+        if teardown and teardown.status == teardown.SKIP:
             suite.suite_teardown_skipped(teardown.message)
 
     def visit_test(self, test):
@@ -45,11 +45,11 @@ class SuiteTeardownFailed(SuiteVisitor):
 
     def visit_test(self, test):
         if not self._skipped:
-            test.status = 'FAIL'
+            test.status = test.FAIL
             prefix = self._also_msg if test.message else self._normal_msg
             test.message += prefix % self._message
         else:
-            test.status = 'SKIP'
+            test.status = test.SKIP
             if test.message:
                 test.message = self._also_skip_msg % (self._message, test.message)
             else:
