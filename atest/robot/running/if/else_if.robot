@@ -24,13 +24,13 @@ Else if else passes
 Else if condition 1 failing
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Branch Status    ${tc.body[0]}                  if        FAIL
-    Should Not Be True     ${tc.body[0].orelse}
+    Check Branch Status    ${tc.body[0].orelse}           elseif    NOT_RUN
 
 Else if condition 2 failing
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Branch Status    ${tc.body[0]}                  if        NOT_RUN
     Check Branch Status    ${tc.body[0].orelse}           elseif    FAIL
-    Should Not Be True     ${tc.body[0].orelse.orelse}
+    Check Branch Status    ${tc.body[0].orelse.orelse}    else      NOT_RUN
 
 Else if else failing
     ${tc} =    Check Test Case    ${TESTNAME}

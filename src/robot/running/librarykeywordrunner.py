@@ -46,13 +46,15 @@ class LibraryKeywordRunner(object):
     def longname(self):
         return '%s.%s' % (self.library.name, self.name)
 
-    def run(self, kw, context):
+    def run(self, kw, context, run=True):
         assignment = VariableAssignment(kw.assign)
-        with StatusReporter(context, self._get_result(kw, assignment)):
-            with assignment.assigner(context) as assigner:
-                return_value = self._run(context, kw.args)
-                assigner.assign(return_value)
-                return return_value
+        result = self._get_result(kw, assignment)
+        with StatusReporter(context, result, run):
+            if run:
+                with assignment.assigner(context) as assigner:
+                    return_value = self._run(context, kw.args)
+                    assigner.assign(return_value)
+                    return return_value
 
     def _get_result(self, kw, assignment):
         handler = self._handler
@@ -109,7 +111,7 @@ class LibraryKeywordRunner(object):
     def dry_run(self, kw, context):
         assignment = VariableAssignment(kw.assign)
         result = self._get_result(kw, assignment)
-        with StatusReporter(context, result, dry_run_lib_kw=True):
+        with StatusReporter(context, result, run=False):
             assignment.validate_assignment()
             self._dry_run(context, kw.args)
 

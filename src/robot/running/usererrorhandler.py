@@ -58,7 +58,7 @@ class UserErrorHandler(object):
     def create_runner(self, name):
         return self
 
-    def run(self, kw, context):
+    def run(self, kw, context, run=True):
         result = KeywordResult(kwname=self.name,
                                libname=self.libname,
                                args=kw.args,
@@ -66,7 +66,8 @@ class UserErrorHandler(object):
                                type=kw.type,
                                lineno=kw.lineno,
                                source=kw.source)
-        with StatusReporter(context, result):
-            raise self.error
+        with StatusReporter(context, result, run):
+            if run:
+                raise self.error
 
     dry_run = run

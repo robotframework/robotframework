@@ -144,8 +144,8 @@ class Runner(SuiteVisitor):
         self._run_setup(test.setup, status, result)
         try:
             if not status.failed:
-                StepRunner(self._context,
-                           test.template).run_steps(test.body)
+                runner = StepRunner(self._context, templated=bool(test.template))
+                runner.run_steps(test.body)
             else:
                 if status.skipped:
                     status.test_skipped(status.message)

@@ -49,14 +49,15 @@ class UserKeywordRunner(object):
         """:rtype: :py:class:`robot.running.arguments.ArgumentSpec`"""
         return self._handler.arguments
 
-    def run(self, kw, context):
+    def run(self, kw, context, run=True):
         assignment = VariableAssignment(kw.assign)
         result = self._get_result(kw, assignment, context.variables)
-        with StatusReporter(context, result):
+        with StatusReporter(context, result, run):
             with assignment.assigner(context) as assigner:
-                return_value = self._run(context, kw.args, result)
-                assigner.assign(return_value)
-                return return_value
+                if run:
+                    return_value = self._run(context, kw.args, result)
+                    assigner.assign(return_value)
+                    return return_value
 
     def _get_result(self, kw, assignment, variables):
         handler = self._handler

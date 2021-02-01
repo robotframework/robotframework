@@ -66,8 +66,8 @@ class Keyword(model.Keyword):
                                parent)
         self.lineno = lineno
 
-    def run(self, context, templated=None):
-        return StepRunner(context).run_step(self)
+    def run(self, context, run=True, templated=None):
+        return StepRunner(context, run).run_step(self)
 
 
 @Body.register
@@ -80,8 +80,8 @@ class For(model.For):
         self.lineno = lineno
         self.error = error
 
-    def run(self, context, templated=False):
-        return ForRunner(context, self.flavor, templated).run(self)
+    def run(self, context, run=True, templated=False):
+        return ForRunner(context, self.flavor, run, templated).run(self)
 
 
 @Body.register
@@ -95,8 +95,8 @@ class If(model.If):
         self.lineno = lineno
         self.error = error
 
-    def run(self, context, templated):
-        return IfRunner(context, templated).run(self)
+    def run(self, context, run=True, templated=False):
+        return IfRunner(context, run, templated).run(self)
 
 
 class TestCase(model.TestCase):

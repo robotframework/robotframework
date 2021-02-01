@@ -18,7 +18,7 @@ from contextlib import contextmanager
 
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           ExecutionStatus, ExitForLoop, ContinueForLoop, DataError)
-from robot.result import For as ForResult, If as IfResult, Keyword as KeywordResult
+from robot.result import For as ForResult, If as IfResult
 from robot.output import librarylogger as logger
 from robot.utils import (format_assign_message, frange, get_error_message,
                          is_list_like, is_number, plural_or_not as s,
@@ -30,24 +30,24 @@ from .statusreporter import StatusReporter
 
 class StepRunner(object):
 
-    def __init__(self, context, templated=False):
+    def __init__(self, context, run=True, templated=False):
         self._context = context
-        self._templated = bool(templated)
+        self._run = run
+        self._templated = templated
 
     def run_steps(self, steps):
         errors = []
         for step in steps:
             try:
-                step.run(self._context, self._templated)
+                step.run(self._context, self._run, self._templated)
             except ExecutionPassed as exception:
                 exception.set_earlier_failures(errors)
                 raise exception
             except ExecutionFailed as exception:
                 errors.extend(exception.get_errors())
-                if not exception.can_continue(self._context.in_teardown,
-                                              self._templated,
-                                              self._context.dry_run):
-                    break
+                self._run = exception.can_continue(self._context.in_teardown,
+                                                   self._templated,
+                                                   self._context.dry_run)
         if errors:
             raise ExecutionFailures(errors)
 
@@ -56,14 +56,15 @@ class StepRunner(object):
         runner = context.get_runner(name or step.name)
         if context.dry_run:
             return runner.dry_run(step, context)
-        return runner.run(step, context)
+        return runner.run(step, context, self._run)
 
 
 class IfRunner(object):
     _dry_run_stack = []
 
-    def __init__(self, context, templated=False):
+    def __init__(self, context, run=True, templated=False):
         self._context = context
+        self._run = run
         self._templated = templated
 
     def run(self, data):
@@ -87,22 +88,30 @@ class IfRunner(object):
     def _run_if_branch(self, data, recursive_dry_run=False, branch_run=False):
         result = IfResult(data.condition, lineno=data.lineno, source=data.source,
                           type=data.type)
-        with StatusReporter(self._context, result) as reporter:
-            if data.error:
+        error = None
+        with StatusReporter(self._context, result, self._run):
+            if data.error and self._run:
                 raise DataError(data.error)
-            if self._should_run_branch(data.condition, branch_run, recursive_dry_run):
-                runner = StepRunner(self._context, self._templated)
-                runner.run_steps(data.body)
+            run = self._should_run_branch(data.condition, branch_run, recursive_dry_run)
+            runner = StepRunner(self._context, run=run, templated=self._templated)
+            try:
+                if not recursive_dry_run:
+                    runner.run_steps(data.body)
+            except ExecutionStatus as err:
+                error = err
+            if run:
                 branch_run = True
             else:
                 result.branch_status = 'NOT_RUN'
             if data.orelse:
                 self._run_if_branch(data.orelse, recursive_dry_run, branch_run)
+            if error:
+                raise error
 
     def _should_run_branch(self, condition, branch_run=False, recursive_dry_run=False):
         if self._context.dry_run:
             return not recursive_dry_run
-        if branch_run:
+        if branch_run or not self._run:
             return False
         if condition is None:
             return True
@@ -112,36 +121,33 @@ class IfRunner(object):
         return bool(condition)
 
 
-def ForRunner(context, flavor='IN', templated=False):
+def ForRunner(context, flavor='IN', run=True, templated=False):
     runners = {'IN': ForInRunner,
                'IN RANGE': ForInRangeRunner,
                'IN ZIP': ForInZipRunner,
                'IN ENUMERATE': ForInEnumerateRunner}
     runner = runners[flavor or 'IN']
-    return runner(context, templated)
+    return runner(context, run, templated)
 
 
 class ForInRunner(object):
     flavor = 'IN'
 
-    def __init__(self, context, templated=False):
+    def __init__(self, context, run=True, templated=False):
         self._context = context
+        self._run = run
         self._templated = templated
 
     def run(self, data):
         result = ForResult(data.variables, data.flavor, data.values,
                            lineno=data.lineno, source=data.source)
-        with StatusReporter(self._context, result):
-            if data.error:
-                raise DataError(data.error)
-            self._run(data, result)
+        with StatusReporter(self._context, result, self._run):
+            if self._run:
+                if data.error:
+                    raise DataError(data.error)
+                self._run_loop(data, result)
 
-    def _get_name(self, data):
-        return '%s %s [ %s ]' % (' | '.join(data.variables),
-                                 self.flavor,
-                                 ' | '.join(data.values))
-
-    def _run(self, data, result):
+    def _run_loop(self, data, result):
         errors = []
         for values in self._get_values_for_rounds(data):
             try:
@@ -255,7 +261,7 @@ class ForInRunner(object):
         result = result.body.create_iteration(info=info,
                                               lineno=data.lineno,
                                               source=data.source)
-        runner = StepRunner(self._context, self._templated)
+        runner = StepRunner(self._context, templated=self._templated)
         with StatusReporter(self._context, result):
             runner.run_steps(data.body)
 
