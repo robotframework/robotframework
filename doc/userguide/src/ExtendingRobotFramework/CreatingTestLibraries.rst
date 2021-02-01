@@ -1,3 +1,4 @@
+
 Creating test libraries
 =======================
 
@@ -1666,10 +1667,6 @@ __ `Limiting public methods becoming keywords`_
 __ `Setting custom name`_
 __ `Embedding arguments into keyword names`_
 __ `Specifying argument types using @keyword decorator`_
-
-.. note:: Storing original keyword name, as ``sourcename`` property
-          when it contains embedded arguments is a new feature in Robot Framework 4.0.
-          It allows for easier matching keywords definition with data from output.xml files.
 
 `@not_keyword` decorator
 ~~~~~~~~~~~~~~~~~~~~~~~~
