@@ -41,8 +41,8 @@ from robot.model import Keywords, BodyItem
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.utils import seq2str, setter
 
+from .bodyrunner import ForRunner, IfRunner, KeywordRunner
 from .randomizer import Randomizer
-from .steprunner import ForRunner, IfRunner, StepRunner
 
 
 class Body(model.Body):
@@ -67,7 +67,7 @@ class Keyword(model.Keyword):
         self.lineno = lineno
 
     def run(self, context, run=True, templated=None):
-        return StepRunner(context, run).run_step(self)
+        return KeywordRunner(context, run).run(self)
 
 
 @Body.register
@@ -309,9 +309,9 @@ class UserKeyword(object):
         self.tags = tags
         self.return_ = return_ or ()
         self.timeout = timeout
-        self.body = []
         self.lineno = lineno
         self.parent = parent
+        self.body = None
         self._teardown = None
 
     @setter

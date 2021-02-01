@@ -28,16 +28,16 @@ from robot.variables import is_dict_variable, evaluate_expression
 from .statusreporter import StatusReporter
 
 
-class StepRunner(object):
+class BodyRunner(object):
 
     def __init__(self, context, run=True, templated=False):
         self._context = context
         self._run = run
         self._templated = templated
 
-    def run_steps(self, steps):
+    def run(self, body):
         errors = []
-        for step in steps:
+        for step in body:
             try:
                 step.run(self._context, self._run, self._templated)
             except ExecutionPassed as exception:
@@ -51,7 +51,14 @@ class StepRunner(object):
         if errors:
             raise ExecutionFailures(errors)
 
-    def run_step(self, step, name=None):
+
+class KeywordRunner(object):
+
+    def __init__(self, context, run=True):
+        self._context = context
+        self._run = run
+
+    def run(self, step, name=None):
         context = self._context
         runner = context.get_runner(name or step.name)
         if context.dry_run:
@@ -93,10 +100,10 @@ class IfRunner(object):
             if data.error and self._run:
                 raise DataError(data.error)
             run = self._should_run_branch(data.condition, branch_run, recursive_dry_run)
-            runner = StepRunner(self._context, run=run, templated=self._templated)
+            runner = BodyRunner(self._context, run=run, templated=self._templated)
             try:
                 if not recursive_dry_run:
-                    runner.run_steps(data.body)
+                    runner.run(data.body)
             except ExecutionStatus as err:
                 error = err
             if run:
@@ -261,9 +268,9 @@ class ForInRunner(object):
         result = result.body.create_iteration(info=info,
                                               lineno=data.lineno,
                                               source=data.source)
-        runner = StepRunner(self._context, templated=self._templated)
+        runner = BodyRunner(self._context, templated=self._templated)
         with StatusReporter(self._context, result):
-            runner.run_steps(data.body)
+            runner.run(data.body)
 
     def _map_variables_and_values(self, variables, values):
         if len(variables) == 1 and len(values) != 1:

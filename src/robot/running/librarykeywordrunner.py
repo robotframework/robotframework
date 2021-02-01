@@ -20,7 +20,7 @@ from robot.utils import prepr, unic
 from robot.variables import (contains_variable, is_list_variable,
                              VariableAssignment)
 
-from .steprunner import StepRunner
+from .bodyrunner import BodyRunner
 from .model import Keyword
 from .outputcapture import OutputCapturer
 from .signalhandler import STOP_SIGNAL_MONITOR
@@ -162,7 +162,7 @@ class RunKeywordRunner(LibraryKeywordRunner):
         LibraryKeywordRunner._dry_run(self, context, args)
         keywords = [kw for kw in self._get_dry_run_keywords(args)
                     if not contains_variable(kw.name)]
-        StepRunner(context).run_steps(keywords)
+        BodyRunner(context).run(keywords)
 
     def _get_dry_run_keywords(self, args):
         name = self._handler.name
