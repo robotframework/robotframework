@@ -147,7 +147,7 @@ class TestBuildTestSuite(unittest.TestCase):
         m1 = self._verify_message(suite.tests[0].body[1].messages[0])
         m2 = self._verify_message(suite.tests[0].body[1].messages[1], 'msg', level=0)
         k2 = self._verify_keyword(suite.tests[0].body[1], body=(m1, m2))
-        T1 = self._verify_test(suite.tests[0], keywords=(k1, k2))
+        T1 = self._verify_test(suite.tests[0], body=(k1, k2))
         T2 = self._verify_test(suite.tests[1], status=1)
         self._verify_suite(suite, status=0, keywords=(K1, K2), suites=(S1,),
                            tests=(T1, T2), stats=(3, 1, 2, 0))
@@ -167,6 +167,24 @@ class TestBuildTestSuite(unittest.TestCase):
                             ((8, 10, 2, 'Message'), (8, 11, 1, '')))
         self._verify_status(model[-3][0][4], start=1000)
 
+    def test_if(self):
+        test = TestSuite().tests.create()
+        if_ = test.body.create_if(condition='$x > 0', branch_status='NOT_RUN')
+        else_if = if_.orelse.config(condition='$y > 0', branch_status='PASS')
+        else_ = else_if.orelse.config()
+        else_.body.create_keyword('z')
+        exp_if = (
+            5, '$x &gt; 0', '', '', '', '', '', '', (2, None, 0), ()
+        )
+        exp_else_if = (
+            6, '$y &gt; 0', '', '', '', '', '', '', (1, None, 0), ()
+        )
+        exp_else = (
+            7, '', '', '', '', '', '', '', (0, None, 0),
+            ((0, 'z', '', '', '', '', '', '', (0, None, 0), ()),)
+        )
+        self._verify_test(test, body=(exp_if, exp_else_if, exp_else))
+
     def _verify_status(self, model, status=0, start=None, elapsed=0):
         assert_equal(model, (status, start, elapsed))
 
@@ -184,12 +202,12 @@ class TestBuildTestSuite(unittest.TestCase):
         return elements if elements[-1] else elements[:-1]
 
     def _verify_test(self, test, name='', doc='', tags=(), timeout='',
-                     status=0, message='', start=None, elapsed=0, keywords=()):
+                     status=0, message='', start=None, elapsed=0, body=()):
         status = (status, start, elapsed, message) \
                 if message else (status, start, elapsed)
         doc = '<p>%s</p>' % doc if doc else ''
         return self._build_and_verify(TestBuilder, test, name, timeout,
-                                      doc, tags, status, keywords)
+                                      doc, tags, status, body)
 
     def _verify_keyword(self, keyword, type=0, kwname='', libname='', doc='',
                         args='', assign='', tags='', timeout='', status=0,

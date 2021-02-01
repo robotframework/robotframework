@@ -191,11 +191,12 @@ class TestTime(unittest.TestCase):
             assert_equal(format_time(timetuple, *seps), exp)
 
     def test_get_timestamp(self):
-        for seps, pattern in [((), '^\d{8} \d\d:\d\d:\d\d.\d\d\d$'),
-                              (('',' ',':',None), '^\d{8} \d\d:\d\d:\d\d$'),
-                              (('','','',None), '^\d{14}$'),
-                              (('-','&nbsp;',':',';'),
-                               '^\d{4}-\d\d-\d\d&nbsp;\d\d:\d\d:\d\d;\d\d\d$')]:
+        for seps, pattern in [
+            ((), r'^\d{8} \d\d:\d\d:\d\d.\d\d\d$'),
+            (('', ' ', ':', None), r'^\d{8} \d\d:\d\d:\d\d$'),
+            (('', '', '', None), r'^\d{14}$'),
+            (('-', '&nbsp;', ':', ';'), r'^\d{4}-\d\d-\d\d&nbsp;\d\d:\d\d:\d\d;\d\d\d$')
+        ]:
             ts = get_timestamp(*seps)
             assert_not_none(re.search(pattern, ts),
                             "'%s' didn't match '%s'" % (ts, pattern), False)
@@ -348,8 +349,8 @@ class TestTime(unittest.TestCase):
 
     def test_get_timestamp_without_millis(self):
         # Need to test twice to verify also possible cached timestamp
-        assert_true(re.match('\d{8} \d\d:\d\d:\d\d', get_timestamp(millissep=None)))
-        assert_true(re.match('\d{8} \d\d:\d\d:\d\d', get_timestamp(millissep=None)))
+        assert_true(re.match(r'\d{8} \d\d:\d\d:\d\d', get_timestamp(millissep=None)))
+        assert_true(re.match(r'\d{8} \d\d:\d\d:\d\d', get_timestamp(millissep=None)))
 
 
 if __name__ == "__main__":

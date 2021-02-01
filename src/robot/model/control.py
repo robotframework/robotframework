@@ -26,6 +26,7 @@ class For(BodyItem):
     body_class = Body
     repr_args = ('variables', 'flavor', 'values')
     __slots__ = ['variables', 'flavor', 'values']
+    deprecate_keyword_attributes = True
 
     def __init__(self, variables=(), flavor='IN', values=(), parent=None):
         self.variables = variables
@@ -64,12 +65,13 @@ class For(BodyItem):
 @Body.register
 class If(BodyItem):
     body_class = Body
-    inactive = object()
-    repr_args = ('condition',)
-    __slots__ = ['condition', '_orelse']
+    repr_args = ('condition', 'type')
+    __slots__ = ['condition', 'type', '_orelse']
+    deprecate_keyword_attributes = True
 
-    def __init__(self, condition=None, parent=None):
+    def __init__(self, condition=None, type=BodyItem.IF_TYPE, parent=None):
         self.condition = condition
+        self.type = type
         self.parent = parent
         self.body = None
         self._orelse = None
@@ -81,7 +83,7 @@ class If(BodyItem):
     @property     # Cannot use @setter because it would create orelses recursively.
     def orelse(self):
         if self._orelse is None and self:
-            self._orelse = type(self)(condition=self.inactive, parent=self)
+            self._orelse = type(self)(type=None, parent=self)
         return self._orelse
 
     @orelse.setter
@@ -99,15 +101,11 @@ class If(BodyItem):
     def source(self):
         return self.parent.source if self.parent is not None else None
 
-    @property
-    def type(self):
-        if self.condition is self.inactive:
-            return None
-        if not isinstance(self.parent, If):
-            return self.IF_TYPE
-        if self.condition:
-            return self.ELSE_IF_TYPE
-        return self.ELSE_TYPE
+    def config(self, **attributes):
+        BodyItem.config(self, **attributes)
+        if self.type is None:
+            self.type = self.ELSE_IF_TYPE if self.condition else self.ELSE_TYPE
+        return self
 
     def visit(self, visitor):
         if self:
@@ -122,8 +120,5 @@ class If(BodyItem):
             return u'ELSE IF    %s' % self.condition
         return u'ELSE'
 
-    def __repr__(self):
-        return BodyItem.__repr__(self) if self else 'If(condition=INACTIVE)'
-
     def __bool__(self):
-        return self.condition is not self.inactive
+        return self.type is not None

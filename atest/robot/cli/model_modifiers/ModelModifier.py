@@ -28,7 +28,16 @@ class ModelModifier(SuiteVisitor):
             for_.flavor = 'IN'
             for_.values = ['FOR', 'is', 'modified!']
 
+    def start_iteration(self, iteration):
+        iteration.info = 'modified'
+
     def start_if(self, if_):
         if if_.condition == "'IF' == 'WRONG'":
             if_.condition = 'True'
-            if_.body[0].config(name='Log', args=['going here!'])
+            # With Robot
+            if not hasattr(if_, 'status'):
+                if_.body[0].config(name='Log', args=['going here!'])
+            # With Rebot
+            elif if_.branch_status == 'NOT_RUN':
+                if_.condition = 'modified'
+                if_.body[0].body.create_message('created!')

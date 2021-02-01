@@ -35,9 +35,9 @@ class TestSearchVariable(unittest.TestCase):
         self._test('-= ${} =-', '${}', start=3)
 
     def test_escape_internal_curlys(self):
-        self._test(r'${embed:\d\{2\}}', '${embed:\d\{2\}}')
+        self._test(r'${embed:\d\{2\}}', r'${embed:\d\{2\}}')
         self._test(r'{}{${e:\d\{4\}-\d\{2\}-\d\{2\}}}}',
-                   '${e:\d\{4\}-\d\{2\}-\d\{2\}}', start=3)
+                   r'${e:\d\{4\}-\d\{2\}-\d\{2\}}', start=3)
         self._test(r'$&{\{\}\{\}\\}{}', r'&{\{\}\{\}\\}', start=1)
         self._test(r'${&{\}\{\\\\}\\}}{}', r'${&{\}\{\\\\}\\}')
 

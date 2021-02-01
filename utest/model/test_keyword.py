@@ -75,7 +75,7 @@ class TestKeyword(unittest.TestCase):
              u'Keyword(name=%r, args=[%r], assign=[%r])' % (u'\xe4', u'\xe5', u'${\xe3}'))
         ]:
             assert_equal(unicode(kw), exp_str)
-            assert_equal(repr(kw), exp_repr)
+            assert_equal(repr(kw), 'robot.model.' + exp_repr)
             if PY2:
                 assert_equal(str(kw), unicode(kw).encode('UTF-8'))
 

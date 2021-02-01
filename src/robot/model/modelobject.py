@@ -20,7 +20,7 @@ from robot.utils import py3to2, SetterAwareType, with_metaclass
 
 @py3to2
 class ModelObject(with_metaclass(SetterAwareType, object)):
-    repr_args = ('name',)
+    repr_args = ()
     __slots__ = []
 
     def config(self, **attributes):
@@ -71,26 +71,7 @@ class ModelObject(with_metaclass(SetterAwareType, object)):
 
     def __repr__(self):
         args = ['%s=%r' % (n, getattr(self, n)) for n in self.repr_args]
-        return '%s(%s)' % (type(self).__name__, ', '.join(args))
-
-    def __setstate__(self, state):
-        """Customize attribute updating when using the `copy` module.
-
-        This may not be needed in the future if we fix the mess we have with
-        different timeout types.
-        """
-        # We have __slots__ so state is always a two-tuple.
-        # Refer to: https://www.python.org/dev/peps/pep-0307
-        dictstate, slotstate = state
-        if dictstate is not None:
-            self.__dict__.update(dictstate)
-        for name in slotstate:
-            # If attribute is defined in __slots__ and overridden by @setter
-            # (this is the case at least with 'timeout' of 'running.TestCase')
-            # we must not set the "real" attribute value because that would run
-            # the setter method and that would recreate the object when it
-            # should not. With timeouts recreating object using the object
-            # itself would also totally fail.
-            setter_name = '_setter__' + name
-            if setter_name not in slotstate:
-                setattr(self, name, slotstate[name])
+        module = type(self).__module__.split('.')
+        if len(module) > 1 and module[0] == 'robot':
+            module = module[:2]
+        return '%s.%s(%s)' % ('.'.join(module), type(self).__name__, ', '.join(args))

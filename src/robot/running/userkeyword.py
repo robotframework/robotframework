@@ -55,8 +55,7 @@ class UserLibrary(object):
         if not embedded:
             return UserKeywordHandler(kw, self.name)
         if kw.args:
-            raise DataError('Keyword cannot have both normal and embedded '
-                            'arguments.')
+            raise DataError('Keyword cannot have both normal and embedded arguments.')
         return EmbeddedArgumentsHandler(kw, self.name, embedded)
 
     def _log_creating_failed(self, handler, error):
@@ -80,7 +79,7 @@ class UserKeywordHandler(object):
                                                            self.longname)
         self._kw = keyword
         self.timeout = keyword.timeout
-        self.keywords = keyword.body
+        self.body = keyword.body
         self.return_value = tuple(keyword.return_)
         self.teardown = keyword.teardown
 

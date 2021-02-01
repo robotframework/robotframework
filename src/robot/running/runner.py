@@ -20,8 +20,8 @@ from robot.utils import (get_timestamp, is_list_like, NormalizedDict, unic,
                          test_or_task)
 from robot.variables import VariableScopes
 
+from .bodyrunner import BodyRunner, KeywordRunner
 from .context import EXECUTION_CONTEXTS
-from .steprunner import StepRunner
 from .namespace import Namespace
 from .status import SuiteStatus, TestStatus
 from .timeouts import TestTimeout
@@ -144,8 +144,7 @@ class Runner(SuiteVisitor):
         self._run_setup(test.setup, status, result)
         try:
             if not status.failed:
-                StepRunner(self._context,
-                           test.template).run_steps(test.body)
+                BodyRunner(self._context, templated=bool(test.template)).run(test.body)
             else:
                 if status.skipped:
                     status.test_skipped(status.message)
@@ -223,7 +222,7 @@ class Runner(SuiteVisitor):
         if name.upper() in ('', 'NONE'):
             return None
         try:
-            StepRunner(self._context).run_step(data, name=name)
+            KeywordRunner(self._context).run(data, name=name)
         except ExecutionStatus as err:
             return err
 

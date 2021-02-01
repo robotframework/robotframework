@@ -165,7 +165,28 @@ class SuiteVisitor(object):
         pass
 
     def end_for(self, for_):
-        """Called when keyword ends. Default implementation does nothing."""
+        """Called when for loop ends. Default implementation does nothing."""
+        pass
+
+    def visit_iteration(self, iteration):
+        """Implements traversing through for loop iteration.
+
+        Can be overridden to allow modifying the passed in ``iteration`` without
+        calling :func:`start_iteration` or :func:`end_iteration` nor visiting body.
+        """
+        if self.start_iteration(iteration) is not False:
+            iteration.body.visit(self)
+            self.end_iteration(iteration)
+
+    def start_iteration(self, iteration):
+        """Called when iteration starts. Default implementation does nothing.
+
+        Can return explicit ``False`` to stop visiting.
+        """
+        pass
+
+    def end_iteration(self, iteration):
+        """Called when iteration ends. Default implementation does nothing."""
         pass
 
     def visit_if(self, if_):
