@@ -1,4 +1,5 @@
-Robot Framework 4.0 beta 1
+==========================
+Robot Framework 4.0 beta 2
 ==========================
 
 .. default-role:: code
@@ -30,7 +31,7 @@ to install exactly this version. Alternatively you can download the source
 distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
-Robot Framework 4.0 beta 1 was released on Wednesday February 3, 2021.
+Robot Framework 4.0 beta 2 was released on Wednesday February 3, 2021.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
