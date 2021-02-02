@@ -61,10 +61,10 @@ Template With IF
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Be Equal    ${tc.body[0].type}                           if
     Should Be Equal    ${tc.body[0].status}                         PASS
-    Should Be Equal    ${tc.body[0].branch_status}                  NOT_RUN
+    Should Be Equal    ${tc.body[0].branch_status}                  NOT RUN
     Should Be Equal    ${tc.body[0].orelse.type}                    elseif
     Should Be Equal    ${tc.body[0].orelse.status}                  PASS
-    Should Be Equal    ${tc.body[0].orelse.branch_status}           NOT_RUN
+    Should Be Equal    ${tc.body[0].orelse.branch_status}           NOT RUN
     Should Be Equal    ${tc.body[0].orelse.orelse.type}             else
     Should Be Equal    ${tc.body[0].orelse.orelse.status}           PASS
     Should Be Equal    ${tc.body[0].orelse.orelse.branch_status}    PASS

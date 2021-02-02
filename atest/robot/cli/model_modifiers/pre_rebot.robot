@@ -59,8 +59,7 @@ Modifiers are used before normal configuration
     Lists should be equal    ${tc.tags}    ${{['added']}}
 
 Modify FOR
-    Create Output With Robot    ${MODIFIED OUTPUT}    ${EMPTY}    misc/for_loops.robot misc/if_else.robot
-    Run Rebot    --prereb ${CURDIR}/ModelModifier.py    ${MODIFIED OUTPUT}
+    [Setup]    Modify FOR and IF
     ${tc} =    Check Test Case    For In Range Loop In Test
     Should Be Equal      ${tc.body[0].flavor}                     IN
     Should Be Equal      ${tc.body[0].values}                     ${{('FOR', 'is', 'modified!')}}
@@ -70,7 +69,14 @@ Modify FOR
     Check Log Message    ${tc.body[0].body[2].body[0].msgs[0]}    2
 
 Modify IF
-    Should Be Equal    ${PREV TEST NAME}    Modify FOR
+    [Setup]    Should Be Equal    ${PREV TEST NAME}    Modify FOR
     ${tc} =    Check Test Case    If structure
-    Should Be Equal      ${tc.body[0].condition}        True
-    Check Log Message    ${tc.body[0].kws[0].msgs[0]}   created!
+    Should Be Equal      ${tc.body[0].condition}         modified
+    Should Be Equal      ${tc.body[0].body[0].status}    NOT RUN
+    Check Log Message    ${tc.body[0].body[0].msgs[0]}   created!
+
+*** Keywords ***
+Modify FOR and IF
+    Create Output With Robot    ${MODIFIED OUTPUT}    ${EMPTY}    misc/for_loops.robot misc/if_else.robot
+    Run Rebot    --prereb ${CURDIR}/ModelModifier.py    ${MODIFIED OUTPUT}
+    Stderr Should Be Empty

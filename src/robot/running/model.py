@@ -41,8 +41,8 @@ from robot.model import Keywords, BodyItem
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.utils import seq2str, setter
 
+from .bodyrunner import ForRunner, IfRunner, KeywordRunner
 from .randomizer import Randomizer
-from .steprunner import ForRunner, IfRunner, StepRunner
 
 
 class Body(model.Body):
@@ -66,8 +66,8 @@ class Keyword(model.Keyword):
                                parent)
         self.lineno = lineno
 
-    def run(self, context, templated=None):
-        return StepRunner(context).run_step(self)
+    def run(self, context, run=True, templated=None):
+        return KeywordRunner(context, run).run(self)
 
 
 @Body.register
@@ -80,8 +80,8 @@ class For(model.For):
         self.lineno = lineno
         self.error = error
 
-    def run(self, context, templated=False):
-        return ForRunner(context, self.flavor, templated).run(self)
+    def run(self, context, run=True, templated=False):
+        return ForRunner(context, self.flavor, run, templated).run(self)
 
 
 @Body.register
@@ -95,8 +95,8 @@ class If(model.If):
         self.lineno = lineno
         self.error = error
 
-    def run(self, context, templated):
-        return IfRunner(context, templated).run(self)
+    def run(self, context, run=True, templated=False):
+        return IfRunner(context, run, templated).run(self)
 
 
 class TestCase(model.TestCase):
@@ -309,9 +309,9 @@ class UserKeyword(object):
         self.tags = tags
         self.return_ = return_ or ()
         self.timeout = timeout
-        self.body = []
         self.lineno = lineno
         self.parent = parent
+        self.body = None
         self._teardown = None
 
     @setter

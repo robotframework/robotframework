@@ -35,8 +35,9 @@ class ModelModifier(SuiteVisitor):
         if if_.condition == "'IF' == 'WRONG'":
             if_.condition = 'True'
             # With Robot
-            if if_.body:
+            if not hasattr(if_, 'status'):
                 if_.body[0].config(name='Log', args=['going here!'])
             # With Rebot
-            else:
-                if_.body.create_keyword().body.create_message('created!')
+            elif if_.branch_status == 'NOT RUN':
+                if_.condition = 'modified'
+                if_.body[0].body.create_message('created!')

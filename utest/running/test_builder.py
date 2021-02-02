@@ -99,8 +99,8 @@ class TestBuilding(unittest.TestCase):
     def test_test_timeout(self):
         tests = build('timeouts.robot').tests
         assert_equal(tests[0].timeout, '1min 42s')
-        assert_equal(tests[1].timeout, '1d2h')
-        assert_equal(tests[2].timeout, '${100}')
+        assert_equal(tests[1].timeout, '${100}')
+        assert_equal(tests[2].timeout, None)
 
     def test_keyword_timeout(self):
         kw = build('timeouts.robot').resource.keywords[0]

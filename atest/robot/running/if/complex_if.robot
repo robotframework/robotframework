@@ -30,7 +30,7 @@ Direct Boolean condition
 Direct Boolean condition false
    ${tc} =    Check Test Case    ${TESTNAME}
    Should Be Equal     ${tc.kws[0].status}           PASS
-   Should Be Equal     ${tc.kws[0].branch_status}    NOT_RUN
+   Should Be Equal     ${tc.kws[0].branch_status}    NOT RUN
 
 Nesting insanity
    Check Test Case    ${TESTNAME}

@@ -20,10 +20,10 @@ from robot.utils import ErrorDetails, get_timestamp
 
 class StatusReporter(object):
 
-    def __init__(self, context, result, dry_run_lib_kw=False):
+    def __init__(self, context, result, run=True):
         self._context = context
         self._result = result
-        self._pass_status = 'PASS' if not dry_run_lib_kw else 'NOT_RUN'
+        self._pass_status = result.PASS if run else result.NOT_RUN
         self._test_passed = None
 
     def __enter__(self):

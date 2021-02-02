@@ -6,36 +6,36 @@ Resource          atest_resource.robot
 Else if condition 1 passes
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Branch Status    ${tc.body[0]}                  if        PASS
-    Check Branch Status    ${tc.body[0].orelse}           elseif    NOT_RUN
-    Check Branch Status    ${tc.body[0].orelse.orelse}    else      NOT_RUN
+    Check Branch Status    ${tc.body[0].orelse}           elseif    NOT RUN
+    Check Branch Status    ${tc.body[0].orelse.orelse}    else      NOT RUN
 
 Else if condition 2 passes
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Branch Status    ${tc.body[0]}                  if        NOT_RUN
+    Check Branch Status    ${tc.body[0]}                  if        NOT RUN
     Check Branch Status    ${tc.body[0].orelse}           elseif    PASS
-    Check Branch Status    ${tc.body[0].orelse.orelse}    else      NOT_RUN
+    Check Branch Status    ${tc.body[0].orelse.orelse}    else      NOT RUN
 
 Else if else passes
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Branch Status    ${tc.body[0]}                  if        NOT_RUN
-    Check Branch Status    ${tc.body[0].orelse}           elseif    NOT_RUN
+    Check Branch Status    ${tc.body[0]}                  if        NOT RUN
+    Check Branch Status    ${tc.body[0].orelse}           elseif    NOT RUN
     Check Branch Status    ${tc.body[0].orelse.orelse}    else      PASS
 
 Else if condition 1 failing
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Branch Status    ${tc.body[0]}                  if        FAIL
-    Should Not Be True     ${tc.body[0].orelse}
+    Check Branch Status    ${tc.body[0].orelse}           elseif    NOT RUN
 
 Else if condition 2 failing
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Branch Status    ${tc.body[0]}                  if        NOT_RUN
+    Check Branch Status    ${tc.body[0]}                  if        NOT RUN
     Check Branch Status    ${tc.body[0].orelse}           elseif    FAIL
-    Should Not Be True     ${tc.body[0].orelse.orelse}
+    Check Branch Status    ${tc.body[0].orelse.orelse}    else      NOT RUN
 
 Else if else failing
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Branch Status    ${tc.body[0]}                  if        NOT_RUN
-    Check Branch Status    ${tc.body[0].orelse}           elseif    NOT_RUN
+    Check Branch Status    ${tc.body[0]}                  if        NOT RUN
+    Check Branch Status    ${tc.body[0].orelse}           elseif    NOT RUN
     Check Branch Status    ${tc.body[0].orelse.orelse}    else      FAIL
 
 Invalid
@@ -48,6 +48,6 @@ Check Branch Status
     [Arguments]    ${branch}    ${type}    ${status}
     Should Be Equal    ${branch.type}    ${type}
     Should Be Equal    ${branch.branch_status}    ${status}
-    IF   $status != 'NOT_RUN'
+    IF   $status != 'NOT RUN'
         Should Be Equal    ${branch.status}    ${status}
     END

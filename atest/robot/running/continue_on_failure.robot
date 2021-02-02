@@ -25,7 +25,8 @@ Continue in user keyword with several continuable failures
 
 Continuable and regular failure
     ${tc}=    Check Test Case    ${TESTNAME}
-    Length Should Be    ${tc.kws}    3
+    Length Should Be    ${tc.kws}    4
+    Should Be Equal    ${tc.kws[-1].status}    NOT RUN
 
 Continue in nested user keyword
     ${tc}=    Check Test Case    ${TESTNAME}

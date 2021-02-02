@@ -9,26 +9,50 @@ Embedded Arguments In User Keyword Name
     Check Keyword Data    ${tc.kws[0]}    User Peke Selects Advanced Python From Webshop    \${name}, \${book}
     Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    This is always executed
     Check Keyword Data    ${tc.kws[2]}    User Juha Selects Playboy From Webshop    \${name}, \${book}
+    File Should Contain    ${OUTFILE}
+    ...    name="User Peke Selects Advanced Python From Webshop"
+    File Should Contain    ${OUTFILE}
+    ...    sourcename="User \${user} Selects \${item} From Webshop"
+    File Should Not Contain    ${OUTFILE}    sourcename="Log"
 
 Complex Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    feature-works
     Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    test case-is *executed*
     Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    issue-is about to be done!
+    File Should Contain    ${OUTFILE}    sourcename="\${prefix:Given|When|Then} this
+    File Should Not Contain    ${OUTFILE}    sourcename="Log"
 
 Embedded Arguments with BDD Prefixes
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0]}    Given user x selects y from webshop
     Check Keyword Data    ${tc.kws[1]}    When user x selects y from webshop
     Check Keyword Data    ${tc.kws[2]}    Then user x selects y from webshop    \${x}, \${y}
+    File Should Contain    ${OUTFILE}
+    ...    name="Given user x selects y from webshop"
+    File Should Contain    ${OUTFILE}
+    ...    sourcename="User \${user} Selects \${item} From Webshop"
+    File Should Not Contain    ${OUTFILE}    sourcename="Log"
 
 Argument Namespaces with Embedded Arguments
     Check Test Case    ${TEST NAME}
+    File Should Contain    ${OUTFILE}    name="My embedded warrior" 
+    File Should Contain    ${OUTFILE}    sourcename="My embedded \${var}"
+    File Should Not Contain    ${OUTFILE}    sourcename="Log"
 
 Embedded Arguments as Variables
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0]}    User \${42} Selects \${EMPTY} From Webshop    \${name}, \${item}
     Check Keyword Data    ${tc.kws[2]}    User \${name} Selects \${SPACE * 10} From Webshop    \${name}, \${item}
+    File Should Contain    ${OUTFILE}
+    ...    name="User \${42} Selects \${EMPTY} From Webshop"
+    File Should Contain    ${OUTFILE}
+    ...    sourcename="User \${user} Selects \${item} From Webshop"
+    File Should Contain    ${OUTFILE}
+    ...    name="User \${name} Selects \${SPACE * 10} From Webshop"
+    File Should Contain    ${OUTFILE}
+    ...    sourcename="User \${user} Selects \${item} From Webshop"
+    File Should Not Contain    ${OUTFILE}    sourcename="Log">
 
 Non-Existing Variable in Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
