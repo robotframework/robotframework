@@ -154,6 +154,9 @@ class RunKeywordRunner(LibraryKeywordRunner):
         LibraryKeywordRunner.__init__(self, handler)
         self._default_dry_run_keywords = default_dry_run_keywords
 
+    def _get_timeout(self, context):
+        return None
+
     def _run_with_output_captured_and_signal_monitor(self, runner, context):
         return self._run_with_signal_monitoring(runner, context)
 
