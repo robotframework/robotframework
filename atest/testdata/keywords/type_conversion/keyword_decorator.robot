@@ -6,7 +6,7 @@ Resource                 conversion.resource
 *** Variables ***
 @{LIST}                  foo                       bar
 &{DICT}                  foo=${1}                  bar=${2}
-${u}                     ${{'u' if sys.version_info[0] == 2 else ''}}
+${u}                     ${{'u' if sys.version_info[0] == 2 and sys.platform != 'cli' else ''}}
 
 *** Test Cases ***
 Integer
@@ -109,7 +109,7 @@ Invalid string
     ...                  arg_type=Bang             error=ZeroDivisionError: *
 
 Invalid string (non-ASCII byte string)
-    [Tags]               require-py2
+    [Tags]               require-py2    no-ipy
     [Template]           Conversion Should Fail
     String               ${{'åäö'}}                arg_type=string    error=*
 

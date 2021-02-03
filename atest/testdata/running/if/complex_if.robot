@@ -156,7 +156,7 @@ If with comments
   END  # Here is also ok
 
 If with invalid condition
-  [Documentation]   FAIL Evaluating expression ''123'=123' failed: SyntaxError: invalid syntax (<string>, line 1)
+  [Documentation]   FAIL STARTS: Evaluating expression ''123'=123' failed: SyntaxError:
   IF  '123'=${123}
 	 Log    Demo
   END
