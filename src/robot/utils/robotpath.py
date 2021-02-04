@@ -109,6 +109,7 @@ def get_link_path(target, base):
         url = 'file:' + url
     return url
 
+
 def _get_link_path(target, base):
     target = abspath(target)
     base = abspath(base)
@@ -129,6 +130,7 @@ def _get_link_path(target, base):
     path = os.path.join(dirs_up, target[common_len + len(os.sep):])
     return os.path.normpath(path)
 
+
 def _common_path(p1, p2):
     """Returns the longest path common to p1 and p2.
 
@@ -136,6 +138,12 @@ def _common_path(p1, p2):
     path separators as such, so it may return invalid paths:
     commonprefix(('/foo/bar/', '/foo/baz.txt')) -> '/foo/ba' (instead of /foo)
     """
+    # os.path.dirname doesn't normalize leading double slash
+    # https://github.com/robotframework/robotframework/issues/3844
+    if p1.startswith('//'):
+        p1 = '/' + p1.lstrip('/')
+    if p2.startswith('//'):
+        p2 = '/' + p2.lstrip('/')
     while p1 and p2:
         if p1 == p2:
             return p1
