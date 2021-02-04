@@ -319,7 +319,7 @@ __ https://github.com/robotframework/robotframework/blob/master/doc/releasenotes
 List and dictionary expansion with item access
 ----------------------------------------------
 
-List and dictionaalsory expansion using `@{list}` and `&{dict}` syntax, respectively,
+List and dictionary expansion using `@{list}` and `&{dict}` syntax, respectively,
 now works also in combination with item access like `@{var}[item]` (`#3487`_). This
 is how that syntax is handled:
 
@@ -368,14 +368,15 @@ preserved. (`#2086`_)
 Keywords after failures are shown in log file as "not run"
 ----------------------------------------------------------
 
-When a keyword that a test or a task contains fails, remaining keywords in
-the test are not executed and execution continues from possible test teardown
-or from the next test. This is fine otherwise, but sometimes it would be
-convenient to see what keywords would have still been executed if there had
-not been a failure. This can be seen from the original script, but they are
-not always easily accessible.
+When a keyword fails, remaining keywords in the current test (or task) are not
+executed and execution continues from possible teardown or from the next test.
+This is done because typically remaining keywords would also fail making it
+harder to see the original problem. Sometimes it would, however, be convenient
+to see what keywords would have been executed if there had not been a failure.
+That can obviously be seen from the original script, but they are not always
+easily or at all available.
 
-Starting from Robot Framework 4.0 keywords after failures are gone through
+Starting from Robot Framework 4.0, keywords after failures are gone through
 and shown in log files using "NOT RUN" status. Keywords are not executed
 so there is only a minimal overhead compared to the earlier behaviour and
 this overhead is only seen when there are failures.
@@ -385,7 +386,7 @@ When this functionality was discussed on the `#devel` channel on our `Slack
 found it very useful, but there were also some who opposed the change. If there
 are more users who do not like this change, we can still consider making it
 configurable. If you have opinions either way, comment the issue `#3842`_ or
-join the discussion on Slack_!
+join the Slack_ discussion!
 
 Positional-only arguments
 -------------------------
