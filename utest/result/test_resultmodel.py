@@ -12,21 +12,24 @@ class TestSuiteStats(unittest.TestCase):
         suite = self._create_suite_with_tests()
         assert_equal(suite.statistics.passed, 3)
         assert_equal(suite.statistics.failed, 2)
+        assert_equal(suite.statistics.skipped, 1)
 
     def test_nested_suite_stats(self):
         suite = self._create_nested_suite_with_tests()
         assert_equal(suite.statistics.passed, 6)
         assert_equal(suite.statistics.failed, 4)
+        assert_equal(suite.statistics.skipped, 2)
 
     def test_test_count(self):
         suite = self._create_nested_suite_with_tests()
-        assert_equal(suite.test_count, 10)
-        assert_equal(suite.suites[0].test_count, 5)
+        assert_equal(suite.test_count, 12)
+        assert_equal(suite.suites[0].test_count, 6)
         suite.suites.append(self._create_suite_with_tests())
-        assert_equal(suite.test_count, 15)
-        suite.suites[-1].tests.create()
-        assert_equal(suite.test_count, 16)
+        assert_equal(suite.test_count, 18)
         assert_equal(suite.suites[-1].test_count, 6)
+        suite.suites[-1].tests.create()
+        assert_equal(suite.test_count, 19)
+        assert_equal(suite.suites[-1].test_count, 7)
 
     def _create_nested_suite_with_tests(self):
         suite = TestSuite()
@@ -37,10 +40,11 @@ class TestSuiteStats(unittest.TestCase):
     def _create_suite_with_tests(self):
         suite = TestSuite()
         suite.tests = [TestCase(status='PASS'),
-                       TestCase(status='PASS', tags='nc'),
+                       TestCase(status='PASS'),
                        TestCase(status='PASS'),
                        TestCase(status='FAIL'),
-                       TestCase(status='FAIL', tags='nc')]
+                       TestCase(status='FAIL'),
+                       TestCase(status='SKIP')]
         return suite
 
 
@@ -240,6 +244,34 @@ class TestModel(unittest.TestCase):
             assert_true('deprecated' in str(w[0].message))
         assert_raises(AttributeError, kws.append, Keyword())
         assert_raises(AttributeError, setattr, kw, 'keywords', [])
+
+    def test_for_parents(self):
+        test = TestCase()
+        for_ = test.body.create_for()
+        assert_equal(for_.parent, test)
+        iter1 = for_.body.create_iteration()
+        assert_equal(iter1.parent, for_)
+        kw = iter1.body.create_keyword()
+        assert_equal(kw.parent, iter1)
+        iter2 = for_.body.create_iteration()
+        assert_equal(iter2.parent, for_)
+        kw = iter2.body.create_keyword()
+        assert_equal(kw.parent, iter2)
+
+    def test_if_parents(self):
+        test = TestCase()
+        if_ = test.body.create_if(condition='True')
+        assert_equal(if_.parent, test)
+        kw = if_.body.create_keyword()
+        assert_equal(kw.parent, if_)
+        else_if = if_.orelse.config(condtion='False')
+        assert_equal(else_if.parent, if_)
+        kw = else_if.body.create_keyword()
+        assert_equal(kw.parent, else_if)
+        else_ = else_if.orelse.config()
+        assert_equal(else_.parent, else_if)
+        kw = else_.body.create_keyword()
+        assert_equal(kw.parent, else_)
 
 
 class TestBody(unittest.TestCase):

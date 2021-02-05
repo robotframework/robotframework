@@ -166,7 +166,7 @@ class Iteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
 
     @setter
     def body(self, body):
-        return self.body_class(body)
+        return self.body_class(self, body)
 
     def visit(self, visitor):
         visitor.visit_iteration(self)
