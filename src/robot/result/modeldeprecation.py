@@ -24,6 +24,7 @@ def deprecated(method):
 
 
 class DeprecatedAttributesMixin(object):
+    __slots__ = []
 
     @property
     @deprecated

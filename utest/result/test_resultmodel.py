@@ -148,6 +148,12 @@ class TestSlots(unittest.TestCase):
     def test_keyword(self):
         self._verify(Keyword())
 
+    def test_if(self):
+        self._verify(If())
+
+    def test_for(self):
+        self._verify(For())
+
     def test_message(self):
         self._verify(Message())
 
@@ -264,7 +270,7 @@ class TestModel(unittest.TestCase):
         assert_equal(if_.parent, test)
         kw = if_.body.create_keyword()
         assert_equal(kw.parent, if_)
-        else_if = if_.orelse.config(condtion='False')
+        else_if = if_.orelse.config(condition='False')
         assert_equal(else_if.parent, if_)
         kw = else_if.body.create_keyword()
         assert_equal(kw.parent, else_if)
