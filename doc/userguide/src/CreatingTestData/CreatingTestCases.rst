@@ -204,7 +204,7 @@ three arguments would not work.
        Create File    ${TEMPDIR}/utf-8.txt         Hyvä esimerkki
        Create File    ${TEMPDIR}/iso-8859-1.txt    Hyvä esimerkki    ISO-8859-1
 
-.. _varargs:
+.. _varargs-usage:
 
 Variable number of arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -354,6 +354,8 @@ library keywords, user keywords, and when importing the Telnet_ test library.
    List files
        [Arguments]    ${path}=.    ${options}=
        Execute command    ls ${options} ${path}
+
+.. _kwargs-usage:
 
 Free named arguments
 ~~~~~~~~~~~~~~~~~~~~
@@ -824,8 +826,8 @@ the templated tests the mode is on automatically.
        second round 1    second round 2
        third round 1     third round 2
 
-Using arguments with `default values`_ or `varargs`_, as well as using
-`named arguments`_ and `free named arguments`_, work with templates
+Using keywords with `default values`_ or accepting `variable number of arguments`_,
+as well as using `named arguments`_ and `free named arguments`_, work with templates
 exactly like they work otherwise. Using variables_ in arguments is also
 supported normally.
 
