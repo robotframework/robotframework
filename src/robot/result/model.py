@@ -68,15 +68,15 @@ class ForBody(Body):
         return self.append(self.iteration_class(*args, **kwargs))
 
     def create_keyword(self, *args, **kwargs):
-        raise TypeError("'robot.result.FOR' cannot contain keywords directly. "
+        raise TypeError("'robot.result.For' cannot contain keywords directly. "
                         "Create an iteration with 'create_iteration' first.")
 
     def create_for(self, *args, **kwargs):
-        raise TypeError("'robot.result.FOR' cannot contain FORs directly. "
+        raise TypeError("'robot.result.For' cannot contain FORs directly. "
                         "Create an iteration with 'create_iteration' first.")
 
     def create_if(self, *args, **kwargs):
-        raise TypeError("'robot.result.FOR' cannot contain IFs directly. "
+        raise TypeError("'robot.result.For' cannot contain IFs directly. "
                         "Create an iteration with 'create_iteration' first.")
 
 
