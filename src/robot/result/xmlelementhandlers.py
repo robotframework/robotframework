@@ -161,20 +161,10 @@ class IfHandler(ElementHandler):
         return result.body.create_if(condition=elem.get('condition'))
 
     def _create_elseif(self, elem, result):
-        return self._config_orelse(result.body[-1].orelse, elem.get('condition'))
-
-    def _config_orelse(self, orelse, condition=None):
-        # In output.xml IF branches are in sequence but in model they are nested.
-        # 'orelse' we got is the first ELSE (IF) branch and we need to find
-        # the correct one configure i.e. the one that isn't yet configured.
-        # Reorganizing output.xml might be a good idea.
-        while orelse:
-            orelse = orelse.orelse
-        orelse.config(condition=condition)
-        return orelse
+        return result.orelse.config(condition=elem.get('condition'))
 
     def _create_else(self, elem, result):
-        return self._config_orelse(result.body[-1].orelse)
+        return result.orelse.config()
 
 
 @ElementHandler.register
@@ -202,6 +192,8 @@ class StatusHandler(ElementHandler):
         result.endtime = self._timestamp(elem, 'endtime')
         if elem.text:
             result.message = elem.text
+        if hasattr(result, 'branch_status'):
+            result.branch_status = elem.get('branch')
 
 
 @ElementHandler.register

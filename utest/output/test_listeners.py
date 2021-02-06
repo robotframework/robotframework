@@ -13,8 +13,11 @@ LOGGER.unregister_console_logger()
 
 
 class Mock(object):
+    non_existing = ()
 
     def __getattr__(self, name):
+        if name[:2] == '__' or name in self.non_existing:
+            raise AttributeError
         return ''
 
 
@@ -42,6 +45,7 @@ class TestMock(Mock):
 
 
 class KwMock(Mock):
+    non_existing = ('branch_status',)
 
     def __init__(self):
         self.name = 'kwmock'

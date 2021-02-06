@@ -144,6 +144,7 @@ window.model = (function () {
     function Keyword(data) {
         var kw = createModelObject(data);
         kw.libname = data.libname;
+        kw.fullName = (kw.libname ? kw.libname + '.' : '') + kw.name;
         kw.type = data.type;
         kw.template = 'keywordTemplate';
         kw.arguments = data.args;

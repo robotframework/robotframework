@@ -1,3 +1,4 @@
+
 Creating test libraries
 =======================
 
@@ -901,6 +902,8 @@ the earlier Python example:
        multipleDefaults(arg1, "default 1");
    }
 
+.. _varargs-library:
+
 Variable number of arguments (`*varargs`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -996,6 +999,8 @@ limitation: it works only when methods have one signature. Thus it is not
 possible to have Java keywords with both default values and varargs.
 
 __ http://docs.oracle.com/javase/1.5.0/docs/guide/language/varargs.html
+
+.. _kwargs-library:
 
 Free keyword arguments (`**kwargs`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

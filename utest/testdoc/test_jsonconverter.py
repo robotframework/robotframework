@@ -30,7 +30,7 @@ class TestJsonConverter(unittest.TestCase):
                      fullName='Misc',
                      doc='<p>My doc</p>',
                      metadata=[('1', '<p>2</p>'), ('abc', '<p>123</p>')],
-                     numberOfTests=183,
+                     numberOfTests=182,
                      tests=[],
                      keywords=[])
         test_convert(self.suite['suites'][0],
@@ -119,11 +119,11 @@ class TestJsonConverter(unittest.TestCase):
                      name='Default Test Timeout',
                      timeout='1 minute 42 seconds')
         test_convert(self.suite['suites'][-2]['tests'][1],
-                     name='Test Timeout With Message',
-                     timeout='1 day 2 hours')
-        test_convert(self.suite['suites'][-2]['tests'][2],
                      name='Test Timeout With Variable',
                      timeout='${100}')
+        test_convert(self.suite['suites'][-2]['tests'][2],
+                     name='No Timeout',
+                     timeout='')
 
     def test_keyword(self):
         test_convert(self.suite['suites'][0]['tests'][0]['keywords'][0],

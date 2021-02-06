@@ -26,7 +26,8 @@ Execution Continues After Test Timeout
 
 Execution Stops After Keyword Timeout
     ${tc} =    Check Test Case    ${TESTNAME}
-    Length Should Be    ${tc.teardown.kws}    1
+    Length Should Be    ${tc.teardown.kws}    2
+    Should Be Equal    ${tc.teardown.kws[-1].status}    NOT RUN
 
 Execution Continues If Variable Does Not Exist
     ${tc} =    Check Test Case    ${TESTNAME}
@@ -38,11 +39,13 @@ Execution Continues After Keyword Errors
 
 Execution Stops After Syntax Error
     ${tc} =    Check Test Case    ${TESTNAME}
-    Length Should Be    ${tc.teardown.kws}    1
+    Length Should Be    ${tc.teardown.kws}    2
+    Should Be Equal    ${tc.teardown.kws[-1].status}    NOT RUN
 
 Fatal Error
     ${tc} =    Check Test Case    ${TESTNAME} 1
-    Length Should Be    ${tc.teardown.kws}    1
+    Length Should Be    ${tc.teardown.kws}    2
+    Should Be Equal    ${tc.teardown.kws[-1].status}    NOT RUN
     Check Test Case    ${TESTNAME} 2
 
 Suite Teardown Is Executed Fully
@@ -61,4 +64,5 @@ Suite Teardown Is Executed Fully
 Suite Teardown Should Stop At Fatal Error
     Run Tests    ${EMPTY}    running/fatal_error_in_suite_teardown.robot
     ${ts} =    Get Test Suite    fatal error in suite teardown
-    Length Should Be    ${ts.teardown.kws}    1
+    Length Should Be    ${ts.teardown.kws}    2
+    Should Be Equal    ${ts.teardown.kws[-1].status}    NOT RUN

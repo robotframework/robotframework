@@ -753,41 +753,48 @@ custom sections:
 Representing arguments
 ----------------------
 
-Libdoc handles keywords' arguments automatically so that
-arguments specified for methods in libraries or user keywords in
-resource files are listed in a separate column. User keyword arguments
-are shown without `${}` or `@{}` to make arguments look
-the same regardless where keywords originated from.
+Libdoc shows information about keywords' arguments automatically.
 
-Regardless how keywords are actually implemented, Libdoc shows arguments
-similarly as when creating keywords in Python. This formatting is explained
-more thoroughly in the table below.
+Included information
+~~~~~~~~~~~~~~~~~~~~
 
-.. table:: How Libdoc represents arguments
-   :class: tabular
+The following information is shown for all keywords regardless are they implemented
+in libraries or in resource files:
 
-   +--------------------+----------------------------+------------------------+
-   |      Arguments     |      Now represented       |        Examples        |
-   +====================+============================+========================+
-   | No arguments       | Empty column.              |                        |
-   +--------------------+----------------------------+------------------------+
-   | One or more        | List of strings containing | | `one_argument`       |
-   | argument           | argument names.            | | `a1, a2, a3`         |
-   +--------------------+----------------------------+------------------------+
-   | Default values     | Default values separated   | | `arg=default value`  |
-   | for arguments      | from names with `=`.       | | `a, b=1, c=2`        |
-   +--------------------+----------------------------+------------------------+
-   | Variable number    | Last (or second last with  | | `*varargs`           |
-   | of arguments       | kwargs) argument has `*`   | | `a, b=42, *rest`     |
-   | (varargs)          | before its name.           |                        |
-   +--------------------+----------------------------+------------------------+
-   | Free keyword       | Last arguments has         | | `**kwargs`           |
-   | arguments (kwargs) | `**` before its name.      | | `a, b=42, **kws`     |
-   |                    |                            | | `*varargs, **kwargs` |
-   +--------------------+----------------------------+------------------------+
+- Argument name. User keyword arguments are shown without the `${}` decoration
+  to make arguments look the same regardless where keywords originate from.
+- Marker telling is the argument `positional-only`__, `named-only`__,
+  `free positional`__, `free named`__, or `normal argument`__ that can be given
+  either by position or by name.
+- Possible default value. Shown like `= 42`.
+- Possible type. Shown like `<int>`. Can be a link to a custom type as explained
+  in the next section.
+
+__ `Positional-only arguments`_
+__ `Keyword-only arguments`_
+__ varargs-library_
+__ kwargs-library_
+__ `Keyword arguments`_
 
 When referring to arguments in keyword documentation, it is recommended to
 use `inline code style <inline styles_>`__ like :codesc:`\`\`argument\`\``.
+
+Automatically listing data types
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As mentioned above, Libdoc automatically shows possible type information when
+listing arguments. If the type is a custom type based on Enum_ or TypedDict_,
+also the type itself is listed separately to show more information about it.
+When these types are used in arguments, the type name also becomes a link
+to the type information.
+
+All listed data types show possible type documentation. In addition to that,
+types based on `Enum` list available members and types based on `TypedDict`
+show the dictionary structure.
+
+.. note:: Automatically listing data types is new in Robot Framework 4.0.
+
+.. _TypedDict: https://docs.python.org/library/typing.html?highlight=typeddict#typing.TypedDict
 
 Libdoc example
 --------------

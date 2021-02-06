@@ -71,10 +71,12 @@ class Body(ItemList):
         setattr(cls, name, body_class)
         return body_class
 
-    def create(self, *args, **kwargs):
+    @property
+    def create(self):
         raise AttributeError(
-            "'Body' object has no attribute 'create'. "
+            "'%s' object has no attribute 'create'. "
             "Use item specific methods like 'create_keyword' instead."
+            % type(self).__name__
         )
 
     def create_keyword(self, *args, **kwargs):

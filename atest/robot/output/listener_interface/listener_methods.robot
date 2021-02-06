@@ -81,12 +81,12 @@ FOR and IF line numbers
     ...    FOR ITEM START: \${pet} = dog (line 3)
     ...    KW START: BuiltIn.Log ['\${pet}'] (line 4)
     ...    IF START: 'IF' == 'WRONG' (line 3)
-    ...    IF END: NOT_RUN
+    ...    IF END: NOT RUN
     ...    ELSE IF START: 'ELSE IF' == 'ELSE IF' (line 5)
     ...    KW START: BuiltIn.Log ['else if branch'] (line 6)
     ...    ELSE IF END: PASS
     ...    ELSE START: (line 7)
-    ...    ELSE END: NOT_RUN
+    ...    ELSE END: NOT RUN
         Should Contain    ${output}    ${expected}
     END
 

@@ -199,7 +199,7 @@ function addExecutionLog(main) {
 <script type="text/x-jquery-tmpl" id="suiteTemplate">
   <div id="${id}" class="suite">
     <div class="element-header closed" onclick="toggleSuite('${id}')">
-      <div class="element-header-left" title="{{html fullName}}">
+      <div class="element-header-left" title="SUITE  {{html name}}  [${status}]">
         <span class="elapsed" title="Elapsed time">${times.elapsedTime}</span>
         <span class="label ${status.toLowerCase()}">SUITE</span>
         <span class="name">{{html name}}</span>
@@ -261,7 +261,7 @@ function addExecutionLog(main) {
 <script type="text/x-jquery-tmpl" id="testTemplate">
   <div id="${id}" class="test">
     <div class="element-header closed" onclick="toggleTest('${id}')">
-      <div class="element-header-left" title="{{html fullName}}">
+      <div class="element-header-left" title="{{= testOrTask('{TEST}')}}  {{html name}}  [${status}]">
         <span class="elapsed" title="Elapsed time">${times.elapsedTime}</span>
         <span class="label ${status.toLowerCase()}">{{= testOrTask('{TEST}')}}</span>
         <span class="name">{{html name}}</span>
@@ -319,7 +319,7 @@ function addExecutionLog(main) {
 <script type="text/x-jquery-tmpl" id="keywordTemplate">
   <div id="${id}" class="keyword">
     <div class="element-header closed" onclick="toggleKeyword('${id}')">
-      <div class="element-header-left" title="{{html name}}">
+      <div class="element-header-left" title="${type}  {{if name}}{{html fullName}}  {{/if}}[${status}]">
         <span class="elapsed" title="Elapsed time">${times.elapsedTime}</span>
         <span class="label keyword ${status.toLowerCase()}">${type}</span>
         <span>{{html assign}}</span>

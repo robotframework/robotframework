@@ -49,7 +49,7 @@ Invalid string
     Check Test Case    ${TESTNAME}
 
 Invalid string (non-ASCII byte string)
-    [Tags]    require-py2
+    [Tags]    require-py2    no-ipy
     Check Test Case    ${TESTNAME}
 
 Bytes

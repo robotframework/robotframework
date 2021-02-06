@@ -12,21 +12,24 @@ class TestSuiteStats(unittest.TestCase):
         suite = self._create_suite_with_tests()
         assert_equal(suite.statistics.passed, 3)
         assert_equal(suite.statistics.failed, 2)
+        assert_equal(suite.statistics.skipped, 1)
 
     def test_nested_suite_stats(self):
         suite = self._create_nested_suite_with_tests()
         assert_equal(suite.statistics.passed, 6)
         assert_equal(suite.statistics.failed, 4)
+        assert_equal(suite.statistics.skipped, 2)
 
     def test_test_count(self):
         suite = self._create_nested_suite_with_tests()
-        assert_equal(suite.test_count, 10)
-        assert_equal(suite.suites[0].test_count, 5)
+        assert_equal(suite.test_count, 12)
+        assert_equal(suite.suites[0].test_count, 6)
         suite.suites.append(self._create_suite_with_tests())
-        assert_equal(suite.test_count, 15)
-        suite.suites[-1].tests.create()
-        assert_equal(suite.test_count, 16)
+        assert_equal(suite.test_count, 18)
         assert_equal(suite.suites[-1].test_count, 6)
+        suite.suites[-1].tests.create()
+        assert_equal(suite.test_count, 19)
+        assert_equal(suite.suites[-1].test_count, 7)
 
     def _create_nested_suite_with_tests(self):
         suite = TestSuite()
@@ -37,10 +40,11 @@ class TestSuiteStats(unittest.TestCase):
     def _create_suite_with_tests(self):
         suite = TestSuite()
         suite.tests = [TestCase(status='PASS'),
-                       TestCase(status='PASS', tags='nc'),
+                       TestCase(status='PASS'),
                        TestCase(status='PASS'),
                        TestCase(status='FAIL'),
-                       TestCase(status='FAIL', tags='nc')]
+                       TestCase(status='FAIL'),
+                       TestCase(status='SKIP')]
         return suite
 
 
@@ -85,27 +89,31 @@ class TestSuiteStatus(unittest.TestCase):
         suite.tests.create(status='PASS')
         assert_equal(suite.status, 'FAIL')
 
-    def test_passed_failed_skipped_propertys(self):
+    def test_status_propertys(self):
         suite = TestSuite()
         assert_false(suite.passed)
         assert_false(suite.failed)
         assert_true(suite.skipped)
+        assert_false(suite.not_run)
         suite.tests.create(status='SKIP')
         assert_false(suite.passed)
         assert_false(suite.failed)
         assert_true(suite.skipped)
+        assert_false(suite.not_run)
         suite.tests.create(status='PASS')
         assert_true(suite.passed)
         assert_false(suite.failed)
         assert_false(suite.skipped)
+        assert_false(suite.not_run)
         suite.tests.create(status='FAIL')
         assert_false(suite.passed)
         assert_true(suite.failed)
         assert_false(suite.skipped)
+        assert_false(suite.not_run)
 
     def test_suite_status_cannot_be_set_directly(self):
         suite = TestSuite()
-        for attr in 'status', 'passed', 'failed', 'skipped':
+        for attr in 'status', 'passed', 'failed', 'skipped', 'not_run':
             assert_true(hasattr(suite, attr))
             assert_raises(AttributeError, setattr, suite, attr, True)
 
@@ -140,6 +148,12 @@ class TestSlots(unittest.TestCase):
     def test_keyword(self):
         self._verify(Keyword())
 
+    def test_if(self):
+        self._verify(If())
+
+    def test_for(self):
+        self._verify(For())
+
     def test_message(self):
         self._verify(Message())
 
@@ -171,43 +185,60 @@ class TestModel(unittest.TestCase):
         self._verify_status_propertys(If())
 
     def test_keyword_passed_after_dry_run(self):
-        self._verify_status_propertys(Keyword(status='NOT_RUN'),
-                                      initial_status='NOT_RUN')
+        self._verify_status_propertys(Keyword(status=Keyword.NOT_RUN),
+                                      initial_status=Keyword.NOT_RUN)
 
     def _verify_status_propertys(self, item, initial_status='FAIL'):
         item.starttime = '20210121 17:04:00.000'
         item.endtime = '20210121 17:04:01.002'
         assert_equal(item.elapsedtime, 1002)
+        assert_equal(item.passed, initial_status == item.PASS)
+        assert_equal(item.failed, initial_status == item.FAIL)
+        assert_equal(item.skipped, initial_status == item.SKIP)
+        assert_equal(item.not_run, initial_status == item.NOT_RUN)
         assert_equal(item.status, initial_status)
-        assert_equal(item.passed, False)
-        assert_equal(item.failed, initial_status == 'FAIL')
-        assert_equal(item.skipped, False)
         item.passed = True
         assert_equal(item.passed, True)
         assert_equal(item.failed, False)
         assert_equal(item.skipped, False)
+        assert_equal(item.not_run, False)
         assert_equal(item.status, 'PASS')
         item.passed = False
         assert_equal(item.passed, False)
         assert_equal(item.failed, True)
         assert_equal(item.skipped, False)
+        assert_equal(item.not_run, False)
         assert_equal(item.status, 'FAIL')
         item.failed = True
         assert_equal(item.passed, False)
         assert_equal(item.failed, True)
         assert_equal(item.skipped, False)
+        assert_equal(item.not_run, False)
         assert_equal(item.status, 'FAIL')
         item.failed = False
         assert_equal(item.passed, True)
         assert_equal(item.failed, False)
         assert_equal(item.skipped, False)
+        assert_equal(item.not_run, False)
         assert_equal(item.status, 'PASS')
         item.skipped = True
         assert_equal(item.passed, False)
         assert_equal(item.failed, False)
         assert_equal(item.skipped, True)
+        assert_equal(item.not_run, False)
         assert_equal(item.status, 'SKIP')
         assert_raises(ValueError, setattr, item, 'skipped', False)
+        if isinstance(item, TestCase):
+            assert_raises(AttributeError, setattr, item, 'not_run', True)
+            assert_raises(AttributeError, setattr, item, 'not_run', False)
+        else:
+            item.not_run = True
+            assert_equal(item.passed, False)
+            assert_equal(item.failed, False)
+            assert_equal(item.skipped, False)
+            assert_equal(item.not_run, True)
+            assert_equal(item.status, 'NOT RUN')
+            assert_raises(ValueError, setattr, item, 'not_run', False)
 
     def test_keywords_deprecation(self):
         kw = Keyword()
@@ -219,6 +250,34 @@ class TestModel(unittest.TestCase):
             assert_true('deprecated' in str(w[0].message))
         assert_raises(AttributeError, kws.append, Keyword())
         assert_raises(AttributeError, setattr, kw, 'keywords', [])
+
+    def test_for_parents(self):
+        test = TestCase()
+        for_ = test.body.create_for()
+        assert_equal(for_.parent, test)
+        iter1 = for_.body.create_iteration()
+        assert_equal(iter1.parent, for_)
+        kw = iter1.body.create_keyword()
+        assert_equal(kw.parent, iter1)
+        iter2 = for_.body.create_iteration()
+        assert_equal(iter2.parent, for_)
+        kw = iter2.body.create_keyword()
+        assert_equal(kw.parent, iter2)
+
+    def test_if_parents(self):
+        test = TestCase()
+        if_ = test.body.create_if(condition='True')
+        assert_equal(if_.parent, test)
+        kw = if_.body.create_keyword()
+        assert_equal(kw.parent, if_)
+        else_if = if_.orelse.config(condition='False')
+        assert_equal(else_if.parent, if_)
+        kw = else_if.body.create_keyword()
+        assert_equal(kw.parent, else_if)
+        else_ = else_if.orelse.config()
+        assert_equal(else_.parent, else_if)
+        kw = else_.body.create_keyword()
+        assert_equal(kw.parent, else_)
 
 
 class TestBody(unittest.TestCase):

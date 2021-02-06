@@ -9,7 +9,12 @@ Output file content should be same with Robot and Rebot
 
 *** Keywords ***
 Generate output with Robot
-    Run tests    -L TRACE    misc/pass_and_fail.robot
+    ${inputs} =    Catenate
+    ...    misc/pass_and_fail.robot
+    ...    misc/for_loops.robot
+    ...    misc/if_else.robot
+    ...    misc/warnings_and_errors.robot
+    Run tests    -L TRACE    ${inputs}
     Run keyword and return    Parse output file
 
 Generate output with Rebot

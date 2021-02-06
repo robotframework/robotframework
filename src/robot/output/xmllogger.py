@@ -66,6 +66,8 @@ class XmlLogger(ResultVisitor):
         attrs = {'name': kw.kwname, 'library': kw.libname}
         if kw.type != 'kw':
             attrs['type'] = kw.type
+        if kw.sourcename:
+            attrs['sourcename'] = kw.sourcename
         self._writer.start('kw', attrs)
         self._write_list('tags', 'tag', [unic(t) for t in kw.tags])
         self._writer.element('doc', kw.doc)
@@ -82,7 +84,7 @@ class XmlLogger(ResultVisitor):
         self._writer.start('if', {'condition': if_.condition, 'type': if_.type})
 
     def end_if(self, if_):
-        self._write_status(if_)
+        self._write_status(if_, {'branch': if_.branch_status})
         self._writer.end('if')
 
     def start_for(self, for_):

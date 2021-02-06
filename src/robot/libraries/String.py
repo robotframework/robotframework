@@ -781,7 +781,7 @@ class String(object):
         """
         if PY2 and is_bytes(string):
             try:
-                string = unicode(string)
+                string = string.decode('ASCII')
             except UnicodeError:
                 raise TypeError('This keyword works only with Unicode strings '
                                 'and non-ASCII bytes.')
