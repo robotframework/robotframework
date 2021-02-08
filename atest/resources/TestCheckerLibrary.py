@@ -6,7 +6,7 @@ from robot.api import logger
 from robot.utils.asserts import assert_equal
 from robot.result import (ExecutionResultBuilder, For, If, Iteration, Keyword,
                           Result, ResultVisitor, TestCase, TestSuite)
-from robot.result.model import Body, ForBody
+from robot.result.model import Body, ForIterations
 from robot.libraries.BuiltIn import BuiltIn
 
 
@@ -32,7 +32,7 @@ class NoSlotsBody(Body):
     if_class = NoSlotsIf
 
 
-class NoSlotsForBody(ForBody):
+class NoSlotsForBody(ForIterations):
     iteration_class = NoSlotsIteration
 
 

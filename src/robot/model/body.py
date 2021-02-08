@@ -80,13 +80,19 @@ class Body(ItemList):
         )
 
     def create_keyword(self, *args, **kwargs):
-        return self.append(self.keyword_class(*args, **kwargs))
+        return self._create(self.keyword_class, 'create_keyword', args, kwargs)
+
+    def _create(self, cls, name, args, kwargs):
+        if cls is None:
+            raise TypeError("'%s' object does not support '%s'."
+                            % (type(self).__name__, name))
+        return self.append(cls(*args, **kwargs))
 
     def create_for(self, *args, **kwargs):
-        return self.append(self.for_class(*args, **kwargs))
+        return self._create(self.for_class, 'create_for', args, kwargs)
 
     def create_if(self, *args, **kwargs):
-        return self.append(self.if_class(*args, **kwargs))
+        return self._create(self.if_class, 'create_if', args, kwargs)
 
     def filter(self, keywords=None, fors=None, ifs=None, predicate=None):
         """Filter body items based on type and/or custom predicate.

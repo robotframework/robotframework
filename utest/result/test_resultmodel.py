@@ -3,7 +3,8 @@ import warnings
 
 from robot.model import Tags
 from robot.result import For, If, Keyword, Message, TestCase, TestSuite
-from robot.utils.asserts import assert_equal, assert_false, assert_raises, assert_true
+from robot.utils.asserts import (assert_equal, assert_false, assert_raises,
+                                 assert_raises_with_msg, assert_true)
 
 
 class TestSuiteStats(unittest.TestCase):
@@ -329,6 +330,25 @@ class TestBody(unittest.TestCase):
         assert_equal(kw.body[2].body[0].id, 's1-t1-k1-k2-m1')
         assert_equal(kw.body[2].body[1].id, 's1-t1-k1-k2-k1')
         assert_equal(kw.body[2].body[2].id, 's1-t1-k1-k2-m2')
+
+
+class TestForIterations(unittest.TestCase):
+
+    def test_create_iteration_message_supported(self):
+        for_ = For()
+        iterations = for_.body
+        for creator in (iterations.create_iteration,
+                        iterations.create_message):
+            item = creator()
+            assert_equal(item.parent, for_)
+
+    def test_create_keyword_for_if_not_supported(self):
+        iterations = For().body
+        for creator in (iterations.create_keyword,
+                        iterations.create_for,
+                        iterations.create_if):
+            msg = "'ForIterations' object does not support '%s'." % creator.__name__
+            assert_raises_with_msg(TypeError, msg, creator)
 
 
 class TestDeprecatedKeywordSpecificAttributes(unittest.TestCase):

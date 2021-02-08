@@ -60,24 +60,15 @@ class Body(model.Body):
                              (self.message_class, messages)], predicate)
 
 
-class ForBody(Body):
+class ForIterations(Body):
     iteration_class = None
+    keyword_class = None
+    if_class = None
+    for_class = None
     __slots__ = []
 
     def create_iteration(self, *args, **kwargs):
         return self.append(self.iteration_class(*args, **kwargs))
-
-    def create_keyword(self, *args, **kwargs):
-        raise TypeError("'robot.result.For' cannot contain keywords directly. "
-                        "Create an iteration with 'create_iteration' first.")
-
-    def create_for(self, *args, **kwargs):
-        raise TypeError("'robot.result.For' cannot contain FORs directly. "
-                        "Create an iteration with 'create_iteration' first.")
-
-    def create_if(self, *args, **kwargs):
-        raise TypeError("'robot.result.For' cannot contain IFs directly. "
-                        "Create an iteration with 'create_iteration' first.")
 
 
 @Body.register
@@ -144,7 +135,7 @@ class StatusMixin(object):
         self.status = self.NOT_RUN
 
 
-@ForBody.register
+@ForIterations.register
 class Iteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     type = BodyItem.FOR_ITEM_TYPE
     body_class = Body
@@ -179,7 +170,7 @@ class Iteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
 
 @Body.register
 class For(model.For, StatusMixin, DeprecatedAttributesMixin):
-    body_class = ForBody
+    body_class = ForIterations
     deprecate_keyword_attributes = False
     __slots__ = ['status', 'starttime', 'endtime', 'doc', 'lineno', 'source']
 
