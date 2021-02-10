@@ -42,6 +42,10 @@ Robot Framework development is sponsored by `Robot Framework Foundation
    :target: http://www.apache.org/licenses/LICENSE-2.0.html
    :alt: License
 
+.. image:: https://codecov.io/gh/robotframework/robotframework/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/robotframework/robotframework
+   :alt: Code Coverage
+
 Installation
 ------------
 
