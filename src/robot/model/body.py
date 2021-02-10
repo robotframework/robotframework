@@ -18,11 +18,13 @@ from .modelobject import ModelObject
 
 
 class BodyItem(ModelObject):
+    # FIXME: Better type values (e.g. 'elseif' -> 'ELSE IF')
     KEYWORD_TYPE  = 'kw'
     SETUP_TYPE    = 'setup'
     TEARDOWN_TYPE = 'teardown'
     FOR_TYPE      = 'for'
     FOR_ITEM_TYPE = 'foritem'
+    IF_ELSE_ROOT  = 'IF/ELSE ROOT'
     IF_TYPE       = 'if'
     ELSE_IF_TYPE  = 'elseif'
     ELSE_TYPE     = 'else'
@@ -46,9 +48,9 @@ class BodyItem(ModelObject):
         setup = getattr(self.parent, 'setup', None)
         body = getattr(self.parent, 'body', ())
         teardown = getattr(self.parent, 'teardown', None)
-        keywords = [item for item in [setup] + list(body) + [teardown]
-                    if item and item.type != item.MESSAGE_TYPE]
-        return '%s-k%d' % (self.parent.id, keywords.index(self) + 1)
+        steps = [step for step in [setup] + list(body) + [teardown]
+                 if step and step.type != step.MESSAGE_TYPE]
+        return '%s-k%d' % (self.parent.id, steps.index(self) + 1)
 
 
 class Body(ItemList):
@@ -126,3 +128,14 @@ class Body(ItemList):
         if predicate:
             items = [item for item in items if predicate(item)]
         return items
+
+
+class IfBranches(Body):
+    ifbranch_class = None
+    keyword_class = None
+    for_class = None
+    if_class = None
+    __slots__ = []
+
+    def create_branch(self, *args, **kwargs):
+        return self.append(self.ifbranch_class(*args, **kwargs))

@@ -18,7 +18,7 @@ from contextlib import contextmanager
 
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           ExecutionStatus, ExitForLoop, ContinueForLoop, DataError)
-from robot.result import For as ForResult, If as IfResult
+from robot.result import For as ForResult, If as IfResult, IfBranch as IfBranchResult
 from robot.output import librarylogger as logger
 from robot.utils import (format_assign_message, frange, get_error_message,
                          is_list_like, is_number, plural_or_not as s,
@@ -75,8 +75,20 @@ class IfRunner(object):
         self._templated = templated
 
     def run(self, data):
+        # FIXME: Simplify handling branch run status
         with self._dry_run_recursion_detection(data) as recursive_dry_run:
-            self._run_if_branch(data, recursive_dry_run)
+            branch_run = False
+            error = None
+            with StatusReporter(self._context, IfResult(), self._run):
+                for branch in data.body:
+                    try:
+                        if self._run_if_branch(branch, branch_run, recursive_dry_run, data.error):
+                            branch_run = True
+                    except ExecutionStatus as err:
+                        error = err
+                        branch_run = True
+                if error:
+                    raise error
 
     @contextmanager
     def _dry_run_recursion_detection(self, data):
@@ -92,28 +104,16 @@ class IfRunner(object):
             if dry_run:
                 self._dry_run_stack.pop()
 
-    def _run_if_branch(self, data, recursive_dry_run=False, branch_run=False):
-        result = IfResult(data.condition, lineno=data.lineno, source=data.source,
-                          type=data.type)
-        error = None
-        with StatusReporter(self._context, result, self._run):
-            if data.error and self._run:
-                raise DataError(data.error)
-            run = self._should_run_branch(data.condition, branch_run, recursive_dry_run)
+    def _run_if_branch(self, branch, branch_run=False, recursive_dry_run=False, error=None):
+        result = IfBranchResult(branch.type, branch.condition, lineno=branch.lineno)
+        run = self._should_run_branch(branch.condition, branch_run, recursive_dry_run)
+        with StatusReporter(self._context, result, run):
+            if error and self._run and not branch_run:
+                raise DataError(error)
             runner = BodyRunner(self._context, run=run, templated=self._templated)
-            try:
-                if not recursive_dry_run:
-                    runner.run(data.body)
-            except ExecutionStatus as err:
-                error = err
-            if run:
-                branch_run = True
-            else:
-                result.branch_status = result.NOT_RUN
-            if data.orelse:
-                self._run_if_branch(data.orelse, recursive_dry_run, branch_run)
-            if error:
-                raise error
+            if not recursive_dry_run:
+                runner.run(branch.body)
+            return run
 
     def _should_run_branch(self, condition, branch_run=False, recursive_dry_run=False):
         if self._context.dry_run:
@@ -153,6 +153,7 @@ class ForInRunner(object):
                 if data.error:
                     raise DataError(data.error)
                 self._run_loop(data, result)
+            # FIXME: Run one FOR round as 'NOT RUN' when self._run is False.
 
     def _run_loop(self, data, result):
         errors = []

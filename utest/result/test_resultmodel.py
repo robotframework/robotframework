@@ -2,7 +2,7 @@ import unittest
 import warnings
 
 from robot.model import Tags
-from robot.result import For, If, Keyword, Message, TestCase, TestSuite
+from robot.result import For, If, IfBranch, Keyword, Message, TestCase, TestSuite
 from robot.utils.asserts import (assert_equal, assert_false, assert_raises,
                                  assert_raises_with_msg, assert_true)
 
@@ -267,18 +267,20 @@ class TestModel(unittest.TestCase):
 
     def test_if_parents(self):
         test = TestCase()
-        if_ = test.body.create_if(condition='True')
+        if_ = test.body.create_if()
         assert_equal(if_.parent, test)
-        kw = if_.body.create_keyword()
-        assert_equal(kw.parent, if_)
-        else_if = if_.orelse.config(condition='False')
-        assert_equal(else_if.parent, if_)
-        kw = else_if.body.create_keyword()
-        assert_equal(kw.parent, else_if)
-        else_ = else_if.orelse.config()
-        assert_equal(else_.parent, else_if)
-        kw = else_.body.create_keyword()
-        assert_equal(kw.parent, else_)
+        branch = if_.body.create_branch(if_.IF_TYPE, '$x > 0')
+        assert_equal(branch.parent, if_)
+        kw = branch.body.create_keyword()
+        assert_equal(kw.parent, branch)
+        branch = if_.body.create_branch(if_.ELSE_IF_TYPE, '$x < 0')
+        assert_equal(branch.parent, if_)
+        kw = branch.body.create_keyword()
+        assert_equal(kw.parent, branch)
+        branch = if_.body.create_branch(if_.ELSE_TYPE)
+        assert_equal(branch.parent, if_)
+        kw = branch.body.create_keyword()
+        assert_equal(kw.parent, branch)
 
 
 class TestBody(unittest.TestCase):
@@ -363,13 +365,21 @@ class TestDeprecatedKeywordSpecificAttributes(unittest.TestCase):
             assert_equal(getattr(for_, name), expected)
 
     def test_if(self):
-        if_ = If('$x > 0')
+        for name, expected in [('name', ''),
+                               ('args', ()),
+                               ('assign', ()),
+                               ('tags', Tags()),
+                               ('timeout', None)]:
+            assert_equal(getattr(If(), name), expected)
+
+    def test_if_branch(self):
+        branch = IfBranch(IfBranch.IF_TYPE, '$x > 0')
         for name, expected in [('name', '$x > 0'),
                                ('args', ()),
                                ('assign', ()),
                                ('tags', Tags()),
                                ('timeout', None)]:
-            assert_equal(getattr(if_, name), expected)
+            assert_equal(getattr(branch, name), expected)
 
 
 if __name__ == '__main__':

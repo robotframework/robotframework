@@ -15,6 +15,8 @@ User keyword after failure
 IF after failure
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Not Be Run    ${tc.body[1:]}
+    Should Not Be Run    ${tc.body[1].body[0].body}
+    Should Not Be Run    ${tc.body[1].body[1].body}
 
 FOR after failure
     ${tc} =    Check Test Case    ${TESTNAME}
@@ -35,31 +37,28 @@ Failure in user keyword
 
 Failure in IF branch
     ${tc} =    Check Test Case    ${TESTNAME}
+    Should Not Be Run    ${tc.body[0].body[0].body[1:]}
+    Should Not Be Run    ${tc.body[0].body[1].body}
     Should Not Be Run    ${tc.body[1:]}
-    Should Not Be Run    ${tc.body[0].body[1:]}
-    Should Be True       ${tc.body[0].orelse}
-    Should Not Be Run    ${tc.body[0].orelse.body}      1
 
 Failure in ELSE IF branch
     ${tc} =    Check Test Case    ${TESTNAME}
+    Should Not Be Run    ${tc.body[0].body[0].body}
+    Should Not Be Run    ${tc.body[0].body[1].body[1:]}
+    Should Not Be Run    ${tc.body[0].body[2].body}
     Should Not Be Run    ${tc.body[1:]}
-    Should Not Be Run    ${tc.body[0].body}    1
-    Should Not Be Run    ${tc.body[0].orelse.body[1:]}
-    Should Be True       ${tc.body[0].orelse.orelse}
-    Should Not Be Run    ${tc.body[0].orelse.orelse.body}    1
 
 Failure in ELSE branch
     ${tc} =    Check Test Case    ${TESTNAME}
+    Should Not Be Run    ${tc.body[0].body[0].body}
+    Should Not Be Run    ${tc.body[0].body[1].body[1:]}
     Should Not Be Run    ${tc.body[1:]}
-    Should Not Be Run    ${tc.body[0].body}    1
-    Should Not Be Run    ${tc.body[0].orelse.body[1:]}
 
 Failure in FOR iteration
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Not Be Run    ${tc.body[1:]}
     Length Should Be     ${tc.body[0].body}    1
     Should Not Be Run    ${tc.body[0].body[0].body[1:]}
-
 
 *** Keywords ***
 Should Not Be Run

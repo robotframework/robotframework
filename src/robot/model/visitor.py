@@ -190,25 +190,46 @@ class SuiteVisitor(object):
         pass
 
     def visit_if(self, if_):
-        """Implements traversing through if loops.
+        """Implements traversing through IF/ELSE structures.
 
         Can be overridden to allow modifying the passed in ``if_`` without
-        calling :func:`start_if` or :func:`end_if` nor visiting body.
+        calling :func:`start_if` or :func:`end_if` nor visiting branches.
         """
         if self.start_if(if_) is not False:
             if_.body.visit(self)
-            if_.orelse.visit(self)
             self.end_if(if_)
 
     def start_if(self, if_):
-        """Called when if structure starts. Default implementation does nothing.
+        """Called when IF/ELSE structure starts. Default implementation does nothing.
 
         Can return explicit ``False`` to stop visiting.
         """
         pass
 
     def end_if(self, if_):
-        """Called when if structure ends. Default implementation does nothing."""
+        """Called when IF/ELSE structure ends. Default implementation does nothing."""
+        pass
+
+    # FIXME: Would visit_if_branch be better? Also xxx_iteration -> xxx_for_iteration?
+    def visit_branch(self, branch):
+        """Implements traversing through IF/ELSE branch.
+
+        Can be overridden to allow modifying the passed in ``branch`` without
+        calling :func:`start_branch` or :func:`end_branch` nor visiting body.
+        """
+        if self.start_branch(branch) is not False:
+            branch.body.visit(self)
+            self.end_branch(branch)
+
+    def start_branch(self, branch):
+        """Called when IF/ELSE branch starts. Default implementation does nothing.
+
+        Can return explicit ``False`` to stop visiting.
+        """
+        pass
+
+    def end_branch(self, branch):
+        """Called when IF/ELSE branch ends. Default implementation does nothing."""
         pass
 
     def visit_message(self, msg):

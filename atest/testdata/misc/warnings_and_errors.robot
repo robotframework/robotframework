@@ -18,7 +18,9 @@ Error in test case
 Warning in
     [Arguments]    ${where}
     [Tags]    warn
-    Log    Warning in ${where}    WARN
+    IF    True
+        Log    Warning in ${where}    WARN
+    END
 
 No warning
     [Tags]    warn

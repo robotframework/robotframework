@@ -13,12 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.model import BodyItem
 from robot.output import LEVELS
 
 from .jsbuildingcontext import JsBuildingContext
 from .jsexecutionresult import JsExecutionResult
 
 
+IF_ELSE_ROOT = BodyItem.IF_ELSE_ROOT
 STATUSES = {'FAIL': 0, 'PASS': 1, 'SKIP': 2, 'NOT RUN': 3}
 KEYWORD_TYPES = {'kw': 0, 'setup': 1, 'teardown': 2, 'for': 3, 'foritem': 4,
                  'if': 5, 'elseif': 6, 'else': 7}
@@ -69,18 +71,18 @@ class _Builder(object):
             msg = self._string(msg)
         return model + (msg,)
 
-    def _build_keywords(self, kws, split=False):
+    def _build_keywords(self, steps, split=False):
         splitting = self._context.start_splitting_if_needed(split)
-        model = tuple(self._build_keyword(k) for k in self._flatten_orelse(kws))
+        model = tuple(self._build_keyword(step) for step in self._flatten_ifs(steps))
         return model if not splitting else self._context.end_splitting(model)
 
-    def _flatten_orelse(self, kws):
-        for kw in kws:
-            yield kw
-            if hasattr(kw, 'orelse'):
-                while kw.orelse:
-                    kw = kw.orelse
-                    yield kw
+    def _flatten_ifs(self, steps):
+        for step in steps:
+            if step.type != IF_ELSE_ROOT:
+                yield step
+            else:
+                for child in step.body:
+                    yield child
 
 
 class SuiteBuilder(_Builder):

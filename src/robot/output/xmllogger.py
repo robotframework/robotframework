@@ -81,11 +81,19 @@ class XmlLogger(ResultVisitor):
         self._writer.end('kw')
 
     def start_if(self, if_):
-        self._writer.start('if', {'condition': if_.condition, 'type': if_.type})
+        self._writer.start('if')
 
     def end_if(self, if_):
-        self._write_status(if_, {'branch': if_.branch_status})
+        self._write_status(if_)
         self._writer.end('if')
+
+    def start_branch(self, branch):
+        self._writer.start('branch', {'type': branch.type,
+                                      'condition': branch.condition})
+
+    def end_branch(self, branch):
+        self._write_status(branch)
+        self._writer.end('branch')
 
     def start_for(self, for_):
         self._writer.start('for', {'flavor': for_.flavor})

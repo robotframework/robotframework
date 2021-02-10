@@ -15,6 +15,7 @@
 
 from ast import NodeVisitor
 
+from robot.parsing import Token
 from robot.variables import VariableIterator
 
 from .testsettings import TestSettings
@@ -163,11 +164,9 @@ class TestCaseBuilder(NodeVisitor):
         for item in parent.body:
             if item.type == item.FOR_TYPE:
                 self._set_template(item, template)
-            elif item.type == item.IF_TYPE:
-                branch = item
-                while branch:
+            elif item.type == item.IF_ELSE_ROOT:
+                for branch in item.body:
                     self._set_template(branch, template)
-                    branch = branch.orelse
             elif item.type == item.KEYWORD_TYPE:
                 name, args = self._format_template(template, item.args)
                 item.name = name
@@ -276,8 +275,8 @@ class ForBuilder(NodeVisitor):
         self.model = self.parent.body.create_for(
             node.variables, node.flavor, node.values, lineno=node.lineno, error=error
         )
-        for child_node in node.body:
-            self.visit(child_node)
+        for step in node.body:
+            self.visit(step)
         return self.model
 
     def _get_errors(self, node):
@@ -302,25 +301,20 @@ class ForBuilder(NodeVisitor):
 
 class IfBuilder(NodeVisitor):
 
-    def __init__(self, parent=None, model=None):
+    def __init__(self, parent):
         self.parent = parent
-        self.model = model
+        self.model = None
 
     def build(self, node):
-        # IF branch. Errors are got also from ELSE IF and ELSE branches.
-        if self.parent:
-            errors = self._get_errors(node)
-            self.model = self.parent.body.create_if(
-                node.condition, lineno=node.lineno, error=format_error(errors)
-            )
-        # ELSE IF and ELSE branches (orelse).
-        else:
-            self.model.config(condition=node.condition, lineno=node.lineno)
-        for child_node in node.body:
-            self.visit(child_node)
-        if node.orelse:
-            IfBuilder(model=self.model.orelse).build(node.orelse)
-        return self.model
+        model = self.parent.body.create_if(lineno=node.lineno,
+                                           error=format_error(self._get_errors(node)))
+        while node:
+            self.model = model.body.create_branch(node.type, node.condition,
+                                                  lineno=node.lineno)
+            for step in node.body:
+                self.visit(step)
+            node = node.orelse
+        return model
 
     def _get_errors(self, node):
         errors = node.header.errors + node.errors

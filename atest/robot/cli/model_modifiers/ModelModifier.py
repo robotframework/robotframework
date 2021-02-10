@@ -31,13 +31,14 @@ class ModelModifier(SuiteVisitor):
     def start_iteration(self, iteration):
         iteration.info = 'modified'
 
-    def start_if(self, if_):
-        if if_.condition == "'IF' == 'WRONG'":
-            if_.condition = 'True'
+    def start_branch(self, branch):
+        if branch.condition == "'IF' == 'WRONG'":
+            branch.condition = 'True'
             # With Robot
-            if not hasattr(if_, 'status'):
-                if_.body[0].config(name='Log', args=['going here!'])
+            if not hasattr(branch, 'status'):
+                branch.body[0].config(name='Log', args=['going here!'])
             # With Rebot
-            elif if_.branch_status == 'NOT RUN':
-                if_.condition = 'modified'
-                if_.body[0].body.create_message('created!')
+            elif branch.status == 'NOT RUN':
+                branch.status = 'PASS'
+                branch.condition = 'modified'
+                branch.body[0].args = ['got here!']

@@ -71,6 +71,10 @@ class ForIterations(Body):
         return self.append(self.iteration_class(*args, **kwargs))
 
 
+class IfBranches(Body, model.IfBranches):
+    __slots__ = []
+
+
 @Body.register
 class Message(model.Message):
     __slots__ = []
@@ -135,11 +139,11 @@ class StatusMixin(object):
         self.status = self.NOT_RUN
 
 
+# FIXME: Inconsistent naming: Iteration vs. IfBranch
 @ForIterations.register
 class Iteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     type = BodyItem.FOR_ITEM_TYPE
     body_class = Body
-    deprecate_keyword_attributes = False
     repr_args = ('info',)
     __slots__ = ['info', 'status', 'starttime', 'endtime', 'doc', 'lineno', 'source']
 
@@ -171,11 +175,10 @@ class Iteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
 @Body.register
 class For(model.For, StatusMixin, DeprecatedAttributesMixin):
     body_class = ForIterations
-    deprecate_keyword_attributes = False
     __slots__ = ['status', 'starttime', 'endtime', 'doc', 'lineno', 'source']
 
     def __init__(self, variables=(),  flavor='IN', values=(), status='FAIL',
-                 starttime=None, endtime=None, doc='', parent=None, lineno=None,
+                 starttime=None, endtime=None, doc='', parent=None, lineno=-1,
                  source=None):
         model.For.__init__(self, variables, flavor, values, parent)
         self.status = status
@@ -194,17 +197,29 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
 
 @Body.register
 class If(model.If, StatusMixin, DeprecatedAttributesMixin):
-    body_class = Body
-    deprecate_keyword_attributes = False
-    __slots__ = ['status', '_branch_status', 'starttime', 'endtime', 'doc',
-                 'lineno', 'source']
+    body_class = IfBranches
+    __slots__ = ['status', 'starttime', 'endtime', 'doc', 'lineno', 'source']
 
-    def __init__(self, condition=None, status='FAIL', branch_status=None,
-                 starttime=None, endtime=None, type=BodyItem.IF_TYPE, doc='',
-                 parent=None, lineno=None, source=None):
-        model.If.__init__(self, condition, type, parent)
+    def __init__(self, parent=None, status='FAIL', starttime=None, endtime=None, doc=''):
+        model.If.__init__(self, parent)
         self.status = status
-        self.branch_status = branch_status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.doc = doc
+        self.lineno = -1       # FIXME: Remove!!!
+        self.source = None    # --ii--
+
+
+@Body.register
+class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
+    body_class = Body
+    __slots__ = ['status', 'starttime', 'endtime', 'doc', 'lineno', 'source']
+
+    def __init__(self, type=BodyItem.IF_TYPE, condition=None, status='FAIL',
+                 starttime=None, endtime=None, doc='', parent=None, lineno=-1,
+                 source=None):
+        model.IfBranch.__init__(self, type, condition, parent)
+        self.status = status
         self.starttime = starttime
         self.endtime = endtime
         self.doc = doc
@@ -215,19 +230,6 @@ class If(model.If, StatusMixin, DeprecatedAttributesMixin):
     @deprecated
     def name(self):
         return self.condition
-
-    @property
-    def branch_status(self):
-        """Status of this particular IF, ELSE IF or ELSE branch. Can be ``NOT RUN``.
-
-        The :attr:`status` attribute takes into account statuses of the subsequent
-        branches as well.
-        """
-        return self._branch_status or self.status
-
-    @branch_status.setter
-    def branch_status(self, branch_status):
-        self._branch_status = branch_status
 
 
 @Body.register

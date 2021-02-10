@@ -7,7 +7,7 @@ from robot.utils.asserts import assert_equal, assert_true
 from robot.utils.platform import PY2
 from robot.result import Keyword, Message, TestCase, TestSuite
 from robot.result.executionerrors import ExecutionErrors
-from robot.model import Statistics
+from robot.model import Statistics, BodyItem
 from robot.reporting.jsmodelbuilders import *
 from robot.reporting.stringcache import StringIndex
 
@@ -169,18 +169,19 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_if(self):
         test = TestSuite().tests.create()
-        if_ = test.body.create_if(condition='$x > 0', branch_status='NOT RUN')
-        else_if = if_.orelse.config(condition='$y > 0', branch_status='PASS')
-        else_ = else_if.orelse.config()
-        else_.body.create_keyword('z')
+        test.body.create_if()
+        test.body[0].body.create_branch(BodyItem.IF_TYPE, '$x > 0', status='NOT RUN')
+        test.body[0].body.create_branch(BodyItem.ELSE_IF_TYPE, '$x < 0', status='PASS')
+        test.body[0].body.create_branch(BodyItem.ELSE_TYPE, status='NOT RUN')
+        test.body[0].body[-1].body.create_keyword('z')
         exp_if = (
             5, '$x &gt; 0', '', '', '', '', '', '', (3, None, 0), ()
         )
         exp_else_if = (
-            6, '$y &gt; 0', '', '', '', '', '', '', (1, None, 0), ()
+            6, '$x &lt; 0', '', '', '', '', '', '', (1, None, 0), ()
         )
         exp_else = (
-            7, '', '', '', '', '', '', '', (0, None, 0),
+            7, '', '', '', '', '', '', '', (3, None, 0),
             ((0, 'z', '', '', '', '', '', '', (0, None, 0), ()),)
         )
         self._verify_test(test, body=(exp_if, exp_else_if, exp_else))

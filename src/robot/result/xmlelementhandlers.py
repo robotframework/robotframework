@@ -151,20 +151,19 @@ class IterationHandler(ElementHandler):
 @ElementHandler.register
 class IfHandler(ElementHandler):
     tag = 'if'
+    children = frozenset(('status', 'branch', 'msg'))
+
+    def start(self, elem, result):
+        return result.body.create_if()
+
+
+@ElementHandler.register
+class IfBranchHandler(ElementHandler):
+    tag = 'branch'
     children = frozenset(('status', 'kw', 'if', 'for', 'msg'))
 
     def start(self, elem, result):
-        creator = getattr(self, '_create_%s' % elem.get('type', 'if'))
-        return creator(elem, result)
-
-    def _create_if(self, elem, result):
-        return result.body.create_if(condition=elem.get('condition'))
-
-    def _create_elseif(self, elem, result):
-        return result.orelse.config(condition=elem.get('condition'))
-
-    def _create_else(self, elem, result):
-        return result.orelse.config()
+        return result.body.create_branch(elem.get('type'), elem.get('condition'))
 
 
 @ElementHandler.register
