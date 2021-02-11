@@ -60,7 +60,7 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equal(self.keyword.endtime, '20111024 13:41:20.928')
         assert_equal(self.keyword.timeout, None)
         assert_equal(len(self.keyword.body), 1)
-        assert_equal(self.keyword.body[0].type, self.keyword.body[0].MESSAGE_TYPE)
+        assert_equal(self.keyword.body[0].type, self.keyword.body[0].MESSAGE)
 
     def test_user_keyword_is_built(self):
         assert_equal(self.user_keyword.name, 'logs on trace')
@@ -221,7 +221,7 @@ class TestSuiteTeardownFailed(unittest.TestCase):
         assert_equal(passed.message, 'Parent suite teardown failed:\nXXX')
         assert_equal(failed.status, 'FAIL')
         assert_equal(failed.message, 'Message\n\n'
-                                      'Also parent suite teardown failed:\nXXX')
+                                     'Also parent suite teardown failed:\nXXX')
         assert_equal(teardowns.status, 'FAIL')
         assert_equal(teardowns.message, 'Parent suite teardown failed:\nXXX')
         for item in suite.setup, suite.teardown:

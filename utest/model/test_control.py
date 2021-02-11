@@ -5,9 +5,9 @@ from robot.utils import PY2, unicode
 from robot.utils.asserts import assert_equal
 
 
-IF_TYPE = If.IF_TYPE
-ELSE_IF_TYPE = If.ELSE_IF_TYPE
-ELSE_TYPE = If.ELSE_TYPE
+IF = If.IF
+ELSE_IF = If.ELSE_IF
+ELSE = If.ELSE
 
 
 class TestFor(unittest.TestCase):
@@ -36,16 +36,16 @@ class TestFor(unittest.TestCase):
 class TestIf(unittest.TestCase):
 
     def test_type(self):
-        assert_equal(IfBranch().type, IF_TYPE)
-        assert_equal(IfBranch(type=ELSE_TYPE).type, ELSE_TYPE)
-        assert_equal(IfBranch(type=ELSE_IF_TYPE).type, ELSE_IF_TYPE)
+        assert_equal(IfBranch().type, IF)
+        assert_equal(IfBranch(type=ELSE).type, ELSE)
+        assert_equal(IfBranch(type=ELSE_IF).type, ELSE_IF)
 
     def test_type_with_nested_if(self):
         branch = IfBranch()
         branch.body.create_if()
-        assert_equal(branch.body[0].body.create_branch().type, IF_TYPE)
-        assert_equal(branch.body[0].body.create_branch(ELSE_IF_TYPE).type, ELSE_IF_TYPE)
-        assert_equal(branch.body[0].body.create_branch(ELSE_TYPE).type, ELSE_TYPE)
+        assert_equal(branch.body[0].body.create_branch().type, IF)
+        assert_equal(branch.body[0].body.create_branch(ELSE_IF).type, ELSE_IF)
+        assert_equal(branch.body[0].body.create_branch(ELSE).type, ELSE)
 
     def test_root_id(self):
         assert_equal(If().id, None)
@@ -68,19 +68,19 @@ class TestIf(unittest.TestCase):
         for if_, exp_str, exp_repr in [
             (IfBranch(),
              'IF    None',
-             "IfBranch(type='if', condition=None)"),
+             "IfBranch(type='IF', condition=None)"),
             (IfBranch(condition='$x > 1'),
              'IF    $x > 1',
-             "IfBranch(type='if', condition='$x > 1')"),
-            (IfBranch(ELSE_IF_TYPE, condition='$x > 2'),
+             "IfBranch(type='IF', condition='$x > 1')"),
+            (IfBranch(ELSE_IF, condition='$x > 2'),
              'ELSE IF    $x > 2',
-             "IfBranch(type='elseif', condition='$x > 2')"),
-            (IfBranch(ELSE_TYPE),
+             "IfBranch(type='ELSE IF', condition='$x > 2')"),
+            (IfBranch(ELSE),
              'ELSE',
-             "IfBranch(type='else', condition=None)"),
+             "IfBranch(type='ELSE', condition=None)"),
             (IfBranch(condition=u'$x == "\xe4iti"'),
              u'IF    $x == "\xe4iti"',
-             u"IfBranch(type='if', condition=%r)" % u'$x == "\xe4iti"'),
+             u"IfBranch(type='IF', condition=%r)" % u'$x == "\xe4iti"'),
         ]:
             assert_equal(unicode(if_), exp_str)
             assert_equal(repr(if_), 'robot.model.' + exp_repr)

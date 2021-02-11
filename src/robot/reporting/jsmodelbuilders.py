@@ -22,8 +22,9 @@ from .jsexecutionresult import JsExecutionResult
 
 IF_ELSE_ROOT = BodyItem.IF_ELSE_ROOT
 STATUSES = {'FAIL': 0, 'PASS': 1, 'SKIP': 2, 'NOT RUN': 3}
-KEYWORD_TYPES = {'kw': 0, 'setup': 1, 'teardown': 2, 'for': 3, 'foritem': 4,
-                 'if': 5, 'elseif': 6, 'else': 7}
+KEYWORD_TYPES = {'KEYWORD': 0, 'SETUP': 1, 'TEARDOWN': 2,
+                 'FOR': 3, 'FOR ITERATION': 4,
+                 'IF': 5, 'ELSE IF': 6, 'ELSE': 7}
 MESSAGE_TYPE = 8
 
 
@@ -152,7 +153,7 @@ class KeywordBuilder(_Builder):
         self._build_message = MessageBuilder(context).build
 
     def build(self, item, split=False):
-        if item.type == item.MESSAGE_TYPE:
+        if item.type == item.MESSAGE:
             return self._build_message(item)
         return self.build_keyword(item, split)
 

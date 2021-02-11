@@ -162,12 +162,12 @@ class TestCaseBuilder(NodeVisitor):
 
     def _set_template(self, parent, template):
         for item in parent.body:
-            if item.type == item.FOR_TYPE:
+            if item.type == item.FOR:
                 self._set_template(item, template)
             elif item.type == item.IF_ELSE_ROOT:
                 for branch in item.body:
                     self._set_template(branch, template)
-            elif item.type == item.KEYWORD_TYPE:
+            elif item.type == item.KEYWORD:
                 name, args = self._format_template(template, item.args)
                 item.name = name
                 item.args = args

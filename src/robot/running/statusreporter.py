@@ -47,7 +47,7 @@ class StatusReporter(object):
             result.status = self._pass_status
         else:
             result.status = failure.status
-            if result.type == result.TEARDOWN_TYPE:
+            if result.type == result.TEARDOWN:
                 result.message = failure.message
         if context.test:
             status = self._get_status(result)

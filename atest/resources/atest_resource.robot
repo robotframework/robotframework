@@ -114,16 +114,13 @@ Check Test Tags
     [Return]    ${tc}
 
 Check Keyword Data
-    [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=    ${type}=kw
-    Should be equal    ${kw.name}    ${name}
-    Should be equal    ${kw.status}    ${status}
-    Should be equal    ${kw.type}    ${type}
-    ${kwassign}=    Catenate    SEPARATOR=,${SPACE}    @{kw.assign}
-    Should be equal    ${kwassign}    ${assign}
-    ${kwargs}=    Catenate    SEPARATOR=,${SPACE}    @{kw.args}
-    Should match    ${kwargs}    ${args}
-    ${kwtags}=    Catenate    SEPARATOR=,${SPACE}    @{kw.tags}
-    Should be equal    ${kwtags}    ${tags}
+    [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=    ${type}=KEYWORD
+    Should Be Equal    ${kw.name}                    ${name}
+    Should Be Equal    ${{', '.join($kw.assign)}}    ${assign}
+    Should Be Equal    ${{', '.join($kw.args)}}      ${args}
+    Should Be Equal    ${kw.status}                  ${status}
+    Should Be Equal    ${{', '.join($kw.tags)}}      ${tags}
+    Should Be Equal    ${kw.type}                    ${type}
 
 Test And All Keywords Should Have Passed
     [Arguments]    ${name}=${TESTNAME}

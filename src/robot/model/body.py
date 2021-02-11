@@ -18,17 +18,16 @@ from .modelobject import ModelObject
 
 
 class BodyItem(ModelObject):
-    # FIXME: Better type values (e.g. 'elseif' -> 'ELSE IF')
-    KEYWORD_TYPE  = 'kw'
-    SETUP_TYPE    = 'setup'
-    TEARDOWN_TYPE = 'teardown'
-    FOR_TYPE      = 'for'
-    FOR_ITEM_TYPE = 'foritem'
-    IF_ELSE_ROOT  = 'IF/ELSE ROOT'
-    IF_TYPE       = 'if'
-    ELSE_IF_TYPE  = 'elseif'
-    ELSE_TYPE     = 'else'
-    MESSAGE_TYPE  = 'message'
+    KEYWORD = 'KEYWORD'
+    SETUP = 'SETUP'
+    TEARDOWN = 'TEARDOWN'
+    FOR = 'FOR'
+    FOR_ITERATION = 'FOR ITERATION'
+    IF_ELSE_ROOT = 'IF/ELSE ROOT'
+    IF = 'IF'
+    ELSE_IF = 'ELSE IF'
+    ELSE = 'ELSE'
+    MESSAGE = 'MESSAGE'
     type = None
     __slots__ = ['parent']
 
@@ -49,7 +48,7 @@ class BodyItem(ModelObject):
         body = getattr(self.parent, 'body', ())
         teardown = getattr(self.parent, 'teardown', None)
         steps = [step for step in [setup] + list(body) + [teardown]
-                 if step and step.type != step.MESSAGE_TYPE]
+                 if step and step.type != step.MESSAGE]
         return '%s-k%d' % (self.parent.id, steps.index(self) + 1)
 
 

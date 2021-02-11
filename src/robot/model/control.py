@@ -22,7 +22,7 @@ from .keyword import Keywords
 @py3to2
 @Body.register
 class For(BodyItem):
-    type = BodyItem.FOR_TYPE
+    type = BodyItem.FOR
     body_class = Body
     repr_args = ('variables', 'flavor', 'values')
     __slots__ = ['variables', 'flavor', 'values']
@@ -87,8 +87,8 @@ class IfBranch(BodyItem):
     repr_args = ('type', 'condition')
     __slots__ = ['type', 'condition']
 
-    def __init__(self, type=BodyItem.IF_TYPE, condition=None, parent=None):
-        self.type = type.lower().replace(' ', '')   # FIXME: Use same type values everywhere
+    def __init__(self, type=BodyItem.IF, condition=None, parent=None):
+        self.type = type
         self.condition = condition
         self.parent = parent
         self.body = None
@@ -108,9 +108,9 @@ class IfBranch(BodyItem):
         return '%s-k%d' % (self.parent.parent.id, index)
 
     def __str__(self):
-        if self.type == self.IF_TYPE:
+        if self.type == self.IF:
             return u'IF    %s' % self.condition
-        if self.type == self.ELSE_IF_TYPE:
+        if self.type == self.ELSE_IF:
             return u'ELSE IF    %s' % self.condition
         return u'ELSE'
 

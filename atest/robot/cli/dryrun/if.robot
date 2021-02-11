@@ -44,9 +44,9 @@ Dryrun fail empty if in non executed branch
 Check Branch Statuses
     [Arguments]    ${kw}    ${name}    ${status}
     Should Be Equal    ${kw.name}                      ${name}
-    Should Be Equal    ${kw.body[0].body[0].type}      if
+    Should Be Equal    ${kw.body[0].body[0].type}      IF
     Should Be Equal    ${kw.body[0].body[0].status}    ${status}
-    Should Be Equal    ${kw.body[0].body[1].type}      elseif
+    Should Be Equal    ${kw.body[0].body[1].type}      ELSE IF
     Should Be Equal    ${kw.body[0].body[1].status}    ${status}
-    Should Be Equal    ${kw.body[0].body[2].type}      else
+    Should Be Equal    ${kw.body[0].body[2].type}      ELSE
     Should Be Equal    ${kw.body[0].body[2].status}    ${status}

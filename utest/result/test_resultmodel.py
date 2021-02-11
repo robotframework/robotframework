@@ -269,15 +269,15 @@ class TestModel(unittest.TestCase):
         test = TestCase()
         if_ = test.body.create_if()
         assert_equal(if_.parent, test)
-        branch = if_.body.create_branch(if_.IF_TYPE, '$x > 0')
+        branch = if_.body.create_branch(if_.IF, '$x > 0')
         assert_equal(branch.parent, if_)
         kw = branch.body.create_keyword()
         assert_equal(kw.parent, branch)
-        branch = if_.body.create_branch(if_.ELSE_IF_TYPE, '$x < 0')
+        branch = if_.body.create_branch(if_.ELSE_IF, '$x < 0')
         assert_equal(branch.parent, if_)
         kw = branch.body.create_keyword()
         assert_equal(kw.parent, branch)
-        branch = if_.body.create_branch(if_.ELSE_TYPE)
+        branch = if_.body.create_branch(if_.ELSE)
         assert_equal(branch.parent, if_)
         kw = branch.body.create_keyword()
         assert_equal(kw.parent, branch)
@@ -373,7 +373,7 @@ class TestDeprecatedKeywordSpecificAttributes(unittest.TestCase):
             assert_equal(getattr(If(), name), expected)
 
     def test_if_branch(self):
-        branch = IfBranch(IfBranch.IF_TYPE, '$x > 0')
+        branch = IfBranch(IfBranch.IF, '$x > 0')
         for name, expected in [('name', '$x > 0'),
                                ('args', ()),
                                ('assign', ()),

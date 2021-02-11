@@ -76,14 +76,14 @@ FOR and IF line numbers
     ${output} =    Get Listener File    ${ALL FILE}
     FOR    ${expected}    IN
     ...    FOR START: \${pet} IN [ cat | dog | horse ] (line 3)
-    ...    FOR ITEM START: \${pet} = cat (line 3)
-    ...    KW START: BuiltIn.Log ['\${pet}'] (line 4)
-    ...    FOR ITEM START: \${pet} = dog (line 3)
-    ...    KW START: BuiltIn.Log ['\${pet}'] (line 4)
+    ...    FOR ITERATION START: \${pet} = cat (line 3)
+    ...    KEYWORD START: BuiltIn.Log ['\${pet}'] (line 4)
+    ...    FOR ITERATION START: \${pet} = dog (line 3)
+    ...    KEYWORD START: BuiltIn.Log ['\${pet}'] (line 4)
     ...    IF START: 'IF' == 'WRONG' (line 3)
     ...    IF END: NOT RUN
     ...    ELSE IF START: 'ELSE IF' == 'ELSE IF' (line 5)
-    ...    KW START: BuiltIn.Log ['else if branch'] (line 6)
+    ...    KEYWORD START: BuiltIn.Log ['else if branch'] (line 6)
     ...    ELSE IF END: PASS
     ...    ELSE START: (line 7)
     ...    ELSE END: NOT RUN
@@ -154,41 +154,41 @@ Check Listen All File
     @{expected}=    Create List    Got settings on level: INFO
     ...    SUITE START: Pass And Fail (s1) 'Some tests here' [ListenerMeta: Hello]
     ...    SETUP START: My Keyword ['Suite Setup'] (line 3)
-    ...    KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 27)
+    ...    KEYWORD START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 27)
     ...    LOG MESSAGE: [INFO] Hello says "Suite Setup"!
-    ...    KW END: PASS
-    ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 28)
-    ...    KW END: PASS
-    ...    KW START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
+    ...    KEYWORD END: PASS
+    ...    KEYWORD START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 28)
+    ...    KEYWORD END: PASS
+    ...    KEYWORD START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
-    ...    KW END: PASS
+    ...    KEYWORD END: PASS
     ...    SETUP END: PASS
     ...    TEST START: Pass (s1-t1, line 12) '' ['force', 'pass']
-    ...    KW START: My Keyword ['Pass'] (line 15)
-    ...    KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 27)
+    ...    KEYWORD START: My Keyword ['Pass'] (line 15)
+    ...    KEYWORD START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 27)
     ...    LOG MESSAGE: [INFO] Hello says "Pass"!
-    ...    KW END: PASS
-    ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 28)
-    ...    KW END: PASS
-    ...    KW START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
+    ...    KEYWORD END: PASS
+    ...    KEYWORD START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 28)
+    ...    KEYWORD END: PASS
+    ...    KEYWORD START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
-    ...    KW END: PASS
-    ...    KW END: PASS
+    ...    KEYWORD END: PASS
+    ...    KEYWORD END: PASS
     ...    TEST END: PASS
     ...    TEST START: Fail (s1-t2, line 17) 'FAIL Expected failure' ['fail', 'force']
-    ...    KW START: My Keyword ['Fail'] (line 20)
-    ...    KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 27)
+    ...    KEYWORD START: My Keyword ['Fail'] (line 20)
+    ...    KEYWORD START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 27)
     ...    LOG MESSAGE: [INFO] Hello says "Fail"!
-    ...    KW END: PASS
-    ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 28)
-    ...    KW END: PASS
-    ...    KW START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
+    ...    KEYWORD END: PASS
+    ...    KEYWORD START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 28)
+    ...    KEYWORD END: PASS
+    ...    KEYWORD START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
-    ...    KW END: PASS
-    ...    KW END: PASS
-    ...    KW START: BuiltIn.Fail ['Expected failure'] (line 21)
+    ...    KEYWORD END: PASS
+    ...    KEYWORD END: PASS
+    ...    KEYWORD START: BuiltIn.Fail ['Expected failure'] (line 21)
     ...    LOG MESSAGE: [FAIL] Expected failure
-    ...    KW END: FAIL
+    ...    KEYWORD END: FAIL
     ...    TEST END: FAIL Expected failure
     ...    SUITE END: FAIL 2 tests, 1 passed, 1 failed
     ...    Output: output.xml    Closing...

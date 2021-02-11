@@ -142,7 +142,7 @@ class StatusMixin(object):
 # FIXME: Inconsistent naming: Iteration vs. IfBranch
 @ForIterations.register
 class Iteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
-    type = BodyItem.FOR_ITEM_TYPE
+    type = BodyItem.FOR_ITERATION
     body_class = Body
     repr_args = ('info',)
     __slots__ = ['info', 'status', 'starttime', 'endtime', 'doc', 'lineno', 'source']
@@ -215,7 +215,7 @@ class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
     body_class = Body
     __slots__ = ['status', 'starttime', 'endtime', 'doc', 'lineno', 'source']
 
-    def __init__(self, type=BodyItem.IF_TYPE, condition=None, status='FAIL',
+    def __init__(self, type=BodyItem.IF, condition=None, status='FAIL',
                  starttime=None, endtime=None, doc='', parent=None, lineno=-1,
                  source=None):
         model.IfBranch.__init__(self, type, condition, parent)
@@ -243,7 +243,7 @@ class Keyword(model.Keyword, StatusMixin):
                  'lineno', 'source', 'sourcename']
 
     def __init__(self, kwname='', libname='', doc='', args=(), assign=(), tags=(),
-                 timeout=None, type=BodyItem.KEYWORD_TYPE, status='FAIL', starttime=None,
+                 timeout=None, type=BodyItem.KEYWORD, status='FAIL', starttime=None,
                  endtime=None, parent=None, lineno=None, source=None, sourcename=None):
         model.Keyword.__init__(self, None, doc, args, assign, tags, timeout, type, parent)
         #: Name of the keyword without library or resource name.

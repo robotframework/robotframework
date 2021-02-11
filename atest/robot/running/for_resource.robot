@@ -14,7 +14,7 @@ Check test and failed loop
 
 Should be FOR loop
     [Arguments]    ${kw}    ${iterations}    ${status}=PASS
-    Should Be Equal     ${kw.type}      for
+    Should Be Equal     ${kw.type}      FOR
     Should Contain      ${kw.name}      IN
     Length Should Be    ${kw.kws}       ${iterations}
     Should Be Equal     ${kw.status}    ${status}
@@ -36,5 +36,5 @@ Should be IN ENUMERATE loop
 
 Should be loop iteration
     [Arguments]    ${kw}    ${name}
-    Should Be Equal    ${kw.type}    foritem
+    Should Be Equal    ${kw.type}    FOR ITERATION
     Should Be Equal    ${kw.name}    ${name}

@@ -44,7 +44,7 @@ Check IF/ELSE Status
 
 Check Branch Statuses
     [Arguments]    ${branches}    ${statuses}
-    ${types} =    Evaluate    ['if'] + ['elseif'] * (len($branches) - 2) + ['else']
+    ${types} =    Evaluate    ['IF'] + ['ELSE IF'] * (len($branches) - 2) + ['ELSE']
     Should Be Equal    ${{len($branches)}}    ${{len($statuses)}}
     Should Be Equal    ${{len($branches)}}    ${{len($types)}}
     FOR    ${branch}    ${type}    ${status}    IN ZIP    ${branches}    ${types}    ${statuses}

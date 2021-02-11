@@ -81,7 +81,7 @@ class TestVisitingSuite(unittest.TestCase):
                 branch.body.create_keyword()
 
             def end_branch(self, branch):
-                if branch.type != branch.ELSE_TYPE:
+                if branch.type != branch.ELSE:
                     branch.condition = 'x > %d' % self.level
 
             def end_if(self, if_):
@@ -92,9 +92,9 @@ class TestVisitingSuite(unittest.TestCase):
                     keyword.name = 'kw %d' % self.level
 
         if_ = self.suite.tests[0].body.create_if()
-        branch1 = if_.body.create_branch(if_.IF_TYPE, condition='xxx')
-        branch2 = if_.body.create_branch(if_.ELSE_IF_TYPE, condition='yyy')
-        branch3 = if_.body.create_branch(if_.ELSE_TYPE)
+        branch1 = if_.body.create_branch(if_.IF, condition='xxx')
+        branch2 = if_.body.create_branch(if_.ELSE_IF, condition='yyy')
+        branch3 = if_.body.create_branch(if_.ELSE)
         self.suite.visit(VisitIf())
         assert_equal(branch1.condition, 'x > 1')
         assert_equal(branch1.body[0].name, 'kw 1')
@@ -165,7 +165,7 @@ class VisitSetupsAndTeardowns(SuiteVisitor):
         self.visited = []
 
     def start_keyword(self, keyword):
-        if keyword.type in (keyword.SETUP_TYPE, keyword.TEARDOWN_TYPE):
+        if keyword.type in (keyword.SETUP, keyword.TEARDOWN):
             self.visited.append(keyword.name)
 
 

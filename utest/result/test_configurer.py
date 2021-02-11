@@ -7,8 +7,8 @@ from robot.result import Keyword, TestCase, TestSuite
 from robot.result.configurer import SuiteConfigurer
 
 
-SETUP = Keyword.SETUP_TYPE
-TEARDOWN = Keyword.TEARDOWN_TYPE
+SETUP = Keyword.SETUP
+TEARDOWN = Keyword.TEARDOWN
 
 
 class TestSuiteAttributes(unittest.TestCase):

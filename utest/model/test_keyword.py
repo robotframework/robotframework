@@ -11,8 +11,8 @@ class TestKeyword(unittest.TestCase):
 
     def test_id_without_parent(self):
         assert_equal(Keyword().id, 'k1')
-        assert_equal(Keyword(type=Keyword.SETUP_TYPE).id, 'k1')
-        assert_equal(Keyword(type=Keyword.TEARDOWN_TYPE).id, 'k1')
+        assert_equal(Keyword(type=Keyword.SETUP).id, 'k1')
+        assert_equal(Keyword(type=Keyword.TEARDOWN).id, 'k1')
 
     def test_suite_setup_and_teardown_id(self):
         suite = TestSuite()

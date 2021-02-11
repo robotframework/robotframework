@@ -65,7 +65,7 @@ class Keyword(model.Keyword):
     __slots__ = ['lineno']
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(), timeout=None,
-                 type=BodyItem.KEYWORD_TYPE, parent=None, lineno=None):
+                 type=BodyItem.KEYWORD, parent=None, lineno=None):
         model.Keyword.__init__(self, name, doc, args, assign, tags, timeout, type,
                                parent)
         self.lineno = lineno
@@ -115,7 +115,7 @@ class IfBranch(model.IfBranch):
     __slots__ = ['lineno']
     body_class = Body
 
-    def __init__(self, type=BodyItem.IF_TYPE, condition=None, parent=None, lineno=None):
+    def __init__(self, type=BodyItem.IF, condition=None, parent=None, lineno=None):
         model.IfBranch.__init__(self, type, condition, parent)
         self.lineno = lineno
 
@@ -362,7 +362,7 @@ class UserKeyword(object):
     @property
     def teardown(self):
         if self._teardown is None:
-            self._teardown = Keyword(None, parent=self, type=Keyword.TEARDOWN_TYPE)
+            self._teardown = Keyword(None, parent=self, type=Keyword.TEARDOWN)
         return self._teardown
 
     @setter

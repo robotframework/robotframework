@@ -226,11 +226,11 @@ class JsonConverter(object):
         for kw in keywords:
             if not kw:
                 continue
-            if kw.type == kw.SETUP_TYPE:
+            if kw.type == kw.SETUP:
                 yield self._convert_keyword(kw, 'SETUP')
-            elif kw.type == kw.TEARDOWN_TYPE:
+            elif kw.type == kw.TEARDOWN:
                 yield self._convert_keyword(kw, 'TEARDOWN')
-            elif kw.type == kw.FOR_TYPE:
+            elif kw.type == kw.FOR:
                 yield self._convert_for(kw)
             elif kw.type == kw.IF_ELSE_ROOT:
                 for branch in self._convert_if(kw):

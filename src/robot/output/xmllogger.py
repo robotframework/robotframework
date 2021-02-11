@@ -64,7 +64,7 @@ class XmlLogger(ResultVisitor):
 
     def start_keyword(self, kw):
         attrs = {'name': kw.kwname, 'library': kw.libname}
-        if kw.type != 'kw':
+        if kw.type != 'KEYWORD':
             attrs['type'] = kw.type
         if kw.sourcename:
             attrs['sourcename'] = kw.sourcename
