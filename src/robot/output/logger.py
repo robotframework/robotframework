@@ -17,7 +17,7 @@ from contextlib import contextmanager
 import os
 
 from robot.errors import DataError
-from robot.result import For, If, IfBranch, Iteration
+from robot.result import For, If, IfBranch, ForIteration
 
 from .console import ConsoleOutput
 from .filelogger import FileLogger
@@ -250,24 +250,24 @@ class LoggerProxy(AbstractLoggerProxy):
     def start_keyword(self, kw):
         if isinstance(kw, If) and hasattr(self.logger, 'start_if'):
             self.logger.start_if(kw)
-        elif isinstance(kw, IfBranch) and hasattr(self.logger, 'start_branch'):
-            self.logger.start_branch(kw)
+        elif isinstance(kw, IfBranch) and hasattr(self.logger, 'start_if_branch'):
+            self.logger.start_if_branch(kw)
         elif isinstance(kw, For) and hasattr(self.logger, 'start_for'):
             self.logger.start_for(kw)
-        elif isinstance(kw, Iteration) and hasattr(self.logger, 'start_iteration'):
-            self.logger.start_iteration(kw)
+        elif isinstance(kw, ForIteration) and hasattr(self.logger, 'start_for_iteration'):
+            self.logger.start_for_iteration(kw)
         else:
             self.logger.start_keyword(kw)
 
     def end_keyword(self, kw):
         if isinstance(kw, If) and hasattr(self.logger, 'end_if'):
             self.logger.end_if(kw)
-        elif isinstance(kw, IfBranch) and hasattr(self.logger, 'end_branch'):
-            self.logger.end_branch(kw)
+        elif isinstance(kw, IfBranch) and hasattr(self.logger, 'end_if_branch'):
+            self.logger.end_if_branch(kw)
         elif isinstance(kw, For) and hasattr(self.logger, 'end_for'):
             self.logger.end_for(kw)
-        elif isinstance(kw, Iteration) and hasattr(self.logger, 'end_iteration'):
-            self.logger.end_iteration(kw)
+        elif isinstance(kw, ForIteration) and hasattr(self.logger, 'end_for_iteration'):
+            self.logger.end_for_iteration(kw)
         else:
             self.logger.end_keyword(kw)
 

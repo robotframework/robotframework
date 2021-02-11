@@ -28,10 +28,10 @@ class ModelModifier(SuiteVisitor):
             for_.flavor = 'IN'
             for_.values = ['FOR', 'is', 'modified!']
 
-    def start_iteration(self, iteration):
+    def start_for_iteration(self, iteration):
         iteration.info = 'modified'
 
-    def start_branch(self, branch):
+    def start_if_branch(self, branch):
         if branch.condition == "'IF' == 'WRONG'":
             branch.condition = 'True'
             # With Robot

@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
+
 from .itemlist import ItemList
 from .modelobject import ModelObject
 
@@ -67,10 +69,13 @@ class Body(ItemList):
         ItemList.__init__(self, BodyItem, {'parent': parent}, items)
 
     @classmethod
-    def register(cls, body_class):
-        name = '%s_class' % body_class.__name__.lower()
-        setattr(cls, name, body_class)
-        return body_class
+    def register(cls, item_class):
+        name_parts = re.findall('([A-Z][a-z]+)', item_class.__name__) + ['class']
+        name = '_'.join(name_parts).lower()
+        if not hasattr(cls, name):
+            raise TypeError("Cannot register '%s'." % name)
+        setattr(cls, name, item_class)
+        return item_class
 
     @property
     def create(self):
@@ -130,11 +135,11 @@ class Body(ItemList):
 
 
 class IfBranches(Body):
-    ifbranch_class = None
+    if_branch_class = None
     keyword_class = None
     for_class = None
     if_class = None
     __slots__ = []
 
     def create_branch(self, *args, **kwargs):
-        return self.append(self.ifbranch_class(*args, **kwargs))
+        return self.append(self.if_branch_class(*args, **kwargs))

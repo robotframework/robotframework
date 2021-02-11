@@ -115,4 +115,4 @@ class IfBranch(BodyItem):
         return u'ELSE'
 
     def visit(self, visitor):
-        visitor.visit_branch(self)
+        visitor.visit_if_branch(self)

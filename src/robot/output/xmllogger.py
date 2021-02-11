@@ -87,11 +87,11 @@ class XmlLogger(ResultVisitor):
         self._write_status(if_)
         self._writer.end('if')
 
-    def start_branch(self, branch):
+    def start_if_branch(self, branch):
         self._writer.start('branch', {'type': branch.type,
                                       'condition': branch.condition})
 
-    def end_branch(self, branch):
+    def end_if_branch(self, branch):
         self._write_status(branch)
         self._writer.end('branch')
 
@@ -105,11 +105,11 @@ class XmlLogger(ResultVisitor):
         self._write_status(for_)
         self._writer.end('for')
 
-    def start_iteration(self, iteration):
+    def start_for_iteration(self, iteration):
         self._writer.start('iter', {'info': iteration.info})
         self._writer.element('doc', iteration.doc)
 
-    def end_iteration(self, iteration):
+    def end_for_iteration(self, iteration):
         self._write_status(iteration)
         self._writer.end('iter')
 

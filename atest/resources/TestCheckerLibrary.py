@@ -4,7 +4,7 @@ import re
 from robot import utils
 from robot.api import logger
 from robot.utils.asserts import assert_equal
-from robot.result import (ExecutionResultBuilder, For, If, Iteration, Keyword,
+from robot.result import (ExecutionResultBuilder, For, If, ForIteration, Keyword,
                           Result, ResultVisitor, TestCase, TestSuite)
 from robot.result.model import Body, ForIterations, IfBranches, IfBranch
 from robot.libraries.BuiltIn import BuiltIn
@@ -33,15 +33,15 @@ class NoSlotsIfBranch(IfBranch):
 
 
 class NoSlotsIfBranches(IfBranches):
-    ifbranch_class = NoSlotsIfBranch
+    if_branch_class = NoSlotsIfBranch
 
 
-class NoSlotsIteration(Iteration):
+class NoSlotsForIteration(ForIteration):
     body_class = NoSlotsBody
 
 
 class NoSlotsForIterations(ForIterations):
-    iteration_class = NoSlotsIteration
+    for_iteration_class = NoSlotsForIteration
 
 
 NoSlotsKeyword.body_class = NoSlotsBody
@@ -291,13 +291,13 @@ class ProcessResults(ResultVisitor):
     def start_for(self, for_):
         self._add_kws_and_msgs(for_)
 
-    def start_iteration(self, iteration):
+    def start_for_iteration(self, iteration):
         self._add_kws_and_msgs(iteration)
 
     def start_if(self, if_):
         self._add_kws_and_msgs(if_)
 
-    def start_branch(self, branch):
+    def start_if_branch(self, branch):
         self._add_kws_and_msgs(branch)
 
     def visit_errors(self, errors):

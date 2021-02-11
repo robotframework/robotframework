@@ -61,14 +61,14 @@ class Body(model.Body):
 
 
 class ForIterations(Body):
-    iteration_class = None
+    for_iteration_class = None
     keyword_class = None
     if_class = None
     for_class = None
     __slots__ = []
 
     def create_iteration(self, *args, **kwargs):
-        return self.append(self.iteration_class(*args, **kwargs))
+        return self.append(self.for_iteration_class(*args, **kwargs))
 
 
 class IfBranches(Body, model.IfBranches):
@@ -139,9 +139,8 @@ class StatusMixin(object):
         self.status = self.NOT_RUN
 
 
-# FIXME: Inconsistent naming: Iteration vs. IfBranch
 @ForIterations.register
-class Iteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
+class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     type = BodyItem.FOR_ITERATION
     body_class = Body
     repr_args = ('info',)
@@ -164,7 +163,7 @@ class Iteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
         return self.body_class(self, body)
 
     def visit(self, visitor):
-        visitor.visit_iteration(self)
+        visitor.visit_for_iteration(self)
 
     @property
     @deprecated
@@ -210,7 +209,7 @@ class If(model.If, StatusMixin, DeprecatedAttributesMixin):
         self.source = None    # --ii--
 
 
-@Body.register
+@IfBranches.register
 class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
     body_class = Body
     __slots__ = ['status', 'starttime', 'endtime', 'doc', 'lineno', 'source']

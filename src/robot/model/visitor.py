@@ -79,7 +79,7 @@ class SuiteVisitor(object):
         """Implements traversing through suites.
 
         Can be overridden to allow modifying the passed in ``suite`` without
-        calling :func:`start_suite` or :func:`end_suite` nor visiting child
+        calling :meth:`start_suite` or :meth:`end_suite` nor visiting child
         suites, tests or keywords (setup and teardown) at all.
         """
         if self.start_suite(suite) is not False:
@@ -104,7 +104,7 @@ class SuiteVisitor(object):
         """Implements traversing through tests.
 
         Can be overridden to allow modifying the passed in ``test`` without
-        calling :func:`start_test` or :func:`end_test` nor visiting keywords.
+        calling :meth:`start_test` or :meth:`end_test` nor visiting keywords.
         """
         if self.start_test(test) is not False:
             test.setup.visit(self)
@@ -127,7 +127,7 @@ class SuiteVisitor(object):
         """Implements traversing through keywords.
 
         Can be overridden to allow modifying the passed in ``kw`` without
-        calling :func:`start_keyword` or :func:`end_keyword` nor visiting
+        calling :meth:`start_keyword` or :meth:`end_keyword` nor visiting
         child keywords.
         """
         if self.start_keyword(kw) is not False:
@@ -148,52 +148,59 @@ class SuiteVisitor(object):
         pass
 
     def visit_for(self, for_):
-        """Implements traversing through for loops.
+        """Implements traversing through FOR loops.
 
         Can be overridden to allow modifying the passed in ``for_`` without
-        calling :func:`start_for` or :func:`end_for` nor visiting body.
+        calling :meth:`start_for` or :meth:`end_for` nor visiting body.
         """
         if self.start_for(for_) is not False:
             for_.body.visit(self)
             self.end_for(for_)
 
     def start_for(self, for_):
-        """Called when for loop starts. Default implementation does nothing.
+        """Called when FOR loop starts. Default implementation does nothing.
 
         Can return explicit ``False`` to stop visiting.
         """
         pass
 
     def end_for(self, for_):
-        """Called when for loop ends. Default implementation does nothing."""
+        """Called when FOR loop ends. Default implementation does nothing."""
         pass
 
-    def visit_iteration(self, iteration):
-        """Implements traversing through for loop iteration.
+    def visit_for_iteration(self, iteration):
+        """Implements traversing through single FOR loop iteration.
+
+        This is only used with the result side model because on the running side
+        there are no iterations.
 
         Can be overridden to allow modifying the passed in ``iteration`` without
-        calling :func:`start_iteration` or :func:`end_iteration` nor visiting body.
+        calling :meth:`start_for_iteration` or :meth:`end_for_iteration` nor visiting
+        body.
         """
-        if self.start_iteration(iteration) is not False:
+        if self.start_for_iteration(iteration) is not False:
             iteration.body.visit(self)
-            self.end_iteration(iteration)
+            self.end_for_iteration(iteration)
 
-    def start_iteration(self, iteration):
-        """Called when iteration starts. Default implementation does nothing.
+    def start_for_iteration(self, iteration):
+        """Called when FOR loop iteration starts. Default implementation does nothing.
 
         Can return explicit ``False`` to stop visiting.
         """
         pass
 
-    def end_iteration(self, iteration):
-        """Called when iteration ends. Default implementation does nothing."""
+    def end_for_iteration(self, iteration):
+        """Called when FOR loop iteration ends. Default implementation does nothing."""
         pass
 
     def visit_if(self, if_):
         """Implements traversing through IF/ELSE structures.
 
+        Notice that ``if_`` does not have any data directly. Actual IF/ELSE branches
+        are in its ``body`` and visited using :meth:`visit_if_branch`.
+
         Can be overridden to allow modifying the passed in ``if_`` without
-        calling :func:`start_if` or :func:`end_if` nor visiting branches.
+        calling :meth:`start_if` or :meth:`end_if` nor visiting branches.
         """
         if self.start_if(if_) is not False:
             if_.body.visit(self)
@@ -210,25 +217,24 @@ class SuiteVisitor(object):
         """Called when IF/ELSE structure ends. Default implementation does nothing."""
         pass
 
-    # FIXME: Would visit_if_branch be better? Also xxx_iteration -> xxx_for_iteration?
-    def visit_branch(self, branch):
-        """Implements traversing through IF/ELSE branch.
+    def visit_if_branch(self, branch):
+        """Implements traversing through single IF/ELSE branch.
 
         Can be overridden to allow modifying the passed in ``branch`` without
-        calling :func:`start_branch` or :func:`end_branch` nor visiting body.
+        calling :meth:`start_if_branch` or :meth:`end_if_branch` nor visiting body.
         """
-        if self.start_branch(branch) is not False:
+        if self.start_if_branch(branch) is not False:
             branch.body.visit(self)
-            self.end_branch(branch)
+            self.end_if_branch(branch)
 
-    def start_branch(self, branch):
+    def start_if_branch(self, branch):
         """Called when IF/ELSE branch starts. Default implementation does nothing.
 
         Can return explicit ``False`` to stop visiting.
         """
         pass
 
-    def end_branch(self, branch):
+    def end_if_branch(self, branch):
         """Called when IF/ELSE branch ends. Default implementation does nothing."""
         pass
 
@@ -236,7 +242,7 @@ class SuiteVisitor(object):
         """Implements visiting messages.
 
         Can be overridden to allow modifying the passed in ``msg`` without
-        calling :func:`start_message` or :func:`end_message`.
+        calling :meth:`start_message` or :meth:`end_message`.
         """
         if self.start_message(msg) is not False:
             self.end_message(msg)

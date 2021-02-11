@@ -76,11 +76,11 @@ class TestVisitingSuite(unittest.TestCase):
             def start_if(self, if_):
                 self.level = 0
 
-            def start_branch(self, branch):
+            def start_if_branch(self, branch):
                 self.level += 1
                 branch.body.create_keyword()
 
-            def end_branch(self, branch):
+            def end_if_branch(self, branch):
                 if branch.type != branch.ELSE:
                     branch.condition = 'x > %d' % self.level
 
