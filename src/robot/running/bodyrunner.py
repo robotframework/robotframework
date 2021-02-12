@@ -151,13 +151,14 @@ class ForInRunner(object):
                 if data.error:
                     raise DataError(data.error)
                 self._run_loop(data, result)
-            # FIXME: Run one FOR round as 'NOT RUN' when self._run is False.
+            else:
+                self._run_one_round(data, result)
 
     def _run_loop(self, data, result):
         errors = []
         for values in self._get_values_for_rounds(data):
             try:
-                self._run_one_round(values, data, result)
+                self._run_one_round(data, result, values)
             except ExitForLoop as exception:
                 if exception.earlier_failures:
                     errors.extend(exception.earlier_failures.get_errors())
@@ -179,11 +180,9 @@ class ForInRunner(object):
             raise ExecutionFailures(errors)
 
     def _get_values_for_rounds(self, data):
-        values_per_round = len(data.variables)
         if self._context.dry_run:
-            return ForInRunner._map_values_to_rounds(
-                self, data.variables, values_per_round
-            )
+            return [None]
+        values_per_round = len(data.variables)
         if self._is_dict_iteration(data.values):
             values = self._resolve_dict_values(data.values)
             values = self._map_dict_values_to_rounds(values, values_per_round)
@@ -259,20 +258,22 @@ class ForInRunner(object):
             'Got %d variables but %d value%s.' % (variables, values, s(values))
         )
 
-    def _run_one_round(self, values, data, result):
+    def _run_one_round(self, data, result, values=None):
         result = result.body.create_iteration(lineno=data.lineno, source=data.source)
         variables = self._map_variables_and_values(data.variables, values)
         for name, value in variables:
             self._context.variables[name] = value
             result.variables[name] = cut_assign_value(value)
-        runner = BodyRunner(self._context, templated=self._templated)
-        with StatusReporter(self._context, result):
+        runner = BodyRunner(self._context, self._run, self._templated)
+        with StatusReporter(self._context, result, self._run):
             runner.run(data.body)
 
     def _map_variables_and_values(self, variables, values):
+        if values is None:    # Failure occurred earlier or dry-run.
+            values = variables
         if len(variables) == 1 and len(values) != 1:
             return [(variables[0], tuple(values))]
-        return list(zip(variables, values))
+        return zip(variables, values)
 
 
 class ForInRangeRunner(ForInRunner):
