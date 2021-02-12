@@ -32,6 +32,7 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 
 """
 
+from collections import OrderedDict
 from itertools import chain
 import warnings
 
@@ -143,12 +144,12 @@ class StatusMixin(object):
 class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     type = BodyItem.FOR_ITERATION
     body_class = Body
-    repr_args = ('info',)
-    __slots__ = ['info', 'status', 'starttime', 'endtime', 'doc', 'lineno', 'source']
+    repr_args = ('variables',)
+    __slots__ = ['variables', 'status', 'starttime', 'endtime', 'doc', 'lineno', 'source']
 
-    def __init__(self, info='', status='FAIL', starttime=None, endtime=None, doc='',
+    def __init__(self, variables=None, status='FAIL', starttime=None, endtime=None, doc='',
                  parent=None, lineno=None, source=None):
-        self.info = info
+        self.variables = variables or OrderedDict()
         self.parent = parent
         self.status = status
         self.starttime = starttime
@@ -168,7 +169,7 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     @property
     @deprecated
     def name(self):
-        return self.info
+        return ', '.join('%s = %s' % item for item in self.variables.items())
 
 
 @Body.register

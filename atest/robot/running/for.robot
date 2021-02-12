@@ -5,14 +5,14 @@ Resource          for_resource.robot
 *** Test Cases ***
 Simple loop
     ${tc} =    Check test case    ${TEST NAME}
-    ${loop} =    Set variable    ${tc.kws[1]}
-    Check log message           ${tc.kws[0].msgs[0]}             Not yet in FOR
-    Should be FOR loop          ${loop}    2
-    Should be loop iteration    ${loop.kws[0]}                   \${var} = one
-    Check log message           ${loop.kws[0].kws[0].msgs[0]}    var: one
-    Should be loop iteration    ${loop.kws[1]}                   \${var} = two
-    Check log message           ${loop.kws[1].kws[0].msgs[0]}    var: two
-    Check log message           ${tc.kws[2].msgs[0]}             Not in FOR anymore
+    ${loop} =    Set variable    ${tc.body[1]}
+    Check log message          ${tc.body[0].msgs[0]}              Not yet in FOR
+    Should be FOR loop         ${loop}    2
+    Should be FOR iteration    ${loop.body[0]}                    \${var}=one
+    Check log message          ${loop.body[0].body[0].msgs[0]}    var: one
+    Should be FOR iteration    ${loop.body[1]}                    \${var}=two
+    Check log message          ${loop.body[1].body[0].msgs[0]}    var: two
+    Check log message          ${tc.body[2].body[0]}              Not in FOR anymore
 
 Variables in values
     ${loop} =    Check test and get loop    ${TEST NAME}
@@ -182,49 +182,49 @@ Loop value with non-existing variable
     Check test case    ${TEST NAME}
 
 Multiple loop variables
-    ${tc} =    Check test case    ${TEST NAME}
-    ${loop} =    Set Variable    ${tc.kws[0]}
-    Should be FOR loop          ${loop}                          4
-    Should be loop iteration    ${loop.kws[0]}                   \${x} = 1, \${y} = a
-    Check log message           ${loop.kws[0].kws[0].msgs[0]}    1a
-    Should be loop iteration    ${loop.kws[1]}                   \${x} = 2, \${y} = b
-    Check log message           ${loop.kws[1].kws[0].msgs[0]}    2b
-    Should be loop iteration    ${loop.kws[2]}                   \${x} = 3, \${y} = c
-    Check log message           ${loop.kws[2].kws[0].msgs[0]}    3c
-    Should be loop iteration    ${loop.kws[3]}                   \${x} = 4, \${y} = d
-    Check log message           ${loop.kws[3].kws[0].msgs[0]}    4d
-    ${loop} =    Set Variable    ${tc.kws[2]}
-    Should be FOR loop          ${loop}           2
-    Should be loop iteration    ${loop.kws[0]}    \${a} = 1, \${b} = 2, \${c} = 3, \${d} = 4, \${e} = 5
-    Should be loop iteration    ${loop.kws[1]}    \${a} = 1, \${b} = 2, \${c} = 3, \${d} = 4, \${e} = 5
+    ${tc} =    Check Test Case    ${TEST NAME}
+    ${loop} =    Set Variable     ${tc.body[0]}
+    Should be FOR loop            ${loop}                            4
+    Should be FOR iteration       ${loop.body[0]}                    \${x}=1    \${y}=a
+    Check log message             ${loop.body[0].body[0].msgs[0]}    1a
+    Should be FOR iteration       ${loop.body[1]}                    \${x}=2    \${y}=b
+    Check log message             ${loop.body[1].body[0].msgs[0]}    2b
+    Should be FOR iteration       ${loop.body[2]}                    \${x}=3    \${y}=c
+    Check log message             ${loop.body[2].body[0].msgs[0]}    3c
+    Should be FOR iteration       ${loop.body[3]}                    \${x}=4    \${y}=d
+    Check log message             ${loop.body[3].body[0].msgs[0]}    4d
+    ${loop} =    Set Variable     ${tc.body[2]}
+    Should be FOR loop            ${loop}            2
+    Should be FOR iteration       ${loop.body[0]}    \${a}=1    \${b}=2    \${c}=3    \${d}=4    \${e}=5
+    Should be FOR iteration       ${loop.body[1]}    \${a}=1    \${b}=2    \${c}=3    \${d}=4    \${e}=5
 
 Wrong number of loop variables
     Check test and failed loop    ${TEST NAME} 1
     Check test and failed loop    ${TEST NAME} 2
 
-Cut long values in iteration name
+Cut long iteration variable values
     ${tc} =         Check test case    ${TEST NAME}
-    ${loop} =       Set Variable       ${tc.kws[6]}
+    ${loop} =       Set Variable       ${tc.body[6]}
     ${exp10} =      Set Variable       0123456789
     ${exp100} =     Evaluate           "${exp10}" * 10
     ${exp200} =     Evaluate           "${exp10}" * 20
     ${exp200+} =    Set Variable       ${exp200}...
-    Should be FOR loop             ${loop}           6
-    Should be loop iteration       ${loop.kws[0]}    \${var} = ${exp10}
-    Should be loop iteration       ${loop.kws[1]}    \${var} = ${exp100}
-    Should be loop iteration       ${loop.kws[2]}    \${var} = ${exp200}
-    Should be loop iteration       ${loop.kws[3]}    \${var} = ${exp200+}
-    Should be loop iteration       ${loop.kws[4]}    \${var} = ${exp200+}
-    Should be loop iteration       ${loop.kws[5]}    \${var} = ${exp200+}
-    ${loop} =       Set Variable       ${tc.kws[7]}
-    Should be FOR loop             ${loop}           2
-    Should be loop iteration       ${loop.kws[0]}    \${var1} = ${exp10}, \${var2} = ${exp100}, \${var3} = ${exp200}
-    Should be loop iteration       ${loop.kws[1]}    \${var1} = ${exp200+}, \${var2} = ${exp200+}, \${var3} = ${exp200+}
+    Should be FOR loop            ${loop}            6
+    Should be FOR iteration       ${loop.body[0]}    \${var}=${exp10}
+    Should be FOR iteration       ${loop.body[1]}    \${var}=${exp100}
+    Should be FOR iteration       ${loop.body[2]}    \${var}=${exp200}
+    Should be FOR iteration       ${loop.body[3]}    \${var}=${exp200+}
+    Should be FOR iteration       ${loop.body[4]}    \${var}=${exp200+}
+    Should be FOR iteration       ${loop.body[5]}    \${var}=${exp200+}
+    ${loop} =    Set Variable     ${tc.body[7]}
+    Should be FOR loop            ${loop}            2
+    Should be FOR iteration       ${loop.body[0]}    \${var1}=${exp10}      \${var2}=${exp100}     \${var3}=${exp200}
+    Should be FOR iteration       ${loop.body[1]}    \${var1}=${exp200+}    \${var2}=${exp200+}    \${var3}=${exp200+}
 
 Characters that are illegal in XML
     ${tc} =    Check test case    ${TEST NAME}
-    Should be equal    ${tc.kws[0].kws[0].name}    \${var} = illegal:
-    Should be equal    ${tc.kws[0].kws[1].name}    \${var} = more:
+    Should be FOR iteration       ${tc.body[0].body[0]}    \${var}=illegal:
+    Should be FOR iteration       ${tc.body[0].body[1]}    \${var}=more:
 
 Old :FOR syntax is not supported
     Check Test Case    ${TESTNAME}
@@ -251,7 +251,7 @@ Invalid END
 
 No loop values
     ${tc} =    Check test case    ${TEST NAME}
-    Should be FOR loop    ${tc.kws[0]}    0    FAIL
+    Should be FOR loop    ${tc.body[0]}    0    FAIL
 
 No loop variables
     Check Test Case    ${TESTNAME}

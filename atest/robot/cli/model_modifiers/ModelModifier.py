@@ -29,7 +29,9 @@ class ModelModifier(SuiteVisitor):
             for_.values = ['FOR', 'is', 'modified!']
 
     def start_for_iteration(self, iteration):
-        iteration.info = 'modified'
+        for name, value in iteration.variables.items():
+            iteration.variables[name] = value + ' (modified)'
+        iteration.variables['${x}'] = 'new'
 
     def start_if_branch(self, branch):
         if branch.condition == "'IF' == 'WRONG'":

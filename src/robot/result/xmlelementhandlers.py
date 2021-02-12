@@ -133,19 +133,19 @@ class KeywordHandler(ElementHandler):
 @ElementHandler.register
 class ForHandler(ElementHandler):
     tag = 'for'
-    children = frozenset(('assign', 'arguments', 'doc', 'status', 'iter', 'msg'))
+    children = frozenset(('var', 'value', 'doc', 'status', 'iter', 'msg'))
 
     def start(self, elem, result):
         return result.body.create_for(flavor=elem.get('flavor'))
 
 
 @ElementHandler.register
-class IterationHandler(ElementHandler):
+class ForIterationHandler(ElementHandler):
     tag = 'iter'
-    children = frozenset(('doc', 'status', 'kw', 'if', 'for', 'msg'))
+    children = frozenset(('var', 'doc', 'status', 'kw', 'if', 'for', 'msg'))
 
     def start(self, elem, result):
-        return result.body.create_iteration(info=elem.get('info'))
+        return result.body.create_iteration()
 
 
 @ElementHandler.register
@@ -246,15 +246,19 @@ class AssignHandler(ElementHandler):
 
 
 @ElementHandler.register
-class AssignVarHandler(ElementHandler):
+class VarHandler(ElementHandler):
     tag = 'var'
 
     def end(self, elem, result):
-        # Handles FOR loops and keywords.
-        if hasattr(result, 'variables'):
-            result.variables += (elem.text or '',)
+        value = elem.text or ''
+        if result.type == result.KEYWORD:
+            result.assign += (value,)
+        elif result.type == result.FOR:
+            result.variables += (value,)
+        elif result.type == result.FOR_ITERATION:
+            result.variables[elem.get('name')] = value
         else:
-            result.assign += (elem.text or '',)
+            raise DataError("Invalid element '%s' for result '%r'." % (elem, result))
 
 
 @ElementHandler.register
@@ -268,11 +272,15 @@ class ArgumentHandler(ElementHandler):
     tag = 'arg'
 
     def end(self, elem, result):
-        # Handles FOR loops and keywords.
-        if hasattr(result, 'values'):
-            result.values += (elem.text or '',)
-        else:
-            result.args += (elem.text or '',)
+        result.args += (elem.text or '',)
+
+
+@ElementHandler.register
+class ValueHandler(ElementHandler):
+    tag = 'value'
+
+    def end(self, elem, result):
+        result.values += (elem.text or '',)
 
 
 @ElementHandler.register

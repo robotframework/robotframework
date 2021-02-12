@@ -20,9 +20,9 @@ from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           ExecutionStatus, ExitForLoop, ContinueForLoop, DataError)
 from robot.result import For as ForResult, If as IfResult, IfBranch as IfBranchResult
 from robot.output import librarylogger as logger
-from robot.utils import (format_assign_message, frange, get_error_message,
-                         is_list_like, is_number, plural_or_not as s,
-                         split_from_equals, type_name, is_unicode)
+from robot.utils import (cut_assign_value, frange, get_error_message,
+                         is_list_like, is_number, is_unicode, plural_or_not as s,
+                         split_from_equals, type_name)
 from robot.variables import is_dict_variable, evaluate_expression
 
 from .statusreporter import StatusReporter
@@ -262,13 +262,11 @@ class ForInRunner(object):
         )
 
     def _run_one_round(self, values, data, result):
+        result = result.body.create_iteration(lineno=data.lineno, source=data.source)
         variables = self._map_variables_and_values(data.variables, values)
         for name, value in variables:
             self._context.variables[name] = value
-        info = ', '.join(format_assign_message(n, v) for n, v in variables)
-        result = result.body.create_iteration(info=info,
-                                              lineno=data.lineno,
-                                              source=data.source)
+            result.variables[name] = cut_assign_value(value)
         runner = BodyRunner(self._context, templated=self._templated)
         with StatusReporter(self._context, result):
             runner.run(data.body)
