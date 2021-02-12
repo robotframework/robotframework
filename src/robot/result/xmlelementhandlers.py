@@ -114,20 +114,34 @@ class KeywordHandler(ElementHandler):
                           'status', 'msg', 'kw', 'if', 'for'))
 
     def start(self, elem, result):
-        creator = getattr(self, '_create_%s' % elem.get('type', 'KEYWORD'))
+        elem_type = elem.get('type')
+        if not elem_type:
+            creator = self._create_keyword
+        else:
+            creator = getattr(self, '_create_%s' % elem_type.lower().replace(' ', '_'))
         return creator(elem, result)
 
-    def _create_KEYWORD(self, elem, result):
+    def _create_keyword(self, elem, result):
         return result.body.create_keyword(kwname=elem.get('name', ''),
-                                          libname=elem.get('library', ''))
+                                          libname=elem.get('library'))
 
-    def _create_SETUP(self, elem, result):
+    def _create_setup(self, elem, result):
         return result.setup.config(kwname=elem.get('name', ''),
-                                   libname=elem.get('library', ''))
+                                   libname=elem.get('library'))
 
-    def _create_TEARDOWN(self, elem, result):
+    def _create_teardown(self, elem, result):
         return result.teardown.config(kwname=elem.get('name', ''),
-                                      libname=elem.get('library', ''))
+                                      libname=elem.get('library'))
+
+    # RF < 4 compatibility.
+
+    def _create_for(self, elem, result):
+        return result.body.create_keyword(kwname=elem.get('name'), type='FOR')
+
+    def _create_foritem(self, elem, result):
+        return result.body.create_keyword(kwname=elem.get('name'), type='FOR ITERATION')
+
+    _create_for_iteration = _create_foritem
 
 
 @ElementHandler.register

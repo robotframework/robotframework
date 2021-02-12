@@ -131,10 +131,11 @@ Keyword name and assign should be
     Lists Should Be Equal    ${kw.assign}    ${assign}
 
 Keyword and library names should be
-    [Arguments]    ${kw}    ${kwname}    ${libname}=
-    Should Be Equal    ${kw.kwname}    ${kwname}
+    [Arguments]    ${kw}    ${kwname}    ${libname}=${None}
+    Should Be Equal    ${kw.kwname}     ${kwname}
     Should Be Equal    ${kw.libname}    ${libname}
-    Run Keyword If    "${libname}"
-    ...    Should Be Equal    ${kw.name}    ${libname}.${kwname}
-    ...    ELSE
-    ...    Should Be Equal    ${kw.name}    ${kwname}
+    IF    $libname is None
+        Should Be Equal    ${kw.name}    ${kwname}
+    ELSE
+        Should Be Equal    ${kw.name}    ${libname}.${kwname}
+    END
