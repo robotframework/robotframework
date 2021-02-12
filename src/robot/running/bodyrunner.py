@@ -75,18 +75,16 @@ class IfRunner(object):
         self._templated = templated
 
     def run(self, data):
-        # FIXME: Simplify handling branch run status
         with self._dry_run_recursion_detection(data) as recursive_dry_run:
-            branch_run = False
             error = None
             with StatusReporter(self._context, IfResult(), self._run):
                 for branch in data.body:
                     try:
-                        if self._run_if_branch(branch, branch_run, recursive_dry_run, data.error):
-                            branch_run = True
+                        if self._run_if_branch(branch, recursive_dry_run, data.error):
+                            self._run = False
                     except ExecutionStatus as err:
                         error = err
-                        branch_run = True
+                        self._run = False
                 if error:
                     raise error
 
@@ -104,21 +102,21 @@ class IfRunner(object):
             if dry_run:
                 self._dry_run_stack.pop()
 
-    def _run_if_branch(self, branch, branch_run=False, recursive_dry_run=False, error=None):
+    def _run_if_branch(self, branch, recursive_dry_run=False, error=None):
         result = IfBranchResult(branch.type, branch.condition, lineno=branch.lineno)
-        run = self._should_run_branch(branch.condition, branch_run, recursive_dry_run)
-        with StatusReporter(self._context, result, run):
-            if error and self._run and not branch_run:
+        run_branch = self._should_run_branch(branch.condition, recursive_dry_run)
+        with StatusReporter(self._context, result, run_branch):
+            if error and self._run:
                 raise DataError(error)
-            runner = BodyRunner(self._context, run=run, templated=self._templated)
+            runner = BodyRunner(self._context, run_branch, self._templated)
             if not recursive_dry_run:
                 runner.run(branch.body)
-            return run
+        return run_branch
 
-    def _should_run_branch(self, condition, branch_run=False, recursive_dry_run=False):
+    def _should_run_branch(self, condition, recursive_dry_run=False):
         if self._context.dry_run:
             return not recursive_dry_run
-        if branch_run or not self._run:
+        if not self._run:
             return False
         if condition is None:
             return True
