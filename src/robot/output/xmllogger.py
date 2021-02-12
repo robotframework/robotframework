@@ -59,7 +59,7 @@ class XmlLogger(ResultVisitor):
     def _write_message(self, msg):
         attrs = {'timestamp': msg.timestamp or 'N/A', 'level': msg.level}
         if msg.html:
-            attrs['html'] = 'yes'
+            attrs['html'] = 'true'
         self._writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):

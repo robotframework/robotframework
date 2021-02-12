@@ -171,9 +171,10 @@ class MessageHandler(ElementHandler):
     tag = 'msg'
 
     def end(self, elem, result):
+        html_true = ('true', 'yes')    # 'yes' is compatibility for RF < 4.
         result.body.create_message(elem.text or '',
                                    elem.get('level', 'INFO'),
-                                   elem.get('html', 'no') == 'yes',
+                                   elem.get('html') in html_true,
                                    self._timestamp(elem, 'timestamp'))
 
 
@@ -297,9 +298,10 @@ class ErrorsHandler(ElementHandler):
 class ErrorMessageHandler(ElementHandler):
 
     def end(self, elem, result):
+        html_true = ('true', 'yes')    # 'yes' is compatibility for RF < 4.
         result.messages.create(elem.text or '',
                                elem.get('level', 'INFO'),
-                               elem.get('html', 'no') == 'yes',
+                               elem.get('html') in html_true,
                                self._timestamp(elem, 'timestamp'))
 
 
