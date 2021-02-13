@@ -18,7 +18,7 @@ def build(*paths, **config):
     return suite
 
 
-def assert_keyword(kw, assign=(), name='', args=(), type='kw'):
+def assert_keyword(kw, assign=(), name='', args=(), type='KEYWORD'):
     assert_equal(kw.name, name)
     assert_equal(kw.args, args)
     assert_equal(kw.assign, assign)
@@ -85,13 +85,13 @@ class TestBuilding(unittest.TestCase):
 
     def test_suite_setup_and_teardown(self):
         suite = build('setups_and_teardowns.robot')
-        assert_keyword(suite.setup, name='${SUITE SETUP}', type='setup')
-        assert_keyword(suite.teardown, name='${SUITE TEARDOWN}', type='teardown')
+        assert_keyword(suite.setup, name='${SUITE SETUP}', type='SETUP')
+        assert_keyword(suite.teardown, name='${SUITE TEARDOWN}', type='TEARDOWN')
 
     def test_test_setup_and_teardown(self):
         test = build('setups_and_teardowns.robot').tests[0]
-        assert_keyword(test.setup, name='${TEST SETUP}', type='setup')
-        assert_keyword(test.teardown, name='${TEST TEARDOWN}', type='teardown')
+        assert_keyword(test.setup, name='${TEST SETUP}', type='SETUP')
+        assert_keyword(test.teardown, name='${TEST TEARDOWN}', type='TEARDOWN')
         assert_equal([kw.name for kw in test.body],
                       ['Keyword'])
         assert_equal([kw.name for kw in test.body], ['Keyword'])

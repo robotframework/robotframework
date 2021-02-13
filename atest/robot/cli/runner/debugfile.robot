@@ -13,13 +13,13 @@ Debugfile
     Debug file should contain    ${content}           + START SUITE: Normal
     Debug file should contain    ${content}           +- START TEST: First One
     Debug file should contain    ${content}
-    ...      ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log ? Test 1 ?
+    ...      ${TIMESTAMP} - INFO - +-- START KEYWORD: BuiltIn.Log ? Test 1 ?
     ...      ${TIMESTAMP} - INFO - Test 1
-    ...      ${TIMESTAMP} - INFO - +-- END KW: BuiltIn.Log
+    ...      ${TIMESTAMP} - INFO - +-- END KEYWORD: BuiltIn.Log
     Debug file should contain    ${content}
-    ...      ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log ? Logging with debug level | DEBUG ?
+    ...      ${TIMESTAMP} - INFO - +-- START KEYWORD: BuiltIn.Log ? Logging with debug level | DEBUG ?
     ...      ${TIMESTAMP} - DEBUG - Logging with debug level
-    ...      ${TIMESTAMP} - INFO - +-- END KW: BuiltIn.Log
+    ...      ${TIMESTAMP} - INFO - +-- END KEYWORD: BuiltIn.Log
     Debug file should contain    ${content}    + END SUITE: Normal
     Syslog Should Contain  DebugFile: DeBug.TXT
     ${path} =  Set Variable  [:.\\w /\\\\~+-]*DeBug\\.TXT
@@ -31,13 +31,13 @@ Debugfile Log Level Should Always Be Debug
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -b debug.txt -o o.xml --loglevel WARN  ${TESTFILE}
     ${content}=     Get File     ${CLI OUTDIR}/debug.txt
     Debug file should contain    ${content}
-    ...    ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log ? Test 1 ?
+    ...    ${TIMESTAMP} - INFO - +-- START KEYWORD: BuiltIn.Log ? Test 1 ?
     ...    ${TIMESTAMP} - INFO - Test 1
-    ...    ${TIMESTAMP} - INFO - +-- END KW: BuiltIn.Log
+    ...    ${TIMESTAMP} - INFO - +-- END KEYWORD: BuiltIn.Log
     Debug file should contain    ${content}
-    ...    ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log ? Logging with debug level | DEBUG ?
+    ...    ${TIMESTAMP} - INFO - +-- START KEYWORD: BuiltIn.Log ? Logging with debug level | DEBUG ?
     ...    ${TIMESTAMP} - DEBUG - Logging with debug level
-    ...    ${TIMESTAMP} - INFO - +-- END KW: BuiltIn.Log
+    ...    ${TIMESTAMP} - INFO - +-- END KEYWORD: BuiltIn.Log
 
 Debugfile timestamps are accurate
     Run Tests    --outputdir ${CLI OUTDIR} -b debug.txt -t LibraryAddsTimestampAsInteger

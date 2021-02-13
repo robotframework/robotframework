@@ -71,30 +71,37 @@ class TestVisitingSuite(unittest.TestCase):
 
     def test_visit_if(self):
         class VisitIf(SuiteVisitor):
-            level = 0
+            level = None
 
             def start_if(self, if_):
+                self.level = 0
+
+            def start_if_branch(self, branch):
                 self.level += 1
-                if_.condition = 'x > %d' % self.level
-                if_.body.create_keyword()
+                branch.body.create_keyword()
+
+            def end_if_branch(self, branch):
+                if branch.type != branch.ELSE:
+                    branch.condition = 'x > %d' % self.level
 
             def end_if(self, if_):
-                self.level -= 1
+                self.level = None
 
             def start_keyword(self, keyword):
-                if self.level:
+                if self.level is not None:
                     keyword.name = 'kw %d' % self.level
 
-        if_ = self.suite.tests[0].body.create_if(condition='True')
-        if_.orelse.config(condition='False')
-        if_.orelse.orelse.config(condition=None)
+        if_ = self.suite.tests[0].body.create_if()
+        branch1 = if_.body.create_branch(if_.IF, condition='xxx')
+        branch2 = if_.body.create_branch(if_.ELSE_IF, condition='yyy')
+        branch3 = if_.body.create_branch(if_.ELSE)
         self.suite.visit(VisitIf())
-        assert_equal(if_.condition, 'x > 1')
-        assert_equal(if_.body[0].name, 'kw 1')
-        assert_equal(if_.orelse.condition, 'x > 2')
-        assert_equal(if_.orelse.body[0].name, 'kw 2')
-        assert_equal(if_.orelse.orelse.condition, 'x > 3')
-        assert_equal(if_.orelse.orelse.body[0].name, 'kw 3')
+        assert_equal(branch1.condition, 'x > 1')
+        assert_equal(branch1.body[0].name, 'kw 1')
+        assert_equal(branch2.condition, 'x > 2')
+        assert_equal(branch2.body[0].name, 'kw 2')
+        assert_equal(branch3.condition, None)
+        assert_equal(branch3.body[0].name, 'kw 3')
 
     def test_start_and_end_methods_can_add_items(self):
         suite = RESULT.suite.deepcopy()
@@ -158,7 +165,7 @@ class VisitSetupsAndTeardowns(SuiteVisitor):
         self.visited = []
 
     def start_keyword(self, keyword):
-        if keyword.type in (keyword.SETUP_TYPE, keyword.TEARDOWN_TYPE):
+        if keyword.type in (keyword.SETUP, keyword.TEARDOWN):
             self.visited.append(keyword.name)
 
 

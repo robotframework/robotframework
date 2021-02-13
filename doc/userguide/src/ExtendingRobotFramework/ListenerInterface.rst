@@ -221,11 +221,10 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |                                                                |
    |                  |                  | Contents of the attribute dictionary:                          |
    |                  |                  |                                                                |
-   |                  |                  | * `type`: String `Keyword` for normal keywords, `Setup` or     |
-   |                  |                  |   `Teardown` for the top level keyword used as setup/teardown, |
-   |                  |                  |   `For` for for loops, and `For Item` for individual for loop  |
-   |                  |                  |   iterations. **NOTE:** Keyword type reporting was changed in  |
-   |                  |                  |   RF 3.0. See issue `#2248`__ for details.                     |
+   |                  |                  | * `type`: String specifying keyword type. Possible values are: |
+   |                  |                  |   `KEYWORD`, `SETUP`, `TEARDOWN`, `FOR`, `FOR ITERATION`, `IF`,|
+   |                  |                  |   `ELSE IF` and `ELSE`. **NOTE:** Prior to RF 4.0 values were: |
+   |                  |                  |   `Keyword`, `Setup`, `Teardown`, `For` and `For Item`.        |
    |                  |                  | * `kwname`: Name of the keyword without library or             |
    |                  |                  |   resource prefix.                                             |
    |                  |                  | * `libname`: Name of the library or resource the               |
@@ -370,8 +369,6 @@ to implement any explicit interface or have all these methods.
        void debugFile(String path);
        void close();
    }
-
-__ https://github.com/robotframework/robotframework/issues/2248
 
 Listener version 3
 ~~~~~~~~~~~~~~~~~~

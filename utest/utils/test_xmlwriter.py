@@ -47,8 +47,13 @@ class TestXmlWriter(unittest.TestCase):
         self._verify_node(None, 'elem', 'Node\n content', {'a': '1', 'b': '2', 'c': '3'})
         self._verify_content('<elem a="1" b="2" c="3">Node\n content</elem>\n')
 
-    def test_element_with_content_is_self_closing(self):
+    def test_element_without_content_is_self_closing(self):
         self.writer.element('elem')
+        self._verify_node(None, 'elem')
+        self._verify_content('<elem/>\n')
+
+    def test_element_with_empty_string_content_is_self_closing(self):
+        self.writer.element('elem', '')
         self._verify_node(None, 'elem')
         self._verify_content('<elem/>\n')
 

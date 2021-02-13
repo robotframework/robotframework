@@ -59,12 +59,12 @@ class XmlLogger(ResultVisitor):
     def _write_message(self, msg):
         attrs = {'timestamp': msg.timestamp or 'N/A', 'level': msg.level}
         if msg.html:
-            attrs['html'] = 'yes'
+            attrs['html'] = 'true'
         self._writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):
         attrs = {'name': kw.kwname, 'library': kw.libname}
-        if kw.type != 'kw':
+        if kw.type != 'KEYWORD':
             attrs['type'] = kw.type
         if kw.sourcename:
             attrs['sourcename'] = kw.sourcename
@@ -81,27 +81,39 @@ class XmlLogger(ResultVisitor):
         self._writer.end('kw')
 
     def start_if(self, if_):
-        self._writer.start('if', {'condition': if_.condition, 'type': if_.type})
+        self._writer.start('if')
 
     def end_if(self, if_):
-        self._write_status(if_, {'branch': if_.branch_status})
+        self._write_status(if_)
         self._writer.end('if')
+
+    def start_if_branch(self, branch):
+        self._writer.start('branch', {'type': branch.type,
+                                      'condition': branch.condition})
+
+    def end_if_branch(self, branch):
+        self._write_status(branch)
+        self._writer.end('branch')
 
     def start_for(self, for_):
         self._writer.start('for', {'flavor': for_.flavor})
+        for name in for_.variables:
+            self._writer.element('var', name)
+        for value in for_.values:
+            self._writer.element('value', value)
         self._writer.element('doc', for_.doc)
-        self._write_list('assign', 'var', for_.variables)
-        self._write_list('arguments', 'arg', for_.values)
 
     def end_for(self, for_):
         self._write_status(for_)
         self._writer.end('for')
 
-    def start_iteration(self, iteration):
-        self._writer.start('iter', {'info': iteration.info})
+    def start_for_iteration(self, iteration):
+        self._writer.start('iter')
+        for name, value in iteration.variables.items():
+            self._writer.element('var', value, {'name': name})
         self._writer.element('doc', iteration.doc)
 
-    def end_iteration(self, iteration):
+    def end_for_iteration(self, iteration):
         self._write_status(iteration)
         self._writer.end('iter')
 

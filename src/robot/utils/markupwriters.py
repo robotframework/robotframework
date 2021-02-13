@@ -102,7 +102,7 @@ class XmlWriter(_MarkupWriter):
 
     def element(self, name, content=None, attrs=None, escape=True, newline=True,
                 replace_newlines=False):
-        if content is not None:
+        if content:
             _MarkupWriter.element(self, name, content, attrs, escape, newline, replace_newlines)
         else:
             self._self_closing_element(name, attrs, newline)

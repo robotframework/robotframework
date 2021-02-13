@@ -2,7 +2,7 @@
 <robot generated="20111027 10:11:57.563" generator="Rebot trunk 20111007 (Python 2.7.2+ on linux2)">
 <suite id="s1" name="Normal &amp; Normal">
 <suite id="s1-s1" name="Normal" source="normal.html">
-<kw name="my setup" type="setup">
+<kw name="my setup" type="SETUP">
 <timeout value="1 year"></timeout>
 <status endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886" status="PASS"></status>
 </kw>
@@ -45,7 +45,7 @@
 <status endtime="20111024 13:41:20.952" starttime="20111024 13:41:20.873" status="PASS"></status>
 </suite>
 <suite id="s1-s2" name="Normal" source="normal.html">
-<kw name="my setup" type="setup">
+<kw name="my setup" type="SETUP">
 <timeout value="1 year"></timeout>
 <status endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886" status="PASS"></status>
 </kw>
