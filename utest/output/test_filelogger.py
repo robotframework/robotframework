@@ -10,11 +10,10 @@ from robot.utils.robottime import TimestampCache
 class _FakeTimeCache(TimestampCache):
 
     def __init__(self):
-        self.fake = time.mktime((2021, 6, 13, 8, 37, 42, 0, 0, 1)) + 0.123
         TimestampCache.__init__(self)
 
     def _get_epoch(self):
-        return self.fake
+        return 1623562662.123
 
 
 class TestFileLogger(unittest.TestCase):
