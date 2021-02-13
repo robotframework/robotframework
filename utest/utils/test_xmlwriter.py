@@ -137,6 +137,7 @@ class TestXmlWriter(unittest.TestCase):
     def test_dont_write_empty(self):
         self.tearDown()
         self.writer = XmlWriterWithoutPreamble(PATH, write_empty=False)
+        self.writer.element('e0')
         self.writer.element('e1', content='', attrs={})
         self.writer.element('e2', attrs={'empty': '', 'None': None})
         self.writer.element('e3', attrs={'empty': '', 'value': 'value'})
