@@ -6,7 +6,7 @@ Library           ParameterLibrary    xxx    yyy    with name    Won't work
 
 *** Test Cases ***
 Import Library Normally After Importing With Name In Another Suite
-    OperatingSystem.Should Exist    ${CURDIR}
+    OperatingSystem.Should Exist    .
     ParameterLibrary.Parameters Should Be    after1    after2
 
 Import Library With Name After Importing With Name In Another Suite
