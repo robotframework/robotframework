@@ -90,11 +90,11 @@ class TestSuite(ModelObject):
 
     @setter
     def setup(self, setup):
-        return create_fixture(setup, self, Keyword.SETUP_TYPE)
+        return create_fixture(setup, self, Keyword.SETUP)
 
     @setter
     def teardown(self, teardown):
-        return create_fixture(teardown, self, Keyword.TEARDOWN_TYPE)
+        return create_fixture(teardown, self, Keyword.TEARDOWN)
 
     @property
     def keywords(self):

@@ -10,11 +10,10 @@ from robot.utils.robottime import TimestampCache
 class _FakeTimeCache(TimestampCache):
 
     def __init__(self):
-        self.fake = time.mktime((2006, 6, 13, 8, 37, 42, 0, 0, 1)) + 0.123
         TimestampCache.__init__(self)
 
     def _get_epoch(self):
-        return self.fake
+        return 1613230353.123 + time.timezone
 
 
 class TestFileLogger(unittest.TestCase):
@@ -29,18 +28,18 @@ class TestFileLogger(unittest.TestCase):
 
     def test_write(self):
         self.logger.write('my message', 'INFO')
-        expected = '20060613 08:37:42.123 | INFO  | my message\n'
+        expected = '20210213 15:32:33.123 | INFO  | my message\n'
         self._verify_message(expected)
         self.logger.write('my 2nd msg\nwith 2 lines', 'ERROR')
-        expected += '20060613 08:37:42.123 | ERROR | my 2nd msg\nwith 2 lines\n'
+        expected += '20210213 15:32:33.123 | ERROR | my 2nd msg\nwith 2 lines\n'
         self._verify_message(expected)
 
     def test_write_helpers(self):
         self.logger.info('my message')
-        expected = '20060613 08:37:42.123 | INFO  | my message\n'
+        expected = '20210213 15:32:33.123 | INFO  | my message\n'
         self._verify_message(expected)
         self.logger.warn('my 2nd msg\nwith 2 lines')
-        expected += '20060613 08:37:42.123 | WARN  | my 2nd msg\nwith 2 lines\n'
+        expected += '20210213 15:32:33.123 | WARN  | my 2nd msg\nwith 2 lines\n'
         self._verify_message(expected)
 
     def test_set_level(self):
@@ -48,7 +47,7 @@ class TestFileLogger(unittest.TestCase):
         self._verify_message('')
         self.logger.set_level('DEBUG')
         self.logger.write('msg', 'DEBUG')
-        self._verify_message('20060613 08:37:42.123 | DEBUG | msg\n')
+        self._verify_message('20210213 15:32:33.123 | DEBUG | msg\n')
 
     def _verify_message(self, expected):
         assert_equal(self.logger._writer.getvalue(), expected)

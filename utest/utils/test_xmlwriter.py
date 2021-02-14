@@ -47,8 +47,13 @@ class TestXmlWriter(unittest.TestCase):
         self._verify_node(None, 'elem', 'Node\n content', {'a': '1', 'b': '2', 'c': '3'})
         self._verify_content('<elem a="1" b="2" c="3">Node\n content</elem>\n')
 
-    def test_element_with_content_is_self_closing(self):
+    def test_element_without_content_is_self_closing(self):
         self.writer.element('elem')
+        self._verify_node(None, 'elem')
+        self._verify_content('<elem/>\n')
+
+    def test_element_with_empty_string_content_is_self_closing(self):
+        self.writer.element('elem', '')
         self._verify_node(None, 'elem')
         self._verify_content('<elem/>\n')
 
@@ -132,6 +137,7 @@ class TestXmlWriter(unittest.TestCase):
     def test_dont_write_empty(self):
         self.tearDown()
         self.writer = XmlWriterWithoutPreamble(PATH, write_empty=False)
+        self.writer.element('e0')
         self.writer.element('e1', content='', attrs={})
         self.writer.element('e2', attrs={'empty': '', 'None': None})
         self.writer.element('e3', attrs={'empty': '', 'value': 'value'})

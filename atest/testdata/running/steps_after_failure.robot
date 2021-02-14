@@ -29,7 +29,26 @@ FOR after failure
     Fail    This fails
     FOR    ${x}    IN    1    2    3
         Fail    This should not be run
+        Fail    This should not be run either
     END
+
+Nested control structure after failure
+    [Documentation]    FAIL    This fails
+    Fail    This fails
+    FOR    ${x}    IN    1    2    3
+        IF    True
+            FOR    ${y}    IN RANGE    ${x}
+                Fail    This should not be run
+                Fail    This should not be run
+                Fail    This should not be run
+            END
+            Fail    This should not be run
+        ELSE
+            Fail    This should not be run
+        END
+        Fail    This should not be run
+    END
+    Fail    This should not be run
 
 Non-existing keyword after failure
     [Documentation]    FAIL    This fails

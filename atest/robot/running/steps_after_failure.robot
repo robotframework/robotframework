@@ -15,10 +15,39 @@ User keyword after failure
 IF after failure
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Not Be Run    ${tc.body[1:]}
+    Should Not Be Run    ${tc.body[1].body[0].body}
+    Should Not Be Run    ${tc.body[1].body[1].body}
 
 FOR after failure
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Not Be Run    ${tc.body[1:]}
+    Should Not Be Run    ${tc.body[1].body}
+    Should Not Be Run    ${tc.body[1].body[0].body}    2
+
+Nested control structure after failure
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Not Be Run    ${tc.body[1:]}    2
+    Should Be Equal      ${tc.body[1].type}    FOR
+    Should Not Be Run    ${tc.body[1].body}    1
+    Should Be Equal      ${tc.body[1].body[0].type}    FOR ITERATION
+    Should Not Be Run    ${tc.body[1].body[0].body}    2
+    Should Be Equal      ${tc.body[1].body[0].body[0].type}    IF/ELSE ROOT
+    Should Not Be Run    ${tc.body[1].body[0].body[0].body}    2
+    Should Be Equal      ${tc.body[1].body[0].body[0].body[0].type}    IF
+    Should Not Be Run    ${tc.body[1].body[0].body[0].body[0].body}    2
+    Should Be Equal      ${tc.body[1].body[0].body[0].body[0].body[0].type}    FOR
+    Should Not Be Run    ${tc.body[1].body[0].body[0].body[0].body[0].body}    1
+    Should Be Equal      ${tc.body[1].body[0].body[0].body[0].body[0].body[0].type}    FOR ITERATION
+    Should Not Be Run    ${tc.body[1].body[0].body[0].body[0].body[0].body[0].body}    3
+    Should Be Equal      ${tc.body[1].body[0].body[0].body[0].body[0].body[0].body[0].type}    KEYWORD
+    Should Be Equal      ${tc.body[1].body[0].body[0].body[0].body[0].body[0].body[1].type}    KEYWORD
+    Should Be Equal      ${tc.body[1].body[0].body[0].body[0].body[0].body[0].body[2].type}    KEYWORD
+    Should Be Equal      ${tc.body[1].body[0].body[0].body[0].body[1].type}    KEYWORD
+    Should Be Equal      ${tc.body[1].body[0].body[0].body[1].type}    ELSE
+    Should Not Be Run    ${tc.body[1].body[0].body[0].body[1].body}    1
+    Should Be Equal      ${tc.body[1].body[0].body[0].body[1].body[0].type}    KEYWORD
+    Should Be Equal      ${tc.body[1].body[0].body[1].type}    KEYWORD
+    Should Be Equal      ${tc.body[2].type}    KEYWORD
 
 Non-existing keyword after failure
     ${tc} =    Check Test Case    ${TESTNAME}
@@ -35,31 +64,28 @@ Failure in user keyword
 
 Failure in IF branch
     ${tc} =    Check Test Case    ${TESTNAME}
+    Should Not Be Run    ${tc.body[0].body[0].body[1:]}
+    Should Not Be Run    ${tc.body[0].body[1].body}
     Should Not Be Run    ${tc.body[1:]}
-    Should Not Be Run    ${tc.body[0].body[1:]}
-    Should Be True       ${tc.body[0].orelse}
-    Should Not Be Run    ${tc.body[0].orelse.body}      1
 
 Failure in ELSE IF branch
     ${tc} =    Check Test Case    ${TESTNAME}
+    Should Not Be Run    ${tc.body[0].body[0].body}
+    Should Not Be Run    ${tc.body[0].body[1].body[1:]}
+    Should Not Be Run    ${tc.body[0].body[2].body}
     Should Not Be Run    ${tc.body[1:]}
-    Should Not Be Run    ${tc.body[0].body}    1
-    Should Not Be Run    ${tc.body[0].orelse.body[1:]}
-    Should Be True       ${tc.body[0].orelse.orelse}
-    Should Not Be Run    ${tc.body[0].orelse.orelse.body}    1
 
 Failure in ELSE branch
     ${tc} =    Check Test Case    ${TESTNAME}
+    Should Not Be Run    ${tc.body[0].body[0].body}
+    Should Not Be Run    ${tc.body[0].body[1].body[1:]}
     Should Not Be Run    ${tc.body[1:]}
-    Should Not Be Run    ${tc.body[0].body}    1
-    Should Not Be Run    ${tc.body[0].orelse.body[1:]}
 
 Failure in FOR iteration
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Not Be Run    ${tc.body[1:]}
     Length Should Be     ${tc.body[0].body}    1
     Should Not Be Run    ${tc.body[0].body[0].body[1:]}
-
 
 *** Keywords ***
 Should Not Be Run

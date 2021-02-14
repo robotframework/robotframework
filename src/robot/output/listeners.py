@@ -38,12 +38,20 @@ class Listeners(object):
                                                    self._method_names)
         for name in self._method_names:
             method = ListenerMethods(name, listeners)
-            if name.endswith(('_file', '_import', 'log_message')):
+            if name.endswith(('_keyword', '_file', '_import', 'log_message')):
                 name = '_' + name
             setattr(self, name, method)
 
     def set_log_level(self, level):
         self._is_logged.set_level(level)
+
+    def start_keyword(self, kw):
+        if kw.type != kw.IF_ELSE_ROOT:
+            self._start_keyword(kw)
+
+    def end_keyword(self, kw):
+        if kw.type != kw.IF_ELSE_ROOT:
+            self._end_keyword(kw)
 
     def log_message(self, msg):
         if self._is_logged(msg.level):

@@ -127,7 +127,7 @@ class ExecutionResultBuilder(object):
         omitted_kws = 0
         for event, elem in context:
             # Teardowns aren't omitted to allow checking suite teardown status.
-            omit = elem.tag == 'kw' and elem.get('type') != 'teardown'
+            omit = elem.tag == 'kw' and elem.get('type') != 'TEARDOWN'
             start = event == 'start'
             if omit and start:
                 omitted_kws += 1

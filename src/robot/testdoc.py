@@ -226,14 +226,15 @@ class JsonConverter(object):
         for kw in keywords:
             if not kw:
                 continue
-            if kw.type == kw.SETUP_TYPE:
+            if kw.type == kw.SETUP:
                 yield self._convert_keyword(kw, 'SETUP')
-            elif kw.type == kw.TEARDOWN_TYPE:
+            elif kw.type == kw.TEARDOWN:
                 yield self._convert_keyword(kw, 'TEARDOWN')
-            elif kw.type == kw.FOR_TYPE:
+            elif kw.type == kw.FOR:
                 yield self._convert_for(kw)
-            elif kw.type == kw.IF_TYPE:
-                yield self._convert_if(kw)
+            elif kw.type == kw.IF_ELSE_ROOT:
+                for branch in self._convert_if(kw):
+                    yield branch
             else:
                 yield self._convert_keyword(kw, 'KEYWORD')
 
@@ -247,11 +248,12 @@ class JsonConverter(object):
         }
 
     def _convert_if(self, data):
-        return {
-            'name': self._escape(data.condition),
-            'arguments': '',
-            'type': data.type
-        }
+        for branch in data.body:
+            yield {
+                'name': self._escape(branch.condition or ''),
+                'arguments': '',
+                'type': branch.type
+            }
 
     def _convert_keyword(self, kw, kw_type):
         return {

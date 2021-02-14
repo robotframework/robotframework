@@ -83,8 +83,8 @@ def _count_virtual_line_length(line):
 def format_assign_message(variable, value, cut_long=True):
     formatter = {'$': unic, '@': seq2str2, '&': _dict_to_str}[variable[0]]
     value = formatter(value)
-    if cut_long and len(value) > _MAX_ASSIGN_LENGTH:
-        value = value[:_MAX_ASSIGN_LENGTH] + '...'
+    if cut_long:
+        value = cut_assign_value(value)
     return '%s = %s' % (variable, value)
 
 def _dict_to_str(d):
@@ -92,6 +92,14 @@ def _dict_to_str(d):
         return '{ }'
     return '{ %s }' % ' | '.join('%s=%s' % (unic(k), unic(v))
                                  for k, v in d.items())
+
+
+def cut_assign_value(value):
+    if not is_unicode(value):
+        value = unic(value)
+    if len(value) > _MAX_ASSIGN_LENGTH:
+        value = value[:_MAX_ASSIGN_LENGTH] + '...'
+    return value
 
 
 def get_console_length(text):

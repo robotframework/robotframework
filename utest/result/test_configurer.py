@@ -7,8 +7,8 @@ from robot.result import Keyword, TestCase, TestSuite
 from robot.result.configurer import SuiteConfigurer
 
 
-SETUP = Keyword.SETUP_TYPE
-TEARDOWN = Keyword.TEARDOWN_TYPE
+SETUP = Keyword.SETUP
+TEARDOWN = Keyword.TEARDOWN
 
 
 class TestSuiteAttributes(unittest.TestCase):
@@ -181,24 +181,24 @@ class TestRemoveKeywords(unittest.TestCase):
         assert_equal(len(suite.teardown.body), 1)
 
     def test_remove_for_removes_passed_iterations_except_last(self):
-        suite, loop = self.suite_with_forloop()
+        suite, loop = self.suite_with_for_loop()
         last = loop.body[-1]
         self._remove_for_loop(suite)
         assert_equal(len(loop.body), 1)
         assert_true(loop.body[-1] is last)
 
-    def suite_with_forloop(self):
+    def suite_with_for_loop(self):
         suite = TestSuite()
         test = suite.tests.create(status='PASS')
         loop = test.body.create_for(status='PASS')
         for i in range(100):
-            loop.body.create_iteration(info='i%d' % i, status='PASS')\
+            loop.body.create_iteration({'${i}': i}, status='PASS')\
                 .body.create_keyword(kwname='k%d' % i, status='PASS')\
                 .body.create_message(message='something')
         return suite, loop
 
     def test_remove_for_does_not_remove_failed_iterations(self):
-        suite, loop = self.suite_with_forloop()
+        suite, loop = self.suite_with_for_loop()
         fail1 = loop.body[42]
         fail2 = loop.body[75]
         last = loop.body[-1]
@@ -208,7 +208,7 @@ class TestRemoveKeywords(unittest.TestCase):
         assert_equal(list(loop.body), [fail1, fail2, last])
 
     def test_remove_for_does_not_remove_iterations_with_warnings(self):
-        suite, loop = self.suite_with_forloop()
+        suite, loop = self.suite_with_for_loop()
         loop.body[2].body.create_message(message='danger!', level='WARN')
         warn = loop.body[2]
         last = loop.body[-1]

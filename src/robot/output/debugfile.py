@@ -35,8 +35,7 @@ def DebugFile(path):
 
 
 class _DebugFileWriter:
-    _separators = {'SUITE': '=', 'TEST': '-', 'KW': '~'}
-    _setup_or_teardown = ('setup', 'teardown')
+    _separators = {'SUITE': '=', 'TEST': '-', 'KEYWORD': '~'}
 
     def __init__(self, outfile):
         self._indent = 0
@@ -70,12 +69,12 @@ class _DebugFileWriter:
 
     def start_keyword(self, kw):
         if self._kw_level == 0:
-            self._separator('KW')
-        self._start(self._get_kw_type(kw), kw.name, kw.args)
+            self._separator('KEYWORD')
+        self._start(kw.type, kw.name, kw.args)
         self._kw_level += 1
 
     def end_keyword(self, kw):
-        self._end(self._get_kw_type(kw), kw.name, kw.elapsedtime)
+        self._end(kw.type, kw.name, kw.elapsedtime)
         self._kw_level -= 1
 
     def log_message(self, msg):
@@ -85,11 +84,6 @@ class _DebugFileWriter:
     def close(self):
         if not self._outfile.closed:
             self._outfile.close()
-
-    def _get_kw_type(self, kw):
-        if kw.type in self._setup_or_teardown:
-            return kw.type.upper()
-        return 'KW'
 
     def _start(self, type_, name, args=''):
         args = ' ' + seq2str2(args)

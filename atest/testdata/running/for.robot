@@ -234,8 +234,7 @@ Multiple loop variables
         Log    ${x}${y}
     END
     Should Be Equal    ${x}${y}    4d
-    FOR    ${a}    ${b}    ${c}    ${d}    ${e}    IN
-    ...    @{NUMS}    @{NUMS}
+    FOR    ${a}    ${b}    ${c}    ${d}    ${e}    IN    @{NUMS}    @{NUMS}
         Should Be Equal    ${a}${b}${c}${d}${e}    12345
     END
     Should Be Equal    ${a}${b}${c}${d}${e}    12345
@@ -254,19 +253,18 @@ Wrong number of loop variables 2
     END
     Fail    Not executed
 
-Cut long values in iteration name
+Cut long iteration variable values
     ${v10} =    Set Variable    0123456789
     ${v100} =    Evaluate    '${v10}' * 10
     ${v200} =    Evaluate    '${v100}' * 2
     ${v201} =    Set Variable    ${v200}1
     ${v300} =    Evaluate    '${v100}' * 3
     ${v10000} =    Evaluate    '${v100}' * 100
-    FOR    ${var}    IN    ${v10}    ${v100}    ${v200}    ${v201}
-    ...    ${v300}    ${v10000}
+    FOR    ${var}    IN    ${v10}    ${v100}    ${v200}    ${v201}    ${v300}    ${v10000}
         Log    ${var}
     END
-    FOR    ${var1}    ${var2}    ${var3}    IN    ${v10}    ${v100}
-    ...    ${v200}    ${v201}    ${v300}    ${v10000}
+    FOR    ${var1}    ${var2}    ${var3}    IN
+    ...    ${v10}    ${v100}    ${v200}    ${v201}    ${v300}    ${v10000}
         Log Many    ${var1}    ${var2}    ${var3}
     END
     Should Be Equal    ${var}    ${var3}    Sanity check

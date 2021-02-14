@@ -35,7 +35,7 @@ class Keyword(BodyItem):
     __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type', '_teardown']
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
-                 timeout=None, type=BodyItem.KEYWORD_TYPE, parent=None):
+                 timeout=None, type=BodyItem.KEYWORD, parent=None):
         self._name = name
         self.doc = doc
         self.args = args
@@ -57,12 +57,12 @@ class Keyword(BodyItem):
     @property    # Cannot use @setter because it would create teardowns recursively.
     def teardown(self):
         if self._teardown is None and self:
-            self._teardown = create_fixture(None, self, self.TEARDOWN_TYPE)
+            self._teardown = create_fixture(None, self, self.TEARDOWN)
         return self._teardown
 
     @teardown.setter
     def teardown(self, teardown):
-        self._teardown = create_fixture(teardown, self, self.TEARDOWN_TYPE)
+        self._teardown = create_fixture(teardown, self, self.TEARDOWN)
 
     @setter
     def tags(self, tags):
@@ -105,7 +105,7 @@ class Keywords(ItemList):
 
     @property
     def setup(self):
-        return self[0] if (self and self[0].type == 'setup') else None
+        return self[0] if (self and self[0].type == 'SETUP') else None
 
     @setup.setter
     def setup(self, kw):
@@ -116,7 +116,7 @@ class Keywords(ItemList):
 
     @property
     def teardown(self):
-        return self[-1] if (self and self[-1].type == 'teardown') else None
+        return self[-1] if (self and self[-1].type == 'TEARDOWN') else None
 
     @teardown.setter
     def teardown(self, kw):
@@ -133,7 +133,7 @@ class Keywords(ItemList):
     @property
     def normal(self):
         """Iterates over normal keywords, omitting setup and teardown."""
-        return [kw for kw in self if kw.type not in ('setup', 'teardown')]
+        return [kw for kw in self if kw.type not in ('SETUP', 'TEARDOWN')]
 
     def __setitem__(self, index, item):
         self.raise_deprecation_error()

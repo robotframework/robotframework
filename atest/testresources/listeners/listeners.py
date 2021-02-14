@@ -68,27 +68,27 @@ class KeywordType(object):
     ROBOT_LISTENER_API_VERSION = '2'
 
     def start_keyword(self, name, attrs):
-        expected = self._get_expected_kw_type(name, attrs['args'])
+        expected = self._get_expected_type(**attrs)
         if attrs['type'] != expected:
             raise RuntimeError("Wrong keyword type '%s', expected '%s'."
                                % (attrs['type'], expected))
 
-    def _get_expected_kw_type(self, name, args):
-        if ' IN ' in name:
-            return 'For'
-        if ' = ' in name:
-            return 'For Item'
+    def _get_expected_type(self, kwname, libname, args, **ignore):
+        if ' IN ' in kwname:
+            return 'FOR'
+        if ' = ' in kwname:
+            return 'FOR ITERATION'
         if not args:
-            if "'IF'" in name:
-                return 'If'
-            if "'ELSE IF'" in name:
-                return 'Else If'
-            if name == '':
-                return 'Else'
-        expected = args[0] if name.startswith('BuiltIn.') else name
-        return {'Suite Setup': 'Setup', 'Suite Teardown': 'Teardown',
-                'Test Setup': 'Setup', 'Test Teardown': 'Teardown',
-                'Keyword Teardown': 'Teardown'}.get(expected, 'Keyword')
+            if kwname == "'IF' == 'WRONG'":
+                return 'IF'
+            if kwname == "'ELSE IF' == 'ELSE IF'":
+                return 'ELSE IF'
+            if kwname == '':
+                return 'ELSE'
+        expected = args[0] if libname == 'BuiltIn' else kwname
+        return {'Suite Setup': 'SETUP', 'Suite Teardown': 'TEARDOWN',
+                'Test Setup': 'SETUP', 'Test Teardown': 'TEARDOWN',
+                'Keyword Teardown': 'TEARDOWN'}.get(expected, 'KEYWORD')
 
     end_keyword = start_keyword
 
