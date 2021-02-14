@@ -81,7 +81,8 @@ class RobotHandler(ElementHandler):
 @ElementHandler.register
 class SuiteHandler(ElementHandler):
     tag = 'suite'
-    children = frozenset(('doc', 'metadata', 'status', 'kw', 'test', 'suite'))
+    # 'metadata' is for RF < 4 compatibility.
+    children = frozenset(('doc', 'metadata', 'meta', 'status', 'kw', 'test', 'suite'))
 
     def start(self, elem, result):
         if hasattr(result, 'suite'):    # root
@@ -101,7 +102,8 @@ class SuiteHandler(ElementHandler):
 @ElementHandler.register
 class TestHandler(ElementHandler):
     tag = 'test'
-    children = frozenset(('doc', 'tags', 'timeout', 'status', 'kw', 'if', 'for'))
+    # 'tags' is for RF < 4 compatibility.
+    children = frozenset(('doc', 'tags', 'tag', 'timeout', 'status', 'kw', 'if', 'for'))
 
     def start(self, elem, result):
         return result.tests.create(name=elem.get('name', ''))
@@ -110,8 +112,9 @@ class TestHandler(ElementHandler):
 @ElementHandler.register
 class KeywordHandler(ElementHandler):
     tag = 'kw'
-    children = frozenset(('doc', 'arguments', 'assign', 'tags', 'timeout',
-                          'status', 'msg', 'kw', 'if', 'for'))
+    # 'arguments', 'assign' and 'tags' are for RF < 4 compatibility.
+    children = frozenset(('doc', 'arguments', 'arg', 'assign', 'var', 'tags', 'tag',
+                          'timeout', 'status', 'msg', 'kw', 'if', 'for'))
 
     def start(self, elem, result):
         elem_type = elem.get('type')
@@ -206,8 +209,6 @@ class StatusHandler(ElementHandler):
         result.endtime = self._timestamp(elem, 'endtime')
         if elem.text:
             result.message = elem.text
-        if hasattr(result, 'branch_status'):
-            result.branch_status = elem.get('branch')
 
 
 @ElementHandler.register
@@ -219,13 +220,13 @@ class DocHandler(ElementHandler):
 
 
 @ElementHandler.register
-class MetadataHandler(ElementHandler):
+class MetadataHandler(ElementHandler):   # RF < 4 compatibility.
     tag = 'metadata'
     children = frozenset(('item',))
 
 
 @ElementHandler.register
-class MetadataItemHandler(ElementHandler):
+class MetadataItemHandler(ElementHandler):    # RF < 4 compatibility.
     tag = 'item'
 
     def end(self, elem, result):
@@ -233,7 +234,15 @@ class MetadataItemHandler(ElementHandler):
 
 
 @ElementHandler.register
-class TagsHandler(ElementHandler):
+class MetaHandler(ElementHandler):
+    tag = 'meta'
+
+    def end(self, elem, result):
+        result.metadata[elem.get('name', '')] = elem.text or ''
+
+
+@ElementHandler.register
+class TagsHandler(ElementHandler):    # RF < 4 compatibility.
     tag = 'tags'
     children = frozenset(('tag',))
 
@@ -255,7 +264,7 @@ class TimeoutHandler(ElementHandler):
 
 
 @ElementHandler.register
-class AssignHandler(ElementHandler):
+class AssignHandler(ElementHandler):    # RF < 4 compatibility.
     tag = 'assign'
     children = frozenset(('var',))
 
@@ -277,7 +286,7 @@ class VarHandler(ElementHandler):
 
 
 @ElementHandler.register
-class ArgumentsHandler(ElementHandler):
+class ArgumentsHandler(ElementHandler):    # RF < 4 compatibility.
     tag = 'arguments'
     children = frozenset(('arg',))
 
