@@ -3,9 +3,6 @@ Suite Setup       Run Tests With Listeners
 Suite Teardown    Remove Listener Files
 Resource          listener_resource.robot
 
-*** Variables ***
-${LISTENER DIR}   ${DATADIR}/output/listeners
-
 *** Test Cases ***
 Listen All
     [Documentation]    Listener listening all methods. Method names with underscore.
@@ -114,13 +111,12 @@ Executing Keywords from Listeners
     Check Log Message    ${tc.kws[2].msgs[0]}    End Pass
 
 Test Template
-    ${listener} =    Normalize Path    ${DATADIR}/output/listeners/verify_template_listener.py
-    File Should Exist    ${listener}
-    Run Tests    --listener ${listener}    output/listeners/test_template.robot
+    ${listener} =    Normalize Path    ${LISTENER DIR}/verify_template_listener.py
+    Run Tests    --listener ${listener}    ${LISTENER DIR}/test_template.robot
     Stderr Should Be Empty
 
 Keyword Arguments Are Always Strings
-    ${result} =    Run Tests    --listener attributeverifyinglistener    output/listeners/keyword_argument_types.robot
+    ${result} =    Run Tests    --listener attributeverifyinglistener    ${LISTENER DIR}/keyword_argument_types.robot
     Should Be Empty    ${result.stderr}
     Check Test Tags    Run Keyword with already resolved non-string arguments in test data    1    2
     Check Test Case    Run Keyword with non-string arguments in library
@@ -131,7 +127,7 @@ TimeoutError occurring during listener method is propagaged
     [Documentation]    Timeouts can only occur inside `log_message`.
     ...    Cannot reliable set timeouts to occur during it, so the listener
     ...    emulates the situation by explicitly raising TimeoutError.
-    Run Tests    --listener ${LISTENER DIR}/timeouting_listener.py    output/listeners/timeouting_listener.robot
+    Run Tests    --listener ${LISTENER DIR}/timeouting_listener.py    ${LISTENER DIR}/timeouting_listener.robot
     Check Test Case    Timeout in test case level
     Check Test Case    Timeout inside user keyword
     Stderr Should Be Empty
