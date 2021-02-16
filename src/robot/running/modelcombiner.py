@@ -15,6 +15,7 @@
 
 
 class ModelCombiner(object):
+    __slots__ = ['data', 'result', 'priority']
 
     def __init__(self, data, result, **priority):
         self.data = data

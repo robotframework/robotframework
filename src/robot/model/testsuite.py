@@ -37,6 +37,7 @@ class TestSuite(ModelObject):
     fixture_class = Keyword  #: Internal usage only.
     repr_args = ('name',)
     __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors', 'rpa']
+    # FIXME: Move 'source' to running side.
 
     def __init__(self, name='', doc='', metadata=None, source=None, rpa=False,
                  parent=None):

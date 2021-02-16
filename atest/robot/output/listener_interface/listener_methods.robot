@@ -67,26 +67,6 @@ Keyword Tags
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
     Should Contain X Times    ${status}    PASSED | tags: [force, keyword, tags]    6
 
-FOR and IF line numbers
-    Run Tests    --listener ListenAll    misc/for_loops.robot misc/if_else.robot
-    Stderr Should Be Empty
-    ${output} =    Get Listener File    ${ALL FILE}
-    FOR    ${expected}    IN
-    ...    FOR START: \${pet} IN [ cat | dog | horse ] (line 3)
-    ...    FOR ITERATION START: \${pet} = cat (line 3)
-    ...    KEYWORD START: BuiltIn.Log ['\${pet}'] (line 4)
-    ...    FOR ITERATION START: \${pet} = dog (line 3)
-    ...    KEYWORD START: BuiltIn.Log ['\${pet}'] (line 4)
-    ...    IF START: 'IF' == 'WRONG' (line 3)
-    ...    IF END: NOT RUN
-    ...    ELSE IF START: 'ELSE IF' == 'ELSE IF' (line 5)
-    ...    KEYWORD START: BuiltIn.Log ['else if branch'] (line 6)
-    ...    ELSE IF END: PASS
-    ...    ELSE START: (line 7)
-    ...    ELSE END: NOT RUN
-        Should Contain    ${output}    ${expected}
-    END
-
 Suite And Test Counts
     Run Tests    --listener listeners.SuiteAndTestCounts    misc/suites/subsuites misc/suites/subsuites2
     Stderr Should Be Empty

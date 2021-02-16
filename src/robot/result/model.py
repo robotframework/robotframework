@@ -145,18 +145,16 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     type = BodyItem.FOR_ITERATION
     body_class = Body
     repr_args = ('variables',)
-    __slots__ = ['variables', 'status', 'starttime', 'endtime', 'doc', 'lineno', 'source']
+    __slots__ = ['variables', 'status', 'starttime', 'endtime', 'doc']
 
-    def __init__(self, variables=None, status='FAIL', starttime=None, endtime=None, doc='',
-                 parent=None, lineno=None, source=None):
+    def __init__(self, variables=None, status='FAIL', starttime=None, endtime=None,
+                 doc='', parent=None):
         self.variables = variables or OrderedDict()
         self.parent = parent
         self.status = status
         self.starttime = starttime
         self.endtime = endtime
         self.doc = doc
-        self.lineno = lineno       # FIXME: Should be removed on result side.
-        self.source = source       # --ii--
         self.body = None
 
     @setter
@@ -175,18 +173,15 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
 @Body.register
 class For(model.For, StatusMixin, DeprecatedAttributesMixin):
     body_class = ForIterations
-    __slots__ = ['status', 'starttime', 'endtime', 'doc', 'lineno', 'source']
+    __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
     def __init__(self, variables=(),  flavor='IN', values=(), status='FAIL',
-                 starttime=None, endtime=None, doc='', parent=None, lineno=-1,
-                 source=None):
+                 starttime=None, endtime=None, doc='', parent=None):
         model.For.__init__(self, variables, flavor, values, parent)
         self.status = status
         self.starttime = starttime
         self.endtime = endtime
         self.doc = doc
-        self.lineno = lineno       # FIXME: Should be removed on result side.
-        self.source = source       # --ii--
 
     @property
     @deprecated
@@ -198,7 +193,7 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
 @Body.register
 class If(model.If, StatusMixin, DeprecatedAttributesMixin):
     body_class = IfBranches
-    __slots__ = ['status', 'starttime', 'endtime', 'doc', 'lineno', 'source']
+    __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
     def __init__(self, parent=None, status='FAIL', starttime=None, endtime=None, doc=''):
         model.If.__init__(self, parent)
@@ -206,25 +201,20 @@ class If(model.If, StatusMixin, DeprecatedAttributesMixin):
         self.starttime = starttime
         self.endtime = endtime
         self.doc = doc
-        self.lineno = -1       # FIXME: Remove!!!
-        self.source = None    # --ii--
 
 
 @IfBranches.register
 class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
     body_class = Body
-    __slots__ = ['status', 'starttime', 'endtime', 'doc', 'lineno', 'source']
+    __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
     def __init__(self, type=BodyItem.IF, condition=None, status='FAIL',
-                 starttime=None, endtime=None, doc='', parent=None, lineno=-1,
-                 source=None):
+                 starttime=None, endtime=None, doc='', parent=None):
         model.IfBranch.__init__(self, type, condition, parent)
         self.status = status
         self.starttime = starttime
         self.endtime = endtime
         self.doc = doc
-        self.lineno = lineno       # FIXME: Should be removed on result side.
-        self.source = source
 
     @property
     @deprecated
@@ -240,11 +230,11 @@ class Keyword(model.Keyword, StatusMixin):
     """
     body_class = Body
     __slots__ = ['kwname', 'libname', 'status', 'starttime', 'endtime', 'message',
-                 'lineno', 'source', 'sourcename']
+                 'sourcename']
 
     def __init__(self, kwname='', libname='', doc='', args=(), assign=(), tags=(),
                  timeout=None, type=BodyItem.KEYWORD, status='FAIL', starttime=None,
-                 endtime=None, parent=None, lineno=None, source=None, sourcename=None):
+                 endtime=None, parent=None, sourcename=None):
         model.Keyword.__init__(self, None, doc, args, assign, tags, timeout, type, parent)
         #: Name of the keyword without library or resource name.
         self.kwname = kwname
@@ -258,10 +248,8 @@ class Keyword(model.Keyword, StatusMixin):
         self.endtime = endtime
         #: Keyword status message. Used only if suite teardowns fails.
         self.message = ''
-        self.lineno = lineno    # FIXME: Should be removed on result side.
-        self.source = source
+        #: Original name of keyword with embedded arguments.
         self.sourcename = sourcename
-        #: sourcename is name of keyword with embedded arguments, from it's definition
         self.body = None
 
     @setter
@@ -354,7 +342,7 @@ class TestCase(model.TestCase, StatusMixin):
 
     @property
     def critical(self):
-        warnings.warn("'TestCase.criticality' is deprecated and always returns 'True'.")
+        warnings.warn("'TestCase.critical' is deprecated and always returns 'True'.")
         return True
 
 

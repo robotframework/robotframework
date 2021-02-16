@@ -70,6 +70,10 @@ class Keyword(model.Keyword):
                                parent)
         self.lineno = lineno
 
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
     def run(self, context, run=True, templated=None):
         return KeywordRunner(context, run).run(self)
 
@@ -140,6 +144,10 @@ class TestCase(model.TestCase):
         # ``None`` if template is not used.
         self.template = template
         self.lineno = lineno
+
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
 
 
 class TestSuite(model.TestSuite):
