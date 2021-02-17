@@ -69,10 +69,6 @@ class Keyword(BodyItem):
         """Keyword tags as a :class:`~.model.tags.Tags` object."""
         return Tags(tags)
 
-    @property
-    def source(self):
-        return self.parent.source if self.parent is not None else None
-
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         if self:

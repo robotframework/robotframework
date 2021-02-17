@@ -113,7 +113,7 @@ class EndSuiteArguments(StartSuiteArguments):
 
 
 class StartTestArguments(_ListenerArgumentsFromItem):
-    _attribute_names = ('id', 'longname', 'doc', 'tags', 'lineno', 'starttime')
+    _attribute_names = ('id', 'longname', 'doc', 'tags', 'lineno', 'source', 'starttime')
 
     def _get_extra_attributes(self, test):
         return {'template': test.template or '',
@@ -121,7 +121,7 @@ class StartTestArguments(_ListenerArgumentsFromItem):
 
 
 class EndTestArguments(StartTestArguments):
-    _attribute_names = ('id', 'longname', 'doc', 'tags', 'lineno', 'starttime',
+    _attribute_names = ('id', 'longname', 'doc', 'tags', 'lineno', 'source', 'starttime',
                         'endtime', 'elapsedtime', 'status', 'message')
 
 

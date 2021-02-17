@@ -77,7 +77,7 @@ class IfRunner(object):
     def run(self, data):
         with self._dry_run_recursion_detection(data) as recursive_dry_run:
             error = None
-            with StatusReporter(self._context, IfResult(), self._run):
+            with StatusReporter(data, IfResult(), self._context, self._run):
                 for branch in data.body:
                     try:
                         if self._run_if_branch(branch, recursive_dry_run, data.error):
@@ -103,9 +103,9 @@ class IfRunner(object):
                 self._dry_run_stack.pop()
 
     def _run_if_branch(self, branch, recursive_dry_run=False, error=None):
-        result = IfBranchResult(branch.type, branch.condition, lineno=branch.lineno)
+        result = IfBranchResult(branch.type, branch.condition)
         run_branch = self._should_run_branch(branch.condition, recursive_dry_run)
-        with StatusReporter(self._context, result, run_branch):
+        with StatusReporter(branch, result, self._context, run_branch):
             if error and self._run:
                 raise DataError(error)
             runner = BodyRunner(self._context, run_branch, self._templated)
@@ -144,9 +144,8 @@ class ForInRunner(object):
         self._templated = templated
 
     def run(self, data):
-        result = ForResult(data.variables, data.flavor, data.values,
-                           lineno=data.lineno, source=data.source)
-        with StatusReporter(self._context, result, self._run):
+        result = ForResult(data.variables, data.flavor, data.values)
+        with StatusReporter(data, result, self._context, self._run):
             if self._run:
                 if data.error:
                     raise DataError(data.error)
@@ -259,13 +258,13 @@ class ForInRunner(object):
         )
 
     def _run_one_round(self, data, result, values=None):
-        result = result.body.create_iteration(lineno=data.lineno, source=data.source)
+        result = result.body.create_iteration()
         variables = self._map_variables_and_values(data.variables, values)
         for name, value in variables:
             self._context.variables[name] = value
             result.variables[name] = cut_assign_value(value)
         runner = BodyRunner(self._context, self._run, self._templated)
-        with StatusReporter(self._context, result, self._run):
+        with StatusReporter(data, result, self._context, self._run):
             runner.run(data.body)
 
     def _map_variables_and_values(self, variables, values):

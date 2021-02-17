@@ -52,7 +52,7 @@ class UserKeywordRunner(object):
     def run(self, kw, context, run=True):
         assignment = VariableAssignment(kw.assign)
         result = self._get_result(kw, assignment, context.variables)
-        with StatusReporter(context, result, run):
+        with StatusReporter(kw, result, context, run):
             with assignment.assigner(context) as assigner:
                 if run:
                     return_value = self._run(context, kw.args, result)
@@ -70,9 +70,7 @@ class UserKeywordRunner(object):
                              args=kw.args,
                              assign=tuple(assignment),
                              tags=tags,
-                             type=kw.type,
-                             lineno=kw.lineno,
-                             source=kw.source)
+                             type=kw.type)
 
     def _run(self, context, args, result):
         variables = context.variables
@@ -209,7 +207,7 @@ class UserKeywordRunner(object):
     def dry_run(self, kw, context):
         assignment = VariableAssignment(kw.assign)
         result = self._get_result(kw, assignment, context.variables)
-        with StatusReporter(context, result):
+        with StatusReporter(kw, result, context):
             assignment.validate_assignment()
             self._dry_run(context, kw.args, result)
 
