@@ -145,14 +145,6 @@ class ConnectionCache(object):
                 pass
         raise ValueError("Non-existing index or alias '%s'." % alias_or_index)
 
-    def _resolve_alias_or_index(self, alias_or_index):
-        # TODO: Remove this function for good in RF 3.3.
-        # See https://github.com/robotframework/robotframework/issues/3125
-        warnings.warn("'ConnectionCache._resolve_alias_or_index' is "
-                      "deprecated. Use 'resolve_alias_or_index' instead.",
-                      UserWarning)
-        return self.resolve_alias_or_index(alias_or_index)
-
     def _resolve_alias(self, alias):
         if is_string(alias) and alias in self._aliases:
             return self._aliases[alias]
