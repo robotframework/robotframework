@@ -14,12 +14,14 @@
 #  limitations under the License.
 
 from robot.errors import DataError, VariableError
-from robot.utils import (DotDict, is_dict_like, is_list_like, NormalizedDict,
-                         type_name)
+from robot.utils import DotDict, is_dict_like, is_list_like, NormalizedDict, type_name
 
 from .notfound import variable_not_found
 from .search import is_assign
 from .tablesetter import VariableTableValueBase
+
+
+NOT_SET = object()
 
 
 class VariableStore(object):
@@ -44,11 +46,10 @@ class VariableStore(object):
             self.data[name] = value.resolve(self._variables)
         except DataError as err:
             # Recursive resolving may have already removed variable.
-            if name in self:
-                self.remove(name)
+            if name in self.data:
+                self.data.pop(name)
                 value.report_error(err)
-            variable_not_found('${%s}' % name, self.data,
-                               "Variable '${%s}' not found." % name)
+            variable_not_found('${%s}' % name, self.data)
         return self.data[name]
 
     def _is_resolvable(self, value):
@@ -58,7 +59,19 @@ class VariableStore(object):
             return False
 
     def __getitem__(self, name):
+        if name not in self.data:
+            variable_not_found('${%s}' % name, self.data)
         return self._resolve_delayed(name, self.data[name])
+
+    def get(self, name, default=NOT_SET, decorated=True):
+        try:
+            if decorated:
+                name = self._undecorate(name)
+            return self[name]
+        except VariableError:
+            if default is NOT_SET:
+                raise
+            return default
 
     def update(self, store):
         self.data.update(store.data)
@@ -68,13 +81,17 @@ class VariableStore(object):
 
     def add(self, name, value, overwrite=True, decorated=True):
         if decorated:
-            name, value = self._undecorate(name, value)
+            name, value = self._undecorate_and_validate(name, value)
         if overwrite or name not in self.data:
             self.data[name] = value
 
-    def _undecorate(self, name, value):
+    def _undecorate(self, name):
         if not is_assign(name):
-            raise DataError("Invalid variable name '%s'." % name)
+            raise VariableError("Invalid variable name '%s'." % name)
+        return name[2:-1]
+
+    def _undecorate_and_validate(self, name, value):
+        undecorated = self._undecorate(name)
         if name[0] == '@':
             if not is_list_like(value):
                 self._raise_cannot_set_type(name, value, 'list')
@@ -83,15 +100,11 @@ class VariableStore(object):
             if not is_dict_like(value):
                 self._raise_cannot_set_type(name, value, 'dictionary')
             value = DotDict(value)
-        return name[2:-1], value
+        return undecorated, value
 
     def _raise_cannot_set_type(self, name, value, expected):
-        raise VariableError("Cannot set variable '%s': Expected %s-like value, "
-                            "got %s." % (name, expected, type_name(value)))
-
-    def remove(self, name):
-        if name in self.data:
-            self.data.pop(name)
+        raise VariableError("Cannot set variable '%s': Expected %s-like value, got %s."
+                            % (name, expected, type_name(value)))
 
     def __len__(self):
         return len(self.data)

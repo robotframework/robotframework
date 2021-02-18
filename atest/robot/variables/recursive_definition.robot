@@ -21,7 +21,7 @@ Recursive list variable
     Check Test Case    ${TESTNAME}
     Recursion error    \@{LIST}      5    12
     Recursion error    \@{LIST 1}    6    13
-    Non-existing error    \@{LIST 2}    \${LIST 1}    7    14    \${LIST 2}
+    Non-existing error    \@{LIST 2}    \@{LIST 1}    7    14
 
 Recursion with variables used in imports
     Check Test Case    ${TESTNAME}
@@ -39,10 +39,11 @@ Recursion error
 
 Non-existing error
     [Arguments]    ${variable1}    ${variable2}    ${index}    ${lineno}    @{recommendations}
-    ${recommendations} =    Run Keyword If    ${recommendations}
-    ...    Get recommendations    @{recommendations}
-    ...    ELSE
-    ...    Set variable    ${EMPTY}
+    IF    ${recommendations}
+        ${recommendations} =    Get recommendations    @{recommendations}
+    ELSE
+        ${recommendations} =    Set variable    ${EMPTY}
+    END
     Error In File    ${index}    variables/recursive_definition.robot    ${lineno}
     ...    Setting variable '${variable1}' failed:
     ...    Variable '${variable2}' not found.

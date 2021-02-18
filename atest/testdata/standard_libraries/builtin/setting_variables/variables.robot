@@ -255,7 +255,7 @@ Set Child Suite Variable 2
     Set Suite Variable    ${VAR}    value    children=${NON EXISTING}
 
 Set Global Variable 1
-    [Documentation]    FAIL Variable '\@{non_existing}' not found.
+    [Documentation]    FAIL Variable '\${non_existing}' not found.
     Should Be Equal    ${parent_suite_setup_global_var}    Set in __init__
     Should Be Equal    ${suite_setup_global_var}    Global var set in suite setup
     Should Be True    ${suite_setup_global_var_list} == [ 'Global var set in', 'suite setup' ]

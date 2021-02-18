@@ -33,14 +33,11 @@ class Variables(object):
         self.store = VariableStore(self)
         self._replacer = VariableReplacer(self.store)
 
-    # FIXME: __setitem__, __getitem__ and __contains__ are super inconsistent.
-    # Do we even need them?
-
     def __setitem__(self, name, value):
         self.store.add(name, value)
 
-    def __getitem__(self, item):
-        return self._replacer.replace_scalar(item)
+    def __getitem__(self, name):
+        return self.store.get(name)
 
     def __contains__(self, name):
         return name in self.store
