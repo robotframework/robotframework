@@ -3,7 +3,7 @@ import os
 import unittest
 import tempfile
 
-from robot.parsing import get_model, ModelVisitor, ModelTransformer, Token
+from robot.parsing import get_model, get_resource_model, ModelVisitor, ModelTransformer, Token
 from robot.parsing.model.blocks import (
     Block, CommentSection, File, For, If, Keyword, KeywordSection,
     SettingSection, TestCase, TestCaseSection, VariableSection
@@ -625,7 +625,26 @@ class TestError(unittest.TestCase):
         assert_equal(Error([Token('ERROR', error=e) for e in '0123456789']).errors,
                      tuple('0123456789'))
 
-    def test_model(self):
+    def test_get_fatal_errors_from_tokens(self):
+        assert_equal(Error([Token('FATAL ERROR', error='xxx')]).errors,
+                     ('xxx',))
+        assert_equal(Error([Token('FATAL ERROR', error='xxx'),
+                            Token('ARGUMENT'),
+                            Token('FATAL ERROR', error='yyy')]).errors,
+                     ('xxx', 'yyy'))
+        assert_equal(Error([Token('FATAL ERROR', error=e) for e in '0123456789']).errors,
+                     tuple('0123456789'))
+
+    def test_get_errors_and_fatal_errors_from_tokens(self):
+        assert_equal(Error([Token('ERROR', error='error'),
+                            Token('ARGUMENT'),
+                            Token('FATAL ERROR', error='fatal error')]).errors,
+                     ('error', 'fatal error'))
+        assert_equal(Error([Token('FATAL ERROR', error=e) for e in '0123456789']).errors,
+                     tuple('0123456789'))
+
+
+    def test_model_error(self):
         model = get_model('''\
 *** Invalid ***
 *** Settings ***
@@ -655,6 +674,54 @@ Documentation
         ])
         assert_model(model, expected)
 
+    def test_model_error_with_fatal_error(self):
+        model = get_resource_model('''\
+*** Test Cases ***
+''', data_only=True)
+        inv_testcases = "Resource file with 'Test Cases' section is invalid."
+        
+        expected = File([
+            CommentSection(
+                body=[
+                    Error([Token('FATAL ERROR', '*** Test Cases ***', 1, 0, inv_testcases)])
+                ]
+            )           
+        ])
+        assert_model(model, expected)
+
+    def test_model_error_with_error_and_fatal_error(self):
+        model = get_resource_model('''\
+*** Invalid ***
+*** Settings ***
+Invalid
+Documentation
+*** Test Cases ***
+''', data_only=True)
+        inv_header = (
+            "Unrecognized section header '*** Invalid ***'. Valid sections: "
+            "'Settings', 'Variables', 'Keywords' and 'Comments'."
+        )
+        inv_setting = "Non-existing setting 'Invalid'."
+        inv_testcases = "Resource file with 'Test Cases' section is invalid."
+
+        expected = File([
+            CommentSection(
+                body=[
+                    Error([Token('ERROR', '*** Invalid ***', 1, 0, inv_header)])
+                ]
+            ),
+            SettingSection(
+                header=SectionHeader([
+                    Token('SETTING HEADER', '*** Settings ***', 2, 0)
+                ]),
+                body=[
+                    Error([Token('ERROR', 'Invalid', 3, 0, inv_setting)]),
+                    Documentation([Token('DOCUMENTATION', 'Documentation', 4, 0)]),
+                    Error([Token('FATAL ERROR', '*** Test Cases ***', 5, 0, inv_testcases)])
+                ]
+            )           
+        ])
+        assert_model(model, expected)
 
 class TestModelVisitors(unittest.TestCase):
 

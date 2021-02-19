@@ -911,7 +911,7 @@ class Error(Statement):
     @property
     def errors(self):
         """Errors got from the underlying ``ERROR`` tokens."""
-        return tuple(t.error for t in self.get_tokens(Token.ERROR)) + self._errors
+        return tuple(t.error for t in self.get_tokens(Token.ERROR, Token.FATAL_ERROR)) + self._errors
 
     @errors.setter
     def errors(self, errors):
