@@ -26,7 +26,11 @@ class StatusReporter(object):
         self.data = data
         self.result = result
         self.context = context
-        self.pass_status = result.PASS if run else result.NOT_RUN
+        if run:
+            self.pass_status = result.PASS
+            result.status = result.NOT_SET
+        else:
+            self.pass_status = result.status = result.NOT_RUN
         self.test_passed = None
 
     def __enter__(self):

@@ -1,7 +1,6 @@
 *** Settings ***
 Resource           lineno_and_source.resource
 
-
 *** Test Cases ***
 Keyword
     No Operation

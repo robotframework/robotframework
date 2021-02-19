@@ -242,6 +242,9 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `source`: An absolute path of the file where the keyword was |
    |                  |                  |   used. New in RF 4.0.                                         |
    |                  |                  | * `lineno`: Line where the keyword was used. New in RF 4.0.    |
+   |                  |                  | * `status`: Initial keyword status. `NOT RUN` if keyword is    |
+   |                  |                  |   not executed (e.g. due to an earlier failure), `NOT SET`     |
+   |                  |                  |   otherwise. New in RF 4.0.                                    |
    |                  |                  | * `starttime`: Keyword execution start time.                   |
    +------------------+------------------+----------------------------------------------------------------+
    | end_keyword      | name, attributes | Called when a keyword ends.                                    |
@@ -266,7 +269,7 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `elapsedtime`: Total execution time in milliseconds as       |
    |                  |                  |   an integer                                                   |
    |                  |                  | * `status`: Keyword status as string `PASS`, `FAIL`, `SKIP`    |
-   |                  |                  |   or `NOT RUN`.                                                |
+   |                  |                  |   or `NOT RUN`. `SKIP` and `NOT RUN` are new in RF 4.0.        |
    +------------------+------------------+----------------------------------------------------------------+
    | log_message      | message          | Called when an executed keyword writes a log message.          |
    |                  |                  |                                                                |

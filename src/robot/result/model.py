@@ -87,6 +87,7 @@ class StatusMixin(object):
     FAIL = 'FAIL'
     SKIP = 'SKIP'
     NOT_RUN = 'NOT RUN'
+    NOT_SET = 'NOT SET'
 
     @property
     def elapsedtime(self):

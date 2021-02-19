@@ -79,6 +79,10 @@ Keyword Type
     Run Tests    --listener listeners.KeywordType    misc/setups_and_teardowns.robot misc/for_loops.robot misc/if_else.robot
     Stderr Should Be Empty
 
+Keyword Status
+    Run Tests    --listener listeners.KeywordStatus    misc/pass_and_fail.robot misc/if_else.robot
+    Stderr Should Be Empty
+
 Suite And Test Counts With Java
     [Tags]    require-jython
     Run Tests    --listener JavaSuiteAndTestCountListener    misc/suites/subsuites misc/suites/subsuites2
