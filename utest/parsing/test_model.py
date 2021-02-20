@@ -643,7 +643,6 @@ class TestError(unittest.TestCase):
         assert_equal(Error([Token('FATAL ERROR', error=e) for e in '0123456789']).errors,
                      tuple('0123456789'))
 
-
     def test_model_error(self):
         model = get_model('''\
 *** Invalid ***
@@ -679,13 +678,12 @@ Documentation
 *** Test Cases ***
 ''', data_only=True)
         inv_testcases = "Resource file with 'Test Cases' section is invalid."
-        
         expected = File([
             CommentSection(
                 body=[
                     Error([Token('FATAL ERROR', '*** Test Cases ***', 1, 0, inv_testcases)])
                 ]
-            )           
+            )
         ])
         assert_model(model, expected)
 
@@ -703,7 +701,6 @@ Documentation
         )
         inv_setting = "Non-existing setting 'Invalid'."
         inv_testcases = "Resource file with 'Test Cases' section is invalid."
-
         expected = File([
             CommentSection(
                 body=[
@@ -719,13 +716,23 @@ Documentation
                     Documentation([Token('DOCUMENTATION', 'Documentation', 4, 0)]),
                     Error([Token('FATAL ERROR', '*** Test Cases ***', 5, 0, inv_testcases)])
                 ]
-            )           
+            )
         ])
         assert_model(model, expected)
 
+    def test_set_errors_explicitly(self):
+        error = Error([])
+        error.errors = ('explicitly set', 'errors')
+        assert_equal(error.errors, ('explicitly set', 'errors'))
+        error.tokens = [Token('ERROR', error='normal error'),
+                        Token('FATAL ERROR', error='fatal error')]
+        assert_equal(error.errors, ('normal error', 'fatal error',
+                                    'explicitly set', 'errors'))
+
+
 class TestModelVisitors(unittest.TestCase):
 
-    def test_ast_NodevVisitor(self):
+    def test_ast_NodeVisitor(self):
 
         class Visitor(ast.NodeVisitor):
 
