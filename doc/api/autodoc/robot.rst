@@ -10,6 +10,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 2
 
    robot.api
    robot.conf
@@ -100,4 +101,3 @@ robot.version module
    :members:
    :undoc-members:
    :show-inheritance:
-

@@ -52,7 +52,6 @@ class Cleaner(ModelTransformer):
         header_token.value = '*** %s ***' % normalized
 
     def visit_Statement(self, statement):
-        statement.tokens = list(self._remove_old_for_loop_indent(statement))
         if statement.type in Token.SETTING_TOKENS:
             self._normalize_setting_name(statement)
         self.generic_visit(statement)
@@ -62,18 +61,6 @@ class Cleaner(ModelTransformer):
         if self.in_data_section:
             self._remove_empty_lines_within_statement(statement)
         return statement
-
-    def _remove_old_for_loop_indent(self, statement):
-        prev_was_for_indent = False
-        for t in statement.tokens:
-            if t.type == Token.OLD_FOR_INDENT:
-                prev_was_for_indent = True
-                continue
-            elif prev_was_for_indent and t.type == Token.SEPARATOR:
-                prev_was_for_indent = False
-                continue
-            else:
-                yield t
 
     def _normalize_setting_name(self, statement):
         name = statement.data_tokens[0].value
@@ -103,7 +90,7 @@ class Cleaner(ModelTransformer):
             new_tokens.extend(line)
         statement.tokens = new_tokens
 
-    def visit_ForLoop(self, loop):
+    def visit_For(self, loop):
         loop.header.data_tokens[0].value = 'FOR'
         if loop.end:
             loop.end.data_tokens[0].value = 'END'
@@ -134,7 +121,7 @@ class NewlineNormalizer(ModelTransformer):
 
     def visit_Section(self, node):
         if node is not self.last_section:
-            node.body.append(EmptyLine.from_value(self.newline))
+            node.body.append(EmptyLine.from_params(self.newline))
         return self.generic_visit(node)
 
     def visit_CommentSection(self, node):
@@ -149,7 +136,7 @@ class NewlineNormalizer(ModelTransformer):
 
     def visit_TestCase(self, node):
         if not node.body or node is not self.last_test:
-            node.body.append(EmptyLine.from_value(self.newline))
+            node.body.append(EmptyLine.from_params(self.newline))
         return self.generic_visit(node)
 
     def visit_KeywordSection(self, node):
@@ -158,16 +145,22 @@ class NewlineNormalizer(ModelTransformer):
 
     def visit_Keyword(self, node):
         if not node.body or node is not self.last_keyword:
-            node.body.append(EmptyLine.from_value(self.newline))
+            node.body.append(EmptyLine.from_params(self.newline))
         return self.generic_visit(node)
 
     def visit_Statement(self, statement):
         if statement[-1].type != Token.EOL:
             if not self._should_write_content_after_name(statement):
                 statement.tokens.append(Token(Token.EOL, self.newline))
+        new_tokens = []
         for line in statement.lines:
             if line[-1].type == Token.EOL:
-                line[-1].value = self.newline
+                if self._should_write_content_after_name(statement):
+                    line.pop()
+                else:
+                    line[-1].value = self.newline
+            new_tokens.extend(line)
+        statement.tokens = new_tokens
         return statement
 
     def _should_write_content_after_name(self, statement):
@@ -198,7 +191,7 @@ class SeparatorNormalizer(ModelTransformer):
         self.indent -= 1
         return node
 
-    def visit_ForLoop(self, node):
+    def visit_For(self, node):
         self.visit_Statement(node.header)
         self.indent += 1
         node.body = [self.visit(item) for item in node.body]
@@ -301,7 +294,7 @@ class ColumnAligner(ModelTransformer):
         self.first_statement_after_name_seen = False
         return self.generic_visit(node)
 
-    def visit_ForLoop(self, node):
+    def visit_For(self, node):
         self.indent += 1
         self.generic_visit(node)
         self.indent -= 1

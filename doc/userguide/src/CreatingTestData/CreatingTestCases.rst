@@ -204,7 +204,7 @@ three arguments would not work.
        Create File    ${TEMPDIR}/utf-8.txt         Hyvä esimerkki
        Create File    ${TEMPDIR}/iso-8859-1.txt    Hyvä esimerkki    ISO-8859-1
 
-.. _varargs:
+.. _varargs-usage:
 
 Variable number of arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -227,7 +227,8 @@ the latter requires at least one argument.
        Remove Files    ${TEMPDIR}/f1.txt    ${TEMPDIR}/f2.txt    ${TEMPDIR}/f3.txt
        @{paths} =    Join Paths    ${TEMPDIR}    f1.txt    f2.txt    f3.txt    f4.txt
 
-.. _Named argument syntax:
+.. _named argument:
+.. _named argument syntax:
 
 Named arguments
 ~~~~~~~~~~~~~~~
@@ -329,9 +330,8 @@ As already explained, the named argument syntax works with keywords. In
 addition to that, it also works when `importing libraries`_.
 
 Naming arguments is supported by `user keywords`_ and by most `test libraries`_.
-The only exception are Java based libraries that use the `static library API`_.
-Library documentation generated with Libdoc_ has a note does the library
-support named arguments or not.
+The only exceptions are Java based libraries that use the `static library API`_
+and Python keywords explicitly using `positional-only arguments`_.
 
 Named arguments example
 '''''''''''''''''''''''
@@ -354,6 +354,8 @@ library keywords, user keywords, and when importing the Telnet_ test library.
    List files
        [Arguments]    ${path}=.    ${options}=
        Execute command    ls ${options} ${path}
+
+.. _kwargs-usage:
 
 Free named arguments
 ~~~~~~~~~~~~~~~~~~~~
@@ -601,7 +603,7 @@ least for the following purposes:
 - Statistics__ about test cases (total, passed, failed  are
   automatically collected based on tags).
 - With tags, you can `include or exclude`__ test cases to be executed.
-- With tags, you can specify which test cases are considered `critical`_.
+- With tags, you can specify which test cases should be skipped_.
 
 __ `Configuring statistics`_
 __ `By tag names`_
@@ -824,8 +826,8 @@ the templated tests the mode is on automatically.
        second round 1    second round 2
        third round 1     third round 2
 
-Using arguments with `default values`_ or `varargs`_, as well as using
-`named arguments`_ and `free named arguments`_, work with templates
+Using keywords with `default values`_ or accepting `variable number of arguments`_,
+as well as using `named arguments`_ and `free named arguments`_, work with templates
 exactly like they work otherwise. Using variables_ in arguments is also
 supported normally.
 
@@ -895,13 +897,31 @@ all the looped elements even if there are failures.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Template and for
+   Template with for loop
        [Template]    Example keyword
        FOR    ${item}    IN    @{ITEMS}
            ${item}    2nd arg
        END
        FOR    ${index}    IN RANGE    42
            1st arg    ${index}
+       END
+
+Templates with if expression
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`If expression`_ can be also used together with templates.
+This can be useful, for example, when used together with `for loops`_ to
+filter executed arguments.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Template with for and if
+       [Template]    Example keyword
+       FOR    ${item}    IN    @{ITEMS}
+           IF  ${item} < 5
+               ${item}    2nd arg
+           END
        END
 
 Different test case styles

@@ -13,10 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import setter
+from robot.utils import py3to2, setter
 
 from .configurer import SuiteConfigurer
 from .filter import Filter, EmptySuiteRemover
+from .fixture import create_fixture
 from .itemlist import ItemList
 from .keyword import Keyword, Keywords
 from .metadata import Metadata
@@ -25,26 +26,30 @@ from .tagsetter import TagSetter
 from .testcase import TestCase, TestCases
 
 
+@py3to2
 class TestSuite(ModelObject):
     """Base model for single suite.
 
     Extended by :class:`robot.running.model.TestSuite` and
     :class:`robot.result.model.TestSuite`.
     """
-    __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors', 'rpa']
     test_class = TestCase    #: Internal usage only.
-    keyword_class = Keyword  #: Internal usage only.
+    fixture_class = Keyword  #: Internal usage only.
+    repr_args = ('name',)
+    __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors', 'rpa']
 
-    def __init__(self, name='', doc='', metadata=None, source=None, rpa=False):
-        self.parent = None  #: Parent suite. ``None`` with the root suite.
+    def __init__(self, name='', doc='', metadata=None, source=None, rpa=False,
+                 parent=None):
         self._name = name
-        self.doc = doc  #: Test suite documentation.
+        self.doc = doc
         self.metadata = metadata
         self.source = source  #: Path to the source file or directory.
-        self.rpa = rpa
+        self.parent = parent  #: Parent suite. ``None`` with the root suite.
+        self.rpa = rpa        #: ``True`` when RPA mode is enabled.
         self.suites = None
         self.tests = None
-        self.keywords = None
+        self.setup = None
+        self.teardown = None
         self._my_visitors = []
 
     @property
@@ -84,9 +89,25 @@ class TestSuite(ModelObject):
         return TestCases(self.test_class, self, tests)
 
     @setter
+    def setup(self, setup):
+        return create_fixture(setup, self, Keyword.SETUP)
+
+    @setter
+    def teardown(self, teardown):
+        return create_fixture(teardown, self, Keyword.TEARDOWN)
+
+    @property
+    def keywords(self):
+        """Deprecated since Robot Framework 4.0
+
+        Use :attr:`setup` or :attr:`teardown` instead.
+        """
+        keywords = [self.setup, self.teardown]
+        return Keywords(self, [kw for kw in keywords if kw])
+
+    @keywords.setter
     def keywords(self, keywords):
-        """Suite setup and teardown as a :class:`~.Keywords` object."""
-        return Keywords(self.keyword_class, self, keywords)
+        Keywords.raise_deprecation_error()
 
     @property
     def id(self):
@@ -172,6 +193,9 @@ class TestSuite(ModelObject):
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_suite(self)
+
+    def __str__(self):
+        return self.name
 
 
 class TestSuites(ItemList):

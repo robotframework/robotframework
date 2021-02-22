@@ -86,8 +86,8 @@ Newline
     Should Be Equal    foo\n\ bar    foo${NL}${SP}bar
     Should Be Equal    foo\\n bar    foo${BS}n${SP}bar
 
-Ignoring Space After Newline Is Deprecated
-    Should Be Equal    foo\n bar\n zap    foo${NL}bar${NL}zap
+Space After Newline Is parsed
+    Should Be Equal    foo\n bar\n zap    foo${NL} bar${NL} zap
 
 Carrriage Return
     Should Be Equal    \r    ${CR}

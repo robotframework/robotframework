@@ -5,7 +5,7 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Import Library Normally Before Importing With Name In Another Suite
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.kws[0]}    OperatingSystem.Should Exist    args=*
+    Check Keyword Data    ${tc.kws[0]}    OperatingSystem.Should Exist    args=.
     Check Keyword Data    ${tc.kws[1]}    ParameterLibrary.Parameters Should Be    args=before1, before2
     Syslog Should Contain    Imported library 'OperatingSystem' with arguments [ ] (version ${ROBOT VERSION}, class type, GLOBAL scope,
     Syslog Should Contain    Imported library 'ParameterLibrary' with arguments [ before1 | before2 ] (version <unknown>, class type, TEST scope,
@@ -17,7 +17,7 @@ Import Library With Name Before Importing With Name In Another Suite
 
 Import Library Normally After Importing With Name In Another Suite
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.kws[0]}    OperatingSystem.Should Exist    args=*
+    Check Keyword Data    ${tc.kws[0]}    OperatingSystem.Should Exist    args=.
     Check Keyword Data    ${tc.kws[1]}    ParameterLibrary.Parameters Should Be    args=after1, after2
 
 Import Library With Name After Importing With Name In Another Suite
@@ -35,8 +35,8 @@ Name Given Using "With Name" Can Be Reused In Different Suites
 
 No Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.kws[0]}    OS.Directory Should Exist    args=*
-    Check Keyword Data    ${tc.kws[1]}    OS.Should Exist    args=*
+    Check Keyword Data    ${tc.kws[0]}    OS.Directory Should Exist    args=.
+    Check Keyword Data    ${tc.kws[1]}    OS.Should Exist    args=.
     Syslog Should Contain    Imported library 'OperatingSystem' with name 'OS'
 
 Embedded Arguments
@@ -93,7 +93,7 @@ Java Library In Package
 
 Import Library Keyword
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.kws[1]}    MyOS.Directory Should Exist    args=*
+    Check Keyword Data    ${tc.kws[1]}    MyOS.Directory Should Exist    args=.
     Check Keyword Data    ${tc.kws[3]}    MyParamLib.Parameters Should Be    args=my first argument, second arg
 
 Correct Error When Using Keyword From Same Library With Different Names Without Prefix
@@ -131,7 +131,7 @@ With Name When Library Arguments Are Not Strings
 
 'WITH NAME' is case-sensitive
     Error In File    -1    test_libraries/with_name_3.robot    5
-    ...    Test Library 'ParameterLibrary' expected 0 to 2 arguments, got 4.
+    ...    Library 'ParameterLibrary' expected 0 to 2 arguments, got 4.
 
 'WITH NAME' cannot come from variable
     Check Test Case    ${TEST NAME}

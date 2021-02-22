@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<keywordspec name="DataTypesLibrary" type="LIBRARY" format="ROBOT" scope="TEST" generated="2020-11-26T20:27:08Z" specversion="3" source="DataTypesLibrary.py" lineno="77">
+<version></version>
+<doc>This Library has Data Types.
+
+It has some in ``__init__`` and others in the `Keywords`.
+
+The DataTypes are the following that should be linked.
+`HttpCredentials` , `GeoLocation` , `Small` and `AssertionOperator`.</doc>
+<tags></tags>
+<inits>
+<init name="Init" lineno="86">
+<arguments repr="credentials: Small = one">
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="credentials: Small = one">
+<name>credentials</name>
+<type>Small</type>
+<default>one</default>
+</arg>
+</arguments>
+<doc>This is the init Docs.
+
+It links to `Set Location` keyword and to `GeoLocation` data type.</doc>
+<shortdoc>This is the init Docs.</shortdoc>
+</init>
+</inits>
+<keywords>
+<kw name="Assert Something" lineno="95">
+<arguments repr="value, operator: AssertionOperator | None = None, exp: str = something?">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="value">
+<name>value</name>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="operator: AssertionOperator | None = None">
+<name>operator</name>
+<type>AssertionOperator</type>
+<type>None</type>
+<default>None</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="exp: str = something?">
+<name>exp</name>
+<type>str</type>
+<default>something?</default>
+</arg>
+</arguments>
+<doc></doc>
+<shortdoc></shortdoc>
+</kw>
+<kw name="Funny Unions" lineno="98">
+<arguments repr="funny: bool | int | float | str | AssertionOperator | Small | GeoLocation | None = equal">
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="funny: bool | int | float | str | AssertionOperator | Small | GeoLocation | None = equal">
+<name>funny</name>
+<type>bool</type>
+<type>int</type>
+<type>float</type>
+<type>str</type>
+<type>AssertionOperator</type>
+<type>Small</type>
+<type>GeoLocation</type>
+<type>None</type>
+<default>equal</default>
+</arg>
+</arguments>
+<doc></doc>
+<shortdoc></shortdoc>
+</kw>
+<kw name="Set Location" lineno="92">
+<arguments repr="location: GeoLocation">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="location: GeoLocation">
+<name>location</name>
+<type>GeoLocation</type>
+</arg>
+</arguments>
+<doc></doc>
+<shortdoc></shortdoc>
+</kw>
+<kw name="Typing Types" lineno="112">
+<arguments repr="list_of_str: List[str], dict_str_int: Dict[str, int], Whatever: Any, *args: List[typing.Any]">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="list_of_str: List[str]">
+<name>list_of_str</name>
+<type>List[str]</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="dict_str_int: Dict[str, int]">
+<name>dict_str_int</name>
+<type>Dict[str, int]</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="Whatever: Any">
+<name>Whatever</name>
+<type>Any</type>
+</arg>
+<arg kind="VAR_POSITIONAL" required="false" repr="*args: List[typing.Any]">
+<name>args</name>
+<type>List[typing.Any]</type>
+</arg>
+</arguments>
+<doc></doc>
+<shortdoc></shortdoc>
+</kw>
+</keywords>
+<datatypes>
+<enums>
+<enum name="AssertionOperator">
+<doc>This is some Doc
+
+This has was defined by assigning to __doc__.</doc>
+<members>
+<member name="equal" value="=="/>
+<member name="==" value="=="/>
+<member name="&lt;" value="&lt;"/>
+<member name="&gt;" value="&gt;"/>
+<member name="&lt;=" value="&lt;="/>
+<member name="&gt;=" value="&gt;="/>
+</members>
+</enum>
+<enum name="Small">
+<doc>This is the Documentation.
+
+    This was defined within the class definition.</doc>
+<members>
+<member name="one" value="1"/>
+<member name="two" value="2"/>
+<member name="three" value="3"/>
+<member name="four" value="4"/>
+</members>
+</enum>
+</enums>
+<typeddicts>
+<typeddict name="GeoLocation">
+<doc>Defines the geolocation.
+
+    - ``latitude`` Latitude between -90 and 90.
+    - ``longitude`` Longitude between -180 and 180.
+    - ``accuracy`` *Optional* Non-negative accuracy value. Defaults to 0.
+    Example usage: ``{'latitude': 59.95, 'longitude': 30.31667}``</doc>
+<items>
+<item key="longitude" type="float" required="true"/>
+<item key="latitude" type="float" required="true"/>
+<item key="accuracy" type="float" required="false"/>
+</items>
+</typeddict>
+</typeddicts>
+</datatypes>
+</keywordspec>

@@ -3,6 +3,7 @@ import unittest
 from os.path import join
 
 from robot import api, model, parsing, reporting, result, running
+from robot.api import parsing as api_parsing
 
 from robot.utils.asserts import assert_equal, assert_true
 
@@ -22,12 +23,37 @@ class TestExposedApi(unittest.TestCase):
         assert_equal(api.SuiteVisitor, model.SuiteVisitor)
         assert_equal(api.ResultVisitor, result.ResultVisitor)
 
-    def test_parsing(self):
+    def test_deprecated_parsing(self):
         assert_equal(api.get_model, parsing.get_model)
         assert_equal(api.get_resource_model, parsing.get_resource_model)
         assert_equal(api.get_tokens, parsing.get_tokens)
         assert_equal(api.get_resource_tokens, parsing.get_resource_tokens)
         assert_equal(api.Token, parsing.Token)
+
+    def test_parsing_getters(self):
+        assert_equal(api_parsing.get_model, parsing.get_model)
+        assert_equal(api_parsing.get_resource_model, parsing.get_resource_model)
+        assert_equal(api_parsing.get_tokens, parsing.get_tokens)
+        assert_equal(api_parsing.get_resource_tokens, parsing.get_resource_tokens)
+
+    def test_parsing_token(self):
+        assert_equal(api_parsing.Token, parsing.Token)
+
+    def test_parsing_model_statements(self):
+        for cls in parsing.model.Statement._statement_handlers.values():
+            assert_equal(getattr(api_parsing, cls.__name__), cls)
+        assert_true(not hasattr(api_parsing, 'Statement'))
+
+    def test_parsing_model_blocks(self):
+        for name in ('File', 'SettingSection', 'VariableSection', 'TestCaseSection',
+                     'KeywordSection', 'CommentSection', 'TestCase', 'Keyword', 'For',
+                     'If'):
+            assert_equal(getattr(api_parsing, name), getattr(parsing.model, name))
+        assert_true(not hasattr(api_parsing, 'Block'))
+
+    def test_parsing_visitors(self):
+        assert_equal(api_parsing.ModelVisitor, parsing.ModelVisitor)
+        assert_equal(api_parsing.ModelTransformer, parsing.ModelTransformer)
 
 
 class TestModelObjects(unittest.TestCase):
@@ -46,7 +72,6 @@ class TestModelObjects(unittest.TestCase):
         assert_true(result.TestSuite)
         assert_true(result.TestCase)
         assert_true(result.Keyword)
-        assert_true(result.Message)
 
 
 class TestTestSuiteBuilder(unittest.TestCase):

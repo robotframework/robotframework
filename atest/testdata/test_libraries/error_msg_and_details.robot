@@ -92,4 +92,3 @@ Non Existing Scalar Variable
 Non Existing List Variable
     [Documentation]    FAIL Variable '\@{non existing}' not found.
     Log Many    @{non existing}.
-

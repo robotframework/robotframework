@@ -22,8 +22,8 @@ Replace Variables Fails When Variable Does Not Exist
 Replace Variables With Escaped Variables
     ${result} =    Replace Variables    \\\${non existing} but escaped
     Should Be Equal    ${result}    \${non existing} but escaped
-    ${result} =    Replace Variables    \@{LIST}[0] \\\@{LIST}[1]
-    Should Be Equal    ${result}    Hello \@{LIST}[1]
+    ${result} =    Replace Variables    \${LIST}[0] \\\${LIST}[1]
+    Should Be Equal    ${result}    Hello \${LIST}[1]
 
 Replace Variables With Scalar Object
     ${replaced} =    Replace Variables    \${42}

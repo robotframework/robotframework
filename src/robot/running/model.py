@@ -37,13 +37,23 @@ import os
 
 from robot import model
 from robot.conf import RobotSettings
+from robot.model import Keywords, BodyItem
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.utils import seq2str, setter
 
+from .bodyrunner import ForRunner, IfRunner, KeywordRunner
 from .randomizer import Randomizer
-from .steprunner import StepRunner
 
 
+class Body(model.Body):
+    __slots__ = []
+
+
+class IfBranches(model.IfBranches):
+    __slots__ = []
+
+
+@Body.register
 class Keyword(model.Keyword):
     """Represents a single executable keyword.
 
@@ -53,50 +63,69 @@ class Keyword(model.Keyword):
     See the base class for documentation of attributes not documented here.
     """
     __slots__ = ['lineno']
-    message_class = None  #: Internal usage only.
 
-    def __init__(self, name='', doc='', args=(), assign=(), tags=(),
-                 timeout=None, type=model.Keyword.KEYWORD_TYPE, lineno=None):
-        model.Keyword.__init__(self, name, doc, args, assign, tags, timeout, type)
+    def __init__(self, name='', doc='', args=(), assign=(), tags=(), timeout=None,
+                 type=BodyItem.KEYWORD, parent=None, lineno=None):
+        model.Keyword.__init__(self, name, doc, args, assign, tags, timeout, type,
+                               parent)
         self.lineno = lineno
 
-    def run(self, context):
-        """Execute the keyword.
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
 
-        Typically called internally by :meth:`TestSuite.run`.
-        """
-        return StepRunner(context).run_step(self)
+    def run(self, context, run=True, templated=None):
+        return KeywordRunner(context, run).run(self)
 
 
-class ForLoop(Keyword):
-    """Represents a for loop in test data.
+@Body.register
+class For(model.For):
+    __slots__ = ['lineno', 'error']
+    body_class = Body
 
-    Contains keywords in the loop body as child :attr:`keywords`.
-    """
-    __slots__ = ['flavor', 'lineno', '_header', '_end']
-    keyword_class = Keyword  #: Internal usage only.
-
-    def __init__(self, variables, values, flavor, lineno=None,
-                 _header='FOR', _end='END'):
-        Keyword.__init__(self, assign=variables, args=values,
-                         type=Keyword.FOR_LOOP_TYPE)
-        self.flavor = flavor
+    def __init__(self, variables, flavor, values, parent=None, lineno=None, error=None):
+        model.For.__init__(self, variables, flavor, values, parent)
         self.lineno = lineno
-        self._header = _header
-        self._end = _end
+        self.error = error
 
     @property
-    def variables(self):
-        return self.assign
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
+    def run(self, context, run=True, templated=False):
+        return ForRunner(context, self.flavor, run, templated).run(self)
+
+
+@Body.register
+class If(model.If):
+    __slots__ = ['lineno', 'error']
+    body_class = IfBranches
+
+    def __init__(self, parent=None, lineno=None, error=None):
+        model.If.__init__(self, parent)
+        self.lineno = lineno
+        self.error = error
 
     @property
-    def values(self):
-        return self.args
+    def source(self):
+        return self.parent.source if self.parent is not None else None
 
-    def __unicode__(self):
-        variables = '    '.join(self.assign)
-        values = '    '.join(self.values)
-        return u'FOR    %s    %s    %s' % (variables, self.flavor, values)
+    def run(self, context, run=True, templated=False):
+        return IfRunner(context, run, templated).run(self)
+
+
+@IfBranches.register
+class IfBranch(model.IfBranch):
+    __slots__ = ['lineno']
+    body_class = Body
+
+    def __init__(self, type=BodyItem.IF, condition=None, parent=None, lineno=None):
+        model.IfBranch.__init__(self, type, condition, parent)
+        self.lineno = lineno
+
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
 
 
 class TestCase(model.TestCase):
@@ -105,15 +134,20 @@ class TestCase(model.TestCase):
     See the base class for documentation of attributes not documented here.
     """
     __slots__ = ['template', 'lineno']
-    keyword_class = Keyword  #: Internal usage only.
+    body_class = Body        #: Internal usage only.
+    fixture_class = Keyword  #: Internal usage only.
 
     def __init__(self, name='', doc='', tags=None, timeout=None, template=None,
                  lineno=None):
         model.TestCase.__init__(self, name, doc, tags, timeout)
-        #: Name of the keyword that has been used as template
-        #: when building the test. ``None`` if no is template used.
+        #: Name of the keyword that has been used as a template when building the test.
+        # ``None`` if template is not used.
         self.template = template
         self.lineno = lineno
+
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
 
 
 class TestSuite(model.TestSuite):
@@ -123,7 +157,7 @@ class TestSuite(model.TestSuite):
     """
     __slots__ = ['resource']
     test_class = TestCase    #: Internal usage only.
-    keyword_class = Keyword  #: Internal usage only.
+    fixture_class = Keyword  #: Internal usage only.
 
     def __init__(self,  name='', doc='', metadata=None, source=None, rpa=None):
         model.TestSuite.__init__(self, name, doc, metadata, source, rpa)
@@ -224,7 +258,6 @@ class TestSuite(model.TestSuite):
 
             stdout = StringIO()
             result = suite.run(variable='EXAMPLE:value',
-                               critical='regression',
                                output='example.xml',
                                exitonfailure=True,
                                stdout=stdout)
@@ -245,7 +278,7 @@ class TestSuite(model.TestSuite):
         """
         from .namespace import IMPORTER
         from .signalhandler import STOP_SIGNAL_MONITOR
-        from .runner import Runner
+        from .suiterunner import SuiteRunner
 
         with LOGGER:
             if not settings:
@@ -255,7 +288,7 @@ class TestSuite(model.TestSuite):
                 with STOP_SIGNAL_MONITOR:
                     IMPORTER.reset()
                     output = Output(settings)
-                    runner = Runner(output, settings)
+                    runner = SuiteRunner(output, settings)
                     self.visit(runner)
                 output.close(runner.result)
         return runner.result
@@ -309,13 +342,36 @@ class UserKeyword(object):
         self.tags = tags
         self.return_ = return_ or ()
         self.timeout = timeout
-        self.keywords = []
         self.lineno = lineno
         self.parent = parent
+        self.body = None
+        self._teardown = None
 
     @setter
+    def body(self, body):
+        """Child keywords as a :class:`~.Body` object."""
+        return Body(self, body)
+
+    @property
+    def keywords(self):
+        """Deprecated since Robot Framework 4.0.
+
+        Use :attr:`body` or :attr:`teardown` instead.
+        """
+        kws = list(self.body)
+        if self.teardown:
+            kws.append(self.teardown)
+        return Keywords(self, kws)
+
+    @keywords.setter
     def keywords(self, keywords):
-        return model.Keywords(Keyword, self, keywords)
+        Keywords.raise_deprecation_error()
+
+    @property
+    def teardown(self):
+        if self._teardown is None:
+            self._teardown = Keyword(None, parent=self, type=Keyword.TEARDOWN)
+        return self._teardown
 
     @setter
     def tags(self, tags):
@@ -329,8 +385,7 @@ class UserKeyword(object):
 class Import(object):
     ALLOWED_TYPES = ('Library', 'Resource', 'Variables')
 
-    def __init__(self, type, name, args=(), alias=None, source=None,
-                 lineno=None):
+    def __init__(self, type, name, args=(), alias=None, source=None, lineno=None):
         if type not in self.ALLOWED_TYPES:
             raise ValueError("Invalid import type '%s'. Should be one of %s."
                              % (type, seq2str(self.ALLOWED_TYPES, lastsep=' or ')))
@@ -352,8 +407,7 @@ class Import(object):
     def report_invalid_syntax(self, message, level='ERROR'):
         source = self.source or '<unknown>'
         line = ' on line %s' % self.lineno if self.lineno is not None else ''
-        LOGGER.write("Error in file '%s'%s: %s" % (source, line, message),
-                     level)
+        LOGGER.write("Error in file '%s'%s: %s" % (source, line, message), level)
 
 
 class Imports(model.ItemList):

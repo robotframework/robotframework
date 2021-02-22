@@ -25,6 +25,22 @@ robot.libdocpkg.consoleviewer module
    :undoc-members:
    :show-inheritance:
 
+robot.libdocpkg.datatypes module
+--------------------------------
+
+.. automodule:: robot.libdocpkg.datatypes
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+robot.libdocpkg.htmlutils module
+--------------------------------
+
+.. automodule:: robot.libdocpkg.htmlutils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.libdocpkg.htmlwriter module
 ---------------------------------
 
@@ -45,6 +61,22 @@ robot.libdocpkg.javabuilder module
 ----------------------------------
 
 .. automodule:: robot.libdocpkg.javabuilder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+robot.libdocpkg.jsonbuilder module
+----------------------------------
+
+.. automodule:: robot.libdocpkg.jsonbuilder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+robot.libdocpkg.jsonwriter module
+---------------------------------
+
+.. automodule:: robot.libdocpkg.jsonwriter
    :members:
    :undoc-members:
    :show-inheritance:
@@ -96,4 +128,3 @@ robot.libdocpkg.xmlwriter module
    :members:
    :undoc-members:
    :show-inheritance:
-

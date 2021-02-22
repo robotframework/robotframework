@@ -50,7 +50,7 @@ Tidying directory
     Should Be Equal    ${result_before.stdout}    ${result_after.stdout}
 
 Custom headers are preserved and tables aligned accordingly
-    Run tidy and check result    input=golden_with_headers.robot
+    Run tidy and check result    input=custom_headers_input.robot    expected=golden_with_headers.robot
 
 Running Tidy as script
     [Tags]   no-standalone

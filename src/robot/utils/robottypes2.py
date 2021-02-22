@@ -64,9 +64,14 @@ def is_dict_like(item):
 
 
 def type_name(item, capitalize=False):
-    cls = item.__class__ if hasattr(item, '__class__') else type(item)
+    if isinstance(item, (type, ClassType)):
+        typ = item
+    elif hasattr(item, '__class__'):
+        typ = item.__class__
+    else:
+        typ = type(item)
     named_types = {str: 'string', unicode: 'string', bool: 'boolean',
                    int: 'integer', long: 'integer', NoneType: 'None',
-                   dict: 'dictionary', type: 'class', ClassType: 'class'}
-    name = named_types.get(cls, cls.__name__)
+                   dict: 'dictionary'}
+    name = named_types.get(typ, typ.__name__)
     return name.capitalize() if capitalize and name.islower() else name

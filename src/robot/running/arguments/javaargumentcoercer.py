@@ -22,6 +22,7 @@ from robot.utils import is_string, is_list_like
 class JavaArgumentCoercer(object):
 
     def __init__(self, signatures, argspec):
+        """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
         self._argspec = argspec
         self._coercers = CoercerFinder().find_coercers(signatures)
         self._varargs_handler = VarargsHandler(argspec)
@@ -30,7 +31,7 @@ class JavaArgumentCoercer(object):
         arguments = self._varargs_handler.handle(arguments)
         arguments = [c.coerce(a, dryrun)
                      for c, a in zip(self._coercers, arguments)]
-        if self._argspec.kwargs:
+        if self._argspec.var_named:
             arguments.append(dict(named))
         return arguments
 
@@ -132,7 +133,7 @@ class NullCoercer(_Coercer):
 class VarargsHandler(object):
 
     def __init__(self, argspec):
-        self._index = argspec.minargs if argspec.varargs else -1
+        self._index = argspec.minargs if argspec.var_positional else -1
 
     def handle(self, arguments):
         if self._index > -1 and not self._passing_list(arguments):

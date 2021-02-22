@@ -17,6 +17,14 @@ robot.api.deco module
    :undoc-members:
    :show-inheritance:
 
+robot.api.exceptions module
+---------------------------
+
+.. automodule:: robot.api.exceptions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.api.logger module
 -----------------------
 
@@ -25,3 +33,10 @@ robot.api.logger module
    :undoc-members:
    :show-inheritance:
 
+robot.api.parsing module
+------------------------
+
+.. automodule:: robot.api.parsing
+   :members:
+   :undoc-members:
+   :show-inheritance:

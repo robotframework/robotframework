@@ -11,19 +11,18 @@ Old Style Python Class With No Argument Init
 
 Java Class With No Constructor
     [Tags]    require-jython    require-tools.jar
-    NoConstructor.java
+    NoConstructor.java    /
 
 Java Class With Default and Private Constructors
     [Tags]    require-jython    require-tools.jar
-    NoArgConstructor.java
-
+    NoArgConstructor.java    /
 
 *** Keywords ***
 Library Should Have No Init
-    [Arguments]    ${library}
+    [Arguments]    ${library}    @{posonly marker}
     Run Libdoc And Parse Output    ${TESTDATADIR}/${library}
     Should Have No Init
-    Doc Should Be    No inits here!
+    Doc Should Be                  No inits here!
     Keyword Name Should Be         0    Keyword
-    Keyword Arguments Should Be    0    arg1    arg2
+    Keyword Arguments Should Be    0    arg1    arg2    @{posonly marker}
     Keyword Doc Should Be          0    The only lonely keyword.

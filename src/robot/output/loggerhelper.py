@@ -19,7 +19,8 @@ from robot.utils import get_timestamp, is_unicode, unic
 
 
 LEVELS = {
-  'NONE'  : 6,
+  'NONE'  : 7,
+  'SKIP'  : 6,
   'FAIL'  : 5,
   'ERROR' : 4,
   'WARN'  : 3,
@@ -55,6 +56,13 @@ class AbstractLogger(object):
             html = True
             msg = msg[6:].lstrip()
         self.write(msg, 'FAIL', html)
+
+    def skip(self, msg):
+        html = False
+        if msg.startswith("*HTML*"):
+            html = True
+            msg = msg[6:].lstrip()
+        self.write(msg, 'SKIP', html)
 
     def error(self, msg):
         self.write(msg, 'ERROR')
@@ -134,7 +142,14 @@ class AbstractLoggerProxy(object):
     def __init__(self, logger, method_names=None, prefix=None):
         self.logger = logger
         for name in method_names or self._methods:
-            setattr(self, name, self._get_method(logger, name, prefix))
+            # Allow extending classes to implement some of the messages themselves.
+            if hasattr(self, name):
+                if hasattr(logger, name):
+                    continue
+                target = logger
+            else:
+                target = self
+            setattr(target, name, self._get_method(logger, name, prefix))
 
     def _get_method(self, logger, name, prefix):
         for method_name in self._get_method_names(name, prefix):

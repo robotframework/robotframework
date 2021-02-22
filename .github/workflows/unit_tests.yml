@@ -2,17 +2,15 @@ name: Unit tests
 
 on:
   push:
+    branches:
+      - main
+      - master
     paths:
       - '.github/workflows/**'
       - 'src/**'
       - 'utest/**'
       - '!**/*.rst'
-  pull_request:
-    paths:
-      - '.github/workflows/**'
-      - 'src/**'
-      - 'utest/**'
-      - '!**/*.rst'
+
 
 jobs:
   test_using_builtin_python:
@@ -21,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ 'ubuntu-latest', 'macos-latest', 'windows-latest' ]
-        python-version: [ '2.7', '3.5', '3.6', '3.7', '3.8', '3.9.0-alpha - 3.9', 'pypy2', 'pypy3' ]
+        python-version: [ '2.7', '3.5', '3.6', '3.7', '3.8', '3.9', 'pypy2', 'pypy3' ]
         exclude:
           - os: windows-latest
             python-version: 'pypy2'
@@ -49,6 +47,7 @@ jobs:
       - name: Run unit tests with coverage
         run: |
           python -m pip install coverage
+          python -m pip install -r utest/requirements.txt
           python -m coverage run --branch utest/run.py -v
 
       - name: Prepare HTML/XML coverage report
@@ -56,7 +55,7 @@ jobs:
           python -m coverage xml -i
         if: always()
 
-      - uses: codecov/codecov-action@e34ee485244a5b5e6e4e1b96daa4a15c9073e4fc
+      - uses: codecov/codecov-action@1fc7722ded4708880a5aea49f2bfafb9336f0c8d
         with:
           name: ${{ matrix.python-version }}-${{ matrix.os }}
         if: always()
@@ -103,6 +102,7 @@ jobs:
       - name: Run unit tests
         run: |
           ${{ matrix.set_codepage }}
+          jython/bin/jython -m pip install -r utest/requirements.txt
           jython/bin/jython utest/run.py -v
 
   test_using_ironpython:
@@ -126,4 +126,5 @@ jobs:
       - name: Run unit tests
         run: |
           chcp 850
+          ipy -m pip install -r utest/requirements.txt
           ipy utest/run.py -v

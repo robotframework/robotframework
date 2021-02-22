@@ -19,10 +19,12 @@ from robot.model import SuiteVisitor
 class SuiteTeardownFailureHandler(SuiteVisitor):
 
     def end_suite(self, suite):
-        teardown = suite.keywords.teardown
-        # Both 'PASS' and 'NOT_RUN' (used in dry-run) statuses are OK.
-        if teardown and teardown.status == 'FAIL':
+        teardown = suite.teardown
+        # Both 'PASS' and 'NOT RUN' statuses are OK.
+        if teardown and teardown.status == teardown.FAIL:
             suite.suite_teardown_failed(teardown.message)
+        if teardown and teardown.status == teardown.SKIP:
+            suite.suite_teardown_skipped(teardown.message)
 
     def visit_test(self, test):
         pass
@@ -32,16 +34,26 @@ class SuiteTeardownFailureHandler(SuiteVisitor):
 
 
 class SuiteTeardownFailed(SuiteVisitor):
-    _normal_msg = 'Parent suite teardown failed:\n'
-    _also_msg = '\n\nAlso parent suite teardown failed:\n'
+    _normal_msg = 'Parent suite teardown failed:\n%s'
+    _also_msg = '\n\nAlso parent suite teardown failed:\n%s'
+    _normal_skip_msg = 'Skipped in parent suite teardown:\n%s'
+    _also_skip_msg = 'Skipped in parent suite teardown:\n%s\n\nEarlier message:\n%s'
 
-    def __init__(self, error):
-        self._normal_msg += error
-        self._also_msg += error
+    def __init__(self, message, skipped=False):
+        self._skipped = skipped
+        self._message = message
 
     def visit_test(self, test):
-        test.status = 'FAIL'
-        test.message += self._also_msg if test.message else self._normal_msg
+        if not self._skipped:
+            test.status = test.FAIL
+            prefix = self._also_msg if test.message else self._normal_msg
+            test.message += prefix % self._message
+        else:
+            test.status = test.SKIP
+            if test.message:
+                test.message = self._also_skip_msg % (self._message, test.message)
+            else:
+                test.message = self._normal_skip_msg % self._message
 
     def visit_keyword(self, keyword):
         pass

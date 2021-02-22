@@ -98,3 +98,6 @@ def keyword_with_tags_3():
 
     Tags: tag1, tag2
     """
+
+def robot_espacers(arg=" robot  escapers\n\t\r  "):
+    pass

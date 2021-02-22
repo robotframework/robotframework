@@ -16,7 +16,7 @@
 import re
 
 from robot.errors import VariableError
-from robot.utils import is_string, py2to3, rstrip
+from robot.utils import is_string, py3to2, rstrip
 
 
 def search_variable(string, identifiers='$@&%*', ignore_errors=False):
@@ -70,7 +70,7 @@ def is_dict_assign(string, allow_assign_mark=False):
     return is_assign(string, '&', allow_assign_mark)
 
 
-@py2to3
+@py3to2
 class VariableMatch(object):
 
     def __init__(self, string, identifier=None, base=None, items=(),
@@ -116,18 +116,11 @@ class VariableMatch(object):
     def is_scalar_variable(self):
         return self.identifier == '$' and self.is_variable()
 
-    # The reason `is_list/dict_variable` check they don't have items is that
-    # at the moment e.g. `@{var}[item]` still returns a scalar value.
-    # This will change in RF 4.0 and then obviously this code must be changed:
-    # https://github.com/robotframework/robotframework/issues/3487
-
     def is_list_variable(self):
-        return (self.identifier == '@' and self.is_variable()
-                and not self.items)
+        return self.identifier == '@' and self.is_variable()
 
     def is_dict_variable(self):
-        return (self.identifier == '&' and self.is_variable()
-                and not self.items)
+        return self.identifier == '&' and self.is_variable()
 
     def is_assign(self, allow_assign_mark=False):
         if allow_assign_mark and self.string.endswith('='):
@@ -146,10 +139,10 @@ class VariableMatch(object):
     def is_dict_assign(self, allow_assign_mark=False):
         return self.identifier == '&' and self.is_assign(allow_assign_mark)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.identifier is not None
 
-    def __unicode__(self):
+    def __str__(self):
         if not self:
             return '<no match>'
         items = ''.join('[%s]' % i for i in self.items) if self.items else ''
@@ -181,11 +174,11 @@ class VariableSearcher(object):
             match.end += sum(len(i) for i in self.items) + 2 * len(self.items)
         return match
 
-    def _search(self, string, offset=0):
+    def _search(self, string):
         start = self._find_variable_start(string)
         if start == -1:
             return False
-        self.start = start + offset
+        self.start = start
         self._open_brackets += 1
         self.variable_chars = [string[start], '{']
         start += 2
@@ -252,11 +245,6 @@ class VariableSearcher(object):
             if self._open_brackets == 0:
                 self.items.append(''.join(self.item_chars))
                 self.item_chars = []
-                # Don't support chained item access with old @ and & syntax.
-                # The old syntax was deprecated in RF 3.2 and in RF 3.3 it'll
-                # be reassigned to mean using item in list/dict context.
-                if self.variable_chars[0] in '@&':
-                    return None
                 return self.waiting_item_state
         elif char == '[' and not self._escaped:
             self._open_brackets += 1
@@ -293,7 +281,7 @@ def unescape_variable_syntax(item):
     return re.sub(r'(\\+)(?=(.+))', handle_escapes, item)
 
 
-@py2to3
+@py3to2
 class VariableIterator(object):
 
     def __init__(self, string, identifiers='$@&%', ignore_errors=False):
@@ -314,7 +302,7 @@ class VariableIterator(object):
     def __len__(self):
         return sum(1 for _ in self)
 
-    def __nonzero__(self):
+    def __bool__(self):
         try:
             next(iter(self))
         except StopIteration:

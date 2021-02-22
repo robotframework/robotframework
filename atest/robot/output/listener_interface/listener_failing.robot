@@ -16,11 +16,11 @@ Failing library listeners don't affect execution otherwise
 
 *** Keywords ***
 Run Tests With Failing Listener
-    ${path} =    Normalize Path    ${DATADIR}/output/listeners/failing_listener.py
+    ${path} =    Normalize Path    ${LISTENER DIR}/failing_listener.py
     Run Tests    --listener ${path} -l l.html -r r.html    misc/pass_and_fail.robot
 
 Run Tests With Failing Library Listener
-    Run Tests    -l l.html -r r.html    output/listeners/failing_library_listener.robot
+    Run Tests    -l l.html -r r.html    ${LISTENER DIR}/failing_library_listener.robot
 
 Test statuses should be correct
     Check Test Case    Pass
@@ -31,7 +31,7 @@ Log and report should be created
     File Should Not Be Empty    ${OUTDIR}/r.html
 
 Listener errors should be reported
-    ${path} =    Normalize Path    ${DATADIR}/output/listeners/failing_listener.py
+    ${path} =    Normalize Path    ${LISTENER DIR}/failing_listener.py
     FOR    ${index}    ${method}    IN ENUMERATE
     ...    message    start_suite    start_keyword    log_message    end_keyword
     ...    start_test    end_test    end_suite

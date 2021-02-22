@@ -15,7 +15,7 @@
 
 from robot.errors import DataError
 from robot.utils import (get_error_message, is_java_method, is_bytes,
-                         is_list_like, is_unicode, type_name, py2to3)
+                         is_list_like, is_unicode, py3to2, type_name)
 
 from .arguments import JavaArgumentParser, PythonArgumentParser
 
@@ -24,7 +24,7 @@ def no_dynamic_method(*args):
     return None
 
 
-@py2to3
+@py3to2
 class _DynamicMethod(object):
     _underscore_name = NotImplemented
 
@@ -85,7 +85,7 @@ class _DynamicMethod(object):
             raise DataError('Return value must be a list of strings%s.'
                             % (' or non-empty tuples' if allow_tuples else ''))
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.method is not no_dynamic_method
 
 
@@ -125,10 +125,10 @@ class RunKeyword(_DynamicMethod):
                 self._java_multi_signature_kwargs(spec))
 
     def _java_single_signature_kwargs(self, spec):
-        return len(spec.positional) == 1 and spec.varargs and spec.kwargs
+        return len(spec.positional) == 1 and spec.var_positional and spec.var_named
 
     def _java_multi_signature_kwargs(self, spec):
-        return len(spec.positional) == 3 and not (spec.varargs or spec.kwargs)
+        return len(spec.positional) == 3 and not (spec.var_positional or spec.var_named)
 
 
 class GetKeywordDocumentation(_DynamicMethod):

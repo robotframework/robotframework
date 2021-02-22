@@ -15,6 +15,7 @@ ${SUITE_MSG}      2 tests, 1 passed, 1 failed
 ${SUITE_MSG_2}    2 tests, 1 passed, 1 failed
 ${LISTENERS}      ${CURDIR}${/}..${/}..${/}..${/}testresources${/}listeners
 ${EMPTY TB}       \nTraceback (most recent call last):\n${SPACE*2}None\n
+${LISTENER DIR}   ${DATADIR}/output/listener_interface
 
 *** Keywords ***
 Listener Import Message Should Be In Syslog
@@ -43,7 +44,7 @@ Check Listener File
     ${expected} =    Catenate    SEPARATOR=\n    @{expected}    ${EMPTY}
     Should Be Equal    ${content}    ${expected}
 
-Get Listener FIle
+Get Listener File
     [Arguments]    ${file}
     ${path} =    Join Path    %{TEMPDIR}    ${file}
     ${content} =    Get File    ${path}

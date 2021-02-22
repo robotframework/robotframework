@@ -73,6 +73,22 @@ robot.running.arguments.javaargumentcoercer module
    :undoc-members:
    :show-inheritance:
 
+robot.running.arguments.py2argumentparser module
+------------------------------------------------
+
+.. automodule:: robot.running.arguments.py2argumentparser
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+robot.running.arguments.py3argumentparser module
+------------------------------------------------
+
+.. automodule:: robot.running.arguments.py3argumentparser
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.running.arguments.typeconverters module
 ---------------------------------------------
 
@@ -88,4 +104,3 @@ robot.running.arguments.typevalidator module
    :members:
    :undoc-members:
    :show-inheritance:
-

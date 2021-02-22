@@ -16,9 +16,11 @@
 import os.path
 
 from robot.errors import DataError
+from robot.running import ArgInfo, ArgumentSpec
 from robot.utils import ET, ETSource
 
 from .model import LibraryDoc, KeywordDoc
+from .datatypes import EnumDoc, TypedDictDoc
 
 
 class SpecDocBuilder(object):
@@ -29,13 +31,13 @@ class SpecDocBuilder(object):
                             type=spec.get('type').upper(),
                             version=spec.find('version').text or '',
                             doc=spec.find('doc').text or '',
-                            scope=self._get_scope(spec),
-                            named_args=self._get_named_args(spec),
+                            scope=spec.get('scope'),
                             doc_format=spec.get('format', 'ROBOT'),
                             source=spec.get('source'),
                             lineno=int(spec.get('lineno', -1)))
-        libdoc.inits = self._create_keywords(spec, 'init')
-        libdoc.keywords = self._create_keywords(spec, 'kw')
+        libdoc.inits = self._create_keywords(spec, 'inits/init')
+        libdoc.keywords = self._create_keywords(spec, 'keywords/kw')
+        libdoc.data_types.update(self._create_data_types(spec))
         return libdoc
 
     def _parse_spec(self, path):
@@ -45,29 +47,12 @@ class SpecDocBuilder(object):
             root = ET.parse(source).getroot()
         if root.tag != 'keywordspec':
             raise DataError("Invalid spec file '%s'." % path)
+        version = root.get('specversion')
+        if version != '3':
+            raise DataError("Invalid spec file version '%s'. "
+                            "Robot Framework 4.0 and newer requires spec version 3."
+                            % version)
         return root
-
-    def _get_scope(self, spec):
-        # RF >= 3.2 has "scope" attribute w/ value 'GLOBAL', 'SUITE, or 'TEST'.
-        if 'scope' in spec.attrib:
-            return spec.get('scope')
-        # RF < 3.2 has "scope" element. Need to map old values to new.
-        scope = spec.find('scope').text
-        return {'': 'GLOBAL',          # Was used with resource files.
-                'global': 'GLOBAL',
-                'test suite': 'SUITE',
-                'test case': 'TEST'}[scope]
-
-    def _get_named_args(self, spec):
-        # RF >= 3.2 has "namedargs" attribute w/ value 'true' or 'false'.
-        namedargs = spec.get('namedargs')
-        if namedargs == 'true':
-            return True
-        if namedargs == 'false':
-            return False
-        # RF < 3.2 has "namedargs" element with text 'yes' or 'no'.
-        namedargs = spec.find('namedargs').text
-        return namedargs == 'yes'
 
     def _create_keywords(self, spec, path):
         return [self._create_keyword(elem) for elem in spec.findall(path)]
@@ -76,8 +61,62 @@ class SpecDocBuilder(object):
         # "deprecated" attribute isn't read because it is read from the doc
         # automatically. That should probably be changed at some point.
         return KeywordDoc(name=elem.get('name', ''),
-                          args=[a.text for a in elem.findall('arguments/arg')],
+                          args=self._create_arguments(elem),
                           doc=elem.find('doc').text or '',
+                          shortdoc=elem.find('shortdoc').text or '',
                           tags=[t.text for t in elem.findall('tags/tag')],
                           source=elem.get('source'),
                           lineno=int(elem.get('lineno', -1)))
+
+    def _create_arguments(self, elem):
+        spec = ArgumentSpec()
+        setters = {
+            ArgInfo.POSITIONAL_ONLY: spec.positional_only.append,
+            ArgInfo.POSITIONAL_ONLY_MARKER: lambda value: None,
+            ArgInfo.POSITIONAL_OR_NAMED: spec.positional_or_named.append,
+            ArgInfo.VAR_POSITIONAL: lambda value: setattr(spec, 'var_positional', value),
+            ArgInfo.NAMED_ONLY_MARKER: lambda value: None,
+            ArgInfo.NAMED_ONLY: spec.named_only.append,
+            ArgInfo.VAR_NAMED: lambda value: setattr(spec, 'var_named', value),
+        }
+        for arg in elem.findall('arguments/arg'):
+            name_elem = arg.find('name')
+            if name_elem is None:
+                continue
+            name = name_elem.text
+            setters[arg.get('kind')](name)
+            default_elem = arg.find('default')
+            if default_elem is not None:
+                spec.defaults[name] = default_elem.text or ''
+            type_elems = arg.findall('type')
+            if not spec.types:
+                spec.types = {}
+            spec.types[name] = tuple(t.text for t in type_elems)
+        return spec
+
+    def _create_data_types(self, spec):
+        enums = [self._create_enum_doc(dt)
+                 for dt in spec.findall('datatypes/enums/enum')]
+        typed_dicts = [self._create_typed_dict_doc(dt)
+                       for dt in spec.findall('datatypes/typeddicts/typeddict')]
+        return enums + typed_dicts
+
+    def _create_enum_doc(self, dt):
+        return EnumDoc(name=dt.get('name'),
+                       doc=dt.find('doc').text or '',
+                       members=[{'name': member.get('name'),
+                                 'value': member.get('value')}
+                                for member in dt.findall('members/member')])
+
+    def _create_typed_dict_doc(self, dt):
+        items = []
+        for item in dt.findall('items/item'):
+            required = item.get('required', None)
+            if required is not None:
+                required = True if required == 'true' else False
+            items.append({'key': item.get('key'),
+                          'type': item.get('type'),
+                          'required': required})
+        return TypedDictDoc(name=dt.get('name'),
+                            doc=dt.find('doc').text or '',
+                            items=items)

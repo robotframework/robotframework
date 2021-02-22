@@ -33,5 +33,5 @@ Nested access with non-subscriptable
 Escape nested
     Check Test Case    ${TESTNAME}
 
-Nested access doesn't support old `@` and `&` syntax
+Nested access supports `@` and `&` syntax
     Check Test Case    ${TESTNAME}

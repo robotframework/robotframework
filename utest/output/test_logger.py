@@ -13,6 +13,7 @@ class MessageMock:
         self.level = level
         self.message = message
 
+
 class LoggerMock:
 
     def __init__(self, *expected):
@@ -27,6 +28,7 @@ class LoggerMock:
 
     def copy(self):
         return LoggerMock(*self.expected)
+
 
 class LoggerMock2(LoggerMock):
 
@@ -120,12 +122,15 @@ class TestLogger(unittest.TestCase):
             def end_test(self, test): self.ended_test = test
             def start_keyword(self, keyword): self.started_keyword = keyword
             def end_keyword(self, keyword): self.ended_keyword = keyword
+        class Arg:
+            type = None
         logger = MyLogger()
         self.logger.register_logger(logger)
         for name in 'suite', 'test', 'keyword':
+            arg = Arg()
             for stend in 'start', 'end':
-                getattr(self.logger, stend + '_' + name)(name)
-                assert_equal(getattr(logger, stend + 'ed_' + name), name)
+                getattr(self.logger, stend + '_' + name)(arg)
+                assert_equal(getattr(logger, stend + 'ed_' + name), arg)
 
     def test_verbose_console_output_is_automatically_registered(self):
         logger = Logger()

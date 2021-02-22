@@ -4,20 +4,59 @@ import re
 from robot import utils
 from robot.api import logger
 from robot.utils.asserts import assert_equal
-from robot.result import (XmlExecutionResultBuilder, Keyword, TestCase, TestSuite,
-                          Result)
+from robot.result import (XmlExecutionResultBuilder, For, If, ForIteration, Keyword,
+                          Result, ResultVisitor, TestCase, TestSuite)
+from robot.result.model import Body, ForIterations, IfBranches, IfBranch
 from robot.libraries.BuiltIn import BuiltIn
 
 
 class NoSlotsKeyword(Keyword):
     pass
 
-class NoSlotsTestCase(TestCase):
+
+class NoSlotsFor(For):
+    pass
+
+
+class NoSlotsIf(If):
+    pass
+
+
+class NoSlotsBody(Body):
     keyword_class = NoSlotsKeyword
+    for_class = NoSlotsFor
+    if_class = NoSlotsIf
+
+
+class NoSlotsIfBranch(IfBranch):
+    body_class = NoSlotsBody
+
+
+class NoSlotsIfBranches(IfBranches):
+    if_branch_class = NoSlotsIfBranch
+
+
+class NoSlotsForIteration(ForIteration):
+    body_class = NoSlotsBody
+
+
+class NoSlotsForIterations(ForIterations):
+    for_iteration_class = NoSlotsForIteration
+
+
+NoSlotsKeyword.body_class = NoSlotsBody
+NoSlotsFor.body_class = NoSlotsForIterations
+NoSlotsIf.body_class = NoSlotsIfBranches
+
+
+class NoSlotsTestCase(TestCase):
+    fixture_class = NoSlotsKeyword
+    body_class = NoSlotsBody
+
 
 class NoSlotsTestSuite(TestSuite):
+    fixture_class = NoSlotsKeyword
     test_class = NoSlotsTestCase
-    keyword_class = NoSlotsKeyword
 
 
 class TestCheckerLibrary:
@@ -35,11 +74,13 @@ class TestCheckerLibrary:
             XmlExecutionResultBuilder(path).build(result)
         except:
             set_suite_variable('$SUITE', None)
-            raise RuntimeError('Processing output failed: %s'
-                               % utils.get_error_message())
-        set_suite_variable('$SUITE', process_suite(result.suite))
+            msg, details = utils.get_error_details()
+            logger.info(details)
+            raise RuntimeError('Processing output failed: %s' % msg)
+        result.visit(ProcessResults())
+        set_suite_variable('$SUITE', result.suite)
         set_suite_variable('$STATISTICS', result.statistics)
-        set_suite_variable('$ERRORS', process_errors(result.errors))
+        set_suite_variable('$ERRORS', result.errors)
 
     def get_test_case(self, name):
         suite = BuiltIn().get_variable_value('${SUITE}')
@@ -201,7 +242,7 @@ class TestCheckerLibrary:
             assert_equal(act, exp)
 
     def should_contain_keywords(self, item, *kw_names):
-        actual_names = [kw.name for kw in item.keywords]
+        actual_names = [kw.name for kw in item.kws]
         assert_equal(len(actual_names), len(kw_names), 'Wrong number of keywords')
         for act, exp in zip(actual_names, kw_names):
             assert_equal(act, exp)
@@ -213,7 +254,7 @@ class TestCheckerLibrary:
         kw_index = int(config.get('kw_index', 0))
         test = self._get_test_from_suite(suite, name)
         self._check_test_status(test)
-        self.should_contain_keywords(test.keywords[kw_index], *kw_names)
+        self.should_contain_keywords(test.body[kw_index], *kw_names)
         return test
 
     def check_log_message(self, item, msg, level='INFO', html=False, pattern=False):
@@ -224,48 +265,41 @@ class TestCheckerLibrary:
         b.should_be_equal(str(item.html), str(html or level == 'HTML'), 'Wrong HTML status')
 
 
-def process_suite(suite):
-    for subsuite in suite.suites:
-        process_suite(subsuite)
-    for test in suite.tests:
-        process_test(test)
-    for kw in suite.keywords:
-        process_keyword(kw)
-    suite.setup = suite.keywords.setup
-    suite.teardown = suite.keywords.teardown
-    return suite
+class ProcessResults(ResultVisitor):
 
+    def start_test(self, test):
+        for status in 'FAIL', 'SKIP', 'PASS':
+            if status in test.doc:
+                test.exp_status = status
+                test.exp_message = test.doc.split(status, 1)[1].lstrip()
+                break
+        else:
+            test.exp_status = 'PASS'
+            test.exp_message = ''
+        test.kws = list(test.body)
+        test.keyword_count = test.kw_count = len(test.kws)
 
-def process_test(test):
-    if 'FAIL' in test.doc:
-        test.exp_status = 'FAIL'
-        test.exp_message = test.doc.split('FAIL', 1)[1].lstrip()
-    elif 'SKIP' in test.doc:
-        test.exp_status = 'SKIP'
-        test.exp_message = test.doc.split('SKIP', 1)[1].lstrip()
-    else:
-        test.exp_status = 'PASS'
-        test.exp_message = '' if 'PASS' not in test.doc else test.doc.split('PASS', 1)[1].lstrip()
-    for kw in test.keywords:
-        process_keyword(kw)
-    test.setup = test.keywords.setup
-    test.teardown = test.keywords.teardown
-    test.keywords = test.kws = list(test.keywords.normal)
-    test.keyword_count = test.kw_count = len(test.keywords)
+    def start_keyword(self, kw):
+        self._add_kws_and_msgs(kw)
 
+    def _add_kws_and_msgs(self, item):
+        item.kws = item.body.filter(messages=False)
+        item.msgs = item.body.filter(messages=True)
+        item.keyword_count = item.kw_count = len(item.kws)
+        item.message_count = item.msg_count = len(item.msgs)
 
-def process_keyword(kw):
-    if kw is None:
-        return
-    kw.kws = kw.keywords
-    kw.msgs = kw.messages
-    kw.message_count = kw.msg_count = len(kw.messages)
-    kw.keyword_count = kw.kw_count = len(list(kw.keywords.normal))
-    for subkw in kw.keywords:
-        process_keyword(subkw)
+    def start_for(self, for_):
+        self._add_kws_and_msgs(for_)
 
+    def start_for_iteration(self, iteration):
+        self._add_kws_and_msgs(iteration)
 
-def process_errors(errors):
-    errors.msgs = errors.messages
-    errors.message_count = errors.msg_count = len(errors.messages)
-    return errors
+    def start_if(self, if_):
+        self._add_kws_and_msgs(if_)
+
+    def start_if_branch(self, branch):
+        self._add_kws_and_msgs(branch)
+
+    def visit_errors(self, errors):
+        errors.msgs = errors.messages
+        errors.message_count = errors.msg_count = len(errors.messages)

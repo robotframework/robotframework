@@ -1,3 +1,4 @@
+
 Creating test libraries
 =======================
 
@@ -901,6 +902,8 @@ the earlier Python example:
        multipleDefaults(arg1, "default 1");
    }
 
+.. _varargs-library:
+
 Variable number of arguments (`*varargs`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -996,6 +999,8 @@ limitation: it works only when methods have one signature. Thus it is not
 possible to have Java keywords with both default values and varargs.
 
 __ http://docs.oracle.com/javase/1.5.0/docs/guide/language/varargs.html
+
+.. _kwargs-library:
 
 Free keyword arguments (`**kwargs`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1111,9 +1116,14 @@ __ `Variable number of arguments with Java`_
 Keyword-only arguments
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 3.1, it is possible to use `named-only
-arguments`_ with different keywords. When implementing libraries using Python,
-this support is provided by Python's `keyword-only arguments`__:
+Starting from Robot Framework 3.1, it is possible to use `named-only arguments`_
+with different keywords. When implementing libraries using Python, this support
+is provided by Python's `keyword-only arguments`__. Keyword-only arguments
+are specified after possible `*varargs` or after a dedicated `*` marker when
+`*varargs` are not needed. Possible `**kwargs` are specified after keyword-only
+arguments.
+
+Example:
 
 .. sourcecode:: python
 
@@ -1121,17 +1131,70 @@ this support is provided by Python's `keyword-only arguments`__:
         key = str.lower if case_sensitive else None
         return sorted(words, key=key)
 
+    def strip_spaces(word, *, left=True, right=True):
+        if left:
+            word = word.lstrip()
+        if right:
+            word = word.rstrip()
+        return word
+
 .. sourcecode:: robotframework
 
    *** Test Cases ***
    Example
        Sort Words    Foo    bar    baZ
        Sort Words    Foo    bar    baZ    case_sensitive=True
+       Strip Spaces    ${word}    left=False
 
 Due to keyword-only arguments being a Python 3 feature, libraries using
 Python 2 cannot use it. Time to upgrade!
 
 __ https://www.python.org/dev/peps/pep-3102
+
+Positional-only arguments
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Python 3.8 introduced `positional-only arguments`__ that make it possible to
+specify that an argument can only be given as a `positional argument`_, not as
+a `named argument`_ like `name=value`. Positional-only arguments are specified
+before normal arguments and a special `/` marker must be used after them:
+
+.. sourcecode:: python
+
+    def keyword(posonly, /, normal):
+        print(f"Got positional-only argument {posonly} and normal argument {normal}.")
+
+The above keyword could be used like this:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       # Positional-only and normal argument used as positional arguments.
+       Keyword    foo    bar
+       # Normal argument can also be named.
+       Keyword    foo    normal=bar
+
+If a positional-only argument is used with a value that contains an equal sign
+like `example=usage`, it is not considered to mean `named argument syntax`_
+even if the part before the `=` would match the argument name. This rule
+only applies if the positional-only argument is used in its correct position
+without other arguments using the name argument syntax before it, though.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       # Positional-only argument gets literal value `posonly=foo` in this case.
+       Keyword    posonly=foo    normal=bar
+       # This fails.
+       Keyword    normal=bar    posonly=foo
+
+Positional-only arguments are fully supported starting from Robot Framework 4.0.
+Using them as positional arguments works also with earlier versions,
+but using them as named arguments causes an error on Python side.
+
+__ https://www.python.org/dev/peps/pep-0570/
 
 Argument types
 ~~~~~~~~~~~~~~
@@ -1154,6 +1217,9 @@ Automatic argument conversion based on function annotations, types specified
 using the `@keyword` decorator, and argument default values are all new
 features in Robot Framework 3.1. The `Supported conversions`_ section
 specifies which argument conversion are supported in these cases.
+
+Prior to Robot Framework 4.0, automatic conversion was done only if the given
+argument was a string. Nowadays it is done regardless the argument type.
 
 __ `Manual argument conversion`_
 __ `Specifying argument types using function annotations`_
@@ -1198,9 +1264,9 @@ __ `Implicit argument types based on default values`_
 Specifying argument types using function annotations
 ''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-Starting from Robot Framework 3.1, arguments passed to keywords as strings
-are automatically converted if argument type information is available. The
-most natural way to specify types is using Python 3 `function annotations`_.
+Starting from Robot Framework 3.1, arguments passed to keywords are automatically
+converted if argument type information is available and the type is recognized.
+The most natural way to specify types is using Python 3 `function annotations`_.
 For example, the keyword in the previous example could be implemented as
 follows and arguments would be converted automatically:
 
@@ -1224,11 +1290,7 @@ nevertheless shown in the documentation generated by Libdoc_.
 .. note:: Because function annotations are a Python 3 feature, using them in
           a library that should also work with Python 2 is not possible.
 
-.. note:: Using function annotations with Robot Framework 3.0.2 or earlier
-          `is not possible at all`__.
-
 .. _function annotations: https://www.python.org/dev/peps/pep-3107/
-__ https://github.com/robotframework/robotframework/issues/2627
 
 Specifying argument types using `@keyword` decorator
 ''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -1303,10 +1365,17 @@ got explicitly:
 - Conversion failures are not errors, keywords get the original value in
   these cases instead.
 
-If argument conversion based on default values is not desired with a certain
-argument, it can be disabled by specifying a type for that argument explicitly.
-Alternatively argument conversion can be disabled altogether with the
-`@keyword decorator`__ like `@keyword(types=None)`.
+If an argument has an explicit type and a default value, conversion is first
+attempted based on the explicit type. If that fails, then conversion is attempted
+based on the default value. In this special case conversion based on the default
+value is strict and a conversion failure causes an error.
+
+If argument conversion based on default values is not desired, the whole
+argument conversion can be disabled with the `@keyword decorator`__ like
+`@keyword(types=None)`.
+
+.. note:: Prior to Robot Framework 4.0 conversion was done based on the default
+          value only if the argument did not have an explict type.
 
 __ `Specifying argument types using @keyword decorator`_
 
@@ -1320,13 +1389,10 @@ arguments to. These characteristics apply to all conversions:
   the `@keyword decorator`__.
 - If not explicitly specified, type can be got implicitly from `argument
   default values`__.
-- Conversion is done only if the argument that is used is itself a Unicode
-  string.
-- With most of the types failed conversion causes an error if the type has
-  been specified explicitly. Exceptions to this rule are mentioned in the
-  table below.
-- With most of the types string `NONE`, case-insensitively, is converted to
-  Python `None`. Exceptions are mentioned in the table below.
+- Conversion is done regardless of the type of the given argument. If the
+  argument type is incompatible with the expected type, conversion fails.
+- Conversion failures cause an error if the type has been specified explicitly.
+  If the type is got based on a default value, the given argument is used as-is.
 
 __ `Specifying argument types using function annotations`_
 __ `Specifying argument types using @keyword decorator`_
@@ -1347,80 +1413,99 @@ the type using type names as a string (e.g. `'int'`) and some types also have
 aliases (e.g. `'integer'`). Matching types to names and aliases is
 case-insensitive.
 
+The Accepts column specifies which given argument types are converted.
+If the given argument already has the expected type, no conversion is done.
+Other types cause conversion failures.
+
 .. table:: Supported argument conversions
    :class: tabular
+   :widths: 5 5 5 5 60 20
 
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   |    Type     |      ABC      |  Aliases   |                       Explanation                              |             Examples                 |
-   +=============+===============+============+================================================================+======================================+
-   | bool_       |               | boolean    | Strings `TRUE`, `YES`, `ON` and `1` are converted to `True`,   | | `TRUE` (converted to `True`)       |
-   |             |               |            | the empty string as well as `FALSE`, `NO`, `OFF` and `0`       | | `off` (converted to `False`)       |
-   |             |               |            | are converted to `False`, and the string `NONE` is converted   | | `foobar` (returned as-is)          |
-   |             |               |            | to `None`. Other strings are passed as-is, allowing keywords   |                                      |
-   |             |               |            | to handle them specially if needed. All comparisons are        |                                      |
-   |             |               |            | case-insensitive.                                              |                                      |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | int_        | Integral_     | integer,   | Conversion is done using the int_ built-in function.           | | `42`                               |
-   |             |               | long       | If that fails and type is got implicitly from default values,  | | `3.14` (only with implicit type)   |
-   |             |               |            | also float_ conversion is attempted.                           |                                      |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | float_      | Real_         | double     | Conversion is done using the float_ built-in.                  | | `3.14`                             |
-   |             |               |            |                                                                | | `2.9979e8`                         |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | Decimal_    |               |            | Conversion is done using the Decimal_ class.                   | | `3.14`                             |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | bytes_      | ByteString_   |            | Argument is converted to bytes so that each Unicode code point | | `foobar`                           |
-   |             |               |            | below 256 is directly mapped to a matching byte. Higher code   | | `hyvä` (converted to `hyv\xe4`)    |
-   |             |               |            | points are not allowed. String `NONE` (case-insensitively) is  | | `\x00` (the null byte)             |
-   |             |               |            | converted to matching bytes, not to Python `None`. When using  |                                      |
-   |             |               |            | Python 2, byte conversion is only done if type is specified    |                                      |
-   |             |               |            | explicitly.                                                    |                                      |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | bytearray_  |               |            | Same conversion as with bytes_ but the result is a bytearray_. |                                      |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | `datetime   |               |            | Argument is expected to be a timestamp in `ISO 8601`_ like     | | `2018-09-12T15:47:05.123456`       |
-   | <dt-mod_>`__|               |            | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `2018-09-12 15:47`                 |
-   |             |               |            | character can be used as a separator or separators can be      | | `2018-09-12`                       |
-   |             |               |            | omitted altogether. Additionally, only the date part is        |                                      |
-   |             |               |            | mandatory, all possibly missing time components are considered |                                      |
-   |             |               |            | to be zeros.                                                   |                                      |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | date_       |               |            | Same conversion as with `datetime <dt-mod_>`__ but all time    | | `2018-09-12`                       |
-   |             |               |            | components are expected to be omitted or to be zeros.          |                                      |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | timedelta_  |               |            | String is expected to represent a time interval in one of the  | | `42` (42 seconds)                  |
-   |             |               |            | time formats Robot Framework supports: `time as number`_,      | | `1 minute 2 seconds`               |
-   |             |               |            | `time as time string`_ or `time as "timer" string`_.           | | `01:02` (same as above)            |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | Enum_       |               |            | The specified type must be an enumeration (a subclass of       | .. sourcecode:: python               |
-   |             |               |            | Enum_) and arguments themselves must match its members.        |                                      |
-   |             |               |            |                                                                |    class Color(Enum):                |
-   |             |               |            | Starting from RF 3.2.2, matching members is case-, space-      |        RED = 1                       |
-   |             |               |            | and underscore-insensitive.                                    |        GREEN = 2                     |
-   |             |               |            |                                                                |        DARK_GREEN = 3                |
-   |             |               |            |                                                                |                                      |
-   |             |               |            |                                                                | | `GREEN` (Color.GREEN)              |
-   |             |               |            |                                                                | | `Dark Green` (Color.DARK_GREEN)    |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | NoneType_   |               |            | String `NONE` (case-insensitively) is converted to `None`      | | `None`                             |
-   |             |               |            | object, other values are passed as-is. Mainly relevant when    |                                      |
-   |             |               |            | type is got implicitly from `None` being a default value.      |                                      |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | list_       | Sequence_     |            | Argument must be be a Python list literal. It is converted     | | `['foo', 'bar']`                   |
-   |             |               |            | to an actual list using the `ast.literal_eval`_ function.      | | `[('one', 1), ('two', 2)]`         |
-   |             |               |            | The list can contain any values `ast.literal_eval`_ supports   |                                      |
-   |             |               |            | inside it, including other lists or other containers.          |                                      |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | tuple_      |               |            | Same as list_ but the argument must be a tuple literal.        | | `('foo', 'bar')`                   |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | dict_       | Mapping_      | dictionary,| Same as list_ but the argument must be a dictionary literal.   | | `{'a': 1, 'b': 2}`                 |
-   |             |               | map        |                                                                | | `{'key': 1, 'nested': {'key': 2}}` |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | set_        | `Set          |            | Same as list_ but the argument must be a set literal or        | | `{1, 2, 3, 42}`                    |
-   |             | <abc.Set_>`__ |            | `set()` to create an empty set. Not supported on Python 2.     | | `set()`                            |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | frozenset_  |               |            | Same conversion as with set_ but the result is a frozenset_.   |                                      |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   |    Type     |      ABC      |  Aliases   |   Accepts    |                       Explanation                              |             Examples                 |
+   +=============+===============+============+==============+================================================================+======================================+
+   | bool_       |               | boolean    | Any          | Strings `TRUE`, `YES`, `ON` and `1` are converted to `True`,   | | `TRUE` (converted to `True`)       |
+   |             |               |            |              | the empty string as well as `FALSE`, `NO`, `OFF` and `0`       | | `off` (converted to `False`)       |
+   |             |               |            |              | are converted to `False`, and the string `NONE` is converted   | | `foobar` (returned as-is)          |
+   |             |               |            |              | to `None`. Other strings and all non-string arguments are      |                                      |
+   |             |               |            |              | passed as-is, allowing keywords to handle them specially if    |                                      |
+   |             |               |            |              | needed. All string comparisons are case-insensitive.           |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | int_        | Integral_     | integer,   | string,      | Conversion is done using the int_ built-in function. Floats    | | `42`                               |
+   |             |               | long       | float        | are converted only if they can be represented as integers      |                                      |
+   |             |               |            |              | exactly. For example, `1.0` is accepted and `1.1` is not.      |                                      |
+   |             |               |            |              | If converting a string to an integer fails and the type        |                                      |
+   |             |               |            |              | is got implicitly based on a default value, conversion to      |                                      |
+   |             |               |            |              | float is attempted as well.                                    |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | float_      | Real_         | double     | string,      | Conversion is done using the float_ built-in.                  | | `3.14`                             |
+   |             |               |            | int          |                                                                | | `2.9979e8`                         |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | Decimal_    |               |            | string,      | Conversion is done using the Decimal_ class.                   | | `3.14`                             |
+   |             |               |            | int, float   |                                                                |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | str_        |               | string,    | Any          | All arguments are converted to Unicode strings. With Python 2  |                                      |
+   |             |               | unicode    |              | the type should be `unicode`, not `str`. New in RF 4.0.        |                                      |
+   |             |               |            |              |                                                                |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | bytes_      | ByteString_   |            | string,      | Strings are converted to bytes so that each Unicode code point | | `foobar`                           |
+   |             |               |            | bytearray    | below 256 is directly mapped to a matching byte. Higher code   | | `hyvä` (converted to `hyv\xe4`)    |
+   |             |               |            |              | points are not allowed. When using Python 2, byte conversion   | | `\x00` (the null byte)             |
+   |             |               |            |              | is dene only if type is specified explicitly.                  |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | bytearray_  |               |            | string,      | Same conversion as with bytes_ but the result is a bytearray_. |                                      |
+   |             |               |            | bytes        |                                                                |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | `datetime   |               |            | string,      | Strings are expected to be a timestamp in `ISO 8601`_ like     | | `2018-09-12T15:47:05.123456`       |
+   | <dt-mod_>`__|               |            | int, float   | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `2018-09-12 15:47`                 |
+   |             |               |            |              | character can be used as a separator or separators can be      | | `2018-09-12`                       |
+   |             |               |            |              | omitted altogether. Additionally, only the date part is        |                                      |
+   |             |               |            |              | mandatory, all possibly missing time components are considered |                                      |
+   |             |               |            |              | to be zeros. Integers and floats are considered to be EPOCH    |                                      |
+   |             |               |            |              | timestamps.                                                    |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | date_       |               |            | string       | Same string conversion as with `datetime <dt-mod_>`__ but all  | | `2018-09-12`                       |
+   |             |               |            |              | time components are expected to be omitted or to be zeros.     |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | timedelta_  |               |            | string,      | Strings are expected to represent a time interval in one of    | | `42` (42 seconds)                  |
+   |             |               |            | int, float   | the time formats Robot Framework supports: `time as number`_,  | | `1 minute 2 seconds`               |
+   |             |               |            |              | `time as time string`_ or `time as "timer" string`_. Integers  | | `01:02` (same as above)            |
+   |             |               |            |              | and floats are considered to be seconds.                       |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | Enum_       |               |            | string       | The specified type must be an enumeration (a subclass of       | .. sourcecode:: python               |
+   |             |               |            |              | Enum_) and given arguments must match its members.             |                                      |
+   |             |               |            |              |                                                                |    class Color(Enum):                |
+   |             |               |            |              | Starting from RF 3.2.2, matching members is case-, space-      |        GREEN = 1                     |
+   |             |               |            |              | and underscore-insensitive.                                    |        DARK_GREEN = 2                |
+   |             |               |            |              |                                                                |                                      |
+   |             |               |            |              |                                                                | | `GREEN` (Color.GREEN)              |
+   |             |               |            |              |                                                                | | `Dark Green` (Color.DARK_GREEN)    |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | None_       |               | NoneType   | string       | String `NONE` (case-insensitively) is converted to `None`      | | `None`                             |
+   |             |               |            |              | object. Other values cause an error.                           |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | list_       | Sequence_     |            | string,      | String must be be a Python list literal. It is converted       | | `['foo', 'bar']`                   |
+   |             |               |            | tuple        | to an actual list using the `ast.literal_eval`_ function.      | | `[('one', 1), ('two', 2)]`         |
+   |             |               |            |              | The list can contain any values `ast.literal_eval`_ supports   |                                      |
+   |             |               |            |              | inside it, including other lists or other containers.          |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | tuple_      |               |            | string, list | Same as list_ but string argument must a tuple literal.        | | `('foo', 'bar')`                   |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | dict_       | Mapping_      | dictionary,| string       | Same as list_ but string argument must be a dictionary         | | `{'a': 1, 'b': 2}`                 |
+   |             |               | map        |              | literal.                                                       | | `{'key': 1, 'nested': {'key': 2}}` |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | set_        | `Set          |            | string,      | Same as list_ but string argument must be a set literal or     | | `{1, 2, 3, 42}`                    |
+   |             | <abc.Set_>`__ |            | list, tuple, | `set()` to create an empty set. Not supported on Python 2.     | | `set()`                            |
+   |             |               |            | dictionary   |                                                                | | `{'key': 1, 'nested': {'key': 2}}` |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | frozenset_  |               |            | string,      | Same conversion as with set_ but the result is a frozenset_.   |                                      |
+   |             |               |            | list, tuple, |                                                                |                                      |
+   |             |               |            | dictionary   |                                                                |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+
+.. note:: Prior to Robot Framework 4.0 most types supported converting string `NONE` (case-insensitively) to Python
+          `None`. That support has been removed and `None` conversion is only done if an argument has `None` as an
+          explicit type or as a default value.
 
 .. _bool: https://docs.python.org/library/functions.html#bool
 .. _int: https://docs.python.org/library/functions.html#int
@@ -1428,6 +1513,7 @@ case-insensitive.
 .. _float: https://docs.python.org/library/functions.html#float
 .. _Real: https://docs.python.org/library/numbers.html#numbers.Real
 .. _Decimal: https://docs.python.org/library/decimal.html#decimal.Decimal
+.. _str: https://docs.python.org/library/functions.html#func-str
 .. _bytes: https://docs.python.org/library/functions.html#func-bytes
 .. _ByteString: https://docs.python.org/library/collections.abc.html#collections.abc.ByteString
 .. _bytearray: https://docs.python.org/library/functions.html#func-bytearray
@@ -1435,7 +1521,7 @@ case-insensitive.
 .. _date: https://docs.python.org/library/datetime.html#datetime.date
 .. _timedelta: https://docs.python.org/library/datetime.html#datetime.timedelta
 .. _Enum: https://docs.python.org/library/enum.html#enum.Enum
-.. _NoneType: https://docs.python.org/library/constants.html#None
+.. _None: https://docs.python.org/library/constants.html#None
 .. _list: https://docs.python.org/library/stdtypes.html#list
 .. _Sequence: https://docs.python.org/library/collections.abc.html#collections.abc.Sequence
 .. _MutableSequence: https://docs.python.org/library/collections.abc.html#collections.abc.MutableSequence
@@ -1448,6 +1534,55 @@ case-insensitive.
 .. _typing: https://docs.python.org/library/typing.html
 .. _ISO 8601: https://en.wikipedia.org/wiki/ISO_8601
 .. _ast.literal_eval: https://docs.python.org/library/ast.html#ast.literal_eval
+
+Specifying multiple possible types
+''''''''''''''''''''''''''''''''''
+
+Starting from Robot Framework 4.0, it is possible to specify that an argument
+has multiple possible types. In this situation argument conversion is attempted
+based on each type in the order they have been specified. If any conversion
+succeeds, the resulting value is used, and otherwise the whole conversion fails.
+
+When using function annotations, the natural syntax to specify that argument
+has multiple possible types is using Union_:
+
+.. sourcecode:: python
+
+  from typing import Union
+
+
+  def example(length=Union[int, float], padding=[None, int, str]):
+      # ...
+
+An alternative is giving types a tuple. It is not recommended with annotations
+because that syntax is not supported by other tools, but it works well with
+the `@keyword` decorator:
+
+.. sourcecode:: python
+
+  from robot.api.deco import keyword
+
+
+  @keyword(types={'length': (int, float), 'padding': (None, int, str)})
+  def example(length, padding):
+      # ...
+
+With the above examples the `length` argument would first be converted to an
+integer and if that fails then to a float. The `padding` would be first
+converted to `None`, then to an integer, and finally to a string.
+
+If any of the specified types is not recognized by Robot Framework and
+the given argument cannot be converted to any of the types before it,
+the given argument will be used as-is. For example, with this keyword
+conversion would first attempted to an integer but if that fails the keyword
+would get the original given argument:
+
+.. sourcecode:: python
+
+  def example(argument=Union[int, MyCustomType]):
+      # ...
+
+.. _Union: https://docs.python.org/3/library/typing.html#typing.Union
 
 Argument types with Java
 ''''''''''''''''''''''''
@@ -1629,6 +1764,13 @@ Reporting keyword status is done simply using exceptions. If an executed
 method raises an exception, the keyword status is `FAIL`, and if it
 returns normally, the status is `PASS`.
 
+Normal execution failures and errors can be reported using the standard exceptions
+such as `AssertionError`, `ValueError` and `RuntimeError`. There are, however, some
+special cases explained in the subsequent sections where special exceptions are needed.
+
+Error messages
+''''''''''''''
+
 The error message shown in logs, reports and the console is created
 from the exception type and its message. With generic exceptions (for
 example, `AssertionError`, `Exception`, and
@@ -1690,38 +1832,64 @@ These messages are not visible in log files by default because they are very
 rarely interesting for normal users. When developing libraries, it is often a
 good idea to run tests using `--loglevel DEBUG`.
 
-Stopping test execution
-~~~~~~~~~~~~~~~~~~~~~~~
+Exceptions provided by Robot Framework
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-It is possible to fail a test case so that `the whole test execution is
-stopped`__. This is done simply by having a special `ROBOT_EXIT_ON_FAILURE`
-attribute with `True` value set on the exception raised from the keyword.
-This is illustrated in the examples below.
+Robot Framework provides some exceptions that libraries can use for reporting
+failures and other events. These exceptions are exposed via the `robot.api`__
+package and contain the following:
 
-Python:
+`Failure`
+    Report failed validation. There is no practical difference in using this exception
+    compared to using the standard `AssertionError`. The main benefit of using this
+    exception is that its name is consistent with other provided exceptions.
+
+`Error`
+    Report error in execution. Failures related to the system not behaving as expected
+    should typically be reported using the `Failure` exception or the standard
+    `AssertionError`. This exception can be used, for example, if the keyword is used
+    incorrectly. There is no practical difference, other than consistent naming with
+    other provided exceptions, compared to using this exception and the standard
+    `RuntimeError`.
+
+`ContinuableFailure`
+    Report failed validation but allow continuing execution.
+    See the `Continuable failures`_ section below for more information.
+
+`SkipExecution`
+    Mark the executed test or task skipped_.
+    See the `Skipping tests`_ section below for more information.
+
+`FatalError`
+    Report error that stops the whole execution.
+    See the `Stopping test execution`_ section below for more information.
+
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.api.html
+
+.. note:: All these exceptions are new in Robot Framework 4.0. Other features than
+          skipping tests, which is also new in Robot Framework 4.0, are available
+          by other means in earlier versions.
+
+Continuable failures
+~~~~~~~~~~~~~~~~~~~~
+
+It is possible to `continue test execution even when there are failures`__.
+The easiest way to do that is using the provided__ `robot.api.ContinuableFailure`
+exception:
 
 .. sourcecode:: python
 
-    class MyFatalError(RuntimeError):
-        ROBOT_EXIT_ON_FAILURE = True
+    from robot.api import ContinuableFailure
 
-Java:
 
-.. sourcecode:: java
+    def example_keyword():
+        if something_is_wrong():
+            raise ContinuableFailure('Something is wrong but execution can continue.')
+        ...
 
-    public class MyFatalError extends RuntimeException {
-        public static final boolean ROBOT_EXIT_ON_FAILURE = true;
-    }
-
-__ `Stopping test execution gracefully`_
-
-Continuing test execution despite of failures
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-It is possible to `continue test execution even when there are failures`__.
-The way to signal this from test libraries is adding a special
-`ROBOT_CONTINUE_ON_FAILURE` attribute with `True` value to the exception
-used to communicate the failure. This is demonstrated by the examples below.
+An alternative is creating a custom exception that has a special
+`ROBOT_CONTINUE_ON_FAILURE` attribute set to a `True` value.
+This is demonstrated by the examples below.
 
 Python:
 
@@ -1739,6 +1907,83 @@ Java:
     }
 
 __ `Continue on failure`_
+__ `Exceptions provided by Robot Framework`_
+
+Skipping tests
+~~~~~~~~~~~~~~
+
+It is possible to skip_ tests with a library keyword. The easiest way to
+do that is using the provided__ `robot.api.SkipExecution` exception:
+
+.. sourcecode:: python
+
+    from robot.api import SkipExecution
+
+
+    def example_keyword():
+        if test_should_be_skipped():
+            raise SkipExecution('Cannot proceed, skipping test.')
+        ...
+
+An alternative is creating a custom exception that has a special
+`ROBOT_SKIP_EXECUTION` attribute set to a `True` value.
+This is demonstrated by the examples below.
+
+Python:
+
+.. sourcecode:: python
+
+    class MySkippingError(RuntimeError):
+        ROBOT_SKIP_EXECUTION = True
+
+Java:
+
+.. sourcecode:: java
+
+    public class MySkippingError extends RuntimeException {
+        public static final boolean ROBOT_SKIP_EXECUTION = true;
+    }
+
+__ `Exceptions provided by Robot Framework`_
+
+Stopping test execution
+~~~~~~~~~~~~~~~~~~~~~~~
+
+It is possible to fail a test case so that `the whole test execution is
+stopped`__. The easiest way to accomplish this is using the provided__
+`robot.api.FatalError` exception:
+
+.. sourcecode:: python
+
+    from robot.api import FatalError
+
+
+    def example_keyword():
+        if system_is_not_running():
+            raise FatalError('System is not running!')
+        ...
+
+In addition to using the `robot.api.FatalError` exception, it is possible create
+a custom exception that has a special `ROBOT_EXIT_ON_FAILURE` attribute set to
+a `True` value. This is illustrated by the examples below.
+
+Python:
+
+.. sourcecode:: python
+
+    class MyFatalError(RuntimeError):
+        ROBOT_EXIT_ON_FAILURE = True
+
+Java:
+
+.. sourcecode:: java
+
+    public class MyFatalError extends RuntimeException {
+        public static final boolean ROBOT_EXIT_ON_FAILURE = true;
+    }
+
+__ `Stopping test execution gracefully`_
+__ `Exceptions provided by Robot Framework`_
 
 Logging information
 ~~~~~~~~~~~~~~~~~~~

@@ -21,9 +21,6 @@ Generated
 Scope
     Scope Should Be    TEST
 
-Named Args
-    Named Args Should Be    true
-
 Init
     Init Doc Should Be          0    Static __init__ doc.
     Init Arguments Should Be    0    doc=None

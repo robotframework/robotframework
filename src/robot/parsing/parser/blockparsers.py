@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from ..lexer import Token
-from ..model import TestCase, Keyword, ForLoop
+from ..model import TestCase, Keyword, For, If
 
 
 class Parser(object):
@@ -30,63 +30,71 @@ class Parser(object):
         raise NotImplementedError
 
 
-class TestCaseParser(Parser):
+class BlockParser(Parser):
+    unhandled_tokens = Token.HEADER_TOKENS | frozenset((Token.TESTCASE_NAME,
+                                                        Token.KEYWORD_NAME))
 
-    def __init__(self, header):
-        Parser.__init__(self, TestCase(header))
+    def __init__(self, model):
+        Parser.__init__(self, model)
+        self.nested_parsers = {Token.FOR: ForParser, Token.IF: IfParser}
 
     def handles(self, statement):
-        if statement.type == Token.TESTCASE_NAME:
-            return False
-        return statement.type not in Token.HEADER_TOKENS
+        return statement.type not in self.unhandled_tokens
 
     def parse(self, statement):
-        if statement.type == Token.FOR:
-            parser = ForLoopParser(statement)
-            model = parser.model
-        else:
-            parser = None
-            model = statement
-        self.model.body.append(model)
-        return parser
+        parser_class = self.nested_parsers.get(statement.type)
+        if parser_class:
+            parser = parser_class(statement)
+            self.model.body.append(parser.model)
+            return parser
+        self.model.body.append(statement)
+        return None
 
 
-class KeywordParser(Parser):
-
-    def __init__(self, header):
-        Parser.__init__(self, Keyword(header))
-
-    def handles(self, statement):
-        if statement.type == Token.KEYWORD_NAME:
-            return False
-        return statement.type not in Token.HEADER_TOKENS
-
-    def parse(self, statement):
-        if statement.type == Token.FOR:
-            parser = ForLoopParser(statement)
-            model = parser.model
-        else:
-            parser = None
-            model = statement
-        self.model.body.append(model)
-        return parser
-
-
-class ForLoopParser(Parser):
+class TestCaseParser(BlockParser):
 
     def __init__(self, header):
-        Parser.__init__(self, ForLoop(header))
-        self.end_seen = False
+        BlockParser.__init__(self, TestCase(header))
+
+
+class KeywordParser(BlockParser):
+
+    def __init__(self, header):
+        BlockParser.__init__(self, Keyword(header))
+
+
+class NestedBlockParser(BlockParser):
 
     def handles(self, statement):
-        if self.end_seen:
-            return False
-        name_tokens = (Token.TESTCASE_NAME, Token.KEYWORD_NAME)
-        return statement.type not in Token.HEADER_TOKENS + name_tokens
+        return BlockParser.handles(self, statement) and not self.model.end
 
     def parse(self, statement):
         if statement.type == Token.END:
             self.model.end = statement
-            self.end_seen = True
-        else:
-            self.model.body.append(statement)
+            return None
+        return BlockParser.parse(self, statement)
+
+
+class ForParser(NestedBlockParser):
+
+    def __init__(self, header):
+        NestedBlockParser.__init__(self, For(header))
+
+
+class IfParser(NestedBlockParser):
+
+    def __init__(self, header):
+        NestedBlockParser.__init__(self, If(header))
+
+    def parse(self, statement):
+        if statement.type in (Token.ELSE_IF, Token.ELSE):
+            parser = OrElseParser(statement)
+            self.model.orelse = parser.model
+            return parser
+        return NestedBlockParser.parse(self, statement)
+
+
+class OrElseParser(IfParser):
+
+    def handles(self, statement):
+        return IfParser.handles(self, statement) and statement.type != Token.END

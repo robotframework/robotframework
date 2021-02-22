@@ -5,6 +5,8 @@ window.model = (function () {
         suite.source = data.source;
         suite.relativeSource = data.relativeSource;
         suite.fullName = data.parent ? data.parent.fullName + '.' + data.name : data.name;
+        suite.type = 'suite';
+        suite.template = 'suiteTemplate';
         setStats(suite, data.statistics);
         suite.metadata = data.metadata;
         suite.populateKeywords = createIterablePopulator('Keyword');
@@ -115,6 +117,8 @@ window.model = (function () {
 
     function Test(data) {
         var test = createModelObject(data);
+        test.type = 'test';
+        test.template = 'testTemplate';
         test.fullName = data.parent.fullName + '.' + test.name;
         test.formatParentName = function () { return util.formatParentName(test); };
         test.timeout = data.timeout;
@@ -140,14 +144,15 @@ window.model = (function () {
     function Keyword(data) {
         var kw = createModelObject(data);
         kw.libname = data.libname;
+        kw.fullName = (kw.libname ? kw.libname + '.' : '') + kw.name;
         kw.type = data.type;
+        kw.template = 'keywordTemplate';
         kw.arguments = data.args;
         kw.assign = data.assign + (data.assign ? ' =' : '');
         kw.tags = data.tags;
         kw.timeout = data.timeout;
-        kw.populateMessages = createIterablePopulator('Message');
         kw.populateKeywords = createIterablePopulator('Keyword');
-        kw.childrenNames = ['keyword', 'message'];
+        kw.childrenNames = ['keyword'];
         kw.isChildrenLoaded = data.isChildrenLoaded;
         kw.callWhenChildrenReady = window.fileLoading.getCallbackHandlerForKeywords(kw);
         kw.children = function () {
@@ -158,13 +163,17 @@ window.model = (function () {
     }
 
     function Message(level, date, text, link) {
-        return {
+        var message = {
+            type: 'message',
+            template: 'messageTemplate',
             level: level,
             time: util.timeFromDate(date),
             date: util.dateFromDate(date),
             text: text,
             link: link
         };
+        message.callWhenChildrenReady = function (callable) { callable(); };
+        return message;
     }
 
     function Times(timedata) {
@@ -277,11 +286,17 @@ window.stats = (function () {
             fail = 0.1
         if (skip > 0 && skip < 0.1)
             skip = 0.1
+        if (pass > 99.95 && pass < 100)
+            pass = 99.9
+        if (fail > 99.95 && fail < 100)
+            fail = 99.9
+        if (skip > 99.95 && skip < 100)
+            skip = 99.9
         return [Math.round(pass*10)/10, Math.round(skip*10)/10, Math.round(fail*10)/10];
     }
 
     function calculateWidths(num1, num2, num3) {
-        if (num1 + num2 + num3 == 0)
+        if (num1 + num2 + num3 === 0)
             return [0.0, 0.0, 0.0];
         // Make small percentages better visible
         if (num1 > 0 && num1 < 1)
@@ -290,16 +305,29 @@ window.stats = (function () {
             num2 = 1
         if (num3 > 0 && num3 < 1)
             num3 = 1
-        // Handle situation where both are rounded up
+
+        // Handle situation where some are rounded up
         while (num1 + num2 + num3 > 100) {
             if (num1 > num2 && num1 > num3)
                 num1 -= 0.1;
-            if (num2 > num1 && num2 > num3)
+            else if (num2 > num1 && num2 > num3)
                 num2 -= 0.1;
-            if (num3 > num1 && num3 > num2)
+            else if (num3 > num1 && num3 > num2)
                 num3 -= 0.1;
+            else if (num1 > num3 && num1 == num2) {
+                num1 -= 0.1;
+                num2 -= 0.1;
+            }
+            else if (num1 > num2 && num1 == num3) {
+                num1 -= 0.1;
+                num3 -= 0.1;
+            }
+            else if (num2 > num1 && num2 == num3) {
+                num2 -= 0.1;
+                num3 -= 0.1;
+            }
         }
-        return [num1, num2, num3];
+        return [Math.ceil(num1*10)/10, Math.ceil(num2*10)/10, Math.ceil(num3*10)/10];
     }
 
     return {

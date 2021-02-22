@@ -15,12 +15,12 @@
 
 import warnings
 
-from .compat import py2to3
+from .compat import py3to2
 from .normalizing import NormalizedDict
 from .robottypes import is_string
 
 
-@py2to3
+@py3to2
 class ConnectionCache(object):
     """Cache for test libs to use with concurrent connections, processes, etc.
 
@@ -134,7 +134,7 @@ class ConnectionCache(object):
     def __len__(self):
         return len(self._connections)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.current is not self._no_current
 
     def resolve_alias_or_index(self, alias_or_index):
@@ -144,14 +144,6 @@ class ConnectionCache(object):
             except ValueError:
                 pass
         raise ValueError("Non-existing index or alias '%s'." % alias_or_index)
-
-    def _resolve_alias_or_index(self, alias_or_index):
-        # TODO: Remove this function for good in RF 3.3.
-        # See https://github.com/robotframework/robotframework/issues/3125
-        warnings.warn("'ConnectionCache._resolve_alias_or_index' is "
-                      "deprecated. Use 'resolve_alias_or_index' instead.",
-                      UserWarning)
-        return self.resolve_alias_or_index(alias_or_index)
 
     def _resolve_alias(self, alias):
         if is_string(alias) and alias in self._aliases:
@@ -168,7 +160,7 @@ class ConnectionCache(object):
         return index
 
 
-@py2to3
+@py3to2
 class NoConnection(object):
 
     def __init__(self, message):
@@ -182,5 +174,5 @@ class NoConnection(object):
     def raise_error(self):
         raise RuntimeError(self.message)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return False

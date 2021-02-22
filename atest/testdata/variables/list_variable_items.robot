@@ -2,6 +2,7 @@
 ${INT}            ${15}
 @{LIST}           A    B    C    D    E    F    G    H    I    J    K
 @{NUMBERS}        1    2    3
+@{NESTED}         ${{['a', 'b', 'c']}}    ${{[1, 2, 3]}}
 ${BYTES}          ${{b'ABCDEFGHIJK'}}
 ${BYTEARRAY}      ${{bytearray(b'ABCDEFGHIJK')}}
 ${STRING}         ABCDEFGHIJK
@@ -155,20 +156,29 @@ Non-subscriptable variable
     ...    literal value, it needs to be escaped like '\\[0]'.
     Log    ${INT}[0]
 
-Old syntax with `@` still works but is deprecated
-    [Documentation]    `\${list}[1]` and `\@{list}[1]` work same way still.
-    ...                In the future latter is deprecated and changed.
-    ...                FAIL List '\@{LIST}' has no item in index 99.
-    Should Be Equal    @{LIST}[0]         A
-    Should Be Equal    @{LIST}[${-1}]     K
-    Log    @{LIST}[99]
+List expansion using `@` syntax
+    [Documentation]    FAIL List '\@{NESTED}' has no item in index 99.
+    ${result} =    Catenate    @{NESTED}[0]    -    @{NESTED}[${-1}]
+    Should Be Equal    ${result}    a b c - 1 2 3
+    Log Many    @{NESTED}[99]
 
-Old syntax with `@` doesn't support new slicing syntax
-    [Documentation]    Slicing support should be added in RF 3.3 when `@{list}[index]` changes.
-    ...                FAIL List '\@{LIST}' used with invalid index '1:'. \
-    ...                To use '[1:]' as a literal value, it needs to be \
-    ...                escaped like '\\[1:]'.
-    Log    @{LIST}[1:]
+List expansion fails if value is not list-like 1
+    [Documentation]    FAIL Value of variable '\@{LIST}[0]' is not list or list-like.
+    Log Many    @{LIST}[0]
+
+List expansion fails if value is not list-like 2
+    [Documentation]    FAIL Value of variable '\@{NESTED}[1][0]' is not list or list-like.
+    Log Many    @{NESTED}[1][0]
+
+List expansion with slice
+    ${result} =    Catenate    @{LIST}[7:]    -    @{LIST}[:${3}]    -    @{LIST}[8:2:-3]
+    Should Be Equal    ${result}    H I J K - A B C - I F
+    ${result} =    Catenate    @{NESTED}[0][1:]    -    @{NESTED}[:][${-1}][::][${99}:-99:-2][:99:1]
+    Should Be Equal    ${result}    b c - 3 1
+
+List expansion with slice fails if value is not list-like
+    [Documentation]    FAIL Value of variable '\@{STRING}[1:]' is not list or list-like.
+    Log Many    @{STRING}[1:]
 
 *** Keywords ***
 Valid index
@@ -203,6 +213,8 @@ Slicing
     Should Be Equal    ${sequence}[1:-1:2]    ${sequence[1:-1:2]}
     Should Be Equal    ${sequence}[:]         ${sequence}
     Should Be Equal    ${sequence}[::]        ${sequence}
+    Should Be Equal    ${sequence}[:][1:]     ${sequence[1:]}
+    Should Be Equal    ${sequence}[:][::]     ${sequence}
     Should Be Empty    ${sequence}[100:]
 
 Slicing with variable

@@ -1,20 +1,27 @@
-*** Setting ***
-Documentation     Tests for keywords that are reserved for future use. Only some keywords are tested here because all have same dynamic implementation. All keywords that are currently reserved: ['for', 'while', 'break', 'continue', 'end', 'if', 'else', 'elif', 'else if', 'return']
+*** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/reserved.robot
 Resource          atest_resource.robot
 
-*** Test Case ***
-For
-    Check testcase    For
+*** Test Cases ***
+Markers should get note about case
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
 
-Continue
-    Check testcase    Continue
+Others should just be reserved
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
 
-Reserved in User Keyword
-    Check testcase    Reserved In User Keyword
+'End' gets extra note
+    Check Test Case    ${TESTNAME}
 
-Else should be capitalized
-    Check testcase    Else should be capitalized
+'Else' gets extra note
+    Check Test Case    ${TESTNAME}
 
-Else If should be capitalized
-    Check testcase    Else If should be capitalized
+'Else if' gets extra note
+    Check Test Case    ${TESTNAME}
+
+'Elif' gets extra note
+    Check Test Case    ${TESTNAME}
+
+Reserved in user keyword
+    Check Test Case    ${TESTNAME}

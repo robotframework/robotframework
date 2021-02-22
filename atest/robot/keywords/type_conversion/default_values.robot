@@ -114,9 +114,6 @@ Sets are not supported in Python 2
 Unknown types are not converted
     Check Test Case    ${TESTNAME}
 
-String None is converted to None object
-    Check Test Case    ${TESTNAME}
-
 Positional as named
     Check Test Case    ${TESTNAME}
 

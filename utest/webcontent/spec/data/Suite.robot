@@ -8,8 +8,9 @@ Test
     [Tags]  tag1  tag2
     [Timeout]  1 second
     Sleep  0.1 seconds
-    : FOR  ${i}  IN RANGE  2
-    \  my keyword  ${i}
+    FOR  ${i}  IN RANGE  2
+      my keyword  ${i}
+    END
 
 *** Keywords ***
 my keyword

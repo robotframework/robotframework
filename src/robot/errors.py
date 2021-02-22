@@ -143,7 +143,7 @@ class ExecutionStatus(RobotError):
     def can_continue(self, teardown=False, templated=False, dry_run=False):
         if dry_run:
             return True
-        if self.syntax or self.exit or self.test_timeout:
+        if self.syntax or self.exit or self.skip or self.test_timeout:
             return False
         if templated:
             return True
@@ -176,7 +176,7 @@ class HandlerExecutionFailed(ExecutionFailed):
                   and not isinstance(error, (KeywordError, VariableError)))
         exit_on_failure = self._get(error, 'EXIT_ON_FAILURE')
         continue_on_failure = self._get(error, 'CONTINUE_ON_FAILURE')
-        skip = self._get(error, 'SKIP_ON_FAILURE')
+        skip = self._get(error, 'SKIP_EXECUTION')
         ExecutionFailed.__init__(self, details.message, test_timeout,
                                  keyword_timeout, syntax, exit_on_failure,
                                  continue_on_failure, skip)
@@ -190,17 +190,25 @@ class HandlerExecutionFailed(ExecutionFailed):
 class ExecutionFailures(ExecutionFailed):
 
     def __init__(self, errors, message=None):
-        message = message or self._format_message([e.message for e in errors])
+        message = message or self._format_message(errors)
         ExecutionFailed.__init__(self, message, **self._get_attrs(errors))
         self._errors = errors
 
-    def _format_message(self, messages):
+    def _format_message(self, errors):
+        messages = [e.message for e in errors]
         if len(messages) == 1:
             return messages[0]
         prefix = 'Several failures occurred:'
         if any(msg.startswith('*HTML*') for msg in messages):
             prefix = '*HTML* ' + prefix
             messages = self._format_html_messages(messages)
+        if any(e.skip for e in errors):
+            skip_idx = errors.index([e for e in errors if e.skip][0])
+            skip_msg = messages[skip_idx]
+            messages = messages[:skip_idx] + messages[skip_idx+1:]
+            if len(messages) == 1:
+                return '%s\n\nAlso failure occurred:\n%s' % (skip_msg, messages[0])
+            prefix = '%s\n\nAlso failures occurred:' % skip_msg
         return '\n\n'.join(
             [prefix] +
             ['%d) %s' % (i, m) for i, m in enumerate(messages, start=1)]
@@ -221,7 +229,7 @@ class ExecutionFailures(ExecutionFailed):
             'syntax': any(e.syntax for e in errors),
             'exit': any(e.exit for e in errors),
             'continue_on_failure': all(e.continue_on_failure for e in errors),
-            'skip': all(e.skip for e in errors)
+            'skip': any(e.skip for e in errors)
         }
 
     def get_errors(self):
@@ -287,17 +295,6 @@ class PassExecution(ExecutionPassed):
 
     def __init__(self, message):
         ExecutionPassed.__init__(self, message)
-
-
-# FIXME: Move under robot.api.
-class SkipExecution(Exception):
-    """Used by 'Skip' keyword.
-
-    Can also be used by library keyword to skip the current test.
-    """
-    # TODO: Perhaps misleading attr name as this isn't related to --skiponfailure?
-    ROBOT_SKIP_ON_FAILURE = True
-    ROBOT_SUPPRESS_NAME = True
 
 
 class ContinueForLoop(ExecutionPassed):

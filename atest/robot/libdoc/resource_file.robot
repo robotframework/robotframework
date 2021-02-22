@@ -34,15 +34,16 @@ Generated
 Scope
     Scope Should Be                 GLOBAL    old=${EMPTY}
 
-Named Args
-    Named Args Should Be            true
-
 Source Info
     Source Should Be                ${TESTDATADIR}/resource.robot
     Lineno Should Be                1
 
 Spec version
     Spec version should be correct
+
+Resource Tags
+    Specfile Tags Should Be          \${3}    ?!?!??    a      b    bar    dar
+    ...                              foo      Has       kw4    tags
 
 Resource Has No Inits
     Should Have No Init

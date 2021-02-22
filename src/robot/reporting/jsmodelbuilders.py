@@ -13,10 +13,19 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.model import BodyItem
 from robot.output import LEVELS
 
 from .jsbuildingcontext import JsBuildingContext
 from .jsexecutionresult import JsExecutionResult
+
+
+IF_ELSE_ROOT = BodyItem.IF_ELSE_ROOT
+STATUSES = {'FAIL': 0, 'PASS': 1, 'SKIP': 2, 'NOT RUN': 3}
+KEYWORD_TYPES = {'KEYWORD': 0, 'SETUP': 1, 'TEARDOWN': 2,
+                 'FOR': 3, 'FOR ITERATION': 4,
+                 'IF': 5, 'ELSE IF': 6, 'ELSE': 7}
+MESSAGE_TYPE = 8
 
 
 class JsModelBuilder(object):
@@ -41,7 +50,6 @@ class JsModelBuilder(object):
 
 
 class _Builder(object):
-    _statuses = {'FAIL': 0, 'PASS': 1, 'NOT_RUN': 2, 'SKIP': 3}
 
     def __init__(self, context):
         self._context = context
@@ -50,7 +58,9 @@ class _Builder(object):
         self._timestamp = self._context.timestamp
 
     def _get_status(self, item):
-        model = (self._statuses[item.status],
+        # Branch status with IF/ELSE, "normal" status with others.
+        status = getattr(item, 'branch_status', item.status)
+        model = (STATUSES[status],
                  self._timestamp(item.starttime),
                  item.elapsedtime)
         msg = getattr(item, 'message', '')
@@ -62,10 +72,18 @@ class _Builder(object):
             msg = self._string(msg)
         return model + (msg,)
 
-    def _build_keywords(self, kws, split=False):
+    def _build_keywords(self, steps, split=False):
         splitting = self._context.start_splitting_if_needed(split)
-        model = tuple(self._build_keyword(k) for k in kws)
+        model = tuple(self._build_keyword(step) for step in self._flatten_ifs(steps))
         return model if not splitting else self._context.end_splitting(model)
+
+    def _flatten_ifs(self, steps):
+        for step in steps:
+            if step.type != IF_ELSE_ROOT:
+                yield step
+            else:
+                for child in step.body:
+                    yield child
 
 
 class SuiteBuilder(_Builder):
@@ -77,8 +95,9 @@ class SuiteBuilder(_Builder):
         self._build_keyword = KeywordBuilder(context).build
 
     def build(self, suite):
-        with self._context.prune_input(suite.suites, suite.tests, suite.keywords):
+        with self._context.prune_input(suite.tests, suite.suites):
             stats = self._get_statistics(suite)  # Must be done before pruning
+            kws = [kw for kw in (suite.setup, suite.teardown) if kw]
             return (self._string(suite.name, attr=True),
                     self._string(suite.source),
                     self._context.relative_source(suite.source),
@@ -87,7 +106,7 @@ class SuiteBuilder(_Builder):
                     self._get_status(suite),
                     tuple(self._build_suite(s) for s in suite.suites),
                     tuple(self._build_test(t) for t in suite.tests),
-                    tuple(self._build_keyword(k, split=True) for k in suite.keywords),
+                    tuple(self._build_keyword(k, split=True) for k in kws),
                     stats)
 
     def _yield_metadata(self, suite):
@@ -107,27 +126,44 @@ class TestBuilder(_Builder):
         self._build_keyword = KeywordBuilder(context).build
 
     def build(self, test):
-        with self._context.prune_input(test.keywords):
+        kws = self._get_keywords(test)
+        with self._context.prune_input(test.body):
             return (self._string(test.name, attr=True),
                     self._string(test.timeout),
                     self._html(test.doc),
                     tuple(self._string(t) for t in test.tags),
                     self._get_status(test),
-                    self._build_keywords(test.keywords, split=True))
+                    self._build_keywords(kws, split=True))
+
+    def _get_keywords(self, test):
+        kws = []
+        if test.setup:
+            kws.append(test.setup)
+        kws.extend(test.body)
+        if test.teardown:
+            kws.append(test.teardown)
+        return kws
 
 
 class KeywordBuilder(_Builder):
-    _types = {'kw': 0, 'setup': 1, 'teardown': 2, 'for': 3, 'foritem': 4}
 
     def __init__(self, context):
         _Builder.__init__(self, context)
         self._build_keyword = self.build
         self._build_message = MessageBuilder(context).build
 
-    def build(self, kw, split=False):
+    def build(self, item, split=False):
+        if item.type == item.MESSAGE:
+            return self._build_message(item)
+        return self.build_keyword(item, split)
+
+    def build_keyword(self, kw, split=False):
         self._context.check_expansion(kw)
-        with self._context.prune_input(kw.messages, kw.keywords):
-            return (self._types[kw.type],
+        kws = list(kw.body)
+        if getattr(kw, 'teardown', None):
+            kws.append(kw.teardown)
+        with self._context.prune_input(kw.body):
+            return (KEYWORD_TYPES[kw.type],
                     self._string(kw.kwname, attr=True),
                     self._string(kw.libname, attr=True),
                     self._string(kw.timeout),
@@ -136,20 +172,20 @@ class KeywordBuilder(_Builder):
                     self._string(', '.join(kw.assign)),
                     self._string(', '.join(kw.tags)),
                     self._get_status(kw),
-                    self._build_keywords(kw.keywords, split),
-                    tuple(self._build_message(m) for m in kw.messages))
+                    self._build_keywords(kws, split))
 
 
 class MessageBuilder(_Builder):
 
     def build(self, msg):
-        if msg.level in ('WARN','ERROR'):
+        if msg.level in ('WARN', 'ERROR'):
             self._context.create_link_target(msg)
         self._context.message_level(msg.level)
         return self._build(msg)
 
     def _build(self, msg):
-        return (self._timestamp(msg.timestamp),
+        return (MESSAGE_TYPE,
+                self._timestamp(msg.timestamp),
                 LEVELS[msg.level],
                 self._string(msg.html_message, escape=False))
 

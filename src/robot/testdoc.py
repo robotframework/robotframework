@@ -187,7 +187,7 @@ class JsonConverter(object):
             'numberOfTests': suite.test_count   ,
             'suites': self._convert_suites(suite),
             'tests': self._convert_tests(suite),
-            'keywords': list(self._convert_keywords(suite))
+            'keywords': list(self._convert_keywords((suite.setup, suite.teardown)))
         }
 
     def _get_relative_source(self, source):
@@ -208,6 +208,10 @@ class JsonConverter(object):
         return [self._convert_test(t) for t in suite.tests]
 
     def _convert_test(self, test):
+        if test.setup:
+            test.body.insert(0, test.setup)
+        if test.teardown:
+            test.body.append(test.teardown)
         return {
             'name': self._escape(test.name),
             'fullName': self._escape(test.longname),
@@ -215,26 +219,41 @@ class JsonConverter(object):
             'doc': self._html(test.doc),
             'tags': [self._escape(t) for t in test.tags],
             'timeout': self._get_timeout(test.timeout),
-            'keywords': list(self._convert_keywords(test))
+            'keywords': list(self._convert_keywords(test.body))
         }
 
-    def _convert_keywords(self, item):
-        for kw in getattr(item, 'keywords', []):
-            if kw.type == kw.SETUP_TYPE:
+    def _convert_keywords(self, keywords):
+        for kw in keywords:
+            if not kw:
+                continue
+            if kw.type == kw.SETUP:
                 yield self._convert_keyword(kw, 'SETUP')
-            elif kw.type == kw.TEARDOWN_TYPE:
+            elif kw.type == kw.TEARDOWN:
                 yield self._convert_keyword(kw, 'TEARDOWN')
-            elif kw.type == kw.FOR_LOOP_TYPE:
-                yield self._convert_for_loop(kw)
+            elif kw.type == kw.FOR:
+                yield self._convert_for(kw)
+            elif kw.type == kw.IF_ELSE_ROOT:
+                for branch in self._convert_if(kw):
+                    yield branch
             else:
                 yield self._convert_keyword(kw, 'KEYWORD')
 
-    def _convert_for_loop(self, kw):
+    def _convert_for(self, data):
+        name = '%s %s %s' % (', '.join(data.variables), data.flavor,
+                             seq2str2(data.values))
         return {
-            'name': self._escape(self._get_for_loop(kw)),
+            'name': self._escape(name),
             'arguments': '',
             'type': 'FOR'
         }
+
+    def _convert_if(self, data):
+        for branch in data.body:
+            yield {
+                'name': self._escape(branch.condition or ''),
+                'arguments': '',
+                'type': branch.type
+            }
 
     def _convert_keyword(self, kw, kw_type):
         return {
@@ -247,10 +266,6 @@ class JsonConverter(object):
         if kw.assign:
             return '%s = %s' % (', '.join(a.rstrip('= ') for a in kw.assign), kw.name)
         return kw.name
-
-    def _get_for_loop(self, kw):
-        joiner = ' %s ' % kw.flavor
-        return ', '.join(kw.variables) + joiner + seq2str2(kw.values)
 
     def _get_timeout(self, timeout):
         if timeout is None:

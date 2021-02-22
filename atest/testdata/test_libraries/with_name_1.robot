@@ -9,7 +9,7 @@ Library           ParameterLibrary    ${1}    2
 
 *** Test Cases ***
 Import Library Normally Before Importing With Name In Another Suite
-    OperatingSystem.Should Exist    ${CURDIR}
+    OperatingSystem.Should Exist    .
     ParameterLibrary.Parameters Should Be    before1    before2
 
 Import Library With Name Before Importing With Name In Another Suite

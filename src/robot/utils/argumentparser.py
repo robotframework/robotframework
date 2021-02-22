@@ -50,7 +50,7 @@ def cmdline2list(args, escaping=False):
 
 
 class ArgumentParser(object):
-    _opt_line_re = re.compile('''
+    _opt_line_re = re.compile(r'''
     ^\s{1,4}      # 1-4 spaces in the beginning of the line
     ((-\S\s)*)    # all possible short options incl. spaces (group 1)
     --(\S{2,})    # required long option (group 3)

@@ -144,12 +144,15 @@ class TestGetLinkPath(unittest.TestCase):
         directory = os.path.dirname(__file__)
         inputs = [(directory, __file__, self._expected_basename(__file__)),
                   (directory, directory, '.'),
-                  (directory, directory + '/Non/Ex', 'Non/Ex'),
+                  (directory, directory + '/', '.'),
+                  (directory, directory + '//', '.'),
+                  (directory, directory + '///', '.'),
+                  (directory, directory + '/trailing/part', 'trailing/part'),
+                  (directory, directory + '//trailing//part', 'trailing/part'),
                   (directory, directory + '/..', '..'),
                   (directory, directory + '/../X', '../X'),
-                  (directory, directory + '/./.././..', '../..'),
-                  (directory, '.',
-                   os.path.relpath('.', directory).replace(os.sep, '/'))]
+                  (directory, directory + '/./.././/..', '../..'),
+                  (directory, '.', os.path.relpath('.', directory).replace(os.sep, '/'))]
         platform_inputs = (self._posix_inputs() if os.sep == '/' else
                            self._windows_inputs())
         return inputs + platform_inputs
@@ -167,6 +170,10 @@ class TestGetLinkPath(unittest.TestCase):
                 ('/tmp', '/x/bar.txt', '../x/bar.txt'),
                 ('/tmp', '/x/y/z/bar.txt', '../x/y/z/bar.txt'),
                 ('/', '/x/bar.txt', 'x/bar.txt'),
+                ('/home//test', '/home/user', '../user'),
+                ('//home/test', '/home/user', '../user'),
+                ('///home/test', '/home/user', '../user'),
+                ('////////////////home/test', '/home/user', '../user'),
                 ('/path/to', '/path/to/result_in_same_dir.html',
                  'result_in_same_dir.html'),
                 ('/path/to/dir', '/path/to/result_in_parent_dir.html',

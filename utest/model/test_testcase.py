@@ -1,9 +1,10 @@
 import unittest
-from robot.utils.asserts import (assert_equal, assert_not_equal, assert_raises,
+import warnings
+from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal, assert_raises,
                                  assert_raises_with_msg, assert_true)
 
 from robot.model.testcase import TestCase, TestCases
-from robot.model import TestSuite
+from robot.model import TestSuite, Keyword
 from robot.utils import PY2, unicode
 
 
@@ -22,6 +23,38 @@ class TestTestCase(unittest.TestCase):
         assert_equal(suite.suites[0].tests[0].id, 's1-s1-t1')
         assert_equal(suite.suites[0].tests[1].id, 's1-s1-t2')
         assert_equal(suite.suites[1].tests[0].id, 's1-s2-t1')
+
+    def test_source(self):
+        test = TestCase()
+        assert_equal(test.source, None)
+        suite = TestSuite()
+        suite.tests.append(test)
+        assert_equal(test.source, None)
+        suite.tests.append(test)
+        suite.source = '/unit/tests'
+        assert_equal(test.source, '/unit/tests')
+
+    def test_setup(self):
+        assert_equal(self.test.setup.__class__, Keyword)
+        assert_equal(self.test.setup.name, None)
+        assert_false(self.test.setup)
+        self.test.setup.config(name='setup kw')
+        assert_equal(self.test.setup.name, 'setup kw')
+        assert_true(self.test.setup)
+        self.test.setup = None
+        assert_equal(self.test.setup.name, None)
+        assert_false(self.test.setup)
+
+    def test_teardown(self):
+        assert_equal(self.test.teardown.__class__, Keyword)
+        assert_equal(self.test.teardown.name, None)
+        assert_false(self.test.teardown)
+        self.test.teardown.config(name='teardown kw')
+        assert_equal(self.test.teardown.name, 'teardown kw')
+        assert_true(self.test.teardown)
+        self.test.teardown = None
+        assert_equal(self.test.teardown.name, None)
+        assert_false(self.test.teardown)
 
     def test_modify_tags(self):
         self.test.tags.add(['t0', 't3'])
@@ -67,6 +100,15 @@ class TestTestCase(unittest.TestCase):
         assert_equal(copy.name, 'New')
         assert_equal(copy.doc, 'New')
 
+    def test_keywords_deprecation(self):
+        self.test.body = [Keyword(), Keyword(), Keyword()]
+        with warnings.catch_warnings(record=True) as w:
+            kws = self.test.keywords
+            assert_equal(len(kws), 3)
+            assert_true('deprecated' in str(w[0].message))
+        assert_raises(AttributeError, kws.append, Keyword())
+        assert_raises(AttributeError, setattr, self.test, 'keywords', [])
+
 
 class TestStringRepresentation(unittest.TestCase):
 
@@ -75,16 +117,19 @@ class TestStringRepresentation(unittest.TestCase):
         self.ascii = TestCase(name='Kekkonen')
         self.non_ascii = TestCase(name=u'hyv\xe4 nimi')
 
-    def test_unicode(self):
-        assert_equal(unicode(self.empty), '')
-        assert_equal(unicode(self.ascii), 'Kekkonen')
-        assert_equal(unicode(self.non_ascii), u'hyv\xe4 nimi')
+    def test_str(self):
+        for tc, expected in [(self.empty, ''),
+                             (self.ascii, 'Kekkonen'),
+                             (self.non_ascii, u'hyv\xe4 nimi')]:
+            assert_equal(unicode(tc), expected)
+            if PY2:
+                assert_equal(str(tc), unicode(tc).encode('UTF-8'))
 
-    if PY2:
-        def test_str(self):
-            assert_equal(str(self.empty), '')
-            assert_equal(str(self.ascii), 'Kekkonen')
-            assert_equal(str(self.non_ascii), u'hyv\xe4 nimi'.encode('UTF-8'))
+    def test_repr(self):
+        for tc, expected in [(self.empty, "TestCase(name='')"),
+                             (self.ascii, "TestCase(name='Kekkonen')"),
+                             (self.non_ascii, u"TestCase(name=%r)" % u'hyv\xe4 nimi')]:
+            assert_equal(repr(tc), 'robot.model.' + expected)
 
 
 class TestTestCases(unittest.TestCase):

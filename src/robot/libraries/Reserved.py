@@ -13,6 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.running import RUN_KW_REGISTER
+
+
 RESERVED_KEYWORDS = ['for', 'while', 'break', 'continue', 'end',
                      'if', 'else', 'elif', 'else if', 'return']
 
@@ -20,12 +23,25 @@ RESERVED_KEYWORDS = ['for', 'while', 'break', 'continue', 'end',
 class Reserved(object):
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
 
-    def get_keyword_names(self):
-        return RESERVED_KEYWORDS
+    def __init__(self):
+        for kw in RESERVED_KEYWORDS:
+            self._add_reserved(kw)
 
-    def run_keyword(self, name, args):
-        error = "'%s' is a reserved keyword." % name.title()
-        if name in ('else', 'else if'):
-            error += (" It must be in uppercase (%s) when used as a marker"
-                      " with 'Run Keyword If'." % name.upper())
+    def _add_reserved(self, kw):
+        RUN_KW_REGISTER.register_run_keyword('Reserved', kw,
+                                             args_to_process=0,
+                                             deprecation_warning=False)
+        self.__dict__[kw] = lambda *args, **kwargs: self._run_reserved(kw)
+
+    def _run_reserved(self, kw):
+        error = "'%s' is a reserved keyword." % kw.title()
+        if kw in ('for', 'end', 'if', 'else', 'else if'):
+            error += " It must be an upper case '%s'" % kw.upper()
+            if kw in ('else', 'else if'):
+                error += " and follow an opening 'IF'"
+            if kw == 'end':
+                error += " and follow an opening 'FOR' or 'IF'"
+            error += " when used as a marker."
+        if kw == 'elif':
+            error += " The marker to use with 'IF' is 'ELSE IF'."
         raise Exception(error)

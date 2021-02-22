@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2020 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="keywordspec" type="KeywordSpec" />
+    <xs:complexType name="KeywordSpec">
+        <xs:sequence>
+            <xs:element name="version" type="xs:string" />
+            <xs:element name="doc" type="xs:string" />
+            <xs:element name="tags" type="Tags" minOccurs="0" />
+            <xs:element name="inits" type="Inits" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="keywords" type="Keywords" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="datatypes" type="DataTypes" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="type" type="LibraryType" use="required" />
+        <xs:attribute name="format" type="DocumentationFormat" use="required" />
+        <xs:attribute name="scope" type="LibraryScope" use="required" />
+        <xs:attribute name="generated" type="xs:dateTime" use="required" />
+        <xs:attribute name="specversion" type="SpecVersion" use="required" />
+        <!-- "source" is a path relative to the location where the spec file is created.
+         Both "source" and "lineno" are omitted if getting them from library fails.
+         With Init and Keyword elements source is omitted also if it same as here. -->
+        <xs:attribute name="source" type="xs:string" use="optional" />
+        <xs:attribute name="lineno" type="xs:positiveInteger" use="optional" />
+    </xs:complexType>
+    <xs:complexType name="Inits">
+        <xs:sequence>
+            <xs:element name="init" type="Init" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Keywords">
+        <xs:sequence>
+            <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Init">
+        <xs:sequence>
+            <xs:element name="arguments" type="Arguments" />
+            <xs:element name="doc" type="xs:string" />
+            <xs:element name="shortdoc" type="xs:string" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="optional" />
+        <xs:attribute name="deprecated" type="xs:boolean" use="optional" />
+        <!-- See the KeywordSpec level comment about "source" and "lineno". -->
+        <xs:attribute name="source" type="xs:string" use="optional" />
+        <xs:attribute name="lineno" type="xs:positiveInteger" use="optional" />
+    </xs:complexType>
+    <xs:complexType name="Keyword">
+        <xs:sequence>
+            <xs:element name="arguments" type="Arguments" />
+            <xs:element name="doc" type="xs:string" />
+            <xs:element name="shortdoc" type="xs:string" />
+            <xs:element name="tags" type="Tags" minOccurs="0" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="deprecated" type="xs:boolean" use="optional" />
+        <!-- See the KeywordSpec level comment about "source" and "lineno". -->
+        <xs:attribute name="source" type="xs:string" use="optional" />
+        <xs:attribute name="lineno" type="xs:positiveInteger" use="optional" />
+    </xs:complexType>
+    <xs:complexType name="Arguments">
+        <xs:sequence>
+            <xs:element name="arg" type="Argument" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="repr" type="xs:string" use="required" />
+    </xs:complexType>
+    <xs:complexType name="DataTypes">
+        <xs:sequence>
+            <xs:element name="enums" type="EnumList" minOccurs="0" />
+            <xs:element name="typeddicts" type="TypedDictList" minOccurs="0" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="EnumList">
+        <xs:sequence>
+            <xs:element name="enum" type="EnumType" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TypedDictList">
+        <xs:sequence>
+            <xs:element name="typeddict" type="TypedDictType" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="EnumType">
+        <xs:sequence>
+            <xs:element name="doc" type="xs:string" />
+            <xs:element name="members" type="EnumMembers" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required" />
+    </xs:complexType>
+    <xs:complexType name="TypedDictType">
+        <xs:sequence>
+            <xs:element name="doc" type="xs:string" />
+            <xs:element name="items" type="TypedDictItems" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required" />
+    </xs:complexType>
+    <xs:complexType name="EnumMembers">
+        <xs:sequence>
+            <xs:element name="member" type="EnumMember" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="EnumMember">
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="value" type="xs:string" use="required" />
+    </xs:complexType>
+    <xs:complexType name="TypedDictItems">
+        <xs:sequence>
+            <xs:element name="item" type="TypedDictItem" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TypedDictItem">
+        <xs:attribute name="key" type="xs:string" use="required" />
+        <xs:attribute name="type" type="xs:string" use="required" />
+        <xs:attribute name="required" type="xs:boolean" use="optional" />
+    </xs:complexType>
+    <xs:complexType name="Tags">
+        <xs:sequence>
+            <xs:element name="tag" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="DocumentationFormat">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ROBOT" />
+            <xs:enumeration value="HTML" />
+            <xs:enumeration value="TEXT" />
+            <xs:enumeration value="REST" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="LibraryType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="LIBRARY" />
+            <xs:enumeration value="RESOURCE" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="SpecVersion">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="3" />
+            <xs:maxInclusive value="3" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="LibraryScope">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="GLOBAL" />
+            <xs:enumeration value="SUITE" />
+            <xs:enumeration value="TEST" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="Argument">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="default" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="kind" type="Kind" use="required" />
+        <xs:attribute name="required" type="xs:boolean" use="required"/>
+        <xs:attribute name="repr" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:simpleType name="Kind">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="POSITIONAL_ONLY" />
+            <xs:enumeration value="POSITIONAL_ONLY_MARKER" />
+            <xs:enumeration value="POSITIONAL_OR_NAMED" />
+            <xs:enumeration value="VAR_POSITIONAL" />
+            <xs:enumeration value="NAMED_ONLY_MARKER" />
+            <xs:enumeration value="NAMED_ONLY" />
+            <xs:enumeration value="VAR_NAMED" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

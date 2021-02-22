@@ -13,6 +13,20 @@ from robot.running.signalhandler import _StopSignalMonitor
 LOGGER.unregister_console_logger()
 
 
+def assert_signal_handler_equal(signum, expected):
+    sig = signal.getsignal(signum)
+    try:
+        assert_equal(sig, expected)
+    except AssertionError:
+        if not JYTHON:
+            raise
+        # With Jython `getsignal` seems to always return different object so that
+        # even `getsignal(SIGINT) == getsignal(SIGINT)` is false. This doesn't
+        # happen always and may be dependent e.g. on the underlying JVM. Comparing
+        # string representations ought to be good enough.
+        assert_equal(str(sig), str(expected))
+
+
 class LoggerStub(AbstractLogger):
     def __init__(self):
         AbstractLogger.__init__(self)
@@ -94,8 +108,8 @@ class TestRestoringOriginalHandlers(unittest.TestCase):
         with _StopSignalMonitor() as monitor:
             assert_equal(self.get_int(), monitor)
             assert_equal(self.get_term(), monitor)
-        assert_equal(self.get_int(), self.orig_int)
-        assert_equal(self.get_term(), self.orig_term)
+        assert_signal_handler_equal(signal.SIGINT, self.orig_int)
+        assert_signal_handler_equal(signal.SIGTERM, self.orig_term)
 
     def test_restore_when_failure(self):
         try:
@@ -107,8 +121,8 @@ class TestRestoringOriginalHandlers(unittest.TestCase):
             pass
         else:
             raise AssertionError
-        assert_equal(self.get_int(), self.orig_int)
-        assert_equal(self.get_term(), self.orig_term)
+        assert_signal_handler_equal(signal.SIGINT, self.orig_int)
+        assert_signal_handler_equal(signal.SIGTERM, self.orig_term)
 
     def test_registered_outside_python(self):
         """

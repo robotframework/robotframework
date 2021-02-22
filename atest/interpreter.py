@@ -79,9 +79,10 @@ class Interpreter(object):
 
     @property
     def excludes(self):
+        if not self.is_python:
+            yield 'require-lxml'
         if self.is_jython:
             yield 'no-jython'
-            yield 'require-lxml'
             if self.version_info[:3] == (2, 7, 0):
                 yield 'no-jython-2.7.0'
             if self.version_info[:3] == (2, 7, 1):
@@ -90,7 +91,6 @@ class Interpreter(object):
             yield 'require-jython'
         if self.is_ironpython:
             yield 'no-ipy'
-            yield 'require-lxml'
             yield 'require-docutils'  # https://github.com/IronLanguages/main/issues/1230
         else:
             yield 'require-ipy'
@@ -105,10 +105,9 @@ class Interpreter(object):
             yield 'require-py3'
         if self.version_info[:2] == (3, 5):
             yield 'no-py-3.5'
-        if self.version_info < (3, 5):
-            yield 'require-py3.5'
-        if self.version_info < (3, 7):
-            yield 'require-py3.7'
+        for require in [(3, 5), (3, 6), (3, 7), (3, 8), (3, 9)]:
+            if self.version_info < require:
+                yield 'require-py%d.%d' % require
         if self.is_windows:
             yield 'no-windows'
             if self.is_jython:
@@ -238,7 +237,6 @@ class StandaloneInterpreter(Interpreter):
             raise ValueError("Failed to find Java version from '%s'."
                              % result.stdout)
         return int(match.group(1)), int(match.group(2))
-
 
     @property
     def excludes(self):

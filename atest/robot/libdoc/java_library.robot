@@ -25,15 +25,15 @@ Generated
 Scope
     Scope Should Be                  GLOBAL
 
-Named Args
-    Named Args Should Be             false
-
 Source Info
     Source Should Be                 ${TESTDATADIR}/Example.java
     Lineno Should Be                 ${None}
 
 Spec version
     Spec version should be correct
+
+Library Tags
+    Specfile Tags Should Be          bar    foo
 
 Init Documentation
     Init Doc Should Start With       0    Creates new Example test library 1
@@ -42,18 +42,18 @@ Init Documentation
 
 Init Arguments
     Init Arguments Should Be         0
-    Init Arguments Should Be         1    arg
-    Init Arguments Should Be         2    i
+    Init Arguments Should Be         1    arg    /
+    Init Arguments Should Be         2    i    /
 
 Keyword Names
     Keyword Name Should Be           1    Keyword
     Keyword Name Should Be           5    My Keyword
 
 Keyword Arguments
-    Keyword Arguments Should Be      1    arg
+    Keyword Arguments Should Be      1    arg    /
     Keyword Arguments Should Be      5
     Keyword Arguments Should Be     -4    *varargs
-    Keyword Arguments Should Be     -3    normal    *varargs
+    Keyword Arguments Should Be     -3    normal   /     *varargs
 
 Keyword Documentation
     Keyword Doc Should Start With    1
@@ -82,16 +82,16 @@ Lists as varargs
     Keyword Arguments Should Be     -1    *varargsList
 
 Kwargs
-    Keyword Arguments Should Be      2    normal  *varargs  **kwargs
+    Keyword Arguments Should Be      2    normal    /    *varargs    **kwargs
 
 Only last map is kwargs
-    Keyword Arguments Should Be      3    normal  **kwargs
+    Keyword Arguments Should Be      3    normal    /    **kwargs
 
 Only last list is varargs
-    Keyword Arguments Should Be     -2    normalArray  *varargs
+    Keyword Arguments Should Be     -2    normalArray    /    *varargs
 
 Last argument overrides
-    Keyword Arguments Should Be      4    normalArray  normalMap  normal
+    Keyword Arguments Should Be      4    normalArray    normalMap    normal    /
 
 Keyword tags
     Keyword Tags Should Be           5    bar    foo
@@ -101,7 +101,7 @@ No keyword source info
     Keyword Should Not Have Lineno   0
 
 Private constructors are ignored
-    Keyword Count Should Be          3    type=init
+    Keyword Count Should Be          3    type=inits/init
 
 Private keywords are ignored
     Keyword Count Should Be         11

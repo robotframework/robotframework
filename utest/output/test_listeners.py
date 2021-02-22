@@ -13,8 +13,11 @@ LOGGER.unregister_console_logger()
 
 
 class Mock(object):
+    non_existing = ()
 
     def __getattr__(self, name):
+        if name[:2] == '__' or name in self.non_existing:
+            raise AttributeError
         return ''
 
 
@@ -42,6 +45,7 @@ class TestMock(Mock):
 
 
 class KwMock(Mock):
+    non_existing = ('branch_status',)
 
     def __init__(self):
         self.name = 'kwmock'
@@ -173,11 +177,15 @@ if JYTHON:
 class TestAttributesAreNotAccessedUnnecessarily(unittest.TestCase):
 
     def test_start_and_end_methods(self):
+        class ModelStub(object):
+            IF_ELSE_ROOT = 'IF/ELSE ROOT'
+            type = 'xxx'
         for listeners in [Listeners([]), LibraryListeners()]:
             for name in dir(listeners):
                 if name.startswith(('start_', 'end_')):
+                    model = ModelStub() if name.endswith('keyword') else None
                     method = getattr(listeners, name)
-                    method(None)
+                    method(model)
 
     def test_message_methods(self):
         class Message(object):

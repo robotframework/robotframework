@@ -13,8 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import normalize_whitespace, split_from_equals
-from robot.variables import is_assign, is_dict_variable, search_variable
+from robot.utils import normalize_whitespace
+from robot.variables import is_assign
 
 from .tokens import Token
 
@@ -108,38 +108,9 @@ class TestOrKeywordSettingLexer(SettingLexer):
 class VariableLexer(StatementLexer):
 
     def lex(self):
-        name = self.statement[0]
-        values = self.statement[1:]
-        match = search_variable(name.value, ignore_errors=True)
-        if match.is_assign(allow_assign_mark=True):
-            self._valid_variable(name, values)
-        else:
-            self._invalid_variable(name, values)
-        if match.is_dict_assign(allow_assign_mark=True):
-            self._validate_dict_items(values)
-
-    def _valid_variable(self, name, values):
-        name.type = Token.VARIABLE
-        for token in values:
+        self.statement[0].type = Token.VARIABLE
+        for token in self.statement[1:]:
             token.type = Token.ARGUMENT
-
-    def _invalid_variable(self, name, values):
-        name.set_error("Invalid variable name '%s'." % name.value)
-        for token in values:
-            token.type = Token.COMMENT
-
-    def _validate_dict_items(self, values):
-        for token in values:
-            if not self._is_valid_dict_item(token.value):
-                token.set_error(
-                    "Invalid dictionary variable item '%s'. "
-                    "Items must use 'name=value' syntax or be dictionary "
-                    "variables themselves." % token.value
-                )
-
-    def _is_valid_dict_item(self, item):
-        name, value = split_from_equals(item)
-        return value is not None or is_dict_variable(item)
 
 
 class KeywordCallLexer(StatementLexer):
@@ -166,37 +137,64 @@ class KeywordCallLexer(StatementLexer):
                 keyword_seen = True
 
 
-class ForLoopHeaderLexer(StatementLexer):
+class ForHeaderLexer(StatementLexer):
     separators = ('IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP')
 
     def handles(self, statement):
-        marker = statement[0].value
-        return (marker == 'FOR' or
-                marker.startswith(':') and
-                marker.replace(':', '').replace(' ', '').upper() == 'FOR')
+        return statement[0].value == 'FOR'
 
     def lex(self):
-        separator_seen = False
-        variable_seen = False
         self.statement[0].type = Token.FOR
+        separator_seen = False
         for token in self.statement[1:]:
             if separator_seen:
                 token.type = Token.ARGUMENT
-            elif variable_seen and self._is_separator(token.value):
+            elif normalize_whitespace(token.value) in self.separators:
                 token.type = Token.FOR_SEPARATOR
                 separator_seen = True
             else:
                 token.type = Token.VARIABLE
-                variable_seen = True
 
-    def _is_separator(self, value):
-        return normalize_whitespace(value) in self.separators
+
+class IfHeaderLexer(StatementLexer):
+
+    def handles(self, statement):
+        return statement[0].value == 'IF'
+
+    def lex(self):
+        self.statement[0].type = Token.IF
+        for token in self.statement[1:]:
+            token.type = Token.ARGUMENT
+
+
+class ElseIfHeaderLexer(StatementLexer):
+
+    def handles(self, statement):
+        return normalize_whitespace(statement[0].value) == 'ELSE IF'
+
+    def lex(self):
+        self.statement[0].type = Token.ELSE_IF
+        for token in self.statement[1:]:
+            token.type = Token.ARGUMENT
+
+
+class ElseHeaderLexer(StatementLexer):
+
+    def handles(self, statement):
+        return statement[0].value == 'ELSE'
+
+    def lex(self):
+        self.statement[0].type = Token.ELSE
+        for token in self.statement[1:]:
+            token.type = Token.ARGUMENT
 
 
 class EndLexer(StatementLexer):
 
     def handles(self, statement):
-        return len(statement) == 1 and statement[0].value == 'END'
+        return statement[0].value == 'END'
 
     def lex(self):
         self.statement[0].type = Token.END
+        for token in self.statement[1:]:
+            token.type = Token.ARGUMENT

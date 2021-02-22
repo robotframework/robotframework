@@ -17,49 +17,57 @@ from robot.errors import (ExecutionFailed, ExecutionStatus, DataError,
                           HandlerExecutionFailed, KeywordError, VariableError)
 from robot.utils import ErrorDetails, get_timestamp
 
+from .modelcombiner import ModelCombiner
+
 
 class StatusReporter(object):
 
-    def __init__(self, context, result, dry_run_lib_kw=False):
-        self._context = context
-        self._result = result
-        self._pass_status = 'PASS' if not dry_run_lib_kw else 'NOT_RUN'
-        self._test_passed = None
+    def __init__(self, data, result, context, run=True):
+        self.data = data
+        self.result = result
+        self.context = context
+        if run:
+            self.pass_status = result.PASS
+            result.status = result.NOT_SET
+        else:
+            self.pass_status = result.status = result.NOT_RUN
+        self.test_passed = None
 
     def __enter__(self):
-        if self._context.test:
-            self._test_passed = self._context.test.passed
-        self._result.starttime = get_timestamp()
-        self._context.start_keyword(self._result)
-        self._warn_if_deprecated(self._result.doc, self._result.name)
+        if self.context.test:
+            self.test_passed = self.context.test.passed
+        self.result.starttime = get_timestamp()
+        self.context.start_keyword(ModelCombiner(self.data, self.result))
+        self._warn_if_deprecated(self.result.doc, self.result.name)
+        return self
 
     def _warn_if_deprecated(self, doc, name):
         if doc.startswith('*DEPRECATED') and '*' in doc[1:]:
             message = ' ' + doc.split('*', 2)[-1].strip()
-            self._context.warn("Keyword '%s' is deprecated.%s" % (name, message))
+            self.context.warn("Keyword '%s' is deprecated.%s" % (name, message))
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        context = self._context
-        result = self._result
+        context = self.context
+        result = self.result
         failure = self._get_failure(exc_type, exc_val, exc_tb, context)
         if failure is None:
-            result.status = self._pass_status
+            result.status = self.pass_status
         else:
             result.status = failure.status
-            if result.type == result.TEARDOWN_TYPE:
+            if result.type == result.TEARDOWN:
                 result.message = failure.message
         if context.test:
             status = self._get_status(result)
             context.test.status = status
         result.endtime = get_timestamp()
-        context.end_keyword(result)
+        context.end_keyword(ModelCombiner(self.data, result))
         if failure is not exc_val:
             raise failure
 
     def _get_status(self, result):
         if result.status == 'SKIP':
             return 'SKIP'
-        if self._test_passed and result.passed:
+        if self.test_passed and result.passed:
             return 'PASS'
         return 'FAIL'
 
@@ -77,7 +85,10 @@ class StatusReporter(object):
         failure = HandlerExecutionFailed(ErrorDetails(exc_info))
         if failure.timeout:
             context.timeout_occurred = True
-        context.fail(failure.full_message)
+        if failure.skip:
+            context.skip(failure.full_message)
+        else:
+            context.fail(failure.full_message)
         if failure.traceback:
             context.debug(failure.traceback)
         return failure

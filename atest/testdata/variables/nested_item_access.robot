@@ -4,7 +4,7 @@ Test Template     Should Be Equal
 
 *** Variables ***
 ${LIST}           [['item'], [1, 2, (3, [4]), 5], 'third']
-${DICT}           {'key': {'key': 'value'}, 1: {2: 3}, 'x': {'y': {'z': ''}}}
+${DICT}           {'key': {'key': 'value'}, 1: {2: 3}, 'x': {'y': {'z': ''}}, 'nest': {'eq': {'first': 'expected'}}}
 ${MIXED}          {'x': [(1, {'y': {'z': ['foo', b'bar', {'': ['ABC']}]}})]}
 ${STRING}         Robot42
 
@@ -50,14 +50,14 @@ Invalid nested dict access
 
 Invalid nested string access
     [Documentation]    FAIL Tuple '\${STRING}[1]' used with invalid index 'inv'.
-    ${LIST}[1][inv]                  whatever
+    ${LIST}[1][inv]                    whatever
 
 Nested access with non-subscriptable
     [Documentation]    FAIL
     ...    Variable '\${DICT}[\${1}][\${2}]' is integer, which is not \
     ...    subscriptable, and thus accessing item '0' from it is not possible. \
     ...    To use '[0]' as a literal value, it needs to be escaped like '\\[0]'.
-    ${DICT}[${1}][${2}][0]                     whatever
+    ${DICT}[${1}][${2}][0]              whatever
 
 Escape nested
     ${LIST}[-1]\[0]                     third[0]
@@ -65,10 +65,11 @@ Escape nested
     ${DICT}[key]\[key][key]             {'key': 'value'}[key][key]
     ${STRING}[0]\[-1]                   R[-1]
 
-Nested access doesn't support old `@` and `&` syntax
-    @{LIST}[0][0]                       ['item'][0]
-    &{DICT}[key][key]                   {'key': 'value'}[key]
-    &{MIXED}[x][0][0]                   ${MIXED}[x]\[0][0]
+Nested access supports `@` and `&` syntax
+    @{LIST}[1][2][1]                    ${4}
+    @{{[[[1, 1]]]}}[0][0]
+    &{DICT}[nest][eq]                   second=expected
+    second=EXPECTED                     &{DICT}[nest][eq]    ignore_case=True
 
 *** Keywords ***
 Literals to objects

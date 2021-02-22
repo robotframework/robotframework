@@ -2,7 +2,7 @@ import sys
 import unittest
 
 from robot.errors import DataError
-from robot.model import Keywords
+from robot.model import Body
 from robot.running.userkeyword import EmbeddedArgumentsHandler
 from robot.running.arguments import EmbeddedArguments, UserKeywordArgumentParser
 from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
@@ -34,7 +34,7 @@ class HandlerDataMock:
     def __init__(self, name, args=[]):
         self.name = name
         self.args = FakeArgs(args)
-        self.keywords = Keywords()
+        self.body = Body()
         self.source = None
         self.lineno = -1
         self.return_value = None
@@ -183,9 +183,9 @@ class TestGetArgSpec(unittest.TestCase):
         argspec = self._parse(in_args)
         assert_equal(argspec.positional, args)
         assert_equal(argspec.defaults, defaults)
-        assert_equal(argspec.varargs, varargs)
-        assert_equal(argspec.kwonlyargs, kwonlyargs)
-        assert_equal(argspec.kwargs, kwargs)
+        assert_equal(argspec.var_positional, varargs)
+        assert_equal(argspec.named_only, kwonlyargs)
+        assert_equal(argspec.var_named, kwargs)
 
     def _parse(self, in_args):
         return UserKeywordArgumentParser().parse(in_args.split())

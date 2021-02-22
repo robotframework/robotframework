@@ -4,7 +4,7 @@ from os.path import join, dirname
 from robot.errors import DataError
 from robot.result import ExecutionResult, Result
 from robot.utils import StringIO, PY3
-from robot.utils.asserts import assert_equal, assert_true, assert_raises
+from robot.utils.asserts import assert_equal, assert_false, assert_true, assert_raises
 
 
 def _read_file(name):
@@ -23,10 +23,10 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         self.result = ExecutionResult(StringIO(GOLDEN_XML))
         self.suite = self.result.suite
         self.test = self.suite.tests[0]
-        self.keyword = self.test.keywords[0]
-        self.user_keyword = self.test.keywords[1]
+        self.keyword = self.test.body[0]
+        self.user_keyword = self.test.body[1]
         self.message = self.keyword.messages[0]
-        self.setup = self.suite.keywords[0]
+        self.setup = self.suite.setup
         self.errors = self.result.errors
 
     def test_suite_is_built(self):
@@ -45,7 +45,7 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equal(self.test.doc, 'Test case documentation')
         assert_equal(self.test.timeout, None)
         assert_equal(list(self.test.tags), ['t1'])
-        assert_equal(len(self.test.keywords), 2)
+        assert_equal(len(self.test.body), 2)
         assert_equal(self.test.status, 'PASS')
         assert_equal(self.test.starttime, '20111024 13:41:20.925')
         assert_equal(self.test.endtime, '20111024 13:41:20.934')
@@ -59,8 +59,8 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equal(self.keyword.starttime, '20111024 13:41:20.926')
         assert_equal(self.keyword.endtime, '20111024 13:41:20.928')
         assert_equal(self.keyword.timeout, None)
-        assert_equal(len(self.keyword.keywords), 0)
-        assert_equal(len(self.keyword.messages), 1)
+        assert_equal(len(self.keyword.body), 1)
+        assert_equal(self.keyword.body[0].type, self.keyword.body[0].MESSAGE)
 
     def test_user_keyword_is_built(self):
         assert_equal(self.user_keyword.name, 'logs on trace')
@@ -72,7 +72,7 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equal(self.user_keyword.endtime, '20111024 13:41:20.933')
         assert_equal(self.user_keyword.timeout, None)
         assert_equal(len(self.user_keyword.messages), 0)
-        assert_equal(len(self.user_keyword.keywords), 1)
+        assert_equal(len(self.user_keyword.body), 1)
 
     def test_message_is_built(self):
         assert_equal(self.message.message, 'Test 1')
@@ -80,7 +80,7 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equal(self.message.timestamp, '20111024 13:41:20.927')
 
     def test_suite_setup_is_built(self):
-        assert_equal(len(self.setup.keywords), 0)
+        assert_equal(len(self.setup.body), 0)
         assert_equal(len(self.setup.messages), 0)
 
     def test_errors_are_built(self):
@@ -221,11 +221,13 @@ class TestSuiteTeardownFailed(unittest.TestCase):
         assert_equal(passed.message, 'Parent suite teardown failed:\nXXX')
         assert_equal(failed.status, 'FAIL')
         assert_equal(failed.message, 'Message\n\n'
-                                      'Also parent suite teardown failed:\nXXX')
+                                     'Also parent suite teardown failed:\nXXX')
         assert_equal(teardowns.status, 'FAIL')
         assert_equal(teardowns.message, 'Parent suite teardown failed:\nXXX')
-        for item in suite, passed, failed, teardowns:
-            assert_equal(list(item.keywords), [])
+        for item in suite.setup, suite.teardown:
+            assert_false(item)
+        for item in passed, failed, teardowns:
+            assert_equal(list(item.body), [])
 
     def test_excluding_keywords_and_already_processed(self):
         inp = SUITE_TEARDOWN_FAILED.replace('generator="Robot', 'generator="Rebot')
@@ -237,8 +239,10 @@ class TestSuiteTeardownFailed(unittest.TestCase):
         assert_equal(failed.message, 'Message')
         assert_equal(teardowns.status, 'PASS')
         assert_equal(teardowns.message, '')
-        for item in suite, passed, failed, teardowns:
-            assert_equal(list(item.keywords), [])
+        for item in suite.setup, suite.teardown:
+            assert_false(item)
+        for item in passed, failed, teardowns:
+            assert_equal(list(item.body), [])
 
 
 class TestBuildingFromXmlStringAndHandlingMissingInformation(unittest.TestCase):
@@ -280,7 +284,6 @@ class TestBuildingFromXmlStringAndHandlingMissingInformation(unittest.TestCase):
         assert_equal(suite.doc, '')
         assert_equal(suite.source, None)
         assert_equal(suite.metadata, {})
-        assert_equal(list(suite.keywords), [])
         assert_equal(suite.starttime, None)
         assert_equal(suite.endtime, None)
         assert_equal(suite.elapsedtime, 0)
@@ -292,7 +295,7 @@ class TestBuildingFromXmlStringAndHandlingMissingInformation(unittest.TestCase):
         assert_equal(test.doc, '')
         assert_equal(test.timeout, None)
         assert_equal(list(test.tags), [])
-        assert_equal(list(test.keywords), [])
+        assert_equal(list(test.body), [])
         assert_equal(test.starttime, None)
         assert_equal(test.endtime, None)
         assert_equal(test.elapsedtime, 0)
@@ -324,7 +327,7 @@ if PY3:
             assert_equal(test.doc, 'Test case documentation')
             assert_equal(test.timeout, None)
             assert_equal(list(test.tags), ['t1'])
-            assert_equal(len(test.keywords), 2)
+            assert_equal(len(test.body), 2)
             assert_equal(test.status, 'PASS')
             assert_equal(test.starttime, '20111024 13:41:20.925')
             assert_equal(test.endtime, '20111024 13:41:20.934')

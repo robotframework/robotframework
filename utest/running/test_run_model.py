@@ -3,12 +3,14 @@ import os
 from os.path import abspath, normpath, join
 import tempfile
 import unittest
+import warnings
 
 from robot import api, model
 from robot.model.modelobject import ModelObject
-from robot.running.model import TestSuite, TestCase, Keyword, ForLoop
+from robot.running.model import TestSuite, TestCase, Keyword, For, If, UserKeyword
 from robot.running import TestSuiteBuilder
-from robot.utils.asserts import assert_equal, assert_not_equal, assert_false
+from robot.utils.asserts import (assert_equal, assert_not_equal, assert_false,
+                                 assert_raises, assert_true)
 from robot.utils import unicode
 
 
@@ -18,10 +20,12 @@ MISC_DIR = normpath(join(abspath(__file__), '..', '..', '..',
 
 class TestModelTypes(unittest.TestCase):
 
-    def test_suite_keyword(self):
-        kw = TestSuite().keywords.create()
-        assert_equal(type(kw), Keyword)
-        assert_not_equal(type(kw), model.Keyword)
+    def test_suite_setup(self):
+        suite = TestSuite()
+        assert_equal(type(suite.setup), Keyword)
+        assert_equal(type(suite.teardown), Keyword)
+        assert_not_equal(type(suite.setup), model.Keyword)
+        assert_not_equal(type(suite.teardown), model.Keyword)
 
     def test_suite_test_case(self):
         test = TestSuite().tests.create()
@@ -29,23 +33,23 @@ class TestModelTypes(unittest.TestCase):
         assert_not_equal(type(test), model.TestCase)
 
     def test_test_case_keyword(self):
-        kw = TestCase().keywords.create()
+        kw = TestCase().body.create_keyword()
         assert_equal(type(kw), Keyword)
         assert_not_equal(type(kw), model.Keyword)
 
 
-class TestStringRepr(unittest.TestCase):
+class TestUserKeyword(unittest.TestCase):
 
-    def test_for_loop(self):
-        loop = ForLoop(['${x}'], ['foo', 'bar'], 'IN')
-        expected = u'FOR    ${x}    IN    foo    bar'
-        assert_equal(str(loop), expected)
-        assert_equal(unicode(loop), expected)
-        assert_equal(repr(loop), repr(expected))
-        loop = ForLoop(['${x}', u'${\xfc}'], [u'f\xf6\xf6', u'b\xe4r'], 'IN ZIP')
-        expected = u'FOR    ${x}    ${\xfc}    IN ZIP    f\xf6\xf6    b\xe4r'
-        assert_equal(unicode(loop), expected)
-        assert_equal(repr(loop), repr(expected))
+    def test_keywords_deprecation(self):
+        uk = UserKeyword('Name')
+        uk.body.create_keyword()
+        uk.teardown.config(name='T')
+        with warnings.catch_warnings(record=True) as w:
+            kws = uk.keywords
+            assert_equal(len(kws), 2)
+            assert_true('deprecated' in str(w[0].message))
+        assert_raises(AttributeError, kws.append, Keyword())
+        assert_raises(AttributeError, setattr, uk, 'keywords', [])
 
 
 class TestSuiteFromSources(unittest.TestCase):
@@ -117,12 +121,11 @@ Keyword
         assert_equal(suite.resource.variables[0].name, '${VAR}')
         assert_equal(suite.resource.variables[0].value, ('Value',))
         assert_equal(suite.resource.keywords[0].name, 'Keyword')
-        assert_equal(suite.resource.keywords[0].keywords[0].name, 'Log')
-        assert_equal(suite.resource.keywords[0].keywords[0].args, ('Hello!',))
+        assert_equal(suite.resource.keywords[0].body[0].name, 'Log')
+        assert_equal(suite.resource.keywords[0].body[0].args, ('Hello!',))
         assert_equal(suite.tests[0].name, 'Example')
-        assert_equal(suite.tests[0].keywords.setup.name, 'No Operation')
-        assert_equal(suite.tests[0].keywords[0].name, 'No Operation')
-        assert_equal(suite.tests[0].keywords[1].name, 'Keyword')
+        assert_equal(suite.tests[0].setup.name, 'No Operation')
+        assert_equal(suite.tests[0].body[0].name, 'Keyword')
 
 
 class TestCopy(unittest.TestCase):
@@ -136,7 +139,7 @@ class TestCopy(unittest.TestCase):
     def assert_copy(self, original, copied):
         assert_not_equal(id(original), id(copied))
         self.assert_same_attrs_and_values(original, copied)
-        for attr in ['suites', 'tests', 'keywords']:
+        for attr in ['suites', 'tests']:
             for child in getattr(original, attr, []):
                 self.assert_copy(child, child.copy())
 
@@ -151,7 +154,7 @@ class TestCopy(unittest.TestCase):
 
     def get_non_property_attrs(self, model1, model2):
         for attr in dir(model1):
-            if isinstance(getattr(type(model1), attr, None), property):
+            if 'parent' in attr or isinstance(getattr(type(model1), attr, None), property):
                 continue
             value1 = getattr(model1, attr)
             value2 = getattr(model2, attr)
@@ -210,8 +213,8 @@ class TestLineNumberAndSource(unittest.TestCase):
         self._assert_lineno_and_source(self.suite.resource.keywords[0], 24)
 
     def test_keyword_call(self):
-        self._assert_lineno_and_source(self.suite.tests[0].keywords[0], 15)
-        self._assert_lineno_and_source(self.suite.resource.keywords[0].keywords[0], 27)
+        self._assert_lineno_and_source(self.suite.tests[0].body[0], 15)
+        self._assert_lineno_and_source(self.suite.resource.keywords[0].body[0], 27)
 
     def _assert_lineno_and_source(self, item, lineno):
         assert_equal(item.source, self.source)

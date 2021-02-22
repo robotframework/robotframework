@@ -40,4 +40,3 @@ robot.output.console.verbose module
    :members:
    :undoc-members:
    :show-inheritance:
-

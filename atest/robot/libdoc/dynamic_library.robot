@@ -21,15 +21,15 @@ Generated
 Scope
     Scope Should Be                  TEST
 
-Named args
-    Named Args Should Be             true
-
 Source info
     Source should be                 ${TESTDATADIR}/DynamicLibrary.py
     Lineno should be                 7
 
 Spec version
     Spec version should be correct
+
+Library Tags
+    Specfile Tags Should Be          hyvää    my    tägs    yötä
 
 Init documentation
     Init Doc Should Start With       0     Dummy documentation for `__init__`.
@@ -38,8 +38,8 @@ Init arguments
     Init Arguments Should Be         0     arg1    arg2=This is shown in docs
 
 Init Source Info
-    Keyword Should Not Have Source   0     xpath=init
-    Keyword Lineno Should Be         0     11      xpath=init
+    Keyword Should Not Have Source   0     xpath=inits/init
+    Keyword Lineno Should Be         0     11      xpath=inits/init
 
 Keyword names
     Keyword Name Should Be           0     0

@@ -3,8 +3,11 @@ Suite Setup     Check That Default Orders Are Correct
 Resource        cli_resource.robot
 
 *** Variables ***
-${DEFAULT SUITE ORDER}  [Suite First, Sub.Suite.1, Suite3, Suite4, Suite5, Suite10, Suite 6, SUite7, suiTe 8, Suite 9 Name]
-${DEFAULT TEST ORDER}  [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12]
+@{DEFAULT SUITE ORDER}    Suite First    Sub.Suite.1    Suite3     Suite4     Suite5
+...                       Suite10        Suite 6        SUite7     suiTe 8    Suite 9 Name
+@{DEFAULT TEST ORDER}     test1          test2          test3      test4      test5
+...                       test6          test7          test8      test9      test10
+...                       test11         test12
 
 *** Test Cases ***
 Randomizing tests
@@ -62,9 +65,8 @@ Randomizing suites and tests with seed
 
 Last option overrides all previous
     [Setup]  Run Tests  --randomize suites --randomize tests --randomize none  misc/multiple_suites
-    Should Be Equal As Strings  ${SUITE.suites}  ${DEFAULT SUITE ORDER}
-    ${tests} =  Get Tests
-    Should Be Equal As Strings  ${tests}  ${DEFAULT TEST ORDER}
+    Suites should be in default order
+    Tests should be in default order
 
 Invalid option value
     Run Should Fail  --randomize INVALID ${TESTFILE}  Option '--randomize' does not support value 'INVALID'.
@@ -79,21 +81,21 @@ Check That Default Orders Are Correct
     Tests should be in default order
 
 Suites Should Be Randomized
-    Should Not Be Equal As Strings    ${SUITE.suites}    ${DEFAULT SUITE ORDER}
+    Should Not Be Equal    ${{[suite.name for suite in $SUITE.suites]}}    ${DEFAULT SUITE ORDER}
     [Return]  ${SUITE.suites}
 
 Suites should be in default order
-    Should Be Equal As Strings    ${SUITE.suites}    ${DEFAULT SUITE ORDER}
+    Should Be Equal    ${{[suite.name for suite in $SUITE.suites]}}    ${DEFAULT SUITE ORDER}
     [Return]  ${SUITE.suites}
 
 Tests Should Be Randomized
     ${tests} =  Get Tests
-    Should Not Be Equal As Strings    ${tests}    ${DEFAULT TEST ORDER}
+    Should Not Be Equal    ${{[test.name for test in $tests]}}    ${DEFAULT TEST ORDER}
     [Return]  ${tests}
 
 Tests should be in default order
     ${tests} =  Get Tests
-    Should Be Equal As Strings    ${tests}    ${DEFAULT TEST ORDER}
+    Should Be Equal    ${{[test.name for test in $tests]}}    ${DEFAULT TEST ORDER}
     [Return]  ${tests}
 
 Order should be same

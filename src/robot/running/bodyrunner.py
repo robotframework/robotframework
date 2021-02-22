@@ -14,110 +14,150 @@
 #  limitations under the License.
 
 from collections import OrderedDict
+from contextlib import contextmanager
 
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
-                          ExitForLoop, ContinueForLoop, DataError)
-from robot.result import Keyword as KeywordResult
+                          ExecutionStatus, ExitForLoop, ContinueForLoop, DataError)
+from robot.result import For as ForResult, If as IfResult, IfBranch as IfBranchResult
 from robot.output import librarylogger as logger
-from robot.utils import (format_assign_message, frange, get_error_message,
-                         is_list_like, is_number, plural_or_not as s,
+from robot.utils import (cut_assign_value, frange, get_error_message,
+                         is_list_like, is_number, is_unicode, plural_or_not as s,
                          split_from_equals, type_name)
-from robot.variables import is_dict_variable, is_scalar_assign
+from robot.variables import is_dict_variable, evaluate_expression
 
 from .statusreporter import StatusReporter
 
 
-class StepRunner(object):
+class BodyRunner(object):
 
-    def __init__(self, context, templated=False):
+    def __init__(self, context, run=True, templated=False):
         self._context = context
-        self._templated = bool(templated)
+        self._run = run
+        self._templated = templated
 
-    def run_steps(self, steps):
+    def run(self, body):
         errors = []
-        for step in steps:
+        for step in body:
             try:
-                self.run_step(step)
+                step.run(self._context, self._run, self._templated)
             except ExecutionPassed as exception:
                 exception.set_earlier_failures(errors)
                 raise exception
             except ExecutionFailed as exception:
                 errors.extend(exception.get_errors())
-                if not exception.can_continue(self._context.in_teardown,
-                                              self._templated,
-                                              self._context.dry_run):
-                    break
+                self._run = exception.can_continue(self._context.in_teardown,
+                                                   self._templated,
+                                                   self._context.dry_run)
         if errors:
             raise ExecutionFailures(errors)
 
-    def run_step(self, step, name=None):
+
+class KeywordRunner(object):
+
+    def __init__(self, context, run=True):
+        self._context = context
+        self._run = run
+
+    def run(self, step, name=None):
         context = self._context
-        if step.type == step.FOR_LOOP_TYPE:
-            runner = ForRunner(context, self._templated, step.flavor)
-            return runner.run(step)
         runner = context.get_runner(name or step.name)
         if context.dry_run:
             return runner.dry_run(step, context)
-        return runner.run(step, context)
+        return runner.run(step, context, self._run)
 
 
-def ForRunner(context, templated=False, flavor='IN'):
+class IfRunner(object):
+    _dry_run_stack = []
+
+    def __init__(self, context, run=True, templated=False):
+        self._context = context
+        self._run = run
+        self._templated = templated
+
+    def run(self, data):
+        with self._dry_run_recursion_detection(data) as recursive_dry_run:
+            error = None
+            with StatusReporter(data, IfResult(), self._context, self._run):
+                for branch in data.body:
+                    try:
+                        if self._run_if_branch(branch, recursive_dry_run, data.error):
+                            self._run = False
+                    except ExecutionStatus as err:
+                        error = err
+                        self._run = False
+                if error:
+                    raise error
+
+    @contextmanager
+    def _dry_run_recursion_detection(self, data):
+        dry_run = self._context.dry_run
+        if dry_run:
+            recursive_dry_run = data in self._dry_run_stack
+            self._dry_run_stack.append(data)
+        else:
+            recursive_dry_run = False
+        try:
+            yield recursive_dry_run
+        finally:
+            if dry_run:
+                self._dry_run_stack.pop()
+
+    def _run_if_branch(self, branch, recursive_dry_run=False, error=None):
+        result = IfBranchResult(branch.type, branch.condition)
+        run_branch = self._should_run_branch(branch.condition, recursive_dry_run)
+        with StatusReporter(branch, result, self._context, run_branch):
+            if error and self._run:
+                raise DataError(error)
+            runner = BodyRunner(self._context, run_branch, self._templated)
+            if not recursive_dry_run:
+                runner.run(branch.body)
+        return run_branch
+
+    def _should_run_branch(self, condition, recursive_dry_run=False):
+        if self._context.dry_run:
+            return not recursive_dry_run
+        if not self._run:
+            return False
+        if condition is None:
+            return True
+        condition = self._context.variables.replace_scalar(condition)
+        if is_unicode(condition):
+            return evaluate_expression(condition, self._context.variables.current.store)
+        return bool(condition)
+
+
+def ForRunner(context, flavor='IN', run=True, templated=False):
     runners = {'IN': ForInRunner,
                'IN RANGE': ForInRangeRunner,
                'IN ZIP': ForInZipRunner,
                'IN ENUMERATE': ForInEnumerateRunner}
     runner = runners[flavor or 'IN']
-    return runner(context, templated)
+    return runner(context, run, templated)
 
 
 class ForInRunner(object):
     flavor = 'IN'
 
-    def __init__(self, context, templated=False):
+    def __init__(self, context, run=True, templated=False):
         self._context = context
+        self._run = run
         self._templated = templated
 
-    def run(self, data, name=None):
-        result = KeywordResult(kwname=self._get_name(data),
-                               type=data.FOR_LOOP_TYPE)
-        with StatusReporter(self._context, result):
-            self._validate(data)
-            self._run(data)
+    def run(self, data):
+        result = ForResult(data.variables, data.flavor, data.values)
+        with StatusReporter(data, result, self._context, self._run):
+            if self._run:
+                if data.error:
+                    raise DataError(data.error)
+                self._run_loop(data, result)
+            else:
+                self._run_one_round(data, result)
 
-    def _get_name(self, data):
-        return '%s %s [ %s ]' % (' | '.join(data.variables),
-                                 self.flavor,
-                                 ' | '.join(data.values))
-
-    def _validate(self, data):
-        # TODO: Remove header and end deprecations in RF 3.3!
-        if data._header != 'FOR':
-            self._deprecated("For loop header '%s' is deprecated. "
-                             "Use 'FOR' instead." % data._header, data)
-        if data._end is None:
-            raise DataError("For loop has no closing 'END'.")
-        if data._end != 'END':
-            self._deprecated("Marking for loop body with '\\' is deprecated. "
-                             "Remove markers and use 'END' instead.", data)
-        if not data.variables:
-            raise DataError('FOR loop has no loop variables.')
-        for var in data.variables:
-            if not is_scalar_assign(var):
-                raise DataError("Invalid FOR loop variable '%s'." % var)
-        if not data.values:
-            raise DataError('FOR loop has no loop values.')
-        if not data.keywords:
-            raise DataError('FOR loop contains no keywords.')
-
-    def _deprecated(self, message, data):
-        logger.warn("Error in file '%s' in FOR loop starting on line %s: %s"
-                    % (data.source, data.lineno, message))
-
-    def _run(self, data):
+    def _run_loop(self, data, result):
         errors = []
         for values in self._get_values_for_rounds(data):
             try:
-                self._run_one_round(data, values)
+                self._run_one_round(data, result, values)
             except ExitForLoop as exception:
                 if exception.earlier_failures:
                     errors.extend(exception.earlier_failures.get_errors())
@@ -139,16 +179,14 @@ class ForInRunner(object):
             raise ExecutionFailures(errors)
 
     def _get_values_for_rounds(self, data):
-        values_per_round = len(data.variables)
         if self._context.dry_run:
-            return ForInRunner._map_values_to_rounds(
-                self, data.variables, values_per_round
-            )
+            return [None]
+        values_per_round = len(data.variables)
         if self._is_dict_iteration(data.values):
             values = self._resolve_dict_values(data.values)
             values = self._map_dict_values_to_rounds(values, values_per_round)
         else:
-            values = self._context.variables.replace_list(data.values)
+            values = self._resolve_values(data.values)
             values = self._map_values_to_rounds(values, values_per_round)
         return values
 
@@ -203,6 +241,9 @@ class ForInRunner(object):
             )
         return values
 
+    def _resolve_values(self, values):
+        return self._context.variables.replace_list(values)
+
     def _map_values_to_rounds(self, values, per_round):
         count = len(values)
         if count % per_round != 0:
@@ -216,21 +257,22 @@ class ForInRunner(object):
             'Got %d variables but %d value%s.' % (variables, values, s(values))
         )
 
-    def _run_one_round(self, data, values):
+    def _run_one_round(self, data, result, values=None):
+        result = result.body.create_iteration()
         variables = self._map_variables_and_values(data.variables, values)
         for name, value in variables:
             self._context.variables[name] = value
-        name = ', '.join(format_assign_message(n, v) for n, v in variables)
-        result = KeywordResult(kwname=name,
-                               type=data.FOR_ITEM_TYPE)
-        runner = StepRunner(self._context, self._templated)
-        with StatusReporter(self._context, result):
-            runner.run_steps(data.keywords)
+            result.variables[name] = cut_assign_value(value)
+        runner = BodyRunner(self._context, self._run, self._templated)
+        with StatusReporter(data, result, self._context, self._run):
+            runner.run(data.body)
 
     def _map_variables_and_values(self, variables, values):
+        if values is None:    # Failure occurred earlier or dry-run.
+            values = variables
         if len(variables) == 1 and len(values) != 1:
             return [(variables[0], tuple(values))]
-        return list(zip(variables, values))
+        return zip(variables, values)
 
 
 class ForInRangeRunner(ForInRunner):
@@ -267,6 +309,7 @@ class ForInRangeRunner(ForInRunner):
 
 class ForInZipRunner(ForInRunner):
     flavor = 'IN ZIP'
+    _start = 0
 
     def _resolve_dict_values(self, values):
         raise DataError(
@@ -288,6 +331,25 @@ class ForInZipRunner(ForInRunner):
 class ForInEnumerateRunner(ForInRunner):
     flavor = 'IN ENUMERATE'
 
+    def _resolve_dict_values(self, values):
+        self._start, values = self._get_start(values)
+        return ForInRunner._resolve_dict_values(self, values)
+
+    def _resolve_values(self, values):
+        self._start, values = self._get_start(values)
+        return ForInRunner._resolve_values(self, values)
+
+    def _get_start(self, values):
+        if not values[-1].startswith('start='):
+            return 0, values
+        start = self._context.variables.replace_string(values[-1][6:])
+        if len(values) == 1:
+            raise DataError('FOR loop has no loop values.')
+        try:
+            return int(start), values[:-1]
+        except ValueError:
+            raise ValueError("Invalid FOR IN ENUMERATE start value '%s'." % start)
+
     def _map_dict_values_to_rounds(self, values, per_round):
         if per_round > 3:
             raise DataError(
@@ -295,13 +357,13 @@ class ForInEnumerateRunner(ForInRunner):
                 'iterating over dictionaries, got %d.' % per_round
             )
         if per_round == 2:
-            return ((index, item) for index, item in enumerate(values))
-        return ((index,) + item for index, item in enumerate(values))
+            return ((i, v) for i, v in enumerate(values, start=self._start))
+        return ((i,) + v for i, v in enumerate(values, start=self._start))
 
     def _map_values_to_rounds(self, values, per_round):
         per_round = max(per_round-1, 1)
         values = ForInRunner._map_values_to_rounds(self, values, per_round)
-        return ([i] + v for i, v in enumerate(values))
+        return ([i] + v for i, v in enumerate(values, start=self._start))
 
     def _raise_wrong_variable_count(self, variables, values):
         raise DataError(

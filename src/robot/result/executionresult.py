@@ -63,9 +63,9 @@ class Result(object):
             result.configure(stat_config={'suite_stat_level': 2,
                                           'tag_stat_combine': 'tagANDanother'})
             stats = result.statistics
-            print stats.total.failed
-            print stats.total.passed
-            print stats.tags.combined[0].total
+            print(stats.total.failed)
+            print(stats.total.passed)
+            print(stats.tags.combined[0].total)
         """
         return Statistics(self.suite, rpa=self.rpa, **self._stat_config)
 
@@ -73,7 +73,7 @@ class Result(object):
     def return_code(self):
         """Return code (integer) of test execution.
 
-        By default returns the number of failed critical tests (max 250),
+        By default returns the number of failed tests (max 250),
         but can be :func:`configured <configure>` to always return 0.
         """
         if self._status_rc:

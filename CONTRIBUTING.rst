@@ -136,6 +136,18 @@ All code, including test code, must be compatible with all supported Python
 interpreters and versions. Most importantly this means that the code must
 support both Python 2 and Python 3.
 
+Line length
+'''''''''''
+
+Maximum line length with Python code, including docstrings and comments, is 88
+characters. This is also what `Black <https://pypi.org/project/black/>`__ uses
+by default and `their documentation
+<https://black.readthedocs.io/en/stable/the_black_code_style.html#line-length>`__
+explains why. Notice that we do not have immediate plans to actually take Black
+into use but we may consider that later.
+
+With Robot Framework tests the maximum line length is 100.
+
 Whitespace
 ''''''''''
 
@@ -143,6 +155,8 @@ We are pretty picky about using whitespace. We follow `PEP-8`_ in how to use
 blank lines and whitespace in general, but we also have some stricter rules:
 
 - No blank lines inside functions.
+- No blank lines between a class declaration and class attributes or between
+  attributes.
 - Indentation using spaces, not tabs.
 - No trailing spaces.
 - No extra empty lines at the end of the file.

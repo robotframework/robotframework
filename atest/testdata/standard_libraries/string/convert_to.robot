@@ -1,5 +1,4 @@
 *** Settings ***
-Test Template     Do uppercase
 Library           String
 
 *** Variables ***
@@ -73,6 +72,10 @@ Convert To Title Case with regexp excludes
     a, b, and c.          a, b, And c.          exclude=${EXCLUDES2}
     full match only!      Full Match Only!      exclude=.
     full match only!      full Match Only!      exclude=....
+
+Convert To Title Case does not work with bytes
+    [Documentation]    FAIL    TypeError: This keyword works only with Unicode strings.
+    Convert To Title Case    ${{b'xxx'}}
 
 *** Keywords ***
 Test upper case

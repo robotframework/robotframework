@@ -88,8 +88,8 @@ We support also `code-block` and `sourcecode` directives as alias for `code`.
 
    Variable Table
       Should Be Equal   ${table_var}   foo
-      Should Be Equal   @{table_listvar}[0]   bar
-      Should Be Equal   @{table_listvar}[1]   foo
+      Should Be Equal   ${table_listvar}[0]   bar
+      Should Be Equal   ${table_listvar}[1]   foo
 
    Resource File
       Keyword from ReST resource
@@ -98,9 +98,9 @@ We support also `code-block` and `sourcecode` directives as alias for `code`.
       Should Be Equal   ${rest_resource_var2}   ReST Resource Variable From Recursive Resource
 
    Variable File
-      Should Be Equal   @{file_listvar}[0]   ${True}
-      Should Be Equal   @{file_listvar}[1]   ${3.14}
-      Should Be Equal   @{file_listvar}[2]   Hello, world!!
+      Should Be Equal   ${file_listvar}[0]   ${True}
+      Should Be Equal   ${file_listvar}[1]   ${3.14}
+      Should Be Equal   ${file_listvar}[2]   Hello, world!!
       Should Be Equal   ${file_var1}   ${-314}
       Should Be Equal   ${file_var2}   file variable 2
 

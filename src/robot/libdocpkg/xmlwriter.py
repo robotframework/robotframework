@@ -13,46 +13,35 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from datetime import datetime
 import os.path
+from datetime import datetime
 
-from robot.utils import WINDOWS, XmlWriter
-
-from .htmlwriter import DocToHtml
+from robot.utils import WINDOWS, XmlWriter, unicode
 
 
 class LibdocXmlWriter(object):
 
-    def __init__(self, force_html_doc=False):
-        self._force_html_doc = force_html_doc
-
     def write(self, libdoc, outfile):
-        formatter = DocFormatter(libdoc.doc_format, self._force_html_doc)
         writer = XmlWriter(outfile, usage='Libdoc spec')
-        self._write_start(libdoc, writer, formatter)
-        self._write_keywords('init', libdoc.inits, libdoc.source,
-                             writer, formatter)
-        self._write_keywords('kw', libdoc.keywords, libdoc.source,
-                             writer, formatter)
+        self._write_start(libdoc, writer)
+        self._write_keywords('inits', 'init', libdoc.inits, libdoc.source, writer)
+        self._write_keywords('keywords', 'kw', libdoc.keywords, libdoc.source, writer)
+        self._write_data_types(libdoc.data_types, writer)
         self._write_end(writer)
 
-    def _write_start(self, libdoc, writer, formatter):
+    def _write_start(self, libdoc, writer):
         generated = datetime.utcnow().replace(microsecond=0).isoformat() + 'Z'
         attrs = {'name': libdoc.name,
                  'type': libdoc.type,
-                 'format': formatter.format,
+                 'format': libdoc.doc_format,
                  'scope': libdoc.scope,
-                 'namedargs': 'true' if libdoc.named_args else 'false',
                  'generated': generated,
-                 'specversion': '2'}
+                 'specversion': '3'}
         self._add_source_info(attrs, libdoc, writer.output)
         writer.start('keywordspec', attrs)
         writer.element('version', libdoc.version)
-        # TODO: Remove 'scope' and 'namedargs' elements in RF 4.0.
-        # https://github.com/robotframework/robotframework/issues/3522
-        writer.element('scope', self._get_old_style_scope(libdoc))
-        writer.element('namedargs', 'yes' if libdoc.named_args else 'no')
-        writer.element('doc', formatter(libdoc.doc))
+        writer.element('doc', libdoc.doc)
+        self._write_tags(libdoc.all_tags, writer)
 
     def _add_source_info(self, attrs, item, outfile, lib_source=None):
         if item.source and item.source != lib_source:
@@ -82,46 +71,79 @@ class LibdocXmlWriter(object):
                 'SUITE': 'test suite',
                 'TEST': 'test case'}[libdoc.scope]
 
-    def _write_keywords(self, kw_type, keywords, lib_source, writer, formatter):
+    def _write_keywords(self, list_name, kw_type, keywords, lib_source, writer):
+        writer.start(list_name)
         for kw in keywords:
-            attrs = self._get_start_attrs(kw_type, kw, lib_source, writer)
+            attrs = self._get_start_attrs(kw, lib_source, writer)
             writer.start(kw_type, attrs)
-            writer.start('arguments')
-            for arg in kw.args:
-                writer.element('arg', arg)
-            writer.end('arguments')
-            writer.element('doc', formatter(kw.doc))
+            self._write_arguments(kw, writer)
+            writer.element('doc', kw.doc)
+            writer.element('shortdoc', kw.shortdoc)
             if kw_type == 'kw' and kw.tags:
-                writer.start('tags')
-                for tag in kw.tags:
-                    writer.element('tag', tag)
-                writer.end('tags')
+                self._write_tags(kw.tags, writer)
             writer.end(kw_type)
+        writer.end(list_name)
 
-    def _get_start_attrs(self, kw_type, kw, lib_source, writer):
-        if kw_type == 'init':
-            attrs = {}
-        else:
-            attrs = {'name': kw.name}
-            if kw.deprecated:
-                attrs['deprecated'] = 'true'
+    def _write_tags(self, tags, writer):
+        writer.start('tags')
+        for tag in tags:
+            writer.element('tag', tag)
+        writer.end('tags')
+
+    def _write_arguments(self, kw, writer):
+        writer.start('arguments', {'repr': unicode(kw.args)})
+        for arg in kw.args:
+            writer.start('arg', {'kind': arg.kind,
+                                 'required': 'true' if arg.required else 'false',
+                                 'repr': unicode(arg)})
+            if arg.name:
+                writer.element('name', arg.name)
+            for type_repr in arg.types_reprs:
+                writer.element('type', type_repr)
+            if arg.default is not arg.NOTSET:
+                writer.element('default', arg.default_repr)
+            writer.end('arg')
+        writer.end('arguments')
+
+    def _get_start_attrs(self, kw, lib_source, writer):
+        attrs = {'name': kw.name}
+        if kw.deprecated:
+            attrs['deprecated'] = 'true'
         self._add_source_info(attrs, kw, writer.output, lib_source)
         return attrs
+
+    def _write_data_types(self, data_types, writer):
+        writer.start('datatypes')
+        if data_types.enums:
+            writer.start('enums')
+            for enum in data_types.enums:
+                writer.start('enum', {'name': enum.name})
+                writer.element('doc', enum.doc)
+                writer.start('members')
+                for member in enum.members:
+                    writer.element('member', attrs=member)
+                writer.end('members')
+                writer.end('enum')
+            writer.end('enums')
+        if data_types.typed_dicts:
+            writer.start('typeddicts')
+            for typ_dict in data_types.typed_dicts:
+                writer.start('typeddict', {'name': typ_dict.name})
+                writer.element('doc', typ_dict.doc)
+                writer.start('items')
+                for item in typ_dict.items:
+                    if item['required'] is None:
+                        item.pop('required')
+                    elif item['required']:
+                        item['required'] = 'true'
+                    else:
+                        item['required'] = 'false'
+                    writer.element('item', attrs=item)
+                writer.end('items')
+                writer.end('typeddict')
+            writer.end('typeddicts')
+        writer.end('datatypes')
 
     def _write_end(self, writer):
         writer.end('keywordspec')
         writer.close()
-
-
-class DocFormatter(object):
-
-    def __init__(self, doc_format, force_html=False):
-        if force_html:
-            self._formatter = DocToHtml(doc_format)
-            self.format = 'HTML'
-        else:
-            self._formatter = lambda doc: doc
-            self.format = doc_format
-
-    def __call__(self, doc):
-        return self._formatter(doc)

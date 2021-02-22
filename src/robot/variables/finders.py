@@ -16,21 +16,22 @@
 import re
 
 try:
-    from java.lang.System import (getProperties as get_java_properties,
-                                  getProperty)
+    from java.lang.System import getProperties as get_java_properties, getProperty
     get_java_property = lambda name: getProperty(name) if name else None
 except ImportError:
     get_java_property = lambda name: None
     get_java_properties = lambda: {}
 
 from robot.errors import DataError, VariableError
-from robot.utils import (get_env_var, get_env_vars, get_error_message,
-                         is_dict_like, is_list_like, normalize, DotDict,
+from robot.utils import (get_env_var, get_env_vars, get_error_message, normalize,
                          NormalizedDict)
 
 from .evaluation import evaluate_expression
 from .notfound import variable_not_found
 from .search import search_variable, VariableMatch
+
+
+NOT_FOUND = object()
 
 
 class VariableFinder(object):
@@ -46,43 +47,21 @@ class VariableFinder(object):
 
     def find(self, variable):
         match = self._get_match(variable)
-        identifier = match.identifier
         name = match.name
         for finder in self._finders:
-            if identifier in finder.identifiers:
-                try:
-                    value = finder.find(name)
-                except (KeyError, ValueError):
-                    continue
-                try:
-                    return self._validate_value(value, identifier, name)
-                except VariableError:
-                    raise
-                except:
-                    raise VariableError("Resolving variable '%s' failed: %s"
-                                        % (name, get_error_message()))
+            if match.identifier in finder.identifiers:
+                result = finder.find(name)
+                if result is not NOT_FOUND:
+                    return result
         variable_not_found(name, self._store.data)
 
     def _get_match(self, variable):
         if isinstance(variable, VariableMatch):
             return variable
         match = search_variable(variable)
-        if match.start != 0 or match.end != len(variable) or match.items:
+        if not match.is_variable() or match.items:
             raise DataError("Invalid variable name '%s'." % variable)
         return match
-
-    def _validate_value(self, value, identifier, name):
-        if identifier == '@':
-            if not is_list_like(value):
-                raise VariableError("Value of variable '%s' is not list or "
-                                    "list-like." % name)
-            return list(value)
-        if identifier == '&':
-            if not is_dict_like(value):
-                raise VariableError("Value of variable '%s' is not dictionary "
-                                    "or dictionary-like." % name)
-            return DotDict(value)
-        return value
 
 
 class StoredFinder(object):
@@ -92,7 +71,7 @@ class StoredFinder(object):
         self._store = store
 
     def find(self, name):
-        return self._store[name[2:-1]]
+        return self._store.get(name, NOT_FOUND)
 
 
 class NumberFinder(object):
@@ -100,10 +79,12 @@ class NumberFinder(object):
 
     def find(self, name):
         number = normalize(name)[2:-1]
-        try:
-            return self._get_int(number)
-        except ValueError:
-            return float(number)
+        for converter in self._get_int, float:
+            try:
+                return converter(number)
+            except ValueError:
+                pass
+        return NOT_FOUND
 
     def _get_int(self, number):
         bases = {'0b': 2, '0o': 8, '0x': 16}
@@ -114,8 +95,10 @@ class NumberFinder(object):
 
 class EmptyFinder(object):
     identifiers = '$@&'
-    find = NormalizedDict({'${EMPTY}': u'', '@{EMPTY}': (), '&{EMPTY}': {}},
-                          ignore='_').__getitem__
+    empty = NormalizedDict({'${EMPTY}': u'', '@{EMPTY}': (), '&{EMPTY}': {}}, ignore='_')
+
+    def find(self, name):
+        return self.empty.get(name, NOT_FOUND)
 
 
 class InlinePythonFinder(object):
@@ -127,12 +110,11 @@ class InlinePythonFinder(object):
     def find(self, name):
         base = name[2:-1]
         if not base or base[0] != '{' or base[-1] != '}':
-            raise ValueError
+            return NOT_FOUND
         try:
             return evaluate_expression(base[1:-1].strip(), self._variables)
         except DataError as err:
-            raise VariableError("Resolving variable '%s' failed: %s"
-                                % (name, err))
+            raise VariableError("Resolving variable '%s' failed: %s" % (name, err))
 
 
 class ExtendedFinder(object):
@@ -148,7 +130,7 @@ class ExtendedFinder(object):
     def find(self, name):
         match = self._match_extended(name[2:-1])
         if match is None:
-            raise ValueError
+            return NOT_FOUND
         base_name, extended = match.groups()
         try:
             variable = self._find_variable('${%s}' % base_name)

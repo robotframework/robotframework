@@ -20,38 +20,38 @@ Base Keyword Names In Test Case
 
 Test Case File User Keyword Names In Test Case File User Keyword
     ${test} =    Check Test Case    Test Case File User Keyword Names In Test Case File User Keyword
-    Check Name and Three Keyword Names    ${test.keywords[0]}    Using Test Case File User Keywords    Keyword Only In Test Case File
-    Should Be Equal    ${test.keywords[1].name}    Using Test Case File User Keywords Nested
-    Check Name and Three Keyword Names    ${test.keywords[1].keywords[0]}    Using Test Case File User Keywords    Keyword Only In Test Case File
-    Check Name and Three Keyword Names    ${test.keywords[1].keywords[1]}    Using Test Case File User Keywords    Keyword Only In Test Case File
+    Check Name and Three Keyword Names    ${test.body[0]}    Using Test Case File User Keywords    Keyword Only In Test Case File
+    Should Be Equal    ${test.body[1].name}    Using Test Case File User Keywords Nested
+    Check Name and Three Keyword Names    ${test.body[1].body[0]}    Using Test Case File User Keywords    Keyword Only In Test Case File
+    Check Name and Three Keyword Names    ${test.body[1].body[1]}    Using Test Case File User Keywords    Keyword Only In Test Case File
 
 Resource File User Keyword Names In Test Case File User Keyword
     ${test} =    Check Test Case    Resource File User Keyword Names In Test Case File User Keyword
-    Check Name and Three Keyword Names    ${test.keywords[0]}    Using Resource File User Keywords    my_resource_1.Keyword Only In Resource 1
-    Should Be Equal    ${test.keywords[1].name}    Using Resource File User Keywords Nested
-    Check Name and Three Keyword Names    ${test.keywords[1].keywords[0]}    Using Resource File User Keywords    my_resource_1.Keyword Only In Resource 1
-    Check Name and Three Keyword Names    ${test.keywords[1].keywords[1]}    Using Resource File User Keywords    my_resource_1.Keyword Only In Resource 1
+    Check Name and Three Keyword Names    ${test.body[0]}    Using Resource File User Keywords    my_resource_1.Keyword Only In Resource 1
+    Should Be Equal    ${test.body[1].name}    Using Resource File User Keywords Nested
+    Check Name and Three Keyword Names    ${test.body[1].body[0]}    Using Resource File User Keywords    my_resource_1.Keyword Only In Resource 1
+    Check Name and Three Keyword Names    ${test.body[1].body[1]}    Using Resource File User Keywords    my_resource_1.Keyword Only In Resource 1
 
 Base Keyword Names In Test Case File User Keyword
     ${test} =    Check Test Case    Base Keyword Names In Test Case File User Keyword
-    Check Name and Three Keyword Names    ${test.keywords[0]}    Using Base Keywords    MyLibrary1.Keyword Only In Library 1
-    Should Be Equal    ${test.keywords[1].name}    Using Base Keywords Nested
-    Check Name and Three Keyword Names    ${test.keywords[1].keywords[0]}    Using Base Keywords    MyLibrary1.Keyword Only In Library 1
-    Check Name and Three Keyword Names    ${test.keywords[1].keywords[1]}    Using Base Keywords    MyLibrary1.Keyword Only In Library 1
+    Check Name and Three Keyword Names    ${test.body[0]}    Using Base Keywords    MyLibrary1.Keyword Only In Library 1
+    Should Be Equal    ${test.body[1].name}    Using Base Keywords Nested
+    Check Name and Three Keyword Names    ${test.body[1].body[0]}    Using Base Keywords    MyLibrary1.Keyword Only In Library 1
+    Check Name and Three Keyword Names    ${test.body[1].body[1]}    Using Base Keywords    MyLibrary1.Keyword Only In Library 1
 
 Test Case File User Keyword Names In Resource File User Keyword
     ${test} =    Check Test Case    Test Case File User Keyword Names In Resource File User Keyword
-    Should Be Equal    ${test.keywords[0].name}    my_resource_1.Using Test Case File User Keywords In Resource
-    Check Name and Three Keyword Names    ${test.keywords[0].keywords[0]}    Using Test Case File User Keywords    Keyword Only In Test Case File
+    Should Be Equal    ${test.body[0].name}    my_resource_1.Using Test Case File User Keywords In Resource
+    Check Name and Three Keyword Names    ${test.body[0].body[0]}    Using Test Case File User Keywords    Keyword Only In Test Case File
 
 Resource File User Keyword Names In Resource File User Keyword
     ${test} =    Check Test Case    Resource File User Keyword Names In Resource File User Keyword
-    Check Name and Three Keyword Names    ${test.keywords[0]}    my_resource_1.Using Resource File User Keywords In Resource 1    my_resource_1.Keyword Only In Resource 1
-    Check Name and Three Keyword Names    ${test.keywords[1]}    my_resource_1.Using Resource File User Keywords In Resource 2    my_resource_2.Keyword Only In Resource 2
+    Check Name and Three Keyword Names    ${test.body[0]}    my_resource_1.Using Resource File User Keywords In Resource 1    my_resource_1.Keyword Only In Resource 1
+    Check Name and Three Keyword Names    ${test.body[1]}    my_resource_1.Using Resource File User Keywords In Resource 2    my_resource_2.Keyword Only In Resource 2
 
 Base Keyword Names In Resource File User Keyword
     ${test} =    Check Test Case    Base Keyword Names In Resource File User Keyword
-    Check Name and Three Keyword Names    ${test.keywords[0]}    my_resource_1.Using Base Keywords In Resource    MyLibrary1.Keyword Only In Library 1
+    Check Name and Three Keyword Names    ${test.body[0]}    my_resource_1.Using Base Keywords In Resource    MyLibrary1.Keyword Only In Library 1
 
 User Keyword Name Containing Dots
     Check Test And Three Keyword Names    User Keyword Name Containing Dots    User Keyword.Name
@@ -121,9 +121,9 @@ Check Name And Three Keyword Names
 
 Check Three Keyword Names
     [Arguments]    ${item}    ${exp_kw_name}
-    Should Be Equal    ${item.keywords[0].name}    ${exp_kw_name}
-    Should Be Equal    ${item.keywords[1].name}    ${exp_kw_name}
-    Should Be Equal    ${item.keywords[2].name}    ${exp_kw_name}
+    Should Be Equal    ${item.body[0].name}    ${exp_kw_name}
+    Should Be Equal    ${item.body[1].name}    ${exp_kw_name}
+    Should Be Equal    ${item.body[2].name}    ${exp_kw_name}
 
 Keyword name and assign should be
     [Arguments]    ${kw}    ${name}    @{assign}
@@ -131,10 +131,11 @@ Keyword name and assign should be
     Lists Should Be Equal    ${kw.assign}    ${assign}
 
 Keyword and library names should be
-    [Arguments]    ${kw}    ${kwname}    ${libname}=
-    Should Be Equal    ${kw.kwname}    ${kwname}
+    [Arguments]    ${kw}    ${kwname}    ${libname}=${None}
+    Should Be Equal    ${kw.kwname}     ${kwname}
     Should Be Equal    ${kw.libname}    ${libname}
-    Run Keyword If    "${libname}"
-    ...    Should Be Equal    ${kw.name}    ${libname}.${kwname}
-    ...    ELSE
-    ...    Should Be Equal    ${kw.name}    ${kwname}
+    IF    $libname is None
+        Should Be Equal    ${kw.name}    ${kwname}
+    ELSE
+        Should Be Equal    ${kw.name}    ${libname}.${kwname}
+    END

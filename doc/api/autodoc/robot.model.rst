@@ -9,6 +9,14 @@ robot.model package
 Submodules
 ----------
 
+robot.model.body module
+-----------------------
+
+.. automodule:: robot.model.body
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.model.configurer module
 -----------------------------
 
@@ -17,10 +25,10 @@ robot.model.configurer module
    :undoc-members:
    :show-inheritance:
 
-robot.model.criticality module
-------------------------------
+robot.model.control module
+--------------------------
 
-.. automodule:: robot.model.criticality
+.. automodule:: robot.model.control
    :members:
    :undoc-members:
    :show-inheritance:
@@ -29,6 +37,14 @@ robot.model.filter module
 -------------------------
 
 .. automodule:: robot.model.filter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+robot.model.fixture module
+--------------------------
+
+.. automodule:: robot.model.fixture
    :members:
    :undoc-members:
    :show-inheritance:
@@ -168,4 +184,3 @@ robot.model.visitor module
    :members:
    :undoc-members:
    :show-inheritance:
-

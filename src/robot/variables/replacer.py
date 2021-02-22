@@ -15,16 +15,17 @@
 
 from robot.errors import DataError, VariableError
 from robot.output import librarylogger as logger
-from robot.utils import (escape, is_dict_like, is_list_like, type_name,
-                         unescape, unic)
+from robot.utils import (escape, get_error_message, is_dict_like, is_list_like,
+                         type_name, unescape, unic, DotDict)
 
+from .finders import VariableFinder
 from .search import VariableMatch, search_variable
 
 
 class VariableReplacer(object):
 
-    def __init__(self, variables):
-        self._variables = variables
+    def __init__(self, variable_store):
+        self._finder = VariableFinder(variable_store)
 
     def replace_list(self, items, replace_until=None, ignore_errors=False):
         """Replaces variables from a list of items.
@@ -121,9 +122,16 @@ class VariableReplacer(object):
                         r"escape it like '\%s'." % (match, match))
             return unic(match)
         try:
-            value = self._variables[match]
+            value = self._finder.find(match)
             if match.items:
                 value = self._get_variable_item(match, value)
+            try:
+                value = self._validate_value(match, value)
+            except VariableError:
+                raise
+            except:
+                raise VariableError("Resolving variable '%s' failed: %s"
+                                    % (match, get_error_message()))
         except DataError:
             if not ignore_errors:
                 raise
@@ -132,10 +140,6 @@ class VariableReplacer(object):
 
     def _get_variable_item(self, match, value):
         name = match.name
-        if match.identifier in '@&':
-            var = '%s[%s]' % (name, match.items[0])
-            logger.warn("Accessing variable items using '%s' syntax "
-                        "is deprecated. Use '$%s' instead." % (var, var[1:]))
         for item in match.items:
             if is_dict_like(value):
                 value = self._get_dict_variable_item(name, value, item)
@@ -154,7 +158,7 @@ class VariableReplacer(object):
     def _get_sequence_variable_item(self, name, variable, index):
         index = self.replace_string(index)
         try:
-            index = self._parse_sequence_variable_index(index, name[0] == '$')
+            index = self._parse_sequence_variable_index(index)
         except ValueError:
             raise VariableError("%s '%s' used with invalid index '%s'. "
                                 "To use '[%s]' as a literal value, it needs "
@@ -168,10 +172,10 @@ class VariableReplacer(object):
                                 % (type_name(variable, capitalize=True), name,
                                    index))
 
-    def _parse_sequence_variable_index(self, index, support_slice=True):
+    def _parse_sequence_variable_index(self, index):
         if ':' not in index:
             return int(index)
-        if index.count(':') > 2 or not support_slice:
+        if index.count(':') > 2:
             raise ValueError
         return slice(*[int(i) if i else None for i in index.split(':')])
 
@@ -185,3 +189,16 @@ class VariableReplacer(object):
         except TypeError as err:
             raise VariableError("Dictionary '%s' used with invalid key: %s"
                                 % (name, err))
+
+    def _validate_value(self, match, value):
+        if match.identifier == '@':
+            if not is_list_like(value):
+                raise VariableError("Value of variable '%s' is not list or "
+                                    "list-like." % match)
+            return list(value)
+        if match.identifier == '&':
+            if not is_dict_like(value):
+                raise VariableError("Value of variable '%s' is not dictionary "
+                                    "or dictionary-like." % match)
+            return DotDict(value)
+        return value

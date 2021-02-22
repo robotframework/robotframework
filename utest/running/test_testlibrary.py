@@ -81,7 +81,7 @@ class TestImports(unittest.TestCase):
                          [("keyword from submodule", None)])
 
     def test_import_non_existing_module(self):
-        msg = ("Importing test library '{libname}' failed: "
+        msg = ("Importing library '{libname}' failed: "
                "{type}Error: No module named {quote}{modname}{quote}")
         quote = '' if PY2 else "'"
         type = 'Import' if sys.version_info < (3, 6) else 'ModuleNotFound'
@@ -93,12 +93,12 @@ class TestImports(unittest.TestCase):
 
     def test_import_non_existing_class_from_existing_module(self):
         assert_raises_with_msg(DataError,
-                               "Importing test library 'pythonmodule.NonExisting' failed: "
+                               "Importing library 'pythonmodule.NonExisting' failed: "
                                "Module 'pythonmodule' does not contain 'NonExisting'.",
                                TestLibrary, 'pythonmodule.NonExisting')
 
     def test_import_invalid_type(self):
-        msg = "Importing test library '%s' failed: Expected class or module, got %s."
+        msg = "Importing library '%s' failed: Expected class or module, got %s."
         assert_raises_with_msg(DataError,
                                msg % ('pythonmodule.some_string', 'string'),
                                TestLibrary, 'pythonmodule.some_string')
@@ -505,7 +505,7 @@ class TestDynamicLibrary(unittest.TestCase):
 def assert_handler_args(handler, minargs=0, maxargs=0, kwargs=False):
     assert_equal(handler.arguments.minargs, minargs)
     assert_equal(handler.arguments.maxargs, maxargs)
-    assert_equal(bool(handler.arguments.kwargs), kwargs)
+    assert_equal(bool(handler.arguments.var_named), kwargs)
 
 
 if JYTHON:
@@ -608,7 +608,7 @@ class TestSourceAndLineno(unittest.TestCase):
     def test_class_in_package(self):
         from robot.variables.variables import __file__ as source
         lib = TestLibrary('robot.variables.Variables')
-        self._verify(lib, source, 25)
+        self._verify(lib, source, 24)
 
     def test_dynamic(self):
         lib = TestLibrary('classes.ArgDocDynamicLibrary')

@@ -48,9 +48,41 @@ quotes on UNIX-like operating systems::
 
    robot --listener listener.py:arg1:arg2 tests.robot
    robot --listener "listener.py;arg:with:colons" tests.robot
-   robot --listener C:\Path\Listener.py;D:\data;E:\extra tests.robot
+   robot --listener c:\path\listener.py;d:\first\arg;e:\second\arg tests.robot
+
+In addition to passing arguments one-by-one as positional arguments, it is
+possible to pass them using the `named argument syntax`_ exactly when using
+keywords::
+
+   robot --listener listener.py:name=value tests.robot
+   robot --listener "listener.py;name=value:with:colons;another=value" tests.robot
+
+Listener arguments are automatically converted using `same rules as with
+keywords`__ based on `type hints`__ and `default values`__. For example,
+this listener
+
+.. sourcecode:: python
+
+    class Listener(object):
+
+        def __init__(self, port: int, log=True):
+            self.port = post
+            self.log = log
+
+could be used like ::
+
+    robot --listener Listener:8270:false
+
+and the first argument would be converted to an integer based on the type hint
+and the second to a Boolean based on the default value.
+
+.. note:: Both named argument syntax and argument conversion are new in
+          Robot Framework 4.0.
 
 __ `Using physical path to library`_
+__ `Supported conversions`_
+__ `Specifying argument types using function annotations`_
+__ `Implicit argument types based on default values`_
 
 Listener interface versions
 ---------------------------
@@ -138,7 +170,7 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `endtime`: Suite execution end time.                         |
    |                  |                  | * `elapsedtime`: Total execution time in milliseconds as       |
    |                  |                  |   an integer                                                   |
-   |                  |                  | * `status`: Suite status as string `PASS` or `FAIL`.           |
+   |                  |                  | * `status`: Suite status as string `PASS`, `FAIL` or `SKIP`.   |
    |                  |                  | * `statistics`: Suite statistics (number of passed             |
    |                  |                  |   and failed tests in the suite) as a string.                  |
    |                  |                  | * `message`: Error message if suite setup or teardown          |
@@ -156,12 +188,12 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |   unresolved. New in RF 3.2.                                   |
    |                  |                  | * `doc`: Test documentation.                                   |
    |                  |                  | * `tags`: Test tags as a list of strings.                      |
-   |                  |                  | * `critical`: `yes` or `no` depending is test considered       |
-   |                  |                  |   critical or not.                                             |
    |                  |                  | * `template`: The name of the template used for the test.      |
    |                  |                  |   An empty string if the test not templated.                   |
+   |                  |                  | * `source`: An absolute path of the test case source file.     |
+   |                  |                  |   New in RF 4.0.                                               |
    |                  |                  | * `lineno`: Line number where the test starts in the source    |
-   |                  |                  |   file. New in RF 3.2.                                         |
+   |                  |                  |   file. New in RF 3.2.                                         |
    |                  |                  | * `starttime`: Test execution execution start time.            |
    +------------------+------------------+----------------------------------------------------------------+
    | end_test         | name, attributes | Called when a test case ends.                                  |
@@ -173,14 +205,14 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `originalname`: Same as in `start_test`.                     |
    |                  |                  | * `doc`: Same as in `start_test`.                              |
    |                  |                  | * `tags`: Same as in `start_test`.                             |
-   |                  |                  | * `critical`: Same as in `start_test`.                         |
    |                  |                  | * `template`: Same as in `start_test`.                         |
+   |                  |                  | * `source`: Same as in `start_test`.                           |
    |                  |                  | * `lineno`: Same as in `start_test`.                           |
    |                  |                  | * `starttime`: Same as in `start_test`.                        |
    |                  |                  | * `endtime`: Test execution execution end time.                |
    |                  |                  | * `elapsedtime`: Total execution time in milliseconds as       |
    |                  |                  |   an integer                                                   |
-   |                  |                  | * `status`: Test status as string `PASS` or `FAIL`.            |
+   |                  |                  | * `status`: Test status as string `PASS`, `FAIL` or `SKIP`.    |
    |                  |                  | * `message`: Status message. Normally an error                 |
    |                  |                  |   message or an empty string.                                  |
    +------------------+------------------+----------------------------------------------------------------+
@@ -192,21 +224,27 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |                                                                |
    |                  |                  | Contents of the attribute dictionary:                          |
    |                  |                  |                                                                |
-   |                  |                  | * `type`: String `Keyword` for normal keywords, `Setup` or     |
-   |                  |                  |   `Teardown` for the top level keyword used as setup/teardown, |
-   |                  |                  |   `For` for for loops, and `For Item` for individual for loop  |
-   |                  |                  |   iterations. **NOTE:** Keyword type reporting was changed in  |
-   |                  |                  |   RF 3.0. See issue `#2248`__ for details.                     |
+   |                  |                  | * `type`: String specifying keyword type. Possible values are: |
+   |                  |                  |   `KEYWORD`, `SETUP`, `TEARDOWN`, `FOR`, `FOR ITERATION`, `IF`,|
+   |                  |                  |   `ELSE IF` and `ELSE`. **NOTE:** Prior to RF 4.0 values were: |
+   |                  |                  |   `Keyword`, `Setup`, `Teardown`, `For` and `For Item`.        |
    |                  |                  | * `kwname`: Name of the keyword without library or             |
-   |                  |                  |   resource prefix.                                             |
-   |                  |                  | * `libname`: Name of the library or resource the               |
-   |                  |                  |   keyword belongs to, or an empty string when                  |
-   |                  |                  |   the keyword is in a test case file.                          |
+   |                  |                  |   resource prefix. String representation of parameters with    |
+   |                  |                  |   FOR and IF/ELSE structures.                                  |
+   |                  |                  | * `libname`: Name of the library or resource file the keyword  |
+   |                  |                  |   belongs to. An empty string when the keyword is in a test    |
+   |                  |                  |   case file and with FOR and IF/ELSE structures.               |
    |                  |                  | * `doc`: Keyword documentation.                                |
    |                  |                  | * `args`: Keyword's arguments as a list of strings.            |
    |                  |                  | * `assign`: A list of variable names that keyword's            |
    |                  |                  |   return value is assigned to.                                 |
-   |                  |                  | * `tags`: `Keyword tags`_ as a list of strings. New in RF 3.0. |
+   |                  |                  | * `tags`: `Keyword tags`_ as a list of strings.                |
+   |                  |                  | * `source`: An absolute path of the file where the keyword was |
+   |                  |                  |   used. New in RF 4.0.                                         |
+   |                  |                  | * `lineno`: Line where the keyword was used. New in RF 4.0.    |
+   |                  |                  | * `status`: Initial keyword status. `NOT RUN` if keyword is    |
+   |                  |                  |   not executed (e.g. due to an earlier failure), `NOT SET`     |
+   |                  |                  |   otherwise. New in RF 4.0.                                    |
    |                  |                  | * `starttime`: Keyword execution start time.                   |
    +------------------+------------------+----------------------------------------------------------------+
    | end_keyword      | name, attributes | Called when a keyword ends.                                    |
@@ -224,11 +262,14 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `args`: Same as with `start_keyword`.                        |
    |                  |                  | * `assign`: Same as with `start_keyword`.                      |
    |                  |                  | * `tags`: Same as with `start_keyword`.                        |
+   |                  |                  | * `source`: Same as with `start_keyword`.                      |
+   |                  |                  | * `lineno`: Same as with `start_keyword`.                      |
    |                  |                  | * `starttime`: Same as with `start_keyword`.                   |
    |                  |                  | * `endtime`: Keyword execution end time.                       |
    |                  |                  | * `elapsedtime`: Total execution time in milliseconds as       |
    |                  |                  |   an integer                                                   |
-   |                  |                  | * `status`: Keyword status as string `PASS` or `FAIL`.         |
+   |                  |                  | * `status`: Keyword status as string `PASS`, `FAIL`, `SKIP`    |
+   |                  |                  |   or `NOT RUN`. `SKIP` and `NOT RUN` are new in RF 4.0.        |
    +------------------+------------------+----------------------------------------------------------------+
    | log_message      | message          | Called when an executed keyword writes a log message.          |
    |                  |                  |                                                                |
@@ -241,8 +282,8 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `html`: String `yes` or `no` denoting whether the message    |
    |                  |                  |   should be interpreted as HTML or not.                        |
    |                  |                  |                                                                |
-   |                  |                  | Starting from RF 3.0, this method is not called if the message |
-   |                  |                  | has level below the current `threshold level <Log levels_>`__. |
+   |                  |                  | Not called if the message level is below the current           |
+   |                  |                  | `threshold level <Log levels_>`__.                             |
    +------------------+------------------+----------------------------------------------------------------+
    | message          | message          | Called when the framework itself writes a syslog_ message.     |
    |                  |                  |                                                                |
@@ -342,8 +383,6 @@ to implement any explicit interface or have all these methods.
        void close();
    }
 
-__ https://github.com/robotframework/robotframework/issues/2248
-
 Listener version 3
 ~~~~~~~~~~~~~~~~~~
 
@@ -387,9 +426,9 @@ __ https://github.com/robotframework/robotframework/issues/1208#issuecomment-164
    |                  |                  |                                                                |
    |                  |                  | Same arguments as with `start_test`.                           |
    +------------------+------------------+----------------------------------------------------------------+
-   | start_keyword    | N/A              | Not implemented in RF 3.0.                                     |
+   | start_keyword    | N/A              | Not currently implemented.                                     |
    +------------------+------------------+----------------------------------------------------------------+
-   | end_keyword      | N/A              | Not implemented in RF 3.0.                                     |
+   | end_keyword      | N/A              | Not currently implemented.                                     |
    +------------------+------------------+----------------------------------------------------------------+
    | log_message      | message          | Called when an executed keyword writes a log message.          |
    |                  |                  | `message` is a model object representing the `logged           |
@@ -402,11 +441,11 @@ __ https://github.com/robotframework/robotframework/issues/1208#issuecomment-164
    |                  |                  |                                                                |
    |                  |                  | `message` is same object as with `log_message`.                |
    +------------------+------------------+----------------------------------------------------------------+
-   | library_import   | N/A              | Not implemented in RF 3.0.                                     |
+   | library_import   | N/A              | Not currently implemented.                                     |
    +------------------+------------------+----------------------------------------------------------------+
-   | resource_import  | N/A              | Not implemented in RF 3.0.                                     |
+   | resource_import  | N/A              | Not currently implemented.                                     |
    +------------------+------------------+----------------------------------------------------------------+
-   | variables_import | N/A              | Not implemented in RF 3.0.                                     |
+   | variables_import | N/A              | Not currently implemented.                                     |
    +------------------+------------------+----------------------------------------------------------------+
    | output_file      | path             | Called when writing to an `output file`_ is ready.             |
    |                  |                  |                                                                |

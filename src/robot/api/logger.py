@@ -22,7 +22,7 @@ and the console. Test libraries can use this API like::
 
 instead of logging through the standard output like::
 
-    print '*INFO* My message'
+    print('*INFO* My message')
 
 In addition to a programmatic interface being cleaner to use, this API
 has a benefit that the log messages have accurate timestamps.

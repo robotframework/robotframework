@@ -16,7 +16,7 @@ Selecting files to parse
 ------------------------
 
 When executing a single file, Robot Framework tries to parse and run it
-regardless the file extension. The file is expected to use the `plain text
+regardless the name or the file extension. The file is expected to use the `plain text
 format`__ or, if it has :file:`.rst` or :file:`.rest` extension,
 the `reStructuredText format`_::
 
@@ -26,10 +26,11 @@ the `reStructuredText format`_::
 
 __ `Supported file formats`_
 
-When executing a directory, Robot Framework only parses files with the
-:file:`.robot` extension by default. If files have other extensions,
-the :option:`--extension (-F)` option must be used to explicitly tell the
-framework to parse also them. If there is a need to parse more
+When executing a directory__, Robot Framework ignores all files and directories
+starting with a dot (:file:`.`) or an underscore (:file:`_`) and, by default,
+only parses files with the :file:`.robot` extension. If files use other
+extensions, the :option:`--extension (-F)` option must be used to explicitly
+tell the framework to parse also them. If there is a need to parse more
 than one kind of files, it is possible to use a colon `:` to separate
 extensions. Matching extensions is case insensitive and the leading `.`
 can be omitted::
@@ -45,6 +46,8 @@ would mean that other files in that format are skipped.
 .. note:: Prior to Robot Framework 3.1 also TXT, TSV and HTML files were
           parsed by default. Starting from Robot Framework 3.2 HTML files
           are not supported at all.
+
+__ `Test suite directories`_
 
 Selecting test cases
 --------------------
@@ -105,9 +108,7 @@ If the :option:`--include` option is used, only test cases having a matching
 tag are selected, and with the :option:`--exclude` option test cases having a
 matching tag are not. If both are used, only tests with a tag
 matching the former option, and not with a tag matching the latter,
-are selected.
-
-::
+are selected::
 
    --include example
    --exclude not_ready
@@ -212,59 +213,6 @@ Rebot fails in these cases, but it has a separate
 :option:`--ProcessEmptySuite` option that can be used to alter the behavior.
 In practice this option works the same way as :option:`--RunEmptySuite` when
 running tests.
-
-Setting criticality
--------------------
-
-The final result of test execution is determined based on
-critical tests. If a single critical test fails, the whole test run is
-considered failed. On the other hand, non-critical test cases can
-fail and the overall status is still considered passed.
-
-All test cases are considered critical by default, but this can be changed
-with the :option:`--critical (-c)` and :option:`--noncritical (-n)`
-options. These options specify which tests are critical
-based on tags_, similarly as :option:`--include` and
-:option:`--exclude` are used to `select tests by tags`__.
-If only :option:`--critical` is used, test cases with a
-matching tag are critical. If only :option:`--noncritical` is used,
-tests without a matching tag are critical. Finally, if both are
-used, only test with a critical tag but without a non-critical tag are
-critical.
-
-Both :option:`--critical` and :option:`--noncritical` also support same `tag
-patterns`_ as :option:`--include` and :option:`--exclude`. This means that pattern
-matching is case, space, and underscore insensitive, `*` and `?`
-are supported as wildcards, and `AND`, `OR` and `NOT`
-operators can be used to create combined patterns.
-
-::
-
-  --critical regression
-  --noncritical not_ready
-  --critical iter-* --critical req-* --noncritical req-6??
-
-The most common use case for setting criticality is having test cases
-that are not ready or test features still under development in the
-test execution. These tests could also be excluded from the
-test execution altogether with the :option:`--exclude` option, but
-including them as non-critical tests enables you to see when
-they start to pass.
-
-Criticality set when tests are
-executed is not stored anywhere. If you want to keep same criticality
-when `post-processing outputs`_ with Rebot, you need to
-use :option:`--critical` and/or :option:`--noncritical` also with it::
-
-  # Use rebot to create new log and report from the output created during execution
-  robot --critical regression --outputdir all tests.robot
-  rebot --name Smoke --include smoke --critical regression --outputdir smoke all/output.xml
-
-  # No need to use --critical/--noncritical when no log or report is created
-  robot --log NONE --report NONE tests.robot
-  rebot --critical feature1 output.xml
-
-__ `By tag names`_
 
 Setting metadata
 ----------------
@@ -529,8 +477,11 @@ works exactly like when `importing a test library`__.
 
 If a modifier requires arguments, like the examples below do, they can be
 specified after the modifier name or path using either a colon (`:`) or a
-semicolon (`;`) as a separator. If both are used in the value, the one first
-is considered to be the actual separator.
+semicolon (`;`) as a separator. If both are used in the value, the one used
+first is considered to be the actual separator. Starting from Robot Framework
+4.0, arguments also support the `named argument syntax`_ as well as `argument
+conversion`__ based on `type hints`__ and `default values`__ the same way
+as keywords do.
 
 If more than one pre-run modifier is needed, they can be specified by using
 the :option:`--prerunmodifier` option multiple times. If similar modifying
@@ -543,15 +494,22 @@ executed test suite and test cases. Most importantly, options related to
 use options like :option:`--include` also with possible dynamically added
 tests.
 
+.. tip:: Modifiers are taken into use from the command line exactly the same
+         way as listeners_. See the `Taking listeners into use`_ section for
+         more information and examples.
+
 .. note:: Prior to Robot Framework 3.2 pre-run modifiers were executed
           after other configuration.
 
 __ `Specifying library to import`_
+__ `Supported conversions`_
+__ `Specifying argument types using function annotations`_
+__ `Implicit argument types based on default values`_
 
 Example: Select every Xth test
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The first example shows how a pre-run-modifier can remove tests from the
+The first example shows how a pre-run modifier can remove tests from the
 executed test suite structure. In this example only every Xth tests is
 preserved, and the X is given from the command line along with an optional
 start index.
@@ -568,6 +526,9 @@ the file is in the `module search path`_, it could be used like this::
 
     # Specify the modifier as a name. Run every third test, starting from the second.
     robot --prerunmodifier SelectEveryXthTest:3:1 tests.robot
+
+.. note:: Argument conversion based on type hints like `x: int` in the above
+          example is new in Robot Framework 4.0 and requires Python 3.
 
 Example: Exclude tests by name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -589,8 +550,8 @@ could be used like this::
   # Exclude all tests ending with 'something'.
   robot --prerunmodifier path/to/ExcludeTests.py:*something tests.robot
 
-Example: Skip setups and teardowns
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Example: Disable setups and teardowns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Sometimes when debugging tests it can be useful to disable setups or teardowns.
 This can be accomplished by editing the test data, but pre-run modifiers make
@@ -610,6 +571,10 @@ disabled, for example, as follows::
   # Disable both test setups and teardowns by using '--prerunmodifier' twice.
   robot --prerunmodifier disable.TestSetup --prerunmodifier disable.TestTeardown tests.robot
 
+.. note::  Prior to Robot Framework 4.0 `setup` and `teardown` were accessed via
+           the intermediate `keywords` attribute and, for example, suite setup
+           was disabled like `suite.keywords.setup = None`.
+
 Controlling console output
 --------------------------
 
@@ -627,9 +592,9 @@ It supports the following case-insensitive values:
     the default.
 
 `dotted`
-    Only show `.` for passed test, `f` for failed non-critical tests, `F`
-    for failed critical tests, and `x` for tests which are skipped because
-    `test execution exit`__. Failed critical tests are listed separately
+    Only show `.` for passed test, `F` for failed tests, `s` for skipped
+    tests and `x` for tests which are skipped because
+    `test execution exit`__. Failed tests are listed separately
     after execution. This output type makes it easy to see are there any
     failures during execution even if there would be a lot of tests.
 

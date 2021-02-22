@@ -22,14 +22,14 @@ Suite Documentation
 Suite Setup
     [Documentation]   Setting and not setting setup using suite file
     Check Log Message   ${suite.setup.kws[0].msgs[0]}   Setup of test suite directory
-    Should Be Equal   ${subsuite_with_init.setup}   ${None}
-    Should Be Equal   ${subsuite_without_init.setup}   ${None}
+    Setup Should Not Be Defined   ${subsuite_with_init}
+    Setup Should Not Be Defined   ${subsuite_without_init}
 
 Suite Teardown
     [Documentation]   Setting and not setting teardown using suite file
     Check Log Message   ${suite.teardown.kws[1].msgs[0]}   Teardown of test suite directory
     Check Log Message   ${subsuite_with_init.teardown.kws[1].msgs[0]}   Teardown of sub test suite directory
-    Should Be Equal   ${subsuite_without_init.teardown}   ${None}
+    Teardown Should Not Be Defined   ${subsuite_without_init}
 
 Invalid Suite Setting
     Error In File    0    core/test_suite_dir_with_init_file/__init__.robot    10

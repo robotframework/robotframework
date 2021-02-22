@@ -1,6 +1,9 @@
 import unittest
 
-from collections import Mapping
+try:
+    from collections.abc import Mapping
+except ImportError:
+    from collections import Mapping
 from array import array
 try:
     from UserDict import UserDict
@@ -159,15 +162,15 @@ class TestTypeName(unittest.TestCase):
         for item, exp in [(NewStyle(), 'NewStyle'),
                           (OldStyle(), 'OldStyle'),
                           (lower(), 'lower'),
-                          (NewStyle, 'class'),
-                          (OldStyle, 'class')]:
+                          (NewStyle, 'NewStyle'),
+                          (OldStyle, 'OldStyle')]:
             assert_equal(type_name(item), exp)
 
     if JYTHON:
 
         def test_java_object(self):
             for item, exp in [(String(), 'String'),
-                              (String, 'Class'),
+                              (String, 'String'),
                               (java.lang, 'javapackage'),
                               (java, 'javapackage')]:
                 assert_equal(type_name(item), exp)

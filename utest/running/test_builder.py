@@ -18,7 +18,7 @@ def build(*paths, **config):
     return suite
 
 
-def assert_keyword(kw, assign=(), name='', args=(), type='kw'):
+def assert_keyword(kw, assign=(), name='', args=(), type='KEYWORD'):
     assert_equal(kw.name, name)
     assert_equal(kw.args, args)
     assert_equal(kw.assign, assign)
@@ -60,11 +60,11 @@ class TestBuilding(unittest.TestCase):
         assert_equal(test.template, None)
 
     def test_test_keywords(self):
-        kw = build('pass_and_fail.robot').tests[0].keywords[0]
+        kw = build('pass_and_fail.robot').tests[0].body[0]
         assert_keyword(kw, (), 'My Keyword', ('Pass',))
 
     def test_assign(self):
-        kw = build('non_ascii.robot').tests[1].keywords[0]
+        kw = build('non_ascii.robot').tests[1].body[0]
         assert_keyword(kw, ('${msg} =',), 'Evaluate', (r"u'Fran\\xe7ais'",))
 
     def test_directory_suite(self):
@@ -84,23 +84,23 @@ class TestBuilding(unittest.TestCase):
         assert_equal(suite.suites[1].tests[1].id, 's1-s2-t2')
 
     def test_suite_setup_and_teardown(self):
-        kws = build('setups_and_teardowns.robot').keywords
-        assert_keyword(kws.setup, name='${SUITE SETUP}', type='setup')
-        assert_keyword(kws.teardown, name='${SUITE TEARDOWN}', type='teardown')
+        suite = build('setups_and_teardowns.robot')
+        assert_keyword(suite.setup, name='${SUITE SETUP}', type='SETUP')
+        assert_keyword(suite.teardown, name='${SUITE TEARDOWN}', type='TEARDOWN')
 
     def test_test_setup_and_teardown(self):
-        kws = build('setups_and_teardowns.robot').tests[0].keywords
-        assert_keyword(kws.setup, name='${TEST SETUP}', type='setup')
-        assert_keyword(kws.teardown, name='${TEST TEARDOWN}', type='teardown')
-        assert_equal([kw.name for kw in kws],
-                      ['${TEST SETUP}', 'Keyword', '${TEST TEARDOWN}'])
-        assert_equal([kw.name for kw in kws.normal], ['Keyword'])
+        test = build('setups_and_teardowns.robot').tests[0]
+        assert_keyword(test.setup, name='${TEST SETUP}', type='SETUP')
+        assert_keyword(test.teardown, name='${TEST TEARDOWN}', type='TEARDOWN')
+        assert_equal([kw.name for kw in test.body],
+                      ['Keyword'])
+        assert_equal([kw.name for kw in test.body], ['Keyword'])
 
     def test_test_timeout(self):
         tests = build('timeouts.robot').tests
         assert_equal(tests[0].timeout, '1min 42s')
-        assert_equal(tests[1].timeout, '1d2h')
-        assert_equal(tests[2].timeout, '${100}')
+        assert_equal(tests[1].timeout, '${100}')
+        assert_equal(tests[2].timeout, None)
 
     def test_keyword_timeout(self):
         kw = build('timeouts.robot').resource.keywords[0]
@@ -125,12 +125,12 @@ class TestTemplates(unittest.TestCase):
 
     def test_from_setting_table(self):
         test = build('../running/test_template.robot').tests[0]
-        assert_keyword(test.keywords[0], (), 'Should Be Equal', ('Fail', 'Fail'))
+        assert_keyword(test.body[0], (), 'Should Be Equal', ('Fail', 'Fail'))
         assert_equal(test.template, 'Should Be Equal')
 
     def test_from_test_case(self):
         test = build('../running/test_template.robot').tests[3]
-        kws = test.keywords
+        kws = test.body
         assert_keyword(kws[0], (), 'Should Not Be Equal', ('Same', 'Same'))
         assert_keyword(kws[1], (), 'Should Not Be Equal', ('42', '43'))
         assert_keyword(kws[2], (), 'Should Not Be Equal', ('Something', 'Different'))
@@ -138,7 +138,7 @@ class TestTemplates(unittest.TestCase):
 
     def test_no_variable_assign(self):
         test = build('../running/test_template.robot').tests[8]
-        assert_keyword(test.keywords[0], (), 'Expect Exactly Three Args',
+        assert_keyword(test.body[0], (), 'Expect Exactly Three Args',
                        ('${SAME VARIABLE}', 'Variable content', '${VARIABLE}'))
         assert_equal(test.template, 'Expect Exactly Three Args')
 

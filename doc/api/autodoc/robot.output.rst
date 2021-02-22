@@ -10,6 +10,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 2
 
    robot.output.console
 
@@ -111,4 +112,3 @@ robot.output.xmllogger module
    :members:
    :undoc-members:
    :show-inheritance:
-

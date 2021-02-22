@@ -46,22 +46,22 @@ public class JavaAttributeVerifyingListener {
 
     public void startTest(String name, Map attrs) {
         verifyAttributes("START TEST", attrs,
-                         new String[] {"id", "doc", "starttime", "longname", "origname", "tags", "template", "lineno"});
+                         new String[] {"id", "doc", "starttime", "longname", "origname", "tags", "template", "source", "lineno"});
     }
 
     public void endTest(String name, Map attrs) {
         verifyAttributes("END TEST", attrs,
-                         new String[] {"id", "doc", "starttime", "longname", "origname", "tags", "template", "lineno", "endtime", "elapsedtime", "status", "message"});
+                         new String[] {"id", "doc", "starttime", "longname", "origname", "tags", "template", "source", "lineno", "endtime", "elapsedtime", "status", "message"});
     }
 
     public void startKeyword(String name, Map attrs) {
         verifyAttributes("START KEYWORD", attrs,
-                         new String[] {"type", "kwname", "libname", "doc", "args", "assign", "tags", "starttime"});
+                         new String[] {"type", "kwname", "libname", "doc", "args", "assign", "tags", "source", "lineno", "status", "starttime"});
     }
 
     public void endKeyword(String name, Map attrs) {
         verifyAttributes("END KEYWORD", attrs,
-                         new String[] {"type", "kwname", "libname", "doc", "args", "assign", "tags", "starttime", "endtime", "elapsedtime", "status"});
+                         new String[] {"type", "kwname", "libname", "doc", "args", "assign", "tags", "source", "lineno", "status", "starttime", "endtime", "elapsedtime"});
     }
 
     public void close() throws IOException {

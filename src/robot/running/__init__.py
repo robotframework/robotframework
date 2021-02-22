@@ -60,7 +60,7 @@ using the :class:`~robot.running.model.TestSuite` class::
     suite = TestSuite('Activate Skynet')
     suite.resource.imports.library('OperatingSystem')
     test = suite.tests.create('Should Activate Skynet', tags=['smoke'])
-    test.keywords.create('Set Environment Variable', args=['SKYNET', 'activated'], type='setup')
+    test.setup.config('Set Environment Variable', args=['SKYNET', 'activated'])
     test.keywords.create('Environment Variable Should Be Set', args=['SKYNET'])
 
 Not that complicated either, especially considering the flexibility. Notice
@@ -72,15 +72,15 @@ Now that we have a test suite ready, let's :meth:`execute it
 :class:`~robot.result.executionresult.Result` object contains correct
 information::
 
-    result = suite.run(critical='smoke', output='skynet.xml')
+    result = suite.run(output='skynet.xml')
 
     assert result.return_code == 0
     assert result.suite.name == 'Activate Skynet'
     test = result.suite.tests[0]
     assert test.name == 'Should Activate Skynet'
-    assert test.passed and test.critical
+    assert test.passed
     stats = result.suite.statistics
-    assert stats.critical.total == 1 and stats.critical.failed == 0
+    assert stats.total == 1 and stats.failed == 0
 
 Running the suite generates a normal output XML file, unless it is disabled
 by using ``output=None``. Generating log, report, and xUnit files based on
@@ -95,6 +95,7 @@ the results is possible using the
     ResultWriter('skynet.xml').write_results()
 """
 
+from .arguments import ArgInfo, ArgumentSpec
 from .builder import TestSuiteBuilder, ResourceFileBuilder
 from .context import EXECUTION_CONTEXTS
 from .model import Keyword, TestCase, TestSuite

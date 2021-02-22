@@ -81,7 +81,7 @@ class TestVariables(unittest.TestCase):
         self.varz['@{S}'] = ['1', '2', '3']
         for inp, exp in [(['@{L}'], ['v1', 'v2']),
                          (['@{L}', 'v3'], ['v1', 'v2', 'v3']),
-                         (['v0', '@{L}', '@{E}', 'v@{S}[2]'], ['v0', 'v1', 'v2', 'v3']),
+                         (['v0', '@{L}', '@{E}', 'v${S}[2]'], ['v0', 'v1', 'v2', 'v3']),
                          ([], []),
                          (['hi u', 'hi 2', 3], ['hi u','hi 2', 3])]:
             assert_equal(self.varz.replace_list(inp), exp)
@@ -93,20 +93,23 @@ class TestVariables(unittest.TestCase):
 
     def test_replace_list_item(self):
         self.varz['@{L}'] = ['v0', 'v1']
-        assert_equal(self.varz.replace_list(['@{L}[0]']), ['v0'])
-        assert_equal(self.varz.replace_scalar('@{L}[1]'), 'v1')
-        assert_equal(self.varz.replace_scalar('-@{L}[0]@{L}[1]@{L}[0]-'), '-v0v1v0-')
-        self.varz['@{L2}'] = ['v0', ['v11', 'v12']]
-        assert_equal(self.varz.replace_list(['@{L2}[0]']), ['v0'])
-        assert_equal(self.varz.replace_list(['@{L2}[1]']), [['v11', 'v12']])
-        assert_equal(self.varz.replace_scalar('@{L2}[0]'), 'v0')
-        assert_equal(self.varz.replace_scalar('@{L2}[1]'), ['v11', 'v12'])
-        assert_equal(self.varz.replace_list(['@{L}[0]', '@{L2}[1]']), ['v0', ['v11', 'v12']])
+        assert_equal(self.varz.replace_list(['${L}[0]']), ['v0'])
+        assert_equal(self.varz.replace_scalar('${L}[1]'), 'v1')
+        assert_equal(self.varz.replace_scalar('-${L}[0]${L}[1]${L}[0]-'), '-v0v1v0-')
+        self.varz['${L2}'] = ['v0', ['v11', 'v12']]
+        assert_equal(self.varz.replace_list(['${L2}[0]']), ['v0'])
+        assert_equal(self.varz.replace_list(['${L2}[1]']), [['v11', 'v12']])
+        assert_equal(self.varz.replace_scalar('${L2}[0]'), 'v0')
+        assert_equal(self.varz.replace_scalar('${L2}[1]'), ['v11', 'v12'])
+        assert_equal(self.varz.replace_list(['${L}[0]', '@{L2}[1]']), ['v0', 'v11', 'v12'])
 
     def test_replace_dict_item(self):
-        self.varz['&{D}'] = {'a': 1, 2: 'b'}
-        assert_equal(self.varz.replace_list(['&{D}[a]']), [1])
-        assert_equal(self.varz.replace_scalar('&{D}[${2}]'), 'b')
+        self.varz['&{D}'] = {'a': 1, 2: 'b', 'nested': {'a': 1}}
+        assert_equal(self.varz.replace_scalar('${D}[a]'), 1)
+        assert_equal(self.varz.replace_scalar('${D}[${2}]'), 'b')
+        assert_equal(self.varz.replace_scalar('${D}[nested][a]'), 1)
+        assert_equal(self.varz.replace_scalar('${D}[nested]'), {'a': 1})
+        assert_equal(self.varz.replace_scalar('&{D}[nested]'), {'a': 1})
 
     def test_replace_non_strings(self):
         self.varz['${d}'] = {'a': 1, 'b': 2}
