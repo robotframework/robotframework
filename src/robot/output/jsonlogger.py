@@ -8,6 +8,9 @@ import json
 import copy
 
 
+RECURSIVE_ITEMS = ["if", "for", "body"]
+
+
 class JsonLogger(ResultVisitor):
 
     def __init__(self, path, log_level='TRACE', rpa=False, generator='Robot'):
@@ -27,12 +30,42 @@ class JsonLogger(ResultVisitor):
         self._item_stack = list()
 
         self._current_suite = None
-        self._current_keyword = None
+        self._current_body_item = None
         self._current_test = None
         self._current_item = None
 
     def _format_data(self, item):
         return {key: value for key, value in item.items() if value}
+
+    def append_to_item(self):
+        # Remove the "destination" from the dictionary
+        destination = self._current_body_item.pop('destination')
+        # Format the keyword
+        self._current_body_item = self._format_data(self._current_body_item)
+        key = 'body'
+        # To process the keyword we must have pushed something to the item stack (or have an active suite/test)
+        if destination == 'suite':
+            parent_item = self._current_suite
+            key = 'kw'
+        elif destination == 'test':
+            parent_item = self._current_test
+        elif destination == 'if':
+            parent_item = self._item_stack[-1]
+            key = 'branches'
+        elif destination == 'for':
+            parent_item = self._item_stack[-1]
+            key = 'iter'
+        else:
+            parent_item = self._item_stack[-1]
+
+        if key not in parent_item:
+            parent_item[key] = list()
+        parent_item[key].append(self._current_body_item)
+        self._current_body_item = None
+        if destination in RECURSIVE_ITEMS:
+            self._current_item = destination
+        else:
+            self._current_item = None
 
     def _create_status(self, data):
         status = {
@@ -66,34 +99,44 @@ class JsonLogger(ResultVisitor):
         if self._error_message_is_logged(msg.level):
             self._errors.append(msg)
 
-    def log_message(self, msg):
+    def log_message(self, msg):        
         if self._log_message_is_logged(msg.level):
             self._write_message(msg)
 
     def _write_message(self, msg):
+        # Decipher where the message belongs
+        if self._current_item in RECURSIVE_ITEMS:
+            if self._current_body_item:
+                item = self._current_body_item
+            elif not self._current_body_item:
+                item = self._item_stack[-1]
+        else:
+            item = self._current_test
+
+        # Make the message
         message = self._create_message(msg)
-        if self._current_item == 'test':
-            self._current_test['msg'] = message
-        elif self._current_item == "keyword":
-            if 'msgs' not in self._current_keyword:
-                self._current_keyword['msgs'] = list()
-            self._current_keyword['msgs'].append(message)
+
+        # Attach the message to the body
+        if 'body' not in item:
+            item['body'] = list()
+        item['body'].append(message)
 
     def _create_message(self, msg):
         message = {
             'msg': msg.message,
             'level': msg.level,
-            'timestamp': msg.timestamp or None,
-            'html': msg.html is not None or None
+            'timestamp': msg.timestamp or 'N/A',
+            'type': msg.type
         }
-        return self._format_data(message)
+        if msg.html:
+            message['html'] = 'true'
+        return message
 
     def start_keyword(self, kw):
-        # If there is an "open" keyword, this will be placed inside its keywords
-        if self._current_item == 'keyword':
-            if self._current_keyword:
+        if self._current_item in RECURSIVE_ITEMS:
+            if self._current_body_item:
                 # Push this onto the stack
-                self._item_stack.append(self._current_keyword)
+                self._item_stack.append(self._current_body_item)
         # If there is no current test then the destination will be the suite
         elif not self._current_test:
             self._current_item = 'suite'
@@ -101,51 +144,144 @@ class JsonLogger(ResultVisitor):
         else:
             self._current_item = 'test'
 
-        self._current_keyword = {
+        self._current_body_item = {
             'name': kw.kwname,
             'lib': kw.libname,
-            'type': kw.type if kw.type != 'kw' else None,
+            'type': kw.type if kw.type != 'KEYWORD' else None,
             'doc': kw.doc,
             'tags': [unic(t) for t in kw.tags],
             'args': [unic(a) for a in kw.args],
-            'assign': [var for var in kw.assign],
+            'var': [var for var in kw.assign],
             'destination': copy.deepcopy(self._current_item)
         }
 
         # Mark the type of item
-        self._current_item = 'keyword'
+        self._current_item = 'body'
 
     def end_keyword(self, kw):
         # Check if we have an item in progress
-        if not self._current_keyword:
+        if not self._current_body_item:
             # If not, then the keywords have been processed for the item on the stack
-            self._current_keyword = self._item_stack.pop()
+            self._current_body_item = self._item_stack.pop()
 
         # Add the rest of the information
         if kw.timeout:
-            self._current_keyword['timeout'] = unic(kw.timeout)
-        self._current_keyword['status'] = self._create_status(kw)
+            self._current_body_item['timeout'] = unic(kw.timeout)
+        self._current_body_item['status'] = self._create_status(kw)
+        self.append_to_item()
 
-        # Remove the "destination" from the dictionary
-        destination = self._current_keyword.pop('destination')
-        # Format the keyword
-        self._current_keyword = self._format_data(self._current_keyword)
-        # To process the keyword we must have pushed something to the item stack (or have an active suite/test)
-        if destination == 'suite':
-            parent_item = self._current_suite
-        elif destination == 'test':
-            parent_item = self._current_test
+    def start_if(self, if_):
+        if self._current_item in RECURSIVE_ITEMS:
+            if self._current_body_item:
+                # Push this onto the stack
+                self._item_stack.append(self._current_body_item)
+        # If there is no current item then we're running inside of test case
         else:
-            parent_item = self._item_stack[-1]
+            self._current_item = 'test'
 
-        if 'kw' not in parent_item:
-            parent_item['kw'] = list()
-        parent_item['kw'].append(self._current_keyword)
-        self._current_keyword = None
-        if destination == 'keyword':
-            self._current_item = destination
+        self._current_body_item = {
+            'doc': if_.doc,
+            'type': if_.type,
+            'destination': copy.deepcopy(self._current_item)
+        }
+
+        # Mark the type of item
+        self._current_item = 'if'
+
+    def end_if(self, if_):
+        # Check if we have an item in progress
+        if not self._current_body_item:
+            # If not, then the keywords have been processed for the item on the stack
+            self._current_body_item = self._item_stack.pop()
+
+        self._current_body_item['status'] = self._create_status(if_)
+        self.append_to_item()
+
+    def start_if_branch(self, branch):
+        if self._current_item in RECURSIVE_ITEMS:
+            if self._current_body_item:
+                # Push this onto the stack
+                self._item_stack.append(self._current_body_item)
+        # If there is no current item then we're running inside of test case
         else:
-            self._current_item = ''
+            self._current_item = 'test'
+
+        self._current_body_item = {
+            'doc': branch.doc,
+            'type': branch.type,
+            'condition': branch.condition,
+            'destination': copy.deepcopy(self._current_item)
+        }
+
+        # Mark the type of item
+        self._current_item = 'body'
+
+    def end_if_branch(self, branch):
+        # Check if we have an item in progress
+        if not self._current_body_item:
+            # If not, then the keywords have been processed for the item on the stack
+            self._current_body_item = self._item_stack.pop()
+
+        self._current_body_item['status'] = self._create_status(branch)
+        self.append_to_item()
+
+    def start_for(self, for_):
+        if self._current_item in RECURSIVE_ITEMS:
+            if self._current_body_item:
+                # Push this onto the stack
+                self._item_stack.append(self._current_body_item)
+        # If there is no current item then we're running inside of test case
+        else:
+            self._current_item = 'test'
+
+        self._current_body_item = {
+            'doc': for_.doc,
+            'flavor': for_.flavor,
+            'var': [var for var in for_.variables],
+            'value': [value for value in for_.values],
+            'type': for_.type,
+            'destination': copy.deepcopy(self._current_item)
+        }
+
+        # Mark the type of item
+        self._current_item = 'for'
+
+    def end_for(self, for_):
+        # Check if we have an item in progress
+        if not self._current_body_item:
+            # If not, then the keywords have been processed for the item on the stack
+            self._current_body_item = self._item_stack.pop()
+
+        self._current_body_item['status'] = self._create_status(for_)
+        self.append_to_item()
+
+    def start_for_iteration(self, iteration):
+        if self._current_item in RECURSIVE_ITEMS:
+            if self._current_body_item:
+                # Push this onto the stack
+                self._item_stack.append(self._current_body_item)
+        # If there is no current item then we're running inside of test case
+        else:
+            self._current_item = 'test'
+
+        self._current_body_item = {
+            'doc': iteration.doc,
+            'var': {name: value for name, value in iteration.variables.items()},
+            'type': iteration.type,
+            'destination': copy.deepcopy(self._current_item)
+        }
+
+        # Mark the type of item
+        self._current_item = 'body'
+
+    def end_for_iteration(self, iteration):
+        # Check if we have an item in progress
+        if not self._current_body_item:
+            # If not, then the keywords have been processed for the item on the stack
+            self._current_body_item = self._item_stack.pop()
+
+        self._current_body_item['status'] = self._create_status(iteration)
+        self.append_to_item()
 
     def start_test(self, test):
         self._current_test = {

@@ -40,7 +40,7 @@ class XmlLogger(ResultVisitor):
     def close(self):
         self.start_errors()
         for msg in self._errors:
-            self._write_message(msg)
+            self.message(msg)
         self.end_errors()
         self._writer.end('robot')
         self._writer.close()

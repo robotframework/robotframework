@@ -7,7 +7,7 @@ class JsonOutputWriter(JsonLogger):
         JsonLogger.__init__(self, output, rpa=rpa, generator='Rebot')
 
     def start_message(self, msg):
-        self._write_message(msg)
+        self.log_message(msg)
 
     def end_result(self, result):
         self.close()

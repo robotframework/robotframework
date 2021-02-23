@@ -43,11 +43,7 @@
 		"test": {
 			"type": "object",
 			"properties": {
-				"kw": {
-					"type": "array",
-					"items": {"$ref": "#/definitions/keyword"},
-					"minItems": 0
-				},
+				"body": {"$ref": "#/definitions/body"},
 				"doc": {"type": "string"},
 				"tags": {
 					"type": "array",
@@ -68,16 +64,12 @@
 		},
 		"type": {
 			"type": "string",
-			"enum": ["kw", "setup", "teardown", "foritem", "for"]
+			"enum": ["kw", "setup", "teardown", "foritem", "for", "if", "elseif", "else"]
 		},
 		"keyword": {
 			"type": "object",
 			"properties": {
-				"kw": {
-					"type": "array",
-					"items": {"$ref": "#/definitions/keyword"},
-					"minItems": 0
-				},
+				"body": {"$ref": "#/definitions/body"},
 				"msgs": {
 					"type": "array",
 					"items": {"$ref": "#/definitions/message"},
@@ -96,13 +88,16 @@
 					"minItems": 0
 				},
 				"lib": {"type":  "string"},
-				"assign": {
+				"var": {
 					"type": "array",
 					"items": {"type": "string"},
 					"minItems": 0
 				},
 				"status": {"$ref": "#/definitions/status"},
 				"name" : {
+					"type": "string"
+				},
+				"sourcename" : {
 					"type": "string"
 				},
 				"type" : {"$ref": "#/definitions/type"}
@@ -117,9 +112,11 @@
 				"endtime": {"type": "string"},
 				"starttime": {"type": "string"},
 				"elapsedtime": {"type": "string"},
-				"critical": {"type": "boolean"}
+				"critical": {"type": "boolean"},
+				"msg": {"type": "string"}
 			},
-			"required": ["status"]
+			"required": ["status"],
+			"additionalProperties": true
 		},
 		"message": {
 			"type": "object",
@@ -138,6 +135,66 @@
 				"name": {"type": "string"},
 				"value": {"type": "string"}
 			}
+		},
+		"for": {
+			"type": "object",
+			"properties": {
+				"flavor": {"type": "string"},
+				"var": {"type": "array",
+						"items": {"type": "string"}},
+				"value": {"type": "array",
+						  "items": {"type": "string"}},
+				"status": {"$ref": "#/definitions/status"},
+				"doc": {"type": "string"},
+				"type" : {"$ref": "#/definitions/type"},
+				"iter": {"type": "array",
+				         "items": {"$ref": "#/definitions/iter"}}
+			}
+		},
+		"itervar": {
+			"type": "object",
+			"properties": {
+				"name": {"type": "string"},
+				"value": {"type": "string"}
+			}
+		},
+		"iter": {
+			"type": "object",
+			"properties": {
+				"var": {"type": "array",
+						"items": {"$ref": "#/definitions/itervar"}},
+				"status": {"$ref": "#/definitions/status"},
+				"doc": {"type": "string"},
+				"body": {"$ref": "#/definitions/body"}
+			}
+		},
+		"if": {
+			"type": "object",
+			"properties": {
+				"doc": {"type": "string"},
+				"status": {"$ref": "#/definitions/status"},
+				"type" : {"$ref": "#/definitions/type"},
+				"branches": {"type": "array",
+							 "items": {"$ref": "#/definitions/branch"}}
+			}
+		},
+		"branch": {
+			"type": "object",
+			"properties": {
+				"type": {"type": "string"},
+				"condition": {"type": "string"},
+				"doc": {"type": "string"},
+				"status": {"$ref": "#/definitions/status"},
+				"body": {"$ref": "#/definitions/body"}
+			}
+		},
+		"body": {
+			"type": "array",
+			"items": {"oneOf": [{"$ref": "#/definitions/keyword"},
+								{"$ref": "#/definitions/for"},
+								{"$ref": "#/definitions/if"},
+								{"$ref": "#/definitions/message"}]},
+			"minItems": 0
 		},
 		"statistics": {
 			"type": "object",
