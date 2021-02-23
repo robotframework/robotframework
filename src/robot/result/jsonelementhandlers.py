@@ -111,7 +111,7 @@ class KeywordHandler(ElementHandler):
     tags = ['kw', 'teardown', 'setup']
     # 'arguments', 'assign' and 'tags' are for RF < 4 compatibility.
     list_children = frozenset(('body', 'msgs', 'tags', 'args', 'var'))
-    children = frozenset(('doc', 'timeout', 'status'))
+    children = frozenset(('doc', 'timeout', 'status', 'teardown'))
 
     def start(self, elem, result):
         elem_type = elem.get('type')

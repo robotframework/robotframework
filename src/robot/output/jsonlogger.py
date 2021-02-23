@@ -162,7 +162,6 @@ class JsonLogger(ResultVisitor):
         self._root.write('generator', get_full_version(generator))
         self._root.write('generated', get_timestamp())
 
-
     def _format_data(self, item):
         return {key: value for key, value in item.items() if value}
 
@@ -253,8 +252,11 @@ class JsonLogger(ResultVisitor):
     def start_keyword(self, kw):
         # If the keyword is not marked as a KEYWORD,
         # then it must be a setup or teardown
-        if kw.type != 'KEYWORD':
-            parent = self._test if self._test else self._suite
+        if kw.type == 'TEARDOWN' or kw.type == 'SETUP':
+            if self._item_stack:
+                parent = self._item_stack[-1]
+            else:
+                parent = self._test if self._test else self._suite
             if kw.type == 'TEARDOWN':
                 parent.close_body()
             if kw.type == 'SETUP':

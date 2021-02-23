@@ -4,13 +4,8 @@
 		"suite": {
 			"type": "object",
 			"properties": {
-				"kw": {
-					"type": "array",
-					"items": {"$ref": "#/definitions/keyword"},
-					"additionalItems": false,
-					"minItems": 0,
-					"maxItems": 2
-				},
+				"setup": {"$ref": "#/definitions/keyword"},
+				"teardown": {"$ref": "#/definitions/keyword"},
 				"suites": {
 					"type": "array",
 					"items": {"$ref": "#/definitions/suite"},
@@ -43,6 +38,8 @@
 		"test": {
 			"type": "object",
 			"properties": {
+				"setup": {"$ref": "#/definitions/keyword"},
+				"teardown": {"$ref": "#/definitions/keyword"},
 				"body": {"$ref": "#/definitions/body"},
 				"doc": {"type": "string"},
 				"tags": {
@@ -69,6 +66,8 @@
 		"keyword": {
 			"type": "object",
 			"properties": {
+				"setup": {"$ref": "#/definitions/keyword"},
+				"teardown": {"$ref": "#/definitions/keyword"},
 				"body": {"$ref": "#/definitions/body"},
 				"msgs": {
 					"type": "array",
