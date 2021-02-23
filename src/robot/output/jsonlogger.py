@@ -250,19 +250,17 @@ class JsonLogger(ResultVisitor):
         return message
 
     def start_keyword(self, kw):
-        # If the keyword is not marked as a KEYWORD,
-        # then it must be a setup or teardown
-        if kw.type == 'TEARDOWN' or kw.type == 'SETUP':
-            if self._item_stack:
-                parent = self._item_stack[-1]
-            else:
-                parent = self._test if self._test else self._suite
+        # Only a suite will not store a keyword in its body.
+        # This is because for tests and setups to store them
+        # differently would require more advanced JSON streaming
+        if (kw.type == 'TEARDOWN' or kw.type == 'SETUP') and \
+                not self._test and self._suite:
             if kw.type == 'TEARDOWN':
-                parent.close_body()
+                self._suite.close_body()
             if kw.type == 'SETUP':
-                subobject = parent.subobject('setup')
+                subobject = self._suite.subobject('setup')
             elif kw.type == 'TEARDOWN':
-                subobject = parent.subobject('teardown')
+                subobject = self._suite.subobject('teardown')
             else:
                 raise ValueError("Keyword type is not known")
         else:

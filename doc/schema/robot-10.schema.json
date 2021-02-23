@@ -38,8 +38,6 @@
 		"test": {
 			"type": "object",
 			"properties": {
-				"setup": {"$ref": "#/definitions/keyword"},
-				"teardown": {"$ref": "#/definitions/keyword"},
 				"body": {"$ref": "#/definitions/body"},
 				"doc": {"type": "string"},
 				"tags": {
@@ -66,8 +64,6 @@
 		"keyword": {
 			"type": "object",
 			"properties": {
-				"setup": {"$ref": "#/definitions/keyword"},
-				"teardown": {"$ref": "#/definitions/keyword"},
 				"body": {"$ref": "#/definitions/body"},
 				"msgs": {
 					"type": "array",

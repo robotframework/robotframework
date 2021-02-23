@@ -100,7 +100,7 @@ class SuiteHandler(ElementHandler):
 class TestHandler(ElementHandler):
     tags = ['tests']
     list_children = frozenset(('body', 'tags'))
-    children = frozenset(('doc', 'timeout', 'status', 'msg', 'setup', 'teardown'))
+    children = frozenset(('doc', 'timeout', 'status', 'msg'))
 
     def start(self, elem, result):
         return result.tests.create(name=elem.get('name', ''))
@@ -111,7 +111,7 @@ class KeywordHandler(ElementHandler):
     tags = ['kw', 'teardown', 'setup']
     # 'arguments', 'assign' and 'tags' are for RF < 4 compatibility.
     list_children = frozenset(('body', 'msgs', 'tags', 'args', 'var'))
-    children = frozenset(('doc', 'timeout', 'status', 'teardown'))
+    children = frozenset(('doc', 'timeout', 'status'))
 
     def start(self, elem, result):
         elem_type = elem.get('type')
@@ -150,7 +150,7 @@ class BodyHandler(ElementHandler):
 
     def parse(self, elem, result):
         body_type = elem['type'] if 'type' in elem else 'KW'
-        if body_type == 'KW':
+        if body_type == 'KW' or body_type == "SETUP" or body_type == "TEARDOWN":
             self.element_handlers['kw'].parse(elem, result)
         elif body_type == 'FOR':
             self.element_handlers['for'].parse(elem, result)
