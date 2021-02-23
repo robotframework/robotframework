@@ -27,6 +27,7 @@ except ImportError:  # Not on Windows or using Jython
     windll = None
 
 from robot.errors import DataError
+from robot.conf.status import Status
 from robot.utils import console_encode, isatty, WINDOWS
 
 
@@ -98,16 +99,20 @@ class HighlightingStream(object):
     @contextmanager
     def _highlighting(self, status):
         highlighter = self._highlighter
-        start = {'PASS': highlighter.green,
-                 'FAIL': highlighter.red,
+        start = {Status.PASS: highlighter.green,
+                 Status.FAIL: highlighter.red,
                  'ERROR': highlighter.red,
                  'WARN': highlighter.yellow,
-                 'SKIP': highlighter.yellow}[status]
+                 Status.SKIP: highlighter.yellow}[status]
         start()
         try:
             yield
         finally:
             highlighter.reset()
+            # reset custom statuses
+            Status.PASS = 'PASS'
+            Status.FAIL = 'FAIL'
+            Status.SKIP = 'SKIP'
 
 
 def Highlighter(stream):

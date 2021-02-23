@@ -36,6 +36,7 @@ from itertools import chain
 import warnings
 
 from robot import model
+from robot.conf.status import Status
 from robot.model import TotalStatisticsBuilder, Keywords
 from robot.utils import get_elapsed_time, setter
 
@@ -75,7 +76,7 @@ class Keyword(model.Keyword):
                  'lineno', 'source']
 
     def __init__(self, kwname='', libname='', doc='', args=(), assign=(), tags=(),
-                 timeout=None, type='kw', status='FAIL', starttime=None, endtime=None,
+                 timeout=None, type='kw', status=Status.FAIL, starttime=None, endtime=None,
                  parent=None, lineno=None, source=None):
         model.Keyword.__init__(self, None, doc, args, assign, tags, timeout, type, parent)
         #: Name of the keyword without library or resource name.
@@ -163,20 +164,20 @@ class Keyword(model.Keyword):
     @property
     def passed(self):
         """``True`` when :attr:`status` is 'PASS', ``False`` otherwise."""
-        return self.status == 'PASS'
+        return self.status == Status.PASS
 
     @passed.setter
     def passed(self, passed):
-        self.status = 'PASS' if passed else 'FAIL'
+        self.status = Status.PASS if passed else Status.FAIL
 
     @property
     def failed(self):
         """``True`` when :attr:`status` is 'FAIL', ``False`` otherwise."""
-        return self.status == 'FAIL'
+        return self.status == Status.FAIL
 
     @failed.setter
     def failed(self, failed):
-        self.status = 'FAIL' if failed else 'PASS'
+        self.status = Status.FAIL if failed else Status.PASS
 
     @property
     def skipped(self):
@@ -184,14 +185,14 @@ class Keyword(model.Keyword):
 
         Setting to ``False`` value is ambiguous and raises an exception.
         """
-        return self.status == 'SKIP'
+        return self.status == Status.SKIP
 
     @skipped.setter
     def skipped(self, skipped):
         if not skipped:
             raise ValueError("`skipped` value must be truthy, got '%s'."
                              % skipped)
-        self.status = 'SKIP'
+        self.status = Status.SKIP
 
 
 class TestCase(model.TestCase):
@@ -203,7 +204,7 @@ class TestCase(model.TestCase):
     body_class = Body
     fixture_class = Keyword
 
-    def __init__(self, name='', doc='', tags=None, timeout=None, status='FAIL',
+    def __init__(self, name='', doc='', tags=None, timeout=None, status=Status.FAIL,
                  message='', starttime=None, endtime=None):
         model.TestCase.__init__(self, name, doc, tags, timeout)
         #: Status as a string ``PASS`` or ``FAIL``. See also :attr:`passed`.
@@ -224,20 +225,20 @@ class TestCase(model.TestCase):
     @property
     def passed(self):
         """``True`` when :attr:`status` is 'PASS', ``False`` otherwise."""
-        return self.status == 'PASS'
+        return self.status == Status.PASS
 
     @passed.setter
     def passed(self, passed):
-        self.status = 'PASS' if passed else 'FAIL'
+        self.status = Status.PASS if passed else Status.FAIL
 
     @property
     def failed(self):
         """``True`` when :attr:`status` is 'FAIL', ``False`` otherwise."""
-        return self.status == 'FAIL'
+        return self.status == Status.FAIL
 
     @failed.setter
     def failed(self, failed):
-        self.status = 'FAIL' if failed else 'PASS'
+        self.status = Status.FAIL if failed else Status.PASS
 
     @property
     def skipped(self):
@@ -245,14 +246,14 @@ class TestCase(model.TestCase):
 
         Setting to ``False`` value is ambiguous and raises an exception.
         """
-        return self.status == 'SKIP'
+        return self.status == Status.SKIP
 
     @skipped.setter
     def skipped(self, skipped):
         if not skipped:
             raise ValueError("`skipped` value must be truthy, got '%s'."
                              % skipped)
-        self.status = 'SKIP'
+        self.status = Status.SKIP
 
     @property
     def critical(self):
@@ -284,17 +285,17 @@ class TestSuite(model.TestSuite):
     @property
     def passed(self):
         """``True`` if no test has failed but some have passed, ``False`` otherwise."""
-        return self.status == 'PASS'
+        return self.status == Status.PASS
 
     @property
     def failed(self):
         """``True`` if any test has failed, ``False`` otherwise."""
-        return self.status == 'FAIL'
+        return self.status == Status.FAIL
 
     @property
     def skipped(self):
         """``True`` if there are no passed or failed tests, ``False`` otherwise."""
-        return self.status == 'SKIP'
+        return self.status == Status.SKIP
 
     @property
     def status(self):
@@ -307,10 +308,10 @@ class TestSuite(model.TestSuite):
         """
         stats = self.statistics  # Local variable avoids recreating stats.
         if stats.failed:
-            return 'FAIL'
+            return Status.FAIL
         if stats.passed:
-            return 'PASS'
-        return 'SKIP'
+            return Status.PASS
+        return Status.SKIP
 
     @property
     def statistics(self):

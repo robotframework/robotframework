@@ -100,7 +100,7 @@ class TestCheckerLibrary:
             test.exp_status = status
         if message is not None:
             test.exp_message = message
-        if test.exp_status != test.status:
+        if test.exp_status != test.status and test.status in ['PASS', 'FAIL', 'SKIP']:
             if test.exp_status == 'PASS':
                 if test.status == 'FAIL':
                     msg = ("Test '%s' was expected to PASS but it FAILED.\n\n"

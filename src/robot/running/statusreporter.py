@@ -16,6 +16,7 @@
 from robot.errors import (ExecutionFailed, ExecutionStatus, DataError,
                           HandlerExecutionFailed, KeywordError, VariableError)
 from robot.utils import ErrorDetails, get_timestamp
+from robot.conf.status import Status
 
 
 class StatusReporter(object):
@@ -23,7 +24,7 @@ class StatusReporter(object):
     def __init__(self, context, result, dry_run_lib_kw=False):
         self._context = context
         self._result = result
-        self._pass_status = 'PASS' if not dry_run_lib_kw else 'NOT_RUN'
+        self._pass_status = Status.PASS if not dry_run_lib_kw else 'NOT_RUN'
         self._test_passed = None
 
     def __enter__(self):
@@ -61,11 +62,11 @@ class StatusReporter(object):
         self._pass_status = 'NOT_RUN'
 
     def _get_status(self, result):
-        if result.status == 'SKIP':
-            return 'SKIP'
+        if result.status == Status.SKIP:
+            return Status.SKIP
         if self._test_passed and result.passed:
-            return 'PASS'
-        return 'FAIL'
+            return Status.PASS
+        return Status.FAIL
 
     def _get_failure(self, exc_type, exc_value, exc_tb, context):
         if exc_value is None:

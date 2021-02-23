@@ -18,8 +18,6 @@ from robot.output import LEVELS
 from .jsbuildingcontext import JsBuildingContext
 from .jsexecutionresult import JsExecutionResult
 
-
-STATUSES = {'FAIL': 0, 'PASS': 1, 'NOT_RUN': 2, 'SKIP': 3}
 KEYWORD_TYPES = {'kw': 0, 'setup': 1, 'teardown': 2, 'for': 3, 'foritem': 4,
                  'if': 5, 'elseif': 6, 'else': 7}
 MESSAGE_TYPE = 8
@@ -55,7 +53,7 @@ class _Builder(object):
         self._timestamp = self._context.timestamp
 
     def _get_status(self, item):
-        model = (STATUSES[item.status],
+        model = (item.status,
                  self._timestamp(item.starttime),
                  item.elapsedtime)
         msg = getattr(item, 'message', '')

@@ -15,6 +15,7 @@
 
 import sys
 
+from robot.conf.status import Status
 from robot.model import SuiteVisitor
 from robot.utils import plural_or_not, secs_to_timestr
 
@@ -45,11 +46,11 @@ class DottedOutput(object):
         if test.passed:
             self._stdout.write('.')
         elif test.skipped:
-            self._stdout.highlight('s', 'SKIP')
+            self._stdout.highlight('s', Status.SKIP)
         elif 'robot:exit' in test.tags:
             self._stdout.write('x')
         else:
-            self._stdout.highlight('F', 'FAIL')
+            self._stdout.highlight('F', Status.FAIL)
 
     def end_suite(self, suite):
         if not suite.parent:
@@ -85,6 +86,6 @@ class StatusReporter(SuiteVisitor):
     def visit_test(self, test):
         if test.failed and 'robot:exit' not in test.tags:
             self._stream.write('-' * self._width + '\n')
-            self._stream.highlight('FAIL')
+            self._stream.highlight(Status.FAIL)
             self._stream.write(': %s\n%s\n' % (test.longname,
                                                test.message.strip()))

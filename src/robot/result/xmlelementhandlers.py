@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from robot.errors import DataError
+from robot.conf.status import Status
 
 
 class XmlElementHandler(object):
@@ -150,7 +151,7 @@ class _StatusHandler(_Handler):
     tag = 'status'
 
     def _set_status(self, elem, result):
-        result.status = elem.get('status', 'FAIL')
+        result.status = elem.get('status', Status.FAIL)
 
     def _set_message(self, elem, result):
         result.message = elem.text or ''

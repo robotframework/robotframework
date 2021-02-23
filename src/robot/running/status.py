@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.conf.status import Status
 from robot.errors import ExecutionFailed, PassExecution
 from robot.model import TagPatterns
 from robot.utils import html_escape, py3to2, unic, test_or_task
@@ -76,6 +77,7 @@ class _ExecutionStatus(object):
         self.skipped = False
         self._teardown_allowed = False
         self._rpa = False
+        self._custom_statuses = None
         if parent:
             parent.children.append(self)
 
@@ -127,11 +129,16 @@ class _ExecutionStatus(object):
 
     @property
     def status(self):
+        if self._custom_statuses and isinstance(self, TestStatus):
+            for custom_status in self._custom_statuses:
+                if TagPatterns(custom_status[2]).match(self._test.tags):
+                    Status[custom_status[1]] = custom_status[0]
+                    break
         if self.skipped or (self.parent and self.parent.skipped):
-            return 'SKIP'
+            return Status.SKIP
         if self.failed:
-            return 'FAIL'
-        return 'PASS'
+            return Status.FAIL
+        return Status.PASS
 
     def _skip_on_failure(self):
         return False
@@ -172,13 +179,14 @@ class SuiteStatus(_ExecutionStatus):
 class TestStatus(_ExecutionStatus):
 
     def __init__(self, parent, test, skip_on_failure=None, critical_tags=None,
-                 rpa=False):
+                 rpa=False, custom_statuses=None):
         _ExecutionStatus.__init__(self, parent)
         self.exit = parent.exit
         self._test = test
         self._skip_on_failure_tags = skip_on_failure
         self._critical_tags = critical_tags
         self._rpa = rpa
+        self._custom_statuses = custom_statuses
 
     def test_failed(self, failure):
         if hasattr(failure, 'skip') and failure.skip:

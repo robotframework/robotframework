@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from robot.model import SuiteVisitor
+from robot.conf.status import Status
 
 
 class SuiteTeardownFailureHandler(SuiteVisitor):
@@ -21,9 +22,9 @@ class SuiteTeardownFailureHandler(SuiteVisitor):
     def end_suite(self, suite):
         teardown = suite.teardown
         # Both 'PASS' and 'NOT_RUN' (used in dry-run) statuses are OK.
-        if teardown and teardown.status == 'FAIL':
+        if teardown and teardown.status == Status.FAIL:
             suite.suite_teardown_failed(teardown.message)
-        if teardown and teardown.status == 'SKIP':
+        if teardown and teardown.status == Status.SKIP:
             suite.suite_teardown_skipped(teardown.message)
 
     def visit_test(self, test):
@@ -45,11 +46,11 @@ class SuiteTeardownFailed(SuiteVisitor):
 
     def visit_test(self, test):
         if not self._skipped:
-            test.status = 'FAIL'
+            test.status = Status.FAIL
             prefix = self._also_msg if test.message else self._normal_msg
             test.message += prefix % self._message
         else:
-            test.status = 'SKIP'
+            test.status = Status.SKIP
             if test.message:
                 test.message = self._also_skip_msg % (self._message, test.message)
             else:

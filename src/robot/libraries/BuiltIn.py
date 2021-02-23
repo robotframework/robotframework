@@ -27,6 +27,7 @@ from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           PassExecution, ReturnFromKeyword, VariableError)
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
+from robot.conf.status import Status
 from robot.running.usererrorhandler import UserErrorHandler
 from robot.utils import (DotDict, escape, format_assign_message,
                          get_error_message, get_time, html_escape, is_falsy,
@@ -1842,11 +1843,11 @@ class _RunKeyword(_BuiltInBase):
         caught by this keyword. Otherwise this keyword itself never fails.
         """
         try:
-            return 'PASS', self.run_keyword(name, *args)
+            return Status.PASS, self.run_keyword(name, *args)
         except ExecutionFailed as err:
             if err.dont_continue or err.skip:
                 raise
-            return 'FAIL', unic(err)
+            return Status.FAIL, unic(err)
 
     @run_keyword_variant(resolve=1)
     def run_keyword_and_warn_on_failure(self, name, *args):
@@ -1863,7 +1864,7 @@ class _RunKeyword(_BuiltInBase):
         New in Robot Framework 4.0.
         """
         status, message = self.run_keyword_and_ignore_error(name, *args)
-        if status == 'FAIL':
+        if status == Status.FAIL:
             logger.warn("Executing keyword '%s' failed:\n%s" % (name, message))
         return status, message
 
@@ -1886,7 +1887,7 @@ class _RunKeyword(_BuiltInBase):
         caught by this keyword. Otherwise this keyword itself never fails.
         """
         status, _ = self.run_keyword_and_ignore_error(name, *args)
-        return status == 'PASS'
+        return status == Status.PASS
 
     @run_keyword_variant(resolve=1)
     def run_keyword_and_continue_on_failure(self, name, *args):
