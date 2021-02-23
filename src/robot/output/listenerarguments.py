@@ -113,7 +113,7 @@ class EndSuiteArguments(StartSuiteArguments):
 
 
 class StartTestArguments(_ListenerArgumentsFromItem):
-    _attribute_names = ('id', 'longname', 'doc', 'tags', 'lineno', 'starttime')
+    _attribute_names = ('id', 'longname', 'doc', 'tags', 'lineno', 'source', 'starttime')
 
     def _get_extra_attributes(self, test):
         return {'template': test.template or '',
@@ -121,33 +121,19 @@ class StartTestArguments(_ListenerArgumentsFromItem):
 
 
 class EndTestArguments(StartTestArguments):
-    _attribute_names = ('id', 'longname', 'doc', 'tags', 'lineno', 'starttime',
+    _attribute_names = ('id', 'longname', 'doc', 'tags', 'lineno', 'source', 'starttime',
                         'endtime', 'elapsedtime', 'status', 'message')
 
 
 class StartKeywordArguments(_ListenerArgumentsFromItem):
-    _attribute_names = ('kwname', 'doc', 'assign', 'tags', 'starttime', 'lineno',
-                        'source')
-    _types = {'kw': 'Keyword',
-              'setup': 'Setup',
-              'teardown': 'Teardown',
-              'for': 'For',
-              'foritem': 'For Item',
-              'if': 'If',
-              'elseif': 'Else If',
-              'else': 'Else'}
+    _attribute_names = ('doc', 'assign', 'tags', 'lineno', 'source', 'type', 'status',
+                        'starttime')
 
     def _get_extra_attributes(self, kw):
         args = [a if is_string(a) else unic(a) for a in kw.args]
-        return {'libname': kw.libname or '', 'args': args, 'type': self._types[kw.type]}
+        return {'kwname': kw.kwname or '', 'libname': kw.libname or '', 'args': args}
 
 
 class EndKeywordArguments(StartKeywordArguments):
-    _attribute_names = ('kwname', 'libname', 'doc', 'args', 'assign', 'tags',
-                        'starttime', 'endtime', 'elapsedtime', 'lineno', 'source')
-
-    def _get_extra_attributes(self, kw):
-        attrs = StartKeywordArguments._get_extra_attributes(self, kw)
-        # With IF/ELSE, return branch status, not status of the whole structure.
-        attrs['status'] = getattr(kw, 'branch_status', kw.status)
-        return attrs
+    _attribute_names = ('doc', 'assign', 'tags', 'lineno', 'source', 'type', 'status',
+                        'starttime', 'endtime', 'elapsedtime')

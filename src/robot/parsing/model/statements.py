@@ -910,12 +910,17 @@ class Error(Statement):
 
     @property
     def errors(self):
-        """Errors got from the underlying ``ERROR`` tokens."""
-        return tuple(t.error for t in self.get_tokens(Token.ERROR)) + self._errors
+        """Errors got from the underlying ``ERROR`` and ``FATAL_ERROR`` tokens.
+
+        Errors can be set also explicitly. When accessing errors, they are returned
+        along with errors from from tokens.
+        """
+        tokens = self.get_tokens(Token.ERROR, Token.FATAL_ERROR)
+        return tuple(t.error for t in tokens) + self._errors
 
     @errors.setter
     def errors(self, errors):
-        self._errors = errors
+        self._errors = tuple(errors)
 
 
 class EmptyLine(Statement):

@@ -18,11 +18,11 @@ from contextlib import contextmanager
 
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           ExecutionStatus, ExitForLoop, ContinueForLoop, DataError)
-from robot.result import For as ForResult, If as IfResult
+from robot.result import For as ForResult, If as IfResult, IfBranch as IfBranchResult
 from robot.output import librarylogger as logger
-from robot.utils import (format_assign_message, frange, get_error_message,
-                         is_list_like, is_number, plural_or_not as s,
-                         split_from_equals, type_name, is_unicode)
+from robot.utils import (cut_assign_value, frange, get_error_message,
+                         is_list_like, is_number, is_unicode, plural_or_not as s,
+                         split_from_equals, type_name)
 from robot.variables import is_dict_variable, evaluate_expression
 
 from .statusreporter import StatusReporter
@@ -76,7 +76,17 @@ class IfRunner(object):
 
     def run(self, data):
         with self._dry_run_recursion_detection(data) as recursive_dry_run:
-            self._run_if_branch(data, recursive_dry_run)
+            error = None
+            with StatusReporter(data, IfResult(), self._context, self._run):
+                for branch in data.body:
+                    try:
+                        if self._run_if_branch(branch, recursive_dry_run, data.error):
+                            self._run = False
+                    except ExecutionStatus as err:
+                        error = err
+                        self._run = False
+                if error:
+                    raise error
 
     @contextmanager
     def _dry_run_recursion_detection(self, data):
@@ -92,33 +102,21 @@ class IfRunner(object):
             if dry_run:
                 self._dry_run_stack.pop()
 
-    def _run_if_branch(self, data, recursive_dry_run=False, branch_run=False):
-        result = IfResult(data.condition, lineno=data.lineno, source=data.source,
-                          type=data.type)
-        error = None
-        with StatusReporter(self._context, result, self._run):
-            if data.error and self._run:
-                raise DataError(data.error)
-            run = self._should_run_branch(data.condition, branch_run, recursive_dry_run)
-            runner = BodyRunner(self._context, run=run, templated=self._templated)
-            try:
-                if not recursive_dry_run:
-                    runner.run(data.body)
-            except ExecutionStatus as err:
-                error = err
-            if run:
-                branch_run = True
-            else:
-                result.branch_status = result.NOT_RUN
-            if data.orelse:
-                self._run_if_branch(data.orelse, recursive_dry_run, branch_run)
-            if error:
-                raise error
+    def _run_if_branch(self, branch, recursive_dry_run=False, error=None):
+        result = IfBranchResult(branch.type, branch.condition)
+        run_branch = self._should_run_branch(branch.condition, recursive_dry_run)
+        with StatusReporter(branch, result, self._context, run_branch):
+            if error and self._run:
+                raise DataError(error)
+            runner = BodyRunner(self._context, run_branch, self._templated)
+            if not recursive_dry_run:
+                runner.run(branch.body)
+        return run_branch
 
-    def _should_run_branch(self, condition, branch_run=False, recursive_dry_run=False):
+    def _should_run_branch(self, condition, recursive_dry_run=False):
         if self._context.dry_run:
             return not recursive_dry_run
-        if branch_run or not self._run:
+        if not self._run:
             return False
         if condition is None:
             return True
@@ -146,19 +144,20 @@ class ForInRunner(object):
         self._templated = templated
 
     def run(self, data):
-        result = ForResult(data.variables, data.flavor, data.values,
-                           lineno=data.lineno, source=data.source)
-        with StatusReporter(self._context, result, self._run):
+        result = ForResult(data.variables, data.flavor, data.values)
+        with StatusReporter(data, result, self._context, self._run):
             if self._run:
                 if data.error:
                     raise DataError(data.error)
                 self._run_loop(data, result)
+            else:
+                self._run_one_round(data, result)
 
     def _run_loop(self, data, result):
         errors = []
         for values in self._get_values_for_rounds(data):
             try:
-                self._run_one_round(values, data, result)
+                self._run_one_round(data, result, values)
             except ExitForLoop as exception:
                 if exception.earlier_failures:
                     errors.extend(exception.earlier_failures.get_errors())
@@ -180,11 +179,9 @@ class ForInRunner(object):
             raise ExecutionFailures(errors)
 
     def _get_values_for_rounds(self, data):
-        values_per_round = len(data.variables)
         if self._context.dry_run:
-            return ForInRunner._map_values_to_rounds(
-                self, data.variables, values_per_round
-            )
+            return [None]
+        values_per_round = len(data.variables)
         if self._is_dict_iteration(data.values):
             values = self._resolve_dict_values(data.values)
             values = self._map_dict_values_to_rounds(values, values_per_round)
@@ -260,22 +257,22 @@ class ForInRunner(object):
             'Got %d variables but %d value%s.' % (variables, values, s(values))
         )
 
-    def _run_one_round(self, values, data, result):
+    def _run_one_round(self, data, result, values=None):
+        result = result.body.create_iteration()
         variables = self._map_variables_and_values(data.variables, values)
         for name, value in variables:
             self._context.variables[name] = value
-        info = ', '.join(format_assign_message(n, v) for n, v in variables)
-        result = result.body.create_iteration(info=info,
-                                              lineno=data.lineno,
-                                              source=data.source)
-        runner = BodyRunner(self._context, templated=self._templated)
-        with StatusReporter(self._context, result):
+            result.variables[name] = cut_assign_value(value)
+        runner = BodyRunner(self._context, self._run, self._templated)
+        with StatusReporter(data, result, self._context, self._run):
             runner.run(data.body)
 
     def _map_variables_and_values(self, variables, values):
+        if values is None:    # Failure occurred earlier or dry-run.
+            values = variables
         if len(variables) == 1 and len(values) != 1:
             return [(variables[0], tuple(values))]
-        return list(zip(variables, values))
+        return zip(variables, values)
 
 
 class ForInRangeRunner(ForInRunner):

@@ -15,10 +15,18 @@ Setting attribute to Java object
     ${JVAR.javaProperty} =    Set Variable   value
     Should Be Equal    ${JVAR.javaInteger}:${JVAR.javaProperty}    42:value
 
-Set attribute not directly in base
-    ${VAR.demeter.loves} =   Set Variable  this
+Set nested attribute
+    ${VAR.demeter.loves} =   Set Variable    this
     Should Be Equal    ${VAR.demeter.loves}    this
     Should Be Equal    ${VAR.demeter.hates}    THIS
+
+Set nested attribute when parent does not exist
+    [Documentation]    FAIL Variable '\${VAR}' does not have attribute 'nonex'.
+    ${VAR.nonex.attrs} =   Set Variable  this fails
+
+Set nested attribute when higher level parent does not exist
+    [Documentation]    FAIL Variable '\${VAR.demeter}' does not have attribute 'nonex'.
+    ${VAR.demeter.nonex.attrs} =   Set Variable  this fails
 
 Trying to set un-settable attribute
     [Documentation]    FAIL STARTS: Setting attribute 'not_settable' to variable '\${VAR}' failed: AttributeError:

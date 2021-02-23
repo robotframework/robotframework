@@ -15,18 +15,17 @@
 
 from robot.utils import setter, py3to2
 
-from .body import Body, BodyItem
+from .body import Body, BodyItem, IfBranches
 from .keyword import Keywords
 
 
 @py3to2
 @Body.register
 class For(BodyItem):
-    type = BodyItem.FOR_TYPE
+    type = BodyItem.FOR
     body_class = Body
     repr_args = ('variables', 'flavor', 'values')
     __slots__ = ['variables', 'flavor', 'values']
-    deprecate_keyword_attributes = True
 
     def __init__(self, variables=(), flavor='IN', values=(), parent=None):
         self.variables = variables
@@ -48,10 +47,6 @@ class For(BodyItem):
     def keywords(self, keywords):
         Keywords.raise_deprecation_error()
 
-    @property
-    def source(self):
-        return self.parent.source if self.parent is not None else None
-
     def visit(self, visitor):
         visitor.visit_for(self)
 
@@ -61,64 +56,63 @@ class For(BodyItem):
         return u'FOR    %s    %s    %s' % (variables, self.flavor, values)
 
 
-@py3to2
 @Body.register
 class If(BodyItem):
-    body_class = Body
-    repr_args = ('condition', 'type')
-    __slots__ = ['condition', 'type', '_orelse']
-    deprecate_keyword_attributes = True
+    """IF/ELSE structure root. Branches are stored in :attr:`body`."""
+    type = BodyItem.IF_ELSE_ROOT
+    body_class = IfBranches
+    __slots__ = ['parent']
 
-    def __init__(self, condition=None, type=BodyItem.IF_TYPE, parent=None):
-        self.condition = condition
-        self.type = type
+    def __init__(self, parent=None):
         self.parent = parent
         self.body = None
-        self._orelse = None
 
     @setter
     def body(self, body):
         return self.body_class(self, body)
 
-    @property     # Cannot use @setter because it would create orelses recursively.
-    def orelse(self):
-        if self._orelse is None and self:
-            self._orelse = type(self)(type=None, parent=self)
-        return self._orelse
-
-    @orelse.setter
-    def orelse(self, orelse):
-        if orelse is None:
-            self._orelse = None
-        elif not isinstance(orelse, type(self)):
-            raise TypeError("Only %s objects accepted, got %s."
-                            % (type(self).__name__, type(orelse).__name__))
-        else:
-            orelse.parent = self
-            self._orelse = orelse
-
     @property
-    def source(self):
-        return self.parent.source if self.parent is not None else None
-
-    def config(self, **attributes):
-        BodyItem.config(self, **attributes)
-        if self.type is None:
-            self.type = self.ELSE_IF_TYPE if self.condition else self.ELSE_TYPE
-        return self
+    def id(self):
+        """Root IF/ELSE id is always ``None``."""
+        return None
 
     def visit(self, visitor):
-        if self:
-            visitor.visit_if(self)
+        visitor.visit_if(self)
+
+
+@py3to2
+@IfBranches.register
+class IfBranch(BodyItem):
+    body_class = Body
+    repr_args = ('type', 'condition')
+    __slots__ = ['type', 'condition']
+
+    def __init__(self, type=BodyItem.IF, condition=None, parent=None):
+        self.type = type
+        self.condition = condition
+        self.parent = parent
+        self.body = None
+
+    @setter
+    def body(self, body):
+        return self.body_class(self, body)
+
+    @property
+    def id(self):
+        """Branch id omits the root IF/ELSE object from the parent id part."""
+        if not self.parent:
+            return 'k1'
+        index = self.parent.body.index(self) + 1
+        if not self.parent.parent:
+            return 'k%d' % index
+        return '%s-k%d' % (self.parent.parent.id, index)
 
     def __str__(self):
-        if not self:
-            return u'None'
-        if not isinstance(self.parent, If):
+        if self.type == self.IF:
             return u'IF    %s' % self.condition
-        if self.condition:
+        if self.type == self.ELSE_IF:
             return u'ELSE IF    %s' % self.condition
         return u'ELSE'
 
-    def __bool__(self):
-        return self.type is not None
+    def visit(self, visitor):
+        visitor.visit_if_branch(self)

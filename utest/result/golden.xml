@@ -1,47 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot rpa="false" generated="20111024 13:41:20.873" generator="Robot trunk 20111007 (Python 2.7.2 on linux2)">
 <suite id="s1" name="Normal" source="normal.html">
-<kw name="my setup" type="setup">
-<timeout value="1 year"></timeout>
-<status endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886" status="PASS"></status>
+<kw name="my setup" type="SETUP">
+<timeout value="1 year"/>
+<status endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886" status="PASS"/>
 </kw>
 <test id="s1-t1" name="First One">
 <kw library="BuiltIn" name="Log">
-<doc>Logs the given message with the given level.</doc>
-<arguments>
 <arg>Test 1</arg>
-</arguments>
+<doc>Logs the given message with the given level.</doc>
 <msg level="INFO" timestamp="20111024 13:41:20.927">Test 1</msg>
-<status endtime="20111024 13:41:20.928" starttime="20111024 13:41:20.926" status="PASS"></status>
+<status endtime="20111024 13:41:20.928" starttime="20111024 13:41:20.926" status="PASS"/>
 </kw>
 <kw name="logs on trace">
-<tags>
-<tag>tag not in source</tag>
-</tags>
-<assign>
 <var>${not really in source}</var>
-</assign>
+<tag>tag not in source</tag>
 <kw library="BuiltIn" name="Log">
-<doc>Logs the given message with the given level.</doc>
-<arguments>
 <arg>Log on ${TEST NAME}</arg>
 <arg>TRACE</arg>
-</arguments>
-<status endtime="20111024 13:41:20.932" starttime="20111024 13:41:20.931" status="PASS"></status>
+<doc>Logs the given message with the given level.</doc>
+<status endtime="20111024 13:41:20.932" starttime="20111024 13:41:20.931" status="PASS"/>
 </kw>
-<status endtime="20111024 13:41:20.933" starttime="20111024 13:41:20.930" status="PASS"></status>
+<status endtime="20111024 13:41:20.933" starttime="20111024 13:41:20.930" status="PASS"/>
 </kw>
 <doc>Test case documentation</doc>
-<tags>
 <tag>t1</tag>
-</tags>
-<status endtime="20111024 13:41:20.934" starttime="20111024 13:41:20.925" status="PASS"></status>
+<status endtime="20111024 13:41:20.934" starttime="20111024 13:41:20.925" status="PASS"/>
 </test>
 <doc>Normal test cases</doc>
-<metadata>
-<item name="Something">My Value</item>
-</metadata>
-<status endtime="20111024 13:41:20.952" starttime="20111024 13:41:20.873" status="PASS"></status>
+<meta name="Something">My Value</meta>
+<status endtime="20111024 13:41:20.952" starttime="20111024 13:41:20.873" status="PASS"/>
 </suite>
 <statistics>
 <total>
@@ -55,6 +43,6 @@
 </suite>
 </statistics>
 <errors>
-  <msg level="ERROR" timestamp="20111024 13:41:20.873">Error in file 'normal.html' in table 'Settings': Resource file 'nope' does not exist.</msg>
+<msg level="ERROR" timestamp="20111024 13:41:20.873">Error in file 'normal.html' in table 'Settings': Resource file 'nope' does not exist.</msg>
 </errors>
 </robot>

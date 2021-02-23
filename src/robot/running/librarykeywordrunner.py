@@ -17,8 +17,7 @@ from robot.errors import DataError
 from robot.output import LOGGER
 from robot.result import Keyword as KeywordResult
 from robot.utils import prepr, unic
-from robot.variables import (contains_variable, is_list_variable,
-                             VariableAssignment)
+from robot.variables import contains_variable, is_list_variable, VariableAssignment
 
 from .bodyrunner import BodyRunner
 from .model import Keyword
@@ -49,7 +48,7 @@ class LibraryKeywordRunner(object):
     def run(self, kw, context, run=True):
         assignment = VariableAssignment(kw.assign)
         result = self._get_result(kw, assignment)
-        with StatusReporter(context, result, run):
+        with StatusReporter(kw, result, context, run):
             if run:
                 with assignment.assigner(context) as assigner:
                     return_value = self._run(context, kw.args)
@@ -64,9 +63,7 @@ class LibraryKeywordRunner(object):
                              args=kw.args,
                              assign=tuple(assignment),
                              tags=handler.tags,
-                             type=kw.type,
-                             lineno=kw.lineno,
-                             source=kw.source)
+                             type=kw.type)
 
     def _run(self, context, args):
         if self.pre_run_messages:
@@ -111,7 +108,7 @@ class LibraryKeywordRunner(object):
     def dry_run(self, kw, context):
         assignment = VariableAssignment(kw.assign)
         result = self._get_result(kw, assignment)
-        with StatusReporter(context, result, run=False):
+        with StatusReporter(kw, result, context, run=False):
             assignment.validate_assignment()
             self._dry_run(context, kw.args)
 

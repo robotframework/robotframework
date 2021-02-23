@@ -26,7 +26,7 @@ class Message(BodyItem):
     Can be a log message triggered by a keyword, or a warning or an error
     that occurred during parsing or test execution.
     """
-    type = BodyItem.MESSAGE_TYPE
+    type = BodyItem.MESSAGE
     repr_args = ('message', 'level')
     __slots__ = ['message', 'level', 'html', 'timestamp']
 

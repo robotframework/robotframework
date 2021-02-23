@@ -16,8 +16,7 @@
 from functools import partial
 
 from robot.errors import VariableError
-from robot.utils import (is_dict_like, is_list_like, normalize,
-                         RecommendationFinder)
+from robot.utils import is_dict_like, is_list_like, normalize, RecommendationFinder
 
 
 def variable_not_found(name, candidates, message=None, deco_braces=True):

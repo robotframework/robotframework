@@ -255,6 +255,15 @@ Negative timeout is ignored
     [Timeout]    -1
     Negative timeout is ignored
 
+Invalid test timeout
+    [Documentation]    FAIL Setting test timeout failed: Invalid time string '¡Bäng!'.
+    [Timeout]    ¡Bäng!
+    Fail    Should not be executed!
+
+Invalid keyword timeout
+    [Documentation]    FAIL Setting keyword timeout failed: Invalid time string '¡Bäng!'.
+    Invalid keyword timeout
+
 *** Keywords ***
 Clean Up Timeout Temp
     Remove Directory    ${timeout_temp}    recursive
@@ -343,3 +352,7 @@ Zero timeout is ignored
 Negative timeout is ignored
     [Timeout]    -1
     Sleep    0.1
+
+Invalid keyword timeout
+    [Timeout]    ¡Bäng!
+    No Operation

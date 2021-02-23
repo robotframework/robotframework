@@ -2,23 +2,21 @@ import unittest
 
 from robot.model import Body, BodyItem, If, For, Keyword, TestCase
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
+from robot.utils import IRONPYTHON
 
 
 class TestBody(unittest.TestCase):
 
     def test_no_create(self):
-        assert_raises_with_msg(
-            AttributeError,
-            "'Body' object has no attribute 'create'. "
-            "Use item specific methods like 'create_keyword' instead.",
-            getattr, Body(), 'create'
-        )
-        assert_raises_with_msg(
-            AttributeError,
-            "'MyBody' object has no attribute 'create'. "
-            "Use item specific methods like 'create_keyword' instead.",
-            getattr, type('MyBody', (Body,), {})(), 'create'
-        )
+        if not IRONPYTHON:
+            error = ("'Body' object has no attribute 'create'. "
+                     "Use item specific methods like 'create_keyword' instead.")
+        else:
+            error = "'Body' object has no attribute 'create'"
+        assert_raises_with_msg(AttributeError, error,
+                               getattr, Body(), 'create')
+        assert_raises_with_msg(AttributeError, error.replace('Body', 'MyBody'),
+                               getattr, type('MyBody', (Body,), {})(), 'create')
 
     def test_filter(self):
         k1, k2, k3 = Keyword(), Keyword(), Keyword()

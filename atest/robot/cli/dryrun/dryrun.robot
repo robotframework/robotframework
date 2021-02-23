@@ -60,8 +60,8 @@ Setup/teardown with non-existing variable is ignored
 
 Setup/teardown with existing variable is resolved and executed
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Keyword Data    ${tc.setup}    BuiltIn.No Operation    status=NOT RUN    type=setup
-    Check Keyword Data    ${tc.teardown}    Teardown    args=\${nonex arg}    type=teardown
+    Check Keyword Data    ${tc.setup}    BuiltIn.No Operation    status=NOT RUN    type=SETUP
+    Check Keyword Data    ${tc.teardown}    Teardown    args=\${nonex arg}    type=TEARDOWN
     Check Keyword Data    ${tc.teardown.body[0]}    BuiltIn.Log    args=\${arg}    status=NOT RUN
 
 User keyword return value
@@ -73,20 +73,20 @@ Non-existing variable in user keyword return value
 Test Setup and Teardown
     ${tc}=    Check Test Case    ${TESTNAME}
     Length Should Be      ${tc.kws}         2
-    Check Keyword Data    ${tc.setup}       BuiltIn.Log    args=Hello Setup    status=NOT RUN    type=setup
-    Check Keyword Data    ${tc.teardown}    Does not exist    status=FAIL    type=teardown
+    Check Keyword Data    ${tc.setup}       BuiltIn.Log    args=Hello Setup    status=NOT RUN    type=SETUP
+    Check Keyword Data    ${tc.teardown}    Does not exist    status=FAIL    type=TEARDOWN
 
 Keyword Teardown
     ${tc}=    Check Test Case    ${TESTNAME}
     Length Should Be      ${tc.kws}              2
-    Check Keyword Data    ${tc.kws[0].teardown}   Does not exist    status=FAIL    type=teardown
+    Check Keyword Data    ${tc.kws[0].teardown}   Does not exist    status=FAIL    type=TEARDOWN
 
 Keyword teardown with non-existing variable is ignored
     Check Test Case    ${TESTNAME}
 
 Keyword teardown with existing variable is resolved and executed
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Keyword Data    ${tc.kws[0].teardown}    Teardown    args=\${I DO NOT EXIST}    type=teardown
+    Check Keyword Data    ${tc.kws[0].teardown}    Teardown    args=\${I DO NOT EXIST}    type=TEARDOWN
     Check Keyword Data    ${tc.kws[0].teardown.kws[0]}    BuiltIn.Log    args=\${arg}    status=NOT RUN
 
 Non-existing keyword name

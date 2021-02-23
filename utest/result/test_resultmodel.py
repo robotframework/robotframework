@@ -2,8 +2,9 @@ import unittest
 import warnings
 
 from robot.model import Tags
-from robot.result import For, If, Keyword, Message, TestCase, TestSuite
-from robot.utils.asserts import assert_equal, assert_false, assert_raises, assert_true
+from robot.result import For, If, IfBranch, Keyword, Message, TestCase, TestSuite
+from robot.utils.asserts import (assert_equal, assert_false, assert_raises,
+                                 assert_raises_with_msg, assert_true)
 
 
 class TestSuiteStats(unittest.TestCase):
@@ -266,18 +267,20 @@ class TestModel(unittest.TestCase):
 
     def test_if_parents(self):
         test = TestCase()
-        if_ = test.body.create_if(condition='True')
+        if_ = test.body.create_if()
         assert_equal(if_.parent, test)
-        kw = if_.body.create_keyword()
-        assert_equal(kw.parent, if_)
-        else_if = if_.orelse.config(condition='False')
-        assert_equal(else_if.parent, if_)
-        kw = else_if.body.create_keyword()
-        assert_equal(kw.parent, else_if)
-        else_ = else_if.orelse.config()
-        assert_equal(else_.parent, else_if)
-        kw = else_.body.create_keyword()
-        assert_equal(kw.parent, else_)
+        branch = if_.body.create_branch(if_.IF, '$x > 0')
+        assert_equal(branch.parent, if_)
+        kw = branch.body.create_keyword()
+        assert_equal(kw.parent, branch)
+        branch = if_.body.create_branch(if_.ELSE_IF, '$x < 0')
+        assert_equal(branch.parent, if_)
+        kw = branch.body.create_keyword()
+        assert_equal(kw.parent, branch)
+        branch = if_.body.create_branch(if_.ELSE)
+        assert_equal(branch.parent, if_)
+        kw = branch.body.create_keyword()
+        assert_equal(kw.parent, branch)
 
 
 class TestBody(unittest.TestCase):
@@ -331,6 +334,25 @@ class TestBody(unittest.TestCase):
         assert_equal(kw.body[2].body[2].id, 's1-t1-k1-k2-m2')
 
 
+class TestForIterations(unittest.TestCase):
+
+    def test_create_iteration_message_supported(self):
+        for_ = For()
+        iterations = for_.body
+        for creator in (iterations.create_iteration,
+                        iterations.create_message):
+            item = creator()
+            assert_equal(item.parent, for_)
+
+    def test_create_keyword_for_if_not_supported(self):
+        iterations = For().body
+        for creator in (iterations.create_keyword,
+                        iterations.create_for,
+                        iterations.create_if):
+            msg = "'ForIterations' object does not support '%s'." % creator.__name__
+            assert_raises_with_msg(TypeError, msg, creator)
+
+
 class TestDeprecatedKeywordSpecificAttributes(unittest.TestCase):
 
     def test_deprecated_keyword_specific_properties(self):
@@ -343,13 +365,21 @@ class TestDeprecatedKeywordSpecificAttributes(unittest.TestCase):
             assert_equal(getattr(for_, name), expected)
 
     def test_if(self):
-        if_ = If('$x > 0')
+        for name, expected in [('name', ''),
+                               ('args', ()),
+                               ('assign', ()),
+                               ('tags', Tags()),
+                               ('timeout', None)]:
+            assert_equal(getattr(If(), name), expected)
+
+    def test_if_branch(self):
+        branch = IfBranch(IfBranch.IF, '$x > 0')
         for name, expected in [('name', '$x > 0'),
                                ('args', ()),
                                ('assign', ()),
                                ('tags', Tags()),
                                ('timeout', None)]:
-            assert_equal(getattr(if_, name), expected)
+            assert_equal(getattr(branch, name), expected)
 
 
 if __name__ == '__main__':

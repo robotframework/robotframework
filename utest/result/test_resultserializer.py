@@ -16,7 +16,7 @@ from test_resultbuilder import GOLDEN_XML, GOLDEN_XML_TWICE
 class StreamXmlWriter(XmlWriter):
 
     def _order_attrs(self, attrs):
-        return sorted(attrs)
+        return sorted(attrs.items())
 
     def _create_output(self, output):
         return output

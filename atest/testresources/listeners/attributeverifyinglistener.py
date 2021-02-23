@@ -14,8 +14,8 @@ OUTFILE = open(os.path.join(os.getenv('TEMPDIR'), 'listener_attrs.txt'), 'w')
 START = 'doc starttime '
 END = START + 'endtime elapsedtime status '
 SUITE = 'id longname metadata source tests suites totaltests '
-TEST = 'id longname tags template originalname lineno '
-KW = ' kwname libname args assign tags type lineno source'
+TEST = 'id longname tags template originalname source lineno '
+KW = 'kwname libname args assign tags type lineno source status '
 EXPECTED_TYPES = {'tags': [basestring], 'args': [basestring],
                   'assign': [basestring], 'metadata': {basestring: basestring},
                   'tests': [basestring], 'suites': [basestring],
@@ -50,7 +50,7 @@ def end_keyword(name, attrs):
 
 
 def _verify_attrs(method_name, attrs, names):
-    names = names.split()
+    names = set(names.split())
     OUTFILE.write(method_name + '\n')
     if len(names) != len(attrs):
         OUTFILE.write('FAILED: wrong number of attributes\n')
