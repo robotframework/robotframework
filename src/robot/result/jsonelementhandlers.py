@@ -84,7 +84,7 @@ class RobotHandler(ElementHandler):
 class SuiteHandler(ElementHandler):
     tags = ['suite', 'suites']
     list_children = frozenset(('kw', 'tests', 'suites'))
-    children = frozenset(('doc', 'metadata', 'status'))
+    children = frozenset(('doc', 'metadata', 'status', 'setup', 'teardown'))
 
     def start(self, elem, result):
         if hasattr(result, 'suite'):    # root
@@ -100,7 +100,7 @@ class SuiteHandler(ElementHandler):
 class TestHandler(ElementHandler):
     tags = ['tests']
     list_children = frozenset(('body', 'tags'))
-    children = frozenset(('doc', 'timeout', 'status', 'msg'))
+    children = frozenset(('doc', 'timeout', 'status', 'msg', 'setup', 'teardown'))
 
     def start(self, elem, result):
         return result.tests.create(name=elem.get('name', ''))
@@ -108,7 +108,7 @@ class TestHandler(ElementHandler):
 
 @ElementHandler.register
 class KeywordHandler(ElementHandler):
-    tags = ['kw']
+    tags = ['kw', 'teardown', 'setup']
     # 'arguments', 'assign' and 'tags' are for RF < 4 compatibility.
     list_children = frozenset(('body', 'msgs', 'tags', 'args', 'var'))
     children = frozenset(('doc', 'timeout', 'status'))
