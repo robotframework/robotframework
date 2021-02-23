@@ -253,17 +253,21 @@ class JsonLogger(ResultVisitor):
         # Only a suite will not store a keyword in its body.
         # This is because for tests and setups to store them
         # differently would require more advanced JSON streaming
-        if (kw.type == 'TEARDOWN' or kw.type == 'SETUP') and \
-                not self._test and self._suite:
-            if kw.type == 'TEARDOWN':
+        subobject = None
+        # Setup keywords can be emitted by Test cases and Suite
+        if kw.type == 'SETUP' and not self._test and self._suite:
+            subobject = self._suite.subobject('setup')
+        # Teardown keywords can be emitted by Test cases, suites, and keywords
+        if kw.type == 'TEARDOWN':
+            # If the item stack is empty, or the item on the end of the stack is
+            # not a BODY type and there is no test activate and the suite is active
+            if (not self._item_stack or not self._item_stack[-1].type == Items.BODY) \
+                 and not self._test and self._suite:
+                # Close the body of the suite, since the teardown is being called
+                # the suite
                 self._suite.close_body()
-            if kw.type == 'SETUP':
-                subobject = self._suite.subobject('setup')
-            elif kw.type == 'TEARDOWN':
                 subobject = self._suite.subobject('teardown')
-            else:
-                raise ValueError("Keyword type is not known")
-        else:
+        if subobject is None:
             subobject = self.open_item()
 
         self._body_item = RobotElement(subobject, Items.BODY, copy.deepcopy(self._item_type), {
