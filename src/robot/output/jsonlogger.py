@@ -28,7 +28,9 @@ class RobotElement(object):
             self[key] = value
 
     def __setitem__(self, key, value):
-        if value is not None:
+        # Ensure that the values aren't None, empty string, or empty list
+        # Cannot do "if value" because this would ignore "False" booleans
+        if value is not None and value is not '' and value is not []:
             self._subobject.write(key, value)
 
     def body(self):
