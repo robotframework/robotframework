@@ -23,21 +23,28 @@ class RobotElement(object):
         # Store the type & destination for the object
         self.destination = destination
         self.type = elem_type
-        # Store the elements initially given into the subobject
-        for key, value in elems.items():
-            self[key] = value
+        if elems:
+            # Store the elements initially given into the subobject
+            for key, value in elems.items():
+                self[key] = value
 
     def __setitem__(self, key, value):
         # Ensure that the values aren't None, empty string, or empty list
         # Cannot do "if value" because this would ignore "False" booleans
-        if value is not None and value is not '' and value is not []:
+        if value is not None and value != '' and value != []:
             self._subobject.write(key, value)
 
     def body(self):
         return self._body if self._body else self.create_body()
 
-    def subobject(self, key):
-        return self._subobject.subobject(key)
+    def subobject(self, key=None):
+        if key:
+            return self._subobject.subobject(key)
+        else:
+            return self._subobject.subobject()
+
+    def subarray(self, key):
+        return self._subobject.subarray(key)
 
     def make_body(self):
         self._body = self._subobject.subarray('body')
@@ -124,6 +131,12 @@ class Items(enum.Enum):
     IF_ = "if"
     FOR_ = "for"
     BODY = "body"
+    STATS = "stats"
+    STAT = "stat"
+    TOTAL = "total"
+    TAG = "tag"
+    SUITE_STATS = "suite"
+    ERRORS = "errors"
 
 
 
@@ -154,6 +167,7 @@ class JsonLogger(ResultVisitor):
         self._body = None
         self._body_item = None
         self._test = None
+        self._errors_element = None
 
         # We need to be able to track the type of item being processed
         # at any moment
@@ -208,8 +222,11 @@ class JsonLogger(ResultVisitor):
 
     def close(self):
         # Create the errors
-        messages = [self._create_message(msg) for msg in self._errors]
-        self.end_errors(messages)
+        if self._errors:
+            self.start_errors()
+            messages = [self._create_message(msg) for msg in self._errors]
+            self.end_errors(messages)
+        # Close the root object (and hence the file)
         self._root.close()
 
     def set_log_level(self, level):
@@ -430,16 +447,76 @@ class JsonLogger(ResultVisitor):
         self._item_type = ""
 
     def start_statistics(self, stats):
-        self._data['statistics'] = {
-            'suite': self._create_suite_statistics(stats.suite),
-            'total': self._create_total_statistics(stats.total),
-            'tag': self._create_tag_statistics(stats.tags)
-        }
+        self._body_item = RobotElement(self._root.subobject('statistics'), Items.STATS, Items.SUITE)
+        self._item_type = Items.STATS
+
+    def end_statistics(self, stats):
+        self._body_item.close()
+
+    def start_total_statistics(self, total_stats):
+        if self._body_item.type != Items.STATS:
+            raise ValueError("The current item is not set to be a statistic")
+        subarray = self._body_item.subarray('total')
+        self._item_stack.append(self._body_item)
+        self._body_item = RobotElement(subarray, Items.TOTAL, Items.STATS)
+        self._item_type = Items.TOTAL
+
+    def end_total_statistics(self, total_stats):
+        if self._item_type != Items.TOTAL:
+            self._body_item = self._item_stack.pop()
+        self._body_item.close() 
+        # Pop the stack off of the queue
+        self._body_item = self._item_stack.pop()
+
+    def start_tag_statistics(self, tag_stats):
+        if self._body_item.type != Items.STATS:
+            raise ValueError("The current item is not set to be a statistic")
+        subarray = self._body_item.subarray('tag')
+        self._item_stack.append(self._body_item)
+        self._body_item = RobotElement(subarray, Items.TOTAL, Items.STATS)
+        self._item_type = Items.TAG
+
+    def end_tag_statistics(self, tag_stats):
+        if self._item_type != Items.TAG:
+            self._body_item = self._item_stack.pop()
+        self._body_item.close() 
+        # Pop the stack off of the queue
+        self._body_item = self._item_stack.pop()
+
+    def start_suite_statistics(self, tag_stats):
+        if self._body_item.type != Items.STATS:
+            raise ValueError("The current item is not set to be a statistic")
+        subarray = self._body_item.subarray('suite')
+        self._item_stack.append(self._body_item)
+        self._body_item = RobotElement(subarray, Items.TOTAL, Items.STATS)
+        self._item_type = Items.SUITE_STATS
+
+    def end_suite_statistics(self, tag_stats):
+        if self._item_type != Items.SUITE_STATS:
+            self._body_item = self._item_stack.pop()
+        self._body_item.close() 
+        # Pop the stack off of the queue
+        self._body_item = self._item_stack.pop()
+
+    def visit_stat(self, stat):
+        subobject = self._body_item.subobject()
+        stat_json = stat.get_attributes()
+        stat_json['name'] = stat.name
+        if self._item_type == Items.TAG:
+            stat_json['tag'] = stat.name
+        RobotElement(subobject, Items.STAT, self._item_type, stat_json).close()
+
+    def start_errors(self, errors=None):
+        self._errors_element = RobotElement(self._root.subarray('errors'), Items.ERRORS, Items.SUITE)
 
     def end_errors(self, errors=None):
-        if 'errors' not in self._data:
-            self._data['errors'] = list()
-        self._data['errors'].extend(errors)
+        for msg in self._errors:        
+            RobotElement(self._errors_element.subobject(),
+                         Items.BODY,
+                         Items.ERRORS,
+                         self._create_message(msg)).close()
+        self._errors_element.close()
+        self._body_item = None
 
     def _create_statistic(self, stat):
         statistic = {
@@ -451,26 +528,3 @@ class JsonLogger(ResultVisitor):
         if suite_id:
             statistic['id'] = suite_id
         return statistic
-
-    def _create_tag_stat(self, tag_stat):
-        tag_statistic = {
-            'name': tag_stat.name,
-            'passed': tag_stat.passed,
-            'failed': tag_stat.failed,
-            'tag': tag_stat.name
-        }
-        if tag_stat.info:
-            tag_statistic['info'] = tag_stat.info
-        if tag_stat.doc:
-            tag_statistic['doc'] = tag_stat.doc
-        return tag_statistic
-
-    def _create_total_statistics(self, total_stats):
-        return [self._create_statistic(statistic) for statistic in total_stats]
-
-    def _create_suite_statistics(self, suite_stats):
-        suites = suite_stats.suites + [suite_stats]
-        return [self._create_statistic(statistic.stat) for statistic in suites]
-
-    def _create_tag_statistics(self, tag_stats):
-        return [self._create_tag_stat(tag_stats.tags[tag]) for tag in tag_stats.tags]
