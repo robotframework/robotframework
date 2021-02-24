@@ -209,7 +209,8 @@
 			"type": "object",
 			"properties": {
 				"tag": {"type": "string"},
-				"failed": {"type": "number"},
+				"fail": {"type": "number"},
+				"skip": {"type": "number"},
 				"critical": {"type": "boolean"},
 				"pass": {"type": "number"},
 				"info": {"type": "string"},
