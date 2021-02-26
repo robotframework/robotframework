@@ -3024,28 +3024,35 @@ class _Misc(_BuiltInBase):
         namespace as a dictionary. Possible ``modules`` are added to this
         namespace.
 
-        Starting from Robot Framework 3.2, modules used in the expression are
-        imported automatically. ``modules`` argument is still needed with
-        nested modules like ``rootmod.submod`` that are implemented so that
-        the root module does not automatically import sub modules. This is
-        illustrated by the ``selenium.webdriver`` example below.
-
         Variables used like ``${variable}`` are replaced in the expression
         before evaluation. Variables are also available in the evaluation
         namespace and can be accessed using the special ``$variable`` syntax
         as explained in the `Evaluating expressions` section.
+
+        Starting from Robot Framework 3.2, modules used in the expression are
+        imported automatically. There are, however, two cases where they need to
+        be explicitly specified using the ``modules`` argument:
+
+        - When nested modules like ``rootmod.submod`` are implemented so that
+          the root module does not automatically import sub modules. This is
+          illustrated by the ``selenium.webdriver`` example below.
+
+        - When using a module in the expression part of a list comprehension.
+          This is illustrated by the ``json`` example below.
 
         Examples (expecting ``${result}`` is number 3.14):
         | ${status} =  | Evaluate | 0 < ${result} < 10 | # Would also work with string '3.14' |
         | ${status} =  | Evaluate | 0 < $result < 10   | # Using variable itself, not string representation |
         | ${random} =  | Evaluate | random.randint(0, sys.maxsize) |
         | ${options} = | Evaluate | selenium.webdriver.ChromeOptions() | modules=selenium.webdriver |
+        | ${items} =   | Evaluate | [json.loads(item) for item in ('1', '"b"')] | modules=json |
         | ${ns} =      | Create Dictionary | x=${4}    | y=${2}              |
         | ${result} =  | Evaluate | x*10 + y           | namespace=${ns}     |
         =>
         | ${status} = True
         | ${random} = <random integer>
         | ${options} = ChromeOptions instance
+        | ${items} = [1, 'b']
         | ${result} = 42
 
         *NOTE*: Prior to Robot Framework 3.2 using ``modules=rootmod.submod``
@@ -3357,10 +3364,10 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     `Evaluate` also allows configuring the execution namespace with a custom
     namespace and with custom modules to be imported. The latter functionality
-    is useful when using nested modules like ``rootmod.submod`` that are
-    implemented so that the root module does not automatically import sub
-    modules. Otherwise the automatic module import mechanism described earlier
-    is enough to get the needed modules imported.
+    is useful in special cases where the automatic module import does not work
+    such as when using nested modules like ``rootmod.submod`` or list
+    comprehensions. See the documentation of the `Evaluate` keyword for mode
+    details.
 
     *NOTE:* Automatic module import is a new feature in Robot Framework 3.2.
     Earlier modules needed to be explicitly taken into use when using the
