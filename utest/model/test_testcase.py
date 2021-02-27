@@ -24,6 +24,16 @@ class TestTestCase(unittest.TestCase):
         assert_equal(suite.suites[0].tests[1].id, 's1-s1-t2')
         assert_equal(suite.suites[1].tests[0].id, 's1-s2-t1')
 
+    def test_source(self):
+        test = TestCase()
+        assert_equal(test.source, None)
+        suite = TestSuite()
+        suite.tests.append(test)
+        assert_equal(test.source, None)
+        suite.tests.append(test)
+        suite.source = '/unit/tests'
+        assert_equal(test.source, '/unit/tests')
+
     def test_setup(self):
         assert_equal(self.test.setup.__class__, Keyword)
         assert_equal(self.test.setup.name, None)

@@ -126,7 +126,8 @@ class EndTestArguments(StartTestArguments):
 
 
 class StartKeywordArguments(_ListenerArgumentsFromItem):
-    _attribute_names = ('doc', 'assign', 'tags', 'starttime', 'lineno', 'source', 'type')
+    _attribute_names = ('doc', 'assign', 'tags', 'lineno', 'source', 'type', 'status',
+                        'starttime')
 
     def _get_extra_attributes(self, kw):
         args = [a if is_string(a) else unic(a) for a in kw.args]
@@ -134,6 +135,5 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
 
 
 class EndKeywordArguments(StartKeywordArguments):
-    _attribute_names = ('doc', 'assign', 'tags', 'starttime', 'lineno', 'source', 'type',
-                        'endtime', 'elapsedtime', 'status')
-
+    _attribute_names = ('doc', 'assign', 'tags', 'lineno', 'source', 'type', 'status',
+                        'starttime', 'endtime', 'elapsedtime')

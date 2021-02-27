@@ -44,6 +44,6 @@ class LinenoAndSource(object):
     def report(self, event, type, source, lineno=-1, name=None, kwname=None,
                status=None, **ignore):
         info = [event, type, name or kwname, lineno, source]
-        if status == 'NOT RUN':
+        if status:
             info.append(status)
         self.output.write('\t'.join(str(i) for i in info) + '\n')

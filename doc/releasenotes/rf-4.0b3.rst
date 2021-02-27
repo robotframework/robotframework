@@ -507,7 +507,7 @@ new features, others enhance the overall output.xml structure:
 - Keywords as well as IF and FOR structures can have `NOT RUN` status if
   they are not executed due to earlier failures (`#3842`_) or if they are in
   an unexecuted IF/ELSE branch (`#3074`_).
-- Unnecessary container elements `<metadata>`, `<tags>`, `<arguments>` and `<assing>`
+- Unnecessary container elements `<metadata>`, `<tags>`, `<arguments>` and `<assign>`
   have been removed. Individual items like `<tag>` and `<arg>` are listed directly
   inside the parent `<kw>`, `<test>` or `<suite>` instead. This change reduces
   output.xml size and makes processing it a bit faster. (`#3853`_)

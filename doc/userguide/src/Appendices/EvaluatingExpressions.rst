@@ -70,8 +70,10 @@ can only be used if the root module automatically imports the submodule. That is
 not always the case and using such modules is not possible. An concrete example
 that is relevant in the automation context is the `selenium` module that is
 implemented, at least at the time of this writing, so that just importing
-`selenium` does not import the `selenium.webdriver` submodule. A workaround is
-using the :name:`Evaluate` keyword that accepts modules to be imported
+`selenium` does not import the `selenium.webdriver` submodule.
+Another limitation is that modules cannot be used in the expression part of
+a list comprehension when using Python 3. A workaround to both of these problems
+is using the BuiltIn_ keyword :name:`Evaluate` that accepts modules to be imported
 and added to the evaluation namespace as an argument:
 
 .. sourcecode:: robotframework
@@ -80,12 +82,19 @@ and added to the evaluation namespace as an argument:
    Does not work due to nested module structure
        Log    ${{selenium.webdriver.ChromeOptions()}}
 
-   Evaluate keyword to the rescue
+   Evaluate keyword with nested module
        ${options} =    Evaluate    selenium.webdriver.ChromeOptions()    modules=selenium.webdriver
        Log    ${options}
 
-The :name:`Evaluate` keyword also supports custom evaluation namespaces.
-See its documentation in the BuiltIn_ library for more details.
+   Does not work due to list comprehension
+       Log    ${{[json.loads(item) for item in ('1', '"b"')]}}
+
+   Evaluate keyword with list comprehension
+       ${items} =    Evaluate    [json.loads(item) for item in ('1', '"b"')]    modules=json
+       Log    ${items}
+
+The :name:`Evaluate` keyword also supports custom evaluation namespaces if further
+customization is needed. See its documentation in the BuiltIn_ library for more details.
 
 __ http://docs.python.org/library/functions.html#eval
 
