@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup       Run With Custom Statuses
 Resource          atest_resource.robot
-Force Tags        lol
 
 *** Variables ***
 ${ADDSTATUS}      --AddStatus WIP:PASS:wip:blue --addstatus KNOWN-ISSUE:FAIL:known-*:purple --ADDSTATUS NON-CRITICAL:SKIP:non-criticalNOTwip:pink --log log.html
