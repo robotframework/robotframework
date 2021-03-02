@@ -103,7 +103,8 @@ class SuiteHandler(ElementHandler):
 class TestHandler(ElementHandler):
     tag = 'test'
     # 'tags' is for RF < 4 compatibility.
-    children = frozenset(('doc', 'tags', 'tag', 'timeout', 'status', 'kw', 'if', 'for'))
+    children = frozenset(('doc', 'tags', 'tag', 'timeout', 'status', 'kw', 'if', 'for',
+                          'msg'))
 
     def start(self, elem, result):
         return result.tests.create(name=elem.get('name', ''))
