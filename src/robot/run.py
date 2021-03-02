@@ -286,7 +286,7 @@ Options
     --addstatus for|foritem|<NEWSTATUS:OLDSTATUS:TAGPATTERN:COLOR> *
                           Allows the possibility to create custom statuses
                           based on existing statues and tags.
-                          Examples: 
+                          Examples:
                               --addstatus KNOWN_ISSUE:FAIL:bug-id-*:purple
                               --addstatus NON-CRITICAL:SKIP:non-critical:pink
                           New in RF 4.x
