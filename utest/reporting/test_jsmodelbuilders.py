@@ -186,6 +186,17 @@ class TestBuildTestSuite(unittest.TestCase):
         )
         self._verify_test(test, body=(exp_if, exp_else_if, exp_else))
 
+    def test_message_directly_under_test(self):
+        test = TestSuite().tests.create()
+        test.body.create_message('Hi from test')
+        test.body.create_keyword().body.create_message('Hi from keyword')
+        test.body.create_message('Hi from test again', 'WARN')
+        exp_m1 = (8, None, 2, 'Hi from test')
+        exp_kw = (0, '', '', '', '', '', '', '', (0, None, 0),
+                  ((8, None, 2, 'Hi from keyword'),))
+        exp_m3 = (8, None, 3, 'Hi from test again')
+        self._verify_test(test, body=(exp_m1, exp_kw, exp_m3))
+
     def _verify_status(self, model, status=0, start=None, elapsed=0):
         assert_equal(model, (status, start, elapsed))
 
