@@ -27,7 +27,6 @@ from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           PassExecution, ReturnFromKeyword, VariableError)
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
-from robot.conf.status import Status
 from robot.running.usererrorhandler import UserErrorHandler
 from robot.utils import (DotDict, escape, format_assign_message,
                          get_error_message, get_time, html_escape, is_falsy,
@@ -1321,8 +1320,9 @@ class _Variables(_BuiltInBase):
 
         See `Set Variable If` for another keyword to set variables dynamically.
         """
+        name = self._get_var_name(name)
         try:
-            return self._variables[self._get_var_name(name)]
+            return self._variables.replace_scalar(name)
         except VariableError:
             return self._variables.replace_scalar(default)
 
@@ -1360,12 +1360,11 @@ class _Variables(_BuiltInBase):
         See also `Variable Should Not Exist` and `Keyword Should Exist`.
         """
         name = self._get_var_name(name)
-        msg = self._variables.replace_string(msg) if msg \
-            else "Variable '%s' does not exist." % name
         try:
-            self._variables[name]
-        except DataError:
-            raise AssertionError(msg)
+            self._variables.replace_scalar(name)
+        except VariableError:
+            raise AssertionError(self._variables.replace_string(msg)
+                                 if msg else "Variable '%s' does not exist." % name)
 
     @run_keyword_variant(resolve=0)
     def variable_should_not_exist(self, name, msg=None):
@@ -1380,14 +1379,13 @@ class _Variables(_BuiltInBase):
         See also `Variable Should Exist` and `Keyword Should Exist`.
         """
         name = self._get_var_name(name)
-        msg = self._variables.replace_string(msg) if msg \
-            else "Variable '%s' exists." % name
         try:
-            self._variables[name]
-        except DataError:
+            self._variables.replace_scalar(name)
+        except VariableError:
             pass
         else:
-            raise AssertionError(msg)
+            raise AssertionError(self._variables.replace_string(msg)
+                                 if msg else "Variable '%s' exists." % name)
 
     def replace_variables(self, text):
         """Replaces variables in the given text with their current values.
@@ -1843,11 +1841,11 @@ class _RunKeyword(_BuiltInBase):
         caught by this keyword. Otherwise this keyword itself never fails.
         """
         try:
-            return Status.PASS, self.run_keyword(name, *args)
+            return 'PASS', self.run_keyword(name, *args)
         except ExecutionFailed as err:
             if err.dont_continue or err.skip:
                 raise
-            return Status.FAIL, unic(err)
+            return 'FAIL', unic(err)
 
     @run_keyword_variant(resolve=1)
     def run_keyword_and_warn_on_failure(self, name, *args):
@@ -1864,7 +1862,7 @@ class _RunKeyword(_BuiltInBase):
         New in Robot Framework 4.0.
         """
         status, message = self.run_keyword_and_ignore_error(name, *args)
-        if status == Status.FAIL:
+        if status == 'FAIL':
             logger.warn("Executing keyword '%s' failed:\n%s" % (name, message))
         return status, message
 
@@ -1887,7 +1885,7 @@ class _RunKeyword(_BuiltInBase):
         caught by this keyword. Otherwise this keyword itself never fails.
         """
         status, _ = self.run_keyword_and_ignore_error(name, *args)
-        return status == Status.PASS
+        return status == 'PASS'
 
     @run_keyword_variant(resolve=1)
     def run_keyword_and_continue_on_failure(self, name, *args):
@@ -3026,28 +3024,35 @@ class _Misc(_BuiltInBase):
         namespace as a dictionary. Possible ``modules`` are added to this
         namespace.
 
-        Starting from Robot Framework 3.2, modules used in the expression are
-        imported automatically. ``modules`` argument is still needed with
-        nested modules like ``rootmod.submod`` that are implemented so that
-        the root module does not automatically import sub modules. This is
-        illustrated by the ``selenium.webdriver`` example below.
-
         Variables used like ``${variable}`` are replaced in the expression
         before evaluation. Variables are also available in the evaluation
         namespace and can be accessed using the special ``$variable`` syntax
         as explained in the `Evaluating expressions` section.
+
+        Starting from Robot Framework 3.2, modules used in the expression are
+        imported automatically. There are, however, two cases where they need to
+        be explicitly specified using the ``modules`` argument:
+
+        - When nested modules like ``rootmod.submod`` are implemented so that
+          the root module does not automatically import sub modules. This is
+          illustrated by the ``selenium.webdriver`` example below.
+
+        - When using a module in the expression part of a list comprehension.
+          This is illustrated by the ``json`` example below.
 
         Examples (expecting ``${result}`` is number 3.14):
         | ${status} =  | Evaluate | 0 < ${result} < 10 | # Would also work with string '3.14' |
         | ${status} =  | Evaluate | 0 < $result < 10   | # Using variable itself, not string representation |
         | ${random} =  | Evaluate | random.randint(0, sys.maxsize) |
         | ${options} = | Evaluate | selenium.webdriver.ChromeOptions() | modules=selenium.webdriver |
+        | ${items} =   | Evaluate | [json.loads(item) for item in ('1', '"b"')] | modules=json |
         | ${ns} =      | Create Dictionary | x=${4}    | y=${2}              |
         | ${result} =  | Evaluate | x*10 + y           | namespace=${ns}     |
         =>
         | ${status} = True
         | ${random} = <random integer>
         | ${options} = ChromeOptions instance
+        | ${items} = [1, 'b']
         | ${result} = 42
 
         *NOTE*: Prior to Robot Framework 3.2 using ``modules=rootmod.submod``
@@ -3359,10 +3364,10 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     `Evaluate` also allows configuring the execution namespace with a custom
     namespace and with custom modules to be imported. The latter functionality
-    is useful when using nested modules like ``rootmod.submod`` that are
-    implemented so that the root module does not automatically import sub
-    modules. Otherwise the automatic module import mechanism described earlier
-    is enough to get the needed modules imported.
+    is useful in special cases where the automatic module import does not work
+    such as when using nested modules like ``rootmod.submod`` or list
+    comprehensions. See the documentation of the `Evaluate` keyword for mode
+    details.
 
     *NOTE:* Automatic module import is a new feature in Robot Framework 3.2.
     Earlier modules needed to be explicitly taken into use when using the
@@ -3593,40 +3598,28 @@ class RobotNotRunningError(AttributeError):
 
 def register_run_keyword(library, keyword, args_to_process=None,
                          deprecation_warning=True):
-    """Registers 'run keyword' so that its arguments can be handled correctly.
+    """Tell Robot Framework that this keyword runs other keywords internally.
 
-    *NOTE:* This API will change in RF 3.1. For more information see
+    *NOTE:* This API will change in the future. For more information see
     https://github.com/robotframework/robotframework/issues/2190. Use with
     `deprecation_warning=False` to avoid related deprecation warnings.
 
     1) Why is this method needed
 
-    Keywords running other keywords internally (normally using `Run Keyword`
-    or some variants of it in BuiltIn) must have the arguments meant to the
-    internally executed keyword handled specially to prevent processing them
-    twice. This is done ONLY for keywords registered using this method.
-
-    If the register keyword has same name as any keyword from Robot Framework
-    standard libraries, it can be used without getting warnings. Normally
-    there is a warning in such cases unless the keyword is used in long
-    format (e.g. MyLib.Keyword).
-
-    Keywords executed by registered run keywords can be tested in dry-run mode
-    if they have 'name' argument which takes the name of the executed keyword.
+    Keywords running other keywords internally using `Run Keyword` or its variants
+    like `Run Keyword If` need some special handling by the framework. This includes
+    not processing arguments (e.g. variables in them) twice, special handling of
+    timeouts, and so on.
 
     2) How to use this method
 
-    `library` is the name of the library where the registered keyword is
-    implemented.
+    `library` is the name of the library where the registered keyword is implemented.
 
-    `keyword` can be either a function or method implementing the
-    keyword, or name of the implemented keyword as a string.
+    `keyword` is the name of the keyword. With Python 2 it is possible to pass also
+    the function or method implementing the keyword.
 
-    `args_to_process` is needed when `keyword` is given as a string, and it
-    defines how many of the arguments to the registered keyword must be
-    processed normally. When `keyword` is a method or function, this
-    information is got directly from it so that varargs (those specified with
-    syntax '*args') are not processed but others are.
+    `args_to_process`` defines how many of the arguments to the registered keyword must
+    be processed normally.
 
     3) Examples
 
@@ -3636,8 +3629,6 @@ def register_run_keyword(library, keyword, args_to_process=None,
         # do something
         return BuiltIn().run_keyword(name, *args)
 
-    # Either one of these works
-    register_run_keyword(__name__, my_run_keyword)
     register_run_keyword(__name__, 'My Run Keyword', 1)
 
     -------------
@@ -3649,8 +3640,6 @@ def register_run_keyword(library, keyword, args_to_process=None,
             # do something
             return BuiltIn().run_keyword_if(expression, name, *args)
 
-    # Either one of these works
-    register_run_keyword('MyLibrary', MyLibrary.my_run_keyword_if)
     register_run_keyword('MyLibrary', 'my_run_keyword_if', 2)
     """
     RUN_KW_REGISTER.register_run_keyword(library, keyword, args_to_process,

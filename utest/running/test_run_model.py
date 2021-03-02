@@ -52,34 +52,6 @@ class TestUserKeyword(unittest.TestCase):
         assert_raises(AttributeError, setattr, uk, 'keywords', [])
 
 
-class TestStringRepr(unittest.TestCase):
-
-    def test_for_loop(self):
-        loop = For(['${x}'], 'IN', ['foo', 'bar'])
-        expected = u'FOR    ${x}    IN    foo    bar'
-        assert_equal(str(loop), expected)
-        assert_equal(unicode(loop), expected)
-        assert_equal(repr(loop), repr(expected))
-        loop = For(['${x}', u'${\xfc}'], 'IN ZIP', [u'f\xf6\xf6', u'b\xe4r'])
-        expected = u'FOR    ${x}    ${\xfc}    IN ZIP    f\xf6\xf6    b\xe4r'
-        assert_equal(unicode(loop), expected)
-        assert_equal(repr(loop), repr(expected))
-
-    def test_if(self):
-        if_ = If('$x > 0')
-        expected = u'IF    $x > 0'
-        assert_equal(str(if_), expected)
-        assert_equal(unicode(if_), expected)
-        assert_equal(repr(if_), repr(expected))
-        if_.orelse = If(u'"\xe4iti" == "mother"')
-        expected = u'ELSE IF    "\xe4iti" == "mother"'
-        assert_equal(unicode(if_.orelse), expected)
-        assert_equal(repr(if_.orelse), repr(expected))
-        if_.orelse.orelse = If(None)
-        assert_equal(unicode(if_.orelse.orelse), 'ELSE')
-        assert_equal(repr(if_.orelse.orelse), repr(u'ELSE'))
-
-
 class TestSuiteFromSources(unittest.TestCase):
     path = join(os.getenv('TEMPDIR') or tempfile.gettempdir(),
                 'test_run_model.robot')

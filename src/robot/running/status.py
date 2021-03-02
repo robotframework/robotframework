@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.conf.status import Status
+from robot.result.model import StatusMixin
 from robot.errors import ExecutionFailed, PassExecution
 from robot.model import TagPatterns
 from robot.utils import html_escape, py3to2, unic, test_or_task
@@ -132,13 +132,18 @@ class _ExecutionStatus(object):
         if self._custom_statuses and isinstance(self, TestStatus):
             for custom_status in self._custom_statuses:
                 if TagPatterns(custom_status[2]).match(self._test.tags):
-                    Status[custom_status[1]] = custom_status[0]
+                    if custom_status[1] == 'PASS':
+                        StatusMixin.PASS = custom_status[0]
+                    elif custom_status[1] == 'FAIL':
+                        StatusMixin.FAIL = custom_status[0]
+                    else:
+                        StatusMixin.SKIP = custom_status[0]
                     break
         if self.skipped or (self.parent and self.parent.skipped):
-            return Status.SKIP
+            return StatusMixin.SKIP
         if self.failed:
-            return Status.FAIL
-        return Status.PASS
+            return StatusMixin.FAIL
+        return StatusMixin.PASS
 
     def _skip_on_failure(self):
         return False
@@ -310,7 +315,6 @@ class TestMessage(_Message):
 
 class SuiteMessage(_Message):
     setup_message = 'Suite setup failed:\n%s'
-    # TODO: wording
     setup_skipped_message = 'Skipped in suite setup:\n%s'
     teardown_skipped_message = 'Skipped in suite teardown:\n%s'
     teardown_message = 'Suite teardown failed:\n%s'

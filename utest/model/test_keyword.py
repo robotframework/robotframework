@@ -11,8 +11,8 @@ class TestKeyword(unittest.TestCase):
 
     def test_id_without_parent(self):
         assert_equal(Keyword().id, 'k1')
-        assert_equal(Keyword(type=Keyword.SETUP_TYPE).id, 'k1')
-        assert_equal(Keyword(type=Keyword.TEARDOWN_TYPE).id, 'k1')
+        assert_equal(Keyword(type=Keyword.SETUP).id, 'k1')
+        assert_equal(Keyword(type=Keyword.TEARDOWN).id, 'k1')
 
     def test_suite_setup_and_teardown_id(self):
         suite = TestSuite()
@@ -41,11 +41,48 @@ class TestKeyword(unittest.TestCase):
         TestSuite().tests.create().body.extend(kws)
         assert_equal([k.id for k in kws], ['s1-t1-k1', 's1-t1-k2', 's1-t1-k3'])
 
-    def test_id_with_for_and_if_parents(self):
-        t = TestCase()
-        assert_equal(t.body.create_for().body.create_keyword().id, 't1-k1-k1')
-        assert_equal(t.body.create_if().body.create_keyword().id, 't1-k2-k1')
-        assert_equal(t.body.create_if().body.create_for().body.create_keyword().id, 't1-k3-k1-k1')
+    def test_id_with_for_parent(self):
+        for_body = TestCase().body.create_for().body
+        assert_equal(for_body.create_keyword().id, 't1-k1-k1')
+        assert_equal(for_body.create_keyword().id, 't1-k1-k2')
+
+    def test_id_with_if_parent(self):
+        if_body = TestCase().body.create_if().body
+        assert_equal(if_body.create_branch().id, 't1-k1')
+        assert_equal(if_body.create_branch().body.create_keyword().id, 't1-k2-k1')
+        assert_equal(if_body.create_branch().body.create_keyword().id, 't1-k3-k1')
+
+    def test_string_reprs(self):
+        for kw, exp_str, exp_repr in [
+            (Keyword(),
+             '',
+             "Keyword(name='', args=(), assign=())"),
+            (Keyword('name'),
+             'name',
+             "Keyword(name='name', args=(), assign=())"),
+            (Keyword(None),
+             'None',
+             "Keyword(name=None, args=(), assign=())"),
+            (Keyword('Name', args=('a1', 'a2')),
+             'Name    a1    a2',
+             "Keyword(name='Name', args=('a1', 'a2'), assign=())"),
+            (Keyword('Name', assign=('${x}', '${y}')),
+             '${x}    ${y}    Name',
+             "Keyword(name='Name', args=(), assign=('${x}', '${y}'))"),
+            (Keyword('Name', assign=['${x}='], args=['x']),
+             '${x}=    Name    x',
+             "Keyword(name='Name', args=['x'], assign=['${x}='])"),
+            (Keyword('Name', args=(1, 2, 3)),
+             'Name    1    2    3',
+             "Keyword(name='Name', args=(1, 2, 3), assign=())"),
+            (Keyword(assign=[u'${\xe3}'], name=u'\xe4', args=[u'\xe5']),
+             u'${\xe3}    \xe4    \xe5',
+             u'Keyword(name=%r, args=[%r], assign=[%r])' % (u'\xe4', u'\xe5', u'${\xe3}'))
+        ]:
+            assert_equal(unicode(kw), exp_str)
+            assert_equal(repr(kw), 'robot.model.' + exp_repr)
+            if PY2:
+                assert_equal(str(kw), unicode(kw).encode('UTF-8'))
 
     def test_slots(self):
         assert_raises(AttributeError, setattr, Keyword(), 'attr', 'value')
@@ -75,25 +112,6 @@ class TestKeyword(unittest.TestCase):
         copy = Keyword(name='Orig').deepcopy(name='New', doc='New')
         assert_equal(copy.name, 'New')
         assert_equal(copy.doc, 'New')
-
-
-class TestStringRepresentation(unittest.TestCase):
-
-    def setUp(self):
-        self.empty = Keyword()
-        self.ascii = Keyword(name='Kekkonen')
-        self.non_ascii = Keyword(name=u'hyv\xe4 nimi')
-
-    def test_unicode(self):
-        assert_equal(unicode(self.empty), '')
-        assert_equal(unicode(self.ascii), 'Kekkonen')
-        assert_equal(unicode(self.non_ascii), u'hyv\xe4 nimi')
-
-    if PY2:
-        def test_str(self):
-            assert_equal(str(self.empty), '')
-            assert_equal(str(self.ascii), 'Kekkonen')
-            assert_equal(str(self.non_ascii), u'hyv\xe4 nimi'.encode('UTF-8'))
 
 
 class TestKeywords(unittest.TestCase):

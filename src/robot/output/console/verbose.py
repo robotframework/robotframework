@@ -16,7 +16,6 @@
 import sys
 
 from robot.errors import DataError
-from robot.conf.status import Status
 from robot.utils import (get_console_length, getshortdoc, isatty,
                          pad_console_length)
 
@@ -170,7 +169,7 @@ class KeywordMarker(object):
 
     def mark(self, status):
         if self.marking_enabled:
-            marker, status = ('.', Status.PASS) if status != Status.FAIL else ('F', Status.FAIL)
+            marker, status = ('.', 'PASS') if status != 'FAIL' else ('F', 'FAIL')
             self._highlighter.highlight(marker, status)
             self.marker_count += 1
 

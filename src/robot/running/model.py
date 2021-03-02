@@ -37,15 +37,19 @@ import os
 
 from robot import model
 from robot.conf import RobotSettings
-from robot.model import Keywords
+from robot.model import Keywords, BodyItem
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.utils import seq2str, setter
 
+from .bodyrunner import ForRunner, IfRunner, KeywordRunner
 from .randomizer import Randomizer
-from .steprunner import ForRunner, IfRunner, StepRunner
 
 
 class Body(model.Body):
+    __slots__ = []
+
+
+class IfBranches(model.IfBranches):
     __slots__ = []
 
 
@@ -61,13 +65,17 @@ class Keyword(model.Keyword):
     __slots__ = ['lineno']
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(), timeout=None,
-                 type=model.Keyword.KEYWORD_TYPE, parent=None, lineno=None):
+                 type=BodyItem.KEYWORD, parent=None, lineno=None):
         model.Keyword.__init__(self, name, doc, args, assign, tags, timeout, type,
                                parent)
         self.lineno = lineno
 
-    def run(self, context, templated=None):
-        return StepRunner(context).run_step(self)
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
+    def run(self, context, run=True, templated=None):
+        return KeywordRunner(context, run).run(self)
 
 
 @Body.register
@@ -80,22 +88,44 @@ class For(model.For):
         self.lineno = lineno
         self.error = error
 
-    def run(self, context, templated=False):
-        return ForRunner(context, self.flavor, templated).run(self)
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
+    def run(self, context, run=True, templated=False):
+        return ForRunner(context, self.flavor, run, templated).run(self)
 
 
 @Body.register
 class If(model.If):
     __slots__ = ['lineno', 'error']
-    body_class = Body
+    body_class = IfBranches
 
-    def __init__(self, condition, parent=None, lineno=None, error=None):
-        model.If.__init__(self, condition, parent)
+    def __init__(self, parent=None, lineno=None, error=None):
+        model.If.__init__(self, parent)
         self.lineno = lineno
         self.error = error
 
-    def run(self, context, templated):
-        return IfRunner(context, templated).run(self)
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
+    def run(self, context, run=True, templated=False):
+        return IfRunner(context, run, templated).run(self)
+
+
+@IfBranches.register
+class IfBranch(model.IfBranch):
+    __slots__ = ['lineno']
+    body_class = Body
+
+    def __init__(self, type=BodyItem.IF, condition=None, parent=None, lineno=None):
+        model.IfBranch.__init__(self, type, condition, parent)
+        self.lineno = lineno
+
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
 
 
 class TestCase(model.TestCase):
@@ -114,6 +144,10 @@ class TestCase(model.TestCase):
         # ``None`` if template is not used.
         self.template = template
         self.lineno = lineno
+
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
 
 
 class TestSuite(model.TestSuite):
@@ -244,7 +278,7 @@ class TestSuite(model.TestSuite):
         """
         from .namespace import IMPORTER
         from .signalhandler import STOP_SIGNAL_MONITOR
-        from .runner import Runner
+        from .suiterunner import SuiteRunner
 
         with LOGGER:
             if not settings:
@@ -254,7 +288,7 @@ class TestSuite(model.TestSuite):
                 with STOP_SIGNAL_MONITOR:
                     IMPORTER.reset()
                     output = Output(settings)
-                    runner = Runner(output, settings)
+                    runner = SuiteRunner(output, settings)
                     self.visit(runner)
                 output.close(runner.result)
         return runner.result
@@ -308,9 +342,9 @@ class UserKeyword(object):
         self.tags = tags
         self.return_ = return_ or ()
         self.timeout = timeout
-        self.body = []
         self.lineno = lineno
         self.parent = parent
+        self.body = None
         self._teardown = None
 
     @setter
@@ -336,7 +370,7 @@ class UserKeyword(object):
     @property
     def teardown(self):
         if self._teardown is None:
-            self._teardown = Keyword(None, parent=self, type=Keyword.TEARDOWN_TYPE)
+            self._teardown = Keyword(None, parent=self, type=Keyword.TEARDOWN)
         return self._teardown
 
     @setter

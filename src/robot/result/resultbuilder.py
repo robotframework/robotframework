@@ -127,7 +127,7 @@ class ExecutionResultBuilder(object):
         omitted_kws = 0
         for event, elem in context:
             # Teardowns aren't omitted to allow checking suite teardown status.
-            omit = elem.tag == 'kw' and elem.get('type') != 'teardown'
+            omit = elem.tag == 'kw' and elem.get('type') != 'TEARDOWN'
             start = event == 'start'
             if omit and start:
                 omitted_kws += 1
@@ -151,25 +151,25 @@ class ExecutionResultBuilder(object):
             tag = elem.tag
             start = event == 'start'
             end = not start
-            if start and tag == 'kw':
+            if start and tag in ('kw', 'for', 'iter'):
                 inside_kw += 1
                 if started >= 0:
                     started += 1
                 elif by_name and name_match(elem.get('name', ''), elem.get('library')):
                     started = 0
                     seen_doc = False
-                elif by_type and type_match(elem.get('type', 'kw')):
+                elif by_type and type_match(tag):
                     started = 0
                     seen_doc = False
             elif started < 0 and by_tags and inside_kw:
                 if end and tag == 'tag':
                     tags.append(elem.text or '')
-                elif end and tag == 'tags':
+                elif end and tags:
                     if tags_match(tags):
                         started = 0
                         seen_doc = False
                     tags = []
-            if end and tag == 'kw':
+            if end and tag in ('kw', 'for', 'iter'):
                 inside_kw -= 1
                 if started == 0 and not seen_doc:
                     doc = ET.Element('doc')
@@ -184,7 +184,7 @@ class ExecutionResultBuilder(object):
                 yield event, elem
             else:
                 elem.clear()
-            if started >= 0 and end and tag == 'kw':
+            if started >= 0 and end and tag in ('kw', 'for', 'iter'):
                 started -= 1
 
     def _get_matcher(self, matcher_class, flattened):

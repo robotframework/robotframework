@@ -13,20 +13,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
+
 from .itemlist import ItemList
 from .modelobject import ModelObject
 
 
 class BodyItem(ModelObject):
-    KEYWORD_TYPE  = 'kw'
-    SETUP_TYPE    = 'setup'
-    TEARDOWN_TYPE = 'teardown'
-    FOR_TYPE      = 'for'
-    FOR_ITEM_TYPE = 'foritem'
-    IF_TYPE       = 'if'
-    ELSE_IF_TYPE  = 'elseif'
-    ELSE_TYPE     = 'else'
-    MESSAGE_TYPE  = 'message'
+    KEYWORD = 'KEYWORD'
+    SETUP = 'SETUP'
+    TEARDOWN = 'TEARDOWN'
+    FOR = 'FOR'
+    FOR_ITERATION = 'FOR ITERATION'
+    IF_ELSE_ROOT = 'IF/ELSE ROOT'
+    IF = 'IF'
+    ELSE_IF = 'ELSE IF'
+    ELSE = 'ELSE'
+    MESSAGE = 'MESSAGE'
     type = None
     __slots__ = ['parent']
 
@@ -46,9 +49,9 @@ class BodyItem(ModelObject):
         setup = getattr(self.parent, 'setup', None)
         body = getattr(self.parent, 'body', ())
         teardown = getattr(self.parent, 'teardown', None)
-        keywords = [item for item in [setup] + list(body) + [teardown]
-                    if item and item.type != item.MESSAGE_TYPE]
-        return '%s-k%d' % (self.parent.id, keywords.index(self) + 1)
+        steps = [step for step in [setup] + list(body) + [teardown]
+                 if step and step.type != step.MESSAGE]
+        return '%s-k%d' % (self.parent.id, steps.index(self) + 1)
 
 
 class Body(ItemList):
@@ -66,25 +69,36 @@ class Body(ItemList):
         ItemList.__init__(self, BodyItem, {'parent': parent}, items)
 
     @classmethod
-    def register(cls, body_class):
-        name = '%s_class' % body_class.__name__.lower()
-        setattr(cls, name, body_class)
-        return body_class
+    def register(cls, item_class):
+        name_parts = re.findall('([A-Z][a-z]+)', item_class.__name__) + ['class']
+        name = '_'.join(name_parts).lower()
+        if not hasattr(cls, name):
+            raise TypeError("Cannot register '%s'." % name)
+        setattr(cls, name, item_class)
+        return item_class
 
-    def create(self, *args, **kwargs):
+    @property
+    def create(self):
         raise AttributeError(
-            "'Body' object has no attribute 'create'. "
+            "'%s' object has no attribute 'create'. "
             "Use item specific methods like 'create_keyword' instead."
+            % type(self).__name__
         )
 
     def create_keyword(self, *args, **kwargs):
-        return self.append(self.keyword_class(*args, **kwargs))
+        return self._create(self.keyword_class, 'create_keyword', args, kwargs)
+
+    def _create(self, cls, name, args, kwargs):
+        if cls is None:
+            raise TypeError("'%s' object does not support '%s'."
+                            % (type(self).__name__, name))
+        return self.append(cls(*args, **kwargs))
 
     def create_for(self, *args, **kwargs):
-        return self.append(self.for_class(*args, **kwargs))
+        return self._create(self.for_class, 'create_for', args, kwargs)
 
     def create_if(self, *args, **kwargs):
-        return self.append(self.if_class(*args, **kwargs))
+        return self._create(self.if_class, 'create_if', args, kwargs)
 
     def filter(self, keywords=None, fors=None, ifs=None, predicate=None):
         """Filter body items based on type and/or custom predicate.
@@ -118,3 +132,14 @@ class Body(ItemList):
         if predicate:
             items = [item for item in items if predicate(item)]
         return items
+
+
+class IfBranches(Body):
+    if_branch_class = None
+    keyword_class = None
+    for_class = None
+    if_class = None
+    __slots__ = []
+
+    def create_branch(self, *args, **kwargs):
+        return self.append(self.if_branch_class(*args, **kwargs))

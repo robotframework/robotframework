@@ -24,8 +24,8 @@ from robot.utils import getshortdoc, DotDict, prepr, split_tags_from_doc
 from robot.variables import is_list_variable, VariableAssignment
 
 from .arguments import DefaultValue
+from .bodyrunner import BodyRunner, KeywordRunner
 from .statusreporter import StatusReporter
-from .steprunner import StepRunner
 from .timeouts import KeywordTimeout
 
 
@@ -49,14 +49,15 @@ class UserKeywordRunner(object):
         """:rtype: :py:class:`robot.running.arguments.ArgumentSpec`"""
         return self._handler.arguments
 
-    def run(self, kw, context):
+    def run(self, kw, context, run=True):
         assignment = VariableAssignment(kw.assign)
         result = self._get_result(kw, assignment, context.variables)
-        with StatusReporter(context, result):
+        with StatusReporter(kw, result, context, run):
             with assignment.assigner(context) as assigner:
-                return_value = self._run(context, kw.args, result)
-                assigner.assign(return_value)
-                return return_value
+                if run:
+                    return_value = self._run(context, kw.args, result)
+                    assigner.assign(return_value)
+                    return return_value
 
     def _get_result(self, kw, assignment, variables):
         handler = self._handler
@@ -69,9 +70,7 @@ class UserKeywordRunner(object):
                              args=kw.args,
                              assign=tuple(assignment),
                              tags=tags,
-                             type=kw.type,
-                             lineno=kw.lineno,
-                             source=kw.source)
+                             type=kw.type)
 
     def _run(self, context, args, result):
         variables = context.variables
@@ -147,13 +146,13 @@ class UserKeywordRunner(object):
 
     def _execute(self, context):
         handler = self._handler
-        if not (handler.keywords or handler.return_value):
+        if not (handler.body or handler.return_value):
             raise DataError("User keyword '%s' contains no keywords." % self.name)
         if context.dry_run and 'robot:no-dry-run' in handler.tags:
             return None, None
         error = return_ = pass_ = None
         try:
-            StepRunner(context).run_steps(handler.keywords)
+            BodyRunner(context).run(handler.body)
         except ReturnFromKeyword as exception:
             return_ = exception
             error = exception.earlier_failures
@@ -198,7 +197,7 @@ class UserKeywordRunner(object):
         if name.upper() in ('', 'NONE'):
             return None
         try:
-            StepRunner(context).run_step(self._handler.teardown, name)
+            KeywordRunner(context).run(self._handler.teardown, name)
         except PassExecution:
             return None
         except ExecutionStatus as err:
@@ -208,7 +207,7 @@ class UserKeywordRunner(object):
     def dry_run(self, kw, context):
         assignment = VariableAssignment(kw.assign)
         result = self._get_result(kw, assignment, context.variables)
-        with StatusReporter(context, result):
+        with StatusReporter(kw, result, context):
             assignment.validate_assignment()
             self._dry_run(context, kw.args, result)
 
@@ -248,3 +247,8 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
     def _trace_log_args_message(self, variables):
         args = ['${%s}' % arg for arg, _ in self.embedded_args]
         return self._format_trace_log_args_message(args, variables)
+
+    def _get_result(self, kw, assignment, variables):
+        result = UserKeywordRunner._get_result(self, kw, assignment, variables)
+        result.sourcename = self._handler.name
+        return result

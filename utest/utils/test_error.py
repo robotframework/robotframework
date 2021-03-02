@@ -85,26 +85,29 @@ class TestRemoveRobotEntriesFromTraceback(unittest.TestCase):
     def test_both_robot_and_non_robot_entries(self):
         def raises():
             raise Exception
-        self._verify_traceback('Traceback \(most recent call last\):\n'
-                               '  File ".*", line \d+, in raises\n'
-                               '    raise Exception',
-                               assert_raises, AssertionError, raises)
+        self._verify_traceback(r'''
+Traceback \(most recent call last\):
+  File ".*", line \d+, in raises
+    raise Exception
+'''.strip(), assert_raises, AssertionError, raises)
 
     def test_remove_entries_with_lambda_and_multiple_entries(self):
         def raises():
             1/0
         raising_lambda = lambda: raises()
-        self._verify_traceback('Traceback \(most recent call last\):\n'
-                               '  File ".*", line \d+, in <lambda.*>\n'
-                               '    raising_lambda = lambda: raises\(\)\n'
-                               '  File ".*", line \d+, in raises\n'
-                               '    1/0',
-                               assert_raises, AssertionError, raising_lambda)
+        self._verify_traceback(r'''
+Traceback \(most recent call last\):
+  File ".*", line \d+, in <lambda.*>
+    raising_lambda = lambda: raises\(\)
+  File ".*", line \d+, in raises
+    1/0
+'''.strip(), assert_raises, AssertionError, raising_lambda)
 
     def test_only_robot_entries(self):
-        self._verify_traceback('Traceback \(most recent call last\):\n'
-                               '  None',
-                               assert_equal, 1, 2)
+        self._verify_traceback(r'''
+Traceback \(most recent call last\):
+  None
+'''.strip(), assert_equal, 1, 2)
 
     def _verify_traceback(self, expected, method, *args):
         try:

@@ -1,24 +1,39 @@
 import unittest
 
 from robot.model import Body, BodyItem, If, For, Keyword, TestCase
-from robot.utils.asserts import assert_equal, assert_raises
+from robot.utils.asserts import assert_equal, assert_raises_with_msg
+from robot.utils import IRONPYTHON
 
 
 class TestBody(unittest.TestCase):
 
+    def test_no_create(self):
+        if not IRONPYTHON:
+            error = ("'Body' object has no attribute 'create'. "
+                     "Use item specific methods like 'create_keyword' instead.")
+        else:
+            error = "'Body' object has no attribute 'create'"
+        assert_raises_with_msg(AttributeError, error,
+                               getattr, Body(), 'create')
+        assert_raises_with_msg(AttributeError, error.replace('Body', 'MyBody'),
+                               getattr, type('MyBody', (Body,), {})(), 'create')
+
     def test_filter(self):
         k1, k2, k3 = Keyword(), Keyword(), Keyword()
         f1, i1, i2 = For(), If(), If()
-        items = [k1, f1, i1, i2, k2, k3]
-        body = Body(items=items)
+        body = Body(items=[k1, f1, i1, i2, k2, k3])
         assert_equal(body.filter(keywords=True), [k1, k2, k3])
         assert_equal(body.filter(keywords=False), [f1, i1, i2])
         assert_equal(body.filter(ifs=True, fors=True), [f1, i1, i2])
-        assert_equal(body.filter(ifs=True, fors=True), [f1, i1, i2])
+        assert_equal(body.filter(ifs=False, fors=False), [k1, k2, k3])
         assert_equal(body.filter(), [k1, f1, i1, i2, k2, k3])
 
     def test_filter_with_includes_and_excludes_fails(self):
-        assert_raises(ValueError, Body().filter, keywords=True, ifs=False)
+        assert_raises_with_msg(
+            ValueError,
+            'Items cannot be both included and excluded by type.',
+            Body().filter, keywords=True, ifs=False
+        )
 
     def test_filter_with_predicate(self):
         x = Keyword(name='x')

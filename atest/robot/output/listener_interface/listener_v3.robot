@@ -1,6 +1,6 @@
 *** Settings ***
-Suite Setup       Run Tests    --listener ${DATADIR}/output/listeners/v3.py -l l -r r -b d -x x    misc/pass_and_fail.robot
-Resource          atest_resource.robot
+Suite Setup       Run Tests    --listener ${LISTENER DIR}/v3.py -l l -r r -b d -x x    misc/pass_and_fail.robot
+Resource          listener_resource.robot
 
 *** Variables ***
 ${SEPARATOR}      ${EMPTY + '-' * 78}

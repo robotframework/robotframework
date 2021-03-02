@@ -59,18 +59,32 @@ Invalid FOR
 
 Template With IF
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.kws[0].type}      if
-    Should Be Equal    ${tc.kws[0].status}    NOT_RUN
-    Should Be Equal    ${tc.kws[1].type}      elseif
-    Should Be Equal    ${tc.kws[1].status}    NOT_RUN
-    Should Be Equal    ${tc.kws[2].type}      else
-    Should Be Equal    ${tc.kws[2].status}    PASS
+    Should Be Equal    ${tc.body[0].status}            PASS
+    Should Be Equal    ${tc.body[0].body[0].type}      IF
+    Should Be Equal    ${tc.body[0].body[0].status}    NOT RUN
+    Should Be Equal    ${tc.body[0].body[1].type}      ELSE IF
+    Should Be Equal    ${tc.body[0].body[1].status}    NOT RUN
+    Should Be Equal    ${tc.body[0].body[2].type}      ELSE
+    Should Be Equal    ${tc.body[0].body[2].status}    PASS
 
 Template With IF Failing
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.body[0].status}            FAIL
+    Should Be Equal    ${tc.body[0].body[0].type}      IF
+    Should Be Equal    ${tc.body[0].body[0].status}    FAIL
+    Should Be Equal    ${tc.body[1].status}            FAIL
+    Should Be Equal    ${tc.body[1].body[0].type}      IF
+    Should Be Equal    ${tc.body[1].body[0].status}    NOT RUN
+    Should Be Equal    ${tc.body[1].body[1].type}      ELSE IF
+    Should Be Equal    ${tc.body[1].body[1].status}    FAIL
+    Should Be Equal    ${tc.body[1].body[2].type}      ELSE
+    Should Be Equal    ${tc.body[1].body[2].status}    NOT RUN
 
 Invalid IF
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.body[0].status}            FAIL
+    Should Be Equal    ${tc.body[0].body[0].type}      IF
+    Should Be Equal    ${tc.body[0].body[0].status}    FAIL
 
 FOR and IF
     Check Test Case    ${TESTNAME}

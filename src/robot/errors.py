@@ -23,8 +23,6 @@ try:
 except NameError:
     unicode = str
 
-from robot.conf.status import Status
-
 
 # Return codes from Robot and Rebot.
 # RC below 250 is the number of failed critical tests and exactly 250
@@ -160,7 +158,7 @@ class ExecutionStatus(RobotError):
 
     @property
     def status(self):
-        return Status.FAIL if not self.skip else Status.SKIP
+        return 'FAIL' if not self.skip else 'SKIP'
 
 
 class ExecutionFailed(ExecutionStatus):
@@ -289,7 +287,7 @@ class ExecutionPassed(ExecutionStatus):
 
     @property
     def status(self):
-        return Status.PASS if not self._earlier_failures else Status.FAIL
+        return 'PASS' if not self._earlier_failures else 'FAIL'
 
 
 class PassExecution(ExecutionPassed):

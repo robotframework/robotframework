@@ -7,7 +7,7 @@ from robot.utils.asserts import assert_equal, assert_true
 from robot.utils.platform import PY2
 from robot.result import Keyword, Message, TestCase, TestSuite
 from robot.result.executionerrors import ExecutionErrors
-from robot.model import Statistics
+from robot.model import Statistics, BodyItem
 from robot.reporting.jsmodelbuilders import *
 from robot.reporting.stringcache import StringIndex
 
@@ -68,8 +68,8 @@ class TestBuildTestSuite(unittest.TestCase):
     def test_test_with_values(self):
         test = TestCase('Name', '*Doc*', ['t1', 't2'], '1 minute', 'PASS', 'Msg',
                         '20111204 19:22:22.222', '20111204 19:22:22.333')
-        test.setup.config(kwname='setup', type='setup')
-        test.teardown.config(kwname='td', type='teardown')
+        test.setup.config(kwname='setup')
+        test.teardown.config(kwname='td')
         k1 = self._verify_keyword(test.setup, type=1, kwname='setup')
         k2 = self._verify_keyword(test.teardown, type=2, kwname='td')
         self._verify_test(test, 'Name', '<b>Doc</b>', ('t1', 't2'),
@@ -88,7 +88,7 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_keyword_with_values(self):
         kw = Keyword('KW Name', 'libname', 'http://doc', ('arg1', 'arg2'),
-                     ('${v1}', '${v2}'), ('tag1', 'tag2'), '1 second', 'setup',
+                     ('${v1}', '${v2}'), ('tag1', 'tag2'), '1 second', 'SETUP',
                      'PASS', '20111204 19:42:42.000', '20111204 19:42:42.042')
         self._verify_keyword(kw, 1, 'KW Name', 'libname',
                              '<a href="http://doc">http://doc</a>',
@@ -128,8 +128,8 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_nested_structure(self):
         suite = TestSuite()
-        suite.setup.config(kwname='setup', type='setup')
-        suite.teardown.config(kwname='td', type='teardown')
+        suite.setup.config(kwname='setup')
+        suite.teardown.config(kwname='td')
         K1 = self._verify_keyword(suite.setup, type=1, kwname='setup')
         K2 = self._verify_keyword(suite.teardown, type=2, kwname='td')
         suite.suites = [TestSuite()]
@@ -138,8 +138,8 @@ class TestBuildTestSuite(unittest.TestCase):
         suite.tests = [TestCase(), TestCase(status='PASS')]
         S1 = self._verify_suite(suite.suites[0],
                                 status=0, tests=(t,), stats=(1, 0, 1, 0))
-        suite.tests[0].body = [Keyword(type=Keyword.FOR_TYPE), Keyword()]
-        suite.tests[0].body[0].body = [Keyword(type=Keyword.FOR_ITEM_TYPE), Message()]
+        suite.tests[0].body = [Keyword(type=Keyword.FOR), Keyword()]
+        suite.tests[0].body[0].body = [Keyword(type=Keyword.FOR_ITERATION), Message()]
         k = self._verify_keyword(suite.tests[0].body[0].body[0], type=4)
         m = self._verify_message(suite.tests[0].body[0].messages[0])
         k1 = self._verify_keyword(suite.tests[0].body[0], type=3, body=(k, m))
@@ -147,7 +147,7 @@ class TestBuildTestSuite(unittest.TestCase):
         m1 = self._verify_message(suite.tests[0].body[1].messages[0])
         m2 = self._verify_message(suite.tests[0].body[1].messages[1], 'msg', level=0)
         k2 = self._verify_keyword(suite.tests[0].body[1], body=(m1, m2))
-        T1 = self._verify_test(suite.tests[0], keywords=(k1, k2))
+        T1 = self._verify_test(suite.tests[0], body=(k1, k2))
         T2 = self._verify_test(suite.tests[1], status=1)
         self._verify_suite(suite, status=0, keywords=(K1, K2), suites=(S1,),
                            tests=(T1, T2), stats=(3, 1, 2, 0))
@@ -167,11 +167,30 @@ class TestBuildTestSuite(unittest.TestCase):
                             ((8, 10, 2, 'Message'), (8, 11, 1, '')))
         self._verify_status(model[-3][0][4], start=1000)
 
+    def test_if(self):
+        test = TestSuite().tests.create()
+        test.body.create_if()
+        test.body[0].body.create_branch(BodyItem.IF, '$x > 0', status='NOT RUN')
+        test.body[0].body.create_branch(BodyItem.ELSE_IF, '$x < 0', status='PASS')
+        test.body[0].body.create_branch(BodyItem.ELSE, status='NOT RUN')
+        test.body[0].body[-1].body.create_keyword('z')
+        exp_if = (
+            5, '$x &gt; 0', '', '', '', '', '', '', (3, None, 0), ()
+        )
+        exp_else_if = (
+            6, '$x &lt; 0', '', '', '', '', '', '', (1, None, 0), ()
+        )
+        exp_else = (
+            7, '', '', '', '', '', '', '', (3, None, 0),
+            ((0, 'z', '', '', '', '', '', '', (0, None, 0), ()),)
+        )
+        self._verify_test(test, body=(exp_if, exp_else_if, exp_else))
+
     def _verify_status(self, model, status=0, start=None, elapsed=0):
         assert_equal(model, (status, start, elapsed))
 
     def _verify_suite(self, suite, name='', doc='', metadata=(), source='',
-                      relsource='', status=3, message='', start=None, elapsed=0,
+                      relsource='', status=2, message='', start=None, elapsed=0,
                       suites=(), tests=(), keywords=(), stats=(0, 0, 0, 0)):
         status = (status, start, elapsed, message) \
                 if message else (status, start, elapsed)
@@ -184,12 +203,12 @@ class TestBuildTestSuite(unittest.TestCase):
         return elements if elements[-1] else elements[:-1]
 
     def _verify_test(self, test, name='', doc='', tags=(), timeout='',
-                     status=0, message='', start=None, elapsed=0, keywords=()):
+                     status=0, message='', start=None, elapsed=0, body=()):
         status = (status, start, elapsed, message) \
                 if message else (status, start, elapsed)
         doc = '<p>%s</p>' % doc if doc else ''
         return self._build_and_verify(TestBuilder, test, name, timeout,
-                                      doc, tags, status, keywords)
+                                      doc, tags, status, body)
 
     def _verify_keyword(self, keyword, type=0, kwname='', libname='', doc='',
                         args='', assign='', tags='', timeout='', status=0,

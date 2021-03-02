@@ -3,7 +3,7 @@ Documentation     Verify that listeners see both the original test name and the 
 ...               Tests both using listener v2 and v3.
 Suite Setup       Run With Listeners
 Test Template     Original and resolved name should be available
-Resource          atest_resource.robot
+Resource          listener_resource.robot
 
 *** Test Cases ***
 Test case name with variable
@@ -16,9 +16,9 @@ Test case name with non-existing variable
 *** Keywords ***
 Run With Listeners
     ${listeners} =    Catenate
-    ...    --listener ${DATADIR}/output/listeners/original_and_resolved_name_v2.py
-    ...    --listener ${DATADIR}/output/listeners/original_and_resolved_name_v3.py
-    Run Tests    ${listeners}    output/listeners/variables_in_test_name.robot
+    ...    --listener ${LISTENER DIR}/original_and_resolved_name_v2.py
+    ...    --listener ${LISTENER DIR}/original_and_resolved_name_v3.py
+    Run Tests    ${listeners}    output/listener_interface/variables_in_test_name.robot
 
 Original and resolved name should be available
     [Arguments]    ${var1}    ${value1}    ${var2}    ${value2}

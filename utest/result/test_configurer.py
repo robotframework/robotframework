@@ -7,10 +7,8 @@ from robot.result import Keyword, TestCase, TestSuite
 from robot.result.configurer import SuiteConfigurer
 
 
-SETUP = Keyword.SETUP_TYPE
-TEARDOWN = Keyword.TEARDOWN_TYPE
-FOR_LOOP = Keyword.FOR_TYPE
-FOR_ITEM = Keyword.FOR_ITEM_TYPE
+SETUP = Keyword.SETUP
+TEARDOWN = Keyword.TEARDOWN
 
 
 class TestSuiteAttributes(unittest.TestCase):
@@ -182,37 +180,41 @@ class TestRemoveKeywords(unittest.TestCase):
         assert_equal(len(suite.setup.messages), 1)
         assert_equal(len(suite.teardown.body), 1)
 
-    def test_remove_for_removes_passed_items_except_last(self):
-        suite, forloop = self.suite_with_forloop()
-        last = forloop.body[-1]
+    def test_remove_for_removes_passed_iterations_except_last(self):
+        suite, loop = self.suite_with_for_loop()
+        last = loop.body[-1]
         self._remove_for_loop(suite)
-        assert_equal(len(forloop.body), 1)
-        assert_true(forloop.body[-1] is last)
+        assert_equal(len(loop.body), 1)
+        assert_true(loop.body[-1] is last)
 
-    def suite_with_forloop(self):
+    def suite_with_for_loop(self):
         suite = TestSuite()
         test = suite.tests.create(status='PASS')
-        forloop = test.body.create_keyword(status='PASS', type=FOR_LOOP)
+        loop = test.body.create_for(status='PASS')
         for i in range(100):
-            forloop.body.create_keyword(status='PASS', type=FOR_ITEM).body\
-                .create_message(message='something')
-        return suite, forloop
+            loop.body.create_iteration({'${i}': i}, status='PASS')\
+                .body.create_keyword(kwname='k%d' % i, status='PASS')\
+                .body.create_message(message='something')
+        return suite, loop
 
-    def test_remove_for_removes_passing_items_when_there_are_failures(self):
-        suite, forloop = self.suite_with_forloop()
-        failed = forloop.body.create_keyword(status='FAIL')
+    def test_remove_for_does_not_remove_failed_iterations(self):
+        suite, loop = self.suite_with_for_loop()
+        fail1 = loop.body[42]
+        fail2 = loop.body[75]
+        last = loop.body[-1]
+        fail1.failed = fail2.failed = True
         self._remove_for_loop(suite)
-        assert_equal(len(forloop.body), 1)
-        assert_true(forloop.body[-1] is failed)
+        assert_equal(len(loop.body), 3)
+        assert_equal(list(loop.body), [fail1, fail2, last])
 
-    def test_remove_for_does_not_remove_for_loop_items_with_warnings(self):
-        suite, forloop = self.suite_with_forloop()
-        forloop.body[2].body.create_message(message='danger!', level='WARN')
-        warn = forloop.body[2]
-        last = forloop.body[-1]
+    def test_remove_for_does_not_remove_iterations_with_warnings(self):
+        suite, loop = self.suite_with_for_loop()
+        loop.body[2].body.create_message(message='danger!', level='WARN')
+        warn = loop.body[2]
+        last = loop.body[-1]
         self._remove_for_loop(suite)
-        assert_equal(len(forloop.body), 2)
-        assert_equal(list(forloop.body), [warn, last])
+        assert_equal(len(loop.body), 2)
+        assert_equal(list(loop.body), [warn, last])
 
     def test_remove_based_on_multiple_condition(self):
         suite = TestSuite()
@@ -220,9 +222,9 @@ class TestRemoveKeywords(unittest.TestCase):
         t1.body.create_keyword().body.create_message()
         t2 = suite.tests.create(status='FAIL')
         t2.body.create_keyword().body.create_message()
-        t2.body.create_keyword(type=FOR_LOOP)
+        iteration = t2.body.create_for().body.create_iteration()
         for i in range(10):
-            t2.body[1].body.create_keyword(type=FOR_ITEM, status='PASS')
+            iteration.body.create_keyword(status='PASS')
         self._remove(['passed', 'for'], suite)
         assert_equal(len(t1.body[0].messages), 0)
         assert_equal(len(t2.body[0].messages), 1)

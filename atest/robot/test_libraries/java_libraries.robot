@@ -61,8 +61,8 @@ Integer Array Arg
     ${tc} =  Check Test Case  ${TEST NAME}
     Check Log Message  ${tc.kws[0].msgs[0]}  1\n2\n3
     Check Log Message  ${tc.kws[1].msgs[0]}  -2006\n2006
-    Should Be Empty  ${tc.keywords[2].messages}
-    Should Be Empty  ${tc.keywords[3].messages}
+    Should Be Empty  ${tc.body[2].messages}
+    Should Be Empty  ${tc.body[3].messages}
     Check Log Message  ${tc.kws[5].msgs[0]}  -1\n1
     Check Log Message  ${tc.kws[6].msgs[0]}  -1\n1
 

@@ -16,7 +16,6 @@
 from contextlib import contextmanager
 
 from robot.errors import DataError
-from robot.conf.status import Status
 from robot.utils import unic
 
 
@@ -90,7 +89,7 @@ class _ExecutionContext(object):
 
     @contextmanager
     def keyword_teardown(self, error):
-        self.variables.set_keyword('${KEYWORD_STATUS}', Status.FAIL if error else Status.PASS)
+        self.variables.set_keyword('${KEYWORD_STATUS}', 'FAIL' if error else 'PASS')
         self.variables.set_keyword('${KEYWORD_MESSAGE}', unic(error or ''))
         self.in_keyword_teardown += 1
         try:

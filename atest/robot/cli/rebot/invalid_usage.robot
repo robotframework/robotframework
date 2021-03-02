@@ -26,9 +26,19 @@ Non-XML Input
     (\\[Fatal Error\\] .*: Content is not allowed in prolog.\\n)?Reading XML source '.*invalid.robot' failed: .*
     ...    source=%{TEMPDIR}/invalid.robot
 
-Incompatible XML
+Wrong XML root element
     [Setup]    Create File    %{TEMPDIR}/invalid.xml    <not><our>type</our></not>
-    Reading XML source '.*invalid.xml' failed: Incompatible XML element 'not'.
+    Reading XML source '.*invalid.xml' failed: Incompatible root element 'not'.
+    ...    source=%{TEMPDIR}/invalid.xml
+
+Wrong XML child element
+    [Setup]    Create File    %{TEMPDIR}/invalid.xml    <robot><suite><test><wrong/></test></suite></robot>
+    Reading XML source '.*invalid.xml' failed: Incompatible child element 'wrong' for 'test'.
+    ...    source=%{TEMPDIR}/invalid.xml
+
+Incompatible XML child element
+    [Setup]    Create File    %{TEMPDIR}/invalid.xml    <robot><suite><test><test/></test></suite></robot>
+    Reading XML source '.*invalid.xml' failed: Incompatible child element 'test' for 'test'.
     ...    source=%{TEMPDIR}/invalid.xml
 
 Invalid Output Directory

@@ -24,11 +24,15 @@ For loop inside for loop
 
 Direct Boolean condition
    ${tc} =    Check Test Case    ${TESTNAME}
-   Should Be Equal     ${tc.kws[0].status}    PASS
+   Should Be Equal     ${tc.body[0].status}                    PASS
+   Should Be Equal     ${tc.body[0].body[0].status}            PASS
+   Should Be Equal     ${tc.body[0].body[0].body[0].status}    PASS
 
 Direct Boolean condition false
    ${tc} =    Check Test Case    ${TESTNAME}
-   Should Be Equal     ${tc.kws[0].status}    NOT_RUN
+   Should Be Equal     ${tc.kws[0].status}                     PASS
+   Should Be Equal     ${tc.body[0].body[0].status}            NOT RUN
+   Should Be Equal     ${tc.body[0].body[0].body[0].status}    NOT RUN
 
 Nesting insanity
    Check Test Case    ${TESTNAME}

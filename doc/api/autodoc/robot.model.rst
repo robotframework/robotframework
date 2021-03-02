@@ -9,10 +9,26 @@ robot.model package
 Submodules
 ----------
 
+robot.model.body module
+-----------------------
+
+.. automodule:: robot.model.body
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.model.configurer module
 -----------------------------
 
 .. automodule:: robot.model.configurer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+robot.model.control module
+--------------------------
+
+.. automodule:: robot.model.control
    :members:
    :undoc-members:
    :show-inheritance:

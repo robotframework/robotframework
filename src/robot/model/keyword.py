@@ -15,7 +15,7 @@
 
 import warnings
 
-from robot.utils import setter, py3to2
+from robot.utils import setter, py3to2, unicode
 
 from .body import Body, BodyItem
 from .fixture import create_fixture
@@ -31,10 +31,11 @@ class Keyword(BodyItem):
     Extended by :class:`robot.running.model.Keyword` and
     :class:`robot.result.model.Keyword`.
     """
+    repr_args = ('name', 'args', 'assign')
     __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type', '_teardown']
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
-                 timeout=None, type=BodyItem.KEYWORD_TYPE, parent=None):
+                 timeout=None, type=BodyItem.KEYWORD, parent=None):
         self._name = name
         self.doc = doc
         self.args = args
@@ -56,21 +57,17 @@ class Keyword(BodyItem):
     @property    # Cannot use @setter because it would create teardowns recursively.
     def teardown(self):
         if self._teardown is None and self:
-            self._teardown = create_fixture(None, self, self.TEARDOWN_TYPE)
+            self._teardown = create_fixture(None, self, self.TEARDOWN)
         return self._teardown
 
     @teardown.setter
     def teardown(self, teardown):
-        self._teardown = create_fixture(teardown, self, self.TEARDOWN_TYPE)
+        self._teardown = create_fixture(teardown, self, self.TEARDOWN)
 
     @setter
     def tags(self, tags):
         """Keyword tags as a :class:`~.model.tags.Tags` object."""
         return Tags(tags)
-
-    @property
-    def source(self):
-        return self.parent.source if self.parent is not None else None
 
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
@@ -79,6 +76,10 @@ class Keyword(BodyItem):
 
     def __bool__(self):
         return self.name is not None
+
+    def __str__(self):
+        parts = list(self.assign) + [self.name] + list(self.args)
+        return '    '.join(unicode(p) for p in parts)
 
 
 class Keywords(ItemList):
@@ -100,7 +101,7 @@ class Keywords(ItemList):
 
     @property
     def setup(self):
-        return self[0] if (self and self[0].type == 'setup') else None
+        return self[0] if (self and self[0].type == 'SETUP') else None
 
     @setup.setter
     def setup(self, kw):
@@ -111,7 +112,7 @@ class Keywords(ItemList):
 
     @property
     def teardown(self):
-        return self[-1] if (self and self[-1].type == 'teardown') else None
+        return self[-1] if (self and self[-1].type == 'TEARDOWN') else None
 
     @teardown.setter
     def teardown(self, kw):
@@ -128,7 +129,7 @@ class Keywords(ItemList):
     @property
     def normal(self):
         """Iterates over normal keywords, omitting setup and teardown."""
-        return [kw for kw in self if kw.type not in ('setup', 'teardown')]
+        return [kw for kw in self if kw.type not in ('SETUP', 'TEARDOWN')]
 
     def __setitem__(self, index, item):
         self.raise_deprecation_error()

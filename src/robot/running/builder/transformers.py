@@ -15,9 +15,9 @@
 
 from ast import NodeVisitor
 
+from robot.parsing import Token
 from robot.variables import VariableIterator
 
-from ..model import If
 from .testsettings import TestSettings
 
 
@@ -162,14 +162,12 @@ class TestCaseBuilder(NodeVisitor):
 
     def _set_template(self, parent, template):
         for item in parent.body:
-            if item.type == item.FOR_TYPE:
+            if item.type == item.FOR:
                 self._set_template(item, template)
-            elif item.type == item.IF_TYPE:
-                branch = item
-                while branch:
+            elif item.type == item.IF_ELSE_ROOT:
+                for branch in item.body:
                     self._set_template(branch, template)
-                    branch = branch.orelse
-            elif item.type == item.KEYWORD_TYPE:
+            elif item.type == item.KEYWORD:
                 name, args = self._format_template(template, item.args)
                 item.name = name
                 item.args = args
@@ -270,16 +268,16 @@ class ForBuilder(NodeVisitor):
 
     def __init__(self, parent):
         self.parent = parent
-        self.loop = None
+        self.model = None
 
     def build(self, node):
         error = format_error(self._get_errors(node))
-        self.loop = self.parent.body.create_for(
+        self.model = self.parent.body.create_for(
             node.variables, node.flavor, node.values, lineno=node.lineno, error=error
         )
-        for child_node in node.body:
-            self.visit(child_node)
-        return self.loop
+        for step in node.body:
+            self.visit(step)
+        return self.model
 
     def _get_errors(self, node):
         errors = node.header.errors + node.errors
@@ -288,40 +286,35 @@ class ForBuilder(NodeVisitor):
         return errors
 
     def visit_KeywordCall(self, node):
-        self.loop.body.create_keyword(name=node.keyword, args=node.args,
-                                      assign=node.assign, lineno=node.lineno)
+        self.model.body.create_keyword(name=node.keyword, args=node.args,
+                                       assign=node.assign, lineno=node.lineno)
 
     def visit_TemplateArguments(self, node):
-        self.loop.body.create_keyword(args=node.args, lineno=node.lineno)
+        self.model.body.create_keyword(args=node.args, lineno=node.lineno)
 
     def visit_For(self, node):
-        ForBuilder(self.loop).build(node)
+        ForBuilder(self.model).build(node)
 
     def visit_If(self, node):
-        IfBuilder(self.loop).build(node)
+        IfBuilder(self.model).build(node)
 
 
 class IfBuilder(NodeVisitor):
 
-    def __init__(self, parent=None):
+    def __init__(self, parent):
         self.parent = parent
-        self.block = None
+        self.model = None
 
     def build(self, node):
-        # IF branch. Errors are got also from ELSE IF and ELSE branches.
-        if self.parent:
-            errors = self._get_errors(node)
-            self.block = self.parent.body.create_if(
-                node.condition, lineno=node.lineno, error=format_error(errors)
-            )
-        # ELSE IF and ELSE branches (orelse)
-        else:
-            self.block = If(node.condition, lineno=node.lineno)
-        for child_node in node.body:
-            self.visit(child_node)
-        if node.orelse:
-            self.block.orelse = IfBuilder().build(node.orelse)
-        return self.block
+        model = self.parent.body.create_if(lineno=node.lineno,
+                                           error=format_error(self._get_errors(node)))
+        while node:
+            self.model = model.body.create_branch(node.type, node.condition,
+                                                  lineno=node.lineno)
+            for step in node.body:
+                self.visit(step)
+            node = node.orelse
+        return model
 
     def _get_errors(self, node):
         errors = node.header.errors + node.errors
@@ -332,17 +325,17 @@ class IfBuilder(NodeVisitor):
         return errors
 
     def visit_KeywordCall(self, node):
-        self.block.body.create_keyword(name=node.keyword, args=node.args,
+        self.model.body.create_keyword(name=node.keyword, args=node.args,
                                        assign=node.assign, lineno=node.lineno)
 
     def visit_TemplateArguments(self, node):
-        self.block.body.create_keyword(args=node.args, lineno=node.lineno)
+        self.model.body.create_keyword(args=node.args, lineno=node.lineno)
 
     def visit_If(self, node):
-        IfBuilder(self.block).build(node)
+        IfBuilder(self.model).build(node)
 
     def visit_For(self, node):
-        ForBuilder(self.block).build(node)
+        ForBuilder(self.model).build(node)
 
 
 def format_error(errors):

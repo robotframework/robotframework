@@ -32,24 +32,24 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 
 """
 
+from collections import OrderedDict
 from itertools import chain
 import warnings
 
 from robot import model
-from robot.conf.status import Status
-from robot.model import TotalStatisticsBuilder, Keywords
+from robot.model import BodyItem, Keywords, TotalStatisticsBuilder
 from robot.utils import get_elapsed_time, setter
 
 from .configurer import SuiteConfigurer
 from .messagefilter import MessageFilter
+from .modeldeprecation import deprecated, DeprecatedAttributesMixin
 from .keywordremover import KeywordRemover
-from .suiteteardownfailed import (SuiteTeardownFailureHandler,
-                                  SuiteTeardownFailed)
+from .suiteteardownfailed import SuiteTeardownFailed, SuiteTeardownFailureHandler
 
 
 class Body(model.Body):
-    __slots__ = []
     message_class = None
+    __slots__ = []
 
     def create_message(self, *args, **kwargs):
         return self.append(self.message_class(*args, **kwargs))
@@ -61,30 +61,187 @@ class Body(model.Body):
                              (self.message_class, messages)], predicate)
 
 
+class ForIterations(Body):
+    for_iteration_class = None
+    keyword_class = None
+    if_class = None
+    for_class = None
+    __slots__ = []
+
+    def create_iteration(self, *args, **kwargs):
+        return self.append(self.for_iteration_class(*args, **kwargs))
+
+
+class IfBranches(Body, model.IfBranches):
+    __slots__ = []
+
+
 @Body.register
 class Message(model.Message):
     __slots__ = []
 
 
+class StatusMixin(object):
+    __slots__ = []
+    PASS = 'PASS'
+    FAIL = 'FAIL'
+    SKIP = 'SKIP'
+    NOT_RUN = 'NOT RUN'
+    NOT_SET = 'NOT SET'
+
+    @property
+    def elapsedtime(self):
+        """Total execution time in milliseconds."""
+        return get_elapsed_time(self.starttime, self.endtime)
+
+    @property
+    def passed(self):
+        """``True`` when :attr:`status` is 'PASS', ``False`` otherwise."""
+        return self.status == self.PASS
+
+    @passed.setter
+    def passed(self, passed):
+        self.status = self.PASS if passed else self.FAIL
+
+    @property
+    def failed(self):
+        """``True`` when :attr:`status` is 'FAIL', ``False`` otherwise."""
+        return self.status == self.FAIL
+
+    @failed.setter
+    def failed(self, failed):
+        self.status = self.FAIL if failed else self.PASS
+
+    @property
+    def skipped(self):
+        """``True`` when :attr:`status` is 'SKIP', ``False`` otherwise.
+
+        Setting to ``False`` value is ambiguous and raises an exception.
+        """
+        return self.status == self.SKIP
+
+    @skipped.setter
+    def skipped(self, skipped):
+        if not skipped:
+            raise ValueError("`skipped` value must be truthy, got '%s'." % skipped)
+        self.status = self.SKIP
+
+    @property
+    def not_run(self):
+        """``True`` when :attr:`status` is 'NOT RUN', ``False`` otherwise.
+
+        Setting to ``False`` value is ambiguous and raises an exception.
+        """
+        return self.status == self.NOT_RUN
+
+    @not_run.setter
+    def not_run(self, not_run):
+        if not not_run:
+            raise ValueError("`not_run` value must be truthy, got '%s'." % not_run)
+        self.status = self.NOT_RUN
+
+
+@ForIterations.register
+class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
+    type = BodyItem.FOR_ITERATION
+    body_class = Body
+    repr_args = ('variables',)
+    __slots__ = ['variables', 'status', 'starttime', 'endtime', 'doc']
+
+    def __init__(self, variables=None, status='FAIL', starttime=None, endtime=None,
+                 doc='', parent=None):
+        self.variables = variables or OrderedDict()
+        self.parent = parent
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.doc = doc
+        self.body = None
+
+    @setter
+    def body(self, body):
+        return self.body_class(self, body)
+
+    def visit(self, visitor):
+        visitor.visit_for_iteration(self)
+
+    @property
+    @deprecated
+    def name(self):
+        return ', '.join('%s = %s' % item for item in self.variables.items())
+
+
 @Body.register
-class Keyword(model.Keyword):
+class For(model.For, StatusMixin, DeprecatedAttributesMixin):
+    body_class = ForIterations
+    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+
+    def __init__(self, variables=(),  flavor='IN', values=(), status='FAIL',
+                 starttime=None, endtime=None, doc='', parent=None):
+        model.For.__init__(self, variables, flavor, values, parent)
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.doc = doc
+
+    @property
+    @deprecated
+    def name(self):
+        return '%s %s [ %s ]' % (' | '.join(self.variables), self.flavor,
+                                 ' | '.join(self.values))
+
+
+@Body.register
+class If(model.If, StatusMixin, DeprecatedAttributesMixin):
+    body_class = IfBranches
+    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+
+    def __init__(self, parent=None, status='FAIL', starttime=None, endtime=None, doc=''):
+        model.If.__init__(self, parent)
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.doc = doc
+
+
+@IfBranches.register
+class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
+    body_class = Body
+    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+
+    def __init__(self, type=BodyItem.IF, condition=None, status='FAIL',
+                 starttime=None, endtime=None, doc='', parent=None):
+        model.IfBranch.__init__(self, type, condition, parent)
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.doc = doc
+
+    @property
+    @deprecated
+    def name(self):
+        return self.condition
+
+
+@Body.register
+class Keyword(model.Keyword, StatusMixin):
     """Represents results of a single keyword.
 
     See the base class for documentation of attributes not documented here.
     """
+    body_class = Body
     __slots__ = ['kwname', 'libname', 'status', 'starttime', 'endtime', 'message',
-                 'lineno', 'source']
+                 'sourcename']
 
     def __init__(self, kwname='', libname='', doc='', args=(), assign=(), tags=(),
-                 timeout=None, type='kw', status=Status.FAIL, starttime=None, endtime=None,
-                 parent=None, lineno=None, source=None):
+                 timeout=None, type=BodyItem.KEYWORD, status='FAIL', starttime=None,
+                 endtime=None, parent=None, sourcename=None):
         model.Keyword.__init__(self, None, doc, args, assign, tags, timeout, type, parent)
         #: Name of the keyword without library or resource name.
         self.kwname = kwname
         #: Name of the library or resource containing this keyword.
         self.libname = libname
-        #: Execution status as a string. Typically ``PASS``, ``FAIL`` or ``SKIP``,
-        #: but library keywords have status ``NOT_RUN`` in the dry-ryn mode.
+        #: Execution status as a string. ``PASS``, ``FAIL``, ``SKIP`` or ``NOT RUN``.
         self.status = status
         #: Keyword execution start time in format ``%Y%m%d %H:%M:%S.%f``.
         self.starttime = starttime
@@ -92,14 +249,14 @@ class Keyword(model.Keyword):
         self.endtime = endtime
         #: Keyword status message. Used only if suite teardowns fails.
         self.message = ''
-        self.lineno = lineno
-        self.source = source
+        #: Original name of keyword with embedded arguments.
+        self.sourcename = sourcename
         self.body = None
 
     @setter
     def body(self, body):
         """Child keywords and messages as a :class:`~.Body` object."""
-        return Body(self, body)
+        return self.body_class(self, body)
 
     @property
     def keywords(self):
@@ -131,12 +288,8 @@ class Keyword(model.Keyword):
 
         Deprecated since Robot Framework 4.0. Use :att:`body` instead.
         """
+        warnings.warn("'Keyword.children' is deprecated. Use 'Keyword.body' instead.")
         return list(self.body)
-
-    @property
-    def elapsedtime(self):
-        """Total execution time in milliseconds."""
-        return get_elapsed_time(self.starttime, self.endtime)
 
     @property
     def name(self):
@@ -161,41 +314,8 @@ class Keyword(model.Keyword):
         self.kwname = None
         self.libname = None
 
-    @property
-    def passed(self):
-        """``True`` when :attr:`status` is 'PASS', ``False`` otherwise."""
-        return self.status == Status.PASS
 
-    @passed.setter
-    def passed(self, passed):
-        self.status = Status.PASS if passed else Status.FAIL
-
-    @property
-    def failed(self):
-        """``True`` when :attr:`status` is 'FAIL', ``False`` otherwise."""
-        return self.status == Status.FAIL
-
-    @failed.setter
-    def failed(self, failed):
-        self.status = Status.FAIL if failed else Status.PASS
-
-    @property
-    def skipped(self):
-        """``True`` when :attr:`status` is 'SKIP', ``False`` otherwise.
-
-        Setting to ``False`` value is ambiguous and raises an exception.
-        """
-        return self.status == Status.SKIP
-
-    @skipped.setter
-    def skipped(self, skipped):
-        if not skipped:
-            raise ValueError("`skipped` value must be truthy, got '%s'."
-                             % skipped)
-        self.status = Status.SKIP
-
-
-class TestCase(model.TestCase):
+class TestCase(model.TestCase, StatusMixin):
     """Represents results of a single test case.
 
     See the base class for documentation of attributes not documented here.
@@ -204,7 +324,7 @@ class TestCase(model.TestCase):
     body_class = Body
     fixture_class = Keyword
 
-    def __init__(self, name='', doc='', tags=None, timeout=None, status=Status.FAIL,
+    def __init__(self, name='', doc='', tags=None, timeout=None, status='FAIL',
                  message='', starttime=None, endtime=None):
         model.TestCase.__init__(self, name, doc, tags, timeout)
         #: Status as a string ``PASS`` or ``FAIL``. See also :attr:`passed`.
@@ -218,52 +338,16 @@ class TestCase(model.TestCase):
         self.endtime = endtime
 
     @property
-    def elapsedtime(self):
-        """Total execution time in milliseconds."""
-        return get_elapsed_time(self.starttime, self.endtime)
-
-    @property
-    def passed(self):
-        """``True`` when :attr:`status` is 'PASS', ``False`` otherwise."""
-        return self.status == Status.PASS
-
-    @passed.setter
-    def passed(self, passed):
-        self.status = Status.PASS if passed else Status.FAIL
-
-    @property
-    def failed(self):
-        """``True`` when :attr:`status` is 'FAIL', ``False`` otherwise."""
-        return self.status == Status.FAIL
-
-    @failed.setter
-    def failed(self, failed):
-        self.status = Status.FAIL if failed else Status.PASS
-
-    @property
-    def skipped(self):
-        """``True`` when :attr:`status` is 'SKIP', ``False`` otherwise.
-
-        Setting to ``False`` value is ambiguous and raises an exception.
-        """
-        return self.status == Status.SKIP
-
-    @skipped.setter
-    def skipped(self, skipped):
-        if not skipped:
-            raise ValueError("`skipped` value must be truthy, got '%s'."
-                             % skipped)
-        self.status = Status.SKIP
+    def not_run(self):
+        return False
 
     @property
     def critical(self):
-        warnings.warn("'TestCase.criticality' has been deprecated and always "
-                      " returns 'True'.",
-                      UserWarning)
+        warnings.warn("'TestCase.critical' is deprecated and always returns 'True'.")
         return True
 
 
-class TestSuite(model.TestSuite):
+class TestSuite(model.TestSuite, StatusMixin):
     """Represents results of a single test suite.
 
     See the base class for documentation of attributes not documented here.
@@ -285,17 +369,21 @@ class TestSuite(model.TestSuite):
     @property
     def passed(self):
         """``True`` if no test has failed but some have passed, ``False`` otherwise."""
-        return self.status == Status.PASS
+        return self.status == self.PASS
 
     @property
     def failed(self):
         """``True`` if any test has failed, ``False`` otherwise."""
-        return self.status == Status.FAIL
+        return self.status == self.FAIL
 
     @property
     def skipped(self):
         """``True`` if there are no passed or failed tests, ``False`` otherwise."""
-        return self.status == Status.SKIP
+        return self.status == self.SKIP
+
+    @property
+    def not_run(self):
+        return False
 
     @property
     def status(self):
@@ -308,10 +396,10 @@ class TestSuite(model.TestSuite):
         """
         stats = self.statistics  # Local variable avoids recreating stats.
         if stats.failed:
-            return Status.FAIL
+            return self.FAIL
         if stats.passed:
-            return Status.PASS
-        return Status.SKIP
+            return self.PASS
+        return self.SKIP
 
     @property
     def statistics(self):

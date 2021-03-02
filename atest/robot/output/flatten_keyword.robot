@@ -58,7 +58,7 @@ Flattened in log after execution
 Flatten for loops
     Run Rebot    --flatten For    ${OUTFILE COPY}
     ${tc} =    Check Test Case    For loop
-    Should Be Equal    ${tc.kws[0].type}    for
+    Should Be Equal    ${tc.kws[0].type}    FOR
     Should Be Equal    ${tc.kws[0].doc}    ${FLAT TEXT}
     Length Should Be    ${tc.kws[0].kws}    0
     Length Should Be    ${tc.kws[0].msgs}    60
@@ -71,15 +71,15 @@ Flatten for loops
         Check Log Message    ${tc.kws[0].msgs[${index * 6 + 5}]}    1
     END
 
-Flatten for loop items
+Flatten for loop iterations
     Run Rebot    --flatten ForItem    ${OUTFILE COPY}
     ${tc} =    Check Test Case    For loop
-    Should Be Equal    ${tc.kws[0].type}    for
+    Should Be Equal    ${tc.kws[0].type}    FOR
     Should Be Empty    ${tc.kws[0].doc}
     Length Should Be    ${tc.kws[0].kws}    10
     Should Be Empty    ${tc.kws[0].msgs}
     FOR    ${index}    IN RANGE    10
-        Should Be Equal      ${tc.kws[0].kws[${index}].type}    foritem
+        Should Be Equal      ${tc.kws[0].kws[${index}].type}    FOR ITERATION
         Should Be Equal      ${tc.kws[0].kws[${index}].doc}    ${FLAT TEXT}
         Should Be Empty      ${tc.kws[0].kws[${index}].kws}
         Length Should Be     ${tc.kws[0].kws[${index}].msgs}    6

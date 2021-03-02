@@ -13,13 +13,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.model import BodyItem
 from robot.output import LEVELS
 
 from .jsbuildingcontext import JsBuildingContext
 from .jsexecutionresult import JsExecutionResult
 
-KEYWORD_TYPES = {'kw': 0, 'setup': 1, 'teardown': 2, 'for': 3, 'foritem': 4,
-                 'if': 5, 'elseif': 6, 'else': 7}
+
+IF_ELSE_ROOT = BodyItem.IF_ELSE_ROOT
+KEYWORD_TYPES = {'KEYWORD': 0, 'SETUP': 1, 'TEARDOWN': 2,
+                 'FOR': 3, 'FOR ITERATION': 4,
+                 'IF': 5, 'ELSE IF': 6, 'ELSE': 7}
 MESSAGE_TYPE = 8
 
 
@@ -53,7 +57,9 @@ class _Builder(object):
         self._timestamp = self._context.timestamp
 
     def _get_status(self, item):
-        model = (item.status,
+        # Branch status with IF/ELSE, "normal" status with others.
+        status = getattr(item, 'branch_status', item.status)
+        model = (status,
                  self._timestamp(item.starttime),
                  item.elapsedtime)
         msg = getattr(item, 'message', '')
@@ -65,10 +71,18 @@ class _Builder(object):
             msg = self._string(msg)
         return model + (msg,)
 
-    def _build_keywords(self, kws, split=False):
+    def _build_keywords(self, steps, split=False):
         splitting = self._context.start_splitting_if_needed(split)
-        model = tuple(self._build_keyword(k) for k in kws)
+        model = tuple(self._build_keyword(step) for step in self._flatten_ifs(steps))
         return model if not splitting else self._context.end_splitting(model)
+
+    def _flatten_ifs(self, steps):
+        for step in steps:
+            if step.type != IF_ELSE_ROOT:
+                yield step
+            else:
+                for child in step.body:
+                    yield child
 
 
 class SuiteBuilder(_Builder):
@@ -138,14 +152,14 @@ class KeywordBuilder(_Builder):
         self._build_message = MessageBuilder(context).build
 
     def build(self, item, split=False):
-        if item.type == item.MESSAGE_TYPE:
+        if item.type == item.MESSAGE:
             return self._build_message(item)
         return self.build_keyword(item, split)
 
     def build_keyword(self, kw, split=False):
         self._context.check_expansion(kw)
         kws = list(kw.body)
-        if kw.teardown:
+        if getattr(kw, 'teardown', None):
             kws.append(kw.teardown)
         with self._context.prune_input(kw.body):
             return (KEYWORD_TYPES[kw.type],

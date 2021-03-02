@@ -19,6 +19,14 @@ Subpackages
 Submodules
 ----------
 
+robot.running.bodyrunner module
+-------------------------------
+
+.. automodule:: robot.running.bodyrunner
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.running.context module
 ----------------------------
 
@@ -143,14 +151,6 @@ robot.running.statusreporter module
 -----------------------------------
 
 .. automodule:: robot.running.statusreporter
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-robot.running.steprunner module
--------------------------------
-
-.. automodule:: robot.running.steprunner
    :members:
    :undoc-members:
    :show-inheritance:

@@ -40,4 +40,4 @@ In FOR separator
 
 In ELSE IF
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[3].kws[0].msgs[0]}    Should be executed
+    Check Log Message    ${tc.body[0].body[3].body[0].msgs[0]}    Should be executed
