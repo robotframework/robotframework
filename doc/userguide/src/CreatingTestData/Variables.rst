@@ -510,16 +510,19 @@ variables slightly more explicit.
    ${NAME} =       Robot Framework
    ${VERSION} =    2.0
 
-If a scalar variable has a long value, it can be split to multiple columns and
-rows__. By default cells are catenated together using a space, but this
-can be changed by having `SEPARATOR=<sep>` in the first cell.
+If a scalar variable has a long value, it can be `split into multiple rows`__
+by using the `...` syntax. By default rows are concatenated together using
+a space, but this can be changed by having `SEPARATOR=<sep>` as the first item.
 
 .. sourcecode:: robotframework
 
    *** Variables ***
-   ${EXAMPLE}      This value is joined    together with a space
-   ${MULTILINE}    SEPARATOR=\n    First line
-   ...             Second line     Third line
+   ${EXAMPLE}      This value is joined
+   ...             together with a space.
+   ${MULTILINE}    SEPARATOR=\n
+   ...             First line.
+   ...             Second line.
+   ...             Third line.
 
 __ `Dividing data to several rows`_
 
