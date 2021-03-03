@@ -54,5 +54,11 @@ Test Setup And Teardown Fails
 robot.api.Failure
     Check Test Case    ${TEST NAME}
 
+robot.api.Failure with HTML message
+    Check Test Case    ${TEST NAME}
+
 robot.api.Error
+    Check Test Case    ${TEST NAME}
+
+robot.api.Error with HTML message
     Check Test Case    ${TEST NAME}

@@ -26,10 +26,17 @@ class Failure(AssertionError):
     """Report failed validation.
 
     There is no practical difference in using this exception compared to using
-    the standard ``AssertionError``. The main benefit of using this exception is
-    that its name is consistent with other exceptions in this module.
+    the standard ``AssertionError``. The main benefits are HTML support and that
+    the name of this exception is consistent with other exceptions in this module.
     """
     ROBOT_SUPPRESS_NAME = True
+
+    def __init__(self, message, html=False):
+        """
+        :param message: Exception message.
+        :param html: When ``True``, message is considered to be HTML and not escaped.
+        """
+        AssertionError.__init__(self, message if not html else '*HTML* ' + message)
 
 
 class ContinuableFailure(Failure):
@@ -43,11 +50,19 @@ class Error(RuntimeError):
     Failures related to the system not behaving as expected should typically be
     reported using the :class:`Failure` exception or the standard ``AssertionError``.
     This exception can be used, for example, if the keyword is used incorrectly.
-    There is no practical difference, other than consistent naming with other
-    exceptions in this module, compared to using this exception and the standard
-    ``RuntimeError``.
+
+    There is no practical difference in using this exception compared to using
+    the standard ``RuntimeError``. The main benefits are HTML support and that
+    the name of this exception is consistent with other exceptions in this module.
     """
     ROBOT_SUPPRESS_NAME = True
+
+    def __init__(self, message, html=False):
+        """
+        :param message: Exception message.
+        :param html: When ``True``, message is considered to be HTML and not escaped.
+        """
+        RuntimeError.__init__(self, message if not html else '*HTML* ' + message)
 
 
 class FatalError(Error):
@@ -60,3 +75,10 @@ class SkipExecution(Exception):
     """Mark the executed test or task skipped."""
     ROBOT_SKIP_EXECUTION = True
     ROBOT_SUPPRESS_NAME = True
+
+    def __init__(self, message, html=False):
+        """
+        :param message: Exception message.
+        :param html: When ``True``, message is considered to be HTML and not escaped.
+        """
+        Exception.__init__(self, message if not html else '*HTML* ' + message)
