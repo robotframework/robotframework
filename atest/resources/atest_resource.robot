@@ -143,10 +143,14 @@ Get Output File
     [Return]    ${file}
 
 File Should Contain
-    [Arguments]    ${path}    @{expected}
+    [Arguments]    ${path}    @{expected}    ${count}=None
     ${exp} =    Catenate    @{expected}
     ${file} =    Get Output File    ${path}
-    Should Contain    ${file}    ${exp}
+    IF    not ${count}
+        Should Contain    ${file}    ${exp}
+    ELSE
+        Should Contain X Times    ${file}    ${exp}    ${count}
+    END
 
 File Should Not Contain
     [Arguments]    ${path}    @{expected}
@@ -213,8 +217,8 @@ Stderr Should Be Empty
     Should Be Empty    ${stderr}    Errors in test execution:\n${stderr}
 
 Stderr Should Contain
-    [Arguments]    @{expected}
-    File Should Contain    ${STDERR_FILE}    @{expected}
+    [Arguments]    @{expected}    ${count}=None
+    File Should Contain    ${STDERR_FILE}    @{expected}    count=${count}
 
 Stderr Should Not Contain
     [Arguments]    @{expected}
@@ -229,8 +233,8 @@ Stderr Should Contain Regexp
     File Should Contain Regexp    ${STDERR_FILE}    @{expected}
 
 Stdout Should Contain
-    [Arguments]    @{expected}
-    File Should Contain    ${STDOUT_FILE}    @{expected}
+    [Arguments]    @{expected}    ${count}=None
+    File Should Contain    ${STDOUT_FILE}    @{expected}    count=${count}
 
 Stdout Should Not Contain
     [Arguments]    @{expected}
