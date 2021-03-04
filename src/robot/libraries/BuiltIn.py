@@ -1844,6 +1844,9 @@ class _RunKeyword(_BuiltInBase):
     def run_keyword_if(self, condition, name, *args):
         """Runs the given keyword with the given arguments, if ``condition`` is true.
 
+        *NOTE:* Robot Framework 4.0 introduced built-in IF/ELSE support and using
+        that is generally recommended over using this keyword.
+
         The given ``condition`` is evaluated in Python as explained in
         `Evaluating expressions`, and ``name`` and ``*args`` have same
         semantics as with `Run Keyword`.
