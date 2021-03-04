@@ -621,9 +621,8 @@ class _Verify(_BuiltInBase):
         If ``strip_spaces`` is given a true value (see `Boolean arguments`)
         and both arguments are strings, the comparison is done without leading
         and trailing spaces. If ``strip_spaces`` is given a string value
-        ``leading`` or ``trailing`` and both arguments are strings, the
-        comparison is done without leading or trailing spaces respectively.
-        The default value is ``False``.
+        ``LEADING`` or ``TRAILING`` (case-insensitive), the comparison is done
+        without leading or trailing spaces, respectively.
 
         Examples:
         | Should Be Equal | ${x} | expected |
@@ -631,8 +630,8 @@ class _Verify(_BuiltInBase):
         | Should Be Equal | ${x} | expected | Custom message | values=False |
         | Should Be Equal | ${x} | expected | ignore_case=True | formatter=repr |
 
-        ``ignore_case`` and ``formatter`` are new features in Robot Framework
-        3.0.1 and 3.1.2, respectively.
+        ``formatter`` is new in Robot Framework 3.1.2 and ``strip_spaces`` is new
+        in Robot Framework 4.0.
         """
         self._log_types_at_info_if_different(first, second)
         if is_truthy(ignore_case) and is_string(first) and is_string(second):
@@ -698,11 +697,10 @@ class _Verify(_BuiltInBase):
         If ``strip_spaces`` is given a true value (see `Boolean arguments`)
         and both arguments are strings, the comparison is done without leading
         and trailing spaces. If ``strip_spaces`` is given a string value
-        ``leading`` or ``trailing`` and both arguments are strings, the
-        comparison is done without leading or trailing spaces respectively.
-        The default value is ``False``.
+        ``LEADING`` or ``TRAILING`` (case-insensitive), the comparison is done
+        without leading or trailing spaces, respectively.
 
-        New option in Robot Framework 3.0.1.
+        ``strip_spaces`` is new in Robot Framework 4.0.
         """
         self._log_types_at_info_if_different(first, second)
         if is_truthy(ignore_case) and is_string(first) and is_string(second):
@@ -821,14 +819,13 @@ class _Verify(_BuiltInBase):
         If ``strip_spaces`` is given a true value (see `Boolean arguments`)
         and both arguments are strings, the comparison is done without leading
         and trailing spaces. If ``strip_spaces`` is given a string value
-        ``leading`` or ``trailing`` and both arguments are strings, the
-        comparison is done without leading or trailing spaces respectively.
-        The default value is ``False``.
+        ``LEADING`` or ``TRAILING`` (case-insensitive), the comparison is done
+        without leading or trailing spaces, respectively.
 
         Strings are always [http://www.macchiato.com/unicode/nfc-faq|
         NFC normalized].
 
-        ``ignore_case`` is a new feature in Robot Framework 3.0.1.
+        ``strip_spaces`` is new in Robot Framework 4.0.
         """
         self._log_types_at_info_if_different(first, second)
         first = self._convert_to_string(first)
@@ -855,15 +852,14 @@ class _Verify(_BuiltInBase):
         If ``strip_spaces`` is given a true value (see `Boolean arguments`)
         and both arguments are strings, the comparison is done without leading
         and trailing spaces. If ``strip_spaces`` is given a string value
-        ``leading`` or ``trailing`` and both arguments are strings, the
-        comparison is done without leading or trailing spaces respectively.
-        The default value is ``False``.
+        ``LEADING`` or ``TRAILING`` (case-insensitive), the comparison is done
+        without leading or trailing spaces, respectively.
 
         Strings are always [http://www.macchiato.com/unicode/nfc-faq|
         NFC normalized].
 
-        ``ignore_case`` and ``formatter`` are new features in Robot Framework
-        3.0.1 and 3.1.2, respectively.
+        ``formatter`` is new in Robot Framework 3.1.2 and ``strip_spaces`` is new
+        in Robot Framework 4.0.
         """
         self._log_types_at_info_if_different(first, second)
         first = self._convert_to_string(first)
@@ -963,13 +959,14 @@ class _Verify(_BuiltInBase):
         If ``strip_spaces`` is given a true value (see `Boolean arguments`)
         and both arguments are strings, the comparison is done without leading
         and trailing spaces. If ``strip_spaces`` is given a string value
-        ``leading`` or ``trailing`` and both arguments are strings, the
-        comparison is done without leading or trailing spaces respectively.
-        The default value is ``False``.
+        ``LEADING`` or ``TRAILING`` (case-insensitive), the comparison is done
+        without leading or trailing spaces, respectively.
 
         Examples:
         | Should Not Contain | ${some list} | value  |
         | Should Not Contain | ${output}    | FAILED | ignore_case=True |
+
+        ``strip_spaces`` is new in Robot Framework 4.0.
         """
         # TODO: It is inconsistent that errors show original case in 'container'
         # 'item' is in lower case. Should rather show original case everywhere
@@ -1006,20 +1003,20 @@ class _Verify(_BuiltInBase):
         If ``ignore_case`` is given a true value (see `Boolean arguments`) and
         compared items are strings, it indicates that comparison should be
         case-insensitive. If the ``container`` is a list-like object, string
-        items in it are compared case-insensitively. New option in Robot
-        Framework 3.0.1.
+        items in it are compared case-insensitively.
 
         If ``strip_spaces`` is given a true value (see `Boolean arguments`)
         and both arguments are strings, the comparison is done without leading
         and trailing spaces. If ``strip_spaces`` is given a string value
-        ``leading`` or ``trailing`` and both arguments are strings, the
-        comparison is done without leading or trailing spaces respectively.
-        The default value is ``False``.
+        ``LEADING`` or ``TRAILING`` (case-insensitive), the comparison is done
+        without leading or trailing spaces, respectively.
 
         Examples:
         | Should Contain | ${output}    | PASS  |
         | Should Contain | ${some list} | value | msg=Failure! | values=False |
         | Should Contain | ${some list} | value | ignore_case=True |
+
+        ``strip_spaces`` is new in Robot Framework 4.0.
         """
         orig_container = container
         if is_truthy(ignore_case) and is_string(item):
@@ -1059,8 +1056,6 @@ class _Verify(_BuiltInBase):
         | Should Contain Any | ${list}   | item 1 | item 2 | item 3 |
         | Should Contain Any | ${list}   | item 1 | item 2 | item 3 | ignore_case=True |
         | Should Contain Any | ${list}   | @{items} | msg=Custom message | values=False |
-
-        New in Robot Framework 3.0.1.
         """
         msg = configuration.pop('msg', None)
         values = configuration.pop('values', True)
@@ -1114,8 +1109,6 @@ class _Verify(_BuiltInBase):
         | Should Not Contain Any | ${list}   | item 1 | item 2 | item 3 |
         | Should Not Contain Any | ${list}   | item 1 | item 2 | item 3 | ignore_case=True |
         | Should Not Contain Any | ${list}   | @{items} | msg=Custom message | values=False |
-
-        New in Robot Framework 3.0.1.
         """
         msg = configuration.pop('msg', None)
         values = configuration.pop('values', True)
@@ -1158,22 +1151,20 @@ class _Verify(_BuiltInBase):
 
         If ``ignore_case`` is given a true value (see `Boolean arguments`) and
         compared items are strings, it indicates that comparison should be
-        case-insensitive.
+        case-insensitive. If the ``container`` is a list-like object, string
+        items in it are compared case-insensitively.
 
         If ``strip_spaces`` is given a true value (see `Boolean arguments`)
         and both arguments are strings, the comparison is done without leading
         and trailing spaces. If ``strip_spaces`` is given a string value
-        ``leading`` or ``trailing`` and both arguments are strings, the
-        comparison is done without leading or trailing spaces respectively.
-        The default value is ``False``.
-
-        If the ``container`` is a list-like object, string
-        items in it are compared case-insensitively. New option in Robot
-        Framework 3.0.1.
+        ``LEADING`` or ``TRAILING`` (case-insensitive), the comparison is done
+        without leading or trailing spaces, respectively.
 
         Examples:
         | Should Contain X Times | ${output}    | hello | 2 |
         | Should Contain X Times | ${some list} | value | 3 | ignore_case=True |
+
+        ``strip_spaces`` is new in Robot Framework 4.0.
         """
         count = self._convert_to_integer(count)
         orig_container = container
@@ -1223,13 +1214,11 @@ class _Verify(_BuiltInBase):
         ``*``, ``?`` and ``[chars]`` acting as wildcards. See the
         `Glob patterns` section for more information.
 
-        If ``ignore_case`` is given a true value (see `Boolean arguments`) and
-        compared items are strings, it indicates that comparison should be
-        case-insensitive.
+        If ``ignore_case`` is given a true value (see `Boolean arguments`),
+        the comparison is case-insensitive.
 
         See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``, as well as for semantics
-        of the ``ignore_case`` option.
+        error message with ``msg`` and ``values`.
         """
         if self._matches(string, pattern, caseless=is_truthy(ignore_case)):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
@@ -1248,8 +1237,7 @@ class _Verify(_BuiltInBase):
         case-insensitive.
 
         See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``, as well as for semantics
-        of the ``ignore_case`` option.
+        error message with ``msg`` and ``values``.
         """
         if not self._matches(string, pattern, caseless=is_truthy(ignore_case)):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
@@ -1620,7 +1608,7 @@ class _Variables(_BuiltInBase):
         """Makes a variable available everywhere within the scope of the current task.
 
         This is an alias for `Set Test Variable` that is more applicable when
-        creating tasks, not tests. New in RF 3.1.
+        creating tasks, not tests. New in Robot Framework 3.1.
         """
         self.set_test_variable(name, *values)
 
@@ -2131,8 +2119,6 @@ class _RunKeyword(_BuiltInBase):
         | Repeat Keyword | 5 times   | Go to Previous Page |
         | Repeat Keyword | ${var}    | Some Keyword | arg1 | arg2 |
         | Repeat Keyword | 2 minutes | Some Keyword | arg1 | arg2 |
-
-        Specifying ``repeat`` as a timeout is new in Robot Framework 3.0.
         """
         try:
             count = self._get_repeat_count(repeat)
@@ -3567,8 +3553,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     | `Should Be Equal` | ${x} | ${y}  | Custom error | values=${FALSE}  | # Python ``False`` is false.   |
     | `Should Be Equal` | ${x} | ${y}  | Custom error | values=no values | # ``no values`` works with ``values`` argument |
 
-    Considering string ``NONE`` false is new in Robot Framework 3.0.3 and
-    considering also ``OFF`` and ``0`` false is new in Robot Framework 3.1.
+    Considering strings ``OFF`` and ``0`` false is new in Robot Framework 3.1.
 
     = Pattern matching =
 
