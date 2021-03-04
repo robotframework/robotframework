@@ -706,7 +706,7 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case) and is_string(first) and is_string(second):
             first = first.lower()
             second = second.lower()
-        if strip_spaces:
+        if strip_spaces and is_string(first) and is_string(second):
             first = self._strip_spaces(first, strip_spaces)
             second = self._strip_spaces(second, strip_spaces)
         self._should_not_be_equal(first, second, msg, values)
@@ -806,8 +806,8 @@ class _Verify(_BuiltInBase):
         second = self._convert_to_number(second, precision)
         self._should_be_equal(first, second, msg, values)
 
-    def should_not_be_equal_as_strings(self, first, second, msg=None,
-                                       values=True, ignore_case=False, strip_spaces=False):
+    def should_not_be_equal_as_strings(self, first, second, msg=None, values=True,
+                                       ignore_case=False, strip_spaces=False):
         """Fails if objects are equal after converting them to strings.
 
         See `Should Be Equal` for an explanation on how to override the default
@@ -839,7 +839,8 @@ class _Verify(_BuiltInBase):
         self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_strings(self, first, second, msg=None, values=True,
-                                   ignore_case=False, strip_spaces=False, formatter='str'):
+                                   ignore_case=False, strip_spaces=False,
+                                   formatter='str'):
         """Fails if objects are unequal after converting them to strings.
 
         See `Should Be Equal` for an explanation on how to override the default
