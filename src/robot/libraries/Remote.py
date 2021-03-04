@@ -71,10 +71,7 @@ class Remote(object):
         def decorator(f):
             @wraps(f)
             def wrapper(self, name=None):
-                self._build_kw_info_cache()
-                if info_type == 'names':
-                    return self._kw_cache.keys() if self._kw_cache else f(self)
-                elif self._kw_cache:
+                if self._kw_cache:
                     return self._kw_cache.get(info_type, dict()).get(name, default)
                 else:
                     try:
@@ -91,19 +88,19 @@ class Remote(object):
             { "keyword_name" : { 'args':[], 'tags':[], 'doc':"", 'types':[]},
               "kw2"          : {...}, etc. }
         """
-        if self._kw_cache is None:
-            self._kw_cache = False
-            try:
-                self._kw_cache = self._client.get_library_information()
-                self._kw_cache['__intro__'] = dict(
-                    doc=self._client.get_keyword_documentation('__intro__'))
-                self._kw_cache['__init__'] = dict(
-                    doc=self._client.get_keyword_documentation('__init__'))
-            except TypeError:
-                pass # Best effort failed, fall back to regular loading
+        try:
+            self._kw_cache = self._client.get_library_information()
+            self._kw_cache['__intro__'] = dict(
+                doc=self._client.get_keyword_documentation('__intro__'))
+            self._kw_cache['__init__'] = dict(
+                doc=self._client.get_keyword_documentation('__init__'))
+        except TypeError:
+            pass # Best effort failed, fall back to regular loading
 
-    @_cached('names')
     def get_keyword_names(self):
+        self._build_kw_info_cache()
+        if self._kw_cache:
+            return self._kw_cache.keys()
         try:
             return self._client.get_keyword_names()
         except TypeError as error:
