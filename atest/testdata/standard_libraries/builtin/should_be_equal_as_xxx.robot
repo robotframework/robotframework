@@ -85,6 +85,51 @@ Should Be Equal As Strings case-insensitive
     HYVÄÄ YÖTÄ    hyvää yötä    repr=yes    ignore_case=yes
     YÖTÄ          PÄIVÄÄ        ignore_case=True
 
+Should Be Equal As Strings without leading spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) YÖTÄ != yötä
+    ...
+    ...    2) test\t != test
+    [Template]    Should Be Equal As Strings
+    \ \t1            ${SPACE}${1}     strip_spaces=Leading
+    ${SPACE}test     \ttest           strip_spaces=LEADING
+    test\ \ value    test\ \ value    strip_spaces=leading
+    \n yötä          \työtä           repr=yes    strip_spaces=leading
+    ${SPACE}         ${EMPTY}         strip_spaces=leading
+    \t\nYÖTÄ         \t\nyötä         strip_spaces=leading
+    ${SPACE}test\t   test             strip_spaces=leading
+
+Should Be Equal As Strings without trailing spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) YÖTÄ != yötä
+    ...
+    ...    2) ${SPACE}test != test
+    [Template]    Should Be Equal As Strings
+    1${SPACE * 5}      ${1}${SPACE}       strip_spaces=trailing
+    \ttest\tvalue\t    \ttest\tvalue\t    strip_spaces=TRAILING
+    yötä\n \t          yötä\t             repr=yes    strip_spaces=trailing
+    ${SPACE}           ${EMPTY}           strip_spaces=trailing
+    YÖTÄ\n\t           yötä\t\n           strip_spaces=trailing
+    ${SPACE}test\t     test               strip_spaces=trailing
+
+Should Be Equal As Strings without leading and trailing spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) YÖTÄ != PÄIVÄÄ
+    ...
+    ...    2) \ test 1\t != \ttest 1\t
+    [Template]    Should Be Equal As Strings
+    \tHelsinki               Helsinki\t      strip_spaces=truE
+    1${SPACE * 5}            \t${1}          strip_spaces=Yes
+    \ttest\tvalue${SPACE}    test\tvalue     strip_spaces=true
+    test                     \ttest\t        strip_spaces=true
+    ${SPACE}HYVÄÄ\t          \tHYVÄÄ\t       repr=yes    strip_spaces=True
+    ${SPACE}                 ${EMPTY}        strip_spaces=True
+    \tYÖTÄ\n\t               \n\ PÄIVÄÄ\t    strip_spaces=True
+    ${SPACE}test 1\t         \ttest 1\t      strip_spaces=no
+
 Should Be Equal As Strings repr
     [Documentation]    FAIL Several failures occurred:
     ...
@@ -134,3 +179,36 @@ Should Not Be Equal As Strings case-insensitive
     1        ${1.1}     ignore_case=True
     Hyvää    päivää     ignore_case=yes
     true     ${True}    ignore_case=yeah
+
+Should Not Be Equal As Strings without leading spaces
+    [Documentation]     FAIL Several failures occurred:
+    ...
+    ...    1) 1 == 1
+    ...
+    ...    2) Hyvää == Hyvää
+    [Template]    Should Not Be Equal As Strings
+    \t1         ${1}             strip_spaces=leading
+    Hyvää       ${SPACE}Hyvää    strip_spaces=Leading
+    \n${2}\t    ${SPACE}2\n\t    strip_spaces=LEADING
+
+Should Not Be Equal As Strings without trailing spaces
+    [Documentation]     FAIL Several failures occurred:
+    ...
+    ...    1) 1 == 1
+    ...
+    ...    2) Hyvää == Hyvää
+    [Template]    Should Not Be Equal As Strings
+    1\t         ${1}         strip_spaces=trailing
+    Hyvää       Hyvää\n\t    strip_spaces=Trailing
+    \t${2}\n    \n\t2\n      strip_spaces=TRAILING
+
+Should Not Be Equal As Strings without leading and trailing spaces
+    [Documentation]     FAIL Several failures occurred:
+    ...
+    ...    1) 1 == 1
+    ...
+    ...    2) Hyvää == Hyvää
+    [Template]    Should Not Be Equal As Strings
+    \t1${SPACE}    \ ${1}\t     strip_spaces=True
+    \tHyvää        \tHyvää\n    strip_spaces=yes
+    \ntest\t       \ttest \n    strip_spaces=no
