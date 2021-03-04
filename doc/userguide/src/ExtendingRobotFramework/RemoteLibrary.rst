@@ -206,6 +206,13 @@ The method, and also the exposed keyword, should return `True`
 or `False` depending on whether stopping is allowed or not. That makes it
 possible for external tools to know if stopping the server succeeded.
 
+Performance improvements at load-time can be achieved by implementing the
+`get_library_information` method. When supported by the remote server, Robot
+Framework will utilize this method to load all information in a single call.
+Without `get_library_information`, all `get_keyword_*` methods will be invoked
+separately for each individual keyword, causing significant delays when loading
+large libraries.
+
 The `Python remote server`__ can be used as a reference implementation.
 
 __ https://github.com/robotframework/PythonRemoteServer
