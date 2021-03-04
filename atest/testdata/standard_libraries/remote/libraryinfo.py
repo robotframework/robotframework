@@ -16,20 +16,21 @@ class BulkLoadRemoteServer(RemoteServer):
     def get_library_information(self):
         info_dict = dict()
         for kw in self.get_keyword_names():
-            info_dict[kw] = dict(args=self.get_keyword_arguments(kw),
-                                 tags=self.get_keyword_tags(kw),
-                                 doc=self.get_keyword_documentation(kw))
+            info_dict[kw] = dict(args=['*args'] if kw == 'some_keyword' else ['arg=None'],
+                                 doc="Documentation for '%s'." % kw,
+                                 tags=['tag', kw],
+                                 types=['bool'] if kw == 'some_keyword' else ['int'])
         return info_dict
+
 
 class The10001KeywordsLibrary(object):
 
     def __init__(self):
-        def count(n): return lambda: "%d"%n
         for i in range(10000):
-            setattr(self, "keyword_%d"%i, count(i))
+            setattr(self, 'keyword_%d' % i, lambda result=str(i): result)
 
-    def some_keyword(self):
-        return "some"
+    def some_keyword(self, arg=True, *extra):
+        return 'yes' if arg else 'no'
 
 
 if __name__ == '__main__':
