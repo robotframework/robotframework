@@ -66,26 +66,33 @@ class Remote(object):
         self._uri = uri
         self._client = XmlRpcRemoteClient(uri, timeout)
         self._lib_info = None
+        self._lib_info_initialized = False
 
     def get_keyword_names(self):
-        try:
-            self._lib_info = self._client.get_library_information()
-        except TypeError:
-            pass
-        else:
-            return self._lib_info.keys()
+        if self._initialize_lib_info():
+            return [name for name in self._lib_info
+                    if not (name[:2] == '__' and name[-2:] == '__')]
         try:
             return self._client.get_keyword_names()
         except TypeError as error:
             raise RuntimeError('Connecting remote server at %s failed: %s'
                                % (self._uri, error))
 
+    def _initialize_lib_info(self):
+        if not self._lib_info_initialized:
+            try:
+                self._lib_info = self._client.get_library_information()
+            except TypeError:
+                pass
+            self._lib_info_initialized = True
+        return self._lib_info is not None
+
     def get_keyword_arguments(self, name):
         return self._get_kw_info(name, 'args', self._client.get_keyword_arguments,
                                  default=['*args'])
 
     def _get_kw_info(self, kw, info, getter, default=None):
-        if self._lib_info is not None:
+        if self._initialize_lib_info():
             return self._lib_info[kw].get(info, default)
         try:
             return getter(kw)
