@@ -69,7 +69,7 @@ class Remote(object):
         self._lib_info_initialized = False
 
     def get_keyword_names(self):
-        if self._initialize_lib_info():
+        if self._is_lib_info_available():
             return [name for name in self._lib_info
                     if not (name[:2] == '__' and name[-2:] == '__')]
         try:
@@ -78,7 +78,7 @@ class Remote(object):
             raise RuntimeError('Connecting remote server at %s failed: %s'
                                % (self._uri, error))
 
-    def _initialize_lib_info(self):
+    def _is_lib_info_available(self):
         if not self._lib_info_initialized:
             try:
                 self._lib_info = self._client.get_library_information()
@@ -92,7 +92,7 @@ class Remote(object):
                                  default=['*args'])
 
     def _get_kw_info(self, kw, info, getter, default=None):
-        if self._initialize_lib_info():
+        if self._is_lib_info_available():
             return self._lib_info[kw].get(info, default)
         try:
             return getter(kw)
