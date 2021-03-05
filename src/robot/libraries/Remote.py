@@ -100,7 +100,8 @@ class Remote(object):
             return default
 
     def get_keyword_types(self, name):
-        return self._get_kw_info(name, 'types', self._client.get_keyword_types)
+        return self._get_kw_info(name, 'types', self._client.get_keyword_types,
+                                 default=())
 
     def get_keyword_tags(self, name):
         return self._get_kw_info(name, 'tags', self._client.get_keyword_tags)

@@ -12,6 +12,12 @@ Required Arguments
 Arguments With Default Values
     Check Test Case    ${TESTNAME}
 
+Defaults as tuples
+    Check Test Case    ${TESTNAME}
+
+Arguent conversion based on defaults
+    Check Test Case    ${TESTNAME}
+
 Named Arguments
     Check Test Case    ${TESTNAME}
 

@@ -20,6 +20,17 @@ Arguments With Default Values
     one, two, 3              Arguments With Default Values    one    two
     one, 2 (int), 3          Arguments With Default Values    one
 
+Defaults as tuples
+    eka, 2 (int)             Defaults as tuples
+    xxx, 2 (int)             Defaults as tuples               xxx
+    xxx, 3 (int)             Defaults as tuples               xxx     3
+
+Arguent conversion based on defaults
+    xxx, 3 (int)             Defaults as tuples               xxx     3
+    xxx, 3.14 (float)        Defaults as tuples               xxx     3.14
+    xxx, yyy                 Defaults as tuples               xxx     yyy
+    0 (int), 3 (int)         Defaults as tuples               ${0}    3
+
 Named Arguments
     first, second, 3         Arguments With Default Values    first    arg2=second
     first, second, 3         Arguments With Default Values    arg1=first    arg2=second

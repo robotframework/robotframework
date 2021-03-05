@@ -249,26 +249,36 @@ and what they must return is explained in the table below.
    `get_keyword_tags`           Tags as a list of strings.
    ===========================  ======================================
 
-Type information can be returned either as a list mapping type names to
-arguments based on position or as a dictionary mapping argument names to
-type names directly. In practice this works the same way as when
-`specifying types using the @keyword decorator`__ with normal libraries.
-The difference is that because the XML-RPC protocol does not support
+Type information used for `argument conversion`_ can be returned either as
+a list mapping type names to arguments based on position or as a dictionary
+mapping argument names to type names directly. In practice this works the same
+way as when `specifying types using the @keyword decorator`__ with normal
+libraries. The difference is that because the XML-RPC protocol does not support
 arbitrary values, type information needs to be specified using type names
 or aliases like `'int'` or `'integer'`, not using actual types like `int`.
 Additionally `None` or `null` values may not be allowed by the XML-RPC server,
 but an empty string can be used to indicate that certain argument does not
 have type information instead.
 
+Argument conversion is supported also based on default values using the
+`same logic as with normal libraries`__. For this to work, arguments with
+default values must be returned as tuples, not as strings, the `same way
+as with dynamic libraries`__. For example, argument conversion works if
+argument information is returned like `[('count', 1), ('caseless', True)]`
+but not if it is `['count=1', 'caseless=True']`.
+
 Remote servers can also provide `general library documentation`__ to
 be used when generating documentation with the Libdoc_ tool. This information
 is got by calling `get_keyword_documentation` with special values `__intro__`
 and `__init__`.
 
-.. note:: `get_keyword_types` is new in Robot Framework 3.1.
+.. note:: `get_keyword_types` is new in Robot Framework 3.1 and support for
+          argument conversion based on defaults is new in Robot Framework 4.0.
 
 __ `Getting keyword arguments`_
 __ `Specifying argument types using @keyword decorator`_
+__ `Implicit argument types based on default values`_
+__ `Getting keyword arguments`_
 __ `Getting general library documentation`_
 
 Using `get_library_information`
