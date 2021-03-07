@@ -7,7 +7,7 @@ Resource          rebot_resource.robot
 
 *** Test Cases ***
 RF 3.2 compatibility
-    Run Rebot And Validate Statistics    rebot/output-3.2.2.xml    172    10
+    Run Rebot And Validate Statistics    rebot/output-3.2.2.xml    172    10    validate=False
 
 RF 4.0 compatibility
     Run Rebot And Validate Statistics    rebot/output-4.0.xml      172    10
@@ -21,8 +21,8 @@ Message directly under test
 
 *** Keywords ***
 Run Rebot And Validate Statistics
-    [Arguments]    ${path}    ${passed}    ${failed}
-    Run Rebot    ${EMPTY}    ${path}
+    [Arguments]    ${path}    ${passed}    ${failed}    ${validate}=True
+    Run Rebot    ${EMPTY}    ${path}    validate output=${validate}
     ${total}    ${passed}    ${failed} =    Evaluate    ${passed} + ${failed}, ${passed}, ${failed}
     Should Be Equal    ${SUITE.statistics.total}     ${total}
     Should Be Equal    ${SUITE.statistics.passed}    ${passed}

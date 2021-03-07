@@ -228,6 +228,18 @@ documentation from Java source files. In addition to setting ``CLASSPATH``
 explicitly, it is possible to put ``tools.jar`` into the ``ext-lib``
 directory in the project root and ``CLASSPATH`` is set automatically.
 
+Schema validation
+-----------------
+
+Created output.xml has `<../doc/schema>`_ that can be tested as part of acceptance
+test run. The schema is always used to validate selected outputs in
+`<robot/rebot/compatibility.robot>`_, but validating all outputs would slow down
+execution a bit too much.
+
+It is, however, possible to enable validating all outputs by setting
+`ATEST_VALIDATE_OUTPUT` environment variable to `TRUE` (case-insensitive).
+This is recommended especially if the schema is updated or output.xml changed.
+
 Telnet tests
 ------------
 

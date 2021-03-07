@@ -52,11 +52,11 @@ Run Tests Without Processing Output
     [Return]    ${result}
 
 Run Rebot
-    [Arguments]    ${options}=    ${sources}=    ${default options}=${COMMON DEFAULTS}    ${output}=${OUTFILE}
+    [Arguments]    ${options}=    ${sources}=    ${default options}=${COMMON DEFAULTS}    ${output}=${OUTFILE}    ${validate output}=True
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
     ${result} =    Execute    ${INTERPRETER.rebot}   ${options}    ${sources}    ${default options}
     Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
-    Process Output    ${output}
+    Process Output    ${output}    validate=${validate output}
     [Return]    ${result}
 
 Run Rebot Without Processing Output
