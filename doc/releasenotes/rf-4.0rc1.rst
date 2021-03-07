@@ -511,6 +511,61 @@ changes are backwards incompatible:
 
 __ `Argument conversion enhancements`_
 
+Running and result models have been changed
+-------------------------------------------
+
+Prior to Robot Framework 4.0 running and result models contained only keywords.
+Although FOR loop syntax existed, internally FOR related objects were represented
+as special kind of keywords. Introduction of the new IF/ELSE syntax made it clear
+that this approach did not work anymore, and separate FOR and IF objects were
+introduced. At the same time, some other changes were done to make these models
+easier to use externally.
+
+These changes do not affect normal Robot Framework usage at all, but tools using
+the running and result models are likely to be affected. These include tools
+modifying tests before execution (using e.g. pre-run modifier or listeners) as
+well as tools inspecting and especially modifying results. Changes most likely
+to cause problems are listed below and issue `#3749`_ contains more details:
+
+- `TestSuite`, `TestCase` and `Keyword` objects used to have `keywords` attribute
+  containing keywords used in them. This name is misleading now when they also
+  have FOR and IF objects. With `TestCase` and `Keyword` the attribute was
+  renamed to `body` and with `TestSuite` it was removed altogether. The `keywords`
+  attribute still exists but it is read-only and deprecated.
+
+- The new `body` does not have `create()` method for creating keywords, like the old
+  `keywords` had, but instead it has separate `create_keyword()`, `create_for()` and
+  `create_if()` methods. This means that old usages like `test.keywords.create()`
+  need to be changed to `test.body.create_keyword()`.
+
+- `TestSuite` and `TestCase` object nowadays have `setup` and `teardown` directly
+  when earlier they needed to be accessed via `keywords`. This means that, for
+  example, suite setup is accessed like `suite.setup` instead of `suite.keywords.setup`.
+
+- `setup` and `teardown` are never `None` like they earlier could be. Instead they
+  are always represented as `Keyword` objects that are just considered inactive
+  (and untrue) when not set. They can be activated by setting `name` and other needed
+  attributes either independently or by calling the `config()` method. If they
+  need to be disabled, the easiest solution is setting them to `None` like
+  `test.setup = None` which will automatically recreate an inactive setup (or
+  teardown) object.
+
+- Result side got separate `For` and `If` objects instead of using `Keyword` with
+  `type` attribute separating normal keywords from other structures. For backwards
+  compatibility reasons the new objects still have `Keyword` specific attributes
+  like `args`.
+
+- On the running side `For` and `If` objects do not anymore extend `Keyword`.
+
+- Earlier result side `Keyword` had `messages` and `keywords` separately, but
+  nowadays also messages are stored in `body` along with executed keywords as
+  well as FOR and IF objects. The old `messages` is preserved as a property
+  getting messages from `body`.
+
+- Visitor interface has got separate entry points for visiting FOR loops and
+  IF/ELSE structures. Nowadays `visit_keyword()`, `start_keyword()` and
+  `end_keyword()` are called only with actual keyword objects.
+
 Generated output.xml has been changed
 -------------------------------------
 
@@ -573,7 +628,6 @@ Other backwards incompatible changes
 - Python 3.4 is not anymore supported. (`#3577`_)
 - Keyword types passed to listeners have changed. (`#3851`_)
 - Parsing model has been changed slightly. (`#3776`_)
-- Result and running models have been changed (`#3749`_)
 - Space after a literal newline is not ignored anymore. (`#3746`_)
 - Small changes to importing listeners and model modifiers from the command line. (`#3809`_)
 - Deprecated `ConnectionCache._resolve_alias_or_index` method has been removed. (`#3858`_)
