@@ -231,7 +231,7 @@ directory in the project root and ``CLASSPATH`` is set automatically.
 Schema validation
 -----------------
 
-Created output.xml has `schema <../doc/schema>`_ that can be tested as part of
+Created output.xml has a `schema <../doc/schema>`_ that can be tested as part of
 acceptance tests. The schema is always used to validate selected outputs in
 `<robot/rebot/compatibility.robot>`_, but validating all outputs would slow down
 execution a bit too much.
