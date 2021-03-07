@@ -34,7 +34,8 @@ class XmlLogger(ResultVisitor):
         writer = XmlWriter(path, write_empty=False, usage='output')
         writer.start('robot', {'generator': get_full_version(generator),
                                'generated': get_timestamp(),
-                               'rpa': 'true' if rpa else 'false'})
+                               'rpa': 'true' if rpa else 'false',
+                               'schemaversion': '2'})
         return writer
 
     def close(self):
