@@ -73,6 +73,14 @@ robot.result.model module
    :undoc-members:
    :show-inheritance:
 
+robot.result.modeldeprecation module
+------------------------------------
+
+.. automodule:: robot.result.modeldeprecation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.result.resultbuilder module
 ---------------------------------
 

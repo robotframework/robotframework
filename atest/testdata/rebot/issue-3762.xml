@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot>
+    <suite source="suiteSource" name="suiteName">
+        <test id="A" name="test A">
+            <msg timestamp="20201116 08:29:45.100" level="WARN">Hi from test</msg>
+            <kw name="log">
+                <msg timestamp="20201116 08:29:45.100" level="WARN">Hi from keyword</msg>
+            </kw>
+            <status status="PASS" starttime="20201116 08:29:45.130" endtime="20201116 08:29:45.140"/>
+            <msg timestamp="20201116 08:29:45.100" level="INFO">Hi from test again</msg>
+        </test>
+    </suite>
+</robot>

@@ -9,19 +9,19 @@ class TestCreateFixture(unittest.TestCase):
 
     def test_creates_default_fixture_when_given_none(self):
         suite = TestSuite()
-        fixture = create_fixture(None, suite, Keyword.SETUP_TYPE)
-        self._assert_fixture(fixture, suite, Keyword.SETUP_TYPE)
+        fixture = create_fixture(None, suite, Keyword.SETUP)
+        self._assert_fixture(fixture, suite, Keyword.SETUP)
 
     def test_sets_parent_and_type_correctly(self):
         suite = TestSuite()
         kw = Keyword('KW Name')
-        fixture = create_fixture(kw, suite, Keyword.TEARDOWN_TYPE)
-        self._assert_fixture(fixture, suite, Keyword.TEARDOWN_TYPE)
+        fixture = create_fixture(kw, suite, Keyword.TEARDOWN)
+        self._assert_fixture(fixture, suite, Keyword.TEARDOWN)
 
     def test_raises_type_error_when_wrong_fixture_type(self):
         suite = TestSuite()
         wrong_kw = object()
-        assert_raises(TypeError, create_fixture, wrong_kw, suite, Keyword.TEARDOWN_TYPE)
+        assert_raises(TypeError, create_fixture, wrong_kw, suite, Keyword.TEARDOWN)
 
     def _assert_fixture(self, fixture, exp_parent, exp_type,
                         exp_class=TestSuite.fixture_class):

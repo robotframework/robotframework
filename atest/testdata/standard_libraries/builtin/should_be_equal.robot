@@ -18,6 +18,27 @@ Case-insensitive
     ${42}           ${42}           ignore_case=True
     Yötä            Päivää          ignore_case=yep!
 
+Without leading spaces
+    [Documentation]    FAIL test != value
+    ${SPACE}test    test            strip_spaces=leading
+    hyvää yötä      \nhyvää yötä    repr=True    strip_spaces=Leading
+    \t${42}         \t${42}         strip_spaces=LEADING
+    \ntest          \n value        strip_spaces=leading
+
+Without trailing spaces
+    [Documentation]    FAIL test != value
+    test${SPACE}    test            strip_spaces=trailing
+    hyvää yötä      hyvää yötä\t    repr=True    strip_spaces=Trailing
+    ${42}\t         ${42}\n         strip_spaces=TRAILING
+    test\n          value\t         strip_spaces=trailing
+
+Without leading and trailing spaces
+    [Documentation]    FAIL test != value
+    test${SPACE}       test               strip_spaces=True
+    hyvää yötä         hyvää yötä\t       repr=True    strip_spaces=TRUE
+    ${SPACE}${42}\n    ${SPACE}${42}\t    strip_spaces=yeS
+    \n\ test\t         ${SPACE}value\n    strip_spaces=yes
+
 Fails with values
     [Documentation]    FAIL Several failures occurred:
     ...
@@ -305,7 +326,50 @@ Should Not Be Equal case-insensitive
     [Template]  Should Not Be Equal
     test value      TEST VALUE1     ignore_case=True
     HYVÄÄ YÖTÄ      hyvää yötä1     ignore_case=True
+    ${42}           ${43}           ignore_case=True
     foo             FOO             ignore_case=True
+
+Should Not Be Equal without leading spaces
+    [Documentation]     FAIL Several failures occurred:
+    ...
+    ...    1) test == test
+    ...
+    ...    2) hyvää yötä == hyvää yötä
+    ...
+    ...    3) 42 == 42
+    [Template]  Should Not Be Equal
+    ${SPACE}test    test            strip_spaces=leading
+    hyvää yötä      \nhyvää yötä    strip_spaces=Leading
+    ${42}           ${42}           strip_spaces=LEADING
+    \t\ntest        \n\tvalue       strip_spaces=leading
+
+Should Not Be Equal without trailing spaces
+    [Documentation]     FAIL Several failures occurred:
+    ...
+    ...    1) test == test
+    ...
+    ...    2) hyvää yötä == hyvää yötä
+    ...
+    ...    3) 42 == 42
+    [Template]  Should Not Be Equal
+    test${SPACE}    test            strip_spaces=trailing
+    hyvää yötä      hyvää yötä\t    strip_spaces=Trailing
+    ${42}           ${42}           strip_spaces=TRAILING
+    test\t\n        value \n        strip_spaces=TraIling
+
+Should Not Be Equal without leading and trailing spaces
+    [Documentation]     FAIL Several failures occurred:
+    ...
+    ...    1) test == test
+    ...
+    ...    2) hyvää yötä == hyvää yötä
+    ...
+    ...    3) 42 == 42
+    [Template]  Should Not Be Equal
+    test${SPACE}    test            strip_spaces=True
+    hyvää yötä      hyvää yötä\t    strip_spaces=TRUE
+    \ test\t\n      \tvalue\t       strip_spaces=yeS
+    ${42}           ${42}           strip_spaces=This probably should be an error.
 
 Should Not Be Equal with bytes containing non-ascii characters
     [Documentation]    FAIL ${BYTES WITH NON ASCII} == ${BYTES WITH NON ASCII}

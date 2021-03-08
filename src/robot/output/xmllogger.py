@@ -34,7 +34,8 @@ class XmlLogger(ResultVisitor):
         writer = XmlWriter(path, write_empty=False, usage='output')
         writer.start('robot', {'generator': get_full_version(generator),
                                'generated': get_timestamp(),
-                               'rpa': 'true' if rpa else 'false'})
+                               'rpa': 'true' if rpa else 'false',
+                               'schemaversion': '2'})
         return writer
 
     def close(self):
@@ -59,20 +60,21 @@ class XmlLogger(ResultVisitor):
     def _write_message(self, msg):
         attrs = {'timestamp': msg.timestamp or 'N/A', 'level': msg.level}
         if msg.html:
-            attrs['html'] = 'yes'
+            attrs['html'] = 'true'
         self._writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):
         attrs = {'name': kw.kwname, 'library': kw.libname}
-        if kw.type != 'kw':
+        if kw.type != 'KEYWORD':
             attrs['type'] = kw.type
         if kw.sourcename:
             attrs['sourcename'] = kw.sourcename
         self._writer.start('kw', attrs)
-        self._write_list('tags', 'tag', [unic(t) for t in kw.tags])
+        self._write_list('var', kw.assign)
+        self._write_list('arg', [unic(a) for a in kw.args])
+        self._write_list('tag', kw.tags)
+        # Must be after tags to allow adding message when using --flattenkeywords.
         self._writer.element('doc', kw.doc)
-        self._write_list('arguments', 'arg', [unic(a) for a in kw.args])
-        self._write_list('assign', 'var', kw.assign)
 
     def end_keyword(self, kw):
         if kw.timeout:
@@ -81,27 +83,41 @@ class XmlLogger(ResultVisitor):
         self._writer.end('kw')
 
     def start_if(self, if_):
-        self._writer.start('if', {'condition': if_.condition, 'type': if_.type})
+        self._writer.start('if')
+        self._writer.element('doc', if_.doc)
 
     def end_if(self, if_):
-        self._write_status(if_, {'branch': if_.branch_status})
+        self._write_status(if_)
         self._writer.end('if')
+
+    def start_if_branch(self, branch):
+        self._writer.start('branch', {'type': branch.type,
+                                      'condition': branch.condition})
+        self._writer.element('doc', branch.doc)
+
+    def end_if_branch(self, branch):
+        self._write_status(branch)
+        self._writer.end('branch')
 
     def start_for(self, for_):
         self._writer.start('for', {'flavor': for_.flavor})
+        for name in for_.variables:
+            self._writer.element('var', name)
+        for value in for_.values:
+            self._writer.element('value', value)
         self._writer.element('doc', for_.doc)
-        self._write_list('assign', 'var', for_.variables)
-        self._write_list('arguments', 'arg', for_.values)
 
     def end_for(self, for_):
         self._write_status(for_)
         self._writer.end('for')
 
-    def start_iteration(self, iteration):
-        self._writer.start('iter', {'info': iteration.info})
+    def start_for_iteration(self, iteration):
+        self._writer.start('iter')
+        for name, value in iteration.variables.items():
+            self._writer.element('var', value, {'name': name})
         self._writer.element('doc', iteration.doc)
 
-    def end_iteration(self, iteration):
+    def end_for_iteration(self, iteration):
         self._write_status(iteration)
         self._writer.end('iter')
 
@@ -110,7 +126,7 @@ class XmlLogger(ResultVisitor):
 
     def end_test(self, test):
         self._writer.element('doc', test.doc)
-        self._write_list('tags', 'tag', test.tags)
+        self._write_list('tag', test.tags)
         if test.timeout:
             self._writer.element('timeout', attrs={'value': unic(test.timeout)})
         self._write_status(test)
@@ -122,16 +138,10 @@ class XmlLogger(ResultVisitor):
 
     def end_suite(self, suite):
         self._writer.element('doc', suite.doc)
-        if suite.metadata:
-            self._write_metadata(suite.metadata)
+        for name, value in suite.metadata.items():
+            self._writer.element('meta', value, {'name': name})
         self._write_status(suite)
         self._writer.end('suite')
-
-    def _write_metadata(self, metadata):
-        self._writer.start('metadata')
-        for name, value in metadata.items():
-            self._writer.element('item', value, {'name': name})
-        self._writer.end('metadata')
 
     def start_statistics(self, stats):
         self._writer.start('statistics')
@@ -167,18 +177,13 @@ class XmlLogger(ResultVisitor):
     def end_errors(self, errors=None):
         self._writer.end('errors')
 
-    def _write_list(self, container_tag, item_tag, items):
-        if items:
-            self._writer.start(container_tag)
-            for item in items:
-                self._writer.element(item_tag, item)
-            self._writer.end(container_tag)
+    def _write_list(self, tag, items):
+        for item in items:
+            self._writer.element(tag, item)
 
-    def _write_status(self, item, extra_attrs=None):
+    def _write_status(self, item):
         attrs = {'status': item.status, 'starttime': item.starttime or 'N/A',
                  'endtime': item.endtime or 'N/A'}
         if not (item.starttime and item.endtime):
             attrs['elapsedtime'] = str(item.elapsedtime)
-        if extra_attrs:
-            attrs.update(extra_attrs)
         self._writer.element('status', item.message, attrs)

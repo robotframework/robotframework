@@ -12,7 +12,7 @@ as well. The main difference is that resource files cannot have tests.
 variables. For example, they allow values other than strings and
 enable creating variables dynamically. Their flexibility comes from
 the fact that they are created using Python code, which also makes
-them somewhat more complicated than `Variable tables`_.
+them somewhat more complicated than `Variable sections`_.
 
 .. contents::
    :depth: 2
@@ -127,7 +127,7 @@ Variable files
 --------------
 
 Variable files contain variables_ that can be used in the test
-data. Variables can also be created using variable tables or set from
+data. Variables can also be created using Variable sections or set from
 the command line, but variable files allow creating them dynamically
 and also make it easy to create other variable values than strings.
 
@@ -301,7 +301,7 @@ Using objects as values
 '''''''''''''''''''''''
 
 Variables in variable files are not limited to having only strings or
-other base types as values like variable tables. Instead, their
+other base types as values like Variable sections. Instead, their
 variables can contain any objects. In the example below, the variable
 `${MAPPING}` contains a Java Hashtable with two values (this
 example works only when running tests on Jython).
@@ -585,8 +585,8 @@ from the command line using :option:`--variablefile` option, in the settings
 table using :setting:`Variables` setting, and dynamically using the
 :name:`Import Variables` keyword.
 
-If the above YAML file is imported, it will create exactly the same
-variables as the following variable table:
+If the above YAML file is imported, it will create exactly the same variables
+as this Variable section:
 
 .. sourcecode:: robotframework
 
@@ -603,7 +603,7 @@ types supported by YAML syntax. If names or values contain non-ASCII
 characters, YAML variables files must be UTF-8 encoded.
 
 Mappings used as values are automatically converted to special dictionaries
-that are used also when `creating dictionary variables`_ in the variable table.
+that are used also when `creating dictionary variables`_ in the Variable section.
 Most importantly, values of these dictionaries are accessible as attributes
 like `${DICT.one}`, assuming their names are valid as Python attribute names.
 If the name contains spaces or is otherwise not a valid attribute name, it is

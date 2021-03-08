@@ -3,10 +3,13 @@ Suite Setup     Run Tests  --skip skip-this --SkipOnFailure skip-on-failure --no
 Resource        atest_resource.robot
 
 *** Test Cases ***
-Skip Keyword
+Skip keyword
     Check Test Case    ${TEST NAME}
 
-Skip with Library Keyword
+Skip with SkipExecution exception in library
+    Check Test Case    ${TEST NAME}
+
+Skip with SkipExecution exception in library using HTML
     Check Test Case    ${TEST NAME}
 
 Skip with custom exception

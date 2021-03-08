@@ -16,20 +16,18 @@
 from robot.errors import ExecutionStatus, DataError, PassExecution
 from robot.model import SuiteVisitor, TagPatterns
 from robot.result import TestSuite, Result
-from robot.utils import (get_timestamp, is_list_like, NormalizedDict, unic,
-                         test_or_task)
+from robot.utils import get_timestamp, is_list_like, NormalizedDict, unic, test_or_task
 from robot.variables import VariableScopes
 
 from .bodyrunner import BodyRunner, KeywordRunner
 from .context import EXECUTION_CONTEXTS
+from .modelcombiner import ModelCombiner
 from .namespace import Namespace
 from .status import SuiteStatus, TestStatus
 from .timeouts import TestTimeout
 
 
-# Some 'extract method' love needed here. Perhaps even 'extract class'.
-
-class Runner(SuiteVisitor):
+class SuiteRunner(SuiteVisitor):
 
     def __init__(self, output, settings):
         self.result = None
@@ -225,20 +223,3 @@ class Runner(SuiteVisitor):
             KeywordRunner(self._context).run(data, name=name)
         except ExecutionStatus as err:
             return err
-
-
-class ModelCombiner(object):
-
-    def __init__(self, data, result, **priority):
-        self.data = data
-        self.result = result
-        self.priority = priority
-
-    def __getattr__(self, name):
-        if name in self.priority:
-            return self.priority[name]
-        if hasattr(self.result, name):
-            return getattr(self.result, name)
-        if hasattr(self.data, name):
-            return getattr(self.data, name)
-        raise AttributeError(name)

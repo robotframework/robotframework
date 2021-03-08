@@ -156,7 +156,6 @@
 .. _user keyword timeouts: `User keyword timeout`_
 .. _keyword timeout: `User keyword timeout`_
 .. _variable: Variables_
-.. _Variable tables: `Variable table`_
 .. _automatic variable: `Automatic variables`_
 .. _test libraries: `Using test libraries`_
 .. _test library: `test libraries`_

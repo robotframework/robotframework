@@ -95,11 +95,11 @@ h2 {
 .label.debug, .label.trace, .label.error, .label.keyword {
     letter-spacing: 0;
 }
-.label.error, .label.fail, .label.pass, .labe.skip, .label.warn {
+.label.error, .label.fail, .label.pass, .label.skip, .label.warn {
     color: #fff !important;
     font-weight: bold;
 }
-.label.error, .label.fail {
+.label.fail, .label.warn {
     background-color: #ee5919;
 }
 .label.pass {
@@ -110,7 +110,7 @@ h2 {
     background-color: #fed84f;
     color: black !important;
 }
-.label.warn {
+.label.error {
     background-color: #b62109;
 }
 /* Top right header */

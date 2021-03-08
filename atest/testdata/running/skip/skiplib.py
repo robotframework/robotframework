@@ -5,8 +5,8 @@ class CustomSkipException(Exception):
     ROBOT_SKIP_EXECUTION = True
 
 
-def skip_with_message(msg):
-    raise SkipExecution(msg)
+def skip_with_message(msg, html=False):
+    raise SkipExecution(msg, html)
 
 
 def skip_with_custom_exception():

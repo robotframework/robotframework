@@ -160,24 +160,25 @@ class TestPluralOrNot(unittest.TestCase):
 
 class TestTestOrTask(unittest.TestCase):
 
-    def test_test_or_task(self):
-        for inp, rpa, exp in [
-            ('{Test}', False, 'Test'),
-            ('{test}', False, 'test'),
-            ('{TEST}', False, 'TEST'),
-            ('{Test}', True, 'Task'),
-            ('{test}', True, 'task'),
-            ('{TEST}', True, 'TASK'),
-            ('Contains {test}', False, 'Contains test'),
-            ('Contains {TEST}', True, 'Contains TASK'),
-            ('Does not contain match', False, 'Does not contain match')
-        ]:
-            assert_equal(test_or_task(inp, rpa), exp)
+    def test_no_match(self):
+        for inp in ['', 'No match', 'No {match}', '{No} {task} {match}']:
+            assert_equal(test_or_task(inp), inp)
+            assert_equal(test_or_task(inp, rpa=True), inp)
 
-    def test_test_or_task_fails_with_invalid_pattern_in_braces(self):
-        assert_raises_with_msg(
-            ValueError, "Invalid input string '{TeSt}'.",
-            test_or_task, '{TeSt}', True)
+    def test_match(self):
+        for test, task in [('test', 'task'),
+                           ('Test', 'Task'),
+                           ('TEST', 'TASK'),
+                           ('tESt', 'tASk')]:
+            inp = '{%s}' % test
+            assert_equal(test_or_task(inp, rpa=False), test)
+            assert_equal(test_or_task(inp, rpa=True), task)
+
+    def test_multiple_matches(self):
+        assert_equal(test_or_task('Contains {test}, {TEST} and {TesT}', False),
+                     'Contains test, TEST and TesT')
+        assert_equal(test_or_task('Contains {test}, {TEST} and {TesT}', True),
+                     'Contains task, TASK and TasK')
 
 
 if __name__ == "__main__":

@@ -181,6 +181,12 @@ Negative timeout is ignored
     Should Be Equal    ${tc.kws[0].timeout}    - 1 second
     Should Be True     ${tc.kws[0].elapsedtime} > 99
 
+Invalid test timeout
+    Check Test Case    ${TEST NAME}
+
+Invalid keyword timeout
+    Check Test Case    ${TEST NAME}
+
 *** Keywords ***
 Timeout should have been active
     [Arguments]    ${kw}    ${timeout}    ${msg count}    ${exceeded}=False    ${type}=Test

@@ -166,13 +166,14 @@
 }
 /* Metadata */
 .metadata th {
-    width: 12.5em;
+    width: 12em;
+    padding: 0.2em;
+    vertical-align: top;
     text-align: left;
-    white-space: nowrap;
-    padding: 0;
 }
 .metadata td {
     padding: 0.2em;
+    vertical-align: top;
 }
 .keyword-metadata {
     font-size: 0.9em;

@@ -15,7 +15,7 @@
 
 from robot.errors import DataError
 from robot.model import SuiteVisitor
-from robot.utils import html_escape
+from robot.utils import html_escape, test_or_task
 
 
 class Merger(SuiteVisitor):
@@ -75,12 +75,7 @@ class Merger(SuiteVisitor):
             self.current.tests[index] = test
 
     def _create_add_message(self, item, suite=False):
-        if suite:
-            item_type = 'Suite'
-        elif self.rpa:
-            item_type = 'Task'
-        else:
-            item_type = 'Test'
+        item_type = 'Suite' if suite else test_or_task('{Test}', self.rpa)
         prefix = '*HTML* %s added from merged output.' % item_type
         if not item.message:
             return prefix
@@ -93,9 +88,9 @@ class Merger(SuiteVisitor):
             return html_escape(message)
 
     def _create_merge_message(self, new, old):
-        header = ('*HTML* <span class="merge">'
-                  '%s has been re-executed and results merged.'
-                  '</span>' % ('Test' if not self.rpa else 'Task'))
+        header = test_or_task('*HTML* <span class="merge">'
+                              '{Test} has been re-executed and results merged.'
+                              '</span>', self.rpa)
         return ''.join([
             header,
             '<hr>',

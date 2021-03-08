@@ -3,9 +3,6 @@ Suite Setup       Run Tests With Listeners
 Suite Teardown    Remove Listener Files
 Resource          listener_resource.robot
 
-*** Variables ***
-${LISTENER DIR}   ${DATADIR}/output/listeners
-
 *** Test Cases ***
 Listen All
     [Documentation]    Listener listening all methods. Method names with underscore.
@@ -70,26 +67,6 @@ Keyword Tags
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
     Should Contain X Times    ${status}    PASSED | tags: [force, keyword, tags]    6
 
-FOR and IF line numbers
-    Run Tests    --listener ListenAll    misc/for_loops.robot misc/if_else.robot
-    Stderr Should Be Empty
-    ${output} =    Get Listener File    ${ALL FILE}
-    FOR    ${expected}    IN
-    ...    FOR START: \${pet} IN [ cat | dog | horse ] (line 3)
-    ...    FOR ITEM START: \${pet} = cat (line 3)
-    ...    KW START: BuiltIn.Log ['\${pet}'] (line 4)
-    ...    FOR ITEM START: \${pet} = dog (line 3)
-    ...    KW START: BuiltIn.Log ['\${pet}'] (line 4)
-    ...    IF START: 'IF' == 'WRONG' (line 3)
-    ...    IF END: NOT RUN
-    ...    ELSE IF START: 'ELSE IF' == 'ELSE IF' (line 5)
-    ...    KW START: BuiltIn.Log ['else if branch'] (line 6)
-    ...    ELSE IF END: PASS
-    ...    ELSE START: (line 7)
-    ...    ELSE END: NOT RUN
-        Should Contain    ${output}    ${expected}
-    END
-
 Suite And Test Counts
     Run Tests    --listener listeners.SuiteAndTestCounts    misc/suites/subsuites misc/suites/subsuites2
     Stderr Should Be Empty
@@ -100,6 +77,10 @@ Suite Source
 
 Keyword Type
     Run Tests    --listener listeners.KeywordType    misc/setups_and_teardowns.robot misc/for_loops.robot misc/if_else.robot
+    Stderr Should Be Empty
+
+Keyword Status
+    Run Tests    --listener listeners.KeywordStatus    misc/pass_and_fail.robot misc/if_else.robot
     Stderr Should Be Empty
 
 Suite And Test Counts With Java
@@ -114,13 +95,12 @@ Executing Keywords from Listeners
     Check Log Message    ${tc.kws[2].msgs[0]}    End Pass
 
 Test Template
-    ${listener} =    Normalize Path    ${DATADIR}/output/listeners/verify_template_listener.py
-    File Should Exist    ${listener}
-    Run Tests    --listener ${listener}    output/listeners/test_template.robot
+    ${listener} =    Normalize Path    ${LISTENER DIR}/verify_template_listener.py
+    Run Tests    --listener ${listener}    ${LISTENER DIR}/test_template.robot
     Stderr Should Be Empty
 
 Keyword Arguments Are Always Strings
-    ${result} =    Run Tests    --listener attributeverifyinglistener    output/listeners/keyword_argument_types.robot
+    ${result} =    Run Tests    --listener attributeverifyinglistener    ${LISTENER DIR}/keyword_argument_types.robot
     Should Be Empty    ${result.stderr}
     Check Test Tags    Run Keyword with already resolved non-string arguments in test data    1    2
     Check Test Case    Run Keyword with non-string arguments in library
@@ -131,7 +111,7 @@ TimeoutError occurring during listener method is propagaged
     [Documentation]    Timeouts can only occur inside `log_message`.
     ...    Cannot reliable set timeouts to occur during it, so the listener
     ...    emulates the situation by explicitly raising TimeoutError.
-    Run Tests    --listener ${LISTENER DIR}/timeouting_listener.py    output/listeners/timeouting_listener.robot
+    Run Tests    --listener ${LISTENER DIR}/timeouting_listener.py    ${LISTENER DIR}/timeouting_listener.robot
     Check Test Case    Timeout in test case level
     Check Test Case    Timeout inside user keyword
     Stderr Should Be Empty
@@ -154,41 +134,41 @@ Check Listen All File
     @{expected}=    Create List    Got settings on level: INFO
     ...    SUITE START: Pass And Fail (s1) 'Some tests here' [ListenerMeta: Hello]
     ...    SETUP START: My Keyword ['Suite Setup'] (line 3)
-    ...    KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 27)
+    ...    KEYWORD START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 27)
     ...    LOG MESSAGE: [INFO] Hello says "Suite Setup"!
-    ...    KW END: PASS
-    ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 28)
-    ...    KW END: PASS
-    ...    KW START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
+    ...    KEYWORD END: PASS
+    ...    KEYWORD START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 28)
+    ...    KEYWORD END: PASS
+    ...    KEYWORD START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
-    ...    KW END: PASS
+    ...    KEYWORD END: PASS
     ...    SETUP END: PASS
     ...    TEST START: Pass (s1-t1, line 12) '' ['force', 'pass']
-    ...    KW START: My Keyword ['Pass'] (line 15)
-    ...    KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 27)
+    ...    KEYWORD START: My Keyword ['Pass'] (line 15)
+    ...    KEYWORD START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 27)
     ...    LOG MESSAGE: [INFO] Hello says "Pass"!
-    ...    KW END: PASS
-    ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 28)
-    ...    KW END: PASS
-    ...    KW START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
+    ...    KEYWORD END: PASS
+    ...    KEYWORD START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 28)
+    ...    KEYWORD END: PASS
+    ...    KEYWORD START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
-    ...    KW END: PASS
-    ...    KW END: PASS
+    ...    KEYWORD END: PASS
+    ...    KEYWORD END: PASS
     ...    TEST END: PASS
     ...    TEST START: Fail (s1-t2, line 17) 'FAIL Expected failure' ['fail', 'force']
-    ...    KW START: My Keyword ['Fail'] (line 20)
-    ...    KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 27)
+    ...    KEYWORD START: My Keyword ['Fail'] (line 20)
+    ...    KEYWORD START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 27)
     ...    LOG MESSAGE: [INFO] Hello says "Fail"!
-    ...    KW END: PASS
-    ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 28)
-    ...    KW END: PASS
-    ...    KW START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
+    ...    KEYWORD END: PASS
+    ...    KEYWORD START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 28)
+    ...    KEYWORD END: PASS
+    ...    KEYWORD START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
-    ...    KW END: PASS
-    ...    KW END: PASS
-    ...    KW START: BuiltIn.Fail ['Expected failure'] (line 21)
+    ...    KEYWORD END: PASS
+    ...    KEYWORD END: PASS
+    ...    KEYWORD START: BuiltIn.Fail ['Expected failure'] (line 21)
     ...    LOG MESSAGE: [FAIL] Expected failure
-    ...    KW END: FAIL
+    ...    KEYWORD END: FAIL
     ...    TEST END: FAIL Expected failure
     ...    SUITE END: FAIL 2 tests, 1 passed, 1 failed
     ...    Output: output.xml    Closing...

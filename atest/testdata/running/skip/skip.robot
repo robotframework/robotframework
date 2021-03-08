@@ -5,14 +5,19 @@ Library            skiplib.py
 ${TEST_OR_TASK}    Test
 
 *** Test Cases ***
-Skip Keyword
+Skip keyword
     [Documentation]    SKIP Skipped with Skip keyword.
     Skip
     Fail    Should not be executed!
 
-Skip with Library Keyword
+Skip with SkipExecution exception in library
     [Documentation]    SKIP Show must not got on
     Skip with Message    Show must not got on
+    Fail    Should not be executed!
+
+Skip with SkipExecution exception in library using HTML
+    [Documentation]    SKIP *HTML* Show <b>must</b> not got on
+    Skip with Message    Show <b>must</b> not got on    html=True
     Fail    Should not be executed!
 
 Skip with custom exception

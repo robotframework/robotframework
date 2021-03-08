@@ -11,8 +11,8 @@ class TestKeyword(unittest.TestCase):
 
     def test_id_without_parent(self):
         assert_equal(Keyword().id, 'k1')
-        assert_equal(Keyword(type=Keyword.SETUP_TYPE).id, 'k1')
-        assert_equal(Keyword(type=Keyword.TEARDOWN_TYPE).id, 'k1')
+        assert_equal(Keyword(type=Keyword.SETUP).id, 'k1')
+        assert_equal(Keyword(type=Keyword.TEARDOWN).id, 'k1')
 
     def test_suite_setup_and_teardown_id(self):
         suite = TestSuite()
@@ -41,11 +41,16 @@ class TestKeyword(unittest.TestCase):
         TestSuite().tests.create().body.extend(kws)
         assert_equal([k.id for k in kws], ['s1-t1-k1', 's1-t1-k2', 's1-t1-k3'])
 
-    def test_id_with_for_and_if_parents(self):
-        t = TestCase()
-        assert_equal(t.body.create_for().body.create_keyword().id, 't1-k1-k1')
-        assert_equal(t.body.create_if().body.create_keyword().id, 't1-k2-k1')
-        assert_equal(t.body.create_if().body.create_for().body.create_keyword().id, 't1-k3-k1-k1')
+    def test_id_with_for_parent(self):
+        for_body = TestCase().body.create_for().body
+        assert_equal(for_body.create_keyword().id, 't1-k1-k1')
+        assert_equal(for_body.create_keyword().id, 't1-k1-k2')
+
+    def test_id_with_if_parent(self):
+        if_body = TestCase().body.create_if().body
+        assert_equal(if_body.create_branch().id, 't1-k1')
+        assert_equal(if_body.create_branch().body.create_keyword().id, 't1-k2-k1')
+        assert_equal(if_body.create_branch().body.create_keyword().id, 't1-k3-k1')
 
     def test_string_reprs(self):
         for kw, exp_str, exp_repr in [

@@ -1,12 +1,14 @@
 import os
 import re
 
+from xmlschema import XMLSchema
+
 from robot import utils
 from robot.api import logger
 from robot.utils.asserts import assert_equal
-from robot.result import (ExecutionResultBuilder, For, If, Iteration, Keyword,
+from robot.result import (ExecutionResultBuilder, For, If, ForIteration, Keyword,
                           Result, ResultVisitor, TestCase, TestSuite)
-from robot.result.model import Body, ForBody
+from robot.result.model import Body, ForIterations, IfBranches, IfBranch
 from robot.libraries.BuiltIn import BuiltIn
 
 
@@ -15,10 +17,6 @@ class NoSlotsKeyword(Keyword):
 
 
 class NoSlotsFor(For):
-    pass
-
-
-class NoSlotsIteration(Iteration):
     pass
 
 
@@ -32,12 +30,25 @@ class NoSlotsBody(Body):
     if_class = NoSlotsIf
 
 
-class NoSlotsForBody(ForBody):
-    iteration_class = NoSlotsIteration
+class NoSlotsIfBranch(IfBranch):
+    body_class = NoSlotsBody
 
 
-NoSlotsKeyword.body_class = NoSlotsIteration.body_class = NoSlotsIf.body_class = NoSlotsBody
-NoSlotsFor.body_class = NoSlotsForBody
+class NoSlotsIfBranches(IfBranches):
+    if_branch_class = NoSlotsIfBranch
+
+
+class NoSlotsForIteration(ForIteration):
+    body_class = NoSlotsBody
+
+
+class NoSlotsForIterations(ForIterations):
+    for_iteration_class = NoSlotsForIteration
+
+
+NoSlotsKeyword.body_class = NoSlotsBody
+NoSlotsFor.body_class = NoSlotsForIterations
+NoSlotsIf.body_class = NoSlotsIfBranches
 
 
 class NoSlotsTestCase(TestCase):
@@ -51,14 +62,22 @@ class NoSlotsTestSuite(TestSuite):
 
 
 class TestCheckerLibrary:
+    ROBOT_LIBRARY_SCOPE = 'GLOBAL'
 
-    def process_output(self, path):
+    def __init__(self):
+        self.schema = XMLSchema('doc/schema/robot.02.xsd')
+
+    def process_output(self, path, validate=None):
         set_suite_variable = BuiltIn().set_suite_variable
         if not path or path.upper() == 'NONE':
             set_suite_variable('$SUITE', None)
             logger.info("Not processing output.")
             return
         path = path.replace('/', os.sep)
+        if validate is None:
+            validate = os.getenv('ATEST_VALIDATE_OUTPUT', False)
+        if utils.is_truthy(validate):
+            self._validate_output(path)
         try:
             logger.info("Processing output '%s'." % path)
             result = Result(root_suite=NoSlotsTestSuite())
@@ -72,6 +91,22 @@ class TestCheckerLibrary:
         set_suite_variable('$SUITE', result.suite)
         set_suite_variable('$STATISTICS', result.statistics)
         set_suite_variable('$ERRORS', result.errors)
+
+    def _validate_output(self, path):
+        schema_version = self._get_schema_version(path)
+        if schema_version != self.schema.version:
+            raise AssertionError(
+                'Incompatible schema versions. Schema has `version="%s"` '
+                'but output file has `schemaversion="%s"`.'
+                % (self.schema.version, schema_version)
+        )
+        self.schema.validate(path)
+
+    def _get_schema_version(self, path):
+        with open(path) as f:
+            for line in f:
+                if line.startswith('<robot'):
+                    return re.search('schemaversion="(\d+)"', line).group(1)
 
     def get_test_case(self, name):
         suite = BuiltIn().get_variable_value('${SUITE}')
@@ -282,11 +317,14 @@ class ProcessResults(ResultVisitor):
     def start_for(self, for_):
         self._add_kws_and_msgs(for_)
 
-    def start_iteration(self, iteration):
+    def start_for_iteration(self, iteration):
         self._add_kws_and_msgs(iteration)
 
     def start_if(self, if_):
         self._add_kws_and_msgs(if_)
+
+    def start_if_branch(self, branch):
+        self._add_kws_and_msgs(branch)
 
     def visit_errors(self, errors):
         errors.msgs = errors.messages

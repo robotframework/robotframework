@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup      Run Remote Tests And Libdoc
 Resource         remote_resource.robot
-Resource         ../../libdoc/libdoc_resource.robot
 Test Template    Verify executed short doc and full Libdoc
 
 *** Test Cases ***

@@ -6,7 +6,7 @@
 </metadata>
 <test name="Pass">
 <doc></doc>
-<kw type="kw" name="BuiltIn.Log">
+<kw name="BuiltIn.Log">
 <doc>Logs the given message with the given level.</doc>
 <arguments>
 <arg>Nothing to see here</arg>
@@ -20,7 +20,7 @@
 </test>
 <test name="Fail">
 <doc></doc>
-<kw type="kw" name="BuiltIn.Fail">
+<kw name="BuiltIn.Fail">
 <doc>Fails the test immediately with the given (optional) message.</doc>
 <arguments>
 <arg>Message</arg>
@@ -36,14 +36,14 @@
 <status status="FAIL" endtime="20111031 13:06:46.977" critical="yes" starttime="20111031 13:06:46.972">Message</status>
 </test>
 <test name="Teardowns">
-<kw type="kw" name="Kw With Teardown">
-<kw type="teardown" name="Teardown Kw">
+<kw name="Kw With Teardown">
+<kw type="TEARDOWN" name="Teardown Kw">
 <status status="PASS" endtime="20111031 13:06:46.971" starttime="20111031 13:06:46.970"></status>
 </kw>
 <status status="PASS" endtime="20111031 13:06:46.971" starttime="20111031 13:06:46.970"></status>
 </kw>
-<kw type="teardown" name="Kw With Teardown">
-<kw type="teardown" name="Teardown Kw">
+<kw type="TEARDOWN" name="Kw With Teardown">
+<kw type="TEARDOWN" name="Teardown Kw">
 <status status="PASS" endtime="20111031 13:06:46.971" starttime="20111031 13:06:46.970"></status>
 </kw>
 <status status="PASS" endtime="20111031 13:06:46.971" starttime="20111031 13:06:46.970"></status>
@@ -51,7 +51,7 @@
 </tags>
 <status status="PASS" endtime="20111031 13:06:46.972" critical="yes" starttime="20111031 13:06:46.969"></status>
 </test>
-<kw type="teardown" name="BuiltIn.Fail">
+<kw type="TEARDOWN" name="BuiltIn.Fail">
 <doc>Fails the test immediately with the given (optional) message.</doc>
 <arguments>
 <arg>XXX</arg>

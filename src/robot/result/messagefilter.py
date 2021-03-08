@@ -25,6 +25,6 @@ class MessageFilter(SuiteVisitor):
 
     def start_keyword(self, keyword):
         def is_logged_or_not_message(item):
-            return item.type != item.MESSAGE_TYPE or is_logged(item.level)
+            return item.type != item.MESSAGE or is_logged(item.level)
         is_logged = IsLogged(self.loglevel)
         keyword.body = keyword.body.filter(predicate=is_logged_or_not_message)

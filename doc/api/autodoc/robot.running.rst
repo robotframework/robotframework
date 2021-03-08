@@ -19,6 +19,14 @@ Subpackages
 Submodules
 ----------
 
+robot.running.bodyrunner module
+-------------------------------
+
+.. automodule:: robot.running.bodyrunner
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.running.context module
 ----------------------------
 
@@ -83,6 +91,14 @@ robot.running.model module
    :undoc-members:
    :show-inheritance:
 
+robot.running.modelcombiner module
+----------------------------------
+
+.. automodule:: robot.running.modelcombiner
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.running.namespace module
 ------------------------------
 
@@ -115,14 +131,6 @@ robot.running.runkwregister module
    :undoc-members:
    :show-inheritance:
 
-robot.running.runner module
----------------------------
-
-.. automodule:: robot.running.runner
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 robot.running.signalhandler module
 ----------------------------------
 
@@ -147,10 +155,10 @@ robot.running.statusreporter module
    :undoc-members:
    :show-inheritance:
 
-robot.running.steprunner module
--------------------------------
+robot.running.suiterunner module
+--------------------------------
 
-.. automodule:: robot.running.steprunner
+.. automodule:: robot.running.suiterunner
    :members:
    :undoc-members:
    :show-inheritance:

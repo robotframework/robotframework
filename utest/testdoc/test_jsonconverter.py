@@ -13,13 +13,12 @@ def test_convert(item, **expected):
 
 
 class TestJsonConverter(unittest.TestCase):
-    suite = None
 
-    def setUp(self):
-        if not self.suite:
-            suite = TestSuiteFactory(DATADIR, doc='My doc', metadata=['abc:123', '1:2'])
-            output = join(DATADIR, '..', 'output.html')
-            self.__class__.suite = JsonConverter(output).convert(suite)
+    @classmethod
+    def setUpClass(cls):
+        suite = TestSuiteFactory(DATADIR, doc='My doc', metadata=['abc:123', '1:2'])
+        output = join(DATADIR, '..', 'output.html')
+        cls.suite = JsonConverter(output).convert(suite)
 
     def test_suite(self):
         test_convert(self.suite,

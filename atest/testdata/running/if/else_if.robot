@@ -62,3 +62,13 @@ Invalid
     ELSE
         Log   xxx
     END
+
+After failure
+    [Documentation]    FAIL Failure before
+    Fail    Failure before
+    IF    True
+        Fail    Not run
+    ELSE IF    False
+    ELSE
+        Fail    Not run
+    END

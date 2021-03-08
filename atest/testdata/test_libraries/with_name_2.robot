@@ -24,9 +24,9 @@ ${VAR}            VAR
 *** Test Cases ***
 No Arguments
     [Documentation]    FAIL No keyword with name 'OperatingSystem.Should Exist' found.
-    OS.Directory Should Exist    ${CURDIR}
-    Should Exist    ${CURDIR}
-    OperatingSystem.Should Exist    ${CURDIR}
+    OS.Directory Should Exist    .
+    Should Exist    .
+    OperatingSystem.Should Exist    .
 
 Embedded Arguments
     Keyword with embedded arg in MyLibFile
@@ -83,7 +83,7 @@ Name Given Using "With Name" Can Be Reused In Different Suites
 
 Import Library Keyword
     BuiltIn.Import Library    OperatingSystem    WITH NAME    MyOS
-    MyOS.Directory Should Exist    ${CURDIR}
+    MyOS.Directory Should Exist    .
     B2.Import Library    ParameterLibrary    my first argument    second arg    WITH NAME    MyParamLib
     My Param Lib.Parameters should be    my first argument    second arg
 

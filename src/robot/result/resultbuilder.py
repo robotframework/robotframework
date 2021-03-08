@@ -127,7 +127,7 @@ class ExecutionResultBuilder(object):
         omitted_kws = 0
         for event, elem in context:
             # Teardowns aren't omitted to allow checking suite teardown status.
-            omit = elem.tag == 'kw' and elem.get('type') != 'teardown'
+            omit = elem.tag == 'kw' and elem.get('type') != 'TEARDOWN'
             start = event == 'start'
             if omit and start:
                 omitted_kws += 1
@@ -164,7 +164,7 @@ class ExecutionResultBuilder(object):
             elif started < 0 and by_tags and inside_kw:
                 if end and tag == 'tag':
                     tags.append(elem.text or '')
-                elif end and tag == 'tags':
+                elif end and tags:
                     if tags_match(tags):
                         started = 0
                         seen_doc = False

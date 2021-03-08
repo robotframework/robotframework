@@ -83,9 +83,17 @@ robot.api.Failure
     [Documentation]    FAIL I failed my duties
     Failure
 
+robot.api.Failure with HTML message
+    [Documentation]    FAIL *HTML* <b>BANG!</b>
+    Failure    <b>BANG!</b>    True
+
 robot.api.Error
     [Documentation]    FAIL I errored my duties
     Error
+
+robot.api.Error with HTML message
+    [Documentation]    FAIL *HTML* <b>BANG!</b>
+    Error    <b>BANG!</b>    True
 
 *** Keyword ***
 Do Nothing

@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.utils import test_or_task
+
 from .stats import TotalStat
 from .visitor import SuiteVisitor
 
@@ -21,9 +23,8 @@ class TotalStatistics(object):
     """Container for total statistics."""
 
     def __init__(self, rpa=False):
-        test_or_task = 'Tests' if not rpa else 'Tasks'
         #: Instance of :class:`~robot.model.stats.TotalStat` for all the tests.
-        self._stat = TotalStat('All ' + test_or_task)
+        self._stat = TotalStat(test_or_task('All {Test}s', rpa))
         self._rpa = rpa
 
     def visit(self, visitor):

@@ -18,7 +18,7 @@ Methods outside start_keyword and end_keyword can log messages to syslog
 
 *** Keywords ***
 Run Tests With Logging Listener
-    ${path} =    Normalize Path    ${DATADIR}/output/listeners/logging_listener.py
+    ${path} =    Normalize Path    ${LISTENER DIR}/logging_listener.py
     Run Tests    --listener ${path} -l l.html -r r.html    misc/pass_and_fail.robot
 
 Test statuses should be correct

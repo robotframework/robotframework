@@ -61,19 +61,25 @@ Modifiers are used before normal configuration
 Modify FOR
     [Setup]    Modify FOR and IF
     ${tc} =    Check Test Case    For In Range Loop In Test
-    Should Be Equal      ${tc.body[0].flavor}                     IN
-    Should Be Equal      ${tc.body[0].values}                     ${{('FOR', 'is', 'modified!')}}
-    Should Be Equal      ${tc.body[0].body[0].info}               modified
-    Check Log Message    ${tc.body[0].body[0].body[0].msgs[0]}    0
-    Check Log Message    ${tc.body[0].body[1].body[0].msgs[0]}    1
-    Check Log Message    ${tc.body[0].body[2].body[0].msgs[0]}    2
+    Should Be Equal      ${tc.body[0].flavor}                        IN
+    Should Be Equal      ${tc.body[0].values}                        ${{('FOR', 'is', 'modified!')}}
+    Should Be Equal      ${tc.body[0].body[0].variables['\${i}']}    0 (modified)
+    Should Be Equal      ${tc.body[0].body[0].variables['\${x}']}    new
+    Check Log Message    ${tc.body[0].body[0].body[0].msgs[0]}       0
+    Should Be Equal      ${tc.body[0].body[1].variables['\${i}']}    1 (modified)
+    Should Be Equal      ${tc.body[0].body[1].variables['\${x}']}    new
+    Check Log Message    ${tc.body[0].body[1].body[0].msgs[0]}       1
+    Should Be Equal      ${tc.body[0].body[2].variables['\${i}']}    2 (modified)
+    Should Be Equal      ${tc.body[0].body[2].variables['\${x}']}    new
+    Check Log Message    ${tc.body[0].body[2].body[0].msgs[0]}       2
 
 Modify IF
     [Setup]    Should Be Equal    ${PREV TEST NAME}    Modify FOR
     ${tc} =    Check Test Case    If structure
-    Should Be Equal      ${tc.body[0].condition}         modified
-    Should Be Equal      ${tc.body[0].body[0].status}    NOT RUN
-    Check Log Message    ${tc.body[0].body[0].msgs[0]}   created!
+    Should Be Equal    ${tc.body[0].body[0].condition}          modified
+    Should Be Equal    ${tc.body[0].body[0].status}             PASS
+    Should Be Equal    ${tc.body[0].body[0].body[0].args[0]}    got here!
+    Should Be Equal    ${tc.body[0].body[1].status}             PASS
 
 *** Keywords ***
 Modify FOR and IF

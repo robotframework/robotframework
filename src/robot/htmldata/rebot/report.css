@@ -20,8 +20,7 @@ th {
 }
 .details th {
     background: white;
-    width: 10em;
-    white-space: nowrap;
+    width: 11em;
     text-align: left;
     vertical-align: top;
     padding: 0.2em 0.4em;

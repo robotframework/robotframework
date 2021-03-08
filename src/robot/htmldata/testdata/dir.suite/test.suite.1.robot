@@ -7,6 +7,9 @@ list test
     ${list} =    Create List    foo    bar    quux
     Log    ${list}
 
+skip
+    Skip    Because we can!
+
 *** Keywords ***
 User Keyword
     User Keyword 2

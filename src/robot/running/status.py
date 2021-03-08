@@ -302,7 +302,6 @@ class TestMessage(_Message):
 
 class SuiteMessage(_Message):
     setup_message = 'Suite setup failed:\n%s'
-    # TODO: wording
     setup_skipped_message = 'Skipped in suite setup:\n%s'
     teardown_skipped_message = 'Skipped in suite teardown:\n%s'
     teardown_message = 'Suite teardown failed:\n%s'

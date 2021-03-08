@@ -1,9 +1,9 @@
 from robot.api import Failure, Error
 
 
-def failure(msg='I failed my duties'):
-    raise Failure(msg)
+def failure(msg='I failed my duties', html=False):
+    raise Failure(msg, html)
 
 
-def error(msg='I errored my duties'):
-    raise Error(msg)
+def error(msg='I errored my duties', html=False):
+    raise Error(msg, html=html)
