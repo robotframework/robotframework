@@ -8,7 +8,8 @@ list test
     Log    ${list}
 
 skip
-    Skip    Because we can!
+    Log     This will be skipped!    WARN
+    Skip    Told you so!
 
 *** Keywords ***
 User Keyword
