@@ -136,7 +136,7 @@ function totalDetailSelected() {
 function renderTotalSelector() {
     var args = {linkTarget: 'totals',
                 totalTabStatus: 'detail-tab-selected'};
-    renderSelector(args, 'totalDetailsSelectorTemplate', {title: testOrTask('All {Test}s')});
+    renderSelector(args, 'totalDetailsSelectorTemplate');
     updatePrintSelector(testOrTask('All {Test}s'));
     renderTotalDetails();
 }
@@ -483,7 +483,7 @@ function hideHiddenDetailsColumns(elem) {
   <h2 id="${linkTarget}">{{= testOrTask('{Test}')}} Details</h2>
   <ul id="detail-tabs">
     <li class="${totalTabStatus} detail-tab">
-      <a href="#totals" onclick="renderTotalSelector()">Totals</a>
+      <a href="#totals" onclick="renderTotalSelector()">All</a>
     </li>
     <li class="${tagTabStatus} detail-tab">
       <a href="#tags" onclick="renderTagSelector()">Tags</a>
@@ -499,11 +499,6 @@ function hideHiddenDetailsColumns(elem) {
 
 <script  type="text/x-jquery-tmpl" id="totalDetailsSelectorTemplate">
   <table class="details" id="details-header">
-    <tr class="selector">
-      <th>${title}</th>
-      <td>
-      <td id="print-selector"></td>
-    </tr>
   </table>
 </script>
 
