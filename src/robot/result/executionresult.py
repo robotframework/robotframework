@@ -96,16 +96,18 @@ class Result(object):
         self._status_rc = status_rc
         self._stat_config = stat_config or {}
 
-    def save(self, path=None):
+    def save(self, path=None, json=False):
         """Save results as a new output XML file.
 
         :param path: Path to save results to. If omitted, overwrites the
             original file.
+        :param json: A flag to represent if the JSON format should be used
+            or not.
         """
         from robot.reporting.outputwriter import OutputWriter
         from robot.reporting.jsonwriter import JsonOutputWriter
         output_path = path or self.source
-        if str(output_path).lower().endswith(".json"):
+        if json or output_path.upper().endswith("JSON"):
             writer = JsonOutputWriter(output_path, rpa=self.rpa)
         else:
             writer = OutputWriter(output_path, rpa=self.rpa)

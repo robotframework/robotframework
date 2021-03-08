@@ -133,7 +133,8 @@ Options
  -o --output file         XML output file. Not created unless this option is
                           specified. Given path, similarly as paths given to
                           --log, --report and --xunit, is relative to
-                          --outputdir unless given as an absolute path.
+                          --outputdir unless given as an absolute path. If
+                          the file ends in .json then the JSON will be loaded.
  -l --log file            HTML log file. Can be disabled by giving a special
                           name `NONE`. Default: log.html
                           Examples: `--log mylog.html`, `-l none`
@@ -141,7 +142,7 @@ Options
                           similarly as --log. Default: report.html
  -x --xunit file          xUnit compatible result file. Not created unless this
                           option is specified.
- -j --json file           JSON result file. Not created unless this option is
+ -j --json file           A JSON result file. Not created unless this option is
                           specified.
     --xunitskipnoncritical  Deprecated since RF 4.0 and has no effect anymore.
  -T --timestampoutputs    When this option is used, timestamp in a format

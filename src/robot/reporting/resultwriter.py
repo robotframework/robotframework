@@ -84,7 +84,7 @@ class ResultWriter(object):
         self._write('Report', ReportWriter(js_result).write, path, config)
 
     def _write_json(self, result, path):
-        self._write('Report', JsonWriter(result).write, path)
+        self._write('Json', JsonWriter(result).write, path)
 
     def _write(self, name, writer, path, *args):
         try:

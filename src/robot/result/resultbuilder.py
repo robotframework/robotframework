@@ -70,7 +70,7 @@ def _combine_results(sources, options):
 
 def _single_result(source, options):
     result = Result(source, rpa=options.pop('rpa', None))
-    if str(source).lower().endswith("json"):
+    if source.upper().endswith("JSON"):
         try:
             with open(source, 'r') as source_file:
                 json_data = json.load(source_file)
@@ -98,6 +98,39 @@ class JsonExecutionResultBuilder(object):
         Instead of using this builder directly, it is recommended to use the
         :func:`ExecutionResult` factory method.
         """
+    def gen_dict_extract(self, key, var):
+        if hasattr(var,'iteritems'):
+            for k, v in var.iteritems():
+                if k == key:
+                    yield v
+                if isinstance(v, dict):
+                    for result in self.gen_dict_extract(key, v):
+                        yield result
+                elif isinstance(v, list):
+                    for d in v:
+                        for result in self.gen_dict_extract(key, d):
+                            yield result
+
+
+    def _omit_keywords(self, key, var):
+        if hasattr(var, 'keys'):
+            keys = var.keys()
+            for k in keys:
+                if k == 'setup':
+                    var.pop(k)
+            for k, v in var.iteritems():
+                if k == 'setup':
+                    var.pop(k)
+                if k == key:
+                    yield v
+                if isinstance(v, dict):
+                    for result in self._omit_keywords(key, v):
+                        yield result
+                elif isinstance(v, list):
+                    for d in v:
+                        for result in self._omit_keywords(key, d):
+                            yield result
+
 
     def __init__(self, data, include_keywords=True, flattened_keywords=None):
         """

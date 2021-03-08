@@ -179,8 +179,8 @@ Options
                           similarly as --log. Default: report.html
  -x --xunit file          xUnit compatible result file. Not created unless this
                           option is specified.
- -j --json file           JSON result file. Not created unless this option is
-                          specified. Alternatively the output filename can
+ -j --json                Use the JSON output format. The default file name is
+                          "output.json". Alternatively the output filename can
                           end with ".json".
     --xunitskipnoncritical  Deprecated since RF 4.0 and has no effect anymore.
  -b --debugfile file      Debug file written during execution. Not created

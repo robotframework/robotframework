@@ -49,7 +49,7 @@ class _BaseSettings(object):
                  'Log'              : ('log', 'log.html'),
                  'Report'           : ('report', 'report.html'),
                  'XUnit'            : ('xunit', None),
-                 'Json'             : ('json', None),
+                 'Json'             : ('json', False),
                  'SplitLog'         : ('splitlog', False),
                  'TimestampOutputs' : ('timestampoutputs', False),
                  'LogTitle'         : ('logtitle', None),
@@ -71,7 +71,7 @@ class _BaseSettings(object):
                  'StdOut'           : ('stdout', None),
                  'StdErr'           : ('stderr', None),
                  'XUnitSkipNonCritical' : ('xunitskipnoncritical', False)}
-    _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile', 'Json']
+    _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile']
 
     def __init__(self, options=None, **extra_options):
         self.start_timestamp = format_time(time.time(), '', '-', '')
@@ -204,7 +204,7 @@ class _BaseSettings(object):
     def _get_output_file(self, option):
         """Returns path of the requested output file and creates needed dirs.
 
-        `option` can be 'Output', 'Log', 'Report', 'XUnit', 'Json', or 'DebugFile'.
+        `option` can be 'Output', 'Log', 'Report', 'XUnit', or 'DebugFile'.
         """
         name = self._opts[option]
         if not name:
@@ -213,6 +213,8 @@ class _BaseSettings(object):
             self['Log'] = None
             LOGGER.error('Log file is not created if output.xml is disabled.')
             return None
+        if option == 'Output' and self.json is True and name == 'output.xml':
+            name = 'output.json'
         name = self._process_output_name(option, name)
         path = abspath(os.path.join(self['OutputDir'], name))
         create_destination_directory(path, '%s file' % option.lower())
@@ -232,8 +234,6 @@ class _BaseSettings(object):
             return '.xml'
         if type_ in ['Log', 'Report']:
             return '.html'
-        if type_ in ['Json']:
-            return '.json'
         if type_ == 'DebugFile':
             return '.txt'
         raise FrameworkError("Invalid output file type: %s" % type_)
@@ -428,6 +428,7 @@ class RobotSettings(_BaseSettings):
         for name in ['Name', 'Doc']:
             settings._opts[name] = None
         settings._opts['Output'] = None
+        settings._opts['Json'] = None
         settings._opts['LogLevel'] = 'TRACE'
         settings._opts['ProcessEmptySuite'] = self['RunEmptySuite']
         settings._opts['ExpandKeywords'] = self['ExpandKeywords']
@@ -559,6 +560,11 @@ class RebotSettings(_BaseSettings):
                        'StartTime'         : ('starttime', None),
                        'EndTime'           : ('endtime', None),
                        'Merge'             : ('merge', False)}
+
+    def __init__(self, options=None, **extra_options):
+        # When using rebot Json is an output argument, rather than a flag
+        self._output_opts.append('Json')
+        super(RebotSettings, self).__init__(options, **extra_options)
 
     def _output_disabled(self):
         return False

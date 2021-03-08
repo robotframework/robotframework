@@ -1,6 +1,7 @@
 from robot.utils import get_timestamp, unic
 from robot.version import get_full_version
 from robot.result.visitor import ResultVisitor
+from robot.errors import DataError
 
 from .loggerhelper import IsLogged
 
@@ -12,7 +13,7 @@ import copy
 try:
     import jsonstreams
 except ImportError:
-    pass
+    jsonstreams = None
 
 
 class RobotElement(object):
@@ -147,6 +148,12 @@ RECURSIVE_ITEMS = [Items.IF_, Items.FOR_, Items.BODY]
 class JsonLogger(ResultVisitor):
 
     def __init__(self, path, log_level='TRACE', rpa=False, generator='Robot'):
+        if not jsonstreams:
+            raise DataError('Using the JSON output format requires the '
+                            'jsonstreams module to be installed. Typically '
+                            'you can install it by running '
+                            '`pip install jsonstreams`.')
+
         self._log_message_is_logged = IsLogged(log_level)
         self._error_message_is_logged = IsLogged('WARN')
         self._path = path
