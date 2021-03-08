@@ -10,6 +10,7 @@ list test
 skip
     Log     This will be skipped!    WARN
     Skip    Told you so!
+    This is not executed
 
 *** Keywords ***
 User Keyword
