@@ -65,11 +65,11 @@
         <xs:attribute name="name" type="xs:string" />
         <xs:attribute name="id" type="xs:string" />
     </xs:complexType>
+    <!-- Keywords can be regular keywords or setup and teardown keywords.
+         If the later, they must have the `type` attribute set accordingly. -->
     <xs:complexType name="Keyword">
         <xs:choice maxOccurs="unbounded">
-            <!-- These keywords can be regular keywords or test setup and teardown.
-                 If the later, they must have the `type` attribute set accordingly. -->
-            <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
+           <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="for" type="For" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="if" type="If" minOccurs="0" maxOccurs="unbounded" />
             <!-- Assigned variables. -->
