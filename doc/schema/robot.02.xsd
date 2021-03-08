@@ -38,7 +38,7 @@
             <xs:element name="test" type="Test" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="doc" type="xs:string" minOccurs="0" />
             <xs:element name="meta" type="Metadata" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="status" type="SuiteAndTestStatus" />
+            <xs:element name="status" type="Status" />
         </xs:choice>
         <xs:attribute name="name" type="xs:string" />
         <xs:attribute name="source" type="xs:string" />
@@ -60,7 +60,7 @@
             <xs:element name="doc" type="xs:string" minOccurs="0" />
             <xs:element name="tag" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="timeout" type="Timeout" minOccurs="0" />
-            <xs:element name="status" type="SuiteAndTestStatus" />
+            <xs:element name="status" type="Status" />
         </xs:choice>
         <xs:attribute name="name" type="xs:string" />
         <xs:attribute name="id" type="xs:string" />
@@ -80,7 +80,7 @@
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="tag" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="timeout" type="Timeout" minOccurs="0" />
-            <xs:element name="status" type="Status" />
+            <xs:element name="status" type="BodyItemStatus" />
         </xs:choice>
         <xs:attribute name="name" type="xs:string" />
         <xs:attribute name="library" type="xs:string" />
@@ -105,7 +105,7 @@
             <xs:element name="iter" type="ForIteration" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="doc" type="xs:string" minOccurs="0" />
-            <xs:element name="status" type="Status" />
+            <xs:element name="status" type="BodyItemStatus" />
         </xs:choice>
         <xs:attribute name="flavor" type="ForFlavor" />
     </xs:complexType>
@@ -126,7 +126,7 @@
             <xs:element name="if" type="If" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="doc" type="xs:string" minOccurs="0" />
-            <xs:element name="status" type="Status" />
+            <xs:element name="status" type="BodyItemStatus" />
         </xs:choice>
     </xs:complexType>
     <xs:complexType name="ForIterationVariable">
@@ -142,7 +142,7 @@
             <xs:element name="branch" type="IfBranch" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="doc" type="xs:string" minOccurs="0" />
-            <xs:element name="status" type="Status" />
+            <xs:element name="status" type="BodyItemStatus" />
         </xs:choice>
     </xs:complexType>
     <xs:complexType name="IfBranch">
@@ -152,7 +152,7 @@
             <xs:element name="if" type="If" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="doc" type="xs:string" minOccurs="0" />
-            <xs:element name="status" type="Status" />
+            <xs:element name="status" type="BodyItemStatus" />
         </xs:choice>
         <xs:attribute name="type" type="IfType" use="required" />
         <xs:attribute name="condition" type="xs:string" />
@@ -195,10 +195,17 @@
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
-    <xs:complexType name="SuiteAndTestStatus">
+    <xs:simpleType name="StatusValue">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="PASS" />
+            <xs:enumeration value="FAIL" />
+            <xs:enumeration value="SKIP" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="BodyItemStatus">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute name="status" type="SuiteAndTestStatusValue" use="required" />
+                <xs:attribute name="status" type="BodyItemStatusValue" use="required" />
                 <xs:attribute name="starttime" type="xs:string" />
                 <xs:attribute name="endtime" type="xs:string" />
                 <!-- Not set if both `starttime` and `endtime` are defined. -->
@@ -206,20 +213,12 @@
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
-    <xs:simpleType name="StatusValue">
+    <xs:simpleType name="BodyItemStatusValue">
         <xs:restriction base="xs:string">
             <xs:enumeration value="PASS" />
             <xs:enumeration value="FAIL" />
             <xs:enumeration value="SKIP" />
-            <!-- Only used with keywords, FORs and IFs, not with tests and suites. -->
             <xs:enumeration value="NOT RUN" />
-        </xs:restriction>
-    </xs:simpleType>
-    <xs:simpleType name="SuiteAndTestStatusValue">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="PASS" />
-            <xs:enumeration value="FAIL" />
-            <xs:enumeration value="SKIP" />
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="Timeout">
