@@ -9,7 +9,7 @@
 .test {
     border-style: dashed;
 }
-#errors, .messages, .metadata {
+#errors, .messages {
     width: 100%;
     border-spacing: 0;
 }
@@ -165,14 +165,16 @@
     display: table;
 }
 /* Metadata */
+.metadata {
+    width: 100%;
+    border-spacing: 0.2em;
+}
 .metadata th {
     width: 12em;
-    padding: 0.2em;
     vertical-align: top;
     text-align: left;
 }
 .metadata td {
-    padding: 0.2em;
     vertical-align: top;
 }
 .keyword-metadata {
