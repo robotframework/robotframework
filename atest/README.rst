@@ -231,6 +231,9 @@ directory in the project root and ``CLASSPATH`` is set automatically.
 Schema validation
 -----------------
 
+output.xml schema
+~~~~~~~~~~~~~~~~~
+
 Created output.xml has a `schema <../doc/schema>`_ that can be tested as part of
 acceptance tests. The schema is always used to validate selected outputs in
 `<robot/rebot/compatibility.robot>`_, but validating all outputs would slow down
@@ -239,6 +242,13 @@ execution a bit too much.
 It is, however, possible to enable validating all outputs by setting
 ``ATEST_VALIDATE_OUTPUT`` environment variable to ``TRUE`` (case-insensitive).
 This is recommended especially if the schema is updated or output.xml changed.
+
+Libdoc XML and JSON spec schemas
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Libdoc can create spec files both in XML and JSON formats and they both have
+`schemas <../doc/schema>`_. All generated Libdoc specs are validated automatically
+in Libdoc tests.
 
 Telnet tests
 ------------
