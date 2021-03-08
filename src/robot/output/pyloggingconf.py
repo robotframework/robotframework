@@ -15,6 +15,7 @@
 
 from contextlib import contextmanager
 import logging
+import traceback
 
 from robot.utils import get_error_details, unic
 
@@ -58,6 +59,9 @@ class RobotHandler(logging.Handler):
 
     def emit(self, record):
         message, error = self._get_message(record)
+        if record.exc_info:
+            tb_lines = traceback.format_exception(*record.exc_info)
+            message = ''.join([message, '\n'] + tb_lines).rstrip()
         method = self._get_logger_method(record.levelno)
         method(message)
         if error:

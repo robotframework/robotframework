@@ -15,6 +15,11 @@ class TypedRemoteServer(RemoteServer):
         kw = getattr(self.library, name)
         return getattr(kw, 'robot_types', None)
 
+    def get_keyword_arguments(self, name):
+        if name == 'defaults_as_tuples':
+            return [('first', 'eka'), ('second', 2)]
+        return RemoteServer.get_keyword_arguments(self, name)
+
 
 class Arguments(object):
 
@@ -69,6 +74,10 @@ class Arguments(object):
 
     def required_defaults_and_varargs(self, req, default='world', *varargs):
         return self._format_args(req, default, *varargs)
+
+    # Handled separately by get_keyword_arguments above.
+    def defaults_as_tuples(self, first='eka', second=2):
+        return self._format_args(first, second)
 
     def kwargs(self, **kwargs):
         return self._format_args(**kwargs)

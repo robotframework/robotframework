@@ -1,5 +1,6 @@
 *** Settings ***
 Resource          atest_resource.robot
+Resource          ../../libdoc/libdoc_resource.robot
 
 *** Variables ***
 ${PORT FILE}      %{TEMPDIR}${/}remote_port.txt

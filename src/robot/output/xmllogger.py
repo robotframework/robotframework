@@ -34,7 +34,8 @@ class XmlLogger(ResultVisitor):
         writer = XmlWriter(path, write_empty=False, usage='output')
         writer.start('robot', {'generator': get_full_version(generator),
                                'generated': get_timestamp(),
-                               'rpa': 'true' if rpa else 'false'})
+                               'rpa': 'true' if rpa else 'false',
+                               'schemaversion': '2'})
         return writer
 
     def close(self):
@@ -180,11 +181,9 @@ class XmlLogger(ResultVisitor):
         for item in items:
             self._writer.element(tag, item)
 
-    def _write_status(self, item, extra_attrs=None):
+    def _write_status(self, item):
         attrs = {'status': item.status, 'starttime': item.starttime or 'N/A',
                  'endtime': item.endtime or 'N/A'}
         if not (item.starttime and item.endtime):
             attrs['elapsedtime'] = str(item.elapsedtime)
-        if extra_attrs:
-            attrs.update(extra_attrs)
         self._writer.element('status', item.message, attrs)

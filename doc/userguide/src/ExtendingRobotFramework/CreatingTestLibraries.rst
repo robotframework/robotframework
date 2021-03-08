@@ -1,4 +1,3 @@
-
 Creating test libraries
 =======================
 
@@ -1196,6 +1195,8 @@ but using them as named arguments causes an error on Python side.
 
 __ https://www.python.org/dev/peps/pep-0570/
 
+.. _argument conversion:
+
 Argument types
 ~~~~~~~~~~~~~~
 
@@ -1541,7 +1542,8 @@ Specifying multiple possible types
 Starting from Robot Framework 4.0, it is possible to specify that an argument
 has multiple possible types. In this situation argument conversion is attempted
 based on each type in the order they have been specified. If any conversion
-succeeds, the resulting value is used, and otherwise the whole conversion fails.
+succeeds, the resulting value is used without attempting conversion to remaining
+types. If no type conversion succeeds, the whole conversion fails.
 
 When using function annotations, the natural syntax to specify that argument
 has multiple possible types is using Union_:
@@ -1556,7 +1558,7 @@ has multiple possible types is using Union_:
 
 An alternative is giving types a tuple. It is not recommended with annotations
 because that syntax is not supported by other tools, but it works well with
-the `@keyword` decorator:
+the `@keyword` decorator and is Python 2 compatible:
 
 .. sourcecode:: python
 
@@ -1570,6 +1572,12 @@ the `@keyword` decorator:
 With the above examples the `length` argument would first be converted to an
 integer and if that fails then to a float. The `padding` would be first
 converted to `None`, then to an integer, and finally to a string.
+
+Because conversion is attempted one-by-one and string conversion always succeeds,
+possible `str` should be the last type. For example, using `Union[str, int]` would
+cause all arguments, including integers, to be converted to strings, but
+`Union[int, str]` means that integer conversion is attempted first and string
+conversion is done only if that fails.
 
 If any of the specified types is not recognized by Robot Framework and
 the given argument cannot be converted to any of the types before it,

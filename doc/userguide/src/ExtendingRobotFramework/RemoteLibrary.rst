@@ -174,24 +174,41 @@ Remote protocol
 
 This section explains the protocol that is used between the Remote
 library and remote servers. This information is mainly targeted for
-people who want to create new remote servers. The provided Python and
-Ruby servers can also be used as examples.
+people who want to create new remote servers.
 
 The remote protocol is implemented on top of `XML-RPC`_, which is a
 simple remote procedure call protocol using XML over HTTP. Most
 mainstream languages (Python, Java, C, Ruby, Perl, Javascript, PHP,
 ...) have a support for XML-RPC either built-in or as an extension.
 
+The `Python remote server`__ can be used as a reference implementation.
+
+__ https://github.com/robotframework/PythonRemoteServer
+
 Required methods
 ~~~~~~~~~~~~~~~~
 
-A remote server is an XML-RPC server that must have the same methods in its
-public interface as the `dynamic library API`_ has. Only `get_keyword_names`
-and `run_keyword` are actually required, but `get_keyword_arguments`,
-`get_keyword_types`, `get_keyword_tags` and `get_keyword_documentation` are
-also recommended. Notice that using the camelCase format like `getKeywordNames`
-in method names is not possible similarly as in the normal dynamic API. How
-the actual keywords are implemented is not relevant for the Remote
+There are two possibilities how remote servers can provide information about
+the keywords they contain. They are briefly explained below and documented
+more thoroughly in the subsequent sections.
+
+1. Remote servers can implement the same methods as the `dynamic library API`_
+   has. This means `get_keyword_names` method and optional `get_keyword_arguments`,
+   `get_keyword_types`, `get_keyword_tags` and `get_keyword_documentation` methods.
+   Notice that using "camel-case names" like `getKeywordNames` is not
+   possible similarly as in the normal dynamic API.
+
+2. Starting from Robot Framework 4.0, remote servers can have a single
+   `get_library_information` method that returns all library and keyword
+   information as a single dictionary. If a remote server has this method,
+   the other getter methods like `get_keyword_names` are not used at all.
+   This approach has the benefit that there is only one XML-RPC call to get
+   information while the approach explained above requires several calls per
+   keyword. With bigger libraries the difference can be significant.
+
+Regardless how remote servers provide information about their keywords, they
+must have `run_keyword` method that is used when keywords are executed.
+How the actual keywords are implemented is not relevant for the Remote
 library. Remote servers can either act as wrappers for the real test
 libraries, like the available `generic remote servers`_ do, or they can
 implement keywords themselves.
@@ -206,50 +223,112 @@ The method, and also the exposed keyword, should return `True`
 or `False` depending on whether stopping is allowed or not. That makes it
 possible for external tools to know if stopping the server succeeded.
 
-The `Python remote server`__ can be used as a reference implementation.
+Using `get_keyword_names` and keyword specific getters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-__ https://github.com/robotframework/PythonRemoteServer
+This section explains how the Remote library gets keyword names and other
+information when the server implements `get_keyword_names`. The next sections
+covers using the newer `get_library_info` method.
 
-Getting remote keyword names and other information
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The `get_keyword_names` method must return names of the keyword the server
+contains as a list of strings. Remote servers can, and should, also implement
+`get_keyword_arguments`, `get_keyword_types`, `get_keyword_tags` and
+`get_keyword_documentation` methods to provide more information about
+the keywords. All these methods take the name of the keyword as an argument
+and what they must return is explained in the table below.
 
-The Remote library gets the list of keywords that a remote server provides
-by using the `get_keyword_names` method. Remote servers must implement this
-method and the method must return keyword names as a list of strings.
+.. table:: Keyword specific getter methods
+   :class: tabular
 
-Remote servers can, and should, also implement `get_keyword_arguments`,
-`get_keyword_types`, `get_keyword_tags` and `get_keyword_documentation`
-methods to provide more information about the keywords. All these methods
-take the name of the keyword as an argument. Arguments must be returned as
-a list of strings in the `same format as with dynamic libraries`__, tags
-`as a list of strings`__, and documentation `as a string`__.
+   ===========================  ======================================
+             Method                         Return value
+   ===========================  ======================================
+   `get_keyword_arguments`      Arguments as a list of strings in the `same format as with dynamic libraries`__.
+   `get_keyword_types`          Type information as a list or dictionary of strings. See below for details.
+   `get_keyword_documentation`  Documentation as a string.
+   `get_keyword_tags`           Tags as a list of strings.
+   ===========================  ======================================
 
-Type information can be returned either as a list mapping type names to
-arguments based on position or as a dictionary mapping argument names to
-type names directly. In practice this works the same way as when
-`specifying types using the @keyword decorator`__ with normal libraries.
-The difference is that because the XML-RPC protocol does not support
+Type information used for `argument conversion`_ can be returned either as
+a list mapping type names to arguments based on position or as a dictionary
+mapping argument names to type names directly. In practice this works the same
+way as when `specifying types using the @keyword decorator`__ with normal
+libraries. The difference is that because the XML-RPC protocol does not support
 arbitrary values, type information needs to be specified using type names
 or aliases like `'int'` or `'integer'`, not using actual types like `int`.
-Additionally `None` or `null` values may not be allowed, and the empty
-string should be used instead if a marker telling certain argument does
-not have type information is needed.
+Additionally `None` or `null` values may not be allowed by the XML-RPC server,
+but an empty string can be used to indicate that certain argument does not
+have type information instead.
+
+Argument conversion is supported also based on default values using the
+`same logic as with normal libraries`__. For this to work, arguments with
+default values must be returned as tuples, not as strings, the `same way
+as with dynamic libraries`__. For example, argument conversion works if
+argument information is returned like `[('count', 1), ('caseless', True)]`
+but not if it is `['count=1', 'caseless=True']`.
 
 Remote servers can also provide `general library documentation`__ to
-be used when generating documentation with the Libdoc_ tool.
+be used when generating documentation with the Libdoc_ tool. This information
+is got by calling `get_keyword_documentation` with special values `__intro__`
+and `__init__`.
 
-.. note:: `get_keyword_tags` is new in Robot Framework 3.0.2.
-          With earlier versions keyword tags can be `embedded into the
-          keyword documentation`__.
-
-.. note:: `get_keyword_types` is new in Robot Framework 3.1.
+.. note:: `get_keyword_types` is new in Robot Framework 3.1 and support for
+          argument conversion based on defaults is new in Robot Framework 4.0.
 
 __ `Getting keyword arguments`_
-__ `Getting keyword tags`_
-__ `Getting keyword documentation`_
 __ `Specifying argument types using @keyword decorator`_
+__ `Implicit argument types based on default values`_
+__ `Getting keyword arguments`_
 __ `Getting general library documentation`_
-__ `Getting keyword tags`_
+
+Using `get_library_information`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `get_library_information` method allows returning information about the whole
+library in one XML-RPC call. The information must be returned as a dictionary where
+keys are keyword names and values are nested dictionaries containing keyword information.
+The dictionary can also contain separate entries for generic library information.
+
+The keyword information dictionary can contain keyword arguments, documentation,
+tags and types, and the respective keys are `args`, `doc`, `tags` and `types`.
+Information must be provided using same semantics as when `get_keyword_arguments`,
+`get_keyword_documentation`, `get_keyword_tags` and `get_keyword_types` discussed
+in the previous section. If some information is not available, it can be omitted
+from the info dictionary altogether.
+
+`get_library_information` supports also returning general library documentation
+to be used with Libdoc_. It is done by including special `__intro__` and `__init__`
+entries into the returned library information dictionary.
+
+For example, a Python library like
+
+.. sourcecode:: python
+
+    """Library documentation."""
+
+    from robot.api.deco import keyword
+
+    @keyword(tags=['x', 'y'])
+    def example(a: int, b=True):
+        """Keyword documentation."""
+        pass
+
+    def another():
+        pass
+
+
+could be mapped into this kind of library information dictionary::
+
+   {
+       '__intro__': {'doc': 'Library documentation'}
+       'example': {'args': ['a', 'b=True'],
+                   'types': ['int'],
+                   'doc': 'Keyword documentation.',
+                   'tags': ['x', 'y']}
+       'another: {'args': []}
+   }
+
+.. note:: `get_library_information` is new in Robot Framework 4.0.
 
 Executing remote keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~

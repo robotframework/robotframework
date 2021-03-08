@@ -91,6 +91,14 @@ robot.running.model module
    :undoc-members:
    :show-inheritance:
 
+robot.running.modelcombiner module
+----------------------------------
+
+.. automodule:: robot.running.modelcombiner
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.running.namespace module
 ------------------------------
 
@@ -123,14 +131,6 @@ robot.running.runkwregister module
    :undoc-members:
    :show-inheritance:
 
-robot.running.runner module
----------------------------
-
-.. automodule:: robot.running.runner
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 robot.running.signalhandler module
 ----------------------------------
 
@@ -151,6 +151,14 @@ robot.running.statusreporter module
 -----------------------------------
 
 .. automodule:: robot.running.statusreporter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+robot.running.suiterunner module
+--------------------------------
+
+.. automodule:: robot.running.suiterunner
    :members:
    :undoc-members:
    :show-inheritance:

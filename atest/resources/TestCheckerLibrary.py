@@ -1,6 +1,8 @@
 import os
 import re
 
+from xmlschema import XMLSchema
+
 from robot import utils
 from robot.api import logger
 from robot.utils.asserts import assert_equal
@@ -60,14 +62,22 @@ class NoSlotsTestSuite(TestSuite):
 
 
 class TestCheckerLibrary:
+    ROBOT_LIBRARY_SCOPE = 'GLOBAL'
 
-    def process_output(self, path):
+    def __init__(self):
+        self.schema = XMLSchema('doc/schema/robot.02.xsd')
+
+    def process_output(self, path, validate=None):
         set_suite_variable = BuiltIn().set_suite_variable
         if not path or path.upper() == 'NONE':
             set_suite_variable('$SUITE', None)
             logger.info("Not processing output.")
             return
         path = path.replace('/', os.sep)
+        if validate is None:
+            validate = os.getenv('ATEST_VALIDATE_OUTPUT', False)
+        if utils.is_truthy(validate):
+            self.schema.validate(path)
         try:
             logger.info("Processing output '%s'." % path)
             result = Result(root_suite=NoSlotsTestSuite())

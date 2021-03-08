@@ -1,16 +1,14 @@
-==========================
-Robot Framework 4.0 beta 3
-==========================
+=======================================
+Robot Framework 4.0 release candidate 1
+=======================================
 
 .. default-role:: code
 
 `Robot Framework`_ 4.0  is a new major release with lot of big new features
 such as the SKIP status and native IF/ELSE support as well as enhancements
-to, for example, type conversion and Libdoc. Robot Framework beta 3 contains
-all planned new features but internal changes and small enhancements are still
-possible before the first release candidate. All issues targeted for Robot
-Framework 4.0 can be found from the `issue tracker milestone`_. The target
-for Robot Framework 4.0 final release is late February or early March.
+to, for example, type conversion and Libdoc. This release candidate contains
+all planned features, fixes and code changes in general. All issues targeted
+for Robot Framework 4.0 can be found from the `issue tracker milestone`_.
 
 Questions and comments related to the release can be sent to the
 `robotframework-users`_ mailing list or to `Robot Framework Slack`_,
@@ -25,13 +23,14 @@ to install the latest available release or use
 
 ::
 
-   pip install robotframework==4.0b3
+   pip install robotframework==4.0rc1
 
 to install exactly this version. Alternatively you can download the source
 distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
-Robot Framework 4.0 beta 3 was released on Tuesday February 16, 2021.
+Robot Framework 4.0 rc 1 was released on Friday March 5, 2021.
+The target for Robot Framework 4.0 final release is Thursday Match 11, 2021.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -401,6 +400,23 @@ addition to `lineno` that has been available since Robot Framework 3.2.
 The `source` has already earlier been passed to `start/end_suite` methods,
 but now it is easier to access it when processing tests.
 
+Performance enhancements with big remote libraries
+--------------------------------------------------
+
+The `remote library interface`_ has been enhanced to support getting all library
+information in one XML-RPC call instead of using multiple calls per keyword.
+With bigger libraries, especially if they are hosted on an external machine,
+the performance difference can be very significant. (`#3362`_)
+
+This enhancement in Robot Framework itself does not yet bring benefits until
+remote servers implement the new `get_library_info` method. `Python Remote Server`__
+already has an `issue about that`__ and hopefully supports it in somewhat
+near future.
+
+.. _remote library interface: https://github.com/robotframework/RemoteInterface
+__ https://github.com/robotframework/PythonRemoteServer
+__ https://github.com/robotframework/PythonRemoteServer/issues/75
+
 Positional-only arguments
 -------------------------
 
@@ -495,6 +511,61 @@ changes are backwards incompatible:
 
 __ `Argument conversion enhancements`_
 
+Running and result models have been changed
+-------------------------------------------
+
+Prior to Robot Framework 4.0 running and result models contained only keywords.
+Although FOR loop syntax existed, internally FOR related objects were represented
+as special kind of keywords. Introduction of the new IF/ELSE syntax made it clear
+that this approach did not work anymore, and separate FOR and IF objects were
+introduced. At the same time, some other changes were done to make these models
+easier to use externally.
+
+These changes do not affect normal Robot Framework usage at all, but tools using
+the running and result models are likely to be affected. These include tools
+modifying tests before execution (using e.g. pre-run modifier or listeners) as
+well as tools inspecting and especially modifying results. Changes most likely
+to cause problems are listed below and issue `#3749`_ contains more details:
+
+- `TestSuite`, `TestCase` and `Keyword` objects used to have `keywords` attribute
+  containing keywords used in them. This name is misleading now when they also
+  have FOR and IF objects. With `TestCase` and `Keyword` the attribute was
+  renamed to `body` and with `TestSuite` it was removed altogether. The `keywords`
+  attribute still exists but it is read-only and deprecated.
+
+- The new `body` does not have `create()` method for creating keywords, like the old
+  `keywords` had, but instead it has separate `create_keyword()`, `create_for()` and
+  `create_if()` methods. This means that old usages like `test.keywords.create()`
+  need to be changed to `test.body.create_keyword()`.
+
+- `TestSuite` and `TestCase` object nowadays have `setup` and `teardown` directly
+  when earlier they needed to be accessed via `keywords`. This means that, for
+  example, suite setup is accessed like `suite.setup` instead of `suite.keywords.setup`.
+
+- `setup` and `teardown` are never `None` like they earlier could be. Instead they
+  are always represented as `Keyword` objects that are just considered inactive
+  (and untrue) when not set. They can be activated by setting `name` and other needed
+  attributes either independently or by calling the `config()` method. If they
+  need to be disabled, the easiest solution is setting them to `None` like
+  `test.setup = None` which will automatically recreate an inactive setup (or
+  teardown) object.
+
+- Result side got separate `For` and `If` objects instead of using `Keyword` with
+  `type` attribute separating normal keywords from other structures. For backwards
+  compatibility reasons the new objects still have `Keyword` specific attributes
+  like `args`.
+
+- On the running side `For` and `If` objects do not anymore extend `Keyword`.
+
+- Earlier result side `Keyword` had `messages` and `keywords` separately, but
+  nowadays also messages are stored in `body` along with executed keywords as
+  well as FOR and IF objects. The old `messages` is preserved as a property
+  getting messages from `body`.
+
+- Visitor interface has got separate entry points for visiting FOR loops and
+  IF/ELSE structures. Nowadays `visit_keyword()`, `start_keyword()` and
+  `end_keyword()` are called only with actual keyword objects.
+
 Generated output.xml has been changed
 -------------------------------------
 
@@ -557,9 +628,9 @@ Other backwards incompatible changes
 - Python 3.4 is not anymore supported. (`#3577`_)
 - Keyword types passed to listeners have changed. (`#3851`_)
 - Parsing model has been changed slightly. (`#3776`_)
-- Result and running models have been changed (`#3749`_)
 - Space after a literal newline is not ignored anymore. (`#3746`_)
 - Small changes to importing listeners and model modifiers from the command line. (`#3809`_)
+- Deprecated `ConnectionCache._resolve_alias_or_index` method has been removed. (`#3858`_)
 
 
 Acknowledgements
@@ -590,13 +661,23 @@ contributions by the wider open source community:
   keywords using embedded arguments to output.xml (`#3750`_) and added information
   about all tags to Libdoc XML spec files (`#3770`_).
 
-- `Bartłomiej Hirsz <https://github.com/bhirsz>`_ enhanced parsing APIs by
+- `Bartłomiej Hirsz <https://github.com/bhirsz>`__ enhanced parsing APIs by
   adding convenience methods for creating new data.
   (PR `#3808 <https://github.com/robotframework/robotframework/pull/3808>`_)
+
+- `Sergey T. <https://github.com/vokiput>`__ added support to strip leading and/or
+  trailing spaces to various comparison comparison keywords in the BuiltIn library.
+  (`#3240`_)
+
+- `J. Foederer <https://github.com/JFoederer>`__ added `get_library_info` method to
+  the `remote library interface`_ to enhance performance with big libraries. (`#3362`_)
 
 - `Mihai Pârvu <https://github.com/mihaiparvu>`__ fixed problems using string 'none'
   (case-insensitively) with various keywords, most importantly with XML library
   keywords setting element text. (`#3649`_)
+
+- `Daniel Biehl <https://github.com/d-biehl>`__ fixed reporting fatal errors in
+  parsing APIs. (`#3857`_)
 
 - `Hugo van Kemenade <https://github.com/hugovk>`__ did metadata and documentation
   changes to drop Python 3.4 support. (`#3577`_)
@@ -648,6 +729,11 @@ Full list of fixes and enhancements
       - high
       - Relative order of messages and keywords is not preserved in log
       - beta 2
+    * - `#3362`_
+      - enhancement
+      - high
+      - Enhance performance of getting information about keywords with big remote libraries
+      - rc 1
     * - `#3487`_
       - enhancement
       - high
@@ -716,7 +802,7 @@ Full list of fixes and enhancements
     * - `#3842`_
       - enhancement
       - high
-      - Show keywords unexecuted due to earlier failures in log
+      - Show un-executed keywords in log
       - beta 2
     * - `#3547`_
       - bug
@@ -758,6 +844,11 @@ Full list of fixes and enhancements
       - medium
       - If library has listener but no keywords, other library listeners' `close` method is called multiple times
       - beta 1
+    * - `#3788`_
+      - bug
+      - medium
+      - Metadata name overlaps with data when larger than expected in log and report
+      - rc 1
     * - `#3801`_
       - bug
       - medium
@@ -768,16 +859,31 @@ Full list of fixes and enhancements
       - medium
       - Handling paths with double leading slashes like `//home/test` can cause endless loop
       - beta 3
+    * - `#3857`_
+      - bug
+      - medium
+      - Parsing API error handling does not detect fatal errors properly
+      - rc 1
     * - `#2294`_
       - enhancement
       - medium
       - Run Keyword And Warn On Failure keyword
       - alpha 1
+    * - `#3240`_
+      - enhancement
+      - medium
+      - Add trim parameter to Should Be Equal As Strings keyword
+      - rc 1
     * - `#3577`_
       - enhancement
       - medium
       - Drop Python 3.4 support
       - alpha 1
+    * - `#3593`_
+      - enhancement
+      - medium
+      - Document that automatic module import in expressions does not work with list comprehensions
+      - rc 1
     * - `#3685`_
       - enhancement
       - medium
@@ -788,11 +894,6 @@ Full list of fixes and enhancements
       - medium
       - Libdoc: Escape backslashes, spaces, line breaks etc. in default values to make them Robot compatible
       - alpha 2
-    * - `#3726`_
-      - enhancement
-      - medium
-      - Update output.xml schema to reflect v4.0 changes
-      - beta 3
     * - `#3733`_
       - enhancement
       - medium
@@ -853,6 +954,11 @@ Full list of fixes and enhancements
       - medium
       - Remove unnecessary container elements from output.xml
       - beta 3
+    * - `#3873`_
+      - enhancement
+      - medium
+      - Support argument conversion based on default values with remote interface
+      - rc 1
     * - `#3731`_
       - ---
       - medium
@@ -913,14 +1019,20 @@ Full list of fixes and enhancements
       - low
       - Add `source` to listener v2 `start_test` and `end_test` methods
       - beta 3
+    * - `#3858`_
+      - enhancement
+      - low
+      - Remove deprecated `ConnectionCache._resolve_alias_or_index` in favor of public API
+      - rc 1
 
-Altogether 58 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av4.0>`__.
+Altogether 64 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av4.0>`__.
 
 .. _#3074: https://github.com/robotframework/robotframework/issues/3074
 .. _#3079: https://github.com/robotframework/robotframework/issues/3079
 .. _#3622: https://github.com/robotframework/robotframework/issues/3622
 .. _#3624: https://github.com/robotframework/robotframework/issues/3624
 .. _#2086: https://github.com/robotframework/robotframework/issues/2086
+.. _#3362: https://github.com/robotframework/robotframework/issues/3362
 .. _#3487: https://github.com/robotframework/robotframework/issues/3487
 .. _#3538: https://github.com/robotframework/robotframework/issues/3538
 .. _#3578: https://github.com/robotframework/robotframework/issues/3578
@@ -943,13 +1055,16 @@ Altogether 58 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#3721: https://github.com/robotframework/robotframework/issues/3721
 .. _#3729: https://github.com/robotframework/robotframework/issues/3729
 .. _#3772: https://github.com/robotframework/robotframework/issues/3772
+.. _#3788: https://github.com/robotframework/robotframework/issues/3788
 .. _#3801: https://github.com/robotframework/robotframework/issues/3801
 .. _#3844: https://github.com/robotframework/robotframework/issues/3844
+.. _#3857: https://github.com/robotframework/robotframework/issues/3857
 .. _#2294: https://github.com/robotframework/robotframework/issues/2294
+.. _#3240: https://github.com/robotframework/robotframework/issues/3240
 .. _#3577: https://github.com/robotframework/robotframework/issues/3577
+.. _#3593: https://github.com/robotframework/robotframework/issues/3593
 .. _#3685: https://github.com/robotframework/robotframework/issues/3685
 .. _#3697: https://github.com/robotframework/robotframework/issues/3697
-.. _#3726: https://github.com/robotframework/robotframework/issues/3726
 .. _#3733: https://github.com/robotframework/robotframework/issues/3733
 .. _#3736: https://github.com/robotframework/robotframework/issues/3736
 .. _#3739: https://github.com/robotframework/robotframework/issues/3739
@@ -962,6 +1077,7 @@ Altogether 58 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#3785: https://github.com/robotframework/robotframework/issues/3785
 .. _#3809: https://github.com/robotframework/robotframework/issues/3809
 .. _#3853: https://github.com/robotframework/robotframework/issues/3853
+.. _#3873: https://github.com/robotframework/robotframework/issues/3873
 .. _#3731: https://github.com/robotframework/robotframework/issues/3731
 .. _#3214: https://github.com/robotframework/robotframework/issues/3214
 .. _#3691: https://github.com/robotframework/robotframework/issues/3691
@@ -974,3 +1090,5 @@ Altogether 58 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#3851: https://github.com/robotframework/robotframework/issues/3851
 .. _#3852: https://github.com/robotframework/robotframework/issues/3852
 .. _#3856: https://github.com/robotframework/robotframework/issues/3856
+.. _#3858: https://github.com/robotframework/robotframework/issues/3858
+.. _#3726: https://github.com/robotframework/robotframework/issues/3726

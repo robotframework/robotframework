@@ -28,6 +28,16 @@ Log with custom levels
     Check log message    ${tc.kws[0].msgs[4]}    between warning and error    WARN
     Check log message    ${tc.kws[0].msgs[5]}    above error    ERROR
 
+Log exception
+    ${tc} =    Check test case    ${TEST NAME}
+    ${message} =    Catenate    SEPARATOR=\n
+    ...    Error occurred!
+    ...    Traceback (most recent call last):
+    ...    ${SPACE*2}File "*", line 54, in log_exception
+    ...    ${SPACE*4}raise ValueError('Bang!')
+    ...    ValueError: Bang!
+    Check log message    ${tc.kws[0].msgs[0]}    ${message}    ERROR    pattern=True
+
 Messages below threshold level are ignored fully
     ${tc}=    Check test case    ${TEST NAME}
     Should be empty    ${tc.kws[0].msgs}
@@ -63,4 +73,4 @@ Logging when timeout is in use
     Check log message    ${tc.kws[0].msgs[1]}    something
 
 Suppress errors from logging module
-    Stderr Should Not Contain    Traceback
+    Stderr Should Contain    Traceback    count=1

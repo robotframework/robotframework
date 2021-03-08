@@ -127,15 +127,12 @@ def seq2str2(sequence):
     return '[ %s ]' % ' | '.join(unic(item) for item in sequence)
 
 
-def test_or_task(text, rpa):
-    """If `rpa` is True, replaces occurrences of `{test}` in `text` with `task`."""
-    def t(match):
+def test_or_task(text, rpa=False):
+    """Replaces `{test}` in `text` with `test` or `task` depending on `rpa`."""
+    def replace(match):
+        test = match.group(1)
         if not rpa:
-            return match.group(1)
-        try:
-            return {
-                'TEST': 'TASK', 'Test': 'Task', 'test': 'task'
-            }[match.group(1)]
-        except KeyError:
-            raise ValueError("Invalid input string '%s'." % text)
-    return re.sub('{(.*)}', t, text)
+            return test
+        upper = [c.isupper() for c in test]
+        return ''.join(c.upper() if up else c for c, up in zip('task', upper))
+    return re.sub('{(test)}', replace, text, flags=re.IGNORECASE)
