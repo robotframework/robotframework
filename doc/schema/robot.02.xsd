@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2">
     <xs:annotation>
         <xs:documentation xml:lang="en">
             = Robot Framework output.xml schema =
@@ -26,9 +26,16 @@
         <xs:attribute name="generated" type="xs:string" />
         <!-- True when executing tasks, false (default) when executing tests. -->
         <xs:attribute name="rpa" type="xs:boolean" />
-        <!-- Version of the schema output.xml is compatible with. -->
-        <xs:attribute name="schemaversion" type="xs:int" />
+        <!-- Version of the schema output.xml is compatible with. Must match
+             the `version` attribute of the `xs:schema` root element. -->
+        <xs:attribute name="schemaversion" type="SpecVersion" />
     </xs:complexType>
+    <xs:simpleType name="SpecVersion">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="2" />
+            <xs:maxInclusive value="2" />
+        </xs:restriction>
+    </xs:simpleType>
     <xs:complexType name="Suite">
         <xs:choice maxOccurs="unbounded">
             <!-- These keywords are possible suite setup and teardown.
@@ -69,7 +76,7 @@
          If the later, they must have the `type` attribute set accordingly. -->
     <xs:complexType name="Keyword">
         <xs:choice maxOccurs="unbounded">
-           <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="for" type="For" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="if" type="If" minOccurs="0" maxOccurs="unbounded" />
             <!-- Assigned variables. -->

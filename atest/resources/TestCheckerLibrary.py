@@ -77,7 +77,7 @@ class TestCheckerLibrary:
         if validate is None:
             validate = os.getenv('ATEST_VALIDATE_OUTPUT', False)
         if utils.is_truthy(validate):
-            self.schema.validate(path)
+            self._validate_output(path)
         try:
             logger.info("Processing output '%s'." % path)
             result = Result(root_suite=NoSlotsTestSuite())
@@ -91,6 +91,22 @@ class TestCheckerLibrary:
         set_suite_variable('$SUITE', result.suite)
         set_suite_variable('$STATISTICS', result.statistics)
         set_suite_variable('$ERRORS', result.errors)
+
+    def _validate_output(self, path):
+        schema_version = self._get_schema_version(path)
+        if schema_version != self.schema.version:
+            raise AssertionError(
+                'Incompatible schema versions. Schema has `version="%s"` '
+                'but output file has `schemaversion="%s"`.'
+                % (self.schema.version, schema_version)
+        )
+        self.schema.validate(path)
+
+    def _get_schema_version(self, path):
+        with open(path) as f:
+            for line in f:
+                if line.startswith('<robot'):
+                    return re.search('schemaversion="(\d+)"', line).group(1)
 
     def get_test_case(self, name):
         suite = BuiltIn().get_variable_value('${SUITE}')
