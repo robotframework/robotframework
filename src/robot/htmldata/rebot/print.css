@@ -21,10 +21,10 @@ a:link, a:visited {
 }
 #test-details {
     border-collapse: collapse;
-    table-layout: auto;
+    background: white;
 }
 #test-details th, #test-details td {
-    border: 1px solid black;
+    border: 1px solid #ccc;
 }
 .details-col-header {
     padding: 0;
