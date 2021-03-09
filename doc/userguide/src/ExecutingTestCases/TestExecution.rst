@@ -437,8 +437,6 @@ If option :option:`--exitonfailure (-X)` is used, test execution stops
 immediately if any test fails. The remaining tests are marked
 as failed without actually executing them.
 
-.. note:: The short option :option:`-X` is new in Robot Framework 3.0.1.
-
 Stopping on parsing or execution error
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

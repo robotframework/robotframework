@@ -749,7 +749,7 @@ example, it is typically easiest to use the `@keyword decorator`_:
 Using this decorator without an argument will have no effect on the exposed
 keyword name, but will still set the `robot_name` attribute.  This allows
 `marking methods to expose as keywords`_ without actually changing keyword
-names. Starting from Robot Framework 3.0.2, methods that have the `robot_name`
+names. Methods that have the `robot_name`
 attribute also create keywords even if the method name itself would start with
 an underscore.
 
@@ -2898,7 +2898,7 @@ __ `Getting keyword arguments`_
 Getting keyword tags
 ~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 3.0.2, dynamic libraries can report `keyword
+Dynamic libraries can report `keyword
 tags`_ by using the `get_keyword_tags` method (alias `getKeywordTags`). It
 gets a keyword name as an argument, and should return corresponding tags
 as a list of strings.
@@ -2906,8 +2906,7 @@ as a list of strings.
 Alternatively it is possible to specify tags on the last row of the
 documentation returned by the `get_keyword_documentation` method discussed
 below. This requires starting the last row with `Tags:` and listing tags
-after it like `Tags: first tag, second, third`. This approach works also
-with Robot Framework versions prior to 3.0.2.
+after it like `Tags: first tag, second, third`.
 
 .. tip:: The `get_keyword_tags` method is guaranteed to be called before
          the `get_keyword_documentation` method. This makes it easy to
@@ -3133,7 +3132,7 @@ camelCase aliases work exactly the same way.
    `run_keyword`                `name, arguments, kwargs`  `Execute the specified keyword`__ with given arguments. `kwargs` is optional.
    `get_keyword_arguments`      `name`                     Return keywords' `argument specification`__. Optional method.
    `get_keyword_types`          `name`                     Return keywords' `argument type information`__. Optional method. New in RF 3.1.
-   `get_keyword_tags`           `name`                     Return keywords' `tags`__. Optional method. New in RF 3.0.2.
+   `get_keyword_tags`           `name`                     Return keywords' `tags`__. Optional method.
    `get_keyword_documentation`  `name`                     Return keywords' and library's `documentation`__. Optional method.
    `get_keyword_source`         `name`                     Return keywords' `source`__. Optional method. New in RF 3.2.
    ===========================  =========================  =======================================================

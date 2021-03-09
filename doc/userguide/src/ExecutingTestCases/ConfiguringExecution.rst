@@ -189,8 +189,6 @@ selected individually with the :option:`--suite` option. It is possible to furth
 fine-tune the list of selected tests by using :option:`--test`, :option:`--suite`,
 :option:`--include` and :option:`--exclude` options.
 
-.. note:: :option:`--rerunfailedsuites` option was added in Robot Framework 3.0.1.
-
 When no tests match selection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -403,8 +401,7 @@ resolved.
 It is possible to disable dry run validation of specific `user keywords`_
 by adding a special `robot:no-dry-run` `keyword tag`__ to them. This is useful
 if a keyword fails in the dry run mode for some reason, but work fine when
-executed normally. Disabling the dry run mode is a new feature in Robot
-Framework 3.0.2.
+executed normally.
 
 .. note:: The dry run mode does not validate variables.
 

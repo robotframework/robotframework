@@ -573,9 +573,8 @@ Python dictionaries have. For example, individual value `&{USER}[name]` can
 also be accessed like `${USER.name}` (notice that `$` is needed in this
 context), but using `${MANY.3}` is not possible.
 
-.. note:: Starting from Robot Framework 3.0.3, dictionary variable keys are
-          accessible recursively like `${VAR.nested.key}`. This eases working
-          with nested data structures.
+.. tip:: With nested dictionary variables keys are accessible like
+         `${VAR.nested.key}`. This eases working with nested data structures.
 
 Another special property of dictionary variables is
 that they are ordered. This means that if these dictionaries are iterated,
