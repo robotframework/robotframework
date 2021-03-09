@@ -73,14 +73,14 @@ h2 {
 }
 /* Status text colors -- !important allows using them in links */
 .fail {
-    color: #f33 !important;
+    color: #ce3e01 !important;
     font-weight: bold;
 }
 .pass {
-    color: #393 !important;
+    color: #098a09 !important;
 }
 .skip {
-    color: #fed84f !important;
+    color: #927201 !important;
     font-weight: bold;
 }
 .label {
