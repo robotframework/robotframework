@@ -103,7 +103,7 @@ class TestCheckerLibrary:
         self.schema.validate(path)
 
     def _get_schema_version(self, path):
-        with open(path) as f:
+        with open(path, encoding='UTF-8') as f:
             for line in f:
                 if line.startswith('<robot'):
                     return re.search('schemaversion="(\d+)"', line).group(1)
