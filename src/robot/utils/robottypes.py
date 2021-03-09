@@ -40,8 +40,6 @@ def is_truthy(item):
 
     - If the value is a string, it is considered false if it is `'FALSE'`,
       `'NO'`, `'OFF'`, `'0'`, `'NONE'` or `''`, case-insensitively.
-      Considering `'NONE'` false is new in RF 3.0.3 and considering `'OFF'`
-      and `'0'` false is new in RF 3.1.
     - Other strings are considered true.
     - Other values are handled by using the standard `bool()` function.
 

@@ -97,8 +97,8 @@ Options
                           files or when using resource files. If more than one
                           extension is needed, separate them with a colon.
                           Examples: `--extension txt`, `--extension robot:txt`
-                          New in RF 3.0.1. Starting from RF 3.2 only `*.robot`
-                          files are parsed by default.
+                          Starting from RF 3.2 only `*.robot` files are parsed
+                          by default.
  -N --name name           Set the name of the top level suite. By default the
                           name is created based on the executed file or
                           directory.
@@ -138,7 +138,7 @@ Options
                           re-executed. Equivalent to selecting same tests
                           individually using --test.
  -S --rerunfailedsuites output  Select failed suites from an earlier output
-                          file to be re-executed. New in RF 3.0.1.
+                          file to be re-executed.
     --runemptysuite       Executes suite even if it contains no tests. Useful
                           e.g. with --include/--exclude when it is not an error
                           that no test matches the condition.
@@ -294,7 +294,6 @@ Options
     --dryrun              Verifies test data and runs tests so that library
                           keywords are not executed.
  -X --exitonfailure       Stops test execution if any critical test fails.
-                          Short option -X is new in RF 3.0.1.
     --exitonerror         Stops test execution if any error occurs when parsing
                           test data, importing libraries, and so on.
     --skipteardownonexit  Causes teardowns to be skipped if test execution is

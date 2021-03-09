@@ -83,7 +83,7 @@ Options
                           one per line. Contents do not need to be escaped but
                           spaces in the beginning and end of lines are removed.
                           Empty lines and lines starting with a hash character
-                          (#) are ignored. New in Robot Framework 3.0.2.
+                          (#) are ignored.
                           Example file:
                           |  --name Example
                           |  # This is a comment line
