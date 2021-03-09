@@ -77,10 +77,6 @@ class Screenshot(object):
     - Scrot :: http://en.wikipedia.org/wiki/Scrot :: Not used on Windows.
       Install with ``apt-get install scrot`` or similar.
 
-    Using ``screencapture`` on OSX and specifying explicit screenshot module
-    are new in Robot Framework 2.9.2. The support for using ``scrot`` is new
-    in Robot Framework 3.0.
-
     = Using with Jython and IronPython =
 
     With Jython and IronPython this library uses APIs provided by JVM and .NET
@@ -127,8 +123,6 @@ class Screenshot(object):
         | Library   | Screenshot |            |
         | Library   | Screenshot | ${TEMPDIR} |
         | Library   | Screenshot | screenshot_module=PyGTK |
-
-        Specifying explicit screenshot module is new in Robot Framework 2.9.2.
         """
         self._given_screenshot_dir = self._norm_path(screenshot_directory)
         self._screenshot_taker = ScreenshotTaker(screenshot_module)

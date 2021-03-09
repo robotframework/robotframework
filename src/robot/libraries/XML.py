@@ -424,8 +424,7 @@ class XML(object):
     | `Parse XML` | ${XML} | keep_clark_notation=${EMPTY} | # Empty string is false.       |
     | `Parse XML` | ${XML} | keep_clark_notation=${FALSE} | # Python ``False`` is false.   |
 
-    Considering string ``NONE`` false is new in Robot Framework 3.0.3 and
-    considering also ``OFF`` and ``0`` false is new in Robot Framework 3.1.
+    Considering ``OFF`` and ``0`` false is new in Robot Framework 3.1.
 
     == Pattern matching ==
 
@@ -497,8 +496,7 @@ class XML(object):
 
         If you want to strip namespace information altogether so that it is
         not included even if XML is saved, you can give a true value to
-        ``strip_namespaces`` argument. This functionality is new in Robot
-        Framework 3.0.2.
+        ``strip_namespaces`` argument.
 
         Examples:
         | ${root} = | Parse XML | <root><child/></root> |

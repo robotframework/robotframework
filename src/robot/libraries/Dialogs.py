@@ -25,7 +25,7 @@ to wrap lines manually, you can add newlines using the ``\\n`` character
 sequence.
 
 The library has a known limitation that it cannot be used with timeouts
-on Python. Support for IronPython was added in Robot Framework 2.9.2.
+on Python.
 """
 
 from robot.version import get_version
@@ -85,9 +85,6 @@ def get_value_from_user(message, default_value='', hidden=False):
     Example:
     | ${username} = | Get Value From User | Input user name | default    |
     | ${password} = | Get Value From User | Input password  | hidden=yes |
-
-    Considering strings ``false`` and ``no`` to be false is new in RF 2.9
-    and considering string ``none`` false is new in RF 3.0.3.
     """
     return _validate_user_input(InputDialog(message, default_value,
                                             is_truthy(hidden)))
