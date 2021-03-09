@@ -311,9 +311,15 @@ class OperatingSystem(object):
         If more complex pattern matching is needed, it is possible to use
         `Get File` in combination with String library keywords like `Get
         Lines Matching Regexp`.
+
+        This keyword supports special ``SYSTEM`` and ``CONSOLE`` encodings that
+        `Get File` supports only with Robot Framework 4.0 and newer. When using
+        Python 3, it is possible to use ``${NONE}`` instead of ``SYSTEM`` with
+        earlier versions.
         """
-        pattern = '*%s*' % pattern
         path = self._absnorm(path)
+        pattern = '*%s*' % pattern
+        encoding = self._map_encoding(encoding)
         lines = []
         total_lines = 0
         self._link("Reading file '%s'.", path)
