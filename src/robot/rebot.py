@@ -355,7 +355,7 @@ def rebot_cli(arguments=None, exit=True):
     :param arguments: Command line options and arguments as a list of strings.
         Starting from RF 3.1, defaults to ``sys.argv[1:]`` if not given.
     :param exit: If ``True``, call ``sys.exit`` with the return code denoting
-        execution status, otherwise just return the rc. New in RF 3.0.1.
+        execution status, otherwise just return the rc.
 
     Entry point used when post-processing outputs from the command line, but
     can also be used by custom scripts. Especially useful if the script itself

@@ -7,6 +7,11 @@ list test
     ${list} =    Create List    foo    bar    quux
     Log    ${list}
 
+skip
+    Log     This will be skipped!    WARN
+    Skip    Told you so!
+    This is not executed
+
 *** Keywords ***
 User Keyword
     User Keyword 2

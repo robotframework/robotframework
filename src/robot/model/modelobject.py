@@ -44,8 +44,6 @@ class ModelObject(with_metaclass(SetterAwareType, object)):
         See also :meth:`deepcopy`. The difference between these two is the same
         as with the standard ``copy.copy`` and ``copy.deepcopy`` functions
         that these methods also use internally.
-
-        New in Robot Framework 3.0.1.
         """
         copied = copy.copy(self)
         for name in attributes:
@@ -61,8 +59,6 @@ class ModelObject(with_metaclass(SetterAwareType, object)):
         See also :meth:`copy`. The difference between these two is the same
         as with the standard ``copy.copy`` and ``copy.deepcopy`` functions
         that these methods also use internally.
-
-        New in Robot Framework 3.0.1.
         """
         copied = copy.deepcopy(self)
         for name in attributes:

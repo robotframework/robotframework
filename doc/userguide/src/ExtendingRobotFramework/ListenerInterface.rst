@@ -87,12 +87,9 @@ __ `Implicit argument types based on default values`_
 Listener interface versions
 ---------------------------
 
-There are two supported listener interface versions. Listener version 2 has
-been available since Robot Framework 2.1, and version 3 is supported by
-Robot Framework 3.0 and newer. A listener must have attribute
-`ROBOT_LISTENER_API_VERSION` with value 2 or 3, either as a string or as an
-integer, depending on which API version it uses. There has also been an older
-listener version 1, but it is not supported anymore by Robot Framework 3.0.
+There are two supported listener interface versions. A listener must
+have an attribute `ROBOT_LISTENER_API_VERSION` with value 2 or 3, either as
+a string or as an integer, depending on which API version it uses.
 
 The main difference between listener versions 2 and 3 is that the former only
 gets information about the execution but cannot directly affect it. The latter
@@ -392,8 +389,7 @@ This API gets actual running and result model objects used by Robot
 Framework itself, and listeners can both directly query information
 they need and also change the model objects on the fly.
 
-Listener version 3 was introduced in Robot Framework 3.0. At least
-initially it does not have all methods that the version 2 has. The
+Listener version 3 does not yet have all methods that the version 2 has. The
 main reason is that `suitable model objects are not available internally`__.
 The `close` method and methods related to output files are called exactly
 same way in both versions.

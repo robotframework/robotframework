@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
@@ -136,7 +136,7 @@ function totalDetailSelected() {
 function renderTotalSelector() {
     var args = {linkTarget: 'totals',
                 totalTabStatus: 'detail-tab-selected'};
-    renderSelector(args, 'totalDetailsSelectorTemplate', {title: testOrTask('All {Test}s')});
+    renderSelector(args, 'totalDetailsSelectorTemplate');
     updatePrintSelector(testOrTask('All {Test}s'));
     renderTotalDetails();
 }
@@ -480,30 +480,29 @@ function hideHiddenDetailsColumns(elem) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="detailsHeaderTemplate">
-  <h2 id="${linkTarget}">{{= testOrTask('{Test}')}} Details</h2>
+  <h2 id="${linkTarget}">{{= testOrTask('{Test} Details')}}</h2>
   <ul id="detail-tabs">
     <li class="${totalTabStatus} detail-tab">
-      <a href="#totals" onclick="renderTotalSelector()">Totals</a>
+      <a href="#totals" onclick="renderTotalSelector()"
+         title="{{= testOrTask('Show all {tests}')}}">All</a>
     </li>
     <li class="${tagTabStatus} detail-tab">
-      <a href="#tags" onclick="renderTagSelector()">Tags</a>
+      <a href="#tags" onclick="renderTagSelector()"
+         title="{{= testOrTask('Show {tests} by tag')}}">Tags</a>
     </li>
     <li class="${suiteTabStatus} detail-tab">
-      <a href="#suites" onclick="renderSuiteSelector()">Suites</a>
+      <a href="#suites" onclick="renderSuiteSelector()"
+         title="{{= testOrTask('Show {tests} by suite')}}">Suites</a>
     </li>
     <li class="${searchTabStatus} detail-tab">
-      <a href="#search" onclick="renderSearchSelector()">Search</a>
+      <a href="#search" onclick="renderSearchSelector()"
+         title="{{= testOrTask('Free {test} search')}}">Search</a>
     </li>
   </ul>
 </script>
 
 <script  type="text/x-jquery-tmpl" id="totalDetailsSelectorTemplate">
   <table class="details" id="details-header">
-    <tr class="selector">
-      <th>${title}</th>
-      <td>
-      <td id="print-selector"></td>
-    </tr>
   </table>
 </script>
 
@@ -512,7 +511,7 @@ function hideHiddenDetailsColumns(elem) {
     <tr class="selector">
       <th>Tag:</th>
       <td id="normal-selector">
-        <select id="tag-detail-selector"
+        <select id="tag-detail-selector" title="Tag selector"
                 onchange="tagDetailSelected(this.options[this.selectedIndex].value)">
           <option selected disabled hidden>-- Select --</option>
           {{each tags}}
@@ -533,7 +532,7 @@ function hideHiddenDetailsColumns(elem) {
     <tr class="selector">
       <th>Suite:</th>
       <td id="normal-selector">
-        <select id="suite-detail-selector"
+        <select id="suite-detail-selector" title="Suite selector"
                 onchange="suiteDetailSelected(this.options[this.selectedIndex].value)">
           <option selected disabled hidden>-- Select --</option>
           {{each suites}}

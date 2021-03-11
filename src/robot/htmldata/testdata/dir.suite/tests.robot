@@ -68,13 +68,20 @@ Complex
     [Tags]    t1  owner-kekkonen
     Log   in test
     User Kw
-    ::FOR  ${i}  IN  @{list}
-    \    Log   Got ${i}
+    FOR  ${i}  IN  @{list}
+        Log   Got ${i}
+        IF    ${i} % 2 == 0
+            Log    ${i} is even
+        ELSE
+            Log    ${i} is odd
+        END
+    END
 
-Log levels
+Logging
     Log     This is a WARNING!\n\nWith multiple lines.      WARN
     Log     This is info            INFO
     Log     This is debug           DEBUG
+    Log Many    Lot of    different    messages    here.    @{list}
 
 Multi-line failure
     [Template]    Fail

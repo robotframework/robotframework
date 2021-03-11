@@ -106,8 +106,6 @@ class Telnet(object):
     opening the telnet connection. It is used internally by `Open Connection`.
     The default value is the system global default timeout.
 
-    New in Robot Framework 2.9.2.
-
     == Newline ==
 
     Newline defines which line separator `Write` keyword should use. The

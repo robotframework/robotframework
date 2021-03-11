@@ -148,9 +148,6 @@ extent on the platform:
 - Epoch time supports 1970 and above on Windows with Python and IronPython.
 - On other platforms epoch time supports 1900 and above or even earlier.
 
-Prior to Robot Framework 2.9.2, all formats had same limitation as epoch time
-has nowadays.
-
 = Time formats =
 
 Similarly as dates, times can be given to and received from keywords in
@@ -252,9 +249,7 @@ by giving a true value to ``exclude_millis`` argument. If the argument is given
 as a string, it is considered true unless it is empty or case-insensitively
 equal to ``false``, ``none`` or ``no``. Other argument types are tested using
 same [http://docs.python.org/library/stdtypes.html#truth|rules as in
-Python]. Notice that prior to Robot Framework 2.9, all strings except
-the empty string were considered true, and that considering ``none`` false is
-new in Robot Framework 3.0.3.
+Python].
 
 When milliseconds are excluded, seconds in returned dates and times are
 rounded to the nearest full second. With `timestamp` and `timer string`

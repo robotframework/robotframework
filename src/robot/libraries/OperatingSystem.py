@@ -82,9 +82,6 @@ class OperatingSystem(object):
     Unless otherwise noted, matching is case-insensitive on
     case-insensitive operating systems such as Windows.
 
-    Starting from Robot Framework 2.9.1, globbing is not done if the given path
-    matches an existing file even if it would contain a glob pattern.
-
     = Tilde expansion =
 
     Paths beginning with ``~`` or ``~username`` are expanded to the current or
@@ -116,8 +113,7 @@ class OperatingSystem(object):
     | `Remove Directory` | ${path} | recursive=${EMPTY} | # Empty string is false.       |
     | `Remove Directory` | ${path} | recursive=${FALSE} | # Python ``False`` is false.   |
 
-    Considering string ``NONE`` false is new in Robot Framework 3.0.3 and
-    considering also ``OFF`` and ``0`` false is new in Robot Framework 3.1.
+    Considering `OFF`` and ``0`` false is new in Robot Framework 3.1.
 
     = Example =
 
@@ -255,8 +251,6 @@ class OperatingSystem(object):
         - ``ignore``: Ignore characters that cannot be decoded.
         - ``replace``: Replace characters that cannot be decoded with
           a replacement character.
-
-        Support for ``SYSTEM`` and ``CONSOLE`` encodings in Robot Framework 3.0.
         """
         path = self._absnorm(path)
         self._link("Getting file '%s'.", path)
@@ -311,9 +305,15 @@ class OperatingSystem(object):
         If more complex pattern matching is needed, it is possible to use
         `Get File` in combination with String library keywords like `Get
         Lines Matching Regexp`.
+
+        This keyword supports special ``SYSTEM`` and ``CONSOLE`` encodings that
+        `Get File` supports only with Robot Framework 4.0 and newer. When using
+        Python 3, it is possible to use ``${NONE}`` instead of ``SYSTEM`` with
+        earlier versions.
         """
-        pattern = '*%s*' % pattern
         path = self._absnorm(path)
+        pattern = '*%s*' % pattern
+        encoding = self._map_encoding(encoding)
         lines = []
         total_lines = 0
         self._link("Reading file '%s'.", path)
@@ -562,9 +562,8 @@ class OperatingSystem(object):
         `File Should Not Exist` can be used to avoid overwriting existing
         files.
 
-        The support for ``SYSTEM`` and ``CONSOLE`` encodings is new in Robot
-        Framework 3.0. Automatically converting ``\\n`` to ``\\r\\n`` on
-        Windows is new in Robot Framework 3.1.
+        Automatically converting ``\\n`` to ``\\r\\n`` on Windows is new in
+        Robot Framework 3.1.
         """
         path = self._write_to_file(path, content, encoding)
         self._link("Created file '%s'.", path)
@@ -735,7 +734,7 @@ class OperatingSystem(object):
         separator, it is considered a file. If the path to the file does not
         exist, it is created.
 
-        The resulting destination path is returned since Robot Framework 2.9.2.
+        The resulting destination path is returned.
 
         See also `Copy Files`, `Move File`, and `Move Files`.
         """
@@ -821,7 +820,7 @@ class OperatingSystem(object):
         """Moves the source file into the destination.
 
         Arguments have exactly same semantics as with `Copy File` keyword.
-        Destination file path is returned since Robot Framework 2.9.2.
+        Destination file path is returned.
 
         If the source and destination are on the same filesystem, rename
         operation is used. Otherwise file is copied to the destination

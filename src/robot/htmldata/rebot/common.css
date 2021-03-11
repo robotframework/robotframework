@@ -73,14 +73,14 @@ h2 {
 }
 /* Status text colors -- !important allows using them in links */
 .fail {
-    color: #f33 !important;
+    color: #ce3e01 !important;
     font-weight: bold;
 }
 .pass {
-    color: #393 !important;
+    color: #098a09 !important;
 }
 .skip {
-    color: #fed84f !important;
+    color: #927201 !important;
     font-weight: bold;
 }
 .label {
@@ -95,23 +95,20 @@ h2 {
 .label.debug, .label.trace, .label.error, .label.keyword {
     letter-spacing: 0;
 }
-.label.error, .label.fail, .label.pass, .labe.skip, .label.warn {
-    color: #fff !important;
+.label.pass, .label.fail, .label.error, .label.skip, .label.warn {
     font-weight: bold;
-}
-.label.error, .label.fail {
-    background-color: #ee5919;
 }
 .label.pass {
     background-color: #97bd61;
-    color: black !important;
+    color: #000 !important;
 }
-.label.skip {
+.label.fail, .label.error {
+    background-color: #ce3e01;
+    color: #fff !important;
+}
+.label.skip, .label.warn {
     background-color: #fed84f;
-    color: black !important;
-}
-.label.warn {
-    background-color: #b62109;
+    color: #000 !important;
 }
 /* Top right header */
 #top-right-header {
@@ -207,13 +204,13 @@ th.stats-col-graph:hover {
     height: 100%;
 }
 .fail-bar {
-    background: #ee5919;
+    background: #ce3e01;
 }
 .pass-bar {
     background: #97bd61;
 }
 .skip-bar {
-    background:  #fed84f;
+    background: #fed84f;
 }
 /* Tablesorter - adapted from provided Blue Skin */
 .tablesorter-header {
