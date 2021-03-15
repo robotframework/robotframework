@@ -284,7 +284,7 @@ class String(object):
         a true value makes it case-insensitive. The value is considered true
         if it is a non-empty string that is not equal to ``false``, ``none`` or
         ``no``. If the value is not a string, its truth value is got directly
-        in Python. Considering ``none`` false is new in RF 3.0.3.
+        in Python.
 
         Lines are returned as one string catenated back together with
         newlines. Possible trailing newline is never returned. The
@@ -319,7 +319,7 @@ class String(object):
         a true value makes it case-insensitive. The value is considered true
         if it is a non-empty string that is not equal to ``false``, ``none`` or
         ``no``. If the value is not a string, its truth value is got directly
-        in Python. Considering ``none`` false is new in RF 3.0.3.
+        in Python.
 
         Lines are returned as one string catenated back together with
         newlines. Possible trailing newline is never returned. The
@@ -352,7 +352,7 @@ class String(object):
         argument a true value. The value is considered true
         if it is a non-empty string that is not equal to ``false``, ``none`` or
         ``no``. If the value is not a string, its truth value is got directly
-        in Python. Considering ``none`` false is new in RF 3.0.3.
+        in Python.
 
         If the pattern is empty, it matches only empty lines by default.
         When partial matching is enabled, empty pattern matches all lines.
@@ -372,9 +372,6 @@ class String(object):
         See `Get Lines Matching Pattern` and `Get Lines Containing
         String` if you do not need full regular expression powers (and
         complexity).
-
-        ``partial_match`` argument is new in Robot Framework 2.9. In earlier
-         versions exact match was always required.
         """
         if not is_truthy(partial_match):
             pattern = '^%s$' % pattern
@@ -412,8 +409,6 @@ class String(object):
         | ${one group} = ['he', 'ri']
         | ${named group} = ['he', 'ri']
         | ${two groups} = [('h', 'e'), ('r', 'i')]
-
-        New in Robot Framework 2.9.
         """
         regexp = re.compile(pattern)
         groups = [self._parse_group(g) for g in groups]
@@ -648,8 +643,6 @@ class String(object):
         | Should Be Equal | ${stripped} | Hello${SPACE} | |
         | ${stripped}=  | Strip String | aabaHelloeee | characters=abe |
         | Should Be Equal | ${stripped} | Hello | |
-
-        New in Robot Framework 3.0.
         """
         try:
             method = {'BOTH': string.strip,

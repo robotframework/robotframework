@@ -32,12 +32,6 @@ Alternatively it is possible to execute the installed `robot.rebot module`__
 or `robot/rebot.py file`__ directly using the selected interpreter. The final
 alternative is using the `standalone JAR distribution`_.
 
-.. note::
-    Versions prior to Robot Framework 3.0 installed the ``rebot`` script only
-    with Python, and used ``jyrebot`` and ``ipyrebot`` scripts with Jython and
-    IronPython, respectively. The old interpreter specific scripts were
-    removed in Robot Framework 3.1 and nowadays ``rebot`` must always be used.
-
 __ `Executing installed robot module`_
 __ `Executing installed robot directory`_
 

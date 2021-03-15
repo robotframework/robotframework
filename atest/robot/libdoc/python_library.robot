@@ -47,7 +47,7 @@ Init Arguments
 Init Source Info
     [Tags]    no-standalone    # Standard library sources aren't included in standalone JAR
     Keyword Should Not Have Source   0    xpath=inits/init
-    Keyword Lineno Should Be         0    283      xpath=inits/init
+    Keyword Lineno Should Be         0    281      xpath=inits/init
 
 Keyword Names
     Keyword Name Should Be           0    Close All Connections
@@ -79,11 +79,11 @@ Keyword Source Info
     # This keyword is from the "main library".
     Keyword Name Should Be           0    Close All Connections
     Keyword Should Not Have Source   0
-    Keyword Lineno Should Be         0    472
+    Keyword Lineno Should Be         0    470
     # This keyword is from an external library component.
     Keyword Name Should Be           7    Read Until Prompt
     Keyword Should Not Have Source   7
-    Keyword Lineno Should Be         7    1013
+    Keyword Lineno Should Be         7    1011
 
 KwArgs and VarArgs
     Run Libdoc And Parse Output      Process

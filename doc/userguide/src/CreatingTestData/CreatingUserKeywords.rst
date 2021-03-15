@@ -229,7 +229,7 @@ the equals sign (`=`) and then the value, for example `${arg}=default`.
 There can be many arguments with defaults, but they all must be given after
 the normal positional arguments. The default value can contain a variable_
 created on `test, suite or global scope`__, but local variables of the keyword
-executor cannot be used. Starting from Robot Framework 3.0, default value can
+executor cannot be used. Default value can
 also be defined based on earlier arguments accepted by the keyword.
 
 .. note:: The syntax for default values is space sensitive. Spaces

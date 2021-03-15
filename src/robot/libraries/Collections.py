@@ -486,8 +486,6 @@ class _Dictionary(object):
 
         Use `Create Dictionary` from the BuiltIn library for constructing new
         dictionaries.
-
-        New in Robot Framework 2.9.
         """
         return dict(item)
 
@@ -548,8 +546,6 @@ class _Dictionary(object):
         =>
         | ${val} = 2
         | ${D3} = {'a': 1, 'c': 3}
-
-        New in Robot Framework 2.9.2.
         """
         self._validate_dictionary(dictionary)
         if default is NOT_SET:
@@ -846,9 +842,9 @@ class Collections(_List, _Dictionary):
     Following keywords in the BuiltIn library can also be used with
     lists and dictionaries:
 
-    | = Keyword Name =             | = Applicable With = | = Comment = |
+    | = Keyword Name =             | = Applicable With = |
     | `Create List`                | lists |
-    | `Create Dictionary`          | dicts | Was in Collections until RF 2.9. |
+    | `Create Dictionary`          | dicts |
     | `Get Length`                 | both  |
     | `Length Should Be`           | both  |
     | `Should Be Empty`            | both  |
@@ -894,8 +890,7 @@ class Collections(_List, _Dictionary):
     | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${FALSE} | # Python ``False`` is false.   |
     | `Lists Should Be Equal` | ${x}   | ${y} | Custom error | values=no values | # ``no values`` works with ``values`` argument |
 
-    Considering string ``NONE`` false is new in Robot Framework 3.0.3 and
-    considering also ``OFF`` and ``0`` false is new in Robot Framework 3.1.
+    Considering ``OFF`` and ``0`` false is new in Robot Framework 3.1.
 
     = Data in examples =
 

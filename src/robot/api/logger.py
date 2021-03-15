@@ -37,8 +37,7 @@ Log levels
 It is possible to log messages using levels ``TRACE``, ``DEBUG``, ``INFO``,
 ``WARN`` and ``ERROR`` either using the :func:`write` function or, more
 commonly, with the log level specific :func:`trace`, :func:`debug`,
-:func:`info`, :func:`warn`, :func:`error` functions. The support for the
-error level and function is new in RF 2.9.
+:func:`info`, :func:`warn`, :func:`error` functions.
 
 By default the trace and debug messages are not logged but that can be
 changed with the ``--loglevel`` command line option. Warnings and errors are
@@ -75,10 +74,9 @@ from robot.running.context import EXECUTION_CONTEXTS
 def write(msg, level='INFO', html=False):
     """Writes the message to the log file using the given level.
 
-    Valid log levels are ``TRACE``, ``DEBUG``, ``INFO`` (default since RF
-    2.9.1), ``WARN``, and ``ERROR`` (new in RF 2.9). Additionally it is
-    possible to use ``HTML`` pseudo log level that logs the message as HTML
-    using the ``INFO`` level.
+    Valid log levels are ``TRACE``, ``DEBUG``, ``INFO`` (default), ``WARN``, and
+    ``ERROR``. Additionally it is possible to use ``HTML`` pseudo log level that
+    logs the message as HTML using the ``INFO`` level.
 
     Instead of using this method, it is generally better to use the level
     specific methods such as ``info`` and ``debug`` that have separate
@@ -125,8 +123,6 @@ def warn(msg, html=False):
 
 def error(msg, html=False):
     """Writes the message to the log file using the ``ERROR`` level.
-
-    New in Robot Framework 2.9.
     """
     write(msg, 'ERROR', html)
 

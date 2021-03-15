@@ -141,6 +141,16 @@ Grep File with UTF-16 files
     ${UTF-16 LE W/ BOM FILE}    UTF-16       föö bar\nföö bar\nföö bar\nföö bar
     ${UTF-16 BE W/ BOM FILE}    UTF-16       föö bar\nföö bar
 
+Grep file with system encoding
+    Create File    ${TEST FILE}    ${RESULT}\nSecond line\n${RESULT}    encoding=${SYSTEM_ENCODING}
+    ${file} =    Grep file    ${TEST FILE}    ää ü    encoding=SYStem
+    Should Be Equal    ${file}    ${RESULT}\n${RESULT}
+
+Grep file with console encoding
+    Create File    ${TEST FILE}    ${RESULT}\nSecond line\n${RESULT}\n     encoding=${CONSOLE_ENCODING}
+    ${file} =    Grep file    ${TEST FILE}    ää ü    encoding=COnsoLE
+    Should Be Equal    ${file}    ${RESULT}\n${RESULT}
+
 Grep File with 'ignore' Error Handler
     [Template]    Verify Grep File with error handler
     ignore    f bar

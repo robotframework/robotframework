@@ -100,6 +100,12 @@ Grep File with UTF-16 files
     Check Log Message    ${tc.kws[2].kws[0].msgs[1]}    4 out of 5 lines matched
     Check Log Message    ${tc.kws[3].kws[0].msgs[1]}    2 out of 3 lines matched
 
+Grep file with system encoding
+    Check testcase    ${TESTNAME}
+
+Grep file with console encoding
+    Check testcase    ${TESTNAME}
+
 Grep File with 'ignore' Error Handler
     [Tags]    no-ipy
     ${tc}=    Check testcase    ${TESTNAME}

@@ -205,8 +205,6 @@ class Process(object):
     | `Start Process` | program | output_encoding=UTF-8 |
     | `Run Process`   | program | stdout=${path} | output_encoding=SYSTEM |
 
-    The support to set output encoding is new in Robot Framework 3.0.
-
     == Alias ==
 
     A custom name given to the process that can be used when selecting the
@@ -274,8 +272,7 @@ class Process(object):
     | `Terminate Process` | kill=${EMPTY} | # Empty string is false.       |
     | `Terminate Process` | kill=${FALSE} | # Python ``False`` is false.   |
 
-    Considering string ``NONE`` false is new in Robot Framework 3.0.3 and
-    considering also ``OFF`` and ``0`` false is new in Robot Framework 3.1.
+    Considering ``OFF`` and ``0`` false is new in Robot Framework 3.1.
 
     = Example =
 
@@ -733,8 +730,6 @@ class Process(object):
         Examples:
         | @{cmd} = | Split Command Line | --option "value with spaces" |
         | Should Be True | $cmd == ['--option', 'value with spaces'] |
-
-        New in Robot Framework 2.9.2.
         """
         return cmdline2list(args, escaping=escaping)
 
@@ -751,8 +746,6 @@ class Process(object):
         Example:
         | ${cmd} = | Join Command Line | --option | value with spaces |
         | Should Be Equal | ${cmd} | --option "value with spaces" |
-
-        New in Robot Framework 2.9.2.
         """
         if len(args) == 1 and is_list_like(args[0]):
             args = args[0]

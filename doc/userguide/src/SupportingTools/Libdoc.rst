@@ -608,8 +608,7 @@ reStructuredText, `linking to keywords`_ requires them to be escaped like
 :codesc:`\\\`My Keyword\\\``.
 
 One of the nice features that reStructured supports is the ability to mark code
-blocks that can be syntax highlighted. The code block syntax has always worked
-with Robot Framework, but they are highlighted only in RF 3.0.1 and newer.
+blocks that can be syntax highlighted.
 Syntax highlight requires additional Pygments_ module and supports all the
 languages that Pygments supports.
 
