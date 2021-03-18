@@ -1553,7 +1553,7 @@ has multiple possible types is using Union_:
   from typing import Union
 
 
-  def example(length=Union[int, float], padding=[None, int, str]):
+  def example(length: Union[int, float], padding: Union[None, int, str]):
       # ...
 
 An alternative is giving types a tuple. It is not recommended with annotations
@@ -1587,7 +1587,7 @@ would get the original given argument:
 
 .. sourcecode:: python
 
-  def example(argument=Union[int, MyCustomType]):
+  def example(argument: Union[int, MyCustomType]):
       # ...
 
 .. _Union: https://docs.python.org/3/library/typing.html#typing.Union
