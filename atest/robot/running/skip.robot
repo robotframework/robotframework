@@ -76,6 +76,12 @@ Skip in Directory Suite Setup
 Skip In Suite Teardown
     Check Test Case    ${TEST NAME}
 
+Skip In Suite Setup And Teardown
+    Check Test Case    ${TEST NAME}
+
+Skip In Suite Teardown After Fail In Setup
+    Check Test Case    ${TEST NAME}
+
 Skip In Directory Suite Teardown
     Check Test Case    ${TEST NAME}
 

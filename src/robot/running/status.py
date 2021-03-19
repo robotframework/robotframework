@@ -306,6 +306,7 @@ class SuiteMessage(_Message):
     teardown_skipped_message = 'Skipped in suite teardown:\n%s'
     teardown_message = 'Suite teardown failed:\n%s'
     also_teardown_message = '%s\n\nAlso suite teardown failed:\n%s'
+    also_teardown_skip_message = 'Skipped in suite teardown:\n%s\n\nEarlier message:\n%s'
 
 
 class ParentMessage(SuiteMessage):
