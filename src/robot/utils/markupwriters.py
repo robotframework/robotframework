@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from .markuputils import attribute_escape, html_escape, xml_escape
-from .robottypes import is_string
+from .robottypes import is_string, is_pathlike
 from .robotio import file_writer
 
 
@@ -27,7 +27,7 @@ class _MarkupWriter(object):
             and clients should use :py:meth:`close` method to close it.
         :param write_empty: Whether to write empty elements and attributes.
         """
-        if is_string(output):
+        if is_string(output) or is_pathlike(output):
             output = file_writer(output, usage=usage)
         self.output = output
         self._write_empty = write_empty
