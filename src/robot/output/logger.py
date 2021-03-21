@@ -39,6 +39,7 @@ class Logger(AbstractLogger):
         self._console_logger = None
         self._syslog = None
         self._xml_logger = None
+        self._debugfile_logger = None
         self._listeners = None
         self._library_listeners = None
         self._other_loggers = []
@@ -56,13 +57,15 @@ class Logger(AbstractLogger):
     @property
     def start_loggers(self):
         loggers = [self._console_logger, self._syslog, self._xml_logger,
-                   self._listeners, self._library_listeners]
+                   self._debugfile_logger, self._listeners,
+                   self._library_listeners]
         return [logger for logger in self._other_loggers + loggers if logger]
 
     @property
     def end_loggers(self):
         loggers = [self._listeners, self._library_listeners,
-                   self._console_logger, self._syslog, self._xml_logger]
+                   self._debugfile_logger, self._console_logger, self._syslog,
+                   self._xml_logger]
         return [logger for logger in loggers + self._other_loggers if logger]
 
     def __iter__(self):
@@ -121,6 +124,12 @@ class Logger(AbstractLogger):
         if listeners:
             self._relay_cached_messages(listeners)
 
+    def register_debugfile_logger(self, logger):
+        self._debugfile_logger = self._wrap_and_relay(logger)
+
+    def unregister_debugfile_logger(self):
+        self._debugfile_logger = None
+
     def register_logger(self, *loggers):
         for logger in loggers:
             logger = self._wrap_and_relay(logger)
@@ -150,6 +159,12 @@ class Logger(AbstractLogger):
             self._error_occurred = True
             if self._error_listener:
                 self._error_listener()
+
+    def maybe_log_to_debugfile(self, msg):
+        """Log messages to the debugfile logger (if enabled), not necessarily
+        from the MainThread."""
+        if self._debugfile_logger:
+            self._debugfile_logger.log_message(msg)
 
     @property
     @contextmanager
