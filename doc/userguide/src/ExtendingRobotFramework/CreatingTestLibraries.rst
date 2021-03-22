@@ -2407,7 +2407,10 @@ background, there should be another keyword that checks the status of
 the worker thread and reports gathered information accordingly.
 
 Messages logged by non-main threads using the normal logging methods from
-`programmatic logging APIs`_  are silently ignored.
+`programmatic logging APIs`_  are silently ignored, except for in the
+`debug file`_ when used. The debug file will contain messages logged by all
+threads using the normal logging methods, but cannot guarantee that the logs
+will always appear exactly in the order they were emitted by the threads.
 
 There is also a `BackgroundLogger` in separate robotbackgroundlogger__ project,
 with a similar API as the standard `robot.api.logger`. Normal logging

@@ -56,16 +56,15 @@ class Logger(AbstractLogger):
 
     @property
     def start_loggers(self):
-        loggers = [self._console_logger, self._syslog, self._xml_logger,
-                   self._debugfile_logger, self._listeners,
-                   self._library_listeners]
+        loggers = [self._debugfile_logger, self._console_logger, self._syslog,
+                   self._xml_logger, self._listeners, self._library_listeners]
         return [logger for logger in self._other_loggers + loggers if logger]
 
     @property
     def end_loggers(self):
         loggers = [self._listeners, self._library_listeners,
-                   self._debugfile_logger, self._console_logger, self._syslog,
-                   self._xml_logger]
+                   self._console_logger, self._syslog, self._xml_logger,
+                   self._debugfile_logger]
         return [logger for logger in loggers + self._other_loggers if logger]
 
     def __iter__(self):

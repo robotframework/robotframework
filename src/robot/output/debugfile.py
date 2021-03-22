@@ -109,7 +109,7 @@ class _DebugFileWriter:
         if not separator:
             thread_name = threading.currentThread().getName()
             text = '%s - %s - %s - %s' % (
-                timestamp or get_timestamp(), thread_name, level, text
+                timestamp or get_timestamp(), level, thread_name, text
             )
         if self._lock:
             self._lock.acquire()
