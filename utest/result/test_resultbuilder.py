@@ -342,7 +342,7 @@ if PY3:
             try:
                 self.result.save(pathlib.Path(devnull))
             except AttributeError as e:
-                fail('Saving ExecutionResult using pathlib.Path raises AttributeError: %s" % str(e))
+                fail('Saving ExecutionResult using pathlib.Path raises AttributeError: %s' % str(e))
             
 
 if __name__ == '__main__':
