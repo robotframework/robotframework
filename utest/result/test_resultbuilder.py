@@ -4,7 +4,7 @@ from os.path import join, dirname
 from robot.errors import DataError
 from robot.result import ExecutionResult, Result
 from robot.utils import StringIO, PY3
-from robot.utils.asserts import assert_equal, assert_false, assert_true, assert_raises
+from robot.utils.asserts import assert_equal, assert_false, assert_true, assert_raises, fail
 
 
 def _read_file(name):
@@ -303,6 +303,7 @@ class TestBuildingFromXmlStringAndHandlingMissingInformation(unittest.TestCase):
 
 if PY3:
     import pathlib
+    from os import devnull
 
     class TestBuildingFromPathlibPath(unittest.TestCase):
 
@@ -332,6 +333,17 @@ if PY3:
             assert_equal(test.starttime, '20111024 13:41:20.925')
             assert_equal(test.endtime, '20111024 13:41:20.934')
 
+    class TestSavingToPathlibPath(unittest.TestCase):
+
+        def setUp(self):
+            self.result = ExecutionResult(pathlib.Path(join(dirname(__file__), 'golden.xml')))
+            
+        def test_save_to_pathlib_path_supported(self):
+            try:
+                self.result.save(pathlib.Path(devnull))
+            except AttributeError as e:
+                fail('Saving ExecutionResult using pathlib.Path raises AttributeError: %s' % str(e))
+            
 
 if __name__ == '__main__':
     unittest.main()
