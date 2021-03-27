@@ -22,7 +22,7 @@ from .logger import LOGGER
 from .loggerhelper import IsLogged
 
 
-def DebugFile(path):
+def DebugFile(path, use_lock=True):
     if not path:
         LOGGER.info('No debug file')
         return None
@@ -33,7 +33,7 @@ def DebugFile(path):
         return None
     else:
         LOGGER.info('Debug file: %s' % path)
-        return _DebugFileWriter(outfile)
+        return _DebugFileWriter(outfile, use_lock=use_lock)
 
 
 _DEBUGFILE_LOCK = Lock()
