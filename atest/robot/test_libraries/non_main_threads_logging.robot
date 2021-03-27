@@ -6,13 +6,14 @@ Resource        atest_resource.robot
 *** Variables ***
 ${TIMESTAMP}   ???????? ??:??:??.???
 ${MAINLINE SUITE TEST}  Log messages from non-main threads should be ignored
+${SUITE FILE}  test_libraries/non_main_threads_logging.robot
 
 
 *** Test Cases ***
 Log messages from non-main threads should be ignored
     [Documentation]  Run the mainline test without debugfile enabled. Check
     ...              that all logs from non-main threads are ignored.
-    Run Tests    -t "${MAINLINE SUITE TEST}"    test_libraries/non_main_threads_logging.robot
+    Run Tests    -t "${MAINLINE SUITE TEST}"    ${SUITE FILE}
     ${tc} =  Check Test Case  ${MAINLINE SUITE TEST}
     Check Log Messages In Main Testcase  ${tc}
 
@@ -22,7 +23,7 @@ Log messages from non-main threads should be written to debug file
     ...              except the debugfile, which should contain all the
     ...              messages logged by all threads, without log lines having
     ...              been written over each other.
-    Run Tests    --debugfile debug.log -t "${MAINLINE SUITE TEST}"    test_libraries/non_main_threads_logging.robot
+    Run Tests    --debugfile debug.log -t "${MAINLINE SUITE TEST}"    ${SUITE FILE}
     ${tc} =  Check Test Case  ${MAINLINE SUITE TEST}
     Check Log Messages In Main Testcase  ${tc}
     ${content} =  Get File  ${OUTDIR}/debug.log
@@ -83,10 +84,12 @@ Check Thread Debugfile Logs
         FOR  ${counter}  IN RANGE  100
             Log  Checking expected line for thread ${thread} count ${counter}
 
-            ${thread_logged_string} =  Get Thread Logged String  ${thread}  In thread ${thread}: ${counter}\n  20  WARN
+            ${thread_logged_string} =  Get Thread Logged String
+            ...    ${thread}  In thread ${thread}: ${counter}\n  20  WARN
             Debugfile Should Contain  ${content}  ${thread_logged_string}
 
-            ${thread_logged_string} =  Get Thread Logged String  ${thread}  Debugging in thread ${thread}: ${counter}\n  10  DEBUG
+            ${thread_logged_string} =  Get Thread Logged String
+            ...  ${thread}  Debugging in thread ${thread}: ${counter}\n  10  DEBUG
             Debugfile Should Contain  ${content}  ${thread_logged_string}
         END
     END

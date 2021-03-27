@@ -2410,7 +2410,9 @@ Messages logged by non-main threads using the normal logging methods from
 `programmatic logging APIs`_  are silently ignored, except for in the
 `debug file`_ when used. The debug file will contain messages logged by all
 threads using the normal logging methods, but cannot guarantee that the logs
-will always appear exactly in the order they were emitted by the threads.
+will always appear exactly in the order they were emitted by the threads. This
+is new in Robot Framework 4.0.1 - prior to this logs from non-main threads were
+not written to the debug file either.
 
 There is also a `BackgroundLogger` in separate robotbackgroundlogger__ project,
 with a similar API as the standard `robot.api.logger`. Normal logging

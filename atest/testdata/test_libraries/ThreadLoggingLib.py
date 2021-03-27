@@ -17,9 +17,7 @@ def log_using_robot_api(in_thread=False):
                 ("In thread {0}: {1}\n" * 20).format(thread_name, str(i))
             )
             logger.debug(
-                ("Debugging in thread {0}: {1}\n" * 10).format(
-                    thread_name, str(i)
-                )
+                ("Debugging in thread {0}: {1}\n" * 10).format(thread_name, str(i))
             )
         else:
             logger.info(str(i))
@@ -36,9 +34,7 @@ def log_using_logging_module(in_thread=False):
                 ("In thread {0}: {1}\n" * 20).format(thread_name, str(i))
             )
             logging.debug(
-                ("Debugging in thread {0}: {1}\n" * 10).format(
-                    thread_name, str(i)
-                )
+                ("Debugging in thread {0}: {1}\n" * 10).format(thread_name, str(i))
             )
         else:
             logging.info(str(i))
