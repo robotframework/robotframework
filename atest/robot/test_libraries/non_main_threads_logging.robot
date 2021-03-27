@@ -48,19 +48,11 @@ Check Log Messages In Main Testcase
 
 Debugfile Should Contain
     [Documentation]  Check that the debugfile contents provided contain the
-    ...              specified lines the specified number of times (default 1).
-    [Arguments]  ${content}  @{lines}  ${count}=None
+    ...              specified lines.
+    [Arguments]  ${content}  @{lines}
     Should Not Be Empty  ${lines}  Invalid usage!!
     ${expected} =  Catenate  SEPARATOR=\n  @{lines}
-    IF    not ${count}
-        Should Match  ${content}  *${expected}*
-    ELSE
-        ${full_expected} =  Set Variable  ${expected}
-        FOR  ${counter}  IN RANGE  ${count}
-            ${full_expected} =  Catenate  SEPARATOR=*  ${full_expected}  ${expected}
-        END
-        Should Match  ${content}  *${full_expected}*
-    END
+    Should Match  ${content}  *${expected}*
 
 Get Thread Logged String
     [Documentation]  Get the string logged in a thread as part of the main
