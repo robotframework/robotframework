@@ -4,7 +4,7 @@ import unittest
 import tempfile
 
 from robot.errors import DataError
-from robot.result import ExecutionResult, Result
+from robot.result import ExecutionResult, ExecutionResultBuilder, Result, TestSuite
 from robot.utils import StringIO, PY3
 from robot.utils.asserts import assert_equal, assert_false, assert_true, assert_raises, fail
 
@@ -118,6 +118,19 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equal(self.result.errors.messages[0].message,
                      "Error in file 'normal.html' in table 'Settings': "
                      "Resource file 'nope' does not exist.")
+
+    def test_omit_keywords(self):
+        result = ExecutionResult(StringIO(GOLDEN_XML), include_keywords=False)
+        assert_equal(len(result.suite.tests[0].body), 0)
+
+    def test_omit_keywords_during_xml_parsing(self):
+        class NonVisitingSuite(TestSuite):
+            def visit(self, visitor):
+                pass
+        result = Result(root_suite=NonVisitingSuite())
+        builder = ExecutionResultBuilder(StringIO(GOLDEN_XML), include_keywords=False)
+        builder.build(result)
+        assert_equal(len(result.suite.tests[0].body), 0)
 
     def test_rpa(self):
         rpa_false = GOLDEN_XML
