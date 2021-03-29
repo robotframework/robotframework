@@ -42,7 +42,7 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equal(self.test.doc, 'Test case documentation')
         assert_equal(self.test.timeout, None)
         assert_equal(list(self.test.tags), ['t1'])
-        assert_equal(len(self.test.body), 2)
+        assert_equal(len(self.test.body), 4)
         assert_equal(self.test.status, 'PASS')
         assert_equal(self.test.starttime, '20111024 13:41:20.925')
         assert_equal(self.test.endtime, '20111024 13:41:20.934')
@@ -78,6 +78,36 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equal(message.message, 'Test 1')
         assert_equal(message.level, 'INFO')
         assert_equal(message.timestamp, '20111024 13:41:20.927')
+
+    def test_for_is_built(self):
+        for_ = self.test.body[2]
+        assert_equal(for_.flavor, 'IN')
+        assert_equal(for_.variables, ('${x}',))
+        assert_equal(for_.values, ('not in source',))
+        assert_equal(len(for_.body), 1)
+        assert_equal(for_.body[0].variables, {'${x}': 'not in source'})
+        assert_equal(len(for_.body[0].body), 1)
+        kw = for_.body[0].body[0]
+        assert_equal(kw.name, 'BuiltIn.Log')
+        assert_equal(kw.args, ('${x}',))
+        assert_equal(len(kw.body), 1)
+        assert_equal(kw.body[0].message, 'not in source')
+
+    def test_if_is_built(self):
+        root = self.test.body[3]
+        if_, else_ = root.body
+        assert_equal(if_.condition, "'IF' == 'WRONG'")
+        assert_equal(if_.status, if_.NOT_RUN)
+        assert_equal(len(if_.body), 1)
+        kw = if_.body[0]
+        assert_equal(kw.name, 'BuiltIn.Fail')
+        assert_equal(kw.status, kw.NOT_RUN)
+        assert_equal(else_.condition, None)
+        assert_equal(else_.status, else_.PASS)
+        assert_equal(len(else_.body), 1)
+        kw = else_.body[0]
+        assert_equal(kw.name, 'BuiltIn.No Operation')
+        assert_equal(kw.status, kw.PASS)
 
     def test_suite_setup_is_built(self):
         assert_equal(len(self.suite.setup.body), 0)
@@ -328,7 +358,7 @@ if PY3:
             assert_equal(test.doc, 'Test case documentation')
             assert_equal(test.timeout, None)
             assert_equal(list(test.tags), ['t1'])
-            assert_equal(len(test.body), 2)
+            assert_equal(len(test.body), 4)
             assert_equal(test.status, 'PASS')
             assert_equal(test.starttime, '20111024 13:41:20.925')
             assert_equal(test.endtime, '20111024 13:41:20.934')
