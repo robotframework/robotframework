@@ -106,8 +106,9 @@ function expandRecursively() {
     element.callWhenChildrenReady(function () {
         var children = element.children();
         for (var i = children.length-1; i >= 0; i--) {
-            if (window.expandDecider(children[i]))
-                window.elementsToExpand.push(children[i]);
+            var child = children[i];
+            if (child.type != 'message' && window.expandDecider(child))
+                window.elementsToExpand.push(child);
         }
         if (window.elementsToExpand.length)
             setTimeout(expandRecursively, 0);
