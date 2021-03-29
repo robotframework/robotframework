@@ -25,11 +25,6 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         self.result = ExecutionResult(StringIO(GOLDEN_XML))
         self.suite = self.result.suite
         self.test = self.suite.tests[0]
-        self.keyword = self.test.body[0]
-        self.user_keyword = self.test.body[1]
-        self.message = self.keyword.messages[0]
-        self.setup = self.suite.setup
-        self.errors = self.result.errors
 
     def test_suite_is_built(self):
         assert_equal(self.suite.source, 'normal.html')
@@ -53,41 +48,44 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equal(self.test.endtime, '20111024 13:41:20.934')
 
     def test_keyword_is_built(self):
-        assert_equal(self.keyword.name, 'BuiltIn.Log')
-        assert_equal(self.keyword.doc, 'Logs the given message with the given level.')
-        assert_equal(self.keyword.args, ('Test 1',))
-        assert_equal(self.keyword.assign, ())
-        assert_equal(self.keyword.status, 'PASS')
-        assert_equal(self.keyword.starttime, '20111024 13:41:20.926')
-        assert_equal(self.keyword.endtime, '20111024 13:41:20.928')
-        assert_equal(self.keyword.timeout, None)
-        assert_equal(len(self.keyword.body), 1)
-        assert_equal(self.keyword.body[0].type, self.keyword.body[0].MESSAGE)
+        keyword = self.test.body[0]
+        assert_equal(keyword.name, 'BuiltIn.Log')
+        assert_equal(keyword.doc, 'Logs the given message with the given level.')
+        assert_equal(keyword.args, ('Test 1',))
+        assert_equal(keyword.assign, ())
+        assert_equal(keyword.status, 'PASS')
+        assert_equal(keyword.starttime, '20111024 13:41:20.926')
+        assert_equal(keyword.endtime, '20111024 13:41:20.928')
+        assert_equal(keyword.timeout, None)
+        assert_equal(len(keyword.body), 1)
+        assert_equal(keyword.body[0].type, keyword.body[0].MESSAGE)
 
     def test_user_keyword_is_built(self):
-        assert_equal(self.user_keyword.name, 'logs on trace')
-        assert_equal(self.user_keyword.doc, '')
-        assert_equal(self.user_keyword.args, ())
-        assert_equal(self.user_keyword.assign, ('${not really in source}',))
-        assert_equal(self.user_keyword.status, 'PASS')
-        assert_equal(self.user_keyword.starttime, '20111024 13:41:20.930')
-        assert_equal(self.user_keyword.endtime, '20111024 13:41:20.933')
-        assert_equal(self.user_keyword.timeout, None)
-        assert_equal(len(self.user_keyword.messages), 0)
-        assert_equal(len(self.user_keyword.body), 1)
+        user_keyword = self.test.body[1]
+        assert_equal(user_keyword.name, 'logs on trace')
+        assert_equal(user_keyword.doc, '')
+        assert_equal(user_keyword.args, ())
+        assert_equal(user_keyword.assign, ('${not really in source}',))
+        assert_equal(user_keyword.status, 'PASS')
+        assert_equal(user_keyword.starttime, '20111024 13:41:20.930')
+        assert_equal(user_keyword.endtime, '20111024 13:41:20.933')
+        assert_equal(user_keyword.timeout, None)
+        assert_equal(len(user_keyword.messages), 0)
+        assert_equal(len(user_keyword.body), 1)
 
     def test_message_is_built(self):
-        assert_equal(self.message.message, 'Test 1')
-        assert_equal(self.message.level, 'INFO')
-        assert_equal(self.message.timestamp, '20111024 13:41:20.927')
+        message = self.test.body[0].messages[0]
+        assert_equal(message.message, 'Test 1')
+        assert_equal(message.level, 'INFO')
+        assert_equal(message.timestamp, '20111024 13:41:20.927')
 
     def test_suite_setup_is_built(self):
-        assert_equal(len(self.setup.body), 0)
-        assert_equal(len(self.setup.messages), 0)
+        assert_equal(len(self.suite.setup.body), 0)
+        assert_equal(len(self.suite.setup.messages), 0)
 
     def test_errors_are_built(self):
-        assert_equal(len(self.errors.messages), 1)
-        assert_equal(self.errors.messages[0].message,
+        assert_equal(len(self.result.errors.messages), 1)
+        assert_equal(self.result.errors.messages[0].message,
                      "Error in file 'normal.html' in table 'Settings': "
                      "Resource file 'nope' does not exist.")
 
