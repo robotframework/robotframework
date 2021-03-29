@@ -230,11 +230,6 @@ Skipped with --SkipOnFailure when Set Tags Used in Teardown
     [Tags]    non-crit
     Fail
 
---Critical can be used to override --SkipOnFailure
-    [Documentation]    FAIL AssertionError
-    [Tags]    dynamic-skip    crit
-    Fail
-
 Failing Test
     [Documentation]    FAIL AssertionError
     Fail
