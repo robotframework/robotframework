@@ -422,9 +422,9 @@ class CombinedConverter(TypeConverter):
     type = Union
 
     def __init__(self, union=None):
-        self.args = self._get_args(union)
+        self.types = self._get_types(union)
 
-    def _get_args(self, union):
+    def _get_types(self, union):
         if not union:
             return ()
         if isinstance(union, tuple):
@@ -439,7 +439,7 @@ class CombinedConverter(TypeConverter):
 
     @property
     def type_name(self):
-        return ' or '.join(type_name(a) for a in self.args) if self.args else None
+        return ' or '.join(type_name(t) for t in self.types) if self.types else None
 
     def handles(self, type_):
         return getattr(type_, '__origin__', None) is Union or isinstance(type_, tuple)
@@ -452,11 +452,11 @@ class CombinedConverter(TypeConverter):
 
     def _no_conversion_needed(self, value):
         NoneType = type(None)
-        types = tuple(NoneType if it is None else it for it in self.args)
+        types = tuple(t if t is not None else NoneType for t in self.types)
         return isinstance(value, types)
 
     def _convert(self, value, explicit_type=True):
-        for typ in self.args:
+        for typ in self.types:
             converter = TypeConverter.converter_for(typ)
             if not converter:
                 return value
