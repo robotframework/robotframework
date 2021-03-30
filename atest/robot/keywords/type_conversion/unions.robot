@@ -31,7 +31,10 @@ Optional argument
 Optional argument with default
     Check Test Case    ${TESTNAME}
 
-Optional string with default
+Optional string with None default
+    Check Test Case    ${TESTNAME}
+
+String with None default
     Check Test Case    ${TESTNAME}
 
 Avoid unnecessary conversion

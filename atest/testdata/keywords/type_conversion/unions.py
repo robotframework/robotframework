@@ -55,7 +55,11 @@ def optional_argument_with_default(argument: Optional[float] = None, expected=ob
     assert argument == expected
 
 
-def optional_string_with_default(argument: Optional[str] = None, expected=object()):
+def optional_string_with_none_default(argument: Optional[str] = None, expected=object()):
+    assert argument == expected
+
+
+def string_with_none_default(argument: str = None, expected=object()):
     assert argument == expected
 
 

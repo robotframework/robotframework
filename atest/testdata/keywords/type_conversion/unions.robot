@@ -72,8 +72,17 @@ Optional argument with default
     ${None}    ${None}
     expected=${None}
 
-Optional string with default
-    [Template]    Optional string with default
+Optional string with None default
+    [Template]    Optional string with None default
+    Hyvä!      Hyvä!
+    1          1
+    ${1}       1
+    None       None
+    ${None}    ${None}
+    expected=${None}
+
+String with None default
+    [Template]    String with None default
     Hyvä!      Hyvä!
     1          1
     ${1}       1
