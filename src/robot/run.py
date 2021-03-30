@@ -88,7 +88,7 @@ see http://robotframework.org/.
 Options
 =======
 
-    --rpa                 Turn the on generic automation mode. Mainly affects
+    --rpa                 Turn on the generic automation mode. Mainly affects
                           terminology so that "test" is replaced with "task"
                           in logs and reports. By default the mode is got
                           from test/task header in data files. New in RF 3.1.
