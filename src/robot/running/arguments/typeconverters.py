@@ -422,7 +422,7 @@ class CombinedConverter(TypeConverter):
     type = Union
 
     def __init__(self, union=None):
-        self.types = self._get_types(union)
+        self.types = self._none_to_nonetype(self._get_types(union))
 
     def _get_types(self, union):
         if not union:
@@ -436,6 +436,9 @@ class CombinedConverter(TypeConverter):
             # of __args__. This block can likely be safely removed
             # when Python 3.5 support is dropped
             return union.__union_params__
+
+    def _none_to_nonetype(self, types):
+        return tuple(t if t is not None else type(None) for t in types)
 
     @property
     def type_name(self):
@@ -451,9 +454,7 @@ class CombinedConverter(TypeConverter):
         return True
 
     def _no_conversion_needed(self, value):
-        NoneType = type(None)
-        types = tuple(t if t is not None else NoneType for t in self.types)
-        return isinstance(value, types)
+        return isinstance(value, self.types)
 
     def _convert(self, value, explicit_type=True):
         for typ in self.types:
