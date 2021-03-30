@@ -6,9 +6,9 @@ Force Tags        require-py3
 *** Test Cases ***
 Union
     [Template]    Union of int float and string
-    1          ${1}
-    2.1        ${2.1}
-    ${21.0}    ${21}
+    1          1
+    2.1        2.1
+    ${21.0}    ${21.0}
     2hello     2hello
     ${-110}    ${-110}
 
@@ -17,7 +17,7 @@ Union with None
     1          ${1}
     ${2}       ${2}
     ${None}    ${None}
-    NONE       ${None}
+    NONE       NONE
 
 Union with None and string
     [Template]    Union with None and str
@@ -44,9 +44,9 @@ Union with custom type
 
 Multiple types using tuple
     [Template]    Tuple of int float and string
-    1          ${1}
-    2.1        ${2.1}
-    ${21.0}    ${21}
+    1          1
+    2.1        2.1
+    ${21.0}    ${21.0}
     2hello     2hello
     ${-110}    ${-110}
 
@@ -66,3 +66,7 @@ Optional argument with default
     [Template]    Optional argument with default
     1       ${1}
     None    ${None}
+
+Avoid unnecessary conversion
+    Union With String First    ${NONE}    ${NONE}
+    Union With String First    None       None

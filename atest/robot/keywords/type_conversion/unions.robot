@@ -28,3 +28,6 @@ Optional argument
 
 Optional argument with default
      Check Test Case    ${TESTNAME}
+
+Avoid unnecessary conversion
+     Check Test Case    ${TESTNAME}

@@ -53,3 +53,7 @@ def optional_argument(argument: Optional[int], expected):
 
 def optional_argument_with_default(argument: Optional[float] = None, expected=None):
     assert argument == expected
+
+
+def union_with_string_first(argument: Union[str, None], expected):
+    assert argument == expected

@@ -451,7 +451,9 @@ class CombinedConverter(TypeConverter):
         return True
 
     def _no_conversion_needed(self, value):
-        return False
+        NoneType = type(None)
+        types = tuple(NoneType if it is None else it for it in self.args)
+        return isinstance(value, types)
 
     def _convert(self, value, explicit_type=True):
         for typ in self.args:
