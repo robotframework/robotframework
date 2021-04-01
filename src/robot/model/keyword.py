@@ -56,6 +56,29 @@ class Keyword(BodyItem):
 
     @property    # Cannot use @setter because it would create teardowns recursively.
     def teardown(self):
+        """Keyword teardown as a :class:`Keyword` object.
+
+        This attribute is a ``Keyword`` object also when a keyword has no teardown
+        but in that case its truth value is ``False``.
+
+        Teardown can be modified by setting attributes directly::
+
+            keyword.teardown.name = 'Example'
+            keyword.teardown.args = ('First', 'Second')
+
+        Alternatively the :meth:`config` method can be used to set multiple
+        attributes in one call::
+
+            keyword.teardown.config(name='Example', args=('First', 'Second'))
+
+        The easiest way to reset the whole teardown is setting it to ``None``.
+        It will automatically recreate the underlying ``Keyword`` object::
+
+            keyword.teardown = None
+
+        New in Robot Framework 4.0. Earlier teardown was accessed like
+        ``keyword.keywords.teardown``.
+        """
         if self._teardown is None and self:
             self._teardown = create_fixture(None, self, self.TEARDOWN)
         return self._teardown
