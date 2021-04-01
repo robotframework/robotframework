@@ -3,12 +3,16 @@ Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keywor
 Resource          atest_resource.robot
 
 *** Test Case ***
-Run Keyword If test Failed When Test Fails
+Run Keyword If Test Failed when test fails
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.teardown.kws[0].name}    BuiltIn.Log
     Check Log Message    ${tc.teardown.kws[0].msgs[0]}    Hello from teardown!
 
-Run Keyword If test Failed When Test Does Not Fail
+Run Keyword If Test Failed when test passes
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Empty    ${tc.teardown.body}
+
+Run Keyword If Test Failed when test is skipped
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Empty    ${tc.teardown.body}
 
