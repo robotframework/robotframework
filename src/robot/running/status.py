@@ -204,12 +204,12 @@ class TestStatus(_ExecutionStatus):
         return False
 
     def _skip_on_failure(self):
+        tags = self._test.tags
         critical_pattern = TagPatterns(self._critical_tags)
-        if critical_pattern and critical_pattern.match(self._test.tags):
-            return False
+        critical = not critical_pattern or critical_pattern.match(tags)
         skip_on_fail_pattern = TagPatterns(self._skip_on_failure_tags)
-        return skip_on_fail_pattern and \
-            skip_on_fail_pattern.match(self._test.tags)
+        skip_on_fail = skip_on_fail_pattern and skip_on_fail_pattern.match(tags)
+        return not critical or skip_on_fail
 
     def _my_message(self):
         return TestMessage(self).message

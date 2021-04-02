@@ -513,7 +513,7 @@ Multiple types using Union
     NONE          None
     ${1}          1
     ${1.2}        1.2
-    ${None}       None
+    ${None}       ${None}
 
 Argument not matching Union tupes
     [Tags]        require-py3
@@ -525,10 +525,10 @@ Multiple types using tuple
     [Template]    Multiple types using tuple
     1             1
     1.2           1.2
-    NONE          None
+    NONE          NONE
     ${1}          1
     ${1.2}        1.2
-    ${None}       None
+    ${None}       ${None}
 
 Argument not matching tuple tupes
     [Template]    Conversion Should Fail

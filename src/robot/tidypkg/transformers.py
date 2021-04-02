@@ -199,6 +199,17 @@ class SeparatorNormalizer(ModelTransformer):
         self.visit_Statement(node.end)
         return node
 
+    def visit_If(self, node):
+        self.visit_Statement(node.header)
+        self.indent += 1
+        node.body = [self.visit(item) for item in node.body]
+        self.indent -= 1
+        if node.orelse:
+            self.visit(node.orelse)
+        if node.end:
+            self.visit_Statement(node.end)
+        return node
+
     def visit_Statement(self, statement):
         has_pipes = statement.tokens[0].value.startswith('|')
         if self.use_pipes:

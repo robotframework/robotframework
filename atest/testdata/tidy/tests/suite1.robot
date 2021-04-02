@@ -11,5 +11,6 @@ Another Test
 
 *** Keywords ***
 My Keyword
-    : FOR    ${i}    IN RANGE   10
-    \    Log    ${i}
+    FOR    ${i}    IN RANGE   10
+        Log    ${i}
+    END

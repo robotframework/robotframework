@@ -9,6 +9,15 @@ Missing END
         Log    ${x}
     Keyword
 
+Nested loop
+    FOR    ${x}    IN    x
+    FOR    ${y}    IN    y
+    FOR    ${z}    IN    z
+    Log    ${x}${y}${z}
+    END
+    END
+    END
+
 *** Keywords ***
 For loop in keyword
   FOR    ${x}    IN    foo    bar

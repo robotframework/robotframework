@@ -57,10 +57,37 @@ class TestCase(ModelObject):
 
     @setter
     def setup(self, setup):
+        """Test setup as a :class:`~.model.keyword.Keyword` object.
+
+        This attribute is a ``Keyword`` object also when a test has no setup
+        but in that case its truth value is ``False``.
+
+        Setup can be modified by setting attributes directly::
+
+            test.setup.name = 'Example'
+            test.setup.args = ('First', 'Second')
+
+        Alternatively the :meth:`config` method can be used to set multiple
+        attributes in one call::
+
+            test.setup.config(name='Example', args=('First', 'Second'))
+
+        The easiest way to reset the whole setup is setting it to ``None``.
+        It will automatically recreate the underlying ``Keyword`` object::
+
+            test.setup = None
+
+        New in Robot Framework 4.0. Earlier setup was accessed like
+        ``test.keywords.setup``.
+        """
         return create_fixture(setup, self, Keyword.SETUP)
 
     @setter
     def teardown(self, teardown):
+        """Test teardown as a :class:`~.model.keyword.Keyword` object.
+
+        See :attr:`setup` for more information.
+        """
         return create_fixture(teardown, self, Keyword.TEARDOWN)
 
     @property

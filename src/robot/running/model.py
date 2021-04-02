@@ -208,6 +208,10 @@ class TestSuite(model.TestSuite):
 
             suite.configure(included_tags=['smoke'],
                             doc='Smoke test results.')
+
+        Not to be confused with :meth:`config` method that suites, tests,
+        and keywords have to make it possible to set multiple attributes in
+        one call.
         """
         model.TestSuite.configure(self, **options)
         self.randomize(randomize_suites, randomize_tests, randomize_seed)

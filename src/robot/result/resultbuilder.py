@@ -90,7 +90,8 @@ class ExecutionResultBuilder(object):
             :class:`~.executionresult.Result` objects from.
         :param include_keywords: Boolean controlling whether to include
             keyword information in the result or not. Keywords are
-            not needed when generating only report.
+            not needed when generating only report. Although the the option name
+            has word "keyword", it controls also including FOR and IF structures.
         :param flatten_keywords: List of patterns controlling what keywords to
             flatten. See the documentation of ``--flattenkeywords`` option for
             more details.
@@ -126,8 +127,9 @@ class ExecutionResultBuilder(object):
     def _omit_keywords(self, context):
         omitted_kws = 0
         for event, elem in context:
-            # Teardowns aren't omitted to allow checking suite teardown status.
-            omit = elem.tag == 'kw' and elem.get('type') != 'TEARDOWN'
+            # Teardowns aren't omitted yet to allow checking suite teardown status.
+            # They'll be removed later when not needed in `build()`.
+            omit = elem.tag in ('kw', 'for', 'if') and elem.get('type') != 'TEARDOWN'
             start = event == 'start'
             if omit and start:
                 omitted_kws += 1

@@ -2303,7 +2303,7 @@ class _RunKeyword(_BuiltInBase):
         documentation for more details.
         """
         test = self._get_test_in_teardown('Run Keyword If Test Failed')
-        if not test.passed:
+        if test.failed:
             return self.run_keyword(name, *args)
 
     @run_keyword_variant(resolve=1)

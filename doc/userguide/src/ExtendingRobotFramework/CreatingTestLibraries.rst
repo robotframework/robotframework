@@ -1541,9 +1541,8 @@ Specifying multiple possible types
 
 Starting from Robot Framework 4.0, it is possible to specify that an argument
 has multiple possible types. In this situation argument conversion is attempted
-based on each type in the order they have been specified. If any conversion
-succeeds, the resulting value is used without attempting conversion to remaining
-types. If no type conversion succeeds, the whole conversion fails.
+based on each type and the whole conversion fails if none of these conversions
+succeed.
 
 When using function annotations, the natural syntax to specify that argument
 has multiple possible types is using Union_:
@@ -1553,10 +1552,10 @@ has multiple possible types is using Union_:
   from typing import Union
 
 
-  def example(length: Union[int, float], padding: Union[None, int, str]):
+  def example(length: Union[int, float], padding: Union[int, str, None] = None):
       # ...
 
-An alternative is giving types a tuple. It is not recommended with annotations
+An alternative is specifying types as a tuple. It is not recommended with annotations,
 because that syntax is not supported by other tools, but it works well with
 the `@keyword` decorator and is Python 2 compatible:
 
@@ -1565,31 +1564,64 @@ the `@keyword` decorator and is Python 2 compatible:
   from robot.api.deco import keyword
 
 
-  @keyword(types={'length': (int, float), 'padding': (None, int, str)})
-  def example(length, padding):
+  @keyword(types={'length': (int, float), 'padding': (int, str, None)})
+  def example(length, padding=None):
       # ...
 
 With the above examples the `length` argument would first be converted to an
 integer and if that fails then to a float. The `padding` would be first
-converted to `None`, then to an integer, and finally to a string.
+converted to an integer, then to a string, and finally to `None`.
 
-Because conversion is attempted one-by-one and string conversion always succeeds,
-possible `str` should be the last type. For example, using `Union[str, int]` would
-cause all arguments, including integers, to be converted to strings, but
-`Union[int, str]` means that integer conversion is attempted first and string
-conversion is done only if that fails.
+If the given argument has one of the accepted types, then no conversion is done
+and the argument is used as-is. For example, if the `length` argument gets
+value `1.5` as a float, it would not be converted to an integer. Notice that
+using non-string values like floats as an argument requires using variables as
+these examples giving different values to the `length` argument demonstrate:
 
-If any of the specified types is not recognized by Robot Framework and
-the given argument cannot be converted to any of the types before it,
-the given argument will be used as-is. For example, with this keyword
-conversion would first attempted to an integer but if that fails the keyword
-would get the original given argument:
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Conversion
+       Example    10        # Argument is a string. Converted to an integer.
+       Example    1.5       # Argument is a string. Converted to a float.
+       Example    ${10}     # Argument is an integer. Accepted as-is.
+       Example    ${1.5}    # Argument is a float. Accepted as-is.
+
+If one of the accepted types is string, then no conversion is done if the given
+argument is a string. As the following examples giving different values to the
+`padding` argument demonstrate, also in these cases passing other types is
+possible using variables:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Conversion
+       Example    1    big        # Argument is a string. Accepted as-is.
+       Example    1    10         # Argument is a string. Accepted as-is.
+       Example    1    ${10}      # Argument is an integer. Accepted as-is.
+       Example    1    ${None}    # Argument is `None`. Accepted as-is.
+       Example    1    ${1.5}     # Argument is a float. Converted to an integer.
+
+If the given argument does not have any of the accepted types, conversion is
+attempted in the order types are specified. If any conversion succeeds, the
+resulting value is used without attempting remaining conversions. If no individual
+conversion succeeds, the whole conversion fails.
+
+If a specified type is not recognized by Robot Framework, then the original value
+is used as-is. For example, with this keyword conversion would first be attempted
+to an integer but if that fails the keyword would get the original given argument:
 
 .. sourcecode:: python
 
   def example(argument: Union[int, MyCustomType]):
       # ...
 
+.. note:: In Robot Framework 4.0 argument conversion was done always, regardless
+          of the type of the given argument. It caused various__ problems__ and
+          was changed in Robot Framework 4.0.1.
+
+__ https://github.com/robotframework/robotframework/issues/3897
+__ https://github.com/robotframework/robotframework/issues/3908
 .. _Union: https://docs.python.org/3/library/typing.html#typing.Union
 
 Argument types with Java
