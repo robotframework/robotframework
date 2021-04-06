@@ -44,16 +44,16 @@ Should Be Byte String Negative
     [Tags]    no-ipy
     Check Test Case    ${TESTNAME}
 
-Should Be Lowercase Positive
+Should Be Lower Case Positive
     Check Test Case    ${TESTNAME}
 
-Should Be Lowercase Negative
+Should Be Lower Case Negative
     Check Test Case    ${TESTNAME}
 
-Should Be Uppercase Positive
+Should Be Upper Case Positive
     Check Test Case    ${TESTNAME}
 
-Should Be Uppercase Negative
+Should Be Upper Case Negative
     Check Test Case    ${TESTNAME}
 
 Should Be Title Case Positive
