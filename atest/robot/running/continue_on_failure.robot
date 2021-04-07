@@ -100,20 +100,6 @@ Continuable and regular failure in for loop
 robot.api.ContinuableFailure
     Check Test Case    ${TESTNAME}
 
-Continue in test with tag
-    ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    This should be executed
-
-Continue in test with negative tag
-    ${tc}=    Check Test Case    ${TESTNAME}
-
-Continue in user kewyord with tag
-    ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].kws[1].msgs[0]}    This should be executed
-
-Continue in for loop with tag
-    ${tc}=    Check Test Case    ${TESTNAME}
-
 *** Keywords ***
 Verify all failures in user keyword    [Arguments]    ${kw}    ${where}
     Check Log Message    ${kw.kws[0].msgs[0]}    ContinuableApocalypseException: 1    FAIL
