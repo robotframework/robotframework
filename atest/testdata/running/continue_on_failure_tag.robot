@@ -5,9 +5,12 @@ ${HEADER}                 Several failures occurred:
 
 *** Test Cases ***
 Continue in test with tag
-    [Documentation]    FAIL 1
+    [Documentation]    FAIL ${HEADER}\n\n
+    ...    1) 1\n\n
+    ...    2) 2
     [Tags]   robot:continue-on-failure
     Fail   1
+    Fail   2
     Log    This should be executed
 
 Continue in test with negative tag 
@@ -46,6 +49,24 @@ Continue in for loop with tag
         Fail   ${val}
     END
 
+Continue in for loop without tag
+    [Documentation]    FAIL 1
+    FOR    ${val}    IN    1    2    3
+        Fail   ${val}
+    END
+
+Continue in for loop in UK with tag
+    [Documentation]    FAIL ${HEADER}\n\n
+    ...    1) 1\n\n
+    ...    2) 2\n\n
+    ...    3) 3
+    [Tags]   robot:continue-on-failure
+    For Loop in in user keyword
+
+Continue in for loop in UK without tag
+    [Documentation]    FAIL 1
+    For Loop in in user keyword
+
 *** Keywords ***
 Failure in user keyword using tag
     [Tags]   robot:continue-on-failure
@@ -67,3 +88,8 @@ Failure in user keyword 2 with negative tag
     Fail   2
     Log    This should not be executed
     Fail   3
+
+For Loop in in user keyword
+    FOR    ${val}    IN    1    2    3
+        Fail   ${val}
+    END
