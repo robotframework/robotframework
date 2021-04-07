@@ -134,11 +134,7 @@ def ForRunner(context, flavor='IN', run=True, templated=False):
                'IN ZIP': ForInZipRunner,
                'IN ENUMERATE': ForInEnumerateRunner}
     runner = runners[flavor or 'IN']
-    try:
-        tags = context.test.tags
-    except AttributeError:
-        tags = []
-    return runner(context, run, templated, tags)
+    return runner(context, run, templated, context.test.tags)
 
 
 class ForInRunner(object):

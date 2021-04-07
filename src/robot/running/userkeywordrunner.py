@@ -144,7 +144,8 @@ class UserKeywordRunner(object):
         args = ['%s=%s' % (name, prepr(variables[name])) for name in args]
         return 'Arguments: [ %s ]' % ' | '.join(args)
 
-    def _process_tags(self, kw_tags, context):
+    def _merge_tags(self, kw_tags, context):
+        # merges user-kw tags with higher-level test case tags
         try:
             test_tags = context.test.tags
         except AttributeError:
@@ -164,7 +165,7 @@ class UserKeywordRunner(object):
         error = return_ = pass_ = None
         try:
             BodyRunner(context,
-                       tags=self._process_tags(handler.tags, context)
+                       tags=self._merge_tags(handler.tags, context)
                        ).run(handler.body)
         except ReturnFromKeyword as exception:
             return_ = exception

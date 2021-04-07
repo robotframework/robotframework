@@ -144,7 +144,8 @@ class SuiteRunner(SuiteVisitor):
             if not status.failed:
                 BodyRunner(self._context,
                            templated=bool(test.template),
-                           tags=test.tags).run(test.body)
+                           tags=test.tags
+                           ).run(test.body)
             else:
                 if status.skipped:
                     status.test_skipped(status.message)
