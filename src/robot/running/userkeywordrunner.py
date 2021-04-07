@@ -144,6 +144,17 @@ class UserKeywordRunner(object):
         args = ['%s=%s' % (name, prepr(variables[name])) for name in args]
         return 'Arguments: [ %s ]' % ' | '.join(args)
 
+    def _process_tags(self, kw_tags, context):
+        try:
+            test_tags = context.test.tags
+        except AttributeError:
+            return kw_tags
+        result = list(kw_tags)
+        if 'robot:continue-on-failure' in test_tags and \
+           'robot:no-continue-on-failure' not in kw_tags:
+            result.append('robot:continue-on-failure')
+        return result
+
     def _execute(self, context):
         handler = self._handler
         if not (handler.body or handler.return_value):
@@ -152,7 +163,9 @@ class UserKeywordRunner(object):
             return None, None
         error = return_ = pass_ = None
         try:
-            BodyRunner(context, tags=handler.tags).run(handler.body)
+            BodyRunner(context,
+                       tags=self._process_tags(handler.tags, context)
+                       ).run(handler.body)
         except ReturnFromKeyword as exception:
             return_ = exception
             error = exception.earlier_failures
