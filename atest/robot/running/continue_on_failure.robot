@@ -102,6 +102,7 @@ robot.api.ContinuableFailure
 
 Continue in test with tag
     ${tc}=    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[1].msgs[0]}    This should be executed
 
 Continue in test with negative tag
     ${tc}=    Check Test Case    ${TESTNAME}
