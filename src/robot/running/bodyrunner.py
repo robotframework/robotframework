@@ -49,11 +49,10 @@ class BodyRunner(object):
                     tags = self._context.test.tags
                 except (KeyError, AttributeError):
                     tags = []
-                can_continue = exception.can_continue(self._context.in_teardown,
-                                                      self._templated,
-                                                      self._context.dry_run,
-                                                      tags)
-                self._run = can_continue
+                self._run = exception.can_continue(self._context.in_teardown,
+                                                   self._templated,
+                                                   self._context.dry_run,
+                                                   tags)
         if errors:
             raise ExecutionFailures(errors)
 
