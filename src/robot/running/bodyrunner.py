@@ -47,7 +47,7 @@ class BodyRunner(object):
                 errors.extend(exception.get_errors())
                 try:
                     tags = self._context.test.tags
-                except (KeyError, AttributeError):
+                except AttributeError:
                     tags = []
                 self._run = exception.can_continue(self._context.in_teardown,
                                                    self._templated,
