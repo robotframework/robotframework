@@ -45,9 +45,15 @@ class BodyRunner(object):
                 raise exception
             except ExecutionFailed as exception:
                 errors.extend(exception.get_errors())
-                self._run = exception.can_continue(self._context.in_teardown,
-                                                   self._templated,
-                                                   self._context.dry_run)
+                try:
+                    tags = self._context.test.tags
+                except (KeyError, AttributeError):
+                    tags = []
+                can_continue = exception.can_continue(self._context.in_teardown,
+                                                      self._templated,
+                                                      self._context.dry_run,
+                                                      tags)
+                self._run = can_continue
         if errors:
             raise ExecutionFailures(errors)
 

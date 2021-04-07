@@ -164,6 +164,8 @@ class UserKeywordRunner(object):
             if error:
                 error.continue_on_failure = False
         except ExecutionFailed as exception:
+            if exception.can_continue(tags=handler.tags):
+                exception.continue_on_failure = True
             error = exception
         with context.keyword_teardown(error):
             td_error = self._run_teardown(context)

@@ -140,7 +140,7 @@ class ExecutionStatus(RobotError):
             if child is not self:
                 child.continue_on_failure = continue_on_failure
 
-    def can_continue(self, teardown=False, templated=False, dry_run=False):
+    def can_continue(self, teardown=False, templated=False, dry_run=False, tags=[]):
         if dry_run:
             return True
         if self.syntax or self.exit or self.skip or self.test_timeout:
@@ -150,6 +150,10 @@ class ExecutionStatus(RobotError):
         if self.keyword_timeout:
             return False
         if teardown:
+            return True
+        if 'robot:no-continue-on-failure' in tags:
+            return False
+        if 'robot:continue-on-failure' in tags:
             return True
         return self.continue_on_failure
 

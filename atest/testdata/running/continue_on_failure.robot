@@ -185,6 +185,25 @@ robot.api.ContinuableFailure
     Fail    3
     Raise Continuable Failure    Should not be executed
 
+Continue in test with tag
+    [Documentation]    FAIL 1\n\n
+    ...    ${TEARDOWN ERROR}
+    [Tags]   robot:continue-on-failure
+    Fail   1
+    Log    This should be executed
+
+Continue in test with negative tag 
+    [Documentation]    FAIL 1\n\n
+    ...    ${TEARDOWN ERROR}
+    [Tags]   robot:no-continue-on-failure
+    Fail   1
+    Fail   2
+
+Continue in user kewyord with tag
+    [Documentation]    FAIL 1\n\n
+    ...    ${TEARDOWN ERROR}
+    Continuable failure in user keyword using tag
+
 *** Keywords ***
 Continuable Failure In User Keyword In ${where}
     Raise Continuable Failure
@@ -228,3 +247,8 @@ Continuable failure in nested user keyword returning value
     ${ret} =    Continuable failure in user keyword returning value
     Should Be Equal    ${ret}    return value
     [Return]    ${ret} 2
+
+Continuable failure in user keyword using tag
+    [Tags]   robot:continue-on-failure
+    Fail   1
+    Log to console    This should be executed
