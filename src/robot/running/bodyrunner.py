@@ -176,9 +176,14 @@ class ForInRunner(object):
                 raise exception
             except ExecutionFailed as exception:
                 errors.extend(exception.get_errors())
+                try:
+                    tags = self._context.test.tags
+                except AttributeError:
+                    tags = []
                 if not exception.can_continue(self._context.in_teardown,
                                               self._templated,
-                                              self._context.dry_run):
+                                              self._context.dry_run,
+                                              tags):
                     break
         if errors:
             raise ExecutionFailures(errors)

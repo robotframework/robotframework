@@ -204,6 +204,17 @@ Continue in user kewyord with tag
     ...    ${TEARDOWN ERROR}
     Continuable failure in user keyword using tag
 
+Continue in for loop with tag
+    [Documentation]    FAIL ${HEADER}\n\n
+    ...    1) 1\n\n
+    ...    2) 2\n\n
+    ...    3) 3\n\n
+    ...    ${TEARDOWN ERROR}
+    [Tags]   robot:continue-on-failure
+    FOR    ${val}    IN    1    2    3
+        Fail   ${val}
+    END
+
 *** Keywords ***
 Continuable Failure In User Keyword In ${where}
     Raise Continuable Failure
