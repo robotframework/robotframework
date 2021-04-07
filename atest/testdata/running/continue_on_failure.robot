@@ -262,4 +262,4 @@ Continuable failure in nested user keyword returning value
 Continuable failure in user keyword using tag
     [Tags]   robot:continue-on-failure
     Fail   1
-    Log to console    This should be executed
+    Log    This should be executed

@@ -30,10 +30,11 @@ from .statusreporter import StatusReporter
 
 class BodyRunner(object):
 
-    def __init__(self, context, run=True, templated=False):
+    def __init__(self, context, run=True, templated=False, tags=None):
         self._context = context
         self._run = run
         self._templated = templated
+        self._tags = tags or []
 
     def run(self, body):
         errors = []
@@ -45,14 +46,10 @@ class BodyRunner(object):
                 raise exception
             except ExecutionFailed as exception:
                 errors.extend(exception.get_errors())
-                try:
-                    tags = self._context.test.tags
-                except AttributeError:
-                    tags = []
                 self._run = exception.can_continue(self._context.in_teardown,
                                                    self._templated,
                                                    self._context.dry_run,
-                                                   tags)
+                                                   self._tags)
         if errors:
             raise ExecutionFailures(errors)
 
