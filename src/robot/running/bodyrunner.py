@@ -134,16 +134,21 @@ def ForRunner(context, flavor='IN', run=True, templated=False):
                'IN ZIP': ForInZipRunner,
                'IN ENUMERATE': ForInEnumerateRunner}
     runner = runners[flavor or 'IN']
-    return runner(context, run, templated)
+    try:
+        tags = context.test.tags
+    except AttributeError:
+        tags = []
+    return runner(context, run, templated, tags)
 
 
 class ForInRunner(object):
     flavor = 'IN'
 
-    def __init__(self, context, run=True, templated=False):
+    def __init__(self, context, run=True, templated=False, tags=[]):
         self._context = context
         self._run = run
         self._templated = templated
+        self._tags = tags
 
     def run(self, data):
         result = ForResult(data.variables, data.flavor, data.values)
@@ -173,14 +178,10 @@ class ForInRunner(object):
                 raise exception
             except ExecutionFailed as exception:
                 errors.extend(exception.get_errors())
-                try:
-                    tags = self._context.test.tags
-                except AttributeError:
-                    tags = []
                 if not exception.can_continue(self._context.in_teardown,
                                               self._templated,
                                               self._context.dry_run,
-                                              tags):
+                                              self._tags):
                     break
         if errors:
             raise ExecutionFailures(errors)
