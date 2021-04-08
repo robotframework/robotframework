@@ -9,6 +9,10 @@ If without condition
 If with many conditions
     Check Test Case    ${TESTNAME}
 
+If with invalid condition
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+
 If without end
     Check Test Case    ${TESTNAME}
 

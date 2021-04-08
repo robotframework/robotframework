@@ -155,18 +155,6 @@ If with comments
         Log    no joo    # Here is also ok
     END    # Here is also ok
 
-If with invalid condition
-    [Documentation]    FAIL STARTS: Evaluating expression ''123'=123' failed: SyntaxError:
-    IF    '123'=${123}
-        Log    Demo
-    END
-
-If with invalid condition 2
-    [Documentation]    FAIL Evaluating expression 'ooops' failed: NameError: name 'ooops' is not defined nor importable as module
-    IF    ooops
-        Log    Demo
-    END
-
 If with invalid condition after valid is ok
     IF    ${True}
         Log    Demo

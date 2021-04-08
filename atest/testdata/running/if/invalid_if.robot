@@ -11,6 +11,18 @@ If with many conditions
         No Operation
     END
 
+If with invalid condition 1
+    [Documentation]    FAIL STARTS: Evaluating expression ''123'=123' failed: SyntaxError:
+    IF    '123'=${123}
+        Log    Demo
+    END
+
+If with invalid condition 2
+    [Documentation]    FAIL Evaluating expression 'ooops' failed: NameError: name 'ooops' is not defined nor importable as module
+    IF    ooops
+        Log    Demo
+    END
+
 If without end
     [Documentation]    FAIL    IF has no closing END.
     IF    ${True}
