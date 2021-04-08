@@ -65,53 +65,39 @@ $(document).ready(function() {
 function doSearch() {
     let string = $('#search-string').val();
     $("#results-table tr").remove();
-    let results = [];
+    let resultsArray = [];
     if (string !== "") {
         $('.keyword').each(function () {
             const result = {};
             let key = $(this)[0].id;
             let elem = $(this).find('.element-header-left')
-            let el = elem[0];
-            if (el && el.title.toLowerCase().match(string.toLowerCase())) {
+            if (elem[0] && elem[0].title.toLowerCase().match(string.toLowerCase())) {
                 elem.addClass("highlighted")
-                let parentKeywords = buildParentKeywords(findAncestor(el, "keyword"));
-                parentKeywords.splice(parentKeywords.length - 1, 0,
-                    $(this).find('.parent-name')[0].innerText.replaceAll(" ", ""));
-                let fullName = buildFullName(el, "test");
-                if (!fullName) {
-                    fullName = buildFullName(el, "suite");
-                }
-                result[key] = fullName
-                    + " | "
-                    + parentKeywords.slice(0, -1).join(' | ')
-                    + parentKeywords.slice(-1)[0];
-                results.push(result);
+                result[key] = buildFullName(elem);
+                resultsArray.push(result);
             } else {
                 elem.removeClass("highlighted")
             }
         });
     }
-    let rows = "";
-    let url = document.URL.split("#")[0] + "#";
-    if (results.length === 0) {
-        rows += "<tr><td>No results found.</tr></td>";
-    }
-    $.each(results, function () {
-        rows += "<tr><td><a href="
-            + url + Object.keys(this)[0] + ">"
-            + escape(Object.values(this).toString())
-            + "</a></td></tr>";
-    });
-
-    $(rows).appendTo("#results-table tbody");
+    $(createResults(resultsArray)).appendTo("#results-table tbody");
     $("#results").show();
 }
 
-function escape(string) {
-    return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+function buildFullName(elem) {
+    let longname = getLongname(elem[0], "test");
+    if (!longname) {
+        longname = getLongname(elem[0], "suite");
+    }
+    let parentKeywords = getParentKeywords(findAncestor(elem[0], "keyword"));
+    addKeywordLibraryName(parentKeywords, elem);
+    return longname
+        + " | "
+        + parentKeywords.slice(0, -1).join(' | ')
+        + parentKeywords.slice(-1)[0];
 }
 
-function buildParentKeywords(ancestor) {
+function getParentKeywords(ancestor) {
     let name = [];
     while (ancestor) {
         name.push(ancestor.querySelector(".element-header-left").title);
@@ -120,18 +106,41 @@ function buildParentKeywords(ancestor) {
     return name.reverse();
 }
 
-function buildFullName(ancestor, type) {
-    let fullName = "";
-    ancestor = findAncestor(ancestor, type);
+function addKeywordLibraryName(parentKeywords, elem) {
+    return parentKeywords.splice(parentKeywords.length - 1, 0,
+        elem.find('.parent-name')[0].innerText.replaceAll(" ", ""));
+}
+
+function getLongname(ancestor, cls) {
+    ancestor = findAncestor(ancestor, cls);
     if (ancestor) {
-        fullName = ancestor.querySelector(".metadata td").innerText;
+        return ancestor.querySelector(".metadata td").innerText;
     }
-    return fullName;
+    return "";
 }
 
 function findAncestor(el, cls) {
     while ((el = el.parentElement) && !el.classList.contains(cls));
     return el;
+}
+
+function createResults(resultsArray) {
+    let rows = "";
+    let url = document.URL.split("#")[0] + "#";
+    if (resultsArray.length === 0) {
+        rows += "<tr><td>No results found.</tr></td>";
+    }
+    $.each(resultsArray, function () {
+        rows += "<tr><td><a href="
+            + url + Object.keys(this)[0] + ">"
+            + escape(Object.values(this).toString())
+            + "</a></td></tr>";
+    });
+    return rows;
+}
+
+function escape(string) {
+    return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 function openSearch() {
