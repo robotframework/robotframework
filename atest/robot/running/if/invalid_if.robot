@@ -14,16 +14,13 @@ IF with many conditions
     FAIL
 
 IF with invalid condition
-    [Template]    NONE
-    Check Test Case    ${TEST NAME}
+    FAIL
 
 IF with ELSE with invalid condition
-    [Template]    NONE
-    Check Test Case    ${TEST NAME}
+    FAIL    NOT RUN
 
 ELSE IF with invalid condition
-    [Template]    NONE
-    Check Test Case    ${TEST NAME}
+    NOT RUN    NOT RUN    FAIL    NOT RUN    NOT RUN
 
 IF without END
     FAIL

@@ -37,6 +37,8 @@ ELSE IF with invalid condition
     [Documentation]    FAIL STARTS: Evaluating expression '1/0' failed: ZeroDivisionError:
     IF    False
         Fail    Should not be run
+    ELSE IF    False
+        Fail    Should not be run
     ELSE IF    1/0
         Fail    Should not be run
     ELSE IF    True

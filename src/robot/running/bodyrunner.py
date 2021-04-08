@@ -104,7 +104,11 @@ class IfRunner(object):
 
     def _run_if_branch(self, branch, recursive_dry_run=False, error=None):
         result = IfBranchResult(branch.type, branch.condition)
-        run_branch = self._should_run_branch(branch.condition, recursive_dry_run)
+        try:
+            run_branch = self._should_run_branch(branch.condition, recursive_dry_run)
+        except:
+            error = get_error_message()
+            run_branch = False
         with StatusReporter(branch, result, self._context, run_branch):
             if error and self._run:
                 raise DataError(error)
