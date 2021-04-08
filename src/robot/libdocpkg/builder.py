@@ -55,13 +55,14 @@ def LibraryDocumentation(library_or_resource, name=None, version=None,
 
 
 def DocumentationBuilder(library_or_resource):
-    extension = os.path.splitext(library_or_resource)[1][1:].lower()
-    if extension in RESOURCE_EXTENSIONS:
-        return ResourceDocBuilder()
-    if extension in SPEC_EXTENSIONS:
-        return SpecDocBuilder()
-    if extension == 'json':
-        return JsonDocBuilder()
-    if extension == 'java':
-        return JavaDocBuilder()
+    if os.path.exists(library_or_resource):
+        extension = os.path.splitext(library_or_resource)[1][1:].lower()
+        if extension in RESOURCE_EXTENSIONS:
+            return ResourceDocBuilder()
+        if extension in SPEC_EXTENSIONS:
+            return SpecDocBuilder()
+        if extension == 'json':
+            return JsonDocBuilder()
+        if extension == 'java':
+            return JavaDocBuilder()
     return LibraryDocBuilder()
