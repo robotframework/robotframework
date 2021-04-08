@@ -152,7 +152,8 @@ class ExecutionStatus(RobotError):
         if teardown:
             return True
         if 'robot:no-continue-on-failure' in tags:
-            return False
+            # continuable keywords can still continue
+            return self.continue_on_failure
         if 'robot:continue-on-failure' in tags:
             return True
         return self.continue_on_failure

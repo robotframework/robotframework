@@ -10,6 +10,9 @@ Continue in test with tag
 Continue in test with negative tag
     ${tc}=    Check Test Case    ${TESTNAME}
 
+Continue in test with negative tag and continuable error
+    ${tc}=    Check Test Case    ${TESTNAME}
+
 Continue in user kewyord with tag
     ${tc}=    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[0].kws[1].msgs[0]}    This should be executed

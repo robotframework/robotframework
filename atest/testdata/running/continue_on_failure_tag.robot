@@ -1,4 +1,5 @@
 *** Settings ***
+Library              Exceptions
 
 *** Variables ***
 ${HEADER}                 Several failures occurred:
@@ -18,6 +19,19 @@ Continue in test with negative tag
     [Tags]   robot:no-continue-on-failure
     Fail   1
     Fail   2
+
+Continue in test with negative tag and continuable error
+    [Documentation]    FAIL ${HEADER}\n\n
+    ...    1) ContinuableApocalypseException: 1\n\n
+    ...    2) 2\n\n
+    ...    3) 3
+    [Tags]   robot:no-continue-on-failure
+    # continuable keywords should still be able to continue
+    # even when robot:no-continue-on-failure is set.
+    Raise Continuable Failure   1
+    Run Keyword and Continue on Failure   Fail  2
+    Fail   3
+    Fail   4
 
 Continue in user kewyord with tag
     [Documentation]    FAIL kw1
