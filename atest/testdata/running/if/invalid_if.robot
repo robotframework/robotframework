@@ -1,123 +1,145 @@
 *** Test Cases ***
-If without condition
+IF without condition
     [Documentation]    FAIL    IF has no condition.
     IF
-        No Operation
+        Fail    Should not be run
     END
 
-If with many conditions
+IF with ELSE without condition
+    [Documentation]    FAIL    IF has no condition.
+    IF
+        Fail    Should not be run
+    ELSE
+        Fail    Should not be run
+    END
+
+IF with many conditions
     [Documentation]    FAIL    IF has more than one condition.
     IF    '1' == '1'    '2' == '2'    '3' == '3'
-        No Operation
+        Fail    Should not be run
     END
 
-If with invalid condition 1
+IF with invalid condition
     [Documentation]    FAIL STARTS: Evaluating expression ''123'=123' failed: SyntaxError:
     IF    '123'=${123}
-        Log    Demo
+        Fail    Should not be run
     END
 
-If with invalid condition 2
+IF with ELSE with invalid condition
     [Documentation]    FAIL Evaluating expression 'ooops' failed: NameError: name 'ooops' is not defined nor importable as module
     IF    ooops
-        Log    Demo
+        Fail    Should not be run
+    ELSE
+        Fail    Should not be run
     END
 
-If without end
+ELSE IF with invalid condition
+    [Documentation]    FAIL STARTS: Evaluating expression '1/0' failed: ZeroDivisionError:
+    IF    False
+        Fail    Should not be run
+    ELSE IF    1/0
+        Fail    Should not be run
+    ELSE IF    True
+        Fail    Should not be run
+    ELSE
+        Fail    Should not be run
+    END
+
+IF without END
     [Documentation]    FAIL    IF has no closing END.
     IF    ${True}
-        No Operation
+        Fail    Should not be run
 
 Invalid END
     [Documentation]    FAIL    END does not accept arguments.
     IF    True
-        Fail    Not executed
+        Fail    Should not be run
     END    this    is    invalid
 
-If with wrong case
+IF with wrong case
     [Documentation]    FAIL    'If' is a reserved keyword. It must be an upper case 'IF' when used as a marker.
     if    ${True}
-    Log    hello
+        Fail    Should not be run
     END
 
-Else if without condition
+ELSE IF without condition
     [Documentation]    FAIL    ELSE IF has no condition.
     IF    'mars' == 'mars'
-        Log    something
+        Fail    Should not be run
     ELSE IF
-        Log    nothing
+        Fail    Should not be run
     ELSE
-        Log    ok
+        Fail    Should not be run
     END
 
-Else if with multiple conditions
+ELSE IF with multiple conditions
     [Documentation]    FAIL    ELSE IF has more than one condition.
     IF    'maa' == 'maa'
-        Log    something
+        Fail    Should not be run
     ELSE IF    ${False}    ${True}
-        Log    nothing
+        Fail    Should not be run
     ELSE
-        Log    ok
+        Fail    Should not be run
     END
 
-Else with a condition
+ELSE with condition
     [Documentation]    FAIL    ELSE has condition.
     IF    'venus' != 'mars'
-        Log    something
+        Fail    Should not be run
     ELSE    ${True}
-        Log    ok
+        Fail    Should not be run
     END
 
-If with empty if
+IF with empty body
     [Documentation]    FAIL    IF has empty body.
     IF    'jupiter' == 'saturnus'
     END
 
-If with empty else
+ELSE with empty body
     [Documentation]    FAIL    ELSE has empty body.
     IF    'kuu' == 'maa'
-        Log    something
+        Fail    Should not be run
     ELSE
     END
 
-If with empty else_if
+ELSE IF with empty body
     [Documentation]    FAIL    ELSE IF has empty body.
     IF    'mars' == 'maa'
-        Log    something
+        Fail    Should not be run
     ELSE IF    ${False}
     ELSE
-        Log    ok
+        Fail    Should not be run
     END
 
-If with else after else
+ELSE after ELSE
     [Documentation]    FAIL    Multiple ELSE branches.
     IF    'kuu' == 'maa'
-        Log    something
+        Fail    Should not be run
     ELSE
-        Log    hello
+        Fail    Should not be run
     ELSE
-        Log    hei
+        Fail    Should not be run
     END
 
-If with else if after else
+ELSE IF after ELSE
     [Documentation]    FAIL    ELSE IF after ELSE.
     IF    'kuu' == 'maa'
-        Log    something
+        Fail    Should not be run
     ELSE
-        Log    hello
+        Fail    Should not be run
     ELSE IF    ${True}
         Log    hei
     END
 
-If for else if parsing
+Invalid IF inside FOR
     [Documentation]    FAIL    ELSE IF after ELSE.
     FOR    ${value}    IN    1    2    3
         IF    ${value} == 1
-            Log    ${value}
+            Fail    Should not be run
         ELSE
-            No Operation
+            Fail    Should not be run
         ELSE IF    ${value} == 3
-            Log    something
+            Fail    Should not be run
         END
     END
 
