@@ -364,6 +364,69 @@ converting any failure into a continuable failure. These failures are
 handled by the framework exactly the same way as continuable failures
 originating from library keywords.
 
+Using reserved robot:continue-on-failure tag
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+All Keywords executed as part of a test case which is tagged with the
+reserved tag `robot:continue-on-failure` are considered continuable
+by default, including those contained within user keywords executed from
+within this test case.
+
+Thus following two test cases behave identically:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Test 1
+       Run Keyword and Continue on Failure    Should be Equal   1   2
+       User Keyword 1
+
+   Test 2
+       [Tags]    robot:continue-on-failure
+       Should be Equal   1   2
+       User Keyword 1
+
+   *** Keywords ***
+   User Keyword 1
+       Run Keyword and Continue on Failure    Should be Equal   3   4
+       Log   this message is logged
+
+   User Keyword 2
+       Should be Equal   3   4
+       Log   this message is logged
+
+The continue-on-failure behaviour "inherited" by user keywords can be overriden
+using the reserved `robot:no-continue-on-failure` tag in the user keyword.  Using
+the above example, setting it on User Keyword 2 would not log the message.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   User Keyword 2
+       [Tags]    robot:no-continue-on-failure
+       Should be Equal   3   4
+       Log   this message is NOT logged
+
+
+These tags also influence continue-on-failure in FOR loops.
+The below test case will execute the test 10 times, no matter if
+the "Perform some test keyword" failed or not.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Test Case
+       [Tags]    robot:no-continue-on-failure
+       FOR    ${index}    IN RANGE    10
+           Perform some test
+       END
+
+
+Please note that setting the reserved tags using the keyword :name:`Set Tags`
+might not always be effective, they are only supported as part of the Test Suite
+or Test Case settings.
+The `robot:continue-on-failure` and `robot:continue-on-failure` are new in Robot Framework 4.1.
+
 Execution continues on teardowns automatically
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -687,7 +687,9 @@ tag with this prefixes unless actually activating the special functionality.
 
 At the time of writing, the only special tags are `robot:exit`, that is
 automatically added to tests when `stopping test execution gracefully`_,
-and `robot:no-dry-run`, that can be used to disable the `dry run`_ mode.
+and `robot:no-dry-run`, that can be used to disable the `dry run`_ mode as
+well as `robot:continue-on-failure` and `robot:no-continue-on-failure` which
+control continuable execution.
 More usages are likely to be added in the future.
 
 Test setup and teardown
