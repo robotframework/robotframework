@@ -21,6 +21,14 @@ Using --specdocformat to specify doc format in output
     --format XML --specdocformat RAW String ${OUTBASE}.libspec     XML        String      path=${OUTBASE}.libspec
     --format XML --specdocformat HTML String ${OUTBASE}.libspec    LIBSPEC    String      path=${OUTBASE}.libspec
 
+Library name matching spec extension
+    --pythonpath ${DATADIR}/libdoc LIBPKG.JSON ${OUTXML}        XML    LIBPKG.JSON    path=${OUTXML}
+    [Teardown]    Keyword Name Should Be    0    Keyword In Json
+
+Library name matching resource extension
+    --pythonpath ${DATADIR}/libdoc LIBPKG.resource ${OUTXML}    XML    LIBPKG.resource    path=${OUTXML}
+    [Teardown]    Keyword Name Should Be    0    Keyword In Resource
+
 Override name and version
     --name MyName --version 42 String ${OUTHTML}    HTML    MyName    42
     -n MyName -v 42 -f xml BuiltIn ${OUTHTML}       XML     MyName    42
@@ -65,7 +73,7 @@ HTML Doc Should Have Been Created
 XML Doc Should Have Been Created
     [Arguments]    ${path}    ${name}    ${version}    ${docformat}=ROBOT
     ${libdoc}=           Parse Xml    ${path}
-    Set Test Variable    ${libdoc}
+    Set Test Variable    ${LIBDOC}
     Name Should Be       ${name}
     Format Should Be     ${docformat}
     Run Keyword If       "${version}"    Version Should Match    ${version}
@@ -73,7 +81,7 @@ XML Doc Should Have Been Created
 LIBSPEC Doc Should Have Been Created
     [Arguments]    ${path}    ${name}    ${version}    ${docformat}=HTML
     ${libdoc}=           Parse Xml    ${path}
-    Set Test Variable    ${libdoc}
+    Set Test Variable    ${LIBDOC}
     Name Should Be       ${name}
     Format Should Be     ${docformat}
     Run Keyword If       "${version}"    Version Should Match    ${version}

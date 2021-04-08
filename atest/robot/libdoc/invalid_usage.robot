@@ -40,7 +40,7 @@ Non-existing library
     NonExistingLib ${OUT HTML}   Importing library 'NonExistingLib' failed: *
 
 Non-existing spec
-    nonex.xml ${OUT HTML}    Spec file 'nonex.xml' does not exist.
+    nonex.xml ${OUT HTML}    Importing library 'nonex.xml' failed: *
 
 Invalid spec
     [Setup]    Create File    ${OUT XML}    <wrong/>
