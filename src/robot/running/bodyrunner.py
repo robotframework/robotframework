@@ -144,11 +144,11 @@ def ForRunner(context, flavor='IN', run=True, templated=False):
 class ForInRunner(object):
     flavor = 'IN'
 
-    def __init__(self, context, run=True, templated=False, tags=[]):
+    def __init__(self, context, run=True, templated=False, tags=None):
         self._context = context
         self._run = run
         self._templated = templated
-        self._tags = tags
+        self._tags = tags or []
 
     def run(self, data):
         result = ForResult(data.variables, data.flavor, data.values)
