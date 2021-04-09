@@ -14,7 +14,7 @@ Continue in test with tag
     Fail   2
     Log    This should be executed
 
-Continue in test with negative tag 
+Continue in test with negative tag
     [Documentation]    FAIL 1
     [Tags]   robot:no-continue-on-failure
     Fail   1
@@ -37,9 +37,9 @@ Continue in user kewyord with tag
     [Documentation]    FAIL kw1
     Failure in user keyword using tag and run keyword "No Operation"
 
-# test shows that user-kw tags aren't propogated down. 
-# if it was propagated, we would also see kw3b failure
 Continue in nested user kewyord with tag
+    # test checks that user-kw tags aren't propogated down.
+    # if it was propagated, we would also see kw3b failure
     [Documentation]    FAIL ${HEADER}\n\n
     ...    1) kw1\n\n
     ...    2) kw3a
