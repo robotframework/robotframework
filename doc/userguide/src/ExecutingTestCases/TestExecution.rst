@@ -397,7 +397,7 @@ Thus, the following two test cases `Test 1` and `Test 2` behave identically:
 
 The continue-on-failure behaviour "inherited" by user keywords can be overriden
 using the reserved `robot:no-continue-on-failure` tag in the user keyword.  Using
-the above example, setting it on User Keyword 2 would not log the message.
+the above example, setting it on User Keyword 2 would not log the message:
 
 .. sourcecode:: robotframework
 
