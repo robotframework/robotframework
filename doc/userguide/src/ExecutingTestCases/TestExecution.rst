@@ -372,7 +372,7 @@ reserved tag `robot:continue-on-failure` are considered continuable
 by default, including those contained within user keywords executed from
 within this test case.
 
-Thus following two test cases behave identically:
+Thus, the following two test cases `Test 1` and `Test 2` behave identically:
 
 .. sourcecode:: robotframework
 
@@ -416,7 +416,7 @@ the "Perform some test keyword" failed or not.
 
    *** Test Cases ***
    Test Case
-       [Tags]    robot:no-continue-on-failure
+       [Tags]    robot:continue-on-failure
        FOR    ${index}    IN RANGE    10
            Perform some test
        END
