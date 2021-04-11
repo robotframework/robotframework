@@ -55,7 +55,7 @@ jobs:
           python -m coverage xml -i
         if: always()
 
-      - uses: codecov/codecov-action@1fc7722ded4708880a5aea49f2bfafb9336f0c8d
+      - uses: codecov/codecov-action@9b0b9bbe2c64e9ed41413180dd7398450dfeee14
         with:
           name: ${{ matrix.python-version }}-${{ matrix.os }}
         if: always()
@@ -64,7 +64,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ '1.8' ]
+        java: [ '8.0' ]
         os: [ 'ubuntu-latest', 'windows-latest', 'macos-latest' ]
         jython-version: [ '2.7.2' ]
         include:
@@ -78,10 +78,11 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup Java ${{ matrix.java }}
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: ${{ matrix.java }}
           architecture: 'x64'
+          distribution: 'zulu'
 
       - name: Install wget
         run: |
