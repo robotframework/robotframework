@@ -396,7 +396,7 @@ Thus, the following two test cases `Test 1` and `Test 2` behave identically:
        Log   this message is logged
 
 The continue-on-failure behaviour "inherited" by user keywords can be overriden
-using the reserved `robot:no-continue-on-failure` tag in the user keyword.  Using
+using the reserved `robot:no-continue-on-failure` tag in the user keyword. Using
 the above example, setting it on User Keyword 2 would not log the message:
 
 .. sourcecode:: robotframework
@@ -407,6 +407,8 @@ the above example, setting it on User Keyword 2 would not log the message:
        Should be Equal   3   4
        Log   this message is NOT logged
 
+The `robot:no-continue-on-failure` does not change the treatment of
+continuable keywords, those are still continuable, despite the tag.
 
 These tags also influence continue-on-failure in FOR loops.
 The below test case will execute the test 10 times, no matter if
