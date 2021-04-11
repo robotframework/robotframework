@@ -151,8 +151,8 @@ class UserKeywordRunner(object):
         except AttributeError:
             return kw_tags
         result = list(kw_tags)
-        if 'robot:continue-on-failure' in test_tags and \
-           'robot:no-continue-on-failure' not in kw_tags:
+        if ('robot:continue-on-failure' in test_tags
+           and 'robot:no-continue-on-failure' not in kw_tags):
             result.append('robot:continue-on-failure')
         return result
 
