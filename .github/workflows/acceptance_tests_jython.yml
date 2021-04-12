@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ '1.8' ]
+        java: [ '8.0' ]
         os: [ 'ubuntu-latest', 'windows-latest' ]
         jython-version: [ '2.7.2' ]
 
@@ -41,10 +41,11 @@ jobs:
           architecture: 'x64'
 
       - name: Setup Java ${{ matrix.java }}
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v2
         with:
           java-version: ${{ matrix.java }}
           architecture: 'x64'
+          distribution: 'zulu'
 
       - name: Install wget and report handling tools
         run: |
@@ -106,7 +107,7 @@ jobs:
           echo "JOB_STATUS=$(python -c "print('${{ job.status }}'.lower())")" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         if: always() && job.status == 'failure' && runner.os == 'Windows'
 
-      - uses: octokit/request-action@ef2f898a5c7cdffca2a715a6b7e8db895f4d7228
+      - uses: octokit/request-action@ddba84b296208cfed0acc2003fa1d871afe9e154
         name: Update status with Github Status API
         id: update_status
         with:
