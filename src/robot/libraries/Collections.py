@@ -737,7 +737,7 @@ class _Dictionary(object):
         default = "Dictionary contains value '%s'." % (value,)
         _verify_condition(not value in dictionary.values(), default, msg)
 
-    def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True):
+    def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True, ignore_keys=None):
         """Fails if the given dictionaries are not equal.
 
         First the equality of dictionaries' keys is checked and after that all
@@ -745,13 +745,22 @@ class _Dictionary(object):
         are listed in the error message. The types of the dictionaries do not
         need to be same.
 
+        ``ignore_keys`` can be used to provide a list of keys to ignore in the
+        comparison.
+
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
         """
-        self._validate_dictionary(dict1)
-        self._validate_dictionary(dict2, 2)
-        keys = self._keys_should_be_equal(dict1, dict2, msg, values)
-        self._key_values_should_be_equal(keys, dict1, dict2, msg, values)
+
+        if ignore_keys is None:
+            ignore_keys = []
+        dct1 = {k: v for k, v in dict1.items() if k not in ignore_keys}
+        dct2 = {k: v for k, v in dict2.items() if k not in ignore_keys}
+        self._validate_dictionary(dct1)
+        self._validate_dictionary(dct2, 2)
+
+        keys = self._keys_should_be_equal(dct1, dct2, msg, values)
+        self._key_values_should_be_equal(keys, dct1, dct2, msg, values)
 
     def dictionary_should_contain_sub_dictionary(self, dict1, dict2, msg=None,
                                                  values=True):

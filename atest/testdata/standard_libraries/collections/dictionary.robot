@@ -181,6 +181,23 @@ Dictionaries Should Equal With Both Dictionaries Missing Keys
     ${x}    ${y} =    Evaluate    dict(a=1, b=2), dict(a=0, c=3, d=4)
     Dictionaries Should Be Equal    ${x}    ${y}
 
+Dictionaries Should Equal With Ignored Key
+    [Documentation]    PASS
+    ${x}    ${y}     ${z} =    Evaluate    dict(a=1, b=2), dict(a=1, b=2, d=4), list('d')
+    Dictionaries Should Be Equal    ${x}    ${y}    ignore_keys=${z}
+
+Dictionaries Should Equal With Ignored Key And Missing Key
+    [Documentation]    FAIL
+    ...    Following keys missing from first dictionary: c
+    ${x}    ${y}     ${z} =    Evaluate    dict(a=1, b=2), dict(a=1, b=2, c=3, d=4), list('d')
+    Dictionaries Should Be Equal    ${x}    ${y}    ignore_keys=${z}
+
+Dictionaries Should Equal With Ignored Key And Missing Key And Own Error Message
+    [Documentation]    FAIL My error message!
+    ...    Following keys missing from first dictionary: c
+    ${x}    ${y}     ${z} =    Evaluate    dict(a=1, b=2), dict(a=1, b=2, c=3, d=4), list('d')
+    Dictionaries Should Be Equal    ${x}    ${y}    My error message!    ignore_keys=${z}
+
 Dictionaries Should Be Equal With Different Keys And Own Error Message
     [Documentation]    FAIL My error message!
     Dictionaries Should Be Equal    ${D2}    ${D3}    My error message!    NO values
