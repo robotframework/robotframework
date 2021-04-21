@@ -754,10 +754,10 @@ class _Dictionary(object):
 
         if ignore_keys is None:
             ignore_keys = []
-        dict1 = {k: v for k, v in dict1.items() if k not in ignore_keys}
-        dict2 = {k: v for k, v in dict2.items() if k not in ignore_keys}
         self._validate_dictionary(dict1)
         self._validate_dictionary(dict2, 2)
+        dict1 = {k: v for k, v in dict1.items() if k not in ignore_keys}
+        dict2 = {k: v for k, v in dict2.items() if k not in ignore_keys}
 
         keys = self._keys_should_be_equal(dict1, dict2, msg, values)
         self._key_values_should_be_equal(keys, dict1, dict2, msg, values)
