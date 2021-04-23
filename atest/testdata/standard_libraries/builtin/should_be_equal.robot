@@ -39,6 +39,20 @@ Without leading and trailing spaces
     ${SPACE}${42}\n    ${SPACE}${42}\t    strip_spaces=yeS
     \n\ test\t         ${SPACE}value\n    strip_spaces=yes
 
+Do not collapse spaces
+    [Documentation]    FAIL repr=True: Yö \ntä != Yö\ttä
+    ${SPACE * 5}test${SPACE * 2}value    ${SPACE * 5}test${SPACE * 2}value    collapse_spaces=False
+    HYVÄÄ\tYÖTÄ${SPACE * 3}              HYVÄÄ\tYÖTÄ${SPACE * 3}              repr=True    collapse_spaces=False
+    ${42}                                ${42}                                collapse_spaces=${FALSE}
+    Yö \ntä                              Yö\ttä                               repr=True    collapse_spaces=False
+
+Collapse spaces
+    [Documentation]    FAIL Yo yo != Oy oy
+    test${SPACE * 4}value${SPACE * 5}    test value${SPACE}    collapse_spaces=True
+    ${SPACE * 5}HYVÄÄ\t\nYÖTÄ            ${SPACE}HYVÄÄ YÖTÄ    repr=True    collapse_spaces=Yes
+    ${42}                                ${42}                 collapse_spaces=${TRUE}
+    Yo${SPACE * 5}yo                     Oy\toy                collapse_spaces=True
+
 Fails with values
     [Documentation]    FAIL Several failures occurred:
     ...
@@ -370,6 +384,34 @@ Should Not Be Equal without leading and trailing spaces
     hyvää yötä      hyvää yötä\t    strip_spaces=TRUE
     \ test\t\n      \tvalue\t       strip_spaces=yeS
     ${42}           ${42}           strip_spaces=This probably should be an error.
+
+Should Not Be Equal and do not collapse spaces
+    [Documentation]     FAIL Several failures occurred:
+    ...
+    ...    1) test\tit == test\tit
+    ...
+    ...    2) repr=True: hyvää\ \nyötä == hyvää\ \nyötä
+    ...
+    ...    3) \ \ 42 == \ \ 42
+    [Template]  Should Not Be Equal
+    test\tit         test\tit         collapse_spaces=No
+    hyvää\ \nyötä    hyvää\ \nyötä    repr=True    collapse_spaces=${FALSE}
+    \ test\t\nit     \tvalue\tit      collapse_spaces=${NONE}
+    \ \ ${42}        \ \ ${42}        collapse_spaces=False
+
+Should Not Be Equal and collapse spaces
+    [Documentation]     FAIL Several failures occurred:
+    ...
+    ...    1) test it == test it
+    ...
+    ...    2) repr=True: hyvää yötä == hyvää yötä
+    ...
+    ...    3) \ 42 == \ 42
+    [Template]  Should Not Be Equal
+    test\t\nit       test\ \tit       collapse_spaces=True
+    hyvää\ \ yötä    hyvää\ \ yötä    repr=True    collapse_spaces=${TRUE}
+    \ test\tit       \tvalue it       collapse_spaces=Maybe yes
+    \ \ ${42}        \ \ ${42}        collapse_spaces=TruE
 
 Should Not Be Equal with bytes containing non-ascii characters
     [Documentation]    FAIL ${BYTES WITH NON ASCII} == ${BYTES WITH NON ASCII}
