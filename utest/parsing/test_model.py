@@ -728,6 +728,9 @@ Documentation
                         Token('FATAL ERROR', error='fatal error')]
         assert_equal(error.errors, ('normal error', 'fatal error',
                                     'explicitly set', 'errors'))
+        error.errors = ['errors', 'as', 'list']
+        assert_equal(error.errors, ('normal error', 'fatal error',
+                                    'errors', 'as', 'list'))
 
 
 class TestModelVisitors(unittest.TestCase):
