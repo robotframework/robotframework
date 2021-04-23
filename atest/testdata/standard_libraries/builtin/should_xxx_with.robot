@@ -53,6 +53,36 @@ Should Start With without leading and trailing spaces
     test value         test\t            strip_spaces=NO
     \t\n\ YÖTÄ\t       \työtä\t\n        strip_spaces=true
 
+Should Start With and do not collapse spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) '\ttest?' does not start with 'test'
+    ...
+    ...    2) 'test\n\ value' does not start with 'test\ \ v'
+    ...
+    ...    3) 'YÖTÄ\t' does not start with '\työtä\ntest'
+    [Template]    Should Start With
+    \ttest?          test            collapse_spaces=False
+    test\n\ value    test\ \ v       collapse_spaces=${FALSE}
+    ${SPACE}         ${EMPTY}        collapse_spaces=No
+    test\tvalue      test\t          collapse_spaces=NO
+    YÖTÄ\t           \työtä\ntest    collapse_spaces=${NONE}
+
+Should Start With and collapse spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) ' test?' does not start with 'test'
+    ...
+    ...    2) 'test value' does not start with 'no test'
+    ...
+    ...    3) 'YÖTÄ ' does not start with ' yötä test'
+    [Template]    Should Start With
+    \ttest?          test            collapse_spaces=True
+    test\n\ value    test\t\ v       collapse_spaces=${TRUE}
+    ${SPACE*5}       ${EMPTY}        collapse_spaces=Yes
+    test\n\tvalue    no\ttest        collapse_spaces=TruE
+    YÖTÄ\t           \työtä\ttest    collapse_spaces=1
+
 Should Not Start With
     [Documentation]    FAIL 'Hello, world!' starts with 'Hello'
     [Template]    Should Not Start With
@@ -107,6 +137,32 @@ Should Not Start With without leading and trailing spaces
     \n\ttest \t     test\t\n      strip_spaces=NO
     \n\työtä\t\n    \t\nyötä\t    repr=yes    strip_spaces=yes
 
+Should Not Start With and do not collapse spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) 'test\tvalue' starts with 'test'
+    ...
+    ...    2) '\ttest\n value' starts with '\ttest'
+    ...
+    ...    3) repr=yes: 'yötä\t\n' starts with 'yötä\t'
+    [Template]    Should Not Start With
+    test\tvalue       test      collapse_spaces=False
+    \ttest\n value    \ttest    collapse_spaces=${FALSE}
+    yötä\t\n          yötä\t    repr=yes    collapse_spaces=No
+
+Should Not Start With and collapse spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) 'test value' starts with 'test'
+    ...
+    ...    2) ' test value' starts with ' test'
+    ...
+    ...    3) repr=yes: ' yötä ' starts with ' yötä '
+    [Template]    Should Not Start With
+    test\tvalue         test        collapse_spaces=True
+    \ttest \t\ value    \ttest      collapse_spaces=${TRUE}
+    \t\ yötä\t\n        \ yötä\t    repr=yes    collapse_spaces=Sure
+
 Should End With without values
     [Documentation]    FAIL My message
     Should End With    ${LONG}    Nope    My message    values=No values
@@ -160,6 +216,28 @@ Should End With without leading and trailing spaces
     some test          test\t         strip_spaces=False
     ${SPACE}YÖTÄ\t     \työtä\t       strip_spaces=true
 
+Should End With and do not collapse spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) '\ttest\ \ ?' does not end with '\n?'
+    ...
+    ...    2)  repr=yes: '\t\nyötä\t' does not end with '\ Yötä'
+    [Template]    Should End With
+    \ttest\ \ ?       \n?         collapse_spaces=False
+    \t\nyötä\t        \ Yötä      repr=yes    collapse_spaces=${FALSE}
+    some\ \ test\t    \ test\t    collapse_spaces=No
+
+Should End With and collapse spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) ' test ?' does not end with 'T ?'
+    ...
+    ...    2)  repr=yes: ' yötä ' does not end with ' Yötä'
+    [Template]    Should End With
+    \ttest\ \ ?       T\n?          collapse_spaces=True
+    \t\nyötä\t        \ Yötä        repr=yes    collapse_spaces=${TRUE}
+    some\ \ test\n    \t\ttest\t    collapse_spaces=Yes
+
 Should Not End With
     [Documentation]    FAIL Message only
     [Template]    Should Not End With
@@ -212,3 +290,33 @@ Should Not End With without leading and trailing spaces
     test\ \ value\n    \te            strip_spaces=truE
     \n \työtä\t\n      \ yötä\t\n     repr=yes    strip_spaces=yes
     some test          test\t         strip_spaces=NO
+
+Should Not End With and do not collapse spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) '\ttest\t\n?' ends with '\t\n?'
+    ...
+    ...    2) 'test\ \nvalue' ends with 'e'
+    ...
+    ...    3) repr=yes: '\työtä\t' ends with 'yötä\t'
+    [Template]    Should Not End With
+    \ttest\t\n?      \t\n?       collapse_spaces=False
+    test\ \nvalue    e           collapse_spaces=${FALSE}
+    \työtä\t         yötä\t      repr=yes    collapse_spaces=FalsE
+    some\ test       \ \ test    collapse_spaces=NO
+
+Should Not End With and collapse spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) ' test ?' ends with ' ?'
+    ...
+    ...    2) 'test value' ends with 'e'
+    ...
+    ...    3) repr=yes: ' yötä ' ends with 'yötä '
+    ...
+    ...    4) 'some test' ends with ' test'
+    [Template]    Should Not End With
+    \ttest\ \ ?      \t\n?       collapse_spaces=True
+    test\t\nvalue    e           collapse_spaces=${TRUE}
+    \työtä\t         yötä\t      repr=yes    collapse_spaces=Yes
+    some\ test       \ \ test    collapse_spaces=1

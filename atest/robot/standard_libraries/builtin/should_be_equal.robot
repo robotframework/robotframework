@@ -23,6 +23,12 @@ Without trailing spaces
 Without leading and trailing spaces
     Check Test Case     ${TESTNAME}
 
+Do not collapse spaces
+    Check Test Case     ${TESTNAME}
+
+Collapse spaces
+    Check Test Case     ${TESTNAME}
+
 Fails with values
     Check test case    ${TESTNAME}
 
@@ -109,6 +115,12 @@ Should Not Be Equal without trailing spaces
     Check Test Case     ${TESTNAME}
 
 Should Not Be Equal without leading and trailing spaces
+    Check Test Case     ${TESTNAME}
+
+Should Not Be Equal and do not collapse spaces
+    Check Test Case     ${TESTNAME}
+
+Should Not Be Equal and collapse spaces
     Check Test Case     ${TESTNAME}
 
 Should Not Be Equal with bytes containing non-ascii characters

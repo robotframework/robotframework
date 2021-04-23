@@ -212,3 +212,43 @@ Should Not Be Equal As Strings without leading and trailing spaces
     \t1${SPACE}    \ ${1}\t     strip_spaces=True
     \tHyvää        \tHyvää\n    strip_spaces=yes
     \ntest\t       \ttest \n    strip_spaces=no
+
+Should Not Be Equal As Strings and do not collapse spaces
+    [Documentation]     FAIL Hyvää\t\npäivää == Hyvää\t\npäivää
+    [Template]    Should Not Be Equal As Strings
+    1\ \ 2             1 2                collapse_spaces=False
+    Hyvää\t\npäivää    Hyvää\t\npäivää    collapse_spaces=No
+    Yo yo              Yo\tyo             collapse_spaces=${FALSE}
+
+Should Not Be Equal As Strings and collapse spaces
+    [Documentation]     FAIL Several failures occurred:
+    ...
+    ...    1) 1 2 == 1 2
+    ...
+    ...    2) Hyvää päivää == Hyvää päivää
+   [Template]    Should Not Be Equal As Strings
+    1\ \ 2             1 2               collapse_spaces=True
+    Hyvää\n\tpäivää    Hyvää \tpäivää    collapse_spaces=Yes
+    Yo yo              Yo\tYo            collapse_spaces=${TRUE}
+
+Should Be Equal As Strings and do not collapse spaces
+    [Documentation]     FAIL Several failures occurred:
+    ...
+    ...    1) 1\ \ 2 != 1 2
+    ...
+    ...    2) \ \nYo yo != Yo\tyo
+    [Template]    Should Be Equal As Strings
+    1\ \ 2            1 2               collapse_spaces=False
+    Hyvää \ päivää    Hyvää \ päivää    collapse_spaces=No
+    \ \nYo yo         Yo\tyo            collapse_spaces=${FALSE}
+
+Should Be Equal As Strings and collapse spaces
+    [Documentation]     FAIL Several failures occurred:
+    ...
+    ...    1) 1 2 != \ 1 2
+    ...
+    ...    2) Yo yo != Yo Yo
+   [Template]    Should Be Equal As Strings
+    1\ \ 2            \ \ 1 2               collapse_spaces=True
+    Hyvää \ päivää    Hyvää\tpäivää    collapse_spaces=Yes
+    Yo\n\t\tyo        Yo\tYo            collapse_spaces=${TRUE}
