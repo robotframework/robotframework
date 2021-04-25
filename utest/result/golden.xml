@@ -23,6 +23,39 @@
 </kw>
 <status endtime="20111024 13:41:20.933" starttime="20111024 13:41:20.930" status="PASS"/>
 </kw>
+<for flavor="IN">
+<var>${x}</var>
+<value>not in source</value>
+<iter>
+<var name="${x}">not in source</var>
+<kw library="BuiltIn" name="Log">
+<arg>${x}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg level="INFO" timestamp="20210329 17:05:45.267">not in source</msg>
+<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="PASS"/>
+</kw>
+<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="PASS"/>
+</iter>
+<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="PASS"/>
+</for>
+<if>
+<branch condition="'IF' == 'WRONG'" type="IF">
+<kw library="BuiltIn" name="Fail">
+<arg>not going here</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="NOT RUN"/>
+</kw>
+<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="NOT RUN"/>
+</branch>
+<branch type="ELSE">
+<kw library="BuiltIn" name="No Operation">
+<doc>Not in source.</doc>
+<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="PASS"/>
+</kw>
+<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="PASS"/>
+</branch>
+<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="PASS"/>
+</if>
 <doc>Test case documentation</doc>
 <tag>t1</tag>
 <status endtime="20111024 13:41:20.934" starttime="20111024 13:41:20.925" status="PASS"/>

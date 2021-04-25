@@ -126,8 +126,24 @@ class KeywordHandler(ElementHandler):
         return creator(elem, result)
 
     def _create_keyword(self, elem, result):
-        return result.body.create_keyword(kwname=elem.get('name', ''),
-                                          libname=elem.get('library'))
+        try:
+            body = result.body
+        except AttributeError:
+            body = self._get_body_for_suite_level_keyword(result)
+        return body.create_keyword(kwname=elem.get('name', ''),
+                                   libname=elem.get('library'))
+
+    def _get_body_for_suite_level_keyword(self, result):
+        # Someone, most likely a listener, has created a `<kw>` element on suite level.
+        # Add the keyword into a suite setup or teardown, depending on have we already
+        # seen tests or not. Create an implicit setup/teardown if needed. Possible real
+        # setup/teardown parsed later will reset the implicit one otherwise, but leaves
+        # the added keyword into its body.
+        kw_type = 'teardown' if result.tests or result.suites else 'setup'
+        keyword = getattr(result, kw_type)
+        if not keyword:
+            keyword.config(kwname='Implicit %s' % kw_type, status=keyword.PASS)
+        return keyword.body
 
     def _create_setup(self, elem, result):
         return result.setup.config(kwname=elem.get('name', ''),

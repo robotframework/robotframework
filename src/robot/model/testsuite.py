@@ -90,10 +90,37 @@ class TestSuite(ModelObject):
 
     @setter
     def setup(self, setup):
+        """Suite setup as a :class:`~.model.keyword.Keyword` object.
+
+        This attribute is a ``Keyword`` object also when a suite has no setup
+        but in that case its truth value is ``False``.
+
+        Setup can be modified by setting attributes directly::
+
+            suite.setup.name = 'Example'
+            suite.setup.args = ('First', 'Second')
+
+        Alternatively the :meth:`config` method can be used to set multiple
+        attributes in one call::
+
+            suite.setup.config(name='Example', args=('First', 'Second'))
+
+        The easiest way to reset the whole setup is setting it to ``None``.
+        It will automatically recreate the underlying ``Keyword`` object::
+
+            suite.setup = None
+
+        New in Robot Framework 4.0. Earlier setup was accessed like
+        ``suite.keywords.setup``.
+        """
         return create_fixture(setup, self, Keyword.SETUP)
 
     @setter
     def teardown(self, teardown):
+        """Suite teardown as a :class:`~.model.keyword.Keyword` object.
+
+        See :attr:`setup` for more information.
+        """
         return create_fixture(teardown, self, Keyword.TEARDOWN)
 
     @property
@@ -179,6 +206,10 @@ class TestSuite(ModelObject):
         :param options: Passed to
             :class:`~robot.model.configurer.SuiteConfigurer` that will then
             set suite attributes, call :meth:`filter`, etc. as needed.
+
+        Not to be confused with :meth:`config` method that suites, tests,
+        and keywords have to make it possible to set multiple attributes in
+        one call.
         """
         if self.parent is not None:
             raise ValueError("'TestSuite.configure()' can only be used with "

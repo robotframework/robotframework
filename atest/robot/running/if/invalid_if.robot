@@ -1,49 +1,73 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    running/if/invalid_if.robot
+Test Template     Branch statuses should be
 Resource          atest_resource.robot
 
 *** Test Cases ***
-If without condition
-  Check Test Case    ${TESTNAME}
+IF without condition
+    FAIL
 
-If with many conditions
-  Check Test Case    ${TESTNAME}
+IF with ELSE without condition
+    FAIL    NOT RUN
 
-If without end
-  Check Test Case    ${TESTNAME}
+IF with many conditions
+    FAIL
+
+IF with invalid condition
+    FAIL
+
+IF with ELSE with invalid condition
+    FAIL    NOT RUN
+
+ELSE IF with invalid condition
+    NOT RUN    NOT RUN    FAIL    NOT RUN    NOT RUN
+
+IF without END
+    FAIL
 
 Invalid END
-  Check Test Case    ${TESTNAME}
+    FAIL
 
-If with wrong case
-  Check Test Case    ${TESTNAME}
+IF with wrong case
+    [Template]    NONE
+    Check Test Case    ${TEST NAME}
 
-Else if without condition
-  Check Test Case    ${TESTNAME}
+ELSE IF without condition
+    FAIL    NOT RUN    NOT RUN
 
-Else if with multiple conditions
-  Check Test Case    ${TESTNAME}
+ELSE IF with multiple conditions
+    FAIL    NOT RUN    NOT RUN
 
-Else with a condition
-  Check Test Case    ${TESTNAME}
+ELSE with condition
+    FAIL    NOT RUN
 
-If with empty if
-  Check Test Case    ${TESTNAME}
+IF with empty body
+    FAIL
 
-If with empty else
-  Check Test Case    ${TESTNAME}
+ELSE with empty body
+    FAIL    NOT RUN
 
-If with empty else_if
-  Check Test Case    ${TESTNAME}
+ELSE IF with empty body
+    FAIL    NOT RUN    NOT RUN
 
-If with else after else
-  Check Test Case    ${TESTNAME}
+ELSE after ELSE
+    FAIL    NOT RUN    NOT RUN
 
-If with else if after else
-  Check Test Case    ${TESTNAME}
+ELSE IF after ELSE
+    FAIL    NOT RUN    NOT RUN
 
-If for else if parsing
-  Check Test Case    ${TESTNAME}
+Invalid IF inside FOR
+    FAIL
 
 Multiple errors
-  Check Test Case    ${TESTNAME}
+    FAIL    NOT RUN    NOT RUN    NOT RUN    NOT RUN
+
+*** Keywords ***
+Branch statuses should be
+    [Arguments]    @{statuses}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.body[0].status}    FAIL
+    FOR    ${branch}    ${status}    IN ZIP    ${tc.body[0].body}    ${statuses}
+        Should Be Equal    ${branch.status}    ${status}
+    END
+    Should Be Equal    ${{len($tc.body[0].body)}}    ${{len($statuses)}}

@@ -41,5 +41,18 @@
 |    |    | ... | args 6 | args 7 | args 8 | args 9 | # loop step comment |
 |    |    | Loop Step 2 |
 |    | END |
+|    | IF | True |
+|    |    | Log | Hi! |
+|    |    | FOR | ${var} | IN | one | two |
+|    |    |    | IF | "${var}" == "one" |
+|    |    |    |    | Log | ${var} is one! |
+|    |    |    | END |
+|    |    |    | No Operation |
+|    |    | END |
+|    | ELSE IF | False |
+|    |    | Fail | Not run |
+|    | ELSE |
+|    |    | Fail | Not run |
+|    | END |
 |    | My Step 2 | my step 2 arg | second arg | # step 2 comment |
 |    | [Return] | args 1 | args 2 |

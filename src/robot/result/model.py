@@ -463,6 +463,10 @@ class TestSuite(model.TestSuite, StatusMixin):
 
             suite.configure(remove_keywords='PASSED',
                             doc='Smoke test results.')
+
+        Not to be confused with :meth:`config` method that suites, tests,
+        and keywords have to make it possible to set multiple attributes in
+        one call.
         """
         model.TestSuite.configure(self)    # Parent validates call is allowed.
         self.visit(SuiteConfigurer(**options))

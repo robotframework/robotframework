@@ -110,8 +110,16 @@ class TestRun(RunningTestCase):
         self._assert_outputs()
 
     def test_multi_options_as_single_string(self):
-        assert_equal(run_without_outputs(self.data, exclude='fail'), 0)
+        assert_equal(run_without_outputs(self.data, exclude='fail', skip='pass',
+                                         skiponfailure='xxx'), 0)
         self._assert_outputs([('FAIL', 0)])
+        self._assert_outputs([('1 test, 0 passed, 0 failed, 1 skipped', 1)])
+
+    def test_multi_options_as_tuples(self):
+        assert_equal(run_without_outputs(self.data, exclude=('fail',), skip=('pass',),
+                                         skiponfailure=('xxx', 'yyy')), 0)
+        self._assert_outputs([('FAIL', 0)])
+        self._assert_outputs([('1 test, 0 passed, 0 failed, 1 skipped', 1)])
 
     def test_listener_gets_notification_about_log_report_and_output(self):
         listener = join(ROOT, 'utest', 'resources', 'Listener.py')

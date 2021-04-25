@@ -3,13 +3,18 @@ ${EXPECTED FAILURE}    Expected failure
 ${TEARDOWN MESSAGE}    Teardown message
 
 *** Test Case ***
-Run Keyword If test Failed When Test Fails
+Run Keyword If Test Failed when test fails
     [Documentation]    FAIL Expected failure
     Fail    ${EXPECTED FAILURE}
     [Teardown]    Run Keyword If Test Failed    Log    Hello from teardown!
 
-Run Keyword If test Failed When Test Does Not Fail
+Run Keyword If Test Failed when test passes
     No Operation
+    [Teardown]    Run Keyword If Test Failed    Fail    ${NOT EXECUTED}
+
+Run Keyword If Test Failed when test is skipped
+    [Documentation]    SKIP For testing purposes.
+    Skip    For testing purposes.
     [Teardown]    Run Keyword If Test Failed    Fail    ${NOT EXECUTED}
 
 Run Keyword If Test Failed Can't Be Used In Setup
