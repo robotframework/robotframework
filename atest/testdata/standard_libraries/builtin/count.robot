@@ -96,9 +96,9 @@ Should Contain X Times and do not collapse spaces
 Should Contain X Times and collapse spaces
     [Documentation]    FAIL  '${LIST_4}' contains ' a' 2 times, not 3 times.
     a\ \ a\ \ a    \ a\n    1    collapse_spaces=True
-    a\n\ta\t\ a    \ a    2    collapse_spaces=${TRUE}
-    ${DICT_5}      \ta         2    collapse_spaces=TRUE
-    ${LIST_4}      \ta              3    collapse_spaces=True
+    a\n\ta\t\ a    \ a      2    collapse_spaces=${TRUE}
+    ${DICT_5}      \ta      2    collapse_spaces=TRUE
+    ${LIST_4}      \ta      3    collapse_spaces=True
 
 Should Contain X Times with invalid item
     [Documentation]    FAIL STARTS: Converting '10' to list failed: TypeError:
