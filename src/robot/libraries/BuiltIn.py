@@ -1304,7 +1304,7 @@ class _Verify(_BuiltInBase):
                     container = self._collapse_spaces(container)
                 elif is_list_like(container):
                     container = [self._collapse_spaces(x)
-                                    if is_string(x) else x for x in container]
+                                 if is_string(x) else x for x in container]
         x = self.get_count(container, item)
         if not msg:
             msg = "'%s' contains '%s' %d time%s, not %d time%s." \
