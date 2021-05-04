@@ -73,5 +73,5 @@ def type_name(item, capitalize=False):
     named_types = {str: 'string', unicode: 'string', bool: 'boolean',
                    int: 'integer', long: 'integer', NoneType: 'None',
                    dict: 'dictionary'}
-    name = named_types.get(typ, typ.__name__)
+    name = named_types.get(typ, typ.__name__.strip('_'))
     return name.capitalize() if capitalize and name.islower() else name

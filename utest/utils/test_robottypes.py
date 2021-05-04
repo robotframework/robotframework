@@ -166,13 +166,23 @@ class TestTypeName(unittest.TestCase):
                           (OldStyle, 'OldStyle')]:
             assert_equal(type_name(item), exp)
 
+    def test_strip_underscores(self):
+        class _Foo_(object): pass
+        assert_equal(type_name(_Foo_), 'Foo')
+
     if PY3:
 
         def test_typing(self):
-            from typing import Any, List, Optional, Union
+            from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
             for item, exp in [(List, 'list'),
                               (List[int], 'list'),
+                              (Tuple, 'tuple'),
+                              (Tuple[int], 'tuple'),
+                              (Set, 'set'),
+                              (Set[int], 'set'),
+                              (Dict, 'dictionary'),
+                              (Dict[int, str], 'dictionary'),
                               (Union, 'Union'),
                               (Union[int, str], 'Union'),
                               (Optional, 'Optional'),
