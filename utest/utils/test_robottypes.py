@@ -166,6 +166,20 @@ class TestTypeName(unittest.TestCase):
                           (OldStyle, 'OldStyle')]:
             assert_equal(type_name(item), exp)
 
+    if PY3:
+
+        def test_typing(self):
+            from typing import Any, List, Optional, Union
+
+            for item, exp in [(List, 'list'),
+                              (List[int], 'list'),
+                              (Union, 'Union'),
+                              (Union[int, str], 'Union'),
+                              (Optional, 'Optional'),
+                              (Optional[int], 'Union'),
+                              (Any, 'Any')]:
+                assert_equal(type_name(item), exp)
+
     if JYTHON:
 
         def test_java_object(self):

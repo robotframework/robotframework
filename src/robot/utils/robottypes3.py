@@ -61,7 +61,11 @@ def is_dict_like(item):
 
 
 def type_name(item, capitalize=False):
-    if isinstance(item, IOBase):
+    if hasattr(item, '__origin__'):
+        item = item.__origin__
+    if hasattr(item, '_name'):  # Union, Any, etc. from typing
+        name = item._name
+    elif isinstance(item, IOBase):
         name = 'file'
     else:
         typ = type(item) if not isinstance(item, type) else item
