@@ -60,11 +60,7 @@ class TypeConverter(object):
 
     @classmethod
     def converter_for(cls, type_):
-        # Types defined in the typing module in Python 3.7+. For details see
-        # https://bugs.python.org/issue34568
-        if (PY_VERSION >= (3, 7)
-                and hasattr(type_, '__origin__')
-                and type_.__origin__ is not Union):
+        if getattr(type_, '__origin__', None) and type_.__origin__ is not Union:
             type_ = type_.__origin__
         if isinstance(type_, (str, unicode)):
             try:
