@@ -13,6 +13,9 @@ Union with None and without str
 Union with None and str
     Check Test Case    ${TESTNAME}
 
+Union with ABC
+    Check Test Case    ${TESTNAME}
+
 Union with subscripted generics
     Check Test Case    ${TESTNAME}
 
@@ -44,6 +47,9 @@ String with None default
     Check Test Case    ${TESTNAME}
 
 Avoid unnecessary conversion
+    Check Test Case    ${TESTNAME}
+
+Avoid unnecessary conversion with ABC
     Check Test Case    ${TESTNAME}
 
 Union with invalid types

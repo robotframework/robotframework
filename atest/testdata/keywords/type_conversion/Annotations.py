@@ -3,6 +3,7 @@ from datetime import datetime, date, timedelta
 from decimal import Decimal
 from enum import Enum
 from functools import wraps
+from fractions import Fraction
 from numbers import Integral, Real
 
 from robot.api.deco import keyword

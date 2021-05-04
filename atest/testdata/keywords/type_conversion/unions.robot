@@ -28,6 +28,11 @@ Union with None and str
     ${None}    ${None}
     three      three
 
+Union with ABC
+    [Template]    Union with ABC
+    ${1}     ${1}
+    1        ${1}
+
 Union with subscripted generics
     [Template]    Union with subscripted generics
     \[1, 2]        [1, 2]
@@ -111,6 +116,13 @@ Avoid unnecessary conversion
     ${1}       1
     None       None
     ${None}    ${None}
+
+Avoid unnecessary conversion with ABC
+    [Template]    Union With str and ABC
+    Hyvä!                            Hyvä!
+    1                                1
+    ${1}                             ${1}
+    ${{fractions.Fraction(1, 3)}}    ${{fractions.Fraction(1, 3)}}
 
 Union with invalid types
     [Template]    Union with invalid types
