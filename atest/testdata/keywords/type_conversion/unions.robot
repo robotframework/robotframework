@@ -28,13 +28,27 @@ Union with None and str
     ${None}    ${None}
     three      three
 
+Union with subscripted generics
+    [Template]    Union with subscripted generics
+    \[1, 2]        [1, 2]
+    ${{[1, 2]}}    [1, 2]
+    42             42
+    ${42}          42
+
+Union with subscripted generics and str
+    [Template]    Union with subscripted generics and str
+    \['a', 'b']        "['a', 'b']"
+    ${{['a', 'b']}}    ['a', 'b']
+    foo                "foo"
+
 Argument not matching union
     [Template]    Conversion Should Fail
-    Union of int and float     not a number    type=integer or float
-    Union of int and float     ${NONE}         type=integer or float    arg_type=None
-    Union of int and float     ${{type('Custom', (), {})()}}
-    ...                                        type=integer or float    arg_type=Custom
-    Union with int and None    invalid         type=integer or None
+    Union of int and float             not a number    type=integer or float
+    Union of int and float             ${NONE}         type=integer or float    arg_type=None
+    Union of int and float             ${{type('Custom', (), {})()}}
+    ...                                                type=integer or float    arg_type=Custom
+    Union with int and None            invalid         type=integer or None
+    Union with subscripted generics    invalid         type=list or integer
 
 Union with custom type
     ${myobject}=    Create my object
@@ -98,3 +112,12 @@ Avoid unnecessary conversion
     None       None
     ${None}    ${None}
 
+Union with invalid types
+    [Template]    Union with invalid types
+    xxx      xxx
+    ${42}    ${42}
+
+Tuple with invalid types
+    [Template]    Tuple with invalid types
+    xxx      xxx
+    ${42}    ${42}

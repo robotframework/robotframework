@@ -87,7 +87,7 @@ class TypeConverter(object):
         return self
 
     def convert(self, name, value, explicit_type=True, strict=True):
-        if self._no_conversion_needed(value):
+        if self.no_conversion_needed(value):
             return value
         if not self._handles_value(value):
             return self._handle_error(name, value, strict=strict)
@@ -98,7 +98,8 @@ class TypeConverter(object):
         except ValueError as error:
             return self._handle_error(name, value, error, strict)
 
-    def _no_conversion_needed(self, value):
+    def no_conversion_needed(self, value):
+        # FIXME: abc?
         return isinstance(value, self.type)
 
     def _handles_value(self, value):
@@ -423,6 +424,7 @@ class CombinedConverter(TypeConverter):
 
     def __init__(self, union=None):
         self.types = self._none_to_nonetype(self._get_types(union))
+        self.converters = [TypeConverter.converter_for(t) for t in self.types]
 
     def _get_types(self, union):
         if not union:
@@ -453,12 +455,14 @@ class CombinedConverter(TypeConverter):
     def _handles_value(self, value):
         return True
 
-    def _no_conversion_needed(self, value):
-        return isinstance(value, self.types)
+    def no_conversion_needed(self, value):
+        for converter in self.converters:
+            if converter and converter.no_conversion_needed(value):
+                return True
+        return False
 
     def _convert(self, value, explicit_type=True):
-        for typ in self.types:
-            converter = TypeConverter.converter_for(typ)
+        for converter in self.converters:
             if not converter:
                 return value
             try:
