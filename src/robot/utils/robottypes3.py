@@ -61,11 +61,21 @@ def is_dict_like(item):
 
 
 def type_name(item, capitalize=False):
-    if isinstance(item, IOBase):
+    if getattr(item, '__origin__', None):
+        item = item.__origin__
+    if hasattr(item, '_name'):  # Union, Any, etc. from typing
+        name = item._name
+    elif isinstance(item, IOBase):
         name = 'file'
     else:
         typ = type(item) if not isinstance(item, type) else item
         named_types = {str: 'string', bool: 'boolean', int: 'integer',
                        type(None): 'None', dict: 'dictionary'}
-        name = named_types.get(typ, typ.__name__)
+        name = named_types.get(typ, typ.__name__.strip('_'))
+        # Generics from typing. With newer versions we get "real" type via __origin__.
+        if PY_VERSION < (3, 7):
+            if name in ('List', 'Set', 'Tuple'):
+                name = name.lower()
+            elif name == 'Dict':
+                name = 'dictionary'
     return name.capitalize() if capitalize and name.islower() else name
