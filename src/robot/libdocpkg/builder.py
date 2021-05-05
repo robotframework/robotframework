@@ -38,13 +38,7 @@ SPEC_EXTENSIONS = ('xml', 'libspec')
 def LibraryDocumentation(library_or_resource, name=None, version=None,
                          doc_format=None):
     builder = DocumentationBuilder(library_or_resource)
-    try:
-        libdoc = builder.build(library_or_resource)
-    except DataError:
-        raise
-    except:
-        raise DataError("Building library '%s' failed: %s"
-                        % (library_or_resource, get_error_message()))
+    libdoc = _build(builder, library_or_resource)
     if name:
         libdoc.name = name
     if version:
@@ -54,9 +48,30 @@ def LibraryDocumentation(library_or_resource, name=None, version=None,
     return libdoc
 
 
+def _build(builder, source):
+    try:
+        return builder.build(source)
+    except DataError:
+        # Possible resource file in PYTHONPATH. Something like `xxx.resource` that
+        # did not exist has been considered to be a library earlier, now we try to
+        # parse it as a resource file.
+        if (isinstance(builder, LibraryDocBuilder)
+                and not os.path.exists(source)
+                and _get_extension(source) in RESOURCE_EXTENSIONS):
+            return _build(ResourceDocBuilder(), source)
+        raise
+    except:
+        raise DataError("Building library '%s' failed: %s"
+                        % (source, get_error_message()))
+
+
+def _get_extension(source):
+    return os.path.splitext(source)[1][1:].lower()
+
+
 def DocumentationBuilder(library_or_resource):
     if os.path.exists(library_or_resource):
-        extension = os.path.splitext(library_or_resource)[1][1:].lower()
+        extension = _get_extension(library_or_resource)
         if extension in RESOURCE_EXTENSIONS:
             return ResourceDocBuilder()
         if extension in SPEC_EXTENSIONS:
