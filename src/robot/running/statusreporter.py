@@ -31,14 +31,15 @@ class StatusReporter(object):
             result.status = result.NOT_SET
         else:
             self.pass_status = result.status = result.NOT_RUN
-        self.test_passed = None
+        self.initial_test_status = None
 
     def __enter__(self):
-        if self.context.test:
-            self.test_passed = self.context.test.passed
-        self.result.starttime = get_timestamp()
-        self.context.start_keyword(ModelCombiner(self.data, self.result))
-        self._warn_if_deprecated(self.result.doc, self.result.name)
+        context = self.context
+        result = self.result
+        self.initial_test_status = context.test.status if context.test else None
+        result.starttime = get_timestamp()
+        context.start_keyword(ModelCombiner(self.data, result))
+        self._warn_if_deprecated(result.doc, result.name)
         return self
 
     def _warn_if_deprecated(self, doc, name):
@@ -56,20 +57,12 @@ class StatusReporter(object):
             result.status = failure.status
             if result.type == result.TEARDOWN:
                 result.message = failure.message
-        if context.test:
-            status = self._get_status(result)
-            context.test.status = status
+        if self.initial_test_status == 'PASS':
+            context.test.status = result.status
         result.endtime = get_timestamp()
         context.end_keyword(ModelCombiner(self.data, result))
         if failure is not exc_val:
             raise failure
-
-    def _get_status(self, result):
-        if result.status == 'SKIP':
-            return 'SKIP'
-        if self.test_passed and result.passed:
-            return 'PASS'
-        return 'FAIL'
 
     def _get_failure(self, exc_type, exc_value, exc_tb, context):
         if exc_value is None:
