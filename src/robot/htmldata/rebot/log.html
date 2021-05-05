@@ -50,6 +50,7 @@ $(document).ready(function() {
     initLayout(topsuite.name, 'Log');
     addStatistics();
     addErrors();
+    setCustomStatusColors();
     addExecutionLog(topsuite);
     addLogLevelSelector(window.settings['minLevel'], window.settings['defaultLevel']);
     if (window.location.hash) {
@@ -59,6 +60,14 @@ $(document).ready(function() {
     }
     setTimeout(function () { loadAndExpandElementIds(window.output['expand_keywords']); }, 100);
 });
+
+function setCustomStatusColors() {
+  let statuses = window.settings['customStatusColor']
+  let css =  $("<style type='text/css'> </style>").appendTo($('body'));
+  for (let status of Object.keys(statuses)) {
+    css.append(".label.".concat(status.toLowerCase()).concat("{ background-color:").concat(statuses[status]).concat("}"));
+  }
+}
 
 function addLogLevelSelector(minLevel, defaultLevel) {
     var controller = LogLevelController(minLevel, defaultLevel);

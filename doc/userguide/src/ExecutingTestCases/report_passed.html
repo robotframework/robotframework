@@ -1126,7 +1126,6 @@ window.testdata = function () {
     var idCounter = 0;
     var _statistics = null;
     var LEVELS = ['TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FAIL', 'SKIP'];
-    var STATUSES = ['FAIL', 'PASS', 'NOT_RUN', 'SKIP'];
     var KEYWORDS = ['KEYWORD', 'SETUP', 'TEARDOWN', 'FOR', 'VAR', 'IF', 'ELSE IF', 'ELSE'];
     function addElement(elem) {
         if (!elem.id)
@@ -1154,7 +1153,7 @@ window.testdata = function () {
                                         strings.get(element[3])));
     }
     function parseStatus(stats) {
-        return STATUSES[stats[0]];
+        return stats[0];
     }
     function childCreator(parent, childType) {
         return function (elem, strings, index) {

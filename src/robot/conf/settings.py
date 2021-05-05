@@ -69,7 +69,8 @@ class _BaseSettings(object):
                  'ConsoleColors'    : ('consolecolors', 'AUTO'),
                  'StdOut'           : ('stdout', None),
                  'StdErr'           : ('stderr', None),
-                 'XUnitSkipNonCritical' : ('xunitskipnoncritical', False)}
+                 'XUnitSkipNonCritical' : ('xunitskipnoncritical', False),
+                 'AddStatus'        : ('addstatus', [])}
     _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile']
 
     def __init__(self, options=None, **extra_options):
@@ -137,7 +138,15 @@ class _BaseSettings(object):
             self._validate_expandkeywords(value)
         if name == 'Extension':
             return tuple(ext.lower().lstrip('.') for ext in value.split(':'))
+        if name == 'AddStatus':
+            return self._validate_custom_statuses(value)
         return value
+
+    def _validate_custom_statuses(self, values):
+        custom_statuses = []
+        for value in values:
+            custom_statuses.append(self._process_custom_statuses(value))
+        return custom_statuses
 
     def _escape_as_data(self, value):
         return value
@@ -273,6 +282,13 @@ class _BaseSettings(object):
         raise DataError("Invalid format for option '--tagstatlink'. "
                         "Expected 'tag:link:title' but got '%s'." % value)
 
+    def _process_custom_statuses(self, value):
+        tokens = value.split(':')
+        if len(tokens) == 4 and tokens[1] in ['PASS', 'FAIL', 'SKIP']:
+            return tokens
+        raise DataError("Invalid format for option '--addstatus'. "
+                        "Expected 'NEWSTATUS:OLDSTATUS:TAGPATTERN:COLOR' but got '%s'." % value)
+
     def _convert_to_positive_integer_or_default(self, name, value):
         value = self._convert_to_integer(name, value)
         return value if value > 0 else self._get_default_value(name)
@@ -384,6 +400,10 @@ class _BaseSettings(object):
     @rpa.setter
     def rpa(self, value):
         self['RPA'] = value
+
+    @property
+    def add_status(self):
+        return self['AddStatus']
 
 
 class RobotSettings(_BaseSettings):
@@ -583,7 +603,8 @@ class RebotSettings(_BaseSettings):
             'title': html_escape(self['LogTitle'] or ''),
             'reportURL': self._url_from_path(self.log, self.report),
             'splitLogBase': os.path.basename(os.path.splitext(self.log)[0]),
-            'defaultLevel': self['VisibleLogLevel']
+            'defaultLevel': self['VisibleLogLevel'],
+            'customStatusColor': self._resolve_custom_status_colors()
         }
 
     @property
@@ -605,6 +626,13 @@ class RebotSettings(_BaseSettings):
     def _resolve_background_colors(self):
         colors = self['ReportBackground']
         return {'pass': colors[0], 'fail': colors[1], 'skip': colors[2]}
+
+    def _resolve_custom_status_colors(self):
+        statuses = self['AddStatus']
+        status_colors = dict()
+        for item in statuses:
+            status_colors[item[0]] = item[3]
+        return status_colors
 
     @property
     def merge(self):

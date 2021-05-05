@@ -122,7 +122,8 @@ class SuiteRunner(SuiteVisitor):
         status = TestStatus(self._suite_status, result,
                             self._settings.skip_on_failure,
                             self._settings.critical_tags,
-                            self._settings.rpa)
+                            self._settings.rpa,
+                            self._settings.add_status)
         if status.exit:
             self._add_exit_combine()
             result.tags.add('robot:exit')

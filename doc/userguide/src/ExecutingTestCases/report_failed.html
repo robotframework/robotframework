@@ -917,7 +917,6 @@ window.testdata = function () {
     var idCounter = 0;
     var _statistics = null;
     var LEVELS = ['TRACE', 'DEBUG', 'INFO', 'WARN', 'FAIL', 'ERROR'];
-    var STATUSES = ['FAIL', 'PASS', 'NOT_RUN'];
     var KEYWORDS = ['KEYWORD', 'SETUP', 'TEARDOWN', 'FOR', 'VAR'];
 
     function addElement(elem) {
@@ -954,7 +953,7 @@ window.testdata = function () {
     function parseStatus(stats, strings, parentSuiteTeardownFailed) {
         if (parentSuiteTeardownFailed)
             return 'FAIL';
-        return STATUSES[stats[0]];
+        return stats[0];
     }
 
     function last(items) {

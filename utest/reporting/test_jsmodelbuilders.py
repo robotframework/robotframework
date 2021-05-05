@@ -35,6 +35,8 @@ def remap(model, strings):
         return model
     elif isinstance(model, tuple):
         return tuple(remap(item, strings) for item in model)
+    elif isinstance(model, str):
+        return model
     else:
         raise AssertionError("Item '%s' has invalid type '%s'" % (model, type(model)))
 
@@ -73,7 +75,7 @@ class TestBuildTestSuite(unittest.TestCase):
         k1 = self._verify_keyword(test.setup, type=1, kwname='setup')
         k2 = self._verify_keyword(test.teardown, type=2, kwname='td')
         self._verify_test(test, 'Name', '<b>Doc</b>', ('t1', 't2'),
-                          '1 minute', 1, 'Msg', 0, 111, (k1, k2))
+                          '1 minute', 'PASS', 'Msg', 0, 111, (k1, k2))
 
     def test_name_escaping(self):
         kw = Keyword('quote:"', 'and *url* https://url.com', '*"Doc"*',)
@@ -93,7 +95,7 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_keyword(kw, 1, 'KW Name', 'libname',
                              '<a href="http://doc">http://doc</a>',
                              'arg1, arg2', '${v1}, ${v2}', 'tag1, tag2',
-                             '1 second', 1, 0, 42)
+                             '1 second', 'PASS', 0, 42)
 
     def test_default_message(self):
         self._verify_message(Message())
@@ -137,7 +139,7 @@ class TestBuildTestSuite(unittest.TestCase):
         t = self._verify_test(suite.suites[0].tests[0], tags=('crit', 'xxx'))
         suite.tests = [TestCase(), TestCase(status='PASS')]
         S1 = self._verify_suite(suite.suites[0],
-                                status=0, tests=(t,), stats=(1, 0, 1, 0))
+                                status='FAIL', tests=(t,), stats=(1, 0, 1, 0))
         suite.tests[0].body = [Keyword(type=Keyword.FOR), Keyword()]
         suite.tests[0].body[0].body = [Keyword(type=Keyword.FOR_ITERATION), Message()]
         k = self._verify_keyword(suite.tests[0].body[0].body[0], type=4)
@@ -148,8 +150,8 @@ class TestBuildTestSuite(unittest.TestCase):
         m2 = self._verify_message(suite.tests[0].body[1].messages[1], 'msg', level=0)
         k2 = self._verify_keyword(suite.tests[0].body[1], body=(m1, m2))
         T1 = self._verify_test(suite.tests[0], body=(k1, k2))
-        T2 = self._verify_test(suite.tests[1], status=1)
-        self._verify_suite(suite, status=0, keywords=(K1, K2), suites=(S1,),
+        T2 = self._verify_test(suite.tests[1], status='PASS')
+        self._verify_suite(suite, status='FAIL', keywords=(K1, K2), suites=(S1,),
                            tests=(T1, T2), stats=(3, 1, 2, 0))
         self._verify_min_message_level('TRACE')
 
@@ -175,14 +177,14 @@ class TestBuildTestSuite(unittest.TestCase):
         test.body[0].body.create_branch(BodyItem.ELSE, status='NOT RUN')
         test.body[0].body[-1].body.create_keyword('z')
         exp_if = (
-            5, '$x &gt; 0', '', '', '', '', '', '', (3, None, 0), ()
+            5, '$x &gt; 0', '', '', '', '', '', '', ('NOT RUN', None, 0), ()
         )
         exp_else_if = (
-            6, '$x &lt; 0', '', '', '', '', '', '', (1, None, 0), ()
+            6, '$x &lt; 0', '', '', '', '', '', '', ('PASS', None, 0), ()
         )
         exp_else = (
-            7, '', '', '', '', '', '', '', (3, None, 0),
-            ((0, 'z', '', '', '', '', '', '', (0, None, 0), ()),)
+            7, '', '', '', '', '', '', '', ('NOT RUN', None, 0),
+            ((0, 'z', '', '', '', '', '', '', ('FAIL', None, 0), ()),)
         )
         self._verify_test(test, body=(exp_if, exp_else_if, exp_else))
 
@@ -192,16 +194,16 @@ class TestBuildTestSuite(unittest.TestCase):
         test.body.create_keyword().body.create_message('Hi from keyword')
         test.body.create_message('Hi from test again', 'WARN')
         exp_m1 = (8, None, 2, 'Hi from test')
-        exp_kw = (0, '', '', '', '', '', '', '', (0, None, 0),
+        exp_kw = (0, '', '', '', '', '', '', '', ('FAIL', None, 0),
                   ((8, None, 2, 'Hi from keyword'),))
         exp_m3 = (8, None, 3, 'Hi from test again')
         self._verify_test(test, body=(exp_m1, exp_kw, exp_m3))
 
-    def _verify_status(self, model, status=0, start=None, elapsed=0):
+    def _verify_status(self, model, status='FAIL', start=None, elapsed=0):
         assert_equal(model, (status, start, elapsed))
 
     def _verify_suite(self, suite, name='', doc='', metadata=(), source='',
-                      relsource='', status=2, message='', start=None, elapsed=0,
+                      relsource='', status='SKIP', message='', start=None, elapsed=0,
                       suites=(), tests=(), keywords=(), stats=(0, 0, 0, 0)):
         status = (status, start, elapsed, message) \
                 if message else (status, start, elapsed)
@@ -214,7 +216,7 @@ class TestBuildTestSuite(unittest.TestCase):
         return elements if elements[-1] else elements[:-1]
 
     def _verify_test(self, test, name='', doc='', tags=(), timeout='',
-                     status=0, message='', start=None, elapsed=0, body=()):
+                     status='FAIL', message='', start=None, elapsed=0, body=()):
         status = (status, start, elapsed, message) \
                 if message else (status, start, elapsed)
         doc = '<p>%s</p>' % doc if doc else ''
@@ -222,7 +224,7 @@ class TestBuildTestSuite(unittest.TestCase):
                                       doc, tags, status, body)
 
     def _verify_keyword(self, keyword, type=0, kwname='', libname='', doc='',
-                        args='', assign='', tags='', timeout='', status=0,
+                        args='', assign='', tags='', timeout='', status='FAIL',
                         start=None, elapsed=0, body=()):
         status = (status, start, elapsed)
         doc = '<p>%s</p>' % doc if doc else ''

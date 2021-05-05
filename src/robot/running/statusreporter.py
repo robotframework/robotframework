@@ -16,6 +16,7 @@
 from robot.errors import (ExecutionFailed, ExecutionStatus, DataError,
                           HandlerExecutionFailed, KeywordError, VariableError)
 from robot.utils import ErrorDetails, get_timestamp
+from robot.result.model import StatusMixin
 
 from .modelcombiner import ModelCombiner
 
@@ -65,11 +66,11 @@ class StatusReporter(object):
             raise failure
 
     def _get_status(self, result):
-        if result.status == 'SKIP':
-            return 'SKIP'
+        if result.status == StatusMixin.SKIP:
+            return StatusMixin.SKIP
         if self.test_passed and result.passed:
-            return 'PASS'
-        return 'FAIL'
+            return StatusMixin.PASS
+        return StatusMixin.FAIL
 
     def _get_failure(self, exc_type, exc_value, exc_tb, context):
         if exc_value is None:

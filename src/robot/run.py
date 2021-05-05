@@ -283,6 +283,13 @@ Options
                           tag:<pattern>:  flatten matched keywords using same
                                    matching rules as with
                                    `--removekeywords tag:<pattern>`
+    --addstatus for|foritem|<NEWSTATUS:OLDSTATUS:TAGPATTERN:COLOR> *
+                          Allows the possibility to create custom statuses
+                          based on existing statues and tags.
+                          Examples:
+                              --addstatus KNOWN_ISSUE:FAIL:bug-id-*:purple
+                              --addstatus NON-CRITICAL:SKIP:non-critical:pink
+                          New in RF 4.x
     --listener class *    A class for monitoring test execution. Gets
                           notifications e.g. when tests start and end.
                           Arguments to the listener class can be given after

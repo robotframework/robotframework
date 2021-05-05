@@ -21,7 +21,6 @@ from .jsexecutionresult import JsExecutionResult
 
 
 IF_ELSE_ROOT = BodyItem.IF_ELSE_ROOT
-STATUSES = {'FAIL': 0, 'PASS': 1, 'SKIP': 2, 'NOT RUN': 3}
 KEYWORD_TYPES = {'KEYWORD': 0, 'SETUP': 1, 'TEARDOWN': 2,
                  'FOR': 3, 'FOR ITERATION': 4,
                  'IF': 5, 'ELSE IF': 6, 'ELSE': 7}
@@ -60,7 +59,7 @@ class _Builder(object):
     def _get_status(self, item):
         # Branch status with IF/ELSE, "normal" status with others.
         status = getattr(item, 'branch_status', item.status)
-        model = (STATUSES[status],
+        model = (status,
                  self._timestamp(item.starttime),
                  item.elapsedtime)
         msg = getattr(item, 'message', '')
