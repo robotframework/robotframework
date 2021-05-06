@@ -56,9 +56,13 @@ Fix using using `Union` containing generics as type hint
 
 `Robot Framework 4.0.1`__ fine-tuned how using Union__ as type hint used in
 automatic argument conversion works. Changes themselves were fine, but they
-introduced a regression making it impossible to use `Union` containing
-`subscribed generics`__ like `example(arg: Union[List[int], Dict[str, int]])`
-(`#3931`_).
+introduced a regression (`#3931`_) making it impossible to use `Union` containing
+`subscribed generics`__ such as:
+
+.. code:: python
+
+    def example(arg: Union[List[int], Dict[str, int]]):
+        # ...
 
 __ https://github.com/robotframework/robotframework/blob/master/doc/releasenotes/rf-4.0.1.rst#avoid-argument-conversion-if-given-argument-has-one-of-the-accepted-types
 __ https://docs.python.org/3/library/typing.html#typing.Union
