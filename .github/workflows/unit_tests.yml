@@ -30,7 +30,7 @@ jobs:
 
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.3.4
 
       - name: Setup python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -75,7 +75,7 @@ jobs:
 
     name: Jython (Java ${{ matrix.java }}) ${{ matrix.jython-version }} on ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.3.4
 
       - name: Setup Java ${{ matrix.java }}
         uses: actions/setup-java@v2
@@ -117,7 +117,7 @@ jobs:
 
     name: IronPython ${{ matrix.ironpython-version }} on ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.3.4
 
       - name: Setup IronPython ${{ matrix.ironpython-version }}
         run: |
