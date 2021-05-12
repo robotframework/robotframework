@@ -31,6 +31,9 @@ distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
 Robot Framework 4.0.1 was released on Thursday April 8, 2021.
+It has been superseded by `Robot Framework 4.0.2`__
+
+__ https://github.com/robotframework/robotframework/blob/master/doc/releasenotes/rf-4.0.2.rst
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
