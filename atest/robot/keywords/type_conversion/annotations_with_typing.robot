@@ -28,6 +28,9 @@ Dict
 Dict with params
     Check Test Case    ${TESTNAME}
 
+TypedDict
+    Check Test Case    ${TESTNAME}
+
 Invalid dictionary
     Check Test Case    ${TESTNAME}
 

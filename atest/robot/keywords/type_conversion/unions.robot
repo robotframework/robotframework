@@ -22,6 +22,9 @@ Union with subscripted generics
 Union with subscripted generics and str
     Check Test Case    ${TESTNAME}
 
+Union with TypedDict
+    Check Test Case    ${TESTNAME}
+
 Argument not matching union
     Check Test Case    ${TESTNAME}
 

@@ -35,7 +35,8 @@ from numbers import Integral, Real
 
 from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import (FALSE_STRINGS, IRONPYTHON, TRUE_STRINGS, PY_VERSION, PY2,
-                         eq, get_error_message, seq2str, type_name, unic, unicode)
+                         eq, get_error_message, seq2str, type_name, typeddict_types,
+                         unic, unicode)
 
 
 class TypeConverter(object):
@@ -391,6 +392,15 @@ class DictionaryConverter(TypeConverter):
     abc = abc.Mapping
     type_name = 'dictionary'
     aliases = ('dict', 'map')
+
+    def __init__(self, used_type):
+        # TypedDict cannot be used with isintance so replace it with a normal dict.
+        # If we wanted to validate that given argument matches TypedDict spec,
+        # we needed to save the original type separately. Alternatively we could
+        # have a separate TypedDictConverter that handles that whole special type.
+        if isinstance(used_type, typeddict_types):
+            used_type = dict
+        TypeConverter.__init__(self, used_type)
 
     def _convert(self, value, explicit_type=True):
         return self._literal_eval(value, dict)
