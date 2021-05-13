@@ -23,6 +23,13 @@ try:
 except ImportError:
     String = ()
 
+try:
+    from typing_extensions import TypedDict
+except ImportError:
+    typeddict_types = ()
+else:
+    typeddict_types = (type(TypedDict('Dummy')),)
+
 from .platform import RERAISED_EXCEPTIONS
 
 
