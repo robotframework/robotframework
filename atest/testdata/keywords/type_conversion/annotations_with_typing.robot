@@ -100,3 +100,6 @@ None as default
 Forward references
     Forward reference         [1, 2, 3, 4]                [1, 2, 3, 4]
     Forward ref with params   [1, 2, 3, 4]                [1, 2, 3, 4]
+
+Type hint not liking `isinstance`
+    Not liking isinstance     42    42

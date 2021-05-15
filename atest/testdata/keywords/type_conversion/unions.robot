@@ -52,6 +52,10 @@ Union with TypedDict
     NONE               None
     ${NONE}            None
 
+Union with item not liking isinstance
+    [Template]    Union with item not liking isinstance
+    42                 42
+
 Argument not matching union
     [Template]    Conversion Should Fail
     Union of int and float             not a number    type=integer or float

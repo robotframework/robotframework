@@ -57,3 +57,6 @@ None as default
 
 Forward references
     Check Test Case    ${TESTNAME}
+
+Type hint not liking `isinstance`
+    Check Test Case    ${TESTNAME}

@@ -25,6 +25,9 @@ Union with subscripted generics and str
 Union with TypedDict
     Check Test Case    ${TESTNAME}
 
+Union with item not liking isinstance
+    Check Test Case    ${TESTNAME}
+
 Argument not matching union
     Check Test Case    ${TESTNAME}
 

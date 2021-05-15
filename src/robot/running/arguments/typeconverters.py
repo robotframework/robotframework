@@ -93,7 +93,14 @@ class TypeConverter(object):
             return self._handle_error(name, value, error, strict)
 
     def no_conversion_needed(self, value):
-        return isinstance(value, self.used_type)
+        try:
+            return isinstance(value, self.used_type)
+        except TypeError:
+            # If the used type doesn't like `isinstance` (e.g. TypedDict),
+            # compare the value to the generic type instead.
+            if self.type and self.type is not self.used_type:
+                return isinstance(value, self.type)
+            raise
 
     def _handles_value(self, value):
         return isinstance(value, self.value_types)
@@ -392,15 +399,6 @@ class DictionaryConverter(TypeConverter):
     abc = abc.Mapping
     type_name = 'dictionary'
     aliases = ('dict', 'map')
-
-    def __init__(self, used_type):
-        # TypedDict cannot be used with isintance so replace it with a normal dict.
-        # If we wanted to validate that given argument matches TypedDict spec,
-        # we needed to save the original type separately. Alternatively we could
-        # have a separate TypedDictConverter that handles that whole special type.
-        if isinstance(used_type, typeddict_types):
-            used_type = dict
-        TypeConverter.__init__(self, used_type)
 
     def _convert(self, value, explicit_type=True):
         return self._literal_eval(value, dict)

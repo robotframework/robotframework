@@ -6,14 +6,21 @@ except ImportError:
     from typing_extensions import TypedDict
 
 
-class MyObject(object):
-    def __init__(self):
-        pass
+class MyObject:
+    pass
 
 
-class UnexpectedObject(object):
-    def __init__(self):
-        pass
+class UnexpectedObject:
+    pass
+
+
+class BadRationalMeta(type(Rational)):
+    def __instancecheck__(self, instance):
+        raise TypeError('Bang!')
+
+
+class BadRational(Rational, metaclass=BadRationalMeta):
+    pass
 
 
 def create_my_object():
@@ -57,6 +64,10 @@ def union_with_subscripted_generics_and_str(argument: Union[List[str], str], exp
 
 
 def union_with_typeddict(argument: Union[TypedDict('X', x=int), None], expected):
+    assert argument == eval(expected), '%r != %s' % (argument, expected)
+
+
+def union_with_item_not_liking_isinstance(argument: BadRational, expected):
     assert argument == eval(expected), '%r != %s' % (argument, expected)
 
 
