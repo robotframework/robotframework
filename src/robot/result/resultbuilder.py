@@ -147,13 +147,14 @@ class ExecutionResultBuilder(object):
         tags_match, by_tags = self._get_matcher(FlattenByTagMatcher, flattened)
         started = -1  # if 0 or more, we are flattening
         tags = []
+        containers = {'kw', 'for', 'iter', 'if'}
         inside_kw = 0  # to make sure we don't read tags from a test
         seen_doc = False
         for event, elem in context:
             tag = elem.tag
             start = event == 'start'
             end = not start
-            if start and tag in ('kw', 'for', 'iter'):
+            if start and tag in containers:
                 inside_kw += 1
                 if started >= 0:
                     started += 1
@@ -171,7 +172,7 @@ class ExecutionResultBuilder(object):
                         started = 0
                         seen_doc = False
                     tags = []
-            if end and tag in ('kw', 'for', 'iter'):
+            if end and tag in containers:
                 inside_kw -= 1
                 if started == 0 and not seen_doc:
                     doc = ET.Element('doc')
@@ -186,7 +187,7 @@ class ExecutionResultBuilder(object):
                 yield event, elem
             else:
                 elem.clear()
-            if started >= 0 and end and tag in ('kw', 'for', 'iter'):
+            if started >= 0 and end and tag in containers:
                 started -= 1
 
     def _get_matcher(self, matcher_class, flattened):

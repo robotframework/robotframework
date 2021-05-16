@@ -3,7 +3,12 @@ Suite Setup     Run And Rebot Flattened
 Resource        atest_resource.robot
 
 *** Variables ***
-${FLATTEN}      --FlattenKeywords NAME:Keyword3 --flat name:key*others --FLAT name:builtin.* --flat TAG:flattenNOTkitty --log log.html
+${FLATTEN}      --FlattenKeywords NAME:Keyword3
+...             --flat name:key*others
+...             --FLAT name:builtin.*
+...             --flat TAG:flattenNOTkitty
+...             --flatten "name:Flatten IF in keyword"
+...             --log log.html
 ${FLAT TEXT}    _*Keyword content flattened.*_
 ${FLAT HTML}    <p><i><b>Keyword content flattened.\\x3c/b>\\x3c/i>\\x3c/p>
 ${ERROR}        [ ERROR ] Invalid value for option '--flattenkeywords'. Expected 'FOR', 'FORITEM', 'TAG:<pattern>', or 'NAME:<pattern>' but got 'invalid'.${USAGE TIP}\n
@@ -54,6 +59,18 @@ Flattened in log after execution
     Should Contain    ${LOG}    *<p>Doc of keyword 3\\x3c/p>\\n${FLAT HTML}
     Should Contain    ${LOG}    *${FLAT HTML}
     Should Contain    ${LOG}    *<p>Logs the given message with the given level.\\x3c/p>\\n${FLAT HTML}
+
+Flatten IF in keyword
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Length Should Be    ${tc.body[0].body.filter(keywords=True, ifs=True)}    0
+    Length Should Be    ${tc.body[0].body.filter(messages=True)}    7
+    Length Should Be    ${tc.body[0].body}    7
+    @{expected} =    Create List
+    ...    Outside IF    Inside IF    Nested IF
+    ...    3    2    1    BANG!
+    FOR    ${msg}    ${exp}    IN ZIP    ${tc.body[0].body}    ${expected}
+        Check Log Message    ${msg}    ${exp}
+    END
 
 Flatten for loops
     Run Rebot    --flatten For    ${OUTFILE COPY}
