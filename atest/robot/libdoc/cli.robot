@@ -42,8 +42,9 @@ Quiet
 
 Relative path with Python libraries
     [Template]    NONE
-    ${dir in libdoc exec dir}=    Set Variable     ${ROBOTPATH}/../TempDirInExecDir
-    Directory Should Not Exist    ${dir in libdoc exec dir}
+    ${dir in libdoc exec dir}=    Normalize Path     ${ROBOTPATH}/../TempDirInExecDir
+    # Wait until possible other run executing this same test finishes.
+    Wait Until Removed    ${dir in libdoc exec dir}    30s
     Create Directory    ${dir in libdoc exec dir}
     Create File    ${dir in libdoc exec dir}/MyLibrary.py    def my_keyword(): pass
     Run Libdoc And Parse Output    ${dir in libdoc exec dir}/MyLibrary.py
@@ -51,16 +52,28 @@ Relative path with Python libraries
     Keyword Name Should Be    0    My Keyword
     [Teardown]    Remove Directory    ${dir in libdoc exec dir}    recursively
 
+Resource file in PYTHONPATH
+    [Template]    NONE
+    Run Libdoc And Parse Output    --pythonpath ${DATADIR}/libdoc resource.resource
+    Name Should Be    resource
+    Keyword Name Should Be    0    Yay, I got new extension!
+
+Non-existing resource
+    [Template]    NONE
+    ${stdout} =    Run Libdoc    nonexisting.resource whatever.xml
+    Should Be Equal    ${stdout}     Resource file 'nonexisting.resource' does not exist.${USAGE TIP}\n
+
 *** Keywords ***
 Run Libdoc And Verify Created Output File
     [Arguments]    ${args}   ${format}    ${name}    ${version}=    ${path}=${OUTHTML}    ${quiet}=False
     ${stdout} =    Run Libdoc    ${args}
     Run Keyword    ${format} Doc Should Have Been Created    ${path}    ${name}    ${version}
     File Should Have Correct Line Separators    ${path}
-    Run Keyword If    not ${quiet}
-    ...    Path to output should be in stdout    ${path}    ${stdout.rstrip()}
-    ...    ELSE
-    ...    Should be empty    ${stdout}
+    IF    not ${quiet}
+        Path to output should be in stdout    ${path}    ${stdout.rstrip()}
+    ELSE
+        Should be empty    ${stdout}
+    END
     [Teardown]    Remove Output Files
 
 HTML Doc Should Have Been Created

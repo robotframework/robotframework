@@ -8,14 +8,32 @@ Run Keyword If Test Failed when test fails
     Fail    ${EXPECTED FAILURE}
     [Teardown]    Run Keyword If Test Failed    Log    Hello from teardown!
 
+Run Keyword If Test Failed in user keyword when test fails
+    [Documentation]    FAIL
+    ...    Expected failure
+    ...
+    ...    Also teardown failed:
+    ...    Apparently test failed!
+    Fail    ${EXPECTED FAILURE}
+    [Teardown]    Run Keyword If Test Failed in user keyword
+
 Run Keyword If Test Failed when test passes
     No Operation
     [Teardown]    Run Keyword If Test Failed    Fail    ${NOT EXECUTED}
+
+Run Keyword If Test Failed in user keyword when test passes
+    No Operation
+    [Teardown]    Run Keyword If Test Failed in user keyword
 
 Run Keyword If Test Failed when test is skipped
     [Documentation]    SKIP For testing purposes.
     Skip    For testing purposes.
     [Teardown]    Run Keyword If Test Failed    Fail    ${NOT EXECUTED}
+
+Run Keyword If Test Failed in user keyword when test is skipped
+    [Documentation]    SKIP For testing purposes.
+    Skip    For testing purposes.
+    [Teardown]    Run Keyword If Test Failed in user keyword
 
 Run Keyword If Test Failed Can't Be Used In Setup
     [Documentation]    FAIL Setup failed:
@@ -40,14 +58,36 @@ Run Keyword If Test Failed Fails
     Fail    ${EXPECTED FAILURE}
     [Teardown]    Run Keyword If Test Failed    Fail    Expected teardown failure
 
-Run Keyword If Test Passed When Test Passes
+Run Keyword If Test Passed when test passes
     No Operation
     [Teardown]    Run Keyword If Test Passed    Log    Teardown of passing test
 
-Run Keyword If Test Passed When Test Fails
+Run Keyword If Test Passed in user keyword when test passes
+    [Documentation]    FAIL
+    ...    Teardown failed:
+    ...    Apparently test passed!
+    No Operation
+    [Teardown]    Run Keyword If Test Passed in user keyword
+
+Run Keyword If Test Passed when test fails
     [Documentation]    FAIL Expected failure
     Fail    ${EXPECTED FAILURE}
-    [Teardown]    Run Keyword If Test Passed    Fail    This should not be executed
+    [Teardown]    Run Keyword If Test Passed    Fail    ${NOT EXECUTED}
+
+Run Keyword If Test Passed in user keyword when test fails
+    [Documentation]    FAIL Expected failure
+    Fail    ${EXPECTED FAILURE}
+    [Teardown]    Run Keyword If Test Passed in user keyword
+
+Run Keyword If Test Passed when test is skipped
+    [Documentation]    SKIP For testing purposes.
+    Skip    For testing purposes.
+    [Teardown]    Run Keyword If Test Passed    Fail    ${NOT EXECUTED}
+
+Run Keyword If Test Passed in user keyword when test is skipped
+    [Documentation]    SKIP For testing purposes.
+    Skip    For testing purposes.
+    [Teardown]    Run Keyword If Test Passed in user keyword
 
 Run Keyword If Test Passed Can't Be used In Setup
     [Documentation]    FAIL Setup failed:
@@ -89,6 +129,11 @@ Run Keyword If Test Passed/Failed With Earlier Ignored Failures
     No Operation
     [Teardown]    Run Keyword If Test Passed/Failed With Earlier Ignored Failures
 
+Run Keyword If Test Passed/Failed after skip in teardown
+    [Documentation]    SKIP For testing purposes
+    No Operation
+    [Teardown]    Run Keyword If Test Passed/Failed after skip
+
 Continuable Failure In Teardown
     [Documentation]    FAIL Teardown failed:
     ...    Several failures occurred:
@@ -100,6 +145,14 @@ Continuable Failure In Teardown
     [Teardown]    Continuable Failure In Teardown
 
 *** Keyword ***
+Run Keyword If Test Failed in user keyword
+    Log    Want to have some keyword before Run Keyword If Test Failed
+    Run Keyword If Test Failed    Fail    Apparently test failed!
+
+Run Keyword If Test Passed in user keyword
+    Log    Want to have some keyword before Run Keyword If Test Passed
+    Run Keyword If Test Passed    Fail    Apparently test passed!
+
 Teardown UK
     [Arguments]    ${message}
     Log    ${message}
@@ -136,6 +189,11 @@ Run Keyword If Test Passed/Failed With Earlier Ignored Failures
 Fail Once
     Log    ${NOT AVAILABLE ON FIRST ROUND}
     [Teardown]    Set Test Variable    ${NOT AVAILABLE ON FIRST ROUND}    xxx
+
+Run Keyword If Test Passed/Failed after skip
+    Skip    For testing purposes
+    Run Keyword If Test Passed    Fail    ${SHOULD NOT BE RUN}
+    Run Keyword If Test Failed    Fail    ${SHOULD NOT BE RUN}
 
 Continuable Failure In Teardown
     Run Keyword And Continue On Failure    Fail    Continuable

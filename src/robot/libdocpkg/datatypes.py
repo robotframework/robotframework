@@ -23,23 +23,8 @@ except ImportError:  # Standard in Py 3.4+ but can be separately installed
     class EnumType(object):
         pass
 
-try:
-    from typing import TypedDict
 
-    TypedDictType = type(TypedDict('TypedDictDummy', {}))
-except ImportError:
-    class TypedDictType(object):
-        pass
-
-try:
-    from typing_extensions import TypedDict as ExtTypedDict
-
-    ExtTypedDictType = type(ExtTypedDict('TypedDictDummy', {}))
-except ImportError:
-    class ExtTypedDictType(object):
-        pass
-
-from robot.utils import py3to2, Sortable, unic, unicode
+from robot.utils import py3to2, Sortable, unic, unicode, typeddict_types
 
 
 @py3to2
@@ -74,7 +59,7 @@ class DataTypeCatalog(object):
     def _get_type_doc_object(self, typ):
         if isinstance(typ, (EnumDoc, TypedDictDoc)):
             return typ
-        if isinstance(typ, (TypedDictType, ExtTypedDictType)):
+        if isinstance(typ, typeddict_types):
             return TypedDictDoc.from_TypedDict(typ)
         if isinstance(typ, EnumType):
             return EnumDoc.from_Enum(typ)

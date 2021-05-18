@@ -9,6 +9,7 @@ try:
 except ImportError:
     class Enum(object):
         pass
+from fractions import Fraction
 from numbers import Integral, Real
 
 from robot.api.deco import keyword

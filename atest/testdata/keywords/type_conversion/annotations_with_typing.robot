@@ -47,6 +47,13 @@ Dict with params
     Dict with params          {'foo': 1, "bar": 2}        {'foo': 1, "bar": 2}
     Dict with params          {1: 2, 3.14: -42}           {1: 2, 3.14: -42}
 
+TypedDict
+    TypedDict                 {'x': 1}                    {'x': 1}
+    # Following would fail if we'd validate TypedDict and didn't only convert to dict.
+    TypedDict                 {}                          {}
+    TypedDict                 {'foo': 1, "bar": 2}        {'foo': 1, "bar": 2}
+    TypedDict                 {1: 2, 3.14: -42}           {1: 2, 3.14: -42}
+
 Invalid dictionary
     [Template]                Conversion Should Fail
     Dict                      {1: ooops}                  type=dictionary      error=Invalid expression.
@@ -93,3 +100,6 @@ None as default
 Forward references
     Forward reference         [1, 2, 3, 4]                [1, 2, 3, 4]
     Forward ref with params   [1, 2, 3, 4]                [1, 2, 3, 4]
+
+Type hint not liking `isinstance`
+    Not liking isinstance     42    42

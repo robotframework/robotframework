@@ -23,6 +23,13 @@ try:
 except ImportError:
     String = ()
 
+try:
+    from typing_extensions import TypedDict
+except ImportError:
+    typeddict_types = ()
+else:
+    typeddict_types = (type(TypedDict('Dummy')),)
+
 from .platform import RERAISED_EXCEPTIONS
 
 
@@ -73,5 +80,5 @@ def type_name(item, capitalize=False):
     named_types = {str: 'string', unicode: 'string', bool: 'boolean',
                    int: 'integer', long: 'integer', NoneType: 'None',
                    dict: 'dictionary'}
-    name = named_types.get(typ, typ.__name__)
+    name = named_types.get(typ, typ.__name__.strip('_'))
     return name.capitalize() if capitalize and name.islower() else name

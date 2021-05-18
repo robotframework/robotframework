@@ -5,16 +5,28 @@ Resource          atest_resource.robot
 *** Test Case ***
 Run Keyword If Test Failed when test fails
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.teardown.kws[0].name}    BuiltIn.Log
-    Check Log Message    ${tc.teardown.kws[0].msgs[0]}    Hello from teardown!
+    Should Be Equal    ${tc.teardown.body[0].name}    BuiltIn.Log
+    Check Log Message    ${tc.teardown.body[0].msgs[0]}    Hello from teardown!
+
+Run Keyword If Test Failed in user keyword when test fails
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.teardown.body[1].body[0].msgs[0]}    Apparently test failed!    FAIL
 
 Run Keyword If Test Failed when test passes
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Empty    ${tc.teardown.body}
 
+Run Keyword If Test Failed in user keyword when test passes
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Empty    ${tc.teardown.body[1].body}
+
 Run Keyword If Test Failed when test is skipped
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Empty    ${tc.teardown.body}
+
+Run Keyword If Test Failed in user keyword when test is skipped
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Empty    ${tc.teardown.body[1].body}
 
 Run Keyword If Test Failed Can't Be Used In Setup
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -36,12 +48,29 @@ Run Keyword If test Failed Can't Be Used In Suite Setup or Teardown
     Check Log Message    ${SUITE.suites[0].setup.msgs[0]}    Keyword 'Run Keyword If Test Failed' can only be used in test teardown.    FAIL
     Check Log Message    ${SUITE.suites[0].teardown.msgs[0]}    Keyword 'Run Keyword If Test Failed' can only be used in test teardown.    FAIL
 
-Run Keyword If Test Passed When Test Passes
+Run Keyword If Test Passed when test passes
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.teardown.kws[0].msgs[0]}    Teardown of passing test
+    Check Log Message    ${tc.teardown.body[0].msgs[0]}    Teardown of passing test
 
-Run Keyword If Test Passed When Test Fails
-    Check Test Case    ${TEST NAME}
+Run Keyword If Test Passed in user keyword when test passes
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.teardown.body[1].body[0].msgs[0]}    Apparently test passed!    FAIL
+
+Run Keyword If Test Passed when test fails
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Empty    ${tc.teardown.body}
+
+Run Keyword If Test Passed in user keyword when test fails
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Empty    ${tc.teardown.body[1].body}
+
+Run Keyword If Test Passed when test is skipped
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Empty    ${tc.teardown.body}
+
+Run Keyword If Test Passed in user keyword when test is skipped
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Empty    ${tc.teardown.body[1].body}
 
 Run Keyword If Test Passed Can't Be used In Setup
     Check Test Case    ${TEST NAME}
@@ -70,6 +99,11 @@ Run Keyword If Test Passed/Failed With Earlier Ignored Failures
     Should Be Equal    ${tc.teardown.kws[1].kws[0].status}    FAIL
     Should Be Equal    ${tc.teardown.kws[1].status}           PASS
     Should Be Equal    ${tc.teardown.status}                  PASS
+
+Run Keyword If Test Passed/Failed after skip in teardown
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Empty    ${tc.teardown.body[1].body}
+    Should Be Empty    ${tc.teardown.body[2].body}
 
 Continuable Failure In Teardown
     Check Test Case    ${TEST NAME}
