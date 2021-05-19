@@ -20,13 +20,10 @@ Set nested attribute
     Should Be Equal    ${VAR.demeter.loves}    this
     Should Be Equal    ${VAR.demeter.hates}    THIS
 
-Set nested attribute when parent does not exist
-    [Documentation]    FAIL Variable '\${VAR}' does not have attribute 'nonex'.
-    ${VAR.nonex.attrs} =   Set Variable  this fails
-
-Set nested attribute when higher level parent does not exist
-    [Documentation]    FAIL Variable '\${VAR.demeter}' does not have attribute 'nonex'.
-    ${VAR.demeter.nonex.attrs} =   Set Variable  this fails
+Set nested attribute when parent uses item access
+    &{body} =    Evaluate     {'data': [{'name': 'old value'}]}
+    ${body.data[0].name} =    Set Variable    new value
+    Should Be Equal    ${body.data[0].name}    new value
 
 Trying to set un-settable attribute
     [Documentation]    FAIL STARTS: Setting attribute 'not_settable' to variable '\${VAR}' failed: AttributeError:
