@@ -35,7 +35,8 @@ from numbers import Integral, Real
 
 from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import (FALSE_STRINGS, IRONPYTHON, TRUE_STRINGS, PY_VERSION, PY2,
-                         eq, get_error_message, seq2str, type_name, unic, unicode)
+                         eq, get_error_message, seq2str, type_name, typeddict_types,
+                         unic, unicode)
 
 
 class TypeConverter(object):
@@ -92,7 +93,14 @@ class TypeConverter(object):
             return self._handle_error(name, value, error, strict)
 
     def no_conversion_needed(self, value):
-        return isinstance(value, self.used_type)
+        try:
+            return isinstance(value, self.used_type)
+        except TypeError:
+            # If the used type doesn't like `isinstance` (e.g. TypedDict),
+            # compare the value to the generic type instead.
+            if self.type and self.type is not self.used_type:
+                return isinstance(value, self.type)
+            raise
 
     def _handles_value(self, value):
         return isinstance(value, self.value_types)

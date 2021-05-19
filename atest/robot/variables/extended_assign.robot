@@ -15,10 +15,7 @@ Setting attribute to Java object
 Set nested attribute
     Check Test Case    ${TESTNAME}
 
-Set nested attribute when parent does not exist
-    Check Test Case    ${TESTNAME}
-
-Set nested attribute when higher level parent does not exist
+Set nested attribute when parent uses item access
     Check Test Case    ${TESTNAME}
 
 Trying to set un-settable attribute

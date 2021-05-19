@@ -17,6 +17,19 @@ from collections.abc import Iterable, Mapping, MutableMapping, Sequence
 from collections import UserString
 from io import IOBase
 
+try:
+    from typing import TypedDict
+except ImportError:
+    typeddict_types = ()
+else:
+    typeddict_types = (type(TypedDict('Dummy')),)
+try:
+    from typing_extensions import TypedDict as ExtTypedDict
+except ImportError:
+    pass
+else:
+    typeddict_types += (type(ExtTypedDict('Dummy')),)
+
 from .platform import RERAISED_EXCEPTIONS, PY_VERSION
 
 if PY_VERSION < (3, 6):

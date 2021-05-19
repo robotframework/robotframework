@@ -46,6 +46,16 @@ Union with subscripted generics and str
     ${{['a', 'b']}}    ['a', 'b']
     foo                "foo"
 
+Union with TypedDict
+    [Template]    Union with TypedDict
+    {'x': 1}           {'x': 1}
+    NONE               None
+    ${NONE}            None
+
+Union with item not liking isinstance
+    [Template]    Union with item not liking isinstance
+    42                 42
+
 Argument not matching union
     [Template]    Conversion Should Fail
     Union of int and float             not a number    type=integer or float
