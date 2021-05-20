@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v2.2.2
         with:
           python-version: ${{ matrix.python-version }}
           architecture: 'x64'
@@ -51,7 +51,7 @@ jobs:
           python -m coverage xml -i
         if: always()
 
-      - uses: codecov/codecov-action@9b0b9bbe2c64e9ed41413180dd7398450dfeee14
+      - uses: codecov/codecov-action@a1ed4b322b4b38cb846afb5a0ebfa17086917d27
         with:
           name: ${{ matrix.python-version }}-${{ matrix.os }}
         if: always()
