@@ -4,7 +4,7 @@ Robot Framework 4.0.2
 
 .. default-role:: code
 
-`Robot Framework`_ 4.0.2 is the second and the last planned bug fix release
+`Robot Framework`_ 4.0.2 is the second bug fix release
 in the Robot Framework 4.0.x series. It fixes some problems in the earlier
 `Robot Framework 4.0`_ and `4.0.1`_ releases.
 
@@ -33,7 +33,10 @@ distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
 Robot Framework 4.0.2 was released on Tuesday May 11, 2021, exactly two
-months after the initial Robot Framework 4.0 release.
+months after the initial Robot Framework 4.0 release. It has been superseded
+`Robot Framework 4.0.3`__. Using the latest release is recommended.
+
+__ https://github.com/robotframework/robotframework/blob/master/doc/releasenotes/rf-4.0.3.rst
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
