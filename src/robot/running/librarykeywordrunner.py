@@ -102,6 +102,12 @@ class LibraryKeywordRunner(object):
         try:
             STOP_SIGNAL_MONITOR.start_running_keyword(context.in_teardown)
             return runner()
+        except Exception as e:
+            import sys
+            if sys.gettrace():
+                global exc
+                exc = e
+            raise e
         finally:
             STOP_SIGNAL_MONITOR.stop_running_keyword()
 

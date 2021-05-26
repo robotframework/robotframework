@@ -87,9 +87,13 @@ class Application(object):
             return self._report_error('Execution stopped by user.',
                                       rc=STOPPED_BY_USER)
         except:
-            error, details = get_error_details(exclude_robot_traces=False)
-            return self._report_error('Unexpected error: %s' % error,
-                                      details, rc=FRAMEWORK_ERROR)
+            try:
+                error, details = get_error_details(exclude_robot_traces=False)
+                from robot.running.librarykeywordrunner import exc
+            except:
+                return self._report_error('Unexpected error: %s' % error,
+                                          details, rc=FRAMEWORK_ERROR)
+            raise exc
         else:
             return rc or 0
 

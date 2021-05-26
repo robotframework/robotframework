@@ -453,7 +453,11 @@ class RobotFramework(Application):
                 writer = ResultWriter(settings.output if settings.log
                                       else result)
                 writer.write_results(settings.get_rebot_settings())
-        return result.return_code
+        try:
+            from robot.running.librarykeywordrunner import exc
+        except:
+            return result.return_code
+        raise exc
 
     def validate(self, options, arguments):
         return self._filter_options_without_value(options), arguments
