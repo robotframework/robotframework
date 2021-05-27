@@ -64,13 +64,13 @@ class PythonCapturer(object):
             self._original = sys.stderr
             self._set_stream = self._set_stderr
         self._stream = StringIO()
-        self._set_stream(self._stream)
+        self._set_stream(self._stream, True)
 
-    def _set_stdout(self, stream):
-        sys.stdout = stream
+    def _set_stdout(self, stream, init=False):
+        sys.stdout = OutputDuplicator(sys.stdout, stream) if init else stream
 
-    def _set_stderr(self, stream):
-        sys.stderr = stream
+    def _set_stderr(self, stream, init=False):
+        sys.stderr = OutputDuplicator(sys.stderr, stream) if init else stream
 
     def release(self):
         # Original stream must be restored before closing the current
@@ -98,6 +98,20 @@ class PythonCapturer(object):
         # http://bugs.python.org/issue6333
         stream.write = lambda s: None
         stream.flush = lambda: None
+
+
+class OutputDuplicator:
+    def __init__(self, original, new):
+        self.original = original
+        self.new = new
+
+    def write(self, data):
+        self.original.write(data)
+        self.new.write(data)
+
+    def flush(self):
+        self.original.flush()
+        self.new.flush()
 
 
 if not JYTHON:
