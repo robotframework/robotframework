@@ -144,14 +144,15 @@ class UserKeywordRunner(object):
         args = ['%s=%s' % (name, prepr(variables[name])) for name in args]
         return 'Arguments: [ %s ]' % ' | '.join(args)
 
-    def _merge_tags(self, kw_tags, context):
-        # merges user-kw tags with higher-level test case tags
+    def _inherit_tc_continue_on_failure(self, kw_tags, context):
+        # apply test-case's continue-on-failure on keywords
+        # (unless robot:no-continue-on-failure is set in keyword)
         try:
-            test_tags = context.test.tags
+            tc_tags = context.test.tags
         except AttributeError:
             return kw_tags
         result = list(kw_tags)
-        if ('robot:continue-on-failure' in test_tags
+        if ('robot:continue-on-failure' in tc_tags
            and 'robot:no-continue-on-failure' not in kw_tags):
             result.append('robot:continue-on-failure')
         return result
@@ -165,7 +166,7 @@ class UserKeywordRunner(object):
         error = return_ = pass_ = None
         try:
             BodyRunner(context,
-                       tags=self._merge_tags(handler.tags, context)
+                       tags=self._inherit_tc_continue_on_failure(handler.tags, context)
                        ).run(handler.body)
         except ReturnFromKeyword as exception:
             return_ = exception
