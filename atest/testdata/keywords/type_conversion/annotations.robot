@@ -7,14 +7,16 @@ Force Tags               require-py3
 *** Variables ***
 @{LIST}                  foo                       bar
 &{DICT}                  foo=${1}                  bar=${2}
+${FRACTION 1/2}          ${{fractions.Fraction(1,2)}}
+${DECIMAL 1/2}           ${{decimal.Decimal('0.5')}}
 
 *** Test Cases ***
 Integer
-    Integer              42                        ${42}
-    Integer              -1                        ${-1}
-    Integer              9999999999999999999999    ${9999999999999999999999}
-    Integer              ${41}                     ${41}
-    Integer              ${-4.0}                   ${-4}
+    Integer              42                        42
+    Integer              -1                        -1
+    Integer              9999999999999999999999    9999999999999999999999
+    Integer              ${41}                     41
+    Integer              ${-4.0}                   -4
 
 Invalid integer
     [Template]           Conversion Should Fail
@@ -23,9 +25,9 @@ Invalid integer
     Integer              ${None}                   arg_type=None
 
 Integral (abc)
-    Integral             42                        ${42}
-    Integral             -1                        ${-1}
-    Integral             9999999999999999999999    ${9999999999999999999999}
+    Integral             42                        42
+    Integral             -1                        -1
+    Integral             9999999999999999999999    9999999999999999999999
 
 Invalid integral (abc)
     [Template]           Conversion Should Fail
@@ -34,12 +36,13 @@ Invalid integral (abc)
     Integral             ${LIST}                   type=integer    arg_type=list
 
 Float
-    Float                1.5                       ${1.5}
-    Float                -1                        ${-1.0}
-    Float                1e6                       ${1000000.0}
-    Float                -1.2e-3                   ${-0.0012}
-    Float                ${4}                      ${4.0}
-    Float                ${-4.1}                   ${-4.1}
+    Float                1.5                       1.5
+    Float                -1                        -1.0
+    Float                1e6                       1000000.0
+    Float                -1.2e-3                   -0.0012
+    Float                ${4}                      4.0
+    Float                ${-4.1}                   -4.1
+    Float                ${FRACTION 1/2}           0.5
 
 Invalid float
     [Template]           Conversion Should Fail
@@ -47,10 +50,11 @@ Invalid float
     Float                ${LIST}                   arg_type=list
 
 Real (abc)
-    Real                 1.5                       ${1.5}
-    Real                 -1                        ${-1.0}
-    Real                 1e6                       ${1000000.0}
-    Real                 -1.2e-3                   ${-0.0012}
+    Real                 1.5                       1.5
+    Real                 -1                        -1.0
+    Real                 1e6                       1000000.0
+    Real                 -1.2e-3                   -0.0012
+    Real                 ${FRACTION 1/2}           Fraction(1,2)
 
 Invalid real (abc)
     [Template]           Conversion Should Fail
@@ -62,6 +66,7 @@ Decimal
     Decimal              1e6                       Decimal('1000000')
     Decimal              ${1}                      Decimal(1)
     Decimal              ${1.1}                    Decimal(1.1)
+    Decimal              ${DECIMAL 1/2}            Decimal(0.5)
 
 Invalid decimal
     [Template]           Conversion Should Fail
@@ -69,19 +74,19 @@ Invalid decimal
     Decimal              ${LIST}                   arg_type=list
 
 Boolean
-    Boolean              True                      ${True}
-    Boolean              YES                       ${True}
-    Boolean              on                        ${True}
-    Boolean              1                         ${True}
-    Boolean              false                     ${False}
-    Boolean              No                        ${False}
-    Boolean              oFF                       ${False}
-    Boolean              0                         ${False}
-    Boolean              ${EMPTY}                  ${False}
-    Boolean              none                      ${None}
-    Boolean              ${1}                      ${1}
-    Boolean              ${1.1}                    ${1.1}
-    Boolean              ${None}                   ${None}
+    Boolean              True                      True
+    Boolean              YES                       True
+    Boolean              on                        True
+    Boolean              1                         True
+    Boolean              false                     False
+    Boolean              No                        False
+    Boolean              oFF                       False
+    Boolean              0                         False
+    Boolean              ${EMPTY}                  False
+    Boolean              none                      None
+    Boolean              ${1}                      1
+    Boolean              ${1.1}                    1.1
+    Boolean              ${None}                   None
 
 Invalid boolean string is accepted as-is
     Boolean              FooBar                    'FooBar'
@@ -131,7 +136,7 @@ Bytestring
     Bytestring           None                      b'None'
     Bytestring           NONE                      b'NONE'
     Bytestring           ${{b'foo'}}               b'foo'
-    Bytestring           ${{bytearray(b'foo')}}    b'foo'
+    Bytestring           ${{bytearray(b'foo')}}    bytearray(b'foo')
 
 Invalid bytesstring
     [Template]           Conversion Should Fail

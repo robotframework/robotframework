@@ -1,6 +1,24 @@
 from typing import (List, Sequence, MutableSequence,
                     Dict, Mapping, MutableMapping,
                     Set, MutableSet)
+try:
+    from typing import TypedDict
+except ImportError:
+    from typing_extensions import TypedDict
+
+from robot.api.deco import not_keyword
+
+
+TypedDict = not_keyword(TypedDict)
+
+
+class BadIntMeta(type(int)):
+    def __instancecheck__(self, instance):
+        raise TypeError('Bang!')
+
+
+class BadInt(int, metaclass=BadIntMeta):
+    pass
 
 
 def list_(argument: List, expected=None):
@@ -32,6 +50,10 @@ def dict_(argument: Dict, expected=None):
 
 
 def dict_with_params(argument: Dict[str, int], expected=None):
+    _validate_type(argument, expected)
+
+
+def typeddict(argument: TypedDict('X', x=int), expected=None):
     _validate_type(argument, expected)
 
 
@@ -76,6 +98,10 @@ def forward_reference(argument: 'List', expected=None):
 
 
 def forward_ref_with_params(argument: 'List[int]', expected=None):
+    _validate_type(argument, expected)
+
+
+def not_liking_isinstance(argument: BadInt, expected=None):
     _validate_type(argument, expected)
 
 

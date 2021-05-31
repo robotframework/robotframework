@@ -28,6 +28,9 @@ Dict
 Dict with params
     Check Test Case    ${TESTNAME}
 
+TypedDict
+    Check Test Case    ${TESTNAME}
+
 Invalid dictionary
     Check Test Case    ${TESTNAME}
 
@@ -53,4 +56,7 @@ None as default
     Check Test Case    ${TESTNAME}
 
 Forward references
+    Check Test Case    ${TESTNAME}
+
+Type hint not liking `isinstance`
     Check Test Case    ${TESTNAME}

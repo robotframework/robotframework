@@ -2237,7 +2237,7 @@ Programmatic logging APIs
 
 Programmatic APIs provide somewhat cleaner way to log information than
 using the standard output and error streams. Currently these
-interfaces are available only to Python bases test libraries.
+interfaces are available only to Python based test libraries.
 
 Public logging API
 ''''''''''''''''''

@@ -913,7 +913,7 @@ class Error(Statement):
         """Errors got from the underlying ``ERROR`` and ``FATAL_ERROR`` tokens.
 
         Errors can be set also explicitly. When accessing errors, they are returned
-        along with errors from from tokens.
+        along with errors got from tokens.
         """
         tokens = self.get_tokens(Token.ERROR, Token.FATAL_ERROR)
         return tuple(t.error for t in tokens) + self._errors
