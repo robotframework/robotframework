@@ -23,8 +23,8 @@ Task syntax
 
 Tasks are created based on the available keywords exactly like test cases,
 and the task syntax is in general identical to the `test case syntax`_.
-The main difference is that tasks are created in task sections (or tables)
-instead of test case sections:
+The main difference is that tasks are created in Task sections
+instead of Test Case sections:
 
 .. sourcecode:: robotframework
 
@@ -45,5 +45,5 @@ the `test case section`__. In the `setting section`__ it is possible to use
 :setting:`Task Setup`, :setting:`Task Teardown`, :setting:`Task Template`
 and :setting:`Task Timeout` instead of their :setting:`Test` variants.
 
-__ `Settings in the Test Case table`_
-__ `Test case related settings in the Setting table`_
+__ `Settings in the Test Case section`_
+__ `Test case related settings in the Setting section`_

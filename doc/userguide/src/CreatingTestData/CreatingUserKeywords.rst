@@ -1,7 +1,7 @@
 Creating user keywords
 ======================
 
-Keyword tables are used to create new higher-level keywords by
+Keyword sections are used to create new higher-level keywords by
 combining existing keywords together. These keywords are called *user
 keywords* to differentiate them from lowest level *library keywords*
 that are implemented in test libraries. The syntax for creating user
@@ -19,8 +19,8 @@ Basic syntax
 ~~~~~~~~~~~~
 
 In many ways, the overall user keyword syntax is identical to the
-`test case syntax`_.  User keywords are created in keyword tables
-which differ from test case tables only by the name that is used to
+`test case syntax`_.  User keywords are created in Keyword sections
+which differ from Test Case sections only by the name that is used to
 identify them. User keyword names are in the first column similarly as
 test cases names. Also user keywords are created from keywords, either
 from keywords in test libraries or other user keywords. Keyword names
@@ -51,8 +51,8 @@ and `test suite initialization files`_. Keywords created in resource
 files are available for files using them, whereas other keywords are
 only available in the files where they are created.
 
-Settings in the Keyword table
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Settings in the Keyword section
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 User keywords can have similar settings as `test cases`__, and they
 have the same square bracket syntax separating them from keyword
@@ -84,7 +84,7 @@ this section.
       `[T a g s]` causes an error in Robot Framework 3.2. Possible spaces
       between brackets and the name (e.g. `[ Tags ]`) are still allowed.
 
-__ `Settings in the test case table`_
+__ `Settings in the test case section`_
 __ `User keyword tags`_
 
 .. _User keyword documentation:
@@ -92,8 +92,8 @@ __ `User keyword tags`_
 User keyword name and documentation
 -----------------------------------
 
-The user keyword name is defined in the first column of the user
-keyword table. Of course, the name should be descriptive, and it is
+The user keyword name is defined in the first column of the
+Keyword section. Of course, the name should be descriptive, and it is
 acceptable to have quite long keyword names. Actually, when creating
 use-case-like test cases, the highest-level keywords are often
 formulated as sentences or even paragraphs.
