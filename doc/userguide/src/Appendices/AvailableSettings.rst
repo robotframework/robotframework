@@ -56,10 +56,6 @@ importing libraries, resources, and variables.
    | Task Timeout    |                                                        |
    +-----------------+--------------------------------------------------------+
 
-.. note:: All setting names can optionally include a colon at the end, for
-      example :setting:`Documentation:`. This can make reading the settings easier
-      especially when using the plain text format.
-
 __ `Test suite documentation`_
 __ `Documenting resource files`_
 

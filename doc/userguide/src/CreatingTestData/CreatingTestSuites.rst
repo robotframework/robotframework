@@ -33,14 +33,7 @@ test suite:
 `Suite Setup`:setting:, `Suite Teardown`:setting:
    Specify `suite setup and teardown`_.
 
-.. note:: All setting names can optionally include a colon at the end, for
-      example :setting:`Documentation:`. This can make reading the settings easier
-      especially when using the plain text format.
-
-.. note:: Setting names are case-insensitive, but the format used above is
-      recommended. Settings used to be also space-insensitive, but that was
-      deprecated in Robot Framework 3.1 and trying to use something like
-      `M e t a d a t a` causes an error in Robot Framework 3.2.
+.. note:: Setting names are case-insensitive, but the format used above is recommended.
 
 __ `Creating test cases`_
 
