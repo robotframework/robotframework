@@ -714,8 +714,8 @@ class String(object):
         if not is_bytes(item):
             self._fail(msg, "'%s' is not a byte string.", item)
 
-    def should_be_lowercase(self, string, msg=None):
-        """Fails if the given ``string`` is not in lowercase.
+    def should_be_lower_case(self, string, msg=None):
+        """Fails if the given ``string`` is not in lower case.
 
         For example, ``'string'`` and ``'with specials!'`` would pass, and
         ``'String'``, ``''`` and ``' '`` would fail.
@@ -723,13 +723,13 @@ class String(object):
         The default error message can be overridden with the optional
         ``msg`` argument.
 
-        See also `Should Be Uppercase` and `Should Be Titlecase`.
+        See also `Should Be Upper Case` and `Should Be Title Case`.
         """
         if not string.islower():
-            self._fail(msg, "'%s' is not lowercase.", string)
+            self._fail(msg, "'%s' is not lower case.", string)
 
-    def should_be_uppercase(self, string, msg=None):
-        """Fails if the given ``string`` is not in uppercase.
+    def should_be_upper_case(self, string, msg=None):
+        """Fails if the given ``string`` is not in upper case.
 
         For example, ``'STRING'`` and ``'WITH SPECIALS!'`` would pass, and
         ``'String'``, ``''`` and ``' '`` would fail.
@@ -737,16 +737,16 @@ class String(object):
         The default error message can be overridden with the optional
         ``msg`` argument.
 
-        See also `Should Be Titlecase` and `Should Be Lowercase`.
+        See also `Should Be Title Case` and `Should Be Lower Case`.
         """
         if not string.isupper():
-            self._fail(msg, "'%s' is not uppercase.", string)
+            self._fail(msg, "'%s' is not upper case.", string)
 
     @keyword(types=None)
     def should_be_title_case(self, string, msg=None, exclude=None):
         """Fails if given ``string`` is not title.
 
-        ``string`` is a title cased string if there is at least one uppercase
+        ``string`` is a title cased string if there is at least one upper case
         letter in each word.
 
         For example, ``'This Is Title'`` and ``'OK, Give Me My iPhone'``
@@ -770,7 +770,7 @@ class String(object):
         regular expression syntax in general and how to use it in Robot
         Framework test data in particular.
 
-        See also `Should Be Uppercase` and `Should Be Lowercase`.
+        See also `Should Be Upper Case` and `Should Be Lower Case`.
         """
         if PY2 and is_bytes(string):
             try:
