@@ -15,32 +15,24 @@ __ `Creating test cases`_
 Test case files
 ---------------
 
-Robot Framework test cases `are created`__ using test case tables in
+Robot Framework test cases `are created`__ using test case sections in
 test case files. Such a file automatically creates a test suite from
 all the test cases it contains. There is no upper limit for how many
 test cases there can be, but it is recommended to have less than ten,
 unless the `data-driven approach`_ is used, where one test case consists of
 only one high-level keyword.
 
-The following settings in the Setting table can be used to customize the
+The following settings in the Setting section can be used to customize the
 test suite:
 
 `Documentation`:setting:
    Used for specifying a `test suite documentation`_
 `Metadata`:setting:
-   Used for setting `free test suite metadata`_ as name-value
-   pairs.
+   Used for setting `free test suite metadata`_ as name-value pairs.
 `Suite Setup`:setting:, `Suite Teardown`:setting:
    Specify `suite setup and teardown`_.
 
-.. note:: All setting names can optionally include a colon at the end, for
-      example :setting:`Documentation:`. This can make reading the settings easier
-      especially when using the plain text format.
-
-.. note:: Setting names are case-insensitive, but the format used above is
-      recommended. Settings used to be also space-insensitive, but that was
-      deprecated in Robot Framework 3.1 and trying to use something like
-      `M e t a d a t a` causes an error in Robot Framework 3.2.
+.. note:: Setting names are case-insensitive, but the format used above is recommended.
 
 __ `Creating test cases`_
 
@@ -81,7 +73,7 @@ The name format is borrowed from Python, where files named in this manner
 denote that a directory is a module.
 
 Initialization files have the same structure and syntax as test case files,
-except that they cannot have test case tables and not all settings are
+except that they cannot have test case sections and not all settings are
 supported. Variables and keywords created or imported in initialization files
 *are not* available in the lower level test suites. If you need to share
 variables or keywords, you can put them into `resource files`_ that can be
@@ -127,7 +119,7 @@ initialization files is explained below.
        Some Keyword    ${arg}
        Another Keyword
 
-__ `Test case related settings in the Setting table`_
+__ `Test case related settings in the Setting section`_
 
 Test suite name and documentation
 ---------------------------------
@@ -147,7 +139,7 @@ suites :name:`Some Tests` and :name:`More Tests`, respectively, and
 the former is executed before the latter.
 
 The documentation for a test suite is set using the :setting:`Documentation`
-setting in the Setting table. It can be used in test case files
+setting in the Setting section. It can be used in test case files
 or, with higher-level suites, in test suite initialization files. Test
 suite documentation has exactly the same characteristics regarding to where
 it is shown and how it can be created as `test case
@@ -168,7 +160,7 @@ Free test suite metadata
 ------------------------
 
 Test suites can also have other metadata than the documentation. This metadata
-is defined in the Setting table using the :setting:`Metadata` setting. Metadata
+is defined in the Setting section using the :setting:`Metadata` setting. Metadata
 set in this manner is shown in test reports and logs.
 
 The name and value for the metadata are located in the columns following
@@ -204,7 +196,7 @@ initialization file`_.
 __ `Test setup and teardown`_
 
 Similarly as with test cases, a suite setup and teardown are keywords
-that may take arguments. They are defined in the Setting table with
+that may take arguments. They are defined in the Setting section with
 :setting:`Suite Setup` and :setting:`Suite Teardown` settings,
 respectively. Keyword names and possible arguments are located in
 the columns after the setting name.
