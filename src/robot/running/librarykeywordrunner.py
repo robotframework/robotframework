@@ -88,7 +88,6 @@ class LibraryKeywordRunner(object):
                 with LOGGER.delayed_logging:
                     context.output.debug(timeout.get_message)
                     return timeout.run(handler, args=positional, kwargs=named)
-
             return runner
         return lambda: handler(*positional, **named)
 
@@ -120,12 +119,12 @@ class LibraryKeywordRunner(object):
             self._handler.resolve_arguments(args)
 
     def _executed_in_dry_run(self, handler):
-        keywords_to_execute_in_dry_run = ('BuiltIn.Import Library',
+        keywords_to_execute = ('BuiltIn.Import Library',
                                           'BuiltIn.Set Library Search Order',
-                                          'BuiltIn.Set Tags,'
+                                          'BuiltIn.Set Tags',
                                           'BuiltIn.Remove Tags')
         return (handler.libname == 'Reserved' or
-                handler.longname in keywords_to_execute_in_dry_run)
+                handler.longname in keywords_to_execute)
 
 
 class EmbeddedArgumentsRunner(LibraryKeywordRunner):
@@ -198,9 +197,9 @@ class RunKeywordRunner(LibraryKeywordRunner):
     def _split_run_kw_if_args(self, given_args, control_word, required_after):
         index = list(given_args).index(control_word)
         expr_and_call = given_args[:index]
-        remaining = given_args[index + 1:]
+        remaining = given_args[index+1:]
         if not (self._validate_kw_call(expr_and_call) and
-                self._validate_kw_call(remaining, required_after)):
+                    self._validate_kw_call(remaining, required_after)):
             raise DataError("Invalid 'Run Keyword If' usage.")
         if is_list_variable(expr_and_call[0]):
             return (), remaining
@@ -218,7 +217,7 @@ class RunKeywordRunner(LibraryKeywordRunner):
     def _get_run_kws_calls(self, given_args):
         if 'AND' not in given_args:
             for kw_call in given_args:
-                yield [kw_call, ]
+                yield [kw_call,]
         else:
             while 'AND' in given_args:
                 index = list(given_args).index('AND')
@@ -229,4 +228,4 @@ class RunKeywordRunner(LibraryKeywordRunner):
 
     def _get_default_run_kw_keywords(self, given_args):
         index = list(self._handler.arguments.positional).index('name')
-        return [Keyword(name=given_args[index], args=given_args[index + 1:])]
+        return [Keyword(name=given_args[index], args=given_args[index+1:])]
