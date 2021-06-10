@@ -18,3 +18,11 @@ Set Library Search Order
     First.Parameters
     Set Library Search Order    NonExisting    Dynamic    First
     Parameters
+
+Set Tags
+    [Tags]    Tag0
+    Set Tags     Tag1    Tag2    Tag3
+
+Remove Tags
+    [Tags]    Tag1    Tag2    Tag3
+    Remove Tags    Tag2

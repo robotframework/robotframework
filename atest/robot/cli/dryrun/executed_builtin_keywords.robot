@@ -13,3 +13,18 @@ Set Library Search Order
     Should Be Equal    ${tc.kws[1].name}    Second.Parameters
     Should Be Equal    ${tc.kws[2].name}    First.Parameters
     Should Be Equal    ${tc.kws[4].name}    Dynamic.Parameters
+
+Set Tags
+    ${tc} =    Check Test Case    ${TESTNAME}
+    List Should Contain Value    ${tc.tags}    Tag0
+    List Should Contain Value    ${tc.tags}    Tag1
+    List Should Contain Value   ${tc.tags}    Tag2
+    List Should Contain Value   ${tc.tags}   Tag3
+
+Remove Tags
+    ${tc} =    Check Test Case    ${TESTNAME}
+    List Should Contain Value   ${tc.tags}    Tag1
+    List Should Not Contain Value   ${tc.tags}    Tag2
+    List Should Contain Value   ${tc.tags}   Tag3
+
+
