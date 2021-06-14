@@ -434,7 +434,7 @@ Libdoc. First line of the documentation (until the first
 documentation similarly as with test libraries.
 
 Also the resource file itself can have :setting:`Documentation` in the
-Setting table for documenting the whole resource file.
+Setting section for documenting the whole resource file.
 
 Possible variables in resource files can not be documented.
 
