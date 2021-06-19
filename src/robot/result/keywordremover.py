@@ -61,8 +61,8 @@ class AllKeywordsRemover(_KeywordRemover):
     def visit_for(self, for_):
         self._clear_content(for_)
 
-    def visit_if(self, if_):
-        self._clear_content(if_)
+    def visit_if_branch(self, branch):
+        self._clear_content(branch)
 
 
 class PassedKeywordRemover(_KeywordRemover):

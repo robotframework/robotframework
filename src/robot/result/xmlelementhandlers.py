@@ -195,7 +195,7 @@ class IfHandler(ElementHandler):
 @ElementHandler.register
 class IfBranchHandler(ElementHandler):
     tag = 'branch'
-    children = frozenset(('status', 'kw', 'if', 'for', 'msg'))
+    children = frozenset(('status', 'kw', 'if', 'for', 'msg', 'doc'))
 
     def start(self, elem, result):
         return result.body.create_branch(elem.get('type'), elem.get('condition'))

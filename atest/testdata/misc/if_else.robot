@@ -1,5 +1,5 @@
 *** Test Cases ***
-If structure
+IF structure
     IF    'IF' == 'WRONG'
         Fail  not going here
     ELSE IF    'ELSE IF' == 'ELSE IF'
