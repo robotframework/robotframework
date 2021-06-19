@@ -171,7 +171,7 @@ in settings and elsewhere when it makes the data easier to understand.
        Directory Should Exist    ${path}
 
 Because tabs and consecutive spaces are considered separators, they must
-to be escaped if they are needed in keyword arguments or elsewhere
+be escaped if they are needed in keyword arguments or elsewhere
 in the actual data. It is possible to use special escape syntax like
 `\t` for tab and `\xA0` for no-break space as well as `built-in variables`_
 `${SPACE}` and `${EMPTY}`. See the Escaping_ section for details.
