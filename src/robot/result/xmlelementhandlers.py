@@ -186,7 +186,7 @@ class ForIterationHandler(ElementHandler):
 @ElementHandler.register
 class IfHandler(ElementHandler):
     tag = 'if'
-    children = frozenset(('status', 'branch', 'msg'))
+    children = frozenset(('status', 'branch', 'msg', 'doc'))
 
     def start(self, elem, result):
         return result.body.create_if()
