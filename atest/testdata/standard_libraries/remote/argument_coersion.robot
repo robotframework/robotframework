@@ -20,10 +20,11 @@ Newline and tab
     '\\t\\n\\r'    '\\t\\n\\n'
 
 Binary
-    '\\x00\\x01\\x02'    b'\\x00\\x01\\x02'    binary=yes
-    'foo\\x00bar'        b'foo\\x00bar'        binary=yes
-    u'\\x00\\x01'        b'\\x00\\x01'         binary=yes
-    bytearray([0, 1])    b'\\x00\\x01'         binary=yes
+    '\\x00\\x01\\x02'         b'\\x00\\x01\\x02'    binary=yes
+    'foo\\x00bar'             b'foo\\x00bar'        binary=yes
+    u'\\x00\\x01'             b'\\x00\\x01'         binary=yes
+    u'\\x00\\xe4\\xff'        b'\\x00\\xe4\\xff'    binary=yes
+    bytearray([0, 1, 228])    b'\\x00\\x01\\xe4'    binary=yes
 
 Binary in non-ASCII range
     b'\\x00\\x01\\xe4'              binary=yes
@@ -33,7 +34,6 @@ Binary in non-ASCII range
 
 Binary with too big Unicode characters
     [Template]  Run Keyword And Expect Error
-    ValueError: Cannot represent *'\\x00\\x01*' as binary.    One Argument    \x00\x01\xff
     ValueError: Cannot represent *'\\x00\\x01*' as binary.    One Argument    \x00\x01\u2603
 
 Unrepresentable Unicode

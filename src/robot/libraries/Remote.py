@@ -147,7 +147,8 @@ class ArgumentCoercer(object):
     def _handle_binary_in_string(self, arg):
         try:
             if not is_bytes(arg):
-                arg = arg.encode('ASCII')
+                # Map Unicode code points to bytes directly
+                arg = arg.encode('latin-1')
         except UnicodeError:
             raise ValueError('Cannot represent %r as binary.' % arg)
         return xmlrpclib.Binary(arg)
