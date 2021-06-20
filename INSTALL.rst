@@ -129,7 +129,7 @@ executable on the command line.
 
 .. tip:: Latest Python Windows installers allow setting ``PATH`` as part of
          the installation. This is disabled by default, but `Add Python 3.x
-         to PATH` can be enabled as `explained here`__
+         to PATH` can be enabled as `explained here`__.
 
 __ https://github.com/robotframework/robotframework/issues/3457
 __ https://docs.python.org/3/using/windows.html#the-full-installer
