@@ -99,9 +99,9 @@ class _ExecutionContext(object):
             self.in_keyword_teardown -= 1
 
     @contextmanager
-    def user_keyword(self, runner):
+    def user_keyword(self, handler):
+        self.user_keywords.append(handler)
         self.namespace.start_user_keyword()
-        self.user_keywords.append(runner._handler)
         try:
             yield
         finally:
