@@ -144,19 +144,6 @@ class UserKeywordRunner(object):
         args = ['%s=%s' % (name, prepr(variables[name])) for name in args]
         return 'Arguments: [ %s ]' % ' | '.join(args)
 
-    def _inherit_tc_continue_on_failure(self, kw_tags, context):
-        # apply test-case's continue-on-failure on keywords
-        # (unless robot:no-continue-on-failure is set in keyword)
-        try:
-            tc_tags = context.test.tags
-        except AttributeError:
-            return kw_tags
-        result = list(kw_tags)
-        if ('robot:continue-on-failure' in tc_tags
-           and 'robot:no-continue-on-failure' not in kw_tags):
-            result.append('robot:continue-on-failure')
-        return result
-
     def _execute(self, context):
         handler = self._handler
         if not (handler.body or handler.return_value):
@@ -165,9 +152,7 @@ class UserKeywordRunner(object):
             return None, None
         error = return_ = pass_ = None
         try:
-            BodyRunner(context,
-                       tags=self._inherit_tc_continue_on_failure(handler.tags, context)
-                       ).run(handler.body)
+            BodyRunner(context, tags=handler.tags).run(handler.body)
         except ReturnFromKeyword as exception:
             return_ = exception
             error = exception.earlier_failures

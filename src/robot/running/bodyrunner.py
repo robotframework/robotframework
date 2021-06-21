@@ -34,13 +34,13 @@ class BodyRunner(object):
         self._context = context
         self._run = run
         self._templated = templated
-        self._tags = tags or []
+        self._tags = tags
 
     def run(self, body):
         errors = []
         for step in body:
             try:
-                step.run(self._context, self._run, self._templated)
+                step.run(self._context, self._run, self._templated, tags=self._tags)
             except ExecutionPassed as exception:
                 exception.set_earlier_failures(errors)
                 raise exception
@@ -71,10 +71,11 @@ class KeywordRunner(object):
 class IfRunner(object):
     _dry_run_stack = []
 
-    def __init__(self, context, run=True, templated=False):
+    def __init__(self, context, run=True, templated=False, tags=None):
         self._context = context
         self._run = run
         self._templated = templated
+        self._tags = tags
 
     def run(self, data):
         with self._dry_run_recursion_detection(data) as recursive_dry_run:
@@ -114,7 +115,7 @@ class IfRunner(object):
         with StatusReporter(branch, result, self._context, run_branch):
             if error and self._run:
                 raise DataError(error)
-            runner = BodyRunner(self._context, run_branch, self._templated)
+            runner = BodyRunner(self._context, run_branch, self._templated, self._tags)
             if not recursive_dry_run:
                 runner.run(branch.body)
         return run_branch
@@ -132,13 +133,13 @@ class IfRunner(object):
         return bool(condition)
 
 
-def ForRunner(context, flavor='IN', run=True, templated=False):
+def ForRunner(context, flavor='IN', run=True, templated=False, tags=None):
     runners = {'IN': ForInRunner,
                'IN RANGE': ForInRangeRunner,
                'IN ZIP': ForInZipRunner,
                'IN ENUMERATE': ForInEnumerateRunner}
     runner = runners[flavor or 'IN']
-    return runner(context, run, templated, context.test.tags)
+    return runner(context, run, templated, tags=tags)
 
 
 class ForInRunner(object):
@@ -148,7 +149,7 @@ class ForInRunner(object):
         self._context = context
         self._run = run
         self._templated = templated
-        self._tags = tags or []
+        self._tags = tags
 
     def run(self, data):
         result = ForResult(data.variables, data.flavor, data.values)
