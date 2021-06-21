@@ -30,26 +30,24 @@ from .statusreporter import StatusReporter
 
 class BodyRunner(object):
 
-    def __init__(self, context, run=True, templated=False, tags=None):
+    def __init__(self, context, run=True, templated=False):
         self._context = context
         self._run = run
         self._templated = templated
-        self._tags = tags
 
     def run(self, body):
         errors = []
         for step in body:
             try:
-                step.run(self._context, self._run, self._templated, tags=self._tags)
+                step.run(self._context, self._run, self._templated)
             except ExecutionPassed as exception:
                 exception.set_earlier_failures(errors)
                 raise exception
             except ExecutionFailed as exception:
                 errors.extend(exception.get_errors())
-                self._run = exception.can_continue(self._context.in_teardown,
-                                                   self._templated,
-                                                   self._context.dry_run,
-                                                   self._tags)
+                self._run = exception.can_continue(teardown=self._context.in_teardown,
+                                                   templated=self._templated,
+                                                   context=self._context)
         if errors:
             raise ExecutionFailures(errors)
 
@@ -71,11 +69,10 @@ class KeywordRunner(object):
 class IfRunner(object):
     _dry_run_stack = []
 
-    def __init__(self, context, run=True, templated=False, tags=None):
+    def __init__(self, context, run=True, templated=False):
         self._context = context
         self._run = run
         self._templated = templated
-        self._tags = tags
 
     def run(self, data):
         with self._dry_run_recursion_detection(data) as recursive_dry_run:
@@ -115,7 +112,7 @@ class IfRunner(object):
         with StatusReporter(branch, result, self._context, run_branch):
             if error and self._run:
                 raise DataError(error)
-            runner = BodyRunner(self._context, run_branch, self._templated, self._tags)
+            runner = BodyRunner(self._context, run_branch, self._templated)
             if not recursive_dry_run:
                 runner.run(branch.body)
         return run_branch
@@ -133,23 +130,22 @@ class IfRunner(object):
         return bool(condition)
 
 
-def ForRunner(context, flavor='IN', run=True, templated=False, tags=None):
+def ForRunner(context, flavor='IN', run=True, templated=False):
     runners = {'IN': ForInRunner,
                'IN RANGE': ForInRangeRunner,
                'IN ZIP': ForInZipRunner,
                'IN ENUMERATE': ForInEnumerateRunner}
     runner = runners[flavor or 'IN']
-    return runner(context, run, templated, tags=tags)
+    return runner(context, run, templated)
 
 
 class ForInRunner(object):
     flavor = 'IN'
 
-    def __init__(self, context, run=True, templated=False, tags=None):
+    def __init__(self, context, run=True, templated=False):
         self._context = context
         self._run = run
         self._templated = templated
-        self._tags = tags
 
     def run(self, data):
         result = ForResult(data.variables, data.flavor, data.values)
@@ -179,10 +175,9 @@ class ForInRunner(object):
                 raise exception
             except ExecutionFailed as exception:
                 errors.extend(exception.get_errors())
-                if not exception.can_continue(self._context.in_teardown,
-                                              self._templated,
-                                              self._context.dry_run,
-                                              self._tags):
+                if not exception.can_continue(teardown=self._context.in_teardown,
+                                              templated=self._templated,
+                                              context=self._context):
                     break
         if errors:
             raise ExecutionFailures(errors)

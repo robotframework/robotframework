@@ -15,6 +15,9 @@ Continue in test with tag and UK without tag
 Continue in test with tag and nested UK with and without tag
     ${tc}=    Check Test Case    ${TESTNAME}
 
+Continue in test with tag and two nested UK with tag
+    ${tc}=    Check Test Case    ${TESTNAME}
+
 Continue in for loop with tag
     ${tc}=    Check Test Case    ${TESTNAME}
 
@@ -37,4 +40,7 @@ Continue in IF in UK with tag
     ${tc}=    Check Test Case    ${TESTNAME}
 
 Continue in IF in UK without tag
+    ${tc}=    Check Test Case    ${TESTNAME}
+
+Run Keywords with tag
     ${tc}=    Check Test Case    ${TESTNAME}

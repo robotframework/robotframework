@@ -142,10 +142,7 @@ class SuiteRunner(SuiteVisitor):
         self._run_setup(test.setup, status, result)
         try:
             if not status.failed:
-                runner = BodyRunner(self._context,
-                                    templated=bool(test.template),
-                                    tags=test.tags)
-                runner.run(test.body)
+                BodyRunner(self._context, templated=bool(test.template)).run(test.body)
             else:
                 if status.skipped:
                     status.test_skipped(status.message)

@@ -74,7 +74,7 @@ class Keyword(model.Keyword):
     def source(self):
         return self.parent.source if self.parent is not None else None
 
-    def run(self, context, run=True, templated=None, tags=None):
+    def run(self, context, run=True, templated=None):
         return KeywordRunner(context, run).run(self)
 
 
@@ -92,8 +92,8 @@ class For(model.For):
     def source(self):
         return self.parent.source if self.parent is not None else None
 
-    def run(self, context, run=True, templated=False, tags=None):
-        return ForRunner(context, self.flavor, run, templated, tags=tags).run(self)
+    def run(self, context, run=True, templated=False):
+        return ForRunner(context, self.flavor, run, templated).run(self)
 
 
 @Body.register
@@ -110,8 +110,8 @@ class If(model.If):
     def source(self):
         return self.parent.source if self.parent is not None else None
 
-    def run(self, context, run=True, templated=False, tags=None):
-        return IfRunner(context, run, templated, tags=tags).run(self)
+    def run(self, context, run=True, templated=False):
+        return IfRunner(context, run, templated).run(self)
 
 
 @IfBranches.register

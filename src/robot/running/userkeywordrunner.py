@@ -75,14 +75,14 @@ class UserKeywordRunner(object):
     def _run(self, context, args, result):
         variables = context.variables
         args = self._resolve_arguments(args, variables)
-        with context.user_keyword:
+        with context.user_keyword(runner=self):
             self._set_arguments(args, context)
             timeout = self._get_timeout(variables)
             if timeout is not None:
                 result.timeout = str(timeout)
             with context.timeout(timeout):
                 exception, return_ = self._execute(context)
-                if exception and not exception.can_continue(context.in_teardown):
+                if exception and not exception.can_continue(teardown=context.in_teardown):
                     raise exception
                 return_value = self._get_return_value(variables, return_)
                 if exception:
@@ -152,7 +152,7 @@ class UserKeywordRunner(object):
             return None, None
         error = return_ = pass_ = None
         try:
-            BodyRunner(context, tags=handler.tags).run(handler.body)
+            BodyRunner(context).run(handler.body)
         except ReturnFromKeyword as exception:
             return_ = exception
             error = exception.earlier_failures

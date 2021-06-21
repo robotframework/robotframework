@@ -36,6 +36,17 @@ Continue in test with tag and nested UK with and without tag
     Failure in user keyword using tag     run_kw=Failure in user keyword without tag
     Fail   This should be executed
 
+Continue in test with tag and two nested UK with tag
+    [Documentation]    FAIL ${HEADER}\n\n
+    ...    1) kw1a\n\n
+    ...    2) kw1b\n\n
+    ...    3) kw1a\n\n
+    ...    4) kw1b\n\n
+    ...    5) This should be executed
+    [Tags]   robot:continue-on-failure
+    Failure in user keyword using tag     run_kw=Failure in user keyword using tag
+    Fail   This should be executed
+
 Continue in for loop with tag
     [Documentation]    FAIL ${HEADER}\n\n
     ...    1) loop-1\n\n
@@ -101,6 +112,12 @@ Continue in IF in UK without tag
     [Documentation]    FAIL kw1a
     If in user keyword without tag
 
+Run Keywords with tag
+    [Documentation]    FAIL ${HEADER}\n\n
+    ...    1) 1\n\n
+    ...    2) 2
+    [Tags]   robot:continue-on-failure
+    Run Keywords    Fail   1   AND   Fail   2
 
 *** Keywords ***
 
