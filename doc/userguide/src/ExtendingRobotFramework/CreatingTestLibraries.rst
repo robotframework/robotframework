@@ -122,7 +122,7 @@ Providing arguments to libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All test libraries implemented as classes can take arguments. These
-arguments are specified in the Setting table after the library name,
+arguments are specified in the Setting section after the library name,
 and when Robot Framework creates an instance of the imported library,
 it passes them to its constructor. Libraries implemented as a module
 cannot take any arguments, so trying to use those results in an error.
