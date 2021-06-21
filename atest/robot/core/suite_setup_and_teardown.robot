@@ -80,8 +80,8 @@ Failing Suite Teardown
     ...    1) first
     ...    2) second
     Check Suite Status    ${SUITE}    FAIL
-    ...    Suite teardown failed:\n${error}\n\n${2 FAIL MSG}
-    ...    Passing    Failing
+    ...    Suite teardown failed:\n${error}\n\n3 tests, 0 passed, 2 failed, 1 skipped
+    ...    Passing    Failing    Skipping
     Should Be Equal    ${SUITE.teardown.status}    FAIL
     Output should contain teardown error    ${error}
 

@@ -25,6 +25,14 @@ Failing
     ...    ${TEARDOWN FAILURES}
     Fail    Expected fail
 
+Skipping
+    [Documentation]    SKIP
+    ...    Expected skip
+    ...
+    ...    Also parent suite teardown failed:
+    ...    ${TEARDOWN FAILURES}
+    Skip    Expected skip
+
 *** Keyword ***
 My Keyword
     Log    User keywords work normally

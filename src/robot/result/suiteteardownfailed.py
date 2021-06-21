@@ -50,7 +50,8 @@ class SuiteTeardownFailed(SuiteVisitor):
             self._suite_teardown_skipped(test)
 
     def _suite_teardown_failed(self, test):
-        test.status = test.FAIL
+        if not test.skipped:
+            test.status = test.FAIL
         prefix = self._also_msg if test.message else self._normal_msg
         test.message += prefix % self.message
 
