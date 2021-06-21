@@ -23,5 +23,5 @@ Invalid output
 *** Keywords ***
 Tidy run should fail
     [Arguments]    ${error}    @{args}    &{kwargs}
-    ${output} =    Run Tidy    @{args}    &{kwargs}    rc=252
+    ${output} =    Run Tidy    @{args}    &{kwargs}    rc=252    deprecation=False
     Should Match    ${output}    ${error}${USAGE TIP}

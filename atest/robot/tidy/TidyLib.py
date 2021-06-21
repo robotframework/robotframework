@@ -11,6 +11,9 @@ from robot.utils.asserts import assert_equal, assert_true
 ROBOT_SRC = join(dirname(abspath(__file__)), '..', '..', '..', 'src')
 DATA_DIR = join(dirname(abspath(__file__)), '..', '..', 'testdata', 'tidy')
 OUTFILE = join(os.getenv('TEMPDIR'), 'tidy-test-dir', 'tidy-test-file.robot')
+DEPRECATION = ("The built-in Tidy tool (\'robot.tidy\') has been deprecated in "
+               "favor of the new and enhanced external Robotidy tool. Learn "
+               "more about the new tool at https://robotidy.readthedocs.io/.\n")
 
 
 class TidyLib(object):
@@ -19,7 +22,8 @@ class TidyLib(object):
         self._tidy = interpreter.tidy
         self._interpreter = interpreter.interpreter
 
-    def run_tidy(self, options=None, input=None, output=None, tidy=None, rc=0):
+    def run_tidy(self, options=None, input=None, output=None, tidy=None, rc=0,
+                 deprecation=True):
         """Runs tidy in the operating system and returns output."""
         command = (tidy or self._tidy)[:]
         if options:
@@ -32,11 +36,13 @@ class TidyLib(object):
         result = run(command,
                      cwd=ROBOT_SRC,
                      stdout=PIPE,
-                     stderr=STDOUT,
+                     stderr=PIPE,
                      universal_newlines=True,
                      shell=os.sep == '\\')
         output = result.stdout.rstrip()
         print('\n' + output)
+        if deprecation and result.stderr != DEPRECATION:
+            raise RuntimeError(f'No deprecation warning in stderr:\n')
         if result.returncode != rc:
             raise RuntimeError(f'Expected Tidy to return {rc} but it returned '
                                f'{result.returncode}.')

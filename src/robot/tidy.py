@@ -29,6 +29,7 @@ This module also provides :class:`Tidy` class and :func:`tidy_cli` function
 that can be used programmatically. Other code is for internal usage.
 """
 
+import logging
 import os
 import sys
 
@@ -38,10 +39,8 @@ if 'robot' not in sys.modules and __name__ == '__main__':
     import pythonpathsetter
 
 from robot.errors import DataError
-from robot.parsing import (get_model, SuiteStructureBuilder,
-                           SuiteStructureVisitor)
-from robot.tidypkg import (Aligner, Cleaner, NewlineNormalizer,
-                           SeparatorNormalizer)
+from robot.parsing import get_model, SuiteStructureBuilder, SuiteStructureVisitor
+from robot.tidypkg import Aligner, Cleaner, NewlineNormalizer, SeparatorNormalizer
 from robot.utils import Application, file_writer
 
 USAGE = """robot.tidy -- Robot Framework data clean-up tool
@@ -102,6 +101,14 @@ can also be run as a script like `python path/robot/tidy.py`.
 
 For more information about Tidy and other built-in tools, see
 http://robotframework.org/robotframework/#built-in-tools.
+
+Deprecation
+===========
+
+The built-in Tidy tool was deprecated in Robot Framework 4.1 in favor of the
+new and enhanced external Robotidy tool. The built-in tool will be removed
+altogether in Robot Framework 5.0. Learn more about the new Robotidy tool at
+https://robotidy.readthedocs.io/.
 """
 
 
@@ -114,6 +121,11 @@ class Tidy(SuiteStructureVisitor):
 
     def __init__(self, space_count=4, use_pipes=False,
                  line_separator=os.linesep):
+        logging.getLogger('tidy').warning(
+            "The built-in Tidy tool ('robot.tidy') has been deprecated in favor "
+            "of the new and enhanced external Robotidy tool. Learn more about "
+            "the new tool at https://robotidy.readthedocs.io/."
+        )
         self.space_count = space_count
         self.use_pipes = use_pipes
         self.line_separator = line_separator

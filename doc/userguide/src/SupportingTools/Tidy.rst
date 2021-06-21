@@ -81,3 +81,12 @@ Examples
     python -m robot.tidy messed_up_data.robot cleaned_up_data.robot
     python -m robot.tidy --inplace example.robot
     python -m robot.tidy --recursive path/to/tests
+
+Deprecation
+-----------
+
+The built-in Tidy tool was deprecated in Robot Framework 4.1 in favor of the
+new and enhanced external Robotidy__ tool. The built-in tool will be removed
+altogether in Robot Framework 5.0.
+
+__ https://robotidy.readthedocs.io/
