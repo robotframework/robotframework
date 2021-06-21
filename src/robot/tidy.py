@@ -29,7 +29,6 @@ This module also provides :class:`Tidy` class and :func:`tidy_cli` function
 that can be used programmatically. Other code is for internal usage.
 """
 
-import logging
 import os
 import sys
 
@@ -121,10 +120,10 @@ class Tidy(SuiteStructureVisitor):
 
     def __init__(self, space_count=4, use_pipes=False,
                  line_separator=os.linesep):
-        logging.getLogger('tidy').warning(
+        sys.stderr.write(
             "The built-in Tidy tool ('robot.tidy') has been deprecated in favor "
             "of the new and enhanced external Robotidy tool. Learn more about "
-            "the new tool at https://robotidy.readthedocs.io/."
+            "the new tool at https://robotidy.readthedocs.io/.\n"
         )
         self.space_count = space_count
         self.use_pipes = use_pipes
