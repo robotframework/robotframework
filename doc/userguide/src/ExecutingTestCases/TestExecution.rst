@@ -367,10 +367,9 @@ originating from library keywords.
 Using reserved robot:continue-on-failure tag
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-All Keywords executed as part of a test case which is tagged with the
-reserved tag `robot:continue-on-failure` are considered continuable
-by default, including those contained within user keywords executed from
-within this test case.
+All Keywords executed as part of test cases or a user keywords which are
+tagged with the reserved tag `robot:continue-on-failure` are considered continuable
+by default.
 
 Thus, the following two test cases `Test 1` and `Test 2` behave identically:
 
@@ -384,7 +383,7 @@ Thus, the following two test cases `Test 1` and `Test 2` behave identically:
    Test 2
        [Tags]    robot:continue-on-failure
        Should be Equal   1   2
-       User Keyword 1
+       User Keyword 2
 
    *** Keywords ***
    User Keyword 1
@@ -392,25 +391,13 @@ Thus, the following two test cases `Test 1` and `Test 2` behave identically:
        Log   this message is logged
 
    User Keyword 2
+       [Tags]    robot:continue-on-failure
        Should be Equal   3   4
        Log   this message is logged
 
-The continue-on-failure behaviour "inherited" by user keywords can be overriden
-using the reserved `robot:no-continue-on-failure` tag in the user keyword. Using
-the above example, setting it on User Keyword 2 would not log the message:
 
-.. sourcecode:: robotframework
-
-   *** Test Cases ***
-   User Keyword 2
-       [Tags]    robot:no-continue-on-failure
-       Should be Equal   3   4
-       Log   this message is NOT logged
-
-The `robot:no-continue-on-failure` does not change the treatment of
-continuable keywords, those are still continuable, despite the tag.
-
-These tags also influence continue-on-failure in FOR loops.
+These tags also influence continue-on-failure in FOR loops and
+within IF/ELSE branches.
 The below test case will execute the test 10 times, no matter if
 the "Perform some test keyword" failed or not.
 
@@ -424,10 +411,10 @@ the "Perform some test keyword" failed or not.
        END
 
 
-Please note that setting the reserved tags using the keyword :name:`Set Tags`
-might not always be effective, they are only supported as part of the Test Suite
-or Test Case settings.
-The `robot:continue-on-failure` and `robot:continue-on-failure` are new in Robot Framework 4.1.
+Please note that setting `robot:continue-on-failure` using the keyword :name:`Set Tags`
+might not always be effective, it is only supported as part of the Test Suite, Test Case or
+User Keyword settings.
+The `robot:continue-on-failure` is new in Robot Framework 4.1.
 
 Execution continues on teardowns automatically
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
