@@ -40,18 +40,7 @@ jobs:
           sudo rm -rf /etc/ntp.conf
         if: runner.os == 'macOS'
 
-      - name: Run unit tests with coverage
+      - name: Run unit tests
         run: |
-          python -m pip install coverage
           python -m pip install -r utest/requirements.txt
-          python -m coverage run --branch utest/run.py -v
-
-      - name: Prepare HTML/XML coverage report
-        run: |
-          python -m coverage xml -i
-        if: always()
-
-      - uses: codecov/codecov-action@a1ed4b322b4b38cb846afb5a0ebfa17086917d27
-        with:
-          name: ${{ matrix.python-version }}-${{ matrix.os }}
-        if: always()
+          python utest/run.py -v
