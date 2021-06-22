@@ -116,7 +116,7 @@ class LibraryKeywordRunner(object):
         if self._executed_in_dry_run(self._handler):
             self._run(context, args)
         else:
-            self._handler.resolve_arguments(args)
+            self._handler.resolve_arguments(args, context.variables)
 
     def _executed_in_dry_run(self, handler):
         return (handler.libname == 'Reserved' or
