@@ -76,6 +76,18 @@ Execution Stops After Keyword Timeout
     No Operation
     [Teardown]    Keyword Timeout Occurs
 
+Execution Continues After Keyword Timeout Occurs In Executed Keyword
+    [Documentation]    FAIL    Teardown failed:
+    ...    Several failures occurred:
+    ...
+    ...    1) Keyword timeout 42 milliseconds exceeded.
+    ...
+    ...    2) This should be executed
+    ...
+    ...    ${SUITE TEARDOWN FAILED}
+    No Operation
+    [Teardown]    Keyword Timeout Occurs In Executed Keyword
+
 Execution Continues If Variable Does Not Exist
     [Documentation]    FAIL    Teardown failed:
     ...    Several failures occurred:
@@ -152,6 +164,10 @@ Keyword Timeout Occurs
     [Timeout]    42 ms
     Sleep    1 s
     Fail    This should not be executed
+
+Keyword Timeout Occurs In Executed Keyword
+    Keyword Timeout Occurs
+    Fail    This should be executed
 
 Missing Variables
     Log    ${this var does not exist}

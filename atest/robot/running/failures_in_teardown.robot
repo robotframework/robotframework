@@ -29,6 +29,15 @@ Execution Stops After Keyword Timeout
     Length Should Be    ${tc.teardown.kws}    2
     Should Be Equal    ${tc.teardown.kws[-1].status}    NOT RUN
 
+Execution Continues After Keyword Timeout Occurs In Executed Keyword
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Length Should Be    ${tc.teardown.body}                      2
+    Length Should Be    ${tc.teardown.body[0].body}              2
+    Should Be Equal     ${tc.teardown.body[0].body[0].status}    FAIL
+    Should Be Equal     ${tc.teardown.body[0].body[1].status}    NOT RUN
+    Should Be Equal     ${tc.teardown.body[0].status}            FAIL
+    Should Be Equal     ${tc.teardown.body[1].status}            FAIL
+
 Execution Continues If Variable Does Not Exist
     ${tc} =    Check Test Case    ${TESTNAME}
     Length Should Be    ${tc.teardown.kws}    3

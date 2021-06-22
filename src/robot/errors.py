@@ -86,8 +86,7 @@ class TimeoutError(RobotError):
 
     This exception is handled specially so that execution of the
     current test is always stopped immediately and it is not caught by
-    keywords executing other keywords (e.g. `Run Keyword And Expect
-    Error`).
+    keywords executing other keywords (e.g. `Run Keyword And Expect Error`).
     """
 
     def __init__(self, message='', test_timeout=True):
@@ -148,6 +147,8 @@ class ExecutionStatus(RobotError):
         if templated:
             return True
         if self.keyword_timeout:
+            if teardown:
+                self.keyword_timeout = False
             return False
         if teardown:
             return True
