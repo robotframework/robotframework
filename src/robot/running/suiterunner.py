@@ -170,7 +170,10 @@ class SuiteRunner(SuiteVisitor):
             result.message = status.message or result.message
         result.status = status.status
         result.endtime = get_timestamp()
+        failed_before_listeners = result.failed
         self._output.end_test(ModelCombiner(test, result))
+        if result.failed and not failed_before_listeners:
+            status.failure_occurred()
         self._context.end_test(result)
 
     def _add_exit_combine(self):

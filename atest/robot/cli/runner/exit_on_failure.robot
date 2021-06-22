@@ -80,6 +80,13 @@ Suite teardown fails
     Test Should Not Have Been Run    Pass
     Test Should Not Have Been Run    Fail
 
+Failure set by listener can initiate exit-on-failure
+    [Setup]    Run Tests
+    ...    --ExitOnFailure --Listener ${DATADIR}/cli/runner/failtests.py
+    ...    misc/pass_and_fail.robot
+    Check Test Case    Pass    status=FAIL
+    Test Should Not Have Been Run    Fail
+
 *** Keywords ***
 Test Should Not Have Been Run
     [Arguments]    ${name}
