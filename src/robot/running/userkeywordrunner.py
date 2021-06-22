@@ -82,7 +82,7 @@ class UserKeywordRunner(object):
                 result.timeout = str(timeout)
             with context.timeout(timeout):
                 exception, return_ = self._execute(context)
-                if exception and not exception.can_continue(teardown=context.in_teardown):
+                if exception and not exception.can_continue(context):
                     raise exception
                 return_value = self._get_return_value(variables, return_)
                 if exception:
