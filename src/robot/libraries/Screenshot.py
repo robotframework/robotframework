@@ -385,7 +385,7 @@ class ScreenshotTaker(object):
 
 if __name__ == "__main__":
     if len(sys.argv) not in [2, 3]:
-        sys.exit("Usage: %s <path>|test [wx|pygtk|pil|scrot]"
+        sys.exit("Usage: %s <path>|test [wxpython|pygtk|pil|scrot]"
                  % os.path.basename(sys.argv[0]))
     path = sys.argv[1] if sys.argv[1] != 'test' else None
     module = sys.argv[2] if len(sys.argv) > 2 else None
