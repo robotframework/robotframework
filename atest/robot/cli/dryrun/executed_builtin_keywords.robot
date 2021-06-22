@@ -20,4 +20,4 @@ Set Tags
 
 Remove Tags
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Test Tags    ${TESTNAME}    Tag1    Tag2    Tag3
+    Check Test Tags    ${TESTNAME}    Tag1    Tag3
