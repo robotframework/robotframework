@@ -39,8 +39,7 @@ class Failure(object):
 @py3to2
 class Exit(object):
 
-    def __init__(self, failure_mode=False, error_mode=False,
-                 skip_teardown_mode=False):
+    def __init__(self, failure_mode=False, error_mode=False, skip_teardown_mode=False):
         self.failure_mode = failure_mode
         self.error_mode = error_mode
         self.skip_teardown_mode = skip_teardown_mode
@@ -102,8 +101,7 @@ class _ExecutionStatus(object):
                 # Keep the Skip status in case the teardown failed
                 self.skipped = self.skipped or failure.skip
             elif self._skip_on_failure():
-                msg = self._skip_on_failure_message(
-                    'Setup failed:\n%s' % unic(failure))
+                msg = self._skip_on_failure_message('Setup failed:\n%s' % unic(failure))
                 self.failure.test = msg
                 self.skipped = True
             else:
@@ -122,8 +120,7 @@ class _ExecutionStatus(object):
 
     @property
     def failed(self):
-        return bool(self.parent and self.parent.failed or
-                    self.failure or self.exit)
+        return bool(self.parent and self.parent.failed or self.failure or self.exit)
 
     @property
     def status(self):
@@ -137,9 +134,10 @@ class _ExecutionStatus(object):
         return False
 
     def _skip_on_failure_message(self, failure):
-        return ("%s failed but its tags matched '--SkipOnFailure' and it was "
-                   "marked skipped.\n\nOriginal failure:\n%s"
-                   % (test_or_task('{Test}', self._rpa), unic(failure)))
+        return test_or_task(
+            "{Test} failed but its tags matched '--SkipOnFailure' and it was marked "
+            "skipped.\n\nOriginal failure:\n%s" % unic(failure), rpa=self._rpa
+        )
 
     @property
     def message(self):
@@ -159,11 +157,9 @@ class _ExecutionStatus(object):
 class SuiteStatus(_ExecutionStatus):
 
     def __init__(self, parent=None, exit_on_failure_mode=False,
-                 exit_on_error_mode=False,
-                 skip_teardown_on_exit_mode=False):
+                 exit_on_error_mode=False, skip_teardown_on_exit_mode=False):
         _ExecutionStatus.__init__(self, parent, exit_on_failure_mode,
-                                  exit_on_error_mode,
-                                  skip_teardown_on_exit_mode)
+                                  exit_on_error_mode, skip_teardown_on_exit_mode)
 
     def _my_message(self):
         return SuiteMessage(self).message

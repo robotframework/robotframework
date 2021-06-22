@@ -160,8 +160,7 @@ class SuiteRunner(SuiteVisitor):
         result.message = status.message or result.message
         if status.teardown_allowed:
             with self._context.test_teardown(result):
-                failure = self._run_teardown(test.teardown, status,
-                                             result)
+                failure = self._run_teardown(test.teardown, status, result)
                 if failure:
                     status.failure_occurred()
         if not status.failed and result.timeout and result.timeout.timed_out():
