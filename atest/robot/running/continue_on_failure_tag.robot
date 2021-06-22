@@ -44,3 +44,15 @@ Continue in IF in UK without tag
 
 Run Keywords with tag
     ${tc}=    Check Test Case    ${TESTNAME}
+
+Recursive Continue in test with tag and two nested UK without tag
+    ${tc}=    Check Test Case    ${TESTNAME}
+
+Recursive Continue in test with tag and two nested UK with and without tag
+    ${tc}=    Check Test Case    ${TESTNAME}
+
+Recursive Continue in test without tag and two nested UK with and without recursive tag
+    ${tc}=    Check Test Case    ${TESTNAME}
+
+Recursive Continue in test without tag and two nested UK without and with recursive tag
+    ${tc}=    Check Test Case    ${TESTNAME}

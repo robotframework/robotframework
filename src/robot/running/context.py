@@ -131,7 +131,10 @@ class _ExecutionContext(object):
         kw_or_test = self.user_keywords[-1] if self.user_keywords else self.test
         if not kw_or_test:
             return False
-        return 'robot:continue-on-failure' in kw_or_test.tags
+        if 'robot:continue-on-failure' in kw_or_test.tags:
+            return True
+        return self.test and 'robot:continue-on-failure-recursive' in self.test.tags \
+            or any([kw for kw in self.user_keywords if 'robot:continue-on-failure-recursive' in kw.tags])
 
     def end_suite(self, suite):
         for name in ['${PREV_TEST_NAME}',
