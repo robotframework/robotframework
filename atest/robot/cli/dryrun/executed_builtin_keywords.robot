@@ -16,15 +16,8 @@ Set Library Search Order
 
 Set Tags
     ${tc} =    Check Test Case    ${TESTNAME}
-    List Should Contain Value    ${tc.tags}    Tag0
-    List Should Contain Value    ${tc.tags}    Tag1
-    List Should Contain Value   ${tc.tags}    Tag2
-    List Should Contain Value   ${tc.tags}   Tag3
+    Check Test Tags    ${TESTNAME}    Tag0    Tag1    Tag2    Tag3
 
 Remove Tags
     ${tc} =    Check Test Case    ${TESTNAME}
-    List Should Contain Value   ${tc.tags}    Tag1
-    List Should Not Contain Value   ${tc.tags}    Tag2
-    List Should Contain Value   ${tc.tags}   Tag3
-
-
+    Check Test Tags    ${TESTNAME}    Tag1    Tag2    Tag3

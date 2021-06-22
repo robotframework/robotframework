@@ -120,9 +120,9 @@ class LibraryKeywordRunner(object):
 
     def _executed_in_dry_run(self, handler):
         keywords_to_execute = ('BuiltIn.Import Library',
-                                          'BuiltIn.Set Library Search Order',
-                                          'BuiltIn.Set Tags',
-                                          'BuiltIn.Remove Tags')
+                               'BuiltIn.Set Library Search Order',
+                               'BuiltIn.Set Tags',
+                               'BuiltIn.Remove Tags')
         return (handler.libname == 'Reserved' or
                 handler.longname in keywords_to_execute)
 
