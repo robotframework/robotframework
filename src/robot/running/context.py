@@ -128,10 +128,10 @@ class _ExecutionContext(object):
 
     @property
     def continue_on_failure(self):
-        parent = self.user_keywords[-1] if self.user_keywords else self.test
-        if not parent:
+        kw_or_test = self.user_keywords[-1] if self.user_keywords else self.test
+        if not kw_or_test:
             return False
-        return 'robot:continue-on-failure' in parent.tags
+        return 'robot:continue-on-failure' in kw_or_test.tags
 
     def end_suite(self, suite):
         for name in ['${PREV_TEST_NAME}',
