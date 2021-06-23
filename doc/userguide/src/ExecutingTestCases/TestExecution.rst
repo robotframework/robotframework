@@ -364,8 +364,8 @@ converting any failure into a continuable failure. These failures are
 handled by the framework exactly the same way as continuable failures
 originating from library keywords.
 
-Using reserved robot:continue-on-failure tag
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Controlling Continue on Failure Using Reserved Tags
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All Keywords executed as part of test cases or a user keywords which are
 tagged with the reserved tag `robot:continue-on-failure` are considered continuable
@@ -411,10 +411,37 @@ the "Perform some test keyword" failed or not.
        END
 
 
-Please note that setting `robot:continue-on-failure` using the keyword :name:`Set Tags`
-might not always be effective, it is only supported as part of the Test Suite, Test Case or
-User Keyword settings.
-The `robot:continue-on-failure` is new in Robot Framework 4.1.
+Setting `robot:continue-on-failure` within a test case will not
+propagate the continue-on-failure behaviour into user keywords
+executed from within this test case (same is true for user keywords
+executed from within a user keyword with the reserved tag set).
+
+To support use cases where the behaviour should propagate from
+test cases into user keywords (and/or from user keywords into other
+user keywords), the reserved tag `robot:continue-on-failure-recursive`
+can be used. The below examples executes all the keywords listed.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Test
+       [Tags]    robot:continue-on-failure-recursive
+       Should be Equal   1   2
+       User Keyword 1
+       Log   log from test case
+
+   *** Keywords ***
+   User Keyword 1
+       Should be Equal   3   4
+       Log   log from keyword 1
+       User Keyword 2
+
+   User Keyword 2
+       Should be Equal   5   6
+       Log   log from keyword 2
+
+
+The `robot:continue-on-failure*` tags are new in Robot Framework 4.1.
 
 Execution continues on teardowns automatically
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
