@@ -364,7 +364,7 @@ converting any failure into a continuable failure. These failures are
 handled by the framework exactly the same way as continuable failures
 originating from library keywords.
 
-Controlling continue-on-failure using reserved tags
+Controlling continue on failure using reserved tags
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All keywords executed as part of test cases or user keywords which are
