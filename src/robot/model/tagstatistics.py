@@ -73,10 +73,7 @@ class TagStatisticsBuilder(object):
 
     def _suppress_reserved(self, tag):
         # don't suppress reserved tags if the user explicitly included them
-        if tag.startswith('robot:') and not (self._included and self._included.match(tag)):
-            return True
-        else:
-            return False
+        return tag.startswith('robot:') and not self._included.match(tag)
 
 
 class TagStatInfo(object):
