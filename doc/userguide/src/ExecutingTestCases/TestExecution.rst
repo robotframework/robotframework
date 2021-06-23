@@ -364,14 +364,14 @@ converting any failure into a continuable failure. These failures are
 handled by the framework exactly the same way as continuable failures
 originating from library keywords.
 
-Controlling Continue on Failure Using Reserved Tags
+Controlling continue-on-failure using reserved tags
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-All Keywords executed as part of test cases or a user keywords which are
+All keywords executed as part of test cases or user keywords which are
 tagged with the reserved tag `robot:continue-on-failure` are considered continuable
 by default.
 
-Thus, the following two test cases `Test 1` and `Test 2` behave identically:
+Thus, the following two test cases :name:`Test 1` and :name:`Test 2` behave identically:
 
 .. sourcecode:: robotframework
 
@@ -412,7 +412,7 @@ the "Perform some test keyword" failed or not.
 
 
 Setting `robot:continue-on-failure` within a test case will not
-propagate the continue-on-failure behaviour into user keywords
+propagate the continue on failure behaviour into user keywords
 executed from within this test case (same is true for user keywords
 executed from within a user keyword with the reserved tag set).
 
@@ -441,7 +441,8 @@ can be used. The below examples executes all the keywords listed.
        Log   log from keyword 2
 
 
-The `robot:continue-on-failure*` tags are new in Robot Framework 4.1.
+The `robot:continue-on-failure` and `robot:continue-on-failure-recursive`
+tags are new in Robot Framework 4.1.
 
 Execution continues on teardowns automatically
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
