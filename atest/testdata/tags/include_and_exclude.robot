@@ -1,5 +1,5 @@
 *** Settings ***
-Force Tags      force    robot:foobar
+Force Tags      force    robot:just-an-example
 
 *** Test Cases ***
 Incl-1

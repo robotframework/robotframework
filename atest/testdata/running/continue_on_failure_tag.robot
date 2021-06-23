@@ -11,7 +11,7 @@ Continue in test with tag
     Fail   2
     Log    This should be executed
 
-Continue in test with set tag
+Continue in test with Set Tags
     [Documentation]    FAIL ${HEADER}\n\n
     ...    1) 1\n\n
     ...    2) 2
@@ -20,7 +20,7 @@ Continue in test with set tag
     Fail   2
     Log    This should be executed
 
-Continue in user kewyord with tag
+Continue in user keyword with tag
     [Documentation]    FAIL ${HEADER}\n\n
     ...    1) kw1a\n\n
     ...    2) kw1b
@@ -56,7 +56,7 @@ Continue in test with tag and two nested UK with tag
     Failure in user keyword with tag     run_kw=Failure in user keyword with tag
     Fail   This should be executed
 
-Continue in for loop with tag
+Continue in FOR loop with tag
     [Documentation]    FAIL ${HEADER}\n\n
     ...    1) loop-1\n\n
     ...    2) loop-2\n\n
@@ -66,7 +66,7 @@ Continue in for loop with tag
         Fail   loop-${val}
     END
 
-Continue in for loop with set tag
+Continue in FOR loop with Set Tags
     [Documentation]    FAIL ${HEADER}\n\n
     ...    1) loop-1\n\n
     ...    2) loop-2\n\n
@@ -76,22 +76,22 @@ Continue in for loop with set tag
         Fail   loop-${val}
     END
 
-Continue in for loop without tag
+No continue in FOR loop without tag
     [Documentation]    FAIL loop-1
     FOR    ${val}    IN    1    2    3
         Fail   loop-${val}
     END
 
-Continue in for loop in UK with tag
+Continue in FOR loop in UK with tag
     [Documentation]    FAIL ${HEADER}\n\n
     ...    1) kw-loop-1\n\n
     ...    2) kw-loop-2\n\n
     ...    3) kw-loop-3
-    For Loop in in user keyword with tag
+    FOR loop in in user keyword with tag
 
-Continue in for loop in UK without tag
+Continue in FOR loop in UK without tag
     [Documentation]    FAIL kw-loop-1
-    For Loop in in user keyword without tag
+    FOR loop in in user keyword without tag
 
 Continue in IF with tag
     [Documentation]    FAIL ${HEADER}\n\n
@@ -99,7 +99,6 @@ Continue in IF with tag
     ...    2) 2\n\n
     ...    3) 3\n\n
     ...    4) 4
-
     [Tags]   robot:continue-on-failure
     IF   1==1
         Fail    1
@@ -117,7 +116,6 @@ Continue in IF with set and remove tag
     ...    1) 1\n\n
     ...    2) 2\n\n
     ...    3) 3
-
     Set Tags   robot:continue-on-failure
     IF   1==1
         Fail    1
@@ -131,7 +129,7 @@ Continue in IF with set and remove tag
         Fail    this is not executed
     END
 
-Continue in IF without tag
+No continue in IF without tag
     [Documentation]    FAIL 1
     IF   1==1
         Fail    1
@@ -144,20 +142,20 @@ Continue in IF in UK with tag
     ...    2) kw1b\n\n
     ...    3) kw1c\n\n
     ...    4) kw1d
-    If in user keyword with tag
+    IF in user keyword with tag
 
-Continue in IF in UK without tag
+No continue in IF in UK without tag
     [Documentation]    FAIL kw1a
-    If in user keyword without tag
+    IF in user keyword without tag
 
-Run Keywords with tag
+Continue in Run Keywords with tag
     [Documentation]    FAIL ${HEADER}\n\n
     ...    1) 1\n\n
     ...    2) 2
     [Tags]   robot:continue-on-failure
     Run Keywords    Fail   1   AND   Fail   2
 
-Recursive Continue in test with tag and two nested UK without tag
+Recursive continue in test with tag and two nested UK without tag
     [Documentation]    FAIL ${HEADER}\n\n
     ...    1) kw2a\n\n
     ...    2) kw2b\n\n
@@ -168,7 +166,7 @@ Recursive Continue in test with tag and two nested UK without tag
     Failure in user keyword without tag     run_kw=Failure in user keyword without tag
     Fail   This should be executed
 
-Recursive Continue in test with set tag and two nested UK without tag
+Recursive continue in test with Set Tags and two nested UK without tag
     [Documentation]    FAIL ${HEADER}\n\n
     ...    1) kw2a\n\n
     ...    2) kw2b\n\n
@@ -179,7 +177,7 @@ Recursive Continue in test with set tag and two nested UK without tag
     Failure in user keyword without tag     run_kw=Failure in user keyword without tag
     Fail   This should be executed
 
-Recursive Continue in test with tag and two nested UK with and without tag
+Recursive continue in test with tag and two nested UK with and without tag
     [Documentation]    FAIL ${HEADER}\n\n
     ...    1) kw1a\n\n
     ...    2) kw1b\n\n
@@ -190,7 +188,7 @@ Recursive Continue in test with tag and two nested UK with and without tag
     Failure in user keyword with tag     run_kw=Failure in user keyword without tag
     Fail   This should be executed
 
-Recursive Continue in test without tag and two nested UK with and without recursive tag
+Recursive continue in user keyword
     [Documentation]    FAIL ${HEADER}\n\n
     ...    1) kw1a\n\n
     ...    2) kw1b\n\n
@@ -199,7 +197,7 @@ Recursive Continue in test without tag and two nested UK with and without recurs
     Failure in user keyword with recursive tag     run_kw=Failure in user keyword without tag
     Fail   This should not be executed
 
-Recursive Continue in test without tag and two nested UK without and with recursive tag
+No recursive continue in user keyword
     [Documentation]    FAIL kw2a
     Failure in user keyword without tag     run_kw=Failure in user keyword with recursive tag
     Fail   This should not be executed
@@ -207,8 +205,8 @@ Recursive Continue in test without tag and two nested UK without and with recurs
 *** Keywords ***
 
 Failure in user keyword with tag
-    [Tags]   robot:continue-on-failure
     [Arguments]    ${run_kw}=No Operation
+    [Tags]   robot:continue-on-failure
     Fail   kw1a
     Fail   kw1b
     Log    This should be executed
@@ -221,25 +219,25 @@ Failure in user keyword without tag
     Run Keyword   ${run_kw}
 
 Failure in user keyword with recursive tag
-    [Tags]   robot:continue-on-failure-recursive
     [Arguments]    ${run_kw}=No Operation
+    [Tags]   robot:continue-on-failure-recursive
     Fail   kw1a
     Fail   kw1b
     Log    This should be executed
     Run Keyword   ${run_kw}
 
-For Loop in in user keyword with tag
+FOR loop in in user keyword with tag
     [Tags]   robot:continue-on-failure
     FOR    ${val}    IN    1    2    3
         Fail   kw-loop-${val}
     END
 
-For Loop in in user keyword without tag
+FOR loop in in user keyword without tag
     FOR    ${val}    IN    1    2    3
         Fail   kw-loop-${val}
     END
 
-If in user keyword with tag
+IF in user keyword with tag
     [Tags]   robot:continue-on-failure
     IF   1==1
         Fail    kw1a
@@ -252,7 +250,7 @@ If in user keyword with tag
         Fail    kw1d
     END
 
-If in user keyword without tag
+IF in user keyword without tag
     IF   1==1
         Fail    kw1a
         Fail    kw1b

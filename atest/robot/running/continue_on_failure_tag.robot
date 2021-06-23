@@ -4,67 +4,67 @@ Resource          atest_resource.robot
 
 *** Test Cases ***
 Continue in test with tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
-Continue in test with set tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+Continue in test with Set Tags
+    Check Test Case    ${TESTNAME}
 
-Continue in user kewyord with tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+Continue in user keyword with tag
+    Check Test Case    ${TESTNAME}
 
 Continue in test with tag and UK without tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Continue in test with tag and nested UK with and without tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Continue in test with tag and two nested UK with tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
-Continue in for loop with tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+Continue in FOR loop with tag
+    Check Test Case    ${TESTNAME}
 
-Continue in for loop with set tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+Continue in FOR loop with Set Tags
+    Check Test Case    ${TESTNAME}
 
-Continue in for loop without tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+No continue in FOR loop without tag
+    Check Test Case    ${TESTNAME}
 
-Continue in for loop in UK with tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+Continue in FOR loop in UK with tag
+    Check Test Case    ${TESTNAME}
 
-Continue in for loop in UK without tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+Continue in FOR loop in UK without tag
+    Check Test Case    ${TESTNAME}
 
 Continue in IF with tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Continue in IF with set and remove tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
-Continue in IF without tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+No continue in IF without tag
+    Check Test Case    ${TESTNAME}
 
 Continue in IF in UK with tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
-Continue in IF in UK without tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+No continue in IF in UK without tag
+    Check Test Case    ${TESTNAME}
 
-Run Keywords with tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+Continue in Run Keywords with tag
+    Check Test Case    ${TESTNAME}
 
-Recursive Continue in test with tag and two nested UK without tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+Recursive continue in test with tag and two nested UK without tag
+    Check Test Case    ${TESTNAME}
 
-Recursive Continue in test with set tag and two nested UK without tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+Recursive continue in test with Set Tags and two nested UK without tag
+    Check Test Case    ${TESTNAME}
 
-Recursive Continue in test with tag and two nested UK with and without tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+Recursive continue in test with tag and two nested UK with and without tag
+    Check Test Case    ${TESTNAME}
 
-Recursive Continue in test without tag and two nested UK with and without recursive tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+Recursive continue in user keyword
+    Check Test Case    ${TESTNAME}
 
-Recursive Continue in test without tag and two nested UK without and with recursive tag
-    ${tc}=    Check Test Case    ${TESTNAME}
+No recursive continue in user keyword
+    Check Test Case    ${TESTNAME}
