@@ -15,9 +15,7 @@ Set Library Search Order
     Should Be Equal    ${tc.kws[4].name}    Dynamic.Parameters
 
 Set Tags
-    ${tc} =    Check Test Case    ${TESTNAME}
     Check Test Tags    ${TESTNAME}    Tag0    Tag1    Tag2    Tag3
 
 Remove Tags
-    ${tc} =    Check Test Case    ${TESTNAME}
     Check Test Tags    ${TESTNAME}    Tag1    Tag3
