@@ -11,6 +11,15 @@ Continue in test with tag
     Fail   2
     Log    This should be executed
 
+Continue in test with set tag
+    [Documentation]    FAIL ${HEADER}\n\n
+    ...    1) 1\n\n
+    ...    2) 2
+    Set Tags   robot:continue-on-failure
+    Fail   1
+    Fail   2
+    Log    This should be executed
+
 Continue in user kewyord with tag
     [Documentation]    FAIL ${HEADER}\n\n
     ...    1) kw1a\n\n
@@ -57,6 +66,16 @@ Continue in for loop with tag
         Fail   loop-${val}
     END
 
+Continue in for loop with set tag
+    [Documentation]    FAIL ${HEADER}\n\n
+    ...    1) loop-1\n\n
+    ...    2) loop-2\n\n
+    ...    3) loop-3
+    FOR    ${val}    IN    1    2    3
+        Set Tags   robot:continue-on-failure
+        Fail   loop-${val}
+    END
+
 Continue in for loop without tag
     [Documentation]    FAIL loop-1
     FOR    ${val}    IN    1    2    3
@@ -93,6 +112,25 @@ Continue in IF with tag
         Fail    4
     END
 
+Continue in IF with set and remove tag
+    [Documentation]    FAIL ${HEADER}\n\n
+    ...    1) 1\n\n
+    ...    2) 2\n\n
+    ...    3) 3
+
+    Set Tags   robot:continue-on-failure
+    IF   1==1
+        Fail    1
+        Fail    2
+    END
+    Remove Tags   robot:continue-on-failure
+    IF   1==2
+        No Operation
+    ELSE
+        Fail    3
+        Fail    this is not executed
+    END
+
 Continue in IF without tag
     [Documentation]    FAIL 1
     IF   1==1
@@ -127,6 +165,17 @@ Recursive Continue in test with tag and two nested UK without tag
     ...    4) kw2b\n\n
     ...    5) This should be executed
     [Tags]   robot:continue-on-failure-recursive
+    Failure in user keyword without tag     run_kw=Failure in user keyword without tag
+    Fail   This should be executed
+
+Recursive Continue in test with set tag and two nested UK without tag
+    [Documentation]    FAIL ${HEADER}\n\n
+    ...    1) kw2a\n\n
+    ...    2) kw2b\n\n
+    ...    3) kw2a\n\n
+    ...    4) kw2b\n\n
+    ...    5) This should be executed
+    Set Tags   robot:continue-on-failure-recursive
     Failure in user keyword without tag     run_kw=Failure in user keyword without tag
     Fail   This should be executed
 
