@@ -60,12 +60,12 @@ with open(OUTPATH, 'w') as output:
     path = INPATH.split(join('atest', 'testdata'))[1][1:].replace(os.sep, '/')
     output.write('''\
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    %s
+Suite Setup       Run Tests    ${EMPTY}    %s
 ''' % path)
     for name, value in SETTINGS:
-        output.write('%s%s\n' % (name.ljust(17), value))
+        output.write('%s%s\n' % (name.ljust(18), value))
     output.write('''\
-Resource         atest_resource.robot
+Resource          atest_resource.robot
 
 *** Test Cases ***
 ''')

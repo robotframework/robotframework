@@ -16,12 +16,12 @@ def extract_tests(path):
 
 def initialize(path):
     lib = os.path.splitext(os.path.basename(path))[0]
-    print """\
+    print("""\
 *** Settings ***
 Library    %s
 
 *** Test Cases ***\
-""" % lib
+""" % lib)
 
 
 def read_tests(path):
@@ -35,15 +35,15 @@ def read_tests(path):
             test = line[4:].split('(')[0]
         if line.startswith('|') and line.endswith('|') and len(line) > 1:
             if test:
-                print '\n', test
+                print('\n', test)
                 test = None
-            print '|    ' + line
+            print('|    ' + line)
 
 
 if __name__ == '__main__':
     try:
         path = sys.argv[1]
     except IndexError:
-        print __doc__
+        print(__doc__)
     else:
         extract_tests(path)

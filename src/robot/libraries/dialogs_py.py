@@ -75,8 +75,9 @@ class _TkDialog(Toplevel):
         return x, y
 
     def _bring_to_front(self):
+        self.lift()
         self.attributes('-topmost', True)
-        self.attributes('-topmost', False)
+        self.after_idle(self.attributes, '-topmost', False)
 
     def _create_body(self, message, value, **extra):
         frame = Frame(self)

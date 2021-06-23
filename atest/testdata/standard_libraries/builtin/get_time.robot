@@ -14,12 +14,12 @@ Get Time As Seconds After Epoch
 
 Get Time As Parts
     @{time} =    Get Time    year, month, day, hour, min, sec
-    Should Be True    2000 < @{time}[0] < 2100
-    Should Be True    1 <= int('@{time}[1]') <= 12
-    Should Be True    1 <= int('@{time}[2]') <= 31
-    Should Be True    0 <= int('@{time}[3]') <= 23
-    Should Be True    0 <= int('@{time}[4]') <= 59
-    Should Be True    0 <= int('@{time}[5]') <= 59
+    Should Be True    2000 < ${time}[0] < 2100
+    Should Be True    1 <= int('${time}[1]') <= 12
+    Should Be True    1 <= int('${time}[2]') <= 31
+    Should Be True    0 <= int('${time}[3]') <= 23
+    Should Be True    0 <= int('${time}[4]') <= 59
+    Should Be True    0 <= int('${time}[5]') <= 59
     ${year}    ${min}    ${sec} =    Get Time    seconds and minutes and year and whatnot
     Should Be True    2000 < ${year} < 2100
     Should Be True    0 <= int('${min}') <= 59

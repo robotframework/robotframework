@@ -31,7 +31,6 @@ Recursion below the recursion limit is ok
     Failing limited recursion
 
 *** Keywords ***
-
 Recursion
     Recursion
 
@@ -58,9 +57,11 @@ Recursion With Run Keyword
 
 Recursive for loop
     [Arguments]    ${rounds}
-    :FOR    ${i}    IN RANGE    ${rounds}
-    \    Recursive for loop    ${i}
+    FOR    ${i}    IN RANGE    ${rounds}
+        Recursive for loop    ${i}
+    END
 
 Infinitely recursive for loop
-    :FOR    ${var}    IN    recursion
-    \    Infinitely recursive for loop
+    FOR    ${var}    IN    recursion
+        Infinitely recursive for loop
+    END

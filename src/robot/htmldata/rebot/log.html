@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
@@ -11,7 +11,7 @@
 <link rel="stylesheet" type="text/css" href="log.css" media="all">
 <link rel="stylesheet" type="text/css" href="print.css" media="print">
 <link rel="stylesheet" type="text/css" href="../common/js_disabled.css" media="all">
-<link rel="stylesheet" type="text/css" href="../common/doc_formatting.css" media="all">
+<link rel="stylesheet" type="text/css" href="doc_formatting.css" media="all">
 <script type="text/javascript" src="log.js"></script>
 <script type="text/javascript" src="../lib/jquery.min.js"></script>
 <script type="text/javascript" src="../lib/jquery.tmpl.min.js"></script>
@@ -30,7 +30,7 @@
   <h1>Opening Robot Framework log failed</h1>
   <ul>
     <li>Verify that you have <b>JavaScript enabled</b> in your browser.</li>
-    <li>Make sure you are using a <b>modern enough browser</b>. If using Internet Explorer, version 8 or newer is required.</li>
+    <li>Make sure you are using a <b>modern enough browser</b>. If using Internet Explorer, version 11 is required.</li>
     <li>Check are there messages in your browser's <b>JavaScript error log</b>. Please report the problem if you suspect you have encountered a bug.</li>
   </ul>
 </div>
@@ -57,6 +57,7 @@ $(document).ready(function() {
     } else {
         expandSuite(topsuite);
     }
+    setTimeout(function () { loadAndExpandElementIds(window.output['expand_keywords']); }, 100);
 });
 
 function addLogLevelSelector(minLevel, defaultLevel) {
@@ -120,7 +121,7 @@ function makeElementVisible(id) {
     window.testdata.ensureLoaded(id, function (ids) {
         util.map(ids, expandElementWithId);
         if (ids.length) {
-            expandCriticalFailed(window.testdata.findLoaded(util.last(ids)));
+            expandFailed(window.testdata.findLoaded(util.last(ids)));
             window.location.hash = '';
             window.location.hash = id;
             highlightLinkTarget();
@@ -198,7 +199,7 @@ function addExecutionLog(main) {
 <script type="text/x-jquery-tmpl" id="suiteTemplate">
   <div id="${id}" class="suite">
     <div class="element-header closed" onclick="toggleSuite('${id}')">
-      <div class="element-header-left" title="{{html fullName}}">
+      <div class="element-header-left" title="SUITE  {{html name}}  [${status}]">
         <span class="elapsed" title="Elapsed time">${times.elapsedTime}</span>
         <span class="label ${status.toLowerCase()}">SUITE</span>
         <span class="name">{{html name}}</span>
@@ -260,11 +261,10 @@ function addExecutionLog(main) {
 <script type="text/x-jquery-tmpl" id="testTemplate">
   <div id="${id}" class="test">
     <div class="element-header closed" onclick="toggleTest('${id}')">
-      <div class="element-header-left" title="{{html fullName}}">
+      <div class="element-header-left" title="{{= testOrTask('{TEST}')}}  {{html name}}  [${status}]">
         <span class="elapsed" title="Elapsed time">${times.elapsedTime}</span>
         <span class="label ${status.toLowerCase()}">{{= testOrTask('{TEST}')}}</span>
         <span class="name">{{html name}}</span>
-        {{if !isCritical}}(non-critical){{/if}}
       </div>
       <div class="element-header-right" onclick="stopPropagation(event)" title="">
         <a class="expand" title="Expand all" href="javascript:expandAll('${id}')"></a>
@@ -303,7 +303,7 @@ function addExecutionLog(main) {
         </tr>
         <tr>
           <th>Status:</th>
-          <td><span class="label ${status.toLowerCase()}">${status}</span> ({{if isCritical}}critical{{else}}non-critical{{/if}})</td>
+          <td><span class="label ${status.toLowerCase()}">${status}</span></td>
         </tr>
         {{if message()}}
         <tr>
@@ -319,7 +319,7 @@ function addExecutionLog(main) {
 <script type="text/x-jquery-tmpl" id="keywordTemplate">
   <div id="${id}" class="keyword">
     <div class="element-header closed" onclick="toggleKeyword('${id}')">
-      <div class="element-header-left" title="{{html name}}">
+      <div class="element-header-left" title="${type}  {{if name}}{{html fullName}}  {{/if}}[${status}]">
         <span class="elapsed" title="Elapsed time">${times.elapsedTime}</span>
         <span class="label keyword ${status.toLowerCase()}">${type}</span>
         <span>{{html assign}}</span>

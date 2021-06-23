@@ -14,13 +14,12 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.model import Keywords
 from robot.output import LOGGER
 from robot.result import Keyword as KeywordResult
 from robot.utils import prepr, unic
-from robot.variables import VariableAssignment, contains_var, is_list_var
+from robot.variables import contains_variable, is_list_variable, VariableAssignment
 
-from .steprunner import StepRunner
+from .bodyrunner import BodyRunner
 from .model import Keyword
 from .outputcapture import OutputCapturer
 from .signalhandler import STOP_SIGNAL_MONITOR
@@ -28,8 +27,6 @@ from .statusreporter import StatusReporter
 
 
 class LibraryKeywordRunner(object):
-    _executed_in_dry_run = ('BuiltIn.Import Library',
-                            'BuiltIn.Set Library Search Order')
 
     def __init__(self, handler, name=None):
         self._handler = handler
@@ -48,13 +45,15 @@ class LibraryKeywordRunner(object):
     def longname(self):
         return '%s.%s' % (self.library.name, self.name)
 
-    def run(self, kw, context):
+    def run(self, kw, context, run=True):
         assignment = VariableAssignment(kw.assign)
-        with StatusReporter(context, self._get_result(kw, assignment)):
-            with assignment.assigner(context) as assigner:
-                return_value = self._run(context, kw.args)
-                assigner.assign(return_value)
-                return return_value
+        result = self._get_result(kw, assignment)
+        with StatusReporter(kw, result, context, run):
+            if run:
+                with assignment.assigner(context) as assigner:
+                    return_value = self._run(context, kw.args)
+                    assigner.assign(return_value)
+                    return return_value
 
     def _get_result(self, kw, assignment):
         handler = self._handler
@@ -109,15 +108,20 @@ class LibraryKeywordRunner(object):
     def dry_run(self, kw, context):
         assignment = VariableAssignment(kw.assign)
         result = self._get_result(kw, assignment)
-        with StatusReporter(context, result, dry_run_lib_kw=True):
+        with StatusReporter(kw, result, context, run=False):
             assignment.validate_assignment()
             self._dry_run(context, kw.args)
 
     def _dry_run(self, context, args):
-        if self._handler.longname in self._executed_in_dry_run:
+        if self._executed_in_dry_run(self._handler):
             self._run(context, args)
         else:
             self._handler.resolve_arguments(args)
+
+    def _executed_in_dry_run(self, handler):
+        return (handler.libname == 'Reserved' or
+                handler.longname in ('BuiltIn.Import Library',
+                                     'BuiltIn.Set Library Search Order'))
 
 
 class EmbeddedArgumentsRunner(LibraryKeywordRunner):
@@ -135,6 +139,11 @@ class EmbeddedArgumentsRunner(LibraryKeywordRunner):
     def _dry_run(self, context, args):
         return LibraryKeywordRunner._dry_run(self, context, self._embedded_args)
 
+    def _get_result(self, kw, assignment):
+        result = LibraryKeywordRunner._get_result(self, kw, assignment)
+        result.sourcename = self._handler.name
+        return result
+
 
 class RunKeywordRunner(LibraryKeywordRunner):
 
@@ -142,10 +151,7 @@ class RunKeywordRunner(LibraryKeywordRunner):
         LibraryKeywordRunner.__init__(self, handler)
         self._default_dry_run_keywords = default_dry_run_keywords
 
-    # TODO: Should this be removed altogether?
-    # - Doesn't seem to be really needed.
-    # - Not used with dynamic run kws in the new design (at least currently)
-    def _get_timeout(self, namespace):
+    def _get_timeout(self, context):
         return None
 
     def _run_with_output_captured_and_signal_monitor(self, runner, context):
@@ -153,23 +159,16 @@ class RunKeywordRunner(LibraryKeywordRunner):
 
     def _dry_run(self, context, args):
         LibraryKeywordRunner._dry_run(self, context, args)
-        keywords = self._get_runnable_dry_run_keywords(args)
-        StepRunner(context).run_steps(keywords)
-
-    def _get_runnable_dry_run_keywords(self, args):
-        keywords = Keywords()
-        for keyword in self._get_dry_run_keywords(args):
-            if contains_var(keyword.name):
-                continue
-            keywords.append(keyword)
-        return keywords
+        keywords = [kw for kw in self._get_dry_run_keywords(args)
+                    if not contains_variable(kw.name)]
+        BodyRunner(context).run(keywords)
 
     def _get_dry_run_keywords(self, args):
         name = self._handler.name
         if name == 'Run Keyword If':
-            return list(self._get_run_kw_if_keywords(args))
+            return self._get_run_kw_if_keywords(args)
         if name == 'Run Keywords':
-            return list(self._get_run_kws_keywords(args))
+            return self._get_run_kws_keywords(args)
         if self._default_dry_run_keywords:
             return self._get_default_run_kw_keywords(args)
         return []
@@ -189,7 +188,7 @@ class RunKeywordRunner(LibraryKeywordRunner):
             yield else_call
         elif self._validate_kw_call(given_args):
             expr, kw_call = given_args[0], given_args[1:]
-            if not is_list_var(expr):
+            if not is_list_variable(expr):
                 yield kw_call
 
     def _split_run_kw_if_args(self, given_args, control_word, required_after):
@@ -199,14 +198,14 @@ class RunKeywordRunner(LibraryKeywordRunner):
         if not (self._validate_kw_call(expr_and_call) and
                     self._validate_kw_call(remaining, required_after)):
             raise DataError("Invalid 'Run Keyword If' usage.")
-        if is_list_var(expr_and_call[0]):
+        if is_list_variable(expr_and_call[0]):
             return (), remaining
         return expr_and_call[1:], remaining
 
     def _validate_kw_call(self, kw_call, min_length=2):
         if len(kw_call) >= min_length:
             return True
-        return any(is_list_var(item) for item in kw_call)
+        return any(is_list_variable(item) for item in kw_call)
 
     def _get_run_kws_keywords(self, given_args):
         for kw_call in self._get_run_kws_calls(given_args):

@@ -2,12 +2,12 @@
 Resource          atest_resource.robot
 
 *** Variables ***
-${1 PASS MSG}     1 critical test, 1 passed, 0 failed\n 1 test total, 1 passed, 0 failed
-${1 FAIL MSG}     1 critical test, 0 passed, 1 failed\n 1 test total, 0 passed, 1 failed
-${2 FAIL MSG}     2 critical tests, 0 passed, 2 failed\n 2 tests total, 0 passed, 2 failed
-${4 FAIL MSG}     4 critical tests, 0 passed, 4 failed\n 4 tests total, 0 passed, 4 failed
-${5 FAIL MSG}     5 critical tests, 0 passed, 5 failed\n 5 tests total, 0 passed, 5 failed
-${12 FAIL MSG}    12 critical tests, 0 passed, 12 failed\n 12 tests total, 0 passed, 12 failed
+${1 PASS MSG}     1 test, 1 passed, 0 failed
+${1 FAIL MSG}     1 test, 0 passed, 1 failed
+${2 FAIL MSG}     2 tests, 0 passed, 2 failed
+${4 FAIL MSG}     4 tests, 0 passed, 4 failed
+${5 FAIL MSG}     5 tests, 0 passed, 5 failed
+${12 FAIL MSG}    12 tests, 0 passed, 12 failed
 ${ALSO}           \n\nAlso teardown of the parent suite failed.
 ${EXECUTED FILE}    %{TEMPDIR}/robot-suite-teardown-executed.txt
 
@@ -73,25 +73,17 @@ Failing Higher Level Suite Setup
     ...    Test 2
     Stderr Should Be Empty
 
-Failing Suite Teardown When All Tests Pass
+Failing Suite Teardown
     Run Tests    ${EMPTY}    core/failing_suite_teardown.robot
     ${error} =    Catenate    SEPARATOR=\n\n
     ...    Several failures occurred:
     ...    1) first
     ...    2) second
     Check Suite Status    ${SUITE}    FAIL
-    ...    Suite teardown failed:\n${error}\n\n${2 FAIL MSG}
-    ...    Test 1    Test 2
+    ...    Suite teardown failed:\n${error}\n\n3 tests, 0 passed, 2 failed, 1 skipped
+    ...    Passing    Failing    Skipping
     Should Be Equal    ${SUITE.teardown.status}    FAIL
     Output should contain teardown error    ${error}
-
-Failing Suite Teardown When Also Tests Fail
-    Run Tests    ${EMPTY}    core/failing_suite_teardown_2.robot
-    Check Suite Status    ${SUITE}    FAIL
-    ...    Suite teardown failed:\nExpected failure\n\n${5 FAIL MSG}
-    ...    Test Passes    Test Fails    Setup Fails    Teardown Fails    Test and Teardown Fail
-    Should Be Equal    ${SUITE.teardown.status}    FAIL
-    Output should contain teardown error    Expected failure
 
 Erroring Suite Teardown
     Run Tests    ${EMPTY}    core/erroring_suite_teardown.robot
@@ -180,4 +172,3 @@ Output should contain teardown error
     [Arguments]    ${error}
     ${keywords} =    Get Elements    ${OUTFILE}    suite/kw
     Element Text Should Be    ${keywords[-1]}    ${error}    xpath=status
-

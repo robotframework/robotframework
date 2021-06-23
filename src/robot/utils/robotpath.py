@@ -20,7 +20,7 @@ import sys
 from robot.errors import DataError
 
 from .encoding import system_decode
-from .platform import IRONPYTHON, PY_VERSION, PY2, WINDOWS
+from .platform import IRONPYTHON, JYTHON, PY_VERSION, PY2, WINDOWS
 from .robottypes import is_unicode
 from .unic import unic
 
@@ -34,6 +34,14 @@ if IRONPYTHON and PY_VERSION == (2, 7, 8):
                 return drive + path
             return path
         return os.path.abspath(path)
+elif WINDOWS and JYTHON and PY_VERSION > (2, 7, 0):
+    # https://bugs.jython.org/issue2824
+    def _abspath(path):
+        path = os.path.abspath(path)
+        if path[:1] == '\\' and path[:2] != '\\\\':
+            drive = os.getcwd()[:2]
+            path = drive + path
+        return path
 else:
     _abspath = os.path.abspath
 
@@ -101,6 +109,7 @@ def get_link_path(target, base):
         url = 'file:' + url
     return url
 
+
 def _get_link_path(target, base):
     target = abspath(target)
     base = abspath(base)
@@ -121,6 +130,7 @@ def _get_link_path(target, base):
     path = os.path.join(dirs_up, target[common_len + len(os.sep):])
     return os.path.normpath(path)
 
+
 def _common_path(p1, p2):
     """Returns the longest path common to p1 and p2.
 
@@ -128,6 +138,12 @@ def _common_path(p1, p2):
     path separators as such, so it may return invalid paths:
     commonprefix(('/foo/bar/', '/foo/baz.txt')) -> '/foo/ba' (instead of /foo)
     """
+    # os.path.dirname doesn't normalize leading double slash
+    # https://github.com/robotframework/robotframework/issues/3844
+    if p1.startswith('//'):
+        p1 = '/' + p1.lstrip('/')
+    if p2.startswith('//'):
+        p2 = '/' + p2.lstrip('/')
     while p1 and p2:
         if p1 == p2:
             return p1

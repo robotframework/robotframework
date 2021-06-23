@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.utils import test_or_task
+
 from .stats import TotalStat
 from .visitor import SuiteVisitor
 
@@ -21,39 +23,54 @@ class TotalStatistics(object):
     """Container for total statistics."""
 
     def __init__(self, rpa=False):
-        #: Instance of :class:`~robot.model.stats.TotalStat` for critical tests.
-        test_or_task = 'Tests' if not rpa else 'Tasks'
-        self.critical = TotalStat('Critical ' + test_or_task)
         #: Instance of :class:`~robot.model.stats.TotalStat` for all the tests.
-        self.all = TotalStat('All ' + test_or_task)
+        self._stat = TotalStat(test_or_task('All {Test}s', rpa))
         self._rpa = rpa
 
     def visit(self, visitor):
-        visitor.visit_total_statistics(self)
+        visitor.visit_total_statistics(self._stat)
 
     def __iter__(self):
-        return iter([self.critical, self.all])
+        yield self._stat
+
+    @property
+    def total(self):
+        return self._stat.total
+
+    @property
+    def passed(self):
+        return self._stat.passed
+
+    @property
+    def skipped(self):
+        return self._stat.skipped
+
+    @property
+    def failed(self):
+        return self._stat.failed
+
+    def add_test(self, test):
+        self._stat.add_test(test)
 
     @property
     def message(self):
         """String representation of the statistics.
 
         For example::
-
-            2 critical tests, 1 passed, 1 failed
-            2 tests total, 1 passed, 1 failed
+            2 tests, 1 passed, 1 failed
         """
+        # TODO: should this message be highlighted in console
         test_or_task = 'test' if not self._rpa else 'task'
-        ctotal, cend, cpass, cfail = self._get_counts(self.critical)
-        atotal, aend, apass, afail = self._get_counts(self.all)
-        return ('%d critical %s%s, %d passed, %d failed\n'
-                '%d %s%s total, %d passed, %d failed'
-                % (ctotal, test_or_task, cend, cpass, cfail,
-                   atotal, test_or_task, aend, apass, afail))
+        total, end, passed, failed, skipped = self._get_counts()
+        template = '%d %s%s, %d passed, %d failed'
+        if skipped:
+            return ((template + ', %d skipped')
+                    % (total, test_or_task, end, passed, failed, skipped))
+        return template % (total, test_or_task, end, passed, failed)
 
-    def _get_counts(self, stat):
-        ending = 's' if stat.total != 1 else ''
-        return stat.total, ending, stat.passed, stat.failed
+    def _get_counts(self):
+        ending = 's' if self.total != 1 else ''
+        return self.total, ending, self.passed, self.failed, self.skipped
 
 
 class TotalStatisticsBuilder(SuiteVisitor):
@@ -64,9 +81,7 @@ class TotalStatisticsBuilder(SuiteVisitor):
             suite.visit(self)
 
     def add_test(self, test):
-        self.stats.all.add_test(test)
-        if test.critical:
-            self.stats.critical.add_test(test)
+        self.stats.add_test(test)
 
     def visit_test(self, test):
         self.add_test(test)

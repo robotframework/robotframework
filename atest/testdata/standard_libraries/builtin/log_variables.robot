@@ -20,6 +20,11 @@ Log Variables
     Log Variables In UK
     [Teardown]    Set Log Level    INFO
 
+List and dict variables failing during iteration
+    Import Variables    ${CURDIR}/broken_containers.py
+    Log Variables
+    Log Many    ${BROKEN ITERABLE}    ${BROKEN SEQUENCE}    ${BROKEN MAPPING}
+
 *** Keyword ***
 My Suite Setup
     ${suite_setup_local_var} =    Set Variable    Variable available only locally in suite setup

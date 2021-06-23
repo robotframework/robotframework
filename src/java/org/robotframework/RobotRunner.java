@@ -29,7 +29,7 @@ import org.python.util.PythonInterpreter;
  *
  * {@code
  * try (RobotRunner runner = new RobotRunner()) {
- *     runner.run(new String[] {"mytests.txt"});
+ *     runner.run(new String[] {"tests.robot"});
  * }
  * }
  * </pre>
@@ -55,7 +55,10 @@ public class RobotRunner implements AutoCloseable {
     }
 
     private PyObject importRunnerClass() {
-        interpreter.exec("import robot; from robot.jarrunner import JarRunner");
+        interpreter.exec(
+            "from robot.jarrunner import JarRunner, process_jythonpath\n" +
+            "process_jythonpath()"
+        );
         return interpreter.get("JarRunner");
     }
 

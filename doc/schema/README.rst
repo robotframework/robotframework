@@ -1,74 +1,63 @@
-Robot Framework output XML schema
-=================================
+Robot Framework and Libdoc schema definitions
+=============================================
 
 Introduction
 ------------
 
-While Robot Framework is running tests, it generates an XML output file
-containing all information about the execution. After execution is over it
-creates, by default, log and report files using
-`rebot tool <http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#rebot>`_
-internally. The same ``rebot`` functionality can also be used externally
-afterwards both as a standalone tool and
-`programmatically <http://robot-framework.readthedocs.org/en/latest/autodoc/robot.html#robot.rebot.rebot>`_.
+This directory contains schema definitions for Robot Frameworks output.xml files
+as well as for spec files created by Libdoc_.
 
-This document describes the format of the output file in high level and in the
-same folder there are detailed
-`XML schema definition <http://en.wikipedia.org/wiki/XML_Schema_(W3C)>`_ (XSD)
-files that can be used for validating that an XML file is Robot Framework
-compatible. The output file format can be useful both for people interested in
-parsing the output and for people interested to create Robot Framework
-compatible outputs.
-
-General structure
+output.xml schema
 -----------------
 
-These are the main elements of the XML output with descriptions of their
-sub-elements. Unless stated otherwise, all attributes are optional. Additionally
-``rebot`` does not care of the order of the XML elements, except for the order
-of suite, test, and kw elements. Starting from Robot Framework 2.9, empty
-elements and attributes are not written to the output XML. This means that,
-for example, test case having no documentation has no ``<doc>`` element either.
+While Robot Framework is running tests, it generates an XML output file
+containing all information about the execution. After execution is over it
+creates, by default, log and report files based on the output.xml file.
+Logs and reports can be generated also afterwards both using the standalone
+Rebot_ tool and programmatically__. The output.xml file format can be useful
+both for people interested in parsing the output and for people interested
+to create Robot Framework compatible outputs.
 
-robot - root element
-    * ``suite`` - root element always has one suite which contains the subsuites and tests
-    * ``statistics`` - statistics contains statistics of the test run
-    * ``errors`` - if there were any errors, they are listed in this element
+This directory contains XSD_ schema definitions that are compatible with
+different Robot Framework versions. Newer output.xml files have ``schemaversion``
+attribute telling which version they support and older implicitly support schema
+version 1.
 
-suite - suite element, name is given as an attribute
-    * ``kw`` - suite can have two kw elements: setup and teardown, both are optional
-    * ``suite`` - any number of sub suites in execution order
-    * ``test`` - any number of tests in execution order
-    * ``doc`` - optional documentation element
-    * ``metadata`` - optional suite metadata
-    * ``status`` - suite has to have a status element
+  * `<robot.02.xsd>`__ - Compatible with Robot Framework >= 4.0.
+  * `<robot.01.xsd>`__ - Compatible with Robot Framework < 4.0.
 
-test - test element, name is given as an attribute
-    * ``kw`` - keywords of the test in execution order
-    * ``msg`` - optional test message
-    * ``doc`` - optional test documentation
-    * ``tags`` - optional test tags
-    * ``timeout`` - optional test timeout. Before 3.0 this was an attribute.
-    * ``status`` - test has to have a status
+Due to XSD 1.1 not being widely adopted, these schema definitions use XSD 1.0.
+Newer schema definitions contain embedded documentation and comments explaining
+the structure in more detail. They also contain instructions how to make them
+XSD 1.1 compatible if needed.
 
-kw - keyword element, name is given as an attribute. Type attribute describes the type of keyword. If this attribute is not present, type is assumed to be ``kw``.
-    * ``tags`` - optional keyword tags (new in 2.9)
-    * ``doc`` - optional keyword documentation
-    * ``arguments`` - optional keyword arguments
-    * ``assignment`` - possible assignment of keyword's return values to variables, each variable in ``var`` subelement (new in 2.9)
-    * ``kw`` - possible sub-keywords in execution order
-    * ``msg`` - any number of optional keyword messages
-    * ``timeout`` - optional keyword timeout. Before 3.0 this was an attribute.
-    * ``status`` - keyword has to have a status
+.. _Rebot: http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#rebot
+__ http://robot-framework.readthedocs.org/en/latest/autodoc/robot.html#robot.rebot.rebot
+.. _XSD: http://en.wikipedia.org/wiki/XML_Schema_(W3C)
 
-For more details and full list of elements and attributes, please see the XML schema files below.
+Libdoc schema
+-------------
 
-XML schema definition
----------------------
+Libdoc_ tool distributed with Robot Framework can generate machine readable spec files
+both in XML and JSON format. XML spec files have XSD_ 1.0 compatible schema definition
+and JSON spec schema is JSON Schema `DRAFT-7`__ compatible.
 
-Available schema files:
+  * `<libdoc.03.xsd>`__ - Compatible with Robot Framework >= 4.0.
+  * `<libdoc.02.xsd>`__ - Compatible with Robot Framework == 3.2.
+  * `<libdoc.01.xsd>`__ - Compatible with Robot Framework < 3.2.
+  * `<libdoc_schema.json>`__ - Compatible with Robot Framework >= 4.0.
 
-  * `<robot-xsd10.xsd>`__ - XSD 1.0 compatible version
-  * `<robot-xsd11.xsd>`__ - XSD 1.1 compatible version
+.. _Libdoc: http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#libdoc
+__ https://json-schema.org/specification-links.html#draft-7
 
-The latter schema file is more complete, but XSD 1.1 is not as widely supported as the 1.0 version.
+Testing schemas
+---------------
+
+Both output.xml and Libdoc schema definitions are tested as part of `acceptance test
+runs <../../atest/README.rst>`__ by validating created outputs against the appropriate
+schemas. Most output.xml files created during test runs are not validated, however,
+because that would slow down test execution a bit too much. Full validation `can be
+enabled separately`__ and that should be done if the schema is updated or output.xml
+structure is changed.
+
+__ https://github.com/robotframework/robotframework/blob/master/atest/README.rst#schema-validation

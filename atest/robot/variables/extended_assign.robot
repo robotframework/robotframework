@@ -3,7 +3,6 @@ Suite Setup      Run Tests    ${EMPTY}    variables/extended_assign.robot
 Resource         atest_resource.robot
 
 *** Test Cases ***
-
 Set attributes to Python object
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    \${VAR.attr} = new value
@@ -13,7 +12,10 @@ Setting attribute to Java object
     [Tags]    require-jython
     Check Test Case    ${TESTNAME}
 
-Set attribute not directly in base
+Set nested attribute
+    Check Test Case    ${TESTNAME}
+
+Set nested attribute when parent uses item access
     Check Test Case    ${TESTNAME}
 
 Trying to set un-settable attribute

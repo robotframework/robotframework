@@ -71,7 +71,7 @@ Should Match Regexp returns match and groups
     ${match}    @{groups} =    Should Match Regexp    Foo: 42 (xxx)    ^(Fo+)([:.;]) (\\d+?)
     Should Be Equal    ${match}    Foo: 4
     Should Be True    @{groups} == ['Foo', ':', '4']
-    ${match}    ${group1}    ${group2} =    Should Match Regexp    Hello, (my) World!!!!!    (?ix)^hel+o,\\s # Comment \n \\((my|your)\\)\\ WORLD(!*)$
+    ${match}    ${group1}    ${group2} =    Should Match Regexp    Hello, (my) World!!!!!    (?ix)^hel+o,\\s # Comment \n\\((my|your)\\)\\ WORLD(!*)$
     Should Be Equal    ${match}    Hello, (my) World!!!!!
     Should Be Equal    ${group1}    my
     Should Be Equal    ${group2}    !!!!!

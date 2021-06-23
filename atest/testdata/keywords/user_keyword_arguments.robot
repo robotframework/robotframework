@@ -139,7 +139,9 @@ Default With List Variable
     Should Be True    $result is $arg
 
 Default With Invalid List Variable
-    [Documentation]    FAIL Resolving argument default values failed: Value of variable '\@{VAR}' is not list or list-like.
+    [Documentation]    FAIL
+    ...    Resolving argument default values failed: \
+    ...    Value of variable '\@{VAR}' is not list or list-like.
     Default With Invalid List Variable
 
 Default With Dict Variable
@@ -152,17 +154,27 @@ Default With Dict Variable
     Should Be True    $result is $arg
 
 Default With Invalid Dict Variable
-    [Documentation]    FAIL Resolving argument default values failed: Value of variable '\&{VAR}' is not dictionary or dictionary-like.
+    [Documentation]    FAIL
+    ...    Resolving argument default values failed: \
+    ...    Value of variable '\&{VAR}' is not dictionary or dictionary-like.
     Default With Invalid Dict Variable
+
+Argument With `=` In Name
+    ${result} =    Argument With `=` In Name    x
+    Should Be Equal    ${result}    x-=-x
+    ${result} =    Argument With `=` In Name    x    y
+    Should Be Equal    ${result}    x-y-x
+    ${result} =    Argument With `=` In Name    x    y    z
+    Should Be Equal    ${result}    x-y-z
 
 Calling Using List Variables
     [Documentation]    FAIL Keyword 'A 0 1' expected 0 to 1 arguments, got 3.
-    A 0    @{EMPTY}
-    A 1    @{EMPTY}    arg
-    A 3    @{LIST}
+    A 0      @{EMPTY}
+    A 1      @{EMPTY}    arg
+    A 3      @{LIST}
     A 1 3    @{LIST}
-    A 3    @{LIST}    @{EMPTY}
-    A 0 1    @{LIST}    @{EMPTY}
+    A 3      @{LIST}     @{EMPTY}
+    A 0 1    @{LIST}     @{EMPTY}
 
 Calling Using Dict Variables
     &{arg} =    Create Dictionary    arg=value
@@ -183,15 +195,18 @@ Caller does not see modifications to varargs
     Should Be True    @{v2} == ['list2']
 
 Invalid Arguments Spec - Invalid argument syntax
-    [Documentation]    FAIL Invalid argument specification: Invalid argument syntax 'no deco'.
+    [Documentation]    FAIL
+    ...    Invalid argument specification: Invalid argument syntax 'no deco'.
     Invalid argument syntax
 
 Invalid Arguments Spec - Non-default after defaults
-    [Documentation]    FAIL Invalid argument specification: Non-default argument after default arguments.
+    [Documentation]    FAIL
+    ...    Invalid argument specification: Non-default argument after default arguments.
     Non-default after defaults
 
 Invalid Arguments Spec - Kwargs not last
-    [Documentation]    FAIL Invalid argument specification: Only last argument can be kwargs.
+    [Documentation]    FAIL
+    ...    Invalid argument specification: Only last argument can be kwargs.
     Kwargs not last
 
 *** Keywords ***
@@ -283,6 +298,10 @@ Default With Dict Variable
 
 Default With Invalid Dict Variable
     [Arguments]    ${invalid}=&{VAR}
+
+Argument With `=` In Name
+    [Arguments]    ${=}    ${==}==    ${===}=${=}
+    [Return]    ${=}-${==}-${===}
 
 Mutate Lists
     [Arguments]    ${list1}    @{list2}

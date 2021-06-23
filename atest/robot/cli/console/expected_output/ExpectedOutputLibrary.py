@@ -3,11 +3,14 @@ from fnmatch import fnmatchcase
 from operator import eq
 
 from robot.api import logger
+from robot.api.deco import keyword
 
 
+ROBOT_AUTO_KEYWORDS = False
 CURDIR = dirname(abspath(__file__))
 
 
+@keyword
 def output_should_be(actual, expected, **replaced):
     actual = _read_file(actual, 'Actual')
     expected = _read_file(join(CURDIR, expected), 'Expected', replaced)

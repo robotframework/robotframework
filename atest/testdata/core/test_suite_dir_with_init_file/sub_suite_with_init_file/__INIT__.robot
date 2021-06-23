@@ -4,7 +4,7 @@ Test Setup        Log    Default setup from sub suite file
 Force Tags        sub suite force
 Test Timeout      1 minute 52 seconds
 Library           OperatingSystem
-Invalid In Sub
+Megadata          This causes recommendation.
 
 *** Variable ***
 ${default}        default
@@ -20,4 +20,3 @@ Create Message
     [Arguments]    @{msg_parts}
     ${msg}    Catenate    @{msg_parts}
     [Return]    ${msg}
-

@@ -9,15 +9,18 @@ try:
 except ImportError:
     class Enum(object):
         pass
+from fractions import Fraction
 from numbers import Integral, Real
 
 from robot.api.deco import keyword
-from robot.utils import PY2, unicode
+from robot.utils import PY2, PY3, unicode
 
 
 class MyEnum(Enum):
     FOO = 1
     bar = 'xxx'
+    foo = 'yyy'
+    normalize_me = True
 
 
 class Unknown(object):
@@ -99,6 +102,11 @@ def nonetype(argument, expected=None):
     _validate_type(argument, expected)
 
 
+@keyword(types={'argument': None})
+def none(argument, expected=None):
+    _validate_type(argument, expected)
+
+
 @keyword(types={'argument': list})
 def list_(argument, expected=None):
     _validate_type(argument, expected)
@@ -175,14 +183,12 @@ def kwargs(expected=None, **argument):
     _validate_type(argument, expected)
 
 
-try:
+if PY3:
     exec('''
 @keyword(types={'argument': float})
 def kwonly(*, argument, expected=None):
     _validate_type(argument, expected)
 ''')
-except SyntaxError:
-    pass
 
 
 @keyword(types='invalid')
@@ -197,6 +203,36 @@ def non_matching_name(argument):
 
 @keyword(types={'argument': int, 'return': float})
 def return_type(argument, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(types=[list])
+def type_and_default_1(argument=None, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(types=[int])
+def type_and_default_2(argument=True, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(types=[timedelta])
+def type_and_default_3(argument=0, expected=None):
+    _validate_type(argument, expected)
+
+
+if PY3:
+    exec('''
+from typing import Union
+
+@keyword(types={'argument': Union[int, None, float]})
+def multiple_types_using_union(argument, expected=None):
+    _validate_type(argument, expected)
+''')
+
+
+@keyword(types={'argument': (int, None, float)})
+def multiple_types_using_tuple(argument, expected=None):
     _validate_type(argument, expected)
 
 

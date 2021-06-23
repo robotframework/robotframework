@@ -27,11 +27,24 @@ class Global(_BaseLib):
 
 
 class Suite(_BaseLib):
+    ROBOT_LIBRARY_SCOPE = 'SUITE'
+
+
+class TestSuite(_BaseLib):
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
 
 
 class Test(_BaseLib):
+    ROBOT_LIBRARY_SCOPE = 'TeSt'
+
+
+class TestCase(_BaseLib):
     ROBOT_LIBRARY_SCOPE = 'TeSt CAse'
+
+
+class Task(_BaseLib):
+    # Any non-recognized value is mapped to TEST scope.
+    ROBOT_LIBRARY_SCOPE = 'TASK'
 
 
 class InvalidValue(_BaseLib):

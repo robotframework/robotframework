@@ -34,10 +34,9 @@ class TestInit(unittest.TestCase):
 
     def test_invalid_timeout_string(self):
         for inv in ['invalid', '1s 1']:
-            for params in [ [inv], [inv,'whatever'] ]:
-                tout = TestTimeout(*params)
-                err = "Setting test timeout failed: Invalid time string '%s'."
-                self._verify_tout(tout, str=inv, secs=0.000001, err=err % inv)
+            err = "Setting test timeout failed: Invalid time string '%s'."
+            self._verify_tout(TestTimeout(inv), str=inv, secs=0.000001,
+                              err=err % inv)
 
     def _verify_tout(self, tout, str='', secs=-1, err=None):
         tout.replace_variables(VariableMock())
@@ -157,14 +156,6 @@ class TestRun(unittest.TestCase):
             self.tout.time_left = lambda: tout
             assert_raises(TimeoutError, self.tout.run, sleeping, (10,))
 
-    def test_customized_message(self):
-        tout = KeywordTimeout('1s', 'My message', VariableMock())
-        tout.start()
-        tout.run(passing)
-        tout.secs = 0.001
-        assert_raises_with_msg(TimeoutError, 'My message',
-                               tout.run, sleeping, (10,))
-
 
 class TestMessage(unittest.TestCase):
 
@@ -182,11 +173,6 @@ class TestMessage(unittest.TestCase):
         tout = TestTimeout('1s', variables=VariableMock())
         tout.starttime = time.time() - 2
         assert_equal(tout.get_message(), 'Test timeout 1 second exceeded.')
-
-    def test_failed_custom(self):
-        tout = KeywordTimeout('1s', 'Custom message', VariableMock())
-        tout.starttime = time.time() - 2
-        assert_equal(tout.get_message(), 'Custom message')
 
 
 if __name__ == '__main__':

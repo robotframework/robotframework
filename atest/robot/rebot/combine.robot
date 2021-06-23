@@ -80,22 +80,6 @@ Suite Metadata
     Should Be Equal    ${SUITE2.metadata['Name']}    value
     Should Be Equal    ${SUITE2.metadata['Other Meta']}    Another value
 
-Earlier Criticality Should Be Ignored
-    ${tags} =    Get Total Stat Nodes    ${COMB OUT 1}
-    Tag Statistics Should Be    ${tags[0]}    3    1
-    Tag Statistics Should Be    ${tags[1]}    3    1
-    ${tags} =    Get Total Stat Nodes    ${COMB OUT 3}
-    Tag Statistics Should Be    ${tags[0]}    9    1
-    Tag Statistics Should Be    ${tags[1]}    9    1
-
-Critical/Non-Critical Tags Can Be Given
-    ${tags} =    Get Total Stat Nodes    ${COMB OUT 2}
-    Tag Statistics Should Be    ${tags[0]}    1    1
-    Tag Statistics Should Be    ${tags[1]}    3    1
-    ${tags} =    Get Total Stat Nodes    ${COMB OUT 4}
-    Tag Statistics Should Be    ${tags[0]}    7    1
-    Tag Statistics Should Be    ${tags[1]}    9    1
-
 Suite Times
     Should Be Equal    ${SUITE3.starttime}    ${NONE}
     Should Be Equal    ${SUITE3.endtime}    ${NONE}
@@ -167,11 +151,11 @@ Create inputs for Rebot
     Prevent accidental usage of ${SUITE} variable
 
 Create first input for Rebot
-    Create Output With Robot    ${TEMP OUT 1}    --critical pass    misc/pass_and_fail.robot
+    Create Output With Robot    ${TEMP OUT 1}    ${EMPTY}    misc/pass_and_fail.robot
     Set Suite Variable    $MILLIS1    ${ORIG ELAPSED}
 
 Create second input for Rebot
-    Create Output With Robot    ${TEMP OUT 2}    -c f1 -c nonex --noncritical notag    misc/normal.robot
+    Create Output With Robot    ${TEMP OUT 2}    ${EMPTY}    misc/normal.robot
     Set Suite Variable    $MILLIS2    ${ORIG ELAPSED}
 
 Combine without options
@@ -185,7 +169,6 @@ Combine with options
     ...    --doc "My fine doc"
     ...    --metadata Name:value
     ...    -M "Other Meta:Another value"
-    ...    --critical force
     Run Rebot    ${options}    ${TEMP OUT 1} ${TEMP OUT 2}
     Set Suite Variable    $SUITE2    ${SUITE}
     Copy File    ${OUT FILE}    ${COMB OUT 2}
@@ -196,7 +179,7 @@ Combine with output with known times
     Set Suite Variable    $SUITE3    ${SUITE}
 
 Recombine
-    Run Rebot    --noncritical f1    rebot/times.xml ${COMB OUT 2}
+    Run Rebot    ${EMPTY}    rebot/times.xml ${COMB OUT 2}
     Set Suite Variable    $SUITE4    ${SUITE}
     Copy File    ${OUT FILE}    ${COMB OUT 4}
 

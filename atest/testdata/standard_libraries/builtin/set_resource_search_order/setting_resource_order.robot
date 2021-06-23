@@ -10,7 +10,8 @@ Resource Order Set In Suite Setup Should Be Available In Test Cases
     Active Resource Should Be    resource1
 
 Empty Resource Order Can Be Set
-    [Documentation]    FAIL Multiple keywords with name 'Get Name' found.\
+    [Documentation]    FAIL
+    ...    Multiple keywords with name 'Get Name' found. \
     ...    Give the full name of the keyword you want to use:
     ...    ${SPACE*4}resource1.Get Name
     ...    ${SPACE*4}resource2.Get Name
@@ -35,8 +36,8 @@ Resource Order Should Be Available In The Next Test Case
 Setting Resource Order Returns Previous Resource Order
     Set Library Search Order    resource2    resource1
     @{order} =    Set Library Search Order
-    Should Be Equal    @{order}[0]    resource2
-    Should Be Equal    @{order}[1]    resource1
+    Should Be Equal    ${order}[0]    resource2
+    Should Be Equal    ${order}[1]    resource1
 
 It Is Possible To Set Both Library And Resource Priorities At The Same Time
     Set Library Search Order    resource1    resource2    TestLibrary    AnotherLibrary

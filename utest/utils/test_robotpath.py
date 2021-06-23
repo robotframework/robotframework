@@ -2,7 +2,8 @@ import unittest
 import os
 import os.path
 
-from robot.utils import abspath, normpath, get_link_path, WINDOWS, unicode
+from robot.utils import (abspath, normpath, get_link_path, unicode,
+                         JYTHON, PY_VERSION, WINDOWS)
 from robot.utils.robotpath import CASE_INSENSITIVE_FILESYSTEM
 from robot.utils.asserts import assert_equal, assert_true
 
@@ -49,9 +50,7 @@ class TestAbspathNormpath(unittest.TestCase):
         def test_add_drive(self):
             drive = os.path.abspath(__file__)[:2]
             for path in ['.', os.path.basename(__file__), r'\abs\path']:
-                abs = abspath(path)
-                assert_equal(abs, os.path.abspath(path))
-                assert_true(abs.startswith(drive))
+                assert_true(abspath(path).startswith(drive))
 
     def test_normpath(self):
         for inp, exp in self._get_inputs():
@@ -132,8 +131,10 @@ class TestGetLinkPath(unittest.TestCase):
     def test_non_existing_paths(self):
         assert_equal(get_link_path('/nonex/target', '/nonex/base'), '../target')
         assert_equal(get_link_path('/nonex/t.ext', '/nonex/b.ext'), '../t.ext')
-        assert_equal(get_link_path('/nonex', __file__),
-                     os.path.relpath('/nonex', os.path.dirname(__file__)).replace(os.sep, '/'))
+        buggy_jython = WINDOWS and JYTHON and PY_VERSION > (2, 7, 0)
+        if not buggy_jython:
+            assert_equal(get_link_path('/nonex', __file__),
+                         os.path.relpath('/nonex', os.path.dirname(__file__)).replace(os.sep, '/'))
 
     def test_non_ascii_paths(self):
         assert_equal(get_link_path(u'\xe4\xf6.txt', ''), '%C3%A4%C3%B6.txt')
@@ -143,12 +144,15 @@ class TestGetLinkPath(unittest.TestCase):
         directory = os.path.dirname(__file__)
         inputs = [(directory, __file__, self._expected_basename(__file__)),
                   (directory, directory, '.'),
-                  (directory, directory + '/Non/Ex', 'Non/Ex'),
+                  (directory, directory + '/', '.'),
+                  (directory, directory + '//', '.'),
+                  (directory, directory + '///', '.'),
+                  (directory, directory + '/trailing/part', 'trailing/part'),
+                  (directory, directory + '//trailing//part', 'trailing/part'),
                   (directory, directory + '/..', '..'),
                   (directory, directory + '/../X', '../X'),
-                  (directory, directory + '/./.././..', '../..'),
-                  (directory, '.',
-                   os.path.relpath('.', directory).replace(os.sep, '/'))]
+                  (directory, directory + '/./.././/..', '../..'),
+                  (directory, '.', os.path.relpath('.', directory).replace(os.sep, '/'))]
         platform_inputs = (self._posix_inputs() if os.sep == '/' else
                            self._windows_inputs())
         return inputs + platform_inputs
@@ -166,6 +170,10 @@ class TestGetLinkPath(unittest.TestCase):
                 ('/tmp', '/x/bar.txt', '../x/bar.txt'),
                 ('/tmp', '/x/y/z/bar.txt', '../x/y/z/bar.txt'),
                 ('/', '/x/bar.txt', 'x/bar.txt'),
+                ('/home//test', '/home/user', '../user'),
+                ('//home/test', '/home/user', '../user'),
+                ('///home/test', '/home/user', '../user'),
+                ('////////////////home/test', '/home/user', '../user'),
                 ('/path/to', '/path/to/result_in_same_dir.html',
                  'result_in_same_dir.html'),
                 ('/path/to/dir', '/path/to/result_in_parent_dir.html',

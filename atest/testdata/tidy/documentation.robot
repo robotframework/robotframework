@@ -1,5 +1,13 @@
+When editing this file, make sure your editor doesn't remove trailing spaces!
+
 *** Settings ***
 Documentation    Hello
+...
+...        No extra spaces should be added to the above line.
+# Trailing spaces everywhere!!                
+...              
+...        Trailing spaces should be removed from this line and 2 lines above.       
+...
 ...    - list
 ...    - <world>
 
@@ -12,6 +20,8 @@ Multiple paragraphs
     [Documentation]    Hello
     ...
     ...                Huhuu
+    ...            
+    ...  Also trailing spaces.         
 Multiline with manual line separators
     [Documentation]    Hillo\non\n hyvää!
 One line

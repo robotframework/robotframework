@@ -22,17 +22,17 @@ Test case syntax
 Basic syntax
 ~~~~~~~~~~~~
 
-Test cases are constructed in test case tables from the available
+Test cases are constructed in test case sections from the available
 keywords. Keywords can be imported from `test libraries`_ or `resource
-files`_, or created in the `keyword table`_ of the test case file
+files`_, or created in the `keyword section`_ of the test case file
 itself.
 
-.. _keyword table: `user keywords`_
+.. _keyword section: `user keywords`_
 
-The first column in the test case table contains test case names. A
+The first column in the test case section contains test case names. A
 test case starts from the row with something in this column and
-continues to the next test case name or to the end of the table. It is
-an error to have something between the table headers and the first
+continues to the next test case name or to the end of the section. It is
+an error to have something between the section headers and the first
 test.
 
 The second column normally has keyword names. An exception to this rule
@@ -66,8 +66,8 @@ contain possible arguments to the specified keyword.
           like `--test 'Example *'` will actually run any test starting with
           :name:`Example`.
 
-Settings in the Test Case table
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Settings in the Test Case section
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Test cases can also have their own settings. Setting names are always
 in the second column, where keywords normally are, and their values
@@ -93,11 +93,10 @@ below and explained later in this section.
    their own section.
 
 .. note:: Setting names are case-insensitive, but the format used above is
-      recommended. Prior to Robot Framework 3.1, settings were also
-      space-insensitive meaning that extra spaces could be added (e.g.
-      `[T a g s]`). This is now deprecated and only the format above,
-      case-insensitively, is supported. Possible space between brackets
-      and the name (e.g. `[ Tags ]`) is still allowed.
+      recommended. Settings used to be also space-insensitive, but that was
+      deprecated in Robot Framework 3.1 and trying to use something like
+      `[T a g s]` causes an error in Robot Framework 3.2. Possible spaces
+      between brackets and the name (e.g. `[ Tags ]`) are still allowed.
 
 Example test case with settings:
 
@@ -109,10 +108,10 @@ Example test case with settings:
        [Tags]    dummy    owner-johndoe
        Log    Hello, world!
 
-Test case related settings in the Setting table
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Test case related settings in the Setting section
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Setting table can have the following test case related
+The Setting section can have the following test case related
 settings. These settings are mainly default values for the
 test case specific settings listed earlier.
 
@@ -205,7 +204,7 @@ three arguments would not work.
        Create File    ${TEMPDIR}/utf-8.txt         Hyvä esimerkki
        Create File    ${TEMPDIR}/iso-8859-1.txt    Hyvä esimerkki    ISO-8859-1
 
-.. _varargs:
+.. _varargs-usage:
 
 Variable number of arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -228,7 +227,8 @@ the latter requires at least one argument.
        Remove Files    ${TEMPDIR}/f1.txt    ${TEMPDIR}/f2.txt    ${TEMPDIR}/f3.txt
        @{paths} =    Join Paths    ${TEMPDIR}    f1.txt    f2.txt    f3.txt    f4.txt
 
-.. _Named argument syntax:
+.. _named argument:
+.. _named argument syntax:
 
 Named arguments
 ~~~~~~~~~~~~~~~
@@ -330,9 +330,8 @@ As already explained, the named argument syntax works with keywords. In
 addition to that, it also works when `importing libraries`_.
 
 Naming arguments is supported by `user keywords`_ and by most `test libraries`_.
-The only exception are Java based libraries that use the `static library API`_.
-Library documentation generated with Libdoc_ has a note does the library
-support named arguments or not.
+The only exceptions are Java based libraries that use the `static library API`_
+and Python keywords explicitly using `positional-only arguments`_.
 
 Named arguments example
 '''''''''''''''''''''''
@@ -355,6 +354,8 @@ library keywords, user keywords, and when importing the Telnet_ test library.
    List files
        [Arguments]    ${path}=.    ${options}=
        Execute command    ls ${options} ${path}
+
+.. _kwargs-usage:
 
 Free named arguments
 ~~~~~~~~~~~~~~~~~~~~
@@ -518,7 +519,7 @@ __ `HTML in error messages`_
 Test case name and documentation
 --------------------------------
 
-The test case name comes directly from the Test Case table: it is
+The test case name comes directly from the Test Case section: it is
 exactly what is entered into the test case column. Test cases in one
 test suite should have unique names.  Pertaining to this, you can also
 use the `automatic variable`_ `${TEST_NAME}` within the test
@@ -526,20 +527,33 @@ itself to refer to the test name. It is available whenever a test is
 being executed, including all user keywords, as well as the test setup
 and the test teardown.
 
+Starting from Robot Framework 3.2, possible variables_ in the test case name
+are resolved so that the final name will contain the variable value. If
+the variable does not exist, its name is left unchanged.
+
+.. sourcecode:: robotframework
+
+    *** Variables ***
+    ${MAX AMOUNT}      ${5000000}
+
+    *** Test Cases ***
+    Amount cannot be larger than ${MAX AMOUNT}
+        # ...
+
 The :setting:`[Documentation]` setting allows you to set a free
 documentation for a test case. That text is shown in the command line
 output, as well as the resulting test logs and test reports.
 It is possible to use simple `HTML formatting`_ in documentation and
-variables_ can be used to make the documentation dynamic.
+variables_ can be used to make the documentation dynamic. Possible
+non-existing variables are left unchanged.
 
 If documentation is split into multiple columns, cells in one row are
-concatenated together with spaces. This is mainly be useful when using
-the `HTML format`_ and columns are narrow. If documentation is `split
+concatenated together with spaces. If documentation is `split
 into multiple rows`__, the created documentation lines themselves are
 `concatenated using newlines`__. Newlines are not added if a line
 already ends with a newline or an `escaping backslash`__.
 
-__ `Dividing test data to several rows`_
+__ `Dividing data to several rows`_
 __ `Newlines in test data`_
 __ `Escaping`_
 
@@ -589,7 +603,7 @@ least for the following purposes:
 - Statistics__ about test cases (total, passed, failed  are
   automatically collected based on tags).
 - With tags, you can `include or exclude`__ test cases to be executed.
-- With tags, you can specify which test cases are considered `critical`_.
+- With tags, you can specify which test cases should be skipped_.
 
 __ `Configuring statistics`_
 __ `By tag names`_
@@ -598,17 +612,17 @@ In this section it is only explained how to set tags for test
 cases, and different ways to do it are listed below. These
 approaches can naturally be used together.
 
-`Force Tags`:setting: in the Setting table
+`Force Tags`:setting: in the Setting section
    All test cases in a test case file with this setting always get
    specified tags. If it is used in the `test suite initialization file`,
    all test cases in sub test suites get these tags.
 
-`Default Tags`:setting: in the Setting table
+`Default Tags`:setting: in the Setting section
    Test cases that do not have a :setting:`[Tags]` setting of their own
    get these tags. Default tags are not supported in test suite initialization
    files.
 
-`[Tags]`:setting: in the Test Case table
+`[Tags]`:setting: in the Test Case section
    A test case always gets these tags. Additionally, it does not get the
    possible tags specified with :setting:`Default Tags`, so it is possible
    to override the :setting:`Default Tags` by using empty value. It is
@@ -699,10 +713,10 @@ on by default.
 
 The easiest way to specify a setup or a teardown for test cases in a
 test case file is using the :setting:`Test Setup` and :setting:`Test
-Teardown` settings in the Setting table. Individual test cases can
+Teardown` settings in the Setting section. Individual test cases can
 also have their own setup or teardown. They are defined with the
 :setting:`[Setup]` or :setting:`[Teardown]` settings in the test case
-table and they override possible :setting:`Test Setup` and
+section and they override possible :setting:`Test Setup` and
 :setting:`Test Teardown` settings. Having no keyword after a
 :setting:`[Setup]` or :setting:`[Teardown]` setting means having no
 setup or teardown. It is also possible to use value `NONE` to indicate that
@@ -716,11 +730,11 @@ a test has no setup/teardown.
 
    *** Test Cases ***
    Default values
-       [Documentation]    Setup and teardown from setting table
+       [Documentation]    Setup and teardown from setting section
        Do Something
 
    Overridden setup
-       [Documentation]    Own setup, teardown from setting table
+       [Documentation]    Own setup, teardown from setting section
        [Setup]    Open Application    App B
        Do Something
 
@@ -786,9 +800,9 @@ functionally fully identical.
 As the example illustrates, it is possible to specify the
 template for an individual test case using the :setting:`[Template]`
 setting. An alternative approach is using the :setting:`Test Template`
-setting in the Setting table, in which case the template is applied
+setting in the Setting section, in which case the template is applied
 for all test cases in that test case file. The :setting:`[Template]`
-setting overrides the possible template set in the Setting table, and
+setting overrides the possible template set in the Setting section, and
 an empty value for :setting:`[Template]` means that the test has no
 template even when :setting:`Test Template` is used. It is also possible
 to use value `NONE` to indicate that a test has no template.
@@ -812,8 +826,8 @@ the templated tests the mode is on automatically.
        second round 1    second round 2
        third round 1     third round 2
 
-Using arguments with `default values`_ or `varargs`_, as well as using
-`named arguments`_ and `free named arguments`_, work with templates
+Using keywords with `default values`_ or accepting `variable number of arguments`_,
+as well as using `named arguments`_ and `free named arguments`_, work with templates
 exactly like they work otherwise. Using variables_ in arguments is also
 supported normally.
 
@@ -883,13 +897,31 @@ all the looped elements even if there are failures.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Template and for
+   Template with for loop
        [Template]    Example keyword
        FOR    ${item}    IN    @{ITEMS}
            ${item}    2nd arg
        END
        FOR    ${index}    IN RANGE    42
            1st arg    ${index}
+       END
+
+Templates with if expression
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`If expression`_ can be also used together with templates.
+This can be useful, for example, when used together with `for loops`_ to
+filter executed arguments.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Template with for and if
+       [Template]    Example keyword
+       FOR    ${item}    IN    @{ITEMS}
+           IF  ${item} < 5
+               ${item}    2nd arg
+           END
        END
 
 Different test case styles
@@ -1010,6 +1042,6 @@ should be open`.
 Embedding data to keywords
 ''''''''''''''''''''''''''
 
-When writing concrete examples it is useful to be able pass actual data to
+When writing concrete examples it is useful to be able to pass actual data to
 keyword implementations. User keywords support this by allowing `embedding
 arguments into keyword name`_.

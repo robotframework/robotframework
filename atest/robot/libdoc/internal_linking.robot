@@ -9,13 +9,11 @@ Linking to sections in introduction
     ${MODEL}    Introduction    Library INTROduction
     ${MODEL}    Importing       importing
     ${MODEL}    Importing       Library Importing
-    ${MODEL}    Shortcuts       ShortCuts
     ${MODEL}    Keywords        Keywords
 
 Linking to sections in importing and keywords
     ${MODEL['inits'][0]}       Introduction    introduction
     ${MODEL['keywords'][1]}    Importing       Importing
-    ${MODEL['keywords'][2]}    Shortcuts       shortcuts
 
 Linking to keywords in introduction
     ${MODEL}    Keyword           Keyword

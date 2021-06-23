@@ -9,24 +9,50 @@ Embedded Arguments In Library Keyword Name
     Check Keyword Data    ${tc.kws[0]}    embedded_args_in_lk_1.User Peke Selects Advanced Python From Webshop    \${name}, \${book}
     Check Log Message  ${tc.kws[2].msgs[0]}    This is always executed
     Check Keyword Data    ${tc.kws[2]}    embedded_args_in_lk_1.User Juha selects Playboy from webshop    \${name}, \${book}
+    File Should Contain    ${OUTFILE}
+    ...    name="User Peke Selects Advanced Python From Webshop"
+    File Should Contain    ${OUTFILE}
+    ...    library="embedded_args_in_lk_1"
+    File Should Contain    ${OUTFILE}
+    ...    sourcename="User \${user} Selects \${item} From Webshop"
+    File Should Not Contain    ${OUTFILE}    sourcename="Log"
 
 Complex Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    feature-works
     Check Log Message    ${tc.kws[1].msgs[0]}    test case-is *executed*
     Check Log Message    ${tc.kws[2].msgs[0]}    issue-is about to be done!
+    File Should Contain    ${OUTFILE}    sourcename="\${prefix:Given|When|Then} this 
+    File Should Not Contain    ${OUTFILE}    sourcename="Log"
 
 Embedded Arguments with BDD Prefixes
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0]}    embedded_args_in_lk_1.Given user x selects y from webshop
     Check Keyword Data    ${tc.kws[1]}    embedded_args_in_lk_1.When user x selects y from webshop
     Check Keyword Data    ${tc.kws[2]}    embedded_args_in_lk_1.Then user x selects y from webshop    \${x}, \${y}
+    File Should Contain    ${OUTFILE}    name="Given user x selects y from webshop"
+    File Should Contain    ${OUTFILE}    library="embedded_args_in_lk_1"
+    File Should Contain    ${OUTFILE}    sourcename="User \${user} Selects \${item} From Webshop"
+    File Should Not Contain    ${OUTFILE}    sourcename="Log"
 
 Argument Namespaces with Embedded Arguments
     Check Test Case    ${TEST NAME}
+    File Should Contain    ${OUTFILE}    name="My embedded warrior"
+    File Should Contain    ${OUTFILE}    library="embedded_args_in_lk_1"
+    File Should Contain    ${OUTFILE}    sourcename="My embedded \${var}"
+    File Should Not Contain    ${OUTFILE}    sourcename="Log"
 
 Embedded Arguments as Variables
     ${tc} =    Check Test Case    ${TEST NAME}
+    File Should Contain    ${OUTFILE}
+    ...    name="User \${42} Selects \${EMPTY} From Webshop"
+    File Should Contain    ${OUTFILE}
+    ...    library="embedded_args_in_lk_1"
+    File Should Contain    ${OUTFILE}
+    ...    sourcename="User \${user} Selects \${item} From Webshop"
+    File Should Contain    ${OUTFILE}
+    ...    name="User \${name} Selects \${SPACE * 10} From Webshop"
+    File Should Not Contain    ${OUTFILE}    sourcename="Log"
 
 Non-Existing Variable in Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -73,10 +99,9 @@ Keyword with embedded args cannot be used as "normal" keyword
 
 Embedded argument count must match accepted arguments
     Check Test Case    ${TESTNAME}
-    ${msg} =    Catenate
-    ...    Adding keyword 'Wrong \${number} of embedded \${args}' to library 'embedded_args_in_lk_1' failed:
+    Error in library    embedded_args_in_lk_1
+    ...    Adding keyword 'Wrong \${number} of embedded \${args}' failed:
     ...    Embedded argument count does not match number of accepted arguments.
-    Check Log Message    ${ERRORS[0]}    ${msg}    ERROR
 
 Optional Non-Embedded Args Are Okay
     Check Test Case    ${TESTNAME}

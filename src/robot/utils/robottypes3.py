@@ -13,10 +13,30 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections import Mapping, UserString
+from collections.abc import Iterable, Mapping, MutableMapping, Sequence
+from collections import UserString
 from io import IOBase
 
-from .platform import RERAISED_EXCEPTIONS
+try:
+    from typing import TypedDict
+except ImportError:
+    typeddict_types = ()
+else:
+    typeddict_types = (type(TypedDict('Dummy')),)
+try:
+    from typing_extensions import TypedDict as ExtTypedDict
+except ImportError:
+    pass
+else:
+    typeddict_types += (type(ExtTypedDict('Dummy')),)
+
+from .platform import RERAISED_EXCEPTIONS, PY_VERSION
+
+if PY_VERSION < (3, 6):
+    from pathlib import PosixPath, WindowsPath
+    PathLike = (PosixPath, WindowsPath)
+else:
+    from os import PathLike
 
 
 def is_integer(item):
@@ -39,27 +59,36 @@ def is_unicode(item):
     return isinstance(item, str)
 
 
+def is_pathlike(item):
+    return isinstance(item, PathLike)
+
+
 def is_list_like(item):
     if isinstance(item, (str, bytes, bytearray, UserString, IOBase)):
         return False
-    try:
-        iter(item)
-    except RERAISED_EXCEPTIONS:
-        raise
-    except:
-        return False
-    else:
-        return True
+    return isinstance(item, Iterable)
 
 
 def is_dict_like(item):
     return isinstance(item, Mapping)
 
 
-def type_name(item):
-    if isinstance(item, IOBase):
-        return 'file'
-    cls = item.__class__ if hasattr(item, '__class__') else type(item)
-    named_types = {str: 'string', bool: 'boolean', int: 'integer',
-                   type(None): 'None', dict: 'dictionary', type: 'class'}
-    return named_types.get(cls, cls.__name__)
+def type_name(item, capitalize=False):
+    if getattr(item, '__origin__', None):
+        item = item.__origin__
+    if hasattr(item, '_name'):  # Union, Any, etc. from typing
+        name = item._name
+    elif isinstance(item, IOBase):
+        name = 'file'
+    else:
+        typ = type(item) if not isinstance(item, type) else item
+        named_types = {str: 'string', bool: 'boolean', int: 'integer',
+                       type(None): 'None', dict: 'dictionary'}
+        name = named_types.get(typ, typ.__name__.strip('_'))
+        # Generics from typing. With newer versions we get "real" type via __origin__.
+        if PY_VERSION < (3, 7):
+            if name in ('List', 'Set', 'Tuple'):
+                name = name.lower()
+            elif name == 'Dict':
+                name = 'dictionary'
+    return name.capitalize() if capitalize and name.islower() else name

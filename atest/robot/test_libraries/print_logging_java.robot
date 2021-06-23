@@ -10,13 +10,13 @@ Logging Using Stdout And Stderr
     Check Log Message    ${tc.setup.msgs[0]}    Hello\nworld\n!!
     Check Log Message    ${tc.kws[0].msgs[0]}    Hello from Java library!
     Check Log Message    ${tc.kws[1].msgs[0]}    Hello Java stderr!!
-    Check Stderr Contains    Hello Java stderr!!
+    Stderr Should Contain    Hello Java stderr!!
 
 Logging Non-ASCII
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    Hyvää päivää java stdout!
     Check Log Message    ${tc.kws[1].msgs[0]}    Hyvää päivää java stderr!
-    Check Stderr Contains    Hyvää päivää java stderr!
+    Stderr Should Contain    Hyvää päivää java stderr!
 
 Logging with Levels
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -29,14 +29,14 @@ Logging with Levels
     Check Log Message    ${tc.kws[3].msgs[0]}    Warning to stderr    WARN
     Check Log Message    ${ERRORS.msgs[0]}    Second msg\n*INVAL* Still 2nd    WARN
     Check Log Message    ${ERRORS.msgs[1]}    Warning to stderr    WARN
-    Check Stderr Contains    [ WARN ] Second msg\n*INVAL* Still 2nd\n
-    Check Stderr Contains    [ WARN ] Warning to stderr\n*WARN* Warning to stderr
+    Stderr Should Contain    [ WARN ] Second msg\n*INVAL* Still 2nd\n
+    Stderr Should Contain    [ WARN ] Warning to stderr\n*WARN* Warning to stderr
 
 Logging HTML
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    <b>Hello, stdout!</b>    HTML
     Check Log Message    ${tc.kws[1].msgs[0]}    <b>Hello, stderr!</b>    HTML
-    Check Stderr Contains    *HTML* <b>Hello, stderr!</b>
+    Stderr Should Contain    *HTML* <b>Hello, stderr!</b>
 
 Logging both to Python and Java streams
     ${tc} =    Check Test Case    ${TEST NAME}

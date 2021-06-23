@@ -44,21 +44,37 @@ Should Be Byte String Negative
     [Tags]    no-ipy
     Check Test Case    ${TESTNAME}
 
-Should Be Lowercase Positive
+Should Be Lower Case Positive
     Check Test Case    ${TESTNAME}
 
-Should Be Lowercase Negative
+Should Be Lower Case Negative
     Check Test Case    ${TESTNAME}
 
-Should Be Uppercase Positive
+Should Be Upper Case Positive
     Check Test Case    ${TESTNAME}
 
-Should Be Uppercase Negative
+Should Be Upper Case Negative
     Check Test Case    ${TESTNAME}
 
-Should Be Titlecase Positive
+Should Be Title Case Positive
     Check Test Case    ${TESTNAME}
 
-Should Be Titlecase Negative
+Should Be Title Case Negative
     Check Test Case    ${TESTNAME}
 
+Should Be Title Case With Excludes
+    Check Test Case    ${TESTNAME}
+
+Should Be Title Case With Regex Excludes
+    Check Test Case    ${TESTNAME}
+
+Should Be Title Case Works With ASCII Bytes On Python 2
+    [Tags]    require-py2    no-ipy
+    Check Test Case    ${TESTNAME}
+
+Should Be Title Case Does Not Work With ASCII Bytes On Python 2
+    [Tags]    require-py3
+    Check Test Case    ${TESTNAME}
+
+Should Be Title Case Does Not Work With Non-ASCII Bytes
+    Check Test Case    ${TESTNAME}

@@ -41,16 +41,7 @@ class Telnet(object):
 
     == Table of contents ==
 
-    - `Connections`
-    - `Writing and reading`
-    - `Configuration`
-    - `Terminal emulation`
-    - `Logging`
-    - `Time string format`
-    - `Boolean arguments`
-    - `Importing`
-    - `Shortcuts`
-    - `Keywords`
+    %TOC%
 
     = Connections =
 
@@ -114,8 +105,6 @@ class Telnet(object):
     Connection Timeout defines how long is the maximum time to wait when
     opening the telnet connection. It is used internally by `Open Connection`.
     The default value is the system global default timeout.
-
-    New in Robot Framework 2.9.2.
 
     == Newline ==
 

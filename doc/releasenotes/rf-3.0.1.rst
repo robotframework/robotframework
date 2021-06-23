@@ -190,7 +190,7 @@ Full list of fixes and enhancements
     * - `#2363`_
       - bug
       - low
-      - `Run Keyword and Expect Error` cannot catch error caused by variable assignement
+      - `Run Keyword and Expect Error` cannot catch error caused by variable assignment
     * - `#2391`_
       - bug
       - low

@@ -1,459 +1,902 @@
+import ast
 import os
 import unittest
+import tempfile
 
-from robot.utils.asserts import (assert_equal, assert_false, assert_none,
-                                 assert_not_equal, assert_true)
-from robot.parsing.model import (ForLoop, KeywordTable, Step, TestCase,
-                                 TestCaseFile, TestCaseTable,
-                                 TestCaseFileSettingTable, UserKeyword,
-                                 VariableTable)
-from robot.parsing.settings import (Arguments, Documentation, Fixture, _Import,
-                                    Return, Tags, Template, Timeout)
+from robot.parsing import get_model, get_resource_model, ModelVisitor, ModelTransformer, Token
+from robot.parsing.model.blocks import (
+    Block, CommentSection, File, For, If, Keyword, KeywordSection,
+    SettingSection, TestCase, TestCaseSection, VariableSection
+)
+from robot.parsing.model.statements import (
+    Arguments, Comment, Documentation, ForHeader, End, ElseHeader, ElseIfHeader,
+    EmptyLine, Error, IfHeader, KeywordCall, KeywordName, SectionHeader,
+    Statement, TestCaseName, Variable
+)
+from robot.utils import PY3
+from robot.utils.asserts import assert_equal, assert_raises_with_msg
+
+if PY3:
+    from pathlib import Path
 
 
-class ForLoopWithFakeParent(ForLoop):
+DATA = '''\
 
-    def __init__(self, *args, **kws):
-        ForLoop.__init__(self, self, *args, **kws)
+*** Test Cases ***
 
-    def report_invalid_syntax(self, message, level='ERROR'):
+Example
+  # Comment
+    Keyword    arg
+    ...\targh
+
+\t\t
+*** Keywords ***
+# Comment    continues
+Keyword
+    [Arguments]    ${arg1}    ${arg2}
+    Log    Got ${arg1} and ${arg}!
+'''
+PATH = os.path.join(os.getenv('TEMPDIR') or tempfile.gettempdir(),
+                    'test_model.robot')
+EXPECTED = File(sections=[
+    CommentSection(
+        body=[
+            EmptyLine([
+                Token('EOL', '\n', 1, 0)
+            ])
+        ]
+    ),
+    TestCaseSection(
+        header=SectionHeader([
+            Token('TESTCASE HEADER', '*** Test Cases ***', 2, 0),
+            Token('EOL', '\n', 2, 18)
+        ]),
+        body=[
+            EmptyLine([Token('EOL', '\n', 3, 0)]),
+            TestCase(
+                header=TestCaseName([
+                    Token('TESTCASE NAME', 'Example', 4, 0),
+                    Token('EOL', '\n', 4, 7)
+                ]),
+                body=[
+                    Comment([
+                        Token('SEPARATOR', '  ', 5, 0),
+                        Token('COMMENT', '# Comment', 5, 2),
+                        Token('EOL', '\n', 5, 11),
+                    ]),
+                    KeywordCall([
+                        Token('SEPARATOR', '    ', 6, 0),
+                        Token('KEYWORD', 'Keyword', 6, 4),
+                        Token('SEPARATOR', '    ', 6, 11),
+                        Token('ARGUMENT', 'arg', 6, 15),
+                        Token('EOL', '\n', 6, 18),
+                        Token('SEPARATOR', '    ', 7, 0),
+                        Token('CONTINUATION', '...', 7, 4),
+                        Token('SEPARATOR', '\t', 7, 7),
+                        Token('ARGUMENT', 'argh', 7, 8),
+                        Token('EOL', '\n', 7, 12)
+                    ]),
+                    EmptyLine([Token('EOL', '\n', 8, 0)]),
+                    EmptyLine([Token('EOL', '\t\t\n', 9, 0)])
+                ]
+            )
+        ]
+    ),
+    KeywordSection(
+        header=SectionHeader([
+            Token('KEYWORD HEADER', '*** Keywords ***', 10, 0),
+            Token('EOL', '\n', 10, 16)
+        ]),
+        body=[
+            Comment([
+                Token('COMMENT', '# Comment', 11, 0),
+                Token('SEPARATOR', '    ', 11, 9),
+                Token('COMMENT', 'continues', 11, 13),
+                Token('EOL', '\n', 11, 22),
+            ]),
+            Keyword(
+                header=KeywordName([
+                    Token('KEYWORD NAME', 'Keyword', 12, 0),
+                    Token('EOL', '\n', 12, 7)
+                ]),
+                body=[
+                    Arguments([
+                        Token('SEPARATOR', '    ', 13, 0),
+                        Token('ARGUMENTS', '[Arguments]', 13, 4),
+                        Token('SEPARATOR', '    ', 13, 15),
+                        Token('ARGUMENT', '${arg1}', 13, 19),
+                        Token('SEPARATOR', '    ', 13, 26),
+                        Token('ARGUMENT', '${arg2}', 13, 30),
+                        Token('EOL', '\n', 13, 37)
+                    ]),
+                    KeywordCall([
+                        Token('SEPARATOR', '    ', 14, 0),
+                        Token('KEYWORD', 'Log', 14, 4),
+                        Token('SEPARATOR', '    ', 14, 7),
+                        Token('ARGUMENT', 'Got ${arg1} and ${arg}!', 14, 11),
+                        Token('EOL', '\n', 14, 34)
+                    ])
+                ]
+            )
+        ]
+    )
+])
+
+
+def assert_model(model, expected=EXPECTED, **expected_attrs):
+    if type(model) is not type(expected):
+        raise AssertionError('Incompatible types:\n%s\n%s'
+                             % (dump_model(model), dump_model(expected)))
+    if isinstance(model, list):
+        assert_equal(len(model), len(expected),
+                     '%r != %r' % (model, expected), values=False)
+        for m, e in zip(model, expected):
+            assert_model(m, e)
+    elif isinstance(model, Block):
+        assert_block(model, expected, expected_attrs)
+    elif isinstance(model, Statement):
+        assert_statement(model, expected)
+    elif model is None and expected is None:
         pass
-
-
-class TestTestCaseFile(unittest.TestCase):
-
-    def setUp(self):
-        self.tcf = TestCaseFile()
-
-    def test_init(self):
-        assert_none(self.tcf.source)
-        assert_true(isinstance(self.tcf.setting_table, TestCaseFileSettingTable))
-        assert_true(isinstance(self.tcf.variable_table, VariableTable))
-        assert_true(isinstance(self.tcf.testcase_table, TestCaseTable))
-        assert_true(isinstance(self.tcf.keyword_table, KeywordTable))
-
-    def test_name(self):
-        assert_none(self.tcf.name)
-        for source, name in [('hello.txt', 'Hello'),
-                             ('hello', 'Hello'),
-                             ('hello_world.tsv', 'Hello World'),
-                             ('HELLO_world.htm', 'HELLO world'),
-                             ('1name', '1Name'),
-                             ('  h i   w o r l d  .htm', 'H I   W O R L D'),
-                             ('HelloWorld.txt', 'HelloWorld'),
-                             ('09__h_E_l_l_o_', 'h E l l o'),
-                             ('prefix__the__name', 'The  Name')]:
-            self.tcf.source = os.path.abspath(source)
-            assert_equal(self.tcf.name, name)
-
-
-class TestSettingTable(unittest.TestCase):
-
-    def setUp(self):
-        self.table = TestCaseFile().setting_table
-
-    def test_init(self):
-        assert_true(isinstance(self.table.doc, Documentation))
-        assert_true(isinstance(self.table.suite_setup, Fixture))
-        assert_true(isinstance(self.table.suite_teardown, Fixture))
-        assert_true(isinstance(self.table.test_setup, Fixture))
-        assert_true(isinstance(self.table.test_teardown, Fixture))
-        assert_true(isinstance(self.table.test_timeout, Timeout))
-        assert_true(isinstance(self.table.force_tags, Tags))
-        assert_true(isinstance(self.table.default_tags, Tags))
-        assert_equal(self.table.metadata.data, [])
-        assert_equal(self.table.imports.data, [])
-
-    def test_doc_default(self):
-        assert_equal(self.table.doc.value, '')
-
-    def test_set_doc_with_string(self):
-        self.table.doc.populate('hello')
-        assert_equal(self.table.doc.value, 'hello')
-
-    def test_set_doc_with_list(self):
-        self.table.doc.populate(['hello', 'world'])
-        assert_equal(self.table.doc.value, 'helloworld')
-
-    def test_fixture_default(self):
-        assert_equal(self.table.suite_setup.name, None)
-        assert_equal(self.table.suite_setup.args, [])
-        assert_false(hasattr(self.table.suite_setup, 'value'))
-
-    def test_set_fixture(self):
-        self.table.suite_teardown.populate(['Name', 'a1', 'a2'])
-        assert_equal(self.table.suite_teardown.name, 'Name')
-        assert_equal(self.table.suite_teardown.args, ['a1', 'a2'])
-        assert_false(hasattr(self.table.suite_teardown, 'value'))
-
-    def test_set_fixture_with_empty_value(self):
-        self.table.test_teardown.populate([])
-        assert_equal(self.table.test_teardown.name, '')
-        assert_equal(self.table.test_teardown.args, [])
-
-    def test_timeout_default(self):
-        assert_equal(self.table.test_timeout.value, None)
-        assert_equal(self.table.test_timeout.message, '')
-        assert_false(hasattr(self.table.suite_setup, 'value'))
-
-    def test_set_timeout(self):
-        self.table.test_timeout.populate(['1s', 'msg', 'in multiple', 'cell'])
-        assert_equal(self.table.test_timeout.value, '1s')
-        assert_equal(self.table.test_timeout.message, 'msg in multiple cell')
-        assert_false(hasattr(self.table.suite_teardown, 'value'))
-
-    def test_set_timeout_with_empty_value(self):
-        self.table.test_timeout.populate([])
-        assert_equal(self.table.test_timeout.value, '')
-        assert_equal(self.table.test_timeout.message, '')
-
-    def test_metadata(self):
-        self.table.add_metadata('Foo', 'bar')
-        self.table.add_metadata('boo', ['f', 'a', 'r'])
-        assert_equal(len(self.table.metadata), 2)
-        assert_equal(self.table.metadata[0].name, 'Foo')
-        assert_equal(self.table.metadata[0].value, 'bar')
-        assert_equal(self.table.metadata[1].name, 'boo')
-        assert_equal(self.table.metadata[1].value, 'f a r')
-        self.table.metadata[0] = self.table.metadata[1]
-        assert_equal(self.table.metadata[0].name, 'boo')
-        assert_equal(self.table.metadata[0].value, 'f a r')
-
-    def test_imports(self):
-        self._verify_import(self.table.add_library('Name'), 'Name')
-        self._verify_import(self.table.add_resource('reso.txt'), 'reso.txt')
-        self._verify_import(self.table.add_variables('varz.py'), 'varz.py')
-        self._verify_import(self.table.add_variables('./v2.py', ['a1', 'a2']),
-                            './v2.py', ['a1', 'a2'])
-        self._verify_import(self.table.add_library('N2', ['1', '2', '3', '4']),
-                            'N2', ['1', '2', '3', '4'])
-        assert_equal(len(self.table.imports), 5)
-        assert_true(all(isinstance(im, _Import) for im in self.table.imports))
-        self.table.imports[1] = self.table.imports[0]
-        assert_equal(self.table.imports[1].name, 'Name')
-
-    def test_resource_with_invalid_args(self):
-        reso = self.table.add_resource('reso.txt', ['invalid', 'args'])
-        self._verify_import(reso, 'reso.txt invalid args')
-
-    def test_library_with_name(self):
-        lib = self.table.add_library('Name', ['WITH NAME', 'New name'])
-        self._verify_import(lib, 'Name', [], 'New name')
-        lib = self.table.add_library('Orig', ['a1', 'a2', 'WITH NAME', 'New'])
-        self._verify_import(lib, 'Orig', ['a1', 'a2'], 'New')
-
-    def _verify_import(self, imp, name, args=[], alias=None):
-        assert_equal(imp.name, name)
-        assert_equal(imp.args, args)
-        assert_equal(imp.alias, alias)
-        assert_equal(imp.type, type(imp).__name__)
-
-    def test_old_style_headers_are_ignored(self):
-        self.table.set_header(['Settings', 'Value', 'value', 'Value'])
-        assert_equal(self.table.header, ['Settings'])
-
-    def test_len(self):
-        assert_equal(len(self.table), 0)
-        self.table.add_library('SomeLib')
-        assert_equal(len(self.table), 1)
-        self.table.doc.value = 'Some doc'
-        self.table.add_metadata('meta name', 'content')
-        assert_equal(len(self.table), 3)
-
-
-class TestVariableTable(unittest.TestCase):
-
-    def setUp(self):
-        self.table = TestCaseFile().variable_table
-
-    def test_init(self):
-        assert_equal(self.table.variables, [])
-
-    def test_add_variables(self):
-        self.table.add('${SCALAR}', ['hello'])
-        self.table.add('${S2} =', 'hello as string')
-        self.table.add('@{LIST}', ['hello', 'world'])
-        assert_equal(len(self.table.variables), 3)
-        assert_equal(self.table.variables[0].name, '${SCALAR}')
-        assert_equal(self.table.variables[0].value, ['hello'])
-        assert_equal(self.table.variables[1].name, '${S2}')
-        assert_equal(self.table.variables[1].value, ['hello as string'])
-        assert_equal(self.table.variables[2].name, '@{LIST}')
-        assert_equal(self.table.variables[2].value, ['hello', 'world'])
-
-    def test_empty_value(self):
-        self.table.add('${V1}', [])
-        self.table.add('${V2}', '')
-        assert_equal(self.table.variables[0].value, [''])
-        assert_equal(self.table.variables[1].value, [''])
-
-    def test_variable_syntax_is_not_verified(self):
-        self.table.add('not var', 'the value')
-        assert_equal(self.table.variables[0].name, 'not var')
-        assert_equal(self.table.variables[0].value, ['the value'])
-
-    def test_old_style_headers_are_ignored(self):
-        self.table.set_header(['Variable', 'value', 'Value'])
-        assert_equal(self.table.header, ['Variable'])
-
-    def test_len(self):
-        self.table.set_header(['Variable', 'value', 'Value'])
-        assert_equal(len(self.table), 0)
-        self.table.add('${a var}', 'some')
-        self.table.add('@{b var}', 's', 'ome')
-        assert_equal(len(self.table), 2)
-
-
-class TestTestCaseTable(unittest.TestCase):
-
-    def setUp(self):
-        self.table = TestCaseFile().testcase_table
-        self.test = TestCase(None, 'name')
-
-    def test_init(self):
-        assert_equal(self.table.tests, [])
-
-    def test_add_test(self):
-        test = self.table.add('My name')
-        assert_true(len(self.table.tests), 1)
-        assert_true(self.table.tests[0] is test)
-        assert_equal(test.name, 'My name')
-
-    def test_settings(self):
-        assert_true(isinstance(self.test.doc, Documentation))
-        assert_true(isinstance(self.test.tags, Tags))
-        assert_true(isinstance(self.test.setup, Fixture))
-        assert_true(isinstance(self.test.teardown, Fixture))
-        assert_true(isinstance(self.test.timeout, Timeout))
-
-    def test_set_settings(self):
-        self.test.doc.populate('My coooool doc')
-        self.test.tags.populate(['My', 'coooool', 'tags'])
-        assert_equal(self.test.doc.value, 'My coooool doc')
-        assert_equal(self.test.tags.value, ['My', 'coooool', 'tags'])
-
-    def test_add_step(self):
-        step = self.test.add_step(['Keyword', 'arg1', 'arg2'])
-        assert_equal(self.test.steps, [step])
-        assert_equal(step.name, 'Keyword')
-        assert_equal(step.args, ['arg1', 'arg2'])
-
-    def test_add_for_loop(self):
-        loop = self.test.add_for_loop(['${var}', 'IN', 'value'])
-        assert_equal(self.test.steps, [loop])
-
-    def test_old_style_headers_are_ignored(self):
-        self.table.set_header(['test case', 'Action', 'Arg', 'Argument'])
-        assert_equal(self.table.header, ['test case'])
-
-    def test_len(self):
-        self.table.set_header(['Test Case'])
-        assert_equal(len(self.table), 0)
-        self.table.add('A test')
-        self.table.add('B test')
-        assert_equal(len(self.table), 2)
-
-
-class TestKeywordTable(unittest.TestCase):
-
-    def setUp(self):
-        self.table = TestCaseFile().keyword_table
-        self.kw = UserKeyword(None, 'name')
-
-    def test_init(self):
-        assert_equal(self.table.keywords, [])
-
-    def test_add_keyword(self):
-        kw = self.table.add('My name')
-        assert_true(len(self.table.keywords), 1)
-        assert_true(self.table.keywords[0] is kw)
-        assert_equal(kw.name, 'My name')
-
-    def test_settings(self):
-        assert_true(isinstance(self.kw.doc, Documentation))
-        assert_true(isinstance(self.kw.args, Arguments))
-        assert_true(isinstance(self.kw.return_, Return))
-        assert_true(isinstance(self.kw.timeout, Timeout))
-        assert_true(isinstance(self.kw.teardown, Fixture))
-
-    def test_set_settings(self):
-        self.kw.doc.populate('My coooool doc')
-        self.kw.args.populate(['${args}', 'are not', 'validated'])
-        assert_equal(self.kw.doc.value, 'My coooool doc')
-        assert_equal(self.kw.args.value, ['${args}', 'are not', 'validated'])
-
-    def test_add_step(self):
-        step = self.kw.add_step(['Keyword', 'arg1', 'arg2'])
-        assert_equal(self.kw.steps, [step])
-        assert_equal(step.name, 'Keyword')
-        assert_equal(step.args, ['arg1', 'arg2'])
-
-    def test_add_for_loop(self):
-        loop = self.kw.add_for_loop(['${var}', 'IN', 'value'])
-        assert_equal(self.kw.steps, [loop])
-
-    def test_old_style_headers_are_ignored(self):
-        self.table.set_header(['keywords', 'Action', 'Arg', 'Argument'])
-        assert_equal(self.table.header, ['keywords'])
-
-    def test_len(self):
-        self.table.set_header(['Keywords'])
-        assert_equal(len(self.table), 0)
-        self.table.add('A kw')
-        self.table.add('B keyword')
-        assert_equal(len(self.table), 2)
-
-
-class TestStep(unittest.TestCase):
-
-    def test_kw_only(self):
-        self._test(['My kewl keyword'], 'My kewl keyword')
-
-    def test_kw_and_args(self):
-        self._test(['KW', 'first arg', '${a2}'], args=['first arg', '${a2}'])
-
-    def test_assign_to_one_var(self):
-        self._test(['${var}', 'KW'], assign=['${var}'])
-        self._test(['${var}=', 'KW', 'a'], args=['a'], assign=['${var}='])
-        self._test(['@{var}     =', 'KW'], assign=['@{var}     ='])
-
-    def test_assign_to_multiple_var(self):
-        self._test(['${v1}', '${v2}', '@{v3}=', 'KW', '${a1}', '${a2}'],
-                   args=['${a1}', '${a2}'], assign=['${v1}', '${v2}', '@{v3}='])
-        self._test(['${v1}=', '${v2} =', 'KW'], assign=['${v1}=', '${v2} ='])
-
-    def test_assign_without_keyword(self):
-        self._test(['${v1}', '${v2}'], kw=None, assign=['${v1}', '${v2}'])
-
-    def test_is_comment(self):
-        assert_true(Step([], comment="comment").is_comment())
-        assert_false(Step(['KW'], comment="comment").is_comment())
-
-    def test_representation(self):
-        assert_equal(Step(['${v}, @{list}=', 'KW', 'arg']).as_list(),
-                      ['${v}, @{list}=', 'KW', 'arg'])
-
-    def _test(self, content, kw='KW', args=[], assign=[]):
-        step = Step(content)
-        assert_equal(step.name, kw)
-        assert_equal(step.args, args)
-        assert_equal(step.assign, assign)
+    else:
+        raise AssertionError('Incompatible children:\n%r\n%r'
+                             % (model, expected))
+
+
+def dump_model(model):
+    if isinstance(model, ast.AST):
+        return ast.dump(model)
+    elif isinstance(model, (list, tuple)):
+        return [dump_model(m) for m in model]
+    else:
+        raise TypeError('Invalid model %r' % model)
+
+def assert_block(model, expected, expected_attrs):
+    assert_equal(model._fields, expected._fields)
+    for field in expected._fields:
+        assert_model(getattr(model, field), getattr(expected, field))
+    for attr in expected._attributes:
+        exp = expected_attrs.get(attr, getattr(expected, attr))
+        assert_equal(getattr(model, attr), exp)
+
+
+def assert_statement(model, expected):
+    assert_equal(model._fields, ('type', 'tokens'))
+    assert_equal(model.type, expected.type)
+    assert_equal(len(model.tokens), len(expected.tokens))
+    for m, e in zip(model.tokens, expected.tokens):
+        assert_equal(m, e, formatter=repr)
+    assert_equal(model._attributes, ('lineno', 'col_offset', 'end_lineno',
+                                     'end_col_offset', 'errors'))
+    assert_equal(model.lineno, expected.tokens[0].lineno)
+    assert_equal(model.col_offset, expected.tokens[0].col_offset)
+    assert_equal(model.end_lineno, expected.tokens[-1].lineno)
+    assert_equal(model.end_col_offset, expected.tokens[-1].end_col_offset)
+    assert_equal(model.errors, expected.errors)
+
+
+class TestGetModel(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        with open(PATH, 'w') as f:
+            f.write(DATA)
+
+    @classmethod
+    def tearDownClass(cls):
+        os.remove(PATH)
+
+    def test_from_string(self):
+        model = get_model(DATA)
+        assert_model(model)
+
+    def test_from_path_as_string(self):
+        model = get_model(PATH)
+        assert_model(model, source=PATH)
+
+    if PY3:
+
+        def test_from_path_as_path(self):
+            model = get_model(Path(PATH))
+            assert_model(model, source=PATH)
+
+    def test_from_open_file(self):
+        with open(PATH) as f:
+            model = get_model(f)
+        assert_model(model)
+
+
+class TestSaveModel(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        with open(PATH, 'w') as f:
+            f.write(DATA)
+
+    @classmethod
+    def tearDownClass(cls):
+        os.remove(PATH)
+
+    def test_save_to_original_path(self):
+        model = get_model(PATH)
+        os.remove(PATH)
+        model.save()
+        assert_model(get_model(PATH), source=PATH)
+
+    def test_save_to_different_path(self):
+        model = get_model(PATH)
+        different = PATH + '.robot'
+        model.save(different)
+        assert_model(get_model(different), source=different)
+
+    if PY3:
+
+        def test_save_to_original_path_as_path(self):
+            model = get_model(Path(PATH))
+            os.remove(PATH)
+            model.save()
+            assert_model(get_model(PATH), source=PATH)
+
+        def test_save_to_different_path_as_path(self):
+            model = get_model(PATH)
+            different = PATH + '.robot'
+            model.save(Path(different))
+            assert_model(get_model(different), source=different)
+
+    def test_save_to_original_fails_if_source_is_not_path(self):
+        message = 'Saving model requires explicit output ' \
+                  'when original source is not path.'
+        assert_raises_with_msg(TypeError, message, get_model(DATA).save)
+        with open(PATH) as f:
+            assert_raises_with_msg(TypeError, message, get_model(f).save)
 
 
 class TestForLoop(unittest.TestCase):
 
-    def test_normal_for(self):
-        self._test(['${var}', 'IN', 'value1', 'value2'],
-                   ['${var}'], ['value1', 'value2'])
-        self._test(['${v1}', '${v2}', 'in', '@{values}'],
-                   ['${v1}', '${v2}'], ['@{values}'])
-        self._test(['${v1}', '${v2}', '${v3}', 'IN'],
-                   ['${v1}', '${v2}', '${v3}'], [])
-        self._test(['${x}', 'IN', 'IN RANGE', 'IN', 'IN RANGE', 'X'],
-                   ['${x}'], ['IN RANGE', 'IN', 'IN RANGE', 'X'])
+    def test_valid(self):
+        model = get_model('''\
+*** Test Cases ***
+Example
+    FOR    ${x}    IN    a    b    c
+        Log    ${x}
+    END
+''', data_only=True)
+        loop = model.sections[0].body[0].body[0]
+        expected = For(
+            header=ForHeader([
+                Token(Token.FOR, 'FOR', 3, 4),
+                Token(Token.VARIABLE, '${x}', 3, 11),
+                Token(Token.FOR_SEPARATOR, 'IN', 3, 19),
+                Token(Token.ARGUMENT, 'a', 3, 25),
+                Token(Token.ARGUMENT, 'b', 3, 30),
+                Token(Token.ARGUMENT, 'c', 3, 35),
+            ]),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'Log', 4, 8),
+                             Token(Token.ARGUMENT, '${x}', 4, 15)])
+            ],
+            end=End([
+                Token(Token.END, 'END', 5, 4)
+            ])
+        )
+        assert_model(loop, expected)
 
-    def test_variable_format_is_not_verified(self):
-        self._test(['whatever', 'here', 'in', 'value1', 'value2'],
-                   ['whatever', 'here'], ['value1', 'value2'])
+    def test_nested(self):
+        model = get_model('''\
+*** Test Cases ***
+Example
+    FOR    ${x}    IN    1    2
+        FOR    ${y}    IN RANGE    ${x}
+            Log    ${y}
+        END
+    END
+''', data_only=True)
+        loop = model.sections[0].body[0].body[0]
+        expected = For(
+            header=ForHeader([
+                Token(Token.FOR, 'FOR', 3, 4),
+                Token(Token.VARIABLE, '${x}', 3, 11),
+                Token(Token.FOR_SEPARATOR, 'IN', 3, 19),
+                Token(Token.ARGUMENT, '1', 3, 25),
+                Token(Token.ARGUMENT, '2', 3, 30),
+            ]),
+            body=[
+                For(
+                    header=ForHeader([
+                        Token(Token.FOR, 'FOR', 4, 8),
+                        Token(Token.VARIABLE, '${y}', 4, 15),
+                        Token(Token.FOR_SEPARATOR, 'IN RANGE', 4, 23),
+                        Token(Token.ARGUMENT, '${x}', 4, 35),
+                    ]),
+                    body=[
+                        KeywordCall([Token(Token.KEYWORD, 'Log', 5, 12),
+                                     Token(Token.ARGUMENT, '${y}', 5, 19)])
+                    ],
+                    end=End([
+                        Token(Token.END, 'END', 6, 8)
+                    ])
+                )
+            ],
+            end=End([
+                Token(Token.END, 'END', 7, 4)
+            ])
+        )
+        assert_model(loop, expected)
 
-    def test_without_vars(self):
-        self._test(['IN', 'value1', 'value2'], [], ['value1', 'value2'])
+    def test_invalid(self):
+        model = get_model('''\
+*** Test Cases ***
+Example
+    FOR
+    END    ooops
 
-    def test_without_in(self):
-        self._test(['whatever', 'here'], ['whatever', 'here'], [])
-
-    def test_in_range(self):
-        self._test(['${i}', 'IN RANGE', '100'], ['${i}'], ['100'],
-                flavor='IN RANGE')
-        self._test(['what', 'ever', 'in range', 'IN', 'whatever'],
-                   ['what', 'ever'], ['IN', 'whatever'],
-                   flavor='IN RANGE')
-
-    def test_representation(self):
-        ForLoop = ForLoopWithFakeParent
-        assert_equal(ForLoop(['${var}', 'IN', 'value1', 'value2']).as_list(),
-                      [': FOR', '${var}', 'IN', 'value1', 'value2'])
-        assert_equal(ForLoop(['${v2}', '${v2}', 'IN RANGE', '100']).as_list(),
-                      [': FOR', '${v2}', '${v2}', 'IN RANGE', '100'])
-
-    def test_in_zip(self):
-        self._test(['${i}', '${item}', 'in zip', '${list1}', '${list2}'],
-                   ['${i}', '${item}'], ['${list1}', '${list2}'],
-                   flavor='IN ZIP')
-
-    def _test(self, content, vars, items, flavor='IN'):
-        loop = ForLoopWithFakeParent(content)
-        assert_equal(loop.vars, vars)
-        assert_equal(loop.items, items)
-        assert_equal(loop.flavor, flavor)
-
-
-class TestSettings(unittest.TestCase):
-
-    def test_timeout(self):
-        timeout = Timeout('Timeout')
-        assert_equal(timeout.as_list(), ['Timeout'])
-        timeout.message='boo'
-        assert_equal(timeout.as_list(), ['Timeout', '', 'boo'])
-        timeout.message=''
-        timeout.value='1 second'
-        assert_equal(timeout.as_list(), ['Timeout', '1 second'])
-        timeout.message='boo'
-        assert_equal(timeout.as_list(), ['Timeout', '1 second', 'boo'])
-
-    def test_tags(self):
-        tags = Tags('Tags')
-        assert_equal(tags.as_list(), ['Tags'])
-        tags.value = ['tag1','tag2']
-        assert_equal(tags.as_list(), ['Tags', 'tag1', 'tag2'])
-
-    def test_fixtures(self):
-        fixture = Fixture('Teardown')
-        assert_equal(fixture.as_list(), ['Teardown'])
-        fixture.name = 'Keyword'
-        assert_equal(fixture.as_list(), ['Teardown', 'Keyword'])
-        fixture.args = ['arg1', 'arg2']
-        assert_equal(fixture.as_list(), ['Teardown', 'Keyword', 'arg1', 'arg2'])
-        fixture.name = ''
-        assert_equal(fixture.as_list(), ['Teardown', '', 'arg1', 'arg2'])
-
-    def test_template(self):
-        template = Template('Template')
-        assert_equal(template.as_list(), ['Template'])
-        template.value = 'value'
-        assert_equal(template.as_list(), ['Template', 'value'])
-
-
-class TestCopy(unittest.TestCase):
-
-    def test_test_case_copy(self):
-        test = self._create_test()
-        copied = test.copy('Copied')
-        assert_equal(copied.name, 'Copied')
-        assert_equal(copied.tags.value, test.tags.value)
-        assert_not_equal(copied.steps[0], test.steps[0])
-        test.add_step(['A new KW'])
-        assert_not_equal(len(test.steps), len(copied.steps))
-
-    def test_keyword_copy(self):
-        kw = self._create_keyword()
-        copied = kw.copy('New KW')
-        assert_equal(copied.name, 'New KW')
-        assert_equal(copied.args.value, kw.args.value)
-
-    def _create_test(self):
-        test = TestCase(TestCaseTable(None), 'Test name')
-        test.tags = Tags('Force Tags')
-        test.tags.value = ['1', '2', '3']
-        test.add_step(['Log', 'Foo'])
-        return test
-
-    def _create_keyword(self):
-        kw = UserKeyword(KeywordTable(None), 'KW')
-        kw.args.value = ['${a1}', '${a2}']
-        kw.add_step(['Some step', '${a1}'])
-        return kw
+    FOR    wrong    IN
+''', data_only=True)
+        loop1, loop2 = model.sections[0].body[0].body
+        expected1 = For(
+            header=ForHeader(
+                tokens=[Token(Token.FOR, 'FOR', 3, 4)],
+                errors=('FOR loop has no loop variables.',
+                        "FOR loop has no 'IN' or other valid separator."),
+            ),
+            end=End(
+                tokens=[Token(Token.END, 'END', 4, 4),
+                        Token(Token.ARGUMENT, 'ooops', 4, 11)],
+                errors=('END does not accept arguments.',)
+            ),
+            errors=('FOR loop has empty body.',)
+        )
+        expected2 = For(
+            header=ForHeader(
+                tokens=[Token(Token.FOR, 'FOR', 6, 4),
+                        Token(Token.VARIABLE, 'wrong', 6, 11),
+                        Token(Token.FOR_SEPARATOR, 'IN', 6, 20)],
+                errors=("FOR loop has invalid loop variable 'wrong'.",
+                        "FOR loop has no loop values."),
+            ),
+            errors=('FOR loop has empty body.',
+                    'FOR loop has no closing END.')
+        )
+        assert_model(loop1, expected1)
+        assert_model(loop2, expected2)
 
 
-if __name__ == "__main__":
+class TestIf(unittest.TestCase):
+
+    def test_if(self):
+        model = get_model('''\
+*** Test Cases ***
+Example
+    IF    True
+        Keyword
+        Another    argument
+    END
+    ''', data_only=True)
+        node = model.sections[0].body[0].body[0]
+        expected = If(
+            header=IfHeader([
+                Token(Token.IF, 'IF', 3, 4),
+                Token(Token.ARGUMENT, 'True', 3, 10),
+            ]),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'Keyword', 4, 8)]),
+                KeywordCall([Token(Token.KEYWORD, 'Another', 5, 8),
+                             Token(Token.ARGUMENT, 'argument', 5, 19)])
+            ],
+            end=End([Token(Token.END, 'END', 6, 4)])
+        )
+        assert_model(node, expected)
+
+    def test_if_else_if_else(self):
+        model = get_model('''\
+*** Test Cases ***
+Example
+    IF    True
+        K1
+    ELSE IF    False
+        K2
+    ELSE
+        K3
+    END
+    ''', data_only=True)
+        node = model.sections[0].body[0].body[0]
+        expected = If(
+            header=IfHeader([
+                Token(Token.IF, 'IF', 3, 4),
+                Token(Token.ARGUMENT, 'True', 3, 10),
+            ]),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'K1', 4, 8)])
+            ],
+            orelse=If(
+                header=ElseIfHeader([
+                    Token(Token.ELSE_IF, 'ELSE IF', 5, 4),
+                    Token(Token.ARGUMENT, 'False', 5, 15),
+                ]),
+                body=[
+                    KeywordCall([Token(Token.KEYWORD, 'K2', 6, 8)])
+                ],
+                orelse=If(
+                    header=ElseHeader([
+                        Token(Token.ELSE, 'ELSE', 7, 4),
+                    ]),
+                    body=[
+                        KeywordCall([Token(Token.KEYWORD, 'K3', 8, 8)])
+                    ],
+                )
+            ),
+            end=End([Token(Token.END, 'END', 9, 4)])
+        )
+        assert_model(node, expected)
+
+    def test_nested(self):
+        model = get_model('''\
+*** Test Cases ***
+Example
+    IF    ${x}
+        Log    ${x}
+        IF    ${y}
+            Log    ${y}
+        ELSE
+            Log    ${z}
+        END
+    END
+''', data_only=True)
+        node = model.sections[0].body[0].body[0]
+        expected = If(
+            header=IfHeader([
+                Token(Token.IF, 'IF', 3, 4),
+                Token(Token.ARGUMENT, '${x}', 3, 10),
+            ]),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'Log', 4, 8),
+                             Token(Token.ARGUMENT, '${x}', 4, 15)]),
+                If(
+                    header=IfHeader([
+                        Token(Token.IF, 'IF', 5, 8),
+                        Token(Token.ARGUMENT, '${y}', 5, 14),
+                    ]),
+                    body=[
+                        KeywordCall([Token(Token.KEYWORD, 'Log', 6, 12),
+                                     Token(Token.ARGUMENT, '${y}', 6, 19)])
+                    ],
+                    orelse=If(
+                        header=ElseHeader([
+                            Token(Token.ELSE, 'ELSE', 7, 8)
+                        ]),
+                        body=[
+                            KeywordCall([Token(Token.KEYWORD, 'Log', 8, 12),
+                                         Token(Token.ARGUMENT, '${z}', 8, 19)])
+                        ]
+                    ),
+                    end=End([
+                        Token(Token.END, 'END', 9, 8)
+                    ])
+                )
+            ],
+            end=End([
+                Token(Token.END, 'END', 10, 4)
+            ])
+        )
+        assert_model(node, expected)
+
+    def test_invalid(self):
+        model = get_model('''\
+*** Test Cases ***
+Example
+    IF    too    many
+    ELSE    ooops
+    ELSE IF
+    END    ooops
+
+    IF
+''', data_only=True)
+        if1, if2 = model.sections[0].body[0].body
+        expected1 = If(
+            header=IfHeader(
+                tokens=[Token(Token.IF, 'IF', 3, 4),
+                        Token(Token.ARGUMENT, 'too', 3, 10),
+                        Token(Token.ARGUMENT, 'many', 3, 17)],
+                errors=('IF has more than one condition.',)
+            ),
+            orelse=If(
+                header=ElseHeader(
+                    tokens=[Token(Token.ELSE, 'ELSE', 4, 4),
+                            Token(Token.ARGUMENT, 'ooops', 4, 12)],
+                    errors=('ELSE has condition.',)
+                ),
+                orelse=If(
+                    header=ElseIfHeader(
+                        tokens=[Token(Token.ELSE_IF, 'ELSE IF', 5, 4)],
+                        errors=('ELSE IF has no condition.',)
+                    ),
+                    errors=('ELSE IF has empty body.',)
+                ),
+                errors=('ELSE has empty body.',)
+            ),
+            end=End(
+                tokens=[Token(Token.END, 'END', 6, 4),
+                        Token(Token.ARGUMENT, 'ooops', 6, 11)],
+                errors=('END does not accept arguments.',)
+            ),
+            errors=('IF has empty body.',
+                    'ELSE IF after ELSE.')
+        )
+        expected2 = If(
+            header=IfHeader(
+                tokens=[Token(Token.IF, 'IF', 8, 4)],
+                errors=('IF has no condition.',)
+            ),
+            errors=('IF has empty body.',
+                    'IF has no closing END.')
+        )
+        assert_model(if1, expected1)
+        assert_model(if2, expected2)
+
+
+class TestVariables(unittest.TestCase):
+
+    def test_valid(self):
+        model = get_model('''\
+*** Variables ***
+${x}      value
+@{y}=     two    values
+&{z} =    one=item
+''', data_only=True)
+        expected = VariableSection(
+            header=SectionHeader(
+                tokens=[Token(Token.VARIABLE_HEADER, '*** Variables ***', 1, 0)]
+            ),
+            body=[
+                Variable([Token(Token.VARIABLE, '${x}', 2, 0),
+                         Token(Token.ARGUMENT, 'value', 2, 10)]),
+                Variable([Token(Token.VARIABLE, '@{y}=', 3, 0),
+                          Token(Token.ARGUMENT, 'two', 3, 10),
+                          Token(Token.ARGUMENT, 'values', 3, 17)]),
+                Variable([Token(Token.VARIABLE, '&{z} =', 4, 0),
+                          Token(Token.ARGUMENT, 'one=item', 4, 10)]),
+            ]
+        )
+        assert_model(model.sections[0], expected)
+
+    def test_invalid(self):
+        model = get_model('''\
+*** Variables ***
+Ooops     I did it again
+${}       invalid
+${x}==    invalid
+${not     closed
+          invalid
+&{dict}   invalid    ${invalid}
+''', data_only=True)
+        expected = VariableSection(
+            header=SectionHeader(
+                tokens=[Token(Token.VARIABLE_HEADER, '*** Variables ***', 1, 0)]
+            ),
+            body=[
+                Variable(
+                    tokens=[Token(Token.VARIABLE, 'Ooops', 2, 0),
+                            Token(Token.ARGUMENT, 'I did it again', 2, 10)],
+                    errors=("Invalid variable name 'Ooops'.",)
+                ),
+                Variable(
+                    tokens=[Token(Token.VARIABLE, '${}', 3, 0),
+                            Token(Token.ARGUMENT, 'invalid', 3, 10)],
+                    errors=("Invalid variable name '${}'.",)
+                ),
+                Variable(
+                    tokens=[Token(Token.VARIABLE, '${x}==', 4, 0),
+                            Token(Token.ARGUMENT, 'invalid', 4, 10)],
+                    errors = ("Invalid variable name '${x}=='.",)
+                ),
+                Variable(
+                    tokens=[Token(Token.VARIABLE, '${not', 5, 0),
+                            Token(Token.ARGUMENT, 'closed', 5, 10)],
+                    errors=("Invalid variable name '${not'.",)
+                ),
+                Variable(
+                    tokens=[Token(Token.VARIABLE, '', 6, 0),
+                            Token(Token.ARGUMENT, 'invalid', 6, 10)],
+                    errors=("Invalid variable name ''.",)
+                ),
+                Variable(
+                    tokens=[Token(Token.VARIABLE, '&{dict}', 7, 0),
+                            Token(Token.ARGUMENT, 'invalid', 7, 10),
+                            Token(Token.ARGUMENT, '${invalid}', 7, 21)],
+                    errors=("Invalid dictionary variable item 'invalid'. "
+                            "Items must use 'name=value' syntax or be dictionary variables themselves.",
+                            "Invalid dictionary variable item '${invalid}'. "
+                            "Items must use 'name=value' syntax or be dictionary variables themselves.")
+                ),
+            ]
+        )
+        assert_model(model.sections[0], expected)
+
+
+class TestError(unittest.TestCase):
+
+    def test_get_errors_from_tokens(self):
+        assert_equal(Error([Token('ERROR', error='xxx')]).errors,
+                     ('xxx',))
+        assert_equal(Error([Token('ERROR', error='xxx'),
+                            Token('ARGUMENT'),
+                            Token('ERROR', error='yyy')]).errors,
+                     ('xxx', 'yyy'))
+        assert_equal(Error([Token('ERROR', error=e) for e in '0123456789']).errors,
+                     tuple('0123456789'))
+
+    def test_get_fatal_errors_from_tokens(self):
+        assert_equal(Error([Token('FATAL ERROR', error='xxx')]).errors,
+                     ('xxx',))
+        assert_equal(Error([Token('FATAL ERROR', error='xxx'),
+                            Token('ARGUMENT'),
+                            Token('FATAL ERROR', error='yyy')]).errors,
+                     ('xxx', 'yyy'))
+        assert_equal(Error([Token('FATAL ERROR', error=e) for e in '0123456789']).errors,
+                     tuple('0123456789'))
+
+    def test_get_errors_and_fatal_errors_from_tokens(self):
+        assert_equal(Error([Token('ERROR', error='error'),
+                            Token('ARGUMENT'),
+                            Token('FATAL ERROR', error='fatal error')]).errors,
+                     ('error', 'fatal error'))
+        assert_equal(Error([Token('FATAL ERROR', error=e) for e in '0123456789']).errors,
+                     tuple('0123456789'))
+
+    def test_model_error(self):
+        model = get_model('''\
+*** Invalid ***
+*** Settings ***
+Invalid
+Documentation
+''', data_only=True)
+        inv_header = (
+            "Unrecognized section header '*** Invalid ***'. Valid sections: "
+            "'Settings', 'Variables', 'Test Cases', 'Tasks', 'Keywords' and 'Comments'."
+        )
+        inv_setting = "Non-existing setting 'Invalid'."
+        expected = File([
+            CommentSection(
+                body=[
+                    Error([Token('ERROR', '*** Invalid ***', 1, 0, inv_header)])
+                ]
+            ),
+            SettingSection(
+                header=SectionHeader([
+                    Token('SETTING HEADER', '*** Settings ***', 2, 0)
+                ]),
+                body=[
+                    Error([Token('ERROR', 'Invalid', 3, 0, inv_setting)]),
+                    Documentation([Token('DOCUMENTATION', 'Documentation', 4, 0)])
+                ]
+            )
+        ])
+        assert_model(model, expected)
+
+    def test_model_error_with_fatal_error(self):
+        model = get_resource_model('''\
+*** Test Cases ***
+''', data_only=True)
+        inv_testcases = "Resource file with 'Test Cases' section is invalid."
+        expected = File([
+            CommentSection(
+                body=[
+                    Error([Token('FATAL ERROR', '*** Test Cases ***', 1, 0, inv_testcases)])
+                ]
+            )
+        ])
+        assert_model(model, expected)
+
+    def test_model_error_with_error_and_fatal_error(self):
+        model = get_resource_model('''\
+*** Invalid ***
+*** Settings ***
+Invalid
+Documentation
+*** Test Cases ***
+''', data_only=True)
+        inv_header = (
+            "Unrecognized section header '*** Invalid ***'. Valid sections: "
+            "'Settings', 'Variables', 'Keywords' and 'Comments'."
+        )
+        inv_setting = "Non-existing setting 'Invalid'."
+        inv_testcases = "Resource file with 'Test Cases' section is invalid."
+        expected = File([
+            CommentSection(
+                body=[
+                    Error([Token('ERROR', '*** Invalid ***', 1, 0, inv_header)])
+                ]
+            ),
+            SettingSection(
+                header=SectionHeader([
+                    Token('SETTING HEADER', '*** Settings ***', 2, 0)
+                ]),
+                body=[
+                    Error([Token('ERROR', 'Invalid', 3, 0, inv_setting)]),
+                    Documentation([Token('DOCUMENTATION', 'Documentation', 4, 0)]),
+                    Error([Token('FATAL ERROR', '*** Test Cases ***', 5, 0, inv_testcases)])
+                ]
+            )
+        ])
+        assert_model(model, expected)
+
+    def test_set_errors_explicitly(self):
+        error = Error([])
+        error.errors = ('explicitly set', 'errors')
+        assert_equal(error.errors, ('explicitly set', 'errors'))
+        error.tokens = [Token('ERROR', error='normal error'),
+                        Token('FATAL ERROR', error='fatal error')]
+        assert_equal(error.errors, ('normal error', 'fatal error',
+                                    'explicitly set', 'errors'))
+        error.errors = ['errors', 'as', 'list']
+        assert_equal(error.errors, ('normal error', 'fatal error',
+                                    'errors', 'as', 'list'))
+
+
+class TestModelVisitors(unittest.TestCase):
+
+    def test_ast_NodeVisitor(self):
+
+        class Visitor(ast.NodeVisitor):
+
+            def __init__(self):
+                self.test_names = []
+                self.kw_names = []
+
+            def visit_TestCaseName(self, node):
+                self.test_names.append(node.name)
+
+            def visit_KeywordName(self, node):
+                self.kw_names.append(node.name)
+
+            def visit_Block(self, node):
+                raise RuntimeError('Should not be executed.')
+
+            def visit_Statement(self, node):
+                raise RuntimeError('Should not be executed.')
+
+        visitor = Visitor()
+        visitor.visit(get_model(DATA))
+        assert_equal(visitor.test_names, ['Example'])
+        assert_equal(visitor.kw_names, ['Keyword'])
+
+    def test_ModelVisitor(self):
+
+        class Visitor(ModelVisitor):
+
+            def __init__(self):
+                self.test_names = []
+                self.kw_names = []
+                self.blocks = []
+                self.statements = []
+
+            def visit_TestCaseName(self, node):
+                self.test_names.append(node.name)
+                self.visit_Statement(node)
+
+            def visit_KeywordName(self, node):
+                self.kw_names.append(node.name)
+                self.visit_Statement(node)
+
+            def visit_Block(self, node):
+                self.blocks.append(type(node).__name__)
+                self.generic_visit(node)
+
+            def visit_Statement(self, node):
+                self.statements.append(node.type)
+
+        visitor = Visitor()
+        visitor.visit(get_model(DATA))
+        assert_equal(visitor.test_names, ['Example'])
+        assert_equal(visitor.kw_names, ['Keyword'])
+        assert_equal(visitor.blocks,
+                     ['File', 'CommentSection', 'TestCaseSection', 'TestCase',
+                      'KeywordSection', 'Keyword'])
+        assert_equal(visitor.statements,
+                     ['EOL', 'TESTCASE HEADER', 'EOL', 'TESTCASE NAME',
+                      'COMMENT', 'KEYWORD', 'EOL', 'EOL', 'KEYWORD HEADER',
+                      'COMMENT', 'KEYWORD NAME', 'ARGUMENTS', 'KEYWORD'])
+
+    def test_ast_NodeTransformer(self):
+
+        class Transformer(ast.NodeTransformer):
+
+            def visit_Tags(self, node):
+                return None
+
+            def visit_TestCaseSection(self, node):
+                self.generic_visit(node)
+                node.body.append(
+                    TestCase(TestCaseName([Token('TESTCASE NAME', 'Added'),
+                                           Token('EOL', '\n')]))
+                )
+                return node
+
+            def visit_TestCase(self, node):
+                self.generic_visit(node)
+                return node if node.name != 'REMOVE' else None
+
+            def visit_TestCaseName(self, node):
+                name_token = node.get_token(Token.TESTCASE_NAME)
+                name_token.value = name_token.value.upper()
+                return node
+
+            def visit_Block(self, node):
+                raise RuntimeError('Should not be executed.')
+
+            def visit_Statement(self, node):
+                raise RuntimeError('Should not be executed.')
+
+        model = get_model('''\
+*** Test Cases ***
+Example
+    [Tags]    to be removed
+Remove
+''')
+        Transformer().visit(model)
+        expected = File(sections=[
+            TestCaseSection(
+                header=SectionHeader([
+                    Token('TESTCASE HEADER', '*** Test Cases ***', 1, 0),
+                    Token('EOL', '\n', 1, 18)
+                ]),
+                body=[
+                    TestCase(TestCaseName([
+                        Token('TESTCASE NAME', 'EXAMPLE', 2, 0),
+                        Token('EOL', '\n', 2, 7)
+                    ])),
+                    TestCase(TestCaseName([
+                        Token('TESTCASE NAME', 'Added'),
+                        Token('EOL', '\n')
+                    ]))
+                ]
+            )
+        ])
+        assert_model(model, expected)
+
+    def test_ModelTransformer(self):
+
+        class Transformer(ModelTransformer):
+
+            def visit_SectionHeader(self, node):
+                return node
+
+            def visit_TestCaseName(self, node):
+                return node
+
+            def visit_Statement(self, node):
+                return None
+
+            def visit_Block(self, node):
+                self.generic_visit(node)
+                if hasattr(node, 'header'):
+                    for token in node.header.data_tokens:
+                        token.value = token.value.upper()
+                return node
+
+        model = get_model('''\
+*** Test Cases ***
+Example
+    [Tags]    to be removed
+    To be removed
+''')
+        Transformer().visit(model)
+        expected = File(sections=[
+            TestCaseSection(
+                header=SectionHeader([
+                    Token('TESTCASE HEADER', '*** TEST CASES ***', 1, 0),
+                    Token('EOL', '\n', 1, 18)
+                ]),
+                body=[
+                    TestCase(TestCaseName([
+                        Token('TESTCASE NAME', 'EXAMPLE', 2, 0),
+                        Token('EOL', '\n', 2, 7)
+                    ])),
+                ]
+            )
+        ])
+        assert_model(model, expected)
+
+
+if __name__ == '__main__':
     unittest.main()

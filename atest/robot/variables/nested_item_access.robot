@@ -27,11 +27,11 @@ Invalid nested list access
 Invalid nested dict access
     Check Test Case    ${TESTNAME}
 
-Nested access with non-list/dict
+Nested access with non-subscriptable
     Check Test Case    ${TESTNAME}
 
 Escape nested
     Check Test Case    ${TESTNAME}
 
-Nested access doesn't support old `@` and `&` syntax
+Nested access supports `@` and `&` syntax
     Check Test Case    ${TESTNAME}

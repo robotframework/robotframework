@@ -33,6 +33,7 @@ ${RUNNER DEFAULTS}
 ...               --ConsoleMarkers OFF
 ...               --PYTHONPATH "${CURDIR}${/}..${/}testresources${/}testlibs"
 ...               --PYTHONPATH "${CURDIR}${/}..${/}testresources${/}listeners"
+${u}              ${{'' if $INTERPRETER.is_py3 or $INTERPRETER.is_ironpython else 'u'}}
 
 *** Keywords ***
 Run Tests
@@ -51,11 +52,11 @@ Run Tests Without Processing Output
     [Return]    ${result}
 
 Run Rebot
-    [Arguments]    ${options}=    ${sources}=    ${default options}=${COMMON DEFAULTS}    ${output}=${OUTFILE}
+    [Arguments]    ${options}=    ${sources}=    ${default options}=${COMMON DEFAULTS}    ${output}=${OUTFILE}    ${validate output}=None
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
     ${result} =    Execute    ${INTERPRETER.rebot}   ${options}    ${sources}    ${default options}
     Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
-    Process Output    ${output}
+    Process Output    ${output}    validate=${validate output}
     [Return]    ${result}
 
 Run Rebot Without Processing Output
@@ -113,15 +114,25 @@ Check Test Tags
     [Return]    ${tc}
 
 Check Keyword Data
-    [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=
-    Should be equal    ${kw.name}    ${name}
-    Should be equal    ${kw.status}    ${status}
-    ${kwassign}=    Catenate    SEPARATOR=,${SPACE}    @{kw.assign}
-    Should be equal    ${kwassign}    ${assign}
-    ${kwargs}=    Catenate    SEPARATOR=,${SPACE}    @{kw.args}
-    Should match    ${kwargs}    ${args}
-    ${kwtags}=    Catenate    SEPARATOR=,${SPACE}    @{kw.tags}
-    Should be equal    ${kwtags}    ${tags}
+    [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=    ${type}=KEYWORD
+    Should Be Equal    ${kw.name}                    ${name}
+    Should Be Equal    ${{', '.join($kw.assign)}}    ${assign}
+    Should Be Equal    ${{', '.join($kw.args)}}      ${args}
+    Should Be Equal    ${kw.status}                  ${status}
+    Should Be Equal    ${{', '.join($kw.tags)}}      ${tags}
+    Should Be Equal    ${kw.type}                    ${type}
+
+Test And All Keywords Should Have Passed
+    [Arguments]    ${name}=${TESTNAME}
+    ${tc} =    Check Test Case    ${name}
+    All Keywords Should Have Passed    ${tc}
+
+All Keywords Should Have Passed
+    [Arguments]    ${tc or kw}
+    FOR    ${kw}    IN    @{tc or kw.kws}
+        Should Be Equal    ${kw.status}    PASS
+        All Keywords Should Have Passed    ${kw}
+    END
 
 Get Output File
     [Arguments]    ${path}
@@ -132,10 +143,14 @@ Get Output File
     [Return]    ${file}
 
 File Should Contain
-    [Arguments]    ${path}    @{expected}
+    [Arguments]    ${path}    @{expected}    ${count}=None
     ${exp} =    Catenate    @{expected}
     ${file} =    Get Output File    ${path}
-    Should Contain    ${file}    ${exp}
+    IF    not ${count}
+        Should Contain    ${file}    ${exp}
+    ELSE
+        Should Contain X Times    ${file}    ${exp}    ${count}
+    END
 
 File Should Not Contain
     [Arguments]    ${path}    @{expected}
@@ -143,11 +158,11 @@ File Should Not Contain
     ${file} =    Get Output File    ${path}
     Should Not Contain    ${file}    ${exp}
 
-Check File Matches Regexp
+File Should Match Regexp
     [Arguments]    ${path}    @{expected}
     ${exp} =    Catenate    @{expected}
     ${file} =    Get Output File    ${path}
-    Should Match Regexp    ${file.strip()}    ^${exp}$
+    Should Match Regexp    ${file.strip()}    (?s)^${exp}$
 
 File Should Contain Regexp
     [Arguments]    ${path}    @{expected}
@@ -201,35 +216,35 @@ Stderr Should Be Empty
     ${stderr} =    Get Stderr
     Should Be Empty    ${stderr}    Errors in test execution:\n${stderr}
 
-Check Stderr Contains
-    [Arguments]    @{expected}
-    File Should Contain    ${STDERR_FILE}    @{expected}
+Stderr Should Contain
+    [Arguments]    @{expected}    ${count}=None
+    File Should Contain    ${STDERR_FILE}    @{expected}    count=${count}
 
-Check Stderr Does Not Contain
+Stderr Should Not Contain
     [Arguments]    @{expected}
     File Should Not Contain    ${STDERR_FILE}    @{expected}
 
-Check Stderr Matches Regexp
+Stderr Should Match Regexp
     [Arguments]    @{expected}
-    Check File Matches Regexp    ${STDERR_FILE}    @{expected}
+    File Should Match Regexp    ${STDERR_FILE}    @{expected}
 
-Check Stderr Contains Regexp
+Stderr Should Contain Regexp
     [Arguments]    @{expected}
     File Should Contain Regexp    ${STDERR_FILE}    @{expected}
 
-Check Stdout Contains
-    [Arguments]    @{expected}
-    File Should Contain    ${STDOUT_FILE}    @{expected}
+Stdout Should Contain
+    [Arguments]    @{expected}    ${count}=None
+    File Should Contain    ${STDOUT_FILE}    @{expected}    count=${count}
 
-Check Stdout Does Not Contain
+Stdout Should Not Contain
     [Arguments]    @{expected}
     File Should Not Contain    ${STDOUT_FILE}    @{expected}
 
-Check Stdout Matches Regexp
+Stdout Should Match Regexp
     [Arguments]    @{expected}
-    Check File Matches Regexp    ${STDOUT_FILE}    @{expected}
+    File Should Match Regexp    ${STDOUT_FILE}    @{expected}
 
-Check Stdout Contains Regexp
+Stdout Should Contain Regexp
     [Arguments]    @{expected}
     File Should Contain Regexp    ${STDOUT_FILE}    @{expected}
 
@@ -249,17 +264,17 @@ Syslog Should Contain Match
     [Arguments]    @{expected}
     File Should Contain Match    ${SYSLOG FILE}    @{expected}
 
-Check Syslog Contains
+Syslog Should Contain
     [Arguments]    @{expected}
     File Should Contain    ${SYSLOG_FILE}    @{expected}
 
-Check Syslog Does Not Contain
+Syslog Should Not Contain
     [Arguments]    @{expected}
     File Should Not Contain    ${SYSLOG_FILE}    @{expected}
 
 Syslog Should Match Regexp
     [Arguments]    @{expected}
-    Check File Matches Regexp    ${SYSLOG_FILE}    @{expected}
+    File Should Match Regexp    ${SYSLOG_FILE}    @{expected}
 
 Syslog Should Contain Regexp
     [Arguments]    @{expected}
@@ -278,12 +293,16 @@ Timestamp Should Be Valid
     [Arguments]    ${time}
     Log    ${time}
     Should Not Be Equal    ${time}    ${None}
-    Should Match Regexp    ${time}    20\\d{6} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}    Not valid timestamp
+    Should Match Regexp    ${time}    ^20\\d{6} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}$    Not valid timestamp
 
 Elapsed Time Should Be Valid
     [Arguments]    ${time}
     Log    ${time}
-    Should Be True    isinstance(${time}, int) and ${time} >= 0    Not valid elapsed time
+    Should Be True    isinstance($time, int)    Not valid elapsed time: ${time}
+    # On CI elapsed time has sometimes been negative. We cannot control system time there,
+    # so better to log a warning than fail the test in that case.
+    Run Keyword If    $time < 0
+    ...    Log    Negative elapsed time '${time}'. Someone messing with system time?    WARN
 
 Previous test should have passed
     [Arguments]    ${name}
@@ -316,18 +335,6 @@ Tag Statistics Should Be
     Should Be Equal As Integers    ${tag.attrib['pass']}    ${pass}
     Should Be Equal As Integers    ${tag.attrib['fail']}    ${fail}
 
-# TODO: Move next two closer to other test/kw status related kws
-Test And All Keywords Should Have Passed
-    [Arguments]    ${name}=${TESTNAME}
-    ${tc} =    Check Test Case    ${name}
-    All Keywords Should Have Passed    ${tc}
-
-All Keywords Should Have Passed
-    [Arguments]    ${tc or kw}
-    : FOR    ${kw}    IN    @{tc or kw.kws}
-    \    Should Be Equal    ${kw.status}    PASS
-    \    All Keywords Should Have Passed    ${kw}
-
 Set PYTHONPATH
     [Arguments]    @{values}
     ${value} =    Catenate    SEPARATOR=${:}    @{values}
@@ -340,15 +347,31 @@ Reset PYTHONPATH
     Remove Environment Variable    JYTHONPATH
     Remove Environment Variable    IRONPYTHONPATH
 
-Import should have failed
-    [Arguments]    ${index}    ${path}    ${message}    ${traceback}=*
-    ...    ${stacktrace}=
-    ${path} =    Normalize Path    ${DATADIR}/${path}
-    ${error} =    Set Variable    Error in file '${path}': ${message}
+Error in file
+    [Arguments]    ${index}    ${path}    ${lineno}    @{message}    ${traceback}=
+    ...    ${stacktrace}=    ${pattern}=True
+    ${path} =    Join Path    ${DATADIR}    ${path}
+    ${message} =    Catenate    @{message}
+    ${error} =    Set Variable    Error in file '${path}' on line ${lineno}: ${message}
     ${error} =    Set Variable If    $traceback and not $stacktrace
     ...    ${error}\nTraceback (most recent call last):\n*${traceback}*
     ...    ${error}
     ${error} =    Set Variable If    $stacktrace
     ...    ${error}\n*${stacktrace}*
     ...    ${error}
-    Check Log Message    @{ERRORS}[${index}]    ${error}    level=ERROR    pattern=yes
+    Check Log Message    ${ERRORS}[${index}]    ${error}    level=ERROR    pattern=${pattern}
+
+Error in library
+    [Arguments]    ${name}    @{message}    ${pattern}=False    ${index}=0
+    ${error} =    Catenate
+    ...    Error in library '${name}':
+    ...    @{message}
+    Check Log Message    ${ERRORS}[${index}]    ${error}    level=ERROR    pattern=${pattern}
+
+Setup Should Not Be Defined
+    [Arguments]    ${model_object}
+    Should Not Be True     ${model_object.setup}
+
+Teardown Should Not Be Defined
+    [Arguments]    ${model_object}
+    Should Not Be True     ${model_object.teardown}

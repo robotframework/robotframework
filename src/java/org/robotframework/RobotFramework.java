@@ -45,7 +45,7 @@ public class RobotFramework {
      * <li>libdoc</li><li>tidy</li><li>testdoc</li></ul><p>
      *
      * Example usages:<br>
-     * <code>run(new String[] {"--outputdir", "/tmp", "mytests.txt"})</code><br>
+     * <code>run(new String[] {"--outputdir", "/tmp", "tests.robot"})</code><br>
      * <code>run(new String[] {"libdoc", "MyLibrary", "mydoc.html"})</code>
      *
      * @param args

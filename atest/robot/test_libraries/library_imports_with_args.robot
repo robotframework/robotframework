@@ -46,4 +46,4 @@ Too Many Arguments
 
 Non-existing variables
     [Template]
-    Check syslog contains  Variable '\${NONEXISTING}' not found.
+    Syslog Should Contain  Variable '\${NONEXISTING}' not found.

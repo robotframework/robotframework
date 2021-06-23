@@ -42,9 +42,9 @@ Log HTML
 
 Write messages to console
     ${tc} =  Check test case  ${TEST NAME}
-    Check stdout contains  To console only
-    Check stdout contains  To console in two parts
-    Check stdout contains  To log and console
+    Stdout Should Contain  To console only
+    Stdout Should Contain  To console in two parts
+    Stdout Should Contain  To log and console
     Check log message  ${tc.kws[0].msgs[0]}  To log and console  INFO
 
 Log Non-Strings

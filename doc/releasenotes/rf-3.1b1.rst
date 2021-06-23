@@ -412,7 +412,7 @@ Other issues possibly causing backwards incompatibility problems
   `01:02foo` do not work anymore. (`#2921`_)
 
 - Deprecated `robot.running.TestSuite.(imports|variables|user_keywords)`
-  propertys have been removed from the programmatic API. (`#2867`_)
+  properties have been removed from the programmatic API. (`#2867`_)
 
 Deprecated features
 ===================
@@ -898,7 +898,7 @@ Full list of fixes and enhancements
     * - `#2867`_
       - enhancement
       - low
-      - Remove deprecated `robot.running.TestSuite.(imports|variables|user_keywords)` propertys
+      - Remove deprecated `robot.running.TestSuite.(imports|variables|user_keywords)` properties
       - alpha 2
     * - `#2879`_
       - enhancement

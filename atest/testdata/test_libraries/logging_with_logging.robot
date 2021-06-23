@@ -15,6 +15,9 @@ Log with custom levels
     [Setup]    Set log level    trace
     Log with custom levels
 
+Log exception
+    Log exception
+
 Messages below threshold level are ignored fully
     [Setup]    Set log level    warn
     Log invalid message

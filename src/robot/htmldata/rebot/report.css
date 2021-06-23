@@ -13,22 +13,19 @@ th {
 /* Summary and total/tag/suite details */
 .details {
     border: 1px solid #ccc;
-    border-collapse: collapse;
+    border-spacing: 0.2em;
     clear: both;
     width: 65em;
     margin-bottom: 1em;
 }
 .details th {
     background: white;
-    width: 10em;
-    white-space: nowrap;
+    width: 11em;
     text-align: left;
     vertical-align: top;
-    padding: 0.2em 0.4em;
 }
 .details td {
     vertical-align: top;
-    padding: 0.2em 0.4em;
 }
 .selector th, .selector td {
     padding-top: 0.5em;

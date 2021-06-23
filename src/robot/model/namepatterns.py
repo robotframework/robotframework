@@ -13,10 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import MultiMatcher, py2to3
+from robot.utils import MultiMatcher, py3to2
 
 
-@py2to3
+@py3to2
 class _NamePatterns(object):
 
     def __init__(self, patterns=None):
@@ -31,7 +31,7 @@ class _NamePatterns(object):
     def _match_longname(self, name):
         raise NotImplementedError
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self._matcher)
 
     def __iter__(self):

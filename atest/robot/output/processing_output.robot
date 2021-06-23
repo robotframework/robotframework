@@ -11,8 +11,8 @@ Test Case File Suite
     Should Be Equal    ${SUITE.metadata['Something']}    My Value
     Should Be Equal as Strings    ${SUITE.metadata}    {Something: My Value}
     Check Normal Suite Defaults    ${SUITE}
-    Should Be Equal    ${SUITE.full_message}    2 critical tests, 2 passed, 0 failed\n 2 tests total, 2 passed, 0 failed
-    Should Be Equal    ${SUITE.statistics.message}    2 critical tests, 2 passed, 0 failed\n 2 tests total, 2 passed, 0 failed
+    Should Be Equal    ${SUITE.full_message}    2 tests, 2 passed, 0 failed
+    Should Be Equal    ${SUITE.statistics.message}    2 tests, 2 passed, 0 failed
     Should Contain Tests    ${SUITE}    First One    Second One
 
 Directory Suite
@@ -75,13 +75,18 @@ Check Minimal Suite Times
 Check Suite Defaults
     [Arguments]    ${mysuite}    ${message}=    ${tests}=[]    ${setup}=${None}    ${teardown}=${None}
     Should Be Equal    ${mysuite.message}    ${message}
-    Check Setup Or Teardown    ${mysuite.setup}    ${setup}
-    Check Setup Or Teardown    ${mysuite.teardown}    ${teardown}
+    Check Setup    ${mysuite}    ${setup}
+    Check Teardown    ${mysuite}    ${teardown}
 
-Check Setup Or Teardown
-    [Arguments]    ${item}    ${expected}
-    ${actual} =    Set Variable If    "${expected}" == "None"    ${item}    ${item.name}
-    Should Be Equal    ${actual}    ${expected}
+Check Setup
+    [Arguments]    ${suite}    ${expected}
+    Run Keyword If    "${expected}" != "None"   Should Be Equal   ${suite.setup.name}    ${expected}
+    Run Keyword If    "${expected}" == "None"   Setup Should Not Be Defined    ${suite}
+
+Check Teardown
+    [Arguments]    ${suite}    ${expected}
+    Run Keyword If    "${expected}" != "None"   Should Be Equal   ${suite.teardown.name}    ${expected}
+    Run Keyword If    "${expected}" == "None"   Teardown Should Not Be Defined    ${suite}
 
 Check Suite Got From Misc/suites/ Directory
     Check Normal Suite Defaults    ${SUITE}    teardown=BuiltIn.Log
@@ -90,7 +95,7 @@ Check Suite Got From Misc/suites/ Directory
     ...    Tsuite3
     Should Be Empty    ${SUITE.tests}
     Should Contain Suites    ${SUITE.suites[1]}    Sub1    Sub2
-    :FOR    ${s}    IN
+    FOR    ${s}    IN
     ...    ${SUITE.suites[0]}
     ...    ${SUITE.suites[1].suites[0]}
     ...    ${SUITE.suites[1].suites[1]}
@@ -98,7 +103,8 @@ Check Suite Got From Misc/suites/ Directory
     ...    ${SUITE.suites[3]}
     ...    ${SUITE.suites[4]}
     ...    ${SUITE.suites[5]}
-    \    Should Be Empty    ${s.suites}
+        Should Be Empty    ${s.suites}
+    END
     Should Contain Tests    ${SUITE}
     ...    SubSuite1 First
     ...    SubSuite2 First

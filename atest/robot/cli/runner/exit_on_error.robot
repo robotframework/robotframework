@@ -39,8 +39,9 @@ With --SkipTeardownOnExit
 *** Keywords ***
 Executed normally
     [Arguments]    @{tests}
-    :FOR    ${name}    IN    @{tests}
-    \    Check Test Case    ${name}
+    FOR    ${name}    IN    @{tests}
+        Check Test Case    ${name}
+    END
 
 Failed due to error
     [Arguments]    ${test}
@@ -48,16 +49,17 @@ Failed due to error
 
 Skipped due to error
     [Arguments]    @{tests}
-    :FOR    ${name}    IN    @{tests}
-    \    ${tc} =    Check Test Case    ${name}    FAIL    ${MESSAGE}
-    \    Should Contain    ${tc.tags}    robot:exit
+    FOR    ${name}    IN    @{tests}
+        ${tc} =    Check Test Case    ${name}    FAIL    ${MESSAGE}
+        Should Contain    ${tc.tags}    robot:exit
+    END
 
 Teardowns not executed
     [Arguments]    ${name}
     ${suite} =    Get Test Suite    ${name}
-    Should Be Equal    ${suite.teardown}    ${None}
+    Teardown Should Not Be Defined    ${suite}
     ${tc} =    Check Test Case    ${name}    FAIL    ${MESSAGE}
-    Should Be Equal    ${tc.teardown}    ${None}
+    Teardown Should Not Be Defined    ${tc}
 
 Teardowns executed
     [Arguments]    ${name}

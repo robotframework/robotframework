@@ -57,8 +57,7 @@ class ResultWriter(object):
         if settings.output:
             self._write_output(results.result, settings.output)
         if settings.xunit:
-            self._write_xunit(results.result, settings.xunit,
-                              settings.xunit_skip_noncritical)
+            self._write_xunit(results.result, settings.xunit)
         if settings.log:
             config = dict(settings.log_config,
                           minLevel=results.js_result.min_level)
@@ -72,8 +71,8 @@ class ResultWriter(object):
     def _write_output(self, result, path):
         self._write('Output', result.save, path)
 
-    def _write_xunit(self, result, path, skip_noncritical):
-        self._write('XUnit', XUnitWriter(result, skip_noncritical).write, path)
+    def _write_xunit(self, result, path):
+        self._write('XUnit', XUnitWriter(result).write, path)
 
     def _write_log(self, js_result, path, config):
         self._write('Log', LogWriter(js_result).write, path, config)
@@ -86,12 +85,6 @@ class ResultWriter(object):
             writer(path, *args)
         except DataError as err:
             LOGGER.error(err.message)
-        except EnvironmentError as err:
-            # `err.filename` can be different than `path` at least if reading
-            # log/report templates or writing split log fails.
-            # `unic` is needed due to http://bugs.jython.org/issue1825.
-            LOGGER.error("Writing %s file '%s' failed: %s: %s" %
-                         (name.lower(), path, err.strerror, unic(err.filename)))
         else:
             LOGGER.output_file(name, path)
 
@@ -123,13 +116,13 @@ class Results(object):
                                            *self._sources)
             if self._settings.rpa is None:
                 self._settings.rpa = self._result.rpa
-            self._result.configure(self._settings.status_rc,
-                                   self._settings.suite_config,
-                                   self._settings.statistics_config)
             modifier = ModelModifier(self._settings.pre_rebot_modifiers,
                                      self._settings.process_empty_suite,
                                      LOGGER)
             self._result.suite.visit(modifier)
+            self._result.configure(self._settings.status_rc,
+                                   self._settings.suite_config,
+                                   self._settings.statistics_config)
             self.return_code = self._result.return_code
         return self._result
 
@@ -138,6 +131,7 @@ class Results(object):
         if self._js_result is None:
             builder = JsModelBuilder(log_path=self._settings.log,
                                      split_log=self._settings.split_log,
+                                     expand_keywords=self._settings.expand_keywords,
                                      prune_input_to_save_memory=self._prune)
             self._js_result = builder.build_from(self.result)
             if self._prune:

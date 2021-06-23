@@ -1,5 +1,7 @@
-import unittest
+import os.path
+import re
 import sys
+import unittest
 
 from robot.running.testlibraries import (TestLibrary, _ClassLibrary,
                                          _ModuleLibrary, _DynamicLibrary)
@@ -7,8 +9,8 @@ from robot.utils.asserts import *
 from robot.utils import normalize, JYTHON, PY2
 from robot.errors import DataError
 
-from classes import (NameLibrary, DocLibrary, ArgInfoLibrary,
-                     GetattrLibrary, SynonymLibrary)
+from classes import (NameLibrary, DocLibrary, ArgInfoLibrary, GetattrLibrary,
+                     SynonymLibrary, __file__ as classes_source)
 if JYTHON:
     import ArgumentTypes, Extended, MultipleArguments, MultipleSignatures, \
             NoHandlers
@@ -79,7 +81,7 @@ class TestImports(unittest.TestCase):
                          [("keyword from submodule", None)])
 
     def test_import_non_existing_module(self):
-        msg = ("Importing test library '{libname}' failed: "
+        msg = ("Importing library '{libname}' failed: "
                "{type}Error: No module named {quote}{modname}{quote}")
         quote = '' if PY2 else "'"
         type = 'Import' if sys.version_info < (3, 6) else 'ModuleNotFound'
@@ -91,12 +93,12 @@ class TestImports(unittest.TestCase):
 
     def test_import_non_existing_class_from_existing_module(self):
         assert_raises_with_msg(DataError,
-                               "Importing test library 'pythonmodule.NonExisting' failed: "
+                               "Importing library 'pythonmodule.NonExisting' failed: "
                                "Module 'pythonmodule' does not contain 'NonExisting'.",
                                TestLibrary, 'pythonmodule.NonExisting')
 
     def test_import_invalid_type(self):
-        msg = "Importing test library '%s' failed: Expected class or module, got %s."
+        msg = "Importing library '%s' failed: Expected class or module, got %s."
         assert_raises_with_msg(DataError,
                                msg % ('pythonmodule.some_string', 'string'),
                                TestLibrary, 'pythonmodule.some_string')
@@ -111,24 +113,29 @@ class TestImports(unittest.TestCase):
         self._verify_lib(TestLibrary(u"pythonmodule.library"), "pythonmodule.library",
                          [("keyword from submodule", None)])
 
-    def test_set_global_scope(self):
-        self._verify_scope(TestLibrary('libraryscope.Global'), 'global')
+    def test_global_scope(self):
+        self._verify_scope(TestLibrary('libraryscope.Global'), 'GLOBAL')
 
     def _verify_scope(self, lib, expected):
         assert_equal(str(lib.scope), expected)
 
-    def test_set_suite_scope(self):
-        self._verify_scope(TestLibrary('libraryscope.Suite'), 'test suite')
+    def test_suite_scope(self):
+        self._verify_scope(TestLibrary('libraryscope.Suite'), 'SUITE')
+        self._verify_scope(TestLibrary('libraryscope.TestSuite'), 'SUITE')
 
-    def test_set_test_scope(self):
-        self._verify_scope(TestLibrary('libraryscope.Test'), 'test case')
+    def test_test_scope(self):
+        self._verify_scope(TestLibrary('libraryscope.Test'), 'TEST')
+        self._verify_scope(TestLibrary('libraryscope.TestCase'), 'TEST')
 
-    def test_set_invalid_scope(self):
+    def test_task_scope_is_mapped_to_test_scope(self):
+        self._verify_scope(TestLibrary('libraryscope.Task'), 'TEST')
+
+    def test_invalid_scope_is_mapped_to_test_scope(self):
         for libname in ['libraryscope.InvalidValue',
                         'libraryscope.InvalidEmpty',
                         'libraryscope.InvalidMethod',
                         'libraryscope.InvalidNone']:
-            self._verify_scope(TestLibrary(libname), 'test case')
+            self._verify_scope(TestLibrary(libname), 'TEST')
 
     if JYTHON:
 
@@ -140,23 +147,23 @@ class TestImports(unittest.TestCase):
             lib = TestLibrary("javapkg.JavaPackageExample")
             self._verify_lib(lib, "javapkg.JavaPackageExample", java_keywords)
 
-        def test_set_global_scope_java(self):
-            self._verify_scope(TestLibrary('javalibraryscope.Global'), 'global')
+        def test_global_scope_java(self):
+            self._verify_scope(TestLibrary('javalibraryscope.Global'), 'GLOBAL')
 
-        def test_set_suite_scope_java(self):
-            self._verify_scope(TestLibrary('javalibraryscope.Suite'), 'test suite')
+        def test_suite_scope_java(self):
+            self._verify_scope(TestLibrary('javalibraryscope.Suite'), 'SUITE')
 
-        def test_set_test_scope_java(self):
-            self._verify_scope(TestLibrary('javalibraryscope.Test'), 'test case')
+        def test_test_scope_java(self):
+            self._verify_scope(TestLibrary('javalibraryscope.Test'), 'TEST')
 
-        def test_set_invalid_scope_java(self):
+        def test_invalid_scope_java(self):
             for libname in ['javalibraryscope.InvalidEmpty',
                             'javalibraryscope.InvalidMethod',
                             'javalibraryscope.InvalidNull',
                             'javalibraryscope.InvalidPrivate',
                             'javalibraryscope.InvalidProtected',
                             'javalibraryscope.InvalidValue']:
-                self._verify_scope(TestLibrary(libname), 'test case')
+                self._verify_scope(TestLibrary(libname), 'TEST')
 
     def _verify_lib(self, lib, libname, keywords):
         assert_equal(libname, lib.name)
@@ -461,7 +468,7 @@ class TestDynamicLibrary(unittest.TestCase):
 
     def test_get_keyword_doc_and_args_are_ignored_if_not_callable(self):
         lib = TestLibrary('classes.InvalidAttributeDynamicLibrary')
-        assert_equal(len(lib.handlers), 6)
+        assert_equal(len(lib.handlers), 7)
         assert_equal(lib.handlers['No Arg'].doc, '')
         assert_handler_args(lib.handlers['No Arg'], 0, sys.maxsize)
 
@@ -498,7 +505,7 @@ class TestDynamicLibrary(unittest.TestCase):
 def assert_handler_args(handler, minargs=0, maxargs=0, kwargs=False):
     assert_equal(handler.arguments.minargs, minargs)
     assert_equal(handler.arguments.maxargs, maxargs)
-    assert_equal(bool(handler.arguments.kwargs), kwargs)
+    assert_equal(bool(handler.arguments.var_named), kwargs)
 
 
 if JYTHON:
@@ -590,6 +597,61 @@ class TestDynamicLibraryInitDocumentation(unittest.TestCase):
         def test_dynamic_init_doc_from_java_library(self):
             self._assert_init_doc('ArgDocDynamicJavaLibrary',
                                   'Dynamic Java init doc.')
+
+
+class TestSourceAndLineno(unittest.TestCase):
+
+    def test_class(self):
+        lib = TestLibrary('classes.NameLibrary')
+        self._verify(lib, classes_source, 12)
+
+    def test_class_in_package(self):
+        from robot.variables.variables import __file__ as source
+        lib = TestLibrary('robot.variables.Variables')
+        self._verify(lib, source, 24)
+
+    def test_dynamic(self):
+        lib = TestLibrary('classes.ArgDocDynamicLibrary')
+        self._verify(lib, classes_source, 217)
+
+    def test_module(self):
+        from module_library import __file__ as source
+        lib = TestLibrary('module_library')
+        self._verify(lib, source, 1)
+
+    def test_package(self):
+        from robot.variables import __file__ as source
+        lib = TestLibrary('robot.variables')
+        self._verify(lib, source, 1)
+
+    def test_decorated(self):
+        lib = TestLibrary('classes.Decorated')
+        self._verify(lib, classes_source, 319)
+
+    def test_no_class_statement(self):
+        lib = TestLibrary('classes.NoClassDefinition')
+        self._verify(lib, classes_source, -1)
+
+    if JYTHON:
+
+        def test_java_class(self):
+            lib = TestLibrary('ArgumentTypes')
+            self._verify(lib, None, -1)
+
+        def test_java_class_by_path(self):
+            from classes import __file__ as base
+            path = os.path.join(os.path.abspath(base), '..', 'ArgumentTypes')
+            lib = TestLibrary(path + '.java')
+            self._verify(lib, path + '.java', -1)
+            lib = TestLibrary(path + '.class')
+            self._verify(lib, path + '.java', -1)
+
+    def _verify(self, lib, source, lineno):
+        if source:
+            source = re.sub(r'(\.pyc|\$py\.class)$', '.py', source)
+            source = os.path.normpath(source)
+        assert_equal(lib.source, source)
+        assert_equal(lib.lineno, lineno)
 
 
 class _FakeNamespace:

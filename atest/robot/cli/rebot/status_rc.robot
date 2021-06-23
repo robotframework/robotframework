@@ -13,18 +13,14 @@ ${NO OUTPUTS}      [ ERROR ] No outputs created.\n\nTry --help for usage informa
 Zero RC when all tests pass
     ${EMPTY}                   ${PASSING}        rc=0
 
-Zero RC when all critical tests pass
-    --critical pass            ${FAILING}        rc=0
-    --statusrc -c pass         ${FAILING}        rc=0
-
-Non-zero RC when critical tests fail
+Non-zero RC when tests fail
     ${EMPTY}                   ${FAILING}        rc=1
     --status                   ${FAILING}        rc=1
 
 Zero RC when all tests pass with --NoStatusRC
     --NoStatusRC               ${PASSING}        rc=0
 
-Zero RC when critical tests fail with --NoStatusRC
+Zero RC when tests fail with --NoStatusRC
     --nostatusrc               ${FAILING}        rc=0
 
 Error when no output is created

@@ -15,10 +15,15 @@ Setting attribute to Java object
     ${JVAR.javaProperty} =    Set Variable   value
     Should Be Equal    ${JVAR.javaInteger}:${JVAR.javaProperty}    42:value
 
-Set attribute not directly in base
-    ${VAR.demeter.loves} =   Set Variable  this
+Set nested attribute
+    ${VAR.demeter.loves} =   Set Variable    this
     Should Be Equal    ${VAR.demeter.loves}    this
     Should Be Equal    ${VAR.demeter.hates}    THIS
+
+Set nested attribute when parent uses item access
+    &{body} =    Evaluate     {'data': [{'name': 'old value'}]}
+    ${body.data[0].name} =    Set Variable    new value
+    Should Be Equal    ${body.data[0].name}    new value
 
 Trying to set un-settable attribute
     [Documentation]    FAIL STARTS: Setting attribute 'not_settable' to variable '\${VAR}' failed: AttributeError:

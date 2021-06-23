@@ -21,7 +21,7 @@ Should Not Be True with message
 Should Not Be True with invalid expression
     Check test case    ${TESTNAME}
 
-Should (Not) Be True is evaluated with os- and sys-modules
+Should (Not) Be True automatically imports modules
     Check test case    ${TESTNAME}
 
 Should (Not) Be True is evaluated with robot's variables

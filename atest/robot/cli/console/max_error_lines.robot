@@ -44,9 +44,10 @@ Has Been Cut
 Error Message In Log Should Not Have Been Cut
     [Arguments]    ${kws}
     @{keywords} =    Set Variable    ${kws}
-    : FOR    ${kw}    IN    @{keywords}
-    \    Run Keyword If    ${kw.msgs}    Should Not Contain    ${kw.msgs[-1].message}    ${EXPLANATION}
-    \    Error Message In Log Should Not Have Been Cut    ${kw.kws}
+    FOR    ${kw}    IN    @{keywords}
+        Run Keyword If    ${kw.msgs}    Should Not Contain    ${kw.msgs[-1].message}    ${EXPLANATION}
+        Error Message In Log Should Not Have Been Cut    ${kw.kws}
+    END
 
 Should Match Non Empty Regexp
     [Arguments]    ${message}    ${pattern}

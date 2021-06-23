@@ -21,6 +21,6 @@ TC1 Fixture
     [Teardown]    Log    Teardown defined in test
 
 TC1 Timeout
-    [Documentation]    FAIL Test timeout 1 second exceeded.
-    [Timeout]    1 s
-    Sleep    1.1
+    [Documentation]    FAIL Test timeout 100 milliseconds exceeded.
+    [Timeout]    0.1s
+    Sleep    1s

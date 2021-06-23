@@ -13,10 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.model import ItemList
+from robot.model import ItemList, Message
 from robot.utils import setter
-
-from .model import Message
 
 
 class ExecutionErrors(object):
@@ -24,7 +22,7 @@ class ExecutionErrors(object):
 
     An error might be, for example, that importing a library has failed.
     """
-    message_class = Message
+    id = 'errors'
 
     def __init__(self, messages=None):
         #: A :class:`list-like object <robot.model.itemlist.ItemList>` of
@@ -32,8 +30,8 @@ class ExecutionErrors(object):
         self.messages = messages
 
     @setter
-    def messages(self, msgs):
-        return ItemList(self.message_class, items=msgs)
+    def messages(self, messages):
+        return ItemList(Message, {'parent': self}, items=messages)
 
     def add(self, other):
         self.messages.extend(other.messages)

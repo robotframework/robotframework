@@ -76,8 +76,9 @@ function addStatistics() {
         '<th class="stats-col-stat">Total</th>' +
         '<th class="stats-col-stat">Pass</th>' +
         '<th class="stats-col-stat">Fail</th>' +
+        '<th class="stats-col-stat">Skip</th>' +
         '<th class="stats-col-elapsed">Elapsed</th>' +
-        '<th class="stats-col-graph">Pass / Fail</th>';
+        '<th class="stats-col-graph">Pass / Fail / Skip</th>';
     var statTable =
         '<h2>{Test} Statistics</h2>' +
         '<table class="statistics" id="total-stats"><thead><tr>' +
@@ -118,8 +119,8 @@ function enableStatisticsSorter() {
     });
     $(".statistics").tablesorter({
         sortInitialOrder: 'desc',
-        headers: {0: {sorter:'statName', sortInitialOrder: 'asc'},
-                  5: {sorter: false}}
+        headers: {0: {sorter: 'statName', sortInitialOrder: 'asc'},
+                  6: {sorter: false}}
     });
 }
 
@@ -135,6 +136,7 @@ function addStatTable(tableName) {
 function renderNoTagStatTable() {
     $('<tbody><tr class="row-0">' +
         '<td class="stats-col-name">No Tags</td>' +
+        '<td class="stats-col-stat"></td>' +
         '<td class="stats-col-stat"></td>' +
         '<td class="stats-col-stat"></td>' +
         '<td class="stats-col-stat"></td>' +
@@ -158,12 +160,14 @@ $.template('statColumnsTemplate',
     '<td class="stats-col-stat">${total}</td>' +
     '<td class="stats-col-stat">${pass}</td>' +
     '<td class="stats-col-stat">${fail}</td>' +
+    '<td class="stats-col-stat">${skip}</td>' +
     '<td class="stats-col-elapsed">${elapsed}</td>' +
     '<td class="stats-col-graph">' +
       '{{if total}}' +
       '<div class="graph">' +
         '<div class="pass-bar" style="width: ${passWidth}%" title="${passPercent}%"></div>' +
         '<div class="fail-bar" style="width: ${failWidth}%" title="${failPercent}%"></div>' +
+        '<div class="skip-bar" style="width: ${skipWidth}%" title="${skipPercent}%"></div>' +
       '</div>' +
       '{{else}}' +
       '<div class="empty-graph"></div>' +
@@ -172,12 +176,8 @@ $.template('statColumnsTemplate',
 );
 
 $.template('suiteStatusMessageTemplate',
-    '${critical} critical {{= testOrTask("{test}")}}, ' +
-    '${criticalPassed} passed, ' +
-    '<span class="{{if criticalFailed}}fail{{else}}pass{{/if}}">${criticalFailed} failed</span><br>' +
-    '${total} {{= testOrTask("{test}")}} total, ' +
-    '${totalPassed} passed, ' +
-    '<span class="{{if totalFailed}}fail{{else}}pass{{/if}}">${totalFailed} failed</span>'
+    '${total} {{= testOrTask("{test}")}}{{if total != 1}}s{{/if}} total, ' +
+    '${pass} passed, ${fail} failed, ${skip} skipped'
 );
 
 // For complete cross-browser experience..

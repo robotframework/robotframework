@@ -66,7 +66,7 @@ class TestMatcher(unittest.TestCase):
 
     def test_matches_no_pattern(self):
         for string in ['foo', '', ' ', '      ', 'what ever',
-                       'multi\nline\string here', '=\\.)(/23.',
+                       'multi\nline\nstring here', '=\\.)(/23.',
                        'forw/slash/and\\back\\slash']:
             self._matches(string, string), string
 
@@ -127,6 +127,18 @@ class TestMatcher(unittest.TestCase):
         self._matches_not('GlobTest1', pattern)
         self._matches_not('GlobTest2', pattern)
         self._matches('GlobTest3', pattern)
+
+    def test_escape_wildcards(self):
+        # No escaping needed
+        self._matches('[', '[')
+        self._matches('[]', '[]')
+        # Escaping needed
+        self._matches_not('[x]', '[x]')
+        self._matches('[x]', '[[]x]')
+        for wild in '*?[]':
+            self._matches(wild, '[%s]' % wild)
+            self._matches('foo%sbar' % wild, 'foo[%s]bar' % wild)
+            self._matches('foo%sbar' % wild, '*[%s]???' % wild)
 
     def test_spaceless(self):
         for text in ['fbar', 'foobar']:

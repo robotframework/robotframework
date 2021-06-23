@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  --critical *remove*  standard_libraries/builtin/tags
+Suite Setup     Run Tests  ${EMPTY}    standard_libraries/builtin/tags
 Resource        atest_resource.robot
 
 *** Variables ***
@@ -57,11 +57,6 @@ Set Tags In Test Teardown
 Using Set And Remove Tags In Suite Teardown Fails
     Should Be Equal  ${SUITE.suites[1].message}  Suite teardown failed:\n'Set Tags' cannot be used in suite teardown.
 
-Set and Removed Tags Should Affect Criticality
-    ${tags} =  Get Total Stat Nodes
-    Tag Statistics Should Be  ${tags[0]}  0  0
-    Tag Statistics Should Be  ${tags[1]}  12  4
-
 Modifying ${TEST TAGS} after setting them has no affect on tags test has
     Check Test Tags    ${TEST NAME}    force-init    set-init    new
 
@@ -86,4 +81,3 @@ Tags Should Have Been Removed
     Remove Values From List  ${tags}  @{removed}
     ${tc} =  Check Test Tags  ${testname}  @{tags}
     [Return]  ${tc}
-

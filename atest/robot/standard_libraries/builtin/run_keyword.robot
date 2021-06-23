@@ -64,18 +64,17 @@ Stdout and stderr are not captured when running Run Keyword
     ...    end keyword BuiltIn.Run Keyword
     ...    end keyword My UK
     ...    end keyword BuiltIn.Run Keyword
-    Check Stdout Contains    ${expected}
-    Check Stderr Contains    ${expected}
+    Stdout Should Contain    ${expected}
+    Stderr Should Contain    ${expected}
 
 *** Keywords ***
 Check Run Keyword
     [Arguments]    ${kw}    ${subkw_name}    @{msgs}
     Should Be Equal    ${kw.name}    BuiltIn.Run Keyword
     Should Be Equal    ${kw.kws[0].name}    ${subkw_name}
-    ${index} =    Set Variable    ${0}
-    :FOR    ${msg}    IN    @{msgs}
-    \    Check Log Message    ${kw.kws[0].msgs[${index}]}    ${msg}
-    \    ${index} =    evaluate    ${index} +1
+    FOR    ${index}    ${msg}    IN ENUMERATE   @{msgs}
+        Check Log Message    ${kw.kws[0].msgs[${index}]}    ${msg}
+    END
 
 Check Run Keyword In Uk
     [Arguments]    ${kw}    ${subkw_name}    @{msgs}

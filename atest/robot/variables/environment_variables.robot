@@ -56,3 +56,19 @@ Escaping Environment Variables
 
 Empty Environment Variable
     Check Test Case  ${TESTNAME}
+
+Environment Variable with Default Value
+    Check Test Case  ${TESTNAME}
+
+Environment Variable with Variable as Default Value
+    Check Test Case  ${TESTNAME}
+
+Environment Variable with Empty Default Value
+    Check Test Case  ${TESTNAME}
+
+Environment Variable with Equal Sign in Default Value
+    Check Test Case  ${TESTNAME}
+
+Java System Properties with Default Value
+    [Tags]  require-jython
+    Check Test Case  ${TESTNAME}

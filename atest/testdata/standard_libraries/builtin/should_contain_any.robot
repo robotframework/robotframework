@@ -38,6 +38,36 @@ Should Contain Any case-insensitive
     ${LIST}      41    ${42}    ignore_case=True
     ${DICT 1}    x              ignore_case=True    msg=Fails
 
+Should Contain Any without leading spaces
+    [Documentation]    FAIL    '${DICT_1}' does not contain any of 'x'
+    [Template]    Should Contain Any
+    Hyvä           \nvä              strip_spaces=leading
+    \tSan Diego    \ San             strip_spaces=leading
+    ${LIST}        ${-1}    \tb      strip_spaces=Leading
+    ${LIST}        41       \tcee    strip_spaces=LEADING
+    ${DICT 1}      \tx               strip_spaces=leading
+    ${DICT_4}      \tc      \ g      strip_spaces=leading
+
+Should Contain Any without trailing spaces
+    [Documentation]    FAIL    '${DICT_1}' does not contain any of 'x'
+    [Template]    Should Contain Any
+    Hyvä           vä\n              strip_spaces=trailing
+    San Diego\n    Diego             strip_spaces=Trailing
+    ${LIST}        ${-1}    b\t      strip_spaces=TRAILING
+    ${LIST}        41       cee\t    strip_spaces=trailing
+    ${DICT 1}      x\t               strip_spaces=trailing
+    ${DICT_4}      dd\t     g\t      strip_spaces=trailing
+
+Should Contain Any without leading and trailing spaces
+    [Documentation]    FAIL    '${DICT_1}' does not contain any of '\ x\t'
+    [Template]    Should Contain Any
+    Hyvä             \tvä\n                 strip_spaces=True
+    \ San Diego\n    Diego                  strip_spaces=TRUE
+    ${LIST}          ${-1}     \ b\t        strip_spaces=Yes
+    ${LIST}          41        \t\tcee\t    strip_spaces=1
+    ${DICT 1}        \ x\t                  strip_spaces=No
+    ${DICT_4}        \tak\t    g\t          strip_spaces=Sure
+
 Should Contain Any without items fails
     [Documentation]    FAIL    One or more items required.
     Should Contain Any    foo
@@ -90,6 +120,45 @@ Should Not Contain Any case-insensitive
     ABCDEFG      abc          ignore_case=True
     ${LIST}      ${1}    B    ignore_case=True
     ${DICT 1}    A            ignore_case=True
+
+Should Not Contain Any without leading spaces
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) 'abcd\tx' contains one or more of 'x'
+    ...
+    ...    2) '${DICT_4}' contains one or more of 'a'
+    [Template]    Should Not Contain Any
+    abcd\tx      \tx      strip_spaces=leading
+    ${DICT_4}    \n\ta    strip_spaces=LEADING
+
+Should Not Contain Any without trailing spaces
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) 'abcx\td' contains one or more of 'x'
+    ...
+    ...    2) '${DICT_4}' contains one or more of 'dd'
+    [Template]    Should Not Contain Any
+    abcx\td      x\t       strip_spaces=trailing
+    ${DICT_4}    dd\n\n    strip_spaces=TRAILING
+
+Should Not Contain Any without leading and trailing spaces
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) 'abcx\td' contains one or more of 'x'
+    ...
+    ...    2) '${DICT_4}' contains one or more of 'dd'
+    ...
+    ...    3) '${DICT_4}' contains one or more of 'ak'
+    ...
+    ...    4) '${DICT_4}' contains one or more of 'a'
+    [Template]    Should Not Contain Any
+    abcx\td      \ x\t       strip_spaces=True
+    ${DICT_4}    \tdd\n      strip_spaces=${True}
+    ${DICT_4}    \ ak\t\t    strip_spaces=TRUE
+    ${DICT_4}    \ a\t\t     strip_spaces=Yes
 
 Should Not Contain Any without items fails
     [Documentation]    FAIL    One or more items required.

@@ -48,8 +48,8 @@ Log also to console
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    Hello, console!
     Check Log Message    ${tc.kws[1].msgs[0]}    ${HTML}    DEBUG    html=True
-    Check Stdout Contains    Hello, console!\n
-    Check Stdout Contains    ${HTML}\n
+    Stdout Should Contain    Hello, console!\n
+    Stdout Should Contain    ${HTML}\n
 
 repr=True
     [Documentation]    In RF 3.1.2 `formatter=repr` and `repr=True` yield same
@@ -66,7 +66,7 @@ repr=True
     ...    'hyva\\u0308'
     ...    'hyvä'
     Check Log Message    ${tc.kws[6].msgs[0]}    ${expected}
-    Check Stdout Contains    b'\\x00abc\\xff (repr=True)'
+    Stdout Should Contain    b'\\x00abc\\xff (repr=True)'
 
 formatter=repr
     [Documentation]    In RF 3.1.2 `formatter=repr` and `repr=True` yield same
@@ -83,18 +83,19 @@ formatter=repr
     ...    'hyva\\u0308'
     ...    'hyvä'
     Check Log Message    ${tc.kws[6].msgs[0]}    ${expected}
-    Check Stdout Contains    b'\\x00abc\\xff (formatter=repr)'
+    Stdout Should Contain    b'\\x00abc\\xff (formatter=repr)'
 
 formatter=ascii
     ${tc} =    Check Test Case    ${TEST NAME}
-    ${u} =    Set Variable If    ${INTERPRETER.is_py2}    u    ${EMPTY}
-    ${b} =    Set Variable If    ${INTERPRETER.is_py2}    ${EMPTY}    b
-    Check Log Message    ${tc.kws[0].msgs[0]}    ${u}'Nothing special here'
+    ${u} =     Set Variable If    ${INTERPRETER.is_py2}    u    ${EMPTY}
+    ${u2} =    Set Variable If    ${INTERPRETER.is_py2} and not ${INTERPRETER.is_ironpython}    u    ${EMPTY}
+    ${b} =     Set Variable If    ${INTERPRETER.is_py2} and not ${INTERPRETER.is_ironpython}    ${EMPTY}    b
+    Check Log Message    ${tc.kws[0].msgs[0]}    ${u2}'Nothing special here'
     Check Log Message    ${tc.kws[1].msgs[0]}    ${u}'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!'
     Check Log Message    ${tc.kws[2].msgs[0]}    42    DEBUG
     Check Log Message    ${tc.kws[4].msgs[0]}    ${b}'\\x00abc\\xff (formatter=ascii)'
     Check Log Message    ${tc.kws[6].msgs[0]}    ${u}'hyva\\u0308'
-    Check Stdout Contains    ${b}'\\x00abc\\xff (formatter=ascii)'
+    Stdout Should Contain    ${b}'\\x00abc\\xff (formatter=ascii)'
 
 formatter=str
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -103,7 +104,7 @@ formatter=str
     Check Log Message    ${tc.kws[2].msgs[0]}    42    DEBUG
     Check Log Message    ${tc.kws[4].msgs[0]}    abc\\xff (formatter=str)
     Check Log Message    ${tc.kws[6].msgs[0]}    hyvä
-    Check Stdout Contains    abc\\xff (formatter=str)
+    Stdout Should Contain    abc\\xff (formatter=str)
 
 formatter=repr pretty prints
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -119,8 +120,8 @@ formatter=repr pretty prints
     ...    ['hyv\\xe4', b'hyv\\xe4', {'\\u2603': b'\\x00\\xff'}]
     ...    ['hyvä', b'hyv\\xe4', {'☃': b'\\x00\\xff'}]
     Check Log Message    ${tc.kws[11].msgs[0]}    ${expected}
-    Check Stdout Contains    ${small dict}
-    Check Stdout Contains    ${small list}
+    Stdout Should Contain    ${small dict}
+    Stdout Should Contain    ${small list}
 
 formatter=invalid
     Check Test Case    ${TEST NAME}
@@ -201,9 +202,10 @@ Log Many with dict variable containing non-dict
 
 Log To Console
     ${tc} =    Check Test Case    ${TEST NAME}
-    :FOR    ${i}    IN RANGE    4
-    \    Should Be Empty    ${tc.kws[${i}].msgs}
-    Check Stdout Contains    stdout äö w/ newline\n
-    Check Stdout Contains    stdout äö w/o new......line äö
-    Check Stderr Contains    stderr äö w/ newline\n
-    Check Stdout Contains    42
+    FOR    ${i}    IN RANGE    4
+        Should Be Empty    ${tc.kws[${i}].msgs}
+    END
+    Stdout Should Contain    stdout äö w/ newline\n
+    Stdout Should Contain    stdout äö w/o new......line äö
+    Stderr Should Contain    stderr äö w/ newline\n
+    Stdout Should Contain    42

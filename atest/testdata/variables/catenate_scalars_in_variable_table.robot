@@ -18,10 +18,10 @@ ${NON STRING 2}    SEPARATOR=-    ${0}    1    ${2.0}    ${True}
 ${LIST VALUES}     @{VALUES}
 ${LIST EMPTY}      @{EMPTY}
 ${LIST EXTENDED}   @{VALUES[1:-1]}
-${LIST INTERNAL}   @{${DEFAULT SEP.split()[${0}]}\[${1}:${-1}]}
+${LIST INTERNAL}   @{${DEFAULT SEP.split()[${0}]} [${1}:${-1}]}
 ${LIST W/ SEP 1}   SEPARATOR=${EMPTY}    0    @{VALUES}    6    ${7}    8    9
 ...                ${SPACE}    ${0}    @{VALUES}    6789
-${LIST W/ SEP 2}   SEPARATOR=@{SEPARATOR.split()}[0]    @{NON STRING 1.split()}
+${LIST W/ SEP 2}   SEPARATOR=${SEPARATOR.split()}[0]    @{NON STRING 1.split()}
 ${NONEX IN VALUE}  Having    ${NON EXISTING}    variable    causes    failure
 ${ESCAPED}         \SEPARATOR=Default    separator    used
 ${NON UPPER 1}     separator=not    upper
@@ -30,16 +30,16 @@ ${NOT FIRST 1}     This    SEPARATOR=is not    first    and    thus    not used
 ${NOT FIRST 2}     SEPARATOR==    Only    first    SEPARATOR=    is    used
 @{NOT SEPARATOR}   SEPARATOR=This    is    not    separator
 ${NO SEPARATOR 1}  @{NOT SEPARATOR}
-${NO SEPARATOR 2}  @{NOT SEPARATOR}[0]    not    separator    either
+${NO SEPARATOR 2}  ${NOT SEPARATOR}[0]    not    separator    either
 ${NO SEPARATOR 3}  ${NOT SEPARATOR[0]}    neither
 ${NO VALUES}
 # Testing that one scalar variable alone is not converted to string.
 ${NON STRING RESULT 1}    ${42}
 ${NON STRING RESULT 2}    ${VALUES}
-${NON STRING RESULT 3}    @{VALUES}[2]
+${NON STRING RESULT 3}    ${VALUES}[2]
 ${STRING RESULT 1}        SEPARATOR=    ${42}
 ${STRING RESULT 2}        SEPARATOR=whatever    ${VALUES[2:4]}
-${STRING RESULT 3}        ${42}    @{VALUES}[2]
+${STRING RESULT 3}        ${42}    ${VALUES}[2]
 
 *** Test Cases ***
 Default separator is space

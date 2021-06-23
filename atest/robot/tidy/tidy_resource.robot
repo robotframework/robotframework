@@ -5,12 +5,12 @@ Resource          atest_resource.robot
 *** Variables ***
 ${DATA}           ${CURDIR}/../../testdata/tidy
 ${TEMP}           %{TEMPDIR}${/}tidy-test-dir
-${TEMPFILE}       ${TEMP}${/}tidy-test-file.txt
+${OUTFILE}        ${TEMP}${/}tidy-test-file.robot
 
 *** Keywords ***
 Run tidy with golden file and check result
-    [Arguments]    ${options}    ${expected}
-    ${output} =    Run tidy and check result    ${options}    golden.robot    expected=${expected}
+    [Arguments]    ${options}    ${expected}    ${input}=golden-input.robot
+    ${output} =    Run tidy and check result    ${options}    ${input}    expected=${expected}
     [Return]    ${output}
 
 Run tidy with golden resource file and check result

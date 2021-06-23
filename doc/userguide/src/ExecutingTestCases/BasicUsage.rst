@@ -61,16 +61,16 @@ are illustrated in the examples below. Note that in these examples, as
 well as in other examples in this section, only the ``robot`` script
 is used, but other execution approaches could be used similarly.
 
-__ `Test case files`_
-__ `Test suite directories`_
-__ `Setting the name`_
-__ `Test suite name and documentation`_
-
 ::
 
    robot tests.robot
    robot path/to/my_tests/
    robot c:\robot\tests.robot
+
+.. note:: When executing a directory__, all files and directories starting with
+          a dot (:file:`.`) or an underscore (:file:`_`) are ignored and,
+          by default, only files with the :file:`.robot` extension executed.
+          See the `Selecting files to parse`_ section for more details.
 
 It is also possible to give paths to several test case files or
 directories at once, separated with spaces. In this case, Robot
@@ -86,6 +86,12 @@ example below::
 
    robot my_tests.robot your_tests.robot
    robot --name Example path/to/tests/pattern_*.robot
+
+__ `Test case files`_
+__ `Test suite directories`_
+__ `Setting the name`_
+__ `Test suite name and documentation`_
+__ `Test suite directories`_
 
 Using command line options
 --------------------------
@@ -146,10 +152,6 @@ of how many times options are used. For example, `--dryrun --dryrun --nodryrun
 --nostatusrc --statusrc` would not activate the dry-run mode and would return
 normal status rc.
 
-.. note:: Support for adding or dropping `no` prefix is a new feature in
-          Robot Framework 2.9. In earlier versions options accepting no
-          values could be disabled by using the exact same option again.
-
 .. _wildcards:
 
 Simple patterns
@@ -178,6 +180,12 @@ Examples::
 All matching in above examples is case, space and underscore insensitive.
 For example, the second example would also match test named `example 1`.
 
+If the matched text happens to contain some of the wildcard characters and
+they need to be matched literally, it is possible to do that by using
+the `[...]` syntax. The pattern `[*]` matches the literal `*` character,
+`[?]` matches `?`, and `[[]` matches `[`. Lone `[` and `]` do not need to
+be escaped.
+
 .. note:: Support for brackets like `[abc]` and `[!a-z]` is new in
           Robot Framework 3.1.
 
@@ -186,8 +194,8 @@ __ http://en.wikipedia.org/wiki/Glob_(programming)
 Tag patterns
 ~~~~~~~~~~~~
 
-Most tag related options accept arguments as *tag patterns*. They have all the
-same characteristics as `simple patterns`_, but they also support `AND`,
+Most tag related options accept arguments as *tag patterns*. They support same
+wildcards as `simple patterns`_ (e.g. `examp??`, `ex*le`), but they also support `AND`,
 `OR` and `NOT` operators explained below. These operators can be
 used for combining two or more individual tags or patterns together.
 
@@ -212,7 +220,7 @@ used for combining two or more individual tags or patterns together.
       --include fooNOTbar     # Matches tests containing tag 'foo' but not tag 'bar'.
       --exclude xxNOTyyNOTzz  # Matches tests containing tag 'xx' but not tag 'yy' or tag 'zz'.
 
-   Starting from Robot Framework 2.9 the pattern can also start with `NOT`
+   The pattern can also start with `NOT`
    in which case the pattern matches if the pattern after `NOT` does not match::
 
       --include NOTfoo        # Matches tests not containing tag 'foo'
@@ -247,13 +255,10 @@ avoid the need to repeat them every time tests are run or Rebot used.
 
 .. sourcecode:: bash
 
-   export ROBOT_OPTIONS="--critical regression --tagdoc 'mytag:Example doc with spaces'"
+   export ROBOT_OPTIONS="--outputdir results --tagdoc 'mytag:Example doc with spaces'"
    robot tests.robot
    export REBOT_OPTIONS="--reportbackground green:yellow:red"
    rebot --name example output.xml
-
-.. note:: Possibility to have spaces in values by surrounding them in quotes
-          is new in Robot Framework 2.9.2.
 
 __ `Post-processing outputs`_
 
@@ -277,8 +282,7 @@ output from executing a simple test suite with only two test cases::
    Error message is displayed here
    ==============================================================================
    Example test suite                                                    | FAIL |
-   2 critical tests, 1 passed, 1 failed
-   2 tests total, 1 passed, 1 failed
+   2 tests, 1 passed, 1 failed
    ==============================================================================
    Output:  /path/to/output.xml
    Report:  /path/to/report.html
@@ -306,7 +310,7 @@ Return codes
 
 Runner scripts communicate the overall test execution status to the
 system running them using return codes. When the execution starts
-successfully and no `critical test`_ fail, the return code is zero.
+successfully and no tests fail, the return code is zero.
 All possible return codes are explained in the table below.
 
 .. table:: Possible return codes
@@ -315,9 +319,9 @@ All possible return codes are explained in the table below.
    ========  ==========================================
       RC                    Explanation
    ========  ==========================================
-   0         All critical tests passed.
-   1-249     Returned number of critical tests failed.
-   250       250 or more critical failures.
+   0         All tests passed.
+   1-249     Returned number of tests failed.
+   250       250 or more failures.
    251       Help or version information printed.
    252       Invalid test data or command line options.
    253       Test execution stopped by user.
@@ -331,7 +335,7 @@ variable `$?`, and in Windows it is in `%ERRORLEVEL%`
 variable. If you use some external tool for running tests, consult its
 documentation for how to get the return code.
 
-The return code can be set to 0 even if there are critical failures using
+The return code can be set to 0 even if there are failures using
 the :option:`--NoStatusRC` command line option. This might be useful, for
 example, in continuous integration servers where post-processing of results
 is needed before the overall status of test execution can be determined.
@@ -382,9 +386,6 @@ along with possible other command line options.
 
 .. note:: Unlike other `long command line options`__, :option:`--argumentfile`
           cannot be given in shortened format like :option:`--argumentf`.
-          Additionally, using it case-insensitively like
-          :option:`--ArgumentFile` is only supported by Robot Framework 3.0.2
-          and newer.
 
 __ `Short and long options`_
 
@@ -482,74 +483,73 @@ some other high-level programming language. Regardless of the
 language, it is recommended that long option names are used, because
 they are easier to understand than the short names.
 
-In the first examples, the same web tests are executed with different
-browsers and the results combined afterwards. This is easy with shell
-scripts, as practically you just list the needed commands one after
-another:
+Shell script example
+~~~~~~~~~~~~~~~~~~~~
+
+In this example, the same web tests in the ``login`` directory are executed
+with different browsers and the results combined afterwards using Rebot_.
+The script also accepts command line options itself and simply forwards them
+to the ``robot`` command using the handy ``$*`` variable:
 
 .. sourcecode:: bash
 
    #!/bin/bash
-   robot --variable BROWSER:Firefox --name Firefox --log none --report none --output out/fx.xml login
-   robot --variable BROWSER:IE --name IE --log none --report none --output out/ie.xml login
+   robot --name Firefox --variable BROWSER:Firefox --output out/fx.xml --log none --report none $* login
+   robot --name IE --variable BROWSER:IE --output out/ie.xml --log none --report none  $* login
    rebot --name Login --outputdir out --output login.xml out/fx.xml out/ie.xml
 
-Implementing the above example with Windows batch files is not very
-complicated, either. The most important thing to remember is that
-because ``robot`` and ``rebot`` scripts are implemented as batch files on
-Windows, ``call`` must be used when running them from another batch
-file. Otherwise execution would end when the first batch file is
-finished.
+Batch file example
+~~~~~~~~~~~~~~~~~~
+
+Implementing the above shell script example using batch files is not very
+complicated either. Notice that arguments to batch files can be forwarded
+to executed commands using ``%*``:
 
 .. sourcecode:: bat
 
    @echo off
-   call robot --variable BROWSER:Firefox --name Firefox --log none --report none --output out\fx.xml login
-   call robot --variable BROWSER:IE --name IE --log none --report none --output out\ie.xml login
-   call rebot --name Login --outputdir out --output login.xml out\fx.xml out\ie.xml
+   robot --name Firefox --variable BROWSER:Firefox --output out\fx.xml --log none --report none %* login
+   robot --name IE --variable BROWSER:IE --log none --output out\ie.xml --report none %* login
+   rebot --name Login --outputdir out --output login.xml out\fx.xml out\ie.xml
 
-In the next examples, jar files under the :file:`lib` directory are
-put into ``CLASSPATH`` before starting the test execution. In these
-examples, start-up scripts require that paths to the executed test
-data are given as arguments. It is also possible to use command line
-options freely, even though some options have already been set in the
-script. All this is relatively straight-forward using bash:
+.. note:: Prior to Robot Framework 3.1 ``robot`` and ``rebot`` commands were
+          implemented as batch files on Windows and using them in another
+          batch file required prefixing the whole command with ``call``.
 
-.. sourcecode:: bash
+Python example
+~~~~~~~~~~~~~~
 
-   #!/bin/bash
+When start-up scripts gets more complicated, implementing them using shell
+scripts or batch files is not that convenient. This is especially true if
+both variants are needed and same logic needs to be implemented twice. In
+such situations it is often better to switch to Python. It is possible to
+execute Robot Framework from Python using the `subprocess module`__, but
+often using Robot Framework's own `programmatic API`__ is more convenient.
+The easiest APIs to use are ``robot.run_cli`` and ``robot.rebot_cli`` that
+accept same command line arguments than the ``robot`` and ``rebot`` commands.
 
-   cp=.
-   for jar in lib/*.jar; do
-       cp=$cp:$jar
-   done
-   export CLASSPATH=$cp
+The following example implements the same logic as the earlier shell script
+and batch file examples. In Python arguments to the script itself are
+available in ``sys.argv``:
 
-   robot --ouputdir /tmp/logs --suitestatlevel 2 $*
+.. sourcecode:: python
 
-Implementing this using Windows batch files is slightly more complicated. The
-difficult part is setting the variable containing the needed JARs inside a For
-loop, because, for some reason, that is not possible without a helper
-function.
+   #!/usr/bin/env python
+   import sys
+   from robot import run_cli, rebot_cli
 
-.. sourcecode:: bat
+   common = ['--log', 'none', '--report', 'none'] + sys.argv[1:] + ['login']
+   run_cli(['--name', 'Firefox', '--variable', 'BROWSER:Firefox', '--output', 'out/fx.xml'] + common, exit=False)
+   run_cli(['--name', 'IE', '--variable', 'BROWSER:IE', '--output', 'out/ie.xml'] + common, exit=False)
+   rebot_cli(['--name', 'Login', '--outputdir', 'out', 'out/fx.xml', 'out/ie.xml'])
 
-   @echo off
 
-   set CP=.
-   for %%jar in (lib\*.jar) do (
-       call :set_cp %%jar
-   )
-   set CLASSPATH=%CP%
+.. note:: ``exit=False`` is needed because by default ``run_cli`` exits to
+          system with the correct `return code`_. ``rebot_cli`` does that too,
+          but in the above example that is fine.
 
-   robot --ouputdir c:\temp\logs --suitestatlevel 2 %*
-
-   goto :eof
-
-   :: Helper for setting variables inside a for loop
-   :set_cp
-       set CP=%CP%;%1
-   goto :eof
+__ https://docs.python.org/library/subprocess.html
+__ https://robot-framework.readthedocs.io
 
 Modifying Java startup parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -567,6 +567,38 @@ outputs are very big. There are two easy ways to configure JVM options:
    installed robot module`_ directly::
 
       jython -J-Xmx1024m -m robot tests.robot
+
+Making :file:`*.robot` files executable
+---------------------------------------
+
+On UNIX-like operating systems it is possible to make :file:`*.robot`
+files executable by giving them execution permission and adding a shebang__
+like in this example:
+
+.. sourcecode:: robotframework
+
+    #!/usr/bin/env robot
+
+    *** Test Cases ***
+    Example
+        Log to console    Executing!
+
+If the above content would be in a file :file:`example.robot` and that file
+would be executable, it could be executed from the command line like below.
+Starting from Robot Framework 3.2, individually executed files can have any
+extension, or no extension at all, so the same would work also if the file
+would be named just :file:`example`.
+
+.. sourcecode:: bash
+
+    ./example.robot
+
+This trick does not work when executing a directory but can be handy when
+executing a single file. It is probably more often useful when
+`automating tasks`__ than when automating tests.
+
+__ https://en.wikipedia.org/wiki/Shebang_(Unix)
+__ `Creating tasks`_
 
 Debugging problems
 ------------------
@@ -604,8 +636,7 @@ the problem is in an individual library keyword.
 Logged tracebacks do not contain information about methods inside Robot
 Framework itself. If you suspect an error is caused by a bug in the framework,
 you can enable showing internal traces by setting environment variable
-``ROBOT_INTERNAL_TRACES`` to any non-empty value. This functionality is
-new in Robot Framework 2.9.2.
+``ROBOT_INTERNAL_TRACES`` to any non-empty value.
 
 If the log file still does not have enough information, it is a good
 idea to enable the syslog_ and see what information it provides. It is
@@ -635,7 +666,7 @@ redirected during keyword execution. Instead, you can use the following:
 
    import sys, pdb; pdb.Pdb(stdout=sys.__stdout__).set_trace()
 
-from within a python library or alternativley:
+from within a python library or alternatively:
 
 .. sourcecode:: robotframework
 

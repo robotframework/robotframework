@@ -3,15 +3,16 @@ Resource and variable files
 
 User keywords and variables in `test case files`_ and `test suite
 initialization files`_ can only be used in files where they are
-created, but *resource files* provide a mechanism for sharing them. Since
-the resource file structure is very close to test case files, it is
-easy to create them.
+created, but *resource files* provide a mechanism for sharing them.
+The high level syntax for creating resource files is exactly the same
+as when creating test case files and `supported file formats`_ are the same
+as well. The main difference is that resource files cannot have tests.
 
 *Variable files* provide a powerful mechanism for creating and sharing
 variables. For example, they allow values other than strings and
 enable creating variables dynamically. Their flexibility comes from
 the fact that they are created using Python code, which also makes
-them somewhat more complicated than `Variable tables`_.
+them somewhat more complicated than `Variable sections`_.
 
 .. contents::
    :depth: 2
@@ -24,23 +25,22 @@ Taking resource files into use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Resource files are imported using the :setting:`Resource` setting in the
-Settings table. The path to the resource file is given in the cell
-after the setting name.
+Settings section. The path to the resource file is given as an argument
+to the setting. When using the `plain text format`__ for creating resource
+files, it is possible to use the normal :file:`.robot` extension but the
+dedicated :file:`.resource` extension is recommended to separate resource
+files from test case files.
+
+__ `Supported file formats`_
 
 If the path is given in an absolute format, it is used directly. In other
 cases, the resource file is first searched relatively to the directory
 where the importing file is located. If the file is not found there,
 it is then searched from the directories in Python's `module search path`_.
 The path can contain variables, and it is recommended to use them to make paths
-system-independent (for example, :file:`${RESOURCES}/login_resources.robot` or
+system-independent (for example, :file:`${RESOURCES}/login.resource` or
 :file:`${RESOURCE_PATH}`). Additionally, forward slashes (`/`) in the path
 are automatically changed to backslashes (:codesc:`\\`) on Windows.
-
-Resource files can use all the same extensions as test case files created
-using the `supported file formats`_. When using the `plain text format`_,
-it is possible to use a special :file:`.resource` extension in addition
-to the normal :file:`.robot` extensions. This makes it easier to separate
-test case files and resource files from each others.
 
 .. sourcecode:: robotframework
 
@@ -62,10 +62,10 @@ Resource file structure
 
 The higher-level structure of resource files is the same as that of
 test case files otherwise, but, of course, they cannot contain Test
-Case tables. Additionally, the Setting table in resource files can
+Case sections. Additionally, the Setting section in resource files can
 contain only import settings (:setting:`Library`, :setting:`Resource`,
-:setting:`Variables`) and :setting:`Documentation`. The Variable table and
-Keyword table are used exactly the same way as in test case files.
+:setting:`Variables`) and :setting:`Documentation`. The Variable section and
+Keyword section are used exactly the same way as in test case files.
 
 If several resource files have a user keyword with the same name, they
 must be used so that the `keyword name is prefixed with the resource
@@ -81,7 +81,7 @@ Documenting resource files
 
 Keywords created in a resource file can be documented__ using
 :setting:`[Documentation]` setting. The resource file itself can have
-:setting:`Documentation` in the Setting table similarly as
+:setting:`Documentation` in the Setting section similarly as
 `test suites`__.
 
 Both Libdoc_ and RIDE_ use these documentations, and they
@@ -127,18 +127,19 @@ Variable files
 --------------
 
 Variable files contain variables_ that can be used in the test
-data. Variables can also be created using variable tables or set from
+data. Variables can also be created using Variable sections or set from
 the command line, but variable files allow creating them dynamically
-and their variables can contain any objects.
+and also make it easy to create other variable values than strings.
 
 Variable files are typically implemented as Python modules and there are
 two different approaches for creating variables:
 
-`Creating variables directly`_
+`Getting variables directly from a module`_
    Variables are specified as module attributes. In simple cases, the
    syntax is so simple that no real programming is needed. For example,
-   `MY_VAR = 'my value'` creates a variable
-   `${MY_VAR}` with the specified text as the value.
+   `MY_VAR = 'my value'` creates a variable `${MY_VAR}` with the specified
+   text as its value. One limitation of this approach is that it does
+   not allow using arguments.
 
 `Getting variables from a special function`_
    Variable files can have a special `get_variables`
@@ -147,18 +148,20 @@ two different approaches for creating variables:
 
 Alternatively variable files can be implemented as `Python or Java classes`__
 that the framework will instantiate. Also in this case it is possible to create
-variables as attributes or get them from a special method.
+variables as attributes or get them dynamically from the `get_variables`
+method. Variable files can also be created as `YAML files`__.
 
 __ `Implementing variable file as Python or Java class`_
+__ `Variable file as YAML`_
 
 Taking variable files into use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Setting table
-'''''''''''''
+Setting section
+'''''''''''''''
 
 All test data files can import variables using the
-:setting:`Variables` setting in the Setting table, in the same way as
+:setting:`Variables` setting in the Setting section, in the same way as
 `resource files are imported`__ using the :setting:`Resource`
 setting. Similarly to resource files, the path to the imported
 variable file is considered relative to the directory where the
@@ -182,7 +185,7 @@ __ `Getting variables from a special function`_
 All variables from a variable file are available in the test data file
 that imports it. If several variable files are imported and they
 contain a variable with the same name, the one in the earliest imported file is
-taken into use. Additionally, variables created in Variable tables and
+taken into use. Additionally, variables created in Variable sections and
 set from the command line override variables from variable files.
 
 Command line
@@ -199,7 +202,7 @@ and possible arguments are joined to the path with a colon (`:`)::
 
 Variable files taken into use from the
 command line are also searched from the `module search path`_ similarly as
-variable files imported in the Setting table.
+variable files imported in the Setting section.
 
 If a variable file is given as an absolute Windows path, the colon after the
 drive letter is not considered a separator::
@@ -223,16 +226,16 @@ names, those that are set individually with
 
 __ `Setting variables in command line`_
 
-Creating variables directly
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Getting variables directly from a module
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Basic syntax
 ''''''''''''
 
 When variable files are taken into use, they are imported as Python
-modules and all their global attributes that do not start with an
-underscore (`_`) are considered to be variables. Because variable
-names are case-insensitive, both lower- and upper-case names are
+modules and all their module level attributes that do not start with
+an underscore (`_`) are, by default, considered to be variables. Because
+variable names are case-insensitive, both lower- and upper-case names are
 possible, but in general, capital letters are recommended for global
 variables and attributes.
 
@@ -268,13 +271,13 @@ These prefixes will not be part of the final variable name, but they cause
 Robot Framework to validate that the value actually is list-like or
 dictionary-like. With dictionaries the actual stored value is also turned
 into a special dictionary that is used also when `creating dictionary
-variables`_ in the Variable table. Values of these dictionaries are accessible
+variables`_ in the Variable section. Values of these dictionaries are accessible
 as attributes like `${FINNISH.cat}`. These dictionaries are also ordered, but
 preserving the source order requires also the original dictionary to be
 ordered.
 
 The variables in both the examples above could be created also using the
-Variable table below.
+Variable section below.
 
 .. sourcecode:: robotframework
 
@@ -298,7 +301,7 @@ Using objects as values
 '''''''''''''''''''''''
 
 Variables in variable files are not limited to having only strings or
-other base types as values like variable tables. Instead, their
+other base types as values like Variable sections. Instead, their
 variables can contain any objects. In the example below, the variable
 `${MAPPING}` contains a Java Hashtable with two values (this
 example works only when running tests on Jython).
@@ -415,19 +418,22 @@ as variables.
           by Python to decide which attributes to import
           when using the syntax `from modulename import *`.
 
+The third option to select what variables are actually created is using
+a special `get_variables` function discussed below.
+
 Getting variables from a special function
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 An alternative approach for getting variables is having a special
-`get_variables` function (also camelCase syntax
-`getVariables` is possible) in a variable file. If such a function
-exists, Robot Framework calls it and expects to receive variables as
-a Python dictionary or a Java `Map` with variable names as keys
-and variable values as values. Created variables can be used as scalars,
-lists, and dictionaries exactly like when `creating variables directly`_,
-and it is possible to use `LIST__` and `DICT__` prefixes to make creating
-list and dictionary variables more explicit. The example below is functionally
-identical to the first `creating variables directly`_ example.
+`get_variables` function (also camelCase syntax `getVariables` is possible)
+in a variable file. If such a function exists, Robot Framework calls it and
+expects to receive variables as a Python dictionary or a Java `Map` with
+variable names as keys and variable values as values. Created variables can
+be used as scalars, lists, and dictionaries exactly like when `getting
+variables directly from a module`_, and it is possible to use `LIST__` and
+`DICT__` prefixes to make creating list and dictionary variables more explicit.
+The example below is functionally identical to the first example related to
+`getting variables directly from a module`_.
 
 .. sourcecode:: python
 
@@ -570,18 +576,17 @@ The following example demonstrates a simple YAML file:
           pip_ installed, you can install it simply by running
           `pip install pyyaml`.
 
-          YAML support is new in Robot Framework 2.9. Starting from
-          version 2.9.2, the `standalone JAR distribution`_ has
-          PyYAML included by default.
+          YAML variable files must have either :file:`.yaml` or :file:`.yml`
+          extension. Support for the :file:`.yml` extension is new in
+          Robot Framework 3.2.
 
 YAML variable files can be used exactly like normal variable files
-from the command line using :option:`--variablefile` option, in the settings
-table using :setting:`Variables` setting, and dynamically using the
-:name:`Import Variables` keyword. The only thing to remember is that paths to
-YAML files must always end with :file:`.yaml` extension.
+from the command line using :option:`--variablefile` option, in the Settings
+section using :setting:`Variables` setting, and dynamically using the
+:name:`Import Variables` keyword.
 
-If the above YAML file is imported, it will create exactly the same
-variables as the following variable table:
+If the above YAML file is imported, it will create exactly the same variables
+as this Variable section:
 
 .. sourcecode:: robotframework
 
@@ -598,10 +603,10 @@ types supported by YAML syntax. If names or values contain non-ASCII
 characters, YAML variables files must be UTF-8 encoded.
 
 Mappings used as values are automatically converted to special dictionaries
-that are used also when `creating dictionary variables`_ in the variable table.
+that are used also when `creating dictionary variables`_ in the Variable section.
 Most importantly, values of these dictionaries are accessible as attributes
 like `${DICT.one}`, assuming their names are valid as Python attribute names.
 If the name contains spaces or is otherwise not a valid attribute name, it is
 always possible to access dictionary values using syntax like
-`&{DICT}[with spaces]` syntax. The created dictionaries are also ordered, but
+`${DICT}[with spaces]` syntax. The created dictionaries are also ordered, but
 unfortunately the original source order of in the YAML file is not preserved.

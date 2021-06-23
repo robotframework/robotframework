@@ -20,8 +20,8 @@ import time
 import signal as signal_module
 
 from robot.utils import (ConnectionCache, abspath, cmdline2list, console_decode,
-                         is_list_like, is_truthy, NormalizedDict, py2to3,
-                         secs_to_timestr, system_decode, system_encode,
+                         is_list_like, is_string, is_truthy, NormalizedDict,
+                         py3to2, secs_to_timestr, system_decode, system_encode,
                          timestr_to_secs, IRONPYTHON, JYTHON, WINDOWS)
 from robot.version import get_version
 from robot.api import logger
@@ -46,14 +46,7 @@ class Process(object):
 
     == Table of contents ==
 
-    - `Specifying command and arguments`
-    - `Process configuration`
-    - `Active process`
-    - `Result object`
-    - `Boolean arguments`
-    - `Example`
-    - `Shortcuts`
-    - `Keywords`
+    %TOC%
 
     = Specifying command and arguments =
 
@@ -172,11 +165,21 @@ class Process(object):
     expected to write outputs using the console encoding, but `output encoding`
     can be configured using the ``output_encoding`` argument if needed.
 
+    If you are not interested in outputs at all, you can explicitly ignore them
+    by using a special value ``DEVNULL`` both with ``stdout`` and ``stderr``. For
+    example, ``stdout=DEVNULL`` is the same as redirecting output on console
+    with ``> /dev/null`` on UNIX-like operating systems or ``> NUL`` on Windows.
+    This way the process will not hang even if there would be a lot of output,
+    but naturally output is not available after execution either.
+
+    Support for the special value ``DEVNULL`` is new in Robot Framework 3.2.
+
     Examples:
     | ${result} = | `Run Process` | program | stdout=${TEMPDIR}/stdout.txt | stderr=${TEMPDIR}/stderr.txt |
     | `Log Many`  | stdout: ${result.stdout} | stderr: ${result.stderr} |
     | ${result} = | `Run Process` | program | stderr=STDOUT |
     | `Log`       | all output: ${result.stdout} |
+    | ${result} = | `Run Process` | program | stdout=DEVNULL | stderr=DEVNULL |
 
     Note that the created output files are not automatically removed after
     the test run. The user is responsible to remove them if needed.
@@ -202,8 +205,6 @@ class Process(object):
     | `Start Process` | program | output_encoding=UTF-8 |
     | `Run Process`   | program | stdout=${path} | output_encoding=SYSTEM |
 
-    The support to set output encoding is new in Robot Framework 3.0.
-
     == Alias ==
 
     A custom name given to the process that can be used when selecting the
@@ -211,7 +212,7 @@ class Process(object):
 
     Examples:
     | `Start Process` | program | alias=example |
-    | `Run Process`   | python  | -c | print 'hello' | alias=hello |
+    | `Run Process`   | python  | -c | print('hello') | alias=hello |
 
     = Active process =
 
@@ -271,8 +272,7 @@ class Process(object):
     | `Terminate Process` | kill=${EMPTY} | # Empty string is false.       |
     | `Terminate Process` | kill=${FALSE} | # Python ``False`` is false.   |
 
-    Considering string ``NONE`` false is new in Robot Framework 3.0.3 and
-    considering also ``OFF`` and ``0`` false is new in Robot Framework 3.1.
+    Considering ``OFF`` and ``0`` false is new in Robot Framework 3.1.
 
     = Example =
 
@@ -321,7 +321,7 @@ class Process(object):
         as ``**configuration``.
 
         Examples:
-        | ${result} = | Run Process | python | -c | print 'Hello, world!' |
+        | ${result} = | Run Process | python | -c | print('Hello, world!') |
         | Should Be Equal | ${result.stdout} | Hello, world! |
         | ${result} = | Run Process | ${command} | stderr=STDOUT | timeout=10s |
         | ${result} = | Run Process | ${command} | timeout=1min | on_timeout=continue |
@@ -407,7 +407,9 @@ class Process(object):
         given in
         [http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#time-format|
         various time formats] supported by Robot Framework, for example, ``42``,
-        ``42 s``, or ``1 minute 30 seconds``.
+        ``42 s``, or ``1 minute 30 seconds``. The timeout is ignored if it is
+        Python ``None`` (default), string ``NONE`` (case-insensitively), zero,
+        or negative.
 
         ``on_timeout`` defines what to do if the timeout occurs. Possible values
         and corresponding actions are explained in the table below. Notice
@@ -439,16 +441,24 @@ class Process(object):
         | ${result} =                 | Wait For Process | timeout=1min 30s | on_timeout=kill |
         | Process Should Be Stopped   |                  |                  |
         | Should Be Equal As Integers | ${result.rc}     | -9               |
+
+        Ignoring timeout if it is string ``NONE``, zero, or negative is new
+        in Robot Framework 3.2.
         """
         process = self._processes[handle]
         logger.info('Waiting for process to complete.')
-        if timeout:
-            timeout = timestr_to_secs(timeout)
+        timeout = self._get_timeout(timeout)
+        if timeout > 0:
             if not self._process_is_stopped(process, timeout):
                 logger.info('Process did not complete in %s.'
                             % secs_to_timestr(timeout))
                 return self._manage_process_timeout(handle, on_timeout.lower())
         return self._wait(process)
+
+    def _get_timeout(self, timeout):
+        if (is_string(timeout) and timeout.upper() == 'NONE') or not timeout:
+            return -1
+        return timestr_to_secs(timeout)
 
     def _manage_process_timeout(self, handle, on_timeout):
         if on_timeout == 'terminate':
@@ -648,7 +658,7 @@ class Process(object):
         values.
 
         Examples:
-        | Run Process           | python             | -c            | print 'Hello, world!' | alias=myproc |
+        | Run Process           | python             | -c            | print('Hello, world!') | alias=myproc |
         | # Get result object   |                    |               |
         | ${result} =           | Get Process Result | myproc        |
         | Should Be Equal       | ${result.rc}       | ${0}          |
@@ -720,8 +730,6 @@ class Process(object):
         Examples:
         | @{cmd} = | Split Command Line | --option "value with spaces" |
         | Should Be True | $cmd == ['--option', 'value with spaces'] |
-
-        New in Robot Framework 2.9.2.
         """
         return cmdline2list(args, escaping=escaping)
 
@@ -738,8 +746,6 @@ class Process(object):
         Example:
         | ${cmd} = | Join Command Line | --option | value with spaces |
         | Should Be Equal | ${cmd} | --option "value with spaces" |
-
-        New in Robot Framework 2.9.2.
         """
         if len(args) == 1 and is_list_like(args[0]):
             args = args[0]
@@ -825,7 +831,7 @@ class ExecutionResult(object):
         return '<result object with rc %d>' % self.rc
 
 
-@py2to3
+@py3to2
 class ProcessConfiguration(object):
 
     def __init__(self, cwd=None, shell=False, stdout=None, stderr=None,
@@ -844,6 +850,8 @@ class ProcessConfiguration(object):
         return abspath('.')
 
     def _new_stream(self, name):
+        if name == 'DEVNULL':
+            return open(os.devnull, 'w')
         if name:
             name = name.replace('/', os.sep)
             return open(os.path.join(self.cwd, name), 'w')
@@ -917,7 +925,7 @@ class ProcessConfiguration(object):
                 'stderr': self.stderr_stream,
                 'output_encoding': self.output_encoding}
 
-    def __unicode__(self):
+    def __str__(self):
         return """\
 cwd:     %s
 shell:   %s

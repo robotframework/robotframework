@@ -26,13 +26,16 @@ Length Should Be with invalid length
     Check Test Case    ${TESTNAME}
 
 Should Be Empty
-    Check test case    ${TESTNAME}
+    Check test case    ${TESTNAME} 1
+    Check test case    ${TESTNAME} 2
+    Check test case    ${TESTNAME} 3
 
 Should Be Empty with custom message
     Check test case    ${TESTNAME}
 
 Should Not Be Empty
-    Check test case    ${TESTNAME}
+    Check test case    ${TESTNAME} 1
+    Check test case    ${TESTNAME} 2
 
 Should Not Be Empty with custom message
     Check test case    ${TESTNAME}

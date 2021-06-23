@@ -13,30 +13,42 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import setter
+from robot.utils import py3to2, setter
 
+from .body import Body
+from .fixture import create_fixture
 from .itemlist import ItemList
 from .keyword import Keyword, Keywords
 from .modelobject import ModelObject
 from .tags import Tags
 
 
+@py3to2
 class TestCase(ModelObject):
     """Base model for a single test case.
 
     Extended by :class:`robot.running.model.TestCase` and
     :class:`robot.result.model.TestCase`.
     """
+    body_class = Body
+    fixture_class = Keyword
+    repr_args = ('name',)
     __slots__ = ['parent', 'name', 'doc', 'timeout']
-    keyword_class = Keyword  #: Internal usage only
 
-    def __init__(self, name='', doc='', tags=None, timeout=None):
-        self.parent = None      #: Parent suite.
-        self.name = name        #: Test case name.
-        self.doc = doc          #: Test case documentation.
-        self.timeout = timeout  #: Test case timeout.
+    def __init__(self, name='', doc='', tags=None, timeout=None, parent=None):
+        self.name = name
+        self.doc = doc
+        self.timeout = timeout
         self.tags = tags
-        self.keywords = None
+        self.parent = parent
+        self.body = None
+        self.setup = None
+        self.teardown = None
+
+    @setter
+    def body(self, body):
+        """Test case body as a :class:`~.Body` object."""
+        return self.body_class(self, body)
 
     @setter
     def tags(self, tags):
@@ -44,12 +56,52 @@ class TestCase(ModelObject):
         return Tags(tags)
 
     @setter
-    def keywords(self, keywords):
-        """Keywords as a :class:`~.Keywords` object.
+    def setup(self, setup):
+        """Test setup as a :class:`~.model.keyword.Keyword` object.
 
-        Contains also possible setup and teardown keywords.
+        This attribute is a ``Keyword`` object also when a test has no setup
+        but in that case its truth value is ``False``.
+
+        Setup can be modified by setting attributes directly::
+
+            test.setup.name = 'Example'
+            test.setup.args = ('First', 'Second')
+
+        Alternatively the :meth:`config` method can be used to set multiple
+        attributes in one call::
+
+            test.setup.config(name='Example', args=('First', 'Second'))
+
+        The easiest way to reset the whole setup is setting it to ``None``.
+        It will automatically recreate the underlying ``Keyword`` object::
+
+            test.setup = None
+
+        New in Robot Framework 4.0. Earlier setup was accessed like
+        ``test.keywords.setup``.
         """
-        return Keywords(self.keyword_class, self, keywords)
+        return create_fixture(setup, self, Keyword.SETUP)
+
+    @setter
+    def teardown(self, teardown):
+        """Test teardown as a :class:`~.model.keyword.Keyword` object.
+
+        See :attr:`setup` for more information.
+        """
+        return create_fixture(teardown, self, Keyword.TEARDOWN)
+
+    @property
+    def keywords(self):
+        """Deprecated since Robot Framework 4.0
+
+        Use :attr:`body`, :attr:`setup` or :attr:`teardown` instead.
+        """
+        keywords = [self.setup] + list(self.body) + [self.teardown]
+        return Keywords(self, [kw for kw in keywords if kw])
+
+    @keywords.setter
+    def keywords(self, keywords):
+        Keywords.raise_deprecation_error()
 
     @property
     def id(self):
@@ -69,9 +121,16 @@ class TestCase(ModelObject):
             return self.name
         return '%s.%s' % (self.parent.longname, self.name)
 
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_test(self)
+
+    def __str__(self):
+        return self.name
 
 
 class TestCases(ItemList):

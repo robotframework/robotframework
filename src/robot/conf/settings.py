@@ -22,14 +22,14 @@ from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
 from robot.result.keywordremover import KeywordRemover
 from robot.result.flattenkeywordmatcher import validate_flatten_keyword
-from robot.utils import (abspath, escape, format_time, get_link_path,
-                         html_escape, is_list_like, py2to3,
-                         split_args_from_name_or_path)
+from robot.utils import (abspath, create_destination_directory, escape,
+                         format_time, get_link_path, html_escape, is_list_like,
+                         py3to2, split_args_from_name_or_path)
 
 from .gatherfailed import gather_failed_tests, gather_failed_suites
 
 
-@py2to3
+@py3to2
 class _BaseSettings(object):
     _cli_opts = {'RPA'              : ('rpa', None),
                  'Name'             : ('name', None),
@@ -43,8 +43,8 @@ class _BaseSettings(object):
                  'SetTag'           : ('settag', []),
                  'Include'          : ('include', []),
                  'Exclude'          : ('exclude', []),
-                 'Critical'         : ('critical', None),
-                 'NonCritical'      : ('noncritical', None),
+                 'Critical'         : ('critical', []),
+                 'NonCritical'      : ('noncritical', []),
                  'OutputDir'        : ('outputdir', abspath('.')),
                  'Log'              : ('log', 'log.html'),
                  'Report'           : ('report', 'report.html'),
@@ -54,7 +54,7 @@ class _BaseSettings(object):
                  'LogTitle'         : ('logtitle', None),
                  'ReportTitle'      : ('reporttitle', None),
                  'ReportBackground' : ('reportbackground',
-                                       ('#9e9', '#9e9', '#f66')),
+                                       ('#9e9', '#f66', '#fed84f')),
                  'SuiteStatLevel'   : ('suitestatlevel', -1),
                  'TagStatInclude'   : ('tagstatinclude', []),
                  'TagStatExclude'   : ('tagstatexclude', []),
@@ -62,6 +62,7 @@ class _BaseSettings(object):
                  'TagDoc'           : ('tagdoc', []),
                  'TagStatLink'      : ('tagstatlink', []),
                  'RemoveKeywords'   : ('removekeywords', []),
+                 'ExpandKeywords'   : ('expandkeywords', []),
                  'FlattenKeywords'  : ('flattenkeywords', []),
                  'PreRebotModifiers': ('prerebotmodifier', []),
                  'StatusRC'         : ('statusrc', True),
@@ -132,11 +133,10 @@ class _BaseSettings(object):
             self._validate_remove_keywords(value)
         if name == 'FlattenKeywords':
             self._validate_flatten_keywords(value)
-        if name == 'WarnOnSkipped':
-            with LOGGER.cache_only:
-                LOGGER.warn("Option '--warnonskippedfiles' is deprecated and "
-                            "has no effect. Nowadays all skipped files are "
-                            "reported.")
+        if name == 'ExpandKeywords':
+            self._validate_expandkeywords(value)
+        if name == 'Extension':
+            return tuple(ext.lower().lstrip('.') for ext in value.split(':'))
         return value
 
     def _escape_as_data(self, value):
@@ -214,7 +214,7 @@ class _BaseSettings(object):
             return None
         name = self._process_output_name(option, name)
         path = abspath(os.path.join(self['OutputDir'], name))
-        self._create_output_dir(os.path.dirname(path), option)
+        create_destination_directory(path, '%s file' % option.lower())
         return path
 
     def _process_output_name(self, option, name):
@@ -235,14 +235,6 @@ class _BaseSettings(object):
             return '.txt'
         raise FrameworkError("Invalid output file type: %s" % type_)
 
-    def _create_output_dir(self, path, type_):
-        try:
-            if not os.path.exists(path):
-                os.makedirs(path)
-        except EnvironmentError as err:
-            raise DataError("Creating %s file directory '%s' failed: %s"
-                            % (type_.lower(), path, err.strerror))
-
     def _process_metadata_or_tagdoc(self, value):
         if ':' in value:
             return value.split(':', 1)
@@ -253,7 +245,7 @@ class _BaseSettings(object):
             raise DataError("Invalid report background colors '%s'." % colors)
         colors = colors.split(':')
         if len(colors) == 2:
-            return colors[0], colors[0], colors[1]
+            return colors[0], colors[1], '#fed84f'
         return tuple(colors)
 
     def _process_tag_stat_combine(self, pattern):
@@ -308,10 +300,17 @@ class _BaseSettings(object):
         except DataError as err:
             raise DataError("Invalid value for option '--flattenkeywords'. %s" % err)
 
+    def _validate_expandkeywords(self, values):
+        for opt in values:
+            if not opt.lower().startswith(('name:', 'tag:')):
+                raise DataError("Invalid value for option '--expandkeywords'. "
+                                "Expected 'TAG:<pattern>', or "
+                                "'NAME:<pattern>' but got '%s'." % opt)
+
     def __contains__(self, setting):
         return setting in self._cli_opts
 
-    def __unicode__(self):
+    def __str__(self):
         return '\n'.join('%s: %s' % (name, self._opts[name])
                          for name in sorted(self._opts))
 
@@ -348,10 +347,6 @@ class _BaseSettings(object):
         return self['StatusRC']
 
     @property
-    def xunit_skip_noncritical(self):
-        return self['XUnitSkipNonCritical']
-
-    @property
     def statistics_config(self):
         return {
             'suite_stat_level': self['SuiteStatLevel'],
@@ -365,10 +360,6 @@ class _BaseSettings(object):
     @property
     def critical_tags(self):
         return self['Critical']
-
-    @property
-    def non_critical_tags(self):
-        return self['NonCritical']
 
     @property
     def remove_keywords(self):
@@ -396,17 +387,18 @@ class _BaseSettings(object):
 
 
 class RobotSettings(_BaseSettings):
-    _extra_cli_opts = {'Extension'          : ('extension', None),
+    _extra_cli_opts = {'Extension'          : ('extension', ('robot',)),
                        'Output'             : ('output', 'output.xml'),
                        'LogLevel'           : ('loglevel', 'INFO'),
                        'MaxErrorLines'      : ('maxerrorlines', 40),
                        'DryRun'             : ('dryrun', False),
                        'ExitOnFailure'      : ('exitonfailure', False),
                        'ExitOnError'        : ('exitonerror', False),
+                       'Skip'               : ('skip', []),
+                       'SkipOnFailure'      : ('skiponfailure', []),
                        'SkipTeardownOnExit' : ('skipteardownonexit', False),
                        'Randomize'          : ('randomize', 'NONE'),
                        'RunEmptySuite'      : ('runemptysuite', False),
-                       'WarnOnSkipped'      : ('warnonskippedfiles', None),
                        'Variables'          : ('variable', []),
                        'VariableFiles'      : ('variablefile', []),
                        'PreRunModifiers'    : ('prerunmodifier', []),
@@ -431,6 +423,7 @@ class RobotSettings(_BaseSettings):
         settings._opts['Output'] = None
         settings._opts['LogLevel'] = 'TRACE'
         settings._opts['ProcessEmptySuite'] = self['RunEmptySuite']
+        settings._opts['ExpandKeywords'] = self['ExpandKeywords']
         return settings
 
     def _output_disabled(self):
@@ -479,6 +472,7 @@ class RobotSettings(_BaseSettings):
     @property
     def dry_run(self):
         return self['DryRun']
+
     @property
     def exit_on_failure(self):
         return self['ExitOnFailure']
@@ -486,6 +480,14 @@ class RobotSettings(_BaseSettings):
     @property
     def exit_on_error(self):
         return self['ExitOnError']
+
+    @property
+    def skipped_tags(self):
+        return self['Skip']
+
+    @property
+    def skip_on_failure(self):
+        return (self['SkipOnFailure'] or []) + (self['NonCritical'] or [])
 
     @property
     def skip_teardown_on_exit(self):
@@ -568,8 +570,6 @@ class RebotSettings(_BaseSettings):
             'empty_suite_ok': self.process_empty_suite,
             'remove_keywords': self.remove_keywords,
             'log_level': self['LogLevel'],
-            'critical_tags': self.critical_tags,
-            'non_critical_tags': self.non_critical_tags,
             'start_time': self['StartTime'],
             'end_time': self['EndTime']
         }
@@ -594,7 +594,7 @@ class RebotSettings(_BaseSettings):
             'rpa': self.rpa,
             'title': html_escape(self['ReportTitle'] or ''),
             'logURL': self._url_from_path(self.report, self.log),
-            'background' : self._resolve_background_colors(),
+            'background' : self._resolve_background_colors()
         }
 
     def _url_from_path(self, source, destination):
@@ -604,7 +604,7 @@ class RebotSettings(_BaseSettings):
 
     def _resolve_background_colors(self):
         colors = self['ReportBackground']
-        return {'pass': colors[0], 'nonCriticalFail': colors[1], 'fail': colors[2]}
+        return {'pass': colors[0], 'fail': colors[1], 'skip': colors[2]}
 
     @property
     def merge(self):
@@ -621,3 +621,7 @@ class RebotSettings(_BaseSettings):
     @property
     def process_empty_suite(self):
         return self['ProcessEmptySuite']
+
+    @property
+    def expand_keywords(self):
+        return self['ExpandKeywords']

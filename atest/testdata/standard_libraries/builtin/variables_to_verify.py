@@ -1,5 +1,6 @@
-import os
 from collections import OrderedDict
+import os
+import sys
 
 try:
     ascii
@@ -10,6 +11,9 @@ if os.name == 'java':
     from java.lang import String
     from java.util import Hashtable, Vector
     import jarray
+
+
+PY3_OR_IPY = sys.version_info[0] > 2 or sys.platform == 'cli'
 
 
 def get_variables():
@@ -25,14 +29,19 @@ def get_variables():
         LIST_1=['a'],
         LIST_2=['a', 2],
         LIST_3=['a', 'b', 'c'],
+        LIST_4=['\ta', '\na', 'b ', 'b \t', '\tc\n'],
         DICT={u'a': 1, u'A': 2, u'\xe4': 3, u'\xc4': 4},
         ORDERED_DICT=OrderedDict([('a', 1), ('A', 2), (u'\xe4', 3), (u'\xc4', 4)]),
         DICT_0={},
         DICT_1={'a': 1},
         DICT_2={'a': 1, 2: 'b'},
         DICT_3={'a': 1, 'b': 2, 'c': 3},
+        DICT_4={'\ta': 1, 'a b': 2, '  c': 3, 'dd\n\t': 4, '\nak \t': 5},
+        DICT_5={' a': 0, '\ta': 1, 'a\t': 2, '\nb': 3, 'd\t': 4, '\td\n': 5},
     )
     variables['ASCII_DICT'] = ascii(variables['DICT'])
+    variables['PREPR_DICT1'] = "{'a': 1}" if PY3_OR_IPY else "{b'a': 1}"
+    variables['U'] = '' if PY3_OR_IPY else 'u'
     if os.name == 'java':
         variables.update(get_java_variables(**variables))
     return variables

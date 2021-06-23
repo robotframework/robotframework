@@ -9,14 +9,14 @@ Library           ParameterLibrary    ${1}    2
 
 *** Test Cases ***
 Import Library Normally Before Importing With Name In Another Suite
-    OperatingSystem.Should Exist    ${CURDIR}
+    OperatingSystem.Should Exist    .
     ParameterLibrary.Parameters Should Be    before1    before2
 
 Import Library With Name Before Importing With Name In Another Suite
     Params.Parameters Should Be    before1with    before2with
 
 Correct Error When Using Keyword From Same Library With Different Names Without Prefix 1
-    [Documentation]    FAIL Multiple keywords with name 'Parameters' found.\
+    [Documentation]    FAIL Multiple keywords with name 'Parameters' found. \
     ...    Give the full name of the keyword you want to use:
     ...    ${SPACE*4}ParameterLibrary.Parameters
     ...    ${SPACE*4}Params.Parameters

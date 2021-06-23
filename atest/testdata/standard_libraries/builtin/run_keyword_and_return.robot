@@ -183,8 +183,9 @@ Run Keyword And Return Given Args If
 
 Run Keyword And Return If Arg Is Positive
     [Arguments]    @{args}
-    :FOR    ${arg}    IN    @{args}
-    \    Run Keyword And Return If    ${arg} > 0    Set Variable    ${arg} > 0
+    FOR    ${arg}    IN    @{args}
+        Run Keyword And Return If    ${arg} > 0    Set Variable    ${arg} > 0
+    END
     Run Keyword And Return If    True    Set Variable    No positive arguments
     Fail    Not executed
     [Return]    Not returned

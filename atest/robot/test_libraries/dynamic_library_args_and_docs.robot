@@ -12,6 +12,16 @@ Documentation And Argument Boundaries Work With Mandatory Args
 
 Documentation And Argument Boundaries Work With Default Args
     Keyword documentation for One or Two Args
+    ...    Executed keyword "One or Two Args" with arguments (${u}'1',).
+    ...    Executed keyword "One or Two Args" with arguments (${u}'1', ${u}'2').
+
+Default value as tuple
+    Keyword documentation for Default as tuple
+    ...    Executed keyword "Default as tuple" with arguments (${u}'1',).
+    ...    Executed keyword "Default as tuple" with arguments (${u}'1', ${u}'2').
+    ...    Executed keyword "Default as tuple" with arguments (${u}'1', ${u}'2', ${u}'3').
+    ...    Executed keyword "Default as tuple" with arguments (${u}'1', False, ${u}'3').
+    ...    Executed keyword "Default as tuple" with arguments (${u}'1', False, ${u}'3').
 
 Documentation And Argument Boundaries Work With Varargs
     Keyword documentation for Many Args
@@ -24,24 +34,26 @@ Multiline Documentation
 
 Keyword Not Created And Warning Shown When Getting Documentation Fails
     [Template]    Check Creating Keyword Failed Due To Invalid Doc Message
-    0    Many Args
-    1    Multiline
-    2    No Arg
-    3    No Arg Spec
-    4    One Arg
-    5    One or Two Args
-    [Teardown]    Check Log Message    ${ERRORS[6]}
+    0    Default as tuple
+    1    Many Args
+    2    Multiline
+    3    No Arg
+    4    No Arg Spec
+    5    One Arg
+    6    One or Two Args
+    [Teardown]    Check Log Message    ${ERRORS}[7]
     ...    Imported library 'classes.InvalidGetDocDynamicLibrary' contains no keywords.    WARN
 
 Keyword Not Created And Warning Shown When Getting Arguments Fails
     [Template]    Check Creating Keyword Failed Due To Invalid Args Message
-    7    Many Args
-    8    Multiline
-    9    No Arg
-    10    No Arg Spec
-    11   One Arg
-    12   One or Two Args
-    [Teardown]    Check Log Message    ${ERRORS[13]}
+    8    Default as tuple
+    9    Many Args
+    10   Multiline
+    11   No Arg
+    12   No Arg Spec
+    13   One Arg
+    14   One or Two Args
+    [Teardown]    Check Log Message    ${ERRORS}[15]
     ...    Imported library 'classes.InvalidGetArgsDynamicLibrary' contains no keywords.    WARN
 
 Documentation And Argument Boundaries Work With No Args In Java
@@ -62,41 +74,55 @@ Documentation And Argument Boundaries Work With Varargs In Java
 
 Keyword With Kwargs Not Created And Warning Shown When No Run Keyword With Kwargs Support In Java
     [Tags]    require-jython
-    [Template]    NONE
-    Check Log Message    ${ERRORS[14]}
-    ...    Adding keyword 'Unsupported Java Kwargs' to library 'ArgDocDynamicJavaLibrary' failed: Too few 'runKeyword' method parameters for **kwargs support.    ERROR
+    [Template]    Error In Library
+    ArgDocDynamicJavaLibrary
+    ...    Adding keyword 'Unsupported Java Kwargs' failed:
+    ...    Too few 'runKeyword' method parameters for **kwargs support.
+    ...    index=16
 
 Keyword Not Created And Warning Shown When Getting Documentation Fails In Java
     [Tags]    require-jython
-    [Template]    NONE
-    Check Log Message    ${ERRORS[15]}
-    ...    Adding keyword 'Invalid Java Args' to library 'ArgDocDynamicJavaLibrary' failed: Calling dynamic method 'getKeywordArguments' failed: Get args failure    ERROR
+    [Template]    Error In Library
+    ArgDocDynamicJavaLibrary
+    ...    Adding keyword 'Invalid Java Args' failed:
+    ...    Calling dynamic method 'getKeywordArguments' failed:
+    ...    Get args failure
+    ...    index=17
 
 Keyword Not Created And Warning Shown When Getting Arguments Fails In Java
     [Tags]    require-jython
-    [Template]    NONE
-    Check Log Message    ${ERRORS[16]}
-    ...    Adding keyword 'Invalid Java Doc' to library 'ArgDocDynamicJavaLibrary' failed: Calling dynamic method 'getKeywordDocumentation' failed: Get doc failure    ERROR
+    [Template]    Error In Library
+    ArgDocDynamicJavaLibrary
+    ...    Adding keyword 'Invalid Java Doc' failed:
+    ...    Calling dynamic method 'getKeywordDocumentation' failed:
+    ...    Get doc failure
+    ...    index=18
 
 *** Keywords ***
 Check test case and its doc
-    [Arguments]    ${expected doc}
+    [Arguments]    ${expected doc}    @{msgs}
     ${tc} =    Check Test case    ${TESTNAME}
     Should Be Equal    ${tc.kws[0].doc}    ${expected doc}
+    FOR    ${kw}    ${msg}    IN ZIP    ${tc.kws}    ${msgs}
+        Check Log Message    ${kw.msgs[0]}    ${msg}
+    END
 
 Check Creating Keyword Failed Due To Invalid Doc Message
     [Arguments]    ${index}    ${kw}
-    ${lib} =    Set Variable    classes.InvalidGetDocDynamicLibrary
-    ${err} =    Set Variable    Calling dynamic method 'get_keyword_documentation' failed: TypeError:
-    Check Creating Keyword Failed Message    ${index}    ${kw}    ${lib}    ${err}
+    Check Creating Keyword Failed Message    ${index}    ${kw}
+    ...    classes.InvalidGetDocDynamicLibrary
+    ...    Calling dynamic method 'get_keyword_documentation' failed: TypeError: *
 
 Check Creating Keyword Failed Due To Invalid Args Message
     [Arguments]    ${index}    ${kw}
-    ${lib} =    Set Variable    classes.InvalidGetArgsDynamicLibrary
-    ${err} =    Set Variable    Calling dynamic method 'get_keyword_arguments' failed: ZeroDivisionError:
-    Check Creating Keyword Failed Message    ${index}    ${kw}    ${lib}    ${err}
+    Check Creating Keyword Failed Message    ${index}    ${kw}
+    ...    classes.InvalidGetArgsDynamicLibrary
+    ...    Calling dynamic method 'get_keyword_arguments' failed: ZeroDivisionError: *
 
 Check Creating Keyword Failed Message
-    [Arguments]    ${index}    ${kw}    ${lib}    ${error}
-    ${msg} =    Set Variable    Adding keyword '${kw}' to library '${lib}' failed: ${error} *
-    Check Log Message    ${ERRORS.msgs[${index}]}    ${msg}    ERROR    pattern=yes
+    [Arguments]    ${index}    ${kw}    ${lib}    @{error}
+    Error In Library    ${lib}
+    ...    Adding keyword '${kw}' failed:
+    ...    @{error}
+    ...    pattern=True
+    ...    index=${index}

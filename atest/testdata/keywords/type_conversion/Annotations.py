@@ -3,6 +3,7 @@ from datetime import datetime, date, timedelta
 from decimal import Decimal
 from enum import Enum
 from functools import wraps
+from fractions import Fraction
 from numbers import Integral, Real
 
 from robot.api.deco import keyword
@@ -11,6 +12,14 @@ from robot.api.deco import keyword
 class MyEnum(Enum):
     FOO = 1
     bar = 'xxx'
+    foo = 'yyy'
+    normalize_me = True
+
+
+class NoneEnum(Enum):
+    NONE = 1
+    NTWO = 2
+    NTHREE = 3
 
 
 class Unknown(object):
@@ -70,6 +79,10 @@ def timedelta_(argument: timedelta, expected=None):
 
 
 def enum_(argument: MyEnum, expected=None):
+    _validate_type(argument, expected)
+
+
+def none_enum_(argument: NoneEnum, expected=None):
     _validate_type(argument, expected)
 
 
@@ -202,7 +215,23 @@ def mismatch_caused_by_decorator(argument: int, expected=None):
 
 
 @decorator_with_wraps
-def mismatch_caused_by_decorator_with_wraps(argument: int, expected=None):
+def keyword_with_wraps(argument: int, expected=None):
+    _validate_type(argument, expected)
+
+
+def type_and_default_1(argument: list = None, expected=None):
+    _validate_type(argument, expected)
+
+
+def type_and_default_2(argument: int = True, expected=None):
+    _validate_type(argument, expected)
+
+
+def type_and_default_3(argument: timedelta = 0, expected=None):
+    _validate_type(argument, expected)
+
+
+def type_and_default_4(argument: list = [], expected=None):
     _validate_type(argument, expected)
 
 

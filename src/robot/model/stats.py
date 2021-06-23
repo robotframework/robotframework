@@ -14,18 +14,18 @@
 #  limitations under the License.
 
 from robot.utils import (Sortable, elapsed_time_to_string, html_escape,
-                         is_string, normalize, py2to3, unicode)
+                         is_string, normalize, py3to2, unicode)
 
 from .tags import TagPattern
 
 
-@py2to3
+@py3to2
 class Stat(Sortable):
     """Generic statistic object used for storing all the statistic values."""
 
     def __init__(self, name):
         #: Human readable identifier of the object these statistics
-        #: belong to. Either `All Tests` or `Critical Tests` for
+        #: belong to. `All Tests` for
         #: :class:`~robot.model.totalstatistics.TotalStatistics`,
         #: long name of the suite for
         #: :class:`~robot.model.suitestatistics.SuiteStatistics`
@@ -36,6 +36,8 @@ class Stat(Sortable):
         self.passed = 0
         #: Number of failed tests.
         self.failed = 0
+        #: Number of skipped tests.
+        self.skipped = 0
         #: Number of milliseconds it took to execute.
         self.elapsed = 0
         self._norm_name = normalize(name, ignore='_')
@@ -43,7 +45,7 @@ class Stat(Sortable):
     def get_attributes(self, include_label=False, include_elapsed=False,
                        exclude_empty=True, values_as_strings=False,
                        html_escape=False):
-        attrs = {'pass': self.passed, 'fail': self.failed}
+        attrs = {'pass': self.passed, 'fail': self.failed, 'skip': self.skipped}
         attrs.update(self._get_custom_attrs())
         if include_label:
             attrs['label'] = self.name
@@ -67,7 +69,7 @@ class Stat(Sortable):
 
     @property
     def total(self):
-        return self.passed + self.failed
+        return self.passed + self.failed + self.skipped
 
     def add_test(self, test):
         self._update_stats(test)
@@ -76,6 +78,8 @@ class Stat(Sortable):
     def _update_stats(self, test):
         if test.passed:
             self.passed += 1
+        elif test.skipped:
+            self.skipped += 1
         else:
             self.failed += 1
 
@@ -86,7 +90,7 @@ class Stat(Sortable):
     def _sort_key(self):
         return self._norm_name
 
-    def __nonzero__(self):
+    def __bool__(self):
         return not self.failed
 
     def visit(self, visitor):
@@ -120,37 +124,28 @@ class SuiteStat(Stat):
     def add_stat(self, other):
         self.passed += other.passed
         self.failed += other.failed
+        self.skipped += other.skipped
 
 
 class TagStat(Stat):
     """Stores statistic values for a single tag."""
     type = 'tag'
 
-    def __init__(self, name, doc='', links=None, critical=False,
-                 non_critical=False, combined=None):
+    def __init__(self, name, doc='', links=None, combined=None):
         Stat.__init__(self, name)
         #: Documentation of tag as a string.
         self.doc = doc
         #: List of tuples in which the first value is the link URL and
         #: the second is the link title. An empty list by default.
         self.links = links or []
-        #: ``True`` if tag is considered critical, ``False`` otherwise.
-        self.critical = critical
-        #: ``True`` if tag is considered non-critical, ``False`` otherwise.
-        self.non_critical = non_critical
         #: Pattern as a string if the tag is combined, ``None`` otherwise.
         self.combined = combined
 
     @property
     def info(self):
         """Returns additional information of the tag statistics
-           are about. Either `critical`, `non-critical`, `combined` or an
-           empty string.
+           are about. Either `combined` or an empty string.
         """
-        if self.critical:
-            return 'critical'
-        if self.non_critical:
-            return 'non-critical'
         if self.combined:
             return 'combined'
         return ''
@@ -164,10 +159,7 @@ class TagStat(Stat):
 
     @property
     def _sort_key(self):
-        return (not self.critical,
-                not self.non_critical,
-                not self.combined,
-                self._norm_name)
+        return (not self.combined, self._norm_name)
 
 
 class CombinedTagStat(TagStat):
@@ -175,18 +167,6 @@ class CombinedTagStat(TagStat):
     def __init__(self, pattern, name=None, doc='', links=None):
         TagStat.__init__(self, name or pattern, doc, links, combined=pattern)
         self.pattern = TagPattern(pattern)
-
-    def match(self, tags):
-        return self.pattern.match(tags)
-
-
-class CriticalTagStat(TagStat):
-
-    def __init__(self, tag_pattern, name=None, critical=True, doc='',
-                 links=None):
-        TagStat.__init__(self, name or unicode(tag_pattern), doc, links,
-                         critical=critical, non_critical=not critical)
-        self.pattern = tag_pattern
 
     def match(self, tags):
         return self.pattern.match(tags)

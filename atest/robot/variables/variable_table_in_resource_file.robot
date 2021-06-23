@@ -1,6 +1,9 @@
 *** Settings ***
-Suite Setup     Run tests  ${EMPTY}  variables/variable_table_in_resource_file.robot
+Suite Setup     Run tests    ${EMPTY}    variables/variable_table_in_resource_file.robot
 Resource        atest_resource.robot
+
+*** Variables ***
+${PATH}         variables/resource_for_variable_table_in_resource_file.robot
 
 *** Test Cases ***
 Scalar String
@@ -53,36 +56,34 @@ Scalar catenated from multile values
 
 Creating variable using non-existing variable fails
     Check Test Case    ${TEST NAME}
-    Creating Variable Should Have Failed    ${ERRORS[3]}    \${NONEX 1}
+    Creating Variable Should Have Failed    3    \${NONEX 1}     26
     ...    Variable '\${NON EXISTING}' not found.
-    Creating Variable Should Have Failed    ${ERRORS[4]}    \${NONEX 2A}
-    ...    Variable '\${NON EX}' not found.*
-    Creating Variable Should Have Failed    ${ERRORS[5]}    \${NONEX 2B}
-    ...    Variable '\${NONEX 2A}' not found.*
+    Creating Variable Should Have Failed    4    \${NONEX 2A}    27
+    ...    Variable '\${NON EX}' not found.
+    ...    Did you mean:*
+    Creating Variable Should Have Failed    5    \${NONEX 2B}    28
+    ...    Variable '\${NONEX 2A}' not found.
+    ...    Did you mean:*
 
 Using variable created from non-existing variable in imports fails
-    Creating Variable Should Have Failed    ${ERRORS[0]}    \${NONEX 3}
+    Creating Variable Should Have Failed    0    \${NONEX 3}     29
     ...    Variable '\${NON EXISTING VARIABLE}' not found.
-    Import Should Have Failed    ${ERRORS[1]}    Resource
-    ...    Variable '\${NONEX 3}' not found.*
-    Import Should Have Failed    ${ERRORS[2]}    Library
-    ...    Variable '\${NONEX 3}' not found.*
+    Import Should Have Failed               1    Resource        32
+    ...    Variable '\${NONEX 3}' not found.
+    ...    Did you mean:*
+    Import Should Have Failed               2    Library         33
+    ...    Variable '\${NONEX 3}' not found.
+    ...    Did you mean:*
 
 *** Keywords ***
 Creating Variable Should Have Failed
-    [Arguments]    ${error}    ${name}    @{message}
-    ${path} =    Normalize Path    ${DATADIR}/variables/resource_for_variable_table_in_resource_file.robot
-    ${msg} =    Catenate
-    ...    Error in file '${path}':
+    [Arguments]    ${index}    ${name}    ${lineno}    @{message}
+    Error In File    ${index}    ${PATH}    ${lineno}
     ...    Setting variable '${name}' failed:
     ...    @{message}
-    Check Log Message    ${error}    ${msg}    ERROR    pattern=${TRUE}
 
 Import Should Have Failed
-    [Arguments]    ${error}    ${name}    @{message}
-    ${path} =    Normalize Path    ${DATADIR}/variables/resource_for_variable_table_in_resource_file.robot
-    ${msg} =    Catenate
-    ...    Error in file '${path}':
+    [Arguments]    ${index}    ${name}    ${lineno}    @{message}
+    Error In File    ${index}    ${PATH}    ${lineno}
     ...    Replacing variables from setting '${name}' failed:
     ...    @{message}
-    Check Log Message    ${error}    ${msg}    ERROR    pattern=${TRUE}

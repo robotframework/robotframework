@@ -23,17 +23,17 @@ Variable File From PYTHONPATH with arguments
     Check Test Case  ${TEST NAME}
 
 Non-Existing Variable File
-    Check Stderr Contains  [ ERROR ] Variable file '${VF3}' does not exist.
-    Check Stderr Contains  [ ERROR ] Variable file '${VF4}' does not exist.
+    Stderr Should Contain  [ ERROR ] Variable file '${VF3}' does not exist.
+    Stderr Should Contain  [ ERROR ] Variable file '${VF4}' does not exist.
 
 Too Few Arguments To Variable File
-    Check Stderr Contains  [ ERROR ] Processing variable file '${VF2}' failed: TypeError: get_variables()
+    Stderr Should Contain  [ ERROR ] Processing variable file '${VF2}' failed: TypeError: get_variables()
 
 Too Many Arguments To Variable File
-    Check Stderr Contains  [ ERROR ] Processing variable file '${VF2}' with arguments [ too | many | args ] failed: TypeError: get_variables()
+    Stderr Should Contain  [ ERROR ] Processing variable file '${VF2}' with arguments [ too | many | args ] failed: TypeError: get_variables()
 
 Invalid Variable File
-    Check Stderr Contains  [ ERROR ] Processing variable file '${VF2}' with arguments [ FAIL ] failed: ZeroDivisionError:
+    Stderr Should Contain  [ ERROR ] Processing variable file '${VF2}' with arguments [ FAIL ] failed: ZeroDivisionError:
 
 *** Keywords ***
 Run Test Data

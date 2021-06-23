@@ -87,11 +87,12 @@ Warnings and errors are preserved
 
 *** Keywords ***
 My FOR
-    :FOR    ${item}    IN    one    two    three    LAST
-    \    Run Keyword If    "${item}" == "LAST"
-    \    ...    Log    ${KEPT FOR MESSAGE} ${item}
-    \    ...    ELSE
-    \    ...    Log    ${REMOVED FOR MESSAGE} ${item}
+    FOR    ${item}    IN    one    two    three    LAST
+        Run Keyword If    "${item}" == "LAST"
+        ...    Log    ${KEPT FOR MESSAGE} ${item}
+        ...    ELSE
+        ...    Log    ${REMOVED FOR MESSAGE} ${item}
+    END
 
 My WUKS
     Set Test Variable    $COUNTER    ${COUNTER + 1}

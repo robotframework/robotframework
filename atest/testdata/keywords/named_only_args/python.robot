@@ -44,11 +44,11 @@ Missing multiple values
     [Documentation]    FAIL Keyword 'KwOnlyArgs.Many Kw Only Args' missing named-only arguments 'first' and 'third'.
     Many Kw Only Args    second=xxx
 
-Unexpected keyword argumemt
+Unexpected keyword argument
     [Documentation]    FAIL Keyword 'KwOnlyArgs.Kw Only Arg' got unexpected named argument 'invalid'.
     Kw Only Arg    kwo=value    invalid=ooops
 
-Multiple unexpected keyword argumemt
+Multiple unexpected keyword argument
     [Documentation]    FAIL Keyword 'KwOnlyArgs.Kw Only Arg' got unexpected named arguments 'invalid' and 'ooops'.
     Kw Only Arg    kwo=value    invalid=ooops    ooops=invalid
 
@@ -75,3 +75,20 @@ With other arguments
     Should Be Equal    ${result}    p1-p2-p3-p4-k1-k2-k3=3-k4=4
     ${result} =    All Arg Types    k4=!!!    kwo_def=k2    k3=!    pos_req=p1    pos_def=p2    kwo_req=k1
     Should Be Equal    ${result}    p1-p2-k1-k2-k3=!-k4=!!!
+
+Argument name as variable
+    ${name} =    Set Variable    kwo
+    ${result} =    Kw Only Arg    ${name}=value
+    Should Be Equal    ${result}    value
+    ${result} =    Kw Only Arg    k${name[1]}o=xxx
+    Should Be Equal    ${result}    xxx
+    ${result} =    Kw Only Arg With Default    another=${name}    ${name}=${EMPTY}
+    Should Be Equal    ${result}    -kwo
+
+Argument name as non-existing variable
+    [Documentation]    FAIL Variable '${i do not exist}' not found.
+    Kw Only Arg    ${i do not exist}=value
+
+With positional argument containing equal sign
+    ${result} =    Kw Only Arg With Varargs    One more time    a=1    <=    2    kwo=No escaping needed!
+    Should Be Equal    ${result}    One more time-a=1-<=-2-No escaping needed!

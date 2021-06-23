@@ -18,17 +18,14 @@ import sys
 
 from .encodingsniffer import get_console_encoding, get_system_encoding
 from .compat import isatty
-from .platform import JYTHON, IRONPYTHON, PY3
+from .platform import JYTHON, IRONPYTHON, PY3, PY_VERSION
 from .robottypes import is_unicode
 from .unic import unic
 
 
 CONSOLE_ENCODING = get_console_encoding()
 SYSTEM_ENCODING = get_system_encoding()
-# IronPython and Jython streams have wrong encoding if outputs are redirected.
-# Jython gets it right if PYTHONIOENCODING is set, though.
-NON_TTY_ENCODING_CAN_BE_TRUSTED = \
-    not (IRONPYTHON or JYTHON and not os.getenv('PYTHONIOENCODING'))
+PYTHONIOENCODING = os.getenv('PYTHONIOENCODING')
 
 
 def console_decode(string, encoding=CONSOLE_ENCODING, force=False):
@@ -70,13 +67,18 @@ def console_encode(string, errors='replace', stream=sys.__stdout__):
 
 def _get_console_encoding(stream):
     encoding = getattr(stream, 'encoding', None)
-    if encoding and (NON_TTY_ENCODING_CAN_BE_TRUSTED or isatty(stream)):
+    if isatty(stream):
+        return encoding or CONSOLE_ENCODING
+    if PYTHONIOENCODING:
+        return PYTHONIOENCODING
+    # Jython and IronPython have wrong encoding if outputs are redirected.
+    if encoding and not (JYTHON or IRONPYTHON):
         return encoding
-    return CONSOLE_ENCODING if isatty(stream) else SYSTEM_ENCODING
+    return SYSTEM_ENCODING
 
 
 # These interpreters handle communication with system APIs using Unicode.
-if PY3 or JYTHON or IRONPYTHON:
+if PY3 or IRONPYTHON or (JYTHON and PY_VERSION < (2, 7, 1)):
 
     def system_decode(string):
         return string if is_unicode(string) else unic(string)
@@ -86,10 +88,20 @@ if PY3 or JYTHON or IRONPYTHON:
 
 else:
 
+    # Jython 2.7.1+ uses UTF-8 with cli args etc. regardless the actual system
+    # encoding. Cannot set the "real" SYSTEM_ENCODING to that value because
+    # we use it also for other purposes.
+    _SYSTEM_ENCODING = SYSTEM_ENCODING if not JYTHON else 'UTF-8'
+
     def system_decode(string):
-        """Decodes bytes from system (e.g. cli args or env vars) to Unicode."""
+        """Decodes bytes from system (e.g. cli args or env vars) to Unicode.
+
+        Depending on the usage, at least cli args may already be Unicode.
+        """
+        if is_unicode(string):
+            return string
         try:
-            return string.decode(SYSTEM_ENCODING)
+            return string.decode(_SYSTEM_ENCODING)
         except UnicodeError:
             return unic(string)
 
@@ -100,4 +112,4 @@ else:
         """
         if not is_unicode(string):
             string = unic(string)
-        return string.encode(SYSTEM_ENCODING, errors)
+        return string.encode(_SYSTEM_ENCODING, errors)

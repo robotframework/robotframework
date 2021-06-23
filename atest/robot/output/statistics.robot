@@ -12,36 +12,35 @@ Statistics Should Be Written to XML
 
 Total statistics should be Correct
     ${stats} =    Get Element    ${OUTFILE}    statistics/total
-    ${crit}    ${total} =    Call Method    ${stats}    findall    stat
-    Node Should Be Correct    ${crit}    Critical Tests    5    1
+    ${total} =    Call Method    ${stats}    find    stat
     Node Should Be Correct    ${total}    All Tests    10    1
 
 Tag statistics should be Correct
     ${stats} =    Get Element    ${OUTFILE}    statistics/tag
-    Tag Node Should Be Correct    ${stats[0]}    t1
-    ...    5    1    info=critical    links=my title:http://url.to:::title:url
-    Tag Node Should Be Correct    ${stats[2]}    D1 OR sub3 OR t2 OR or and not
+    Tag Node Should Be Correct    ${stats[1]}    D1 OR sub3 OR t2 OR or and not
     ...    4    0    info=combined    combined=D1 OR sub3 OR t2 OR or and not
-    Tag Node Should Be Correct    ${stats[3]}    f1 AND t1
+    Tag Node Should Be Correct    ${stats[2]}    f1 AND t1
     ...    5    1    info=combined    combined=f1 AND t1
-    Tag Node Should Be Correct    ${stats[4]}    F1 NOT T1
+    Tag Node Should Be Correct    ${stats[3]}    F1 NOT T1
     ...    4    0    info=combined    combined=F1 NOT T1
-    Tag Node Should Be Correct    ${stats[5]}    NOT t1
+    Tag Node Should Be Correct    ${stats[4]}    NOT t1
     ...    5    0    info=combined    combined=NOT t1
-    Tag Node Should Be Correct    ${stats[6]}    d1
+    Tag Node Should Be Correct    ${stats[5]}    d1
     ...    1    0    links=title:url
-    Tag Node Should Be Correct    ${stats[7]}    d2
+    Tag Node Should Be Correct    ${stats[6]}    d2
     ...    1    0
-    Tag Node Should Be Correct    ${stats[8]}    f1
+    Tag Node Should Be Correct    ${stats[7]}    f1
     ...    9    1    doc=this is tagdoc    links=title:url
-    Tag Node Should Be Correct    ${stats[9]}    sub3
+    Tag Node Should Be Correct    ${stats[8]}    sub3
     ...    2    0
+    Tag Node Should Be Correct    ${stats[9]}    t1
+    ...    5    1    links=my title:http://url.to:::title:url
     Tag Node Should Be Correct    ${stats[10]}    XXX
     ...    10    1
 
 Combined Tag Statistics Name Can Be Given
     ${stats} =    Get Element    ${OUTFILE}    statistics/tag
-    Tag Node Should Be Correct    ${stats[1]}    Combined tag with new name AND-OR-NOT
+    Tag Node Should Be Correct    ${stats[0]}    Combined tag with new name AND-OR-NOT
     ...    1    0    info=combined    combined=d1 AND d2
 
 Suite statistics should be Correct
@@ -57,7 +56,6 @@ Suite statistics should be Correct
 *** Keywords ***
 My Setup
     ${options} =    Catenate
-    ...    --critical t1
     ...    --tagdoc "f1:this is tagdoc"
     ...    --tagstatlink "t*:http://url.to:my title"
     ...    --tagstatlink ?1:url:title

@@ -9,6 +9,9 @@ Get value when variable exists
 Get value when variable doesn't exist
     Check Test Case  ${TESTNAME}
 
+Get value when default value is none
+    Check Test Case  ${TESTNAME}
+
 Default value contains variables
     Check Test Case  ${TESTNAME}
 
@@ -21,6 +24,10 @@ List variables
 Extended variable syntax
     Check Test Case  ${TESTNAME}
 
+Embedded variable
+    Check Test Case  ${TESTNAME}
+
 Invalid variable syntax
     Check Test Case  ${TESTNAME} 1
     Check Test Case  ${TESTNAME} 2
+    Check Test Case  ${TESTNAME} 3

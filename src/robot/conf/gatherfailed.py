@@ -16,7 +16,7 @@
 from robot.errors import DataError
 from robot.model import SuiteVisitor
 from robot.result import ExecutionResult
-from robot.utils import get_error_message
+from robot.utils import get_error_message, glob_escape
 
 
 class GatherFailedTests(SuiteVisitor):
@@ -25,8 +25,8 @@ class GatherFailedTests(SuiteVisitor):
         self.tests = []
 
     def visit_test(self, test):
-        if not test.passed:
-            self.tests.append(test.longname)
+        if test.failed:
+            self.tests.append(glob_escape(test.longname))
 
     def visit_keyword(self, kw):
         pass
@@ -38,8 +38,8 @@ class GatherFailedSuites(SuiteVisitor):
         self.suites = []
 
     def start_suite(self, suite):
-        if any(not test.passed for test in suite.tests):
-            self.suites.append(suite.longname)
+        if any(test.failed for test in suite.tests):
+            self.suites.append(glob_escape(suite.longname))
 
     def visit_test(self, test):
         pass

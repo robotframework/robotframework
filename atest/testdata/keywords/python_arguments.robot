@@ -1,6 +1,7 @@
 *** Settings ***
 Library           ArgumentsPython
 Library           Annotations.py
+Library           ../libdoc/Decorators.py
 
 *** Variables ***
 @{LIST}           With    three    values
@@ -102,3 +103,22 @@ Calling Using Annotations
 Calling Using Annotations With Defaults
     ${ret}=    Annotations With Defaults    one
     Should Be Equal    ${ret}    annotations: one default
+
+Dummy decorator does not preserve arguments 1
+    Keyword using decorator    foo    bar    zap
+
+Dummy decorator does not preserve arguments 2
+    [Documentation]    FAIL STARTS: TypeError:
+    Keyword using decorator    argument    mismatch    is    not    detected
+
+Decorator using functools.wraps does not preserve arguments on Python 2
+    [Documentation]    FAIL STARTS: TypeError:
+    [Tags]    require-py2
+    Keyword using decorator with wraps    foo    bar    zap
+    Keyword using decorator with wraps    argument    mismatch    is    not    detected
+
+Decorator using functools.wraps preserves arguments on Python 3
+    [Documentation]    FAIL Keyword 'Decorators.Keyword Using Decorator With Wraps' expected 2 to 3 arguments, got 4.
+    [Tags]    require-py3
+    Keyword using decorator with wraps    foo    bar    zap
+    Keyword using decorator with wraps    argument    mismatch    is    detected

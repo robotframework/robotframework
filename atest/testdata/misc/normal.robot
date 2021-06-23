@@ -18,10 +18,27 @@ Second One
     [Documentation]    Nothing interesting here
     [Timeout]    1 day
     Log    Test 2
-    Sleep    ${DELAY}
+    Delay
+    Nested keyword
+    Nested keyword 2
 
 *** Keyword ***
 logs on trace
     [Timeout]    1 hour
     [Tags]    kw    tags
     Log    Log on ${TEST NAME}    TRACE
+
+Delay
+    Sleep    ${DELAY}
+
+Nested keyword
+    [Tags]    nested
+    Nested keyword 2
+
+Nested keyword 2
+    [Tags]    nested 2
+    Nested keyword 3
+
+Nested keyword 3
+    [Tags]    nested 3
+    No operation

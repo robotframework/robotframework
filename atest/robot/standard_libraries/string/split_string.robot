@@ -9,6 +9,9 @@ Split String
 Split String With Longer Separator
     Check Test Case    ${TESTNAME}
 
+Split String With none As Separator
+    Check Test Case    ${TESTNAME}
+
 Split String With Whitespaces and Separator Is None
     Check Test Case    ${TESTNAME}
 
@@ -34,6 +37,9 @@ Split String From Right
     Check Test Case    ${TESTNAME}
 
 Split String From Right With Longer Separator
+    Check Test Case    ${TESTNAME}
+
+Split String From Right With none As Separator
     Check Test Case    ${TESTNAME}
 
 Split String From Right With Whitespaces and Separator Is None

@@ -3,7 +3,7 @@ We have a devious plan to rule the world with robots.
 
 *Setting*      *Value*
 
-Documentation  A complex testdata file   in robot format.
+Documentation  A complex testdata file in robot format.
 Default Tags   default1
 Force Tags     force1   force2
 
@@ -13,8 +13,14 @@ Resource       ../resources/robot_resource.robot
 Variables      ../resources/variables.py
 Library       OperatingSystem
 
+# This is a normal comment.
+ # These
+  # are
+   # comments
+    # as
+     # well
 
-* Variable
+* Variable    # comment
 
 ${table_var}   foo
 @{table_listvar}   bar   ${table_var}
@@ -39,8 +45,8 @@ Own Tags   [Tags]   own1   own2
 Default Tags   No Operation
 
 Variable Table   Should Be Equal   ${table_var}   foo
-   Should Be Equal   @{table_listvar}[0]   bar
-   Should Be Equal   @{table_listvar}[1]   foo
+   Should Be Equal   ${table_listvar}[0]   bar
+   Should Be Equal   ${table_listvar}[1]   foo
 
 
 Resource File   Keyword from ROBOT resource
@@ -48,9 +54,9 @@ Resource File   Keyword from ROBOT resource
    Should Be Equal   ${robot_resource_var}   ROBOT Resource Variable
    Should Be Equal   ${robot_resource_var2}   ROBOT Resource Variable From Recursive Resource
 
-Variable File   Should Be Equal   @{file_listvar}[0]   ${True}
-   Should Be Equal   @{file_listvar}[1]   ${3.14}
-   Should Be Equal   @{file_listvar}[2]   Hello, world!!
+Variable File   Should Be Equal   ${file_listvar}[0]   ${True}
+   Should Be Equal   ${file_listvar}[1]   ${3.14}
+   Should Be Equal   ${file_listvar}[2]   Hello, world!!
    Should Be Equal   ${file_var1}   ${-314}
    Should Be Equal   ${file_var2}   file variable 2
 
@@ -89,7 +95,7 @@ Default Fixture   No operation
 
 Overridden Fixture   [Teardown]   Fail   Failing Teardown
    [Setup]   Log   Own Setup
-   [Documentation]   FAIL   Teardown failed:\n Failing Teardown
+   [Documentation]   FAIL   Teardown failed:\nFailing Teardown
    No Operation
 
 Quotes   Should Be Equal   ${quoted}   """this has """"many "" quotes """""
@@ -100,14 +106,16 @@ Escaping
 
 
 *Keywords*   *Action*   *Argument*   *Argument*   *Argument*
-
+# comment
 My Keyword With Arg   [Arguments]   ${arg1}
+# comment
    Keyword with no arguments
    Another Keyword   ${arg1}
 
 
-
+ # comment
 Another Keyword   [Arguments]   ${arg1}   ${arg2}=something
+ # comment
    Should Be Equal   ${arg1}   ${arg2}
 
 Timeouted Keyword   [Timeout]   2ms

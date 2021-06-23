@@ -5,11 +5,6 @@ Documentation  NO RIDE because it removes empty [Return]
     [Documentation]  FAIL  Test case name cannot be empty.
     Fail  Should not be executed
 
-User Keyword Without Name
-    [Documentation]  FAIL  Keyword name cannot be empty.
-    \  argh
-    Fail  Should not be executed
-
 Empty Test Case
     [Documentation]  FAIL Test case contains no keywords.
 

@@ -61,17 +61,17 @@ Unnecessary files are not parsed when --suite matches files
     ...                Additionally __init__ files should never be ignored.
     Previous Test Should Have Passed    Parent suite init files are processed
     ${root} =    Normalize Path    ${DATA DIR}/${SUITE DIR}
-    Check Syslog Contains    Parsing directory '${root}'.
-    Check Syslog Contains    Parsing file '${root}${/}tsuite1.robot'.
-    Check Syslog Contains    Ignoring file or directory '${root}${/}tsuite2.robot'.
-    Check Syslog Contains    Parsing file '${root}${/}tsuite3.robot'.
-    Check Syslog Contains    Parsing file '${root}${/}fourth.robot'.
-    Check Syslog Contains    Parsing directory '${root}${/}subsuites'.
-    Check Syslog Contains    Ignoring file or directory '${root}${/}subsuites${/}sub1.robot'.
-    Check Syslog Contains    Ignoring file or directory '${root}${/}subsuites${/}sub2.robot'.
-    Check Syslog Contains    Parsing directory '${root}${/}subsuites2'.
-    Check Syslog Contains    Ignoring file or directory '${root}${/}subsuites2${/}subsuite3.robot'.
-    Check Syslog Contains    Ignoring file or directory '${root}${/}subsuites2${/}sub.suite.4.robot'.
+    Syslog Should Contain    Parsing directory '${root}'.
+    Syslog Should Contain    Parsing file '${root}${/}tsuite1.robot'.
+    Syslog Should Contain    Ignoring file or directory '${root}${/}tsuite2.robot'.
+    Syslog Should Contain    Parsing file '${root}${/}tsuite3.robot'.
+    Syslog Should Contain    Parsing file '${root}${/}fourth.robot'.
+    Syslog Should Contain    Parsing directory '${root}${/}subsuites'.
+    Syslog Should Contain    Ignoring file or directory '${root}${/}subsuites${/}sub1.robot'.
+    Syslog Should Contain    Ignoring file or directory '${root}${/}subsuites${/}sub2.robot'.
+    Syslog Should Contain    Parsing directory '${root}${/}subsuites2'.
+    Syslog Should Contain    Ignoring file or directory '${root}${/}subsuites2${/}subsuite3.robot'.
+    Syslog Should Contain    Ignoring file or directory '${root}${/}subsuites2${/}sub.suite.4.robot'.
     Syslog Should Not Contain Regexp    Ignoring file or directory '.*__init__.robot'.
 
 --suite matching directory
@@ -85,17 +85,17 @@ Unnecessary files are not parsed when --suite matches directory
     ...                should be parsed regardless their names.
     Previous Test Should Have Passed    --suite matching directory
     ${root} =    Normalize Path    ${DATA DIR}/${SUITE DIR}
-    Check Syslog Contains    Parsing directory '${root}'.
-    Check Syslog Contains    Ignoring file or directory '${root}${/}tsuite1.robot'.
-    Check Syslog Contains    Ignoring file or directory '${root}${/}tsuite2.robot'.
-    Check Syslog Contains    Ignoring file or directory '${root}${/}tsuite3.robot'.
-    Check Syslog Contains    Ignoring file or directory '${root}${/}fourth.robot'.
-    Check Syslog Contains    Parsing directory '${root}${/}subsuites'.
-    Check Syslog Contains    Parsing file '${root}${/}subsuites${/}sub1.robot'.
-    Check Syslog Contains    Parsing file '${root}${/}subsuites${/}sub2.robot'.
-    Check Syslog Contains    Parsing directory '${root}${/}subsuites2'.
-    Check Syslog Contains    Ignoring file or directory '${root}${/}subsuites2${/}subsuite3.robot'.
-    Check Syslog Contains    Ignoring file or directory '${root}${/}subsuites2${/}sub.suite.4.robot'.
+    Syslog Should Contain    Parsing directory '${root}'.
+    Syslog Should Contain    Ignoring file or directory '${root}${/}tsuite1.robot'.
+    Syslog Should Contain    Ignoring file or directory '${root}${/}tsuite2.robot'.
+    Syslog Should Contain    Ignoring file or directory '${root}${/}tsuite3.robot'.
+    Syslog Should Contain    Ignoring file or directory '${root}${/}fourth.robot'.
+    Syslog Should Contain    Parsing directory '${root}${/}subsuites'.
+    Syslog Should Contain    Parsing file '${root}${/}subsuites${/}sub1.robot'.
+    Syslog Should Contain    Parsing file '${root}${/}subsuites${/}sub2.robot'.
+    Syslog Should Contain    Parsing directory '${root}${/}subsuites2'.
+    Syslog Should Contain    Ignoring file or directory '${root}${/}subsuites2${/}subsuite3.robot'.
+    Syslog Should Contain    Ignoring file or directory '${root}${/}subsuites2${/}sub.suite.4.robot'.
     Syslog Should Not Contain Regexp    Ignoring file or directory '.*__init__.robot'.
 
 --suite with long name matching file

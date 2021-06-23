@@ -1,9 +1,10 @@
 *** Settings ***
 Library           String
-Suite Setup       Create Byte String Variables
 
 *** Variables ***
-${BYTES}          <set by suite setup>
+${BYTES}          ${{b'Hello'}}
+@{EXCLUDES}       a    an    the    to    is
+@{EXCLUDES 2}     (a|b|c)[.,]?
 
 *** Test Cases ***
 Should Be String Positive
@@ -46,34 +47,78 @@ Should Be Byte String Negative
     'Hyvä' is not a byte string.    Should Be Byte String    Hyvä
     My error    Should Be Byte String    ${0}    My error
 
-Should Be Lowercase Positive
-    Should Be Lowercase    foo bar
-    Should Be Lowercase    ${BYTES.lower()}
+Should Be Lower Case Positive
+    Should Be Lower Case    foo bar
+    Should Be Lower Case    ${BYTES.lower()}
 
-Should Be Lowercase Negative
+Should Be Lower Case Negative
     [Template]    Run Keyword And Expect Error
-    '${BYTES}' is not lowercase.    Should Be Lowercase    ${BYTES}
-    My error    Should Be Lowercase    UP!    My error
+    '${BYTES}' is not lower case.    Should Be Lower Case    ${BYTES}
+    My error    Should Be Lower Case    UP!    My error
 
-Should Be Uppercase Positive
-    Should Be Uppercase    FOO BAR
-    Should Be Uppercase    ${BYTES.upper()}
+Should Be Upper Case Positive
+    Should Be Upper Case    FOO BAR
+    Should Be Upper Case    ${BYTES.upper()}
 
-Should Be Uppercase Negative
+Should Be Upper Case Negative
     [Template]    Run Keyword And Expect Error
-    '${BYTES}' is not uppercase.    Should Be Uppercase    ${BYTES}
-    Custom error    Should Be Uppercase    low...    Custom error
+    '${BYTES}' is not upper case.    Should Be Upper Case    ${BYTES}
+    Custom error    Should Be Upper Case    low...    Custom error
 
-Should Be Titlecase Positive
-    Should Be Titlecase    Foo Bar!
-    Should Be Titlecase    ${BYTES}
+Should Be Title Case Positive
+    Should Be Title Case    Foo Bar!
+    Should Be Title Case    Abcd
+    Should Be Title Case    Äiti
+    Should Be Title Case    XML
+    Should Be Title Case    jUnit
+    Should Be Title Case    3.14
+    Should Be Title Case    ----
+    Should Be Title Case    3Tm
+    Should Be Title Case    \u2603
+    Should Be Title Case    \u2603Snowman
+    Should Be Title Case    Hello World
+    Should Be Title Case    Don't Title T
+    Should Be Title Case    'Do' Title "These"
+    Should be Title Case    I Don't Have iPhone X11 & It's OK
+    Should be Title Case    They're Bill's Friends From The UK
+    Should be Title Case    Ääliö Älä Lyö, Ööliä Läikkyy!
 
-Should Be Titlecase Negative
+Should Be Title Case Negative
     [Template]    Run Keyword And Expect Error
-    '${BYTES.lower()}' is not titlecase.    Should Be Titlecase    ${BYTES.lower()}
-    Special error    Should Be Titlecase    all low    Special error
+    'low' is not title case.    Should Be Title Case    low
+    Custom error                Should Be Title Case    low    Custom error
+
+Should Be Title Case With Excludes
+    [Template]    Test title case
+    This is an Example    None   is, an
+    This is an Example    None   ${EXCLUDES}
+    äiti Ei Ole Iso       exclude=äiti
+    Isä on Iso            exclude=äiti,isä,on
+    They're Bill's Friends From the UK
+    ...                   exclude=${EXCLUDES}
+    This Is none          exclude=none
+
+Should Be Title Case With Regex Excludes
+    [Template]    Test title case
+    A, B, And C.          exclude=a, b, c
+    a, b, And c.          exclude=(a|b|c).
+    a, b, And c.          exclude=${EXCLUDES2}
+    Full Match Only!      exclude=.
+    full Match Only!      exclude=....
+
+Should Be Title Case Works With ASCII Bytes On Python 2
+    Should Be Title Case    ${BYTES}
+
+Should Be Title Case Does Not Work With ASCII Bytes On Python 2
+    [Documentation]    FAIL    TypeError: This keyword works only with Unicode strings.
+    Should Be Title Case    ${BYTES}
+
+Should Be Title Case Does Not Work With Non-ASCII Bytes
+    [Documentation]    FAIL    REGEXP:
+    ...    TypeError: This keyword works only with Unicode strings( and non-ASCII bytes)?.
+    Should Be Title Case    ${{b'\xe4iti'}}
 
 *** Keywords ***
-Create Byte String Variables
-    ${BYTES} =    Evaluate    b"Hyv\\xe4"
-    Set Suite Variable    ${BYTES}
+Test title case
+    [Arguments]    ${string}    @{args}    &{kwargs}
+    Should Be Title Case    ${string}   @{args}    &{kwargs}

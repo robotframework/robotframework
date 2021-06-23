@@ -89,8 +89,8 @@ Creating test library class or module
 Test libraries can be implemented as Python modules and Python or Java
 classes.
 
-Test library names
-~~~~~~~~~~~~~~~~~~
+Library name
+~~~~~~~~~~~~
 
 The name of a test library that is used when a library is imported is
 the same as the name of the module or class implementing it. For
@@ -118,11 +118,11 @@ package must be imported with name :name:`com.mycompany.myproject.MyLib`.
          package name is long, it is recommended to give the library a
          simpler alias by using the `WITH NAME syntax`_.
 
-Providing arguments to test libraries
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Providing arguments to libraries
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All test libraries implemented as classes can take arguments. These
-arguments are specified in the Setting table after the library name,
+arguments are specified in the Setting section after the library name,
 and when Robot Framework creates an instance of the imported library,
 it passes them to its constructor. Libraries implemented as a module
 cannot take any arguments, so trying to use those results in an error.
@@ -160,7 +160,6 @@ the libraries used in the above example:
 .. sourcecode:: java
 
    public class AnotherLib {
-
        private String setting = null;
 
        public AnotherLib(String setting) {
@@ -174,8 +173,8 @@ the libraries used in the above example:
        }
    }
 
-Test library scope
-~~~~~~~~~~~~~~~~~~
+Library scope
+~~~~~~~~~~~~~
 
 Libraries implemented as classes can have an internal state, which can
 be altered by keywords and with arguments to the constructor of the
@@ -196,15 +195,27 @@ Test libraries can control when new libraries are created with a
 class attribute `ROBOT_LIBRARY_SCOPE` . This attribute must be
 a string and it can have the following three values:
 
-`TEST CASE`
+`TEST`
   A new instance is created for every test case. A possible suite setup
-  and suite teardown share yet another instance. This is the default.
+  and suite teardown share yet another instance.
 
-`TEST SUITE`
+  Prior to Robot Framework 3.2 this value was `TEST CASE`, but nowadays
+  `TEST` is recommended. Because all unrecognized values are considered
+  same as `TEST`, both values work with all versions. For the same reason
+  it is possible to also use value `TASK` if the library is targeted for
+  RPA_ usage more than testing. `TEST` is also the default value if the
+  `ROBOT_LIBRARY_SCOPE` attribute is not set.
+
+
+`SUITE`
   A new instance is created for every test suite. The lowest-level test
   suites, created from test case files and containing test cases, have
   instances of their own, and higher-level suites all get their own instances
   for their possible setups and teardowns.
+
+  Prior to Robot Framework 3.2 this value was `TEST SUITE`. That value still
+  works, but `SUITE` is recommended with libraries targeting Robot Framework
+  3.2 and newer.
 
 `GLOBAL`
   Only one instance is created during the whole test execution and it
@@ -214,8 +225,8 @@ a string and it can have the following three values:
 .. note:: If a library is imported multiple times with different arguments__,
           a new instance is created every time regardless the scope.
 
-When the `TEST SUITE` or `GLOBAL` scopes are used with test
-libraries that have a state, it is recommended that libraries have some
+When the `SUITE` or `GLOBAL` scopes are used with libraries that have a state,
+it is recommended that libraries have some
 special keyword for cleaning up the state. This keyword can then be
 used, for example, in a suite setup or teardown to ensure that test
 cases in the next test suites can start from a known state. For example,
@@ -224,13 +235,12 @@ using the same browser in different test cases without having to
 reopen it, and it also has the :name:`Close All Browsers` keyword for
 easily closing all opened browsers.
 
-Example Python library using the `TEST SUITE` scope:
+Example Python library using the `SUITE` scope:
 
 .. sourcecode:: python
 
     class ExampleLibrary:
-
-        ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
+        ROBOT_LIBRARY_SCOPE = 'SUITE'
 
         def __init__(self):
             self._counter = 0
@@ -247,9 +257,7 @@ Example Java library using the `GLOBAL` scope:
 .. sourcecode:: java
 
     public class ExampleLibrary {
-
         public static final String ROBOT_LIBRARY_SCOPE = "GLOBAL";
-
         private int counter = 0;
 
         public void count() {
@@ -262,10 +270,10 @@ Example Java library using the `GLOBAL` scope:
         }
     }
 
-__ `Providing arguments to test libraries`_
+__ `Providing arguments to libraries`_
 
-Specifying library version
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Library version
+~~~~~~~~~~~~~~~
 
 When a test library is taken into use, Robot Framework tries to
 determine its version. This information is then written into the syslog_
@@ -274,7 +282,7 @@ Libdoc_ also writes this information into the keyword
 documentations it generates.
 
 Version information is read from attribute
-`ROBOT_LIBRARY_VERSION`, similarly as `test library scope`_ is
+`ROBOT_LIBRARY_VERSION`, similarly as `library scope`_ is
 read from `ROBOT_LIBRARY_SCOPE`. If
 `ROBOT_LIBRARY_VERSION` does not exist, information is tried to
 be read from `__version__` attribute. These attributes must be
@@ -296,15 +304,14 @@ A Java class using `ROBOT_LIBRARY_VERSION`:
 .. sourcecode:: java
 
     public class VersionExample {
-
         public static final String ROBOT_LIBRARY_VERSION = "1.0.2";
 
         public void keyword() {
         }
     }
 
-Specifying documentation format
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Documentation format
+~~~~~~~~~~~~~~~~~~~~
 
 Library documentation tool Libdoc_
 supports documentation in multiple formats. If you want to use something
@@ -335,6 +342,7 @@ about documenting test libraries in general.
 
     ROBOT_LIBRARY_DOC_FORMAT = 'reST'
 
+
     def keyword():
         """**Nothing** to see here. Not even in the table below.
 
@@ -354,7 +362,6 @@ about documenting test libraries in general.
      * Here is a link to the only `Keyword`.
      */
     public class DocFormatExample {
-
         public static final String ROBOT_LIBRARY_DOC_FORMAT = "HTML";
 
         /**<b>Nothing</b> to see here. Not even in the table below.
@@ -368,9 +375,8 @@ about documenting test libraries in general.
         }
     }
 
-__ `Test library scope`_
-__ `Specifying library version`_
-
+__ `Library scope`_
+__ `Library version`_
 
 Library acting as listener
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -381,21 +387,85 @@ start and end. Sometimes getting such notifications is also useful for test
 libraries, and they can register a custom listener by using
 `ROBOT_LIBRARY_LISTENER` attribute. The value of this attribute
 should be an instance of the listener to use, possibly the library itself.
-For more information and examples see `Test libraries as listeners`_ section.
 
-Creating static keywords
-------------------------
+For more information and examples see `Libraries as listeners`_ section.
+
+`@library` decorator
+~~~~~~~~~~~~~~~~~~~~
+
+An easy way to configure libraries implemented as Python classes is using
+the `robot.api.deco.library` class decorator. It allows configuring library's
+scope__, version__, `documentation format`_ and listener__ with optional
+arguments `scope`, `version`, `doc_format` and `listener`, respectively.
+When these arguments are used, they set the matching `ROBOT_LIBRARY_SCOPE`,
+`ROBOT_LIBRARY_VERSION`, `ROBOT_LIBRARY_DOC_FORMAT` and
+`ROBOT_LIBRARY_LISTENER` attributes automatically:
+
+.. sourcecode:: python
+
+    from robot.api.deco import library
+
+    from example import Listener
+
+
+    @library(scope='GLOBAL', version='3.2b1', doc_format='reST', listener=Listener())
+    class Example(object):
+        # ...
+
+The `@library` decorator also disables the `automatic keyword discovery`__
+by setting the `ROBOT_AUTO_KEYWORDS` argument to `False` by default. This
+means that it is mandatory to decorate methods with the `@keyword decorator`_
+to expose them as keywords. If only that behavior is desired and no further
+configuration is needed, the decorator can also be used without parenthesis
+like:
+
+.. sourcecode:: python
+
+    from robot.api.deco import library
+
+
+    @library
+    class Example:
+        # ...
+
+If needed, the automatic keyword discovery can be enabled by using the
+`auto_keywords` argument:
+
+.. sourcecode:: python
+
+    from robot.api.deco import library
+
+
+    @library(scope='GLOBAL', auto_keywords=True)
+    class Example:
+        # ...
+
+The `@library` decorator only sets class attributes `ROBOT_LIBRARY_SCOPE`,
+`ROBOT_LIBRARY_VERSION`, `ROBOT_LIBRARY_DOC_FORMAT` and `ROBOT_LIBRARY_LISTENER`
+if the respective arguments `scope`, `version`, `doc_format` and `listener`
+are used. The `ROBOT_AUTO_KEYWORDS` attribute is set always. When attributes
+are set, they override possible existing class attributes.
+
+.. note:: The `@library` decorator is new in Robot Framework 3.2.
+
+__ `library scope`_
+__ `library version`_
+__ `Library acting as listener`_
+__ `What methods are considered keywords`_
+
+Creating keywords
+-----------------
 
 What methods are considered keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When the static library API is used, Robot Framework uses reflection
-to find out what public methods the library class or module contains.
-It will exclude all methods starting with an underscore (unless `using
-a custom keyword name`_), and with Java libraries also methods implemented
-only in the implicit base class `java.lang.Object` are excluded. All
-the methods that are not ignored are considered keywords. For example, the
-Python and Java libraries below implement a single keyword :name:`My Keyword`.
+When the static library API is used, Robot Framework uses introspection
+to find out what keywords the library class or module implements.
+By default it excludes methods and functions starting with an underscore,
+and with Java based libraries it ignores also private methods as well as
+methods implemented only in `java.lang.Object`. All the methods and functions
+that are not ignored are considered keywords. For example, the Python and Java
+libraries below implement a single keyword :name:`My Keyword`.
 
 .. sourcecode:: python
 
@@ -420,12 +490,82 @@ Python and Java libraries below implement a single keyword :name:`My Keyword`.
         }
     }
 
-When implementing a library as a Python or Java class, also methods in
-possible base classes are considered keywords. When implementing a library
-as a Python module, also possible functions imported into the module namespace
-become keywords. For example, if the module below would be used as a library,
-it would contain keywords :name:`Example Keyword`, :name:`Second Example` and
-also :name:`Current Thread`.
+Limiting public methods becoming keywords
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Automatically considering all public methods and functions keywords typically
+works well, but there are cases where it is not desired. There are also
+situations where keywords are created when not expected. For example, when
+implementing a library as class, it can be a surprise that also methods
+in possible base classes are considered keywords. When implementing a library
+as a module, functions imported into the module namespace becoming keywords
+is probably even a bigger surprise.
+
+This section explains how to prevent methods and functions becoming keywords.
+These features only work when creating libraries using Python.
+
+Class based libraries
+'''''''''''''''''''''
+
+When a library is implemented as a Python class, it is possible to tell
+Robot Framework not to automatically expose methods as keywords by setting
+the `ROBOT_AUTO_KEYWORDS` attribute to the class with a false value:
+
+.. sourcecode:: python
+
+   class Example:
+       ROBOT_AUTO_KEYWORDS = False
+
+When the `ROBOT_AUTO_KEYWORDS` attribute is set like this, only methods that
+have explicitly been decorated with the `@keyword decorator`_ or otherwise
+have the `robot_name` attribute become keywords. The `@keyword` decorator
+can also be used for setting a `custom name`__, tags__ and `argument types`__
+to the keyword.
+
+Although the `ROBOT_AUTO_KEYWORDS` attribute can be set to the class
+explicitly, it is more convenient to use the `@library decorator`_
+that sets it to `False` by default:
+
+.. sourcecode:: python
+
+   from robot.api.deco import keyword, library
+
+
+   @library
+   class Example:
+
+       @keyword
+       def this_is_keyword(self):
+           pass
+
+       @keyword('This is keyword with custom name')
+       def xxx(self):
+           pass
+
+       def this_is_not_keyword(self):
+           pass
+
+.. note:: Both limiting what methods become keywords using the
+          `ROBOT_AUTO_KEYWORDS` attribute and the `@library` decorator are
+          new in Robot Framework 3.2.
+
+Another way to explicitly specify what keywords a library implements is using
+the dynamic__ or the hybrid__ library API.
+
+__ `Setting custom name`_
+__ `Keyword tags`_
+__ `Specifying argument types using @keyword decorator`_
+__ `Dynamic library API`_
+__ `Hybrid library API`_
+
+Module based libraries
+''''''''''''''''''''''
+
+When implementing a library as a module, all functions in the module namespace
+become keywords. This is true also with imported functions, and that can cause
+nasty surprises. For example, if the module below would be used as a library,
+it would contain a keyword :name:`Example Keyword`, as expected, but also
+a keyword :name:`Current Thread`.
 
 .. sourcecode:: python
 
@@ -435,11 +575,9 @@ also :name:`Current Thread`.
    def example_keyword():
        print('Running in thread "%s".' % current_thread().name)
 
-   def second_example():
-       pass
 
 A simple way to avoid imported functions becoming keywords is to only
-import modules (e.g. `import threading`) and use functions via the module
+import modules (e.g. `import threading`) and to use functions via the module
 (e.g `threading.current_thread()`). Alternatively functions could be
 given an alias starting with an underscore at the import time (e.g.
 `from threading import current_thread as _current_thread`).
@@ -447,27 +585,84 @@ given an alias starting with an underscore at the import time (e.g.
 A more explicit way to limit what functions become keywords is using
 the module level `__all__` attribute that `Python itself uses for similar
 purposes`__. If it is used, only the listed functions can be keywords.
-For example, the library below implements only keywords
-:name:`Example Keyword` and :name:`Second Example`.
+For example, the library below implements only one keyword
+:name:`Example Keyword`:
 
 .. sourcecode:: python
 
    from threading import current_thread
 
 
-   __all__ = ['example_keyword', 'second_example']
+   __all__ = ['example_keyword']
 
 
    def example_keyword():
        print('Running in thread "%s".' % current_thread().name)
 
-   def second_example():
+   def this_is_not_keyword():
        pass
 
-   def not_exposed_as_keyword():
+If the library is big, maintaining the `__all__` attribute when keywords are
+added, removed or renamed can be a somewhat big task. Another way to explicitly
+mark what functions are keywords is using the `ROBOT_AUTO_KEYWORDS` attribute
+similarly as it can be used with `class based libraries`_. When this attribute
+is set to a false value, only functions explicitly decorated with the
+`@keyword decorator`_ become keywords. For example, also this library
+implements only one keyword :name:`Example Keyword`:
+
+.. sourcecode:: python
+
+   from threading import current_thread
+
+   from robot.api.deco import keyword
+
+
+   ROBOT_AUTO_KEYWORDS = False
+
+
+   @keyword
+   def example_keyword():
+       print('Running in thread "%s".' % current_thread().name)
+
+   def this_is_not_keyword():
        pass
+
+.. note:: Limiting what functions become keywords using `ROBOT_AUTO_KEYWORDS`
+          is a new feature in Robot Framework 3.2.
 
 __ https://docs.python.org/tutorial/modules.html#importing-from-a-package
+
+Using `@not_keyword` decorator
+''''''''''''''''''''''''''''''
+
+Functions in modules and methods in classes can be explicitly marked as
+"not keywords" by using the `@not_keyword` decorator. When a library is
+implemented as a module, this decorator can also be used to avoid imported
+functions becoming keywords.
+
+.. sourcecode:: python
+
+   from threading import current_thread
+
+   from robot.api.deco import not_keyword
+
+
+   not_keyword(current_thread)    # Don't expose `current_thread` as a keyword.
+
+
+   def example_keyword():
+       print('Running in thread "%s".' % current_thread().name)
+
+   @not_keyword
+   def this_is_not_keyword():
+       pass
+
+Using the `@not_keyword` decorator is pretty much the opposite way to avoid
+functions or methods becoming keywords compared to disabling the automatic
+keyword discovery with the `@library` decorator or by setting the
+`ROBOT_AUTO_KEYWORDS` to a false value. Which one to use depends on the context.
+
+.. note:: The `@not_keyword` decorator is new in Robot Framework 3.2.
 
 Keyword names
 ~~~~~~~~~~~~~
@@ -519,61 +714,70 @@ in the `module search path`_.
        Do Nothing
        Hello    world
 
-Using a custom keyword name
-'''''''''''''''''''''''''''
+Setting custom name
+'''''''''''''''''''
 
 It is possible to expose a different name for a keyword instead of the
 default keyword name which maps to the method name.  This can be accomplished
-by setting the `robot_name` attribute on the method to the desired custom name.
-This is typically easiest done by using the `robot.api.deco.keyword` decorator
-as follows:
+by setting the `robot_name` attribute on the method to the desired custom name:
 
 .. sourcecode:: python
 
-  from robot.api.deco import keyword
-
-  @keyword('Login Via User Panel')
-  def login(username, password):
+    def login(username, password):
       # ...
+
+    login.robot_name = 'Login via user panel'
 
 .. sourcecode:: robotframework
 
-   *** Test Cases ***
-   My Test
-       Login Via User Panel    ${username}    ${password}
+    *** Test Cases ***
+    My Test
+        Login Via User Panel    ${username}    ${password}
+
+Instead of explicitly setting the `robot_name` attribute like in the above
+example, it is typically easiest to use the `@keyword decorator`_:
+
+.. sourcecode:: python
+
+    from robot.api.deco import keyword
+
+
+    @keyword('Login via user panel')
+    def login(username, password):
+          # ...
 
 Using this decorator without an argument will have no effect on the exposed
 keyword name, but will still set the `robot_name` attribute.  This allows
 `marking methods to expose as keywords`_ without actually changing keyword
-names. Starting from Robot Framework 3.0.2, methods that have the `robot_name`
+names. Methods that have the `robot_name`
 attribute also create keywords even if the method name itself would start with
 an underscore.
 
 Setting a custom keyword name can also enable library keywords to accept
-arguments using `Embedded Arguments`__ syntax.
+arguments using the `embedded arguments`__ syntax.
 
 __ `Embedding arguments into keyword names`_
 
 Keyword tags
 ~~~~~~~~~~~~
 
-Starting from Robot Framework 2.9, library keywords and `user keywords`__ can
-have tags. Library keywords can define them by setting the `robot_tags`
-attribute on the method to a list of desired tags. The `robot.api.deco.keyword`
-decorator may be used as a shortcut for setting this attribute when used as
-follows:
+Library keywords and `user keywords`__ can have tags. Library keywords can
+define them by setting the `robot_tags` attribute on the method to a list
+of desired tags. Similarly as when `setting custom name`_, it is easiest to
+set this attribute by using the `@keyword decorator`_:
 
 .. sourcecode:: python
 
-  from robot.api.deco import keyword
+    from robot.api.deco import keyword
 
-  @keyword(tags=['tag1', 'tag2'])
-  def login(username, password):
-      # ...
 
-  @keyword('Custom name', ['tags', 'here'])
-  def another_example():
-      # ...
+    @keyword(tags=['tag1', 'tag2'])
+    def login(username, password):
+        # ...
+
+    @keyword('Custom name', ['tags', 'here'])
+    def another_example():
+        # ...
 
 Another option for setting tags is giving them on the last line of
 `keyword documentation`__ with `Tags:` prefix and separated by a comma. For
@@ -581,12 +785,12 @@ example:
 
 .. sourcecode:: python
 
-  def login(username, password):
-      """Log user in to SUT.
+    def login(username, password):
+        """Log user in to SUT.
 
-      Tags: tag1, tag2
-      """
-      # ...
+        Tags: tag1, tag2
+        """
+        # ...
 
 __ `User keyword tags`_
 __ `Documenting libraries`_
@@ -697,6 +901,8 @@ the earlier Python example:
        multipleDefaults(arg1, "default 1");
    }
 
+.. _varargs-library:
+
 Variable number of arguments (`*varargs`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -793,6 +999,8 @@ possible to have Java keywords with both default values and varargs.
 
 __ http://docs.oracle.com/javase/1.5.0/docs/guide/language/varargs.html
 
+.. _kwargs-library:
+
 Free keyword arguments (`**kwargs`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -836,8 +1044,9 @@ work together:
 
 .. sourcecode:: python
 
-  def various_args(arg, *varargs, **kwargs):
-      print('arg:', arg)
+  def various_args(arg=None, *varargs, **kwargs):
+      if arg is not None:
+          print('arg:', arg)
       for value in varargs:
           print('vararg:', value)
       for name, value in sorted(kwargs.items()):
@@ -906,9 +1115,14 @@ __ `Variable number of arguments with Java`_
 Keyword-only arguments
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 3.1, it is possible to use `named-only
-arguments`_ with different keywords. When implementing libraries using Python,
-this support is provided by Python's `keyword-only arguments`__:
+Starting from Robot Framework 3.1, it is possible to use `named-only arguments`_
+with different keywords. When implementing libraries using Python, this support
+is provided by Python's `keyword-only arguments`__. Keyword-only arguments
+are specified after possible `*varargs` or after a dedicated `*` marker when
+`*varargs` are not needed. Possible `**kwargs` are specified after keyword-only
+arguments.
+
+Example:
 
 .. sourcecode:: python
 
@@ -916,17 +1130,72 @@ this support is provided by Python's `keyword-only arguments`__:
         key = str.lower if case_sensitive else None
         return sorted(words, key=key)
 
+    def strip_spaces(word, *, left=True, right=True):
+        if left:
+            word = word.lstrip()
+        if right:
+            word = word.rstrip()
+        return word
+
 .. sourcecode:: robotframework
 
    *** Test Cases ***
    Example
        Sort Words    Foo    bar    baZ
        Sort Words    Foo    bar    baZ    case_sensitive=True
+       Strip Spaces    ${word}    left=False
 
 Due to keyword-only arguments being a Python 3 feature, libraries using
 Python 2 cannot use it. Time to upgrade!
 
 __ https://www.python.org/dev/peps/pep-3102
+
+Positional-only arguments
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Python 3.8 introduced `positional-only arguments`__ that make it possible to
+specify that an argument can only be given as a `positional argument`_, not as
+a `named argument`_ like `name=value`. Positional-only arguments are specified
+before normal arguments and a special `/` marker must be used after them:
+
+.. sourcecode:: python
+
+    def keyword(posonly, /, normal):
+        print(f"Got positional-only argument {posonly} and normal argument {normal}.")
+
+The above keyword could be used like this:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       # Positional-only and normal argument used as positional arguments.
+       Keyword    foo    bar
+       # Normal argument can also be named.
+       Keyword    foo    normal=bar
+
+If a positional-only argument is used with a value that contains an equal sign
+like `example=usage`, it is not considered to mean `named argument syntax`_
+even if the part before the `=` would match the argument name. This rule
+only applies if the positional-only argument is used in its correct position
+without other arguments using the name argument syntax before it, though.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       # Positional-only argument gets literal value `posonly=foo` in this case.
+       Keyword    posonly=foo    normal=bar
+       # This fails.
+       Keyword    normal=bar    posonly=foo
+
+Positional-only arguments are fully supported starting from Robot Framework 4.0.
+Using them as positional arguments works also with earlier versions,
+but using them as named arguments causes an error on Python side.
+
+__ https://www.python.org/dev/peps/pep-0570/
+
+.. _argument conversion:
 
 Argument types
 ~~~~~~~~~~~~~~
@@ -949,6 +1218,9 @@ Automatic argument conversion based on function annotations, types specified
 using the `@keyword` decorator, and argument default values are all new
 features in Robot Framework 3.1. The `Supported conversions`_ section
 specifies which argument conversion are supported in these cases.
+
+Prior to Robot Framework 4.0, automatic conversion was done only if the given
+argument was a string. Nowadays it is done regardless the argument type.
 
 __ `Manual argument conversion`_
 __ `Specifying argument types using function annotations`_
@@ -993,9 +1265,9 @@ __ `Implicit argument types based on default values`_
 Specifying argument types using function annotations
 ''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-Starting from Robot Framework 3.1, arguments passed to keywords as strings
-are automatically converted if argument type information is available. The
-most natural way to specify types is using Python 3 `function annotations`_.
+Starting from Robot Framework 3.1, arguments passed to keywords are automatically
+converted if argument type information is available and the type is recognized.
+The most natural way to specify types is using Python 3 `function annotations`_.
 For example, the keyword in the previous example could be implemented as
 follows and arguments would be converted automatically:
 
@@ -1019,23 +1291,22 @@ nevertheless shown in the documentation generated by Libdoc_.
 .. note:: Because function annotations are a Python 3 feature, using them in
           a library that should also work with Python 2 is not possible.
 
-.. note:: Using function annotations with Robot Framework 3.0.2 or earlier
-          `is not possible at all`__.
-
 .. _function annotations: https://www.python.org/dev/peps/pep-3107/
-__ https://github.com/robotframework/robotframework/issues/2627
 
 Specifying argument types using `@keyword` decorator
 ''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 An alternative way to specify explicit argument types is using the
-`robot.api.deco.keyword` decorator. Starting from Robot Framework 3.1,
+`@keyword decorator`_. Starting from Robot Framework 3.1,
 it accepts an optional `types` argument that can be used to specify argument
 types either as a dictionary mapping argument names to types or as a list
 mapping arguments to types based on position. These approaches are shown
 below implementing the same keyword as in earlier examples:
 
 .. sourcecode:: python
+
+  from robot.api.deco import keyword
+
 
   @keyword(types={'count': int, 'case_insensitive': bool})
   def example_keyword(count, case_insensitive=True):
@@ -1049,10 +1320,9 @@ below implementing the same keyword as in earlier examples:
 
 Regardless of the approach that is used, it is not necessarily to specify
 types for all arguments. When specifying types as a list, it is possible
-to use `None` or any other non-true value to mark that a certain argument
-does not have a type, and arguments at the end can be omitted altogether.
-For example, both of these keywords specify the type only for the second
-argument:
+to use `None` to mark that a certain argument does not have a type, and
+arguments at the end can be omitted altogether. For example, both of these
+keywords specify the type only for the second argument:
 
 .. sourcecode:: python
 
@@ -1096,10 +1366,17 @@ got explicitly:
 - Conversion failures are not errors, keywords get the original value in
   these cases instead.
 
-If argument conversion based on default values is not desired with a certain
-argument, it can be disabled by specifying a type for that argument explicitly.
-Alternatively argument conversion can be disabled altogether with the
-`@keyword decorator`__ like `@keyword(types=None)`.
+If an argument has an explicit type and a default value, conversion is first
+attempted based on the explicit type. If that fails, then conversion is attempted
+based on the default value. In this special case conversion based on the default
+value is strict and a conversion failure causes an error.
+
+If argument conversion based on default values is not desired, the whole
+argument conversion can be disabled with the `@keyword decorator`__ like
+`@keyword(types=None)`.
+
+.. note:: Prior to Robot Framework 4.0 conversion was done based on the default
+          value only if the argument did not have an explict type.
 
 __ `Specifying argument types using @keyword decorator`_
 
@@ -1113,13 +1390,10 @@ arguments to. These characteristics apply to all conversions:
   the `@keyword decorator`__.
 - If not explicitly specified, type can be got implicitly from `argument
   default values`__.
-- Conversion is done only if the argument that is used is itself a Unicode
-  string.
-- With most of the types failed conversion causes an error if the type has
-  been specified explicitly. Exceptions to this rule are mentioned in the
-  table below.
-- With most of the types string `NONE`, case-insensitively, is converted to
-  Python `None`. Exceptions are mentioned in the table below.
+- Conversion is done regardless of the type of the given argument. If the
+  argument type is incompatible with the expected type, conversion fails.
+- Conversion failures cause an error if the type has been specified explicitly.
+  If the type is got based on a default value, the given argument is used as-is.
 
 __ `Specifying argument types using function annotations`_
 __ `Specifying argument types using @keyword decorator`_
@@ -1140,78 +1414,99 @@ the type using type names as a string (e.g. `'int'`) and some types also have
 aliases (e.g. `'integer'`). Matching types to names and aliases is
 case-insensitive.
 
+The Accepts column specifies which given argument types are converted.
+If the given argument already has the expected type, no conversion is done.
+Other types cause conversion failures.
+
 .. table:: Supported argument conversions
    :class: tabular
+   :widths: 5 5 5 5 60 20
 
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   |    Type     |      ABC      |  Aliases   |                       Explanation                              |             Examples                 |
-   +=============+===============+============+================================================================+======================================+
-   | bool_       |               | boolean    | Strings `TRUE`, `YES`, `ON` and `1` are converted to `True`,   | | `TRUE` (converted to `True`)       |
-   |             |               |            | the empty string as well as `FALSE`, `NO`, `OFF` and `0`       | | `off` (converted to `False`)       |
-   |             |               |            | are converted to `False`, and the string `NONE` is converted   | | `foobar` (returned as-is)          |
-   |             |               |            | to `None`. Other strings are passed as-is, allowing keywords   |                                      |
-   |             |               |            | to handle them specially if needed. All comparisons are        |                                      |
-   |             |               |            | case-insensitive.                                              |                                      |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | int_        | Integral_     | integer,   | Conversion is done using the int_ built-in function.           | | `42`                               |
-   |             |               | long       | If that fails and type is got implicitly from default values,  | | `3.14` (only with implicit type)   |
-   |             |               |            | also float_ conversion is attempted.                           |                                      |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | float_      | Real_         | double     | Conversion is done using the float_ built-in.                  | | `3.14`                             |
-   |             |               |            |                                                                | | `2.9979e8`                         |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | Decimal_    |               |            | Conversion is done using the Decimal_ class.                   | | `3.14`                             |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | bytes_      | ByteString_   |            | Argument is converted to bytes so that each Unicode code point | | `foobar`                           |
-   |             |               |            | below 256 is directly mapped to a matching byte. Higher code   | | `hyvä` (converted to `hyv\xe4`)    |
-   |             |               |            | points are not allowed. String `NONE` (case-insensitively) is  | | `\x00` (the null byte)             |
-   |             |               |            | converted to matching bytes, not to Python `None`. When using  |                                      |
-   |             |               |            | Python 2, byte conversion is only done if type is specified    |                                      |
-   |             |               |            | explicitly.                                                    |                                      |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | bytearray_  |               |            | Same conversion as with bytes_ but the result is a bytearray_. |                                      |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | `datetime   |               |            | Argument is expected to be a timestamp in `ISO 8601`_ like     | | `2018-09-12T15:47:05.123456`       |
-   | <dt-mod_>`__|               |            | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `2018-09-12 15:47`                 |
-   |             |               |            | character can be used as a separator or separators can be      | | `2018-09-12`                       |
-   |             |               |            | omitted altogether. Additionally, only the date part is        |                                      |
-   |             |               |            | mandatory, all possibly missing time components are considered |                                      |
-   |             |               |            | to be zeros.                                                   |                                      |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | date_       |               |            | Same conversion as with `datetime <dt-mod_>`__ but all time    | | `2018-09-12`                       |
-   |             |               |            | components are expected to be omitted or to be zeros.          |                                      |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | timedelta_  |               |            | String is expected to represent a time interval in one of the  | | `42` (42 seconds)                  |
-   |             |               |            | time formats Robot Framework supports: `time as number`_,      | | `1 minute 2 seconds`               |
-   |             |               |            | `time as time string`_ or `time as "timer" string`_.           | | `01:02` (same as above)            |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | Enum_       |               |            | The specified type must be an enumeration (a subclass of       | .. sourcecode:: python               |
-   |             |               |            | Enum_) and arguments themselves must match its members.        |                                      |
-   |             |               |            |                                                                |    class Color(Enum):                |
-   |             |               |            |                                                                |        RED = 1                       |
-   |             |               |            |                                                                |        GREEN = 2                     |
-   |             |               |            |                                                                |                                      |
-   |             |               |            |                                                                | | `GREEN`                            |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | NoneType_   |               |            | String `NONE` (case-insensitively) is converted to `None`      | | `None`                             |
-   |             |               |            | object, other values are passed as-is. Mainly relevant when    |                                      |
-   |             |               |            | type is got implicitly from `None` being a default value.      |                                      |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | list_       | Sequence_     |            | Argument must be be a Python list literal. It is converted     | | `['foo', 'bar']`                   |
-   |             |               |            | to an actual list using the `ast.literal_eval`_ function.      | | `[('one', 1), ('two', 2)]`         |
-   |             |               |            | The list can contain any values `ast.literal_eval`_ supports   |                                      |
-   |             |               |            | inside it, including other lists or other containers.          |                                      |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | tuple_      |               |            | Same as list_ but the argument must be a tuple literal.        | | `('foo', 'bar')`                   |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | dict_       | Mapping_      | dictionary,| Same as list_ but the argument must be a dictionary literal.   | | `{'a': 1, 'b': 2}`                 |
-   |             |               | map        |                                                                | | `{'key': 1, 'nested': {'key': 2}}` |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | set_        | `Set          |            | Same as list_ but the argument must be a set literal or        | | `{1, 2, 3, 42}`                    |
-   |             | <abc.Set_>`__ |            | `set()` to create an empty set. Not supported on Python 2.     | | `set()`                            |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | frozenset_  |               |            | Same conversion as with set_ but the result is a frozenset_.   |                                      |
-   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   |    Type     |      ABC      |  Aliases   |   Accepts    |                       Explanation                              |             Examples                 |
+   +=============+===============+============+==============+================================================================+======================================+
+   | bool_       |               | boolean    | Any          | Strings `TRUE`, `YES`, `ON` and `1` are converted to `True`,   | | `TRUE` (converted to `True`)       |
+   |             |               |            |              | the empty string as well as `FALSE`, `NO`, `OFF` and `0`       | | `off` (converted to `False`)       |
+   |             |               |            |              | are converted to `False`, and the string `NONE` is converted   | | `foobar` (returned as-is)          |
+   |             |               |            |              | to `None`. Other strings and all non-string arguments are      |                                      |
+   |             |               |            |              | passed as-is, allowing keywords to handle them specially if    |                                      |
+   |             |               |            |              | needed. All string comparisons are case-insensitive.           |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | int_        | Integral_     | integer,   | string,      | Conversion is done using the int_ built-in function. Floats    | | `42`                               |
+   |             |               | long       | float        | are converted only if they can be represented as integers      |                                      |
+   |             |               |            |              | exactly. For example, `1.0` is accepted and `1.1` is not.      |                                      |
+   |             |               |            |              | If converting a string to an integer fails and the type        |                                      |
+   |             |               |            |              | is got implicitly based on a default value, conversion to      |                                      |
+   |             |               |            |              | float is attempted as well.                                    |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | float_      | Real_         | double     | string,      | Conversion is done using the float_ built-in.                  | | `3.14`                             |
+   |             |               |            | int          |                                                                | | `2.9979e8`                         |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | Decimal_    |               |            | string,      | Conversion is done using the Decimal_ class.                   | | `3.14`                             |
+   |             |               |            | int, float   |                                                                |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | str_        |               | string,    | Any          | All arguments are converted to Unicode strings. With Python 2  |                                      |
+   |             |               | unicode    |              | the type should be `unicode`, not `str`. New in RF 4.0.        |                                      |
+   |             |               |            |              |                                                                |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | bytes_      | ByteString_   |            | string,      | Strings are converted to bytes so that each Unicode code point | | `foobar`                           |
+   |             |               |            | bytearray    | below 256 is directly mapped to a matching byte. Higher code   | | `hyvä` (converted to `hyv\xe4`)    |
+   |             |               |            |              | points are not allowed. When using Python 2, byte conversion   | | `\x00` (the null byte)             |
+   |             |               |            |              | is dene only if type is specified explicitly.                  |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | bytearray_  |               |            | string,      | Same conversion as with bytes_ but the result is a bytearray_. |                                      |
+   |             |               |            | bytes        |                                                                |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | `datetime   |               |            | string,      | Strings are expected to be a timestamp in `ISO 8601`_ like     | | `2018-09-12T15:47:05.123456`       |
+   | <dt-mod_>`__|               |            | int, float   | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `2018-09-12 15:47`                 |
+   |             |               |            |              | character can be used as a separator or separators can be      | | `2018-09-12`                       |
+   |             |               |            |              | omitted altogether. Additionally, only the date part is        |                                      |
+   |             |               |            |              | mandatory, all possibly missing time components are considered |                                      |
+   |             |               |            |              | to be zeros. Integers and floats are considered to be EPOCH    |                                      |
+   |             |               |            |              | timestamps.                                                    |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | date_       |               |            | string       | Same string conversion as with `datetime <dt-mod_>`__ but all  | | `2018-09-12`                       |
+   |             |               |            |              | time components are expected to be omitted or to be zeros.     |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | timedelta_  |               |            | string,      | Strings are expected to represent a time interval in one of    | | `42` (42 seconds)                  |
+   |             |               |            | int, float   | the time formats Robot Framework supports: `time as number`_,  | | `1 minute 2 seconds`               |
+   |             |               |            |              | `time as time string`_ or `time as "timer" string`_. Integers  | | `01:02` (same as above)            |
+   |             |               |            |              | and floats are considered to be seconds.                       |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | Enum_       |               |            | string       | The specified type must be an enumeration (a subclass of       | .. sourcecode:: python               |
+   |             |               |            |              | Enum_) and given arguments must match its members.             |                                      |
+   |             |               |            |              |                                                                |    class Color(Enum):                |
+   |             |               |            |              | Starting from RF 3.2.2, matching members is case-, space-      |        GREEN = 1                     |
+   |             |               |            |              | and underscore-insensitive.                                    |        DARK_GREEN = 2                |
+   |             |               |            |              |                                                                |                                      |
+   |             |               |            |              |                                                                | | `GREEN` (Color.GREEN)              |
+   |             |               |            |              |                                                                | | `Dark Green` (Color.DARK_GREEN)    |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | None_       |               | NoneType   | string       | String `NONE` (case-insensitively) is converted to `None`      | | `None`                             |
+   |             |               |            |              | object. Other values cause an error.                           |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | list_       | Sequence_     |            | string,      | String must be be a Python list literal. It is converted       | | `['foo', 'bar']`                   |
+   |             |               |            | tuple        | to an actual list using the `ast.literal_eval`_ function.      | | `[('one', 1), ('two', 2)]`         |
+   |             |               |            |              | The list can contain any values `ast.literal_eval`_ supports   |                                      |
+   |             |               |            |              | inside it, including other lists or other containers.          |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | tuple_      |               |            | string, list | Same as list_ but string argument must a tuple literal.        | | `('foo', 'bar')`                   |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | dict_       | Mapping_      | dictionary,| string       | Same as list_ but string argument must be a dictionary         | | `{'a': 1, 'b': 2}`                 |
+   |             |               | map        |              | literal.                                                       | | `{'key': 1, 'nested': {'key': 2}}` |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | set_        | `Set          |            | string,      | Same as list_ but string argument must be a set literal or     | | `{1, 2, 3, 42}`                    |
+   |             | <abc.Set_>`__ |            | list, tuple, | `set()` to create an empty set. Not supported on Python 2.     | | `set()`                            |
+   |             |               |            | dictionary   |                                                                | | `{'key': 1, 'nested': {'key': 2}}` |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | frozenset_  |               |            | string,      | Same conversion as with set_ but the result is a frozenset_.   |                                      |
+   |             |               |            | list, tuple, |                                                                |                                      |
+   |             |               |            | dictionary   |                                                                |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+
+.. note:: Prior to Robot Framework 4.0 most types supported converting string `NONE` (case-insensitively) to Python
+          `None`. That support has been removed and `None` conversion is only done if an argument has `None` as an
+          explicit type or as a default value.
 
 .. _bool: https://docs.python.org/library/functions.html#bool
 .. _int: https://docs.python.org/library/functions.html#int
@@ -1219,6 +1514,7 @@ case-insensitive.
 .. _float: https://docs.python.org/library/functions.html#float
 .. _Real: https://docs.python.org/library/numbers.html#numbers.Real
 .. _Decimal: https://docs.python.org/library/decimal.html#decimal.Decimal
+.. _str: https://docs.python.org/library/functions.html#func-str
 .. _bytes: https://docs.python.org/library/functions.html#func-bytes
 .. _ByteString: https://docs.python.org/library/collections.abc.html#collections.abc.ByteString
 .. _bytearray: https://docs.python.org/library/functions.html#func-bytearray
@@ -1226,7 +1522,7 @@ case-insensitive.
 .. _date: https://docs.python.org/library/datetime.html#datetime.date
 .. _timedelta: https://docs.python.org/library/datetime.html#datetime.timedelta
 .. _Enum: https://docs.python.org/library/enum.html#enum.Enum
-.. _NoneType: https://docs.python.org/library/constants.html#None
+.. _None: https://docs.python.org/library/constants.html#None
 .. _list: https://docs.python.org/library/stdtypes.html#list
 .. _Sequence: https://docs.python.org/library/collections.abc.html#collections.abc.Sequence
 .. _MutableSequence: https://docs.python.org/library/collections.abc.html#collections.abc.MutableSequence
@@ -1239,6 +1535,94 @@ case-insensitive.
 .. _typing: https://docs.python.org/library/typing.html
 .. _ISO 8601: https://en.wikipedia.org/wiki/ISO_8601
 .. _ast.literal_eval: https://docs.python.org/library/ast.html#ast.literal_eval
+
+Specifying multiple possible types
+''''''''''''''''''''''''''''''''''
+
+Starting from Robot Framework 4.0, it is possible to specify that an argument
+has multiple possible types. In this situation argument conversion is attempted
+based on each type and the whole conversion fails if none of these conversions
+succeed.
+
+When using function annotations, the natural syntax to specify that argument
+has multiple possible types is using Union_:
+
+.. sourcecode:: python
+
+  from typing import Union
+
+
+  def example(length: Union[int, float], padding: Union[int, str, None] = None):
+      # ...
+
+An alternative is specifying types as a tuple. It is not recommended with annotations,
+because that syntax is not supported by other tools, but it works well with
+the `@keyword` decorator and is Python 2 compatible:
+
+.. sourcecode:: python
+
+  from robot.api.deco import keyword
+
+
+  @keyword(types={'length': (int, float), 'padding': (int, str, None)})
+  def example(length, padding=None):
+      # ...
+
+With the above examples the `length` argument would first be converted to an
+integer and if that fails then to a float. The `padding` would be first
+converted to an integer, then to a string, and finally to `None`.
+
+If the given argument has one of the accepted types, then no conversion is done
+and the argument is used as-is. For example, if the `length` argument gets
+value `1.5` as a float, it would not be converted to an integer. Notice that
+using non-string values like floats as an argument requires using variables as
+these examples giving different values to the `length` argument demonstrate:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Conversion
+       Example    10        # Argument is a string. Converted to an integer.
+       Example    1.5       # Argument is a string. Converted to a float.
+       Example    ${10}     # Argument is an integer. Accepted as-is.
+       Example    ${1.5}    # Argument is a float. Accepted as-is.
+
+If one of the accepted types is string, then no conversion is done if the given
+argument is a string. As the following examples giving different values to the
+`padding` argument demonstrate, also in these cases passing other types is
+possible using variables:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Conversion
+       Example    1    big        # Argument is a string. Accepted as-is.
+       Example    1    10         # Argument is a string. Accepted as-is.
+       Example    1    ${10}      # Argument is an integer. Accepted as-is.
+       Example    1    ${None}    # Argument is `None`. Accepted as-is.
+       Example    1    ${1.5}     # Argument is a float. Converted to an integer.
+
+If the given argument does not have any of the accepted types, conversion is
+attempted in the order types are specified. If any conversion succeeds, the
+resulting value is used without attempting remaining conversions. If no individual
+conversion succeeds, the whole conversion fails.
+
+If a specified type is not recognized by Robot Framework, then the original value
+is used as-is. For example, with this keyword conversion would first be attempted
+to an integer but if that fails the keyword would get the original given argument:
+
+.. sourcecode:: python
+
+  def example(argument: Union[int, MyCustomType]):
+      # ...
+
+.. note:: In Robot Framework 4.0 argument conversion was done always, regardless
+          of the type of the given argument. It caused various__ problems__ and
+          was changed in Robot Framework 4.0.1.
+
+__ https://github.com/robotframework/robotframework/issues/3897
+__ https://github.com/robotframework/robotframework/issues/3908
+.. _Union: https://docs.python.org/3/library/typing.html#typing.Union
 
 Argument types with Java
 ''''''''''''''''''''''''
@@ -1292,40 +1676,89 @@ conflicting signatures.
 
 Argument type coercion works also with `Java library constructors`__.
 
-__ `Providing arguments to test libraries`_
+__ `Providing arguments to libraries`_
 
 .. note:: Converting arguments passed to Java based keywords is an old feature
           and independent on the support to convert arguments of Python
           keywords in Robot Framework 3.1 and newer. Conversion functionality
           may be unified in the future.
 
-Using decorators
-~~~~~~~~~~~~~~~~
+`@keyword` decorator
+~~~~~~~~~~~~~~~~~~~~
 
-When writing static keywords, it is sometimes useful to modify them with
-Python's decorators. However, decorators modify function signatures,
-and can confuse Robot Framework's introspection when determining which
+Although Robot Framework gets lot of information about keywords automatically,
+such as their names and arguments, there are sometimes needs to configure this
+information further. This is typically easiest done by using the
+`robot.api.deco.keyword` decorator. It has several useful usages that are
+explained thoroughly elsewhere and only listened here as a reference:
+
+- Exposing methods and functions as keywords when the `automatic keyword
+  discovery`__ has been disabled by using the `@library decorator`_ or
+  otherwise.
+
+- Setting a `custom name`__ to a keyword. This is especially useful when using
+  the `embedded argument syntax`__.
+
+- Setting `keyword tags`_.
+
+- Setting `type information`__ to enable automatic argument type conversion.
+  Supports also disabling the argument conversion altogether.
+
+- `Marking methods to expose as keywords`_ when using the
+  `dynamic library API`_ or the `hybrid library API`_.
+
+__ `Limiting public methods becoming keywords`_
+__ `Setting custom name`_
+__ `Embedding arguments into keyword names`_
+__ `Specifying argument types using @keyword decorator`_
+
+`@not_keyword` decorator
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `robot.api.deco.not_keyword` decorator can be used for
+`disabling functions or methods becoming keywords`__.
+
+__ `Using @not_keyword decorator`_
+
+Using custom decorators
+~~~~~~~~~~~~~~~~~~~~~~~
+
+When implementing keywords, it is sometimes useful to modify them with
+`Python decorators`__. However, decorators often modify function signatures
+and can thus confuse Robot Framework's introspection when determining which
 arguments keywords accept. This is especially problematic when creating
-library documentation with Libdoc_ and when using RIDE_. To avoid this
-issue, either do not use decorators, or use the handy `decorator module`__
-to create signature-preserving decorators.
+library documentation with Libdoc_ and when using external tools like RIDE_.
+When using Python 3, the easiest way to avoid this problem is decorating the
+decorator itself using `functools.wraps`__. Other solutions include using
+external modules like decorator__ and wrapt__ that allow creating fully
+signature-preserving decorators.
 
-__ https://decorator.readthedocs.io
+.. note:: Support for "unwrapping" decorators decorated with `functools.wraps`
+          is a new feature in Robot Framework 3.2.
+
+          `functools.wraps` exists also in Python 2, but it does not preserve
+          signature information and thus works for this purpose only in Python 3.
+
+__ https://realpython.com/primer-on-python-decorators/
+__ https://docs.python.org/library/functools.html#functools.wraps
+__ https://pypi.org/project/decorator/
+__ https://wrapt.readthedocs.io
 
 Embedding arguments into keyword names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Library keywords can also accept arguments which are passed using
-`Embedded Argument syntax`__.  The `robot.api.deco.keyword` decorator
+the `embedded argument syntax`__.  The `@keyword decorator`_
 can be used to create a `custom keyword name`__ for the keyword
 which includes the desired syntax.
 
 __ `Embedding arguments into keyword name`_
-__ `Using a custom keyword name`_
+__ `Setting custom name`_
 
 .. sourcecode:: python
 
     from robot.api.deco import keyword
+
 
     @keyword('Add ${quantity:\d+} copies of ${item} to cart')
     def add_copies_to_cart(quantity, item):
@@ -1340,12 +1773,12 @@ __ `Using a custom keyword name`_
 By default arguments are passed to implementing keywords as strings, but
 automatic `argument type conversion`__ works if type information is specified
 somehow. With Python 3 it is convenient to use `function annotations`__,
-and alternatively it is possible to pass types to the `@keyword decorator`__:
+and alternatively it is possible to pass types to the `@keyword decorator`__.
+This example uses annotations:
 
 .. sourcecode:: python
 
-    @keyword('Add ${quantity:\d+} copies of ${item} to cart',
-             types={'quantity': int})
+    @keyword('Add ${quantity:\d+} copies of ${item} to cart')
     def add_copies_to_cart(quantity: int, item):
         # ...
 
@@ -1370,6 +1803,13 @@ Reporting keyword status
 Reporting keyword status is done simply using exceptions. If an executed
 method raises an exception, the keyword status is `FAIL`, and if it
 returns normally, the status is `PASS`.
+
+Normal execution failures and errors can be reported using the standard exceptions
+such as `AssertionError`, `ValueError` and `RuntimeError`. There are, however, some
+special cases explained in the subsequent sections where special exceptions are needed.
+
+Error messages
+''''''''''''''
 
 The error message shown in logs, reports and the console is created
 from the exception type and its message. With generic exceptions (for
@@ -1432,38 +1872,64 @@ These messages are not visible in log files by default because they are very
 rarely interesting for normal users. When developing libraries, it is often a
 good idea to run tests using `--loglevel DEBUG`.
 
-Stopping test execution
-~~~~~~~~~~~~~~~~~~~~~~~
+Exceptions provided by Robot Framework
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-It is possible to fail a test case so that `the whole test execution is
-stopped`__. This is done simply by having a special `ROBOT_EXIT_ON_FAILURE`
-attribute with `True` value set on the exception raised from the keyword.
-This is illustrated in the examples below.
+Robot Framework provides some exceptions that libraries can use for reporting
+failures and other events. These exceptions are exposed via the `robot.api`__
+package and contain the following:
 
-Python:
+`Failure`
+    Report failed validation. There is no practical difference in using this exception
+    compared to using the standard `AssertionError`. The main benefit of using this
+    exception is that its name is consistent with other provided exceptions.
+
+`Error`
+    Report error in execution. Failures related to the system not behaving as expected
+    should typically be reported using the `Failure` exception or the standard
+    `AssertionError`. This exception can be used, for example, if the keyword is used
+    incorrectly. There is no practical difference, other than consistent naming with
+    other provided exceptions, compared to using this exception and the standard
+    `RuntimeError`.
+
+`ContinuableFailure`
+    Report failed validation but allow continuing execution.
+    See the `Continuable failures`_ section below for more information.
+
+`SkipExecution`
+    Mark the executed test or task skipped_.
+    See the `Skipping tests`_ section below for more information.
+
+`FatalError`
+    Report error that stops the whole execution.
+    See the `Stopping test execution`_ section below for more information.
+
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.api.html
+
+.. note:: All these exceptions are new in Robot Framework 4.0. Other features than
+          skipping tests, which is also new in Robot Framework 4.0, are available
+          by other means in earlier versions.
+
+Continuable failures
+~~~~~~~~~~~~~~~~~~~~
+
+It is possible to `continue test execution even when there are failures`__.
+The easiest way to do that is using the provided__ `robot.api.ContinuableFailure`
+exception:
 
 .. sourcecode:: python
 
-    class MyFatalError(RuntimeError):
-        ROBOT_EXIT_ON_FAILURE = True
+    from robot.api import ContinuableFailure
 
-Java:
 
-.. sourcecode:: java
+    def example_keyword():
+        if something_is_wrong():
+            raise ContinuableFailure('Something is wrong but execution can continue.')
+        ...
 
-    public class MyFatalError extends RuntimeException {
-        public static final boolean ROBOT_EXIT_ON_FAILURE = true;
-    }
-
-__ `Stopping test execution gracefully`_
-
-Continuing test execution despite of failures
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-It is possible to `continue test execution even when there are failures`__.
-The way to signal this from test libraries is adding a special
-`ROBOT_CONTINUE_ON_FAILURE` attribute with `True` value to the exception
-used to communicate the failure. This is demonstrated by the examples below.
+An alternative is creating a custom exception that has a special
+`ROBOT_CONTINUE_ON_FAILURE` attribute set to a `True` value.
+This is demonstrated by the examples below.
 
 Python:
 
@@ -1481,6 +1947,83 @@ Java:
     }
 
 __ `Continue on failure`_
+__ `Exceptions provided by Robot Framework`_
+
+Skipping tests
+~~~~~~~~~~~~~~
+
+It is possible to skip_ tests with a library keyword. The easiest way to
+do that is using the provided__ `robot.api.SkipExecution` exception:
+
+.. sourcecode:: python
+
+    from robot.api import SkipExecution
+
+
+    def example_keyword():
+        if test_should_be_skipped():
+            raise SkipExecution('Cannot proceed, skipping test.')
+        ...
+
+An alternative is creating a custom exception that has a special
+`ROBOT_SKIP_EXECUTION` attribute set to a `True` value.
+This is demonstrated by the examples below.
+
+Python:
+
+.. sourcecode:: python
+
+    class MySkippingError(RuntimeError):
+        ROBOT_SKIP_EXECUTION = True
+
+Java:
+
+.. sourcecode:: java
+
+    public class MySkippingError extends RuntimeException {
+        public static final boolean ROBOT_SKIP_EXECUTION = true;
+    }
+
+__ `Exceptions provided by Robot Framework`_
+
+Stopping test execution
+~~~~~~~~~~~~~~~~~~~~~~~
+
+It is possible to fail a test case so that `the whole test execution is
+stopped`__. The easiest way to accomplish this is using the provided__
+`robot.api.FatalError` exception:
+
+.. sourcecode:: python
+
+    from robot.api import FatalError
+
+
+    def example_keyword():
+        if system_is_not_running():
+            raise FatalError('System is not running!')
+        ...
+
+In addition to using the `robot.api.FatalError` exception, it is possible create
+a custom exception that has a special `ROBOT_EXIT_ON_FAILURE` attribute set to
+a `True` value. This is illustrated by the examples below.
+
+Python:
+
+.. sourcecode:: python
+
+    class MyFatalError(RuntimeError):
+        ROBOT_EXIT_ON_FAILURE = True
+
+Java:
+
+.. sourcecode:: java
+
+    public class MyFatalError extends RuntimeException {
+        public static final boolean ROBOT_EXIT_ON_FAILURE = true;
+    }
+
+__ `Stopping test execution gracefully`_
+__ `Exceptions provided by Robot Framework`_
 
 Logging information
 ~~~~~~~~~~~~~~~~~~~
@@ -1517,9 +2060,6 @@ Messages with `ERROR` or `WARN` level are automatically written to the
 console and a separate `Test Execution Errors section`__ in the log
 files. This makes these messages more visible than others and allows
 using them for reporting important but non-critical problems to users.
-
-.. note:: In Robot Framework 2.9, new functionality was added to automatically
-          add ERRORs logged by keywords to the Test Execution Errors section.
 
 __ `Errors and warnings during execution`_
 
@@ -1569,6 +2109,7 @@ Python:
 
     import time
 
+
     def example_keyword():
         print('*INFO:%d* Message with timestamp' % (time.time()*1000))
 
@@ -1603,6 +2144,7 @@ and are not written to the log file at all:
 
    import sys
 
+
    def my_keyword(arg):
       sys.__stdout__.write('Got arg %s\n' % arg)
 
@@ -1611,6 +2153,7 @@ The final option is using the `public logging API`_:
 .. sourcecode:: python
 
    from robot.api import logger
+
 
    def log_to_console(arg):
       logger.console('Got arg %s' % arg)
@@ -1694,7 +2237,7 @@ Programmatic logging APIs
 
 Programmatic APIs provide somewhat cleaner way to log information than
 using the standard output and error streams. Currently these
-interfaces are available only to Python bases test libraries.
+interfaces are available only to Python based test libraries.
 
 Public logging API
 ''''''''''''''''''
@@ -1713,6 +2256,7 @@ a simple usage example:
 .. sourcecode:: python
 
    from robot.api import logger
+
 
    def my_keyword(arg):
        logger.debug('Got argument %s' % arg)
@@ -1744,6 +2288,7 @@ Framework.
 .. sourcecode:: python
 
    import logging
+
 
    def my_keyword(arg):
        logging.debug('Got argument %s' % arg)
@@ -1794,14 +2339,16 @@ Python library logging using the logging API during import:
 
    from robot.api import logger
 
+
    logger.debug("Importing library")
+
 
    def keyword():
        # ...
 
 .. note:: If you log something during initialization, i.e. in Python
           `__init__` or in Java constructor, the messages may be
-          logged multiple times depending on the `test library scope`_.
+          logged multiple times depending on the `library scope`_.
 
 __ `Logging information`_
 
@@ -1826,6 +2373,7 @@ __ `Scalar variables`_
 .. sourcecode:: python
 
   from mymodule import MyObject
+
 
   def return_string():
       return "Hello, world!"
@@ -1974,7 +2522,7 @@ By default documentation is considered to follow Robot Framework's
 `documentation formatting`_ rules. This simple format allows often used
 styles like `*bold*` and `_italic_`, tables, lists, links, etc.
 It is possible to use also HTML, plain
-text and reStructuredText_ formats. See `Specifying documentation format`_
+text and reStructuredText_ formats. See the `Documentation format`_
 section for information how to set the format in the library source code and
 Libdoc_ chapter for more information about the formats in general.
 
@@ -2086,14 +2634,10 @@ Java test library that uses the `static library interface`__ because
 their documentation is not available at runtime. With such keywords,
 it possible to use user keywords as wrappers and deprecate them.
 
-.. note:: Prior to Robot Framework 2.9 the documentation must start with
-          `*DEPRECATED*` exactly without any extra content before the
-          closing `*`.
-
 __ `Errors and warnings during execution`_
 __ `Documenting libraries`_
 __ `User keyword name and documentation`_
-__ `Creating static keywords`_
+__ `Creating keywords`_
 
 .. _Dynamic library:
 
@@ -2173,19 +2717,25 @@ If a dynamic library should contain both methods which are meant to be keywords
 and methods which are meant to be private helper methods, it may be wise to
 mark the keyword methods as such so it is easier to implement `get_keyword_names`.
 The `robot.api.deco.keyword` decorator allows an easy way to do this since it
-creates a custom `robot_name` attribute on the decorated method.
+creates a `custom 'robot_name' attribute`__ on the decorated method.
 This allows generating the list of keywords just by checking for the `robot_name`
-attribute on every method in the library during `get_keyword_names`.  See
-`Using a custom keyword name`_ for more about this decorator.
+attribute on every method in the library during `get_keyword_names`.
 
 .. sourcecode:: python
 
    from robot.api.deco import keyword
 
+
    class DynamicExample:
 
        def get_keyword_names(self):
-           return [name for name in dir(self) if hasattr(getattr(self, name), 'robot_name')]
+           # Get all attributes and their values from the library.
+           attributes = [(name, getattr(self, name)) for name in dir(self)]
+           # Filter out attributes that do not have 'robot_name' set.
+           keywords = [(name, value) for name, value in attributes
+                       if hasattr(value, 'robot_name')]
+           # Return value of 'robot_name', if given, or the original 'name'.
+           return [value.robot_name or name for name, value in keywords]
 
        def helper_method(self):
            # ...
@@ -2193,6 +2743,8 @@ attribute on every method in the library during `get_keyword_names`.  See
        @keyword
        def keyword_method(self):
            # ...
+
+__ `Setting custom name`_
 
 .. _`Running dynamic keywords`:
 
@@ -2271,8 +2823,7 @@ Java lists or String arrays instead.
    :class: tabular
 
    +--------------------+----------------------------+----------------------------+
-   |    Expected        |      How to represent      |          Examples          |
-   |    arguments       |                            |                            |
+   |   Argument type    |      How to represent      |          Examples          |
    +====================+============================+============================+
    | No arguments       | Empty list.                | `[]`                       |
    +--------------------+----------------------------+----------------------------+
@@ -2280,16 +2831,22 @@ Java lists or String arrays instead.
    | `positional        | argument names.            | `['arg1', 'arg2', 'arg3']` |
    | argument`_         |                            |                            |
    +--------------------+----------------------------+----------------------------+
-   | `Default values`_  | Default values separated   | `['arg=default value']`,   |
-   | for arguments      | from argument names with   | `['a', 'b=1', 'c=2']`      |
-   |                    | `=`. Default values are    |                            |
-   |                    | always considered to be    |                            |
-   |                    | strings.                   |                            |
+   | `Default values`_  | Two ways how to represent  | `['name=default']`,        |
+   |                    | the argument name and the  | `['a', 'b=1', 'c=2']`      |
+   |                    | default value:             |                            |
+   |                    |                            | `[('name', 'default')]`,   |
+   |                    | - As a string where the    | `['a', ('b', 1), ('c', 2)]`|
+   |                    |   name and the default are |                            |
+   |                    |   separated with `=`.      |                            |
+   |                    | - As a tuple with the name |                            |
+   |                    |   and the default as       |                            |
+   |                    |   separate items. New in   |                            |
+   |                    |   Robot Framework 3.2.     |                            |
    +--------------------+----------------------------+----------------------------+
    | `Variable number   | Argument after possible    | `['*varargs']`,            |
    | of arguments`_     | positional arguments and   | `['argument', '*rest']`,   |
    | (varargs)          | their defaults has `*`     | `['a', 'b=42', '*c']`      |
-   | (varargs)          | prefix.                    |                            |
+   |                    | prefix.                    |                            |
    +--------------------+----------------------------+----------------------------+
    | `Free named        | Last arguments has `**`    | `['**named']`,             |
    | arguments`_        | prefix. Requires           | `['a', 'b=42', '**c']`,    |
@@ -2314,15 +2871,31 @@ The actual argument names and default values that are returned are also
 important. They are needed for `named argument support`__ and the Libdoc_
 tool needs them to be able to create a meaningful library documentation.
 
+As explained in the above table, default values can be specified with argument
+names either as a string like `'name=default'` or as a tuple like
+`('name', 'default')`. The main problem with the former syntax is that all
+default values are considered strings whereas the latter syntax allows using
+all objects like `('inteter', 1)` or `('boolean', True)`. When using other
+objects than strings, Robot Framework can do `automatic argument conversion`__
+based on them.
+
+For consistency reasons, also arguments that do not accept default values can
+be specified as one item tuples. For example, `['a', 'b=c', '*d']` and
+`[('a',), ('b', 'c'), ('*d',)]` are equivalent.
+
 If `get_keyword_arguments` is missing or returns Python `None` or Java
 `null` for a certain keyword, that keyword gets an argument specification
 accepting all arguments. This automatic argument spec is either
 `[*varargs, **kwargs]` or `[*varargs]`, depending does
 `run_keyword` `support free named arguments`__ or not.
 
+.. note:: Support to specify arguments as tuples like `('name', 'default')`
+          is new in Robot Framework 3.2.
+
 __ `Free named arguments with dynamic libraries`_
 __ `Named-only arguments with dynamic libraries`_
 __ `Named argument syntax with dynamic libraries`_
+__ `Implicit argument types based on default values`_
 __ `Free named arguments with dynamic libraries`_
 
 Getting keyword argument types
@@ -2342,13 +2915,22 @@ from external systems, using strings like `'int'` or `'integer'` may be
 easier. See the `Supported conversions`_ section for more information about
 supported types and how to specify them.
 
+Robot Framework does automatic argument conversion also based on the
+`argument default values`__. Earlier this did not work with the dynamic API
+because it was possible to specify arguments only as strings. As
+`discussed in the previous section`__, this was changed in Robot Framework
+3.2 and nowadays default values returned like `('example', True)` are
+automatically used for this purpose.
+
 __ `Argument types`_
 __ `Specifying argument types using @keyword decorator`_
+__ `Implicit argument types based on default values`_
+__ `Getting keyword arguments`_
 
 Getting keyword tags
 ~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 3.0.2, dynamic libraries can report `keyword
+Dynamic libraries can report `keyword
 tags`_ by using the `get_keyword_tags` method (alias `getKeywordTags`). It
 gets a keyword name as an argument, and should return corresponding tags
 as a list of strings.
@@ -2356,8 +2938,7 @@ as a list of strings.
 Alternatively it is possible to specify tags on the last row of the
 documentation returned by the `get_keyword_documentation` method discussed
 below. This requires starting the last row with `Tags:` and listing tags
-after it like `Tags: first tag, second, third`. This approach works also
-with Robot Framework versions prior to 3.0.2.
+after it like `Tags: first tag, second, third`.
 
 .. tip:: The `get_keyword_tags` method is guaranteed to be called before
          the `get_keyword_documentation` method. This makes it easy to
@@ -2399,6 +2980,31 @@ documentation directly in the code as the docstring of the library
 class and its `__init__` method. If a non-empty documentation is
 got both directly from the code and from the
 `get_keyword_documentation` method, the latter has precedence.
+
+Getting keyword source information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The dynamic API masks the real implementation of keywords from Robot Framework
+and thus makes it impossible to see where keywords are implemented. This
+means that editors and other tools utilizing Robot Framework APIs cannot
+implement features such as go-to-definition. This problem can be solved by
+implementing yet another optional dynamic method named `get_keyword_source`
+(alias `getKeywordSource`) that returns the source information.
+
+The return value from the `get_keyword_source` method must be a string or
+`None` (`null` in Java) if no source information is available. In the simple
+case it is enough to simply return an absolute path to the file implementing
+the keyword. If the line number where the keyword implementation starts
+is known, it can be embedded to the return value like `path:lineno`.
+Returning only the line number is possible like `:lineno`.
+
+The source information of the library itself is got automatically from
+the imported library class the same way as with other library APIs. The
+library source path is used with all keywords that do not have their own
+source path defined.
+
+.. note:: Returning source information for keywords is a new feature in
+          Robot Framework 3.2.
 
 Named argument syntax with dynamic libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2558,8 +3164,9 @@ camelCase aliases work exactly the same way.
    `run_keyword`                `name, arguments, kwargs`  `Execute the specified keyword`__ with given arguments. `kwargs` is optional.
    `get_keyword_arguments`      `name`                     Return keywords' `argument specification`__. Optional method.
    `get_keyword_types`          `name`                     Return keywords' `argument type information`__. Optional method. New in RF 3.1.
-   `get_keyword_tags`           `name`                     Return keywords' `tags`__. Optional method. New in RF 3.0.2.
+   `get_keyword_tags`           `name`                     Return keywords' `tags`__. Optional method.
    `get_keyword_documentation`  `name`                     Return keywords' and library's `documentation`__. Optional method.
+   `get_keyword_source`         `name`                     Return keywords' `source`__. Optional method. New in RF 3.2.
    ===========================  =========================  =======================================================
 
 __ `Getting dynamic keyword names`_
@@ -2568,6 +3175,7 @@ __ `Getting keyword arguments`_
 __ `Getting keyword argument types`_
 __ `Getting keyword tags`_
 __ `Getting keyword documentation`_
+__ `Getting keyword source information`_
 
 It is possible to write a formal interface specification in Java as
 below. However, remember that libraries *do not need* to implement
@@ -2636,6 +3244,7 @@ __ http://docs.python.org/reference/datamodel.html#attribute-access
 .. sourcecode:: python
 
    from somewhere import external_keyword
+
 
    class HybridExample:
 
@@ -2734,6 +3343,7 @@ using `set_test_variable`, `set_suite_variable` and
    import os.path
    from robot.libraries.BuiltIn import BuiltIn
 
+
    def do_something(argument):
        output = do_something_that_creates_a_lot_of_output(argument)
        outputdir = BuiltIn().replace_variables('${OUTPUTDIR}')
@@ -2788,6 +3398,7 @@ library in Java code the same way.
 .. sourcecode:: python
 
    from SeleniumLibrary import SeleniumLibrary
+
 
    class ExtendedSeleniumLibrary(SeleniumLibrary):
 
@@ -2847,6 +3458,7 @@ __ `Using Robot Framework's internal modules`_
 .. sourcecode:: python
 
    from robot.libraries.BuiltIn import BuiltIn
+
 
    def title_should_start_with(expected):
        seleniumlib = BuiltIn().get_library_instance('SeleniumLibrary')

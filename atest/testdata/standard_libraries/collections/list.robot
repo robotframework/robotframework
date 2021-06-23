@@ -233,8 +233,9 @@ List Should Not Contain Value, Value Found And Own Error Message
 
 List Should Not Contain Duplicates With No Duplicates
     ${generator}    ${tuple} =    Evaluate    (c for c in 'abcABC'), (0, 1, 2, '0', '1', '2')
-    : FOR    ${list}    IN    ${L0}    ${L1}    ${L2}    ${L3}    ${L4}    ${generator}    ${tuple}
-    \    List Should Not Contain Duplicates    ${list}
+    FOR    ${list}    IN    ${L0}    ${L1}    ${L2}    ${L3}    ${L4}    ${generator}    ${tuple}
+        List Should Not Contain Duplicates    ${list}
+    END
 
 List Should Not Contain Duplicates Is Case And Space Sensitive
     ${list} =    Create List    item    ITEM    i tem    i t e m    ITE_m
@@ -330,6 +331,11 @@ Lists Should Be Equal With Named Indices As Dictionary With Too Few Values
     ${names} =    Create Dictionary    0=a    2=c
     Lists Should Be Equal    ${L3}    ${L3B}    names=${names}
 
+Lists Should Be Equal Ignore Order
+    ${list1} =    Create List    A    B    C    D
+    ${list2} =    Create List    D    B    C    A
+    Lists Should Be Equal    ${list1}    ${list2}    ignore_order=True
+
 List Should Contain Sub List
     List Should Contain Sub List    ${LONG}    ${L4}
 
@@ -357,6 +363,8 @@ Log List With Different Lists
     Log List    ${L0}
     Log List    ${L1}
     ${tuple} =    Evaluate    (1, 2, 3)
+    ${list} =    Create List    ${tuple}
+    Log List    ${list}
     ${list} =    Create List    ${tuple}    ${3.12}
     Log List    ${list}
 

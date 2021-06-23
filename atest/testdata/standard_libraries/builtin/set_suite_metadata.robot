@@ -37,7 +37,7 @@ Non-ASCII and non-string names and values
     Set Suite Metadata    42    päivä    append=kyllä
     Metadata variable should have value    42    1 päivä
 
-Modifying ${SUITE METADATA} has no effect also after setting metadata
+Modifying \${SUITE METADATA} has no effect also after setting metadata
     [Documentation]    The variable changes but actual metadata does not
     Set Suite Metadata    Cannot be   set otherwise
     Set To Dictionary    ${SUITE METADATA}    Cannot be   really set this way

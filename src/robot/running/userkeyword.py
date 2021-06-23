@@ -17,9 +17,8 @@ import os
 
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.utils import getshortdoc, is_string, unic
+from robot.utils import getshortdoc, unic
 
-from .builder import ResourceFileBuilder
 from .arguments import EmbeddedArguments, UserKeywordArgumentParser
 from .handlerstore import HandlerStore
 from .userkeywordrunner import UserKeywordRunner, EmbeddedArgumentsRunner
@@ -30,11 +29,7 @@ class UserLibrary(object):
     TEST_CASE_FILE_TYPE = HandlerStore.TEST_CASE_FILE_TYPE
     RESOURCE_FILE_TYPE = HandlerStore.RESOURCE_FILE_TYPE
 
-    def __init__(self, source, source_type=RESOURCE_FILE_TYPE):
-        if is_string(source):
-            resource = ResourceFileBuilder().build(source)
-        else:
-            resource = source
+    def __init__(self, resource, source_type=RESOURCE_FILE_TYPE):
         source = resource.source
         basename = os.path.basename(source) if source else None
         self.name = os.path.splitext(basename)[0] \
@@ -60,8 +55,7 @@ class UserLibrary(object):
         if not embedded:
             return UserKeywordHandler(kw, self.name)
         if kw.args:
-            raise DataError('Keyword cannot have both normal and embedded '
-                            'arguments.')
+            raise DataError('Keyword cannot have both normal and embedded arguments.')
         return EmbeddedArgumentsHandler(kw, self.name, embedded)
 
     def _log_creating_failed(self, handler, error):
@@ -78,14 +72,16 @@ class UserKeywordHandler(object):
         self.name = keyword.name
         self.libname = libname
         self.doc = unic(keyword.doc)
+        self.source = keyword.source
+        self.lineno = keyword.lineno
         self.tags = keyword.tags
         self.arguments = UserKeywordArgumentParser().parse(tuple(keyword.args),
                                                            self.longname)
         self._kw = keyword
         self.timeout = keyword.timeout
-        self.keywords = keyword.keywords.normal
+        self.body = keyword.body
         self.return_value = tuple(keyword.return_)
-        self.teardown = keyword.keywords.teardown
+        self.teardown = keyword.teardown
 
     @property
     def longname(self):

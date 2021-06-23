@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
@@ -11,7 +11,7 @@
 <link rel="stylesheet" type="text/css" href="report.css" media="all">
 <link rel="stylesheet" type="text/css" href="print.css" media="print">
 <link rel="stylesheet" type="text/css" href="../common/js_disabled.css" media="all">
-<link rel="stylesheet" type="text/css" href="../common/doc_formatting.css" media="all">
+<link rel="stylesheet" type="text/css" href="doc_formatting.css" media="all">
 <script type="text/javascript" src="../lib/jquery.min.js"></script>
 <script type="text/javascript" src="../lib/jquery.tmpl.min.js"></script>
 <script type="text/javascript" src="../lib/jquery.tablesorter.min.js"></script>
@@ -30,7 +30,7 @@
   <h1>Opening Robot Framework report failed</h1>
   <ul>
     <li>Verify that you have <b>JavaScript enabled</b> in your browser.</li>
-    <li>Make sure you are using a <b>modern enough browser</b>. If using Internet Explorer, version 8 or newer is required.</li>
+    <li>Make sure you are using a <b>modern enough browser</b>. If using Internet Explorer, version 11 is required.</li>
     <li>Check are there messages in your browser's <b>JavaScript error log</b>. Please report the problem if you suspect you have encountered a bug.</li>
   </ul>
 </div>
@@ -60,12 +60,12 @@ $(document).ready(function () {
 
 function setBackground(topsuite) {
     var color;
-    if (topsuite.criticalFailed)
+    if (topsuite.fail)
         color = window.settings.background.fail;
-    else if (topsuite.totalFailed)
-        color = window.settings.background.nonCriticalFail;
-    else
+    else if (topsuite.pass)
         color = window.settings.background.pass;
+    else
+        color = window.settings.background.skip;
     $('body').css('background-color', color);
 }
 
@@ -79,18 +79,18 @@ function addDetails() {
     if (window.location.hash)
         showDetailsByHash();
     else
-        renderTotalSelector();
+        renderSearchSelector();
 }
 
 function addCustomSortersForDetails() {
     $.tablesorter.addParser({
-        id: 'criticality',
+        id: 'status',
         type: 'numeric',
         is: function(s) {
             return false;  // do not auto-detect
         },
         format: function(s) {
-            return s === 'yes' ? 0 : 1;
+            return {'FAIL': -1, 'SKIP': 0, 'PASS': 1}[s];
         }
     });
     $.tablesorter.addParser({
@@ -128,26 +128,22 @@ function showDetailsByHash() {
         action(query);
 }
 
-function totalDetailSelected(name) {
-    renderTotalSelector(name);
-    if (name) {
-        renderTotalDetails(name);
-        var title = name == 'critical' ? 'Critical {Test}s' : 'All {Test}s'
-        updatePrintSelector(testOrTask(title));
-    }
+function totalDetailSelected() {
+    renderTotalSelector();
     scrollToSelector('totals', name);
 }
 
-function renderTotalSelector(name) {
-    var args = {linkTarget: (name) ? 'totals?'+name : 'totals',
+function renderTotalSelector() {
+    var args = {linkTarget: 'totals',
                 totalTabStatus: 'detail-tab-selected'};
-    renderSelector(args, 'totalDetailsSelectorTemplate', {selected: name});
+    renderSelector(args, 'totalDetailsSelectorTemplate');
+    updatePrintSelector(testOrTask('All {Test}s'));
+    renderTotalDetails();
 }
 
-function renderTotalDetails(name) {
-    var index = (name == 'critical') ? 0 : 1;
-    var stat = window.testdata.statistics().total[index];
-    var tests = getTotalTests(name);
+function renderTotalDetails() {
+    var stat = window.testdata.statistics().total[0];
+    var tests = window.testdata.suite().allTests().sort(sortByStatus)
     stat.totalTime = calculateTotalTime(tests);
     $.tmpl('tagOrTotalDetailsTemplate', stat).appendTo('#details-header');
     drawTestDetailsTable(tests, true);
@@ -245,11 +241,8 @@ function renderSearchSelector(suite, test, include, exclude) {
 function renderSearchDetails(suite, test, include, exclude) {
     var tests = searchTests(util.escape(suite), util.escape(test),
                             util.escape(include), util.escape(exclude));
-    var passed = calculatePassed(tests);
-    var stats = {total: tests.length,
-                 pass: passed,
-                 fail: tests.length - passed,
-                 totalTime: calculateTotalTime(tests)};
+    var stats = calculateStats(tests);
+    stats.totalTime = calculateTotalTime(tests);
     $.tmpl('tagOrTotalDetailsTemplate', stats).appendTo('#details-header');
     drawTestDetailsTable(tests, true);
 }
@@ -300,21 +293,14 @@ function renderTestDetailsHeader() {
 }
 
 function sortByStatus(t1, t2) {
-    if (t1.status != t2.status)
-        return t1.status == 'FAIL' ? -1 : 1;
-    if (t1.isCritical != t2.isCritical)
-        return t1.isCritical ? -1 : 1;
-    return t1.fullName < t2.fullName ? -1 : 1;
+    if (t1.status == t2.status)
+        return t1.fullName < t2.fullName ? -1 : 1;
+    statuses = {'FAIL': -1, 'SKIP': 0, 'PASS': 1};
+    return statuses[t1.status] < statuses[t2.status] ? -1 : 1;
 }
 
 function getTestsHavingTag(tag) {
     return window.testdata.suite().searchTestsByTag(tag).sort(sortByStatus);
-}
-
-function getTotalTests(name) {
-    if (name == 'critical')
-        return window.testdata.suite().criticalTests().sort(sortByStatus);
-    return window.testdata.suite().allTests().sort(sortByStatus);
 }
 
 function calculateTotalTime(tests) {
@@ -324,11 +310,19 @@ function calculateTotalTime(tests) {
     return util.formatElapsed(total);
 }
 
-function calculatePassed(tests) {
+function calculateStats(tests) {
     var passed = util.filter(tests, function (test) {
         return test.status == 'PASS';
     });
-    return passed.length;
+    var failed = util.filter(tests, function (test) {
+        return test.status == 'FAIL';
+    });
+    return {
+      total: tests.length,
+      pass: passed.length,
+      fail: failed.length,
+      skip: tests.length - passed.length - failed.length
+    };
 }
 
 function renderTestDetails(sortByStatus, target) {
@@ -351,12 +345,12 @@ function renderTestDetailsRows(tests, target) {
 }
 
 function configureTableSorter(sortByStatus) {
-    var config = {headers: {3: {sorter: 'criticality'},
-                            6: {sortInitialOrder: 'desc'},
-                            7: {sorter: 'times'}},
+    var config = {headers: {3: {sorter: 'status'},
+                            5: {sortInitialOrder: 'desc'},
+                            6: {sorter: 'times'}},
                   selectorSort: '.details-col-header'};
     if (sortByStatus)
-        config['sortList'] = [[4, 0], [3, 0]];
+        config['sortList'] = [[3, 0]];
     $('#test-details').tablesorter(config);
 }
 
@@ -393,15 +387,19 @@ function hideHiddenDetailsColumns(elem) {
   <table class="details">
     <tr>
       <th>Status:</th>
-      {{if criticalFailed}}
-      <td><a href="#totals?critical" onclick="totalDetailSelected('critical')"
-             class="fail">${criticalFailed} critical {{= testOrTask('{test}')}}{{if criticalFailed != 1}}s{{/if}} failed</a></td>
-      {{else totalFailed}}
-      <td><a href="#totals?critical" onclick="totalDetailSelected('critical')"
-             class="pass">All critical {{= testOrTask('{test}')}}s passed</a></td>
-      {{else}}
-      <td><a href="#totals?all" onclick="totalDetailSelected('all')"
+      {{if fail}}
+      <td><a href="#totals" onclick="totalDetailSelected()"
+             class="fail">${fail} {{= testOrTask('{test}')}}{{if fail != 1}}s{{/if}} failed</a></td>
+      {{else pass && skip}}
+      <td><a href="#totals" onclick="totalDetailSelected()"
+             class="pass">${pass} {{= testOrTask('{test}')}}{{if pass != 1}}s{{/if}} passed,
+             ${skip} {{= testOrTask('{test}')}}{{if skip != 1}}s{{/if}} skipped</a></td>
+      {{else pass}}
+      <td><a href="#totals" onclick="totalDetailSelected()"
              class="pass">All {{= testOrTask('{test}')}}s passed</a></td>
+      {{else}}
+      <td><a href="#totals" onclick="totalDetailSelected()"
+             class="skip">All {{= testOrTask('{test}')}}s skipped</a></td>
       {{/if}}
     </tr>
     {{if doc()}}
@@ -442,10 +440,10 @@ function hideHiddenDetailsColumns(elem) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="totalStatisticsRowTemplate">
-  <tr onclick="totalDetailSelected('${type}')" class="row-${$item.index}">
+  <tr onclick="totalDetailSelected('all')" class="row-${$item.index}">
     <td class="stats-col-name">
       <div class="stat-name">
-        <a href="#totals?${type}">{{html label}}</a>
+        <a href="#totals">{{html label}}</a>
       </div>
     </td>
     {{tmpl($data) 'statColumnsTemplate'}}
@@ -482,50 +480,40 @@ function hideHiddenDetailsColumns(elem) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="detailsHeaderTemplate">
-  <h2 id="${linkTarget}">{{= testOrTask('{Test}')}} Details</h2>
+  <h2 id="${linkTarget}">{{= testOrTask('{Test} Details')}}</h2>
   <ul id="detail-tabs">
     <li class="${totalTabStatus} detail-tab">
-      <a href="#totals" onclick="renderTotalSelector()">Totals</a>
+      <a href="#totals" onclick="renderTotalSelector()"
+         title="{{= testOrTask('Show all {tests}')}}">All</a>
     </li>
     <li class="${tagTabStatus} detail-tab">
-      <a href="#tags" onclick="renderTagSelector()">Tags</a>
+      <a href="#tags" onclick="renderTagSelector()"
+         title="{{= testOrTask('Show {tests} by tag')}}">Tags</a>
     </li>
     <li class="${suiteTabStatus} detail-tab">
-      <a href="#suites" onclick="renderSuiteSelector()">Suites</a>
+      <a href="#suites" onclick="renderSuiteSelector()"
+         title="{{= testOrTask('Show {tests} by suite')}}">Suites</a>
     </li>
     <li class="${searchTabStatus} detail-tab">
-      <a href="#search" onclick="renderSearchSelector()">Search</a>
+      <a href="#search" onclick="renderSearchSelector()"
+         title="{{= testOrTask('Free {test} search')}}">Search</a>
     </li>
   </ul>
 </script>
 
 <script  type="text/x-jquery-tmpl" id="totalDetailsSelectorTemplate">
   <table class="details" id="details-header">
-    <tr class="selector">
-      <th>Type:</th>
-      <td id="normal-selector">
-        <input id="radio-critical" type="radio" name="totals-radio"
-               onclick="totalDetailSelected('critical')"
-               {{if selected == 'critical'}}checked="checked"{{/if}}>
-        <label for="radio-critical">Critical {{= testOrTask('{Test}')}}s</label><br>
-        <input id="radio-all" type="radio" name="totals-radio"
-               onclick="totalDetailSelected('all')"
-               {{if selected == 'all'}}checked="checked"{{/if}}>
-        <label for="radio-all">All {{= testOrTask('{Test}')}}s</label>
-      </td>
-      <td id="print-selector"></td>
-    </tr>
   </table>
 </script>
 
 <script  type="text/x-jquery-tmpl" id="tagDetailsSelectorTemplate">
   <table class="details" id="details-header">
     <tr class="selector">
-      <th>Name:</th>
+      <th>Tag:</th>
       <td id="normal-selector">
-        <select id="tag-detail-selector"
+        <select id="tag-detail-selector" title="Tag selector"
                 onchange="tagDetailSelected(this.options[this.selectedIndex].value)">
-          <option value="">Select tag...</option>
+          <option selected disabled hidden>-- Select --</option>
           {{each tags}}
           <option value="${$value.label}"
                   {{if $value.label == selected}}selected="selected"{{/if}}>
@@ -542,11 +530,11 @@ function hideHiddenDetailsColumns(elem) {
 <script  type="text/x-jquery-tmpl" id="suiteDetailsSelectorTemplate">
   <table class="details" id="details-header">
     <tr class="selector">
-      <th>Name:</th>
+      <th>Suite:</th>
       <td id="normal-selector">
-        <select id="suite-detail-selector"
+        <select id="suite-detail-selector" title="Suite selector"
                 onchange="suiteDetailSelected(this.options[this.selectedIndex].value)">
-          <option value="">Select suite...</option>
+          <option selected disabled hidden>-- Select --</option>
           {{each suites}}
           <option value="${$value.id}"
                   {{if $value.id == selected}}selected="selected"{{/if}}>
@@ -717,7 +705,7 @@ function hideHiddenDetailsColumns(elem) {
 <script type="text/x-jquery-tmpl" id="tagOrTotalDetailsTemplate">
   <tr>
     <th>Status:</th>
-    <td>${total} total, ${pass} passed, {{if fail}}<span class="fail">${fail} failed</span>{{else}}<span class="pass">0 failed</span>{{/if}}</td>
+    <td>{{tmpl($data) 'suiteStatusMessageTemplate'}}</td>
   </tr>
   {{if doc}}
   <tr>
@@ -799,9 +787,6 @@ function hideHiddenDetailsColumns(elem) {
           <div class='details-col-toggle' onclick="toggleDetailsColumn('tags')">&times;</div>
           <div class='details-col-header'>Tags</div>
         </th>
-        <th class="details-col-crit" title="Critical">
-          <div class='details-col-header'>Crit.</div>
-        </th>
         <th class="details-col-status" title="Status">
           <div class='details-col-header'>Status</div>
         </th>
@@ -837,7 +822,6 @@ function hideHiddenDetailsColumns(elem) {
   {{/if}}
     <td class="details-col-doc"><div class="doc details-limited">{{html doc()}}</div></td>
     <td class="details-col-tags"><div>{{html tags.join(', ')}}</div></td>
-    <td class="details-col-crit"><div>{{if isCritical}}yes{{else}}no{{/if}}</div></td>
     <td class="details-col-status"><div><span class="label ${status.toLowerCase()}">${status}</span></div></td>
     <td class="details-col-msg"><div class="message details-limited">{{html message()}}</div></td>
     <td class="details-col-elapsed"><div>${times.elapsedTime}</div></td>

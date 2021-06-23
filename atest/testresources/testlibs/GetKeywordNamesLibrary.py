@@ -16,14 +16,15 @@ def failing_handler(*args):
 class GetKeywordNamesLibrary:
 
     def __init__(self):
-        self.this_is_not_keyword = 'This is just an attribute!!'
+        self.not_method_or_function = 'This is just a string!!'
 
     def get_keyword_names(self):
         marked = [name for name in dir(self)
                   if hasattr(getattr(self, name), 'robot_name')]
         other = ['Get Keyword That Passes', 'Get Keyword That Fails',
                  'keyword_in_library_itself', '_starting_with_underscore_is_ok',
-                 'non_existing_kw', 'this_is_not_keyword']
+                 'Non-existing attribute', 'not_method_or_function',
+                 'Unexpected error getting attribute']
         return marked + other
 
     def __getattr__(self, name):
@@ -31,7 +32,9 @@ class GetKeywordNamesLibrary:
             return passing_handler
         if name == 'Get Keyword That Fails':
             return failing_handler
-        raise AttributeError("Non-existing keyword '%s'" % name)
+        if name == 'Unexpected error getting attribute':
+            raise TypeError('Oooops!')
+        raise AttributeError("Non-existing attribute '%s'" % name)
 
     def keyword_in_library_itself(self):
         msg = 'No need for __getattr__ here!!'

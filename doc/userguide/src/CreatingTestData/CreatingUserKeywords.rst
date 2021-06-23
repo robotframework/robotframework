@@ -1,7 +1,7 @@
 Creating user keywords
 ======================
 
-Keyword tables are used to create new higher-level keywords by
+Keyword sections are used to create new higher-level keywords by
 combining existing keywords together. These keywords are called *user
 keywords* to differentiate them from lowest level *library keywords*
 that are implemented in test libraries. The syntax for creating user
@@ -19,8 +19,8 @@ Basic syntax
 ~~~~~~~~~~~~
 
 In many ways, the overall user keyword syntax is identical to the
-`test case syntax`_.  User keywords are created in keyword tables
-which differ from test case tables only by the name that is used to
+`test case syntax`_.  User keywords are created in Keyword sections
+which differ from Test Case sections only by the name that is used to
 identify them. User keyword names are in the first column similarly as
 test cases names. Also user keywords are created from keywords, either
 from keywords in test libraries or other user keywords. Keyword names
@@ -51,8 +51,8 @@ and `test suite initialization files`_. Keywords created in resource
 files are available for files using them, whereas other keywords are
 only available in the files where they are created.
 
-Settings in the Keyword table
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Settings in the Keyword section
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 User keywords can have similar settings as `test cases`__, and they
 have the same square bracket syntax separating them from keyword
@@ -79,13 +79,12 @@ this section.
    in a section of their own.
 
 .. note:: Setting names are case-insensitive, but the format used above is
-      recommended. Prior to Robot Framework 3.1, settings were also
-      space-insensitive meaning that extra spaces could be added (e.g.
-      `[T a g s]`). This is now deprecated and only the format above,
-      case-insensitively, is supported. Possible space between brackets
-      and the name (e.g. `[ Tags ]`) is still allowed.
+      recommended. Settings used to be also space-insensitive, but that was
+      deprecated in Robot Framework 3.1 and trying to use something like
+      `[T a g s]` causes an error in Robot Framework 3.2. Possible spaces
+      between brackets and the name (e.g. `[ Tags ]`) are still allowed.
 
-__ `Settings in the test case table`_
+__ `Settings in the test case section`_
 __ `User keyword tags`_
 
 .. _User keyword documentation:
@@ -93,8 +92,8 @@ __ `User keyword tags`_
 User keyword name and documentation
 -----------------------------------
 
-The user keyword name is defined in the first column of the user
-keyword table. Of course, the name should be descriptive, and it is
+The user keyword name is defined in the first column of the
+Keyword section. Of course, the name should be descriptive, and it is
 acceptable to have quite long keyword names. Actually, when creating
 use-case-like test cases, the highest-level keywords are often
 formulated as sentences or even paragraphs.
@@ -142,7 +141,7 @@ the `Deprecating keywords`_ section.
 User keyword tags
 -----------------
 
-Starting from Robot Framework 2.9, keywords can also have tags. User keywords
+Both user keywords and `library keywords`_ can have tags. User keyword
 tags can be set with :setting:`[Tags]` setting similarly as `test case tags`_,
 but possible :setting:`Force Tags` and :setting:`Default Tags` setting do not
 affect them. Additionally keyword tags can be specified on the last line of
@@ -230,7 +229,7 @@ the equals sign (`=`) and then the value, for example `${arg}=default`.
 There can be many arguments with defaults, but they all must be given after
 the normal positional arguments. The default value can contain a variable_
 created on `test, suite or global scope`__, but local variables of the keyword
-executor cannot be used. Starting from Robot Framework 3.0, default value can
+executor cannot be used. Default value can
 also be defined based on earlier arguments accepted by the keyword.
 
 .. note:: The syntax for default values is space sensitive. Spaces
@@ -505,7 +504,7 @@ values used when calling the keyword match the correct arguments. This
 is a problem especially if there are multiple arguments and characters
 separating them may also appear in the given values. For example,
 keyword :name:`Select ${city} ${team}` does not work correctly if used
-with city containing too parts like :name:`Select Los Angeles Lakers`.
+with city containing two parts like :name:`Select Los Angeles Lakers`.
 
 An easy solution to this problem is quoting the arguments (e.g.
 :name:`Select "${city}" "${team}"`) and using the keyword in quoted
@@ -528,6 +527,7 @@ __ `Ignoring Given/When/Then/And/But prefixes`_
 
 Using custom regular expressions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 When keywords with embedded arguments are called, the values are
 matched internally using `regular expressions`__
 (regexps for short). The default logic goes so that every argument in
@@ -582,10 +582,10 @@ regular expressions is illustrated by the examples below.
    I execute "${cmd}" with "${opts}"
        Run Process    ${cmd} ${opts}    shell=True
 
-   I type ${a:\d+} ${operator:[+-]} ${b:\d+}
-       Calculate    ${a}    ${operator}    ${b}
+   I type ${num1:\d+} ${operator:[+-]} ${num2:\d+}
+       Calculate    ${num1}    ${operator}    ${num2}
 
-   Today is ${date:\d{4\}-\d{2\}-\d{2\}}
+   Today is ${date:\d{4}-\d{2}-\d{2}}
        Log    ${date}
 
 In the above example keyword :name:`I execute "ls" with "-lh"` matches
@@ -614,23 +614,22 @@ errors`__.
 Escaping special characters
 '''''''''''''''''''''''''''
 
-There are some special characters that need to be escaped when used in
-the custom embedded arguments regexp. First of all, possible closing
-curly braces (`}`) in the pattern need to be escaped with a single backslash
-(`\}`) because otherwise the argument would end already there. This is
-illustrated in the previous example with keyword
-:name:`Today is ${date:\\d{4\\}-\\d{2\\}-\\d{2\\}}`.
+Regular expressions use the backslash character (:codesc:`\\`) heavily both
+to escape characters that have a special meaning in regexps (e.g. `\$`) and
+to form special sequences (e.g. `\d`). Typically in Robot Framework data
+backslash characters `need to be escaped`__ with another backslash, but
+that is not required in this context. If there is a need to have a literal
+backslash in the pattern, then the backslash must be escaped.
 
-Backslash (:codesc:`\\`) is a special character in Python regular
-expression syntax and thus needs to be escaped if you want to have a
-literal backslash character. The safest escape sequence in this case
-is four backslashes (`\\\\`) but, depending on the next
-character, also two backslashes may be enough.
+Possible lone opening and closing curly braces in the pattern must be escaped
+like `${open:\}}` and `${close:\{}`. If there are matching braces like
+`${two digits:\d{2}}`, escaping is not needed. Escaping only opening or
+closing brace is not allowed.
 
-Notice also that keyword names and possible embedded arguments in them
-should *not* be escaped using the normal `test data escaping
-rules`__. This means that, for example, backslashes in expressions
-like `${name:\w+}` should not be escaped.
+.. warning:: Prior to Robot Framework 3.2 it was mandatory to escape all
+             closing curly braces in the pattern like `${two digits:\d{2\}}`.
+             This syntax is unfortunately not supported by Robot Framework 3.2
+             or newer and keywords using it must be updated when upgrading.
 
 Using variables with custom embedded argument regular expressions
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -751,6 +750,20 @@ specifying those values in different cells after the :setting:`[Return]` setting
 
    Return Three Values
        [Return]    foo    bar    zap
+
+The :setting:`[Return]` setting just defines what the keyword should return after
+all keywords it contains have been executed. Although it is recommended to have it
+at the end of keyword where it logically belongs, its position does not affect how
+it is used. For example, the following keyword works exactly like the one above.
+
+.. sourcecode:: robotframework
+
+   *** Keywords ***
+   Return One Value
+       [Return]    ${value}
+       [Arguments]    ${arg}
+       Do Something    ${arg}
+       ${value} =    Get Some Value
 
 Using special keywords to return
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -15,7 +15,7 @@
 
 from robot.errors import DataError
 from robot.utils import is_string, is_dict_like, split_from_equals
-from robot.variables import VariableSplitter
+from robot.variables import is_dict_variable
 
 from .argumentvalidator import ArgumentValidator
 
@@ -43,15 +43,16 @@ class ArgumentResolver(object):
 class NamedArgumentResolver(object):
 
     def __init__(self, argspec):
+        """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
         self._argspec = argspec
 
     def resolve(self, arguments, variables=None):
         positional = []
         named = []
         for arg in arguments:
-            if self._is_dict_var(arg):
+            if is_dict_variable(arg):
                 named.append(arg)
-            elif self._is_named(arg, variables):
+            elif self._is_named(arg, named, variables):
                 named.append(split_from_equals(arg))
             elif named:
                 self._raise_positional_after_named()
@@ -59,27 +60,24 @@ class NamedArgumentResolver(object):
                 positional.append(arg)
         return positional, named
 
-    def _is_dict_var(self, arg):
-        return (is_string(arg) and arg[:2] == '&{' and arg[-1] == '}' and
-                VariableSplitter(arg).is_dict_variable())
-
-    def _is_named(self, arg, variables=None):
-        if not (is_string(arg) and '=' in arg):
-            return False
+    def _is_named(self, arg, previous_named, variables=None):
         name, value = split_from_equals(arg)
         if value is None:
             return False
-        if self._argspec.kwargs or self._argspec.kwonlyargs:
-            return True
-        if not self._argspec.supports_named:
-            return False
         if variables:
-            name = variables.replace_scalar(name)
-        return name in self._argspec.positional
+            try:
+                name = variables.replace_scalar(name)
+            except DataError:
+                return False
+        spec = self._argspec
+        return bool(previous_named or
+                    spec.var_named or
+                    name in spec.positional_or_named or
+                    name in spec.named_only)
 
     def _raise_positional_after_named(self):
         raise DataError("%s '%s' got positional argument after named arguments."
-                        % (self._argspec.type, self._argspec.name))
+                        % (self._argspec.type.capitalize(), self._argspec.name))
 
 
 class NullNamedArgumentResolver(object):
@@ -92,7 +90,7 @@ class DictToKwargs(object):
 
     def __init__(self, argspec, enabled=False):
         self._maxargs = argspec.maxargs
-        self._enabled = enabled and bool(argspec.kwargs)
+        self._enabled = enabled and bool(argspec.var_named)
 
     def handle(self, positional, named):
         if self._enabled and self._extra_arg_has_kwargs(positional, named):

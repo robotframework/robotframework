@@ -46,7 +46,7 @@ Non-ASCII and non-string names and values
     Check log message    ${tc.kws[2].msgs[0]}
     ...    Set suite metadata '42' to value '1 päivä'.
 
-Modifying ${SUITE METADATA} has no effect also after setting metadata
+Modifying \${SUITE METADATA} has no effect also after setting metadata
     Check test case    ${TESTNAME}
     Metadata should have value    Cannot be   set otherwise
 

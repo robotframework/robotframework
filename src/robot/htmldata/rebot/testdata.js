@@ -3,9 +3,10 @@ window.testdata = function () {
     var elementsById = {};
     var idCounter = 0;
     var _statistics = null;
-    var LEVELS = ['TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FAIL'];
-    var STATUSES = ['FAIL', 'PASS', 'NOT_RUN'];
-    var KEYWORDS = ['KEYWORD', 'SETUP', 'TEARDOWN', 'FOR', 'VAR'];
+    var LEVELS = ['TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FAIL', 'SKIP'];
+    var STATUSES = ['FAIL', 'PASS', 'SKIP', 'NOT RUN'];
+    var KEYWORD_TYPES = ['KEYWORD', 'SETUP', 'TEARDOWN', 'FOR', 'VAR', 'IF', 'ELSE IF', 'ELSE'];
+    var MESSAGE_TYPE = 8;
 
     function addElement(elem) {
         if (!elem.id)
@@ -29,11 +30,11 @@ window.testdata = function () {
                 elapsed];
     }
 
-    function message(element, strings) {
-        return addElement(model.Message(LEVELS[element[1]],
-                                        util.timestamp(element[0]),
-                                        strings.get(element[2]),
-                                        strings.get(element[3])));
+    function createMessage(element, strings) {
+        return model.Message(LEVELS[element[2]],
+                             util.timestamp(element[1]),
+                             strings.get(element[3]),
+                             strings.get(element[4]));
     }
 
     function parseStatus(stats) {
@@ -46,10 +47,16 @@ window.testdata = function () {
         };
     }
 
+    function createBodyItem(parent, element, strings, index) {
+        if (element[0] == MESSAGE_TYPE)
+            return createMessage(element, strings);
+        return createKeyword(parent, element, strings, index);
+    }
+
     function createKeyword(parent, element, strings, index) {
         var kw = model.Keyword({
             parent: parent,
-            type: KEYWORDS[element[0]],
+            type: KEYWORD_TYPES[element[0]],
             id: 'k' + (index + 1),
             name: strings.get(element[1]),
             libname: strings.get(element[2]),
@@ -67,13 +74,12 @@ window.testdata = function () {
             isChildrenLoaded: typeof(element[9]) !== 'number'
         });
         lazyPopulateKeywordsFromFile(kw, element[9], strings);
-        kw.populateMessages(Populator(element[10], strings, message));
         return kw;
     }
 
     function lazyPopulateKeywordsFromFile(parent, modelOrIndex, strings) {
         var model, index, populator;
-        var creator = childCreator(parent, createKeyword);
+        var creator = childCreator(parent, createBodyItem);
         if (parent.isChildrenLoaded) {
             model = modelOrIndex;
             populator = Populator(model, strings, creator);
@@ -90,38 +96,33 @@ window.testdata = function () {
     }
 
     function createTest(parent, element, strings, index) {
-        var statusElement = element[5];
+        var status = element[4];
         var test = model.Test({
             parent: parent,
             id: 't' + (index + 1),
             name: strings.get(element[0]),
             doc: function () {
-                var doc = strings.get(element[3]);
+                var doc = strings.get(element[2]);
                 this.doc = function () { return doc; };
                 return doc;
             },
             timeout: strings.get(element[1]),
-            isCritical: element[2],
-            status: parseStatus(statusElement),
+            status: parseStatus(status),
             message: function () {
-                var msg = createMessage(statusElement, strings);
+                var msg = status.length == 4 ? strings.get(status[3]) : '';
                 this.message = function () { return msg; };
                 return msg;
             },
-            times: model.Times(times(statusElement)),
-            tags: tags(element[4], strings),
-            isChildrenLoaded: typeof(element[6]) !== 'number'
+            times: model.Times(times(status)),
+            tags: tags(element[3], strings),
+            isChildrenLoaded: typeof(element[5]) !== 'number'
         });
-        lazyPopulateKeywordsFromFile(test, element[6], strings);
+        lazyPopulateKeywordsFromFile(test, element[5], strings);
         return test;
     }
 
-    function createMessage(statusElement, strings) {
-        return statusElement.length == 4 ? strings.get(statusElement[3]) : '';
-    }
-
     function createSuite(parent, element, strings, index) {
-        var statusElement = element[5];
+        var status = element[5];
         var suite = model.Suite({
             parent: parent,
             id: 's' + ((index || 0) + 1),
@@ -133,13 +134,13 @@ window.testdata = function () {
                 this.doc = function () { return doc; };
                 return doc;
             },
-            status: parseStatus(statusElement),
+            status: parseStatus(status),
             message: function () {
-                var msg = createMessage(statusElement, strings);
+                var msg = status.length == 4 ? strings.get(status[3]) : '';
                 this.message = function () { return msg; };
                 return msg;
             },
-            times: model.Times(times(statusElement)),
+            times: model.Times(times(status)),
             statistics: suiteStats(util.last(element)),
             metadata: parseMetadata(element[4], strings)
         });
@@ -160,11 +161,9 @@ window.testdata = function () {
     function suiteStats(stats) {
         return {
             total: stats[0],
-            totalPassed: stats[1],
-            totalFailed: stats[0] - stats[1],
-            critical: stats[2],
-            criticalPassed: stats[3],
-            criticalFailed: stats[2] - stats[3]
+            pass: stats[1],
+            fail: stats[2],
+            skip: stats[3]
         };
     }
 
@@ -232,7 +231,10 @@ window.testdata = function () {
 
     function selectFrom(element, type, index) {
         if (type === 'k') {
-            return element.keywords()[index];
+            var keywords = util.filter(element.keywords(), function (kw) {
+                return kw.type != 'message';
+            });
+            return keywords[index];
         } else if (type === 't') {
             return element.tests()[index];
         } else {
@@ -243,8 +245,8 @@ window.testdata = function () {
     function errorIterator() {
         return {
             next: function () {
-                return message(window.output.errors.shift(),
-                               StringStore(window.output.strings));
+                return addElement(createMessage(window.output.errors.shift(),
+                                                StringStore(window.output.strings)));
             },
             hasNext: function () {
                 return window.output.errors.length > 0;

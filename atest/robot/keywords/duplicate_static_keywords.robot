@@ -24,8 +24,7 @@ Keyword with embedded arguments defined twice fails at run-time
 *** Keywords ***
 Creating keyword should have failed
     [Arguments]    ${index}    ${name}
-    ${message} =    Catenate
-    ...    Error in test library 'DupeKeywords':
-    ...    Creating keyword '${name}' failed:
+    Error in library    DupeKeywords
+    ...    Adding keyword '${name}' failed:
     ...    Keyword with same name defined multiple times.
-    Check Log Message    ${ERRORS[${index}]}    ${message}    ERROR
+    ...    index=${index}

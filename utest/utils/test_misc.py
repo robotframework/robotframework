@@ -1,7 +1,9 @@
 import unittest
 
-from robot.utils.asserts import assert_equal
-from robot.utils import printable_name, seq2str, roundup, IRONPYTHON
+from robot.utils.asserts import assert_equal, assert_raises_with_msg
+from robot.utils import (
+    printable_name, seq2str, roundup, plural_or_not, IRONPYTHON, test_or_task
+)
 
 
 class TestRoundup(unittest.TestCase):
@@ -141,6 +143,42 @@ class TestPrintableName(unittest.TestCase):
                          ('Foo-B:A;R!', 'Foo-B:A;R!'),
                          ('', '')]:
             assert_equal(printable_name(inp, code_style=True), exp)
+
+
+class TestPluralOrNot(unittest.TestCase):
+
+    def test_plural_or_not(self):
+        for singular in [1, -1, (2,), ['foo'], {'key': 'value'}, 'x']:
+            assert_equal(plural_or_not(singular), '')
+        for plural in [0, 2, -2, 42,
+                       (), [], {},
+                       (1, 2, 3), ['a', 'b'], {'a': 1, 'b': 2},
+                       '', 'xx', 'Hello, world!']:
+            assert_equal(plural_or_not(plural), 's')
+
+
+
+class TestTestOrTask(unittest.TestCase):
+
+    def test_no_match(self):
+        for inp in ['', 'No match', 'No {match}', '{No} {task} {match}']:
+            assert_equal(test_or_task(inp), inp)
+            assert_equal(test_or_task(inp, rpa=True), inp)
+
+    def test_match(self):
+        for test, task in [('test', 'task'),
+                           ('Test', 'Task'),
+                           ('TEST', 'TASK'),
+                           ('tESt', 'tASk')]:
+            inp = '{%s}' % test
+            assert_equal(test_or_task(inp, rpa=False), test)
+            assert_equal(test_or_task(inp, rpa=True), task)
+
+    def test_multiple_matches(self):
+        assert_equal(test_or_task('Contains {test}, {TEST} and {TesT}', False),
+                     'Contains test, TEST and TesT')
+        assert_equal(test_or_task('Contains {test}, {TEST} and {TesT}', True),
+                     'Contains task, TASK and TasK')
 
 
 if __name__ == "__main__":

@@ -24,12 +24,6 @@ class OutputWriter(XmlLogger):
     def start_message(self, msg):
         self._write_message(msg)
 
-    def visit_keyword(self, kw):
-        self.start_keyword(kw)
-        for child in kw.children:
-            child.visit(self)
-        self.end_keyword(kw)
-
     def close(self):
         self._writer.end('robot')
         self._writer.close()

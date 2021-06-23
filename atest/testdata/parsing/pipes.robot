@@ -59,23 +59,25 @@
 | |  |   |    |     |      |       |        |       |      |     |    |  | |
 | | Cells Should Be Empty  |  |     | | | |  |   | ${EMPTY}  | | | |
 
-| Consequtive spaces
-| | Should Be Equal | foo            bar | foo bar
-| | Should Be Equal | non-ascii  　spaces | non-ascii spaces
+| Consecutive spaces
+| | Should Be Equal | foo            bar | foo${SPACE * 12}bar
+| | Should Be Equal | non-ascii  　spaces | non-ascii\xa0\u1680\u3000spaces
 
 | Tabs
-| | Should Be Equal | foo	bar | foo bar |
-| | Should Be Equal | foo			bar | foo bar |
+| | Should Be Equal | foo	bar | foo\tbar |
+| | Should Be Equal | foo			bar | foo\t\t\tbar |
 
 | Using FOR Loop With Pipes  |
 |         |  [Documentation]  |  FAIL    |  for loop executed  |
-|         |  :FOR  |  ${value}  |  IN   |  a    |   a   |   for loop executed   |  for loop not executed  |
+|         |   FOR  |  ${value}  |  IN   |  a    |   a   |   for loop executed   |  for loop not executed  |
 |         |        |  Should Be Equal  |  ${value}  |  a   |  ${value}  |  no values  |
+|         | END    |
 
 | *Keywords* | A | r | g | u | m | e | n | t | s |
 |  Cells Should Be Empty  |
 |       | [Arguments]     | @{args}          |
-|       | :FOR            | ${arg}           |  IN      |  @{args}   |
+|       |  FOR            | ${arg}           |  IN      |  @{args}   |
 |       |                 | Should Be Equal  |  ${arg}  |  ${EMPTY}  |
+|       | END             |
 |       | ${length} =     | Get Length       | ${args}  |
 |       | Should Be Equal | ${length}        | ${8}     | Amount of empty cells |

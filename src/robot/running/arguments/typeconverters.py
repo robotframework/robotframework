@@ -19,6 +19,11 @@ try:
     from collections import abc
 except ImportError:    # Python 2
     import collections as abc
+try:
+    from typing import Union
+except ImportError:
+    class Union(object):
+        pass
 from datetime import datetime, date, timedelta
 from decimal import InvalidOperation, Decimal
 try:
@@ -29,76 +34,92 @@ except ImportError:    # Standard in Py 3.4+ but can be separately installed
 from numbers import Integral, Real
 
 from robot.libraries.DateTime import convert_date, convert_time
-from robot.utils import (FALSE_STRINGS, IRONPYTHON, TRUE_STRINGS, PY_VERSION,
-                         PY2, seq2str, type_name, unicode)
+from robot.utils import (FALSE_STRINGS, IRONPYTHON, TRUE_STRINGS, PY_VERSION, PY2,
+                         eq, get_error_message, seq2str, type_name, typeddict_types,
+                         unic, unicode)
 
 
 class TypeConverter(object):
     type = None
+    type_name = None
     abc = None
     aliases = ()
-    convert_none = True
+    value_types = (unicode,)
     _converters = OrderedDict()
     _type_aliases = {}
 
-    @property
-    def type_name(self):
-        return self.type.__name__.lower()
+    def __init__(self, used_type):
+        self.used_type = used_type
 
     @classmethod
-    def register(cls, converter_class):
-        converter = converter_class()
+    def register(cls, converter):
         cls._converters[converter.type] = converter
         for name in (converter.type_name,) + converter.aliases:
-            if name is not None:
+            if name is not None and not isinstance(name, property):
                 cls._type_aliases[name.lower()] = converter.type
-        return converter_class
+        return converter
 
     @classmethod
     def converter_for(cls, type_):
-        # Types defined in the typing module in Python 3.7+. For details see
-        # https://bugs.python.org/issue34568
-        if PY_VERSION >= (3, 7) and hasattr(type_, '__origin__'):
+        if getattr(type_, '__origin__', None) and type_.__origin__ is not Union:
             type_ = type_.__origin__
         if isinstance(type_, (str, unicode)):
             try:
                 type_ = cls._type_aliases[type_.lower()]
             except KeyError:
                 return None
-        if not isinstance(type_, type) or issubclass(type_, unicode):
-            return None
         if type_ in cls._converters:
-            return cls._converters[type_]
+            return cls._converters[type_](type_)
         for converter in cls._converters.values():
             if converter.handles(type_):
-                return converter.get_converter(type_)
+                return converter(type_)
         return None
 
-    def handles(self, type_):
-        return (issubclass(type_, self.type) or
-                self.abc and issubclass(type_, self.abc))
+    @classmethod
+    def handles(cls, type_):
+        handled = (cls.type, cls.abc) if cls.abc else cls.type
+        return isinstance(type_, type) and issubclass(type_, handled)
 
-    def get_converter(self, type_):
-        return self
-
-    def convert(self, name, value, explicit_type=True):
-        if self.convert_none and value.upper() == 'NONE':
-            return None
+    def convert(self, name, value, explicit_type=True, strict=True):
+        if self.no_conversion_needed(value):
+            return value
+        if not self._handles_value(value):
+            return self._handle_error(name, value, strict=strict)
         try:
+            if not isinstance(value, unicode):
+                return self._non_string_convert(value, explicit_type)
             return self._convert(value, explicit_type)
         except ValueError as error:
-            return self._handle_error(name, value, error, explicit_type)
+            return self._handle_error(name, value, error, strict)
+
+    def no_conversion_needed(self, value):
+        try:
+            return isinstance(value, self.used_type)
+        except TypeError:
+            # If the used type doesn't like `isinstance` (e.g. TypedDict),
+            # compare the value to the generic type instead.
+            if self.type and self.type is not self.used_type:
+                return isinstance(value, self.type)
+            raise
+
+    def _handles_value(self, value):
+        return isinstance(value, self.value_types)
+
+    def _non_string_convert(self, value, explicit_type=True):
+        return self._convert(value, explicit_type)
 
     def _convert(self, value, explicit_type=True):
         raise NotImplementedError
 
-    def _handle_error(self, name, value, error, explicit_type=True):
-        if not explicit_type:
+    def _handle_error(self, name, value, error=None, strict=True):
+        if not strict:
             return value
-        ending = u': %s' % error if error.args else '.'
-        raise ValueError("Argument '%s' got value '%s' that cannot be "
-                         "converted to %s%s"
-                         % (name, value, self.type_name, ending))
+        value_type = '' if isinstance(value, unicode) else ' (%s)' % type_name(value)
+        ending = u': %s' % error if (error and error.args) else '.'
+        raise ValueError(
+            "Argument '%s' got value '%s'%s that cannot be converted to %s%s"
+            % (name, unic(value), value_type, self.type_name, ending)
+        )
 
     def _literal_eval(self, value, expected):
         # ast.literal_eval has some issues with sets:
@@ -123,13 +144,37 @@ class TypeConverter(object):
 
 
 @TypeConverter.register
+class StringConverter(TypeConverter):
+    type = unicode
+    type_name = 'string'
+    aliases = ('string', 'str', 'unicode')
+
+    def _handles_value(self, value):
+        return True
+
+    def _convert(self, value, explicit_type=True):
+        if not explicit_type:
+            return value
+        try:
+            return unicode(value)
+        except Exception:
+            raise ValueError(get_error_message())
+
+
+@TypeConverter.register
 class BooleanConverter(TypeConverter):
+    value_types = (unicode, int, float, type(None))
     type = bool
     type_name = 'boolean'
     aliases = ('bool',)
 
+    def _non_string_convert(self, value, explicit_type=True):
+        return value
+
     def _convert(self, value, explicit_type=True):
         upper = value.upper()
+        if upper == 'NONE':
+            return None
         if upper in TRUE_STRINGS:
             return True
         if upper in FALSE_STRINGS:
@@ -143,6 +188,12 @@ class IntegerConverter(TypeConverter):
     abc = Integral
     type_name = 'integer'
     aliases = ('int', 'long')
+    value_types = (unicode, float)
+
+    def _non_string_convert(self, value, explicit_type=True):
+        if value.is_integer():
+            return int(value)
+        raise ValueError('Conversion would lose precision.')
 
     def _convert(self, value, explicit_type=True):
         try:
@@ -160,7 +211,9 @@ class IntegerConverter(TypeConverter):
 class FloatConverter(TypeConverter):
     type = float
     abc = Real
+    type_name = 'float'
     aliases = ('double',)
+    value_types = (unicode, Real)
 
     def _convert(self, value, explicit_type=True):
         try:
@@ -172,6 +225,8 @@ class FloatConverter(TypeConverter):
 @TypeConverter.register
 class DecimalConverter(TypeConverter):
     type = Decimal
+    type_name = 'decimal'
+    value_types = (unicode, int, float)
 
     def _convert(self, value, explicit_type=True):
         try:
@@ -187,8 +242,11 @@ class DecimalConverter(TypeConverter):
 class BytesConverter(TypeConverter):
     type = bytes
     abc = getattr(abc, 'ByteString', None)    # ByteString is new in Python 3
-    type_name = 'bytes'                       # Needed on Python 2
-    convert_none = False
+    type_name = 'bytes'
+    value_types = (unicode, bytearray)
+
+    def _non_string_convert(self, value, explicit_type=True):
+        return bytes(value)
 
     def _convert(self, value, explicit_type=True):
         if PY2 and not explicit_type:
@@ -204,7 +262,11 @@ class BytesConverter(TypeConverter):
 @TypeConverter.register
 class ByteArrayConverter(TypeConverter):
     type = bytearray
-    convert_none = False
+    type_name = 'bytearray'
+    value_types = (unicode, bytes)
+
+    def _non_string_convert(self, value, explicit_type=True):
+        return bytearray(value)
 
     def _convert(self, value, explicit_type=True):
         try:
@@ -217,6 +279,8 @@ class ByteArrayConverter(TypeConverter):
 @TypeConverter.register
 class DateTimeConverter(TypeConverter):
     type = datetime
+    type_name = 'datetime'
+    value_types = (unicode, int, float)
 
     def _convert(self, value, explicit_type=True):
         return convert_date(value, result_format='datetime')
@@ -225,6 +289,7 @@ class DateTimeConverter(TypeConverter):
 @TypeConverter.register
 class DateConverter(TypeConverter):
     type = date
+    type_name = 'date'
 
     def _convert(self, value, explicit_type=True):
         dt = convert_date(value, result_format='datetime')
@@ -236,6 +301,8 @@ class DateConverter(TypeConverter):
 @TypeConverter.register
 class TimeDeltaConverter(TypeConverter):
     type = timedelta
+    type_name = 'timedelta'
+    value_types = (unicode, int, float)
 
     def _convert(self, value, explicit_type=True):
         return convert_time(value, result_format='timedelta')
@@ -245,26 +312,27 @@ class TimeDeltaConverter(TypeConverter):
 class EnumConverter(TypeConverter):
     type = Enum
 
-    def __init__(self, enum=None):
-        self._enum = enum
-
     @property
     def type_name(self):
-        return self._enum.__name__ if self._enum else None
-
-    def get_converter(self, type_):
-        return EnumConverter(type_)
+        return self.used_type.__name__
 
     def _convert(self, value, explicit_type=True):
+        enum = self.used_type
         try:
             # This is compatible with the enum module in Python 3.4, its
-            # enum34 backport, and the older enum module. `self._enum[value]`
+            # enum34 backport, and the older enum module. `enum[value]`
             # wouldn't work with the old enum module.
-            return getattr(self._enum, value)
+            return getattr(enum, value)
         except AttributeError:
-            members = self._get_members(self._enum)
-            raise ValueError("%s does not have member '%s'. Available: %s"
-                             % (self.type_name, value, seq2str(members)))
+            members = sorted(self._get_members(enum))
+            matches = [m for m in members if eq(m, value, ignore='_')]
+            if not matches:
+                raise ValueError("%s does not have member '%s'. Available: %s"
+                                 % (self.type_name, value, seq2str(members)))
+            if len(matches) > 1:
+                raise ValueError("%s has multiple members matching '%s'. Available: %s"
+                                 % (self.type_name, value, seq2str(matches)))
+            return getattr(enum, matches[0])
 
     def _get_members(self, enum):
         try:
@@ -276,15 +344,37 @@ class EnumConverter(TypeConverter):
 @TypeConverter.register
 class NoneConverter(TypeConverter):
     type = type(None)
+    type_name = 'None'
+
+    def __init__(self, used_type):
+        if used_type is None:
+            used_type = type(None)
+        TypeConverter.__init__(self, used_type)
+
+    @classmethod
+    def handles(cls, type_):
+        return type_ in (type(None), None)
 
     def _convert(self, value, explicit_type=True):
-        return value
+        if value.upper() == 'NONE':
+            return None
+        raise ValueError
 
 
 @TypeConverter.register
 class ListConverter(TypeConverter):
     type = list
+    type_name = 'list'
     abc = abc.Sequence
+    value_types = (unicode, tuple)
+
+    def no_conversion_needed(self, value):
+        if isinstance(value, (str, unicode)):
+            return False
+        return TypeConverter.no_conversion_needed(self, value)
+
+    def _non_string_convert(self, value, explicit_type=True):
+        return list(value)
 
     def _convert(self, value, explicit_type=True):
         return self._literal_eval(value, list)
@@ -293,6 +383,11 @@ class ListConverter(TypeConverter):
 @TypeConverter.register
 class TupleConverter(TypeConverter):
     type = tuple
+    type_name = 'tuple'
+    value_types = (unicode, list)
+
+    def _non_string_convert(self, value, explicit_type=True):
+        return tuple(value)
 
     def _convert(self, value, explicit_type=True):
         return self._literal_eval(value, tuple)
@@ -312,7 +407,12 @@ class DictionaryConverter(TypeConverter):
 @TypeConverter.register
 class SetConverter(TypeConverter):
     type = set
+    type_name = 'set'
+    value_types = (unicode, frozenset, list, tuple, abc.Mapping)
     abc = abc.Set
+
+    def _non_string_convert(self, value, explicit_type=True):
+        return set(value)
 
     def _convert(self, value, explicit_type=True):
         return self._literal_eval(value, set)
@@ -321,9 +421,66 @@ class SetConverter(TypeConverter):
 @TypeConverter.register
 class FrozenSetConverter(TypeConverter):
     type = frozenset
+    type_name = 'frozenset'
+    value_types = (unicode, set, list, tuple, abc.Mapping)
+
+    def _non_string_convert(self, value, explicit_type=True):
+        return frozenset(value)
 
     def _convert(self, value, explicit_type=True):
         # There are issues w/ literal_eval. See self._literal_eval for details.
         if value == 'frozenset()' and not PY2:
             return frozenset()
         return frozenset(self._literal_eval(value, set))
+
+
+@TypeConverter.register
+class CombinedConverter(TypeConverter):
+    type = Union
+
+    def __init__(self, union):
+        self.types = self._none_to_nonetype(self._get_types(union))
+        self.converters = [TypeConverter.converter_for(t) for t in self.types]
+
+    def _get_types(self, union):
+        if not union:
+            return ()
+        if isinstance(union, tuple):
+            return union
+        try:
+            return union.__args__
+        except AttributeError:
+            # Python 3.5.2's typing uses __union_params__ instead
+            # of __args__. This block can likely be safely removed
+            # when Python 3.5 support is dropped
+            return union.__union_params__
+
+    def _none_to_nonetype(self, types):
+        return tuple(t if t is not None else type(None) for t in types)
+
+    @property
+    def type_name(self):
+        return ' or '.join(type_name(t) for t in self.types) if self.types else None
+
+    @classmethod
+    def handles(cls, type_):
+        return getattr(type_, '__origin__', None) is Union or isinstance(type_, tuple)
+
+    def _handles_value(self, value):
+        return True
+
+    def no_conversion_needed(self, value):
+        for converter in self.converters:
+            if converter and converter.no_conversion_needed(value):
+                return True
+        return False
+
+    def _convert(self, value, explicit_type=True):
+        for converter in self.converters:
+            if not converter:
+                return value
+            try:
+                return converter.convert('', value, explicit_type)
+            except ValueError:
+                pass
+        raise ValueError

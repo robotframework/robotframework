@@ -13,4 +13,4 @@ S2TC2 Fixture
 
 S2TC2 Timeout
     [Timeout]    1 day
-    Sleep    1.1
+    Sleep    0.1

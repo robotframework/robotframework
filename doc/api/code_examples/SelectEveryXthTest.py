@@ -8,9 +8,9 @@ from robot.api import SuiteVisitor
 
 class SelectEveryXthTest(SuiteVisitor):
 
-    def __init__(self, x, start=0):
-        self.x = int(x)
-        self.start = int(start)
+    def __init__(self, x: int, start: int = 0):
+        self.x = x
+        self.start = start
 
     def start_suite(self, suite):
         """Modify suite's tests to contain only every Xth."""

@@ -6,3 +6,7 @@ Failing
 Selected
     No Operation
 
+Glob [seq]
+    [Documentation]    FAIL Message
+    Fail    Message
+

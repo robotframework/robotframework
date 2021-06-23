@@ -12,6 +12,18 @@ None means no type
 Falsy types mean no type
     Falsy types mean no type    1    2    3
 
+NoneType
+    NoneType    1    none    3
+
+None as string is None
+    NoneType    1    none    3
+
+None in tuple is alias for NoneType
+    [Template]    None in tuple is alias for NoneType
+    1       None       exp1=1       exp2=None
+    ${1}    ${None}    exp1=1       exp2=None
+    NONE    none       exp1=None    exp2=None
+
 Less types than arguments is ok
     Less types than arguments is ok    1    2    3
 

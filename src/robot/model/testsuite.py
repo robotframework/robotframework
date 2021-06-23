@@ -13,10 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import setter
+from robot.utils import py3to2, setter
 
 from .configurer import SuiteConfigurer
 from .filter import Filter, EmptySuiteRemover
+from .fixture import create_fixture
 from .itemlist import ItemList
 from .keyword import Keyword, Keywords
 from .metadata import Metadata
@@ -25,26 +26,30 @@ from .tagsetter import TagSetter
 from .testcase import TestCase, TestCases
 
 
+@py3to2
 class TestSuite(ModelObject):
     """Base model for single suite.
 
     Extended by :class:`robot.running.model.TestSuite` and
     :class:`robot.result.model.TestSuite`.
     """
-    __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors', 'rpa']
     test_class = TestCase    #: Internal usage only.
-    keyword_class = Keyword  #: Internal usage only.
+    fixture_class = Keyword  #: Internal usage only.
+    repr_args = ('name',)
+    __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors', 'rpa']
 
-    def __init__(self, name='', doc='', metadata=None, source=None, rpa=False):
-        self.parent = None  #: Parent suite. ``None`` with the root suite.
+    def __init__(self, name='', doc='', metadata=None, source=None, rpa=False,
+                 parent=None):
         self._name = name
-        self.doc = doc  #: Test suite documentation.
+        self.doc = doc
         self.metadata = metadata
         self.source = source  #: Path to the source file or directory.
-        self.rpa = rpa
+        self.parent = parent  #: Parent suite. ``None`` with the root suite.
+        self.rpa = rpa        #: ``True`` when RPA mode is enabled.
         self.suites = None
         self.tests = None
-        self.keywords = None
+        self.setup = None
+        self.teardown = None
         self._my_visitors = []
 
     @property
@@ -84,9 +89,52 @@ class TestSuite(ModelObject):
         return TestCases(self.test_class, self, tests)
 
     @setter
+    def setup(self, setup):
+        """Suite setup as a :class:`~.model.keyword.Keyword` object.
+
+        This attribute is a ``Keyword`` object also when a suite has no setup
+        but in that case its truth value is ``False``.
+
+        Setup can be modified by setting attributes directly::
+
+            suite.setup.name = 'Example'
+            suite.setup.args = ('First', 'Second')
+
+        Alternatively the :meth:`config` method can be used to set multiple
+        attributes in one call::
+
+            suite.setup.config(name='Example', args=('First', 'Second'))
+
+        The easiest way to reset the whole setup is setting it to ``None``.
+        It will automatically recreate the underlying ``Keyword`` object::
+
+            suite.setup = None
+
+        New in Robot Framework 4.0. Earlier setup was accessed like
+        ``suite.keywords.setup``.
+        """
+        return create_fixture(setup, self, Keyword.SETUP)
+
+    @setter
+    def teardown(self, teardown):
+        """Suite teardown as a :class:`~.model.keyword.Keyword` object.
+
+        See :attr:`setup` for more information.
+        """
+        return create_fixture(teardown, self, Keyword.TEARDOWN)
+
+    @property
+    def keywords(self):
+        """Deprecated since Robot Framework 4.0
+
+        Use :attr:`setup` or :attr:`teardown` instead.
+        """
+        keywords = [self.setup, self.teardown]
+        return Keywords(self, [kw for kw in keywords if kw])
+
+    @keywords.setter
     def keywords(self, keywords):
-        """Suite setup and teardown as a :class:`~.Keywords` object."""
-        return Keywords(self.keyword_class, self, keywords)
+        Keywords.raise_deprecation_error()
 
     @property
     def id(self):
@@ -108,6 +156,12 @@ class TestSuite(ModelObject):
     def test_count(self):
         """Number of the tests in this suite, recursively."""
         return len(self.tests) + sum(suite.test_count for suite in self.suites)
+
+    @property
+    def has_tests(self):
+        if self.tests:
+            return True
+        return any(s.has_tests for s in self.suites)
 
     def set_tags(self, add=None, remove=None, persist=False):
         """Add and/or remove specified tags to the tests in this suite.
@@ -152,6 +206,10 @@ class TestSuite(ModelObject):
         :param options: Passed to
             :class:`~robot.model.configurer.SuiteConfigurer` that will then
             set suite attributes, call :meth:`filter`, etc. as needed.
+
+        Not to be confused with :meth:`config` method that suites, tests,
+        and keywords have to make it possible to set multiple attributes in
+        one call.
         """
         if self.parent is not None:
             raise ValueError("'TestSuite.configure()' can only be used with "
@@ -159,13 +217,16 @@ class TestSuite(ModelObject):
         if options:
             self.visit(SuiteConfigurer(**options))
 
-    def remove_empty_suites(self):
+    def remove_empty_suites(self, preserve_direct_children=False):
         """Removes all child suites not containing any tests, recursively."""
-        self.visit(EmptySuiteRemover())
+        self.visit(EmptySuiteRemover(preserve_direct_children))
 
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_suite(self)
+
+    def __str__(self):
+        return self.name
 
 
 class TestSuites(ItemList):

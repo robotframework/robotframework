@@ -5,8 +5,8 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Import Library
     Check Test Case    ${TESTNAME}
-    Check Syslog Contains    Imported library 'String' with arguments [ ]
-    Check Syslog Contains    Imported library 'ParameterLibrary' with arguments [ value | 42 ]
+    Syslog Should Contain    Imported library 'String' with arguments [ ]
+    Syslog Should Contain    Imported library 'ParameterLibrary' with arguments [ value | 42 ]
 
 Set Library Search Order
     ${tc} =    Check Test Case    ${TESTNAME}

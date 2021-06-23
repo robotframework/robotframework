@@ -61,7 +61,7 @@ Check closing
     ...    CLOSING TEST CASE (test)
     ...    CLOSING TEST CASE (suite)
     ...    CLOSING TEST SUITE
-    ...    [ ERROR ] Registering listeners for library 'lib_not_works' failed: Taking listener 'NoVersionListener' into use failed: Listener 'NoVersionListener' does not have mandatory 'ROBOT_LISTENER_API_VERSION' attribute.
+    ...    [ ERROR ] Error in library 'lib_not_works': Registering listeners failed: Taking listener 'NoVersionListener' into use failed: Listener 'NoVersionListener' does not have mandatory 'ROBOT_LISTENER_API_VERSION' attribute.
     ...    CLOSING TEST CASE (test)
     ...    CLOSING TEST CASE (test)
     ...    CLOSING TEST CASE (test)
@@ -71,7 +71,7 @@ Check closing
     ...    CLOSING GLOBAL\n
 
 Library listener should be in syslog
-    Syslog Should Contain Regexp    Imported library '.*suite_listenerlibrary.py' with arguments \\[ \\] \\(version <unknown>, class type, test suite scope, 5 keywords, with listener\\)
+    Syslog Should Contain Regexp    Imported library '.*suite_listenerlibrary.py' with arguments \\[ \\] \\(version <unknown>, class type, SUITE scope, 5 keywords, with listener\\)
 
 Nested scopes
     Run Tests    sources=test_libraries/as_listener/nested_scopes

@@ -6,30 +6,44 @@ Resource         atest_resource.robot
 Valid index
     Check Test Case    ${TESTNAME}
 
-Valid index using variable
+Index with variable
+    Check Test Case    ${TESTNAME}
+
+Index with variable using item access
     Check Test Case    ${TESTNAME}
 
 Slicing
     Check Test Case    ${TESTNAME}
 
-Invalid index
+Slicing with variable
     Check Test Case    ${TESTNAME}
+
+Invalid index
+    Check Test Case    ${TESTNAME} list
+    Check Test Case    ${TESTNAME} string
+    Check Test Case    ${TESTNAME} bytes
 
 Invalid index using variable
     Check Test Case    ${TESTNAME}
 
 Non-int index
-    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME} list
+    Check Test Case    ${TESTNAME} string
+    Check Test Case    ${TESTNAME} bytes
 
 Non-int index using variable
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
 
 Empty index
-    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME} list
+    Check Test Case    ${TESTNAME} string
+    Check Test Case    ${TESTNAME} bytes
 
 Invalid slice
-    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME} list
+    Check Test Case    ${TESTNAME} string
+    Check Test Case    ${TESTNAME} bytes
 
 Non-int slice index
     Check Test Case    ${TESTNAME} 1
@@ -42,14 +56,18 @@ Non-existing variable
 Non-existing index variable
     Check Test Case    ${TESTNAME}
 
-Non-list variable
+Non-subscriptable variable
     Check Test Case    ${TESTNAME}
 
-Old syntax with `@` still works like earlier
-    [Documentation]    `${list}[1]` and `@{list}[1]` work same way still.
-    ...                In the future latter is deprecated and changed.
+List expansion using `@` syntax
     Check Test Case    ${TESTNAME}
 
-Old syntax with `@` doesn't support new slicing syntax
-    [Documentation]    Slicing support should be added in RF 3.3 when `@{list}[index]` changes.
+List expansion fails if value is not list-like
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+
+List expansion with slice
+    Check Test Case    ${TESTNAME}
+
+List expansion with slice fails if value is not list-like
     Check Test Case    ${TESTNAME}

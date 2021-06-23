@@ -18,7 +18,7 @@ ${SUITE TEARDOWN FAILED}    SEPARATOR=\n
 One Failure
     [Documentation]    FAIL    Teardown failed:
     ...    Message
-    ...    
+    ...
     ...    ${SUITE TEARDOWN FAILED}
     No Operation
     [Teardown]    One Failure
@@ -28,9 +28,9 @@ Multiple Failures
     ...    Several failures occurred:
     ...
     ...    1) Message 1
-    ...    
+    ...
     ...    2) Message 2
-    ...    
+    ...
     ...    ${SUITE TEARDOWN FAILED}
     No Operation
     [Teardown]    Multiple Failures
@@ -48,13 +48,13 @@ Failure In For Loop
     ...    Several failures occurred:
     ...
     ...    1) cat
-    ...    
+    ...
     ...    2) again
-    ...    
+    ...
     ...    3) dog
-    ...    
+    ...
     ...    4) again
-    ...    
+    ...
     ...    ${SUITE TEARDOWN FAILED}
     No Operation
     [Teardown]    Failures In For Loop
@@ -75,6 +75,18 @@ Execution Stops After Keyword Timeout
     ...    ${SUITE TEARDOWN FAILED}
     No Operation
     [Teardown]    Keyword Timeout Occurs
+
+Execution Continues After Keyword Timeout Occurs In Executed Keyword
+    [Documentation]    FAIL    Teardown failed:
+    ...    Several failures occurred:
+    ...
+    ...    1) Keyword timeout 42 milliseconds exceeded.
+    ...
+    ...    2) This should be executed
+    ...
+    ...    ${SUITE TEARDOWN FAILED}
+    No Operation
+    [Teardown]    Keyword Timeout Occurs In Executed Keyword
 
 Execution Continues If Variable Does Not Exist
     [Documentation]    FAIL    Teardown failed:
@@ -139,9 +151,10 @@ Failure when setting variables
     Should Be Equal    ${ret}    ${None}
 
 Failures In For Loop
-    :FOR    ${animal}    IN    cat    dog
-    \    Fail    ${animal}
-    \    Fail    again
+    FOR    ${animal}    IN    cat    dog
+        Fail    ${animal}
+        Fail    again
+    END
 
 Test Timeout Occurs
     Sleep    1 s
@@ -152,11 +165,16 @@ Keyword Timeout Occurs
     Sleep    1 s
     Fail    This should not be executed
 
+Keyword Timeout Occurs In Executed Keyword
+    Keyword Timeout Occurs
+    Fail    This should be executed
+
 Missing Variables
     Log    ${this var does not exist}
     Log    This should be executed
-    :FOR    ${i}    IN RANGE    1
-    \    Fail    ${neither does this one}
+    FOR    ${i}    IN RANGE    1
+        Fail    ${neither does this one}
+    END
 
 Keyword Errors
     Keyword Missing

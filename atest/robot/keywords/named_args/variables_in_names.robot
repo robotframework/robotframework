@@ -32,3 +32,6 @@ Variable with non-string value as named arg name
 
 Variable with non-string value as kwargs name
     Check Test Case    ${TESTNAME}
+
+Equal sign in variable name
+    Check Test Case    ${TESTNAME}

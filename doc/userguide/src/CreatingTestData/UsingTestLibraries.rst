@@ -23,7 +23,7 @@ Using `Library` setting
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Test libraries are normally imported using the :setting:`Library`
-setting in the Setting table and having the library name in the
+setting in the Setting section and having the library name in the
 subsequent column. Unlike most of the other data, the library name
 is both case- and space-sensitive. If a library is in a package,
 the full name including the package name must be used.
@@ -39,11 +39,11 @@ __ `Using arguments`_
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Library    OperatingSystem 
+   Library    OperatingSystem
    Library    my.package.TestLibrary
    Library    MyLibrary    arg1    arg2
    Library    ${LIBRARY}
-   
+
 It is possible to import test libraries in `test case files`_,
 `resource files`_ and `test suite initialization files`_. In all these
 cases, all the keywords in the imported library are available in that
@@ -66,7 +66,7 @@ make it available.
 
    *** Test Cases ***
    Example
-       Do Something 
+       Do Something
        Import Library    MyLibrary    arg1    arg2
        KW From MyLibrary
 
@@ -75,7 +75,7 @@ Specifying library to import
 
 Libraries to import can be specified either by using the library name
 or the path to the library. These approaches work the same way regardless
-is the library imported using the :setting:`Library` setting or the
+if the library is imported using the :setting:`Library` setting or the
 :name:`Import Library` keyword.
 
 Using library name
@@ -125,7 +125,7 @@ A limitation of this approach is that libraries implemented as Python classes `m
 be in a module with the same name as the class`__. Additionally, importing
 libraries distributed in JAR or ZIP packages is not possible with this mechanism.
 
-__ `Test library names`_
+__ `Library name`_
 
 Setting custom name to test library
 -----------------------------------
@@ -181,7 +181,7 @@ different arguments:
        LocalLib.Another Keyword
 
 Setting a custom name to a test library works both when importing a
-library in the Setting table and when using the :name:`Import Library` keyword.
+library in the Setting section and when using the :name:`Import Library` keyword.
 
 Standard libraries
 ------------------

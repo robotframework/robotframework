@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="keywordspec" type="KeywordSpec" />
+  <xs:complexType name="KeywordSpec">
+    <xs:sequence>
+      <xs:element name="version" type="xs:string" />
+      <xs:element name="scope" type="LibraryScope" />
+      <xs:element name="namedargs" type="SupportNamedArgs" />
+      <xs:element name="doc" type="xs:string" />
+      <xs:element name="init" type="Init" minOccurs="0" />
+      <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="type" type="LibraryType" use="required" />
+    <xs:attribute name="format" type="DocumentationFormat" use="required" />
+    <xs:attribute name="generated" type="GenerationDate" use="required" />
+  </xs:complexType>
+  <xs:complexType name="Init">
+    <xs:sequence>
+      <xs:element name="arguments" type="Arguments" />
+      <xs:element name="doc" type="xs:string" />
+      <xs:element name="tags" type="Tags" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Keyword">
+    <xs:sequence>
+      <xs:element name="arguments" type="Arguments" />
+      <xs:element name="doc" type="xs:string" />
+      <xs:element name="tags" type="Tags" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="Arguments">
+    <xs:sequence>
+      <xs:element name="arg" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Tags">
+    <xs:sequence>
+      <xs:element name="tag" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="LibraryScope">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="" />
+      <xs:enumeration value="global" />
+      <xs:enumeration value="test suite" />
+      <xs:enumeration value="test case" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="DocumentationFormat">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ROBOT" />
+      <xs:enumeration value="HTML" />
+      <xs:enumeration value="TEXT" />
+      <xs:enumeration value="REST" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="LibraryType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="library" />
+      <xs:enumeration value="resource" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="GenerationDate">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\d{8} \d\d:\d\d:\d\d" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="SupportNamedArgs">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="yes" />
+      <xs:enumeration value="no" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

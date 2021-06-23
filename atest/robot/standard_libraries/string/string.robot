@@ -69,3 +69,7 @@ Strip String With Invalid Mode
 
 Strip String With Given Characters
     Check Test Case    ${TESTNAME}
+
+Strip String With Given Characters none
+    Check Test Case    ${TESTNAME}
+

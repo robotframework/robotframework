@@ -13,17 +13,17 @@ Join Path
 
 Join Paths
     @{paths} =    Join Paths    base    example    other
-    Should Be Equal    @{paths}[0]    base${/}example
-    Should Be Equal    @{paths}[1]    base${/}other
+    Should Be Equal    ${paths}[0]    base${/}example
+    Should Be Equal    ${paths}[1]    base${/}other
     Length Should Be    ${paths}    2
     @{paths} =    Join Paths    ${CURDIR}${/}my${/}base    %{TEMPDIR}${/}example    other
-    Should Be Equal    @{paths}[0]    %{TEMPDIR}${/}example
-    Should Be Equal    @{paths}[1]    ${CURDIR}${/}my${/}base${/}other
+    Should Be Equal    ${paths}[0]    %{TEMPDIR}${/}example
+    Should Be Equal    ${paths}[1]    ${CURDIR}${/}my${/}base${/}other
     Length Should Be    ${paths}    2
     @{paths} =    Join Paths    my${/}base    example${/}path${/}    other    one${/}more
-    Should Be Equal    @{paths}[0]    my${/}base${/}example${/}path
-    Should Be Equal    @{paths}[1]    my${/}base${/}other
-    Should Be Equal    @{paths}[2]    my${/}base${/}one${/}more
+    Should Be Equal    ${paths}[0]    my${/}base${/}example${/}path
+    Should Be Equal    ${paths}[1]    my${/}base${/}other
+    Should Be Equal    ${paths}[2]    my${/}base${/}one${/}more
     Length Should Be    ${paths}    3
 
 Normalize Path

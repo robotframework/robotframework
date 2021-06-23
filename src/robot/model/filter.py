@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import py2to3, setter
+from robot.utils import py3to2, setter
 
 from .tags import TagPatterns
 from .namepatterns import SuiteNamePatterns, TestNamePatterns
@@ -22,8 +22,12 @@ from .visitor import SuiteVisitor
 
 class EmptySuiteRemover(SuiteVisitor):
 
+    def __init__(self, preserve_direct_children=False):
+        self.preserve_direct_children = preserve_direct_children
+
     def end_suite(self, suite):
-        suite.suites = [s for s in suite.suites if s.test_count]
+        if suite.parent or not self.preserve_direct_children:
+            suite.suites = [s for s in suite.suites if s.test_count]
 
     def visit_test(self, test):
         pass
@@ -32,11 +36,12 @@ class EmptySuiteRemover(SuiteVisitor):
         pass
 
 
-@py2to3
+@py3to2
 class Filter(EmptySuiteRemover):
 
     def __init__(self, include_suites=None, include_tests=None,
                  include_tags=None, exclude_tags=None):
+        EmptySuiteRemover.__init__(self)
         self.include_suites = include_suites
         self.include_tests = include_tests
         self.include_tags = include_tags
@@ -97,6 +102,6 @@ class Filter(EmptySuiteRemover):
     def _not_excluded_by_tags(self, test):
         return not self.exclude_tags.match(test.tags)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.include_suites or self.include_tests or
                     self.include_tags or self.exclude_tags)

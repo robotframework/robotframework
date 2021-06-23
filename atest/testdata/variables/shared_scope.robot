@@ -18,6 +18,6 @@ Scalar can overwrite list
 
 Variables from file
     Should be equal    ${LIST}       ${LIST2}
-    Should be equal    @{LIST}[0]    spam
+    Should be equal    ${LIST}[0]    spam
     @{list}=           Create list    @{VARIABLE}
     Should be equal    ${list}      ${VARIABLE}

@@ -4,17 +4,20 @@ import unittest
 
 from robot.output.listeners import Listeners, LibraryListeners
 from robot.output import LOGGER
-from robot.utils.asserts import *
-from robot.utils import JYTHON
 from robot.running.outputcapture import OutputCapturer
+from robot.utils.asserts import assert_equal, assert_raises
+from robot.utils import DotDict, JYTHON
 
 
 LOGGER.unregister_console_logger()
 
 
 class Mock(object):
+    non_existing = ()
 
     def __getattr__(self, name):
+        if name[:2] == '__' or name in self.non_existing:
+            raise AttributeError
         return ''
 
 
@@ -38,9 +41,11 @@ class TestMock(Mock):
         self.tags = ['foo', 'bar']
         self.message = 'Expected failure'
         self.status = 'FAIL'
+        self.data = DotDict({'name':self.name})
 
 
 class KwMock(Mock):
+    non_existing = ('branch_status',)
 
     def __init__(self):
         self.name = 'kwmock'
@@ -172,11 +177,15 @@ if JYTHON:
 class TestAttributesAreNotAccessedUnnecessarily(unittest.TestCase):
 
     def test_start_and_end_methods(self):
+        class ModelStub(object):
+            IF_ELSE_ROOT = 'IF/ELSE ROOT'
+            type = 'xxx'
         for listeners in [Listeners([]), LibraryListeners()]:
             for name in dir(listeners):
                 if name.startswith(('start_', 'end_')):
+                    model = ModelStub() if name.endswith('keyword') else None
                     method = getattr(listeners, name)
-                    method(None)
+                    method(model)
 
     def test_message_methods(self):
         class Message(object):

@@ -15,16 +15,16 @@
 
 from robot.errors import DataError
 from robot.utils import (get_error_message, is_java_method, is_bytes,
-                         is_unicode, py2to3)
+                         is_list_like, is_unicode, py3to2, type_name)
 
 from .arguments import JavaArgumentParser, PythonArgumentParser
 
 
 def no_dynamic_method(*args):
-    pass
+    return None
 
 
-@py2to3
+@py3to2
 class _DynamicMethod(object):
     _underscore_name = NotImplemented
 
@@ -52,25 +52,40 @@ class _DynamicMethod(object):
             return self._handle_return_value(self.method(*args))
         except:
             raise DataError("Calling dynamic method '%s' failed: %s"
-                            % (self.method.__name__, get_error_message()))
+                            % (self.name, get_error_message()))
 
     def _handle_return_value(self, value):
         raise NotImplementedError
 
-    def _to_string(self, value):
+    def _to_string(self, value, allow_tuple=False, allow_none=False):
         if is_unicode(value):
             return value
         if is_bytes(value):
             return value.decode('UTF-8')
-        raise DataError('Return value must be string.')
+        if allow_tuple and is_list_like(value) and len(value) > 0:
+            return tuple(value)
+        if allow_none and value is None:
+            return value
+        or_tuple = ' or a non-empty tuple' if allow_tuple else ''
+        raise DataError('Return value must be a string%s, got %s.'
+                        % (or_tuple, type_name(value)))
 
-    def _to_list_of_strings(self, value):
+    def _to_list(self, value):
+        if value is None:
+            return ()
+        if not is_list_like(value):
+            raise DataError
+        return value
+
+    def _to_list_of_strings(self, value, allow_tuples=False):
         try:
-            return [self._to_string(v) for v in value]
-        except (TypeError, DataError):
-            raise DataError('Return value must be list of strings.')
+            return [self._to_string(item, allow_tuples)
+                    for item in self._to_list(value)]
+        except DataError:
+            raise DataError('Return value must be a list of strings%s.'
+                            % (' or non-empty tuples' if allow_tuples else ''))
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.method is not no_dynamic_method
 
 
@@ -78,7 +93,7 @@ class GetKeywordNames(_DynamicMethod):
     _underscore_name = 'get_keyword_names'
 
     def _handle_return_value(self, value):
-        names = self._to_list_of_strings(value or [])
+        names = self._to_list_of_strings(value)
         return list(self._remove_duplicates(names))
 
     def _remove_duplicates(self, names):
@@ -110,10 +125,10 @@ class RunKeyword(_DynamicMethod):
                 self._java_multi_signature_kwargs(spec))
 
     def _java_single_signature_kwargs(self, spec):
-        return len(spec.positional) == 1 and spec.varargs and spec.kwargs
+        return len(spec.positional) == 1 and spec.var_positional and spec.var_named
 
     def _java_multi_signature_kwargs(self, spec):
-        return len(spec.positional) == 3 and not (spec.varargs or spec.kwargs)
+        return len(spec.positional) == 3 and not (spec.var_positional or spec.var_named)
 
 
 class GetKeywordDocumentation(_DynamicMethod):
@@ -135,18 +150,25 @@ class GetKeywordArguments(_DynamicMethod):
             if self._supports_kwargs:
                 return ['*varargs', '**kwargs']
             return ['*varargs']
-        return self._to_list_of_strings(value)
+        return self._to_list_of_strings(value, allow_tuples=True)
 
 
 class GetKeywordTypes(_DynamicMethod):
     _underscore_name = 'get_keyword_types'
 
     def _handle_return_value(self, value):
-        return value
+        return value if self else {}
 
 
 class GetKeywordTags(_DynamicMethod):
     _underscore_name = 'get_keyword_tags'
 
     def _handle_return_value(self, value):
-        return self._to_list_of_strings(value or [])
+        return self._to_list_of_strings(value)
+
+
+class GetKeywordSource(_DynamicMethod):
+    _underscore_name = 'get_keyword_source'
+
+    def _handle_return_value(self, value):
+        return self._to_string(value, allow_none=True)

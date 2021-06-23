@@ -50,10 +50,14 @@ Boolean
     Boolean              0                         ${False}
     Boolean              ${EMPTY}                  ${False}
     Boolean              none                      ${None}
+    Boolean              ${None}                   ${None}
+    Boolean              ${0}                      ${0}
+    Boolean              ${1.1}                    ${1.1}
 
 Invalid boolean
     [Template]           Invalid value is passed as-is
     Boolean              foobar
+    Boolean              ${LIST}                   expected=${LIST}
 
 String
     String               Hello, world!             u'Hello, world!'
@@ -61,11 +65,17 @@ String
     String               None                      u'None'
     String               True                      u'True'
     String               []                        u'[]'
+    String               ${42}                     42
+    String               ${None}                   None
+    String               ${LIST}                   ['foo', 'bar']
     Unicode              Hello, world!             u'Hello, world!'
     Unicode              åäö                       u'åäö'
     Unicode              None                      u'None'
     Unicode              True                      u'True'
     Unicode              []                        u'[]'
+    Unicode              ${42}                     42
+    Unicode              ${None}                   None
+    Unicode              ${LIST}                   ['foo', 'bar']
 
 Bytes
     [Tags]               require-py3
@@ -232,22 +242,6 @@ Unknown types are not converted
     Unknown              none                      u'none'
     Unknown              []                        u'[]'
 
-String None is converted to None object
-    [Template]           String None is converted to None object
-    Integer
-    Float
-    Decimal
-    Boolean
-    Datetime
-    Date
-    Timedelta
-    Enum
-    List
-    Tuple
-    Dictionary
-    Set
-    Frozenset
-
 Positional as named
     Integer              argument=-1               expected=-1
     Float                argument=1e2              expected=100.0
@@ -274,5 +268,5 @@ Invalid kwonly
 
 *** Keywords ***
 Invalid value is passed as-is
-    [Arguments]    ${kw}    ${arg}
-    Run Keyword    ${kw}    ${arg}    u'''${arg}'''
+    [Arguments]    ${kw}    ${arg}    ${expected}=u'''${arg}'''
+    Run Keyword    ${kw}    ${arg}    ${expected}

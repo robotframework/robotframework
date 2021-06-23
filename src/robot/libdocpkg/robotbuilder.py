@@ -15,11 +15,13 @@
 
 import os
 import sys
+import re
 
 from robot.errors import DataError
-from robot.parsing import disable_curdir_processing
-from robot.running import TestLibrary, UserLibrary, UserErrorHandler
-from robot.utils import split_tags_from_doc, unescape
+from robot.running import (TestLibrary, UserLibrary, UserErrorHandler,
+                           ResourceFileBuilder)
+from robot.utils import split_tags_from_doc, unescape, is_string
+from robot.variables import VariableIterator, search_variable
 
 from .model import LibraryDoc, KeywordDoc
 
@@ -34,7 +36,9 @@ class LibraryDocBuilder(object):
                             doc=self._get_doc(lib),
                             version=lib.version,
                             scope=str(lib.scope),
-                            doc_format=lib.doc_format)
+                            doc_format=lib.doc_format,
+                            source=lib.source,
+                            lineno=lib.lineno)
         libdoc.inits = self._get_initializers(lib)
         libdoc.keywords = KeywordDocBuilder().build_keywords(lib)
         return libdoc
@@ -65,13 +69,17 @@ class ResourceDocBuilder(object):
         res = self._import_resource(path)
         libdoc = LibraryDoc(name=res.name,
                             doc=self._get_doc(res),
-                            type='resource')
+                            type='RESOURCE',
+                            scope='GLOBAL',
+                            source=res.source,
+                            lineno=1)
         libdoc.keywords = KeywordDocBuilder(resource=True).build_keywords(res)
         return libdoc
 
-    @disable_curdir_processing
     def _import_resource(self, path):
-        return UserLibrary(self._find_resource_file(path))
+        ast = ResourceFileBuilder(process_curdir=False).build(
+            self._find_resource_file(path))
+        return UserLibrary(ast)
 
     def _find_resource_file(self, path):
         if os.path.isfile(path):
@@ -98,10 +106,32 @@ class KeywordDocBuilder(object):
 
     def build_keyword(self, kw):
         doc, tags = self._get_doc_and_tags(kw)
+        if not self._resource:
+            self._escape_strings_in_defaults(kw.arguments.defaults)
         return KeywordDoc(name=kw.name,
-                          args=self._get_args(kw.arguments),
+                          args=kw.arguments,
                           doc=doc,
-                          tags=tags)
+                          tags=tags,
+                          source=kw.source,
+                          lineno=kw.lineno)
+
+    def _escape_strings_in_defaults(self, defaults):
+        for name, value in defaults.items():
+            if is_string(value):
+                value = re.sub(r'[\\\r\n\t]', lambda x: repr(str(x.group()))[1:-1], value)
+                value = self._escape_variables(value)
+                defaults[name] = re.sub('^(?= )|(?<= )$|(?<= )(?= )', r'\\', value)
+
+    def _escape_variables(self, value):
+        result = ''
+        match = search_variable(value)
+        while match:
+            result += r'%s\%s{%s}' % (match.before, match.identifier,
+                                      self._escape_variables(match.base))
+            for item in match.items:
+                result += '[%s]' % self._escape_variables(item)
+            match = search_variable(match.after)
+        return result + match.string
 
     def _get_doc_and_tags(self, kw):
         doc = self._get_doc(kw)
@@ -112,28 +142,3 @@ class KeywordDocBuilder(object):
         if self._resource and not isinstance(kw, UserErrorHandler):
             return unescape(kw.doc)
         return kw.doc
-
-    def _get_args(self, argspec):
-        """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
-        args = [self._format_arg(arg, argspec) for arg in argspec.positional]
-        if argspec.varargs:
-            args.append('*%s' % self._format_arg(argspec.varargs, argspec))
-        if argspec.kwonlyargs:
-            if not argspec.varargs:
-                args.append('*')
-            args.extend(self._format_arg(arg, argspec)
-                        for arg in argspec.kwonlyargs)
-        if argspec.kwargs:
-            args.append('**%s' % self._format_arg(argspec.kwargs, argspec))
-        return args
-
-    def _format_arg(self, arg, argspec):
-        result = arg
-        if argspec.types is not None and arg in argspec.types:
-            result = '%s: %s' % (result, self._format_type(argspec.types[arg]))
-        if arg in argspec.defaults:
-            result = '%s=%s' % (result, argspec.defaults[arg])
-        return result
-
-    def _format_type(self, type_):
-        return type_.__name__ if isinstance(type_, type) else type_

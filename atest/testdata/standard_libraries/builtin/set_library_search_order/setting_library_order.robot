@@ -10,7 +10,8 @@ Library Order Set In Suite Setup Should Be Available In Test Cases
     Active Library Should Be    Library1
 
 Empty Library Order Can Be Set
-    [Documentation]    FAIL Multiple keywords with name 'Get Name' found.\
+    [Documentation]    FAIL
+    ...    Multiple keywords with name 'Get Name' found. \
     ...    Give the full name of the keyword you want to use:
     ...    ${SPACE*4}Library With Space.Get Name
     ...    ${SPACE*4}Library1.Get Name
@@ -37,8 +38,8 @@ Library Order Should Be Available In The Next Test Case
 Setting Library Order Returns Previous Library Order
     Set Library Search Order    Library1    Library2
     @{library order} =    Set Library Search Order
-    Should Be Equal    @{library order}[0]    Library1
-    Should Be Equal    @{library order}[1]    Library2
+    Should Be Equal    ${library order}[0]    Library1
+    Should Be Equal    ${library order}[1]    Library2
 
 Setting Library Order Allows Setting BuiltIn Library As Default Library
     Set Library Search Order    BuiltIn

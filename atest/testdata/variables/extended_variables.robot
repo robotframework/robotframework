@@ -1,132 +1,156 @@
 *** Settings ***
-Variables       extended_variables.py
-Library         ExampleJavaLibrary
+Variables         extended_variables.py
+Library           ExampleJavaLibrary
 
 *** Variables ***
-@{LIST}  ${42}  foo  ${None}
+${X}              X
+${Y}              Y
+@{LIST}           ${42}    foo    ${None}
 
 *** Test Cases ***
 Using Attribute
-    Should Be Equal  ${OBJ.name}  dude
-    Should Be Equal  ${ o_B J __ .name}  dude
+    Should Be Equal    ${OBJ.name}    dude
+    Should Be Equal    ${ o_B J __ .name}    dude
 
 Calling Method
-    Should Be Equal  ${OBJ.greet()}  dude says hi!
-    Should Be Equal  ${OBJ.greet('dudette')}  dude says hi to dudette!
-    Should Be Equal  ${OBJ.name.capitalize()}  Dude
-    Should Be Equal  ${SPACE.__len__()}  ${1}
+    Should Be Equal    ${OBJ.greet()}    dude says hi!
+    Should Be Equal    ${OBJ.greet('dudette')}    dude says hi to dudette!
+    Should Be Equal    ${OBJ.name.capitalize()}    Dude
+    Should Be Equal    ${SPACE.__len__()}    ${1}
 
 Accessing List
-    Should Be Equal  ${LIST[0]} ${LIST[1]}  42 foo
-    Should Be Equal  ${LIST[2]}  ${None}
-    Should Be Equal  ${LIST[-1]} ${LIST[-2]}  None foo
+    Should Be Equal    ${LIST[0]} ${LIST[1]}    42 foo
+    Should Be Equal    ${LIST[2]}    ${None}
+    Should Be Equal    ${LIST[-1]} ${LIST[-2]}    None foo
 
 Accessing Dictionary
-    ${dict} =  Evaluate  {'a': 1, 42: 'b'}
-    Should Be Equal  ${dict['a']}  ${1}
-    Should Be Equal  ${dict[42]}  b
+    ${dict} =    Evaluate    {'a': 1, 42: 'b'}
+    Should Be Equal    ${dict['a']}    ${1}
+    Should Be Equal    ${dict[42]}    b
 
 Multiply
-    [Documentation]  FAIL STARTS: Resolving variable '\${3.0 * 2}' failed: SyntaxError:
-    Should Be Equal  ${SPACE * 3}  ${SPACE}${SPACE}${SPACE}
-    Should Be Equal  ${3 * 42}  ${126}
-    Should Be Equal  ${3 * 2.0}  ${6}
-    Log Many  Having float first fails  ${3.0 * 2}
+    [Documentation]    FAIL STARTS: Resolving variable '\${3.0 * 2}' failed: SyntaxError:
+    Should Be Equal    ${SPACE * 3}    ${SPACE}${SPACE}${SPACE}
+    Should Be Equal    ${3 * 42}    ${126}
+    Should Be Equal    ${3 * 2.0}    ${6}
+    Log Many    Having float first fails    ${3.0 * 2}
 
 Using Public Java Attribute
-    ${javaobj} =  Get Java Object  Robot Framework
-    Should Be Equal  ${javaobj.publicString}  Robot Framework
-    Should Be Equal  ${javaobj.publicInt}  ${42}
+    ${javaobj} =    Get Java Object    Robot Framework
+    Should Be Equal    ${javaobj.publicString}    Robot Framework
+    Should Be Equal    ${javaobj.publicInt}    ${42}
 
 Using Java Attribute With Bean Properties
-    ${javaobj} =  Get Java Object  Robot
-    Should Be Equal  ${javaobj.name}  Robot
+    ${javaobj} =    Get Java Object    Robot
+    Should Be Equal    ${javaobj.name}    Robot
 
 Calling Java Method
-    ${javaobj} =  Get Java Object  Robot
-    Should Be Equal  ${javaobj.setName('New')}  ${null}
-    Should Be Equal  ${javaobj.getName()}  New
-    Should Be Equal  ${javaobj.publicString}  Robot
+    ${javaobj} =    Get Java Object    Robot
+    Should Be Equal    ${javaobj.setName('New')}    ${null}
+    Should Be Equal    ${javaobj.getName()}    New
+    Should Be Equal    ${javaobj.publicString}    Robot
 
 Accessing Java Lists and Maps
-    ${array} =  Get Array Of Three Ints
-    Should Be Equal  ${array[2]}  ${42}
-    ${array} =  Get String Array  foo  bar
-    Should Be Equal  ${array[-1]}  bar
-    ${ht} =  Get Hashtable
-    Should Be Equal  ${ht.put('key', 'value')}  ${null}
-    Should Be Equal  ${ht['key']}  value
-    ${list} =  Get Linked List  one  two
-    Should Be Equal  ${list[0]}  one
-    Should Be Equal  ${list[1]}  two
+    ${array} =    Get Array Of Three Ints
+    Should Be Equal    ${array[2]}    ${42}
+    ${array} =    Get String Array    foo    bar
+    Should Be Equal    ${array[-1]}    bar
+    ${ht} =    Get Hashtable
+    Should Be Equal    ${ht.put('key', 'value')}    ${null}
+    Should Be Equal    ${ht['key']}    value
+    ${list} =    Get Linked List    one    two
+    Should Be Equal    ${list[0]}    one
+    Should Be Equal    ${list[1]}    two
 
 Failing When Base Name Does Not Exist
-    [Documentation]  FAIL Resolving variable '\${nonexisting.whatever}' failed: Variable '\${nonexisting}' not found.
-    Log  ${nonexisting.whatever}
+    [Documentation]    FAIL Resolving variable '\${nonexisting.whatever}' failed: Variable '\${nonexisting}' not found.
+    Log    ${nonexisting.whatever}
 
 Failing When Base Name Starts With Existing Variable 1
-    [Documentation]  FAIL Variable '\${nonexisting}' not found.
-    Log  ${None}
-    Log  ${nonexisting}
+    [Documentation]    FAIL Variable '\${nonexisting}' not found.
+    Log    ${None}
+    Log    ${nonexisting}
 
 Failing When Base Name Starts With Existing Variable 2
-    [Documentation]  FAIL STARTS: Variable '\${lista}' not found.
-    Log  ${list}
-    Log  ${lista}
+    [Documentation]    FAIL STARTS: Variable '\${lista}' not found.
+    Log    ${list}
+    Log    ${lista}
 
 Testing Extended Var Regexp
-    [Documentation]  FAIL STARTS: Resolving variable '\${var..upper()}' failed: SyntaxError:
-    Length Should Be  ${/*3}  ${1 * 3}
-    Should Be Equal  ${/.upper()}  ${/ * 1}
-    ${var}  ${var.}  ${var.upper} =  Set Variable  value  Value  VALUE
-    Should Be Equal  ${v a r .}  Value
-    Should Be Equal  ${__ VAR . UPPER __}  VALUE
-    Should Be Equal  ${var.}  ${var.capitalize()}
-    Should Be Equal  ${var.upper}  ${_ V _ A _ R _ . upper ( ) }
-    Log Many  So this works ${var.upper()}  but this does not ${var..upper()}
+    [Documentation]    FAIL STARTS: Resolving variable '\${var..upper()}' failed: SyntaxError:
+    Length Should Be    ${/*3}    ${1 * 3}
+    Should Be Equal    ${/.upper()}    ${/ * 1}
+    ${var}    ${var.}    ${var.upper} =    Set Variable    value    Value    VALUE
+    Should Be Equal    ${v a r .}    Value
+    Should Be Equal    ${__ VAR . UPPER __}    VALUE
+    Should Be Equal    ${var.}    ${var.capitalize()}
+    Should Be Equal    ${var.upper}    ${_ V _ A _ R _ . upper ( ) }
+    Log Many    So this works ${var.upper()}    but this does not ${var..upper()}
 
 Base name contains non-ASCII characters
-    ${äiti}=  Set Variable    hyvä
+    ${äiti}=    Set Variable    hyvä
     Should Be Equal    ${äiti.upper()}    HYVÄ
-    ${isä}=  Set Variable    hyvä
+    ${isä}=    Set Variable    hyvä
     Should Be Equal    ${isä.upper()}    HYVÄ
 
+Escape characters and curly braces
+    [Documentation]    Escape characters in the variable body are left alone
+    ...                and thus can be used in evaluated expression without
+    ...                additional escaping. Exceptions to this rule are escapes
+    ...                before curly braces as well as before literal strings
+    ...                looking like variables. These escapes are needed to
+    ...                make the whole variable valid and are removed. Matching
+    ...                curly braces don't need to be escaped.
+    [Template]    Should Be Equal
+    ${X + '\n'}               X\n
+    ${X + u'\xe4'}            Xä
+    ${X + '\${Y}'}            X\${Y}
+    ${X + '\\${Y}'}           X\\Y
+    ${X + '$\{Y\}'}           X\${Y}
+    ${X + '\$\{Y\}'}          X\\\${Y}
+    ${X + '\\'}               X\\
+    ${X + '\}'}               X}
+    ${X + '\{'}               X{
+    ${X + '{}'}               X{}
+    ${X + {'k': 'v'}['k']}    Xv
+    ${X + __import__('re').match('(\d{2})${Y}\\s{2}', '1${2}Y\t\r').group(${1})}
+    ...                       X12
+
 Failing When Attribute Does Not exists 1
-    [Documentation]  FAIL STARTS: Resolving variable '\${OBJ.nonex}' failed: AttributeError:
-    Log  ${OBJ.nonex}
+    [Documentation]    FAIL STARTS: Resolving variable '\${OBJ.nonex}' failed: AttributeError:
+    Log    ${OBJ.nonex}
 
 Failing When Attribute Does Not exists 2
-    [Documentation]  FAIL STARTS: Resolving variable '\${OBJ.nonex_method()}' failed: AttributeError:
-    Log  ${OBJ.nonex_method()}
+    [Documentation]    FAIL STARTS: Resolving variable '\${OBJ.nonex_method()}' failed: AttributeError:
+    Log    ${OBJ.nonex_method()}
 
 Failing When Calling Method With Wrong Number Of Arguments
-    [Documentation]  FAIL STARTS: Resolving variable '\${OBJ.greet('too', 'many')}' failed: TypeError:
-    Log  ${OBJ.greet('too', 'many')}
+    [Documentation]    FAIL STARTS: Resolving variable '\${OBJ.greet('too', 'many')}' failed: TypeError:
+    Log    ${OBJ.greet('too', 'many')}
 
 Failing When Method Raises Exception
-    [Documentation]  FAIL Resolving variable '\${OBJ.greet('FAIL')}' failed: ValueError
-    Log  ${OBJ.greet('FAIL')}
+    [Documentation]    FAIL Resolving variable '\${OBJ.greet('FAIL')}' failed: ValueError
+    Log    ${OBJ.greet('FAIL')}
 
 Fail When Accessing Item Not In List
-    [Documentation]  FAIL STARTS: Resolving variable '\${LIST[30]}' failed: IndexError:
-    Log  ${LIST[30]}
+    [Documentation]    FAIL STARTS: Resolving variable '\${LIST[30]}' failed: IndexError:
+    Log    ${LIST[30]}
 
 Fail When Accessing Item Not In Dictionary
-    [Documentation]  FAIL STARTS: Resolving variable '\${dict['xxx']}' failed: KeyError:
-    ${dict} =  Evaluate  {}
-    Log  ${dict['xxx']}
+    [Documentation]    FAIL STARTS: Resolving variable '\${dict['xxx']}' failed: KeyError:
+    ${dict} =    Evaluate    {}
+    Log    ${dict['xxx']}
 
 Failing For Syntax Error
-    [Documentation]  FAIL STARTS: Resolving variable '\${OBJ.greet('no end quote)}' failed: SyntaxError:
-    Log  ${OBJ.greet('no end quote)}
+    [Documentation]    FAIL STARTS: Resolving variable '\${OBJ.greet('no end quote)}' failed: SyntaxError:
+    Log    ${OBJ.greet('no end quote)}
 
 Failing When Java Attribute Does Not Exist
-    [Documentation]  FAIL STARTS: Resolving variable '\${javaobj.nonExisting}' failed: AttributeError:
-    ${javaobj} =  Get Java Object  My Name
-    Log  ${javaobj.nonExisting}
+    [Documentation]    FAIL STARTS: Resolving variable '\${javaobj.nonExisting}' failed: AttributeError:
+    ${javaobj} =    Get Java Object    My Name
+    Log    ${javaobj.nonExisting}
 
 Failing When Java Method Throws Exception
-    [Documentation]  FAIL STARTS: Resolving variable '\${javaobj.exception()}' failed: IllegalArgumentException:
-    ${javaobj} =  Get Java Object  My Name
-    Log  ${javaobj.exception()}
-
+    [Documentation]    FAIL STARTS: Resolving variable '\${javaobj.exception()}' failed: IllegalArgumentException:
+    ${javaobj} =    Get Java Object    My Name
+    Log    ${javaobj.exception()}

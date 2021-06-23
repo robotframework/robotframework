@@ -17,6 +17,12 @@ Get Etree Version
     ${et} =    Evaluate    robot.utils.ET    modules=robot
     [Return]    ${et.VERSION}
 
+Run With Bytes
+    [Arguments]    ${kw}    ${string}    @{args}    ${encoding}=UTF-8    &{kws}
+    ${bytes} =    Encode string to bytes    ${string}    ${encoding}
+    ${result} =    Run Keyword    ${kw}    ${bytes}    @{args}    &{kws}
+    [Return]    ${result}
+
 Parse XML To Test Variable
     [Arguments]    ${input}    ${var}    &{config}
     ${result} =    Parse XML    ${input}    &{config}
@@ -33,7 +39,6 @@ Saved XML Should Equal
     Save XML    ${tree}    ${OUTPUT}
     ${expected} =    Catenate    SEPARATOR=\n    @{expected}
     XML Content Should Be    ${expected}
-
 
 Saved XML Should Equal File
     [Arguments]    ${tree}    ${expected}

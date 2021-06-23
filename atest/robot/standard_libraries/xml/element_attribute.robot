@@ -16,6 +16,9 @@ Getting non-existing attribute returns None
 Default value is used when attribute does not exist
     Check Test Case    ${TESTNAME}
 
+Default value is none when attribute does not exist
+    Check Test Case    ${TESTNAME}
+
 Get element attributes
     Check Test Case    ${TESTNAME}
 

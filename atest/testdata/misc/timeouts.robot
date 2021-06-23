@@ -8,19 +8,15 @@ Default Test Timeout
     [Documentation]    I have a timeout
     Timeouted
 
-Test Timeout With Message
-    [Timeout]    1d2h    The message
-    Timeouted
-
 Test Timeout With Variable
     [Timeout]    ${100}
     Timeouted
 
 No Timeout
-    [Timeout]
+    [Timeout]    NONE
     No Operation
 
 *** Keywords ***
 Timeouted
-    [Timeout]    42    My message
+    [Timeout]    42
     No Operation

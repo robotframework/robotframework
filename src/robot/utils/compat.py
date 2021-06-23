@@ -19,24 +19,44 @@ from .platform import IRONPYTHON, PY2
 
 
 if PY2:
-    # io.StringIO only accepts u'foo' with Python 2.
-    from StringIO import StringIO
+    from inspect import ismethod
+    from StringIO import StringIO    # io.StringIO accepts only Unicode strings.
 
+
+    def unwrap(func):
+        return func
 
     def py2to3(cls):
+        """Deprecated since RF 4.0. Use 'py3to2' instead."""
         if hasattr(cls, '__unicode__'):
             cls.__str__ = lambda self: unicode(self).encode('UTF-8')
         return cls
 
+    def py3to2(cls):
+        if ismethod(cls.__str__) and cls.__str__.im_func is not unicode_to_str:
+            cls.__unicode__ = cls.__str__
+            cls.__str__ = unicode_to_str
+        if hasattr(cls, '__bool__'):
+            cls.__nonzero__ = cls.__bool__
+        return cls
+
+    def unicode_to_str(self):
+        return unicode(self).encode('UTF-8')
+
 else:
+    from inspect import unwrap
     from io import StringIO
 
 
     def py2to3(cls):
+        """Deprecated since RF 4.0. Use 'py3to2' instead."""
         if hasattr(cls, '__unicode__'):
             cls.__str__ = lambda self: self.__unicode__()
         if hasattr(cls, '__nonzero__'):
             cls.__bool__ = lambda self: self.__nonzero__()
+        return cls
+
+    def py3to2(cls):
         return cls
 
 
@@ -60,7 +80,12 @@ if not IRONPYTHON:
         # first check if buffer was detached
         if hasattr(stream, 'buffer') and stream.buffer is None:
             return False
-        return hasattr(stream, 'isatty') and stream.isatty()
+        if not hasattr(stream, 'isatty'):
+            return False
+        try:
+            return stream.isatty()
+        except ValueError:    # Occurs if file is closed.
+            return False
 
 else:
 

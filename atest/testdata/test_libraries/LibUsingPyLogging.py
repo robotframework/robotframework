@@ -49,6 +49,12 @@ def log_with_custom_levels():
     logging.log(logging.WARNING+5, 'between warning and error')
     logging.log(logging.ERROR*100,'above error')
 
+def log_exception():
+    try:
+        raise ValueError('Bang!')
+    except ValueError:
+        logging.exception('Error occurred!')
+
 def log_invalid_message():
     logging.info(InvalidMessage())
 

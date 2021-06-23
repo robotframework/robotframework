@@ -1,0 +1,11 @@
+string in yml:   Hello, YML!
+integer in yml:  42
+float in yml:    3.14
+list in yml:
+- one
+- 2
+dict in yml:
+  a: '1'
+  b: 2
+  3: [one, 2]
+  key with spaces: value with spaces

@@ -14,6 +14,11 @@ Exit From Java Keyword
     Check Test Case    ${TESTNAME}
     Check Test Case    Test That Should Not Be Run 3
 
+robot.api.FatalError
+    Run Tests    ${EMPTY}    running/fatal_exception/standard_error.robot
+    Check Test Case    ${TESTNAME}
+    Check Test Case    Test That Should Not Be Run
+
 Multiple Suite Aware Exiting
     Run Tests    ${EMPTY}    running/fatal_exception/
     Check Test Case    Exit From Python Keyword
@@ -48,25 +53,25 @@ Multiple Suite Aware Exiting From Suite Setup
     Check Test Case    Test That Should Not Be Run 2.1
     Check Test Case    Test That Should Not Be Run 2.2
     ${ts2} =    Get Test Suite    Irrelevant
-    Should Be Equal    ${ts2.teardown}    ${None}
+    Should Not Be True    ${ts2.teardown}
 
 Multiple Suite Aware Exiting From Suite Setup With Skip Teardowns
     Run Tests    --SkipTeardownOnExit    running/fatal_exception_suite_setup/
     Check Test Case    Test That Should Not Be Run 1
     ${ts1} =    Get Test Suite    Suite Setup
-    Should Be Equal    ${ts1.teardown}    ${None}
+    Should Not Be True    ${ts1.teardown}
     Check Test Case    Test That Should Not Be Run 2.1
     Check Test Case    Test That Should Not Be Run 2.2
     ${ts2} =    Get Test Suite    Irrelevant
-    Should Be Equal    ${ts2.teardown}    ${None}
+    Should Not Be True    ${ts2.teardown}
 
 Fatal Exception and Exit on Failure
     Run Tests    --exitonfailure    running/fatal_exception/01__python_library_kw.robot
-    Check Test Case    Test That Should Not Be Run 1    FAIL    Critical failure occurred and exit-on-failure mode is in use.
+    Check Test Case    Test That Should Not Be Run 1    FAIL    Failure occurred and exit-on-failure mode is in use.
 
 Fatal Exception And Skip Teardown On Exit
     Run Tests    --SkipTeardownOnExit    running/fatal_exception
     ${tc} =    Check Test Case    Exit From Python Keyword
-    Should Be Equal    ${tc.teardown}    ${None}
+    Should Not Be True    ${tc.teardown}
     ${ts} =    Get Test Suite    Python Library Kw
-    Should Be Equal    ${ts.teardown}    ${None}
+    Should Not Be True    ${ts.teardown}

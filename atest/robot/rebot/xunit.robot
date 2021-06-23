@@ -14,22 +14,22 @@ ${INVALID}        %{TEMPDIR}${/}ïnvälïd-xünït.xml
 No XUnit Option Given
     Run Rebot    ${EMPTY}    ${INPUT FILE}
     Stderr Should Be Empty
-    Check Stdout Does Not Contain    XUnit
+    Stdout Should Not Contain    XUnit
 
 XUnit Option Given
     Run Rebot    --xunit xunit.xml --log log.html    ${INPUT FILE}
     Stderr Should Be Empty
-    Check Stdout Contains    XUnit:
+    Stdout Should Contain    XUnit:
     File Should Exist    ${OUTDIR}/xunit.xml
     File Should Exist    ${OUTDIR}/log.html
     ${root} =    Parse XML    ${OUTDIR}/xunit.xml
     Should Be Equal    ${root.tag}    testsuite
     ${tests} =    Get Elements    ${root}    testcase
     Length Should Be    ${tests}    19
-    Should Be Equal    ${tests[7].attrib['name']}    Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо
+    Element Attribute Should be    ${tests}[7]    name    Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо
     ${failures} =    Get Elements    ${root}    testcase/failure
     Length Should Be    ${failures}    5
-    Should Be Equal    ${failures[0].attrib['message']}    ${MESSAGES}
+    Element Attribute Should be    ${failures}[0]    message    ${MESSAGES}
 
 Times in xUnit output
     Previous Test Should Have Passed    XUnit Option Given
@@ -37,17 +37,9 @@ Times in xUnit output
     Element Attribute Should Match    ${suite}    time    ?.???
     Element Attribute Should Match    ${suite}    time    ?.???    xpath=.//testcase[1]
 
-XUnit skip non-criticals
-    Run Rebot    --xUnit xunit.xml --xUnitSkipNonCritical --NonCritical f1    ${INPUT FILE}
-    Stderr Should Be Empty
-    ${root} =    Parse XML    ${OUTDIR}/xunit.xml
-    Element Attribute Should Be    ${root}    tests    19
-    Element Attribute Should Be    ${root}    failures    4
-    Element Attribute Should Be    ${root}    skipped    10
-    ${skipped} =    Get Elements    ${root}    xpath=testcase/skipped
-    Should Be Equal    ${skipped[0].text}    FAIL: Expected
-    Should Be Equal    ${skipped[1].text}    PASS
-    Length Should Be    ${skipped}    10
+XUnit skip non-criticals is deprecated
+    Run Rebot    --xUnit xunit.xml --xUnitSkipNonCritical     ${INPUT FILE}
+    Stderr Should Contain   Command line option --xunitskipnoncritical has been deprecated and has no effect.
 
 Invalid XUnit File
     Create Directory    ${INVALID}
@@ -55,7 +47,8 @@ Invalid XUnit File
     File Should Not Exist    ${INVALID}
     File Should Exist    ${OUTDIR}/log.html
     ${path} =    Regexp Escape    ${INVALID}
-    Check Stderr Matches Regexp    \\[ ERROR \\] Writing xunit file '${path}' failed: .*
+    Stderr Should Match Regexp
+    ...    \\[ ERROR \\] Opening xunit file '${path}' failed: .*
 
 *** Keywords ***
 Create Input File

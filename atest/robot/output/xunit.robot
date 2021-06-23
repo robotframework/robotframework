@@ -2,7 +2,7 @@
 Documentation       Tests for xunit-compatible xml-output.
 Resource            atest_resource.robot
 Variables           unicode_vars.py
-Suite Setup         Run Tests    -x xunit.xml -l log.html    ${TESTDATA}
+Suite Setup         Run Tests    -x xunit.xml -l log.html --skiponfailure täg    ${TESTDATA}
 
 *** Variables ***
 ${TESTDATA}         misc/non_ascii.robot
@@ -12,28 +12,36 @@ ${INVALID}          %{TEMPDIR}${/}ïnvälïd-xünït.xml
 *** Test Cases ***
 XUnit File Is Created
     Stderr should be empty
-    Check Stdout Contains    XUnit:
+    Stdout Should Contain    XUnit:
     File Should Exist    ${OUTDIR}/xunit.xml
     File Should Exist    ${OUTDIR}/log.html
 
 File Structure Is Correct
     ${root} =    Get XUnit Node
     Should Be Equal    ${root.tag}    testsuite
-    Suite Stats Should Be    ${root}    8    4    0
+    Suite Stats Should Be    ${root}    8    3    1
     ${tests} =    Get XUnit Nodes    testcase
     Length Should Be    ${tests}    8
-    ${failures} =    Get XUnit Nodes    testcase/failure
-    Length Should Be    ${failures}    4
+    ${fails} =    Get XUnit Nodes    testcase/failure
+    Length Should Be    ${fails}    3
+    Element Attribute Should Be    ${fails}[0]    message
+    ...    Setup failed:\n${MESSAGES}
+    Element Attribute Should Be    ${fails}[0]    type    AssertionError
+    ${skips} =    Get XUnit Nodes    testcase/skipped
+    Length Should Be    ${skips}    1
+    Element Attribute Should Be    ${skips}[0]    message
+    ...    Test failed but its tags matched '--SkipOnFailure' and it was marked skipped.\n\nOriginal failure:\n${MESSAGES}
+    Element Attribute Should Be    ${skips}[0]    type    SkipExecution
 
 Non-ASCII Content
     ${tests} =    Get XUnit Nodes    testcase
-    Should Be Equal    ${tests[-1].attrib['name']}    Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо
+    Element Attribute Should Be    ${tests}[-1]    name    Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо
     ${failures} =    Get XUnit Nodes    testcase/failure
-    Should Be Equal    ${failures[0].attrib['message']}    ${MESSAGES}
+    Element Attribute Should Be    ${failures}[0]    message    Setup failed:\n${MESSAGES}
 
 Multiline failure
     ${failures} =    Get XUnit Nodes    testcase/failure
-    Should Be Equal    ${failures[-1].attrib['message']}    Just ASCII here\n\nAlso teardown failed:\n${MESSAGES}
+    Element Attribute Should Be    ${failures}[-1]    message    Just ASCII here\n\nAlso teardown failed:\n${MESSAGES}
 
 Suite has execution time
     ${suite} =    Get XUnit Node
@@ -47,7 +55,7 @@ Test has execution time
 
 No XUnit Option Given
     Run Tests    ${EMPTY}    ${TESTDATA}
-    Check Stdout Does Not Contain    XUnit
+    Stdout Should Not Contain    XUnit
 
 Invalid XUnit File
     Create Directory    ${INVALID}
@@ -56,24 +64,12 @@ Invalid XUnit File
     File Should Exist    ${OUTDIR}/log.html
     ${dir}    ${base} =    Split Path  ${INVALID}
     ${path} =    Regexp Escape    ${INVALID}
-    Check Stderr Matches Regexp
-    ...    \\[ ERROR \\] Writing xunit file '${path}' failed: .*
+    Stderr Should Match Regexp
+    ...    \\[ ERROR \\] Opening xunit file '${path}' failed: .*
 
-Skipping non-critical tests
-    Run tests    --xUnit xunit.xml --xUnitSkipNonCritical --NonCritical fail    ${PASS AND FAIL}
-    ${root} =    Get XUnit Node  .
-    Suite Stats Should Be    ${root}    2    0    1
-    ${skipped} =  Get XUnit Node  testcase/skipped
-    Should be equal    ${skipped.text}    FAIL: Expected failure
-
-Skipping all tests
-    Run tests    --xunit xunit.xml --noncritical force --xunitskip    ${PASS AND FAIL}
-    ${root} =    Get XUnit Node    .
-    Suite Stats Should Be    ${root}    2    0    2
-    ${skipped} =    Get XUnit Nodes    testcase/skipped
-    Should be equal    ${skipped[0].text}    PASS
-    Should be equal    ${skipped[1].text}    FAIL: Expected failure
-    Length Should Be    ${skipped}    2
+Skipping non-critical tests is deprecated
+    Run tests    --xUnit xunit.xml --xUnitSkipNonCritical     ${PASS AND FAIL}
+    Stderr Should Contain   Command line option --xunitskipnoncritical has been deprecated and has no effect.
 
 *** Keywords ***
 Get XUnit Node

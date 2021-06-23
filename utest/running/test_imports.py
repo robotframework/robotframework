@@ -28,8 +28,8 @@ class TestImports(unittest.TestCase):
     def test_imports(self):
         suite = TestSuite(name='Suite')
         suite.resource.imports.create('Library', 'OperatingSystem')
-        suite.tests.create(name='Test').keywords.create('Directory Should Exist',
-                                                        args=['.'])
+        suite.tests.create(name='Test').body.create_keyword('Directory Should Exist',
+                                                            args=['.'])
         result = run(suite)
         assert_suite(result, 'Suite', 'PASS')
         assert_test(result.tests[0], 'Test', 'PASS')
@@ -37,8 +37,8 @@ class TestImports(unittest.TestCase):
     def test_library_imports(self):
         suite = TestSuite(name='Suite')
         suite.resource.imports.library('OperatingSystem')
-        suite.tests.create(name='Test').keywords.create('Directory Should Exist',
-                                                        args=['.'])
+        suite.tests.create(name='Test').body.create_keyword('Directory Should Exist',
+                                                            args=['.'])
         result = run(suite)
         assert_suite(result, 'Suite', 'PASS')
         assert_test(result.tests[0], 'Test', 'PASS')
@@ -46,8 +46,8 @@ class TestImports(unittest.TestCase):
     def test_resource_imports(self):
         suite = TestSuite(name='Suite')
         suite.resource.imports.resource('test_resource.txt')
-        suite.tests.create(name='Test').keywords.create('My Test Keyword')
-        assert_equal(suite.tests[0].keywords[0].name, 'My Test Keyword')
+        suite.tests.create(name='Test').body.create_keyword('My Test Keyword')
+        assert_equal(suite.tests[0].body[0].name, 'My Test Keyword')
         result = run(suite)
         assert_suite(result, 'Suite', 'PASS')
         assert_test(result.tests[0], 'Test', 'PASS')
@@ -55,7 +55,7 @@ class TestImports(unittest.TestCase):
     def test_variable_imports(self):
         suite = TestSuite(name='Suite')
         suite.resource.imports.variables('variables_file.py')
-        suite.tests.create(name='Test').keywords.create(
+        suite.tests.create(name='Test').body.create_keyword(
             'Should Be Equal As Strings',
             args=['${MY_VARIABLE}', 'An example string']
         )

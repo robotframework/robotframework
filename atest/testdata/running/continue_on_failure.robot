@@ -174,6 +174,16 @@ Continuable and regular failure in for loop
     END
     Fail    Should not be executed
 
+robot.api.ContinuableFailure
+    [Documentation]    FAIL ${HEADER}\n\n
+    ...    1) 1\n\n
+    ...    2) 2\n\n
+    ...    3) 3\n\n
+    ...    ${TEARDOWN ERROR}
+    Raise Continuable Failure    1    standard=True
+    Raise Continuable Failure    2    standard=True
+    Fail    3
+    Raise Continuable Failure    Should not be executed
 
 *** Keywords ***
 Continuable Failure In User Keyword In ${where}

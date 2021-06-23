@@ -68,8 +68,9 @@ Fails if used outside keywords
 
 Fails if used outside keywords inside for loop
     [Documentation]    FAIL    Invalid 'Return From Keyword' usage.
-    :FOR    ${var}    IN    1    2    3
-    \    Return From Keyword
+    FOR    ${var}    IN    1    2    3
+        Return From Keyword
+    END
 
 With continuable failure
     [Documentation]    FAIL    continuable error
@@ -89,9 +90,7 @@ Return From Keyword If does not evaluate bogus arguments if condition is untrue
     [Documentation]    FAIL Replacing variables from keyword return value failed: Variable '\${non existent 2}' not found.
     Return From Keyword If with non-existing variables in arguments
 
-
 *** Keywords ***
-
 Without Return Value
     Return From Keyword
     Fail    Should have returned before this
@@ -126,9 +125,10 @@ Nested keywords with return
     [Return]    should be returned
 
 With for loop
-    :FOR    ${var}    IN    foo    bar    baz
-    \       Return From Keyword    return ${var}
-    \       Fail    Should have returned before this
+    FOR    ${var}    IN    foo    bar    baz
+           Return From Keyword    return ${var}
+           Fail    Should have returned before this
+    END
     [Return]     Should not ${evaluate}
 
 With teardown
@@ -150,10 +150,11 @@ With continuable failure
     [Return]     Should not ${evaluate}
 
 With continuable failure in for loop
-    :FOR    ${var}    IN    foo    bar    baz
-    \       Run Keyword And Continue On Failure    Fail    continuable error
-    \       Return From Keyword    something to return
-    \       Fail    Should have returned before this
+    FOR    ${var}    IN    foo    bar    baz
+           Run Keyword And Continue On Failure    Fail    continuable error
+           Return From Keyword    something to return
+           Fail    Should have returned before this
+    END
     Fail     Should have returned before this
     [Return]     Should not ${evaluate}
 

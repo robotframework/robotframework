@@ -37,8 +37,10 @@ class UserErrorHandler(object):
         self.name = name
         self.libname = libname
         self.error = error
+        self.source = None
+        self.lineno = -1
         self.arguments = ArgumentSpec()
-        self.timeout = ''
+        self.timeout = None
         self.tags = Tags()
 
     @property
@@ -56,13 +58,14 @@ class UserErrorHandler(object):
     def create_runner(self, name):
         return self
 
-    def run(self, kw, context):
+    def run(self, kw, context, run=True):
         result = KeywordResult(kwname=self.name,
                                libname=self.libname,
                                args=kw.args,
                                assign=kw.assign,
                                type=kw.type)
-        with StatusReporter(context, result):
-            raise self.error
+        with StatusReporter(kw, result, context, run):
+            if run:
+                raise self.error
 
     dry_run = run

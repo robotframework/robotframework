@@ -23,8 +23,9 @@ from string import ascii_lowercase, ascii_uppercase, digits
 
 
 from robot.api import logger
+from robot.api.deco import keyword
 from robot.utils import (is_bytes, is_string, is_truthy, is_unicode, lower,
-                         unic, Utf8Reader, PY3)
+                         unic, FileReader, PY2, PY3)
 from robot.version import get_version
 
 
@@ -52,12 +53,16 @@ class String(object):
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
 
-    def convert_to_lowercase(self, string):
-        """Converts string to lowercase.
+    def convert_to_lower_case(self, string):
+        """Converts string to lower case.
+
+        Uses Python's standard
+        [https://docs.python.org/library/stdtypes.html#str.lower|lower()]
+        method.
 
         Examples:
-        | ${str1} = | Convert To Lowercase | ABC |
-        | ${str2} = | Convert To Lowercase | 1A2c3D |
+        | ${str1} = | Convert To Lower Case | ABC |
+        | ${str2} = | Convert To Lower Case | 1A2c3D |
         | Should Be Equal | ${str1} | abc |
         | Should Be Equal | ${str2} | 1a2c3d |
         """
@@ -65,16 +70,80 @@ class String(object):
         # comments for more details.
         return lower(string)
 
-    def convert_to_uppercase(self, string):
-        """Converts string to uppercase.
+    def convert_to_upper_case(self, string):
+        """Converts string to upper case.
+
+        Uses Python's standard
+        [https://docs.python.org/library/stdtypes.html#str.upper|upper()]
+        method.
 
         Examples:
-        | ${str1} = | Convert To Uppercase | abc |
-        | ${str2} = | Convert To Uppercase | 1a2C3d |
+        | ${str1} = | Convert To Upper Case | abc |
+        | ${str2} = | Convert To Upper Case | 1a2C3d |
         | Should Be Equal | ${str1} | ABC |
         | Should Be Equal | ${str2} | 1A2C3D |
         """
         return string.upper()
+
+    @keyword(types=None)
+    def convert_to_title_case(self, string, exclude=None):
+        """Converts string to title case.
+
+        Uses the following algorithm:
+
+        - Split the string to words from whitespace characters (spaces,
+          newlines, etc.).
+        - Exclude words that are not all lower case. This preserves,
+          for example, "OK" and "iPhone".
+        - Exclude also words listed in the optional ``exclude`` argument.
+        - Title case the first alphabetical character of each word that has
+          not been excluded.
+        - Join all words together so that original whitespace is preserved.
+
+        Explicitly excluded words can be given as a list or as a string with
+        words separated by a comma and an optional space. Excluded words are
+        actually considered to be regular expression patterns, so it is
+        possible to use something like "example[.!?]?" to match the word
+        "example" on it own and also if followed by ".", "!" or "?".
+        See `BuiltIn.Should Match Regexp` for more information about Python
+        regular expression syntax in general and how to use it in Robot
+        Framework test data in particular.
+
+        Examples:
+        | ${str1} = | Convert To Title Case | hello, world!     |
+        | ${str2} = | Convert To Title Case | it's an OK iPhone | exclude=a, an, the |
+        | ${str3} = | Convert To Title Case | distance is 1 km. | exclude=is, km.? |
+        | Should Be Equal | ${str1} | Hello, World! |
+        | Should Be Equal | ${str2} | It's an OK iPhone |
+        | Should Be Equal | ${str3} | Distance is 1 km. |
+
+        The reason this keyword does not use Python's standard
+        [https://docs.python.org/library/stdtypes.html#str.title|title()]
+        method is that it can yield undesired results, for example, if
+        strings contain upper case letters or special characters like
+        apostrophes. It would, for example, convert "it's an OK iPhone"
+        to "It'S An Ok Iphone".
+
+        New in Robot Framework 3.2.
+        """
+        if not is_unicode(string):
+            raise TypeError('This keyword works only with Unicode strings.')
+        if is_string(exclude):
+            exclude = [e.strip() for e in exclude.split(',')]
+        elif not exclude:
+            exclude = []
+        exclude = [re.compile('^%s$' % e) for e in exclude]
+
+        def title(word):
+            if any(e.match(word) for e in exclude) or not word.islower():
+                return word
+            for index, char in enumerate(word):
+                if char.isalpha():
+                    return word[:index] + word[index].title() + word[index+1:]
+            return word
+
+        tokens = re.split(r'(\s+)', string, flags=re.UNICODE)
+        return ''.join(title(token) for token in tokens)
 
     def encode_string_to_bytes(self, string, encoding, errors='strict'):
         """Encodes the given Unicode ``string`` to bytes using the given ``encoding``.
@@ -151,7 +220,7 @@ class String(object):
             template = template.replace('/', os.sep)
             logger.info('Reading template from file <a href="%s">%s</a>.'
                         % (template, template), html=True)
-            with Utf8Reader(template) as reader:
+            with FileReader(template) as reader:
                 template = reader.read()
         return template.format(*positional, **named)
 
@@ -215,7 +284,7 @@ class String(object):
         a true value makes it case-insensitive. The value is considered true
         if it is a non-empty string that is not equal to ``false``, ``none`` or
         ``no``. If the value is not a string, its truth value is got directly
-        in Python. Considering ``none`` false is new in RF 3.0.3.
+        in Python.
 
         Lines are returned as one string catenated back together with
         newlines. Possible trailing newline is never returned. The
@@ -250,7 +319,7 @@ class String(object):
         a true value makes it case-insensitive. The value is considered true
         if it is a non-empty string that is not equal to ``false``, ``none`` or
         ``no``. If the value is not a string, its truth value is got directly
-        in Python. Considering ``none`` false is new in RF 3.0.3.
+        in Python.
 
         Lines are returned as one string catenated back together with
         newlines. Possible trailing newline is never returned. The
@@ -283,7 +352,7 @@ class String(object):
         argument a true value. The value is considered true
         if it is a non-empty string that is not equal to ``false``, ``none`` or
         ``no``. If the value is not a string, its truth value is got directly
-        in Python. Considering ``none`` false is new in RF 3.0.3.
+        in Python.
 
         If the pattern is empty, it matches only empty lines by default.
         When partial matching is enabled, empty pattern matches all lines.
@@ -303,9 +372,6 @@ class String(object):
         See `Get Lines Matching Pattern` and `Get Lines Containing
         String` if you do not need full regular expression powers (and
         complexity).
-
-        ``partial_match`` argument is new in Robot Framework 2.9. In earlier
-         versions exact match was always required.
         """
         if not is_truthy(partial_match):
             pattern = '^%s$' % pattern
@@ -343,8 +409,6 @@ class String(object):
         | ${one group} = ['he', 'ri']
         | ${named group} = ['he', 'ri']
         | ${two groups} = [('h', 'e'), ('r', 'i')]
-
-        New in Robot Framework 2.9.
         """
         regexp = re.compile(pattern)
         groups = [self._parse_group(g) for g in groups]
@@ -439,6 +503,7 @@ class String(object):
             string = self.replace_string_using_regexp(string, pattern, '')
         return string
 
+    @keyword(types=None)
     def split_string(self, string, separator=None, max_split=-1):
         """Splits the ``string`` using ``separator`` as a delimiter string.
 
@@ -464,6 +529,7 @@ class String(object):
         max_split = self._convert_to_integer(max_split, 'max_split')
         return string.split(separator, max_split)
 
+    @keyword(types=None)
     def split_string_from_right(self, string, separator=None, max_split=-1):
         """Splits the ``string`` using ``separator`` starting from right.
 
@@ -556,6 +622,7 @@ class String(object):
         end = self._convert_to_index(end, 'end')
         return string[start:end]
 
+    @keyword(types=None)
     def strip_string(self, string, mode='both', characters=None):
         """Remove leading and/or trailing whitespaces from the given string.
 
@@ -576,8 +643,6 @@ class String(object):
         | Should Be Equal | ${stripped} | Hello${SPACE} | |
         | ${stripped}=  | Strip String | aabaHelloeee | characters=abe |
         | Should Be Equal | ${stripped} | Hello | |
-
-        New in Robot Framework 3.0.
         """
         try:
             method = {'BOTH': string.strip,
@@ -649,8 +714,8 @@ class String(object):
         if not is_bytes(item):
             self._fail(msg, "'%s' is not a byte string.", item)
 
-    def should_be_lowercase(self, string, msg=None):
-        """Fails if the given ``string`` is not in lowercase.
+    def should_be_lower_case(self, string, msg=None):
+        """Fails if the given ``string`` is not in lower case.
 
         For example, ``'string'`` and ``'with specials!'`` would pass, and
         ``'String'``, ``''`` and ``' '`` would fail.
@@ -658,13 +723,13 @@ class String(object):
         The default error message can be overridden with the optional
         ``msg`` argument.
 
-        See also `Should Be Uppercase` and `Should Be Titlecase`.
+        See also `Should Be Upper Case` and `Should Be Title Case`.
         """
         if not string.islower():
-            self._fail(msg, "'%s' is not lowercase.", string)
+            self._fail(msg, "'%s' is not lower case.", string)
 
-    def should_be_uppercase(self, string, msg=None):
-        """Fails if the given ``string`` is not in uppercase.
+    def should_be_upper_case(self, string, msg=None):
+        """Fails if the given ``string`` is not in upper case.
 
         For example, ``'STRING'`` and ``'WITH SPECIALS!'`` would pass, and
         ``'String'``, ``''`` and ``' '`` would fail.
@@ -672,28 +737,49 @@ class String(object):
         The default error message can be overridden with the optional
         ``msg`` argument.
 
-        See also `Should Be Titlecase` and `Should Be Lowercase`.
+        See also `Should Be Title Case` and `Should Be Lower Case`.
         """
         if not string.isupper():
-            self._fail(msg, "'%s' is not uppercase.", string)
+            self._fail(msg, "'%s' is not upper case.", string)
 
-    def should_be_titlecase(self, string, msg=None):
+    @keyword(types=None)
+    def should_be_title_case(self, string, msg=None, exclude=None):
         """Fails if given ``string`` is not title.
 
-        ``string`` is a titlecased string if there is at least one
-        character in it, uppercase characters only follow uncased
-        characters and lowercase characters only cased ones.
+        ``string`` is a title cased string if there is at least one upper case
+        letter in each word.
 
-        For example, ``'This Is Title'`` would pass, and ``'Word In UPPER'``,
-        ``'Word In lower'``, ``''`` and ``' '`` would fail.
+        For example, ``'This Is Title'`` and ``'OK, Give Me My iPhone'``
+        would pass. ``'all words lower'`` and ``'Word In lower'`` would fail.
+
+        This logic changed in Robot Framework 4.0 to be compatible with
+        `Convert to Title Case`. See `Convert to Title Case` for title case
+        algorithm and reasoning.
 
         The default error message can be overridden with the optional
         ``msg`` argument.
 
-        See also `Should Be Uppercase` and `Should Be Lowercase`.
+        Words can be explicitly excluded with the optional ``exclude`` argument.
+
+        Explicitly excluded words can be given as a list or as a string with
+        words separated by a comma and an optional space. Excluded words are
+        actually considered to be regular expression patterns, so it is
+        possible to use something like "example[.!?]?" to match the word
+        "example" on it own and also if followed by ".", "!" or "?".
+        See `BuiltIn.Should Match Regexp` for more information about Python
+        regular expression syntax in general and how to use it in Robot
+        Framework test data in particular.
+
+        See also `Should Be Upper Case` and `Should Be Lower Case`.
         """
-        if not string.istitle():
-            self._fail(msg, "'%s' is not titlecase.", string)
+        if PY2 and is_bytes(string):
+            try:
+                string = string.decode('ASCII')
+            except UnicodeError:
+                raise TypeError('This keyword works only with Unicode strings '
+                                'and non-ASCII bytes.')
+        if string != self.convert_to_title_case(string, exclude):
+            self._fail(msg, "'%s' is not title case.", string)
 
     def _convert_to_index(self, value, name):
         if value == '':

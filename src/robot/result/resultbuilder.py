@@ -27,7 +27,9 @@ from .xmlelementhandlers import XmlElementHandler
 def ExecutionResult(*sources, **options):
     """Factory method to constructs :class:`~.executionresult.Result` objects.
 
-    :param sources: Path(s) to the XML output file(s).
+    :param sources: XML source(s) containing execution results.
+        Can be specified as paths, opened file objects, or strings/bytes
+        containing XML directly. Support for bytes is new in RF 3.2.
     :param options: Configuration options.
         Using ``merge=True`` causes multiple results to be combined so that
         tests in the latter results replace the ones in the original.
@@ -52,7 +54,7 @@ def ExecutionResult(*sources, **options):
 
 def _merge_results(original, merged, options):
     result = ExecutionResult(original, **options)
-    merger = Merger(result)
+    merger = Merger(result, rpa=result.rpa)
     for path in merged:
         merged = ExecutionResult(path, **options)
         merger.merge(merged)
@@ -88,7 +90,8 @@ class ExecutionResultBuilder(object):
             :class:`~.executionresult.Result` objects from.
         :param include_keywords: Boolean controlling whether to include
             keyword information in the result or not. Keywords are
-            not needed when generating only report.
+            not needed when generating only report. Although the the option name
+            has word "keyword", it controls also including FOR and IF structures.
         :param flatten_keywords: List of patterns controlling what keywords to
             flatten. See the documentation of ``--flattenkeywords`` option for
             more details.
@@ -124,8 +127,9 @@ class ExecutionResultBuilder(object):
     def _omit_keywords(self, context):
         omitted_kws = 0
         for event, elem in context:
-            # Teardowns aren't omitted to allow checking suite teardown status.
-            omit = elem.tag == 'kw' and elem.get('type') != 'teardown'
+            # Teardowns aren't omitted yet to allow checking suite teardown status.
+            # They'll be removed later when not needed in `build()`.
+            omit = elem.tag in ('kw', 'for', 'if') and elem.get('type') != 'TEARDOWN'
             start = event == 'start'
             if omit and start:
                 omitted_kws += 1
@@ -143,31 +147,32 @@ class ExecutionResultBuilder(object):
         tags_match, by_tags = self._get_matcher(FlattenByTagMatcher, flattened)
         started = -1  # if 0 or more, we are flattening
         tags = []
+        containers = {'kw', 'for', 'iter', 'if'}
         inside_kw = 0  # to make sure we don't read tags from a test
         seen_doc = False
         for event, elem in context:
             tag = elem.tag
             start = event == 'start'
             end = not start
-            if start and tag == 'kw':
+            if start and tag in containers:
                 inside_kw += 1
                 if started >= 0:
                     started += 1
                 elif by_name and name_match(elem.get('name', ''), elem.get('library')):
                     started = 0
                     seen_doc = False
-                elif by_type and type_match(elem.get('type', 'kw')):
+                elif by_type and type_match(tag):
                     started = 0
                     seen_doc = False
             elif started < 0 and by_tags and inside_kw:
                 if end and tag == 'tag':
                     tags.append(elem.text or '')
-                elif end and tag == 'tags':
+                elif end and tags:
                     if tags_match(tags):
                         started = 0
                         seen_doc = False
                     tags = []
-            if end and tag == 'kw':
+            if end and tag in containers:
                 inside_kw -= 1
                 if started == 0 and not seen_doc:
                     doc = ET.Element('doc')
@@ -182,7 +187,7 @@ class ExecutionResultBuilder(object):
                 yield event, elem
             else:
                 elem.clear()
-            if started >= 0 and end and tag == 'kw':
+            if started >= 0 and end and tag in containers:
                 started -= 1
 
     def _get_matcher(self, matcher_class, flattened):
@@ -193,7 +198,8 @@ class ExecutionResultBuilder(object):
 class RemoveKeywords(SuiteVisitor):
 
     def start_suite(self, suite):
-        suite.keywords = []
+        suite.setup = None
+        suite.teardown = None
 
     def visit_test(self, test):
-        test.keywords = []
+        test.body = []

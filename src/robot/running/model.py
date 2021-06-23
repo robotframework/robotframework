@@ -33,15 +33,27 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-interface
 """
 
+import os
+
 from robot import model
 from robot.conf import RobotSettings
+from robot.model import Keywords, BodyItem
 from robot.output import LOGGER, Output, pyloggingconf
-from robot.utils import setter
+from robot.utils import seq2str, setter
 
-from .steprunner import StepRunner
+from .bodyrunner import ForRunner, IfRunner, KeywordRunner
 from .randomizer import Randomizer
 
 
+class Body(model.Body):
+    __slots__ = []
+
+
+class IfBranches(model.IfBranches):
+    __slots__ = []
+
+
+@Body.register
 class Keyword(model.Keyword):
     """Represents a single executable keyword.
 
@@ -50,37 +62,70 @@ class Keyword(model.Keyword):
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = []
-    message_class = None  #: Internal usage only.
+    __slots__ = ['lineno']
 
-    def run(self, context):
-        """Execute the keyword.
-
-        Typically called internally by :meth:`TestSuite.run`.
-        """
-        return StepRunner(context).run_step(self)
-
-
-class ForLoop(Keyword):
-    """Represents a for loop in test data.
-
-    Contains keywords in the loop body as child :attr:`keywords`.
-    """
-    __slots__ = ['flavor']
-    keyword_class = Keyword  #: Internal usage only.
-
-    def __init__(self, variables, values, flavor):
-        Keyword.__init__(self, assign=variables, args=values,
-                         type=Keyword.FOR_LOOP_TYPE)
-        self.flavor = flavor
+    def __init__(self, name='', doc='', args=(), assign=(), tags=(), timeout=None,
+                 type=BodyItem.KEYWORD, parent=None, lineno=None):
+        model.Keyword.__init__(self, name, doc, args, assign, tags, timeout, type,
+                               parent)
+        self.lineno = lineno
 
     @property
-    def variables(self):
-        return self.assign
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
+    def run(self, context, run=True, templated=None):
+        return KeywordRunner(context, run).run(self)
+
+
+@Body.register
+class For(model.For):
+    __slots__ = ['lineno', 'error']
+    body_class = Body
+
+    def __init__(self, variables, flavor, values, parent=None, lineno=None, error=None):
+        model.For.__init__(self, variables, flavor, values, parent)
+        self.lineno = lineno
+        self.error = error
 
     @property
-    def values(self):
-        return self.args
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
+    def run(self, context, run=True, templated=False):
+        return ForRunner(context, self.flavor, run, templated).run(self)
+
+
+@Body.register
+class If(model.If):
+    __slots__ = ['lineno', 'error']
+    body_class = IfBranches
+
+    def __init__(self, parent=None, lineno=None, error=None):
+        model.If.__init__(self, parent)
+        self.lineno = lineno
+        self.error = error
+
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
+    def run(self, context, run=True, templated=False):
+        return IfRunner(context, run, templated).run(self)
+
+
+@IfBranches.register
+class IfBranch(model.IfBranch):
+    __slots__ = ['lineno']
+    body_class = Body
+
+    def __init__(self, type=BodyItem.IF, condition=None, parent=None, lineno=None):
+        model.IfBranch.__init__(self, type, condition, parent)
+        self.lineno = lineno
+
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
 
 
 class TestCase(model.TestCase):
@@ -88,22 +133,21 @@ class TestCase(model.TestCase):
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = ['template']
-    keyword_class = Keyword  #: Internal usage only.
+    __slots__ = ['template', 'lineno']
+    body_class = Body        #: Internal usage only.
+    fixture_class = Keyword  #: Internal usage only.
 
-    def __init__(self, name='', doc='', tags=None, timeout=None, template=None):
+    def __init__(self, name='', doc='', tags=None, timeout=None, template=None,
+                 lineno=None):
         model.TestCase.__init__(self, name, doc, tags, timeout)
-        #: Name of the keyword that has been used as template
-        #: when building the test. ``None`` if no is template used.
+        #: Name of the keyword that has been used as a template when building the test.
+        # ``None`` if template is not used.
         self.template = template
+        self.lineno = lineno
 
-    @setter
-    def timeout(self, timeout):
-        """Test timeout as a :class:`Timeout` instance or ``None``.
-
-        This attribute is likely to change in the future.
-        """
-        return Timeout(*timeout) if timeout else None
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
 
 
 class TestSuite(model.TestSuite):
@@ -113,14 +157,41 @@ class TestSuite(model.TestSuite):
     """
     __slots__ = ['resource']
     test_class = TestCase    #: Internal usage only.
-    keyword_class = Keyword  #: Internal usage only.
+    fixture_class = Keyword  #: Internal usage only.
 
-    def __init__(self,  name='', doc='', metadata=None, source=None, rpa=False):
+    def __init__(self,  name='', doc='', metadata=None, source=None, rpa=None):
         model.TestSuite.__init__(self, name, doc, metadata, source, rpa)
         #: :class:`ResourceFile` instance containing imports, variables and
         #: keywords the suite owns. When data is parsed from the file system,
         #: this data comes from the same test case file that creates the suite.
         self.resource = ResourceFile(source=source)
+
+    @classmethod
+    def from_file_system(cls, *paths, **config):
+        """Create a :class:`TestSuite` object based on the given ``paths``.
+
+        ``paths`` are file or directory paths where to read the data from.
+
+        Internally utilizes the :class:`~.builders.TestSuiteBuilder` class
+        and ``config`` can be used to configure how it is initialized.
+
+        New in Robot Framework 3.2.
+        """
+        from .builder import TestSuiteBuilder
+        return TestSuiteBuilder(**config).build(*paths)
+
+    @classmethod
+    def from_model(cls, model, name=None):
+        """Create a :class:`TestSuite` object based on the given ``model``.
+
+        The model can be created by using the
+        :func:`~robot.parsing.parser.parser.get_model` function and possibly
+        modified by other tooling in the :mod:`robot.parsing` module.
+
+        New in Robot Framework 3.2.
+        """
+        from .builder import RobotParser
+        return RobotParser().build_suite(model, name)
 
     def configure(self, randomize_suites=False, randomize_tests=False,
                   randomize_seed=None, **options):
@@ -137,6 +208,10 @@ class TestSuite(model.TestSuite):
 
             suite.configure(included_tags=['smoke'],
                             doc='Smoke test results.')
+
+        Not to be confused with :meth:`config` method that suites, tests,
+        and keywords have to make it possible to set multiple attributes in
+        one call.
         """
         model.TestSuite.configure(self, **options)
         self.randomize(randomize_suites, randomize_tests, randomize_seed)
@@ -187,11 +262,10 @@ class TestSuite(model.TestSuite):
 
             stdout = StringIO()
             result = suite.run(variable='EXAMPLE:value',
-                               critical='regression',
                                output='example.xml',
                                exitonfailure=True,
                                stdout=stdout)
-            print result.return_code
+            print(result.return_code)
 
         To save memory, the returned
         :class:`~robot.result.executionresult.Result` object does not
@@ -208,7 +282,7 @@ class TestSuite(model.TestSuite):
         """
         from .namespace import IMPORTER
         from .signalhandler import STOP_SIGNAL_MONITOR
-        from .runner import Runner
+        from .suiterunner import SuiteRunner
 
         with LOGGER:
             if not settings:
@@ -218,7 +292,7 @@ class TestSuite(model.TestSuite):
                 with STOP_SIGNAL_MONITOR:
                     IMPORTER.reset()
                     output = Output(settings)
-                    runner = Runner(output, settings)
+                    runner = SuiteRunner(output, settings)
                     self.visit(runner)
                 output.close(runner.result)
         return runner.result
@@ -226,24 +300,18 @@ class TestSuite(model.TestSuite):
 
 class Variable(object):
 
-    def __init__(self, name, value, source=None):
+    def __init__(self, name, value, source=None, lineno=None, error=None):
         self.name = name
         self.value = value
         self.source = source
+        self.lineno = lineno
+        self.error = error
 
     def report_invalid_syntax(self, message, level='ERROR'):
-        LOGGER.write("Error in file '%s': Setting variable '%s' failed: %s"
-                     % (self.source or '<unknown>', self.name, message), level)
-
-
-class Timeout(object):
-
-    def __init__(self, value, message=None):
-        self.value = value
-        self.message = message
-
-    def __str__(self):
-        return self.value
+        source = self.source or '<unknown>'
+        line = ' on line %s' % self.lineno if self.lineno is not None else ''
+        LOGGER.write("Error in file '%s'%s: Setting variable '%s' failed: %s"
+                     % (source, line, self.name, message), level)
 
 
 class ResourceFile(object):
@@ -257,11 +325,11 @@ class ResourceFile(object):
 
     @setter
     def imports(self, imports):
-        return model.Imports(self.source, imports)
+        return Imports(self.source, imports)
 
     @setter
     def keywords(self, keywords):
-        return model.ItemList(UserKeyword, items=keywords)
+        return model.ItemList(UserKeyword, {'parent': self}, items=keywords)
 
     @setter
     def variables(self, variables):
@@ -270,24 +338,92 @@ class ResourceFile(object):
 
 class UserKeyword(object):
 
-    def __init__(self, name, args=(), doc='', tags=(), return_=None, timeout=None):
+    def __init__(self, name, args=(), doc='', tags=(), return_=None,
+                 timeout=None, lineno=None, parent=None):
         self.name = name
         self.args = args
         self.doc = doc
         self.tags = tags
         self.return_ = return_ or ()
         self.timeout = timeout
-        self.keywords = []
+        self.lineno = lineno
+        self.parent = parent
+        self.body = None
+        self._teardown = None
 
     @setter
+    def body(self, body):
+        """Child keywords as a :class:`~.Body` object."""
+        return Body(self, body)
+
+    @property
+    def keywords(self):
+        """Deprecated since Robot Framework 4.0.
+
+        Use :attr:`body` or :attr:`teardown` instead.
+        """
+        kws = list(self.body)
+        if self.teardown:
+            kws.append(self.teardown)
+        return Keywords(self, kws)
+
+    @keywords.setter
     def keywords(self, keywords):
-        return model.Keywords(Keyword, self, keywords)
+        Keywords.raise_deprecation_error()
 
-    @setter
-    def timeout(self, timeout):
-        """Keyword timeout as a :class:`Timeout` instance or ``None``."""
-        return Timeout(*timeout) if timeout else None
+    @property
+    def teardown(self):
+        if self._teardown is None:
+            self._teardown = Keyword(None, parent=self, type=Keyword.TEARDOWN)
+        return self._teardown
 
     @setter
     def tags(self, tags):
         return model.Tags(tags)
+
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
+
+class Import(object):
+    ALLOWED_TYPES = ('Library', 'Resource', 'Variables')
+
+    def __init__(self, type, name, args=(), alias=None, source=None, lineno=None):
+        if type not in self.ALLOWED_TYPES:
+            raise ValueError("Invalid import type '%s'. Should be one of %s."
+                             % (type, seq2str(self.ALLOWED_TYPES, lastsep=' or ')))
+        self.type = type
+        self.name = name
+        self.args = args
+        self.alias = alias
+        self.source = source
+        self.lineno = lineno
+
+    @property
+    def directory(self):
+        if not self.source:
+            return None
+        if os.path.isdir(self.source):
+            return self.source
+        return os.path.dirname(self.source)
+
+    def report_invalid_syntax(self, message, level='ERROR'):
+        source = self.source or '<unknown>'
+        line = ' on line %s' % self.lineno if self.lineno is not None else ''
+        LOGGER.write("Error in file '%s'%s: %s" % (source, line, message), level)
+
+
+class Imports(model.ItemList):
+
+    def __init__(self, source, imports=None):
+        model.ItemList.__init__(self, Import, {'source': source}, items=imports)
+
+    def library(self, name, args=(), alias=None, lineno=None):
+        self.create('Library', name, args, alias, lineno)
+
+    def resource(self, path, lineno=None):
+        self.create('Resource', path, lineno)
+
+    def variables(self, path, args=(), lineno=None):
+        self.create('Variables', path, args, lineno)

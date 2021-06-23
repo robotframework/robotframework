@@ -13,7 +13,6 @@ Expected
 Run suite 'Suites & Suites' with 22 tests in *
 
 FAILED
-22 critical tests, 20 passed, 2 failed
-22 tests total, 20 passed, 2 failed
+22 tests, 20 passed, 2 failed
 
 Output:  *

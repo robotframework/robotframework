@@ -14,21 +14,21 @@
 #  limitations under the License.
 
 from .markuputils import attribute_escape, html_escape, xml_escape
-from .robottypes import is_string
+from .robottypes import is_string, is_pathlike
 from .robotio import file_writer
 
 
 class _MarkupWriter(object):
 
-    def __init__(self, output, write_empty=True):
+    def __init__(self, output, write_empty=True, usage=None):
         """
         :param output: Either an opened, file like object, or a path to the
             desired output file. In the latter case, the file is created
             and clients should use :py:meth:`close` method to close it.
         :param write_empty: Whether to write empty elements and attributes.
         """
-        if is_string(output):
-            output = file_writer(output)
+        if is_string(output) or is_pathlike(output):
+            output = file_writer(output, usage=usage)
         self.output = output
         self._write_empty = write_empty
         self._preamble()
@@ -41,19 +41,18 @@ class _MarkupWriter(object):
         self._start(name, attrs, newline)
 
     def _start(self, name, attrs, newline):
-        self._write('<%s %s>' % (name, attrs) if attrs else '<%s>' % name,
-                    newline)
+        self._write('<%s %s>' % (name, attrs) if attrs else '<%s>' % name, newline)
 
     def _format_attrs(self, attrs):
         if not attrs:
             return ''
-        attrs = [(k, attribute_escape(attrs[k] or ''))
-                 for k in self._order_attrs(attrs)]
         write_empty = self._write_empty
-        return ' '.join('%s="%s"' % a for a in attrs if write_empty or a[1])
+        return ' '.join('%s="%s"' % (name, attribute_escape(value or ''))
+                        for name, value in self._order_attrs(attrs)
+                        if write_empty or value)
 
     def _order_attrs(self, attrs):
-        return attrs
+        return attrs.items()
 
     def content(self, content=None, escape=True, newline=False):
         if content:
@@ -65,12 +64,11 @@ class _MarkupWriter(object):
     def end(self, name, newline=True):
         self._write('</%s>' % name, newline)
 
-    def element(self, name, content=None, attrs=None, escape=True,
-                newline=True, replace_newlines=False):
+    def element(self, name, content=None, attrs=None, escape=True, newline=True):
         attrs = self._format_attrs(attrs)
         if self._write_empty or content or attrs:
             self._start(name, attrs, newline=False)
-            self.content(content, escape, replace_newlines)
+            self.content(content, escape)
             self.end(name, newline)
 
     def close(self):
@@ -86,7 +84,7 @@ class _MarkupWriter(object):
 class HtmlWriter(_MarkupWriter):
 
     def _order_attrs(self, attrs):
-        return sorted(attrs)  # eases testing
+        return sorted(attrs.items())  # eases testing
 
     def _escape(self, content):
         return html_escape(content)
@@ -100,9 +98,19 @@ class XmlWriter(_MarkupWriter):
     def _escape(self, text):
         return xml_escape(text)
 
+    def element(self, name, content=None, attrs=None, escape=True, newline=True):
+        if content:
+            _MarkupWriter.element(self, name, content, attrs, escape, newline)
+        else:
+            self._self_closing_element(name, attrs, newline)
+
+    def _self_closing_element(self, name, attrs, newline):
+        attrs = self._format_attrs(attrs)
+        if self._write_empty or attrs:
+            self._write('<%s %s/>' % (name, attrs) if attrs else '<%s/>' % name, newline)
+
 
 class NullMarkupWriter(object):
     """Null implementation of the _MarkupWriter interface."""
 
-    __init__ = start = content = element = end = close = \
-        lambda *args, **kwargs: None
+    __init__ = start = content = element = end = close = lambda *args, **kwargs: None

@@ -21,15 +21,9 @@ as well as doing simple calculations with them (e.g. `Subtract Time From Date`,
 `Add Time To Time`). It supports dates and times in various formats, and can
 also be used by other libraries programmatically.
 
-= Table of Contents =
+== Table of contents ==
 
-- `Terminology`
-- `Date formats`
-- `Time formats`
-- `Millisecond handling`
-- `Programmatic usage`
-- `Shortcuts`
-- `Keywords`
+%TOC%
 
 = Terminology =
 
@@ -85,7 +79,7 @@ Examples:
 It is possible to use custom timestamps in both input and output.
 The custom format is same as accepted by Python's
 [http://docs.python.org/library/datetime.html#strftime-strptime-behavior|
-datatime.strptime] function. For example, the default timestamp discussed
+datetime.strptime] function. For example, the default timestamp discussed
 in the previous section would match ``%Y-%m-%d %H:%M:%S.%f``.
 
 When using a custom timestamp in input, it must be specified using
@@ -147,15 +141,12 @@ Examples:
 == Earliest supported date ==
 
 The earliest date that is supported depends on the date format and to some
-extend on the platform:
+extent on the platform:
 
 - Timestamps support year 1900 and above.
 - Python datetime objects support year 1 and above.
 - Epoch time supports 1970 and above on Windows with Python and IronPython.
 - On other platforms epoch time supports 1900 and above or even earlier.
-
-Prior to Robot Framework 2.9.2, all formats had same limitation as epoch time
-has nowadays.
 
 = Time formats =
 
@@ -258,9 +249,7 @@ by giving a true value to ``exclude_millis`` argument. If the argument is given
 as a string, it is considered true unless it is empty or case-insensitively
 equal to ``false``, ``none`` or ``no``. Other argument types are tested using
 same [http://docs.python.org/library/stdtypes.html#truth|rules as in
-Python]. Notice that prior to Robot Framework 2.9, all strings except
-the empty string were considered true, and that considering ``none`` false is
-new in Robot Framework 3.0.3.
+Python].
 
 When milliseconds are excluded, seconds in returned dates and times are
 rounded to the nearest full second. With `timestamp` and `timer string`
@@ -346,9 +335,15 @@ def get_current_date(time_zone='local', increment=0,
     | Should Be Equal | ${date.year}     | ${2014}                 |
     | Should Be Equal | ${date.month}    | ${6}                    |
     """
-    if time_zone.upper() == 'LOCAL':
+    upper = time_zone.upper()
+    if upper == 'LOCAL':
         dt = datetime.now()
-    elif time_zone.upper() == 'UTC':
+    # Epoch time is same regardless the timezone. We convert `dt` to epoch time
+    # using `time.mktime()` afterwards, and it expects time in local time.
+    # For details: https://github.com/robotframework/robotframework/issues/3306
+    elif upper == 'UTC' and result_format.upper() == 'EPOCH':
+        dt = datetime.now()
+    elif upper == 'UTC':
         dt = datetime.utcnow()
     else:
         raise ValueError("Unsupported timezone '%s'." % time_zone)
@@ -564,7 +559,7 @@ class Date(object):
 
     def _handle_un_supported_f_directive(self, ts, input_format):
         input_format = self._remove_f_from_format(input_format)
-        match = re.search('\d+$', ts)
+        match = re.search(r'\d+$', ts)
         if not match:
             raise ValueError("time data '%s' does not match format '%s%%f'."
                              % (ts, input_format))

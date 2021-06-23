@@ -72,7 +72,7 @@ class _ListenerArgumentsFromItem(ListenerArguments):
         attributes = dict((name, self._get_attribute_value(item, name))
                           for name in self._attribute_names)
         attributes.update(self._get_extra_attributes(item))
-        return item.name, attributes
+        return item.name or '', attributes
 
     def _get_attribute_value(self, item, name):
         value = getattr(item, name)
@@ -113,29 +113,27 @@ class EndSuiteArguments(StartSuiteArguments):
 
 
 class StartTestArguments(_ListenerArgumentsFromItem):
-    _attribute_names = ('id', 'longname', 'doc', 'tags', 'starttime')
+    _attribute_names = ('id', 'longname', 'doc', 'tags', 'lineno', 'source', 'starttime')
 
     def _get_extra_attributes(self, test):
-        return {'critical': 'yes' if test.critical else 'no',
-                'template': test.template or ''}
+        return {'template': test.template or '',
+                'originalname': test.data.name}
 
 
 class EndTestArguments(StartTestArguments):
-    _attribute_names = ('id', 'longname', 'doc', 'tags', 'starttime',
+    _attribute_names = ('id', 'longname', 'doc', 'tags', 'lineno', 'source', 'starttime',
                         'endtime', 'elapsedtime', 'status', 'message')
 
 
 class StartKeywordArguments(_ListenerArgumentsFromItem):
-    _attribute_names = ('kwname', 'libname', 'doc', 'assign', 'tags',
+    _attribute_names = ('doc', 'assign', 'tags', 'lineno', 'source', 'type', 'status',
                         'starttime')
-    _types = {'kw': 'Keyword', 'setup': 'Setup', 'teardown': 'Teardown',
-              'for': 'For', 'foritem': 'For Item'}
 
     def _get_extra_attributes(self, kw):
         args = [a if is_string(a) else unic(a) for a in kw.args]
-        return {'args': args, 'type': self._types[kw.type]}
+        return {'kwname': kw.kwname or '', 'libname': kw.libname or '', 'args': args}
 
 
 class EndKeywordArguments(StartKeywordArguments):
-    _attribute_names = ('kwname', 'libname', 'doc', 'args', 'assign', 'tags',
-                        'starttime', 'endtime', 'elapsedtime', 'status')
+    _attribute_names = ('doc', 'assign', 'tags', 'lineno', 'source', 'type', 'status',
+                        'starttime', 'endtime', 'elapsedtime')

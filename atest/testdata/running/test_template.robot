@@ -47,7 +47,7 @@ Template With Variables
     [Template]    Expect Exactly Two Args
     ${VARIABLE}    ${VARIABLE}
 
-Template With @{EMPTY} Variable
+Template With \@{EMPTY} Variable
     [Template]    Template With Default Parameters
     @{EMPTY}
 
@@ -131,6 +131,90 @@ Template With FOR IN RANGE Loop
     ...    4) 0 != 4
     FOR    ${index}    IN RANGE    5
         ${0}    ${index}
+    END
+
+Nested FOR
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) a != b
+    ...
+    ...    2) b != a
+    ...
+    ...    3) b != a
+    ...
+    ...    4) c != a
+    ...
+    ...    5) c != b
+    ...
+    ...    6) c != a
+    FOR    ${x}    IN    a    b    c
+        FOR    ${y}    IN    a    b
+            ${x}    ${y}
+        END
+        ${x}    A    ignore_case=True
+    END
+
+Invalid FOR
+    [Documentation]    FAIL
+    ...    Multiple errors:
+    ...    - FOR loop has no loop values.
+    ...    - FOR loop has no closing END.
+    FOR    ${x}    IN
+        ${x}    not run
+
+Template With IF
+    IF    False
+        Not     Run
+    ELSE IF    False
+        Run     Not
+    ELSE
+        Same    Same
+    END
+
+Template With IF Failing
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) Not != Same
+    ...
+    ...    2) Same != Not
+    IF    True
+        Not     Same
+    END
+    IF    False
+        Not     Run
+    ELSE IF    True
+        Same    Not
+    ELSE
+        Not     Run
+    END
+
+Invalid IF
+    [Documentation]    FAIL
+    ...    Multiple errors:
+    ...    - IF has no condition.
+    ...    - IF has no closing END.
+    IF
+        Not    Run
+
+FOR and IF
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) b != wrong
+    ...
+    ...    2) d != bad
+    FOR    ${x}    IN    a    b    c    d
+        IF    '${x}' == 'a'
+            ${x}    a
+        ELSE IF    '${x}' == 'b'
+            ${x}    wrong
+        ELSE IF    '${x}' == 'c'
+            ${x}    c
+        ELSE
+            ${x}    bad
+        END
     END
 
 User Keywords Should Not Be Continued On Failure
@@ -243,8 +327,8 @@ Templated test with for loop continues after keyword timeout
     END
 
 Templated test ends after syntax errors
-    [Documentation]    FAIL   Keyword 'BuiltIn.Should Be Equal' expected 2 to 6 arguments, got 7.
-    Syntax    error    makes    test    end     again    here
+    [Documentation]    FAIL   Keyword 'BuiltIn.Should Be Equal' expected 2 to 7 arguments, got 8.
+    The    syntax    error    makes    test    end     again    here
     Not compared    anymore
 
 Templated test continues after variable error

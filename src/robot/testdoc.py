@@ -40,7 +40,6 @@ if 'robot' not in sys.modules and __name__ == '__main__':
 
 from robot.conf import RobotSettings
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, TESTDOC
-from robot.parsing import disable_curdir_processing
 from robot.running import TestSuiteBuilder
 from robot.utils import (abspath, Application, file_writer, get_link_path,
                          html_escape, html_format, IRONPYTHON, is_string,
@@ -84,7 +83,7 @@ Options
                           one per line. Contents do not need to be escaped but
                           spaces in the beginning and end of lines are removed.
                           Empty lines and lines starting with a hash character
-                          (#) are ignored. New in Robot Framework 3.0.2.
+                          (#) are ignored.
                           Example file:
                           |  --name Example
                           |  # This is a comment line
@@ -110,7 +109,7 @@ Jython and IronPython). It can be executed as an installed module like
 
 Examples:
 
-  python -m robot.testdoc my_test.html testdoc.html
+  python -m robot.testdoc my_test.robot testdoc.html
   jython -m robot.testdoc -N smoke_tests -i smoke path/to/my_tests smoke.html
   ipy path/to/robot/testdoc.py first_suite.txt second_suite.txt output.html
 
@@ -131,17 +130,16 @@ class TestDoc(Application):
         self.console(outfile)
 
     def _write_test_doc(self, suite, outfile, title):
-        with file_writer(outfile) as output:
+        with file_writer(outfile, usage='Testdoc output') as output:
             model_writer = TestdocModelWriter(output, suite, title)
             HtmlFileWriter(output, model_writer).write(TESTDOC)
 
 
-@disable_curdir_processing
 def TestSuiteFactory(datasources, **options):
     settings = RobotSettings(options)
     if is_string(datasources):
         datasources = [datasources]
-    suite = TestSuiteBuilder().build(*datasources)
+    suite = TestSuiteBuilder(process_curdir=False).build(*datasources)
     suite.configure(**settings.suite_config)
     return suite
 
@@ -189,7 +187,7 @@ class JsonConverter(object):
             'numberOfTests': suite.test_count   ,
             'suites': self._convert_suites(suite),
             'tests': self._convert_tests(suite),
-            'keywords': list(self._convert_keywords(suite))
+            'keywords': list(self._convert_keywords((suite.setup, suite.teardown)))
         }
 
     def _get_relative_source(self, source):
@@ -210,6 +208,10 @@ class JsonConverter(object):
         return [self._convert_test(t) for t in suite.tests]
 
     def _convert_test(self, test):
+        if test.setup:
+            test.body.insert(0, test.setup)
+        if test.teardown:
+            test.body.append(test.teardown)
         return {
             'name': self._escape(test.name),
             'fullName': self._escape(test.longname),
@@ -217,26 +219,41 @@ class JsonConverter(object):
             'doc': self._html(test.doc),
             'tags': [self._escape(t) for t in test.tags],
             'timeout': self._get_timeout(test.timeout),
-            'keywords': list(self._convert_keywords(test))
+            'keywords': list(self._convert_keywords(test.body))
         }
 
-    def _convert_keywords(self, item):
-        for kw in getattr(item, 'keywords', []):
-            if kw.type == kw.SETUP_TYPE:
+    def _convert_keywords(self, keywords):
+        for kw in keywords:
+            if not kw:
+                continue
+            if kw.type == kw.SETUP:
                 yield self._convert_keyword(kw, 'SETUP')
-            elif kw.type == kw.TEARDOWN_TYPE:
+            elif kw.type == kw.TEARDOWN:
                 yield self._convert_keyword(kw, 'TEARDOWN')
-            elif kw.type == kw.FOR_LOOP_TYPE:
-                yield self._convert_for_loop(kw)
+            elif kw.type == kw.FOR:
+                yield self._convert_for(kw)
+            elif kw.type == kw.IF_ELSE_ROOT:
+                for branch in self._convert_if(kw):
+                    yield branch
             else:
                 yield self._convert_keyword(kw, 'KEYWORD')
 
-    def _convert_for_loop(self, kw):
+    def _convert_for(self, data):
+        name = '%s %s %s' % (', '.join(data.variables), data.flavor,
+                             seq2str2(data.values))
         return {
-            'name': self._escape(self._get_for_loop(kw)),
+            'name': self._escape(name),
             'arguments': '',
             'type': 'FOR'
         }
+
+    def _convert_if(self, data):
+        for branch in data.body:
+            yield {
+                'name': self._escape(branch.condition or ''),
+                'arguments': '',
+                'type': branch.type
+            }
 
     def _convert_keyword(self, kw, kw_type):
         return {
@@ -250,19 +267,13 @@ class JsonConverter(object):
             return '%s = %s' % (', '.join(a.rstrip('= ') for a in kw.assign), kw.name)
         return kw.name
 
-    def _get_for_loop(self, kw):
-        joiner = ' %s ' % kw.flavor
-        return ', '.join(kw.variables) + joiner + seq2str2(kw.values)
-
     def _get_timeout(self, timeout):
         if timeout is None:
             return ''
         try:
-            tout = secs_to_timestr(timestr_to_secs(timeout.value))
+            tout = secs_to_timestr(timestr_to_secs(timeout))
         except ValueError:
-            tout = timeout.value
-        if timeout.message:
-            tout += ' :: ' + timeout.message
+            tout = timeout
         return tout
 
 

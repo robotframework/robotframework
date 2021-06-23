@@ -26,6 +26,11 @@ class TestIsATty(unittest.TestCase):
             assert_raises((ValueError, AttributeError), wrapper.isatty)
             assert_false(isatty(wrapper))
 
+    def test_open_and_closed_file(self):
+        with open(__file__) as file:
+            assert_false(isatty(file))
+        assert_false(isatty(file))
+
 
 if __name__ == '__main__':
     unittest.main()

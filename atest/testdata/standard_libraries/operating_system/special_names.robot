@@ -1,10 +1,8 @@
 *** Settings ***
 Documentation     Tests for different file and directory names.
-...               These are, for most parts, tested also elsewhere. On Windows tests with
-...               non-ASCII chars having ordinal over 255 fail on Jython due to
-...               http://bugs.jython.org/issue1658
-Suite Teardown    Remove Base Test Directory
+...               These are, for most parts, tested also elsewhere.
 Test Setup        Create Base Test Directory
+Suite Teardown    Remove Base Test Directory
 Resource          os_resource.robot
 
 *** Test Cases ***
@@ -82,6 +80,6 @@ Test Directory Operations
     Directory Should Not Be Empty    ${path}
     @{items} =    List Directory    ${path}
     Length Should Be    ${items}    1
-    Should Be Equal    @{items}[0]    ${name}
+    Should Be Equal    ${items}[0]    ${name}
     Remove Directory    ${path}    recursive
     Directory Should Not Exist    ${path}

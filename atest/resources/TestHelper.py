@@ -1,5 +1,5 @@
 import os
-from stat import S_IREAD, S_IWRITE
+from stat import S_IREAD, S_IWRITE, S_IEXEC
 
 from robot.api import logger
 
@@ -11,6 +11,12 @@ class TestHelper:
 
     def set_read_write(self, path):
         os.chmod(path, S_IREAD | S_IWRITE)
+
+    def set_read_write_execute(self, path):
+        os.chmod(path, S_IREAD | S_IWRITE | S_IEXEC)
+
+    def remove_permissions(self, path):
+        os.chmod(path, 0)
 
     def file_should_have_correct_line_separators(self, output, sep=os.linesep):
         if os.path.isfile(output):

@@ -1,0 +1,308 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://robotframework.org/robotframework/schema/libdoc.json",
+  "type": "object",
+  "title": "Libdoc json spec schema",
+  "description": "This schema describes the json format that is used by Robot Framework Libdocs HTML reports and by the json spec files that can be generated and read by Libdoc.",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "generated": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "version": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "LIBRARY",
+        "RESOURCE"
+      ]
+    },
+    "scope": {
+      "type": "string",
+      "enum": [
+        "GLOBAL",
+        "SUITE",
+        "TEST"
+      ],
+      "default": "TEST"
+    },
+    "doc": {
+      "type": "string"
+    },
+    "docFormat": {
+      "type": "string",
+      "enum": [
+        "ROBOT",
+        "HTML",
+        "REST",
+        "TEXT"
+      ],
+      "default": "ROBOT"
+    },
+    "source": {
+      "type": "string",
+      "description": "Path to the source code of that library."
+    },
+    "lineno": {
+      "type": "integer",
+      "minimum": -1
+    },
+    "tags": {
+      "$id": "#/properties/tags",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "inits": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/keyword"
+      },
+      "uniqueItems": true
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/keyword"
+      },
+      "uniqueItems": true
+    },
+    "dataTypes": {
+      "type": "object",
+      "title": "Keyword schema",
+      "properties": {
+        "enums": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/enumType"
+          },
+          "uniqueItems": true
+        },
+        "typedDicts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/typedDictType"
+          },
+          "uniqueItems": true
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "generated",
+    "version",
+    "type",
+    "scope",
+    "doc",
+    "docFormat",
+    "source",
+    "lineno",
+    "inits",
+    "keywords",
+    "tags"
+  ],
+  "definitions": {
+    "keyword": {
+      "$id": "#/definitions/keyword",
+      "type": "object",
+      "title": "Keyword schema",
+      "required": [
+        "name",
+        "args",
+        "doc",
+        "shortdoc",
+        "tags",
+        "source",
+        "lineno"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/keywordArg"
+          }
+        },
+        "doc": {
+          "type": "string"
+        },
+        "shortdoc": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lineno": {
+          "type": "integer",
+          "minimum": -1
+        }
+      }
+    },
+    "keywordArg": {
+      "$id": "#/definitions/keywordArg",
+      "type": "object",
+      "required": [
+        "name",
+        "types",
+        "defaultValue",
+        "kind",
+        "required",
+        "repr"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "defaultValue": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "POSITIONAL_ONLY",
+            "POSITIONAL_ONLY_MARKER",
+            "POSITIONAL_OR_NAMED",
+            "VAR_POSITIONAL",
+            "NAMED_ONLY_MARKER",
+            "NAMED_ONLY",
+            "VAR_NAMED"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "repr": {
+          "type": "string"
+        }
+      }
+    },
+    "enumType": {
+      "$id": "#/definitions/enumType",
+      "type": "object",
+      "title": "Enum DataType schema",
+      "required": [
+        "name",
+        "type",
+        "doc",
+        "members"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "doc": {
+          "type": "string"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/enumMember"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "enumMember": {
+      "$id": "#/definitions/enum_member",
+      "type": "object",
+      "title": "Enum Member schema",
+      "required": [
+        "name",
+        "value"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "typedDictType": {
+      "$id": "#/definitions/typedDictType",
+      "type": "object",
+      "title": "TypedDict Type schema",
+      "required": [
+        "name",
+        "type",
+        "doc",
+        "items"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "doc": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/typedDictItem"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "typedDictItem": {
+      "$id": "#/definitions/typedDictItem",
+      "type": "object",
+      "title": "TypedDict Item schema",
+      "required": [
+        "key",
+        "type",
+        "required"
+      ],
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "required": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

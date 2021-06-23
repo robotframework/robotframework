@@ -9,7 +9,7 @@
 .test {
     border-style: dashed;
 }
-#errors, .messages, .metadata {
+#errors, .messages {
     width: 100%;
     border-spacing: 0;
 }
@@ -73,7 +73,7 @@
 }
 .elapsed {
     float: right;
-    color: #999;
+    color: #666;
     padding-left: 1em;
 }
 .link {
@@ -165,14 +165,17 @@
     display: table;
 }
 /* Metadata */
+.metadata {
+    width: 100%;
+    border-spacing: 0.2em;
+}
 .metadata th {
-    width: 12.5em;
+    width: 12em;
+    vertical-align: top;
     text-align: left;
-    white-space: nowrap;
-    padding: 0;
 }
 .metadata td {
-    padding: 0.2em;
+    vertical-align: top;
 }
 .keyword-metadata {
     font-size: 0.9em;

@@ -1,0 +1,74 @@
+#introduction-container > h2,
+.doc > h1,
+.doc > h2,
+.section > h1,
+.section > h2 {
+    margin-top: 4rem;
+    margin-bottom: 1rem;
+}
+
+.doc > h3, .section > h3 {
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+}
+
+.doc > h4, .section > h4 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.doc > p, .section > p {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+.doc > *:first-child {
+    margin-top: 0.1em;
+}
+.doc table {
+    border: none;
+    background: transparent;
+    border-collapse: collapse;
+    empty-cells: show;
+    font-size: 0.9em;
+    overflow-y: auto;
+    display: block;
+}
+.doc table th, .doc table td {
+    border: 1px solid var(--border-color);
+    background: transparent;
+    padding: 0.1em 0.3em;
+    height: 1.2em;
+}
+.doc table th {
+    text-align: center;
+    letter-spacing: 0.1em;
+}
+.doc pre {
+    font-size: 1.1em;
+    letter-spacing: 0.05em;
+    background: var(--light-background-color);
+    overflow-y: auto;
+    padding: 0.3rem;
+    border-radius: 3px;
+}
+
+.doc code,
+.docutils.literal {
+    font-size: 1.1em;
+    letter-spacing: 0.05em;
+    background: var(--light-background-color);
+    padding: 1px;
+    border-radius: 3px;
+}
+.doc li {
+    list-style-position: inside;
+    list-style-type: square;
+}
+.doc img {
+    border: 1px solid #ccc;
+}
+.doc hr {
+    background: #ccc;
+    height: 1px;
+    border: 0;
+}

@@ -100,8 +100,8 @@ class VariableScopes(object):
     def replace_scalar(self, items, ignore_errors=False):
         return self.current.replace_scalar(items, ignore_errors)
 
-    def replace_string(self, string, ignore_errors=False):
-        return self.current.replace_string(string, ignore_errors=ignore_errors)
+    def replace_string(self, string, custom_unescaper=None, ignore_errors=False):
+        return self.current.replace_string(string, custom_unescaper, ignore_errors)
 
     def set_from_file(self, path, args, overwrite=False):
         variables = None
@@ -151,6 +151,9 @@ class VariableScopes(object):
     def set_keyword(self, name, value):
         self.current[name] = value
         self._variables_set.set_keyword(name, value)
+
+    def set_local_variable(self, name, value):
+        self.current[name] = value
 
     def as_dict(self, decoration=True):
         return self.current.as_dict(decoration=decoration)

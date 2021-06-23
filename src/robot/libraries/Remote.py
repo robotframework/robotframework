@@ -15,6 +15,9 @@
 
 from __future__ import absolute_import
 
+from contextlib import contextmanager
+from functools import wraps
+
 try:
     import httplib
     import xmlrpclib
@@ -62,40 +65,49 @@ class Remote(object):
             timeout = timestr_to_secs(timeout)
         self._uri = uri
         self._client = XmlRpcRemoteClient(uri, timeout)
+        self._lib_info = None
+        self._lib_info_initialized = False
 
-    def get_keyword_names(self, attempts=2):
-        for i in range(attempts):
-            time.sleep(i)
+    def get_keyword_names(self):
+        if self._is_lib_info_available():
+            return [name for name in self._lib_info
+                    if not (name[:2] == '__' and name[-2:] == '__')]
+        try:
+            return self._client.get_keyword_names()
+        except TypeError as error:
+            raise RuntimeError('Connecting remote server at %s failed: %s'
+                               % (self._uri, error))
+
+    def _is_lib_info_available(self):
+        if not self._lib_info_initialized:
             try:
-                return self._client.get_keyword_names()
-            except TypeError as err:
-                error = err
-        raise RuntimeError('Connecting remote server at %s failed: %s'
-                           % (self._uri, error))
+                self._lib_info = self._client.get_library_information()
+            except TypeError:
+                pass
+            self._lib_info_initialized = True
+        return self._lib_info is not None
 
     def get_keyword_arguments(self, name):
+        return self._get_kw_info(name, 'args', self._client.get_keyword_arguments,
+                                 default=['*args'])
+
+    def _get_kw_info(self, kw, info, getter, default=None):
+        if self._is_lib_info_available():
+            return self._lib_info[kw].get(info, default)
         try:
-            return self._client.get_keyword_arguments(name)
+            return getter(kw)
         except TypeError:
-            return ['*args']
+            return default
 
     def get_keyword_types(self, name):
-        try:
-            return self._client.get_keyword_types(name)
-        except TypeError:
-            return None
+        return self._get_kw_info(name, 'types', self._client.get_keyword_types,
+                                 default=())
 
     def get_keyword_tags(self, name):
-        try:
-            return self._client.get_keyword_tags(name)
-        except TypeError:
-            return None
+        return self._get_kw_info(name, 'tags', self._client.get_keyword_tags)
 
     def get_keyword_documentation(self, name):
-        try:
-            return self._client.get_keyword_documentation(name)
-        except TypeError:
-            return None
+        return self._get_kw_info(name, 'doc', self._client.get_keyword_documentation)
 
     def run_keyword(self, name, args, kwargs):
         coercer = ArgumentCoercer()
@@ -135,7 +147,8 @@ class ArgumentCoercer(object):
     def _handle_binary_in_string(self, arg):
         try:
             if not is_bytes(arg):
-                arg = arg.encode('ASCII')
+                # Map Unicode code points to bytes directly
+                arg = arg.encode('latin-1')
         except UnicodeError:
             raise ValueError('Cannot represent %r as binary.' % arg)
         return xmlrpclib.Binary(arg)
@@ -206,57 +219,64 @@ class RemoteResult(object):
 class XmlRpcRemoteClient(object):
 
     def __init__(self, uri, timeout=None):
-        if uri.startswith('https://'):
-            transport = TimeoutHTTPSTransport(timeout=timeout)
-        else:
-            transport = TimeoutHTTPTransport(timeout=timeout)
-        self._server = xmlrpclib.ServerProxy(uri, encoding='UTF-8',
-                                             transport=transport)
+        self.uri = uri
+        self.timeout = timeout
 
-    def get_keyword_names(self):
+    @property
+    @contextmanager
+    def _server(self):
+        if self.uri.startswith('https://'):
+            transport = TimeoutHTTPSTransport(timeout=self.timeout)
+        else:
+            transport = TimeoutHTTPTransport(timeout=self.timeout)
+        server = xmlrpclib.ServerProxy(self.uri, encoding='UTF-8',
+                                       transport=transport)
         try:
-            return self._server.get_keyword_names()
+            yield server
         except (socket.error, xmlrpclib.Error) as err:
             raise TypeError(err)
+        finally:
+            server('close')()
+
+    def get_library_information(self):
+        with self._server as server:
+            return server.get_library_information()
+
+    def get_keyword_names(self):
+        with self._server as server:
+            return server.get_keyword_names()
 
     def get_keyword_arguments(self, name):
-        try:
-            return self._server.get_keyword_arguments(name)
-        except xmlrpclib.Error:
-            raise TypeError
+        with self._server as server:
+            return server.get_keyword_arguments(name)
 
     def get_keyword_types(self, name):
-        try:
-            return self._server.get_keyword_types(name)
-        except xmlrpclib.Error:
-            raise TypeError
+        with self._server as server:
+            return server.get_keyword_types(name)
 
     def get_keyword_tags(self, name):
-        try:
-            return self._server.get_keyword_tags(name)
-        except xmlrpclib.Error:
-            raise TypeError
+        with self._server as server:
+            return server.get_keyword_tags(name)
 
     def get_keyword_documentation(self, name):
-        try:
-            return self._server.get_keyword_documentation(name)
-        except xmlrpclib.Error:
-            raise TypeError
+        with self._server as server:
+            return server.get_keyword_documentation(name)
 
     def run_keyword(self, name, args, kwargs):
-        run_keyword_args = [name, args, kwargs] if kwargs else [name, args]
-        try:
-            return self._server.run_keyword(*run_keyword_args)
-        except xmlrpclib.Fault as err:
-            message = err.faultString
-        except socket.error as err:
-            message = 'Connection to remote server broken: %s' % err
-        except ExpatError as err:
-            message = ('Processing XML-RPC return value failed. '
-                       'Most often this happens when the return value '
-                       'contains characters that are not valid in XML. '
-                       'Original error was: ExpatError: %s' % err)
-        raise RuntimeError(message)
+        with self._server as server:
+            run_keyword_args = [name, args, kwargs] if kwargs else [name, args]
+            try:
+                return server.run_keyword(*run_keyword_args)
+            except xmlrpclib.Fault as err:
+                message = err.faultString
+            except socket.error as err:
+                message = 'Connection to remote server broken: %s' % err
+            except ExpatError as err:
+                message = ('Processing XML-RPC return value failed. '
+                        'Most often this happens when the return value '
+                        'contains characters that are not valid in XML. '
+                        'Original error was: ExpatError: %s' % err)
+            raise RuntimeError(message)
 
 
 # Custom XML-RPC timeouts based on

@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    --include upper --include onespace --include HYP-HENandD.O.T.S. --include A? --include HeLLo --include TAG --exclude exclude --exclude EXCLUDE2 --critical HELLO    tags/tags_are_not_normalized.robot
+Suite Setup       Run Tests    --include upper --include onespace --include HYP-HENandD.O.T.S. --include A? --include HeLLo --include TAG --exclude exclude --exclude EXCLUDE2    tags/tags_are_not_normalized.robot
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -24,9 +24,6 @@ Statistics Are Counted In Normalized Manner
 Including And Excluding Works in Normalized Manner
     [Documentation]    Including is actually tested using --include when running tests. If all previous tests pass then including works.
     Should Not Contain Tests    ${SUITE}    Excluded
-
-Criticality Works In Normalized Manner
-    Check Stdout Contains    1 critical test, 1 passed, 0 failed\n 10 tests total, 5 passed, 5 failed
 
 Rebot Keeps Tags In Original Format
     Copy Previous Outfile

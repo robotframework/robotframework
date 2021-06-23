@@ -9,10 +9,14 @@ Flatten stuff
     Keyword with fags flatten
 
 For loop
-    :FOR    ${i}    IN RANGE    10
-    \    Log   index: ${i}
-    \    Keyword 3
-    \    Keyword 2
+    FOR    ${i}    IN RANGE    10
+        Log   index: ${i}
+        Keyword 3
+        Keyword 2
+    END
+
+Flatten IF in keyword
+    Flatten IF in keyword
 
 *** Keywords ***
 Keyword 3
@@ -43,3 +47,28 @@ Keyword with fags flatten
     [Documentation]    Doc of flat tag
     [Tags]   hello    flatten
     Keyword 1
+
+Flatten IF in keyword
+    Log    Outside IF
+    IF    True
+        Log    Inside IF
+    ELSE IF    True
+        Fail    Not run
+    ELSE
+        Fail    Not run
+    END
+    IF    True
+        IF    True
+            Log    Nested IF
+            Countdown
+        END
+    END
+
+Countdown
+    [Arguments]    ${count}=${3}
+    IF    ${count} > 0
+        Log    ${count}
+        Countdown    ${count - 1}
+    ELSE
+        Log    BANG!
+    END

@@ -61,18 +61,11 @@ means that the above example could be written also as follows.
 No automatic newline is added if a line already ends with a literal newline
 or if it ends with an `escaping backslash`__. If documentation or metadata
 is defined in multiple columns, cells in a same row are concatenated together
-with spaces. This kind of splitting can be a good idea especially when
-using the `HTML format`_ and columns are narrow. Different ways to split
-documentation are illustrated in the examples below where all test cases
-end up having the same two line documentation.
+with a space. Different ways to split documentation are illustrated in the
+examples below where all test cases end up having the same two line
+documentation.
 
-.. note:: Handling documentation split to multiple columns will change in
-          Robot Framework 3.2 when also they will be concatenated together
-          with newlines. This change should not cause problems because,
-          as explained in the Paragraphs_ section below, single newlines do
-          not affect how paragraphs actually are rendered in logs and reports.
-
-__ `Dividing test data to several rows`_
+__ `Dividing data to several rows`_
 __ Escaping_
 
 .. sourcecode:: robotframework
@@ -200,8 +193,8 @@ URLs
 
 All strings that look like URLs are automatically converted into
 clickable links. Additionally, URLs that end with extension
-:file:`.jpg`, :file:`.jpeg`, :file:`.png`, :file:`.gif` or
-:file:`.bmp` (case-insensitive) will automatically create images. For
+:file:`.jpg`, :file:`.jpeg`, :file:`.png`, :file:`.gif`, :file:`.bmp` or
+:file:`.svg` (case-insensitive) will automatically create images. For
 example, URLs like `http://example.com` are turned into links, and
 `http:///host/image.jpg` and `file:///path/chart.png`
 into images.
@@ -210,6 +203,8 @@ The automatic conversion of URLs to links is applied to all the data
 in logs and reports, but creating images is done only for test suite,
 test case and keyword documentation, and for test suite metadata.
 
+.. note:: :file:`.svg` image support is new in Robot Framework 3.2.
+
 Custom links and images
 -----------------------
 
@@ -217,8 +212,10 @@ It is possible to create custom links
 and embed images using special syntax `[link|content]`. This creates
 a link or image depending are `link` and `content` images.
 They are considered images if they have the same image extensions that are
-special with URLs_. The surrounding square brackets and the pipe character
-between the parts are mandatory in all cases.
+special with URLs_ or start with `data:image/`. The surrounding square
+brackets and the pipe character between the parts are mandatory in all cases.
+
+.. note:: Support for the `data:image/` prefix is new in Robot Framework 3.2.
 
 Link with text content
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -237,6 +234,7 @@ If `content` is an image, you get a link where the link content is an
 image. Link target is created by `link` and it can be either text or image::
 
     [robot.html|robot.png] -> <a href="robot.html"><img src="robot.png"></a>
+    [robot.html|data:image/png;base64,oooxxx=] -> <a href="robot.html"><img src="data:image/png;base64,oooxxx="></a>
     [image.jpg|thumb.jpg] -> <a href="image.jpg"><img src="thumb.jpg"></a>
 
 Image with title text
@@ -247,6 +245,7 @@ image where the `content` is the title text shown when mouse is over
 the image::
 
     [robot.jpeg|Robot rocks!] -> <img src="robot.jpeg" title="Robot rocks!">
+    [data:image/png;base64,oooxxx=|Robot rocks!] -> <img src="data:image/png;base64,oooxxx=" title="Robot rocks!">
 
 Section titles
 --------------

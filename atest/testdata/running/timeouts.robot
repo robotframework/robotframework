@@ -55,16 +55,19 @@ Total Time Too Long 2
 Total Time Too Long 3
     [Documentation]    FAIL Test timeout 100 milliseconds exceeded.
     [Timeout]    0.1
-    :FOR    ${i}    IN RANGE    1000
-    \    Log    How many kws can we run in 0.1s?
+    FOR    ${i}    IN RANGE    1000
+        Log    How many kws can we run in 0.1s?
+    END
     Fail    This should not be executed
 
 Total Time Too Long 4
     [Documentation]    FAIL Test timeout 100 milliseconds exceeded.
     [Timeout]    0.1
-    :FOR    ${i}    IN RANGE    1000
-    \    Run Keyword And Expect Error    How many kws can we run in 0.1s?
-    ...    Fail    How many kws can we run in 0.1s?
+    FOR    ${i}    IN RANGE    1000
+        Run Keyword And Expect Error
+        ...    How many kws can we run in 0.1s?
+        ...    Fail    How many kws can we run in 0.1s?
+    END
     Fail    This should not be executed
 
 Looping Forever And Timeouting
@@ -244,6 +247,23 @@ Timeouted Keyword Called With Wrong Number of Arguments with Run Keyword
     Run Keyword    Timeouted Keyword Passes    wrong    number    of    arguments
     [Teardown]    No Operation
 
+Zero timeout is ignored
+    [Timeout]    0
+    Zero timeout is ignored
+
+Negative timeout is ignored
+    [Timeout]    -1
+    Negative timeout is ignored
+
+Invalid test timeout
+    [Documentation]    FAIL Setting test timeout failed: Invalid time string '¡Bäng!'.
+    [Timeout]    ¡Bäng!
+    Fail    Should not be executed!
+
+Invalid keyword timeout
+    [Documentation]    FAIL Setting keyword timeout failed: Invalid time string '¡Bäng!'.
+    Invalid keyword timeout
+
 *** Keywords ***
 Clean Up Timeout Temp
     Remove Directory    ${timeout_temp}    recursive
@@ -324,3 +344,15 @@ Embedded args timeout '${timeout}' from arguments
 Keyword that uses parent local variable for timeout
     [Timeout]    ${local}
     Sleep    0.1
+
+Zero timeout is ignored
+    [Timeout]    0
+    Sleep    0.1
+
+Negative timeout is ignored
+    [Timeout]    -1
+    Sleep    0.1
+
+Invalid keyword timeout
+    [Timeout]    ¡Bäng!
+    No Operation

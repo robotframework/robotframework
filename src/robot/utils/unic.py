@@ -15,14 +15,24 @@
 
 import sys
 from pprint import PrettyPrinter
+from unicodedata import normalize
 
-from .platform import IRONPYTHON, JYTHON, PY2, PY3
+from .platform import PY2, PY3
 from .robottypes import is_bytes, is_unicode, unicode
+
+
+def unic(item):
+    item = _unic(item)
+    try:
+        return normalize('NFC', item)
+    except ValueError:
+        # https://github.com/IronLanguages/ironpython2/issues/628
+        return item
 
 
 if PY2:
 
-    def unic(item):
+    def _unic(item):
         if isinstance(item, unicode):
             return item
         if isinstance(item, (bytes, bytearray)):
@@ -41,7 +51,7 @@ if PY2:
 
 else:
 
-    def unic(item):
+    def _unic(item):
         if isinstance(item, str):
             return item
         if isinstance(item, (bytes, bytearray)):
@@ -54,17 +64,6 @@ else:
             return str(item)
         except:
             return _unrepresentable_object(item)
-
-
-# JVM and .NET seem to handle Unicode normalization automatically. Importing
-# unicodedata on Jython also takes some time so it's better to avoid it.
-if not (JYTHON or IRONPYTHON):
-
-    from unicodedata import normalize
-    _unic = unic
-
-    def unic(item):
-        return normalize('NFC', _unic(item))
 
 
 def prepr(item, width=80):

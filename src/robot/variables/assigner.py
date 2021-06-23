@@ -18,7 +18,7 @@ import re
 from robot.errors import (DataError, ExecutionStatus, HandlerExecutionFailed,
                           VariableError)
 from robot.utils import (ErrorDetails, format_assign_message, get_error_message,
-                         is_number, is_string, prepr, type_name)
+                         is_number, is_string, prepr, rstrip, type_name)
 
 
 class VariableAssignment(object):
@@ -67,7 +67,7 @@ class AssignmentValidator(object):
                             "variable.")
         if variable.endswith('='):
             self._seen_assign_mark = True
-            return variable[:-1].rstrip()
+            return rstrip(variable[:-1])
         return variable
 
     def _validate_state(self, is_list, is_dict):
@@ -82,7 +82,7 @@ class AssignmentValidator(object):
 
 
 class VariableAssigner(object):
-    _valid_extended_attr = re.compile('^[_a-zA-Z]\w*$')
+    _valid_extended_attr = re.compile(r'^[_a-zA-Z]\w*$')
 
     def __init__(self, assignment, context):
         self._assignment = assignment
@@ -116,10 +116,10 @@ class VariableAssigner(object):
     def _extended_assign(self, name, value, variables):
         if name[0] != '$' or '.' not in name or name in variables:
             return False
-        base, attr = self._split_extended_assign(name)
+        base, attr = [token.strip() for token in name[2:-1].rsplit('.', 1)]
         try:
-            var = variables[base]
-        except DataError:
+            var = variables.replace_scalar('${%s}' % base)
+        except VariableError:
             return False
         if not (self._variable_supports_extended_assign(var) and
                 self._is_valid_extended_attribute(attr)):
@@ -127,13 +127,9 @@ class VariableAssigner(object):
         try:
             setattr(var, attr, value)
         except:
-            raise VariableError("Setting attribute '%s' to variable '%s' "
-                                "failed: %s" % (attr, base, get_error_message()))
+            raise VariableError("Setting attribute '%s' to variable '${%s}' failed: %s"
+                                % (attr, base, get_error_message()))
         return True
-
-    def _split_extended_assign(self, name):
-        base, attr = name.rsplit('.', 1)
-        return base.strip() + '}', attr[:-1].strip()
 
     def _variable_supports_extended_assign(self, var):
         return not (is_string(var) or is_number(var))

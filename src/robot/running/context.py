@@ -196,3 +196,6 @@ class _ExecutionContext(object):
 
     def fail(self, message):
         self.output.fail(message)
+
+    def skip(self, message):
+        self.output.skip(message)

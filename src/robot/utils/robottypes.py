@@ -18,12 +18,14 @@ from .platform import PY2
 
 if PY2:
     from .robottypes2 import (is_bytes, is_dict_like, is_integer, is_list_like,
-                              is_number, is_string, is_unicode, type_name)
+                              is_number, is_pathlike, is_string, is_unicode,
+                              type_name, typeddict_types, Mapping, MutableMapping)
     unicode = unicode
 
 else:
     from .robottypes3 import (is_bytes, is_dict_like, is_integer, is_list_like,
-                              is_number, is_string, is_unicode, type_name)
+                              is_number, is_pathlike, is_string, is_unicode,
+                              type_name, typeddict_types, Mapping, MutableMapping)
     unicode = str
 
 
@@ -38,8 +40,6 @@ def is_truthy(item):
 
     - If the value is a string, it is considered false if it is `'FALSE'`,
       `'NO'`, `'OFF'`, `'0'`, `'NONE'` or `''`, case-insensitively.
-      Considering `'NONE'` false is new in RF 3.0.3 and considering `'OFF'`
-      and `'0'` false is new in RF 3.1.
     - Other strings are considered true.
     - Other values are handled by using the standard `bool()` function.
 

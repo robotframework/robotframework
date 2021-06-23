@@ -16,6 +16,7 @@
 from inspect import cleandoc
 
 from robot.errors import DataError
+from robot.running import ArgumentSpec
 from robot.utils import (JAVA_VERSION, normalize, split_tags_from_doc,
                          printable_name)
 
@@ -30,8 +31,8 @@ class JavaDocBuilder(object):
                             doc=self._get_doc(doc),
                             version=self._get_version(doc),
                             scope=self._get_scope(doc),
-                            named_args=False,
-                            doc_format=self._get_doc_format(doc))
+                            doc_format=self._get_doc_format(doc),
+                            source=path)
         libdoc.inits = self._initializers(doc)
         libdoc.keywords = self._keywords(doc)
         return libdoc
@@ -45,8 +46,9 @@ class JavaDocBuilder(object):
 
     def _get_scope(self, doc):
         scope = self._get_attr(doc, 'SCOPE', upper=True)
-        return {'TESTSUITE': 'test suite',
-                'GLOBAL': 'global'}.get(scope, 'test suite')
+        return {'GLOBAL': 'GLOBAL',
+                'SUITE': 'SUITE',
+                'TESTSUITE': 'SUITE'}.get(scope, 'TEST')
 
     def _get_doc_format(self, doc):
         return self._get_attr(doc, 'DOC_FORMAT', upper=True)
@@ -81,16 +83,18 @@ class JavaDocBuilder(object):
 
     def _get_keyword_arguments(self, method):
         params = method.parameters()
+        spec = ArgumentSpec()
         if not params:
-            return []
+            return spec
         names = [p.name() for p in params]
         if self._is_varargs(params[-1]):
-            names[-1] = '*' + names[-1]
+            spec.var_positional = names.pop()
         elif self._is_kwargs(params[-1]):
-            names[-1] = '**' + names[-1]
+            spec.var_named = names.pop()
             if len(params) > 1 and self._is_varargs(params[-2]):
-                names[-2] = '*' + names[-2]
-        return names
+                spec.var_positional = names.pop()
+        spec.positional_only = names
+        return spec
 
     def _is_varargs(self, param):
         return (param.typeName().startswith('java.util.List')

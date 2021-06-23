@@ -27,6 +27,26 @@ def falsy_types_mean_no_type(foo, bar, zap):
     _validate_type(zap, u'3')
 
 
+@keyword(types=[int, type(None), float])
+def nonetype(foo, bar, zap):
+    _validate_type(foo, 1)
+    _validate_type(bar, None)
+    _validate_type(zap, 3.0)
+
+
+@keyword(types=[int, 'None', float])
+def none_as_string_is_none(foo, bar, zap):
+    _validate_type(foo, 1)
+    _validate_type(bar, None)
+    _validate_type(zap, 3.0)
+
+
+@keyword(types=[(int, None), (None,)])
+def none_in_tuple_is_alias_for_nonetype(arg1, arg2, exp1=None, exp2=None):
+    _validate_type(arg1, eval(exp1) if exp1 else None)
+    _validate_type(arg2, eval(exp2) if exp2 else None)
+
+
 @keyword(types=[int, float])
 def less_types_than_arguments_is_ok(foo, bar, zap):
     _validate_type(foo, 1)

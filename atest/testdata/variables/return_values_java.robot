@@ -1,5 +1,4 @@
 *** Settings ***
-Documentation     NO RIDE because it would sanitize formatting too much.
 Library           ExampleJavaLibrary
 
 *** Test Cases ***
@@ -18,31 +17,31 @@ Set Object To Scalar Variable
 
 Set List Variable Using Array
     @{listvar} =    Get String Array    v1    v2    v3
-    Should Be Equal    @{listvar}[0]    v1
-    Should Be True    @{listvar} == ['v1', 'v2', 'v3']
+    Should Be Equal    ${listvar}[0]    v1
+    Should Be True    ${listvar} == ['v1', 'v2', 'v3']
     @{listvar} =    Get Array of Three Ints
-    Should Be Equal    @{listvar}[0]    ${1}
-    Should Be True    @{listvar} == [1 ,2, 42]
+    Should Be Equal    ${listvar}[0]    ${1}
+    Should Be True    ${listvar} == [1 ,2, 42]
 
 Set List Variable Using Vector
     @{listvar} =    Get String Vector    v1    v2    v3
-    Should Be Equal    @{listvar}[0]    v1
-    Should Be True    @{listvar} == ['v1', 'v2', 'v3']
+    Should Be Equal    ${listvar}[0]    v1
+    Should Be True    ${listvar} == ['v1', 'v2', 'v3']
 
 Set List Variable Using Array List
     @{listvar} =    Get String Array List    v1    v2    v3
-    Should Be Equal    @{listvar}[0]    v1
-    Should Be True    @{listvar} == ['v1', 'v2', 'v3']
+    Should Be Equal    ${listvar}[0]    v1
+    Should Be True    ${listvar} == ['v1', 'v2', 'v3']
 
 Set List Variable Using String List
     @{listvar} =    Get String List    v1    v2    v3
-    Should Be Equal    @{listvar}[0]    v1
-    Should Be True    @{listvar} == ['v1', 'v2', 'v3']
+    Should Be Equal    ${listvar}[0]    v1
+    Should Be True    ${listvar} == ['v1', 'v2', 'v3']
 
 Set List Variable Using String Iterator
     @{listvar} =    Get String Iterator    v1    v2    v3
-    Should Be Equal    @{listvar}[0]    v1
-    Should Be True    @{listvar} == ['v1', 'v2', 'v3']
+    Should Be Equal    ${listvar}[0]    v1
+    Should Be True    ${listvar} == ['v1', 'v2', 'v3']
 
 List Variable From Mapping
     @{list} =    Get Hashtable

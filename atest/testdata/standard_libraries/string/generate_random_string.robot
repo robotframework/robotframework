@@ -40,8 +40,10 @@ Generate Random String With [NUMBERS]
 String Lenght Should Be And It Should Consist Of
     [Arguments]    ${string}    ${length}    ${allowed chars}
     Length Should Be    ${string}    ${length}
-    : FOR    ${i}    IN RANGE    0    ${length}
-    \    Should Contain    ${allowed chars}    ${string[${i}]}    String '${string}' contains character '${string[${i}]}' which is not in allowed characters '${allowed chars}'.
+    FOR    ${i}    IN RANGE    0    ${length}
+        Should Contain    ${allowed chars}    ${string[${i}]}
+        ...    String '${string}' contains character '${string[${i}]}' which is not in allowed characters '${allowed chars}'.
+    END
 
 Test Random String With
     [Arguments]    ${expected characters}    ${given characters}

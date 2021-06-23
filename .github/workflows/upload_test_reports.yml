@@ -1,0 +1,10 @@
+name: Upload test results
+
+on: [status]
+
+jobs:
+  upload_test_results:
+    runs-on: ubuntu-latest
+    name: Upload results from ${{ github.event.name }}
+    steps:
+        - run: echo ${{ github.event }}

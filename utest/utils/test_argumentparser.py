@@ -133,14 +133,15 @@ class TestArgumentParserParseArgs(unittest.TestCase):
         inargs = '-d reports --reportfile reps.html -T arg'.split()
         opts, args = self.ap.parse_args(inargs)
         assert_equal(opts, {'reportdir': 'reports', 'reportfile': 'reps.html',
-                             'variable': [], 'name': None, 'toggle': True})
+                            'escape': [], 'variable': [], 'name': None,
+                            'toggle': True})
 
     def test_multi_options(self):
         inargs = '-v a:1 -v b:2 --name my_name --variable c:3 arg'.split()
         opts, args = self.ap.parse_args(inargs)
-        assert_equal(opts, {'variable': ['a:1','b:2','c:3'], 'name':'my_name',
-                             'reportdir': None, 'reportfile': None,
-                             'toggle': None})
+        assert_equal(opts, {'variable': ['a:1', 'b:2', 'c:3'], 'escape': [],
+                            'name': 'my_name', 'reportdir': None,
+                            'reportfile': None, 'toggle': None})
         assert_equal(args, ['arg'])
 
     def test_flag_options(self):
@@ -194,14 +195,6 @@ class TestArgumentParserParseArgs(unittest.TestCase):
         assert_equal(opts['variable'], ['X:y', 'ZzZ'])
         assert_equal(args, [])
 
-    def test_unescape_options(self):
-        cli = '--escape quot:Q -E space:SP -E lt:LT -E gt:GT ' \
-                + '-N QQQLTmySPfineSPnameGTQQQ sourceSPwithSPspaces'
-        opts, args = self.ap.parse_args(cli.split())
-        assert_equal(opts['name'], '"""<my fine name>"""')
-        assert_equal(args, ['source with spaces'])
-        assert_true('escape' not in opts)
-
     def test_split_pythonpath(self):
         ap = ArgumentParser('ignored')
         data = [(['path'], ['path']),
@@ -243,7 +236,6 @@ class TestArgumentParserParseArgs(unittest.TestCase):
  -h --help
  -v --version
  --pythonpath path
- --escape x:y *
  --argumentfile path
  --option
 ''')
@@ -255,13 +247,12 @@ class TestArgumentParserParseArgs(unittest.TestCase):
  -h --help
  -v --version
  --pythonpath path
- --escape x:y
  --argumentfile path
-''', auto_help=False, auto_version=False, auto_escape=False,
+''', auto_help=False, auto_version=False,
      auto_pythonpath=False, auto_argumentfile=False)
-        opts, args = ap.parse_args(['--help', '-v', '--escape', 'xxx'])
-        assert_equal(opts, {'help': True, 'version': True, 'pythonpath': None,
-                             'escape': 'xxx', 'argumentfile': None})
+        opts, args = ap.parse_args(['--help', '-v', '--pythonpath', 'xxx'])
+        assert_equal(opts, {'help': True, 'version': True, 'pythonpath': 'xxx',
+                             'argumentfile': None})
 
     def test_non_list_args(self):
         ap = ArgumentParser('''Options:
@@ -414,24 +405,6 @@ class TestPrintHelpAndVersion(unittest.TestCase):
     def test_version_is_replaced_in_help(self):
         assert_raises_with_msg(Information, USAGE.replace('<VERSION>', '1.0 alpha'),
                                self.ap.parse_args, ['--help'])
-
-    def test_escapes_are_replaced_in_help(self):
-        usage = """Name
- --escape x:y      blaa blaa .............................................. end
-                   <-----------------------ESCAPES---------------------------->
-                   -- next line --
- --help"""
-        expected = """Name
- --escape x:y      blaa blaa .............................................. end
-                   Available escapes: amp (&), apos ('), at (@), bslash (\),
-                   colon (:), comma (,), curly1 ({), curly2 (}), dollar ($),
-                   exclam (!), gt (>), hash (#), lt (<), paren1 ((), paren2
-                   ()), percent (%), pipe (|), quest (?), quot ("), semic (;),
-                   slash (/), space ( ), square1 ([), square2 (]), star (*)
-                   -- next line --
- --help"""
-        assert_raises_with_msg(Information, expected,
-                               ArgumentParser(usage).parse_args, ['--help'])
 
 
 if __name__ == "__main__":

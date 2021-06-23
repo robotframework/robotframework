@@ -45,7 +45,7 @@ else:
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
 from robot.version import get_version
-from robot.utils import abspath, get_error_message, get_link_path, py2to3
+from robot.utils import abspath, get_error_message, get_link_path, py3to2
 
 
 class Screenshot(object):
@@ -53,6 +53,10 @@ class Screenshot(object):
 
     Notice that successfully taking screenshots requires tests to be run with
     a physical or virtual display.
+
+    == Table of contents ==
+
+    %TOC%
 
     = Using with Python =
 
@@ -72,10 +76,6 @@ class Screenshot(object):
     - Scrot :: http://en.wikipedia.org/wiki/Scrot :: Not used on Windows.
       Install with ``apt-get install scrot`` or similar.
 
-    Using ``screencapture`` on OSX and specifying explicit screenshot module
-    are new in Robot Framework 2.9.2. The support for using ``scrot`` is new
-    in Robot Framework 3.0.
-
     = Using with Jython and IronPython =
 
     With Jython and IronPython this library uses APIs provided by JVM and .NET
@@ -92,6 +92,13 @@ class Screenshot(object):
     ``screenshot_directory`` argument when `importing` the library and
     using `Set Screenshot Directory` keyword during execution. It is also
     possible to save screenshots using an absolute path.
+
+    = ScreenCapLibrary =
+
+    [https://github.com/mihaiparvu/ScreenCapLibrary|ScreenCapLibrary] is an
+    external Robot Framework library that can be used as an alternative,
+    which additionally provides support for multiple formats, adjusting the
+    quality, using GIFs and video capturing.
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
@@ -115,8 +122,6 @@ class Screenshot(object):
         | Library   | Screenshot |            |
         | Library   | Screenshot | ${TEMPDIR} |
         | Library   | Screenshot | screenshot_module=PyGTK |
-
-        Specifying explicit screenshot module is new in Robot Framework 2.9.2.
         """
         self._given_screenshot_dir = self._norm_path(screenshot_directory)
         self._screenshot_taker = ScreenshotTaker(screenshot_module)
@@ -238,7 +243,7 @@ class Screenshot(object):
                     % (link, path), html=True)
 
 
-@py2to3
+@py3to2
 class ScreenshotTaker(object):
 
     def __init__(self, module_name=None):
@@ -249,7 +254,7 @@ class ScreenshotTaker(object):
     def __call__(self, path):
         self._screenshot(path)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.module != 'no'
 
     def test(self, path=None):
@@ -338,6 +343,8 @@ class ScreenshotTaker(object):
         if not path.endswith(('.jpg', '.jpeg')):
             raise RuntimeError("Scrot requires extension to be '.jpg' or "
                                "'.jpeg', got '%s'." % os.path.splitext(path)[1])
+        if os.path.exists(path):
+            os.remove(path)
         if self._call('scrot', '--silent', path) != 0:
             raise RuntimeError("Using 'scrot' failed.")
 
@@ -378,7 +385,7 @@ class ScreenshotTaker(object):
 
 if __name__ == "__main__":
     if len(sys.argv) not in [2, 3]:
-        sys.exit("Usage: %s <path>|test [wx|pygtk|pil|scrot]"
+        sys.exit("Usage: %s <path>|test [wxpython|pygtk|pil|scrot]"
                  % os.path.basename(sys.argv[0]))
     path = sys.argv[1] if sys.argv[1] != 'test' else None
     module = sys.argv[2] if len(sys.argv) > 2 else None

@@ -16,7 +16,7 @@ Keyword In Python Class Using Method From Parent Class
     Check Test Case  Keyword In Python Class Using Method From Parent Class
 
 Message Of Importing Library Should Be In Syslog
-    Check Syslog Contains  Imported library 'ExtendPythonLib' with arguments [ ] (version <unknown>, class type, test case scope, 32 keywords)
+    Syslog Should Contain  Imported library 'ExtendPythonLib' with arguments [ ] (version <unknown>, class type, TEST scope, 32 keywords)
 
 Keyword From Java Class Extended By Python Class
     [Tags]  require-jython
@@ -36,10 +36,10 @@ Keyword In Python Class Using Method From Java Class
 
 Message Of Importing Library Extending Java Class Should Be In Syslog
     [Tags]  require-jython
-    Check Syslog Contains  Imported library 'extendingjava.ExtendJavaLib' with arguments [ ] (version <unknown>, class type, global scope, 25 keywords)
+    Syslog Should Contain  Imported library 'extendingjava.ExtendJavaLib' with arguments [ ] (version <unknown>, class type, GLOBAL scope, 25 keywords)
 
 Using Methods From Java Parents Should Not Create Handlers Starting With Super__
     [Documentation]  At least in Jython 2.2, when a class implemented in python inherits a java class, and the python class uses a method from the java class, the python instance ends up having an attribute super__methodname, where methodname is the method from parent class. We don't want to create keywords from these, even though they are real methods.
     [Tags]  require-jython
-    Check Syslog Does Not Contain  Created handler 'Super JavaSleep'
+    Syslog Should Not Contain  Created handler 'Super JavaSleep'
 

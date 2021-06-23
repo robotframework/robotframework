@@ -10,5 +10,5 @@ Suite source should not be case normalized
     Should End With    ${SUITE.source}    multiple_suites${/}suiTe_8.robot
 
 Outputs are not case normalized
-    Check stdout contains    ${/}LOG.html
-    Check stdout contains    ${/}RaP.html
+    Stdout Should Contain    ${/}LOG.html
+    Stdout Should Contain    ${/}RaP.html

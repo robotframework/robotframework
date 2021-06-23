@@ -32,6 +32,12 @@ Set Element Text
     Set Element Text    ${XML}    new    xpath=child
     Element Text Should Be    ${XML}    new    xpath=child
 
+Set Element Text none
+     Set Element Text    ${XML}    none    xpath=child
+     Element Text Should Be    ${XML}    none    xpath=child
+     Set Elements Text    ${XML}    none    xpath=child
+     Element Text Should Be    ${XML}    none    xpath=child
+
 Set Element Text And Tail
     ${child} =    Get Element    ${XML}    child
     Set Element Text    ${XML}    new text    new tail    xpath=child

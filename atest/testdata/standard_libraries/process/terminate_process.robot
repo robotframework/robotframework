@@ -82,16 +82,18 @@ Terminate all processes
     ${p3}=    Get Process Object    ${h3}
     ${p4}=    Get Process Object    ${h4}
     ${p5}=    Get Process Object    ${h5}
-    :FOR    ${process}    IN    ${p1}    ${p2}    ${p3}    ${p4}    ${p5}
-    \    ${poll}=    Call Method    ${process}    poll
-    \    Should Be Equal    ${poll}    ${NONE}
+    FOR    ${process}    IN    ${p1}    ${p2}    ${p3}    ${p4}    ${p5}
+        ${poll}=    Call Method    ${process}    poll
+        Should Be Equal    ${poll}    ${NONE}
+    END
     Switch Process    ${h3}
     Terminate Process    ${h2}
     Terminate All Processes
     Sleep    0.1
-    :FOR    ${process}    IN    ${p1}    ${p2}    ${p3}    ${p4}    ${p5}
-    \    ${poll}=    Call Method    ${process}    poll
-    \    Should Not Be Equal    ${poll}    ${NONE}
+    FOR    ${process}    IN    ${p1}    ${p2}    ${p3}    ${p4}    ${p5}
+        ${poll}=    Call Method    ${process}    poll
+        Should Not Be Equal    ${poll}    ${NONE}
+    END
 
 Terminating all empties cache
     Some process
