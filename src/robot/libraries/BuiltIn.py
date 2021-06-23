@@ -625,9 +625,9 @@ class _Verify(_BuiltInBase):
         ``LEADING`` or ``TRAILING`` (case-insensitive), the comparison is done
         without leading or trailing spaces, respectively.
 
-        If ``collapse_spaces`` is given a true value (see `Boolean arguments`) and
-        both arguments are strings, the comparison is done with all white spaces
-        replaced by a single space character.
+        If ``collapse_spaces`` is given a true value (see `Boolean arguments`) and both
+        arguments are strings, the comparison is done with all white spaces replaced by
+        a single space character.
 
         Examples:
         | Should Be Equal | ${x} | expected |
@@ -636,7 +636,7 @@ class _Verify(_BuiltInBase):
         | Should Be Equal | ${x} | expected | ignore_case=True | formatter=repr |
 
         ``formatter`` is new in Robot Framework 3.1.2 and ``strip_spaces`` is new
-        in Robot Framework 4.0.
+        in Robot Framework 4.0 and ``collapse_spaces`` is new in Robot Framework 4.1.
         """
         self._log_types_at_info_if_different(first, second)
         if is_string(first) and is_string(second):
@@ -713,11 +713,12 @@ class _Verify(_BuiltInBase):
         ``LEADING`` or ``TRAILING`` (case-insensitive), the comparison is done
         without leading or trailing spaces, respectively.
 
-        If ``collapse_spaces`` is given a true value (see `Boolean arguments`) and
-        both arguments are strings, the comparison is done with all white spaces
-        replaced by a single space character.
+        If ``collapse_spaces`` is given a true value (see `Boolean arguments`) and both
+        arguments are strings, the comparison is done with all white spaces replaced by
+        a single space character.
 
-        ``strip_spaces`` is new in Robot Framework 4.0.
+        ``strip_spaces`` is new in Robot Framework 4.0 and ``collapse_spaces`` is new
+        in Robot Framework 4.1.
         """
         self._log_types_at_info_if_different(first, second)
         if is_string(first) and is_string(second):
@@ -844,14 +845,15 @@ class _Verify(_BuiltInBase):
         ``LEADING`` or ``TRAILING`` (case-insensitive), the comparison is done
         without leading or trailing spaces, respectively.
 
-        If ``collapse_spaces`` is given a true value (see `Boolean arguments`) and
-        both arguments are strings, the comparison is done with all white spaces
-        replaced by a single space character.
+        If ``collapse_spaces`` is given a true value (see `Boolean arguments`) and both
+        arguments are strings, the comparison is done with all white spaces replaced by
+        a single space character.
 
         Strings are always [http://www.macchiato.com/unicode/nfc-faq|
         NFC normalized].
 
-        ``strip_spaces`` is new in Robot Framework 4.0.
+        ``strip_spaces`` is new in Robot Framework 4.0 and ``collapse_spaces`` is new
+        in Robot Framework 4.1.
         """
         self._log_types_at_info_if_different(first, second)
         first = self._convert_to_string(first)
@@ -885,15 +887,15 @@ class _Verify(_BuiltInBase):
         ``LEADING`` or ``TRAILING`` (case-insensitive), the comparison is done
         without leading or trailing spaces, respectively.
 
-        If ``collapse_spaces`` is given a true value (see `Boolean arguments`) and
-        both arguments are strings, the comparison is done with all white spaces
-        replaced by a single space character.
+        If ``collapse_spaces`` is given a true value (see `Boolean arguments`) and both
+        arguments are strings, the comparison is done with all white spaces replaced by
+        a single space character.
 
         Strings are always [http://www.macchiato.com/unicode/nfc-faq|
         NFC normalized].
 
         ``formatter`` is new in Robot Framework 3.1.2 and ``strip_spaces`` is new
-        in Robot Framework 4.0.
+        in Robot Framework 4.0 and ``collapse_spaces`` is new in Robot Framework 4.1.
         """
         self._log_types_at_info_if_different(first, second)
         first = self._convert_to_string(first)
@@ -916,8 +918,7 @@ class _Verify(_BuiltInBase):
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
-        of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces``
-        options.
+        of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
@@ -933,14 +934,12 @@ class _Verify(_BuiltInBase):
                                                       'starts with'))
 
     def should_start_with(self, str1, str2, msg=None, values=True,
-                          ignore_case=False, strip_spaces=False,
-                          collapse_spaces=False):
+                          ignore_case=False, strip_spaces=False, collapse_spaces=False):
         """Fails if the string ``str1`` does not start with the string ``str2``.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
-        of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces``
-        options.
+        of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
@@ -962,8 +961,7 @@ class _Verify(_BuiltInBase):
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
-        of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces``
-        options.
+        of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
@@ -979,14 +977,12 @@ class _Verify(_BuiltInBase):
                                                       'ends with'))
 
     def should_end_with(self, str1, str2, msg=None, values=True,
-                        ignore_case=False, strip_spaces=False,
-                        collapse_spaces=False):
+                        ignore_case=False, strip_spaces=False, collapse_spaces=False):
         """Fails if the string ``str1`` does not end with the string ``str2``.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
-        of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces``
-        options.
+        of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
@@ -1019,15 +1015,16 @@ class _Verify(_BuiltInBase):
         ``LEADING`` or ``TRAILING`` (case-insensitive), the comparison is done
         without leading or trailing spaces, respectively.
 
-        If ``collapse_spaces`` is given a true value (see `Boolean arguments`) and
-        both arguments are strings, the comparison is done with all white spaces
-        replaced by a single space character.
+        If ``collapse_spaces`` is given a true value (see `Boolean arguments`) and both
+        arguments are strings, the comparison is done with all white spaces replaced by
+        a single space character.
 
         Examples:
         | Should Not Contain | ${some list} | value  |
         | Should Not Contain | ${output}    | FAILED | ignore_case=True |
 
-        ``strip_spaces`` is new in Robot Framework 4.0.
+        ``strip_spaces`` is new in Robot Framework 4.0 and ``collapse_spaces`` is new
+        in Robot Framework 4.1.
         """
         # TODO: It is inconsistent that errors show original case in 'container'
         # 'item' is in lower case. Should rather show original case everywhere
@@ -1035,35 +1032,32 @@ class _Verify(_BuiltInBase):
         # This same logic should be used with all keywords supporting
         # case-insensitive comparisons.
         orig_container = container
-        if is_string(item):
-            if is_truthy(ignore_case):
-                item = item.lower()
-                if is_string(container):
-                    container = container.lower()
-                elif is_list_like(container):
-                    container = set(x.lower()
-                                    if is_string(x) else x for x in container)
-            if strip_spaces:
-                item = self._strip_spaces(item, strip_spaces)
-                if is_string(container):
-                    container = self._strip_spaces(container, strip_spaces)
-                elif is_list_like(container):
-                    container = set(self._strip_spaces(x, strip_spaces)
-                                    if is_string(x) else x for x in container)
-            if is_truthy(collapse_spaces):
-                item = self._collapse_spaces(item)
-                if is_string(container):
-                    container = self._collapse_spaces(container)
-                elif is_list_like(container):
-                    container = set(self._collapse_spaces(x)
-                                    if is_string(x) else x for x in container)
+        if is_truthy(ignore_case) and is_string(item):
+            item = item.lower()
+            if is_string(container):
+                container = container.lower()
+            elif is_list_like(container):
+                container = set(x.lower() if is_string(x) else x for x in container)
+        if strip_spaces and is_string(item):
+            item = self._strip_spaces(item, strip_spaces)
+            if is_string(container):
+                container = self._strip_spaces(container, strip_spaces)
+            elif is_list_like(container):
+                container = set(self._strip_spaces(x, strip_spaces)
+                                if is_string(x) else x for x in container)
+        if is_truthy(collapse_spaces) and is_string(item):
+            item = self._collapse_spaces(item)
+            if is_string(container):
+                container = self._collapse_spaces(container)
+            elif is_list_like(container):
+                container = set(self._collapse_spaces(x)
+                                if is_string(x) else x for x in container)
         if item in container:
             raise AssertionError(self._get_string_msg(orig_container, item, msg,
                                                       values, 'contains'))
 
     def should_contain(self, container, item, msg=None, values=True,
-                       ignore_case=False, strip_spaces=False,
-                       collapse_spaces=False):
+                       ignore_case=False, strip_spaces=False, collapse_spaces=False):
         """Fails if ``container`` does not contain ``item`` one or more times.
 
         Works with strings, lists, and anything that supports Python's ``in``
@@ -1083,40 +1077,39 @@ class _Verify(_BuiltInBase):
         ``LEADING`` or ``TRAILING`` (case-insensitive), the comparison is done
         without leading or trailing spaces, respectively.
 
-        If ``collapse_spaces`` is given a true value (see `Boolean arguments`) and
-        both arguments are strings, the comparison is done with all white spaces
-        replaced by a single space character.
+        If ``collapse_spaces`` is given a true value (see `Boolean arguments`) and both
+        arguments are strings, the comparison is done with all white spaces replaced by
+        a single space character.
 
         Examples:
         | Should Contain | ${output}    | PASS  |
         | Should Contain | ${some list} | value | msg=Failure! | values=False |
         | Should Contain | ${some list} | value | ignore_case=True |
 
-        ``strip_spaces`` is new in Robot Framework 4.0.
+        ``strip_spaces`` is new in Robot Framework 4.0 and ``collapse_spaces`` is new
+        in Robot Framework 4.1.
         """
         orig_container = container
-        if is_string(item):
-            if is_truthy(ignore_case):
-                item = item.lower()
-                if is_string(container):
-                    container = container.lower()
-                elif is_list_like(container):
-                    container = set(x.lower()
-                                    if is_string(x) else x for x in container)
-            if strip_spaces:
-                item = self._strip_spaces(item, strip_spaces)
-                if is_string(container):
-                    container = self._strip_spaces(container, strip_spaces)
-                elif is_list_like(container):
-                    container = set(self._strip_spaces(x, strip_spaces)
-                                    if is_string(x) else x for x in container)
-            if is_truthy(collapse_spaces):
-                item = self._collapse_spaces(item)
-                if is_string(container):
-                    container = self._collapse_spaces(container)
-                elif is_list_like(container):
-                    container = set(self._collapse_spaces(x)
-                                    if is_string(x) else x for x in container)
+        if is_truthy(ignore_case) and is_string(item):
+            item = item.lower()
+            if is_string(container):
+                container = container.lower()
+            elif is_list_like(container):
+                container = set(x.lower() if is_string(x) else x for x in container)
+        if strip_spaces and is_string(item):
+            item = self._strip_spaces(item, strip_spaces)
+            if is_string(container):
+                container = self._strip_spaces(container, strip_spaces)
+            elif is_list_like(container):
+                container = set(self._strip_spaces(x, strip_spaces)
+                                if is_string(x) else x for x in container)
+        if is_truthy(collapse_spaces) and is_string(item):
+            item = self._collapse_spaces(item)
+            if is_string(container):
+                container = self._collapse_spaces(container)
+            elif is_list_like(container):
+                container = set(self._collapse_spaces(x)
+                                if is_string(x) else x for x in container)
         if item not in container:
             raise AssertionError(self._get_string_msg(orig_container, item, msg,
                                                       values, 'does not contain'))
@@ -1160,8 +1153,7 @@ class _Verify(_BuiltInBase):
             if is_string(container):
                 container = container.lower()
             elif is_list_like(container):
-                container = set(x.lower()
-                                if is_string(x) else x for x in container)
+                container = set(x.lower() if is_string(x) else x for x in container)
         if strip_spaces:
             items = [self._strip_spaces(x, strip_spaces)
                      if is_string(x) else x for x in items]
@@ -1171,8 +1163,7 @@ class _Verify(_BuiltInBase):
                 container = set(self._strip_spaces(x, strip_spaces)
                                 if is_string(x) else x for x in container)
         if is_truthy(collapse_spaces):
-            items = [self._collapse_spaces(x)
-                     if is_string(x) else x for x in items]
+            items = [self._collapse_spaces(x) if is_string(x) else x for x in items]
             if is_string(container):
                 container = self._collapse_spaces(container)
             elif is_list_like(container):
@@ -1193,10 +1184,9 @@ class _Verify(_BuiltInBase):
         operator.
 
         Supports additional configuration parameters ``msg``, ``values``,
-        ``ignore_case`` and ``strip_spaces``, and ``collapse_spaces``
-        which have exactly the same semantics as arguments with same
-        names have with `Should Contain`. These arguments must always
-        be given using ``name=value`` syntax after all ``items``.
+        ``ignore_case`` and ``strip_spaces``, and ``collapse_spaces`` which have exactly
+        the same semantics as arguments with same names have with `Should Contain`.
+        These arguments must always be given using ``name=value`` syntax after all ``items``.
 
         Note that possible equal signs in ``items`` must be escaped with
         a backslash (e.g. ``foo\\=bar``) to avoid them to be passed in
@@ -1225,8 +1215,7 @@ class _Verify(_BuiltInBase):
             if is_string(container):
                 container = container.lower()
             elif is_list_like(container):
-                container = set(x.lower()
-                                if is_string(x) else x for x in container)
+                container = set(x.lower() if is_string(x) else x for x in container)
         if strip_spaces:
             items = [self._strip_spaces(x, strip_spaces)
                      if is_string(x) else x for x in items]
@@ -1236,8 +1225,7 @@ class _Verify(_BuiltInBase):
                 container = set(self._strip_spaces(x, strip_spaces)
                                 if is_string(x) else x for x in container)
         if is_truthy(collapse_spaces):
-            items = [self._collapse_spaces(x)
-                     if is_string(x) else x for x in items]
+            items = [self._collapse_spaces(x) if is_string(x) else x for x in items]
             if is_string(container):
                 container = self._collapse_spaces(container)
             elif is_list_like(container):
@@ -1271,15 +1259,16 @@ class _Verify(_BuiltInBase):
         ``LEADING`` or ``TRAILING`` (case-insensitive), the comparison is done
         without leading or trailing spaces, respectively.
 
-        If ``collapse_spaces`` is given a true value (see `Boolean arguments`) and
-        both arguments are strings, the comparison is done with all white spaces
-        replaced by a single space character.
+        If ``collapse_spaces`` is given a true value (see `Boolean arguments`) and both
+        arguments are strings, the comparison is done with all white spaces replaced by
+        a single space character.
 
         Examples:
         | Should Contain X Times | ${output}    | hello | 2 |
         | Should Contain X Times | ${some list} | value | 3 | ignore_case=True |
 
-        ``strip_spaces`` is new in Robot Framework 4.0.
+        ``strip_spaces`` is new in Robot Framework 4.0 and ``collapse_spaces`` is new
+        in Robot Framework 4.1.
         """
         count = self._convert_to_integer(count)
         orig_container = container
