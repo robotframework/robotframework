@@ -147,7 +147,7 @@ class ExecutionStatus(RobotError):
         if templated:
             return True
         if self.keyword_timeout:
-            if teardown:
+            if context.in_teardown:
                 self.keyword_timeout = False
             return False
         if context.in_teardown or context.continue_on_failure:
