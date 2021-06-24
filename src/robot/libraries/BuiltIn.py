@@ -1815,7 +1815,7 @@ class _RunKeyword(_BuiltInBase):
                 raise err
             except ExecutionFailed as err:
                 errors.extend(err.get_errors())
-                if not err.can_continue(self._context.in_teardown):
+                if not err.can_continue(self._context):
                     break
         if errors:
             raise ExecutionFailures(errors)

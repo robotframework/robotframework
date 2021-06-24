@@ -45,9 +45,8 @@ class BodyRunner(object):
                 raise exception
             except ExecutionFailed as exception:
                 errors.extend(exception.get_errors())
-                self._run = exception.can_continue(self._context.in_teardown,
-                                                   self._templated,
-                                                   self._context.dry_run)
+                self._run = exception.can_continue(self._context,
+                                                   self._templated)
         if errors:
             raise ExecutionFailures(errors)
 
@@ -175,9 +174,8 @@ class ForInRunner(object):
                 raise exception
             except ExecutionFailed as exception:
                 errors.extend(exception.get_errors())
-                if not exception.can_continue(self._context.in_teardown,
-                                              self._templated,
-                                              self._context.dry_run):
+                if not exception.can_continue(self._context,
+                                              self._templated):
                     break
         if errors:
             raise ExecutionFailures(errors)

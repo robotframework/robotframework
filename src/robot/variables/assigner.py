@@ -95,7 +95,7 @@ class VariableAssigner(object):
         if exc_val is None:
             return
         failure = self._get_failure(exc_type, exc_val, exc_tb)
-        if failure.can_continue(self._context.in_teardown):
+        if failure.can_continue(self._context):
             self.assign(failure.return_value)
 
     def _get_failure(self, exc_type, exc_val, exc_tb):

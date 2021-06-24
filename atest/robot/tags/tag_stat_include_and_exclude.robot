@@ -5,6 +5,7 @@ Resource          atest_resource.robot
 *** Variables ***
 ${DATA SOURCE}    tags/include_and_exclude.robot
 ${F}              force
+${INTERNAL}       robot:just-an-example
 ${I1}             incl1
 ${I2}             incl 2
 ${I3}             incl_3
@@ -31,6 +32,14 @@ More Includes
 Include With Patterns
     --TagStatInc incl_?    @{INCL}
     --TagStatInc *cl3 --TagStatInc i*2    ${E3}    ${I2}    ${I3}
+
+Include to show internal tags
+    --tagstatinclude incl1 --tagstatinclude robot:*    ${I1}    ${INTERNAL}
+    --tagstatinclude robot:*    ${INTERNAL}
+    --tagstatinclude *    @{ALL}    ${INTERNAL}
+
+Include and exclude internal
+    --tagstatinclude incl1 --tagstatinclude robot:* --tagstatexclude robot:*    ${I1}
 
 One Exclude
     --tagstatexclude excl1    ${E2}    ${E3}    ${F}    @{INCL}

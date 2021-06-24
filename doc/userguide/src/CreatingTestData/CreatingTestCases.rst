@@ -687,8 +687,13 @@ tag with this prefixes unless actually activating the special functionality.
 
 At the time of writing, the only special tags are `robot:exit`, that is
 automatically added to tests when `stopping test execution gracefully`_,
-and `robot:no-dry-run`, that can be used to disable the `dry run`_ mode.
+and `robot:no-dry-run`, that can be used to disable the `dry run`_ mode as
+well as `robot:continue-on-failure` which controls continuable execution.
 More usages are likely to be added in the future.
+
+As of RobotFramework 4.1, reserved tags are suppressed by default in the
+test suite's tag statistics. They will be shown when they are explicitly 
+included via the `--tagstatinclude 'robot:*'` command line option.
 
 Test setup and teardown
 -----------------------

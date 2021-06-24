@@ -139,8 +139,8 @@ class ExecutionStatus(RobotError):
             if child is not self:
                 child.continue_on_failure = continue_on_failure
 
-    def can_continue(self, teardown=False, templated=False, dry_run=False):
-        if dry_run:
+    def can_continue(self, context, templated=False):
+        if context.dry_run:
             return True
         if self.syntax or self.exit or self.skip or self.test_timeout:
             return False
@@ -150,7 +150,7 @@ class ExecutionStatus(RobotError):
             if teardown:
                 self.keyword_timeout = False
             return False
-        if teardown:
+        if context.in_teardown or context.continue_on_failure:
             return True
         return self.continue_on_failure
 

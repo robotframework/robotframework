@@ -56,7 +56,7 @@ class TagStatisticsBuilder(object):
 
     def _add_tags_to_statistics(self, test):
         for tag in test.tags:
-            if self._is_included(tag):
+            if self._is_included(tag) and not self._suppress_reserved(tag):
                 if tag not in self.stats.tags:
                     self.stats.tags[tag] = self._info.get_stat(tag)
                 self.stats.tags[tag].add_test(test)
@@ -70,6 +70,10 @@ class TagStatisticsBuilder(object):
         for stat in self.stats.combined:
             if stat.match(test.tags):
                 stat.add_test(test)
+
+    def _suppress_reserved(self, tag):
+        # don't suppress reserved tags if the user explicitly included them
+        return tag.startswith('robot:') and not self._included.match(tag)
 
 
 class TagStatInfo(object):
