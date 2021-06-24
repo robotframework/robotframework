@@ -1043,15 +1043,13 @@ class _Verify(_BuiltInBase):
             if is_string(container):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
-                container = set(self._strip_spaces(x, strip_spaces)
-                                if is_string(x) else x for x in container)
+                container = set(self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in container)
         if is_truthy(collapse_spaces) and is_string(item):
             item = self._collapse_spaces(item)
             if is_string(container):
                 container = self._collapse_spaces(container)
             elif is_list_like(container):
-                container = set(self._collapse_spaces(x)
-                                if is_string(x) else x for x in container)
+                container = set(self._collapse_spaces(x) if is_string(x) else x for x in container)
         if item in container:
             raise AssertionError(self._get_string_msg(orig_container, item, msg,
                                                       values, 'contains'))
@@ -1101,15 +1099,13 @@ class _Verify(_BuiltInBase):
             if is_string(container):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
-                container = set(self._strip_spaces(x, strip_spaces)
-                                if is_string(x) else x for x in container)
+                container = set(self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in container)
         if is_truthy(collapse_spaces) and is_string(item):
             item = self._collapse_spaces(item)
             if is_string(container):
                 container = self._collapse_spaces(container)
             elif is_list_like(container):
-                container = set(self._collapse_spaces(x)
-                                if is_string(x) else x for x in container)
+                container = set(self._collapse_spaces(x) if is_string(x) else x for x in container)
         if item not in container:
             raise AssertionError(self._get_string_msg(orig_container, item, msg,
                                                       values, 'does not contain'))
@@ -1155,20 +1151,17 @@ class _Verify(_BuiltInBase):
             elif is_list_like(container):
                 container = set(x.lower() if is_string(x) else x for x in container)
         if strip_spaces:
-            items = [self._strip_spaces(x, strip_spaces)
-                     if is_string(x) else x for x in items]
+            items = [self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in items]
             if is_string(container):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
-                container = set(self._strip_spaces(x, strip_spaces)
-                                if is_string(x) else x for x in container)
+                container = set(self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in container)
         if is_truthy(collapse_spaces):
             items = [self._collapse_spaces(x) if is_string(x) else x for x in items]
             if is_string(container):
                 container = self._collapse_spaces(container)
             elif is_list_like(container):
-                container = set(self._collapse_spaces(x)
-                                if is_string(x) else x for x in container)
+                container = set(self._collapse_spaces(x) if is_string(x) else x for x in container)
         if not any(item in container for item in items):
             msg = self._get_string_msg(orig_container,
                                        seq2str(items, lastsep=' or '),
@@ -1217,20 +1210,17 @@ class _Verify(_BuiltInBase):
             elif is_list_like(container):
                 container = set(x.lower() if is_string(x) else x for x in container)
         if strip_spaces:
-            items = [self._strip_spaces(x, strip_spaces)
-                     if is_string(x) else x for x in items]
+            items = [self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in items]
             if is_string(container):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
-                container = set(self._strip_spaces(x, strip_spaces)
-                                if is_string(x) else x for x in container)
+                container = set(self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in container)
         if is_truthy(collapse_spaces):
             items = [self._collapse_spaces(x) if is_string(x) else x for x in items]
             if is_string(container):
                 container = self._collapse_spaces(container)
             elif is_list_like(container):
-                container = set(self._strip_spaces(x, strip_spaces)
-                                if is_string(x) else x for x in container)
+                container = set(self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in container)
         if any(item in container for item in items):
             msg = self._get_string_msg(orig_container,
                                        seq2str(items, lastsep=' or '),
@@ -1278,22 +1268,19 @@ class _Verify(_BuiltInBase):
                 if is_string(container):
                     container = container.lower()
                 elif is_list_like(container):
-                    container = [i.lower()
-                                 if is_string(i) else i for i in container]
+                    container = [i.lower() if is_string(i) else i for i in container]
             if strip_spaces:
                 item = self._strip_spaces(item, strip_spaces)
                 if is_string(container):
                     container = self._strip_spaces(container, strip_spaces)
                 elif is_list_like(container):
-                    container = [self._strip_spaces(x, strip_spaces)
-                                 if is_string(x) else x for x in container]
+                    container = [self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in container]
             if is_truthy(collapse_spaces):
                 item = self._collapse_spaces(item)
                 if is_string(container):
                     container = self._collapse_spaces(container)
                 elif is_list_like(container):
-                    container = [self._collapse_spaces(x)
-                                 if is_string(x) else x for x in container]
+                    container = [self._collapse_spaces(x) if is_string(x) else x for x in container]
         x = self.get_count(container, item)
         if not msg:
             msg = "'%s' contains '%s' %d time%s, not %d time%s." \
