@@ -15,7 +15,7 @@ Continue in test with Set Tags
     [Documentation]    FAIL ${HEADER}\n\n
     ...    1) 1\n\n
     ...    2) 2
-    Set Tags   robot:continue-on-failure
+    Set Tags   ROBOT:CONTINUE-ON-FAILURE            # case shouldn't matter
     Fail   1
     Fail   2
     Log    This should be executed
@@ -31,7 +31,7 @@ Continue in test with tag and UK without tag
     [Documentation]    FAIL ${HEADER}\n\n
     ...    1) kw2a\n\n
     ...    2) This should be executed
-    [Tags]   robot:continue-on-failure
+    [Tags]   robot:CONTINUE-on-failure              # case shouldn't matter
     Failure in user keyword without tag
     Fail   This should be executed
 
@@ -41,7 +41,7 @@ Continue in test with tag and nested UK with and without tag
     ...    2) kw1b\n\n
     ...    3) kw2a\n\n
     ...    4) This should be executed
-    [Tags]   robot:continue-on-failure
+    [Tags]   robot: continue-on-failure             # spaces should be collapsed
     Failure in user keyword with tag     run_kw=Failure in user keyword without tag
     Fail   This should be executed
 
@@ -173,7 +173,7 @@ Recursive continue in test with Set Tags and two nested UK without tag
     ...    3) kw2a\n\n
     ...    4) kw2b\n\n
     ...    5) This should be executed
-    Set Tags   robot:recursive-continue-on-failure
+    Set Tags   robot: recursive-continue-on-failure     # spaces should be collapsed
     Failure in user keyword without tag     run_kw=Failure in user keyword without tag
     Fail   This should be executed
 
@@ -184,7 +184,7 @@ Recursive continue in test with tag and two nested UK with and without tag
     ...    3) kw2a\n\n
     ...    4) kw2b\n\n
     ...    5) This should be executed
-    [Tags]   robot:recursive-continue-on-failure
+    [Tags]   ROBOT:RECURSIVE-CONTINUE-ON-FAILURE        # case shouldn't matter
     Failure in user keyword with tag     run_kw=Failure in user keyword without tag
     Fail   This should be executed
 
