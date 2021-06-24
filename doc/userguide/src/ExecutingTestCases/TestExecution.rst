@@ -418,14 +418,14 @@ executed from within a user keyword with the reserved tag set).
 
 To support use cases where the behaviour should propagate from
 test cases into user keywords (and/or from user keywords into other
-user keywords), the reserved tag `robot:continue-on-failure-recursive`
+user keywords), the reserved tag `robot:recursive-continue-on-failure`
 can be used. The below examples executes all the keywords listed.
 
 .. sourcecode:: robotframework
 
    *** Test Cases ***
    Test
-       [Tags]    robot:continue-on-failure-recursive
+       [Tags]    robot:recursive-continue-on-failure
        Should be Equal   1   2
        User Keyword 1
        Log   log from test case
@@ -441,7 +441,7 @@ can be used. The below examples executes all the keywords listed.
        Log   log from keyword 2
 
 
-The `robot:continue-on-failure` and `robot:continue-on-failure-recursive`
+The `robot:continue-on-failure` and `robot:recursive-continue-on-failure`
 tags are new in Robot Framework 4.1.
 
 Execution continues on teardowns automatically

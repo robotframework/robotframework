@@ -133,7 +133,7 @@ class _ExecutionContext(object):
             return False
         if 'robot:continue-on-failure' in parents[-1].tags:
             return True
-        return any('robot:continue-on-failure-recursive' in p.tags for p in parents)
+        return any('robot:recursive-continue-on-failure' in p.tags for p in parents)
 
     def end_suite(self, suite):
         for name in ['${PREV_TEST_NAME}',
