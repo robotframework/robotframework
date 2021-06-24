@@ -197,13 +197,14 @@ Recursive continue in user keyword
     Failure in user keyword with recursive tag     run_kw=Failure in user keyword without tag
     Fail   This should not be executed
 
-No recursive continue in user keyword
-    [Documentation]    FAIL kw2a
+Recursive continue in nested keyword
+    [Documentation]    FAIL ${HEADER}\n\n
+    ...    1) kw1a\n\n
+    ...    2) kw1b
     Failure in user keyword without tag     run_kw=Failure in user keyword with recursive tag
     Fail   This should not be executed
 
 *** Keywords ***
-
 Failure in user keyword with tag
     [Arguments]    ${run_kw}=No Operation
     [Tags]   robot:continue-on-failure
@@ -214,9 +215,9 @@ Failure in user keyword with tag
 
 Failure in user keyword without tag
     [Arguments]    ${run_kw}=No Operation
+    Run Keyword   ${run_kw}
     Fail   kw2a
     Fail   kw2b
-    Run Keyword   ${run_kw}
 
 Failure in user keyword with recursive tag
     [Arguments]    ${run_kw}=No Operation

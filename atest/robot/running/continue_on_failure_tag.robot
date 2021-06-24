@@ -66,5 +66,5 @@ Recursive continue in test with tag and two nested UK with and without tag
 Recursive continue in user keyword
     Check Test Case    ${TESTNAME}
 
-No recursive continue in user keyword
+Recursive continue in nested keyword
     Check Test Case    ${TESTNAME}
