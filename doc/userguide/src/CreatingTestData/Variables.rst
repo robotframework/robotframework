@@ -10,7 +10,7 @@ Introduction
 
 Variables are an integral feature of Robot Framework, and they can be
 used in most places in test data. Most commonly, they are used in
-arguments for keywords in test case tables and keyword tables, but
+arguments for keywords in Test Case and Keyword sections, but
 also all settings allow variables in their values. A normal keyword
 name *cannot* be specified with a variable, but the BuiltIn_ keyword
 :name:`Run Keyword` can be used to get the same effect.

@@ -23,7 +23,7 @@ Using `Library` setting
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Test libraries are normally imported using the :setting:`Library`
-setting in the Setting table and having the library name in the
+setting in the Setting section and having the library name in the
 subsequent column. Unlike most of the other data, the library name
 is both case- and space-sensitive. If a library is in a package,
 the full name including the package name must be used.
@@ -181,7 +181,7 @@ different arguments:
        LocalLib.Another Keyword
 
 Setting a custom name to a test library works both when importing a
-library in the Setting table and when using the :name:`Import Library` keyword.
+library in the Setting section and when using the :name:`Import Library` keyword.
 
 Standard libraries
 ------------------
