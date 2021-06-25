@@ -774,7 +774,8 @@ everywhere within the scope of the currently executed test case. For
 example, if you set a variable in a user keyword, it is available both
 in the test case level and also in all other user keywords used in the
 current test. Other test cases will not see variables set with this
-keyword.
+keyword. It is a fatal exception to call :name:`Set Test Variable`
+outside the scope of a test (e.g. in a Suite Setup or Teardown).
 
 Variables set with :name:`Set Suite Variable` keyword are available
 everywhere within the scope of the currently executed test
