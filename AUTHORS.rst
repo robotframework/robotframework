@@ -105,5 +105,4 @@ Anton Nikitin                  | Should (Not) Contain Any (3.0.1, #2120)
 Yang Qian                      | Support to copy/deepcopy model objects (3.0.1, #2483)
 Chris Callan                   | Case-insensitivity support to various comparison keywords (3.0.1, #2439)
 Benjamin Einaudi               | Add `--rerunfailedsuites` option (3.0.1, #2117)
-Oliver Schwaneberg             | Alternative interval timing for keyword `Wait Unitl Keyword Succeeds` (4.1, #3177)
 ===========================    ===============================================

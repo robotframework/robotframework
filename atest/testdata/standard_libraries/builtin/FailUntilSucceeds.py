@@ -23,6 +23,6 @@ class FailUntilSucceeds:
         elapsed = time() - self.last_call_time
         if elapsed % 0.05 > 0.01 or elapsed < 0.045:
             sleep(0.02)  # insert 20ms delay to interfere with the timing
-            raise TimeoutError('interval violated')
+            raise RuntimeError('interval violated')
         self.last_call_time = None  # Resetting call time
         return message

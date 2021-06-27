@@ -2185,14 +2185,14 @@ class _RunKeyword(_BuiltInBase):
         defined using ``retry`` argument either as timeout or count.
         ``retry_interval`` is the time to wait before trying to run the
         keyword again after the previous run has failed.
-        Alternatively, add prefix ``strict:`` to the parameter and
-        ``retry_interval`` will be the time between keyword executions.
+        Alternatively, add prefix ``strict:`` (e.g. ``strict:0.2s``) to the
+        parameter and ``retry_interval`` will be the time between keyword executions.
         Use the ``strict:`` switch if a precise repetition rate is desired.
 
         If ``retry`` is given as timeout, it must be in Robot Framework's
-        time format (e.g. ``1 minute``, ``2 min 3 s``, ``4.5``, ``strict:0.2s``)
-        that is explained in an appendix of Robot Framework User Guide. If it
-        is given as count, it must have ``times`` or ``x`` postfix (e.g.
+        time format (e.g. ``1 minute``, ``2 min 3 s``, ``4.5``) that is
+        explained in an appendix of Robot Framework User Guide. If it is
+        given as count, it must have ``times`` or ``x`` postfix (e.g.
         ``5 times``, ``10 x``). ``retry_interval`` must always be given in
         Robot Framework's time format.
 
@@ -2212,6 +2212,8 @@ class _RunKeyword(_BuiltInBase):
         lots of output and considerably increase the size of the generated
         output files. It is possible to remove unnecessary keywords from
         the outputs using ``--RemoveKeywords WUKS`` command line option.
+
+        Support for "strict" retry interval is new in Robot Framework 4.1.
         """
         maxtime = count = -1
         try:
@@ -2224,17 +2226,14 @@ class _RunKeyword(_BuiltInBase):
             if count <= 0:
                 raise ValueError('Retry count %d is not positive.' % count)
             message = '%d time%s' % (count, s(count))
-        match = re.search(r'(strict *: *)', retry_interval)
-        if match:
-            strict_interval = True
-            retry_interval = retry_interval.lstrip(match.group())
-        else:
-            strict_interval = False
-
-        retry_interval = float(timestr_to_secs(retry_interval))
-        wait_time = retry_interval
+        strict_interval = isinstance(retry_interval, str) \
+            and retry_interval.replace(' ', '').lower().startswith('strict:')
+        if strict_interval:
+            retry_interval = retry_interval.split(':')[1].strip()
+        retry_interval = timestr_to_secs(retry_interval)
+        sleep_time = retry_interval
         while True:
-            execution_time = time.time()
+            start_time = time.time()
             try:
                 return self.run_keyword(name, *args)
             except ExecutionFailed as err:
@@ -2245,15 +2244,16 @@ class _RunKeyword(_BuiltInBase):
                     raise AssertionError("Keyword '%s' failed after retrying "
                                          "%s. The last error was: %s"
                                          % (name, message, err))
-                keyword_runtime = time.time() - execution_time
+                keyword_runtime = time.time() - start_time
                 if strict_interval:
-                    wait_time = retry_interval - keyword_runtime
-                if wait_time >= 0.0:
-                    self._sleep_in_parts(wait_time)
+                    sleep_time = retry_interval - keyword_runtime
+                if sleep_time < 0:
+                    logger.warn("Interval violation: retry_interval is {}"
+                                ", but keyword runtime is {}."
+                                .format(secs_to_timestr(retry_interval),
+                                        secs_to_timestr(keyword_runtime)))
                 else:
-                    logger.warn("Interval violation: retry_interval is {:.3}s"
-                                ", but keyword runtime is {:.3}s."
-                                .format(retry_interval, keyword_runtime))
+                    self._sleep_in_parts(sleep_time)
 
     @run_keyword_variant(resolve=1)
     def set_variable_if(self, condition, *values):

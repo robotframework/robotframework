@@ -135,8 +135,10 @@ Pass With Strict Timing
     Wait Until Keyword Succeeds    2 times    strict: 50ms    Passes Every Second Time At 50ms Interval
 
 Fail Without Strict Timing
-    [Documentation]    The executed keyword adds a 20ms wait time to elongate the interval, so it must fail without strict timing
-    Run Keyword And Expect Error    Keyword 'Passes Every Second Time At 50ms Interval' failed after retrying 2 times. The last error was: TimeoutError: interval violated    Wait Until Keyword Succeeds    2 times    50ms    Passes Every Second Time At 50ms Interval
+    [Documentation]    FAIL
+    ...    Keyword 'Passes Every Second Time At 50ms Interval' failed after retrying 2 times. \
+    ...    The last error was: TimeoutError: interval violated
+    Wait Until Keyword Succeeds    2 times    50ms    Passes Every Second Time At 50ms Interval
 
 *** Keywords ***
 User Keyword
