@@ -327,8 +327,8 @@ Templated test with for loop continues after keyword timeout
     END
 
 Templated test ends after syntax errors
-    [Documentation]    FAIL   Keyword 'BuiltIn.Should Be Equal' expected 2 to 7 arguments, got 8.
-    The    syntax    error    makes    test    end     again    here
+    [Documentation]    FAIL   Keyword 'BuiltIn.Should Be Equal' expected 2 to 8 arguments, got 9.
+    The    syntax    error    makes    any    test    end     again    here
     Not compared    anymore
 
 Templated test continues after variable error

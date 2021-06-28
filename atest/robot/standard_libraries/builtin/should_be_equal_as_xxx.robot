@@ -50,6 +50,12 @@ Should Be Equal As Strings without trailing spaces
 Should Be Equal As Strings without leading and trailing spaces
     Check test case    ${TESTNAME}
 
+Should Be Equal As Strings and do not collapse spaces
+    Check test case    ${TESTNAME}
+
+Should Be Equal As Strings and collapse spaces
+    Check test case    ${TESTNAME}
+
 Should Be Equal As Strings repr
     Check test case    ${TESTNAME}
 
@@ -73,4 +79,10 @@ Should Not Be Equal As Strings without trailing spaces
     Check test case    ${TESTNAME}
 
 Should Not Be Equal As Strings without leading and trailing spaces
+    Check test case    ${TESTNAME}
+
+Should Not Be Equal As Strings and do not collapse spaces
+    Check test case    ${TESTNAME}
+
+Should Not Be Equal As Strings and collapse spaces
     Check test case    ${TESTNAME}

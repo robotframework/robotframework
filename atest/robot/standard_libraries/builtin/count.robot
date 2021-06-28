@@ -44,6 +44,12 @@ Should Contain X Times without trailing spaces
 Should Contain X Times without leading and trailing spaces
     Check test case    ${TESTNAME}
 
+Should Contain X Times and do not collapse spaces
+    Check test case    ${TESTNAME}
+
+Should Contain X Times and collapse spaces
+    Check test case    ${TESTNAME}
+
 Should Contain X Times with invalid item
     Check test case    ${TESTNAME}
 
