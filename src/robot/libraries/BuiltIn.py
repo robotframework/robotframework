@@ -235,7 +235,7 @@ class _Converter(_BuiltInBase):
 
         See also `Convert To Integer`, `Convert To Binary` and `Convert To Octal`.
         """
-        spec = 'x' if is_truthy(lowercase) else 'X'
+        spec = 'x' if lowercase else 'X'
         return self._convert_to_bin_oct_hex(item, base, prefix, length, spec)
 
     def _convert_to_bin_oct_hex(self, item, base, prefix, length, format_spec):
@@ -640,13 +640,13 @@ class _Verify(_BuiltInBase):
         """
         self._log_types_at_info_if_different(first, second)
         if is_string(first) and is_string(second):
-            if is_truthy(ignore_case):
+            if ignore_case:
                 first = first.lower()
                 second = second.lower()
             if strip_spaces:
                 first = self._strip_spaces(first, strip_spaces)
                 second = self._strip_spaces(second, strip_spaces)
-            if is_truthy(collapse_spaces):
+            if collapse_spaces:
                 first = self._collapse_spaces(first)
                 second = self._collapse_spaces(second)
         self._should_be_equal(first, second, msg, values, formatter)
@@ -722,13 +722,13 @@ class _Verify(_BuiltInBase):
         """
         self._log_types_at_info_if_different(first, second)
         if is_string(first) and is_string(second):
-            if is_truthy(ignore_case):
+            if ignore_case:
                 first = first.lower()
                 second = second.lower()
             if strip_spaces:
                 first = self._strip_spaces(first, strip_spaces)
                 second = self._strip_spaces(second, strip_spaces)
-            if is_truthy(collapse_spaces):
+            if collapse_spaces:
                 first = self._collapse_spaces(first)
                 second = self._collapse_spaces(second)
         self._should_not_be_equal(first, second, msg, values)
@@ -858,13 +858,13 @@ class _Verify(_BuiltInBase):
         self._log_types_at_info_if_different(first, second)
         first = self._convert_to_string(first)
         second = self._convert_to_string(second)
-        if is_truthy(ignore_case):
+        if ignore_case:
             first = first.lower()
             second = second.lower()
         if strip_spaces:
             first = self._strip_spaces(first, strip_spaces)
             second = self._strip_spaces(second, strip_spaces)
-        if is_truthy(collapse_spaces):
+        if collapse_spaces:
             first = self._collapse_spaces(first)
             second = self._collapse_spaces(second)
         self._should_not_be_equal(first, second, msg, values)
@@ -899,13 +899,13 @@ class _Verify(_BuiltInBase):
         self._log_types_at_info_if_different(first, second)
         first = self._convert_to_string(first)
         second = self._convert_to_string(second)
-        if is_truthy(ignore_case):
+        if ignore_case:
             first = first.lower()
             second = second.lower()
         if strip_spaces:
             first = self._strip_spaces(first, strip_spaces)
             second = self._strip_spaces(second, strip_spaces)
-        if is_truthy(collapse_spaces):
+        if collapse_spaces:
             first = self._collapse_spaces(first)
             second = self._collapse_spaces(second)
         self._should_be_equal(first, second, msg, values, formatter)
@@ -919,13 +919,13 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
-        if is_truthy(ignore_case):
+        if ignore_case:
             str1 = str1.lower()
             str2 = str2.lower()
         if strip_spaces:
             str1 = self._strip_spaces(str1, strip_spaces)
             str2 = self._strip_spaces(str2, strip_spaces)
-        if is_truthy(collapse_spaces):
+        if collapse_spaces:
             str1 = self._collapse_spaces(str1)
             str2 = self._collapse_spaces(str2)
         if str1.startswith(str2):
@@ -940,13 +940,13 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
-        if is_truthy(ignore_case):
+        if ignore_case:
             str1 = str1.lower()
             str2 = str2.lower()
         if strip_spaces:
             str1 = self._strip_spaces(str1, strip_spaces)
             str2 = self._strip_spaces(str2, strip_spaces)
-        if is_truthy(collapse_spaces):
+        if collapse_spaces:
             str1 = self._collapse_spaces(str1)
             str2 = self._collapse_spaces(str2)
         if not str1.startswith(str2):
@@ -962,13 +962,13 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
-        if is_truthy(ignore_case):
+        if ignore_case:
             str1 = str1.lower()
             str2 = str2.lower()
         if strip_spaces:
             str1 = self._strip_spaces(str1, strip_spaces)
             str2 = self._strip_spaces(str2, strip_spaces)
-        if is_truthy(collapse_spaces):
+        if collapse_spaces:
             str1 = self._collapse_spaces(str1)
             str2 = self._collapse_spaces(str2)
         if str1.endswith(str2):
@@ -983,13 +983,13 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
-        if is_truthy(ignore_case):
+        if ignore_case:
             str1 = str1.lower()
             str2 = str2.lower()
         if strip_spaces:
             str1 = self._strip_spaces(str1, strip_spaces)
             str2 = self._strip_spaces(str2, strip_spaces)
-        if is_truthy(collapse_spaces):
+        if collapse_spaces:
             str1 = self._collapse_spaces(str1)
             str2 = self._collapse_spaces(str2)
         if not str1.endswith(str2):
@@ -1031,7 +1031,7 @@ class _Verify(_BuiltInBase):
         # This same logic should be used with all keywords supporting
         # case-insensitive comparisons.
         orig_container = container
-        if is_truthy(ignore_case) and is_string(item):
+        if ignore_case and is_string(item):
             item = item.lower()
             if is_string(container):
                 container = container.lower()
@@ -1043,7 +1043,7 @@ class _Verify(_BuiltInBase):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
                 container = set(self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in container)
-        if is_truthy(collapse_spaces) and is_string(item):
+        if collapse_spaces and is_string(item):
             item = self._collapse_spaces(item)
             if is_string(container):
                 container = self._collapse_spaces(container)
@@ -1087,7 +1087,7 @@ class _Verify(_BuiltInBase):
         in Robot Framework 4.1.
         """
         orig_container = container
-        if is_truthy(ignore_case) and is_string(item):
+        if ignore_case and is_string(item):
             item = item.lower()
             if is_string(container):
                 container = container.lower()
@@ -1099,7 +1099,7 @@ class _Verify(_BuiltInBase):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
                 container = set(self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in container)
-        if is_truthy(collapse_spaces) and is_string(item):
+        if collapse_spaces and is_string(item):
             item = self._collapse_spaces(item)
             if is_string(container):
                 container = self._collapse_spaces(container)
@@ -1133,9 +1133,9 @@ class _Verify(_BuiltInBase):
         """
         msg = configuration.pop('msg', None)
         values = configuration.pop('values', True)
-        ignore_case = configuration.pop('ignore_case', False)
+        ignore_case = is_truthy(configuration.pop('ignore_case', False))
         strip_spaces = configuration.pop('strip_spaces', False)
-        collapse_spaces = configuration.pop('collapse_spaces', False)
+        collapse_spaces = is_truthy(configuration.pop('collapse_spaces', False))
         if configuration:
             raise RuntimeError("Unsupported configuration parameter%s: %s."
                                % (s(configuration),
@@ -1143,7 +1143,7 @@ class _Verify(_BuiltInBase):
         if not items:
             raise RuntimeError('One or more items required.')
         orig_container = container
-        if is_truthy(ignore_case):
+        if ignore_case:
             items = [x.lower() if is_string(x) else x for x in items]
             if is_string(container):
                 container = container.lower()
@@ -1155,7 +1155,7 @@ class _Verify(_BuiltInBase):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
                 container = set(self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in container)
-        if is_truthy(collapse_spaces):
+        if collapse_spaces:
             items = [self._collapse_spaces(x) if is_string(x) else x for x in items]
             if is_string(container):
                 container = self._collapse_spaces(container)
@@ -1192,17 +1192,16 @@ class _Verify(_BuiltInBase):
         """
         msg = configuration.pop('msg', None)
         values = configuration.pop('values', True)
-        ignore_case = configuration.pop('ignore_case', False)
+        ignore_case = is_truthy(configuration.pop('ignore_case', False))
         strip_spaces = configuration.pop('strip_spaces', False)
-        collapse_spaces = configuration.pop('collapse_spaces', False)
+        collapse_spaces = is_truthy(configuration.pop('collapse_spaces', False))
         if configuration:
             raise RuntimeError("Unsupported configuration parameter%s: %s."
-                               % (s(configuration),
-                                  seq2str(sorted(configuration))))
+                               % (s(configuration), seq2str(sorted(configuration))))
         if not items:
             raise RuntimeError('One or more items required.')
         orig_container = container
-        if is_truthy(ignore_case):
+        if ignore_case:
             items = [x.lower() if is_string(x) else x for x in items]
             if is_string(container):
                 container = container.lower()
@@ -1214,7 +1213,7 @@ class _Verify(_BuiltInBase):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
                 container = set(self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in container)
-        if is_truthy(collapse_spaces):
+        if collapse_spaces:
             items = [self._collapse_spaces(x) if is_string(x) else x for x in items]
             if is_string(container):
                 container = self._collapse_spaces(container)
@@ -1262,7 +1261,7 @@ class _Verify(_BuiltInBase):
         count = self._convert_to_integer(count)
         orig_container = container
         if is_string(item):
-            if is_truthy(ignore_case):
+            if ignore_case:
                 item = item.lower()
                 if is_string(container):
                     container = container.lower()
@@ -1274,7 +1273,7 @@ class _Verify(_BuiltInBase):
                     container = self._strip_spaces(container, strip_spaces)
                 elif is_list_like(container):
                     container = [self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in container]
-            if is_truthy(collapse_spaces):
+            if collapse_spaces:
                 item = self._collapse_spaces(item)
                 if is_string(container):
                     container = self._collapse_spaces(container)
@@ -1320,7 +1319,7 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values`.
         """
-        if self._matches(string, pattern, caseless=is_truthy(ignore_case)):
+        if self._matches(string, pattern, caseless=ignore_case):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'matches'))
 
@@ -1339,7 +1338,7 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
-        if not self._matches(string, pattern, caseless=is_truthy(ignore_case)):
+        if not self._matches(string, pattern, caseless=ignore_case):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'does not match'))
 
@@ -1766,8 +1765,7 @@ class _Variables(_BuiltInBase):
         `Get Variable Value` keywords.
         """
         name = self._get_var_name(name)
-        if (values and is_string(values[-1]) and
-                values[-1].startswith('children=')):
+        if values and is_string(values[-1]) and values[-1].startswith('children='):
             children = self._variables.replace_scalar(values[-1][9:])
             children = is_truthy(children)
             values = values[:-1]
@@ -2889,13 +2887,13 @@ class _Misc(_BuiltInBase):
         `Log To Console` if you only want to write to the console.
         """
         # TODO: Deprecate `repr` in RF 3.2 or latest in RF 3.3.
-        if is_truthy(repr):
+        if repr:
             formatter = prepr
         else:
             formatter = self._get_formatter(formatter)
         message = formatter(message)
-        logger.write(message, level, is_truthy(html))
-        if is_truthy(console):
+        logger.write(message, level, html)
+        if console:
             logger.console(message)
 
     def _get_formatter(self, formatter):
@@ -3421,7 +3419,6 @@ class _Misc(_BuiltInBase):
         The documentation of the current suite is available as a built-in
         variable ``${SUITE DOCUMENTATION}``.
         """
-        top = is_truthy(top)
         suite = self._get_context(top).suite
         suite.doc = self._get_new_text(suite.doc, doc, append)
         self._variables.set_suite('${SUITE_DOCUMENTATION}', suite.doc, top)
@@ -3442,7 +3439,6 @@ class _Misc(_BuiltInBase):
         ``${SUITE METADATA}`` in a Python dictionary. Notice that modifying this
         variable directly has no effect on the actual metadata the suite has.
         """
-        top = is_truthy(top)
         if not is_unicode(name):
             name = unic(name)
         metadata = self._get_context(top).suite.metadata
@@ -3531,7 +3527,7 @@ class _Misc(_BuiltInBase):
         Example:
         | &{all libs} = | Get library instance | all=True |
         """
-        if is_truthy(all):
+        if all:
             return self._namespace.get_library_instances()
         try:
             return self._namespace.get_library_instance(name)
