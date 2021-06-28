@@ -130,15 +130,21 @@ Fail With Nonexisting Variable Inside Wait Until Keyword Succeeds
 Pass With Initially Nonexisting Variable Inside Wait Until Keyword Succeeds
     Wait Until Keyword Succeeds    3 times    0s    Access Initially Nonexisting Variable
 
-Pass With Strict Timing
-    [Documentation]    Retry at fixed rate takes at least 20ms to execute and requires exact timing
-    Wait Until Keyword Succeeds    2 times    strict: 50ms    Passes Every Second Time At 50ms Interval
+Strict retry interval
+    Wait Until Keyword Succeeds    4 times    strict: 50ms    Fail Until Retried Often Enough
 
-Fail Without Strict Timing
+Fail with strict retry interval
     [Documentation]    FAIL
-    ...    Keyword 'Passes Every Second Time At 50ms Interval' failed after retrying 2 times. \
-    ...    The last error was: TimeoutError: interval violated
-    Wait Until Keyword Succeeds    2 times    50ms    Passes Every Second Time At 50ms Interval
+    ...    Keyword 'Fail Until Retried Often Enough' failed after retrying 3 times. \
+    ...    The last error was: Still 0 times to fail!
+    Wait Until Keyword Succeeds    3 times    STRICT : 50ms    Fail Until Retried Often Enough
+
+Strict retry interval violation
+    Wait Until Keyword Succeeds    5 sec    strict:0.04    Fail Until Retried Often Enough    sleep=0.05
+
+Strict and invalid retry interval
+    [Documentation]    FAIL    ValueError: Invalid time string 'invalid:value'.
+    Wait Until Keyword Succeeds    3 times    strict: invalid:value    Not executed
 
 *** Keywords ***
 User Keyword
