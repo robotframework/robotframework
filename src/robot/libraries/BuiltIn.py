@@ -635,8 +635,8 @@ class _Verify(_BuiltInBase):
         | Should Be Equal | ${x} | expected | Custom message | values=False |
         | Should Be Equal | ${x} | expected | ignore_case=True | formatter=repr |
 
-        ``formatter`` is new in Robot Framework 3.1.2 and ``strip_spaces`` is new
-        in Robot Framework 4.0 and ``collapse_spaces`` is new in Robot Framework 4.1.
+        ``strip_spaces`` is new in Robot Framework 4.0 and
+        ``collapse_spaces`` is new in Robot Framework 4.1.
         """
         self._log_types_at_info_if_different(first, second)
         if is_string(first) and is_string(second):
@@ -891,11 +891,10 @@ class _Verify(_BuiltInBase):
         arguments are strings, the comparison is done with all white spaces replaced by
         a single space character.
 
-        Strings are always [http://www.macchiato.com/unicode/nfc-faq|
-        NFC normalized].
+        Strings are always [http://www.macchiato.com/unicode/nfc-faq| NFC normalized].
 
-        ``formatter`` is new in Robot Framework 3.1.2 and ``strip_spaces`` is new
-        in Robot Framework 4.0 and ``collapse_spaces`` is new in Robot Framework 4.1.
+        ``strip_spaces`` is new in Robot Framework 4.0
+        and ``collapse_spaces`` is new in Robot Framework 4.1.
         """
         self._log_types_at_info_if_different(first, second)
         first = self._convert_to_string(first)
@@ -1709,7 +1708,7 @@ class _Variables(_BuiltInBase):
         """Makes a variable available everywhere within the scope of the current task.
 
         This is an alias for `Set Test Variable` that is more applicable when
-        creating tasks, not tests. New in Robot Framework 3.1.
+        creating tasks, not tests.
         """
         self.set_test_variable(name, *values)
 
@@ -2137,12 +2136,11 @@ class _RunKeyword(_BuiltInBase):
         The keyword to execute and its arguments are specified using ``name``
         and ``*args`` exactly like with `Run Keyword`.
 
-        The expected error must be given in the same format as in Robot
-        Framework reports. By default it is interpreted as a glob pattern
-        with ``*``, ``?`` and ``[chars]`` as wildcards, but starting from
-        Robot Framework 3.1 that can be changed by using various prefixes
-        explained in the table below. Prefixes are case-sensitive and they
-        must be separated from the actual message with a colon and an
+        The expected error must be given in the same format as in Robot Framework
+        reports. By default it is interpreted as a glob pattern with ``*``, ``?``
+        and ``[chars]`` as wildcards, but that can be changed by using various
+        prefixes explained in the table below. Prefixes are case-sensitive and
+        they must be separated from the actual message with a colon and an
         optional space like ``PREFIX: Message`` or ``PREFIX:Message``.
 
         | = Prefix = | = Explanation = |
@@ -2871,7 +2869,7 @@ class _Misc(_BuiltInBase):
         functions with same names. When using ``repr``, bigger lists,
         dictionaries and other containers are also pretty-printed so that
         there is one item per row. For more details see `String
-        representations`. This is a new feature in Robot Framework 3.1.2.
+        representations`.
 
         The old way to control string representation was using the ``repr``
         argument, and ``repr=True`` is still equivalent to using
@@ -3657,8 +3655,6 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     | `Should Be Equal` | ${x} | ${y}  | Custom error | values=${FALSE}  | # Python ``False`` is false.   |
     | `Should Be Equal` | ${x} | ${y}  | Custom error | values=no values | # ``no values`` works with ``values`` argument |
 
-    Considering strings ``OFF`` and ``0`` false is new in Robot Framework 3.1.
-
     = Pattern matching =
 
     Many keywords accepts arguments as either glob or regular expression
@@ -3679,9 +3675,6 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     Unlike with glob patterns normally, path separator characters ``/`` and
     ``\\`` and the newline character ``\\n`` are matches by the above
     wildcards.
-
-    Support for brackets like ``[abc]`` and ``[!a-z]`` is new in
-    Robot Framework 3.1.
 
     == Regular expressions ==
 
@@ -3764,8 +3757,6 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     ``str`` (default), ``repr``, and ``ascii`` that work similarly as
     [https://docs.python.org/library/functions.html|Python built-in functions]
     with same names. More detailed semantics are explained below.
-
-    The ``formatter`` argument is new in Robot Framework 3.1.2.
 
     == str ==
 
