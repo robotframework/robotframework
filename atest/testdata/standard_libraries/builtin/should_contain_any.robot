@@ -115,6 +115,8 @@ Should Contain Any and collapse spaces
     San\tDiego    Di\t\nego              collapse_spaces=TRUE
     ${LIST}       \n\tab       \ b\t     collapse_spaces=Yes
     ${DICT 4}     \tak         a\tb\n    collapse_spaces=${TRUE}
+    ${DICT 5}     e e                    collapse_spaces=TRUE
+    ${DICT 5}     e \n \t e              collapse_spaces=TRUE
 
 Should Contain Any without items fails
     [Documentation]    FAIL    One or more items required.
@@ -238,11 +240,14 @@ Should Not Contain Any and collapse spaces
     ...    3) '${DICT 5}' contains one or more of ' a'
     ...
     ...    4) '${LIST 4}' contains one or more of 'b '
+    ...
+    ...    5) '${DICT 5}' contains one or more of 'e e'
     [Template]    Should Not Contain Any
     abc x d      \nx\t     collapse_spaces=True
     ${DICT 4}    a\t\nb    collapse_spaces=${TRUE}
     ${DICT 5}    \ \ta     collapse_spaces=TRUE
     ${LIST 4}    b\n\t     collapse_spaces=Yes
+    ${DICT 5}    e\te       collapse_spaces=TRUE
 
 Should Not Contain Any without items fails
     [Documentation]    FAIL    One or more items required.

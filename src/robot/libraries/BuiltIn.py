@@ -1138,8 +1138,7 @@ class _Verify(_BuiltInBase):
         collapse_spaces = is_truthy(configuration.pop('collapse_spaces', False))
         if configuration:
             raise RuntimeError("Unsupported configuration parameter%s: %s."
-                               % (s(configuration),
-                                  seq2str(sorted(configuration))))
+                               % (s(configuration), seq2str(sorted(configuration))))
         if not items:
             raise RuntimeError('One or more items required.')
         orig_container = container
@@ -1218,7 +1217,7 @@ class _Verify(_BuiltInBase):
             if is_string(container):
                 container = self._collapse_spaces(container)
             elif is_list_like(container):
-                container = set(self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in container)
+                container = set(self._collapse_spaces(x) if is_string(x) else x for x in container)
         if any(item in container for item in items):
             msg = self._get_string_msg(orig_container,
                                        seq2str(items, lastsep=' or '),
