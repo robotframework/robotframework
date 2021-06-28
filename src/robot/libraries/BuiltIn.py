@@ -2279,6 +2279,9 @@ class _RunKeyword(_BuiltInBase):
         defined using ``retry`` argument either as timeout or count.
         ``retry_interval`` is the time to wait before trying to run the
         keyword again after the previous run has failed.
+        Alternatively, add prefix ``strict:`` (e.g. ``strict:0.2s``) to the
+        parameter and ``retry_interval`` will be the time between keyword executions.
+        Use the ``strict:`` switch if a precise repetition rate is desired.
 
         If ``retry`` is given as timeout, it must be in Robot Framework's
         time format (e.g. ``1 minute``, ``2 min 3 s``, ``4.5``) that is
@@ -2293,6 +2296,7 @@ class _RunKeyword(_BuiltInBase):
         Examples:
         | Wait Until Keyword Succeeds | 2 min | 5 sec | My keyword | argument |
         | ${result} = | Wait Until Keyword Succeeds | 3x | 200ms | My keyword |
+        | ${result} = | Wait Until Keyword Succeeds | 3x | strict: 200ms | My keyword |
 
         All normal failures are caught by this keyword. Errors caused by
         invalid syntax, test or keyword timeouts, or fatal exceptions (caused
@@ -2302,6 +2306,8 @@ class _RunKeyword(_BuiltInBase):
         lots of output and considerably increase the size of the generated
         output files. It is possible to remove unnecessary keywords from
         the outputs using ``--RemoveKeywords WUKS`` command line option.
+
+        Support for "strict" retry interval is new in Robot Framework 4.1.
         """
         maxtime = count = -1
         try:
@@ -2314,8 +2320,14 @@ class _RunKeyword(_BuiltInBase):
             if count <= 0:
                 raise ValueError('Retry count %d is not positive.' % count)
             message = '%d time%s' % (count, s(count))
+        strict_interval = isinstance(retry_interval, str) \
+            and retry_interval.replace(' ', '').lower().startswith('strict:')
+        if strict_interval:
+            retry_interval = retry_interval.split(':')[1].strip()
         retry_interval = timestr_to_secs(retry_interval)
+        sleep_time = retry_interval
         while True:
+            start_time = time.time()
             try:
                 return self.run_keyword(name, *args)
             except ExecutionFailed as err:
@@ -2326,7 +2338,16 @@ class _RunKeyword(_BuiltInBase):
                     raise AssertionError("Keyword '%s' failed after retrying "
                                          "%s. The last error was: %s"
                                          % (name, message, err))
-                self._sleep_in_parts(retry_interval)
+                keyword_runtime = time.time() - start_time
+                if strict_interval:
+                    sleep_time = retry_interval - keyword_runtime
+                if sleep_time < 0:
+                    logger.warn("Interval violation: retry_interval is {}"
+                                ", but keyword runtime is {}."
+                                .format(secs_to_timestr(retry_interval),
+                                        secs_to_timestr(keyword_runtime)))
+                else:
+                    self._sleep_in_parts(sleep_time)
 
     @run_keyword_variant(resolve=1)
     def set_variable_if(self, condition, *values):
