@@ -203,15 +203,26 @@ class IntegerConverter(TypeConverter):
         raise ValueError('Conversion would lose precision.')
 
     def _convert(self, value, explicit_type=True):
+        value = self._remove_number_separators(value)
+        value, base = self._get_base(value)
         try:
-            return int(self._remove_number_separators(value))
+            return int(value, base)
         except ValueError:
-            if not explicit_type:
+            if base == 10 and not explicit_type:
                 try:
                     return float(value)
                 except ValueError:
                     pass
         raise ValueError
+
+    def _get_base(self, value):
+        value = value.lower()
+        for prefix, base in [('0x', 16), ('0o', 8), ('0b', 2)]:
+            if prefix in value:
+                parts = value.split(prefix)
+                if len(parts) == 2 and parts[0] in ('', '-', '+'):
+                    return ''.join(parts), base
+        return value, 10
 
 
 @TypeConverter.register

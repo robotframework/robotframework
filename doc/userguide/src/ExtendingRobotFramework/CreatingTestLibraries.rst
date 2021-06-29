@@ -1434,10 +1434,14 @@ Other types cause conversion failures.
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | int_        | Integral_     | integer,   | string,      | Conversion is done using the int_ built-in function. Floats    | | `42`                               |
    |             |               | long       | float        | are converted only if they can be represented as integers      | | `-1`                               |
-   |             |               |            |              | exactly. For example, `1.0` is accepted and `1.1` is not.      | | `10 000 000`                       |
-   |             |               |            |              | If converting a string to an integer fails and the type        | | `10_000_000`                       |
-   |             |               |            |              | is got implicitly based on a default value, conversion to      |                                      |
-   |             |               |            |              | float is attempted as well.                                    |                                      |
+   |             |               |            |              | exactly. For example, `1.0` is accepted and `1.1` is not.      | | `0xFF`                             |
+   |             |               |            |              | If converting a string to an integer fails and the type        | | `0o777`                            |
+   |             |               |            |              | is got implicitly based on a default value, conversion to      | | `0b1010`                           |
+   |             |               |            |              | float is attempted as well.                                    | | `10 000 000`                       |
+   |             |               |            |              |                                                                | | `0xBAD_C0FFEE`                     |
+   |             |               |            |              | Starting from RF 4.1, it is possible to use hexadecimal,       |                                      |
+   |             |               |            |              | octal and binary numbers by prefixing values with              |                                      |
+   |             |               |            |              | `0x`, `0o` and `0b`, respectively.                             |                                      |
    |             |               |            |              |                                                                |                                      |
    |             |               |            |              | Starting from RF 4.1, numbers can be separated using space or  |                                      |
    |             |               |            |              | underscore.                                                    |                                      |

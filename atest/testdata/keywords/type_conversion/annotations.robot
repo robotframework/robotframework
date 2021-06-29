@@ -22,10 +22,49 @@ Integer
     Integer              ${41}                     41
     Integer              ${-4.0}                   -4
 
+Integer as hex
+    Integer              0x0                        0
+    Integer              0 X 0 0 0 0 0              0
+    Integer              0_X_0_0_0_0_0              0
+    Integer              0x1000                     4096
+    Integer              -0x1000                    -4096
+    Integer              +0x1000                    4096
+    Integer              0x00FF                     255
+    Integer              - 0 X 00 ff                -255
+    Integer              -__0__X__00_ff__           -255
+    Integer              0 x BAD C0FFEE             50159747054
+
+Integer as octal
+    Integer              0o0                        0
+    Integer              0 O 0 0 0 0 0              0
+    Integer              0_O_0_0_0_0_0              0
+    Integer              0o1000                     512
+    Integer              -0o1000                    -512
+    Integer              +0o1000                    512
+    Integer              0o0077                     63
+    Integer              - 0 o 00 77                -63
+    Integer              -__0__o__00_77__           -63
+
+Integer as binary
+    Integer              0b0                        0
+    Integer              0 B 0 0 0 0 0              0
+    Integer              0_B_0_0_0_0_0              0
+    Integer              0b1000                     8
+    Integer              -0b1000                    -8
+    Integer              +0b1000                    8
+    Integer              0b0011                     3
+    Integer              - 0 b 00 11                -3
+    Integer              -__0__b__00_11__           -3
+
 Invalid integer
     [Template]           Conversion Should Fail
     Integer              foobar
     Integer              1.0
+    Integer              0xINVALID
+    Integer              0o8
+    Integer              0b2
+    Integer              00b1
+    Integer              0x0x0
     Integer              ${None}                   arg_type=None
 
 Integral (abc)
