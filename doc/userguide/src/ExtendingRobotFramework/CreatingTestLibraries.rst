@@ -1433,17 +1433,24 @@ Other types cause conversion failures.
    |             |               |            |              | needed. All string comparisons are case-insensitive.           |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | int_        | Integral_     | integer,   | string,      | Conversion is done using the int_ built-in function. Floats    | | `42`                               |
-   |             |               | long       | float        | are converted only if they can be represented as integers      |                                      |
-   |             |               |            |              | exactly. For example, `1.0` is accepted and `1.1` is not.      |                                      |
-   |             |               |            |              | If converting a string to an integer fails and the type        |                                      |
+   |             |               | long       | float        | are converted only if they can be represented as integers      | | `-1`                               |
+   |             |               |            |              | exactly. For example, `1.0` is accepted and `1.1` is not.      | | `10 000 000`                       |
+   |             |               |            |              | If converting a string to an integer fails and the type        | | `10_000_000`                       |
    |             |               |            |              | is got implicitly based on a default value, conversion to      |                                      |
    |             |               |            |              | float is attempted as well.                                    |                                      |
+   |             |               |            |              |                                                                |                                      |
+   |             |               |            |              | Starting from RF 4.1, numbers can be separated using space or  |                                      |
+   |             |               |            |              | underscore.                                                    |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | float_      | Real_         | double     | string,      | Conversion is done using the float_ built-in.                  | | `3.14`                             |
    |             |               |            | int          |                                                                | | `2.9979e8`                         |
+   |             |               |            |              | Starting from RF 4.1, numbers can be separated using space or  | | `10 000.000 01`                    |
+   |             |               |            |              | underscore.                                                    | | `10_000.000_01`                    |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Decimal_    |               |            | string,      | Conversion is done using the Decimal_ class.                   | | `3.14`                             |
-   |             |               |            | int, float   |                                                                |                                      |
+   |             |               |            | int, float   |                                                                | | `10 000.000 01`                    |
+   |             |               |            |              | Starting from RF 4.1, numbers can be separated using space or  | | `10_000.000_01`                    |
+   |             |               |            |              | underscore.                                                    |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | str_        |               | string,    | Any          | All arguments are converted to Unicode strings. With Python 2  |                                      |
    |             |               | unicode    |              | the type should be `unicode`, not `str`. New in RF 4.0.        |                                      |

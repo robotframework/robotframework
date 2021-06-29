@@ -35,8 +35,8 @@ from numbers import Integral, Real
 
 from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import (FALSE_STRINGS, IRONPYTHON, TRUE_STRINGS, PY_VERSION, PY2,
-                         eq, get_error_message, seq2str, type_name, typeddict_types,
-                         unic, unicode)
+                         eq, get_error_message, is_string, seq2str, type_name,
+                         typeddict_types, unic, unicode)
 
 
 class TypeConverter(object):
@@ -142,6 +142,13 @@ class TypeConverter(object):
                                                        expected.__name__))
         return value
 
+    def _remove_number_separators(self, value):
+        if is_string(value):
+            for sep in ' ', '_':
+                if sep in value:
+                    value = value.replace(sep, '')
+        return value
+
 
 @TypeConverter.register
 class StringConverter(TypeConverter):
@@ -197,7 +204,7 @@ class IntegerConverter(TypeConverter):
 
     def _convert(self, value, explicit_type=True):
         try:
-            return int(value)
+            return int(self._remove_number_separators(value))
         except ValueError:
             if not explicit_type:
                 try:
@@ -217,7 +224,7 @@ class FloatConverter(TypeConverter):
 
     def _convert(self, value, explicit_type=True):
         try:
-            return float(value)
+            return float(self._remove_number_separators(value))
         except ValueError:
             raise ValueError
 
@@ -230,7 +237,7 @@ class DecimalConverter(TypeConverter):
 
     def _convert(self, value, explicit_type=True):
         try:
-            return Decimal(value)
+            return Decimal(self._remove_number_separators(value))
         except InvalidOperation:
             # With Python 3 error messages by decimal module are not very
             # useful and cannot be included in our error messages:

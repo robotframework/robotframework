@@ -11,6 +11,10 @@ Integer
     Integer              42                        ${42}
     Integer              -1                        ${-1}
     Integer              9999999999999999999999    ${9999999999999999999999}
+    Integer              123 456 789               123456789
+    Integer              123_456_789               123456789
+    Integer              - 123 456 789             -123456789
+    Integer              -_123_456_789             -123456789
 
 Integer as float
     Integer              1.0                       ${1.0}
@@ -24,6 +28,7 @@ Float
     Float                1.5                       ${1.5}
     Float                -1                        ${-1.0}
     Float                1e6                       ${1000000.0}
+    Float                1 000 000 . 0_0_1         1000000.001
     Float                -1.2e-3                   ${-0.0012}
 
 Invalid float
@@ -34,6 +39,7 @@ Decimal
     Decimal              3.14                      Decimal('3.14')
     Decimal              -1                        Decimal('-1')
     Decimal              1e6                       Decimal('1000000')
+    Decimal              1 000 000 . 0_0_1         Decimal('1000000.001')
 
 Invalid decimal
     [Template]           Invalid value is passed as-is

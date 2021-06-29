@@ -15,6 +15,10 @@ Integer
     Integer              42                        42
     Integer              -1                        -1
     Integer              9999999999999999999999    9999999999999999999999
+    Integer              123 456 789               123456789
+    Integer              123_456_789               123456789
+    Integer              - 123 456 789             -123456789
+    Integer              -_123_456_789             -123456789
     Integer              ${41}                     41
     Integer              ${-4.0}                   -4
 
@@ -27,7 +31,7 @@ Invalid integer
 Integral (abc)
     Integral             42                        42
     Integral             -1                        -1
-    Integral             9999999999999999999999    9999999999999999999999
+    Integral             999_999 999_999 999       999999999999999
 
 Invalid integral (abc)
     [Template]           Conversion Should Fail
@@ -39,6 +43,7 @@ Float
     Float                1.5                       1.5
     Float                -1                        -1.0
     Float                1e6                       1000000.0
+    Float                1 000 000 . 0_0_1         1000000.001
     Float                -1.2e-3                   -0.0012
     Float                ${4}                      4.0
     Float                ${-4.1}                   -4.1
@@ -53,6 +58,7 @@ Real (abc)
     Real                 1.5                       1.5
     Real                 -1                        -1.0
     Real                 1e6                       1000000.0
+    Real                 1 000 000 . 0_0_1         1000000.001
     Real                 -1.2e-3                   -0.0012
     Real                 ${FRACTION 1/2}           Fraction(1,2)
 
@@ -64,6 +70,7 @@ Decimal
     Decimal              3.14                      Decimal('3.14')
     Decimal              -1                        Decimal('-1')
     Decimal              1e6                       Decimal('1000000')
+    Decimal              1 000 000 . 0_0_1         Decimal('1000000.001')
     Decimal              ${1}                      Decimal(1)
     Decimal              ${1.1}                    Decimal(1.1)
     Decimal              ${DECIMAL 1/2}            Decimal(0.5)
