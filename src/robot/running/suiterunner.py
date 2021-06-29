@@ -99,7 +99,6 @@ class SuiteRunner(SuiteVisitor):
                     self._suite.suite_teardown_skipped(unic(failure))
                 else:
                     self._suite.suite_teardown_failed(unic(failure))
-                self._suite_status.failure_occurred()
         self._suite.endtime = get_timestamp()
         self._suite.message = self._suite_status.message
         self._context.end_suite(ModelCombiner(suite, self._suite))
@@ -158,11 +157,8 @@ class SuiteRunner(SuiteVisitor):
             status.test_failed(err)
         result.status = status.status
         result.message = status.message or result.message
-        if status.teardown_allowed:
-            with self._context.test_teardown(result):
-                failure = self._run_teardown(test.teardown, status, result)
-                if failure:
-                    status.failure_occurred()
+        with self._context.test_teardown(result):
+            self._run_teardown(test.teardown, status, result)
         if not status.failed and result.timeout and result.timeout.timed_out():
             status.test_failed(result.timeout.get_message())
             result.message = status.message

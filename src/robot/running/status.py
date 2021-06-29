@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import ExecutionFailed, PassExecution
+from robot.errors import ExecutionStatus, PassExecution
 from robot.model import TagPatterns
 from robot.utils import html_escape, py3to2, unic, test_or_task
 
@@ -48,7 +48,7 @@ class Exit(object):
         self.fatal = False
 
     def failure_occurred(self, failure=None):
-        if isinstance(failure, ExecutionFailed) and failure.exit:
+        if isinstance(failure, ExecutionStatus) and failure.exit:
             self.fatal = True
         if self.failure_mode:
             self.failure = True
@@ -84,13 +84,12 @@ class _ExecutionStatus(object):
                 self.failure.setup_skipped = unic(failure)
                 self.skipped = True
             elif self._skip_on_failure():
-                msg = self._skip_on_failure_message(
-                    'Setup failed:\n%s' % unic(failure))
+                msg = self._skip_on_failure_message('Setup failed:\n%s' % failure)
                 self.failure.test = msg
                 self.skipped = True
             else:
                 self.failure.setup = unic(failure)
-            self.exit.failure_occurred(failure)
+                self.exit.failure_occurred(failure)
 
         self._teardown_allowed = True
 
@@ -101,12 +100,12 @@ class _ExecutionStatus(object):
                 # Keep the Skip status in case the teardown failed
                 self.skipped = self.skipped or failure.skip
             elif self._skip_on_failure():
-                msg = self._skip_on_failure_message('Setup failed:\n%s' % unic(failure))
+                msg = self._skip_on_failure_message('Teardown failed:\n%s' % failure)
                 self.failure.test = msg
                 self.skipped = True
             else:
                 self.failure.teardown = unic(failure)
-            self.exit.failure_occurred(failure)
+                self.exit.failure_occurred(failure)
 
     def failure_occurred(self):
         self.exit.failure_occurred()

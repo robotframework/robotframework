@@ -206,7 +206,7 @@ Skipped with --SkipOnFailure when Failure in Test Teardown
     ...    ${TEST_OR_TASK} failed but its tags matched '--SkipOnFailure' and it was marked skipped.
     ...
     ...    Original failure:
-    ...    Setup failed:
+    ...    Teardown failed:
     ...    failure in teardown
     [Tags]    skip-on-failure
     [Teardown]    Fail    failure in teardown
