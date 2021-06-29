@@ -9,14 +9,16 @@ ${EXIT ON FAILURE}          Failure occurred and exit-on-failure mode is in use.
 
 *** Test Cases ***
 Passing tests do not initiate exit-on-failure
-    Check Test Case    Passing
-    Check Test Case    Passing tests do not initiate exit-on-failure
+    Check Test Case    ${TEST NAME}
+
+Skipped tests do not initiate exit-on-failure
+    Check Test Case    ${TEST NAME}
 
 Skip-on-failure tests do not initiate exit-on-failure
-    Check Test Case    Skipped on failure
+    Check Test Case    ${TEST NAME}
 
 Failing tests initiate exit-on-failure
-    Check Test Case    Failing
+    Check Test Case    ${TEST NAME}
     Test Should Not Have Been Run    Not executed
 
 Tests in subsequent suites are skipped

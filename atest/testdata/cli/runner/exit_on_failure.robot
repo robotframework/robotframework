@@ -1,11 +1,12 @@
 *** Test Cases ***
-Passing
-    No Operation
-
 Passing tests do not initiate exit-on-failure
     No Operation
 
-Skipped on failure
+Skipped tests do not initiate exit-on-failure
+    [Documentation]    SKIP    testing...
+    Skip    testing...
+
+Skip-on-failure tests do not initiate exit-on-failure
     [Documentation]    SKIP
     ...       Test failed but its tags matched '--SkipOnFailure' and it was marked skipped.
     ...
@@ -14,7 +15,7 @@ Skipped on failure
     [Tags]    skip-on-failure
     Fail    Does not initiate exit-on-failure
 
-Failing
+Failing tests initiate exit-on-failure
     [Documentation]    FAIL Initiates exit-on-failure
     Fail    Initiates exit-on-failure
 
