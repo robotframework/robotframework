@@ -1484,14 +1484,24 @@ Other types cause conversion failures.
    |             |               |            |              | `time as time string`_ or `time as "timer" string`_. Integers  | | `01:02` (same as above)            |
    |             |               |            |              | and floats are considered to be seconds.                       |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | Enum_       |               |            | string       | The specified type must be an enumeration (a subclass of       | .. sourcecode:: python               |
-   |             |               |            |              | Enum_) and given arguments must match its members.             |                                      |
-   |             |               |            |              |                                                                |    class Color(Enum):                |
-   |             |               |            |              | Starting from RF 3.2.2, matching members is case-, space-      |        GREEN = 1                     |
-   |             |               |            |              | and underscore-insensitive.                                    |        DARK_GREEN = 2                |
+   | Enum_       |               |            | string       | The specified type must be an enumeration (a subclass of Enum_ | .. sourcecode:: python               |
+   |             |               |            |              | or Flag_) and given arguments must match its member names.     |                                      |
+   |             |               |            |              |                                                                |    class Direction(Enum):            |
+   |             |               |            |              | Starting from RF 3.2.2, matching member names is case-, space- |        NORTH = auto()                |
+   |             |               |            |              | and underscore-insensitive.                                    |        NORTH_WEST = auto()           |
    |             |               |            |              |                                                                |                                      |
-   |             |               |            |              |                                                                | | `GREEN` (Color.GREEN)              |
-   |             |               |            |              |                                                                | | `Dark Green` (Color.DARK_GREEN)    |
+   |             |               |            |              |                                                                | | `NORTH` (Direction.NORTH)          |
+   |             |               |            |              |                                                                | | `north west` (Direction.NORTH_WEST)|
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | IntEnum_    |               |            | string, int  | The specified type must be an integer based enumeration (a     | .. sourcecode:: python               |
+   |             |               |            |              | subclass of IntEnum_ or IntFlag_) and given arguments must     |                                      |
+   |             |               |            |              | match its member names or values.                              |    class PowerState(IntEnum):        |
+   |             |               |            |              |                                                                |        OFF = 0                       |
+   |             |               |            |              | Matching member names is case-, space- and                     |        ON = 1                        |
+   |             |               |            |              | and underscore-insensitive. Values can be given as actual      |                                      |
+   |             |               |            |              | integers and as strings that can be converted to integers.     | | `OFF` (PowerState.OFF)             |
+   |             |               |            |              |                                                                | | `1` (PowerState.ON)                |
+   |             |               |            |              | Support for IntEnum_ and IntFlag_ is new in RF 4.1.            |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | None_       |               | NoneType   | string       | String `NONE` (case-insensitively) is converted to `None`      | | `None`                             |
    |             |               |            |              | object. Other values cause an error.                           |                                      |
@@ -1533,6 +1543,9 @@ Other types cause conversion failures.
 .. _date: https://docs.python.org/library/datetime.html#datetime.date
 .. _timedelta: https://docs.python.org/library/datetime.html#datetime.timedelta
 .. _Enum: https://docs.python.org/library/enum.html#enum.Enum
+.. _Flag: https://docs.python.org/library/enum.html#enum.Flag
+.. _IntEnum: https://docs.python.org/library/enum.html#enum.IntEnum
+.. _IntFlag: https://docs.python.org/library/enum.html#enum.IntFlag
 .. _None: https://docs.python.org/library/constants.html#None
 .. _list: https://docs.python.org/library/stdtypes.html#list
 .. _Sequence: https://docs.python.org/library/collections.abc.html#collections.abc.Sequence
