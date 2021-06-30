@@ -1,7 +1,12 @@
 try:
-    from enum import IntEnum, Enum
-except ImportError:    # Python < 3.4, unless installed separately
-    IntEnum, Enum = object
+    from enum import Flag, Enum, IntFlag, IntEnum
+except ImportError:  # Python 2
+    try:
+        from enum import Enum, IntEnum
+    except ImportError:  # no enum34 installed
+        Flag = Enum = IntFlag = IntEnum = object
+    else:
+        Flag, IntFlag = Enum, IntEnum
 from datetime import datetime, date, timedelta
 from decimal import Decimal
 
@@ -14,9 +19,20 @@ class MyEnum(Enum):
     bar = 'xxx'
 
 
+class MyFlag(Flag):
+    RED = 1
+    BLUE = 2
+
+
 class MyIntEnum(IntEnum):
-    OFF = 0
     ON = 1
+    OFF = 0
+
+
+class MyIntFlag(IntFlag):
+    R = 4
+    W = 2
+    X = 1
 
 
 class Unknown(object):
@@ -71,7 +87,15 @@ def enum(argument=MyEnum.FOO, expected=None):
     _validate_type(argument, expected)
 
 
+def flag(argument=MyFlag.RED, expected=None):
+    _validate_type(argument, expected)
+
+
 def int_enum(argument=MyIntEnum.ON, expected=None):
+    _validate_type(argument, expected)
+
+
+def int_flag(argument=MyIntFlag.X, expected=None):
     _validate_type(argument, expected)
 
 

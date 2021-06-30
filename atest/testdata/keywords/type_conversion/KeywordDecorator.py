@@ -5,13 +5,15 @@ except ImportError:
 from datetime import datetime, date, timedelta
 from decimal import Decimal
 try:
-    from enum import IntEnum, Enum
-except ImportError:
-    class Enum(object):
-        pass
-    class IntEnum(object):
-        pass
-from fractions import Fraction
+    from enum import Flag, Enum, IntFlag, IntEnum
+except ImportError:  # Python 2
+    try:
+        from enum import Enum, IntEnum
+    except ImportError:  # no enum34 installed
+        Flag = Enum = IntFlag = IntEnum = object
+    else:
+        Flag, IntFlag = Enum, IntEnum
+from fractions import Fraction    # Needed by `eval()` in `_validate_type()`.
 from numbers import Integral, Real
 
 from robot.api.deco import keyword
@@ -25,9 +27,20 @@ class MyEnum(Enum):
     normalize_me = True
 
 
+class MyFlag(Flag):
+    RED = 1
+    BLUE = 2
+
+
 class MyIntEnum(IntEnum):
-    OFF = 0
     ON = 1
+    OFF = 0
+
+
+class MyIntFlag(IntFlag):
+    R = 4
+    W = 2
+    X = 1
 
 
 class Unknown(object):
@@ -100,12 +113,22 @@ def timedelta_(argument, expected=None):
 
 
 @keyword(types={'argument': MyEnum})
-def enum_(argument, expected=None):
+def enum(argument, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(types={'argument': MyFlag})
+def flag(argument, expected=None):
     _validate_type(argument, expected)
 
 
 @keyword(types=[MyIntEnum])
 def int_enum(argument, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(types=[MyIntFlag])
+def int_flag(argument, expected=None):
     _validate_type(argument, expected)
 
 

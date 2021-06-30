@@ -97,7 +97,13 @@ Invalid timedelta
 Enum
     Check Test Case    ${TESTNAME}
 
+Flag
+    Check Test Case    ${TESTNAME}
+
 IntEnum
+    Check Test Case    ${TESTNAME}
+
+IntFlag
     Check Test Case    ${TESTNAME}
 
 Normalized enum member match
@@ -107,6 +113,9 @@ Normalized enum member match with multiple matches
     Check Test Case    ${TESTNAME}
 
 Invalid Enum
+    Check Test Case    ${TESTNAME}
+
+Invalid IntEnum
     Check Test Case    ${TESTNAME}
 
 NoneType

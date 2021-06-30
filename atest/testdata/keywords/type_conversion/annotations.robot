@@ -267,8 +267,18 @@ Enum
     None enum            None                      NoneEnum.NONE
     None enum            NONE                      NoneEnum.NONE
 
+Flag
+    Flag                 RED                       MyFlag.RED
+
 IntEnum
     IntEnum              ON                        MyIntEnum.ON
+    IntEnum              ${1}                      MyIntEnum.ON
+    IntEnum              0                         MyIntEnum.OFF
+
+IntFlag
+    IntFlag              R                         MyIntFlag.R
+    IntFlag              4                         MyIntFlag.R
+    IntFlag              ${4}                      MyIntFlag.R
 
 Normalized enum member match
     Enum                 b a r                     MyEnum.bar
@@ -277,6 +287,9 @@ Normalized enum member match
     Enum                 normalize_me              MyEnum.normalize_me
     Enum                 normalize me              MyEnum.normalize_me
     Enum                 Normalize Me              MyEnum.normalize_me
+    Flag                 red                       MyFlag.RED
+    IntEnum              on                        MyIntEnum.ON
+    IntFlag              x                         MyIntFlag.X
 
 Normalized enum member match with multiple matches
     [Template]           Conversion Should Fail
@@ -287,6 +300,16 @@ Invalid Enum
     Enum                 foobar                    type=MyEnum           error=MyEnum does not have member 'foobar'. Available: 'FOO', 'bar', 'foo' and 'normalize_me'
     Enum                 bar!                      type=MyEnum           error=MyEnum does not have member 'bar!'. Available: 'FOO', 'bar', 'foo' and 'normalize_me'
     Enum                 None                      type=MyEnum           error=MyEnum does not have member 'None'. Available: 'FOO', 'bar', 'foo' and 'normalize_me'
+    Enum                 1                         type=MyEnum           error=MyEnum does not have member '1'. Available: 'FOO', 'bar', 'foo' and 'normalize_me'
+    Flag                 foobar                    type=MyFlag           error=MyFlag does not have member 'foobar'. Available: 'BLUE' and 'RED'
+
+Invalid IntEnum
+    [Template]           Conversion Should Fail
+    IntEnum              nonex                     type=MyIntEnum        error=MyIntEnum does not have member 'nonex'. Available: 'OFF (0)' and 'ON (1)'
+    IntEnum              2                         type=MyIntEnum        error=MyIntEnum does not have member '2'. Available: 'OFF (0)' and 'ON (1)'
+    IntEnum              ${2}                      type=MyIntEnum        error=MyIntEnum does not have value '2'. Available: '0' and '1'          arg_type=integer
+    IntFlag              3                         type=MyIntFlag        error=MyIntFlag does not have member '3'. Available: 'R (4)', 'W (2)' and 'X (1)'
+    IntFlag              ${-1}                     type=MyIntFlag        error=MyIntFlag does not have value '-1'. Available: '1', '2' and '4'    arg_type=integer
 
 NoneType
     NoneType             None                      None

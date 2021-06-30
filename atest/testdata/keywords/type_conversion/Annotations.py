@@ -1,9 +1,13 @@
 from collections import abc
 from datetime import datetime, date, timedelta
 from decimal import Decimal
-from enum import Enum, IntEnum
+try:
+    from enum import Flag, Enum, IntFlag, IntEnum
+except ImportError:    # Python 3.5
+    from enum import Enum, IntEnum
+    Flag, IntFlag = Enum, IntEnum
 from functools import wraps
-from fractions import Fraction
+from fractions import Fraction    # Needed by `eval()` in `_validate_type()`.
 from numbers import Integral, Real
 
 from robot.api.deco import keyword
@@ -22,9 +26,20 @@ class NoneEnum(Enum):
     NTHREE = 3
 
 
+class MyFlag(Flag):
+    RED = 1
+    BLUE = 2
+
+
 class MyIntEnum(IntEnum):
-    OFF = 0
     ON = 1
+    OFF = 0
+
+
+class MyIntFlag(IntFlag):
+    R = 4
+    W = 2
+    X = 1
 
 
 class Unknown(object):
@@ -91,7 +106,15 @@ def none_enum(argument: NoneEnum, expected=None):
     _validate_type(argument, expected)
 
 
+def flag(argument: MyFlag, expected=None):
+    _validate_type(argument, expected)
+
+
 def int_enum(argument: MyIntEnum, expected=None):
+    _validate_type(argument, expected)
+
+
+def int_flag(argument: MyIntFlag, expected=None):
     _validate_type(argument, expected)
 
 

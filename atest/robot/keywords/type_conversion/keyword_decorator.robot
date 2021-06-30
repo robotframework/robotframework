@@ -103,7 +103,15 @@ Enum
     [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
+Flag
+    [Tags]    require-enum
+    Check Test Case    ${TESTNAME}
+
 IntEnum
+    [Tags]    require-enum
+    Check Test Case    ${TESTNAME}
+
+IntFlag
     [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
@@ -116,6 +124,10 @@ Normalized enum member match with multiple matches
     Check Test Case    ${TESTNAME}
 
 Invalid Enum
+    [Tags]    require-enum
+    Check Test Case    ${TESTNAME}
+
+Invalid IntEnum
     [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 

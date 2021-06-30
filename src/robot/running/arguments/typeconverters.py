@@ -34,9 +34,9 @@ except ImportError:    # Standard in Py 3.4+ but can be separately installed
 from numbers import Integral, Real
 
 from robot.libraries.DateTime import convert_date, convert_time
-from robot.utils import (FALSE_STRINGS, IRONPYTHON, TRUE_STRINGS, PY_VERSION, PY2,
+from robot.utils import (FALSE_STRINGS, IRONPYTHON, TRUE_STRINGS, PY2,
                          eq, get_error_message, is_string, seq2str, type_name,
-                         typeddict_types, unic, unicode)
+                         unic, unicode)
 
 
 class TypeConverter(object):
@@ -158,29 +158,52 @@ class EnumConverter(TypeConverter):
     def type_name(self):
         return self.used_type.__name__
 
+    @property
+    def value_types(self):
+        return (unicode, int) if issubclass(self.used_type, int) else (unicode,)
+
     def _convert(self, value, explicit_type=True):
         enum = self.used_type
+        if isinstance(value, int):
+            return self._find_by_int_value(enum, value)
         try:
             # This is compatible with the enum module in Python 3.4, its
             # enum34 backport, and the older enum module. `enum[value]`
             # wouldn't work with the old enum module.
             return getattr(enum, value)
         except AttributeError:
-            members = sorted(self._get_members(enum))
-            matches = [m for m in members if eq(m, value, ignore='_')]
-            if not matches:
-                raise ValueError("%s does not have member '%s'. Available: %s"
-                                 % (self.type_name, value, seq2str(members)))
-            if len(matches) > 1:
-                raise ValueError("%s has multiple members matching '%s'. Available: %s"
-                                 % (self.type_name, value, seq2str(matches)))
+            return self._find_by_normalized_name_or_int_value(enum, value)
+
+    def _find_by_normalized_name_or_int_value(self, enum, value):
+        members = sorted(self._get_members(enum))
+        matches = [m for m in members if eq(m, value, ignore='_')]
+        if len(matches) == 1:
             return getattr(enum, matches[0])
+        if len(matches) > 1:
+            raise ValueError("%s has multiple members matching '%s'. Available: %s"
+                             % (self.type_name, value, seq2str(matches)))
+        try:
+            if issubclass(self.used_type, int):
+                return self._find_by_int_value(enum, value)
+        except ValueError:
+            members = ['%s (%d)' % (m, getattr(enum, m)) for m in members]
+        raise ValueError("%s does not have member '%s'. Available: %s"
+                         % (self.type_name, value, seq2str(members)))
 
     def _get_members(self, enum):
         try:
             return list(enum.__members__)
         except AttributeError:    # old enum module
             return [attr for attr in dir(enum) if not attr.startswith('_')]
+
+    def _find_by_int_value(self, enum, value):
+        value = int(value)
+        for member in enum:
+            if member.value == value:
+                return member
+        values = sorted(member.value for member in enum)
+        raise ValueError("%s does not have value '%d'. Available: %s"
+                         % (self.type_name, value, seq2str(values)))
 
 
 @TypeConverter.register

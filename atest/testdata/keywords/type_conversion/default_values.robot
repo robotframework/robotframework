@@ -189,12 +189,25 @@ Enum
     Enum                 FOO                       MyEnum.FOO
     Enum                 bar                       MyEnum.bar
 
+Flag
+    Flag                 RED                       MyFlag.RED
+
 IntEnum
     IntEnum              ON                        MyIntEnum.ON
+    IntEnum              ${1}                      MyIntEnum.ON
+    IntEnum              0                         MyIntEnum.OFF
+
+IntFlag
+    IntFlag              R                         MyIntFlag.R
+    IntFlag              4                         MyIntFlag.R
+    IntFlag              ${4}                      MyIntFlag.R
 
 Invalid enum
     [Template]           Invalid value is passed as-is
     Enum                 foobar
+    Flag                 YELLOW
+    IntEnum              -1
+    IntFlag              ${10}                     ${10}
 
 None
     None                 None                      None
