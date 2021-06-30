@@ -1,7 +1,7 @@
 try:
-    from enum import Enum
+    from enum import IntEnum, Enum
 except ImportError:    # Python < 3.4, unless installed separately
-    Enum = object
+    IntEnum, Enum = object
 from datetime import datetime, date, timedelta
 from decimal import Decimal
 
@@ -12,6 +12,11 @@ from robot.utils import unicode
 class MyEnum(Enum):
     FOO = 1
     bar = 'xxx'
+
+
+class MyIntEnum(IntEnum):
+    OFF = 0
+    ON = 1
 
 
 class Unknown(object):
@@ -63,6 +68,10 @@ def timedelta_(argument=timedelta(), expected=None):
 
 
 def enum(argument=MyEnum.FOO, expected=None):
+    _validate_type(argument, expected)
+
+
+def int_enum(argument=MyIntEnum.ON, expected=None):
     _validate_type(argument, expected)
 
 

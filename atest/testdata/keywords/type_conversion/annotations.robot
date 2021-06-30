@@ -267,6 +267,9 @@ Enum
     None enum            None                      NoneEnum.NONE
     None enum            NONE                      NoneEnum.NONE
 
+IntEnum
+    IntEnum              ON                        MyIntEnum.ON
+
 Normalized enum member match
     Enum                 b a r                     MyEnum.bar
     Enum                 BAr                       MyEnum.bar

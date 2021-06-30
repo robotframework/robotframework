@@ -272,6 +272,10 @@ Enum
     Enum                 bar                       MyEnum.bar
     Enum                 foo                       MyEnum.foo
 
+IntEnum
+    [Tags]               require-enum
+    IntEnum              ON                        MyIntEnum.ON
+
 Normalized enum member match
     [Tags]               require-enum
     Enum                 b a r                     MyEnum.bar

@@ -189,6 +189,9 @@ Enum
     Enum                 FOO                       MyEnum.FOO
     Enum                 bar                       MyEnum.bar
 
+IntEnum
+    IntEnum              ON                        MyIntEnum.ON
+
 Invalid enum
     [Template]           Invalid value is passed as-is
     Enum                 foobar

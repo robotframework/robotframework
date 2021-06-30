@@ -1,7 +1,7 @@
 from collections import abc
 from datetime import datetime, date, timedelta
 from decimal import Decimal
-from enum import Enum
+from enum import Enum, IntEnum
 from functools import wraps
 from fractions import Fraction
 from numbers import Integral, Real
@@ -20,6 +20,11 @@ class NoneEnum(Enum):
     NONE = 1
     NTWO = 2
     NTHREE = 3
+
+
+class MyIntEnum(IntEnum):
+    OFF = 0
+    ON = 1
 
 
 class Unknown(object):
@@ -82,7 +87,11 @@ def enum_(argument: MyEnum, expected=None):
     _validate_type(argument, expected)
 
 
-def none_enum_(argument: NoneEnum, expected=None):
+def none_enum(argument: NoneEnum, expected=None):
+    _validate_type(argument, expected)
+
+
+def int_enum(argument: MyIntEnum, expected=None):
     _validate_type(argument, expected)
 
 

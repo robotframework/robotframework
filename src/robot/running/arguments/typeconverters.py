@@ -151,6 +151,39 @@ class TypeConverter(object):
 
 
 @TypeConverter.register
+class EnumConverter(TypeConverter):
+    type = Enum
+
+    @property
+    def type_name(self):
+        return self.used_type.__name__
+
+    def _convert(self, value, explicit_type=True):
+        enum = self.used_type
+        try:
+            # This is compatible with the enum module in Python 3.4, its
+            # enum34 backport, and the older enum module. `enum[value]`
+            # wouldn't work with the old enum module.
+            return getattr(enum, value)
+        except AttributeError:
+            members = sorted(self._get_members(enum))
+            matches = [m for m in members if eq(m, value, ignore='_')]
+            if not matches:
+                raise ValueError("%s does not have member '%s'. Available: %s"
+                                 % (self.type_name, value, seq2str(members)))
+            if len(matches) > 1:
+                raise ValueError("%s has multiple members matching '%s'. Available: %s"
+                                 % (self.type_name, value, seq2str(matches)))
+            return getattr(enum, matches[0])
+
+    def _get_members(self, enum):
+        try:
+            return list(enum.__members__)
+        except AttributeError:    # old enum module
+            return [attr for attr in dir(enum) if not attr.startswith('_')]
+
+
+@TypeConverter.register
 class StringConverter(TypeConverter):
     type = unicode
     type_name = 'string'
@@ -324,39 +357,6 @@ class TimeDeltaConverter(TypeConverter):
 
     def _convert(self, value, explicit_type=True):
         return convert_time(value, result_format='timedelta')
-
-
-@TypeConverter.register
-class EnumConverter(TypeConverter):
-    type = Enum
-
-    @property
-    def type_name(self):
-        return self.used_type.__name__
-
-    def _convert(self, value, explicit_type=True):
-        enum = self.used_type
-        try:
-            # This is compatible with the enum module in Python 3.4, its
-            # enum34 backport, and the older enum module. `enum[value]`
-            # wouldn't work with the old enum module.
-            return getattr(enum, value)
-        except AttributeError:
-            members = sorted(self._get_members(enum))
-            matches = [m for m in members if eq(m, value, ignore='_')]
-            if not matches:
-                raise ValueError("%s does not have member '%s'. Available: %s"
-                                 % (self.type_name, value, seq2str(members)))
-            if len(matches) > 1:
-                raise ValueError("%s has multiple members matching '%s'. Available: %s"
-                                 % (self.type_name, value, seq2str(matches)))
-            return getattr(enum, matches[0])
-
-    def _get_members(self, enum):
-        try:
-            return list(enum.__members__)
-        except AttributeError:    # old enum module
-            return [attr for attr in dir(enum) if not attr.startswith('_')]
 
 
 @TypeConverter.register

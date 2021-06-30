@@ -5,9 +5,11 @@ except ImportError:
 from datetime import datetime, date, timedelta
 from decimal import Decimal
 try:
-    from enum import Enum
+    from enum import IntEnum, Enum
 except ImportError:
     class Enum(object):
+        pass
+    class IntEnum(object):
         pass
 from fractions import Fraction
 from numbers import Integral, Real
@@ -21,6 +23,11 @@ class MyEnum(Enum):
     bar = 'xxx'
     foo = 'yyy'
     normalize_me = True
+
+
+class MyIntEnum(IntEnum):
+    OFF = 0
+    ON = 1
 
 
 class Unknown(object):
@@ -94,6 +101,11 @@ def timedelta_(argument, expected=None):
 
 @keyword(types={'argument': MyEnum})
 def enum_(argument, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(types=[MyIntEnum])
+def int_enum(argument, expected=None):
     _validate_type(argument, expected)
 
 

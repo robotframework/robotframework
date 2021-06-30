@@ -97,6 +97,9 @@ Invalid timedelta
 Enum
     Check Test Case    ${TESTNAME}
 
+IntEnum
+    Check Test Case    ${TESTNAME}
+
 Normalized enum member match
     Check Test Case    ${TESTNAME}
 

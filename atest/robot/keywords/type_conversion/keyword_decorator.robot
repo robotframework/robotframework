@@ -103,6 +103,10 @@ Enum
     [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
+IntEnum
+    [Tags]    require-enum
+    Check Test Case    ${TESTNAME}
+
 Normalized enum member match
     [Tags]    require-enum
     Check Test Case    ${TESTNAME}

@@ -78,6 +78,10 @@ Enum
     [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
+IntEnum
+    [Tags]    require-enum
+    Check Test Case    ${TESTNAME}
+
 Invalid enum
     Check Test Case    ${TESTNAME}
 
