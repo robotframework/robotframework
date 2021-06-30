@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from inspect import isclass
+from inspect import getdoc, isclass
 
 try:
     from enum import Enum
@@ -95,7 +95,7 @@ class TypedDictDoc(Sortable):
             required = key in required_keys if required_keys or optional_keys else None
             items.append({'key': key, 'type': typ, 'required': required})
         return cls(name=typed_dict.__name__,
-                   doc=typed_dict.__doc__ or '',
+                   doc=getdoc(typed_dict) or '',
                    items=items)
 
     @property
@@ -122,7 +122,7 @@ class EnumDoc(Sortable):
     @classmethod
     def from_Enum(cls, enum_type):
         return cls(name=enum_type.__name__,
-                   doc=enum_type.__doc__ or '',
+                   doc=getdoc(enum_type) or '',
                    members=[{'name': name, 'value': unicode(member.value)}
                             for name, member in enum_type.__members__.items()])
 

@@ -33,8 +33,9 @@ TypedDict
     ...    <ul>
     ...    <li><code>latitude</code> Latitude between -90 and 90.</li>
     ...    <li><code>longitude</code> Longitude between -180 and 180.</li>
-    ...    <li><code>accuracy</code> <b>Optional</b> Non-negative accuracy value. Defaults to 0. Example usage: <code>{'latitude': 59.95, 'longitude': 30.31667}</code></li>
+    ...    <li><code>accuracy</code> <b>Optional</b> Non-negative accuracy value. Defaults to 0.</li>
     ...    </ul>
+    ...    <p>Example usage: <code>{'latitude': 59.95, 'longitude': 30.31667}</code></p>
 
 TypedDict Items
     [Template]    NONE
