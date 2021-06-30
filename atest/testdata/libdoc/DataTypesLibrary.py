@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, IntEnum
 from typing import Optional, Union, Dict, Any, List
 
 
@@ -29,7 +29,7 @@ class GeoLocation(_GeoCoordinated, total=False):
     accuracy: float
 
 
-class Small(Enum):
+class Small(IntEnum):
     """This is the Documentation.
 
     This was defined within the class definition."""
