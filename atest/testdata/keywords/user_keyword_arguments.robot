@@ -209,6 +209,15 @@ Invalid Arguments Spec - Kwargs not last
     ...    Invalid argument specification: Only last argument can be kwargs.
     Kwargs not last
 
+Invalid Arguments Spec - Multiple errors
+    [Documentation]    FAIL
+    ...    Invalid argument specification: Multiple errors:
+    ...    - Invalid argument syntax 'invalid'.
+    ...    - Non-default argument after default arguments.
+    ...    - Cannot have multiple varargs.
+    ...    - Only last argument can be kwargs.
+    Multiple errors
+
 *** Keywords ***
 A 0
     [Return]    a_0
@@ -314,12 +323,16 @@ Mutate Lists
 
 Invalid argument syntax
     [Arguments]    no deco
-    No Operation
+    Fail    Not executed
 
 Non-default after defaults
     [Arguments]    ${named}=value    ${positional}
-    No Operation
+    Fail    Not executed
 
 Kwargs not last
     [Arguments]    &{kwargs}    ${positional}
-    No Operation
+    Fail    Not executed
+
+Multiple errors
+    [Arguments]    invalid    ${optional}=default    ${required}    @{too}    @{many}    &{kwargs}    ${x}
+    Fail    Not executed

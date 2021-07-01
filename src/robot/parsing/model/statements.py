@@ -16,6 +16,7 @@
 import ast
 import re
 
+from robot.running.arguments import UserKeywordArgumentParser
 from robot.utils import normalize_whitespace, split_from_equals
 from robot.variables import is_scalar_assign, is_dict_variable, search_variable
 
@@ -692,6 +693,11 @@ class Arguments(MultiValue):
             tokens.append(Token(Token.ARGUMENT, arg))
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
+
+    def validate(self):
+        errors = []
+        UserKeywordArgumentParser(error_reporter=errors.append).parse(self.values)
+        self.errors = tuple(errors)
 
 
 @Statement.register

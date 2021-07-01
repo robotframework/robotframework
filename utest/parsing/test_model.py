@@ -613,6 +613,45 @@ ${not     closed
         assert_model(model.sections[0], expected)
 
 
+class TestKeyword(unittest.TestCase):
+
+    def test_invalid_arg_spec(self):
+        model = get_model('''\
+*** Keywords ***
+Invalid
+    [Arguments]    ooops    ${optional}=default    ${required}
+    ...    @{too}    @{many}    &{notlast}    ${x}
+''', data_only=True)
+        expected = KeywordSection(
+            header=SectionHeader(
+                tokens=[Token(Token.KEYWORD_HEADER, '*** Keywords ***', 1, 0)]
+            ),
+            body=[
+                Keyword(
+                    header=KeywordName(
+                        tokens=[Token(Token.KEYWORD_NAME, 'Invalid', 2, 0)]
+                    ),
+                    body=[
+                        Arguments(
+                            tokens=[Token(Token.ARGUMENTS, '[Arguments]', 3, 4),
+                                    Token(Token.ARGUMENT, 'ooops', 3, 19),
+                                    Token(Token.ARGUMENT, '${optional}=default', 3, 28),
+                                    Token(Token.ARGUMENT, '${required}', 3, 51),
+                                    Token(Token.ARGUMENT, '@{too}', 4, 11),
+                                    Token(Token.ARGUMENT, '@{many}', 4, 21),
+                                    Token(Token.ARGUMENT, '&{notlast}', 4, 32),
+                                    Token(Token.ARGUMENT, '${x}', 4, 46)],
+                            errors=("Invalid argument syntax 'ooops'.",
+                                    'Non-default argument after default arguments.',
+                                    'Cannot have multiple varargs.',
+                                    'Only last argument can be kwargs.')
+                        )
+                    ],
+                )
+            ]
+        )
+        assert_model(model.sections[0], expected)
+
 class TestError(unittest.TestCase):
 
     def test_get_errors_from_tokens(self):

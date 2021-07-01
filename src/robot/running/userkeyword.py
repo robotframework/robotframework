@@ -51,6 +51,8 @@ class UserLibrary(object):
                 self._log_creating_failed(handler, error)
 
     def _create_handler(self, kw):
+        if kw.error:
+            raise DataError(kw.error)
         embedded = EmbeddedArguments(kw.name)
         if not embedded:
             return UserKeywordHandler(kw, self.name)

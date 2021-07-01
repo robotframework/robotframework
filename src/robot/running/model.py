@@ -339,7 +339,7 @@ class ResourceFile(object):
 class UserKeyword(object):
 
     def __init__(self, name, args=(), doc='', tags=(), return_=None,
-                 timeout=None, lineno=None, parent=None):
+                 timeout=None, lineno=None, parent=None, error=None):
         self.name = name
         self.args = args
         self.doc = doc
@@ -348,6 +348,7 @@ class UserKeyword(object):
         self.timeout = timeout
         self.lineno = lineno
         self.parent = parent
+        self.error = error
         self.body = None
         self._teardown = None
 
