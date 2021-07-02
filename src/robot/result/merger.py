@@ -65,6 +65,8 @@ class Merger(SuiteVisitor):
         if old is None:
             test.message = self._create_add_message(test)
             self.current.tests.append(test)
+        elif test.skipped:
+            old.message = self._create_skip_message(old, test)
         else:
             test.message = self._create_merge_message(test, old)
             index = self.current.tests.index(old)
@@ -75,13 +77,12 @@ class Merger(SuiteVisitor):
         prefix = '*HTML* %s added from merged output.' % item_type
         if not item.message:
             return prefix
-        return ''.join([prefix, '<hr>', self._html_escape(item.message)])
+        return ''.join([prefix, '<hr>', self._html(item.message)])
 
-    def _html_escape(self, message):
+    def _html(self, message):
         if message.startswith('*HTML*'):
             return message[6:].lstrip()
-        else:
-            return html_escape(message)
+        return html_escape(message)
 
     def _create_merge_message(self, new, old):
         header = test_or_task('*HTML* <span class="merge">'
@@ -100,7 +101,7 @@ class Merger(SuiteVisitor):
                                  self._status_text(test.status))
         if test.message:
             message += '%s %s<br>' % (self._message_header(state),
-                                      self._html_escape(test.message))
+                                      self._html(test.message))
         return message
 
     def _status_header(self, state):
@@ -121,3 +122,11 @@ class Merger(SuiteVisitor):
             .replace(self._status_header('New'), self._status_header('Old'))
             .replace(self._message_header('New'), self._message_header('Old'))
         )
+
+    def _create_skip_message(self, test, new):
+        msg = test_or_task('*HTML* {Test} has been re-executed and results merged. '
+                           'Latter result had %s status and was ignored. Message:\n%s'
+                           % (self._status_text('SKIP'), self._html(new.message)))
+        if not test.message:
+            return msg
+        return '%s<hr>Original message:\n%s' % (msg, self._html(test.message))

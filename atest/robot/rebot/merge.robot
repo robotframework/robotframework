@@ -64,6 +64,18 @@ Using other options
     Test merge should have been successful    suite name=Custom
     Log should have been created with all Log keywords flattened
 
+Merge ignores skip
+    Create Output With Robot    ${ORIGINAL}    ${EMPTY}    rebot/merge_statuses.robot
+    Create Output With Robot    ${MERGE1}    --skip NOTskip    rebot/merge_statuses.robot
+    Run Merge
+    ${prefix} =    Catenate
+    ...    *HTML* Test has been re-executed and results merged.
+    ...    Latter result had <span class="skip">SKIP</span> status and was ignored. Message:
+    Should Contain Tests    ${SUITE}
+    ...    Pass=PASS:${prefix}\nTest skipped with '--skip' command line option.
+    ...    Fail=FAIL:${prefix}\nTest skipped with '--skip' command line option.<hr>Original message:\nNot &lt;b&gt;HTML&lt;/b&gt; fail
+    ...    Skip=SKIP:${prefix}\n<b>HTML</b> skip<hr>Original message:\n<b>HTML</b> skip
+
 *** Keywords ***
 Run original tests
     Create Output With Robot    ${ORIGINAL}    --variable FAIL:YES --variable LEVEL:WARN    ${SUITES}
