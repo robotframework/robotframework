@@ -15,7 +15,7 @@
 
 from robot.errors import DataError
 from robot.utils import JYTHON, PY2, is_string, split_from_equals
-from robot.variables import is_assign
+from robot.variables import is_assign, is_scalar_assign
 
 from .argumentspec import ArgumentSpec
 
@@ -203,9 +203,13 @@ class UserKeywordArgumentParser(_ArgumentSpecParser):
         arg, default = split_from_equals(arg)
         if not (is_assign(arg) or arg == '@{}'):
             self._report_error("Invalid argument syntax '%s'." % arg)
-        if default is not None:
-            return arg, default
-        return arg
+        if default is None:
+            return arg
+        if not is_scalar_assign(arg):
+            typ = 'list' if arg[0] == '@' else 'dictionary'
+            self._report_error("Only normal arguments accept default values, "
+                               "%s arguments like '%s' do not." % (typ, arg))
+        return arg, default
 
     def _is_kwargs(self, arg):
         return arg[0] == '&'

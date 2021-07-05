@@ -204,6 +204,16 @@ Invalid Arguments Spec - Non-default after defaults
     ...    Invalid argument specification: Non-default argument after default arguments.
     Non-default after defaults
 
+Invalid Arguments Spec - Default with varargs
+    [Documentation]    FAIL
+    ...    Invalid argument specification: Only normal arguments accept default values, list arguments like '\@{varargs}' do not.
+    Default with varargs
+
+Invalid Arguments Spec - Default with kwargs
+    [Documentation]    FAIL
+    ...    Invalid argument specification: Only normal arguments accept default values, dictionary arguments like '&{kwargs}' do not.
+    Default with kwargs
+
 Invalid Arguments Spec - Kwargs not last
     [Documentation]    FAIL
     ...    Invalid argument specification: Only last argument can be kwargs.
@@ -327,6 +337,14 @@ Invalid argument syntax
 
 Non-default after defaults
     [Arguments]    ${named}=value    ${positional}
+    Fail    Not executed
+
+Default with varargs
+    [Arguments]    @{varargs}=invalid
+    Fail    Not executed
+
+Default with kwargs
+    [Arguments]    &{kwargs}=invalid
     Fail    Not executed
 
 Kwargs not last

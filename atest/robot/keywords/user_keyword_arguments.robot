@@ -87,8 +87,10 @@ Invalid Arguments Spec
     [Template]    Verify Invalid Argument Spec
     0    Invalid argument syntax       Invalid argument syntax 'no deco'.
     1    Non-default after defaults    Non-default argument after default arguments.
-    2    Kwargs not last               Only last argument can be kwargs.
-    3    Multiple errors               Multiple errors:
+    2    Default with varargs          Only normal arguments accept default values, list arguments like '\@{varargs}' do not.
+    3    Default with kwargs           Only normal arguments accept default values, dictionary arguments like '\&{kwargs}' do not.
+    4    Kwargs not last               Only last argument can be kwargs.
+    5    Multiple errors               Multiple errors:
     ...                                - Invalid argument syntax 'invalid'.
     ...                                - Non-default argument after default arguments.
     ...                                - Cannot have multiple varargs.
