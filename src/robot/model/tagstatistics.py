@@ -16,10 +16,10 @@
 from itertools import chain
 import re
 
-from robot.utils import NormalizedDict, unicode
+from robot.utils import NormalizedDict
 
 from .stats import CombinedTagStat, TagStat
-from .tags import SingleTagPattern, TagPatterns
+from .tags import TagPatterns
 
 
 class TagStatistics(object):
