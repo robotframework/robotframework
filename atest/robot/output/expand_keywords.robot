@@ -49,6 +49,8 @@ Run tests with expanding
     ...    misc/non_ascii.robot
     ...    misc/formatting_and_escaping.robot
     ...    misc/normal.robot
+    ...    misc/if_else.robot
+    ...    misc/for_loops.robot
     Run Tests    ${options}    ${paths}
     ${EXPANDED} =    Get Expand Keywords    ${OUTDIR}/log.html
     Set Suite Variable    ${EXPANDED}
