@@ -140,7 +140,7 @@ class _BaseSettings(object):
         return value
 
     def _process_doc(self, value):
-        if os.path.exists(value):
+        if os.path.exists(value) and value.strip() == value:
             try:
                 with open(value) as f:
                     value = f.read()
