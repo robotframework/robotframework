@@ -98,20 +98,20 @@ Variable Values Should Not Be Visible In Keyword Arguments
 Strict retry interval
     ${tc} =    Check Test Case    ${TESTNAME}
     Length Should Be    ${tc.body[0].kws}    4
-    Should Be True    150 <= ${tc.body[0].elapsedtime} < 200
+    Should Be True    300 <= ${tc.body[0].elapsedtime} < 400
 
 Fail with strict retry interval
     ${tc} =    Check Test Case    ${TESTNAME}
     Length Should Be    ${tc.body[0].kws}    3
-    Should Be True    100 <= ${tc.body[0].elapsedtime} < 150
+    Should Be True    200 <= ${tc.body[0].elapsedtime} < 300
 
 Strict retry interval violation
     ${tc} =    Check Test Case    ${TESTNAME}
     Length Should Be    ${tc.body[0].kws}    4
-    Should Be True    200 <= ${tc.body[0].elapsedtime} < 250
+    Should Be True    400 <= ${tc.body[0].elapsedtime} < 500
     FOR    ${index}    IN    1    3    5    7
         Check Log Message    ${tc.body[0].body[${index}]}
-        ...    Keyword execution time 5? milliseconds is longer than retry interval 40 milliseconds.
+        ...    Keyword execution time 1?? milliseconds is longer than retry interval 100 milliseconds.
         ...    WARN    pattern=True
     END
 
