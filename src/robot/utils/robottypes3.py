@@ -76,7 +76,9 @@ def is_dict_like(item):
 def type_name(item, capitalize=False):
     if getattr(item, '__origin__', None):
         item = item.__origin__
-    if hasattr(item, '_name'):  # Union, Any, etc. from typing
+    if hasattr(item, '_name') and item._name:
+        # Union, Any, etc. from typing have real name in _name and __name__ is just
+        # generic `SpecialForm`. Also pandas.Series has _name but it's None.
         name = item._name
     elif isinstance(item, IOBase):
         name = 'file'

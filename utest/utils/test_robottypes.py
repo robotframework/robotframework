@@ -170,6 +170,12 @@ class TestTypeName(unittest.TestCase):
         class _Foo_(object): pass
         assert_equal(type_name(_Foo_), 'Foo')
 
+    def test_none_as_underscore_name(self):
+        class C(object):
+            _name = None
+        assert_equal(type_name(C()), 'C')
+        assert_equal(type_name(C(), capitalize=True), 'C')
+
     if PY3:
 
         def test_typing(self):
