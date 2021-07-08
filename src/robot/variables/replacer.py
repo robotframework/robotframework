@@ -16,7 +16,7 @@
 from robot.errors import DataError, VariableError
 from robot.output import librarylogger as logger
 from robot.utils import (escape, get_error_message, is_dict_like, is_list_like,
-                         type_name, unescape, unic, DotDict)
+                         is_string, type_name, unescape, unic, DotDict)
 
 from .finders import VariableFinder
 from .search import VariableMatch, search_variable
@@ -156,23 +156,32 @@ class VariableReplacer(object):
         return value
 
     def _get_sequence_variable_item(self, name, variable, index):
-        index = self.replace_string(index)
+        index = self.replace_scalar(index)
         try:
             index = self._parse_sequence_variable_index(index)
         except ValueError:
-            raise VariableError("%s '%s' used with invalid index '%s'. "
-                                "To use '[%s]' as a literal value, it needs "
-                                "to be escaped like '\\[%s]'."
-                                % (type_name(variable, capitalize=True), name,
-                                   index, index, index))
+            try:
+                return variable[index]
+            except TypeError:
+                raise VariableError("%s '%s' used with invalid index '%s'. "
+                                    "To use '[%s]' as a literal value, it needs "
+                                    "to be escaped like '\\[%s]'."
+                                    % (type_name(variable, capitalize=True), name,
+                                       index, index, index))
+            except:
+                raise VariableError("Accessing '%s[%s]' failed: %s"
+                                    % (name, index, get_error_message()))
         try:
             return variable[index]
         except IndexError:
             raise VariableError("%s '%s' has no item in index %d."
-                                % (type_name(variable, capitalize=True), name,
-                                   index))
+                                % (type_name(variable, capitalize=True), name, index))
 
     def _parse_sequence_variable_index(self, index):
+        if isinstance(index, (int, slice)):
+            return index
+        if not is_string(index):
+            raise ValueError
         if ':' not in index:
             return int(index)
         if index.count(':') > 2:
