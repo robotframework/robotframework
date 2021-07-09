@@ -36,7 +36,7 @@ Include With Patterns
 Include to show internal tags
     --tagstatinclude incl1 --tagstatinclude ROBOT:*    ${I1}    @{INTERNAL}
     --tagstatinclude robot:*    @{INTERNAL}
-    --tagstatinclude *    @{ALL}    @{INTERNAL}
+    --tagstatinclude=*    @{ALL}    @{INTERNAL}
 
 Include and exclude internal
     --tagstatinclude incl1 --tagstatinclude "robot : *" --tagstatexclude ROBOT:*    ${I1}
