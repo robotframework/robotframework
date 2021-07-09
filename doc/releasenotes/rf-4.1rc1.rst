@@ -4,12 +4,9 @@ Robot Framework 4.1 release candidate 1
 
 .. default-role:: code
 
-`Robot Framework`_ 4.1 is a new feature release with some nice new features,
-such as enhancements to the continue-on-failure mode, as well as bug fixes.
-This release candidate contains all planned changes.
-
-All issues targeted for Robot Framework 4.1 can be found
-from the `issue tracker milestone`_.
+`Robot Framework`_ 4.1 is a feature release with several nice enhancements,
+for example, to the continue-on-failure mode and argument conversion,
+as well as some bug fixes. This release candidate contains all planned changes.
 
 Questions and comments related to the release can be sent to the
 `robotframework-users`_ mailing list or to `Robot Framework Slack`_,
@@ -60,13 +57,13 @@ the test case but allow execution to continue after the failure. Earlier this
 functionality could only be enabled by library keywords using special exceptions
 and by using BuiltIn keyword `Run Keyword And Continue On Failure`.
 
-Robot Framework 4.1 eases using the continue-on-failure mode on the data level
-considerably by allowing tests and keywords to use special tags to initiate it.
-The new `robot:continue-on-failure` tag enables the mode so that if any of
-the executed keywords fail, next keyword is nevertheless run. This mode does not
-propagate to lower level keywords, though, so in them execution stops immediately
-and is resumed only on the test or keyword with the special tag. If recursive
-usage is desired, it is possible to use another new tag
+Robot Framework 4.1 eases using the continue-on-failure mode considerably by
+allowing tests and keywords to use special tags to initiate it. The new
+`robot:continue-on-failure` tag enables the mode so that if any of the executed
+keywords fail, the next keyword is nevertheless run. This mode does not
+propagate to lower level keywords, though, so in them execution stops
+immediately and is resumed only on the test or keyword with the special tag.
+If recursive usage is desired, it is possible to use another new tag
 `robot:recursive-continue-on-failure`. (`#2285`_)
 
 Argument conversion enhancements
@@ -74,9 +71,9 @@ Argument conversion enhancements
 
 Automatic argument conversion has been improved in few different ways:
 
-- `Derived enumerations`__ `IntEnum` and `IntFlag` are supported. With both
-  of them it is possible to use enumeration member names as well as their
-  integer values. (`#3910`_)
+- `Derived enumerations`__ `IntEnum` and `IntFlag` are not supported. With both
+  of them the value that is used can be a member name, like with other
+  enumerations, or the integer value of a member. (`#3910`_)
 
 - Number conversions (`int`, `float` and `Decimal`) support spaces and
   underscores as number separators like `2 000 000`. (`#4026`_)
@@ -91,7 +88,7 @@ Backwards incompatible changes
 ==============================
 
 Robot Framework 4.1 is mostly backwards compatible with Robot Framework 4.0.
-There are, however, two changes that may affect some users:
+There are, however, few changes that may affect some users:
 
 - If `--doc` or `--metadata` gets a value that points to an existing file,
   the actual value is read from that file, but in earlier releases the value is
@@ -107,6 +104,12 @@ There are, however, two changes that may affect some users:
   change does not affect normal usage of these keywords. If someone has used
   these methods programmatically, they need to update their code. (`#3890`_)
 
+In addition to the changes explained above, any change to the code may
+`affect someones workflow`__. It is thus a good idea to test new versions
+before using them in production.
+
+__ https://xkcd.com/1172/
+
 Deprecated features
 ===================
 
@@ -115,12 +118,13 @@ Python 2 support
 
 Robot Framework 4.1 is the last release supporting Python 2. Its possible bug
 fix releases will still support Python 2 as well, but Robot Framework 5.0 will
-require Python 3.6 or newer.
+require Python 3.6 or newer. (`#3457`_)
 
-This unfortunately means also the end of Jython__ and IronPython__ support.
+This unfortunately means also Jython__ and IronPython__ support is deprecated.
 Support can be added again if these projects get Python 3.6+ compatible versions
 released.
 
+__ https://github.com/robotframework/robotframework/issues/3457
 __ https://jython.org
 __ https://ironpython.net
 
@@ -149,7 +153,7 @@ In addition to that, we have got great contributions by the open source communit
 - `Sergey Tupikov <https://github.com/vokiput>`_ added support to collapse
   whitespace with `Should Be Equal` and other comparison keywords (`#3884`_).
 
-- `Mikhail Tuev <https://github.com/miktuy>`_ fix using `--removekeywords` when
+- `Mikhail Tuev <https://github.com/miktuy>`_ fixed using `--removekeywords` when
   test contains IF structure (`#4009`_) and renamed String library methods for
   consistency (`#3890`_).
 
