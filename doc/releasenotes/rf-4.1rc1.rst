@@ -118,7 +118,7 @@ Python 2 support
 
 Robot Framework 4.1 is the last release supporting Python 2. Its possible bug
 fix releases will still support Python 2 as well, but Robot Framework 5.0 will
-require Python 3.6 or newer. (`#3457`_)
+require Python 3.6 or newer. (`#3457`__)
 
 This unfortunately means also Jython__ and IronPython__ support is deprecated.
 Support can be added again if these projects get Python 3.6+ compatible versions
