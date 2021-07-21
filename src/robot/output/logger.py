@@ -150,7 +150,7 @@ class Logger(AbstractLogger):
             if self._error_listener:
                 self._error_listener()
 
-    @property
+    @property  # type: ignore[misc]
     @contextmanager
     def cache_only(self):
         self._cache_only = True
@@ -159,7 +159,7 @@ class Logger(AbstractLogger):
         finally:
             self._cache_only = False
 
-    @property
+    @property  # type: ignore[misc]
     @contextmanager
     def delayed_logging(self):
         prev_cache = self._log_message_cache

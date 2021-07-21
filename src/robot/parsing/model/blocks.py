@@ -12,8 +12,8 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
 import ast
+from typing import Tuple, ClassVar
 
 from robot.utils import file_writer, is_pathlike, is_string
 
@@ -22,8 +22,8 @@ from ..lexer import Token
 
 
 class Block(ast.AST):
-    _fields = ()
-    _attributes = ('lineno', 'col_offset', 'end_lineno', 'end_col_offset', 'errors')
+    _fields: ClassVar[Tuple[str, ...]] = ()
+    _attributes: ClassVar[Tuple[str, ...]] = ('lineno', 'col_offset', 'end_lineno', 'end_col_offset', 'errors')
     errors = ()
 
     @property

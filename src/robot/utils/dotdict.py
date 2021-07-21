@@ -18,7 +18,7 @@ from collections import OrderedDict
 from .robottypes import is_dict_like
 
 
-class DotDict(OrderedDict):
+class DotDict(OrderedDict):  # type: ignore[type-arg]
 
     def __init__(self, *args, **kwds):
         args = [self._convert_nested_initial_dicts(a) for a in args]

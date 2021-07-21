@@ -18,7 +18,7 @@ import io
 try:
     import yaml
 except ImportError:
-    yaml = None
+    yaml = None  # type: ignore[assignment]
 
 from robot.errors import DataError
 from robot.output import LOGGER

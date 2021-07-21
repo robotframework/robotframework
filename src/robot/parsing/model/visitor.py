@@ -44,7 +44,7 @@ class ModelVisitor(ast.NodeVisitor, VisitorFinder):
             # ...
     """
 
-    def visit(self, node):
+    def visit(self, node: ast.AST) -> None:
         visitor = self._find_visitor(type(node)) or self.generic_visit
         visitor(node)
 

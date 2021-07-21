@@ -14,13 +14,14 @@
 #  limitations under the License.
 
 import copy
+from typing import Tuple, List
 
 from robot.utils import SetterAwareType
 
 
 class ModelObject(metaclass=SetterAwareType):
-    repr_args = ()
-    __slots__ = []
+    repr_args: Tuple[str, ...] = ()
+    __slots__: List[str] = []
 
     def config(self, **attributes):
         """Configure model object with given attributes.

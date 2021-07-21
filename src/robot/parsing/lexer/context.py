@@ -12,15 +12,16 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from typing import Optional, Type, Union
 
 from .sections import (InitFileSections, TestCaseFileSections,
-                       ResourceFileSections)
+                       ResourceFileSections, Sections)
 from .settings import (InitFileSettings, TestCaseFileSettings,
-                       ResourceFileSettings, TestCaseSettings, KeywordSettings)
+                       ResourceFileSettings, TestCaseSettings, KeywordSettings, Settings)
 
 
 class LexingContext:
-    settings_class = None
+    settings_class: Optional[Type[Union[Settings, Sections]]] = None
 
     def __init__(self, settings=None):
         self.settings = settings or self.settings_class()
@@ -30,7 +31,7 @@ class LexingContext:
 
 
 class FileContext(LexingContext):
-    sections_class = None
+    sections_class: Optional[Type[Union[Sections, Settings]]] = None
 
     def __init__(self, settings=None):
         LexingContext.__init__(self, settings)

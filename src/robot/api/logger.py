@@ -66,12 +66,16 @@ Example
 """
 
 import logging
-
+from typing import TYPE_CHECKING
 from robot.output import librarylogger
 from robot.running.context import EXECUTION_CONTEXTS
 
 
-def write(msg, level='INFO', html=False):
+if TYPE_CHECKING:
+    from typing_extensions import Literal
+
+
+def write(msg: str, level: 'Literal["TRACE", "DEBUG", "INFO", "WARN", "ERROR"]' = 'INFO', html: bool = False) -> None:
     """Writes the message to the log file using the given level.
 
     Valid log levels are ``TRACE``, ``DEBUG``, ``INFO`` (default), ``WARN``, and
@@ -86,26 +90,28 @@ def write(msg, level='INFO', html=False):
         librarylogger.write(msg, level, html)
     else:
         logger = logging.getLogger("RobotFramework")
-        level = {'TRACE': logging.DEBUG // 2,
+        level = {'TRACE': logging.DEBUG // 2,  # type: ignore[assignment]
                  'DEBUG': logging.DEBUG,
                  'INFO': logging.INFO,
                  'HTML': logging.INFO,
                  'WARN': logging.WARN,
                  'ERROR': logging.ERROR}[level]
-        logger.log(level, msg)
+        logger.log(level, msg)  # type: ignore[arg-type]
 
 
-def trace(msg, html=False):
+
+
+def trace(msg: str, html: bool=False) -> None:
     """Writes the message to the log file using the ``TRACE`` level."""
     write(msg, 'TRACE', html)
 
 
-def debug(msg, html=False):
+def debug(msg: str, html: bool=False) -> None:
     """Writes the message to the log file using the ``DEBUG`` level."""
     write(msg, 'DEBUG', html)
 
 
-def info(msg, html=False, also_console=False):
+def info(msg: str, html: bool=False, also_console: bool=False) -> None:
     """Writes the message to the log file using the ``INFO`` level.
 
     If ``also_console`` argument is set to ``True``, the message is
@@ -116,18 +122,18 @@ def info(msg, html=False, also_console=False):
         console(msg)
 
 
-def warn(msg, html=False):
+def warn(msg: str, html: bool=False) -> None:
     """Writes the message to the log file using the ``WARN`` level."""
     write(msg, 'WARN', html)
 
 
-def error(msg, html=False):
+def error(msg: str, html: bool=False) -> None:
     """Writes the message to the log file using the ``ERROR`` level.
     """
     write(msg, 'ERROR', html)
 
 
-def console(msg, newline=True, stream='stdout'):
+def console(msg: str, newline: bool=True, stream: str='stdout') -> None:
     """Writes the message to the console.
 
     If the ``newline`` argument is ``True``, a newline character is

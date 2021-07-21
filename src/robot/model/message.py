@@ -12,6 +12,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from typing import List
 
 from robot.utils import html_escape
 
@@ -63,7 +64,7 @@ class Message(BodyItem):
 
 
 class Messages(ItemList):
-    __slots__ = []
+    __slots__: List[str] = []
 
     def __init__(self, message_class=Message, parent=None, messages=None):
         ItemList.__init__(self, message_class, {'parent': parent}, messages)

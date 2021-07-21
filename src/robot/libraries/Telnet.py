@@ -22,7 +22,7 @@ import telnetlib
 import time
 
 try:
-    import pyte
+    import pyte  # type: ignore[import]
 except ImportError:
     pyte = None
 

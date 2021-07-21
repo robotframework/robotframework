@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from typing import Union
 from robot.conf import RebotSettings
 from robot.errors import DataError
 from robot.model import ModelModifier
@@ -39,7 +40,7 @@ class ResultWriter:
         writer.write_results(report='custom.html', log=None, xunit='xunit.xml')
     """
 
-    def __init__(self, *sources):
+    def __init__(self, *sources: Union[Result, str]) -> None:
         self._sources = sources
 
     def write_results(self, settings=None, **options):

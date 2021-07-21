@@ -23,7 +23,7 @@ try:
     from xml.etree import cElementTree as ET
 except ImportError:
     try:
-        from xml.etree import ElementTree as ET
+        from xml.etree import ElementTree as ET  # type: ignore[no-redef]
     except ImportError:
         raise ImportError('No valid ElementTree XML parser module found')
 

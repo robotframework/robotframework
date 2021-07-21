@@ -12,6 +12,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from typing import List
 
 from robot.model import Tags
 
@@ -24,44 +25,44 @@ def deprecated(method):
 
 
 class DeprecatedAttributesMixin:
-    __slots__ = []
+    __slots__: List[str] = []
 
-    @property
+    @property  # type: ignore[misc]
     @deprecated
     def name(self):
         return ''
 
-    @property
+    @property  # type: ignore[misc]
     @deprecated
     def kwname(self):
         return self.name
 
-    @property
+    @property  # type: ignore[misc]
     @deprecated
     def libname(self):
         return None
 
-    @property
+    @property  # type: ignore[misc]
     @deprecated
     def args(self):
         return ()
 
-    @property
+    @property  # type: ignore[misc]
     @deprecated
     def assign(self):
         return ()
 
-    @property
+    @property  # type: ignore[misc]
     @deprecated
     def tags(self):
         return Tags()
 
-    @property
+    @property  # type: ignore[misc]
     @deprecated
     def timeout(self):
         return None
 
-    @property
+    @property  # type: ignore[misc]
     @deprecated
     def message(self):
         return ''

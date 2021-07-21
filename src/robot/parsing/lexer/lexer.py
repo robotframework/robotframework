@@ -14,17 +14,19 @@
 #  limitations under the License.
 
 from itertools import chain
+from typing import Union, Generator
+from pathlib import Path
 
 from robot.errors import DataError
 from robot.utils import get_error_message, FileReader
 
-from .blocklexers import FileLexer, InlineIfLexer
+from .blocklexers import FileLexer
 from .context import InitFileContext, TestCaseFileContext, ResourceFileContext
 from .tokenizer import Tokenizer
 from .tokens import EOS, END, Token
 
 
-def get_tokens(source, data_only=False, tokenize_variables=False):
+def get_tokens(source: Union[str, Path], data_only: bool = False, tokenize_variables: bool = False) -> Generator[Token, None, None]:
     """Parses the given source to tokens.
 
     :param source: The source where to read the data. Can be a path to
@@ -47,7 +49,7 @@ def get_tokens(source, data_only=False, tokenize_variables=False):
     return lexer.get_tokens()
 
 
-def get_resource_tokens(source, data_only=False, tokenize_variables=False):
+def get_resource_tokens(source: Union[str, Path], data_only: bool=False, tokenize_variables: bool=False) -> Generator[Token, None, None]:
     """Parses the given source to resource file tokens.
 
     Otherwise same as :func:`get_tokens` but the source is considered to be
@@ -58,7 +60,7 @@ def get_resource_tokens(source, data_only=False, tokenize_variables=False):
     return lexer.get_tokens()
 
 
-def get_init_tokens(source, data_only=False, tokenize_variables=False):
+def get_init_tokens(source: Union[str, Path], data_only=False, tokenize_variables=False) -> Generator[Token, None, None]:
     """Parses the given source to init file tokens.
 
     Otherwise same as :func:`get_tokens` but the source is considered to be

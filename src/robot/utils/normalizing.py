@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections.abc import MutableMapping
+from typing import MutableMapping
 import re
 
 from .robottypes import is_dict_like, is_unicode
@@ -46,7 +46,7 @@ def normalize_whitespace(string):
     return re.sub(r'\s', ' ', string, flags=re.UNICODE)
 
 
-class NormalizedDict(MutableMapping):
+class NormalizedDict(MutableMapping[object, object]):
     """Custom dictionary implementation automatically normalizing keys."""
 
     def __init__(self, initial=None, ignore=(), caseless=True, spaceless=True):

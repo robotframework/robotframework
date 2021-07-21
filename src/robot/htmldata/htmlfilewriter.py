@@ -15,6 +15,7 @@
 
 import os.path
 import re
+from typing import Optional
 
 from robot.utils import HtmlWriter
 from robot.version import get_full_version
@@ -46,7 +47,7 @@ class HtmlFileWriter:
 
 
 class _Writer:
-    _handles_line = None
+    _handles_line: Optional[str] = None
 
     def handles(self, line):
         return line.startswith(self._handles_line)

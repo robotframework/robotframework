@@ -12,9 +12,9 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
 import ast
 import re
+from typing import Dict, Optional, Tuple
 
 from robot.running.arguments import UserKeywordArgumentParser
 from robot.utils import normalize_whitespace, split_from_equals
@@ -28,11 +28,11 @@ EOL = '\n'
 
 
 class Statement(ast.AST):
-    type = None
-    handles_types = ()
+    type: Optional[str] = None
+    handles_types: Tuple[str, ...] = ()
     _fields = ('type', 'tokens')
     _attributes = ('lineno', 'col_offset', 'end_lineno', 'end_col_offset', 'errors')
-    _statement_handlers = {}
+    _statement_handlers: Dict[object, object] = {}
 
     def __init__(self, tokens, errors=()):
         self.tokens = tuple(tokens)

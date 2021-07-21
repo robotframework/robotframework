@@ -18,7 +18,7 @@ import re
 import os
 
 try:
-    from lxml import etree as lxml_etree
+    from lxml import etree as lxml_etree # type: ignore[import]
 except ImportError:
     lxml_etree = None
 

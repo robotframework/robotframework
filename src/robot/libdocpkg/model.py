@@ -164,7 +164,7 @@ class KeywordDoc(Sortable):
             doc = HtmlToText().get_shortdoc_from_html(doc)
         return ' '.join(getshortdoc(doc).splitlines())
 
-    @shortdoc.setter
+    @shortdoc.setter  # type: ignore[no-redef,attr-defined]
     def shortdoc(self, shortdoc):
         self._shortdoc = shortdoc
 

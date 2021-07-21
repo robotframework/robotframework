@@ -12,14 +12,15 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
+import builtins
+import sys
 from ast import literal_eval
 from collections import abc, OrderedDict
-try:
+if sys.version_info >= (3, 10):
     from types import UnionType
-except ImportError:    # Python < 3.10
+else:
     UnionType = ()
-from typing import Union
+from typing import Union, Tuple, Optional, Dict
 from datetime import datetime, date, timedelta
 from decimal import InvalidOperation, Decimal
 from enum import Enum
@@ -31,13 +32,13 @@ from robot.utils import (FALSE_STRINGS, TRUE_STRINGS, eq, get_error_message, is_
 
 
 class TypeConverter:
-    type = None
-    type_name = None
-    abc = None
-    aliases = ()
-    value_types = (str,)
-    _converters = OrderedDict()
-    _type_aliases = {}
+    type: object = None
+    type_name: Optional[str] = None
+    abc: Optional[builtins.type] = None
+    aliases: Tuple[str, ...] = ()
+    value_types: Tuple[builtins.type, ...] = (str,)
+    _converters: Dict[object, object] = OrderedDict()
+    _type_aliases: Dict[str, builtins.type] = {}
 
     def __init__(self, used_type):
         self.used_type = used_type

@@ -12,13 +12,13 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
 import sys
 from threading import current_thread
 import time
+from typing import Optional
 
 try:
-    from Tkinter import (Button, Entry, Frame, Label, Listbox, TclError,
+    from Tkinter import (Button, Entry, Frame, Label, Listbox, TclError, # type: ignore[import]
                          Toplevel, Tk, BOTH, END, LEFT, W)
 except ImportError:
     from tkinter import (Button, Entry, Frame, Label, Listbox, TclError,
@@ -27,7 +27,7 @@ except ImportError:
 
 class _TkDialog(Toplevel):
     _left_button = 'OK'
-    _right_button = 'Cancel'
+    _right_button: Optional[str] = 'Cancel'
 
     def __init__(self, message, value=None, **extra):
         self._prevent_execution_with_timeouts()

@@ -24,7 +24,7 @@ def no_dynamic_method(*args):
 
 
 class _DynamicMethod:
-    _underscore_name = NotImplemented
+    _underscore_name: str = NotImplemented
 
     def __init__(self, lib):
         self.method = self._get_method(lib)

@@ -21,7 +21,7 @@ from robot.errors import TimeoutError, DataError, FrameworkError
 if WINDOWS:
     from .windows import Timeout
 else:
-    from .posix import Timeout
+    from .posix import Timeout  # type: ignore[misc]
 
 
 class _Timeout(Sortable):

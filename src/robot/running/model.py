@@ -47,13 +47,18 @@ from .bodyrunner import ForRunner, IfRunner, KeywordRunner
 from .randomizer import Randomizer
 from .statusreporter import StatusReporter
 
+from typing import TYPE_CHECKING, List
+
+if TYPE_CHECKING:
+    from robot.result.executionresult import Result
+
 
 class Body(model.Body):
-    __slots__ = []
+    __slots__: List[str] = []
 
 
 class IfBranches(model.IfBranches):
-    __slots__ = []
+    __slots__: List[str] = []
 
 
 @Body.register
@@ -176,7 +181,7 @@ class TestSuite(model.TestSuite):
     test_class = TestCase    #: Internal usage only.
     fixture_class = Keyword  #: Internal usage only.
 
-    def __init__(self,  name='', doc='', metadata=None, source=None, rpa=None):
+    def __init__(self,  name:str='', doc: str='', metadata: str=None, source: str=None, rpa: str=None):
         model.TestSuite.__init__(self, name, doc, metadata, source, rpa)
         #: :class:`ResourceFile` instance containing imports, variables and
         #: keywords the suite owns. When data is parsed from the file system,
@@ -184,7 +189,7 @@ class TestSuite(model.TestSuite):
         self.resource = ResourceFile(source=source)
 
     @classmethod
-    def from_file_system(cls, *paths, **config):
+    def from_file_system(cls, *paths: str, **config) -> "TestSuite":
         """Create a :class:`TestSuite` object based on the given ``paths``.
 
         ``paths`` are file or directory paths where to read the data from.
@@ -198,7 +203,7 @@ class TestSuite(model.TestSuite):
         return TestSuiteBuilder(**config).build(*paths)
 
     @classmethod
-    def from_model(cls, model, name=None):
+    def from_model(cls, model: object, name: str = None) -> "TestSuite":
         """Create a :class:`TestSuite` object based on the given ``model``.
 
         The model can be created by using the
@@ -210,8 +215,8 @@ class TestSuite(model.TestSuite):
         from .builder import RobotParser
         return RobotParser().build_suite(model, name)
 
-    def configure(self, randomize_suites=False, randomize_tests=False,
-                  randomize_seed=None, **options):
+    def configure(self, randomize_suites: bool=False, randomize_tests: bool=False,
+                  randomize_seed: object=None, **options: object) -> None:
         """A shortcut to configure a suite using one method call.
 
         Can only be used with the root test suite.
@@ -233,7 +238,7 @@ class TestSuite(model.TestSuite):
         model.TestSuite.configure(self, **options)
         self.randomize(randomize_suites, randomize_tests, randomize_seed)
 
-    def randomize(self, suites=True, tests=True, seed=None):
+    def randomize(self, suites: bool=True, tests: bool=True, seed: object=None):
         """Randomizes the order of suites and/or tests, recursively.
 
         :param suites: Boolean controlling should suites be randomized.
@@ -243,7 +248,7 @@ class TestSuite(model.TestSuite):
         """
         self.visit(Randomizer(suites, tests, seed))
 
-    def run(self, settings=None, **options):
+    def run(self, settings: RobotSettings=None, **options: object) -> "Result":
         """Executes the suite based based the given ``settings`` or ``options``.
 
         :param settings: :class:`~robot.conf.settings.RobotSettings` object

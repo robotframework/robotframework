@@ -12,6 +12,8 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from typing import Optional, Union, Tuple
+
 
 class JsonWriter:
 
@@ -55,7 +57,7 @@ class JsonDumper:
 
 
 class _Dumper:
-    _handled_types = None
+    _handled_types: Union[type, Tuple[type, ...], None] = None
 
     def __init__(self, jsondumper):
         self._dump = jsondumper.dump

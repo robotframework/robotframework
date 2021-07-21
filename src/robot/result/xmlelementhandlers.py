@@ -12,6 +12,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from typing import Optional, Dict, Tuple, FrozenSet
 
 from robot.errors import DataError
 
@@ -33,9 +34,9 @@ class XmlElementHandler:
 
 
 class ElementHandler:
-    element_handlers = {}
-    tag = None
-    children = frozenset()
+    element_handlers: Dict[object, object] = {}
+    tag: Optional[str] = None
+    children: FrozenSet[str] = frozenset()
 
     @classmethod
     def register(cls, handler):

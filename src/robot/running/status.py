@@ -12,6 +12,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from typing import Optional
 
 from robot.errors import ExecutionStatus, PassExecution
 from robot.model import TagPatterns
@@ -209,11 +210,11 @@ class TestStatus(_ExecutionStatus):
 
 
 class _Message:
-    setup_message = NotImplemented
-    setup_skipped_message = NotImplemented
-    teardown_skipped_message = NotImplemented
-    teardown_message = NotImplemented
-    also_teardown_message = NotImplemented
+    setup_message: Optional[str] = NotImplemented
+    setup_skipped_message: Optional[str] = NotImplemented
+    teardown_skipped_message: Optional[str] = NotImplemented
+    teardown_message: Optional[str] = NotImplemented
+    also_teardown_message: Optional[str] = NotImplemented
 
     def __init__(self, status):
         self.failure = status.failure

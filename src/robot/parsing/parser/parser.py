@@ -13,13 +13,19 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from pathlib import Path
+from typing import TYPE_CHECKING, Union
+
 from ..lexer import Token, get_tokens, get_resource_tokens, get_init_tokens
 from ..model import Statement
 
 from .fileparser import FileParser
 
+if TYPE_CHECKING:
+    from robot.parsing.model import File
 
-def get_model(source, data_only=False, curdir=None):
+
+def get_model(source: Union[str, Path], data_only: bool = False, curdir: str = None) -> "File":
     """Parses the given source to a model represented as an AST.
 
     How to use the model is explained more thoroughly in the general
@@ -45,7 +51,7 @@ def get_model(source, data_only=False, curdir=None):
     return _get_model(get_tokens, source, data_only, curdir)
 
 
-def get_resource_model(source, data_only=False, curdir=None):
+def get_resource_model(source: Union[str, Path], data_only: bool = False, curdir: str = None) -> object:
     """Parses the given source to a resource file model.
 
     Otherwise same as :func:`get_model` but the source is considered to be
@@ -54,7 +60,7 @@ def get_resource_model(source, data_only=False, curdir=None):
     return _get_model(get_resource_tokens, source, data_only, curdir)
 
 
-def get_init_model(source, data_only=False, curdir=None):
+def get_init_model(source: Union[str, Path], data_only: bool = False, curdir: str = None) -> "File":
     """Parses the given source to a init file model.
 
     Otherwise same as :func:`get_model` but the source is considered to be

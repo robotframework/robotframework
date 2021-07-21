@@ -31,7 +31,7 @@ class Failure(AssertionError):
     """
     ROBOT_SUPPRESS_NAME = True
 
-    def __init__(self, message, html=False):
+    def __init__(self, message: str, html: bool=False) -> None:
         """
         :param message: Exception message.
         :param html: When ``True``, message is considered to be HTML and not escaped.
@@ -57,7 +57,7 @@ class Error(RuntimeError):
     """
     ROBOT_SUPPRESS_NAME = True
 
-    def __init__(self, message, html=False):
+    def __init__(self, message: str, html: bool=False) -> None:
         """
         :param message: Exception message.
         :param html: When ``True``, message is considered to be HTML and not escaped.
@@ -76,7 +76,7 @@ class SkipExecution(Exception):
     ROBOT_SKIP_EXECUTION = True
     ROBOT_SUPPRESS_NAME = True
 
-    def __init__(self, message, html=False):
+    def __init__(self, message: str, html: bool=False) -> None:
         """
         :param message: Exception message.
         :param html: When ``True``, message is considered to be HTML and not escaped.

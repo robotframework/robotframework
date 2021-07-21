@@ -12,8 +12,8 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
 import os
+from typing import List, Tuple, Union
 
 from robot.errors import DataError
 from robot.output import LOGGER
@@ -46,8 +46,8 @@ class TestSuiteBuilder:
     :mod:`robot.api` package.
     """
 
-    def __init__(self, included_suites=None, included_extensions=('robot',),
-                 rpa=None, allow_empty_suite=False, process_curdir=True):
+    def __init__(self, included_suites: List[str] = None, included_extensions: Union[List[str], Tuple[str, ...]]=('robot',),
+                 rpa: bool=None, allow_empty_suite: bool=False, process_curdir: bool=True):
         """
         :param include_suites:
             List of suite names to include. If ``None`` or an empty list,

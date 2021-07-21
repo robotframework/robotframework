@@ -18,15 +18,15 @@ import subprocess
 import sys
 
 try:
-    import wx
+    import wx  # type: ignore[import]
 except ImportError:
     wx = None
 try:
-    from gtk import gdk
+    from gtk import gdk  # type: ignore[import]
 except ImportError:
     gdk = None
 try:
-    from PIL import ImageGrab  # apparently available only on Windows
+    from PIL import ImageGrab  # type: ignore[import] # apparently available only on Windows
 except ImportError:
     ImageGrab = None
 

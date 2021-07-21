@@ -15,7 +15,7 @@
 
 import re
 try:
-    from urllib import quote
+    from urllib import quote  # type: ignore[attr-defined]
 except ImportError:
     from urllib.parse import quote
 

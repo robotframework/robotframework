@@ -12,6 +12,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from typing import Optional
 
 from robot.utils import normalize_whitespace
 from robot.variables import is_assign
@@ -39,7 +40,7 @@ class Lexer:
 
 
 class StatementLexer(Lexer):
-    token_type = None
+    token_type: Optional[str] = None
 
     def __init__(self, ctx):
         Lexer.__init__(self, ctx)

@@ -155,7 +155,7 @@ class ErrorSectionLexer(SectionLexer):
 
 
 class TestOrKeywordLexer(BlockLexer):
-    name_type = NotImplemented
+    name_type: str = NotImplemented
     _name_seen = False
 
     def accepts_more(self, statement):

@@ -12,6 +12,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from typing import List
 
 from robot.variables import VariableIterator
 
@@ -220,7 +221,7 @@ class Token:
 
 class EOS(Token):
     """Token representing end of a statement."""
-    __slots__ = []
+    __slots__: List[str] = []
 
     def __init__(self, lineno=-1, col_offset=-1):
         Token.__init__(self, Token.EOS, '', lineno, col_offset)
@@ -237,7 +238,7 @@ class END(Token):
     Virtual END tokens have '' as their value, with "real" END tokens the
     value is 'END'.
     """
-    __slots__ = []
+    __slots__: List[str] = []
 
     def __init__(self, lineno=-1, col_offset=-1, virtual=False):
         value = 'END' if not virtual else ''

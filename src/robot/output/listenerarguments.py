@@ -12,6 +12,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from typing import Tuple, Optional
 
 from robot.utils import is_list_like, is_dict_like, is_string, unic
 
@@ -66,7 +67,7 @@ class MessageArguments(ListenerArguments):
 
 
 class _ListenerArgumentsFromItem(ListenerArguments):
-    _attribute_names = None
+    _attribute_names: Optional[Tuple[str, ...]] = None
 
     def _get_version2_arguments(self, item):
         attributes = dict((name, self._get_attribute_value(item, name))
@@ -93,7 +94,7 @@ class _ListenerArgumentsFromItem(ListenerArguments):
 
 
 class StartSuiteArguments(_ListenerArgumentsFromItem):
-    _attribute_names = ('id', 'longname', 'doc', 'metadata', 'starttime')
+    _attribute_names: Tuple[str, ...] = ('id', 'longname', 'doc', 'metadata', 'starttime')
 
     def _get_extra_attributes(self, suite):
         return {'tests': [t.name for t in suite.tests],
@@ -113,7 +114,7 @@ class EndSuiteArguments(StartSuiteArguments):
 
 
 class StartTestArguments(_ListenerArgumentsFromItem):
-    _attribute_names = ('id', 'longname', 'doc', 'tags', 'lineno', 'source', 'starttime')
+    _attribute_names: Tuple[str, ...] = ('id', 'longname', 'doc', 'tags', 'lineno', 'source', 'starttime')
 
     def _get_extra_attributes(self, test):
         return {'template': test.template or '',
@@ -126,8 +127,8 @@ class EndTestArguments(StartTestArguments):
 
 
 class StartKeywordArguments(_ListenerArgumentsFromItem):
-    _attribute_names = ('doc', 'assign', 'tags', 'lineno', 'source', 'type', 'status',
-                        'starttime')
+    _attribute_names: Tuple[str, ...] = ('doc', 'assign', 'tags', 'lineno', 'source', 'type',
+                                         'status', 'starttime')
 
     def _get_extra_attributes(self, kw):
         args = [a if is_string(a) else unic(a) for a in kw.args]

@@ -17,18 +17,21 @@ from collections.abc import Iterable, Mapping
 from collections import UserString
 from io import IOBase
 from os import PathLike
-try:
+import sys
+from typing import Tuple
+if sys.version_info >= (3, 8):
     from typing import TypedDict
-except ImportError:    # Python < 3.8
-    typeddict_types = ()
+
+    typeddict_types: Tuple[type, ...] = (type(TypedDict('Dummy', {})),)
 else:
-    typeddict_types = (type(TypedDict('Dummy', {})),)
+    typeddict_types: Tuple[type, ...] = ()
+
 try:
     from typing_extensions import TypedDict as ExtTypedDict
 except ImportError:
     pass
 else:
-    typeddict_types += (type(ExtTypedDict('Dummy', {})),)
+    typeddict_types += (type(ExtTypedDict('Dummy', {})),)  # type: ignore[operator]
 
 from .platform import PY_VERSION
 

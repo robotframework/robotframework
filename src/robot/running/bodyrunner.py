@@ -15,6 +15,7 @@
 
 from collections import OrderedDict
 from contextlib import contextmanager
+from typing import Any, List
 
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           ExecutionStatus, ExitForLoop, ContinueForLoop, DataError)
@@ -69,7 +70,7 @@ class KeywordRunner:
 
 
 class IfRunner:
-    _dry_run_stack = []
+    _dry_run_stack: List[Any] = []
 
     def __init__(self, context, run=True, templated=False):
         self._context = context

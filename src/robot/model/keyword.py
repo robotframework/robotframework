@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import warnings
+from typing import List
 
 from robot.utils import setter
 
@@ -127,7 +128,7 @@ class Keywords(ItemList):
 
     Read-only and deprecated since Robot Framework 4.0.
     """
-    __slots__ = []
+    __slots__: List[str] = []
     deprecation_message = (
         "'keywords' attribute is read-only and deprecated since Robot Framework 4.0. "
         "Use 'body', 'setup' or 'teardown' instead."

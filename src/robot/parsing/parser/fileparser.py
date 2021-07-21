@@ -14,6 +14,8 @@
 #  limitations under the License.
 
 import os.path
+import typing
+from typing import Type, Union
 
 from robot.utils import is_pathlike, is_string
 
@@ -23,6 +25,8 @@ from ..model import (File, CommentSection, SettingSection, VariableSection,
 
 from .blockparsers import Parser, TestCaseParser, KeywordParser
 
+if typing.TYPE_CHECKING:
+    from robot.parsing.model.blocks import Section
 
 class FileParser(Parser):
 
@@ -58,7 +62,7 @@ class FileParser(Parser):
 
 
 class SectionParser(Parser):
-    model_class = None
+    model_class: Union[Type["Section"], None] = None
 
     def __init__(self, header):
         Parser.__init__(self, self.model_class(header))

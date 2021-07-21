@@ -17,6 +17,7 @@ import os
 import random
 import sys
 import time
+from typing import Dict, Tuple
 
 from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
@@ -30,7 +31,8 @@ from .gatherfailed import gather_failed_tests, gather_failed_suites
 
 
 class _BaseSettings:
-    _cli_opts = {'RPA'              : ('rpa', None),
+    _cli_opts: Dict[str, Tuple[str, object]] = {
+                 'RPA'              : ('rpa', None),
                  'Name'             : ('name', None),
                  'Doc'              : ('doc', None),
                  'Metadata'         : ('metadata', []),

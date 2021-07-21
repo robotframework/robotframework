@@ -15,9 +15,9 @@
 
 import builtins
 import token
-from collections.abc import Mapping
 from io import StringIO
 from tokenize import generate_tokens, untokenize
+from typing import Mapping
 
 from robot.errors import DataError
 from robot.utils import get_error_message, type_name
@@ -91,7 +91,7 @@ def _import_modules(module_names):
     return modules
 
 
-class EvaluationNamespace(Mapping):
+class EvaluationNamespace(Mapping[object, object]):
 
     def __init__(self, variable_store, namespace):
         self.namespace = namespace

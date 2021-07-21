@@ -20,6 +20,7 @@ import re
 import socket
 import sys
 import xmlrpc.client
+from typing import Type
 from xml.parsers.expat import ExpatError
 
 from robot.errors import RemoteError
@@ -198,7 +199,7 @@ class XmlRpcRemoteClient:
         self.uri = uri
         self.timeout = timeout
 
-    @property
+    @property  # type: ignore[misc]
     @contextmanager
     def _server(self):
         if self.uri.startswith('https://'):
@@ -259,7 +260,7 @@ class XmlRpcRemoteClient:
 # http://stackoverflow.com/questions/2425799/timeout-for-xmlrpclib-client-requests
 
 class TimeoutHTTPTransport(xmlrpc.client.Transport):
-    _connection_class = http.client.HTTPConnection
+    _connection_class: Type[http.client.HTTPConnection] = http.client.HTTPConnection
 
     def __init__(self, use_datetime=0, timeout=None):
         xmlrpc.client.Transport.__init__(self, use_datetime)

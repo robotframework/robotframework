@@ -67,7 +67,7 @@ class VariableTableValueBase:
         with self._avoid_recursion:
             return self._replace_variables(self._values, variables)
 
-    @property
+    @property  # type: ignore[misc]
     @contextmanager
     def _avoid_recursion(self):
         if self._resolving:

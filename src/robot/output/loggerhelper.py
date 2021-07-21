@@ -12,6 +12,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from typing import Optional, Tuple, Callable
 
 from robot.errors import DataError
 from robot.model import Message as BaseMessage
@@ -136,8 +137,8 @@ class IsLogged:
 
 
 class AbstractLoggerProxy:
-    _methods = None
-    _no_method = lambda *args: None
+    _methods: Optional[Tuple[str, ...]] = None
+    _no_method: Optional[Callable[..., object]] = lambda *args: None
 
     def __init__(self, logger, method_names=None, prefix=None):
         self.logger = logger

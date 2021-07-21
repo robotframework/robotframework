@@ -35,6 +35,7 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 from collections import OrderedDict
 from itertools import chain
 import warnings
+from typing import List, Any
 
 from robot import model
 from robot.model import BodyItem, Keywords, TotalStatisticsBuilder
@@ -49,7 +50,7 @@ from .suiteteardownfailed import SuiteTeardownFailed, SuiteTeardownFailureHandle
 
 class Body(model.Body):
     message_class = None
-    __slots__ = []
+    __slots__: List[str] = []
 
     def create_message(self, *args, **kwargs):
         return self.append(self.message_class(*args, **kwargs))
@@ -65,23 +66,23 @@ class ForIterations(Body):
     for_iteration_class = None
     if_class = None
     for_class = None
-    __slots__ = []
+    __slots__: List[str] = []
 
     def create_iteration(self, *args, **kwargs):
         return self.append(self.for_iteration_class(*args, **kwargs))
 
 
 class IfBranches(Body, model.IfBranches):
-    __slots__ = []
+    __slots__: List[str] = []
 
 
 @Body.register
 class Message(model.Message):
-    __slots__ = []
+    __slots__: List[str] = []
 
 
 class StatusMixin:
-    __slots__ = []
+    __slots__: List[str] = []
     PASS = 'PASS'
     FAIL = 'FAIL'
     SKIP = 'SKIP'
@@ -164,7 +165,7 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     def visit(self, visitor):
         visitor.visit_for_iteration(self)
 
-    @property
+    @property  # type: ignore[misc]
     @deprecated
     def name(self):
         return ', '.join('%s = %s' % item for item in self.variables.items())
@@ -183,7 +184,7 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
         self.endtime = endtime
         self.doc = doc
 
-    @property
+    @property  # type: ignore[misc]
     @deprecated
     def name(self):
         return '%s %s [ %s ]' % (' | '.join(self.variables), self.flavor,
@@ -216,7 +217,7 @@ class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
         self.endtime = endtime
         self.doc = doc
 
-    @property
+    @property  # type: ignore[misc]
     @deprecated
     def name(self):
         return self.condition
@@ -234,12 +235,12 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
 
     # FIXME: Remove attributes.
 
-    @property
+    @property  # type: ignore[misc]
     @deprecated
     def args(self):
         return self.values
 
-    @property
+    @property  # type: ignore[misc]
     @deprecated
     def doc(self):
         return ''
@@ -359,7 +360,7 @@ class TestCase(model.TestCase, StatusMixin):
         #: Test case execution end time in format ``%Y%m%d %H:%M:%S.%f``.
         self.endtime = endtime
 
-    @property
+    @property  # type: ignore[misc] # Read-only property cannot override read-write property
     def not_run(self):
         return False
 
@@ -388,22 +389,22 @@ class TestSuite(model.TestSuite, StatusMixin):
         #: Suite execution end time in format ``%Y%m%d %H:%M:%S.%f``.
         self.endtime = endtime
 
-    @property
+    @property  # type: ignore[misc] # Read-only property cannot override read-write property
     def passed(self):
         """``True`` if no test has failed but some have passed, ``False`` otherwise."""
         return self.status == self.PASS
 
-    @property
+    @property  # type: ignore[misc] # Read-only property cannot override read-write property
     def failed(self):
         """``True`` if any test has failed, ``False`` otherwise."""
         return self.status == self.FAIL
 
-    @property
+    @property  # type: ignore[misc] # Read-only property cannot override read-write property
     def skipped(self):
         """``True`` if there are no passed or failed tests, ``False`` otherwise."""
         return self.status == self.SKIP
 
-    @property
+    @property  # type: ignore[misc] # Read-only property cannot override read-write property
     def not_run(self):
         return False
 

@@ -21,9 +21,10 @@ from contextlib import contextmanager
 import errno
 import os
 import sys
-try:
+import sys
+if sys.platform == "win32":
     from ctypes import windll, Structure, c_short, c_ushort, byref
-except ImportError:  # Not on Windows
+else:
     windll = None
 
 from robot.errors import DataError
@@ -64,7 +65,7 @@ class HighlightingStream:
                 raise
             self._write(text, retry-1)
 
-    @property
+    @property  # type: ignore[misc]
     @contextmanager
     def _suppress_broken_pipe_error(self):
         try:

@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from os.path import basename, splitext
+from typing import Optional
 
 from robot.htmldata import HtmlFileWriter, ModelWriter, LOG, REPORT
 from robot.utils import file_writer, is_string
@@ -22,7 +23,7 @@ from .jswriter import JsResultWriter, SplitLogWriter
 
 
 class _LogReportWriter:
-    usage = None
+    usage: Optional[str] = None
 
     def __init__(self, js_model):
         self._js_model = js_model
