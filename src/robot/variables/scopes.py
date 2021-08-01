@@ -201,7 +201,9 @@ class GlobalVariables(Variables):
                             ('${LOG_LEVEL}', settings.log_level),
                             ('${PREV_TEST_NAME}', ''),
                             ('${PREV_TEST_STATUS}', ''),
-                            ('${PREV_TEST_MESSAGE}', '')]:
+                            ('${PREV_TEST_MESSAGE}', ''),
+                            ('@{INCLUDE_TAGS}', settings.suite_config['include_tags']),
+                            ('@{EXCLUDE_TAGS}', settings.suite_config['exclude_tags'])]:
             self[name] = value
 
 
