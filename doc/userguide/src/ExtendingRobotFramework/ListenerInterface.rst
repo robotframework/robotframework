@@ -576,10 +576,10 @@ probably more useful than this example.
            else:
                self.outfile.write('FAIL: %s\n' % attrs['message'])
 
-        def end_suite(self, name, attrs):
+       def end_suite(self, name, attrs):
             self.outfile.write('%s\n%s\n' % (attrs['status'], attrs['message']))
 
-        def close(self):
+       def close(self):
             self.outfile.close()
 
 The following example implements the same functionality as the previous one,
