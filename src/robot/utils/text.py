@@ -26,7 +26,7 @@ from .unic import unic
 
 
 MAX_ERROR_LINES = 40
-_MAX_ASSIGN_LENGTH = 200
+MAX_ASSIGN_LENGTH = 200
 _MAX_ERROR_LINE_LENGTH = 78
 _ERROR_CUT_EXPLN = '    [ Message content over the limit has been removed. ]'
 _TAGS_RE = re.compile(r'\s*tags:(.*)', re.IGNORECASE)
@@ -83,6 +83,8 @@ def _count_virtual_line_length(line):
 def format_assign_message(variable, value, cut_long=True):
     formatter = {'$': unic, '@': seq2str2, '&': _dict_to_str}[variable[0]]
     value = formatter(value)
+    if MAX_ASSIGN_LENGTH is None:
+        return '%s = ...' % variable
     if cut_long:
         value = cut_assign_value(value)
     return '%s = %s' % (variable, value)
@@ -97,8 +99,8 @@ def _dict_to_str(d):
 def cut_assign_value(value):
     if not is_unicode(value):
         value = unic(value)
-    if len(value) > _MAX_ASSIGN_LENGTH:
-        value = value[:_MAX_ASSIGN_LENGTH] + '...'
+    if len(value) > MAX_ASSIGN_LENGTH:
+        value = value[:MAX_ASSIGN_LENGTH] + '...'
     return value
 
 

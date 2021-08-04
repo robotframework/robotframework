@@ -129,6 +129,8 @@ class _BaseSettings(object):
             return self._process_randomize_value(value)
         if name == 'MaxErrorLines':
             return self._process_max_error_lines(value)
+        if name == 'MaxAssignLength':
+            return self._process_max_assign_length(value)
         if name == 'RemoveKeywords':
             self._validate_remove_keywords(value)
         if name == 'FlattenKeywords':
@@ -180,6 +182,15 @@ class _BaseSettings(object):
         value = self._convert_to_integer('maxerrorlines', value)
         if value < 10:
             raise DataError("Option '--maxerrorlines' expected an integer "
+                            "value greater that 10 but got '%s'." % value)
+        return value
+
+    def _process_max_assign_length(self, value):
+        value = self._convert_to_integer('maxassignlength', value)
+        if value == -1:
+            return None
+        if value < 10:
+            raise DataError("Option '--maxassignlength' expected an integer "
                             "value greater that 10 but got '%s'." % value)
         return value
 
@@ -408,6 +419,7 @@ class RobotSettings(_BaseSettings):
                        'Output'             : ('output', 'output.xml'),
                        'LogLevel'           : ('loglevel', 'INFO'),
                        'MaxErrorLines'      : ('maxerrorlines', 40),
+                       'MaxAssignLength'    : ('maxassignlength', 200),
                        'DryRun'             : ('dryrun', False),
                        'ExitOnFailure'      : ('exitonfailure', False),
                        'ExitOnError'        : ('exitonerror', False),
@@ -540,6 +552,10 @@ class RobotSettings(_BaseSettings):
     @property
     def max_error_lines(self):
         return self['MaxErrorLines']
+
+    @property
+    def max_assign_length(self):
+        return self['MaxAssignLength']
 
     @property
     def pre_run_modifiers(self):
