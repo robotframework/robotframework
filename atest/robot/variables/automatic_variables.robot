@@ -14,10 +14,10 @@ Test Documentation
     Should Be Equal    ${tc.doc}    My doc.\nIn 2 lines! And with variable value!!
 
 Test Tags
-    Check Test Tags    ${TEST NAME}    Force 1    Hello, world!    id-42    variable value
+    Check Test Tags    ${TEST NAME}    Force 1    Hello, world!    id-42    include this test    variable value
 
 Modifying \${TEST TAGS} does not affect actual tags test has
-    Check Test Tags    ${TEST NAME}    Force 1    mytag
+    Check Test Tags    ${TEST NAME}    Force 1    mytag    include this test
 
 Suite Name
     Check Test Case    ${TEST NAME}
