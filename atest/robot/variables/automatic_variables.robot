@@ -1,5 +1,5 @@
 *** Setting ***
-Suite Setup       Run Tests    ${EMPTY}    variables/automatic_variables/
+Suite Setup       Run Tests    --exclude exclude_this_test --include include_this_test   variables/automatic_variables/
 Resource          atest_resource.robot
 
 *** Test Case ***

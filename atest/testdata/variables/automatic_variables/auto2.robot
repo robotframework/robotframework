@@ -4,6 +4,7 @@ Suite Setup       Check Variables In Suite Setup    Automatic Variables.Auto2
 Suite Teardown    Check Variables In Suite Teardown    Automatic Variables.Auto2    FAIL
 ...               1 test, 0 passed, 1 failed
 ...               @{LAST_TEST}
+Force Tags        include_this_tag
 Resource          resource.robot
 
 *** Variable ***

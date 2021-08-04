@@ -988,6 +988,12 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    |                        | alphabetical order. Can be modified dynamically using |            |
    |                        | :name:`Set Tags` and :name:`Remove Tags` keywords.    |            |
    +------------------------+-------------------------------------------------------+------------+
+   | @{INCLUDE_TAGS}        | A list of tags that were provided to by the           | Everywhere |
+   |                        | --include command line option.                        |            |
+   +------------------------+-------------------------------------------------------+------------+
+   | @{EXCLUDE_TAGS}        | A list of tags that were provided to by the           | Everywhere |
+   |                        | --exclude command line option.                        |            |
+   +------------------------+-------------------------------------------------------+------------+
    | ${TEST DOCUMENTATION}  | The documentation of the current test case. Can be set| Test case  |
    |                        | dynamically using using :name:`Set Test Documentation`|            |
    |                        | keyword.                                              |            |
