@@ -112,7 +112,7 @@ class IfRunner(object):
             if error and self._run:
                 raise DataError(error)
             runner = BodyRunner(self._context, run_branch, self._templated)
-            if not recursive_dry_run:
+            if run_branch and not recursive_dry_run:
                 runner.run(branch.body)
         return run_branch
 

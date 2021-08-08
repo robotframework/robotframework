@@ -45,14 +45,19 @@ Setting after if
 
 For loop inside if
     ${value}    Set Variable    0
+    ${outter}    Set Variable   'focus pokus'
     IF    'kaunis maailma'
         FOR    ${var}    IN    1    2    3
             ${value}=    Set Variable    ${var}
         END
     ELSE IF    'ei tanne'
+        FOR    ${outter}    IN    1    2    3
+            Log    ${outter}
+        END
         ${value}=    Set Variable    123
     END
     Should be equal    ${value}    3
+    Should be equal    ${outter}    'focus pokus'
 
 For loop inside for loop
     ${checker}    Set Variable    wrong
