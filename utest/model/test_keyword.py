@@ -52,6 +52,14 @@ class TestKeyword(unittest.TestCase):
         assert_equal(if_body.create_branch().body.create_keyword().id, 't1-k2-k1')
         assert_equal(if_body.create_branch().body.create_keyword().id, 't1-k3-k1')
 
+    def test_id_with_messages_in_body(self):
+        from robot.result.model import Keyword
+        kw = Keyword()
+        assert_equal(kw.body.create_message().id, 'k1-m1')
+        assert_equal(kw.body.create_keyword().id, 'k1-k1')
+        assert_equal(kw.body.create_message().id, 'k1-m2')
+        assert_equal(kw.body.create_keyword().id, 'k1-k2')
+
     def test_string_reprs(self):
         for kw, exp_str, exp_repr in [
             (Keyword(),
