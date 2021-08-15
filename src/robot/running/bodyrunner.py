@@ -261,17 +261,19 @@ class ForInRunner(object):
 
     def _run_one_round(self, data, result, values=None):
         result = result.body.create_iteration()
-        variables = self._map_variables_and_values(data.variables, values)
-        for name, value in variables:
-            self._context.variables[name] = value
+        if values is not None:
+            variables = self._context.variables
+        else:    # Not really run (earlier failure, unexecuted IF branch, dry-run)
+            variables = {}
+            values = data.variables
+        for name, value in self._map_variables_and_values(data.variables, values):
+            variables[name] = value
             result.variables[name] = cut_assign_value(value)
         runner = BodyRunner(self._context, self._run, self._templated)
         with StatusReporter(data, result, self._context, self._run):
             runner.run(data.body)
 
     def _map_variables_and_values(self, variables, values):
-        if values is None:    # Failure occurred earlier or dry-run.
-            values = variables
         if len(variables) == 1 and len(values) != 1:
             return [(variables[0], tuple(values))]
         return zip(variables, values)
