@@ -145,6 +145,17 @@ Setup and teardown with variables
     No Operation
     [Teardown]    ${LOG}    ${LOG}ged using variables ${2}
 
+Setup and teardown with non-existing variables
+    [Documentation]    FAIL
+    ...    Setup failed:
+    ...    Variable '\${OOOPS}' not found.
+    ...
+    ...    Also teardown failed:
+    ...    Variable '\${OOOPS}' not found.
+    [Setup]    ${OOOPS}
+    No Operation
+    [Teardown]    ${OOOPS}
+
 Override setup and teardown using empty settings
     [Setup]
     No Operation

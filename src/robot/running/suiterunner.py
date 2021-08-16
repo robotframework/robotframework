@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import ExecutionStatus, DataError, PassExecution
+from robot.errors import ExecutionFailed, ExecutionStatus, DataError, PassExecution
 from robot.model import SuiteVisitor, TagPatterns
 from robot.result import TestSuite, Result
 from robot.utils import get_timestamp, is_list_like, NormalizedDict, unic, test_or_task
@@ -214,7 +214,7 @@ class SuiteRunner(SuiteVisitor):
         except DataError as err:
             if self._settings.dry_run:
                 return None
-            return err
+            return ExecutionFailed(message=err.message)
         if name.upper() in ('', 'NONE'):
             return None
         try:
