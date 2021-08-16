@@ -3030,12 +3030,12 @@ class _Misc(_BuiltInBase):
         are running. That may be necessary, if the library itself is dynamic
         and not yet available when test data is processed. In a normal case,
         libraries should be imported using the Library setting in the Setting
-        table.
+        section.
 
         This keyword supports importing libraries both using library
         names and physical paths. When paths are used, they must be
         given in absolute format or found from
-        [http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#pythonpath-jythonpath-and-ironpythonpath|
+        [http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#module-search-path|
         search path]. Forward slashes can be used as path separators in all
         operating systems.
 
