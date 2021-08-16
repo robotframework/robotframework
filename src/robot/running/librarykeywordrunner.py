@@ -69,8 +69,8 @@ class LibraryKeywordRunner(object):
         if self.pre_run_messages:
             for message in self.pre_run_messages:
                 context.output.message(message)
-        positional, named = \
-            self._handler.resolve_arguments(args, context.variables)
+        variables = context.variables if not context.dry_run else None
+        positional, named = self._handler.resolve_arguments(args, variables)
         context.output.trace(lambda: self._trace_log_args(positional, named))
         runner = self._runner_for(context, self._handler.current_handler(),
                                   positional, dict(named))

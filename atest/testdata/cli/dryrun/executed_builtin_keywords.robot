@@ -21,8 +21,8 @@ Set Library Search Order
 
 Set Tags
     [Tags]    Tag0
-    Set Tags     Tag1    Tag2    Tag3
+    Set Tags     Tag1    Tag2    ${var}    ${2}
 
 Remove Tags
     [Tags]    Tag1    Tag2    Tag3
-    Remove Tags    Tag2
+    Remove Tags    Tag2    ${var}
