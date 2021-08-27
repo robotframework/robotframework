@@ -110,6 +110,9 @@ class _ErrorDetails(object):
             return name
         if self._is_generic_exception(name):
             return message
+        if message.startswith('*HTML*'):
+            name = '*HTML* ' + name
+            message = message.split('*', 2)[-1].lstrip()
         return '%s: %s' % (name, message)
 
     def _is_generic_exception(self, name):

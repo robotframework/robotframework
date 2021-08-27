@@ -3,8 +3,8 @@ Library           Exceptions
 
 *** Test Cases ***
 robot.api.FatalError
-    [Documentation]    FAIL FatalError: BANG!
-    Exit on failure    standard=True
+    [Documentation]    FAIL *HTML* FatalError: Big <b>BANG</b>!
+    Exit on failure    Big <b>BANG</b>!    html=True    standard=True
     Fail    Should not be executed
 
 Test That Should Not Be Run
