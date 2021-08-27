@@ -123,17 +123,18 @@ class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
     _message = '%d failing step%s removed using --RemoveKeywords option.'
 
     def start_keyword(self, kw):
-        if kw.name == 'BuiltIn.Wait Until Keyword Succeeds' and kw.body:
+        if kw.libname == 'BuiltIn' and kw.kwname == 'Wait Until Keyword Succeeds':
             before = len(kw.body)
             self._remove_keywords(kw.body)
             self._removal_message.set_if_removed(kw, before)
 
     def _remove_keywords(self, body):
         keywords = body.filter(messages=False)
-        include_from_end = 2 if keywords[-1].passed else 1
-        for kw in keywords[:-include_from_end]:
-            if not self._warning_or_error(kw):
-                body.remove(kw)
+        if keywords:
+            include_from_end = 2 if keywords[-1].passed else 1
+            for kw in keywords[:-include_from_end]:
+                if not self._warning_or_error(kw):
+                    body.remove(kw)
 
 
 class WarningAndErrorFinder(SuiteVisitor):
