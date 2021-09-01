@@ -1,5 +1,5 @@
 from numbers import Rational
-from typing import List, Optional, TypedDict
+from typing import TypedDict
 
 
 class MyObject:
@@ -51,11 +51,11 @@ def union_with_str_and_abc(argument: str | Rational, expected):
     assert argument == expected
 
 
-def union_with_subscripted_generics(argument: List[int] | int, expected=object()):
+def union_with_subscripted_generics(argument: list[int] | int, expected=object()):
     assert argument == eval(expected), '%r != %s' % (argument, expected)
 
 
-def union_with_subscripted_generics_and_str(argument: List[str] | str, expected):
+def union_with_subscripted_generics_and_str(argument: list[str] | str, expected):
     assert argument == eval(expected), '%r != %s' % (argument, expected)
 
 
