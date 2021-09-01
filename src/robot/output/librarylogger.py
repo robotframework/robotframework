@@ -40,7 +40,7 @@ def write(msg, level, html=False):
         msg = unic(msg)
     if level.upper() not in ('TRACE', 'DEBUG', 'INFO', 'HTML', 'WARN', 'ERROR'):
         raise DataError("Invalid log level '%s'." % level)
-    if threading.currentThread().getName() in LOGGING_THREADS:
+    if threading.current_thread().name in LOGGING_THREADS:
         LOGGER.log_message(Message(msg, level, html))
 
 
