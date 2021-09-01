@@ -1,4 +1,7 @@
-from collections import Mapping
+try:
+    from collections.abc import Mapping
+except ImportError:    # Python 2
+    from collections import Mapping
 
 
 class MyObject(object):
