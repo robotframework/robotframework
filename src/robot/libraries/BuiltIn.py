@@ -1692,6 +1692,8 @@ class _Variables(_BuiltInBase):
         variable in a user keyword, it is available both in the test case level
         and also in all other user keywords used in the current test. Other
         test cases will not see variables set with this keyword.
+        It is an error to call `Set Test Variable` outside the
+        scope of a test (e.g. in a Suite Setup or Teardown).
 
         See `Set Suite Variable` for more information and examples.
         """
