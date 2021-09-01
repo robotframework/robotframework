@@ -54,7 +54,8 @@ Union with TypedDict
 
 Union with item not liking isinstance
     [Template]    Union with item not liking isinstance
-    42                 42
+    42                 ${42}
+    3.14               ${3.14}
 
 Argument not matching union
     [Template]    Conversion Should Fail
