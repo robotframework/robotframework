@@ -20,6 +20,10 @@ try:
 except ImportError:    # Python 2
     import collections as abc
 try:
+    from types import UnionType
+except ImportError:    # Python < 3.10
+    UnionType = ()
+try:
     from typing import Union
 except ImportError:
     class Union(object):
@@ -505,7 +509,8 @@ class CombinedConverter(TypeConverter):
 
     @classmethod
     def handles(cls, type_):
-        return getattr(type_, '__origin__', None) is Union or isinstance(type_, tuple)
+        return (isinstance(type_, (UnionType, tuple))
+                or getattr(type_, '__origin__', None) is Union)
 
     def _handles_value(self, value):
         return True
