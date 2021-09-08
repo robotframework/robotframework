@@ -29,7 +29,8 @@ distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
 Robot Framework 4.1.1 rc 1 was released on Wednesday September 1, 2021.
-The final release is planned for Wednesday September 8.
+It was followed by `Robot Framework 4.1.1 <rf-4.1.1.rst>`_ final release
+on Wednesday September 8, 2021.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
