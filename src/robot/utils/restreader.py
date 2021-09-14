@@ -16,6 +16,7 @@
 import functools
 
 from robot.errors import DataError
+from robot.utils import PY2
 
 try:
     from docutils.core import publish_doctree
@@ -72,9 +73,6 @@ def directive(*args, **kwargs):
     return directive_class, messages
 
 
-directives.directive = directive
-
-
 @functools.wraps(roles.role)
 def role(*args, **kwargs):
     role_function = role.__wrapped__(*args, **kwargs)
@@ -83,6 +81,12 @@ def role(*args, **kwargs):
     return role_function
 
 
+if PY2:
+    directive.__wrapped__ = directives.directive
+    role.__wrapped__ = roles.role
+
+
+directives.directive = directive
 roles.role = role
 
 
