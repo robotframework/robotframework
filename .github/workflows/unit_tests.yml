@@ -55,7 +55,7 @@ jobs:
           python -m coverage xml -i
         if: always()
 
-      - uses: codecov/codecov-action@29386c70ef20e286228c72b668a06fd0e8399192
+      - uses: codecov/codecov-action@f32b3a3741e1053eb607407145bc9619351dc93b
         with:
           name: ${{ matrix.python-version }}-${{ matrix.os }}
         if: always()
