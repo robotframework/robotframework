@@ -31,7 +31,6 @@ elif sys.platform == 'cli':
 else:
     try:
         import wx
-        wx_app = wx.App(False)  # Linux Python 2.7 must exist on global scope
     except ImportError:
         wx = None
     try:
@@ -250,6 +249,7 @@ class ScreenshotTaker(object):
     def __init__(self, module_name=None):
         self._screenshot = self._get_screenshot_taker(module_name)
         self.module = self._screenshot.__name__.split('_')[1]
+        self._wx_app_reference = None
 
     def __call__(self, path):
         self._screenshot(path)
@@ -349,7 +349,8 @@ class ScreenshotTaker(object):
             raise RuntimeError("Using 'scrot' failed.")
 
     def _wx_screenshot(self, path):
-        # depends on wx_app been created
+        if not self._wx_app_reference:
+            self._wx_app_reference = wx.App(False)
         context = wx.ScreenDC()
         width, height = context.GetSize()
         if wx.__version__ >= '4':
@@ -384,7 +385,7 @@ class ScreenshotTaker(object):
 
 if __name__ == "__main__":
     if len(sys.argv) not in [2, 3]:
-        sys.exit("Usage: %s <path>|test [wx|pygtk|pil|scrot]"
+        sys.exit("Usage: %s <path>|test [wxpython|pygtk|pil|scrot]"
                  % os.path.basename(sys.argv[0]))
     path = sys.argv[1] if sys.argv[1] != 'test' else None
     module = sys.argv[2] if len(sys.argv) > 2 else None

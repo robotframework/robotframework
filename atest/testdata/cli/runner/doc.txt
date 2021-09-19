@@ -1,0 +1,8 @@
+Hello
+world!
+
+c:\no\t\resolved
+
+${nonex}
+
+*xxx*

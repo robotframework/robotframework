@@ -95,7 +95,7 @@ class VariableAssigner(object):
         if exc_val is None:
             return
         failure = self._get_failure(exc_type, exc_val, exc_tb)
-        if failure.can_continue(self._context.in_teardown):
+        if failure.can_continue(self._context):
             self.assign(failure.return_value)
 
     def _get_failure(self, exc_type, exc_val, exc_tb):
@@ -116,12 +116,11 @@ class VariableAssigner(object):
     def _extended_assign(self, name, value, variables):
         if name[0] != '$' or '.' not in name or name in variables:
             return False
-        base, attr = [token.strip() for token in name[2:-1].split('.', 1)]
+        base, attr = [token.strip() for token in name[2:-1].rsplit('.', 1)]
         try:
-            var = variables['${%s}' % base]
+            var = variables.replace_scalar('${%s}' % base)
         except VariableError:
             return False
-        var, base, attr = self._get_nested_extended_var(var, base, attr)
         if not (self._variable_supports_extended_assign(var) and
                 self._is_valid_extended_attribute(attr)):
             return False
@@ -131,17 +130,6 @@ class VariableAssigner(object):
             raise VariableError("Setting attribute '%s' to variable '${%s}' failed: %s"
                                 % (attr, base, get_error_message()))
         return True
-
-    def _get_nested_extended_var(self, var, base, attr):
-        while '.' in attr:
-            parent, attr = [token.strip() for token in attr.split('.', 1)]
-            try:
-                var = getattr(var, parent)
-            except AttributeError:
-                raise VariableError("Variable '${%s}' does not have attribute '%s'."
-                                    % (base, parent))
-            base += '.' + parent
-        return var, base, attr
 
     def _variable_supports_extended_assign(self, var):
         return not (is_string(var) or is_number(var))

@@ -1,8 +1,9 @@
-from collections import Mapping
 try:
     from UserDict import UserDict
+    from collections import Mapping
 except ImportError:  # Python 3
     from collections import UserDict
+    from collections.abc import Mapping
 
 
 def get_variables(type):

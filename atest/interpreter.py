@@ -105,7 +105,7 @@ class Interpreter(object):
             yield 'require-py3'
         if self.version_info[:2] == (3, 5):
             yield 'no-py-3.5'
-        for require in [(3, 5), (3, 6), (3, 7), (3, 8), (3, 9)]:
+        for require in [(3, 5), (3, 6), (3, 7), (3, 8), (3, 9), (3, 10)]:
             if self.version_info < require:
                 yield 'require-py%d.%d' % require
         if self.is_windows:

@@ -145,7 +145,10 @@ that you get separate test suites and possibly already fixed failures are
 also shown. In this situation it is better to use :option:`--merge (-R)`
 option to tell Rebot to merge the results instead. In practice this
 means that tests from the latter test runs replace tests in the original.
-The usage is best illustrated by a practical example using
+An exception to this rule is that skipped_ tests in latter runs are ignored
+and original tests preserved.
+
+This usage is best illustrated by a practical example using
 :option:`--rerunfailed` and :option:`--merge` together::
 
   robot --output original.xml tests                          # first execute all tests
@@ -159,6 +162,8 @@ Merged results must always have same top-level test suite. Tests and suites
 in merged outputs that are not found from the original output are added into
 the resulting output. How this works in practice is discussed in the next
 section.
+
+.. note:: Ignoring skipped tests in latter runs is new in Robot Framework 4.1.
 
 Merging suites executed in pieces
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

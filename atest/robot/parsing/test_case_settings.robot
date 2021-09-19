@@ -121,6 +121,9 @@ Setup and teardown with variables
     Verify Setup    Logged using variables 1
     Verify Teardown    Logged using variables 2
 
+Setup and teardown with non-existing variables
+    Check Test Case    ${TEST NAME}
+
 Override setup and teardown using empty settings
     ${tc} =    Check Test Case    ${TEST NAME}
     Setup Should Not Be Defined     ${tc}
@@ -146,7 +149,7 @@ Timeout
 
 Timeout with message
     Verify Timeout    1 minute 39 seconds 999 milliseconds
-    Error In File    0    parsing/test_case_settings.robot    173
+    Error In File    0    parsing/test_case_settings.robot    184
     ...    Setting 'Timeout' accepts only one value, got 2.
 
 Default timeout
@@ -173,12 +176,12 @@ Multiple settings
 
 Invalid setting
     Check Test Case    ${TEST NAME}
-    Error In File    1    parsing/test_case_settings.robot    206
+    Error In File    1    parsing/test_case_settings.robot    217
     ...    Non-existing setting 'Invalid'.
 
 Small typo should provide recommendation
     Check Test Doc    ${TEST NAME}
-    Error In File    2    parsing/test_case_settings.robot    210
+    Error In File    2    parsing/test_case_settings.robot    221
     ...    SEPARATOR=\n
     ...    Non-existing setting 'Doc U ment a tion'. Did you mean:
     ...    ${SPACE*4}Documentation

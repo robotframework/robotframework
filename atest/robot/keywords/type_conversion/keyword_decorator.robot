@@ -6,6 +6,15 @@ Resource         atest_resource.robot
 Integer
     Check Test Case    ${TESTNAME}
 
+Integer as hex
+    Check Test Case    ${TESTNAME}
+
+Integer as octal
+    Check Test Case    ${TESTNAME}
+
+Integer as binary
+    Check Test Case    ${TESTNAME}
+
 Invalid integer
     Check Test Case    ${TESTNAME}
 
@@ -94,6 +103,18 @@ Enum
     [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
+Flag
+    [Tags]    require-enum
+    Check Test Case    ${TESTNAME}
+
+IntEnum
+    [Tags]    require-enum
+    Check Test Case    ${TESTNAME}
+
+IntFlag
+    [Tags]    require-enum
+    Check Test Case    ${TESTNAME}
+
 Normalized enum member match
     [Tags]    require-enum
     Check Test Case    ${TESTNAME}
@@ -103,6 +124,10 @@ Normalized enum member match with multiple matches
     Check Test Case    ${TESTNAME}
 
 Invalid Enum
+    [Tags]    require-enum
+    Check Test Case    ${TESTNAME}
+
+Invalid IntEnum
     [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 

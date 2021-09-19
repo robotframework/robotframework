@@ -39,34 +39,84 @@ Should Contain Any case-insensitive
     ${DICT 1}    x              ignore_case=True    msg=Fails
 
 Should Contain Any without leading spaces
-    [Documentation]    FAIL    '${DICT_1}' does not contain any of 'x'
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) '${DICT 1}' does not contain any of 'x'
+    ...
+    ...    2) '${DICT 5}' does not contain any of 'b\t'
     [Template]    Should Contain Any
     Hyvä           \nvä              strip_spaces=leading
     \tSan Diego    \ San             strip_spaces=leading
     ${LIST}        ${-1}    \tb      strip_spaces=Leading
     ${LIST}        41       \tcee    strip_spaces=LEADING
     ${DICT 1}      \tx               strip_spaces=leading
-    ${DICT_4}      \tc      \ g      strip_spaces=leading
+    ${DICT 4}      \tc      \ g      strip_spaces=leading
+    ${DICT 5}      \tb               strip_spaces=leading
+    ${DICT 5}      b\t               strip_spaces=leading
 
 Should Contain Any without trailing spaces
-    [Documentation]    FAIL    '${DICT_1}' does not contain any of 'x'
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) '${DICT 1}' does not contain any of 'x'
+    ...
+    ...    2) '${DICT 5}' does not contain any of '\nd'
     [Template]    Should Contain Any
     Hyvä           vä\n              strip_spaces=trailing
     San Diego\n    Diego             strip_spaces=Trailing
     ${LIST}        ${-1}    b\t      strip_spaces=TRAILING
     ${LIST}        41       cee\t    strip_spaces=trailing
     ${DICT 1}      x\t               strip_spaces=trailing
-    ${DICT_4}      dd\t     g\t      strip_spaces=trailing
+    ${DICT 4}      dd\t     g\t      strip_spaces=trailing
+    ${DICT 5}      d\n               strip_spaces=trailing
+    ${DICT 5}      \nd               strip_spaces=trailing
 
 Should Contain Any without leading and trailing spaces
-    [Documentation]    FAIL    '${DICT_1}' does not contain any of '\ x\t'
+    [Documentation]    FAIL    '${DICT 1}' does not contain any of '\ x\t'
     [Template]    Should Contain Any
     Hyvä             \tvä\n                 strip_spaces=True
     \ San Diego\n    Diego                  strip_spaces=TRUE
     ${LIST}          ${-1}     \ b\t        strip_spaces=Yes
     ${LIST}          41        \t\tcee\t    strip_spaces=1
     ${DICT 1}        \ x\t                  strip_spaces=No
-    ${DICT_4}        \tak\t    g\t          strip_spaces=Sure
+    ${DICT 4}        \tak\t    g\t          strip_spaces=Sure
+
+Should Contain Any and do not collapse spaces
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) 'Hyvä' does not contain any of '\tVä\n'
+    ...
+    ...    2) '\ San\tDiego\n' does not contain any of 'Di ego'
+    ...
+    ...    3) '${LIST}' does not contain any of '\n\tab' or '\ b\t'
+    ...
+    ...    4) '${DICT 4}' does not contain any of '\tak' or 'dd\t'
+    [Template]    Should Contain Any
+    Hyvä              \tVä\n             collapse_spaces=False
+    \ San\tDiego\n    Di ego             collapse_spaces=FALSE
+    ${LIST}           \n\tab    \ b\t    collapse_spaces=No
+    ${DICT 4}         \tak      dd\t     collapse_spaces=${FALSE}
+
+Should Contain Any and collapse spaces
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) 'Hyvä' does not contain any of ' Vä '
+    ...
+    ...    2) 'San\tDiego' does not contain any of 'Di ego'
+    ...
+    ...    3) '${LIST}' does not contain any of ' ab' or ' b '
+    ...
+    ...    4) '${DICT 4}' does not contain any of ' ak' or 'a b '
+    [Template]    Should Contain Any
+    Hyvä          \tVä\n                 collapse_spaces=True
+    San\tDiego    Di\t\nego              collapse_spaces=TRUE
+    ${LIST}       \n\tab       \ b\t     collapse_spaces=Yes
+    ${DICT 4}     \tak         a\tb\n    collapse_spaces=${TRUE}
+    ${DICT 5}     e e                    collapse_spaces=TRUE
+    ${DICT 5}     e \n \t e              collapse_spaces=TRUE
 
 Should Contain Any without items fails
     [Documentation]    FAIL    One or more items required.
@@ -127,10 +177,11 @@ Should Not Contain Any without leading spaces
     ...
     ...    1) 'abcd\tx' contains one or more of 'x'
     ...
-    ...    2) '${DICT_4}' contains one or more of 'a'
+    ...    2) '${DICT 4}' contains one or more of 'a'
     [Template]    Should Not Contain Any
     abcd\tx      \tx      strip_spaces=leading
-    ${DICT_4}    \n\ta    strip_spaces=LEADING
+    ${DICT 4}    dd       strip_spaces=leading
+    ${DICT 4}    \n\ta    strip_spaces=LEADING
 
 Should Not Contain Any without trailing spaces
     [Documentation]    FAIL
@@ -138,10 +189,11 @@ Should Not Contain Any without trailing spaces
     ...
     ...    1) 'abcx\td' contains one or more of 'x'
     ...
-    ...    2) '${DICT_4}' contains one or more of 'dd'
+    ...    2) '${DICT 4}' contains one or more of 'dd'
     [Template]    Should Not Contain Any
     abcx\td      x\t       strip_spaces=trailing
-    ${DICT_4}    dd\n\n    strip_spaces=TRAILING
+    ${DICT 4}    a         strip_spaces=TRAILING
+    ${DICT 4}    dd\n\n    strip_spaces=trailing
 
 Should Not Contain Any without leading and trailing spaces
     [Documentation]    FAIL
@@ -149,16 +201,53 @@ Should Not Contain Any without leading and trailing spaces
     ...
     ...    1) 'abcx\td' contains one or more of 'x'
     ...
-    ...    2) '${DICT_4}' contains one or more of 'dd'
+    ...    2) '${DICT 4}' contains one or more of 'dd'
     ...
-    ...    3) '${DICT_4}' contains one or more of 'ak'
+    ...    3) '${DICT 4}' contains one or more of 'ak'
     ...
-    ...    4) '${DICT_4}' contains one or more of 'a'
+    ...    4) '${DICT 4}' contains one or more of 'a'
     [Template]    Should Not Contain Any
     abcx\td      \ x\t       strip_spaces=True
-    ${DICT_4}    \tdd\n      strip_spaces=${True}
-    ${DICT_4}    \ ak\t\t    strip_spaces=TRUE
-    ${DICT_4}    \ a\t\t     strip_spaces=Yes
+    ${DICT 4}    \tdd\n      strip_spaces=${True}
+    ${DICT 4}    \ ak\t\t    strip_spaces=TRUE
+    ${DICT 4}    \ a\t\t     strip_spaces=Yes
+
+Should Not Contain Any and do not collapse spaces
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) 'abc\nx\td' contains one or more of '\nx\t'
+    ...
+    ...    2) '${DICT 4}' contains one or more of 'dd\n\t'
+    ...
+    ...    3) '${DICT 4}' contains one or more of '\nak \t'
+    ...
+    ...    4) '${LIST 4}' contains one or more of '\ta'
+    [Template]    Should Not Contain Any
+    abc\nx\td    \nx\t      collapse_spaces=False
+    ${DICT 4}    dd\n\t     collapse_spaces=${FALSE}
+    ${DICT 4}    \nak \t    collapse_spaces=FALSE
+    ${LIST 4}    \ta        collapse_spaces=No
+
+Should Not Contain Any and collapse spaces
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) 'abc x d' contains one or more of ' x '
+    ...
+    ...    2) '${DICT 4}' contains one or more of 'a b'
+    ...
+    ...    3) '${DICT 5}' contains one or more of ' a'
+    ...
+    ...    4) '${LIST 4}' contains one or more of 'b '
+    ...
+    ...    5) '${DICT 5}' contains one or more of 'e e'
+    [Template]    Should Not Contain Any
+    abc x d      \nx\t     collapse_spaces=True
+    ${DICT 4}    a\t\nb    collapse_spaces=${TRUE}
+    ${DICT 5}    \ \ta     collapse_spaces=TRUE
+    ${LIST 4}    b\n\t     collapse_spaces=Yes
+    ${DICT 5}    e\te       collapse_spaces=TRUE
 
 Should Not Contain Any without items fails
     [Documentation]    FAIL    One or more items required.

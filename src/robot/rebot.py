@@ -92,10 +92,13 @@ Options
  -D --doc documentation   Set the documentation of the top level suite.
                           Simple formatting is supported (e.g. *bold*). If
                           the documentation contains spaces, it must be quoted.
-                          Example: --doc "Very *good* example"
+                          If the value is path to an existing file, actual
+                          documentation is read from that file.
+                          Examples: --doc "Very *good* example"
+                                    --doc doc_from_file.txt
  -M --metadata name:value *  Set metadata of the top level suite. Value can
-                          contain formatting similarly as --doc.
-                          Example: --metadata Version:1.2
+                          contain formatting and be read from a file similarly
+                          as --doc. Example: --metadata Version:1.2
  -G --settag tag *        Sets given tag(s) to all tests.
  -t --test name *         Select tests by name or by long name containing also
                           parent suite name like `Parent.Test`. Name is case

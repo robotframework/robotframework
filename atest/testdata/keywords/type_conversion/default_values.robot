@@ -11,19 +11,63 @@ Integer
     Integer              42                        ${42}
     Integer              -1                        ${-1}
     Integer              9999999999999999999999    ${9999999999999999999999}
+    Integer              123 456 789               123456789
+    Integer              123_456_789               123456789
+    Integer              - 123 456 789             -123456789
+    Integer              -_123_456_789             -123456789
 
 Integer as float
     Integer              1.0                       ${1.0}
     Integer              1.5                       ${1.5}
 
+Integer as hex
+    Integer              0x0                        0
+    Integer              0 X 0 0 0 0 0              0
+    Integer              0_X_0_0_0_0_0              0
+    Integer              0x1000                     4096
+    Integer              -0x1000                    -4096
+    Integer              +0x1000                    4096
+    Integer              0x00FF                     255
+    Integer              - 0 X 00 ff                -255
+    Integer              -__0__X__00_ff__           -255
+    Integer              0 x BAD C0FFEE             50159747054
+
+Integer as octal
+    Integer              0o0                        0
+    Integer              0 O 0 0 0 0 0              0
+    Integer              0_O_0_0_0_0_0              0
+    Integer              0o1000                     512
+    Integer              -0o1000                    -512
+    Integer              +0o1000                    512
+    Integer              0o0077                     63
+    Integer              - 0 o 00 77                -63
+    Integer              -__0__o__00_77__           -63
+
+Integer as binary
+    Integer              0b0                        0
+    Integer              0 B 0 0 0 0 0              0
+    Integer              0_B_0_0_0_0_0              0
+    Integer              0b1000                     8
+    Integer              -0b1000                    -8
+    Integer              +0b1000                    8
+    Integer              0b0011                     3
+    Integer              - 0 b 00 11                -3
+    Integer              -__0__b__00_11__           -3
+
 Invalid integer
     [Template]           Invalid value is passed as-is
     Integer              foobar
+    Integer              0xFOOBAR
+    Integer              0o8
+    Integer              0b2
+    Integer              00b1
+    Integer              0x0x0
 
 Float
     Float                1.5                       ${1.5}
     Float                -1                        ${-1.0}
     Float                1e6                       ${1000000.0}
+    Float                1 000 000 . 0_0_1         1000000.001
     Float                -1.2e-3                   ${-0.0012}
 
 Invalid float
@@ -34,6 +78,7 @@ Decimal
     Decimal              3.14                      Decimal('3.14')
     Decimal              -1                        Decimal('-1')
     Decimal              1e6                       Decimal('1000000')
+    Decimal              1 000 000 . 0_0_1         Decimal('1000000.001')
 
 Invalid decimal
     [Template]           Invalid value is passed as-is
@@ -144,9 +189,25 @@ Enum
     Enum                 FOO                       MyEnum.FOO
     Enum                 bar                       MyEnum.bar
 
+Flag
+    Flag                 RED                       MyFlag.RED
+
+IntEnum
+    IntEnum              ON                        MyIntEnum.ON
+    IntEnum              ${1}                      MyIntEnum.ON
+    IntEnum              0                         MyIntEnum.OFF
+
+IntFlag
+    IntFlag              R                         MyIntFlag.R
+    IntFlag              4                         MyIntFlag.R
+    IntFlag              ${4}                      MyIntFlag.R
+
 Invalid enum
     [Template]           Invalid value is passed as-is
     Enum                 foobar
+    Flag                 YELLOW
+    IntEnum              -1
+    IntFlag              ${10}                     ${10}
 
 None
     None                 None                      None

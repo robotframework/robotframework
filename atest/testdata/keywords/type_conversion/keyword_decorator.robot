@@ -6,26 +6,71 @@ Resource                 conversion.resource
 *** Variables ***
 @{LIST}                  foo                       bar
 &{DICT}                  foo=${1}                  bar=${2}
+${FRACTION 1/2}          ${{fractions.Fraction(1,2)}}
+${DECIMAL 1/2}           ${{decimal.Decimal('0.5')}}
 ${u}                     ${{'u' if sys.version_info[0] == 2 and sys.platform != 'cli' else ''}}
 
 *** Test Cases ***
 Integer
-    Integer              42                        ${42}
-    Integer              -1                        ${-1}
-    Integer              9999999999999999999999    ${9999999999999999999999}
-    Integer              ${41}                     ${41}
-    Integer              ${-4.0}                   ${-4}
+    Integer              42                        42
+    Integer              -1                        -1
+    Integer              9999999999999999999999    9999999999999999999999
+    Integer              123 456 789               123456789
+    Integer              123_456_789               123456789
+    Integer              - 123 456 789             -123456789
+    Integer              -_123_456_789             -123456789
+    Integer              ${41}                     41
+    Integer              ${-4.0}                   -4
+
+Integer as hex
+    Integer              0x0                        0
+    Integer              0 X 0 0 0 0 0              0
+    Integer              0_X_0_0_0_0_0              0
+    Integer              0x1000                     4096
+    Integer              -0x1000                    -4096
+    Integer              +0x1000                    4096
+    Integer              0x00FF                     255
+    Integer              - 0 X 00 ff                -255
+    Integer              -__0__X__00_ff__           -255
+    Integer              0 x BAD C0FFEE             50159747054
+
+Integer as octal
+    Integer              0o0                        0
+    Integer              0 O 0 0 0 0 0              0
+    Integer              0_O_0_0_0_0_0              0
+    Integer              0o1000                     512
+    Integer              -0o1000                    -512
+    Integer              +0o1000                    512
+    Integer              0o0077                     63
+    Integer              - 0 o 00 77                -63
+    Integer              -__0__o__00_77__           -63
+
+Integer as binary
+    Integer              0b0                        0
+    Integer              0 B 0 0 0 0 0              0
+    Integer              0_B_0_0_0_0_0              0
+    Integer              0b1000                     8
+    Integer              -0b1000                    -8
+    Integer              +0b1000                    8
+    Integer              0b0011                     3
+    Integer              - 0 b 00 11                -3
+    Integer              -__0__b__00_11__           -3
 
 Invalid integer
     [Template]           Conversion Should Fail
     Integer              foobar
     Integer              1.0
+    Integer              0xINVALID
+    Integer              0o8
+    Integer              0b2
+    Integer              00b1
+    Integer              0x0x0
     Integer              ${None}                   arg_type=None
 
 Integral (abc)
-    Integral             42                        ${42}
-    Integral             -1                        ${-1}
-    Integral             9999999999999999999999    ${9999999999999999999999}
+    Integral             42                        42
+    Integral             -1                        -1
+    Integral             999_999 999_999 999       999999999999999
 
 Invalid integral (abc)
     [Template]           Conversion Should Fail
@@ -34,12 +79,14 @@ Invalid integral (abc)
     Integral             ${LIST}                   type=integer    arg_type=list
 
 Float
-    Float                1.5                       ${1.5}
-    Float                -1                        ${-1.0}
-    Float                1e6                       ${1000000.0}
-    Float                -1.2e-3                   ${-0.0012}
-    Float                ${4}                      ${4.0}
-    Float                ${-4.1}                   ${-4.1}
+    Float                1.5                       1.5
+    Float                -1                        -1.0
+    Float                1e6                       1000000.0
+    Float                1 000 000 . 0_0_1         1000000.001
+    Float                -1.2e-3                   -0.0012
+    Float                ${4}                      4.0
+    Float                ${-4.1}                   -4.1
+    Float                ${FRACTION 1/2}           0.5
 
 Invalid float
     [Template]           Conversion Should Fail
@@ -47,10 +94,12 @@ Invalid float
     Float                ${LIST}                   arg_type=list
 
 Real (abc)
-    Real                 1.5                       ${1.5}
-    Real                 -1                        ${-1.0}
-    Real                 1e6                       ${1000000.0}
-    Real                 -1.2e-3                   ${-0.0012}
+    Real                 1.5                       1.5
+    Real                 -1                        -1.0
+    Real                 1e6                       1000000.0
+    Real                 1 000 000 . 0_0_1         1000000.001
+    Real                 -1.2e-3                   -0.0012
+    Real                 ${FRACTION 1/2}           Fraction(1,2)
 
 Invalid real (abc)
     [Template]           Conversion Should Fail
@@ -60,8 +109,10 @@ Decimal
     Decimal              3.14                      Decimal('3.14')
     Decimal              -1                        Decimal('-1')
     Decimal              1e6                       Decimal('1000000')
+    Decimal              1 000 000 . 0_0_1         Decimal('1000000.001')
     Decimal              ${1}                      Decimal(1)
     Decimal              ${1.1}                    Decimal(1.1)
+    Decimal              ${DECIMAL 1/2}            Decimal(0.5)
 
 Invalid decimal
     [Template]           Conversion Should Fail
@@ -69,19 +120,19 @@ Invalid decimal
     Decimal              ${LIST}                   arg_type=list
 
 Boolean
-    Boolean              True                      ${True}
-    Boolean              YES                       ${True}
-    Boolean              on                        ${True}
-    Boolean              1                         ${True}
-    Boolean              false                     ${False}
-    Boolean              No                        ${False}
-    Boolean              oFF                       ${False}
-    Boolean              0                         ${False}
-    Boolean              ${EMPTY}                  ${False}
-    Boolean              none                      ${NONE}
-    Boolean              ${1}                      ${1}
-    Boolean              ${1.1}                    ${1.1}
-    Boolean              ${None}                   ${None}
+    Boolean              True                      True
+    Boolean              YES                       True
+    Boolean              on                        True
+    Boolean              1                         True
+    Boolean              false                     False
+    Boolean              No                        False
+    Boolean              oFF                       False
+    Boolean              0                         False
+    Boolean              ${EMPTY}                  False
+    Boolean              none                      NONE
+    Boolean              ${1}                      1
+    Boolean              ${1.1}                    1.1
+    Boolean              ${None}                   None
 
 Invalid boolean string is accepted as-is
     Boolean              FooBar                    'FooBar'
@@ -137,7 +188,7 @@ Bytestring
     Bytestring           None                      b'None'
     Bytestring           NONE                      b'NONE'
     Bytestring           ${{b'foo'}}               b'foo'
-    Bytestring           ${{bytearray(b'foo')}}    b'foo'
+    Bytestring           ${{bytearray(b'foo')}}    bytearray(b'foo')
 
 Invalid bytesstring
     [Tags]               require-py3
@@ -221,6 +272,22 @@ Enum
     Enum                 bar                       MyEnum.bar
     Enum                 foo                       MyEnum.foo
 
+Flag
+    [Tags]               require-enum
+    Flag                 RED                       MyFlag.RED
+
+IntEnum
+    [Tags]               require-enum
+    IntEnum              ON                        MyIntEnum.ON
+    IntEnum              ${1}                      MyIntEnum.ON
+    IntEnum              0                         MyIntEnum.OFF
+
+IntFlag
+    [Tags]               require-enum
+    IntFlag              R                         MyIntFlag.R
+    IntFlag              4                         MyIntFlag.R
+    IntFlag              ${4}                      MyIntFlag.R
+
 Normalized enum member match
     [Tags]               require-enum
     Enum                 b a r                     MyEnum.bar
@@ -229,6 +296,9 @@ Normalized enum member match
     Enum                 normalize_me              MyEnum.normalize_me
     Enum                 normalize me              MyEnum.normalize_me
     Enum                 Normalize Me              MyEnum.normalize_me
+    Flag                 red                       MyFlag.RED
+    IntEnum              on                        MyIntEnum.ON
+    IntFlag              x                         MyIntFlag.X
 
 Normalized enum member match with multiple matches
     [Tags]               require-enum
@@ -240,6 +310,17 @@ Invalid Enum
     [Template]           Conversion Should Fail
     Enum                 foobar                    type=MyEnum           error=MyEnum does not have member 'foobar'. Available: 'FOO', 'bar', 'foo' and 'normalize_me'
     Enum                 bar!                      type=MyEnum           error=MyEnum does not have member 'bar!'. Available: 'FOO', 'bar', 'foo' and 'normalize_me'
+    Enum                 1                         type=MyEnum           error=MyEnum does not have member '1'. Available: 'FOO', 'bar', 'foo' and 'normalize_me'
+    Flag                 foobar                    type=MyFlag           error=MyFlag does not have member 'foobar'. Available: 'BLUE' and 'RED'
+
+Invalid IntEnum
+    [Tags]               require-enum
+    [Template]           Conversion Should Fail
+    IntEnum              nonex                     type=MyIntEnum        error=MyIntEnum does not have member 'nonex'. Available: 'OFF (0)' and 'ON (1)'
+    IntEnum              2                         type=MyIntEnum        error=MyIntEnum does not have member '2'. Available: 'OFF (0)' and 'ON (1)'
+    IntEnum              ${2}                      type=MyIntEnum        error=MyIntEnum does not have value '2'. Available: '0' and '1'          arg_type=integer
+    IntFlag              3                         type=MyIntFlag        error=MyIntFlag does not have member '3'. Available: 'R (4)', 'W (2)' and 'X (1)'
+    IntFlag              ${-1}                     type=MyIntFlag        error=MyIntFlag does not have value '-1'. Available: '1', '2' and '4'    arg_type=integer
 
 NoneType
     NoneType             None                      None

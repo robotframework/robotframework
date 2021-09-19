@@ -32,7 +32,7 @@ After failure
 Check IF/ELSE Status
     [Arguments]    @{statuses}    ${index}=0
     ${tc} =    Check Test Case    ${TESTNAME}
-    ${if} =    Set Variable   ${tc.body}[${index}]
+    ${if} =    Set Variable    ${tc.body}[${index}]
     IF    'FAIL' in ${statuses}
         Should Be Equal    ${if.status}    FAIL
     ELSE IF    'PASS' in ${statuses}

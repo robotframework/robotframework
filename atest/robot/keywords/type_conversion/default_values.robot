@@ -9,6 +9,15 @@ Integer
 Integer as float
     Check Test Case    ${TESTNAME}
 
+Integer as hex
+    Check Test Case    ${TESTNAME}
+
+Integer as octal
+    Check Test Case    ${TESTNAME}
+
+Integer as binary
+    Check Test Case    ${TESTNAME}
+
 Invalid integer
     Check Test Case    ${TESTNAME}
 
@@ -66,6 +75,18 @@ Invalid timedelta
     Check Test Case    ${TESTNAME}
 
 Enum
+    [Tags]    require-enum
+    Check Test Case    ${TESTNAME}
+
+Flag
+    [Tags]    require-enum
+    Check Test Case    ${TESTNAME}
+
+IntEnum
+    [Tags]    require-enum
+    Check Test Case    ${TESTNAME}
+
+IntFlag
     [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 

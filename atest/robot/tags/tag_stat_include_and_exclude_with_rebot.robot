@@ -17,6 +17,7 @@ ${E3}             excl_3
 @{INCL}           ${I1}    ${I2}    ${I3}
 @{EXCL}           ${E1}    ${E2}    ${E3}
 @{ALL}            @{EXCL}    ${F}    @{INCL}
+@{INTERNAL}       robot:just-an-example    ROBOT : XXX
 
 *** Test Cases ***
 No Includes Or Excludes
@@ -34,6 +35,14 @@ More Includes
 Include With Patterns
     --TagStatInc incl_?    @{INCL}
     --TagStatInc *cl3 --TagStatInc i*2    ${E3}    ${I2}    ${I3}
+
+Include to show internal tags
+    --tagstatinclude incl1 --tagstatinclude robot:*    ${I1}    @{INTERNAL}
+    --tagstatinclude robot:*    @{INTERNAL}
+    --tagstatinclude=*    @{ALL}    @{INTERNAL}
+
+Include and exclude internal
+    --tagstatinclude incl1 --tagstatinclude "robot : *" --tagstatexclude ROBOT:*    ${I1}
 
 One Exclude
     --tagstatexclude excl1    ${E2}    ${E3}    ${F}    @{INCL}

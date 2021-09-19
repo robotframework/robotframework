@@ -364,6 +364,86 @@ converting any failure into a continuable failure. These failures are
 handled by the framework exactly the same way as continuable failures
 originating from library keywords.
 
+Controlling continue on failure using reserved tags
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+All keywords executed as part of test cases or user keywords which are
+tagged with the reserved tag `robot:continue-on-failure` are considered continuable
+by default.
+
+Thus, the following two test cases :name:`Test 1` and :name:`Test 2` behave identically:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Test 1
+       Run Keyword and Continue on Failure    Should be Equal   1   2
+       User Keyword 1
+
+   Test 2
+       [Tags]    robot:continue-on-failure
+       Should be Equal   1   2
+       User Keyword 2
+
+   *** Keywords ***
+   User Keyword 1
+       Run Keyword and Continue on Failure    Should be Equal   3   4
+       Log   this message is logged
+
+   User Keyword 2
+       [Tags]    robot:continue-on-failure
+       Should be Equal   3   4
+       Log   this message is logged
+
+
+These tags also influence continue-on-failure in FOR loops and
+within IF/ELSE branches.
+The below test case will execute the test 10 times, no matter if
+the "Perform some test keyword" failed or not.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Test Case
+       [Tags]    robot:continue-on-failure
+       FOR    ${index}    IN RANGE    10
+           Perform some test
+       END
+
+
+Setting `robot:continue-on-failure` within a test case will not
+propagate the continue on failure behaviour into user keywords
+executed from within this test case (same is true for user keywords
+executed from within a user keyword with the reserved tag set).
+
+To support use cases where the behaviour should propagate from
+test cases into user keywords (and/or from user keywords into other
+user keywords), the reserved tag `robot:recursive-continue-on-failure`
+can be used. The below examples executes all the keywords listed.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Test
+       [Tags]    robot:recursive-continue-on-failure
+       Should be Equal   1   2
+       User Keyword 1
+       Log   log from test case
+
+   *** Keywords ***
+   User Keyword 1
+       Should be Equal   3   4
+       Log   log from keyword 1
+       User Keyword 2
+
+   User Keyword 2
+       Should be Equal   5   6
+       Log   log from keyword 2
+
+
+The `robot:continue-on-failure` and `robot:recursive-continue-on-failure`
+tags are new in Robot Framework 4.1.
+
 Execution continues on teardowns automatically
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

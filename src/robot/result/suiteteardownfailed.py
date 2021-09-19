@@ -40,20 +40,27 @@ class SuiteTeardownFailed(SuiteVisitor):
     _also_skip_msg = 'Skipped in parent suite teardown:\n%s\n\nEarlier message:\n%s'
 
     def __init__(self, message, skipped=False):
-        self._skipped = skipped
-        self._message = message
+        self.message = message
+        self.skipped = skipped
 
     def visit_test(self, test):
-        if not self._skipped:
-            test.status = test.FAIL
-            prefix = self._also_msg if test.message else self._normal_msg
-            test.message += prefix % self._message
+        if not self.skipped:
+            self._suite_teardown_failed(test)
         else:
-            test.status = test.SKIP
-            if test.message:
-                test.message = self._also_skip_msg % (self._message, test.message)
-            else:
-                test.message = self._normal_skip_msg % self._message
+            self._suite_teardown_skipped(test)
+
+    def _suite_teardown_failed(self, test):
+        if not test.skipped:
+            test.status = test.FAIL
+        prefix = self._also_msg if test.message else self._normal_msg
+        test.message += prefix % self.message
+
+    def _suite_teardown_skipped(self, test):
+        test.status = test.SKIP
+        if test.message:
+            test.message = self._also_skip_msg % (self.message, test.message)
+        else:
+            test.message = self._normal_skip_msg % self.message
 
     def visit_keyword(self, keyword):
         pass

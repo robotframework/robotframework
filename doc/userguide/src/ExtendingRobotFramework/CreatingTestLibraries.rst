@@ -122,7 +122,7 @@ Providing arguments to libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All test libraries implemented as classes can take arguments. These
-arguments are specified in the Setting table after the library name,
+arguments are specified in the Setting section after the library name,
 and when Robot Framework creates an instance of the imported library,
 it passes them to its constructor. Libraries implemented as a module
 cannot take any arguments, so trying to use those results in an error.
@@ -1433,17 +1433,28 @@ Other types cause conversion failures.
    |             |               |            |              | needed. All string comparisons are case-insensitive.           |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | int_        | Integral_     | integer,   | string,      | Conversion is done using the int_ built-in function. Floats    | | `42`                               |
-   |             |               | long       | float        | are converted only if they can be represented as integers      |                                      |
-   |             |               |            |              | exactly. For example, `1.0` is accepted and `1.1` is not.      |                                      |
-   |             |               |            |              | If converting a string to an integer fails and the type        |                                      |
-   |             |               |            |              | is got implicitly based on a default value, conversion to      |                                      |
-   |             |               |            |              | float is attempted as well.                                    |                                      |
+   |             |               | long       | float        | are converted only if they can be represented as integers      | | `-1`                               |
+   |             |               |            |              | exactly. For example, `1.0` is accepted and `1.1` is not.      | | `0xFF`                             |
+   |             |               |            |              | If converting a string to an integer fails and the type        | | `0o777`                            |
+   |             |               |            |              | is got implicitly based on a default value, conversion to      | | `0b1010`                           |
+   |             |               |            |              | float is attempted as well.                                    | | `10 000 000`                       |
+   |             |               |            |              |                                                                | | `0xBAD_C0FFEE`                     |
+   |             |               |            |              | Starting from RF 4.1, it is possible to use hexadecimal,       |                                      |
+   |             |               |            |              | octal and binary numbers by prefixing values with              |                                      |
+   |             |               |            |              | `0x`, `0o` and `0b`, respectively.                             |                                      |
+   |             |               |            |              |                                                                |                                      |
+   |             |               |            |              | Starting from RF 4.1, numbers can be separated using space or  |                                      |
+   |             |               |            |              | underscore.                                                    |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | float_      | Real_         | double     | string,      | Conversion is done using the float_ built-in.                  | | `3.14`                             |
    |             |               |            | int          |                                                                | | `2.9979e8`                         |
+   |             |               |            |              | Starting from RF 4.1, numbers can be separated using space or  | | `10 000.000 01`                    |
+   |             |               |            |              | underscore.                                                    | | `10_000.000_01`                    |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Decimal_    |               |            | string,      | Conversion is done using the Decimal_ class.                   | | `3.14`                             |
-   |             |               |            | int, float   |                                                                |                                      |
+   |             |               |            | int, float   |                                                                | | `10 000.000 01`                    |
+   |             |               |            |              | Starting from RF 4.1, numbers can be separated using space or  | | `10_000.000_01`                    |
+   |             |               |            |              | underscore.                                                    |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | str_        |               | string,    | Any          | All arguments are converted to Unicode strings. With Python 2  |                                      |
    |             |               | unicode    |              | the type should be `unicode`, not `str`. New in RF 4.0.        |                                      |
@@ -1473,14 +1484,24 @@ Other types cause conversion failures.
    |             |               |            |              | `time as time string`_ or `time as "timer" string`_. Integers  | | `01:02` (same as above)            |
    |             |               |            |              | and floats are considered to be seconds.                       |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | Enum_       |               |            | string       | The specified type must be an enumeration (a subclass of       | .. sourcecode:: python               |
-   |             |               |            |              | Enum_) and given arguments must match its members.             |                                      |
-   |             |               |            |              |                                                                |    class Color(Enum):                |
-   |             |               |            |              | Starting from RF 3.2.2, matching members is case-, space-      |        GREEN = 1                     |
-   |             |               |            |              | and underscore-insensitive.                                    |        DARK_GREEN = 2                |
+   | Enum_       |               |            | string       | The specified type must be an enumeration (a subclass of Enum_ | .. sourcecode:: python               |
+   |             |               |            |              | or Flag_) and given arguments must match its member names.     |                                      |
+   |             |               |            |              |                                                                |    class Direction(Enum):            |
+   |             |               |            |              | Starting from RF 3.2.2, matching member names is case-, space- |        NORTH = auto()                |
+   |             |               |            |              | and underscore-insensitive.                                    |        NORTH_WEST = auto()           |
    |             |               |            |              |                                                                |                                      |
-   |             |               |            |              |                                                                | | `GREEN` (Color.GREEN)              |
-   |             |               |            |              |                                                                | | `Dark Green` (Color.DARK_GREEN)    |
+   |             |               |            |              |                                                                | | `NORTH` (Direction.NORTH)          |
+   |             |               |            |              |                                                                | | `north west` (Direction.NORTH_WEST)|
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | IntEnum_    |               |            | string, int  | The specified type must be an integer based enumeration (a     | .. sourcecode:: python               |
+   |             |               |            |              | subclass of IntEnum_ or IntFlag_) and given arguments must     |                                      |
+   |             |               |            |              | match its member names or values.                              |    class PowerState(IntEnum):        |
+   |             |               |            |              |                                                                |        OFF = 0                       |
+   |             |               |            |              | Matching member names is case-, space- and                     |        ON = 1                        |
+   |             |               |            |              | and underscore-insensitive. Values can be given as actual      |                                      |
+   |             |               |            |              | integers and as strings that can be converted to integers.     | | `OFF` (PowerState.OFF)             |
+   |             |               |            |              |                                                                | | `1` (PowerState.ON)                |
+   |             |               |            |              | Support for IntEnum_ and IntFlag_ is new in RF 4.1.            |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | None_       |               | NoneType   | string       | String `NONE` (case-insensitively) is converted to `None`      | | `None`                             |
    |             |               |            |              | object. Other values cause an error.                           |                                      |
@@ -1522,6 +1543,9 @@ Other types cause conversion failures.
 .. _date: https://docs.python.org/library/datetime.html#datetime.date
 .. _timedelta: https://docs.python.org/library/datetime.html#datetime.timedelta
 .. _Enum: https://docs.python.org/library/enum.html#enum.Enum
+.. _Flag: https://docs.python.org/library/enum.html#enum.Flag
+.. _IntEnum: https://docs.python.org/library/enum.html#enum.IntEnum
+.. _IntFlag: https://docs.python.org/library/enum.html#enum.IntFlag
 .. _None: https://docs.python.org/library/constants.html#None
 .. _list: https://docs.python.org/library/stdtypes.html#list
 .. _Sequence: https://docs.python.org/library/collections.abc.html#collections.abc.Sequence
@@ -2237,7 +2261,7 @@ Programmatic logging APIs
 
 Programmatic APIs provide somewhat cleaner way to log information than
 using the standard output and error streams. Currently these
-interfaces are available only to Python bases test libraries.
+interfaces are available only to Python based test libraries.
 
 Public logging API
 ''''''''''''''''''

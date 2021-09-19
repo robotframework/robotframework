@@ -443,6 +443,25 @@ Syntax error in nested loop 2
             Fail    Should not be executed
         END
 
+Unexecuted
+    [Documentation]    FAIL    Expected failure
+    ${x} =    Set Variable    Original value
+    IF    False
+        FOR    ${x}    ${y}    IN    not    run
+            Fail    Should not be executed
+       END
+    END
+    Should Be Equal    ${x}    Original value
+    Variable Should Not Exist    ${y}
+    Fail    Expected failure
+    FOR    ${x}    ${y}    IN    not    run
+        Fail    Should not be executed
+    END
+    [Teardown]    Run Keywords
+    ...    Should Be Equal    ${x}    Original value
+    ...    AND
+    ...    Variable Should Not Exist    ${y}
+
 Header at the end of file
     [Documentation]    FAIL
     ...    Multiple errors:

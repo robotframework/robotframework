@@ -71,3 +71,6 @@ List expansion with slice
 
 List expansion with slice fails if value is not list-like
     Check Test Case    ${TESTNAME}
+
+Object supporting both index and key access
+    Check Test Case    ${TESTNAME}

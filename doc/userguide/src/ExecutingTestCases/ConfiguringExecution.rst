@@ -235,9 +235,22 @@ Setting the documentation
 
 In addition to `defining documentation in the test data`__, documentation
 of the top-level suite can be given from the command line with the
-option :option:`--doc (-D)` The value can contain simple `HTML formatting`_.
+option :option:`--doc (-D)`. The value can contain simple `HTML formatting`_
+and must be quoted if it contains spaces.
 
-.. note:: Prior to Robot Framework 3.1, underscores in the value were
+If the given documentation is a relative or absolute path pointing to an existing
+file, the actual documentation will be read from that file. This is especially
+convenient if the externally specified documentation is long or contains multiple
+lines.
+
+Examples::
+
+    robot --doc "Example documentation" tests.robot
+    robot --doc doc.txt tests.robot    # Documentation read from doc.txt if it exits.
+
+.. note:: Reading documentation from an external file is new in Robot Framework 4.1.
+
+          Prior to Robot Framework 3.1, underscores in documentation were
           converted to spaces same way as with the :option:`--name` option.
 
 __ `Test suite name and documentation`_
@@ -248,10 +261,26 @@ Setting free metadata
 `Free test suite metadata`_ may also be given from the command line with the
 option :option:`--metadata (-M)`. The argument must be in the format
 `name:value`, where `name` the name of the metadata to set and
-`value` is its value. The value can contain simple `HTML formatting`_.
+`value` is its value. The value can contain simple `HTML formatting`_ and
+the whole argument must be quoted if it contains spaces.
 This option may be used several times to set multiple metadata values.
 
-.. note:: Prior to Robot Framework 3.1, underscores in the value were
+If the given value is a relative or absolute path pointing to an existing
+file, the actual value will be read from that file. This is especially
+convenient if the value is long or contains multiple lines.
+If the value should be a path to an existing file, not read from that file,
+the value must be separated with a space from the `name:` part.
+
+Examples::
+
+    robot --metadata Name:Value tests.robot
+    robot --metadata "Another Name:Another value, now with spaces" tests.robot
+    robot --metadata "Read From File:meta.txt" tests.robot    # Value read from meta.txt if it exists.
+    robot --metadata "Path As Value: meta.txt" tests.robot    # Value always used as-is.
+
+.. note:: Reading metadata value from an external file is new in Robot Framework 4.1.
+
+          Prior to Robot Framework 3.1, underscores in the value were
           converted to spaces same way as with the :option:`--name` option.
 
 Setting tags

@@ -67,6 +67,7 @@ class _ExecutionContext(object):
         self.in_keyword_teardown = 0
         self._started_keywords = 0
         self.timeout_occurred = False
+        self.user_keywords = []
 
     @contextmanager
     def suite_teardown(self):
@@ -97,14 +98,15 @@ class _ExecutionContext(object):
         finally:
             self.in_keyword_teardown -= 1
 
-    @property
     @contextmanager
-    def user_keyword(self):
+    def user_keyword(self, handler):
+        self.user_keywords.append(handler)
         self.namespace.start_user_keyword()
         try:
             yield
         finally:
             self.namespace.end_user_keyword()
+            self.user_keywords.pop()
 
     @contextmanager
     def timeout(self, timeout):
@@ -123,6 +125,15 @@ class _ExecutionContext(object):
     @property
     def variables(self):
         return self.namespace.variables
+
+    @property
+    def continue_on_failure(self):
+        parents = ([self.test] if self.test else []) + self.user_keywords
+        if not parents:
+            return False
+        if 'robot:continue-on-failure' in parents[-1].tags:
+            return True
+        return any('robot:recursive-continue-on-failure' in p.tags for p in parents)
 
     def end_suite(self, suite):
         for name in ['${PREV_TEST_NAME}',

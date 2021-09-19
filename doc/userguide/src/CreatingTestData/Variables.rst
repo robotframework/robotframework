@@ -10,7 +10,7 @@ Introduction
 
 Variables are an integral feature of Robot Framework, and they can be
 used in most places in test data. Most commonly, they are used in
-arguments for keywords in test case tables and keyword tables, but
+arguments for keywords in Test Case and Keyword sections, but
 also all settings allow variables in their values. A normal keyword
 name *cannot* be specified with a variable, but the BuiltIn_ keyword
 :name:`Run Keyword` can be used to get the same effect.
@@ -774,7 +774,8 @@ everywhere within the scope of the currently executed test case. For
 example, if you set a variable in a user keyword, it is available both
 in the test case level and also in all other user keywords used in the
 current test. Other test cases will not see variables set with this
-keyword.
+keyword. It is an error to call :name:`Set Test Variable`
+outside the scope of a test (e.g. in a Suite Setup or Teardown).
 
 Variables set with :name:`Set Suite Variable` keyword are available
 everywhere within the scope of the currently executed test
@@ -1171,6 +1172,8 @@ Variables with the test case scope are visible in a test case and in
 all user keywords the test uses. Initially there are no variables in
 this scope, but it is possible to create them by using the BuiltIn_
 keyword :name:`Set Test Variable` anywhere in a test case.
+It is an error to call :name:`Set Test Variable` outside the
+scope of a test (e.g. in a Suite Setup or Teardown).
 
 Also variables in the test case scope are to some extend global. It is
 thus generally recommended to use capital letters with them too.

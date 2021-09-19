@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 import sys
-from threading import currentThread
+from threading import current_thread
 import signal
 
 from robot.errors import ExecutionFailed
@@ -63,7 +63,7 @@ class _StopSignalMonitor(object):
 
     @property
     def _can_register_signal(self):
-        return signal and currentThread().getName() == 'MainThread'
+        return signal and current_thread().name == 'MainThread'
 
     def _register_signal_handler(self, signum):
         try:

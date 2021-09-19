@@ -94,3 +94,26 @@ Pass With Initially Nonexisting Variable Inside Wait Until Keyword Succeeds
 Variable Values Should Not Be Visible In Keyword Arguments
     ${tc} =    Check Test Case    Pass With First Try
     Check Keyword Data    ${tc.kws[0].kws[0]}    BuiltIn.Log    args=\${HELLO}
+
+Strict retry interval
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Length Should Be    ${tc.body[0].kws}    4
+    Should Be True    300 <= ${tc.body[0].elapsedtime} < 900
+
+Fail with strict retry interval
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Length Should Be    ${tc.body[0].kws}    3
+    Should Be True    200 <= ${tc.body[0].elapsedtime} < 600
+
+Strict retry interval violation
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Length Should Be    ${tc.body[0].kws}    4
+    Should Be True    400 <= ${tc.body[0].elapsedtime} < 1200
+    FOR    ${index}    IN    1    3    5    7
+        Check Log Message    ${tc.body[0].body[${index}]}
+        ...    Keyword execution time ??? milliseconds is longer than retry interval 100 milliseconds.
+        ...    WARN    pattern=True
+    END
+
+Strict and invalid retry interval
+    Check Test Case    ${TESTNAME}

@@ -75,14 +75,14 @@ class UserKeywordRunner(object):
     def _run(self, context, args, result):
         variables = context.variables
         args = self._resolve_arguments(args, variables)
-        with context.user_keyword:
+        with context.user_keyword(self._handler):
             self._set_arguments(args, context)
             timeout = self._get_timeout(variables)
             if timeout is not None:
                 result.timeout = str(timeout)
             with context.timeout(timeout):
                 exception, return_ = self._execute(context)
-                if exception and not exception.can_continue(context.in_teardown):
+                if exception and not exception.can_continue(context):
                     raise exception
                 return_value = self._get_return_value(variables, return_)
                 if exception:
@@ -213,7 +213,7 @@ class UserKeywordRunner(object):
 
     def _dry_run(self, context, args, result):
         self._resolve_arguments(args)
-        with context.user_keyword:
+        with context.user_keyword(self._handler):
             timeout = self._get_timeout()
             if timeout:
                 result.timeout = str(timeout)

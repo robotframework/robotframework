@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, IntEnum
 from typing import Optional, Union, Dict, Any, List
 
 
@@ -24,15 +24,17 @@ class GeoLocation(_GeoCoordinated, total=False):
     - ``latitude`` Latitude between -90 and 90.
     - ``longitude`` Longitude between -180 and 180.
     - ``accuracy`` *Optional* Non-negative accuracy value. Defaults to 0.
-    Example usage: ``{'latitude': 59.95, 'longitude': 30.31667}``"""
 
+    Example usage: ``{'latitude': 59.95, 'longitude': 30.31667}``
+    """
     accuracy: float
 
 
-class Small(Enum):
+class Small(IntEnum):
     """This is the Documentation.
 
-    This was defined within the class definition."""
+    This was defined within the class definition.
+    """
     one = 1
     two = 2
     three = 3
@@ -67,7 +69,8 @@ class DataTypesLibrary:
     def __init__(self, credentials: Small = Small.one):
         """This is the init Docs.
 
-        It links to `Set Location` keyword and to `GeoLocation` data type."""
+        It links to `Set Location` keyword and to `GeoLocation` data type.
+        """
         print(type(credentials))
 
     def set_location(self, location: GeoLocation):
@@ -76,7 +79,8 @@ class DataTypesLibrary:
     def assert_something(self, value, operator: Optional[AssertionOperator] = None, exp: str = 'something?'):
         """This links to `AssertionOperator` .
 
-        This is the next Line that links to 'Set Location` ."""
+        This is the next Line that links to 'Set Location` .
+        """
         pass
 
     def funny_unions(self,

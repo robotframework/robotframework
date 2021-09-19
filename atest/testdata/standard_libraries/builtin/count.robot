@@ -86,6 +86,20 @@ Should Contain X Times without leading and trailing spaces
     ${LIST_4}      \ b\n          2    strip_spaces=${True}
     ${LIST_4}      c              0    strip_spaces=sure thing
 
+Should Contain X Times and do not collapse spaces
+    [Documentation]    FAIL  '${LIST_4}' contains '\ \ c' 0 times, not 1 time.
+    a\t\ a\n\ a    \ a      2    collapse_spaces=False
+    a\n\ a\n\ a    a\n      2    collapse_spaces=${FALSE}
+    ${DICT_5}      \ a      1    collapse_spaces=No
+    ${LIST_4}      \ \ c    1    collapse_spaces=False
+
+Should Contain X Times and collapse spaces
+    [Documentation]    FAIL  '${LIST_4}' contains ' a' 2 times, not 3 times.
+    a\ \ a\ \ a    \ a\n    1    collapse_spaces=True
+    a\n\ta\t\ a    \ a      2    collapse_spaces=${TRUE}
+    ${DICT_5}      \ta      2    collapse_spaces=TRUE
+    ${LIST_4}      \ta      3    collapse_spaces=True
+
 Should Contain X Times with invalid item
     [Documentation]    FAIL STARTS: Converting '10' to list failed: TypeError:
     ${10}    a    1

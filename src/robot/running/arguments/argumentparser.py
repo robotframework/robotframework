@@ -15,7 +15,7 @@
 
 from robot.errors import DataError
 from robot.utils import JYTHON, PY2, is_string, split_from_equals
-from robot.variables import is_assign
+from robot.variables import is_assign, is_scalar_assign
 
 from .argumentspec import ArgumentSpec
 
@@ -100,13 +100,17 @@ class JavaArgumentParser(_ArgumentParser):
 
 class _ArgumentSpecParser(_ArgumentParser):
 
+    def __init__(self, type='Keyword', error_reporter=None):
+        _ArgumentParser.__init__(self, type)
+        self._error_reporter = error_reporter
+
     def parse(self, argspec, name=None):
         spec = ArgumentSpec(name, self._type)
         named_only = False
         for arg in argspec:
             arg = self._validate_arg(arg)
             if spec.var_named:
-                self._raise_invalid_spec('Only last argument can be kwargs.')
+                self._report_error('Only last argument can be kwargs.')
             elif isinstance(arg, tuple):
                 arg, default = arg
                 arg = self._add_arg(spec, arg, named_only)
@@ -115,13 +119,12 @@ class _ArgumentSpecParser(_ArgumentParser):
                 spec.var_named = self._format_kwargs(arg)
             elif self._is_varargs(arg):
                 if named_only:
-                    self._raise_invalid_spec('Cannot have multiple varargs.')
+                    self._report_error('Cannot have multiple varargs.')
                 if not self._is_kw_only_separator(arg):
                     spec.var_positional = self._format_varargs(arg)
                 named_only = True
             elif spec.defaults and not named_only:
-                self._raise_invalid_spec('Non-default argument after default '
-                                         'arguments.')
+                self._report_error('Non-default argument after default arguments.')
             else:
                 self._add_arg(spec, arg, named_only)
         return spec
@@ -129,8 +132,11 @@ class _ArgumentSpecParser(_ArgumentParser):
     def _validate_arg(self, arg):
         raise NotImplementedError
 
-    def _raise_invalid_spec(self, error):
-        raise DataError('Invalid argument specification: %s' % error)
+    def _report_error(self, error):
+        if self._error_reporter:
+            self._error_reporter(error)
+        else:
+            raise DataError('Invalid argument specification: %s' % error)
 
     def _is_kwargs(self, arg):
         raise NotImplementedError
@@ -162,7 +168,7 @@ class DynamicArgumentParser(_ArgumentSpecParser):
     def _validate_arg(self, arg):
         if isinstance(arg, tuple):
             if self._is_invalid_tuple(arg):
-                self._raise_invalid_spec('Invalid argument "%s".' % (arg,))
+                self._report_error('Invalid argument "%s".' % (arg,))
             if len(arg) == 1:
                 return arg[0]
             return arg
@@ -196,10 +202,14 @@ class UserKeywordArgumentParser(_ArgumentSpecParser):
     def _validate_arg(self, arg):
         arg, default = split_from_equals(arg)
         if not (is_assign(arg) or arg == '@{}'):
-            self._raise_invalid_spec("Invalid argument syntax '%s'." % arg)
-        if default is not None:
-            return arg, default
-        return arg
+            self._report_error("Invalid argument syntax '%s'." % arg)
+        if default is None:
+            return arg
+        if not is_scalar_assign(arg):
+            typ = 'list' if arg[0] == '@' else 'dictionary'
+            self._report_error("Only normal arguments accept default values, "
+                               "%s arguments like '%s' do not." % (typ, arg))
+        return arg, default
 
     def _is_kwargs(self, arg):
         return arg[0] == '&'

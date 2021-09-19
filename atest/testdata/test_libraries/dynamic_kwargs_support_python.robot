@@ -12,7 +12,7 @@ Dynamic kwargs support should work without argument specification
     Do Something with kwargs    something    y=12    b=13
 
 Unexpected keyword argument
-    [Documentation]  FAIL TypeError: do_something_third() got an unexpected keyword argument 'y'
+    [Documentation]  FAIL GLOB: TypeError: *do_something_third() got an unexpected keyword argument 'y'
     Do something third    x    y=1
 
 Documentation and Argument Boundaries Work With Kwargs

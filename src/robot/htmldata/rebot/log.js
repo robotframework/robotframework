@@ -42,10 +42,10 @@ function drawCallback(element, childElement, childrenNames) {
 }
 
 function expandSuite(suite) {
-    if (suite.status == "PASS")
-        expandElement(suite);
-    else
+    if (suite.status == "FAIL")
         expandFailed(suite);
+    else
+        expandElement(suite);
 }
 
 function expandElement(item, retryCount) {

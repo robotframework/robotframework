@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 import sys
-from threading import currentThread
+from threading import current_thread
 import time
 
 try:
@@ -39,8 +39,7 @@ class _TkDialog(Toplevel):
         self._result = None
 
     def _prevent_execution_with_timeouts(self):
-        if 'linux' not in sys.platform \
-                and currentThread().getName() != 'MainThread':
+        if 'linux' not in sys.platform and current_thread().name != 'MainThread':
             raise RuntimeError('Dialogs library is not supported with '
                                'timeouts on Python on this platform.')
 

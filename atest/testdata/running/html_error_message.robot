@@ -1,3 +1,6 @@
+*** Settings ***
+Library           Exceptions
+
 *** Test Cases ***
 Set Test Message
     [Documentation]    PASS
@@ -8,6 +11,11 @@ HTML failure
     [Documentation]    FAIL
     ...    *HTML* <a href='http://robotframework.org'>Robot Framework</a>
     Fail    *HTML* <a href='http://robotframework.org'>Robot Framework</a>
+
+HTML failure with non-generic exception
+    [Documentation]    FAIL
+    ...    *HTML* ValueError: Invalid <b>value</b>
+    ValueError    *HTML* Invalid <b>value</b>
 
 HTML failure in setup
     [Documentation]    FAIL

@@ -45,9 +45,8 @@ class BodyRunner(object):
                 raise exception
             except ExecutionFailed as exception:
                 errors.extend(exception.get_errors())
-                self._run = exception.can_continue(self._context.in_teardown,
-                                                   self._templated,
-                                                   self._context.dry_run)
+                self._run = exception.can_continue(self._context,
+                                                   self._templated)
         if errors:
             raise ExecutionFailures(errors)
 
@@ -104,7 +103,11 @@ class IfRunner(object):
 
     def _run_if_branch(self, branch, recursive_dry_run=False, error=None):
         result = IfBranchResult(branch.type, branch.condition)
-        run_branch = self._should_run_branch(branch.condition, recursive_dry_run)
+        try:
+            run_branch = self._should_run_branch(branch.condition, recursive_dry_run)
+        except:
+            error = get_error_message()
+            run_branch = False
         with StatusReporter(branch, result, self._context, run_branch):
             if error and self._run:
                 raise DataError(error)
@@ -171,9 +174,8 @@ class ForInRunner(object):
                 raise exception
             except ExecutionFailed as exception:
                 errors.extend(exception.get_errors())
-                if not exception.can_continue(self._context.in_teardown,
-                                              self._templated,
-                                              self._context.dry_run):
+                if not exception.can_continue(self._context,
+                                              self._templated):
                     break
         if errors:
             raise ExecutionFailures(errors)
@@ -259,17 +261,19 @@ class ForInRunner(object):
 
     def _run_one_round(self, data, result, values=None):
         result = result.body.create_iteration()
-        variables = self._map_variables_and_values(data.variables, values)
-        for name, value in variables:
-            self._context.variables[name] = value
+        if values is not None:
+            variables = self._context.variables
+        else:    # Not really run (earlier failure, unexecuted IF branch, dry-run)
+            variables = {}
+            values = data.variables
+        for name, value in self._map_variables_and_values(data.variables, values):
+            variables[name] = value
             result.variables[name] = cut_assign_value(value)
         runner = BodyRunner(self._context, self._run, self._templated)
         with StatusReporter(data, result, self._context, self._run):
             runner.run(data.body)
 
     def _map_variables_and_values(self, variables, values):
-        if values is None:    # Failure occurred earlier or dry-run.
-            values = variables
         if len(variables) == 1 and len(values) != 1:
             return [(variables[0], tuple(values))]
         return zip(variables, values)

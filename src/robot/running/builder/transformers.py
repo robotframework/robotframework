@@ -238,6 +238,9 @@ class KeywordBuilder(NodeVisitor):
 
     def visit_Arguments(self, node):
         self.kw.args = node.values
+        if node.errors:
+            self.kw.error = ('Invalid argument specification: %s'
+                             % format_error(node.errors))
 
     def visit_Tags(self, node):
         self.kw.tags = node.values

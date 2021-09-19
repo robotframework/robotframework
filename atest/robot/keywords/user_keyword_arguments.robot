@@ -87,13 +87,21 @@ Invalid Arguments Spec
     [Template]    Verify Invalid Argument Spec
     0    Invalid argument syntax       Invalid argument syntax 'no deco'.
     1    Non-default after defaults    Non-default argument after default arguments.
-    2    Kwargs not last               Only last argument can be kwargs.
+    2    Default with varargs          Only normal arguments accept default values, list arguments like '\@{varargs}' do not.
+    3    Default with kwargs           Only normal arguments accept default values, dictionary arguments like '\&{kwargs}' do not.
+    4    Kwargs not last               Only last argument can be kwargs.
+    5    Multiple errors               Multiple errors:
+    ...                                - Invalid argument syntax 'invalid'.
+    ...                                - Non-default argument after default arguments.
+    ...                                - Cannot have multiple varargs.
+    ...                                - Only last argument can be kwargs.
 
 *** Keywords ***
 Verify Invalid Argument Spec
-    [Arguments]    ${index}    ${name}    ${error}
+    [Arguments]    ${index}    ${name}    @{error}
     Check Test Case    ${TEST NAME} - ${name}
     ${source} =    Normalize Path    ${DATADIR}/keywords/user_keyword_arguments.robot
+    ${error} =    Catenate    SEPARATOR=\n    @{error}
     ${message} =    Catenate
     ...    Error in test case file '${source}':
     ...    Creating keyword '${name}' failed:

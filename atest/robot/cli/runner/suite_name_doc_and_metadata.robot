@@ -3,10 +3,8 @@ Resource          cli_resource.robot
 
 *** Test Cases ***
 Default Name, Doc & Metadata
-    Run tests    ${EMPTY}    ${TESTFILE}
-    Check Names    ${SUITE}    Normal
-    Check Names    ${SUITE.tests[0]}    First One    Normal.
-    Check Names    ${SUITE.tests[1]}    Second One    Normal.
+    Run Tests    ${EMPTY}    ${TESTFILE}
+    Check All Names    ${SUITE}    Normal
     Should Be Equal    ${SUITE.doc}    Normal test cases
     Should Be Equal    ${SUITE.metadata['Something']}    My Value
 
@@ -21,9 +19,7 @@ Overriding Name, Doc & Metadata And Escaping
     ...    -M path:c:\\temp\\new.txt
     ...    -M esc:*?$&#!!
     Run Tests    ${options}    ${TESTFILE}
-    Check Names    ${SUITE}    my COOL Name.!!.
-    Check Names    ${SUITE.tests[0]}    First One    my COOL Name.!!..
-    Check Names    ${SUITE.tests[1]}    Second One    my COOL Name.!!..
+    Check All Names    ${SUITE}    my COOL Name.!!.
     Should Be Equal    ${SUITE.doc}    Even \\cooooler\\ doc!?
     Should Be Equal    ${SUITE.metadata['Something']}    new
     Should Be Equal    ${SUITE.metadata['Two Parts']}    three part VALUE
@@ -31,3 +27,26 @@ Overriding Name, Doc & Metadata And Escaping
     Should Be Equal    ${SUITE.metadata['esc']}    *?$&#!!
     File Should Contain    ${OUTDIR}/log.html    Something
     File Should Not Contain    ${OUTDIR}/log.html    something
+
+Documentation and metadata from external file
+    ${path} =    Normalize Path    ${DATADIR}/cli/runner/doc.txt
+    ${value} =    Get File    ${path}
+    Run Tests    --doc ${path} --metadata name:${path}    ${TEST FILE}
+    Check All Names    ${SUITE}    Normal
+    Should Be Equal    ${SUITE.doc}    ${value.rstrip()}
+    Should Be Equal    ${SUITE.metadata['name']}    ${value.rstrip()}
+    Run Tests    --doc " ${path}" --metadata "name: ${path}"    ${TEST FILE}
+    Check All Names    ${SUITE}    Normal
+    Should Be Equal    ${SUITE.doc}    ${path}
+    Should Be Equal    ${SUITE.metadata['name']}    ${path}
+
+Invalid external file
+    Run Tests Without Processing Output    --doc .    ${TEST FILE}
+    Stderr Should Match    [[] ERROR []] Reading documentation from an external file failed: *${USAGE TIP}\n
+
+*** Keywords ***
+Check All Names
+    [Arguments]    ${suite}    ${name}
+    Check Names    ${suite}    ${name}
+    Check Names    ${suite.tests[0]}    First One    ${name}.
+    Check Names    ${suite.tests[1]}    Second One    ${name}.

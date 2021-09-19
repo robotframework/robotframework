@@ -1,113 +1,149 @@
 *** Test Cases ***
-If without condition
+IF without condition
     [Documentation]    FAIL    IF has no condition.
     IF
-       No Operation
+        Fail    Should not be run
     END
 
-If with many conditions
+IF with ELSE without condition
+    [Documentation]    FAIL    IF has no condition.
+    IF
+        Fail    Should not be run
+    ELSE
+        Fail    Should not be run
+    END
+
+IF with many conditions
     [Documentation]    FAIL    IF has more than one condition.
-    IF   '1' == '1'  '2' == '2'  '3' == '3'
-       No Operation
+    IF    '1' == '1'    '2' == '2'    '3' == '3'
+        Fail    Should not be run
     END
 
-If without end
+IF with invalid condition
+    [Documentation]    FAIL STARTS: Evaluating expression ''123'=123' failed: SyntaxError:
+    IF    '123'=${123}
+        Fail    Should not be run
+    END
+
+IF with ELSE with invalid condition
+    [Documentation]    FAIL Evaluating expression 'ooops' failed: NameError: name 'ooops' is not defined nor importable as module
+    IF    ooops
+        Fail    Should not be run
+    ELSE
+        Fail    Should not be run
+    END
+
+ELSE IF with invalid condition
+    [Documentation]    FAIL STARTS: Evaluating expression '1/0' failed: ZeroDivisionError:
+    IF    False
+        Fail    Should not be run
+    ELSE IF    False
+        Fail    Should not be run
+    ELSE IF    1/0
+        Fail    Should not be run
+    ELSE IF    True
+        Fail    Should not be run
+    ELSE
+        Fail    Should not be run
+    END
+
+IF without END
     [Documentation]    FAIL    IF has no closing END.
-    IF  ${True}
-       No Operation
+    IF    ${True}
+        Fail    Should not be run
 
 Invalid END
     [Documentation]    FAIL    END does not accept arguments.
     IF    True
-        Fail    Not executed
+        Fail    Should not be run
     END    this    is    invalid
 
-If with wrong case
-   [Documentation]    FAIL    'If' is a reserved keyword. It must be an upper case 'IF' when used as a marker.
-   if  ${True}
-       Log  hello
-   END
+IF with wrong case
+    [Documentation]    FAIL    'If' is a reserved keyword. It must be an upper case 'IF' when used as a marker.
+    if    ${True}
+        Fail    Should not be run
+    END
 
-Else if without condition
-   [Documentation]    FAIL    ELSE IF has no condition.
-   IF  'mars' == 'mars'
-      Log   something
-   ELSE IF
-      Log  nothing
-   ELSE
-      Log   ok
-   END
+ELSE IF without condition
+    [Documentation]    FAIL    ELSE IF has no condition.
+    IF    'mars' == 'mars'
+        Fail    Should not be run
+    ELSE IF
+        Fail    Should not be run
+    ELSE
+        Fail    Should not be run
+    END
 
-Else if with multiple conditions
-  [Documentation]    FAIL    ELSE IF has more than one condition.
-  IF  'maa' == 'maa'
-     Log   something
-  ELSE IF  ${False}  ${True}
-     Log  nothing
-  ELSE
-     Log   ok
-  END
+ELSE IF with multiple conditions
+    [Documentation]    FAIL    ELSE IF has more than one condition.
+    IF    'maa' == 'maa'
+        Fail    Should not be run
+    ELSE IF    ${False}    ${True}
+        Fail    Should not be run
+    ELSE
+        Fail    Should not be run
+    END
 
-Else with a condition
-  [Documentation]    FAIL    ELSE has condition.
-  IF  'venus' != 'mars'
-     Log   something
-  ELSE  ${True}
-     Log   ok
-  END
+ELSE with condition
+    [Documentation]    FAIL    ELSE has condition.
+    IF    'venus' != 'mars'
+        Fail    Should not be run
+    ELSE    ${True}
+        Fail    Should not be run
+    END
 
-If with empty if
-  [Documentation]    FAIL    IF has empty body.
-  IF  'jupiter' == 'saturnus'
-  END
+IF with empty body
+    [Documentation]    FAIL    IF has empty body.
+    IF    'jupiter' == 'saturnus'
+    END
 
-If with empty else
-  [Documentation]    FAIL    ELSE has empty body.
-  IF  'kuu' == 'maa'
-     Log   something
-  ELSE
-  END
+ELSE with empty body
+    [Documentation]    FAIL    ELSE has empty body.
+    IF    'kuu' == 'maa'
+        Fail    Should not be run
+    ELSE
+    END
 
-If with empty else_if
-  [Documentation]    FAIL    ELSE IF has empty body.
-  IF  'mars' == 'maa'
-     Log   something
-  ELSE IF  ${False}
-  ELSE
-     Log   ok
-  END
+ELSE IF with empty body
+    [Documentation]    FAIL    ELSE IF has empty body.
+    IF    'mars' == 'maa'
+        Fail    Should not be run
+    ELSE IF    ${False}
+    ELSE
+        Fail    Should not be run
+    END
 
-If with else after else
-  [Documentation]    FAIL     Multiple ELSE branches.
-  IF  'kuu' == 'maa'
-     Log   something
-  ELSE
-     Log   hello
-  ELSE
-     Log   hei
-  END
+ELSE after ELSE
+    [Documentation]    FAIL    Multiple ELSE branches.
+    IF    'kuu' == 'maa'
+        Fail    Should not be run
+    ELSE
+        Fail    Should not be run
+    ELSE
+        Fail    Should not be run
+    END
 
-If with else if after else
-  [Documentation]    FAIL    ELSE IF after ELSE.
-  IF  'kuu' == 'maa'
-     Log   something
-  ELSE
-     Log   hello
-  ELSE IF  ${True}
-     Log   hei
-  END
+ELSE IF after ELSE
+    [Documentation]    FAIL    ELSE IF after ELSE.
+    IF    'kuu' == 'maa'
+        Fail    Should not be run
+    ELSE
+        Fail    Should not be run
+    ELSE IF    ${True}
+        Log    hei
+    END
 
-If for else if parsing
-   [Documentation]    FAIL    ELSE IF after ELSE.
-   FOR  ${value}  IN  1  2  3
-       IF  ${value} == 1
-           Log  ${value}
-       ELSE
-           No Operation
-       ELSE IF  ${value} == 3
-           Log  something
-       END
-   END
+Invalid IF inside FOR
+    [Documentation]    FAIL    ELSE IF after ELSE.
+    FOR    ${value}    IN    1    2    3
+        IF    ${value} == 1
+            Fail    Should not be run
+        ELSE
+            Fail    Should not be run
+        ELSE IF    ${value} == 3
+            Fail    Should not be run
+        END
+    END
 
 Multiple errors
     [Documentation]    FAIL
@@ -126,6 +162,6 @@ Multiple errors
     ...    - ELSE has empty body.
     IF
     ELSE IF    too    many
-    ELSE   oops
+    ELSE    oops
     ELSE IF
     ELSE

@@ -34,6 +34,24 @@ Errors Are Removed In All Mode
     Keyword Should Be Empty    ${tc.body[0]}    Error in test case
     Logged Errors Are Preserved In Execution Errors
 
+IF/ELSE in All mode
+    [Setup]    Previous test should have passed   Errors Are Removed In All Mode
+    ${tc} =    Check Test Case    IF structure
+    Length Should Be    ${tc.body}    1
+    Length Should Be    ${tc.body[0].body}    3
+    IF Branch Should Be Empty    ${tc.body[0].body[0]}    IF         'IF' == 'WRONG'
+    IF Branch Should Be Empty    ${tc.body[0].body[1]}    ELSE IF    'ELSE IF' == 'ELSE IF'
+    IF Branch Should Be Empty    ${tc.body[0].body[2]}    ELSE
+
+FOR in All mode
+    [Setup]    Previous test should have passed    IF/ELSE in All mode
+    ${tc} =    Check Test Case    FOR Loop In Test
+    Length Should Be    ${tc.body}    1
+    FOR Loop Should Be Empty    ${tc.body[0]}    IN
+    ${tc} =    Check Test Case    FOR IN RANGE Loop In Test
+    Length Should Be    ${tc.body}    1
+    FOR Loop Should Be Empty    ${tc.body[0]}    IN RANGE
+
 Passed Mode
     [Setup]    Run Rebot and set My Suite    --removekeywords passed    0
     Keyword Should Not Be Empty    ${MY SUITE.setup}    My Keyword    Suite Setup
@@ -132,7 +150,12 @@ Errors Are Not Removed In Tag Mode
 
 *** Keywords ***
 Run Some Tests
-    Create Output With Robot    ${INPUTFILE}    ${EMPTY}    misc/pass_and_fail.robot misc/warnings_and_errors.robot
+    ${suites} =    Catenate
+    ...    misc/pass_and_fail.robot
+    ...    misc/warnings_and_errors.robot
+    ...    misc/if_else.robot
+    ...    misc/for_loops.robot
+    Create Output With Robot    ${INPUTFILE}    ${EMPTY}    ${suites}
 
 Run Rebot And Set My Suite
     [Arguments]    ${rebot params}    ${suite index}

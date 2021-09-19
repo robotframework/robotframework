@@ -131,7 +131,8 @@ class KeywordHandler(ElementHandler):
         except AttributeError:
             body = self._get_body_for_suite_level_keyword(result)
         return body.create_keyword(kwname=elem.get('name', ''),
-                                   libname=elem.get('library'))
+                                   libname=elem.get('library'),
+                                   sourcename=elem.get('sourcename'))
 
     def _get_body_for_suite_level_keyword(self, result):
         # Someone, most likely a listener, has created a `<kw>` element on suite level.
@@ -185,7 +186,7 @@ class ForIterationHandler(ElementHandler):
 @ElementHandler.register
 class IfHandler(ElementHandler):
     tag = 'if'
-    children = frozenset(('status', 'branch', 'msg'))
+    children = frozenset(('status', 'branch', 'msg', 'doc'))
 
     def start(self, elem, result):
         return result.body.create_if()
@@ -194,7 +195,7 @@ class IfHandler(ElementHandler):
 @ElementHandler.register
 class IfBranchHandler(ElementHandler):
     tag = 'branch'
-    children = frozenset(('status', 'kw', 'if', 'for', 'msg'))
+    children = frozenset(('status', 'kw', 'if', 'for', 'msg', 'doc'))
 
     def start(self, elem, result):
         return result.body.create_branch(elem.get('type'), elem.get('condition'))

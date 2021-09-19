@@ -73,25 +73,17 @@ Failing Higher Level Suite Setup
     ...    Test 2
     Stderr Should Be Empty
 
-Failing Suite Teardown When All Tests Pass
+Failing Suite Teardown
     Run Tests    ${EMPTY}    core/failing_suite_teardown.robot
     ${error} =    Catenate    SEPARATOR=\n\n
     ...    Several failures occurred:
     ...    1) first
     ...    2) second
     Check Suite Status    ${SUITE}    FAIL
-    ...    Suite teardown failed:\n${error}\n\n${2 FAIL MSG}
-    ...    Test 1    Test 2
+    ...    Suite teardown failed:\n${error}\n\n3 tests, 0 passed, 2 failed, 1 skipped
+    ...    Passing    Failing    Skipping
     Should Be Equal    ${SUITE.teardown.status}    FAIL
     Output should contain teardown error    ${error}
-
-Failing Suite Teardown When Also Tests Fail
-    Run Tests    ${EMPTY}    core/failing_suite_teardown_2.robot
-    Check Suite Status    ${SUITE}    FAIL
-    ...    Suite teardown failed:\nExpected failure\n\n${5 FAIL MSG}
-    ...    Test Passes    Test Fails    Setup Fails    Teardown Fails    Test and Teardown Fail
-    Should Be Equal    ${SUITE.teardown.status}    FAIL
-    Output should contain teardown error    Expected failure
 
 Erroring Suite Teardown
     Run Tests    ${EMPTY}    core/erroring_suite_teardown.robot

@@ -16,6 +16,7 @@
 import ast
 import re
 
+from robot.running.arguments import UserKeywordArgumentParser
 from robot.utils import normalize_whitespace, split_from_equals
 from robot.variables import is_scalar_assign, is_dict_variable, search_variable
 
@@ -693,6 +694,11 @@ class Arguments(MultiValue):
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
+    def validate(self):
+        errors = []
+        UserKeywordArgumentParser(error_reporter=errors.append).parse(self.values)
+        self.errors = tuple(errors)
+
 
 @Statement.register
 class Return(MultiValue):
@@ -913,7 +919,7 @@ class Error(Statement):
         """Errors got from the underlying ``ERROR`` and ``FATAL_ERROR`` tokens.
 
         Errors can be set also explicitly. When accessing errors, they are returned
-        along with errors from from tokens.
+        along with errors got from tokens.
         """
         tokens = self.get_tokens(Token.ERROR, Token.FATAL_ERROR)
         return tuple(t.error for t in tokens) + self._errors

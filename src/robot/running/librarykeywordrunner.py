@@ -69,8 +69,8 @@ class LibraryKeywordRunner(object):
         if self.pre_run_messages:
             for message in self.pre_run_messages:
                 context.output.message(message)
-        positional, named = \
-            self._handler.resolve_arguments(args, context.variables)
+        variables = context.variables if not context.dry_run else None
+        positional, named = self._handler.resolve_arguments(args, variables)
         context.output.trace(lambda: self._trace_log_args(positional, named))
         runner = self._runner_for(context, self._handler.current_handler(),
                                   positional, dict(named))
@@ -119,9 +119,12 @@ class LibraryKeywordRunner(object):
             self._handler.resolve_arguments(args)
 
     def _executed_in_dry_run(self, handler):
+        keywords_to_execute = ('BuiltIn.Import Library',
+                               'BuiltIn.Set Library Search Order',
+                               'BuiltIn.Set Tags',
+                               'BuiltIn.Remove Tags')
         return (handler.libname == 'Reserved' or
-                handler.longname in ('BuiltIn.Import Library',
-                                     'BuiltIn.Set Library Search Order'))
+                handler.longname in keywords_to_execute)
 
 
 class EmbeddedArgumentsRunner(LibraryKeywordRunner):

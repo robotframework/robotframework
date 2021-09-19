@@ -130,6 +130,22 @@ Fail With Nonexisting Variable Inside Wait Until Keyword Succeeds
 Pass With Initially Nonexisting Variable Inside Wait Until Keyword Succeeds
     Wait Until Keyword Succeeds    3 times    0s    Access Initially Nonexisting Variable
 
+Strict retry interval
+    Wait Until Keyword Succeeds    4 times    strict: 100ms    Fail Until Retried Often Enough
+
+Fail with strict retry interval
+    [Documentation]    FAIL
+    ...    Keyword 'Fail Until Retried Often Enough' failed after retrying 3 times. \
+    ...    The last error was: Still 0 times to fail!
+    Wait Until Keyword Succeeds    3 times    STRICT : 0.1s    Fail Until Retried Often Enough
+
+Strict retry interval violation
+    Wait Until Keyword Succeeds    5 sec    strict:0.1    Fail Until Retried Often Enough    sleep=0.101
+
+Strict and invalid retry interval
+    [Documentation]    FAIL    ValueError: Invalid time string 'invalid:value'.
+    Wait Until Keyword Succeeds    3 times    strict: invalid:value    Not executed
+
 *** Keywords ***
 User Keyword
     ${value} =    Fail Until Retried Often Enough    From User Keyword

@@ -15,6 +15,10 @@ HTML failure
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    ${FAILURE}    FAIL    html=True
 
+HTML failure with non-generic exception
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    ValueError: Invalid <b>value</b>    FAIL    html=True
+
 HTML failure in setup
     Check Test Case    ${TESTNAME}
 

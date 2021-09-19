@@ -16,10 +16,10 @@
 from itertools import chain
 import re
 
-from robot.utils import NormalizedDict, unicode
+from robot.utils import NormalizedDict
 
 from .stats import CombinedTagStat, TagStat
-from .tags import SingleTagPattern, TagPatterns
+from .tags import TagPatterns
 
 
 class TagStatistics(object):
@@ -41,14 +41,13 @@ class TagStatistics(object):
 
 class TagStatisticsBuilder(object):
 
-    def __init__(self, included=None, excluded=None,
-                 combined=None, docs=None, links=None):
+    def __init__(self, included=None, excluded=None, combined=None, docs=None,
+                 links=None):
         self._included = TagPatterns(included)
         self._excluded = TagPatterns(excluded)
+        self._reserved = TagPatterns('robot:*')
         self._info = TagStatInfo(docs, links)
-        self.stats = TagStatistics(
-            self._info.get_combined_stats(combined)
-        )
+        self.stats = TagStatistics(self._info.get_combined_stats(combined))
 
     def add_test(self, test):
         self._add_tags_to_statistics(test)
@@ -56,15 +55,18 @@ class TagStatisticsBuilder(object):
 
     def _add_tags_to_statistics(self, test):
         for tag in test.tags:
-            if self._is_included(tag):
+            if self._is_included(tag) and not self._suppress_reserved(tag):
                 if tag not in self.stats.tags:
                     self.stats.tags[tag] = self._info.get_stat(tag)
                 self.stats.tags[tag].add_test(test)
 
     def _is_included(self, tag):
-        if self._included and not self._included.match(tag):
+        if self._included and tag not in self._included:
             return False
-        return not self._excluded.match(tag)
+        return tag not in self._excluded
+
+    def _suppress_reserved(self, tag):
+        return tag in self._reserved and tag not in self._included
 
     def _add_to_combined_statistics(self, test):
         for stat in self.stats.combined:

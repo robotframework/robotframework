@@ -8,20 +8,28 @@ Resource          atest_resource.robot
 ${EXIT ON FAILURE}          Failure occurred and exit-on-failure mode is in use.
 
 *** Test Cases ***
-Passing tests do not initiate exit-on-failure
-    Check Test Case    Passing
-    Check Test Case    Passing tests do not initiate exit-on-failure
+Passing test does not initiate exit-on-failure
+    Check Test Case    ${TEST NAME}
 
-Skip-on-failure tests do not initiate exit-on-failure
-    Check Test Case    Skipped on failure
+Skipped test does not initiate exit-on-failure
+    Check Test Case    ${TEST NAME}
 
-Failing tests initiate exit-on-failure
-    Check Test Case    Failing
-    Test Should Have Been Skipped    Not executed
+Test skipped in teardown does not initiate exit-on-failure
+    Check Test Case    ${TEST NAME}
+
+Skip-on-failure test does not initiate exit-on-failure
+    Check Test Case    ${TEST NAME}
+
+Test skipped-on-failure in teardown does not initiate exit-on-failure
+    Check Test Case    ${TEST NAME}
+
+Failing test initiates exit-on-failure
+    Check Test Case    ${TEST NAME}
+    Test Should Not Have Been Run    Not executed
 
 Tests in subsequent suites are skipped
-    Test Should Have Been Skipped    SubSuite1 First
-    Test Should Have Been Skipped    Suite3 First
+    Test Should Not Have Been Run    SubSuite1 First
+    Test Should Not Have Been Run    Suite3 First
 
 Imports in subsequent suites are skipped
     Should Be Equal    ${SUITE.suites[-1].name}    Irrelevant
@@ -42,46 +50,53 @@ Exit On Failure With Skip Teardown On Exit
     Teardown Should Not Be Defined    ${tcase}
     ${tsuite} =    Get Test Suite    Fourth
     Teardown Should Not Be Defined    ${tsuite}
-    Test Should Have Been Skipped    SubSuite1 First
-    Test Should Have Been Skipped    Suite3 First
+    Test Should Not Have Been Run    SubSuite1 First
+    Test Should Not Have Been Run    Suite3 First
 
 Test setup fails
     [Setup]    Run Tests    -X    misc/setups_and_teardowns.robot
     Check Test Case    Test with setup and teardown
     Check Test Case    Test with failing setup
-    Test Should Have Been Skipped    Test with failing teardown
-    Test Should Have Been Skipped    Failing test with failing teardown
+    Test Should Not Have Been Run    Test with failing teardown
+    Test Should Not Have Been Run    Failing test with failing teardown
 
 Test teardown fails
     [Setup]    Run Tests
     ...    --ExitOnFail --variable TEST_TEARDOWN:NonExistingKeyword
     ...    misc/setups_and_teardowns.robot
     Check Test Case    Test with setup and teardown    FAIL    Teardown failed:\nNo keyword with name 'NonExistingKeyword' found.
-    Test Should Have Been Skipped    Test with failing setup
-    Test Should Have Been Skipped    Test with failing teardown
-    Test Should Have Been Skipped    Failing test with failing teardown
+    Test Should Not Have Been Run    Test with failing setup
+    Test Should Not Have Been Run    Test with failing teardown
+    Test Should Not Have Been Run    Failing test with failing teardown
 
 Suite setup fails
     [Setup]    Run Tests
     ...    --ExitOnFail --variable SUITE_SETUP:Fail
     ...    misc/setups_and_teardowns.robot misc/pass_and_fail.robot
-    Test Should Have Been Skipped    Test with setup and teardown
-    Test Should Have Been Skipped    Test with failing setup
-    Test Should Have Been Skipped    Test with failing teardown
-    Test Should Have Been Skipped    Failing test with failing teardown
-    Test Should Have Been Skipped    Pass
-    Test Should Have Been Skipped    Fail
+    Test Should Not Have Been Run    Test with setup and teardown
+    Test Should Not Have Been Run    Test with failing setup
+    Test Should Not Have Been Run    Test with failing teardown
+    Test Should Not Have Been Run    Failing test with failing teardown
+    Test Should Not Have Been Run    Pass
+    Test Should Not Have Been Run    Fail
 
 Suite teardown fails
     [Setup]    Run Tests
     ...    --ExitOnFail --variable SUITE_TEARDOWN:Fail --test TestWithSetupAndTeardown --test Pass --test Fail
     ...    misc/setups_and_teardowns.robot misc/pass_and_fail.robot
     Check Test Case    Test with setup and teardown    FAIL    Parent suite teardown failed:\nAssertionError
-    Test Should Have Been Skipped    Pass
-    Test Should Have Been Skipped    Fail
+    Test Should Not Have Been Run    Pass
+    Test Should Not Have Been Run    Fail
+
+Failure set by listener can initiate exit-on-failure
+    [Setup]    Run Tests
+    ...    --ExitOnFailure --Listener ${DATADIR}/cli/runner/failtests.py
+    ...    misc/pass_and_fail.robot
+    Check Test Case    Pass    status=FAIL
+    Test Should Not Have Been Run    Fail
 
 *** Keywords ***
-Test Should Have Been Skipped
+Test Should Not Have Been Run
     [Arguments]    ${name}
     ${tc} =    Check Test Case    ${name}    FAIL    ${EXIT ON FAILURE}
     Should Contain    ${tc.tags}    robot:exit

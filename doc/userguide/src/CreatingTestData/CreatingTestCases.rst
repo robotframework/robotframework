@@ -22,17 +22,17 @@ Test case syntax
 Basic syntax
 ~~~~~~~~~~~~
 
-Test cases are constructed in test case tables from the available
+Test cases are constructed in test case sections from the available
 keywords. Keywords can be imported from `test libraries`_ or `resource
-files`_, or created in the `keyword table`_ of the test case file
+files`_, or created in the `keyword section`_ of the test case file
 itself.
 
-.. _keyword table: `user keywords`_
+.. _keyword section: `user keywords`_
 
-The first column in the test case table contains test case names. A
+The first column in the test case section contains test case names. A
 test case starts from the row with something in this column and
-continues to the next test case name or to the end of the table. It is
-an error to have something between the table headers and the first
+continues to the next test case name or to the end of the section. It is
+an error to have something between the section headers and the first
 test.
 
 The second column normally has keyword names. An exception to this rule
@@ -66,8 +66,8 @@ contain possible arguments to the specified keyword.
           like `--test 'Example *'` will actually run any test starting with
           :name:`Example`.
 
-Settings in the Test Case table
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Settings in the Test Case section
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Test cases can also have their own settings. Setting names are always
 in the second column, where keywords normally are, and their values
@@ -108,10 +108,10 @@ Example test case with settings:
        [Tags]    dummy    owner-johndoe
        Log    Hello, world!
 
-Test case related settings in the Setting table
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Test case related settings in the Setting section
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Setting table can have the following test case related
+The Setting section can have the following test case related
 settings. These settings are mainly default values for the
 test case specific settings listed earlier.
 
@@ -519,7 +519,7 @@ __ `HTML in error messages`_
 Test case name and documentation
 --------------------------------
 
-The test case name comes directly from the Test Case table: it is
+The test case name comes directly from the Test Case section: it is
 exactly what is entered into the test case column. Test cases in one
 test suite should have unique names.  Pertaining to this, you can also
 use the `automatic variable`_ `${TEST_NAME}` within the test
@@ -612,17 +612,17 @@ In this section it is only explained how to set tags for test
 cases, and different ways to do it are listed below. These
 approaches can naturally be used together.
 
-`Force Tags`:setting: in the Setting table
+`Force Tags`:setting: in the Setting section
    All test cases in a test case file with this setting always get
    specified tags. If it is used in the `test suite initialization file`,
    all test cases in sub test suites get these tags.
 
-`Default Tags`:setting: in the Setting table
+`Default Tags`:setting: in the Setting section
    Test cases that do not have a :setting:`[Tags]` setting of their own
    get these tags. Default tags are not supported in test suite initialization
    files.
 
-`[Tags]`:setting: in the Test Case table
+`[Tags]`:setting: in the Test Case section
    A test case always gets these tags. Additionally, it does not get the
    possible tags specified with :setting:`Default Tags`, so it is possible
    to override the :setting:`Default Tags` by using empty value. It is
@@ -687,8 +687,13 @@ tag with this prefixes unless actually activating the special functionality.
 
 At the time of writing, the only special tags are `robot:exit`, that is
 automatically added to tests when `stopping test execution gracefully`_,
-and `robot:no-dry-run`, that can be used to disable the `dry run`_ mode.
+and `robot:no-dry-run`, that can be used to disable the `dry run`_ mode as
+well as `robot:continue-on-failure` which controls continuable execution.
 More usages are likely to be added in the future.
+
+As of RobotFramework 4.1, reserved tags are suppressed by default in the
+test suite's tag statistics. They will be shown when they are explicitly 
+included via the `--tagstatinclude 'robot:*'` command line option.
 
 Test setup and teardown
 -----------------------
@@ -713,10 +718,10 @@ on by default.
 
 The easiest way to specify a setup or a teardown for test cases in a
 test case file is using the :setting:`Test Setup` and :setting:`Test
-Teardown` settings in the Setting table. Individual test cases can
+Teardown` settings in the Setting section. Individual test cases can
 also have their own setup or teardown. They are defined with the
 :setting:`[Setup]` or :setting:`[Teardown]` settings in the test case
-table and they override possible :setting:`Test Setup` and
+section and they override possible :setting:`Test Setup` and
 :setting:`Test Teardown` settings. Having no keyword after a
 :setting:`[Setup]` or :setting:`[Teardown]` setting means having no
 setup or teardown. It is also possible to use value `NONE` to indicate that
@@ -730,11 +735,11 @@ a test has no setup/teardown.
 
    *** Test Cases ***
    Default values
-       [Documentation]    Setup and teardown from setting table
+       [Documentation]    Setup and teardown from setting section
        Do Something
 
    Overridden setup
-       [Documentation]    Own setup, teardown from setting table
+       [Documentation]    Own setup, teardown from setting section
        [Setup]    Open Application    App B
        Do Something
 
@@ -800,9 +805,9 @@ functionally fully identical.
 As the example illustrates, it is possible to specify the
 template for an individual test case using the :setting:`[Template]`
 setting. An alternative approach is using the :setting:`Test Template`
-setting in the Setting table, in which case the template is applied
+setting in the Setting section, in which case the template is applied
 for all test cases in that test case file. The :setting:`[Template]`
-setting overrides the possible template set in the Setting table, and
+setting overrides the possible template set in the Setting section, and
 an empty value for :setting:`[Template]` means that the test has no
 template even when :setting:`Test Template` is used. It is also possible
 to use value `NONE` to indicate that a test has no template.

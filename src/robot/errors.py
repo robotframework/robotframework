@@ -86,8 +86,7 @@ class TimeoutError(RobotError):
 
     This exception is handled specially so that execution of the
     current test is always stopped immediately and it is not caught by
-    keywords executing other keywords (e.g. `Run Keyword And Expect
-    Error`).
+    keywords executing other keywords (e.g. `Run Keyword And Expect Error`).
     """
 
     def __init__(self, message='', test_timeout=True):
@@ -140,16 +139,18 @@ class ExecutionStatus(RobotError):
             if child is not self:
                 child.continue_on_failure = continue_on_failure
 
-    def can_continue(self, teardown=False, templated=False, dry_run=False):
-        if dry_run:
+    def can_continue(self, context, templated=False):
+        if context.dry_run:
             return True
         if self.syntax or self.exit or self.skip or self.test_timeout:
             return False
         if templated:
             return True
         if self.keyword_timeout:
+            if context.in_teardown:
+                self.keyword_timeout = False
             return False
-        if teardown:
+        if context.in_teardown or context.continue_on_failure:
             return True
         return self.continue_on_failure
 
@@ -200,27 +201,28 @@ class ExecutionFailures(ExecutionFailed):
             return messages[0]
         prefix = 'Several failures occurred:'
         if any(msg.startswith('*HTML*') for msg in messages):
-            prefix = '*HTML* ' + prefix
-            messages = self._format_html_messages(messages)
+            html_prefix = '*HTML* '
+            messages = [self._html_format(msg) for msg in messages]
+        else:
+            html_prefix = ''
         if any(e.skip for e in errors):
             skip_idx = errors.index([e for e in errors if e.skip][0])
             skip_msg = messages[skip_idx]
             messages = messages[:skip_idx] + messages[skip_idx+1:]
             if len(messages) == 1:
-                return '%s\n\nAlso failure occurred:\n%s' % (skip_msg, messages[0])
+                return '%s%s\n\nAlso failure occurred:\n%s' \
+                       % (html_prefix, skip_msg, messages[0])
             prefix = '%s\n\nAlso failures occurred:' % skip_msg
         return '\n\n'.join(
-            [prefix] +
+            [html_prefix + prefix] +
             ['%d) %s' % (i, m) for i, m in enumerate(messages, start=1)]
         )
 
-    def _format_html_messages(self, messages):
+    def _html_format(self, msg):
         from robot.utils import html_escape
-        for msg in messages:
-            if msg.startswith('*HTML*'):
-                yield msg[6:].lstrip()
-            else:
-                yield html_escape(msg)
+        if msg.startswith('*HTML*'):
+            return msg[6:].lstrip()
+        return html_escape(msg)
 
     def _get_attrs(self, errors):
         return {

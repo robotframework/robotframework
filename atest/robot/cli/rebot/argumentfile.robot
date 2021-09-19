@@ -9,7 +9,7 @@ ${ARG FILE}     %{TEMPDIR}/arguments.txt
 Argument File
     ${content} =    Catenate    SEPARATOR=\n
     ...    --name From Arg File
-    ...    -D= Leading space
+    ...    -D= Leading space is ignored
     ...    -M${SPACE*5}No:Spaces
     ...    \# comment line
     ...    ${EMPTY}
@@ -24,5 +24,5 @@ Argument File
     Should Be Empty    ${result.stderr}
     Directory Should Contain    ${CLI OUTDIR}    myout.xml
     Should Be Equal    ${SUITE.name}    From Arg File
-    Should Be Equal    ${SUITE.doc}    ${SPACE}Leading space
+    Should Be Equal    ${SUITE.doc}    Leading space is ignored
     Should Be Equal    ${SUITE.metadata['No']}    Spaces

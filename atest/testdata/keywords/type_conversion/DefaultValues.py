@@ -1,7 +1,12 @@
 try:
-    from enum import Enum
-except ImportError:    # Python < 3.4, unless installed separately
-    Enum = object
+    from enum import Flag, Enum, IntFlag, IntEnum
+except ImportError:  # Python 2
+    try:
+        from enum import Enum, IntEnum
+    except ImportError:  # no enum34 installed
+        Flag = Enum = IntFlag = IntEnum = object
+    else:
+        Flag, IntFlag = Enum, IntEnum
 from datetime import datetime, date, timedelta
 from decimal import Decimal
 
@@ -12,6 +17,22 @@ from robot.utils import unicode
 class MyEnum(Enum):
     FOO = 1
     bar = 'xxx'
+
+
+class MyFlag(Flag):
+    RED = 1
+    BLUE = 2
+
+
+class MyIntEnum(IntEnum):
+    ON = 1
+    OFF = 0
+
+
+class MyIntFlag(IntFlag):
+    R = 4
+    W = 2
+    X = 1
 
 
 class Unknown(object):
@@ -63,6 +84,18 @@ def timedelta_(argument=timedelta(), expected=None):
 
 
 def enum(argument=MyEnum.FOO, expected=None):
+    _validate_type(argument, expected)
+
+
+def flag(argument=MyFlag.RED, expected=None):
+    _validate_type(argument, expected)
+
+
+def int_enum(argument=MyIntEnum.ON, expected=None):
+    _validate_type(argument, expected)
+
+
+def int_flag(argument=MyIntFlag.X, expected=None):
     _validate_type(argument, expected)
 
 

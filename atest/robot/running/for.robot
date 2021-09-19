@@ -280,6 +280,13 @@ Syntax error in nested loop
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
 
+Unexecuted
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should be FOR loop         ${tc.body[1].body[0].body[0]}            1              NOT RUN
+    Should be FOR iteration    ${tc.body[1].body[0].body[0].body[0]}    \${x}=\${x}    \${y}=\${y}
+    Should be FOR loop         ${tc.body[5]}                            1              NOT RUN
+    Should be FOR iteration    ${tc.body[5].body[0]}                    \${x}=\${x}    \${y}=\${y}
+
 Header at the end of file
     Check Test Case    ${TESTNAME}
 

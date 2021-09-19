@@ -47,23 +47,23 @@ Should Be Byte String Negative
     'Hyvä' is not a byte string.    Should Be Byte String    Hyvä
     My error    Should Be Byte String    ${0}    My error
 
-Should Be Lowercase Positive
-    Should Be Lowercase    foo bar
-    Should Be Lowercase    ${BYTES.lower()}
+Should Be Lower Case Positive
+    Should Be Lower Case    foo bar
+    Should Be Lower Case    ${BYTES.lower()}
 
-Should Be Lowercase Negative
+Should Be Lower Case Negative
     [Template]    Run Keyword And Expect Error
-    '${BYTES}' is not lowercase.    Should Be Lowercase    ${BYTES}
-    My error    Should Be Lowercase    UP!    My error
+    '${BYTES}' is not lower case.    Should Be Lower Case    ${BYTES}
+    My error    Should Be Lower Case    UP!    My error
 
-Should Be Uppercase Positive
-    Should Be Uppercase    FOO BAR
-    Should Be Uppercase    ${BYTES.upper()}
+Should Be Upper Case Positive
+    Should Be Upper Case    FOO BAR
+    Should Be Upper Case    ${BYTES.upper()}
 
-Should Be Uppercase Negative
+Should Be Upper Case Negative
     [Template]    Run Keyword And Expect Error
-    '${BYTES}' is not uppercase.    Should Be Uppercase    ${BYTES}
-    Custom error    Should Be Uppercase    low...    Custom error
+    '${BYTES}' is not upper case.    Should Be Upper Case    ${BYTES}
+    Custom error    Should Be Upper Case    low...    Custom error
 
 Should Be Title Case Positive
     Should Be Title Case    Foo Bar!

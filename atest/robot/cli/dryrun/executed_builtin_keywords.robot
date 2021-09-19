@@ -13,3 +13,9 @@ Set Library Search Order
     Should Be Equal    ${tc.kws[1].name}    Second.Parameters
     Should Be Equal    ${tc.kws[2].name}    First.Parameters
     Should Be Equal    ${tc.kws[4].name}    Dynamic.Parameters
+
+Set Tags
+    Check Test Tags    ${TESTNAME}    \${2}    \${var}    Tag0    Tag1    Tag2
+
+Remove Tags
+    Check Test Tags    ${TESTNAME}    Tag1    Tag3

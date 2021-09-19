@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from inspect import isclass
+from inspect import getdoc, isclass
 
 try:
     from enum import Enum
@@ -23,23 +23,8 @@ except ImportError:  # Standard in Py 3.4+ but can be separately installed
     class EnumType(object):
         pass
 
-try:
-    from typing import TypedDict
 
-    TypedDictType = type(TypedDict('TypedDictDummy', {}))
-except ImportError:
-    class TypedDictType(object):
-        pass
-
-try:
-    from typing_extensions import TypedDict as ExtTypedDict
-
-    ExtTypedDictType = type(ExtTypedDict('TypedDictDummy', {}))
-except ImportError:
-    class ExtTypedDictType(object):
-        pass
-
-from robot.utils import py3to2, Sortable, unic, unicode
+from robot.utils import py3to2, Sortable, unic, unicode, typeddict_types
 
 
 @py3to2
@@ -74,7 +59,7 @@ class DataTypeCatalog(object):
     def _get_type_doc_object(self, typ):
         if isinstance(typ, (EnumDoc, TypedDictDoc)):
             return typ
-        if isinstance(typ, (TypedDictType, ExtTypedDictType)):
+        if isinstance(typ, typeddict_types):
             return TypedDictDoc.from_TypedDict(typ)
         if isinstance(typ, EnumType):
             return EnumDoc.from_Enum(typ)
@@ -110,7 +95,7 @@ class TypedDictDoc(Sortable):
             required = key in required_keys if required_keys or optional_keys else None
             items.append({'key': key, 'type': typ, 'required': required})
         return cls(name=typed_dict.__name__,
-                   doc=typed_dict.__doc__ or '',
+                   doc=getdoc(typed_dict) or '',
                    items=items)
 
     @property
@@ -137,7 +122,7 @@ class EnumDoc(Sortable):
     @classmethod
     def from_Enum(cls, enum_type):
         return cls(name=enum_type.__name__,
-                   doc=enum_type.__doc__ or '',
+                   doc=getdoc(enum_type) or '',
                    members=[{'name': name, 'value': unicode(member.value)}
                             for name, member in enum_type.__members__.items()])
 

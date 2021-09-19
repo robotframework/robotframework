@@ -7,6 +7,15 @@ Resource         atest_resource.robot
 Integer
     Check Test Case    ${TESTNAME}
 
+Integer as hex
+    Check Test Case    ${TESTNAME}
+
+Integer as octal
+    Check Test Case    ${TESTNAME}
+
+Integer as binary
+    Check Test Case    ${TESTNAME}
+
 Invalid integer
     Check Test Case    ${TESTNAME}
 
@@ -88,6 +97,15 @@ Invalid timedelta
 Enum
     Check Test Case    ${TESTNAME}
 
+Flag
+    Check Test Case    ${TESTNAME}
+
+IntEnum
+    Check Test Case    ${TESTNAME}
+
+IntFlag
+    Check Test Case    ${TESTNAME}
+
 Normalized enum member match
     Check Test Case    ${TESTNAME}
 
@@ -95,6 +113,9 @@ Normalized enum member match with multiple matches
     Check Test Case    ${TESTNAME}
 
 Invalid Enum
+    Check Test Case    ${TESTNAME}
+
+Invalid IntEnum
     Check Test Case    ${TESTNAME}
 
 NoneType

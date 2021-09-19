@@ -166,6 +166,36 @@ class TestTypeName(unittest.TestCase):
                           (OldStyle, 'OldStyle')]:
             assert_equal(type_name(item), exp)
 
+    def test_strip_underscores(self):
+        class _Foo_(object): pass
+        assert_equal(type_name(_Foo_), 'Foo')
+
+    def test_none_as_underscore_name(self):
+        class C(object):
+            _name = None
+        assert_equal(type_name(C()), 'C')
+        assert_equal(type_name(C(), capitalize=True), 'C')
+
+    if PY3:
+
+        def test_typing(self):
+            from typing import Any, Dict, List, Optional, Set, Tuple, Union
+
+            for item, exp in [(List, 'list'),
+                              (List[int], 'list'),
+                              (Tuple, 'tuple'),
+                              (Tuple[int], 'tuple'),
+                              (Set, 'set'),
+                              (Set[int], 'set'),
+                              (Dict, 'dictionary'),
+                              (Dict[int, str], 'dictionary'),
+                              (Union, 'Union'),
+                              (Union[int, str], 'Union'),
+                              (Optional, 'Optional'),
+                              (Optional[int], 'Union'),
+                              (Any, 'Any')]:
+                assert_equal(type_name(item), exp)
+
     if JYTHON:
 
         def test_java_object(self):

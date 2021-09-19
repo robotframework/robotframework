@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import ExecutionStatus, DataError, PassExecution
+from robot.errors import ExecutionFailed, ExecutionStatus, DataError, PassExecution
 from robot.model import SuiteVisitor, TagPatterns
 from robot.result import TestSuite, Result
 from robot.utils import get_timestamp, is_list_like, NormalizedDict, unic, test_or_task
@@ -99,7 +99,6 @@ class SuiteRunner(SuiteVisitor):
                     self._suite.suite_teardown_skipped(unic(failure))
                 else:
                     self._suite.suite_teardown_failed(unic(failure))
-                self._suite_status.failure_occurred()
         self._suite.endtime = get_timestamp()
         self._suite.message = self._suite_status.message
         self._context.end_suite(ModelCombiner(suite, self._suite))
@@ -158,12 +157,8 @@ class SuiteRunner(SuiteVisitor):
             status.test_failed(err)
         result.status = status.status
         result.message = status.message or result.message
-        if status.teardown_allowed:
-            with self._context.test_teardown(result):
-                failure = self._run_teardown(test.teardown, status,
-                                             result)
-                if failure:
-                    status.failure_occurred()
+        with self._context.test_teardown(result):
+            self._run_teardown(test.teardown, status, result)
         if not status.failed and result.timeout and result.timeout.timed_out():
             status.test_failed(result.timeout.get_message())
             result.message = status.message
@@ -171,7 +166,10 @@ class SuiteRunner(SuiteVisitor):
             result.message = status.message or result.message
         result.status = status.status
         result.endtime = get_timestamp()
+        failed_before_listeners = result.failed
         self._output.end_test(ModelCombiner(test, result))
+        if result.failed and not failed_before_listeners:
+            status.failure_occurred()
         self._context.end_test(result)
 
     def _add_exit_combine(self):
@@ -216,7 +214,7 @@ class SuiteRunner(SuiteVisitor):
         except DataError as err:
             if self._settings.dry_run:
                 return None
-            return err
+            return ExecutionFailed(message=err.message)
         if name.upper() in ('', 'NONE'):
             return None
         try:
