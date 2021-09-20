@@ -10,7 +10,6 @@ Pipes All Around
     Check Test Case    ${TEST NAME}
 
 Empty line with pipe
-    Should Be True    not any(e.level == 'ERROR' for e in $ERRORS)
     Check Test Case    ${TEST NAME}
 
 Pipes In Data
@@ -30,3 +29,10 @@ Tabs
 
 Using FOR Loop With Pipes
     Check Test Case  ${TEST NAME}
+
+Leading pipe without space after
+    Check Test Case  |${TEST NAME}
+    Check Test Case  ||
+    Error In File    0    parsing/pipes.robot    6    Non-existing setting '||'.
+    Error In File    1    parsing/pipes.robot    7    Non-existing setting '|Documentation'. Did you mean:\n${SPACE*4}Documentation
+    Length Should Be    ${ERRORS}    2

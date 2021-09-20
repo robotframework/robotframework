@@ -42,10 +42,10 @@ class Tokenizer(object):
         tokens = []
         append = tokens.append
         offset = 0
-        if line[:1] != '|':
-            splitter = self._split_from_spaces
-        else:
+        if line[:1] == '|' and line[:2].strip() == '|':
             splitter = self._split_from_pipes
+        else:
+            splitter = self._split_from_spaces
         for value, is_data in splitter(rstrip(line)):
             if is_data:
                 append(Token(None, value, lineno, offset))

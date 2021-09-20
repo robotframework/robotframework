@@ -203,6 +203,22 @@ class TestSplitFromPipes(unittest.TestCase):
                       (SEPA, '|', 1, 14),
                       (EOL, '', 1, 15)])
 
+    def test_no_space_after(self):
+        # Not actually splitting from pipes in this case.
+        verify_split('||',
+                     [(DATA, '||', 1, 0),
+                      (EOL, '', 1, 2)])
+        verify_split('|foo\n',
+                     [(DATA, '|foo', 1, 0),
+                      (EOL, '\n', 1, 4)])
+        verify_split('|x  |    |',
+                     [(DATA, '|x', 1, 0),
+                      (SEPA, '  ', 1, 2),
+                      (DATA, '|', 1, 4),
+                      (SEPA, '    ', 1, 5),
+                      (DATA, '|', 1, 9),
+                      (EOL, '', 1, 10)])
+
     def test_no_pipe_at_end(self):
         verify_split('| Hello | my world  |   !',
                      [(SEPA, '| ', 1, 0),

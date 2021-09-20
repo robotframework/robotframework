@@ -3,7 +3,16 @@
 |
 | Library | String
 |
+||
+|Documentation    invalid
+
+| *** Comments ***
 |
+||
+|||
+||||
+|| |
+| ||
 
 ***Test Cases***
 | Minimum Pipes
@@ -27,8 +36,8 @@
 | Pipes In Data |
 |               | Should Be Equal | |foo\| | |foo| |
 |               | Should Be Equal | |foo|  | |foo\|
-|               | Should Be Equal | \|     | \|    |
-|               | Should Be Equal | ||||   | ||||  |
+|               | Should Be Equal | \|     | ${{'|'}} |
+|               | Should Be Equal | ||||   | ${{'||||'}}  |
 
 
 |  Extra Pipes At The End  |       |                      |       |        |
@@ -43,6 +52,7 @@
 | Empty Cells In Middle |
 |                       |                        |
 | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+|
 | |
 |  |
 |   |
@@ -56,6 +66,7 @@
 |   |
 |  |
 | |
+|
 | |  |   |    |     |      |       |        |       |      |     |    |  | |
 | | Cells Should Be Empty  |  |     | | | |  |   | ${EMPTY}  | | | |
 
@@ -73,6 +84,11 @@
 |         |        |  Should Be Equal  |  ${value}  |  a   |  ${value}  |  no values  |
 |         | END    |
 
+|Leading pipe without space after
+    |Leading pipe without space after
+
+||  ||
+
 | *Keywords* | A | r | g | u | m | e | n | t | s |
 |  Cells Should Be Empty  |
 |       | [Arguments]     | @{args}          |
@@ -81,3 +97,11 @@
 |       | END             |
 |       | ${length} =     | Get Length       | ${args}  |
 |       | Should Be Equal | ${length}        | ${8}     | Amount of empty cells |
+
+|Leading pipe without space after
+    No Operation
+
+||  |||  ||||
+
+|||   [Arguments]    ${arg}
+      Should Be Equal    ${arg}    ||||
