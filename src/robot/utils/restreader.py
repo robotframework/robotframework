@@ -13,29 +13,21 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import functools
+
 from robot.errors import DataError
+from robot.utils import PY2
 
 try:
     from docutils.core import publish_doctree
+    from docutils.parsers.rst import directives
+    from docutils.parsers.rst import roles
     from docutils.parsers.rst.directives import register_directive
     from docutils.parsers.rst.directives.body import CodeBlock
+    from docutils.parsers.rst.directives.misc import Include
 except ImportError:
     raise DataError("Using reStructuredText test data requires having "
                     "'docutils' module version 0.9 or newer installed.")
-
-
-class CaptureRobotData(CodeBlock):
-
-    def run(self):
-        if 'robotframework' in self.arguments:
-            store = RobotDataStorage(self.state_machine.document)
-            store.add_data(self.content)
-        return []
-
-
-register_directive('code', CaptureRobotData)
-register_directive('code-block', CaptureRobotData)
-register_directive('sourcecode', CaptureRobotData)
 
 
 class RobotDataStorage(object):
@@ -55,12 +47,55 @@ class RobotDataStorage(object):
         return bool(self._robot_data)
 
 
+class RobotCodeBlock(CodeBlock):
+
+    def run(self):
+        if 'robotframework' in self.arguments:
+            store = RobotDataStorage(self.state_machine.document)
+            store.add_data(self.content)
+        return []
+
+
+register_directive('code', RobotCodeBlock)
+register_directive('code-block', RobotCodeBlock)
+register_directive('sourcecode', RobotCodeBlock)
+
+
+relevant_directives = (RobotCodeBlock, Include)
+
+
+@functools.wraps(directives.directive)
+def directive(*args, **kwargs):
+    directive_class, messages = directive.__wrapped__(*args, **kwargs)
+    if directive_class not in relevant_directives:
+        # Skipping unknown or non-relevant directive entirely
+        directive_class = (lambda *args, **kwargs: [])
+    return directive_class, messages
+
+
+@functools.wraps(roles.role)
+def role(*args, **kwargs):
+    role_function = role.__wrapped__(*args, **kwargs)
+    if role_function is None:  # role is unknown, ignore
+        role_function = (lambda *args, **kwargs: [], [])
+    return role_function
+
+
+if PY2:
+    directive.__wrapped__ = directives.directive
+    role.__wrapped__ = roles.role
+
+
+directives.directive = directive
+roles.role = role
+
+
 def read_rest_data(rstfile):
     doctree = publish_doctree(
-        rstfile.read(), source_path=rstfile.name,
+        rstfile.read(),
+        source_path=rstfile.name,
         settings_overrides={
             'input_encoding': 'UTF-8',
-            'report_level': 4
         })
     store = RobotDataStorage(doctree)
     return store.get_data()

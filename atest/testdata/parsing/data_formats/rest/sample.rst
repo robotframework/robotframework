@@ -1,3 +1,6 @@
+..
+   When parsing ReST files, only robotframework code blocks
+   and includes need to be parsed.
 .. include:: empty.rest
 .. include:: include.rst
 
@@ -21,10 +24,13 @@ We have a devious plan to rule the world with robots.
    | Variables  | ../resources/variables.py
    | Library    | OperatingSystem | | | | | | | | | | | | | | | |
 
-The following are non-standard docutils directives, and we should ignore
-errors when parsing this.
+.. csv-table:: cannot and should not be parsed
+   :file: not/a/real/path.csv
 
-Testing also a :term:`test` as it should generate an error.
+The following are non-standard docutils directives and no errors
+should arise when parsing this.
+
+Testing also a :term:`test` as it should not generate an error.
 
 .. highlight:: robotframework
 
