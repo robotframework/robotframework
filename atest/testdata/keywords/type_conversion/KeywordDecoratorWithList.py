@@ -16,15 +16,15 @@ def basics(integer, decimal, boolean, date_, list_=None):
 @keyword(types=[int, None, float])
 def none_means_no_type(foo, bar, zap):
     _validate_type(foo, 1)
-    _validate_type(bar, u'2')
+    _validate_type(bar, '2')
     _validate_type(zap, 3.0)
 
 
 @keyword(types=['', int, False])
 def falsy_types_mean_no_type(foo, bar, zap):
-    _validate_type(foo, u'1')
+    _validate_type(foo, '1')
     _validate_type(bar, 2)
-    _validate_type(zap, u'3')
+    _validate_type(zap, '3')
 
 
 @keyword(types=[int, type(None), float])
@@ -51,7 +51,7 @@ def none_in_tuple_is_alias_for_nonetype(arg1, arg2, exp1=None, exp2=None):
 def less_types_than_arguments_is_ok(foo, bar, zap):
     _validate_type(foo, 1)
     _validate_type(bar, 2.0)
-    _validate_type(zap, u'3')
+    _validate_type(zap, '3')
 
 
 @keyword(types=[int, int])
@@ -66,11 +66,9 @@ def varargs_and_kwargs(arg, *varargs, **kwargs):
     _validate_type(kwargs, {'kw': 5})
 
 
-try:
-    exec('''
 @keyword(types=[None, int, float])
 def kwonly(*, foo, bar=None, zap):
-    _validate_type(foo, u'1')
+    _validate_type(foo, '1')
     _validate_type(bar, 2)
     _validate_type(zap, 3.0)
 
@@ -78,13 +76,10 @@ def kwonly(*, foo, bar=None, zap):
 @keyword(types=[None, None, int, float, Decimal])
 def kwonly_with_varargs_and_kwargs(*varargs, foo, bar=None, zap, **kwargs):
     _validate_type(varargs, ('0',))
-    _validate_type(foo, u'1')
+    _validate_type(foo, '1')
     _validate_type(bar, 2)
     _validate_type(zap, 3.0)
     _validate_type(kwargs, {'quux': Decimal(4)})
-''')
-except SyntaxError:
-    pass
 
 
 def _validate_type(argument, expected):

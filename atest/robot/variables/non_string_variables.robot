@@ -1,10 +1,9 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    variables/non_string_variables.robot
 Resource         atest_resource.robot
-Variables        ${DATADIR}/variables/non_string_variables.py    ${INTERPRETER}
+Variables        ${DATADIR}/variables/non_string_variables.py
 
 *** Test Cases ***
-
 Numbers
     Check Test Doc    ${TESTNAME}    I can has 42 and 3.14?
 

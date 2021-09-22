@@ -1,13 +1,13 @@
-Running suite 'Fatal Exception' with 8 tests.
+Running suite 'Fatal Exception' with 6 tests.
 ==============================================================================
-Fxxxxxxx
+Fxxxxx
 ------------------------------------------------------------------------------
 FAIL: Fatal Exception.Python Library Kw.Exit From Python Keyword
 FatalCatastrophyException: BANG!
 ==============================================================================
-Run suite 'Fatal Exception' with 8 tests in *.
+Run suite 'Fatal Exception' with 6 tests in *.
 
 FAILED
-8 tests, 0 passed, 8 failed
+6 tests, 0 passed, 6 failed
 
 Output:  *.xml

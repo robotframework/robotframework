@@ -27,22 +27,22 @@ Inits
 Keyword Names
     ${MODEL}[keywords][0][name]     Get Hello
     ${MODEL}[keywords][1][name]     Keyword
-    ${MODEL}[keywords][14][name]    Set Name Using Robot Name Attribute
+    ${MODEL}[keywords][12][name]    Set Name Using Robot Name Attribute
 
 Keyword Arguments
     [Template]    Verify Argument Models
     ${MODEL}[keywords][0][args]
     ${MODEL}[keywords][1][args]     a1=d    *a2
     ${MODEL}[keywords][6][args]     arg=hyv\\xe4
-    ${MODEL}[keywords][10][args]    arg=hyvä
-    ${MODEL}[keywords][12][args]    a=1    b=True    c=(1, 2, None)
-    ${MODEL}[keywords][13][args]    arg=\\ robot \\ escapers\\n\\t\\r \\ \\
-    ${MODEL}[keywords][14][args]    a    b    *args    **kwargs
+    ${MODEL}[keywords][9][args]     arg=hyvä
+    ${MODEL}[keywords][10][args]    a=1    b=True    c=(1, 2, None)
+    ${MODEL}[keywords][11][args]    arg=\\ robot \\ escapers\\n\\t\\r \\ \\
+    ${MODEL}[keywords][12][args]    a    b    *args    **kwargs
 
 Embedded Arguments
     [Template]    NONE
-    Should Be Equal    ${MODEL}[keywords][15][name]    Takes \${embedded} \${args}
-    Should Be Empty    ${MODEL}[keywords][15][args]
+    Should Be Equal    ${MODEL}[keywords][13][name]    Takes \${embedded} \${args}
+    Should Be Empty    ${MODEL}[keywords][13][args]
 
 Keyword Documentation
     ${MODEL}[keywords][1][doc]
@@ -57,14 +57,14 @@ Keyword Documentation
     ...    <p>And paragraphs.</p>
 
 Non-ASCII Keyword Documentation
-    ${MODEL}[keywords][8][doc]     <p>Hyvää yötä.</p>
-    ${MODEL}[keywords][11][doc]    <p>Hyvää yötä.</p>\n<p>Спасибо!</p>
+    ${MODEL}[keywords][7][doc]    <p>Hyvää yötä.</p>\n<p>Спасибо!</p>
+    ${MODEL}[keywords][8][doc]    <p>Hyvää yötä.</p>
 
 Keyword Short Doc
-    ${MODEL}[keywords][1][shortdoc]     A keyword.
-    ${MODEL}[keywords][0][shortdoc]     Get hello.
-    ${MODEL}[keywords][8][shortdoc]     Hyvää yötä.
-    ${MODEL}[keywords][11][shortdoc]    Hyvää yötä.
+    ${MODEL}[keywords][0][shortdoc]    Get hello.
+    ${MODEL}[keywords][1][shortdoc]    A keyword.
+    ${MODEL}[keywords][7][shortdoc]    Hyvää yötä.
+    ${MODEL}[keywords][8][shortdoc]    Hyvää yötä.
 
 Keyword Short Doc Spanning Multiple Physical Lines
     ${MODEL}[keywords][5][shortdoc]    This is short doc. It can span multiple physical lines.
@@ -108,7 +108,8 @@ User keyword documentation formatting
 *** Keywords ***
 Verify Argument Models
     [Arguments]    ${arg_models}    @{expected_reprs}
-    Should Be True    len($arg_models) == len($expected_reprs)
+    [Tags]    robot: continue-on-failure
+    Should Be True    len(${arg_models}) == len(${expected_reprs})
     FOR    ${arg_model}    ${expected_repr}    IN ZIP    ${arg_models}    ${expected_reprs}
-       Run Keyword And Continue On Failure    Verify Argument Model    ${arg_model}    ${expected_repr}    json=True
+        Verify Argument Model    ${arg_model}    ${expected_repr}    json=True
     END

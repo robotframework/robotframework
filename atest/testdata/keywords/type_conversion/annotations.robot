@@ -2,7 +2,6 @@
 Library                  Annotations.py
 Library                  OperatingSystem
 Resource                 conversion.resource
-Force Tags               require-py3
 
 *** Variables ***
 @{LIST}                  foo                       bar

@@ -1,10 +1,7 @@
-try:
-    from collections.abc import Mapping
-except ImportError:    # Python 2
-    from collections import Mapping
+from collections.abc import Mapping
 
 
-class MyObject(object):
+class MyObject:
 
     def __init__(self, name='<MyObject>'):
         self.name = name

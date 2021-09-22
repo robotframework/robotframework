@@ -1,7 +1,6 @@
 *** Settings ***
 Library           OperatingSystem
 Library           module_library
-Library           ExampleJavaLibrary
 Library           ParameterLibrary    first    WITH NAME    1st
 Library           ParameterLibrary    second    WITH NAME    2nd has spaces
 Library           ParameterLibrary    same1    WITH NAME    Same when normalized
@@ -21,12 +20,6 @@ Library imported normally
 Module library
     ${lib} =    Get Library Instance    module_library
     Should Be Equal    ${lib.returning()}    Hello from module library
-
-Java library
-    ${lib} =    Get Library Instance    ExampleJavaLibrary
-    Should Be Equal    ${lib.getCount()}    ${1}
-    Should Be Equal    ${lib.getCount()}    ${2}
-    Should Be Equal    ${lib.getCount()}    ${3}
 
 Library with alias
     [Documentation]    FAIL No library 'ParameterLibrary' found.

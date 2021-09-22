@@ -34,9 +34,7 @@ Varargs and kwargs
     Check Test Case    ${TESTNAME}
 
 Kwonly
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Kwonly with kwargs
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}

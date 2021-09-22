@@ -1,5 +1,3 @@
-# coding=UTF-8
-
 import sys
 from xmlrpc.server import SimpleXMLRPCServer
 
@@ -18,14 +16,14 @@ class Documentation(SimpleXMLRPCServer):
         self.serve_forever()
 
     def get_keyword_names(self):
-        return ['Empty', 'Single', 'Multi', u'Nön-ÄSCII']
+        return ['Empty', 'Single', 'Multi', 'Nön-ÄSCII']
 
     def get_keyword_documentation(self, name):
         return {'__intro__': 'Remote library for documentation testing purposes',
                 'Empty': '',
                 'Single': 'Single line documentation',
                 'Multi': 'Short doc\nin two lines.\n\nDoc body\nin\nthree.',
-                u'Nön-ÄSCII': u'Nön-ÄSCII documentation'}.get(name)
+                'Nön-ÄSCII': 'Nön-ÄSCII documentation'}.get(name)
 
     def get_keyword_arguments(self, name):
         return {'Empty': (),

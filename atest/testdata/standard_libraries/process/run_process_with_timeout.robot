@@ -30,7 +30,7 @@ Disable timeout with negative value
 
 On timeout process is terminated by default (w/ default streams)
     ${result} =    Run Process    @{COMMAND}    timeout=200ms
-    Should be terminated    ${result}    empty output=os.sep == '/' and sys.platform.startswith('java')
+    Should be terminated    ${result}
 
 On timeout process is terminated by default (w/ custom streams)
     ${result} =    Run Process    @{COMMAND}    timeout=200ms
@@ -39,7 +39,7 @@ On timeout process is terminated by default (w/ custom streams)
 
 On timeout process can be killed (w/ default streams)
     ${result} =    Run Process    @{COMMAND}    timeout=0.2    on_timeout=kill
-    Should be terminated    ${result}    empty output=os.sep == '/' and sys.platform.startswith('java1.8')
+    Should be terminated    ${result}
 
 On timeout process can be killed (w/ custom streams)
     ${result} =    Run Process    @{COMMAND}    timeout=0.2    on_timeout=KiLL
@@ -61,12 +61,7 @@ Should not be terminated
     Should Be Equal    ${result.stderr}    start stderr\nend stderr
 
 Should be terminated
-    [Arguments]    ${result}    ${empty output}=False
+    [Arguments]    ${result}
     Should Not Be Equal    ${result.rc}    ${0}
-    ${expected stdout}    ${expected stderr} =
-    ...    Run Keyword If    not (${empty output})
-    ...    Create List    start stdout    start stderr
-    ...    ELSE
-    ...    Create List    ${EMPTY}    ${EMPTY}
-    Should Be Equal    ${result.stdout}    ${expected stdout}
-    Should Be Equal    ${result.stderr}    ${expected stderr}
+    Should Be Equal    ${result.stdout}    start stdout
+    Should Be Equal    ${result.stderr}    start stderr

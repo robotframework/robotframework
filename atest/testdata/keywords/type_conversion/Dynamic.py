@@ -1,7 +1,6 @@
 from decimal import Decimal
 
 from robot.api.deco import keyword
-from robot.utils import unicode
 
 
 class Dynamic(object):
@@ -63,7 +62,7 @@ class Dynamic(object):
         self._validate_type(value, expected)
 
     def _validate_type(self, argument, expected):
-        if isinstance(expected, unicode):
+        if isinstance(expected, str):
             expected = eval(expected)
         if argument != expected or type(argument) != type(expected):
             raise AssertionError('%r (%s) != %r (%s)'

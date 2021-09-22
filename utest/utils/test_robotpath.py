@@ -2,8 +2,7 @@ import unittest
 import os
 import os.path
 
-from robot.utils import (abspath, normpath, get_link_path, unicode,
-                         JYTHON, PY_VERSION, WINDOWS)
+from robot.utils import abspath, normpath, get_link_path, unicode, WINDOWS
 from robot.utils.robotpath import CASE_INSENSITIVE_FILESYSTEM
 from robot.utils.asserts import assert_equal, assert_true
 
@@ -131,10 +130,8 @@ class TestGetLinkPath(unittest.TestCase):
     def test_non_existing_paths(self):
         assert_equal(get_link_path('/nonex/target', '/nonex/base'), '../target')
         assert_equal(get_link_path('/nonex/t.ext', '/nonex/b.ext'), '../t.ext')
-        buggy_jython = WINDOWS and JYTHON and PY_VERSION > (2, 7, 0)
-        if not buggy_jython:
-            assert_equal(get_link_path('/nonex', __file__),
-                         os.path.relpath('/nonex', os.path.dirname(__file__)).replace(os.sep, '/'))
+        assert_equal(get_link_path('/nonex', __file__),
+                     os.path.relpath('/nonex', os.path.dirname(__file__)).replace(os.sep, '/'))
 
     def test_non_ascii_paths(self):
         assert_equal(get_link_path(u'\xe4\xf6.txt', ''), '%C3%A4%C3%B6.txt')

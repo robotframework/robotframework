@@ -79,17 +79,13 @@ Invalid dictionary
     Check Test Case    ${TESTNAME}
 
 Set
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Invalid set
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Frozenset
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Invalid frozenset
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}

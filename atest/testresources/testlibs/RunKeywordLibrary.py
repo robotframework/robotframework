@@ -1,6 +1,3 @@
-from __future__ import print_function
-
-
 class RunKeywordLibrary:
     ROBOT_LIBRARY_SCOPE = 'TESTCASE'
 

@@ -22,7 +22,6 @@ Existing And Non-Existing Input
 
 Non-XML Input
     [Setup]    Create File    %{TEMPDIR}/invalid.robot    Hello, world
-    [Tags]    no-py-3.5
     (\\[Fatal Error\\] .*: Content is not allowed in prolog.\\n)?Reading XML source '.*invalid.robot' failed: .*
     ...    source=%{TEMPDIR}/invalid.robot
 

@@ -113,17 +113,8 @@ String
     String               ${42}                     42
     String               ${None}                   None
     String               ${LIST}                   ['foo', 'bar']
-    Unicode              Hello, world!             u'Hello, world!'
-    Unicode              åäö                       u'åäö'
-    Unicode              None                      u'None'
-    Unicode              True                      u'True'
-    Unicode              []                        u'[]'
-    Unicode              ${42}                     42
-    Unicode              ${None}                   None
-    Unicode              ${LIST}                   ['foo', 'bar']
 
 Bytes
-    [Tags]               require-py3
     Bytes                foo                       b'foo'
     Bytes                \x00\x01\xFF\u00FF        b'\\x00\\x01\\xFF\\xFF'
     Bytes                Hyvä esimerkki!           b'Hyv\\xE4 esimerkki!'
@@ -131,7 +122,6 @@ Bytes
     Bytes                NONE                      b'NONE'
 
 Invalid bytes
-    [Tags]               require-py3
     [Template]           Invalid value is passed as-is
     Bytes                \u0100
 
@@ -185,7 +175,6 @@ Invalid timedelta
     Timedelta            01:02:03:04
 
 Enum
-    [Tags]               require-enum
     Enum                 FOO                       MyEnum.FOO
     Enum                 bar                       MyEnum.bar
 
@@ -212,9 +201,9 @@ Invalid enum
 None
     None                 None                      None
     None                 NONE                      None
-    None                 Hello, world!             u'Hello, world!'
-    None                 True                      u'True'
-    None                 []                        u'[]'
+    None                 Hello, world!             'Hello, world!'
+    None                 True                      'True'
+    None                 []                        '[]'
 
 List
     List                 []                        []
@@ -258,7 +247,6 @@ Invalid dictionary
     Dictionary           {{'not': 'hashable'}: 'xxx'}
 
 Set
-    [Tags]               require-py3
     Set                  set()                     set()
     Set                  {'foo', 'bar'}            {'foo', 'bar'}
     Set                  {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
@@ -274,7 +262,6 @@ Invalid set
     Set                  frozenset()
 
 Frozenset
-    [Tags]               require-py3
     Frozenset            set()                     frozenset()
     Frozenset            frozenset()               frozenset()
     Frozenset            {'foo', 'bar'}            frozenset({'foo', 'bar'})
@@ -287,21 +274,13 @@ Invalid frozenset
     Frozenset            ooops
     Frozenset            {{'not', 'hashable'}}
 
-Sets are not supported in Python 2
-    [Tags]               require-py2
-    Set                  set()                     u'set()'
-    Set                  {'foo', 'bar'}            u"{'foo', 'bar'}"
-    Frozenset            set()                     u'set()'
-    Frozenset            frozenset()               u'frozenset()'
-    Frozenset            {'foo', 'bar'}            u"{'foo', 'bar'}"
-
 Unknown types are not converted
-    Unknown              foo                       u'foo'
-    Unknown              1                         u'1'
-    Unknown              true                      u'true'
-    Unknown              None                      u'None'
-    Unknown              none                      u'none'
-    Unknown              []                        u'[]'
+    Unknown              foo                       'foo'
+    Unknown              1                         '1'
+    Unknown              true                      'true'
+    Unknown              None                      'None'
+    Unknown              none                      'none'
+    Unknown              []                        '[]'
 
 Positional as named
     Integer              argument=-1               expected=-1
@@ -310,24 +289,22 @@ Positional as named
 
 Invalid positional as named
     Integer              argument=1.0              expected=1.0
-    Float                argument=xxx              expected=u'xxx'
-    Dictionary           argument=[0]              expected=u'[0]'
+    Float                argument=xxx              expected='xxx'
+    Dictionary           argument=[0]              expected='[0]'
 
 Kwonly
-    [Tags]               require-py3
     Kwonly               argument=1.0              expected=1.0
 
 Invalid kwonly
-    [Tags]               require-py3
     Kwonly               argument=foobar           expected='foobar'
 
 @keyword decorator overrides default values
     Types via keyword deco override            42    timedelta(seconds=42)
-    None as types via @keyword disables        42    u'42'
+    None as types via @keyword disables        42    '42'
     Empty types via @keyword doesn't override  42    42
     @keyword without types doesn't override    42    42
 
 *** Keywords ***
 Invalid value is passed as-is
-    [Arguments]    ${kw}    ${arg}    ${expected}=u'''${arg}'''
+    [Arguments]    ${kw}    ${arg}    ${expected}='''${arg}'''
     Run Keyword    ${kw}    ${arg}    ${expected}

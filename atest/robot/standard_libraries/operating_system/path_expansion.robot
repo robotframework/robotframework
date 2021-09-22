@@ -7,5 +7,4 @@ Tilde in path
     Check testcase    ${TESTNAME}
 
 Tilde and username in path
-    [Tags]    no-jython
     Check testcase    ${TESTNAME}

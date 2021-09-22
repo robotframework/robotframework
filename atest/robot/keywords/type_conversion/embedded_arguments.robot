@@ -4,7 +4,6 @@ Resource         atest_resource.robot
 
 *** Test Cases ***
 Types via annotations
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Types via @keyword

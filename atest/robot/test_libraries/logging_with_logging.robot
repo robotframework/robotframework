@@ -33,7 +33,7 @@ Log exception
     ${message} =    Catenate    SEPARATOR=\n
     ...    Error occurred!
     ...    Traceback (most recent call last):
-    ...    ${SPACE*2}File "*", line 54, in log_exception
+    ...    ${SPACE*2}File "*", line 58, in log_exception
     ...    ${SPACE*4}raise ValueError('Bang!')
     ...    ValueError: Bang!
     Check log message    ${tc.kws[0].msgs[0]}    ${message}    ERROR    pattern=True

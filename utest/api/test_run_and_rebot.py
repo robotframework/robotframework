@@ -6,13 +6,13 @@ import threading
 import tempfile
 import signal
 import logging
+from io import StringIO
 from os.path import abspath, curdir, dirname, exists, join
 from os import chdir, getenv
 
 from robot import run, run_cli, rebot, rebot_cli
 from robot.model import SuiteVisitor
 from robot.running import namespace
-from robot.utils import JYTHON, StringIO
 from robot.utils.asserts import assert_equal, assert_raises, assert_true
 
 from resources.runningtestcase import RunningTestCase
@@ -35,16 +35,7 @@ def run_without_outputs(*args, **kwargs):
 
 def assert_signal_handler_equal(signum, expected):
     sig = signal.getsignal(signum)
-    try:
-        assert_equal(sig, expected)
-    except AssertionError:
-        if not JYTHON:
-            raise
-        # With Jython `getsignal` seems to always return different object so that
-        # even `getsignal(SIGINT) == getsignal(SIGINT)` is false. This doesn't
-        # happen always and may be dependent e.g. on the underlying JVM. Comparing
-        # string representations ought to be good enough.
-        assert_equal(str(sig), str(expected))
+    assert_equal(sig, expected)
 
 
 class StreamWithOnlyWriteAndFlush(object):

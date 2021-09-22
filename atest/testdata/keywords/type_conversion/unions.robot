@@ -1,7 +1,6 @@
 *** Settings ***
 Library           unions.py
 Resource          conversion.resource
-Force Tags        require-py3
 
 *** Test Cases ***
 Union

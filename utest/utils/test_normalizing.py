@@ -1,12 +1,8 @@
 import unittest
-try:
-    from UserDict import UserDict
-except ImportError:
-    from collections import UserDict
+from collections import UserDict
 
-from robot.utils import normalize, NormalizedDict, PY2
-from robot.utils.asserts import (assert_equal, assert_true, assert_false,
-                                 assert_raises)
+from robot.utils import normalize, NormalizedDict
+from robot.utils.asserts import assert_equal, assert_true, assert_false, assert_raises
 
 
 class TestNormalize(unittest.TestCase):
@@ -32,9 +28,9 @@ class TestNormalize(unittest.TestCase):
         self._verify('Fo o BaR', 'foobar', caseless=True)
 
     def test_caseless_non_ascii(self):
-        self._verify(u'\xc4iti', u'\xc4iti', caseless=False)
-        for mother in [u'\xc4ITI', u'\xc4iTi', u'\xe4iti', u'\xe4iTi']:
-            self._verify(mother, u'\xe4iti', caseless=True)
+        self._verify('\xc4iti', '\xc4iti', caseless=False)
+        for mother in ['\xc4ITI', '\xc4iTi', '\xe4iti', '\xe4iTi']:
+            self._verify(mother, '\xe4iti', caseless=True)
 
     def test_spaceless(self):
         self._verify('Fo o BaR', 'fo o bar', spaceless=False)
@@ -117,13 +113,13 @@ class TestNormalizedDict(unittest.TestCase):
             assert_true(key not in nd2)
 
     def test_caseless_with_non_ascii(self):
-        nd1 = NormalizedDict({u'\xe4': 1})
-        assert_equal(nd1[u'\xe4'], 1)
-        assert_equal(nd1[u'\xc4'], 1)
-        assert_true(u'\xc4' in nd1)
-        nd2 = NormalizedDict({u'\xe4': 1}, caseless=False)
-        assert_equal(nd2[u'\xe4'], 1)
-        assert_true(u'\xc4' not in nd2)
+        nd1 = NormalizedDict({'\xe4': 1})
+        assert_equal(nd1['\xe4'], 1)
+        assert_equal(nd1['\xc4'], 1)
+        assert_true('\xc4' in nd1)
+        nd2 = NormalizedDict({'\xe4': 1}, caseless=False)
+        assert_equal(nd2['\xe4'], 1)
+        assert_true('\xc4' not in nd2)
 
     def test_contains(self):
         nd = NormalizedDict({'Foo': 'bar'})
@@ -193,11 +189,8 @@ class TestNormalizedDict(unittest.TestCase):
         assert_equal(str(nd), expected)
 
     def test_unicode(self):
-        nd = NormalizedDict({'a': u'\xe4', u'\xe4': 'a'})
-        if PY2:
-            assert_equal(unicode(nd), "{'a': u'\\xe4', u'\\xe4': 'a'}")
-        else:
-            assert_equal(str(nd), u"{'a': '\xe4', '\xe4': 'a'}")
+        nd = NormalizedDict({'a': '\xe4', '\xe4': 'a'})
+        assert_equal(str(nd), "{'a': '\xe4', '\xe4': 'a'}")
 
     def test_update(self):
         nd = NormalizedDict({'a': 1, 'b': 1, 'c': 1})
@@ -244,40 +237,12 @@ class TestNormalizedDict(unittest.TestCase):
         nd = NormalizedDict((c, None) for c in 'aBcDeFg123XyZ___')
         assert_equal(list(nd.keys()), list('123_aBcDeFgXyZ'))
 
-    if PY2:
-
-        def test_iterkeys_and_keys(self):
-            nd = NormalizedDict({'A': 1, 'b': 3, 'C': 2})
-            iterator = nd.iterkeys()
-            assert_false(isinstance(iterator, list))
-            assert_equal(list(iterator), ['A', 'b', 'C'])
-            assert_equal(list(iterator), [])
-            assert_equal(list(nd.iterkeys()), nd.keys())
-
-        def test_itervalues_and_values(self):
-            nd = NormalizedDict({'A': 1, 'b': 3, 'C': 2})
-            iterator = nd.itervalues()
-            assert_false(isinstance(iterator, list))
-            assert_equal(list(iterator), [1, 3, 2])
-            assert_equal(list(iterator), [])
-            assert_equal(list(nd.itervalues()), nd.values())
-
-        def test_iteritems_and_items(self):
-            nd = NormalizedDict({'A': 1, 'b': 2, 'C': 3})
-            iterator = nd.iteritems()
-            assert_false(isinstance(iterator, list))
-            assert_equal(list(iterator), [('A', 1), ('b', 2), ('C', 3)])
-            assert_equal(list(iterator), [])
-            assert_equal(list(nd.iteritems()), nd.items())
-
     def test_keys_values_and_items_are_returned_in_same_order(self):
         nd = NormalizedDict()
         for i, c in enumerate('abcdefghijklmnopqrstuvwxyz0123456789!"#%&/()=?'):
             nd[c.upper()] = i
             nd[c+str(i)] = 1
         assert_equal(list(nd.items()), list(zip(nd.keys(), nd.values())))
-        if PY2:
-            assert_equal(list(nd.iteritems()), list(zip(nd.iterkeys(), nd.itervalues())))
 
     def test_eq(self):
         self._verify_eq(NormalizedDict(), NormalizedDict())

@@ -1,34 +1,30 @@
 *** Settings ***
-Library           NonAsciiLibrary
 Library           TraceLogArgsLibrary.py
 
 *** Test Cases ***
-Return from Userkeyword
+Return from user keyword
     Return Value From UK
 
-Return from Library Keyword
+Return from library keyword
     Set Variable    value
 
-Return From Run Keyword
+Return from Run Keyword
     Run Keyword    Set Variable    value
 
-Return Non String Object
+Return non-string value
     Convert To Integer    1
 
 Return None
     No Operation
 
-Return Non Ascii String
+Return non-ASCII string
     Set Variable    Hyvää 'Päivää'\n
 
-Return Object With Unicode Repr
-    Print and Return NonASCII Object
+Return object with non-ASCII repr
+    Return object with non ASCII repr
 
-Return Object with Unicode Repr With Non Ascii Chars
-    Return Object With Invalid Repr
-
-Return Object with Non Ascii String from Repr
-    Return Object With Non Ascii String Repr
+Return object with invalid repr
+    Return object with invalid repr
 
 *** Keywords ***
 Return Value From UK

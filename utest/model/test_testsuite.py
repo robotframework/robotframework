@@ -6,7 +6,6 @@ from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
 from robot.model import TestSuite
 from robot.running import TestSuite as RunningTestSuite
 from robot.result import TestSuite as ResultTestSuite
-from robot.utils import PY2, unicode
 
 
 class TestTestSuite(unittest.TestCase):
@@ -136,9 +135,7 @@ class TestStringRepresentation(unittest.TestCase):
         for tc, expected in [(self.empty, ''),
                              (self.ascii, 'Kekkonen'),
                              (self.non_ascii, u'hyv\xe4 nimi')]:
-            assert_equal(unicode(tc), expected)
-            if PY2:
-                assert_equal(str(tc), unicode(tc).encode('UTF-8'))
+            assert_equal(str(tc), expected)
 
     def test_repr(self):
         for tc, expected in [(self.empty, "TestSuite(name='')"),

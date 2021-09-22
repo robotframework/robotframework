@@ -35,11 +35,6 @@ Format from Python library
 Format from CLI overrides format from library
     ${HTML DOC}    -F robot    DocFormatHtml.py
 
-Format from Java library
-    [Tags]    require-jython    require-tools.jar
-    *bold* or <b>bold</b> ${EXAMPLE URL}                      ${EMPTY}    DocFormatHtml.java
-    ${HTML DOC}    -F robot    DocFormatHtml.java
-
 Format in XML
     [Template]    Test Format in XML
     ${RAW DOC}    TEXT     -F TEXT          DocFormat.py

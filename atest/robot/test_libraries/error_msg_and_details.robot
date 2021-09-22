@@ -7,16 +7,8 @@ Test Template     Verify Test Case And Error In Log
 Exception Type is Removed From Generic Failures
     Generic Failure    foo != bar
 
-Exception Type is Removed From Generic Java Failures
-    [Tags]    require-jython
-    Generic Failure In Java    bar != foo    2
-
 Exception Type is Removed with Exception Attribute
     Exception Name Suppressed in Error Message    No Exception Name
-
-Exception Type is Removed with Exception Attribute in Java
-    [Tags]    require-jython
-    Exception Name Suppressed in Error Message In Java    No Exception Name
 
 Exception Type is Included In Non-Generic Failures
     Non Generic Failure    FloatingPointError: Too Large A Number !!
@@ -24,10 +16,6 @@ Exception Type is Included In Non-Generic Failures
 Message Contains Only Class Name When Raising Only Class
     Generic Python class    RuntimeError
     Non-Generic Python class    ZeroDivisionError
-
-Exception Type is Included In Non-Generic Java Failures
-    [Tags]    require-jython
-    Non Generic Failure In Java    ArrayStoreException: My message
 
 Message Is Got Correctly If Python Exception Has Non-String Message
     Python Exception With Non-String Message    ValueError: ['a', 'b', (1, 2), None, {'a': 1}]    1
@@ -38,16 +26,8 @@ Message Is Got Correctly If Python Exception Has 'None' Message
 Multiline Error
     ${TESTNAME}   First line\n2nd\n3rd and last
 
-Multiline Java Error
-    [Tags]    require-jython
-    ${TESTNAME}   ArrayStoreException: First line\n2nd\n3rd and last
-
 Multiline Error With CRLF
     ${TESTNAME}   First line\n2nd\n3rd and last
-
-Message Is Got Correctly If Java Exception Has 'null' Message
-    [Tags]    require-jython
-    Java Exception With 'null' Message    ArrayStoreException
 
 Message And Internal Trace Are Removed From Details When Exception In Library
     [Template]    NONE
@@ -62,19 +42,6 @@ Message And Internal Trace Are Removed From Details When Exception In Library
     ...    exception
     ...    raise exception(msg)
 
-Message And Internal Trace Are Removed From Details When Exception In Java Library
-    [Tags]    require-jython
-    [Template]    NONE
-    ${tc} =    Verify Test Case And Error In Log    Generic Failure In Java    bar != foo    2
-    Verify Java Stack Trace    ${tc.kws[2].msgs[1]}
-    ...    java\\.lang\\.AssertionError:
-    ...    ExampleJavaLibrary\\.checkInHashtable
-    ${tc} =    Verify Test Case And Error In Log    Non Generic Failure In Java    ArrayStoreException: My message
-    Verify Java Stack Trace    ${tc.kws[0].msgs[1]}
-    ...    java\\.lang\\.ArrayStoreException:
-    ...    ExampleJavaLibrary\\.exception
-    ...    ExampleJavaLibrary\\.javaException
-
 Message and Internal Trace Are Removed From Details When Exception In External Code
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    External Failure    UnboundLocalError: Raised from an external object!
@@ -86,24 +53,13 @@ Message and Internal Trace Are Removed From Details When Exception In External C
     ...    exception
     ...    raise exception(msg)
 
-Message and Internal Trace Are Removed From Details When Exception In External Java Code
-    [Tags]    require-jython
-    [Template]    NONE
-    ${tc} =    Verify Test Case And Error In Log    External Failure In Java    IllegalArgumentException: Illegal initial capacity: -1
-    Verify Java Stack Trace    ${tc.kws[0].msgs[1]}
-    ...    java\\.lang\\.IllegalArgumentException:
-    ...    (java.base/)?java\\.util\\.HashMap\\.
-    ...    (java.base/)?java\\.util\\.HashMap\\.
-    ...    JavaObject\\.exception
-    ...    ExampleJavaLibrary\\.externalJavaException
-
 Failure in library in non-ASCII directory
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    ${TEST NAME}    Keyword in 'nön_äscii_dïr' fails!    index=1
     Verify Python Traceback    ${tc.kws[1].msgs[1]}
     ...    test_libraries/nön_äscii_dïr/valid.py
     ...    failing_keyword_in_non_ascii_dir
-    ...    raise AssertionError(u"Keyword in 'nön_äscii_dïr' fails!")
+    ...    raise AssertionError("Keyword in 'nön_äscii_dïr' fails!")
 
 No Details For Timeouts
     [Template]    Verify Test Case, Error In Log And No Details
@@ -148,15 +104,6 @@ Verify Python Traceback
         ${path} =    Normalize Path    ${DATADIR}/${path}
         ${path}    ${func}    ${text} =    Regexp Escape    ${path}    ${func}    ${text}
         ${exp} =    Set Variable    ${exp}\n\\s+File ".*${path}.*", line \\d+, in ${func}\n\\s+${text}
-    END
-    Should Match Regexp    ${msg.message}    ${exp}
-    Should Be Equal    ${msg.level}    DEBUG
-
-Verify Java Stack Trace
-    [Arguments]    ${msg}    ${exception}    @{functions}
-    ${exp} =    Set Variable    ${exception}\\s*
-    FOR    ${func}    IN    @{functions}
-        ${exp} =    Set Variable    ${exp}\n\\s+at ${func}.+
     END
     Should Match Regexp    ${msg.message}    ${exp}
     Should Be Equal    ${msg.level}    DEBUG

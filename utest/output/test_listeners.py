@@ -1,12 +1,10 @@
-from __future__ import print_function
-
 import unittest
 
 from robot.output.listeners import Listeners, LibraryListeners
 from robot.output import LOGGER
 from robot.running.outputcapture import OutputCapturer
 from robot.utils.asserts import assert_equal, assert_raises
-from robot.utils import DotDict, JYTHON
+from robot.utils import DotDict
 
 
 LOGGER.unregister_console_logger()
@@ -165,13 +163,6 @@ class TestListeners(unittest.TestCase):
         stdout, stderr = self.capturer._release()
         assert_equal(stderr, '')
         assert_equal(stdout.rstrip(), expected)
-
-
-if JYTHON:
-
-    class TestJavaListeners(TestListeners):
-        listener_name = 'NewStyleJavaListener'
-        stat_message = 'stat message'
 
 
 class TestAttributesAreNotAccessedUnnecessarily(unittest.TestCase):

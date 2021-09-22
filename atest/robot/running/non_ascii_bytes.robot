@@ -3,7 +3,7 @@ Documentation     These tests log, raise, and return messages containing non-ASC
 ...               When these messages are logged, the bytes are escaped.
 Suite Setup       Run Tests    ${EMPTY}    running/non_ascii_bytes.robot
 Resource          atest_resource.robot
-Variables         ${DATADIR}/running/expbytevalues.py    ${INTERPRETER}
+Variables         ${DATADIR}/running/expbytevalues.py
 
 *** Test Cases ***
 In Message

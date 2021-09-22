@@ -28,25 +28,21 @@ Kill process
 
 Terminate process running on shell
     Check Precondition    os.sep == '/' or hasattr(signal, 'CTRL_BREAK_EVENT')
-    Check Precondition    not sys.platform.startswith('java')
     Start Process    python    ${COUNTDOWN}    ${TEMPFILE}    shell=True
     Terminate should stop countdown
 
 Kill process running on shell
     Check Precondition    os.sep == '/'
-    Check Precondition    not sys.platform.startswith('java')
     Start Process    python    ${COUNTDOWN}    ${TEMPFILE}    shell=True
     Terminate should stop countdown    kill=yes
 
 Also child processes are terminated
     Check Precondition    os.sep == '/' or hasattr(signal, 'CTRL_BREAK_EVENT')
-    Check Precondition    not sys.platform.startswith('java')
     Start Process    python    ${COUNTDOWN}    ${TEMPFILE}    3
     Terminate should stop countdown
 
 Also child processes are killed
     Check Precondition    os.sep == '/'
-    Check Precondition    not sys.platform.startswith('java')
     Start Process    python    ${COUNTDOWN}    ${TEMPFILE}    3
     Terminate should stop countdown    kill=${True}
 

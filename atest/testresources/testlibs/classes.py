@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import os.path
 import functools
 
@@ -263,8 +261,8 @@ class DynamicWithSource:
                 'path w/ colon': r'c:\temp\lib.py',
                 'path w/ colon & lineno': r'c:\temp\lib.py:1234567890',
                 'no source': None,
-                u'nön-äscii': u'hyvä esimerkki',
-                u'nön-äscii utf-8': b'\xe7\xa6\x8f:88',
+                'nön-äscii': 'hyvä esimerkki',
+                'nön-äscii utf-8': b'\xe7\xa6\x8f:88',
                 'invalid source': 666}
 
     def get_keyword_names(self):

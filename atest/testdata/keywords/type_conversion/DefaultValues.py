@@ -1,17 +1,8 @@
-try:
-    from enum import Flag, Enum, IntFlag, IntEnum
-except ImportError:  # Python 2
-    try:
-        from enum import Enum, IntEnum
-    except ImportError:  # no enum34 installed
-        Flag = Enum = IntFlag = IntEnum = object
-    else:
-        Flag, IntFlag = Enum, IntEnum
+from enum import Flag, Enum, IntFlag, IntEnum
 from datetime import datetime, date, timedelta
 from decimal import Decimal
 
 from robot.api.deco import keyword
-from robot.utils import unicode
 
 
 class MyEnum(Enum):
@@ -56,10 +47,6 @@ def boolean(argument=True, expected=None):
 
 
 def string(argument='', expected=None):
-    _validate_type(argument, expected)
-
-
-def unicode_(argument=u'', expected=None):
     _validate_type(argument, expected)
 
 
@@ -127,13 +114,8 @@ def unknown(argument=Unknown(), expected=None):
     _validate_type(argument, expected)
 
 
-try:
-    exec('''
 def kwonly(*, argument=0.0, expected=None):
     _validate_type(argument, expected)
-''')
-except SyntaxError:
-    pass
 
 
 @keyword(types={'argument': timedelta})
@@ -157,7 +139,7 @@ def keyword_deco_alone_does_not_override(argument=0, expected=None):
 
 
 def _validate_type(argument, expected):
-    if isinstance(expected, unicode):
+    if isinstance(expected, str):
         expected = eval(expected)
     if argument != expected or type(argument) != type(expected):
         raise AssertionError('%r (%s) != %r (%s)'

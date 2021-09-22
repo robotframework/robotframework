@@ -3,11 +3,6 @@ import sys
 import re
 
 from robot.utils.asserts import assert_equal, assert_true, assert_raises
-from robot import utils
-if utils.JYTHON:
-    import JavaExceptions
-    java_exceptions = JavaExceptions()
-
 from robot.utils.error import get_error_details, get_error_message, PythonErrorDetails
 
 
@@ -41,43 +36,6 @@ class TestGetErrorDetails(unittest.TestCase):
             assert_equal(message, exception.__name__)
             assert_true(details.startswith('Traceback'))
             assert_true(exp_msg not in details)
-
-    if utils.JYTHON:
-
-        def test_get_error_details_java(self):
-            for exception, msg, expected in [
-                    ('AssertionError', 'My Error', 'My Error'),
-                    ('AssertionError', None, 'AssertionError'),
-                    ('RuntimeException', 'Another Error', 'Another Error'),
-                    ('RuntimeException', None, 'RuntimeException'),
-                    ('ArithmeticException', 'foo', 'ArithmeticException: foo'),
-                    ('ArithmeticException', None, 'ArithmeticException'),
-                    ('AssertionError', 'Msg\nin 3\nlines', 'Msg\nin 3\nlines'),
-                    ('IOException', '1\n2', 'IOException: 1\n2'),
-                    ('RuntimeException', 'embedded', 'embedded'),
-                    ('IOException', 'IOException: emb', 'IOException: emb')]:
-                try:
-                    throw_method = getattr(java_exceptions, 'throw'+exception)
-                    throw_method(msg)
-                except:
-                    message, details = get_error_details()
-                    assert_equal(message, get_error_message())
-                assert_equal(message, expected)
-                lines = details.splitlines()
-                assert_true(exception in lines[0])
-                for line in lines[1:]:
-                    line.strip().startswith('at ')
-
-        def test_message_removed_from_details_java(self):
-            for msg in ['My message', 'My\nmultiline\nmessage']:
-                try:
-                    java_exceptions.throwRuntimeException(msg)
-                except:
-                    message, details = get_error_details()
-                assert_true(message not in details)
-                line1, line2 = details.splitlines()[0:2]
-                assert_equal('java.lang.RuntimeException: ', line1)
-                assert_true(line2.strip().startswith('at '))
 
 
 class TestRemoveRobotEntriesFromTraceback(unittest.TestCase):

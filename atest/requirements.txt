@@ -1,23 +1,16 @@
 # External Python modules required by acceptance tests.
 # See atest/README.rst for more information.
 
-enum34; python_version < '3.0'
+docutils >= 0.10
+pygments
 
-# https://github.com/IronLanguages/ironpython2/issues/113
-docutils >= 0.9; platform_python_implementation != 'IronPython'
-pygments; platform_python_implementation != 'IronPython'
-
-# https://github.com/yaml/pyyaml/issues/369
-pyyaml; platform_python_implementation != 'Jython'
-pyyaml == 5.2; platform_python_implementation == 'Jython'
+pyyaml
 
 # On Linux installing lxml with pip may require compilation and development
 # headers. Alternatively it can be installed using a package manager like
 # `sudo apt-get install python-lxml`.
 lxml; platform_python_implementation == 'CPython'
 
-pillow < 7; platform_system == 'Windows' and python_version == '2.7'
-pillow < 6; platform_system == 'Windows' and python_version == '3.4'
-pillow >= 7.1.0; platform_system == 'Windows' and python_version >= '3.5'
+pillow >= 7.1.0; platform_system == 'Windows'
 
 -r ../utest/requirements.txt

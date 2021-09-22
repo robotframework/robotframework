@@ -3,7 +3,6 @@ Documentation     Tests using test case and user keyword timeouts.
 Suite Setup       Clean Up Timeout Temp
 Test Timeout      1 second
 Library           ExampleLibrary
-Library           ExampleJavaLibrary
 Library           OperatingSystem
 
 *** Variables ***
@@ -27,10 +26,6 @@ Failing Before Timeout
 Show Correct Trace Back When Failing Before Timeout
     [Documentation]    FAIL Failure before timeout
     Exception    RuntimeError    Failure before timeout
-
-Show Correct Trace Back When Failing In Java Before Timeout
-    [Documentation]    FAIL ArrayStoreException: This is exception message
-    java exception    This is exception message
 
 Sleeping And Timeouting
     [Documentation]    FAIL Test timeout 1 second exceeded.
@@ -233,9 +228,6 @@ Test Timeout Should Not Be Active For Run Keyword Variants But To Keywords They 
 Keyword Timeout Should Not Be Active For Run Keyword Variants But To Keywords They Execute
     [Documentation]    FAIL Keyword timeout 200 milliseconds exceeded.
     Run Keyword With Timeout
-
-It Should Be Possible To Print From Java Libraries When Test Timeout Has Been Set
-    ExampleJavaLibrary.Print    My message from java lib
 
 Timeouted Keyword Called With Wrong Number of Arguments
     [Documentation]    FAIL Keyword 'Timeouted Keyword Passes' expected 0 to 1 arguments, got 4.

@@ -4,7 +4,6 @@ from robot.model import Message
 from robot.result import Keyword
 from robot.result.executionerrors import ExecutionErrors
 from robot.utils.asserts import assert_equal, assert_raises
-from robot.utils import PY2, unicode
 
 
 class TestMessage(unittest.TestCase):
@@ -38,7 +37,7 @@ class TestHtmlMessage(unittest.TestCase):
     def test_no_html(self):
         assert_equal(Message('Hello, Kitty!').html_message, 'Hello, Kitty!')
         assert_equal(Message('<b> & ftp://url').html_message,
-                             '&lt;b&gt; &amp; <a href="ftp://url">ftp://url</a>')
+                     '&lt;b&gt; &amp; <a href="ftp://url">ftp://url</a>')
 
     def test_html(self):
         assert_equal(Message('Hello, Kitty!', html=True).html_message, 'Hello, Kitty!')
@@ -56,9 +55,7 @@ class TestStringRepresentation(unittest.TestCase):
         for tc, expected in [(self.empty, ''),
                              (self.ascii, 'Kekkonen'),
                              (self.non_ascii, u'hyv\xe4 nimi')]:
-            assert_equal(unicode(tc), expected)
-            if PY2:
-                assert_equal(str(tc), unicode(tc).encode('UTF-8'))
+            assert_equal(str(tc), expected)
 
     def test_repr(self):
         for tc, expected in [(self.empty, "Message(message='', level='INFO')"),

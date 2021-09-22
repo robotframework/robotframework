@@ -11,11 +11,7 @@ Should Be String Positive
     Should be String    Robot
     Should be String    ${EMPTY}
 
-Bytes are strings in python 2
-    Should be String    ${BYTES}
-    Run keyword and expect error    '${BYTES}' is a string.    Should not be string    ${BYTES}
-
-Bytes are not strings in python 3 and ironpython
+Bytes are not strings
     Run Keyword And Expect Error   '${BYTES}' is not a string.    Should Be String    ${BYTES}
     Should not be string    ${BYTES}
 
@@ -106,16 +102,12 @@ Should Be Title Case With Regex Excludes
     Full Match Only!      exclude=.
     full Match Only!      exclude=....
 
-Should Be Title Case Works With ASCII Bytes On Python 2
-    Should Be Title Case    ${BYTES}
-
-Should Be Title Case Does Not Work With ASCII Bytes On Python 2
+Should Be Title Case Does Not Work With ASCII Bytes
     [Documentation]    FAIL    TypeError: This keyword works only with Unicode strings.
     Should Be Title Case    ${BYTES}
 
 Should Be Title Case Does Not Work With Non-ASCII Bytes
-    [Documentation]    FAIL    REGEXP:
-    ...    TypeError: This keyword works only with Unicode strings( and non-ASCII bytes)?.
+    [Documentation]    FAIL    TypeError: This keyword works only with Unicode strings.
     Should Be Title Case    ${{b'\xe4iti'}}
 
 *** Keywords ***

@@ -2,7 +2,6 @@
 Library           Process
 Library           Collections
 Library           OperatingSystem
-Library           PlatformLib.py
 
 *** Variables ***
 ${SCRIPT}         ${CURDIR}${/}files${/}script.py
@@ -93,8 +92,7 @@ Check Precondition
     ...    Fail    Precondition '${precondition}' was not true.    precondition-fail
 
 Precondition not OSX
-    ${platform} =     Get os platform
-    Run Keyword If    $platform in ('darwin', 'mac os x')
+    Run Keyword If    ${{sys.platform == 'darwin'}}
     ...    Fail    Platform is OSX, where this test wont work.    precondition-fail
 
 Wait until countdown started

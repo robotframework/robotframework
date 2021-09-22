@@ -2,10 +2,10 @@ import logging
 import signal
 import sys
 import unittest
+from io import StringIO
 from os.path import abspath, dirname, join
 
 from robot.running import TestSuite, TestSuiteBuilder
-from robot.utils import JYTHON, StringIO
 from robot.utils.asserts import assert_equal
 
 from resources.runningtestcase import RunningTestCase
@@ -45,24 +45,14 @@ def assert_test(test, name, status, tags=(), msg=''):
 
 def assert_signal_handler_equal(signum, expected):
     sig = signal.getsignal(signum)
-    try:
-        assert_equal(sig, expected)
-    except AssertionError:
-        if not JYTHON:
-            raise
-        # With Jython `getsignal` seems to always return different object so that
-        # even `getsignal(SIGINT) == getsignal(SIGINT)` is false. This doesn't
-        # happen always and may be dependent e.g. on the underlying JVM. Comparing
-        # string representations ought to be good enough.
-        assert_equal(str(sig), str(expected))
+    assert_equal(sig, expected)
 
 
 class TestRunning(unittest.TestCase):
 
     def test_one_library_keyword(self):
         suite = TestSuite(name='Suite')
-        suite.tests.create(name='Test')\
-            .body.create_keyword('Log', args=['Hello, world!'])
+        suite.tests.create(name='Test').body.create_keyword('Log', args=['Hello!'])
         result = run(suite)
         assert_suite(result, 'Suite', 'PASS')
         assert_test(result.tests[0], 'Test', 'PASS')

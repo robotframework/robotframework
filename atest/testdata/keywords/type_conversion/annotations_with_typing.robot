@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags                    require-py3.5
 Library                       AnnotationsWithTyping.py
 Resource                      conversion.resource
 

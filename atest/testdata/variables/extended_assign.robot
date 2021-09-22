@@ -9,12 +9,6 @@ Set attributes to Python object
     ${VAR.attr3} =    Set Variable    ${42}
     Should Be Equal    ${VAR.attr}-${VAR.attr2}-${VAR.attr3}    new value-NV2-42
 
-Setting attribute to Java object
-    [Setup]    Should Be Equal    ${JVAR.javaInteger}:${JVAR.javaProperty}    -1:default
-    ${JVAR.javaInteger} =    Set Variable   ${42}
-    ${JVAR.javaProperty} =    Set Variable   value
-    Should Be Equal    ${JVAR.javaInteger}:${JVAR.javaProperty}    42:value
-
 Set nested attribute
     ${VAR.demeter.loves} =   Set Variable    this
     Should Be Equal    ${VAR.demeter.loves}    this

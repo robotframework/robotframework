@@ -12,17 +12,6 @@ Convert To Integer
     ${OBJECT}            42
     ${OBJECT_FAILING}    This fails!
 
-Convert To Integer With Java Objects
-    [Documentation]    FAIL STARTS: 'foobar' cannot be converted to an integer: ValueError:
-    [Template]    Test Convert To Integer
-    ${JAVA_STRING_INT}
-    ${JAVA_INTEGER}
-    ${JAVA_LONG}
-    ${JAVA_SHORT}
-    ${JAVA_FLOAT}
-    ${JAVA_DOUBLE}
-    ${JAVA_STRING_INVALID}    This fails!
-
 Convert To Integer With Base
     [Documentation]    FAIL STARTS: 'A' cannot be converted to an integer: ValueError:
     [Template]    Test Convert To Integer
@@ -54,13 +43,6 @@ Convert To Integer With Embedded Base
     + 0x FF 00      65280
     0b 1010 1010    170
     0xXXX           fails
-
-Convert To Integer With Base And Java Objects
-    [Documentation]    FAIL STARTS: 'F00' cannot be converted to an integer: ValueError:
-    [Template]    Test Convert To Integer
-    ${JAVA_STRING_HEX}            3840   16
-    ${JAVA_STRING_EMBEDDED_BASE}    3840
-    ${JAVA_STRING_HEX}            fails    8
 
 Convert To Binary
     [Template]    Test Convert To Binary
@@ -107,18 +89,6 @@ Convert To Number
     -10.000              -10
     ${OBJECT}            42.0
     ${OBJECT_FAILING}    This fails!
-
-Convert To Number With Java Objects
-    [Documentation]    FAIL STARTS: 'foobar' cannot be converted to a floating point number: ValueError:
-    [Template]    Test Convert To Number
-    ${JAVA_STRING_INT}        1.0
-    ${JAVA_STRING_FLOAT}      1.1
-    ${JAVA_INTEGER}           1.0
-    ${JAVA_LONG}              1.0
-    ${JAVA_SHORT}             1.0
-    ${JAVA_FLOAT}             1.1
-    ${JAVA_DOUBLE}            1.1
-    ${JAVA_STRING_INVALID}    This fails!
 
 Convert To Number With Precision
     [Documentation]    FAIL STARTS: 'invalid' cannot be converted to an integer: ValueError:

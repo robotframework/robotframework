@@ -39,22 +39,9 @@ Equals in non-kwargs must be escaped
     Call Method    ${obj}    my_method    this=fails
 
 Call Method From Module
-    ${path} =    Call Method    ${os.path}    join    ${CURDIR}    foo    bar.txt
+    ${path} =    Call Method    ${{os.path}}    join    ${CURDIR}    foo    bar.txt
     Should Be Equal    ${path}    ${CURDIR}${/}foo${/}bar.txt
 
 Call Non Existing Method
     [Documentation]    FAIL MyObject object does not have method 'non_existing'.
     Call Method    ${obj}    non_existing
-
-Call Java Method
-    ${isempty} =    Call Method    ${hashtable}    isEmpty
-    Should Be True    ${isempty}
-    Call Method    ${hashtable}    put    myname    myvalue
-    ${value} =    Call Method    ${hashtable}    get    myname
-    Should Be Equal    ${value}    myvalue
-    ${isempty} =    Call Method    ${hashtable}    isEmpty
-    Should Not Be True    ${isempty}
-
-Call Non Existing Java Method
-    [Documentation]    FAIL REGEXP: Hashtable object does not have method 'nonExisting'.
-    Call Method    ${hashtable}    nonExisting

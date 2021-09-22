@@ -56,8 +56,8 @@ Index and five items
 One variable only
     ${loop} =    Check test and get loop    ${TEST NAME}
     Should be IN ENUMERATE loop    ${loop}            3
-    Should be FOR iteration        ${loop.body[0]}    \${item}=(0, ${u}'a')
-    Should be FOR iteration        ${loop.body[1]}    \${item}=(1, ${u}'b')
+    Should be FOR iteration        ${loop.body[0]}    \${item}=(0, 'a')
+    Should be FOR iteration        ${loop.body[1]}    \${item}=(1, 'b')
 
 Wrong number of variables
     Check test and failed loop    ${TEST NAME}    IN ENUMERATE

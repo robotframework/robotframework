@@ -10,7 +10,6 @@ Custom stdout
     Check Test Case    ${TESTNAME}
 
 Redirecting stdout to DEVNULL
-    [Tags]    no-ipy    # https://github.com/IronLanguages/ironpython2/issues/702
     Check Test Case    ${TESTNAME}
 
 Custom stderr
@@ -47,7 +46,6 @@ Lot of output to custom stream
     Check Test Case    ${TESTNAME}
 
 Lot of output to DEVNULL
-    [Tags]    no-ipy    # https://github.com/IronLanguages/ironpython2/issues/702
     Check Test Case    ${TESTNAME}
 
 Run multiple times

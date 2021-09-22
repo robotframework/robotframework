@@ -25,10 +25,6 @@ Should Contain X Times with containers
     Check Log Message    ${tc.kws[1].msgs[0]}    Item found from container 2 times.
     Check Log Message    ${tc.kws[3].msgs[0]}    Item found from container 0 times.
 
-Should Contain X Times with Java types
-    [Tags]    require-jython
-    Check test case    ${TESTNAME}
-
 Should Contain X Times failing
     Check test case    ${TESTNAME}
 

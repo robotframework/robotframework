@@ -42,11 +42,7 @@ Save Using Invalid Encoding
     [Documentation]    FAIL STARTS: LookupError:
     Save XML    ${SIMPLE}    ${OUTPUT}    encoding=invalid
 
-Save Non-ASCII Using ASCII On Python 2
-    [Documentation]    FAIL STARTS: UnicodeEncodeError:
-    Save XML    ${NON-ASCII}    ${OUTPUT}    ASCII
-
-Save Non-ASCII Using ASCII On Python 3
+Save Non-ASCII Using ASCII
     Save XML    ${NON-ASCII}    ${OUTPUT}    ASCII
     XML Content Should Be    ${NON-ASCII SAVED}    ASCII
 

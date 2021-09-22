@@ -7,7 +7,6 @@ from robot.errors import TimeoutError
 from robot.running.timeouts import TestTimeout, KeywordTimeout
 from robot.utils.asserts import (assert_equal, assert_false, assert_true,
                                  assert_raises, assert_raises_with_msg)
-from robot.utils import JYTHON
 
 # thread_resources is here
 sys.path.append(os.path.join(os.path.dirname(__file__),'..','utils'))
@@ -35,8 +34,7 @@ class TestInit(unittest.TestCase):
     def test_invalid_timeout_string(self):
         for inv in ['invalid', '1s 1']:
             err = "Setting test timeout failed: Invalid time string '%s'."
-            self._verify_tout(TestTimeout(inv), str=inv, secs=0.000001,
-                              err=err % inv)
+            self._verify_tout(TestTimeout(inv), str=inv, secs=0.000001, err=err % inv)
 
     def _verify_tout(self, tout, str='', secs=-1, err=None):
         tout.replace_variables(VariableMock())
@@ -114,21 +112,13 @@ class TestRun(unittest.TestCase):
         assert_equal(self.tout.run(passing), None)
 
     def test_returning(self):
-        for arg in [ 10, 'hello', ['l','i','s','t'], unittest]:
+        for arg in [10, 'hello', ['l','i','s','t'], unittest]:
             ret = self.tout.run(returning, args=(arg,))
             assert_equal(ret, arg)
 
     def test_failing(self):
         assert_raises_with_msg(MyException, 'hello world',
                                self.tout.run, failing, ('hello world',))
-
-    if JYTHON:
-
-        def test_java_failing(self):
-            from java.lang import Error
-            from thread_resources import java_failing
-            assert_raises_with_msg(Error, 'java.lang.Error: hi tellus',
-                                   self.tout.run, java_failing, ('hi tellus',))
 
     def test_sleeping(self):
         assert_equal(self.tout.run(sleeping, args=(0.01,)), 0.01)

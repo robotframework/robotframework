@@ -138,34 +138,7 @@ formatter=repr
     NL           NL\r\n       formatter=Repr
     ${TUPLE1}    ${TUPLE2}    formatter=repr
 
-formatter=repr/ascii with non-ASCII characters on Python 2
-    [Documentation]    FAIL Several failures occurred:
-    ...
-    ...    1) Ä != A
-    ...
-    ...    2) '\\xc4' != 'A'
-    ...
-    ...    3) u'\\xc4' != ${U}'A'
-    ...
-    ...    4) Ä (string) != Ä (string)
-    ...
-    ...    5) '\\xc4' != 'A\\u0308'
-    ...
-    ...    6) u'\\xc4' != u'A\\u0308'
-    ...
-    ...    7) {'A': 2, 'a': 1, '\\xc4': 4, '\\xe4': 3} != ${PREPR_DICT1}
-    ...
-    ...    8) ${ASCII DICT} != {'a': 1}
-    Ä          A
-    Ä          A           formatter=repr
-    Ä          A           formatter=ascii
-    Ä          A\u0308     formatter=str
-    Ä          A\u0308     formatter=Repr
-    Ä          A\u0308     formatter=ASCII
-    ${DICT}    ${DICT1}    formatter=repr
-    ${DICT}    ${DICT1}    formatter=ascii
-
-formatter=repr/ascii with non-ASCII characters on Python 3
+formatter=repr/ascii with non-ASCII characters
     [Documentation]    FAIL Several failures occurred:
     ...
     ...    1) Ä != A
@@ -246,40 +219,7 @@ formatter=repr with multiline and different line endings
     1\r\n2\r\n3    1\n2\n3\n    formatter=str
     1\r\n2\r\n3    1\n2\n3\n    formatter=REPR
 
-formatter=repr/ascii with multiline and non-ASCII characters on Python 2
-    [Documentation]    FAIL Several failures occurred:
-    ...
-    ...    1) Multiline strings are different:
-    ...    --- first
-    ...    +++ second
-    ...    @@ -1,3 +1,3 @@
-    ...   \ Å
-    ...    -Ä
-    ...    +Ä
-    ...   \ Ö
-    ...
-    ...    2) Multiline strings are different:
-    ...    --- first
-    ...    +++ second
-    ...    @@ -1,3 +1,3 @@
-    ...   \ '\\xc5\\n'
-    ...    -'\\xc4\\n'
-    ...    +'A\\u0308\\n'
-    ...   \ '\\xd6\\n'
-    ...
-    ...    3) Multiline strings are different:
-    ...    --- first
-    ...    +++ second
-    ...    @@ -1,3 +1,3 @@
-    ...   \ u'\\xc5\\n'
-    ...    -u'\\xc4\\n'
-    ...    +u'A\\u0308\\n'
-    ...   \ u'\\xd6\\n'
-    Å\nÄ\n\Ö\n    Å\nA\u0308\n\Ö\n
-    Å\nÄ\n\Ö\n    Å\nA\u0308\n\Ö\n    formatter=repr
-    Å\nÄ\n\Ö\n    Å\nA\u0308\n\Ö\n    formatter=ascii
-
-formatter=repr/ascii with multiline and non-ASCII characters on Python 3
+formatter=repr/ascii with multiline and non-ASCII characters
     [Documentation]    FAIL Several failures occurred:
     ...
     ...    1) Multiline strings are different:

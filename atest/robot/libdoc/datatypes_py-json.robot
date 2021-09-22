@@ -2,7 +2,6 @@
 Resource          libdoc_resource.robot
 Suite Setup       Run Libdoc And Parse Model From JSON    ${TESTDATADIR}/DataTypesLibrary.py
 Test Template     Should Be Equal Multiline
-Force Tags        require-py3.6
 
 *** Test Cases ***
 Documentation

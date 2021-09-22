@@ -61,7 +61,6 @@ TOC with inits and tags
    ...    %TOC% not replaced here
 
 TOC with inits and tags and DataTypes
-   [Tags]    require-py3
    Run Libdoc And Parse Output    ${TESTDATADIR}/TOCWithInitsAndKeywordsAndDataTypes.py
    Doc should be
    ...    = First entry =

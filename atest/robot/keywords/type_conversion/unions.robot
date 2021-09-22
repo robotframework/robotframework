@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    keywords/type_conversion/unions.robot
-Force Tags        require-py3
 Resource          atest_resource.robot
 
 *** Test Cases ***

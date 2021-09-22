@@ -20,10 +20,9 @@ Modifier with arguments separated with ';'
 
 Non-existing modifier
     Run Tests    --prerunmodifier NobodyHere -l ${LOG}   ${TEST DATA}
-    ${quote} =    Set Variable If    ${INTERPRETER.is_py3}    '    ${EMPTY}
     Stderr Should Match
     ...    ? ERROR ? Importing model modifier 'NobodyHere' failed: *Error:
-    ...    No module named ${quote}NobodyHere${quote}\nTraceback (most recent call last):\n*
+    ...    No module named 'NobodyHere'\nTraceback (most recent call last):\n*
     Output and log should not be modified
 
 Invalid modifier

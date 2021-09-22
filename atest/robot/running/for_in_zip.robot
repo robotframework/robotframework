@@ -41,16 +41,16 @@ One variable and list
 One variable and two lists
     ${loop} =    Check test and get loop    ${TEST NAME}
     Should be IN ZIP loop      ${loop}            3
-    Should be FOR iteration    ${loop.body[0]}    \${x}=(${u}'a', ${u}'x')
-    Should be FOR iteration    ${loop.body[1]}    \${x}=(${u}'b', ${u}'y')
-    Should be FOR iteration    ${loop.body[2]}    \${x}=(${u}'c', ${u}'z')
+    Should be FOR iteration    ${loop.body[0]}    \${x}=('a', 'x')
+    Should be FOR iteration    ${loop.body[1]}    \${x}=('b', 'y')
+    Should be FOR iteration    ${loop.body[2]}    \${x}=('c', 'z')
 
 One variable and six lists
     ${loop} =    Check test and get loop    ${TEST NAME}
     Should be IN ZIP loop      ${loop}            3
-    Should be FOR iteration    ${loop.body[0]}    \${x}=(${u}'a', ${u}'x', ${u}'1', ${u}'1', ${u}'x', ${u}'a')
-    Should be FOR iteration    ${loop.body[1]}    \${x}=(${u}'b', ${u}'y', ${u}'2', ${u}'2', ${u}'y', ${u}'b')
-    Should be FOR iteration    ${loop.body[2]}    \${x}=(${u}'c', ${u}'z', ${u}'3', ${u}'3', ${u}'z', ${u}'c')
+    Should be FOR iteration    ${loop.body[0]}    \${x}=('a', 'x', '1', '1', 'x', 'a')
+    Should be FOR iteration    ${loop.body[1]}    \${x}=('b', 'y', '2', '2', 'y', 'b')
+    Should be FOR iteration    ${loop.body[2]}    \${x}=('c', 'z', '3', '3', 'z', 'c')
 
 Other iterables
     Check Test Case    ${TEST NAME}

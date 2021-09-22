@@ -1,8 +1,7 @@
-from __future__ import print_function
 import sys
 import time
 
-from robot import utils
+from robot.utils import eq, normalize, timestr_to_secs
 
 from objecttoreturn import ObjectToReturn
 
@@ -28,12 +27,6 @@ class ExampleLibrary:
     def print_to_stdout_and_stderr(self, msg):
         print('stdout: ' + msg, file=sys.stdout)
         print('stderr: ' + msg, file=sys.stderr)
-
-    def print_to_python_and_java_streams(self):
-        import ExampleJavaLibrary
-        print('*INFO* First message to Python')
-        getattr(ExampleJavaLibrary(), 'print')('*INFO* Second message to Java')
-        print('*INFO* Last message to Python')
 
     def single_line_doc(self):
         """One line keyword documentation."""
@@ -78,22 +71,22 @@ class ExampleLibrary:
         object.name = name
 
     def set_attribute(self, name, value):
-        setattr(self, utils.normalize(name), utils.normalize(value))
+        setattr(self, normalize(name), normalize(value))
 
     def get_attribute(self, name):
-        return getattr(self, utils.normalize(name))
+        return getattr(self, normalize(name))
 
     def check_attribute(self, name, expected):
         try:
-            actual = getattr(self, utils.normalize(name))
+            actual = getattr(self, normalize(name))
         except AttributeError:
             raise AssertionError("Attribute '%s' not set" % name)
-        if not utils.eq(actual, expected):
+        if not eq(actual, expected):
             raise AssertionError("Attribute '%s' was '%s', expected '%s'"
                                  % (name, actual, expected))
 
     def check_attribute_not_set(self, name):
-        if hasattr(self, utils.normalize(name)):
+        if hasattr(self, normalize(name)):
             raise AssertionError("Attribute '%s' should not be set" % name)
 
     def backslashes(self, count=1):
@@ -123,15 +116,12 @@ class ExampleLibrary:
                 print('Looping forever: %d' % i)
 
     def write_to_file_after_sleeping(self, path, sec, msg=None):
-        f = open(path, 'w')
-        try:
+        with open(path, 'w') as file:
             self._sleep(sec)
-            f.write(msg or 'Slept %s seconds' % sec)
-        finally:  # may be killed by timeouts
-            f.close()
+            file.write(msg or 'Slept %s seconds' % sec)
 
     def sleep_without_logging(self, timestr):
-        seconds = utils.timestr_to_secs(timestr)
+        seconds = timestr_to_secs(timestr)
         self._sleep(seconds)
 
     def _sleep(self, seconds):
@@ -149,23 +139,17 @@ class ExampleLibrary:
         return _MyList(values)
 
     def return_unrepresentable_objects(self, identifier=None, just_one=False):
-        class FailiningStr(object):
+        class FailingStr:
+
             def __init__(self, identifier=identifier):
                 self.identifier = identifier
+
             def __str__(self):
                 raise RuntimeError
-            def __unicode__(self):
-                raise UnicodeError
-        class FailiningUnicode(object):
-            def __init__(self, identifier=identifier):
-                self.identifier = identifier
-            def __unicode__(self):
-                raise ValueError
-            if sys.version_info[0] > 2:
-                __str__ = __unicode__
+
         if just_one:
-            return FailiningStr()
-        return FailiningStr(), FailiningUnicode()
+            return FailingStr()
+        return FailingStr(), FailingStr()
 
     def fail_with_suppressed_exception_name(self, msg):
         raise MyException(msg)
@@ -176,5 +160,4 @@ class _MyList(list):
 
 
 class MyException(AssertionError):
-
     ROBOT_SUPPRESS_NAME = True

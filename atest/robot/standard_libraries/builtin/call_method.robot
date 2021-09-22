@@ -3,7 +3,6 @@ Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/call_method.robo
 Resource        atest_resource.robot
 
 *** Test Cases ***
-
 Call Method
     Check Test Case  ${TEST NAME}
 
@@ -23,12 +22,4 @@ Call Method From Module
     Check Test Case  ${TEST NAME}
 
 Call Non Existing Method
-    Check Test Case  ${TEST NAME}
-
-Call Java Method
-    [Tags]  require-jython
-    Check Test Case  ${TEST NAME}
-
-Call Non Existing Java Method
-    [Tags]  require-jython
     Check Test Case  ${TEST NAME}

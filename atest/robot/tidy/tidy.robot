@@ -53,7 +53,6 @@ Custom headers are preserved and tables aligned accordingly
     Run tidy and check result    input=custom_headers_input.robot    expected=golden_with_headers.robot
 
 Running Tidy as script
-    [Tags]   no-standalone
     Run tidy as script and check result    input=golden.robot
 
 For loops

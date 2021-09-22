@@ -1,7 +1,4 @@
-from __future__ import print_function
-
-
-class DynamicLibraryWithoutArgspec(object):
+class DynamicLibraryWithoutArgspec:
 
     def get_keyword_names(self):
         return [name for name in dir(self) if name.startswith('do_')]

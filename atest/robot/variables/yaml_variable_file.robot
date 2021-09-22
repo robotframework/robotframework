@@ -15,7 +15,6 @@ Valid YML file
     Check Test Case    ${TESTNAME}
 
 Non-ASCII strings
-    [Tags]    no-ipy
     Check Test Case    ${TESTNAME}
 
 Dictionary is dot-accessible

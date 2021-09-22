@@ -5,7 +5,6 @@ Test Template   Run Should Fail
 
 *** Test Cases ***
 No Input
-    [Tags]    no-standalone
     ${EMPTY}    Expected at least 1 argument, got 0\\.
 
 Argument File Option Without Value As Last Argument

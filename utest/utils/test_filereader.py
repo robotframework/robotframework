@@ -3,8 +3,9 @@ import os
 import tempfile
 import unittest
 from io import BytesIO, StringIO
+from pathlib import Path
 
-from robot.utils import FileReader, IRONPYTHON, PY3
+from robot.utils import FileReader
 from robot.utils.asserts import assert_equal, assert_raises
 
 
@@ -55,35 +56,24 @@ class TestReadFile(unittest.TestCase):
             assert_reader(reader)
         assert_closed(reader.file)
 
-    if PY3:
-        def test_open_text_file(self):
-            with open(PATH, encoding='UTF-8') as f:
-                with FileReader(f) as reader:
-                    assert_reader(reader)
-                assert_open(f, reader.file)
-            assert_closed(f, reader.file)
-
-        def test_path_as_path(self):
-            from pathlib import Path
-            with FileReader(Path(PATH)) as reader:
+    def test_open_text_file(self):
+        with open(PATH, encoding='UTF-8') as f:
+            with FileReader(f) as reader:
                 assert_reader(reader)
-            assert_closed(reader.file)
+            assert_open(f, reader.file)
+        assert_closed(f, reader.file)
 
-    else:
-        def test_open_text_file(self):
-            with open(PATH) as f:
-                with FileReader(f) as reader:
-                    assert_reader(reader)
-                assert_open(f, reader.file)
-            assert_closed(f, reader.file)
+    def test_path_as_pathlib_path(self):
+        with FileReader(Path(PATH)) as reader:
+            assert_reader(reader)
+        assert_closed(reader.file)
 
-    if not IRONPYTHON:
-        def test_codecs_open_file(self):
-            with codecs.open(PATH, encoding='UTF-8') as f:
-                with FileReader(f) as reader:
-                    assert_reader(reader)
-                assert_open(f, reader.file)
-            assert_closed(f, reader.file)
+    def test_codecs_open_file(self):
+        with codecs.open(PATH, encoding='UTF-8') as f:
+            with FileReader(f) as reader:
+                assert_reader(reader)
+            assert_open(f, reader.file)
+        assert_closed(f, reader.file)
 
     def test_open_binary_file(self):
         with open(PATH, 'rb') as f:

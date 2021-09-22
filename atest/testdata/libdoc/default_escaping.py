@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """Library to document and test correct default value escaping."""
 from robot.libraries.BuiltIn import BuiltIn
 

@@ -9,10 +9,6 @@ Library imported normally
 Module library
     Check Test Case    ${TESTNAME}
 
-Java library
-    [Tags]    require-jython
-    Check Test Case    ${TESTNAME}
-
 Library with alias
     Check Test Case    ${TESTNAME}
 

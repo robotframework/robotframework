@@ -3,7 +3,7 @@ import sys
 
 from robot.utils.asserts import assert_equal, assert_not_none
 from robot.utils.encodingsniffer import get_console_encoding
-from robot.utils import IRONPYTHON, PY_VERSION, WINDOWS
+from robot.utils import WINDOWS
 
 
 class StreamStub(object):
@@ -53,9 +53,8 @@ class TestGetConsoleEncodingFromStandardStreams(unittest.TestCase):
         assert_equal(get_console_encoding(), 'ascii')
 
 
-# We don't look at streams on Windows w/ Python 3.6+ and with IronPython
-# our `isatty` util doesn't consider the StreamSub a tty.
-if WINDOWS and (IRONPYTHON or PY_VERSION > (3,6)):
+# We don't look at streams on Windows. Our `isatty` doesn't consider StreamSub a tty.
+if WINDOWS:
     del TestGetConsoleEncodingFromStandardStreams
 
 

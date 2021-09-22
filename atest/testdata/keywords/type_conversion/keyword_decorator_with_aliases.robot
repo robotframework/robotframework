@@ -170,13 +170,11 @@ Invalid dictionary
     Dictionary           {{'not': 'hashable'}: 'xxx'}                    error=Evaluating expression failed: *
 
 Set
-    [Tags]               require-py3
     Set                  set()                     set()
     Set                  {'foo', 'bar'}            {'foo', 'bar'}
     Set                  {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
 
 Invalid set
-    [Tags]               require-py3
     [Template]           Conversion Should Fail
     Set                  {1, ooops}                                      error=Invalid expression.
     Set                  {}                                              error=Value is dictionary, not set.
@@ -187,14 +185,12 @@ Invalid set
     Set                  frozenset()                                     error=Invalid expression.
 
 Frozenset
-    [Tags]               require-py3
     Frozenset            frozenset()               frozenset()
     Frozenset            set()                     frozenset()
     Frozenset            {'foo', 'bar'}            frozenset({'foo', 'bar'})
     Frozenset            {1, 2, 3.14, -42}         frozenset({1, 2, 3.14, -42})
 
 Invalid frozenset
-    [Tags]               require-py3
     [Template]           Conversion Should Fail
     Frozenset            {1, ooops}                                      error=Invalid expression.
     Frozenset            {}                                              error=Value is dictionary, not set.

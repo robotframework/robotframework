@@ -31,11 +31,9 @@ By default signal is sent only to parent process
     Check Test Case    ${TESTNAME}
 
 Signal can be sent to process running in shell
-    [Tags]    no-jython
     Check Test Case    ${TESTNAME}
 
 Signal can be sent to child processes
-    [Tags]    no-jython
     Check Test Case    ${TESTNAME}
 
 Sending an unknown signal

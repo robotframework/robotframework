@@ -3,7 +3,6 @@ Documentation     Test that SIGINT and SIGTERM can stop execution gracefully
 ...               (one signal) and forcefully (two signals). Windows does not
 ...               support these signals so we use CTRL_C_EVENT instead SIGINT
 ...               and do not test with SIGTERM.
-Force Tags        no-windows-jython
 Resource          atest_resource.robot
 
 *** Variables ***
@@ -20,7 +19,6 @@ SIGTERM Signal Should Stop Test Execution Gracefully
     Check Test Cases Have Failed Correctly
 
 Execution Is Stopped Even If Keyword Swallows Exception
-    [Tags]    no-ipy    no-jython
     Start And Send Signal    swallow_exception.robot    One SIGINT
     Check Test Cases Have Failed Correctly
 

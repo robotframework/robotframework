@@ -9,14 +9,6 @@ New Style Python Class With No Init
 Old Style Python Class With No Argument Init
     no_arg_init.py
 
-Java Class With No Constructor
-    [Tags]    require-jython    require-tools.jar
-    NoConstructor.java    /
-
-Java Class With Default and Private Constructors
-    [Tags]    require-jython    require-tools.jar
-    NoArgConstructor.java    /
-
 *** Keywords ***
 Library Should Have No Init
     [Arguments]    ${library}    @{posonly marker}

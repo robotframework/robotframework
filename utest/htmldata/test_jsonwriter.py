@@ -1,19 +1,9 @@
-try:
-    import json
-except ImportError:
-    try:
-        import simplejson as json
-    except ImportError:
-        json = None
+import json
 import unittest
+from io import StringIO
 
-from robot.utils import StringIO, PY3
 from robot.utils.asserts import assert_equal, assert_raises
 from robot.htmldata.jsonwriter import JsonDumper
-
-
-if PY3:
-    long = int
 
 
 class TestJsonDumper(unittest.TestCase):
@@ -51,8 +41,7 @@ class TestJsonDumper(unittest.TestCase):
         self._test(1, '1')
 
     def test_dump_long(self):
-        self._test(long(12345678901234567890), '12345678901234567890')
-        self._test(long(0), '0')
+        self._test(12345678901234567890, '12345678901234567890')
 
     def test_dump_list(self):
         self._test([1, 2, True, 'hello', 'world'], '[1,2,true,"hello","world"]')
@@ -83,16 +72,11 @@ class TestJsonDumper(unittest.TestCase):
         assert_equal(output.getvalue(), '[1,[a,{a:1}]]')
         assert_raises(ValueError, dumper.dump, [mapped1])
 
-    if json:
-        def test_against_standard_json(self):
-            data = ['\\\'\"\r\t\n' + ''.join(chr(i) for i in range(32, 127)),
-                    {'A': 1, 'b': 2, 'C': ()}, None, (1, 2, 3)]
-            try:
-                expected = json.dumps(data, sort_keys=True,
-                                      separators=(',', ':'))
-            except UnicodeError:
-                return  # http://ironpython.codeplex.com/workitem/32331
-            self._test(data, expected)
+    def test_against_standard_json(self):
+        data = ['\\\'\"\r\t\n' + ''.join(chr(i) for i in range(32, 127)),
+                {'A': 1, 'b': 2, 'C': ()}, None, (1, 2, 3)]
+        expected = json.dumps(data, sort_keys=True, separators=(',', ':'))
+        self._test(data, expected)
 
 
 if __name__ == '__main__':

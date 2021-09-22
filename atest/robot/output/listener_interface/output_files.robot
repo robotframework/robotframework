@@ -1,5 +1,6 @@
 *** Settings ***
-Documentation     Testing that listener gets information about different output files. Tests also that the listener can be taken into use with path.
+Documentation     Testing that listener gets information about different output files.
+...               Tests also that the listener can be taken into use with path.
 Suite Setup       Run Some Tests
 Suite Teardown    Remove Listener Files
 Resource          listener_resource.robot
@@ -18,22 +19,10 @@ Output Files
     ...    Closing...\n
     Should End With    ${file}    ${expected}
 
-Output Files With Java
-    [Tags]    require-jython
-    ${file} =    Get Listener File    ${JAVA_FILE}
-    ${expected} =    Catenate    SEPARATOR=\n
-    ...    Debug (java): mydeb.txt
-    ...    Output (java): myout.xml
-    ...    Log (java): mylog.html
-    ...    Report (java): myrep.html
-    ...    The End\n
-    Should End With    ${file}    ${expected}
-
 *** Keywords ***
 Run Some Tests
     ${options} =    Catenate
     ...    --listener "${LISTENERS}${/}ListenAll.py"
-    ...    --listener "${LISTENERS}${/}JavaListener.java"
     ...    --log mylog.html
     ...    --report myrep.html
     ...    --output myout.xml

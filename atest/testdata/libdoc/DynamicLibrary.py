@@ -1,15 +1,13 @@
-# coding=UTF-8
-from __future__ import print_function
 import inspect
 import os.path
 
 
 class DynamicLibrary(object):
-    """This is overwritten and not shown in docs"""
+    """This doc is overwritten and not shown in docs."""
     ROBOT_LIBRARY_VERSION = 0.1
 
-    def __init__(self, arg1, arg2="This is shown in docs"):
-        """This is overwritten and not shown in docs"""
+    def __init__(self, arg1, arg2="These args are shown in docs"):
+        """This doc is overwritten and not shown in docs."""
 
     def get_keyword_names(self):
         return ['0',
@@ -21,8 +19,8 @@ class DynamicLibrary(object):
                 'KWO w/ varargs',
                 'Embedded ${args} 1',
                 'Em${bed}ed ${args} 2',
-                'nön-äscii ÜTF-8',
-                u'nön-äscii Ünicöde',
+                'nön-äscii ÜTF-8'.encode('UTF-8'),
+                'nön-äscii Ünicöde',
                 'Tags',
                 'Types',
                 'Source info',
@@ -49,10 +47,10 @@ class DynamicLibrary(object):
         return ['arg%d' % (i+1) for i in range(int(name[-1]))]
 
     def get_keyword_documentation(self, name):
-        if name == u'nön-äscii ÜTF-8':
-            return 'Hyvää yötä.\n\nСпасибо! (UTF-8)\n\nTags: hyvää, yötä'
-        if name == u'nön-äscii Ünicöde':
-            return u'Hyvää yötä.\n\nСпасибо! (Unicode)\n\nTags: hyvää, yötä'
+        if name == 'nön-äscii ÜTF-8':
+            return 'Hyvää yötä.\n\nСпасибо! (UTF-8)\n\nTags: hyvää, yötä'.encode('UTF-8')
+        if name == 'nön-äscii Ünicöde':
+            return 'Hyvää yötä.\n\nСпасибо! (Unicode)\n\nTags: hyvää, yötä'
         short = 'Dummy documentation for `%s`.' % name
         if name.startswith('__'):
             return short

@@ -159,11 +159,6 @@ Invalid string
     String               ${{type('Bang', (), {'__str__': lambda self: 1/0})()}}
     ...                  arg_type=Bang             error=ZeroDivisionError: *
 
-Invalid string (non-ASCII byte string)
-    [Tags]               require-py2    no-ipy
-    [Template]           Conversion Should Fail
-    String               ${{'åäö'}}                arg_type=string    error=*
-
 Bytes
     Bytes                foo                       b'foo'
     Bytes                \x00\x01\xFF\u00FF        b'\\x00\\x01\\xFF\\xFF'
@@ -181,7 +176,6 @@ Invalid bytes
     Bytes                ${1.3}                    arg_type=float
 
 Bytestring
-    [Tags]               require-py3
     Bytestring           foo                       b'foo'
     Bytestring           \x00\x01\xFF\u00FF        b'\\x00\\x01\\xFF\\xFF'
     Bytestring           Hyvä esimerkki!           b'Hyv\\xE4 esimerkki!'
@@ -191,7 +185,6 @@ Bytestring
     Bytestring           ${{bytearray(b'foo')}}    bytearray(b'foo')
 
 Invalid bytesstring
-    [Tags]               require-py3
     [Template]           Conversion Should Fail
     Bytestring           \u0100                    type=bytes            error=Character '\u0100' cannot be mapped to a byte.
     Bytestring           \u00ff\u0100\u0101        type=bytes            error=Character '\u0100' cannot be mapped to a byte.
@@ -267,29 +260,24 @@ Invalid timedelta
     Timedelta            ${LIST}                   arg_type=list
 
 Enum
-    [Tags]               require-enum
     Enum                 FOO                       MyEnum.FOO
     Enum                 bar                       MyEnum.bar
     Enum                 foo                       MyEnum.foo
 
 Flag
-    [Tags]               require-enum
     Flag                 RED                       MyFlag.RED
 
 IntEnum
-    [Tags]               require-enum
     IntEnum              ON                        MyIntEnum.ON
     IntEnum              ${1}                      MyIntEnum.ON
     IntEnum              0                         MyIntEnum.OFF
 
 IntFlag
-    [Tags]               require-enum
     IntFlag              R                         MyIntFlag.R
     IntFlag              4                         MyIntFlag.R
     IntFlag              ${4}                      MyIntFlag.R
 
 Normalized enum member match
-    [Tags]               require-enum
     Enum                 b a r                     MyEnum.bar
     Enum                 BAr                       MyEnum.bar
     Enum                 B_A_r                     MyEnum.bar
@@ -301,12 +289,10 @@ Normalized enum member match
     IntFlag              x                         MyIntFlag.X
 
 Normalized enum member match with multiple matches
-    [Tags]               require-enum
     [Template]           Conversion Should Fail
     Enum                 Foo                       type=MyEnum           error=MyEnum has multiple members matching 'Foo'. Available: 'FOO' and 'foo'
 
 Invalid Enum
-    [Tags]               require-enum
     [Template]           Conversion Should Fail
     Enum                 foobar                    type=MyEnum           error=MyEnum does not have member 'foobar'. Available: 'FOO', 'bar', 'foo' and 'normalize_me'
     Enum                 bar!                      type=MyEnum           error=MyEnum does not have member 'bar!'. Available: 'FOO', 'bar', 'foo' and 'normalize_me'
@@ -314,7 +300,6 @@ Invalid Enum
     Flag                 foobar                    type=MyFlag           error=MyFlag does not have member 'foobar'. Available: 'BLUE' and 'RED'
 
 Invalid IntEnum
-    [Tags]               require-enum
     [Template]           Conversion Should Fail
     IntEnum              nonex                     type=MyIntEnum        error=MyIntEnum does not have member 'nonex'. Available: 'OFF (0)' and 'ON (1)'
     IntEnum              2                         type=MyIntEnum        error=MyIntEnum does not have member '2'. Available: 'OFF (0)' and 'ON (1)'
@@ -419,7 +404,6 @@ Invalid mapping (abc)
     Mutable mapping      barfoo                    type=dictionary       error=Invalid expression.
 
 Set
-    [Tags]               require-py3
     Set                  set()                     set()
     Set                  {'foo', 'bar'}            {'foo', 'bar'}
     Set                  {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
@@ -430,7 +414,6 @@ Set
     Set                  ${{{1: 2}}}               {1}
 
 Invalid set
-    [Tags]               require-py3
     [Template]           Conversion Should Fail
     Set                  {1, ooops}                error=Invalid expression.
     Set                  {}                        error=Value is dictionary, not set.
@@ -442,7 +425,6 @@ Invalid set
     Set                  ${NONE}                   arg_type=None
 
 Set (abc)
-    [Tags]               require-py3
     Set abc              set()                     set()
     Set abc              {'foo', 'bar'}            {'foo', 'bar'}
     Set abc              {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
@@ -451,7 +433,6 @@ Set (abc)
     Mutable set          {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
 
 Invalid set (abc)
-    [Tags]               require-py3
     [Template]           Conversion Should Fail
     Set abc              {1, ooops}                type=set              error=Invalid expression.
     Set abc              {}                        type=set              error=Value is dictionary, not set.
@@ -461,7 +442,6 @@ Invalid set (abc)
     Mutable set          ooops                     type=set              error=Invalid expression.
 
 Frozenset
-    [Tags]               require-py3
     Frozenset            frozenset()               frozenset()
     Frozenset            set()                     frozenset()
     Frozenset            {'foo', 'bar'}            frozenset({'foo', 'bar'})
@@ -473,23 +453,11 @@ Frozenset
     Frozenset            ${{{1: 2}}}               frozenset({1})
 
 Invalid frozenset
-    [Tags]               require-py3
     [Template]           Conversion Should Fail
     Frozenset            {1, ooops}                                      error=Invalid expression.
     Frozenset            {}                                              error=Value is dictionary, not set.
     Frozenset            ooops                                           error=Invalid expression.
     Frozenset            {{'not', 'hashable'}}                           error=Evaluating expression failed: *
-
-Sets are not supported in Python 2
-    [Tags]               require-py2
-    [Template]           Conversion Should Fail
-    Set                  set()                                           error=Sets are not supported on Python 2.
-    Set                  {'foo', 'bar'}                                  error=Sets are not supported on Python 2.
-    Set abc              set()                     type=set              error=Sets are not supported on Python 2.
-    Mutable set          {'foo', 'bar'}            type=set              error=Sets are not supported on Python 2.
-    Frozenset            set()                                           error=Sets are not supported on Python 2.
-    Frozenset            {'foo', 'bar'}                                  error=Sets are not supported on Python 2.
-    Frozenset            frozenset()                                     error=Sets are not supported on Python 2.
 
 Unknown types are not converted
     Unknown              foo                       'foo'
@@ -537,12 +505,10 @@ Invalid Kwargs
     Kwargs               kwarg=${1.2}              type=integer    arg_type=float    error=Conversion would lose precision.
 
 Kwonly
-    [Tags]               require-py3
     Kwonly               argument=1.0              expected=1.0
     Kwonly               argument=${1}             expected=1.0
 
 Invalid kwonly
-    [Tags]               require-py3
     [Template]           Conversion Should Fail
     Kwonly               argument=foobar           type=float
     Kwonly               argument=${NONE}          type=float    arg_type=None
@@ -587,7 +553,6 @@ Explicit conversion failure is used if both conversions fail
     Type and default 3    BANG!    type=timedelta    error=Invalid time string 'BANG!'.
 
 Multiple types using Union
-    [Tags]        require-py3
     [Template]    Multiple types using Union
     1             1
     1.2           1.2
@@ -597,7 +562,6 @@ Multiple types using Union
     ${None}       ${None}
 
 Argument not matching Union tupes
-    [Tags]        require-py3
     [Template]    Conversion Should Fail
     Multiple types using Union    invalid    type=integer or None or float
     Multiple types using Union    ${LIST}    type=integer or None or float    arg_type=list

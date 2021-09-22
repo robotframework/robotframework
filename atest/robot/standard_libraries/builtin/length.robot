@@ -48,8 +48,3 @@ Getting length with `size` method
 
 Getting length with `length` attribute
     Check test case    ${TESTNAME}
-
-Getting length from Java types
-    [Documentation]    Tests that it's possible to get the lenght of String, Vector, Hashtable and array
-    [Tags]    require-jython
-    Check test case    ${TESTNAME}

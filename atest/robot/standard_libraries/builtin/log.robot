@@ -56,16 +56,10 @@ repr=True
     ...                results and thus these tests are identical.
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    'Nothing special here'
-    ${expected} =    Set Variable If    ${INTERPRETER.is_py2}
-    ...    'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!'
-    ...    'Hyvää yötä ☃!'
-    Check Log Message    ${tc.kws[1].msgs[0]}    ${expected}
+    Check Log Message    ${tc.kws[1].msgs[0]}    'Hyvää yötä ☃!'
     Check Log Message    ${tc.kws[2].msgs[0]}    42    DEBUG
     Check Log Message    ${tc.kws[4].msgs[0]}    b'\\x00abc\\xff (repr=True)'
-    ${expected} =    Set Variable If    ${INTERPRETER.is_py2}
-    ...    'hyva\\u0308'
-    ...    'hyvä'
-    Check Log Message    ${tc.kws[6].msgs[0]}    ${expected}
+    Check Log Message    ${tc.kws[6].msgs[0]}    'hyvä'
     Stdout Should Contain    b'\\x00abc\\xff (repr=True)'
 
 formatter=repr
@@ -73,29 +67,20 @@ formatter=repr
     ...                results and thus these tests are identical.
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    'Nothing special here'
-    ${expected} =    Set Variable If    ${INTERPRETER.is_py2}
-    ...    'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!'
-    ...    'Hyvää yötä ☃!'
-    Check Log Message    ${tc.kws[1].msgs[0]}    ${expected}
+    Check Log Message    ${tc.kws[1].msgs[0]}    'Hyvää yötä ☃!'
     Check Log Message    ${tc.kws[2].msgs[0]}    42    DEBUG
     Check Log Message    ${tc.kws[4].msgs[0]}    b'\\x00abc\\xff (formatter=repr)'
-    ${expected} =    Set Variable If    ${INTERPRETER.is_py2}
-    ...    'hyva\\u0308'
-    ...    'hyvä'
-    Check Log Message    ${tc.kws[6].msgs[0]}    ${expected}
+    Check Log Message    ${tc.kws[6].msgs[0]}    'hyvä'
     Stdout Should Contain    b'\\x00abc\\xff (formatter=repr)'
 
 formatter=ascii
     ${tc} =    Check Test Case    ${TEST NAME}
-    ${u} =     Set Variable If    ${INTERPRETER.is_py2}    u    ${EMPTY}
-    ${u2} =    Set Variable If    ${INTERPRETER.is_py2} and not ${INTERPRETER.is_ironpython}    u    ${EMPTY}
-    ${b} =     Set Variable If    ${INTERPRETER.is_py2} and not ${INTERPRETER.is_ironpython}    ${EMPTY}    b
-    Check Log Message    ${tc.kws[0].msgs[0]}    ${u2}'Nothing special here'
-    Check Log Message    ${tc.kws[1].msgs[0]}    ${u}'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!'
+    Check Log Message    ${tc.kws[0].msgs[0]}    'Nothing special here'
+    Check Log Message    ${tc.kws[1].msgs[0]}    'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!'
     Check Log Message    ${tc.kws[2].msgs[0]}    42    DEBUG
-    Check Log Message    ${tc.kws[4].msgs[0]}    ${b}'\\x00abc\\xff (formatter=ascii)'
-    Check Log Message    ${tc.kws[6].msgs[0]}    ${u}'hyva\\u0308'
-    Stdout Should Contain    ${b}'\\x00abc\\xff (formatter=ascii)'
+    Check Log Message    ${tc.kws[4].msgs[0]}    b'\\x00abc\\xff (formatter=ascii)'
+    Check Log Message    ${tc.kws[6].msgs[0]}    'hyva\\u0308'
+    Stdout Should Contain    b'\\x00abc\\xff (formatter=ascii)'
 
 formatter=str
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -116,10 +101,7 @@ formatter=repr pretty prints
     Check Log Message    ${tc.kws[5].msgs[0]}    {'big': 'dict',\n\ 'list': [1, 2, 3],\n\ 'long': '${long string}',\n\ 'nested': ${small dict}}
     Check Log Message    ${tc.kws[7].msgs[0]}    ${small list}
     Check Log Message    ${tc.kws[9].msgs[0]}    ['big',\n\ 'list',\n\ '${long string}',\n\ b'${long string}',\n\ ['nested', ('tuple', 2)],\n\ ${small dict}]
-    ${expected} =    Set Variable If    ${INTERPRETER.is_py2}
-    ...    ['hyv\\xe4', b'hyv\\xe4', {'\\u2603': b'\\x00\\xff'}]
-    ...    ['hyvä', b'hyv\\xe4', {'☃': b'\\x00\\xff'}]
-    Check Log Message    ${tc.kws[11].msgs[0]}    ${expected}
+    Check Log Message    ${tc.kws[11].msgs[0]}    ['hyvä', b'hyv\\xe4', {'☃': b'\\x00\\xff'}]
     Stdout Should Contain    ${small dict}
     Stdout Should Contain    ${small list}
 

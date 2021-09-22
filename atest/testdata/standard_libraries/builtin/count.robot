@@ -28,12 +28,6 @@ Should Contain X Times with containers
     ${LIST}    42       0
     ${DICT}    a        1
 
-Should Contain X Times with Java types
-    ${HASHTABLE1}    a    1
-    ${ARRAY3}        b    1
-    ${VECTOR3}       c    1
-    ${VECTOR3}       d    0
-
 Should Contain X Times failing
     [Documentation]    FAIL
     ...    Several failures occurred:

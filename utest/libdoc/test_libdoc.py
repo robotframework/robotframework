@@ -2,7 +2,9 @@ import unittest
 import json
 from os.path import dirname, join, normpath
 
-from robot.utils import PY3, PY_VERSION, IRONPYTHON, JYTHON
+from jsonschema import validate
+
+from robot.utils import PY_VERSION
 from robot.utils.asserts import assert_equal
 from robot.libdocpkg import LibraryDocumentation
 from robot.libdocpkg.model import LibraryDoc, KeywordDoc
@@ -164,82 +166,77 @@ argument value ``'stderr'``."""
         pass
 
 
-if not IRONPYTHON and not JYTHON:
-    from jsonschema import validate
+class TestLibdocJsonWriter(unittest.TestCase):
 
-    class TestLibdocJsonWriter(unittest.TestCase):
+    def test_Annotations(self):
+        run_libdoc_and_validate_json('Annotations.py')
 
-        def test_Annotations(self):
-            if PY3:
-                run_libdoc_and_validate_json('Annotations.py')
+    def test_Decorators(self):
+        run_libdoc_and_validate_json('Decorators.py')
 
-        def test_Decorators(self):
-            run_libdoc_and_validate_json('Decorators.py')
+    def test_Deprecation(self):
+        run_libdoc_and_validate_json('Deprecation.py')
 
-        def test_Deprecation(self):
-            run_libdoc_and_validate_json('Deprecation.py')
+    def test_DocFormat(self):
+        run_libdoc_and_validate_json('DocFormat.py')
 
-        def test_DocFormat(self):
-            run_libdoc_and_validate_json('DocFormat.py')
+    def test_DynamicLibrary(self):
+        run_libdoc_and_validate_json('DynamicLibrary.py::required')
 
-        def test_DynamicLibrary(self):
-            run_libdoc_and_validate_json('DynamicLibrary.py::required')
+    def test_DynamicLibraryWithoutGetKwArgsAndDoc(self):
+        run_libdoc_and_validate_json('DynamicLibraryWithoutGetKwArgsAndDoc.py')
 
-        def test_DynamicLibraryWithoutGetKwArgsAndDoc(self):
-            run_libdoc_and_validate_json('DynamicLibraryWithoutGetKwArgsAndDoc.py')
+    def test_ExampleSpec(self):
+        run_libdoc_and_validate_json('ExampleSpec.xml')
 
-        def test_ExampleSpec(self):
-            run_libdoc_and_validate_json('ExampleSpec.xml')
+    def test_InternalLinking(self):
+        run_libdoc_and_validate_json('InternalLinking.py')
 
-        def test_InternalLinking(self):
-            run_libdoc_and_validate_json('InternalLinking.py')
+    def test_KeywordOnlyArgs(self):
+        run_libdoc_and_validate_json('KeywordOnlyArgs.py')
 
-        def test_KeywordOnlyArgs(self):
-            if PY3:
-                run_libdoc_and_validate_json('KeywordOnlyArgs.py')
+    def test_LibraryDecorator(self):
+        run_libdoc_and_validate_json('LibraryDecorator.py')
 
-        def test_LibraryDecorator(self):
-            run_libdoc_and_validate_json('LibraryDecorator.py')
+    def test_module(self):
+        run_libdoc_and_validate_json('module.py')
 
-        def test_module(self):
-            run_libdoc_and_validate_json('module.py')
+    def test_NewStyleNoInit(self):
+        run_libdoc_and_validate_json('NewStyleNoInit.py')
 
-        def test_NewStyleNoInit(self):
-            run_libdoc_and_validate_json('NewStyleNoInit.py')
+    def test_no_arg_init(self):
+        run_libdoc_and_validate_json('no_arg_init.py')
 
-        def test_no_arg_init(self):
-            run_libdoc_and_validate_json('no_arg_init.py')
+    def test_resource(self):
+        run_libdoc_and_validate_json('resource.resource')
 
-        def test_resource(self):
-            run_libdoc_and_validate_json('resource.resource')
+    def test_resource_with_robot_extension(self):
+        run_libdoc_and_validate_json('resource.robot')
 
-        def test_resource_with_robot_extension(self):
-            run_libdoc_and_validate_json('resource.robot')
+    def test_toc(self):
+        run_libdoc_and_validate_json('toc.py')
 
-        def test_toc(self):
-            run_libdoc_and_validate_json('toc.py')
+    def test_TOCWithInitsAndKeywords(self):
+        run_libdoc_and_validate_json('TOCWithInitsAndKeywords.py')
 
-        def test_TOCWithInitsAndKeywords(self):
-            run_libdoc_and_validate_json('TOCWithInitsAndKeywords.py')
+    def test_TypesViaKeywordDeco(self):
+        run_libdoc_and_validate_json('TypesViaKeywordDeco.py')
 
-        def test_TypesViaKeywordDeco(self):
-            run_libdoc_and_validate_json('TypesViaKeywordDeco.py')
+    def test_DynamicLibrary_json(self):
+        run_libdoc_and_validate_json('DynamicLibrary.json')
 
-        def test_DynamicLibrary_json(self):
-            run_libdoc_and_validate_json('DynamicLibrary.json')
+    def test_DataTypesLibrary_json(self):
+        run_libdoc_and_validate_json('DataTypesLibrary.json')
 
-        def test_DataTypesLibrary_json(self):
-            run_libdoc_and_validate_json('DataTypesLibrary.json')
+    def test_DataTypesLibrary_xml(self):
+        run_libdoc_and_validate_json('DataTypesLibrary.xml')
 
-        def test_DataTypesLibrary_xml(self):
-            run_libdoc_and_validate_json('DataTypesLibrary.xml')
+    def test_DataTypesLibrary_py(self):
+        run_libdoc_and_validate_json('DataTypesLibrary.py')
 
-        if PY_VERSION >= (3, 6):
-            def test_DataTypesLibrary_py(self):
-                run_libdoc_and_validate_json('DataTypesLibrary.py')
+    def test_DataTypesLibrary_libspex(self):
+        run_libdoc_and_validate_json('DataTypesLibrary.libspec')
 
-        def test_DataTypesLibrary_libspex(self):
-            run_libdoc_and_validate_json('DataTypesLibrary.libspec')
 
 class TestLibdocJsonBuilder(unittest.TestCase):
 
@@ -262,36 +259,34 @@ class TestLibdocJsonBuilder(unittest.TestCase):
         assert_equal(data, orig_data)
 
 
-if PY_VERSION >= (3, 6):
+class TestLibdocTypedDictKeys(unittest.TestCase):
 
-    class TestLibdocTypedDictKeys(unittest.TestCase):
-
-        def test_typed_dict_keys(self):
-            library = join(DATADIR, 'DataTypesLibrary.py')
-            spec = LibraryDocumentation(library).to_json()
-            current_items = json.loads(spec)['dataTypes']['typedDicts'][0]['items']
-            expected_items = [
-                {
-                    "key": "longitude",
-                    "type": "float",
-                    "required": True if TYPEDDICT_SUPPORTS_REQUIRED_KEYS else None
-                },
-                {
-                    "key": "latitude",
-                    "type": "float",
-                    "required": True if TYPEDDICT_SUPPORTS_REQUIRED_KEYS else None
-                },
-                {
-                    "key": "accuracy",
-                    "type": "float",
-                    "required": False if TYPEDDICT_SUPPORTS_REQUIRED_KEYS else None
-                }
-            ]
-            for exp_item in expected_items:
-                for cur_item in current_items:
-                    if exp_item['key'] == cur_item['key']:
-                        assert_equal(exp_item, cur_item)
-                        break
+    def test_typed_dict_keys(self):
+        library = join(DATADIR, 'DataTypesLibrary.py')
+        spec = LibraryDocumentation(library).to_json()
+        current_items = json.loads(spec)['dataTypes']['typedDicts'][0]['items']
+        expected_items = [
+            {
+                "key": "longitude",
+                "type": "float",
+                "required": True if TYPEDDICT_SUPPORTS_REQUIRED_KEYS else None
+            },
+            {
+                "key": "latitude",
+                "type": "float",
+                "required": True if TYPEDDICT_SUPPORTS_REQUIRED_KEYS else None
+            },
+            {
+                "key": "accuracy",
+                "type": "float",
+                "required": False if TYPEDDICT_SUPPORTS_REQUIRED_KEYS else None
+            }
+        ]
+        for exp_item in expected_items:
+            for cur_item in current_items:
+                if exp_item['key'] == cur_item['key']:
+                    assert_equal(exp_item, cur_item)
+                    break
 
 
 if __name__ == '__main__':

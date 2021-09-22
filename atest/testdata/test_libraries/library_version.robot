@@ -3,8 +3,6 @@ Documentation     This test data exists solely to test library version informati
 Library           classes.VersionLibrary
 Library           classes.NameLibrary
 Library           module_library
-Library           JavaVersionLibrary
-Library           ExampleJavaLibrary
 
 *** Test Case ***
 Test

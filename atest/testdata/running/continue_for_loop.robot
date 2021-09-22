@@ -1,6 +1,3 @@
-*** Settings ***
-Library               JavaExceptions
-
 *** Test Cases ***
 Simple Continue For Loop
     FOR    ${var}    IN    one    two

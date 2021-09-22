@@ -3,7 +3,6 @@ Library                  EmbeddedArguments.py
 
 *** Test Cases ***
 Types via annotations
-    [Tags]    require-py3
     1 + 2 = 3
     2 + 2 = 4
 

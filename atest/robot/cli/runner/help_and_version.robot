@@ -3,7 +3,6 @@ Resource          cli_resource.robot
 
 *** Test Cases ***
 Help
-    [Tags]    no-standalone
     ${result} =            Run Tests       --help    output=NONE
     Should Be Equal        ${result.rc}    ${251}
     Should Be Empty        ${result.stderr}
@@ -31,5 +30,5 @@ Version
     Should Be Equal        ${result.rc}    ${251}
     Should Be Empty        ${result.stderr}
     Should Match Regexp    ${result.stdout}
-    ...    ^Robot Framework [345]\\.\\d(\\.\\d)?((a|b|rc)\\d)?(\\.dev\\d)? \\((Python|Jython|IronPython|PyPy) [23]\\.[\\d.]+.* on .+\\)$
+    ...    ^Robot Framework [567]\\.\\d(\\.\\d)?((a|b|rc)\\d)?(\\.dev\\d)? \\((Python|PyPy) 3\\.[\\d.]+.* on .+\\)$
     Should Be True         len($result.stdout) < 80    Too long version line

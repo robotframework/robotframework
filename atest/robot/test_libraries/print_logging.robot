@@ -44,7 +44,6 @@ Logging Non-ASCII As Unicode
     Stderr Should Contain    Hyvää päivää stderr!
 
 Logging Non-ASCII As Bytes
-    [Tags]    no-ipy
     ${tc} =    Check Test Case    ${TEST NAME}
     ${expected} =    Get Expected Bytes    Hyvää päivää!
     Check Log Message    ${tc.kws[1].msgs[0]}    ${expected}
@@ -52,7 +51,6 @@ Logging Non-ASCII As Bytes
     Stderr Should Contain    ${expected}
 
 Logging Mixed Non-ASCII Unicode And Bytes
-    [Tags]    no-ipy
     ${tc} =    Check Test Case    ${TEST NAME}
     ${bytes} =    Get Expected Bytes    Hyvä byte!
     Check Log Message    ${tc.kws[1].msgs[0]}    ${bytes} Hyvä Unicode!
@@ -73,6 +71,5 @@ FAIL is not valid log level
 *** Keywords ***
 Get Expected Bytes
     [Arguments]    ${string}
-    Return From Keyword If    ${INTERPRETER.is_py2}    ${string}
     ${bytes} =    Encode String To Bytes    ${string}    ${CONSOLE_ENCODING}
     [Return]    b'${bytes}'

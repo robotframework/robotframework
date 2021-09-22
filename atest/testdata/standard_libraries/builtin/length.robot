@@ -104,25 +104,9 @@ Getting length with `length` attribute
     Should Not Be Empty    ${LENGTH ATTRIBUTE}
     Should Be Empty        ${LENGTH ATTRIBUTE}
 
-Getting length from Java types
-    [Documentation]    FAIL Length of '{}' should be 3 but is 0.
-    FOR    ${type}    IN    STRING    HASHTABLE    VECTOR    ARRAY
-        Verify Length Of Java Type    ${type}
-    END
-    Length Should Be    ${HASHTABLE 0}    3
-
 *** Keywords ***
 Verify Get Length
     [Arguments]    ${item}    ${exp}
     ${length} =    Get Length    ${item}
     ${exp} =    Convert To Integer    ${exp}
     Should Be Equal    ${length}    ${exp}
-
-Verify Length Of Java Type
-    [Arguments]    ${type}
-    FOR    ${i}    IN RANGE    4
-        Verify Get Length    ${${type} ${i}}    ${i}
-        Length Should Be    ${${type} ${i}}    ${i}
-    END
-    Should Not Be Empty    ${${type} 1}
-    Should Be Empty    ${${type} 0}

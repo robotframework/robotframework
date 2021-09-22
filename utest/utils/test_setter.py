@@ -1,18 +1,11 @@
 import unittest
 from robot.utils.asserts import assert_equal, assert_raises
 
-from robot.utils import setter, SetterAwareType, PY2
+from robot.utils import setter, SetterAwareType
 
 
-if PY2:
-    class BaseWithMeta(object):
-        __slots__ = []
-        __metaclass__ = SetterAwareType
-else:
-    exec('''
 class BaseWithMeta(metaclass=SetterAwareType):
     __slots__ = []
-''')
 
 
 class ExampleWithSlots(BaseWithMeta):

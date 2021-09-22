@@ -1,12 +1,13 @@
-from os.path import join, dirname
 import os
 import unittest
 import tempfile
+from io import StringIO
+from os.path import join, dirname
+from pathlib import Path
 
 from robot.errors import DataError
 from robot.result import ExecutionResult, ExecutionResultBuilder, Result, TestSuite
-from robot.utils import StringIO, PY3
-from robot.utils.asserts import assert_equal, assert_false, assert_true, assert_raises, fail
+from robot.utils.asserts import assert_equal, assert_false, assert_true, assert_raises
 
 
 def _read_file(name):
@@ -344,48 +345,44 @@ class TestBuildingFromXmlStringAndHandlingMissingInformation(unittest.TestCase):
         assert_equal(test.elapsedtime, 0)
 
 
-if PY3:
-    import pathlib
-    from os import devnull
+class TestUsingPathlibPath(unittest.TestCase):
 
-    class TestUsingPathlibPath(unittest.TestCase):
+    def setUp(self):
+        self.result = ExecutionResult(Path(__file__).parent / 'golden.xml')
 
-        def setUp(self):
-            self.result = ExecutionResult(pathlib.Path(join(dirname(__file__), 'golden.xml')))
+    def test_suite_is_built(self, suite=None):
+        suite = suite or self.result.suite
+        assert_equal(suite.source, 'normal.html')
+        assert_equal(suite.name, 'Normal')
+        assert_equal(suite.doc, 'Normal test cases')
+        assert_equal(suite.metadata, {'Something': 'My Value'})
+        assert_equal(suite.status, 'PASS')
+        assert_equal(suite.starttime, '20111024 13:41:20.873')
+        assert_equal(suite.endtime, '20111024 13:41:20.952')
+        assert_equal(suite.statistics.passed, 1)
+        assert_equal(suite.statistics.failed, 0)
 
-        def test_suite_is_built(self, suite=None):
-            suite = suite or self.result.suite
-            assert_equal(suite.source, 'normal.html')
-            assert_equal(suite.name, 'Normal')
-            assert_equal(suite.doc, 'Normal test cases')
-            assert_equal(suite.metadata, {'Something': 'My Value'})
-            assert_equal(suite.status, 'PASS')
-            assert_equal(suite.starttime, '20111024 13:41:20.873')
-            assert_equal(suite.endtime, '20111024 13:41:20.952')
-            assert_equal(suite.statistics.passed, 1)
-            assert_equal(suite.statistics.failed, 0)
+    def test_test_is_built(self, suite=None):
+        test = (suite or self.result.suite).tests[0]
+        assert_equal(test.name, 'First One')
+        assert_equal(test.doc, 'Test case documentation')
+        assert_equal(test.timeout, None)
+        assert_equal(list(test.tags), ['t1'])
+        assert_equal(len(test.body), 4)
+        assert_equal(test.status, 'PASS')
+        assert_equal(test.starttime, '20111024 13:41:20.925')
+        assert_equal(test.endtime, '20111024 13:41:20.934')
 
-        def test_test_is_built(self, suite=None):
-            test = (suite or self.result.suite).tests[0]
-            assert_equal(test.name, 'First One')
-            assert_equal(test.doc, 'Test case documentation')
-            assert_equal(test.timeout, None)
-            assert_equal(list(test.tags), ['t1'])
-            assert_equal(len(test.body), 4)
-            assert_equal(test.status, 'PASS')
-            assert_equal(test.starttime, '20111024 13:41:20.925')
-            assert_equal(test.endtime, '20111024 13:41:20.934')
-
-        def test_save(self):
-            temp = os.getenv('TEMPDIR', tempfile.gettempdir())
-            path = pathlib.Path(temp) / 'pathlib.xml'
-            self.result.save(path)
-            try:
-                result = ExecutionResult(path)
-            finally:
-                path.unlink()
-            self.test_suite_is_built(result.suite)
-            self.test_test_is_built(result.suite)
+    def test_save(self):
+        temp = os.getenv('TEMPDIR', tempfile.gettempdir())
+        path = Path(temp) / 'pathlib.xml'
+        self.result.save(path)
+        try:
+            result = ExecutionResult(path)
+        finally:
+            path.unlink()
+        self.test_suite_is_built(result.suite)
+        self.test_test_is_built(result.suite)
 
 
 if __name__ == '__main__':

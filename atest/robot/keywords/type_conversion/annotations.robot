@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    keywords/type_conversion/annotations.robot
-Force Tags       require-py3
 Resource         atest_resource.robot
 
 *** Test Cases ***
@@ -209,7 +208,6 @@ None as default
     Check Test Case    ${TESTNAME}
 
 Forward references
-    [Tags]    require-py3.5
     Check Test Case    ${TESTNAME}
 
 @keyword decorator overrides annotations

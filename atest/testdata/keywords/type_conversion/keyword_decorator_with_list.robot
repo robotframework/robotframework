@@ -35,10 +35,7 @@ Varargs and kwargs
     Varargs and kwargs    1    2    3    4    kw=5
 
 Kwonly
-    [Tags]    require-py3
     Kwonly    foo=1    zap=3    bar=2
 
 Kwonly with kwargs
-    [Tags]    require-py3
     Kwonly with varargs and kwargs    0    foo=1    zap=3    bar=2    quux=4
-

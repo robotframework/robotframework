@@ -1,7 +1,6 @@
 *** Settings ***
 Library                  AnnotationsWithAliases.py
 Resource                 conversion.resource
-Force Tags               require-py3
 
 *** Variables ***
 @{LIST}                  foo                       bar

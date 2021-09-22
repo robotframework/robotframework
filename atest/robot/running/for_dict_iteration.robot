@@ -6,9 +6,9 @@ Resource          for_resource.robot
 FOR loop with one variable
     ${loop} =    Check test and get loop    ${TESTNAME}
     Should be FOR loop         ${loop}            3
-    Should be FOR iteration    ${loop.body[0]}    \${item}=(${u}'a', ${u}'1')
-    Should be FOR iteration    ${loop.body[1]}    \${item}=(${u}'b', ${u}'2')
-    Should be FOR iteration    ${loop.body[2]}    \${item}=(${u}'c', ${u}'3')
+    Should be FOR iteration    ${loop.body[0]}    \${item}=('a', '1')
+    Should be FOR iteration    ${loop.body[1]}    \${item}=('b', '2')
+    Should be FOR iteration    ${loop.body[2]}    \${item}=('c', '3')
 
 FOR loop with two variables
     ${loop} =    Check test and get loop    ${TESTNAME}
@@ -23,16 +23,16 @@ FOR loop with more than two variables is invalid
 FOR IN ENUMERATE loop with one variable
     ${loop} =    Check test and get loop    ${TESTNAME}
     Should be IN ENUMERATE loop    ${loop}            3
-    Should be FOR iteration        ${loop.body[0]}    \${var}=(0, ${u}'a', ${u}'1')
-    Should be FOR iteration        ${loop.body[1]}    \${var}=(1, ${u}'b', ${u}'2')
-    Should be FOR iteration        ${loop.body[2]}    \${var}=(2, ${u}'c', ${u}'3')
+    Should be FOR iteration        ${loop.body[0]}    \${var}=(0, 'a', '1')
+    Should be FOR iteration        ${loop.body[1]}    \${var}=(1, 'b', '2')
+    Should be FOR iteration        ${loop.body[2]}    \${var}=(2, 'c', '3')
 
 FOR IN ENUMERATE loop with two variables
     ${loop} =    Check test and get loop    ${TESTNAME}
     Should be IN ENUMERATE loop    ${loop}            3
-    Should be FOR iteration        ${loop.body[0]}    \${index}=0    \${item}=(${u}'a', ${u}'1')
-    Should be FOR iteration        ${loop.body[1]}    \${index}=1    \${item}=(${u}'b', ${u}'2')
-    Should be FOR iteration        ${loop.body[2]}    \${index}=2    \${item}=(${u}'c', ${u}'3')
+    Should be FOR iteration        ${loop.body[0]}    \${index}=0    \${item}=('a', '1')
+    Should be FOR iteration        ${loop.body[1]}    \${index}=1    \${item}=('b', '2')
+    Should be FOR iteration        ${loop.body[2]}    \${index}=2    \${item}=('c', '3')
 
 FOR IN ENUMERATE loop with three variables
     ${loop} =    Check test and get loop    ${TESTNAME}

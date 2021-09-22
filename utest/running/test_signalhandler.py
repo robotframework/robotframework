@@ -5,7 +5,6 @@ from threading import Thread
 from robot.output import LOGGER
 from robot.output.loggerhelper import AbstractLogger
 from robot.utils.asserts import assert_equal
-from robot.utils import JYTHON
 
 from robot.running.signalhandler import _StopSignalMonitor
 
@@ -15,16 +14,7 @@ LOGGER.unregister_console_logger()
 
 def assert_signal_handler_equal(signum, expected):
     sig = signal.getsignal(signum)
-    try:
-        assert_equal(sig, expected)
-    except AssertionError:
-        if not JYTHON:
-            raise
-        # With Jython `getsignal` seems to always return different object so that
-        # even `getsignal(SIGINT) == getsignal(SIGINT)` is false. This doesn't
-        # happen always and may be dependent e.g. on the underlying JVM. Comparing
-        # string representations ought to be good enough.
-        assert_equal(str(sig), str(expected))
+    assert_equal(sig, expected)
 
 
 class LoggerStub(AbstractLogger):
@@ -71,21 +61,6 @@ class TestSignalHandlerRegisteringFailures(unittest.TestCase):
         t.start()
         t.join()
         assert_equal(len(self.logger.messages), 0)
-
-    if JYTHON:
-
-        # signal.signal may raise IllegalArgumentException on Jython:
-        # http://bugs.jython.org/issue1729
-        def test_illegal_argument_exception(self):
-            from java.lang import IllegalArgumentException
-            def raise_iae_for_sigint(signum, handler):
-                if signum == signal.SIGINT:
-                    raise IllegalArgumentException('xxx')
-            signal.signal = raise_iae_for_sigint
-            _StopSignalMonitor().__enter__()
-            assert_equal(len(self.logger.messages), 1)
-            self._verify_warning(self.logger.messages[0], 'INT',
-                                 'java.lang.IllegalArgumentException: xxx')
 
 
 class TestRestoringOriginalHandlers(unittest.TestCase):

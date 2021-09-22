@@ -38,22 +38,6 @@ Non Existing Listener
     [Template]    Importing Listener Failed
     2    NonExistingListener    *${EMPTY TB}PYTHONPATH:*    pattern=True
 
-Java Listener
-    [Tags]  require-jython
-    class    JavaListener
-
-Java Listener With Arguments
-    [Tags]  require-jython
-    class    JavaListenerWithArgs    count=3
-    [Teardown]    Check Listener File      ${JAVA_ARGS_FILE}
-    ...    I got arguments 'Hello' and 'world'
-
-Java Listener With Wrong Number Of Arguments
-    [Tags]  require-jython
-    [Template]    Importing Listener Failed
-    3    JavaListenerWithArgs          Creating instance failed: TypeError: JavaListenerWithArgs(): expected 2 args; got 0${EMPTY TB}
-    4    JavaListenerWithArgs:b:a:r    Creating instance failed: TypeError: JavaListenerWithArgs(): expected 2 args; got 3${EMPTY TB}
-
 *** Keywords ***
 Run Tests With Listeners
     ${listeners} =    Catenate
@@ -69,10 +53,6 @@ Run Tests With Listeners
     ...    --listener listeners.WithArgs
     ...    --listener listeners.WithArgs:1:2:3
     ...    --listener NonExistingListener
-    ...    --listener JavaListener
-    ...    --listener JavaListenerWithArgs:Hello:world
-    ...    --listener JavaListenerWithArgs
-    ...    --listener JavaListenerWithArgs:b:a:r
     Run Tests    ${listeners}    misc/pass_and_fail.robot
 
 Importing Listener Failed

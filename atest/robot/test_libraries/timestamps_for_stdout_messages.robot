@@ -3,20 +3,13 @@ Suite Setup     Run Tests  ${EMPTY}  test_libraries/timestamps_for_stdout_messag
 Resource        atest_resource.robot
 
 *** Test Cases ***
-
 Library adds timestamp as integer
     Test's timestamps should be correct
 
 Library adds timestamp as float
     Test's timestamps should be correct
 
-Java library adds timestamp
-    [Tags]  require-jython
-    Test's timestamps should be correct
-
-
 *** Keywords ***
-
 Test's timestamps should be correct
     ${tc} =  Check Test Case  ${TESTNAME}
     Known timestamp should be correct  ${tc.kws[0].msgs[0]}

@@ -4,25 +4,21 @@ import zlib
 from os.path import abspath, basename, dirname, join
 
 from robot.utils.asserts import assert_equal, assert_true
-from robot.utils.platform import PY2
 from robot.result import Keyword, Message, TestCase, TestSuite
 from robot.result.executionerrors import ExecutionErrors
 from robot.model import Statistics, BodyItem
-from robot.reporting.jsmodelbuilders import *
+from robot.reporting.jsmodelbuilders import (
+    ErrorsBuilder, JsBuildingContext, KeywordBuilder, MessageBuilder,
+    StatisticsBuilder, SuiteBuilder, TestBuilder
+)
 from robot.reporting.stringcache import StringIndex
 
-
-try:
-    long
-except NameError:
-    long = int
 
 CURDIR = dirname(abspath(__file__))
 
 
 def decode_string(string):
-    string = string if PY2 else string.encode('ASCII')
-    return zlib.decompress(base64.b64decode(string)).decode('UTF-8')
+    return zlib.decompress(base64.b64decode(string.encode('ASCII'))).decode('UTF-8')
 
 
 def remap(model, strings):
@@ -31,7 +27,7 @@ def remap(model, strings):
             # Strip the asterisk from a raw string.
             return strings[model][1:]
         return decode_string(strings[model])
-    elif isinstance(model, (int, long, type(None))):
+    elif isinstance(model, (int, type(None))):
         return model
     elif isinstance(model, tuple):
         return tuple(remap(item, strings) for item in model)

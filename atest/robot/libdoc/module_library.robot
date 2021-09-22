@@ -2,9 +2,6 @@
 Suite Setup        Run Libdoc And Parse Output    ${TESTDATADIR}/module.py
 Resource           libdoc_resource.robot
 
-*** Variables ***
-${PY3 or IPY}      ${{$INTERPRETER.is_py3 or $INTERPRETER.is_ironpython}}
-
 *** Test Cases ***
 Name
     Name Should Be                   module
@@ -37,27 +34,24 @@ Has No Inits
 Keyword Names
     Keyword Name Should Be           0     Get Hello
     Keyword Name Should Be           1     Keyword
-    Keyword Name Should Be           14    Set Name Using Robot Name Attribute
+    Keyword Name Should Be           12    Set Name Using Robot Name Attribute
 
 Keyword Arguments
     Keyword Arguments Should Be      0
     Keyword Arguments Should Be      1     a1=d    *a2
-    Keyword Arguments Should Be      12    a=1    b=True    c=(1, 2, None)
-    Keyword Arguments Should Be      13    arg=\\ robot \\ escapers\\n\\t\\r \\ \\
-    Keyword Arguments Should Be      14    a    b    *args    **kwargs
-
-Non-ASCII Unicode Defaults
-    Keyword Arguments Should Be      10    arg=hyvä
+    Keyword Arguments Should Be      10    a=1    b=True    c=(1, 2, None)
+    Keyword Arguments Should Be      11    arg=\\ robot \\ escapers\\n\\t\\r \\ \\
+    Keyword Arguments Should Be      12    a    b    *args    **kwargs
 
 Non-ASCII Bytes Defaults
     Keyword Arguments Should Be      6     arg=hyv\\xe4
 
 Non-ASCII String Defaults
-    Keyword Arguments Should Be      7     arg=${{'hyvä' if $PY3_or_IPY else 'hyv\\xc3\\xa4'}}
+    Keyword Arguments Should Be      9     arg=hyvä
 
 Embedded Arguments
-    Keyword Name Should Be           15    Takes \${embedded} \${args}
-    Keyword Arguments Should Be      15
+    Keyword Name Should Be           13    Takes \${embedded} \${args}
+    Keyword Arguments Should Be      13
 
 Keyword Documentation
     Keyword Doc Should Be            1     A keyword.\n\nSee `get hello` for details.
@@ -77,14 +71,11 @@ Multiline Documentation With Split Short Doc
     ...    And paragraphs.
     Keyword Doc Should Be            5     ${doc}
 
-Non-ASCII Unicode doc
-    Keyword Doc Should Be            11    Hyvää yötä.\n\nСпасибо!
-
-Non-ASCII string doc
-    Keyword Doc Should Be            8     Hyvää yötä.
+Non-ASCII doc
+    Keyword Doc Should Be            7    Hyvää yötä.\n\nСпасибо!
 
 Non-ASCII string doc with escapes
-    Keyword Doc Should Be            9     ${{'Hyvää yötä.' if $PY3_or_IPY else 'Hyv\\xe4\\xe4 y\\xf6t\\xe4.'}}
+    Keyword Doc Should Be            8     Hyvää yötä.
 
 Keyword tags
     Keyword Tags Should Be           1
@@ -95,9 +86,9 @@ Keyword tags
 Keyword source info
     Keyword Name Should Be           0     Get Hello
     Keyword Should Not Have Source   0
-    Keyword Lineno Should Be         0     19
+    Keyword Lineno Should Be         0     17
 
 Keyword source info with decorated function
-    Keyword Name Should Be           15    Takes \${embedded} \${args}
-    Keyword Should Not Have Source   15
-    Keyword Lineno Should Be         15    81
+    Keyword Name Should Be           13    Takes \${embedded} \${args}
+    Keyword Should Not Have Source   13
+    Keyword Lineno Should Be         13    71

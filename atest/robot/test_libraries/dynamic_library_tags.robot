@@ -14,10 +14,6 @@ Tags from get_keyword_tags
 Tags both from doc and get_keyword_tags
     0    1    2    3    4
 
-Tags from Java getKeywordTags
-    [Tags]    require-jython
-    0    Java No Arg    tag
-
 *** Keywords ***
 Keyword Tags Should Be
     [Arguments]    ${index}    @{tags}

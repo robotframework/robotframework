@@ -17,18 +17,12 @@ Timeouted Test Fails Before Timeout
     Check Test Case    Failing Before Timeout
 
 Show Correct Trace Back When Failing Before Timeout
-    [Tags]    no-ipy    # For some reason IronPython loses the traceback in this case.
     ${tc} =    Check Test Case    ${TEST NAME}
     ${expected} =    Catenate    SEPARATOR=\n
     ...    Traceback (most recent call last):
     ...    ${SPACE*2}File "*", line *, in exception
     ...    ${SPACE*4}raise exception(msg)
     Check Log Message    ${tc.kws[0].msgs[-1]}    ${expected}    pattern=yes    level=DEBUG
-
-Show Correct Trace Back When Failing In Java Before Timeout
-    [Tags]    require-jython
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Should Contain    ${tc.kws[0].msgs[-1].message}    at ExampleJavaLibrary.exception(
 
 Timeouted Test Timeouts
     Check Test Case    Sleeping And Timeouting
@@ -140,12 +134,6 @@ Logging With Timeouts
     ${tc} =    Check Test Case    Timeouted Keyword Passes
     Check Log Message    ${tc.kws[0].msgs[1]}           Testing logging in timeouted test
     Check Log Message    ${tc.kws[1].kws[0].msgs[1]}    Testing logging in timeouted keyword
-
-It Should Be Possible To Print From Java Libraries When Test Timeout Has Been Set
-    [Tags]    require-jython
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Timeout should have been active    ${tc.kws[0]}    1 second    2
-    Check Log message    ${tc.kws[0].msgs[1]}    My message from java lib
 
 Timeouted Keyword Called With Wrong Number of Arguments
     Check Test Case    ${TEST NAME}

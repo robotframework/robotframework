@@ -5,15 +5,14 @@ import unittest
 
 from robot.running.testlibraries import (TestLibrary, _ClassLibrary,
                                          _ModuleLibrary, _DynamicLibrary)
-from robot.utils.asserts import *
-from robot.utils import normalize, JYTHON, PY2
+from robot.utils.asserts import (assert_equal, assert_false, assert_none,
+                                 assert_not_equal, assert_not_none, assert_true,
+                                 assert_raises, assert_raises_with_msg)
+from robot.utils import normalize
 from robot.errors import DataError
 
 from classes import (NameLibrary, DocLibrary, ArgInfoLibrary, GetattrLibrary,
                      SynonymLibrary, __file__ as classes_source)
-if JYTHON:
-    import ArgumentTypes, Extended, MultipleArguments, MultipleSignatures, \
-            NoHandlers
 
 
 # Valid keyword names and arguments for some libraries
@@ -54,11 +53,6 @@ class TestLibraryTypes(unittest.TestCase):
         lib = TestLibrary("RunKeywordLibrary")
         assert_equal(lib.__class__, _DynamicLibrary)
 
-    if JYTHON:
-        def test_java_library(self):
-            lib = TestLibrary("ExampleJavaLibrary")
-            assert_equal(lib.__class__, _ClassLibrary)
-
 
 class TestImports(unittest.TestCase):
 
@@ -82,13 +76,10 @@ class TestImports(unittest.TestCase):
 
     def test_import_non_existing_module(self):
         msg = ("Importing library '{libname}' failed: "
-               "{type}Error: No module named {quote}{modname}{quote}")
-        quote = '' if PY2 else "'"
-        type = 'Import' if sys.version_info < (3, 6) else 'ModuleNotFound'
+               "ModuleNotFoundError: No module named '{modname}'")
         for name in 'nonexisting', 'nonexi.sting':
             error = assert_raises(DataError, TestLibrary, name)
-            expected = msg.format(libname=name, modname=name.split('.')[0],
-                                  quote=quote, type=type)
+            expected = msg.format(libname=name, modname=name.split('.')[0])
             assert_equal(str(error).splitlines()[0], expected)
 
     def test_import_non_existing_class_from_existing_module(self):
@@ -137,34 +128,6 @@ class TestImports(unittest.TestCase):
                         'libraryscope.InvalidNone']:
             self._verify_scope(TestLibrary(libname), 'TEST')
 
-    if JYTHON:
-
-        def test_import_java(self):
-            lib = TestLibrary("ExampleJavaLibrary")
-            self._verify_lib(lib, "ExampleJavaLibrary", java_keywords)
-
-        def test_import_java_with_dots(self):
-            lib = TestLibrary("javapkg.JavaPackageExample")
-            self._verify_lib(lib, "javapkg.JavaPackageExample", java_keywords)
-
-        def test_global_scope_java(self):
-            self._verify_scope(TestLibrary('javalibraryscope.Global'), 'GLOBAL')
-
-        def test_suite_scope_java(self):
-            self._verify_scope(TestLibrary('javalibraryscope.Suite'), 'SUITE')
-
-        def test_test_scope_java(self):
-            self._verify_scope(TestLibrary('javalibraryscope.Test'), 'TEST')
-
-        def test_invalid_scope_java(self):
-            for libname in ['javalibraryscope.InvalidEmpty',
-                            'javalibraryscope.InvalidMethod',
-                            'javalibraryscope.InvalidNull',
-                            'javalibraryscope.InvalidPrivate',
-                            'javalibraryscope.InvalidProtected',
-                            'javalibraryscope.InvalidValue']:
-                self._verify_scope(TestLibrary(libname), 'TEST')
-
     def _verify_lib(self, lib, libname, keywords):
         assert_equal(libname, lib.name)
         for name, _ in keywords:
@@ -200,26 +163,6 @@ class TestLibraryInit(unittest.TestCase):
         assert_equal(lib.init.arguments.maxargs, max)
         return lib
 
-    if JYTHON:
-
-        def test_java_library_without_constructor(self):
-            self._test_init_handler('ExampleJavaLibrary', None, 0, 0)
-
-        def test_java_library_with_constructor(self):
-            self._test_init_handler('DefaultArgs', ['arg1', 'arg2'], 1, 3)
-
-        def test_extended_java_lib_with_no_init_and_no_constructor(self):
-            self._test_init_handler('extendingjava.ExtendJavaLib', None, 0, 0)
-
-        def test_extended_java_lib_with_no_init_and_contructor(self):
-            self._test_init_handler('extendingjava.ExtendJavaLibWithConstructor', ['arg'], 1, 3)
-
-        def test_extended_java_lib_with_init_and_no_constructor(self):
-            self._test_init_handler('extendingjava.ExtendJavaLibWithInit', [1,2,3], 0, sys.maxsize)
-
-        def test_extended_java_lib_with_init_and_constructor(self):
-            self._test_init_handler('extendingjava.ExtendJavaLibWithInitAndConstructor', ['arg'], 0, sys.maxsize)
-
 
 class TestVersion(unittest.TestCase):
 
@@ -233,14 +176,6 @@ class TestVersion(unittest.TestCase):
     def test_version_in_module_library(self):
         self._verify_version('module_library', 'test')
 
-    if JYTHON:
-
-        def test_no_version_in_java_library(self):
-            self._verify_version('ExampleJavaLibrary', '')
-
-        def test_version_in_java_library(self):
-            self._verify_version('JavaVersionLibrary', '1.0')
-
     def _verify_version(self, name, version):
         assert_equal(TestLibrary(name).version, version)
 
@@ -252,14 +187,6 @@ class TestDocFormat(unittest.TestCase):
 
     def test_doc_format_in_python_libarary(self):
         self._verify_doc_format('classes.VersionLibrary', 'HTML')
-
-    if JYTHON:
-
-        def test_no_doc_format_in_java_library(self):
-            self._verify_doc_format('ExampleJavaLibrary', '')
-
-        def test_doc_format_in_java_library(self):
-            self._verify_doc_format('JavaVersionLibrary', 'TEXT')
 
     def _verify_doc_format(self, name, doc_format):
         assert_equal(TestLibrary(name).doc_format, doc_format)
@@ -434,28 +361,6 @@ class TestHandlers(unittest.TestCase):
         assert_equal(instance.kw_accessed, 1)
         assert_equal(instance.kw_called, 5)
 
-    if JYTHON:
-
-        def test_get_java_handlers(self):
-            for lib in [ArgumentTypes, MultipleArguments, MultipleSignatures,
-                        NoHandlers, Extended]:
-                handlers = TestLibrary(lib.__name__).handlers
-                assert_equal(len(handlers), lib().handler_count, lib.__name__)
-                for handler in handlers:
-                    assert_false(handler._handler_name.startswith('_'))
-                    assert_true('skip' not in handler._handler_name)
-
-        def test_overridden_getName(self):
-            handlers = TestLibrary('OverrideGetName').handlers
-            assert_equal(sorted(handler.name for handler in handlers),
-                          ['Do Nothing', 'Get Name'])
-
-        def test_extending_java_lib_in_python(self):
-            handlers = TestLibrary('extendingjava.ExtendJavaLib').handlers
-            assert_equal(len(handlers), 25)
-            for handler in 'kw_in_java_extender', 'javaSleep', 'divByZero':
-                assert_true(handler in handlers)
-
 
 class TestDynamicLibrary(unittest.TestCase):
 
@@ -508,44 +413,6 @@ def assert_handler_args(handler, minargs=0, maxargs=0, kwargs=False):
     assert_equal(bool(handler.arguments.var_named), kwargs)
 
 
-if JYTHON:
-
-    class TestDynamicLibraryJava(unittest.TestCase):
-
-        def test_arguments_without_kwargs(self):
-            lib = TestLibrary('ArgDocDynamicJavaLibrary')
-            for name, (mina, maxa) in [('Java No Arg', (0, 0)),
-                                       ('Java One Arg', (1, 1)),
-                                       ('Java One or Two Args', (1, 2)),
-                                       ('Java Many Args', (0, sys.maxsize))]:
-                self._assert_handler(lib, name, mina, maxa)
-
-        def test_arguments_with_kwargs(self):
-            lib = TestLibrary('ArgDocDynamicJavaLibraryWithKwargsSupport')
-            for name, (mina, maxa) in [('Java No Arg', (0, 0)),
-                                       ('Java One Arg', (1, 1)),
-                                       ('Java One or Two Args', (1, 2)),
-                                       ('Java Many Args', (0, sys.maxsize))]:
-                self._assert_handler(lib, name, mina, maxa)
-            for name, (mina, maxa) in [('Java Kwargs', (0, 0)),
-                                       ('Java Varargs and Kwargs', (0, sys.maxsize))]:
-                self._assert_handler(lib, name, mina, maxa, kwargs=True)
-
-        def test_get_keyword_doc_and_args_are_ignored_if_not_callable(self):
-            lib = TestLibrary('InvalidAttributeArgDocDynamicJavaLibrary')
-            assert_equal(len(lib.handlers), 1)
-            assert_handler_args(lib.handlers['keyword'], 0, sys.maxsize)
-
-        def test_handler_is_not_created_if_get_keyword_doc_fails(self):
-            lib = TestLibrary('InvalidSignatureArgDocDynamicJavaLibrary')
-            assert_equal(len(lib.handlers), 0)
-
-        def _assert_handler(self, lib, name, minargs, maxargs, kwargs=False):
-            handler = lib.handlers[name]
-            assert_equal(handler.doc, 'Keyword documentation for %s' % name)
-            assert_handler_args(handler, minargs, maxargs, kwargs)
-
-
 class TestDynamicLibraryIntroDocumentation(unittest.TestCase):
 
     def test_doc_from_class_definition(self):
@@ -567,19 +434,13 @@ class TestDynamicLibraryIntroDocumentation(unittest.TestCase):
     def _assert_intro_doc(self, library_name, expected_doc):
         assert_equal(TestLibrary(library_name).doc, expected_doc)
 
-    if JYTHON:
-
-        def test_dynamic_init_doc_from_java_library(self):
-            self._assert_intro_doc('ArgDocDynamicJavaLibrary',
-                                   'Dynamic Java intro doc.')
-
 
 class TestDynamicLibraryInitDocumentation(unittest.TestCase):
 
     def test_doc_from_class_init(self):
         self._assert_init_doc('dynlibs.StaticDocsLib', 'Init doc.')
 
-    def test__doc_from_dynamic_method(self):
+    def test_doc_from_dynamic_method(self):
         self._assert_init_doc('dynlibs.DynamicDocsLib', 'Dynamic init doc.')
 
     def test_dynamic_doc_overrides_method_doc(self):
@@ -593,17 +454,12 @@ class TestDynamicLibraryInitDocumentation(unittest.TestCase):
     def _assert_init_doc(self, library_name, expected_doc):
         assert_equal(TestLibrary(library_name).init.doc, expected_doc)
 
-    if JYTHON:
-        def test_dynamic_init_doc_from_java_library(self):
-            self._assert_init_doc('ArgDocDynamicJavaLibrary',
-                                  'Dynamic Java init doc.')
-
 
 class TestSourceAndLineno(unittest.TestCase):
 
     def test_class(self):
         lib = TestLibrary('classes.NameLibrary')
-        self._verify(lib, classes_source, 12)
+        self._verify(lib, classes_source, 10)
 
     def test_class_in_package(self):
         from robot.variables.variables import __file__ as source
@@ -612,7 +468,7 @@ class TestSourceAndLineno(unittest.TestCase):
 
     def test_dynamic(self):
         lib = TestLibrary('classes.ArgDocDynamicLibrary')
-        self._verify(lib, classes_source, 217)
+        self._verify(lib, classes_source, 215)
 
     def test_module(self):
         from module_library import __file__ as source
@@ -626,25 +482,11 @@ class TestSourceAndLineno(unittest.TestCase):
 
     def test_decorated(self):
         lib = TestLibrary('classes.Decorated')
-        self._verify(lib, classes_source, 319)
+        self._verify(lib, classes_source, 317)
 
     def test_no_class_statement(self):
         lib = TestLibrary('classes.NoClassDefinition')
         self._verify(lib, classes_source, -1)
-
-    if JYTHON:
-
-        def test_java_class(self):
-            lib = TestLibrary('ArgumentTypes')
-            self._verify(lib, None, -1)
-
-        def test_java_class_by_path(self):
-            from classes import __file__ as base
-            path = os.path.join(os.path.abspath(base), '..', 'ArgumentTypes')
-            lib = TestLibrary(path + '.java')
-            self._verify(lib, path + '.java', -1)
-            lib = TestLibrary(path + '.class')
-            self._verify(lib, path + '.java', -1)
 
     def _verify(self, lib, source, lineno):
         if source:

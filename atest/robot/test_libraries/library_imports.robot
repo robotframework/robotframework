@@ -15,7 +15,6 @@ Library Import With Spaces In Name Does Not Work
     ...    traceback=None
 
 Importing Library Class Should Have Been Syslogged
-    [Tags]    no-standalone
     ${source} =    Normalize Path And Ignore Drive    ${CURDIR}/../../../src/robot/libraries/OperatingSystem
     Syslog Should Contain Match    | INFO \ |    Imported library class 'robot.libraries.OperatingSystem' from '${source}*'
     ${base} =    Normalize Path And Ignore Drive    ${CURDIR}/../../testresources/testlibs

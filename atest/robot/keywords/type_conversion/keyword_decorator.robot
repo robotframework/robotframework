@@ -57,10 +57,6 @@ String
 Invalid string
     Check Test Case    ${TESTNAME}
 
-Invalid string (non-ASCII byte string)
-    [Tags]    require-py2    no-ipy
-    Check Test Case    ${TESTNAME}
-
 Bytes
     Check Test Case    ${TESTNAME}
 
@@ -68,11 +64,9 @@ Invalid bytes
     Check Test Case    ${TESTNAME}
 
 Bytestring
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Invalid bytesstring
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Bytearray
@@ -100,35 +94,27 @@ Invalid timedelta
     Check Test Case    ${TESTNAME}
 
 Enum
-    [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
 Flag
-    [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
 IntEnum
-    [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
 IntFlag
-    [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
 Normalized enum member match
-    [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
 Normalized enum member match with multiple matches
-    [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
 Invalid Enum
-    [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
 Invalid IntEnum
-    [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
 NoneType
@@ -174,31 +160,21 @@ Invalid mapping (abc)
     Check Test Case    ${TESTNAME}
 
 Set
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Invalid set
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Set (abc)
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Invalid set (abc)
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Frozenset
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Invalid frozenset
-    [Tags]    require-py3
-    Check Test Case    ${TESTNAME}
-
-Sets are not supported in Python 2
-    [Tags]    require-py2
     Check Test Case    ${TESTNAME}
 
 Unknown types are not converted
@@ -226,11 +202,9 @@ Invalid Kwargs
     Check Test Case    ${TESTNAME}
 
 Kwonly
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Invalid kwonly
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Invalid type spec causes error
@@ -264,11 +238,9 @@ Explicit conversion failure is used if both conversions fail
     Check Test Case    ${TESTNAME}
 
 Multiple types using Union
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Argument not matching Union tupes
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Multiple types using tuple

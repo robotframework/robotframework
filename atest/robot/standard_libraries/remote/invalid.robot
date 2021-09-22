@@ -10,7 +10,6 @@ Invalid result dict
     Check Test Case    ${TESTNAME}
 
 Invalid char in XML
-    [Tags]    no-ipy
     Check Test Case    ${TESTNAME}
 
 Exception

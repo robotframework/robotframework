@@ -1,11 +1,10 @@
-from io import StringIO
 import os
 import unittest
 import tempfile
+from io import StringIO
+from pathlib import Path
 
-from robot.utils import PY3
 from robot.utils.asserts import assert_equal
-
 from robot.parsing import get_tokens, get_init_tokens, get_resource_tokens, Token
 
 
@@ -1070,12 +1069,9 @@ Example
         self._verify(self.path)
         self._verify(self.path, data_only=True)
 
-    if PY3:
-
-        def test_pathlib_path(self):
-            from pathlib import Path
-            self._verify(Path(self.path))
-            self._verify(Path(self.path), data_only=True)
+    def test_pathlib_path(self):
+        self._verify(Path(self.path))
+        self._verify(Path(self.path), data_only=True)
 
     def test_open_file(self):
         with open(self.path) as f:

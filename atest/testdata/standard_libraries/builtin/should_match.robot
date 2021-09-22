@@ -21,13 +21,7 @@ Should Match case-insensitive
     Hello!    heLLo!    ignore_case=True
     Hillo?    h?ll*     ignore_case=yes
 
-Should Match with bytes containing non-ascii characters
-    [Documentation]    FAIL    '${BYTES WITH NON ASCII}' does not match 'hyva'
-    [Template]    Should Match
-    ${BYTES WITH NON ASCII}    ${BYTES WITH NON ASCII}
-    ${BYTES WITH NON ASCII}    ${BYTES WITHOUT NON ASCII}
-
-Should Match does not work with bytes on Python 3
+Should Match does not work with bytes
     [Documentation]    FAIL    GLOB: Several failures occurred:\n\n
     ...    1) TypeError: *\n\n
     ...    2) TypeError: Matching bytes is not supported on Python 3.
@@ -49,12 +43,6 @@ Should Not Match case-insensitive
     [Template]    Should Not Match
     Hello!    heLLo    ignore_case=True
     Hillo?    h?ll*    ignore_case=yes    msg=Fails
-
-Should Not Match with bytes containing non-ascii characters
-    [Documentation]    FAIL    '${BYTES WITH NON ASCII}' matches '${BYTES WITH NON ASCII}'
-    [Template]    Should Not Match
-    ${BYTES WITH NON ASCII}    ${BYTES WITHOUT NON ASCII}
-    ${BYTES WITH NON ASCII}    ${BYTES WITH NON ASCII}
 
 Should Match Regexp
     [Documentation]    FAIL    Something failed

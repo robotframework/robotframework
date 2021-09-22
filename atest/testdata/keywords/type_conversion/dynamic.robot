@@ -1,6 +1,5 @@
 *** Settings ***
 Library                Dynamic.py
-Library                DynamicJava.java
 Resource               conversion.resource
 
 *** Test Cases ***
@@ -32,7 +31,3 @@ Default values are not used if `get_keyword_types` returns `None`
     Default values when types are none    TRUE     u'TRUE'
     Default values when types are none    False    u'False'
     Default values when types are none    xxx      u'xxx'
-
-Java types
-    [Tags]    require-jython
-    Java types         42    3.14    [1, 2, 3]

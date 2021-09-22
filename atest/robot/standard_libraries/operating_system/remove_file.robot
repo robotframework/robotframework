@@ -19,7 +19,7 @@ Remove Files Using Glob Pattern
     Check Test Case    ${TESTNAME}
 
 Remove Non-ASCII Files Using Glob Pattern
-    [Tags]    no-osx-python
+    [Tags]    no-osx
     # On OSX python glob does not handle NFD characters.
     Check Test Case    ${TESTNAME}
 

@@ -11,7 +11,6 @@ from robot.utils.platform import _version_to_tuple
 class TestIsATty(unittest.TestCase):
 
     def test_with_stdout_and_stderr(self):
-        # file class based in PY2, io module based in PY3
         assert_equal(isatty(sys.__stdout__), sys.__stdout__.isatty())
         assert_equal(isatty(sys.__stderr__), sys.__stderr__.isatty())
 

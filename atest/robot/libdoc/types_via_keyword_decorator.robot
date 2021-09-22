@@ -20,5 +20,4 @@ Non-type annotations
     ...                                  *varargs: But surely feels odd...
 
 Keyword-only arguments
-    [Tags]    require-py3
     Keyword Arguments Should Be     5    *    kwo: int    with_default: str = value

@@ -107,8 +107,3 @@ Multiple dialogs in a row
     Pause Execution    Verify that dialog is closed immediately.\n\nAfter pressing OK.
     Sleep    0.5s
     Get Value From User    Verify that dialog is closed immediately.\n\nAfter pressing Cancel.
-
-Dialog and timeout
-    [Timeout]  1s
-    [Tags]     jybot_only
-    Execute Manual Step    Wait for timeout

@@ -1,5 +1,3 @@
-# coding=UTF-8
-
 from robot.api.deco import keyword
 
 
@@ -41,7 +39,7 @@ class MyLibrary1:
     def name_set_in_method_signature(self):
         print("My name was set using 'robot.api.deco.keyword' decorator!")
 
-    @keyword(name=u'Custom nön-ÄSCII name')
+    @keyword(name='Custom nön-ÄSCII name')
     def non_ascii_would_not_work_here(self):
         pass
 

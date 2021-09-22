@@ -1,4 +1,3 @@
-from __future__ import print_function
 import sys
 from robot.api import logger
 

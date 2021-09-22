@@ -38,4 +38,4 @@ Resource with invalid extension
     Error in file    0    parsing/data_formats/resource_extensions/tests.robot    6
     ...    Invalid resource file extension '.invalid'.
     ...    Supported extensions are '.resource', '.robot', '.txt', '.tsv', '.rst' and '.rest'.
-    Length should be    ${ERRORS}    ${{1 if not ($INTERPRETER.is_ironpython or $INTERPRETER.is_standalone) else 3}}
+    Length should be    ${ERRORS}    1

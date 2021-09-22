@@ -12,16 +12,16 @@ Documentation And Argument Boundaries Work With Mandatory Args
 
 Documentation And Argument Boundaries Work With Default Args
     Keyword documentation for One or Two Args
-    ...    Executed keyword "One or Two Args" with arguments (${u}'1',).
-    ...    Executed keyword "One or Two Args" with arguments (${u}'1', ${u}'2').
+    ...    Executed keyword "One or Two Args" with arguments ('1',).
+    ...    Executed keyword "One or Two Args" with arguments ('1', '2').
 
 Default value as tuple
     Keyword documentation for Default as tuple
-    ...    Executed keyword "Default as tuple" with arguments (${u}'1',).
-    ...    Executed keyword "Default as tuple" with arguments (${u}'1', ${u}'2').
-    ...    Executed keyword "Default as tuple" with arguments (${u}'1', ${u}'2', ${u}'3').
-    ...    Executed keyword "Default as tuple" with arguments (${u}'1', False, ${u}'3').
-    ...    Executed keyword "Default as tuple" with arguments (${u}'1', False, ${u}'3').
+    ...    Executed keyword "Default as tuple" with arguments ('1',).
+    ...    Executed keyword "Default as tuple" with arguments ('1', '2').
+    ...    Executed keyword "Default as tuple" with arguments ('1', '2', '3').
+    ...    Executed keyword "Default as tuple" with arguments ('1', False, '3').
+    ...    Executed keyword "Default as tuple" with arguments ('1', False, '3').
 
 Documentation And Argument Boundaries Work With Varargs
     Keyword documentation for Many Args
@@ -55,48 +55,6 @@ Keyword Not Created And Warning Shown When Getting Arguments Fails
     14   One or Two Args
     [Teardown]    Check Log Message    ${ERRORS}[15]
     ...    Imported library 'classes.InvalidGetArgsDynamicLibrary' contains no keywords.    WARN
-
-Documentation And Argument Boundaries Work With No Args In Java
-    [Tags]    require-jython
-    Keyword documentation for Java No Arg
-
-Documentation And Argument Boundaries Work With Mandatory Args In Java
-    [Tags]    require-jython
-    Keyword documentation for Java One Arg
-
-Documentation And Argument Boundaries Work With Default Args In Java
-    [Tags]    require-jython
-    Keyword documentation for Java One or Two Args
-
-Documentation And Argument Boundaries Work With Varargs In Java
-    [Tags]    require-jython
-    Keyword documentation for Java Many Args
-
-Keyword With Kwargs Not Created And Warning Shown When No Run Keyword With Kwargs Support In Java
-    [Tags]    require-jython
-    [Template]    Error In Library
-    ArgDocDynamicJavaLibrary
-    ...    Adding keyword 'Unsupported Java Kwargs' failed:
-    ...    Too few 'runKeyword' method parameters for **kwargs support.
-    ...    index=16
-
-Keyword Not Created And Warning Shown When Getting Documentation Fails In Java
-    [Tags]    require-jython
-    [Template]    Error In Library
-    ArgDocDynamicJavaLibrary
-    ...    Adding keyword 'Invalid Java Args' failed:
-    ...    Calling dynamic method 'getKeywordArguments' failed:
-    ...    Get args failure
-    ...    index=17
-
-Keyword Not Created And Warning Shown When Getting Arguments Fails In Java
-    [Tags]    require-jython
-    [Template]    Error In Library
-    ArgDocDynamicJavaLibrary
-    ...    Adding keyword 'Invalid Java Doc' failed:
-    ...    Calling dynamic method 'getKeywordDocumentation' failed:
-    ...    Get doc failure
-    ...    index=18
 
 *** Keywords ***
 Check test case and its doc

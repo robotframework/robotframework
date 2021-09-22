@@ -1,33 +1,13 @@
 import unittest
 
-try:
-    from collections.abc import Mapping
-except ImportError:
-    from collections import Mapping
 from array import array
-try:
-    from UserDict import UserDict
-    from UserList import UserList
-    from UserString import UserString
-except ImportError:
-    from collections import UserDict, UserList, UserString
-
-try:
-    import java
-    from java.lang import String
-    from java.util import HashMap, Hashtable
-except ImportError:
-    pass
+from collections import UserDict, UserList, UserString
+from collections.abc import Mapping
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 from robot.utils import (is_bytes, is_falsy, is_dict_like, is_list_like,
-                         is_string, is_truthy, type_name, IRONPYTHON, JYTHON,
-                         PY3)
+                         is_string, is_truthy, type_name)
 from robot.utils.asserts import assert_equal, assert_true
-
-
-if PY3:
-    long = int
-    xrange = range
 
 
 class MyMapping(Mapping):
@@ -49,20 +29,20 @@ def generator():
 class TestStringsAndBytes(unittest.TestCase):
 
     def test_strings(self):
-        for thing in ['string', u'unicode', '', u'']:
+        for thing in ['string', 'hyvä', '']:
             assert_equal(is_string(thing), True, thing)
-            assert_equal(is_bytes(thing), isinstance(thing, bytes), thing)
+            assert_equal(is_bytes(thing), False, thing)
 
     def test_bytes(self):
         for thing in [b'bytes', bytearray(b'ba'), b'', bytearray()]:
             assert_equal(is_bytes(thing), True, thing)
-            assert_equal(is_string(thing), isinstance(thing, str), thing)
+            assert_equal(is_string(thing), False, thing)
 
 
 class TestListLike(unittest.TestCase):
 
     def test_strings_are_not_list_like(self):
-        for thing in ['str', u'unicode', UserString('user')]:
+        for thing in ['string', UserString('user')]:
             assert_equal(is_list_like(thing), False, thing)
 
     def test_bytes_are_not_list_like(self):
@@ -72,15 +52,6 @@ class TestListLike(unittest.TestCase):
     def test_dict_likes_are_list_like(self):
         for thing in [dict(), UserDict(), MyMapping()]:
             assert_equal(is_list_like(thing), True, thing)
-
-    if JYTHON:
-
-        def test_java_strings_are_not_list_like(self):
-            assert_equal(is_list_like(String()), False)
-
-        def test_java_dict_likes_are_list_like(self):
-            assert_equal(is_list_like(HashMap()), True)
-            assert_equal(is_list_like(Hashtable()), True)
 
     def test_files_are_not_list_like(self):
         with open(__file__) as f:
@@ -100,7 +71,7 @@ class TestListLike(unittest.TestCase):
         assert_equal(is_list_like(Example()), False)
 
     def test_iterables_in_general_are_list_like(self):
-        for thing in [[], (), set(), xrange(1), generator(), array('i'), UserList()]:
+        for thing in [[], (), set(), range(1), generator(), array('i'), UserList()]:
             assert_equal(is_list_like(thing), True, thing)
 
     def test_others_are_not_list_like(self):
@@ -126,22 +97,15 @@ class TestDictLike(unittest.TestCase):
         for thing in ['', u'', 1, None, True, object(), [], (), set()]:
             assert_equal(is_dict_like(thing), False, thing)
 
-    if JYTHON:
-
-        def test_java_maps(self):
-            assert_equal(is_dict_like(HashMap()), True)
-            assert_equal(is_dict_like(Hashtable()), True)
-
 
 class TestTypeName(unittest.TestCase):
 
     def test_base_types(self):
         for item, exp in [('x', 'string'),
                           (u'x', 'string'),
-                          (b'x', 'bytes' if (PY3 or IRONPYTHON) else 'string'),
+                          (b'x', 'bytes'),
                           (bytearray(), 'bytearray'),
                           (1, 'integer'),
-                          (long(1), 'integer'),
                           (1.0, 'float'),
                           (True, 'boolean'),
                           (None, 'None'),
@@ -176,34 +140,21 @@ class TestTypeName(unittest.TestCase):
         assert_equal(type_name(C()), 'C')
         assert_equal(type_name(C(), capitalize=True), 'C')
 
-    if PY3:
-
-        def test_typing(self):
-            from typing import Any, Dict, List, Optional, Set, Tuple, Union
-
-            for item, exp in [(List, 'list'),
-                              (List[int], 'list'),
-                              (Tuple, 'tuple'),
-                              (Tuple[int], 'tuple'),
-                              (Set, 'set'),
-                              (Set[int], 'set'),
-                              (Dict, 'dictionary'),
-                              (Dict[int, str], 'dictionary'),
-                              (Union, 'Union'),
-                              (Union[int, str], 'Union'),
-                              (Optional, 'Optional'),
-                              (Optional[int], 'Union'),
-                              (Any, 'Any')]:
-                assert_equal(type_name(item), exp)
-
-    if JYTHON:
-
-        def test_java_object(self):
-            for item, exp in [(String(), 'String'),
-                              (String, 'String'),
-                              (java.lang, 'javapackage'),
-                              (java, 'javapackage')]:
-                assert_equal(type_name(item), exp)
+    def test_typing(self):
+        for item, exp in [(List, 'list'),
+                          (List[int], 'list'),
+                          (Tuple, 'tuple'),
+                          (Tuple[int], 'tuple'),
+                          (Set, 'set'),
+                          (Set[int], 'set'),
+                          (Dict, 'dictionary'),
+                          (Dict[int, str], 'dictionary'),
+                          (Union, 'Union'),
+                          (Union[int, str], 'Union'),
+                          (Optional, 'Optional'),
+                          (Optional[int], 'Union'),
+                          (Any, 'Any')]:
+            assert_equal(type_name(item), exp)
 
     def test_capitalize(self):
         class lowerclass: pass

@@ -1,4 +1,4 @@
-__all__ = ['VAR', 'JVAR']
+__all__ = ['VAR']
 
 
 class Demeter(object):
@@ -20,11 +20,3 @@ class Variable(object):
 
 
 VAR = Variable()
-
-
-try:
-    import JavaClass
-except ImportError:
-    JVAR = None
-else:
-    JVAR = JavaClass()

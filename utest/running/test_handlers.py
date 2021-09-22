@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import inspect
 import os.path
 import re
@@ -7,7 +5,6 @@ import sys
 import unittest
 
 from robot.running.handlers import _PythonHandler, _JavaHandler, DynamicHandler
-from robot.utils import IRONPYTHON, JYTHON, PY2
 from robot.utils.asserts import assert_equal, assert_raises_with_msg, assert_true
 from robot.running.testlibraries import TestLibrary, LibraryScope
 from robot.running.dynamicmethods import (
@@ -17,8 +14,6 @@ from robot.errors import DataError
 from classes import (NameLibrary, DocLibrary, ArgInfoLibrary,
                      __file__ as classes_source)
 from ArgumentsPython import ArgumentsPython
-if JYTHON:
-    import ArgumentsJava
 
 
 def _get_handler_methods(lib):
@@ -103,13 +98,11 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         self._assert_doc('This is some documentation')
 
     def test_non_ascii_doc(self):
-        self._assert_doc(u'P\xe4iv\xe4\xe4')
+        self._assert_doc('Hyvää yötä')
 
-    if not IRONPYTHON:
-
-        def test_with_utf8_doc(self):
-            doc = u'P\xe4iv\xe4\xe4'
-            self._assert_doc(doc.encode('UTF-8'), doc)
+    def test_with_utf8_doc(self):
+        doc = 'Hyvää yötä'
+        self._assert_doc(doc.encode('UTF-8'), doc)
 
     def test_invalid_doc_type(self):
         self._assert_fails('Return value must be a string, got boolean.', doc=True)
@@ -300,148 +293,16 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         return DynamicHandler(lib, 'mock', RunKeyword(lib), doc, argspec)
 
 
-if JYTHON:
-
-    handlers = dict((method.__name__, method) for method in
-                    _get_java_handler_methods(ArgumentsJava('Arg', ['varargs'])))
-
-    class TestJavaHandlerArgLimits(unittest.TestCase):
-
-        def test_no_defaults_or_varargs(self):
-            for count in [0, 1, 3]:
-                method = handlers['a_%d' % count]
-                handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_argspec(handler.arguments,
-                               minargs=count,
-                               maxargs=count,
-                               positional=self._format_positional(count))
-
-        def test_defaults(self):
-            # defaults i.e. multiple signatures
-            for mina, maxa in [(0, 1), (1, 3)]:
-                method = handlers['a_%d_%d' % (mina, maxa)]
-                handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_argspec(handler.arguments,
-                               minargs=mina,
-                               maxargs=maxa,
-                               positional=self._format_positional(maxa),
-                               defaults={'arg%s' % (i+1): ''
-                                         for i in range(mina, maxa)})
-
-        def test_varargs(self):
-            for count in [0, 1]:
-                method = handlers['a_%d_n' % count]
-                handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_argspec(handler.arguments,
-                               minargs=count,
-                               maxargs=sys.maxsize,
-                               positional=self._format_positional(count),
-                               varargs='varargs')
-
-        def test_kwargs(self):
-            for name, positional, varargs in [('javaKWArgs', 0, False),
-                                              ('javaNormalAndKWArgs', 1, False),
-                                              ('javaVarArgsAndKWArgs', 0, True),
-                                              ('javaAllArgs', 1, True)]:
-                method = handlers[name]
-                handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_argspec(handler.arguments,
-                               minargs=positional,
-                               maxargs=sys.maxsize if varargs else positional,
-                               positional=self._format_positional(positional),
-                               varargs='varargs' if varargs else None,
-                               kwargs='kwargs')
-
-        def _format_positional(self, count):
-            return ['arg%s' % (i+1) for i in range(count)]
-
-
-    class TestArgumentCoercer(unittest.TestCase):
-
-        def setUp(self):
-            self.lib = TestLibrary('ArgTypeCoercion', ['42', 'true'])
-
-        def test_coercion_in_constructor(self):
-            instance = self.lib.get_instance()
-            assert_equal(instance.myInt, 42)
-            assert_equal(instance.myBool, True)
-
-        def test_coercing_to_integer(self):
-            self._test_coercion(self._handler_named('intArgument'),
-                                ['1'], [1])
-
-        def test_coercing_to_boolean(self):
-            handler = self._handler_named('booleanArgument')
-            self._test_coercion(handler, ['True'], [True])
-            self._test_coercion(handler, ['FALSE'], [ False])
-
-        def test_coercing_to_real_number(self):
-            self._test_coercion(self._handler_named('doubleArgument'),
-                                ['1.42'], [1.42])
-            self._test_coercion(self._handler_named('floatArgument'),
-                                ['-9991.098'], [-9991.098])
-
-        def test_coercion_with_compatible_types(self):
-            self._test_coercion(self._handler_named('coercableKeywordWithCompatibleTypes'),
-                                ['9999', '-42', 'FaLsE', '31.31'],
-                                [9999, -42, False, 31.31])
-
-        def test_arguments_that_are_not_strings_are_not_coerced(self):
-            self._test_coercion(self._handler_named('intArgument'),
-                                [self.lib], [self.lib])
-            self._test_coercion(self._handler_named('booleanArgument'),
-                                [42], [42])
-
-        def test_coercion_fails_with_reasonable_message(self):
-            exp_msg = 'Argument at position 1 cannot be coerced to %s.'
-            self._test_coercion_fails(self._handler_named('intArgument'),
-                                      exp_msg % 'integer')
-            self._test_coercion_fails(self._handler_named('booleanArgument'),
-                                      exp_msg % 'boolean')
-            self._test_coercion_fails(self._handler_named('floatArgument'),
-                                      exp_msg % 'floating point number')
-
-        def test_no_arg_no_coercion(self):
-            self._test_coercion(self._handler_named('noArgument'), [], [])
-
-        def test_coercing_multiple_arguments(self):
-            self._test_coercion(self._handler_named('coercableKeyword'),
-                                ['10.0', '42', 'tRUe'], [10.0, 42, True])
-
-        def test_coercion_is_not_done_with_conflicting_signatures(self):
-            self._test_coercion(self._handler_named('unCoercableKeyword'),
-                                ['True', '42'], ['True', '42'])
-
-        def test_coercable_and_uncoercable_args_in_same_kw(self):
-            self._test_coercion(self._handler_named('coercableAndUnCoercableArgs'),
-                                ['1', 'False', '-23', '0'], ['1', False, -23, '0'])
-
-        def _handler_named(self, name):
-            return self.lib.handlers[name]
-
-        def _test_coercion(self, handler, args, expected):
-            assert_equal(handler._arg_coercer.coerce(args, {}), expected)
-
-        def _test_coercion_fails(self, handler, expected_message):
-            assert_raises_with_msg(ValueError, expected_message,
-                                   handler._arg_coercer.coerce, ['invalid'], {})
-
-
 class TestSourceAndLineno(unittest.TestCase):
 
     def test_class_with_init(self):
         lib = TestLibrary('classes.RecordingLibrary')
-        self._verify(lib.handlers['kw'], classes_source, 208)
-        self._verify(lib.init, classes_source, 204)
+        self._verify(lib.handlers['kw'], classes_source, 206)
+        self._verify(lib.init, classes_source, 202)
 
     def test_class_without_init(self):
         lib = TestLibrary('classes.NameLibrary')
-        self._verify(lib.handlers['simple1'], classes_source, 15)
-        self._verify(lib.init, classes_source, -1)
-
-    def test_old_style_class_without_init(self):
-        lib = TestLibrary('classes.NameLibrary')
-        self._verify(lib.handlers['simple1'], classes_source, 15)
+        self._verify(lib.handlers['simple1'], classes_source, 13)
         self._verify(lib.init, classes_source, -1)
 
     def test_module(self):
@@ -459,14 +320,10 @@ class TestSourceAndLineno(unittest.TestCase):
 
     def test_decorated(self):
         lib = TestLibrary('classes.Decorated')
-        self._verify(lib.handlers['no_wrapper'], classes_source, 322)
-        # Python 2 doesn't see the original source with wrapping decorators.
-        if PY2:
-            self._verify(lib.handlers['wrapper'], classes_source, 311)
-        else:
-            self._verify(lib.handlers['wrapper'], classes_source, 329)
-            self._verify(lib.handlers['external'], classes_source, 334)
-        self._verify(lib.handlers['no_def'], classes_source, 337)
+        self._verify(lib.handlers['no_wrapper'], classes_source, 320)
+        self._verify(lib.handlers['wrapper'], classes_source, 327)
+        self._verify(lib.handlers['external'], classes_source, 332)
+        self._verify(lib.handlers['no_def'], classes_source, 335)
 
     def test_dynamic_without_source(self):
         lib = TestLibrary('classes.ArgDocDynamicLibrary')
@@ -491,15 +348,13 @@ class TestSourceAndLineno(unittest.TestCase):
 
     def test_dynamic_with_non_ascii_source(self):
         lib = TestLibrary('classes.DynamicWithSource')
-        self._verify(lib.handlers[u'nön-äscii'],
-                     u'hyvä esimerkki')
-        self._verify(lib.handlers[u'nön-äscii utf-8'],
-                     u'福', 88)
+        self._verify(lib.handlers['nön-äscii'], 'hyvä esimerkki')
+        self._verify(lib.handlers['nön-äscii utf-8'], '福', 88)
 
     def test_dynamic_init(self):
         lib_with_init = TestLibrary('classes.ArgDocDynamicLibrary')
         lib_without_init = TestLibrary('classes.DynamicWithSource')
-        self._verify(lib_with_init.init, classes_source, 219)
+        self._verify(lib_with_init.init, classes_source, 217)
         self._verify(lib_without_init.init, classes_source, -1)
 
     def test_dynamic_invalid_source(self):
@@ -513,12 +368,6 @@ class TestSourceAndLineno(unittest.TestCase):
             "Return value must be a string, got integer."
         )
         assert_equal(logger.messages, [(error, 'ERROR')])
-
-    if JYTHON:
-
-        def test_java_class(self):
-            kw = TestLibrary('ArgumentTypes').handlers['byte1']
-            self._verify(kw, None, -1)
 
     def _verify(self, kw, source, lineno=-1):
         if source:

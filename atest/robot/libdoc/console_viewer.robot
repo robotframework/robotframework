@@ -11,11 +11,9 @@ List all keywords
     ...   Keyword With Tags 3
     ...   Multiline Doc With Split Short Doc
     ...   Non Ascii Bytes Defaults
+    ...   Non Ascii Doc
+    ...   Non Ascii Doc With Escapes
     ...   Non Ascii String Defaults
-    ...   Non Ascii String Doc
-    ...   Non Ascii String Doc With Escapes
-    ...   Non Ascii Unicode Defaults
-    ...   Non Ascii Unicode Doc
     ...   Non String Defaults
     ...   Robot Espacers
     ...   Set Name Using Robot Name Attribute

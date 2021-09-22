@@ -2,7 +2,6 @@ import unittest
 import warnings
 
 from robot.model import TestSuite, TestCase, Keyword, Keywords
-from robot.utils import PY2, unicode
 from robot.utils.asserts import (assert_equal, assert_not_equal, assert_true,
                                  assert_raises)
 
@@ -98,14 +97,12 @@ class TestKeyword(unittest.TestCase):
             (Keyword('Name', args=(1, 2, 3)),
              'Name    1    2    3',
              "Keyword(name='Name', args=(1, 2, 3), assign=())"),
-            (Keyword(assign=[u'${\xe3}'], name=u'\xe4', args=[u'\xe5']),
-             u'${\xe3}    \xe4    \xe5',
-             u'Keyword(name=%r, args=[%r], assign=[%r])' % (u'\xe4', u'\xe5', u'${\xe3}'))
+            (Keyword(assign=['${\xe3}'], name='\xe4', args=['\xe5']),
+             '${\xe3}    \xe4    \xe5',
+             'Keyword(name=%r, args=[%r], assign=[%r])' % ('\xe4', '\xe5', '${\xe3}'))
         ]:
-            assert_equal(unicode(kw), exp_str)
+            assert_equal(str(kw), exp_str)
             assert_equal(repr(kw), 'robot.model.' + exp_repr)
-            if PY2:
-                assert_equal(str(kw), unicode(kw).encode('UTF-8'))
 
     def test_slots(self):
         assert_raises(AttributeError, setattr, Keyword(), 'attr', 'value')

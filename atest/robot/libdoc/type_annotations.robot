@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup       Run Libdoc And Parse Output    ${TESTDATADIR}/Annotations.py
-Force Tags        require-py3
 Resource          libdoc_resource.robot
 
 *** Test Cases ***

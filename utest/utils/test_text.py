@@ -3,7 +3,6 @@ import os
 from os.path import abspath
 
 from robot.utils.asserts import assert_equal, assert_true
-from robot.utils import IRONPYTHON, PY2
 from robot.utils.text import (
     cut_long_message, get_console_length, getdoc, getshortdoc,
     pad_console_length, split_tags_from_doc, split_args_from_name_or_path,
@@ -303,22 +302,6 @@ class TestGetdoc(unittest.TestCase):
                 u"""Hyv\xe4 \xe4iti!"""
         assert_equal(getdoc(Class.meth), u'Hyv\xe4 \xe4iti!')
         assert_equal(getdoc(Class.meth), getdoc(Class().meth))
-
-    if PY2:
-
-        def test_non_ascii_doc_in_utf8(self):
-            def func():
-                """Hyv\xc3\xa4 \xc3\xa4iti!"""
-            expected = u'Hyv\xe4 \xe4iti!' \
-                if not IRONPYTHON else u'Hyv\xc3\xa4 \xc3\xa4iti!'
-            assert_equal(getdoc(func), expected)
-
-        def test_non_ascii_doc_not_in_utf8(self):
-            def func():
-                """Hyv\xe4 \xe4iti!"""
-            expected = 'Hyv\\xe4 \\xe4iti!' \
-                if not IRONPYTHON else u'Hyv\xe4 \xe4iti!'
-            assert_equal(getdoc(func), expected)
 
 
 class TestGetshortdoc(unittest.TestCase):

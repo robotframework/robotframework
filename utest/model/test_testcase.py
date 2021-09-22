@@ -1,11 +1,10 @@
 import unittest
 import warnings
+
 from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal, assert_raises,
                                  assert_raises_with_msg, assert_true)
-
-from robot.model.testcase import TestCase, TestCases
-from robot.model import TestSuite, Keyword
-from robot.utils import PY2, unicode
+from robot.model import TestSuite, TestCase, Keyword
+from robot.model.testcase import TestCases
 
 
 class TestTestCase(unittest.TestCase):
@@ -121,9 +120,7 @@ class TestStringRepresentation(unittest.TestCase):
         for tc, expected in [(self.empty, ''),
                              (self.ascii, 'Kekkonen'),
                              (self.non_ascii, u'hyv\xe4 nimi')]:
-            assert_equal(unicode(tc), expected)
-            if PY2:
-                assert_equal(str(tc), unicode(tc).encode('UTF-8'))
+            assert_equal(str(tc), expected)
 
     def test_repr(self):
         for tc, expected in [(self.empty, "TestCase(name='')"),

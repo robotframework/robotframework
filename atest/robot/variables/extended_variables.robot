@@ -18,22 +18,6 @@ Accessing Dictionary
 Multiply
     Check Test Case    ${TESTNAME}
 
-Using Public Java Attribute
-    [Tags]    require-jython
-    Check Test Case    ${TESTNAME}
-
-Using Java Attribute With Bean Properties
-    [Tags]    require-jython
-    Check Test Case    ${TESTNAME}
-
-Calling Java Method
-    [Tags]    require-jython
-    Check Test Case    ${TESTNAME}
-
-Accessing Java Lists and Maps
-    [Tags]    require-jython
-    Check Test Case    ${TESTNAME}
-
 Failing When Base Name Does Not Exist
     Check Test Case    ${TESTNAME}
 
@@ -68,12 +52,4 @@ Fail When Accessing Item Not In Dictionary
     Check Test Case    ${TESTNAME}
 
 Failing For Syntax Error
-    Check Test Case    ${TESTNAME}
-
-Failing When Java Attribute Does Not Exist
-    [Tags]    require-jython
-    Check Test Case    ${TESTNAME}
-
-Failing When Java Method Throws Exception
-    [Tags]    require-jython
     Check Test Case    ${TESTNAME}

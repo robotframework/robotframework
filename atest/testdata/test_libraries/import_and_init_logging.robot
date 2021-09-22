@@ -1,7 +1,6 @@
 *** Settings ***
 Library  ImportLogging.py
 Library  InitLogging.py
-Library  ConstructorLogging.java
 Library  InitImportingAndIniting.Importing
 Library  InitImportingAndIniting.Initted    id=42
 Library  InitImportingAndIniting.Initting
@@ -10,9 +9,6 @@ Library  InitImportingAndIniting.Initting
 No import/init time messages here
     ImportLogging.Keyword
     InitLogging.Keyword
-
-No import/init time messages in Java either
-    ConstructorLogging.Keyword
 
 Importing and initializing libraries in init
     Kw from lib with importing init

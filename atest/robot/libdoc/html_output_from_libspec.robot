@@ -22,37 +22,37 @@ Inits
 Keyword Names
     ${XML-MODEL}[keywords][0][name]    ${MODEL}[keywords][0][name]
     ${XML-MODEL}[keywords][1][name]    ${MODEL}[keywords][1][name]
-    ${XML-MODEL}[keywords][13][name]    ${MODEL}[keywords][13][name]
+    ${XML-MODEL}[keywords][11][name]    ${MODEL}[keywords][11][name]
 
 Keyword Arguments
     [Template]    List of Dict Should Be Equal
     ${XML-MODEL}[keywords][0][args]    ${MODEL}[keywords][0][args]
     ${XML-MODEL}[keywords][1][args]    ${MODEL}[keywords][1][args]
     ${XML-MODEL}[keywords][6][args]    ${MODEL}[keywords][6][args]
+    ${XML-MODEL}[keywords][9][args]    ${MODEL}[keywords][9][args]
     ${XML-MODEL}[keywords][10][args]    ${MODEL}[keywords][10][args]
+    ${XML-MODEL}[keywords][11][args]    ${MODEL}[keywords][11][args]
     ${XML-MODEL}[keywords][12][args]    ${MODEL}[keywords][12][args]
-    ${XML-MODEL}[keywords][13][args]    ${MODEL}[keywords][13][args]
 
 Embedded Arguments names
-    ${XML-MODEL}[keywords][14][name]    ${MODEL}[keywords][14][name]
+    ${XML-MODEL}[keywords][13][name]    ${MODEL}[keywords][13][name]
 
 Embedded Arguments arguments
     [Template]    List of Dict Should Be Equal
-    ${XML-MODEL}[keywords][14][args]    ${MODEL}[keywords][14][args]
+    ${XML-MODEL}[keywords][13][args]    ${MODEL}[keywords][13][args]
 
 Keyword Documentation
-    ${XML-MODEL}[keywords][1][doc]    ${MODEL}[keywords][1][doc]
     ${XML-MODEL}[keywords][0][doc]    ${MODEL}[keywords][0][doc]
+    ${XML-MODEL}[keywords][1][doc]    ${MODEL}[keywords][1][doc]
     ${XML-MODEL}[keywords][5][doc]    ${MODEL}[keywords][5][doc]
+    ${XML-MODEL}[keywords][7][doc]    ${MODEL}[keywords][7][doc]
     ${XML-MODEL}[keywords][8][doc]    ${MODEL}[keywords][8][doc]
-    ${XML-MODEL}[keywords][11][doc]    ${MODEL}[keywords][11][doc]
 
 Keyword Short Doc
-    ${XML-MODEL}[keywords][1][shortdoc]    ${MODEL}[keywords][1][shortdoc]
     ${XML-MODEL}[keywords][0][shortdoc]    ${MODEL}[keywords][0][shortdoc]
+    ${XML-MODEL}[keywords][1][shortdoc]    ${MODEL}[keywords][1][shortdoc]
+    ${XML-MODEL}[keywords][7][shortdoc]    ${MODEL}[keywords][7][shortdoc]
     ${XML-MODEL}[keywords][8][shortdoc]    ${MODEL}[keywords][8][shortdoc]
-    ${XML-MODEL}[keywords][11][shortdoc]    ${MODEL}[keywords][11][shortdoc]
-    ${XML-MODEL}[keywords][5][shortdoc]    ${MODEL}[keywords][5][shortdoc]
 
 Keyword tags
     ${XML-MODEL}[keywords][1][tags]    ${MODEL}[keywords][1][tags]

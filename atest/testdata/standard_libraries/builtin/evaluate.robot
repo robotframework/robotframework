@@ -64,8 +64,6 @@ Automatic module imports are case-sensitive
     os.sep + OS.sep
 
 Automatic modules don't override builtins
-    ${result} =    Evaluate    repr(42)     # `repr` module exists in Python 2
-    Should Be Equal    ${result}    42
     ${result} =    Evaluate    len('foo')   # `len.py` exists in this directory
     Should Be Equal    ${result}    ${3}
 

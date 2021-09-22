@@ -1,14 +1,8 @@
-try:
-    unicode
-except NameError:
-    unicode = str
-
-
 def get_variables():
     return {'MIXED USAGE': MixedUsage()}
 
 
-class MixedUsage(object):
+class MixedUsage:
 
     def __init__(self):
         self.data = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']
@@ -18,6 +12,6 @@ class MixedUsage(object):
             return self
         if isinstance(item, (int, slice)):
             return self.data[item]
-        if isinstance(item, unicode):
+        if isinstance(item, str):
             return self.data.index(item)
         raise TypeError

@@ -41,7 +41,6 @@ Get File with 'ignore' Error Handler
     Check testcase    ${TESTNAME}
 
 Get File with 'replace' Error Handler
-    [Tags]    no-ipy
     Check testcase    ${TESTNAME}
 
 Get file converts CRLF to LF
@@ -60,7 +59,6 @@ Log File with 'ignore' Error Handler
     Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    Hyv t
 
 Log File with 'replace' Error Handler
-    [Tags]    no-ipy
     ${tc}=    Check testcase    ${TESTNAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    Hyv\ufffd\ufffd \ufffd\ufffdt\ufffd
 
@@ -107,12 +105,10 @@ Grep file with console encoding
     Check testcase    ${TESTNAME}
 
 Grep File with 'ignore' Error Handler
-    [Tags]    no-ipy
     ${tc}=    Check testcase    ${TESTNAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    1 out of 5 lines matched
 
 Grep File with 'replace' Error Handler
-    [Tags]    no-ipy
     ${tc}=    Check testcase    ${TESTNAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    1 out of 5 lines matched
 

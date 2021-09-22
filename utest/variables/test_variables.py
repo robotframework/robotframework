@@ -3,7 +3,6 @@ import unittest
 from robot.variables import Variables
 from robot.errors import DataError, VariableError
 from robot.utils.asserts import assert_equal, assert_raises
-from robot.utils import JYTHON
 
 
 SCALARS = ['${var}', '${  v A  R }']
@@ -11,9 +10,6 @@ LISTS = ['@{var}', '@{  v A  R }']
 NOKS = ['var', '$var', '${var', '${va}r', '@{va}r', '@var', '%{var}', ' ${var}',
         '@{var} ', '\\${var}', '\\\\${var}', 42, None, ['${var}'], DataError]
 
-
-# Simple objects needed when testing assigning objects to variables.
-# JavaObject lives in '../../acceptance/testdata/libraries'
 
 class PythonObject(object):
     def __init__(self, a, b):
@@ -26,9 +22,6 @@ class PythonObject(object):
     def __len__(self):
         return 2
     __repr__ = __str__
-
-if JYTHON:
-    import JavaObject
 
 
 class TestVariables(unittest.TestCase):
@@ -240,19 +233,6 @@ class TestVariables(unittest.TestCase):
         varz['${foo}'] = 'bar'
         copy = varz.copy()
         assert_equal(copy['${foo}'], 'bar')
-
-    if JYTHON:
-
-        def test_variable_as_object_in_java(self):
-            obj = JavaObject('hello')
-            self.varz['${obj}'] = obj
-            assert_equal(self.varz['${obj}'], obj)
-            assert_equal(self.varz.replace_scalar('${obj} world'), 'hello world')
-
-        def test_extended_variables_in_java(self):
-            obj = JavaObject('my name')
-            self.varz['${obj}'] = obj
-            assert_equal(self.varz.replace_list(['${obj.name}']), ['my name'])
 
     def test_ignore_error(self):
         v = Variables()

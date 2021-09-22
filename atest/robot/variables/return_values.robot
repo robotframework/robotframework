@@ -2,13 +2,11 @@
 Documentation     Tests for return values from keywords. Tests include e.g.
 ...               setting different return values for variables and checking
 ...               messages that are automatically logged when variables are set.
-...               See also return_values_java.robot.
 Suite Setup       Run Tests    ${EMPTY}    variables/return_values.robot
 Resource          atest_resource.robot
 
 *** Variables ***
-${UNREPR STR}     <Unrepresentable object FailiningStr. Error: *>
-${UNREPR UNIC}    <Unrepresentable object FailiningUnicode. Error: *>
+${UNREPR}         <Unrepresentable object FailingStr. Error: *>
 
 *** Test Cases ***
 Simple Scalar Variable
@@ -22,7 +20,7 @@ Empty Scalar Variable
 
 List To Scalar Variable
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    \${setvar} = [${UNICODE PREFIX}'a', 2]
+    Check Log Message    ${tc.kws[0].msgs[0]}    \${setvar} = ['a', 2]
 
 Python Object To Scalar Variable
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -30,7 +28,7 @@ Python Object To Scalar Variable
 
 Unrepresentable object to scalar variable
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    \${var} = ${UNREPR STR}    pattern=yes
+    Check Log Message    ${tc.kws[0].msgs[0]}    \${var} = ${UNREPR}    pattern=yes
 
 None To Scalar Variable
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -44,8 +42,8 @@ Multible Scalar Variables
 
 Unrepresentable objects to scalar variables
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    \${o1} = ${UNREPR STR}    pattern=yes
-    Check Log Message    ${tc.kws[0].msgs[1]}    \${o2} = ${UNREPR UNIC}    pattern=yes
+    Check Log Message    ${tc.kws[0].msgs[0]}    \${o1} = ${UNREPR}    pattern=yes
+    Check Log Message    ${tc.kws[0].msgs[1]}    \${o2} = ${UNREPR}    pattern=yes
 
 None To Multiple Scalar Variables
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -83,12 +81,12 @@ List Variable From Dictionary
 
 Unrepresentable objects to list variables
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    \@{unrepr} = ? ${UNREPR STR} | ${UNREPR UNIC} ?    pattern=yes
-    Check Log Message    ${tc.kws[0].msgs[0]}    \@{unrepr} = ? ${UNREPR STR} | ${UNREPR UNIC} ?    pattern=yes
-    Should Match         ${tc.kws[2].kws[0].name}    \${obj} = ${UNREPR STR}
-    Check Log Message    ${tc.kws[2].kws[0].kws[1].msgs[0]}    $\{var} = ${UNREPR STR}    pattern=yes
-    Should Match         ${tc.kws[2].kws[1].name}    \${obj} = ${UNREPR UNIC}
-    Check Log Message    ${tc.kws[2].kws[1].kws[1].msgs[0]}    $\{var} = ${UNREPR UNIC}    pattern=yes
+    Check Log Message    ${tc.kws[0].msgs[0]}    \@{unrepr} = ? ${UNREPR} | ${UNREPR} ?    pattern=yes
+    Check Log Message    ${tc.kws[0].msgs[0]}    \@{unrepr} = ? ${UNREPR} | ${UNREPR} ?    pattern=yes
+    Should Match         ${tc.kws[2].kws[0].name}    \${obj} = ${UNREPR}
+    Check Log Message    ${tc.kws[2].kws[0].kws[1].msgs[0]}    $\{var} = ${UNREPR}    pattern=yes
+    Should Match         ${tc.kws[2].kws[1].name}    \${obj} = ${UNREPR}
+    Check Log Message    ${tc.kws[2].kws[1].kws[1].msgs[0]}    $\{var} = ${UNREPR}    pattern=yes
 
 None To List Variable
     ${tc} =    Check Test Case    ${TEST NAME}

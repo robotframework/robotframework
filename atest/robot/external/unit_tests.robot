@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags      no-standalone
 Resource        atest_resource.robot
 Suite Setup     Create Directory    ${OUTDIR}
 

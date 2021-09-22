@@ -43,11 +43,9 @@ String
     Check Test Case    ${TESTNAME}
 
 Bytes
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Invalid bytes
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Bytearray
@@ -75,19 +73,15 @@ Invalid timedelta
     Check Test Case    ${TESTNAME}
 
 Enum
-    [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
 Flag
-    [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
 IntEnum
-    [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
 IntFlag
-    [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
 Invalid enum
@@ -116,21 +110,15 @@ Invalid dictionary
     Check Test Case    ${TESTNAME}
 
 Set
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Invalid set
     Check Test Case    ${TESTNAME}
 
 Frozenset
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Invalid frozenset
-    Check Test Case    ${TESTNAME}
-
-Sets are not supported in Python 2
-    [Tags]    require-py2
     Check Test Case    ${TESTNAME}
 
 Unknown types are not converted
@@ -143,11 +131,9 @@ Invalid positional as named
     Check Test Case    ${TESTNAME}
 
 Kwonly
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Invalid kwonly
-    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 @keyword decorator overrides default values

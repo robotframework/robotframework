@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    --exclude jybot_only    standard_libraries/dialogs/dialogs.robot
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/dialogs/dialogs.robot
 Force Tags        manual    no-ci
 Resource          atest_resource.robot
 
@@ -63,8 +63,3 @@ Get Selections From User Exited
 
 Multiple dialogs in a row
     Check Test Case    ${TESTNAME}
-
-Dialog and timeout
-    [Tags]    require-jython
-    Run Tests    --include jybot_only    standard_libraries/dialogs/dialogs.robot
-    Check Test Case    ${TESTNAME}    FAIL    Test timeout 1 second exceeded.

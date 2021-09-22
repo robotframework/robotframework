@@ -48,12 +48,5 @@ Library Import Without Name
     Error in file    8    test_libraries/library_import_failing.robot    10
     ...    Library setting requires value.
 
-Initializing Java Library Fails
-    [Tags]  require-jython
-    Error in file    9    test_libraries/library_import_failing.robot    11
-    ...    Initializing library 'InitializationFailJavaLibrary' with no arguments failed:
-    ...    Initialization failed!
-    ...    stacktrace=at InitializationFailJavaLibrary.<init>(InitializationFailJavaLibrary.java:4)
-
 Importing library with same name as Python built-in module
     Check Test Case    Name clash with Python builtin-module

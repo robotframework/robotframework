@@ -263,6 +263,6 @@ Should Be Equal As Strings and collapse spaces
     ...
     ...    2) Yo yo != Yo Yo
    [Template]    Should Be Equal As Strings
-    1\ \ 2            \ \ 1 2               collapse_spaces=True
+    1\ \ 2            \ \ 1 2          collapse_spaces=True
     Hyvää \ päivää    Hyvää\tpäivää    collapse_spaces=Yes
-    Yo\n\t\tyo        Yo\tYo            collapse_spaces=${TRUE}
+    Yo\n\t\tyo        Yo\tYo           collapse_spaces=${TRUE}

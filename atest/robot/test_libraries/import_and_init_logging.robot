@@ -4,7 +4,6 @@ Suite Setup     Run Tests  --PYTHONPATH "${DATADIR}/test_libraries"  test_librar
 Resource        atest_resource.robot
 
 *** Test Cases ***
-
 Test case should not get import/init messages
     ${tc} =  Check test case  No import/init time messages here
     Should be empty  ${tc.kws[0].msgs}
@@ -35,19 +34,6 @@ Python library logging in import via logging API
     Syslog Should Contain  | WARN \ | Warning via API in init 2\n
     Stderr Should Contain  [ WARN ] Warning via API in init 1\n
     Stderr Should Contain  [ WARN ] Warning via API in init 2\n
-
-Java library logging in constructor via stdout and stderr
-    [Tags]  require-jython
-    ${tc} =  Check test case  No import/init time messages in Java either
-    Should be empty  ${tc.kws[0].msgs}
-    Syslog Should Contain  | WARN \ | Warning via stdout in constructor 1\n
-    Syslog Should Contain  | WARN \ | Warning via stdout in constructor 2\n
-    Syslog Should Contain  | INFO \ | Info via stderr in constructor 1\n
-    Syslog Should Contain  | INFO \ | Info via stderr in constructor 2\n
-    Stderr Should Contain  [ WARN ] Warning via stdout in constructor 1\n
-    Stderr Should Contain  [ WARN ] Warning via stdout in constructor 2\n
-    Stderr Should Contain  \nInfo via stderr in constructor 1
-    Stderr Should Contain  \nInfo via stderr in constructor 2
 
 Importing and initializing libraries in init
     ${tc} =  Check Test Case  ${TEST NAME}

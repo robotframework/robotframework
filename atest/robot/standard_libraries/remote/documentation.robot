@@ -14,7 +14,6 @@ Multi
     Short doc\nin two lines.    Short doc\nin two lines.\n\nDoc body\nin\nthree.    1
 
 Nön-ÄSCII
-    [Tags]    no-ipy
     Nön-ÄSCII documentation    Nön-ÄSCII documentation    2
 
 Intro documentation

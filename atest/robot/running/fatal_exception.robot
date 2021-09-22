@@ -8,12 +8,6 @@ Exit From Python Keyword
     Check Log Message    ${tc.teardown.msgs[0]}    This should be executed
     Check Test Case    Test That Should Not Be Run 1
 
-Exit From Java Keyword
-    [Tags]    require-jython
-    Run Tests    ${EMPTY}    running/fatal_exception/03__java_library_kw.robot
-    Check Test Case    ${TESTNAME}
-    Check Test Case    Test That Should Not Be Run 3
-
 robot.api.FatalError
     Run Tests    ${EMPTY}    running/fatal_exception/standard_error.robot
     Check Test Case    ${TESTNAME}
@@ -34,9 +28,8 @@ Skipped tests get robot:exit tag
     Previous test should have passed    Skip Imports On Exit
     Check Test Tags    Exit From Python Keyword    some tag
     Check Test Tags    Test That Should Not Be Run 1    robot:exit
-    Check Test Tags    Test That Should Not Be Run 2.1    robot:exit
+    Check Test Tags    Test That Should Not Be Run 2.1    robot:exit    owntag
     Check Test Tags    Test That Should Not Be Run 2.2    robot:exit
-    Check Test Tags    Test That Should Not Be Run 3    robot:exit    foo
 
 Skipping creates 'NOT robot:exit' combined tag statistics
     Previous test should have passed    Skipped tests get robot:exit tag

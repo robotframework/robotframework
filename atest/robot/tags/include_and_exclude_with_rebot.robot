@@ -85,12 +85,10 @@ Include and Exclude with NOT
 
 Select tests without any tags
     [Setup]    Set Test Variable    ${INPUT FILES}    ${INPUT FILE 2}
-    # Using just '*' won't work with Jython on Windows due to its auto-globbing
     --exclude *ORwhatever    No Own Tags No Force Nor Default    Own Tags Empty No Force Nor Default
 
 Select tests with any tag
     [Setup]    Set Test Variable    ${INPUT FILES}    ${INPUT FILE 2}
-    # Using just '*' won't work with Jython on Windows due to its auto-globbing
     --include *AND*    Own Tags No Force Nor Default
 
 Non Matching Include

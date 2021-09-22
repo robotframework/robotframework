@@ -12,22 +12,13 @@ Should Match with extra trailing newline
 Should Match case-insensitive
     Check test case    ${TESTNAME}
 
-Should Match with bytes containing non-ascii characters
-    [Tags]    require-py2    no-ipy
-    Check test case    ${TESTNAME}
-
-Should Match does not work with bytes on Python 3
-    [Tags]    require-py3
+Should Match does not work with bytes
     Check test case    ${TESTNAME}
 
 Should Not Match
     Check test case    ${TESTNAME}
 
 Should Not Match case-insensitive
-    Check test case    ${TESTNAME}
-
-Should Not Match with bytes containing non-ascii characters
-    [Tags]    require-py2    no-ipy
     Check test case    ${TESTNAME}
 
 Should Match Regexp

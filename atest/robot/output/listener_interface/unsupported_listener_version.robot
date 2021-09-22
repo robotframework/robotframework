@@ -14,18 +14,12 @@ No version information
     2    unsupported_listeners
     ...    Listener 'unsupported_listeners' does not have mandatory 'ROBOT_LISTENER_API_VERSION' attribute.
 
-Unsupported Java listener
-    [Tags]    require-jython
-    3    OldJavaListener
-    ...    Listener 'OldJavaListener' does not have mandatory 'ROBOT_LISTENER_API_VERSION' attribute.
-
 *** Keywords ***
 Run Tests With Listeners
     ${listeners} =    Catenate
     ...    --listener unsupported_listeners.V1ClassListener
     ...    --listener unsupported_listeners.InvalidVersionClassListener
     ...    --listener unsupported_listeners
-    ...    --listener OldJavaListener
     Run Tests    ${listeners}    misc/pass_and_fail.robot
 
 Taking listener into use should have failed

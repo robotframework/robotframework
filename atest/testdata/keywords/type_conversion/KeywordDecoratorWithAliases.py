@@ -3,25 +3,24 @@ from datetime import datetime, date, timedelta
 from decimal import Decimal
 
 from robot.api.deco import keyword
-from robot.utils import unicode
 
 
-@keyword(types=['Integer'])                # type always is given as str
+@keyword(types=['Integer'])
 def integer(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types=[u'INT'])                   # type given as unicode on Python 2
+@keyword(types=['INT'])
 def int_(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': 'lOnG'})       # type always given as str
+@keyword(types={'argument': 'lOnG'})
 def long_(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={u'argument': u'Float'})    # type given as unicode on Python 2
+@keyword(types={'argument': 'Float'})
 def float_(argument, expected=None):
     _validate_type(argument, expected)
 
@@ -112,7 +111,7 @@ def frozenset_(argument, expected=None):
 
 
 def _validate_type(argument, expected):
-    if isinstance(expected, (str, unicode)):
+    if isinstance(expected, str):
         expected = eval(expected)
     if argument != expected or type(argument) != type(expected):
         raise AssertionError('%r (%s) != %r (%s)'

@@ -28,7 +28,6 @@ Explicit modules
     Check Test Case    ${TESTNAME}
 
 Explicit modules are needed with nested modules
-    [Tags]    no-jython-2.7.1
     Check Test Case    ${TESTNAME}
 
 Explicit modules can override builtins

@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    keywords/type_conversion/annotations_with_aliases.robot
-Force Tags       require-py3
 Resource         atest_resource.robot
 
 *** Test Cases ***

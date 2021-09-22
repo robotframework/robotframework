@@ -40,5 +40,4 @@ Trailing Newline Is Removed Automatically
     Check Test Case    ${TESTNAME}
 
 It Is Possible To Start Background Processes
-    [Tags]    no-jython
     Check Test Case    ${TESTNAME}

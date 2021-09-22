@@ -1,7 +1,6 @@
 import os
 
 from robot.libraries.BuiltIn import BuiltIn
-from robot.utils import PY3
 
 
 class ListenSome:
@@ -33,16 +32,9 @@ class WithArgs(object):
 class WithArgConversion(object):
     ROBOT_LISTENER_API_VERSION = '2'
 
-    def __init__(self, integer, boolean=False):
-        assert integer == '42'
+    def __init__(self, integer: int, boolean=False):
+        assert integer == 42
         assert boolean is True
-
-    if PY3:
-        exec('''
-def __init__(self, integer: int, boolean=False):
-    assert integer == 42
-    assert boolean is True
-''')
 
 
 class SuiteAndTestCounts(object):

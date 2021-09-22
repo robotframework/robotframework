@@ -1,6 +1,6 @@
 import unittest
 
-from robot.utils import eq, Matcher, MultiMatcher, IRONPYTHON, PY2
+from robot.utils import eq, Matcher, MultiMatcher
 from robot.utils.asserts import assert_equal, assert_raises
 
 
@@ -89,17 +89,8 @@ class TestMatcher(unittest.TestCase):
         assert not matcher.match_any(())
 
     def test_bytes(self):
-        if IRONPYTHON:
-            return
-        elif PY2:
-            assert Matcher(b'foo').match(b'foo')
-            assert Matcher(b'f*').match(b'foo')
-            assert Matcher('f*').match(b'foo')
-            assert Matcher(b'f*').match('foo')
-            assert Matcher(b'f.*', regexp=True).match(b'foo')
-        else:
-            assert_raises(TypeError, Matcher, b'foo')
-            assert_raises(TypeError, Matcher('foo').match, b'foo')
+        assert_raises(TypeError, Matcher, b'foo')
+        assert_raises(TypeError, Matcher('foo').match, b'foo')
 
     def test_glob_sequence(self):
         pattern = '[Tre]est [CR]at'
@@ -198,7 +189,7 @@ class TestMultiMatcher(unittest.TestCase):
         assert_equal(list(MultiMatcher(['1', 'xxx', '3'])), ['1', 'xxx', '3'])
         assert_equal(tuple(MultiMatcher(regexp=True)), ())
         assert_equal(list(MultiMatcher(['1', 'xxx', '3'], regexp=True)),
-                      ['1', 'xxx', '3'])
+                     ['1', 'xxx', '3'])
 
     def test_single_string_is_converted_to_list(self):
         matcher = MultiMatcher('one string')

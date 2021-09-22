@@ -28,7 +28,7 @@ Invalid list
 Invalid dict
     Check Test Case    ${TESTNAME}
     Verify Error    1    4
-    ...    [ DICT__inv_dict | [${UNICODE PREFIX}'1', ${UNICODE PREFIX}'2', 3] ]
+    ...    [ DICT__inv_dict | ['1', '2', 3] ]
     ...    \&{inv_dict}
     ...    Expected dict-like value, got list.
 

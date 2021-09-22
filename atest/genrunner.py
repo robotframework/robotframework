@@ -1,11 +1,10 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python
 
 """Script to generate atest runners based on plain text data files.
 
 Usage:  {tool} testdata/path/data.robot [robot/path/runner.robot]
 """
 
-from __future__ import print_function
 from os.path import abspath, basename, dirname, exists, join
 import os
 import sys
