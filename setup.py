@@ -20,18 +20,13 @@ CLASSIFIERS = """
 Development Status :: 5 - Production/Stable
 License :: OSI Approved :: Apache Software License
 Operating System :: OS Independent
-Programming Language :: Python :: 2
-Programming Language :: Python :: 2.7
 Programming Language :: Python :: 3
-Programming Language :: Python :: 3.5
 Programming Language :: Python :: 3.6
 Programming Language :: Python :: 3.7
 Programming Language :: Python :: 3.8
 Programming Language :: Python :: 3.9
 Programming Language :: Python :: 3.10
 Programming Language :: Python :: Implementation :: CPython
-Programming Language :: Python :: Implementation :: Jython
-Programming Language :: Python :: Implementation :: IronPython
 Programming Language :: Python :: Implementation :: PyPy
 Topic :: Software Development :: Testing
 Topic :: Software Development :: Testing :: Acceptance
@@ -50,7 +45,7 @@ PACKAGE_DATA = [join('htmldata', directory, pattern)
 setup(
     name         = 'robotframework',
     version      = VERSION,
-    author       = u'Pekka Kl\xe4rck',
+    author       = 'Pekka Kl\xe4rck',
     author_email = 'peke@eliga.fi',
     url          = 'http://robotframework.org',
     download_url = 'https://pypi.python.org/pypi/robotframework',
