@@ -203,58 +203,7 @@ Creating distributions
 
       pip install --pre --upgrade robotframework
 
-7. JAR distribution
-
-   - Create::
-
-       invoke jar
-
-   - Test that JAR is not totally broken::
-
-       java -jar dist/robotframework-$VERSION.jar --version
-       java -jar dist/robotframework-$VERSION.jar atest/testdata/misc/pass_and_fail.robot
-
-   - To create a JAR with a custom name for testing::
-
-       invoke jar --jar-name=example
-       java -jar dist/example.jar --version
-
-8. Upload JAR to Sonatype
-
-   - Sonatype offers a service where users can upload JARs and they will be synced
-     to the maven central repository. Below are the instructions to upload the JAR.
-
-   - Prequisites:
-
-      - Install maven
-      - Create a `Sonatype account`__
-      - Add these lines (filled with the Sonatype account information) to your ``settings.xml``::
-
-            <servers>
-                <server>
-                    <id>sonatype-nexus-staging</id>
-                    <username></username>
-                    <password></password>
-                </server>
-            </servers>
-
-      - Create `a PGP key`__
-      - Apply for `publish rights`__ to org.robotframework project. This will
-        take some time from them to accept.
-
-
-   - Run command::
-
-        mvn gpg:sign-and-deploy-file -Dfile=dist/robotframework-$VERSION.jar -DpomFile=pom.xml -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging
-
-   - Go to https://oss.sonatype.org/index.html#welcome, log in with Sonatype credentials, find the staging repository and do close & release
-   - After that, the released JAR is synced to Maven central within an hour.
-
-__ https://issues.sonatype.org/secure/Dashboard.jspa
-__ https://central.sonatype.org/pages/working-with-pgp-signatures.html
-__ https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
-
-9. Documentation
+7. Documentation
 
    - Generate library documentation::
 
