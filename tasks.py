@@ -281,6 +281,10 @@ def create_robot_jar(ctx, version, name=None, source='build'):
         name = f'robotframework-{version}.jar'
     elif not name.endswith('.jar'):
         name += '.jar'
+    # https://bugs.jython.org/issue2924
+    offending_file = Path(source) / 'module-info.class'
+    if offending_file.exists():
+        offending_file.unlink()
     target = Path(f'dist/{name}')
     ctx.run(f'jar cvfM {target} -C {source} .')
     print(f"Created '{target}'.")
