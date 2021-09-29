@@ -4,6 +4,8 @@ import unittest
 
 from robot.utils import isatty
 from robot.utils.asserts import assert_equal, assert_false, assert_raises
+# Should be tested in own module but util only needed with Jython so can be here.
+from robot.utils.platform import _version_to_tuple
 
 
 class TestIsATty(unittest.TestCase):
@@ -30,6 +32,17 @@ class TestIsATty(unittest.TestCase):
         with open(__file__) as file:
             assert_false(isatty(file))
         assert_false(isatty(file))
+
+
+class TestPlatform(unittest.TestCase):
+
+    def test_version_to_tuple(self):
+        for inp, exp in [('1.2.3', (1, 2, 3)),
+                         ('1.2.3-dev1', (1, 2, 3)),
+                         ('192.168.0.1', (192, 168, 0)),
+                         ('17', (17, 0, 0)),
+                         ('18-ea', (18, 0, 0))]:
+            assert_equal(_version_to_tuple(inp), exp)
 
 
 if __name__ == '__main__':

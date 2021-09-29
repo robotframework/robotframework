@@ -18,13 +18,12 @@ import re
 import sys
 
 
-java_match = re.match(r'java(\d+)\.(\d+)\.(\d+)', sys.platform)
-if java_match:
-    JYTHON = True
-    JAVA_VERSION = tuple(int(i) for i in java_match.groups())
-else:
-    JYTHON = False
-    JAVA_VERSION = (0, 0, 0)
+def _version_to_tuple(version_string):
+    version = [int(re.match(r'\d*', v).group() or 0) for v in version_string.split('.')]
+    missing = [0] * (3 - len(version))
+    return tuple(version + missing)[:3]
+
+
 PY_VERSION = sys.version_info[:3]
 PY2 = PY_VERSION[0] == 2
 PY3 = not PY2
@@ -32,8 +31,15 @@ IRONPYTHON = sys.platform == 'cli'
 PYPY = 'PyPy' in sys.version
 UNIXY = os.sep == '/'
 WINDOWS = not UNIXY
-
 RERAISED_EXCEPTIONS = (KeyboardInterrupt, SystemExit, MemoryError)
-if JYTHON:
-    from java.lang import OutOfMemoryError
+
+if sys.platform.startswith('java'):
+    from java.lang import OutOfMemoryError, System
+
+    JYTHON = True
+    JAVA_VERSION = _version_to_tuple(System.getProperty('java.version'))
     RERAISED_EXCEPTIONS += (OutOfMemoryError,)
+
+else:
+    JYTHON = False
+    JAVA_VERSION = (0, 0, 0)
