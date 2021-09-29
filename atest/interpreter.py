@@ -61,8 +61,9 @@ class Interpreter(object):
                                              encoding='UTF-8')
         except (subprocess.CalledProcessError, FileNotFoundError) as err:
             raise ValueError('Failed to get Java version: %s' % err)
-        major, minor = output.strip().split('.', 2)[:2]
-        return int(major), int(minor)
+        version = [int(re.match(r'\d*', v).group() or 0) for v in output.split('.')]
+        missing = [0] * (2 - len(version))
+        return tuple(version + missing)[:2]
 
     @property
     def os(self):
@@ -124,7 +125,7 @@ class Interpreter(object):
         if not self.is_jython:
             return None
         classpath = os.environ.get('CLASSPATH')
-        if classpath and 'tools.jar' in classpath:
+        if self.java_version_info[0] >= 9 or classpath and 'tools.jar' in classpath:
             return classpath
         tools_jar = join(PROJECT_ROOT, 'ext-lib', 'tools.jar')
         if not exists(tools_jar):
@@ -216,13 +217,13 @@ class StandaloneInterpreter(Interpreter):
     def __init__(self, path, name=None, version=None):
         Interpreter.__init__(self, abspath(path), name or 'Standalone JAR',
                              version or '2.7.2')
+        if self.classpath:
+            self.interpreter.insert(1, '-Xbootclasspath/a:%s' % self.classpath)
 
     def _get_interpreter(self, path):
-        interpreter = ['java', '-jar', path]
-        classpath = self.classpath
-        if classpath:
-            interpreter.insert(1, '-Xbootclasspath/a:%s' % classpath)
-        return interpreter
+        java_home = os.environ.get('JAVA_HOME')
+        java = join(java_home, 'bin', 'java') if java_home else 'java'
+        return [java, '-jar', path]
 
     def _get_java_version_info(self):
         result = subprocess.run(self.interpreter + ['--version'],
@@ -232,11 +233,11 @@ class StandaloneInterpreter(Interpreter):
         if result.returncode != 251:
             raise ValueError('Failed to get Robot Framework version:\n%s'
                              % result.stdout)
-        match = re.search(r'Jython .* on java(\d+)\.(\d)', result.stdout)
+        match = re.search(r'Jython .* on java(\d+)(\.(\d+))?', result.stdout)
         if not match:
             raise ValueError("Failed to find Java version from '%s'."
                              % result.stdout)
-        return int(match.group(1)), int(match.group(2))
+        return int(match.group(1)), int(match.group(3) or 0)
 
     @property
     def excludes(self):

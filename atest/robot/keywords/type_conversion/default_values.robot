@@ -91,6 +91,7 @@ IntFlag
     Check Test Case    ${TESTNAME}
 
 Invalid enum
+    [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
 None

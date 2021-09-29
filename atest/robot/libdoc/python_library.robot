@@ -121,7 +121,7 @@ Decorators
     ...        Run Keywords
     ...            Keyword Arguments Should Be      1    *args    **kwargs
     ...        AND
-    ...            Keyword Lineno Should Be         1    ${{'15' if not $INTERPRETER.is_standalone else '14'}}
+    ...            Keyword Lineno Should Be         1    15
 
 Documentation set in __init__
     Run Libdoc And Parse Output      ${TESTDATADIR}/DocSetInInit.py
