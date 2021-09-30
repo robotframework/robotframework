@@ -128,7 +128,6 @@ _                          # end of italic
 class HtmlFormatter(object):
 
     def __init__(self):
-        self._results = []
         self._formatters = [TableFormatter(),
                             PreformattedFormatter(),
                             ListFormatter(),
@@ -138,24 +137,25 @@ class HtmlFormatter(object):
         self._current = None
 
     def format(self, text):
+        results = []
         for line in text.splitlines():
-            self._process_line(line)
-        self._end_current()
-        return '\n'.join(self._results)
+            self._process_line(line, results)
+        self._end_current(results)
+        return '\n'.join(results)
 
-    def _process_line(self, line):
+    def _process_line(self, line, results):
         if not line.strip():
-            self._end_current()
+            self._end_current(results)
         elif self._current and self._current.handles(line):
             self._current.add(line)
         else:
-            self._end_current()
+            self._end_current(results)
             self._current = self._find_formatter(line)
             self._current.add(line)
 
-    def _end_current(self):
+    def _end_current(self, results):
         if self._current:
-            self._results.append(self._current.end())
+            results.append(self._current.end())
             self._current = None
 
     def _find_formatter(self, line):
@@ -284,8 +284,7 @@ class ListFormatter(_Formatter):
     _format_item = LineFormatter().format
 
     def _handles(self, line):
-        return line.strip().startswith('- ') or \
-                line.startswith(' ') and self._lines
+        return line.strip().startswith('- ') or line.startswith(' ') and self._lines
 
     def format(self, lines):
         items = ['<li>%s</li>' % self._format_item(line)

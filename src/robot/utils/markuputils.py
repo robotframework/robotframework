@@ -19,6 +19,7 @@ from .htmlformatters import LinkFormatter, HtmlFormatter
 
 
 _format_url = LinkFormatter().format_url
+_format_html = HtmlFormatter().format
 _generic_escapes = (('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;'))
 _attribute_escapes = _generic_escapes \
          + (('"', '&quot;'), ('\n', '&#10;'), ('\r', '&#13;'), ('\t', '&#09;'))
@@ -37,7 +38,7 @@ def xml_escape(text):
 
 
 def html_format(text):
-    return HtmlFormatter().format(_escape(text))
+    return _format_html(_escape(text))
 
 
 def attribute_escape(attr):

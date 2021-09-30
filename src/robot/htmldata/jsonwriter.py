@@ -41,7 +41,7 @@ class JsonWriter(object):
 class JsonDumper(object):
 
     def __init__(self, output):
-        self._output = output
+        self.write = output.write
         self._dumpers = (MappingDumper(self),
                          IntegerDumper(self),
                          TupleListDumper(self),
@@ -55,9 +55,6 @@ class JsonDumper(object):
                 dumper.dump(data, mapping)
                 return
         raise ValueError('Dumping %s not supported.' % type(data))
-
-    def write(self, data):
-        self._output.write(data)
 
 
 class _Dumper(object):
@@ -101,28 +98,32 @@ class DictDumper(_Dumper):
     _handled_types = dict
 
     def dump(self, data, mapping):
-        self._write('{')
+        write = self._write
+        dump = self._dump
+        write('{')
         last_index = len(data) - 1
         for index, key in enumerate(sorted(data)):
-            self._dump(key, mapping)
-            self._write(':')
-            self._dump(data[key], mapping)
+            dump(key, mapping)
+            write(':')
+            dump(data[key], mapping)
             if index < last_index:
-                self._write(',')
-        self._write('}')
+                write(',')
+        write('}')
 
 
 class TupleListDumper(_Dumper):
     _handled_types = (tuple, list)
 
     def dump(self, data, mapping):
-        self._write('[')
+        write = self._write
+        dump = self._dump
+        write('[')
         last_index = len(data) - 1
         for index, item in enumerate(data):
-            self._dump(item, mapping)
+            dump(item, mapping)
             if index < last_index:
-                self._write(',')
-        self._write(']')
+                write(',')
+        write(']')
 
 
 class MappingDumper(_Dumper):

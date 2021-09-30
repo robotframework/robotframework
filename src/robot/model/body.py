@@ -120,15 +120,15 @@ class Body(ItemList):
                              (self.if_class, ifs)], predicate)
 
     def _filter(self, types, predicate):
-        include = tuple(cls for cls, activated in types if activated is True)
-        exclude = tuple(cls for cls, activated in types if activated is False)
+        include = [cls for cls, activated in types if activated is True]
+        exclude = [cls for cls, activated in types if activated is False]
         if include and exclude:
             raise ValueError('Items cannot be both included and excluded by type.')
         items = list(self)
         if include:
-            items = [item for item in items if isinstance(item, include)]
+            items = [item for item in items if isinstance(item, tuple(include))]
         if exclude:
-            items = [item for item in items if not isinstance(item, exclude)]
+            items = [item for item in items if not isinstance(item, tuple(exclude))]
         if predicate:
             items = [item for item in items if predicate(item)]
         return items

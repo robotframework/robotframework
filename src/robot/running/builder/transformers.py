@@ -15,7 +15,6 @@
 
 from ast import NodeVisitor
 
-from robot.parsing import Token
 from robot.variables import VariableIterator
 
 from .testsettings import TestSettings
@@ -152,10 +151,14 @@ class TestCaseBuilder(NodeVisitor):
         self._set_settings(self.test, self.settings)
 
     def _set_settings(self, test, settings):
-        test.setup.config(**settings.setup)
-        test.teardown.config(**settings.teardown)
-        test.timeout = settings.timeout
-        test.tags = settings.tags
+        if settings.setup:
+            test.setup.config(**settings.setup)
+        if settings.teardown:
+            test.teardown.config(**settings.teardown)
+        if settings.timeout:
+            test.timeout = settings.timeout
+        if settings.tags:
+            test.tags = settings.tags
         if settings.template:
             test.template = settings.template
             self._set_template(test, settings.template)
