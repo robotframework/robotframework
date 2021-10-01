@@ -17,12 +17,14 @@ import ctypes
 import os
 import subprocess
 import time
+from tempfile import TemporaryFile
 import signal as signal_module
 
-from robot.utils import (ConnectionCache, abspath, cmdline2list, console_decode,
-                         is_list_like, is_string, is_truthy, NormalizedDict,
-                         py3to2, secs_to_timestr, system_decode, system_encode,
-                         timestr_to_secs, IRONPYTHON, JYTHON, WINDOWS)
+from robot.utils import (abspath, cmdline2list, ConnectionCache, console_decode,
+                         console_encode, IRONPYTHON, JYTHON, is_list_like, is_string,
+                         is_unicode, is_truthy, NormalizedDict, PY2, py3to2,
+                         secs_to_timestr, system_decode, system_encode, timestr_to_secs,
+                         WINDOWS)
 from robot.version import get_version
 from robot.api import logger
 
@@ -84,6 +86,7 @@ class Process(object):
     | env:<name> | Overrides the named environment variable(s) only.     |
     | stdout     | Path of a file where to write standard output.        |
     | stderr     | Path of a file where to write standard error.         |
+    | stdin      | Configure process standard input. New in RF 4.1.2.    |
     | output_encoding | Encoding to use when reading command outputs.    |
     | alias      | Alias given to the process.                           |
 
@@ -183,6 +186,33 @@ class Process(object):
 
     Note that the created output files are not automatically removed after
     the test run. The user is responsible to remove them if needed.
+
+    == Standard input stream ==
+
+    The ``stdin`` argument makes it possible to pass information to the standard
+    input stream of the started process. How its value is interpreted is
+    explained in the table below.
+
+    | = Value =        | = Explanation = |
+    | String ``PIPE``  | Make stdin a pipe that can be written to. This is the default. |
+    | String ``NONE``  | Inherit stdin from the parent process. This value is case-insensitive. |
+    | Path to a file   | Open the specified file and use it as the stdin. |
+    | Any other string | Create a temporary file with the text as its content and use it as the stdin. |
+    | Any non-string value | Used as-is. Could be a file descriptor, stdout of another process, etc. |
+
+    Values ``PIPE`` and ``NONE`` are internally mapped directly to
+    ``subprocess.PIPE`` and ``None``, respectively, when calling
+    [https://docs.python.org/3/library/subprocess.html#subprocess.Popen|subprocess.Popen].
+    The default behavior may change from ``PIPE`` to ``NONE`` in future
+    releases. If you depend on the ``PIPE`` behavior, it is a good idea to use
+    it explicitly.
+
+    Examples:
+    | `Run Process` | command | stdin=NONE |
+    | `Run Process` | command | stdin=${CURDIR}/stdin.txt |
+    | `Run Process` | command | stdin=Stdin as text. |
+
+    The support to configure ``stdin`` is new in Robot Framework 4.1.2.
 
     == Output encoding ==
 
@@ -754,7 +784,8 @@ class Process(object):
 
 class ExecutionResult(object):
 
-    def __init__(self, process, stdout, stderr, rc=None, output_encoding=None):
+    def __init__(self, process, stdout, stderr, stdin=None, rc=None,
+                 output_encoding=None):
         self._process = process
         self.stdout_path = self._get_path(stdout)
         self.stderr_path = self._get_path(stderr)
@@ -762,14 +793,14 @@ class ExecutionResult(object):
         self._output_encoding = output_encoding
         self._stdout = None
         self._stderr = None
-        self._custom_streams = [stream for stream in (stdout, stderr)
+        self._custom_streams = [stream for stream in (stdout, stderr, stdin)
                                 if self._is_custom_stream(stream)]
 
     def _get_path(self, stream):
         return stream.name if self._is_custom_stream(stream) else None
 
     def _is_custom_stream(self, stream):
-        return stream not in (subprocess.PIPE, subprocess.STDOUT)
+        return stream not in (subprocess.PIPE, subprocess.STDOUT, None)
 
     @property
     def stdout(self):
@@ -834,14 +865,15 @@ class ExecutionResult(object):
 @py3to2
 class ProcessConfiguration(object):
 
-    def __init__(self, cwd=None, shell=False, stdout=None, stderr=None,
+    def __init__(self, cwd=None, shell=False, stdout=None, stderr=None, stdin='PIPE',
                  output_encoding='CONSOLE', alias=None, env=None, **rest):
         self.cwd = self._get_cwd(cwd)
-        self.stdout_stream = self._new_stream(stdout)
-        self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
         self.shell = is_truthy(shell)
         self.alias = alias
         self.output_encoding = output_encoding
+        self.stdout_stream = self._new_stream(stdout)
+        self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
+        self.stdin_stream = self._get_stdin(stdin)
         self.env = self._construct_env(env, rest)
 
     def _get_cwd(self, cwd):
@@ -853,8 +885,8 @@ class ProcessConfiguration(object):
         if name == 'DEVNULL':
             return open(os.devnull, 'w')
         if name:
-            name = name.replace('/', os.sep)
-            return open(os.path.join(self.cwd, name), 'w')
+            path = os.path.normpath(os.path.join(self.cwd, name))
+            return open(path, 'w')
         return subprocess.PIPE
 
     def _get_stderr(self, stderr, stdout, stdout_stream):
@@ -863,6 +895,23 @@ class ProcessConfiguration(object):
                 return stdout_stream
             return subprocess.STDOUT
         return self._new_stream(stderr)
+
+    def _get_stdin(self, stdin):
+        if not is_string(stdin):
+            return stdin
+        if stdin.upper() == 'NONE':
+            return None
+        if stdin == 'PIPE':
+            return subprocess.PIPE
+        path = os.path.normpath(os.path.join(self.cwd, stdin))
+        if os.path.isfile(path):
+            return open(path)
+        stdin_file = TemporaryFile()
+        if is_unicode(stdin):
+            stdin = console_encode(stdin, self.output_encoding, force=True)
+        stdin_file.write(stdin)
+        stdin_file.seek(0)
+        return stdin_file
 
     def _construct_env(self, env, extra):
         env = self._get_initial_env(env, extra)
@@ -901,7 +950,7 @@ class ProcessConfiguration(object):
     def popen_config(self):
         config = {'stdout': self.stdout_stream,
                   'stderr': self.stderr_stream,
-                  'stdin': subprocess.PIPE,
+                  'stdin': self.stdin_stream,
                   'shell': self.shell,
                   'cwd': self.cwd,
                   'env': self.env}
@@ -923,6 +972,7 @@ class ProcessConfiguration(object):
     def result_config(self):
         return {'stdout': self.stdout_stream,
                 'stderr': self.stderr_stream,
+                'stdin': self.stdin_stream,
                 'output_encoding': self.output_encoding}
 
     def __str__(self):
@@ -931,12 +981,19 @@ cwd:     %s
 shell:   %s
 stdout:  %s
 stderr:  %s
+stdin:   %s
 alias:   %s
-env:     %s""" % (self.cwd, self.shell, self._stream_name(self.stdout_stream),
-                  self._stream_name(self.stderr_stream), self.alias, self.env)
+env:     %s""" % (self.cwd,
+                  self.shell,
+                  self._stream_name(self.stdout_stream),
+                  self._stream_name(self.stderr_stream),
+                  self._stream_name(self.stdin_stream),
+                  self.alias,
+                  self.env)
 
     def _stream_name(self, stream):
         if hasattr(stream, 'name'):
             return stream.name
         return {subprocess.PIPE: 'PIPE',
-                subprocess.STDOUT: 'STDOUT'}.get(stream, stream)
+                subprocess.STDOUT: 'STDOUT',
+                None: 'None'}.get(stream, stream)

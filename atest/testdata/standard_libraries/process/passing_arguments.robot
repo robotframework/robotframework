@@ -48,4 +48,4 @@ Unsupported kwargs cause error
 
 Log process config
     Run Process    python -c pass    shell=yes    stdout=%{TEMPDIR}/stdout    cwd=%{TEMPDIR}    alias=äliäs
-    Run Process    python    -c    pass    stderr=STDOUT    cwd=${CURDIR}
+    Run Process    python    -c    pass    stderr=STDOUT    cwd=${CURDIR}    stdin=None

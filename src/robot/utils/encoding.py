@@ -50,17 +50,27 @@ def console_decode(string, encoding=CONSOLE_ENCODING, force=False):
         return unic(string)
 
 
-def console_encode(string, errors='replace', stream=sys.__stdout__):
+def console_encode(string, encoding=None, errors='replace', stream=sys.__stdout__,
+                   force=False):
     """Encodes Unicode to bytes in console or system encoding.
 
-    Determines the encoding to use based on the given stream and system
-    configuration. On Python 3 and IronPython returns Unicode, otherwise
-    returns bytes.
+    If encoding is not given, determines it based on the given stream and system
+    configuration. In addition to the normal encodings, it is possible to use
+    case-insensitive values `CONSOLE` and `SYSTEM` to use the system console
+    and system encoding, respectively.
+
+    On Python 3 and IronPython returns Unicode unless `force` is True in which
+    case returns bytes. Otherwise always returns bytes.
     """
-    encoding = _get_console_encoding(stream)
+    if encoding:
+        encoding = {'CONSOLE': CONSOLE_ENCODING,
+                    'SYSTEM': SYSTEM_ENCODING}.get(encoding.upper(), encoding)
+    else:
+        encoding = _get_console_encoding(stream)
     if PY3 and encoding != 'UTF-8':
-        return string.encode(encoding, errors).decode(encoding)
-    if PY3 or IRONPYTHON:
+        encoded = string.encode(encoding, errors)
+        return encoded if force else encoded.decode(encoding)
+    if (PY3 or IRONPYTHON) and not force:
         return string
     return string.encode(encoding, errors)
 

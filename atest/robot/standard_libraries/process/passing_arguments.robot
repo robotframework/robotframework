@@ -41,6 +41,7 @@ Log process config
     ...    shell:${SPACE*3}True
     ...    stdout:${SPACE*2}%{TEMPDIR}${/}stdout
     ...    stderr:${SPACE*2}PIPE
+    ...    stdin:${SPACE*3}PIPE
     ...    alias:${SPACE*3}äliäs
     ...    env:${SPACE*5}None
     Check Log Message    ${tc.kws[0].msgs[1]}    Process configuration:\n${config}    level=DEBUG
@@ -50,6 +51,7 @@ Log process config
     ...    shell:${SPACE*3}False
     ...    stdout:${SPACE*2}PIPE
     ...    stderr:${SPACE*2}STDOUT
+    ...    stdin:${SPACE*3}None
     ...    alias:${SPACE*3}None
     ...    env:${SPACE*5}None
     Check Log Message    ${tc.kws[1].msgs[1]}    Process configuration:\n${config}    level=DEBUG

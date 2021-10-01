@@ -41,6 +41,7 @@ On timeout process is terminated by default (w/ custom streams)
     Check Log Message    ${tc.kws[0].msgs[3]}    Gracefully terminating process.
 
 On timeout process can be killed (w/ default streams)
+    [Tags]    no-jython
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[0].msgs[1]}    Waiting for process to complete.
     Check Log Message    ${tc.kws[0].msgs[2]}    Process did not complete in 200 milliseconds.
