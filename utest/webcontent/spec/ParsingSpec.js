@@ -113,7 +113,7 @@ describe("Handling Suite", function () {
         expect(kw.times.elapsedMillis).toBeGreaterThan(99);
         expect(kw.times.elapsedMillis).toBeLessThan(200);
         expect(kw.type).toEqual("KEYWORD");
-        expect(kw.childrenNames).toEqual(['keyword', 'message'])
+        expect(kw.childrenNames).toEqual(['keyword']);
     });
 
     it("should parse for loop", function() {
@@ -129,7 +129,7 @@ describe("Handling Suite", function () {
     });
 
     it("should parse message", function () {
-        var message = nthKeyword(firstTest(window.testdata.suite()), 0).messages()[0];
+        var message = nthKeyword(firstTest(window.testdata.suite()), 0).children()[0];
         expect(message.text).toEqual("Slept 100 milliseconds");
     });
 
@@ -228,7 +228,7 @@ describe("Handling messages", function (){
     }
 
     function kwMessages(kw) {
-        return nthKeyword(firstTest(window.testdata.suite()), kw).messages();
+        return nthKeyword(firstTest(window.testdata.suite()), kw).children();
     }
 
     function kwMessage(kw) {
@@ -263,7 +263,7 @@ describe("Handling messages", function (){
         var callbackExecuted = false;
         window.testdata.ensureLoaded(firstError.link, function (pathToKeyword) {
             var errorKw = window.testdata.findLoaded(pathToKeyword[pathToKeyword.length-1]);
-            expect(errorKw.messages()[0].level).toEqual("WARN");
+            expect(errorKw.children()[0].level).toEqual("WARN");
             callbackExecuted = true;
         });
         expect(callbackExecuted).toBeTruthy();
@@ -502,7 +502,7 @@ describe("Element ids", function (){
     });
 
     it("should give id for a message", function (){
-        var msg = subSuite(0, subSuite(3)).tests()[0].keywords()[0].messages()[0];
+        var msg = subSuite(0, subSuite(3)).tests()[0].keywords()[0].children()[0];
         expect(window.testdata.findLoaded(msg.id)).toEqual(msg);
     });
 
