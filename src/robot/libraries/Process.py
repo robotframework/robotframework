@@ -375,19 +375,32 @@ class Process(object):
         for more information about the arguments, and `Run Process` keyword
         for related examples.
 
-        Makes the started process new `active process`. Returns an identifier
-        that can be used as a handle to activate the started process if needed.
+        Makes the started process new `active process`. Returns the created 
+        process object [https://docs.python.org/3/library/subprocess.html#popen-constructor]
+        which can be assigned to a variable if needed.
+
+        Note: Returning an actual process object introduced in RF 5.0, previous versions
+        would only return a generic handler.
 
         Processes are started so that they create a new process group. This
         allows sending signals to and terminating also possible child
         processes. This is not supported on Jython.
+
+        Examples:
+        | Start Process | ${command} | alias=example |
+        | ${result} = | Wait For Process | example |
+        | ${process} = | Start Process | python | -c | print('Hello, world!') |
+        | ${result} = | Run Process | python | -c | import sys; print(sys.stdin.read().upper().strip()) | stdin=${process.stdout} |
+        | Wait For Process | ${process} |
+        | Should Be Equal | ${result.stdout} | HELLO, WORLD! |
         """
         conf = ProcessConfiguration(**configuration)
         command = conf.get_command(command, list(arguments))
         self._log_start(command, conf)
         process = subprocess.Popen(command, **conf.popen_config)
         self._results[process] = ExecutionResult(process, **conf.result_config)
-        return self._processes.register(process, alias=conf.alias)
+        self._processes.register(process, alias=conf.alias)
+        return self._processes.current
 
     def _log_start(self, command, config):
         if is_list_like(command):

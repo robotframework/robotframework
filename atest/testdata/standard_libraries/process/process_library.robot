@@ -41,6 +41,12 @@ Input things to process
     ${result}=    Wait For Process
     Should Match    ${result.stdout}    *inp 42*
 
+Assign process object to variable
+    ${process} =    Start Process  python  -c  print('Hello, world!')
+    ${result} =    Run Process  python  -c  import sys; print(sys.stdin.read().upper().strip())  stdin=${process.stdout}
+    Wait For Process    ${process}
+    Should Be Equal As Strings    ${result.stdout}  HELLO, WORLD!
+
 Get process id
     ${handle}=    Some process
     ${pid}=    Get Process Id    ${handle}
