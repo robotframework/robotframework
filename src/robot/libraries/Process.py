@@ -375,19 +375,26 @@ class Process(object):
         for more information about the arguments, and `Run Process` keyword
         for related examples.
 
-        Makes the started process new `active process`. Returns an identifier
-        that can be used as a handle to activate the started process if needed.
+        Makes the started process new `active process`. Returns a process object
+        that can be assigned to a variable if needed.
 
         Processes are started so that they create a new process group. This
         allows sending signals to and terminating also possible child
         processes. This is not supported on Jython.
+
+        Examples:
+        | Start Process | ${command} | alias=example |
+        | ${result} = | Wait For Process | example |
+        | ${process} = | Start Process | python | -c | print('Hello, world!') |
+        | Should Be Equal | ${process.stdout} | Hello, world! |
         """
         conf = ProcessConfiguration(**configuration)
         command = conf.get_command(command, list(arguments))
         self._log_start(command, conf)
         process = subprocess.Popen(command, **conf.popen_config)
         self._results[process] = ExecutionResult(process, **conf.result_config)
-        return self._processes.register(process, alias=conf.alias)
+        index = self._processes.register(process, alias=conf.alias)
+        return self._processes.get_connection(index)
 
     def _log_start(self, command, config):
         if is_list_like(command):
