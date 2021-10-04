@@ -42,6 +42,7 @@ class JsonDumper(object):
 
     def __init__(self, output):
         self.write = output.write
+        self._output = output
         self._dumpers = (MappingDumper(self),
                          IntegerDumper(self),
                          TupleListDumper(self),
@@ -55,6 +56,12 @@ class JsonDumper(object):
                 dumper.dump(data, mapping)
                 return
         raise ValueError('Dumping %s not supported.' % type(data))
+
+    # TODO: Remove in RF 5.0. Not needed anymore after performance tuning in RF 4.1.2.
+    # Although this is internal API, don't still want to remove it in a patch release.
+    # Also `self._output` can be removed once this is gone.
+    def write(self, data):
+        self._output.write(data)
 
 
 class _Dumper(object):
