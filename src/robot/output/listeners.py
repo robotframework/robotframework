@@ -46,11 +46,11 @@ class Listeners(object):
         self._is_logged.set_level(level)
 
     def start_keyword(self, kw):
-        if kw.type != kw.IF_ELSE_ROOT:
+        if kw.type != kw.IF_ELSE_ROOT and kw.type != kw.FOR:
             self._start_keyword(kw)
 
     def end_keyword(self, kw):
-        if kw.type != kw.IF_ELSE_ROOT:
+        if kw.type != kw.IF_ELSE_ROOT and kw.type != kw.FOR:
             self._end_keyword(kw)
 
     def log_message(self, msg):
