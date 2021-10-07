@@ -117,14 +117,14 @@ class Message(BaseMessage):
 class IsLogged(object):
 
     def __init__(self, level):
-        self._str_level = level
+        self.level = level.upper()
         self._int_level = self._level_to_int(level)
 
     def __call__(self, level):
         return self._level_to_int(level) >= self._int_level
 
     def set_level(self, level):
-        old = self._str_level.upper()
+        old = self.level
         self.__init__(level)
         return old
 
