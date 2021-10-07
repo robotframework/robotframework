@@ -13,25 +13,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import (Matcher, normalize, NormalizedDict, is_string, py3to2,
-                         setter, unic, unicode)
+from robot.utils import (is_string, normalize, NormalizedDict, Matcher, py3to2,
+                         unic, unicode)
 
 
 @py3to2
 class Tags(object):
+    __slots__ = ['_tags']
 
     def __init__(self, tags=None):
-        self._tags = tags
-
-    @setter
-    def _tags(self, tags):
         if not tags:
-            return ()
-        if is_string(tags):
+            tags = ()
+        elif is_string(tags):
             tags = (tags,)
-        return self._deduplicate_normalized(tags)
+        self._tags = self._normalize(tags)
 
-    def _deduplicate_normalized(self, tags):
+    def _normalize(self, tags):
         normalized = NormalizedDict(((unic(t), 1) for t in tags), ignore='_')
         for removed in '', 'NONE':
             if removed in normalized:
@@ -39,11 +36,11 @@ class Tags(object):
         return tuple(normalized)
 
     def add(self, tags):
-        self._tags = tuple(self) + tuple(Tags(tags))
+        self._tags = self._normalize(tuple(self) + tuple(Tags(tags)))
 
     def remove(self, tags):
         tags = TagPatterns(tags)
-        self._tags = [t for t in self if not tags.match(t)]
+        self._tags = tuple([t for t in self if not tags.match(t)])
 
     def match(self, tags):
         return TagPatterns(tags).match(self)

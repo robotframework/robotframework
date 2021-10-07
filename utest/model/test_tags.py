@@ -1,6 +1,7 @@
 import unittest
 
-from robot.utils.asserts import assert_equal, assert_false, assert_not_equal, assert_true
+from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal,
+                                 assert_raises, assert_true)
 from robot.utils import seq2str, IRONPYTHON, PY2, unicode
 from robot.model.tags import Tags, TagPattern, TagPatterns
 
@@ -155,6 +156,10 @@ class TestTags(unittest.TestCase):
     def test__eq__normalized(self):
         assert_equal(Tags(['Hello world', 'Foo', 'Not_world']),
                      Tags(['nOT WORLD', 'FOO', 'hello world']))
+
+    def test__slots__(self):
+        assert_raises(AttributeError, setattr, Tags(), 'attribute', 'value')
+
 
 class TestNormalizing(unittest.TestCase):
 
