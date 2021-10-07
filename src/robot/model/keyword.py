@@ -58,9 +58,6 @@ class Keyword(BodyItem):
     def teardown(self):
         """Keyword teardown as a :class:`Keyword` object.
 
-        This attribute is a ``Keyword`` object also when a keyword has no teardown
-        but in that case its truth value is ``False``.
-
         Teardown can be modified by setting attributes directly::
 
             keyword.teardown.name = 'Example'
@@ -76,8 +73,15 @@ class Keyword(BodyItem):
 
             keyword.teardown = None
 
+        This attribute is a ``Keyword`` object also when a keyword has no teardown
+        but in that case its truth value is ``False``. If there is a need to just
+        check does a keyword have a teardown, using the :attr:`has_teardown`
+        attribute avoids creating the ``Keyword`` object and is thus more memory
+        efficient.
+
         New in Robot Framework 4.0. Earlier teardown was accessed like
-        ``keyword.keywords.teardown``.
+        ``keyword.keywords.teardown``. :attr:`has_keyword` is new in Robot
+        Framework 4.1.2.
         """
         if self._teardown is None and self:
             self._teardown = create_fixture(None, self, self.TEARDOWN)
@@ -86,6 +90,20 @@ class Keyword(BodyItem):
     @teardown.setter
     def teardown(self, teardown):
         self._teardown = create_fixture(teardown, self, self.TEARDOWN)
+
+    @property
+    def has_teardown(self):
+        """Check does a keyword have a teardown without creating a teardown object.
+
+        A difference between using ``if kw.has_teardown:`` and ``if kw.teardown:``
+        is that accessing the :attr:`teardown` attribute creates a :class:`Keyword`
+        object representing a teardown even when the keyword actually does not
+        have one. This typically does not matter, but with bigger suite structures
+        having lot of keywords it can have a considerable effect on memory usage.
+
+        New in Robot Framework 4.1.2.
+        """
+        return self._teardown is not None
 
     @setter
     def tags(self, tags):
