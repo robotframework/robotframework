@@ -18,7 +18,6 @@ from robot.errors import DataError
 from robot.model import ModelModifier
 from robot.output import LOGGER
 from robot.result import ExecutionResult, Result
-from robot.utils import unic
 
 from .jsmodelbuilders import JsModelBuilder
 from .logreportwriters import LogWriter, ReportWriter
