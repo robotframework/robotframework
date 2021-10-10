@@ -80,7 +80,7 @@ class Keyword(BodyItem):
         efficient.
 
         New in Robot Framework 4.0. Earlier teardown was accessed like
-        ``keyword.keywords.teardown``. :attr:`has_keyword` is new in Robot
+        ``keyword.keywords.teardown``. :attr:`has_teardown` is new in Robot
         Framework 4.1.2.
         """
         if self._teardown is None and self:
