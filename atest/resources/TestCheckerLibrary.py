@@ -44,6 +44,7 @@ class NoSlotsForIteration(ForIteration):
 
 class NoSlotsForIterations(ForIterations):
     for_iteration_class = NoSlotsForIteration
+    keyword_class = NoSlotsKeyword
 
 
 NoSlotsKeyword.body_class = NoSlotsBody

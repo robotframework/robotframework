@@ -63,7 +63,6 @@ class Body(model.Body):
 
 class ForIterations(Body):
     for_iteration_class = None
-    keyword_class = None
     if_class = None
     for_class = None
     __slots__ = []

@@ -168,7 +168,7 @@ class KeywordHandler(ElementHandler):
 @ElementHandler.register
 class ForHandler(ElementHandler):
     tag = 'for'
-    children = frozenset(('var', 'value', 'doc', 'status', 'iter', 'msg'))
+    children = frozenset(('var', 'value', 'doc', 'status', 'iter', 'msg', 'kw'))
 
     def start(self, elem, result):
         return result.body.create_for(flavor=elem.get('flavor'))

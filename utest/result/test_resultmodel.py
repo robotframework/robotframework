@@ -336,18 +336,18 @@ class TestBody(unittest.TestCase):
 
 class TestForIterations(unittest.TestCase):
 
-    def test_create_iteration_message_supported(self):
+    def test_create_supported(self):
         for_ = For()
         iterations = for_.body
         for creator in (iterations.create_iteration,
-                        iterations.create_message):
+                        iterations.create_message,
+                        iterations.create_keyword):
             item = creator()
             assert_equal(item.parent, for_)
 
-    def test_create_keyword_for_if_not_supported(self):
+    def test_create_not_supported(self):
         iterations = For().body
-        for creator in (iterations.create_keyword,
-                        iterations.create_for,
+        for creator in (iterations.create_for,
                         iterations.create_if):
             msg = "'ForIterations' object does not support '%s'." % creator.__name__
             assert_raises_with_msg(TypeError, msg, creator)

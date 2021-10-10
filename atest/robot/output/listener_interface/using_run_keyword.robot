@@ -74,8 +74,53 @@ In start_keyword and end_keyword with user keyword
     Check Log Message     ${tc.body[3].body[2].body[0]}            end_keyword
     Length Should Be      ${tc.body[3].body}                       3
 
+In start_keyword and end_keyword with FOR loop
+    ${tc} =               Check Test Case                          FOR loop in test
+    ${for} =              Set Variable                             ${tc.body[1]}
+    Should Be Equal       ${for.type}                              FOR
+    Length Should Be      ${for.body}                              5
+    Length Should Be      ${for.body.filter(keywords=True)}        2
+    Should Be Equal       ${for.body[0].name}                      BuiltIn.Log
+    Check Log Message     ${for.body[0].body[0]}                   start_keyword
+    Should Be Equal       ${for.body[-1].name}                     BuiltIn.Log
+    Check Log Message     ${for.body[-1].body[0]}                  end_keyword
+
+In start_keyword and end_keyword with IF/ELSE
+    ${tc} =               Check Test Case                          IF structure
+    Should Be Equal       ${tc.body[1].type}                       IF/ELSE ROOT
+    Length Should Be      ${tc.body[1].body}                       3                     # Listener if not called with root
+    Validate IF branch    ${tc.body[1].body[0]}                    IF         NOT RUN    # but is called with unexecuted branches.
+    Validate IF branch    ${tc.body[1].body[1]}                    ELSE IF    PASS
+    Validate IF branch    ${tc.body[1].body[2]}                    ELSE       NOT RUN
+
 *** Keywords ***
 Run Tests With Keyword Running Listener
     ${path} =    Normalize Path    ${LISTENER DIR}/keyword_running_listener.py
-    Run Tests    --listener ${path}    misc/normal.robot misc/setups_and_teardowns.robot
+    ${files} =    Catenate
+    ...    misc/normal.robot
+    ...    misc/setups_and_teardowns.robot
+    ...    misc/for_loops.robot
+    ...    misc/if_else.robot
+    Run Tests    --listener ${path}    ${files}
     Should Be Empty    ${ERRORS}
+
+Validate IF branch
+    [Arguments]    ${branch}    ${type}    ${status}
+    Should Be Equal       ${branch.type}                           ${type}
+    Should Be Equal       ${branch.status}                         ${status}
+    Length Should Be      ${branch.body}                           3
+    Should Be Equal       ${branch.body[0].name}                   BuiltIn.Log
+    Check Log Message     ${branch.body[0].body[0]}                start_keyword
+    IF    $status == 'PASS'
+        Should Be Equal       ${branch.body[1].name}                   BuiltIn.Log
+        Should Be Equal       ${branch.body[1].body[0].name}           BuiltIn.Log
+        Check Log Message     ${branch.body[1].body[0].body[0]}        start_keyword
+        Check Log Message     ${branch.body[1].body[1]}                else if branch
+        Should Be Equal       ${branch.body[1].body[2].name}           BuiltIn.Log
+        Check Log Message     ${branch.body[1].body[2].body[0]}        end_keyword
+    ELSE
+        Should Be Equal       ${branch.body[1].name}                   BuiltIn.Fail
+        Should Be Equal       ${branch.body[1].status}                 NOT RUN
+    END
+    Should Be Equal       ${branch.body[-1].name}                  BuiltIn.Log
+    Check Log Message     ${branch.body[-1].body[0]}               end_keyword
