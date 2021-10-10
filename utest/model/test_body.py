@@ -28,6 +28,14 @@ class TestBody(unittest.TestCase):
         assert_equal(body.filter(ifs=False, fors=False), [k1, k2, k3])
         assert_equal(body.filter(), [k1, f1, i1, i2, k2, k3])
 
+    def test_filter_when_included_or_excluded_type_is_disabled(self):
+        class NoKeywords(Body):
+            keyword_class = None
+        f1, i1, i2 = For(), If(), If()
+        body = NoKeywords(items=[f1, i1, i2])
+        assert_equal(body.filter(keywords=False), [f1, i1, i2])
+        assert_equal(body.filter(ifs=True, keywords=True), [i1, i2])
+
     def test_filter_with_includes_and_excludes_fails(self):
         assert_raises_with_msg(
             ValueError,
