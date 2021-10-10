@@ -1,13 +1,14 @@
 =========================================
-Robot Framework 4.1.2 release candidate 1
+Robot Framework 4.1.2 release candidate 2
 =========================================
 
 .. default-role:: code
 
-`Robot Framework`_ 4.1.2 is the last planned bug fix release in the RF 4.1.x
-series. It is also the last planned release to support Python 2 that itself
+`Robot Framework`_ 4.1.2 contains few bug fixes and considerable enhancement
+to memory usage. It is the last planned release in the RF 4.1.x series.
+It is also the last planned release to support Python 2 that itself
 `has not been supported since January 2020`__. Unfortunately this also means
-the end of our Jython__ and IronPython__ support at least until they get
+the end of our Jython__ and IronPython__ support, at least until they get
 Python 3 compatible versions released.
 
 __ https://www.python.org/doc/sunset-python-2/
@@ -28,14 +29,18 @@ to install the latest available release or use
 
 ::
 
-   pip install robotframework==4.1.2rc1
+   pip install robotframework==4.1.2rc2
 
 to install exactly this version. Alternatively you can download the source
 distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
-Robot Framework 4.1.2 rc 1 was released on Monday October 4, 2021.
-It was followed by `RF 4.1.2rc2 <rf-4.1.2rc2.rst>`_ on Sunday, October 10.
+Robot Framework 4.1.2 rc 1 was released on Sunday October 10, 2021.
+The final release is targeted for Thursday October 14, 2021. If you are still
+using Python 2, Jython or IronPython, we highly recommend you to test this
+release candidate in your own environment before that. Reported problems
+will still be fixed before the release, even if that would delay the release,
+but there are no plans for further RF 4.1.x releases after that.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -54,6 +59,15 @@ It was followed by `RF 4.1.2rc2 <rf-4.1.2rc2.rst>`_ on Sunday, October 10.
 Most important enhancements
 ===========================
 
+Reduce memory usage
+-------------------
+
+RF 4.1.2 uses considerably less memory than earlier versions especially when
+processing large output.xml files. Exact numbers vary depending on the executed
+tests or tasks, but the reduction compared to RF 4.1.1 can be over 30%. (`#4114`_)
+
+Memory usage was profiled using the `Fil <https://pythonspeed.com/fil/>`_ tool.
+
 Java integration fixes
 ----------------------
 
@@ -63,11 +77,10 @@ these two high priority issues were fixed in it:
 - Java versions with version number not in format `<major>.<minor>.<patch>`
   (e.g. `16.0.1`) did not work at all. OpenJDK releases use just `<major>` as
   their initial version number adding `<minor>` and `<patch>` parts only in
-  possible bug fix releases. As the result, using Robot Framework with Jython
-  on OpenJDK 17 was not possible at all. (`#4100`_)
+  possible bug fix releases. As the result, using Robot Framework on, for example,
+  OpenJDK 17 was not possible at all. (`#4100`_)
 
 - Extending the standalone JAR distribution was not possible. (`#3780`_)
-
 
 Lines starting with `|` not followed by space caused crash
 ----------------------------------------------------------
@@ -105,36 +118,55 @@ Full list of fixes and enhancements
       - Type
       - Priority
       - Summary
+      - Added
     * - `#4100`_
       - bug
       - critical
       - Java versions with version number not in format `<major>.<minor>.<patch>` do not work (e.g. OpenJDK 17)
+      - rc 1
     * - `#4082`_
       - bug
       - high
       - Lines starting with `|` not followed by space cause crash
+      - rc 1
+    * - `#4114`_
+      - enhancement
+      - high
+      - Reduce memory usage
+      - rc 2
     * - `#3780`_
       - bug
       - medium
       - Extending JAR distribution fails
+      - rc 1
     * - `#4065`_
       - bug
       - medium
       - Process: Started processes can hang due to how stdin is configured
+      - rc 1
     * - `#4086`_
       - bug
       - medium
       - All irrelevant errors are not silenced when parsing reStructuredText data
+      - rc 1
+    * - `#4112`_
+      - bug
+      - medium
+      - Incompatible output.xml created if listener runs keyword in `end_keyword` inside FOR loop
+      - rc 2
     * - `#4102`_
       - enhancement
       - medium
       - Process: Make it possible to configure standard input stream
+      - rc 1
 
-Altogether 6 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av4.1.2>`__.
+Altogether 8 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av4.1.2>`__.
 
 .. _#4100: https://github.com/robotframework/robotframework/issues/4100
 .. _#4082: https://github.com/robotframework/robotframework/issues/4082
+.. _#4114: https://github.com/robotframework/robotframework/issues/4114
 .. _#3780: https://github.com/robotframework/robotframework/issues/3780
 .. _#4065: https://github.com/robotframework/robotframework/issues/4065
 .. _#4086: https://github.com/robotframework/robotframework/issues/4086
+.. _#4112: https://github.com/robotframework/robotframework/issues/4112
 .. _#4102: https://github.com/robotframework/robotframework/issues/4102
