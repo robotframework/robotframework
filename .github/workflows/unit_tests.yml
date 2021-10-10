@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ 'ubuntu-latest', 'macos-latest', 'windows-latest' ]
+        os: [ 'ubuntu-latest', 'windows-latest' ]
         python-version: [ '2.7', '3.5', '3.6', '3.7', '3.8', '3.9', 'pypy2', 'pypy3' ]
         exclude:
           - os: windows-latest
@@ -37,12 +37,6 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: 'x64'
-
-      - name: Disable NTP on macOS (https://github.com/actions/virtual-environments/issues/820)
-        run: |
-          sudo systemsetup -setusingnetworktime off
-          sudo rm -rf /etc/ntp.conf
-        if: runner.os == 'macOS'
 
       - name: Run unit tests with coverage
         run: |

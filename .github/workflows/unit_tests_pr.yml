@@ -34,12 +34,6 @@ jobs:
           python-version: ${{ matrix.python-version }}
           architecture: 'x64'
 
-      - name: Disable NTP on macOS (https://github.com/actions/virtual-environments/issues/820)
-        run: |
-          sudo systemsetup -setusingnetworktime off
-          sudo rm -rf /etc/ntp.conf
-        if: runner.os == 'macOS'
-
       - name: Run unit tests
         run: |
           python -m pip install -r utest/requirements.txt

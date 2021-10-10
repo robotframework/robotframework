@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ 'ubuntu-latest', 'macos-latest', 'windows-latest' ]
+        os: [ 'ubuntu-latest', 'windows-latest' ]
         python-version: [ '2.7', '3.5', '3.6', '3.7', '3.8', '3.9', 'pypy2', 'pypy3' ]
         include:
           - os: ubuntu-latest
@@ -59,7 +59,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: 'x64'
-      
+
       - name: Get test runner Python at Windows
         run: echo "BASE_PYTHON=$((get-command python.exe).Path)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         if: runner.os == 'Windows'
@@ -74,12 +74,6 @@ jobs:
           choco install zip -y --no-progress
         if: runner.os == 'Windows'
 
-      - name: Install report handling tools to Mac
-        run: |
-          brew install zip
-          brew install curl
-        if: runner.os == 'macOS'
-
       - name: Install Ubuntu PyPy dependencies
         run: |
           sudo apt-get update
@@ -91,12 +85,6 @@ jobs:
           sudo apt-get update
           sudo apt-get -y -q install xvfb scrot zip curl libxml2-dev libxslt1-dev
         if: contains(matrix.os, 'ubuntu')
-
-      - name: Disable NTP on macOS (https://github.com/actions/virtual-environments/issues/820)
-        run: |
-          sudo systemsetup -setusingnetworktime off
-          sudo rm -rf /etc/ntp.conf
-        if: runner.os == 'macOS'
 
       - name: Run acceptance tests
         run: |
