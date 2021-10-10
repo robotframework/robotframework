@@ -101,7 +101,7 @@ Run Tests With Keyword Running Listener
     ...    misc/setups_and_teardowns.robot
     ...    misc/for_loops.robot
     ...    misc/if_else.robot
-    Run Tests    --listener ${path}    ${files}
+    Run Tests    --listener ${path}    ${files}    validate output=True
     Should Be Empty    ${ERRORS}
 
 Validate IF branch

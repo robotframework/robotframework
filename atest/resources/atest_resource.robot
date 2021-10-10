@@ -37,11 +37,11 @@ ${u}              ${{'' if $INTERPRETER.is_py3 or $INTERPRETER.is_ironpython els
 
 *** Keywords ***
 Run Tests
-    [Arguments]    ${options}=    ${sources}=    ${default options}=${RUNNER DEFAULTS}    ${output}=${OUTFILE}
+    [Arguments]    ${options}=    ${sources}=    ${default options}=${RUNNER DEFAULTS}    ${output}=${OUTFILE}    ${validate output}=None
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
     ${result} =    Execute    ${INTERPRETER.runner}   ${options}    ${sources}    ${default options}
     Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
-    Process Output    ${output}
+    Process Output    ${output}    validate=${validate output}
     [Return]    ${result}
 
 Run Tests Without Processing Output
