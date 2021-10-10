@@ -22,17 +22,20 @@ class Tags(object):
     __slots__ = ['_tags']
 
     def __init__(self, tags=None):
+        self._tags = self._init_tags(tags)
+
+    def _init_tags(self, tags):
         if not tags:
-            tags = ()
-        elif is_string(tags):
+            return ()
+        if is_string(tags):
             tags = (tags,)
-        self._tags = self._normalize(tags)
+        return self._normalize(tags)
 
     def _normalize(self, tags):
-        normalized = NormalizedDict(((unic(t), 1) for t in tags), ignore='_')
-        for removed in '', 'NONE':
-            if removed in normalized:
-                normalized.pop(removed)
+        normalized = NormalizedDict([(unic(t), None) for t in tags], ignore='_')
+        for remove in '', 'NONE':
+            if remove in normalized:
+                normalized.pop(remove)
         return tuple(normalized)
 
     def add(self, tags):
