@@ -103,7 +103,7 @@ class Keyword(BodyItem):
 
         New in Robot Framework 4.1.2.
         """
-        return self._teardown is not None
+        return bool(self._teardown)
 
     @setter
     def tags(self, tags):

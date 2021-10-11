@@ -36,6 +36,21 @@ class TestKeyword(unittest.TestCase):
         assert_equal(test.setup.id, 's1-t1-k1')
         assert_equal(test.teardown.id, 's1-t1-k3')
 
+    def test_keyword_teardown(self):
+        kw = Keyword()
+        assert_true(not kw.has_teardown)
+        assert_true(not kw.teardown)
+        assert_equal(kw.teardown.name, None)
+        assert_equal(kw.teardown.type, 'TEARDOWN')
+        kw.teardown = Keyword()
+        assert_true(kw.has_teardown)
+        assert_true(kw.teardown)
+        assert_equal(kw.teardown.name, '')
+        assert_equal(kw.teardown.type, 'TEARDOWN')
+        kw.teardown = None
+        assert_true(not kw.has_teardown)
+        assert_true(not kw.teardown)
+
     def test_test_body_id(self):
         kws = [Keyword(), Keyword(), Keyword()]
         TestSuite().tests.create().body.extend(kws)
