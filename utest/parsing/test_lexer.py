@@ -1277,5 +1277,108 @@ ${name}
                       data_only=True, tokenize_variables=True)
 
 
+class TestKeywordCallAssign(unittest.TestCase):
+
+    def test_valid_assign(self):
+        data = '''\
+*** Keywords ***
+do something
+    ${a}
+'''
+        expected = [(T.KEYWORD_HEADER, '*** Keywords ***', 1, 0),
+                    (T.EOS, '', 1, 16),
+                    (T.KEYWORD_NAME, 'do something', 2, 0),
+                    (T.EOS, '', 2, 12),
+                    (T.ASSIGN, '${a}', 3, 4),
+                    (T.EOS, '', 3, 8)]
+                    
+        assert_tokens(data, expected, get_tokens=get_tokens,
+                      data_only=True, tokenize_variables=True)
+        assert_tokens(data, expected, get_tokens=get_resource_tokens,
+                      data_only=True, tokenize_variables=True)
+        assert_tokens(data, expected, get_tokens=get_init_tokens,
+                      data_only=True, tokenize_variables=True)
+
+    def test_valid_assign_with_keyword(self):
+        data = '''\
+*** Keywords ***
+do something
+    ${a}  do nothing
+'''
+        expected = [(T.KEYWORD_HEADER, '*** Keywords ***', 1, 0),
+                    (T.EOS, '', 1, 16),
+                    (T.KEYWORD_NAME, 'do something', 2, 0),
+                    (T.EOS, '', 2, 12),
+                    (T.ASSIGN, '${a}', 3, 4),
+                    (T.KEYWORD, 'do nothing', 3, 10),
+                    (T.EOS, '', 3, 20)]
+                    
+        assert_tokens(data, expected, get_tokens=get_tokens,
+                      data_only=True, tokenize_variables=True)
+        assert_tokens(data, expected, get_tokens=get_resource_tokens,
+                      data_only=True, tokenize_variables=True)
+        assert_tokens(data, expected, get_tokens=get_init_tokens,
+                      data_only=True, tokenize_variables=True)
+
+    def test_invalid_assign_not_closed_should_be_keyword(self):
+        data = '''\
+*** Keywords ***
+do something
+    ${a
+'''
+        expected = [(T.KEYWORD_HEADER, '*** Keywords ***', 1, 0),
+                    (T.EOS, '', 1, 16),
+                    (T.KEYWORD_NAME, 'do something', 2, 0),
+                    (T.EOS, '', 2, 12),
+                    (T.KEYWORD, '${a', 3, 4),
+                    (T.EOS, '', 3, 7)]
+                    
+        assert_tokens(data, expected, get_tokens=get_tokens,
+                      data_only=True, tokenize_variables=True)
+        assert_tokens(data, expected, get_tokens=get_resource_tokens,
+                      data_only=True, tokenize_variables=True)
+        assert_tokens(data, expected, get_tokens=get_init_tokens,
+                      data_only=True, tokenize_variables=True)
+
+    def test_invalid_assign_ends_with_equal_should_be_keyword(self):
+        data = '''\
+*** Keywords ***
+do something
+    ${=
+'''
+        expected = [(T.KEYWORD_HEADER, '*** Keywords ***', 1, 0),
+                    (T.EOS, '', 1, 16),
+                    (T.KEYWORD_NAME, 'do something', 2, 0),
+                    (T.EOS, '', 2, 12),
+                    (T.KEYWORD, '${=', 3, 4),
+                    (T.EOS, '', 3, 7)]
+                    
+        assert_tokens(data, expected, get_tokens=get_tokens,
+                      data_only=True, tokenize_variables=True)
+        assert_tokens(data, expected, get_tokens=get_resource_tokens,
+                      data_only=True, tokenize_variables=True)
+        assert_tokens(data, expected, get_tokens=get_init_tokens,
+                      data_only=True, tokenize_variables=True)
+
+    def test_invalid_assign_variable_and_ends_with_equal_should_be_keyword(self):
+        data = '''\
+*** Keywords ***
+do something
+    ${abc def=
+'''
+        expected = [(T.KEYWORD_HEADER, '*** Keywords ***', 1, 0),
+                    (T.EOS, '', 1, 16),
+                    (T.KEYWORD_NAME, 'do something', 2, 0),
+                    (T.EOS, '', 2, 12),
+                    (T.KEYWORD, '${abc def=', 3, 4),
+                    (T.EOS, '', 3, 14)]
+                    
+        assert_tokens(data, expected, get_tokens=get_tokens,
+                      data_only=True, tokenize_variables=True)
+        assert_tokens(data, expected, get_tokens=get_resource_tokens,
+                      data_only=True, tokenize_variables=True)
+        assert_tokens(data, expected, get_tokens=get_init_tokens,
+                      data_only=True, tokenize_variables=True)
+
 if __name__ == '__main__':
     unittest.main()
