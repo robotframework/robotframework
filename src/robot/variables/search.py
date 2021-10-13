@@ -39,9 +39,8 @@ def is_scalar_variable(string):
     return is_variable(string, '$')
 
 
-# See comment to `VariableMatch.is_list/dict_variable` for explanation why
-# `is_list/dict_variable` need different implementation than
-# `is_scalar_variable` above. This ought to be changed in RF 4.0.
+# TODO: Nowadays is_list_variable and is_dict_variable ought to be able to use
+# is_variable same way as is_scalar variable. That wasn't the case before RF 4.
 
 def is_list_variable(string):
     match = search_variable(string, '@', ignore_errors=True)
