@@ -334,6 +334,18 @@ Invalid type error is catchable
     ...    Assign dict variable    not dict               AND
     ...    Fail    Also this is executed!
 
+Invalid assign
+    [Documentation]    FAIL No keyword with name '\${oops' found.
+    ${oops    Set Variable    whatever
+
+Invalid assign with assign mark
+    [Documentation]    FAIL No keyword with name '\${oops=' found.
+    ${oops=    Set Variable    whatever
+
+Too many assign marks
+    [Documentation]    FAIL No keyword with name '\${oops}==' found.
+    ${oops}==    Set Variable    whatever
+
 *** Keywords ***
 Assign multiple variables
      [Arguments]    @{args}

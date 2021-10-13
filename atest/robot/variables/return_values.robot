@@ -212,3 +212,12 @@ Invalid count error is catchable
 
 Invalid type error is catchable
     Check Test Case    ${TESTNAME}
+
+Invalid assign
+    Check Test Case    ${TESTNAME}
+
+Invalid assign with assign mark
+    Check Test Case    ${TESTNAME}
+
+Too many assign marks
+    Check Test Case    ${TESTNAME}
