@@ -124,7 +124,7 @@ class VariableMatch(object):
 
     def is_assign(self, allow_assign_mark=False):
         if allow_assign_mark and self.string.endswith('='):
-            return search_variable(rstrip(self.string[:-1])).is_assign()
+            return search_variable(rstrip(self.string[:-1]), ignore_errors=True).is_assign()
         return (self.is_variable()
                 and self.identifier in '$@&'
                 and not self.items
