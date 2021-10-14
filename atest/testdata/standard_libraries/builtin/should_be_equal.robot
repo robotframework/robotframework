@@ -94,6 +94,20 @@ Multiline comparison uses diff
     ...    +
     foo\nbar\ndar\n    foo\nbar\ngar\n\ndar\n\n
 
+Multiline comparison with custom message
+    [Documentation]    FAIL
+    ...    Custom message of mine: Multiline strings are different:
+    ...    --- first
+    ...    +++ second
+    ...    @@ -1,3 +1,6 @@
+    ...    \ foo
+    ...    \ bar
+    ...    +gar
+    ...    +
+    ...    \ dar
+    ...    +
+    foo\nbar\ndar\n    foo\nbar\ngar\n\ndar\n\n    msg=Custom message of mine
+
 Multiline comparison requires both multiline
     [Documentation]    FAIL foo\nbar\ndar != foobar
     foo\nbar\ndar    foobar

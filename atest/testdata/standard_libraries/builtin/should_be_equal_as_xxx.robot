@@ -153,6 +153,20 @@ Should Be Equal As Strings multiline
     ...   \ dar
     Should Be Equal As Strings    foo\nbar\r\ndar    foo\nbar\ngar\ndar
 
+Should Be Equal As Strings multiline with custom message
+    [Documentation]    FAIL
+    ...    Custom message of mine: Multiline strings are different:
+    ...    --- first
+    ...    +++ second
+    ...    @@ -1,3 +1,4 @@
+    ...   \ foo
+    ...    -bar
+    ...    +bar
+    ...    +gar
+    ...   \ dar
+    Should Be Equal As Strings    foo\nbar\r\ndar    foo\nbar\ngar\ndar
+    ...    msg=Custom message of mine
+
 Should Be Equal As Strings repr multiline
     [Documentation]    FAIL
     ...    Multiline strings are different:

@@ -62,6 +62,9 @@ Should Be Equal As Strings repr
 Should Be Equal As Strings multiline
     Check test case    ${TESTNAME}
 
+Should Be Equal As Strings multiline with custom message
+    Check test case    ${TESTNAME}
+
 Should Be Equal As Strings repr multiline
     Check test case    ${TESTNAME}
 

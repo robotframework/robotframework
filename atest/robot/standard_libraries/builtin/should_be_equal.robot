@@ -39,6 +39,10 @@ Multiline comparison uses diff
     ${tc} =    Check test case    ${TESTNAME}
     Check Log Message    ${tc.kws[0].msgs[1]}    foo\nbar\ndar\n\n!=\n\nfoo\nbar\ngar\n\ndar
 
+Multiline comparison with custom message
+    ${tc} =    Check test case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[1]}    foo\nbar\ndar\n\n!=\n\nfoo\nbar\ngar\n\ndar
+
 Multiline comparison requires both multiline
     Check test case    ${TESTNAME}
 

@@ -657,14 +657,14 @@ class _Verify(_BuiltInBase):
         if first == second:
             return
         if include_values and is_string(first) and is_string(second):
-            self._raise_multi_diff(first, second, formatter)
+            self._raise_multi_diff(first, second, msg, formatter)
         assert_equal(first, second, msg, include_values, formatter)
 
     def _log_types_at_info_if_different(self, first, second):
         level = 'DEBUG' if type(first) == type(second) else 'INFO'
         self._log_types_at_level(level, first, second)
 
-    def _raise_multi_diff(self, first, second, formatter):
+    def _raise_multi_diff(self, first, second, msg, formatter):
         first_lines = first.splitlines(True)      # keepends
         second_lines = second.splitlines(True)
         if len(first_lines) < 3 or len(second_lines) < 3:
@@ -673,10 +673,11 @@ class _Verify(_BuiltInBase):
         diffs = list(difflib.unified_diff(first_lines, second_lines,
                                           fromfile='first', tofile='second',
                                           lineterm=''))
-        diffs[3:] = [item[0] + formatter(item[1:]).rstrip()
-                     for item in diffs[3:]]
-        raise AssertionError('Multiline strings are different:\n' +
-                             '\n'.join(diffs))
+        diffs[3:] = [item[0] + formatter(item[1:]).rstrip() for item in diffs[3:]]
+        prefix = 'Multiline strings are different:'
+        if msg:
+            prefix = '%s: %s' % (msg, prefix)
+        raise AssertionError('\n'.join([prefix] + diffs))
 
     def _include_values(self, values):
         return is_truthy(values) and str(values).upper() != 'NO VALUES'
