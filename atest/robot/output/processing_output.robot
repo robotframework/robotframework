@@ -115,9 +115,9 @@ Check Suite Got From Misc/suites/ Directory
     ...    Suite3 First
     ...    Suite4 First
     ...    Test From Sub Suite 4
-    Check Normal Suite Defaults    ${SUITE.suites[0]}    ${EMPTY}    []    teardown=BuiltIn.Log
+    Check Normal Suite Defaults    ${SUITE.suites[0]}    ${EMPTY}    []    setup=BuiltIn.Log    teardown=BuiltIn.Log
     Check Normal Suite Defaults    ${SUITE.suites[1]}
-    Check Normal Suite Defaults    ${SUITE.suites[1].suites[0]}    setup=BuiltIn.Log    teardown=BuiltIn.No Operation
+    Check Normal Suite Defaults    ${SUITE.suites[1].suites[0]}    setup=Setup    teardown=BuiltIn.No Operation
     Check Normal Suite Defaults    ${SUITE.suites[1].suites[1]}
     Check Normal Suite Defaults    ${SUITE.suites[2].suites[0]}
     Check Normal Suite Defaults    ${SUITE.suites[3]}

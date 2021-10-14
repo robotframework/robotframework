@@ -1,7 +1,9 @@
 *** Setting ***
-Suite Teardown    ${SUITE_TEARDOWN_KW}    ${SUITE_TEARDOWN_ARG}
+Suite Setup       ${SUITE_SETUP}
+Suite Teardown    ${SUITE_TEARDOWN}    ${SUITE_TEARDOWN_ARG}
 Library           OperatingSystem
 
 *** Variable ***
-${SUITE_TEARDOWN_KW}    Log
+${SUITE_SETUP}           NONE
+${SUITE_TEARDOWN}        Log
 ${SUITE_TEARDOWN_ARG}    Default suite teardown

@@ -1,9 +1,14 @@
 *** Setting ***
 Documentation     Normal test cases
-Suite Teardown    Log    Suite Teardonw of Fourth
+Suite Setup       Log    ${SETUP MSG}
+Suite Teardown    Log    ${TEARDOWN MSG}
 Force Tags        f1
 Default Tags      d1    d2
 Metadata          Something    My Value
+
+*** Variables ***
+${SETUP MSG}     Suite Setup of Fourth
+${TEARDOWN MSG}  Suite Teardown of Fourth
 
 *** Test Case ***
 Suite4 First

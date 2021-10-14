@@ -37,6 +37,8 @@ class Merger(SuiteVisitor):
             old = self._find(self.current.suites, suite.name)
         if old is not None:
             old.starttime = old.endtime = None
+            old.setup = suite.setup
+            old.teardown = suite.teardown
             self.current = old
         else:
             suite.message = self._create_add_message(suite, suite=True)

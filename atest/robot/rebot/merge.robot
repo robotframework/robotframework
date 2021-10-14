@@ -27,6 +27,10 @@ Merge re-executed tests
     Run merge
     Test merge should have been successful
 
+Merge suite setup and teardown
+    [Setup]   Should Be Equal    ${PREV_TEST_STATUS}    PASS
+    Suite setup and teardown should have been merged
+
 Merge re-executed and re-re-executed tests
     Re-run tests
     Re-re-run tests
@@ -91,7 +95,15 @@ Verify original tests
 
 Re-run tests
     [Arguments]    ${options}=
-    Create Output With Robot    ${MERGE 1}    --rerunfailed ${ORIGINAL} ${options}    ${SUITES}
+    ${options} =    Catenate
+    ...    --variable SUITE_SETUP:NoOperation  # Affects misc/suites/__init__.robot
+    ...    --variable SUITE_TEARDOWN:NONE      #           -- ;; --
+    ...    --variable SETUP_MSG:Rerun!         # Affects misc/suites/fourth.robot
+    ...    --variable TEARDOWN_MSG:New!        #           -- ;; --
+    ...    --variable SETUP:NONE               # Affects misc/suites/subsuites/sub1.robot
+    ...    --variable TEARDOWN:NONE            #           -- ;; --
+    ...    --rerunfailed ${ORIGINAL} ${options}
+    Create Output With Robot    ${MERGE 1}    ${options}    ${SUITES}
     Should Be Equal    ${SUITE.name}    Suites
     Should Contain Suites    ${SUITE}    @{RERUN SUITES}
     Should Contain Suites    ${SUITE.suites[1]}    ${SUB SUITES 1}[0]
@@ -148,6 +160,16 @@ Test merge should have been successful
     ...    ${SUITE.suites[3]}
     ...    ${SUITE.suites[4]}
     ...    ${SUITE.suites[5]}
+
+Suite setup and teardown should have been merged
+    Should Be Equal      ${SUITE.setup.name}                           BuiltIn.No Operation
+    Should Be Equal      ${SUITE.teardown.name}                        ${NONE}
+    Should Be Equal      ${SUITE.suites[0].name}                       Fourth
+    Check Log Message    ${SUITE.suites[0].setup.msgs[0]}              Rerun!
+    Check Log Message    ${SUITE.suites[0].teardown.msgs[0]}           New!
+    Should Be Equal      ${SUITE.suites[1].suites[0].name}             Sub1
+    Should Be Equal      ${SUITE.suites[1].suites[0].setup.name}       ${NONE}
+    Should Be Equal      ${SUITE.suites[1].suites[0].teardown.name}    ${NONE}
 
 Test add should have been successful
     Should Be Equal    ${SUITE.name}    Suites
