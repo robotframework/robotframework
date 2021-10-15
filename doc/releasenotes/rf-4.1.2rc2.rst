@@ -35,12 +35,8 @@ to install exactly this version. Alternatively you can download the source
 distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
-Robot Framework 4.1.2 rc 1 was released on Sunday October 10, 2021.
-The final release is targeted for Thursday October 14, 2021. If you are still
-using Python 2, Jython or IronPython, we highly recommend you to test this
-release candidate in your own environment before that. Reported problems
-will still be fixed before the release, even if that would delay the release,
-but there are no plans for further RF 4.1.x releases after that.
+Robot Framework 4.1.2 rc 2 was released on Sunday October 10, 2021.
+It was followed by the final release on Friday October 15, 2021.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -94,7 +90,7 @@ Acknowledgements
 Robot Framework 4.1.2 development has been sponsored by the `Robot Framework Foundation`_
 and its `close to 50 member organizations <https://robotframework.org/foundation/#members>`_.
 Big thanks for the foundation for its continued support! If your organization is using
-Robot Framework and finds it useful, consider joining the foundation to make make
+Robot Framework and finds it useful, consider joining the foundation to make
 sure it is maintained and developed further also in the future.
 
 Robot Framework 4.1.2 was a pretty small release, but there was one great pull
