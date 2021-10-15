@@ -1,0 +1,247 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"definitions": {
+		"suite": {
+			"type": "object",
+			"properties": {
+				"setup": {"$ref": "#/definitions/keyword"},
+				"teardown": {"$ref": "#/definitions/keyword"},
+				"suites": {
+					"type": "array",
+					"items": {"$ref": "#/definitions/suite"},
+					"minItems": 0
+				},
+				"tests": {
+					"type": "array",
+					"items": {"$ref": "#/definitions/test"},
+					"minItems": 0
+				},
+				"doc": {"type": "string"},
+				"metadata": {
+					"type": "object",
+					"additionalProperties": true
+				},
+				"status": {"$ref": "#/definitions/status"},
+				"name" : {
+					"type": "string"
+				},
+				"id": {
+					"type": "string"
+				},
+				"source":{
+					"type": "string"
+				}
+			},
+			"required": ["name", "status"],
+			"additionalProperties": true
+		},
+		"test": {
+			"type": "object",
+			"properties": {
+				"body": {"$ref": "#/definitions/body"},
+				"doc": {"type": "string"},
+				"tags": {
+					"type": "array",
+					"items": {"type": "string"},
+					"minItems": 0
+				},
+				"timeout": {"type": "string"},
+				"status": {"$ref": "#/definitions/status"},
+				"name" : {
+					"type": "string"
+				},
+				"id" : {
+					"type": "string"
+				}
+			},
+			"required": ["name", "status"],
+			"additionalProperties": true	
+		},
+		"type": {
+			"type": "string",
+			"enum": ["kw", "setup", "teardown", "foritem", "for", "if", "elseif", "else"]
+		},
+		"keyword": {
+			"type": "object",
+			"properties": {
+				"body": {"$ref": "#/definitions/body"},
+				"msgs": {
+					"type": "array",
+					"items": {"$ref": "#/definitions/message"},
+					"minItems": 0
+				},
+				"doc": {"type": "string"},
+				"tags": {
+					"type": "array",
+					"items": {"type": "string"},
+					"minItems": 0
+				},
+				"timeout": {"type": "string"},
+				"args": {
+					"type": "array",
+					"items":  {"type": "string"},
+					"minItems": 0
+				},
+				"lib": {"type":  "string"},
+				"var": {
+					"type": "array",
+					"items": {"type": "string"},
+					"minItems": 0
+				},
+				"status": {"$ref": "#/definitions/status"},
+				"name" : {
+					"type": "string"
+				},
+				"sourcename" : {
+					"type": "string"
+				},
+				"type" : {"$ref": "#/definitions/type"}
+			},
+			"required": ["name", "status"],
+			"additionalProperties": true
+		},
+		"status": {
+			"type": "object",
+			"properties": {
+				"status": {"$ref": "#/definitions/status_enum"},
+				"endtime": {"type": "string"},
+				"starttime": {"type": "string"},
+				"elapsedtime": {"type": "string"},
+				"critical": {"type": "boolean"},
+				"msg": {"type": "string"}
+			},
+			"required": ["status"],
+			"additionalProperties": true
+		},
+		"message": {
+			"type": "object",
+			"properties": {
+				"msg": {"type": "string"},
+				"timestamp": {"type": "string"},
+				"level": {"$ref": "#/definitions/level_enum"},
+				"html": {"type": "boolean"}
+			},
+			"required": ["msg", "timestamp", "level"],
+			"additionalProperties": true
+		},
+		"metadata": {
+			"type": "object",
+			"properties": {
+				"name": {"type": "string"},
+				"value": {"type": "string"}
+			}
+		},
+		"for": {
+			"type": "object",
+			"properties": {
+				"flavor": {"type": "string"},
+				"var": {"type": "array",
+						"items": {"type": "string"}},
+				"value": {"type": "array",
+						  "items": {"type": "string"}},
+				"status": {"$ref": "#/definitions/status"},
+				"doc": {"type": "string"},
+				"type" : {"$ref": "#/definitions/type"},
+				"iter": {"type": "array",
+				         "items": {"$ref": "#/definitions/iter"}}
+			}
+		},
+		"itervar": {
+			"type": "object",
+			"properties": {
+				"name": {"type": "string"},
+				"value": {"type": "string"}
+			}
+		},
+		"iter": {
+			"type": "object",
+			"properties": {
+				"var": {"type": "array",
+						"items": {"$ref": "#/definitions/itervar"}},
+				"status": {"$ref": "#/definitions/status"},
+				"doc": {"type": "string"},
+				"body": {"$ref": "#/definitions/body"}
+			}
+		},
+		"if": {
+			"type": "object",
+			"properties": {
+				"doc": {"type": "string"},
+				"status": {"$ref": "#/definitions/status"},
+				"type" : {"$ref": "#/definitions/type"},
+				"branches": {"type": "array",
+							 "items": {"$ref": "#/definitions/branch"}}
+			}
+		},
+		"branch": {
+			"type": "object",
+			"properties": {
+				"type": {"type": "string"},
+				"condition": {"type": "string"},
+				"doc": {"type": "string"},
+				"status": {"$ref": "#/definitions/status"},
+				"body": {"$ref": "#/definitions/body"}
+			}
+		},
+		"body": {
+			"type": "array",
+			"items": {"oneOf": [{"$ref": "#/definitions/keyword"},
+								{"$ref": "#/definitions/for"},
+								{"$ref": "#/definitions/if"},
+								{"$ref": "#/definitions/message"}]},
+			"minItems": 0
+		},
+		"statistics": {
+			"type": "object",
+			"properties": {	
+				"total": {"$ref": "#/definitions/stats"},
+				"tag": {"$ref": "#/definitions/stats"},
+				"suite": {"$ref": "#/definitions/stats"}
+			},
+			"required": ["total", "tag", "suite"]
+		},
+		"stats": {
+			"type": "array",
+			"items": {"$ref": "#/definitions/stat"},
+			"minItems": 0
+		},
+		"stat": {
+			"type": "object",
+			"properties": {
+				"tag": {"type": "string"},
+				"fail": {"type": "number"},
+				"skip": {"type": "number"},
+				"critical": {"type": "boolean"},
+				"pass": {"type": "number"},
+				"info": {"type": "string"},
+				"doc": {"type": "string"},
+				"id": {"type": "string"},
+				"name": {"type": "string"}
+			},
+			"additionalProperties": true
+		},
+		"errors": {
+			"type": "array",
+			"items": {"$ref": "#/definitions/message"}
+		},
+		"status_enum": {
+			"type": "string",
+			"enum": ["PASS", "FAIL"]
+		},
+		"level_enum": {
+			"type": "string",
+			"enum": ["TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FAIL"]
+		}
+	},
+	"type": "object",
+	"properties": {
+		"generator": {"type": "string"},
+		"generated": {"type": "string"},
+		"rpa": {"type": "boolean"},
+		"suite": {"$ref": "#/definitions/suite"},
+		"statistics": {"$ref": "#/definitions/statistics"},
+		"errors": {"$ref": "#/definitions/errors"}
+	},
+	"required": ["suite"],
+	"additionalProperties": true
+}

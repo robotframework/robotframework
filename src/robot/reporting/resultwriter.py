@@ -22,6 +22,7 @@ from robot.result import ExecutionResult, Result
 from .jsmodelbuilders import JsModelBuilder
 from .logreportwriters import LogWriter, ReportWriter
 from .xunitwriter import XUnitWriter
+from .jsonwriter import JsonWriter
 
 
 class ResultWriter(object):
@@ -65,6 +66,8 @@ class ResultWriter(object):
             results.js_result.remove_data_not_needed_in_report()
             self._write_report(results.js_result, settings.report,
                                settings.report_config)
+        if settings.json:
+            self._write_json(results.result, settings.json)
         return results.return_code
 
     def _write_output(self, result, path):
@@ -78,6 +81,9 @@ class ResultWriter(object):
 
     def _write_report(self, js_result, path, config):
         self._write('Report', ReportWriter(js_result).write, path, config)
+
+    def _write_json(self, result, path):
+        self._write('Json', JsonWriter(result).write, path)
 
     def _write(self, name, writer, path, *args):
         try:

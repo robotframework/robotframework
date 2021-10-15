@@ -22,7 +22,10 @@ from .flattenkeywordmatcher import (FlattenByNameMatcher, FlattenByTypeMatcher,
                                     FlattenByTagMatcher)
 from .merger import Merger
 from .xmlelementhandlers import XmlElementHandler
+from .jsonelementhandlers import JsonElementHandler
 
+import json
+import traceback
 
 def ExecutionResult(*sources, **options):
     """Factory method to constructs :class:`~.executionresult.Result` objects.
@@ -66,18 +69,93 @@ def _combine_results(sources, options):
 
 
 def _single_result(source, options):
-    ets = ETSource(source)
     result = Result(source, rpa=options.pop('rpa', None))
-    try:
-        return ExecutionResultBuilder(ets, **options).build(result)
-    except IOError as err:
-        error = err.strerror
-    except:
-        error = get_error_message()
-    raise DataError("Reading XML source '%s' failed: %s" % (unic(ets), error))
+    if source.upper().endswith("JSON"):
+        try:
+            with open(source, 'r') as source_file:
+                json_data = json.load(source_file)
+            return JsonExecutionResultBuilder(json_data, **options).build(result)
+        except IOError as err:
+            error = err.strerror
+        except Exception:
+            traceback.print_exc()
+            error = get_error_message()
+        raise DataError("Reading JSON source '%s' failed: %s" % (unic(json_data), error))
+    else:
+        ets = ETSource(source)
+        try:
+            return XmlExecutionResultBuilder(ets, **options).build(result)
+        except IOError as err:
+            error = err.strerror
+        except:
+            error = get_error_message()
+        raise DataError("Reading XML source '%s' failed: %s" % (unic(ets), error))
 
 
-class ExecutionResultBuilder(object):
+class JsonExecutionResultBuilder(object):
+    """Builds :class:`~.executionresult.Result` objects based on output files.
+
+        Instead of using this builder directly, it is recommended to use the
+        :func:`ExecutionResult` factory method.
+        """
+    def gen_dict_extract(self, key, var):
+        if hasattr(var,'iteritems'):
+            for k, v in var.iteritems():
+                if k == key:
+                    yield v
+                if isinstance(v, dict):
+                    for result in self.gen_dict_extract(key, v):
+                        yield result
+                elif isinstance(v, list):
+                    for d in v:
+                        for result in self.gen_dict_extract(key, d):
+                            yield result
+
+
+    def _omit_keywords(self, key, var):
+        if hasattr(var, 'keys'):
+            keys = var.keys()
+            for k in keys:
+                if k == 'setup':
+                    var.pop(k)
+            for k, v in var.iteritems():
+                if k == 'setup':
+                    var.pop(k)
+                if k == key:
+                    yield v
+                if isinstance(v, dict):
+                    for result in self._omit_keywords(key, v):
+                        yield result
+                elif isinstance(v, list):
+                    for d in v:
+                        for result in self._omit_keywords(key, d):
+                            yield result
+
+
+    def __init__(self, data, include_keywords=True, flattened_keywords=None):
+        """
+        :param data: JSON to build
+            :class:`~.executionresult.Result` objects from.
+        :param include_keywords: Boolean controlling whether to include
+            keyword information in the result or not. Keywords are
+            not needed when generating only report.
+        :param flatten_keywords: List of patterns controlling what keywords to
+            flatten. See the documentation of ``--flattenkeywords`` option for
+            more details.
+        """
+        self._data = data
+        self._include_keywords = include_keywords
+        self._flattened_keywords = flattened_keywords
+
+    def build(self, result):
+        json_handler = JsonElementHandler(result)
+        json_handler.parse(self._data)
+        if not self._include_keywords:
+            result.suite.visit(RemoveKeywords())
+        return result
+
+
+class XmlExecutionResultBuilder(object):
     """Builds :class:`~.executionresult.Result` objects based on output files.
 
     Instead of using this builder directly, it is recommended to use the

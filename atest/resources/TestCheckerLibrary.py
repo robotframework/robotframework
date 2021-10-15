@@ -6,7 +6,7 @@ from xmlschema import XMLSchema
 from robot import utils
 from robot.api import logger
 from robot.utils.asserts import assert_equal
-from robot.result import (ExecutionResultBuilder, For, If, ForIteration, Keyword,
+from robot.result import (XmlExecutionResultBuilder, For, If, ForIteration, Keyword,
                           Result, ResultVisitor, TestCase, TestSuite)
 from robot.result.model import Body, ForIterations, IfBranches, IfBranch
 from robot.libraries.BuiltIn import BuiltIn
@@ -82,7 +82,7 @@ class TestCheckerLibrary:
         try:
             logger.info("Processing output '%s'." % path)
             result = Result(root_suite=NoSlotsTestSuite())
-            ExecutionResultBuilder(path).build(result)
+            XmlExecutionResultBuilder(path).build(result)
         except:
             set_suite_variable('$SUITE', None)
             msg, details = utils.get_error_details()
