@@ -7,7 +7,7 @@ except ImportError:
 __all__ = ['BROKEN_ITERABLE', 'BROKEN_SEQUENCE', 'BROKEN_MAPPING']
 
 
-class BrokenIterable(object):
+class BrokenIterable:
 
     def __iter__(self):
         yield 'x'

@@ -1,4 +1,4 @@
-class DynamicLibraryWithKeywordTags(object):
+class DynamicLibraryWithKeywordTags:
 
     def get_keyword_names(self):
         return ['dynamic_library_keyword_with_tags']

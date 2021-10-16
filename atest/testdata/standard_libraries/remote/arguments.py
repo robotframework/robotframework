@@ -21,7 +21,7 @@ class TypedRemoteServer(RemoteServer):
         return RemoteServer.get_keyword_arguments(self, name)
 
 
-class Arguments(object):
+class Arguments:
 
     def argument_should_be(self, argument, expected, binary=False):
         if binary:

@@ -19,7 +19,7 @@ from .tagstatistics import TagStatisticsBuilder
 from .visitor import SuiteVisitor
 
 
-class Statistics(object):
+class Statistics:
     """Container for total, suite and tag statistics.
 
     Accepted parameters have the same semantics as the matching command line

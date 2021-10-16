@@ -10,7 +10,7 @@ class _Extended:
 EXTENDED = _Extended()
 
 
-class _Iterable(object):
+class _Iterable:
     def __iter__(self):
         return iter(LIST)
 

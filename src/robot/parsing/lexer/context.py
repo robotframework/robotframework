@@ -19,7 +19,7 @@ from .settings import (InitFileSettings, TestCaseFileSettings,
                        ResourceFileSettings, TestCaseSettings, KeywordSettings)
 
 
-class LexingContext(object):
+class LexingContext:
     settings_class = None
 
     def __init__(self, settings=None):

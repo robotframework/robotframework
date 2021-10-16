@@ -1,4 +1,4 @@
-class RecLibrary1(object):
+class RecLibrary1:
 
     def keyword_only_in_library_1(self):
         print("Keyword from library 1")

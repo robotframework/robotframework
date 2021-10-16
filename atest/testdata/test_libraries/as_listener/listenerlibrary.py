@@ -1,7 +1,7 @@
 import sys
 
 
-class listenerlibrary(object):
+class listenerlibrary:
     ROBOT_LISTENER_API_VERSION = 2
     ROBOT_LIBRARY_SCOPE = "TEST CASE"
 

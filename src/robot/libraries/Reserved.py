@@ -20,7 +20,7 @@ RESERVED_KEYWORDS = ['for', 'while', 'break', 'continue', 'end',
                      'if', 'else', 'elif', 'else if', 'return']
 
 
-class Reserved(object):
+class Reserved:
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
 
     def __init__(self):

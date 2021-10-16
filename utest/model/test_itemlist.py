@@ -26,7 +26,7 @@ class TestItemLists(unittest.TestCase):
         assert_equal(list(items), [item])
 
     def test_create_with_args_and_kwargs(self):
-        class Item(object):
+        class Item:
             def __init__(self, arg1, arg2):
                 self.arg1 = arg1
                 self.arg2 = arg2

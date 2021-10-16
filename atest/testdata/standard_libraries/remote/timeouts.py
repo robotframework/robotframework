@@ -3,7 +3,7 @@ import time
 from remoteserver import RemoteServer
 
 
-class Timeouts(object):
+class Timeouts:
 
     def sleep(self, secs):
         time.sleep(int(secs))

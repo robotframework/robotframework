@@ -63,7 +63,7 @@ this listener
 
 .. sourcecode:: python
 
-    class Listener(object):
+    class Listener:
 
         def __init__(self, port: int, log=True):
             self.port = post
@@ -707,7 +707,7 @@ that is implemented as a class.
 
 .. sourcecode:: python
 
-    class ResultModifier(object):
+    class ResultModifier:
         ROBOT_LISTENER_API_VERSION = 3
 
         def __init__(self, max_seconds=10):

@@ -16,7 +16,7 @@ DEPRECATION = ("The built-in Tidy tool (\'robot.tidy\') has been deprecated in "
                "more about the new tool at https://robotidy.readthedocs.io/.\n")
 
 
-class TidyLib(object):
+class TidyLib:
 
     def __init__(self, interpreter):
         self._tidy = interpreter.tidy

@@ -16,7 +16,7 @@
 from robot.utils import file_writer
 
 
-class LibdocJsonWriter(object):
+class LibdocJsonWriter:
 
     def write(self, libdoc, outfile):
         with file_writer(outfile) as writer:

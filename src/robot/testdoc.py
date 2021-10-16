@@ -160,7 +160,7 @@ class TestdocModelWriter(ModelWriter):
         JsonWriter(self._output).write_json('testdoc = ', model)
 
 
-class JsonConverter(object):
+class JsonConverter:
 
     def __init__(self, output_path=None):
         self._output_path = output_path

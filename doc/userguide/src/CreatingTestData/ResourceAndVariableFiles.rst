@@ -507,7 +507,7 @@ attributes and `${ANOTHER VARIABLE}` from an instance attribute.
 
 .. sourcecode:: python
 
-    class StaticPythonExample(object):
+    class StaticPythonExample:
         variable = 'value'
         LIST__list = [1, 2, 3]
         _not_variable = 'starts with an underscore'
@@ -533,7 +533,7 @@ them create only one variable `${DYNAMIC VARIABLE}`.
 
 .. sourcecode:: python
 
-    class DynamicPythonExample(object):
+    class DynamicPythonExample:
 
         def get_variables(self, *args):
             return {'dynamic variable': ' '.join(args)}

@@ -18,7 +18,7 @@ from robot.utils import normalize_whitespace
 from .tokens import Token
 
 
-class Sections(object):
+class Sections:
     setting_markers = ('Settings', 'Setting')
     variable_markers = ('Variables', 'Variable')
     test_case_markers = ('Test Cases', 'Test Case', 'Tasks', 'Task')

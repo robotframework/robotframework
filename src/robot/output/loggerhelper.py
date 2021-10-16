@@ -30,7 +30,7 @@ LEVELS = {
 }
 
 
-class AbstractLogger(object):
+class AbstractLogger:
 
     def __init__(self, level='TRACE'):
         self._is_logged = IsLogged(level)
@@ -114,7 +114,7 @@ class Message(BaseMessage):
             self._message = self._message()
 
 
-class IsLogged(object):
+class IsLogged:
 
     def __init__(self, level):
         self.level = level.upper()
@@ -135,7 +135,7 @@ class IsLogged(object):
             raise DataError("Invalid log level '%s'." % level)
 
 
-class AbstractLoggerProxy(object):
+class AbstractLoggerProxy:
     _methods = None
     _no_method = lambda *args: None
 

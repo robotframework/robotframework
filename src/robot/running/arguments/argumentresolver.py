@@ -20,7 +20,7 @@ from robot.variables import is_dict_variable
 from .argumentvalidator import ArgumentValidator
 
 
-class ArgumentResolver(object):
+class ArgumentResolver:
 
     def __init__(self, argspec, resolve_named=True,
                  resolve_variables_until=None, dict_to_kwargs=False):
@@ -40,7 +40,7 @@ class ArgumentResolver(object):
         return positional, named
 
 
-class NamedArgumentResolver(object):
+class NamedArgumentResolver:
 
     def __init__(self, argspec):
         """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
@@ -80,13 +80,13 @@ class NamedArgumentResolver(object):
                         % (self._argspec.type.capitalize(), self._argspec.name))
 
 
-class NullNamedArgumentResolver(object):
+class NullNamedArgumentResolver:
 
     def resolve(self, arguments, variables=None):
         return arguments, {}
 
 
-class DictToKwargs(object):
+class DictToKwargs:
 
     def __init__(self, argspec, enabled=False):
         self._maxargs = argspec.maxargs
@@ -103,7 +103,7 @@ class DictToKwargs(object):
         return is_dict_like(positional[-1])
 
 
-class VariableReplacer(object):
+class VariableReplacer:
 
     def __init__(self, resolve_until=None):
         self._resolve_until = resolve_until

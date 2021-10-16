@@ -1,4 +1,4 @@
-class DynamicKwOnlyArgs(object):
+class DynamicKwOnlyArgs:
     keywords = {
         'Args Should Have Been': ['*args', '**kwargs'],
         'Kw Only Arg': ['*', 'kwo'],

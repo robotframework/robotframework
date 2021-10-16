@@ -21,7 +21,7 @@ from robot.output import LOGGER
 from robot.utils import abspath, get_error_message, unic
 
 
-class SuiteStructure(object):
+class SuiteStructure:
 
     def __init__(self, source=None, init_file=None, children=None):
         self.source = source
@@ -46,7 +46,7 @@ class SuiteStructure(object):
             visitor.visit_directory(self)
 
 
-class SuiteStructureBuilder(object):
+class SuiteStructureBuilder:
     ignored_prefixes = ('_', '.')
     ignored_dirs = ('CVS',)
 
@@ -154,7 +154,7 @@ class SuiteStructureBuilder(object):
         return name.split('__', 1)[-1]
 
 
-class SuiteStructureVisitor(object):
+class SuiteStructureVisitor:
 
     def visit_file(self, structure):
         pass

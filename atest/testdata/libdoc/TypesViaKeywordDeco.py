@@ -1,7 +1,7 @@
 from robot.api.deco import keyword
 
 
-class UnknownType(object):
+class UnknownType:
     pass
 
 

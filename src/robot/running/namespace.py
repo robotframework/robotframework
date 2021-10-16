@@ -33,7 +33,7 @@ from .userkeyword import UserLibrary
 IMPORTER = Importer()
 
 
-class Namespace(object):
+class Namespace:
     _default_libraries = ('BuiltIn', 'Reserved', 'Easter')
     _library_import_by_path_endings = ('.py', '/', os.sep)
 
@@ -220,7 +220,7 @@ class Namespace(object):
             return UserErrorHandler(error, name)
 
 
-class KeywordStore(object):
+class KeywordStore:
 
     def __init__(self, resource):
         self.user_keywords = UserLibrary(resource,
@@ -405,7 +405,7 @@ class KeywordStore(object):
         raise KeywordError('\n    '.join([error+':'] + names))
 
 
-class KeywordRecommendationFinder(object):
+class KeywordRecommendationFinder:
 
     def __init__(self, user_keywords, libraries, resources):
         self.user_keywords = user_keywords

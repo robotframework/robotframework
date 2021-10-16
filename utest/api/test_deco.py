@@ -39,7 +39,7 @@ class TestLibrary(unittest.TestCase):
         class lib1:
             pass
         @library()
-        class lib2(object):
+        class lib2:
             pass
         self._validate_lib(lib1)
         self._validate_lib(lib2)

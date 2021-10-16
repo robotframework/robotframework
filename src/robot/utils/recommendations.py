@@ -16,7 +16,7 @@
 import difflib
 
 
-class RecommendationFinder(object):
+class RecommendationFinder:
 
     def __init__(self, normalizer=None):
         self.normalizer = normalizer or (lambda x: x)

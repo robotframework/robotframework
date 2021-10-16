@@ -18,7 +18,7 @@ import os
 from robot.utils import file_writer
 
 
-class LibdocOutput(object):
+class LibdocOutput:
 
     def __init__(self, output_path, format):
         self._output_path = output_path

@@ -2,7 +2,7 @@ import sys
 from remoteserver import DirectResultRemoteServer
 
 
-class SpecialErrors(object):
+class SpecialErrors:
 
     def continuable(self, message, traceback):
         return self._special_error(message, traceback, continuable=True)

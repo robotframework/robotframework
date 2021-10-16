@@ -1,4 +1,4 @@
-class library_with_keywords_with_dots_in_name(object):
+class library_with_keywords_with_dots_in_name:
 
     def get_keyword_names(self):
         return ['Dots.in.name.in.a.library',

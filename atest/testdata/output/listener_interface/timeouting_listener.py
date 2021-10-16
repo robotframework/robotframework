@@ -1,7 +1,7 @@
 from robot.errors import TimeoutError
 
 
-class timeouting_listener(object):
+class timeouting_listener:
     ROBOT_LISTENER_API_VERSION = 2
     timeout = False
 

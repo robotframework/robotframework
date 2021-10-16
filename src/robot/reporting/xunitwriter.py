@@ -17,7 +17,7 @@ from robot.result import ResultVisitor
 from robot.utils import XmlWriter
 
 
-class XUnitWriter(object):
+class XUnitWriter:
 
     def __init__(self, execution_result):
         self._execution_result = execution_result

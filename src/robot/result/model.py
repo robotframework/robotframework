@@ -80,7 +80,7 @@ class Message(model.Message):
     __slots__ = []
 
 
-class StatusMixin(object):
+class StatusMixin:
     __slots__ = []
     PASS = 'PASS'
     FAIL = 'FAIL'

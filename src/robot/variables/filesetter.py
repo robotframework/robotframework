@@ -26,7 +26,7 @@ from robot.utils import (get_error_message, is_dict_like, is_list_like,
                          is_string, seq2str2, type_name, DotDict, Importer)
 
 
-class VariableFileSetter(object):
+class VariableFileSetter:
 
     def __init__(self, store):
         self._store = store
@@ -57,7 +57,7 @@ class VariableFileSetter(object):
             self._store.add(name, value, overwrite)
 
 
-class YamlImporter(object):
+class YamlImporter:
 
     def import_variables(self, path, args=None):
         if args:
@@ -89,7 +89,7 @@ class YamlImporter(object):
         return value
 
 
-class PythonImporter(object):
+class PythonImporter:
 
     def import_variables(self, path, args=None):
         importer = Importer('variable file', LOGGER).import_class_or_module_by_path

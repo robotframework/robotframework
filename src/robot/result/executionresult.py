@@ -20,7 +20,7 @@ from .executionerrors import ExecutionErrors
 from .model import TestSuite
 
 
-class Result(object):
+class Result:
     """Test execution results.
 
     Can be created based on XML output files using the

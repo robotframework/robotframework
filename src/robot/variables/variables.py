@@ -21,7 +21,7 @@ from .store import VariableStore
 from .tablesetter import VariableTableSetter
 
 
-class Variables(object):
+class Variables:
     """Represents a set of variables.
 
     Contains methods for replacing variables from list, scalars, and strings.

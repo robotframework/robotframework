@@ -21,7 +21,7 @@ from robot.utils import file_writer, is_string
 from .jswriter import JsResultWriter, SplitLogWriter
 
 
-class _LogReportWriter(object):
+class _LogReportWriter:
     usage = None
 
     def __init__(self, js_model):

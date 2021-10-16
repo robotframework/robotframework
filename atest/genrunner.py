@@ -26,7 +26,7 @@ if not exists(dirname(OUTPATH)):
     os.mkdir(dirname(OUTPATH))
 
 
-class TestCase(object):
+class TestCase:
 
     def __init__(self, name, tags=None):
         self.name = name

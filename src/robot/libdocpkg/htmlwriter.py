@@ -16,7 +16,7 @@
 from robot.htmldata import HtmlFileWriter, ModelWriter, LIBDOC
 
 
-class LibdocHtmlWriter(object):
+class LibdocHtmlWriter:
 
     def write(self, libdoc, output):
         model_writer = LibdocModelWriter(output, libdoc)

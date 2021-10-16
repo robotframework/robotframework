@@ -1,7 +1,7 @@
 from robot.api.deco import not_keyword
 
 
-class ClassWithNotKeywordDecorator(object):
+class ClassWithNotKeywordDecorator:
 
     def exposed_in_class(self):
         pass

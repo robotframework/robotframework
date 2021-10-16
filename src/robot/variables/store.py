@@ -24,7 +24,7 @@ from .tablesetter import VariableTableValueBase
 NOT_SET = object()
 
 
-class VariableStore(object):
+class VariableStore:
 
     def __init__(self, variables):
         self.data = NormalizedDict(ignore='_')

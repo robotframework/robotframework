@@ -20,7 +20,7 @@ from robot.utils import ErrorDetails, get_timestamp
 from .modelcombiner import ModelCombiner
 
 
-class StatusReporter(object):
+class StatusReporter:
 
     def __init__(self, data, result, context, run=True):
         self.data = data

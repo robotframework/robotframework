@@ -34,7 +34,7 @@ def _get_scope(libcode):
     return normalize(unic(scope), ignore='_').upper()
 
 
-class GlobalScope(object):
+class GlobalScope:
     is_global = True
 
     def __init__(self, library):

@@ -3,7 +3,7 @@ from decimal import Decimal
 from robot.api.deco import keyword
 
 
-class Dynamic(object):
+class Dynamic:
 
     def get_keyword_names(self):
         return [name for name in dir(self)

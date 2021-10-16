@@ -1,4 +1,4 @@
-class KwargsLibrary(object):
+class KwargsLibrary:
 
     def one_named(self, named=None):
         return named

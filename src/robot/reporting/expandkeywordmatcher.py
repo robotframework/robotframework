@@ -16,7 +16,7 @@
 from robot.utils import MultiMatcher, is_list_like
 
 
-class ExpandKeywordMatcher(object):
+class ExpandKeywordMatcher:
 
     def __init__(self, expand_keywords):
         self.matched_ids = []

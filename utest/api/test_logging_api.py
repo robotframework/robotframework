@@ -6,7 +6,7 @@ from robot.utils.asserts import assert_equal, assert_true
 from robot.api import logger
 
 
-class MyStream(object):
+class MyStream:
 
     def __init__(self):
         self.flushed = False

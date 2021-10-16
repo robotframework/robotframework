@@ -22,7 +22,7 @@ from .stats import CombinedTagStat, TagStat
 from .tags import TagPatterns
 
 
-class TagStatistics(object):
+class TagStatistics:
     """Container for tag statistics."""
 
     def __init__(self, combined_stats):
@@ -39,7 +39,7 @@ class TagStatistics(object):
         return iter(sorted(chain(self.combined, self.tags.values())))
 
 
-class TagStatisticsBuilder(object):
+class TagStatisticsBuilder:
 
     def __init__(self, included=None, excluded=None, combined=None, docs=None,
                  links=None):
@@ -74,7 +74,7 @@ class TagStatisticsBuilder(object):
                 stat.add_test(test)
 
 
-class TagStatInfo(object):
+class TagStatInfo:
 
     def __init__(self, docs=None, links=None):
         self._docs = [TagStatDoc(*doc) for doc in docs or []]
@@ -98,7 +98,7 @@ class TagStatInfo(object):
         return [link.get_link(tag) for link in self._links if link.match(tag)]
 
 
-class TagStatDoc(object):
+class TagStatDoc:
 
     def __init__(self, pattern, doc):
         self._matcher = TagPatterns(pattern)
@@ -108,7 +108,7 @@ class TagStatDoc(object):
         return self._matcher.match(tag)
 
 
-class TagStatLink(object):
+class TagStatLink:
     _match_pattern_tokenizer = re.compile(r'(\*|\?+)')
 
     def __init__(self, pattern, link, title):

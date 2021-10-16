@@ -7,7 +7,7 @@ ESCAPED_FROM_VAR_FILE = {'${a}': 'c:\\temp',
                          '4=5\\=6': 'value'}
 
 
-class ClassFromVarFile(object):
+class ClassFromVarFile:
     attribute = DICT_FROM_VAR_FILE
 
     def get_escaped(self):

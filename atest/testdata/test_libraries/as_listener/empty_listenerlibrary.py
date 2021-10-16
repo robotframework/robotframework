@@ -3,7 +3,7 @@ from robot.api.deco import library
 import sys
 
 
-class listener(object):
+class listener:
     ROBOT_LISTENER_API_VERSION = 2
 
     def start_test(self, name, attrs):
@@ -23,5 +23,5 @@ class listener(object):
 
 
 @library(scope='TEST CASE', listener=listener())
-class empty_listenerlibrary(object):
+class empty_listenerlibrary:
     pass

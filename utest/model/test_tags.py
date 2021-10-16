@@ -342,7 +342,7 @@ class TestTagPatterns(unittest.TestCase):
         assert_equal(seq2str(patterns), "'is\xe4' and '\xe4iti'")
 
 
-class AndOrPatternGenerator(object):
+class AndOrPatternGenerator:
     tags = ['0', '1']
     operators = ['OR', 'AND']
 

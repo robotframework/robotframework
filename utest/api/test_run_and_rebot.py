@@ -38,7 +38,7 @@ def assert_signal_handler_equal(signum, expected):
     assert_equal(sig, expected)
 
 
-class StreamWithOnlyWriteAndFlush(object):
+class StreamWithOnlyWriteAndFlush:
 
     def __init__(self):
         self._buffer = []

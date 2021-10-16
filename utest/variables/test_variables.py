@@ -11,7 +11,7 @@ NOKS = ['var', '$var', '${var', '${va}r', '@{va}r', '@var', '%{var}', ' ${var}',
         '@{var} ', '\\${var}', '\\\\${var}', 42, None, ['${var}'], DataError]
 
 
-class PythonObject(object):
+class PythonObject:
     def __init__(self, a, b):
         self.a = a
         self.b = b

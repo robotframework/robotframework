@@ -25,7 +25,7 @@ from .expandkeywordmatcher import ExpandKeywordMatcher
 from .stringcache import StringCache
 
 
-class JsBuildingContext(object):
+class JsBuildingContext:
 
     def __init__(self, log_path=None, split_log=False, expand_keywords=None,
                  prune_input=False):

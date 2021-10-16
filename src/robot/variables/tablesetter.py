@@ -21,7 +21,7 @@ from robot.utils import DotDict, is_string, split_from_equals, unic
 from .search import is_assign, is_list_variable, is_dict_variable
 
 
-class VariableTableSetter(object):
+class VariableTableSetter:
 
     def __init__(self, store):
         self._store = store

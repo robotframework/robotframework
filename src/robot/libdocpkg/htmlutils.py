@@ -24,7 +24,7 @@ from robot.utils import html_escape, html_format, NormalizedDict
 from robot.utils.htmlformatters import HeaderFormatter
 
 
-class DocFormatter(object):
+class DocFormatter:
     _header_regexp = re.compile(r'<h([234])>(.+?)</h\1>')
     _name_regexp = re.compile('`(.+?)`')
 
@@ -79,7 +79,7 @@ class DocFormatter(object):
         return '<span class="name">%s</span>' % name
 
 
-class DocToHtml(object):
+class DocToHtml:
 
     def __init__(self, doc_format):
         self._formatter = self._get_formatter(doc_format)
@@ -109,7 +109,7 @@ class DocToHtml(object):
         return self._formatter(doc)
 
 
-class HtmlToText(object):
+class HtmlToText:
     html_tags = {
         'b': '*',
         'i': '_',

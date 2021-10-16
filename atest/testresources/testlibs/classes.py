@@ -196,7 +196,7 @@ class VersionObjectLibrary:
     kw = lambda x:None
 
 
-class RecordingLibrary(object):
+class RecordingLibrary:
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
 
     def __init__(self):
@@ -314,7 +314,7 @@ def wraps(x):
 @noop
 @noop
 @functools.total_ordering
-class Decorated(object):
+class Decorated:
 
     @noop
     def no_wrapper(self):

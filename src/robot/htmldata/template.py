@@ -17,7 +17,7 @@ import os
 from os.path import abspath, dirname, join, normpath
 
 
-class HtmlTemplate(object):
+class HtmlTemplate:
     _base_dir = join(dirname(abspath(__file__)), '..', 'htmldata')
 
     def __init__(self, filename):

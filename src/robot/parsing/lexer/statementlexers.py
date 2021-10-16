@@ -19,7 +19,7 @@ from robot.variables import is_assign
 from .tokens import Token
 
 
-class Lexer(object):
+class Lexer:
     """Base class for lexers."""
 
     def __init__(self, ctx):

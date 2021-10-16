@@ -3,7 +3,7 @@ import sys
 from remoteserver import RemoteServer, keyword
 
 
-class KeywordTags(object):
+class KeywordTags:
 
     def no_tags(self):
         pass

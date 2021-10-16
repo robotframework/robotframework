@@ -13,7 +13,7 @@ KEYWORDS = [('other than strings', [1, 2]),
             ('valid argspec with tuple', [['a'], ('b', None)])]
 
 
-class InvalidArgSpecs(object):
+class InvalidArgSpecs:
 
     def get_keyword_names(self):
         return [name for name, _ in KEYWORDS]

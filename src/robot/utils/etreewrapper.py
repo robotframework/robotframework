@@ -28,7 +28,7 @@ except ImportError:
         raise ImportError('No valid ElementTree XML parser module found')
 
 
-class ETSource(object):
+class ETSource:
 
     def __init__(self, source):
         self._source = source

@@ -81,7 +81,7 @@ class AssignmentValidator:
         self._seen_any_var = True
 
 
-class VariableAssigner(object):
+class VariableAssigner:
     _valid_extended_attr = re.compile(r'^[_a-zA-Z]\w*$')
 
     def __init__(self, assignment, context):
@@ -153,13 +153,13 @@ def ReturnValueResolver(assignment):
     return ScalarsOnlyReturnValueResolver(assignment)
 
 
-class NoReturnValueResolver(object):
+class NoReturnValueResolver:
 
     def resolve(self, return_value):
         return []
 
 
-class OneReturnValueResolver(object):
+class OneReturnValueResolver:
 
     def __init__(self, variable):
         self._variable = variable
@@ -171,7 +171,7 @@ class OneReturnValueResolver(object):
         return [(self._variable, return_value)]
 
 
-class _MultiReturnValueResolver(object):
+class _MultiReturnValueResolver:
 
     def __init__(self, variables):
         self._variables = variables

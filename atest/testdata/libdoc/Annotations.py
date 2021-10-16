@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Any, List, Union
 
 
-class UnknownType(object):
+class UnknownType:
     pass
 
 

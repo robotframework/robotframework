@@ -20,7 +20,7 @@ from robot.utils import format_time
 from .loggerhelper import Message
 
 
-class StdoutLogSplitter(object):
+class StdoutLogSplitter:
     """Splits messages logged through stdout (or stderr) into Message objects"""
 
     _split_from_levels = re.compile(r'^(?:\*'

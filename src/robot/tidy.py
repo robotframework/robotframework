@@ -222,7 +222,7 @@ class TidyCommandLine(Application):
         return opts, args
 
 
-class ArgumentValidator(object):
+class ArgumentValidator:
 
     def mode_and_args(self, args, recursive, inplace, **others):
         recursive, inplace = bool(recursive), bool(inplace)

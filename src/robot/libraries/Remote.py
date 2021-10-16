@@ -192,7 +192,7 @@ class RemoteResult:
         return value
 
 
-class XmlRpcRemoteClient(object):
+class XmlRpcRemoteClient:
 
     def __init__(self, uri, timeout=None):
         self.uri = uri

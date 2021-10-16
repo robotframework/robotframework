@@ -21,7 +21,7 @@ from robot.utils import NormalizedDict
 from .usererrorhandler import UserErrorHandler
 
 
-class HandlerStore(object):
+class HandlerStore:
     TEST_LIBRARY_TYPE = 'Test library'
     TEST_CASE_FILE_TYPE = 'Test case file'
     RESOURCE_FILE_TYPE = 'Resource file'

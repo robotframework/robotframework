@@ -1,4 +1,4 @@
-class EmbeddedArgs(object):
+class EmbeddedArgs:
 
     def get_keyword_names(self):
         return ['Add ${count} Copies Of ${item} To Cart']

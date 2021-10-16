@@ -3,7 +3,7 @@ import sys
 from remoteserver import RemoteServer
 
 
-class DictResult(object):
+class DictResult:
 
     def return_dict(self, **kwargs):
         return kwargs

@@ -21,7 +21,7 @@ def _get_handler_methods(lib):
     return [a for a in attrs if inspect.ismethod(a)]
 
 
-class LibraryMock(object):
+class LibraryMock:
 
     def __init__(self, name='MyLibrary', scope='GLOBAL'):
         self.name = self.orig_name = name
@@ -371,7 +371,7 @@ class TestSourceAndLineno(unittest.TestCase):
         assert_equal(kw.lineno, lineno)
 
 
-class LoggerMock(object):
+class LoggerMock:
 
     def __init__(self):
         self.messages = []

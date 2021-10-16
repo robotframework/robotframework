@@ -1,4 +1,4 @@
-class NamedArgsImportLibrary(object):
+class NamedArgsImportLibrary:
 
     def __init__(self, arg1=None, arg2=None, **kws):
         self.arg1 = arg1

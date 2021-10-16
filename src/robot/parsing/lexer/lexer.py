@@ -70,7 +70,7 @@ def get_init_tokens(source, data_only=False, tokenize_variables=False):
     return lexer.get_tokens()
 
 
-class Lexer(object):
+class Lexer:
 
     def __init__(self, ctx, data_only=False, tokenize_variables=False):
         self.lexer = FileLexer(ctx)

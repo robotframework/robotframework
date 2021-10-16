@@ -1,7 +1,7 @@
 from listenerlibrary import listenerlibrary
 
 
-class multiple_listenerlibrary(object):
+class multiple_listenerlibrary:
 
     def __init__(self, fail=False):
         self.instances = [
@@ -9,7 +9,7 @@ class multiple_listenerlibrary(object):
             listenerlibrary(),
         ]
         if fail:
-            class NoVersionListener(object):
+            class NoVersionListener:
                 def events_should_be_empty(self):
                     pass
             self.instances.append(NoVersionListener())

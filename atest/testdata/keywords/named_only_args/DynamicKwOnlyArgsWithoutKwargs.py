@@ -1,4 +1,4 @@
-class DynamicKwOnlyArgsWithoutKwargs(object):
+class DynamicKwOnlyArgsWithoutKwargs:
 
     def get_keyword_names(self):
         return ['No kwargs']

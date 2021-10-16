@@ -19,7 +19,7 @@ from robot.errors import DataError
 from robot.utils import unic
 
 
-class ExecutionContexts(object):
+class ExecutionContexts:
 
     def __init__(self):
         self._contexts = []
@@ -52,7 +52,7 @@ class ExecutionContexts(object):
 EXECUTION_CONTEXTS = ExecutionContexts()
 
 
-class _ExecutionContext(object):
+class _ExecutionContext:
     _started_keywords_threshold = 42  # Jython on Windows don't work with higher
 
     def __init__(self, suite, namespace, output, dry_run=False):

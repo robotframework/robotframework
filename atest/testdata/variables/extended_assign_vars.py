@@ -1,14 +1,14 @@
 __all__ = ['VAR']
 
 
-class Demeter(object):
+class Demeter:
     loves = ''
     @property
     def hates(self):
         return self.loves.upper()
 
 
-class Variable(object):
+class Variable:
     attr = 'value'
     _attr2 = 'v2'
     attr2 = property(lambda self: self._attr2,

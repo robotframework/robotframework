@@ -18,7 +18,7 @@ import time
 from threading import current_thread, Lock, Timer
 
 
-class Timeout(object):
+class Timeout:
 
     def __init__(self, timeout, error):
         self._runner_thread_id = current_thread().ident

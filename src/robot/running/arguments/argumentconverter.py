@@ -18,7 +18,7 @@ from robot.variables import contains_variable
 from .typeconverters import TypeConverter
 
 
-class ArgumentConverter(object):
+class ArgumentConverter:
 
     def __init__(self, argspec, dry_run=False):
         """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""

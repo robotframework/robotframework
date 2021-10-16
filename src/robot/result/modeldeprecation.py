@@ -23,7 +23,7 @@ def deprecated(method):
     return wrapper
 
 
-class DeprecatedAttributesMixin(object):
+class DeprecatedAttributesMixin:
     __slots__ = []
 
     @property

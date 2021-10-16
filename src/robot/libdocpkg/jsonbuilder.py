@@ -22,7 +22,7 @@ from robot.errors import DataError
 from .model import LibraryDoc, KeywordDoc
 
 
-class JsonDocBuilder(object):
+class JsonDocBuilder:
 
     def build(self, path):
         spec = self._parse_spec_json(path)

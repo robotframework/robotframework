@@ -44,7 +44,7 @@ def func():
     return path
 
 
-class LoggerStub(object):
+class LoggerStub:
 
     def __init__(self, remove_extension=False):
         self.messages = []

@@ -18,7 +18,7 @@ from functools import partial
 from itertools import cycle
 
 
-class LinkFormatter(object):
+class LinkFormatter:
     _image_exts = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg')
     _link = re.compile(r'\[(.+?\|.*?)\]')
     _url = re.compile(r'''
@@ -72,7 +72,7 @@ class LinkFormatter(object):
                 or text.lower().endswith(self._image_exts))
 
 
-class LineFormatter(object):
+class LineFormatter:
     handles = lambda self, line: True
     newline = '\n'
     _bold = re.compile(r'''
@@ -125,7 +125,7 @@ _                          # end of italic
         return self._code.sub('\\1<code>\\3</code>', line)
 
 
-class HtmlFormatter(object):
+class HtmlFormatter:
 
     def __init__(self):
         self._formatters = [TableFormatter(),
@@ -164,7 +164,7 @@ class HtmlFormatter(object):
                 return formatter
 
 
-class _Formatter(object):
+class _Formatter:
     _strip_lines = True
 
     def __init__(self):

@@ -1,7 +1,7 @@
 from robot.libraries.BuiltIn import BuiltIn
 
 
-class LogLevels(object):
+class LogLevels:
     ROBOT_LISTENER_API_VERSION = 2
 
     def __init__(self):

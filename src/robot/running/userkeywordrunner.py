@@ -29,7 +29,7 @@ from .statusreporter import StatusReporter
 from .timeouts import KeywordTimeout
 
 
-class UserKeywordRunner(object):
+class UserKeywordRunner:
 
     def __init__(self, handler, name=None):
         self._handler = handler

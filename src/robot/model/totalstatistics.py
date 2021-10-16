@@ -19,7 +19,7 @@ from .stats import TotalStat
 from .visitor import SuiteVisitor
 
 
-class TotalStatistics(object):
+class TotalStatistics:
     """Container for total statistics."""
 
     def __init__(self, rpa=False):

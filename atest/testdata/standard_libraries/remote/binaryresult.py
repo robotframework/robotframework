@@ -4,7 +4,7 @@ from xmlrpc.client import Binary
 from remoteserver import DirectResultRemoteServer
 
 
-class BinaryResult(object):
+class BinaryResult:
 
     def return_binary(self, *ordinals):
         return self._result(return_=self._binary(ordinals))

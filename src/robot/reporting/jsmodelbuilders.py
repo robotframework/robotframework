@@ -28,7 +28,7 @@ KEYWORD_TYPES = {'KEYWORD': 0, 'SETUP': 1, 'TEARDOWN': 2,
 MESSAGE_TYPE = 8
 
 
-class JsModelBuilder(object):
+class JsModelBuilder:
 
     def __init__(self, log_path=None, split_log=False, expand_keywords=None,
                  prune_input_to_save_memory=False):
@@ -49,7 +49,7 @@ class JsModelBuilder(object):
         )
 
 
-class _Builder(object):
+class _Builder:
 
     def __init__(self, context):
         self._context = context
@@ -193,7 +193,7 @@ class MessageBuilder(_Builder):
                 self._string(msg.html_message, escape=False))
 
 
-class StatisticsBuilder(object):
+class StatisticsBuilder:
 
     def build(self, statistics):
         return (self._build_stats(statistics.total),

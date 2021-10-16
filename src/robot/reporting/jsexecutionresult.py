@@ -47,7 +47,7 @@ class JsExecutionResult:
                 = remover.remove_unused_strings(self.suite, self.strings)
 
 
-class _KeywordRemover(object):
+class _KeywordRemover:
 
     def remove_keywords(self, suite):
         return self._remove_keywords_from_suite(suite)

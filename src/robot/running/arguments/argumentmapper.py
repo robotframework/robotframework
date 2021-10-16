@@ -16,7 +16,7 @@
 from robot.errors import DataError
 
 
-class ArgumentMapper(object):
+class ArgumentMapper:
 
     def __init__(self, argspec):
         """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
@@ -31,7 +31,7 @@ class ArgumentMapper(object):
         return template.args, template.kwargs
 
 
-class KeywordCallTemplate(object):
+class KeywordCallTemplate:
 
     def __init__(self, argspec):
         """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
@@ -68,7 +68,7 @@ class KeywordCallTemplate(object):
         self.kwargs = [(n, v) for n, v in self.kwargs if not is_default(v)]
 
 
-class DefaultValue(object):
+class DefaultValue:
 
     def __init__(self, value):
         self.value = value

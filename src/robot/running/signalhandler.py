@@ -21,7 +21,7 @@ from robot.errors import ExecutionFailed
 from robot.output import LOGGER
 
 
-class _StopSignalMonitor(object):
+class _StopSignalMonitor:
 
     def __init__(self):
         self._signal_count = 0

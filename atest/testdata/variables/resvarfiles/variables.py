@@ -1,4 +1,4 @@
-class _Object(object):
+class _Object:
     def __init__(self, name):
         self.name = name
     def __str__(self):

@@ -13,7 +13,7 @@ class MyExc(Exception):
     pass
 
 
-class MyEqual(object):
+class MyEqual:
     def __init__(self, attr=None):
         self.attr = attr
     def __eq__(self, obj):

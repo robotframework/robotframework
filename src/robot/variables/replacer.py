@@ -22,7 +22,7 @@ from .finders import VariableFinder
 from .search import VariableMatch, search_variable
 
 
-class VariableReplacer(object):
+class VariableReplacer:
 
     def __init__(self, variable_store):
         self._finder = VariableFinder(variable_store)

@@ -19,7 +19,7 @@ from datetime import datetime
 from robot.utils import WINDOWS, XmlWriter
 
 
-class LibdocXmlWriter(object):
+class LibdocXmlWriter:
 
     def write(self, libdoc, outfile):
         writer = XmlWriter(outfile, usage='Libdoc spec')

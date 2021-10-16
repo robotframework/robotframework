@@ -26,7 +26,7 @@ class BulkLoadRemoteServer(RemoteServer):
         return info_dict
 
 
-class The10001KeywordsLibrary(object):
+class The10001KeywordsLibrary:
 
     def __init__(self):
         for i in range(10000):

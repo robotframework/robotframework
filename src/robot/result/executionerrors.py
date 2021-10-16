@@ -17,7 +17,7 @@ from robot.model import ItemList, Message
 from robot.utils import setter
 
 
-class ExecutionErrors(object):
+class ExecutionErrors:
     """Represents errors occurred during the execution of tests.
 
     An error might be, for example, that importing a library has failed.

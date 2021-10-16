@@ -1,7 +1,7 @@
 ROBOT_LISTENER_API_VERSION = 2
 
 
-class ListenerMethod(object):
+class ListenerMethod:
 
     def __init__(self, name):
         self.__name__ = name

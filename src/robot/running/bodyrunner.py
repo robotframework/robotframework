@@ -28,7 +28,7 @@ from robot.variables import is_dict_variable, evaluate_expression
 from .statusreporter import StatusReporter
 
 
-class BodyRunner(object):
+class BodyRunner:
 
     def __init__(self, context, run=True, templated=False):
         self._context = context
@@ -51,7 +51,7 @@ class BodyRunner(object):
             raise ExecutionFailures(errors)
 
 
-class KeywordRunner(object):
+class KeywordRunner:
 
     def __init__(self, context, run=True):
         self._context = context
@@ -65,7 +65,7 @@ class KeywordRunner(object):
         return runner.run(step, context, self._run)
 
 
-class IfRunner(object):
+class IfRunner:
     _dry_run_stack = []
 
     def __init__(self, context, run=True, templated=False):
@@ -138,7 +138,7 @@ def ForRunner(context, flavor='IN', run=True, templated=False):
     return runner(context, run, templated)
 
 
-class ForInRunner(object):
+class ForInRunner:
     flavor = 'IN'
 
     def __init__(self, context, run=True, templated=False):

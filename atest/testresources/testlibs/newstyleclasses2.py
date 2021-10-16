@@ -8,7 +8,7 @@ class MyMetaClass(type):
         pass
 
 
-class MetaClassLibrary(object):
+class MetaClassLibrary:
     __metaclass__ = MyMetaClass
 
     def greet(self, name):

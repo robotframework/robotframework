@@ -2,7 +2,7 @@ import inspect
 import os.path
 
 
-class DynamicLibrary(object):
+class DynamicLibrary:
     """This doc is overwritten and not shown in docs."""
     ROBOT_LIBRARY_VERSION = 0.1
 

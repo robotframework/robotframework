@@ -16,7 +16,7 @@
 from robot.utils import is_list_like, is_dict_like, is_string, unic
 
 
-class ListenerArguments(object):
+class ListenerArguments:
 
     def __init__(self, arguments):
         self._arguments = arguments

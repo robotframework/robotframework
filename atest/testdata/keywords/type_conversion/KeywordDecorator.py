@@ -32,7 +32,7 @@ class MyIntFlag(IntFlag):
     X = 1
 
 
-class Unknown(object):
+class Unknown:
     pass
 
 

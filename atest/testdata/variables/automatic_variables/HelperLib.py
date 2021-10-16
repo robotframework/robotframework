@@ -1,4 +1,4 @@
-class HelperLib(object):
+class HelperLib:
 
     def __init__(self, source, name, doc, metadata):
         self.source = source

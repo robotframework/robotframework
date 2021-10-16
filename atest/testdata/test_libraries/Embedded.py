@@ -1,7 +1,7 @@
 from robot.api.deco import keyword
 
 
-class Embedded(object):
+class Embedded:
 
     def __init__(self):
         self.called = 0

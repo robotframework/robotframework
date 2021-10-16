@@ -16,7 +16,7 @@
 NOTSET = object()
 
 
-class TestDefaults(object):
+class TestDefaults:
 
     def __init__(self, parent=None):
         self.parent = parent
@@ -73,7 +73,7 @@ class TestDefaults(object):
         self._timeout = timeout
 
 
-class TestSettings(object):
+class TestSettings:
 
     def __init__(self, defaults):
         self.defaults = defaults

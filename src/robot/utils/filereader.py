@@ -19,7 +19,7 @@ import os.path
 from .robottypes import is_bytes, is_pathlike, is_string
 
 
-class FileReader(object):
+class FileReader:
     """Utility to ease reading different kind of files.
 
     Supports different sources where to read the data:

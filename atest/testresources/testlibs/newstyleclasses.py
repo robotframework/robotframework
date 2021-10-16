@@ -1,4 +1,4 @@
-class NewStyleClassLibrary(object):
+class NewStyleClassLibrary:
     
     def mirror(self, arg):
         arg = list(arg)
@@ -14,7 +14,7 @@ class NewStyleClassLibrary(object):
         raise SystemExit('This should not be called, ever!!!')
     
 
-class NewStyleClassArgsLibrary(object):
+class NewStyleClassArgsLibrary:
     
     def __init__(self, param):
         self.get_param = lambda self: param

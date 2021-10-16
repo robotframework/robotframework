@@ -298,7 +298,7 @@ class TestSuite(model.TestSuite):
         return runner.result
 
 
-class Variable(object):
+class Variable:
 
     def __init__(self, name, value, source=None, lineno=None, error=None):
         self.name = name
@@ -314,7 +314,7 @@ class Variable(object):
                      % (source, line, self.name, message), level)
 
 
-class ResourceFile(object):
+class ResourceFile:
 
     def __init__(self, doc='', source=None):
         self.doc = doc
@@ -336,7 +336,7 @@ class ResourceFile(object):
         return model.ItemList(Variable, {'source': self.source}, items=variables)
 
 
-class UserKeyword(object):
+class UserKeyword:
 
     def __init__(self, name, args=(), doc='', tags=(), return_=None,
                  timeout=None, lineno=None, parent=None, error=None):
@@ -387,7 +387,7 @@ class UserKeyword(object):
         return self.parent.source if self.parent is not None else None
 
 
-class Import(object):
+class Import:
     ALLOWED_TYPES = ('Library', 'Resource', 'Variables')
 
     def __init__(self, type, name, args=(), alias=None, source=None, lineno=None):

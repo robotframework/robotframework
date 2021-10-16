@@ -23,7 +23,7 @@ from .parsers import RobotParser, NoInitFileDirectoryParser, RestParser
 from .testsettings import TestDefaults
 
 
-class TestSuiteBuilder(object):
+class TestSuiteBuilder:
     """Builder to construct ``TestSuite`` objects based on data on the disk.
 
     The :meth:`build` method constructs executable
@@ -190,7 +190,7 @@ class SuiteStructureParser(SuiteStructureVisitor):
                             "execution mode explicitly." % (this, that))
 
 
-class ResourceFileBuilder(object):
+class ResourceFileBuilder:
 
     def __init__(self, process_curdir=True):
         self.process_curdir = process_curdir

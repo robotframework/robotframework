@@ -22,7 +22,7 @@ from robot.version import get_full_version
 from .template import HtmlTemplate
 
 
-class HtmlFileWriter(object):
+class HtmlFileWriter:
 
     def __init__(self, output, model_writer):
         self._output = output
@@ -45,7 +45,7 @@ class HtmlFileWriter(object):
                 LineWriter(self._output))
 
 
-class _Writer(object):
+class _Writer:
     _handles_line = None
 
     def handles(self, line):

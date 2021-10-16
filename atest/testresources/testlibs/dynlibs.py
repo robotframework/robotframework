@@ -1,4 +1,4 @@
-class _BaseDynamicLibrary(object):
+class _BaseDynamicLibrary:
 
     def get_keyword_names(self):
         return []

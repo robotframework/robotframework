@@ -1,4 +1,4 @@
-class local_lib(object):
+class local_lib:
 
     def __init__(self, argument):
         pass

@@ -26,7 +26,7 @@ from .signalhandler import STOP_SIGNAL_MONITOR
 from .statusreporter import StatusReporter
 
 
-class LibraryKeywordRunner(object):
+class LibraryKeywordRunner:
 
     def __init__(self, handler, name=None):
         self._handler = handler

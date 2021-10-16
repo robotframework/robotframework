@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 
-class ModelCombiner(object):
+class ModelCombiner:
     __slots__ = ['data', 'result', 'priority']
 
     def __init__(self, data, result, **priority):

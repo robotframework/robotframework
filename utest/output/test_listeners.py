@@ -10,7 +10,7 @@ from robot.utils import DotDict
 LOGGER.unregister_console_logger()
 
 
-class Mock(object):
+class Mock:
     non_existing = ()
 
     def __getattr__(self, name):
@@ -52,7 +52,7 @@ class KwMock(Mock):
         self.type = 'kw'
 
 
-class ListenOutputs(object):
+class ListenOutputs:
 
     def output_file(self, path):
         self._out_file('Output', path)
@@ -168,7 +168,7 @@ class TestListeners(unittest.TestCase):
 class TestAttributesAreNotAccessedUnnecessarily(unittest.TestCase):
 
     def test_start_and_end_methods(self):
-        class ModelStub(object):
+        class ModelStub:
             IF_ELSE_ROOT = 'IF/ELSE ROOT'
             type = 'xxx'
         for listeners in [Listeners([]), LibraryListeners()]:
@@ -179,14 +179,14 @@ class TestAttributesAreNotAccessedUnnecessarily(unittest.TestCase):
                     method(model)
 
     def test_message_methods(self):
-        class Message(object):
+        class Message:
             level = 'INFO'
         for listeners in [Listeners([]), LibraryListeners()]:
             listeners.log_message(Message)
             listeners.message(Message)
 
     def test_some_methods_implemented(self):
-        class MyListener(object):
+        class MyListener:
             ROBOT_LISTENER_API_VERSION = 2
             def end_suite(self, suite):
                 pass

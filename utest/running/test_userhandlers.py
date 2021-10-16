@@ -9,7 +9,7 @@ from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
                                  assert_raises_with_msg)
 
 
-class Fake(object):
+class Fake:
     value = ''
     message = ''
 
@@ -17,7 +17,7 @@ class Fake(object):
         return iter([])
 
 
-class FakeArgs(object):
+class FakeArgs:
 
     def __init__(self, args):
         self.value = args

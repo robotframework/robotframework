@@ -10,7 +10,7 @@ KEYWORDS = NormalizedDict({'add_keyword': ('name', '*args'),
                            'original 2': ('arg',),
                            'original 3': ('arg',)})
 
-class Reloadable(object):
+class Reloadable:
 
     def get_keyword_names(self):
         return list(KEYWORDS)

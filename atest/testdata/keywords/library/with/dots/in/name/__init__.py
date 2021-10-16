@@ -1,4 +1,4 @@
-class name(object):
+class name:
 
     def get_keyword_names(self):
         return ['No dots in keyword name in library with dots in name',

@@ -17,7 +17,7 @@ from ..lexer import Token
 from ..model import TestCase, Keyword, For, If
 
 
-class Parser(object):
+class Parser:
     """Base class for parsers."""
 
     def __init__(self, model):

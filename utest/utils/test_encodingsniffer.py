@@ -6,7 +6,7 @@ from robot.utils.encodingsniffer import get_console_encoding
 from robot.utils import WINDOWS
 
 
-class StreamStub(object):
+class StreamStub:
 
     def __init__(self, encoding, isatty=True):
         self.encoding = encoding

@@ -16,7 +16,7 @@
 from robot.errors import DataError
 
 
-class XmlElementHandler(object):
+class XmlElementHandler:
 
     def __init__(self, execution_result, root_handler=None):
         self._stack = [(root_handler or RootHandler(), execution_result)]
@@ -32,7 +32,7 @@ class XmlElementHandler(object):
         handler.end(elem, result)
 
 
-class ElementHandler(object):
+class ElementHandler:
     element_handlers = {}
     tag = None
     children = frozenset()

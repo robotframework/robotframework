@@ -1,4 +1,4 @@
-class LenLibrary(object):
+class LenLibrary:
     """Library with default zero __len__.
 
     Example:

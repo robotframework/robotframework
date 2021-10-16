@@ -26,7 +26,7 @@ from .transformers import SuiteBuilder, SettingsBuilder, ResourceBuilder
 from ..model import TestSuite, ResourceFile
 
 
-class BaseParser(object):
+class BaseParser:
 
     def parse_init_file(self, source, defaults=None):
         raise NotImplementedError

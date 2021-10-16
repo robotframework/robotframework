@@ -16,7 +16,7 @@
 from signal import setitimer, signal, SIGALRM, ITIMER_REAL
 
 
-class Timeout(object):
+class Timeout:
 
     def __init__(self, timeout, error):
         self._timeout = timeout

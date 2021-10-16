@@ -18,7 +18,7 @@ from robot.utils import plural_or_not, seq2str
 from robot.variables import is_list_variable
 
 
-class ArgumentValidator(object):
+class ArgumentValidator:
 
     def __init__(self, argspec):
         """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""

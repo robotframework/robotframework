@@ -24,7 +24,7 @@ from .logreportwriters import LogWriter, ReportWriter
 from .xunitwriter import XUnitWriter
 
 
-class ResultWriter(object):
+class ResultWriter:
     """A class to create log, report, output XML and xUnit files.
 
     :param sources: Either one :class:`~robot.result.executionresult.Result`
@@ -88,7 +88,7 @@ class ResultWriter(object):
             LOGGER.output_file(name, path)
 
 
-class Results(object):
+class Results:
 
     def __init__(self, settings, *sources):
         self._settings = settings

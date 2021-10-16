@@ -312,5 +312,5 @@ class DottedImporter(_Importer):
         return self._verify_type(imported), self._get_source(imported)
 
 
-class NoLogger(object):
+class NoLogger:
     error = warn = info = debug = trace = lambda self, *args, **kws: None

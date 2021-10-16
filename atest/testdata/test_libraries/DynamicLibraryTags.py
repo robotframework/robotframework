@@ -6,7 +6,7 @@ KWS = {
 }
 
 
-class DynamicLibraryTags(object):
+class DynamicLibraryTags:
     get_keyword_tags_called = False
 
     def get_keyword_names(self):

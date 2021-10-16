@@ -16,7 +16,7 @@
 from .stats import SuiteStat
 
 
-class SuiteStatistics(object):
+class SuiteStatistics:
     """Container for suite statistics."""
 
     def __init__(self, suite):
@@ -35,7 +35,7 @@ class SuiteStatistics(object):
                 yield stat
 
 
-class SuiteStatisticsBuilder(object):
+class SuiteStatisticsBuilder:
 
     def __init__(self, suite_stat_level):
         self._suite_stat_level = suite_stat_level

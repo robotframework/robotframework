@@ -377,7 +377,7 @@ def _split_timestamp(timestamp):
     return years, mons, days, hours, mins, secs, millis
 
 
-class TimestampCache(object):
+class TimestampCache:
 
     def __init__(self):
         self._previous_secs = None

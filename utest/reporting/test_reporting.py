@@ -120,7 +120,7 @@ class TestReporting(unittest.TestCase):
         assert_true(self.EXPECTED_ERROR_MESSAGE not in content)
 
 
-class StubSettings(object):
+class StubSettings:
     log = None
     log_config = {}
     split_log = False
@@ -138,7 +138,7 @@ class StubSettings(object):
         self.__dict__.update(settings)
 
 
-class ClosableOutput(object):
+class ClosableOutput:
 
     def __init__(self, path):
         self._output = StringIO()

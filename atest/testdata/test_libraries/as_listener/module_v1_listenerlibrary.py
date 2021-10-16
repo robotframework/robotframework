@@ -1,9 +1,9 @@
-class Listener(object):
+class Listener:
 
     def close(self):
         pass
 
-class Listener2(object):
+class Listener2:
 
     def close(self):
         pass

@@ -20,7 +20,7 @@ from .arguments import ArgumentSpec
 from .statusreporter import StatusReporter
 
 
-class UserErrorHandler(object):
+class UserErrorHandler:
     """Created if creating handlers fail -- running raises DataError.
 
     The idea is not to raise DataError at processing time and prevent all

@@ -13,7 +13,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__),'..','utils'))
 from thread_resources import passing, failing, sleeping, returning, MyException
 
 
-class VariableMock(object):
+class VariableMock:
 
     def replace_string(self, string):
         return string

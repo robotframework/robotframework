@@ -1,12 +1,12 @@
 from robot.api.deco import keyword, library
 
 
-class Listener(object):
+class Listener:
     ROBOT_LISTENER_API_VERSION = 3
 
 
 @library(scope='TEST SUITE', version='1.2.3', listener=Listener())
-class LibraryDecoratorWithArgs(object):
+class LibraryDecoratorWithArgs:
 
     def not_keyword_v2(self):
         raise RuntimeError('Should not be executed!')

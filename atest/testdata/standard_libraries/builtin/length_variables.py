@@ -1,4 +1,4 @@
-class CustomLen(object):
+class CustomLen:
 
     def __init__(self, length):
         self._length=length
@@ -7,7 +7,7 @@ class CustomLen(object):
         return self._length
 
 
-class LengthMethod(object):
+class LengthMethod:
 
     def length(self):
         return 40
@@ -16,7 +16,7 @@ class LengthMethod(object):
         return 'length()'
 
 
-class SizeMethod(object):
+class SizeMethod:
 
     def size(self):
         return 41
@@ -25,7 +25,7 @@ class SizeMethod(object):
         return 'size()'
 
 
-class LengthAttribute(object):
+class LengthAttribute:
     length=42
 
     def __str__(self):

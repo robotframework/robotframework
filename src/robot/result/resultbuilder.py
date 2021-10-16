@@ -77,7 +77,7 @@ def _single_result(source, options):
     raise DataError("Reading XML source '%s' failed: %s" % (unic(ets), error))
 
 
-class ExecutionResultBuilder(object):
+class ExecutionResultBuilder:
     """Builds :class:`~.executionresult.Result` objects based on output files.
 
     Instead of using this builder directly, it is recommended to use the

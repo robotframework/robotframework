@@ -1374,7 +1374,7 @@ class XML:
         return self.get_element(source, context).xpath(expression)
 
 
-class NameSpaceStripper(object):
+class NameSpaceStripper:
 
     def __init__(self, etree, lxml_etree=False):
         self.etree = etree
@@ -1405,7 +1405,7 @@ class NameSpaceStripper(object):
         return elem
 
 
-class ElementFinder(object):
+class ElementFinder:
 
     def __init__(self, etree, modern=True, lxml=False):
         self.etree = etree
@@ -1437,7 +1437,7 @@ class ElementFinder(object):
             return xpath
 
 
-class ElementComparator(object):
+class ElementComparator:
 
     def __init__(self, comparator, normalizer=None, exclude_children=False):
         self._comparator = comparator
@@ -1491,7 +1491,7 @@ class ElementComparator(object):
             self.compare(act, exp, location.child(act.tag))
 
 
-class Location(object):
+class Location:
 
     def __init__(self, path, is_root=True):
         self.path = path

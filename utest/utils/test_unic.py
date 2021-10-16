@@ -125,7 +125,7 @@ class TestPrettyRepr(unittest.TestCase):
         self._verify(bytearray(b' '.join([b'Hello world!'] * 1000)))
 
 
-class UnRepr(object):
+class UnRepr:
     error = 'This, of course, should never happen...'
 
     @property

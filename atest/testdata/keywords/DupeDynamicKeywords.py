@@ -1,4 +1,4 @@
-class DupeDynamicKeywords(object):
+class DupeDynamicKeywords:
     names = ['defined twice', 'DEFINED TWICE',
              'Embedded ${twice}', 'EMBEDDED ${ARG}',
              'Exact dupe is ok', 'Exact dupe is ok']

@@ -1,4 +1,4 @@
-class InvalidKeywordNames(object):
+class InvalidKeywordNames:
 
     def __init__(self, hybrid=False):
         if not hybrid:

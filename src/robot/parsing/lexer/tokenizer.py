@@ -18,7 +18,7 @@ import re
 from .tokens import Token
 
 
-class Tokenizer(object):
+class Tokenizer:
     _space_splitter = re.compile(r'(\s{2,}|\t)', re.UNICODE)
     _pipe_splitter = re.compile(r'((?:\A|\s+)\|(?:\s+|\Z))', re.UNICODE)
 

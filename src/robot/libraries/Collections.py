@@ -22,13 +22,13 @@ from robot.utils.asserts import assert_equal
 from robot.version import get_version
 
 
-class NotSet(object):
+class NotSet:
     def __repr__(self):
         return ""
 NOT_SET = NotSet()
 
 
-class _List(object):
+class _List:
 
     def convert_to_list(self, item):
         """Converts the given ``item`` to a Python ``list`` type.
@@ -475,7 +475,7 @@ class _List(object):
             self._validate_list(item, index)
 
 
-class _Dictionary(object):
+class _Dictionary:
 
     def convert_to_dictionary(self, item):
         """Converts the given ``item`` to a Python ``dict`` type.

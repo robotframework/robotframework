@@ -5,7 +5,7 @@ import tempfile
 TEMPDIR = os.getenv('TEMPDIR', tempfile.gettempdir())
 
 
-class LinenoAndSource(object):
+class LinenoAndSource:
     ROBOT_LISTENER_API_VERSION = 2
 
     def __init__(self):

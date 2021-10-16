@@ -156,7 +156,7 @@ class WarningAndErrorFinder(SuiteVisitor):
             self.found = True
 
 
-class RemovalMessage(object):
+class RemovalMessage:
 
     def __init__(self, message):
         self._message = message

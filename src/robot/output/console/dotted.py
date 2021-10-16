@@ -21,7 +21,7 @@ from robot.utils import plural_or_not, secs_to_timestr
 from .highlighting import HighlightingStream
 
 
-class DottedOutput(object):
+class DottedOutput:
 
     def __init__(self, width=78, colors='AUTO', stdout=None, stderr=None):
         self._width = width

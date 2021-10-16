@@ -44,7 +44,7 @@ def InitHandler(library, method=None, docgetter=None):
     return _PythonInitHandler(library, '__init__', method, docgetter)
 
 
-class _RunnableHandler(object):
+class _RunnableHandler:
 
     def __init__(self, library, handler_name, handler_method, doc='', tags=None):
         self.library = library

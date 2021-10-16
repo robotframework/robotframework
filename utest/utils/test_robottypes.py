@@ -59,13 +59,13 @@ class TestListLike(unittest.TestCase):
         assert_equal(is_list_like(f), False)
 
     def test_iter_makes_object_iterable_regardless_implementation(self):
-        class Example(object):
+        class Example:
             def __iter__(self):
                 1/0
         assert_equal(is_list_like(Example()), True)
 
     def test_only_getitem_does_not_make_object_iterable(self):
-        class Example(object):
+        class Example:
             def __getitem__(self, item):
                 return "I'm not iterable!"
         assert_equal(is_list_like(Example()), False)
@@ -120,7 +120,7 @@ class TestTypeName(unittest.TestCase):
             assert_equal(type_name(f), 'file')
 
     def test_custom_objects(self):
-        class NewStyle(object): pass
+        class NewStyle: pass
         class OldStyle: pass
         class lower: pass
         for item, exp in [(NewStyle(), 'NewStyle'),
@@ -131,11 +131,11 @@ class TestTypeName(unittest.TestCase):
             assert_equal(type_name(item), exp)
 
     def test_strip_underscores(self):
-        class _Foo_(object): pass
+        class _Foo_: pass
         assert_equal(type_name(_Foo_), 'Foo')
 
     def test_none_as_underscore_name(self):
-        class C(object):
+        class C:
             _name = None
         assert_equal(type_name(C()), 'C')
         assert_equal(type_name(C(), capitalize=True), 'C')
@@ -174,7 +174,7 @@ class TestIsTruthyFalsy(unittest.TestCase):
                 assert_true(is_falsy(item) is False)
 
     def test_falsy_values(self):
-        class AlwaysFalse(object):
+        class AlwaysFalse:
             __bool__ = __nonzero__ = lambda self: False
         falsy_strings = ['', 'faLse', 'nO', 'nOne', 'oFF', '0']
         for item in falsy_strings + [False, None, 0, [], {}, AlwaysFalse()]:

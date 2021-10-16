@@ -68,7 +68,7 @@ class Listeners:
                    for method in self.__dict__.values())
 
 
-class LibraryListeners(object):
+class LibraryListeners:
     _method_names = ('start_suite', 'end_suite', 'start_test', 'end_test',
                      'start_keyword', 'end_keyword', 'log_message', 'message',
                      'close')

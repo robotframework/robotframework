@@ -11,7 +11,7 @@ KEYWORDS = {
 }
 
 
-class DynamicWithoutKwargs(object):
+class DynamicWithoutKwargs:
 
     def __init__(self, **extra):
         self.keywords = dict(KEYWORDS, **extra)

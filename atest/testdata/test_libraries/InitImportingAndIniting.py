@@ -2,7 +2,7 @@ from robot.libraries.BuiltIn import BuiltIn
 from robot.api import logger
 
 
-class Importing(object):
+class Importing:
 
     def __init__(self):
         BuiltIn().import_library('String')
@@ -11,7 +11,7 @@ class Importing(object):
         print('Keyword from library with importing __init__.')
 
 
-class Initting(object):
+class Initting:
 
     def __init__(self):
         # This initializes the accesses library.
@@ -22,7 +22,7 @@ class Initting(object):
         self.lib.kw_from_lib_initted_by_init()
 
 
-class Initted(object):
+class Initted:
 
     def __init__(self, id):
         self.id = id

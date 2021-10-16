@@ -16,7 +16,7 @@
 import ast
 
 
-class VisitorFinder(object):
+class VisitorFinder:
 
     def _find_visitor(self, cls):
         if cls is ast.AST:

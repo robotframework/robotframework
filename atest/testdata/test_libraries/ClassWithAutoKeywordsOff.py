@@ -1,7 +1,7 @@
 from robot.api.deco import keyword
 
 
-class ClassWithAutoKeywordsOff(object):
+class ClassWithAutoKeywordsOff:
     ROBOT_AUTO_KEYWORDS = False
 
     def public_method_is_not_keyword(self):

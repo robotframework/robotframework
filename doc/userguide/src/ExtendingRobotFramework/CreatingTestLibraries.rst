@@ -409,7 +409,7 @@ When these arguments are used, they set the matching `ROBOT_LIBRARY_SCOPE`,
 
 
     @library(scope='GLOBAL', version='3.2b1', doc_format='reST', listener=Listener())
-    class Example(object):
+    class Example:
         # ...
 
 The `@library` decorator also disables the `automatic keyword discovery`__

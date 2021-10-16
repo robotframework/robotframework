@@ -8,7 +8,7 @@ class Mandatory:
         return self.mandatory1, self.mandatory2
 
 
-class Defaults(object):
+class Defaults:
 
     def __init__(self, mandatory, default1='value', default2=None):
         self.mandatory = mandatory

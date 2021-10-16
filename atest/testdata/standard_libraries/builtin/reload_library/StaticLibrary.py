@@ -1,7 +1,7 @@
 from robot.libraries.BuiltIn import BuiltIn
 
 
-class StaticLibrary(object):
+class StaticLibrary:
 
     def add_static_keyword(self, name):
         def f(x):

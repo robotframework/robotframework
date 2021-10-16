@@ -23,7 +23,7 @@ from robot.utils import abspath, find_file, get_error_details, NormalizedDict
 from .variables import Variables
 
 
-class VariableScopes(object):
+class VariableScopes:
 
     def __init__(self, settings):
         self._global = GlobalVariables(settings)
@@ -205,7 +205,7 @@ class GlobalVariables(Variables):
             self[name] = value
 
 
-class SetVariables(object):
+class SetVariables:
 
     def __init__(self):
         self._suite = None

@@ -1,4 +1,4 @@
-class DupeHybridKeywords(object):
+class DupeHybridKeywords:
     names = ['defined twice', 'DEFINED TWICE',
              'Embedded ${twice}', 'EMBEDDED ${ARG}',
              'Exact dupe is ok', 'Exact dupe is ok']

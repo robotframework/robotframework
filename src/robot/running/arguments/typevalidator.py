@@ -18,7 +18,7 @@ from robot.utils import (is_dict_like, is_list_like, plural_or_not as s,
                          seq2str, type_name)
 
 
-class TypeValidator(object):
+class TypeValidator:
 
     def __init__(self, argspec):
         """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""

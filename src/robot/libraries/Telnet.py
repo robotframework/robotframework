@@ -33,7 +33,7 @@ from robot.utils import (ConnectionCache, is_bytes, is_string, is_truthy,
 from robot.version import get_version
 
 
-class Telnet(object):
+class Telnet:
     """A test library providing communication over Telnet connections.
 
     ``Telnet`` is Robot Framework's standard library that makes it possible to
@@ -1155,7 +1155,7 @@ class TelnetConnection(telnetlib.Telnet):
                                 newline=self._newline)
 
 
-class TerminalEmulator(object):
+class TerminalEmulator:
 
     def __init__(self, window_size=None, newline="\r\n"):
         self._rows, self._columns = window_size or (200, 200)

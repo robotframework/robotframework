@@ -12,7 +12,7 @@ def get_variables(path, name=None, version=None):
     return {'INTERPRETER': Interpreter(path, name, version)}
 
 
-class Interpreter(object):
+class Interpreter:
 
     def __init__(self, path, name=None, version=None):
         self.path = path

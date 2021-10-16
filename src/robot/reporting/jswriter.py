@@ -16,7 +16,7 @@
 from robot.htmldata import JsonWriter
 
 
-class JsResultWriter(object):
+class JsResultWriter:
     _output_attr = 'window.output'
     _settings_attr = 'window.settings'
     _suite_key = 'suite'
@@ -70,7 +70,7 @@ class JsResultWriter(object):
         return '%s["%s"]' % (self._output_attr, key)
 
 
-class SuiteWriter(object):
+class SuiteWriter:
 
     def __init__(self, write_json, split_threshold):
         self._write_json = write_json
@@ -97,7 +97,7 @@ class SuiteWriter(object):
         mapping[data] = part_name
 
 
-class SplitLogWriter(object):
+class SplitLogWriter:
 
     def __init__(self, output):
         self._writer = JsonWriter(output)

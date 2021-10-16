@@ -1,7 +1,7 @@
 from robot.api.deco import keyword
 
 
-class InvalidKeywords(object):
+class InvalidKeywords:
 
     @keyword('Invalid embedded ${args}')
     def invalid_embedded(self):

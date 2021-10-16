@@ -18,7 +18,7 @@ from .robottypes import is_string, is_pathlike
 from .robotio import file_writer
 
 
-class _MarkupWriter(object):
+class _MarkupWriter:
 
     def __init__(self, output, write_empty=True, usage=None):
         """
@@ -110,7 +110,7 @@ class XmlWriter(_MarkupWriter):
             self._write('<%s %s/>' % (name, attrs) if attrs else '<%s/>' % name, newline)
 
 
-class NullMarkupWriter(object):
+class NullMarkupWriter:
     """Null implementation of the _MarkupWriter interface."""
 
     __init__ = start = content = element = end = close = lambda *args, **kwargs: None

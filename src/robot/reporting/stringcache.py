@@ -22,7 +22,7 @@ class StringIndex(int):
     pass
 
 
-class StringCache(object):
+class StringCache:
     _compress_threshold = 80
     _use_compressed_threshold = 1.1
     _zero_index = StringIndex(0)

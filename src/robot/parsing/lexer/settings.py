@@ -18,7 +18,7 @@ from robot.utils import normalize, normalize_whitespace, RecommendationFinder
 from .tokens import Token
 
 
-class Settings(object):
+class Settings:
     names = ()
     aliases = {}
     multi_use = (

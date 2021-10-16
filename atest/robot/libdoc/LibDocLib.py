@@ -15,7 +15,7 @@ from robot.running.arguments import ArgInfo
 ROOT = join(dirname(abspath(__file__)), '..', '..', '..')
 
 
-class LibDocLib(object):
+class LibDocLib:
 
     def __init__(self, interpreter=None):
         self.interpreter = interpreter

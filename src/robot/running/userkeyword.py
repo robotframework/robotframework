@@ -25,7 +25,7 @@ from .userkeywordrunner import UserKeywordRunner, EmbeddedArgumentsRunner
 from .usererrorhandler import UserErrorHandler
 
 
-class UserLibrary(object):
+class UserLibrary:
     TEST_CASE_FILE_TYPE = HandlerStore.TEST_CASE_FILE_TYPE
     RESOURCE_FILE_TYPE = HandlerStore.RESOURCE_FILE_TYPE
 
@@ -68,7 +68,7 @@ class UserLibrary(object):
 
 # TODO: Should be merged with running.model.UserKeyword
 
-class UserKeywordHandler(object):
+class UserKeywordHandler:
 
     def __init__(self, keyword, libname):
         self.name = keyword.name

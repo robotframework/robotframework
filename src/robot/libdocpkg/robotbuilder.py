@@ -26,7 +26,7 @@ from robot.variables import VariableIterator, search_variable
 from .model import LibraryDoc, KeywordDoc
 
 
-class LibraryDocBuilder(object):
+class LibraryDocBuilder:
     _argument_separator = '::'
 
     def build(self, library):
@@ -63,7 +63,7 @@ class LibraryDocBuilder(object):
         return []
 
 
-class ResourceDocBuilder(object):
+class ResourceDocBuilder:
 
     def build(self, path):
         res = self._import_resource(path)
@@ -96,7 +96,7 @@ class ResourceDocBuilder(object):
         return "Documentation for resource file ``%s``." % res.name
 
 
-class KeywordDocBuilder(object):
+class KeywordDocBuilder:
 
     def __init__(self, resource=False):
         self._resource = resource

@@ -6,7 +6,7 @@ except NameError:
     basestring = str
 
 
-class ListenImports(object):
+class ListenImports:
     ROBOT_LISTENER_API_VERSION = 2
 
     def __init__(self, imports):

@@ -1,6 +1,6 @@
 from robot.libraries.BuiltIn import BuiltIn
 
-class NamespaceUsingLibrary(object):
+class NamespaceUsingLibrary:
 
     def __init__(self):
         self._importing_suite = BuiltIn().get_variable_value('${SUITE NAME}')

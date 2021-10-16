@@ -2,7 +2,7 @@ import sys
 from remoteserver import DirectResultRemoteServer
 
 
-class Invalid(object):
+class Invalid:
 
     def non_dict_result_dict(self):
         return 42

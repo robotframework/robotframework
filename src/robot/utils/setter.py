@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 
-class setter(object):
+class setter:
 
     def __init__(self, method):
         self.method = method

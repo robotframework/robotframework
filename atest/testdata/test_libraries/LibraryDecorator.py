@@ -2,7 +2,7 @@ from robot.api.deco import keyword, library
 
 
 @library
-class LibraryDecorator(object):
+class LibraryDecorator:
 
     def not_keyword(self):
         raise RuntimeError('Should not be executed!')
