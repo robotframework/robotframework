@@ -25,8 +25,6 @@ def assert_prefix(error, expected):
     message = str(error)
     count = 3 if WINDOWS_PATH_IN_ERROR.search(message) else 2
     prefix = ':'.join(message.split(':')[:count]) + ':'
-    if 'ImportError:' in expected and sys.version_info >= (3, 6):
-        expected = expected.replace('ImportError:', 'ModuleNotFoundError:')
     assert_equal(prefix, expected)
 
 
@@ -209,7 +207,7 @@ class TestImportClassOrModule(unittest.TestCase):
 
     def test_import_non_existing(self):
         error = assert_raises(DataError, self._import, 'NonExisting')
-        assert_prefix(error, "Importing 'NonExisting' failed: ImportError:")
+        assert_prefix(error, "Importing 'NonExisting' failed: ModuleNotFoundError:")
 
     def test_import_sub_module(self):
         module = self._import_module('pythonmodule.library')
@@ -253,7 +251,7 @@ class TestImportClassOrModule(unittest.TestCase):
 
     def test_item_from_non_existing_module(self):
         error = assert_raises(DataError, self._import, 'nonex.item')
-        assert_prefix(error, "Importing 'nonex.item' failed: ImportError:")
+        assert_prefix(error, "Importing 'nonex.item' failed: ModuleNotFoundError:")
 
     def test_import_file_by_path(self):
         import module_library as expected

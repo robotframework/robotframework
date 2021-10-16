@@ -1,5 +1,5 @@
 class NewStyleClassLibrary:
-    
+
     def mirror(self, arg):
         arg = list(arg)
         arg.reverse()
@@ -12,16 +12,25 @@ class NewStyleClassLibrary:
     @property
     def _property_getter(self):
         raise SystemExit('This should not be called, ever!!!')
-    
+
 
 class NewStyleClassArgsLibrary:
-    
+
     def __init__(self, param):
         self.get_param = lambda self: param
-    
 
-import sys
-if sys.version_info[0] == 2:
-    from newstyleclasses2 import MetaClassLibrary
-else:
-    from newstyleclasses3 import MetaClassLibrary
+
+class MyMetaClass(type):
+
+    def __new__(cls, name, bases, ns):
+        ns['kw_created_by_metaclass'] = lambda self, arg: arg.upper()
+        return type.__new__(cls, name, bases, ns)
+
+    def method_in_metaclass(cls):
+        pass
+
+
+class MetaClassLibrary(metaclass=MyMetaClass):
+
+    def greet(self, name):
+        return 'Hello %s!' % name
