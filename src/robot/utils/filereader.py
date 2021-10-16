@@ -13,10 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from io import StringIO
 import os.path
 
-from .compat import StringIO
-from .platform import IRONPYTHON
 from .robottypes import is_bytes, is_pathlike, is_string
 
 
@@ -46,12 +45,7 @@ class FileReader(object):
     def _get_file(self, source, accept_text):
         path = self._get_path(source, accept_text)
         if path:
-            try:
-                file = open(path, 'rb')
-            except ValueError:
-                # Converting ValueError to IOError needed due to this IPY bug:
-                # https://github.com/IronLanguages/ironpython2/issues/700
-                raise IOError("Invalid path '%s'." % path)
+            file = open(path, 'rb')
             opened = True
         elif is_string(source):
             file = StringIO(source)
@@ -92,10 +86,9 @@ class FileReader(object):
             first_line = False
 
     def _decode(self, content, remove_bom=True):
-        force_decode = IRONPYTHON and self._is_binary_file()
-        if is_bytes(content) or force_decode:
+        if is_bytes(content):
             content = content.decode('UTF-8')
-        if remove_bom and content.startswith(u'\ufeff'):
+        if remove_bom and content.startswith('\ufeff'):
             content = content[1:]
         if '\r\n' in content:
             content = content.replace('\r\n', '\n')

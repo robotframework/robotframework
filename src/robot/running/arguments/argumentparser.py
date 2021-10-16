@@ -13,96 +13,96 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from inspect import signature, Parameter
+from typing import get_type_hints
+
 from robot.errors import DataError
-from robot.utils import JYTHON, PY2, is_string, split_from_equals
+from robot.utils import is_string, split_from_equals
 from robot.variables import is_assign, is_scalar_assign
 
 from .argumentspec import ArgumentSpec
 
-# Move PythonArgumentParser to this module when Python 2 support is dropped.
-if PY2:
-    from .py2argumentparser import PythonArgumentParser
-else:
-    from .py3argumentparser import PythonArgumentParser
 
-if JYTHON:
-    from java.lang import Class
-    from java.util import List, Map
+class _ArgumentParser:
 
-
-class _ArgumentParser(object):
-
-    def __init__(self, type='Keyword'):
+    def __init__(self, type='Keyword', error_reporter=None):
         self._type = type
+        self._error_reporter = error_reporter
 
     def parse(self, source, name=None):
         raise NotImplementedError
 
-
-class JavaArgumentParser(_ArgumentParser):
-
-    def parse(self, signatures, name=None):
-        if not signatures:
-            return self._no_signatures_arg_spec(name)
-        elif len(signatures) == 1:
-            return self._single_signature_arg_spec(signatures[0], name)
+    def _report_error(self, error):
+        if self._error_reporter:
+            self._error_reporter(error)
         else:
-            return self._multi_signature_arg_spec(signatures, name)
+            raise DataError('Invalid argument specification: %s' % error)
 
-    def _no_signatures_arg_spec(self, name):
-        # Happens when a class has no public constructors
-        return self._format_arg_spec(name)
 
-    def _single_signature_arg_spec(self, signature, name):
-        varargs, kwargs = self._get_varargs_and_kwargs_support(signature.args)
-        positional = len(signature.args) - int(varargs) - int(kwargs)
-        return self._format_arg_spec(name, positional, varargs=varargs,
-                                     kwargs=kwargs)
+class PythonArgumentParser(_ArgumentParser):
 
-    def _get_varargs_and_kwargs_support(self, args):
-        if not args:
-            return False, False
-        if self._is_varargs_type(args[-1]):
-            return True, False
-        if not self._is_kwargs_type(args[-1]):
-            return False, False
-        if len(args) > 1 and self._is_varargs_type(args[-2]):
-            return True, True
-        return False, True
+    def parse(self, handler, name=None):
+        spec = ArgumentSpec(name, self._type)
+        self._set_args(spec, handler)
+        self._set_types(spec, handler)
+        return spec
 
-    def _is_varargs_type(self, arg):
-        return arg is List or isinstance(arg, Class) and arg.isArray()
+    def _set_args(self, spec, handler):
+        try:
+            sig = signature(handler)
+        except ValueError:  # Can occur w/ C functions (incl. many builtins).
+            spec.var_positional = 'args'
+            return
+        parameters = list(sig.parameters.values())
+        # `inspect.signature` drops `self` with bound methods and that's the case when
+        # inspecting keywords. `__init__` is got directly from class (i.e. isn't bound)
+        # so we need to handle that case ourselves.
+        if handler.__name__ == '__init__':
+            parameters = parameters[1:]
+        setters = {
+            Parameter.POSITIONAL_ONLY: spec.positional_only.append,
+            Parameter.POSITIONAL_OR_KEYWORD: spec.positional_or_named.append,
+            Parameter.VAR_POSITIONAL: lambda name: setattr(spec, 'var_positional', name),
+            Parameter.KEYWORD_ONLY: spec.named_only.append,
+            Parameter.VAR_KEYWORD: lambda name: setattr(spec, 'var_named', name),
+        }
+        for param in parameters:
+            setters[param.kind](param.name)
+            if param.default is not param.empty:
+                spec.defaults[param.name] = param.default
 
-    def _is_kwargs_type(self, arg):
-        return arg is Map
-
-    def _multi_signature_arg_spec(self, signatures, name):
-        mina = maxa = len(signatures[0].args)
-        for sig in signatures[1:]:
-            argc = len(sig.args)
-            mina = min(argc, mina)
-            maxa = max(argc, maxa)
-        return self._format_arg_spec(name, maxa, maxa-mina)
-
-    def _format_arg_spec(self, name, positional=0, defaults=0, varargs=False,
-                         kwargs=False):
-        positional = ['arg%d' % (i+1) for i in range(positional)]
-        if defaults:
-            defaults = {name: '' for name in positional[-defaults:]}
+    def _set_types(self, spec, handler):
+        # If types are set using the `@keyword` decorator, use them. Including when
+        # types are explicitly disabled with `@keyword(types=None)`. Otherwise read
+        # type hints.
+        robot_types = getattr(handler, 'robot_types', ())
+        if robot_types or robot_types is None:
+            spec.types = robot_types
         else:
-            defaults = {}
-        return ArgumentSpec(name, self._type,
-                            positional_only=positional,
-                            var_positional='varargs' if varargs else None,
-                            var_named='kwargs' if kwargs else None,
-                            defaults=defaults)
+            spec.types = self._get_type_hints(handler, spec)
+
+    def _get_type_hints(self, handler, spec):
+        try:
+            type_hints = get_type_hints(handler)
+        except Exception:  # Can raise pretty much anything
+            # Not all functions have `__annotations__`.
+            # https://github.com/robotframework/robotframework/issues/4059
+            return getattr(handler, '__annotations__', {})
+        self._remove_mismatching_type_hints(type_hints, spec.argument_names)
+        return type_hints
+
+    # FIXME: This is likely not needed nowadays because we unwrap keywords.
+    # Don't want to remove in 4.1.x but can go in 5.0.
+    def _remove_mismatching_type_hints(self, type_hints, argument_names):
+        # typing.get_type_hints returns info from the original function even
+        # if it is decorated. Argument names are got from the wrapping
+        # decorator and thus there is a mismatch that needs to be resolved.
+        mismatch = set(type_hints) - set(argument_names)
+        for name in mismatch:
+            type_hints.pop(name)
 
 
 class _ArgumentSpecParser(_ArgumentParser):
-
-    def __init__(self, type='Keyword', error_reporter=None):
-        _ArgumentParser.__init__(self, type)
-        self._error_reporter = error_reporter
 
     def parse(self, argspec, name=None):
         spec = ArgumentSpec(name, self._type)
@@ -131,12 +131,6 @@ class _ArgumentSpecParser(_ArgumentParser):
 
     def _validate_arg(self, arg):
         raise NotImplementedError
-
-    def _report_error(self, error):
-        if self._error_reporter:
-            self._error_reporter(error)
-        else:
-            raise DataError('Invalid argument specification: %s' % error)
 
     def _is_kwargs(self, arg):
         raise NotImplementedError

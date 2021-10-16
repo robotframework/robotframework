@@ -18,12 +18,6 @@
 External libraries should not used exceptions defined here.
 """
 
-try:
-    unicode
-except NameError:
-    unicode = str
-
-
 # Return codes from Robot and Rebot.
 # RC below 250 is the number of failed critical tests and exactly 250
 # means that number or more such failures.
@@ -45,7 +39,7 @@ class RobotError(Exception):
 
     @property
     def message(self):
-        return unicode(self)
+        return str(self)
 
 
 class FrameworkError(RobotError):

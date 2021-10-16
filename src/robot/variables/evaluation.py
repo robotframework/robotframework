@@ -13,20 +13,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from tokenize import generate_tokens, untokenize
+import builtins
 import token
+from collections.abc import MutableMapping
+from io import StringIO
+from tokenize import generate_tokens, untokenize
 
 from robot.errors import DataError
-from robot.utils import (get_error_message, is_string, MutableMapping, PY2,
-                         StringIO, type_name)
+from robot.utils import get_error_message, is_string, type_name
 
 from .notfound import variable_not_found
 
 
-if PY2:
-    import __builtin__ as builtins
-else:
-    import builtins
 PYTHON_BUILTINS = set(builtins.__dict__)
 
 
@@ -95,7 +93,7 @@ def _import_modules(module_names):
     return modules
 
 
-# TODO: In Python 3 this could probably be just Mapping, not MutableMapping.
+# FIXME: In Python 3 this could probably be just Mapping, not MutableMapping.
 # With Python 2 at least list comprehensions need to mutate the evaluation
 # namespace. Using just Mapping would allow removing __set/delitem__.
 class EvaluationNamespace(MutableMapping):

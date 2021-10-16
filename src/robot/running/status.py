@@ -15,11 +15,10 @@
 
 from robot.errors import ExecutionStatus, PassExecution
 from robot.model import TagPatterns
-from robot.utils import html_escape, py3to2, unic, test_or_task
+from robot.utils import html_escape, unic, test_or_task
 
 
-@py3to2
-class Failure(object):
+class Failure:
 
     def __init__(self):
         self.setup = None
@@ -36,8 +35,7 @@ class Failure(object):
         )
 
 
-@py3to2
-class Exit(object):
+class Exit:
 
     def __init__(self, failure_mode=False, error_mode=False, skip_teardown_mode=False):
         self.failure_mode = failure_mode
@@ -65,7 +63,7 @@ class Exit(object):
         return self.failure or self.error or self.fatal
 
 
-class _ExecutionStatus(object):
+class _ExecutionStatus:
 
     def __init__(self, parent=None, *exit_modes):
         self.parent = parent
@@ -210,7 +208,7 @@ class TestStatus(_ExecutionStatus):
         return TestMessage(self).message
 
 
-class _Message(object):
+class _Message:
     setup_message = NotImplemented
     setup_skipped_message = NotImplemented
     teardown_skipped_message = NotImplemented

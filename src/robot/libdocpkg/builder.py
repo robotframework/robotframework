@@ -16,19 +16,11 @@
 import os
 
 from robot.errors import DataError
-from robot.utils import JYTHON, JAVA_VERSION, get_error_message
+from robot.utils import get_error_message
 
 from .robotbuilder import LibraryDocBuilder, ResourceDocBuilder
 from .specbuilder import SpecDocBuilder
 from .jsonbuilder import JsonDocBuilder
-if JYTHON:
-    if JAVA_VERSION < (1, 9):
-        from .javabuilder import JavaDocBuilder
-    else:
-        from .java9builder import JavaDocBuilder
-else:
-    def JavaDocBuilder():
-        raise DataError('Documenting Java test libraries requires Jython.')
 
 
 RESOURCE_EXTENSIONS = ('resource', 'robot', 'txt', 'tsv', 'rst', 'rest')
@@ -86,6 +78,4 @@ def DocumentationBuilder(library_or_resource):
             return SpecDocBuilder()
         if extension == 'json':
             return JsonDocBuilder()
-        if extension == 'java':
-            return JavaDocBuilder()
     return LibraryDocBuilder()

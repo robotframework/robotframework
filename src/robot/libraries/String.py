@@ -13,8 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import absolute_import
-
 import os
 import re
 from fnmatch import fnmatchcase
@@ -24,12 +22,11 @@ from string import ascii_lowercase, ascii_uppercase, digits
 
 from robot.api import logger
 from robot.api.deco import keyword
-from robot.utils import (is_bytes, is_string, is_truthy, is_unicode, lower,
-                         unic, FileReader, PY2, PY3)
+from robot.utils import is_bytes, is_string, is_truthy, is_unicode, unic, FileReader
 from robot.version import get_version
 
 
-class String(object):
+class String:
     """A test library for string manipulation and verification.
 
     ``String`` is Robot Framework's standard library for manipulating
@@ -66,9 +63,7 @@ class String(object):
         | Should Be Equal | ${str1} | abc |
         | Should Be Equal | ${str2} | 1a2c3d |
         """
-        # Custom `lower` needed due to IronPython bug. See its code and
-        # comments for more details.
-        return lower(string)
+        return string.lower()
 
     def convert_to_upper_case(self, string):
         """Converts string to upper case.
@@ -188,8 +183,8 @@ class String(object):
         byte strings, and `Convert To String` in ``BuiltIn`` if you need to
         convert arbitrary objects to Unicode strings.
         """
-        if PY3 and is_unicode(bytes):
-            raise TypeError('Can not decode strings on Python 3.')
+        if is_unicode(bytes):
+            raise TypeError('Cannot decode strings.')
         return bytes.decode(encoding, errors)
 
     def format_string(self, template, *positional, **named):
@@ -656,20 +651,7 @@ class String(object):
     def should_be_string(self, item, msg=None):
         """Fails if the given ``item`` is not a string.
 
-        With Python 2, except with IronPython, this keyword passes regardless
-        is the ``item`` a Unicode string or a byte string. Use `Should Be
-        Unicode String` or `Should Be Byte String` if you want to restrict
-        the string type. Notice that with Python 2, except with IronPython,
-        ``'string'`` creates a byte string and ``u'unicode'`` must be used to
-        create a Unicode string.
-
-        With Python 3 and IronPython, this keyword passes if the string is
-        a Unicode string but fails if it is bytes. Notice that with both
-        Python 3 and IronPython, ``'string'`` creates a Unicode string, and
-        ``b'bytes'`` must be used to create a byte string.
-
-        The default error message can be overridden with the optional
-        ``msg`` argument.
+        The default error message can be overridden with the optional ``msg`` argument.
         """
         if not is_string(item):
             self._fail(msg, "'%s' is not a string.", item)
@@ -677,11 +659,7 @@ class String(object):
     def should_not_be_string(self, item, msg=None):
         """Fails if the given ``item`` is a string.
 
-        See `Should Be String` for more details about Unicode strings and byte
-        strings.
-
-        The default error message can be overridden with the optional
-        ``msg`` argument.
+        The default error message can be overridden with the optional ``msg`` argument.
         """
         if is_string(item):
             self._fail(msg, "'%s' is a string.", item)
@@ -689,13 +667,8 @@ class String(object):
     def should_be_unicode_string(self, item, msg=None):
         """Fails if the given ``item`` is not a Unicode string.
 
-        Use `Should Be Byte String` if you want to verify the ``item`` is a
-        byte string, or `Should Be String` if both Unicode and byte strings
-        are fine. See `Should Be String` for more details about Unicode
-        strings and byte strings.
-
-        The default error message can be overridden with the optional
-        ``msg`` argument.
+        On Python 3 this keyword behaves exactly the same way `Should Be String`.
+        That keyword should be used instead and this keyword will be deprecated.
         """
         if not is_unicode(item):
             self._fail(msg, "'%s' is not a Unicode string.", item)
@@ -703,13 +676,9 @@ class String(object):
     def should_be_byte_string(self, item, msg=None):
         """Fails if the given ``item`` is not a byte string.
 
-        Use `Should Be Unicode String` if you want to verify the ``item`` is a
-        Unicode string, or `Should Be String` if both Unicode and byte strings
-        are fine. See `Should Be String` for more details about Unicode strings
-        and byte strings.
+        Use `Should Be String` if you want to verify the ``item`` is a string.
 
-        The default error message can be overridden with the optional
-        ``msg`` argument.
+        The default error message can be overridden with the optional ``msg`` argument.
         """
         if not is_bytes(item):
             self._fail(msg, "'%s' is not a byte string.", item)
@@ -772,12 +741,6 @@ class String(object):
 
         See also `Should Be Upper Case` and `Should Be Lower Case`.
         """
-        if PY2 and is_bytes(string):
-            try:
-                string = string.decode('ASCII')
-            except UnicodeError:
-                raise TypeError('This keyword works only with Unicode strings '
-                                'and non-ASCII bytes.')
         if string != self.convert_to_title_case(string, exclude):
             self._fail(msg, "'%s' is not title case.", string)
 

@@ -13,23 +13,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from inspect import isclass
 import re
 import sys
+from enum import Enum
+from inspect import isclass
+from typing import Union
 
-try:
-    from typing import Union
-except ImportError:
-    class Union(object):
-        pass
-
-try:
-    from enum import Enum
-except ImportError:    # Standard in Py 3.4+ but can be separately installed
-    class Enum(object):
-        pass
-
-from robot.utils import setter, py3to2, unicode, unic
+from robot.utils import setter, unic
 
 from .argumentconverter import ArgumentConverter
 from .argumentmapper import ArgumentMapper
@@ -37,8 +27,7 @@ from .argumentresolver import ArgumentResolver
 from .typevalidator import TypeValidator
 
 
-@py3to2
-class ArgumentSpec(object):
+class ArgumentSpec:
 
     def __init__(self, name=None, type='Keyword', positional_only=None,
                  positional_or_named=None, var_positional=None, named_only=None,
@@ -120,11 +109,10 @@ class ArgumentSpec(object):
                     self.named_only, self.var_named])
 
     def __str__(self):
-        return ', '.join(unicode(arg) for arg in self)
+        return ', '.join(str(arg) for arg in self)
 
 
-@py3to2
-class ArgInfo(object):
+class ArgInfo:
     NOTSET = object()
     POSITIONAL_ONLY = 'POSITIONAL_ONLY'
     POSITIONAL_ONLY_MARKER = 'POSITIONAL_ONLY_MARKER'

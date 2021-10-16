@@ -15,11 +15,10 @@
 
 import copy
 
-from robot.utils import py3to2, SetterAwareType, with_metaclass
+from robot.utils import SetterAwareType
 
 
-@py3to2
-class ModelObject(with_metaclass(SetterAwareType, object)):
+class ModelObject(metaclass=SetterAwareType):
     repr_args = ()
     __slots__ = []
 

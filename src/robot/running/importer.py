@@ -29,7 +29,7 @@ from .testlibraries import TestLibrary
 RESOURCE_EXTENSIONS = ('.resource', '.robot', '.txt', '.tsv', '.rst', '.rest')
 
 
-class Importer(object):
+class Importer:
 
     def __init__(self):
         self._library_cache = ImportCache()
@@ -94,15 +94,11 @@ class Importer(object):
         # This is pretty ugly. Hopefully we can remove cache and copying
         # altogether in 3.0 and always just re-import libraries:
         # https://github.com/robotframework/robotframework/issues/2106
-        # Could then also remove __copy__ methods added to some handlers as
-        # a workaround for this IronPython bug:
-        # https://github.com/IronLanguages/main/issues/1192
         lib = copy.copy(orig)
         lib.name = name
         lib.scope = type(lib.scope)(lib)
         lib.reset_instance()
-        lib.handlers = HandlerStore(orig.handlers.source,
-                                    orig.handlers.source_type)
+        lib.handlers = HandlerStore(orig.handlers.source, orig.handlers.source_type)
         for handler in orig.handlers._normal.values():
             handler = copy.copy(handler)
             handler.library = lib
@@ -114,7 +110,7 @@ class Importer(object):
         return lib
 
 
-class ImportCache(object):
+class ImportCache:
     """Keeps track on and optionally caches imported items.
 
     Handles paths in keys case-insensitively on case-insensitive OSes.

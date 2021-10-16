@@ -16,15 +16,12 @@
 from copy import copy
 import inspect
 
-from robot.utils import (getdoc, getshortdoc, is_java_init, is_java_method,
-                         is_list_like, normpath, printable_name,
-                         split_tags_from_doc, type_name, unwrap)
+from robot.utils import (getdoc, getshortdoc, is_list_like, normpath, printable_name,
+                         split_tags_from_doc, type_name)
 from robot.errors import DataError
 from robot.model import Tags
 
-from .arguments import (ArgumentSpec, DynamicArgumentParser,
-                        JavaArgumentCoercer, JavaArgumentParser,
-                        PythonArgumentParser)
+from .arguments import ArgumentSpec, DynamicArgumentParser, PythonArgumentParser
 from .dynamicmethods import GetKeywordSource, GetKeywordTypes
 from .librarykeywordrunner import (EmbeddedArgumentsRunner,
                                    LibraryKeywordRunner, RunKeywordRunner)
@@ -34,10 +31,7 @@ from .runkwregister import RUN_KW_REGISTER
 def Handler(library, name, method):
     if RUN_KW_REGISTER.is_run_keyword(library.orig_name, name):
         return _RunKeywordHandler(library, name, method)
-    if is_java_method(method):
-        return _JavaHandler(library, name, method)
-    else:
-        return _PythonHandler(library, name, method)
+    return _PythonHandler(library, name, method)
 
 
 def DynamicHandler(library, name, method, doc, argspec, tags=None):
@@ -47,8 +41,7 @@ def DynamicHandler(library, name, method, doc, argspec, tags=None):
 
 
 def InitHandler(library, method=None, docgetter=None):
-    Init = _PythonInitHandler if not is_java_init(method) else _JavaInitHandler
-    return Init(library, '__init__', method, docgetter)
+    return _PythonInitHandler(library, '__init__', method, docgetter)
 
 
 class _RunnableHandler(object):
@@ -151,7 +144,7 @@ class _PythonHandler(_RunnableHandler):
         handler = self.current_handler()
         # `getsourcefile` can return None and raise TypeError.
         try:
-            source = inspect.getsourcefile(unwrap(handler))
+            source = inspect.getsourcefile(inspect.unwrap(handler))
         except TypeError:
             source = None
         return normpath(source) if source else self.library.source
@@ -160,36 +153,13 @@ class _PythonHandler(_RunnableHandler):
     def lineno(self):
         handler = self.current_handler()
         try:
-            lines, start_lineno = inspect.getsourcelines(unwrap(handler))
+            lines, start_lineno = inspect.getsourcelines(inspect.unwrap(handler))
         except (TypeError, OSError, IOError):
             return -1
         for increment, line in enumerate(lines):
             if line.strip().startswith('def '):
                 return start_lineno + increment
         return start_lineno
-
-
-class _JavaHandler(_RunnableHandler):
-
-    def __init__(self, library, handler_name, handler_method):
-        _RunnableHandler.__init__(self, library, handler_name, handler_method)
-        signatures = self._get_signatures(handler_method)
-        self._arg_coercer = JavaArgumentCoercer(signatures, self.arguments)
-
-    def _parse_arguments(self, handler_method):
-        signatures = self._get_signatures(handler_method)
-        return JavaArgumentParser().parse(signatures, self.longname)
-
-    def _get_signatures(self, handler):
-        code_object = getattr(handler, 'im_func', handler)
-        return code_object.argslist[:code_object.nargs]
-
-    def resolve_arguments(self, args, variables=None):
-        positional, named = self.arguments.resolve(args, variables,
-                                                   dict_to_kwargs=True)
-        arguments = self._arg_coercer.coerce(positional, named,
-                                             dryrun=not variables)
-        return arguments, []
 
 
 class _DynamicHandler(_RunnableHandler):
@@ -312,26 +282,7 @@ class _PythonInitHandler(_PythonHandler):
         return parser.parse(init_method or (lambda: None), self.library.name)
 
 
-class _JavaInitHandler(_JavaHandler):
-
-    def __init__(self, library, handler_name, handler_method, docgetter):
-        _JavaHandler.__init__(self, library, handler_name, handler_method)
-        self._docgetter = docgetter
-
-    @property
-    def doc(self):
-        if self._docgetter:
-            self._doc = self._docgetter() or self._doc
-            self._docgetter = None
-        return self._doc
-
-    def _parse_arguments(self, handler_method):
-        parser = JavaArgumentParser(type='Library')
-        signatures = self._get_signatures(handler_method)
-        return parser.parse(signatures, self.library.name)
-
-
-class EmbeddedArgumentsHandler(object):
+class EmbeddedArgumentsHandler:
 
     def __init__(self, name_regexp, orig_handler):
         self.arguments = ArgumentSpec()  # Show empty argument spec for Libdoc

@@ -1,10 +1,10 @@
+from io import StringIO
 import sys
 import tempfile
 import unittest
 
 from robot import libdoc
 from robot.utils.asserts import assert_equal
-from robot.utils import StringIO
 
 
 class TestLibdoc(unittest.TestCase):

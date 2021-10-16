@@ -1,7 +1,7 @@
 import unittest
 import re
 
-from robot.utils import unic, unicode, prepr, DotDict
+from robot.utils import unic, prepr, DotDict
 from robot.utils.asserts import assert_equal, assert_true
 
 
@@ -49,7 +49,7 @@ class TestPrettyRepr(unittest.TestCase):
         if not expected:
             expected = repr(item).lstrip('')
         assert_equal(prepr(item, **config), expected)
-        if isinstance(item, (unicode, bytes)) and not config:
+        if isinstance(item, (str, bytes)) and not config:
             assert_equal(prepr([item]), '[%s]' % expected)
             assert_equal(prepr((item,)), '(%s,)' % expected)
             assert_equal(prepr({item: item}), '{%s: %s}' % (expected, expected))

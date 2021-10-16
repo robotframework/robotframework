@@ -15,13 +15,6 @@
 
 import re
 
-try:
-    from java.lang.System import getProperties as get_java_properties, getProperty
-    get_java_property = lambda name: getProperty(name) if name else None
-except ImportError:
-    get_java_property = lambda name: None
-    get_java_properties = lambda: {}
-
 from robot.errors import DataError, VariableError
 from robot.utils import (get_env_var, get_env_vars, get_error_message, normalize,
                          NormalizedDict)
@@ -34,7 +27,7 @@ from .search import search_variable, VariableMatch
 NOT_FOUND = object()
 
 
-class VariableFinder(object):
+class VariableFinder:
 
     def __init__(self, variable_store):
         self._finders = (StoredFinder(variable_store),
@@ -64,7 +57,7 @@ class VariableFinder(object):
         return match
 
 
-class StoredFinder(object):
+class StoredFinder:
     identifiers = '$@&'
 
     def __init__(self, store):
@@ -74,7 +67,7 @@ class StoredFinder(object):
         return self._store.get(name, NOT_FOUND)
 
 
-class NumberFinder(object):
+class NumberFinder:
     identifiers = '$'
 
     def find(self, name):
@@ -93,15 +86,15 @@ class NumberFinder(object):
         return int(number)
 
 
-class EmptyFinder(object):
+class EmptyFinder:
     identifiers = '$@&'
-    empty = NormalizedDict({'${EMPTY}': u'', '@{EMPTY}': (), '&{EMPTY}': {}}, ignore='_')
+    empty = NormalizedDict({'${EMPTY}': '', '@{EMPTY}': (), '&{EMPTY}': {}}, ignore='_')
 
     def find(self, name):
         return self.empty.get(name, NOT_FOUND)
 
 
-class InlinePythonFinder(object):
+class InlinePythonFinder:
     identifiers = '$@&'
 
     def __init__(self, variables):
@@ -117,7 +110,7 @@ class InlinePythonFinder(object):
             raise VariableError("Resolving variable '%s' failed: %s" % (name, err))
 
 
-class ExtendedFinder(object):
+class ExtendedFinder:
     identifiers = '$@&'
     _match_extended = re.compile(r'''
         (.+?)          # base name (group 1)
@@ -144,21 +137,15 @@ class ExtendedFinder(object):
                                 % (name, get_error_message()))
 
 
-class EnvironmentFinder(object):
+class EnvironmentFinder:
     identifiers = '%'
 
     def find(self, name):
         var_name, has_default, default_value = name[2:-1].partition('=')
-        for getter in get_env_var, get_java_property:
-            value = getter(var_name)
-            if value is not None:
-                return value
-        if has_default:     # in case if '' is desired default value
+        value = get_env_var(var_name)
+        if value is not None:
+            return value
+        if has_default:
             return default_value
-        variable_not_found(name, self._get_candidates(),
+        variable_not_found(name, get_env_vars(),
                            "Environment variable '%s' not found." % name)
-
-    def _get_candidates(self):
-        candidates = dict(get_java_properties())
-        candidates.update(get_env_vars())
-        return candidates

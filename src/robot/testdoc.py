@@ -42,14 +42,8 @@ from robot.conf import RobotSettings
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, TESTDOC
 from robot.running import TestSuiteBuilder
 from robot.utils import (abspath, Application, file_writer, get_link_path,
-                         html_escape, html_format, IRONPYTHON, is_string,
-                         PY_VERSION, secs_to_timestr, seq2str2,
-                         timestr_to_secs, unescape)
-
-
-# http://ironpython.codeplex.com/workitem/31549
-if IRONPYTHON and PY_VERSION < (2, 7, 2):
-    int = long
+                         html_escape, html_format, is_string, secs_to_timestr,
+                         seq2str2, timestr_to_secs, unescape)
 
 
 USAGE = """robot.testdoc -- Robot Framework test data documentation tool

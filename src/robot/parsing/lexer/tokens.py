@@ -13,12 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import py3to2
 from robot.variables import VariableIterator
 
 
-@py3to2
-class Token(object):
+class Token:
     """Token representing piece of Robot Framework data.
 
     Each token has type, value, line number, column offset and end column
@@ -208,9 +206,6 @@ class Token(object):
                 and self.lineno == other.lineno
                 and self.col_offset == other.col_offset
                 and self.error == other.error)
-
-    def __ne__(self, other):
-        return not self == other
 
 
 class EOS(Token):

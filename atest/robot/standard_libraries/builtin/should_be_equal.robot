@@ -5,11 +5,11 @@ Resource          builtin_resource.robot
 *** Test Cases ***
 Basics
     ${tc}=    Check test case    ${TESTNAME}
-    Verify argument type message    ${tc.kws[0].msgs[0]}    unicode    unicode
-    Verify argument type message    ${tc.kws[1].msgs[0]}    unicode    unicode
+    Verify argument type message    ${tc.kws[0].msgs[0]}
+    Verify argument type message    ${tc.kws[1].msgs[0]}
     Verify argument type message    ${tc.kws[2].msgs[0]}    float      int
     Verify argument type message    ${tc.kws[3].msgs[0]}    bytes      bytes
-    Verify argument type message    ${tc.kws[4].msgs[0]}    unicode    unicode
+    Verify argument type message    ${tc.kws[4].msgs[0]}
 
 Case-insensitive
     Check Test Case     ${TESTNAME}
@@ -85,17 +85,17 @@ Bytes containing non-ascii characters
 
 Unicode and bytes with non-ascii characters
     ${tc}=    Check test case    ${TESTNAME}
-    Verify argument type message    ${tc.kws[0].msgs[0]}    bytes    unicode
+    Verify argument type message    ${tc.kws[0].msgs[0]}    bytes    str
 
 Types info is added if string representations are same
     ${tc}=    Check test case    ${TESTNAME}
-    Verify argument type message    ${tc.kws[0].msgs[0]}    unicode    int
+    Verify argument type message    ${tc.kws[0].msgs[0]}    str    int
 
 Should Not Be Equal
     ${tc}=    Check test case    ${TESTNAME}
-    Verify argument type message    ${tc.kws[0].msgs[0]}    unicode    unicode
-    Verify argument type message    ${tc.kws[1].msgs[0]}    unicode    int
-    Verify argument type message    ${tc.kws[2].msgs[0]}    unicode    unicode
+    Verify argument type message    ${tc.kws[0].msgs[0]}    str    str
+    Verify argument type message    ${tc.kws[1].msgs[0]}    str    int
+    Verify argument type message    ${tc.kws[2].msgs[0]}    str    str
 
 Should Not Be Equal case-insensitive
     Check Test Case     ${TESTNAME}
@@ -118,5 +118,5 @@ Should Not Be Equal and collapse spaces
 Should Not Be Equal with bytes containing non-ascii characters
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    bytes    bytes
-    Verify argument type message    ${tc.kws[1].msgs[0]}    bytes    unicode
+    Verify argument type message    ${tc.kws[1].msgs[0]}    bytes    str
     Verify argument type message    ${tc.kws[2].msgs[0]}    bytes    bytes

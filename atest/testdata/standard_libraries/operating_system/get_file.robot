@@ -78,9 +78,9 @@ Get File with 'replace' Error Handler
     ${LATIN-1 FILE}    replace    Hyv\ufffd\ufffd \ufffd\ufffdt\ufffd
 
 Get file converts CRLF to LF
-    Create Binary File    ${TESTFILE}    .\r.\n.\r\n
+    Create Binary File    ${TESTFILE}    1\r\n2\r\n
     ${file}=    Get File    ${TESTFILE}
-    Should Be Equal    ${file}    .\r.\n.\n
+    Should Be Equal    ${file}    1\n2\n
 
 Log File
     Create File    ${TESTFILE}    hello world\nwith two lines

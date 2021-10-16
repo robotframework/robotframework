@@ -14,18 +14,16 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import (get_error_message, is_java_method, is_bytes,
-                         is_list_like, is_unicode, py3to2, type_name)
+from robot.utils import get_error_message, is_bytes, is_list_like, is_unicode, type_name
 
-from .arguments import JavaArgumentParser, PythonArgumentParser
+from .arguments import PythonArgumentParser
 
 
 def no_dynamic_method(*args):
     return None
 
 
-@py3to2
-class _DynamicMethod(object):
+class _DynamicMethod:
     _underscore_name = NotImplemented
 
     def __init__(self, lib):
@@ -109,26 +107,8 @@ class RunKeyword(_DynamicMethod):
 
     @property
     def supports_kwargs(self):
-        if is_java_method(self.method):
-            return self._supports_java_kwargs(self.method)
-        return self._supports_python_kwargs(self.method)
-
-    def _supports_python_kwargs(self, method):
-        spec = PythonArgumentParser().parse(method)
+        spec = PythonArgumentParser().parse(self.method)
         return len(spec.positional) == 3
-
-    def _supports_java_kwargs(self, method):
-        func = self.method.im_func if hasattr(method, 'im_func') else method
-        signatures = func.argslist[:func.nargs]
-        spec = JavaArgumentParser().parse(signatures)
-        return (self._java_single_signature_kwargs(spec) or
-                self._java_multi_signature_kwargs(spec))
-
-    def _java_single_signature_kwargs(self, spec):
-        return len(spec.positional) == 1 and spec.var_positional and spec.var_named
-
-    def _java_multi_signature_kwargs(self, spec):
-        return len(spec.positional) == 3 and not (spec.var_positional or spec.var_named)
 
 
 class GetKeywordDocumentation(_DynamicMethod):

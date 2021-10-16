@@ -2,7 +2,7 @@ import unittest
 import os
 import os.path
 
-from robot.utils import abspath, normpath, get_link_path, unicode, WINDOWS
+from robot.utils import abspath, normpath, get_link_path, WINDOWS
 from robot.utils.robotpath import CASE_INSENSITIVE_FILESYSTEM
 from robot.utils.asserts import assert_equal, assert_true
 
@@ -14,11 +14,11 @@ class TestAbspathNormpath(unittest.TestCase):
             exp = os.path.abspath(exp)
             path = abspath(inp)
             assert_equal(path, exp, inp)
-            assert_true(isinstance(path, unicode), inp)
+            assert_true(isinstance(path, str), inp)
             exp = exp.lower() if CASE_INSENSITIVE_FILESYSTEM else exp
             path = abspath(inp, case_normalize=True)
             assert_equal(path, exp, inp)
-            assert_true(isinstance(path, unicode), inp)
+            assert_true(isinstance(path, str), inp)
 
     def test_abspath_when_cwd_is_non_ascii(self):
         orig = abspath('.')
@@ -55,11 +55,11 @@ class TestAbspathNormpath(unittest.TestCase):
         for inp, exp in self._get_inputs():
             path = normpath(inp)
             assert_equal(path, exp, inp)
-            assert_true(isinstance(path, unicode), inp)
+            assert_true(isinstance(path, str), inp)
             exp = exp.lower() if CASE_INSENSITIVE_FILESYSTEM else exp
             path = normpath(inp, case_normalize=True)
             assert_equal(path, exp, inp)
-            assert_true(isinstance(path, unicode), inp)
+            assert_true(isinstance(path, str), inp)
 
     def _get_inputs(self):
         inputs = self._windows_inputs if WINDOWS else self._posix_inputs

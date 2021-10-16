@@ -53,7 +53,7 @@ class VariableStore(object):
         return self.data[name]
 
     def _is_resolvable(self, value):
-        try: # isinstance can throw an exception in ironpython and jython
+        try:
             return isinstance(value, VariableTableValueBase)
         except Exception:
             return False

@@ -15,12 +15,8 @@
 
 import re
 
-from .platform import PY3
 from .robottypes import is_string
 
-
-if PY3:
-    unichr = chr
 
 _CONTROL_WORDS = frozenset(('ELSE', 'ELSE IF', 'AND', 'WITH NAME'))
 _SEQUENCES_TO_BE_ESCAPED = ('\\', '${', '@{', '%{', '&{', '*{', '=')
@@ -46,7 +42,7 @@ def glob_escape(item):
     return item
 
 
-class Unescaper(object):
+class Unescaper:
     _escape_sequences = re.compile(r'''
         (\\+)                # escapes
         (n|r|t            # n, r, or t
@@ -72,10 +68,11 @@ class Unescaper(object):
         # No Unicode code points above 0x10FFFF
         if ordinal > 0x10FFFF:
             return 'U' + value
-        # unichr only supports ordinals up to 0xFFFF with narrow Python builds
+        # `chr` only supports ordinals up to 0xFFFF on narrow Python builds.
+        # This may not be relevant anymore.
         if ordinal > 0xFFFF:
-            return eval(r"u'\U%08x'" % ordinal)
-        return unichr(ordinal)
+            return eval(r"'\U%08x'" % ordinal)
+        return chr(ordinal)
 
     def unescape(self, item):
         if not (is_string(item) and '\\' in item):

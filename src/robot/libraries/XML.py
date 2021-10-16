@@ -26,7 +26,7 @@ from robot.api import logger
 from robot.api.deco import keyword
 from robot.libraries.BuiltIn import BuiltIn
 from robot.utils import (asserts, ET, ETSource, is_bytes, is_falsy, is_string,
-                         is_truthy, plural_or_not as s, PY2)
+                         is_truthy, plural_or_not as s)
 from robot.version import get_version
 
 
@@ -34,7 +34,7 @@ should_be_equal = asserts.assert_equal
 should_match = BuiltIn().should_match
 
 
-class XML(object):
+class XML:
     """Robot Framework test library for verifying and modifying XML documents.
 
     As the name implies, _XML_ is a test library for verifying contents of XML
@@ -1204,8 +1204,7 @@ class XML(object):
         parent.remove(element)
 
     def _find_parent(self, root, element):
-        all_elements = root.getiterator() if PY2 else root.iter()
-        for parent in all_elements:
+        for parent in root.iter():
             for child in parent:
                 if child is element:
                     return parent

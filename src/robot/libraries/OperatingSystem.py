@@ -15,10 +15,8 @@
 
 import fnmatch
 import glob
-import io
 import os
 import shutil
-import sys
 import tempfile
 import time
 
@@ -29,14 +27,13 @@ from robot.utils import (abspath, ConnectionCache, console_decode, del_env_var,
                          get_env_var, get_env_vars, get_time, is_truthy,
                          is_unicode, normpath, parse_time, plural_or_not,
                          secs_to_timestamp, secs_to_timestr, seq2str,
-                         set_env_var, timestr_to_secs, unic, CONSOLE_ENCODING,
-                         IRONPYTHON, JYTHON, PY2, PY3, SYSTEM_ENCODING, WINDOWS)
+                         set_env_var, timestr_to_secs, unic, CONSOLE_ENCODING, WINDOWS)
 
 __version__ = get_version()
 PROCESSES = ConnectionCache('No active processes.')
 
 
-class OperatingSystem(object):
+class OperatingSystem:
     """A test library providing keywords for OS related tasks.
 
     ``OperatingSystem`` is Robot Framework's standard library that
@@ -255,21 +252,16 @@ class OperatingSystem(object):
         path = self._absnorm(path)
         self._link("Getting file '%s'.", path)
         encoding = self._map_encoding(encoding)
-        if IRONPYTHON:
-            # https://github.com/IronLanguages/main/issues/1233
-            with open(path) as f:
-                content = f.read().decode(encoding, encoding_errors)
-        else:
-            with io.open(path, encoding=encoding, errors=encoding_errors,
-                         newline='') as f:
-                content = f.read()
-        return content.replace('\r\n', '\n')
+        # Using `newline=None` (default) and not converting `\r\n` -> `\n`
+        # ourselves would be better but some of our own acceptance tests
+        # depend on these semantics. Best solution would probably be making
+        # `newline` configurable.
+        # FIXME: Make `newline` configurable or at least submit an issue about that.
+        with open(path, encoding=encoding, errors=encoding_errors, newline='') as f:
+            return f.read().replace('\r\n', '\n')
 
     def _map_encoding(self, encoding):
-        # Python 3 opens files in native system encoding by default.
-        if PY3 and encoding.upper() == 'SYSTEM':
-            return None
-        return {'SYSTEM': SYSTEM_ENCODING,
+        return {'SYSTEM': None,
                 'CONSOLE': CONSOLE_ENCODING}.get(encoding.upper(), encoding)
 
     def get_binary_file(self, path):
@@ -281,7 +273,7 @@ class OperatingSystem(object):
         path = self._absnorm(path)
         self._link("Getting file '%s'.", path)
         with open(path, 'rb') as f:
-            return bytes(f.read())
+            return f.read()
 
     def grep_file(self, path, pattern, encoding='UTF-8', encoding_errors='strict'):
         """Returns the lines of the specified file that match the ``pattern``.
@@ -317,7 +309,7 @@ class OperatingSystem(object):
         lines = []
         total_lines = 0
         self._link("Reading file '%s'.", path)
-        with io.open(path, encoding=encoding, errors=encoding_errors) as f:
+        with open(path, encoding=encoding, errors=encoding_errors) as f:
             for line in f.readlines():
                 total_lines += 1
                 line = line.rstrip('\r\n')
@@ -573,13 +565,9 @@ class OperatingSystem(object):
         parent = os.path.dirname(path)
         if not os.path.exists(parent):
             os.makedirs(parent)
-        # io.open() only accepts Unicode, not byte-strings, in text mode.
-        # We expect possible byte-strings to be all ASCII.
-        if PY2 and isinstance(content, str) and 'b' not in mode:
-            content = unicode(content)
         if encoding:
             encoding = self._map_encoding(encoding)
-        with io.open(path, mode, encoding=encoding) as f:
+        with open(path, mode, encoding=encoding) as f:
             f.write(content)
         return path
 
@@ -889,14 +877,8 @@ class OperatingSystem(object):
         the destination directory and the possible missing intermediate
         directories are created.
         """
-        source, destination \
-            = self._prepare_copy_and_move_directory(source, destination)
-        try:
-            shutil.copytree(source, destination)
-        except shutil.Error:
-            # https://github.com/robotframework/robotframework/issues/2321
-            if not (WINDOWS and JYTHON):
-                raise
+        source, destination = self._prepare_copy_and_move_directory(source, destination)
+        shutil.copytree(source, destination)
         self._link("Copied directory from '%s' to '%s'.", source, destination)
 
     def _prepare_copy_and_move_directory(self, source, destination):
@@ -1399,11 +1381,7 @@ class OperatingSystem(object):
             self._link("Touched new file '%s'.", path)
 
     def _absnorm(self, path):
-        path = self.normalize_path(path)
-        try:
-            return abspath(path)
-        except ValueError:  # http://ironpython.codeplex.com/workitem/29489
-            return path
+        return abspath(self.normalize_path(path))
 
     def _fail(self, *messages):
         raise AssertionError(next(msg for msg in messages if msg))
@@ -1450,7 +1428,7 @@ class _Process:
         #   In Jython return code can be between '-255' - '255'
         #   In Python return code must be converted with 'rc >> 8' and it is
         #   between 0-255 after conversion
-        if WINDOWS or JYTHON:
+        if WINDOWS:
             return rc % 256
         return rc >> 8
 
@@ -1460,15 +1438,11 @@ class _Process:
                 command = command[:-1] + ' 2>&1 &'
             else:
                 command += ' 2>&1'
-        return self._encode_to_file_system(command)
-
-    def _encode_to_file_system(self, string):
-        enc = sys.getfilesystemencoding() if PY2 else None
-        return string.encode(enc) if enc else string
+        return command
 
     def _process_output(self, output):
         if '\r\n' in output:
             output = output.replace('\r\n', '\n')
         if output.endswith('\n'):
             output = output[:-1]
-        return console_decode(output, force=True)
+        return console_decode(output)

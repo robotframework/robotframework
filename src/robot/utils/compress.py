@@ -14,40 +14,9 @@
 #  limitations under the License.
 
 import base64
-
-from .platform import JYTHON, PY2
+import zlib
 
 
 def compress_text(text):
-    result = base64.b64encode(_compress(text.encode('UTF-8')))
-    return result if PY2 else result.decode('ASCII')
-
-
-if not JYTHON:
-
-    import zlib
-
-    def _compress(text):
-        return zlib.compress(text, 9)
-
-else:
-
-    # Custom compress implementation was originally used to avoid memory leak
-    # (http://bugs.jython.org/issue1775). Kept around still because it is a bit
-    # faster than Jython's standard zlib.compress.
-
-    from java.util.zip import Deflater
-    import jarray
-
-    _DEFLATOR = Deflater(9, False)
-
-    def _compress(text):
-        _DEFLATOR.setInput(text)
-        _DEFLATOR.finish()
-        buf = jarray.zeros(1024, 'b')
-        compressed = []
-        while not _DEFLATOR.finished():
-            length = _DEFLATOR.deflate(buf, 0, 1024)
-            compressed.append(buf[:length].tostring())
-        _DEFLATOR.reset()
-        return ''.join(compressed)
+    compressed = zlib.compress(text.encode('UTF-8'), 9)
+    return base64.b64encode(compressed).decode('ASCII')

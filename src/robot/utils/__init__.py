@@ -35,7 +35,6 @@ or::
 
 from .argumentparser import ArgumentParser, cmdline2list
 from .application import Application
-from .compat import isatty, py2to3, py3to2, StringIO, unwrap, with_metaclass
 from .compress import compress_text
 from .connectioncache import ConnectionCache
 from .dotdict import DotDict
@@ -50,30 +49,27 @@ from .markuputils import html_format, html_escape, xml_escape, attribute_escape
 from .markupwriters import HtmlWriter, XmlWriter, NullMarkupWriter
 from .importer import Importer
 from .match import eq, Matcher, MultiMatcher
-from .misc import (plural_or_not, printable_name, roundup, seq2str,
-                   seq2str2, test_or_task)
-from .normalizing import lower, normalize, normalize_whitespace, NormalizedDict
-from .platform import (IRONPYTHON, JAVA_VERSION, JYTHON, PY_VERSION,
-                       PY2, PY3, PYPY, UNIXY, WINDOWS, RERAISED_EXCEPTIONS)
+from .misc import (isatty, plural_or_not, printable_name, roundup, seq2str, seq2str2,
+                   test_or_task)
+from .normalizing import normalize, normalize_whitespace, NormalizedDict
+from .platform import PY_VERSION, PYPY, UNIXY, WINDOWS, RERAISED_EXCEPTIONS
 from .recommendations import RecommendationFinder
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
-from .robotinspect import is_init, is_java_init, is_java_method
-from .robotio import (binary_file_writer, create_destination_directory,
-                      file_writer)
+from .robotinspect import is_init
+from .robotio import binary_file_writer, create_destination_directory, file_writer
 from .robotpath import abspath, find_file, get_link_path, normpath
 from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
                         get_time, get_timestamp, secs_to_timestamp,
                         secs_to_timestr, timestamp_to_secs, timestr_to_secs,
                         parse_time)
-from .robottypes import (FALSE_STRINGS, Mapping, MutableMapping, TRUE_STRINGS,
-                         is_bytes, is_dict_like, is_falsy, is_integer,
-                         is_list_like, is_number, is_pathlike, is_string,
-                         is_truthy, is_unicode, type_name, typeddict_types, unicode)
+from .robottypes import (FALSE_STRINGS, TRUE_STRINGS, is_bytes, is_dict_like,
+                         is_falsy, is_integer, is_list_like, is_number, is_pathlike,
+                         is_string, is_truthy, is_unicode, type_name, typeddict_types)
 from .setter import setter, SetterAwareType
 from .sortable import Sortable
 from .text import (cut_assign_value, cut_long_message, format_assign_message,
                    get_console_length, getdoc, getshortdoc, pad_console_length,
-                   rstrip, split_tags_from_doc, split_args_from_name_or_path)
+                   split_tags_from_doc, split_args_from_name_or_path)
 from .unic import prepr, unic
 
 

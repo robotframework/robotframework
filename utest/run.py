@@ -12,7 +12,6 @@ options:
     -h, --help      Show help
 """
 
-from __future__ import print_function
 import getopt
 import os
 import sys
@@ -23,7 +22,6 @@ import warnings
 
 if not sys.warnoptions:
     warnings.simplefilter('always')
-    warnings.filterwarnings('ignore', 'Not importing directory .*java', ImportWarning)
 
 
 base = os.path.abspath(os.path.normpath(os.path.split(sys.argv[0])[0]))

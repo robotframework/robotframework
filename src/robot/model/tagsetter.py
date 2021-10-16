@@ -13,12 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import py3to2
-
 from .visitor import SuiteVisitor
 
 
-@py3to2
 class TagSetter(SuiteVisitor):
 
     def __init__(self, add=None, remove=None):

@@ -16,16 +16,10 @@
 import time
 from collections import OrderedDict
 
-from robot.utils import IRONPYTHON, PY_VERSION
-
 from .stringcache import StringIndex
 
-# http://ironpython.codeplex.com/workitem/31549
-if IRONPYTHON and PY_VERSION < (2, 7, 2):
-    int = long
 
-
-class JsExecutionResult(object):
+class JsExecutionResult:
 
     def __init__(self, suite, statistics, errors, strings, basemillis=None,
                  split_results=None, min_level=None, expand_keywords=None):

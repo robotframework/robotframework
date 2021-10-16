@@ -14,12 +14,11 @@
 #  limitations under the License.
 
 from robot.utils import (Sortable, elapsed_time_to_string, html_escape,
-                         is_string, normalize, py3to2, unicode)
+                         is_string, normalize)
 
 from .tags import TagPattern
 
 
-@py3to2
 class Stat(Sortable):
     """Generic statistic object used for storing all the statistic values."""
 
@@ -55,7 +54,7 @@ class Stat(Sortable):
         if exclude_empty:
             attrs = dict((k, v) for k, v in attrs.items() if v not in ('', None))
         if values_as_strings:
-            attrs = dict((k, unicode(v if v is not None else ''))
+            attrs = dict((k, str(v) if v is not None else '')
                          for k, v in attrs.items())
         if html_escape:
             attrs = dict((k, self._html_escape(v)) for k, v in attrs.items())

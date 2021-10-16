@@ -13,11 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import MultiMatcher, py3to2
+from robot.utils import MultiMatcher
 
 
-@py3to2
-class _NamePatterns(object):
+class NamePatterns:
 
     def __init__(self, patterns=None):
         self._matcher = MultiMatcher(patterns, ignore='_')
@@ -38,7 +37,7 @@ class _NamePatterns(object):
         return iter(self._matcher)
 
 
-class SuiteNamePatterns(_NamePatterns):
+class SuiteNamePatterns(NamePatterns):
 
     def _match_longname(self, name):
         while '.' in name:
@@ -48,7 +47,7 @@ class SuiteNamePatterns(_NamePatterns):
         return False
 
 
-class TestNamePatterns(_NamePatterns):
+class TestNamePatterns(NamePatterns):
 
     def _match_longname(self, name):
         return self._match(name)

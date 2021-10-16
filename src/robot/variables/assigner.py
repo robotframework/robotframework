@@ -18,10 +18,10 @@ import re
 from robot.errors import (DataError, ExecutionStatus, HandlerExecutionFailed,
                           VariableError)
 from robot.utils import (ErrorDetails, format_assign_message, get_error_message,
-                         is_number, is_string, prepr, rstrip, type_name)
+                         is_number, is_string, prepr, type_name)
 
 
-class VariableAssignment(object):
+class VariableAssignment:
 
     def __init__(self, assignment):
         validator = AssignmentValidator()
@@ -47,7 +47,7 @@ class VariableAssignment(object):
         return VariableAssigner(self.assignment, context)
 
 
-class AssignmentValidator(object):
+class AssignmentValidator:
 
     def __init__(self):
         self._seen_list = False
@@ -67,7 +67,7 @@ class AssignmentValidator(object):
                             "variable.")
         if variable.endswith('='):
             self._seen_assign_mark = True
-            return rstrip(variable[:-1])
+            return variable[:-1].rstrip()
         return variable
 
     def _validate_state(self, is_list, is_dict):

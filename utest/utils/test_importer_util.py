@@ -375,12 +375,7 @@ class TestSplitPathToModule(unittest.TestCase):
 
     def test_normal_file(self):
         self._verify('hello.py', 'hello')
-        self._verify('hello.class', 'hello')
-        self._verify('hello.world.java', 'hello.world')
-
-    def test_jython_class_file(self):
-        self._verify('hello$py.class', 'hello')
-        self._verify('__init__$py.class', '__init__')
+        self._verify('hello.world.pyc', 'hello.world')
 
     def test_directory(self):
         self._verify('hello', 'hello')

@@ -1,7 +1,6 @@
 import unittest
 
 from robot.utils.asserts import assert_equal, assert_false
-from robot.utils import unicode
 
 from robot.api import Token
 
@@ -20,7 +19,7 @@ class TestToken(unittest.TestCase):
               "Token(None, '', -1, -1)"))
         ]:
             token = Token(*token)
-            assert_equal(unicode(token), exp_str)
+            assert_equal(str(token), exp_str)
             assert_equal(repr(token), exp_repr)
 
     def test_automatic_value(self):

@@ -16,42 +16,15 @@
 import os
 import os.path
 import sys
+from urllib.request import pathname2url as path_to_url
 
 from robot.errors import DataError
 
 from .encoding import system_decode
-from .platform import IRONPYTHON, JYTHON, PY_VERSION, PY2, WINDOWS
+from .platform import WINDOWS
 from .robottypes import is_unicode
 from .unic import unic
 
-
-if IRONPYTHON and PY_VERSION == (2, 7, 8):
-    # https://github.com/IronLanguages/ironpython2/issues/371
-    def _abspath(path):
-        if os.path.isabs(path):
-            if not os.path.splitdrive(path)[0]:
-                drive = os.path.splitdrive(os.getcwd())[0]
-                return drive + path
-            return path
-        return os.path.abspath(path)
-elif WINDOWS and JYTHON and PY_VERSION > (2, 7, 0):
-    # https://bugs.jython.org/issue2824
-    def _abspath(path):
-        path = os.path.abspath(path)
-        if path[:1] == '\\' and path[:2] != '\\\\':
-            drive = os.getcwd()[:2]
-            path = drive + path
-        return path
-else:
-    _abspath = os.path.abspath
-
-if PY2:
-    from urllib import pathname2url
-
-    def path_to_url(path):
-        return pathname2url(path.encode('UTF-8'))
-else:
-    from urllib.request import pathname2url as path_to_url
 
 if WINDOWS:
     CASE_INSENSITIVE_FILESYSTEM = True
@@ -91,7 +64,7 @@ def abspath(path, case_normalize=False):
     3. Turn ``c:`` into ``c:\\`` on Windows instead of ``c:\\current\\path``.
     """
     path = normpath(path, case_normalize)
-    return normpath(_abspath(path), case_normalize)
+    return normpath(os.path.abspath(path), case_normalize)
 
 
 def get_link_path(target, base):

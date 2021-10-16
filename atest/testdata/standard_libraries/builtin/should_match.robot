@@ -24,7 +24,7 @@ Should Match case-insensitive
 Should Match does not work with bytes
     [Documentation]    FAIL    GLOB: Several failures occurred:\n\n
     ...    1) TypeError: *\n\n
-    ...    2) TypeError: Matching bytes is not supported on Python 3.
+    ...    2) TypeError: *
     [Template]    Should Match
     ${BYTES WITHOUT NON ASCII}    pattern
     text                          ${BYTES WITHOUT NON ASCII}

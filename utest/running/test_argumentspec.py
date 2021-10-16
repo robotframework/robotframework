@@ -1,11 +1,8 @@
-# encoding=utf-8
-
 import unittest
 from enum import Enum
 
 from robot.running.arguments.argumentspec import ArgumentSpec, ArgInfo
 from robot.utils.asserts import assert_equal
-from robot.utils import unicode
 
 
 class TestStringRepr(unittest.TestCase):
@@ -17,16 +14,16 @@ class TestStringRepr(unittest.TestCase):
         self._verify('a, b', ['a', 'b'])
 
     def test_non_ascii_names(self):
-        self._verify(u'nön, äscii', [u'nön', u'äscii'])
+        self._verify('nön, äscii', ['nön', 'äscii'])
 
     def test_default(self):
         self._verify('a, b=c', ['a', 'b'], defaults={'b': 'c'})
-        self._verify(u'nön=äscii', [u'nön'], defaults={u'nön': u'äscii'})
+        self._verify('nön=äscii', ['nön'], defaults={'nön': 'äscii'})
         self._verify('i=42', ['i'], defaults={'i': 42})
 
     def test_default_as_bytes(self):
         self._verify('b=ytes', ['b'], defaults={'b': b'ytes'})
-        self._verify(u'ä=\\xe4', [u'ä'], defaults={u'ä': b'\xe4'})
+        self._verify('ä=\\xe4', ['ä'], defaults={'ä': b'\xe4'})
 
     def test_type_as_class(self):
         self._verify('a: int, b: bool', ['a', 'b'], types={'a': int, 'b': bool})
@@ -158,7 +155,7 @@ class TestStringRepr(unittest.TestCase):
 
     def _verify(self, expected, positional_or_named=None, **config):
         spec = ArgumentSpec(positional_or_named=positional_or_named, **config)
-        assert_equal(unicode(spec), expected)
+        assert_equal(str(spec), expected)
         assert_equal(bool(spec), bool(expected))
 
 

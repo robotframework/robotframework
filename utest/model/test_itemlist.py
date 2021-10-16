@@ -3,18 +3,13 @@ from robot.utils.asserts import (assert_equal, assert_false, assert_true,
                                  assert_raises, assert_raises_with_msg)
 
 from robot.model.itemlist import ItemList
-from robot.utils import unicode
 
 
-class Object(object):
+class Object:
     attr = 1
 
     def __init__(self, id=None):
         self.id = id
-
-
-class OldStyle:
-    pass
 
 
 class CustomItems(ItemList):
@@ -66,11 +61,11 @@ class TestItemLists(unittest.TestCase):
                                'Only int objects accepted, got str.',
                                ItemList(int).append, 'not integer')
         assert_raises_with_msg(TypeError,
-                               'Only OldStyle objects accepted, got Object.',
-                               ItemList(OldStyle).extend, [Object()])
+                               'Only int objects accepted, got Object.',
+                               ItemList(int).extend, [Object()])
         assert_raises_with_msg(TypeError,
-                               'Only Object objects accepted, got OldStyle.',
-                               ItemList(Object).insert, 0, OldStyle())
+                               'Only Object objects accepted, got int.',
+                               ItemList(Object).insert, 0, 42)
 
     def test_common_attrs(self):
         item1 = Object()
@@ -224,11 +219,8 @@ class TestItemLists(unittest.TestCase):
     def test_str(self):
         assert_equal(str(ItemList(int, items=[1, 2, 3, 4])), '[1, 2, 3, 4]')
         assert_equal(str(ItemList(str, items=['foo', 'bar'])), "['foo', 'bar']")
-
-    def test_unicode(self):
-        assert_equal(unicode(ItemList(int, items=[1, 2, 3, 4])), '[1, 2, 3, 4]')
-        assert_equal(unicode(ItemList(unicode, items=[u'hyv\xe4\xe4', u'y\xf6'])),
-                     unicode([u'hyv\xe4\xe4', u'y\xf6']))
+        assert_equal(str(ItemList(int, items=[1, 2, 3, 4])), '[1, 2, 3, 4]')
+        assert_equal(str(ItemList(str, items=['hyvää', 'yötä'])), "['hyvää', 'yötä']")
 
     def test_repr(self):
         assert_equal(repr(ItemList(int, items=[1, 2, 3, 4])),

@@ -1,8 +1,8 @@
+from io import StringIO
 import unittest
 
 from robot.reporting.jsexecutionresult import JsExecutionResult
 from robot.reporting.jswriter import JsResultWriter
-from robot.utils import StringIO
 from robot.utils.asserts import assert_equal, assert_true
 
 

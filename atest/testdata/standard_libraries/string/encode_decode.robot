@@ -49,7 +49,7 @@ Decode Non-ASCII Bytes To String Using Incompatible Encoding And Error Handler
     Should Match    ${string}    Hyv??
 
 Decoding String Fails
-    [Documentation]    FAIL TypeError: Can not decode strings on Python 3.
+    [Documentation]    FAIL TypeError: Cannot decode strings.
     Decode Bytes To String    hello    ASCII
 
 *** Keywords ***

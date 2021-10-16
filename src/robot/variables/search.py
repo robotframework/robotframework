@@ -16,7 +16,7 @@
 import re
 
 from robot.errors import VariableError
-from robot.utils import is_string, py3to2, rstrip
+from robot.utils import is_string
 
 
 def search_variable(string, identifiers='$@&%*', ignore_errors=False):
@@ -39,7 +39,7 @@ def is_scalar_variable(string):
     return is_variable(string, '$')
 
 
-# TODO: Nowadays is_list_variable and is_dict_variable ought to be able to use
+# FIXME: Nowadays is_list_variable and is_dict_variable ought to be able to use
 # is_variable same way as is_scalar variable. That wasn't the case before RF 4.
 
 def is_list_variable(string):
@@ -69,11 +69,9 @@ def is_dict_assign(string, allow_assign_mark=False):
     return is_assign(string, '&', allow_assign_mark)
 
 
-@py3to2
-class VariableMatch(object):
+class VariableMatch:
 
-    def __init__(self, string, identifier=None, base=None, items=(),
-                 start=-1, end=-1):
+    def __init__(self, string, identifier=None, base=None, items=(), start=-1, end=-1):
         self.string = string
         self.identifier = identifier
         self.base = base
@@ -123,7 +121,7 @@ class VariableMatch(object):
 
     def is_assign(self, allow_assign_mark=False):
         if allow_assign_mark and self.string.endswith('='):
-            match = search_variable(rstrip(self.string[:-1]), ignore_errors=True)
+            match = search_variable(self.string[:-1].rstrip(), ignore_errors=True)
             return match.is_assign()
         return (self.is_variable()
                 and self.identifier in '$@&'
@@ -149,7 +147,7 @@ class VariableMatch(object):
         return '%s{%s}%s' % (self.identifier, self.base, items)
 
 
-class VariableSearcher(object):
+class VariableSearcher:
 
     def __init__(self, identifiers, ignore_errors=False):
         self.identifiers = identifiers
@@ -281,8 +279,7 @@ def unescape_variable_syntax(item):
     return re.sub(r'(\\+)(?=(.+))', handle_escapes, item)
 
 
-@py3to2
-class VariableIterator(object):
+class VariableIterator:
 
     def __init__(self, string, identifiers='$@&%', ignore_errors=False):
         self.string = string
@@ -292,8 +289,7 @@ class VariableIterator(object):
     def __iter__(self):
         remaining = self.string
         while True:
-            match = search_variable(remaining, self.identifiers,
-                                    self.ignore_errors)
+            match = search_variable(remaining, self.identifiers, self.ignore_errors)
             if not match:
                 break
             remaining = match.after

@@ -1,9 +1,10 @@
+from io import StringIO
 import unittest
 import time
 
 from robot.output.filelogger import FileLogger
-from robot.utils import StringIO, robottime
-from robot.utils.asserts import *
+from robot.utils import robottime
+from robot.utils.asserts import assert_equal
 from robot.utils.robottime import TimestampCache
 
 

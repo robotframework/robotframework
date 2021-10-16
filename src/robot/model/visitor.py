@@ -68,7 +68,7 @@ internally by Robot Framework itself. Some good examples are
 """
 
 
-class SuiteVisitor(object):
+class SuiteVisitor:
     """Abstract class to ease traversing through the test suite structure.
 
     See the :mod:`module level <robot.model.visitor>` documentation for more

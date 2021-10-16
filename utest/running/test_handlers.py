@@ -4,7 +4,7 @@ import re
 import sys
 import unittest
 
-from robot.running.handlers import _PythonHandler, _JavaHandler, DynamicHandler
+from robot.running.handlers import _PythonHandler, DynamicHandler
 from robot.utils.asserts import assert_equal, assert_raises_with_msg, assert_true
 from robot.running.testlibraries import TestLibrary, LibraryScope
 from robot.running.dynamicmethods import (
@@ -19,12 +19,6 @@ from ArgumentsPython import ArgumentsPython
 def _get_handler_methods(lib):
     attrs = [getattr(lib, a) for a in dir(lib) if not a.startswith('_')]
     return [a for a in attrs if inspect.ismethod(a)]
-
-def _get_java_handler_methods(lib):
-    # This hack assumes that all java handlers used start with 'a_' or 'java'
-    # -- easier than excluding 'equals' etc. otherwise
-    return [a for a in _get_handler_methods(lib)
-            if a.__name__.startswith(('a_', 'java'))]
 
 
 class LibraryMock(object):

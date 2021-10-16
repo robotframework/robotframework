@@ -7,11 +7,10 @@ import warnings
 
 from robot import api, model
 from robot.model.modelobject import ModelObject
-from robot.running.model import TestSuite, TestCase, Keyword, For, If, UserKeyword
+from robot.running.model import TestSuite, TestCase, Keyword, UserKeyword
 from robot.running import TestSuiteBuilder
 from robot.utils.asserts import (assert_equal, assert_not_equal, assert_false,
                                  assert_raises, assert_true)
-from robot.utils import unicode
 
 
 MISC_DIR = normpath(join(abspath(__file__), '..', '..', '..',

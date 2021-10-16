@@ -13,15 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import warnings
-
-from .compat import py3to2
 from .normalizing import NormalizedDict
 from .robottypes import is_string
 
 
-@py3to2
-class ConnectionCache(object):
+class ConnectionCache:
     """Cache for test libs to use with concurrent connections, processes, etc.
 
     The cache stores the registered connections (or other objects) and allows
@@ -160,8 +156,7 @@ class ConnectionCache(object):
         return index
 
 
-@py3to2
-class NoConnection(object):
+class NoConnection:
 
     def __init__(self, message):
         self.message = message

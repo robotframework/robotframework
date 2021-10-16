@@ -1,14 +1,7 @@
 import unittest
-import sys
 
 from robot.utils.asserts import assert_equal
 from robot.output.console.verbose import VerboseOutput
-
-# Overwrite IronPython's special utils.isatty with version using stream.isatty.
-# Otherwise our StreamStub.isatty would not really work.
-if sys.platform == 'cli':
-    from robot.output.console import verbose
-    verbose.isatty = lambda stream: hasattr(stream, 'isatty') and stream.isatty()
 
 
 class TestKeywordNotification(unittest.TestCase):
@@ -83,7 +76,7 @@ class TestKeywordNotification(unittest.TestCase):
         assert_equal(str(self.stream), '%sX :: D  %s' % (before, after))
 
 
-class Stub(object):
+class Stub:
 
     def __init__(self, name='X', doc='D', status='PASS', message=''):
         self.name = name
@@ -96,14 +89,14 @@ class Stub(object):
         return self.status == 'PASS'
 
 
-class MessageStub(object):
+class MessageStub:
 
     def __init__(self, message='Message', level='WARN'):
         self.message = message
         self.level = level
 
 
-class StreamStub(object):
+class StreamStub:
 
     def __init__(self, isatty=True):
         self.buffer = []

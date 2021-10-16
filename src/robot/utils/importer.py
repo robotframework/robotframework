@@ -16,25 +16,18 @@
 import os
 import sys
 import inspect
+from importlib import invalidate_caches as invalidate_import_caches
 
 from robot.errors import DataError
 
-from .encoding import system_decode, system_encode
+from .encoding import system_decode
 from .error import get_error_details
-from .platform import JYTHON, IRONPYTHON, PY2, PY3, PYPY
 from .robotpath import abspath, normpath
-from .robotinspect import is_java_init, is_init
+from .robotinspect import is_init
 from .robottypes import type_name, is_unicode
 
-if PY3:
-    from importlib import invalidate_caches as invalidate_import_caches
-else:
-    invalidate_import_caches = lambda: None
-if JYTHON:
-    from java.lang.System import getProperty
 
-
-class Importer(object):
+class Importer:
     """Utility that can import modules and classes based on names and paths.
 
     Imported classes can optionally be instantiated automatically.
@@ -58,7 +51,7 @@ class Importer(object):
 
     def import_class_or_module(self, name_or_path, instantiate_with_args=None,
                                return_source=False):
-        """Imports Python class/module or Java class based on the given name or path.
+        """Imports Python class or module based on the given name or path.
 
         :param name_or_path:
             Name or path of the module or class to import.
@@ -116,16 +109,12 @@ class Importer(object):
             candidate = os.path.join(source, '__init__.py')
         elif source.endswith('.pyc'):
             candidate = source[:-4] + '.py'
-        elif source.endswith('$py.class'):
-            candidate = source[:-9] + '.py'
-        elif source.endswith('.class'):
-            candidate = source[:-6] + '.java'
         else:
             return source
         return candidate if os.path.exists(candidate) else source
 
     def import_class_or_module_by_path(self, path, instantiate_with_args=None):
-        """Import a Python module or Java class using a file system path.
+        """Import a Python module or class using a file system path.
 
         :param path:
             Path to the module or class to import.
@@ -134,9 +123,7 @@ class Importer(object):
             using them.
 
         When importing a Python file, the path must end with :file:`.py` and the
-        actual file must also exist. When importing Java classes, the path must
-        end with :file:`.java` or :file:`.class`. The Java class file must exist
-        in both cases and in the former case also the source file must exist.
+        actual file must also exist.
 
         Use :meth:`import_class_or_module` to support importing also using name,
         not only path. See the documentation of that function for more information
@@ -163,9 +150,6 @@ class Importer(object):
             raise DataError(msg)
         msg = [msg, error.details]
         msg.extend(self._get_items_in('PYTHONPATH', sys.path))
-        if JYTHON:
-            classpath = getProperty('java.class.path').split(os.path.pathsep)
-            msg.extend(self._get_items_in('CLASSPATH', classpath))
         raise DataError('\n'.join(msg))
 
     def _get_items_in(self, type, items):
@@ -203,36 +187,21 @@ class Importer(object):
         name = imported.__name__
         if not is_init(init):
             return ArgumentSpec(name, self._type)
-        if is_java_init(init):
-            return ArgumentSpec(name, self._type, var_positional='varargs')
         return PythonArgumentParser(self._type).parse(init, name)
 
 
-class _Importer(object):
+class _Importer:
 
     def __init__(self, logger):
         self._logger = logger
 
-    def _import(self, name, fromlist=None, retry=True):
+    def _import(self, name, fromlist=None):
         if name in sys.builtin_module_names:
             raise DataError('Cannot import custom module with same name as '
                             'Python built-in module.')
         invalidate_import_caches()
         try:
-            try:
-                return __import__(name, fromlist=fromlist)
-            except ImportError:
-                # Hack to support standalone Jython. For more information, see:
-                # https://github.com/robotframework/robotframework/issues/515
-                # http://bugs.jython.org/issue1778514
-                if JYTHON and fromlist and retry:
-                    __import__('%s.%s' % (name, fromlist[0]))
-                    return self._import(name, fromlist, retry=False)
-                # IronPython loses traceback when using plain raise.
-                # https://github.com/IronLanguages/main/issues/989
-                if IRONPYTHON:
-                    exec('raise sys.exc_type, sys.exc_value, sys.exc_traceback')
-                raise
+            return __import__(name, fromlist=fromlist)
         except:
             raise DataError(*get_error_details())
 
@@ -255,7 +224,7 @@ class _Importer(object):
 
 
 class ByPathImporter(_Importer):
-    _valid_import_extensions = ('.py', '.java', '.class', '')
+    _valid_import_extensions = ('.py', '')
 
     def handles(self, path):
         return os.path.isabs(path)
@@ -286,15 +255,13 @@ class ByPathImporter(_Importer):
     def _split_path_to_module(self, path):
         module_dir, module_file = os.path.split(abspath(path))
         module_name = os.path.splitext(module_file)[0]
-        if module_name.endswith('$py'):
-            module_name = module_name[:-3]
         return module_dir, module_name
 
     def _wrong_module_imported(self, name, importing_from, importing_package):
         if name not in sys.modules:
             return False
         source = getattr(sys.modules[name], '__file__', None)
-        if not source:  # play safe (occurs at least with java based modules)
+        if not source:  # play safe
             return True
         imported_from, imported_package = self._get_import_information(source)
         return (normpath(importing_from, case_normalize=True) !=
@@ -310,10 +277,6 @@ class ByPathImporter(_Importer):
 
     def _import_by_path(self, path):
         module_dir, module_name = self._split_path_to_module(path)
-        # Other interpreters work also with Unicode paths.
-        # https://bitbucket.org/pypy/pypy/issues/3112
-        if PYPY and PY2:
-            module_dir = system_encode(module_dir)
         sys.path.insert(0, module_dir)
         try:
             return self._import(module_name)

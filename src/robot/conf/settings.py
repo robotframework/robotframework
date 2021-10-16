@@ -24,13 +24,12 @@ from robot.result.keywordremover import KeywordRemover
 from robot.result.flattenkeywordmatcher import validate_flatten_keyword
 from robot.utils import (abspath, create_destination_directory, escape,
                          format_time, get_link_path, html_escape, is_list_like,
-                         py3to2, split_args_from_name_or_path)
+                         split_args_from_name_or_path)
 
 from .gatherfailed import gather_failed_tests, gather_failed_suites
 
 
-@py3to2
-class _BaseSettings(object):
+class _BaseSettings:
     _cli_opts = {'RPA'              : ('rpa', None),
                  'Name'             : ('name', None),
                  'Doc'              : ('doc', None),

@@ -14,21 +14,15 @@
 #  limitations under the License.
 
 from inspect import getdoc, isclass
+from enum import Enum
 
-try:
-    from enum import Enum
-
-    EnumType = type(Enum)
-except ImportError:  # Standard in Py 3.4+ but can be separately installed
-    class EnumType(object):
-        pass
+from robot.utils import Sortable, unic, typeddict_types
 
 
-from robot.utils import py3to2, Sortable, unic, unicode, typeddict_types
+EnumType = type(Enum)
 
 
-@py3to2
-class DataTypeCatalog(object):
+class DataTypeCatalog:
 
     def __init__(self):
         self._enums = set()
@@ -123,7 +117,7 @@ class EnumDoc(Sortable):
     def from_Enum(cls, enum_type):
         return cls(name=enum_type.__name__,
                    doc=getdoc(enum_type) or '',
-                   members=[{'name': name, 'value': unicode(member.value)}
+                   members=[{'name': name, 'value': str(member.value)}
                             for name, member in enum_type.__members__.items()])
 
     @property

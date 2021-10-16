@@ -15,8 +15,6 @@
 
 import re
 
-from robot.utils import rstrip
-
 from .tokens import Token
 
 
@@ -46,14 +44,14 @@ class Tokenizer(object):
             splitter = self._split_from_pipes
         else:
             splitter = self._split_from_spaces
-        for value, is_data in splitter(rstrip(line)):
+        for value, is_data in splitter(line.rstrip()):
             if is_data:
                 append(Token(None, value, lineno, offset))
             elif include_separators:
                 append(Token(Token.SEPARATOR, value, lineno, offset))
             offset += len(value)
         if include_separators:
-            trailing_whitespace = line[len(rstrip(line)):]
+            trailing_whitespace = line[len(line.rstrip()):]
             append(Token(Token.EOL, trailing_whitespace, lineno, offset))
         return tokens
 
@@ -111,9 +109,7 @@ class Tokenizer(object):
         return False
 
     def _remove_trailing_empty(self, tokens):
-        # list() needed w/ IronPython, otherwise reversed() alone is enough.
-        # https://github.com/IronLanguages/ironpython2/issues/699
-        for token in reversed(list(tokens)):
+        for token in reversed(tokens):
             if not token.value and token.type != Token.EOL:
                 tokens.remove(token)
             elif token.type is None:

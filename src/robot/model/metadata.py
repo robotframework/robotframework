@@ -13,10 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import is_string, NormalizedDict, py3to2, unic
+from robot.utils import is_string, NormalizedDict, unic
 
 
-@py3to2
 class Metadata(NormalizedDict):
 
     def __init__(self, initial=None):
@@ -30,4 +29,4 @@ class Metadata(NormalizedDict):
         NormalizedDict.__setitem__(self, key, value)
 
     def __str__(self):
-        return u'{%s}' % ', '.join('%s: %s' % (k, self[k]) for k in self)
+        return '{%s}' % ', '.join('%s: %s' % (k, self[k]) for k in self)

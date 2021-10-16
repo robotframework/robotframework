@@ -27,16 +27,10 @@ from robot.version import get_full_version
 from .encoding import console_decode, system_decode
 from .filereader import FileReader
 from .misc import plural_or_not
-from .platform import PY2
-from .robottypes import is_falsy, is_integer, is_string, is_unicode
+from .robottypes import is_falsy, is_integer, is_string
 
 
 def cmdline2list(args, escaping=False):
-    if PY2 and is_unicode(args):
-        args = args.encode('UTF-8')
-        decode = lambda item: item.decode('UTF-8')
-    else:
-        decode = lambda item: item
     lexer = shlex.shlex(args, posix=True)
     if is_falsy(escaping):
         lexer.escape = ''
@@ -44,12 +38,12 @@ def cmdline2list(args, escaping=False):
     lexer.commenters = ''
     lexer.whitespace_split = True
     try:
-        return [decode(token) for token in lexer]
+        return list(lexer)
     except ValueError as err:
         raise ValueError("Parsing '%s' failed: %s" % (args, err))
 
 
-class ArgumentParser(object):
+class ArgumentParser:
     _opt_line_re = re.compile(r'''
     ^\s{1,4}      # 1-4 spaces in the beginning of the line
     ((-\S\s)*)    # all possible short options incl. spaces (group 1)
@@ -309,7 +303,7 @@ class ArgumentParser(object):
         raise FrameworkError("Option '%s' multiple times in usage" % opt)
 
 
-class ArgLimitValidator(object):
+class ArgLimitValidator:
 
     def __init__(self, arg_limits):
         self._min_args, self._max_args = self._parse_arg_limits(arg_limits)
@@ -338,7 +332,7 @@ class ArgLimitValidator(object):
         raise DataError("Expected %s, got %d." % (expectation, arg_count))
 
 
-class ArgFileParser(object):
+class ArgFileParser:
 
     def __init__(self, options):
         self._options = options

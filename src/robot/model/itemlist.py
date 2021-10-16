@@ -15,16 +15,12 @@
 
 from functools import total_ordering
 
-from robot.utils import py3to2
-
-
-# TODO: When Python 2 support is dropped, we could extend MutableSequence.
-# In Python 2 it doesn't have slots: https://bugs.python.org/issue11333
+# FIXME: Now that Python 2 support is dropped, we could extend MutableSequence.
+# In Python 2 it didn't have slots: https://bugs.python.org/issue11333
 
 
 @total_ordering
-@py3to2
-class ItemList(object):
+class ItemList:
     __slots__ = ['_item_class', '_common_attrs', '_items']
 
     def __init__(self, item_class, common_attrs=None, items=None):
@@ -112,7 +108,7 @@ class ItemList(object):
         return len(self._items)
 
     def __str__(self):
-        return u'[%s]' % ', '.join(repr(item) for item in self)
+        return '[%s]' % ', '.join(repr(item) for item in self)
 
     def __repr__(self):
         return '%s(item_class=%s, items=%s)' % (type(self).__name__,
@@ -142,10 +138,6 @@ class ItemList(object):
     def _is_compatible(self, other):
         return (self._item_class is other._item_class
                 and self._common_attrs == other._common_attrs)
-
-    def __ne__(self, other):
-        # @total_ordering doesn't add __ne__ in Python < 2.7.15
-        return not self == other
 
     def __lt__(self, other):
         if not isinstance(other, ItemList):

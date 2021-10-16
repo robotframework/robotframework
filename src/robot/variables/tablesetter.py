@@ -53,7 +53,7 @@ def VariableTableValue(value, name, error_reporter=None):
     return VariableTableValue(value, error_reporter)
 
 
-class VariableTableValueBase(object):
+class VariableTableValueBase:
 
     def __init__(self, values, error_reporter=None):
         self._values = self._format_values(values)

@@ -13,10 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import PY2
-
-
-class JsonWriter(object):
+class JsonWriter:
 
     def __init__(self, output, separator=''):
         self._writer = JsonDumper(output)
@@ -38,7 +35,7 @@ class JsonWriter(object):
             self._writer.write(self._separator)
 
 
-class JsonDumper(object):
+class JsonDumper:
 
     def __init__(self, output):
         self.write = output.write
@@ -57,7 +54,7 @@ class JsonDumper(object):
         raise ValueError('Dumping %s not supported.' % type(data))
 
 
-class _Dumper(object):
+class _Dumper:
     _handled_types = None
 
     def __init__(self, jsondumper):
@@ -72,7 +69,7 @@ class _Dumper(object):
 
 
 class StringDumper(_Dumper):
-    _handled_types = (str, unicode) if PY2 else str
+    _handled_types = str
     _search_and_replace = [('\\', '\\\\'), ('"', '\\"'), ('\t', '\\t'),
                            ('\n', '\\n'), ('\r', '\\r'), ('</', '\\x3c/')]
 
@@ -88,7 +85,7 @@ class StringDumper(_Dumper):
 
 class IntegerDumper(_Dumper):
     # Handles also bool
-    _handled_types = (int, long) if PY2 else int
+    _handled_types = int
 
     def dump(self, data, mapping):
         self._write(str(data).lower())

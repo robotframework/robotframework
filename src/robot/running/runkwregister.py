@@ -16,10 +16,10 @@
 import inspect
 import warnings
 
-from robot.utils import NormalizedDict, PY3
+from robot.utils import NormalizedDict
 
 
-class _RunKeywordRegister(object):
+class _RunKeywordRegister:
 
     def __init__(self):
         self._libs = {}
@@ -51,14 +51,8 @@ class _RunKeywordRegister(object):
         return self.get_args_to_process(libname, kwname) >= 0
 
     def _get_args_from_method(self, method):
-        if PY3:
-            raise RuntimeError('Cannot determine arguments to process '
-                               'automatically in Python 3.')
-        if inspect.ismethod(method):
-            return method.__code__.co_argcount - 1
-        elif inspect.isfunction(method):
-            return method.__code__.co_argcount
-        raise ValueError('Needs function or method')
+        raise RuntimeError('Cannot determine arguments to process '
+                           'automatically in Python 3.')
 
 
 RUN_KW_REGISTER = _RunKeywordRegister()

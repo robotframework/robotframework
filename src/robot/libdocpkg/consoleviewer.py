@@ -15,11 +15,11 @@
 
 import textwrap
 
-from robot.utils import MultiMatcher, console_encode, unicode
 from robot.errors import DataError
+from robot.utils import MultiMatcher, console_encode
 
 
-class ConsoleViewer(object):
+class ConsoleViewer:
 
     def __init__(self, libdoc):
         self._libdoc = libdoc
@@ -72,7 +72,7 @@ class ConsoleViewer(object):
     def _show_keyword(self, kw, show_name=True):
         if show_name:
             self._header(kw.name, underline='-')
-        self._data([('Arguments', '[%s]' % unicode(kw.args))])
+        self._data([('Arguments', '[%s]' % str(kw.args))])
         self._doc(kw.doc)
 
     def _header(self, name, underline):
@@ -96,7 +96,7 @@ class ConsoleViewer(object):
         return '\n'.join(textwrap.wrap(text, width=width, **config))
 
 
-class KeywordMatcher(object):
+class KeywordMatcher:
 
     def __init__(self, libdoc):
         self._keywords = libdoc.keywords

@@ -15,7 +15,7 @@
 
 import warnings
 
-from robot.utils import setter, py3to2, unicode
+from robot.utils import setter
 
 from .body import Body, BodyItem
 from .fixture import create_fixture
@@ -23,7 +23,6 @@ from .itemlist import ItemList
 from .tags import Tags
 
 
-@py3to2
 @Body.register
 class Keyword(BodyItem):
     """Base model for a single keyword.
@@ -120,7 +119,7 @@ class Keyword(BodyItem):
 
     def __str__(self):
         parts = list(self.assign) + [self.name] + list(self.args)
-        return '    '.join(unicode(p) for p in parts)
+        return '    '.join(str(p) for p in parts)
 
 
 class Keywords(ItemList):

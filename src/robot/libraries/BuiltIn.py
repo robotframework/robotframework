@@ -13,8 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import absolute_import
-
 from collections import OrderedDict
 import difflib
 import re
@@ -31,9 +29,9 @@ from robot.running.usererrorhandler import UserErrorHandler
 from robot.utils import (DotDict, escape, format_assign_message,
                          get_error_message, get_time, html_escape, is_falsy,
                          is_integer, is_list_like, is_string, is_truthy,
-                         is_unicode, IRONPYTHON, JYTHON, Matcher, normalize,
+                         is_unicode, Matcher, normalize,
                          normalize_whitespace, parse_time, prepr,
-                         plural_or_not as s, PY3, RERAISED_EXCEPTIONS,
+                         plural_or_not as s, RERAISED_EXCEPTIONS,
                          roundup, secs_to_timestr, seq2str, split_from_equals,
                          timestr_to_secs, type_name, unic)
 from robot.utils.asserts import assert_equal, assert_not_equal
@@ -42,11 +40,8 @@ from robot.variables import (evaluate_expression, is_dict_variable,
                              DictVariableTableValue, VariableTableValue)
 from robot.version import get_version
 
-if JYTHON:
-    from java.lang import String, Number
 
-
-# TODO: Clean-up registering run keyword variants in RF 3.1.
+# FIXME: Clean-up registering run keyword variants in RF 5!
 # https://github.com/robotframework/robotframework/issues/2190
 
 def run_keyword_variant(resolve):
@@ -57,7 +52,7 @@ def run_keyword_variant(resolve):
     return decorator
 
 
-class _BuiltInBase(object):
+class _BuiltInBase:
 
     @property
     def _context(self):
@@ -95,9 +90,6 @@ class _BuiltInBase(object):
         self.log('\n'.join(msg), level)
 
     def _get_type(self, arg):
-        # In IronPython type(u'x') is str. We want to report unicode anyway.
-        if is_unicode(arg):
-            return "<type 'unicode'>"
         return str(type(arg))
 
 
@@ -134,23 +126,13 @@ class _Converter(_BuiltInBase):
 
     def _convert_to_integer(self, orig, base=None):
         try:
-            item = self._handle_java_numbers(orig)
-            item, base = self._get_base(item, base)
+            item, base = self._get_base(orig, base)
             if base:
                 return int(item, self._convert_to_integer(base))
             return int(item)
         except:
             raise RuntimeError("'%s' cannot be converted to an integer: %s"
                                % (orig, get_error_message()))
-
-    def _handle_java_numbers(self, item):
-        if not JYTHON:
-            return item
-        if isinstance(item, String):
-            return unic(item)
-        if isinstance(item, Number):
-            return item.doubleValue()
-        return item
 
     def _get_base(self, item, base):
         if not is_string(item):
@@ -291,8 +273,6 @@ class _Converter(_BuiltInBase):
 
     def _convert_to_number_without_precision(self, item):
         try:
-            if JYTHON:
-                item = self._handle_java_numbers(item)
             return float(item)
         except:
             error = get_error_message()
@@ -336,7 +316,7 @@ class _Converter(_BuiltInBase):
         return bool(item)
 
     def convert_to_bytes(self, input, input_type='text'):
-        u"""Converts the given ``input`` to bytes according to the ``input_type``.
+        """Converts the given ``input`` to bytes according to the ``input_type``.
 
         Valid input types are listed below:
 
@@ -389,9 +369,6 @@ class _Converter(_BuiltInBase):
             raise RuntimeError("Creating bytes failed: %s" % get_error_message())
 
     def _get_ordinals_from_text(self, input):
-        # https://github.com/IronLanguages/main/issues/1237
-        if IRONPYTHON and isinstance(input, bytearray):
-            input = bytes(input)
         for char in input:
             ordinal = char if is_integer(char) else ord(char)
             yield self._test_ordinal(ordinal, char, 'Character')
@@ -582,16 +559,6 @@ class _Verify(_BuiltInBase):
         Examples:
         | Should Be True | $rc < 10          |
         | Should Be True | $status == 'PASS' | # Expected string must be quoted |
-
-        `Should Be True` automatically imports Python's
-        [http://docs.python.org/library/os.html|os] and
-        [http://docs.python.org/library/sys.html|sys] modules that contain
-        several useful attributes:
-
-        | Should Be True | os.linesep == '\\n'             | # Unixy   |
-        | Should Be True | os.linesep == '\\r\\n'          | # Windows |
-        | Should Be True | sys.platform == 'darwin'        | # OS X    |
-        | Should Be True | sys.platform.startswith('java') | # Jython  |
         """
         if not self._is_true(condition):
             raise AssertionError(msg or "'%s' should be true." % condition)
@@ -2002,15 +1969,6 @@ class _RunKeyword(_BuiltInBase):
         explicitly and thus cannot come from variables. If you need to use
         literal ``ELSE`` and ``ELSE IF`` strings as arguments, you can escape
         them with a backslash like ``\\ELSE`` and ``\\ELSE IF``.
-
-        Python's [http://docs.python.org/library/os.html|os] and
-        [http://docs.python.org/library/sys.html|sys] modules are
-        automatically imported when evaluating the ``condition``.
-        Attributes they contain can thus be used in the condition:
-
-        | `Run Keyword If` | os.sep == '/' | `Unix Keyword`        |
-        | ...              | ELSE IF       | sys.platform.startswith('java') | `Jython Keyword` |
-        | ...              | ELSE          | `Windows Keyword`     |
         """
         args, branch = self._split_elif_or_else_branch(args)
         if self._is_true(condition):
@@ -2911,7 +2869,7 @@ class _Misc(_BuiltInBase):
         See `Log Many` if you want to log multiple messages in one go, and
         `Log To Console` if you only want to write to the console.
         """
-        # TODO: Deprecate `repr` in RF 3.2 or latest in RF 3.3.
+        # FIXME: Deprecate `repr` in RF 5.
         if repr:
             formatter = prepr
         else:
@@ -2925,7 +2883,7 @@ class _Misc(_BuiltInBase):
         try:
             return {'str': unic,
                     'repr': prepr,
-                    'ascii': ascii if PY3 else repr}[formatter.lower()]
+                    'ascii': ascii}[formatter.lower()]
         except KeyError:
             raise ValueError("Invalid formatter '%s'. Available "
                              "'str', 'repr' and 'ascii'." % formatter)
@@ -3048,8 +3006,7 @@ class _Misc(_BuiltInBase):
 
         Examples:
         | Import Library | MyLibrary |
-        | Import Library | ${CURDIR}/../Library.py | arg1 | named=arg2 |
-        | Import Library | ${LIBRARIES}/Lib.java | arg | WITH NAME | JavaLib |
+        | Import Library | ${CURDIR}/Lib.py | arg1 | named=arg2 | WITH NAME | Custom |
         """
         args, alias = self._split_alias(args)
         try:

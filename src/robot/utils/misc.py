@@ -13,12 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import division
-
 from operator import add, sub
 import re
 
-from .platform import PY2
 from .robottypes import is_integer
 from .unic import unic
 
@@ -29,9 +26,6 @@ def roundup(number, ndigits=0, return_type=None):
     Numbers equally close to a certain precision are always rounded away from
     zero. By default return value is float when ``ndigits`` is positive and
     int otherwise, but that can be controlled with ``return_type``.
-
-    With the built-in ``round()`` rounding equally close numbers as well as
-    the return type depends on the Python version.
     """
     result = _roundup(number, ndigits)
     if not return_type:
@@ -39,18 +33,18 @@ def roundup(number, ndigits=0, return_type=None):
     return return_type(result)
 
 
-# Python 2 rounds half away from zero (as taught in school) but Python 3
-# uses "bankers' rounding" that rounds half towards the even number. We want
-# consistent rounding and expect Python 2 style to be more familiar for users.
-if PY2:
-    _roundup = round
-else:
-    def _roundup(number, ndigits):
-        precision = 10 ** (-1 * ndigits)
-        if number % (0.5 * precision) == 0 and number % precision != 0:
-            operator = add if number > 0 else sub
-            number = operator(number, 0.1 * precision)
-        return round(number, ndigits)
+# Python 3 uses "bankers' rounding" that rounds half towards the even number.
+# We round always up partly because that's more familiar algorithm for users
+# but mainly because Python 2 behaved that way and we wanted consistent rounding
+# behavior. This could be changed and the whole `roundup` removed not that we
+# don't need to care about Python 2 anymore.
+# TODO: Check could `roundup` be removed and `round` used instead.
+def _roundup(number, ndigits):
+    precision = 10 ** (-1 * ndigits)
+    if number % (0.5 * precision) == 0 and number % precision != 0:
+        operator = add if number > 0 else sub
+        number = operator(number, 0.1 * precision)
+    return round(number, ndigits)
 
 
 def printable_name(string, code_style=False):
@@ -136,3 +130,15 @@ def test_or_task(text, rpa=False):
         upper = [c.isupper() for c in test]
         return ''.join(c.upper() if up else c for c, up in zip('task', upper))
     return re.sub('{(test)}', replace, text, flags=re.IGNORECASE)
+
+
+def isatty(stream):
+    # first check if buffer was detached
+    if hasattr(stream, 'buffer') and stream.buffer is None:
+        return False
+    if not hasattr(stream, 'isatty'):
+        return False
+    try:
+        return stream.isatty()
+    except ValueError:    # Occurs if file is closed.
+        return False

@@ -13,74 +13,56 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import print_function
-
 import os
 import subprocess
 import sys
-if sys.platform.startswith('java'):
-    from java.awt import Toolkit, Robot, Rectangle
-    from javax.imageio import ImageIO
-    from java.io import File
-elif sys.platform == 'cli':
-    import clr
-    clr.AddReference('System.Windows.Forms')
-    clr.AddReference('System.Drawing')
-    from System.Drawing import Bitmap, Graphics, Imaging
-    from System.Windows.Forms import Screen
-else:
-    try:
-        import wx
-    except ImportError:
-        wx = None
-    try:
-        from gtk import gdk
-    except ImportError:
-        gdk = None
-    try:
-        from PIL import ImageGrab  # apparently available only on Windows
-    except ImportError:
-        ImageGrab = None
+
+try:
+    import wx
+except ImportError:
+    wx = None
+try:
+    from gtk import gdk
+except ImportError:
+    gdk = None
+try:
+    from PIL import ImageGrab  # apparently available only on Windows
+except ImportError:
+    ImageGrab = None
 
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
 from robot.version import get_version
-from robot.utils import abspath, get_error_message, get_link_path, py3to2
+from robot.utils import abspath, get_error_message, get_link_path
 
 
-class Screenshot(object):
-    """Test library for taking screenshots on the machine where tests are run.
+class Screenshot:
+    """Library for taking screenshots on the machine where tests are executed.
 
-    Notice that successfully taking screenshots requires tests to be run with
-    a physical or virtual display.
+    Taking the actual screenshot requires a suitable tool or module that may
+    need to be installed separately. Taking screenshots also requires tests
+    to be run with a physical or virtual display.
 
     == Table of contents ==
 
     %TOC%
 
-    = Using with Python =
+    = Supported screenshot taking tools and modules =
 
-    How screenshots are taken when using Python depends on the operating
-    system. On OSX screenshots are taken using the built-in ``screencapture``
-    utility. On other operating systems you need to have one of the following
-    tools or Python modules installed. You can specify the tool/module to use
-    when `importing` the library. If no tool or module is specified, the first
+    How screenshots are taken depends on the operating system. On OSX
+    screenshots are taken using the built-in ``screencapture`` utility. On
+    other operating systems you need to have one of the following tools or
+    Python modules installed. You can specify the tool/module to use when
+    `importing` the library. If no tool or module is specified, the first
     one found will be used.
 
-    - wxPython :: http://wxpython.org :: Required also by RIDE so many Robot
-      Framework users already have this module installed.
+    - wxPython :: http://wxpython.org :: Generic Python GUI toolkit.
     - PyGTK :: http://pygtk.org :: This module is available by default on most
       Linux distributions.
     - Pillow :: http://python-pillow.github.io ::
       Only works on Windows. Also the original PIL package is supported.
     - Scrot :: http://en.wikipedia.org/wiki/Scrot :: Not used on Windows.
       Install with ``apt-get install scrot`` or similar.
-
-    = Using with Jython and IronPython =
-
-    With Jython and IronPython this library uses APIs provided by JVM and .NET
-    platforms, respectively. These APIs are always available and thus no
-    external modules are needed.
 
     = Where screenshots are saved =
 
@@ -112,12 +94,11 @@ class Screenshot(object):
         `Set Screenshot Directory` keyword.
 
         ``screenshot_module`` specifies the module or tool to use when using
-        this library on Python outside OSX. Possible values are ``wxPython``,
+        this library outside OSX. Possible values are ``wxPython``,
         ``PyGTK``, ``PIL`` and ``scrot``, case-insensitively. If no value is
-        given, the first module/tool found is used in that order. See `Using
-        with Python` for more information.
+        given, the first module/tool found is used in that order.
 
-        Examples (use only one of these):
+        Examples:
         | =Setting= |  =Value=   |  =Value=   |
         | Library   | Screenshot |            |
         | Library   | Screenshot | ${TEMPDIR} |
@@ -243,8 +224,7 @@ class Screenshot(object):
                     % (link, path), html=True)
 
 
-@py3to2
-class ScreenshotTaker(object):
+class ScreenshotTaker:
 
     def __init__(self, module_name=None):
         self._screenshot = self._get_screenshot_taker(module_name)
@@ -276,10 +256,6 @@ class ScreenshotTaker(object):
             return True
 
     def _get_screenshot_taker(self, module_name=None):
-        if sys.platform.startswith('java'):
-            return self._java_screenshot
-        if sys.platform == 'cli':
-            return self._cli_screenshot
         if sys.platform == 'darwin':
             return self._osx_screenshot
         if module_name:
@@ -307,22 +283,6 @@ class ScreenshotTaker(object):
                                          (True, self._no_screenshot)]:
             if module:
                 return screenshot_taker
-
-    def _java_screenshot(self, path):
-        size = Toolkit.getDefaultToolkit().getScreenSize()
-        rectangle = Rectangle(0, 0, size.width, size.height)
-        image = Robot().createScreenCapture(rectangle)
-        ImageIO.write(image, 'jpg', File(path))
-
-    def _cli_screenshot(self, path):
-        bmp = Bitmap(Screen.PrimaryScreen.Bounds.Width,
-                     Screen.PrimaryScreen.Bounds.Height)
-        graphics = Graphics.FromImage(bmp)
-        try:
-            graphics.CopyFromScreen(0, 0, 0, 0, bmp.Size)
-        finally:
-            graphics.Dispose()
-            bmp.Save(path, Imaging.ImageFormat.Jpeg)
 
     def _osx_screenshot(self, path):
         if self._call('screencapture', '-t', 'jpg', path) != 0:

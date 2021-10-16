@@ -13,7 +13,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-try:
-    from .jartemplate import HtmlTemplate
-except ImportError:
-    from .normaltemplate import HtmlTemplate
+import os
+from os.path import abspath, dirname, join, normpath
+
+
+class HtmlTemplate(object):
+    _base_dir = join(dirname(abspath(__file__)), '..', 'htmldata')
+
+    def __init__(self, filename):
+        self._path = normpath(join(self._base_dir, filename.replace('/', os.sep)))
+
+    def __iter__(self):
+        with open(self._path, encoding='UTF-8') as file:
+            for line in file:
+                yield line.rstrip()

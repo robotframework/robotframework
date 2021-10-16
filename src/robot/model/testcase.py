@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import py3to2, setter
+from robot.utils import setter
 
 from .body import Body
 from .fixture import create_fixture
@@ -23,7 +23,6 @@ from .modelobject import ModelObject
 from .tags import Tags
 
 
-@py3to2
 class TestCase(ModelObject):
     """Base model for a single test case.
 

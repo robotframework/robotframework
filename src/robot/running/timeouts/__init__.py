@@ -15,21 +15,15 @@
 
 import time
 
-from robot.utils import (IRONPYTHON, JYTHON, py3to2, Sortable, secs_to_timestr,
-                         timestr_to_secs, WINDOWS)
+from robot.utils import Sortable, secs_to_timestr, timestr_to_secs, WINDOWS
 from robot.errors import TimeoutError, DataError, FrameworkError
 
-if JYTHON:
-    from .jython import Timeout
-elif IRONPYTHON:
-    from .ironpython import Timeout
-elif WINDOWS:
+if WINDOWS:
     from .windows import Timeout
 else:
     from .posix import Timeout
 
 
-@py3to2
 class _Timeout(Sortable):
 
     def __init__(self, timeout=None, variables=None):
@@ -53,8 +47,7 @@ class _Timeout(Sortable):
             self.string = secs_to_timestr(self.secs)
         except (DataError, ValueError) as err:
             self.secs = 0.000001  # to make timeout active
-            self.error = (u'Setting %s timeout failed: %s'
-                          % (self.type.lower(), err))
+            self.error = ('Setting %s timeout failed: %s' % (self.type.lower(), err))
 
     def start(self):
         if self.secs > 0:
@@ -108,9 +101,6 @@ class _Timeout(Sortable):
 
     def __eq__(self, other):
         return self is other
-
-    def __ne__(self, other):
-        return not self == other
 
     def __hash__(self):
         return id(self)

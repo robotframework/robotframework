@@ -3,7 +3,7 @@ import sys
 import re
 
 from robot.utils.asserts import assert_equal, assert_true, assert_raises
-from robot.utils.error import get_error_details, get_error_message, PythonErrorDetails
+from robot.utils.error import get_error_details, get_error_message, ErrorDetails
 
 
 class TestGetErrorDetails(unittest.TestCase):
@@ -73,7 +73,7 @@ Traceback \(most recent call last\):
         except Exception:
             type, value, tb = sys.exc_info()
             # first tb entry originates from this file and must be excluded
-            traceback = PythonErrorDetails(type, value, tb.tb_next).traceback
+            traceback = ErrorDetails((type, value, tb.tb_next)).traceback
         else:
             raise AssertionError
         if not re.match(expected, traceback):

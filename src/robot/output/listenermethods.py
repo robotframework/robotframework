@@ -14,14 +14,13 @@
 #  limitations under the License.
 
 from robot.errors import TimeoutError
-from robot.utils import get_error_details, py3to2
+from robot.utils import get_error_details
 
 from .listenerarguments import ListenerArguments
 from .logger import LOGGER
 
 
-@py3to2
-class ListenerMethods(object):
+class ListenerMethods:
 
     def __init__(self, method_name, listeners):
         self._methods = []
@@ -45,7 +44,7 @@ class ListenerMethods(object):
         return bool(self._methods)
 
 
-class LibraryListenerMethods(object):
+class LibraryListenerMethods:
 
     def __init__(self, method_name):
         self._method_stack = []
@@ -85,7 +84,7 @@ class LibraryListenerMethods(object):
         return methods
 
 
-class ListenerMethod(object):
+class ListenerMethod:
     # Flag to avoid recursive listener calls.
     called = False
 

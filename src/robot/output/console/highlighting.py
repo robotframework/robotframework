@@ -23,14 +23,14 @@ import os
 import sys
 try:
     from ctypes import windll, Structure, c_short, c_ushort, byref
-except ImportError:  # Not on Windows or using Jython
+except ImportError:  # Not on Windows
     windll = None
 
 from robot.errors import DataError
 from robot.utils import console_encode, isatty, WINDOWS
 
 
-class HighlightingStream(object):
+class HighlightingStream:
 
     def __init__(self, stream, colors='AUTO'):
         self.stream = stream
@@ -116,7 +116,7 @@ def Highlighter(stream):
     return DosHighlighter(stream) if windll else NoHighlighting(stream)
 
 
-class AnsiHighlighter(object):
+class AnsiHighlighter:
     _ANSI_GREEN = '\033[32m'
     _ANSI_RED = '\033[31m'
     _ANSI_YELLOW = '\033[33m'
@@ -147,7 +147,7 @@ class NoHighlighting(AnsiHighlighter):
         pass
 
 
-class DosHighlighter(object):
+class DosHighlighter:
     _FOREGROUND_GREEN = 0x2
     _FOREGROUND_RED = 0x4
     _FOREGROUND_YELLOW = 0x6

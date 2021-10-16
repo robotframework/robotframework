@@ -13,13 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import html_escape, py3to2
+from robot.utils import html_escape
 
 from .body import BodyItem
 from .itemlist import ItemList
 
 
-@py3to2
 class Message(BodyItem):
     """A message created during the test execution.
 

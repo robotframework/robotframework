@@ -13,13 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import setter, py3to2
+from robot.utils import setter
 
 from .body import Body, BodyItem, IfBranches
 from .keyword import Keywords
 
 
-@py3to2
 @Body.register
 class For(BodyItem):
     type = BodyItem.FOR
@@ -53,7 +52,7 @@ class For(BodyItem):
     def __str__(self):
         variables = '    '.join(self.variables)
         values = '    '.join(self.values)
-        return u'FOR    %s    %s    %s' % (variables, self.flavor, values)
+        return 'FOR    %s    %s    %s' % (variables, self.flavor, values)
 
 
 @Body.register
@@ -80,7 +79,6 @@ class If(BodyItem):
         visitor.visit_if(self)
 
 
-@py3to2
 @IfBranches.register
 class IfBranch(BodyItem):
     body_class = Body
@@ -109,10 +107,10 @@ class IfBranch(BodyItem):
 
     def __str__(self):
         if self.type == self.IF:
-            return u'IF    %s' % self.condition
+            return 'IF    %s' % self.condition
         if self.type == self.ELSE_IF:
-            return u'ELSE IF    %s' % self.condition
-        return u'ELSE'
+            return 'ELSE IF    %s' % self.condition
+        return 'ELSE'
 
     def visit(self, visitor):
         visitor.visit_if_branch(self)

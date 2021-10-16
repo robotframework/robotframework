@@ -13,21 +13,19 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from io import StringIO
 import sys
-from robot.utils import StringIO
 
 from robot.output import LOGGER
-from robot.utils import console_decode, console_encode, JYTHON
+from robot.utils import console_decode, console_encode
 
 
-class OutputCapturer(object):
+class OutputCapturer:
 
     def __init__(self, library_import=False):
         self._library_import = library_import
         self._python_out = PythonCapturer(stdout=True)
         self._python_err = PythonCapturer(stdout=False)
-        self._java_out = JavaCapturer(stdout=True)
-        self._java_err = JavaCapturer(stdout=False)
 
     def __enter__(self):
         if self._library_import:
@@ -49,12 +47,12 @@ class OutputCapturer(object):
             sys.__stderr__.write(console_encode(stderr, stream=sys.__stderr__))
 
     def _release(self):
-        stdout = self._python_out.release() + self._java_out.release()
-        stderr = self._python_err.release() + self._java_err.release()
+        stdout = self._python_out.release()
+        stderr = self._python_err.release()
         return stdout, stderr
 
 
-class PythonCapturer(object):
+class PythonCapturer:
 
     def __init__(self, stdout=True):
         if stdout:
@@ -94,44 +92,7 @@ class PythonCapturer(object):
         # Avoid ValueError at program exit when logging module tries to call
         # methods of streams it has intercepted that are already closed.
         # Which methods are called, and does logging silence possible errors,
-        # depends on Python/Jython version. For related discussion see
+        # depends on Python version. For related discussion see
         # http://bugs.python.org/issue6333
         stream.write = lambda s: None
         stream.flush = lambda: None
-
-
-if not JYTHON:
-
-    class JavaCapturer(object):
-
-        def __init__(self, stdout=True):
-            pass
-
-        def release(self):
-            return u''
-
-else:
-
-    from java.io import ByteArrayOutputStream, PrintStream
-    from java.lang import System
-
-    class JavaCapturer(object):
-
-        def __init__(self, stdout=True):
-            if stdout:
-                self._original = System.out
-                self._set_stream = System.setOut
-            else:
-                self._original = System.err
-                self._set_stream = System.setErr
-            self._bytes = ByteArrayOutputStream()
-            self._stream = PrintStream(self._bytes, False, 'UTF-8')
-            self._set_stream(self._stream)
-
-        def release(self):
-            # Original stream must be restored before closing the current
-            self._set_stream(self._original)
-            self._stream.close()
-            output = self._bytes.toString('UTF-8')
-            self._bytes.reset()
-            return output

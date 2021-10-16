@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import py3to2, setter
+from robot.utils import setter
 
 from .configurer import SuiteConfigurer
 from .filter import Filter, EmptySuiteRemover
@@ -26,7 +26,6 @@ from .tagsetter import TagSetter
 from .testcase import TestCase, TestCases
 
 
-@py3to2
 class TestSuite(ModelObject):
     """Base model for single suite.
 

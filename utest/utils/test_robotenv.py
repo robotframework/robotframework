@@ -2,7 +2,7 @@ import unittest
 import os
 
 from robot.utils.asserts import assert_equal, assert_not_none, assert_none, assert_true
-from robot.utils import get_env_var, set_env_var, del_env_var, get_env_vars, unicode
+from robot.utils import get_env_var, set_env_var, del_env_var, get_env_vars
 
 
 TEST_VAR = 'TeST_EnV_vAR'
@@ -49,7 +49,7 @@ class TestRobotEnv(unittest.TestCase):
         assert_equal(vars[self._upper_on_windows(TEST_VAR)], TEST_VAL)
         assert_equal(vars[self._upper_on_windows(NON_ASCII_VAR)], NON_ASCII_VAL)
         for k, v in vars.items():
-            assert_true(isinstance(k, unicode) and isinstance(v, unicode))
+            assert_true(isinstance(k, str) and isinstance(v, str))
 
     def _upper_on_windows(self, name):
         return name if os.sep == '/' else name.upper()

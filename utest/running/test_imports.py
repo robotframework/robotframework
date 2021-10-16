@@ -1,7 +1,7 @@
+from io import StringIO
 import unittest
 
 from robot.running import TestSuite
-from robot.utils import StringIO
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
 
@@ -10,11 +10,13 @@ def run(suite, **config):
                        stdout=StringIO(), stderr=StringIO(), **config)
     return result.suite
 
+
 def assert_suite(suite, name, status, message='', tests=1):
     assert_equal(suite.name, name)
     assert_equal(suite.status, status)
     assert_equal(suite.message, message)
     assert_equal(len(suite.tests), tests)
+
 
 def assert_test(test, name, status, tags=(), msg=''):
     assert_equal(test.name, name)

@@ -16,7 +16,7 @@
 import os.path
 from datetime import datetime
 
-from robot.utils import WINDOWS, XmlWriter, unicode
+from robot.utils import WINDOWS, XmlWriter
 
 
 class LibdocXmlWriter(object):
@@ -91,11 +91,11 @@ class LibdocXmlWriter(object):
         writer.end('tags')
 
     def _write_arguments(self, kw, writer):
-        writer.start('arguments', {'repr': unicode(kw.args)})
+        writer.start('arguments', {'repr': str(kw.args)})
         for arg in kw.args:
             writer.start('arg', {'kind': arg.kind,
                                  'required': 'true' if arg.required else 'false',
-                                 'repr': unicode(arg)})
+                                 'repr': str(arg)})
             if arg.name:
                 writer.element('name', arg.name)
             for type_repr in arg.types_reprs:

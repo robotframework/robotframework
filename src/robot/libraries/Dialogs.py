@@ -16,27 +16,20 @@
 """A test library providing dialogs for interacting with users.
 
 ``Dialogs`` is Robot Framework's standard library that provides means
-for pausing the test execution and getting input from users. The
-dialogs are slightly different depending on whether tests are run on
-Python, IronPython or Jython but they provide the same functionality.
+for pausing the test execution and getting input from users.
 
 Long lines in the provided messages are wrapped automatically. If you want
 to wrap lines manually, you can add newlines using the ``\\n`` character
 sequence.
 
-The library has a known limitation that it cannot be used with timeouts
-on Python.
+The library has a known limitation that it cannot be used with timeouts.
 """
 
 from robot.version import get_version
-from robot.utils import IRONPYTHON, JYTHON, is_truthy
+from robot.utils import is_truthy
 
-if JYTHON:
-    from .dialogs_jy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog, MultipleSelectionDialog
-elif IRONPYTHON:
-    from .dialogs_ipy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog, MultipleSelectionDialog
-else:
-    from .dialogs_py import MessageDialog, PassFailDialog, InputDialog, SelectionDialog, MultipleSelectionDialog
+from .dialogs_py import (InputDialog, MessageDialog, MultipleSelectionDialog,
+                         PassFailDialog, SelectionDialog)
 
 
 __version__ = get_version()

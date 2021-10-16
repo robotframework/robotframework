@@ -1,14 +1,14 @@
 import sys
 import unittest
 from glob import glob
+from io import StringIO
 from os import remove
 from os.path import exists
 
-from robot.utils import StringIO, is_integer
+from robot.utils import is_integer
 
 
 class RunningTestCase(unittest.TestCase):
-
     remove_files = []
 
     def setUp(self):

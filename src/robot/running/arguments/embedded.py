@@ -16,12 +16,11 @@
 import re
 
 from robot.errors import DataError
-from robot.utils import get_error_message, py3to2
+from robot.utils import get_error_message
 from robot.variables import VariableIterator
 
 
-@py3to2
-class EmbeddedArguments(object):
+class EmbeddedArguments:
 
     def __init__(self, name):
         if '${' in name:
@@ -33,7 +32,7 @@ class EmbeddedArguments(object):
         return self.name is not None
 
 
-class EmbeddedArgumentParser(object):
+class EmbeddedArgumentParser:
     _regexp_extension = re.compile(r'(?<!\\)\(\?.+\)')
     _regexp_group_start = re.compile(r'(?<!\\)\((.*?)\)')
     _escaped_curly = re.compile(r'(\\+)([{}])')

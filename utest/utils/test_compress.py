@@ -1,16 +1,18 @@
+import base64
 import unittest
 import zlib
 
-from robot.utils.compress import compress_text, _compress
+from robot.utils.compress import compress_text
 from robot.utils.asserts import assert_equal, assert_true
 
 
 class TestCompress(unittest.TestCase):
 
     def _test(self, text):
-        assert_true(isinstance(compress_text(text), str))
-        text = text.encode('UTF-8')
-        assert_equal(_compress(text), zlib.compress(text, 9))
+        compressed = compress_text(text)
+        assert_true(isinstance(compressed, str))
+        uncompressed = zlib.decompress(base64.b64decode(compressed)).decode('UTF-8')
+        assert_equal(uncompressed, text)
 
     def test_empty_string(self):
         self._test('')
@@ -20,8 +22,8 @@ class TestCompress(unittest.TestCase):
                    'Rsakjaf AdfSasda  asldjfaerew lasldjf awlkr aslk sd rl')
 
     def test_non_ascii(self):
-        self._test(u'hyv\xe4')
-        self._test(u'\u4e2d\u6587')
+        self._test('hyv\xe4')
+        self._test('\u4e2d\u6587')
 
 
 if __name__ == '__main__':

@@ -13,7 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import ctypes
 import os
 import subprocess
 import time
@@ -21,15 +20,14 @@ from tempfile import TemporaryFile
 import signal as signal_module
 
 from robot.utils import (abspath, cmdline2list, ConnectionCache, console_decode,
-                         console_encode, IRONPYTHON, JYTHON, is_list_like, is_string,
-                         is_unicode, is_truthy, NormalizedDict, PY2, py3to2,
-                         secs_to_timestr, system_decode, system_encode, timestr_to_secs,
-                         WINDOWS)
+                         console_encode, is_list_like, is_string, is_unicode,
+                         is_truthy, NormalizedDict, secs_to_timestr, system_decode,
+                         system_encode, timestr_to_secs, WINDOWS)
 from robot.version import get_version
 from robot.api import logger
 
 
-class Process(object):
+class Process:
     """Robot Framework test library for running processes.
 
     This library utilizes Python's
@@ -392,8 +390,8 @@ class Process(object):
     def _log_start(self, command, config):
         if is_list_like(command):
             command = self.join_command_line(command)
-        logger.info(u'Starting process:\n%s' % system_decode(command))
-        logger.debug(u'Process configuration:\n%s' % config)
+        logger.info('Starting process:\n%s' % system_decode(command))
+        logger.debug('Process configuration:\n%s' % config)
 
     def is_process_running(self, handle=None):
         """Checks is the process running or not.
@@ -569,12 +567,7 @@ class Process(object):
         if hasattr(os, 'killpg'):
             os.killpg(process.pid, signal_module.SIGTERM)
         elif hasattr(signal_module, 'CTRL_BREAK_EVENT'):
-            if IRONPYTHON:
-                # https://ironpython.codeplex.com/workitem/35020
-                ctypes.windll.kernel32.GenerateConsoleCtrlEvent(
-                    signal_module.CTRL_BREAK_EVENT, process.pid)
-            else:
-                process.send_signal(signal_module.CTRL_BREAK_EVENT)
+            process.send_signal(signal_module.CTRL_BREAK_EVENT)
         else:
             process.terminate()
         if not self._process_is_stopped(process, self.TERMINATE_TIMEOUT):
@@ -782,7 +775,7 @@ class Process(object):
         return subprocess.list2cmdline(args)
 
 
-class ExecutionResult(object):
+class ExecutionResult:
 
     def __init__(self, process, stdout, stderr, stdin=None, rc=None,
                  output_encoding=None):
@@ -838,7 +831,7 @@ class ExecutionResult(object):
         return stream and not stream.closed
 
     def _format_output(self, output):
-        output = console_decode(output, self._output_encoding, force=True)
+        output = console_decode(output, self._output_encoding)
         output = output.replace('\r\n', '\n')
         if output.endswith('\n'):
             output = output[:-1]
@@ -862,8 +855,7 @@ class ExecutionResult(object):
         return '<result object with rc %d>' % self.rc
 
 
-@py3to2
-class ProcessConfiguration(object):
+class ProcessConfiguration:
 
     def __init__(self, cwd=None, shell=False, stdout=None, stderr=None, stdin='PIPE',
                  output_encoding='CONSOLE', alias=None, env=None, **rest):
@@ -958,8 +950,7 @@ class ProcessConfiguration(object):
         # https://github.com/robotframework/robotframework/issues/2794
         if not WINDOWS:
             config['close_fds'] = True
-        if not JYTHON:
-            self._add_process_group_config(config)
+        self._add_process_group_config(config)
         return config
 
     def _add_process_group_config(self, config):

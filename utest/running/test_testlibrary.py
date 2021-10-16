@@ -27,7 +27,6 @@ example_keywords = [ ( "Log", ("msg",) ),
                      ( "L O G M A N Y", ("m1","m2","m3","m4","m5") ),
                      ( "equals", ("1","1") ),
                      ( "equals", ("1","2","failed") ), ]
-java_keywords = [ ( "print", ("msg",) ) ]
 
 
 class TestLibraryTypes(unittest.TestCase):

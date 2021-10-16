@@ -17,9 +17,7 @@ import re
 import fnmatch
 from functools import partial
 
-from .compat import py3to2
 from .normalizing import normalize
-from .platform import IRONPYTHON, PY3
 from .robottypes import is_string
 
 
@@ -29,13 +27,9 @@ def eq(str1, str2, ignore=(), caseless=True, spaceless=True):
     return str1 == str2
 
 
-@py3to2
-class Matcher(object):
+class Matcher:
 
-    def __init__(self, pattern, ignore=(), caseless=True, spaceless=True,
-                 regexp=False):
-        if PY3 and isinstance(pattern, bytes):
-            raise TypeError('Matching bytes is not supported on Python 3.')
+    def __init__(self, pattern, ignore=(), caseless=True, spaceless=True, regexp=False):
         self.pattern = pattern
         self._normalize = partial(normalize, ignore=ignore, caseless=caseless,
                                   spaceless=spaceless)
@@ -44,9 +38,6 @@ class Matcher(object):
     def _compile(self, pattern, regexp=False):
         if not regexp:
             pattern = fnmatch.translate(pattern)
-            # https://github.com/IronLanguages/ironpython2/issues/515
-            if IRONPYTHON and "\\'" in pattern:
-                pattern = pattern.replace("\\'", "'")
         return re.compile(pattern, re.DOTALL)
 
     def match(self, string):
@@ -59,7 +50,7 @@ class Matcher(object):
         return bool(self._normalize(self.pattern))
 
 
-class MultiMatcher(object):
+class MultiMatcher:
 
     def __init__(self, patterns=None, ignore=(), caseless=True, spaceless=True,
                  match_if_no_patterns=False, regexp=False):

@@ -18,7 +18,7 @@ from operator import eq, lt, le, gt, ge
 from .robottypes import type_name
 
 
-class Sortable(object):
+class Sortable:
     """Base class for sorting based self._sort_key"""
 
     _sort_key = NotImplemented
@@ -33,9 +33,6 @@ class Sortable(object):
 
     def __eq__(self, other):
         return self.__test(eq, other, require_sortable=False)
-
-    def __ne__(self, other):
-        return not self == other
 
     def __lt__(self, other):
         return self.__test(lt, other)

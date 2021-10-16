@@ -13,10 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from collections.abc import MutableMapping
 import re
 
-from .platform import IRONPYTHON, JYTHON, PY_VERSION, PY3
-from .robottypes import is_dict_like, is_unicode, MutableMapping
+from .robottypes import is_dict_like, is_unicode
 
 
 def normalize(string, ignore=(), caseless=True, spaceless=True):
@@ -25,18 +25,15 @@ def normalize(string, ignore=(), caseless=True, spaceless=True):
     By default string is turned to lower case and all whitespace is removed.
     Additional characters can be removed by giving them in ``ignore`` list.
     """
-    empty = u'' if is_unicode(string) else b''
-    if PY3 and isinstance(ignore, bytes):
+    empty = '' if is_unicode(string) else b''
+    if isinstance(ignore, bytes):
         # Iterating bytes in Python3 yields integers.
         ignore = [bytes([i]) for i in ignore]
     if spaceless:
-        # https://bugs.jython.org/issue2772
-        if JYTHON and PY_VERSION < (2, 7, 2):
-            string = normalize_whitespace(string)
         string = empty.join(string.split())
     if caseless:
-        string = lower(string)
-        ignore = [lower(i) for i in ignore]
+        string = string.lower()
+        ignore = [i.lower() for i in ignore]
     # both if statements below enhance performance a little
     if ignore:
         for ign in ignore:
@@ -47,15 +44,6 @@ def normalize(string, ignore=(), caseless=True, spaceless=True):
 
 def normalize_whitespace(string):
     return re.sub(r'\s', ' ', string, flags=re.UNICODE)
-
-
-# http://ironpython.codeplex.com/workitem/33133
-if IRONPYTHON and PY_VERSION < (2, 7, 5):
-    def lower(string):
-        return ('A' + string).lower()[1:]
-else:
-    def lower(string):
-        return string.lower()
 
 
 class NormalizedDict(MutableMapping):
@@ -109,9 +97,6 @@ class NormalizedDict(MutableMapping):
         if not isinstance(other, NormalizedDict):
             other = NormalizedDict(other)
         return self._data == other._data
-
-    def __ne__(self, other):
-        return not self == other
 
     def copy(self):
         copy = NormalizedDict()

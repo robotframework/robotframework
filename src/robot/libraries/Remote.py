@@ -13,35 +13,21 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import absolute_import
-
 from contextlib import contextmanager
-from functools import wraps
 
-try:
-    import httplib
-    import xmlrpclib
-except ImportError:  # Py3
-    import http.client as httplib
-    import xmlrpc.client as xmlrpclib
+import http.client
 import re
 import socket
 import sys
-import time
-
-try:
-    from xml.parsers.expat import ExpatError
-except ImportError:   # No expat in IronPython 2.7
-    class ExpatError(Exception):
-        pass
+import xmlrpc.client
+from xml.parsers.expat import ExpatError
 
 from robot.errors import RemoteError
 from robot.utils import (is_bytes, is_dict_like, is_list_like, is_number,
-                         is_string, timestr_to_secs, unic, DotDict,
-                         IRONPYTHON, JYTHON, PY2)
+                         is_string, timestr_to_secs, unic, DotDict)
 
 
-class Remote(object):
+class Remote:
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
 
     def __init__(self, uri='http://127.0.0.1:8270', timeout=None):
@@ -121,7 +107,7 @@ class Remote(object):
         return result.return_
 
 
-class ArgumentCoercer(object):
+class ArgumentCoercer:
     binary = re.compile('[\x00-\x08\x0B\x0C\x0E-\x1F]')
     non_ascii = re.compile('[\x80-\xff]')
 
@@ -151,13 +137,10 @@ class ArgumentCoercer(object):
                 arg = arg.encode('latin-1')
         except UnicodeError:
             raise ValueError('Cannot represent %r as binary.' % arg)
-        return xmlrpclib.Binary(arg)
+        return xmlrpc.client.Binary(arg)
 
     def _handle_bytes(self, arg):
-        # http://bugs.jython.org/issue2429
-        if IRONPYTHON or JYTHON:
-            arg = str(arg)
-        return xmlrpclib.Binary(arg)
+        return xmlrpc.client.Binary(arg)
 
     def _pass_through(self, arg):
         return arg
@@ -178,18 +161,11 @@ class ArgumentCoercer(object):
         return self._handle_string(item)
 
     def _validate_key(self, key):
-        if isinstance(key, xmlrpclib.Binary):
-            raise ValueError('Dictionary keys cannot be binary. Got %s%r.'
-                             % ('b' if PY2 else '', key.data))
-        if IRONPYTHON:
-            try:
-                key.encode('ASCII')
-            except UnicodeError:
-                raise ValueError('Dictionary keys cannot contain non-ASCII '
-                                 'characters on IronPython. Got %r.' % key)
+        if isinstance(key, xmlrpc.client.Binary):
+            raise ValueError('Dictionary keys cannot be binary. Got %r.' % (key.data,))
 
 
-class RemoteResult(object):
+class RemoteResult:
 
     def __init__(self, result):
         if not (is_dict_like(result) and 'status' in result):
@@ -207,7 +183,7 @@ class RemoteResult(object):
         return self._convert(value)
 
     def _convert(self, value):
-        if isinstance(value, xmlrpclib.Binary):
+        if isinstance(value, xmlrpc.client.Binary):
             return bytes(value.data)
         if is_dict_like(value):
             return DotDict((k, self._convert(v)) for k, v in value.items())
@@ -229,11 +205,11 @@ class XmlRpcRemoteClient(object):
             transport = TimeoutHTTPSTransport(timeout=self.timeout)
         else:
             transport = TimeoutHTTPTransport(timeout=self.timeout)
-        server = xmlrpclib.ServerProxy(self.uri, encoding='UTF-8',
-                                       transport=transport)
+        server = xmlrpc.client.ServerProxy(self.uri, encoding='UTF-8',
+                                           transport=transport)
         try:
             yield server
-        except (socket.error, xmlrpclib.Error) as err:
+        except (socket.error, xmlrpc.client.Error) as err:
             raise TypeError(err)
         finally:
             server('close')()
@@ -267,26 +243,26 @@ class XmlRpcRemoteClient(object):
             run_keyword_args = [name, args, kwargs] if kwargs else [name, args]
             try:
                 return server.run_keyword(*run_keyword_args)
-            except xmlrpclib.Fault as err:
+            except xmlrpc.client.Fault as err:
                 message = err.faultString
             except socket.error as err:
                 message = 'Connection to remote server broken: %s' % err
             except ExpatError as err:
                 message = ('Processing XML-RPC return value failed. '
-                        'Most often this happens when the return value '
-                        'contains characters that are not valid in XML. '
-                        'Original error was: ExpatError: %s' % err)
+                           'Most often this happens when the return value '
+                           'contains characters that are not valid in XML. '
+                           'Original error was: ExpatError: %s' % err)
             raise RuntimeError(message)
 
 
 # Custom XML-RPC timeouts based on
 # http://stackoverflow.com/questions/2425799/timeout-for-xmlrpclib-client-requests
 
-class TimeoutHTTPTransport(xmlrpclib.Transport):
-    _connection_class = httplib.HTTPConnection
+class TimeoutHTTPTransport(xmlrpc.client.Transport):
+    _connection_class = http.client.HTTPConnection
 
     def __init__(self, use_datetime=0, timeout=None):
-        xmlrpclib.Transport.__init__(self, use_datetime)
+        xmlrpc.client.Transport.__init__(self, use_datetime)
         if not timeout:
             timeout = socket._GLOBAL_DEFAULT_TIMEOUT
         self.timeout = timeout
@@ -299,15 +275,5 @@ class TimeoutHTTPTransport(xmlrpclib.Transport):
         return self._connection[1]
 
 
-if IRONPYTHON:
-
-    class TimeoutHTTPTransport(xmlrpclib.Transport):
-
-        def __init__(self, use_datetime=0, timeout=None):
-            xmlrpclib.Transport.__init__(self, use_datetime)
-            if timeout:
-                raise RuntimeError('Timeouts are not supported on IronPython.')
-
-
 class TimeoutHTTPSTransport(TimeoutHTTPTransport):
-    _connection_class = httplib.HTTPSConnection
+    _connection_class = http.client.HTTPSConnection

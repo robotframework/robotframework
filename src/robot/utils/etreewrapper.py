@@ -14,52 +14,23 @@
 #  limitations under the License.
 
 from io import BytesIO
+from os import fsdecode
 import re
 
-from .compat import py3to2
-from .platform import IRONPYTHON, PY_VERSION, PY3
 from .robottypes import is_bytes, is_pathlike, is_string
 
-if PY3:
-    from os import fsdecode
-else:
-    from .encoding import console_decode as fsdecode
-
-
-IRONPYTHON_WITH_BROKEN_ETREE = IRONPYTHON and PY_VERSION < (2, 7, 9)
-NO_ETREE_ERROR = 'No valid ElementTree XML parser module found'
-
-
-if not IRONPYTHON_WITH_BROKEN_ETREE:
+try:
+    from xml.etree import cElementTree as ET
+except ImportError:
     try:
-        from xml.etree import cElementTree as ET
+        from xml.etree import ElementTree as ET
     except ImportError:
-        try:
-            from xml.etree import ElementTree as ET
-        except ImportError:
-            raise ImportError(NO_ETREE_ERROR)
-else:
-    # Standard ElementTree works only with IronPython 2.7.9+
-    # https://github.com/IronLanguages/ironpython2/issues/370
-    try:
-        from elementtree import ElementTree as ET
-    except ImportError:
-        raise ImportError(NO_ETREE_ERROR)
-    from StringIO import StringIO
+        raise ImportError('No valid ElementTree XML parser module found')
 
 
-# cElementTree.VERSION seems to always be 1.0.6. We want real API version.
-if ET.VERSION < '1.3' and hasattr(ET, 'tostringlist'):
-    ET.VERSION = '1.3'
-
-
-@py3to2
 class ETSource(object):
 
     def __init__(self, source):
-        # ET on Python < 3.6 doesn't support pathlib.Path
-        if PY_VERSION < (3, 6) and is_pathlike(source):
-            source = str(source)
         self._source = source
         self._opened = None
 
@@ -70,8 +41,6 @@ class ETSource(object):
     def _open_if_necessary(self, source):
         if self._is_path(source) or self._is_already_open(source):
             return None
-        if IRONPYTHON_WITH_BROKEN_ETREE:
-            return StringIO(source)
         if is_bytes(source):
             return BytesIO(source)
         encoding = self._find_encoding(source)
@@ -105,7 +74,7 @@ class ETSource(object):
             return self._path_to_string(source)
         if hasattr(source, 'name'):
             return self._path_to_string(source.name)
-        return u'<in-memory file>'
+        return '<in-memory file>'
 
     def _path_to_string(self, path):
         if is_pathlike(path):
