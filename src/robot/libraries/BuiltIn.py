@@ -316,14 +316,14 @@ class _Converter(_BuiltInBase):
         return bool(item)
 
     def convert_to_bytes(self, input, input_type='text'):
-        """Converts the given ``input`` to bytes according to the ``input_type``.
+        r"""Converts the given ``input`` to bytes according to the ``input_type``.
 
         Valid input types are listed below:
 
         - ``text:`` Converts text to bytes character by character. All
           characters with ordinal below 256 can be used and are converted to
           bytes with same values. Many characters are easiest to represent
-          using escapes like ``\\x00`` or ``\\xff``. Supports both Unicode
+          using escapes like ``\x00`` or ``\xff``. Supports both Unicode
           strings and bytes.
 
         - ``int:`` Converts integers separated by spaces to bytes. Similarly as
@@ -345,16 +345,17 @@ class _Converter(_BuiltInBase):
         they cannot contain extra spaces.
 
         Examples (last column shows returned bytes):
-        | ${bytes} = | Convert To Bytes | hyv\xe4    |     | # hyv\\xe4        |
-        | ${bytes} = | Convert To Bytes | \\xff\\x07 |     | # \\xff\\x07      |
-        | ${bytes} = | Convert To Bytes | 82 70      | int | # RF              |
-        | ${bytes} = | Convert To Bytes | 0b10 0x10  | int | # \\x02\\x10      |
-        | ${bytes} = | Convert To Bytes | ff 00 07   | hex | # \\xff\\x00\\x07 |
-        | ${bytes} = | Convert To Bytes | 5246212121 | hex | # RF!!!           |
-        | ${bytes} = | Convert To Bytes | 0000 1000  | bin | # \\x08           |
-        | ${input} = | Create List      | 1          | 2   | 12                |
-        | ${bytes} = | Convert To Bytes | ${input}   | int | # \\x01\\x02\\x0c |
-        | ${bytes} = | Convert To Bytes | ${input}   | hex | # \\x01\\x02\\x12 |
+        | ${bytes} = | Convert To Bytes | hyvä      |     | # hyv\xe4      |
+        | ${bytes} = | Convert To Bytes | hyv\xe4   |     | # hyv\xe4      |
+        | ${bytes} = | Convert To Bytes | \xff\x07  |     | # \xff\x07     |
+        | ${bytes} = | Convert To Bytes | 82 70     | int | # RF           |
+        | ${bytes} = | Convert To Bytes | 0b10 0x10 | int | # \x02\x10     |
+        | ${bytes} = | Convert To Bytes | ff 00 07  | hex | # \xff\x00\x07 |
+        | ${bytes} = | Convert To Bytes | 52462121  | hex | # RF!!         |
+        | ${bytes} = | Convert To Bytes | 0000 1000 | bin | # \x08         |
+        | ${input} = | Create List      | 1         | 2   | 12             |
+        | ${bytes} = | Convert To Bytes | ${input}  | int | # \x01\x02\x0c |
+        | ${bytes} = | Convert To Bytes | ${input}  | hex | # \x01\x02\x12 |
 
         Use `Encode String To Bytes` in ``String`` library if you need to
         convert text to bytes using a certain encoding.
@@ -2819,7 +2820,7 @@ class _Misc(_BuiltInBase):
 
     def log(self, message, level='INFO', html=False, console=False,
             repr=False, formatter='str'):
-        u"""Logs the given message with the given level.
+        r"""Logs the given message with the given level.
 
         Valid levels are TRACE, DEBUG, INFO (default), HTML, WARN, and ERROR.
         Messages below the current active log level are ignored. See
@@ -2864,7 +2865,7 @@ class _Misc(_BuiltInBase):
         | Log | <b>Hello</b>, world! | HTML     |   | # Same as above.         |
         | Log | <b>Hello</b>, world! | DEBUG    | html=true | # DEBUG as HTML. |
         | Log | Hello, console!   | console=yes | | # Log also to the console. |
-        | Log | Null is \\x00  | formatter=repr | | # Log ``'Null is \\x00'``. |
+        | Log | Null is \x00    | formatter=repr | | # Log ``'Null is \x00'``. |
 
         See `Log Many` if you want to log multiple messages in one go, and
         `Log To Console` if you only want to write to the console.
@@ -3518,7 +3519,7 @@ class _Misc(_BuiltInBase):
 
 
 class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
-    u"""An always available standard library with often needed keywords.
+    r"""An always available standard library with often needed keywords.
 
     ``BuiltIn`` is Robot Framework's standard library that provides a set
     of generic keywords needed often. It is imported automatically and
@@ -3651,7 +3652,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     | ``[!a-z]``   | matches one character not from the range in the bracket |
 
     Unlike with glob patterns normally, path separator characters ``/`` and
-    ``\\`` and the newline character ``\\n`` are matches by the above
+    ``\`` and the newline character ``\n`` are matches by the above
     wildcards.
 
     == Regular expressions ==
@@ -3663,9 +3664,9 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     [http://docs.python.org/library/re.html|re module] and its documentation
     should be consulted for more information about the syntax.
 
-    Because the backslash character (``\\``) is an escape character in
+    Because the backslash character (``\``) is an escape character in
     Robot Framework test data, possible backslash characters in regular
-    expressions need to be escaped with another backslash like ``\\\\d\\\\w+``.
+    expressions need to be escaped with another backslash like ``\\d\\w+``.
     Strings that may contain special characters but should be handled
     as literal strings, can be escaped with the `Regexp Escape` keyword.
 
@@ -3676,8 +3677,8 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     format] if both strings have more than two lines.
 
     Example:
-    | ${first} =  | `Catenate` | SEPARATOR=\\n | Not in second | Same | Differs | Same |
-    | ${second} = | `Catenate` | SEPARATOR=\\n | Same | Differs2 | Same | Not in first |
+    | ${first} =  | `Catenate` | SEPARATOR=\n | Not in second | Same | Differs | Same |
+    | ${second} = | `Catenate` | SEPARATOR=\n | Same | Differs2 | Same | Not in first |
     | `Should Be Equal` | ${first} | ${second} |
 
     Results in the following error message:
@@ -3710,21 +3711,20 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     - Trailing whitespace is not visible.
 
-    - Different newlines (``\\r\\n`` on Windows, ``\\n`` elsewhere) cannot
+    - Different newlines (``\r\n`` on Windows, ``\n`` elsewhere) cannot
       be separated from each others.
 
     - There are several Unicode characters that are different but look the
-      same. One example is the Latin ``\u0061`` (``\\u0061``) and the Cyrillic
-      ``\u0430`` (``\\u0430``). Error messages like ``\u0061 != \u0430`` are
-      not very helpful.
+      same. One example is the Latin ``a`` (``\u0061``) and the Cyrillic
+      ``а`` (``\u0430``). Error messages like ``a != а`` are not very helpful.
 
     - Some Unicode characters can be represented using
       [https://en.wikipedia.org/wiki/Unicode_equivalence|different forms].
-      For example, ``\xe4`` can be represented either as a single code point
-      ``\\u00e4`` or using two code points ``\\u0061`` and ``\\u0308`` combined
+      For example, ``ä`` can be represented either as a single code point
+      ``\u00e4`` or using two code points ``\u0061`` and ``\u0308`` combined
       together. Such forms are considered canonically equivalent, but strings
       containing them are not considered equal when compared in Python. Error
-      messages like ``\xe4 != \u0061\u0308`` are not that helpful either.
+      messages like ``ä != ä`` are not that helpful either.
 
     - Containers such as lists and dictionaries are formatted into a single
       line making it hard to see individual items they contain.
@@ -3738,37 +3738,27 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     == str ==
 
-    Use the "human readable" string representation. Equivalent to using
-    ``str()`` in Python 3 and ``unicode()`` in Python 2. This is the default.
+    Use the "human readable" string representation. Equivalent to using ``str()``
+    in Python. This is the default.
 
     == repr ==
 
     Use the "machine readable" string representation. Similar to using
     ``repr()`` in Python, which means that strings like ``Hello`` are logged
     like ``'Hello'``, newlines and non-printable characters are escaped like
-    ``\\n`` and ``\\x00``, and so on. Non-ASCII characters are shown as-is
-    like ``\xe4`` in Python 3 and in escaped format like ``\\xe4`` in Python 2.
-    Use ``ascii`` to always get the escaped format.
+    ``\n`` and ``\x00``, and so on. Non-ASCII characters are shown as-is like ``ä``.
 
-    There are also some enhancements compared to the standard ``repr()``:
-    - Bigger lists, dictionaries and other containers are pretty-printed so
-      that there is one item per row.
-    - On Python 2 the ``u`` prefix is omitted with Unicode strings and
-      the ``b`` prefix is added to byte strings.
+    In this mode bigger lists, dictionaries and other containers are
+    pretty-printed so that there is one item per row.
 
     == ascii ==
 
-    Same as using ``ascii()`` in Python 3 or ``repr()`` in Python 2 where
-    ``ascii()`` does not exist. Similar to using ``repr`` explained above
+    Same as using ``ascii()`` in Python. Similar to using ``repr`` explained above
     but with the following differences:
 
-    - On Python 3 non-ASCII characters are escaped like ``\\xe4`` instead of
-      showing them as-is like ``\xe4``. This makes it easier to see differences
-      between Unicode characters that look the same but are not equal. This
-      is how ``repr()`` works in Python 2.
-    - On Python 2 just uses the standard ``repr()`` meaning that Unicode
-      strings get the ``u`` prefix and no ``b`` prefix is added to byte
-      strings.
+    - Non-ASCII characters are escaped like ``\xe4`` instead of
+      showing them as-is like ``ä``. This makes it easier to see differences
+      between Unicode characters that look the same but are not equal.
     - Containers are not pretty-printed.
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
