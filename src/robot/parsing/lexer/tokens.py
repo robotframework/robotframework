@@ -218,3 +218,15 @@ class EOS(Token):
     @classmethod
     def from_token(cls, token):
         return EOS(lineno=token.lineno, col_offset=token.end_col_offset)
+
+
+class END(Token):
+    """Token representing END token used to signify block ending."""
+    __slots__ = []
+
+    def __init__(self, lineno=-1, col_offset=-1):
+        Token.__init__(self, Token.END, '', lineno, col_offset)
+
+    @classmethod
+    def from_token(cls, token):
+        return END(lineno=token.lineno, col_offset=token.end_col_offset)

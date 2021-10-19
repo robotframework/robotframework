@@ -21,7 +21,7 @@ from robot.utils import get_error_message, FileReader
 from .blocklexers import FileLexer
 from .context import InitFileContext, TestCaseFileContext, ResourceFileContext
 from .tokenizer import Tokenizer
-from .tokens import EOS, Token
+from .tokens import EOS, END, Token
 
 
 def get_tokens(source, data_only=False, tokenize_variables=False):
@@ -112,6 +112,15 @@ class Lexer:
         return tokens
 
     def _get_tokens(self, statements):
+        name_and_eos_handler = self._get_name_and_eos_handler()
+        for statement in statements:
+            if not self._is_inline_if(statement):
+                yield from name_and_eos_handler(statement)
+            else:
+                for part in self._split_inline_if(statement):
+                    yield from name_and_eos_handler(part)
+
+    def _get_name_and_eos_handler(self):
         # Setting local variables is performance optimization to avoid
         # unnecessary lookups and attribute access.
         if self.data_only:
@@ -121,7 +130,7 @@ class Lexer:
         name_types = (Token.TESTCASE_NAME, Token.KEYWORD_NAME)
         separator_type = Token.SEPARATOR
         eol_type = Token.EOL
-        for statement in statements:
+        def name_and_eos_handler(statement):
             name_seen = False
             separator_after_name = None
             prev_token = None
@@ -144,6 +153,7 @@ class Lexer:
                 yield token
             if prev_token:
                 yield EOS.from_token(prev_token)
+        return name_and_eos_handler
 
     def _split_trailing_commented_and_empty_lines(self, statement):
         lines = self._split_to_lines(statement)
@@ -182,3 +192,30 @@ class Lexer:
         for token in tokens:
             for t in token.tokenize_variables():
                 yield t
+
+    def _split_inline_if(self, statement):
+        statement_end_indices = \
+            [idx for idx, token in
+                enumerate(statement)
+                if token.type in (Token.IF, Token.ELSE_IF, Token.ELSE, Token.KEYWORD)]
+        for pos, idx in enumerate(statement_end_indices):
+            if pos == 0:
+                yield statement[:statement_end_indices[pos+1]]
+            elif pos < len(statement_end_indices) - 1:
+                yield statement[idx:statement_end_indices[pos+1]]
+            else:
+                yield statement[idx:len(statement)]
+        yield [END.from_token(statement[-1])]
+
+    def _is_inline_if(self, statement):
+        if not self._is_normal_if_header(statement):
+            return False
+        if_index = [s.type for s in statement].index(Token.IF)
+        return len(statement[if_index:]) > 2
+
+    def _is_normal_if_header(self, statement):
+        for token in statement:
+            if token.type == Token.IF:
+                return True
+        return False
+

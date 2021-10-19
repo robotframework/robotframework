@@ -922,6 +922,81 @@ Name
                       get_resource_tokens, data_only=True)
 
 
+class TestInlineIf(unittest.TestCase):
+
+    def test_if_only(self):
+        header = 'IF    ${True}    Log Many   foo    bar'
+        expected = [
+            (T.IF, 'IF', 3, 4),
+            (T.ARGUMENT, '${True}', 3, 10),
+            (T.EOS, '', 3, 17),
+            (T.KEYWORD, 'Log Many', 3, 21),
+            (T.ARGUMENT, 'foo', 3, 32),
+            (T.ARGUMENT, 'bar', 3, 39),
+            (T.EOS, '', 3, 42),
+            (T.END, '', 3, 42),
+            (T.EOS, '', 3, 42)
+        ]
+        self._verify(header, expected)
+
+    def test_with_else(self):
+        header = 'IF    ${False}    Log    foo    ELSE   Log    bar'
+        expected = [
+            (T.IF, 'IF', 3, 4),
+            (T.ARGUMENT, '${False}', 3, 10),
+            (T.EOS, '', 3, 18),
+            (T.KEYWORD, 'Log', 3, 22),
+            (T.ARGUMENT, 'foo', 3, 29),
+            (T.EOS, '', 3, 32),
+            (T.ELSE, 'ELSE', 3, 36),
+            (T.EOS, '', 3, 40),
+            (T.KEYWORD, 'Log', 3, 43),
+            (T.ARGUMENT, 'bar', 3, 50),
+            (T.EOS, '', 3, 53),
+            (T.END, '', 3, 53),
+            (T.EOS, '', 3, 53)
+        ]
+        self._verify(header, expected)
+
+    def test_with_else_if_and_else(self):
+        header = 'IF    ${False}    Log    foo    ELSE IF    ${True}  Log    bar    ELSE    Noop'
+        expected = [
+            (T.IF, 'IF', 3, 4),
+            (T.ARGUMENT, '${False}', 3, 10),
+            (T.EOS, '', 3, 18),
+            (T.KEYWORD, 'Log', 3, 22),
+            (T.ARGUMENT, 'foo', 3, 29),
+            (T.EOS, '', 3, 32),
+            (T.ELSE_IF, 'ELSE IF', 3, 36),
+            (T.ARGUMENT, '${True}', 3, 47),
+            (T.EOS, '', 3, 54),
+            (T.KEYWORD, 'Log', 3, 56),
+            (T.ARGUMENT, 'bar', 3, 63),
+            (T.EOS, '', 3, 66),
+            (T.ELSE, 'ELSE', 3, 70),
+            (T.EOS, '', 3, 74),
+            (T.KEYWORD, 'Noop', 3, 78),
+            (T.EOS, '', 3, 82),
+            (T.END, '', 3, 82),
+            (T.EOS, '', 3, 82)
+        ]
+        self._verify(header, expected)
+
+    def _verify(self, header, expected_header):
+        data = '''\
+*** Test Cases ***
+Name
+    %s
+'''
+        expected_tokens = [
+            (T.TESTCASE_HEADER, '*** Test Cases ***', 1, 0),
+            (T.EOS, '', 1, 18),
+            (T.TESTCASE_NAME, 'Name', 2, 0),
+            (T.EOS, '', 2, 4)
+        ] + expected_header
+        assert_tokens(data % header, expected_tokens, data_only=True)
+
+
 class TestCommentRowsAndEmptyRows(unittest.TestCase):
 
     def test_between_names(self):

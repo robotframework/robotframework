@@ -477,7 +477,7 @@ Example
         model = get_model('''\
 *** Test Cases ***
 Example
-    IF    too    many
+    IF
     ELSE    ooops
     ELSE IF
     END    ooops
@@ -487,10 +487,8 @@ Example
         if1, if2 = model.sections[0].body[0].body
         expected1 = If(
             header=IfHeader(
-                tokens=[Token(Token.IF, 'IF', 3, 4),
-                        Token(Token.ARGUMENT, 'too', 3, 10),
-                        Token(Token.ARGUMENT, 'many', 3, 17)],
-                errors=('IF has more than one condition.',)
+                tokens=[Token(Token.IF, 'IF', 3, 4)],
+                errors=('IF has no condition.',)
             ),
             orelse=If(
                 header=ElseHeader(

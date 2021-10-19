@@ -205,8 +205,11 @@ class NestedBlockLexer(BlockLexer):
 
     def input(self, statement):
         lexer = BlockLexer.input(self, statement)
-        if isinstance(lexer, (IfHeaderLexer, ForHeaderLexer)):
+        if isinstance(lexer, (ForHeaderLexer)):
             self._block_level += 1
+        if isinstance(lexer, (IfHeaderLexer)):
+            if not lexer.is_inline_if:
+                self._block_level += 1
         if isinstance(lexer, EndLexer):
             self._block_level -= 1
 

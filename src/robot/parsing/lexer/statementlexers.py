@@ -158,13 +158,43 @@ class ForHeaderLexer(StatementLexer):
 
 class IfHeaderLexer(StatementLexer):
 
+    def __init__(self, ctx):
+        super().__init__(ctx)
+        self.is_inline_if = False
+
     def handles(self, statement):
         return statement[0].value == 'IF'
 
+    def input(self, statement):
+        self.is_inline_if = len(statement) > 2
+        return super().input(statement)
+
     def lex(self):
-        self.statement[0].type = Token.IF
-        for token in self.statement[1:]:
-            token.type = Token.ARGUMENT
+        if not self.is_inline_if:
+            self.statement[0].type = Token.IF
+            for token in self.statement[1:]:
+                token.type = Token.ARGUMENT
+        else:
+            marker_indexes = [idx for idx, token in
+                            enumerate(self.statement)
+                            if token.value in ('IF', 'ELSE IF', 'ELSE')]
+            for idx, marker_idx in enumerate(marker_indexes):
+                marker_token = self.statement[marker_idx]
+                marker_token.type = {
+                    'IF': Token.IF,
+                    'ELSE IF': Token.ELSE_IF,
+                    'ELSE': Token.ELSE
+                }[marker_token.value]
+                if marker_token.type in (Token.IF, Token.ELSE_IF):
+                    self.statement[marker_idx + 1].type = Token.ARGUMENT
+                    kw_start = marker_idx + 2
+                else:
+                    kw_start = marker_idx + 1
+                kw_end = marker_indexes[idx + 1] if idx < len(
+                    marker_indexes) - 1 else len(self.statement)
+                l = KeywordCallLexer(self.ctx)
+                l.input(self.statement[kw_start:kw_end])
+                l.lex()
 
 
 class ElseIfHeaderLexer(StatementLexer):
