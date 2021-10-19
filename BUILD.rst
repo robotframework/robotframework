@@ -183,10 +183,10 @@ Creating distributions
 
       invoke clean
 
-3. Create and validate source distribution in zip format and universal (i.e.
-   Python 2 and 3 compatible) `wheel <http://pythonwheels.com>`_::
+3. Create and validate source distribution in zip format and
+   `wheel <https://pythonwheels.com>`_::
 
-      python setup.py sdist --formats zip bdist_wheel --universal
+      python setup.py sdist --formats zip bdist_wheel
       ls -l dist
       twine check dist/*
 
