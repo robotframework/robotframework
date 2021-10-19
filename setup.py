@@ -21,6 +21,7 @@ Development Status :: 5 - Production/Stable
 License :: OSI Approved :: Apache Software License
 Operating System :: OS Independent
 Programming Language :: Python :: 3
+Programming Language :: Python :: 3 :: Only
 Programming Language :: Python :: 3.6
 Programming Language :: Python :: 3.7
 Programming Language :: Python :: 3.8
@@ -47,14 +48,15 @@ setup(
     version      = VERSION,
     author       = 'Pekka Kl\xe4rck',
     author_email = 'peke@eliga.fi',
-    url          = 'http://robotframework.org',
-    download_url = 'https://pypi.python.org/pypi/robotframework',
+    url          = 'https://robotframework.org/',
+    download_url = 'https://pypi.org/project/robotframework/',
     license      = 'Apache License 2.0',
     description  = DESCRIPTION,
     long_description = LONG_DESCRIPTION,
     long_description_content_type = 'text/x-rst',
     keywords     = KEYWORDS,
     platforms    = 'any',
+    python_requires='>=3.6',
     classifiers  = CLASSIFIERS,
     package_dir  = {'': 'src'},
     package_data = {'robot': PACKAGE_DATA},
