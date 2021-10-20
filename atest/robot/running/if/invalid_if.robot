@@ -10,9 +10,6 @@ IF without condition
 IF with ELSE without condition
     FAIL    NOT RUN
 
-IF with many conditions
-    FAIL
-
 IF with invalid condition
     FAIL
 

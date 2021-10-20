@@ -42,6 +42,13 @@ Inline if failing in else keyword
     [Documentation]    FAIL expected
     Failing else keyword
 
+Invalid END after inline header
+    [Documentation]    FAIL 'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR' or 'IF' when used as a marker.
+    IF    True    Log    reached this
+        Log   this is a normal keyword call
+    END
+
+
 *** Keywords ***
 Passing if keyword
     IF    ${1}    Log    expected    ELSE IF    12 < 14    Fail    should not go here    ELSE    Fail    not here

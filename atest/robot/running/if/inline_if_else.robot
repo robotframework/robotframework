@@ -38,3 +38,6 @@ Inline if failing in keyword
 
 Inline if failing in else keyword
     Check Test Case    ${TESTNAME}
+
+Invalid END after inline header
+    Check Test Case    ${TESTNAME}

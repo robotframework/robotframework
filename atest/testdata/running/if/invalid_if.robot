@@ -13,12 +13,6 @@ IF with ELSE without condition
         Fail    Should not be run
     END
 
-IF with many conditions
-    [Documentation]    FAIL    IF has more than one condition.
-    IF    '1' == '1'    '2' == '2'    '3' == '3'
-        Fail    Should not be run
-    END
-
 IF with invalid condition
     [Documentation]    FAIL STARTS: Evaluating expression ''123'=123' failed: SyntaxError:
     IF    '123'=${123}
