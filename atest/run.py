@@ -1,27 +1,33 @@
 #!/usr/bin/env python3
 
-r"""A script for running Robot Framework's acceptance tests.
+"""A script for running Robot Framework's own acceptance tests.
 
-Usage:  atest/run.py interpreter [options] datasource(s)
+Usage:  atest/run.py [--interpreter interpreter] [options] [data]
 
-Data sources are paths to directories or files under the `atest/robot` folder.
+`data` is path (or paths) of the file or directory under the `atest/robot`
+folder to execute. If `data` is not given, all tests except for tests tagged
+with `no-ci` are executed.
 
-Available options are the same that can be used with Robot Framework.
+Available `options` are the same that can be used with Robot Framework.
 See its help (e.g. `robot --help`) for more information.
 
-The specified interpreter is used by acceptance tests under `atest/robot` to
-run test cases under `atest/testdata`. It can be the name of the interpreter
-like (e.g. `python` or `py -3.9`) or a path to the selected interpreter like
-(e.g. `/usr/bin/python39`).
-
-If the interpreter itself needs arguments, the interpreter and its arguments
-need to be quoted like `"py -3"`.
+By default uses the same Python interpreter for running tests that is used
+for running this script. That can be changed by using the `--interpreter` (`-I`)
+option. It can be the name of the interpreter (e.g. `pypy3`) or a path to the
+selected interpreter (e.g. `/usr/bin/python39`). If the interpreter itself needs
+arguments, the interpreter and its arguments need to be quoted (e.g. `"py -3"`).
 
 Examples:
-$ atest/run.py python --test example atest/robot
-> atest\run.py "py -3.9" -e no-ci atest\robot\running
+$ atest/run.py
+$ atest/run.py --exclude no-ci atest/robot/standard_libraries
+$ atest/run.py --interpreter pypy3
+
+The results of the test execution are written into an interpreter specific
+directory under the `atest/results` directory. Temporary outputs created
+during the execution are created under the system temporary directory.
 """
 
+import argparse
 import os
 from pathlib import Path
 import shutil
@@ -47,7 +53,7 @@ ARGUMENTS = '''
 '''.strip()
 
 
-def atests(interpreter, *arguments):
+def atests(interpreter, arguments):
     try:
         interpreter = Interpreter(interpreter)
     except ValueError as err:
@@ -75,8 +81,7 @@ def _get_arguments(interpreter, outputdir):
                                  pythonpath=CURDIR / 'resources',
                                  outputdir=outputdir)
     for line in arguments.splitlines():
-        for part in line.split(' ', 1):
-            yield part
+        yield from line.split(' ', 1)
     for exclude in interpreter.excludes:
         yield '--exclude'
         yield exclude
@@ -96,9 +101,15 @@ def _run(args, tempdir, interpreter):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 1 or '--help' in sys.argv:
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument('-I', '--interpreter', default=sys.executable)
+    parser.add_argument('-h', '--help', action='store_true')
+    options, robot_args = parser.parse_known_args()
+    if not robot_args or not Path(robot_args[-1]).exists():
+        robot_args += ['--exclude', 'no-ci', str(CURDIR/'robot')]
+    if options.help:
         print(__doc__)
         rc = 251
     else:
-        rc = atests(*sys.argv[1:])
+        rc = atests(options.interpreter, robot_args)
     sys.exit(rc)
