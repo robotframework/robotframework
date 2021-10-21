@@ -245,25 +245,26 @@ class InlineIfLexer(BlockLexer):
                 KeywordCallLexer)
 
     def input(self, statement):
-        for part in self._get_statements(statement):
+        for part in self.split_statements(statement):
             super().input(part)
         return self
 
-    def _get_statements(self, statement):
+    @staticmethod
+    def split_statements(statement):
         current_statement = []
-        expects_arg = False
+        expect_arg = False
         for token in statement:
-            if expects_arg:
+            if expect_arg:
                 current_statement.append(token)
                 yield current_statement
                 current_statement = []
-                expects_arg = False
+                expect_arg = False
             elif token.value in ('IF', 'ELSE IF'):
                 if current_statement:
                     yield current_statement
                     current_statement = []
                 current_statement.append(token)
-                expects_arg = True
+                expect_arg = True
             elif token.value == 'ELSE':
                 yield current_statement
                 current_statement = []

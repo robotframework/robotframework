@@ -28,6 +28,10 @@ Inline if else - else executed - failing
     [Documentation]    FAIL expected
     IF    0 > 1    Log    unexpected    ELSE    Fail    expected
 
+Assignment inside inline if
+    IF    True    ${num}=   Convert to number    12
+    Variable Should Exist    $num
+
 Inline if inside for loop
     [Documentation]    FAIL The end
     FOR    ${i}    IN    1    2    3

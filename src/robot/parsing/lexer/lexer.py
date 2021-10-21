@@ -18,7 +18,7 @@ from itertools import chain
 from robot.errors import DataError
 from robot.utils import get_error_message, FileReader
 
-from .blocklexers import FileLexer
+from .blocklexers import FileLexer, InlineIfLexer
 from .context import InitFileContext, TestCaseFileContext, ResourceFileContext
 from .tokenizer import Tokenizer
 from .tokens import EOS, END, Token
@@ -194,17 +194,7 @@ class Lexer:
                 yield t
 
     def _split_inline_if(self, statement):
-        statement_end_indices = \
-            [idx for idx, token in
-                enumerate(statement)
-                if token.type in (Token.IF, Token.ELSE_IF, Token.ELSE, Token.KEYWORD)]
-        for pos, idx in enumerate(statement_end_indices):
-            if pos == 0:
-                yield statement[:statement_end_indices[pos+1]]
-            elif pos < len(statement_end_indices) - 1:
-                yield statement[idx:statement_end_indices[pos+1]]
-            else:
-                yield statement[idx:len(statement)]
+        yield from InlineIfLexer.split_statements(statement)
         yield [END.from_token(statement[-1])]
 
     def _is_inline_if(self, statement):
