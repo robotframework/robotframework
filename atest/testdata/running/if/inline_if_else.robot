@@ -11,7 +11,7 @@ Inline if not executed
 
 Inline if not executed failing
     [Documentation]    FAIL after not passing
-    IF    'a' == 'b'   Pass Execution    should go here
+    IF    'a' == 'b'   Pass Execution    should not go here
     Fail    after not passing
 
 Inline if else - if executed
@@ -27,6 +27,22 @@ Inline if else - if executed - failing
 Inline if else - else executed - failing
     [Documentation]    FAIL expected
     IF    0 > 1    Log    unexpected    ELSE    Fail    expected
+
+Inline if inside for loop
+    [Documentation]    FAIL The end
+    FOR    ${i}    IN    1    2    3
+        IF    ${i} == 3    Fail    The end    ELSE    Log    ${i}
+    END
+
+Inline if inside nested loop
+    [Documentation]    FAIL The end
+    IF    ${False}
+       Fail    Should not go here
+    ELSE
+        FOR    ${i}    IN    1    2    3
+            IF    ${i} == 3    Fail    The end    ELSE    Log    ${i}
+        END
+    END
 
 Inline if passing in keyword
     Passing if keyword

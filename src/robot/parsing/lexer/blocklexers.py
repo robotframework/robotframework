@@ -173,7 +173,8 @@ class TestOrKeywordLexer(BlockLexer):
                 statement.pop(0).type = None    # These tokens will be ignored
 
     def lexer_classes(self):
-        return (TestOrKeywordSettingLexer, ForLexer, IfLexer, KeywordCallLexer)
+        return (TestOrKeywordSettingLexer, ForLexer, InlineIfLexer, IfLexer,
+                KeywordCallLexer)
 
 
 class TestCaseLexer(TestOrKeywordLexer):
@@ -205,11 +206,8 @@ class NestedBlockLexer(BlockLexer):
 
     def input(self, statement):
         lexer = BlockLexer.input(self, statement)
-        if isinstance(lexer, (ForHeaderLexer)):
+        if isinstance(lexer, (ForHeaderLexer, IfHeaderLexer)):
             self._block_level += 1
-        if isinstance(lexer, (IfHeaderLexer)):
-            if not lexer.is_inline_if:
-                self._block_level += 1
         if isinstance(lexer, EndLexer):
             self._block_level -= 1
 
@@ -220,7 +218,8 @@ class ForLexer(NestedBlockLexer):
         return ForHeaderLexer(self.ctx).handles(statement)
 
     def lexer_classes(self):
-        return (ForHeaderLexer, IfLexer, EndLexer, KeywordCallLexer)
+        return (ForHeaderLexer, InlineIfLexer, IfLexer, EndLexer,
+                KeywordCallLexer)
 
 
 class IfLexer(NestedBlockLexer):
@@ -231,3 +230,47 @@ class IfLexer(NestedBlockLexer):
     def lexer_classes(self):
         return (IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
                 ForLexer, EndLexer, KeywordCallLexer)
+
+
+class InlineIfLexer(BlockLexer):
+
+    def handles(self, statement):
+        return statement[0].value == 'IF' and len(statement) > 2
+
+    def accepts_more(self, statement):
+        return False
+
+    def lexer_classes(self):
+        return (IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
+                KeywordCallLexer)
+
+    def input(self, statement):
+        for part in self._get_statements(statement):
+            super().input(part)
+        return self
+
+    def _get_statements(self, statement):
+        current_statement = []
+        expects_arg = False
+        for token in statement:
+            if expects_arg:
+                current_statement.append(token)
+                yield current_statement
+                current_statement = []
+                expects_arg = False
+            elif token.value in ('IF', 'ELSE IF'):
+                if current_statement:
+                    yield current_statement
+                    current_statement = []
+                current_statement.append(token)
+                expects_arg = True
+            elif token.value == 'ELSE':
+                yield current_statement
+                current_statement = []
+                yield [token]
+            else:
+                current_statement.append(token)
+        yield current_statement
+
+
+
