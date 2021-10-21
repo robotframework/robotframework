@@ -4,6 +4,10 @@
 .. include:: empty.rest
 .. include:: include.rst
 
+.. Sphinx directive, causes error with plain docutils.
+.. highlight:: robotframework
+
+
 ReST Test Data Example
 ======================
 
