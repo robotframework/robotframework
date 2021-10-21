@@ -96,6 +96,7 @@ def read_rest_data(rstfile):
         source_path=rstfile.name,
         settings_overrides={
             'input_encoding': 'UTF-8',
+            'report_level': 4
         })
     store = RobotDataStorage(doctree)
     return store.get_data()

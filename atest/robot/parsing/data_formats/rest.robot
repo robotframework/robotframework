@@ -5,6 +5,7 @@ Resource        formats_resource.robot
 *** Test Cases ***
 One reST using code-directive
     Run sample file and check tests    ${EMPTY}    ${RESTDIR}/sample.rst
+    Stderr Should Be Empty
 
 ReST With reST Resource
     Previous Run Should Have Been Successful
