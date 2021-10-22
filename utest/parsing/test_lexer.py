@@ -15,10 +15,15 @@ def assert_tokens(source, expected, get_tokens=get_tokens, **config):
     tokens = list(get_tokens(source, **config))
     assert_equal(len(tokens), len(expected),
                  'Expected %d tokens:\n%s\n\nGot %d tokens:\n%s'
-                 % (len(expected), expected, len(tokens), tokens),
+                 % (len(expected), format_tokens(expected),
+                    len(tokens), format_tokens(tokens)),
                  values=False)
     for act, exp in zip(tokens, expected):
         assert_equal(act, Token(*exp), formatter=repr)
+
+
+def format_tokens(tokens):
+    return '\n'.join(repr(t) for t in tokens)
 
 
 class TestLexSettingsSection(unittest.TestCase):
@@ -743,6 +748,12 @@ class TestName(unittest.TestCase):
                       (T.ASSIGN, '${v}=', 2, 3), (T.SEPARATOR, '  ', 2, 8),
                       (T.KEYWORD, 'K', 2, 10), (T.EOL, '', 2, 11), (T.EOS, '', 2, 11)])
 
+    def test_name_and_keyword_on_same_continued_rows(self):
+        self._verify('Name\n...    Keyword',
+                     [(T.TESTCASE_NAME, 'Name', 2, 0), (T.EOL, '\n', 2, 4), (T.EOS, '', 2, 5),
+                      (T.CONTINUATION, '...', 3, 0), (T.SEPARATOR, '    ', 3, 3),
+                      (T.KEYWORD, 'Keyword', 3, 7), (T.EOL, '', 3, 14), (T.EOS, '', 3, 14)])
+
     def test_name_and_setting_on_same_row(self):
         self._verify('Name    [Documentation]    The doc.',
                      [(T.TESTCASE_NAME, 'Name', 2, 0), (T.EOS, '', 2, 4), (T.SEPARATOR, '    ', 2, 4),
@@ -784,6 +795,12 @@ class TestNameWithPipes(unittest.TestCase):
                      [(T.SEPARATOR, '|    ', 2, 0), (T.TESTCASE_NAME, 'N', 2, 5), (T.EOS, '', 2, 6),
                       (T.SEPARATOR, '  |  ', 2, 6), (T.ASSIGN, '${v} =', 2, 11), (T.SEPARATOR, '    |    ', 2, 17),
                       (T.KEYWORD, 'K', 2, 26), (T.EOL, '    ', 2, 27), (T.EOS, '', 2, 31)])
+
+    def test_name_and_keyword_on_same_continued_row(self):
+        self._verify('| Name | \n| ... | Keyword',
+                     [(T.SEPARATOR, '| ', 2, 0), (T.TESTCASE_NAME, 'Name', 2, 2), (T.SEPARATOR, ' |', 2, 6), (T.EOL, ' \n', 2, 8), (T.EOS, '', 2, 10),
+                      (T.SEPARATOR, '| ', 3, 0), (T.CONTINUATION, '...', 3, 2), (T.SEPARATOR, ' | ', 3, 5),
+                      (T.KEYWORD, 'Keyword', 3, 8), (T.EOL, '', 3, 15), (T.EOS, '', 3, 15)])
 
     def test_name_and_setting_on_same_row(self):
         self._verify('| Name | [Documentation] | The doc.',
@@ -922,6 +939,137 @@ Name
                       get_resource_tokens, data_only=True)
 
 
+class TestIf(unittest.TestCase):
+
+    def test_if_only(self):
+        block = '''\
+    IF    ${True}
+        Log Many    foo    bar
+    END
+'''
+        expected = [
+            (T.IF, 'IF', 3, 4),
+            (T.ARGUMENT, '${True}', 3, 10),
+            (T.EOS, '', 3, 17),
+            (T.KEYWORD, 'Log Many', 4, 8),
+            (T.ARGUMENT, 'foo', 4, 20),
+            (T.ARGUMENT, 'bar', 4, 27),
+            (T.EOS, '', 4, 30),
+            (T.END, 'END', 5, 4),
+            (T.EOS, '', 5, 7)
+        ]
+        self._verify(block, expected)
+
+    def test_with_else(self):
+        block = '''\
+    IF    ${False}
+        Log    foo
+    ELSE
+        Log    bar
+    END
+'''
+        expected = [
+            (T.IF, 'IF', 3, 4),
+            (T.ARGUMENT, '${False}', 3, 10),
+            (T.EOS, '', 3, 18),
+            (T.KEYWORD, 'Log', 4, 8),
+            (T.ARGUMENT, 'foo', 4, 15),
+            (T.EOS, '', 4, 18),
+            (T.ELSE, 'ELSE', 5, 4),
+            (T.EOS, '', 5, 8),
+            (T.KEYWORD, 'Log', 6,8),
+            (T.ARGUMENT, 'bar', 6, 15),
+            (T.EOS, '', 6, 18),
+            (T.END, 'END', 7, 4),
+            (T.EOS, '', 7, 7)
+        ]
+        self._verify(block, expected)
+
+    def test_with_else_if_and_else(self):
+        block = '''\
+    IF    ${False}
+        Log    foo
+    ELSE IF    ${True}
+        Log    bar
+    ELSE
+        Noop
+    END
+'''
+        expected = [
+            (T.IF, 'IF', 3, 4),
+            (T.ARGUMENT, '${False}', 3, 10),
+            (T.EOS, '', 3, 18),
+            (T.KEYWORD, 'Log', 4, 8),
+            (T.ARGUMENT, 'foo', 4, 15),
+            (T.EOS, '', 4, 18),
+            (T.ELSE_IF, 'ELSE IF', 5, 4),
+            (T.ARGUMENT, '${True}', 5, 15),
+            (T.EOS, '', 5, 22),
+            (T.KEYWORD, 'Log', 6, 8),
+            (T.ARGUMENT, 'bar', 6, 15),
+            (T.EOS, '', 6, 18),
+            (T.ELSE, 'ELSE', 7, 4),
+            (T.EOS, '', 7, 8),
+            (T.KEYWORD, 'Noop', 8, 8),
+            (T.EOS, '', 8, 12),
+            (T.END, 'END', 9, 4),
+            (T.EOS, '', 9, 7)
+        ]
+        self._verify(block, expected)
+
+    def test_multiline_and_comments(self):
+        block = '''\
+    IF                 # 3
+    ...    ${False}    # 4
+        Log            # 5
+    ...    foo         # 6
+    ELSE IF            # 7
+    ...    ${True}     # 8
+        Log            # 9
+    ...    bar         # 10
+    ELSE               # 11
+        Log            # 12
+    ...    zap         # 13
+    END                # 14
+        '''
+        expected = [
+            (T.IF, 'IF', 3, 4),
+            (T.ARGUMENT, '${False}', 4, 11),
+            (T.EOS, '', 4, 19),
+            (T.KEYWORD, 'Log', 5, 8),
+            (T.ARGUMENT, 'foo', 6, 11),
+            (T.EOS, '', 6, 14),
+            (T.ELSE_IF, 'ELSE IF', 7, 4),
+            (T.ARGUMENT, '${True}', 8, 11),
+            (T.EOS, '', 8, 18),
+            (T.KEYWORD, 'Log', 9, 8),
+            (T.ARGUMENT, 'bar', 10, 11),
+            (T.EOS, '', 10, 14),
+            (T.ELSE, 'ELSE', 11, 4),
+            (T.EOS, '', 11, 8),
+            (T.KEYWORD, 'Log', 12, 8),
+            (T.ARGUMENT, 'zap', 13, 11),
+            (T.EOS, '', 13, 14),
+            (T.END, 'END', 14, 4),
+            (T.EOS, '', 14, 7)
+        ]
+        self._verify(block, expected)
+
+    def _verify(self, block, expected_header):
+        data = f'''\
+*** Test Cases ***
+Name
+{block}
+'''
+        expected_tokens = [
+            (T.TESTCASE_HEADER, '*** Test Cases ***', 1, 0),
+            (T.EOS, '', 1, 18),
+            (T.TESTCASE_NAME, 'Name', 2, 0),
+            (T.EOS, '', 2, 4)
+        ] + expected_header
+        assert_tokens(data, expected_tokens, data_only=True)
+
+
 class TestInlineIf(unittest.TestCase):
 
     def test_if_only(self):
@@ -947,7 +1095,7 @@ class TestInlineIf(unittest.TestCase):
             (T.EOS, '', 3, 18),
             (T.KEYWORD, 'Log', 3, 22),
             (T.ARGUMENT, 'foo', 3, 29),
-            (T.EOS, '', 3, 32),
+            (T.EOS, '', 3, 36),    # FIXME: Check is 36 right or should be 32 (like it was). Same with ELSE IF in below test.
             (T.ELSE, 'ELSE', 3, 36),
             (T.EOS, '', 3, 40),
             (T.KEYWORD, 'Log', 3, 43),
@@ -966,13 +1114,13 @@ class TestInlineIf(unittest.TestCase):
             (T.EOS, '', 3, 18),
             (T.KEYWORD, 'Log', 3, 22),
             (T.ARGUMENT, 'foo', 3, 29),
-            (T.EOS, '', 3, 32),
+            (T.EOS, '', 3, 36),
             (T.ELSE_IF, 'ELSE IF', 3, 36),
             (T.ARGUMENT, '${True}', 3, 47),
             (T.EOS, '', 3, 54),
             (T.KEYWORD, 'Log', 3, 56),
             (T.ARGUMENT, 'bar', 3, 63),
-            (T.EOS, '', 3, 66),
+            (T.EOS, '', 3, 70),
             (T.ELSE, 'ELSE', 3, 70),
             (T.EOS, '', 3, 74),
             (T.KEYWORD, 'Noop', 3, 78),
@@ -982,11 +1130,48 @@ class TestInlineIf(unittest.TestCase):
         ]
         self._verify(header, expected)
 
+    def test_multiline_and_comments(self):
+        header = '''\
+IF                     # 3
+    ...    ${False}    # 4
+    ...    Log         # 5
+    ...    foo         # 6
+    ...    ELSE IF     # 7
+    ...    ${True}     # 8
+    ...    Log         # 9
+    ...    bar         # 10
+    ...    ELSE        # 11
+    ...    Log         # 12
+    ...    zap         # 13
+'''
+        expected = [
+            (T.IF, 'IF', 3, 4),
+            (T.ARGUMENT, '${False}', 4, 11),
+            (T.EOS, '', 4, 19),
+            (T.KEYWORD, 'Log', 5, 11),
+            (T.ARGUMENT, 'foo', 6, 11),
+            (T.EOS, '', 7, 11),
+            (T.ELSE_IF, 'ELSE IF', 7, 11),
+            (T.ARGUMENT, '${True}', 8, 11),
+            (T.EOS, '', 8, 18),
+            (T.KEYWORD, 'Log', 9, 11),
+            (T.ARGUMENT, 'bar', 10, 11),
+            (T.EOS, '', 11, 11),
+            (T.ELSE, 'ELSE', 11, 11),
+            (T.EOS, '', 11, 15),
+            (T.KEYWORD, 'Log', 12, 11),
+            (T.ARGUMENT, 'zap', 13, 11),
+            (T.EOS, '', 13, 14),
+            (T.END, '', 13, 14),
+            (T.EOS, '', 13, 14)
+        ]
+        self._verify(header, expected)
+
     def _verify(self, header, expected_header):
-        data = '''\
+        data = f'''\
 *** Test Cases ***
 Name
-    %s
+    {header}
 '''
         expected_tokens = [
             (T.TESTCASE_HEADER, '*** Test Cases ***', 1, 0),
@@ -994,7 +1179,7 @@ Name
             (T.TESTCASE_NAME, 'Name', 2, 0),
             (T.EOS, '', 2, 4)
         ] + expected_header
-        assert_tokens(data % header, expected_tokens, data_only=True)
+        assert_tokens(data, expected_tokens, data_only=True)
 
 
 class TestCommentRowsAndEmptyRows(unittest.TestCase):
@@ -1084,7 +1269,7 @@ class TestCommentRowsAndEmptyRows(unittest.TestCase):
 class TestGetTokensSourceFormats(unittest.TestCase):
     path = os.path.join(os.getenv('TEMPDIR') or tempfile.gettempdir(),
                         'test_lexer.robot')
-    data = u'''\
+    data = '''\
 *** Settings ***
 Library         Easter
 
@@ -1168,7 +1353,7 @@ Example
 
 
 class TestGetResourceTokensSourceFormats(TestGetTokensSourceFormats):
-    data = u'''\
+    data = '''\
 *** Variable ***
 ${VAR}    Value
 
@@ -1362,7 +1547,7 @@ do something
                     (T.EOS, '', 2, 12),
                     (T.ASSIGN, '${a}', 3, 4),
                     (T.EOS, '', 3, 8)]
-                    
+
         assert_tokens(data, expected, get_tokens=get_tokens,
                       data_only=True, tokenize_variables=True)
         assert_tokens(data, expected, get_tokens=get_resource_tokens,
@@ -1383,7 +1568,7 @@ do something
                     (T.ASSIGN, '${a}', 3, 4),
                     (T.KEYWORD, 'do nothing', 3, 10),
                     (T.EOS, '', 3, 20)]
-                    
+
         assert_tokens(data, expected, get_tokens=get_tokens,
                       data_only=True, tokenize_variables=True)
         assert_tokens(data, expected, get_tokens=get_resource_tokens,
@@ -1403,7 +1588,7 @@ do something
                     (T.EOS, '', 2, 12),
                     (T.KEYWORD, '${a', 3, 4),
                     (T.EOS, '', 3, 7)]
-                    
+
         assert_tokens(data, expected, get_tokens=get_tokens,
                       data_only=True, tokenize_variables=True)
         assert_tokens(data, expected, get_tokens=get_resource_tokens,
@@ -1423,7 +1608,7 @@ do something
                     (T.EOS, '', 2, 12),
                     (T.KEYWORD, '${=', 3, 4),
                     (T.EOS, '', 3, 7)]
-                    
+
         assert_tokens(data, expected, get_tokens=get_tokens,
                       data_only=True, tokenize_variables=True)
         assert_tokens(data, expected, get_tokens=get_resource_tokens,
@@ -1443,13 +1628,14 @@ do something
                     (T.EOS, '', 2, 12),
                     (T.KEYWORD, '${abc def=', 3, 4),
                     (T.EOS, '', 3, 14)]
-                    
+
         assert_tokens(data, expected, get_tokens=get_tokens,
                       data_only=True, tokenize_variables=True)
         assert_tokens(data, expected, get_tokens=get_resource_tokens,
                       data_only=True, tokenize_variables=True)
         assert_tokens(data, expected, get_tokens=get_init_tokens,
                       data_only=True, tokenize_variables=True)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -112,48 +112,87 @@ class Lexer:
         return tokens
 
     def _get_tokens(self, statements):
-        name_and_eos_handler = self._get_name_and_eos_handler()
-        for statement in statements:
-            if not self._is_inline_if(statement):
-                yield from name_and_eos_handler(statement)
-            else:
-                for part in self._split_inline_if(statement):
-                    yield from name_and_eos_handler(part)
-
-    def _get_name_and_eos_handler(self):
         # Setting local variables is performance optimization to avoid
         # unnecessary lookups and attribute access.
         if self.data_only:
             ignored_types = {None, Token.COMMENT_HEADER, Token.COMMENT}
         else:
             ignored_types = {None}
-        name_types = (Token.TESTCASE_NAME, Token.KEYWORD_NAME)
-        separator_type = Token.SEPARATOR
-        eol_type = Token.EOL
-        def name_and_eos_handler(statement):
-            name_seen = False
-            separator_after_name = None
-            prev_token = None
+        name_types = {Token.TESTCASE_NAME, Token.KEYWORD_NAME}
+        if_type = Token.IF
+        for statement in statements:
+            eos_adder = None
+            result = []
+            append = result.append
             for token in statement:
                 token_type = token.type
                 if token_type in ignored_types:
                     continue
-                if name_seen:
-                    if token_type == separator_type:
-                        separator_after_name = token
-                        continue
-                    if token_type != eol_type:
-                        yield EOS.from_token(prev_token)
-                    if separator_after_name:
-                        yield separator_after_name
-                    name_seen = False
                 if token_type in name_types:
-                    name_seen = True
-                prev_token = token
-                yield token
-            if prev_token:
-                yield EOS.from_token(prev_token)
-        return name_and_eos_handler
+                    eos_adder = self._add_eos_to_name_statement
+                if token_type == if_type:
+                    eos_adder = self._add_eos_to_if_statement
+                append(token)
+            if eos_adder:
+                eos_adder(result)
+            elif result:
+                append(EOS.from_token(result[-1]))
+            yield from result
+
+    def _add_eos_to_name_statement(self, statement):
+        eol_type = Token.EOL
+        separator_type = Token.SEPARATOR
+        name_types = {Token.TESTCASE_NAME, Token.KEYWORD_NAME}
+        name_seen = False
+        eos_index = None
+        for index, token in enumerate(statement):
+            token_type = token.type
+            if token.type in name_types:
+                name_seen = True
+            elif name_seen:
+                if token_type == separator_type:
+                    eos_index = index
+                elif token_type == eol_type:
+                    eos_index = None
+                else:
+                    eos_index = eos_index or index
+                    break
+        if eos_index:
+            statement.insert(eos_index, EOS.from_token(statement[eos_index-1]))
+        statement.append(EOS.from_token(statement[-1]))
+
+    def _add_eos_to_if_statement(self, statement):
+        if_else_markers = {Token.IF: (False, True),
+                           Token.ELSE_IF: (True, True),
+                           Token.ELSE: (True, False)}
+        normal_if_statement_types = {Token.IF, Token.ARGUMENT,   # TODO: Continuation?
+                                     Token.SEPARATOR, Token.EOL}
+        inline_if = False
+        added = 0
+        add_after_arg = False
+        for index, token in enumerate(statement[:]):
+            token_type = token.type
+            if token_type in if_else_markers:
+                add_before, add_after_arg = if_else_markers[token_type]
+                if add_before:
+                    statement.insert(index + added, EOS.from_token(token, before=True))
+                    added += 1
+                if not add_after_arg:
+                    statement.insert(index + added + 1, EOS.from_token(token))
+                    added += 1
+            elif token_type == Token.ARGUMENT and add_after_arg:
+                statement.insert(index + added + 1, EOS.from_token(token))
+                added += 1
+                add_after_arg = False
+            if token_type not in normal_if_statement_types:
+                inline_if = True
+        last = statement[-1]
+        if not added:
+            statement.append(EOS.from_token(last))
+        if inline_if:
+            statement.extend([EOS.from_token(last),
+                              END.from_token(last, virtual=True),
+                              EOS.from_token(last)])
 
     def _split_trailing_commented_and_empty_lines(self, statement):
         lines = self._split_to_lines(statement)
@@ -192,20 +231,3 @@ class Lexer:
         for token in tokens:
             for t in token.tokenize_variables():
                 yield t
-
-    def _split_inline_if(self, statement):
-        yield from InlineIfLexer.split_statements(statement)
-        yield [END.from_token(statement[-1])]
-
-    def _is_inline_if(self, statement):
-        if not self._is_normal_if_header(statement):
-            return False
-        if_index = [s.type for s in statement].index(Token.IF)
-        return len(statement[if_index:]) > 2
-
-    def _is_normal_if_header(self, statement):
-        for token in statement:
-            if token.type == Token.IF:
-                return True
-        return False
-

@@ -216,17 +216,23 @@ class EOS(Token):
         Token.__init__(self, Token.EOS, '', lineno, col_offset)
 
     @classmethod
-    def from_token(cls, token):
-        return EOS(lineno=token.lineno, col_offset=token.end_col_offset)
+    def from_token(cls, token, before=False):
+        col_offset = token.col_offset if before else token.end_col_offset
+        return EOS(token.lineno, col_offset)
 
 
 class END(Token):
-    """Token representing END token used to signify block ending."""
+    """Token representing END token used to signify block ending.
+
+    Virtual END tokens have '' as their value, with "real" END tokens the
+    value is 'END'.
+    """
     __slots__ = []
 
-    def __init__(self, lineno=-1, col_offset=-1):
-        Token.__init__(self, Token.END, '', lineno, col_offset)
+    def __init__(self, lineno=-1, col_offset=-1, virtual=False):
+        value = 'END' if not virtual else ''
+        Token.__init__(self, Token.END, value, lineno, col_offset)
 
     @classmethod
-    def from_token(cls, token):
-        return END(lineno=token.lineno, col_offset=token.end_col_offset)
+    def from_token(cls, token, virtual=False):
+        return END(token.lineno, token.end_col_offset, virtual)
