@@ -42,7 +42,7 @@ Dryrun fail inside of ELSE
     This is validated
 
 Dryrun fail invalid IF in non executed branch
-    [Documentation]    FAIL    IF has more than one condition.
+    [Documentation]    FAIL    IF has no condition.
     IF  1 > 2
        Keyword with invalid if
     END
@@ -75,7 +75,7 @@ Dryrun fail empty if in non executed branch
 
 *** Keywords ***
 Keyword with invalid if
-    IF  1 == 1  2 == 2
+    IF
        Log  invalid
     END
 

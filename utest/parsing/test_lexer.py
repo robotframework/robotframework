@@ -1075,7 +1075,7 @@ class TestInlineIf(unittest.TestCase):
     def test_if_only(self):
         header = 'IF    ${True}    Log Many   foo    bar'
         expected = [
-            (T.IF, 'IF', 3, 4),
+            (T.INLINE_IF, 'IF', 3, 4),
             (T.ARGUMENT, '${True}', 3, 10),
             (T.EOS, '', 3, 17),
             (T.KEYWORD, 'Log Many', 3, 21),
@@ -1090,7 +1090,7 @@ class TestInlineIf(unittest.TestCase):
     def test_with_else(self):
         header = 'IF    ${False}    Log    foo    ELSE   Log    bar'
         expected = [
-            (T.IF, 'IF', 3, 4),
+            (T.INLINE_IF, 'IF', 3, 4),
             (T.ARGUMENT, '${False}', 3, 10),
             (T.EOS, '', 3, 18),
             (T.KEYWORD, 'Log', 3, 22),
@@ -1109,7 +1109,7 @@ class TestInlineIf(unittest.TestCase):
     def test_with_else_if_and_else(self):
         header = 'IF    ${False}    Log    foo    ELSE IF    ${True}  Log    bar    ELSE    Noop'
         expected = [
-            (T.IF, 'IF', 3, 4),
+            (T.INLINE_IF, 'IF', 3, 4),
             (T.ARGUMENT, '${False}', 3, 10),
             (T.EOS, '', 3, 18),
             (T.KEYWORD, 'Log', 3, 22),
@@ -1145,7 +1145,7 @@ IF                     # 3
     ...    zap         # 13
 '''
         expected = [
-            (T.IF, 'IF', 3, 4),
+            (T.INLINE_IF, 'IF', 3, 4),
             (T.ARGUMENT, '${False}', 4, 11),
             (T.EOS, '', 4, 19),
             (T.KEYWORD, 'Log', 5, 11),

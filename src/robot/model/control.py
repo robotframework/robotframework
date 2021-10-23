@@ -106,7 +106,7 @@ class IfBranch(BodyItem):
         return '%s-k%d' % (self.parent.parent.id, index)
 
     def __str__(self):
-        if self.type == self.IF:
+        if self.type in (self.IF, self.INLINE_IF):
             return 'IF    %s' % self.condition
         if self.type == self.ELSE_IF:
             return 'ELSE IF    %s' % self.condition

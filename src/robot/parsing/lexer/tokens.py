@@ -78,6 +78,7 @@ class Token:
     FOR_SEPARATOR = 'FOR SEPARATOR'
     END = 'END'
     IF = 'IF'
+    INLINE_IF = 'INLINE IF'
     ELSE_IF = 'ELSE IF'
     ELSE = 'ELSE'
 
@@ -140,8 +141,8 @@ class Token:
         if value is None:
             value = {
                 Token.IF: 'IF', Token.ELSE_IF: 'ELSE IF', Token.ELSE: 'ELSE',
-                Token.FOR: 'FOR', Token.END: 'END', Token.CONTINUATION: '...',
-                Token.EOL: '\n', Token.WITH_NAME: 'WITH NAME'
+                Token.INLINE_IF: 'IF', Token.FOR: 'FOR', Token.END: 'END',
+                Token.CONTINUATION: '...', Token.EOL: '\n', Token.WITH_NAME: 'WITH NAME'
             }.get(type, '')
         self.value = value
         self.lineno = lineno

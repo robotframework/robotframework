@@ -33,6 +33,9 @@ Assignment inside inline if
 Inline if inside for loop
     Check Test Case    ${TESTNAME}
 
+Inline if inside block if
+    Check Test Case    ${TESTNAME}
+
 Inline if inside nested loop
     Check Test Case    ${TESTNAME}
 

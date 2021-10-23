@@ -249,6 +249,7 @@ class LoggerProxy(AbstractLoggerProxy):
     _start_keyword_methods = {
         'IF/ELSE ROOT': 'start_if',
         'IF': 'start_if_branch',
+        'INLINE IF': 'start_if_branch',
         'ELSE IF': 'start_if_branch',
         'ELSE': 'start_if_branch',
         'FOR': 'start_for',
@@ -257,6 +258,7 @@ class LoggerProxy(AbstractLoggerProxy):
     _end_keyword_methods = {
         'IF/ELSE ROOT': 'end_if',
         'IF': 'end_if_branch',
+        'INLINE IF': 'end_if_branch',
         'ELSE IF': 'end_if_branch',
         'ELSE': 'end_if_branch',
         'FOR': 'end_for',

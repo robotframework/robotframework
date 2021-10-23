@@ -824,7 +824,7 @@ class IfHeader(Statement):
     def from_params(cls, condition, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
         return cls([
             Token(Token.SEPARATOR, indent),
-            Token(Token.IF),
+            Token(cls.type),
             Token(Token.SEPARATOR, separator),
             Token(Token.ARGUMENT, condition),
             Token(Token.EOL, eol)
@@ -843,18 +843,13 @@ class IfHeader(Statement):
 
 
 @Statement.register
+class InlineIfHeader(IfHeader):
+    type = Token.INLINE_IF
+
+
+@Statement.register
 class ElseIfHeader(IfHeader):
     type = Token.ELSE_IF
-
-    @classmethod
-    def from_params(cls, condition, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
-        return cls([
-            Token(Token.SEPARATOR, indent),
-            Token(Token.ELSE_IF),
-            Token(Token.SEPARATOR, separator),
-            Token(Token.ARGUMENT, condition),
-            Token(Token.EOL, eol)
-        ])
 
 
 @Statement.register

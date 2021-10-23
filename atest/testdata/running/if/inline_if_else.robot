@@ -30,12 +30,19 @@ Inline if else - else executed - failing
 
 Assignment inside inline if
     IF    True    ${num}=   Convert to number    12
-    Variable Should Exist    $num
+    Should Be Equal    ${num}    ${12}
 
 Inline if inside for loop
     [Documentation]    FAIL The end
     FOR    ${i}    IN    1    2    3
         IF    ${i} == 3    Fail    The end    ELSE    Log    ${i}
+    END
+
+Inline if inside block if
+    IF    ${True}
+        Log   Hi
+        IF    3==4    Fail    Should not be executed    ELSE    Log    Hello
+        Log   Goodbye
     END
 
 Inline if inside nested loop

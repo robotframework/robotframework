@@ -167,6 +167,17 @@ class IfHeaderLexer(StatementLexer):
             token.type = Token.ARGUMENT
 
 
+class InlineIfHeaderLexer(StatementLexer):
+
+    def handles(self, statement):
+        return statement[0].value == 'IF'
+
+    def lex(self):
+        self.statement[0].type = Token.INLINE_IF
+        for token in self.statement[1:]:
+            token.type = Token.ARGUMENT
+
+
 class ElseIfHeaderLexer(StatementLexer):
 
     def handles(self, statement):

@@ -36,7 +36,7 @@ class BlockParser(Parser):
 
     def __init__(self, model):
         Parser.__init__(self, model)
-        self.nested_parsers = {Token.FOR: ForParser, Token.IF: IfParser}
+        self.nested_parsers = {Token.FOR: ForParser, Token.IF: IfParser, Token.INLINE_IF: IfParser}
 
     def handles(self, statement):
         return statement.type not in self.unhandled_tokens
@@ -92,6 +92,12 @@ class IfParser(NestedBlockParser):
             self.model.orelse = parser.model
             return parser
         return NestedBlockParser.parse(self, statement)
+
+
+class InlineIfParser(IfParser):
+
+    def __init__(self, header):
+        NestedBlockParser.__init__(self, InlineIf(header))
 
 
 class OrElseParser(IfParser):

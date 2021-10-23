@@ -27,6 +27,7 @@ class BodyItem(ModelObject):
     FOR_ITERATION = 'FOR ITERATION'
     IF_ELSE_ROOT = 'IF/ELSE ROOT'
     IF = 'IF'
+    INLINE_IF = 'INLINE IF'
     ELSE_IF = 'ELSE IF'
     ELSE = 'ELSE'
     MESSAGE = 'MESSAGE'

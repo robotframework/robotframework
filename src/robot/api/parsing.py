@@ -225,6 +225,7 @@ Statements:
 - :class:`~robot.parsing.model.statements.TemplateArguments`
 - :class:`~robot.parsing.model.statements.ForHeader`
 - :class:`~robot.parsing.model.statements.IfHeader`
+- :class:`~robot.parsing.model.statements.InlineIfHeader`
 - :class:`~robot.parsing.model.statements.ElseIfHeader`
 - :class:`~robot.parsing.model.statements.ElseHeader`
 - :class:`~robot.parsing.model.statements.End`
@@ -519,6 +520,7 @@ from robot.parsing.model.statements import (
     TemplateArguments,
     ForHeader,
     IfHeader,
+    InlineIfHeader,
     ElseIfHeader,
     ElseHeader,
     End,

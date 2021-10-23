@@ -23,7 +23,7 @@ from .statementlexers import (Lexer,
                               ErrorSectionHeaderLexer,
                               TestOrKeywordSettingLexer,
                               KeywordCallLexer,
-                              ForHeaderLexer,
+                              ForHeaderLexer, InlineIfHeaderLexer,
                               IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
                               EndLexer)
 
@@ -228,7 +228,7 @@ class IfLexer(NestedBlockLexer):
         return IfHeaderLexer(self.ctx).handles(statement)
 
     def lexer_classes(self):
-        return (IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
+        return (InlineIfLexer, IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
                 ForLexer, EndLexer, KeywordCallLexer)
 
 
@@ -241,7 +241,7 @@ class InlineIfLexer(BlockLexer):
         return False
 
     def lexer_classes(self):
-        return (IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
+        return (InlineIfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
                 KeywordCallLexer)
 
     def input(self, statement):
@@ -249,8 +249,7 @@ class InlineIfLexer(BlockLexer):
             super().input(part)
         return self
 
-    @staticmethod
-    def split_statements(statement):
+    def split_statements(self, statement):
         current_statement = []
         expect_arg = False
         for token in statement:
@@ -272,6 +271,3 @@ class InlineIfLexer(BlockLexer):
             else:
                 current_statement.append(token)
         yield current_statement
-
-
-

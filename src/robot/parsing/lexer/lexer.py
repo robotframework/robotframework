@@ -119,7 +119,7 @@ class Lexer:
         else:
             ignored_types = {None}
         name_types = {Token.TESTCASE_NAME, Token.KEYWORD_NAME}
-        if_type = Token.IF
+        if_type = Token.INLINE_IF
         for statement in statements:
             eos_adder = None
             result = []
@@ -162,12 +162,9 @@ class Lexer:
         statement.append(EOS.from_token(statement[-1]))
 
     def _add_eos_to_if_statement(self, statement):
-        if_else_markers = {Token.IF: (False, True),
+        if_else_markers = {Token.INLINE_IF: (False, True),
                            Token.ELSE_IF: (True, True),
                            Token.ELSE: (True, False)}
-        normal_if_statement_types = {Token.IF, Token.ARGUMENT,   # TODO: Continuation?
-                                     Token.SEPARATOR, Token.EOL}
-        inline_if = False
         added = 0
         add_after_arg = False
         for index, token in enumerate(statement[:]):
@@ -184,15 +181,10 @@ class Lexer:
                 statement.insert(index + added + 1, EOS.from_token(token))
                 added += 1
                 add_after_arg = False
-            if token_type not in normal_if_statement_types:
-                inline_if = True
         last = statement[-1]
-        if not added:
-            statement.append(EOS.from_token(last))
-        if inline_if:
-            statement.extend([EOS.from_token(last),
-                              END.from_token(last, virtual=True),
-                              EOS.from_token(last)])
+        statement.extend([EOS.from_token(last),
+                          END.from_token(last, virtual=True),
+                          EOS.from_token(last)])
 
     def _split_trailing_commented_and_empty_lines(self, statement):
         lines = self._split_to_lines(statement)
