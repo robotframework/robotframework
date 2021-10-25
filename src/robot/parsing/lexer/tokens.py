@@ -134,7 +134,8 @@ class Token:
         KEYWORD_NAME
     ))
 
-    __slots__ = ['type', 'value', 'lineno', 'col_offset', 'error']
+    __slots__ = ['type', 'value', 'lineno', 'col_offset', 'error',
+                 '_add_eos_before', '_add_eos_after']
 
     def __init__(self, type=None, value=None, lineno=-1, col_offset=-1, error=None):
         self.type = type
@@ -148,6 +149,9 @@ class Token:
         self.lineno = lineno
         self.col_offset = col_offset
         self.error = error
+        # Used internally be lexer to indicate that EOS is needed before/after.
+        self._add_eos_before = False
+        self._add_eos_after = False
 
     @property
     def end_col_offset(self):

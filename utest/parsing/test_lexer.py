@@ -750,7 +750,7 @@ class TestName(unittest.TestCase):
 
     def test_name_and_keyword_on_same_continued_rows(self):
         self._verify('Name\n...    Keyword',
-                     [(T.TESTCASE_NAME, 'Name', 2, 0), (T.EOL, '\n', 2, 4), (T.EOS, '', 2, 5),
+                     [(T.TESTCASE_NAME, 'Name', 2, 0), (T.EOS, '', 2, 4), (T.EOL, '\n', 2, 4),
                       (T.CONTINUATION, '...', 3, 0), (T.SEPARATOR, '    ', 3, 3),
                       (T.KEYWORD, 'Keyword', 3, 7), (T.EOL, '', 3, 14), (T.EOS, '', 3, 14)])
 
@@ -759,6 +759,11 @@ class TestName(unittest.TestCase):
                      [(T.TESTCASE_NAME, 'Name', 2, 0), (T.EOS, '', 2, 4), (T.SEPARATOR, '    ', 2, 4),
                       (T.DOCUMENTATION, '[Documentation]', 2, 8), (T.SEPARATOR, '    ', 2, 23),
                       (T.ARGUMENT, 'The doc.', 2, 27), (T.EOL, '', 2, 35), (T.EOS, '', 2, 35)])
+
+    def test_name_with_extra(self):
+        self._verify('Name\n...\n',
+                     [(T.TESTCASE_NAME, 'Name', 2, 0), (T.EOS, '', 2, 4), (T.EOL, '\n', 2, 4),
+                      (T.CONTINUATION, '...', 3, 0), (T.KEYWORD, '', 3, 3), (T.EOL, '\n', 3, 3), (T.EOS, '', 3, 4)])
 
     def _verify(self, data, tokens):
         assert_tokens('*** Test Cases ***\n' + data,
@@ -798,7 +803,7 @@ class TestNameWithPipes(unittest.TestCase):
 
     def test_name_and_keyword_on_same_continued_row(self):
         self._verify('| Name | \n| ... | Keyword',
-                     [(T.SEPARATOR, '| ', 2, 0), (T.TESTCASE_NAME, 'Name', 2, 2), (T.SEPARATOR, ' |', 2, 6), (T.EOL, ' \n', 2, 8), (T.EOS, '', 2, 10),
+                     [(T.SEPARATOR, '| ', 2, 0), (T.TESTCASE_NAME, 'Name', 2, 2), (T.EOS, '', 2, 6), (T.SEPARATOR, ' |', 2, 6), (T.EOL, ' \n', 2, 8),
                       (T.SEPARATOR, '| ', 3, 0), (T.CONTINUATION, '...', 3, 2), (T.SEPARATOR, ' | ', 3, 5),
                       (T.KEYWORD, 'Keyword', 3, 8), (T.EOL, '', 3, 15), (T.EOS, '', 3, 15)])
 
@@ -807,6 +812,13 @@ class TestNameWithPipes(unittest.TestCase):
                      [(T.SEPARATOR, '| ', 2, 0), (T.TESTCASE_NAME, 'Name', 2, 2), (T.EOS, '', 2, 6), (T.SEPARATOR, ' | ', 2, 6),
                       (T.DOCUMENTATION, '[Documentation]', 2, 9), (T.SEPARATOR, ' | ', 2, 24),
                       (T.ARGUMENT, 'The doc.', 2, 27), (T.EOL, '', 2, 35), (T.EOS, '', 2, 35)])
+
+    def test_name_with_extra(self):
+        self._verify('| Name |  |   |\n| ... |',
+                     [(T.SEPARATOR, '| ', 2, 0), (T.TESTCASE_NAME, 'Name', 2, 2), (T.EOS, '', 2, 6),
+                      (T.SEPARATOR, ' |  ', 2, 6), (T.SEPARATOR, '|   ', 2, 10), (T.SEPARATOR, '|', 2, 14), (T.EOL, '\n', 2, 15),
+                      (T.SEPARATOR, '| ', 3, 0), (T.CONTINUATION, '...', 3, 2), (T.KEYWORD, '', 3, 5), (T.SEPARATOR, ' |', 3, 5),
+                      (T.EOL, '', 3, 7), (T.EOS, '', 3, 7)])
 
     def _verify(self, data, tokens):
         assert_tokens('*** Test Cases ***\n' + data,
@@ -1073,66 +1085,93 @@ Name
 class TestInlineIf(unittest.TestCase):
 
     def test_if_only(self):
-        header = 'IF    ${True}    Log Many   foo    bar'
+        header = '    IF    ${True}    Log Many   foo    bar'
         expected = [
+            (T.SEPARATOR, '    ', 3, 0),
             (T.INLINE_IF, 'IF', 3, 4),
+            (T.SEPARATOR, '    ', 3, 6),
             (T.ARGUMENT, '${True}', 3, 10),
             (T.EOS, '', 3, 17),
+            (T.SEPARATOR, '    ', 3, 17),
             (T.KEYWORD, 'Log Many', 3, 21),
+            (T.SEPARATOR, '   ', 3, 29),
             (T.ARGUMENT, 'foo', 3, 32),
+            (T.SEPARATOR, '    ', 3, 35),
             (T.ARGUMENT, 'bar', 3, 39),
-            (T.EOS, '', 3, 42),
-            (T.END, '', 3, 42),
-            (T.EOS, '', 3, 42)
+            (T.EOL, '\n', 3, 42),
+            (T.EOS, '', 3, 43),
+            (T.END, '', 3, 43),
+            (T.EOS, '', 3, 43)
         ]
         self._verify(header, expected)
 
     def test_with_else(self):
-        header = 'IF    ${False}    Log    foo    ELSE   Log    bar'
+        #             4     10          22     29     36     43     50
+        header = '    IF    ${False}    Log    foo    ELSE   Log    bar'
         expected = [
+            (T.SEPARATOR, '    ', 3, 0),
             (T.INLINE_IF, 'IF', 3, 4),
+            (T.SEPARATOR, '    ', 3, 6),
             (T.ARGUMENT, '${False}', 3, 10),
             (T.EOS, '', 3, 18),
+            (T.SEPARATOR, '    ', 3, 18),
             (T.KEYWORD, 'Log', 3, 22),
+            (T.SEPARATOR, '    ', 3, 25),
             (T.ARGUMENT, 'foo', 3, 29),
-            (T.EOS, '', 3, 36),    # FIXME: Check is 36 right or should be 32 (like it was). Same with ELSE IF in below test.
+            (T.SEPARATOR, '    ', 3, 32),
+            (T.EOS, '', 3, 36),
             (T.ELSE, 'ELSE', 3, 36),
             (T.EOS, '', 3, 40),
+            (T.SEPARATOR, '   ', 3, 40),
             (T.KEYWORD, 'Log', 3, 43),
+            (T.SEPARATOR, '    ', 3, 46),
             (T.ARGUMENT, 'bar', 3, 50),
-            (T.EOS, '', 3, 53),
-            (T.END, '', 3, 53),
-            (T.EOS, '', 3, 53)
+            (T.EOL, '\n', 3, 53),
+            (T.EOS, '', 3, 54),
+            (T.END, '', 3, 54),
+            (T.EOS, '', 3, 54)
         ]
         self._verify(header, expected)
 
     def test_with_else_if_and_else(self):
-        header = 'IF    ${False}    Log    foo    ELSE IF    ${True}  Log    bar    ELSE    Noop'
+        #             4     10          22     29     36         47       56     63     70      78
+        header = '    IF    ${False}    Log    foo    ELSE IF    ${True}  Log    bar    ELSE    Noop'
         expected = [
+            (T.SEPARATOR, '    ', 3, 0),
             (T.INLINE_IF, 'IF', 3, 4),
+            (T.SEPARATOR, '    ', 3, 6),
             (T.ARGUMENT, '${False}', 3, 10),
             (T.EOS, '', 3, 18),
+            (T.SEPARATOR, '    ', 3, 18),
             (T.KEYWORD, 'Log', 3, 22),
+            (T.SEPARATOR, '    ', 3, 25),
             (T.ARGUMENT, 'foo', 3, 29),
+            (T.SEPARATOR, '    ', 3, 32),
             (T.EOS, '', 3, 36),
             (T.ELSE_IF, 'ELSE IF', 3, 36),
+            (T.SEPARATOR, '    ', 3, 43),
             (T.ARGUMENT, '${True}', 3, 47),
             (T.EOS, '', 3, 54),
+            (T.SEPARATOR, '  ', 3, 54),
             (T.KEYWORD, 'Log', 3, 56),
+            (T.SEPARATOR, '    ', 3, 59),
             (T.ARGUMENT, 'bar', 3, 63),
+            (T.SEPARATOR, '    ', 3, 66),
             (T.EOS, '', 3, 70),
             (T.ELSE, 'ELSE', 3, 70),
             (T.EOS, '', 3, 74),
+            (T.SEPARATOR, '    ', 3, 74),
             (T.KEYWORD, 'Noop', 3, 78),
-            (T.EOS, '', 3, 82),
-            (T.END, '', 3, 82),
-            (T.EOS, '', 3, 82)
+            (T.EOL, '\n', 3, 82),
+            (T.EOS, '', 3, 83),
+            (T.END, '', 3, 83),
+            (T.EOS, '', 3, 83)
         ]
         self._verify(header, expected)
 
     def test_multiline_and_comments(self):
         header = '''\
-IF                     # 3
+    IF                 # 3
     ...    ${False}    # 4
     ...    Log         # 5
     ...    foo         # 6
@@ -1145,25 +1184,97 @@ IF                     # 3
     ...    zap         # 13
 '''
         expected = [
+            (T.SEPARATOR, '    ', 3, 0),
             (T.INLINE_IF, 'IF', 3, 4),
+            (T.SEPARATOR, '                 ', 3, 6),
+            (T.COMMENT, '# 3', 3, 23),
+            (T.EOL, '\n', 3, 26),
+            (T.SEPARATOR, '    ', 4, 0),
+            (T.CONTINUATION, '...', 4, 4),
+            (T.SEPARATOR, '    ', 4, 7),
             (T.ARGUMENT, '${False}', 4, 11),
             (T.EOS, '', 4, 19),
+
+            (T.SEPARATOR, '    ', 4, 19),
+            (T.COMMENT, '# 4', 4, 23),
+            (T.EOL, '\n', 4, 26),
+            (T.SEPARATOR, '    ', 5, 0),
+            (T.CONTINUATION, '...', 5, 4),
+            (T.SEPARATOR, '    ', 5, 7),
             (T.KEYWORD, 'Log', 5, 11),
+            (T.SEPARATOR, '         ', 5, 14),
+            (T.COMMENT, '# 5', 5, 23),
+            (T.EOL, '\n', 5, 26),
+            (T.SEPARATOR, '    ', 6, 0),
+            (T.CONTINUATION, '...', 6, 4),
+            (T.SEPARATOR, '    ', 6, 7),
             (T.ARGUMENT, 'foo', 6, 11),
+            (T.SEPARATOR, '         ', 6, 14),
+            (T.COMMENT, '# 6', 6, 23),
+            (T.EOL, '\n', 6, 26),
+            (T.SEPARATOR, '    ', 7, 0),
+            (T.CONTINUATION, '...', 7, 4),
+            (T.SEPARATOR, '    ', 7, 7),
             (T.EOS, '', 7, 11),
+
             (T.ELSE_IF, 'ELSE IF', 7, 11),
+            (T.SEPARATOR, '     ', 7, 18),
+            (T.COMMENT, '# 7', 7, 23),
+            (T.EOL, '\n', 7, 26),
+            (T.SEPARATOR, '    ', 8, 0),
+            (T.CONTINUATION, '...', 8, 4),
+            (T.SEPARATOR, '    ', 8, 7),
             (T.ARGUMENT, '${True}', 8, 11),
             (T.EOS, '', 8, 18),
+
+            (T.SEPARATOR, '     ', 8, 18),
+            (T.COMMENT, '# 8', 8, 23),
+            (T.EOL, '\n', 8, 26),
+            (T.SEPARATOR, '    ', 9, 0),
+            (T.CONTINUATION, '...', 9, 4),
+            (T.SEPARATOR, '    ', 9, 7),
             (T.KEYWORD, 'Log', 9, 11),
+            (T.SEPARATOR, '         ', 9, 14),
+            (T.COMMENT, '# 9', 9, 23),
+            (T.EOL, '\n', 9, 26),
+            (T.SEPARATOR, '    ', 10, 0),
+            (T.CONTINUATION, '...', 10, 4),
+            (T.SEPARATOR, '    ', 10, 7),
             (T.ARGUMENT, 'bar', 10, 11),
+            (T.SEPARATOR, '         ', 10, 14),
+            (T.COMMENT, '# 10', 10, 23),
+            (T.EOL, '\n', 10, 27),
+            (T.SEPARATOR, '    ', 11, 0),
+            (T.CONTINUATION, '...', 11, 4),
+            (T.SEPARATOR, '    ', 11, 7),
             (T.EOS, '', 11, 11),
+
             (T.ELSE, 'ELSE', 11, 11),
             (T.EOS, '', 11, 15),
+
+            (T.SEPARATOR, '        ', 11, 15),
+            (T.COMMENT, '# 11', 11, 23),
+            (T.EOL, '\n', 11, 27),
+            (T.SEPARATOR, '    ', 12, 0),
+            (T.CONTINUATION, '...', 12, 4),
+            (T.SEPARATOR, '    ', 12, 7),
             (T.KEYWORD, 'Log', 12, 11),
+            (T.SEPARATOR, '         ', 12, 14),
+            (T.COMMENT, '# 12', 12, 23),
+            (T.EOL, '\n', 12, 27),
+            (T.SEPARATOR, '    ', 13, 0),
+            (T.CONTINUATION, '...', 13, 4),
+            (T.SEPARATOR, '    ', 13, 7),
             (T.ARGUMENT, 'zap', 13, 11),
-            (T.EOS, '', 13, 14),
-            (T.END, '', 13, 14),
-            (T.EOS, '', 13, 14)
+            (T.SEPARATOR, '         ', 13, 14),
+            (T.COMMENT, '# 13', 13, 23),
+            (T.EOL, '\n', 13, 27),
+            (T.EOS, '', 13, 28),
+
+            (T.END, '', 13, 28),
+            (T.EOS, '', 13, 28),
+            (T.EOL, '\n', 14, 0),
+            (T.EOS, '', 14, 1)
         ]
         self._verify(header, expected)
 
@@ -1171,15 +1282,17 @@ IF                     # 3
         data = f'''\
 *** Test Cases ***
 Name
-    {header}
+{header}
 '''
         expected_tokens = [
             (T.TESTCASE_HEADER, '*** Test Cases ***', 1, 0),
-            (T.EOS, '', 1, 18),
+            (T.EOL, '\n', 1, 18),
+            (T.EOS, '', 1, 19),
             (T.TESTCASE_NAME, 'Name', 2, 0),
-            (T.EOS, '', 2, 4)
+            (T.EOL, '\n', 2, 4),
+            (T.EOS, '', 2, 5),
         ] + expected_header
-        assert_tokens(data, expected_tokens, data_only=True)
+        assert_tokens(data, expected_tokens)
 
 
 class TestCommentRowsAndEmptyRows(unittest.TestCase):

@@ -112,79 +112,33 @@ class Lexer:
         return tokens
 
     def _get_tokens(self, statements):
-        # Setting local variables is performance optimization to avoid
-        # unnecessary lookups and attribute access.
         if self.data_only:
             ignored_types = {None, Token.COMMENT_HEADER, Token.COMMENT}
         else:
             ignored_types = {None}
-        name_types = {Token.TESTCASE_NAME, Token.KEYWORD_NAME}
-        if_type = Token.INLINE_IF
+        inline_if_type = Token.INLINE_IF
         for statement in statements:
-            eos_adder = None
-            result = []
-            append = result.append
+            last = None
+            inline_if = False
             for token in statement:
                 token_type = token.type
                 if token_type in ignored_types:
                     continue
-                if token_type in name_types:
-                    eos_adder = self._add_eos_to_name_statement
-                if token_type == if_type:
-                    eos_adder = self._add_eos_to_if_statement
-                append(token)
-            if eos_adder:
-                eos_adder(result)
-            elif result:
-                append(EOS.from_token(result[-1]))
-            yield from result
-
-    def _add_eos_to_name_statement(self, statement):
-        eol_type = Token.EOL
-        separator_type = Token.SEPARATOR
-        name_types = {Token.TESTCASE_NAME, Token.KEYWORD_NAME}
-        name_seen = False
-        eos_index = None
-        for index, token in enumerate(statement):
-            token_type = token.type
-            if token.type in name_types:
-                name_seen = True
-            elif name_seen:
-                if token_type == separator_type:
-                    eos_index = index
-                elif token_type == eol_type:
-                    eos_index = None
-                else:
-                    eos_index = eos_index or index
-                    break
-        if eos_index:
-            statement.insert(eos_index, EOS.from_token(statement[eos_index-1]))
-        statement.append(EOS.from_token(statement[-1]))
-
-    def _add_eos_to_if_statement(self, statement):
-        if_else_markers = {Token.INLINE_IF: (False, True),
-                           Token.ELSE_IF: (True, True),
-                           Token.ELSE: (True, False)}
-        added = 0
-        add_after_arg = False
-        for index, token in enumerate(statement[:]):
-            token_type = token.type
-            if token_type in if_else_markers:
-                add_before, add_after_arg = if_else_markers[token_type]
-                if add_before:
-                    statement.insert(index + added, EOS.from_token(token, before=True))
-                    added += 1
-                if not add_after_arg:
-                    statement.insert(index + added + 1, EOS.from_token(token))
-                    added += 1
-            elif token_type == Token.ARGUMENT and add_after_arg:
-                statement.insert(index + added + 1, EOS.from_token(token))
-                added += 1
-                add_after_arg = False
-        last = statement[-1]
-        statement.extend([EOS.from_token(last),
-                          END.from_token(last, virtual=True),
-                          EOS.from_token(last)])
+                if token._add_eos_before:
+                    token._add_eos_before = False
+                    yield EOS.from_token(token, before=True)
+                yield token
+                if token._add_eos_after:
+                    token._add_eos_after = False
+                    yield EOS.from_token(token)
+                if token_type == inline_if_type:
+                    inline_if = True
+                last = token
+            if last:
+                yield EOS.from_token(last)
+            if inline_if:
+                yield END.from_token(last, virtual=True)
+                yield EOS.from_token(last)
 
     def _split_trailing_commented_and_empty_lines(self, statement):
         lines = self._split_to_lines(statement)

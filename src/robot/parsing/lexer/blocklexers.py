@@ -166,7 +166,10 @@ class TestOrKeywordLexer(BlockLexer):
 
     def _handle_name_or_indentation(self, statement):
         if not self._name_seen:
-            statement.pop(0).type = self.name_type
+            token = statement.pop(0)
+            token.type = self.name_type
+            if statement:
+                token._add_eos_after = True
             self._name_seen = True
         else:
             while statement and not statement[0].value:
@@ -245,29 +248,33 @@ class InlineIfLexer(BlockLexer):
                 KeywordCallLexer)
 
     def input(self, statement):
-        for part in self.split_statements(statement):
+        for part in self._split_statements(statement):
             super().input(part)
         return self
 
-    def split_statements(self, statement):
-        current_statement = []
-        expect_arg = False
+    def _split_statements(self, statement):
+        current = []
+        expect_condition = False
         for token in statement:
-            if expect_arg:
-                current_statement.append(token)
-                yield current_statement
-                current_statement = []
-                expect_arg = False
+            if expect_condition:
+                token._add_eos_after = True
+                current.append(token)
+                yield current
+                current = []
+                expect_condition = False
             elif token.value in ('IF', 'ELSE IF'):
-                if current_statement:
-                    yield current_statement
-                    current_statement = []
-                current_statement.append(token)
-                expect_arg = True
+                token._add_eos_before = token.value == 'ELSE IF'
+                if current:
+                    yield current
+                    current = []
+                current.append(token)
+                expect_condition = True
             elif token.value == 'ELSE':
-                yield current_statement
-                current_statement = []
+                token._add_eos_before = True
+                token._add_eos_after = True
+                yield current
+                current = []
                 yield [token]
             else:
-                current_statement.append(token)
-        yield current_statement
+                current.append(token)
+        yield current
