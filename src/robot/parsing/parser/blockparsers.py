@@ -94,12 +94,6 @@ class IfParser(NestedBlockParser):
         return NestedBlockParser.parse(self, statement)
 
 
-class InlineIfParser(IfParser):
-
-    def __init__(self, header):
-        NestedBlockParser.__init__(self, InlineIf(header))
-
-
 class OrElseParser(IfParser):
 
     def handles(self, statement):

@@ -82,12 +82,13 @@ class If(BodyItem):
 @IfBranches.register
 class IfBranch(BodyItem):
     body_class = Body
-    repr_args = ('type', 'condition')
-    __slots__ = ['type', 'condition']
+    repr_args = ('type', 'condition', 'assign')
+    __slots__ = ['type', 'condition', 'assign']
 
-    def __init__(self, type=BodyItem.IF, condition=None, parent=None):
+    def __init__(self, type=BodyItem.IF, condition=None, assign=None, parent=None):
         self.type = type
         self.condition = condition
+        self.assign = assign or ()
         self.parent = parent
         self.body = None
 
@@ -106,7 +107,7 @@ class IfBranch(BodyItem):
         return '%s-k%d' % (self.parent.parent.id, index)
 
     def __str__(self):
-        if self.type in (self.IF, self.INLINE_IF):
+        if self.type == self.IF:
             return 'IF    %s' % self.condition
         if self.type == self.ELSE_IF:
             return 'ELSE IF    %s' % self.condition

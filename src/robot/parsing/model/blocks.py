@@ -152,11 +152,17 @@ class If(Block):
     def condition(self):
         return self.header.condition
 
+    @property
+    def assign(self):
+        return self.header.assign
+
     def validate(self):
         self._validate_body()
-        if self.type == Token.IF:
+        if self.type in (Token.IF, Token.INLINE_IF):
             self._validate_structure()
             self._validate_end()
+        if self.type == Token.INLINE_IF:
+            self._validate_branch_keyword_calls()
 
     def _validate_body(self):
         if not self.body:
@@ -177,6 +183,21 @@ class If(Block):
     def _validate_end(self):
         if not self.end:
             self.errors += ('IF has no closing END.',)
+
+    def _validate_branch_keyword_calls(self):
+        # TODO: validation messages
+        def validate(body):
+            if not body:
+                self.errors += ('%s has empty body.' % self.type,)
+            if len(body) > 1:
+                self.errors += ('Inline if branch has more than one keyword call.',)
+            if body[0].assign:
+                self.errors += ('Inline if branch cannot have an assignment.',)
+        validate(self.body)
+        orelse = self.orelse
+        while orelse:
+            validate(orelse.body)
+            orelse = orelse.orelse
 
 
 class For(Block):

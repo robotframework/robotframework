@@ -67,6 +67,8 @@ class Statement(ast.AST):
         for token in tokens:
             if token.type in handlers:
                 return handlers[token.type](tokens)
+        if all(token.type is Token.ARGUMENT for token in tokens):
+            return KeywordCall(tokens)
         return EmptyLine(tokens)
 
     @classmethod
@@ -720,7 +722,6 @@ class Return(MultiValue):
 @Statement.register
 class KeywordCall(Statement):
     type = Token.KEYWORD
-    handles_types = (Token.KEYWORD, Token.ASSIGN)
 
     @classmethod
     def from_params(cls, name, assign=(), args=(), indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
@@ -834,6 +835,10 @@ class IfHeader(Statement):
     def condition(self):
         return self.get_value(Token.ARGUMENT)
 
+    @property
+    def assign(self):
+        return self.get_values(Token.ASSIGN)
+
     def validate(self):
         conditions = len(self.get_tokens(Token.ARGUMENT))
         if conditions == 0:
@@ -867,6 +872,10 @@ class ElseHeader(Statement):
     @property
     def condition(self):
         return None
+
+    @property
+    def assign(self):
+        return ()
 
     def validate(self):
         if self.get_tokens(Token.ARGUMENT):

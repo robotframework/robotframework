@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.variables import is_assign
+
 from .tokens import Token
 from .statementlexers import (Lexer,
                               SettingSectionHeaderLexer, SettingLexer,
@@ -238,8 +240,10 @@ class IfLexer(NestedBlockLexer):
 class InlineIfLexer(BlockLexer):
 
     def handles(self, statement):
-        return statement[0].value == 'IF' and len(statement) > 2
-
+        if len(statement) <= 2:
+            return False
+        return InlineIfHeaderLexer(self.ctx).handles(statement)
+            
     def accepts_more(self, statement):
         return False
 
