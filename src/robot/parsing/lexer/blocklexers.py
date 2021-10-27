@@ -230,11 +230,21 @@ class IfLexer(NestedBlockLexer):
                 ForLexer, EndLexer, KeywordCallLexer)
 
 
-class IfLexer(NestedBlockLexer):
+class ContinueLexer(KeywordLexer):
 
     def handles(self, statement):
-        return IfHeaderLexer(self.ctx).handles(statement)
+        return ContinueLexer(self.ctx).handles(statement)
 
     def lexer_classes(self):
         return (IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
-                ForLexer, EndLexer, KeywordCallLexer)
+                ForLexer, KeywordCallLexer)
+
+
+class BreakLexer(KeywordLexer):
+
+    def handles(self, statement):
+        return BreakLexer(self.ctx).handles(statement)
+
+    def lexer_classes(self):
+        return (IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
+                ForLexer, KeywordCallLexer)
