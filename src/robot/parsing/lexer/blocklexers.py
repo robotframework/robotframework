@@ -25,7 +25,7 @@ from .statementlexers import (Lexer,
                               KeywordCallLexer,
                               ForHeaderLexer,
                               IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
-                              EndLexer)
+                              EndLexer,ContinueLexer,BreakLexer)
 
 
 class BlockLexer(Lexer):

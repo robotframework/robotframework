@@ -198,3 +198,25 @@ class EndLexer(StatementLexer):
         self.statement[0].type = Token.END
         for token in self.statement[1:]:
             token.type = Token.ARGUMENT
+
+
+class ContinueLexer(StatementLexer):
+
+    def handles(self, statement):
+        return statement[0].value == 'CONTINUE'
+
+    def lex(self):
+        self.statement[0].type = Token.END
+        for token in self.statement[1:]:
+            token.type = Token.ARGUMENT
+
+
+class BreakLexer(StatementLexer):
+
+    def handles(self, statement):
+        return statement[0].value == 'BREAK'
+
+    def lex(self):
+        self.statement[0].type = Token.END
+        for token in self.statement[1:]:
+            token.type = Token.ARGUMENT

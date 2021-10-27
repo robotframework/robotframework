@@ -80,6 +80,8 @@ class Token:
     IF = 'IF'
     ELSE_IF = 'ELSE IF'
     ELSE = 'ELSE'
+    BREAK = 'BREAK'
+    CONTINUE = 'CONTINUE'
 
     SEPARATOR = 'SEPARATOR'
     COMMENT = 'COMMENT'
