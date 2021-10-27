@@ -206,7 +206,7 @@ class ContinueLexer(StatementLexer):
         return statement[0].value == 'CONTINUE'
 
     def lex(self):
-        self.statement[0].type = Token.END
+        self.statement[0].type = Token.CONTINUE
         for token in self.statement[1:]:
             token.type = Token.ARGUMENT
 
@@ -217,6 +217,6 @@ class BreakLexer(StatementLexer):
         return statement[0].value == 'BREAK'
 
     def lex(self):
-        self.statement[0].type = Token.END
+        self.statement[0].type = Token.BREAK
         for token in self.statement[1:]:
             token.type = Token.ARGUMENT

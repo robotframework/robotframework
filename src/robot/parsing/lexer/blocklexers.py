@@ -25,7 +25,7 @@ from .statementlexers import (Lexer,
                               KeywordCallLexer,
                               ForHeaderLexer,
                               IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
-                              EndLexer,ContinueLexer,BreakLexer)
+                              EndLexer, ContinueLexer, BreakLexer)
 
 
 class BlockLexer(Lexer):
@@ -218,6 +218,16 @@ class ForLexer(NestedBlockLexer):
 
     def lexer_classes(self):
         return (ForHeaderLexer, IfLexer, EndLexer, KeywordCallLexer)
+
+
+class IfLexer(NestedBlockLexer):
+
+    def handles(self, statement):
+        return IfHeaderLexer(self.ctx).handles(statement)
+
+    def lexer_classes(self):
+        return (IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
+                ForLexer, EndLexer, KeywordCallLexer)
 
 
 class IfLexer(NestedBlockLexer):
