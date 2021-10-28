@@ -188,11 +188,11 @@ class If(Block):
         # TODO: validation messages
         def validate(body):
             if not body:
-                self.errors += ('%s has empty body.' % self.type,)
+                self.errors += (f'{self.type} has empty body.' ,)
             if len(body) > 1:
-                self.errors += ('Inline if branch has more than one keyword call.',)
+                self.errors += (f'{self.type} branch has more than one keyword call.',)
             if body[0].assign:
-                self.errors += ('Inline if branch cannot have an assignment.',)
+                self.errors += (f'{self.type} branch cannot have an assignment.',)
         validate(self.body)
         orelse = self.orelse
         while orelse:

@@ -315,14 +315,14 @@ class IfBuilder(NodeVisitor):
         model = self.parent.body.create_if(lineno=node.lineno,
                                            error=format_error(self._get_errors(node)))
         is_inline_if = node.type == 'INLINE IF'
-        assign = node.assign
+        assign = node.assign if is_inline_if else None
         while node:
             type = node.type if not is_inline_if else 'IF'
-            self.model = model.body.create_branch(type, node.condition, node.assign,
+            self.model = model.body.create_branch(type, node.condition,
                                                   lineno=node.lineno)
             for step in node.body:
                 self.visit(step)
-            if is_inline_if:
+            if assign:
                 self.model.body[0].assign = assign
             node = node.orelse
         return model
