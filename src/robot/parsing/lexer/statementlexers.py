@@ -170,12 +170,12 @@ class IfHeaderLexer(StatementLexer):
 class InlineIfHeaderLexer(StatementLexer):
 
     def handles(self, statement):
-        if statement[0].value == 'IF':
-            return True
-        if len(statement) > 1 and is_assign(statement[0].value, allow_assign_mark=True) and \
-                statement[1].value == 'IF':
-            return True
-        return False
+        for token in statement:
+            if token.value == 'IF':
+                return True
+            if is_assign(token.value, allow_assign_mark=True):
+                continue
+            return False
 
     def lex(self):
         self.statement[0].type = Token.INLINE_IF

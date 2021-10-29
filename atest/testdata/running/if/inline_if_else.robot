@@ -1,69 +1,89 @@
 *** Test Cases ***
-Inline if passing
+IF passing
     IF    True    Log    reached this
 
-Inline if failing
-    [Documentation]    FAIL failing inside if
-    IF    '1' == '1'   Fail    failing inside if
+IF failing
+    [Documentation]    FAIL Inside IF
+    IF    '1' == '1'   Fail    Inside IF
 
-Inline if not executed
-    IF    False    Fail    should not go here
+Not executed
+    [Documentation]    FAIL After IF
+    IF    False    Not    run
+    Fail    After IF
 
-Inline if not executed failing
-    [Documentation]    FAIL after not passing
-    IF    'a' == 'b'   Pass Execution    should not go here
-    Fail    after not passing
+Not executed after failure
+    [Documentation]    FAIL Before IF
+    Fail    Before IF
+    IF    True    Not    run    ELSE IF    True    Not run    ELSE    Not run
 
-Inline if else - if executed
-    IF    1 > 0    Log    does go through here    ELSE    Fail    should not go here
+ELSE IF not executed
+    [Documentation]    FAIL Expected failure
+    IF    False    Not run    ELSE IF    False    Not    run    ELSE    Executed
+    IF    1 > 0    Failure    ELSE IF    True    Not run        ELSE IF    True    Not run
 
-Inline if else - else executed
-    IF    0 > 1    Fail    should not go here    ELSE    Log    does go through here
+ELSE IF executed
+    [Documentation]    FAIL Expected failure
+    IF    False    Not run    ELSE IF    True    Executed    ELSE    Not run
+    IF                False    Not run
+    ...    ELSE IF    False    Not run
+    ...    ELSE IF    True     Failure
+    ...    ELSE IF    False    Not run
+    ...    ELSE                Not run
 
-Inline if else - if executed - failing
+ELSE not executed
     [Documentation]    FAIL expected
-    IF    1 > 0    Fail    expected    ELSE    Log    unexpected
+    IF    1 > 0    Executed            ELSE    Not    run
+    IF    1 > 0    Fail    expected    ELSE    Not run
 
-Inline if else - else executed - failing
+ELSE executed
     [Documentation]    FAIL expected
-    IF    0 > 1    Log    unexpected    ELSE    Fail    expected
+    IF    0 > 1    Not run       ELSE    Log    does go through here
+    IF    0 > 1    Not    run    ELSE    Fail    expected
 
-Inline if inside for loop
+Assign
+    ${x} =    IF    1    Convert to integer    1    ELSE IF    2    Convert to integer    2    ELSE    Convert to integer    3
+    ${y} =    IF    0    Convert to integer    1    ELSE IF    2    Convert to integer    2    ELSE    Convert to integer    3
+    ${z} =    IF    0    Convert to integer    1    ELSE IF    0    Convert to integer    2    ELSE    Convert to integer    3
+    Should Be Equal    ${x}    ${1}
+    Should Be Equal    ${y}    ${2}
+    Should Be Equal    ${z}    ${3}
+
+Multi assign
+    ${x}   ${y}    ${z} =    IF    True    Create list    a    b    c    ELSE    Not run
+    Should Be Equal    ${x}    a
+    Should Be Equal    ${y}    b
+    Should Be Equal    ${z}    c
+
+List assign
+    @{x} =    IF    True    Create list    a    b    c    ELSE    Not run
+    Should Be True    ${x} == ['a', 'b', 'c']
+    ${x}    @{y}    ${z} =    IF    False    Not run    ELSE    Create list    a    b    c
+    Should Be Equal    ${x}    a
+    Should Be True     ${y} == ['b']
+    Should Be Equal    ${z}    c
+
+Dict assign
+    &{x} =    IF    False    Not run    ELSE    Create dictionary    a=1    b=2
+    Should Be True    ${x} == {'a': '1', 'b': '2'}
+
+Inside FOR
     [Documentation]    FAIL The end
     FOR    ${i}    IN    1    2    3
         IF    ${i} == 3    Fail    The end    ELSE    Log    ${i}
     END
 
-Inline if inside block if
+Inside normal IF
     IF    ${True}
         Log   Hi
         IF    3==4    Fail    Should not be executed    ELSE    Log    Hello
         Log   Goodbye
-    END
-
-Inline if inside nested loop
-    [Documentation]    FAIL The end
-    IF    ${False}
-       Fail    Should not go here
     ELSE
-        FOR    ${i}    IN    1    2    3
-            IF    ${i} == 3    Fail    The end    ELSE    Log    ${i}
-        END
+        IF    True    Not run    ELSE    Not run
     END
 
-Inline if passing in keyword
-    Passing if keyword
-
-Inline if passing in else keyword
-    Passing else keyword
-
-Inline if failing in keyword
-    [Documentation]    FAIL expected
-    Failing if keyword
-
-Inline if failing in else keyword
-    [Documentation]    FAIL expected
-    Failing else keyword
+In keyword
+    [Documentation]    FAIL Expected failure
+    Keyword with inline IFs
 
 Invalid END after inline header
     [Documentation]    FAIL 'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR' or 'IF' when used as a marker.
@@ -71,16 +91,20 @@ Invalid END after inline header
         Log   this is a normal keyword call
     END
 
-
 *** Keywords ***
-Passing if keyword
-    IF    ${1}    Log    expected    ELSE IF    12 < 14    Fail    should not go here    ELSE    Fail    not here
+Keyword with inline IFs
+    ${x} =    IF    True    Convert to integer    42
+    IF    ${x} == 0      Not run    ELSE IF    $x == 42    Executed    ELSE    Not    run
+    IF                False    Not run
+    ...    ELSE IF    False    Not run
+    ...    ELSE IF    False    Not run
+    ...    ELSE IF    True     Failure
+    ...    ELSE IF    False    Not run
+    ...    ELSE IF    False    Not run
+    ...    ELSE                Not run
 
-Passing else keyword
-    IF    ${False}    Fail    not here    ELSE    Log    expected
+Executed
+    No operation
 
-Failing if keyword
-    IF    ${1}    Fail    expected    ELSE IF    12 < 14    Log    should not go here    ELSE    Log    not here
-
-Failing else keyword
-    IF    ${False}    Log    should not here    ELSE    Fail    expected
+Failure
+    Fail    Expected failure

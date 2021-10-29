@@ -1,52 +1,74 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    running/if/inline_if_else.robot
-Resource          atest_resource.robot
+Test Template     Check IF/ELSE Status
+Resource          if.resource
 
 *** Test Cases ***
-Inline if passing
-    Check Test Case    ${TESTNAME}
+IF passing
+    PASS    else=False
 
-Inline if failing
-    Check Test Case    ${TESTNAME}
+IF failing
+    FAIL    else=False
 
-Inline if not executed
-    Check Test Case    ${TESTNAME}
+Not executed
+    NOT RUN    else=False
 
-Inline if not executed failing
-    Check Test Case    ${TESTNAME}
+Not executed after failure
+    NOT RUN    NOT RUN    NOT RUN    index=1    run=False
 
-Inline if else - if executed
-    Check Test Case    ${TESTNAME}
+ELSE IF not executed
+    NOT RUN    NOT RUN    PASS       index=0
+    FAIL       NOT RUN    NOT RUN    index=1    else=False
 
-Inline if else - else executed
-    Check Test Case    ${TESTNAME}
+ELSE IF executed
+    NOT RUN    PASS       NOT RUN                          index=0
+    NOT RUN    NOT RUN    FAIL       NOT RUN    NOT RUN    index=1
 
-Inline if else - if executed - failing
-    Check Test Case    ${TESTNAME}
+ELSE not executed
+    PASS       NOT RUN    index=0
+    FAIL       NOT RUN    index=1
 
-Inline if else - else executed - failing
-    Check Test Case    ${TESTNAME}
+ELSE executed
+    NOT RUN    PASS       index=0
+    NOT RUN    FAIL       index=1
 
-Inline if inside for loop
-    Check Test Case    ${TESTNAME}
+Assign
+    PASS       NOT RUN    NOT RUN    index=0
+    NOT RUN    PASS       NOT RUN    index=1
+    NOT RUN    NOT RUN    PASS       index=2
 
-Inline if inside block if
-    Check Test Case    ${TESTNAME}
+Multi assign
+    PASS       NOT RUN
 
-Inline if inside nested loop
-    Check Test Case    ${TESTNAME}
+List assign
+    PASS       NOT RUN    index=0
+    NOT RUN    PASS       index=2
 
-Inline if passing in keyword
-    Check Test Case    ${TESTNAME}
+Dict assign
+    NOT RUN    PASS
 
-Inline if passing in else keyword
-    Check Test Case    ${TESTNAME}
+Inside FOR
+    [Template]    NONE
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check IF/ELSE Status    NOT RUN    PASS       root=${tc.body[0].body[0].body[0]}
+    Check IF/ELSE Status    NOT RUN    PASS       root=${tc.body[0].body[1].body[0]}
+    Check IF/ELSE Status    FAIL       NOT RUN    root=${tc.body[0].body[2].body[0]}
 
-Inline if failing in keyword
-    Check Test Case    ${TESTNAME}
+Inside normal IF
+    [Template]    NONE
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check IF/ELSE Status    NOT RUN    PASS       root=${tc.body[0].body[0].body[1]}
+    Check IF/ELSE Status    NOT RUN    NOT RUN    root=${tc.body[0].body[1].body[0]}    run=False
 
-Inline if failing in else keyword
-    Check Test Case    ${TESTNAME}
+In keyword
+    [Template]    NONE
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check IF/ELSE Status    PASS                                     root=${tc.body[0].body[0]}
+    Check IF/ELSE Status    NOT RUN    PASS       NOT RUN            root=${tc.body[0].body[1]}
+    Check IF/ELSE Status    NOT RUN    NOT RUN    NOT RUN    FAIL
+    ...                     NOT RUN    NOT RUN    NOT RUN            root=${tc.body[0].body[2]}
 
 Invalid END after inline header
-    Check Test Case    ${TESTNAME}
+    # FIXME: Move to separate suite with other invalid syntax tests
+    [Template]    NONE
+    Check Test Case    ${TEST NAME}
