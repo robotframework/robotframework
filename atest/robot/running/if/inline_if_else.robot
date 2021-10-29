@@ -27,9 +27,6 @@ Inline if else - if executed - failing
 Inline if else - else executed - failing
     Check Test Case    ${TESTNAME}
 
-Assignment inside inline if
-    Check Test Case    ${TESTNAME}
-
 Inline if inside for loop
     Check Test Case    ${TESTNAME}
 
