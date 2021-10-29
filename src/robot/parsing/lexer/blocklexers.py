@@ -243,7 +243,7 @@ class InlineIfLexer(BlockLexer):
         if len(statement) <= 2:
             return False
         return InlineIfHeaderLexer(self.ctx).handles(statement)
-            
+
     def accepts_more(self, statement):
         return False
 
