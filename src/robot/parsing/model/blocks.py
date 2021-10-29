@@ -133,7 +133,8 @@ class Keyword(Block):
 class If(Block):
     """Represents IF structures in the model.
 
-    Used with IF, ELSE_IF and ELSE nodes. The :attr:`type` attribute specifies the type.
+    Used with IF, Inline IF, ELSE IF and ELSE nodes. The :attr:`type` attribute
+    specifies the type.
     """
     _fields = ('header', 'body', 'orelse', 'end')
 
@@ -166,7 +167,7 @@ class If(Block):
 
     def _validate_body(self):
         if not self.body:
-            self.errors += ('%s has empty body.' % self.type,)
+            self.errors += (f'{self.type} branch cannot be empty.',)
 
     def _validate_structure(self):
         orelse = self.orelse

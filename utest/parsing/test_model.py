@@ -501,16 +501,16 @@ Example
                         tokens=[Token(Token.ELSE_IF, 'ELSE IF', 5, 4)],
                         errors=('ELSE IF has no condition.',)
                     ),
-                    errors=('ELSE IF has empty body.',)
+                    errors=('ELSE IF branch cannot be empty.',)
                 ),
-                errors=('ELSE has empty body.',)
+                errors=('ELSE branch cannot be empty.',)
             ),
             end=End(
                 tokens=[Token(Token.END, 'END', 6, 4),
                         Token(Token.ARGUMENT, 'ooops', 6, 11)],
                 errors=('END does not accept arguments.',)
             ),
-            errors=('IF has empty body.',
+            errors=('IF branch cannot be empty.',
                     'ELSE IF after ELSE.')
         )
         expected2 = If(
@@ -518,7 +518,7 @@ Example
                 tokens=[Token(Token.IF, 'IF', 8, 4)],
                 errors=('IF has no condition.',)
             ),
-            errors=('IF has empty body.',
+            errors=('IF branch cannot be empty.',
                     'IF has no closing END.')
         )
         assert_model(if1, expected1)

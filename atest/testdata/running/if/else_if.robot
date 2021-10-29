@@ -57,7 +57,7 @@ Else if else failing
     END
 
 Invalid
-    [Documentation]    FAIL IF has empty body.
+    [Documentation]    FAIL IF branch cannot be empty.
     IF    False
     ELSE
         Log    xxx

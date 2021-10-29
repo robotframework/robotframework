@@ -65,7 +65,7 @@ Dryrun fail invalid ELSE IF in non executed branch
     This is validated
 
 Dryrun fail empty if in non executed branch
-    [Documentation]    FAIL    IF has empty body.
+    [Documentation]    FAIL    IF branch cannot be empty.
     IF  ${True}
        Log  hello
     ELSE IF  ${True}

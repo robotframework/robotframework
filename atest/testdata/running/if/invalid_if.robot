@@ -87,19 +87,19 @@ ELSE with condition
     END
 
 IF with empty body
-    [Documentation]    FAIL    IF has empty body.
+    [Documentation]    FAIL    IF branch cannot be empty.
     IF    'jupiter' == 'saturnus'
     END
 
 ELSE with empty body
-    [Documentation]    FAIL    ELSE has empty body.
+    [Documentation]    FAIL    ELSE branch cannot be empty.
     IF    'kuu' == 'maa'
         Fail    Should not be run
     ELSE
     END
 
 ELSE IF with empty body
-    [Documentation]    FAIL    ELSE IF has empty body.
+    [Documentation]    FAIL    ELSE IF branch cannot be empty.
     IF    'mars' == 'maa'
         Fail    Should not be run
     ELSE IF    ${False}
@@ -143,17 +143,17 @@ Multiple errors
     [Documentation]    FAIL
     ...    Multiple errors:
     ...    - IF has no condition.
-    ...    - IF has empty body.
+    ...    - IF branch cannot be empty.
     ...    - ELSE IF after ELSE.
     ...    - Multiple ELSE branches.
     ...    - IF has no closing END.
     ...    - ELSE IF has more than one condition.
-    ...    - ELSE IF has empty body.
+    ...    - ELSE IF branch cannot be empty.
     ...    - ELSE has condition.
-    ...    - ELSE has empty body.
+    ...    - ELSE branch cannot be empty.
     ...    - ELSE IF has no condition.
-    ...    - ELSE IF has empty body.
-    ...    - ELSE has empty body.
+    ...    - ELSE IF branch cannot be empty.
+    ...    - ELSE branch cannot be empty.
     IF
     ELSE IF    too    many
     ELSE    oops
