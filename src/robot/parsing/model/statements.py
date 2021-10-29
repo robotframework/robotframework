@@ -67,7 +67,7 @@ class Statement(ast.AST):
         for token in tokens:
             if token.type in handlers:
                 return handlers[token.type](tokens)
-        if all(token.type == Token.ASSIGN for token in tokens):
+        if tokens and all(token.type == Token.ASSIGN for token in tokens):
             return KeywordCall(tokens)
         return EmptyLine(tokens)
 
@@ -817,19 +817,30 @@ class ForHeader(Statement):
         self.errors += ('FOR loop has %s.' % error,)
 
 
+class IfElseHeader(Statement):
+
+    @property
+    def condition(self):
+        return None
+
+    @property
+    def assign(self):
+        return None
+
+
 @Statement.register
-class IfHeader(Statement):
+class IfHeader(IfElseHeader):
     type = Token.IF
 
     @classmethod
     def from_params(cls, condition, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
-        return cls([
-            Token(Token.SEPARATOR, indent),
-            Token(cls.type),
-            Token(Token.SEPARATOR, separator),
-            Token(Token.ARGUMENT, condition),
-            Token(Token.EOL, eol)
-        ])
+        tokens = [Token(Token.SEPARATOR, indent),
+                  Token(cls.type),
+                  Token(Token.SEPARATOR, separator),
+                  Token(Token.ARGUMENT, condition)]
+        if cls.type != Token.INLINE_IF:
+            tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
 
     @property
     def condition(self):
@@ -858,7 +869,7 @@ class ElseIfHeader(IfHeader):
 
 
 @Statement.register
-class ElseHeader(Statement):
+class ElseHeader(IfElseHeader):
     type = Token.ELSE
 
     @classmethod
@@ -868,10 +879,6 @@ class ElseHeader(Statement):
             Token(Token.ELSE),
             Token(Token.EOL, eol)
         ])
-
-    @property
-    def condition(self):
-        return None
 
     def validate(self):
         if self.get_tokens(Token.ARGUMENT):

@@ -31,6 +31,7 @@ from robot.parsing.model.statements import (
     TemplateArguments,
     ForHeader,
     IfHeader,
+    InlineIfHeader,
     ElseHeader,
     ElseIfHeader,
     End,
@@ -682,6 +683,21 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             tokens,
             IfHeader,
             condition='${var} not in [@{list}]'
+        )
+
+    def test_InlineIfHeader(self):
+        # Test/Keyword
+        #     IF    $x > 0
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.INLINE_IF),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, '$x > 0')
+        ]
+        assert_created_statement(
+            tokens,
+            InlineIfHeader,
+            condition='$x > 0'
         )
 
     def test_ElseIfHeader(self):
