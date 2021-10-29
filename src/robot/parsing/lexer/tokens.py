@@ -66,7 +66,10 @@ class Token:
     TIMEOUT = 'TIMEOUT'
     TAGS = 'TAGS'
     ARGUMENTS = 'ARGUMENTS'
+    # Use ´RETURN_SETTING` type instead of `RETURN`. `[Return]` is deprecated and
+    # `RETURN` type will be used with `RETURN` statement in the future.
     RETURN = 'RETURN'
+    RETURN_SETTING = RETURN
 
     NAME = 'NAME'
     VARIABLE = 'VARIABLE'
@@ -81,6 +84,7 @@ class Token:
     INLINE_IF = 'INLINE IF'
     ELSE_IF = 'ELSE IF'
     ELSE = 'ELSE'
+    RETURN_STATEMENT = 'RETURN STATEMENT'
 
     SEPARATOR = 'SEPARATOR'
     COMMENT = 'COMMENT'
@@ -143,6 +147,7 @@ class Token:
             value = {
                 Token.IF: 'IF', Token.ELSE_IF: 'ELSE IF', Token.ELSE: 'ELSE',
                 Token.INLINE_IF: 'IF', Token.FOR: 'FOR', Token.END: 'END',
+                Token.RETURN_STATEMENT: 'RETURN',
                 Token.CONTINUATION: '...', Token.EOL: '\n', Token.WITH_NAME: 'WITH NAME'
             }.get(type, '')
         self.value = value

@@ -121,15 +121,19 @@ Check Keyword Data
     Should Be Equal    ${kw.type}                    ${type}
 
 Test And All Keywords Should Have Passed
-    [Arguments]    ${name}=${TESTNAME}
+    [Arguments]    ${name}=${TESTNAME}    ${allow not run}=False
     ${tc} =    Check Test Case    ${name}
-    All Keywords Should Have Passed    ${tc}
+    All Keywords Should Have Passed    ${tc}    ${allow not run}
 
 All Keywords Should Have Passed
-    [Arguments]    ${tc or kw}
-    FOR    ${kw}    IN    @{tc or kw.kws}
-        Should Be Equal    ${kw.status}    PASS
-        All Keywords Should Have Passed    ${kw}
+    [Arguments]    ${tc or kw}    ${allow not run}=False
+    FOR    ${index}    ${kw}    IN ENUMERATE    @{tc or kw.kws}
+        IF    ${allow not run} and ${index} > 0
+            Should Be True    $kw.status in ['PASS', 'NOT RUN']
+        ELSE
+            Should Be Equal    ${kw.status}    PASS
+        END
+        All Keywords Should Have Passed    ${kw}    ${allow not run}
     END
 
 Get Output File

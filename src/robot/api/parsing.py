@@ -524,6 +524,7 @@ from robot.parsing.model.statements import (
     ElseIfHeader,
     ElseHeader,
     End,
+    ReturnStatement,
     Comment,
     Error,
     EmptyLine

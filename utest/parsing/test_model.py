@@ -11,8 +11,8 @@ from robot.parsing.model.blocks import (
 )
 from robot.parsing.model.statements import (
     Arguments, Comment, Documentation, ForHeader, End, ElseHeader, ElseIfHeader,
-    EmptyLine, Error, IfHeader, InlineIfHeader, KeywordCall, KeywordName, SectionHeader,
-    Statement, TestCaseName, Variable
+    EmptyLine, Error, IfHeader, InlineIfHeader, KeywordCall, KeywordName,
+    ReturnStatement, SectionHeader, Statement, TestCaseName, Variable
 )
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
@@ -754,6 +754,39 @@ Invalid
             ]
         )
         assert_model(model.sections[0], expected)
+
+
+class TestControlStatements(unittest.TestCase):
+    # Tests for CONTINUE and BREAK can be added here as well.
+
+    def test_return(self):
+        model = get_model('''\
+*** Keywords ***
+Name
+    Return    RETURN
+    RETURN    RETURN
+        ''', data_only=True)
+        expected = KeywordSection(
+            header=SectionHeader(
+                tokens=[Token(Token.KEYWORD_HEADER, '*** Keywords ***', 1, 0)]
+            ),
+            body=[
+
+                Keyword(
+                    header=KeywordName(
+                        tokens=[Token(Token.KEYWORD_NAME, 'Name', 2, 0)]
+                    ),
+                    body=[
+                        KeywordCall([Token(Token.KEYWORD, 'Return', 3, 4),
+                                     Token(Token.ARGUMENT, 'RETURN', 3, 14)]),
+                        ReturnStatement([Token(Token.RETURN_STATEMENT, 'RETURN', 4, 4),
+                                         Token(Token.ARGUMENT, 'RETURN', 4, 14)])
+                    ],
+                )
+            ]
+        )
+        assert_model(model.sections[0], expected)
+
 
 class TestError(unittest.TestCase):
 

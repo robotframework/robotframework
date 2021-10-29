@@ -191,14 +191,17 @@ class If(Block):
 
     def _validate_inline_if(self):
         branch = self
+        assign = branch.assign
         while branch:
             if branch.body:
                 item = branch.body[0]
+                if assign and item.type != Token.KEYWORD:
+                    self.errors += ('Inline IF with assignment can only contain '
+                                    'keyword calls.',)
                 if getattr(item, 'assign', None):
-                    type = branch.type if branch.type != Token.INLINE_IF else 'IF'
-                    self.errors += (f'Inline {type} branch cannot have an assignment.',)
+                    self.errors += ('Inline IF branches cannot contain assignments.',)
                 if item.type == Token.INLINE_IF:
-                    self.errors += (f'Inline IF cannot be nested.',)
+                    self.errors += ('Inline IF cannot be nested.',)
             branch = branch.orelse
 
 

@@ -86,3 +86,6 @@ Assign when ELSE IF branch is empty
 
 Assign when ELSE branch is empty
     Check Test Case    ${TESTNAME}
+
+Assign with RETURN
+    Check Test Case    ${TESTNAME}

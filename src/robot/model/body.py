@@ -29,6 +29,7 @@ class BodyItem(ModelObject):
     IF = 'IF'
     ELSE_IF = 'ELSE IF'
     ELSE = 'ELSE'
+    RETURN = 'RETURN'
     MESSAGE = 'MESSAGE'
     type = None
     __slots__ = ['parent']
@@ -64,6 +65,7 @@ class Body(ItemList):
     keyword_class = None
     for_class = None
     if_class = None
+    return_class = None
 
     def __init__(self, parent=None, items=None):
         ItemList.__init__(self, BodyItem, {'parent': parent}, items)
@@ -99,6 +101,9 @@ class Body(ItemList):
 
     def create_if(self, *args, **kwargs):
         return self._create(self.if_class, 'create_if', args, kwargs)
+
+    def create_return(self, *args, **kwargs):
+        return self._create(self.return_class, 'create_return', args, kwargs)
 
     def filter(self, keywords=None, fors=None, ifs=None, predicate=None):
         """Filter body items based on type and/or custom predicate.

@@ -17,7 +17,6 @@ from contextlib import contextmanager
 import os
 
 from robot.errors import DataError
-from robot.result import For, If, IfBranch, ForIteration
 
 from .console import ConsoleOutput
 from .filelogger import FileLogger
@@ -252,7 +251,8 @@ class LoggerProxy(AbstractLoggerProxy):
         'ELSE IF': 'start_if_branch',
         'ELSE': 'start_if_branch',
         'FOR': 'start_for',
-        'FOR ITERATION': 'start_for_iteration'
+        'FOR ITERATION': 'start_for_iteration',
+        'RETURN': 'start_return'
     }
     _end_keyword_methods = {
         'IF/ELSE ROOT': 'end_if',
@@ -260,7 +260,8 @@ class LoggerProxy(AbstractLoggerProxy):
         'ELSE IF': 'end_if_branch',
         'ELSE': 'end_if_branch',
         'FOR': 'end_for',
-        'FOR ITERATION': 'end_for_iteration'
+        'FOR ITERATION': 'end_for_iteration',
+        'RETURN': 'end_return'
     }
 
     def start_keyword(self, kw):

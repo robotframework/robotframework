@@ -239,6 +239,11 @@ class SuiteVisitor:
         """Called when IF/ELSE branch ends. Default implementation does nothing."""
         pass
 
+    def visit_return(self, return_):
+        # FIXME: Documentation.
+        # FIXME: Do we need `start/end_return`?
+        pass
+
     def visit_message(self, msg):
         """Implements visiting messages.
 

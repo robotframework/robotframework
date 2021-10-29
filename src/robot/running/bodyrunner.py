@@ -37,16 +37,19 @@ class BodyRunner:
 
     def run(self, body):
         errors = []
+        passed = None
         for step in body:
             try:
                 step.run(self._context, self._run, self._templated)
             except ExecutionPassed as exception:
                 exception.set_earlier_failures(errors)
-                raise exception
+                passed = exception
+                self._run = False
             except ExecutionFailed as exception:
                 errors.extend(exception.get_errors())
-                self._run = exception.can_continue(self._context,
-                                                   self._templated)
+                self._run = exception.can_continue(self._context, self._templated)
+        if passed:
+            raise passed
         if errors:
             raise ExecutionFailures(errors)
 

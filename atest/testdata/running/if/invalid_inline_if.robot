@@ -93,15 +93,15 @@ Unnecessary END
     IF    False    Not run    ELSE    No operation    END
 
 Assign in IF branch
-    [Documentation]    FAIL Inline IF branch cannot have an assignment.
+    [Documentation]    FAIL Inline IF branches cannot contain assignments.
     IF    False    ${x} =    Whatever
 
 Assign in ELSE IF branch
-    [Documentation]    FAIL Inline ELSE IF branch cannot have an assignment.
+    [Documentation]    FAIL Inline IF branches cannot contain assignments.
     IF    False    Keyword    ELSE IF   False    ${x} =    Whatever
 
 Assign in ELSE branch
-    [Documentation]    FAIL Inline ELSE branch cannot have an assignment.
+    [Documentation]    FAIL Inline IF branches cannot contain assignments.
     IF    False    Keyword    ELSE    ${x} =    Whatever
 
 Invalid assing mark usage
@@ -135,3 +135,11 @@ Assign when ELSE IF branch is empty
 Assign when ELSE branch is empty
     [Documentation]    FAIL ELSE branch cannot be empty.
     ${x} =    IF    True    Not run    ELSE
+
+Assign with RETURN
+    [Documentation]    FAIL Inline IF with assignment can only contain keyword calls.
+    Assign with RETURN
+
+*** Keywords ***
+Assign with RETURN
+    ${x} =    IF    False    RETURN    ELSE    Not run

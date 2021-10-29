@@ -114,3 +114,17 @@ class IfBranch(BodyItem):
 
     def visit(self, visitor):
         visitor.visit_if_branch(self)
+
+
+@Body.register
+class Return(BodyItem):
+    type = BodyItem.RETURN
+    repr_args = ('values',)
+    __slots__ = ['values']
+
+    def __init__(self, values=(), parent=None):
+        self.values = values
+        self.parent = parent
+
+    def visit(self, visitor):
+        visitor.visit_return(self)

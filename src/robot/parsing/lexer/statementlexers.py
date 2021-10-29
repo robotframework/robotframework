@@ -214,3 +214,15 @@ class EndLexer(StatementLexer):
         self.statement[0].type = Token.END
         for token in self.statement[1:]:
             token.type = Token.ARGUMENT
+
+
+class ReturnLexer(StatementLexer):
+
+    def handles(self, statement):
+        return statement[0].value == 'RETURN'
+
+    # FIXME: Add common base class (or other config) for lexers lexing arguments.
+    def lex(self):
+        self.statement[0].type = Token.RETURN_STATEMENT
+        for token in self.statement[1:]:
+            token.type = Token.ARGUMENT

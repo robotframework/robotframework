@@ -4,22 +4,22 @@ Resource          atest_resource.robot
 
 *** Test Cases ***
 Simple Exit For Loop
-    Test And All Keywords Should Have Passed
+    Test And All Keywords Should Have Passed    allow not run=True
 
 Exit For Loop In `Run Keyword`
-    Test And All Keywords Should Have Passed
+    Test And All Keywords Should Have Passed    allow not run=True
 
 Exit For Loop In User Keyword
-    Test And All Keywords Should Have Passed
+    Test And All Keywords Should Have Passed    allow not run=True
 
 Exit For Loop In User Keyword With Loop
-    Test And All Keywords Should Have Passed
+    Test And All Keywords Should Have Passed    allow not run=True
 
 Exit For Loop In User Keyword With Loop Within Loop
-    Test And All Keywords Should Have Passed
+    Test And All Keywords Should Have Passed    allow not run=True
 
 Exit For Loop In User Keyword Calling User Keyword With Exit For Loop
-    Test And All Keywords Should Have Passed
+    Test And All Keywords Should Have Passed    allow not run=True
 
 Exit For Loop Without For Loop Should Fail
     Check Test Case    ${TESTNAME}

@@ -24,8 +24,10 @@ IF_ELSE_ROOT = BodyItem.IF_ELSE_ROOT
 STATUSES = {'FAIL': 0, 'PASS': 1, 'SKIP': 2, 'NOT RUN': 3}
 KEYWORD_TYPES = {'KEYWORD': 0, 'SETUP': 1, 'TEARDOWN': 2,
                  'FOR': 3, 'FOR ITERATION': 4,
-                 'IF': 5, 'ELSE IF': 6, 'ELSE': 7}
-MESSAGE_TYPE = 8
+                 'IF': 5, 'ELSE IF': 6, 'ELSE': 7,
+                 'RETURN': 8}
+# FIXME: Don't use type with messages in model. They can be recognized based on model length.
+MESSAGE_TYPE = 9
 
 
 class JsModelBuilder:
@@ -162,10 +164,15 @@ class KeywordBuilder(_Builder):
 
     def build_keyword(self, kw, split=False):
         self._context.check_expansion(kw)
-        kws = list(kw.body)
-        if getattr(kw, 'has_teardown', False):
-            kws.append(kw.teardown)
-        with self._context.prune_input(kw.body):
+        if hasattr(kw, 'body'):
+            kws = list(kw.body)
+            if getattr(kw, 'has_teardown', False):
+                kws.append(kw.teardown)
+            prune = (kw.body,)
+        else:
+            kws = []
+            prune = ()
+        with self._context.prune_input(*prune):
             return (KEYWORD_TYPES[kw.type],
                     self._string(kw.kwname, attr=True),
                     self._string(kw.libname, attr=True),

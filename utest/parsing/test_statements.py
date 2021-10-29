@@ -27,6 +27,7 @@ from robot.parsing.model.statements import (
     Timeout,
     Arguments,
     Return,
+    ReturnStatement,
     KeywordCall,
     TemplateArguments,
     ForHeader,
@@ -739,6 +740,22 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             tokens,
             End
         )
+
+    def test_Return(self):
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.RETURN_STATEMENT),
+            Token(Token.EOL)
+        ]
+        assert_created_statement(tokens, ReturnStatement)
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.RETURN_STATEMENT, 'RETURN'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'x'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(tokens, ReturnStatement, values=('x',))
 
     def test_Comment(self):
         tokens = [

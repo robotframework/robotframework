@@ -4,19 +4,19 @@ Resource          atest_resource.robot
 
 *** Test Cases ***
 Simple Continue For Loop
-    Test And All Keywords Should Have Passed
+    Test And All Keywords Should Have Passed    allow not run=True
 
 Continue For Loop In `Run Keyword`
-    Test And All Keywords Should Have Passed
+    Test And All Keywords Should Have Passed    allow not run=True
 
 Continue For Loop In User Keyword
-    Test And All Keywords Should Have Passed
+    Test And All Keywords Should Have Passed    allow not run=True
 
 Continue For Loop Should Terminate Immediate Loop Only
-    Test And All Keywords Should Have Passed
+    Test And All Keywords Should Have Passed    allow not run=True
 
 Continue For Loop In User Keyword Should Terminate Immediate Loop Only
-    Test And All Keywords Should Have Passed
+    Test And All Keywords Should Have Passed    allow not run=True
 
 Continue For Loop Without For Loop Should Fail
     Check Test Case    ${TESTNAME}

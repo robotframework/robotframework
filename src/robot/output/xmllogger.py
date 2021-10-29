@@ -121,6 +121,15 @@ class XmlLogger(ResultVisitor):
         self._write_status(iteration)
         self._writer.end('iter')
 
+    def start_return(self, return_):
+        self._writer.start('return')
+        for value in return_.values:
+            self._writer.element('value', value)
+
+    def end_return(self, return_):
+        self._write_status(return_)
+        self._writer.end('return')
+
     def start_test(self, test):
         self._writer.start('test', {'id': test.id, 'name': test.name})
 

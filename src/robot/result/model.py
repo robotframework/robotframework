@@ -223,6 +223,29 @@ class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
 
 
 @Body.register
+class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
+    __slots__ = ['status', 'starttime', 'endtime']
+
+    def __init__(self, values=(), status='FAIL', starttime=None, endtime=None, parent=None):
+        model.Return.__init__(self, values, parent)
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+
+    # FIXME: Remove attributes.
+
+    @property
+    @deprecated
+    def args(self):
+        return self.values
+
+    @property
+    @deprecated
+    def doc(self):
+        return ''
+
+
+@Body.register
 class Keyword(model.Keyword, StatusMixin):
     """Represents results of a single keyword.
 

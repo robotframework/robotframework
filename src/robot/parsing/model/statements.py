@@ -903,6 +903,25 @@ class End(Statement):
 
 
 @Statement.register
+class ReturnStatement(Statement):
+    type = Token.RETURN_STATEMENT
+
+    @property
+    def values(self):
+        return self.get_values(Token.ARGUMENT)
+
+    @classmethod
+    def from_params(cls, values=(), indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+        tokens = [Token(Token.SEPARATOR, indent),
+                  Token(Token.RETURN_STATEMENT)]
+        for value in values:
+            tokens.extend([Token(Token.SEPARATOR, separator),
+                           Token(Token.ARGUMENT, value)])
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
+
+@Statement.register
 class Comment(Statement):
     type = Token.COMMENT
 
