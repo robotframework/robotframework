@@ -84,6 +84,10 @@ Nested IF 3
     ...    ELSE IF    True    IF    True    Not run
     ...    ELSE               IF    True    Not run
 
+Nested FOR
+    [Documentation]    FAIL 'For' is a reserved keyword. It must be an upper case 'FOR' when used as a marker.
+    IF    True    FOR    ${x}    IN    @{stuff}
+
 Unnecessary END
     [Documentation]    FAIL Keyword 'BuiltIn.No Operation' expected 0 arguments, got 1.
     IF    False    Not run    ELSE    No operation    END

@@ -48,6 +48,9 @@ Nested IF
     Check Test Case    ${TESTNAME} 2
     Check Test Case    ${TESTNAME} 3
 
+Nested FOR
+    Check Test Case    ${TESTNAME}
+
 Unnecessary END
     Check Test Case    ${TESTNAME}
 
