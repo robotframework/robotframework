@@ -159,15 +159,17 @@ class If(Block):
 
     def validate(self):
         self._validate_body()
-        if self.type in (Token.IF, Token.INLINE_IF):
+        if self.type == Token.IF:
             self._validate_structure()
             self._validate_end()
         if self.type == Token.INLINE_IF:
-            self._validate_branch_keyword_calls()
+            self._validate_structure()
+            self._validate_inline_if()
 
     def _validate_body(self):
         if not self.body:
-            self.errors += (f'{self.type} branch cannot be empty.',)
+            type = self.type if self.type != Token.INLINE_IF else 'IF'
+            self.errors += (f'{type} branch cannot be empty.',)
 
     def _validate_structure(self):
         orelse = self.orelse
@@ -175,9 +177,11 @@ class If(Block):
         while orelse:
             if else_seen:
                 if orelse.type == Token.ELSE:
-                    self.errors += ('Multiple ELSE branches.',)
+                    error = 'Multiple ELSE branches.'
                 else:
-                    self.errors += ('ELSE IF after ELSE.',)
+                    error = 'ELSE IF after ELSE.'
+                if error not in self.errors:
+                    self.errors += (error,)
             else_seen = else_seen or orelse.type == Token.ELSE
             orelse = orelse.orelse
 
@@ -185,20 +189,17 @@ class If(Block):
         if not self.end:
             self.errors += ('IF has no closing END.',)
 
-    def _validate_branch_keyword_calls(self):
-        # TODO: validation messages
-        def validate(body):
-            if not body:
-                self.errors += (f'{self.type} has empty body.' ,)
-            if len(body) > 1:
-                self.errors += (f'{self.type} branch has more than one keyword call.',)
-            if body[0].assign:
-                self.errors += (f'{self.type} branch cannot have an assignment.',)
-        validate(self.body)
-        orelse = self.orelse
-        while orelse:
-            validate(orelse.body)
-            orelse = orelse.orelse
+    def _validate_inline_if(self):
+        branch = self
+        while branch:
+            if branch.body:
+                item = branch.body[0]
+                if getattr(item, 'assign', None):
+                    type = branch.type if branch.type != Token.INLINE_IF else 'IF'
+                    self.errors += (f'Inline {type} branch cannot have an assignment.',)
+                if item.type == Token.INLINE_IF:
+                    self.errors += (f'Inline IF cannot be nested.',)
+            branch = branch.orelse
 
 
 class For(Block):

@@ -5,13 +5,16 @@ Resource          if.resource
 
 *** Test Cases ***
 IF passing
-    PASS    else=False
+    PASS
 
 IF failing
-    FAIL    else=False
+    FAIL
+
+IF erroring
+    FAIL
 
 Not executed
-    NOT RUN    else=False
+    NOT RUN
 
 Not executed after failure
     NOT RUN    NOT RUN    NOT RUN    index=1    run=False

@@ -124,17 +124,15 @@ class Lexer:
                 token_type = token.type
                 if token_type in ignored_types:
                     continue
-                if token._add_eos_before:
-                    token._add_eos_before = False
+                if token._add_eos_before and not (last and last._add_eos_after):
                     yield EOS.from_token(token, before=True)
                 yield token
                 if token._add_eos_after:
-                    token._add_eos_after = False
                     yield EOS.from_token(token)
                 if token_type == inline_if_type:
                     inline_if = True
                 last = token
-            if last:
+            if last and not last._add_eos_after:
                 yield EOS.from_token(last)
             if inline_if:
                 yield END.from_token(last, virtual=True)

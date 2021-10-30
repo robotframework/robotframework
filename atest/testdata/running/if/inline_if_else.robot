@@ -6,6 +6,10 @@ IF failing
     [Documentation]    FAIL Inside IF
     IF    '1' == '1'   Fail    Inside IF
 
+IF erroring
+    [Documentation]    FAIL No keyword with name 'Oooops, I don't exist!' found.
+    IF    '1' == '1'   Oooops, I don't exist!
+
 Not executed
     [Documentation]    FAIL After IF
     IF    False    Not    run

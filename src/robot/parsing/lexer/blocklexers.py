@@ -253,7 +253,8 @@ class InlineIfLexer(BlockLexer):
 
     def input(self, statement):
         for part in self._split_statements(statement):
-            super().input(part)
+            if part:
+                super().input(part)
         return self
 
     def _split_statements(self, statement):
@@ -268,9 +269,8 @@ class InlineIfLexer(BlockLexer):
                 expect_condition = False
             elif token.value in ('IF', 'ELSE IF'):
                 token._add_eos_before = token.value == 'ELSE IF'
-                if current:
-                    yield current
-                    current = []
+                yield current
+                current = []
                 current.append(token)
                 expect_condition = True
             elif token.value == 'ELSE':

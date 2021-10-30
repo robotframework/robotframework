@@ -11,7 +11,7 @@ from robot.parsing.model.blocks import (
 )
 from robot.parsing.model.statements import (
     Arguments, Comment, Documentation, ForHeader, End, ElseHeader, ElseIfHeader,
-    EmptyLine, Error, IfHeader, KeywordCall, KeywordName, SectionHeader,
+    EmptyLine, Error, IfHeader, InlineIfHeader, KeywordCall, KeywordName, SectionHeader,
     Statement, TestCaseName, Variable
 )
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
@@ -33,8 +33,7 @@ Keyword
     [Arguments]    ${arg1}    ${arg2}
     Log    Got ${arg1} and ${arg}!
 '''
-PATH = os.path.join(os.getenv('TEMPDIR') or tempfile.gettempdir(),
-                    'test_model.robot')
+PATH = os.path.join(os.getenv('TEMPDIR') or tempfile.gettempdir(), 'test_model.robot')
 EXPECTED = File(sections=[
     CommentSection(
         body=[
@@ -136,8 +135,7 @@ def assert_model(model, expected=EXPECTED, **expected_attrs):
     elif model is None and expected is None:
         pass
     else:
-        raise AssertionError('Incompatible children:\n%r\n%r'
-                             % (model, expected))
+        raise AssertionError('Incompatible children:\n%r\n%r' % (model, expected))
 
 
 def dump_model(model):
@@ -147,6 +145,7 @@ def dump_model(model):
         return [dump_model(m) for m in model]
     else:
         raise TypeError('Invalid model %r' % model)
+
 
 def assert_block(model, expected, expected_attrs):
     assert_equal(model._fields, expected._fields)
@@ -523,6 +522,119 @@ Example
         )
         assert_model(if1, expected1)
         assert_model(if2, expected2)
+
+
+class TestInlineIf(unittest.TestCase):
+
+    def test_if(self):
+        model = get_model('''\
+*** Test Cases ***
+Example
+    IF    True    Keyword
+''', data_only=True)
+        node = model.sections[0].body[0].body[0]
+        expected = If(
+            header=InlineIfHeader([Token(Token.INLINE_IF, 'IF', 3, 4),
+                                   Token(Token.ARGUMENT, 'True', 3, 10)]),
+            body=[KeywordCall([Token(Token.KEYWORD, 'Keyword', 3, 18)])],
+            end=End([Token(Token.END, '', 3, 25)])
+        )
+        assert_model(node, expected)
+
+    def test_if_else_if_else(self):
+        model = get_model('''\
+*** Test Cases ***
+Example
+    IF    True    K1    ELSE IF    False    K2    ELSE    K3
+''', data_only=True)
+        node = model.sections[0].body[0].body[0]
+        expected = If(
+            header=InlineIfHeader([Token(Token.INLINE_IF, 'IF', 3, 4),
+                                   Token(Token.ARGUMENT, 'True', 3, 10)]),
+            body=[KeywordCall([Token(Token.KEYWORD, 'K1', 3, 18)])],
+            orelse=If(
+                header=ElseIfHeader([Token(Token.ELSE_IF, 'ELSE IF', 3, 24),
+                                     Token(Token.ARGUMENT, 'False', 3, 35)]),
+                body=[KeywordCall([Token(Token.KEYWORD, 'K2', 3, 44)])],
+                orelse=If(
+                    header=ElseHeader([Token(Token.ELSE, 'ELSE', 3, 50)]),
+                    body=[KeywordCall([Token(Token.KEYWORD, 'K3', 3, 58)])],
+                )
+            ),
+            end=End([Token(Token.END, '', 3, 60)])
+        )
+        assert_model(node, expected)
+
+    def test_nested(self):
+        model = get_model('''\
+*** Test Cases ***
+Example
+    IF    ${x}    IF    ${y}    K1    ELSE    IF    ${z}    K2
+''', data_only=True)
+        node = model.sections[0].body[0].body[0]
+        expected = If(
+            header=InlineIfHeader([Token(Token.INLINE_IF, 'IF', 3, 4),
+                                   Token(Token.ARGUMENT, '${x}', 3, 10)]),
+            body=[If(
+                header=InlineIfHeader([Token(Token.INLINE_IF, 'IF', 3, 18),
+                                       Token(Token.ARGUMENT, '${y}', 3, 24)]),
+                body=[KeywordCall([Token(Token.KEYWORD, 'K1', 3, 32)])],
+                orelse=If(
+                    header=ElseHeader([Token(Token.ELSE, 'ELSE', 3, 38)]),
+                    body=[If(
+                        header=InlineIfHeader([Token(Token.INLINE_IF, 'IF', 3, 46),
+                                               Token(Token.ARGUMENT, '${z}', 3, 52)]),
+                        body=[KeywordCall([Token(Token.KEYWORD, 'K2', 3, 60)])],
+                        end=End([Token(Token.END, '', 3, 62)]),
+                    )],
+                ),
+                errors=('Inline IF cannot be nested.',),
+            )],
+            errors=('Inline IF cannot be nested.',),
+        )
+        assert_model(node, expected)
+
+    def test_assign(self):
+        model = get_model('''\
+*** Test Cases ***
+Example
+    ${x} =    IF    True    K1    ELSE    K2
+''', data_only=True)
+        node = model.sections[0].body[0].body[0]
+        expected = If(
+            header=InlineIfHeader([Token(Token.ASSIGN, '${x} =', 3, 4),
+                                   Token(Token.INLINE_IF, 'IF', 3, 14),
+                                   Token(Token.ARGUMENT, 'True', 3, 20)]),
+            body=[KeywordCall([Token(Token.KEYWORD, 'K1', 3, 28)])],
+            orelse=If(
+                header=ElseHeader([Token(Token.ELSE, 'ELSE', 3, 34)]),
+                body=[KeywordCall([Token(Token.KEYWORD, 'K2', 3, 42)])],
+            ),
+            end=End([Token(Token.END, '', 3, 44)])
+        )
+        assert_model(node, expected)
+
+    def test_invalid(self):
+        model = get_model('''\
+*** Test Cases ***
+Example
+    ${x} =    ${y}    IF    ELSE    ooops    ELSE IF
+''', data_only=True)
+        node = model.sections[0].body[0].body[0]
+        expected = If(
+            header=InlineIfHeader([Token(Token.ASSIGN, '${x} =', 3, 4),
+                                   Token(Token.ASSIGN, '${y}', 3, 14),
+                                   Token(Token.INLINE_IF, 'IF', 3, 22),
+                                   Token(Token.ARGUMENT, 'ELSE', 3, 28)]),
+            body=[KeywordCall([Token(Token.KEYWORD, 'ooops', 3, 36)])],
+            orelse=If(
+                header=ElseIfHeader([Token(Token.ELSE_IF, 'ELSE IF', 3, 45)],
+                                    errors=('ELSE IF has no condition.',)),
+                errors=('ELSE IF branch cannot be empty.',),
+            ),
+            end=End([Token(Token.END, '', 3, 52)])
+        )
+        assert_model(node, expected)
 
 
 class TestVariables(unittest.TestCase):
