@@ -77,3 +77,12 @@ Invalid value for list assign
 
 Invalid value for dict assign
     Check Test Case    ${TESTNAME}
+
+Assign when IF branch is empty
+    Check Test Case    ${TESTNAME}
+
+Assign when ELSE IF branch is empty
+    Check Test Case    ${TESTNAME}
+
+Assign when ELSE branch is empty
+    Check Test Case    ${TESTNAME}

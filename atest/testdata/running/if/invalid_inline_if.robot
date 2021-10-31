@@ -123,3 +123,15 @@ Invalid value for list assign
 Invalid value for dict assign
     [Documentation]    FAIL Cannot set variable '\&{x}': Expected dictionary-like value, got string.
     &{x} =    IF    False    Not run    ELSE    Set variable    String is not dict either
+
+Assign when IF branch is empty
+    [Documentation]    FAIL IF branch cannot be empty.
+    ${x} =    IF    False
+
+Assign when ELSE IF branch is empty
+    [Documentation]    FAIL ELSE IF branch cannot be empty.
+    ${x} =    IF    True    Not run    ELSE IF    True
+
+Assign when ELSE branch is empty
+    [Documentation]    FAIL ELSE branch cannot be empty.
+    ${x} =    IF    True    Not run    ELSE

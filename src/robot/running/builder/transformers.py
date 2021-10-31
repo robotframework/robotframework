@@ -321,7 +321,7 @@ class IfBuilder(NodeVisitor):
                                                   lineno=node.lineno)
             for step in node.body:
                 self.visit(step)
-            if assign:
+            if assign and self.model.body:
                 self.model.body[0].assign = assign
             node = node.orelse
         return model
