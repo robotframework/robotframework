@@ -1,91 +1,98 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    running/if/invalid_inline_if.robot
-Resource          atest_resource.robot
+Test Template     Check IF/ELSE Status
+Resource          if.resource
 
 *** Test Cases ***
 Invalid condition
-    Check Test Case    ${TESTNAME}
+    FAIL    NOT RUN
+
+Invalid condition with other error
+    FAIL    NOT RUN
 
 Empty IF
-    Check Test Case    ${TESTNAME}
+    FAIL
 
 IF without branch
-    Check Test Case    ${TESTNAME}
+    FAIL
 
 IF without branch with ELSE IF
-    Check Test Case    ${TESTNAME}
+    FAIL    NOT RUN    else=False
 
 IF without branch with ELSE
-    Check Test Case    ${TESTNAME}
+    FAIL    NOT RUN
 
-IF follewed by ELSE IF
-    Check Test Case    ${TESTNAME}
+IF followed by ELSE IF
+    FAIL
 
-IF follewed by ELSE
-    Check Test Case    ${TESTNAME}
+IF followed by ELSE
+    FAIL
 
 Empty ELSE IF
-    Check Test Case    ${TESTNAME} 1
-    Check Test Case    ${TESTNAME} 2
+    FAIL       NOT RUN    test=${TESTNAME} 1    else=False
+    NOT RUN    FAIL       test=${TESTNAME} 2    else=False
 
 ELSE IF without branch
-    Check Test Case    ${TESTNAME} 1
-    Check Test Case    ${TESTNAME} 2
+    FAIL    NOT RUN               test=${TESTNAME} 1    else=False
+    FAIL    NOT RUN    NOT RUN    test=${TESTNAME} 2
 
 Empty ELSE
-    Check Test Case    ${TESTNAME}
+    FAIL    NOT RUN    NOT RUN
 
 ELSE IF after ELSE
-    Check Test Case    ${TESTNAME} 1
-    Check Test Case    ${TESTNAME} 2
+    FAIL    NOT RUN    NOT RUN               types=['IF', 'ELSE', 'ELSE IF']               test=${TESTNAME} 1
+    FAIL    NOT RUN    NOT RUN    NOT RUN    types=['IF', 'ELSE', 'ELSE IF', 'ELSE IF']    test=${TESTNAME} 2
 
 Multiple ELSEs
-    Check Test Case    ${TESTNAME} 1
-    Check Test Case    ${TESTNAME} 2
+    FAIL    NOT RUN    NOT RUN               types=['IF', 'ELSE', 'ELSE']            test=${TESTNAME} 1
+    FAIL    NOT RUN    NOT RUN    NOT RUN    types=['IF', 'ELSE', 'ELSE', 'ELSE']    test=${TESTNAME} 2
 
 Nested IF
-    Check Test Case    ${TESTNAME} 1
-    Check Test Case    ${TESTNAME} 2
-    Check Test Case    ${TESTNAME} 3
+    FAIL               test=${TESTNAME} 1
+    FAIL    NOT RUN    test=${TESTNAME} 2
+    FAIL               test=${TESTNAME} 3
 
 Nested FOR
-    Check Test Case    ${TESTNAME}
+    FAIL
 
 Unnecessary END
-    Check Test Case    ${TESTNAME}
+    PASS       NOT RUN    index=0
+    NOT RUN    FAIL       index=1
 
 Assign in IF branch
-    Check Test Case    ${TESTNAME}
+    FAIL
 
 Assign in ELSE IF branch
-    Check Test Case    ${TESTNAME}
+    FAIL    NOT RUN    else=False
 
 Assign in ELSE branch
-    Check Test Case    ${TESTNAME}
+    FAIL    NOT RUN
 
-Invalid assing mark usage
-    Check Test Case    ${TESTNAME}
+Invalid assign mark usage
+    FAIL
 
 Too many list variables in assign
-    Check Test Case    ${TESTNAME}
+    FAIL    NOT RUN
 
 Invalid number of variables in assign
-    Check Test Case    ${TESTNAME}
+    NOT RUN    FAIL
 
 Invalid value for list assign
-    Check Test Case    ${TESTNAME}
+    FAIL
 
 Invalid value for dict assign
-    Check Test Case    ${TESTNAME}
+    NOT RUN    FAIL
 
 Assign when IF branch is empty
-    Check Test Case    ${TESTNAME}
+    FAIL
 
 Assign when ELSE IF branch is empty
-    Check Test Case    ${TESTNAME}
+    FAIL    NOT RUN    else=False
 
 Assign when ELSE branch is empty
-    Check Test Case    ${TESTNAME}
+    FAIL    NOT RUN
 
 Assign with RETURN
-    Check Test Case    ${TESTNAME}
+    [Template]    NONE
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check IF/ELSE Status    FAIL    NOT RUN    root=${tc.body[0].body[0]}

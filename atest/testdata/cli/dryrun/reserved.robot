@@ -53,7 +53,7 @@ End after valid FOR header
     End
 
 End after valid If header
-    [Documentation]    FAIL    IF has no closing END.
+    [Documentation]    FAIL    'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR' or 'IF' when used as a marker.
     IF    True
         No operation
     End

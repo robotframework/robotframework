@@ -3,9 +3,9 @@ Resource        atest_resource.robot
 
 *** Keywords ***
 Check IF/ELSE Status
-    [Arguments]    @{statuses}    ${root}=${None}    ${index}=0    ${else}=${True}    ${run}=${True}
+    [Arguments]    @{statuses}    ${types}=${None}    ${root}=${None}    ${test}=${TEST NAME}    ${index}=0    ${else}=${True}    ${run}=${True}
     IF    not $root
-        ${tc} =    Check Test Case    ${TESTNAME}
+        ${tc} =    Check Test Case    ${test}
         ${root} =    Set Variable    ${tc.body}[${index}]
     END
     Should Be Equal    ${root.type}    IF/ELSE ROOT
@@ -16,14 +16,18 @@ Check IF/ELSE Status
     ELSE
         Should Be Equal    ${root.status}    NOT RUN
     END
-    Check Branch Statuses    ${root.body}    ${statuses}    ${else}
+    Check Branch Statuses    ${root.body}    ${statuses}    ${types}    ${else}
 
 Check Branch Statuses
-    [Arguments]    ${branches}    ${statuses}    ${else}=${True}
-    IF    ${else} and len($branches) > 1
-        ${types} =    Evaluate    ['IF'] + ['ELSE IF'] * (len($branches) - 2) + ['ELSE']
+    [Arguments]    ${branches}    ${statuses}    ${types}=${None}    ${else}=${True}
+    IF   $types
+        ${types} =    Evaluate    ${types}
     ELSE
-        ${types} =    Evaluate    ['IF'] + ['ELSE IF'] * (len($branches) - 1)
+        IF    ${else} and len($branches) > 1
+            ${types} =    Evaluate    ['IF'] + ['ELSE IF'] * (len($branches) - 2) + ['ELSE']
+        ELSE
+            ${types} =    Evaluate    ['IF'] + ['ELSE IF'] * (len($branches) - 1)
+        END
     END
     Should Be Equal    ${{len($branches)}}    ${{len($statuses)}}
     Should Be Equal    ${{len($branches)}}    ${{len($types)}}

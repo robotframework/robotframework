@@ -3,6 +3,10 @@ Invalid condition
     [Documentation]    FAIL Evaluating expression 'ooops' failed: NameError: name 'ooops' is not defined nor importable as module
     IF    ooops    Not run    ELSE    Not run either
 
+Invalid condition with other error
+    [Documentation]    FAIL ELSE branch cannot be empty.
+    IF    bad    Not run    ELSE
+
 Empty IF
     [Documentation]    FAIL Multiple errors:
     ...    - IF has no condition.
@@ -24,11 +28,11 @@ IF without branch with ELSE
     [Documentation]    FAIL IF branch cannot be empty.
     IF    True    ELSE    Not run
 
-IF follewed by ELSE IF
+IF followed by ELSE IF
     [Documentation]    FAIL STARTS: Evaluating expression 'ELSE IF' failed:
     IF    ELSE IF   False    Not run
 
-IF follewed by ELSE
+IF followed by ELSE
     [Documentation]    FAIL Evaluating expression 'ELSE' failed: NameError: name 'ELSE' is not defined nor importable as module
     IF    ELSE    Not run
 
@@ -90,7 +94,8 @@ Nested FOR
 
 Unnecessary END
     [Documentation]    FAIL Keyword 'BuiltIn.No Operation' expected 0 arguments, got 1.
-    IF    False    Not run    ELSE    No operation    END
+    IF    True     No operation    ELSE    Log    END
+    IF    False    Not run         ELSE    No operation    END
 
 Assign in IF branch
     [Documentation]    FAIL Inline IF branches cannot contain assignments.
@@ -104,13 +109,13 @@ Assign in ELSE branch
     [Documentation]    FAIL Inline IF branches cannot contain assignments.
     IF    False    Keyword    ELSE    ${x} =    Whatever
 
-Invalid assing mark usage
+Invalid assign mark usage
     [Documentation]    FAIL Assign mark '=' can be used only with the last variable.
     ${x} =    ${y}    IF    True    Create list    x    y
 
 Too many list variables in assign
     [Documentation]    FAIL Assignment can contain only one list variable.
-    @{x}    @{y} =    IF    True    Create list    x    y
+    @{x}    @{y} =    IF    True    Create list    x    y    ELSE    Not run
 
 Invalid number of variables in assign
     [Documentation]    FAIL Cannot set variables: Expected 2 return values, got 3.
