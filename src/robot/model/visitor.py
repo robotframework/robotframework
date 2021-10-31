@@ -240,8 +240,11 @@ class SuiteVisitor:
         pass
 
     def visit_return(self, return_):
-        # FIXME: Documentation.
-        # FIXME: Do we need `start/end_return`?
+        """Called when RETURN is encountered. Default implementation does nothing.
+
+        Because RETURN cannot have children, does not call separate
+        ``start_return`` or ``end_return`` methods.
+        """
         pass
 
     def visit_message(self, msg):
