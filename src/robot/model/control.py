@@ -117,6 +117,18 @@ class IfBranch(BodyItem):
 
 
 @Body.register
+class Try(BodyItem):
+    type = BodyItem.TRY
+    body_class = Body
+    repr_args = ('handlers',)
+
+    def __init__(self, except_handlers=None, parent=None):
+        self.except_handlers = except_handlers
+        self.parent = parent
+        self.body = None
+
+
+@Body.register
 class Return(BodyItem):
     type = BodyItem.RETURN
     repr_args = ('values',)

@@ -192,6 +192,9 @@ class TestCaseBuilder(NodeVisitor):
     def visit_If(self, node):
         IfBuilder(self.test).build(node)
 
+    def visit_Try(self, node):
+        TryBuilder(self.test).build(node)
+
     def visit_TemplateArguments(self, node):
         self.test.body.create_keyword(args=node.args, lineno=node.lineno)
 
@@ -368,6 +371,25 @@ class IfBuilder(NodeVisitor):
 
     def visit_ReturnStatement(self, node):
         self.model.body.create_return(node.values)
+
+
+class TryBuilder(NodeVisitor):
+
+    def __init__(self, parent):
+        self.parent = parent
+        self.model = None
+
+    def build(self, node):
+        model = self.parent.body.create_try()
+        return model
+
+    def _get_errors(self, node):
+        errors = node.header.errors + node.errors
+        # for handler in node.except_handlers:
+        #     errors += handler.errors + handler.body.errors
+        if node.end:
+            errors += node.end.errors
+        return errors
 
 
 def format_error(errors):

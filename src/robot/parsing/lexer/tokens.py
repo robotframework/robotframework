@@ -84,6 +84,8 @@ class Token:
     INLINE_IF = 'INLINE IF'
     ELSE_IF = 'ELSE IF'
     ELSE = 'ELSE'
+    TRY = 'TRY'
+    EXCEPT = 'EXCEPT'
     RETURN_STATEMENT = 'RETURN STATEMENT'
 
     SEPARATOR = 'SEPARATOR'

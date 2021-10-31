@@ -886,6 +886,41 @@ class ElseHeader(IfElseHeader):
 
 
 @Statement.register
+class Try(Statement):
+    type = Token.TRY
+
+    @classmethod
+    def from_params(cls, indent=FOUR_SPACES, eol=EOL):
+        return cls([
+            Token(Token.SEPARATOR, indent),
+            Token(Token.TRY),
+            Token(Token.EOL, eol)
+        ])
+
+    def validate(self):
+        if self.get_tokens(Token.ARGUMENT):
+            self.errors += ('ELSE has condition.',)
+
+
+@Statement.register
+class Except(Statement):
+    type = Token.EXCEPT
+
+    @classmethod
+    def from_params(cls, pattern= None, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+        tokens = [
+            Token(Token.SEPARATOR, indent),
+            Token(Token.FOR),
+            Token(Token.SEPARATOR, separator)
+        ]
+        for p in pattern:
+            tokens.append(p)
+            tokens.append(Token(Token.SEPARATOR, indent))
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
+
+@Statement.register
 class End(Statement):
     type = Token.END
 

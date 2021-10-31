@@ -233,6 +233,27 @@ class For(Block):
             self.errors += ('FOR loop has no closing END.',)
 
 
+class Try(Block):
+    _fields = ('header', 'body', 'handlers', 'end')
+
+    def __init__(self, header, body=None, handlers=None, end=None, errors=()):
+        self.header = header
+        self.body = body or []
+        self.except_handlers = handlers or []
+        self.end = end
+        self.errors = errors
+
+
+class Except(Block):
+    _fields = ('header', 'body', 'pattern', 'end')
+
+    def __init__(self, header, body=None, pattern=None, errors=()):
+        self.header = header
+        self.body = body or []
+        self.pattern = pattern or []
+        self.end = None
+
+
 class ModelWriter(ModelVisitor):
 
     def __init__(self, output):

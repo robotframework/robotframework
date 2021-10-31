@@ -29,6 +29,8 @@ class BodyItem(ModelObject):
     IF = 'IF'
     ELSE_IF = 'ELSE IF'
     ELSE = 'ELSE'
+    TRY = 'TRY'
+    EXCEPT = 'EXCEPT'
     RETURN = 'RETURN'
     MESSAGE = 'MESSAGE'
     type = None
@@ -66,6 +68,7 @@ class Body(ItemList):
     for_class = None
     if_class = None
     return_class = None
+    try_class = None
 
     def __init__(self, parent=None, items=None):
         ItemList.__init__(self, BodyItem, {'parent': parent}, items)
@@ -101,6 +104,9 @@ class Body(ItemList):
 
     def create_if(self, *args, **kwargs):
         return self._create(self.if_class, 'create_if', args, kwargs)
+
+    def create_try(self, *args, **kwargs):
+        return self._create(self.try_class, 'create_try', args, kwargs)
 
     def create_return(self, *args, **kwargs):
         return self._create(self.return_class, 'create_return', args, kwargs)
