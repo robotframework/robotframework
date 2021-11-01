@@ -160,7 +160,7 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_status(model[5], start=0)
         self._verify_status(model[-2][0][8], start=1)
         self._verify_mapped(model[-2][0][-1], context.strings,
-                            ((9, 10, 2, 'Message'), (9, 11, 1, '')))
+                            ((10, 2, 'Message'), (11, 1, '')))
         self._verify_status(model[-3][0][4], start=1000)
 
     def test_if(self):
@@ -187,10 +187,10 @@ class TestBuildTestSuite(unittest.TestCase):
         test.body.create_message('Hi from test')
         test.body.create_keyword().body.create_message('Hi from keyword')
         test.body.create_message('Hi from test again', 'WARN')
-        exp_m1 = (9, None, 2, 'Hi from test')
+        exp_m1 = (None, 2, 'Hi from test')
         exp_kw = (0, '', '', '', '', '', '', '', (0, None, 0),
-                  ((9, None, 2, 'Hi from keyword'),))
-        exp_m3 = (9, None, 3, 'Hi from test again')
+                  ((None, 2, 'Hi from keyword'),))
+        exp_m3 = (None, 3, 'Hi from test again')
         self._verify_test(test, body=(exp_m1, exp_kw, exp_m3))
 
     def _verify_status(self, model, status=0, start=None, elapsed=0):
@@ -227,7 +227,7 @@ class TestBuildTestSuite(unittest.TestCase):
                                       status, body)
 
     def _verify_message(self, msg, message='', level=2, timestamp=None):
-        return self._build_and_verify(MessageBuilder, msg, 9, timestamp, level, message)
+        return self._build_and_verify(MessageBuilder, msg, timestamp, level, message)
 
     def _verify_min_message_level(self, expected):
         assert_equal(self.context.min_level, expected)
@@ -330,8 +330,8 @@ class TestSplitting(unittest.TestCase):
         SuiteBuilder(context).build(suite)
         errors = ErrorsBuilder(context).build(ExecutionErrors([msg1, msg2]))
         assert_equal(remap(errors, context.strings),
-                     ((9, -1000, 3, 'Message 1', 's1-k1-k1'),
-                      (9, 0, 4, 'Message 2', 's1-t1-k1')))
+                     ((-1000, 3, 'Message 1', 's1-k1-k1'),
+                      (0, 4, 'Message 2', 's1-t1-k1')))
         assert_equal(remap(context.link(msg1), context.strings), 's1-k1-k1')
         assert_equal(remap(context.link(msg2), context.strings), 's1-t1-k1')
         assert_true('*s1-k1-k1' in context.strings)
@@ -481,7 +481,7 @@ class TestBuildErrors(unittest.TestCase):
         context = JsBuildingContext()
         model = ErrorsBuilder(context).build(self.errors)
         model = remap(model, context.strings)
-        assert_equal(model, ((9, 0, 4, 'Error'), (9, 42, 3, 'Warning')))
+        assert_equal(model, ((0, 4, 'Error'), (42, 3, 'Warning')))
 
     def test_linking(self):
         self.errors.messages.create('Linkable', 'WARN',
@@ -493,9 +493,9 @@ class TestBuildErrors(unittest.TestCase):
         MessageBuilder(context).build(msg)
         model = ErrorsBuilder(context).build(self.errors)
         model = remap(model, context.strings)
-        assert_equal(model, ((9, -1, 4, 'Error'),
-                             (9, 41, 3, 'Warning'),
-                             (9, 0, 3, 'Linkable', 's1-t1-k1')))
+        assert_equal(model, ((-1, 4, 'Error'),
+                             (41, 3, 'Warning'),
+                             (0, 3, 'Linkable', 's1-t1-k1')))
 
 
 if __name__ == '__main__':

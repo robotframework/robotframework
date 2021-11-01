@@ -26,8 +26,6 @@ KEYWORD_TYPES = {'KEYWORD': 0, 'SETUP': 1, 'TEARDOWN': 2,
                  'FOR': 3, 'FOR ITERATION': 4,
                  'IF': 5, 'ELSE IF': 6, 'ELSE': 7,
                  'RETURN': 8}
-# FIXME: Don't use type with messages in model. They can be recognized based on model length.
-MESSAGE_TYPE = 9
 
 
 class JsModelBuilder:
@@ -194,8 +192,7 @@ class MessageBuilder(_Builder):
         return self._build(msg)
 
     def _build(self, msg):
-        return (MESSAGE_TYPE,
-                self._timestamp(msg.timestamp),
+        return (self._timestamp(msg.timestamp),
                 LEVELS[msg.level],
                 self._string(msg.html_message, escape=False))
 
