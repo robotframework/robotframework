@@ -956,6 +956,40 @@ class Break(Statement):
 
 
 @Statement.register
+class Continue(Statement):
+    type = Token.CONTINUE
+
+    @classmethod
+    def from_params(cls, indent=FOUR_SPACES, eol=EOL):
+        return cls([
+            Token(Token.SEPARATOR, indent),
+            Token(Token.CONTINUE),
+            Token(Token.EOL, eol)
+        ])
+
+    def validate(self):
+        if self.get_tokens(Token.ARGUMENT):
+            self.errors += ('CONTINUE does not accept arguments.',)
+
+
+@Statement.register
+class Break(Statement):
+    type = Token.BREAK
+
+    @classmethod
+    def from_params(cls, indent=FOUR_SPACES, eol=EOL):
+        return cls([
+            Token(Token.SEPARATOR, indent),
+            Token(Token.BREAK),
+            Token(Token.EOL, eol)
+        ])
+
+    def validate(self):
+        if self.get_tokens(Token.ARGUMENT):
+            self.errors += ('BREAK does not accept arguments.',)
+
+
+@Statement.register
 class Comment(Statement):
     type = Token.COMMENT
 
