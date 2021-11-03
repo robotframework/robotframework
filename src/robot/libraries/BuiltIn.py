@@ -2561,17 +2561,30 @@ class _Control(_BuiltInBase):
     def return_from_keyword(self, *return_values):
         """Returns from the enclosing user keyword.
 
+        ---
+
+        *NOTE:* Robot Framework 5.0 added support for native ``RETURN`` statement that
+        is recommended over this keyword. In the examples below, ``Return From Keyword``
+        can simply be replaced with ``RETURN``. In addition to that, native ``IF``
+        syntax (new in RF 4.0) or inline ``IF`` syntax (new in RF 5.0) can be used
+        instead of ``Run Keyword If``. For example, the first example below could be
+        written like this instead:
+
+        | IF    ${rc} < 0    RETURN
+
+        This keyword will eventually be deprecated and removed.
+
+        ---
+
         This keyword can be used to return from a user keyword with PASS status
         without executing it fully. It is also possible to return values
         similarly as with the ``[Return]`` setting. For more detailed information
         about working with the return values, see the User Guide.
 
         This keyword is typically wrapped to some other keyword, such as
-        `Run Keyword If` or `Run Keyword If Test Passed`, to return based
-        on a condition:
+        `Run Keyword If`, to return based on a condition:
 
-        | Run Keyword If | ${rc} < 0 | Return From Keyword |
-        | Run Keyword If Test Passed | Return From Keyword |
+        | Run Keyword If    ${rc} < 0    Return From Keyword
 
         It is possible to use this keyword to return from a keyword also inside
         a for loop. That, as well as returning values, is demonstrated by the
@@ -2597,7 +2610,7 @@ class _Control(_BuiltInBase):
         |        Run Keyword If    '${item}' == '${element}'    Return From Keyword    ${index}
         |        ${index} =    Set Variable    ${index + 1}
         |    END
-        |    Return From Keyword    ${-1}    # Also [Return] would work here.
+        |    Return From Keyword    ${-1}
 
         The most common use case, returning based on an expression, can be
         accomplished directly with `Return From Keyword If`. See also
@@ -2612,6 +2625,19 @@ class _Control(_BuiltInBase):
     @run_keyword_variant(resolve=1)
     def return_from_keyword_if(self, condition, *return_values):
         """Returns from the enclosing user keyword if ``condition`` is true.
+
+        ---
+
+        *NOTE:* Robot Framework 5.0 added support for native ``RETURN`` statement
+        and inline ``IF`` and that combination should be used instead of this
+        keyword. For example, ``Return From Keyword`` usage in the example below
+        could be replaced with
+
+        | IF    '${item}' == '${element}'    RETURN    ${index}
+
+        This keyword will eventually be deprecated and removed.
+
+        ---
 
         A wrapper for `Return From Keyword` to return based on the given
         condition. The condition is evaluated using the same semantics as
@@ -2628,7 +2654,7 @@ class _Control(_BuiltInBase):
         |        Return From Keyword If    '${item}' == '${element}'    ${index}
         |        ${index} =    Set Variable    ${index + 1}
         |    END
-        |    Return From Keyword    ${-1}    # Also [Return] would work here.
+        |    Return From Keyword    ${-1}
 
         See also `Run Keyword And Return` and `Run Keyword And Return If`.
         """

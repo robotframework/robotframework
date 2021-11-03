@@ -43,7 +43,7 @@ Using Run Keyword variants
     [Teardown]    Using Run Keywords
 
 Outside user keyword
-    [Documentation]    FAIL Invalid 'Return From Keyword' usage.
+    [Documentation]    FAIL Invalid 'RETURN' usage.
     Run Keyword And Return    Log    This does not work
     Fail    This is not executed
 

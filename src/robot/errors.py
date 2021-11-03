@@ -261,13 +261,8 @@ class ExecutionPassed(ExecutionStatus):
     """
 
     def __init__(self, message=None, **kwargs):
-        ExecutionStatus.__init__(self, message or self._get_message(), **kwargs)
+        super().__init__(message, **kwargs)
         self._earlier_failures = []
-
-    def _get_message(self):
-        from robot.utils import printable_name
-        return ("Invalid '%s' usage."
-                % printable_name(type(self).__name__, code_style=True))
 
     def set_earlier_failures(self, failures):
         if failures:
@@ -288,22 +283,28 @@ class PassExecution(ExecutionPassed):
     """Used by 'Pass Execution' keyword."""
 
     def __init__(self, message):
-        ExecutionPassed.__init__(self, message)
+        super().__init__(message)
 
 
 class ContinueForLoop(ExecutionPassed):
-    """Used by 'Continue For Loop' keyword."""
+    """Used by 'CONTINUE' keyword."""
+
+    def __init__(self):
+        super().__init__("Invalid 'CONTINUE' usage.")
 
 
 class ExitForLoop(ExecutionPassed):
-    """Used by 'Exit For Loop' keyword."""
+    """Used by 'BREAK' keyword."""
+
+    def __init__(self):
+        super().__init__("Invalid 'BREAK' usage.")
 
 
 class ReturnFromKeyword(ExecutionPassed):
-    """Used by 'Return From Keyword' keyword."""
+    """Used by 'RETURN' statement."""
 
     def __init__(self, return_value=None, failures=None):
-        ExecutionPassed.__init__(self, return_value=return_value)
+        super().__init__("Invalid 'RETURN' usage.", return_value=return_value)
         if failures:
             self.set_earlier_failures(failures)
 

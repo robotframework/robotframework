@@ -44,6 +44,18 @@ In test with values
     [Documentation]    FAIL 'Return' is a reserved keyword.
     RETURN    v1    v2
 
+In test inside IF
+    [Documentation]    FAIL Invalid 'RETURN' usage.
+    IF    True
+        RETURN
+    END
+
+In test inside FOR
+    [Documentation]    FAIL Invalid 'RETURN' usage.
+    FOR    ${x}    IN    whatever
+        RETURN
+    END
+
 *** Keywords ***
 Simple
     Log    Before

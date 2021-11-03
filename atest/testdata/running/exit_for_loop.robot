@@ -43,11 +43,11 @@ Exit For Loop In User Keyword Calling User Keyword With Exit For Loop
     Should Be Equal    ${x}    two-extra
 
 Exit For Loop Without For Loop Should Fail
-   [Documentation]    FAIL Invalid 'Exit For Loop' usage.
+   [Documentation]    FAIL Invalid 'BREAK' usage.
    Exit For Loop
 
 Exit For Loop In User Keyword Without For Loop Should Fail
-   [Documentation]    FAIL Invalid 'Exit For Loop' usage.
+   [Documentation]    FAIL Invalid 'BREAK' usage.
    With Only Exit For Loop
 
 Exit For Loop In Test Teardown
@@ -59,7 +59,7 @@ Exit For Loop In Keyword Teardown
 
 Invalid Exit For Loop In User Keyword Teardown
     [Documentation]    FAIL Keyword teardown failed:
-    ...                Invalid 'Exit For Loop' usage.
+    ...                Invalid 'BREAK' usage.
     FOR    ${var}    IN    one   two
         Invalid Exit For Loop In User Keyword Teardown
     END
