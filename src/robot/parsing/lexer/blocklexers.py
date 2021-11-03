@@ -180,7 +180,7 @@ class TestOrKeywordLexer(BlockLexer):
 
     def lexer_classes(self):
         return (TestOrKeywordSettingLexer, ForLexer, InlineIfLexer, IfLexer,
-                ReturnLexer, KeywordCallLexer, ContinueLexer, BreakLexer)
+                ReturnLexer, ContinueLexer, BreakLexer, KeywordCallLexer)
 
 
 class TestCaseLexer(TestOrKeywordLexer):

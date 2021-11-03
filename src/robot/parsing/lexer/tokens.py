@@ -70,6 +70,8 @@ class Token:
     # `RETURN` type will be used with `RETURN` statement in the future.
     RETURN = 'RETURN'
     RETURN_SETTING = RETURN
+    CONTINUE = 'CONTINUE'
+    BREAK = 'BREAK'
 
     NAME = 'NAME'
     VARIABLE = 'VARIABLE'
@@ -87,6 +89,8 @@ class Token:
     CONTIUNE = 'CONTINUE'
     BREAK = 'BREAK'
     RETURN_STATEMENT = 'RETURN STATEMENT'
+    CONTINUE = 'CONTINUE'
+    BREAK = 'BREAK'
 
     SEPARATOR = 'SEPARATOR'
     COMMENT = 'COMMENT'
