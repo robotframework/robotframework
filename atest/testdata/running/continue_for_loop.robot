@@ -43,11 +43,11 @@ Continue For Loop In User Keyword Calling User Keyword With Continue For Loop
     Should Be Equal    ${x}    two-extra
 
 Continue For Loop Without For Loop Should Fail
-   [Documentation]    FAIL Invalid 'Continue For Loop' usage.
+   [Documentation]    FAIL Invalid 'CONTINUE' usage.
    Continue For Loop
 
 Continue For Loop In User Keyword Without For Loop Should Fail
-   [Documentation]    FAIL Invalid 'Continue For Loop' usage.
+   [Documentation]    FAIL Invalid 'CONTINUE' usage.
    With Only Continue For Loop
 
 Continue For Loop In Test Teardown
@@ -59,7 +59,7 @@ Continue For Loop In Keyword Teardown
 
 Invalid Continue For Loop In User Keyword Teardown
     [Documentation]    FAIL Keyword teardown failed:
-    ...                Invalid 'Continue For Loop' usage.
+    ...                Invalid 'CONTINUE' usage.
     FOR    ${var}    IN    one   two
         Invalid Continue For Loop In User Keyword Teardown
     END

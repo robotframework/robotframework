@@ -55,19 +55,23 @@ In a keyword inside keyword teardown
     With return in keyword inside teardown
 
 Fails if used directly in keyword teardown
-    [Documentation]    FAIL    Keyword teardown failed:
-    ...                        Invalid 'Return From Keyword' usage.
+    [Documentation]    FAIL
+    ...    Keyword teardown failed:
+    ...    Invalid 'RETURN' usage.
     Returning directly from keyword teardown fails
     Fail    Should have failed before this
 
 Fails if used outside keywords
-    [Documentation]    FAIL    Invalid 'Return From Keyword' usage.\n\n
-    ...    Also teardown failed:\nInvalid 'Return From Keyword' usage.
+    [Documentation]    FAIL
+    ...    Invalid 'RETURN' usage.
+    ...
+    ...    Also teardown failed:
+    ...    Invalid 'RETURN' usage.
     Return From Keyword    ${non existent variable}
     [Teardown]    Return From Keyword
 
 Fails if used outside keywords inside for loop
-    [Documentation]    FAIL    Invalid 'Return From Keyword' usage.
+    [Documentation]    FAIL    Invalid 'RETURN' usage.
     FOR    ${var}    IN    1    2    3
         Return From Keyword
     END
