@@ -84,6 +84,8 @@ class Token:
     INLINE_IF = 'INLINE IF'
     ELSE_IF = 'ELSE IF'
     ELSE = 'ELSE'
+    CONTIUNE = 'CONTINUE'
+    BREAK = 'BREAK'
     RETURN_STATEMENT = 'RETURN STATEMENT'
 
     SEPARATOR = 'SEPARATOR'
@@ -147,7 +149,7 @@ class Token:
             value = {
                 Token.IF: 'IF', Token.ELSE_IF: 'ELSE IF', Token.ELSE: 'ELSE',
                 Token.INLINE_IF: 'IF', Token.FOR: 'FOR', Token.END: 'END',
-                Token.RETURN_STATEMENT: 'RETURN',
+                Token.RETURN_STATEMENT: 'RETURN', Token.CONTIUNE: 'CONTINUE', Token.BREAK: 'BREAK',
                 Token.CONTINUATION: '...', Token.EOL: '\n', Token.WITH_NAME: 'WITH NAME'
             }.get(type, '')
         self.value = value

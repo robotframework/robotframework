@@ -525,6 +525,8 @@ from robot.parsing.model.statements import (
     ElseHeader,
     End,
     ReturnStatement,
+    Continue,
+    Break,
     Comment,
     Error,
     EmptyLine
