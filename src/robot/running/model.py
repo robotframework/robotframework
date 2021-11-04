@@ -38,7 +38,7 @@ import os
 from robot import model
 from robot.conf import RobotSettings
 from robot.errors import ReturnFromKeyword
-from robot.errors import ContinueForLoop
+from robot.errors import ContinueForLoop, ExitForLoop
 from robot.model import Keywords, BodyItem
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.result import Return as ReturnResult
@@ -147,7 +147,7 @@ class Return(model.Return):
 
 
 @Body.register
-class Break(model.Return):
+class Continue(model.Return):
     __slots__ = ['lineno']
 
     def __init__(self, values=(), parent=None, lineno=None):
@@ -161,7 +161,7 @@ class Break(model.Return):
 
 
 @Body.register
-class Continue(model.Return):
+class Break(model.Return):
     __slots__ = ['lineno']
 
     def __init__(self, values=(), parent=None, lineno=None):
@@ -171,7 +171,7 @@ class Continue(model.Return):
     def run(self, context, run=True, templated=False):
         with StatusReporter(self, ReturnResult(self.values), context, run):
             if run:
-                raise ContinueForLoop(self.values)
+                raise ExitForLoop(self.values)
 
 
 class TestCase(model.TestCase):
