@@ -53,10 +53,12 @@ Assign
     Should Be Equal    ${z}    ${3}
 
 Multi assign
-    ${x}   ${y}    ${z} =    IF    True    Create list    a    b    c    ELSE    Not run
+    [Documentation]    FAIL Cannot set variables: Expected 3 return values, got 2.
+    ${x}    ${y}    ${z} =    IF    True    Create list    a    b    c    ELSE    Not run
     Should Be Equal    ${x}    a
     Should Be Equal    ${y}    b
     Should Be Equal    ${z}    c
+    ${x}    ${y}    ${z} =    IF    True    Create list    too    few    ELSE    Not run
 
 List assign
     @{x} =    IF    True    Create list    a    b    c    ELSE    Not run
@@ -69,6 +71,22 @@ List assign
 Dict assign
     &{x} =    IF    False    Not run    ELSE    Create dictionary    a=1    b=2
     Should Be True    ${x} == {'a': '1', 'b': '2'}
+
+Assign without ELSE
+    ${x} =    IF    True    Set variable    Hello!
+    Should Be Equal    ${x}    Hello!
+    ${x} =    IF    False    Not run    ELSE IF    True    Set variable    World!
+    Should Be Equal    ${x}    World!
+
+Assign when no branch is run
+    ${x} =    IF    False    Not run
+    Should Be Equal    ${x}    ${None}
+    ${x} =    IF    False    Not run    ELSE IF    False    Not run either
+    Should Be Equal    ${x}    ${None}
+    ${x}    @{y}    ${z} =    IF    False    Not run
+    Should Be Equal    ${x}    ${None}
+    Should Be Empty    ${y}
+    Should Be Equal    ${z}    ${None}
 
 Inside FOR
     [Documentation]    FAIL The end
@@ -97,7 +115,7 @@ Invalid END after inline header
 
 *** Keywords ***
 Keyword with inline IFs
-    ${x} =    IF    True    Convert to integer    42
+    ${x} =    IF    True    Convert to integer    42    ELSE    Not run
     IF    ${x} == 0      Not run    ELSE IF    $x == 42    Executed    ELSE    Not    run
     IF                False    Not run
     ...    ELSE IF    False    Not run
