@@ -97,6 +97,12 @@ Unnecessary END
     IF    True     No operation    ELSE    Log    END
     IF    False    Not run         ELSE    No operation    END
 
+Invalid END after inline header
+    [Documentation]    FAIL 'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR' or 'IF' when used as a marker.
+    IF    True    Log    Executed inside inline IF
+        Log   Executed outside IF
+    END
+
 Assign in IF branch
     [Documentation]    FAIL Inline IF branches cannot contain assignments.
     IF    False    ${x} =    Whatever

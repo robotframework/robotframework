@@ -1,7 +1,7 @@
 Evaluating expressions
 ======================
 
-Constructs such as `if expressions`_ and `inline Python evaluation`_ as well as
+Constructs such as `IF/ELSE structures`_ and `inline Python evaluation`_ as well as
 several BuiltIn_ keywords accept an expression that is evaluated in Python:
 
 .. sourcecode:: robotframework
@@ -43,7 +43,7 @@ modules.
 
 The following examples demonstrate using Python builtins as well as modules
 using the `inline Python evaluation`_ syntax, but same expressions would also
-work with `if expressions`_ and BuiltIn_ keywords without the need to use
+work with `IF/ELSE structures`_ and BuiltIn_ keywords without the need to use
 the `${{}}` decoration around the expression:
 
 .. sourcecode:: robotframework

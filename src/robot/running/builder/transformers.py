@@ -324,9 +324,10 @@ class IfBuilder(NodeVisitor):
         model = self.parent.body.create_if(lineno=node.lineno,
                                            error=format_error(self._get_errors(node)))
         assign = node.assign
+        node_type = None
         while node:
-            type = node.type if node.type != 'INLINE IF' else 'IF'
-            self.model = model.body.create_branch(type, node.condition,
+            node_type = node.type if node.type != 'INLINE IF' else 'IF'
+            self.model = model.body.create_branch(node_type, node.condition,
                                                   lineno=node.lineno)
             for step in node.body:
                 self.visit(step)
@@ -337,6 +338,11 @@ class IfBuilder(NodeVisitor):
                     if hasattr(item, 'assign'):
                         item.assign = assign
             node = node.orelse
+        # Smallish hack to make sure assignment is always run.
+        if assign and node_type != 'ELSE':
+            model.body.create_branch('ELSE').body.create_keyword(
+                assign=assign, name='BuiltIn.Set Variable', args=['${NONE}']
+            )
         return model
 
     def _get_errors(self, node):

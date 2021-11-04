@@ -207,34 +207,35 @@ time left.
           functionality was deprecated in Robot Framework 3.0.1 and removed
           in Robot Framework 3.2.
 
+.. _for:
 .. _for loop:
 
-For loops
----------
+`FOR` loops
+-----------
 
 Repeating same actions several times is quite a common need in test
 automation. With Robot Framework, test libraries can have any kind of
 loop constructs, and most of the time loops should be implemented in
-them. Robot Framework also has its own for loop syntax, which is
+them. Robot Framework also has its own `FOR` loop syntax, which is
 useful, for example, when there is a need to repeat keywords from
 different libraries.
 
-For loops can be used with both test cases and user keywords. Except for
+`FOR` loops can be used with both test cases and user keywords. Except for
 really simple cases, user keywords are better, because they hide the
-complexity introduced by for loops. The basic for loop syntax,
+complexity introduced by `FOR` loops. The basic `FOR` loop syntax,
 `FOR item IN sequence`, is derived from Python, but similar
 syntax is supported also by various other programming languages.
 
-Simple for loop
-~~~~~~~~~~~~~~~
+Simple `FOR` loop
+~~~~~~~~~~~~~~~~~
 
-In a normal for loop, one variable is assigned based on a list of values,
+In a normal `FOR` loop, one variable is assigned based on a list of values,
 one value per iteration. The syntax starts with `FOR` (case-sensitive) as
 a marker, then the loop variable, then a mandatory `IN` (case-sensitive) as
 a separator, and finally the values to iterate. These values can contain
 variables_, including `list variables`_.
 
-The keywords used in the for loop are on the following rows and the loop
+The keywords used in the `FOR` loop are on the following rows and the loop
 ends with `END` (case-sensitive) on its own row. Keywords inside the loop
 do not need to be indented, but that is highly recommended to make the syntax
 easier to read.
@@ -255,13 +256,13 @@ easier to read.
            Log    ${var}
        END
 
-The for loop in :name:`Example` above is executed twice, so that first
+The `FOR` loop in :name:`Example` above is executed twice, so that first
 the loop variable `${animal}` has the value `cat` and then
 `dog`. The loop consists of two :name:`Log` keywords. In the
 second example, loop values are `split into two rows`__ and the
 loop is run altogether ten times.
 
-It is often convenient to use for loops with `list variables`_. This is
+It is often convenient to use `FOR` loops with `list variables`_. This is
 illustrated by the example below, where `@{ELEMENTS}` contains
 an arbitrarily long list of elements and keyword :name:`Start Element` is
 used with all of them one by one.
@@ -276,10 +277,10 @@ used with all of them one by one.
 
 __ `Dividing data to several rows`_
 
-Old for loop syntax
-~~~~~~~~~~~~~~~~~~~
+Old `FOR` loop syntax
+~~~~~~~~~~~~~~~~~~~~~
 
-Prior to Robot Framework 3.1 the for loop syntax was different than nowadays.
+Prior to Robot Framework 3.1 the `FOR` loop syntax was different than nowadays.
 The marker to start the loop was `:FOR` instead of `FOR` and loop contents needed
 to be explicitly marked with a backslash instead of using the `END` marker to end
 the loop. The first example above would look like this using the old syntax:
@@ -296,10 +297,10 @@ the loop. The first example above would look like this using the old syntax:
 The old syntax was deprecated in Robot Framework 3.2 and the support for it was
 removed altogether in Robot Framework 4.0.
 
-Nested for loops
-~~~~~~~~~~~~~~~~
+Nested `FOR` loops
+~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 4.0, it is possible to use nested for loops
+Starting from Robot Framework 4.0, it is possible to use nested `FOR` loops
 simply by adding another loop inside a loop:
 
 .. sourcecode:: robotframework
@@ -330,14 +331,14 @@ There can be multiple nesting levels and one loop can contain several loops:
            END
        END
 
-With earlier Robot Framework versions nesting for loops was not supported directly,
+With earlier Robot Framework versions nesting `FOR` loops was not supported directly,
 but it was possible to have a user keyword inside a loop and have another loop there.
 
 Using several loop variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is also possible to use several loop variables. The syntax is the
-same as with the normal for loop, but all loop variables are listed in
+same as with the normal `FOR` loop, but all loop variables are listed in
 the cells between `FOR` and `IN`. There can be any number of loop
 variables, but the number of values must be evenly dividable by the number of
 variables.
@@ -348,30 +349,29 @@ them below the loop variables, as in the first loop of the example below:
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Three loop variables
+   Multiple loop variables
        FOR    ${index}    ${english}    ${finnish}    IN
        ...     1           cat           kissa
        ...     2           dog           koira
        ...     3           horse         hevonen
-           Add to dictionary    ${english}    ${finnish}    ${index}
+           Add Translation    ${english}    ${finnish}    ${index}
        END
        FOR    ${name}    ${id}    IN    @{EMPLOYERS}
            Create    ${name}    ${id}
        END
 
-For-in-range loop
-~~~~~~~~~~~~~~~~~
+`FOR-IN-RANGE` loop
+~~~~~~~~~~~~~~~~~~~
 
-Earlier for loops always iterated over a sequence, and this is also the most
-common use case. Sometimes it is still convenient to have a for loop
-that is executed a certain number of times, and Robot Framework has a
-special `FOR index IN RANGE limit` syntax for this purpose. This
-syntax is derived from the similar Python idiom using the `built-in
-range() function`__.
+All `FOR` loops in the previous section iterated over a sequence. That is the most
+common use case, but sometimes it is convenient to have a loop that is executed
+a certain number of times. For this purpose Robot Framework has a special
+`FOR index IN RANGE limit` loop syntax that is derived from the similar Python
+idiom using the `built-in range() function`__.
 
 __ http://docs.python.org/library/functions.html#func-range
 
-Similarly as other for loops, the for-in-range loop starts with
+Similarly as other `FOR` loops, the `FOR-IN-RANGE` loop starts with
 `FOR` and the loop variable is in the next cell. In this format
 there can be only one loop variable and it contains the current loop
 index. The next cell must contain `IN RANGE` (case-sensitive) and
@@ -429,8 +429,8 @@ integers, but using float values is possible as well.
            Log    ${index}
        END
 
-For-in-enumerate loop
-~~~~~~~~~~~~~~~~~~~~~
+`FOR-IN-ENUMERATE` loop
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Sometimes it is useful to loop over a list and also keep track of your location
 inside the list. Robot Framework has a special
@@ -439,7 +439,7 @@ This syntax is derived from the `Python built-in enumerate() function`__.
 
 __ http://docs.python.org/library/functions.html#enumerate
 
-For-in-enumerate loops work just like regular for loops, except the cell
+`FOR-IN-ENUMERATE` loops work just like regular `FOR` loops, except the cell
 after its loop variables must say `IN ENUMERATE` (case-sensitive),
 and they must have an additional index variable before any other loop-variables.
 That index variable has a value of `0` for the first iteration, `1` for the
@@ -460,7 +460,7 @@ For example, the following two test cases do the same thing:
            My Keyword    ${index}    ${item}
        END
 
-   For-in-enumerate
+   FOR-IN-ENUMERATE
        FOR    ${index}    ${item}    IN ENUMERATE    @{LIST}
            My Keyword    ${index}    ${item}
        END
@@ -490,14 +490,14 @@ The `start=<index>` syntax must be explicitly used in the `FOR` header and it ca
 itself come from a variable. If the last actual item to enumerate would start with
 `start=`, it needs to be escaped like `start\=`.
 
-Just like with regular for loops, you can loop over multiple values per loop
+Just like with regular `FOR` loops, you can loop over multiple values per loop
 iteration as long as the number of values in your list is evenly divisible by
 the number of loop-variables (excluding the first, index variable):
 
 .. sourcecode:: robotframework
 
    *** Test Case ***
-   For-in-enumerate with two values per iteration
+   FOR-IN-ENUMERATE with two values per iteration
        FOR    ${index}    ${en}    ${fi}    IN ENUMERATE
        ...    cat      kissa
        ...    dog      koira
@@ -505,23 +505,23 @@ the number of loop-variables (excluding the first, index variable):
            Log    "${en}" in English is "${fi}" in Finnish (index: ${index})
        END
 
-If you only use one loop variable with for-in-enumerate loops, that variable
+If you only use one loop variable with FOR-IN-ENUMERATE loops, that variable
 will become a Python tuple containing the index and the iterated value:
 
 .. sourcecode:: robotframework
 
    *** Test Case ***
-   For-in-enumerate with one loop variable
+   FOR-IN-ENUMERATE with one loop variable
        FOR    ${x}    IN ENUMERATE    @{LIST}
            Length Should Be    ${x}    2
            Log    Index is ${x}[0] and item is ${x}[1].
        END
 
-.. note:: Using for-in-enumerate loops with only one loop variable is a new
+.. note:: FOR-IN-ENUMERATE loops with only one loop variable is a new
           feature in Robot Framework 3.2.
 
-For-in-zip loop
-~~~~~~~~~~~~~~~
+`FOR-IN-ZIP` loop
+~~~~~~~~~~~~~~~~~
 
 Some tests build up several related lists, then loop over them together.
 Robot Framework has a shortcut for this case: `FOR ... IN ZIP ...`, which
@@ -544,14 +544,14 @@ This may be easiest to show with an example:
            Log Many    ${NUMBERS}[${index}]    ${NAMES}[${index}]
        END
 
-   For-in-zip
+   FOR-IN-ZIP
        FOR    ${number}    ${name}    IN ZIP    ${NUMBERS}    ${NAMES}
            Log Many    ${number}    ${name}
        END
 
-Similarly as for-in-range and for-in-enumerate loops, for-in-zip loops require
+Similarly as FOR-IN-RANGE and FOR-IN-ENUMERATE loops, FOR-IN-ZIP loops require
 the cell after the loop variables to read `IN ZIP` (case-sensitive).
-Values used with for-in-zip loops must be lists or list-like objects. Looping
+Values used with FOR-IN-ZIP loops must be lists or list-like objects. Looping
 will stop when the shortest list is exhausted.
 
 Lists to iterate over must always be given either as `scalar variables`_ like
@@ -567,7 +567,7 @@ demonstrated above. The latter approach works like this:
    @{LISTS}         ${NUMBERS}    ${NAMES}
 
    *** Test Cases ***
-   For-in-zip
+   FOR-IN-ZIP with lists from variable
        FOR    ${number}    ${name}    IN ZIP    @{LISTS}
            Log Many    ${number}    ${name}
        END
@@ -584,12 +584,12 @@ variable that then becomes a Python tuple getting items from all lists.
    @{NUM}           1    2    3    4    5
 
    *** Test Cases ***
-   For-in-zip with multiple lists
+   FOR-IN-ZIP with multiple lists
        FOR    ${a}    ${x}    ${n}    IN ZIP    ${ABC}    ${XYZ}    ${NUM}
            Log Many    ${a}    ${x}    ${n}
        END
 
-   For-in-zip with one variable
+   FOR-IN-ZIP with one variable
        FOR    ${items}    IN ZIP    ${ABC}    ${XYZ}    ${NUM}
            Length Should Be    ${items}    3
            Log Many    ${items}[0]    ${items}[1]    ${items}[2]
@@ -606,7 +606,7 @@ in the `${NUM}` list are ignored.
 Dictionary iteration
 ~~~~~~~~~~~~~~~~~~~~
 
-Normal for loops and for-in-enumerate loops support iterating over keys
+Normal `FOR` loops and `FOR-IN-ENUMERATE` loops support iterating over keys
 and values in dictionaries. This syntax requires at least one of the loop
 values to be a `dictionary variable`_.
 It is possible to use multiple dictionary variables and to give additional
@@ -619,12 +619,12 @@ and if same key gets multiple values the last value will be used.
    &{DICT}          a=1    b=2    c=3
 
    *** Test Cases ***
-   Dictionary iteration
+   Dictionary iteration with FOR loop
        FOR    ${key}    ${value}    IN    &{DICT}
            Log    Key is '${key}' and value is '${value}'.
        END
 
-   Dictionary iteration with enumerate
+   Dictionary iteration with FOR-IN-ENUMERATE loop
        FOR    ${index}    ${key}    ${value}    IN ENUMERATE    &{DICT}
            Log    On round ${index} key is '${key}' and value is '${value}'.
        END
@@ -636,11 +636,11 @@ and if same key gets multiple values the last value will be used.
        END
 
 Typically it is easiest to use the dictionary iteration syntax so that keys
-and values get separate variables like in the above examples. With normal for
+and values get separate variables like in the above examples. With normal `FOR`
 loops it is also possible to use just a single variable that will become
 a tuple containing the key and the value. If only one variable is used with
-for-in-enumerate loops, it becomes a tuple containing the index, the key and
-the value. Two variables with for-in-enumerate loops means assigning the index
+`FOR-IN-ENUMERATE` loops, it becomes a tuple containing the index, the key and
+the value. Two variables with `FOR-IN-ENUMERATE` loops means assigning the index
 to the first variable and making the second variable a tuple containing the key
 and the value.
 
@@ -652,12 +652,12 @@ and the value.
            Log    Key is '${item}[0]' and value is '${item}[1]'.
        END
 
-   One loop variable with enumerate
+   One loop variable with FOR-IN-ENUMERATE
        FOR    ${item}    IN ENUMERATE    &{DICT}
            Log    On round ${item}[0] key is '${item}[1]' and value is '${item}[2]'.
        END
 
-   Two loop variables with enumerate
+   Two loop variables with FOR-IN-ENUMERATE
        FOR    ${index}    ${item}    IN ENUMERATE    &{DICT}
            Log    On round ${index} key is '${item}[0]' and value is '${item}[1]'.
        END
@@ -678,22 +678,19 @@ requires using dictionaries as `list variables`_:
           Robot Framework 3.2. With earlier version it is possible to iterate
           over dictionary keys like the last example above demonstrates.
 
-.. note:: Dictionary iteration is not supported with for-in-range or
-          for-in-zip loops.
+Exiting `FOR` loop
+~~~~~~~~~~~~~~~~~~
 
-Exiting for loop
-~~~~~~~~~~~~~~~~
-
-Normally for loops are executed until all the loop values have been iterated
+Normally `FOR` loops are executed until all the loop values have been iterated
 or a keyword used inside the loop fails. If there is a need to exit the loop
 earlier, BuiltIn_ keywords :name:`Exit For Loop` and :name:`Exit For Loop If`
 can be used to accomplish that. They works similarly as `break`
 statement in Python, Java, and many other programming languages.
 
 :name:`Exit For Loop` and :name:`Exit For Loop If` keywords can be used
-directly inside a for loop or in a keyword that the loop uses. In both cases
+directly inside a `FOR` loop or in a keyword that the loop uses. In both cases
 test execution continues after the loop. It is an error to use these keywords
-outside a for loop.
+outside a `FOR` loop.
 
 .. sourcecode:: robotframework
 
@@ -711,21 +708,21 @@ instead of using :name:`Exit For Loop` with :name:`Run Keyword If`.
 For more information about these keywords, including more usage examples,
 see their documentation in the BuiltIn_ library.
 
-Continuing for loop
-~~~~~~~~~~~~~~~~~~~
+Continuing `FOR`` loop
+~~~~~~~~~~~~~~~~~~~~~~
 
-In addition to exiting a for loop prematurely, it is also possible to
+In addition to exiting a `FOR` loop prematurely, it is also possible to
 continue to the next iteration of the loop before all keywords have been
 executed. This can be done using BuiltIn_ keywords :name:`Continue For Loop`
 and :name:`Continue For Loop If`, that work like `continue` statement
 in many programming languages.
 
 :name:`Continue For Loop` and :name:`Continue For Loop If` keywords can be used
-directly inside a for loop or in a keyword that the loop uses. In both cases
+directly inside a `FOR` loop or in a keyword that the loop uses. In both cases
 rest of the keywords in that iteration are skipped and execution continues
 from the next iteration. If these keywords are used on the last iteration,
 execution continues after the loop. It is an error to use these keywords
-outside a for loop.
+outside a `FOR` loop.
 
 .. sourcecode:: robotframework
 
@@ -744,7 +741,7 @@ documentation in the BuiltIn_ library.
 Removing unnecessary keywords from outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For loops with multiple iterations often create lots of output and
+`FOR` loops with multiple iterations often create lots of output and
 considerably increase the size of the generated output_ and log_ files.
 It is possible to `remove unnecessary keywords`__ from the outputs using
 :option:`--RemoveKeywords FOR` command line option.
@@ -754,7 +751,7 @@ __ `Removing and flattening keywords`_
 Repeating single keyword
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-For loops can be excessive in situations where there is only a need to
+`FOR` loops can be excessive in situations where there is only a need to
 repeat a single keyword. In these cases it is often easier to use
 BuiltIn_ keyword :name:`Repeat Keyword`. This keyword takes a
 keyword and how many times to repeat it as arguments. The times to
@@ -769,23 +766,24 @@ to make the syntax easier to read.
        Repeat Keyword    42 times    My Keyword
        Repeat Keyword    ${var}    Another Keyword    argument
 
-.. _if expressions:
+.. _if:
+.. _if/else structures:
 
-If expression
--------------
+`IF/ELSE` syntax
+----------------
 
 Sometimes there is a need to execute some keywords conditionally. Starting
-from Robot Framework 4.0 there is a separate *if expression* syntax, but
+from Robot Framework 4.0 there is a separate `IF/ELSE` syntax, but
 there are also `other ways to execute keywords conditionally`_. Notice that if
 the logic gets complicated, it is typically better to move it into a `test library`_.
 
 Basic `IF` syntax
 ~~~~~~~~~~~~~~~~~
 
-Robot Framework's native if expression syntax starts with `IF` (case-sensitive) and
+Robot Framework's native `IF` syntax starts with `IF` (case-sensitive) and
 ends with `END` (case-sensitive). The `IF` marker requires exactly one value that is
 the condition to evaluate. Keywords to execute if the condition is true are on their
-own rows between the `IF` and `END` markers. Indenting keywords in the if block is
+own rows between the `IF` and `END` markers. Indenting keywords in the `IF` block is
 highly recommended but not mandatory.
 
 In the following example keywords :name:`Some keyword` and :name:`Another keyword`
@@ -806,11 +804,13 @@ The condition is evaluated in Python so that Python builtins like
 Normal variables like `${rc}` in the above example are replaced before evaluation, but
 variables are also available in the evaluation namespace using the special `$rc` syntax.
 The latter approach is handy when the string representation of the variable cannot be
-used in the condition directly. For more information and examples related the evaluation
-syntax see the `Evaluating expressions`_ appendix.
+used in the condition directly. For example, strings require quoting and multiline
+strings and string themselves containing quotes cause additional problems. For more
+information and examples related the evaluation syntax see the `Evaluating expressions`_
+appendix.
 
-`ELSE`
-~~~~~~
+`ELSE` branches
+~~~~~~~~~~~~~~~
 
 Like most other languages supporting conditional execution, Robot Framework `IF`
 syntax also supports `ELSE` branches that are executed if the `IF` condition is
@@ -829,8 +829,8 @@ zero and :name:`Another keyword` is executed otherwise:
             Another keyword
         END
 
-`ELSE IF`
-~~~~~~~~~
+`ELSE IF` branches
+~~~~~~~~~~~~~~~~~~
 
 Robot Framework also supports `ELSE IF` branches that have their own condition
 that is evaluated if the initial condition is not true. There can be any number
@@ -860,12 +860,76 @@ Notice that this example uses the `${rc}` variable in the special `$rc` format t
 avoid evaluation failures if it is not a number. See the aforementioned
 `Evaluating expressions`_ appendix for more information about this syntax.
 
-Nested if structures
-~~~~~~~~~~~~~~~~~~~~
+.. _inline if:
 
-If expressions can be nested with other if expressions and with `for loops`_.
+Inline `IF`
+~~~~~~~~~~~
+
+Normal `IF/ELSE` structure is a bit verbose if there is a need to execute only
+a single statement. An alternative to it is using inline `IF` syntax where
+the statement to execute follows the `IF` marker and condition directly and
+no `END` marker is needed. For example, the following two keywords are
+equivalent:
+
+.. sourcecode:: robotframework
+
+    *** Keyword ***
+    Normal IF
+        IF    $condition1
+            Keyword    argument
+        END
+        IF    $condition2
+            RETURN
+        END
+
+    Inline IF
+        IF    $condition1    Keyword    argument
+        IF    $condition2    RETURN
+
+The inline `IF` syntax supports also `ELSE` and `ELSE IF` branches:
+
+.. sourcecode:: robotframework
+
+    *** Keyword ***
+    Inline IF/ELSE
+        IF    $condition    Keyword    argument    ELSE    Another Keyword
+
+    Inline IF/ELSE IF/ELSE
+        IF    $cond1    Keyword 1    ELSE IF    $cond2    Keyword 2    ELSE IF    $cond3    Keyword 3    ELSE    Keyword 4
+
+As the latter example above demonstrates, inline `IF` with several `ELSE IF`
+and `ELSE` branches starts to get hard to understand. Long inline `IF`
+structures can be `split into multiple lines`__ using the common `...`
+continuation syntax, but using a normal `IF/ELSE` structure or moving the logic
+into a `test library`_ is probably a better idea. Each inline `IF` branch can
+contain only one statement. If more statements are needed, normal `IF/ELSE`
+structure needs to be used instead.
+
+If there is a need for an assignment with inline `IF`, the variable or variables
+to assign must be before the starting `IF`. Otherwise the logic is exactly
+the same as when `assigning variables`__ based on keyword return values. If
+assignment is used and no branch is run, the variable gets value `None`.
+
+.. sourcecode:: robotframework
+
+    *** Keyword ***
+    Inline IF/ELSE with assignment
+        ${var} =    IF    $condition    Keyword    argument    ELSE    Another Keyword
+
+    Inline IF/ELSE with assignment having multiple variables
+        ${host}    ${port} =    IF    $production    Get Production Config    ELSE    Get Testing Config
+
+__ `Dividing data to several rows`_
+__ `Return values from keywords`_
+
+.. note:: Inline `IF` syntax is new in Robot Framework 5.0.
+
+Nested `IF` structures
+~~~~~~~~~~~~~~~~~~~~~~
+
+`IF` structures can be nested with each others and with `FOR loops`_.
 This is illustrated by the following example using advanced features such
-as `for-in-enumerate loop`_, `named-only arguments with user keywords`_ and
+as `FOR-IN-ENUMERATE loop`_, `named-only arguments with user keywords`_ and
 `inline Python evaluation`_ syntax (`${{len(${items})}}`):
 
 .. sourcecode:: robotframework
@@ -900,7 +964,6 @@ as `for-in-enumerate loop`_, `named-only arguments with user keywords`_ and
     Multiple items
         Log items    a    b    c
 
-
 Other ways to execute keywords conditionally
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -917,7 +980,7 @@ There are also other methods to execute keywords conditionally:
 
 - The BuiltIn_ keywords :name:`Run Keyword If` and :name:`Run Keyword Unless`
   execute a named keyword only if a certain expression is true or false, respectively.
-  The new if expression syntax explained above is generally recommended, though.
+  The new `IF/ELSE` syntax explained above is generally recommended, though.
 
 - Another BuiltIn_ keyword, :name:`Set Variable If`, can be used to set
   variables dynamically based on a given expression.
@@ -938,5 +1001,5 @@ level so that the library executes the code on background. Typically this
 means that the library needs a keyword like :name:`Start Something` that
 starts the execution and returns immediately, and another keyword like
 :name:`Get Results From Something` that waits until the result is available
-and returns it. See OperatingSystem_ library keywords :name:`Start Process`
-and :name:`Read Process Output` for an example.
+and returns it. See Process_ library keywords :name:`Start Process`
+and :name:`Wait For Process` for an example.

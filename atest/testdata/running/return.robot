@@ -15,6 +15,12 @@ Return multiple values
     Should be equal    ${x}    first
     Should be equal    ${y}    ${2}
     Should be equal    ${z}    third
+    ${result} =    Return multiple values
+    Should be true    ${result} == ['first', 2, 'third']
+
+In nested keyword
+    ${result} =    Return in nested keyword
+    Should be equal    ${result}    Hello, world!
 
 In IF
     ${x} =    Return in IF    first
@@ -70,6 +76,18 @@ Return value as variable
 
 Return multiple values
     RETURN    first    ${2}    third
+
+Return in nested keyword
+    ${result} =    Nested keyword
+    Should be equal    ${result}    Hello, world!
+    RETURN    ${result}
+
+Nested keyword
+    ${result} =    Nested keyword 2
+    RETURN    Hello, ${result}!
+
+Nested keyword 2
+    RETURN    world
 
 Return in IF
     [Arguments]    ${arg}
