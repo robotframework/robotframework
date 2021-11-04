@@ -1,5 +1,4 @@
 *** Settings ***
-Documentation     NO RIDE because it would sanitize formatting too much.
 Library           ExampleLibrary
 Library           Collections
 Library           get_file_lib.py
@@ -260,6 +259,14 @@ Failing Keyword And Teardown
     ...                Teardown is executed normally. But fails...
     ${ret} =    Fail    Failing, again, instead of returning.
     [Teardown]    Fail    Teardown is executed normally. But fails...
+
+Non-existing keyword 1
+    [Documentation]    FAIL No keyword with name 'I do not exist' found.
+    ${x} =    I do not exist
+
+Non-existing keyword 2
+    [Documentation]    FAIL No keyword with name 'I do not exist either' found.
+    ${x}      I do not exist either
 
 Assign Mark Without Space
     ${var}=    Set Variable    hello

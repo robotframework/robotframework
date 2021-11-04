@@ -187,6 +187,12 @@ Failing Keyword
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0]}    BuiltIn.Fail    \${ret}    Failing instead of returning    status=FAIL
 
+Non-existing keyword
+    ${tc1} =    Check Test Case    ${TEST NAME} 1
+    ${tc2} =    Check Test Case    ${TEST NAME} 2
+    Check Keyword Data    ${tc1.kws[0]}    I do not exist           \${x}    status=FAIL
+    Check Keyword Data    ${tc2.kws[0]}    I do not exist either    \${x}    status=FAIL
+
 Failing Keyword And Teardown
     Check Test Case    ${TESTNAME}
 
