@@ -2522,25 +2522,6 @@ class _Control(_BuiltInBase):
         """
         if self._is_true(condition):
             self.continue_for_loop()
-    
-    def continue(self):
-        """Skips the current for loop iteration and continues from the next.
-
-        Skips the remaining keywords in the current for loop iteration and
-        continues from the next one. Can be used directly in a for loop or
-        in a keyword that the loop uses.
-
-        Example:
-        | FOR | ${var}         | IN                     | @{VALUES}         |
-        |     | Run Keyword If | '${var}' == 'CONTINUE' | Continue For Loop |
-        |     | Do Something   | ${var}                 |
-        | END |
-
-        See `Continue For Loop If` to conditionally continue a for loop without
-        using `Run Keyword If` or other wrapper keywords.
-        """
-        self.log("Continuing for loop from the next iteration.")
-        raise ContinueForLoop()
 
     def exit_for_loop(self):
         """Stops executing the enclosing for loop.
@@ -2575,22 +2556,6 @@ class _Control(_BuiltInBase):
         """
         if self._is_true(condition):
             self.exit_for_loop()
-    
-    def break(self, condition):
-        """Stops executing the enclosing for loop if the ``break`` is true.
-
-        A wrapper for `break` to exit a for loop based on
-        the given condition. The condition is evaluated using the same
-        semantics as with `Should Be True` keyword.
-
-        Example:
-        | FOR | ${var}           | IN                 | @{VALUES} |
-        |     | Run Keyword If | '${var}' == 'EXIT' | break |
-        |     | Do Something     | ${var}             |
-        | END |
-        """
-        self.log("Exiting for loop altogether.")
-        raise ExitForLoop()
 
     @run_keyword_variant(resolve=0)
     def return_from_keyword(self, *return_values):
