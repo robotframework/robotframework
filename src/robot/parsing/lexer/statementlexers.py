@@ -225,3 +225,4 @@ class BreakLexer(TypeAndArguments):
 
     def handles(self, statement):
         return statement[0].value == 'BREAK'
+

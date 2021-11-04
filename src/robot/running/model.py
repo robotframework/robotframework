@@ -147,7 +147,7 @@ class Return(model.Return):
 
 
 @Body.register
-class Continue(model.Return):
+class Break(model.Return):
     __slots__ = ['lineno']
 
     def __init__(self, values=(), parent=None, lineno=None):
@@ -161,7 +161,7 @@ class Continue(model.Return):
 
 
 @Body.register
-class Break(model.Return):
+class Continue(model.Return):
     __slots__ = ['lineno']
 
     def __init__(self, values=(), parent=None, lineno=None):
