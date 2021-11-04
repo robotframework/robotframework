@@ -19,6 +19,14 @@ Not executed
 Not executed after failure
     NOT RUN    NOT RUN    NOT RUN    index=1    run=False
 
+Not executed after failure with assignment
+    [Template]    NONE
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check IF/ELSE Status    NOT RUN    NOT RUN    root=${tc.body[1]}    run=False
+    Check IF/ELSE Status    NOT RUN    NOT RUN    root=${tc.body[2]}    run=False
+    Check Keyword Data      ${tc.body[1].body[0].body[0]}    Not run    assign=\${x}           status=NOT RUN
+    Check Keyword Data      ${tc.body[2].body[0].body[0]}    Not run    assign=\${x}, \@{y}    status=NOT RUN
+
 ELSE IF not executed
     NOT RUN    NOT RUN    PASS       index=0
     FAIL       NOT RUN    NOT RUN    index=1    else=False

@@ -63,8 +63,7 @@ class AssignmentValidator:
 
     def _validate_assign_mark(self, variable):
         if self._seen_assign_mark:
-            raise DataError("Assign mark '=' can be used only with the last "
-                            "variable.")
+            raise DataError("Assign mark '=' can be used only with the last variable.")
         if variable.endswith('='):
             self._seen_assign_mark = True
             return variable[:-1].rstrip()

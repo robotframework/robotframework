@@ -20,6 +20,12 @@ Not executed after failure
     Fail    Before IF
     IF    True    Not    run    ELSE IF    True    Not run    ELSE    Not run
 
+Not executed after failure with assignment
+    [Documentation]    FAIL Before IF
+    Fail    Before IF
+    ${x} =          IF    True    Not run    ELSE    Not run
+    ${x}    @{y}    IF    True    Not run    ELSE    Not run
+
 ELSE IF not executed
     [Documentation]    FAIL Expected failure
     IF    False    Not run    ELSE IF    False    Not    run    ELSE    Executed

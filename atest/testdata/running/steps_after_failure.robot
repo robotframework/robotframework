@@ -15,13 +15,21 @@ User keyword after failure
     Fail    This fails
     User keyword
 
+Assignment after failure
+    [Documentation]    FAIL    This fails
+    Fail    This fails
+    ${x} =    Not run
+    ${x}      Not run
+    ${x}    ${y} =    Not run
+    ${x}    ${y}      Not run
+
 IF after failure
     [Documentation]    FAIL    This fails
     Fail    This fails
     IF    True
         Fail    This should not be run
     ELSE
-        Fail    This should not be run
+        ${x} =    Fail    This should not be run
     END
 
 FOR after failure
@@ -29,7 +37,7 @@ FOR after failure
     Fail    This fails
     FOR    ${x}    IN    1    2    3
         Fail    This should not be run
-        Fail    This should not be run either
+        ${x}    Fail    This should not be run either
     END
 
 Nested control structure after failure

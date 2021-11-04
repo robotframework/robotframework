@@ -12,17 +12,29 @@ User keyword after failure
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Not Be Run    ${tc.body[1:]}
 
+Assignment after failure
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Not Be Run     ${tc.body[1:]}    4
+    Check Keyword Data    ${tc.body[1]}    Not run    assign=\${x}          status=NOT RUN
+    Check Keyword Data    ${tc.body[2]}    Not run    assign=\${x}          status=NOT RUN
+    Check Keyword Data    ${tc.body[3]}    Not run    assign=\${x}, \${y}   status=NOT RUN
+    Check Keyword Data    ${tc.body[4]}    Not run    assign=\${x}, \${y}   status=NOT RUN
+
 IF after failure
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Not Be Run    ${tc.body[1:]}
-    Should Not Be Run    ${tc.body[1].body[0].body}
-    Should Not Be Run    ${tc.body[1].body[1].body}
+    Should Not Be Run     ${tc.body[1:]}
+    Should Not Be Run     ${tc.body[1].body[0].body}
+    Should Not Be Run     ${tc.body[1].body[1].body}
+    Check Keyword Data    ${tc.body[1].body[1].body[0]}
+    ...    BuiltIn.Fail    assign=\${x}    args=This should not be run    status=NOT RUN
 
 FOR after failure
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Not Be Run    ${tc.body[1:]}
-    Should Not Be Run    ${tc.body[1].body}
-    Should Not Be Run    ${tc.body[1].body[0].body}    2
+    Should Not Be Run     ${tc.body[1:]}
+    Should Not Be Run     ${tc.body[1].body}
+    Should Not Be Run     ${tc.body[1].body[0].body}    2
+    Check Keyword Data    ${tc.body[1].body[0].body[1]}
+    ...    BuiltIn.Fail    assign=\${x}    args=This should not be run either    status=NOT RUN
 
 Nested control structure after failure
     ${tc} =    Check Test Case    ${TESTNAME}
