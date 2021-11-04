@@ -719,6 +719,8 @@ in test cases and in other user keywords.
 
 __ `Return values from keywords`_
 
+.. _RETURN:
+
 Using `RETURN` statement
 ~~~~~~~~~~~~~~~~~~~~~~~~
 

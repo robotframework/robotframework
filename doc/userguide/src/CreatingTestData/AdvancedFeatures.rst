@@ -860,6 +860,70 @@ Notice that this example uses the `${rc}` variable in the special `$rc` format t
 avoid evaluation failures if it is not a number. See the aforementioned
 `Evaluating expressions`_ appendix for more information about this syntax.
 
+.. _inline if:
+
+Inline `IF`
+~~~~~~~~~~~
+
+Normal `IF/ELSE` structure is a bit verbose if there is a need to execute only
+a single statement. An alternative to it is using inline `IF` syntax where
+the statement to execute follows the `IF` marker and condition directly and
+no `END` marker is needed. For example, the following two keywords are
+equivalent:
+
+.. sourcecode:: robotframework
+
+    *** Keyword ***
+    Normal IF
+        IF    $condition1
+            Keyword    argument
+        END
+        IF    $condition2
+            RETURN
+        END
+
+    Inline IF
+        IF    $condition1    Keyword    argument
+        IF    $condition2    RETURN
+
+The inline `IF` syntax supports also `ELSE` and `ELSE IF` branches:
+
+.. sourcecode:: robotframework
+
+    *** Keyword ***
+    Inline IF/ELSE
+        IF    $condition    Keyword    argument    ELSE    Another Keyword
+
+    Inline IF/ELSE IF/ELSE
+        IF    $cond1    Keyword 1    ELSE IF    $cond2    Keyword 2    ELSE IF    $cond3    Keyword 3    ELSE    Keyword 4
+
+As the latter example above demonstrates, inline `IF` with several `ELSE IF`
+and `ELSE` branches starts to get hard to understand. Long inline `IF`
+structures can be `split into multiple lines`__ using the common `...`
+continuation syntax, but using a normal `IF/ELSE` structure or moving the logic
+into a `test library`_ is probably a better idea. Each inline `IF` branch can
+contain only one statement. If more statements are needed, normal `IF/ELSE`
+structure needs to be used instead.
+
+If there is a need for an assignment with inline `IF`, the variable or variables
+to assign must be before the starting `IF`. Otherwise the logic is exactly
+the same as when `assigning variables`__ based on keyword return values. If
+assignment is used and no branch is run, the variable gets value `None`.
+
+.. sourcecode:: robotframework
+
+    *** Keyword ***
+    Inline IF/ELSE with assignment
+        ${var} =    IF    $condition    Keyword    argument    ELSE    Another Keyword
+
+    Inline IF/ELSE with assignment having multiple variables
+        ${host}    ${port} =    IF    $production    Get Production Config    ELSE    Get Testing Config
+
+__ `Dividing data to several rows`_
+__ `Return values from keywords`_
+
+.. note:: Inline `IF` syntax is new in Robot Framework 5.0.
+
 Nested `IF` structures
 ~~~~~~~~~~~~~~~~~~~~~~
 

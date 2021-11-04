@@ -435,7 +435,7 @@ only when they are at the end of the row:
 .. sourcecode:: robotframework
 
    | *** Test Cases *** |              |           |            |
-   | Using backslash    | Do Something | first arg | \          |
+   | Using backslash    | Do Something | first arg | \          |
    |                    | Do Something |           | second arg |
    |                    |              |           |            |
    | Using ${EMPTY}     | Do Something | first arg | ${EMPTY}   |
