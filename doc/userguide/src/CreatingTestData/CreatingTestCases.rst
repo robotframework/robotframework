@@ -692,7 +692,7 @@ well as `robot:continue-on-failure` which controls continuable execution.
 More usages are likely to be added in the future.
 
 As of RobotFramework 4.1, reserved tags are suppressed by default in the
-test suite's tag statistics. They will be shown when they are explicitly 
+test suite's tag statistics. They will be shown when they are explicitly
 included via the `--tagstatinclude 'robot:*'` command line option.
 
 Test setup and teardown
@@ -891,10 +891,10 @@ the same effect can be achieved by naming the columns that contain
 arguments. This is illustrated by the `data-driven style`_ example in
 the next section.
 
-Templates with for loops
-~~~~~~~~~~~~~~~~~~~~~~~~
+Templates with `FOR` loops
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If templates are used with `for loops`_, the template is applied for
+If templates are used with `FOR loops`_, the template is applied for
 all the steps inside the loop. The continue on failure mode is in use
 also in this case, which means that all the steps are executed with
 all the looped elements even if there are failures.
@@ -902,7 +902,7 @@ all the looped elements even if there are failures.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Template with for loop
+   Template with FOR loop
        [Template]    Example keyword
        FOR    ${item}    IN    @{ITEMS}
            ${item}    2nd arg
@@ -911,17 +911,17 @@ all the looped elements even if there are failures.
            1st arg    ${index}
        END
 
-Templates with if expression
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Templates with `IF/ELSE` structures
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`If expression`_ can be also used together with templates.
-This can be useful, for example, when used together with `for loops`_ to
+`IF/ELSE structures`_ can be also used together with templates.
+This can be useful, for example, when used together with `FOR loops`_ to
 filter executed arguments.
 
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Template with for and if
+   Template with FOR and IF
        [Template]    Example keyword
        FOR    ${item}    IN    @{ITEMS}
            IF  ${item} < 5
