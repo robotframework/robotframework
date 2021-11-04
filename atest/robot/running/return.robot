@@ -18,6 +18,9 @@ Return value as variable
 Return multiple values
     Check Test Case    ${TESTNAME}
 
+In nested keyword
+    Check Test Case    ${TESTNAME}
+
 In IF
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Be Equal    ${tc.body[0].body[0].body[0].body[0].type}      RETURN
