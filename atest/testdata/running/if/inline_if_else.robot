@@ -107,12 +107,6 @@ In keyword
     [Documentation]    FAIL Expected failure
     Keyword with inline IFs
 
-Invalid END after inline header
-    [Documentation]    FAIL 'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR' or 'IF' when used as a marker.
-    IF    True    Log    reached this
-        Log   this is a normal keyword call
-    END
-
 *** Keywords ***
 Keyword with inline IFs
     ${x} =    IF    True    Convert to integer    42    ELSE    Not run

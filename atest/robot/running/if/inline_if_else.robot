@@ -80,8 +80,3 @@ In keyword
     Check IF/ELSE Status    NOT RUN    PASS       NOT RUN            root=${tc.body[0].body[1]}
     Check IF/ELSE Status    NOT RUN    NOT RUN    NOT RUN    FAIL
     ...                     NOT RUN    NOT RUN    NOT RUN            root=${tc.body[0].body[2]}
-
-Invalid END after inline header
-    # FIXME: Move to separate suite with other invalid syntax tests
-    [Template]    NONE
-    Check Test Case    ${TEST NAME}

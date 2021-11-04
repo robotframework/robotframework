@@ -59,6 +59,14 @@ Unnecessary END
     PASS       NOT RUN    index=0
     NOT RUN    FAIL       index=1
 
+Invalid END after inline header
+    [Template]    NONE
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check IF/ELSE Status    PASS    root=${tc.body[0]}
+    Check Log Message     ${tc.body[0].body[0].body[0].body[0]}   Executed inside inline IF
+    Check Log Message     ${tc.body[1].body[0]}                   Executed outside IF
+    Check Keyword Data    ${tc.body[2]}                           Reserved.End    status=FAIL
+
 Assign in IF branch
     FAIL
 
@@ -69,7 +77,7 @@ Assign in ELSE branch
     FAIL    NOT RUN
 
 Invalid assign mark usage
-    FAIL
+    FAIL    NOT RUN
 
 Too many list variables in assign
     FAIL    NOT RUN
@@ -78,16 +86,16 @@ Invalid number of variables in assign
     NOT RUN    FAIL
 
 Invalid value for list assign
-    FAIL
+    FAIL    NOT RUN
 
 Invalid value for dict assign
     NOT RUN    FAIL
 
 Assign when IF branch is empty
-    FAIL
+    FAIL    NOT RUN
 
 Assign when ELSE IF branch is empty
-    FAIL    NOT RUN    else=False
+    FAIL    NOT RUN    NOT RUN
 
 Assign when ELSE branch is empty
     FAIL    NOT RUN
