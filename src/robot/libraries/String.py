@@ -571,7 +571,8 @@ class String:
     def generate_random_string(self, length=8, chars='[LETTERS][NUMBERS]'):
         """Generates a string with a desired ``length`` from the given ``chars``.
 
-        ``length`` can be given as a number
+        ``length`` can be given as a number, a string representation of a number,
+        or as a range of numbers, such as ``5-10``.
 
         The population sequence ``chars`` contains the characters to use
         when generating the random string. It can contain any
@@ -589,10 +590,11 @@ class String:
         | ${low} = | Generate Random String | 12 | [LOWER]         |
         | ${bin} = | Generate Random String | 8  | 01              |
         | ${hex} = | Generate Random String | 4  | [NUMBERS]abcdef |
+        | ${rnd} = | Generate Random String | 5-10 | # Generates a string 5 to 10 characters long |
         """
         if length == '':
             length = 8
-        if '-' in length:
+        if '-' in str(length):
             min_length, max_length = length.split('-')
             length = randint(self._convert_to_integer(min_length, "length"),
                              self._convert_to_integer(max_length, "length"))
