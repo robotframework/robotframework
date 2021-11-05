@@ -20,7 +20,6 @@ import traceback
 from robot.errors import RobotError
 
 from .platform import RERAISED_EXCEPTIONS
-from .unic import unic
 
 
 EXCLUDE_ROBOT_TRACES = not os.getenv('ROBOT_INTERNAL_TRACES')
@@ -49,16 +48,13 @@ class ErrorDetails:
     contains type and message of the original error, `traceback` contains the
     traceback and `error` contains the original error instance.
     """
-    _generic_exception_names = ('AssertionError', 'AssertionFailedError',
-                                'Exception', 'Error', 'RuntimeError',
-                                'RuntimeException')
+    _generic_names = frozenset(('AssertionError', 'Error', 'Exception', 'RuntimeError'))
 
     def __init__(self, exc_info=None, exclude_robot_traces=EXCLUDE_ROBOT_TRACES):
         exc_type, exc_value, exc_traceback = exc_info or sys.exc_info()
         if exc_type in RERAISED_EXCEPTIONS:
             raise exc_value
         self.error = exc_value
-        self._exc_type = exc_type
         self._exc_traceback = exc_traceback
         self._exclude_robot_traces = exclude_robot_traces
         self._message = None
@@ -67,12 +63,8 @@ class ErrorDetails:
     @property
     def message(self):
         if self._message is None:
-            self._message = self._get_message()
+            self._message = self._format_message(self.error)
         return self._message
-
-    def _get_message(self):
-        name = self._exc_type.__name__
-        return self._format_message(name, unic(self.error))
 
     @property
     def traceback(self):
@@ -93,25 +85,25 @@ class ErrorDetails:
             return '  None'
         return ''.join(traceback.format_tb(tb)).rstrip()
 
-    def _is_excluded_traceback(self, traceback):
+    def _is_excluded_traceback(self, tb):
         if self._exclude_robot_traces:
-            module = traceback.tb_frame.f_globals.get('__name__')
+            module = tb.tb_frame.f_globals.get('__name__')
             return module and module.startswith('robot.')
         return False
 
-    def _format_message(self, name, message):
-        message = unic(message or '')
-        name = name.split('.')[-1]  # Use only last part of the name
+    def _format_message(self, error):
+        name = type(error).__name__.split('.')[-1]  # Use only the last part
+        message = str(error)
         if not message:
             return name
-        if self._suppress_name(name):
+        if self._suppress_name(name, error):
             return message
         if message.startswith('*HTML*'):
             name = '*HTML* ' + name
             message = message.split('*', 2)[-1].lstrip()
         return '%s: %s' % (name, message)
 
-    def _suppress_name(self, name):
-        return (name in self._generic_exception_names
-                or isinstance(self.error, RobotError)
-                or getattr(self.error, 'ROBOT_SUPPRESS_NAME', False))
+    def _suppress_name(self, name, error):
+        return (name in self._generic_names
+                or isinstance(error, RobotError)
+                or getattr(error, 'ROBOT_SUPPRESS_NAME', False))
