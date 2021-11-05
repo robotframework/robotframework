@@ -10,11 +10,11 @@ ${NUMBERS}        1234567890
 *** Test Cases ***
 Generate Random String With Defaults
     ${result} =    Generate Random String
-    String Lenght Should Be And It Should Consist Of    ${result}    8    ${LETTERS}${NUMBERS}
+    String Length Should Be And It Should Consist Of    ${result}    8    ${LETTERS}${NUMBERS}
 
 Generate Random String With Empty Length
     ${result} =    Generate Random String    ${EMPTY}    abc
-    String Lenght Should Be And It Should Consist Of    ${result}    8    abc
+    String Length Should Be And It Should Consist Of    ${result}    8    abc
 
 Generate Random String From Non Default Characters
     Test Random String With    %=}$+^~*äö#    %=}$+^~*äö#
@@ -37,7 +37,7 @@ Generate Random String With [NUMBERS]
     Test Random String With    ${NUMBERS}    [NUMBERS]
 
 *** Keywords ***
-String Lenght Should Be And It Should Consist Of
+String Length Should Be And It Should Consist Of
     [Arguments]    ${string}    ${length}    ${allowed chars}
     Length Should Be    ${string}    ${length}
     FOR    ${i}    IN RANGE    0    ${length}
@@ -48,4 +48,4 @@ String Lenght Should Be And It Should Consist Of
 Test Random String With
     [Arguments]    ${expected characters}    ${given characters}
     ${result} =    Generate Random String    100    ${given characters}
-    String Lenght Should Be And It Should Consist Of    ${result}    100    ${expected characters}
+    String Length Should Be And It Should Consist Of    ${result}    100    ${expected characters}
