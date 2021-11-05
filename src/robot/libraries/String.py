@@ -571,6 +571,8 @@ class String:
     def generate_random_string(self, length=8, chars='[LETTERS][NUMBERS]'):
         """Generates a string with a desired ``length`` from the given ``chars``.
 
+        ``length`` can be given as a number
+
         The population sequence ``chars`` contains the characters to use
         when generating the random string. It can contain any
         characters, and it is possible to use special markers
@@ -590,7 +592,12 @@ class String:
         """
         if length == '':
             length = 8
-        length = self._convert_to_integer(length, 'length')
+        if '-' in length:
+            min_length, max_length = length.split('-')
+            length = randint(self._convert_to_integer(min_length, "length"),
+                             self._convert_to_integer(max_length, "length"))
+        else:
+            length = self._convert_to_integer(length, 'length')
         for name, value in [('[LOWER]', ascii_lowercase),
                             ('[UPPER]', ascii_uppercase),
                             ('[LETTERS]', ascii_lowercase + ascii_uppercase),
