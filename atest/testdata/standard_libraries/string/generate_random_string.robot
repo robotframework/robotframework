@@ -16,6 +16,12 @@ Generate Random String With Empty Length
     ${result} =    Generate Random String    ${EMPTY}    abc
     String Length Should Be And It Should Consist Of    ${result}    8    abc
 
+Generate Random String With Random Length
+    FOR    ${i}    IN RANGE    0    20
+        ${result} =    Generate Random String    5-10
+        String Length Should Be Within    ${result}    5    10
+    END
+
 Generate Random String From Non Default Characters
     Test Random String With    %=}$+^~*äö#    %=}$+^~*äö#
 
@@ -44,6 +50,11 @@ String Length Should Be And It Should Consist Of
         Should Contain    ${allowed chars}    ${string[${i}]}
         ...    String '${string}' contains character '${string[${i}]}' which is not in allowed characters '${allowed chars}'.
     END
+
+String Length Should Be Within
+    [Arguments]     ${string}    ${lower limit}    ${upper limit}
+    ${length} =    Get Length    ${string}
+    Should Be True    ${lower limit} <= ${length} <= ${upper limit}
 
 Test Random String With
     [Arguments]    ${expected characters}    ${given characters}

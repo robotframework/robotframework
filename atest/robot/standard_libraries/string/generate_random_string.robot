@@ -9,6 +9,9 @@ Generate Random String With Defaults
 Generate Random String With Empty Length
     Check Test Case    ${TESTNAME}
 
+Generate Random String With Random Length
+    Check Test Case    ${TESTNAME}
+
 Generate Random String From Non Default Characters
     Check Test Case    ${TESTNAME}
 
