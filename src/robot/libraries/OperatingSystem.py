@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import fnmatch
+import re
 import glob
 import os
 import shutil
@@ -24,7 +25,7 @@ from robot.version import get_version
 from robot.api import logger
 from robot.api.deco import keyword
 from robot.utils import (abspath, ConnectionCache, console_decode, del_env_var,
-                         get_env_var, get_env_vars, get_time, is_truthy,
+                         get_env_var, get_env_vars, get_time, is_truthy, is_falsy,
                          is_unicode, normpath, parse_time, plural_or_not,
                          secs_to_timestamp, secs_to_timestr, seq2str,
                          set_env_var, timestr_to_secs, unic, CONSOLE_ENCODING, WINDOWS)
@@ -275,7 +276,7 @@ class OperatingSystem:
         with open(path, 'rb') as f:
             return f.read()
 
-    def grep_file(self, path, pattern, encoding='UTF-8', encoding_errors='strict'):
+    def grep_file(self, path, pattern, encoding='UTF-8', encoding_errors='strict', regexp=False):
         """Returns the lines of the specified file that match the ``pattern``.
 
         This keyword reads a file from the file system using the defined
@@ -293,10 +294,12 @@ class OperatingSystem:
         Examples:
         | ${errors} = | Grep File | /var/log/myapp.log | ERROR |
         | ${ret} = | Grep File | ${CURDIR}/file.txt | [Ww]ildc??d ex*ple |
+        | ${ret} = | Grep File | ${CURDIR}/file.txt | [Ww]ildc..d ex.*ple | 
+        | ${ret} = | Grep File | ${CURDIR}/file.txt | [Ww]ildc..d ex.*ple | regexp=True
 
-        If more complex pattern matching is needed, it is possible to use
-        `Get File` in combination with String library keywords like `Get
-        Lines Matching Regexp`.
+        If more complex pattern matching is needed, it is possible to set
+        the regexp flag to True or use `Get File` in combination with String
+        library keywords like `Get Lines Matching Regexp`.
 
         This keyword supports special ``SYSTEM`` and ``CONSOLE`` encodings that
         `Get File` supports only with Robot Framework 4.0 and newer. When using
@@ -304,16 +307,19 @@ class OperatingSystem:
         earlier versions.
         """
         path = self._absnorm(path)
-        pattern = '*%s*' % pattern
+        if is_falsy(regexp):
+            pattern = fnmatch.translate('*%s*' % pattern)
+        reobj = re.compile(pattern)
+
         encoding = self._map_encoding(encoding)
         lines = []
         total_lines = 0
         self._link("Reading file '%s'.", path)
         with open(path, encoding=encoding, errors=encoding_errors) as f:
-            for line in f.readlines():
+            for line in f:
                 total_lines += 1
                 line = line.rstrip('\r\n')
-                if fnmatch.fnmatchcase(line, pattern):
+                if reobj.match(line):
                     lines.append(line)
             self._info('%d out of %d lines matched' % (len(lines), total_lines))
             return '\n'.join(lines)
