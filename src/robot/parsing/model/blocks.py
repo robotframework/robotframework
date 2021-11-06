@@ -239,19 +239,23 @@ class Try(Block):
     def __init__(self, header, body=None, handlers=None, end=None, errors=()):
         self.header = header
         self.body = body or []
-        self.except_handlers = handlers or []
+        self.handlers = handlers or []
         self.end = end
         self.errors = errors
 
 
 class Except(Block):
-    _fields = ('header', 'body', 'pattern', 'end')
+    _fields = ('header', 'body', 'end')
 
-    def __init__(self, header, body=None, pattern=None, errors=()):
+    def __init__(self, header, body=None, errors=()):
         self.header = header
         self.body = body or []
-        self.pattern = pattern or []
         self.end = None
+        self.errors = errors
+
+    @property
+    def pattern(self):
+        return self.header.pattern
 
 
 class ModelWriter(ModelVisitor):

@@ -121,6 +121,20 @@ class XmlLogger(ResultVisitor):
         self._write_status(iteration)
         self._writer.end('iter')
 
+    def start_try(self, try_):
+        self._writer.start('try')
+
+    def end_try(self, try_):
+        self._write_status(try_)
+        self._writer.end('try')
+
+    def start_except(self, except_):
+        self._writer.start('except', {'pattern': except_.pattern})
+
+    def end_except(self, except_):
+        self._write_status(except_)
+        self._writer.end('except')
+
     def start_return(self, return_):
         self._writer.start('return')
         for value in return_.values:

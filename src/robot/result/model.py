@@ -222,6 +222,37 @@ class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
         return self.condition
 
 
+class Except(model.Except, StatusMixin, DeprecatedAttributesMixin):
+    body_class = Body
+    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+
+    def __init__(self, pattern=None, parent=None, status='FAIL', starttime=None, endtime=None, doc=''):
+        model.Except.__init__(self, pattern, parent)
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.doc = doc
+
+    @property
+    @deprecated
+    def kwname(self):
+        return self.pattern
+
+
+@Body.register
+class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
+    body_class = Body
+    except_class = Except
+    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+
+    def __init__(self, parent=None, status='FAIL', starttime=None, endtime=None, doc=''):
+        model.Try.__init__(self, parent)
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.doc = doc
+
+
 @Body.register
 class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
     __slots__ = ['status', 'starttime', 'endtime']

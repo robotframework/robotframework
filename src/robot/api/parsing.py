@@ -489,7 +489,9 @@ from robot.parsing.model.blocks import (
     TestCase,
     Keyword,
     For,
-    If
+    If,
+    Try,
+    Except
 )
 from robot.parsing.model.statements import (
     SectionHeader,

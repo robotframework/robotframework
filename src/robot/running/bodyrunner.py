@@ -15,14 +15,16 @@
 
 from collections import OrderedDict
 from contextlib import contextmanager
+import re
 
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           ExecutionStatus, ExitForLoop, ContinueForLoop, DataError)
-from robot.result import For as ForResult, If as IfResult, IfBranch as IfBranchResult
+from robot.result import (For as ForResult, If as IfResult, IfBranch as IfBranchResult,
+                          Try as TryResult, Except as ExceptResult)
 from robot.output import librarylogger as logger
-from robot.utils import (cut_assign_value, frange, get_error_message, is_list_like,
-                         is_number, is_string, plural_or_not as s, split_from_equals,
-                         type_name)
+from robot.utils import (cut_assign_value, frange, get_error_message,
+                         is_list_like, is_number, plural_or_not as s,
+                         split_from_equals, type_name, Matcher)
 from robot.variables import is_dict_variable, evaluate_expression
 
 from .statusreporter import StatusReporter
@@ -381,3 +383,46 @@ class ForInEnumerateRunner(ForInRunner):
             'its variables (excluding the index). Got %d variables but %d '
             'value%s.' % (variables, values, s(values))
         )
+
+
+class TryRunner:
+
+    def __init__(self, context, run=True, templated=False):
+        self._context = context
+        self._run = run
+        self._templated = templated
+
+    def run(self, data):
+        result = TryResult()
+        with StatusReporter(data, result, self._context, self._run):
+            if self._run:
+                if data.error:
+                    raise DataError(data.error)
+            runner = BodyRunner(self._context, self._run, self._templated)
+            try:
+                runner.run(data.body)
+            except ExecutionFailures as failures:
+                for handler in data.handlers:
+                    run = self._error_is_expected(failures.message, handler.pattern)
+                    with StatusReporter(handler, ExceptResult(handler.pattern), self._context, run):
+                        runner = BodyRunner(self._context, run, self._templated)
+                        runner.run(handler.body)
+
+        return self._run
+
+    def _error_is_expected(self, error, expected_error):
+        glob = self._matches
+        matchers = {'GLOB': glob,
+                    'EQUALS': lambda s, p: s == p,
+                    'STARTS': lambda s, p: s.startswith(p),
+                    'REGEXP': lambda s, p: re.match(p, s) is not None}
+        prefixes = tuple(prefix + ':' for prefix in matchers)
+        if not expected_error.startswith(prefixes):
+            return glob(error, expected_error)
+        prefix, expected_error = expected_error.split(':', 1)
+        return matchers[prefix](error, expected_error.lstrip())
+
+    def _matches(self, string, pattern, caseless=False):
+        # Must use this instead of fnmatch when string may contain newlines.
+        matcher = Matcher(pattern, caseless=caseless, spaceless=False)
+        return matcher.match(string)

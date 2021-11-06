@@ -25,7 +25,7 @@ STATUSES = {'FAIL': 0, 'PASS': 1, 'SKIP': 2, 'NOT RUN': 3}
 KEYWORD_TYPES = {'KEYWORD': 0, 'SETUP': 1, 'TEARDOWN': 2,
                  'FOR': 3, 'FOR ITERATION': 4,
                  'IF': 5, 'ELSE IF': 6, 'ELSE': 7,
-                 'RETURN': 8}
+                 'RETURN': 8, 'TRY': 9, 'EXCEPT': 10}
 
 
 class JsModelBuilder:
@@ -166,6 +166,8 @@ class KeywordBuilder(_Builder):
             kws = list(kw.body)
             if getattr(kw, 'has_teardown', False):
                 kws.append(kw.teardown)
+            if getattr(kw, 'handlers', False):
+                kws.extend(kw.handlers)
             prune = (kw.body,)
         else:
             kws = []

@@ -113,7 +113,7 @@ class TryParser(NestedBlockParser):
     def parse(self, statement):
         if statement.type == Token.EXCEPT:
             parser = ExceptParser(statement)
-            self.model.except_handlers.append(parser.model)
+            self.model.handlers.append(parser.model)
             return parser
         return NestedBlockParser.parse(self, statement)
 

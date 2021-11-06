@@ -899,7 +899,7 @@ class Try(Statement):
 
     def validate(self):
         if self.get_tokens(Token.ARGUMENT):
-            self.errors += ('ELSE has condition.',)
+            self.errors += ('TRY has condition.',)
 
 
 @Statement.register
@@ -907,7 +907,7 @@ class Except(Statement):
     type = Token.EXCEPT
 
     @classmethod
-    def from_params(cls, pattern= None, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, pattern=None, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
         tokens = [
             Token(Token.SEPARATOR, indent),
             Token(Token.FOR),
@@ -918,6 +918,10 @@ class Except(Statement):
             tokens.append(Token(Token.SEPARATOR, indent))
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
+
+    @property
+    def pattern(self):
+        return self.get_value(Token.ARGUMENT)
 
 
 @Statement.register

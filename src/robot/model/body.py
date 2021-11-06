@@ -67,8 +67,8 @@ class Body(ItemList):
     keyword_class = None
     for_class = None
     if_class = None
-    return_class = None
     try_class = None
+    return_class = None
 
     def __init__(self, parent=None, items=None):
         ItemList.__init__(self, BodyItem, {'parent': parent}, items)
@@ -120,7 +120,7 @@ class Body(ItemList):
         ``body.filter(fors=False, ifs=False)``. Including and excluding by types
         at the same time is not supported.
 
-        Custom ``predicate`` is a calleble getting each body item as an argument
+        Custom ``predicate`` is a callable getting each body item as an argument
         that must return ``True/False`` depending on should the item be included
         or not.
 

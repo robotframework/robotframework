@@ -104,7 +104,7 @@ class TestHandler(ElementHandler):
     tag = 'test'
     # 'tags' is for RF < 4 compatibility.
     children = frozenset(('doc', 'tags', 'tag', 'timeout', 'status', 'kw', 'if', 'for',
-                          'msg'))
+                          'try', 'msg'))
 
     def start(self, elem, result):
         return result.tests.create(name=elem.get('name', ''))
@@ -115,7 +115,7 @@ class KeywordHandler(ElementHandler):
     tag = 'kw'
     # 'arguments', 'assign' and 'tags' are for RF < 4 compatibility.
     children = frozenset(('doc', 'arguments', 'arg', 'assign', 'var', 'tags', 'tag',
-                          'timeout', 'status', 'msg', 'kw', 'if', 'for', 'return'))
+                          'timeout', 'status', 'msg', 'kw', 'if', 'for', 'try', 'return'))
 
     def start(self, elem, result):
         elem_type = elem.get('type')
@@ -199,6 +199,24 @@ class IfBranchHandler(ElementHandler):
 
     def start(self, elem, result):
         return result.body.create_branch(elem.get('type'), elem.get('condition'))
+
+
+@ElementHandler.register
+class ExceptHandler(ElementHandler):
+    tag = 'except'
+    children = frozenset(('var', 'value', 'doc', 'status', 'iter', 'msg', 'kw', 'for', 'if'))
+
+    def start(self, elem, result):
+        return result.create_except(pattern=elem.get('pattern'))
+
+
+@ElementHandler.register
+class TryHandler(ElementHandler):
+    tag = 'try'
+    children = frozenset(('var', 'value', 'doc', 'status', 'iter', 'msg', 'kw', 'for', 'if', 'except'))
+
+    def start(self, elem, result):
+        return result.body.create_try()
 
 
 @ElementHandler.register

@@ -380,16 +380,44 @@ class TryBuilder(NodeVisitor):
         self.model = None
 
     def build(self, node):
-        model = self.parent.body.create_try()
-        return model
+        self.model = self.parent.body.create_try(lineno=node.lineno,
+                                                 error=format_error(self._get_errors(node)))
+        for step in node.body:
+            self.visit(step)
+        for handler in node.handlers:
+            self.visit(handler)
+        return self.model
 
     def _get_errors(self, node):
         errors = node.header.errors + node.errors
-        # for handler in node.except_handlers:
-        #     errors += handler.errors + handler.body.errors
         if node.end:
             errors += node.end.errors
         return errors
+
+    def visit_Except(self, node):
+        ExceptBuilder(self.model).build(node)
+
+    def visit_KeywordCall(self, node):
+        self.model.body.create_keyword(name=node.keyword, args=node.args,
+                                       assign=node.assign, lineno=node.lineno)
+
+
+class ExceptBuilder(NodeVisitor):
+
+    def __init__(self, parent):
+        self.parent = parent
+        self.model = None
+
+    def build(self, node):
+        self.model = self.parent.create_except(pattern=node.pattern, lineno=node.lineno,
+                                               error=format_error(node.errors))
+        for step in node.body:
+            self.visit(step)
+        return self.model
+
+    def visit_KeywordCall(self, node):
+        self.model.body.create_keyword(name=node.keyword, args=node.args,
+                                       assign=node.assign, lineno=node.lineno)
 
 
 def format_error(errors):

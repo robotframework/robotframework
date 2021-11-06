@@ -116,16 +116,47 @@ class IfBranch(BodyItem):
         visitor.visit_if_branch(self)
 
 
+class Except(BodyItem):
+    type = BodyItem.EXCEPT
+    body_class = Body
+    repr_args = ('pattern',)
+
+    def __init__(self, pattern=None, parent=None):
+        self.pattern = pattern
+        self.parent = parent
+        self.body = None
+
+    @setter
+    def body(self, body):
+        return self.body_class(self, body)
+
+    def visit(self, visitor):
+        visitor.visit_try(self)
+
+
 @Body.register
 class Try(BodyItem):
     type = BodyItem.TRY
     body_class = Body
+    except_class = Except
     repr_args = ('handlers',)
 
-    def __init__(self, except_handlers=None, parent=None):
-        self.except_handlers = except_handlers
+    def __init__(self, handlers=None, parent=None):
+        self.handlers = handlers or []
         self.parent = parent
         self.body = None
+
+    @setter
+    def body(self, body):
+        return self.body_class(self, body)
+
+    def visit(self, visitor):
+        visitor.visit_try(self)
+
+    def create_except(self, *args, **kwargs):
+        except_ = self.except_class(*args, **kwargs)
+        self.handlers.append(except_)
+        return except_
 
 
 @Body.register

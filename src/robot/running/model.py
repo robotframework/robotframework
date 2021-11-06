@@ -43,7 +43,7 @@ from robot.output import LOGGER, Output, pyloggingconf
 from robot.result import Return as ReturnResult
 from robot.utils import seq2str, setter
 
-from .bodyrunner import ForRunner, IfRunner, KeywordRunner
+from .bodyrunner import ForRunner, IfRunner, KeywordRunner, TryRunner
 from .randomizer import Randomizer
 from .statusreporter import StatusReporter
 
@@ -129,6 +129,42 @@ class IfBranch(model.IfBranch):
     @property
     def source(self):
         return self.parent.source if self.parent is not None else None
+
+
+class Except(model.Except):
+    __slots__ = ['lineno', 'error']
+    body_class = Body
+
+    def __init__(self, pattern=None, parent=None, lineno=None, error=None):
+        model.Except.__init__(self, pattern, parent)
+        self.lineno = lineno
+        self.error = error
+
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
+    def run(self, context, run=True, templated=False):
+        return TryRunner(context, run, templated).run(self)
+
+
+@Body.register
+class Try(model.Try):
+    __slots__ = ['lineno', 'error']
+    body_class = Body
+    except_class = Except
+
+    def __init__(self, parent=None, lineno=None, error=None):
+        model.Try.__init__(self, parent)
+        self.lineno = lineno
+        self.error = error
+
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
+    def run(self, context, run=True, templated=False):
+        return TryRunner(context, run, templated).run(self)
 
 
 @Body.register
