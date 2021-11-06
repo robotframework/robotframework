@@ -1816,5 +1816,137 @@ class TestReturn(unittest.TestCase):
         assert_tokens(data, expected, data_only=True)
 
 
+class TestContinue(unittest.TestCase):
+
+    def test_in_keyword(self):
+        data = '    CONTINUE'
+        expected = [(T.CONTINUE, 'CONTINUE', 3, 4),
+                    (T.EOS, '', 3, 12)]
+        self._verify(data, expected)
+
+    def test_in_test(self):
+        # This is not valid usage but that's not recognized during lexing.
+        data = '    CONTINUE'
+        expected = [(T.CONTINUE, 'CONTINUE', 3, 4),
+                    (T.EOS, '', 3, 12)]
+        self._verify(data, expected, test=True)
+
+    def test_in_if(self):
+        data = '''\
+    IF    True
+        CONTINUE
+    END
+'''
+        expected = [(T.IF, 'IF', 3, 4),
+                    (T.ARGUMENT, 'True', 3, 10),
+                    (T.EOS, '', 3, 14),
+                    (T.CONTINUE, 'CONTINUE', 3, 12),
+                    (T.ARGUMENT, '', 4, 12),
+                    (T.EOS, '', 4, 24),
+                    (T.END, 'END', 5, 4),
+                    (T.EOS, '', 5, 7)]
+        self._verify(data, expected)
+
+    def test_in_for(self):
+            data = '''\
+    FOR    ${x}    IN    @{STUFF}
+        CONTINUE
+    END
+'''
+            expected = [(T.FOR, 'FOR', 3, 4),
+                        (T.VARIABLE, '${x}', 3, 11),
+                        (T.FOR_SEPARATOR, 'IN', 3, 19),
+                        (T.ARGUMENT, '@{STUFF}', 3, 25),
+                        (T.EOS, '', 3, 33),
+                        (T.CONTINUE, 'CONTINUE', 4, 8),
+                        (T.ARGUMENT, '${x}', 4, 18),
+                        (T.EOS, '', 4, 22),
+                        (T.END, 'END', 5, 4),
+                        (T.EOS, '', 5, 7)]
+            self._verify(data, expected)
+
+    def _verify(self, data, expected, test=False):
+        if not test:
+            header = '*** Keywords ***'
+            header_type = T.KEYWORD_HEADER
+            name_type = T.KEYWORD_NAME
+        else:
+            header = '*** Test Cases ***'
+            header_type = T.TESTCASE_HEADER
+            name_type = T.TESTCASE_NAME
+        data = f'{header}\nName\n{data}'
+        expected = [(header_type, header, 1, 0),
+                    (T.EOS, '', 1, len(header)),
+                    (name_type, 'Name', 2, 0),
+                    (T.EOS, '', 2, 4)] + expected
+        assert_tokens(data, expected, data_only=True)
+
+
+class TestBreak(unittest.TestCase):
+
+    def test_in_keyword(self):
+        data = '    BREAK'
+        expected = [(T.BREAK, 'BREAK', 3, 4),
+                    (T.EOS, '', 3, 9)]
+        self._verify(data, expected)
+
+    def test_in_test(self):
+        # This is not valid usage but that's not recognized during lexing.
+        data = '    BREAK'
+        expected = [(T.BREAK, 'BREAK', 3, 4),
+                    (T.EOS, '', 3, 9)]
+        self._verify(data, expected, test=True)
+
+    def test_in_if(self):
+        data = '''\
+    IF    True
+        BREAK
+    END
+'''
+        expected = [(T.IF, 'IF', 3, 4),
+                    (T.ARGUMENT, 'True', 3, 10),
+                    (T.EOS, '', 3, 14),
+                    (T.BREAK, 'BREAK', 3, 9),
+                    (T.ARGUMENT, '', 4, 12),
+                    (T.EOS, '', 4, 24),
+                    (T.END, 'END', 5, 4),
+                    (T.EOS, '', 5, 7)]
+        self._verify(data, expected)
+
+    def test_in_for(self):
+            data = '''\
+    FOR    ${x}    IN    @{STUFF}
+        BREAK
+    END
+'''
+            expected = [(T.FOR, 'FOR', 3, 4),
+                        (T.VARIABLE, '${x}', 3, 11),
+                        (T.FOR_SEPARATOR, 'IN', 3, 19),
+                        (T.ARGUMENT, '@{STUFF}', 3, 25),
+                        (T.EOS, '', 3, 33),
+                        (T.BREAK, 'BREAK', 4, 8),
+                        (T.ARGUMENT, '${x}', 4, 18),
+                        (T.EOS, '', 4, 22),
+                        (T.END, 'END', 5, 4),
+                        (T.EOS, '', 5, 7)]
+            self._verify(data, expected)
+
+    def _verify(self, data, expected, test=False):
+        if not test:
+            header = '*** Keywords ***'
+            header_type = T.KEYWORD_HEADER
+            name_type = T.KEYWORD_NAME
+        else:
+            header = '*** Test Cases ***'
+            header_type = T.TESTCASE_HEADER
+            name_type = T.TESTCASE_NAME
+        data = f'{header}\nName\n{data}'
+        expected = [(header_type, header, 1, 0),
+                    (T.EOS, '', 1, len(header)),
+                    (name_type, 'Name', 2, 0),
+                    (T.EOS, '', 2, 4)] + expected
+        assert_tokens(data, expected, data_only=True)
+
+
 if __name__ == '__main__':
     unittest.main()

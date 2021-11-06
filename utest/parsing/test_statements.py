@@ -33,6 +33,8 @@ from robot.parsing.model.statements import (
     ForHeader,
     IfHeader,
     InlineIfHeader,
+    Continue,
+    Break,
     ElseHeader,
     ElseIfHeader,
     End,

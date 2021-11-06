@@ -70,7 +70,7 @@ class Token:
     # `RETURN` type will be used with `RETURN` statement in the future.
     RETURN = 'RETURN'
     RETURN_SETTING = RETURN
-    
+
     NAME = 'NAME'
     VARIABLE = 'VARIABLE'
     ARGUMENT = 'ARGUMENT'

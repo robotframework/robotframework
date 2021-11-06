@@ -2506,7 +2506,7 @@ class _Control(_BuiltInBase):
         """
         self.log("Continuing for loop from the next iteration.")
         raise ContinueForLoop()
-        
+
     def continue_for_loop_if(self, condition):
         """Skips the current for loop iteration if the ``condition`` is true.
 
