@@ -600,10 +600,12 @@ class String:
         if '-' in str(length):
             try:
                 min_length, max_length = length.split('-')
+                length = randint(self._convert_to_integer(min_length, "length"),
+                                 self._convert_to_integer(max_length, "length"))
             except ValueError:
                 raise ValueError("Length is not a valid range of integers: {0}".format(length))
-            length = randint(self._convert_to_integer(min_length, "length"),
-                             self._convert_to_integer(max_length, "length"))
+            except AttributeError:
+                pass    # To keep behaviour as it is with negative numbers
         else:
             length = self._convert_to_integer(length, 'length')
         for name, value in [('[LOWER]', ascii_lowercase),
