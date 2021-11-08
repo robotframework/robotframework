@@ -327,6 +327,9 @@ class ProcessResults(ResultVisitor):
     def start_if_branch(self, branch):
         self._add_kws_and_msgs(branch)
 
+    def start_try(self, try_):
+        self._add_kws_and_msgs(try_)
+
     def visit_errors(self, errors):
         errors.msgs = errors.messages
         errors.message_count = errors.msg_count = len(errors.messages)

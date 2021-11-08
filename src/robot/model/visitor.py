@@ -239,6 +239,39 @@ class SuiteVisitor:
         """Called when IF/ELSE branch ends. Default implementation does nothing."""
         pass
 
+    def visit_try(self, try_):
+        """Called when a TRY/EXCEPT block starts
+
+        Can be overridden to allow modifying the passed in ``try``-structure without
+        calling :meth:`start_try` or :meth:`end_try` nor visiting body.
+        """
+        if self.start_try(try_) is not False:
+            try_.body.visit(self)
+            # FIXME: add handlers visitation
+            self.end_try(try_)
+
+    def start_try(self, try_):
+        """Called when TRY/EXCEPT block starts. Default implementation does nothing.
+
+        Can return explicit ``False`` to stop visiting.
+        """
+        pass
+
+    def end_try(self, try_):
+        """Called when TRY/EXCEPT branch ends. Default implementation does nothing."""
+        pass
+
+    def start_if_branch(self, branch):
+        """Called when IF/ELSE branch starts. Default implementation does nothing.
+
+        Can return explicit ``False`` to stop visiting.
+        """
+        pass
+
+    def end_if_branch(self, branch):
+        """Called when IF/ELSE branch ends. Default implementation does nothing."""
+        pass
+
     def visit_return(self, return_):
         """Called when RETURN is encountered. Default implementation does nothing.
 
