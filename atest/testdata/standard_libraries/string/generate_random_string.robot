@@ -30,10 +30,9 @@ Generate Random String With Invalid Ranges
     Run Keyword And Expect Error    ValueError: *    Generate Random String    foo-bar
     Run Keyword And Expect Error    ValueError: *    Generate Random String    -
     # Length is not a valid range of integers
-    Run Keyword And Expect Error    ValueError: Length is not a valid range of integers: *
-    ...    Generate Random String    --
-    Run Keyword And Expect Error    ValueError: Length is not a valid range of integers: *
-    ...    Generate Random String    1-2-3
+    ${range error} =    Set Variable    ValueError: Length is not a valid range of integers: *
+    Run Keyword And Expect Error    ${range error}    Generate Random String    --
+    Run Keyword And Expect Error    ${range error}    Generate Random String    1-2-3
 
 Generate Random String From Non Default Characters
     Test Random String With    %=}$+^~*äö#    %=}$+^~*äö#
