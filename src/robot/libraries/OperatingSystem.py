@@ -294,7 +294,6 @@ class OperatingSystem:
         Examples:
         | ${errors} = | Grep File | /var/log/myapp.log | ERROR |
         | ${ret} = | Grep File | ${CURDIR}/file.txt | [Ww]ildc??d ex*ple |
-        | ${ret} = | Grep File | ${CURDIR}/file.txt | [Ww]ildc..d ex.*ple | 
         | ${ret} = | Grep File | ${CURDIR}/file.txt | [Ww]ildc..d ex.*ple | regexp=True
 
         If more complex pattern matching is needed, it is possible to set

@@ -133,6 +133,9 @@ Grep File non Ascii
     fää     fää        ${TESTFILE}
     ö       föö bär    ${TESTFILE}
     A       A Fåå      ${TESTFILE}
+    fää     fää        ${TESTFILE}    True
+    ö       föö bär    ${TESTFILE}    True
+    A       A Fåå      ${TESTFILE}    True
 
 Grep File with UTF-16 files
     [Template]    Verify Grep File With UTF-16 files
@@ -169,8 +172,8 @@ Get And Check File
     Should Be Equal    ${content}    ${expected}
 
 Grep And Check File
-    [Arguments]    ${pattern}    ${expected}    ${test FILE}=${UTF-8 LONG FILE}
-    ${content} =    Grep File    ${test FILE}    ${pattern}
+    [Arguments]    ${pattern}    ${expected}    ${test FILE}=${UTF-8 LONG FILE}    ${regexp}=${False}
+    ${content} =    Grep File    ${test FILE}    ${pattern}    regexp=${regexp}
     Should Be Equal    ${content}    ${expected}
 
 Verify Get File with error handler
