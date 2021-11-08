@@ -32,6 +32,7 @@ Log messages are collected on specified level
     ...    FAIL: Expected failure
     ...    DEBUG: Traceback (most recent call last):
     ...    ${SPACE*2}None
+    ...    AssertionError: Expected failure
 
 *** Keywords ***
 Logged messages should be
