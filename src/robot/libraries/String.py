@@ -572,7 +572,8 @@ class String:
         """Generates a string with a desired ``length`` from the given ``chars``.
 
         ``length`` can be given as a number, a string representation of a number,
-        or as a range of numbers, such as ``5-10``.
+        or as a range of numbers, such as ``5-10``. When a range of values is given
+        the range will be selected by random within the range.
 
         The population sequence ``chars`` contains the characters to use
         when generating the random string. It can contain any
@@ -591,11 +592,16 @@ class String:
         | ${bin} = | Generate Random String | 8  | 01              |
         | ${hex} = | Generate Random String | 4  | [NUMBERS]abcdef |
         | ${rnd} = | Generate Random String | 5-10 | # Generates a string 5 to 10 characters long |
+
+        Giving ``length`` as a range of values is new in Robot Framework 5.0.
         """
         if length == '':
             length = 8
         if '-' in str(length):
-            min_length, max_length = length.split('-')
+            try:
+                min_length, max_length = length.split('-')
+            except ValueError:
+                raise ValueError("Length is not a valid range of integers: {0}".format(length))
             length = randint(self._convert_to_integer(min_length, "length"),
                              self._convert_to_integer(max_length, "length"))
         else:
