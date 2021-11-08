@@ -12,6 +12,9 @@ Generate Random String With Empty Length
 Generate Random String With Random Length
     Check Test Case    ${TESTNAME}
 
+Generate Random String With Invalid Ranges
+    Check Test Case    ${TESTNAME}
+
 Generate Random String From Non Default Characters
     Check Test Case    ${TESTNAME}
 

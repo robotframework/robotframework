@@ -22,6 +22,19 @@ Generate Random String With Random Length
         String Length Should Be Within    ${result}    5    10
     END
 
+Generate Random String With Invalid Ranges
+    # Cannot convert 'length' to integer
+    Run Keyword And Expect Error    ValueError: *    Generate Random String    5-
+    Run Keyword And Expect Error    ValueError: *    Generate Random String    foo-10
+    Run Keyword And Expect Error    ValueError: *    Generate Random String    5-bar
+    Run Keyword And Expect Error    ValueError: *    Generate Random String    foo-bar
+    Run Keyword And Expect Error    ValueError: *    Generate Random String    -
+    # Length is not a valid range of integers
+    Run Keyword And Expect Error    ValueError: Length is not a valid range of integers: *
+    ...    Generate Random String    --
+    Run Keyword And Expect Error    ValueError: Length is not a valid range of integers: *
+    ...    Generate Random String    1-2-3
+
 Generate Random String From Non Default Characters
     Test Random String With    %=}$+^~*äö#    %=}$+^~*äö#
 
