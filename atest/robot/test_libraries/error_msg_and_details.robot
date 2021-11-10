@@ -33,36 +33,37 @@ Message And Internal Trace Are Removed From Details When Exception In Library
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    Generic Failure    foo != bar
     Verify Traceback    ${tc.kws[0].msgs[1]}
-    ...    ../testresources/testlibs/ExampleLibrary.py
-    ...    exception
-    ...    raise exception(msg)
+    ...    ../testresources/testlibs/ExampleLibrary.py    exception    raise exception(msg)
     ...    error=AssertionError: foo != bar
     ${tc} =    Verify Test Case And Error In Log    Non Generic Failure    FloatingPointError: Too Large A Number !!
     Verify Traceback    ${tc.kws[0].msgs[1]}
-    ...    ../testresources/testlibs/ExampleLibrary.py
-    ...    exception
-    ...    raise exception(msg)
+    ...    ../testresources/testlibs/ExampleLibrary.py    exception    raise exception(msg)
     ...    error=FloatingPointError: Too Large A Number !!
 
 Message and Internal Trace Are Removed From Details When Exception In External Code
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    External Failure    UnboundLocalError: Raised from an external object!
     Verify Traceback    ${tc.kws[0].msgs[1]}
-    ...    ../testresources/testlibs/ExampleLibrary.py
-    ...    external_exception
-    ...    ObjectToReturn('failure').exception(name, msg)
-    ...    ../testresources/testlibs/objecttoreturn.py
-    ...    exception
-    ...    raise exception(msg)
+    ...    ../testresources/testlibs/ExampleLibrary.py    external_exception    ObjectToReturn('failure').exception(name, msg)
+    ...    ../testresources/testlibs/objecttoreturn.py    exception             raise exception(msg)
     ...    error=UnboundLocalError: Raised from an external object!
+
+Chained exceptions
+    [Template]    NONE
+    # Executed keyword formats exception traceback using `traceback.format_exception()`
+    # and logs it so that we can validate the traceback logged by Robot based on it.
+    # This avois the need to construct long and complicated tracebacks that are subject
+    # change between Python versions.
+    ${tc} =    Verify Test Case And Error In Log    Implicitly chained exception    NameError: name 'ooops' is not defined    msg=1
+    Check Log Message    ${tc.kws[0].msgs[2]}    ${tc.kws[0].msgs[0].message}    DEBUG
+    ${tc} =    Verify Test Case And Error In Log    Explicitly chained exception    Expected error    msg=1
+    Check Log Message    ${tc.kws[0].msgs[2]}    ${tc.kws[0].msgs[0].message}    DEBUG
 
 Failure in library in non-ASCII directory
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    ${TEST NAME}    Keyword in 'nön_äscii_dïr' fails!    index=1
     Verify Traceback    ${tc.kws[1].msgs[1]}
-    ...    test_libraries/nön_äscii_dïr/valid.py
-    ...    failing_keyword_in_non_ascii_dir
-    ...    raise AssertionError("Keyword in 'nön_äscii_dïr' fails!")
+    ...    test_libraries/nön_äscii_dïr/valid.py    failing_keyword_in_non_ascii_dir    raise AssertionError("Keyword in 'nön_äscii_dïr' fails!")
     ...    error=AssertionError: Keyword in 'nön_äscii_dïr' fails!
 
 No Details For Timeouts
