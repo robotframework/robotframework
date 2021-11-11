@@ -2873,10 +2873,10 @@ class _Misc(_BuiltInBase):
 
         The ``formatter`` argument controls how to format the string
         representation of the message. Possible values are ``str`` (default),
-        ``repr`` and ``ascii``, and they work similarly to Python built-in
-        functions with same names. When using ``repr``, bigger lists,
-        dictionaries and other containers are also pretty-printed so that
-        there is one item per row. For more details see `String
+        ``repr``, ``ascii``, ``len``, and ``type``. They work similarly to
+        Python built-in functions with same names. When using ``repr``, bigger
+        lists, dictionaries and other containers are also pretty-printed so
+        that there is one item per row. For more details see `String
         representations`.
 
         The old way to control string representation was using the ``repr``
@@ -2910,10 +2910,12 @@ class _Misc(_BuiltInBase):
         try:
             return {'str': unic,
                     'repr': prepr,
-                    'ascii': ascii}[formatter.lower()]
+                    'ascii': ascii,
+                    'len': len,
+                    'type': type}[formatter.lower()]
         except KeyError:
             raise ValueError("Invalid formatter '%s'. Available "
-                             "'str', 'repr' and 'ascii'." % formatter)
+                             "'str', 'repr', 'ascii', 'len', and 'type'." % formatter)
 
     @run_keyword_variant(resolve=0)
     def log_many(self, *messages):

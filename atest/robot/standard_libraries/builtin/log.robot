@@ -105,6 +105,22 @@ formatter=repr pretty prints
     Stdout Should Contain    ${small dict}
     Stdout Should Contain    ${small list}
 
+formatter=len
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    20
+    Check Log Message    ${tc.kws[1].msgs[0]}    13
+    Check Log Message    ${tc.kws[2].msgs[0]}    42    DEBUG
+    Check Log Message    ${tc.kws[4].msgs[0]}    21
+    Check Log Message    ${tc.kws[6].msgs[0]}    5
+
+formatter=type
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    <class 'str'>
+    Check Log Message    ${tc.kws[1].msgs[0]}    <class 'str'>
+    Check Log Message    ${tc.kws[2].msgs[0]}    42    DEBUG
+    Check Log Message    ${tc.kws[4].msgs[0]}    <class 'bytes'>
+    Check Log Message    ${tc.kws[6].msgs[0]}    <class 'str'>
+
 formatter=invalid
     Check Test Case    ${TEST NAME}
 

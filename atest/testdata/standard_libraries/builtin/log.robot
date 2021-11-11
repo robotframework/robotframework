@@ -102,8 +102,28 @@ formatter=repr pretty prints
     ${non ascii} =    Evaluate    ['hyv\\xe4', b'hyv\\xe4', {'\\u2603': b'\\x00\\xff'}]
     Log    ${non ascii}    formatter=repr
 
+formatter=len
+    [Setup]    Set Log Level    DEBUG
+    Log    Nothing special here    formatter=len
+    Log    Hyvää yötä \u2603!    formatter=LEN
+    Log    ${42}    DEBUG    ${FALSE}    ${FALSE}    ${TRUE}
+    ${bytes} =    Evaluate    b'\\x00abc\\xff (formatter=len)'
+    Log    ${bytes}    formatter=len    console=True
+    ${nfd} =    Evaluate    'hyva\u0308'
+    Log    ${nfd}    formatter=len
+
+formatter=type
+    [Setup]    Set Log Level    DEBUG
+    Log    Nothing special here    formatter=type
+    Log    Hyvää yötä \u2603!    formatter=TYPE
+    Log    ${42}    DEBUG    ${FALSE}    ${FALSE}    ${TRUE}
+    ${bytes} =    Evaluate    b'\\x00abc\\xff (formatter=type)'
+    Log    ${bytes}    formatter=type    console=True
+    ${nfd} =    Evaluate    'hyva\u0308'
+    Log    ${nfd}    formatter=type
+
 formatter=invalid
-    [Documentation]    FAIL ValueError: Invalid formatter 'invalid'. Available 'str', 'repr' and 'ascii'.
+    [Documentation]    FAIL ValueError: Invalid formatter 'invalid'. Available 'str', 'repr', 'ascii', 'len', and 'type'.
     Log    x    formatter=invalid
 
 Log callable
