@@ -380,7 +380,7 @@ class Process(object):
         which can be assigned to a variable if needed.
 
         Note: Returning an actual process object introduced in RF 5.0, previous versions
-        would only return a generic handler.
+        would only return a generic process handle.
 
         Processes are started so that they create a new process group. This
         allows sending signals to and terminating also possible child

@@ -138,12 +138,12 @@ class ConnectionCache(object):
         return self.current is not self._no_current
 
     def resolve_alias_or_index(self, alias_or_index):
-        for resolver in self._resolve_alias, self._resolve_index:
+        for resolver in self._resolve_alias, self._resolve_index, self._is_connection:
             try:
                 return resolver(alias_or_index)
             except ValueError:
                 pass
-        raise ValueError("Non-existing index or alias '%s'." % alias_or_index)
+        raise ValueError(f"Non-existing index or alias '{alias_or_index}'.")
 
     def _resolve_alias(self, alias):
         if is_string(alias) and alias in self._aliases:
@@ -158,6 +158,9 @@ class ConnectionCache(object):
         if not 0 < index <= len(self._connections):
             raise ValueError
         return index
+
+    def _is_connection(self, conn):
+        return self._connections.index(conn) + 1
 
 
 @py3to2
