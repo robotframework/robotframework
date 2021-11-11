@@ -603,7 +603,7 @@ class String:
                 length = randint(self._convert_to_integer(min_length, "length"),
                                  self._convert_to_integer(max_length, "length"))
             except ValueError:
-                raise ValueError("Length is not a valid range of integers: {0}".format(length))
+                raise ValueError(f"Length '{length}' is not a valid range of integers.")
             except AttributeError:
                 pass    # To keep behaviour as it is with negative numbers
         else:
