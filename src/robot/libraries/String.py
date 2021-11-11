@@ -597,15 +597,10 @@ class String:
         """
         if length == '':
             length = 8
-        if '-' in str(length):
-            try:
-                min_length, max_length = length.split('-')
-                length = randint(self._convert_to_integer(min_length, "length"),
-                                 self._convert_to_integer(max_length, "length"))
-            except ValueError:
-                raise ValueError(f"Length '{length}' is not a valid range of integers.")
-            except AttributeError:
-                pass    # To keep behaviour as it is with negative numbers
+        if isinstance(length, str) and re.match(r'^\d+-\d+$', length):
+            min_length, max_length = length.split('-')
+            length = randint(self._convert_to_integer(min_length, "length"),
+                             self._convert_to_integer(max_length, "length"))
         else:
             length = self._convert_to_integer(length, 'length')
         for name, value in [('[LOWER]', ascii_lowercase),
