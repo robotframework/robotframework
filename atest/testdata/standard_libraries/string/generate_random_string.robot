@@ -23,7 +23,6 @@ Generate Random String With Random Length
     END
 
 Generate Random String With Invalid Ranges
-    # Cannot convert 'length' to integer
     FOR    ${range}    IN     5-    foo-10    5-bar    foo-bar    -    5--10    1-2-3
         Run Keyword And Expect Error    ValueError: Cannot convert 'length' argument '${range}' to an integer.
         ...    Generate Random String    ${range}
