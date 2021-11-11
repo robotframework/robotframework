@@ -2845,7 +2845,7 @@ class _Misc(_BuiltInBase):
         return sep.join(items)
 
     def log(self, message, level='INFO', html=False, console=False,
-            repr=False, formatter='str'):
+            repr='DEPRECATED', formatter='str'):
         r"""Logs the given message with the given level.
 
         Valid levels are TRACE, DEBUG, INFO (default), HTML, WARN, and ERROR.
@@ -2880,9 +2880,8 @@ class _Misc(_BuiltInBase):
         representations`.
 
         The old way to control string representation was using the ``repr``
-        argument, and ``repr=True`` is still equivalent to using
-        ``formatter=repr``. The ``repr`` argument will be deprecated in the
-        future, though, and using ``formatter`` is thus recommended.
+        argument. This argument has been deprecated and ``formatter=repr``
+        should be used instead.
 
         Examples:
         | Log | Hello, world!        |          |   | # Normal INFO message.   |
@@ -2898,11 +2897,13 @@ class _Misc(_BuiltInBase):
 
         Formatter options ``type`` and ``log`` are new in Robot Framework 5.0.
         """
-        # FIXME: Deprecate `repr` in RF 5.
-        if repr:
-            formatter = prepr
-        else:
+        # TODO: Remove `repr` altogether in RF 5.2. It was deprecated in RF 5.0.
+        if repr == 'DEPRECATED':
             formatter = self._get_formatter(formatter)
+        else:
+            logger.warn("The 'repr' argument of 'BuiltIn.Log' is deprecated. "
+                        "Use 'formatter=repr' instead.")
+            formatter = prepr if is_truthy(repr) else self._get_formatter(formatter)
         message = formatter(message)
         logger.write(message, level, html)
         if console:

@@ -23,7 +23,7 @@ Log with different levels
     Check Log Message    ${tc.kws[5].msgs[1]}    Error level    ERROR
     Check Log Message    ${ERRORS[0]}            Warn level     WARN
     Check Log Message    ${ERRORS[1]}            Error level    ERROR
-    Length Should Be     ${ERRORS}               2
+    Length Should Be     ${ERRORS}               4    # Two deprecation warnings from `repr`.
 
 HTML is escaped by default
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -52,19 +52,13 @@ Log also to console
     Stdout Should Contain    ${HTML}\n
 
 repr=True
-    [Documentation]    In RF 3.1.2 `formatter=repr` and `repr=True` yield same
-    ...                results and thus these tests are identical.
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    'Nothing special here'
-    Check Log Message    ${tc.kws[1].msgs[0]}    'Hyvää yötä ☃!'
-    Check Log Message    ${tc.kws[2].msgs[0]}    42    DEBUG
-    Check Log Message    ${tc.kws[4].msgs[0]}    b'\\x00abc\\xff (repr=True)'
-    Check Log Message    ${tc.kws[6].msgs[0]}    'hyvä'
-    Stdout Should Contain    b'\\x00abc\\xff (repr=True)'
+    Check Log Message    ${tc.kws[0].msgs[0]}    The 'repr' argument of 'BuiltIn.Log' is deprecated. Use 'formatter=repr' instead.    WARN
+    Check Log Message    ${tc.kws[0].msgs[1]}    Nothing special here
+    Check Log Message    ${tc.kws[1].msgs[0]}    The 'repr' argument of 'BuiltIn.Log' is deprecated. Use 'formatter=repr' instead.    WARN
+    Check Log Message    ${tc.kws[1].msgs[1]}    'Hyvää yötä ☃!'
 
 formatter=repr
-    [Documentation]    In RF 3.1.2 `formatter=repr` and `repr=True` yield same
-    ...                results and thus these tests are identical.
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    'Nothing special here'
     Check Log Message    ${tc.kws[1].msgs[0]}    'Hyvää yötä ☃!'
