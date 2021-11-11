@@ -103,24 +103,25 @@ formatter=repr pretty prints
     Log    ${non ascii}    formatter=repr
 
 formatter=len
+    [Documentation]    FAIL STARTS: TypeError:
     [Setup]    Set Log Level    DEBUG
     Log    Nothing special here    formatter=len
-    Log    Hyvää yötä \u2603!    formatter=LEN
-    Log    ${42}    DEBUG    ${FALSE}    ${FALSE}    ${TRUE}
+    Log    Hyvää yötä \u2603!    DEBUG    formatter=LEN
     ${bytes} =    Evaluate    b'\\x00abc\\xff (formatter=len)'
     Log    ${bytes}    formatter=len    console=True
     ${nfd} =    Evaluate    'hyva\u0308'
     Log    ${nfd}    formatter=len
+    Log    ${42}    formatter=len
 
 formatter=type
     [Setup]    Set Log Level    DEBUG
     Log    Nothing special here    formatter=type
     Log    Hyvää yötä \u2603!    formatter=TYPE
-    Log    ${42}    DEBUG    ${FALSE}    ${FALSE}    ${TRUE}
+    Log    ${42}    DEBUG    formatter=type
     ${bytes} =    Evaluate    b'\\x00abc\\xff (formatter=type)'
     Log    ${bytes}    formatter=type    console=True
-    ${nfd} =    Evaluate    'hyva\u0308'
-    Log    ${nfd}    formatter=type
+    ${now} =    Evaluate    datetime.datetime.now()
+    Log    ${now}    formatter=type
 
 formatter=invalid
     [Documentation]    FAIL ValueError: Invalid formatter 'invalid'. Available 'str', 'repr', 'ascii', 'len', and 'type'.

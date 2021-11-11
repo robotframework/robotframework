@@ -2895,6 +2895,8 @@ class _Misc(_BuiltInBase):
 
         See `Log Many` if you want to log multiple messages in one go, and
         `Log To Console` if you only want to write to the console.
+
+        Formatter options ``type`` and ``log`` are new in Robot Framework 5.0.
         """
         # FIXME: Deprecate `repr` in RF 5.
         if repr:
@@ -2912,7 +2914,7 @@ class _Misc(_BuiltInBase):
                     'repr': prepr,
                     'ascii': ascii,
                     'len': len,
-                    'type': type}[formatter.lower()]
+                    'type': lambda x: type(x).__name__}[formatter.lower()]
         except KeyError:
             raise ValueError("Invalid formatter '%s'. Available "
                              "'str', 'repr', 'ascii', 'len', and 'type'." % formatter)
