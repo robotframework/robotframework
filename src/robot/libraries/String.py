@@ -571,6 +571,10 @@ class String:
     def generate_random_string(self, length=8, chars='[LETTERS][NUMBERS]'):
         """Generates a string with a desired ``length`` from the given ``chars``.
 
+        ``length`` can be given as a number, a string representation of a number,
+        or as a range of numbers, such as ``5-10``. When a range of values is given
+        the range will be selected by random within the range.
+
         The population sequence ``chars`` contains the characters to use
         when generating the random string. It can contain any
         characters, and it is possible to use special markers
@@ -587,10 +591,18 @@ class String:
         | ${low} = | Generate Random String | 12 | [LOWER]         |
         | ${bin} = | Generate Random String | 8  | 01              |
         | ${hex} = | Generate Random String | 4  | [NUMBERS]abcdef |
+        | ${rnd} = | Generate Random String | 5-10 | # Generates a string 5 to 10 characters long |
+
+        Giving ``length`` as a range of values is new in Robot Framework 5.0.
         """
         if length == '':
             length = 8
-        length = self._convert_to_integer(length, 'length')
+        if isinstance(length, str) and re.match(r'^\d+-\d+$', length):
+            min_length, max_length = length.split('-')
+            length = randint(self._convert_to_integer(min_length, "length"),
+                             self._convert_to_integer(max_length, "length"))
+        else:
+            length = self._convert_to_integer(length, 'length')
         for name, value in [('[LOWER]', ascii_lowercase),
                             ('[UPPER]', ascii_uppercase),
                             ('[LETTERS]', ascii_lowercase + ascii_uppercase),
