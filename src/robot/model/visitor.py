@@ -261,14 +261,14 @@ class SuiteVisitor:
         """Called when TRY/EXCEPT branch ends. Default implementation does nothing."""
         pass
 
-    def start_if_branch(self, branch):
+    def start_try_branch(self, branch):
         """Called when IF/ELSE branch starts. Default implementation does nothing.
 
         Can return explicit ``False`` to stop visiting.
         """
         pass
 
-    def end_if_branch(self, branch):
+    def end_try_branch(self, branch):
         """Called when IF/ELSE branch ends. Default implementation does nothing."""
         pass
 

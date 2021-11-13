@@ -53,6 +53,15 @@ class Block(ast.AST):
         pass
 
 
+class HeaderAndBody(Block):
+    _fields = ('header', 'body')
+
+    def __init__(self, header, body=None, errors=()):
+        self.header = header
+        self.body = body or []
+        self.errors = errors
+
+
 class File(Block):
     _fields = ('sections',)
     _attributes = ('source',) + Block._attributes
@@ -234,28 +243,27 @@ class For(Block):
 
 
 class Try(Block):
-    _fields = ('header', 'body', 'handlers', 'end')
+    _fields = ('header', 'body', 'handlers', 'orelse', 'end')
 
-    def __init__(self, header, body=None, handlers=None, end=None, errors=()):
+    def __init__(self, header, body=None, handlers=None, orelse=None, end=None, errors=()):
         self.header = header
         self.body = body or []
         self.handlers = handlers or []
+        self.orelse = orelse
         self.end = end
         self.errors = errors
 
 
-class Except(Block):
-    _fields = ('header', 'body', 'end')
-
-    def __init__(self, header, body=None, errors=()):
-        self.header = header
-        self.body = body or []
-        self.end = None
-        self.errors = errors
+class Except(HeaderAndBody):
+    end = None  # FIXME
 
     @property
     def pattern(self):
         return self.header.pattern
+
+
+class TryElse(HeaderAndBody):
+    pass
 
 
 class ModelWriter(ModelVisitor):

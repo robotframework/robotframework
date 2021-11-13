@@ -56,6 +56,15 @@ class IfBranches(model.IfBranches):
     __slots__ = []
 
 
+class ExceptHandlers(model.ExceptHandlers):
+    __slots__ = []
+
+
+class Block(model.Block):
+    __slots__ = []
+    body_class = Body
+
+
 @Body.register
 class Keyword(model.Keyword):
     """Represents a single executable keyword.
@@ -131,12 +140,15 @@ class IfBranch(model.IfBranch):
         return self.parent.source if self.parent is not None else None
 
 
-class Except(model.Except):
+@Body.register
+class Try(model.Try):
     __slots__ = ['lineno', 'error']
-    body_class = Body
+    try_class = Block
+    handlers_class = ExceptHandlers
+    else_class = Block
 
-    def __init__(self, pattern=None, parent=None, lineno=None, error=None):
-        model.Except.__init__(self, pattern, parent)
+    def __init__(self, parent=None, lineno=None, error=None):
+        model.Try.__init__(self, parent)
         self.lineno = lineno
         self.error = error
 
@@ -148,14 +160,13 @@ class Except(model.Except):
         return TryRunner(context, run, templated).run(self)
 
 
-@Body.register
-class Try(model.Try):
+@ExceptHandlers.register
+class Except(model.Except):
     __slots__ = ['lineno', 'error']
     body_class = Body
-    except_class = Except
 
-    def __init__(self, parent=None, lineno=None, error=None):
-        model.Try.__init__(self, parent)
+    def __init__(self, pattern=None, parent=None, lineno=None, error=None):
+        model.Except.__init__(self, pattern, parent)
         self.lineno = lineno
         self.error = error
 

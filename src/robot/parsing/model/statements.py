@@ -886,7 +886,7 @@ class ElseHeader(IfElseHeader):
 
 
 @Statement.register
-class Try(Statement):
+class TryHeader(Statement):
     type = Token.TRY
 
     @classmethod
@@ -903,7 +903,7 @@ class Try(Statement):
 
 
 @Statement.register
-class Except(Statement):
+class ExceptHeader(Statement):
     type = Token.EXCEPT
 
     @classmethod

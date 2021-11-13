@@ -15,8 +15,23 @@
 
 from robot.utils import setter
 
-from .body import Body, BodyItem, IfBranches
+from .body import Body, BodyItem, IfBranches, ExceptHandlers
 from .keyword import Keywords
+
+
+class Block(BodyItem):
+    body_class = Body
+    __slots__ = ['type', 'parent']
+    repr_args = ('type',)
+
+    def __init__(self, type, parent=None):
+        self.type = type
+        self.parent = parent
+        self.body = None
+
+    @setter
+    def body(self, body):
+        return self.body_class(self, body)
 
 
 @Body.register
@@ -116,10 +131,39 @@ class IfBranch(BodyItem):
         visitor.visit_if_branch(self)
 
 
+@Body.register
+class Try(BodyItem):
+    type = BodyItem.TRY_EXCEPT_ROOT
+    try_class = Block
+    handlers_class = ExceptHandlers
+    else_class = Block
+    __slots__ = ['parent', 'try_block', 'else_block']
+
+    def __init__(self, parent=None):
+        self.parent = parent
+        self.try_block = self.try_class(BodyItem.TRY, self)
+        self.handlers = None
+        self.else_block = self.else_class(BodyItem.ELSE, self)
+
+    @setter
+    def handlers(self, handlers):
+        return self.handlers_class(self, handlers)
+
+    @property
+    def id(self):
+        """Root TRY/EXCEPT id is always ``None``."""
+        return None
+
+    def visit(self, visitor):
+        visitor.visit_try(self)
+
+
+@ExceptHandlers.register
 class Except(BodyItem):
     type = BodyItem.EXCEPT
     body_class = Body
-    repr_args = ('pattern',)
+    repr_args = ('type', 'pattern')
+    __slots__ = ['pattern']
 
     def __init__(self, pattern=None, parent=None):
         self.pattern = pattern
@@ -130,33 +174,25 @@ class Except(BodyItem):
     def body(self, body):
         return self.body_class(self, body)
 
-    def visit(self, visitor):
-        visitor.visit_try(self)
+    @property
+    def id(self):
+        """Branch id omits the root IF/ELSE object from the parent id part."""
+        if not self.parent:
+            return 'k1'
+        index = self.parent.body.index(self) + 1
+        if not self.parent.parent:
+            return 'k%d' % index
+        return '%s-k%d' % (self.parent.parent.id, index)
 
-
-@Body.register
-class Try(BodyItem):
-    type = BodyItem.TRY
-    body_class = Body
-    except_class = Except
-    repr_args = ('handlers',)
-
-    def __init__(self, handlers=None, parent=None):
-        self.handlers = handlers or []
-        self.parent = parent
-        self.body = None
-
-    @setter
-    def body(self, body):
-        return self.body_class(self, body)
+    def __str__(self):
+        if self.type == self.TRY:
+            return 'TRY'
+        if self.type == self.EXCEPT:
+            return 'EXCEPT    %s' % self.condition
+        return 'ELSE'
 
     def visit(self, visitor):
-        visitor.visit_try(self)
-
-    def create_except(self, *args, **kwargs):
-        except_ = self.except_class(*args, **kwargs)
-        self.handlers.append(except_)
-        return except_
+        visitor.visit_try_branch(self)
 
 
 @Body.register

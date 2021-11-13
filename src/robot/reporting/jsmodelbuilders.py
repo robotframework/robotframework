@@ -20,7 +20,6 @@ from .jsbuildingcontext import JsBuildingContext
 from .jsexecutionresult import JsExecutionResult
 
 
-IF_ELSE_ROOT = BodyItem.IF_ELSE_ROOT
 STATUSES = {'FAIL': 0, 'PASS': 1, 'SKIP': 2, 'NOT RUN': 3}
 KEYWORD_TYPES = {'KEYWORD': 0, 'SETUP': 1, 'TEARDOWN': 2,
                  'FOR': 3, 'FOR ITERATION': 4,
@@ -82,10 +81,14 @@ class _Builder:
     def _flatten_ifs(self, steps):
         result = []
         for step in steps:
-            if step.type != IF_ELSE_ROOT:
-                result.append(step)
-            else:
+            if step.type == BodyItem.IF_ELSE_ROOT:
                 result.extend(step.body)
+            elif step.type == BodyItem.TRY_EXCEPT_ROOT:
+                result.append(step.try_block)
+                result.extend(step.handlers)
+                # result.append(step.else_block)
+            else:
+                result.append(step)
         return result
 
 
@@ -166,8 +169,6 @@ class KeywordBuilder(_Builder):
             kws = list(kw.body)
             if getattr(kw, 'has_teardown', False):
                 kws.append(kw.teardown)
-            if getattr(kw, 'handlers', False):
-                kws.extend(kw.handlers)
             prune = (kw.body,)
         else:
             kws = []

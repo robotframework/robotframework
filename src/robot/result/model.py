@@ -75,6 +75,10 @@ class IfBranches(Body, model.IfBranches):
     __slots__ = []
 
 
+class ExceptHandlers(Body, model.ExceptHandlers):
+    __slots__ = []
+
+
 @Body.register
 class Message(model.Message):
     __slots__ = []
@@ -138,6 +142,19 @@ class StatusMixin:
         if not not_run:
             raise ValueError("`not_run` value must be truthy, got '%s'." % not_run)
         self.status = self.NOT_RUN
+
+
+class Block(model.Block, StatusMixin, DeprecatedAttributesMixin):
+    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+    body_class = Body
+
+    def __init__(self, type, status='FAIL', starttime=None, endtime=None,
+                 doc='', parent=None):
+        super().__init__(type, parent)
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.doc = doc
 
 
 @ForIterations.register
@@ -222,27 +239,11 @@ class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
         return self.condition
 
 
-class Except(model.Except, StatusMixin, DeprecatedAttributesMixin):
-    body_class = Body
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
-
-    def __init__(self, pattern=None, parent=None, status='FAIL', starttime=None, endtime=None, doc=''):
-        model.Except.__init__(self, pattern, parent)
-        self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
-        self.doc = doc
-
-    @property
-    @deprecated
-    def kwname(self):
-        return self.pattern
-
-
 @Body.register
 class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
-    body_class = Body
-    except_class = Except
+    try_class = Block
+    handlers_class = ExceptHandlers
+    else_class = Block
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
     def __init__(self, parent=None, status='FAIL', starttime=None, endtime=None, doc=''):
@@ -251,6 +252,25 @@ class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
         self.starttime = starttime
         self.endtime = endtime
         self.doc = doc
+
+
+@ExceptHandlers.register
+class Except(model.Except, StatusMixin, DeprecatedAttributesMixin):
+    body_class = Body
+    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+
+    def __init__(self, pattern=None, status='FAIL',
+                 starttime=None, endtime=None, doc='', parent=None):
+        model.Except.__init__(self, pattern, parent)
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.doc = doc
+
+    @property
+    @deprecated
+    def name(self):
+        return self.pattern
 
 
 @Body.register

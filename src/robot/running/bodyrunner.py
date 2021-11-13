@@ -20,7 +20,7 @@ import re
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           ExecutionStatus, ExitForLoop, ContinueForLoop, DataError)
 from robot.result import (For as ForResult, If as IfResult, IfBranch as IfBranchResult,
-                          Try as TryResult, Except as ExceptResult)
+                          Try as TryResult, Except as TryHandlerResult, Block as BlockResult)
 from robot.output import librarylogger as logger
 from robot.utils import (cut_assign_value, frange, get_error_message, is_string,
                          is_list_like, is_number, plural_or_not as s,
@@ -393,25 +393,34 @@ class TryRunner:
         self._templated = templated
 
     def run(self, data):
-        result = TryResult()
-        with StatusReporter(data, result, self._context, self._run):
+        with StatusReporter(data, TryResult(), self._context, self._run):
             failures = None
             if self._run:
                 if data.error:
                     raise DataError(data.error)
-            runner = BodyRunner(self._context, self._run, self._templated)
+            result = BlockResult(data.try_block.type)
             try:
-                runner.run(data.body)
+                with StatusReporter(data.try_block, result, self._context, self._run):
+                    runner = BodyRunner(self._context, self._run, self._templated)
+                    runner.run(data.try_block.body)
             except ExecutionFailures as error:
                 failures = error
 
-            for handler in data.handlers:
-                run = failures and self._error_is_expected(failures.message, handler.pattern)
-                with StatusReporter(handler, ExceptResult(handler.pattern), self._context, run):
-                    runner = BodyRunner(self._context, run, self._templated)
-                    runner.run(handler.body)
+            self._run_except_handlers(data, failures)
 
         return self._run
+
+    def _run_except_handlers(self, data, failures):
+        handler_matched = False
+        for handler in data.handlers:
+            run = failures and self._error_is_expected(failures.message, handler.pattern)
+            if run:
+                handler_matched = True
+            with StatusReporter(handler, TryHandlerResult(handler.pattern), self._context, run):
+                runner = BodyRunner(self._context, run, self._templated)
+                runner.run(handler.body)
+        if not handler_matched and failures:
+            raise failures
 
     def _error_is_expected(self, error, expected_error):
         glob = self._matches

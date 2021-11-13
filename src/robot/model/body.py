@@ -29,6 +29,7 @@ class BodyItem(ModelObject):
     IF = 'IF'
     ELSE_IF = 'ELSE IF'
     ELSE = 'ELSE'
+    TRY_EXCEPT_ROOT = 'TRY/EXCEPT ROOT'
     TRY = 'TRY'
     EXCEPT = 'EXCEPT'
     RETURN = 'RETURN'
@@ -154,3 +155,14 @@ class IfBranches(Body):
 
     def create_branch(self, *args, **kwargs):
         return self.append(self.if_branch_class(*args, **kwargs))
+
+
+class ExceptHandlers(Body):
+    except_class = None
+    keyword_class = None
+    for_class = None
+    if_class = None
+    __slots__ = []
+
+    def create_except(self, *args, **kwargs):
+        return self.append(self.except_class(*args, **kwargs))
