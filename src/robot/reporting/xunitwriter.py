@@ -49,7 +49,8 @@ class XUnitFileWriter(ResultVisitor):
                  'errors': '0',
                  'failures': failures,
                  'skipped': skipped,
-                 'time': self._time_as_seconds(suite.elapsedtime)}
+                 'time': self._time_as_seconds(suite.elapsedtime),
+                 'timestamp' : self._starttime_to_isoformat(suite.starttime)}
         self._writer.start('testsuite', attrs)
 
     def _get_stats(self, statistics):
@@ -90,3 +91,8 @@ class XUnitFileWriter(ResultVisitor):
 
     def end_result(self, result):
         self._writer.close()
+
+    def _starttime_to_isoformat(self, stime):
+        if not stime:
+            return None
+        return f'{stime[:4]}-{stime[4:6]}-{stime[6:8]}T{stime[9:22]}000'

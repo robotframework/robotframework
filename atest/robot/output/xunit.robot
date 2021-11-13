@@ -8,6 +8,8 @@ Suite Setup         Run Tests    -x xunit.xml -l log.html --skiponfailure täg  
 ${TESTDATA}         misc/non_ascii.robot
 ${PASS AND FAIL}    misc/pass_and_fail.robot
 ${INVALID}          %{TEMPDIR}${/}ïnvälïd-xünït.xml
+${MERGE ONE}        %{TEMPDIR}${/}merge1.xml
+${MERGE TWO}        %{TEMPDIR}${/}merge2.xml
 
 *** Test Cases ***
 XUnit File Is Created
@@ -53,6 +55,10 @@ Test has execution time
     Should match    ${test.attrib['time']}    ?.???
     Should be true    ${test.attrib['time']} > 0
 
+Suite has execution timestamp
+    Verify XUnit Timestamp
+    ...    ${{datetime.datetime.strptime($SUITE.starttime, '%Y%m%d %H:%M:%S.%f').strftime('%Y-%m-%dT%H:%M:%S.%f')}}
+
 No XUnit Option Given
     Run Tests    ${EMPTY}    ${TESTDATA}
     Stdout Should Not Contain    XUnit
@@ -70,6 +76,20 @@ Invalid XUnit File
 Skipping non-critical tests is deprecated
     Run tests    --xUnit xunit.xml --xUnitSkipNonCritical     ${PASS AND FAIL}
     Stderr Should Contain   Command line option --xunitskipnoncritical has been deprecated and has no effect.
+
+Merge outputs
+    Run Tests Without Processing Output    --output ${MERGE ONE}    ${PASS AND FAIL}
+    Run Tests Without Processing Output    --output ${MERGE TWO}    ${TESTDATA}
+    Execute On Existing Execution Environment
+    ...    ${INTERPRETER.rebot}    --xUnit xunit.xml -l log.html    ${MERGE TWO} ${MERGE ONE}    ${COMMON DEFAULTS}
+    Verify XUnit Timestamp    ${EMPTY}
+
+Rebot with start and end time
+    Run Tests    -l log.html    ${PASS AND FAIL}
+    Execute On Existing Execution Environment
+    ...    ${INTERPRETER.rebot}    -x xunit.xml -l log.html --starttime 20211215-12:11:10.456 --endtime 20211215-12:13:14.789
+    ...    ${OUTFILE}    ${COMMON DEFAULTS}
+    Verify XUnit Timestamp    2021-12-15T12:11:10.456000
 
 *** Keywords ***
 Get XUnit Node
@@ -89,3 +109,18 @@ Suite Stats Should Be
     Element Attribute Should Be       ${elem}    skipped     ${skipped}
     Element Attribute Should Match    ${elem}    time        ?.???
     Element Attribute Should Be       ${elem}    errors      0
+    Element Attribute Should Match    ${elem}    timestamp   ????-??-??T??:??:??.???000
+
+Verify XUnit Timestamp
+    [Arguments]    ${pattern}
+    File Should Exist    ${OUTDIR}/xunit.xml
+    ${suite} =    Get XUnit Node
+    Element Attribute Should Match    ${suite}    timestamp    ${pattern}
+
+Execute On Existing Execution Environment
+    [Arguments]    ${executor}    ${options}    ${sources}    ${default options}=
+    @{arguments} =    Get Execution Arguments    ${options}    ${sources}    ${default options}
+    ${result} =    Run Process    @{executor}    @{arguments}
+    ...    stdout=${STDOUTFILE}    stderr=${STDERRFILE}    output_encoding=SYSTEM
+    ...    timeout=5min    on_timeout=terminate
+    [Return]    ${result}
