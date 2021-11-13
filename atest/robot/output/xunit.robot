@@ -53,6 +53,10 @@ Test has execution time
     Should match    ${test.attrib['time']}    ?.???
     Should be true    ${test.attrib['time']} > 0
 
+Suite has execution timestamp
+    ${suite} =    Get XUnit Node
+    Should match    ${suite.attrib['timestamp']}    ????-??-??T??:??:??.???000
+
 No XUnit Option Given
     Run Tests    ${EMPTY}    ${TESTDATA}
     Stdout Should Not Contain    XUnit
@@ -89,3 +93,4 @@ Suite Stats Should Be
     Element Attribute Should Be       ${elem}    skipped     ${skipped}
     Element Attribute Should Match    ${elem}    time        ?.???
     Element Attribute Should Be       ${elem}    errors      0
+    Element Attribute Should Match    ${elem}    timestamp   ????-??-??T??:??:??.???000
