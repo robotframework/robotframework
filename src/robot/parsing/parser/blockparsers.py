@@ -128,7 +128,7 @@ class ExceptParser(TryParser):
         NestedBlockParser.__init__(self, Except(header))
 
     def handles(self, statement):
-        return statement.type not in (Token.END, Token.ELSE) \
+        return statement.type not in (Token.END, Token.ELSE, Token.EXCEPT) \
                and TryParser.handles(self, statement)
 
 
