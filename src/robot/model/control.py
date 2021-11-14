@@ -141,9 +141,9 @@ class Try(BodyItem):
 
     def __init__(self, parent=None):
         self.parent = parent
-        self.try_block = self.try_class(BodyItem.TRY, self)
+        self.try_block = self.try_class(BodyItem.TRY, parent=self)
         self.handlers = None
-        self.else_block = self.else_class(BodyItem.ELSE, self)
+        self.else_block = self.else_class(BodyItem.TRY_ELSE, parent=self)
 
     @setter
     def handlers(self, handlers):
@@ -188,7 +188,7 @@ class Except(BodyItem):
         if self.type == self.TRY:
             return 'TRY'
         if self.type == self.EXCEPT:
-            return 'EXCEPT    %s' % self.condition
+            return 'EXCEPT    %s' % self.pattern
         return 'ELSE'
 
     def visit(self, visitor):

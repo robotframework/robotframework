@@ -381,11 +381,13 @@ class TryBuilder(NodeVisitor):
 
     def build(self, node):
         self.model = self.parent.body.create_try(lineno=node.lineno,
-                                            error=format_error(self._get_errors(node)))
+                                                 error=format_error(self._get_errors(node)))
         for step in node.body:
             self.visit(step)
         for handler in node.handlers:
             self.visit(handler)
+        if node.orelse:
+            self.visit(node.orelse)
         return self.model
 
     def _get_errors(self, node):
@@ -396,6 +398,9 @@ class TryBuilder(NodeVisitor):
 
     def visit_Except(self, node):
         ExceptBuilder(self.model).build(node)
+
+    def visit_TryElse(self, node):
+        TryElseBuilder(self.model).build(node)
 
     def visit_KeywordCall(self, node):
         self.model.try_block.body.create_keyword(name=node.keyword, args=node.args,
@@ -412,6 +417,24 @@ class ExceptBuilder(NodeVisitor):
         self.model = self.parent.handlers.create_except(pattern=node.pattern,
                                                         lineno=node.lineno,
                                                         error=format_error(node.errors))
+        for step in node.body:
+            self.visit(step)
+        return self.model
+
+    def visit_KeywordCall(self, node):
+        self.model.body.create_keyword(name=node.keyword, args=node.args,
+                                       assign=node.assign, lineno=node.lineno)
+
+
+class TryElseBuilder(NodeVisitor):
+
+    def __init__(self, parent):
+        self.parent = parent
+        self.model = None
+
+    def build(self, node):
+        # FIXME: Should there be an __init__ to set lineno and error?
+        self.model = self.parent.else_block
         for step in node.body:
             self.visit(step)
         return self.model

@@ -24,7 +24,8 @@ STATUSES = {'FAIL': 0, 'PASS': 1, 'SKIP': 2, 'NOT RUN': 3}
 KEYWORD_TYPES = {'KEYWORD': 0, 'SETUP': 1, 'TEARDOWN': 2,
                  'FOR': 3, 'FOR ITERATION': 4,
                  'IF': 5, 'ELSE IF': 6, 'ELSE': 7,
-                 'RETURN': 8, 'TRY': 9, 'EXCEPT': 10}
+                 'RETURN': 8, 'TRY': 9, 'EXCEPT': 10,
+                 'TRY ELSE': 11}
 
 
 class JsModelBuilder:
@@ -86,7 +87,7 @@ class _Builder:
             elif step.type == BodyItem.TRY_EXCEPT_ROOT:
                 result.append(step.try_block)
                 result.extend(step.handlers)
-                # result.append(step.else_block)
+                result.append(step.else_block)
             else:
                 result.append(step)
         return result

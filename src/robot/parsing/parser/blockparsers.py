@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from ..lexer import Token
-from ..model import TestCase, Keyword, For, If, Try, Except
+from ..model import TestCase, Keyword, For, If, Try, Except, TryElse
 
 
 class Parser:
@@ -115,6 +115,10 @@ class TryParser(NestedBlockParser):
             parser = ExceptParser(statement)
             self.model.handlers.append(parser.model)
             return parser
+        if statement.type == Token.ELSE:
+            parser = TryElseParser(statement)
+            self.model.orelse = parser.model
+            return parser
         return NestedBlockParser.parse(self, statement)
 
 
@@ -124,4 +128,15 @@ class ExceptParser(TryParser):
         NestedBlockParser.__init__(self, Except(header))
 
     def handles(self, statement):
-        return statement.type != Token.END and TryParser.handles(self, statement)
+        return statement.type not in (Token.END, Token.ELSE) \
+               and TryParser.handles(self, statement)
+
+
+class TryElseParser(TryParser):
+
+    def __init__(self, header):
+        NestedBlockParser.__init__(self, TryElse(header))
+
+    def handles(self, statement):
+        return statement.type != Token.END \
+               and TryParser.handles(self, statement)

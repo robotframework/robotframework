@@ -32,6 +32,7 @@ class BodyItem(ModelObject):
     TRY_EXCEPT_ROOT = 'TRY/EXCEPT ROOT'
     TRY = 'TRY'
     EXCEPT = 'EXCEPT'
+    TRY_ELSE = 'TRY ELSE'
     RETURN = 'RETURN'
     MESSAGE = 'MESSAGE'
     type = None

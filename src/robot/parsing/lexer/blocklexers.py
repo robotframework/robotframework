@@ -288,5 +288,5 @@ class TryExceptLexer(NestedBlockLexer):
         return TryLexer(self.ctx).handles(statement)
 
     def lexer_classes(self):
-        return (TryLexer, ExceptLexer, ForHeaderLexer, InlineIfLexer, IfLexer,
+        return (TryLexer, ExceptLexer, ElseHeaderLexer, ForHeaderLexer, InlineIfLexer, IfLexer,
                 EndLexer, KeywordCallLexer)

@@ -263,7 +263,7 @@ class Except(HeaderAndBody):
 
 
 class TryElse(HeaderAndBody):
-    pass
+    end = None  # FIXME
 
 
 class ModelWriter(ModelVisitor):
