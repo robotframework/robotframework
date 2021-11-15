@@ -136,7 +136,8 @@ class XmlLogger(ResultVisitor):
         self._writer.end('block')
 
     def start_except(self, except_):
-        self._writer.start('except', {'type': except_.type, 'pattern': except_.pattern})
+        self._writer.start('except')
+        self._write_list('pattern', except_.pattern)
 
     def end_except(self, except_):
         self._write_status(except_)

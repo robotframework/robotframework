@@ -166,7 +166,7 @@ class Except(BodyItem):
     __slots__ = ['pattern']
 
     def __init__(self, pattern=None, parent=None):
-        self.pattern = pattern
+        self.pattern = pattern or []
         self.parent = parent
         self.body = None
 

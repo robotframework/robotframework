@@ -213,10 +213,19 @@ class BlockHandler(ElementHandler):
 @ElementHandler.register
 class ExceptHandler(ElementHandler):
     tag = 'except'
-    children = frozenset(('status', 'kw', 'for', 'if', 'try'))
+    children = frozenset(('pattern', 'status', 'kw', 'for', 'if', 'try'))
 
     def start(self, elem, result):
-        return result.handlers.create_except(pattern=elem.get('pattern'))
+        return result.handlers.create_except()
+
+
+@ElementHandler.register
+class PatternHandler(ElementHandler):
+    tag = 'pattern'
+    children = frozenset()
+
+    def start(self, elem, result):
+        return result.pattern.append(elem.text or '')
 
 
 @ElementHandler.register

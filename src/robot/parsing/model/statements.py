@@ -921,7 +921,7 @@ class ExceptHeader(Statement):
 
     @property
     def pattern(self):
-        return self.get_value(Token.ARGUMENT)
+        return self.get_values(Token.ARGUMENT)
 
 
 @Statement.register

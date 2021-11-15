@@ -427,17 +427,25 @@ class TryRunner:
         if not handler_matched and failures:
             raise failures
 
-    def _error_is_expected(self, error, expected_error):
+    def _error_is_expected(self, error, patterns):
+        if not patterns:
+            # Empty catch matches everything
+            return True
         glob = self._matches
         matchers = {'GLOB': glob,
                     'EQUALS': lambda s, p: s == p,
                     'STARTS': lambda s, p: s.startswith(p),
                     'REGEXP': lambda s, p: re.match(p, s) is not None}
         prefixes = tuple(prefix + ':' for prefix in matchers)
-        if not expected_error.startswith(prefixes):
-            return glob(error, expected_error)
-        prefix, expected_error = expected_error.split(':', 1)
-        return matchers[prefix](error, expected_error.lstrip())
+        for pattern in patterns:
+            if not pattern.startswith(prefixes):
+                if glob(error, pattern):
+                    return True
+            else:
+                prefix, pat = pattern.split(':', 1)
+                if matchers[prefix](error, pat.lstrip()):
+                    return True
+        return False
 
     def _matches(self, string, pattern, caseless=False):
         # Must use this instead of fnmatch when string may contain newlines.
