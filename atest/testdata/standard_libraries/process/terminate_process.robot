@@ -92,10 +92,12 @@ Terminate all processes
     END
 
 Terminating all empties cache
+    [Documentation]    FAIL Non-existing index or alias '1'.
     Some process
+    Some process
+    Switch process    ${2}
     Terminate All Processes    kill=True
-    ${handle} =    Some Process
-    Should Be Equal    ${handle}    ${1}
+    Switch process    ${1}
 
 *** Keywords ***
 Terminate should stop countdown

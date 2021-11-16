@@ -23,5 +23,8 @@ Running a process in a shell
 Input things to process
     Check Test Case    ${TESTNAME}
 
+Assign process object to variable
+    Check Test Case    ${TESTNAME}
+
 Get process id
     Check Test Case    ${TESTNAME}
