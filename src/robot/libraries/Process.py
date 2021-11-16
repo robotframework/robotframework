@@ -244,16 +244,15 @@ class Process:
 
     = Active process =
 
-    The test library keeps record which of the started processes is currently
-    active. By default it is latest process started with `Start Process`,
-    but `Switch Process` can be used to select a different one. Using
+    The library keeps record which of the started processes is currently active.
+    By default it is the latest process started with `Start Process`,
+    but `Switch Process` can be used to activate a different process. Using
     `Run Process` does not affect the active process.
 
     The keywords that operate on started processes will use the active process
     by default, but it is possible to explicitly select a different process
-    using the ``handle`` argument. The handle can be the identifier returned by
-    `Start Process` or an ``alias`` explicitly given to `Start Process` or
-    `Run Process`.
+    using the ``handle`` argument. The handle can be an ``alias`` explicitly
+    given to `Start Process` or the process object returned by it.
 
     = Result object =
 
@@ -373,24 +372,36 @@ class Process:
         for more information about the arguments, and `Run Process` keyword
         for related examples.
 
-        Makes the started process new `active process`. Returns the created 
-        process object [https://docs.python.org/3/library/subprocess.html#popen-constructor]
-        which can be assigned to a variable if needed.
-
-        Note: Returning an actual process object introduced in RF 5.0, previous versions
-        would only return a generic process handle.
+        Makes the started process new `active process`. Returns the created
+        [https://docs.python.org/3/library/subprocess.html#popen-constructor |
+        subprocess.Popen] object which can be be used later to active this
+        process. ``Popen`` attributes like ``pid`` can also be accessed directly.
 
         Processes are started so that they create a new process group. This
-        allows sending signals to and terminating also possible child
-        processes. This is not supported on Jython.
+        allows terminating and sending signals to possible child processes.
 
         Examples:
-        | Start Process | ${command} | alias=example |
-        | ${result} = | Wait For Process | example |
-        | ${process} = | Start Process | python | -c | print('Hello, world!') |
-        | ${result} = | Run Process | python | -c | import sys; print(sys.stdin.read().upper().strip()) | stdin=${process.stdout} |
-        | Wait For Process | ${process} |
-        | Should Be Equal | ${result.stdout} | HELLO, WORLD! |
+
+        Start process and wait for it to end later using alias:
+        | `Start Process` | ${command} | alias=example |
+        | # Other keywords |
+        | ${result} = | `Wait For Process` | example |
+
+        Use returned ``Popen`` object:
+        | ${process} = | `Start Process` | ${command} |
+        | `Log` | PID: ${process.pid} |
+        | # Other keywords |
+        | ${result} = | `Terminate Process` | ${process} |
+
+        Use started process in a pipeline with another process:
+        | ${process} = | `Start Process` | python | -c | print('Hello, world!') |
+        | ${result} = | `Run Process` | python | -c | import sys; print(sys.stdin.read().upper().strip()) | stdin=${process.stdout} |
+        | `Wait For Process` | ${process} |
+        | `Should Be Equal` | ${result.stdout} | HELLO, WORLD! |
+
+        Returning a ``subprocess.Popen`` object is new in Robot Framework 5.0.
+        Earlier versions returned a generic handle and getting the process object
+        required using `Get Process Object` separately.
         """
         conf = ProcessConfiguration(**configuration)
         command = conf.get_command(command, list(arguments))
@@ -661,8 +672,9 @@ class Process:
 
         If ``handle`` is not given, uses the current `active process`.
 
-        Notice that the pid is not the same as the handle returned by
-        `Start Process` that is used internally by this library.
+        Starting from Robot Framework 5.0, it is also possible to directly access
+        the ``pid`` attribute of the ``subprocess.Popen`` object returned by
+        `Start Process` like ``${process.pid}``.
         """
         return self._processes[handle].pid
 
@@ -670,6 +682,10 @@ class Process:
         """Return the underlying ``subprocess.Popen`` object.
 
         If ``handle`` is not given, uses the current `active process`.
+
+        Starting from Robot Framework 5.0, `Start Process` returns the created
+        ``subprocess.Popen`` object, not a generic handle, making this keyword
+        mostly redundant.
         """
         return self._processes[handle]
 
