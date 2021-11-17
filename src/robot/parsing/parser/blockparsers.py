@@ -71,7 +71,8 @@ class KeywordParser(BlockParser):
 class NestedBlockParser(BlockParser):
 
     def handles(self, statement):
-        return BlockParser.handles(self, statement) and not self.model.end
+        return BlockParser.handles(self, statement) and \
+               not getattr(self.model, 'end', False)
 
     def parse(self, statement):
         if statement.type == Token.END:

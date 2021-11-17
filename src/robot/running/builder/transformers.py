@@ -414,7 +414,7 @@ class ExceptBuilder(NodeVisitor):
         self.model = None
 
     def build(self, node):
-        self.model = self.parent.handlers.create_except(pattern=node.pattern,
+        self.model = self.parent.handlers.create_except(patterns=node.patterns,
                                                         lineno=node.lineno,
                                                         error=format_error(node.errors))
         for step in node.body:
@@ -433,8 +433,8 @@ class TryElseBuilder(NodeVisitor):
         self.model = None
 
     def build(self, node):
-        # FIXME: Should there be an __init__ to set lineno and error?
         self.model = self.parent.else_block
+        self.model.config(lineno=node.lineno, error=format_error(node.errors))
         for step in node.body:
             self.visit(step)
         return self.model

@@ -128,16 +128,16 @@ class XmlLogger(ResultVisitor):
         self._write_status(root)
         self._writer.end('try')
 
-    def start_try(self, try_):
+    def start_try_block(self, try_):
         self._writer.start('block', {'type': try_.type})
 
-    def end_try(self, try_):
+    def end_try_block(self, try_):
         self._write_status(try_)
         self._writer.end('block')
 
     def start_except(self, except_):
         self._writer.start('except')
-        self._write_list('pattern', except_.pattern)
+        self._write_list('pattern', except_.patterns)
 
     def end_except(self, except_):
         self._write_status(except_)

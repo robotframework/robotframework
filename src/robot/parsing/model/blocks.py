@@ -255,15 +255,14 @@ class Try(Block):
 
 
 class Except(HeaderAndBody):
-    end = None  # FIXME
 
     @property
-    def pattern(self):
-        return self.header.pattern
+    def patterns(self):
+        return self.header.patterns
 
 
 class TryElse(HeaderAndBody):
-    end = None  # FIXME
+    pass
 
 
 class ModelWriter(ModelVisitor):

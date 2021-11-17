@@ -225,7 +225,7 @@ class PatternHandler(ElementHandler):
     children = frozenset()
 
     def start(self, elem, result):
-        return result.pattern.append(elem.text or '')
+        return result.patterns.append(elem.text or '')
 
 
 @ElementHandler.register

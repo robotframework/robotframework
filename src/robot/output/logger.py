@@ -253,8 +253,8 @@ class LoggerProxy(AbstractLoggerProxy):
         'FOR': 'start_for',
         'FOR ITERATION': 'start_for_iteration',
         'TRY/EXCEPT ROOT': 'start_try_except',
-        'TRY': 'start_try',
-        'TRY ELSE': 'start_try',
+        'TRY': 'start_try_block',
+        'TRY ELSE': 'start_try_block',
         'EXCEPT': 'start_except',
         'RETURN': 'start_return'
     }
@@ -266,9 +266,9 @@ class LoggerProxy(AbstractLoggerProxy):
         'FOR': 'end_for',
         'FOR ITERATION': 'end_for_iteration',
         'TRY/EXCEPT ROOT': 'end_try_except',
-        'TRY': 'end_try',
+        'TRY': 'end_try_block',
         'EXCEPT': 'end_except',
-        'TRY ELSE': 'end_try',
+        'TRY ELSE': 'end_try_block',
         'RETURN': 'end_return'
     }
 

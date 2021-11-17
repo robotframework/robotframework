@@ -61,7 +61,7 @@ class ExceptHandlers(model.ExceptHandlers):
 
 
 class Block(model.Block):
-    __slots__ = []
+    __slots__ = ['lineno', 'error']
     body_class = Body
 
 
@@ -165,8 +165,8 @@ class Except(model.Except):
     __slots__ = ['lineno', 'error']
     body_class = Body
 
-    def __init__(self, pattern=None, parent=None, lineno=None, error=None):
-        model.Except.__init__(self, pattern, parent)
+    def __init__(self, patterns=None, parent=None, lineno=None, error=None):
+        model.Except.__init__(self, patterns, parent)
         self.lineno = lineno
         self.error = error
 
