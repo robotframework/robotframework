@@ -246,8 +246,9 @@ class SuiteVisitor:
         calling :meth:`start_try` or :meth:`end_try` nor visiting body.
         """
         if self.start_try(try_) is not False:
-            try_.body.visit(self)
-            # FIXME: add handlers visitation
+            try_.try_block.visit(self)
+            for handler in try_.handlers:
+                handler.visit(self)
             self.end_try(try_)
 
     def start_try(self, try_):
@@ -261,15 +262,30 @@ class SuiteVisitor:
         """Called when TRY/EXCEPT branch ends. Default implementation does nothing."""
         pass
 
-    def start_try_branch(self, branch):
+    def visit_block(self, block):
+        if self.start_block(block) is not False:
+            block.visit(self)
+
+    def start_block(self, block):
+        pass
+
+    def end_block(self, block):
+        pass
+
+    def visit_except(self, except_):
         """Called when IF/ELSE branch starts. Default implementation does nothing.
 
         Can return explicit ``False`` to stop visiting.
         """
+        if self.start_except(except_) is not False:
+            except_.visit(self)
+
+    def start_except(self, except_):
+        """Called when EXCEPT branch starts. Default implementation does nothing."""
         pass
 
-    def end_try_branch(self, branch):
-        """Called when IF/ELSE branch ends. Default implementation does nothing."""
+    def end_except(self, except_):
+        """Called when EXCEPT branch ends. Default implementation does nothing."""
         pass
 
     def visit_return(self, return_):

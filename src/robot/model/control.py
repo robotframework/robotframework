@@ -33,6 +33,9 @@ class Block(BodyItem):
     def body(self, body):
         return self.body_class(self, body)
 
+    def visit(self, visitor):
+        self.body.visit(visitor)
+
 
 @Body.register
 class For(BodyItem):
@@ -166,7 +169,6 @@ class Except(BodyItem):
     __slots__ = ['patterns']
 
     def __init__(self, patterns=None, parent=None):
-        # FIXME -> patterns
         self.patterns = patterns or []
         self.parent = parent
         self.body = None
@@ -179,7 +181,7 @@ class Except(BodyItem):
         return f'EXCEPT    {", ".join(self.patterns)}'
 
     def visit(self, visitor):
-        visitor.visit_try_branch(self)
+        self.body.visit(visitor)
 
 
 @Body.register
