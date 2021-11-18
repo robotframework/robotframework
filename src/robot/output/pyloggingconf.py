@@ -56,6 +56,9 @@ def set_level(level):
 
 
 class RobotHandler(logging.Handler):
+    def __init__(self, level=logging.NOTSET, library_logger=librarylogger):
+        super().__init__(level)
+        self.library_logger = library_logger
 
     def emit(self, record):
         message, error = self._get_message(record)
@@ -65,11 +68,11 @@ class RobotHandler(logging.Handler):
         method = self._get_logger_method(record.levelno)
         method(message)
         if error:
-            librarylogger.debug(error)
+            self.library_logger.debug(error)
 
     def _get_message(self, record):
         try:
-            return record.getMessage(), None
+            return self.format(record), None
         except:
             message = 'Failed to log following message properly: %s' \
                         % unic(record.msg)
@@ -78,11 +81,11 @@ class RobotHandler(logging.Handler):
 
     def _get_logger_method(self, level):
         if level >= logging.ERROR:
-            return librarylogger.error
+            return self.library_logger.error
         if level >= logging.WARNING:
-            return librarylogger.warn
+            return self.library_logger.warn
         if level >= logging.INFO:
-            return librarylogger.info
+            return self.library_logger.info
         if level >= logging.DEBUG:
-            return librarylogger.debug
-        return librarylogger.trace
+            return self.library_logger.debug
+        return self.library_logger.trace
