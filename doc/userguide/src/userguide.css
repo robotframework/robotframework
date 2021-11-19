@@ -38,6 +38,7 @@ customize this style sheet.
 
 @media (prefers-color-scheme: dark) {
     :root {
+        color-scheme: dark;
         --background-color: #1c2227;
         --text-color: #e2e1d7;
         --border-color: #4e4e4e;
@@ -121,6 +122,17 @@ body {
     }
 
 
+}
+
+@media (min-width: 1400px) {
+    body > * {
+        padding-left: calc(min(600px, 100vw - 1000px));
+    }
+
+    #table-of-contents{
+        width: max(25%, 100vw - 1020px);
+        max-width: 580px;
+    }
 }
 
 a {
