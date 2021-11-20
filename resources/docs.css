@@ -56,6 +56,21 @@ a {
     color: var(--link-color);
 }
 
+@-moz-document url-prefix() {
+    button,
+    input,
+    optgroup,
+    select,
+    textarea {
+      color: inherit;
+      font: inherit;
+      margin: 0;
+      background: var(--background-color);
+      border: solid 1px var(--border-color);
+      border-radius: 2px;
+    }
+}
+
 code {
     font-size: 0.9em;
     background-color: var(--code-bg);
