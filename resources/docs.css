@@ -1,5 +1,46 @@
+:root {
+    --background-color: white;
+    --text-color: black;
+    --border-color: #e0e0e2;
+    --light-background-color: #f3f3f3;
+    --robot-highlight: #00c0b5;
+    --highlighted-color: var(--text-color);
+    --highlighted-background-color: yellow;
+    --less-important-text-color: gray;
+    --link-color: #0000ee;
+    --code-bg: #f8f8f8;
+    --code-bg-hll: #ffffcc;
+}
+
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+        --background-color: #1c2227;
+        --text-color: #e2e1d7;
+        --border-color: #4e4e4e;
+        --light-background-color: #002b36;
+        --robot-highlight: yellow;
+        --highlighted-color: var(--background-color);
+        --highlighted-background-color: yellow;
+        --less-important-text-color: #5b6a6f;
+        --link-color: #52adff;
+        --code-bg: #002b36;
+        --code-bg-hll: #073642;
+    }
+}
+
+
+
 body {
     margin: 0 2em 10em 2em;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+body > div {
+    max-width: 1000px;
+    display: grid;
 }
 
 h2 > a {
@@ -11,9 +52,13 @@ h2 > a:hover:after {
     color: #C60F0F;
 }
 
+a {
+    color: var(--link-color);
+}
+
 code {
     font-size: 0.9em;
-    background-color: #EDEDED;
+    background-color: var(--code-bg);
     padding: 0 0.2em;
 }
 
@@ -28,4 +73,8 @@ code {
 th, td {
     padding: 0.2em 0.8em 0.2em 0;
     text-align: left;
+}
+
+td:nth-child(2) {
+    white-space: nowrap;
 }
