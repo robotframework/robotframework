@@ -93,7 +93,6 @@ class XUnitFileWriter(ResultVisitor):
         self._writer.close()
 
     def _starttime_to_isoformat(self, stime):
-        isoformat = None
-        if stime:
-            isoformat = f'{stime[:4]}-{stime[4:6]}-{stime[6:8]}T{stime[9:22]}000'
-        return isoformat
+        if not stime:
+            return None
+        return f'{stime[:4]}-{stime[4:6]}-{stime[6:8]}T{stime[9:22]}000'

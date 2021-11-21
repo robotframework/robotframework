@@ -74,6 +74,14 @@ Execute
     ...    timeout=5min    on_timeout=terminate
     [Return]    ${result}
 
+Execute On Existing Execution Environment
+    [Arguments]    ${executor}    ${options}    ${sources}    ${default options}=
+    @{arguments} =    Get Execution Arguments    ${options}    ${sources}    ${default options}
+    ${result} =    Run Process    @{executor}    @{arguments}
+    ...    stdout=${STDOUTFILE}    stderr=${STDERRFILE}    output_encoding=SYSTEM
+    ...    timeout=5min    on_timeout=terminate
+    [Return]    ${result}
+
 Get Execution Arguments
     [Arguments]    ${options}    ${sources}    ${default options}
     @{options} =    Split command line    --outputdir ${OUTDIR} ${default options} ${options}
