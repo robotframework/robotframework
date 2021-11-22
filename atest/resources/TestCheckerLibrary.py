@@ -6,8 +6,9 @@ from xmlschema import XMLSchema
 from robot import utils
 from robot.api import logger
 from robot.utils.asserts import assert_equal
-from robot.result import (ExecutionResultBuilder, For, If, ForIteration, Keyword,
-                          Result, ResultVisitor, TestCase, TestSuite)
+from robot.result import (ExecutionResultBuilder, For, If, ForIteration, Try,
+                          ExceptHandlers, Except, Block, Keyword, Result,
+                          ResultVisitor, TestCase, TestSuite)
 from robot.result.model import Body, ForIterations, IfBranches, IfBranch
 from robot.libraries.BuiltIn import BuiltIn
 
@@ -24,10 +25,30 @@ class NoSlotsIf(If):
     pass
 
 
+class NoSlotsExcept(Except):
+    pass
+
+
+class NoSlotsExceptHandlers(ExceptHandlers):
+    except_class = NoSlotsExcept
+    keyword_class = NoSlotsKeyword
+    for_class = NoSlotsFor
+    if_class = NoSlotsIf
+
+
+class NoSlotsTry(Try):
+    handlers_class = NoSlotsExceptHandlers
+
+
 class NoSlotsBody(Body):
     keyword_class = NoSlotsKeyword
     for_class = NoSlotsFor
     if_class = NoSlotsIf
+    try_class = NoSlotsTry
+
+
+class NoSlotsBlock(Block):
+    body_class = NoSlotsBody
 
 
 class NoSlotsIfBranch(IfBranch):
@@ -50,6 +71,9 @@ class NoSlotsForIterations(ForIterations):
 NoSlotsKeyword.body_class = NoSlotsBody
 NoSlotsFor.body_class = NoSlotsForIterations
 NoSlotsIf.body_class = NoSlotsIfBranches
+NoSlotsTry.try_class = NoSlotsBlock
+NoSlotsTry.else_class = NoSlotsBlock
+NoSlotsExcept.body_class = NoSlotsBody
 
 
 class NoSlotsTestCase(TestCase):
@@ -326,9 +350,6 @@ class ProcessResults(ResultVisitor):
 
     def start_if_branch(self, branch):
         self._add_kws_and_msgs(branch)
-
-    def start_try(self, try_):
-        self._add_kws_and_msgs(try_)
 
     def visit_errors(self, errors):
         errors.msgs = errors.messages
