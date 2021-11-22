@@ -7,7 +7,7 @@ from robot import utils
 from robot.api import logger
 from robot.utils.asserts import assert_equal
 from robot.result import (ExecutionResultBuilder, For, If, ForIteration, Try,
-                          ExceptHandlers, Except, Block, Keyword, Result,
+                          ExceptBlocks, Except, Block, Keyword, Result,
                           ResultVisitor, TestCase, TestSuite)
 from robot.result.model import Body, ForIterations, IfBranches, IfBranch
 from robot.libraries.BuiltIn import BuiltIn
@@ -29,7 +29,7 @@ class NoSlotsExcept(Except):
     pass
 
 
-class NoSlotsExceptHandlers(ExceptHandlers):
+class NoSlotsExceptBlocks(ExceptBlocks):
     except_class = NoSlotsExcept
     keyword_class = NoSlotsKeyword
     for_class = NoSlotsFor
@@ -37,7 +37,7 @@ class NoSlotsExceptHandlers(ExceptHandlers):
 
 
 class NoSlotsTry(Try):
-    handlers_class = NoSlotsExceptHandlers
+    excepts_class = NoSlotsExceptBlocks
 
 
 class NoSlotsBody(Body):
