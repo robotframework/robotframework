@@ -20,7 +20,6 @@ This will run only the unit tests in the subdirectory output
 """
 
 import argparse
-import getopt
 import os
 import sys
 import re
@@ -29,12 +28,12 @@ import warnings
 
 
 if not sys.warnoptions:
-    warnings.simplefilter('always')
+    warnings.simplefilter("always")
 
 
 base = os.path.abspath(os.path.normpath(os.path.split(sys.argv[0])[0]))
-for path in ['../src', '../atest/testresources/testlibs']:
-    path = os.path.join(base, path.replace('/', os.sep))
+for path in ["../src", "../atest/testresources/testlibs"]:
+    path = os.path.join(base, path.replace("/", os.sep))
     if path not in sys.path:
         sys.path.insert(0, path)
 
@@ -59,9 +58,8 @@ def get_tests(directory=None):
             modname = os.path.splitext(name)[0]
             if modname in imported:
                 print(
-                    "Test module '%s' imported both as '%s' and '%s'. "
-                    "Rename one or fix test discovery."
-                    % (modname, imported[modname], os.path.join(directory, name)),
+                    f"Test module '{modname}' imported both as '{imported[modname]}' and "
+                    + "'{os.path.join(directory, name)}'. Rename one or fix test discovery.",
                     file=sys.stderr,
                 )
                 sys.exit(1)
@@ -76,19 +74,19 @@ def usage_exit(msg=None):
     if msg is None:
         rc = 251
     else:
-        print('\nError:', msg)
+        print("\nError:", msg)
         rc = 252
     sys.exit(rc)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(add_help=False, description=__doc__)
-    parser.add_argument('-I', '--interpreter', default=sys.executable)
-    parser.add_argument('-h', '--help', action='store_true')
-    parser.add_argument('-q', dest='vrbst', action='store_const', const=0)
-    parser.add_argument('-v', dest='vrbst', action='store_const', const=2)
-    parser.add_argument('-d', dest='docs', action='store_true')
-    parser.add_argument(dest='directory', nargs='?', action='store', default=None)
+    parser.add_argument("-I", "--interpreter", default=sys.executable)
+    parser.add_argument("-h", "--help", action="store_true")
+    parser.add_argument("-q", dest="vrbst", action="store_const", const=0)
+    parser.add_argument("-v", dest="vrbst", action="store_const", const=2)
+    parser.add_argument("-d", dest="docs", action="store_true")
+    parser.add_argument(dest="directory", nargs="?", action="store", default=None)
     parser.set_defaults(vrbst=1)
 
     args = parser.parse_args()

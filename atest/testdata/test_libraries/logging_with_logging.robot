@@ -37,3 +37,6 @@ Timestamps are accurate
 Logging when timeout is in use
     [Timeout]    5 seconds
     Log something
+
+Log with format
+    Log with format

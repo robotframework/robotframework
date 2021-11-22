@@ -35,6 +35,17 @@ class MockLibraryLogger:
 
 
 class TestPyLogging(unittest.TestCase):
+    test_message = "This is a test message"
+    test_format = "%(name)s %(levelname)s %(message)s"
+
+    str_rep = {
+        logging.ERROR: "ERROR",
+        logging.WARNING: "WARNING",
+        logging.INFO: "INFO",
+        logging.DEBUG: "DEBUG",
+        logging.NOTSET: "TRACE",
+    }
+
     def setUp(self):
         self.library_logger = MockLibraryLogger()
         self.test_handler = pyLogging.RobotHandler(library_logger=self.library_logger)
@@ -49,93 +60,67 @@ class TestPyLogging(unittest.TestCase):
         root.removeHandler(self.test_handler)
 
     def test_python_logging_debug(self):
-        TESTMESSAGE = "This is a test message"
-        logging.debug(TESTMESSAGE)
-        message, level = self.library_logger.last_message
-        assert_equal(message, TESTMESSAGE)
-        assert_equal(level, logging.DEBUG)
+        logging.debug(self.test_message)
+        self.assert_message(self.test_message, logging.DEBUG)
 
     def test_python_logging_info(self):
-        TESTMESSAGE = "This is a test message"
-        logging.info(TESTMESSAGE)
-        message, level = self.library_logger.last_message
-        assert_equal(message, TESTMESSAGE)
-        assert_equal(level, logging.INFO)
+        logging.info(self.test_message)
+        self.assert_message(self.test_message, logging.INFO)
 
     def test_python_logging_warn(self):
-        TESTMESSAGE = "This is a test message"
-        logging.warning(TESTMESSAGE)
-        message, level = self.library_logger.last_message
-        assert_equal(message, TESTMESSAGE)
-        assert_equal(level, logging.WARNING)
+        logging.warning(self.test_message)
+        self.assert_message(self.test_message, logging.WARNING)
 
     def test_python_logging_error(self):
-        TESTMESSAGE = "This is a test message"
-        logging.error(TESTMESSAGE)
-        message, level = self.library_logger.last_message
-        assert_equal(message, TESTMESSAGE)
-        assert_equal(level, logging.ERROR)
+        logging.error(self.test_message)
+
+        self.assert_message(self.test_message, logging.ERROR)
 
     def test_python_logging_formatted_debug(self):
-        DEFAULTLOGGINGFORMAT = '%(name)s %(levelname)s %(message)s'
-        DEFAULTLOGGINGDATEFORMAT = '%m/%d %H:%M:%S'
-        TESTMESSAGE = "This is a test message"
-        FORMATTEDMESSAGE = f"root DEBUG {TESTMESSAGE}"
         old_formatter = self.test_handler.formatter
-        formatter = logging.Formatter(fmt=DEFAULTLOGGINGFORMAT)
+        formatter = logging.Formatter(fmt=self.test_format)
         self.test_handler.setFormatter(formatter)
 
-        logging.debug(TESTMESSAGE)
-        
-        message, level = self.library_logger.last_message
-        assert_equal(message, FORMATTEDMESSAGE)
-        assert_equal(level, logging.DEBUG)
+        logging.debug(self.test_message)
+
+        self.assert_formatted_message(logging.DEBUG)
         self.test_handler.setFormatter(old_formatter)
 
     def test_python_logging_formatted_info(self):
-        DEFAULTLOGGINGFORMAT = '%(name)s %(levelname)s %(message)s'
-        DEFAULTLOGGINGDATEFORMAT = '%m/%d %H:%M:%S'
-        TESTMESSAGE = "This is a test message"
-        FORMATTEDMESSAGE = f"root INFO {TESTMESSAGE}"
         old_formatter = self.test_handler.formatter
-        formatter = logging.Formatter(fmt=DEFAULTLOGGINGFORMAT)
+        formatter = logging.Formatter(fmt=self.test_format)
         self.test_handler.setFormatter(formatter)
 
-        logging.info(TESTMESSAGE)
-        
-        message, level = self.library_logger.last_message
-        assert_equal(message, FORMATTEDMESSAGE)
-        assert_equal(level, logging.INFO)
+        logging.info(self.test_message)
+
+        self.assert_formatted_message(logging.INFO)
         self.test_handler.setFormatter(old_formatter)
 
     def test_python_logging_formatted_warn(self):
-        DEFAULTLOGGINGFORMAT = '%(name)s %(levelname)s %(message)s'
-        DEFAULTLOGGINGDATEFORMAT = '%m/%d %H:%M:%S'
-        TESTMESSAGE = "This is a test message"
-        FORMATTEDMESSAGE = f"root WARNING {TESTMESSAGE}"
         old_formatter = self.test_handler.formatter
-        formatter = logging.Formatter(fmt=DEFAULTLOGGINGFORMAT)
+        formatter = logging.Formatter(fmt=self.test_format)
         self.test_handler.setFormatter(formatter)
 
-        logging.warning(TESTMESSAGE)
-        
-        message, level = self.library_logger.last_message
-        assert_equal(message, FORMATTEDMESSAGE)
-        assert_equal(level, logging.WARNING)
+        logging.warning(self.test_message)
+
+        self.assert_formatted_message(logging.WARNING)
         self.test_handler.setFormatter(old_formatter)
 
     def test_python_logging_formatted_error(self):
-        DEFAULTLOGGINGFORMAT = '%(name)s %(levelname)s %(message)s'
-        DEFAULTLOGGINGDATEFORMAT = '%m/%d %H:%M:%S'
-        TESTMESSAGE = "This is a test message"
-        FORMATTEDMESSAGE = f"root ERROR {TESTMESSAGE}"
         old_formatter = self.test_handler.formatter
-        formatter = logging.Formatter(fmt=DEFAULTLOGGINGFORMAT)
+        formatter = logging.Formatter(fmt=self.test_format)
         self.test_handler.setFormatter(formatter)
 
-        logging.error(TESTMESSAGE)
-        
-        message, level = self.library_logger.last_message
-        assert_equal(message, FORMATTEDMESSAGE)
-        assert_equal(level, logging.ERROR)
+        logging.error(self.test_message)
+
+        self.assert_formatted_message(logging.ERROR)
         self.test_handler.setFormatter(old_formatter)
+
+    def assert_message(self, message, level):
+        message_last, level_last = self.library_logger.last_message
+        assert_equal(message_last, message)
+        assert_equal(level_last, level)
+
+    def assert_formatted_message(self, logging_level):
+        formatted_message = f"root {self.str_rep[logging_level]} {self.test_message}"
+        self.assert_message(formatted_message, logging_level)
