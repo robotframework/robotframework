@@ -75,7 +75,7 @@ class IfBranches(Body, model.IfBranches):
     __slots__ = []
 
 
-class ExceptHandlers(Body, model.ExceptHandlers):
+class ExceptBlocks(Body, model.ExceptBlocks):
     __slots__ = []
 
 
@@ -242,7 +242,7 @@ class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
 @Body.register
 class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
     try_class = Block
-    handlers_class = ExceptHandlers
+    excepts_class = ExceptBlocks
     else_class = Block
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
@@ -254,7 +254,7 @@ class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
         self.doc = doc
 
 
-@ExceptHandlers.register
+@ExceptBlocks.register
 class Except(model.Except, StatusMixin, DeprecatedAttributesMixin):
     body_class = Body
     __slots__ = ['status', 'starttime', 'endtime', 'doc']

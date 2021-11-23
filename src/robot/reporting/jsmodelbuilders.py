@@ -86,8 +86,9 @@ class _Builder:
                 result.extend(step.body)
             elif step.type == BodyItem.TRY_EXCEPT_ROOT:
                 result.append(step.try_block)
-                result.extend(step.handlers)
-                result.append(step.else_block)
+                result.extend(step.except_blocks)
+                if step.else_block:
+                    result.append(step.else_block)
             else:
                 result.append(step)
         return result

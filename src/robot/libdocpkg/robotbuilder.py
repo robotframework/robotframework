@@ -106,7 +106,7 @@ class KeywordDocBuilder:
         self._resource = resource
 
     def build_keywords(self, lib):
-        return [self.build_keyword(kw) for kw in lib.handlers]
+        return [self.build_keyword(kw) for kw in lib.except_blocks]
 
     def build_keyword(self, kw):
         doc, tags = self._get_doc_and_tags(kw)

@@ -414,9 +414,9 @@ class ExceptBuilder(NodeVisitor):
         self.model = None
 
     def build(self, node):
-        self.model = self.parent.handlers.create_except(patterns=node.patterns,
-                                                        lineno=node.lineno,
-                                                        error=format_error(node.errors))
+        self.model = self.parent.except_blocks.create_except(patterns=node.patterns,
+                                                             lineno=node.lineno,
+                                                             error=format_error(node.errors))
         for step in node.body:
             self.visit(step)
         return self.model

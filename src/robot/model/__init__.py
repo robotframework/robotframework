@@ -25,7 +25,7 @@ elsewhere.
 This package is considered stable.
 """
 
-from .body import Body, BodyItem, IfBranches, ExceptHandlers
+from .body import Body, BodyItem, IfBranches, ExceptBlocks
 from .configurer import SuiteConfigurer
 from .control import For, If, IfBranch, Try, Except, Return, Block
 from .testsuite import TestSuite

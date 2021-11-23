@@ -56,7 +56,7 @@ class IfBranches(model.IfBranches):
     __slots__ = []
 
 
-class ExceptHandlers(model.ExceptHandlers):
+class ExceptBlocks(model.ExceptBlocks):
     __slots__ = []
 
 
@@ -144,7 +144,7 @@ class IfBranch(model.IfBranch):
 class Try(model.Try):
     __slots__ = ['lineno', 'error']
     try_class = Block
-    handlers_class = ExceptHandlers
+    excepts_class = ExceptBlocks
     else_class = Block
 
     def __init__(self, parent=None, lineno=None, error=None):
@@ -160,7 +160,7 @@ class Try(model.Try):
         return TryRunner(context, run, templated).run(self)
 
 
-@ExceptHandlers.register
+@ExceptBlocks.register
 class Except(model.Except):
     __slots__ = ['lineno', 'error']
     body_class = Body

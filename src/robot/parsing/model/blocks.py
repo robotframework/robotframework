@@ -243,7 +243,7 @@ class For(Block):
 
 
 class Try(Block):
-    _fields = ('header', 'body', 'handlers', 'orelse', 'end')
+    _fields = ('header', 'body', 'excepts', 'orelse', 'end')
 
     def __init__(self, header, body=None, handlers=None, orelse=None, end=None, errors=()):
         self.header = header
@@ -252,6 +252,10 @@ class Try(Block):
         self.orelse = orelse
         self.end = end
         self.errors = errors
+
+    def validate(self):
+        if not self.end:
+            self.errors += ('TRY has no closing END.',)
 
 
 class Except(HeaderAndBody):

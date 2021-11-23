@@ -247,8 +247,8 @@ class SuiteVisitor:
         """
         if self.start_try(try_) is not False:
             try_.try_block.visit(self)
-            for handler in try_.handlers:
-                handler.visit(self)
+            try_.except_blocks.visit(self)
+            try_.else_block.visit(self)
             self.end_try(try_)
 
     def start_try(self, try_):
@@ -262,29 +262,42 @@ class SuiteVisitor:
         """Called when TRY/EXCEPT branch ends. Default implementation does nothing."""
         pass
 
-    def visit_block(self, block):
-        if self.start_block(block) is not False:
-            block.visit(self)
+    def visit_try_block(self, block):
+        if self.start_try_block(block) is not False:
+            block.body.visit(self)
+            self.end_try_block(block)
 
-    def start_block(self, block):
+    def start_try_block(self, block):
         pass
 
-    def end_block(self, block):
+    def end_try_block(self, block):
         pass
 
-    def visit_except(self, except_):
+    def visit_else_block(self, block):
+        if self.start_else_block(block) is not False:
+            block.body.visit(self)
+            self.end_else_block(block)
+
+    def start_else_block(self, block):
+        pass
+
+    def end_else_block(self, block):
+        pass
+
+    def visit_except_block(self, block):
         """Called when IF/ELSE branch starts. Default implementation does nothing.
 
         Can return explicit ``False`` to stop visiting.
         """
-        if self.start_except(except_) is not False:
-            except_.visit(self)
+        if self.start_except_block(block) is not False:
+            block.visit(self)
+            self.end_except_block(block)
 
-    def start_except(self, except_):
+    def start_except_block(self, block):
         """Called when EXCEPT branch starts. Default implementation does nothing."""
         pass
 
-    def end_except(self, except_):
+    def end_except_block(self, block):
         """Called when EXCEPT branch ends. Default implementation does nothing."""
         pass
 

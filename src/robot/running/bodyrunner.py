@@ -395,31 +395,31 @@ class TryRunner:
     def run(self, data):
         with StatusReporter(data, TryResult(), self._context, self._run):
             failures = None
-            if self._run:
-                if data.error:
-                    raise DataError(data.error)
             result = BlockResult(data.try_block.type)
             try:
                 with StatusReporter(data.try_block, result, self._context, self._run):
+                    if self._run:
+                        if data.error:
+                            raise DataError(data.error)
                     runner = BodyRunner(self._context, self._run, self._templated)
                     runner.run(data.try_block.body)
             except ExecutionFailures as error:
                 failures = error
 
-            self._run_except_handlers(data, failures)
+            self._run_handlers(data, failures)
 
         return self._run
 
-    def _run_except_handlers(self, data, failures):
+    def _run_handlers(self, data, failures):
         handler_matched = False
-        for handler in data.handlers:
+        for handler in data.except_blocks:
             run = self._run and failures and self._error_is_expected(failures.message, handler.patterns)
             if run:
                 handler_matched = True
             with StatusReporter(handler, TryHandlerResult(handler.patterns), self._context, run):
                 runner = BodyRunner(self._context, run, self._templated)
                 runner.run(handler.body)
-        if data.else_block.body:
+        if data.else_block:
             run = self._run and not failures
             with StatusReporter(data.else_block, BlockResult(data.else_block.type), self._context, run):
                 runner = BodyRunner(self._context, run, self._templated)

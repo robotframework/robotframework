@@ -202,21 +202,39 @@ class IfBranchHandler(ElementHandler):
 
 
 @ElementHandler.register
-class BlockHandler(ElementHandler):
-    tag = 'block'
-    children = frozenset(('status', 'kw', 'for', 'if', 'try'))
+class TryHandler(ElementHandler):
+    tag = 'try'
+    children = frozenset(('status', 'tryblock', 'exceptblock', 'elseblock'))
 
     def start(self, elem, result):
-        return result.try_block if elem.get('type') == 'TRY' else result.else_block
+        return result.body.create_try()
+
+
+@ElementHandler.register
+class TryBlockHandler(ElementHandler):
+    tag = 'tryblock'
+    children = frozenset(('status', 'msg', 'kw', 'for', 'if', 'try'))
+
+    def start(self, elem, result):
+        return result.try_block
 
 
 @ElementHandler.register
 class ExceptHandler(ElementHandler):
-    tag = 'except'
+    tag = 'exceptblock'
     children = frozenset(('pattern', 'status', 'kw', 'for', 'if', 'try'))
 
     def start(self, elem, result):
-        return result.handlers.create_except()
+        return result.except_blocks.create_except()
+
+
+@ElementHandler.register
+class ElseBlockHandler(ElementHandler):
+    tag = 'elseblock'
+    children = frozenset(('status', 'msg', 'kw', 'for', 'if', 'try'))
+
+    def start(self, elem, result):
+        return result.else_block
 
 
 @ElementHandler.register
@@ -226,15 +244,6 @@ class PatternHandler(ElementHandler):
 
     def start(self, elem, result):
         return result.patterns.append(elem.text or '')
-
-
-@ElementHandler.register
-class TryHandler(ElementHandler):
-    tag = 'try'
-    children = frozenset(('status', 'block', 'except'))
-
-    def start(self, elem, result):
-        return result.body.create_try()
 
 
 @ElementHandler.register

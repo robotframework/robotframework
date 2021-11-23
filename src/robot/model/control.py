@@ -15,7 +15,7 @@
 
 from robot.utils import setter
 
-from .body import Body, BodyItem, IfBranches, ExceptHandlers
+from .body import Body, BodyItem, IfBranches, ExceptBlocks
 from .keyword import Keywords
 
 
@@ -34,7 +34,10 @@ class Block(BodyItem):
         return self.body_class(self, body)
 
     def visit(self, visitor):
-        self.body.visit(visitor)
+        visitor.visit_try_block(self) if self.type == 'TRY' else visitor.visit_else_block(self)
+
+    def __bool__(self):
+        return bool(self.body)
 
 
 @Body.register
@@ -138,19 +141,19 @@ class IfBranch(BodyItem):
 class Try(BodyItem):
     type = BodyItem.TRY_EXCEPT_ROOT
     try_class = Block
-    handlers_class = ExceptHandlers
+    excepts_class = ExceptBlocks
     else_class = Block
     __slots__ = ['parent', 'try_block', 'else_block']
 
     def __init__(self, parent=None):
         self.parent = parent
         self.try_block = self.try_class(BodyItem.TRY, parent=self)
-        self.handlers = None
+        self.except_blocks = None
         self.else_block = self.else_class(BodyItem.TRY_ELSE, parent=self)
 
     @setter
-    def handlers(self, handlers):
-        return self.handlers_class(self, handlers)
+    def except_blocks(self, excepts):
+        return self.excepts_class(self, excepts)
 
     @property
     def id(self):
@@ -161,7 +164,7 @@ class Try(BodyItem):
         visitor.visit_try(self)
 
 
-@ExceptHandlers.register
+@ExceptBlocks.register
 class Except(BodyItem):
     type = BodyItem.EXCEPT
     body_class = Body

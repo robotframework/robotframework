@@ -158,7 +158,7 @@ class IfBranches(Body):
         return self.append(self.if_branch_class(*args, **kwargs))
 
 
-class ExceptHandlers(Body):
+class ExceptBlocks(Body):
     except_class = None
     keyword_class = None
     for_class = None
