@@ -20,11 +20,10 @@ from importlib import invalidate_caches as invalidate_import_caches
 
 from robot.errors import DataError
 
-from .encoding import system_decode
 from .error import get_error_details
 from .robotpath import abspath, normpath
 from .robotinspect import is_init
-from .robottypes import type_name, is_unicode
+from .robottypes import type_name
 
 
 class Importer:

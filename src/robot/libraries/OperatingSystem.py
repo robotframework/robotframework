@@ -25,7 +25,7 @@ from robot.api import logger
 from robot.api.deco import keyword
 from robot.utils import (abspath, ConnectionCache, console_decode, del_env_var,
                          get_env_var, get_env_vars, get_time, is_truthy,
-                         is_unicode, normpath, parse_time, plural_or_not,
+                         is_string, normpath, parse_time, plural_or_not,
                          safe_str, secs_to_timestamp, secs_to_timestr, seq2str,
                          set_env_var, timestr_to_secs, CONSOLE_ENCODING, WINDOWS)
 
@@ -592,7 +592,7 @@ class OperatingSystem:
         encoding. `File Should Not Exist` can be used to avoid overwriting
         existing files.
         """
-        if is_unicode(content):
+        if is_string(content):
             content = bytes(bytearray(ord(c) for c in content))
         path = self._write_to_file(path, content, mode='wb')
         self._link("Created binary file '%s'.", path)

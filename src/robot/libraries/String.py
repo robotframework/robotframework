@@ -22,8 +22,7 @@ from string import ascii_lowercase, ascii_uppercase, digits
 
 from robot.api import logger
 from robot.api.deco import keyword
-from robot.utils import (FileReader, is_bytes, is_string, is_truthy, is_unicode,
-                         safe_str, type_name)
+from robot.utils import FileReader, is_bytes, is_string, is_truthy, safe_str, type_name
 from robot.version import get_version
 
 
@@ -122,7 +121,7 @@ class String:
 
         New in Robot Framework 3.2.
         """
-        if not is_unicode(string):
+        if not is_string(string):
             raise TypeError('This keyword works only with Unicode strings.')
         if is_string(exclude):
             exclude = [e.strip() for e in exclude.split(',')]
@@ -184,7 +183,7 @@ class String:
         byte strings, and `Convert To String` in ``BuiltIn`` if you need to
         convert arbitrary objects to Unicode strings.
         """
-        if is_unicode(bytes):
+        if is_string(bytes):
             raise TypeError('Cannot decode strings.')
         return bytes.decode(encoding, errors)
 
@@ -683,7 +682,7 @@ class String:
         On Python 3 this keyword behaves exactly the same way `Should Be String`.
         That keyword should be used instead and this keyword will be deprecated.
         """
-        if not is_unicode(item):
+        if not is_string(item):
             self._fail(msg, "'%s' is not a Unicode string.", item)
 
     def should_be_byte_string(self, item, msg=None):

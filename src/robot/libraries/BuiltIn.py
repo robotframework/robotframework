@@ -28,7 +28,7 @@ from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
 from robot.utils import (DotDict, escape, format_assign_message, get_error_message,
                          get_time, html_escape, is_falsy, is_integer, is_list_like,
-                         is_string, is_truthy, is_unicode, Matcher, normalize,
+                         is_string, is_truthy, Matcher, normalize,
                          normalize_whitespace, parse_time, prepr, plural_or_not as s,
                          RERAISED_EXCEPTIONS, roundup, safe_str, secs_to_timestr,
                          seq2str, split_from_equals, timestr_to_secs, type_name)
@@ -3376,7 +3376,7 @@ class _Misc(_BuiltInBase):
         self.log('Set test message to:\n%s' % message, level)
 
     def _get_new_text(self, old, new, append, handle_html=False):
-        if not is_unicode(new):
+        if not is_string(new):
             new = str(new)
         if not (is_truthy(append) and old):
             return new
@@ -3448,7 +3448,7 @@ class _Misc(_BuiltInBase):
         ``${SUITE METADATA}`` in a Python dictionary. Notice that modifying this
         variable directly has no effect on the actual metadata the suite has.
         """
-        if not is_unicode(name):
+        if not is_string(name):
             name = str(name)
         metadata = self._get_context(top).suite.metadata
         original = metadata.get(name, '')

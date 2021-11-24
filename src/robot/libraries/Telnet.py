@@ -29,7 +29,7 @@ except ImportError:
 from robot.api import logger
 from robot.api.deco import keyword
 from robot.utils import (ConnectionCache, is_bytes, is_string, is_truthy,
-                         is_unicode, secs_to_timestr, seq2str, timestr_to_secs)
+                         secs_to_timestr, seq2str, timestr_to_secs)
 from robot.version import get_version
 
 
@@ -932,7 +932,7 @@ class TelnetConnection(telnetlib.Telnet):
         self._verify_connection()
         if self._terminal_emulator:
             return self._terminal_read_until_regexp(expected)
-        expected = [self._encode(exp) if is_unicode(exp) else exp
+        expected = [self._encode(exp) if is_string(exp) else exp
                     for exp in expected]
         return self._telnet_read_until_regexp(expected)
 

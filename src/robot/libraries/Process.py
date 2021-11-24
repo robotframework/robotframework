@@ -20,8 +20,8 @@ from tempfile import TemporaryFile
 import signal as signal_module
 
 from robot.utils import (abspath, cmdline2list, ConnectionCache, console_decode,
-                         console_encode, is_list_like, is_string, is_unicode,
-                         is_truthy, NormalizedDict, secs_to_timestr, system_decode,
+                         console_encode, is_list_like, is_string, is_truthy,
+                         NormalizedDict, secs_to_timestr, system_decode,
                          system_encode, timestr_to_secs, WINDOWS)
 from robot.version import get_version
 from robot.api import logger
@@ -928,7 +928,7 @@ class ProcessConfiguration:
         if os.path.isfile(path):
             return open(path)
         stdin_file = TemporaryFile()
-        if is_unicode(stdin):
+        if is_string(stdin):
             stdin = console_encode(stdin, self.output_encoding, force=True)
         stdin_file.write(stdin)
         stdin_file.seek(0)

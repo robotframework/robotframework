@@ -16,7 +16,7 @@
 from collections.abc import MutableMapping
 import re
 
-from .robottypes import is_dict_like, is_unicode
+from .robottypes import is_dict_like, is_string
 
 
 def normalize(string, ignore=(), caseless=True, spaceless=True):
@@ -25,7 +25,7 @@ def normalize(string, ignore=(), caseless=True, spaceless=True):
     By default string is turned to lower case and all whitespace is removed.
     Additional characters can be removed by giving them in ``ignore`` list.
     """
-    empty = '' if is_unicode(string) else b''
+    empty = '' if is_string(string) else b''
     if isinstance(ignore, bytes):
         # Iterating bytes in Python3 yields integers.
         ignore = [bytes([i]) for i in ignore]

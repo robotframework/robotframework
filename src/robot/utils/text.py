@@ -20,7 +20,7 @@ import re
 
 from .charwidth import get_char_width
 from .misc import seq2str2
-from .robottypes import is_string, is_unicode
+from .robottypes import is_string
 from .unic import safe_str
 
 
@@ -93,7 +93,7 @@ def _dict_to_str(d):
 
 
 def cut_assign_value(value):
-    if not is_unicode(value):
+    if not is_string(value):
         value = safe_str(value)
     if len(value) > _MAX_ASSIGN_LENGTH:
         value = value[:_MAX_ASSIGN_LENGTH] + '...'
