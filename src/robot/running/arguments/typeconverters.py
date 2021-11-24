@@ -27,7 +27,7 @@ from numbers import Integral, Real
 
 from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import (FALSE_STRINGS, TRUE_STRINGS, eq, get_error_message, is_string,
-                         seq2str, type_name, unic)
+                         safe_str, seq2str, type_name)
 
 
 class TypeConverter:
@@ -109,7 +109,7 @@ class TypeConverter:
         ending = ': %s' % error if (error and error.args) else '.'
         raise ValueError(
             "Argument '%s' got value '%s'%s that cannot be converted to %s%s"
-            % (name, unic(value), value_type, self.type_name, ending)
+            % (name, safe_str(value), value_type, self.type_name, ending)
         )
 
     def _literal_eval(self, value, expected):

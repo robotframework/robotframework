@@ -1,46 +1,46 @@
 import unittest
 import re
 
-from robot.utils import unic, prepr, DotDict
+from robot.utils import safe_str, prepr, DotDict
 from robot.utils.asserts import assert_equal, assert_true
 
 
-class TestUnic(unittest.TestCase):
+class TestSafeStr(unittest.TestCase):
 
     def test_unicode_nfc_and_nfd_decomposition_equality(self):
         import unicodedata
         text = 'Hyv\xe4'
-        assert_equal(unic(unicodedata.normalize('NFC', text)), text)
+        assert_equal(safe_str(unicodedata.normalize('NFC', text)), text)
         # In Mac filesystem umlaut characters are presented in NFD-format.
         # This is to check that unic normalizes all strings to NFC
-        assert_equal(unic(unicodedata.normalize('NFD', text)), text)
+        assert_equal(safe_str(unicodedata.normalize('NFD', text)), text)
 
     def test_object_containing_unicode_repr(self):
-        assert_equal(unic(UnicodeRepr()), 'Hyv\xe4')
+        assert_equal(safe_str(UnicodeRepr()), 'Hyv\xe4')
 
     def test_list_with_objects_containing_unicode_repr(self):
         objects = [UnicodeRepr(), UnicodeRepr()]
-        result = unic(objects)
+        result = safe_str(objects)
         assert_equal(result, '[Hyv\xe4, Hyv\xe4]')
 
     def test_bytes_below_128(self):
-        assert_equal(unic('\x00-\x01-\x02-\x7f'), '\x00-\x01-\x02-\x7f')
+        assert_equal(safe_str('\x00-\x01-\x02-\x7f'), '\x00-\x01-\x02-\x7f')
 
     def test_bytes_above_128(self):
-        assert_equal(unic(b'hyv\xe4'), 'hyv\\xe4')
-        assert_equal(unic(b'\x00-\x01-\x02-\xe4'), '\x00-\x01-\x02-\\xe4')
+        assert_equal(safe_str(b'hyv\xe4'), 'hyv\\xe4')
+        assert_equal(safe_str(b'\x00-\x01-\x02-\xe4'), '\x00-\x01-\x02-\\xe4')
 
     def test_bytes_with_newlines_tabs_etc(self):
-        assert_equal(unic(b"\x00\xe4\n\t\r\\'"), "\x00\\xe4\n\t\r\\'")
+        assert_equal(safe_str(b"\x00\xe4\n\t\r\\'"), "\x00\\xe4\n\t\r\\'")
 
     def test_bytearray(self):
-        assert_equal(unic(bytearray(b'hyv\xe4')), 'hyv\\xe4')
-        assert_equal(unic(bytearray(b'\x00-\x01-\x02-\xe4')), '\x00-\x01-\x02-\\xe4')
-        assert_equal(unic(bytearray(b"\x00\xe4\n\t\r\\'")), "\x00\\xe4\n\t\r\\'")
+        assert_equal(safe_str(bytearray(b'hyv\xe4')), 'hyv\\xe4')
+        assert_equal(safe_str(bytearray(b'\x00-\x01-\x02-\xe4')), '\x00-\x01-\x02-\\xe4')
+        assert_equal(safe_str(bytearray(b"\x00\xe4\n\t\r\\'")), "\x00\\xe4\n\t\r\\'")
 
     def test_failure_in_str(self):
         failing = StrFails()
-        assert_equal(unic(failing), failing.unrepr)
+        assert_equal(safe_str(failing), failing.unrepr)
 
 
 class TestPrettyRepr(unittest.TestCase):

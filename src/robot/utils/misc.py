@@ -17,7 +17,7 @@ from operator import add, sub
 import re
 
 from .robottypes import is_integer
-from .unic import unic
+from .unic import safe_str
 
 
 def roundup(number, ndigits=0, return_type=None):
@@ -105,7 +105,7 @@ def plural_or_not(item):
 
 def seq2str(sequence, quote="'", sep=', ', lastsep=' and '):
     """Returns sequence in format `'item 1', 'item 2' and 'item 3'`."""
-    sequence = [quote + unic(item) + quote for item in sequence]
+    sequence = [f'{quote}{safe_str(item)}{quote}' for item in sequence]
     if not sequence:
         return ''
     if len(sequence) == 1:
@@ -118,7 +118,7 @@ def seq2str2(sequence):
     """Returns sequence in format `[ item 1 | item 2 | ... ]`."""
     if not sequence:
         return '[ ]'
-    return '[ %s ]' % ' | '.join(unic(item) for item in sequence)
+    return '[ %s ]' % ' | '.join(safe_str(item) for item in sequence)
 
 
 def test_or_task(text, rpa=False):

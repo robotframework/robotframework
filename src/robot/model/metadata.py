@@ -13,20 +13,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import is_string, NormalizedDict, unic
+from robot.utils import is_string, NormalizedDict
 
 
 class Metadata(NormalizedDict):
 
     def __init__(self, initial=None):
-        NormalizedDict.__init__(self, initial, ignore='_')
+        super().__init__(initial, ignore='_')
 
     def __setitem__(self, key, value):
         if not is_string(key):
-            key = unic(key)
+            key = str(key)
         if not is_string(value):
-            value = unic(value)
-        NormalizedDict.__setitem__(self, key, value)
+            value = str(value)
+        super().__setitem__(key, value)
 
     def __str__(self):
         return '{%s}' % ', '.join('%s: %s' % (k, self[k]) for k in self)

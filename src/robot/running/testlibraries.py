@@ -19,8 +19,8 @@ import os
 from robot.errors import DataError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER
-from robot.utils import (getdoc, get_error_details, Importer, is_init, normalize,
-                         seq2str2, unic, is_list_like, type_name)
+from robot.utils import (getdoc, get_error_details, Importer, is_init, is_list_like,
+                         normalize, seq2str2, type_name)
 
 from .arguments import EmbeddedArguments
 from .context import EXECUTION_CONTEXTS
@@ -139,7 +139,7 @@ class _BaseTestLibrary:
             or self._get_attr(libcode, '__version__')
 
     def _get_attr(self, object, attr, default='', upper=False):
-        value = unic(getattr(object, attr, default))
+        value = str(getattr(object, attr, default))
         if upper:
             value = normalize(value, ignore='_').upper()
         return value

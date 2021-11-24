@@ -70,7 +70,7 @@ from .sortable import Sortable
 from .text import (cut_assign_value, cut_long_message, format_assign_message,
                    get_console_length, getdoc, getshortdoc, pad_console_length,
                    split_tags_from_doc, split_args_from_name_or_path)
-from .unic import prepr, unic
+from .unic import prepr, safe_str
 
 
 def read_rest_data(rstfile):

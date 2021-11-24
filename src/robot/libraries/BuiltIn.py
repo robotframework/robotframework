@@ -26,14 +26,12 @@ from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
-from robot.utils import (DotDict, escape, format_assign_message,
-                         get_error_message, get_time, html_escape, is_falsy,
-                         is_integer, is_list_like, is_string, is_truthy,
-                         is_unicode, Matcher, normalize,
-                         normalize_whitespace, parse_time, prepr,
-                         plural_or_not as s, RERAISED_EXCEPTIONS,
-                         roundup, secs_to_timestr, seq2str, split_from_equals,
-                         timestr_to_secs, type_name, unic)
+from robot.utils import (DotDict, escape, format_assign_message, get_error_message,
+                         get_time, html_escape, is_falsy, is_integer, is_list_like,
+                         is_string, is_truthy, is_unicode, Matcher, normalize,
+                         normalize_whitespace, parse_time, prepr, plural_or_not as s,
+                         RERAISED_EXCEPTIONS, roundup, safe_str, secs_to_timestr,
+                         seq2str, split_from_equals, timestr_to_secs, type_name)
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (evaluate_expression, is_dict_variable,
                              is_list_variable, search_variable,
@@ -294,10 +292,7 @@ class _Converter(_BuiltInBase):
         want to create byte strings.
         """
         self._log_types(item)
-        return self._convert_to_string(item)
-
-    def _convert_to_string(self, item):
-        return unic(item)
+        return safe_str(item)
 
     def convert_to_boolean(self, item):
         """Converts the given item to Boolean true or false.
@@ -824,8 +819,8 @@ class _Verify(_BuiltInBase):
         in Robot Framework 4.1.
         """
         self._log_types_at_info_if_different(first, second)
-        first = self._convert_to_string(first)
-        second = self._convert_to_string(second)
+        first = safe_str(first)
+        second = safe_str(second)
         if ignore_case:
             first = first.lower()
             second = second.lower()
@@ -865,8 +860,8 @@ class _Verify(_BuiltInBase):
         and ``collapse_spaces`` is new in Robot Framework 4.1.
         """
         self._log_types_at_info_if_different(first, second)
-        first = self._convert_to_string(first)
-        second = self._convert_to_string(second)
+        first = safe_str(first)
+        second = safe_str(second)
         if ignore_case:
             first = first.lower()
             second = second.lower()
@@ -1248,8 +1243,8 @@ class _Verify(_BuiltInBase):
                     container = [self._collapse_spaces(x) for x in container]
         x = self.get_count(container, item)
         if not msg:
-            msg = "'%s' contains '%s' %d time%s, not %d time%s." \
-                    % (unic(orig_container), unic(item), x, s(x), count, s(count))
+            msg = "%r contains '%s' %d time%s, not %d time%s." \
+                    % (orig_container, item, x, s(x), count, s(count))
         self.should_be_equal_as_integers(x, count, msg, values=False)
 
     def get_count(self, container, item):
@@ -1447,8 +1442,8 @@ class _Verify(_BuiltInBase):
                         delimiter, quote_item1=True, quote_item2=True):
         if custom_message and not self._include_values(include_values):
             return custom_message
-        item1 = "'%s'" % unic(item1) if quote_item1 else unic(item1)
-        item2 = "'%s'" % unic(item2) if quote_item2 else unic(item2)
+        item1 = "'%s'" % safe_str(item1) if quote_item1 else safe_str(item1)
+        item2 = "'%s'" % safe_str(item2) if quote_item2 else safe_str(item2)
         default_message = '%s %s %s' % (item1, delimiter, item2)
         if not custom_message:
             return default_message
@@ -1782,7 +1777,7 @@ class _Variables(_BuiltInBase):
         match.resolve_base(self._variables)
         if not match.is_assign():
             raise DataError("Invalid variable name '%s'." % name)
-        return unic(match)
+        return str(match)
 
     def _resolve_var_name(self, name):
         if name.startswith('\\'):
@@ -1795,7 +1790,7 @@ class _Variables(_BuiltInBase):
         match.resolve_base(self._variables)
         if not match.is_assign():
             raise ValueError
-        return unic(match)
+        return str(match)
 
     def _get_var_value(self, name, values):
         if not values:
@@ -2025,7 +2020,7 @@ class _RunKeyword(_BuiltInBase):
         except ExecutionFailed as err:
             if err.dont_continue or err.skip:
                 raise
-            return 'FAIL', unic(err)
+            return 'FAIL', str(err)
 
     @run_keyword_variant(resolve=1)
     def run_keyword_and_warn_on_failure(self, name, *args):
@@ -2836,7 +2831,7 @@ class _Misc(_BuiltInBase):
         """
         if not items:
             return ''
-        items = [unic(item) for item in items]
+        items = [str(item) for item in items]
         if items[0].startswith('SEPARATOR='):
             sep = items[0][len('SEPARATOR='):]
             items = items[1:]
@@ -2911,7 +2906,7 @@ class _Misc(_BuiltInBase):
 
     def _get_formatter(self, formatter):
         try:
-            return {'str': unic,
+            return {'str': safe_str,
                     'repr': prepr,
                     'ascii': ascii,
                     'len': len,
@@ -2996,7 +2991,7 @@ class _Misc(_BuiltInBase):
         try:
             old = self._context.output.set_log_level(level)
         except DataError as err:
-            raise RuntimeError(unic(err))
+            raise RuntimeError(str(err))
         self._namespace.variables.set_global('${LOG_LEVEL}', level.upper())
         self.log('Log level changed from %s to %s.' % (old, level.upper()))
         return old
@@ -3044,7 +3039,7 @@ class _Misc(_BuiltInBase):
         try:
             self._namespace.import_library(name, args, alias)
         except DataError as err:
-            raise RuntimeError(unic(err))
+            raise RuntimeError(str(err))
 
     def _split_alias(self, args):
         if len(args) > 1 and normalize_whitespace(args[-2]) == 'WITH NAME':
@@ -3074,7 +3069,7 @@ class _Misc(_BuiltInBase):
         try:
             self._namespace.import_variables(path, list(args), overwrite=True)
         except DataError as err:
-            raise RuntimeError(unic(err))
+            raise RuntimeError(str(err))
 
     @run_keyword_variant(resolve=0)
     def import_resource(self, path):
@@ -3097,7 +3092,7 @@ class _Misc(_BuiltInBase):
         try:
             self._namespace.import_resource(path)
         except DataError as err:
-            raise RuntimeError(unic(err))
+            raise RuntimeError(str(err))
 
     def set_library_search_order(self, *search_order):
         """Sets the resolution order to use when a name matches multiple keywords.
@@ -3382,7 +3377,7 @@ class _Misc(_BuiltInBase):
 
     def _get_new_text(self, old, new, append, handle_html=False):
         if not is_unicode(new):
-            new = unic(new)
+            new = str(new)
         if not (is_truthy(append) and old):
             return new
         if handle_html:
@@ -3454,7 +3449,7 @@ class _Misc(_BuiltInBase):
         variable directly has no effect on the actual metadata the suite has.
         """
         if not is_unicode(name):
-            name = unic(name)
+            name = str(name)
         metadata = self._get_context(top).suite.metadata
         original = metadata.get(name, '')
         metadata[name] = self._get_new_text(original, value, append)
@@ -3546,7 +3541,7 @@ class _Misc(_BuiltInBase):
         try:
             return self._namespace.get_library_instance(name)
         except DataError as err:
-            raise RuntimeError(unic(err))
+            raise RuntimeError(str(err))
 
 
 class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):

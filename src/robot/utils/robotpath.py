@@ -23,7 +23,7 @@ from robot.errors import DataError
 from .encoding import system_decode
 from .platform import WINDOWS
 from .robottypes import is_unicode
-from .unic import unic
+from .unic import safe_str
 
 
 if WINDOWS:
@@ -46,7 +46,7 @@ def normpath(path, case_normalize=False):
     """
     if not is_unicode(path):
         path = system_decode(path)
-    path = unic(path)  # Handles NFC normalization on OSX
+    path = safe_str(path)  # Handles NFC normalization on OSX
     path = os.path.normpath(path)
     if case_normalize and CASE_INSENSITIVE_FILESYSTEM:
         path = path.lower()

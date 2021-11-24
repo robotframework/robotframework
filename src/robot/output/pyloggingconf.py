@@ -17,7 +17,7 @@ from contextlib import contextmanager
 import logging
 import traceback
 
-from robot.utils import get_error_details, unic
+from robot.utils import get_error_details, safe_str
 
 from . import librarylogger
 
@@ -72,7 +72,7 @@ class RobotHandler(logging.Handler):
             return record.getMessage(), None
         except:
             message = 'Failed to log following message properly: %s' \
-                        % unic(record.msg)
+                        % safe_str(record.msg)
             error = '\n'.join(get_error_details())
             return message, error
 

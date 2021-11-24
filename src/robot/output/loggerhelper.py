@@ -15,7 +15,7 @@
 
 from robot.errors import DataError
 from robot.model import Message as BaseMessage
-from robot.utils import get_timestamp, is_unicode, unic
+from robot.utils import get_timestamp, is_unicode, safe_str
 
 
 LEVELS = {
@@ -87,7 +87,7 @@ class Message(BaseMessage):
         if callable(msg):
             return msg
         if not is_unicode(msg):
-            msg = unic(msg)
+            msg = safe_str(msg)
         if '\r\n' in msg:
             msg = msg.replace('\r\n', '\n')
         return msg

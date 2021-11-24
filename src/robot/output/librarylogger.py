@@ -23,7 +23,7 @@ import sys
 import threading
 
 from robot.errors import DataError
-from robot.utils import unic, console_encode
+from robot.utils import console_encode
 
 from .logger import LOGGER
 from .loggerhelper import Message
@@ -37,7 +37,7 @@ def write(msg, level, html=False):
     # expose this functionality publicly. See the following issue for details:
     # https://github.com/robotframework/robotframework/issues/1505
     if callable(msg):
-        msg = unic(msg)
+        msg = str(msg)
     if level.upper() not in ('TRACE', 'DEBUG', 'INFO', 'HTML', 'WARN', 'ERROR'):
         raise DataError("Invalid log level '%s'." % level)
     if threading.current_thread().name in LOGGING_THREADS:
@@ -67,7 +67,7 @@ def error(msg, html=False):
 
 
 def console(msg, newline=True, stream='stdout'):
-    msg = unic(msg)
+    msg = str(msg)
     if newline:
         msg += '\n'
     stream = sys.__stdout__ if stream.lower() != 'stderr' else sys.__stderr__

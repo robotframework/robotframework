@@ -22,7 +22,8 @@ from string import ascii_lowercase, ascii_uppercase, digits
 
 from robot.api import logger
 from robot.api.deco import keyword
-from robot.utils import is_bytes, is_string, is_truthy, is_unicode, unic, FileReader
+from robot.utils import (FileReader, is_bytes, is_string, is_truthy, is_unicode,
+                         safe_str, type_name)
 from robot.version import get_version
 
 
@@ -666,7 +667,7 @@ class String:
         The default error message can be overridden with the optional ``msg`` argument.
         """
         if not is_string(item):
-            self._fail(msg, "'%s' is not a string.", item)
+            self._fail(msg, "'%s' is %s, not a string.", item, type_name(item))
 
     def should_not_be_string(self, item, msg=None):
         """Fails if the given ``item`` is a string.
@@ -772,5 +773,5 @@ class String:
 
     def _fail(self, message, default_template, *items):
         if not message:
-            message = default_template % tuple(unic(item) for item in items)
+            message = default_template % tuple(safe_str(item) for item in items)
         raise AssertionError(message)

@@ -19,7 +19,7 @@ from enum import Enum
 from inspect import isclass
 from typing import Union
 
-from robot.utils import setter, unic
+from robot.utils import safe_str, setter
 
 from .argumentconverter import ArgumentConverter
 from .argumentmapper import ArgumentMapper
@@ -142,9 +142,9 @@ class ArgInfo:
         try:
             return union.__args__
         except AttributeError:
-            # Python 3.5.2's typing uses __union_params__ instead
-            # of __args__. This block can likely be safely removed
-            # when Python 3.5 support is dropped
+            # Python 3.5.2's typing uses __union_params__ instead of __args__.
+            # FIXME: This block can likely be safely removed when Python 3.5
+            # support is dropped
             return union.__union_params__
 
     @property
@@ -164,7 +164,7 @@ class ArgInfo:
             return 'None'
         if isclass(typ):
             return typ.__name__
-        return re.sub(r'^typing\.(.+)', r'\1', unic(typ))
+        return re.sub(r'^typing\.(.+)', r'\1', str(typ))
 
     @property
     def default_repr(self):
@@ -172,7 +172,7 @@ class ArgInfo:
             return None
         if isinstance(self.default, Enum):
             return self.default.name
-        return unic(self.default)
+        return safe_str(self.default)
 
     def __str__(self):
         if self.kind == self.POSITIONAL_ONLY_MARKER:

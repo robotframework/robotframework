@@ -17,9 +17,8 @@ from contextlib import contextmanager
 from os.path import exists, dirname
 
 from robot.output.loggerhelper import LEVELS
-from robot.utils import (attribute_escape, get_link_path, html_escape,
-                         html_format, is_string, is_unicode, timestamp_to_secs,
-                         unic)
+from robot.utils import (attribute_escape, get_link_path, html_escape, html_format,
+                         is_string, is_unicode, safe_str, timestamp_to_secs)
 
 from .expandkeywordmatcher import ExpandKeywordMatcher
 from .stringcache import StringCache
@@ -44,7 +43,7 @@ class JsBuildingContext:
     def string(self, string, escape=True, attr=False):
         if escape and string:
             if not is_unicode(string):
-                string = unic(string)
+                string = safe_str(string)
             string = (html_escape if not attr else attribute_escape)(string)
         return self._strings.add(string)
 
