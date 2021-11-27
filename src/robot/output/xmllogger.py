@@ -150,6 +150,13 @@ class XmlLogger(ResultVisitor):
         self._write_status(block)
         self._writer.end('elseblock')
 
+    def start_finally_block(self, block):
+        self._writer.start('finallyblock')
+
+    def end_finally_block(self, block):
+        self._write_status(block)
+        self._writer.end('finallyblock')
+
     def start_return(self, return_):
         self._writer.start('return')
         for value in return_.values:

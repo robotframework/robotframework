@@ -204,7 +204,7 @@ class IfBranchHandler(ElementHandler):
 @ElementHandler.register
 class TryHandler(ElementHandler):
     tag = 'try'
-    children = frozenset(('status', 'tryblock', 'exceptblock', 'elseblock'))
+    children = frozenset(('status', 'tryblock', 'exceptblock', 'elseblock', 'finallyblock'))
 
     def start(self, elem, result):
         return result.body.create_try()
@@ -235,6 +235,15 @@ class ElseBlockHandler(ElementHandler):
 
     def start(self, elem, result):
         return result.else_block
+
+
+@ElementHandler.register
+class FinallyBlockHandler(ElementHandler):
+    tag = 'finallyblock'
+    children = frozenset(('status', 'msg', 'kw', 'for', 'if', 'try'))
+
+    def start(self, elem, result):
+        return result.finally_block
 
 
 @ElementHandler.register

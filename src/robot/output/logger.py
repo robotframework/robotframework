@@ -254,8 +254,9 @@ class LoggerProxy(AbstractLoggerProxy):
         'FOR ITERATION': 'start_for_iteration',
         'TRY/EXCEPT ROOT': 'start_try',
         'TRY': 'start_try_block',
-        'TRY ELSE': 'start_else_block',
         'EXCEPT': 'start_except_block',
+        'TRY ELSE': 'start_else_block',
+        'FINALLY': 'start_finally_block',
         'RETURN': 'start_return'
     }
     _end_keyword_methods = {
@@ -269,6 +270,7 @@ class LoggerProxy(AbstractLoggerProxy):
         'TRY': 'end_try_block',
         'EXCEPT': 'end_except_block',
         'TRY ELSE': 'end_else_block',
+        'FINALLY': 'end_finally_block',
         'RETURN': 'end_return'
     }
 

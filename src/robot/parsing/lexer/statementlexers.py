@@ -199,7 +199,6 @@ class ElseHeaderLexer(TypeAndArguments):
         return statement[0].value == 'ELSE'
 
 
-
 class TryLexer(TypeAndArguments):
     token_type = Token.TRY
 
@@ -212,6 +211,13 @@ class ExceptLexer(TypeAndArguments):
 
     def handles(self, statement):
         return statement[0].value == 'EXCEPT'
+
+
+class FinallyLexer(TypeAndArguments):
+    token_type = Token.FINALLY
+
+    def handles(self, statement):
+        return statement[0].value == 'FINALLY'
 
 
 class EndLexer(TypeAndArguments):

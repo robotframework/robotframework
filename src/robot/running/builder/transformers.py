@@ -388,10 +388,18 @@ class TryBuilder(NodeVisitor):
             self.visit(handler)
         if node.orelse:
             self.visit(node.orelse)
+        if node.finalbody:
+            self.visit(node.finalbody)
         return self.model
 
     def _get_errors(self, node):
         errors = node.header.errors + node.errors
+        for handler in node.handlers:
+            errors += handler.errors
+        if node.orelse:
+            errors += node.orelse.errors + node.orelse.header.errors
+        if node.finalbody:
+            errors += node.finalbody.errors + node.finalbody.header.errors
         if node.end:
             errors += node.end.errors
         return errors
@@ -401,6 +409,9 @@ class TryBuilder(NodeVisitor):
 
     def visit_TryElse(self, node):
         TryElseBuilder(self.model).build(node)
+
+    def visit_FinalBody(self, node):
+        FinalBodyBuilder(self.model).build(node)
 
     def visit_KeywordCall(self, node):
         self.model.try_block.body.create_keyword(name=node.keyword, args=node.args,
@@ -434,6 +445,24 @@ class TryElseBuilder(NodeVisitor):
 
     def build(self, node):
         self.model = self.parent.else_block
+        self.model.config(lineno=node.lineno, error=format_error(node.errors))
+        for step in node.body:
+            self.visit(step)
+        return self.model
+
+    def visit_KeywordCall(self, node):
+        self.model.body.create_keyword(name=node.keyword, args=node.args,
+                                       assign=node.assign, lineno=node.lineno)
+
+
+class FinalBodyBuilder(NodeVisitor):
+
+    def __init__(self, parent):
+        self.parent = parent
+        self.model = None
+
+    def build(self, node):
+        self.model = self.parent.finally_block
         self.model.config(lineno=node.lineno, error=format_error(node.errors))
         for step in node.body:
             self.visit(step)

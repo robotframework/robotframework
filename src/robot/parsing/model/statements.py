@@ -885,21 +885,24 @@ class ElseHeader(IfElseHeader):
             self.errors += ('ELSE has condition.',)
 
 
-@Statement.register
-class TryHeader(Statement):
-    type = Token.TRY
+class NoArgumentHeader(Statement):
 
     @classmethod
     def from_params(cls, indent=FOUR_SPACES, eol=EOL):
         return cls([
             Token(Token.SEPARATOR, indent),
-            Token(Token.TRY),
+            Token(cls.type),
             Token(Token.EOL, eol)
         ])
 
     def validate(self):
         if self.get_tokens(Token.ARGUMENT):
-            self.errors += ('TRY has an argument.',)
+            self.errors += (f'{self.type} has an argument.',)
+
+
+@Statement.register
+class TryHeader(NoArgumentHeader):
+    type = Token.TRY
 
 
 @Statement.register
@@ -922,6 +925,11 @@ class ExceptHeader(Statement):
     @property
     def patterns(self):
         return self.get_values(Token.ARGUMENT)
+
+
+@Statement.register
+class FinallyHeader(NoArgumentHeader):
+    type = Token.FINALLY
 
 
 @Statement.register

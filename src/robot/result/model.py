@@ -244,6 +244,7 @@ class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
     try_class = Block
     excepts_class = ExceptBlocks
     else_class = Block
+    finally_class = Block
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
     def __init__(self, parent=None, status='FAIL', starttime=None, endtime=None, doc=''):

@@ -143,13 +143,15 @@ class Try(BodyItem):
     try_class = Block
     excepts_class = ExceptBlocks
     else_class = Block
-    __slots__ = ['parent', 'try_block', 'else_block']
+    finally_class = Block
+    __slots__ = ['parent', 'try_block', 'else_block', 'finally_block']
 
     def __init__(self, parent=None):
         self.parent = parent
         self.try_block = self.try_class(BodyItem.TRY, parent=self)
         self.except_blocks = None
         self.else_block = self.else_class(BodyItem.TRY_ELSE, parent=self)
+        self.finally_block = self.finally_class(BodyItem.FINALLY, parent=self)
 
     @setter
     def except_blocks(self, excepts):
@@ -168,7 +170,7 @@ class Try(BodyItem):
 class Except(BodyItem):
     type = BodyItem.EXCEPT
     body_class = Body
-    repr_args = ('type', 'pattern')
+    repr_args = ('type', 'patterns')
     __slots__ = ['patterns']
 
     def __init__(self, patterns=None, parent=None):

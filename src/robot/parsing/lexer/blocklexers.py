@@ -25,7 +25,8 @@ from .statementlexers import (Lexer,
                               KeywordCallLexer,
                               ForHeaderLexer, InlineIfHeaderLexer,
                               IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
-                              TryLexer, ExceptLexer, EndLexer, ReturnLexer)
+                              TryLexer, ExceptLexer, FinallyLexer,
+                              EndLexer, ReturnLexer)
 
 
 class BlockLexer(Lexer):
@@ -288,5 +289,5 @@ class TryExceptLexer(NestedBlockLexer):
         return TryLexer(self.ctx).handles(statement)
 
     def lexer_classes(self):
-        return (TryLexer, ExceptLexer, ElseHeaderLexer, ForHeaderLexer, InlineIfLexer, IfLexer,
-                EndLexer, KeywordCallLexer)
+        return (TryLexer, ExceptLexer, ElseHeaderLexer, FinallyLexer, ForHeaderLexer,
+                InlineIfLexer, IfLexer, EndLexer, KeywordCallLexer)

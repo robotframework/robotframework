@@ -146,6 +146,7 @@ class Try(model.Try):
     try_class = Block
     excepts_class = ExceptBlocks
     else_class = Block
+    finally_class = Block
 
     def __init__(self, parent=None, lineno=None, error=None):
         model.Try.__init__(self, parent)

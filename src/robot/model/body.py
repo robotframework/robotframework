@@ -33,6 +33,7 @@ class BodyItem(ModelObject):
     TRY = 'TRY'
     EXCEPT = 'EXCEPT'
     TRY_ELSE = 'TRY ELSE'
+    FINALLY = 'FINALLY'
     RETURN = 'RETURN'
     MESSAGE = 'MESSAGE'
     type = None

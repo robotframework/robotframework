@@ -403,8 +403,8 @@ class TryRunner:
                             raise DataError(data.error)
                     runner = BodyRunner(self._context, self._run, self._templated)
                     runner.run(data.try_block.body)
-            except ExecutionFailures as error:
-                failures = error
+            except (ExecutionFailures, ExecutionFailed) as err:
+                failures = err
 
             self._run_handlers(data, failures)
 
@@ -424,6 +424,11 @@ class TryRunner:
             with StatusReporter(data.else_block, BlockResult(data.else_block.type), self._context, run):
                 runner = BodyRunner(self._context, run, self._templated)
                 runner.run(data.else_block.body)
+        if data.finally_block:
+            run = self._run and not data.error
+            with StatusReporter(data.else_block, BlockResult(data.finally_block.type), self._context, run):
+                runner = BodyRunner(self._context, run, self._templated)
+                runner.run(data.finally_block.body)
         if not handler_matched and failures:
             raise failures
 
