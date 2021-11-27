@@ -1,8 +1,8 @@
 import unittest
 
-from robot.utils.asserts import assert_equal, assert_true, assert_false
+from robot.utils.asserts import assert_equal
 
-import robot.output.pyloggingconf as pyLogging
+from robot.output.pyloggingconf import RobotHandler
 
 import logging
 
@@ -48,7 +48,7 @@ class TestPyLogging(unittest.TestCase):
 
     def setUp(self):
         self.library_logger = MockLibraryLogger()
-        self.test_handler = pyLogging.RobotHandler(library_logger=self.library_logger)
+        self.test_handler = RobotHandler(library_logger=self.library_logger)
         root = logging.getLogger()
         root.setLevel(logging.NOTSET)
         for handler in root.handlers:
@@ -73,16 +73,13 @@ class TestPyLogging(unittest.TestCase):
 
     def test_python_logging_error(self):
         logging.error(self.test_message)
-
         self.assert_message(self.test_message, logging.ERROR)
 
     def test_python_logging_formatted_debug(self):
         old_formatter = self.test_handler.formatter
         formatter = logging.Formatter(fmt=self.test_format)
         self.test_handler.setFormatter(formatter)
-
         logging.debug(self.test_message)
-
         self.assert_formatted_message(logging.DEBUG)
         self.test_handler.setFormatter(old_formatter)
 
@@ -90,9 +87,7 @@ class TestPyLogging(unittest.TestCase):
         old_formatter = self.test_handler.formatter
         formatter = logging.Formatter(fmt=self.test_format)
         self.test_handler.setFormatter(formatter)
-
         logging.info(self.test_message)
-
         self.assert_formatted_message(logging.INFO)
         self.test_handler.setFormatter(old_formatter)
 
@@ -100,9 +95,7 @@ class TestPyLogging(unittest.TestCase):
         old_formatter = self.test_handler.formatter
         formatter = logging.Formatter(fmt=self.test_format)
         self.test_handler.setFormatter(formatter)
-
         logging.warning(self.test_message)
-
         self.assert_formatted_message(logging.WARNING)
         self.test_handler.setFormatter(old_formatter)
 
@@ -110,9 +103,7 @@ class TestPyLogging(unittest.TestCase):
         old_formatter = self.test_handler.formatter
         formatter = logging.Formatter(fmt=self.test_format)
         self.test_handler.setFormatter(formatter)
-
         logging.error(self.test_message)
-
         self.assert_formatted_message(logging.ERROR)
         self.test_handler.setFormatter(old_formatter)
 
