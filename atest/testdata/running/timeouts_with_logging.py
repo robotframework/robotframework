@@ -21,7 +21,7 @@ def _log_a_lot(info):
     msg = MSG
     sleep = time.sleep
     current = time.time
-    end = current() + 1
+    end = current() + 5
     while current() < end:
         info(msg)
         sleep(0)    # give time for other threads
