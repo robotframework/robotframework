@@ -7,5 +7,14 @@ Test Template     Block statuses should be
 Try without END
     FAIL    NOT RUN
 
+Try without except or finally
+    FAIL
+
 Try with argument
     FAIL    NOT RUN
+
+Try else with argument
+    FAIL    NOT RUN    NOT RUN
+
+Finally with argument
+    FAIL    NOT RUN    NOT RUN

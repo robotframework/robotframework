@@ -11,7 +11,7 @@ First except executed
     FAIL    PASS
 
 Second except executed
-    FAIL    NOT RUN    PASS
+    FAIL    NOT RUN    PASS    NOT RUN
 
 Except handler failing
     FAIL    FAIL
@@ -30,3 +30,12 @@ Multiple except patterns
 
 Default except pattern
     FAIL    PASS
+
+Finally block executed when no failures
+    PASS    NOT RUN    PASS
+
+Finally block executed after catch
+    FAIL    PASS    PASS
+
+Finally block failing
+    FAIL    PASS    FAIL

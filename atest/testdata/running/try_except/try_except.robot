@@ -20,6 +20,8 @@ Second except executed
         Fail    Should not be executed
     EXCEPT    failure
         No operation
+    EXCEPT    does not match
+            Fail    Should not be executed
     END
 
 Except handler failing
@@ -70,4 +72,32 @@ Default except pattern
         Fail    Failure
     EXCEPT
         Log   Catch it again!
+    END
+
+Finally block executed when no failures
+    TRY
+        Log    all good
+    EXCEPT
+        Fail    should not be executed
+    FINALLY
+        Log    Hello from finally!
+    END
+
+Finally block executed after catch
+    TRY
+        Fail    all not good
+    EXCEPT    all not good
+        Log    we are safe now
+    FINALLY
+        Log    Hello from finally!
+    END
+
+Finally block failing
+    [Documentation]    FAIL fail in finally
+    TRY
+        Fail    all not good
+    EXCEPT    all not good
+        Log    we are safe now
+    FINALLY
+        Fail    fail in finally
     END
