@@ -37,12 +37,8 @@ class XUnitFileWriter(ResultVisitor):
 
     def __init__(self, xml_writer):
         self._writer = xml_writer
-        self._root_suite = None
 
     def start_suite(self, suite):
-        if self._root_suite:
-            return
-        self._root_suite = suite
         tests, failures, skipped = self._get_stats(suite.statistics)
         attrs = {'name': suite.name,
                  'tests': tests,
@@ -61,8 +57,7 @@ class XUnitFileWriter(ResultVisitor):
         )
 
     def end_suite(self, suite):
-        if suite is self._root_suite:
-            self._writer.end('testsuite')
+        self._writer.end('testsuite')
 
     def visit_test(self, test):
         self._writer.start('testcase',
