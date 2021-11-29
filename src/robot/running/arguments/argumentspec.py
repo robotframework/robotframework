@@ -135,17 +135,8 @@ class ArgInfo:
         if isinstance(typ, tuple):
             return typ
         if getattr(typ, '__origin__', None) is Union:
-            return self._get_union_args(typ)
+            return typ.__args__
         return (typ,)
-
-    def _get_union_args(self, union):
-        try:
-            return union.__args__
-        except AttributeError:
-            # Python 3.5.2's typing uses __union_params__ instead of __args__.
-            # FIXME: This block can likely be safely removed when Python 3.5
-            # support is dropped
-            return union.__union_params__
 
     @property
     def required(self):
