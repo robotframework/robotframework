@@ -22,6 +22,7 @@ XUnit Option Given
     Stdout Should Contain    XUnit:
     File Should Exist    ${OUTDIR}/xunit.xml
     File Should Exist    ${OUTDIR}/log.html
+    Suite Stats Should Be    19    5
     ${root} =    Parse XML    ${OUTDIR}/xunit.xml
     Should Be Equal    ${root.tag}    testsuite
     ${tests} =    Get Elements    ${root}    testcase
@@ -50,6 +51,14 @@ Invalid XUnit File
     Stderr Should Match Regexp
     ...    \\[ ERROR \\] Opening xunit file '${path}' failed: .*
 
+Merge outputs
+    Run Rebot    -x xunit.xml    ${INPUT FILE} ${INPUT FILE}
+    Suite Stats Should Be     38    10    0    timestamp=${EMPTY}
+
+Start and end time
+    Run Rebot    -x xunit.xml --starttime 20211215-12:11:10.456 --endtime 20211215-12:13:10.556    ${INPUT FILE}
+    Suite Stats Should Be     19    5    0    120.100    2021-12-15T12:11:10.456000
+
 *** Keywords ***
 Create Input File
     Create Output With Robot    ${INPUT FILE}    ${EMPTY}    misc/non_ascii.robot misc/suites
@@ -58,3 +67,13 @@ Create Input File
 Remove Temps
     Remove Directory    ${MYOUTDIR}    recursive
     Remove File    ${INPUT FILE}
+
+Suite Stats Should Be
+    [Arguments]    ${tests}    ${failures}    ${skipped}=0    ${time}=?.???    ${timestamp}=20??-??-??T??:??:??.???000
+    ${suite} =    Get Element    ${OUTDIR}/xunit.xml
+    Element Attribute Should Be       ${suite}    tests       ${tests}
+    Element Attribute Should Be       ${suite}    failures    ${failures}
+    Element Attribute Should Be       ${suite}    skipped     ${skipped}
+    Element Attribute Should Be       ${suite}    errors      0
+    Element Attribute Should Match    ${suite}    time        ${time}
+    Element Attribute Should Match    ${suite}    timestamp   ${timestamp}
