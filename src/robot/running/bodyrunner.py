@@ -412,15 +412,22 @@ class TryRunner:
 
     def _run_handlers(self, data, failures):
         handler_matched = False
+        handler_error = None
         for handler in data.except_blocks:
-            run = self._run and failures and self._error_is_expected(failures.message, handler.patterns)
+            run = self._run and failures and not handler_error and \
+                  self._error_is_expected(failures.message, handler.patterns)
             if run:
                 handler_matched = True
-            with StatusReporter(handler, TryHandlerResult(handler.patterns), self._context, run):
-                runner = BodyRunner(self._context, run, self._templated)
-                runner.run(handler.body)
+            result = TryHandlerResult(handler.patterns)
+            try:
+                with StatusReporter(handler, result, self._context, run):
+                    runner = BodyRunner(self._context, run, self._templated)
+                    runner.run(handler.body)
+            except ExecutionFailed as err:
+                handler_error = err
+
         if data.else_block:
-            run = self._run and not failures
+            run = self._run and not failures and not handler_error
             with StatusReporter(data.else_block, BlockResult(data.else_block.type), self._context, run):
                 runner = BodyRunner(self._context, run, self._templated)
                 runner.run(data.else_block.body)
@@ -431,6 +438,8 @@ class TryRunner:
                 runner.run(data.finally_block.body)
         if not handler_matched and failures:
             raise failures
+        if handler_error:
+            raise handler_error
 
     def _error_is_expected(self, error, patterns):
         if not patterns:

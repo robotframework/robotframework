@@ -313,6 +313,9 @@ class ForBuilder(NodeVisitor):
     def visit_If(self, node):
         IfBuilder(self.model).build(node)
 
+    def visit_Try(self, node):
+        TryBuilder(self.model).build(node)
+
     def visit_ReturnStatement(self, node):
         self.model.body.create_return(node.values)
 
@@ -369,6 +372,9 @@ class IfBuilder(NodeVisitor):
     def visit_For(self, node):
         ForBuilder(self.model).build(node)
 
+    def visit_Try(self, node):
+        TryBuilder(self.model).build(node)
+
     def visit_ReturnStatement(self, node):
         self.model.body.create_return(node.values)
 
@@ -413,6 +419,9 @@ class TryBuilder(NodeVisitor):
     def visit_FinalBody(self, node):
         FinalBodyBuilder(self.model).build(node)
 
+    def visit_If(self, node):
+        IfBuilder(self.model.try_block).build(node)
+
     def visit_KeywordCall(self, node):
         self.model.try_block.body.create_keyword(name=node.keyword, args=node.args,
                                                  assign=node.assign, lineno=node.lineno)
@@ -432,6 +441,9 @@ class ExceptBuilder(NodeVisitor):
             self.visit(step)
         return self.model
 
+    def visit_If(self, node):
+        IfBuilder(self.model).build(node)
+
     def visit_KeywordCall(self, node):
         self.model.body.create_keyword(name=node.keyword, args=node.args,
                                        assign=node.assign, lineno=node.lineno)
@@ -449,6 +461,9 @@ class TryElseBuilder(NodeVisitor):
         for step in node.body:
             self.visit(step)
         return self.model
+
+    def visit_If(self, node):
+        IfBuilder(self.model).build(node)
 
     def visit_KeywordCall(self, node):
         self.model.body.create_keyword(name=node.keyword, args=node.args,

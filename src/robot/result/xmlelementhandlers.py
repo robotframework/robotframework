@@ -177,7 +177,7 @@ class ForHandler(ElementHandler):
 @ElementHandler.register
 class ForIterationHandler(ElementHandler):
     tag = 'iter'
-    children = frozenset(('var', 'doc', 'status', 'kw', 'if', 'for', 'msg', 'return'))
+    children = frozenset(('var', 'doc', 'status', 'kw', 'if', 'for', 'msg', 'try', 'return'))
 
     def start(self, elem, result):
         return result.body.create_iteration()
@@ -195,7 +195,7 @@ class IfHandler(ElementHandler):
 @ElementHandler.register
 class IfBranchHandler(ElementHandler):
     tag = 'branch'
-    children = frozenset(('status', 'kw', 'if', 'for', 'msg', 'doc', 'return'))
+    children = frozenset(('status', 'kw', 'if', 'for', 'try', 'msg', 'doc', 'return'))
 
     def start(self, elem, result):
         return result.body.create_branch(elem.get('type'), elem.get('condition'))
