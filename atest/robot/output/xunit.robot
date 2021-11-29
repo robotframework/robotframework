@@ -1,13 +1,21 @@
 *** Settings ***
 Documentation       Tests for xunit-compatible xml-output.
 Resource            atest_resource.robot
+Resource            rebot_resource.robot
 Variables           unicode_vars.py
-Suite Setup         Run Tests    -x xunit.xml -l log.html --skiponfailure täg    ${TESTDATA}
+Suite Setup         Run Keywords
+...    Create Output With Robot    ${OUT ONE}    ${EMPTY}    ${PASS AND FAIL}
+...    AND
+...    Create Output With Robot    ${OUT TWO}    ${EMPTY}    ${TESTDATA}
+...    AND
+...    Run Tests    -x xunit.xml -l log.html --skiponfailure täg    ${TESTDATA}
 
 *** Variables ***
 ${TESTDATA}         misc/non_ascii.robot
 ${PASS AND FAIL}    misc/pass_and_fail.robot
 ${INVALID}          %{TEMPDIR}${/}ïnvälïd-xünït.xml
+${OUT ONE}          %{TEMPDIR}${/}out1.xml
+${OUT TWO}          %{TEMPDIR}${/}out2.xml
 
 *** Test Cases ***
 XUnit File Is Created
@@ -53,6 +61,10 @@ Test has execution time
     Should match    ${test.attrib['time']}    ?.???
     Should be true    ${test.attrib['time']} > 0
 
+Suite has execution timestamp
+    Verify XUnit Timestamp
+    ...    ${{datetime.datetime.strptime($SUITE.starttime, '%Y%m%d %H:%M:%S.%f').strftime('%Y-%m-%dT%H:%M:%S.%f')}}
+
 No XUnit Option Given
     Run Tests    ${EMPTY}    ${TESTDATA}
     Stdout Should Not Contain    XUnit
@@ -70,6 +82,14 @@ Invalid XUnit File
 Skipping non-critical tests is deprecated
     Run tests    --xUnit xunit.xml --xUnitSkipNonCritical     ${PASS AND FAIL}
     Stderr Should Contain   Command line option --xunitskipnoncritical has been deprecated and has no effect.
+
+Merge outputs
+    Run Rebot    -x xunit.xml -l log.html    ${OUT ONE} ${OUT TWO}
+    Verify XUnit Timestamp    ${EMPTY}
+
+Rebot with start and end time
+    Run Rebot    -x xunit.xml -l log.html --starttime 20211215-12:11:10.456 --endtime 20211215-12:13:14.789    ${OUT ONE}
+    Verify XUnit Timestamp    2021-12-15T12:11:10.456000
 
 *** Keywords ***
 Get XUnit Node
@@ -89,3 +109,10 @@ Suite Stats Should Be
     Element Attribute Should Be       ${elem}    skipped     ${skipped}
     Element Attribute Should Match    ${elem}    time        ?.???
     Element Attribute Should Be       ${elem}    errors      0
+    Element Attribute Should Match    ${elem}    timestamp   ????-??-??T??:??:??.???000
+
+Verify XUnit Timestamp
+    [Arguments]    ${pattern}
+    File Should Exist    ${OUTDIR}/xunit.xml
+    ${suite} =    Get XUnit Node
+    Element Attribute Should Match    ${suite}    timestamp    ${pattern}
