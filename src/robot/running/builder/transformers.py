@@ -278,6 +278,10 @@ class KeywordBuilder(NodeVisitor):
     def visit_If(self, node):
         IfBuilder(self.kw).build(node)
 
+    def visit_Try(self, node):
+        TryBuilder(self.kw).build(node)
+
+
 
 class ForBuilder(NodeVisitor):
 
@@ -422,6 +426,12 @@ class TryBuilder(NodeVisitor):
     def visit_If(self, node):
         IfBuilder(self.model.try_block).build(node)
 
+    def visit_For(self, node):
+        ForBuilder(self.model.try_block).build(node)
+
+    def visit_ReturnStatement(self, node):
+        self.model.try_block.body.create_return(node.values)
+
     def visit_KeywordCall(self, node):
         self.model.try_block.body.create_keyword(name=node.keyword, args=node.args,
                                                  assign=node.assign, lineno=node.lineno)
@@ -444,6 +454,9 @@ class ExceptBuilder(NodeVisitor):
     def visit_If(self, node):
         IfBuilder(self.model).build(node)
 
+    def visit_For(self, node):
+        ForBuilder(self.model).build(node)
+
     def visit_KeywordCall(self, node):
         self.model.body.create_keyword(name=node.keyword, args=node.args,
                                        assign=node.assign, lineno=node.lineno)
@@ -465,6 +478,9 @@ class TryElseBuilder(NodeVisitor):
     def visit_If(self, node):
         IfBuilder(self.model).build(node)
 
+    def visit_For(self, node):
+        ForBuilder(self.model).build(node)
+
     def visit_KeywordCall(self, node):
         self.model.body.create_keyword(name=node.keyword, args=node.args,
                                        assign=node.assign, lineno=node.lineno)
@@ -482,6 +498,12 @@ class FinalBodyBuilder(NodeVisitor):
         for step in node.body:
             self.visit(step)
         return self.model
+
+    def visit_If(self, node):
+        IfBuilder(self.model).build(node)
+
+    def visit_For(self, node):
+        ForBuilder(self.model).build(node)
 
     def visit_KeywordCall(self, node):
         self.model.body.create_keyword(name=node.keyword, args=node.args,

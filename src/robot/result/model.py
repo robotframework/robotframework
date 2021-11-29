@@ -271,7 +271,7 @@ class Except(model.Except, StatusMixin, DeprecatedAttributesMixin):
     @property
     @deprecated
     def name(self):
-        return self.patterns
+        return ' | '.join(self.patterns)
 
 
 @Body.register

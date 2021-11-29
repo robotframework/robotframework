@@ -392,29 +392,12 @@ class TryRunner:
         self._run = run
         self._templated = templated
 
-    def run(self, data):
-        with StatusReporter(data, TryResult(), self._context, self._run):
-            failures = None
-            result = BlockResult(data.try_block.type)
-            try:
-                with StatusReporter(data.try_block, result, self._context, self._run):
-                    if self._run:
-                        if data.error:
-                            raise DataError(data.error)
-                    runner = BodyRunner(self._context, self._run, self._templated)
-                    runner.run(data.try_block.body)
-            except (ExecutionFailures, ExecutionFailed) as err:
-                failures = err
-
-            self._run_handlers(data, failures)
-
-        return self._run
-
     def _run_handlers(self, data, failures):
         handler_matched = False
         handler_error = None
+        else_error = None
         for handler in data.except_blocks:
-            run = self._run and failures and not handler_error and \
+            run = self._run and failures and not handler_matched and not handler_error and \
                   self._error_is_expected(failures.message, handler.patterns)
             if run:
                 handler_matched = True
@@ -428,18 +411,23 @@ class TryRunner:
 
         if data.else_block:
             run = self._run and not failures and not handler_error
-            with StatusReporter(data.else_block, BlockResult(data.else_block.type), self._context, run):
-                runner = BodyRunner(self._context, run, self._templated)
-                runner.run(data.else_block.body)
+            try:
+                with StatusReporter(data.else_block, BlockResult(data.else_block.type), self._context, run):
+                    runner = BodyRunner(self._context, run, self._templated)
+                    runner.run(data.else_block.body)
+            except ExecutionFailed as err:
+                else_error = err
         if data.finally_block:
             run = self._run and not data.error
-            with StatusReporter(data.else_block, BlockResult(data.finally_block.type), self._context, run):
+            with StatusReporter(data.finally_block, BlockResult(data.finally_block.type), self._context, run):
                 runner = BodyRunner(self._context, run, self._templated)
                 runner.run(data.finally_block.body)
-        if not handler_matched and failures:
-            raise failures
         if handler_error:
             raise handler_error
+        if else_error:
+            raise else_error
+        if not handler_matched and failures:
+            raise failures
 
     def _error_is_expected(self, error, patterns):
         if not patterns:
@@ -460,6 +448,24 @@ class TryRunner:
                 if matchers[prefix](error, pat.lstrip()):
                     return True
         return False
+
+    def run(self, data):
+        with StatusReporter(data, TryResult(), self._context, self._run):
+            failures = None
+            result = BlockResult(data.try_block.type)
+            try:
+                with StatusReporter(data.try_block, result, self._context, self._run):
+                    if self._run:
+                        if data.error:
+                            raise DataError(data.error)
+                    runner = BodyRunner(self._context, self._run, self._templated)
+                    runner.run(data.try_block.body)
+            except (ExecutionFailures, ExecutionFailed) as err:
+                failures = err
+
+            self._run_handlers(data, failures)
+
+        return self._run
 
     def _matches(self, string, pattern, caseless=False):
         # Must use this instead of fnmatch when string may contain newlines.

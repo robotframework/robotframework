@@ -34,7 +34,12 @@ class Block(BodyItem):
         return self.body_class(self, body)
 
     def visit(self, visitor):
-        visitor.visit_try_block(self) if self.type == 'TRY' else visitor.visit_else_block(self)
+        if self.type == 'TRY':
+            visitor.visit_try_block(self)
+        elif self.type == 'TRY ELSE':
+            visitor.visit_else_block(self)
+        elif self.type == 'FINALLY':
+            visitor.visit_finally_block(self)
 
     def __bool__(self):
         return bool(self.body)

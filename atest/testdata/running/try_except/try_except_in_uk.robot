@@ -1,5 +1,66 @@
 *** Test Cases ***
 Try with no failures
+    Try with no failures
+
+First except executed
+    First except executed
+
+Second except executed
+    Second except executed
+
+Second matching except ignored
+    Second matching except ignored
+
+Except handler failing
+    [Documentation]    FAIL    oh no
+    Except handler failing
+
+Else branch executed
+    Else branch executed
+
+Else branch not executed
+    Else branch not executed
+
+Else branch failing
+    [Documentation]    FAIL oh noes, a catastrophe
+    Else branch failing
+
+Multiple except patterns
+    Multiple except patterns
+
+Default except pattern
+    Default except pattern
+
+Finally block executed when no failures
+    Finally block executed when no failures
+
+Finally block executed after catch
+    Finally block executed after catch
+
+Finally block executed after failure in except
+    [Documentation]    FAIL oh no, failure again
+    Finally block executed after failure in except
+
+Finally block executed after failure in else
+    [Documentation]    FAIL all else fails
+    Finally block executed after failure in else
+
+Try finally with no errors
+    Try finally with no errors
+
+Try finally with failing try
+    [Documentation]    FAIL oh no
+    Try finally with failing try
+
+Finally block failing
+    [Documentation]    FAIL fail in finally
+    Finally block failing
+
+Return in try
+    Return in try
+
+*** Keywords ***
+Try with no failures
     TRY
         No operation
     EXCEPT    failure
@@ -34,7 +95,6 @@ Second matching except ignored
     END
 
 Except handler failing
-    [Documentation]    FAIL    oh no
     TRY
         Fail    bar
     EXCEPT    bar
@@ -62,7 +122,6 @@ Else branch not executed
     END
 
 Else branch failing
-    [Documentation]    FAIL oh noes, a catastrophe
     TRY
         Log    bar
     EXCEPT    bar
@@ -106,7 +165,6 @@ Finally block executed after catch
     END
 
 Finally block executed after failure in except
-    [Documentation]    FAIL oh no, failure again
     TRY
         Fail    all not good
     EXCEPT    all not good
@@ -118,7 +176,6 @@ Finally block executed after failure in except
     END
 
 Finally block executed after failure in else
-    [Documentation]    FAIL all else fails
     TRY
         No operation
     EXCEPT    all not good
@@ -137,7 +194,6 @@ Try finally with no errors
     END
 
 Try finally with failing try
-    [Documentation]    FAIL oh no
     TRY
         FAIL    oh no
     FINALLY
@@ -145,11 +201,17 @@ Try finally with failing try
     END
 
 Finally block failing
-    [Documentation]    FAIL fail in finally
     TRY
         Fail    all not good
     EXCEPT    all not good
         Log    we are safe now
     FINALLY
         Fail    fail in finally
+    END
+
+Return in try
+    TRY
+        RETURN    1
+    EXCEPT    foo
+        Fail    should not be executed
     END

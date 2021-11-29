@@ -1,7 +1,7 @@
 *** Settings ***
 Resource          try_except_resource.robot
-Suite Setup       Run Tests    ${EMPTY}    running/try_except/try_except.robot
-Test Template     Verify try except and block statuses
+Suite Setup       Run Tests    ${EMPTY}    running/try_except/try_except_in_uk.robot
+Test Template     Verify try except and block statuses in uk
 
 *** Test Cases ***
 Try with no failures
@@ -54,3 +54,6 @@ Try finally with failing try
 
 Finally block failing
     FAIL    PASS    FAIL
+
+Return in try
+    PASS

@@ -213,7 +213,7 @@ class TryHandler(ElementHandler):
 @ElementHandler.register
 class TryBlockHandler(ElementHandler):
     tag = 'tryblock'
-    children = frozenset(('status', 'msg', 'kw', 'for', 'if', 'try'))
+    children = frozenset(('status', 'msg', 'kw', 'for', 'if', 'try', 'return'))
 
     def start(self, elem, result):
         return result.try_block
