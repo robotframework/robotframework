@@ -792,6 +792,11 @@ div.figure, div.topic {
 
 </style>
 <script defer data-domain="robotframework.org" src="https://plausible.io/js/plausible.js"></script>
+<script>
+  window.addEventListener("hashchange", ({ oldURL, newURL }) => {
+      plausible(`Anchor link click - ${document.title}`, { props: { to: newURL } })
+  }, false)
+</script>
 </head>
 <body>
 <div class="document" id="robot-framework-user-guide">

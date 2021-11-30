@@ -2,6 +2,11 @@
 <html>
   <head>
     <script defer data-domain="robotframework.org" src="https://plausible.io/js/plausible.js"></script>
+    <script>
+      window.addEventListener("hashchange", ({ oldURL, newURL }) => {
+          plausible(`Anchor link click - ${document.title}`, { props: { to: newURL } })
+      }, false)
+    </script>
     <title>Robot Framework documentation</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="resources/reset.css">
