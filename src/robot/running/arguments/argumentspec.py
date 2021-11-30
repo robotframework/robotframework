@@ -66,13 +66,14 @@ class ArgumentSpec:
                 self.named_only +
                 ([self.var_named] if self.var_named else []))
 
-    def resolve(self, arguments, variables=None, resolve_named=True,
-                resolve_variables_until=None, dict_to_kwargs=False):
+    def resolve(self, arguments, variables=None, converters=None,
+                resolve_named=True, resolve_variables_until=None,
+                dict_to_kwargs=False):
         resolver = ArgumentResolver(self, resolve_named,
                                     resolve_variables_until, dict_to_kwargs)
         positional, named = resolver.resolve(arguments, variables)
         if self.types or self.defaults:
-            converter = ArgumentConverter(self, dry_run=not variables)
+            converter = ArgumentConverter(self, converters, dry_run=not variables)
             positional, named = converter.convert(positional, named)
         return positional, named
 

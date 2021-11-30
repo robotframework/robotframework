@@ -51,7 +51,7 @@ class TypeConverter:
         return converter
 
     @classmethod
-    def converter_for(cls, type_):
+    def converter_for(cls, type_, custom_converters=None):
         if getattr(type_, '__origin__', None) and type_.__origin__ is not Union:
             type_ = type_.__origin__
         if isinstance(type_, str):
@@ -59,6 +59,10 @@ class TypeConverter:
                 type_ = cls._type_aliases[type_.lower()]
             except KeyError:
                 return None
+        if custom_converters:
+            custom = CustomConverter(type_, custom_converters)
+            if custom.handles(type_):
+                return custom
         if type_ in cls._converters:
             return cls._converters[type_](type_)
         for converter in cls._converters.values():
@@ -501,3 +505,33 @@ class CombinedConverter(TypeConverter):
             except ValueError:
                 pass
         raise ValueError
+
+
+class CustomConverter(TypeConverter):
+
+    def __init__(self, used_type, converters):
+        super().__init__(used_type)
+        self.converter = self._find_converter(used_type, converters)
+
+    def _find_converter(self, used_type, converters):
+        if isinstance(used_type, type):
+            for type_ in converters:
+                if issubclass(used_type, type_):
+                    return converters[type_]
+        return None
+
+    @property
+    def type_name(self):
+        return self.used_type.__name__
+
+    def handles(self, type_):
+        return self.converter is not None
+
+    def _handles_value(self, value):
+        return True
+
+    def _convert(self, value, explicit_type=True):
+        try:
+            return self.converter(value)
+        except Exception:
+            raise ValueError(get_error_message())
