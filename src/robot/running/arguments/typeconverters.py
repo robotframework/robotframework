@@ -60,9 +60,9 @@ class TypeConverter:
             except KeyError:
                 return None
         if custom_converters:
-            custom = CustomConverter(type_, custom_converters)
-            if custom.handles(type_):
-                return custom
+            info = custom_converters.get_converter_info(type_)
+            if info:
+                return CustomConverter(type_, info.converter, info.value_types)
         if type_ in cls._converters:
             return cls._converters[type_](type_)
         for converter in cls._converters.values():
@@ -509,26 +509,20 @@ class CombinedConverter(TypeConverter):
 
 class CustomConverter(TypeConverter):
 
-    def __init__(self, used_type, converters):
+    def __init__(self, used_type, converter, value_types):
         super().__init__(used_type)
-        self.converter = self._find_converter(used_type, converters)
-
-    def _find_converter(self, used_type, converters):
-        if isinstance(used_type, type):
-            for type_ in converters:
-                if issubclass(used_type, type_):
-                    return converters[type_]
-        return None
+        self.converter = converter
+        self.value_types = value_types
 
     @property
     def type_name(self):
-        return self.used_type.__name__
+        return type_name(self.used_type)
 
     def handles(self, type_):
         return self.converter is not None
 
     def _handles_value(self, value):
-        return True
+        return not self.value_types or isinstance(value, self.value_types)
 
     def _convert(self, value, explicit_type=True):
         try:

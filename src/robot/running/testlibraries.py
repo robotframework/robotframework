@@ -22,7 +22,7 @@ from robot.output import LOGGER
 from robot.utils import (getdoc, get_error_details, Importer, is_dict_like, is_init,
                          is_list_like, normalize, seq2str2, type_name)
 
-from .arguments import EmbeddedArguments
+from .arguments import EmbeddedArguments, CustomArgumentConverters
 from .context import EXECUTION_CONTEXTS
 from .dynamicmethods import (GetKeywordArguments, GetKeywordDocumentation,
                              GetKeywordNames, GetKeywordTags, RunKeyword)
@@ -163,7 +163,7 @@ class _BaseTestLibrary:
             self.report_error(f'Argument converters must be given as a dictionary, '
                               f'got {type_name(converters)}.')
             return None
-        return converters
+        return CustomArgumentConverters.from_dict(converters, self.report_error)
 
     def reset_instance(self, instance=None):
         prev = self._libinst
