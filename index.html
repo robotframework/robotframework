@@ -4,7 +4,7 @@
     <script defer data-domain="robotframework.org" src="https://plausible.io/js/plausible.js"></script>
     <script>
       window.addEventListener("hashchange", ({ oldURL, newURL }) => {
-          plausible(`Anchor link click - ${document.title}`, { props: { to: newURL } })
+          plausible(`Anchor click - ${document.title}`, { props: { to: window.location.hash.replaceAll("%20", " ") } })
       }, false)
     </script>
     <title>Robot Framework documentation</title>
