@@ -113,25 +113,28 @@ Get Binary File returns bytes as-is
 Grep File
     [Template]    Grep And Check File
     ${EMPTY}    foo\nbar\nfoo bar\n\nA Foo
-    ${EMPTY}    foo\nbar\nfoo bar\n\nA Foo    regexp=${True}
     foo         foo\nfoo bar
-    foo         foo\nfoo bar    regexp=${True}
     foo?        foo bar
-    foo.        foo bar    regexp=${True}
     ?foo        ${EMPTY}
-    .foo        ${EMPTY}    regexp=${True}
     ?oo         foo\nfoo bar\nA Foo
-    .+oo         foo\nfoo bar\nA Foo    regexp=${True}
     [Ff]oo      foo\nfoo bar\nA Foo
-    .*[Ff]oo      foo\nfoo bar\nA Foo    regexp=${True}
     f*a         foo bar
-    f.*a         foo bar    regexp=${True}
     ?           foo\nbar\nfoo bar\nA Foo
-    .           foo\nbar\nfoo bar\nA Foo    regexp=${True}
     ????        foo bar\nA Foo
-    ....        foo bar\nA Foo    regexp=${True}
     foo bar     foo bar
-    foo\\sbar     foo bar    regexp=${True}
+
+Grep File with regexp
+    [Template]    Grep And Check File
+    ${EMPTY}    foo\nbar\nfoo bar\n\nA Foo    regexp=True
+    f\\wo         foo\nfoo bar    regexp=True
+    foo.        foo bar    regexp=True
+    .foo        ${EMPTY}    regexp=True
+    .oo         foo\nfoo bar\nA Foo    regexp=True
+    [Ff]oo      foo\nfoo bar\nA Foo    regexp=True
+    f.*a         foo bar    regexp=True
+    .           foo\nbar\nfoo bar\nA Foo    regexp=True
+    ....        foo bar\nA Foo    regexp=True
+    foo\\sbar     foo bar    regexp=True
 
 Grep File with empty file
     Create File    ${TESTFILE}    ${EMPTY}
@@ -141,10 +144,14 @@ Grep File non Ascii
     [Setup]    Create File    ${TESTFILE}    fää\nbär\nföö bär\n\nA Fåå
     [Template]    Grep And Check File
     fää     fää        ${TESTFILE}
-    fää     fää        ${TESTFILE}    regexp=${True}
     ö       föö bär    ${TESTFILE}
-    .*ö     föö bär    ${TESTFILE}    regexp=${True}
     A       A Fåå      ${TESTFILE}
+
+Grep File non Ascii with regexp
+    [Setup]    Create File    ${TESTFILE}    fää\nbär\nföö bär\n\nA Fåå
+    [Template]    Grep And Check File
+    f\\wä     fää        ${TESTFILE}    regexp=True
+    ö       föö bär    ${TESTFILE}    regexp=yes
     A       A Fåå      ${TESTFILE}    regexp=${True}
 
 Grep File with UTF-16 files
@@ -183,8 +190,8 @@ Get And Check File
     Should Be Equal    ${content}    ${expected}
 
 Grep And Check File
-    [Arguments]    ${pattern}    ${expected}    ${test FILE}=${UTF-8 LONG FILE}    ${regexp}=${False}
-    ${content} =    Grep File    ${test FILE}    ${pattern}    regexp=${regexp}
+    [Arguments]    ${pattern}    ${expected}    ${test FILE}=${UTF-8 LONG FILE}    &{config}
+    ${content} =    Grep File    ${test FILE}    ${pattern}    &{config}
     Should Be Equal    ${content}    ${expected}
 
 Verify Get File with error handler
