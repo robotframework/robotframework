@@ -113,15 +113,25 @@ Get Binary File returns bytes as-is
 Grep File
     [Template]    Grep And Check File
     ${EMPTY}    foo\nbar\nfoo bar\n\nA Foo
+    ${EMPTY}    foo\nbar\nfoo bar\n\nA Foo    regexp=${True}
     foo         foo\nfoo bar
+    foo         foo\nfoo bar    regexp=${True}
     foo?        foo bar
+    foo.        foo bar    regexp=${True}
     ?foo        ${EMPTY}
+    .foo        ${EMPTY}    regexp=${True}
     ?oo         foo\nfoo bar\nA Foo
+    .+oo         foo\nfoo bar\nA Foo    regexp=${True}
     [Ff]oo      foo\nfoo bar\nA Foo
+    .*[Ff]oo      foo\nfoo bar\nA Foo    regexp=${True}
     f*a         foo bar
+    f.*a         foo bar    regexp=${True}
     ?           foo\nbar\nfoo bar\nA Foo
+    .           foo\nbar\nfoo bar\nA Foo    regexp=${True}
     ????        foo bar\nA Foo
+    ....        foo bar\nA Foo    regexp=${True}
     foo bar     foo bar
+    foo\\sbar     foo bar    regexp=${True}
 
 Grep File with empty file
     Create File    ${TESTFILE}    ${EMPTY}
@@ -131,11 +141,11 @@ Grep File non Ascii
     [Setup]    Create File    ${TESTFILE}    fää\nbär\nföö bär\n\nA Fåå
     [Template]    Grep And Check File
     fää     fää        ${TESTFILE}
+    fää     fää        ${TESTFILE}    regexp=${True}
     ö       föö bär    ${TESTFILE}
+    .*ö     föö bär    ${TESTFILE}    regexp=${True}
     A       A Fåå      ${TESTFILE}
-    fää     fää        ${TESTFILE}    True
-    ö       föö bär    ${TESTFILE}    True
-    A       A Fåå      ${TESTFILE}    True
+    A       A Fåå      ${TESTFILE}    regexp=${True}
 
 Grep File with UTF-16 files
     [Template]    Verify Grep File With UTF-16 files
@@ -164,6 +174,7 @@ Grep File with 'replace' Error Handler
 
 Grep File With Windows line endings
     Grep And Check File    f*a    foo bar    ${UTF-8 WINDOWS FILE}
+    Grep And Check File    f.*a    foo bar    ${UTF-8 WINDOWS FILE}    regexp=${True}
 
 *** Keywords ***
 Get And Check File

@@ -287,8 +287,8 @@ class OperatingSystem:
         Possible trailing newline is never returned.
 
         A line matches if it contains the ``pattern`` anywhere in it and
-        it *does not need to match the pattern fully*. The pattern
-        matching syntax is explained in `introduction`, and in this
+        it *does not need to match the pattern fully when not in regex mode*. 
+        The pattern matching syntax is explained in `introduction`, and in this
         case matching is case-sensitive.
 
         Examples:
@@ -297,8 +297,7 @@ class OperatingSystem:
         | ${ret} = | Grep File | ${CURDIR}/file.txt | [Ww]ildc..d ex.*ple | regexp=True
 
         If more complex pattern matching is needed, it is possible to set
-        the regexp flag to True or use `Get File` in combination with String
-        library keywords like `Get Lines Matching Regexp`.
+        the regexp flag to True. When in regex mode, the pattern need to match fully.
 
         This keyword supports special ``SYSTEM`` and ``CONSOLE`` encodings that
         `Get File` supports only with Robot Framework 4.0 and newer. When using
@@ -309,7 +308,6 @@ class OperatingSystem:
         if is_falsy(regexp):
             pattern = fnmatch.translate('*%s*' % pattern)
         reobj = re.compile(pattern)
-
         encoding = self._map_encoding(encoding)
         lines = []
         total_lines = 0
