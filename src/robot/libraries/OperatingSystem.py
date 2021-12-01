@@ -306,7 +306,7 @@ class OperatingSystem:
         """
         path = self._absnorm(path)
         if not regexp:
-            pattern = fnmatch.translate('*%s*' % pattern)
+            pattern = fnmatch.translate(f'{pattern}*')
         reobj = re.compile(pattern)
         encoding = self._map_encoding(encoding)
         lines = []
