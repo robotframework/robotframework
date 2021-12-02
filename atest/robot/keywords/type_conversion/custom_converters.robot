@@ -15,6 +15,9 @@ Subclasses
 Class as converter
     Check Test Case    ${TESTNAME}
 
+Custom in Union
+    Check Test Case    ${TESTNAME}
+
 Failing conversion
     Check Test Case    ${TESTNAME}
 

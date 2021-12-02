@@ -39,8 +39,9 @@ class TypeConverter:
     _converters = OrderedDict()
     _type_aliases = {}
 
-    def __init__(self, used_type):
+    def __init__(self, used_type, custom_converters=None):
         self.used_type = used_type
+        self.custom_converters = custom_converters
 
     @classmethod
     def register(cls, converter):
@@ -67,7 +68,7 @@ class TypeConverter:
             return cls._converters[type_](type_)
         for converter in cls._converters.values():
             if converter.handles(type_):
-                return converter(type_)
+                return converter(type_, custom_converters)
         return None
 
     @classmethod
@@ -372,11 +373,6 @@ class NoneConverter(TypeConverter):
     type = type(None)
     type_name = 'None'
 
-    def __init__(self, used_type):
-        if used_type is None:
-            used_type = type(None)
-        TypeConverter.__init__(self, used_type)
-
     @classmethod
     def handles(cls, type_):
         return type_ in (type(None), None)
@@ -464,9 +460,10 @@ class FrozenSetConverter(TypeConverter):
 class CombinedConverter(TypeConverter):
     type = Union
 
-    def __init__(self, union):
-        self.types = self._none_to_nonetype(self._get_types(union))
-        self.converters = [TypeConverter.converter_for(t) for t in self.types]
+    def __init__(self, union, custom_converters):
+        super().__init__(self._get_types(union))
+        self.converters = [TypeConverter.converter_for(t, custom_converters)
+                           for t in self.used_type]
 
     def _get_types(self, union):
         if not union:
@@ -475,12 +472,9 @@ class CombinedConverter(TypeConverter):
             return union
         return union.__args__
 
-    def _none_to_nonetype(self, types):
-        return tuple(t if t is not None else type(None) for t in types)
-
     @property
     def type_name(self):
-        return ' or '.join(type_name(t) for t in self.types) if self.types else None
+        return ' or '.join(type_name(t) for t in self.used_type)
 
     @classmethod
     def handles(cls, type_):

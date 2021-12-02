@@ -28,6 +28,14 @@ Subclasses
 Class as converter
     Class as converter    Robot   Hello, Robot!
 
+Custom in Union
+    Number or int    ${1}
+    Number or int    1
+    Number or int    one
+    Int or number    ${1}
+    Int or number    1
+    Int or number    one
+
 Failing conversion
     [Template]    Conversion should fail
     Number     wrong         type=Number     error=ValueError: Don't know number 'wrong'.

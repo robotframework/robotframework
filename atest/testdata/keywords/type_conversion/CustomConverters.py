@@ -98,6 +98,14 @@ def class_as_converter(argument: ClassAsConverter, expected):
     assert argument.greeting == expected
 
 
+def number_or_int(number: Union[Number, int]):
+    assert number == 1
+
+
+def int_or_number(number: Union[int, Number]):
+    assert number == 1
+
+
 def invalid(a: Invalid, b: TooFewArgs, c: TooManyArgs, d: KwOnlyNotOk):
     assert (a, b, c, d) == ('a', 'b', 'c', 'd')
 
