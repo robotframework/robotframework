@@ -28,9 +28,8 @@ from .output import LibdocOutput
 
 class LibraryDoc:
 
-    def __init__(self, name='', doc='', version='', type='LIBRARY',
-                 scope='TEST', doc_format='ROBOT',
-                 source=None, lineno=-1):
+    def __init__(self, name='', doc='', version='', type='LIBRARY', scope='TEST',
+                 doc_format='ROBOT', converters=None, source=None, lineno=-1):
         self.name = name
         self._doc = doc
         self.version = version
@@ -78,14 +77,9 @@ class LibraryDoc:
 
     def _process_keywords(self, kws):
         for keyword in kws:
-            self._add_types_from_keyword(keyword)
             keyword.parent = self
             keyword.generate_shortdoc()
         return sorted(kws)
-
-    def _add_types_from_keyword(self, keyword):
-        for arg in keyword.args:
-            self.data_types.update(arg.types)
 
     @property
     def all_tags(self):

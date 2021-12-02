@@ -132,6 +132,7 @@ class LibdocXmlWriter:
                 writer.element('doc', typ_dict.doc)
                 writer.start('items')
                 for item in typ_dict.items:
+                    item = item.copy()
                     if item['required'] is None:
                         item.pop('required')
                     elif item['required']:

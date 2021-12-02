@@ -1,6 +1,8 @@
-import unittest
 import json
+import os
 from os.path import dirname, join, normpath
+import unittest
+import tempfile
 
 from jsonschema import validate
 
@@ -15,6 +17,7 @@ get_text = HtmlToText().html_to_plain_text
 
 CURDIR = dirname(__file__)
 DATADIR = normpath(join(CURDIR, '../../atest/testdata/libdoc/'))
+TEMPDIR = os.getenv('TEMPDIR') or tempfile.gettempdir()
 
 try:
     from typing_extensions import TypedDict
@@ -238,25 +241,44 @@ class TestLibdocJsonWriter(unittest.TestCase):
         run_libdoc_and_validate_json('DataTypesLibrary.libspec')
 
 
-class TestLibdocJsonBuilder(unittest.TestCase):
+class TestJson(unittest.TestCase):
 
-    def test_libdoc_json_roundtrip(self):
-        library = join(DATADIR, 'DynamicLibrary.json')
-        spec = LibraryDocumentation(library).to_json()
+    def test_roundtrip(self):
+        self._test('DynamicLibrary.json')
+
+    def test_roundtrip_with_datatypes(self):
+        self._test('DataTypesLibrary.json')
+
+    def _test(self, lib):
+        path = join(DATADIR, lib)
+        spec = LibraryDocumentation(path).to_json()
         data = json.loads(spec)
-        with open(library) as f:
+        with open(path) as f:
             orig_data = json.load(f)
         data['generated'] = orig_data['generated'] = None
-        assert_equal(data, orig_data)
+        self.maxDiff = None
+        self.assertDictEqual(data, orig_data)
 
-    def test_libdoc_json_roundtrip_with_dt(self):
-        library = join(DATADIR, 'DataTypesLibrary.json')
-        spec = LibraryDocumentation(library).to_json()
-        data = json.loads(spec)
-        with open(library) as f:
-            orig_data = json.load(f)
-        data['generated'] = orig_data['generated'] = None
-        assert_equal(data, orig_data)
+
+class TestXmlSpec(unittest.TestCase):
+
+    def test_roundtrip(self):
+        self._test('DynamicLibrary.json')
+
+    def test_roundtrip_with_datatypes(self):
+        self._test('DataTypesLibrary.json')
+
+    def _test(self, lib):
+        path = join(TEMPDIR, 'libdoc-utest-spec.xml')
+        orig_lib = LibraryDocumentation(join(DATADIR, lib))
+        orig_lib.save(path, format='XML')
+        spec_lib = LibraryDocumentation(path)
+        orig_data = orig_lib.to_dictionary()
+        spec_data = spec_lib.to_dictionary()
+        orig_data['generated'] = spec_data['generated'] = None
+        orig_data['source'] = spec_data['source'] = None
+        self.maxDiff = None
+        self.assertDictEqual(orig_data, spec_data)
 
 
 class TestLibdocTypedDictKeys(unittest.TestCase):

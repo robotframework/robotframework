@@ -41,6 +41,9 @@ class LibraryDocBuilder:
                             lineno=lib.lineno)
         libdoc.inits = self._get_initializers(lib)
         libdoc.keywords = KeywordDocBuilder().build_keywords(lib)
+        for kw in libdoc.inits + libdoc.keywords:
+            for arg in kw.args:
+                libdoc.data_types.update(arg.types)
         return libdoc
 
     def _split_library_name_and_args(self, library):

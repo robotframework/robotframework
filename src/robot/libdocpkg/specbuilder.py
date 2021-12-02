@@ -35,8 +35,8 @@ class SpecDocBuilder:
                             doc_format=spec.get('format', 'ROBOT'),
                             source=spec.get('source'),
                             lineno=int(spec.get('lineno', -1)))
-        libdoc.inits = self._create_keywords(spec, 'inits/init')
-        libdoc.keywords = self._create_keywords(spec, 'keywords/kw')
+        libdoc.inits = self._create_keywords(spec, 'inits/init', libdoc.source)
+        libdoc.keywords = self._create_keywords(spec, 'keywords/kw', libdoc.source)
         libdoc.data_types.update(self._create_data_types(spec))
         return libdoc
 
@@ -54,10 +54,10 @@ class SpecDocBuilder:
                             % version)
         return root
 
-    def _create_keywords(self, spec, path):
-        return [self._create_keyword(elem) for elem in spec.findall(path)]
+    def _create_keywords(self, spec, path, lib_source):
+        return [self._create_keyword(elem, lib_source) for elem in spec.findall(path)]
 
-    def _create_keyword(self, elem):
+    def _create_keyword(self, elem, lib_source):
         # "deprecated" attribute isn't read because it is read from the doc
         # automatically. That should probably be changed at some point.
         return KeywordDoc(name=elem.get('name', ''),
@@ -65,7 +65,7 @@ class SpecDocBuilder:
                           doc=elem.find('doc').text or '',
                           shortdoc=elem.find('shortdoc').text or '',
                           tags=[t.text for t in elem.findall('tags/tag')],
-                          source=elem.get('source'),
+                          source=elem.get('source') or lib_source,
                           lineno=int(elem.get('lineno', -1)))
 
     def _create_arguments(self, elem):
