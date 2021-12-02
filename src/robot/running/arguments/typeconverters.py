@@ -27,7 +27,7 @@ from numbers import Integral, Real
 
 from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import (FALSE_STRINGS, TRUE_STRINGS, eq, get_error_message, is_string,
-                         seq2str, type_name, unic)
+                         safe_str, seq2str, type_name)
 
 
 class TypeConverter:
@@ -51,7 +51,7 @@ class TypeConverter:
         return converter
 
     @classmethod
-    def converter_for(cls, type_):
+    def converter_for(cls, type_, custom_converters=None):
         if getattr(type_, '__origin__', None) and type_.__origin__ is not Union:
             type_ = type_.__origin__
         if isinstance(type_, str):
@@ -59,6 +59,10 @@ class TypeConverter:
                 type_ = cls._type_aliases[type_.lower()]
             except KeyError:
                 return None
+        if custom_converters:
+            info = custom_converters.get_converter_info(type_)
+            if info:
+                return CustomConverter(type_, info.converter, info.value_types)
         if type_ in cls._converters:
             return cls._converters[type_](type_)
         for converter in cls._converters.values():
@@ -109,7 +113,7 @@ class TypeConverter:
         ending = ': %s' % error if (error and error.args) else '.'
         raise ValueError(
             "Argument '%s' got value '%s'%s that cannot be converted to %s%s"
-            % (name, unic(value), value_type, self.type_name, ending)
+            % (name, safe_str(value), value_type, self.type_name, ending)
         )
 
     def _literal_eval(self, value, expected):
@@ -501,3 +505,27 @@ class CombinedConverter(TypeConverter):
             except ValueError:
                 pass
         raise ValueError
+
+
+class CustomConverter(TypeConverter):
+
+    def __init__(self, used_type, converter, value_types):
+        super().__init__(used_type)
+        self.converter = converter
+        self.value_types = value_types
+
+    @property
+    def type_name(self):
+        return type_name(self.used_type)
+
+    def handles(self, type_):
+        return self.converter is not None
+
+    def _handles_value(self, value):
+        return not self.value_types or isinstance(value, self.value_types)
+
+    def _convert(self, value, explicit_type=True):
+        try:
+            return self.converter(value)
+        except Exception:
+            raise ValueError(get_error_message())

@@ -20,9 +20,9 @@ from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           ExecutionStatus, ExitForLoop, ContinueForLoop, DataError)
 from robot.result import For as ForResult, If as IfResult, IfBranch as IfBranchResult
 from robot.output import librarylogger as logger
-from robot.utils import (cut_assign_value, frange, get_error_message,
-                         is_list_like, is_number, is_unicode, plural_or_not as s,
-                         split_from_equals, type_name)
+from robot.utils import (cut_assign_value, frange, get_error_message, is_list_like,
+                         is_number, is_string, plural_or_not as s, split_from_equals,
+                         type_name)
 from robot.variables import is_dict_variable, evaluate_expression
 
 from .statusreporter import StatusReporter
@@ -130,7 +130,7 @@ class IfRunner:
         if condition is None:
             return True
         condition = self._context.variables.replace_scalar(condition)
-        if is_unicode(condition):
+        if is_string(condition):
             return evaluate_expression(condition, self._context.variables.current.store)
         return bool(condition)
 

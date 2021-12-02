@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import is_list_like, is_dict_like, is_string, unic
+from robot.utils import is_list_like, is_dict_like, is_string, safe_str
 
 
 class ListenerArguments:
@@ -130,7 +130,7 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
                         'starttime')
 
     def _get_extra_attributes(self, kw):
-        args = [a if is_string(a) else unic(a) for a in kw.args]
+        args = [a if is_string(a) else safe_str(a) for a in kw.args]
         return {'kwname': kw.kwname or '', 'libname': kw.libname or '', 'args': args}
 
 

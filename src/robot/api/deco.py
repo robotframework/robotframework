@@ -97,7 +97,7 @@ def keyword(name=None, tags=(), types=()):
 
 
 @not_keyword
-def library(scope=None, version=None, doc_format=None, listener=None,
+def library(scope=None, version=None, converters=None, doc_format=None, listener=None,
             auto_keywords=False):
     """Class decorator to control keyword discovery and other library settings.
 
@@ -107,12 +107,13 @@ def library(scope=None, version=None, doc_format=None, listener=None,
     keywords. If that is not desired, automatic keyword discovery can be
     enabled by using ``auto_keywords=True``.
 
-    Arguments ``scope``, ``version``, ``doc_format`` and ``listener`` set the
-    library scope, version, documentation format and listener by using class
-    attributes ``ROBOT_LIBRARY_SCOPE``, ``ROBOT_LIBRARY_VERSION``,
-    ``ROBOT_LIBRARY_DOC_FORMAT`` and ``ROBOT_LIBRARY_LISTENER``, respectively.
-    These attributes are only set if the related arguments are given and they
-    override possible existing attributes in the decorated class.
+    Arguments ``scope``, ``version``, ``converters``, ``doc_format`` and ``listener``
+    set library's scope, version, converters, documentation format and listener by
+    using class attributes ``ROBOT_LIBRARY_SCOPE``, ``ROBOT_LIBRARY_VERSION``,
+    ``ROBOT_LIBRARY_CONVERTERS``, ``ROBOT_LIBRARY_DOC_FORMAT`` and
+    ``ROBOT_LIBRARY_LISTENER``, respectively. These attributes are only set if
+    the related arguments are given and they override possible existing attributes
+    in the decorated class.
 
     Examples::
 
@@ -132,6 +133,7 @@ def library(scope=None, version=None, doc_format=None, listener=None,
             # ...
 
     The ``@library`` decorator is new in Robot Framework 3.2.
+    The ``converters`` argument is new in Robot Framework 5.0.
     """
     if inspect.isclass(scope):
         return library()(scope)
@@ -141,6 +143,8 @@ def library(scope=None, version=None, doc_format=None, listener=None,
             cls.ROBOT_LIBRARY_SCOPE = scope
         if version is not None:
             cls.ROBOT_LIBRARY_VERSION = version
+        if converters is not None:
+            cls.ROBOT_LIBRARY_CONVERTERS = converters
         if doc_format is not None:
             cls.ROBOT_LIBRARY_DOC_FORMAT = doc_format
         if listener is not None:

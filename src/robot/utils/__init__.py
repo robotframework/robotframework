@@ -64,15 +64,41 @@ from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
                         parse_time)
 from .robottypes import (FALSE_STRINGS, TRUE_STRINGS, is_bytes, is_dict_like,
                          is_falsy, is_integer, is_list_like, is_number, is_pathlike,
-                         is_string, is_truthy, is_unicode, type_name, typeddict_types)
+                         is_string, is_truthy, type_name, typeddict_types)
 from .setter import setter, SetterAwareType
 from .sortable import Sortable
 from .text import (cut_assign_value, cut_long_message, format_assign_message,
                    get_console_length, getdoc, getshortdoc, pad_console_length,
                    split_tags_from_doc, split_args_from_name_or_path)
-from .unic import prepr, unic
+from .unic import prepr, safe_str
 
 
 def read_rest_data(rstfile):
     from .restreader import read_rest_data
     return read_rest_data(rstfile)
+
+
+# Deprecated Python 2/3 compatibility layer. Not needed by Robot Framework itself
+# since Python 2 support was dropped in RF 5. Preserved at least until RF 5.2
+# to avoid breaking external libraries and tools that use it.
+# https://github.com/robotframework/robotframework/issues/4150
+
+PY3 = True
+PY2 = JYTHON = IRONPYTHON = False
+is_unicode = is_string
+unicode = str
+unic = safe_str
+
+
+def py2to3(cls):
+    """Deprecated since RF 5.0. Use Python 3 features directly instead."""
+    if hasattr(cls, '__unicode__'):
+        cls.__str__ = lambda self: self.__unicode__()
+    if hasattr(cls, '__nonzero__'):
+        cls.__bool__ = lambda self: self.__nonzero__()
+    return cls
+
+
+def py3to2(cls):
+    """Deprecated since RF 5.0. Never done anything when used on Python 3."""
+    return cls

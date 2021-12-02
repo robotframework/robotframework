@@ -22,6 +22,7 @@ Show Correct Trace Back When Failing Before Timeout
     ...    Traceback (most recent call last):
     ...    ${SPACE*2}File "*", line *, in exception
     ...    ${SPACE*4}raise exception(msg)
+    ...    RuntimeError: Failure before timeout
     Check Log Message    ${tc.kws[0].msgs[-1]}    ${expected}    pattern=yes    level=DEBUG
 
 Timeouted Test Timeouts

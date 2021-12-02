@@ -8,6 +8,8 @@ Suite Setup         Run Tests    -x xunit.xml -l log.html --skiponfailure täg  
 ${TESTDATA}         misc/non_ascii.robot
 ${PASS AND FAIL}    misc/pass_and_fail.robot
 ${INVALID}          %{TEMPDIR}${/}ïnvälïd-xünït.xml
+${OUT ONE}          %{TEMPDIR}${/}out1.xml
+${OUT TWO}          %{TEMPDIR}${/}out2.xml
 
 *** Test Cases ***
 XUnit File Is Created
@@ -19,7 +21,7 @@ XUnit File Is Created
 File Structure Is Correct
     ${root} =    Get XUnit Node
     Should Be Equal    ${root.tag}    testsuite
-    Suite Stats Should Be    ${root}    8    3    1
+    Suite Stats Should Be    ${root}    8    3    1    ${SUITE.starttime}
     ${tests} =    Get XUnit Nodes    testcase
     Length Should Be    ${tests}    8
     ${fails} =    Get XUnit Nodes    testcase/failure
@@ -83,9 +85,11 @@ Get XUnit Nodes
     [Return]    ${nodes}
 
 Suite Stats Should Be
-    [Arguments]    ${elem}    ${tests}    ${failures}    ${skipped}
+    [Arguments]    ${elem}    ${tests}    ${failures}    ${skipped}    ${starttime}
     Element Attribute Should Be       ${elem}    tests       ${tests}
     Element Attribute Should Be       ${elem}    failures    ${failures}
     Element Attribute Should Be       ${elem}    skipped     ${skipped}
     Element Attribute Should Match    ${elem}    time        ?.???
     Element Attribute Should Be       ${elem}    errors      0
+    Element Attribute Should Be       ${elem}    timestamp
+    ...    ${{datetime.datetime.strptime($starttime, '%Y%m%d %H:%M:%S.%f').strftime('%Y-%m-%dT%H:%M:%S.%f')}}

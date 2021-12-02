@@ -16,7 +16,7 @@
 from inspect import getdoc, isclass
 from enum import Enum
 
-from robot.utils import Sortable, unic, typeddict_types
+from robot.utils import Sortable, typeddict_types
 
 
 EnumType = type(Enum)
@@ -85,7 +85,7 @@ class TypedDictDoc(Sortable):
         required_keys = list(getattr(typed_dict, '__required_keys__', []))
         optional_keys = list(getattr(typed_dict, '__optional_keys__', []))
         for key, value in typed_dict.__annotations__.items():
-            typ = value.__name__ if isclass(value) else unic(value)
+            typ = value.__name__ if isclass(value) else str(value)
             required = key in required_keys if required_keys or optional_keys else None
             items.append({'key': key, 'type': typ, 'required': required})
         return cls(name=typed_dict.__name__,

@@ -9,3 +9,7 @@ Annotations
 Keyword Decorator
     Run Tests    --dryrun --exclude negative    keywords/type_conversion/keyword_decorator.robot
     Should be equal    ${SUITE.status}    PASS
+
+Custom converters
+    Run Tests    --dryrun    keywords/type_conversion/custom_converters.robot
+    Should be equal    ${SUITE.status}    PASS

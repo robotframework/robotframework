@@ -79,27 +79,15 @@ class PythonArgumentParser(_ArgumentParser):
         if robot_types or robot_types is None:
             spec.types = robot_types
         else:
-            spec.types = self._get_type_hints(handler, spec)
+            spec.types = self._get_type_hints(handler)
 
-    def _get_type_hints(self, handler, spec):
+    def _get_type_hints(self, handler):
         try:
-            type_hints = get_type_hints(handler)
+            return get_type_hints(handler)
         except Exception:  # Can raise pretty much anything
             # Not all functions have `__annotations__`.
             # https://github.com/robotframework/robotframework/issues/4059
             return getattr(handler, '__annotations__', {})
-        self._remove_mismatching_type_hints(type_hints, spec.argument_names)
-        return type_hints
-
-    # FIXME: This is likely not needed nowadays because we unwrap keywords.
-    # Don't want to remove in 4.1.x but can go in 5.0.
-    def _remove_mismatching_type_hints(self, type_hints, argument_names):
-        # typing.get_type_hints returns info from the original function even
-        # if it is decorated. Argument names are got from the wrapping
-        # decorator and thus there is a mismatch that needs to be resolved.
-        mismatch = set(type_hints) - set(argument_names)
-        for name in mismatch:
-            type_hints.pop(name)
 
 
 class _ArgumentSpecParser(_ArgumentParser):

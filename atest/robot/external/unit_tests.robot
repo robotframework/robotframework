@@ -10,5 +10,5 @@ Unit Tests
     ${result} =    Run Process    @{INTERPRETER.interpreter}     ${TESTPATH}   --quiet
     ...    stdout=${STDOUT FILE}    stderr=STDOUT
     Log    ${result.stdout}
-    Should Be Equal As Integers  ${result.rc}    0
-    ...    Unit tests failed with RC ${result.rc}.    values=False
+    Should Be True    ${result.rc} == 0
+    ...    Unit tests failed with RC ${result.rc}:\n${result.stdout}

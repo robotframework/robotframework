@@ -95,7 +95,7 @@ Example output::
 """
 
 from .robottypes import type_name
-from .unic import unic
+from .unic import safe_str
 
 
 def fail(msg=None):
@@ -166,8 +166,7 @@ def assert_raises_with_msg(exc_class, expected_msg, callable_obj, *args,
     try:
         callable_obj(*args, **kwargs)
     except exc_class as err:
-        assert_equal(expected_msg, unic(err),
-                     'Correct exception but wrong message')
+        assert_equal(expected_msg, str(err), 'Correct exception but wrong message')
     else:
         if hasattr(exc_class,'__name__'):
             exc_name = exc_class.__name__
@@ -176,13 +175,13 @@ def assert_raises_with_msg(exc_class, expected_msg, callable_obj, *args,
         _report_failure('%s not raised' % exc_name)
 
 
-def assert_equal(first, second, msg=None, values=True, formatter=None):
+def assert_equal(first, second, msg=None, values=True, formatter=safe_str):
     """Fail if given objects are unequal as determined by the '==' operator."""
     if not first == second:
         _report_inequality(first, second, '!=', msg, values, formatter)
 
 
-def assert_not_equal(first, second, msg=None, values=True, formatter=None):
+def assert_not_equal(first, second, msg=None, values=True, formatter=safe_str):
     """Fail if given objects are equal as determined by the '==' operator."""
     if first == second:
         _report_inequality(first, second, '==', msg, values, formatter)
@@ -220,8 +219,8 @@ def _report_failure(msg):
     raise AssertionError(msg)
 
 
-def _report_inequality(obj1, obj2, delim, msg=None, values=False,
-                       formatter=None, extra=None):
+def _report_inequality(obj1, obj2, delim, msg=None, values=False, formatter=safe_str,
+                       extra=None):
     if not msg:
         msg = _format_message(obj1, obj2, delim, formatter)
     elif values:
@@ -231,8 +230,7 @@ def _report_inequality(obj1, obj2, delim, msg=None, values=False,
     raise AssertionError(msg)
 
 
-def _format_message(obj1, obj2, delim, formatter=None):
-    formatter = formatter or unic
+def _format_message(obj1, obj2, delim, formatter=safe_str):
     str1 = formatter(obj1)
     str2 = formatter(obj2)
     if delim == '!=' and str1 == str2:

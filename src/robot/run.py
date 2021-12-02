@@ -42,7 +42,7 @@ from robot.model import ModelModifier
 from robot.output import LOGGER, pyloggingconf
 from robot.reporting import ResultWriter
 from robot.running.builder import TestSuiteBuilder
-from robot.utils import Application, unic, text
+from robot.utils import Application, text
 
 
 USAGE = """Robot Framework -- A generic automation framework
@@ -432,7 +432,7 @@ class RobotFramework(Application):
         if settings['XUnitSkipNonCritical']:
             LOGGER.warn("Command line option --xunitskipnoncritical has been "
                         "deprecated and has no effect.")
-        LOGGER.info('Settings:\n%s' % unic(settings))
+        LOGGER.info(f'Settings:\n{settings}')
         builder = TestSuiteBuilder(settings['SuiteNames'],
                                    included_extensions=settings.extension,
                                    rpa=settings.rpa,

@@ -53,10 +53,6 @@ def is_string(item):
     return isinstance(item, str)
 
 
-def is_unicode(item):
-    return isinstance(item, str)
-
-
 def is_pathlike(item):
     return isinstance(item, PathLike)
 

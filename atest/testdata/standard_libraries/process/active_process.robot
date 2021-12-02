@@ -1,5 +1,6 @@
 *** Settings ***
 Resource          process_resource.robot
+Test Teardown     Terminate all processes
 
 *** Test Cases ***
 Implicit handle
@@ -9,21 +10,33 @@ Implicit handle
 
 Explicit handle
     ${handle} =    Some process
-    ${stdout} =    Stop some process    ${handle}    42
-    Should Be Equal    ${stdout}    42
+    ${stdout} =    Stop some process    ${handle}    43
+    Should Be Equal    ${stdout}    43
 
 Alias
     Some process    alias=saila
-    ${stdout} =    Stop some process    saila    42
-    Should Be Equal    ${stdout}    42
+    ${stdout} =    Stop some process    saila    44
+    Should Be Equal    ${stdout}    44
 
-Implicit handle, explicit handle, and alias are equivalent
+Index
+    [Documentation]    Mainly for compatibility with RF < 5.0 when Start Process
+    ...                returned process index, not Popen object, as handle.
+    Some process
+    ${stdout} =    Stop some process    1    45
+    Should Be Equal    ${stdout}    45
+    Some process
+    ${stdout} =    Stop some process    2    46
+    Should Be Equal    ${stdout}    46
+
+Implicit handle, explicit handle, alias, and index are equivalent
     ${handle}=    Some process    alias=saila
     ${pid by implicit handle} =    Get process id
     ${pid by explicit handle} =    Get process id    ${handle}
     ${pid by alias} =    Get process id    saila
+    ${pid by index} =    Get process id    1
     Should Be Equal    ${pid by implicit handle}    ${pid by explicit handle}
     Should Be Equal    ${pid by implicit handle}    ${pid by alias}
+    Should Be Equal    ${pid by implicit handle}    ${pid by index}
 
 Switching active process
     Some process    one

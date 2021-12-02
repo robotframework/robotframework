@@ -15,8 +15,8 @@
 
 from robot.errors import DataError, VariableError
 from robot.output import librarylogger as logger
-from robot.utils import (escape, get_error_message, is_dict_like, is_list_like,
-                         is_string, type_name, unescape, unic, DotDict)
+from robot.utils import (DotDict, escape, get_error_message, is_dict_like, is_list_like,
+                         is_string, safe_str, type_name, unescape)
 
 from .finders import VariableFinder
 from .search import VariableMatch, search_variable
@@ -100,7 +100,7 @@ class VariableReplacer:
         unescaper = custom_unescaper or unescape
         match = self._search_variable(item, ignore_errors=ignore_errors)
         if not match:
-            return unic(unescaper(match.string))
+            return safe_str(unescaper(match.string))
         return self._replace_string(match, unescaper, ignore_errors)
 
     def _replace_string(self, match, unescaper, ignore_errors):
@@ -108,7 +108,7 @@ class VariableReplacer:
         while match:
             parts.extend([
                 unescaper(match.before),
-                unic(self._get_variable_value(match, ignore_errors))
+                safe_str(self._get_variable_value(match, ignore_errors))
             ])
             match = search_variable(match.after, ignore_errors=ignore_errors)
         parts.append(unescaper(match.string))
@@ -120,7 +120,7 @@ class VariableReplacer:
         if match.identifier == '*':
             logger.warn(r"Syntax '%s' is reserved for future use. Please "
                         r"escape it like '\%s'." % (match, match))
-            return unic(match)
+            return str(match)
         try:
             value = self._finder.find(match)
             if match.items:

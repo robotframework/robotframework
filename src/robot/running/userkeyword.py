@@ -17,7 +17,7 @@ import os
 
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.utils import getshortdoc, unic
+from robot.utils import getshortdoc
 
 from .arguments import EmbeddedArguments, UserKeywordArgumentParser
 from .handlerstore import HandlerStore
@@ -73,7 +73,7 @@ class UserKeywordHandler:
     def __init__(self, keyword, libname):
         self.name = keyword.name
         self.libname = libname
-        self.doc = unic(keyword.doc)
+        self.doc = keyword.doc
         self.source = keyword.source
         self.lineno = keyword.lineno
         self.tags = keyword.tags

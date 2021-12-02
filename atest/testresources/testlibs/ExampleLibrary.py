@@ -1,5 +1,7 @@
+import builtins
 import sys
 import time
+import traceback
 
 from robot.utils import eq, normalize, timestr_to_secs
 
@@ -41,16 +43,36 @@ class ExampleLibrary:
         pass
 
     def exception(self, name, msg="", class_only=False):
-        try:
-            exception = getattr(__builtins__, name)
-        except AttributeError:  # __builtins__ is sometimes a dict, go figure
-            exception = __builtins__[name]
+        exception = getattr(builtins, name)
         if class_only:
             raise exception
         raise exception(msg)
 
     def external_exception(self, name, msg):
         ObjectToReturn('failure').exception(name, msg)
+
+    def implicitly_chained_exception(self):
+        try:
+            try:
+                1/0
+            except Exception:
+                ooops
+        except Exception:
+            self._log_python_traceback()
+            raise
+
+    def explicitly_chained_exception(self):
+        try:
+            try:
+                assert False
+            except Exception as err:
+                raise AssertionError('Expected error') from err
+        except Exception:
+            self._log_python_traceback()
+            raise
+
+    def _log_python_traceback(self):
+        print(''.join(traceback.format_exception(*sys.exc_info())).rstrip())
 
     def return_string_from_library(self,string='This is a string from Library'):
         return string
