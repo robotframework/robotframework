@@ -291,8 +291,9 @@ class OperatingSystem:
         pattern matching syntaxes available. The more simple matching syntax is 
         explained in `introduction`, and in this case matching is case-sensitive.
 
-        If the flag regexp is turned to True, full regular expression syntax is
-        used to filter the lines. Note double \\ needed for regex rules using a \.
+        THe regexp syntax is new in Robot Framework 5.0. If the flag is turned
+        to True, full regular expression syntax is used to filter the lines.
+        Note double \\\\ needed for regex rules using a \\.
 
         Examples:
         | ${errors} = | Grep File | /var/log/myapp.log | ERROR |
