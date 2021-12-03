@@ -2944,7 +2944,7 @@ class _Misc(_BuiltInBase):
             else:
                 yield value
 
-    def log_to_console(self, message, stream='STDOUT', no_newline=False):
+    def log_to_console(self, message, stream='STDOUT', no_newline=False, format = ""):
         """Logs the given message to the console.
 
         By default uses the standard output stream. Using the standard error
@@ -2964,6 +2964,8 @@ class _Misc(_BuiltInBase):
         This keyword does not log the message to the normal log file. Use
         `Log` keyword, possibly with argument ``console``, if that is desired.
         """
+        format = "{:" + format + "}"
+        message = format.format(message)
         logger.console(message, newline=is_falsy(no_newline), stream=stream)
 
     @run_keyword_variant(resolve=0)
