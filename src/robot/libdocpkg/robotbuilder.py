@@ -37,6 +37,7 @@ class LibraryDocBuilder:
                             version=lib.version,
                             scope=str(lib.scope),
                             doc_format=lib.doc_format,
+                            converters=lib.converters,
                             source=lib.source,
                             lineno=lib.lineno)
         libdoc.inits = self._get_initializers(lib)

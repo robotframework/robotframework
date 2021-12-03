@@ -20,7 +20,7 @@ from robot.running import ArgInfo, ArgumentSpec
 from robot.utils import ET, ETSource
 
 from .model import LibraryDoc, KeywordDoc
-from .datatypes import EnumDoc, TypedDictDoc
+from .datatypes import EnumDoc, TypedDictDoc, CustomDoc
 
 
 class SpecDocBuilder:
@@ -48,10 +48,9 @@ class SpecDocBuilder:
         if root.tag != 'keywordspec':
             raise DataError("Invalid spec file '%s'." % path)
         version = root.get('specversion')
-        if version != '3':
-            raise DataError("Invalid spec file version '%s'. "
-                            "Robot Framework 4.0 and newer requires spec version 3."
-                            % version)
+        if version not in ('3', '4'):
+            raise DataError(f"Invalid spec file version '{version}'. "
+                            f"Supported versions are 3 and 4.")
         return root
 
     def _create_keywords(self, spec, path, lib_source):
@@ -99,7 +98,9 @@ class SpecDocBuilder:
                  for dt in spec.findall('datatypes/enums/enum')]
         typed_dicts = [self._create_typed_dict_doc(dt)
                        for dt in spec.findall('datatypes/typeddicts/typeddict')]
-        return enums + typed_dicts
+        custom = [self._create_custom_doc(dt)
+                  for dt in spec.findall('datatypes/customs/custom')]
+        return enums + typed_dicts + custom
 
     def _create_enum_doc(self, dt):
         return EnumDoc(name=dt.get('name'),
@@ -120,3 +121,7 @@ class SpecDocBuilder:
         return TypedDictDoc(name=dt.get('name'),
                             doc=dt.find('doc').text or '',
                             items=items)
+
+    def _create_custom_doc(self, dt):
+        return CustomDoc(name=dt.get('name'),
+                         doc=dt.find('doc').text or '')

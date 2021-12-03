@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import type_name
+from robot.utils import getdoc, type_name
 
 from .argumentparser import PythonArgumentParser
 
@@ -42,6 +42,12 @@ class CustomArgumentConverters:
                     return conv
         return None
 
+    def __iter__(self):
+        return iter(self.converters)
+
+    def __len__(self):
+        return len(self.converters)
+
 
 class ConverterInfo:
 
@@ -49,6 +55,14 @@ class ConverterInfo:
         self.type = type
         self.converter = converter
         self.value_types = value_types
+
+    @property
+    def name(self):
+        return self.type.__name__
+
+    @property
+    def doc(self):
+        return getdoc(self.converter) or getdoc(self.type)
 
     @classmethod
     def for_converter(cls, type_, converter):
@@ -68,9 +82,9 @@ class ConverterInfo:
                             f'keyword-only arguments which is not supported.')
         arg_type = spec.types.get(spec.positional[0])
         if arg_type is None:
-            accepted_types = ()
+            accepts = ()
         elif hasattr(arg_type, '__args__'):  # Union
-            accepted_types = arg_type.__args__
+            accepts = arg_type.__args__
         else:
-            accepted_types = (arg_type,)
-        return cls(type_, converter, accepted_types)
+            accepts = (arg_type,)
+        return cls(type_, converter, accepts)

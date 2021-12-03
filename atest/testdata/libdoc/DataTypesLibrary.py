@@ -1,11 +1,11 @@
 from enum import Enum, IntEnum
 from typing import Optional, Union, Dict, Any, List
-
-
 try:
     from typing_extensions import TypedDict
 except ImportError:
     from typing import TypedDict
+
+from robot.api.deco import library
 
 
 class HttpCredentials(TypedDict):
@@ -57,6 +57,14 @@ AssertionOperator.__doc__ = """This is some Doc
 This has was defined by assigning to __doc__."""
 
 
+class CustomType:
+    @classmethod
+    def parse(cls, value: Union[str, int]):
+        """Custom doc."""
+        return value
+
+
+@library(converters={CustomType: CustomType.parse}, auto_keywords=True)
 class DataTypesLibrary:
     """This Library has Data Types.
 
@@ -98,4 +106,7 @@ class DataTypesLibrary:
         pass
 
     def typing_types(self, list_of_str: List[str], dict_str_int: Dict[str, int], Whatever: Any, *args: List[Any]):
+        pass
+
+    def custom(self, argument: CustomType):
         pass

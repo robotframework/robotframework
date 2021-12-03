@@ -590,6 +590,7 @@
   ],
   "dataTypes": {
     "enums": [],
-    "typedDicts": []
+    "typedDicts": [],
+    "customs": []
   }
 }

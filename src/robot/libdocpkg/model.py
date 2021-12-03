@@ -38,7 +38,7 @@ class LibraryDoc:
         self.doc_format = doc_format
         self.source = source
         self.lineno = lineno
-        self.data_types = DataTypeCatalog()
+        self.data_types = DataTypeCatalog(converters)
         self.inits = []
         self.keywords = []
 
