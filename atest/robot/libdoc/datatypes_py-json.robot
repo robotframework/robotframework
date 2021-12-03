@@ -21,7 +21,7 @@ Keyword Arguments
     [Tags]        require-py3.7
     [Template]    Verify Argument Models
     ${MODEL}[keywords][0][args]     value    operator: AssertionOperator | None = None    exp: str = something?
-    ${MODEL}[keywords][1][args]     argument: CustomType
+    ${MODEL}[keywords][1][args]     arg: CustomType    arg2: CustomType2
     ${MODEL}[keywords][2][args]     funny: bool | int | float | str | AssertionOperator | Small | GeoLocation | None = equal
     ${MODEL}[keywords][3][args]     location: GeoLocation
     ${MODEL}[keywords][4][args]     list_of_str: List[str]    dict_str_int: Dict[str, int]    Whatever: Any    *args: List[typing.Any]
@@ -74,7 +74,10 @@ Enum Members
 Custom types
     ${Model}[dataTypes][customs][0][type]    Custom
     ${Model}[dataTypes][customs][0][name]    CustomType
-    ${Model}[dataTypes][customs][0][doc]     <p>Custom doc.</p>
+    ${Model}[dataTypes][customs][0][doc]     <p>Converter method doc is used when defined.</p>
+    ${Model}[dataTypes][customs][1][type]    Custom
+    ${Model}[dataTypes][customs][1][name]    CustomType2
+    ${Model}[dataTypes][customs][1][doc]     <p>Class doc is used when converter method has no doc.</p>
 
 *** Keywords ***
 Verify Argument Models

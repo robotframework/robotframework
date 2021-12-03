@@ -58,13 +58,21 @@ This has was defined by assigning to __doc__."""
 
 
 class CustomType:
+    """This doc not used because converter method has doc."""
     @classmethod
     def parse(cls, value: Union[str, int]):
-        """Custom doc."""
+        """Converter method doc is used when defined."""
         return value
 
 
-@library(converters={CustomType: CustomType.parse}, auto_keywords=True)
+class CustomType2:
+    """Class doc is used when converter method has no doc."""
+    def __init__(self, value):
+        self.value = value
+
+
+@library(converters={CustomType: CustomType.parse, CustomType2: CustomType2},
+         auto_keywords=True)
 class DataTypesLibrary:
     """This Library has Data Types.
 
@@ -108,5 +116,5 @@ class DataTypesLibrary:
     def typing_types(self, list_of_str: List[str], dict_str_int: Dict[str, int], Whatever: Any, *args: List[Any]):
         pass
 
-    def custom(self, argument: CustomType):
+    def custom(self, arg: CustomType, arg2: CustomType2):
         pass
