@@ -59,6 +59,12 @@ Finally block failing
 Return in try
     Return in try
 
+Return in except handler
+    Return in except handler
+
+Return in else
+    Return in else
+
 *** Keywords ***
 Try with no failures
     TRY
@@ -214,4 +220,30 @@ Return in try
         RETURN    1
     EXCEPT    foo
         Fail    should not be executed
+    ELSE
+        Fail    should not be executed
+    FINALLY
+        Log    finally is always executed
+    END
+
+Return in except handler
+    TRY
+        Fail    foo
+    EXCEPT    foo
+        RETURN    1
+    ELSE
+        Fail    should not be executed
+    FINALLY
+        Log    finally is always executed
+    END
+
+Return in else
+    TRY
+        No operation
+    EXCEPT    foo
+        Fail    should not be executed
+    ELSE
+        RETURN    1
+    FINALLY
+        Log    finally is always executed
     END

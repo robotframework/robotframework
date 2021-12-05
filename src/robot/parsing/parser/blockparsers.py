@@ -107,6 +107,7 @@ class OrElseParser(IfParser):
 
 
 class TryParser(NestedBlockParser):
+    _child_tokens = (Token.END, Token.ELSE, Token.EXCEPT, Token.FINALLY)
 
     def __init__(self, header):
         NestedBlockParser.__init__(self, Try(header))
@@ -118,11 +119,11 @@ class TryParser(NestedBlockParser):
             return parser
         if statement.type == Token.ELSE:
             parser = TryElseParser(statement)
-            self.model.orelse = parser.model
+            self.model.add_orelse(parser.model)
             return parser
         if statement.type == Token.FINALLY:
             parser = FinalBodyParser(statement)
-            self.model.finalbody = parser.model
+            self.model.add_finalbody(parser.model)
             return parser
         return NestedBlockParser.parse(self, statement)
 
@@ -133,7 +134,7 @@ class ExceptParser(TryParser):
         NestedBlockParser.__init__(self, Except(header))
 
     def handles(self, statement):
-        return (statement.type not in (Token.END, Token.ELSE, Token.EXCEPT, Token.FINALLY)
+        return (statement.type not in self._child_tokens
                 and TryParser.handles(self, statement))
 
 
@@ -143,7 +144,8 @@ class TryElseParser(TryParser):
         NestedBlockParser.__init__(self, TryElse(header))
 
     def handles(self, statement):
-        return statement.type not in (Token.END, Token.EXCEPT, Token.FINALLY) and TryParser.handles(self, statement)
+        return (statement.type not in self._child_tokens
+                and TryParser.handles(self, statement))
 
 
 class FinalBodyParser(TryParser):
@@ -152,4 +154,5 @@ class FinalBodyParser(TryParser):
         NestedBlockParser.__init__(self, FinalBody(header))
 
     def handles(self, statement):
-        return statement.type not in (Token.END, Token.EXCEPT, Token.ELSE) and TryParser.handles(self, statement)
+        return (statement.type not in self._child_tokens
+                and TryParser.handles(self, statement))

@@ -222,7 +222,7 @@ class TryBlockHandler(ElementHandler):
 @ElementHandler.register
 class ExceptHandler(ElementHandler):
     tag = 'exceptblock'
-    children = frozenset(('pattern', 'status', 'kw', 'for', 'if', 'try'))
+    children = frozenset(('pattern', 'status', 'kw', 'for', 'if', 'try', 'return'))
 
     def start(self, elem, result):
         return result.except_blocks.create_except()
@@ -231,7 +231,7 @@ class ExceptHandler(ElementHandler):
 @ElementHandler.register
 class ElseBlockHandler(ElementHandler):
     tag = 'elseblock'
-    children = frozenset(('status', 'msg', 'kw', 'for', 'if', 'try'))
+    children = frozenset(('status', 'msg', 'kw', 'for', 'if', 'try', 'return'))
 
     def start(self, elem, result):
         return result.else_block

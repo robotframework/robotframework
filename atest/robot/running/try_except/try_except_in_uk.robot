@@ -56,4 +56,10 @@ Finally block failing
     FAIL    PASS    FAIL
 
 Return in try
-    PASS
+    PASS    NOT RUN    NOT RUN    PASS
+
+Return in except handler
+    FAIL    PASS    NOT RUN    PASS
+
+Return in else
+    PASS    NOT RUN    PASS    PASS

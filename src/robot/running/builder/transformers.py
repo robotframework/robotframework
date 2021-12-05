@@ -457,6 +457,9 @@ class ExceptBuilder(NodeVisitor):
     def visit_For(self, node):
         ForBuilder(self.model).build(node)
 
+    def visit_ReturnStatement(self, node):
+        self.model.body.create_return(node.values)
+
     def visit_KeywordCall(self, node):
         self.model.body.create_keyword(name=node.keyword, args=node.args,
                                        assign=node.assign, lineno=node.lineno)
@@ -480,6 +483,9 @@ class TryElseBuilder(NodeVisitor):
 
     def visit_For(self, node):
         ForBuilder(self.model).build(node)
+
+    def visit_ReturnStatement(self, node):
+        self.model.body.create_return(node.values)
 
     def visit_KeywordCall(self, node):
         self.model.body.create_keyword(name=node.keyword, args=node.args,

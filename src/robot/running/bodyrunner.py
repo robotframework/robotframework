@@ -18,7 +18,8 @@ from contextlib import contextmanager
 import re
 
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
-                          ExecutionStatus, ExitForLoop, ContinueForLoop, DataError)
+                          ExecutionStatus, ExitForLoop, ContinueForLoop, DataError,
+                          ReturnFromKeyword)
 from robot.result import (For as ForResult, If as IfResult, IfBranch as IfBranchResult,
                           Try as TryResult, Except as TryHandlerResult, Block as BlockResult)
 from robot.output import librarylogger as logger
@@ -392,34 +393,50 @@ class TryRunner:
         self._run = run
         self._templated = templated
 
+    def run(self, data):
+        run = self._run
+        with StatusReporter(data, TryResult(), self._context, run):
+            failures = self._run_block(data.try_block, BlockResult(data.try_block.type),
+                                       run, data.error)
+            self._run_handlers(data, failures)
+        return run
+
+    def _run_block(self, block, result, run, error=None):
+        try:
+            with StatusReporter(block, result, self._context, run):
+                if run:
+                    if error:
+                        raise DataError(error)
+                runner = BodyRunner(self._context, run, self._templated)
+                runner.run(block.body)
+        except (ExecutionFailures, ExecutionFailed,
+                ReturnFromKeyword) as err:
+            return err
+        else:
+            return None
+
     def _run_handlers(self, data, failures):
         handler_matched = False
         handler_error = None
         else_error = None
         for handler in data.except_blocks:
-            run = self._run and failures and not handler_matched and not handler_error and \
-                  self._error_is_expected(failures.message, handler.patterns)
+            run = self._run and failures and not handler_matched \
+                and not handler_error and not data.error \
+                and self._error_is_expected(failures.message, handler.patterns)
             if run:
                 handler_matched = True
             result = TryHandlerResult(handler.patterns)
-            try:
-                with StatusReporter(handler, result, self._context, run):
-                    runner = BodyRunner(self._context, run, self._templated)
-                    runner.run(handler.body)
-            except ExecutionFailed as err:
-                handler_error = err
+            handler_error = self._run_block(handler, result, run)
 
         if data.else_block:
             run = self._run and not failures and not handler_error
-            try:
-                with StatusReporter(data.else_block, BlockResult(data.else_block.type), self._context, run):
-                    runner = BodyRunner(self._context, run, self._templated)
-                    runner.run(data.else_block.body)
-            except ExecutionFailed as err:
-                else_error = err
+            result = BlockResult(data.else_block.type)
+            else_error = self._run_block(data.else_block, result, run)
+
         if data.finally_block:
             run = self._run and not data.error
-            with StatusReporter(data.finally_block, BlockResult(data.finally_block.type), self._context, run):
+            with StatusReporter(data.finally_block, BlockResult(data.finally_block.type),
+                                self._context, run):
                 runner = BodyRunner(self._context, run, self._templated)
                 runner.run(data.finally_block.body)
         if handler_error:
@@ -431,7 +448,7 @@ class TryRunner:
 
     def _error_is_expected(self, error, patterns):
         if not patterns:
-            # Empty catch matches everything
+            # The default (empty) except matches everything
             return True
         glob = self._matches
         matchers = {'GLOB': glob,
@@ -448,24 +465,6 @@ class TryRunner:
                 if matchers[prefix](error, pat.lstrip()):
                     return True
         return False
-
-    def run(self, data):
-        with StatusReporter(data, TryResult(), self._context, self._run):
-            failures = None
-            result = BlockResult(data.try_block.type)
-            try:
-                with StatusReporter(data.try_block, result, self._context, self._run):
-                    if self._run:
-                        if data.error:
-                            raise DataError(data.error)
-                    runner = BodyRunner(self._context, self._run, self._templated)
-                    runner.run(data.try_block.body)
-            except (ExecutionFailures, ExecutionFailed) as err:
-                failures = err
-
-            self._run_handlers(data, failures)
-
-        return self._run
 
     def _matches(self, string, pattern, caseless=False):
         # Must use this instead of fnmatch when string may contain newlines.
