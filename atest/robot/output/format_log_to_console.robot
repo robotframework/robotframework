@@ -1,3 +1,6 @@
+*** Settings ***
+Library    Process
+Library    OperatingSystem
 *** Test Cases *** 
 Center align log to console with star padding
     Log to console  hello console  format=*^78
