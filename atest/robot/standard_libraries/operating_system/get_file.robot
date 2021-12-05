@@ -81,11 +81,29 @@ Grep File
     Check Log Message    ${tc.kws[8].kws[0].msgs[1]}    2 out of 5 lines matched
     Check Log Message    ${tc.kws[9].kws[0].msgs[1]}    1 out of 5 lines matched
 
+Grep File with regexp
+    ${tc}=    Check testcase    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    5 out of 5 lines matched
+    Check Log Message    ${tc.kws[1].kws[0].msgs[1]}    2 out of 5 lines matched
+    Check Log Message    ${tc.kws[2].kws[0].msgs[1]}    1 out of 5 lines matched
+    Check Log Message    ${tc.kws[3].kws[0].msgs[1]}    0 out of 5 lines matched
+    Check Log Message    ${tc.kws[4].kws[0].msgs[1]}    3 out of 5 lines matched
+    Check Log Message    ${tc.kws[5].kws[0].msgs[1]}    3 out of 5 lines matched
+    Check Log Message    ${tc.kws[6].kws[0].msgs[1]}    1 out of 5 lines matched
+    Check Log Message    ${tc.kws[7].kws[0].msgs[1]}    4 out of 5 lines matched
+    Check Log Message    ${tc.kws[8].kws[0].msgs[1]}    2 out of 5 lines matched
+    Check Log Message    ${tc.kws[9].kws[0].msgs[1]}    1 out of 5 lines matched
+
 Grep File with empty file
     ${tc}=    Check testcase    ${TESTNAME}
     Check Log Message    ${tc.kws[1].kws[0].msgs[1]}    0 out of 0 lines matched
 
 Grep File non Ascii
+    ${tc}=    Check testcase    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    1 out of 5 lines matched
+    Check Log Message    ${tc.kws[1].kws[0].msgs[1]}    1 out of 5 lines matched
+
+Grep File non Ascii with regexp
     ${tc}=    Check testcase    ${TESTNAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    1 out of 5 lines matched
     Check Log Message    ${tc.kws[1].kws[0].msgs[1]}    1 out of 5 lines matched

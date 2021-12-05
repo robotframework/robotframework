@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import fnmatch
+import re
 import glob
 import os
 import shutil
@@ -275,7 +276,7 @@ class OperatingSystem:
         with open(path, 'rb') as f:
             return f.read()
 
-    def grep_file(self, path, pattern, encoding='UTF-8', encoding_errors='strict'):
+    def grep_file(self, path, pattern, encoding='UTF-8', encoding_errors='strict', regexp=False):
         """Returns the lines of the specified file that match the ``pattern``.
 
         This keyword reads a file from the file system using the defined
@@ -286,17 +287,18 @@ class OperatingSystem:
         Possible trailing newline is never returned.
 
         A line matches if it contains the ``pattern`` anywhere in it and
-        it *does not need to match the pattern fully*. The pattern
-        matching syntax is explained in `introduction`, and in this
-        case matching is case-sensitive.
+        it *does not need to match the pattern fully*. There are two different
+        pattern matching syntaxes available. The more simple matching syntax is 
+        explained in `introduction`, and in this case matching is case-sensitive.
+
+        THe regexp syntax is new in Robot Framework 5.0. If the flag is turned
+        to True, full regular expression syntax is used to filter the lines.
+        Note double \\\\ needed for regex rules using a \\.
 
         Examples:
         | ${errors} = | Grep File | /var/log/myapp.log | ERROR |
         | ${ret} = | Grep File | ${CURDIR}/file.txt | [Ww]ildc??d ex*ple |
-
-        If more complex pattern matching is needed, it is possible to use
-        `Get File` in combination with String library keywords like `Get
-        Lines Matching Regexp`.
+        | ${ret} = | Grep File | ${CURDIR}/file.txt | [Ww]ildc\\w+d ex.*ple | regexp=True
 
         This keyword supports special ``SYSTEM`` and ``CONSOLE`` encodings that
         `Get File` supports only with Robot Framework 4.0 and newer. When using
@@ -304,16 +306,18 @@ class OperatingSystem:
         earlier versions.
         """
         path = self._absnorm(path)
-        pattern = '*%s*' % pattern
+        if not regexp:
+            pattern = fnmatch.translate(f'{pattern}*')
+        reobj = re.compile(pattern)
         encoding = self._map_encoding(encoding)
         lines = []
         total_lines = 0
         self._link("Reading file '%s'.", path)
-        with open(path, encoding=encoding, errors=encoding_errors) as f:
-            for line in f.readlines():
+        with open(path, encoding=encoding, errors=encoding_errors) as file:
+            for line in file:
                 total_lines += 1
                 line = line.rstrip('\r\n')
-                if fnmatch.fnmatchcase(line, pattern):
+                if reobj.search(line):
                     lines.append(line)
             self._info('%d out of %d lines matched' % (len(lines), total_lines))
             return '\n'.join(lines)

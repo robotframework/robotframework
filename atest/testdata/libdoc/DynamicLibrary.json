@@ -127,7 +127,7 @@
       "doc": "<p>Dummy documentation for <a href=\"#Invalid%20Source%20Info\" class=\"name\">Invalid source info</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" class=\"name\">introduction</a> nor <a href=\"#Importing\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
       "shortdoc": "Dummy documentation for `Invalid source info`.",
       "tags": [],
-      "source": null,
+      "source": "/Source/robotframework/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": -1
     },
     {
@@ -590,6 +590,7 @@
   ],
   "dataTypes": {
     "enums": [],
-    "typedDicts": []
+    "typedDicts": [],
+    "customs": []
   }
 }

@@ -42,7 +42,8 @@ Libdoc_ tool distributed with Robot Framework can generate machine readable spec
 both in XML and JSON format. XML spec files have XSD_ 1.0 compatible schema definition
 and JSON spec schema is JSON Schema `DRAFT-7`__ compatible.
 
-  * `<libdoc.03.xsd>`__ - Compatible with Robot Framework >= 4.0.
+  * `<libdoc.04.xsd>`__ - Compatible with Robot Framework >= 5.0.
+  * `<libdoc.03.xsd>`__ - Compatible with Robot Framework >= 4.0, < 5.0.
   * `<libdoc.02.xsd>`__ - Compatible with Robot Framework == 3.2.
   * `<libdoc.01.xsd>`__ - Compatible with Robot Framework < 3.2.
   * `<libdoc_schema.json>`__ - Compatible with Robot Framework >= 4.0.

@@ -25,15 +25,27 @@ Subclasses
     FI date      30.11.2021    2021-11-30
     Dates        11/30/2021    30.11.2021
 
+Class as converter
+    Class as converter    Robot   Hello, Robot!
+
+Custom in Union
+    Number or int    ${1}
+    Number or int    1
+    Number or int    one
+    Int or number    ${1}
+    Int or number    1
+    Int or number    one
+
 Failing conversion
     [Template]    Conversion should fail
     Number     wrong         type=Number     error=ValueError: Don't know number 'wrong'.
     US date    30.11.2021    type=UsDate     error=Value does not match '%m/%d/%Y'.
-    FI date    ${666}        type=FiDate     error=TypeError: Only strings accepted!    arg_type=integer
+    US date    ${666}        type=UsDate     error=TypeError: Only strings accepted!    arg_type=integer
+    FI date    ${666}        type=FiDate     arg_type=integer
+    True       ${1.0}        type=boolean    arg_type=float
 
-Invalid converter
-    [Template]    Conversion should fail
-    Invalid    xxx           type=Invalid    error=TypeError: 'int' object is not callable
+Invalid converters
+    Invalid    a    b    c    d
 
 Non-type annotation
     Non type annotation    x    x
