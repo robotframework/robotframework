@@ -35,7 +35,6 @@ import signal
 import subprocess
 import sys
 import tempfile
-import time
 
 from interpreter import Interpreter
 
@@ -113,5 +112,4 @@ if __name__ == '__main__':
         rc = 251
     else:
         rc = atests(options.interpreter, robot_args)
-    time.sleep(10)
     sys.exit(rc)
