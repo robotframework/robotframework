@@ -422,7 +422,7 @@ class TryRunner:
         for handler in data.except_blocks:
             run = self._run and failures and not handler_matched \
                 and not handler_error and not data.error \
-                and self._error_is_expected(failures.message, handler.patterns)
+                and self._error_is_expected(failures, handler.patterns)
             if run:
                 handler_matched = True
             result = TryHandlerResult(handler.patterns)
@@ -450,23 +450,20 @@ class TryRunner:
         if not patterns:
             # The default (empty) except matches everything
             return True
-        glob = self._matches
-        matchers = {'GLOB': glob,
-                    'EQUALS': lambda s, p: s == p,
-                    'STARTS': lambda s, p: s.startswith(p),
-                    'REGEXP': lambda s, p: re.match(p, s) is not None}
+        matchers = {
+            'GLOB': lambda s, p: Matcher(p, spaceless=False).match(s),
+            'EQUALS': lambda s, p: s == p,
+            'STARTS': lambda s, p: s.startswith(p),
+            'REGEXP': lambda s, p: re.match(p, s) is not None
+        }
         prefixes = tuple(prefix + ':' for prefix in matchers)
+        message = error.message
         for pattern in patterns:
             if not pattern.startswith(prefixes):
-                if glob(error, pattern):
+                if message == pattern:
                     return True
             else:
                 prefix, pat = pattern.split(':', 1)
-                if matchers[prefix](error, pat.lstrip()):
+                if matchers[prefix](message, pat.lstrip()):
                     return True
         return False
-
-    def _matches(self, string, pattern, caseless=False):
-        # Must use this instead of fnmatch when string may contain newlines.
-        matcher = Matcher(pattern, caseless=caseless, spaceless=False)
-        return matcher.match(string)
