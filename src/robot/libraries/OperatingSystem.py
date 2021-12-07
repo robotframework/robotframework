@@ -35,7 +35,7 @@ PROCESSES = ConnectionCache('No active processes.')
 
 
 class OperatingSystem:
-    """A test library providing keywords for OS related tasks.
+    r"""A test library providing keywords for OS related tasks.
 
     ``OperatingSystem`` is Robot Framework's standard library that
     enables various operating system related tasks to be performed in
@@ -52,22 +52,26 @@ class OperatingSystem:
 
     = Path separators =
 
-    Because Robot Framework uses the backslash (``\\``) as an escape character
-    in the test data, using a literal backslash requires duplicating it like
-    in ``c:\\\\path\\\\file.txt``. That can be inconvenient especially with
+    Because Robot Framework uses the backslash (``\``) as an escape character
+    in its data, using a literal backslash requires duplicating it like
+    in ``c:\\path\\file.txt``. That can be inconvenient especially with
     longer Windows paths, and thus all keywords expecting paths as arguments
     convert forward slashes to backslashes automatically on Windows. This also
     means that paths like ``${CURDIR}/path/file.txt`` are operating system
     independent.
 
     Notice that the automatic path separator conversion does not work if
-    the path is only a part of an argument like with `Run` and `Start Process`
-    keywords. In these cases the built-in variable ``${/}`` that contains
-    ``\\`` or ``/``, depending on the operating system, can be used instead.
+    the path is only a part of an argument like with the `Run` keyword.
+    In these cases the built-in variable ``${/}`` that contains ``\`` or ``/``,
+    depending on the operating system, can be used instead.
 
     = Pattern matching =
 
-    Some keywords allow their arguments to be specified as
+    Many keywords accepts arguments as either _glob_ or _regular expression_ patterns.
+
+    == Glob patterns ==
+
+    Some keywords, for example `List Directory`, support so called
     [http://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:
 
     | ``*``        | matches any string, even an empty string                |
@@ -77,18 +81,31 @@ class OperatingSystem:
     | ``[a-z]``    | matches one character from the range in the bracket     |
     | ``[!a-z]``   | matches one character not from the range in the bracket |
 
-    Unless otherwise noted, matching is case-insensitive on
-    case-insensitive operating systems such as Windows.
+    Unless otherwise noted, matching is case-insensitive on case-insensitive
+    operating systems such as Windows.
+
+    == Regular expressions ==
+
+    Some keywords, for example `Grep File`, support
+    [http://en.wikipedia.org/wiki/Regular_expression|regular expressions]
+    that are more powerful but also more complicated that glob patterns.
+    The regular expression support is implemented using Python's
+    [http://docs.python.org/library/re.html|re module] and its documentation
+    should be consulted for more information about the syntax.
+
+    Because the backslash character (``\``) is an escape character in
+    Robot Framework data, possible backslash characters in regular
+    expressions need to be escaped with another backslash like ``\\d\\w+``.
+    Strings that may contain special characters but should be handled
+    as literal strings, can be escaped with the `Regexp Escape` keyword
+    from the BuiltIn library.
 
     = Tilde expansion =
 
     Paths beginning with ``~`` or ``~username`` are expanded to the current or
     specified user's home directory, respectively. The resulting path is
     operating system dependent, but typically e.g. ``~/robot`` is expanded to
-    ``C:\\Users\\<user>\\robot`` on Windows and ``/home/<user>/robot`` on
-    Unixes.
-
-    The ``~username`` form does not work on Jython.
+    ``C:\Users\<user>\robot`` on Windows and ``/home/<user>/robot`` on Unixes.
 
     = Boolean arguments =
 
@@ -111,21 +128,19 @@ class OperatingSystem:
     | `Remove Directory` | ${path} | recursive=${EMPTY} | # Empty string is false.       |
     | `Remove Directory` | ${path} | recursive=${FALSE} | # Python ``False`` is false.   |
 
-    Considering `OFF`` and ``0`` false is new in Robot Framework 3.1.
-
     = Example =
 
-    |  =Setting=  |     =Value=     |
-    | Library     | OperatingSystem |
-
-    | =Variable=  |       =Value=         |
-    | ${PATH}     | ${CURDIR}/example.txt |
-
-    | =Test Case= |     =Action=      | =Argument= |    =Argument=        |
-    | Example     | Create File       | ${PATH}    | Some text            |
-    |             | File Should Exist | ${PATH}    |                      |
-    |             | Copy File         | ${PATH}    | ~/file.txt           |
-    |             | ${output} =       | Run | ${TEMPDIR}${/}script.py arg |
+    | ***** Settings *****
+    | Library         OperatingSystem
+    |
+    | ***** Variables *****
+    | ${PATH}         ${CURDIR}/example.txt
+    |
+    | ***** Test Cases *****
+    | Example
+    |     `Create File`          ${PATH}    Some text
+    |     `File Should Exist`    ${PATH}
+    |     `Copy File`            ${PATH}    ~/file.txt
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = __version__
@@ -276,34 +291,41 @@ class OperatingSystem:
         with open(path, 'rb') as f:
             return f.read()
 
-    def grep_file(self, path, pattern, encoding='UTF-8', encoding_errors='strict', regexp=False):
-        """Returns the lines of the specified file that match the ``pattern``.
+    def grep_file(self, path, pattern, encoding='UTF-8', encoding_errors='strict',
+                  regexp=False):
+        r"""Returns the lines of the specified file that match the ``pattern``.
 
         This keyword reads a file from the file system using the defined
         ``path``, ``encoding`` and ``encoding_errors`` similarly as `Get File`.
         A difference is that only the lines that match the given ``pattern`` are
-        returned. Lines are returned as a single string catenated back together
+        returned. Lines are returned as a single string concatenated back together
         with newlines and the number of matched lines is automatically logged.
         Possible trailing newline is never returned.
 
-        A line matches if it contains the ``pattern`` anywhere in it and
-        it *does not need to match the pattern fully*. There are two different
-        pattern matching syntaxes available. The more simple matching syntax is 
-        explained in `introduction`, and in this case matching is case-sensitive.
+        A line matches if it contains the ``pattern`` anywhere in it i.e. it does
+        not need to match the pattern fully. There are two supported pattern types:
 
-        THe regexp syntax is new in Robot Framework 5.0. If the flag is turned
-        to True, full regular expression syntax is used to filter the lines.
-        Note double \\\\ needed for regex rules using a \\.
+        - By default the pattern is considered a _glob_ pattern where, for example,
+          ``*`` and ``?`` can be used as wildcards.
+        - If the ``regexp`` argument is given a true value, the pattern is
+          considered to be a _regular expression_. These patterns are more
+          powerful but also more complicated than glob patterns. They often use
+          the backslash character and it needs to be escaped in Robot Framework
+          date like `\\`.
+
+        For more information about glob and regular expression syntax, see
+        the `Pattern matching` section. With this keyword matching is always
+        case-sensitive.
 
         Examples:
         | ${errors} = | Grep File | /var/log/myapp.log | ERROR |
         | ${ret} = | Grep File | ${CURDIR}/file.txt | [Ww]ildc??d ex*ple |
-        | ${ret} = | Grep File | ${CURDIR}/file.txt | [Ww]ildc\\w+d ex.*ple | regexp=True
+        | ${ret} = | Grep File | ${CURDIR}/file.txt | [Ww]ildc\\w+d ex.*ple | regexp=True |
 
-        This keyword supports special ``SYSTEM`` and ``CONSOLE`` encodings that
-        `Get File` supports only with Robot Framework 4.0 and newer. When using
-        Python 3, it is possible to use ``${NONE}`` instead of ``SYSTEM`` with
-        earlier versions.
+        Special encoding values ``SYSTEM`` and ``CONSOLE`` that `Get File` supports
+        are supported by this keyword only with Robot Framework 4.0 and newer.
+
+        Support for regular expressions is new in Robot Framework 5.0.
         """
         path = self._absnorm(path)
         if not regexp:
@@ -342,7 +364,8 @@ class OperatingSystem:
         """Fails unless the given path (file or directory) exists.
 
         The path can be given as an exact path or as a glob pattern.
-        The pattern matching syntax is explained in `introduction`.
+        See the `Glob patterns` section for details about the supported syntax.
+
         The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
@@ -354,7 +377,8 @@ class OperatingSystem:
         """Fails if the given path (file or directory) exists.
 
         The path can be given as an exact path or as a glob pattern.
-        The pattern matching syntax is explained in `introduction`.
+        See the `Glob patterns` section for details about the supported syntax.
+
         The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
@@ -378,7 +402,8 @@ class OperatingSystem:
         """Fails unless the given ``path`` points to an existing file.
 
         The path can be given as an exact path or as a glob pattern.
-        The pattern matching syntax is explained in `introduction`.
+        See the `Glob patterns` section for details about the supported syntax.
+
         The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
@@ -391,7 +416,8 @@ class OperatingSystem:
         """Fails if the given path points to an existing file.
 
         The path can be given as an exact path or as a glob pattern.
-        The pattern matching syntax is explained in `introduction`.
+        See the `Glob patterns` section for details about the supported syntax.
+
         The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
@@ -404,7 +430,8 @@ class OperatingSystem:
         """Fails unless the given path points to an existing directory.
 
         The path can be given as an exact path or as a glob pattern.
-        The pattern matching syntax is explained in `introduction`.
+        See the `Glob patterns` section for details about the supported syntax.
+
         The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
@@ -417,7 +444,8 @@ class OperatingSystem:
         """Fails if the given path points to an existing file.
 
         The path can be given as an exact path or as a glob pattern.
-        The pattern matching syntax is explained in `introduction`.
+        See the `Glob patterns` section for details about the supported syntax.
+
         The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
@@ -432,7 +460,7 @@ class OperatingSystem:
         """Waits until the given file or directory is removed.
 
         The path can be given as an exact path or as a glob pattern.
-        The pattern matching syntax is explained in `introduction`.
+        See the `Glob patterns` section for details about the supported syntax.
         If the path is a pattern, the keyword waits until all matching
         items are removed.
 
@@ -458,7 +486,7 @@ class OperatingSystem:
         """Waits until the given file or directory is created.
 
         The path can be given as an exact path or as a glob pattern.
-        The pattern matching syntax is explained in `introduction`.
+        See the `Glob patterns` section for details about the supported syntax.
         If the path is a pattern, the keyword returns when an item matching
         it is created.
 
@@ -557,9 +585,6 @@ class OperatingSystem:
         and `Create Binary File` if you need to write bytes without encoding.
         `File Should Not Exist` can be used to avoid overwriting existing
         files.
-
-        Automatically converting ``\\n`` to ``\\r\\n`` on Windows is new in
-        Robot Framework 3.1.
         """
         path = self._write_to_file(path, content, encoding)
         self._link("Created file '%s'.", path)
@@ -576,7 +601,7 @@ class OperatingSystem:
         return path
 
     def create_binary_file(self, path, content):
-        """Creates a binary file with the given content.
+        r"""Creates a binary file with the given content.
 
         If content is given as a Unicode string, it is first converted to bytes
         character by character. All characters with ordinal below 256 can be
@@ -589,15 +614,15 @@ class OperatingSystem:
         with missing intermediate directories.
 
         Examples:
-        | Create Binary File | ${dir}/example.png | ${image content}     |
-        | Create Binary File | ${path}            | \\x01\\x00\\xe4\\x00 |
+        | Create Binary File | ${dir}/example.png | ${image content} |
+        | Create Binary File | ${path}            | \x01\x00\xe4\x00 |
 
         Use `Create File` if you want to create a text file using a certain
         encoding. `File Should Not Exist` can be used to avoid overwriting
         existing files.
         """
         if is_string(content):
-            content = bytes(bytearray(ord(c) for c in content))
+            content = bytes(ord(c) for c in content)
         path = self._write_to_file(path, content, mode='wb')
         self._link("Created binary file '%s'.", path)
 
@@ -610,9 +635,6 @@ class OperatingSystem:
         Other than not overwriting possible existing files, this keyword works
         exactly like `Create File`. See its documentation for more details
         about the usage.
-
-        Note that special encodings ``SYSTEM`` and ``CONSOLE`` only work
-        with this keyword starting from Robot Framework 3.1.2.
         """
         path = self._write_to_file(path, content, encoding, mode='a')
         self._link("Appended to file '%s'.", path)
@@ -624,7 +646,7 @@ class OperatingSystem:
         not point to a regular file (e.g. it points to a directory).
 
         The path can be given as an exact path or as a glob pattern.
-        The pattern matching syntax is explained in `introduction`.
+        See the `Glob patterns` section for details about the supported syntax.
         If the path is a pattern, all files matching it are removed.
         """
         path = self._absnorm(path)
@@ -704,10 +726,10 @@ class OperatingSystem:
     # Moving and copying files and directories
 
     def copy_file(self, source, destination):
-        """Copies the source file into the destination.
+        r"""Copies the source file into the destination.
 
         Source must be a path to an existing file or a glob pattern (see
-        `Pattern matching`) that matches exactly one file. How the
+        `Glob patterns`) that matches exactly one file. How the
         destination is interpreted is explained below.
 
         1) If the destination is an existing file, the source file is copied
@@ -718,7 +740,7 @@ class OperatingSystem:
         overwritten.
 
         3) If the destination does not exist and it ends with a path
-        separator (``/`` or ``\\``), it is considered a directory. That
+        separator (``/`` or ``\``), it is considered a directory. That
         directory is created and a source file copied into it.
         Possible missing intermediate directories are also created.
 
@@ -831,7 +853,7 @@ class OperatingSystem:
         """Copies specified files to the target directory.
 
         Source files can be given as exact paths and as glob patterns (see
-        `Pattern matching`). At least one source must be given, but it is
+        `Glob patterns`). At least one source must be given, but it is
         not an error if it is a pattern that does not match anything.
 
         Last argument must be the destination directory. If the destination
@@ -1081,10 +1103,8 @@ class OperatingSystem:
         - Collapses redundant separators and up-level references.
         - Converts ``/`` to ``\\`` on Windows.
         - Replaces initial ``~`` or ``~user`` by that user's home directory.
-          The latter is not supported on Jython.
         - If ``case_normalize`` is given a true value (see `Boolean arguments`)
-          on Windows, converts the path to all lowercase. New in Robot
-          Framework 3.1.
+          on Windows, converts the path to all lowercase.
 
         Examples:
         | ${path1} = | Normalize Path | abc/           |
@@ -1288,8 +1308,9 @@ class OperatingSystem:
         argument a true value (see `Boolean arguments`).
 
         If ``pattern`` is given, only items matching it are returned. The pattern
-        matching syntax is explained in `introduction`, and in this case
-        matching is case-sensitive.
+        is considered to be a _glob pattern_ and the full syntax is explained in
+        the `Glob patterns` section. With this keyword matching is always
+        case-sensitive.
 
         Examples (using also other `List Directory` variants):
         | @{items} = | List Directory           | ${TEMPDIR} |
