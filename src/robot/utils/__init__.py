@@ -83,6 +83,9 @@ def read_rest_data(rstfile):
 # to avoid breaking external libraries and tools that use it.
 # https://github.com/robotframework/robotframework/issues/4150
 
+from io import StringIO
+
+
 PY3 = True
 PY2 = JYTHON = IRONPYTHON = False
 is_unicode = is_string
