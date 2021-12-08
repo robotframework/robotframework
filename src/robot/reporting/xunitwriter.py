@@ -37,6 +37,7 @@ class XUnitFileWriter(ResultVisitor):
 
     def __init__(self, xml_writer):
         self._writer = xml_writer
+        self.root = None
 
     def start_suite(self, suite):
         tests, failures, skipped = self._get_stats(suite.statistics)
@@ -48,6 +49,8 @@ class XUnitFileWriter(ResultVisitor):
                  'time': self._time_as_seconds(suite.elapsedtime),
                  'timestamp' : self._starttime_to_isoformat(suite.starttime)}
         self._writer.start('testsuite', attrs)
+        if not self.root:
+            self.root = suite
 
     def _get_stats(self, statistics):
         return (
@@ -57,6 +60,17 @@ class XUnitFileWriter(ResultVisitor):
         )
 
     def end_suite(self, suite):
+        if suite.metadata or suite.doc:
+            self._writer.start('properties')
+            if suite.doc:
+                self._writer.element('property', attrs={'name': 'Suite Documentation', 'value': suite.doc})
+            if suite.metadata:
+                for n, v in suite.metadata.items():
+                    self._writer.element('property', attrs={'name': n, 'value': v})
+            if suite is self.root:
+                self._writer.element('property', attrs={'name': 'XUnit Documentation',
+                                                        'value': self.__doc__})
+            self._writer.end('properties')
         self._writer.end('testsuite')
 
     def visit_test(self, test):
