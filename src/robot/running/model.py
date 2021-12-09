@@ -166,8 +166,8 @@ class Except(model.Except):
     __slots__ = ['lineno', 'error']
     body_class = Body
 
-    def __init__(self, patterns=None, parent=None, lineno=None, error=None):
-        model.Except.__init__(self, patterns, parent)
+    def __init__(self, patterns=None, variable=None, parent=None, lineno=None, error=None):
+        model.Except.__init__(self, patterns, variable, parent)
         self.lineno = lineno
         self.error = error
 

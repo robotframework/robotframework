@@ -175,11 +175,12 @@ class Try(BodyItem):
 class Except(BodyItem):
     type = BodyItem.EXCEPT
     body_class = Body
-    repr_args = ('type', 'patterns')
-    __slots__ = ['patterns']
+    repr_args = ('type', 'patterns', 'variable')
+    __slots__ = ['patterns', 'variable']
 
-    def __init__(self, patterns=None, parent=None):
+    def __init__(self, patterns=None, variable=None, parent=None):
         self.patterns = patterns or []
+        self.variable = variable
         self.parent = parent
         self.body = None
 
@@ -188,7 +189,8 @@ class Except(BodyItem):
         return self.body_class(self, body)
 
     def __str__(self):
-        return f'EXCEPT    {", ".join(self.patterns)}'
+        return f'EXCEPT    {", ".join(self.patterns)}' + \
+               f' as {self.variable}' if self.variable else ''
 
     def visit(self, visitor):
         self.body.visit(visitor)

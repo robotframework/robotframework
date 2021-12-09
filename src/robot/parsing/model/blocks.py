@@ -300,6 +300,10 @@ class Except(HeaderAndBody):
     def patterns(self):
         return self.header.patterns
 
+    @property
+    def variable(self):
+        return self.header.variable
+
     def validate(self):
         if not self.body:
             self.errors += ('EXCEPT block cannot be empty.',)

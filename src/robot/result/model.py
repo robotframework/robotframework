@@ -260,9 +260,9 @@ class Except(model.Except, StatusMixin, DeprecatedAttributesMixin):
     body_class = Body
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
-    def __init__(self, patterns=None, status='FAIL',
+    def __init__(self, patterns=None, variable=None, status='FAIL',
                  starttime=None, endtime=None, doc='', parent=None):
-        model.Except.__init__(self, patterns, parent)
+        model.Except.__init__(self, patterns, variable, parent)
         self.status = status
         self.starttime = starttime
         self.endtime = endtime
@@ -271,7 +271,8 @@ class Except(model.Except, StatusMixin, DeprecatedAttributesMixin):
     @property
     @deprecated
     def name(self):
-        return ' | '.join(self.patterns)
+        as_part = f' AS {self.variable}' if self.variable else ''
+        return ' | '.join(self.patterns) + as_part
 
 
 @Body.register

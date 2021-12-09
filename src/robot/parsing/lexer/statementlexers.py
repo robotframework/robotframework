@@ -206,11 +206,19 @@ class TryHeaderLexer(TypeAndArguments):
         return statement[0].value == 'TRY'
 
 
-class ExceptHeaderLexer(TypeAndArguments):
+class ExceptHeaderLexer(StatementLexer):
     token_type = Token.EXCEPT
 
     def handles(self, statement):
         return statement[0].value == 'EXCEPT'
+
+    def lex(self):
+        self.statement[0].type = Token.EXCEPT
+        for token in self.statement[1:]:
+            if token.value == 'AS':
+                token.type = Token.AS
+            else:
+                token.type = token.ARGUMENT
 
 
 class FinallyHeaderLexer(TypeAndArguments):

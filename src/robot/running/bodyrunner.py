@@ -425,7 +425,9 @@ class TryRunner:
                 and self._error_is_expected(failures, handler.patterns)
             if run:
                 handler_matched = True
-            result = TryHandlerResult(handler.patterns)
+                if handler.variable:
+                    self._context.variables[handler.variable] = failures
+            result = TryHandlerResult(handler.patterns, handler.variable)
             handler_error = self._run_block(handler, result, run)
 
         if data.else_block:

@@ -910,21 +910,38 @@ class ExceptHeader(Statement):
     type = Token.EXCEPT
 
     @classmethod
-    def from_params(cls, patterns=None, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, patterns=None, variable=None, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
         tokens = [
             Token(Token.SEPARATOR, indent),
-            Token(Token.FOR),
+            Token(Token.EXCEPT),
             Token(Token.SEPARATOR, separator)
         ]
         for pattern in patterns:
             tokens.append(pattern)
-            tokens.append(Token(Token.SEPARATOR, indent))
+            tokens.append(Token(Token.SEPARATOR, separator))
+        if variable:
+            tokens.append(Token(Token.AS))
+            tokens.append(Token(Token.SEPARATOR, separator))
+            tokens.append(Token(Token.ARGUMENT, variable))
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
     @property
     def patterns(self):
-        return self.get_values(Token.ARGUMENT)
+        patterns = []
+        for t in self.tokens:
+            if t.type == Token.AS:
+                break
+            if t.type == Token.ARGUMENT:
+                patterns.append(t.value)
+        return patterns
+
+    @property
+    def variable(self):
+        for t in self.tokens:
+            if t.type == Token.AS and len(self.tokens) > self.tokens.index(t) + 1:
+                return self.tokens[self.tokens.index(t) + 1].value
+        return None
 
 
 @Statement.register

@@ -225,7 +225,7 @@ class ExceptHandler(ElementHandler):
     children = frozenset(('pattern', 'status', 'kw', 'for', 'if', 'try', 'return'))
 
     def start(self, elem, result):
-        return result.except_blocks.create_except()
+        return result.except_blocks.create_except(variable=elem.get('variable'))
 
 
 @ElementHandler.register

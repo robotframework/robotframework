@@ -87,6 +87,7 @@ class Token:
     TRY = 'TRY'
     EXCEPT = 'EXCEPT'
     FINALLY = 'FINALLY'
+    AS = 'AS'
     RETURN_STATEMENT = 'RETURN STATEMENT'
 
     SEPARATOR = 'SEPARATOR'

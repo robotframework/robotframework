@@ -444,6 +444,7 @@ class ExceptBuilder(NodeVisitor):
 
     def build(self, node):
         self.model = self.parent.except_blocks.create_except(patterns=node.patterns,
+                                                             variable=node.variable,
                                                              lineno=node.lineno,
                                                              error=format_error(node.errors))
         for step in node.body:
