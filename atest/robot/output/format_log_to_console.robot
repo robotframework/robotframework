@@ -2,6 +2,8 @@
 Library    Process
 Library    OperatingSystem
 *** Test Cases *** 
+No formatting
+    Log To Console  no format
 Center align log to console with star padding
     Log to console  hello console  format=*^78
 Right align log to console with hastag padding
