@@ -1,5 +1,0 @@
-*** Settings ***
-
-*** Variables ***
-
-*** Keywords ***
