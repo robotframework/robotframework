@@ -426,7 +426,7 @@ class TryRunner:
             if run:
                 handler_matched = True
                 if handler.variable:
-                    self._context.variables[handler.variable] = failures
+                    self._context.variables[handler.variable] = str(failures)
             result = TryHandlerResult(handler.patterns, handler.variable)
             handler_error = self._run_block(handler, result, run)
 
@@ -449,6 +449,8 @@ class TryRunner:
             raise failures
 
     def _error_is_expected(self, error, patterns):
+        if isinstance(error, ReturnFromKeyword):
+            return False
         if not patterns:
             # The default (empty) except matches everything
             return True

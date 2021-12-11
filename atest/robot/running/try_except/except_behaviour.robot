@@ -1,6 +1,6 @@
 *** Settings ***
 Resource          try_except_resource.robot
-Suite Setup       Run Tests    ${EMPTY}    running/try_except/except_patterns.robot
+Suite Setup       Run Tests    ${EMPTY}    running/try_except/except_behaviour.robot
 Test Template     Verify try except and block statuses
 
 *** Test Cases ***
@@ -14,4 +14,14 @@ Startswith matcher
     FAIL    PASS
 
 Regexp matcher
+    FAIL    PASS
+
+Return cannot be catch
+    [Template]
+    Check test case    ${TEST NAME}
+
+AS get the message
+    FAIL    PASS
+
+AS with many failures
     FAIL    PASS
