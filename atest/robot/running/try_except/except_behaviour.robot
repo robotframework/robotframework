@@ -16,6 +16,9 @@ Startswith matcher
 Regexp matcher
     FAIL    PASS
 
+Variable in pattern
+    FAIL    PASS
+
 Return cannot be catch
     [Template]
     Check test case    ${TEST NAME}

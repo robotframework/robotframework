@@ -463,6 +463,7 @@ class TryRunner:
         prefixes = tuple(prefix + ':' for prefix in matchers)
         message = error.message
         for pattern in patterns:
+            pattern = self._context.variables.replace_scalar(pattern)
             if not pattern.startswith(prefixes):
                 if message == pattern:
                     return True

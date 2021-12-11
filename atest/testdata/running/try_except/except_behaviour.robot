@@ -1,3 +1,6 @@
+*** Variables ***
+${expected}    failure
+
 *** Test Cases ***
 Equals is the default matcher
     TRY
@@ -27,6 +30,13 @@ Regexp matcher
         No operation
     END
 
+Variable in pattern
+    TRY
+        Fail    failure
+    EXCEPT    ${expected}
+        No operation
+    END
+
 Return cannot be catch
     Uk with return
 
@@ -44,9 +54,6 @@ AS with many failures
     EXCEPT    GLOB: several*    AS   ${err}
         Should be equal    ${err}    Several failures occurred:\n\n1) oh no!\n\n2) fail again!
     END
-
-
-
 
 *** Keywords ***
 Uk with return
