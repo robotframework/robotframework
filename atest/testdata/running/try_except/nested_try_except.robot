@@ -218,3 +218,41 @@ For loop inside finally block failing
             Should be equal    ${i}    1
         END
     END
+
+Try Except in test setup
+    [Setup]    Passing uk with try except
+    No operation
+
+Try Except in test teardown
+    [Teardown]    Passing uk with try except
+    No operation
+
+Failing Try Except in test setup
+    [Documentation]    FAIL Setup failed:\nOh no
+    [Setup]    Failing uk with try except
+    No operation
+
+Failing Try Except in test teardown
+    [Documentation]    FAIL Teardown failed:\nOh no
+    [Teardown]    Failing uk with try except
+    No operation
+
+Failing Try Except in test teardown and other failures
+    [Documentation]    FAIL failure in body\n\nAlso teardown failed:\nOh no
+    [Teardown]    Failing uk with try except
+    Fail    failure in body
+
+*** Keywords ***
+Passing uk with try except
+    TRY
+        Fail    Oh no
+    EXCEPT    Oh no
+        No operation
+    END
+
+Failing uk with try except
+    TRY
+        Fail    Oh no
+    EXCEPT    Oh no no oh!
+        No operation
+    END

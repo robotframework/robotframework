@@ -75,3 +75,23 @@ For loop inside finally block
 For loop inside finally block failing
     ${tc}=    Check Test Case    ${TESTNAME}
     Block statuses should be   ${tc.body[0]}    PASS    NOT RUN    FAIL
+
+Try Except in test setup
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Block statuses should be   ${tc.setup.body[0]}    FAIL    PASS
+
+Try Except in test teardown
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Block statuses should be   ${tc.teardown.body[0]}    FAIL    PASS
+
+Failing Try Except in test setup
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Block statuses should be   ${tc.setup.body[0]}    FAIL    NOT RUN
+
+Failing Try Except in test teardown
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Block statuses should be   ${tc.teardown.body[0]}    FAIL    NOT RUN
+
+Failing Try Except in test teardown and other failures
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Block statuses should be   ${tc.teardown.body[0]}    FAIL    NOT RUN
