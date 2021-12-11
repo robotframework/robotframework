@@ -40,7 +40,7 @@ Variable in pattern
 Return cannot be catch
     Uk with return
 
-AS get the message
+AS gets the message
     TRY
         Fail    failure
     EXCEPT    failure    AS    ${err}
@@ -54,6 +54,14 @@ AS with many failures
     EXCEPT    GLOB: several*    AS   ${err}
         Should be equal    ${err}    Several failures occurred:\n\n1) oh no!\n\n2) fail again!
     END
+
+AS with default except
+    TRY
+        Fail    failure
+    EXCEPT    AS    ${err}
+        Should be equal    ${err}    failure
+    END
+
 
 *** Keywords ***
 Uk with return

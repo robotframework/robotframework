@@ -23,8 +23,11 @@ Return cannot be catch
     [Template]
     Check test case    ${TEST NAME}
 
-AS get the message
+AS gets the message
     FAIL    PASS
 
 AS with many failures
+    FAIL    PASS
+
+AS with default except
     FAIL    PASS
