@@ -2948,18 +2948,27 @@ class _Misc(_BuiltInBase):
         """Logs the given message to the console.
 
         By default uses the standard output stream. Using the standard error
-        stream is possibly by giving the ``stream`` argument value ``STDERR``
+        stream is possible by giving the ``stream`` argument value ``STDERR``
         (case-insensitive).
 
         By default appends a newline to the logged message. This can be
         disabled by giving the ``no_newline`` argument a true value (see
         `Boolean arguments`).
 
+        By default adds no alignment formatting. The format argument can be 
+        used to set the alignment of the log message, along with adding 
+        custom padding. Please see 
+        https://docs.python.org/3/library/string.html#formatspec for
+        detailed alignment possibilities. This argument is new in Robot
+        Framework 5.0.
+
         Examples:
         | Log To Console | Hello, console!             |                 |
         | Log To Console | Hello, stderr!              | STDERR          |
         | Log To Console | Message starts here and is  | no_newline=true |
         | Log To Console | continued without newline.  |                 |
+        | Log To Console | center message with * pad   | format=*^60     |
+        | Log To Console | 30 spaces before msg starts | format=>30      |
 
         This keyword does not log the message to the normal log file. Use
         `Log` keyword, possibly with argument ``console``, if that is desired.
