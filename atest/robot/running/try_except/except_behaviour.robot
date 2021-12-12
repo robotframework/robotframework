@@ -19,9 +19,13 @@ Regexp matcher
 Variable in pattern
     FAIL    PASS
 
+Skip cannot be catch
+    [Template]
+    Verify try except and block statuses    SKIP    NOT RUN    PASS    tc_status=SKIP
+
 Return cannot be catch
     [Template]
-    Check test case    ${TEST NAME}
+    Verify try except and block statuses in uk    PASS   NOT RUN    PASS
 
 AS gets the message
     FAIL    PASS

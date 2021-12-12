@@ -451,6 +451,8 @@ class TryRunner:
     def _error_is_expected(self, error, patterns):
         if isinstance(error, ReturnFromKeyword):
             return False
+        if any(e.skip for e in error.get_errors()):
+            return False
         if not patterns:
             # The default (empty) except matches everything
             return True

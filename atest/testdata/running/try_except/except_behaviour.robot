@@ -37,6 +37,16 @@ Variable in pattern
         No operation
     END
 
+Skip cannot be catch
+    [Documentation]    SKIP hello!
+    TRY
+        SKIP   hello!
+    EXCEPT
+        No operation
+    FINALLY
+        No operation
+    END
+
 Return cannot be catch
     Uk with return
 
@@ -69,4 +79,6 @@ Uk with return
         RETURN
     EXCEPT    GLOB: *
         Fail    Should not be executed
+    FINALLY
+        No operation
     END
