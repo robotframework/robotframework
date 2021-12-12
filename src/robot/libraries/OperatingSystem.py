@@ -1447,11 +1447,10 @@ class _Process:
             return 255
         if rc is None:
             return 0
-        # In Windows (Python and Jython) return code is value returned by
+        # In Windows return code is value returned by
         # command (can be almost anything)
         # In other OS:
-        #   In Jython return code can be between '-255' - '255'
-        #   In Python return code must be converted with 'rc >> 8' and it is
+        #   Return code must be converted with 'rc >> 8' and it is
         #   between 0-255 after conversion
         if WINDOWS:
             return rc % 256

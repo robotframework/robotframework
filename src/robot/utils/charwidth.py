@@ -29,6 +29,8 @@ it takes several seconds on Jython.
 [1] https://github.com/robotframework/robotframework/issues/604
 [2] https://github.com/robotframework/robotframework/issues/1096
 """
+# TODO: can the implementation use unicodedata now?
+
 
 def get_char_width(char):
     char = ord(char)

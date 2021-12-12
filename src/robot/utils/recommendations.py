@@ -60,6 +60,7 @@ class RecommendationFinder:
 
     def _get_normalized_candidates(self, candidates):
         norm_candidates = {}
+        # TODO: maybe this can be changed since Jython is not supported.
         # sort before normalization for consistent Python/Jython ordering
         for cand in sorted(candidates):
             norm = self.normalizer(cand)
