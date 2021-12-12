@@ -9,7 +9,7 @@ Valid END after For
     ...
     ...    1) 'For' is a reserved keyword. It must be an upper case 'FOR' when used as a marker.
     ...
-    ...    2) 'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR' or 'IF' when used as a marker.
+    ...    2) 'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR', 'IF' or 'TRY' when used as a marker.
     For    ${x}    IN    invalid
         Log    ${x}
     END
@@ -43,7 +43,7 @@ Else If inside valid IF
     END
 
 End
-    [Documentation]    FAIL    'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR' or 'IF' when used as a marker.
+    [Documentation]    FAIL    'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR', 'IF' or 'TRY' when used as a marker.
     End
 
 End after valid FOR header
@@ -53,7 +53,7 @@ End after valid FOR header
     End
 
 End after valid If header
-    [Documentation]    FAIL    'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR' or 'IF' when used as a marker.
+    [Documentation]    FAIL    'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR', 'IF' or 'TRY' when used as a marker.
     IF    True
         No operation
     End
@@ -72,11 +72,11 @@ Reserved inside IF
     ...
     ...    2) 'If' is a reserved keyword. It must be an upper case 'IF' when used as a marker.
     ...
-    ...    3) 'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR' or 'IF' when used as a marker.
+    ...    3) 'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR', 'IF' or 'TRY' when used as a marker.
     ...
     ...    4) 'Return' is a reserved keyword.
     ...
-    ...    5) 'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR' or 'IF' when used as a marker.
+    ...    5) 'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR', 'IF' or 'TRY' when used as a marker.
     IF    True
         For    ${x}    IN    invalid
             Log     ${x}
