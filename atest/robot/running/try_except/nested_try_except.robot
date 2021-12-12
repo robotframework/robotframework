@@ -3,6 +3,26 @@ Resource          try_except_resource.robot
 Suite Setup       Run Tests    ${EMPTY}    running/try_except/nested_try_except.robot
 
 *** Test cases ***
+Try except inside try
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Block statuses should be   ${tc.body[0]}    FAIL    PASS
+    Block statuses should be   ${tc.body[0].try_block.body[0]}    FAIL    NOT RUN    NOT RUN    PASS
+
+Try except inside except
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Block statuses should be   ${tc.body[0]}    FAIL    PASS    NOT RUN
+    Block statuses should be   ${tc.body[0].except_blocks[0].body[0]}    FAIL    PASS    PASS
+
+Try except inside try else
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Block statuses should be   ${tc.body[0]}    PASS   NOT RUN    PASS
+    Block statuses should be   ${tc.body[0].else_block.body[0]}    FAIL    PASS    PASS
+
+Try except inside finally
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Block statuses should be   ${tc.body[0]}    FAIL    PASS    PASS
+    Block statuses should be   ${tc.body[0].finally_block.body[0]}    FAIL    PASS    PASS
+
 Try except inside if
     ${tc}=    Check Test Case    ${TESTNAME}
     Block statuses should be   ${tc.body[0].body[0].body[0]}    FAIL    PASS

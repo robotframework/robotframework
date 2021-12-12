@@ -1,4 +1,64 @@
 *** Test cases ***
+Try except inside try
+    TRY
+        TRY
+            Fail    nested failure
+        EXCEPT    miss
+            Fail    Should not be executed
+        ELSE
+            No operation
+        FINALLY
+            Log    in the finally
+        END
+    EXCEPT    nested failure
+        No operation
+    END
+
+Try except inside except
+    TRY
+        Fail    oh no!
+    EXCEPT    oh no!
+        TRY
+            Fail    nested failure
+        EXCEPT    nested failure
+            No operation
+        FINALLY
+            Log    in the finally
+        END
+    ELSE
+        Fail    Should not be executed
+    END
+
+Try except inside try else
+    TRY
+        No operation
+    EXCEPT    oh no!
+        Fail    Should not be executed
+    ELSE
+        TRY
+            Fail    nested failure
+        EXCEPT    nested failure
+            No operation
+        FINALLY
+            Log    in the finally
+        END
+    END
+
+Try except inside finally
+    TRY
+        Fail    oh no!
+    EXCEPT    oh no!
+        No operation
+    FINALLY
+        TRY
+            Fail    nested failure
+        EXCEPT    nested failure
+            No operation
+        FINALLY
+            Log    in the finally
+        END
+    END
+
 Try except inside if
     IF    True
         TRY
