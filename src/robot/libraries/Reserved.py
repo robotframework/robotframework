@@ -40,8 +40,9 @@ class Reserved:
             if kw in ('else', 'else if'):
                 error += " and follow an opening 'IF'"
             if kw == 'end':
-                error += " and follow an opening 'FOR', 'IF' or 'TRY'"
-            error += " when used as a marker."
+                error += " when used as a marker to close a block."
+            else:
+                error += " when used as a marker."
         if kw == 'elif':
             error += " The marker to use with 'IF' is 'ELSE IF'."
         raise Exception(error)
