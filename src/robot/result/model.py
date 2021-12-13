@@ -59,6 +59,15 @@ class ForIterations(model.BaseBody):
         return self.append(self.for_iteration_class(*args, **kwargs))
 
 
+class WhileIterations(model.BaseBody):
+    while_iteration_class = None
+    __slots__ = []
+
+    def create_iteration(self, *args, **kwargs):
+        return self.append(self.while_iteration_class(*args, **kwargs))
+
+
+@WhileIterations.register
 @ForIterations.register
 @Body.register
 class Message(model.Message):
@@ -241,6 +250,53 @@ class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
         self.doc = doc
 
 
+@WhileIterations.register
+class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
+    """Represents one WHILE loop iteration."""
+    type = BodyItem.WHILE_ITERATION
+    body_class = Body
+    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+
+    def __init__(self, status='FAIL', starttime=None, endtime=None,
+                 doc='', parent=None):
+        self.parent = parent
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.doc = doc
+        self.body = None
+
+    @setter
+    def body(self, body):
+        return self.body_class(self, body)
+
+    def visit(self, visitor):
+        visitor.visit_while_iteration(self)
+
+    @property
+    @deprecated
+    def name(self):
+        return ''
+
+
+@Body.register
+class While(model.While, StatusMixin, DeprecatedAttributesMixin):
+    body_class = WhileIterations
+    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+
+    def __init__(self, condition=None, parent=None, status='FAIL', starttime=None, endtime=None, doc=''):
+        model.While.__init__(self, condition, parent)
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.doc = doc
+
+    @property
+    @deprecated
+    def name(self):
+        return self.condition
+
+
 @Body.register
 class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
     __slots__ = ['status', 'starttime', 'endtime']
@@ -264,6 +320,7 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
         return ''
 
 
+@WhileIterations.register
 @ForIterations.register
 @Body.register
 class Keyword(model.Keyword, StatusMixin):

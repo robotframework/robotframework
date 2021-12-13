@@ -104,7 +104,7 @@ class TestHandler(ElementHandler):
     tag = 'test'
     # 'tags' is for RF < 4 compatibility.
     children = frozenset(('doc', 'tags', 'tag', 'timeout', 'status', 'kw', 'if', 'for',
-                          'try', 'msg'))
+                          'try', 'while', 'msg'))
 
     def start(self, elem, result):
         return result.tests.create(name=elem.get('name', ''))
@@ -226,6 +226,15 @@ class ReturnHandler(ElementHandler):
 
     def start(self, elem, result):
         return result.body.create_return()
+
+
+@ElementHandler.register
+class WhileHandler(ElementHandler):
+    tag = 'while'
+    children = frozenset(('var', 'value', 'doc', 'status', 'iter', 'msg', 'kw'))
+
+    def start(self, elem, result):
+        return result.body.create_while(condition=elem.get('condition'))
 
 
 @ElementHandler.register

@@ -956,6 +956,31 @@ class End(NoArgumentHeader):
 
 
 @Statement.register
+class WhileHeader(Statement):
+    type = Token.WHILE
+
+    @classmethod
+    def from_params(cls, condition, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+        tokens = [Token(Token.SEPARATOR, indent),
+                  Token(cls.type),
+                  Token(Token.SEPARATOR, separator),
+                  Token(Token.ARGUMENT, condition),
+                  Token(Token.EOL, eol)]
+        return cls(tokens)
+
+    @property
+    def condition(self):
+        return self.get_value(Token.ARGUMENT)
+
+    def validate(self):
+        conditions = len(self.get_tokens(Token.ARGUMENT))
+        if conditions == 0:
+            self.errors += ('%s has no condition.' % self.type,)
+        if conditions > 1:
+            self.errors += ('%s has more than one condition.' % self.type,)
+
+
+@Statement.register
 class ReturnStatement(Statement):
     type = Token.RETURN_STATEMENT
 

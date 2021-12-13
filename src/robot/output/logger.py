@@ -253,7 +253,9 @@ class LoggerProxy(AbstractLoggerProxy):
         'IfBranch': 'start_if_branch',
         'Try': 'start_try',
         'TryBranch': 'start_try_branch',
-        'Return': 'start_return'
+        'Return': 'start_return',
+        'While': 'start_while',
+        'WhileIteration': 'start_while_iteration',
     }
     _end_keyword_methods = {
         'For': 'end_for',
@@ -262,7 +264,9 @@ class LoggerProxy(AbstractLoggerProxy):
         'IfBranch': 'end_if_branch',
         'Try': 'end_try',
         'TryBranch': 'end_try_branch',
-        'Return': 'end_return'
+        'Return': 'end_return',
+        'While': 'end_while',
+        'WhileIteration': 'end_while_iteration',
     }
 
     def start_keyword(self, kw):

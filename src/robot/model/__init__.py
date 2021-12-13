@@ -27,7 +27,7 @@ This package is considered stable.
 
 from .body import BaseBody, Body, BodyItem, Branches
 from .configurer import SuiteConfigurer
-from .control import For, If, IfBranch, Try, TryBranch, Return
+from .control import For, If, IfBranch, Try, TryBranch, Return, While
 from .testsuite import TestSuite
 from .testcase import TestCase
 from .keyword import Keyword, Keywords

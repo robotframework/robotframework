@@ -21,7 +21,7 @@ from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           ExecutionStatus, ExitForLoop, ContinueForLoop, DataError,
                           ReturnFromKeyword)
 from robot.result import (For as ForResult, If as IfResult, IfBranch as IfBranchResult,
-                          Try as TryResult, TryBranch as TryBranchResult)
+                          Try as TryResult, TryBranch as TryBranchResult, While as WhileResult)
 from robot.output import librarylogger as logger
 from robot.utils import (cut_assign_value, frange, get_error_message, is_string,
                          is_list_like, is_number, plural_or_not as s,
@@ -506,3 +506,37 @@ class TryRunner:
                 if matchers[f'{prefix}:'](message, pat):
                     return True
         return False
+
+
+class WhileRunner:
+
+    def __init__(self, context, run=True, templated=False):
+        self._context = context
+        self._run = run
+        self._templated = templated
+
+    def run(self, data):
+        result = WhileResult(data.condition)
+        run_at_least_one_round = self._should_run(data.condition)
+        run = self._run and run_at_least_one_round
+        with StatusReporter(data, result, self._context, run):
+            if self._run and data.error:
+                raise DataError(data.error)
+            if run_at_least_one_round:
+                while self._should_run(data.condition):
+                    self._run_iteration(data, result, self._run)
+            else:
+                self._run_iteration(data, result, run)
+        return run
+
+    def _run_iteration(self, data, result, run):
+        runner = BodyRunner(self._context, run, self._templated)
+        with StatusReporter(data, result.body.create_iteration(),
+                            self._context, run):
+            runner.run(data.body)
+
+    def _should_run(self, condition):
+        condition = self._context.variables.replace_scalar(condition)
+        if is_string(condition):
+            return evaluate_expression(condition, self._context.variables.current.store)
+        return bool(condition)

@@ -243,6 +243,13 @@ class FinallyHeaderLexer(TypeAndArguments):
         return statement[0].value == 'FINALLY'
 
 
+class WhileHeaderLexer(TypeAndArguments):
+    token_type = Token.WHILE
+
+    def handles(self, statement):
+        return statement[0].value == 'WHILE'
+
+
 class EndLexer(TypeAndArguments):
     token_type = Token.END
 

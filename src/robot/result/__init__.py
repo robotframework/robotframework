@@ -43,6 +43,6 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 
 from .executionresult import Result
 from .model import (For, If, IfBranch, ForIteration, Keyword, Message, TestCase,
-                    TestSuite, Try, TryBranch, Return)
+                    TestSuite, Try, TryBranch, While, WhileIteration, Return)
 from .resultbuilder import ExecutionResult, ExecutionResultBuilder
 from .visitor import ResultVisitor
