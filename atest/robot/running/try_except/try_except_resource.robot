@@ -8,11 +8,13 @@ Verify try except and block statuses
     [Arguments]    @{statuses}    ${tc_status}=${None}
     ${tc}=    Check test status    @{statuses}    tc_status=${tc_status}
     Block statuses should be    ${tc.body[0]}    @{statuses}
+    RETURN    ${tc}
 
 Verify try except and block statuses in uk
     [Arguments]    @{statuses}    ${tc_status}=${None}
     ${tc}=    Check test status    @{statuses}    tc_status=${tc_status}
     Block statuses should be    ${tc.body[0].body[0]}    @{statuses}
+    RETURN    ${tc}
 
 Check Test Status
     [Arguments]    @{statuses}    ${tc_status}=${None}

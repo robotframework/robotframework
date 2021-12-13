@@ -273,7 +273,7 @@ class Try(Block):
         if not self.body:
             self.errors += ('TRY block cannot be empty.',)
         if not (self.handlers or self.finalbody):
-            self.errors += ('TRY block must have EXCEPT or FINALLY block.',)
+            self.errors += ('TRY block must be followed by EXCEPT or FINALLY block"',)
         self._validate_structure()
 
     def _validate_structure(self):
@@ -290,7 +290,8 @@ class Try(Block):
             if finally_line < else_line:
                 self.errors += ('FINALLY block before ELSE block.',)
         default_excepts = list(filter(lambda h: not h.patterns, self.handlers))
-        if len(default_excepts) > 1 or (len(default_excepts) == 1 and default_excepts[0] is not self.handlers[-1]):
+        if len(default_excepts) > 1 or (len(default_excepts) == 1 and
+                                        default_excepts[0] is not self.handlers[-1]):
             self.errors += ('Default (empty) EXCEPT must be last.',)
 
 

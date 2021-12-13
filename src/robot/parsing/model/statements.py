@@ -943,6 +943,18 @@ class ExceptHeader(Statement):
                 return self.tokens[self.tokens.index(t) + 1].value
         return None
 
+    def validate(self):
+        as_seen = False
+        for token in self.tokens:
+            if token.type == Token.AS:
+                as_seen = True
+                if token != self.tokens[-2]:
+                    self.errors += ('AS must be second to last.',)
+        if as_seen:
+            var = self.tokens[-1].value
+            if not is_scalar_assign(var, allow_assign_mark=False):
+                self.errors += (f"Invalid AS variable '{var}'.",)
+
 
 @Statement.register
 class FinallyHeader(NoArgumentHeader):

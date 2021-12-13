@@ -1,5 +1,6 @@
 *** Variables ***
 ${expected}    failure
+${expected_with_pattern}    GLOB: *
 
 *** Test Cases ***
 Equals is the default matcher
@@ -30,6 +31,13 @@ Regexp matcher
         No operation
     END
 
+Regexp escapes
+    TRY
+        Fail    000failure
+    EXCEPT    REGEXP: \\d\\d\\dfai?lu.*
+        No operation
+    END
+
 Variable in pattern
     TRY
         Fail    failure
@@ -37,7 +45,20 @@ Variable in pattern
         No operation
     END
 
-Skip cannot be catch
+Matcher type cannot be defined with variable
+    [Documentation]    FAIL failure
+    TRY
+        Fail    GLOB: *
+    EXCEPT    ${expected_with_pattern}
+       No operation
+    END
+    TRY
+        Fail    failure
+    EXCEPT    ${expected_with_pattern}
+        Fail    Should not be executed
+    END
+
+Skip cannot be caught
     [Documentation]    SKIP hello!
     TRY
         SKIP   hello!
@@ -47,13 +68,21 @@ Skip cannot be catch
         No operation
     END
 
-Return cannot be catch
-    Uk with return
+Return cannot be caught
+    ${value}=    Uk with return
+    Should be equal    ${value}    value
 
 AS gets the message
     TRY
         Fail    failure
     EXCEPT    failure    AS    ${err}
+        Should be equal    ${err}    failure
+    END
+
+AS with multiple pattern
+    TRY
+        Fail    failure
+    EXCEPT    fa    GLOB: fa?lur?    AS    ${err}
         Should be equal    ${err}    failure
     END
 
@@ -72,11 +101,17 @@ AS with default except
         Should be equal    ${err}    failure
     END
 
+AS as the error message
+    TRY
+        Fail    AS
+    EXCEPT    \AS    AS    ${err}
+        Should be equal    ${err}    \AS
+    END
 
 *** Keywords ***
 Uk with return
     TRY
-        RETURN
+        RETURN    value
     EXCEPT    GLOB: *
         Fail    Should not be executed
     FINALLY

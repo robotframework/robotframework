@@ -18,7 +18,7 @@ Try without body
     END
 
 Try without except or finally
-    [Documentation]    FAIL    TRY block must have EXCEPT or FINALLY block.
+    [Documentation]    FAIL    TRY block must be followed by EXCEPT or FINALLY block"
     TRY
         Fail   Should not be executed
     END
@@ -53,6 +53,22 @@ Default except not last
     EXCEPT    Error
         Fail   Should not be executed
     FINALLY
+        Fail   Should not be executed
+    END
+
+AS not the second last token
+    [Documentation]    FAIL    AS must be second to last.
+    TRY
+        Fail   Should not be executed
+    EXCEPT    AS    foo    ${foo}
+        Fail   Should not be executed
+    END
+
+Invalid AS variable
+    [Documentation]    FAIL    Invalid AS variable 'foo'.
+    TRY
+        Fail   Should not be executed
+    EXCEPT    AS    foo
         Fail   Should not be executed
     END
 

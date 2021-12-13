@@ -404,7 +404,7 @@ class TryBuilder(NodeVisitor):
     def _get_errors(self, node):
         errors = node.header.errors + node.errors
         for handler in node.handlers:
-            errors += handler.errors
+            errors += handler.errors + handler.header.errors
         if node.orelse:
             errors += node.orelse.errors + node.orelse.header.errors
         if node.finalbody:

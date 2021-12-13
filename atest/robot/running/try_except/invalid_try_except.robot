@@ -22,6 +22,12 @@ Except without body
 Default except not last
     FAIL    NOT RUN    NOT RUN    NOT RUN
 
+AS not the second last token
+    FAIL    NOT RUN
+
+Invalid AS variable
+    FAIL    NOT RUN
+
 Else with argument
     FAIL    NOT RUN    NOT RUN    NOT RUN
 

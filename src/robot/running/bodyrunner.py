@@ -465,12 +465,13 @@ class TryRunner:
         prefixes = tuple(prefix + ':' for prefix in matchers)
         message = error.message
         for pattern in patterns:
-            pattern = self._context.variables.replace_scalar(pattern)
             if not pattern.startswith(prefixes):
+                pattern = self._context.variables.replace_scalar(pattern)
                 if message == pattern:
                     return True
             else:
                 prefix, pat = pattern.split(':', 1)
+                pat = self._context.variables.replace_scalar(pat)
                 if matchers[prefix](message, pat.lstrip()):
                     return True
         return False
