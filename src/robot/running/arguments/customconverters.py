@@ -72,7 +72,7 @@ class ConverterInfo:
         if not callable(converter):
             raise TypeError(f'Custom converters must be callable, converter for '
                             f'{type_name(type_)} is {type_name(converter)}.')
-        spec = PythonArgumentParser().parse(converter)
+        spec = PythonArgumentParser(type='Converter').parse(converter)
         if len(spec.positional) != 1:
             raise TypeError(f'Custom converters must accept exactly one positional '
                             f'argument, converter {converter.__name__!r} accepts '
@@ -83,7 +83,8 @@ class ConverterInfo:
         arg_type = spec.types.get(spec.positional[0])
         if arg_type is None:
             accepts = ()
-        elif hasattr(arg_type, '__args__'):  # Union
+        # FIXME: This Union detection is faulty. Also others have __args__!!
+        elif hasattr(arg_type, '__args__'):
             accepts = arg_type.__args__
         else:
             accepts = (arg_type,)

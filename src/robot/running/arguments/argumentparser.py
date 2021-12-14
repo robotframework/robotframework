@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from inspect import signature, Parameter
+from inspect import isclass, signature, Parameter
 from typing import get_type_hints
 
 from robot.errors import DataError
@@ -75,6 +75,8 @@ class PythonArgumentParser(_ArgumentParser):
         # If types are set using the `@keyword` decorator, use them. Including when
         # types are explicitly disabled with `@keyword(types=None)`. Otherwise read
         # type hints.
+        if isclass(handler):
+            handler = handler.__init__
         robot_types = getattr(handler, 'robot_types', ())
         if robot_types or robot_types is None:
             spec.types = robot_types
