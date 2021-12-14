@@ -58,7 +58,7 @@ class ConverterInfo:
 
     @property
     def name(self):
-        return self.type.__name__
+        return type_name(self.type)
 
     @property
     def doc(self):

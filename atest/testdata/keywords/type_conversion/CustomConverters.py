@@ -90,7 +90,7 @@ def fi_date(argument: FiDate, expected: date = None):
     assert argument == expected
 
 
-def dates(us: UsDate, fi: FiDate):
+def dates(us: 'UsDate', fi: 'FiDate'):
     assert us == fi
 
 

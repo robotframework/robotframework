@@ -17,6 +17,7 @@ from inspect import getdoc, isclass
 from enum import Enum
 
 from robot.utils import Sortable, typeddict_types
+from robot.running import TypeConverter
 
 
 EnumType = type(Enum)
@@ -25,7 +26,8 @@ EnumType = type(Enum)
 class DataTypeCatalog:
 
     def __init__(self, converters=None):
-        self._customs = set([CustomDoc.from_type(info) for info in converters or ()])
+        self._converters = converters
+        self._customs = set()
         self._enums = set()
         self._typed_dicts = set()
 
@@ -33,7 +35,7 @@ class DataTypeCatalog:
         return iter(sorted(self._customs | self._enums | self._typed_dicts))
 
     def __bool__(self):
-        return bool(self._customs or self._enums or self._typed_dicts)
+        return next(iter(self), None) is not None
 
     @property
     def customs(self):
@@ -64,6 +66,9 @@ class DataTypeCatalog:
             return EnumDoc.from_type(typ)
         if isinstance(typ, typeddict_types):
             return TypedDictDoc.from_type(typ)
+        info = TypeConverter.type_info_for(typ, self._converters)
+        if info:
+            return CustomDoc(info.name, info.doc)
         if isinstance(typ, dict) and 'type' in typ:
             cls = {EnumDoc.type: EnumDoc,
                    TypedDictDoc.type: TypedDictDoc,
@@ -91,10 +96,6 @@ class DataType(Sortable):
     @property
     def _sort_key(self):
         return self.name.lower()
-
-    @classmethod
-    def from_type(cls, typ):
-        raise NotImplementedError
 
     def to_dictionary(self):
         return {
@@ -158,7 +159,3 @@ class EnumDoc(DataType):
 
 class CustomDoc(DataType):
     type = 'Custom'
-
-    @classmethod
-    def from_type(cls, type_info):
-        return cls(type_info.name, type_info.doc)

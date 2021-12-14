@@ -13,10 +13,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .argumentmapper import DefaultValue
-from .argumentparser import (DynamicArgumentParser, PythonArgumentParser,
-                             UserKeywordArgumentParser)
-from .argumentspec import ArgumentSpec, ArgInfo
-from .embedded import EmbeddedArguments
-from .customconverters import CustomArgumentConverters
-from .typeconverters import TypeConverter
+from robot.utils import Sortable
+
+
+class TypeInfo(Sortable):
+
+    def __init__(self, name, doc, used_as):
+        self.name = name
+        self.doc = doc
+        self.used_as = used_as
+
+    @property
+    def _sort_key(self):
+        return self.name.lower(), self.used_as.lower()

@@ -26,8 +26,10 @@ from enum import Enum
 from numbers import Integral, Real
 
 from robot.libraries.DateTime import convert_date, convert_time
-from robot.utils import (FALSE_STRINGS, TRUE_STRINGS, eq, get_error_message, is_string,
-                         safe_str, seq2str, type_name)
+from robot.utils import (FALSE_STRINGS, TRUE_STRINGS, eq, get_error_message,
+                         is_string, safe_str, seq2str, type_name)
+
+from .typeinfo import TypeInfo
 
 
 class TypeConverter:
@@ -67,7 +69,7 @@ class TypeConverter:
         if custom_converters:
             info = custom_converters.get_converter_info(type_)
             if info:
-                return CustomConverter(type_, info.converter, info.value_types)
+                return CustomConverter(type_, info)
         if type_ in cls._converters:
             return cls._converters[type_](type_)
         for converter in cls._converters.values():
@@ -144,6 +146,20 @@ class TypeConverter:
                 if sep in value:
                     value = value.replace(sep, '')
         return value
+
+    @classmethod
+    def type_info_for(cls, type_, custom_converters=None) -> TypeInfo:
+        converter = cls.converter_for(type_, custom_converters)
+        if isinstance(type_, str):
+            used_as = type_
+        elif isinstance(type_, type):
+            used_as = type_.__name__
+        else:
+            used_as = str(type)
+        return converter.get_type_info(used_as) if converter else None
+
+    def get_type_info(self, used_as):
+        return None
 
 
 @TypeConverter.register
@@ -507,23 +523,26 @@ class CombinedConverter(TypeConverter):
 
 class CustomConverter(TypeConverter):
 
-    def __init__(self, used_type, converter, value_types):
+    def __init__(self, used_type, converter_info):
         super().__init__(used_type)
-        self.converter = converter
-        self.value_types = value_types
+        self.converter_info = converter_info
 
     @property
     def type_name(self):
-        return type_name(self.used_type)
+        return self.converter_info.name
 
-    def handles(self, type_):
-        return self.converter is not None
+    @property
+    def value_types(self):
+        return self.converter_info.value_types
 
     def _handles_value(self, value):
         return not self.value_types or isinstance(value, self.value_types)
 
     def _convert(self, value, explicit_type=True):
         try:
-            return self.converter(value)
+            return self.converter_info.converter(value)
         except Exception:
             raise ValueError(get_error_message())
+
+    def get_type_info(self, used_as):
+        return TypeInfo(self.converter_info.name, self.converter_info.doc, used_as)
