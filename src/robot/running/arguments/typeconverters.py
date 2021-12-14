@@ -53,6 +53,10 @@ class TypeConverter:
 
     @classmethod
     def converter_for(cls, type_, custom_converters=None):
+        try:
+            hash(type_)
+        except TypeError:
+            return None
         if getattr(type_, '__origin__', None) and type_.__origin__ is not Union:
             type_ = type_.__origin__
         if isinstance(type_, str):
@@ -304,7 +308,7 @@ class DecimalConverter(TypeConverter):
 @TypeConverter.register
 class BytesConverter(TypeConverter):
     type = bytes
-    abc = getattr(abc, 'ByteString', None)    # ByteString is new in Python 3
+    abc = abc.ByteString
     type_name = 'bytes'
     value_types = (str, bytearray)
 
