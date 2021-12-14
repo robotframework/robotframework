@@ -138,8 +138,6 @@ class ExceptParser(TryParser):
         NestedBlockParser.__init__(self, Except(header))
 
     def handles(self, statement):
-        if statement.type == Token.AS:
-            return True
         return self._try_child_handles(statement)
 
 
