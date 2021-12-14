@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import getdoc, type_name
+from robot.utils import getdoc, is_union, type_name
 
 from .argumentparser import PythonArgumentParser
 
@@ -83,9 +83,10 @@ class ConverterInfo:
         arg_type = spec.types.get(spec.positional[0])
         if arg_type is None:
             accepts = ()
-        # FIXME: This Union detection is faulty. Also others have __args__!!
-        elif hasattr(arg_type, '__args__'):
+        elif is_union(arg_type):
             accepts = arg_type.__args__
+        elif hasattr(arg_type, '__origin__'):
+            accepts = (arg_type.__origin__,)
         else:
             accepts = (arg_type,)
         return cls(type_, converter, accepts)

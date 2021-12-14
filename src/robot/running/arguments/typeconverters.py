@@ -15,10 +15,6 @@
 
 from ast import literal_eval
 from collections import abc, OrderedDict
-try:
-    from types import UnionType
-except ImportError:    # Python < 3.10
-    UnionType = ()
 from typing import Union
 from datetime import datetime, date, timedelta
 from decimal import InvalidOperation, Decimal
@@ -27,7 +23,7 @@ from numbers import Integral, Real
 
 from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import (FALSE_STRINGS, TRUE_STRINGS, eq, get_error_message,
-                         is_string, safe_str, seq2str, type_name)
+                         is_string, is_union, safe_str, seq2str, type_name)
 
 from .typeinfo import TypeInfo
 
@@ -498,8 +494,7 @@ class CombinedConverter(TypeConverter):
 
     @classmethod
     def handles(cls, type_):
-        return (isinstance(type_, (UnionType, tuple))
-                or getattr(type_, '__origin__', None) is Union)
+        return is_union(type_, allow_tuple=True)
 
     def _handles_value(self, value):
         return True

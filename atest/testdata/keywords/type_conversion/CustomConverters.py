@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import Union
+from typing import List, Union
 
 
 class Number:
@@ -51,6 +51,11 @@ class ClassWithHintsAsConverter:
         self.value = value
 
 
+class AcceptSubscriptedGenerics:
+    def __init__(self, numbers: List[int]):
+        self.sum = sum(numbers)
+
+
 class Invalid:
     pass
 
@@ -75,6 +80,7 @@ ROBOT_LIBRARY_CONVERTERS = {Number: string_to_int,
                             FiDate: FiDate.from_string,
                             ClassAsConverter: ClassAsConverter,
                             ClassWithHintsAsConverter: ClassWithHintsAsConverter,
+                            AcceptSubscriptedGenerics: AcceptSubscriptedGenerics,
                             Invalid: 666,
                             TooFewArgs: TooFewArgs,
                             TooManyArgs: TooManyArgs,
@@ -113,6 +119,10 @@ def class_as_converter(argument: ClassAsConverter, expected):
 
 def class_with_hints_as_converter(argument: ClassWithHintsAsConverter, expected=None):
     assert argument.value == expected
+
+
+def accept_subscripted_generics(argument: AcceptSubscriptedGenerics, expected):
+    assert argument.sum == expected
 
 
 def number_or_int(number: Union[Number, int]):

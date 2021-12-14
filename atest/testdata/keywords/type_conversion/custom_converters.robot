@@ -38,6 +38,9 @@ Custom in Union
     Int or number    1
     Int or number    one
 
+Accept subscripted generics
+    Accept subscripted generics    ${{[1, 2, 3]}}    ${6}
+
 Failing conversion
     [Template]    Conversion should fail
     Number     wrong         type=Number     error=ValueError: Don't know number 'wrong'.
