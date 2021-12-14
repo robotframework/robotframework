@@ -922,26 +922,17 @@ class ExceptHeader(Statement):
         if variable:
             tokens.append(Token(Token.AS))
             tokens.append(Token(Token.SEPARATOR, separator))
-            tokens.append(Token(Token.ARGUMENT, variable))
+            tokens.append(Token(Token.VARIABLE, variable))
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
     @property
     def patterns(self):
-        patterns = []
-        for t in self.tokens:
-            if t.type == Token.AS:
-                break
-            if t.type == Token.ARGUMENT:
-                patterns.append(t.value)
-        return patterns
+        return self.get_values(Token.ARGUMENT)
 
     @property
     def variable(self):
-        for t in self.tokens:
-            if t.type == Token.AS and len(self.tokens) > self.tokens.index(t) + 1:
-                return self.tokens[self.tokens.index(t) + 1].value
-        return None
+        return self.get_value(Token.VARIABLE)
 
     def validate(self):
         as_seen = False
