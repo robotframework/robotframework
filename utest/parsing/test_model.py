@@ -663,7 +663,7 @@ Example
             handlers=[
                 Except(header=ExceptHeader([Token(Token.EXCEPT, 'EXCEPT', 5, 4), Token(Token.ARGUMENT, 'does not match', 5, 13)]),
                        body=[KeywordCall((Token(Token.KEYWORD, 'No operation', 6, 8),))]),
-                Except(header=ExceptHeader((Token(Token.EXCEPT, 'EXCEPT', 7, 4), Token(Token.AS, 'AS', 7, 14), Token(Token.ARGUMENT, '${exp}', 7, 20))),
+                Except(header=ExceptHeader((Token(Token.EXCEPT, 'EXCEPT', 7, 4), Token(Token.AS, 'AS', 7, 14), Token(Token.VARIABLE, '${exp}', 7, 20))),
                        body=[KeywordCall((Token(Token.KEYWORD, 'Log', 8, 8), Token(Token.ARGUMENT, 'Catch', 8, 15)))])
             ],
             orelse=TryElse(header=ElseHeader((Token(Token.ELSE, 'ELSE', 9, 4),)),
