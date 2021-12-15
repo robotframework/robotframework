@@ -5,8 +5,8 @@ Robot Framework 4.1.3
 .. default-role:: code
 
 `Robot Framework`_ 4.1.3 contains a fix to a regression related to parsing
-`<https://en.wikipedia.org/wiki/ReStructuredText>`_ files introduced in
-`Robot Framework 4.1.2`_ (`#4124`_).
+`reStructuredText <https://en.wikipedia.org/wiki/ReStructuredText>`_ files
+(`#4124`_) that was introduced in `Robot Framework 4.1.2`_.
 
 Questions and comments related to the release can be sent to the
 `robotframework-users`_ mailing list or to `Robot Framework Slack`_,
