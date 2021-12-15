@@ -30,7 +30,7 @@ installation approaches, see the `installation instructions`_.
 
 Robot Framework 4.1.3 was released on Wednesday December 15, 2021.
 
-.. _Robot Framework 4.1.2: rf-4.1.2.rst
+.. _Robot Framework 4.1.2: https://github.com/robotframework/robotframework/blob/master/doc/releasenotes/rf-4.1.2.rst
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
 .. _pip: http://pip-installer.org
@@ -40,11 +40,6 @@ Robot Framework 4.1.3 was released on Wednesday December 15, 2021.
 .. _robotframework-users: http://groups.google.com/group/robotframework-users
 .. _Robot Framework Slack: https://robotframework-slack-invite.herokuapp.com
 .. _installation instructions: ../../INSTALL.rst
-
-
-.. contents::
-   :depth: 2
-   :local:
 
 Full list of fixes and enhancements
 ===================================
