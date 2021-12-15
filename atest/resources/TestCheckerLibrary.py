@@ -190,16 +190,15 @@ class TestCheckerLibrary:
         if test.exp_status != test.status:
             if test.exp_status == 'PASS':
                 if test.status == 'FAIL':
-                    msg = ("Test '%s' was expected to PASS but it FAILED.\n\n"
-                           "Error message:\n%s" % (test.name, test.message))
+                    msg = f"Error message:\n{test.message}"
                 else:
-                    msg = ("Test '%s' was expected to PASS but it was SKIPPED.\n\n"
-                           "Test message:\n%s" % (test.name, test.message))
+                    msg = f"Test message:\n{test.message}"
             else:
-                msg = ("Test '%s' was expected to %s but it %sED.\n\n"
-                       "Expected message:\n%s" % (test.name, test.exp_status,
-                                                  test.status, test.exp_message))
-            raise AssertionError(msg)
+                msg = f"Expected message:\n{test.exp_message}"
+            raise AssertionError(
+                f"Status of '{test.name}' should have been {test.exp_status} "
+                f"but it was {test.status}.\n\n{msg}"
+            )
         if test.exp_message == test.message:
             return
         if test.exp_message.startswith('REGEXP:'):
