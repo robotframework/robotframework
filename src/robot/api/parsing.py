@@ -491,7 +491,7 @@ from robot.parsing.model.blocks import (
     For,
     If,
     Try,
-    Except
+    TryHandler
 )
 from robot.parsing.model.statements import (
     SectionHeader,

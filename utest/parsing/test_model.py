@@ -6,7 +6,7 @@ from pathlib import Path
 
 from robot.parsing import get_model, get_resource_model, ModelVisitor, ModelTransformer, Token
 from robot.parsing.model.blocks import (
-    Block, CommentSection, File, For, If, Try, Except, TryElse, FinalBody,
+    Block, CommentSection, File, For, If, Try, TryHandler,
     Keyword, KeywordSection, SettingSection, TestCase, TestCaseSection, VariableSection
 )
 from robot.parsing.model.statements import (
@@ -660,16 +660,16 @@ Example
         expected = Try(
             header=TryHeader([Token(Token.TRY, 'TRY', 3, 4)]),
             body=[KeywordCall([Token(Token.KEYWORD, 'Fail', 4, 8), Token(Token.ARGUMENT, 'Oh no!', 4, 16)])],
-            handlers=[
-                Except(header=ExceptHeader([Token(Token.EXCEPT, 'EXCEPT', 5, 4), Token(Token.ARGUMENT, 'does not match', 5, 13)]),
-                       body=[KeywordCall((Token(Token.KEYWORD, 'No operation', 6, 8),))]),
-                Except(header=ExceptHeader((Token(Token.EXCEPT, 'EXCEPT', 7, 4), Token(Token.AS, 'AS', 7, 14), Token(Token.VARIABLE, '${exp}', 7, 20))),
-                       body=[KeywordCall((Token(Token.KEYWORD, 'Log', 8, 8), Token(Token.ARGUMENT, 'Catch', 8, 15)))])
-            ],
-            orelse=TryElse(header=ElseHeader((Token(Token.ELSE, 'ELSE', 9, 4),)),
+            blocks=[
+                TryHandler(header=ExceptHeader([Token(Token.EXCEPT, 'EXCEPT', 5, 4), Token(Token.ARGUMENT, 'does not match', 5, 13)]),
+                           body=[KeywordCall((Token(Token.KEYWORD, 'No operation', 6, 8),))]),
+                TryHandler(header=ExceptHeader((Token(Token.EXCEPT, 'EXCEPT', 7, 4), Token(Token.AS, 'AS', 7, 14), Token(Token.VARIABLE, '${exp}', 7, 20))),
+                           body=[KeywordCall((Token(Token.KEYWORD, 'Log', 8, 8), Token(Token.ARGUMENT, 'Catch', 8, 15)))]),
+                TryHandler(header=ElseHeader((Token(Token.ELSE, 'ELSE', 9, 4),)),
                            body=[KeywordCall((Token(Token.KEYWORD, 'No operation', 10, 8),))]),
-            finalbody=FinalBody(header=FinallyHeader((Token(Token.FINALLY, 'FINALLY', 11, 4),)),
-                                body=[KeywordCall((Token(Token.KEYWORD, 'Log', 12, 8), Token(Token.ARGUMENT, 'finally here!', 12, 15)))]),
+                TryHandler(header=FinallyHeader((Token(Token.FINALLY, 'FINALLY', 11, 4),)),
+                           body=[KeywordCall((Token(Token.KEYWORD, 'Log', 12, 8), Token(Token.ARGUMENT, 'finally here!', 12, 15)))])
+            ],
             end=End([Token(Token.END, 'END', 13, 4)])
         )
         assert_model(node, expected)

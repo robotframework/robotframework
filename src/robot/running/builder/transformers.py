@@ -15,6 +15,7 @@
 
 from ast import NodeVisitor
 
+from robot.parsing import Token
 from robot.variables import VariableIterator
 
 from .testsettings import TestSettings
@@ -393,34 +394,18 @@ class TryBuilder(NodeVisitor):
                                                  error=format_error(self._get_errors(node)))
         for step in node.body:
             self.visit(step)
-        for handler in node.handlers:
-            self.visit(handler)
-        if node.orelse:
-            self.visit(node.orelse)
-        if node.finalbody:
-            self.visit(node.finalbody)
+        for block in node.blocks:
+            self.visit(block)
         return self.model
 
     def _get_errors(self, node):
         errors = node.header.errors + node.errors
-        for handler in node.handlers:
+        for handler in node.blocks:
             errors += handler.errors + handler.header.errors
-        if node.orelse:
-            errors += node.orelse.errors + node.orelse.header.errors
-        if node.finalbody:
-            errors += node.finalbody.errors + node.finalbody.header.errors
-        if node.end:
-            errors += node.end.errors
         return errors
 
-    def visit_Except(self, node):
+    def visit_TryHandler(self, node):
         ExceptBuilder(self.model).build(node)
-
-    def visit_TryElse(self, node):
-        TryElseBuilder(self.model).build(node)
-
-    def visit_FinalBody(self, node):
-        FinalBodyBuilder(self.model).build(node)
 
     def visit_If(self, node):
         IfBuilder(self.model.try_block).build(node)
@@ -446,39 +431,13 @@ class ExceptBuilder(NodeVisitor):
         self.model = None
 
     def build(self, node):
-        self.model = self.parent.except_blocks.create_except(patterns=node.patterns,
-                                                             variable=node.variable,
-                                                             lineno=node.lineno,
-                                                             error=format_error(node.errors))
-        for step in node.body:
-            self.visit(step)
-        return self.model
-
-    def visit_If(self, node):
-        IfBuilder(self.model).build(node)
-
-    def visit_For(self, node):
-        ForBuilder(self.model).build(node)
-
-    def visit_Try(self, node):
-        TryBuilder(self.model).build(node)
-
-    def visit_ReturnStatement(self, node):
-        self.model.body.create_return(node.values)
-
-    def visit_KeywordCall(self, node):
-        self.model.body.create_keyword(name=node.keyword, args=node.args,
-                                       assign=node.assign, lineno=node.lineno)
-
-
-class TryElseBuilder(NodeVisitor):
-
-    def __init__(self, parent):
-        self.parent = parent
-        self.model = None
-
-    def build(self, node):
-        self.model = self.parent.else_block
+        if node.type == Token.EXCEPT:
+            self.model = self.parent.except_blocks.create_except(
+                patterns=node.patterns, variable=node.variable)
+        elif node.type == Token.ELSE:
+            self.model = self.parent.else_block
+        elif node.type == Token.FINALLY:
+            self.model = self.parent.finally_block
         self.model.config(lineno=node.lineno, error=format_error(node.errors))
         for step in node.body:
             self.visit(step)
@@ -495,33 +454,6 @@ class TryElseBuilder(NodeVisitor):
 
     def visit_ReturnStatement(self, node):
         self.model.body.create_return(node.values)
-
-    def visit_KeywordCall(self, node):
-        self.model.body.create_keyword(name=node.keyword, args=node.args,
-                                       assign=node.assign, lineno=node.lineno)
-
-
-class FinalBodyBuilder(NodeVisitor):
-
-    def __init__(self, parent):
-        self.parent = parent
-        self.model = None
-
-    def build(self, node):
-        self.model = self.parent.finally_block
-        self.model.config(lineno=node.lineno, error=format_error(node.errors))
-        for step in node.body:
-            self.visit(step)
-        return self.model
-
-    def visit_If(self, node):
-        IfBuilder(self.model).build(node)
-
-    def visit_For(self, node):
-        ForBuilder(self.model).build(node)
-
-    def visit_Try(self, node):
-        TryBuilder(self.model).build(node)
 
     def visit_KeywordCall(self, node):
         self.model.body.create_keyword(name=node.keyword, args=node.args,

@@ -22,6 +22,9 @@ Except without body
 Default except not last
     FAIL    NOT RUN    NOT RUN    NOT RUN
 
+Multiple default excepts
+    FAIL    NOT RUN    NOT RUN    NOT RUN
+
 AS not the second last token
     FAIL    NOT RUN
 

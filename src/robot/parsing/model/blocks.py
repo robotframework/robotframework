@@ -243,85 +243,83 @@ class For(Block):
 
 
 class Try(Block):
-    _fields = ('header', 'body', 'handlers', 'orelse', 'finalbody', 'end')
+    _fields = ('header', 'body', 'blocks', 'end')
 
-    def __init__(self, header, body=None, handlers=None, orelse=None,
-                 finalbody=None, end=None, errors=()):
+    def __init__(self, header, body=None, blocks=None, end=None, errors=()):
         self.header = header
         self.body = body or []
-        self.handlers = handlers or []
-        self.orelse = orelse
-        self.finalbody = finalbody
+        self.blocks = blocks or []
         self.end = end
         self.errors = errors
 
-    def add_orelse(self, orelse):
-        if self.orelse is None:
-            self.orelse = orelse
-        else:
-            self.errors += ('Multiple ELSE blocks.',)
+    @property
+    def except_blocks(self):
+        return [b for b in self.blocks if b.type == Token.EXCEPT]
 
-    def add_finalbody(self, finalbody):
-        if self.finalbody is None:
-            self.finalbody = finalbody
-        else:
-            self.errors += ('Multiple FINALLY blocks.',)
+    @property
+    def else_block(self):
+        else_blocks = [b for b in self.blocks if b.type == Token.ELSE]
+        return else_blocks[0] if else_blocks else None
+
+    @property
+    def finally_block(self):
+        finally_blocks = [b for b in self.blocks if b.type == Token.FINALLY]
+        return finally_blocks[0] if finally_blocks else None
 
     def validate(self):
         if not self.end:
             self.errors += ('TRY has no closing END.',)
         if not self.body:
             self.errors += ('TRY block cannot be empty.',)
-        if not (self.handlers or self.finalbody):
+        if not (self.except_blocks or self.finally_block):
             self.errors += ('TRY block must be followed by EXCEPT or FINALLY block"',)
         self._validate_structure()
 
     def _validate_structure(self):
-        except_handler_lines = [h.lineno for h in self.handlers]
-        else_line = self.orelse.lineno if self.orelse else 0
-        finally_line = self.finalbody.lineno if self.finalbody else 0
-        if else_line:
-            if any([else_line < line for line in except_handler_lines]):
-                self.errors += ('ELSE block before EXCEPT block.',)
-        if finally_line:
-            if any([finally_line < line for line in except_handler_lines]):
-                self.errors += ('FINALLY block before EXCEPT block.',)
-        if finally_line and else_line:
-            if finally_line < else_line:
-                self.errors += ('FINALLY block before ELSE block.',)
-        default_excepts = list(filter(lambda h: not h.patterns, self.handlers))
-        if len(default_excepts) > 1 or (len(default_excepts) == 1 and
-                                        default_excepts[0] is not self.handlers[-1]):
-            self.errors += ('Default (empty) EXCEPT must be last.',)
+        else_count = 0
+        finally_count = 0
+        default_block_seen = False
+        for block in self.blocks:
+            if block.type == Token.EXCEPT:
+                if else_count > 0:
+                    self.errors += ('ELSE block before EXCEPT block.',)
+                if finally_count > 0:
+                    self.errors += ('FINALLY block before EXCEPT block.',)
+                if not block.patterns:
+                    if default_block_seen:
+                        self.errors += ('Multiple default (empty) EXCEPT blocks',)
+                    default_block_seen = True
+                if block.patterns and default_block_seen:
+                    self.errors += ('Default (empty) EXCEPT must be last.',)
+            if block.type == Token.ELSE:
+                else_count += 1
+                if finally_count > 0:
+                    self.errors += ('FINALLY block before ELSE block.',)
+            if block.type == Token.FINALLY:
+                finally_count += 1
+        if finally_count > 1:
+            self.errors += ('Multiple FINALLY blocks.',)
+        if else_count > 1:
+            self.errors += ('Multiple ELSE blocks.',)
 
 
-class Except(HeaderAndBody):
+class TryHandler(HeaderAndBody):
+
+    @property
+    def type(self):
+        return self.header.type
 
     @property
     def patterns(self):
-        return self.header.patterns
+        return getattr(self.header, 'patterns', [])
 
     @property
     def variable(self):
-        return self.header.variable
+        return getattr(self.header, 'variable', None)
 
     def validate(self):
         if not self.body:
-            self.errors += ('EXCEPT block cannot be empty.',)
-
-
-class TryElse(HeaderAndBody):
-
-    def validate(self):
-        if not self.body:
-            self.errors += ('ELSE block cannot be empty.',)
-
-
-class FinalBody(HeaderAndBody):
-
-    def validate(self):
-        if not self.body:
-            self.errors += ('FINALLY block cannot be empty.',)
+            self.errors += (f'{self.type} block cannot be empty.',)
 
 
 class ModelWriter(ModelVisitor):

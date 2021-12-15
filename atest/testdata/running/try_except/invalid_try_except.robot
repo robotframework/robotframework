@@ -56,6 +56,18 @@ Default except not last
         Fail   Should not be executed
     END
 
+Multiple default excepts
+    [Documentation]    FAIL    Multiple default (empty) EXCEPT blocks
+    TRY
+        Fail   Should not be executed
+    EXCEPT
+        Fail   Should not be executed
+    EXCEPT
+        Fail   Should not be executed
+    FINALLY
+        Fail   Should not be executed
+    END
+
 AS not the second last token
     [Documentation]    FAIL    AS must be second to last.
     TRY
