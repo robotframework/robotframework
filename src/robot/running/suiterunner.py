@@ -127,17 +127,14 @@ class SuiteRunner(SuiteVisitor):
             result.tags.add('robot:exit')
         if self._skipped_tags.match(test.tags):
             status.test_skipped(
-                test_or_task(
-                    "{Test} skipped with '--skip' command line option.",
-                    self._settings.rpa))
+                test_or_task("{Test} skipped with '--skip' command line option.",
+                             self._settings.rpa))
         if not status.failed and not test.name:
             status.test_failed(
-                test_or_task('{Test} case name cannot be empty.',
-                             self._settings.rpa))
+                test_or_task('{Test} name cannot be empty.', self._settings.rpa))
         if not status.failed and not test.body:
             status.test_failed(
-                test_or_task('{Test} case contains no keywords.',
-                             self._settings.rpa))
+                test_or_task('{Test} contains no keywords.', self._settings.rpa))
         self._run_setup(test.setup, status, result)
         try:
             if not status.failed:
