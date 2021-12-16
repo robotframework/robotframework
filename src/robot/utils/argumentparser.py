@@ -157,8 +157,24 @@ class ArgumentParser:
                 opts.pop(opt)
         return opts, args
 
+    def _parse_special_robot_colon_args(self, args, index, arg):
+        special_robot_colon_args = ['skip',
+                                    'exclude',
+                                    'skip-on-failure']
+        special_robot_colon_args = special_robot_colon_args + \
+                                   [spec_arg.upper() \
+                                    for spec_arg in special_robot_colon_args]
+        if arg in ['robot:'+spec_arg for spec_arg in special_robot_colon_args]:
+            special_arg_index = special_robot_colon_args.index(arg.strip('robot:'))
+            special_args = [special_robot_colon_args[special_arg_index].lower(), 
+                            special_robot_colon_args[special_arg_index].upper()]
+            if not any(['--' + i in args[index-1] for i in special_args]):
+                args.insert(index, '--' + special_args[0])
+
     def _parse_args(self, args):
         args = [self._lowercase_long_option(a) for a in args]
+        for index, arg in zip(range(0,len(args)-1),args):
+            self._parse_special_robot_colon_args(args, index, arg)
         try:
             opts, args = getopt.getopt(args, self._short_opts, self._long_opts)
         except getopt.GetoptError as err:
