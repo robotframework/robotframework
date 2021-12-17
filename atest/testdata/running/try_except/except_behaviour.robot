@@ -45,6 +45,16 @@ Variable in pattern
         No operation
     END
 
+Invalid variable in pattern
+    [Documentation]    FAIL    Variable '${does not exist}' not found.
+    TRY
+        Fail   Oh no!
+    EXCEPT    ${does not exist}
+        Fail   Should not be executed
+    FINALLY
+        Log    finally here
+    END
+
 Matcher type cannot be defined with variable
     [Documentation]    FAIL failure
     TRY

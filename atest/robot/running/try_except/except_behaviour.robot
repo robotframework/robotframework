@@ -22,6 +22,9 @@ Regexp escapes
 Variable in pattern
     FAIL    PASS
 
+Invalid variable in pattern
+    FAIL    NOT RUN    PASS    tc_status=FAIL
+
 Matcher type cannot be defined with variable
     [Template]
     ${tc}=    Verify try except and block statuses    FAIL    PASS
