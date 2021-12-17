@@ -132,11 +132,9 @@ class _ExecutionStatus:
 
     def _skip_on_failure_message(self, failure):
         return test_or_task(
-            "{Test} failed but its tags matched '--SkipOnFailure' or the tag "
-            "'robot:skip-on-failure' was used, and thus the test was "
-            "skipped instead.\n\nOriginal failure:\n%s" % failure, rpa=self._rpa
+            "{Test} failed but its tags matched '--SkipOnFailure' and it was marked "
+            "skipped.\n\nOriginal failure:\n%s" % failure, rpa=self._rpa
         )
-
     @property
     def message(self):
         if self.failure or self.exit:

@@ -118,6 +118,12 @@ Skipped with --SkipOnFailure when Failure in Test Teardown
 Skipped with --SkipOnFailure when Set Tags Used in Teardown
     Check Test Case    Skipped with --SkipOnFailure when Set Tags Used in Teardown
 
+Skipped when test is tagged with robot:skip
+    Check Test Case    ${TEST NAME}    status=SKIP
+
+Skipped although test fails since test is tagged with robot:skip-on-failure
+    Check Test Case    ${TEST NAME}    SKIP
+
 Using Skip Does Not Affect Passing And Failing Tests
     Check Test Case    Passing Test
     Check Test Case    Failing Test
