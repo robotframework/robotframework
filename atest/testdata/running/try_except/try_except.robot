@@ -36,8 +36,8 @@ Second matching except ignored
 Except handler failing
     [Documentation]    FAIL    oh no
     TRY
-        Fail    bar
-    EXCEPT    bar
+        Fail    GLOB bar
+    EXCEPT    GLOB bar
         Fail   oh no
     ELSE
         Fail    should not be executed

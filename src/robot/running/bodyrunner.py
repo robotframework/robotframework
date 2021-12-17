@@ -477,21 +477,20 @@ class TryRunner:
             # The default (empty) except matches everything
             return True
         matchers = {
-            'GLOB': lambda s, p: Matcher(p, spaceless=False).match(s),
-            'EQUALS': lambda s, p: s == p,
-            'STARTS': lambda s, p: s.startswith(p),
-            'REGEXP': lambda s, p: re.match(p, s) is not None
+            'GLOB:': lambda s, p: Matcher(p, spaceless=False, caseless=False).match(s),
+            'EQUALS:': lambda s, p: s == p,
+            'STARTS:': lambda s, p: s.startswith(p),
+            'REGEXP:': lambda s, p: re.match(f'{p}\Z', s) is not None
         }
-        prefixes = tuple(prefix + ':' for prefix in matchers)
         message = error.message
         for pattern in patterns:
-            if not pattern.startswith(prefixes):
+            if not pattern.startswith(tuple(matchers)):
                 pattern = self._context.variables.replace_scalar(pattern)
                 if message == pattern:
                     return True
             else:
                 prefix, pat = pattern.split(':', 1)
-                pat = self._context.variables.replace_scalar(pat)
-                if matchers[prefix](message, pat.lstrip()):
+                pat = self._context.variables.replace_scalar(pat.lstrip())
+                if matchers[f'{prefix}:'](message, pat):
                     return True
         return False

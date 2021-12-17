@@ -7,14 +7,20 @@ Test Template     Verify try except and block statuses
 Equals is the default matcher
     FAIL    PASS
 
+Equals with whitespace
+    FAIL    PASS
+
 Glob matcher
+    FAIL    NOT RUN    PASS
+
+Glob with leading whitespace
     FAIL    PASS
 
 Startswith matcher
     FAIL    PASS
 
 Regexp matcher
-    FAIL    PASS
+    FAIL    NOT RUN    PASS
 
 Regexp escapes
     FAIL    PASS

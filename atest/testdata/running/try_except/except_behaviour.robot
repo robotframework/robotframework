@@ -10,10 +10,26 @@ Equals is the default matcher
         No operation
     END
 
+Equals with whitespace
+    TRY
+        Fail    ${SPACE}failure\n\n
+    EXCEPT    ${SPACE}failure\n\n
+        No operation
+    END
+
 Glob matcher
     TRY
         Fail    failure
+    EXCEPT    GLOB: FAI*
+        Fail   Should not be executed
     EXCEPT    GLOB: f*
+        No operation
+    END
+
+Glob with leading whitespace
+    TRY
+        Fail    ${SPACE}failure
+    EXCEPT    GLOB: ${SPACE}f*
         No operation
     END
 
@@ -27,6 +43,8 @@ Startswith matcher
 Regexp matcher
     TRY
         Fail    failure
+    EXCEPT    REGEXP: fai?lu
+        Fail   Should not be executed
     EXCEPT    REGEXP: fai?lu.*
         No operation
     END
@@ -100,7 +118,7 @@ AS with many failures
     TRY
         Run keyword and continue on failure    Fail    oh no!
         Fail    fail again!
-    EXCEPT    GLOB: several*    AS   ${err}
+    EXCEPT    GLOB: Several*    AS   ${err}
         Should be equal    ${err}    Several failures occurred:\n\n1) oh no!\n\n2) fail again!
     END
 
