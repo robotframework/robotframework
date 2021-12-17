@@ -129,33 +129,33 @@ class XmlLogger(ResultVisitor):
         self._writer.end('try')
 
     def start_try_block(self, block):
-        self._writer.start('tryblock')
+        self._writer.start('block', attrs={'type': 'try'})
 
     def end_try_block(self, block):
         self._write_status(block)
-        self._writer.end('tryblock')
+        self._writer.end('block')
 
     def start_except_block(self, block):
-        self._writer.start('exceptblock', attrs={'variable': block.variable})
+        self._writer.start('block', attrs={'variable': block.variable, 'type': 'except'})
         self._write_list('pattern', block.patterns)
 
     def end_except_block(self, block):
         self._write_status(block)
-        self._writer.end('exceptblock')
+        self._writer.end('block')
 
     def start_else_block(self, block):
-        self._writer.start('elseblock')
+        self._writer.start('block', attrs={'type': 'else'})
 
     def end_else_block(self, block):
         self._write_status(block)
-        self._writer.end('elseblock')
+        self._writer.end('block')
 
     def start_finally_block(self, block):
-        self._writer.start('finallyblock')
+        self._writer.start('block', attrs={'type': 'finally'})
 
     def end_finally_block(self, block):
         self._write_status(block)
-        self._writer.end('finallyblock')
+        self._writer.end('block')
 
     def start_return(self, return_):
         self._writer.start('return')

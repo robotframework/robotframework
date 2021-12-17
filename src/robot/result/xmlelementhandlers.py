@@ -204,46 +204,27 @@ class IfBranchHandler(ElementHandler):
 @ElementHandler.register
 class TryHandler(ElementHandler):
     tag = 'try'
-    children = frozenset(('status', 'tryblock', 'exceptblock', 'elseblock', 'finallyblock'))
+    children = frozenset(('status', 'block'))
 
     def start(self, elem, result):
         return result.body.create_try()
 
 
 @ElementHandler.register
-class TryBlockHandler(ElementHandler):
-    tag = 'tryblock'
-    children = frozenset(('status', 'msg', 'kw', 'for', 'if', 'try', 'return'))
+class BlockHandler(ElementHandler):
+    tag = 'block'
+    children = frozenset(('status', 'msg', 'kw', 'for', 'if', 'try', 'return', 'pattern'))
 
     def start(self, elem, result):
-        return result.try_block
-
-
-@ElementHandler.register
-class ExceptHandler(ElementHandler):
-    tag = 'exceptblock'
-    children = frozenset(('pattern', 'status', 'kw', 'for', 'if', 'try', 'return'))
-
-    def start(self, elem, result):
-        return result.except_blocks.create_except(variable=elem.get('variable'))
-
-
-@ElementHandler.register
-class ElseBlockHandler(ElementHandler):
-    tag = 'elseblock'
-    children = frozenset(('status', 'msg', 'kw', 'for', 'if', 'try', 'return'))
-
-    def start(self, elem, result):
-        return result.else_block
-
-
-@ElementHandler.register
-class FinallyBlockHandler(ElementHandler):
-    tag = 'finallyblock'
-    children = frozenset(('status', 'msg', 'kw', 'for', 'if', 'try'))
-
-    def start(self, elem, result):
-        return result.finally_block
+        type_ = elem.get('type')
+        if type_ == 'try':
+            return result.try_block
+        if type_ == 'except':
+            return result.except_blocks.create_except(variable=elem.get('variable'))
+        if type_ == 'else':
+            return result.else_block
+        if type_ == 'finally':
+            return result.finally_block
 
 
 @ElementHandler.register
