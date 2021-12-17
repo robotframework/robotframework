@@ -132,8 +132,9 @@ class _ExecutionStatus:
 
     def _skip_on_failure_message(self, failure):
         return test_or_task(
-            "{Test} failed but its tags matched '--SkipOnFailure' and it was marked "
-            "skipped.\n\nOriginal failure:\n%s" % failure, rpa=self._rpa
+            "{Test} failed but its tags matched '--SkipOnFailure' or the tag "
+            "'robot:skip-on-failure' was used, and thus the test was "
+            "skipped instead.\n\nOriginal failure:\n%s" % failure, rpa=self._rpa
         )
 
     @property
@@ -202,6 +203,7 @@ class TestStatus(_ExecutionStatus):
         critical = not critical_pattern or critical_pattern.match(tags)
         skip_on_fail_pattern = TagPatterns(self._skip_on_failure_tags)
         skip_on_fail = skip_on_fail_pattern and skip_on_fail_pattern.match(tags)
+        skip_on_fail = TagPatterns("robot:skip-on-failure").match(tags)
         return not critical or skip_on_fail
 
     def _my_message(self):

@@ -125,10 +125,10 @@ class SuiteRunner(SuiteVisitor):
         if status.exit:
             self._add_exit_combine()
             result.tags.add('robot:exit')
-        if "robot:SKIP" in test.tags:
+        if TagPatterns("robot:skip").match(test.tags):
             status.test_skipped(
                 test_or_task(
-                    "{Test} skipped since robot:SKIP tag is used.",
+                    "{Test} skipped since test is tagged with robot:skip.",
                     self._settings.rpa))
         if self._skipped_tags.match(test.tags):
             status.test_skipped(
