@@ -193,16 +193,10 @@ Log Many with dict variable containing non-dict
 
 Log To Console
     ${tc} =    Check Test Case    ${TEST NAME}
-    FOR    ${i}    IN RANGE    10
+    FOR    ${i}    IN RANGE    4
         Should Be Empty    ${tc.kws[${i}].msgs}
     END
     Stdout Should Contain    stdout äö w/ newline\n
     Stdout Should Contain    stdout äö w/o new......line äö
     Stderr Should Contain    stderr äö w/ newline\n
     Stdout Should Contain    42
-    Stdout Should Contain    ************test middle align with star padding*************
-    Stdout Should Contain    ####################test right align with hash padding
-    Stdout Should Contain                  test-with-spacepad-and-weird-characters+%?,_\>~}./asdf
-    Stdout Should Contain                            message starts here,this sentence should be on the same sentence as "message starts here"
-    Stderr Should Contain                                   test log to stderr
-
