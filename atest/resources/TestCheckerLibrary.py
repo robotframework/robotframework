@@ -73,6 +73,7 @@ NoSlotsFor.body_class = NoSlotsForIterations
 NoSlotsIf.body_class = NoSlotsIfBranches
 NoSlotsTry.try_class = NoSlotsBlock
 NoSlotsTry.else_class = NoSlotsBlock
+NoSlotsTry.finally_class = NoSlotsBlock
 NoSlotsExcept.body_class = NoSlotsBody
 
 

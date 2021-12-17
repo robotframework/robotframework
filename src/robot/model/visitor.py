@@ -249,6 +249,7 @@ class SuiteVisitor:
             try_.try_block.visit(self)
             try_.except_blocks.visit(self)
             try_.else_block.visit(self)
+            try_.finally_block.visit(self)
             self.end_try(try_)
 
     def start_try(self, try_):
@@ -273,17 +274,6 @@ class SuiteVisitor:
     def end_try_block(self, block):
         pass
 
-    def visit_else_block(self, block):
-        if self.start_else_block(block) is not False:
-            block.body.visit(self)
-            self.end_else_block(block)
-
-    def start_else_block(self, block):
-        pass
-
-    def end_else_block(self, block):
-        pass
-
     def visit_except_block(self, block):
         """Called when IF/ELSE branch starts. Default implementation does nothing.
 
@@ -299,6 +289,28 @@ class SuiteVisitor:
 
     def end_except_block(self, block):
         """Called when EXCEPT branch ends. Default implementation does nothing."""
+        pass
+
+    def visit_else_block(self, block):
+        if self.start_else_block(block) is not False:
+            block.body.visit(self)
+            self.end_else_block(block)
+
+    def start_else_block(self, block):
+        pass
+
+    def end_else_block(self, block):
+        pass
+
+    def visit_finally_block(self, block):
+        if self.start_finally_block(block) is not False:
+            block.body.visit(self)
+            self.end_finally_block(block)
+
+    def start_finally_block(self, block):
+        pass
+
+    def end_finally_block(self, block):
         pass
 
     def visit_return(self, return_):
