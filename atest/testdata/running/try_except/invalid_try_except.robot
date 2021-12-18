@@ -18,7 +18,7 @@ Try without body
     END
 
 Try without except or finally
-    [Documentation]    FAIL    TRY block must be followed by EXCEPT or FINALLY block"
+    [Documentation]    FAIL    TRY block must be followed by EXCEPT or FINALLY block.
     TRY
         Fail   Should not be executed
     END
@@ -171,7 +171,7 @@ Finally before except
     TRY
         Fail   Should not be executed
     EXCEPT    Error
-            Fail   Should not be executed
+        Fail   Should not be executed
     FINALLY
         Fail   Should not be executed
     EXCEPT    Error
@@ -183,9 +183,29 @@ Finally before else
     TRY
         Fail   Should not be executed
     EXCEPT    Error
-            Fail   Should not be executed
+        Fail   Should not be executed
     FINALLY
         Fail   Should not be executed
     ELSE
         Fail   Should not be executed
+    END
+
+Template with try except
+    [Template]    Log many
+    [Documentation]    FAIL    Templates cannot be used with TRY.
+    TRY
+        Fail   Should not be executed
+    EXCEPT    Error
+        Fail   Should not be executed
+    END
+
+Template with try except inside if
+    [Template]    Log many
+    [Documentation]    FAIL    Templates cannot be used with TRY.
+    IF    True
+        TRY
+            Fail   Should not be executed
+        EXCEPT    Error
+            Fail   Should not be executed
+        END
     END

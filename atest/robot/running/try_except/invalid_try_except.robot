@@ -57,3 +57,11 @@ Finally before except
 
 Finally before else
     FAIL    NOT RUN    NOT RUN    NOT RUN
+
+Template with try except
+    FAIL    NOT RUN
+
+Template with try except inside if
+    [Template]
+    ${tc}=    Check Test Case    ${TEST NAME}
+    Block statuses should be    ${tc.body[0].body[0].body[0]}    FAIL    NOT RUN

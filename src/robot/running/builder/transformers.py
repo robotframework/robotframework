@@ -423,6 +423,9 @@ class TryBuilder(NodeVisitor):
         self.model.try_block.body.create_keyword(name=node.keyword, args=node.args,
                                                  assign=node.assign, lineno=node.lineno)
 
+    def visit_TemplateArguments(self, node):
+        self.model.error = 'Templates cannot be used with TRY.'
+
 
 class ExceptBuilder(NodeVisitor):
 

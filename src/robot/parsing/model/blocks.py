@@ -272,7 +272,7 @@ class Try(Block):
         if not self.body:
             self.errors += ('TRY block cannot be empty.',)
         if not (self.except_blocks or self.finally_block):
-            self.errors += ('TRY block must be followed by EXCEPT or FINALLY block"',)
+            self.errors += ('TRY block must be followed by EXCEPT or FINALLY block.',)
         self._validate_structure()
 
     def _validate_structure(self):
