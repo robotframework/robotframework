@@ -91,7 +91,7 @@ class TestCheckerLibrary:
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
 
     def __init__(self):
-        self.schema = XMLSchema('doc/schema/robot.02.xsd')
+        self.schema = XMLSchema('doc/schema/robot.03.xsd')
 
     def process_output(self, path, validate=None):
         set_suite_variable = BuiltIn().set_suite_variable
@@ -132,7 +132,7 @@ class TestCheckerLibrary:
         with open(path, encoding='UTF-8') as f:
             for line in f:
                 if line.startswith('<robot'):
-                    return re.search('schemaversion="(\d+)"', line).group(1)
+                    return re.search(r'schemaversion="(\d+)"', line).group(1)
 
     def get_test_case(self, name):
         suite = BuiltIn().get_variable_value('${SUITE}')
