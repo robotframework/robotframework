@@ -217,13 +217,13 @@ class BlockHandler(ElementHandler):
 
     def start(self, elem, result):
         type_ = elem.get('type')
-        if type_ == 'try':
+        if type_ == 'TRY':
             return result.try_block
-        if type_ == 'except':
+        if type_ == 'EXCEPT':
             return result.except_blocks.create_except(variable=elem.get('variable'))
-        if type_ == 'else':
+        if type_ == 'ELSE':
             return result.else_block
-        if type_ == 'finally':
+        if type_ == 'FINALLY':
             return result.finally_block
 
 

@@ -63,6 +63,7 @@
             <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="for" type="For" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="if" type="If" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="try" type="Try" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="doc" type="xs:string" minOccurs="0" />
             <xs:element name="tag" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
@@ -79,6 +80,7 @@
             <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="for" type="For" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="if" type="If" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="try" type="Try" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="return" type="Return" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="var" type="xs:string" minOccurs="0" maxOccurs="unbounded" />  <!-- Assignment -->
@@ -126,6 +128,7 @@
             <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="for" type="For" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="if" type="If" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="try" type="Try" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="return" type="Return" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="doc" type="xs:string" minOccurs="0" />
@@ -152,6 +155,7 @@
             <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="for" type="For" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="if" type="If" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="try" type="Try" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="return" type="Return" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="doc" type="xs:string" minOccurs="0" />
@@ -165,6 +169,37 @@
             <xs:enumeration value="IF" />
             <xs:enumeration value="ELSE IF" />
             <xs:enumeration value="ELSE" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="Try">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="block" type="TryBlock" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="doc" type="xs:string" minOccurs="0" />
+            <xs:element name="status" type="BodyItemStatus" />
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="TryBlock">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="pattern" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="for" type="For" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="if" type="If" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="try" type="Try" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="return" type="Return" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="doc" type="xs:string" minOccurs="0" />
+            <xs:element name="status" type="BodyItemStatus" />
+        </xs:choice>
+        <xs:attribute name="type" type="TryType" use="required" />
+        <xs:attribute name="variable" type="xs:string" />
+    </xs:complexType>
+    <xs:simpleType name="TryType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="TRY" />
+            <xs:enumeration value="EXCEPT" />
+            <xs:enumeration value="ELSE" />
+            <xs:enumeration value="FINALLY" />
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="Return">

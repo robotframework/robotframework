@@ -129,14 +129,14 @@ class XmlLogger(ResultVisitor):
         self._writer.end('try')
 
     def start_try_block(self, block):
-        self._writer.start('block', attrs={'type': 'try'})
+        self._writer.start('block', attrs={'type': 'TRY'})
 
     def end_try_block(self, block):
         self._write_status(block)
         self._writer.end('block')
 
     def start_except_block(self, block):
-        self._writer.start('block', attrs={'variable': block.variable, 'type': 'except'})
+        self._writer.start('block', attrs={'variable': block.variable, 'type': 'EXCEPT'})
         self._write_list('pattern', block.patterns)
 
     def end_except_block(self, block):
@@ -144,14 +144,14 @@ class XmlLogger(ResultVisitor):
         self._writer.end('block')
 
     def start_else_block(self, block):
-        self._writer.start('block', attrs={'type': 'else'})
+        self._writer.start('block', attrs={'type': 'ELSE'})
 
     def end_else_block(self, block):
         self._write_status(block)
         self._writer.end('block')
 
     def start_finally_block(self, block):
-        self._writer.start('block', attrs={'type': 'finally'})
+        self._writer.start('block', attrs={'type': 'FINALLY'})
 
     def end_finally_block(self, block):
         self._write_status(block)
