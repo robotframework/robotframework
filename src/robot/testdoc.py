@@ -226,33 +226,41 @@ class JsonConverter:
             elif kw.type == kw.FOR:
                 yield self._convert_for(kw)
             elif kw.type == kw.IF_ELSE_ROOT:
-                for branch in self._convert_if(kw):
-                    yield branch
+                yield from self._convert_if(kw)
+            elif kw.type == kw.TRY_EXCEPT_ROOT:
+                yield from self._convert_try(kw)
             else:
                 yield self._convert_keyword(kw, 'KEYWORD')
 
     def _convert_for(self, data):
         name = '%s %s %s' % (', '.join(data.variables), data.flavor,
                              seq2str2(data.values))
-        return {
-            'name': self._escape(name),
-            'arguments': '',
-            'type': 'FOR'
-        }
+        return {'type': 'FOR', 'name': self._escape(name), 'arguments': ''}
 
     def _convert_if(self, data):
         for branch in data.body:
-            yield {
-                'name': self._escape(branch.condition or ''),
-                'arguments': '',
-                'type': branch.type
-            }
+            yield {'type': branch.type,
+                   'name': self._escape(branch.condition or ''),
+                   'arguments': ''}
+
+    def _convert_try(self, data):
+        yield {'type': 'TRY', 'name': '', 'arguments': ''}
+        for block in data.except_blocks:
+            patterns = ', '.join(block.patterns)
+            as_var = f' AS {block.variable}' if block.variable else ''
+            yield {'type': 'EXCEPT',
+                   'name': f'{patterns}{as_var}',
+                   'arguments': ''}
+        if data.else_block:
+            yield {'type': 'ELSE', 'name': '', 'arguments': ''}
+        if data.finally_block:
+            yield {'type': 'FINALLY', 'name': '', 'arguments': ''}
 
     def _convert_keyword(self, kw, kw_type):
         return {
+            'type': kw_type,
             'name': self._escape(self._get_kw_name(kw)),
-            'arguments': self._escape(', '.join(kw.args)),
-            'type': kw_type
+            'arguments': self._escape(', '.join(kw.args))
         }
 
     def _get_kw_name(self, kw):

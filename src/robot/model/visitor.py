@@ -240,10 +240,10 @@ class SuiteVisitor:
         pass
 
     def visit_try(self, try_):
-        """Called when a TRY/EXCEPT block starts
+        """Implements traversing through TRY/EXCEPT structures.
 
-        Can be overridden to allow modifying the passed in ``try``-structure without
-        calling :meth:`start_try` or :meth:`end_try` nor visiting body.
+        This method is used with the TRY/EXCEPT root element. Actual TRY, EXCEPT, ELSE
+        and FINALLY blocks are visited separately.
         """
         if self.start_try(try_) is not False:
             try_.try_block.visit(self)
@@ -253,64 +253,94 @@ class SuiteVisitor:
             self.end_try(try_)
 
     def start_try(self, try_):
-        """Called when TRY/EXCEPT block starts. Default implementation does nothing.
+        """Called when TRY/EXCEPT structure starts. Default implementation does nothing.
 
         Can return explicit ``False`` to stop visiting.
         """
         pass
 
     def end_try(self, try_):
-        """Called when TRY/EXCEPT branch ends. Default implementation does nothing."""
+        """Called when TRY/EXCEPT structure ends. Default implementation does nothing."""
         pass
 
     def visit_try_block(self, block):
+        """Visits individual TRY block.
+
+        EXCEPT, ELSE and FINALLY blocks are visited separately.
+        """
         if self.start_try_block(block) is not False:
             block.body.visit(self)
             self.end_try_block(block)
 
     def start_try_block(self, block):
-        pass
-
-    def end_try_block(self, block):
-        pass
-
-    def visit_except_block(self, block):
-        """Called when IF/ELSE branch starts. Default implementation does nothing.
+        """Called when TRY block starts. Default implementation does nothing.
 
         Can return explicit ``False`` to stop visiting.
         """
+        pass
+
+    def end_try_block(self, block):
+        """Called when TRY block ends. Default implementation does nothing."""
+        pass
+
+    def visit_except_block(self, block):
+        """Visits individual EXCEPT block.
+
+        TRY, ELSE and FINALLY blocks are visited separately.
+        """
         if self.start_except_block(block) is not False:
-            block.visit(self)
+            block.body.visit(self)
             self.end_except_block(block)
 
     def start_except_block(self, block):
-        """Called when EXCEPT branch starts. Default implementation does nothing."""
+        """Called when EXCEPT block starts. Default implementation does nothing.
+
+        Can return explicit ``False`` to stop visiting.
+        """
         pass
 
     def end_except_block(self, block):
-        """Called when EXCEPT branch ends. Default implementation does nothing."""
+        """Called when EXCEPT block ends. Default implementation does nothing."""
         pass
 
     def visit_else_block(self, block):
+        """Visits individual ELSE block of TRY/EXCEPT structure.
+
+        TRY, EXCEPT and FINALLY blocks are visited separately.
+        """
         if self.start_else_block(block) is not False:
             block.body.visit(self)
             self.end_else_block(block)
 
     def start_else_block(self, block):
+        """Called when ELSE block starts. Default implementation does nothing.
+
+        Can return explicit ``False`` to stop visiting.
+        """
         pass
 
     def end_else_block(self, block):
+        """Called when ELSE block ends. Default implementation does nothing."""
         pass
 
     def visit_finally_block(self, block):
+        """Visits individual FINALLY block.
+
+        TRY, EXCEPT and ELSE blocks are visited separately.
+        """
         if self.start_finally_block(block) is not False:
             block.body.visit(self)
             self.end_finally_block(block)
 
     def start_finally_block(self, block):
+        """Called when FINALLY block starts. Default implementation does nothing.
+
+        Can return explicit ``False`` to stop visiting.
+        """
         pass
 
     def end_finally_block(self, block):
+        """Called when FINALLY block ends. Default implementation does nothing."""
         pass
 
     def visit_return(self, return_):

@@ -204,7 +204,7 @@ class IfBranchHandler(ElementHandler):
 @ElementHandler.register
 class TryHandler(ElementHandler):
     tag = 'try'
-    children = frozenset(('status', 'block'))
+    children = frozenset(('status', 'block', 'msg', 'doc'))
 
     def start(self, elem, result):
         return result.body.create_try()

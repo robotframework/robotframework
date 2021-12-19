@@ -480,7 +480,7 @@ class TryRunner:
             'GLOB:': lambda s, p: Matcher(p, spaceless=False, caseless=False).match(s),
             'EQUALS:': lambda s, p: s == p,
             'STARTS:': lambda s, p: s.startswith(p),
-            'REGEXP:': lambda s, p: re.match(f'{p}\Z', s) is not None
+            'REGEXP:': lambda s, p: re.match(rf'{p}\Z', s) is not None
         }
         message = error.message
         for pattern in patterns:
