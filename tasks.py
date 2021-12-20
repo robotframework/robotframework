@@ -10,6 +10,7 @@ import os.path
 import shutil
 import zipfile
 import re
+import glob
 
 from invoke import task
 
@@ -31,6 +32,7 @@ def add_docs(ctx, version, push=False):
     extract_ug(version)
     if not is_preview(version):
         update_latest(version)
+        copy_libdoc_jsons()
     update_index(version)
     add_changes(ctx, version)
     if push:
@@ -74,6 +76,17 @@ def update_latest(version):
           "'robotframework-userguide-latest.zip'".format(version))
     shutil.copy('robotframework-userguide-{}.zip'.format(version),
                 'robotframework-userguide-latest.zip')
+
+
+def copy_libdoc_jsons():
+    source = os.path.join('doc', 'libraries', "*.json")
+    target = os.path.join('latest', 'libdoc', '')
+    os.mkdir(target)
+    files = glob.iglob(source)
+    print("Copying {} to {} ".format(source, target))
+    for file in files:
+        if os.path.isfile(file):
+            shutil.copy(file, target)
 
 
 def update_index(version):

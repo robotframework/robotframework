@@ -1,0 +1,1410 @@
+{
+  "name": "OperatingSystem",
+  "doc": "A test library providing keywords for OS related tasks.\n\n``OperatingSystem`` is Robot Framework's standard library that\nenables various operating system related tasks to be performed in\nthe system where Robot Framework is running. It can, among other\nthings, execute commands (e.g. `Run`), create and remove files and\ndirectories (e.g. `Create File`, `Remove Directory`), check\nwhether files or directories exists or contain something\n(e.g. `File Should Exist`, `Directory Should Be Empty`) and\nmanipulate environment variables (e.g. `Set Environment Variable`).\n\n== Table of contents ==\n\n- `Path separators`\n- `Pattern matching`\n- `Tilde expansion`\n- `Boolean arguments`\n- `Example`\n- `Keywords`\n\n= Path separators =\n\nBecause Robot Framework uses the backslash (``\\``) as an escape character\nin the test data, using a literal backslash requires duplicating it like\nin ``c:\\\\path\\\\file.txt``. That can be inconvenient especially with\nlonger Windows paths, and thus all keywords expecting paths as arguments\nconvert forward slashes to backslashes automatically on Windows. This also\nmeans that paths like ``${CURDIR}/path/file.txt`` are operating system\nindependent.\n\nNotice that the automatic path separator conversion does not work if\nthe path is only a part of an argument like with `Run` and `Start Process`\nkeywords. In these cases the built-in variable ``${/}`` that contains\n``\\`` or ``/``, depending on the operating system, can be used instead.\n\n= Pattern matching =\n\nSome keywords allow their arguments to be specified as\n[http://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:\n\n| ``*``        | matches any string, even an empty string                |\n| ``?``        | matches any single character                            |\n| ``[chars]``  | matches one character in the bracket                    |\n| ``[!chars]`` | matches one character not in the bracket                |\n| ``[a-z]``    | matches one character from the range in the bracket     |\n| ``[!a-z]``   | matches one character not from the range in the bracket |\n\nUnless otherwise noted, matching is case-insensitive on\ncase-insensitive operating systems such as Windows.\n\n= Tilde expansion =\n\nPaths beginning with ``~`` or ``~username`` are expanded to the current or\nspecified user's home directory, respectively. The resulting path is\noperating system dependent, but typically e.g. ``~/robot`` is expanded to\n``C:\\Users\\<user>\\robot`` on Windows and ``/home/<user>/robot`` on\nUnixes.\n\nThe ``~username`` form does not work on Jython.\n\n= Boolean arguments =\n\nSome keywords accept arguments that are handled as Boolean values true or\nfalse. If such an argument is given as a string, it is considered false if\nit is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or\n``0``, case-insensitively. Other strings are considered true regardless\ntheir value, and other argument types are tested using the same\n[http://docs.python.org/library/stdtypes.html#truth|rules as in Python].\n\nTrue examples:\n| `Remove Directory` | ${path} | recursive=True    | # Strings are generally true.    |\n| `Remove Directory` | ${path} | recursive=yes     | # Same as the above.             |\n| `Remove Directory` | ${path} | recursive=${TRUE} | # Python ``True`` is true.       |\n| `Remove Directory` | ${path} | recursive=${42}   | # Numbers other than 0 are true. |\n\nFalse examples:\n| `Remove Directory` | ${path} | recursive=False    | # String ``false`` is false.   |\n| `Remove Directory` | ${path} | recursive=no       | # Also string ``no`` is false. |\n| `Remove Directory` | ${path} | recursive=${EMPTY} | # Empty string is false.       |\n| `Remove Directory` | ${path} | recursive=${FALSE} | # Python ``False`` is false.   |\n\nConsidering `OFF`` and ``0`` false is new in Robot Framework 3.1.\n\n= Example =\n\n|  =Setting=  |     =Value=     |\n| Library     | OperatingSystem |\n\n| =Variable=  |       =Value=         |\n| ${PATH}     | ${CURDIR}/example.txt |\n\n| =Test Case= |     =Action=      | =Argument= |    =Argument=        |\n| Example     | Create File       | ${PATH}    | Some text            |\n|             | File Should Exist | ${PATH}    |                      |\n|             | Copy File         | ${PATH}    | ~/file.txt           |\n|             | ${output} =       | Run | ${TEMPDIR}${/}script.py arg |",
+  "version": "4.1.3",
+  "generated": "2021-12-20 22:45:34",
+  "type": "LIBRARY",
+  "scope": "GLOBAL",
+  "docFormat": "ROBOT",
+  "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+  "lineno": 39,
+  "tags": [],
+  "inits": [],
+  "keywords": [
+    {
+      "name": "Append To Environment Variable",
+      "args": [
+        {
+          "name": "name",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "name"
+        },
+        {
+          "name": "values",
+          "types": [],
+          "defaultValue": null,
+          "kind": "VAR_POSITIONAL",
+          "required": false,
+          "repr": "*values"
+        },
+        {
+          "name": "config",
+          "types": [],
+          "defaultValue": null,
+          "kind": "VAR_NAMED",
+          "required": false,
+          "repr": "**config"
+        }
+      ],
+      "doc": "Appends given ``values`` to environment variable ``name``.\n\nIf the environment variable already exists, values are added after it,\nand otherwise a new environment variable is created.\n\nValues are, by default, joined together using the operating system\npath separator (``;`` on Windows, ``:`` elsewhere). This can be changed\nby giving a separator after the values like ``separator=value``. No\nother configuration parameters are accepted.\n\nExamples (assuming ``NAME`` and ``NAME2`` do not exist initially):\n| Append To Environment Variable | NAME     | first  |       |\n| Should Be Equal                | %{NAME}  | first  |       |\n| Append To Environment Variable | NAME     | second | third |\n| Should Be Equal                | %{NAME}  | first${:}second${:}third |\n| Append To Environment Variable | NAME2    | first  | separator=-     |\n| Should Be Equal                | %{NAME2} | first  |                 |\n| Append To Environment Variable | NAME2    | second | separator=-     |\n| Should Be Equal                | %{NAME2} | first-second             |",
+      "shortdoc": "Appends given ``values`` to environment variable ``name``.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 962
+    },
+    {
+      "name": "Append To File",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "content",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "content"
+        },
+        {
+          "name": "encoding",
+          "types": [],
+          "defaultValue": "UTF-8",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "encoding=UTF-8"
+        }
+      ],
+      "doc": "Appends the given content to the specified file.\n\nIf the file exists, the given text is written to its end. If the file\ndoes not exist, it is created.\n\nOther than not overwriting possible existing files, this keyword works\nexactly like `Create File`. See its documentation for more details\nabout the usage.\n\nNote that special encodings ``SYSTEM`` and ``CONSOLE`` only work\nwith this keyword starting from Robot Framework 3.1.2.",
+      "shortdoc": "Appends the given content to the specified file.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 612
+    },
+    {
+      "name": "Copy Directory",
+      "args": [
+        {
+          "name": "source",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "source"
+        },
+        {
+          "name": "destination",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "destination"
+        }
+      ],
+      "doc": "Copies the source directory into the destination.\n\nIf the destination exists, the source is copied under it. Otherwise\nthe destination directory and the possible missing intermediate\ndirectories are created.",
+      "shortdoc": "Copies the source directory into the destination.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 885
+    },
+    {
+      "name": "Copy File",
+      "args": [
+        {
+          "name": "source",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "source"
+        },
+        {
+          "name": "destination",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "destination"
+        }
+      ],
+      "doc": "Copies the source file into the destination.\n\nSource must be a path to an existing file or a glob pattern (see\n`Pattern matching`) that matches exactly one file. How the\ndestination is interpreted is explained below.\n\n1) If the destination is an existing file, the source file is copied\nover it.\n\n2) If the destination is an existing directory, the source file is\ncopied into it. A possible file with the same name as the source is\noverwritten.\n\n3) If the destination does not exist and it ends with a path\nseparator (``/`` or ``\\``), it is considered a directory. That\ndirectory is created and a source file copied into it.\nPossible missing intermediate directories are also created.\n\n4) If the destination does not exist and it does not end with a path\nseparator, it is considered a file. If the path to the file does not\nexist, it is created.\n\nThe resulting destination path is returned.\n\nSee also `Copy Files`, `Move File`, and `Move Files`.",
+      "shortdoc": "Copies the source file into the destination.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 714
+    },
+    {
+      "name": "Copy Files",
+      "args": [
+        {
+          "name": "sources_and_destination",
+          "types": [],
+          "defaultValue": null,
+          "kind": "VAR_POSITIONAL",
+          "required": false,
+          "repr": "*sources_and_destination"
+        }
+      ],
+      "doc": "Copies specified files to the target directory.\n\nSource files can be given as exact paths and as glob patterns (see\n`Pattern matching`). At least one source must be given, but it is\nnot an error if it is a pattern that does not match anything.\n\nLast argument must be the destination directory. If the destination\ndoes not exist, it will be created.\n\nExamples:\n| Copy Files | ${dir}/file1.txt  | ${dir}/file2.txt | ${dir2} |\n| Copy Files | ${dir}/file-*.txt | ${dir2}          |         |\n\nSee also `Copy File`, `Move File`, and `Move Files`.",
+      "shortdoc": "Copies specified files to the target directory.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 838
+    },
+    {
+      "name": "Count Directories In Directory",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "pattern",
+          "types": [],
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "pattern=None"
+        }
+      ],
+      "doc": "Wrapper for `Count Items In Directory` returning only directory count.",
+      "shortdoc": "Wrapper for `Count Items In Directory` returning only directory count.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 1350
+    },
+    {
+      "name": "Count Files In Directory",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "pattern",
+          "types": [],
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "pattern=None"
+        }
+      ],
+      "doc": "Wrapper for `Count Items In Directory` returning only file count.",
+      "shortdoc": "Wrapper for `Count Items In Directory` returning only file count.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 1344
+    },
+    {
+      "name": "Count Items In Directory",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "pattern",
+          "types": [],
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "pattern=None"
+        }
+      ],
+      "doc": "Returns and logs the number of all items in the given directory.\n\nThe argument ``pattern`` has the same semantics as with `List Directory`\nkeyword. The count is returned as an integer, so it must be checked e.g.\nwith the built-in keyword `Should Be Equal As Integers`.",
+      "shortdoc": "Returns and logs the number of all items in the given directory.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 1333
+    },
+    {
+      "name": "Create Binary File",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "content",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "content"
+        }
+      ],
+      "doc": "Creates a binary file with the given content.\n\nIf content is given as a Unicode string, it is first converted to bytes\ncharacter by character. All characters with ordinal below 256 can be\nused and are converted to bytes with same values. Using characters\nwith higher ordinal is an error.\n\nByte strings, and possible other types, are written to the file as is.\n\nIf the directory for the file does not exist, it is created, along\nwith missing intermediate directories.\n\nExamples:\n| Create Binary File | ${dir}/example.png | ${image content}     |\n| Create Binary File | ${path}            | \\x01\\x00\\xe4\\x00 |\n\nUse `Create File` if you want to create a text file using a certain\nencoding. `File Should Not Exist` can be used to avoid overwriting\nexisting files.",
+      "shortdoc": "Creates a binary file with the given content.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 586
+    },
+    {
+      "name": "Create Directory",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        }
+      ],
+      "doc": "Creates the specified directory.\n\nAlso possible intermediate directories are created. Passes if the\ndirectory already exists, but fails if the path exists and is not\na directory.",
+      "shortdoc": "Creates the specified directory.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 672
+    },
+    {
+      "name": "Create File",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "content",
+          "types": [],
+          "defaultValue": "",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "content="
+        },
+        {
+          "name": "encoding",
+          "types": [],
+          "defaultValue": "UTF-8",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "encoding=UTF-8"
+        }
+      ],
+      "doc": "Creates a file with the given content and encoding.\n\nIf the directory where the file is created does not exist, it is\nautomatically created along with possible missing intermediate\ndirectories. Possible existing file is overwritten.\n\nOn Windows newline characters (``\\n``) in content are automatically\nconverted to Windows native newline sequence (``\\r\\n``).\n\nSee `Get File` for more information about possible ``encoding`` values,\nincluding special values ``SYSTEM`` and ``CONSOLE``.\n\nExamples:\n| Create File | ${dir}/example.txt | Hello, world!       |         |\n| Create File | ${path}            | Hyv\\xe4 esimerkki  | Latin-1 |\n| Create File | /tmp/foo.txt       | 3\\nlines\\nhere\\n | SYSTEM  |\n\nUse `Append To File` if you want to append to an existing file\nand `Create Binary File` if you need to write bytes without encoding.\n`File Should Not Exist` can be used to avoid overwriting existing\nfiles.\n\nAutomatically converting ``\\n`` to ``\\r\\n`` on Windows is new in\nRobot Framework 3.1.",
+      "shortdoc": "Creates a file with the given content and encoding.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 542
+    },
+    {
+      "name": "Directory Should Be Empty",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "msg",
+          "types": [],
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "msg=None"
+        }
+      ],
+      "doc": "Fails unless the specified directory is empty.\n\nThe default error message can be overridden with the ``msg`` argument.",
+      "shortdoc": "Fails unless the specified directory is empty.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 489
+    },
+    {
+      "name": "Directory Should Exist",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "msg",
+          "types": [],
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "msg=None"
+        }
+      ],
+      "doc": "Fails unless the given path points to an existing directory.\n\nThe path can be given as an exact path or as a glob pattern.\nThe pattern matching syntax is explained in `introduction`.\nThe default error message can be overridden with the ``msg`` argument.",
+      "shortdoc": "Fails unless the given path points to an existing directory.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 407
+    },
+    {
+      "name": "Directory Should Not Be Empty",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "msg",
+          "types": [],
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "msg=None"
+        }
+      ],
+      "doc": "Fails if the specified directory is empty.\n\nThe default error message can be overridden with the ``msg`` argument.",
+      "shortdoc": "Fails if the specified directory is empty.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 501
+    },
+    {
+      "name": "Directory Should Not Exist",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "msg",
+          "types": [],
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "msg=None"
+        }
+      ],
+      "doc": "Fails if the given path points to an existing file.\n\nThe path can be given as an exact path or as a glob pattern.\nThe pattern matching syntax is explained in `introduction`.\nThe default error message can be overridden with the ``msg`` argument.",
+      "shortdoc": "Fails if the given path points to an existing file.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 420
+    },
+    {
+      "name": "Empty Directory",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        }
+      ],
+      "doc": "Deletes all the content from the given directory.\n\nDeletes both files and sub-directories, but the specified directory\nitself if not removed. Use `Remove Directory` if you want to remove\nthe whole directory.",
+      "shortdoc": "Deletes all the content from the given directory.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 657
+    },
+    {
+      "name": "Environment Variable Should Be Set",
+      "args": [
+        {
+          "name": "name",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "name"
+        },
+        {
+          "name": "msg",
+          "types": [],
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "msg=None"
+        }
+      ],
+      "doc": "Fails if the specified environment variable is not set.\n\nThe default error message can be overridden with the ``msg`` argument.",
+      "shortdoc": "Fails if the specified environment variable is not set.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 1009
+    },
+    {
+      "name": "Environment Variable Should Not Be Set",
+      "args": [
+        {
+          "name": "name",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "name"
+        },
+        {
+          "name": "msg",
+          "types": [],
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "msg=None"
+        }
+      ],
+      "doc": "Fails if the specified environment variable is set.\n\nThe default error message can be overridden with the ``msg`` argument.",
+      "shortdoc": "Fails if the specified environment variable is set.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 1019
+    },
+    {
+      "name": "File Should Be Empty",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "msg",
+          "types": [],
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "msg=None"
+        }
+      ],
+      "doc": "Fails unless the specified file is empty.\n\nThe default error message can be overridden with the ``msg`` argument.",
+      "shortdoc": "Fails unless the specified file is empty.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 513
+    },
+    {
+      "name": "File Should Exist",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "msg",
+          "types": [],
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "msg=None"
+        }
+      ],
+      "doc": "Fails unless the given ``path`` points to an existing file.\n\nThe path can be given as an exact path or as a glob pattern.\nThe pattern matching syntax is explained in `introduction`.\nThe default error message can be overridden with the ``msg`` argument.",
+      "shortdoc": "Fails unless the given ``path`` points to an existing file.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 381
+    },
+    {
+      "name": "File Should Not Be Empty",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "msg",
+          "types": [],
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "msg=None"
+        }
+      ],
+      "doc": "Fails if the specified directory is empty.\n\nThe default error message can be overridden with the ``msg`` argument.",
+      "shortdoc": "Fails if the specified directory is empty.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 527
+    },
+    {
+      "name": "File Should Not Exist",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "msg",
+          "types": [],
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "msg=None"
+        }
+      ],
+      "doc": "Fails if the given path points to an existing file.\n\nThe path can be given as an exact path or as a glob pattern.\nThe pattern matching syntax is explained in `introduction`.\nThe default error message can be overridden with the ``msg`` argument.",
+      "shortdoc": "Fails if the given path points to an existing file.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 394
+    },
+    {
+      "name": "Get Binary File",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        }
+      ],
+      "doc": "Returns the contents of a specified file.\n\nThis keyword reads the specified file and returns the contents as is.\nSee also `Get File`.",
+      "shortdoc": "Returns the contents of a specified file.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 275
+    },
+    {
+      "name": "Get Environment Variable",
+      "args": [
+        {
+          "name": "name",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "name"
+        },
+        {
+          "name": "default",
+          "types": [],
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "default=None"
+        }
+      ],
+      "doc": "Returns the value of an environment variable with the given name.\n\nIf no such environment variable is set, returns the default value, if\ngiven. Otherwise fails the test case.\n\nReturned variables are automatically decoded to Unicode using\nthe system encoding.\n\nNote that you can also access environment variables directly using\nthe variable syntax ``%{ENV_VAR_NAME}``.",
+      "shortdoc": "Returns the value of an environment variable with the given name.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 935
+    },
+    {
+      "name": "Get Environment Variables",
+      "args": [],
+      "doc": "Returns currently available environment variables as a dictionary.\n\nBoth keys and values are decoded to Unicode using the system encoding.\nAltering the returned dictionary has no effect on the actual environment\nvariables.",
+      "shortdoc": "Returns currently available environment variables as a dictionary.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 1030
+    },
+    {
+      "name": "Get File",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "encoding",
+          "types": [],
+          "defaultValue": "UTF-8",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "encoding=UTF-8"
+        },
+        {
+          "name": "encoding_errors",
+          "types": [],
+          "defaultValue": "strict",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "encoding_errors=strict"
+        }
+      ],
+      "doc": "Returns the contents of a specified file.\n\nThis keyword reads the specified file and returns the contents.\nLine breaks in content are converted to platform independent form.\nSee also `Get Binary File`.\n\n``encoding`` defines the encoding of the file. The default value is\n``UTF-8``, which means that UTF-8 and ASCII encoded files are read\ncorrectly. In addition to the encodings supported by the underlying\nPython implementation, the following special encoding values can be\nused:\n\n- ``SYSTEM``: Use the default system encoding.\n- ``CONSOLE``: Use the console encoding. Outside Windows this is same\n  as the system encoding.\n\n``encoding_errors`` argument controls what to do if decoding some bytes\nfails. All values accepted by ``decode`` method in Python are valid, but\nin practice the following values are most useful:\n\n- ``strict``: Fail if characters cannot be decoded (default).\n- ``ignore``: Ignore characters that cannot be decoded.\n- ``replace``: Replace characters that cannot be decoded with\n  a replacement character.",
+      "shortdoc": "Returns the contents of a specified file.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 229
+    },
+    {
+      "name": "Get File Size",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        }
+      ],
+      "doc": "Returns and logs file size as an integer in bytes.",
+      "shortdoc": "Returns and logs file size as an integer in bytes.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 1281
+    },
+    {
+      "name": "Get Modified Time",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "format",
+          "types": [],
+          "defaultValue": "timestamp",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "format=timestamp"
+        }
+      ],
+      "doc": "Returns the last modification time of a file or directory.\n\nHow time is returned is determined based on the given ``format``\nstring as follows. Note that all checks are case-insensitive.\nReturned time is also automatically logged.\n\n1) If ``format`` contains the word ``epoch``, the time is returned\n   in seconds after the UNIX epoch. The return value is always\n   an integer.\n\n2) If ``format`` contains any of the words ``year``, ``month``,\n   ``day``, ``hour``, ``min`` or ``sec``, only the selected parts are\n   returned. The order of the returned parts is always the one\n   in the previous sentence and the order of the words in\n   ``format`` is not significant. The parts are returned as\n   zero-padded strings (e.g. May -> ``05``).\n\n3) Otherwise, and by default, the time is returned as a\n   timestamp string in the format ``2006-02-24 15:08:31``.\n\nExamples (when the modified time of ``${CURDIR}`` is\n2006-03-29 15:06:21):\n| ${time} = | Get Modified Time | ${CURDIR} |\n| ${secs} = | Get Modified Time | ${CURDIR} | epoch |\n| ${year} = | Get Modified Time | ${CURDIR} | return year |\n| ${y} | ${d} = | Get Modified Time | ${CURDIR} | year,day |\n| @{time} = | Get Modified Time | ${CURDIR} | year,month,day,hour,min,sec |\n=>\n- ${time} = '2006-03-29 15:06:21'\n- ${secs} = 1143637581\n- ${year} = '2006'\n- ${y} = '2006' & ${d} = '29'\n- @{time} = ['2006', '03', '29', '15', '06', '21']",
+      "shortdoc": "Returns the last modification time of a file or directory.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 1192
+    },
+    {
+      "name": "Grep File",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "pattern",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "pattern"
+        },
+        {
+          "name": "encoding",
+          "types": [],
+          "defaultValue": "UTF-8",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "encoding=UTF-8"
+        },
+        {
+          "name": "encoding_errors",
+          "types": [],
+          "defaultValue": "strict",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "encoding_errors=strict"
+        }
+      ],
+      "doc": "Returns the lines of the specified file that match the ``pattern``.\n\nThis keyword reads a file from the file system using the defined\n``path``, ``encoding`` and ``encoding_errors`` similarly as `Get File`.\nA difference is that only the lines that match the given ``pattern`` are\nreturned. Lines are returned as a single string catenated back together\nwith newlines and the number of matched lines is automatically logged.\nPossible trailing newline is never returned.\n\nA line matches if it contains the ``pattern`` anywhere in it and\nit *does not need to match the pattern fully*. The pattern\nmatching syntax is explained in `introduction`, and in this\ncase matching is case-sensitive.\n\nExamples:\n| ${errors} = | Grep File | /var/log/myapp.log | ERROR |\n| ${ret} = | Grep File | ${CURDIR}/file.txt | [Ww]ildc??d ex*ple |\n\nIf more complex pattern matching is needed, it is possible to use\n`Get File` in combination with String library keywords like `Get\nLines Matching Regexp`.\n\nThis keyword supports special ``SYSTEM`` and ``CONSOLE`` encodings that\n`Get File` supports only with Robot Framework 4.0 and newer. When using\nPython 3, it is possible to use ``${NONE}`` instead of ``SYSTEM`` with\nearlier versions.",
+      "shortdoc": "Returns the lines of the specified file that match the ``pattern``.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 286
+    },
+    {
+      "name": "Join Path",
+      "args": [
+        {
+          "name": "base",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "base"
+        },
+        {
+          "name": "parts",
+          "types": [],
+          "defaultValue": null,
+          "kind": "VAR_POSITIONAL",
+          "required": false,
+          "repr": "*parts"
+        }
+      ],
+      "doc": "Joins the given path part(s) to the given base path.\n\nThe path separator (``/`` or ``\\``) is inserted when needed and\nthe possible absolute paths handled as expected. The resulted\npath is also normalized.\n\nExamples:\n| ${path} = | Join Path | my        | path  |\n| ${p2} =   | Join Path | my/       | path/ |\n| ${p3} =   | Join Path | my        | path  | my | file.txt |\n| ${p4} =   | Join Path | my        | /path |\n| ${p5} =   | Join Path | /my/path/ | ..    | path2 |\n=>\n- ${path} = 'my/path'\n- ${p2} = 'my/path'\n- ${p3} = 'my/path/my/file.txt'\n- ${p4} = '/path'\n- ${p5} = '/my/path2'",
+      "shortdoc": "Joins the given path part(s) to the given base path.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 1052
+    },
+    {
+      "name": "Join Paths",
+      "args": [
+        {
+          "name": "base",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "base"
+        },
+        {
+          "name": "paths",
+          "types": [],
+          "defaultValue": null,
+          "kind": "VAR_POSITIONAL",
+          "required": false,
+          "repr": "*paths"
+        }
+      ],
+      "doc": "Joins given paths with base and returns resulted paths.\n\nSee `Join Path` for more information.\n\nExamples:\n| @{p1} = | Join Paths | base     | example       | other |          |\n| @{p2} = | Join Paths | /my/base | /example      | other |          |\n| @{p3} = | Join Paths | my/base  | example/path/ | other | one/more |\n=>\n- @{p1} = ['base/example', 'base/other']\n- @{p2} = ['/example', '/my/base/other']\n- @{p3} = ['my/base/example/path', 'my/base/other', 'my/base/one/more']",
+      "shortdoc": "Joins given paths with base and returns resulted paths.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 1076
+    },
+    {
+      "name": "List Directories In Directory",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "pattern",
+          "types": [],
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "pattern=None"
+        },
+        {
+          "name": "absolute",
+          "types": [],
+          "defaultValue": "False",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "absolute=False"
+        }
+      ],
+      "doc": "Wrapper for `List Directory` that returns only directories.",
+      "shortdoc": "Wrapper for `List Directory` that returns only directories.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 1325
+    },
+    {
+      "name": "List Directory",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "pattern",
+          "types": [],
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "pattern=None"
+        },
+        {
+          "name": "absolute",
+          "types": [],
+          "defaultValue": "False",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "absolute=False"
+        }
+      ],
+      "doc": "Returns and logs items in a directory, optionally filtered with ``pattern``.\n\nFile and directory names are returned in case-sensitive alphabetical\norder, e.g. ``['A Name', 'Second', 'a lower case name', 'one more']``.\nImplicit directories ``.`` and ``..`` are not returned. The returned\nitems are automatically logged.\n\nFile and directory names are returned relative to the given path\n(e.g. ``'file.txt'``) by default. If you want them be returned in\nabsolute format (e.g. ``'/home/robot/file.txt'``), give the ``absolute``\nargument a true value (see `Boolean arguments`).\n\nIf ``pattern`` is given, only items matching it are returned. The pattern\nmatching syntax is explained in `introduction`, and in this case\nmatching is case-sensitive.\n\nExamples (using also other `List Directory` variants):\n| @{items} = | List Directory           | ${TEMPDIR} |\n| @{files} = | List Files In Directory  | /tmp | *.txt | absolute |\n| ${count} = | Count Files In Directory | ${CURDIR} | ??? |",
+      "shortdoc": "Returns and logs items in a directory, optionally filtered with ``pattern``.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 1291
+    },
+    {
+      "name": "List Files In Directory",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "pattern",
+          "types": [],
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "pattern=None"
+        },
+        {
+          "name": "absolute",
+          "types": [],
+          "defaultValue": "False",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "absolute=False"
+        }
+      ],
+      "doc": "Wrapper for `List Directory` that returns only files.",
+      "shortdoc": "Wrapper for `List Directory` that returns only files.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 1318
+    },
+    {
+      "name": "Log Environment Variables",
+      "args": [
+        {
+          "name": "level",
+          "types": [],
+          "defaultValue": "INFO",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "level=INFO"
+        }
+      ],
+      "doc": "Logs all environment variables using the given log level.\n\nEnvironment variables are also returned the same way as with\n`Get Environment Variables` keyword.",
+      "shortdoc": "Logs all environment variables using the given log level.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 1039
+    },
+    {
+      "name": "Log File",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "encoding",
+          "types": [],
+          "defaultValue": "UTF-8",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "encoding=UTF-8"
+        },
+        {
+          "name": "encoding_errors",
+          "types": [],
+          "defaultValue": "strict",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "encoding_errors=strict"
+        }
+      ],
+      "doc": "Wrapper for `Get File` that also logs the returned file.\n\nThe file is logged with the INFO level. If you want something else,\njust use `Get File` and the built-in keyword `Log` with the desired\nlevel.\n\nSee `Get File` for more information about ``encoding`` and\n``encoding_errors`` arguments.",
+      "shortdoc": "Wrapper for `Get File` that also logs the returned file.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 329
+    },
+    {
+      "name": "Move Directory",
+      "args": [
+        {
+          "name": "source",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "source"
+        },
+        {
+          "name": "destination",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "destination"
+        }
+      ],
+      "doc": "Moves the source directory into a destination.\n\nUses `Copy Directory` keyword internally, and ``source`` and\n``destination`` arguments have exactly same semantics as with\nthat keyword.",
+      "shortdoc": "Moves the source directory into a destination.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 920
+    },
+    {
+      "name": "Move File",
+      "args": [
+        {
+          "name": "source",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "source"
+        },
+        {
+          "name": "destination",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "destination"
+        }
+      ],
+      "doc": "Moves the source file into the destination.\n\nArguments have exactly same semantics as with `Copy File` keyword.\nDestination file path is returned.\n\nIf the source and destination are on the same filesystem, rename\noperation is used. Otherwise file is copied to the destination\nfilesystem and then removed from the original filesystem.\n\nSee also `Move Files`, `Copy File`, and `Copy Files`.",
+      "shortdoc": "Moves the source file into the destination.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 819
+    },
+    {
+      "name": "Move Files",
+      "args": [
+        {
+          "name": "sources_and_destination",
+          "types": [],
+          "defaultValue": null,
+          "kind": "VAR_POSITIONAL",
+          "required": false,
+          "repr": "*sources_and_destination"
+        }
+      ],
+      "doc": "Moves specified files to the target directory.\n\nArguments have exactly same semantics as with `Copy Files` keyword.\n\nSee also `Move File`, `Copy File`, and `Copy Files`.",
+      "shortdoc": "Moves specified files to the target directory.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 873
+    },
+    {
+      "name": "Normalize Path",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "case_normalize",
+          "types": [],
+          "defaultValue": "False",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "case_normalize=False"
+        }
+      ],
+      "doc": "Normalizes the given path.\n\n- Collapses redundant separators and up-level references.\n- Converts ``/`` to ``\\`` on Windows.\n- Replaces initial ``~`` or ``~user`` by that user's home directory.\n  The latter is not supported on Jython.\n- If ``case_normalize`` is given a true value (see `Boolean arguments`)\n  on Windows, converts the path to all lowercase. New in Robot\n  Framework 3.1.\n\nExamples:\n| ${path1} = | Normalize Path | abc/           |\n| ${path2} = | Normalize Path | abc/../def     |\n| ${path3} = | Normalize Path | abc/./def//ghi |\n| ${path4} = | Normalize Path | ~robot/stuff   |\n=>\n- ${path1} = 'abc'\n- ${path2} = 'def'\n- ${path3} = 'abc/def/ghi'\n- ${path4} = '/home/robot/stuff'\n\nOn Windows result would use ``\\`` instead of ``/`` and home directory\nwould be different.",
+      "shortdoc": "Normalizes the given path.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 1092
+    },
+    {
+      "name": "Remove Directory",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "recursive",
+          "types": [],
+          "defaultValue": "False",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "recursive=False"
+        }
+      ],
+      "doc": "Removes the directory pointed to by the given ``path``.\n\nIf the second argument ``recursive`` is given a true value (see\n`Boolean arguments`), the directory is removed recursively. Otherwise\nremoving fails if the directory is not empty.\n\nIf the directory pointed to by the ``path`` does not exist, the keyword\npasses, but it fails, if the ``path`` points to a file.",
+      "shortdoc": "Removes the directory pointed to by the given ``path``.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 688
+    },
+    {
+      "name": "Remove Environment Variable",
+      "args": [
+        {
+          "name": "names",
+          "types": [],
+          "defaultValue": null,
+          "kind": "VAR_POSITIONAL",
+          "required": false,
+          "repr": "*names"
+        }
+      ],
+      "doc": "Deletes the specified environment variable.\n\nDoes nothing if the environment variable is not set.\n\nIt is possible to remove multiple variables by passing them to this\nkeyword as separate arguments.",
+      "shortdoc": "Deletes the specified environment variable.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 994
+    },
+    {
+      "name": "Remove File",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        }
+      ],
+      "doc": "Removes a file with the given path.\n\nPasses if the file does not exist, but fails if the path does\nnot point to a regular file (e.g. it points to a directory).\n\nThe path can be given as an exact path or as a glob pattern.\nThe pattern matching syntax is explained in `introduction`.\nIf the path is a pattern, all files matching it are removed.",
+      "shortdoc": "Removes a file with the given path.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 628
+    },
+    {
+      "name": "Remove Files",
+      "args": [
+        {
+          "name": "paths",
+          "types": [],
+          "defaultValue": null,
+          "kind": "VAR_POSITIONAL",
+          "required": false,
+          "repr": "*paths"
+        }
+      ],
+      "doc": "Uses `Remove File` to remove multiple files one-by-one.\n\nExample:\n| Remove Files | ${TEMPDIR}${/}foo.txt | ${TEMPDIR}${/}bar.txt | ${TEMPDIR}${/}zap.txt |",
+      "shortdoc": "Uses `Remove File` to remove multiple files one-by-one.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 648
+    },
+    {
+      "name": "Run",
+      "args": [
+        {
+          "name": "command",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "command"
+        }
+      ],
+      "doc": "Runs the given command in the system and returns the output.\n\nThe execution status of the command *is not checked* by this\nkeyword, and it must be done separately based on the returned\noutput. If the execution return code is needed, either `Run\nAnd Return RC` or `Run And Return RC And Output` can be used.\n\nThe standard error stream is automatically redirected to the standard\noutput stream by adding ``2>&1`` after the executed command. This\nautomatic redirection is done only when the executed command does not\ncontain additional output redirections. You can thus freely forward\nthe standard error somewhere else, for example, like\n``my_command 2>stderr.txt``.\n\nThe returned output contains everything written into the standard\noutput or error streams by the command (unless either of them\nis redirected explicitly). Many commands add an extra newline\n(``\\n``) after the output to make it easier to read in the\nconsole. To ease processing the returned output, this possible\ntrailing newline is stripped by this keyword.\n\nExamples:\n| ${output} =        | Run       | ls -lhF /tmp |\n| Log                | ${output} |\n| ${result} =        | Run       | ${CURDIR}${/}tester.py arg1 arg2 |\n| Should Not Contain | ${result} | FAIL |\n| ${stdout} =        | Run       | /opt/script.sh 2>/tmp/stderr.txt |\n| Should Be Equal    | ${stdout} | TEST PASSED |\n| File Should Be Empty | /tmp/stderr.txt |\n\n*TIP:* `Run Process` keyword provided by the\n[http://robotframework.org/robotframework/latest/libraries/Process.html|\nProcess library] supports better process configuration and is generally\nrecommended as a replacement for this keyword.",
+      "shortdoc": "Runs the given command in the system and returns the output.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 135
+    },
+    {
+      "name": "Run And Return Rc",
+      "args": [
+        {
+          "name": "command",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "command"
+        }
+      ],
+      "doc": "Runs the given command in the system and returns the return code.\n\nThe return code (RC) is returned as a positive integer in\nrange from 0 to 255 as returned by the executed command. On\nsome operating systems (notable Windows) original return codes\ncan be something else, but this keyword always maps them to\nthe 0-255 range. Since the RC is an integer, it must be\nchecked e.g. with the keyword `Should Be Equal As Integers`\ninstead of `Should Be Equal` (both are built-in keywords).\n\nExamples:\n| ${rc} = | Run and Return RC | ${CURDIR}${/}script.py arg |\n| Should Be Equal As Integers | ${rc} | 0 |\n| ${rc} = | Run and Return RC | /path/to/example.rb arg1 arg2 |\n| Should Be True | 0 < ${rc} < 42 |\n\nSee `Run` and `Run And Return RC And Output` if you need to get the\noutput of the executed command.\n\n*TIP:* `Run Process` keyword provided by the\n[http://robotframework.org/robotframework/latest/libraries/Process.html|\nProcess library] supports better process configuration and is generally\nrecommended as a replacement for this keyword.",
+      "shortdoc": "Runs the given command in the system and returns the return code.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 173
+    },
+    {
+      "name": "Run And Return Rc And Output",
+      "args": [
+        {
+          "name": "command",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "command"
+        }
+      ],
+      "doc": "Runs the given command in the system and returns the RC and output.\n\nThe return code (RC) is returned similarly as with `Run And Return RC`\nand the output similarly as with `Run`.\n\nExamples:\n| ${rc} | ${output} =  | Run and Return RC and Output | ${CURDIR}${/}mytool |\n| Should Be Equal As Integers | ${rc}    | 0    |\n| Should Not Contain   | ${output}       | FAIL |\n| ${rc} | ${stdout} =  | Run and Return RC and Output | /opt/script.sh 2>/tmp/stderr.txt |\n| Should Be True       | ${rc} > 42      |\n| Should Be Equal      | ${stdout}       | TEST PASSED |\n| File Should Be Empty | /tmp/stderr.txt |\n\n*TIP:* `Run Process` keyword provided by the\n[http://robotframework.org/robotframework/latest/libraries/Process.html|\nProcess library] supports better process configuration and is generally\nrecommended as a replacement for this keyword.",
+      "shortdoc": "Runs the given command in the system and returns the RC and output.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 200
+    },
+    {
+      "name": "Set Environment Variable",
+      "args": [
+        {
+          "name": "name",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "name"
+        },
+        {
+          "name": "value",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "value"
+        }
+      ],
+      "doc": "Sets an environment variable to a specified value.\n\nValues are converted to strings automatically. Set variables are\nautomatically encoded using the system encoding.",
+      "shortdoc": "Sets an environment variable to a specified value.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 952
+    },
+    {
+      "name": "Set Modified Time",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "mtime",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "mtime"
+        }
+      ],
+      "doc": "Sets the file modification and access times.\n\nChanges the modification and access times of the given file to\nthe value determined by ``mtime``. The time can be given in\ndifferent formats described below. Note that all checks\ninvolving strings are case-insensitive. Modified time can only\nbe set to regular files.\n\n1) If ``mtime`` is a number, or a string that can be converted\n   to a number, it is interpreted as seconds since the UNIX\n   epoch (1970-01-01 00:00:00 UTC). This documentation was\n   originally written about 1177654467 seconds after the epoch.\n\n2) If ``mtime`` is a timestamp, that time will be used. Valid\n   timestamp formats are ``YYYY-MM-DD hh:mm:ss`` and\n   ``YYYYMMDD hhmmss``.\n\n3) If ``mtime`` is equal to ``NOW``, the current local time is used.\n\n4) If ``mtime`` is equal to ``UTC``, the current time in\n   [http://en.wikipedia.org/wiki/Coordinated_Universal_Time|UTC]\n   is used.\n\n5) If ``mtime`` is in the format like ``NOW - 1 day`` or ``UTC + 1\n   hour 30 min``, the current local/UTC time plus/minus the time\n   specified with the time string is used. The time string format\n   is described in an appendix of Robot Framework User Guide.\n\nExamples:\n| Set Modified Time | /path/file | 1177654467         | # Time given as epoch seconds |\n| Set Modified Time | /path/file | 2007-04-27 9:14:27 | # Time given as a timestamp   |\n| Set Modified Time | /path/file | NOW                | # The local time of execution |\n| Set Modified Time | /path/file | NOW - 1 day        | # 1 day subtracted from the local time |\n| Set Modified Time | /path/file | UTC + 1h 2min 3s   | # 1h 2min 3s added to the UTC time |",
+      "shortdoc": "Sets the file modification and access times.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 1234
+    },
+    {
+      "name": "Should Exist",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "msg",
+          "types": [],
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "msg=None"
+        }
+      ],
+      "doc": "Fails unless the given path (file or directory) exists.\n\nThe path can be given as an exact path or as a glob pattern.\nThe pattern matching syntax is explained in `introduction`.\nThe default error message can be overridden with the ``msg`` argument.",
+      "shortdoc": "Fails unless the given path (file or directory) exists.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 345
+    },
+    {
+      "name": "Should Not Exist",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "msg",
+          "types": [],
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "msg=None"
+        }
+      ],
+      "doc": "Fails if the given path (file or directory) exists.\n\nThe path can be given as an exact path or as a glob pattern.\nThe pattern matching syntax is explained in `introduction`.\nThe default error message can be overridden with the ``msg`` argument.",
+      "shortdoc": "Fails if the given path (file or directory) exists.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 357
+    },
+    {
+      "name": "Split Extension",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        }
+      ],
+      "doc": "Splits the extension from the given path.\n\nThe given path is first normalized (e.g. possible trailing\npath separators removed, special directories ``..`` and ``.``\nremoved). The base path and extension are returned as separate\ncomponents so that the dot used as an extension separator is\nremoved. If the path contains no extension, an empty string is\nreturned for it. Possible leading and trailing dots in the file\nname are never considered to be extension separators.\n\nExamples:\n| ${path} | ${ext} = | Split Extension | file.extension    |\n| ${p2}   | ${e2} =  | Split Extension | path/file.ext     |\n| ${p3}   | ${e3} =  | Split Extension | path/file         |\n| ${p4}   | ${e4} =  | Split Extension | p1/../p2/file.ext |\n| ${p5}   | ${e5} =  | Split Extension | path/.file.ext    |\n| ${p6}   | ${e6} =  | Split Extension | path/.file        |\n=>\n- ${path} = 'file' & ${ext} = 'extension'\n- ${p2} = 'path/file' & ${e2} = 'ext'\n- ${p3} = 'path/file' & ${e3} = ''\n- ${p4} = 'p2/file' & ${e4} = 'ext'\n- ${p5} = 'path/.file' & ${e5} = 'ext'\n- ${p6} = 'path/.file' & ${e6} = ''",
+      "shortdoc": "Splits the extension from the given path.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 1145
+    },
+    {
+      "name": "Split Path",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        }
+      ],
+      "doc": "Splits the given path from the last path separator (``/`` or ``\\``).\n\nThe given path is first normalized (e.g. a possible trailing\npath separator is removed, special directories ``..`` and ``.``\nremoved). The parts that are split are returned as separate\ncomponents.\n\nExamples:\n| ${path1} | ${dir} =  | Split Path | abc/def         |\n| ${path2} | ${file} = | Split Path | abc/def/ghi.txt |\n| ${path3} | ${d2}  =  | Split Path | abc/../def/ghi/ |\n=>\n- ${path1} = 'abc' & ${dir} = 'def'\n- ${path2} = 'abc/def' & ${file} = 'ghi.txt'\n- ${path3} = 'def' & ${d2} = 'ghi'",
+      "shortdoc": "Splits the given path from the last path separator (``/`` or ``\\``).",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 1126
+    },
+    {
+      "name": "Touch",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        }
+      ],
+      "doc": "Emulates the UNIX touch command.\n\nCreates a file, if it does not exist. Otherwise changes its access and\nmodification times to the current time.\n\nFails if used with the directories or the parent directory of the given\nfile does not exist.",
+      "shortdoc": "Emulates the UNIX touch command.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 1378
+    },
+    {
+      "name": "Wait Until Created",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "timeout",
+          "types": [],
+          "defaultValue": "1 minute",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "timeout=1 minute"
+        }
+      ],
+      "doc": "Waits until the given file or directory is created.\n\nThe path can be given as an exact path or as a glob pattern.\nThe pattern matching syntax is explained in `introduction`.\nIf the path is a pattern, the keyword returns when an item matching\nit is created.\n\nThe optional ``timeout`` can be used to control the maximum time of\nwaiting. The timeout is given as a timeout string, e.g. in a format\n``15 seconds``, ``1min 10s`` or just ``10``. The time string format is\ndescribed in an appendix of Robot Framework User Guide.\n\nIf the timeout is negative, the keyword is never timed-out. The keyword\nreturns immediately, if the path already exists.",
+      "shortdoc": "Waits until the given file or directory is created.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 461
+    },
+    {
+      "name": "Wait Until Removed",
+      "args": [
+        {
+          "name": "path",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "path"
+        },
+        {
+          "name": "timeout",
+          "types": [],
+          "defaultValue": "1 minute",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "timeout=1 minute"
+        }
+      ],
+      "doc": "Waits until the given file or directory is removed.\n\nThe path can be given as an exact path or as a glob pattern.\nThe pattern matching syntax is explained in `introduction`.\nIf the path is a pattern, the keyword waits until all matching\nitems are removed.\n\nThe optional ``timeout`` can be used to control the maximum time of\nwaiting. The timeout is given as a timeout string, e.g. in a format\n``15 seconds``, ``1min 10s`` or just ``10``. The time string format is\ndescribed in an appendix of Robot Framework User Guide.\n\nIf the timeout is negative, the keyword is never timed-out. The keyword\nreturns immediately, if the path does not exist in the first place.",
+      "shortdoc": "Waits until the given file or directory is removed.",
+      "tags": [],
+      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/OperatingSystem.py",
+      "lineno": 435
+    }
+  ],
+  "dataTypes": {
+    "enums": [],
+    "typedDicts": []
+  }
+}
