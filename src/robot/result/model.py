@@ -271,8 +271,10 @@ class Except(model.Except, StatusMixin, DeprecatedAttributesMixin):
     @property
     @deprecated
     def name(self):
-        as_part = f' AS {self.variable}' if self.variable else ''
-        return ' | '.join(self.patterns) + as_part
+        patterns = ' | '.join(self.patterns)
+        as_var = f'AS {self.variable}' if self.variable else ''
+        sep = ' ' if patterns and as_var else ''
+        return f'{patterns}{sep}{as_var}'
 
 
 @Body.register

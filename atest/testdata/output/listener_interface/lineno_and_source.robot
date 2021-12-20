@@ -60,6 +60,26 @@ IF in FOR
 IF in resource
     IF In resource
 
+TRY
+    [Documentation]    FAIL    Hello, Robot!
+    TRY
+        Fail    Robot
+    EXCEPT    AS    ${name}
+        TRY
+            Fail    Hello, ${name}!
+        FINALLY
+            Should Be Equal    ${name}    Robot
+        END
+    ELSE
+        Fail    Not executed
+    END
+
+TRY in keyword
+    TRY in keyword
+
+TRY in resource
+    TRY in resource
+
 *** Keywords ***
 User Keyword
     No Operation
@@ -74,4 +94,16 @@ IF In Keyword
     IF    True
         No Operation
         RETURN
+    END
+
+TRY In Keyword
+    TRY
+        RETURN    Value
+        Fail    Not executed!
+    EXCEPT    No match    AS    ${var}
+        Fail    Not executed!
+    EXCEPT    No    Match    2    AS    ${x}
+        Fail    Not executed!
+    EXCEPT
+        Fail    Not executed!
     END

@@ -44,11 +44,11 @@ class Listeners:
         self._is_logged.set_level(level)
 
     def start_keyword(self, kw):
-        if kw.type != kw.IF_ELSE_ROOT:
+        if kw.type not in (kw.IF_ELSE_ROOT, kw.TRY_EXCEPT_ROOT):
             self._start_keyword(kw)
 
     def end_keyword(self, kw):
-        if kw.type != kw.IF_ELSE_ROOT:
+        if kw.type not in (kw.IF_ELSE_ROOT, kw.TRY_EXCEPT_ROOT):
             self._end_keyword(kw)
 
     def log_message(self, msg):

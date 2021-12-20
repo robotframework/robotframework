@@ -406,7 +406,7 @@ class TryBuilder(NodeVisitor):
         return errors
 
     def visit_TryHandler(self, node):
-        ExceptBuilder(self.model).build(node)
+        TryHandlerBuilder(self.model).build(node)
 
     def visit_If(self, node):
         IfBuilder(self.model.try_block).build(node)
@@ -428,7 +428,7 @@ class TryBuilder(NodeVisitor):
         self.model.error = 'Templates cannot be used with TRY.'
 
 
-class ExceptBuilder(NodeVisitor):
+class TryHandlerBuilder(NodeVisitor):
 
     def __init__(self, parent):
         self.parent = parent

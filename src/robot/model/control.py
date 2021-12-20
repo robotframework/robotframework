@@ -186,8 +186,9 @@ class Except(BodyItem):
 
     def __str__(self):
         patterns = ', '.join(self.patterns)
-        as_var = f' AS {self.variable}' if self.variable else ''
-        return f'EXCEPT    {patterns}{as_var}'
+        as_var = f'AS {self.variable}' if self.variable else ''
+        sep = ' ' if patterns and as_var else ''
+        return f'EXCEPT    {patterns}{sep}{as_var}'
 
     def visit(self, visitor):
         visitor.visit_try_block(self)
