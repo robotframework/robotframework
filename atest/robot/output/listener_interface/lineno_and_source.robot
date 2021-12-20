@@ -11,124 +11,128 @@ ${RESOURCE FILE}     ${LISTENER DIR}/lineno_and_source.resource
 
 *** Test Cases ***
 Keyword
-    START    No Operation                    6    NOT SET
-    END      No Operation                    6    PASS
+    START    KEYWORD          No Operation                    6    NOT SET
+    END      KEYWORD          No Operation                    6    PASS
 
 User keyword
-    START    User Keyword                    9    NOT SET
-    START    No Operation                   65    NOT SET
-    END      No Operation                   65    PASS
-    END      User Keyword                    9    PASS
+    START    KEYWORD          User Keyword                    9    NOT SET
+    START    KEYWORD          No Operation                   65    NOT SET
+    END      KEYWORD          No Operation                   65    PASS
+    START    RETURN           ${EMPTY}                       66    NOT SET
+    END      RETURN           ${EMPTY}                       66    PASS
+    END      KEYWORD          User Keyword                    9    PASS
 
 User keyword in resource
-    START    User Keyword In Resource       12    NOT SET
-    START    No Operation                    3    NOT SET    source=${RESOURCE FILE}
-    END      No Operation                    3    PASS       source=${RESOURCE FILE}
-    END      User Keyword In Resource       12    PASS
+    START    KEYWORD          User Keyword In Resource       12    NOT SET
+    START    KEYWORD          No Operation                    3    NOT SET    source=${RESOURCE FILE}
+    END      KEYWORD          No Operation                    3    PASS       source=${RESOURCE FILE}
+    END      KEYWORD          User Keyword In Resource       12    PASS
 
 Not run keyword
-    START    Fail                           16    NOT SET
-    END      Fail                           16    FAIL
-    START    Fail                           17    NOT RUN
-    END      Fail                           17    NOT RUN
-    START    Non-existing                   18    NOT RUN
-    END      Non-existing                   18    NOT RUN
+    START    KEYWORD          Fail                           16    NOT SET
+    END      KEYWORD          Fail                           16    FAIL
+    START    KEYWORD          Fail                           17    NOT RUN
+    END      KEYWORD          Fail                           17    NOT RUN
+    START    KEYWORD          Non-existing                   18    NOT RUN
+    END      KEYWORD          Non-existing                   18    NOT RUN
 
 FOR
-    START    \${x} IN [ first | second ]    21    NOT SET    type=FOR
-    START    \${x} = first                  21    NOT SET    type=FOR ITERATION
-    START    No Operation                   22    NOT SET
-    END      No Operation                   22    PASS
-    END      \${x} = first                  21    PASS       type=FOR ITERATION
-    START    \${x} = second                 21    NOT SET    type=FOR ITERATION
-    START    No Operation                   22    NOT SET
-    END      No Operation                   22    PASS
-    END      \${x} = second                 21    PASS       type=FOR ITERATION
-    END      \${x} IN [ first | second ]    21    PASS       type=FOR
+    START    FOR              \${x} IN [ first | second ]    21    NOT SET
+    START    FOR ITERATION    \${x} = first                  21    NOT SET
+    START    KEYWORD          No Operation                   22    NOT SET
+    END      KEYWORD          No Operation                   22    PASS
+    END      FOR ITERATION    \${x} = first                  21    PASS
+    START    FOR ITERATION    \${x} = second                 21    NOT SET
+    START    KEYWORD          No Operation                   22    NOT SET
+    END      KEYWORD          No Operation                   22    PASS
+    END      FOR ITERATION    \${x} = second                 21    PASS
+    END      FOR              \${x} IN [ first | second ]    21    PASS
 
 FOR in keyword
-    START    FOR In Keyword                 26    NOT SET
-    START    \${x} IN [ once ]              68    NOT SET    type=FOR
-    START    \${x} = once                   68    NOT SET    type=FOR ITERATION
-    START    No Operation                   69    NOT SET
-    END      No Operation                   69    PASS
-    END      \${x} = once                   68    PASS       type=FOR ITERATION
-    END      \${x} IN [ once ]              68    PASS       type=FOR
-    END      FOR In Keyword                 26    PASS
+    START    KEYWORD          FOR In Keyword                 26    NOT SET
+    START    FOR              \${x} IN [ once ]              69    NOT SET
+    START    FOR ITERATION    \${x} = once                   69    NOT SET
+    START    KEYWORD          No Operation                   70    NOT SET
+    END      KEYWORD          No Operation                   70    PASS
+    END      FOR ITERATION    \${x} = once                   69    PASS
+    END      FOR              \${x} IN [ once ]              69    PASS
+    END      KEYWORD          FOR In Keyword                 26    PASS
 
 FOR in IF
-    START    True                           29    NOT SET    type=IF
-    START    \${x} | \${y} IN [ x | y ]     30    NOT SET    type=FOR
-    START    \${x} = x, \${y} = y           30    NOT SET    type=FOR ITERATION
-    START    No Operation                   31    NOT SET
-    END      No Operation                   31    PASS
-    END      \${x} = x, \${y} = y           30    PASS       type=FOR ITERATION
-    END      \${x} | \${y} IN [ x | y ]     30    PASS       type=FOR
-    END      True                           29    PASS       type=IF
+    START    IF               True                           29    NOT SET
+    START    FOR              \${x} | \${y} IN [ x | y ]     30    NOT SET
+    START    FOR ITERATION    \${x} = x, \${y} = y           30    NOT SET
+    START    KEYWORD          No Operation                   31    NOT SET
+    END      KEYWORD          No Operation                   31    PASS
+    END      FOR ITERATION    \${x} = x, \${y} = y           30    PASS
+    END      FOR              \${x} | \${y} IN [ x | y ]     30    PASS
+    END      IF               True                           29    PASS
 
 FOR in resource
-    START    FOR In Resource       36    NOT SET
-    START    \${x} IN [ once ]      6    NOT SET    source=${RESOURCE FILE}    type=FOR
-    START    \${x} = once           6    NOT SET    source=${RESOURCE FILE}    type=FOR ITERATION
-    START    Log                    7    NOT SET    source=${RESOURCE FILE}
-    END      Log                    7    PASS       source=${RESOURCE FILE}
-    END      \${x} = once           6    PASS       source=${RESOURCE FILE}    type=FOR ITERATION
-    END      \${x} IN [ once ]      6    PASS       source=${RESOURCE FILE}    type=FOR
-    END      FOR In Resource       36    PASS
+    START    KEYWORD          FOR In Resource                36    NOT SET
+    START    FOR              \${x} IN [ once ]               6    NOT SET    source=${RESOURCE FILE}
+    START    FOR ITERATION    \${x} = once                    6    NOT SET    source=${RESOURCE FILE}
+    START    KEYWORD          Log                             7    NOT SET    source=${RESOURCE FILE}
+    END      KEYWORD          Log                             7    PASS       source=${RESOURCE FILE}
+    END      FOR ITERATION    \${x} = once                    6    PASS       source=${RESOURCE FILE}
+    END      FOR              \${x} IN [ once ]               6    PASS       source=${RESOURCE FILE}
+    END      KEYWORD          FOR In Resource                36    PASS
 
 IF
-    START    1 > 2                 39    NOT RUN    type=IF
-    START    Fail                  40    NOT RUN
-    END      Fail                  40    NOT RUN
-    END      1 > 2                 39    NOT RUN    type=IF
-    START    1 < 2                 41    NOT SET    type=ELSE IF
-    START    No Operation          42    NOT SET
-    END      No Operation          42    PASS
-    END      1 < 2                 41    PASS       type=ELSE IF
-    START    ${EMPTY}              43    NOT RUN    type=ELSE
-    START    Fail                  44    NOT RUN
-    END      Fail                  44    NOT RUN
-    END      ${EMPTY}              43    NOT RUN    type=ELSE
+    START   IF                1 > 2                          39    NOT RUN
+    START   KEYWORD           Fail                           40    NOT RUN
+    END     KEYWORD           Fail                           40    NOT RUN
+    END     IF                1 > 2                          39    NOT RUN
+    START   ELSE IF           1 < 2                          41    NOT SET
+    START   KEYWORD           No Operation                   42    NOT SET
+    END     KEYWORD           No Operation                   42    PASS
+    END     ELSE IF           1 < 2                          41    PASS
+    START   ELSE              ${EMPTY}                       43    NOT RUN
+    START   KEYWORD           Fail                           44    NOT RUN
+    END     KEYWORD           Fail                           44    NOT RUN
+    END     ELSE              ${EMPTY}                       43    NOT RUN
 
 IF in keyword
-    START    IF In Keyword         48    NOT SET
-    START    True                  73    NOT SET    type=IF
-    START    No Operation          74    NOT SET
-    END      No Operation          74    PASS
-    END      True                  73    PASS       type=IF
-    END      IF In Keyword         48    PASS
+    START   KEYWORD           IF In Keyword                  48    NOT SET
+    START   IF                True                           74    NOT SET
+    START   KEYWORD           No Operation                   75    NOT SET
+    END     KEYWORD           No Operation                   75    PASS
+    START   RETURN            ${EMPTY}                       76    NOT SET
+    END     RETURN            ${EMPTY}                       76    PASS
+    END     IF                True                           74    PASS
+    END     KEYWORD           IF In Keyword                  48    PASS
 
 IF in FOR
-    START    \${x} IN [ 1 | 2 ]    52    NOT SET    type=FOR
-    START    \${x} = 1             52    NOT SET    type=FOR ITERATION
-    START    \${x} == 1            53    NOT SET    type=IF
-    START    Log                   54    NOT SET
-    END      Log                   54    PASS
-    END      \${x} == 1            53    PASS       type=IF
-    START    ${EMPTY}              55    NOT RUN    type=ELSE
-    START    Fail                  56    NOT RUN
-    END      Fail                  56    NOT RUN
-    END      ${EMPTY}              55    NOT RUN    type=ELSE
-    END      \${x} = 1             52    PASS       type=FOR ITERATION
-    START    \${x} = 2             52    NOT SET    type=FOR ITERATION
-    START    \${x} == 1            53    NOT RUN    type=IF
-    START    Log                   54    NOT RUN
-    END      Log                   54    NOT RUN
-    END      \${x} == 1            53    NOT RUN    type=IF
-    START    ${EMPTY}              55    NOT SET    type=ELSE
-    START    Fail                  56    NOT SET
-    END      Fail                  56    FAIL
-    END      ${EMPTY}              55    FAIL       type=ELSE
-    END      \${x} = 2             52    FAIL       type=FOR ITERATION
-    END      \${x} IN [ 1 | 2 ]    52    FAIL       type=FOR
+    START   FOR               \${x} IN [ 1 | 2 ]             52    NOT SET
+    START   FOR ITERATION     \${x} = 1                      52    NOT SET
+    START   IF                \${x} == 1                     53    NOT SET
+    START   KEYWORD           Log                            54    NOT SET
+    END     KEYWORD           Log                            54    PASS
+    END     IF                \${x} == 1                     53    PASS
+    START   ELSE              ${EMPTY}                       55    NOT RUN
+    START   KEYWORD           Fail                           56    NOT RUN
+    END     KEYWORD           Fail                           56    NOT RUN
+    END     ELSE              ${EMPTY}                       55    NOT RUN
+    END     FOR ITERATION     \${x} = 1                      52    PASS
+    START   FOR ITERATION     \${x} = 2                      52    NOT SET
+    START   IF                \${x} == 1                     53    NOT RUN
+    START   KEYWORD           Log                            54    NOT RUN
+    END     KEYWORD           Log                            54    NOT RUN
+    END     IF                \${x} == 1                     53    NOT RUN
+    START   ELSE              ${EMPTY}                       55    NOT SET
+    START   KEYWORD           Fail                           56    NOT SET
+    END     KEYWORD           Fail                           56    FAIL
+    END     ELSE              ${EMPTY}                       55    FAIL
+    END     FOR ITERATION     \${x} = 2                      52    FAIL
+    END     FOR               \${x} IN [ 1 | 2 ]             52    FAIL
 
 IF in resource
-    START    IF In Resource        61    NOT SET
-    START    True                  11    NOT SET    source=${RESOURCE FILE}    type=IF
-    START    No Operation          12    NOT SET    source=${RESOURCE FILE}
-    END      No Operation          12    PASS       source=${RESOURCE FILE}
-    END      True                  11    PASS       source=${RESOURCE FILE}    type=IF
-    END      IF In Resource        61    PASS
+    START   KEYWORD           IF In Resource                 61    NOT SET
+    START   IF                True                           11    NOT SET    source=${RESOURCE FILE}
+    START   KEYWORD           No Operation                   12    NOT SET    source=${RESOURCE FILE}
+    END     KEYWORD           No Operation                   12    PASS       source=${RESOURCE FILE}
+    END     IF                True                           11    PASS       source=${RESOURCE FILE}
+    END     KEYWORD           IF In Resource                 61    PASS
 
 Test
     [Template]    Expect test
@@ -147,13 +151,13 @@ Test
     [Teardown]    Validate tests
 
 Suite
-    START    Lineno And Source    type=SUITE
-    END      Lineno And Source    type=SUITE    status=FAIL
+    START    SUITE    Lineno And Source
+    END      SUITE    Lineno And Source    status=FAIL
     [Teardown]    Validate suite
 
 *** Keywords ***
 Expect
-    [Arguments]    ${event}    ${name}    ${lineno}=-1    ${status}=    ${source}=${TEST CASE FILE}    ${type}=KEYWORD
+    [Arguments]    ${event}    ${type}    ${name}    ${lineno}=-1    ${status}=    ${source}=${TEST CASE FILE}
     ${source} =    Normalize Path    ${source}
     ${status} =    Set Variable IF    "${status}"    \t${status}    ${EMPTY}
     Set test variable    @EXPECTED    @{EXPECTED}    ${event}\t${type}\t${name}\t${lineno}\t${source}${status}
@@ -164,8 +168,8 @@ Validate keywords
 
 Expect test
     [Arguments]    ${name}    ${lineno}    ${status}=PASS
-    Expect    START    ${name}    ${lineno}    type=TEST
-    Expect    END      ${name}    ${lineno}    ${status}    type=TEST
+    Expect    START    TEST    ${name}    ${lineno}
+    Expect    END      TEST    ${name}    ${lineno}    ${status}
 
 Validate tests
     Check Listener File    LinenoAndSourceTests.txt    @{EXPECTED}

@@ -29,6 +29,11 @@ class BodyItem(ModelObject):
     IF = 'IF'
     ELSE_IF = 'ELSE IF'
     ELSE = 'ELSE'
+    TRY_EXCEPT_ROOT = 'TRY/EXCEPT ROOT'
+    TRY = 'TRY'
+    EXCEPT = 'EXCEPT'
+    TRY_ELSE = 'TRY ELSE'
+    FINALLY = 'FINALLY'
     RETURN = 'RETURN'
     MESSAGE = 'MESSAGE'
     type = None
@@ -65,6 +70,7 @@ class Body(ItemList):
     keyword_class = None
     for_class = None
     if_class = None
+    try_class = None
     return_class = None
 
     def __init__(self, parent=None, items=None):
@@ -102,6 +108,9 @@ class Body(ItemList):
     def create_if(self, *args, **kwargs):
         return self._create(self.if_class, 'create_if', args, kwargs)
 
+    def create_try(self, *args, **kwargs):
+        return self._create(self.try_class, 'create_try', args, kwargs)
+
     def create_return(self, *args, **kwargs):
         return self._create(self.return_class, 'create_return', args, kwargs)
 
@@ -114,7 +123,7 @@ class Body(ItemList):
         ``body.filter(fors=False, ifs=False)``. Including and excluding by types
         at the same time is not supported.
 
-        Custom ``predicate`` is a calleble getting each body item as an argument
+        Custom ``predicate`` is a callable getting each body item as an argument
         that must return ``True/False`` depending on should the item be included
         or not.
 
@@ -148,3 +157,14 @@ class IfBranches(Body):
 
     def create_branch(self, *args, **kwargs):
         return self.append(self.if_branch_class(*args, **kwargs))
+
+
+class ExceptBlocks(Body):
+    except_class = None
+    keyword_class = None
+    for_class = None
+    if_class = None
+    __slots__ = []
+
+    def create_except(self, *args, **kwargs):
+        return self.append(self.except_class(*args, **kwargs))

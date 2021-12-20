@@ -104,7 +104,7 @@ class TestHandler(ElementHandler):
     tag = 'test'
     # 'tags' is for RF < 4 compatibility.
     children = frozenset(('doc', 'tags', 'tag', 'timeout', 'status', 'kw', 'if', 'for',
-                          'msg'))
+                          'try', 'msg'))
 
     def start(self, elem, result):
         return result.tests.create(name=elem.get('name', ''))
@@ -115,7 +115,7 @@ class KeywordHandler(ElementHandler):
     tag = 'kw'
     # 'arguments', 'assign' and 'tags' are for RF < 4 compatibility.
     children = frozenset(('doc', 'arguments', 'arg', 'assign', 'var', 'tags', 'tag',
-                          'timeout', 'status', 'msg', 'kw', 'if', 'for', 'return'))
+                          'timeout', 'status', 'msg', 'kw', 'if', 'for', 'try', 'return'))
 
     def start(self, elem, result):
         elem_type = elem.get('type')
@@ -177,7 +177,7 @@ class ForHandler(ElementHandler):
 @ElementHandler.register
 class ForIterationHandler(ElementHandler):
     tag = 'iter'
-    children = frozenset(('var', 'doc', 'status', 'kw', 'if', 'for', 'msg', 'return'))
+    children = frozenset(('var', 'doc', 'status', 'kw', 'if', 'for', 'msg', 'try', 'return'))
 
     def start(self, elem, result):
         return result.body.create_iteration()
@@ -195,16 +195,51 @@ class IfHandler(ElementHandler):
 @ElementHandler.register
 class IfBranchHandler(ElementHandler):
     tag = 'branch'
-    children = frozenset(('status', 'kw', 'if', 'for', 'msg', 'doc', 'return'))
+    children = frozenset(('status', 'kw', 'if', 'for', 'try', 'msg', 'doc', 'return'))
 
     def start(self, elem, result):
         return result.body.create_branch(elem.get('type'), elem.get('condition'))
 
 
 @ElementHandler.register
+class TryHandler(ElementHandler):
+    tag = 'try'
+    children = frozenset(('status', 'block', 'msg', 'doc'))
+
+    def start(self, elem, result):
+        return result.body.create_try()
+
+
+@ElementHandler.register
+class BlockHandler(ElementHandler):
+    tag = 'block'
+    children = frozenset(('status', 'msg', 'kw', 'for', 'if', 'try', 'return', 'pattern'))
+
+    def start(self, elem, result):
+        type_ = elem.get('type')
+        if type_ == 'TRY':
+            return result.try_block
+        if type_ == 'EXCEPT':
+            return result.except_blocks.create_except(variable=elem.get('variable'))
+        if type_ == 'ELSE':
+            return result.else_block
+        if type_ == 'FINALLY':
+            return result.finally_block
+
+
+@ElementHandler.register
+class PatternHandler(ElementHandler):
+    tag = 'pattern'
+    children = frozenset()
+
+    def start(self, elem, result):
+        return result.patterns.append(elem.text or '')
+
+
+@ElementHandler.register
 class ReturnHandler(ElementHandler):
     tag = 'return'
-    children = frozenset(('status', 'value'))
+    children = frozenset(('status', 'value', 'msg'))
 
     def start(self, elem, result):
         return result.body.create_return()
@@ -215,6 +250,9 @@ class MessageHandler(ElementHandler):
     tag = 'msg'
 
     def end(self, elem, result):
+        # Ignore messages under RETURN. They can only be logged by listeners.
+        if getattr(result, 'type', '') == 'RETURN':
+            return
         html_true = ('true', 'yes')    # 'yes' is compatibility for RF < 4.
         result.body.create_message(elem.text or '',
                                    elem.get('level', 'INFO'),

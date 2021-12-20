@@ -199,6 +199,39 @@ class ElseHeaderLexer(TypeAndArguments):
         return statement[0].value == 'ELSE'
 
 
+class TryHeaderLexer(TypeAndArguments):
+    token_type = Token.TRY
+
+    def handles(self, statement):
+        return statement[0].value == 'TRY'
+
+
+class ExceptHeaderLexer(StatementLexer):
+    token_type = Token.EXCEPT
+
+    def handles(self, statement):
+        return statement[0].value == 'EXCEPT'
+
+    def lex(self):
+        self.statement[0].type = Token.EXCEPT
+        as_seen = False
+        for token in self.statement[1:]:
+            if token.value == 'AS':
+                token.type = Token.AS
+                as_seen = True
+            elif as_seen:
+                token.type = Token.VARIABLE
+            else:
+                token.type = Token.ARGUMENT
+
+
+class FinallyHeaderLexer(TypeAndArguments):
+    token_type = Token.FINALLY
+
+    def handles(self, statement):
+        return statement[0].value == 'FINALLY'
+
+
 class EndLexer(TypeAndArguments):
     token_type = Token.END
 

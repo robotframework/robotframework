@@ -102,9 +102,5 @@ class Interpreter:
     def testdoc(self):
         return self.interpreter + [str(ROBOT_DIR / 'testdoc.py')]
 
-    @property
-    def tidy(self):
-        return self.interpreter + [str(ROBOT_DIR / 'tidy.py')]
-
     def __str__(self):
         return f'{self.name} {self.version} on {self.os}'

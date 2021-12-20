@@ -26,7 +26,9 @@ Subclasses
     Dates        11/30/2021    30.11.2021
 
 Class as converter
-    Class as converter    Robot   Hello, Robot!
+    Class as converter               Robot    Hello, Robot!
+    Class with hints as converter    ${42}    ${42}
+    Class with hints as converter    42       42
 
 Custom in Union
     Number or int    ${1}
@@ -36,6 +38,9 @@ Custom in Union
     Int or number    1
     Int or number    one
 
+Accept subscripted generics
+    Accept subscripted generics    ${{[1, 2, 3]}}    ${6}
+
 Failing conversion
     [Template]    Conversion should fail
     Number     wrong         type=Number     error=ValueError: Don't know number 'wrong'.
@@ -43,6 +48,8 @@ Failing conversion
     US date    ${666}        type=UsDate     error=TypeError: Only strings accepted!    arg_type=integer
     FI date    ${666}        type=FiDate     arg_type=integer
     True       ${1.0}        type=boolean    arg_type=float
+    Class with hints as converter
+    ...        ${1.2}        type=ClassWithHintsAsConverter    arg_type=float
 
 Invalid converters
     Invalid    a    b    c    d

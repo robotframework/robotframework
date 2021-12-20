@@ -52,6 +52,7 @@ EXECUTION_CONTEXTS = ExecutionContexts()
 
 
 class _ExecutionContext:
+    # FIXME: can this be increased?
     _started_keywords_threshold = 42  # Jython on Windows don't work with higher
 
     def __init__(self, suite, namespace, output, dry_run=False):

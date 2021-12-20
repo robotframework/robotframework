@@ -64,9 +64,8 @@ like `LibraryName::arg1::arg2`.
 The easiest way to run Libdoc is using the `libdoc` command created as part of
 the normal installation. Alternatively it is possible to execute the
 `robot.libdoc` module directly like `python -m robot.libdoc`, where `python`
-can be replaced with any supported Python interpreter such as `jython`, `ipy`
-or `python3`. Yet another alternative is running the module as a script like
-`python path/to/robot/libdoc.py`.
+can be replaced with any supported Python interpreter. Yet another alternative
+is running the module as a script like `python path/to/robot/libdoc.py`.
 
 The separate `libdoc` command and the support for JSON spec files are new in
 Robot Framework 4.0.
@@ -117,8 +116,6 @@ the `--format` option.
 Examples:
 
   libdoc src/MyLibrary.py doc/MyLibrary.html
-  python -m robot.libdoc MyLibrary.java MyLibrary.html
-  jython -m robot.libdoc src/MyLibrary.py doc/MyLibrary.json
   libdoc doc/MyLibrary.json doc/MyLibrary.html
   libdoc --name MyLibrary Remote::10.0.0.42:8270 MyLibrary.xml
   libdoc MyLibrary MyLibrary.libspec
@@ -154,8 +151,8 @@ Examples:
 Alternative execution
 =====================
 
-Libdoc works with all interpreters supported by Robot Framework (Python,
-Jython and IronPython). In the examples above Libdoc is executed as an
+Libdoc works with all interpreters supported by Robot Framework.
+ In the examples above Libdoc is executed as an
 installed module, but it can also be executed as a script like
 `python path/robot/libdoc.py`.
 

@@ -1,15 +1,15 @@
-*** Settings ***
-Documentation  NO RIDE because it removes empty [Return]
+*** Variables ***
+${TEST OR TASK}   Test
 
 *** Test Cases ***
-    [Documentation]  FAIL  Test case name cannot be empty.
+    [Documentation]  FAIL ${TEST OR TASK} name cannot be empty.
     Fail  Should not be executed
 
 Empty Test Case
-    [Documentation]  FAIL Test case contains no keywords.
+    [Documentation]  FAIL ${TEST OR TASK} contains no keywords.
 
 Empty Test Case With Setup And Teardown
-    [Documentation]  FAIL Test case contains no keywords.
+    [Documentation]  FAIL ${TEST OR TASK} contains no keywords.
     [Setup]  Fail  Should not be executed
     [Teardown]  Fail  Should not be executed
 

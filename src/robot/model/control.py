@@ -15,8 +15,30 @@
 
 from robot.utils import setter
 
-from .body import Body, BodyItem, IfBranches
+from .body import Body, BodyItem, IfBranches, ExceptBlocks
 from .keyword import Keywords
+
+
+class Block(BodyItem):
+    body_class = Body
+    __slots__ = ['type', 'parent']
+    repr_args = ('type',)
+
+    def __init__(self, type, parent=None):
+        self.type = type
+        self.parent = parent
+        self.body = None
+
+    @setter
+    def body(self, body):
+        return self.body_class(self, body)
+
+    def visit(self, visitor):
+        if self:
+            visitor.visit_try_block(self)
+
+    def __bool__(self):
+        return bool(self.body)
 
 
 @Body.register
@@ -114,6 +136,61 @@ class IfBranch(BodyItem):
 
     def visit(self, visitor):
         visitor.visit_if_branch(self)
+
+
+@Body.register
+class Try(BodyItem):
+    type = BodyItem.TRY_EXCEPT_ROOT
+    try_class = Block
+    excepts_class = ExceptBlocks
+    else_class = Block
+    finally_class = Block
+    __slots__ = ['parent', 'try_block', 'else_block', 'finally_block']
+
+    def __init__(self, parent=None):
+        self.parent = parent
+        self.try_block = self.try_class(BodyItem.TRY, parent=self)
+        self.except_blocks = None
+        self.else_block = self.else_class(BodyItem.TRY_ELSE, parent=self)
+        self.finally_block = self.finally_class(BodyItem.FINALLY, parent=self)
+
+    @setter
+    def except_blocks(self, excepts):
+        return self.excepts_class(self, excepts)
+
+    @property
+    def id(self):
+        """Root TRY/EXCEPT id is always ``None``."""
+        return None
+
+    def visit(self, visitor):
+        visitor.visit_try(self)
+
+
+@ExceptBlocks.register
+class Except(BodyItem):
+    type = BodyItem.EXCEPT
+    body_class = Body
+    repr_args = ('type', 'patterns', 'variable')
+    __slots__ = ['patterns', 'variable']
+
+    def __init__(self, patterns=None, variable=None, parent=None):
+        self.patterns = patterns or []
+        self.variable = variable
+        self.parent = parent
+        self.body = None
+
+    @setter
+    def body(self, body):
+        return self.body_class(self, body)
+
+    def __str__(self):
+        patterns = ', '.join(self.patterns)
+        as_var = f' AS {self.variable}' if self.variable else ''
+        return f'EXCEPT    {patterns}{as_var}'
+
+    def visit(self, visitor):
+        visitor.visit_try_block(self)
 
 
 @Body.register

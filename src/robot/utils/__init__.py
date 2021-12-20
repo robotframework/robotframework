@@ -64,7 +64,7 @@ from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
                         parse_time)
 from .robottypes import (FALSE_STRINGS, TRUE_STRINGS, is_bytes, is_dict_like,
                          is_falsy, is_integer, is_list_like, is_number, is_pathlike,
-                         is_string, is_truthy, type_name, typeddict_types)
+                         is_string, is_truthy, is_union, type_name, typeddict_types)
 from .setter import setter, SetterAwareType
 from .sortable import Sortable
 from .text import (cut_assign_value, cut_long_message, format_assign_message,
@@ -82,6 +82,9 @@ def read_rest_data(rstfile):
 # since Python 2 support was dropped in RF 5. Preserved at least until RF 5.2
 # to avoid breaking external libraries and tools that use it.
 # https://github.com/robotframework/robotframework/issues/4150
+
+from io import StringIO
+
 
 PY3 = True
 PY2 = JYTHON = IRONPYTHON = False

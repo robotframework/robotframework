@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import Union
+from typing import List, Union
 
 
 class Number:
@@ -44,6 +44,18 @@ class ClassAsConverter:
         self.greeting = f'Hello, {name}!'
 
 
+class ClassWithHintsAsConverter:
+    name: str
+
+    def __init__(self, value: Union[int, str]):
+        self.value = value
+
+
+class AcceptSubscriptedGenerics:
+    def __init__(self, numbers: List[int]):
+        self.sum = sum(numbers)
+
+
 class Invalid:
     pass
 
@@ -62,11 +74,18 @@ class KwOnlyNotOk:
         pass
 
 
-ROBOT_LIBRARY_CONVERTERS = {Number: string_to_int, bool: parse_bool,
-                            UsDate: UsDate.from_string, FiDate: FiDate.from_string,
-                            ClassAsConverter: ClassAsConverter, Invalid: 666,
-                            TooFewArgs: TooFewArgs, TooManyArgs: TooManyArgs,
-                            KwOnlyNotOk: KwOnlyNotOk, 'Bad': int}
+ROBOT_LIBRARY_CONVERTERS = {Number: string_to_int,
+                            bool: parse_bool,
+                            UsDate: UsDate.from_string,
+                            FiDate: FiDate.from_string,
+                            ClassAsConverter: ClassAsConverter,
+                            ClassWithHintsAsConverter: ClassWithHintsAsConverter,
+                            AcceptSubscriptedGenerics: AcceptSubscriptedGenerics,
+                            Invalid: 666,
+                            TooFewArgs: TooFewArgs,
+                            TooManyArgs: TooManyArgs,
+                            KwOnlyNotOk: KwOnlyNotOk,
+                            'Bad': int}
 
 
 def number(argument: Number, expected: int = 0):
@@ -90,12 +109,20 @@ def fi_date(argument: FiDate, expected: date = None):
     assert argument == expected
 
 
-def dates(us: UsDate, fi: FiDate):
+def dates(us: 'UsDate', fi: 'FiDate'):
     assert us == fi
 
 
 def class_as_converter(argument: ClassAsConverter, expected):
     assert argument.greeting == expected
+
+
+def class_with_hints_as_converter(argument: ClassWithHintsAsConverter, expected=None):
+    assert argument.value == expected
+
+
+def accept_subscripted_generics(argument: AcceptSubscriptedGenerics, expected):
+    assert argument.sum == expected
 
 
 def number_or_int(number: Union[Number, int]):

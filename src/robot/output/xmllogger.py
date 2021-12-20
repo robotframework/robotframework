@@ -35,7 +35,7 @@ class XmlLogger(ResultVisitor):
         writer.start('robot', {'generator': get_full_version(generator),
                                'generated': get_timestamp(),
                                'rpa': 'true' if rpa else 'false',
-                               'schemaversion': '2'})
+                               'schemaversion': '3'})
         return writer
 
     def close(self):
@@ -120,6 +120,27 @@ class XmlLogger(ResultVisitor):
     def end_for_iteration(self, iteration):
         self._write_status(iteration)
         self._writer.end('iter')
+
+    def start_try(self, root):
+        self._writer.start('try')
+
+    def end_try(self, root):
+        self._write_status(root)
+        self._writer.end('try')
+
+    def start_try_block(self, block):
+        block_type = block.type
+        if block_type == block.EXCEPT:
+            self._writer.start('block', attrs={'type': 'EXCEPT',
+                                               'variable': block.variable})
+            self._write_list('pattern', block.patterns)
+        else:
+            typ = block_type if block_type != block.TRY_ELSE else 'ELSE'
+            self._writer.start('block', attrs={'type': typ})
+
+    def end_try_block(self, block):
+        self._write_status(block)
+        self._writer.end('block')
 
     def start_return(self, return_):
         self._writer.start('return')

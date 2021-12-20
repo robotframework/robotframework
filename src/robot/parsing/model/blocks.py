@@ -53,6 +53,15 @@ class Block(ast.AST):
         pass
 
 
+class HeaderAndBody(Block):
+    _fields = ('header', 'body')
+
+    def __init__(self, header, body=None, errors=()):
+        self.header = header
+        self.body = body or []
+        self.errors = errors
+
+
 class File(Block):
     _fields = ('sections',)
     _attributes = ('source',) + Block._attributes
@@ -231,6 +240,86 @@ class For(Block):
             self.errors += ('FOR loop has empty body.',)
         if not self.end:
             self.errors += ('FOR loop has no closing END.',)
+
+
+class Try(Block):
+    _fields = ('header', 'body', 'blocks', 'end')
+
+    def __init__(self, header, body=None, blocks=None, end=None, errors=()):
+        self.header = header
+        self.body = body or []
+        self.blocks = blocks or []
+        self.end = end
+        self.errors = errors
+
+    @property
+    def except_blocks(self):
+        return [b for b in self.blocks if b.type == Token.EXCEPT]
+
+    @property
+    def else_block(self):
+        else_blocks = [b for b in self.blocks if b.type == Token.ELSE]
+        return else_blocks[0] if else_blocks else None
+
+    @property
+    def finally_block(self):
+        finally_blocks = [b for b in self.blocks if b.type == Token.FINALLY]
+        return finally_blocks[0] if finally_blocks else None
+
+    def validate(self):
+        if not self.end:
+            self.errors += ('TRY has no closing END.',)
+        if not self.body:
+            self.errors += ('TRY block cannot be empty.',)
+        if not (self.except_blocks or self.finally_block):
+            self.errors += ('TRY block must be followed by EXCEPT or FINALLY block.',)
+        self._validate_structure()
+
+    def _validate_structure(self):
+        else_count = 0
+        finally_count = 0
+        default_block_seen = False
+        for block in self.blocks:
+            if block.type == Token.EXCEPT:
+                if else_count > 0:
+                    self.errors += ('ELSE block before EXCEPT block.',)
+                if finally_count > 0:
+                    self.errors += ('FINALLY block before EXCEPT block.',)
+                if not block.patterns:
+                    if default_block_seen:
+                        self.errors += ('Multiple default (empty) EXCEPT blocks',)
+                    default_block_seen = True
+                if block.patterns and default_block_seen:
+                    self.errors += ('Default (empty) EXCEPT must be last.',)
+            if block.type == Token.ELSE:
+                else_count += 1
+                if finally_count > 0:
+                    self.errors += ('FINALLY block before ELSE block.',)
+            if block.type == Token.FINALLY:
+                finally_count += 1
+        if finally_count > 1:
+            self.errors += ('Multiple FINALLY blocks.',)
+        if else_count > 1:
+            self.errors += ('Multiple ELSE blocks.',)
+
+
+class TryHandler(HeaderAndBody):
+
+    @property
+    def type(self):
+        return self.header.type
+
+    @property
+    def patterns(self):
+        return getattr(self.header, 'patterns', [])
+
+    @property
+    def variable(self):
+        return getattr(self.header, 'variable', None)
+
+    def validate(self):
+        if not self.body:
+            self.errors += (f'{self.type} block cannot be empty.',)
 
 
 class ModelWriter(ModelVisitor):

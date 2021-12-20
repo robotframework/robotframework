@@ -63,6 +63,7 @@ IF in resource
 *** Keywords ***
 User Keyword
     No Operation
+    RETURN
 
 FOR In Keyword
     FOR    ${x}    IN    once
@@ -72,4 +73,5 @@ FOR In Keyword
 IF In Keyword
     IF    True
         No Operation
+        RETURN
     END

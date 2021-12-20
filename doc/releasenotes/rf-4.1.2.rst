@@ -36,6 +36,9 @@ distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
 Robot Framework 4.1.2 was released on Friday October 15, 2021.
+It contained a small regression related to parsing `reStructuredText
+<https://en.wikipedia.org/wiki/ReStructuredText>`_ files that was fixed in
+`Robot Framework 4.1.3 <rf-4.1.3.rst>`_ released on Wednesday December 15, 2021.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation

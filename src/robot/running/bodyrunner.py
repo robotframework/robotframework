@@ -15,14 +15,17 @@
 
 from collections import OrderedDict
 from contextlib import contextmanager
+import re
 
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
-                          ExecutionStatus, ExitForLoop, ContinueForLoop, DataError)
-from robot.result import For as ForResult, If as IfResult, IfBranch as IfBranchResult
+                          ExecutionStatus, ExitForLoop, ContinueForLoop, DataError,
+                          ReturnFromKeyword)
+from robot.result import (For as ForResult, If as IfResult, IfBranch as IfBranchResult,
+                          Try as TryResult, Except as TryHandlerResult, Block as BlockResult)
 from robot.output import librarylogger as logger
-from robot.utils import (cut_assign_value, frange, get_error_message, is_list_like,
-                         is_number, is_string, plural_or_not as s, split_from_equals,
-                         type_name)
+from robot.utils import (cut_assign_value, frange, get_error_message, is_string,
+                         is_list_like, is_number, plural_or_not as s,
+                         split_from_equals, type_name, Matcher)
 from robot.variables import is_dict_variable, evaluate_expression
 
 from .statusreporter import StatusReporter
@@ -381,3 +384,113 @@ class ForInEnumerateRunner(ForInRunner):
             'its variables (excluding the index). Got %d variables but %d '
             'value%s.' % (variables, values, s(values))
         )
+
+
+class TryRunner:
+
+    def __init__(self, context, run=True, templated=False):
+        self._context = context
+        self._run = run
+        self._templated = templated
+
+    def run(self, data):
+        run = self._run
+        with StatusReporter(data, TryResult(), self._context, run):
+            result = BlockResult(data.try_block.type)
+            failures = self._run_block(data.try_block, result, run, data.error)
+            self._run_handlers(data, failures)
+        return run
+
+    def _run_block(self, block, result, run, error=None):
+        try:
+            with StatusReporter(block, result, self._context, run):
+                if run:
+                    if error:
+                        raise DataError(error)
+                runner = BodyRunner(self._context, run, self._templated)
+                runner.run(block.body)
+        except (ExecutionFailures, ExecutionFailed, ReturnFromKeyword) as err:
+            return err
+        else:
+            return None
+
+    def _run_handlers(self, data, failures):
+        handler_error, handler_matched = self._run_except_handlers(data, failures)
+        else_error = self._run_else_block(data, failures, handler_error)
+        self._run_finally_block(data)
+        if handler_error:
+            raise handler_error
+        if else_error:
+            raise else_error
+        if not handler_matched and failures:
+            raise failures
+
+    def _run_except_handlers(self, data, failures):
+        handler_matched = False
+        handler_error = None
+        for handler in data.except_blocks:
+            run, handler_error = self._should_run_handler(
+                data, failures, handler, handler_matched, handler_error)
+            if run:
+                handler_matched = True
+                if handler.variable:
+                    self._context.variables[handler.variable] = str(failures)
+            result = TryHandlerResult(handler.patterns, handler.variable)
+            if not handler_error:
+                handler_error = self._run_block(handler, result, run)
+            else:
+                self._run_block(handler, result, run)
+        return handler_error, handler_matched
+
+    def _should_run_handler(self,data, failures, handler, handler_matched,
+                            handler_error):
+        if not self._run or handler_matched or handler_error or data.error:
+            return False, None
+        try:
+            return failures and self._error_is_expected(failures, handler), None
+        except:
+            return False, ExecutionFailed(get_error_message())
+
+    def _run_else_block(self, data, failures, handler_error):
+        else_error = None
+        if data.else_block:
+            run = self._run and not failures and not handler_error
+            result = BlockResult(data.else_block.type)
+            else_error = self._run_block(data.else_block, result, run)
+        return else_error
+
+    def _run_finally_block(self, data):
+        if data.finally_block:
+            run = self._run and not data.error
+            with StatusReporter(data.finally_block, BlockResult(data.finally_block.type),
+                                self._context, run):
+                runner = BodyRunner(self._context, run, self._templated)
+                runner.run(data.finally_block.body)
+
+    def _error_is_expected(self, error, handler):
+        if isinstance(error, ReturnFromKeyword):
+            return False
+        if any(e.skip for e in error.get_errors()):
+            return False
+        patterns = handler.patterns
+        if not patterns:
+            # The default (empty) except matches everything
+            return True
+        matchers = {
+            'GLOB:': lambda s, p: Matcher(p, spaceless=False, caseless=False).match(s),
+            'EQUALS:': lambda s, p: s == p,
+            'STARTS:': lambda s, p: s.startswith(p),
+            'REGEXP:': lambda s, p: re.match(rf'{p}\Z', s) is not None
+        }
+        message = error.message
+        for pattern in patterns:
+            if not pattern.startswith(tuple(matchers)):
+                pattern = self._context.variables.replace_scalar(pattern)
+                if message == pattern:
+                    return True
+            else:
+                prefix, pat = pattern.split(':', 1)
+                pat = self._context.variables.replace_scalar(pat.lstrip())
+                if matchers[f'{prefix}:'](message, pat):
+                    return True
+        return False

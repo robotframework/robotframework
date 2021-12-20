@@ -7,7 +7,7 @@ Variables         binary_list.py
 @{RESULT}
 ${WRONG VALUES}   Number of FOR loop values should be multiple of its variables.
 ${INVALID FOR}    'For' is a reserved keyword. It must be an upper case 'FOR' when used as a marker.
-${INVALID END}    'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR' or 'IF' when used as a marker.
+${INVALID END}    'End' is a reserved keyword. It must be an upper case 'END' when used as a marker to close a block.
 
 *** Test Cases ***
 Simple loop
