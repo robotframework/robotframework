@@ -6,8 +6,9 @@ from xmlschema import XMLSchema
 from robot import utils
 from robot.api import logger
 from robot.utils.asserts import assert_equal
-from robot.result import (ExecutionResultBuilder, For, If, ForIteration, Keyword,
-                          Result, ResultVisitor, TestCase, TestSuite)
+from robot.result import (ExecutionResultBuilder, For, If, ForIteration, Try,
+                          ExceptBlocks, Except, Block, Keyword, Result,
+                          ResultVisitor, TestCase, TestSuite)
 from robot.result.model import Body, ForIterations, IfBranches, IfBranch
 from robot.libraries.BuiltIn import BuiltIn
 
@@ -24,10 +25,30 @@ class NoSlotsIf(If):
     pass
 
 
+class NoSlotsExcept(Except):
+    pass
+
+
+class NoSlotsExceptBlocks(ExceptBlocks):
+    except_class = NoSlotsExcept
+    keyword_class = NoSlotsKeyword
+    for_class = NoSlotsFor
+    if_class = NoSlotsIf
+
+
+class NoSlotsTry(Try):
+    excepts_class = NoSlotsExceptBlocks
+
+
 class NoSlotsBody(Body):
     keyword_class = NoSlotsKeyword
     for_class = NoSlotsFor
     if_class = NoSlotsIf
+    try_class = NoSlotsTry
+
+
+class NoSlotsBlock(Block):
+    body_class = NoSlotsBody
 
 
 class NoSlotsIfBranch(IfBranch):
@@ -50,6 +71,10 @@ class NoSlotsForIterations(ForIterations):
 NoSlotsKeyword.body_class = NoSlotsBody
 NoSlotsFor.body_class = NoSlotsForIterations
 NoSlotsIf.body_class = NoSlotsIfBranches
+NoSlotsTry.try_class = NoSlotsBlock
+NoSlotsTry.else_class = NoSlotsBlock
+NoSlotsTry.finally_class = NoSlotsBlock
+NoSlotsExcept.body_class = NoSlotsBody
 
 
 class NoSlotsTestCase(TestCase):
@@ -66,7 +91,7 @@ class TestCheckerLibrary:
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
 
     def __init__(self):
-        self.schema = XMLSchema('doc/schema/robot.02.xsd')
+        self.schema = XMLSchema('doc/schema/robot.03.xsd')
 
     def process_output(self, path, validate=None):
         set_suite_variable = BuiltIn().set_suite_variable
@@ -107,7 +132,7 @@ class TestCheckerLibrary:
         with open(path, encoding='UTF-8') as f:
             for line in f:
                 if line.startswith('<robot'):
-                    return re.search('schemaversion="(\d+)"', line).group(1)
+                    return re.search(r'schemaversion="(\d+)"', line).group(1)
 
     def get_test_case(self, name):
         suite = BuiltIn().get_variable_value('${SUITE}')
@@ -166,16 +191,15 @@ class TestCheckerLibrary:
         if test.exp_status != test.status:
             if test.exp_status == 'PASS':
                 if test.status == 'FAIL':
-                    msg = ("Test '%s' was expected to PASS but it FAILED.\n\n"
-                           "Error message:\n%s" % (test.name, test.message))
+                    msg = f"Error message:\n{test.message}"
                 else:
-                    msg = ("Test '%s' was expected to PASS but it was SKIPPED.\n\n"
-                           "Test message:\n%s" % (test.name, test.message))
+                    msg = f"Test message:\n{test.message}"
             else:
-                msg = ("Test '%s' was expected to %s but it %sED.\n\n"
-                       "Expected message:\n%s" % (test.name, test.exp_status,
-                                                  test.status, test.exp_message))
-            raise AssertionError(msg)
+                msg = f"Expected message:\n{test.exp_message}"
+            raise AssertionError(
+                f"Status of '{test.name}' should have been {test.exp_status} "
+                f"but it was {test.status}.\n\n{msg}"
+            )
         if test.exp_message == test.message:
             return
         if test.exp_message.startswith('REGEXP:'):

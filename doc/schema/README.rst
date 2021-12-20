@@ -23,7 +23,8 @@ different Robot Framework versions. Newer output.xml files have ``schemaversion`
 attribute telling which version they support and older implicitly support schema
 version 1.
 
-  * `<robot.02.xsd>`__ - Compatible with Robot Framework >= 4.0.
+  * `<robot.03.xsd>`__ - Compatible with Robot Framework >= 5.0.
+  * `<robot.02.xsd>`__ - Compatible with Robot Framework >= 4.0, < 5.0.
   * `<robot.01.xsd>`__ - Compatible with Robot Framework < 4.0.
 
 Due to XSD 1.1 not being widely adopted, these schema definitions use XSD 1.0.

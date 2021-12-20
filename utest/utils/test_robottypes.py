@@ -6,7 +6,7 @@ from collections.abc import Mapping
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 from robot.utils import (is_bytes, is_falsy, is_dict_like, is_list_like,
-                         is_string, is_truthy, type_name)
+                         is_string, is_truthy, is_union, PY_VERSION, type_name)
 from robot.utils.asserts import assert_equal, assert_true
 
 
@@ -26,7 +26,7 @@ def generator():
     yield 'generated'
 
 
-class TestStringsAndBytes(unittest.TestCase):
+class TestIsMisc(unittest.TestCase):
 
     def test_strings(self):
         for thing in ['string', 'hyvä', '']:
@@ -37,6 +37,18 @@ class TestStringsAndBytes(unittest.TestCase):
         for thing in [b'bytes', bytearray(b'ba'), b'', bytearray()]:
             assert_equal(is_bytes(thing), True, thing)
             assert_equal(is_string(thing), False, thing)
+
+    def test_is_union(self):
+        assert is_union(Union[int, str])
+        assert is_union(Union[int, str], allow_tuple=True)
+        assert not is_union((int, str))
+        assert is_union((int, str), allow_tuple=True)
+        if PY_VERSION >= (3, 10):
+            assert is_union(eval('int | str'))
+            assert is_union(eval('int | str'), allow_tuple=True)
+        for not_union in 'string', 3, [int, str], list, List[int]:
+            assert not is_union(not_union)
+            assert not is_union(not_union, allow_tuple=True)
 
 
 class TestListLike(unittest.TestCase):
@@ -120,14 +132,11 @@ class TestTypeName(unittest.TestCase):
             assert_equal(type_name(f), 'file')
 
     def test_custom_objects(self):
-        class NewStyle: pass
-        class OldStyle: pass
+        class CamelCase: pass
         class lower: pass
-        for item, exp in [(NewStyle(), 'NewStyle'),
-                          (OldStyle(), 'OldStyle'),
+        for item, exp in [(CamelCase(), 'CamelCase'),
                           (lower(), 'lower'),
-                          (NewStyle, 'NewStyle'),
-                          (OldStyle, 'OldStyle')]:
+                          (CamelCase, 'CamelCase')]:
             assert_equal(type_name(item), exp)
 
     def test_strip_underscores(self):

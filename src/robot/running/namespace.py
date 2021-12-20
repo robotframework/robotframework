@@ -441,5 +441,6 @@ class KeywordRecommendationFinder:
                     ((library.name or '',
                       printable_name(handler.name, code_style=True))
                      for handler in library.handlers))
+        # TODO: is this still needed?
         # sort handlers to ensure consistent ordering between Jython and Python
         return sorted(handlers)

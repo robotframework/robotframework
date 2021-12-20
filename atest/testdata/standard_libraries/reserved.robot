@@ -18,7 +18,7 @@ Others should just be reserved 2
     Return    ${something}
 
 'End' gets extra note
-    [Documentation]    FAIL 'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR' or 'IF' when used as a marker.
+    [Documentation]    FAIL 'End' is a reserved keyword. It must be an upper case 'END' when used as a marker to close a block.
     END
 
 'Else' gets extra note

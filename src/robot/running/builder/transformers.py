@@ -15,6 +15,7 @@
 
 from ast import NodeVisitor
 
+from robot.parsing import Token
 from robot.variables import VariableIterator
 
 from .testsettings import TestSettings
@@ -192,6 +193,9 @@ class TestCaseBuilder(NodeVisitor):
     def visit_If(self, node):
         IfBuilder(self.test).build(node)
 
+    def visit_Try(self, node):
+        TryBuilder(self.test).build(node)
+
     def visit_TemplateArguments(self, node):
         self.test.body.create_keyword(args=node.args, lineno=node.lineno)
 
@@ -222,7 +226,8 @@ class TestCaseBuilder(NodeVisitor):
                                       assign=node.assign, lineno=node.lineno)
 
     def visit_ReturnStatement(self, node):
-        self.test.body.create_keyword(name='RETURN', args=node.values)
+        self.test.body.create_keyword(name='RETURN', args=node.values,
+                                      lineno=node.lineno)
 
 
 class KeywordBuilder(NodeVisitor):
@@ -267,13 +272,16 @@ class KeywordBuilder(NodeVisitor):
                                     assign=node.assign, lineno=node.lineno)
 
     def visit_ReturnStatement(self, node):
-        self.kw.body.create_return(node.values)
+        self.kw.body.create_return(node.values, lineno=node.lineno)
 
     def visit_For(self, node):
         ForBuilder(self.kw).build(node)
 
     def visit_If(self, node):
         IfBuilder(self.kw).build(node)
+
+    def visit_Try(self, node):
+        TryBuilder(self.kw).build(node)
 
 
 class ForBuilder(NodeVisitor):
@@ -310,8 +318,11 @@ class ForBuilder(NodeVisitor):
     def visit_If(self, node):
         IfBuilder(self.model).build(node)
 
+    def visit_Try(self, node):
+        TryBuilder(self.model).build(node)
+
     def visit_ReturnStatement(self, node):
-        self.model.body.create_return(node.values)
+        self.model.body.create_return(node.values, lineno=node.lineno)
 
 
 class IfBuilder(NodeVisitor):
@@ -366,8 +377,91 @@ class IfBuilder(NodeVisitor):
     def visit_For(self, node):
         ForBuilder(self.model).build(node)
 
+    def visit_Try(self, node):
+        TryBuilder(self.model).build(node)
+
     def visit_ReturnStatement(self, node):
-        self.model.body.create_return(node.values)
+        self.model.body.create_return(node.values, lineno=node.lineno)
+
+
+class TryBuilder(NodeVisitor):
+
+    def __init__(self, parent):
+        self.parent = parent
+        self.model = None
+
+    def build(self, node):
+        self.model = self.parent.body.create_try(lineno=node.lineno,
+                                                 error=format_error(self._get_errors(node)))
+        for step in node.body:
+            self.visit(step)
+        for block in node.blocks:
+            self.visit(block)
+        return self.model
+
+    def _get_errors(self, node):
+        errors = node.header.errors + node.errors
+        for handler in node.blocks:
+            errors += handler.errors + handler.header.errors
+        return errors
+
+    def visit_TryHandler(self, node):
+        ExceptBuilder(self.model).build(node)
+
+    def visit_If(self, node):
+        IfBuilder(self.model.try_block).build(node)
+
+    def visit_For(self, node):
+        ForBuilder(self.model.try_block).build(node)
+
+    def visit_Try(self, node):
+        TryBuilder(self.model.try_block).build(node)
+
+    def visit_ReturnStatement(self, node):
+        self.model.try_block.body.create_return(node.values, lineno=node.lineno)
+
+    def visit_KeywordCall(self, node):
+        self.model.try_block.body.create_keyword(name=node.keyword, args=node.args,
+                                                 assign=node.assign, lineno=node.lineno)
+
+    def visit_TemplateArguments(self, node):
+        self.model.error = 'Templates cannot be used with TRY.'
+
+
+class ExceptBuilder(NodeVisitor):
+
+    def __init__(self, parent):
+        self.parent = parent
+        self.model = None
+
+    def build(self, node):
+        if node.type == Token.EXCEPT:
+            self.model = self.parent.except_blocks.create_except(
+                patterns=node.patterns, variable=node.variable)
+        elif node.type == Token.ELSE:
+            self.model = self.parent.else_block
+        elif node.type == Token.FINALLY:
+            self.model = self.parent.finally_block
+        self.model.config(lineno=node.lineno, error=format_error(node.errors))
+        for step in node.body:
+            self.visit(step)
+        return self.model
+
+    def visit_If(self, node):
+        IfBuilder(self.model).build(node)
+
+    def visit_For(self, node):
+        ForBuilder(self.model).build(node)
+
+    def visit_Try(self, node):
+        TryBuilder(self.model).build(node)
+
+    def visit_ReturnStatement(self, node):
+        self.model.body.create_return(node.values, lineno=node.lineno)
+
+    def visit_KeywordCall(self, node):
+        self.model.body.create_keyword(name=node.keyword, args=node.args,
+                                       assign=node.assign, lineno=node.lineno)
 
 
 def format_error(errors):

@@ -3069,8 +3069,8 @@ class _Misc(_BuiltInBase):
         variables, for example, for each test in a test suite.
 
         The given path must be absolute or found from
-        [http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#pythonpath-jythonpath-and-ironpythonpath|
-        search path]. Forward slashes can be used as path separator regardless
+        [http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html##module-search-path|search path].
+        Forward slashes can be used as path separator regardless
         the operating system.
 
         Examples:
@@ -3092,8 +3092,8 @@ class _Misc(_BuiltInBase):
         setting.
 
         The given path must be absolute or found from
-        [http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#pythonpath-jythonpath-and-ironpythonpath|
-        search path]. Forward slashes can be used as path separator regardless
+        [http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#module-search-path|search path].
+        Forward slashes can be used as path separator regardless
         the operating system.
 
         Examples:
