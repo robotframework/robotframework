@@ -96,6 +96,8 @@ Check Listen All File
     ...    KEYWORD START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KEYWORD END: PASS
+    ...    RETURN START: (line 30)
+    ...    RETURN END: PASS
     ...    SETUP END: PASS
     ...    TEST START: Pass (s1-t1, line 12) '' ['force', 'pass']
     ...    KEYWORD START: My Keyword ['Pass'] (line 15)
@@ -107,6 +109,8 @@ Check Listen All File
     ...    KEYWORD START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KEYWORD END: PASS
+    ...    RETURN START: (line 30)
+    ...    RETURN END: PASS
     ...    KEYWORD END: PASS
     ...    TEST END: PASS
     ...    TEST START: Fail (s1-t2, line 17) 'FAIL Expected failure' ['fail', 'force']
@@ -119,6 +123,8 @@ Check Listen All File
     ...    KEYWORD START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KEYWORD END: PASS
+    ...    RETURN START: (line 30)
+    ...    RETURN END: PASS
     ...    KEYWORD END: PASS
     ...    KEYWORD START: BuiltIn.Fail ['Expected failure'] (line 21)
     ...    LOG MESSAGE: [FAIL] Expected failure

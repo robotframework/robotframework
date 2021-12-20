@@ -239,7 +239,7 @@ class PatternHandler(ElementHandler):
 @ElementHandler.register
 class ReturnHandler(ElementHandler):
     tag = 'return'
-    children = frozenset(('status', 'value'))
+    children = frozenset(('status', 'value', 'msg'))
 
     def start(self, elem, result):
         return result.body.create_return()
@@ -250,6 +250,9 @@ class MessageHandler(ElementHandler):
     tag = 'msg'
 
     def end(self, elem, result):
+        # Ignore messages under RETURN. They can only be logged by listeners.
+        if getattr(result, 'type', '') == 'RETURN':
+            return
         html_true = ('true', 'yes')    # 'yes' is compatibility for RF < 4.
         result.body.create_message(elem.text or '',
                                    elem.get('level', 'INFO'),

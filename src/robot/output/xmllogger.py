@@ -142,7 +142,6 @@ class XmlLogger(ResultVisitor):
         self._write_status(block)
         self._writer.end('block')
 
-    # FIXME: These probably aren't called by Rebot!
     def start_return(self, return_):
         self._writer.start('return')
         for value in return_.values:

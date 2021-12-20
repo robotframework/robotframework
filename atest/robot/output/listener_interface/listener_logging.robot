@@ -40,7 +40,7 @@ Execution errors should have messages from message and log_message methods
 Correct start/end warnings should be shown in execution errors
     ${msgs} =    Get start/end messages    ${ERRORS.msgs}
     @{kw} =    Create List    start_keyword    end_keyword
-    @{uk} =    Create List    start_keyword    @{kw}    @{kw}    @{kw}    end_keyword
+    @{uk} =    Create List    start_keyword    @{kw}    @{kw}    @{kw}    @{kw}    end_keyword
     FOR    ${index}    ${method}    IN ENUMERATE
     ...    start_suite
     ...    @{uk}

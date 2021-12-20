@@ -18,6 +18,8 @@ User keyword
     START    User Keyword                    9    NOT SET
     START    No Operation                   65    NOT SET
     END      No Operation                   65    PASS
+    START    ${EMPTY}                       66    NOT SET    type=RETURN
+    END      ${EMPTY}                       66    PASS       type=RETURN
     END      User Keyword                    9    PASS
 
 User keyword in resource
@@ -48,12 +50,12 @@ FOR
 
 FOR in keyword
     START    FOR In Keyword                 26    NOT SET
-    START    \${x} IN [ once ]              68    NOT SET    type=FOR
-    START    \${x} = once                   68    NOT SET    type=FOR ITERATION
-    START    No Operation                   69    NOT SET
-    END      No Operation                   69    PASS
-    END      \${x} = once                   68    PASS       type=FOR ITERATION
-    END      \${x} IN [ once ]              68    PASS       type=FOR
+    START    \${x} IN [ once ]              69    NOT SET    type=FOR
+    START    \${x} = once                   69    NOT SET    type=FOR ITERATION
+    START    No Operation                   70    NOT SET
+    END      No Operation                   70    PASS
+    END      \${x} = once                   69    PASS       type=FOR ITERATION
+    END      \${x} IN [ once ]              69    PASS       type=FOR
     END      FOR In Keyword                 26    PASS
 
 FOR in IF
@@ -92,10 +94,12 @@ IF
 
 IF in keyword
     START    IF In Keyword         48    NOT SET
-    START    True                  73    NOT SET    type=IF
-    START    No Operation          74    NOT SET
-    END      No Operation          74    PASS
-    END      True                  73    PASS       type=IF
+    START    True                  74    NOT SET    type=IF
+    START    No Operation          75    NOT SET
+    END      No Operation          75    PASS
+    START    ${EMPTY}              76    NOT SET    type=RETURN
+    END      ${EMPTY}              76    PASS       type=RETURN
+    END      True                  74    PASS       type=IF
     END      IF In Keyword         48    PASS
 
 IF in FOR

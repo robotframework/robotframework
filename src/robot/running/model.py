@@ -187,6 +187,10 @@ class Return(model.Return):
         model.Return.__init__(self, values, parent)
         self.lineno = lineno
 
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
     def run(self, context, run=True, templated=False):
         with StatusReporter(self, ReturnResult(self.values), context, run):
             if run:

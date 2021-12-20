@@ -281,11 +281,19 @@ class SuiteVisitor:
         pass
 
     def visit_return(self, return_):
-        """Called when RETURN is encountered. Default implementation does nothing.
+        """Visits RETURN elements."""
+        if self.start_return(return_) is not False:
+            self.end_return(return_)
 
-        Because RETURN cannot have children, does not call separate
-        ``start_return`` or ``end_return`` methods.
+    def start_return(self, return_):
+        """Called when RETURN element starts.
+
+        Can return explicit ``False`` to avoid calling :meth:`end_return`.
         """
+        pass
+
+    def end_return(self, return_):
+        """Called when RETURN element ends."""
         pass
 
     def visit_message(self, msg):
