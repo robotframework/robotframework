@@ -169,6 +169,7 @@ class TestStatus(_ExecutionStatus):
         self.exit = parent.exit
         self._test = test
         self._skip_on_failure_tags = skip_on_failure
+        self._skip_on_failure_tags.append('robot:skip-on-failure')
         self._critical_tags = critical_tags
         self._rpa = rpa
 
@@ -201,7 +202,6 @@ class TestStatus(_ExecutionStatus):
         critical = not critical_pattern or critical_pattern.match(tags)
         skip_on_fail_pattern = TagPatterns(self._skip_on_failure_tags)
         skip_on_fail = skip_on_fail_pattern and skip_on_fail_pattern.match(tags)
-        skip_on_fail = TagPatterns("robot:skip-on-failure").match(tags)
         return not critical or skip_on_fail
 
     def _my_message(self):
