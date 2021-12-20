@@ -695,6 +695,9 @@ As of RobotFramework 4.1, reserved tags are suppressed by default in the
 test suite's tag statistics. They will be shown when they are explicitly
 included via the `--tagstatinclude 'robot:*'` command line option.
 
+As of RobotFramework 5.0, new reserved tags include `robot:skip`, 
+`robot:skip-on-failure` and `robot:exclude`. 
+
 Test setup and teardown
 -----------------------
 
