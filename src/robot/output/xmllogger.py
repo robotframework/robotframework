@@ -129,34 +129,20 @@ class XmlLogger(ResultVisitor):
         self._writer.end('try')
 
     def start_try_block(self, block):
-        self._writer.start('block', attrs={'type': 'TRY'})
+        block_type = block.type
+        if block_type == block.EXCEPT:
+            self._writer.start('block', attrs={'type': 'EXCEPT',
+                                               'variable': block.variable})
+            self._write_list('pattern', block.patterns)
+        else:
+            typ = block_type if block_type != block.TRY_ELSE else 'ELSE'
+            self._writer.start('block', attrs={'type': typ})
 
     def end_try_block(self, block):
         self._write_status(block)
         self._writer.end('block')
 
-    def start_except_block(self, block):
-        self._writer.start('block', attrs={'variable': block.variable, 'type': 'EXCEPT'})
-        self._write_list('pattern', block.patterns)
-
-    def end_except_block(self, block):
-        self._write_status(block)
-        self._writer.end('block')
-
-    def start_else_block(self, block):
-        self._writer.start('block', attrs={'type': 'ELSE'})
-
-    def end_else_block(self, block):
-        self._write_status(block)
-        self._writer.end('block')
-
-    def start_finally_block(self, block):
-        self._writer.start('block', attrs={'type': 'FINALLY'})
-
-    def end_finally_block(self, block):
-        self._write_status(block)
-        self._writer.end('block')
-
+    # FIXME: These probably aren't called by Rebot!
     def start_return(self, return_):
         self._writer.start('return')
         for value in return_.values:

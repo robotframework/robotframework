@@ -34,16 +34,8 @@ class Block(BodyItem):
         return self.body_class(self, body)
 
     def visit(self, visitor):
-        if not self:
-            return
-        if self.type == BodyItem.TRY:
+        if self:
             visitor.visit_try_block(self)
-        elif self.type == BodyItem.EXCEPT:
-            visitor.visit_except_block(self)
-        elif self.type == BodyItem.TRY_ELSE:
-            visitor.visit_else_block(self)
-        elif self.type == BodyItem.FINALLY:
-            visitor.visit_finally_block(self)
 
     def __bool__(self):
         return bool(self.body)
@@ -198,7 +190,7 @@ class Except(BodyItem):
         return f'EXCEPT    {patterns}{as_var}'
 
     def visit(self, visitor):
-        visitor.visit_except_block(self)
+        visitor.visit_try_block(self)
 
 
 @Body.register
