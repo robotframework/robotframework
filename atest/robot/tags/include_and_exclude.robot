@@ -73,6 +73,9 @@ Include with NOT
 Exclude with NOT
     --exclude excl1NOTexcl2ANDexcl3    Excl-123    @{INCL_ALL}
 
+Exclude with robot:exclude tag
+    --tag no-use    Robot-exclude
+    
 Include and Exclude with NOT
     --include incl1NOTincl3 --exclude incl1NOTincl2    Incl-12
 

@@ -14,6 +14,10 @@ Incl-123
     [Tags]  incl_1  incl_2  incl_3
     No Operation
 
+Robot-exclude
+    [Tags]  robot:exclude
+    Fail  test not executed
+
 excl-1
     [Tags]  excl1
     No Operation
@@ -25,3 +29,4 @@ Excl-12
 Excl-123
     [Tags]  excl_1  excl_2  excl_3
     No Operation
+

@@ -44,7 +44,7 @@ class Filter(EmptySuiteRemover):
         self.include_suites = include_suites
         self.include_tests = include_tests
         self.include_tags = include_tags
-        self.exclude_tags = exclude_tags
+        self.exclude_tags = tuple(exclude_tags or ()) + ('robot:exclude',)
 
     @setter
     def include_suites(self, suites):
