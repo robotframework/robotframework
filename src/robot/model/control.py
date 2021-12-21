@@ -134,14 +134,28 @@ class TryBranch(BodyItem):
     def body(self, body):
         return self.body_class(self, body)
 
+    @property
+    def id(self):
+        """Branch id omits TRY/EXCEPT root from the parent id part."""
+        if not self.parent:
+            return 'k1'
+        index = self.parent.body.index(self) + 1
+        if not self.parent.parent:
+            return 'k%d' % index
+        return '%s-k%d' % (self.parent.parent.id, index)
+
     def __str__(self):
-        if self.type == BodyItem.EXCEPT:
+        if self.type != BodyItem.EXCEPT:
             return self.type
-        patterns = ', '.join(self.patterns)
-        as_var = f'AS {self.variable}' if self.variable else ''
+        patterns = '    '.join(self.patterns)
+        as_var = f'AS    {self.variable}' if self.variable else ''
         sep1 = '    ' if patterns or as_var else ''
-        sep2 = ' ' if patterns and as_var else ''
+        sep2 = '    ' if patterns and as_var else ''
         return f'EXCEPT{sep1}{patterns}{sep2}{as_var}'
+
+    def __repr__(self):
+        repr_args = self.repr_args if self.type == BodyItem.EXCEPT else ['type']
+        return super().__repr__(repr_args)
 
     def visit(self, visitor):
         # FIXME: block -> branch
