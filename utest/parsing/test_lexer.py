@@ -1833,18 +1833,26 @@ class TestContinue(unittest.TestCase):
 
     def test_in_if(self):
         data = '''\
-    IF    True
-        CONTINUE
+    FOR    ${x}    IN    @{STUFF}
+        IF    True
+            CONTINUE
+        END
     END
 '''
-        expected = [(T.IF, 'IF', 3, 4),
-                    (T.ARGUMENT, 'True', 3, 10),
-                    (T.EOS, '', 3, 14),
-                    (T.CONTINUE, 'CONTINUE', 3, 12),
-                    (T.ARGUMENT, '', 4, 12),
-                    (T.EOS, '', 4, 24),
-                    (T.END, 'END', 5, 4),
-                    (T.EOS, '', 5, 7)]
+        expected = [(T.FOR, 'FOR', 3, 4),
+                    (T.VARIABLE, '${x}', 3, 11),
+                    (T.FOR_SEPARATOR, 'IN', 3, 19),
+                    (T.ARGUMENT, '@{STUFF}', 3, 25),
+                    (T.EOS, '', 3, 33),
+                    (T.IF, 'IF', 4, 8),
+                    (T.ARGUMENT, 'True', 4, 14),
+                    (T.EOS, '', 4, 18),
+                    (T.CONTINUE, 'CONTINUE', 5, 12),
+                    (T.EOS, '', 5, 20),
+                    (T.END, 'END', 6, 8),
+                    (T.EOS, '', 6, 7)
+                    (T.END, 'END', 7, 4),
+                    (T.EOS, '', 6, 7)]
         self._verify(data, expected)
 
     def test_in_for(self):
@@ -1854,15 +1862,12 @@ class TestContinue(unittest.TestCase):
     END
 '''
             expected = [(T.FOR, 'FOR', 3, 4),
-                        (T.VARIABLE, '${x}', 3, 11),
-                        (T.FOR_SEPARATOR, 'IN', 3, 19),
-                        (T.ARGUMENT, '@{STUFF}', 3, 25),
-                        (T.EOS, '', 3, 33),
-                        (T.CONTINUE, 'CONTINUE', 4, 8),
-                        (T.ARGUMENT, '${x}', 4, 18),
-                        (T.EOS, '', 4, 22),
-                        (T.END, 'END', 5, 4),
-                        (T.EOS, '', 5, 7)]
+                    (T.VARIABLE, '${x}', 3, 11),
+                    (T.FOR_SEPARATOR, 'IN', 3, 19),
+                    (T.ARGUMENT, '@{STUFF}', 3, 25),
+                    (T.EOS, '', 3, 33),
+                    (T.END, 'END', 7, 4),
+                    (T.EOS, '', 6, 7)]
             self._verify(data, expected)
 
     def _verify(self, data, expected, test=False):
@@ -1886,31 +1891,39 @@ class TestBreak(unittest.TestCase):
 
     def test_in_keyword(self):
         data = '    BREAK'
-        expected = [(T.BREAK, 'BREAK', 3, 4),
+        expected = [(T.CONTINUE, 'BREAK', 3, 4),
                     (T.EOS, '', 3, 9)]
         self._verify(data, expected)
 
     def test_in_test(self):
         # This is not valid usage but that's not recognized during lexing.
         data = '    BREAK'
-        expected = [(T.BREAK, 'BREAK', 3, 4),
+        expected = [(T.CONTINUE, 'BREAK', 3, 4),
                     (T.EOS, '', 3, 9)]
         self._verify(data, expected, test=True)
 
     def test_in_if(self):
         data = '''\
-    IF    True
-        BREAK
+    FOR    ${x}    IN    @{STUFF}
+        IF    True
+            BREAK
+        END
     END
 '''
-        expected = [(T.IF, 'IF', 3, 4),
-                    (T.ARGUMENT, 'True', 3, 10),
-                    (T.EOS, '', 3, 14),
-                    (T.BREAK, 'BREAK', 3, 9),
-                    (T.ARGUMENT, '', 4, 12),
-                    (T.EOS, '', 4, 24),
-                    (T.END, 'END', 5, 4),
-                    (T.EOS, '', 5, 7)]
+        expected = [(T.FOR, 'FOR', 3, 4),
+                    (T.VARIABLE, '${x}', 3, 11),
+                    (T.FOR_SEPARATOR, 'IN', 3, 19),
+                    (T.ARGUMENT, '@{STUFF}', 3, 25),
+                    (T.EOS, '', 3, 33),
+                    (T.IF, 'IF', 4, 8),
+                    (T.ARGUMENT, 'True', 4, 14),
+                    (T.EOS, '', 4, 18),
+                    (T.BREAK, 'BREAK', 5, 12),
+                    (T.EOS, '', 5, 17),
+                    (T.END, 'END', 6, 8),
+                    (T.EOS, '', 6, 11)
+                    (T.END, 'END', 7, 4),
+                    (T.EOS, '', 7, 7)]
         self._verify(data, expected)
 
     def test_in_for(self):
@@ -1920,15 +1933,14 @@ class TestBreak(unittest.TestCase):
     END
 '''
             expected = [(T.FOR, 'FOR', 3, 4),
-                        (T.VARIABLE, '${x}', 3, 11),
-                        (T.FOR_SEPARATOR, 'IN', 3, 19),
-                        (T.ARGUMENT, '@{STUFF}', 3, 25),
-                        (T.EOS, '', 3, 33),
-                        (T.BREAK, 'BREAK', 4, 8),
-                        (T.ARGUMENT, '${x}', 4, 18),
-                        (T.EOS, '', 4, 22),
-                        (T.END, 'END', 5, 4),
-                        (T.EOS, '', 5, 7)]
+                    (T.VARIABLE, '${x}', 3, 11),
+                    (T.FOR_SEPARATOR, 'IN', 3, 19),
+                    (T.ARGUMENT, '@{STUFF}', 3, 25),
+                    (T.EOS, '', 3, 33),
+                    (T.BREAK, 'BREAK', 5, 8),
+                    (T.EOS, '', 5, 13),
+                    (T.END, 'END', 6, 4),
+                    (T.EOS, '', 6, 7)]
             self._verify(data, expected)
 
     def _verify(self, data, expected, test=False):
