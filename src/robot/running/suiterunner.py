@@ -127,42 +127,38 @@ class SuiteRunner(SuiteVisitor):
             result.tags.add('robot:exit')
         if self._skipped_tags.match(test.tags):
             status.test_skipped(
-                test_or_task(
-                    "{Test} skipped with '--skip' command line option.",
-                    self._settings.rpa))
-        if not status.failed and not test.name:
-            status.test_failed(
-                test_or_task('{Test} case name cannot be empty.',
+                test_or_task("{Test} skipped with '--skip' command line option.",
                              self._settings.rpa))
-        if not status.failed and not test.body:
+        if status.passed and not test.name:
             status.test_failed(
-                test_or_task('{Test} case contains no keywords.',
-                             self._settings.rpa))
+                test_or_task('{Test} name cannot be empty.', self._settings.rpa))
+        if status.passed and not test.body:
+            status.test_failed(
+                test_or_task('{Test} contains no keywords.', self._settings.rpa))
         self._run_setup(test.setup, status, result)
-        try:
-            if not status.failed:
+        if status.passed:
+            try:
                 BodyRunner(self._context, templated=bool(test.template)).run(test.body)
-            else:
-                if status.skipped:
-                    status.test_skipped(status.message)
+            except PassExecution as exception:
+                err = exception.earlier_failures
+                if err:
+                    status.test_failed(error=err)
                 else:
-                    status.test_failed(status.message)
-        except PassExecution as exception:
-            err = exception.earlier_failures
-            if err:
-                status.test_failed(err)
-            else:
-                result.message = exception.message
-        except ExecutionStatus as err:
-            status.test_failed(err)
+                    result.message = exception.message
+            except ExecutionStatus as err:
+                status.test_failed(error=err)
+        elif status.skipped:
+            status.test_skipped(status.message)
+        else:
+            status.test_failed(status.message)
         result.status = status.status
         result.message = status.message or result.message
         with self._context.test_teardown(result):
             self._run_teardown(test.teardown, status, result)
-        if not status.failed and result.timeout and result.timeout.timed_out():
+        if status.passed and result.timeout and result.timeout.timed_out():
             status.test_failed(result.timeout.get_message())
             result.message = status.message
-        if status.skip_if_needed():
+        if status.skip_on_failure_after_tag_changes:
             result.message = status.message or result.message
         result.status = status.status
         result.endtime = get_timestamp()
@@ -183,14 +179,13 @@ class SuiteRunner(SuiteVisitor):
         return TestTimeout(test.timeout, self._variables, rpa=test.parent.rpa)
 
     def _run_setup(self, setup, status, result=None):
-        if not status.failed:
+        if status.passed:
             exception = self._run_setup_or_teardown(setup)
             status.setup_executed(exception)
             if result and isinstance(exception, PassExecution):
                 result.message = exception.message
-        else:
-            if status.parent and status.parent.skipped:
-                status.skipped = True
+        elif status.parent and status.parent.skipped:
+            status.skipped = True
 
     def _run_teardown(self, teardown, status, result=None):
         if status.teardown_allowed:

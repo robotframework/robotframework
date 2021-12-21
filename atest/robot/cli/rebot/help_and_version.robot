@@ -9,7 +9,7 @@ Help
     ${help} =              Set Variable    ${result.stdout}
     Log                    ${help}
     Should Start With      ${help}         Rebot -- Robot Framework report and log generator\n\nVersion: \
-    Should End With        ${help}         \n$ jython path/robot/rebot.py -N Project_X -l none -r x.html output.xml\n
+    Should End With        ${help}         \n$ python -m robot.rebot --name Combined outputs/*.xml\n
     Should Not Contain     ${help}         \t
     Should Not Contain     ${help}         [ ERROR ]
     Should Not Contain     ${help}         [ WARN \ ]

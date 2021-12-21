@@ -42,8 +42,6 @@ class Remote:
         the operating system and its configuration. Notice that setting
         a timeout that is shorter than keyword execution time will interrupt
         the keyword.
-
-        Timeouts do not work with IronPython.
         """
         if '://' not in uri:
             uri = 'http://' + uri

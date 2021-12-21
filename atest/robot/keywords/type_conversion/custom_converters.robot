@@ -18,6 +18,9 @@ Class as converter
 Custom in Union
     Check Test Case    ${TESTNAME}
 
+Accept subscripted generics
+    Check Test Case    ${TESTNAME}
+
 Failing conversion
     Check Test Case    ${TESTNAME}
 

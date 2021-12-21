@@ -146,8 +146,7 @@ class Process:
     By default processes are run so that their standard output and standard
     error streams are kept in the memory. This works fine normally,
     but if there is a lot of output, the output buffers may get full and
-    the program can hang. Additionally on Jython, everything written to
-    these in-memory buffers can be lost if the process is terminated.
+    the program can hang.
 
     To avoid the above mentioned problems, it is possible to use ``stdout``
     and ``stderr`` arguments to specify files on the file system where to
@@ -556,9 +555,6 @@ class Process:
         | Terminate Process           | myproc            | kill=true |
 
         Limitations:
-        - Graceful termination is not supported on Windows when using Jython.
-          Process is killed instead.
-        - Stopping the whole process group is not supported when using Jython.
         - On Windows forceful kill only stops the main process, not possible
           child processes.
         """
@@ -638,8 +634,7 @@ class Process:
         does the shell propagate the signal to the actual started process.
 
         To send the signal to the whole process group, ``group`` argument can
-        be set to any true value (see `Boolean arguments`). This is not
-        supported by Jython, however.
+        be set to any true value (see `Boolean arguments`).
         """
         if os.sep == '\\':
             raise RuntimeError('This keyword does not work on Windows.')
@@ -849,7 +844,7 @@ class ExecutionResult:
             return ''
         try:
             content = stream.read()
-        except IOError:  # http://bugs.jython.org/issue2218
+        except IOError:  # TODO: can this be removed? http://bugs.jython.org/issue2218
             return ''
         finally:
             if stream_path:

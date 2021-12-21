@@ -252,6 +252,11 @@ class LoggerProxy(AbstractLoggerProxy):
         'ELSE': 'start_if_branch',
         'FOR': 'start_for',
         'FOR ITERATION': 'start_for_iteration',
+        'TRY/EXCEPT ROOT': 'start_try',
+        'TRY': 'start_try_block',
+        'EXCEPT': 'start_try_block',
+        'TRY ELSE': 'start_try_block',
+        'FINALLY': 'start_try_block',
         'RETURN': 'start_return'
     }
     _end_keyword_methods = {
@@ -261,6 +266,11 @@ class LoggerProxy(AbstractLoggerProxy):
         'ELSE': 'end_if_branch',
         'FOR': 'end_for',
         'FOR ITERATION': 'end_for_iteration',
+        'TRY/EXCEPT ROOT': 'end_try',
+        'TRY': 'end_try_block',
+        'EXCEPT': 'end_try_block',
+        'TRY ELSE': 'end_try_block',
+        'FINALLY': 'end_try_block',
         'RETURN': 'end_return'
     }
 

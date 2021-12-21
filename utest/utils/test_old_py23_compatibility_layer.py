@@ -1,7 +1,7 @@
 import unittest
 
 from robot.utils.asserts import assert_equal, assert_false, assert_true
-from robot.utils import (PY2, PY3, JYTHON, IRONPYTHON, py2to3, py3to2,
+from robot.utils import (PY2, PY3, StringIO, JYTHON, IRONPYTHON, py2to3, py3to2,
                          is_unicode, unicode, unic)
 
 
@@ -49,6 +49,10 @@ class TestCompatibilityLayer(unittest.TestCase):
         assert_equal(unic(42), '42')
         assert_equal(unic(b'Hyv\xe4'), r'Hyv\xe4')
         assert_equal(unic(b'Paha'), 'Paha')
+
+    def test_stringio(self):
+        import io
+        assert_true(StringIO is io.StringIO)
 
 
 if __name__ == '__main__':

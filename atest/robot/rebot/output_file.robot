@@ -13,6 +13,7 @@ Generate output with Robot
     ...    misc/pass_and_fail.robot
     ...    misc/for_loops.robot
     ...    misc/if_else.robot
+    ...    misc/try_except.robot
     ...    misc/warnings_and_errors.robot
     ...    keywords/embedded_arguments.robot
     Run tests    -L TRACE    ${inputs}

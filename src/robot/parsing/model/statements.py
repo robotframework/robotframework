@@ -885,6 +885,73 @@ class ElseHeader(IfElseHeader):
             self.errors += ('ELSE has condition.',)
 
 
+class NoArgumentHeader(Statement):
+
+    @classmethod
+    def from_params(cls, indent=FOUR_SPACES, eol=EOL):
+        return cls([
+            Token(Token.SEPARATOR, indent),
+            Token(cls.type),
+            Token(Token.EOL, eol)
+        ])
+
+    def validate(self):
+        if self.get_tokens(Token.ARGUMENT):
+            self.errors += (f'{self.type} has an argument.',)
+
+
+@Statement.register
+class TryHeader(NoArgumentHeader):
+    type = Token.TRY
+
+
+@Statement.register
+class ExceptHeader(Statement):
+    type = Token.EXCEPT
+
+    @classmethod
+    def from_params(cls, patterns=None, variable=None, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+        tokens = [
+            Token(Token.SEPARATOR, indent),
+            Token(Token.EXCEPT),
+            Token(Token.SEPARATOR, separator)
+        ]
+        for pattern in patterns:
+            tokens.append(pattern)
+            tokens.append(Token(Token.SEPARATOR, separator))
+        if variable:
+            tokens.append(Token(Token.AS))
+            tokens.append(Token(Token.SEPARATOR, separator))
+            tokens.append(Token(Token.VARIABLE, variable))
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
+    @property
+    def patterns(self):
+        return self.get_values(Token.ARGUMENT)
+
+    @property
+    def variable(self):
+        return self.get_value(Token.VARIABLE)
+
+    def validate(self):
+        as_seen = False
+        for token in self.tokens:
+            if token.type == Token.AS:
+                as_seen = True
+                if token != self.tokens[-2]:
+                    self.errors += ('AS must be second to last.',)
+        if as_seen:
+            var = self.tokens[-1].value
+            if not is_scalar_assign(var, allow_assign_mark=False):
+                self.errors += (f"Invalid AS variable '{var}'.",)
+
+
+@Statement.register
+class FinallyHeader(NoArgumentHeader):
+    type = Token.FINALLY
+
+
 @Statement.register
 class End(Statement):
     type = Token.END

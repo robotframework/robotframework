@@ -42,4 +42,7 @@ TypedDict
 Custom
     DataType Custom Should Be    0
     ...    CustomType
-    ...    Custom doc.
+    ...    Converter method doc is used when defined.
+    DataType Custom Should Be    1
+    ...    CustomType2
+    ...    Class doc is used when converter method has no doc.
