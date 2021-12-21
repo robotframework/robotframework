@@ -122,8 +122,6 @@ class TryBranch(BodyItem):
     __slots__ = ['type', 'patterns', 'variable']
 
     def __init__(self, type=BodyItem.TRY, patterns=(), variable=None, parent=None):
-        if type == 'ELSE':
-            type = BodyItem.TRY_ELSE    # FIXME!
         if (patterns or variable) and type != BodyItem.EXCEPT:
             raise TypeError(f"'{type}' branches do not accept patterns or variables.")
         self.type = type
@@ -137,8 +135,8 @@ class TryBranch(BodyItem):
         return self.body_class(self, body)
 
     def __str__(self):
-        if self.type != BodyItem.EXCEPT:
-            return self.type if self.type != BodyItem.TRY_ELSE else 'ELSE'
+        if self.type == BodyItem.EXCEPT:
+            return self.type
         patterns = ', '.join(self.patterns)
         as_var = f'AS {self.variable}' if self.variable else ''
         sep1 = '    ' if patterns or as_var else ''
@@ -178,7 +176,7 @@ class Try(BodyItem):
     @property
     def else_block(self):
         for branch in self.body:
-            if branch.type == BodyItem.TRY_ELSE:  # FIXME: TRY_ELSE -> ELSE?
+            if branch.type == BodyItem.ELSE:
                 return branch
         return None
 

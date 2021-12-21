@@ -128,6 +128,7 @@ class TestLogger(unittest.TestCase):
         self.logger.register_logger(logger)
         for name in 'suite', 'test', 'keyword':
             arg = Arg()
+            arg.result = arg
             for stend in 'start', 'end':
                 getattr(self.logger, stend + '_' + name)(arg)
                 assert_equal(getattr(logger, stend + 'ed_' + name), arg)

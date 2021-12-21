@@ -149,10 +149,10 @@ TRY
     END      KEYWORD          Should Be Equal                71    PASS
     END      FINALLY          ${EMPTY}                       70    PASS
     END      EXCEPT           AS \${name}                    67    FAIL
-    START    TRY ELSE         ${EMPTY}                       73    NOT RUN
+    START    ELSE             ${EMPTY}                       73    NOT RUN
     START    KEYWORD          Fail                           74    NOT RUN
     END      KEYWORD          Fail                           74    NOT RUN
-    END      TRY ELSE         ${EMPTY}                       73    NOT RUN
+    END      ELSE             ${EMPTY}                       73    NOT RUN
 
 TRY in keyword
     START    KEYWORD          TRY In Keyword                 78    NOT SET

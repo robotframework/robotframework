@@ -467,7 +467,7 @@ class TryRunner:
         else_error = None
         if data.else_block:
             run = self._run and not failures and not handler_error
-            result = TryBranchResult(data.TRY_ELSE)
+            result = TryBranchResult(data.ELSE)
             else_error = self._run_block(data.else_block, result, run)
         return else_error
 

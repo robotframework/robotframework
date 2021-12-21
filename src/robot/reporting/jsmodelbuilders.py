@@ -25,7 +25,7 @@ KEYWORD_TYPES = {'KEYWORD': 0, 'SETUP': 1, 'TEARDOWN': 2,
                  'FOR': 3, 'FOR ITERATION': 4,
                  'IF': 5, 'ELSE IF': 6, 'ELSE': 7,
                  'RETURN': 8, 'TRY': 9, 'EXCEPT': 10,
-                 'TRY ELSE': 7, 'FINALLY': 11}
+                 'FINALLY': 11}
 
 
 class JsModelBuilder:
