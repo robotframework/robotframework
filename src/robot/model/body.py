@@ -68,6 +68,7 @@ class BaseBody(ItemList):
     if_class = None
     try_class = None
     return_class = None
+    message_class = None
 
     def __init__(self, parent=None, items=None):
         ItemList.__init__(self, BodyItem, {'parent': parent}, items)
@@ -110,7 +111,11 @@ class BaseBody(ItemList):
     def create_return(self, *args, **kwargs):
         return self._create(self.return_class, 'create_return', args, kwargs)
 
-    def filter(self, keywords=None, fors=None, ifs=None, predicate=None):
+    def create_message(self, *args, **kwargs):
+        return self._create(self.message_class, 'create_message', args, kwargs)
+
+    def filter(self, keywords=None, fors=None, ifs=None, trys=None, messages=None,
+               predicate=None):
         """Filter body items based on type and/or custom predicate.
 
         To include or exclude items based on types, give matching arguments
@@ -127,18 +132,20 @@ class BaseBody(ItemList):
         """
         return self._filter([(self.keyword_class, keywords),
                              (self.for_class, fors),
-                             (self.if_class, ifs)], predicate)
+                             (self.if_class, ifs),
+                             (self.try_class, trys),
+                             (self.message_class, messages)], predicate)
 
     def _filter(self, types, predicate):
-        include = [cls for cls, activated in types if activated is True and cls]
-        exclude = [cls for cls, activated in types if activated is False and cls]
+        include = tuple(cls for cls, activated in types if activated is True and cls)
+        exclude = tuple(cls for cls, activated in types if activated is False and cls)
         if include and exclude:
             raise ValueError('Items cannot be both included and excluded by type.')
         items = list(self)
         if include:
-            items = [item for item in items if isinstance(item, tuple(include))]
+            items = [item for item in items if isinstance(item, include)]
         if exclude:
-            items = [item for item in items if not isinstance(item, tuple(exclude))]
+            items = [item for item in items if not isinstance(item, exclude)]
         if predicate:
             items = [item for item in items if predicate(item)]
         return items
@@ -162,15 +169,3 @@ class Branches(BaseBody):
 
     def create_branch(self, *args, **kwargs):
         return self.append(self.branch_class(*args, **kwargs))
-
-
-# FIXME: Remove and use generic Branches instead.
-class IfBranches(Body):
-    if_branch_class = None
-    keyword_class = None
-    for_class = None
-    if_class = None
-    __slots__ = []
-
-    def create_branch(self, *args, **kwargs):
-        return self.append(self.if_branch_class(*args, **kwargs))

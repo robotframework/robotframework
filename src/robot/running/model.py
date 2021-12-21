@@ -52,10 +52,6 @@ class Body(model.Body):
     __slots__ = []
 
 
-class IfBranches(model.IfBranches):
-    __slots__ = []
-
-
 @Body.register
 class Keyword(model.Keyword):
     """Represents a single executable keyword.
@@ -98,10 +94,23 @@ class For(model.For):
         return ForRunner(context, self.flavor, run, templated).run(self)
 
 
+class IfBranch(model.IfBranch):
+    __slots__ = ['lineno']
+    body_class = Body
+
+    def __init__(self, type=BodyItem.IF, condition=None, parent=None, lineno=None):
+        super().__init__(type, condition, parent)
+        self.lineno = lineno
+
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
+
 @Body.register
 class If(model.If):
     __slots__ = ['lineno', 'error']
-    body_class = IfBranches
+    branch_class = IfBranch
 
     def __init__(self, parent=None, lineno=None, error=None):
         super().__init__(parent)
@@ -114,20 +123,6 @@ class If(model.If):
 
     def run(self, context, run=True, templated=False):
         return IfRunner(context, run, templated).run(self)
-
-
-@IfBranches.register
-class IfBranch(model.IfBranch):
-    __slots__ = ['lineno']
-    body_class = Body
-
-    def __init__(self, type=BodyItem.IF, condition=None, parent=None, lineno=None):
-        super().__init__(type, condition, parent)
-        self.lineno = lineno
-
-    @property
-    def source(self):
-        return self.parent.source if self.parent is not None else None
 
 
 class TryBranch(model.TryBranch):

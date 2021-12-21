@@ -9,7 +9,7 @@ from robot.utils.asserts import assert_equal
 from robot.result import (ExecutionResultBuilder, For, If, IfBranch, ForIteration,
                           Try, TryBranch, Keyword, Result, ResultVisitor, TestCase,
                           TestSuite)
-from robot.result.model import Body, ForIterations, IfBranches
+from robot.result.model import Body, ForIterations
 from robot.libraries.BuiltIn import BuiltIn
 
 
@@ -40,10 +40,6 @@ class NoSlotsIfBranch(IfBranch):
     body_class = NoSlotsBody
 
 
-class NoSlotsIfBranches(IfBranches):
-    if_branch_class = NoSlotsIfBranch
-
-
 class NoSlotsTryBranch(TryBranch):
     body_class = NoSlotsBody
 
@@ -59,7 +55,7 @@ class NoSlotsForIterations(ForIterations):
 
 NoSlotsKeyword.body_class = NoSlotsBody
 NoSlotsFor.body_class = NoSlotsForIterations
-NoSlotsIf.body_class = NoSlotsIfBranches
+NoSlotsIf.branch_class = NoSlotsIfBranch
 NoSlotsTry.branch_class = NoSlotsTryBranch
 
 

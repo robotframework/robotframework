@@ -47,34 +47,19 @@ from .keywordremover import KeywordRemover
 from .suiteteardownfailed import SuiteTeardownFailed, SuiteTeardownFailureHandler
 
 
-class Body(model.Body):
-    message_class = None
+class Body(model.BaseBody):
     __slots__ = []
 
-    def create_message(self, *args, **kwargs):
-        return self.append(self.message_class(*args, **kwargs))
 
-    def filter(self, keywords=None, fors=None, ifs=None, messages=None, predicate=None):
-        return self._filter([(self.keyword_class, keywords),
-                             (self.for_class, fors),
-                             (self.if_class, ifs),
-                             (self.message_class, messages)], predicate)
-
-
-class ForIterations(Body):
+class ForIterations(model.BaseBody):
     for_iteration_class = None
-    if_class = None
-    for_class = None
     __slots__ = []
 
     def create_iteration(self, *args, **kwargs):
         return self.append(self.for_iteration_class(*args, **kwargs))
 
 
-class IfBranches(Body, model.IfBranches):
-    __slots__ = []
-
-
+@ForIterations.register
 @Body.register
 class Message(model.Message):
     __slots__ = []
@@ -142,6 +127,7 @@ class StatusMixin:
 
 @ForIterations.register
 class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
+    """Represents one FOR loop iteration."""
     type = BodyItem.FOR_ITERATION
     body_class = Body
     repr_args = ('variables',)
@@ -190,20 +176,6 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
                                  ' | '.join(self.values))
 
 
-@Body.register
-class If(model.If, StatusMixin, DeprecatedAttributesMixin):
-    body_class = IfBranches
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
-
-    def __init__(self, parent=None, status='FAIL', starttime=None, endtime=None, doc=''):
-        super().__init__(parent)
-        self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
-        self.doc = doc
-
-
-@IfBranches.register
 class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
     body_class = Body
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
@@ -220,6 +192,19 @@ class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
     @deprecated
     def name(self):
         return self.condition
+
+
+@Body.register
+class If(model.If, StatusMixin, DeprecatedAttributesMixin):
+    branch_class = IfBranch
+    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+
+    def __init__(self, status='FAIL', starttime=None, endtime=None, doc='', parent=None):
+        super().__init__(parent)
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.doc = doc
 
 
 class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
@@ -279,6 +264,7 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
         return ''
 
 
+@ForIterations.register
 @Body.register
 class Keyword(model.Keyword, StatusMixin):
     """Represents results of a single keyword.

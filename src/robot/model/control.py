@@ -15,7 +15,7 @@
 
 from robot.utils import setter
 
-from .body import Body, BodyItem, Branches, IfBranches
+from .body import Body, BodyItem, Branches
 from .keyword import Keywords
 
 
@@ -55,31 +55,6 @@ class For(BodyItem):
         return 'FOR    %s    %s    %s' % (variables, self.flavor, values)
 
 
-@Body.register
-class If(BodyItem):
-    """IF/ELSE structure root. Branches are stored in :attr:`body`."""
-    type = BodyItem.IF_ELSE_ROOT
-    body_class = IfBranches
-    __slots__ = ['parent']
-
-    def __init__(self, parent=None):
-        self.parent = parent
-        self.body = None
-
-    @setter
-    def body(self, branches):
-        return self.body_class(self, branches)
-
-    @property
-    def id(self):
-        """Root IF/ELSE id is always ``None``."""
-        return None
-
-    def visit(self, visitor):
-        visitor.visit_if(self)
-
-
-@IfBranches.register
 class IfBranch(BodyItem):
     body_class = Body
     repr_args = ('type', 'condition')
@@ -97,7 +72,7 @@ class IfBranch(BodyItem):
 
     @property
     def id(self):
-        """Branch id omits the root IF/ELSE object from the parent id part."""
+        """Branch id omits IF/ELSE root from the parent id part."""
         if not self.parent:
             return 'k1'
         index = self.parent.body.index(self) + 1
@@ -114,6 +89,30 @@ class IfBranch(BodyItem):
 
     def visit(self, visitor):
         visitor.visit_if_branch(self)
+
+
+@Body.register
+class If(BodyItem):
+    """IF/ELSE structure root. Branches are stored in :attr:`body`."""
+    type = BodyItem.IF_ELSE_ROOT
+    branch_class = IfBranch
+    __slots__ = ['parent']
+
+    def __init__(self, parent=None):
+        self.parent = parent
+        self.body = None
+
+    @setter
+    def body(self, branches):
+        return Branches(self.branch_class, self, branches)
+
+    @property
+    def id(self):
+        """Root IF/ELSE id is always ``None``."""
+        return None
+
+    def visit(self, visitor):
+        visitor.visit_if(self)
 
 
 class TryBranch(BodyItem):
@@ -164,6 +163,7 @@ class TryBranch(BodyItem):
 
 @Body.register
 class Try(BodyItem):
+    """TRY/EXCEPT structure root. Branches are stored in :attr:`body`."""
     type = BodyItem.TRY_EXCEPT_ROOT
     branch_class = TryBranch
     __slots__ = []
