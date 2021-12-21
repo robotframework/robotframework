@@ -82,15 +82,8 @@ class _Builder:
     def _flatten(self, steps):
         result = []
         for step in steps:
-            if step.type == BodyItem.IF_ELSE_ROOT:
+            if step.type in (BodyItem.IF_ELSE_ROOT, BodyItem.TRY_EXCEPT_ROOT):
                 result.extend(step.body)
-            elif step.type == BodyItem.TRY_EXCEPT_ROOT:
-                result.append(step.try_block)
-                result.extend(step.except_blocks)
-                if step.else_block:
-                    result.append(step.else_block)
-                if step.finally_block:
-                    result.append(step.finally_block)
             else:
                 result.append(step)
         return result

@@ -246,10 +246,7 @@ class SuiteVisitor:
         and FINALLY blocks are visited separately.
         """
         if self.start_try(try_) is not False:
-            try_.try_block.visit(self)
-            try_.except_blocks.visit(self)
-            try_.else_block.visit(self)
-            try_.finally_block.visit(self)
+            try_.body.visit(self)
             self.end_try(try_)
 
     def start_try(self, try_):

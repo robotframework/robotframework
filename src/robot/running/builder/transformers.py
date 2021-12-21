@@ -389,43 +389,50 @@ class TryBuilder(NodeVisitor):
     def __init__(self, parent):
         self.parent = parent
         self.model = None
+        self.template_error = None
 
     def build(self, node):
-        self.model = self.parent.body.create_try(lineno=node.lineno,
-                                                 error=format_error(self._get_errors(node)))
+        root = self.parent.body.create_try(lineno=node.lineno)
+        self.model = root.body.create_branch('TRY', lineno=node.lineno)
         for step in node.body:
             self.visit(step)
         for block in node.blocks:
-            self.visit(block)
-        return self.model
+            self.model = root.body.create_branch(block.type, block.patterns,
+                                                 block.variable, lineno=block.lineno)
+            for step in block.body:
+                self.visit(step)
+        root.error = format_error(self._get_errors(node))
+        return root
 
     def _get_errors(self, node):
         errors = node.header.errors + node.errors
         for handler in node.blocks:
             errors += handler.errors + handler.header.errors
+        if self.template_error:
+            errors += (self.template_error,)
         return errors
 
     def visit_TryHandler(self, node):
         TryHandlerBuilder(self.model).build(node)
 
     def visit_If(self, node):
-        IfBuilder(self.model.try_block).build(node)
+        IfBuilder(self.model).build(node)
 
     def visit_For(self, node):
-        ForBuilder(self.model.try_block).build(node)
+        ForBuilder(self.model).build(node)
 
     def visit_Try(self, node):
-        TryBuilder(self.model.try_block).build(node)
+        TryBuilder(self.model).build(node)
 
     def visit_ReturnStatement(self, node):
-        self.model.try_block.body.create_return(node.values, lineno=node.lineno)
+        self.model.body.create_return(node.values, lineno=node.lineno)
 
     def visit_KeywordCall(self, node):
-        self.model.try_block.body.create_keyword(name=node.keyword, args=node.args,
-                                                 assign=node.assign, lineno=node.lineno)
+        self.model.body.create_keyword(name=node.keyword, args=node.args,
+                                       assign=node.assign, lineno=node.lineno)
 
     def visit_TemplateArguments(self, node):
-        self.model.error = 'Templates cannot be used with TRY.'
+        self.template_error = 'Templates cannot be used with TRY.'
 
 
 class TryHandlerBuilder(NodeVisitor):

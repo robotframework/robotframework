@@ -252,6 +252,7 @@ class Try(Block):
         self.end = end
         self.errors = errors
 
+    # FIXME: Are these propertys needed?
     @property
     def except_blocks(self):
         return [b for b in self.blocks if b.type == Token.EXCEPT]
@@ -311,7 +312,7 @@ class TryHandler(HeaderAndBody):
 
     @property
     def patterns(self):
-        return getattr(self.header, 'patterns', [])
+        return getattr(self.header, 'patterns', ())
 
     @property
     def variable(self):

@@ -21,7 +21,7 @@ from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           ExecutionStatus, ExitForLoop, ContinueForLoop, DataError,
                           ReturnFromKeyword)
 from robot.result import (For as ForResult, If as IfResult, IfBranch as IfBranchResult,
-                          Try as TryResult, Except as TryHandlerResult, Block as BlockResult)
+                          Try as TryResult, TryBranch as TryBranchResult)
 from robot.output import librarylogger as logger
 from robot.utils import (cut_assign_value, frange, get_error_message, is_string,
                          is_list_like, is_number, plural_or_not as s,
@@ -396,17 +396,29 @@ class TryRunner:
     def run(self, data):
         run = self._run
         with StatusReporter(data, TryResult(), self._context, run):
-            result = BlockResult(data.try_block.type)
-            failures = self._run_block(data.try_block, result, run, data.error)
+            if data.error:
+                self._run_invalid(data)
+                return False
+            result = TryBranchResult(data.TRY)
+            failures = self._run_block(data.try_block, result, run)
             self._run_handlers(data, failures)
         return run
 
-    def _run_block(self, block, result, run, error=None):
+    def _run_invalid(self, data):
+        error_reported = False
+        for branch in data.body:
+            result = TryBranchResult(branch.type, branch.patterns, branch.variable)
+            with StatusReporter(branch, result, self._context, run=False, suppress=True):
+                runner = BodyRunner(self._context, run=False, templated=self._templated)
+                runner.run(branch.body)
+                if not error_reported:
+                    error_reported = True
+                    raise ExecutionFailed(data.error)
+        raise ExecutionFailed(data.error)
+
+    def _run_block(self, block, result, run):
         try:
             with StatusReporter(block, result, self._context, run):
-                if run:
-                    if error:
-                        raise DataError(error)
                 runner = BodyRunner(self._context, run, self._templated)
                 runner.run(block.body)
         except (ExecutionFailures, ExecutionFailed, ReturnFromKeyword) as err:
@@ -435,7 +447,7 @@ class TryRunner:
                 handler_matched = True
                 if handler.variable:
                     self._context.variables[handler.variable] = str(failures)
-            result = TryHandlerResult(handler.patterns, handler.variable)
+            result = TryBranchResult(handler.type, handler.patterns, handler.variable)
             if not handler_error:
                 handler_error = self._run_block(handler, result, run)
             else:
@@ -455,14 +467,14 @@ class TryRunner:
         else_error = None
         if data.else_block:
             run = self._run and not failures and not handler_error
-            result = BlockResult(data.else_block.type)
+            result = TryBranchResult(data.TRY_ELSE)
             else_error = self._run_block(data.else_block, result, run)
         return else_error
 
     def _run_finally_block(self, data):
         if data.finally_block:
             run = self._run and not data.error
-            with StatusReporter(data.finally_block, BlockResult(data.finally_block.type),
+            with StatusReporter(data.finally_block, TryBranchResult(data.FINALLY),
                                 self._context, run):
                 runner = BodyRunner(self._context, run, self._templated)
                 runner.run(data.finally_block.body)

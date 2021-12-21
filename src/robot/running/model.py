@@ -56,23 +56,6 @@ class IfBranches(model.IfBranches):
     __slots__ = []
 
 
-class ExceptBlocks(model.ExceptBlocks):
-    __slots__ = []
-
-
-class Block(model.Block):
-    __slots__ = ['lineno', 'error']
-    body_class = Body
-
-    def __init__(self, type, parent=None, lineno=None):
-        super().__init__(type, parent)
-        self.lineno = lineno
-
-    @property
-    def source(self):
-        return self.parent.source if self.parent is not None else None
-
-
 @Body.register
 class Keyword(model.Keyword):
     """Represents a single executable keyword.
@@ -147,35 +130,27 @@ class IfBranch(model.IfBranch):
         return self.parent.source if self.parent is not None else None
 
 
-@Body.register
-class Try(model.Try):
-    __slots__ = ['lineno', 'error']
-    try_class = Block
-    excepts_class = ExceptBlocks
-    else_class = Block
-    finally_class = Block
+class TryBranch(model.TryBranch):
+    __slots__ = ['lineno']
+    body_class = Body
 
-    def __init__(self, parent=None, lineno=None, error=None):
-        super().__init__(parent)
+    def __init__(self, type=BodyItem.TRY, patterns=(), variable=None, parent=None,
+                 lineno=None):
+        super().__init__(type, patterns, variable, parent)
         self.lineno = lineno
-        self.try_block.lineno = lineno
-        self.error = error
 
     @property
     def source(self):
         return self.parent.source if self.parent is not None else None
 
-    def run(self, context, run=True, templated=False):
-        return TryRunner(context, run, templated).run(self)
 
-
-@ExceptBlocks.register
-class Except(model.Except):
+@Body.register
+class Try(model.Try):
     __slots__ = ['lineno', 'error']
-    body_class = Body
+    branch_class = TryBranch
 
-    def __init__(self, patterns=None, variable=None, parent=None, lineno=None, error=None):
-        super().__init__(patterns, variable, parent)
+    def __init__(self, parent=None, lineno=None, error=None):
+        super().__init__(parent)
         self.lineno = lineno
         self.error = error
 

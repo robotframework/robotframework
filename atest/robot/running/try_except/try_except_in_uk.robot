@@ -63,3 +63,8 @@ Return in except handler
 
 Return in else
     PASS    NOT RUN    PASS    PASS
+
+*** Keywords ***
+Verify try except and block statuses in uk
+    [Arguments]    @{types_and_statuses}    ${tc_status}=    ${path}=body[0].body[0]
+    Verify try except and block statuses    @{types_and_statuses}    tc_status=${tc_status}    path=${path}

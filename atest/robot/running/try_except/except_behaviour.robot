@@ -32,17 +32,17 @@ Invalid variable in pattern
     FAIL    NOT RUN    PASS    tc_status=FAIL
 
 Matcher type cannot be defined with variable
-    [Template]
+    [Template]    NONE
     ${tc}=    Verify try except and block statuses    FAIL    PASS
     Block statuses should be    ${tc.body[1]}    FAIL    NOT RUN
 
 Skip cannot be caught
-    [Template]
+    [Template]    NONE
     Verify try except and block statuses    SKIP    NOT RUN    PASS    tc_status=SKIP
 
 Return cannot be caught
-    [Template]
-    Verify try except and block statuses in uk    PASS   NOT RUN    PASS
+    [Template]    NONE
+    Verify try except and block statuses    PASS   NOT RUN    PASS    path=body[0].body[0]
 
 AS gets the message
     FAIL    PASS

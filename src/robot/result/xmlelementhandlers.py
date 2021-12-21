@@ -211,20 +211,12 @@ class TryHandler(ElementHandler):
 
 
 @ElementHandler.register
-class BlockHandler(ElementHandler):
+class TryBranchHandler(ElementHandler):   # FIXME: branch vs block?
     tag = 'block'
     children = frozenset(('status', 'msg', 'kw', 'for', 'if', 'try', 'return', 'pattern'))
 
     def start(self, elem, result):
-        type_ = elem.get('type')
-        if type_ == 'TRY':
-            return result.try_block
-        if type_ == 'EXCEPT':
-            return result.except_blocks.create_except(variable=elem.get('variable'))
-        if type_ == 'ELSE':
-            return result.else_block
-        if type_ == 'FINALLY':
-            return result.finally_block
+        return result.body.create_branch(elem.get('type'), variable=elem.get('variable'))
 
 
 @ElementHandler.register
@@ -232,8 +224,8 @@ class PatternHandler(ElementHandler):
     tag = 'pattern'
     children = frozenset()
 
-    def start(self, elem, result):
-        return result.patterns.append(elem.text or '')
+    def end(self, elem, result):
+        result.patterns += (elem.text or '',)
 
 
 @ElementHandler.register

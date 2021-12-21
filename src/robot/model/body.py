@@ -60,11 +60,8 @@ class BodyItem(ModelObject):
         return '%s-k%d' % (self.parent.id, steps.index(self) + 1)
 
 
-class Body(ItemList):
-    """A list-like object representing body of a suite, a test or a keyword.
-
-    Body contains the keywords and other structures such as for loops.
-    """
+class BaseBody(ItemList):
+    """Base class for Body and Branches objects."""
     __slots__ = []
     # Set using 'Body.register' when these classes are created.
     keyword_class = None
@@ -148,6 +145,27 @@ class Body(ItemList):
         return items
 
 
+class Body(BaseBody):
+    """A list-like object representing body of a suite, a test or a keyword.
+
+    Body contains the keywords and other structures such as FOR loops.
+    """
+    pass
+
+
+class Branches(BaseBody):
+    """A list-like object representing branches IF and TRY objects contain."""
+    __slots__ = ['branch_class']
+
+    def __init__(self, branch_class, parent=None, items=None):
+        self.branch_class = branch_class
+        super().__init__(parent, items)
+
+    def create_branch(self, *args, **kwargs):
+        return self.append(self.branch_class(*args, **kwargs))
+
+
+# FIXME: Remove and use generic Branches instead.
 class IfBranches(Body):
     if_branch_class = None
     keyword_class = None
@@ -157,14 +175,3 @@ class IfBranches(Body):
 
     def create_branch(self, *args, **kwargs):
         return self.append(self.if_branch_class(*args, **kwargs))
-
-
-class ExceptBlocks(Body):
-    except_class = None
-    keyword_class = None
-    for_class = None
-    if_class = None
-    __slots__ = []
-
-    def create_except(self, *args, **kwargs):
-        return self.append(self.except_class(*args, **kwargs))

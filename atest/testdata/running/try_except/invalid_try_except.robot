@@ -64,7 +64,7 @@ Multiple default excepts
         Fail   Should not be executed
     EXCEPT
         Fail   Should not be executed
-    FINALLY
+    ELSE
         Fail   Should not be executed
     END
 
@@ -135,8 +135,6 @@ Finally without body
     [Documentation]    FAIL    FINALLY block cannot be empty.
     TRY
         Fail   Should not be executed
-    EXCEPT    Error
-        Fail   Should not be executed
     FINALLY
     END
 
@@ -191,8 +189,8 @@ Finally before else
     END
 
 Template with try except
-    [Template]    Log many
     [Documentation]    FAIL    Templates cannot be used with TRY.
+    [Template]    Log many
     TRY
         Fail   Should not be executed
     EXCEPT    Error
@@ -200,8 +198,8 @@ Template with try except
     END
 
 Template with try except inside if
-    [Template]    Log many
     [Documentation]    FAIL    Templates cannot be used with TRY.
+    [Template]    Log many
     IF    True
         TRY
             Fail   Should not be executed
@@ -209,3 +207,16 @@ Template with try except inside if
             Fail   Should not be executed
         END
     END
+
+Template with IF inside TRY
+    [Documentation]    FAIL
+    ...    Multiple errors:
+    ...    - TRY has no closing END.
+    ...    - Templates cannot be used with TRY.
+    [Template]    Log many
+    TRY
+        IF    True
+            Fail    Should not be executed
+        END
+    FINALLY
+        No Operation

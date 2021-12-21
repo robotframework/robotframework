@@ -5,63 +5,64 @@ Test Template     Verify try except and block statuses
 
 *** Test Cases ***
 Try without END
-    FAIL    NOT RUN    NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN
 
 Try without body
-    FAIL    NOT RUN    NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN
 
 Try without except or finally
-    FAIL
+    TRY:FAIL
 
 Try with argument
-    FAIL    NOT RUN    NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN
 
 Except without body
-    FAIL    NOT RUN    NOT RUN    NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN    EXCEPT:NOT RUN    FINALLY:NOT RUN
 
 Default except not last
-    FAIL    NOT RUN    NOT RUN    NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN    EXCEPT:NOT RUN    FINALLY:NOT RUN
 
 Multiple default excepts
-    FAIL    NOT RUN    NOT RUN    NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN    EXCEPT:NOT RUN    TRY ELSE:NOT RUN
 
 AS not the second last token
-    FAIL    NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN
 
 Invalid AS variable
-    FAIL    NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN
 
 Else with argument
-    FAIL    NOT RUN    NOT RUN    NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN    TRY ELSE:NOT RUN    FINALLY:NOT RUN
 
 Else without body
-    FAIL    NOT RUN    NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN    TRY ELSE:NOT RUN    FINALLY:NOT RUN
 
 Multiple else blocks
-    FAIL    NOT RUN    NOT RUN    NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN    TRY ELSE:NOT RUN    TRY ELSE:NOT RUN    FINALLY:NOT RUN
 
 Finally with argument
-    FAIL    NOT RUN    NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN
 
 Finally without body
-    FAIL    NOT RUN
+    TRY:FAIL    FINALLY:NOT RUN
 
 Multiple finally blocks
-    FAIL    NOT RUN    NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN    FINALLY:NOT RUN
 
 Else before except
-    FAIL    NOT RUN    NOT RUN    NOT RUN   NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN    TRY ELSE:NOT RUN    EXCEPT:NOT RUN   FINALLY:NOT RUN
 
 Finally before except
-    FAIL    NOT RUN    NOT RUN    NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN    EXCEPT:NOT RUN
 
 Finally before else
-    FAIL    NOT RUN    NOT RUN    NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN    TRY ELSE:NOT RUN
 
 Template with try except
-    FAIL    NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN
 
 Template with try except inside if
-    [Template]
-    ${tc}=    Check Test Case    ${TEST NAME}
-    Block statuses should be    ${tc.body[0].body[0].body[0]}    FAIL    NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN    path=body[0].body[0].body[0]
+
+Template with IF inside TRY
+    TRY:FAIL    FINALLY:NOT RUN
