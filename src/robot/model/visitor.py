@@ -243,7 +243,7 @@ class SuiteVisitor:
         """Implements traversing through TRY/EXCEPT structures.
 
         This method is used with the TRY/EXCEPT root element. Actual TRY, EXCEPT, ELSE
-        and FINALLY blocks are visited separately.
+        and FINALLY branches are visited separately.
         """
         if self.start_try(try_) is not False:
             try_.body.visit(self)
@@ -260,21 +260,21 @@ class SuiteVisitor:
         """Called when TRY/EXCEPT structure ends. Default implementation does nothing."""
         pass
 
-    def visit_try_block(self, block):
-        """Visits individual TRY, EXCEPT, ELSE and FINALLY blocks."""
-        if self.start_try_block(block) is not False:
-            block.body.visit(self)
-            self.end_try_block(block)
+    def visit_try_branch(self, branch):
+        """Visits individual TRY, EXCEPT, ELSE and FINALLY branches."""
+        if self.start_try_branch(branch) is not False:
+            branch.body.visit(self)
+            self.end_try_branch(branch)
 
-    def start_try_block(self, block):
-        """Called when TRY block starts. Default implementation does nothing.
+    def start_try_branch(self, branch):
+        """Called when TRY, EXCEPT, ELSE or FINALLY branch starts.
 
         Can return explicit ``False`` to stop visiting.
         """
         pass
 
-    def end_try_block(self, block):
-        """Called when TRY block ends. Default implementation does nothing."""
+    def end_try_branch(self, branch):
+        """Called when TRY, EXCEPT, ELSE or FINALLY branch ends."""
         pass
 
     def visit_return(self, return_):

@@ -244,17 +244,14 @@ class JsonConverter:
                    'arguments': ''}
 
     def _convert_try(self, data):
-        yield {'type': 'TRY', 'name': '', 'arguments': ''}
-        for block in data.except_blocks:
-            patterns = ', '.join(block.patterns)
-            as_var = f' AS {block.variable}' if block.variable else ''
-            yield {'type': 'EXCEPT',
-                   'name': f'{patterns}{as_var}',
-                   'arguments': ''}
-        if data.else_block:
-            yield {'type': 'ELSE', 'name': '', 'arguments': ''}
-        if data.finally_block:
-            yield {'type': 'FINALLY', 'name': '', 'arguments': ''}
+        for branch in data.body:
+            if branch.type == branch.EXCEPT:
+                patterns = ', '.join(branch.patterns)
+                as_var = f'AS {branch.variable}' if branch.variable else ''
+                name = f'{patterns} {as_var}'.strip()
+            else:
+                name = ''
+            yield {'type': branch.type, 'name': name, 'arguments': ''}
 
     def _convert_keyword(self, kw, kw_type):
         return {

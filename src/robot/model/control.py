@@ -154,11 +154,10 @@ class TryBranch(BodyItem):
 
     def __repr__(self):
         repr_args = self.repr_args if self.type == BodyItem.EXCEPT else ['type']
-        return super().__repr__(repr_args)
+        return self._repr(repr_args)
 
     def visit(self, visitor):
-        # FIXME: block -> branch
-        visitor.visit_try_block(self)
+        visitor.visit_try_branch(self)
 
 
 @Body.register
@@ -176,26 +175,25 @@ class Try(BodyItem):
     def body(self, branches):
         return Branches(self.branch_class, self, branches)
 
-    # FIXME: block -> branch
     @property
-    def try_block(self):
+    def try_branch(self):
         if self.body and self.body[0].type == BodyItem.TRY:
             return self.body[0]
         raise TypeError("No 'TRY' branch or 'TRY' branch is not first.")
 
     @property
-    def except_blocks(self):
+    def except_branches(self):
         return [branch for branch in self.body if branch.type == BodyItem.EXCEPT]
 
     @property
-    def else_block(self):
+    def else_branch(self):
         for branch in self.body:
             if branch.type == BodyItem.ELSE:
                 return branch
         return None
 
     @property
-    def finally_block(self):
+    def finally_branch(self):
         if self.body and self.body[-1].type == BodyItem.FINALLY:
             return self.body[-1]
         return None

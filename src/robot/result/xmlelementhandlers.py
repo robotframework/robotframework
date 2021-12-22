@@ -211,8 +211,8 @@ class TryHandler(ElementHandler):
 
 
 @ElementHandler.register
-class TryBranchHandler(ElementHandler):   # FIXME: branch vs block?
-    tag = 'block'
+class TryBranchHandler(ElementHandler):
+    tag = 'block'     # FIXME: branch vs block?
     children = frozenset(('status', 'msg', 'kw', 'for', 'if', 'try', 'return', 'pattern'))
 
     def start(self, elem, result):

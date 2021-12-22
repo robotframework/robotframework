@@ -400,7 +400,7 @@ class TryRunner:
                 self._run_invalid(data)
                 return False
             result = TryBranchResult(data.TRY)
-            failures = self._run_block(data.try_block, result, run)
+            failures = self._run_branch(data.try_branch, result, run)
             self._run_handlers(data, failures)
         return run
 
@@ -416,11 +416,11 @@ class TryRunner:
                     raise ExecutionFailed(data.error)
         raise ExecutionFailed(data.error)
 
-    def _run_block(self, block, result, run):
+    def _run_branch(self, branch, result, run):
         try:
-            with StatusReporter(block, result, self._context, run):
+            with StatusReporter(branch, result, self._context, run):
                 runner = BodyRunner(self._context, run, self._templated)
-                runner.run(block.body)
+                runner.run(branch.body)
         except (ExecutionFailures, ExecutionFailed, ReturnFromKeyword) as err:
             return err
         else:
@@ -428,8 +428,8 @@ class TryRunner:
 
     def _run_handlers(self, data, failures):
         handler_error, handler_matched = self._run_except_handlers(data, failures)
-        else_error = self._run_else_block(data, failures, handler_error)
-        self._run_finally_block(data)
+        else_error = self._run_else_branch(data, failures, handler_error)
+        self._run_finally_branch(data)
         if handler_error:
             raise handler_error
         if else_error:
@@ -440,7 +440,7 @@ class TryRunner:
     def _run_except_handlers(self, data, failures):
         handler_matched = False
         handler_error = None
-        for handler in data.except_blocks:
+        for handler in data.except_branches:
             run, handler_error = self._should_run_handler(
                 data, failures, handler, handler_matched, handler_error)
             if run:
@@ -449,9 +449,9 @@ class TryRunner:
                     self._context.variables[handler.variable] = str(failures)
             result = TryBranchResult(handler.type, handler.patterns, handler.variable)
             if not handler_error:
-                handler_error = self._run_block(handler, result, run)
+                handler_error = self._run_branch(handler, result, run)
             else:
-                self._run_block(handler, result, run)
+                self._run_branch(handler, result, run)
         return handler_error, handler_matched
 
     def _should_run_handler(self,data, failures, handler, handler_matched,
@@ -463,21 +463,21 @@ class TryRunner:
         except:
             return False, ExecutionFailed(get_error_message())
 
-    def _run_else_block(self, data, failures, handler_error):
+    def _run_else_branch(self, data, failures, handler_error):
         else_error = None
-        if data.else_block:
+        if data.else_branch:
             run = self._run and not failures and not handler_error
             result = TryBranchResult(data.ELSE)
-            else_error = self._run_block(data.else_block, result, run)
+            else_error = self._run_branch(data.else_branch, result, run)
         return else_error
 
-    def _run_finally_block(self, data):
-        if data.finally_block:
+    def _run_finally_branch(self, data):
+        if data.finally_branch:
             run = self._run and not data.error
-            with StatusReporter(data.finally_block, TryBranchResult(data.FINALLY),
+            with StatusReporter(data.finally_branch, TryBranchResult(data.FINALLY),
                                 self._context, run):
                 runner = BodyRunner(self._context, run, self._templated)
-                runner.run(data.finally_block.body)
+                runner.run(data.finally_branch.body)
 
     def _error_is_expected(self, error, handler):
         if isinstance(error, ReturnFromKeyword):

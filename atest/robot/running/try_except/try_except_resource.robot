@@ -13,11 +13,11 @@ Check Test Status
     [Arguments]    @{statuses}    ${tc_status}=${None}
     ${tc} =    Check Test Case    ${TESTNAME}
     IF    $tc_status
-        Should Be Equal    ${tc.body[0].status}    ${tc_status}
+        Should Be Equal    ${tc.status}    ${tc_status}
     ELSE IF    'FAIL' in $statuses[1:] or ($statuses[0] == 'FAIL' and 'PASS' not in $statuses[1:])
-        Should Be Equal    ${tc.body[0].status}    FAIL
+        Should Be Equal    ${tc.status}    FAIL
     ELSE
-        Should Be Equal    ${tc.body[0].status}    PASS
+        Should Be Equal    ${tc.status}    PASS
     END
     RETURN    ${tc}
 

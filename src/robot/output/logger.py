@@ -252,7 +252,7 @@ class LoggerProxy(AbstractLoggerProxy):
         'If': 'start_if',
         'IfBranch': 'start_if_branch',
         'Try': 'start_try',
-        'TryBranch': 'start_try_block',
+        'TryBranch': 'start_try_branch',
         'Return': 'start_return'
     }
     _end_keyword_methods = {
@@ -261,7 +261,7 @@ class LoggerProxy(AbstractLoggerProxy):
         'If': 'end_if',
         'IfBranch': 'end_if_branch',
         'Try': 'end_try',
-        'TryBranch': 'end_try_block',
+        'TryBranch': 'end_try_branch',
         'Return': 'end_return'
     }
 
