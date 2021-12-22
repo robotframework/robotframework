@@ -488,18 +488,18 @@ Example
         expected1 = If(
             header=IfHeader(
                 tokens=[Token(Token.IF, 'IF', 3, 4)],
-                errors=('IF has no condition.',)
+                errors=('IF must have a condition.',)
             ),
             orelse=If(
                 header=ElseHeader(
                     tokens=[Token(Token.ELSE, 'ELSE', 4, 4),
                             Token(Token.ARGUMENT, 'ooops', 4, 12)],
-                    errors=('ELSE has condition.',)
+                    errors=('ELSE does not accept arguments.',)
                 ),
                 orelse=If(
                     header=ElseIfHeader(
                         tokens=[Token(Token.ELSE_IF, 'ELSE IF', 5, 4)],
-                        errors=('ELSE IF has no condition.',)
+                        errors=('ELSE IF must have a condition.',)
                     ),
                     errors=('ELSE IF branch cannot be empty.',)
                 ),
@@ -516,7 +516,7 @@ Example
         expected2 = If(
             header=IfHeader(
                 tokens=[Token(Token.IF, 'IF', 8, 4)],
-                errors=('IF has no condition.',)
+                errors=('IF must have a condition.',)
             ),
             errors=('IF branch cannot be empty.',
                     'IF has no closing END.')
@@ -630,7 +630,7 @@ Example
             body=[KeywordCall([Token(Token.KEYWORD, 'ooops', 3, 36)])],
             orelse=If(
                 header=ElseIfHeader([Token(Token.ELSE_IF, 'ELSE IF', 3, 45)],
-                                    errors=('ELSE IF has no condition.',)),
+                                    errors=('ELSE IF must have a condition.',)),
                 errors=('ELSE IF branch cannot be empty.',),
             ),
             end=End([Token(Token.END, '', 3, 52)])

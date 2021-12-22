@@ -9,7 +9,7 @@ Invalid condition with other error
 
 Empty IF
     [Documentation]    FAIL Multiple errors:
-    ...    - IF has no condition.
+    ...    - IF must have a condition.
     ...    - IF branch cannot be empty.
     ...    - IF has no closing END.
     IF
@@ -38,7 +38,7 @@ IF followed by ELSE
 
 Empty ELSE IF 1
     [Documentation]    FAIL Multiple errors:
-    ...    - ELSE IF has no condition.
+    ...    - ELSE IF must have a condition.
     ...    - ELSE IF branch cannot be empty.
     IF    False    Not run    ELSE IF
 

@@ -849,9 +849,9 @@ class IfHeader(IfElseHeader):
     def validate(self):
         conditions = len(self.get_tokens(Token.ARGUMENT))
         if conditions == 0:
-            self.errors += ('%s has no condition.' % self.type,)
+            self.errors += ('%s must have a condition.' % self.type,)
         if conditions > 1:
-            self.errors += ('%s has more than one condition.' % self.type,)
+            self.errors += ('%s cannot have more than one condition.' % self.type,)
 
 
 @Statement.register
@@ -882,7 +882,7 @@ class ElseHeader(IfElseHeader):
 
     def validate(self):
         if self.get_tokens(Token.ARGUMENT):
-            self.errors += ('ELSE has condition.',)
+            self.errors += ('ELSE does not accept arguments.',)
 
 
 class NoArgumentHeader(Statement):
@@ -897,7 +897,7 @@ class NoArgumentHeader(Statement):
 
     def validate(self):
         if self.get_tokens(Token.ARGUMENT):
-            self.errors += (f'{self.type} has an argument.',)    # FIXME: Enhance error message. Use this class also with END.
+            self.errors += (f'{self.type} does not accept arguments.',)
 
 
 @Statement.register
@@ -951,20 +951,8 @@ class FinallyHeader(NoArgumentHeader):
 
 
 @Statement.register
-class End(Statement):
+class End(NoArgumentHeader):
     type = Token.END
-
-    @classmethod
-    def from_params(cls, indent=FOUR_SPACES, eol=EOL):
-        return cls([
-            Token(Token.SEPARATOR, indent),
-            Token(Token.END),
-            Token(Token.EOL, eol)
-        ])
-
-    def validate(self):
-        if self.get_tokens(Token.ARGUMENT):
-            self.errors += ('END does not accept arguments.',)
 
 
 @Statement.register
