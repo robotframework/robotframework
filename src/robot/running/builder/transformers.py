@@ -332,14 +332,14 @@ class IfBuilder(NodeVisitor):
         self.model = None
 
     def build(self, node):
-        model = self.parent.body.create_if(lineno=node.lineno,
-                                           error=format_error(self._get_errors(node)))
+        root = self.parent.body.create_if(lineno=node.lineno,
+                                          error=format_error(self._get_errors(node)))
         assign = node.assign
         node_type = None
         while node:
             node_type = node.type if node.type != 'INLINE IF' else 'IF'
-            self.model = model.body.create_branch(node_type, node.condition,
-                                                  lineno=node.lineno)
+            self.model = root.body.create_branch(node_type, node.condition,
+                                                 lineno=node.lineno)
             for step in node.body:
                 self.visit(step)
             if assign:
@@ -351,10 +351,10 @@ class IfBuilder(NodeVisitor):
             node = node.orelse
         # Smallish hack to make sure assignment is always run.
         if assign and node_type != 'ELSE':
-            model.body.create_branch('ELSE').body.create_keyword(
+            root.body.create_branch('ELSE').body.create_keyword(
                 assign=assign, name='BuiltIn.Set Variable', args=['${NONE}']
             )
-        return model
+        return root
 
     def _get_errors(self, node):
         errors = node.header.errors + node.errors
@@ -393,27 +393,26 @@ class TryBuilder(NodeVisitor):
 
     def build(self, node):
         root = self.parent.body.create_try(lineno=node.lineno)
-        self.model = root.body.create_branch('TRY', lineno=node.lineno)
-        for step in node.body:
-            self.visit(step)
-        for block in node.blocks:
-            self.model = root.body.create_branch(block.type, block.patterns,
-                                                 block.variable, lineno=block.lineno)
-            for step in block.body:
+        errors = self._get_errors(node)
+        while node:
+            self.model = root.body.create_branch(node.type, node.patterns,
+                                                 node.variable, lineno=node.lineno)
+            for step in node.body:
                 self.visit(step)
-        root.error = format_error(self._get_errors(node))
+            node = node.next
+        if self.template_error:
+            errors += (self.template_error,)
+        if errors:
+            root.error = format_error(errors)
         return root
 
     def _get_errors(self, node):
         errors = node.header.errors + node.errors
-        for handler in node.blocks:
-            errors += handler.errors + handler.header.errors
-        if self.template_error:
-            errors += (self.template_error,)
+        if node.next:
+            errors += self._get_errors(node.next)
+        if node.end:
+            errors += node.end.errors
         return errors
-
-    def visit_TryHandler(self, node):
-        TryHandlerBuilder(self.model).build(node)
 
     def visit_If(self, node):
         IfBuilder(self.model).build(node)
@@ -433,42 +432,6 @@ class TryBuilder(NodeVisitor):
 
     def visit_TemplateArguments(self, node):
         self.template_error = 'Templates cannot be used with TRY.'
-
-
-class TryHandlerBuilder(NodeVisitor):
-
-    def __init__(self, parent):
-        self.parent = parent
-        self.model = None
-
-    def build(self, node):
-        if node.type == Token.EXCEPT:
-            self.model = self.parent.except_blocks.create_except(
-                patterns=node.patterns, variable=node.variable)
-        elif node.type == Token.ELSE:
-            self.model = self.parent.else_block
-        elif node.type == Token.FINALLY:
-            self.model = self.parent.finally_block
-        self.model.config(lineno=node.lineno, error=format_error(node.errors))
-        for step in node.body:
-            self.visit(step)
-        return self.model
-
-    def visit_If(self, node):
-        IfBuilder(self.model).build(node)
-
-    def visit_For(self, node):
-        ForBuilder(self.model).build(node)
-
-    def visit_Try(self, node):
-        TryBuilder(self.model).build(node)
-
-    def visit_ReturnStatement(self, node):
-        self.model.body.create_return(node.values, lineno=node.lineno)
-
-    def visit_KeywordCall(self, node):
-        self.model.body.create_keyword(name=node.keyword, args=node.args,
-                                       assign=node.assign, lineno=node.lineno)
 
 
 def format_error(errors):

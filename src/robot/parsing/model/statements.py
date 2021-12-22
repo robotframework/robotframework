@@ -897,7 +897,7 @@ class NoArgumentHeader(Statement):
 
     def validate(self):
         if self.get_tokens(Token.ARGUMENT):
-            self.errors += (f'{self.type} has an argument.',)
+            self.errors += (f'{self.type} has an argument.',)    # FIXME: Enhance error message. Use this class also with END.
 
 
 @Statement.register
@@ -910,7 +910,8 @@ class ExceptHeader(Statement):
     type = Token.EXCEPT
 
     @classmethod
-    def from_params(cls, patterns=None, variable=None, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, patterns=None, variable=None, indent=FOUR_SPACES,
+                    separator=FOUR_SPACES, eol=EOL):
         tokens = [
             Token(Token.SEPARATOR, indent),
             Token(Token.EXCEPT),
@@ -935,16 +936,13 @@ class ExceptHeader(Statement):
         return self.get_value(Token.VARIABLE)
 
     def validate(self):
-        as_seen = False
-        for token in self.tokens:
-            if token.type == Token.AS:
-                as_seen = True
-                if token != self.tokens[-2]:
-                    self.errors += ('AS must be second to last.',)
-        if as_seen:
+        as_token = self.get_token(Token.AS)
+        if as_token:
+            if as_token is not self.tokens[-2]:
+                self.errors += ("EXCEPT's AS marker must be second to last.",)
             var = self.tokens[-1].value
-            if not is_scalar_assign(var, allow_assign_mark=False):
-                self.errors += (f"Invalid AS variable '{var}'.",)
+            if not is_scalar_assign(var):
+                self.errors += (f"EXCEPT's AS variable '{var}' is invalid.",)
 
 
 @Statement.register

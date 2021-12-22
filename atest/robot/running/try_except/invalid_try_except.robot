@@ -4,25 +4,28 @@ Suite Setup       Run Tests    ${EMPTY}    running/try_except/invalid_try_except
 Test Template     Verify try except and block statuses
 
 *** Test Cases ***
-Try without END
+TRY without END
     TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN
 
-Try without body
+TRY without body
     TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN
 
-Try without except or finally
+TRY without EXCEPT or FINALLY
     TRY:FAIL
 
-Try with argument
+TRY with ELSE without EXCEPT or FINALLY
+    TRY:FAIL    ELSE:NOT RUN
+
+TRY with argument
     TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN
 
-Except without body
+EXCEPT without body
     TRY:FAIL    EXCEPT:NOT RUN    EXCEPT:NOT RUN    FINALLY:NOT RUN
 
-Default except not last
+Default EXCEPT not last
     TRY:FAIL    EXCEPT:NOT RUN    EXCEPT:NOT RUN    FINALLY:NOT RUN
 
-Multiple default excepts
+Multiple default EXCEPTs
     TRY:FAIL    EXCEPT:NOT RUN    EXCEPT:NOT RUN    ELSE:NOT RUN
 
 AS not the second last token
@@ -31,37 +34,37 @@ AS not the second last token
 Invalid AS variable
     TRY:FAIL    EXCEPT:NOT RUN
 
-Else with argument
+ELSE with argument
     TRY:FAIL    EXCEPT:NOT RUN    ELSE:NOT RUN    FINALLY:NOT RUN
 
-Else without body
+ELSE without body
     TRY:FAIL    EXCEPT:NOT RUN    ELSE:NOT RUN    FINALLY:NOT RUN
 
-Multiple else blocks
+Multiple ELSE blocks
     TRY:FAIL    EXCEPT:NOT RUN    ELSE:NOT RUN    ELSE:NOT RUN    FINALLY:NOT RUN
 
-Finally with argument
+FINALLY with argument
     TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN
 
-Finally without body
+FINALLY without body
     TRY:FAIL    FINALLY:NOT RUN
 
-Multiple finally blocks
+Multiple FINALLY blocks
     TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN    FINALLY:NOT RUN
 
-Else before except
+ELSE before EXCEPT
     TRY:FAIL    EXCEPT:NOT RUN    ELSE:NOT RUN    EXCEPT:NOT RUN   FINALLY:NOT RUN
 
-Finally before except
+FINALLY before EXCEPT
     TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN    EXCEPT:NOT RUN
 
-Finally before else
+FINALLY before ELSE
     TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN    ELSE:NOT RUN
 
-Template with try except
+Template with TRY
     TRY:FAIL    EXCEPT:NOT RUN
 
-Template with try except inside if
+Template with TRY inside IF
     TRY:FAIL    EXCEPT:NOT RUN    path=body[0].body[0].body[0]
 
 Template with IF inside TRY

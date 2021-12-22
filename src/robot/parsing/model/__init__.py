@@ -15,6 +15,6 @@
 
 from .blocks import (File, SettingSection, VariableSection, TestCaseSection,
                      KeywordSection, CommentSection, TestCase, Keyword, For,
-                     If, Try, TryHandler)
+                     If, Try)
 from .statements import Statement
 from .visitor import ModelTransformer, ModelVisitor

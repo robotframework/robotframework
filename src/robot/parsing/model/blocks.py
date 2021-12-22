@@ -243,68 +243,14 @@ class For(Block):
 
 
 class Try(Block):
-    _fields = ('header', 'body', 'blocks', 'end')
+    _fields = ('header', 'body', 'next', 'end')
 
-    def __init__(self, header, body=None, blocks=None, end=None, errors=()):
+    def __init__(self, header, body=None, next=None, end=None, errors=()):
         self.header = header
         self.body = body or []
-        self.blocks = blocks or []
+        self.next = next
         self.end = end
         self.errors = errors
-
-    # FIXME: Are these propertys needed?
-    @property
-    def except_blocks(self):
-        return [b for b in self.blocks if b.type == Token.EXCEPT]
-
-    @property
-    def else_block(self):
-        else_blocks = [b for b in self.blocks if b.type == Token.ELSE]
-        return else_blocks[0] if else_blocks else None
-
-    @property
-    def finally_block(self):
-        finally_blocks = [b for b in self.blocks if b.type == Token.FINALLY]
-        return finally_blocks[0] if finally_blocks else None
-
-    def validate(self):
-        if not self.end:
-            self.errors += ('TRY has no closing END.',)
-        if not self.body:
-            self.errors += ('TRY block cannot be empty.',)
-        if not (self.except_blocks or self.finally_block):
-            self.errors += ('TRY block must be followed by EXCEPT or FINALLY block.',)
-        self._validate_structure()
-
-    def _validate_structure(self):
-        else_count = 0
-        finally_count = 0
-        default_block_seen = False
-        for block in self.blocks:
-            if block.type == Token.EXCEPT:
-                if else_count > 0:
-                    self.errors += ('ELSE block before EXCEPT block.',)
-                if finally_count > 0:
-                    self.errors += ('FINALLY block before EXCEPT block.',)
-                if not block.patterns:
-                    if default_block_seen:
-                        self.errors += ('Multiple default (empty) EXCEPT blocks',)
-                    default_block_seen = True
-                if block.patterns and default_block_seen:
-                    self.errors += ('Default (empty) EXCEPT must be last.',)
-            if block.type == Token.ELSE:
-                else_count += 1
-                if finally_count > 0:
-                    self.errors += ('FINALLY block before ELSE block.',)
-            if block.type == Token.FINALLY:
-                finally_count += 1
-        if finally_count > 1:
-            self.errors += ('Multiple FINALLY blocks.',)
-        if else_count > 1:
-            self.errors += ('Multiple ELSE blocks.',)
-
-
-class TryHandler(HeaderAndBody):
 
     @property
     def type(self):
@@ -319,8 +265,51 @@ class TryHandler(HeaderAndBody):
         return getattr(self.header, 'variable', None)
 
     def validate(self):
+        self._validate_body()
+        if self.type == Token.TRY:
+            self._validate_structure()
+            self._validate_end()
+
+    def _validate_body(self):
         if not self.body:
-            self.errors += (f'{self.type} block cannot be empty.',)
+            self.errors += (f'{self.type} branch cannot be empty.',)
+
+    def _validate_structure(self):
+        else_count = 0
+        finally_count = 0
+        except_count = 0
+        empty_except_count = 0
+        branch = self.next
+        while branch:
+            if branch.type == Token.EXCEPT:
+                if else_count:
+                    self.errors += ('EXCEPT not allowed after ELSE.',)
+                if finally_count:
+                    self.errors += ('EXCEPT not allowed after FINALLY.',)
+                if branch.patterns and empty_except_count:
+                    self.errors += ('EXCEPT without patterns must be last.',)
+                if not branch.patterns:
+                    empty_except_count += 1
+                except_count += 1
+            if branch.type == Token.ELSE:
+                if finally_count:
+                    self.errors += ('ELSE not allowed after FINALLY.',)
+                else_count += 1
+            if branch.type == Token.FINALLY:
+                finally_count += 1
+            branch = branch.next
+        if finally_count > 1:
+            self.errors += ('Only one FINALLY allowed.',)
+        if else_count > 1:
+            self.errors += ('Only one ELSE allowed.',)
+        if empty_except_count > 1:
+            self.errors += ('Only one EXCEPT without patterns allowed.',)
+        if not (except_count or finally_count):
+            self.errors += ('TRY structure must have EXCEPT or FINALLY branch.',)
+
+    def _validate_end(self):
+        if not self.end:
+            self.errors += ('TRY has no closing END.',)
 
 
 class ModelWriter(ModelVisitor):
