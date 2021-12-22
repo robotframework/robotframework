@@ -193,30 +193,21 @@ class IfHandler(ElementHandler):
 
 
 @ElementHandler.register
-class IfBranchHandler(ElementHandler):
+class BranchHandler(ElementHandler):
     tag = 'branch'
-    children = frozenset(('status', 'kw', 'if', 'for', 'try', 'msg', 'doc', 'return'))
+    children = frozenset(('status', 'kw', 'if', 'for', 'try', 'msg', 'doc', 'return', 'pattern'))
 
     def start(self, elem, result):
-        return result.body.create_branch(elem.get('type'), elem.get('condition'))
+        return result.body.create_branch(**elem.attrib)
 
 
 @ElementHandler.register
 class TryHandler(ElementHandler):
     tag = 'try'
-    children = frozenset(('status', 'block', 'msg', 'doc'))
+    children = frozenset(('status', 'branch', 'msg', 'doc'))
 
     def start(self, elem, result):
         return result.body.create_try()
-
-
-@ElementHandler.register
-class TryBranchHandler(ElementHandler):
-    tag = 'block'     # FIXME: branch vs block?
-    children = frozenset(('status', 'msg', 'kw', 'for', 'if', 'try', 'return', 'pattern'))
-
-    def start(self, elem, result):
-        return result.body.create_branch(elem.get('type'), variable=elem.get('variable'))
 
 
 @ElementHandler.register
