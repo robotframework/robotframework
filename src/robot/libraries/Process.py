@@ -20,8 +20,8 @@ from tempfile import TemporaryFile
 import signal as signal_module
 
 from robot.utils import (abspath, cmdline2list, ConnectionCache, console_decode,
-                         console_encode, is_list_like, is_string, is_unicode,
-                         is_truthy, NormalizedDict, secs_to_timestr, system_decode,
+                         console_encode, is_list_like, is_string, is_truthy,
+                         NormalizedDict, secs_to_timestr, system_decode,
                          system_encode, timestr_to_secs, WINDOWS)
 from robot.version import get_version
 from robot.api import logger
@@ -146,8 +146,7 @@ class Process:
     By default processes are run so that their standard output and standard
     error streams are kept in the memory. This works fine normally,
     but if there is a lot of output, the output buffers may get full and
-    the program can hang. Additionally on Jython, everything written to
-    these in-memory buffers can be lost if the process is terminated.
+    the program can hang.
 
     To avoid the above mentioned problems, it is possible to use ``stdout``
     and ``stderr`` arguments to specify files on the file system where to
@@ -244,16 +243,15 @@ class Process:
 
     = Active process =
 
-    The test library keeps record which of the started processes is currently
-    active. By default it is latest process started with `Start Process`,
-    but `Switch Process` can be used to select a different one. Using
+    The library keeps record which of the started processes is currently active.
+    By default it is the latest process started with `Start Process`,
+    but `Switch Process` can be used to activate a different process. Using
     `Run Process` does not affect the active process.
 
     The keywords that operate on started processes will use the active process
     by default, but it is possible to explicitly select a different process
-    using the ``handle`` argument. The handle can be the identifier returned by
-    `Start Process` or an ``alias`` explicitly given to `Start Process` or
-    `Run Process`.
+    using the ``handle`` argument. The handle can be an ``alias`` explicitly
+    given to `Start Process` or the process object returned by it.
 
     = Result object =
 
@@ -373,19 +371,44 @@ class Process:
         for more information about the arguments, and `Run Process` keyword
         for related examples.
 
-        Makes the started process new `active process`. Returns an identifier
-        that can be used as a handle to activate the started process if needed.
+        Makes the started process new `active process`. Returns the created
+        [https://docs.python.org/3/library/subprocess.html#popen-constructor |
+        subprocess.Popen] object which can be be used later to active this
+        process. ``Popen`` attributes like ``pid`` can also be accessed directly.
 
         Processes are started so that they create a new process group. This
-        allows sending signals to and terminating also possible child
-        processes. This is not supported on Jython.
+        allows terminating and sending signals to possible child processes.
+
+        Examples:
+
+        Start process and wait for it to end later using alias:
+        | `Start Process` | ${command} | alias=example |
+        | # Other keywords |
+        | ${result} = | `Wait For Process` | example |
+
+        Use returned ``Popen`` object:
+        | ${process} = | `Start Process` | ${command} |
+        | `Log` | PID: ${process.pid} |
+        | # Other keywords |
+        | ${result} = | `Terminate Process` | ${process} |
+
+        Use started process in a pipeline with another process:
+        | ${process} = | `Start Process` | python | -c | print('Hello, world!') |
+        | ${result} = | `Run Process` | python | -c | import sys; print(sys.stdin.read().upper().strip()) | stdin=${process.stdout} |
+        | `Wait For Process` | ${process} |
+        | `Should Be Equal` | ${result.stdout} | HELLO, WORLD! |
+
+        Returning a ``subprocess.Popen`` object is new in Robot Framework 5.0.
+        Earlier versions returned a generic handle and getting the process object
+        required using `Get Process Object` separately.
         """
         conf = ProcessConfiguration(**configuration)
         command = conf.get_command(command, list(arguments))
         self._log_start(command, conf)
         process = subprocess.Popen(command, **conf.popen_config)
         self._results[process] = ExecutionResult(process, **conf.result_config)
-        return self._processes.register(process, alias=conf.alias)
+        self._processes.register(process, alias=conf.alias)
+        return self._processes.current
 
     def _log_start(self, command, config):
         if is_list_like(command):
@@ -532,9 +555,6 @@ class Process:
         | Terminate Process           | myproc            | kill=true |
 
         Limitations:
-        - Graceful termination is not supported on Windows when using Jython.
-          Process is killed instead.
-        - Stopping the whole process group is not supported when using Jython.
         - On Windows forceful kill only stops the main process, not possible
           child processes.
         """
@@ -614,8 +634,7 @@ class Process:
         does the shell propagate the signal to the actual started process.
 
         To send the signal to the whole process group, ``group`` argument can
-        be set to any true value (see `Boolean arguments`). This is not
-        supported by Jython, however.
+        be set to any true value (see `Boolean arguments`).
         """
         if os.sep == '\\':
             raise RuntimeError('This keyword does not work on Windows.')
@@ -648,8 +667,9 @@ class Process:
 
         If ``handle`` is not given, uses the current `active process`.
 
-        Notice that the pid is not the same as the handle returned by
-        `Start Process` that is used internally by this library.
+        Starting from Robot Framework 5.0, it is also possible to directly access
+        the ``pid`` attribute of the ``subprocess.Popen`` object returned by
+        `Start Process` like ``${process.pid}``.
         """
         return self._processes[handle].pid
 
@@ -657,6 +677,10 @@ class Process:
         """Return the underlying ``subprocess.Popen`` object.
 
         If ``handle`` is not given, uses the current `active process`.
+
+        Starting from Robot Framework 5.0, `Start Process` returns the created
+        ``subprocess.Popen`` object, not a generic handle, making this keyword
+        mostly redundant.
         """
         return self._processes[handle]
 
@@ -820,7 +844,7 @@ class ExecutionResult:
             return ''
         try:
             content = stream.read()
-        except IOError:  # http://bugs.jython.org/issue2218
+        except IOError:  # TODO: can this be removed? http://bugs.jython.org/issue2218
             return ''
         finally:
             if stream_path:
@@ -899,7 +923,7 @@ class ProcessConfiguration:
         if os.path.isfile(path):
             return open(path)
         stdin_file = TemporaryFile()
-        if is_unicode(stdin):
+        if is_string(stdin):
             stdin = console_encode(stdin, self.output_encoding, force=True)
         stdin_file.write(stdin)
         stdin_file.seek(0)

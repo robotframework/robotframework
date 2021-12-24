@@ -23,7 +23,8 @@ different Robot Framework versions. Newer output.xml files have ``schemaversion`
 attribute telling which version they support and older implicitly support schema
 version 1.
 
-  * `<robot.02.xsd>`__ - Compatible with Robot Framework >= 4.0.
+  * `<robot.03.xsd>`__ - Compatible with Robot Framework >= 5.0.
+  * `<robot.02.xsd>`__ - Compatible with Robot Framework >= 4.0, < 5.0.
   * `<robot.01.xsd>`__ - Compatible with Robot Framework < 4.0.
 
 Due to XSD 1.1 not being widely adopted, these schema definitions use XSD 1.0.
@@ -42,7 +43,8 @@ Libdoc_ tool distributed with Robot Framework can generate machine readable spec
 both in XML and JSON format. XML spec files have XSD_ 1.0 compatible schema definition
 and JSON spec schema is JSON Schema `DRAFT-7`__ compatible.
 
-  * `<libdoc.03.xsd>`__ - Compatible with Robot Framework >= 4.0.
+  * `<libdoc.04.xsd>`__ - Compatible with Robot Framework >= 5.0.
+  * `<libdoc.03.xsd>`__ - Compatible with Robot Framework >= 4.0, < 5.0.
   * `<libdoc.02.xsd>`__ - Compatible with Robot Framework == 3.2.
   * `<libdoc.01.xsd>`__ - Compatible with Robot Framework < 3.2.
   * `<libdoc_schema.json>`__ - Compatible with Robot Framework >= 4.0.

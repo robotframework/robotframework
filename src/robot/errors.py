@@ -174,8 +174,6 @@ class HandlerExecutionFailed(ExecutionFailed):
         skip = self._get(error, 'SKIP_EXECUTION')
         super().__init__(details.message, test_timeout, keyword_timeout, syntax,
                          exit_on_failure, continue_on_failure, skip)
-        self.full_message = details.message
-        self.traceback = details.traceback
 
     def _get(self, error, attr):
         return bool(getattr(error, 'ROBOT_' + attr, False))

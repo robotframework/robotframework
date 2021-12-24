@@ -19,10 +19,10 @@ import os
 from robot.errors import DataError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER
-from robot.utils import (getdoc, get_error_details, Importer, is_init, normalize,
-                         seq2str2, unic, is_list_like, type_name)
+from robot.utils import (getdoc, get_error_details, Importer, is_dict_like, is_init,
+                         is_list_like, normalize, seq2str2, type_name)
 
-from .arguments import EmbeddedArguments
+from .arguments import EmbeddedArguments, CustomArgumentConverters
 from .context import EXECUTION_CONTEXTS
 from .dynamicmethods import (GetKeywordArguments, GetKeywordDocumentation,
                              GetKeywordNames, GetKeywordTags, RunKeyword)
@@ -65,11 +65,14 @@ class _BaseTestLibrary:
     def __init__(self, libcode, name, args, source, logger, variables):
         if os.path.exists(name):
             name = os.path.splitext(os.path.basename(os.path.abspath(name)))[0]
+        self._libcode = libcode
+        self._libinst = None
         self.version = self._get_version(libcode)
         self.name = name
         self.orig_name = name  # Stores original name when importing WITH NAME
         self.source = source
         self.logger = logger
+        self.converters = self._get_converters(libcode)
         self.handlers = HandlerStore(self.name, HandlerStore.TEST_LIBRARY_TYPE)
         self.has_listener = None  # Set when first instance is created
         self._doc = None
@@ -78,8 +81,6 @@ class _BaseTestLibrary:
         self.init = self._create_init_handler(libcode)
         self.positional_args, self.named_args \
             = self.init.resolve_arguments(args, variables)
-        self._libcode = libcode
-        self._libinst = None
 
     def __len__(self):
         return len(self.handlers)
@@ -139,7 +140,7 @@ class _BaseTestLibrary:
             or self._get_attr(libcode, '__version__')
 
     def _get_attr(self, object, attr, default='', upper=False):
-        value = unic(getattr(object, attr, default))
+        value = str(getattr(object, attr, default))
         if upper:
             value = normalize(value, ignore='_').upper()
         return value
@@ -153,6 +154,16 @@ class _BaseTestLibrary:
     def _resolve_init_method(self, libcode):
         init = getattr(libcode, '__init__', None)
         return init if is_init(init) else None
+
+    def _get_converters(self, libcode):
+        converters = getattr(libcode, 'ROBOT_LIBRARY_CONVERTERS', None)
+        if not converters:
+            return None
+        if not is_dict_like(converters):
+            self.report_error(f'Argument converters must be given as a dictionary, '
+                              f'got {type_name(converters)}.')
+            return None
+        return CustomArgumentConverters.from_dict(converters, self.report_error)
 
     def reset_instance(self, instance=None):
         prev = self._libinst

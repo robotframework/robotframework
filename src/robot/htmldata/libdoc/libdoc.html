@@ -66,7 +66,11 @@
         parseTemplates();
         document.title = libdoc.name;
         storage.init('libdoc');
-        libdoc.dataTypes = libdoc.dataTypes.enums.concat(libdoc.dataTypes.typedDicts);
+        libdoc.dataTypes = [].concat(
+            libdoc.dataTypes.customs,
+            libdoc.dataTypes.enums,
+            libdoc.dataTypes.typedDicts,
+        );
         libdoc.dataTypes = libdoc.dataTypes.map(function(dt) {
           dt.usage = [];
           return dt;
@@ -514,9 +518,16 @@ ${name}
 {{/if}}
 
 {{if types.length}}
-  <span class="arg-type" title="Argument '${name}' will be converter to type ${types}">
+  <span class="arg-type">
     ${( $data.linked = linked ),''}
-    {{each types}}&lt;{{if $data.linked.indexOf($value) > -1}}<a class="type" href="#${$value}">${$value}</a>{{else}}<span class="type">${$value}</span>{{/if}}&gt;<span class="or"></span>{{/each}}
+    {{each types}}
+      {{if $data.linked.indexOf($value) > -1}}
+          &lt;<a class="type" href="#${$value}" title="Click to show accepted values">${$value}</a>&gt;
+      {{else}}
+          &lt;<span class="type">${$value}</span>&gt;
+      {{/if}}
+      <span class="or"></span>
+    {{/each}}
   </span>
 {{/if}}
 </script>
@@ -536,9 +547,10 @@ ${name}
 <script type="text/x-jquery-tmpl" id="data-type-template">
     <div class="data-type-container {{if hidden}}no-{{/if}}match" id="${name}">
        <div class="data-type-name">
-            <h2>Type:
+            <h2>
             <a class="dt-name" href="#${encodeURIComponent(name)}"
                title="Link to this data type">${name}</a>
+            (${type})
             </h2>
        </div>
        <div class="data-type-content">

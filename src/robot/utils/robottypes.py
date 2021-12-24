@@ -18,6 +18,11 @@ from collections import UserString
 from io import IOBase
 from os import PathLike
 try:
+    from types import UnionType
+except ImportError:    # Python < 3.10
+    UnionType = ()
+from typing import Union
+try:
     from typing import TypedDict
 except ImportError:    # Python < 3.8
     typeddict_types = ()
@@ -53,10 +58,6 @@ def is_string(item):
     return isinstance(item, str)
 
 
-def is_unicode(item):
-    return isinstance(item, str)
-
-
 def is_pathlike(item):
     return isinstance(item, PathLike)
 
@@ -69,6 +70,12 @@ def is_list_like(item):
 
 def is_dict_like(item):
     return isinstance(item, Mapping)
+
+
+def is_union(item, allow_tuple=False):
+    return (isinstance(item, UnionType)
+            or getattr(item, '__origin__', None) is Union
+            or allow_tuple and isinstance(item, tuple))
 
 
 def type_name(item, capitalize=False):

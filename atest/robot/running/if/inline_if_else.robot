@@ -19,6 +19,14 @@ Not executed
 Not executed after failure
     NOT RUN    NOT RUN    NOT RUN    index=1    run=False
 
+Not executed after failure with assignment
+    [Template]    NONE
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check IF/ELSE Status    NOT RUN    NOT RUN    root=${tc.body[1]}    run=False
+    Check IF/ELSE Status    NOT RUN    NOT RUN    root=${tc.body[2]}    run=False
+    Check Keyword Data      ${tc.body[1].body[0].body[0]}    Not run    assign=\${x}           status=NOT RUN
+    Check Keyword Data      ${tc.body[2].body[0].body[0]}    Not run    assign=\${x}, \@{y}    status=NOT RUN
+
 ELSE IF not executed
     NOT RUN    NOT RUN    PASS       index=0
     FAIL       NOT RUN    NOT RUN    index=1    else=False
@@ -41,7 +49,8 @@ Assign
     NOT RUN    NOT RUN    PASS       index=2
 
 Multi assign
-    PASS       NOT RUN
+    PASS       NOT RUN    index=0
+    FAIL       NOT RUN    index=4
 
 List assign
     PASS       NOT RUN    index=0
@@ -49,6 +58,15 @@ List assign
 
 Dict assign
     NOT RUN    PASS
+
+Assign without ELSE
+    PASS       NOT RUN               index=0
+    NOT RUN    PASS       NOT RUN    index=2
+
+Assign when no branch is run
+    NOT RUN    PASS                  index=0
+    NOT RUN    NOT RUN    PASS       index=2
+    NOT RUN    PASS                  index=4
 
 Inside FOR
     [Template]    NONE
@@ -66,12 +84,7 @@ Inside normal IF
 In keyword
     [Template]    NONE
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check IF/ELSE Status    PASS                                     root=${tc.body[0].body[0]}
+    Check IF/ELSE Status    PASS       NOT RUN                       root=${tc.body[0].body[0]}
     Check IF/ELSE Status    NOT RUN    PASS       NOT RUN            root=${tc.body[0].body[1]}
     Check IF/ELSE Status    NOT RUN    NOT RUN    NOT RUN    FAIL
     ...                     NOT RUN    NOT RUN    NOT RUN            root=${tc.body[0].body[2]}
-
-Invalid END after inline header
-    # FIXME: Move to separate suite with other invalid syntax tests
-    [Template]    NONE
-    Check Test Case    ${TEST NAME}

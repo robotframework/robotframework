@@ -16,7 +16,6 @@
 from contextlib import contextmanager
 
 from robot.errors import DataError
-from robot.utils import unic
 
 
 class ExecutionContexts:
@@ -53,6 +52,7 @@ EXECUTION_CONTEXTS = ExecutionContexts()
 
 
 class _ExecutionContext:
+    # FIXME: can this be increased?
     _started_keywords_threshold = 42  # Jython on Windows don't work with higher
 
     def __init__(self, suite, namespace, output, dry_run=False):
@@ -91,7 +91,7 @@ class _ExecutionContext:
     @contextmanager
     def keyword_teardown(self, error):
         self.variables.set_keyword('${KEYWORD_STATUS}', 'FAIL' if error else 'PASS')
-        self.variables.set_keyword('${KEYWORD_MESSAGE}', unic(error or ''))
+        self.variables.set_keyword('${KEYWORD_MESSAGE}', str(error or ''))
         self.in_keyword_teardown += 1
         try:
             yield

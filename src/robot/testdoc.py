@@ -97,15 +97,14 @@ Data can be given as a single file, directory, or as multiple files and
 directories. In all these cases, the last argument must be the file where
 to write the output. The output is always created in HTML format.
 
-Testdoc works with all interpreters supported by Robot Framework (Python,
-Jython and IronPython). It can be executed as an installed module like
+Testdoc works with all interpreters supported by Robot Framework.
+It can be executed as an installed module like
 `python -m robot.testdoc` or as a script like `python path/robot/testdoc.py`.
 
 Examples:
 
   python -m robot.testdoc my_test.robot testdoc.html
-  jython -m robot.testdoc -N smoke_tests -i smoke path/to/my_tests smoke.html
-  ipy path/to/robot/testdoc.py first_suite.txt second_suite.txt output.html
+  python path/to/robot/testdoc.py first_suite.txt second_suite.txt output.html
 
 For more information about Testdoc and other built-in tools, see
 http://robotframework.org/robotframework/#built-in-tools.
@@ -227,33 +226,38 @@ class JsonConverter:
             elif kw.type == kw.FOR:
                 yield self._convert_for(kw)
             elif kw.type == kw.IF_ELSE_ROOT:
-                for branch in self._convert_if(kw):
-                    yield branch
+                yield from self._convert_if(kw)
+            elif kw.type == kw.TRY_EXCEPT_ROOT:
+                yield from self._convert_try(kw)
             else:
                 yield self._convert_keyword(kw, 'KEYWORD')
 
     def _convert_for(self, data):
         name = '%s %s %s' % (', '.join(data.variables), data.flavor,
                              seq2str2(data.values))
-        return {
-            'name': self._escape(name),
-            'arguments': '',
-            'type': 'FOR'
-        }
+        return {'type': 'FOR', 'name': self._escape(name), 'arguments': ''}
 
     def _convert_if(self, data):
         for branch in data.body:
-            yield {
-                'name': self._escape(branch.condition or ''),
-                'arguments': '',
-                'type': branch.type
-            }
+            yield {'type': branch.type,
+                   'name': self._escape(branch.condition or ''),
+                   'arguments': ''}
+
+    def _convert_try(self, data):
+        for branch in data.body:
+            if branch.type == branch.EXCEPT:
+                patterns = ', '.join(branch.patterns)
+                as_var = f'AS {branch.variable}' if branch.variable else ''
+                name = f'{patterns} {as_var}'.strip()
+            else:
+                name = ''
+            yield {'type': branch.type, 'name': name, 'arguments': ''}
 
     def _convert_keyword(self, kw, kw_type):
         return {
+            'type': kw_type,
             'name': self._escape(self._get_kw_name(kw)),
-            'arguments': self._escape(', '.join(kw.args)),
-            'type': kw_type
+            'arguments': self._escape(', '.join(kw.args))
         }
 
     def _get_kw_name(self, kw):

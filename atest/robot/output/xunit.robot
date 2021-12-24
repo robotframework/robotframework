@@ -8,7 +8,8 @@ Suite Setup         Run Tests    -x xunit.xml -l log.html --skiponfailure täg  
 ${TESTDATA}         misc/non_ascii.robot
 ${PASS AND FAIL}    misc/pass_and_fail.robot
 ${INVALID}          %{TEMPDIR}${/}ïnvälïd-xünït.xml
-
+${NESTED}           misc/suites
+ 
 *** Test Cases ***
 XUnit File Is Created
     Stderr should be empty
@@ -19,7 +20,7 @@ XUnit File Is Created
 File Structure Is Correct
     ${root} =    Get XUnit Node
     Should Be Equal    ${root.tag}    testsuite
-    Suite Stats Should Be    ${root}    8    3    1
+    Suite Stats Should Be    ${root}    8    3    1    ${SUITE.starttime}
     ${tests} =    Get XUnit Nodes    testcase
     Length Should Be    ${tests}    8
     ${fails} =    Get XUnit Nodes    testcase/failure
@@ -71,6 +72,26 @@ Skipping non-critical tests is deprecated
     Run tests    --xUnit xunit.xml --xUnitSkipNonCritical     ${PASS AND FAIL}
     Stderr Should Contain   Command line option --xunitskipnoncritical has been deprecated and has no effect.
 
+XUnit File From Nested Suites
+    Run Tests    -x xunit.xml -l log.html    ${TESTDATA} ${NESTED}
+    Stderr Should Be Empty
+    Stdout Should Contain    XUnit:
+    File Should Exist    ${OUTDIR}/xunit.xml
+    File Should Exist    ${OUTDIR}/log.html
+    ${root} =    Parse XML    ${OUTDIR}/xunit.xml
+    Should Be Equal    ${root.tag}    testsuite
+    ${suites} =    Get Elements    ${root}    testsuite
+    Length Should Be    ${suites}    2
+    ${tests} =    Get Elements    ${suites}[0]    testcase
+    Length Should Be    ${tests}    8
+    Element Attribute Should be    ${tests}[7]    name    Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо
+    ${failures} =    Get Elements    ${suites}[0]    testcase/failure
+    Length Should Be    ${failures}    4
+    Element Attribute Should be    ${failures}[0]    message    ${MESSAGES}
+    ${nested suite} =    Get Element    ${OUTDIR}/xunit.xml    xpath=testsuite[2]
+    Element Attribute Should Be       ${nested suite}    tests       11
+    Element Attribute Should Be       ${nested suite}    failures    1
+
 *** Keywords ***
 Get XUnit Node
     [Arguments]    ${xpath}=.
@@ -83,9 +104,11 @@ Get XUnit Nodes
     [Return]    ${nodes}
 
 Suite Stats Should Be
-    [Arguments]    ${elem}    ${tests}    ${failures}    ${skipped}
+    [Arguments]    ${elem}    ${tests}    ${failures}    ${skipped}    ${starttime}
     Element Attribute Should Be       ${elem}    tests       ${tests}
     Element Attribute Should Be       ${elem}    failures    ${failures}
     Element Attribute Should Be       ${elem}    skipped     ${skipped}
     Element Attribute Should Match    ${elem}    time        ?.???
     Element Attribute Should Be       ${elem}    errors      0
+    Element Attribute Should Be       ${elem}    timestamp
+    ...    ${{datetime.datetime.strptime($starttime, '%Y%m%d %H:%M:%S.%f').strftime('%Y-%m-%dT%H:%M:%S.%f')}}

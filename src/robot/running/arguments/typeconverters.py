@@ -15,10 +15,6 @@
 
 from ast import literal_eval
 from collections import abc, OrderedDict
-try:
-    from types import UnionType
-except ImportError:    # Python < 3.10
-    UnionType = ()
 from typing import Union
 from datetime import datetime, date, timedelta
 from decimal import InvalidOperation, Decimal
@@ -26,8 +22,10 @@ from enum import Enum
 from numbers import Integral, Real
 
 from robot.libraries.DateTime import convert_date, convert_time
-from robot.utils import (FALSE_STRINGS, TRUE_STRINGS, eq, get_error_message, is_string,
-                         seq2str, type_name, unic)
+from robot.utils import (FALSE_STRINGS, TRUE_STRINGS, eq, get_error_message,
+                         is_string, is_union, safe_str, seq2str, type_name)
+
+from .typeinfo import TypeInfo
 
 
 class TypeConverter:
@@ -39,8 +37,9 @@ class TypeConverter:
     _converters = OrderedDict()
     _type_aliases = {}
 
-    def __init__(self, used_type):
+    def __init__(self, used_type, custom_converters=None):
         self.used_type = used_type
+        self.custom_converters = custom_converters
 
     @classmethod
     def register(cls, converter):
@@ -51,7 +50,11 @@ class TypeConverter:
         return converter
 
     @classmethod
-    def converter_for(cls, type_):
+    def converter_for(cls, type_, custom_converters=None):
+        try:
+            hash(type_)
+        except TypeError:
+            return None
         if getattr(type_, '__origin__', None) and type_.__origin__ is not Union:
             type_ = type_.__origin__
         if isinstance(type_, str):
@@ -59,11 +62,15 @@ class TypeConverter:
                 type_ = cls._type_aliases[type_.lower()]
             except KeyError:
                 return None
+        if custom_converters:
+            info = custom_converters.get_converter_info(type_)
+            if info:
+                return CustomConverter(type_, info)
         if type_ in cls._converters:
             return cls._converters[type_](type_)
         for converter in cls._converters.values():
             if converter.handles(type_):
-                return converter(type_)
+                return converter(type_, custom_converters)
         return None
 
     @classmethod
@@ -109,7 +116,7 @@ class TypeConverter:
         ending = ': %s' % error if (error and error.args) else '.'
         raise ValueError(
             "Argument '%s' got value '%s'%s that cannot be converted to %s%s"
-            % (name, unic(value), value_type, self.type_name, ending)
+            % (name, safe_str(value), value_type, self.type_name, ending)
         )
 
     def _literal_eval(self, value, expected):
@@ -135,6 +142,20 @@ class TypeConverter:
                 if sep in value:
                     value = value.replace(sep, '')
         return value
+
+    @classmethod
+    def type_info_for(cls, type_, custom_converters=None) -> TypeInfo:
+        converter = cls.converter_for(type_, custom_converters)
+        if isinstance(type_, str):
+            used_as = type_
+        elif isinstance(type_, type):
+            used_as = type_.__name__
+        else:
+            used_as = str(type)
+        return converter.get_type_info(used_as) if converter else None
+
+    def get_type_info(self, used_as):
+        return None
 
 
 @TypeConverter.register
@@ -299,7 +320,7 @@ class DecimalConverter(TypeConverter):
 @TypeConverter.register
 class BytesConverter(TypeConverter):
     type = bytes
-    abc = getattr(abc, 'ByteString', None)    # ByteString is new in Python 3
+    abc = abc.ByteString
     type_name = 'bytes'
     value_types = (str, bytearray)
 
@@ -367,11 +388,6 @@ class TimeDeltaConverter(TypeConverter):
 class NoneConverter(TypeConverter):
     type = type(None)
     type_name = 'None'
-
-    def __init__(self, used_type):
-        if used_type is None:
-            used_type = type(None)
-        TypeConverter.__init__(self, used_type)
 
     @classmethod
     def handles(cls, type_):
@@ -460,9 +476,10 @@ class FrozenSetConverter(TypeConverter):
 class CombinedConverter(TypeConverter):
     type = Union
 
-    def __init__(self, union):
-        self.types = self._none_to_nonetype(self._get_types(union))
-        self.converters = [TypeConverter.converter_for(t) for t in self.types]
+    def __init__(self, union, custom_converters):
+        super().__init__(self._get_types(union))
+        self.converters = [TypeConverter.converter_for(t, custom_converters)
+                           for t in self.used_type]
 
     def _get_types(self, union):
         if not union:
@@ -471,17 +488,13 @@ class CombinedConverter(TypeConverter):
             return union
         return union.__args__
 
-    def _none_to_nonetype(self, types):
-        return tuple(t if t is not None else type(None) for t in types)
-
     @property
     def type_name(self):
-        return ' or '.join(type_name(t) for t in self.types) if self.types else None
+        return ' or '.join(type_name(t) for t in self.used_type)
 
     @classmethod
     def handles(cls, type_):
-        return (isinstance(type_, (UnionType, tuple))
-                or getattr(type_, '__origin__', None) is Union)
+        return is_union(type_, allow_tuple=True)
 
     def _handles_value(self, value):
         return True
@@ -501,3 +514,30 @@ class CombinedConverter(TypeConverter):
             except ValueError:
                 pass
         raise ValueError
+
+
+class CustomConverter(TypeConverter):
+
+    def __init__(self, used_type, converter_info):
+        super().__init__(used_type)
+        self.converter_info = converter_info
+
+    @property
+    def type_name(self):
+        return self.converter_info.name
+
+    @property
+    def value_types(self):
+        return self.converter_info.value_types
+
+    def _handles_value(self, value):
+        return not self.value_types or isinstance(value, self.value_types)
+
+    def _convert(self, value, explicit_type=True):
+        try:
+            return self.converter_info.converter(value)
+        except Exception:
+            raise ValueError(get_error_message())
+
+    def get_type_info(self, used_as):
+        return TypeInfo(self.converter_info.name, self.converter_info.doc, used_as)

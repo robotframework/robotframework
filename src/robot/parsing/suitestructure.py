@@ -18,7 +18,7 @@ import os.path
 from robot.errors import DataError
 from robot.model import SuiteNamePatterns
 from robot.output import LOGGER
-from robot.utils import abspath, get_error_message, unic
+from robot.utils import abspath, get_error_message, safe_str
 
 
 class SuiteStructure:
@@ -112,15 +112,13 @@ class SuiteStructureBuilder:
         return init_file, paths
 
     def _list_dir(self, dir_path, incl_suites):
-        # os.listdir returns Unicode entries when path is Unicode
-        dir_path = unic(dir_path)
         try:
             names = os.listdir(dir_path)
         except:
             raise DataError("Reading directory '%s' failed: %s"
                             % (dir_path, get_error_message()))
         for name in sorted(names, key=lambda item: item.lower()):
-            name = unic(name)  # needed to handle nfc/nfd normalization on OSX
+            name = safe_str(name)  # Handles NFC normalization on OSX
             path = os.path.join(dir_path, name)
             base, ext = os.path.splitext(name)
             ext = ext[1:].lower()

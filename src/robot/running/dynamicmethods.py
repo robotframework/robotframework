@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import get_error_message, is_bytes, is_list_like, is_unicode, type_name
+from robot.utils import get_error_message, is_bytes, is_list_like, is_string, type_name
 
 from .arguments import PythonArgumentParser
 
@@ -56,7 +56,7 @@ class _DynamicMethod:
         raise NotImplementedError
 
     def _to_string(self, value, allow_tuple=False, allow_none=False):
-        if is_unicode(value):
+        if is_string(value):
             return value
         if is_bytes(value):
             return value.decode('UTF-8')

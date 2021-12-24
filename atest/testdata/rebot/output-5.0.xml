@@ -1,0 +1,2790 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 5.0.dev1 (Python 3.8.10 on linux)" generated="20211222 03:24:39.975" rpa="false" schemaversion="3">
+<suite id="s1" name="Misc" source="/home/peke/Devel/robotframework/atest/testdata/misc">
+<suite id="s1-s1" name="Dummy Lib Test" source="/home/peke/Devel/robotframework/atest/testdata/misc/dummy_lib_test.robot">
+<test id="s1-s1-t1" name="Dummy Test">
+<kw name="dummykw">
+<msg timestamp="20211222 03:24:39.992" level="FAIL">No keyword with name 'dummykw' found.</msg>
+<status status="FAIL" starttime="20211222 03:24:39.992" endtime="20211222 03:24:39.992"/>
+</kw>
+<status status="FAIL" starttime="20211222 03:24:39.991" endtime="20211222 03:24:39.993">No keyword with name 'dummykw' found.</status>
+</test>
+<status status="FAIL" starttime="20211222 03:24:39.989" endtime="20211222 03:24:39.993"/>
+</suite>
+<suite id="s1-s2" name="For Loops" source="/home/peke/Devel/robotframework/atest/testdata/misc/for_loops.robot">
+<test id="s1-s2-t1" name="FOR loop in test">
+<for flavor="IN">
+<var>${pet}</var>
+<value>cat</value>
+<value>dog</value>
+<value>horse</value>
+<iter>
+<var name="${pet}">cat</var>
+<kw name="Log" library="BuiltIn">
+<arg>${pet}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:39.995" level="INFO">cat</msg>
+<status status="PASS" starttime="20211222 03:24:39.995" endtime="20211222 03:24:39.995"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:39.995" endtime="20211222 03:24:39.995"/>
+</iter>
+<iter>
+<var name="${pet}">dog</var>
+<kw name="Log" library="BuiltIn">
+<arg>${pet}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:39.996" level="INFO">dog</msg>
+<status status="PASS" starttime="20211222 03:24:39.996" endtime="20211222 03:24:39.996"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:39.995" endtime="20211222 03:24:39.996"/>
+</iter>
+<iter>
+<var name="${pet}">horse</var>
+<kw name="Log" library="BuiltIn">
+<arg>${pet}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:39.996" level="INFO">horse</msg>
+<status status="PASS" starttime="20211222 03:24:39.996" endtime="20211222 03:24:39.996"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:39.996" endtime="20211222 03:24:39.996"/>
+</iter>
+<status status="PASS" starttime="20211222 03:24:39.995" endtime="20211222 03:24:39.996"/>
+</for>
+<status status="PASS" starttime="20211222 03:24:39.995" endtime="20211222 03:24:39.996"/>
+</test>
+<test id="s1-s2-t2" name="FOR IN RANGE loop in test">
+<for flavor="IN RANGE">
+<var>${i}</var>
+<value>10</value>
+<iter>
+<var name="${i}">0</var>
+<kw name="Log" library="BuiltIn">
+<arg>${i}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:39.997" level="INFO">0</msg>
+<status status="PASS" starttime="20211222 03:24:39.997" endtime="20211222 03:24:39.997"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:39.997" endtime="20211222 03:24:39.997"/>
+</iter>
+<iter>
+<var name="${i}">1</var>
+<kw name="Log" library="BuiltIn">
+<arg>${i}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:39.997" level="INFO">1</msg>
+<status status="PASS" starttime="20211222 03:24:39.997" endtime="20211222 03:24:39.997"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:39.997" endtime="20211222 03:24:39.997"/>
+</iter>
+<iter>
+<var name="${i}">2</var>
+<kw name="Log" library="BuiltIn">
+<arg>${i}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:39.998" level="INFO">2</msg>
+<status status="PASS" starttime="20211222 03:24:39.998" endtime="20211222 03:24:39.998"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:39.998" endtime="20211222 03:24:39.998"/>
+</iter>
+<iter>
+<var name="${i}">3</var>
+<kw name="Log" library="BuiltIn">
+<arg>${i}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:39.998" level="INFO">3</msg>
+<status status="PASS" starttime="20211222 03:24:39.998" endtime="20211222 03:24:39.998"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:39.998" endtime="20211222 03:24:39.998"/>
+</iter>
+<iter>
+<var name="${i}">4</var>
+<kw name="Log" library="BuiltIn">
+<arg>${i}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:39.998" level="INFO">4</msg>
+<status status="PASS" starttime="20211222 03:24:39.998" endtime="20211222 03:24:39.998"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:39.998" endtime="20211222 03:24:39.998"/>
+</iter>
+<iter>
+<var name="${i}">5</var>
+<kw name="Log" library="BuiltIn">
+<arg>${i}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:39.999" level="INFO">5</msg>
+<status status="PASS" starttime="20211222 03:24:39.999" endtime="20211222 03:24:39.999"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:39.998" endtime="20211222 03:24:39.999"/>
+</iter>
+<iter>
+<var name="${i}">6</var>
+<kw name="Log" library="BuiltIn">
+<arg>${i}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:39.999" level="INFO">6</msg>
+<status status="PASS" starttime="20211222 03:24:39.999" endtime="20211222 03:24:39.999"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:39.999" endtime="20211222 03:24:39.999"/>
+</iter>
+<iter>
+<var name="${i}">7</var>
+<kw name="Log" library="BuiltIn">
+<arg>${i}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:39.999" level="INFO">7</msg>
+<status status="PASS" starttime="20211222 03:24:39.999" endtime="20211222 03:24:40.000"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:39.999" endtime="20211222 03:24:40.000"/>
+</iter>
+<iter>
+<var name="${i}">8</var>
+<kw name="Log" library="BuiltIn">
+<arg>${i}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.000" level="INFO">8</msg>
+<status status="PASS" starttime="20211222 03:24:40.000" endtime="20211222 03:24:40.000"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.000" endtime="20211222 03:24:40.000"/>
+</iter>
+<iter>
+<var name="${i}">9</var>
+<kw name="Log" library="BuiltIn">
+<arg>${i}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.000" level="INFO">9</msg>
+<status status="PASS" starttime="20211222 03:24:40.000" endtime="20211222 03:24:40.000"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.000" endtime="20211222 03:24:40.000"/>
+</iter>
+<status status="PASS" starttime="20211222 03:24:39.997" endtime="20211222 03:24:40.000"/>
+</for>
+<status status="PASS" starttime="20211222 03:24:39.996" endtime="20211222 03:24:40.000"/>
+</test>
+<status status="PASS" starttime="20211222 03:24:39.994" endtime="20211222 03:24:40.001"/>
+</suite>
+<suite id="s1-s3" name="Formatting And Escaping" source="/home/peke/Devel/robotframework/atest/testdata/misc/formatting_and_escaping.robot">
+<test id="s1-s3-t1" name="Formatting">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.003" endtime="20211222 03:24:40.003"/>
+</kw>
+<doc>*I* can haz _formatting_ &amp; &lt;escaping&gt;!!
+- list
+- here</doc>
+<status status="PASS" starttime="20211222 03:24:40.002" endtime="20211222 03:24:40.003"/>
+</test>
+<test id="s1-s3-t2" name="&lt;Escaping&gt;">
+<kw name="&lt;blink&gt;NO&lt;/blink&gt;">
+<arg>&lt;&amp;&gt;</arg>
+<kw name="Log" library="BuiltIn">
+<arg>${arg}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.004" level="INFO">&lt;&amp;&gt;</msg>
+<status status="PASS" starttime="20211222 03:24:40.004" endtime="20211222 03:24:40.004"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.003" endtime="20211222 03:24:40.004"/>
+</kw>
+<tag>*not bold*</tag>
+<tag>&lt;b&gt;not bold either&lt;/b&gt;</tag>
+<status status="PASS" starttime="20211222 03:24:40.003" endtime="20211222 03:24:40.004"/>
+</test>
+<doc>We have _formatting_ and &lt;escaping&gt;.
+
+| *Name* | *URL* |
+| Robot | http://robotframework.org |
+| Custom | [http://robotframework.org|link] |</doc>
+<meta name="Escape">this is &lt;b&gt;not bold&lt;/b&gt;</meta>
+<meta name="Format">this is *bold*</meta>
+<status status="PASS" starttime="20211222 03:24:40.001" endtime="20211222 03:24:40.004"/>
+</suite>
+<suite id="s1-s4" name="If Else" source="/home/peke/Devel/robotframework/atest/testdata/misc/if_else.robot">
+<test id="s1-s4-t1" name="IF structure">
+<if>
+<branch type="IF" condition="'IF' == 'WRONG'">
+<kw name="Fail" library="BuiltIn">
+<arg>not going here</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" starttime="20211222 03:24:40.006" endtime="20211222 03:24:40.006"/>
+</kw>
+<status status="NOT RUN" starttime="20211222 03:24:40.006" endtime="20211222 03:24:40.006"/>
+</branch>
+<branch type="ELSE IF" condition="'ELSE IF' == 'ELSE IF'">
+<kw name="Log" library="BuiltIn">
+<arg>else if branch</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.007" level="INFO">else if branch</msg>
+<status status="PASS" starttime="20211222 03:24:40.006" endtime="20211222 03:24:40.007"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.006" endtime="20211222 03:24:40.007"/>
+</branch>
+<branch type="ELSE">
+<kw name="Fail" library="BuiltIn">
+<arg>not going here</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" starttime="20211222 03:24:40.007" endtime="20211222 03:24:40.007"/>
+</kw>
+<status status="NOT RUN" starttime="20211222 03:24:40.007" endtime="20211222 03:24:40.007"/>
+</branch>
+<status status="PASS" starttime="20211222 03:24:40.006" endtime="20211222 03:24:40.007"/>
+</if>
+<status status="PASS" starttime="20211222 03:24:40.006" endtime="20211222 03:24:40.007"/>
+</test>
+<status status="PASS" starttime="20211222 03:24:40.005" endtime="20211222 03:24:40.007"/>
+</suite>
+<suite id="s1-s5" name="Many Tests" source="/home/peke/Devel/robotframework/atest/testdata/misc/many_tests.robot">
+<kw name="Log" library="BuiltIn" type="SETUP">
+<arg>Setup</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.009" level="INFO">Setup</msg>
+<status status="PASS" starttime="20211222 03:24:40.009" endtime="20211222 03:24:40.009"/>
+</kw>
+<test id="s1-s5-t1" name="First">
+<kw name="Log" library="BuiltIn">
+<arg>Test 1</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.009" level="INFO">Test 1</msg>
+<status status="PASS" starttime="20211222 03:24:40.009" endtime="20211222 03:24:40.009"/>
+</kw>
+<tag>f1</tag>
+<tag>t1</tag>
+<tag>t2</tag>
+<status status="PASS" starttime="20211222 03:24:40.009" endtime="20211222 03:24:40.009"/>
+</test>
+<test id="s1-s5-t2" name="Second One">
+<kw name="Log" library="BuiltIn">
+<arg>Test 2</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.010" level="INFO">Test 2</msg>
+<status status="PASS" starttime="20211222 03:24:40.010" endtime="20211222 03:24:40.010"/>
+</kw>
+<tag>d1</tag>
+<tag>d2</tag>
+<tag>f1</tag>
+<status status="PASS" starttime="20211222 03:24:40.010" endtime="20211222 03:24:40.010"/>
+</test>
+<test id="s1-s5-t3" name="Third One">
+<kw name="Log" library="BuiltIn">
+<arg>Test 3</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.011" level="INFO">Test 3</msg>
+<status status="PASS" starttime="20211222 03:24:40.011" endtime="20211222 03:24:40.011"/>
+</kw>
+<tag>d1</tag>
+<tag>d2</tag>
+<tag>f1</tag>
+<status status="PASS" starttime="20211222 03:24:40.010" endtime="20211222 03:24:40.011"/>
+</test>
+<test id="s1-s5-t4" name="Fourth One With More Complex Name">
+<kw name="Log" library="BuiltIn">
+<arg>Test 4</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.012" level="INFO">Test 4</msg>
+<status status="PASS" starttime="20211222 03:24:40.012" endtime="20211222 03:24:40.012"/>
+</kw>
+<tag>d1</tag>
+<tag>d2</tag>
+<tag>f1</tag>
+<status status="PASS" starttime="20211222 03:24:40.011" endtime="20211222 03:24:40.012"/>
+</test>
+<test id="s1-s5-t5" name="Fifth">
+<kw name="Log" library="BuiltIn">
+<arg>Test 5</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.012" level="INFO">Test 5</msg>
+<status status="PASS" starttime="20211222 03:24:40.012" endtime="20211222 03:24:40.012"/>
+</kw>
+<tag>d1</tag>
+<tag>d2</tag>
+<tag>f1</tag>
+<status status="PASS" starttime="20211222 03:24:40.012" endtime="20211222 03:24:40.013"/>
+</test>
+<test id="s1-s5-t6" name="GlobTestCase1">
+<kw name="Log" library="BuiltIn">
+<arg>GlobTestCase1</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.013" level="INFO">GlobTestCase1</msg>
+<status status="PASS" starttime="20211222 03:24:40.013" endtime="20211222 03:24:40.013"/>
+</kw>
+<tag>d1</tag>
+<tag>d2</tag>
+<tag>f1</tag>
+<status status="PASS" starttime="20211222 03:24:40.013" endtime="20211222 03:24:40.013"/>
+</test>
+<test id="s1-s5-t7" name="GlobTestCase2">
+<kw name="Log" library="BuiltIn">
+<arg>GlobTestCase2</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.014" level="INFO">GlobTestCase2</msg>
+<status status="PASS" starttime="20211222 03:24:40.014" endtime="20211222 03:24:40.014"/>
+</kw>
+<tag>d1</tag>
+<tag>d2</tag>
+<tag>f1</tag>
+<status status="PASS" starttime="20211222 03:24:40.014" endtime="20211222 03:24:40.014"/>
+</test>
+<test id="s1-s5-t8" name="GlobTestCase3">
+<kw name="Log" library="BuiltIn">
+<arg>GlobTestCase3</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.015" level="INFO">GlobTestCase3</msg>
+<status status="PASS" starttime="20211222 03:24:40.015" endtime="20211222 03:24:40.015"/>
+</kw>
+<tag>d1</tag>
+<tag>d2</tag>
+<tag>f1</tag>
+<status status="PASS" starttime="20211222 03:24:40.015" endtime="20211222 03:24:40.015"/>
+</test>
+<test id="s1-s5-t9" name="GlobTestCase[5]">
+<kw name="Log" library="BuiltIn">
+<arg>GlobTestCase[5]</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.016" level="INFO">GlobTestCase[5]</msg>
+<status status="PASS" starttime="20211222 03:24:40.016" endtime="20211222 03:24:40.016"/>
+</kw>
+<tag>d1</tag>
+<tag>d2</tag>
+<tag>f1</tag>
+<status status="PASS" starttime="20211222 03:24:40.015" endtime="20211222 03:24:40.016"/>
+</test>
+<test id="s1-s5-t10" name="GlobTest Cat">
+<kw name="Log" library="BuiltIn">
+<arg>Cat</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.017" level="INFO">Cat</msg>
+<status status="PASS" starttime="20211222 03:24:40.017" endtime="20211222 03:24:40.017"/>
+</kw>
+<tag>d1</tag>
+<tag>d2</tag>
+<tag>f1</tag>
+<status status="PASS" starttime="20211222 03:24:40.016" endtime="20211222 03:24:40.018"/>
+</test>
+<test id="s1-s5-t11" name="GlobTest Rat">
+<kw name="Log" library="BuiltIn">
+<arg>Cat</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.018" level="INFO">Cat</msg>
+<status status="PASS" starttime="20211222 03:24:40.018" endtime="20211222 03:24:40.018"/>
+</kw>
+<tag>d1</tag>
+<tag>d2</tag>
+<tag>f1</tag>
+<status status="PASS" starttime="20211222 03:24:40.018" endtime="20211222 03:24:40.018"/>
+</test>
+<kw name="No Operation" library="BuiltIn" type="TEARDOWN">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.019" endtime="20211222 03:24:40.019"/>
+</kw>
+<doc>Normal test cases</doc>
+<meta name="Something">My Value</meta>
+<status status="PASS" starttime="20211222 03:24:40.008" endtime="20211222 03:24:40.019"/>
+</suite>
+<suite id="s1-s6" name="Multiple Suites" source="/home/peke/Devel/robotframework/atest/testdata/misc/multiple_suites">
+<suite id="s1-s6-s1" name="Suite First" source="/home/peke/Devel/robotframework/atest/testdata/misc/multiple_suites/01__suite_first.robot">
+<test id="s1-s6-s1-t1" name="test1">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.022" endtime="20211222 03:24:40.022"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.022" endtime="20211222 03:24:40.022"/>
+</test>
+<test id="s1-s6-s1-t2" name="test2">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.023" endtime="20211222 03:24:40.023"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.022" endtime="20211222 03:24:40.023"/>
+</test>
+<test id="s1-s6-s1-t3" name="test3">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.023" endtime="20211222 03:24:40.023"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.023" endtime="20211222 03:24:40.024"/>
+</test>
+<test id="s1-s6-s1-t4" name="test4">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.024" endtime="20211222 03:24:40.024"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.024" endtime="20211222 03:24:40.024"/>
+</test>
+<test id="s1-s6-s1-t5" name="test5">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.025" endtime="20211222 03:24:40.025"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.025" endtime="20211222 03:24:40.025"/>
+</test>
+<test id="s1-s6-s1-t6" name="test6">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.026" endtime="20211222 03:24:40.026"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.025" endtime="20211222 03:24:40.026"/>
+</test>
+<test id="s1-s6-s1-t7" name="test7">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.026" endtime="20211222 03:24:40.026"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.026" endtime="20211222 03:24:40.027"/>
+</test>
+<test id="s1-s6-s1-t8" name="test8">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.027" endtime="20211222 03:24:40.027"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.027" endtime="20211222 03:24:40.027"/>
+</test>
+<test id="s1-s6-s1-t9" name="test9">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.028" endtime="20211222 03:24:40.028"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.027" endtime="20211222 03:24:40.028"/>
+</test>
+<test id="s1-s6-s1-t10" name="test10">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.028" endtime="20211222 03:24:40.028"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.028" endtime="20211222 03:24:40.029"/>
+</test>
+<test id="s1-s6-s1-t11" name="test11">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.029" endtime="20211222 03:24:40.029"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.029" endtime="20211222 03:24:40.029"/>
+</test>
+<test id="s1-s6-s1-t12" name="test12">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.030" endtime="20211222 03:24:40.030"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.029" endtime="20211222 03:24:40.030"/>
+</test>
+<status status="PASS" starttime="20211222 03:24:40.021" endtime="20211222 03:24:40.030"/>
+</suite>
+<suite id="s1-s6-s2" name="Sub.Suite.1" source="/home/peke/Devel/robotframework/atest/testdata/misc/multiple_suites/02__sub.suite.1">
+<suite id="s1-s6-s2-s1" name="Suite4" source="/home/peke/Devel/robotframework/atest/testdata/misc/multiple_suites/02__sub.suite.1/first__suite4.robot">
+<test id="s1-s6-s2-s1-t1" name="test1">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.033" endtime="20211222 03:24:40.034"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.033" endtime="20211222 03:24:40.034"/>
+</test>
+<test id="s1-s6-s2-s1-t2" name="test2">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.034" endtime="20211222 03:24:40.034"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.034" endtime="20211222 03:24:40.034"/>
+</test>
+<test id="s1-s6-s2-s1-t3" name="test3">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.035" endtime="20211222 03:24:40.035"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.035" endtime="20211222 03:24:40.035"/>
+</test>
+<test id="s1-s6-s2-s1-t4" name="test4">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.036" endtime="20211222 03:24:40.036"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.035" endtime="20211222 03:24:40.036"/>
+</test>
+<test id="s1-s6-s2-s1-t5" name="test5">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.036" endtime="20211222 03:24:40.036"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.036" endtime="20211222 03:24:40.036"/>
+</test>
+<test id="s1-s6-s2-s1-t6" name="test6">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.037" endtime="20211222 03:24:40.037"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.037" endtime="20211222 03:24:40.037"/>
+</test>
+<test id="s1-s6-s2-s1-t7" name="test7">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.038" endtime="20211222 03:24:40.038"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.037" endtime="20211222 03:24:40.038"/>
+</test>
+<test id="s1-s6-s2-s1-t8" name="test8">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.038" endtime="20211222 03:24:40.038"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.038" endtime="20211222 03:24:40.038"/>
+</test>
+<test id="s1-s6-s2-s1-t9" name="test9">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.039" endtime="20211222 03:24:40.039"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.039" endtime="20211222 03:24:40.039"/>
+</test>
+<test id="s1-s6-s2-s1-t10" name="test10">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.039" endtime="20211222 03:24:40.040"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.039" endtime="20211222 03:24:40.040"/>
+</test>
+<test id="s1-s6-s2-s1-t11" name="test11">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.040" endtime="20211222 03:24:40.040"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.040" endtime="20211222 03:24:40.040"/>
+</test>
+<test id="s1-s6-s2-s1-t12" name="test12">
+<kw name="Log" library="BuiltIn">
+<arg>warning</arg>
+<arg>WARN</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.041" level="WARN">warning</msg>
+<status status="PASS" starttime="20211222 03:24:40.041" endtime="20211222 03:24:40.041"/>
+</kw>
+<tag>warning</tag>
+<status status="PASS" starttime="20211222 03:24:40.041" endtime="20211222 03:24:40.041"/>
+</test>
+<status status="PASS" starttime="20211222 03:24:40.032" endtime="20211222 03:24:40.041"/>
+</suite>
+<suite id="s1-s6-s2-s2" name=".Sui.te.2." source="/home/peke/Devel/robotframework/atest/testdata/misc/multiple_suites/02__sub.suite.1/second__.Sui.te.2..robot">
+<test id="s1-s6-s2-s2-t1" name="test1">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.043" endtime="20211222 03:24:40.044"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.043" endtime="20211222 03:24:40.044"/>
+</test>
+<test id="s1-s6-s2-s2-t2" name="test2">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.044" endtime="20211222 03:24:40.044"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.044" endtime="20211222 03:24:40.044"/>
+</test>
+<test id="s1-s6-s2-s2-t3" name="test3">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.045" endtime="20211222 03:24:40.045"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.045" endtime="20211222 03:24:40.045"/>
+</test>
+<test id="s1-s6-s2-s2-t4" name="test4">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.045" endtime="20211222 03:24:40.046"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.045" endtime="20211222 03:24:40.046"/>
+</test>
+<test id="s1-s6-s2-s2-t5" name="test5">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.046" endtime="20211222 03:24:40.046"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.046" endtime="20211222 03:24:40.046"/>
+</test>
+<test id="s1-s6-s2-s2-t6" name="test6">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.047" endtime="20211222 03:24:40.047"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.046" endtime="20211222 03:24:40.047"/>
+</test>
+<test id="s1-s6-s2-s2-t7" name="test7">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.047" endtime="20211222 03:24:40.047"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.047" endtime="20211222 03:24:40.048"/>
+</test>
+<test id="s1-s6-s2-s2-t8" name="test8">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.048" endtime="20211222 03:24:40.048"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.048" endtime="20211222 03:24:40.048"/>
+</test>
+<test id="s1-s6-s2-s2-t9" name="test9">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.048" endtime="20211222 03:24:40.049"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.048" endtime="20211222 03:24:40.049"/>
+</test>
+<test id="s1-s6-s2-s2-t10" name="test10">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.049" endtime="20211222 03:24:40.049"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.049" endtime="20211222 03:24:40.049"/>
+</test>
+<test id="s1-s6-s2-s2-t11" name="test11">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.050" endtime="20211222 03:24:40.050"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.050" endtime="20211222 03:24:40.050"/>
+</test>
+<test id="s1-s6-s2-s2-t12" name="test12">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.050" endtime="20211222 03:24:40.051"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.050" endtime="20211222 03:24:40.051"/>
+</test>
+<status status="PASS" starttime="20211222 03:24:40.042" endtime="20211222 03:24:40.051"/>
+</suite>
+<status status="PASS" starttime="20211222 03:24:40.031" endtime="20211222 03:24:40.052"/>
+</suite>
+<suite id="s1-s6-s3" name="Suite3" source="/home/peke/Devel/robotframework/atest/testdata/misc/multiple_suites/03__suite3.robot">
+<test id="s1-s6-s3-t1" name="test1">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.054" endtime="20211222 03:24:40.054"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.054" endtime="20211222 03:24:40.054"/>
+</test>
+<test id="s1-s6-s3-t2" name="test2">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.055" endtime="20211222 03:24:40.055"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.054" endtime="20211222 03:24:40.055"/>
+</test>
+<test id="s1-s6-s3-t3" name="test3">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.055" endtime="20211222 03:24:40.055"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.055" endtime="20211222 03:24:40.056"/>
+</test>
+<test id="s1-s6-s3-t4" name="test4">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.056" endtime="20211222 03:24:40.056"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.056" endtime="20211222 03:24:40.056"/>
+</test>
+<test id="s1-s6-s3-t5" name="test5">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.057" endtime="20211222 03:24:40.057"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.056" endtime="20211222 03:24:40.057"/>
+</test>
+<test id="s1-s6-s3-t6" name="test6">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.057" endtime="20211222 03:24:40.057"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.057" endtime="20211222 03:24:40.057"/>
+</test>
+<test id="s1-s6-s3-t7" name="test7">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.058" endtime="20211222 03:24:40.058"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.058" endtime="20211222 03:24:40.058"/>
+</test>
+<test id="s1-s6-s3-t8" name="test8">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.058" endtime="20211222 03:24:40.059"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.058" endtime="20211222 03:24:40.059"/>
+</test>
+<test id="s1-s6-s3-t9" name="test9">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.059" endtime="20211222 03:24:40.059"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.059" endtime="20211222 03:24:40.059"/>
+</test>
+<test id="s1-s6-s3-t10" name="test10">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.060" endtime="20211222 03:24:40.060"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.059" endtime="20211222 03:24:40.060"/>
+</test>
+<test id="s1-s6-s3-t11" name="test11">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.060" endtime="20211222 03:24:40.060"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.060" endtime="20211222 03:24:40.061"/>
+</test>
+<test id="s1-s6-s3-t12" name="test12">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.061" endtime="20211222 03:24:40.061"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.061" endtime="20211222 03:24:40.061"/>
+</test>
+<status status="PASS" starttime="20211222 03:24:40.052" endtime="20211222 03:24:40.061"/>
+</suite>
+<suite id="s1-s6-s4" name="Suite4" source="/home/peke/Devel/robotframework/atest/testdata/misc/multiple_suites/04__suite4.robot">
+<test id="s1-s6-s4-t1" name="test1">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.063" endtime="20211222 03:24:40.063"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.063" endtime="20211222 03:24:40.064"/>
+</test>
+<test id="s1-s6-s4-t2" name="test2">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.064" endtime="20211222 03:24:40.064"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.064" endtime="20211222 03:24:40.064"/>
+</test>
+<test id="s1-s6-s4-t3" name="test3">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.065" endtime="20211222 03:24:40.065"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.064" endtime="20211222 03:24:40.065"/>
+</test>
+<test id="s1-s6-s4-t4" name="test4">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.065" endtime="20211222 03:24:40.065"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.065" endtime="20211222 03:24:40.065"/>
+</test>
+<test id="s1-s6-s4-t5" name="test5">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.066" endtime="20211222 03:24:40.066"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.066" endtime="20211222 03:24:40.066"/>
+</test>
+<test id="s1-s6-s4-t6" name="test6">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.067" endtime="20211222 03:24:40.067"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.066" endtime="20211222 03:24:40.067"/>
+</test>
+<test id="s1-s6-s4-t7" name="test7">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.067" endtime="20211222 03:24:40.067"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.067" endtime="20211222 03:24:40.067"/>
+</test>
+<test id="s1-s6-s4-t8" name="test8">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.068" endtime="20211222 03:24:40.068"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.068" endtime="20211222 03:24:40.068"/>
+</test>
+<test id="s1-s6-s4-t9" name="test9">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.068" endtime="20211222 03:24:40.068"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.068" endtime="20211222 03:24:40.069"/>
+</test>
+<test id="s1-s6-s4-t10" name="test10">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.069" endtime="20211222 03:24:40.069"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.069" endtime="20211222 03:24:40.069"/>
+</test>
+<test id="s1-s6-s4-t11" name="test11">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.070" endtime="20211222 03:24:40.070"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.069" endtime="20211222 03:24:40.070"/>
+</test>
+<test id="s1-s6-s4-t12" name="test12">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.070" endtime="20211222 03:24:40.070"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.070" endtime="20211222 03:24:40.070"/>
+</test>
+<status status="PASS" starttime="20211222 03:24:40.062" endtime="20211222 03:24:40.071"/>
+</suite>
+<suite id="s1-s6-s5" name="Suite5" source="/home/peke/Devel/robotframework/atest/testdata/misc/multiple_suites/05__suite5.robot">
+<test id="s1-s6-s5-t1" name="test1">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.073" endtime="20211222 03:24:40.073"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.072" endtime="20211222 03:24:40.073"/>
+</test>
+<test id="s1-s6-s5-t2" name="test2">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.073" endtime="20211222 03:24:40.073"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.073" endtime="20211222 03:24:40.073"/>
+</test>
+<test id="s1-s6-s5-t3" name="test3">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.074" endtime="20211222 03:24:40.074"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.074" endtime="20211222 03:24:40.074"/>
+</test>
+<test id="s1-s6-s5-t4" name="test4">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.074" endtime="20211222 03:24:40.075"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.074" endtime="20211222 03:24:40.075"/>
+</test>
+<test id="s1-s6-s5-t5" name="test5">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.075" endtime="20211222 03:24:40.075"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.075" endtime="20211222 03:24:40.075"/>
+</test>
+<test id="s1-s6-s5-t6" name="test6">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.076" endtime="20211222 03:24:40.076"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.075" endtime="20211222 03:24:40.076"/>
+</test>
+<test id="s1-s6-s5-t7" name="test7">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.076" endtime="20211222 03:24:40.076"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.076" endtime="20211222 03:24:40.076"/>
+</test>
+<test id="s1-s6-s5-t8" name="test8">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.077" endtime="20211222 03:24:40.077"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.077" endtime="20211222 03:24:40.077"/>
+</test>
+<test id="s1-s6-s5-t9" name="test9">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.077" endtime="20211222 03:24:40.078"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.077" endtime="20211222 03:24:40.078"/>
+</test>
+<test id="s1-s6-s5-t10" name="test10">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.078" endtime="20211222 03:24:40.078"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.078" endtime="20211222 03:24:40.078"/>
+</test>
+<test id="s1-s6-s5-t11" name="test11">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.079" endtime="20211222 03:24:40.079"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.078" endtime="20211222 03:24:40.079"/>
+</test>
+<test id="s1-s6-s5-t12" name="test12">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.079" endtime="20211222 03:24:40.079"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.079" endtime="20211222 03:24:40.079"/>
+</test>
+<status status="PASS" starttime="20211222 03:24:40.071" endtime="20211222 03:24:40.080"/>
+</suite>
+<suite id="s1-s6-s6" name="Suite10" source="/home/peke/Devel/robotframework/atest/testdata/misc/multiple_suites/10__suite10.robot">
+<test id="s1-s6-s6-t1" name="test1">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.082" endtime="20211222 03:24:40.082"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.081" endtime="20211222 03:24:40.082"/>
+</test>
+<test id="s1-s6-s6-t2" name="test2">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.082" endtime="20211222 03:24:40.082"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.082" endtime="20211222 03:24:40.083"/>
+</test>
+<test id="s1-s6-s6-t3" name="test3">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.083" endtime="20211222 03:24:40.083"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.083" endtime="20211222 03:24:40.083"/>
+</test>
+<test id="s1-s6-s6-t4" name="test4">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.084" endtime="20211222 03:24:40.084"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.084" endtime="20211222 03:24:40.084"/>
+</test>
+<test id="s1-s6-s6-t5" name="test5">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.085" endtime="20211222 03:24:40.085"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.084" endtime="20211222 03:24:40.085"/>
+</test>
+<test id="s1-s6-s6-t6" name="test6">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.085" endtime="20211222 03:24:40.085"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.085" endtime="20211222 03:24:40.086"/>
+</test>
+<test id="s1-s6-s6-t7" name="test7">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.086" endtime="20211222 03:24:40.086"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.086" endtime="20211222 03:24:40.086"/>
+</test>
+<test id="s1-s6-s6-t8" name="test8">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.087" endtime="20211222 03:24:40.087"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.086" endtime="20211222 03:24:40.087"/>
+</test>
+<test id="s1-s6-s6-t9" name="test9">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.087" endtime="20211222 03:24:40.087"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.087" endtime="20211222 03:24:40.087"/>
+</test>
+<test id="s1-s6-s6-t10" name="test10">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.088" endtime="20211222 03:24:40.088"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.087" endtime="20211222 03:24:40.088"/>
+</test>
+<test id="s1-s6-s6-t11" name="test11">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.088" endtime="20211222 03:24:40.088"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.088" endtime="20211222 03:24:40.089"/>
+</test>
+<test id="s1-s6-s6-t12" name="test12">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.089" endtime="20211222 03:24:40.089"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.089" endtime="20211222 03:24:40.089"/>
+</test>
+<status status="PASS" starttime="20211222 03:24:40.080" endtime="20211222 03:24:40.090"/>
+</suite>
+<suite id="s1-s6-s7" name="Suite 6" source="/home/peke/Devel/robotframework/atest/testdata/misc/multiple_suites/suite 6.robot">
+<test id="s1-s6-s7-t1" name="test1">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.091" endtime="20211222 03:24:40.091"/>
+</kw>
+<tag>some</tag>
+<status status="PASS" starttime="20211222 03:24:40.091" endtime="20211222 03:24:40.092"/>
+</test>
+<test id="s1-s6-s7-t2" name="test2">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.092" endtime="20211222 03:24:40.092"/>
+</kw>
+<tag>some</tag>
+<status status="PASS" starttime="20211222 03:24:40.092" endtime="20211222 03:24:40.092"/>
+</test>
+<test id="s1-s6-s7-t3" name="test3">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.093" endtime="20211222 03:24:40.093"/>
+</kw>
+<tag>some</tag>
+<status status="PASS" starttime="20211222 03:24:40.093" endtime="20211222 03:24:40.093"/>
+</test>
+<test id="s1-s6-s7-t4" name="test4">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.094" endtime="20211222 03:24:40.094"/>
+</kw>
+<tag>some</tag>
+<status status="PASS" starttime="20211222 03:24:40.093" endtime="20211222 03:24:40.094"/>
+</test>
+<test id="s1-s6-s7-t5" name="test5">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.094" endtime="20211222 03:24:40.094"/>
+</kw>
+<tag>some</tag>
+<status status="PASS" starttime="20211222 03:24:40.094" endtime="20211222 03:24:40.094"/>
+</test>
+<test id="s1-s6-s7-t6" name="test6">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.095" endtime="20211222 03:24:40.095"/>
+</kw>
+<tag>some</tag>
+<status status="PASS" starttime="20211222 03:24:40.095" endtime="20211222 03:24:40.095"/>
+</test>
+<test id="s1-s6-s7-t7" name="test7">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.095" endtime="20211222 03:24:40.096"/>
+</kw>
+<tag>some</tag>
+<status status="PASS" starttime="20211222 03:24:40.095" endtime="20211222 03:24:40.096"/>
+</test>
+<test id="s1-s6-s7-t8" name="test8">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.096" endtime="20211222 03:24:40.096"/>
+</kw>
+<tag>some</tag>
+<status status="PASS" starttime="20211222 03:24:40.096" endtime="20211222 03:24:40.096"/>
+</test>
+<test id="s1-s6-s7-t9" name="test9">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.097" endtime="20211222 03:24:40.097"/>
+</kw>
+<tag>some</tag>
+<status status="PASS" starttime="20211222 03:24:40.096" endtime="20211222 03:24:40.097"/>
+</test>
+<test id="s1-s6-s7-t10" name="test10">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.097" endtime="20211222 03:24:40.098"/>
+</kw>
+<tag>some</tag>
+<status status="PASS" starttime="20211222 03:24:40.097" endtime="20211222 03:24:40.098"/>
+</test>
+<test id="s1-s6-s7-t11" name="test11">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.098" endtime="20211222 03:24:40.098"/>
+</kw>
+<tag>some</tag>
+<status status="PASS" starttime="20211222 03:24:40.098" endtime="20211222 03:24:40.098"/>
+</test>
+<test id="s1-s6-s7-t12" name="test12">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.099" endtime="20211222 03:24:40.099"/>
+</kw>
+<tag>some</tag>
+<status status="PASS" starttime="20211222 03:24:40.098" endtime="20211222 03:24:40.099"/>
+</test>
+<status status="PASS" starttime="20211222 03:24:40.090" endtime="20211222 03:24:40.099"/>
+</suite>
+<suite id="s1-s6-s8" name="SUite7" source="/home/peke/Devel/robotframework/atest/testdata/misc/multiple_suites/SUite7.robot">
+<test id="s1-s6-s8-t1" name="test1">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.102" endtime="20211222 03:24:40.102"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.101" endtime="20211222 03:24:40.102"/>
+</test>
+<test id="s1-s6-s8-t2" name="test2">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.102" endtime="20211222 03:24:40.102"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.102" endtime="20211222 03:24:40.103"/>
+</test>
+<test id="s1-s6-s8-t3" name="test3">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.103" endtime="20211222 03:24:40.103"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.103" endtime="20211222 03:24:40.103"/>
+</test>
+<test id="s1-s6-s8-t4" name="test4">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.104" endtime="20211222 03:24:40.104"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.103" endtime="20211222 03:24:40.104"/>
+</test>
+<test id="s1-s6-s8-t5" name="test5">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.104" endtime="20211222 03:24:40.104"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.104" endtime="20211222 03:24:40.105"/>
+</test>
+<test id="s1-s6-s8-t6" name="test6">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.105" endtime="20211222 03:24:40.105"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.105" endtime="20211222 03:24:40.105"/>
+</test>
+<test id="s1-s6-s8-t7" name="test7">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.106" endtime="20211222 03:24:40.106"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.105" endtime="20211222 03:24:40.106"/>
+</test>
+<test id="s1-s6-s8-t8" name="test8">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.106" endtime="20211222 03:24:40.106"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.106" endtime="20211222 03:24:40.106"/>
+</test>
+<test id="s1-s6-s8-t9" name="test9">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.107" endtime="20211222 03:24:40.107"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.107" endtime="20211222 03:24:40.107"/>
+</test>
+<test id="s1-s6-s8-t10" name="test10">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.108" endtime="20211222 03:24:40.108"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.107" endtime="20211222 03:24:40.108"/>
+</test>
+<test id="s1-s6-s8-t11" name="test11">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.108" endtime="20211222 03:24:40.108"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.108" endtime="20211222 03:24:40.108"/>
+</test>
+<test id="s1-s6-s8-t12" name="test12">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.109" endtime="20211222 03:24:40.109"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.108" endtime="20211222 03:24:40.109"/>
+</test>
+<status status="PASS" starttime="20211222 03:24:40.100" endtime="20211222 03:24:40.109"/>
+</suite>
+<suite id="s1-s6-s9" name="suiTe 8" source="/home/peke/Devel/robotframework/atest/testdata/misc/multiple_suites/suiTe_8.robot">
+<test id="s1-s6-s9-t1" name="test1">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.111" endtime="20211222 03:24:40.111"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.111" endtime="20211222 03:24:40.111"/>
+</test>
+<test id="s1-s6-s9-t2" name="test2">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.112" endtime="20211222 03:24:40.112"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.111" endtime="20211222 03:24:40.112"/>
+</test>
+<test id="s1-s6-s9-t3" name="test3">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.112" endtime="20211222 03:24:40.112"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.112" endtime="20211222 03:24:40.112"/>
+</test>
+<test id="s1-s6-s9-t4" name="test4">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.113" endtime="20211222 03:24:40.113"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.113" endtime="20211222 03:24:40.113"/>
+</test>
+<test id="s1-s6-s9-t5" name="test5">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.114" endtime="20211222 03:24:40.114"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.113" endtime="20211222 03:24:40.114"/>
+</test>
+<test id="s1-s6-s9-t6" name="test6">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.114" endtime="20211222 03:24:40.114"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.114" endtime="20211222 03:24:40.114"/>
+</test>
+<test id="s1-s6-s9-t7" name="test7">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.115" endtime="20211222 03:24:40.115"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.115" endtime="20211222 03:24:40.115"/>
+</test>
+<test id="s1-s6-s9-t8" name="test8">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.115" endtime="20211222 03:24:40.116"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.115" endtime="20211222 03:24:40.116"/>
+</test>
+<test id="s1-s6-s9-t9" name="test9">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.116" endtime="20211222 03:24:40.116"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.116" endtime="20211222 03:24:40.116"/>
+</test>
+<test id="s1-s6-s9-t10" name="test10">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.117" endtime="20211222 03:24:40.117"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.117" endtime="20211222 03:24:40.117"/>
+</test>
+<test id="s1-s6-s9-t11" name="test11">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.117" endtime="20211222 03:24:40.117"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.117" endtime="20211222 03:24:40.118"/>
+</test>
+<test id="s1-s6-s9-t12" name="test12">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.118" endtime="20211222 03:24:40.118"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.118" endtime="20211222 03:24:40.118"/>
+</test>
+<status status="PASS" starttime="20211222 03:24:40.110" endtime="20211222 03:24:40.118"/>
+</suite>
+<suite id="s1-s6-s10" name="Suite 9 Name" source="/home/peke/Devel/robotframework/atest/testdata/misc/multiple_suites/suite_9_name.robot">
+<test id="s1-s6-s10-t1" name="test1">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.120" endtime="20211222 03:24:40.120"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.120" endtime="20211222 03:24:40.120"/>
+</test>
+<test id="s1-s6-s10-t2" name="test2">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.121" endtime="20211222 03:24:40.121"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.121" endtime="20211222 03:24:40.121"/>
+</test>
+<test id="s1-s6-s10-t3" name="test3">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.121" endtime="20211222 03:24:40.122"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.121" endtime="20211222 03:24:40.122"/>
+</test>
+<test id="s1-s6-s10-t4" name="test4">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.122" endtime="20211222 03:24:40.122"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.122" endtime="20211222 03:24:40.122"/>
+</test>
+<test id="s1-s6-s10-t5" name="test5">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.123" endtime="20211222 03:24:40.123"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.122" endtime="20211222 03:24:40.123"/>
+</test>
+<test id="s1-s6-s10-t6" name="test6">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.123" endtime="20211222 03:24:40.123"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.123" endtime="20211222 03:24:40.124"/>
+</test>
+<test id="s1-s6-s10-t7" name="test7">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.124" endtime="20211222 03:24:40.124"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.124" endtime="20211222 03:24:40.125"/>
+</test>
+<test id="s1-s6-s10-t8" name="test8">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.125" endtime="20211222 03:24:40.125"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.125" endtime="20211222 03:24:40.125"/>
+</test>
+<test id="s1-s6-s10-t9" name="test9">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.126" endtime="20211222 03:24:40.126"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.125" endtime="20211222 03:24:40.126"/>
+</test>
+<test id="s1-s6-s10-t10" name="test10">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.126" endtime="20211222 03:24:40.126"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.126" endtime="20211222 03:24:40.126"/>
+</test>
+<test id="s1-s6-s10-t11" name="test11">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.127" endtime="20211222 03:24:40.127"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.127" endtime="20211222 03:24:40.127"/>
+</test>
+<test id="s1-s6-s10-t12" name="test12">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.127" endtime="20211222 03:24:40.128"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.127" endtime="20211222 03:24:40.128"/>
+</test>
+<status status="PASS" starttime="20211222 03:24:40.119" endtime="20211222 03:24:40.128"/>
+</suite>
+<status status="PASS" starttime="20211222 03:24:40.019" endtime="20211222 03:24:40.129"/>
+</suite>
+<suite id="s1-s7" name="Non Ascii" source="/home/peke/Devel/robotframework/atest/testdata/misc/non_ascii.robot">
+<test id="s1-s7-t1" name="Non-ASCII Log Messages">
+<kw name="Print Non Ascii Strings" library="NonAsciiLibrary">
+<doc>Prints message containing non-ASCII characters</doc>
+<msg timestamp="20211222 03:24:40.133" level="INFO">Circle is 360°</msg>
+<msg timestamp="20211222 03:24:40.133" level="INFO">Hyvää üötä</msg>
+<msg timestamp="20211222 03:24:40.133" level="INFO">উৄ ৰ ৺ ট ৫ ৪ হ</msg>
+<status status="PASS" starttime="20211222 03:24:40.132" endtime="20211222 03:24:40.133"/>
+</kw>
+<kw name="Log" library="BuiltIn">
+<arg>Français</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.133" level="INFO">Français</msg>
+<status status="PASS" starttime="20211222 03:24:40.133" endtime="20211222 03:24:40.133"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>0.001</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20211222 03:24:40.134" level="INFO">Slept 1 millisecond</msg>
+<status status="PASS" starttime="20211222 03:24:40.133" endtime="20211222 03:24:40.134"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.132" endtime="20211222 03:24:40.134"/>
+</test>
+<test id="s1-s7-t2" name="Non-ASCII Return Value">
+<kw name="Evaluate" library="BuiltIn">
+<var>${msg}</var>
+<arg>u'Fran\\xe7ais'</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<msg timestamp="20211222 03:24:40.135" level="INFO">${msg} = Français</msg>
+<status status="PASS" starttime="20211222 03:24:40.135" endtime="20211222 03:24:40.135"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${msg}</arg>
+<arg>Français</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20211222 03:24:40.135" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20211222 03:24:40.135" endtime="20211222 03:24:40.135"/>
+</kw>
+<kw name="Log" library="BuiltIn">
+<arg>${msg}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.136" level="INFO">Français</msg>
+<status status="PASS" starttime="20211222 03:24:40.135" endtime="20211222 03:24:40.136"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.135" endtime="20211222 03:24:40.136"/>
+</test>
+<test id="s1-s7-t3" name="Non-ASCII In Return Value Attributes">
+<kw name="Print And Return Non Ascii Object" library="NonAsciiLibrary">
+<var>${obj}</var>
+<doc>Prints object with non-ASCII `str()` and returns it.</doc>
+<msg timestamp="20211222 03:24:40.136" level="INFO">Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ</msg>
+<msg timestamp="20211222 03:24:40.136" level="INFO">${obj} = Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ</msg>
+<status status="PASS" starttime="20211222 03:24:40.136" endtime="20211222 03:24:40.136"/>
+</kw>
+<kw name="Log" library="BuiltIn">
+<arg>${obj.message}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.137" level="INFO">Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ</msg>
+<status status="PASS" starttime="20211222 03:24:40.137" endtime="20211222 03:24:40.137"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.136" endtime="20211222 03:24:40.137"/>
+</test>
+<test id="s1-s7-t4" name="Non-ASCII Failure">
+<kw name="Raise Non Ascii Error" library="NonAsciiLibrary">
+<msg timestamp="20211222 03:24:40.138" level="FAIL">Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ</msg>
+<msg timestamp="20211222 03:24:40.138" level="DEBUG">Traceback (most recent call last):
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 54, in run
+    return_value = self._run(context, kw.args)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 77, in _run
+    return self._run_with_output_captured_and_signal_monitor(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 99, in _run_with_output_captured_and_signal_monitor
+    return self._run_with_signal_monitoring(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 104, in _run_with_signal_monitoring
+    return runner()
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 92, in &lt;lambda&gt;
+    return lambda: handler(*positional, **named)
+  File "/home/peke/Devel/robotframework/atest/testresources/testlibs/NonAsciiLibrary.py", line 20, in raise_non_ascii_error
+    raise AssertionError(', '.join(MESSAGES))
+AssertionError: Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ</msg>
+<status status="FAIL" starttime="20211222 03:24:40.138" endtime="20211222 03:24:40.138"/>
+</kw>
+<tag>täg</tag>
+<status status="FAIL" starttime="20211222 03:24:40.137" endtime="20211222 03:24:40.138">Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ</status>
+</test>
+<test id="s1-s7-t5" name="Non-ASCII Failure In Setup">
+<kw name="Raise Non Ascii Error" library="NonAsciiLibrary" type="SETUP">
+<msg timestamp="20211222 03:24:40.139" level="FAIL">Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ</msg>
+<msg timestamp="20211222 03:24:40.139" level="DEBUG">Traceback (most recent call last):
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 54, in run
+    return_value = self._run(context, kw.args)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 77, in _run
+    return self._run_with_output_captured_and_signal_monitor(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 99, in _run_with_output_captured_and_signal_monitor
+    return self._run_with_signal_monitoring(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 104, in _run_with_signal_monitoring
+    return runner()
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 92, in &lt;lambda&gt;
+    return lambda: handler(*positional, **named)
+  File "/home/peke/Devel/robotframework/atest/testresources/testlibs/NonAsciiLibrary.py", line 20, in raise_non_ascii_error
+    raise AssertionError(', '.join(MESSAGES))
+AssertionError: Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ</msg>
+<status status="FAIL" starttime="20211222 03:24:40.139" endtime="20211222 03:24:40.139"/>
+</kw>
+<status status="FAIL" starttime="20211222 03:24:40.138" endtime="20211222 03:24:40.139">Setup failed:
+Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ</status>
+</test>
+<test id="s1-s7-t6" name="Non-ASCII Failure In Teardown">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.140" endtime="20211222 03:24:40.140"/>
+</kw>
+<kw name="Raise Non Ascii Error" library="NonAsciiLibrary" type="TEARDOWN">
+<msg timestamp="20211222 03:24:40.140" level="FAIL">Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ</msg>
+<msg timestamp="20211222 03:24:40.140" level="DEBUG">Traceback (most recent call last):
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 54, in run
+    return_value = self._run(context, kw.args)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 77, in _run
+    return self._run_with_output_captured_and_signal_monitor(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 99, in _run_with_output_captured_and_signal_monitor
+    return self._run_with_signal_monitoring(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 104, in _run_with_signal_monitoring
+    return runner()
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 92, in &lt;lambda&gt;
+    return lambda: handler(*positional, **named)
+  File "/home/peke/Devel/robotframework/atest/testresources/testlibs/NonAsciiLibrary.py", line 20, in raise_non_ascii_error
+    raise AssertionError(', '.join(MESSAGES))
+AssertionError: Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ</msg>
+<status status="FAIL" starttime="20211222 03:24:40.140" endtime="20211222 03:24:40.140">Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ</status>
+</kw>
+<status status="FAIL" starttime="20211222 03:24:40.139" endtime="20211222 03:24:40.140">Teardown failed:
+Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ</status>
+</test>
+<test id="s1-s7-t7" name="Non-ASCII Failure In Teardown After Normal Failure">
+<kw name="Fail" library="BuiltIn">
+<arg>Just ASCII here</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<msg timestamp="20211222 03:24:40.141" level="FAIL">Just ASCII here</msg>
+<msg timestamp="20211222 03:24:40.142" level="DEBUG">Traceback (most recent call last):
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 54, in run
+    return_value = self._run(context, kw.args)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 77, in _run
+    return self._run_with_output_captured_and_signal_monitor(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 99, in _run_with_output_captured_and_signal_monitor
+    return self._run_with_signal_monitoring(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 104, in _run_with_signal_monitoring
+    return runner()
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 92, in &lt;lambda&gt;
+    return lambda: handler(*positional, **named)
+  File "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py", line 507, in fail
+    raise AssertionError(msg) if msg else AssertionError()
+AssertionError: Just ASCII here</msg>
+<status status="FAIL" starttime="20211222 03:24:40.141" endtime="20211222 03:24:40.142"/>
+</kw>
+<kw name="Raise Non Ascii Error" library="NonAsciiLibrary" type="TEARDOWN">
+<msg timestamp="20211222 03:24:40.142" level="FAIL">Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ</msg>
+<msg timestamp="20211222 03:24:40.142" level="DEBUG">Traceback (most recent call last):
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 54, in run
+    return_value = self._run(context, kw.args)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 77, in _run
+    return self._run_with_output_captured_and_signal_monitor(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 99, in _run_with_output_captured_and_signal_monitor
+    return self._run_with_signal_monitoring(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 104, in _run_with_signal_monitoring
+    return runner()
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 92, in &lt;lambda&gt;
+    return lambda: handler(*positional, **named)
+  File "/home/peke/Devel/robotframework/atest/testresources/testlibs/NonAsciiLibrary.py", line 20, in raise_non_ascii_error
+    raise AssertionError(', '.join(MESSAGES))
+AssertionError: Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ</msg>
+<status status="FAIL" starttime="20211222 03:24:40.142" endtime="20211222 03:24:40.142">Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ</status>
+</kw>
+<status status="FAIL" starttime="20211222 03:24:40.140" endtime="20211222 03:24:40.142">Just ASCII here
+
+Also teardown failed:
+Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ</status>
+</test>
+<test id="s1-s7-t8" name="Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо">
+<kw name="Ñöñ-ÄŚÇÏÏ Këywörd Nämë">
+<kw name="Log" library="BuiltIn">
+<arg>Hyvää päivää</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.143" level="INFO">Hyvää päivää</msg>
+<status status="PASS" starttime="20211222 03:24:40.143" endtime="20211222 03:24:40.143"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.143" endtime="20211222 03:24:40.143"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.142" endtime="20211222 03:24:40.143"/>
+</test>
+<status status="FAIL" starttime="20211222 03:24:40.130" endtime="20211222 03:24:40.144"/>
+</suite>
+<suite id="s1-s8" name="Normal" source="/home/peke/Devel/robotframework/atest/testdata/misc/normal.robot">
+<test id="s1-s8-t1" name="First One">
+<kw name="Log" library="BuiltIn">
+<arg>Test 1</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.146" level="INFO">Test 1</msg>
+<status status="PASS" starttime="20211222 03:24:40.146" endtime="20211222 03:24:40.146"/>
+</kw>
+<kw name="Log" library="BuiltIn">
+<arg>Logging with debug level</arg>
+<arg>DEBUG</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.146" level="DEBUG">Logging with debug level</msg>
+<status status="PASS" starttime="20211222 03:24:40.146" endtime="20211222 03:24:40.146"/>
+</kw>
+<kw name="logs on trace">
+<tag>kw</tag>
+<tag>tags</tag>
+<kw name="Log" library="BuiltIn">
+<arg>Log on ${TEST NAME}</arg>
+<arg>TRACE</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.147" level="DEBUG">Keyword timeout 1 hour active. 3600.0 seconds left.</msg>
+<status status="PASS" starttime="20211222 03:24:40.146" endtime="20211222 03:24:40.147"/>
+</kw>
+<timeout value="1 hour"/>
+<status status="PASS" starttime="20211222 03:24:40.146" endtime="20211222 03:24:40.147"/>
+</kw>
+<tag>f1</tag>
+<tag>t1</tag>
+<tag>t2</tag>
+<status status="PASS" starttime="20211222 03:24:40.145" endtime="20211222 03:24:40.147"/>
+</test>
+<test id="s1-s8-t2" name="Second One">
+<kw name="Log" library="BuiltIn">
+<arg>Test 2</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.147" level="DEBUG">Test timeout 1 day active. 86400.0 seconds left.</msg>
+<msg timestamp="20211222 03:24:40.147" level="INFO">Test 2</msg>
+<status status="PASS" starttime="20211222 03:24:40.147" endtime="20211222 03:24:40.148"/>
+</kw>
+<kw name="Delay">
+<kw name="Sleep" library="BuiltIn">
+<arg>${DELAY}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20211222 03:24:40.148" level="DEBUG">Test timeout 1 day active. 86399.999 seconds left.</msg>
+<msg timestamp="20211222 03:24:40.158" level="INFO">Slept 10 milliseconds</msg>
+<status status="PASS" starttime="20211222 03:24:40.148" endtime="20211222 03:24:40.158"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.148" endtime="20211222 03:24:40.158"/>
+</kw>
+<kw name="Nested keyword">
+<tag>nested</tag>
+<kw name="Nested keyword 2">
+<tag>nested 2</tag>
+<kw name="Nested keyword 3">
+<tag>nested 3</tag>
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<msg timestamp="20211222 03:24:40.159" level="DEBUG">Test timeout 1 day active. 86399.988 seconds left.</msg>
+<status status="PASS" starttime="20211222 03:24:40.159" endtime="20211222 03:24:40.159"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.159" endtime="20211222 03:24:40.159"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.159" endtime="20211222 03:24:40.159"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.158" endtime="20211222 03:24:40.159"/>
+</kw>
+<kw name="Nested keyword 2">
+<tag>nested 2</tag>
+<kw name="Nested keyword 3">
+<tag>nested 3</tag>
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<msg timestamp="20211222 03:24:40.160" level="DEBUG">Test timeout 1 day active. 86399.987 seconds left.</msg>
+<status status="PASS" starttime="20211222 03:24:40.160" endtime="20211222 03:24:40.160"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.160" endtime="20211222 03:24:40.160"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.160" endtime="20211222 03:24:40.160"/>
+</kw>
+<doc>Nothing interesting here</doc>
+<tag>d1</tag>
+<tag>d_2</tag>
+<tag>f1</tag>
+<timeout value="1 day"/>
+<status status="PASS" starttime="20211222 03:24:40.147" endtime="20211222 03:24:40.160"/>
+</test>
+<doc>Normal test cases</doc>
+<meta name="Something">My Value</meta>
+<status status="PASS" starttime="20211222 03:24:40.144" endtime="20211222 03:24:40.161"/>
+</suite>
+<suite id="s1-s9" name="Pass And Fail" source="/home/peke/Devel/robotframework/atest/testdata/misc/pass_and_fail.robot">
+<kw name="My Keyword" type="SETUP">
+<arg>Suite Setup</arg>
+<tag>force</tag>
+<tag>keyword</tag>
+<tag>tags</tag>
+<kw name="Log" library="BuiltIn">
+<arg>Hello says "${who}"!</arg>
+<arg>${LEVEL1}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.166" level="INFO">Hello says "Suite Setup"!</msg>
+<status status="PASS" starttime="20211222 03:24:40.166" endtime="20211222 03:24:40.166"/>
+</kw>
+<kw name="Log" library="BuiltIn">
+<arg>Debug message</arg>
+<arg>${LEVEL2}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.167" level="DEBUG">Debug message</msg>
+<status status="PASS" starttime="20211222 03:24:40.167" endtime="20211222 03:24:40.167"/>
+</kw>
+<kw name="Convert To Upper Case" library="String">
+<var>${assign}</var>
+<arg>Just testing...</arg>
+<doc>Converts string to upper case.</doc>
+<msg timestamp="20211222 03:24:40.167" level="INFO">${assign} = JUST TESTING...</msg>
+<status status="PASS" starttime="20211222 03:24:40.167" endtime="20211222 03:24:40.167"/>
+</kw>
+<return>
+<status status="PASS" starttime="20211222 03:24:40.167" endtime="20211222 03:24:40.167"/>
+</return>
+<status status="PASS" starttime="20211222 03:24:40.166" endtime="20211222 03:24:40.167"/>
+</kw>
+<test id="s1-s9-t1" name="Pass">
+<kw name="My Keyword">
+<arg>Pass</arg>
+<tag>force</tag>
+<tag>keyword</tag>
+<tag>tags</tag>
+<kw name="Log" library="BuiltIn">
+<arg>Hello says "${who}"!</arg>
+<arg>${LEVEL1}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.168" level="INFO">Hello says "Pass"!</msg>
+<status status="PASS" starttime="20211222 03:24:40.168" endtime="20211222 03:24:40.168"/>
+</kw>
+<kw name="Log" library="BuiltIn">
+<arg>Debug message</arg>
+<arg>${LEVEL2}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.168" level="DEBUG">Debug message</msg>
+<status status="PASS" starttime="20211222 03:24:40.168" endtime="20211222 03:24:40.168"/>
+</kw>
+<kw name="Convert To Upper Case" library="String">
+<var>${assign}</var>
+<arg>Just testing...</arg>
+<doc>Converts string to upper case.</doc>
+<msg timestamp="20211222 03:24:40.168" level="INFO">${assign} = JUST TESTING...</msg>
+<status status="PASS" starttime="20211222 03:24:40.168" endtime="20211222 03:24:40.168"/>
+</kw>
+<return>
+<status status="PASS" starttime="20211222 03:24:40.168" endtime="20211222 03:24:40.169"/>
+</return>
+<status status="PASS" starttime="20211222 03:24:40.167" endtime="20211222 03:24:40.169"/>
+</kw>
+<tag>force</tag>
+<tag>pass</tag>
+<status status="PASS" starttime="20211222 03:24:40.167" endtime="20211222 03:24:40.169"/>
+</test>
+<test id="s1-s9-t2" name="Fail">
+<kw name="My Keyword">
+<arg>Fail</arg>
+<tag>force</tag>
+<tag>keyword</tag>
+<tag>tags</tag>
+<kw name="Log" library="BuiltIn">
+<arg>Hello says "${who}"!</arg>
+<arg>${LEVEL1}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.170" level="INFO">Hello says "Fail"!</msg>
+<status status="PASS" starttime="20211222 03:24:40.169" endtime="20211222 03:24:40.170"/>
+</kw>
+<kw name="Log" library="BuiltIn">
+<arg>Debug message</arg>
+<arg>${LEVEL2}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.170" level="DEBUG">Debug message</msg>
+<status status="PASS" starttime="20211222 03:24:40.170" endtime="20211222 03:24:40.170"/>
+</kw>
+<kw name="Convert To Upper Case" library="String">
+<var>${assign}</var>
+<arg>Just testing...</arg>
+<doc>Converts string to upper case.</doc>
+<msg timestamp="20211222 03:24:40.170" level="INFO">${assign} = JUST TESTING...</msg>
+<status status="PASS" starttime="20211222 03:24:40.170" endtime="20211222 03:24:40.170"/>
+</kw>
+<return>
+<status status="PASS" starttime="20211222 03:24:40.170" endtime="20211222 03:24:40.170"/>
+</return>
+<status status="PASS" starttime="20211222 03:24:40.169" endtime="20211222 03:24:40.170"/>
+</kw>
+<kw name="Fail" library="BuiltIn">
+<arg>Expected failure</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<msg timestamp="20211222 03:24:40.171" level="FAIL">Expected failure</msg>
+<msg timestamp="20211222 03:24:40.171" level="DEBUG">Traceback (most recent call last):
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 54, in run
+    return_value = self._run(context, kw.args)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 77, in _run
+    return self._run_with_output_captured_and_signal_monitor(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 99, in _run_with_output_captured_and_signal_monitor
+    return self._run_with_signal_monitoring(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 104, in _run_with_signal_monitoring
+    return runner()
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 92, in &lt;lambda&gt;
+    return lambda: handler(*positional, **named)
+  File "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py", line 507, in fail
+    raise AssertionError(msg) if msg else AssertionError()
+AssertionError: Expected failure</msg>
+<status status="FAIL" starttime="20211222 03:24:40.170" endtime="20211222 03:24:40.171"/>
+</kw>
+<doc>FAIL Expected failure</doc>
+<tag>fail</tag>
+<tag>force</tag>
+<status status="FAIL" starttime="20211222 03:24:40.169" endtime="20211222 03:24:40.171">Expected failure</status>
+</test>
+<doc>Some tests here</doc>
+<status status="FAIL" starttime="20211222 03:24:40.161" endtime="20211222 03:24:40.171"/>
+</suite>
+<suite id="s1-s10" name="Setups And Teardowns" source="/home/peke/Devel/robotframework/atest/testdata/misc/setups_and_teardowns.robot">
+<kw name="Suite Setup" type="SETUP">
+<kw name="Log" library="BuiltIn">
+<arg>Keyword</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.173" level="INFO">Keyword</msg>
+<status status="PASS" starttime="20211222 03:24:40.173" endtime="20211222 03:24:40.173"/>
+</kw>
+<kw name="Keyword">
+<kw name="Log" library="BuiltIn">
+<arg>Keyword</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.174" level="INFO">Keyword</msg>
+<status status="PASS" starttime="20211222 03:24:40.174" endtime="20211222 03:24:40.174"/>
+</kw>
+<kw name="Log" library="BuiltIn" type="TEARDOWN">
+<arg>Keyword Teardown</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.174" level="INFO">Keyword Teardown</msg>
+<status status="PASS" starttime="20211222 03:24:40.174" endtime="20211222 03:24:40.174"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.173" endtime="20211222 03:24:40.174"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.173" endtime="20211222 03:24:40.174"/>
+</kw>
+<test id="s1-s10-t1" name="Test with setup and teardown">
+<kw name="Test Setup" type="SETUP">
+<kw name="Log" library="BuiltIn">
+<arg>Keyword</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.175" level="INFO">Keyword</msg>
+<status status="PASS" starttime="20211222 03:24:40.175" endtime="20211222 03:24:40.175"/>
+</kw>
+<kw name="Keyword">
+<kw name="Log" library="BuiltIn">
+<arg>Keyword</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.175" level="INFO">Keyword</msg>
+<status status="PASS" starttime="20211222 03:24:40.175" endtime="20211222 03:24:40.175"/>
+</kw>
+<kw name="Log" library="BuiltIn" type="TEARDOWN">
+<arg>Keyword Teardown</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.176" level="INFO">Keyword Teardown</msg>
+<status status="PASS" starttime="20211222 03:24:40.175" endtime="20211222 03:24:40.176"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.175" endtime="20211222 03:24:40.176"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.174" endtime="20211222 03:24:40.176"/>
+</kw>
+<kw name="Keyword">
+<kw name="Log" library="BuiltIn">
+<arg>Keyword</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.176" level="INFO">Keyword</msg>
+<status status="PASS" starttime="20211222 03:24:40.176" endtime="20211222 03:24:40.176"/>
+</kw>
+<kw name="Log" library="BuiltIn" type="TEARDOWN">
+<arg>Keyword Teardown</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.176" level="INFO">Keyword Teardown</msg>
+<status status="PASS" starttime="20211222 03:24:40.176" endtime="20211222 03:24:40.176"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.176" endtime="20211222 03:24:40.176"/>
+</kw>
+<kw name="Test Teardown" type="TEARDOWN">
+<kw name="Log" library="BuiltIn">
+<arg>Keyword</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.177" level="INFO">Keyword</msg>
+<status status="PASS" starttime="20211222 03:24:40.177" endtime="20211222 03:24:40.177"/>
+</kw>
+<kw name="Keyword">
+<kw name="Log" library="BuiltIn">
+<arg>Keyword</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.177" level="INFO">Keyword</msg>
+<status status="PASS" starttime="20211222 03:24:40.177" endtime="20211222 03:24:40.177"/>
+</kw>
+<kw name="Log" library="BuiltIn" type="TEARDOWN">
+<arg>Keyword Teardown</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.178" level="INFO">Keyword Teardown</msg>
+<status status="PASS" starttime="20211222 03:24:40.177" endtime="20211222 03:24:40.178"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.177" endtime="20211222 03:24:40.178"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.177" endtime="20211222 03:24:40.178"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.174" endtime="20211222 03:24:40.178"/>
+</test>
+<test id="s1-s10-t2" name="Test with failing setup">
+<kw name="Fail" library="BuiltIn" type="SETUP">
+<arg>Test Setup</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<msg timestamp="20211222 03:24:40.178" level="FAIL">Test Setup</msg>
+<msg timestamp="20211222 03:24:40.179" level="DEBUG">Traceback (most recent call last):
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 54, in run
+    return_value = self._run(context, kw.args)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 77, in _run
+    return self._run_with_output_captured_and_signal_monitor(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 99, in _run_with_output_captured_and_signal_monitor
+    return self._run_with_signal_monitoring(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 104, in _run_with_signal_monitoring
+    return runner()
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 92, in &lt;lambda&gt;
+    return lambda: handler(*positional, **named)
+  File "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py", line 507, in fail
+    raise AssertionError(msg) if msg else AssertionError()
+AssertionError: Test Setup</msg>
+<status status="FAIL" starttime="20211222 03:24:40.178" endtime="20211222 03:24:40.179"/>
+</kw>
+<kw name="Test Teardown" type="TEARDOWN">
+<kw name="Log" library="BuiltIn">
+<arg>Keyword</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.179" level="INFO">Keyword</msg>
+<status status="PASS" starttime="20211222 03:24:40.179" endtime="20211222 03:24:40.179"/>
+</kw>
+<kw name="Keyword">
+<kw name="Log" library="BuiltIn">
+<arg>Keyword</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.180" level="INFO">Keyword</msg>
+<status status="PASS" starttime="20211222 03:24:40.179" endtime="20211222 03:24:40.180"/>
+</kw>
+<kw name="Log" library="BuiltIn" type="TEARDOWN">
+<arg>Keyword Teardown</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.180" level="INFO">Keyword Teardown</msg>
+<status status="PASS" starttime="20211222 03:24:40.180" endtime="20211222 03:24:40.180"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.179" endtime="20211222 03:24:40.180"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.179" endtime="20211222 03:24:40.180"/>
+</kw>
+<doc>FAIL
+Setup failed:
+Test Setup</doc>
+<status status="FAIL" starttime="20211222 03:24:40.178" endtime="20211222 03:24:40.180">Setup failed:
+Test Setup</status>
+</test>
+<test id="s1-s10-t3" name="Test with failing teardown">
+<kw name="Test Setup" type="SETUP">
+<kw name="Log" library="BuiltIn">
+<arg>Keyword</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.181" level="INFO">Keyword</msg>
+<status status="PASS" starttime="20211222 03:24:40.181" endtime="20211222 03:24:40.181"/>
+</kw>
+<kw name="Keyword">
+<kw name="Log" library="BuiltIn">
+<arg>Keyword</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.181" level="INFO">Keyword</msg>
+<status status="PASS" starttime="20211222 03:24:40.181" endtime="20211222 03:24:40.182"/>
+</kw>
+<kw name="Log" library="BuiltIn" type="TEARDOWN">
+<arg>Keyword Teardown</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.182" level="INFO">Keyword Teardown</msg>
+<status status="PASS" starttime="20211222 03:24:40.182" endtime="20211222 03:24:40.182"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.181" endtime="20211222 03:24:40.182"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.181" endtime="20211222 03:24:40.182"/>
+</kw>
+<kw name="Keyword">
+<kw name="Log" library="BuiltIn">
+<arg>Keyword</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.182" level="INFO">Keyword</msg>
+<status status="PASS" starttime="20211222 03:24:40.182" endtime="20211222 03:24:40.182"/>
+</kw>
+<kw name="Log" library="BuiltIn" type="TEARDOWN">
+<arg>Keyword Teardown</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.183" level="INFO">Keyword Teardown</msg>
+<status status="PASS" starttime="20211222 03:24:40.183" endtime="20211222 03:24:40.183"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.182" endtime="20211222 03:24:40.183"/>
+</kw>
+<kw name="Fail" library="BuiltIn" type="TEARDOWN">
+<arg>Test Teardown</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<msg timestamp="20211222 03:24:40.183" level="FAIL">Test Teardown</msg>
+<msg timestamp="20211222 03:24:40.183" level="DEBUG">Traceback (most recent call last):
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 54, in run
+    return_value = self._run(context, kw.args)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 77, in _run
+    return self._run_with_output_captured_and_signal_monitor(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 99, in _run_with_output_captured_and_signal_monitor
+    return self._run_with_signal_monitoring(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 104, in _run_with_signal_monitoring
+    return runner()
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 92, in &lt;lambda&gt;
+    return lambda: handler(*positional, **named)
+  File "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py", line 507, in fail
+    raise AssertionError(msg) if msg else AssertionError()
+AssertionError: Test Teardown</msg>
+<status status="FAIL" starttime="20211222 03:24:40.183" endtime="20211222 03:24:40.183">Test Teardown</status>
+</kw>
+<doc>FAIL
+Teardown failed:
+Test Teardown</doc>
+<status status="FAIL" starttime="20211222 03:24:40.180" endtime="20211222 03:24:40.183">Teardown failed:
+Test Teardown</status>
+</test>
+<test id="s1-s10-t4" name="Failing test with failing teardown">
+<kw name="Test Setup" type="SETUP">
+<kw name="Log" library="BuiltIn">
+<arg>Keyword</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.184" level="INFO">Keyword</msg>
+<status status="PASS" starttime="20211222 03:24:40.184" endtime="20211222 03:24:40.184"/>
+</kw>
+<kw name="Keyword">
+<kw name="Log" library="BuiltIn">
+<arg>Keyword</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.185" level="INFO">Keyword</msg>
+<status status="PASS" starttime="20211222 03:24:40.185" endtime="20211222 03:24:40.185"/>
+</kw>
+<kw name="Log" library="BuiltIn" type="TEARDOWN">
+<arg>Keyword Teardown</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.185" level="INFO">Keyword Teardown</msg>
+<status status="PASS" starttime="20211222 03:24:40.185" endtime="20211222 03:24:40.185"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.184" endtime="20211222 03:24:40.185"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.184" endtime="20211222 03:24:40.185"/>
+</kw>
+<kw name="Fail" library="BuiltIn">
+<arg>Keyword</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<msg timestamp="20211222 03:24:40.185" level="FAIL">Keyword</msg>
+<msg timestamp="20211222 03:24:40.185" level="DEBUG">Traceback (most recent call last):
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 54, in run
+    return_value = self._run(context, kw.args)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 77, in _run
+    return self._run_with_output_captured_and_signal_monitor(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 99, in _run_with_output_captured_and_signal_monitor
+    return self._run_with_signal_monitoring(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 104, in _run_with_signal_monitoring
+    return runner()
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 92, in &lt;lambda&gt;
+    return lambda: handler(*positional, **named)
+  File "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py", line 507, in fail
+    raise AssertionError(msg) if msg else AssertionError()
+AssertionError: Keyword</msg>
+<status status="FAIL" starttime="20211222 03:24:40.185" endtime="20211222 03:24:40.186"/>
+</kw>
+<kw name="Fail" library="BuiltIn" type="TEARDOWN">
+<arg>Test Teardown</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<msg timestamp="20211222 03:24:40.186" level="FAIL">Test Teardown</msg>
+<msg timestamp="20211222 03:24:40.186" level="DEBUG">Traceback (most recent call last):
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 54, in run
+    return_value = self._run(context, kw.args)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 77, in _run
+    return self._run_with_output_captured_and_signal_monitor(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 99, in _run_with_output_captured_and_signal_monitor
+    return self._run_with_signal_monitoring(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 104, in _run_with_signal_monitoring
+    return runner()
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 92, in &lt;lambda&gt;
+    return lambda: handler(*positional, **named)
+  File "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py", line 507, in fail
+    raise AssertionError(msg) if msg else AssertionError()
+AssertionError: Test Teardown</msg>
+<status status="FAIL" starttime="20211222 03:24:40.186" endtime="20211222 03:24:40.186">Test Teardown</status>
+</kw>
+<doc>FAIL
+Keyword
+
+Also teardown failed:
+Test Teardown</doc>
+<status status="FAIL" starttime="20211222 03:24:40.183" endtime="20211222 03:24:40.186">Keyword
+
+Also teardown failed:
+Test Teardown</status>
+</test>
+<kw name="Suite Teardown" type="TEARDOWN">
+<kw name="Log" library="BuiltIn">
+<arg>Keyword</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.187" level="INFO">Keyword</msg>
+<status status="PASS" starttime="20211222 03:24:40.187" endtime="20211222 03:24:40.187"/>
+</kw>
+<kw name="Keyword">
+<kw name="Log" library="BuiltIn">
+<arg>Keyword</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.187" level="INFO">Keyword</msg>
+<status status="PASS" starttime="20211222 03:24:40.187" endtime="20211222 03:24:40.187"/>
+</kw>
+<kw name="Log" library="BuiltIn" type="TEARDOWN">
+<arg>Keyword Teardown</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.187" level="INFO">Keyword Teardown</msg>
+<status status="PASS" starttime="20211222 03:24:40.187" endtime="20211222 03:24:40.187"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.187" endtime="20211222 03:24:40.187"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.186" endtime="20211222 03:24:40.187"/>
+</kw>
+<doc>This suite was initially created for testing keyword types
+with listeners but can be used for other purposes too.</doc>
+<status status="FAIL" starttime="20211222 03:24:40.172" endtime="20211222 03:24:40.188"/>
+</suite>
+<suite id="s1-s11" name="Suites" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites">
+<suite id="s1-s11-s1" name="Fourth" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/fourth.robot">
+<kw name="Log" library="BuiltIn" type="SETUP">
+<arg>${SETUP MSG}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.196" level="INFO">Suite Setup of Fourth</msg>
+<status status="PASS" starttime="20211222 03:24:40.196" endtime="20211222 03:24:40.196"/>
+</kw>
+<test id="s1-s11-s1-t1" name="Suite4 First">
+<kw name="Log" library="BuiltIn">
+<arg>Suite4_First</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.197" level="INFO">Suite4_First</msg>
+<status status="PASS" starttime="20211222 03:24:40.197" endtime="20211222 03:24:40.197"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>0.01</arg>
+<arg>Make sure elapsed time &gt; 0</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20211222 03:24:40.207" level="INFO">Slept 10 milliseconds</msg>
+<msg timestamp="20211222 03:24:40.207" level="INFO">Make sure elapsed time &gt; 0</msg>
+<status status="PASS" starttime="20211222 03:24:40.197" endtime="20211222 03:24:40.207"/>
+</kw>
+<kw name="Fail" library="BuiltIn">
+<arg>Expected</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<msg timestamp="20211222 03:24:40.208" level="FAIL">Expected</msg>
+<msg timestamp="20211222 03:24:40.208" level="DEBUG">Traceback (most recent call last):
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 54, in run
+    return_value = self._run(context, kw.args)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 77, in _run
+    return self._run_with_output_captured_and_signal_monitor(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 99, in _run_with_output_captured_and_signal_monitor
+    return self._run_with_signal_monitoring(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 104, in _run_with_signal_monitoring
+    return runner()
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 92, in &lt;lambda&gt;
+    return lambda: handler(*positional, **named)
+  File "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py", line 507, in fail
+    raise AssertionError(msg) if msg else AssertionError()
+AssertionError: Expected</msg>
+<status status="FAIL" starttime="20211222 03:24:40.207" endtime="20211222 03:24:40.208"/>
+</kw>
+<kw name="Log" library="BuiltIn" type="TEARDOWN">
+<arg>Huhuu</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.208" level="INFO">Huhuu</msg>
+<status status="PASS" starttime="20211222 03:24:40.208" endtime="20211222 03:24:40.208"/>
+</kw>
+<doc>FAIL Expected</doc>
+<tag>f1</tag>
+<tag>t1</tag>
+<status status="FAIL" starttime="20211222 03:24:40.196" endtime="20211222 03:24:40.208">Expected</status>
+</test>
+<kw name="Log" library="BuiltIn" type="TEARDOWN">
+<arg>${TEARDOWN MSG}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.209" level="INFO">Suite Teardown of Fourth</msg>
+<status status="PASS" starttime="20211222 03:24:40.209" endtime="20211222 03:24:40.209"/>
+</kw>
+<doc>Normal test cases</doc>
+<meta name="Something">My Value</meta>
+<status status="FAIL" starttime="20211222 03:24:40.195" endtime="20211222 03:24:40.209"/>
+</suite>
+<suite id="s1-s11-s2" name="Subsuites" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/subsuites">
+<suite id="s1-s11-s2-s1" name="Sub1" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/subsuites/sub1.robot">
+<kw name="Setup" type="SETUP">
+<kw name="Log" library="BuiltIn">
+<arg>Hello, world!</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.212" level="INFO">Hello, world!</msg>
+<status status="PASS" starttime="20211222 03:24:40.212" endtime="20211222 03:24:40.212"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.212" endtime="20211222 03:24:40.212"/>
+</kw>
+<test id="s1-s11-s2-s1-t1" name="SubSuite1 First">
+<kw name="Log" library="BuiltIn">
+<arg>${MESSAGE}</arg>
+<arg>${LEVEL}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.213" level="INFO">Original message</msg>
+<status status="PASS" starttime="20211222 03:24:40.213" endtime="20211222 03:24:40.213"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>${SLEEP}</arg>
+<arg>Make sure elapsed time &gt; 0</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20211222 03:24:40.313" level="INFO">Slept 100 milliseconds</msg>
+<msg timestamp="20211222 03:24:40.313" level="INFO">Make sure elapsed time &gt; 0</msg>
+<status status="PASS" starttime="20211222 03:24:40.213" endtime="20211222 03:24:40.313"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${FAIL}</arg>
+<arg>NO</arg>
+<arg>This test was doomed to fail</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20211222 03:24:40.314" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20211222 03:24:40.314" endtime="20211222 03:24:40.314"/>
+</kw>
+<tag>f1</tag>
+<tag>t1</tag>
+<status status="PASS" starttime="20211222 03:24:40.212" endtime="20211222 03:24:40.314"/>
+</test>
+<kw name="No Operation" library="BuiltIn" type="TEARDOWN">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.315" endtime="20211222 03:24:40.315"/>
+</kw>
+<doc>Normal test cases</doc>
+<meta name="Something">My Value</meta>
+<status status="PASS" starttime="20211222 03:24:40.210" endtime="20211222 03:24:40.315"/>
+</suite>
+<suite id="s1-s11-s2-s2" name="Sub2" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/subsuites/sub2.robot">
+<test id="s1-s11-s2-s2-t1" name="SubSuite2 First">
+<kw name="Log" library="BuiltIn">
+<arg>SubSuite2_First</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.318" level="INFO">SubSuite2_First</msg>
+<status status="PASS" starttime="20211222 03:24:40.318" endtime="20211222 03:24:40.319"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>${SLEEP}</arg>
+<arg>Make sure elapsed time &gt; 0</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20211222 03:24:40.419" level="INFO">Slept 100 milliseconds</msg>
+<msg timestamp="20211222 03:24:40.419" level="INFO">Make sure elapsed time &gt; 0</msg>
+<status status="PASS" starttime="20211222 03:24:40.319" endtime="20211222 03:24:40.419"/>
+</kw>
+<tag>f1</tag>
+<status status="PASS" starttime="20211222 03:24:40.318" endtime="20211222 03:24:40.419"/>
+</test>
+<doc>Normal test cases</doc>
+<meta name="Something">My Value</meta>
+<status status="PASS" starttime="20211222 03:24:40.316" endtime="20211222 03:24:40.420"/>
+</suite>
+<status status="PASS" starttime="20211222 03:24:40.209" endtime="20211222 03:24:40.420"/>
+</suite>
+<suite id="s1-s11-s3" name="Subsuites2" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/subsuites2">
+<suite id="s1-s11-s3-s1" name="Sub.Suite.4" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/subsuites2/sub.suite.4.robot">
+<test id="s1-s11-s3-s1-t1" name="Test From Sub Suite 4">
+<kw name="Sleep" library="BuiltIn">
+<arg>0.01</arg>
+<arg>Make sure elapsed time &gt; 0</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20211222 03:24:40.434" level="INFO">Slept 10 milliseconds</msg>
+<msg timestamp="20211222 03:24:40.434" level="INFO">Make sure elapsed time &gt; 0</msg>
+<status status="PASS" starttime="20211222 03:24:40.423" endtime="20211222 03:24:40.434"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.423" endtime="20211222 03:24:40.434"/>
+</test>
+<status status="PASS" starttime="20211222 03:24:40.422" endtime="20211222 03:24:40.434"/>
+</suite>
+<suite id="s1-s11-s3-s2" name="Subsuite3" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/subsuites2/subsuite3.robot">
+<test id="s1-s11-s3-s2-t1" name="SubSuite3 First">
+<kw name="Log" library="BuiltIn">
+<arg>SubSuite3_First</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.436" level="INFO">SubSuite3_First</msg>
+<status status="PASS" starttime="20211222 03:24:40.436" endtime="20211222 03:24:40.436"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>0.01</arg>
+<arg>Make sure elapsed time &gt; 0</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20211222 03:24:40.447" level="INFO">Slept 10 milliseconds</msg>
+<msg timestamp="20211222 03:24:40.447" level="INFO">Make sure elapsed time &gt; 0</msg>
+<status status="PASS" starttime="20211222 03:24:40.436" endtime="20211222 03:24:40.447"/>
+</kw>
+<tag>f1</tag>
+<tag>sub3</tag>
+<tag>t1</tag>
+<status status="PASS" starttime="20211222 03:24:40.436" endtime="20211222 03:24:40.447"/>
+</test>
+<test id="s1-s11-s3-s2-t2" name="SubSuite3 Second">
+<kw name="Log" library="BuiltIn">
+<arg>SubSuite3_Second</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.448" level="INFO">SubSuite3_Second</msg>
+<status status="PASS" starttime="20211222 03:24:40.447" endtime="20211222 03:24:40.448"/>
+</kw>
+<tag>f1</tag>
+<tag>sub3</tag>
+<tag>t2</tag>
+<status status="PASS" starttime="20211222 03:24:40.447" endtime="20211222 03:24:40.448"/>
+</test>
+<doc>Normal test cases</doc>
+<meta name="Something">My Value</meta>
+<status status="PASS" starttime="20211222 03:24:40.435" endtime="20211222 03:24:40.448"/>
+</suite>
+<status status="PASS" starttime="20211222 03:24:40.421" endtime="20211222 03:24:40.449"/>
+</suite>
+<suite id="s1-s11-s4" name="Tsuite1" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/tsuite1.robot">
+<test id="s1-s11-s4-t1" name="Suite1 First">
+<kw name="Log" library="BuiltIn">
+<arg>Suite1_First</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.451" level="INFO">Suite1_First</msg>
+<status status="PASS" starttime="20211222 03:24:40.451" endtime="20211222 03:24:40.451"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>0.01</arg>
+<arg>Make sure elapsed time &gt; 0</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20211222 03:24:40.461" level="INFO">Slept 10 milliseconds</msg>
+<msg timestamp="20211222 03:24:40.461" level="INFO">Make sure elapsed time &gt; 0</msg>
+<status status="PASS" starttime="20211222 03:24:40.451" endtime="20211222 03:24:40.461"/>
+</kw>
+<tag>f1</tag>
+<tag>t1</tag>
+<status status="PASS" starttime="20211222 03:24:40.450" endtime="20211222 03:24:40.461"/>
+</test>
+<test id="s1-s11-s4-t2" name="Suite1 Second">
+<kw name="Log" library="BuiltIn">
+<arg>Suite1_Second</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.462" level="INFO">Suite1_Second</msg>
+<status status="PASS" starttime="20211222 03:24:40.462" endtime="20211222 03:24:40.462"/>
+</kw>
+<tag>f1</tag>
+<tag>t2</tag>
+<status status="PASS" starttime="20211222 03:24:40.462" endtime="20211222 03:24:40.462"/>
+</test>
+<test id="s1-s11-s4-t3" name="Third In Suite1">
+<kw name="Log" library="BuiltIn">
+<arg>Suite2_third</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.463" level="INFO">Suite2_third</msg>
+<status status="PASS" starttime="20211222 03:24:40.463" endtime="20211222 03:24:40.463"/>
+</kw>
+<tag>d1</tag>
+<tag>d2</tag>
+<tag>f1</tag>
+<status status="PASS" starttime="20211222 03:24:40.462" endtime="20211222 03:24:40.463"/>
+</test>
+<doc>Normal test cases</doc>
+<meta name="Something">My Value</meta>
+<status status="PASS" starttime="20211222 03:24:40.449" endtime="20211222 03:24:40.463"/>
+</suite>
+<suite id="s1-s11-s5" name="Tsuite2" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/tsuite2.robot">
+<test id="s1-s11-s5-t1" name="Suite2 First">
+<kw name="Log" library="BuiltIn">
+<arg>Suite2_First</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.465" level="INFO">Suite2_First</msg>
+<status status="PASS" starttime="20211222 03:24:40.465" endtime="20211222 03:24:40.465"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>0.01</arg>
+<arg>Make sure elapsed time &gt; 0</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20211222 03:24:40.476" level="INFO">Slept 10 milliseconds</msg>
+<msg timestamp="20211222 03:24:40.476" level="INFO">Make sure elapsed time &gt; 0</msg>
+<status status="PASS" starttime="20211222 03:24:40.465" endtime="20211222 03:24:40.476"/>
+</kw>
+<tag>f1</tag>
+<tag>t1</tag>
+<status status="PASS" starttime="20211222 03:24:40.465" endtime="20211222 03:24:40.476"/>
+</test>
+<doc>Normal test cases</doc>
+<meta name="Something">My Value</meta>
+<status status="PASS" starttime="20211222 03:24:40.464" endtime="20211222 03:24:40.476"/>
+</suite>
+<suite id="s1-s11-s6" name="Tsuite3" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/tsuite3.robot">
+<test id="s1-s11-s6-t1" name="Suite3 First">
+<kw name="Log" library="BuiltIn">
+<arg>Suite3_First</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.478" level="INFO">Suite3_First</msg>
+<status status="PASS" starttime="20211222 03:24:40.478" endtime="20211222 03:24:40.478"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>0.01</arg>
+<arg>Make sure elapsed time &gt; 0</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20211222 03:24:40.488" level="INFO">Slept 10 milliseconds</msg>
+<msg timestamp="20211222 03:24:40.488" level="INFO">Make sure elapsed time &gt; 0</msg>
+<status status="PASS" starttime="20211222 03:24:40.478" endtime="20211222 03:24:40.488"/>
+</kw>
+<tag>f1</tag>
+<tag>t1</tag>
+<status status="PASS" starttime="20211222 03:24:40.478" endtime="20211222 03:24:40.489"/>
+</test>
+<kw name="Log" library="BuiltIn" type="TEARDOWN">
+<arg>Suite Teardown of Tsuite3</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.489" level="INFO">Suite Teardown of Tsuite3</msg>
+<status status="PASS" starttime="20211222 03:24:40.489" endtime="20211222 03:24:40.489"/>
+</kw>
+<doc>Normal test cases</doc>
+<meta name="Something">My Value</meta>
+<status status="PASS" starttime="20211222 03:24:40.476" endtime="20211222 03:24:40.489"/>
+</suite>
+<kw name="Log" library="BuiltIn" type="TEARDOWN">
+<arg>${SUITE_TEARDOWN_ARG}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.490" level="INFO">Default suite teardown</msg>
+<status status="PASS" starttime="20211222 03:24:40.490" endtime="20211222 03:24:40.490"/>
+</kw>
+<status status="FAIL" starttime="20211222 03:24:40.188" endtime="20211222 03:24:40.490"/>
+</suite>
+<suite id="s1-s12" name="Timeouts" source="/home/peke/Devel/robotframework/atest/testdata/misc/timeouts.robot">
+<test id="s1-s12-t1" name="Default Test Timeout">
+<kw name="Timeouted">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<msg timestamp="20211222 03:24:40.493" level="DEBUG">Keyword timeout 42 seconds active. 42.0 seconds left.</msg>
+<status status="PASS" starttime="20211222 03:24:40.492" endtime="20211222 03:24:40.493"/>
+</kw>
+<timeout value="42 seconds"/>
+<status status="PASS" starttime="20211222 03:24:40.492" endtime="20211222 03:24:40.493"/>
+</kw>
+<doc>I have a timeout</doc>
+<timeout value="1 minute 42 seconds"/>
+<status status="PASS" starttime="20211222 03:24:40.492" endtime="20211222 03:24:40.493"/>
+</test>
+<test id="s1-s12-t2" name="Test Timeout With Variable">
+<kw name="Timeouted">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<msg timestamp="20211222 03:24:40.494" level="DEBUG">Keyword timeout 42 seconds active. 42.0 seconds left.</msg>
+<status status="PASS" starttime="20211222 03:24:40.494" endtime="20211222 03:24:40.494"/>
+</kw>
+<timeout value="42 seconds"/>
+<status status="PASS" starttime="20211222 03:24:40.494" endtime="20211222 03:24:40.494"/>
+</kw>
+<timeout value="1 minute 40 seconds"/>
+<status status="PASS" starttime="20211222 03:24:40.493" endtime="20211222 03:24:40.495"/>
+</test>
+<test id="s1-s12-t3" name="No Timeout">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211222 03:24:40.495" endtime="20211222 03:24:40.495"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.495" endtime="20211222 03:24:40.495"/>
+</test>
+<doc>Initially created for testing timeouts with testdoc but
+can be used also for other purposes and extended as needed.</doc>
+<status status="PASS" starttime="20211222 03:24:40.491" endtime="20211222 03:24:40.495"/>
+</suite>
+<suite id="s1-s13" name="Try Except" source="/home/peke/Devel/robotframework/atest/testdata/misc/try_except.robot">
+<test id="s1-s13-t1" name="Everything">
+<try>
+<branch type="TRY">
+<kw name="Keyword">
+<try>
+<branch type="TRY">
+<for flavor="IN">
+<var>${msg}</var>
+<value>Ooops!</value>
+<value>Auts!</value>
+<iter>
+<var name="${msg}">Ooops!</var>
+<kw name="Fail" library="BuiltIn">
+<arg>${msg}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<msg timestamp="20211222 03:24:40.498" level="FAIL">Ooops!</msg>
+<msg timestamp="20211222 03:24:40.498" level="DEBUG">Traceback (most recent call last):
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 54, in run
+    return_value = self._run(context, kw.args)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 77, in _run
+    return self._run_with_output_captured_and_signal_monitor(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 99, in _run_with_output_captured_and_signal_monitor
+    return self._run_with_signal_monitoring(runner, context)
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 104, in _run_with_signal_monitoring
+    return runner()
+  File "/home/peke/Devel/robotframework/src/robot/running/librarykeywordrunner.py", line 92, in &lt;lambda&gt;
+    return lambda: handler(*positional, **named)
+  File "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py", line 507, in fail
+    raise AssertionError(msg) if msg else AssertionError()
+AssertionError: Ooops!</msg>
+<status status="FAIL" starttime="20211222 03:24:40.498" endtime="20211222 03:24:40.498"/>
+</kw>
+<status status="FAIL" starttime="20211222 03:24:40.498" endtime="20211222 03:24:40.498"/>
+</iter>
+<status status="FAIL" starttime="20211222 03:24:40.498" endtime="20211222 03:24:40.498"/>
+</for>
+<status status="FAIL" starttime="20211222 03:24:40.498" endtime="20211222 03:24:40.499"/>
+</branch>
+<branch type="EXCEPT">
+<pattern>No match</pattern>
+<pattern>No match either</pattern>
+<kw name="Fail" library="BuiltIn">
+<arg>Not executed</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" starttime="20211222 03:24:40.499" endtime="20211222 03:24:40.499"/>
+</kw>
+<status status="NOT RUN" starttime="20211222 03:24:40.499" endtime="20211222 03:24:40.499"/>
+</branch>
+<branch type="ELSE">
+<kw name="Fail" library="BuiltIn">
+<arg>Not executed</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" starttime="20211222 03:24:40.499" endtime="20211222 03:24:40.499"/>
+</kw>
+<status status="NOT RUN" starttime="20211222 03:24:40.499" endtime="20211222 03:24:40.499"/>
+</branch>
+<status status="FAIL" starttime="20211222 03:24:40.497" endtime="20211222 03:24:40.499"/>
+</try>
+<if>
+<branch type="IF" condition="True">
+<try>
+<branch type="TRY">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" starttime="20211222 03:24:40.499" endtime="20211222 03:24:40.499"/>
+</kw>
+<status status="NOT RUN" starttime="20211222 03:24:40.499" endtime="20211222 03:24:40.499"/>
+</branch>
+<branch type="FINALLY">
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" starttime="20211222 03:24:40.499" endtime="20211222 03:24:40.499"/>
+</kw>
+<status status="NOT RUN" starttime="20211222 03:24:40.499" endtime="20211222 03:24:40.499"/>
+</branch>
+<status status="NOT RUN" starttime="20211222 03:24:40.499" endtime="20211222 03:24:40.499"/>
+</try>
+<status status="NOT RUN" starttime="20211222 03:24:40.499" endtime="20211222 03:24:40.499"/>
+</branch>
+<status status="NOT RUN" starttime="20211222 03:24:40.499" endtime="20211222 03:24:40.499"/>
+</if>
+<for flavor="IN">
+<var>${error}</var>
+<value>First</value>
+<value>Second</value>
+<value>Third</value>
+<iter>
+<var name="${error}">${error}</var>
+<try>
+<branch type="TRY">
+<kw name="Fail" library="BuiltIn">
+<arg>${x}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" starttime="20211222 03:24:40.500" endtime="20211222 03:24:40.500"/>
+</kw>
+<status status="NOT RUN" starttime="20211222 03:24:40.500" endtime="20211222 03:24:40.500"/>
+</branch>
+<branch type="EXCEPT">
+<pattern>First</pattern>
+<pattern>Second</pattern>
+<pattern>Third</pattern>
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" starttime="20211222 03:24:40.500" endtime="20211222 03:24:40.500"/>
+</kw>
+<status status="NOT RUN" starttime="20211222 03:24:40.500" endtime="20211222 03:24:40.500"/>
+</branch>
+<status status="NOT RUN" starttime="20211222 03:24:40.500" endtime="20211222 03:24:40.500"/>
+</try>
+<status status="NOT RUN" starttime="20211222 03:24:40.500" endtime="20211222 03:24:40.500"/>
+</iter>
+<status status="NOT RUN" starttime="20211222 03:24:40.499" endtime="20211222 03:24:40.500"/>
+</for>
+<status status="FAIL" starttime="20211222 03:24:40.497" endtime="20211222 03:24:40.500"/>
+</kw>
+<status status="FAIL" starttime="20211222 03:24:40.497" endtime="20211222 03:24:40.500"/>
+</branch>
+<branch type="EXCEPT">
+<pattern>No match</pattern>
+<kw name="Fail" library="BuiltIn">
+<arg>Not executed</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" starttime="20211222 03:24:40.500" endtime="20211222 03:24:40.500"/>
+</kw>
+<kw name="Fail" library="BuiltIn">
+<arg>Not executed either</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" starttime="20211222 03:24:40.501" endtime="20211222 03:24:40.501"/>
+</kw>
+<status status="NOT RUN" starttime="20211222 03:24:40.500" endtime="20211222 03:24:40.501"/>
+</branch>
+<branch type="EXCEPT" variable="${err}">
+<pattern>Ooops!</pattern>
+<if>
+<branch type="IF" condition="$err == 'Ooops!'">
+<kw name="Log" library="BuiltIn">
+<arg>Didn't do it again.</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.503" level="INFO">Didn't do it again.</msg>
+<status status="PASS" starttime="20211222 03:24:40.503" endtime="20211222 03:24:40.503"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.503" endtime="20211222 03:24:40.503"/>
+</branch>
+<branch type="ELSE">
+<kw name="Fail" library="BuiltIn">
+<arg>Ooops, I did it again!</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" starttime="20211222 03:24:40.503" endtime="20211222 03:24:40.503"/>
+</kw>
+<status status="NOT RUN" starttime="20211222 03:24:40.503" endtime="20211222 03:24:40.503"/>
+</branch>
+<status status="PASS" starttime="20211222 03:24:40.501" endtime="20211222 03:24:40.503"/>
+</if>
+<status status="PASS" starttime="20211222 03:24:40.501" endtime="20211222 03:24:40.503"/>
+</branch>
+<branch type="ELSE">
+<kw name="Fail" library="BuiltIn">
+<arg>Not executed</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" starttime="20211222 03:24:40.504" endtime="20211222 03:24:40.504"/>
+</kw>
+<status status="NOT RUN" starttime="20211222 03:24:40.503" endtime="20211222 03:24:40.504"/>
+</branch>
+<branch type="FINALLY">
+<kw name="Log" library="BuiltIn">
+<arg>Finally we are in FINALLY!</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.504" level="INFO">Finally we are in FINALLY!</msg>
+<status status="PASS" starttime="20211222 03:24:40.504" endtime="20211222 03:24:40.504"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.504" endtime="20211222 03:24:40.504"/>
+</branch>
+<status status="PASS" starttime="20211222 03:24:40.497" endtime="20211222 03:24:40.504"/>
+</try>
+<status status="PASS" starttime="20211222 03:24:40.497" endtime="20211222 03:24:40.504"/>
+</test>
+<status status="PASS" starttime="20211222 03:24:40.496" endtime="20211222 03:24:40.504"/>
+</suite>
+<suite id="s1-s14" name="Warnings And Errors" source="/home/peke/Devel/robotframework/atest/testdata/misc/warnings_and_errors.robot">
+<kw name="Warning in" type="SETUP">
+<arg>suite setup</arg>
+<tag>warn</tag>
+<if>
+<branch type="IF" condition="True">
+<kw name="Log" library="BuiltIn">
+<arg>Warning in ${where}</arg>
+<arg>WARN</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.506" level="WARN">Warning in suite setup</msg>
+<status status="PASS" starttime="20211222 03:24:40.506" endtime="20211222 03:24:40.506"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.506" endtime="20211222 03:24:40.506"/>
+</branch>
+<status status="PASS" starttime="20211222 03:24:40.506" endtime="20211222 03:24:40.506"/>
+</if>
+<status status="PASS" starttime="20211222 03:24:40.506" endtime="20211222 03:24:40.506"/>
+</kw>
+<test id="s1-s14-t1" name="Warning in test case">
+<kw name="Warning in">
+<arg>test case</arg>
+<tag>warn</tag>
+<if>
+<branch type="IF" condition="True">
+<kw name="Log" library="BuiltIn">
+<arg>Warning in ${where}</arg>
+<arg>WARN</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.507" level="WARN">Warning in test case</msg>
+<status status="PASS" starttime="20211222 03:24:40.507" endtime="20211222 03:24:40.507"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.507" endtime="20211222 03:24:40.507"/>
+</branch>
+<status status="PASS" starttime="20211222 03:24:40.507" endtime="20211222 03:24:40.507"/>
+</if>
+<status status="PASS" starttime="20211222 03:24:40.507" endtime="20211222 03:24:40.507"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.506" endtime="20211222 03:24:40.507"/>
+</test>
+<test id="s1-s14-t2" name="Warning in test case">
+<kw name="No warning">
+<tag>warn</tag>
+<kw name="Log" library="BuiltIn">
+<arg>No warnings here</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.508" level="INFO">No warnings here</msg>
+<status status="PASS" starttime="20211222 03:24:40.508" endtime="20211222 03:24:40.508"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.508" endtime="20211222 03:24:40.508"/>
+</kw>
+<doc>Duplicate name causes warning</doc>
+<status status="PASS" starttime="20211222 03:24:40.508" endtime="20211222 03:24:40.508"/>
+</test>
+<test id="s1-s14-t3" name="Error in test case">
+<kw name="Error in test case">
+<tag>error</tag>
+<tag>warn</tag>
+<kw name="Log" library="BuiltIn">
+<arg>Logged errors supported since 2.9</arg>
+<arg>ERROR</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.509" level="ERROR">Logged errors supported since 2.9</msg>
+<status status="PASS" starttime="20211222 03:24:40.509" endtime="20211222 03:24:40.509"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.509" endtime="20211222 03:24:40.509"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.509" endtime="20211222 03:24:40.510"/>
+</test>
+<kw name="Warning in" type="TEARDOWN">
+<arg>suite teardown</arg>
+<tag>warn</tag>
+<if>
+<branch type="IF" condition="True">
+<kw name="Log" library="BuiltIn">
+<arg>Warning in ${where}</arg>
+<arg>WARN</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211222 03:24:40.510" level="WARN">Warning in suite teardown</msg>
+<status status="PASS" starttime="20211222 03:24:40.510" endtime="20211222 03:24:40.510"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.510" endtime="20211222 03:24:40.510"/>
+</branch>
+<status status="PASS" starttime="20211222 03:24:40.510" endtime="20211222 03:24:40.510"/>
+</if>
+<status status="PASS" starttime="20211222 03:24:40.510" endtime="20211222 03:24:40.510"/>
+</kw>
+<status status="PASS" starttime="20211222 03:24:40.505" endtime="20211222 03:24:40.510"/>
+</suite>
+<status status="FAIL" starttime="20211222 03:24:39.975" endtime="20211222 03:24:40.512"/>
+</suite>
+<statistics>
+<total>
+<stat pass="173" fail="10" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="1" fail="0" skip="0">*not bold*</stat>
+<stat pass="1" fail="0" skip="0">&lt;b&gt;not bold either&lt;/b&gt;</stat>
+<stat pass="12" fail="0" skip="0">d1</stat>
+<stat pass="12" fail="0" skip="0">d2</stat>
+<stat pass="22" fail="1" skip="0">f1</stat>
+<stat pass="0" fail="1" skip="0">fail</stat>
+<stat pass="1" fail="1" skip="0">force</stat>
+<stat pass="1" fail="0" skip="0">pass</stat>
+<stat pass="12" fail="0" skip="0">some</stat>
+<stat pass="2" fail="0" skip="0">sub3</stat>
+<stat pass="7" fail="1" skip="0">t1</stat>
+<stat pass="4" fail="0" skip="0">t2</stat>
+<stat pass="0" fail="1" skip="0">täg</stat>
+<stat pass="1" fail="0" skip="0">warning</stat>
+</tag>
+<suite>
+<stat pass="173" fail="10" skip="0" id="s1" name="Misc">Misc</stat>
+<stat pass="0" fail="1" skip="0" id="s1-s1" name="Dummy Lib Test">Misc.Dummy Lib Test</stat>
+<stat pass="2" fail="0" skip="0" id="s1-s2" name="For Loops">Misc.For Loops</stat>
+<stat pass="2" fail="0" skip="0" id="s1-s3" name="Formatting And Escaping">Misc.Formatting And Escaping</stat>
+<stat pass="1" fail="0" skip="0" id="s1-s4" name="If Else">Misc.If Else</stat>
+<stat pass="11" fail="0" skip="0" id="s1-s5" name="Many Tests">Misc.Many Tests</stat>
+<stat pass="132" fail="0" skip="0" id="s1-s6" name="Multiple Suites">Misc.Multiple Suites</stat>
+<stat pass="12" fail="0" skip="0" id="s1-s6-s1" name="Suite First">Misc.Multiple Suites.Suite First</stat>
+<stat pass="24" fail="0" skip="0" id="s1-s6-s2" name="Sub.Suite.1">Misc.Multiple Suites.Sub.Suite.1</stat>
+<stat pass="12" fail="0" skip="0" id="s1-s6-s2-s1" name="Suite4">Misc.Multiple Suites.Sub.Suite.1.Suite4</stat>
+<stat pass="12" fail="0" skip="0" id="s1-s6-s2-s2" name=".Sui.te.2.">Misc.Multiple Suites.Sub.Suite.1..Sui.te.2.</stat>
+<stat pass="12" fail="0" skip="0" id="s1-s6-s3" name="Suite3">Misc.Multiple Suites.Suite3</stat>
+<stat pass="12" fail="0" skip="0" id="s1-s6-s4" name="Suite4">Misc.Multiple Suites.Suite4</stat>
+<stat pass="12" fail="0" skip="0" id="s1-s6-s5" name="Suite5">Misc.Multiple Suites.Suite5</stat>
+<stat pass="12" fail="0" skip="0" id="s1-s6-s6" name="Suite10">Misc.Multiple Suites.Suite10</stat>
+<stat pass="12" fail="0" skip="0" id="s1-s6-s7" name="Suite 6">Misc.Multiple Suites.Suite 6</stat>
+<stat pass="12" fail="0" skip="0" id="s1-s6-s8" name="SUite7">Misc.Multiple Suites.SUite7</stat>
+<stat pass="12" fail="0" skip="0" id="s1-s6-s9" name="suiTe 8">Misc.Multiple Suites.suiTe 8</stat>
+<stat pass="12" fail="0" skip="0" id="s1-s6-s10" name="Suite 9 Name">Misc.Multiple Suites.Suite 9 Name</stat>
+<stat pass="4" fail="4" skip="0" id="s1-s7" name="Non Ascii">Misc.Non Ascii</stat>
+<stat pass="2" fail="0" skip="0" id="s1-s8" name="Normal">Misc.Normal</stat>
+<stat pass="1" fail="1" skip="0" id="s1-s9" name="Pass And Fail">Misc.Pass And Fail</stat>
+<stat pass="1" fail="3" skip="0" id="s1-s10" name="Setups And Teardowns">Misc.Setups And Teardowns</stat>
+<stat pass="10" fail="1" skip="0" id="s1-s11" name="Suites">Misc.Suites</stat>
+<stat pass="0" fail="1" skip="0" id="s1-s11-s1" name="Fourth">Misc.Suites.Fourth</stat>
+<stat pass="2" fail="0" skip="0" id="s1-s11-s2" name="Subsuites">Misc.Suites.Subsuites</stat>
+<stat pass="1" fail="0" skip="0" id="s1-s11-s2-s1" name="Sub1">Misc.Suites.Subsuites.Sub1</stat>
+<stat pass="1" fail="0" skip="0" id="s1-s11-s2-s2" name="Sub2">Misc.Suites.Subsuites.Sub2</stat>
+<stat pass="3" fail="0" skip="0" id="s1-s11-s3" name="Subsuites2">Misc.Suites.Subsuites2</stat>
+<stat pass="1" fail="0" skip="0" id="s1-s11-s3-s1" name="Sub.Suite.4">Misc.Suites.Subsuites2.Sub.Suite.4</stat>
+<stat pass="2" fail="0" skip="0" id="s1-s11-s3-s2" name="Subsuite3">Misc.Suites.Subsuites2.Subsuite3</stat>
+<stat pass="3" fail="0" skip="0" id="s1-s11-s4" name="Tsuite1">Misc.Suites.Tsuite1</stat>
+<stat pass="1" fail="0" skip="0" id="s1-s11-s5" name="Tsuite2">Misc.Suites.Tsuite2</stat>
+<stat pass="1" fail="0" skip="0" id="s1-s11-s6" name="Tsuite3">Misc.Suites.Tsuite3</stat>
+<stat pass="3" fail="0" skip="0" id="s1-s12" name="Timeouts">Misc.Timeouts</stat>
+<stat pass="1" fail="0" skip="0" id="s1-s13" name="Try Except">Misc.Try Except</stat>
+<stat pass="3" fail="0" skip="0" id="s1-s14" name="Warnings And Errors">Misc.Warnings And Errors</stat>
+</suite>
+</statistics>
+<errors>
+<msg timestamp="20211222 03:24:39.973" level="ERROR">Error in file '/home/peke/Devel/robotframework/atest/testdata/misc/warnings_and_errors.robot' on line 4: Non-existing setting 'Non-Existing'.</msg>
+<msg timestamp="20211222 03:24:39.990" level="ERROR">Error in file '/home/peke/Devel/robotframework/atest/testdata/misc/dummy_lib_test.robot' on line 2: Importing library 'DummyLib' failed: ModuleNotFoundError: No module named 'DummyLib'
+Traceback (most recent call last):
+  File "/home/peke/Devel/robotframework/src/robot/utils/importer.py", line 191, in _import
+    return __import__(name, fromlist=fromlist)
+PYTHONPATH:
+  /home/peke/Devel/robotframework/atest/testresources/testlibs
+  /home/peke/Devel/robotframework/tmp
+  /home/peke/Devel/robotframework/src
+  /home/peke/Devel/robotframework
+  /usr/lib/python38.zip
+  /usr/lib/python3.8
+  /usr/lib/python3.8/lib-dynload
+  /home/peke/Devel/robotframework/venv38/lib/python3.8/site-packages
+  /home/peke/Devel/robotframework/src</msg>
+<msg timestamp="20211222 03:24:40.041" level="WARN">warning</msg>
+<msg timestamp="20211222 03:24:40.101" level="ERROR">Error in file '/home/peke/Devel/robotframework/atest/testdata/misc/multiple_suites/SUite7.robot' on line 2: Importing library 'Non Existing' failed: ModuleNotFoundError: No module named 'Non Existing'
+Traceback (most recent call last):
+  File "/home/peke/Devel/robotframework/src/robot/utils/importer.py", line 191, in _import
+    return __import__(name, fromlist=fromlist)
+PYTHONPATH:
+  /home/peke/Devel/robotframework/atest/testresources/testlibs
+  /home/peke/Devel/robotframework/tmp
+  /home/peke/Devel/robotframework/src
+  /home/peke/Devel/robotframework
+  /usr/lib/python38.zip
+  /usr/lib/python3.8
+  /usr/lib/python3.8/lib-dynload
+  /home/peke/Devel/robotframework/venv38/lib/python3.8/site-packages
+  /home/peke/Devel/robotframework/src</msg>
+<msg timestamp="20211222 03:24:40.506" level="WARN">Warning in suite setup</msg>
+<msg timestamp="20211222 03:24:40.507" level="WARN">Warning in test case</msg>
+<msg timestamp="20211222 03:24:40.508" level="WARN">Multiple test cases with name 'Warning in test case' executed in test suite 'Misc.Warnings And Errors'.</msg>
+<msg timestamp="20211222 03:24:40.509" level="ERROR">Logged errors supported since 2.9</msg>
+<msg timestamp="20211222 03:24:40.510" level="WARN">Warning in suite teardown</msg>
+</errors>
+</robot>

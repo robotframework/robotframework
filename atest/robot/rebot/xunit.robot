@@ -24,18 +24,38 @@ XUnit Option Given
     File Should Exist    ${OUTDIR}/log.html
     ${root} =    Parse XML    ${OUTDIR}/xunit.xml
     Should Be Equal    ${root.tag}    testsuite
-    ${tests} =    Get Elements    ${root}    testcase
-    Length Should Be    ${tests}    19
+    ${suites} =    Get Elements    ${root}    testsuite
+    Length Should Be    ${suites}    2
+    ${tests} =    Get Elements    ${suites}[0]    testcase
+    Length Should Be    ${tests}    8
     Element Attribute Should be    ${tests}[7]    name    Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо
-    ${failures} =    Get Elements    ${root}    testcase/failure
-    Length Should Be    ${failures}    5
+    ${failures} =    Get Elements    ${suites}[0]    testcase/failure
+    Length Should Be    ${failures}    4
     Element Attribute Should be    ${failures}[0]    message    ${MESSAGES}
 
+Suite Stats
+    [Template]    Suite Stats Should Be
+    19    5
+    8     4    xpath=testsuite[1]
+    11    1    xpath=testsuite[2]
+    1     1    xpath=testsuite[2]/testsuite[1]
+    2     0    xpath=testsuite[2]/testsuite[2]
+    1     0    xpath=testsuite[2]/testsuite[2]/testsuite[1]
+    1     0    xpath=testsuite[2]/testsuite[2]/testsuite[2]
+    3     0    xpath=testsuite[2]/testsuite[3]
+    1     0    xpath=testsuite[2]/testsuite[3]/testsuite[1]
+    2     0    xpath=testsuite[2]/testsuite[3]/testsuite[2]
+    3     0    xpath=testsuite[2]/testsuite[4]
+    1     0    xpath=testsuite[2]/testsuite[5]
+    1     0    xpath=testsuite[2]/testsuite[6]
+
 Times in xUnit output
-    Previous Test Should Have Passed    XUnit Option Given
+    Previous Test Should Have Passed    Suite Stats
     ${suite} =    Parse XML    ${OUTDIR}/xunit.xml
     Element Attribute Should Match    ${suite}    time    ?.???
-    Element Attribute Should Match    ${suite}    time    ?.???    xpath=.//testcase[1]
+    Element Attribute Should Match    ${suite}    time    ?.???    xpath=testsuite[1]
+    Element Attribute Should Match    ${suite}    time    ?.???    xpath=testsuite[1]/testcase[1]
+    Element Attribute Should Match    ${suite}    time    ?.???    xpath=testsuite[2]/testsuite[1]/testcase[1]
 
 XUnit skip non-criticals is deprecated
     Run Rebot    --xUnit xunit.xml --xUnitSkipNonCritical     ${INPUT FILE}
@@ -50,6 +70,14 @@ Invalid XUnit File
     Stderr Should Match Regexp
     ...    \\[ ERROR \\] Opening xunit file '${path}' failed: .*
 
+Merge outputs
+    Run Rebot    -x xunit.xml    ${INPUT FILE} ${INPUT FILE}
+    Suite Stats Should Be     38    10    0    timestamp=${EMPTY}
+
+Start and end time
+    Run Rebot    -x xunit.xml --starttime 20211215-12:11:10.456 --endtime 20211215-12:13:10.556    ${INPUT FILE}
+    Suite Stats Should Be     19    5    0    120.100    2021-12-15T12:11:10.456000
+
 *** Keywords ***
 Create Input File
     Create Output With Robot    ${INPUT FILE}    ${EMPTY}    misc/non_ascii.robot misc/suites
@@ -58,3 +86,15 @@ Create Input File
 Remove Temps
     Remove Directory    ${MYOUTDIR}    recursive
     Remove File    ${INPUT FILE}
+
+Suite Stats Should Be
+    [Arguments]    ${tests}    ${failures}    ${skipped}=0
+    ...    ${time}=?.???    ${timestamp}=20??-??-??T??:??:??.???000
+    ...    ${xpath}=.
+    ${suite} =    Get Element    ${OUTDIR}/xunit.xml    xpath=${xpath}
+    Element Attribute Should Be       ${suite}    tests       ${tests}
+    Element Attribute Should Be       ${suite}    failures    ${failures}
+    Element Attribute Should Be       ${suite}    skipped     ${skipped}
+    Element Attribute Should Be       ${suite}    errors      0
+    Element Attribute Should Match    ${suite}    time        ${time}
+    Element Attribute Should Match    ${suite}    timestamp   ${timestamp}

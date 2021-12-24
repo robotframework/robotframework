@@ -453,7 +453,7 @@ Most of the content of `output files`_ comes from keywords and their
 log messages. When creating higher level reports, log files are not necessarily
 needed at all, and in that case keywords and their messages just take space
 unnecessarily. Log files themselves can also grow overly large, especially if
-they contain `for loops`_ or other constructs that repeat certain keywords
+they contain `FOR loops`_ or other constructs that repeat certain keywords
 multiple times.
 
 In these situations, command line options :option:`--removekeywords` and
@@ -480,7 +480,7 @@ or warnings`__ are not removed except when using the `ALL` mode.
    possible failures.
 
 `FOR`
-   Remove all passed iterations from `for loops`_ except the last one.
+   Remove all passed iterations from `FOR loops`_ except the last one.
 
 `WUKS`
    Remove all failing keywords inside BuiltIn_ keyword
@@ -524,10 +524,10 @@ keywords, recursively, and child keywords are discarded otherwise. Flattening
 supports the following modes:
 
 `FOR`
-   Flatten `for loops`_ fully.
+   Flatten `FOR loops`_ fully.
 
 `FORITEM`
-   Flatten individual for loop iterations.
+   Flatten individual `FOR` loop iterations.
 
 `NAME:<pattern>`
    Flatten keywords matching the given pattern. Pattern matching rules are

@@ -12,20 +12,22 @@ Should Be String Positive
     Should be String    ${EMPTY}
 
 Bytes are not strings
-    Run Keyword And Expect Error   '${BYTES}' is not a string.    Should Be String    ${BYTES}
+    Run Keyword And Expect Error   '${BYTES}' is bytes, not a string.    Should Be String    ${BYTES}
     Should not be string    ${BYTES}
 
 Should Be String Negative
     [Template]     Run Keyword And Expect Error
-    '0' is not a string.    Should be string    ${0}
-    My error    Should be string    ${TRUE}    My error
+    '0' is integer, not a string.    Should be string    ${0}
+    My error                         Should be string    ${TRUE}    My error
 
 Should Not Be String Positive
     Should Not Be String    ${0}
     Should Not Be String    ${TRUE}
 
 Should Not Be String Negative
-    Run Keyword And Expect Error    My error message    Should not be string    Hello    My error message
+    [Template]     Run Keyword And Expect Error
+    'Two\nlines' is a string.    Should not be string    Two\nlines
+    My error message             Should not be string    Hello    My error message
 
 Should Be Unicode String Positive
     Should be Unicode String    Robot

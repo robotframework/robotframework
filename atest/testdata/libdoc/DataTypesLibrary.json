@@ -249,6 +249,13 @@
           }
         ]
       }
+    ],
+    "customs": [
+      {
+        "name": "Example",
+        "doc": "Hello, world!",
+        "type": "Custom"
+      }
     ]
   }
 }

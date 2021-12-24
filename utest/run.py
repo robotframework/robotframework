@@ -2,7 +2,7 @@
 
 """Helper script to run all Robot Framework's unit tests.
 
-usage: utest/run.py [options]
+usage: utest/run.py [options] [directory]
 
 options:
     -q, --quiet     Minimal output
@@ -10,9 +10,16 @@ options:
     -d, --doc       Show test's doc string instead of name and class
                     (implies verbosity)
     -h, --help      Show help
+    
+`directory` is the path of the directory under the `utest` folder to execute. 
+If no value is given all tests are run
+
+examples:
+$ utest/run.py -q output
+This will run only the unit tests in the subdirectory output
 """
 
-import getopt
+import argparse
 import os
 import sys
 import re
@@ -37,6 +44,8 @@ imported = {}
 def get_tests(directory=None):
     if directory is None:
         directory = base
+    else:
+        directory = os.path.join(base, directory)
     sys.path.insert(0, directory)
     tests = []
     for name in sorted(os.listdir(directory)):
@@ -48,38 +57,16 @@ def get_tests(directory=None):
         elif testfile.match(name):
             modname = os.path.splitext(name)[0]
             if modname in imported:
-                print("Test module '%s' imported both as '%s' and '%s'. "
-                      "Rename one or fix test discovery."
-                      % (modname, imported[modname],
-                         os.path.join(directory, name)), file=sys.stderr)
+                print(
+                    f"Test module '{modname}' imported both as '{imported[modname]}' and "
+                    + "'{os.path.join(directory, name)}'. Rename one or fix test discovery.",
+                    file=sys.stderr,
+                )
                 sys.exit(1)
             module = __import__(modname)
             imported[modname] = module.__file__
             tests.append(unittest.defaultTestLoader.loadTestsFromModule(module))
     return tests
-
-
-def parse_args(argv):
-    docs = False
-    verbosity = 1
-    try:
-        options, args = getopt.getopt(argv, 'hH?vqd',
-                                      ['help', 'verbose', 'quiet', 'doc'])
-        if args:
-            raise getopt.error('no arguments accepted, got %s' % list(args))
-    except getopt.error as err:
-        usage_exit(err)
-    for opt, value in options:
-        if opt in ('-h', '-H', '-?', '--help'):
-            usage_exit()
-        if opt in ('-q', '--quiet'):
-            verbosity = 0
-        if opt in ('-v', '--verbose'):
-            verbosity = 2
-        if opt in ('-d', '--doc'):
-            docs = True
-            verbosity = 2
-    return docs, verbosity
 
 
 def usage_exit(msg=None):
@@ -92,11 +79,25 @@ def usage_exit(msg=None):
     sys.exit(rc)
 
 
-if __name__ == '__main__':
-    docs, vrbst = parse_args(sys.argv[1:])
-    tests = get_tests()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(add_help=False, description=__doc__)
+    parser.add_argument("-I", "--interpreter", default=sys.executable)
+    parser.add_argument("-h", "--help", action="store_true")
+    parser.add_argument("-q", "--quiet", dest="vrbst", action="store_const", const=0)
+    parser.add_argument("-v", "--verbose",dest="vrbst", action="store_const", const=2)
+    parser.add_argument("-d", "--doc", dest="docs", action="store_true")
+    parser.add_argument(dest="directory", nargs="?", action="store", default=None)
+    parser.set_defaults(vrbst=1)
+
+    args = parser.parse_args()
+    if args.docs:
+        args.vrbst = 2
+    if args.help:
+        usage_exit()
+
+    tests = get_tests(args.directory)
     suite = unittest.TestSuite(tests)
-    runner = unittest.TextTestRunner(descriptions=docs, verbosity=vrbst)
+    runner = unittest.TextTestRunner(descriptions=args.docs, verbosity=args.vrbst)
     result = runner.run(suite)
     rc = len(result.failures) + len(result.errors)
     if rc > 250:

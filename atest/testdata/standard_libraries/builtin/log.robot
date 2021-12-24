@@ -45,24 +45,19 @@ FAIL is not valid log level
 
 Log also to console
     [Setup]    Set Log Level    DEBUG
-    Log    Hello, console!    console=yepyep    repr=no    html=false
+    Log    Hello, console!    console=yepyep    html=false
     Log    ${HTML}    debug    enable both html    and console
 
 repr=True
     [Setup]    Set Log Level    DEBUG
-    Log    Nothing special here    repr=yes
+    Log    Nothing special here    repr=false
     Log    Hyvää yötä \u2603!    repr=True
-    Log    ${42}    DEBUG    ${FALSE}    ${FALSE}    ${TRUE}
-    ${bytes} =    Evaluate    b'\\x00abc\\xff (repr=True)'
-    Log    ${bytes}    repr=${42}    console=True
-    ${nfd} =    Evaluate    'hyva\u0308'
-    Log    ${nfd}    repr=Y
 
 formatter=repr
     [Setup]    Set Log Level    DEBUG
     Log    Nothing special here    formatter=repr
     Log    Hyvää yötä \u2603!    formatter=repr
-    Log    ${42}    DEBUG    ${FALSE}    ${FALSE}    ${TRUE}
+    Log    ${42}    DEBUG    ${FALSE}    ${FALSE}    DEPRECATED    repr
     ${bytes} =    Evaluate    b'\\x00abc\\xff (formatter=repr)'
     Log    ${bytes}    formatter=REPR    console=True
     ${nfd} =    Evaluate    'hyva\u0308'
@@ -72,7 +67,7 @@ formatter=ascii
     [Setup]    Set Log Level    DEBUG
     Log    Nothing special here    formatter=ascii
     Log    Hyvää yötä \u2603!    formatter=ascii
-    Log    ${42}    DEBUG    ${FALSE}    ${FALSE}    ${TRUE}
+    Log    ${42}    DEBUG    ${FALSE}    ${FALSE}    DEPRECATED    ascii
     ${bytes} =    Evaluate    b'\\x00abc\\xff (formatter=ascii)'
     Log    ${bytes}    formatter=ASCII    console=True
     ${nfd} =    Evaluate    'hyva\u0308'
@@ -82,7 +77,7 @@ formatter=str
     [Setup]    Set Log Level    DEBUG
     Log    Nothing special here    formatter=str
     Log    Hyvää yötä \u2603!    formatter=STR
-    Log    ${42}    DEBUG    ${FALSE}    ${FALSE}    ${TRUE}
+    Log    ${42}    DEBUG    ${FALSE}    ${FALSE}    DEPRECATED    sTr
     ${bytes} =    Evaluate    b'\\x00abc\\xff (formatter=str)'
     Log    ${bytes}    formatter=str    console=True
     ${nfd} =    Evaluate    'hyva\u0308'
@@ -90,7 +85,7 @@ formatter=str
 
 formatter=repr pretty prints
     ${long string} =    Evaluate    ' '.join(['Robot Framework'] * 1000)
-    Log    ${long string}    repr=True
+    Log    ${long string}    formatter=repr
     ${small dict} =    Evaluate    {'small': 'dict', 3: b'items', 'a': 'sorted'}
     Log    ${small dict}    formatter=repr    console=TRUE
     ${big dict} =    Evaluate    {'big': 'dict', 'long': '${long string}', 'nested': ${small dict}, 'list': [1, 2, 3]}
@@ -102,8 +97,29 @@ formatter=repr pretty prints
     ${non ascii} =    Evaluate    ['hyv\\xe4', b'hyv\\xe4', {'\\u2603': b'\\x00\\xff'}]
     Log    ${non ascii}    formatter=repr
 
+formatter=len
+    [Documentation]    FAIL STARTS: TypeError:
+    [Setup]    Set Log Level    DEBUG
+    Log    Nothing special here    formatter=len
+    Log    Hyvää yötä \u2603!    DEBUG    formatter=LEN
+    ${bytes} =    Evaluate    b'\\x00abc\\xff (formatter=len)'
+    Log    ${bytes}    formatter=len    console=True
+    ${nfd} =    Evaluate    'hyva\u0308'
+    Log    ${nfd}    formatter=len
+    Log    ${42}    formatter=len
+
+formatter=type
+    [Setup]    Set Log Level    DEBUG
+    Log    Nothing special here    formatter=type
+    Log    Hyvää yötä \u2603!    formatter=TYPE
+    Log    ${42}    DEBUG    formatter=type
+    ${bytes} =    Evaluate    b'\\x00abc\\xff (formatter=type)'
+    Log    ${bytes}    formatter=type    console=True
+    ${now} =    Evaluate    datetime.datetime.now()
+    Log    ${now}    formatter=type
+
 formatter=invalid
-    [Documentation]    FAIL ValueError: Invalid formatter 'invalid'. Available 'str', 'repr' and 'ascii'.
+    [Documentation]    FAIL ValueError: Invalid formatter 'invalid'. Available 'str', 'repr', 'ascii', 'len', and 'type'.
     Log    x    formatter=invalid
 
 Log callable

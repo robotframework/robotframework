@@ -499,8 +499,8 @@ with it like:
   java -jar robotframework-4.0.3.jar --variable name:value mytests.robot
 
 If you want to `post-process outputs`_ using Rebot or use other built-in
-`supporting tools`_, you need to give the command name ``rebot``, ``libdoc``,
-``testdoc`` or ``tidy`` as the first argument to the JAR file:
+`supporting tools`_, you need to give the command name ``rebot``, ``libdoc``
+or ``testdoc`` as the first argument to the JAR file:
 
 .. sourcecode:: bash
 

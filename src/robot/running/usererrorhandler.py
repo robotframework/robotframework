@@ -15,6 +15,7 @@
 
 from robot.model import Tags
 from robot.result import Keyword as KeywordResult
+from robot.variables import VariableAssignment
 
 from .arguments import ArgumentSpec
 from .statusreporter import StatusReporter
@@ -62,7 +63,7 @@ class UserErrorHandler:
         result = KeywordResult(kwname=self.name,
                                libname=self.libname,
                                args=kw.args,
-                               assign=kw.assign,
+                               assign=tuple(VariableAssignment(kw.assign)),
                                type=kw.type)
         with StatusReporter(kw, result, context, run):
             if run:

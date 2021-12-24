@@ -69,7 +69,8 @@ this section.
    Specifies `user keyword arguments`_.
 
 `[Return]`:setting:
-   Specifies `user keyword return values`_.
+   Specifies `user keyword return values`_. `RETURN` statement (new in RF 5.0)
+   should be used instead.
 
 `[Teardown]`:setting:
    Specify `user keyword teardown`_.
@@ -78,11 +79,9 @@ this section.
    Sets the possible `user keyword timeout`_. Timeouts_ are discussed
    in a section of their own.
 
-.. note:: Setting names are case-insensitive, but the format used above is
-      recommended. Settings used to be also space-insensitive, but that was
-      deprecated in Robot Framework 3.1 and trying to use something like
-      `[T a g s]` causes an error in Robot Framework 3.2. Possible spaces
-      between brackets and the name (e.g. `[ Tags ]`) are still allowed.
+.. note:: The format used above is recommended, but setting names are
+          case-insensitive and spaces are allowed between brackets and the name.
+          For example, `[ TAGS ]`:setting is valid.
 
 __ `Settings in the test case section`_
 __ `User keyword tags`_
@@ -708,62 +707,120 @@ __ http://cukes.info
 User keyword return values
 --------------------------
 
-Similarly as library keywords, also user keywords can return
-values. Typically return values are defined with the :setting:`[Return]`
-setting, but it is also possible to use BuiltIn_ keywords
-:name:`Return From Keyword` and :name:`Return From Keyword If`.
+Similarly as library keywords, also user keywords can return values.
+When using Robot Framework 5.0 or newer, the recommended approach is
+using the native `RETURN` statement. Old :setting:`[Return]`
+setting and BuiltIn_ keywords :name:`Return From Keyword` and
+:name:`Return From Keyword If` still work but they will be deprecated
+and removed in the future.
+
 Regardless how values are returned, they can be `assigned to variables`__
 in test cases and in other user keywords.
 
 __ `Return values from keywords`_
 
+.. _RETURN:
+
+Using `RETURN` statement
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The recommended approach to return values is using the `RETURN` statement.
+It accepts optional return values and can be used with IF_ and `inline IF`_
+structures. Its usage is easiest explained with examples:
+
+.. sourcecode:: robotframework
+
+   *** Keywords ***
+   Return One Value
+       [Arguments]    ${arg}
+       [Documentation]    Return a value unconditionally.
+       ...                Notice that keywords after RETURN are not executed.
+       ${value} =    Convert To Upper Case    ${arg}
+       RETURN    ${value}
+       Fail    Not executed
+
+   Return Three Values
+       [Documentation]    Return multiple values.
+       RETURN    a    b    c
+
+   Conditional Return
+       [Arguments]    ${arg}
+       [Documentation]    Return conditionally.
+       Log    Before
+       IF    ${arg} == 1
+           Log    Returning!
+           RETURN
+       END
+       Log    After
+
+   Find Index
+       [Arguments]    ${test}    ${items}
+       [Documentation]    Advanced example involving FOR loop, inline IF and @{list} variable syntax.
+       FOR    ${index}    ${item}    IN ENUMERATE    @{items}
+           IF    $item == $test    RETURN    ${index}
+       END
+       RETURN    ${-1}
+
+If you want to test the above examples yourself, you can use them with these test cases:
+
+.. sourcecode:: robotframework
+
+   *** Settings ***
+   Library           String
+
+   *** Test Cases ***
+   One return value
+       ${ret} =    Return One Value    argument
+       Should Be Equal    ${ret}    ARGUMENT
+
+   Multiple return values
+       ${a}    ${b}    ${c} =    Return Three Values
+       Should Be Equal    ${a}, ${b}, ${c}    a, b, c
+
+   Conditional return
+       Conditional Return    1
+       Conditional Return    2
+
+   Advanced
+       @{list} =    Create List    foo    bar    baz
+       ${index} =    Find Index    bar    ${list}
+       Should Be Equal    ${index}    ${1}
+       ${index} =    Find Index    non existing    ${list}
+       Should Be Equal    ${index}    ${-1}
+
+
+.. note:: `RETURN` syntax is case-sensitive similarly as IF_ and FOR_.
+
+.. note:: `RETURN` is new in Robot Framework 5.0. Use approaches explained
+          below if you need to support older versions.
+
 Using :setting:`[Return]` setting
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The most common case is that  a user keyword returns one value and it is
-assigned to a scalar variable. When using the :setting:`[Return]` setting, this is
-done by having the return value in the next cell after the setting.
+The :setting:`[Return]` setting defines what the keyword should return after
+it has been executed. Although it is recommended to have it at the end of keyword
+where it logically belongs, its position does not affect how it is used.
 
-User keywords can also return several values, which can then be assigned into
-several scalar variables at once, to a list variable, or to scalar variables
-and a list variable. Several values can be returned simply by
-specifying those values in different cells after the :setting:`[Return]` setting.
+An inherent limitation of the :setting:`[Return]` setting is that cannot be used
+conditionally. Thus only the first two earlier `RETURN` statement examples
+can be created using it.
 
 .. sourcecode:: robotframework
-
-   *** Test Cases ***
-   One Return Value
-       ${ret} =    Return One Value    argument
-       Some Keyword    ${ret}
-
-   Multiple Values
-       ${a}    ${b}    ${c} =    Return Three Values
-       @{list} =    Return Three Values
-       ${scalar}    @{rest} =    Return Three Values
 
    *** Keywords ***
    Return One Value
        [Arguments]    ${arg}
-       Do Something    ${arg}
-       ${value} =    Get Some Value
+       ${value} =    Convert To Upper Case    ${arg}
        [Return]    ${value}
 
    Return Three Values
-       [Return]    foo    bar    zap
+       [Return]    a    b    c
 
-The :setting:`[Return]` setting just defines what the keyword should return after
-all keywords it contains have been executed. Although it is recommended to have it
-at the end of keyword where it logically belongs, its position does not affect how
-it is used. For example, the following keyword works exactly like the one above.
-
-.. sourcecode:: robotframework
-
-   *** Keywords ***
-   Return One Value
-       [Return]    ${value}
-       [Arguments]    ${arg}
-       Do Something    ${arg}
-       ${value} =    Get Some Value
+.. note:: The :setting:`[Return]` setting is effectively deprecated and the `RETURN`
+          statement should be used unless there is a need to support also older
+          versions than Robot Framework 5.0. There is no visible deprecation warning
+          when using the setting yet, but it will be loudly deprecated and eventually
+          removed in the future.
 
 Using special keywords to return
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -771,42 +828,44 @@ Using special keywords to return
 BuiltIn_ keywords :name:`Return From Keyword` and :name:`Return From Keyword If`
 allow returning from a user keyword conditionally in the middle of the keyword.
 Both of them also accept optional return values that are handled exactly like
-with the :setting:`[Return]` setting discussed above.
+with the `RETURN` statement and the :setting:`[Return]` setting discussed above.
 
-The first example below is functionally identical to the previous
-:setting:`[Return]` setting example. The second, and more advanced, example
-demonstrates returning conditionally inside a `for loop`_.
+The introduction of the `RETURN` statement makes these keywords redundant.
+Examples below contain same keywords as earlier `RETURN` examples but these
+ones are more verbose:
 
 .. sourcecode:: robotframework
-
-   *** Test Cases ***
-   One Return Value
-       ${ret} =    Return One Value  argument
-       Some Keyword    ${ret}
-
-   Advanced
-       @{list} =    Create List    foo    baz
-       ${index} =    Find Index    baz    @{list}
-       Should Be Equal    ${index}    ${1}
-       ${index} =    Find Index    non existing    @{list}
-       Should Be Equal    ${index}    ${-1}
 
    *** Keywords ***
    Return One Value
        [Arguments]    ${arg}
-       Do Something    ${arg}
-       ${value} =    Get Some Value
+       ${value} =    Convert To Upper Case    ${arg}
        Return From Keyword    ${value}
-       Fail    This is not executed
+       Fail    Not executed
+
+   Return Three Values
+       Return From Keyword        a    b    c
+
+   Conditional Return
+       [Arguments]    ${arg}
+       Log    Before
+       IF    ${arg} == 1
+           Log    Returning!
+           Return From Keyword
+       END
+       Log    After
 
    Find Index
-       [Arguments]    ${element}    @{items}
-       ${index} =    Set Variable    ${0}
-       FOR    ${item}    IN    @{items}
-           Return From Keyword If    '${item}' == '${element}'    ${index}
-           ${index} =    Set Variable    ${index + 1}
+       [Arguments]    ${test}    ${items}
+       FOR    ${index}    ${item}    IN ENUMERATE    @{items}
+           Return From Keyword If    $item == $test    ${index}
        END
-       Return From Keyword    ${-1}    # Could also use [Return]
+       Return From Keyword    ${-1}
+
+.. note:: These keywords are effectively deprecated and the `RETURN` statement should be
+          used unless there is a need to support also older versions than Robot Framework
+          5.0. There is no visible deprecation warning when using these keywords yet, but
+          they will be loudly deprecated and eventually removed in the future.
 
 User keyword teardown
 ---------------------

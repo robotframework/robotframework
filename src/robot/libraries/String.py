@@ -22,7 +22,7 @@ from string import ascii_lowercase, ascii_uppercase, digits
 
 from robot.api import logger
 from robot.api.deco import keyword
-from robot.utils import is_bytes, is_string, is_truthy, is_unicode, unic, FileReader
+from robot.utils import FileReader, is_bytes, is_string, is_truthy, safe_str, type_name
 from robot.version import get_version
 
 
@@ -121,7 +121,7 @@ class String:
 
         New in Robot Framework 3.2.
         """
-        if not is_unicode(string):
+        if not is_string(string):
             raise TypeError('This keyword works only with Unicode strings.')
         if is_string(exclude):
             exclude = [e.strip() for e in exclude.split(',')]
@@ -183,7 +183,7 @@ class String:
         byte strings, and `Convert To String` in ``BuiltIn`` if you need to
         convert arbitrary objects to Unicode strings.
         """
-        if is_unicode(bytes):
+        if is_string(bytes):
             raise TypeError('Cannot decode strings.')
         return bytes.decode(encoding, errors)
 
@@ -571,6 +571,10 @@ class String:
     def generate_random_string(self, length=8, chars='[LETTERS][NUMBERS]'):
         """Generates a string with a desired ``length`` from the given ``chars``.
 
+        ``length`` can be given as a number, a string representation of a number,
+        or as a range of numbers, such as ``5-10``. When a range of values is given
+        the range will be selected by random within the range.
+
         The population sequence ``chars`` contains the characters to use
         when generating the random string. It can contain any
         characters, and it is possible to use special markers
@@ -587,10 +591,18 @@ class String:
         | ${low} = | Generate Random String | 12 | [LOWER]         |
         | ${bin} = | Generate Random String | 8  | 01              |
         | ${hex} = | Generate Random String | 4  | [NUMBERS]abcdef |
+        | ${rnd} = | Generate Random String | 5-10 | # Generates a string 5 to 10 characters long |
+
+        Giving ``length`` as a range of values is new in Robot Framework 5.0.
         """
         if length == '':
             length = 8
-        length = self._convert_to_integer(length, 'length')
+        if isinstance(length, str) and re.match(r'^\d+-\d+$', length):
+            min_length, max_length = length.split('-')
+            length = randint(self._convert_to_integer(min_length, "length"),
+                             self._convert_to_integer(max_length, "length"))
+        else:
+            length = self._convert_to_integer(length, 'length')
         for name, value in [('[LOWER]', ascii_lowercase),
                             ('[UPPER]', ascii_uppercase),
                             ('[LETTERS]', ascii_lowercase + ascii_uppercase),
@@ -654,7 +666,7 @@ class String:
         The default error message can be overridden with the optional ``msg`` argument.
         """
         if not is_string(item):
-            self._fail(msg, "'%s' is not a string.", item)
+            self._fail(msg, "'%s' is %s, not a string.", item, type_name(item))
 
     def should_not_be_string(self, item, msg=None):
         """Fails if the given ``item`` is a string.
@@ -670,7 +682,7 @@ class String:
         On Python 3 this keyword behaves exactly the same way `Should Be String`.
         That keyword should be used instead and this keyword will be deprecated.
         """
-        if not is_unicode(item):
+        if not is_string(item):
             self._fail(msg, "'%s' is not a Unicode string.", item)
 
     def should_be_byte_string(self, item, msg=None):
@@ -760,5 +772,5 @@ class String:
 
     def _fail(self, message, default_template, *items):
         if not message:
-            message = default_template % tuple(unic(item) for item in items)
+            message = default_template % tuple(safe_str(item) for item in items)
         raise AssertionError(message)

@@ -9,7 +9,7 @@ Invalid condition with other error
 
 Empty IF
     [Documentation]    FAIL Multiple errors:
-    ...    - IF has no condition.
+    ...    - IF must have a condition.
     ...    - IF branch cannot be empty.
     ...    - IF has no closing END.
     IF
@@ -38,7 +38,7 @@ IF followed by ELSE
 
 Empty ELSE IF 1
     [Documentation]    FAIL Multiple errors:
-    ...    - ELSE IF has no condition.
+    ...    - ELSE IF must have a condition.
     ...    - ELSE IF branch cannot be empty.
     IF    False    Not run    ELSE IF
 
@@ -96,6 +96,12 @@ Unnecessary END
     [Documentation]    FAIL Keyword 'BuiltIn.No Operation' expected 0 arguments, got 1.
     IF    True     No operation    ELSE    Log    END
     IF    False    Not run         ELSE    No operation    END
+
+Invalid END after inline header
+    [Documentation]    FAIL 'End' is a reserved keyword. It must be an upper case 'END' when used as a marker to close a block.
+    IF    True    Log    Executed inside inline IF
+        Log   Executed outside IF
+    END
 
 Assign in IF branch
     [Documentation]    FAIL Inline IF branches cannot contain assignments.

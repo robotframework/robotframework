@@ -12,7 +12,10 @@ Explicit handle
 Alias
     Check Test Case    ${TESTNAME}
 
-Implicit handle, explicit handle, and alias are equivalent
+Index
+    Check Test Case    ${TESTNAME}
+
+Implicit handle, explicit handle, alias, and index are equivalent
     Check Test Case    ${TESTNAME}
 
 Switching active process

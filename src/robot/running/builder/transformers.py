@@ -15,6 +15,7 @@
 
 from ast import NodeVisitor
 
+from robot.parsing import Token
 from robot.variables import VariableIterator
 
 from .testsettings import TestSettings
@@ -192,6 +193,9 @@ class TestCaseBuilder(NodeVisitor):
     def visit_If(self, node):
         IfBuilder(self.test).build(node)
 
+    def visit_Try(self, node):
+        TryBuilder(self.test).build(node)
+
     def visit_TemplateArguments(self, node):
         self.test.body.create_keyword(args=node.args, lineno=node.lineno)
 
@@ -222,7 +226,8 @@ class TestCaseBuilder(NodeVisitor):
                                       assign=node.assign, lineno=node.lineno)
 
     def visit_ReturnStatement(self, node):
-        self.test.body.create_keyword(name='RETURN', args=node.values)
+        self.test.body.create_keyword(name='RETURN', args=node.values,
+                                      lineno=node.lineno)
 
 
 class KeywordBuilder(NodeVisitor):
@@ -267,13 +272,16 @@ class KeywordBuilder(NodeVisitor):
                                     assign=node.assign, lineno=node.lineno)
 
     def visit_ReturnStatement(self, node):
-        self.kw.body.create_return(node.values)
+        self.kw.body.create_return(node.values, lineno=node.lineno)
 
     def visit_For(self, node):
         ForBuilder(self.kw).build(node)
 
     def visit_If(self, node):
         IfBuilder(self.kw).build(node)
+
+    def visit_Try(self, node):
+        TryBuilder(self.kw).build(node)
 
 
 class ForBuilder(NodeVisitor):
@@ -310,8 +318,11 @@ class ForBuilder(NodeVisitor):
     def visit_If(self, node):
         IfBuilder(self.model).build(node)
 
+    def visit_Try(self, node):
+        TryBuilder(self.model).build(node)
+
     def visit_ReturnStatement(self, node):
-        self.model.body.create_return(node.values)
+        self.model.body.create_return(node.values, lineno=node.lineno)
 
 
 class IfBuilder(NodeVisitor):
@@ -321,13 +332,14 @@ class IfBuilder(NodeVisitor):
         self.model = None
 
     def build(self, node):
-        model = self.parent.body.create_if(lineno=node.lineno,
-                                           error=format_error(self._get_errors(node)))
+        root = self.parent.body.create_if(lineno=node.lineno,
+                                          error=format_error(self._get_errors(node)))
         assign = node.assign
+        node_type = None
         while node:
-            type = node.type if node.type != 'INLINE IF' else 'IF'
-            self.model = model.body.create_branch(type, node.condition,
-                                                  lineno=node.lineno)
+            node_type = node.type if node.type != 'INLINE IF' else 'IF'
+            self.model = root.body.create_branch(node_type, node.condition,
+                                                 lineno=node.lineno)
             for step in node.body:
                 self.visit(step)
             if assign:
@@ -337,7 +349,12 @@ class IfBuilder(NodeVisitor):
                     if hasattr(item, 'assign'):
                         item.assign = assign
             node = node.orelse
-        return model
+        # Smallish hack to make sure assignment is always run.
+        if assign and node_type != 'ELSE':
+            root.body.create_branch('ELSE').body.create_keyword(
+                assign=assign, name='BuiltIn.Set Variable', args=['${NONE}']
+            )
+        return root
 
     def _get_errors(self, node):
         errors = node.header.errors + node.errors
@@ -360,8 +377,61 @@ class IfBuilder(NodeVisitor):
     def visit_For(self, node):
         ForBuilder(self.model).build(node)
 
+    def visit_Try(self, node):
+        TryBuilder(self.model).build(node)
+
     def visit_ReturnStatement(self, node):
-        self.model.body.create_return(node.values)
+        self.model.body.create_return(node.values, lineno=node.lineno)
+
+
+class TryBuilder(NodeVisitor):
+
+    def __init__(self, parent):
+        self.parent = parent
+        self.model = None
+        self.template_error = None
+
+    def build(self, node):
+        root = self.parent.body.create_try(lineno=node.lineno)
+        errors = self._get_errors(node)
+        while node:
+            self.model = root.body.create_branch(node.type, node.patterns,
+                                                 node.variable, lineno=node.lineno)
+            for step in node.body:
+                self.visit(step)
+            node = node.next
+        if self.template_error:
+            errors += (self.template_error,)
+        if errors:
+            root.error = format_error(errors)
+        return root
+
+    def _get_errors(self, node):
+        errors = node.header.errors + node.errors
+        if node.next:
+            errors += self._get_errors(node.next)
+        if node.end:
+            errors += node.end.errors
+        return errors
+
+    def visit_If(self, node):
+        IfBuilder(self.model).build(node)
+
+    def visit_For(self, node):
+        ForBuilder(self.model).build(node)
+
+    def visit_Try(self, node):
+        TryBuilder(self.model).build(node)
+
+    def visit_ReturnStatement(self, node):
+        self.model.body.create_return(node.values, lineno=node.lineno)
+
+    def visit_KeywordCall(self, node):
+        self.model.body.create_keyword(name=node.keyword, args=node.args,
+                                       assign=node.assign, lineno=node.lineno)
+
+    def visit_TemplateArguments(self, node):
+        self.template_error = 'Templates cannot be used with TRY.'
 
 
 def format_error(errors):

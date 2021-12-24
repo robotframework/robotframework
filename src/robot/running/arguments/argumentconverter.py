@@ -20,9 +20,10 @@ from .typeconverters import TypeConverter
 
 class ArgumentConverter:
 
-    def __init__(self, argspec, dry_run=False):
+    def __init__(self, argspec, converters, dry_run=False):
         """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
         self._argspec = argspec
+        self._converters = converters
         self._dry_run = dry_run
 
     def convert(self, positional, named):
@@ -50,7 +51,7 @@ class ArgumentConverter:
             return value
         conversion_error = None
         if name in spec.types:
-            converter = TypeConverter.converter_for(spec.types[name])
+            converter = TypeConverter.converter_for(spec.types[name], self._converters)
             if converter:
                 try:
                     return converter.convert(name, value)

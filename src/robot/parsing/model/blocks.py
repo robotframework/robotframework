@@ -53,6 +53,15 @@ class Block(ast.AST):
         pass
 
 
+class HeaderAndBody(Block):
+    _fields = ('header', 'body')
+
+    def __init__(self, header, body=None, errors=()):
+        self.header = header
+        self.body = body or []
+        self.errors = errors
+
+
 class File(Block):
     _fields = ('sections',)
     _attributes = ('source',) + Block._attributes
@@ -231,6 +240,76 @@ class For(Block):
             self.errors += ('FOR loop has empty body.',)
         if not self.end:
             self.errors += ('FOR loop has no closing END.',)
+
+
+class Try(Block):
+    _fields = ('header', 'body', 'next', 'end')
+
+    def __init__(self, header, body=None, next=None, end=None, errors=()):
+        self.header = header
+        self.body = body or []
+        self.next = next
+        self.end = end
+        self.errors = errors
+
+    @property
+    def type(self):
+        return self.header.type
+
+    @property
+    def patterns(self):
+        return getattr(self.header, 'patterns', ())
+
+    @property
+    def variable(self):
+        return getattr(self.header, 'variable', None)
+
+    def validate(self):
+        self._validate_body()
+        if self.type == Token.TRY:
+            self._validate_structure()
+            self._validate_end()
+
+    def _validate_body(self):
+        if not self.body:
+            self.errors += (f'{self.type} branch cannot be empty.',)
+
+    def _validate_structure(self):
+        else_count = 0
+        finally_count = 0
+        except_count = 0
+        empty_except_count = 0
+        branch = self.next
+        while branch:
+            if branch.type == Token.EXCEPT:
+                if else_count:
+                    self.errors += ('EXCEPT not allowed after ELSE.',)
+                if finally_count:
+                    self.errors += ('EXCEPT not allowed after FINALLY.',)
+                if branch.patterns and empty_except_count:
+                    self.errors += ('EXCEPT without patterns must be last.',)
+                if not branch.patterns:
+                    empty_except_count += 1
+                except_count += 1
+            if branch.type == Token.ELSE:
+                if finally_count:
+                    self.errors += ('ELSE not allowed after FINALLY.',)
+                else_count += 1
+            if branch.type == Token.FINALLY:
+                finally_count += 1
+            branch = branch.next
+        if finally_count > 1:
+            self.errors += ('Only one FINALLY allowed.',)
+        if else_count > 1:
+            self.errors += ('Only one ELSE allowed.',)
+        if empty_except_count > 1:
+            self.errors += ('Only one EXCEPT without patterns allowed.',)
+        if not (except_count or finally_count):
+            self.errors += ('TRY structure must have EXCEPT or FINALLY branch.',)
+
+    def _validate_end(self):
+        if not self.end:
+            self.errors += ('TRY has no closing END.',)
 
 
 class ModelWriter(ModelVisitor):

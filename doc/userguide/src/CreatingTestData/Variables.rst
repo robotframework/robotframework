@@ -579,7 +579,7 @@ context), but using `${MANY.3}` is not possible.
 Another special property of dictionary variables is
 that they are ordered. This means that if these dictionaries are iterated,
 their items always come in the order they are defined. This can be useful
-if dictionaries are used as `list variables`_ with `for loops`_ or otherwise.
+if dictionaries are used as `list variables`_ with `FOR loops`_ or otherwise.
 When a dictionary is used as a list variable, the actual value contains
 dictionary keys. For example, `@{MANY}` variable would have value `['first',
 'second', 3]`.

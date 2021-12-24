@@ -95,7 +95,7 @@ the results is possible using the
     ResultWriter('skynet.xml').write_results()
 """
 
-from .arguments import ArgInfo, ArgumentSpec
+from .arguments import ArgInfo, ArgumentSpec, TypeConverter
 from .builder import TestSuiteBuilder, ResourceFileBuilder
 from .context import EXECUTION_CONTEXTS
 from .model import Keyword, TestCase, TestSuite

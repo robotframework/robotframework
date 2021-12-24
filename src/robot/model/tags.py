@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import is_string, normalize, NormalizedDict, Matcher, unic
+from robot.utils import is_string, normalize, NormalizedDict, Matcher
 
 
 class Tags:
@@ -30,7 +30,7 @@ class Tags:
         return self._normalize(tags)
 
     def _normalize(self, tags):
-        normalized = NormalizedDict([(unic(t), None) for t in tags], ignore='_')
+        normalized = NormalizedDict([(str(t), None) for t in tags], ignore='_')
         for remove in '', 'NONE':
             if remove in normalized:
                 normalized.pop(remove)

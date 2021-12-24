@@ -83,7 +83,7 @@ class _RunnableHandler:
         return None
 
     def resolve_arguments(self, args, variables=None):
-        return self.arguments.resolve(args, variables)
+        return self.arguments.resolve(args, variables, self.library.converters)
 
     @property
     def doc(self):
@@ -220,7 +220,7 @@ class _DynamicHandler(_RunnableHandler):
         return self._source_info[1]
 
     def resolve_arguments(self, arguments, variables=None):
-        positional, named = self.arguments.resolve(arguments, variables)
+        positional, named = super().resolve_arguments(arguments, variables)
         if not self._supports_kwargs:
             positional, named = self.arguments.map(positional, named)
         return positional, named
@@ -254,9 +254,9 @@ class _RunKeywordHandler(_PythonHandler):
                                                    self.name)
 
     def resolve_arguments(self, args, variables=None):
-        args_to_process = self._args_to_process
-        return self.arguments.resolve(args, variables, resolve_named=False,
-                                      resolve_variables_until=args_to_process)
+        return self.arguments.resolve(args, variables, self.library.converters,
+                                      resolve_named=False,
+                                      resolve_variables_until=self._args_to_process)
 
 
 class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):

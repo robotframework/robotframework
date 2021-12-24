@@ -20,11 +20,10 @@ from importlib import invalidate_caches as invalidate_import_caches
 
 from robot.errors import DataError
 
-from .encoding import system_decode
 from .error import get_error_details
 from .robotpath import abspath, normpath
 from .robotinspect import is_init
-from .robottypes import type_name, is_unicode
+from .robottypes import type_name
 
 
 class Importer:
@@ -144,20 +143,8 @@ class Importer:
                           % (import_type, item_type, name, location))
 
     def _raise_import_failed(self, name, error):
-        import_type = '%s ' % self._type.lower() if self._type else ''
-        msg = "Importing %s'%s' failed: %s" % (import_type, name, error.message)
-        if not error.details:
-            raise DataError(msg)
-        msg = [msg, error.details]
-        msg.extend(self._get_items_in('PYTHONPATH', sys.path))
-        raise DataError('\n'.join(msg))
-
-    def _get_items_in(self, type, items):
-        yield '%s:' % type
-        for item in items:
-            if item:
-                yield '  %s' % (item if is_unicode(item)
-                                else system_decode(item))
+        prefix = f'Importing {self._type.lower()}' if self._type else 'Importing'
+        raise DataError(f"{prefix} '{name}' failed: {error.message}")
 
     def _instantiate_if_needed(self, imported, args):
         if args is None:
@@ -203,13 +190,14 @@ class _Importer:
         try:
             return __import__(name, fromlist=fromlist)
         except:
-            raise DataError(*get_error_details())
+            message, traceback = get_error_details(full_traceback=False)
+            path = '\n'.join(f'  {p}' for p in sys.path)
+            raise DataError(f'{message}\n{traceback}\nPYTHONPATH:\n{path}')
 
     def _verify_type(self, imported):
         if inspect.isclass(imported) or inspect.ismodule(imported):
             return imported
-        raise DataError('Expected class or module, got %s.'
-                        % type_name(imported))
+        raise DataError('Expected class or module, got %s.' % type_name(imported))
 
     def _get_class_from_module(self, module, name=None):
         klass = getattr(module, name or module.__name__, None)

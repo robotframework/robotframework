@@ -22,8 +22,8 @@ from robot.errors import DataError
 
 from .encoding import system_decode
 from .platform import WINDOWS
-from .robottypes import is_unicode
-from .unic import unic
+from .robottypes import is_string
+from .unic import safe_str
 
 
 if WINDOWS:
@@ -44,9 +44,9 @@ def normpath(path, case_normalize=False):
        That includes Windows and also OSX in default configuration.
     4. Turn ``c:`` into ``c:\\`` on Windows instead of keeping it as ``c:``.
     """
-    if not is_unicode(path):
+    if not is_string(path):
         path = system_decode(path)
-    path = unic(path)  # Handles NFC normalization on OSX
+    path = safe_str(path)  # Handles NFC normalization on OSX
     path = os.path.normpath(path)
     if case_normalize and CASE_INSENSITIVE_FILESYSTEM:
         path = path.lower()
@@ -152,7 +152,7 @@ def _find_relative_path(path, basedir):
     for base in [basedir] + sys.path:
         if not (base and os.path.isdir(base)):
             continue
-        if not is_unicode(base):
+        if not is_string(base):
             base = system_decode(base)
         ret = os.path.abspath(os.path.join(base, path))
         if _is_valid_file(ret):

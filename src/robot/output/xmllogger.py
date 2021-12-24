@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import XmlWriter, NullMarkupWriter, get_timestamp, unic
+from robot.utils import get_timestamp, NullMarkupWriter, safe_str, XmlWriter
 from robot.version import get_full_version
 from robot.result.visitor import ResultVisitor
 
@@ -35,7 +35,7 @@ class XmlLogger(ResultVisitor):
         writer.start('robot', {'generator': get_full_version(generator),
                                'generated': get_timestamp(),
                                'rpa': 'true' if rpa else 'false',
-                               'schemaversion': '2'})
+                               'schemaversion': '3'})
         return writer
 
     def close(self):
@@ -71,14 +71,14 @@ class XmlLogger(ResultVisitor):
             attrs['sourcename'] = kw.sourcename
         self._writer.start('kw', attrs)
         self._write_list('var', kw.assign)
-        self._write_list('arg', [unic(a) for a in kw.args])
+        self._write_list('arg', [safe_str(a) for a in kw.args])
         self._write_list('tag', kw.tags)
         # Must be after tags to allow adding message when using --flattenkeywords.
         self._writer.element('doc', kw.doc)
 
     def end_keyword(self, kw):
         if kw.timeout:
-            self._writer.element('timeout', attrs={'value': unic(kw.timeout)})
+            self._writer.element('timeout', attrs={'value': str(kw.timeout)})
         self._write_status(kw)
         self._writer.end('kw')
 
@@ -121,6 +121,25 @@ class XmlLogger(ResultVisitor):
         self._write_status(iteration)
         self._writer.end('iter')
 
+    def start_try(self, root):
+        self._writer.start('try')
+
+    def end_try(self, root):
+        self._write_status(root)
+        self._writer.end('try')
+
+    def start_try_branch(self, branch):
+        if branch.type == branch.EXCEPT:
+            self._writer.start('branch', attrs={'type': 'EXCEPT',
+                                               'variable': branch.variable})
+            self._write_list('pattern', branch.patterns)
+        else:
+            self._writer.start('branch', attrs={'type': branch.type})
+
+    def end_try_branch(self, branch):
+        self._write_status(branch)
+        self._writer.end('branch')
+
     def start_return(self, return_):
         self._writer.start('return')
         for value in return_.values:
@@ -137,7 +156,7 @@ class XmlLogger(ResultVisitor):
         self._writer.element('doc', test.doc)
         self._write_list('tag', test.tags)
         if test.timeout:
-            self._writer.element('timeout', attrs={'value': unic(test.timeout)})
+            self._writer.element('timeout', attrs={'value': str(test.timeout)})
         self._write_status(test)
         self._writer.end('test')
 
