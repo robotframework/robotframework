@@ -56,6 +56,15 @@ Regexp escapes
         No operation
     END
 
+Regexp flags
+    TRY
+        Fail    MESSAGE\nIN\nMANY\nLINES
+    EXCEPT    REGEXP: message.*lines
+        Fail   Should not be executed
+    EXCEPT    REGEXP: (?is)message.*lines
+        No operation
+    END
+
 Variable in pattern
     TRY
         Fail    failure

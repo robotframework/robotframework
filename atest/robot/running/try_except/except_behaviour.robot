@@ -25,6 +25,9 @@ Regexp matcher
 Regexp escapes
     FAIL    PASS
 
+Regexp flags
+    FAIL    NOT RUN    PASS
+
 Variable in pattern
     FAIL    PASS
 
