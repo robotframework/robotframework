@@ -72,6 +72,12 @@ Error message is correct if no task match --task or other options
     --include xxx --exclude yyy    matching tag 'xxx' and not matching tag 'yyy'
     --suite nonex --task task      matching name 'task' in suite 'nonex'
 
+Error message is correct if task name is empty or task contains no keywords
+    [Template]    NONE
+    Run Tests    --rpa --variable TEST_OR_TASK:Task    core/empty_testcase_and_uk.robot
+    Check Test Case    ${EMPTY}
+    Check Test Case    Empty Test Case
+
 *** Keywords ***
 Run and validate RPA tasks
     [Arguments]    ${options}    ${sources}    @{tasks}

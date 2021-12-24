@@ -16,8 +16,8 @@
 import copy
 
 from robot.api import logger
-from robot.utils import (is_dict_like, is_list_like, is_number, is_string, is_truthy, plural_or_not,
-                         seq2str, seq2str2, type_name, unic, Matcher)
+from robot.utils import (is_dict_like, is_list_like, is_number, is_string, is_truthy,
+                         Matcher, plural_or_not, seq2str, seq2str2, type_name)
 from robot.utils.asserts import assert_equal
 from robot.version import get_version
 
@@ -416,7 +416,7 @@ class _List:
             try:
                 assert_equal(item1, item2, msg='Index %d%s' % (index, name))
             except AssertionError as err:
-                yield unic(err)
+                yield str(err)
 
     def list_should_contain_sub_list(self, list1, list2, msg=None, values=True):
         """Fails if not all of the elements in ``list2`` are found in ``list1``.
@@ -428,7 +428,7 @@ class _List:
         the error message with ``msg`` and ``values`` arguments.
         """
         self._validate_lists(list1, list2)
-        diffs = ', '.join(unic(item) for item in list2 if item not in list1)
+        diffs = ', '.join(str(item) for item in list2 if item not in list1)
         default = 'Following values were not found from first list: ' + diffs
         _verify_condition(not diffs, default, msg, values)
 
@@ -715,7 +715,7 @@ class _Dictionary:
         """
         self._validate_dictionary(dictionary)
         self.dictionary_should_contain_key(dictionary, key, msg)
-        actual, expected = unic(dictionary[key]), unic(value)
+        actual, expected = str(dictionary[key]), str(value)
         default = "Value of dictionary key '%s' does not match: %s != %s" % (key, actual, expected)
         _verify_condition(actual == expected, default, msg)
 
@@ -763,7 +763,7 @@ class _Dictionary:
         self._validate_dictionary(dict1)
         self._validate_dictionary(dict2, 2)
         keys = self.get_dictionary_keys(dict2)
-        diffs = [unic(k) for k in keys if k not in dict1]
+        diffs = [str(k) for k in keys if k not in dict1]
         default = "Following keys missing from first dictionary: %s" \
                   % ', '.join(diffs)
         _verify_condition(not diffs, default, msg, values)
@@ -793,8 +793,8 @@ class _Dictionary:
     def _keys_should_be_equal(self, dict1, dict2, msg, values):
         keys1 = self.get_dictionary_keys(dict1)
         keys2 = self.get_dictionary_keys(dict2)
-        miss1 = [unic(k) for k in keys2 if k not in dict1]
-        miss2 = [unic(k) for k in keys1 if k not in dict2]
+        miss1 = [str(k) for k in keys2 if k not in dict1]
+        miss2 = [str(k) for k in keys1 if k not in dict2]
         error = []
         if miss1:
             error += ['Following keys missing from first dictionary: %s'
@@ -815,7 +815,7 @@ class _Dictionary:
             try:
                 assert_equal(dict1[key], dict2[key], msg='Key %s' % (key,))
             except AssertionError as err:
-                yield unic(err)
+                yield str(err)
 
     def _validate_dictionary(self, dictionary, position=1):
         if is_string(dictionary) or is_number(dictionary):

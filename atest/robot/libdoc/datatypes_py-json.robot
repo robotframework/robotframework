@@ -6,8 +6,8 @@ Test Template     Should Be Equal Multiline
 *** Test Cases ***
 Documentation
     ${MODEL}[doc]    <p>This Library has Data Types.</p>
-    ...   <p>It has some in <code>__init__</code> and others in the <a href=\"#Keywords\" class=\"name\">Keywords</a>.</p>
-    ...   <p>The DataTypes are the following that should be linked. <span class=\"name\">HttpCredentials</span> , <a href=\"#GeoLocation\" class=\"name\">GeoLocation</a> , <a href=\"#Small\" class=\"name\">Small</a> and <a href=\"#AssertionOperator\" class=\"name\">AssertionOperator</a>.</p>
+    ...   <p>It has some in <code>__init__</code> and others in the <a href="#Keywords" class="name">Keywords</a>.</p>
+    ...   <p>The DataTypes are the following that should be linked. <span class="name">HttpCredentials</span> , <a href="#GeoLocation" class="name">GeoLocation</a> , <a href="#Small" class="name">Small</a> and <a href="#AssertionOperator" class="name">AssertionOperator</a>.</p>
 
 Init Arguments
     [Template]    Verify Argument Models
@@ -15,20 +15,21 @@ Init Arguments
 
 Init docs
     ${MODEL}[inits][0][doc]     <p>This is the init Docs.</p>
-    ...   <p>It links to <a href=\"#Set%20Location\" class=\"name\">Set Location</a> keyword and to <a href=\"#GeoLocation\" class=\"name\">GeoLocation</a> data type.</p>
+    ...   <p>It links to <a href="#Set%20Location" class="name">Set Location</a> keyword and to <a href="#GeoLocation" class="name">GeoLocation</a> data type.</p>
 
 Keyword Arguments
     [Tags]        require-py3.7
     [Template]    Verify Argument Models
     ${MODEL}[keywords][0][args]     value    operator: AssertionOperator | None = None    exp: str = something?
-    ${MODEL}[keywords][1][args]     funny: bool | int | float | str | AssertionOperator | Small | GeoLocation | None = equal
-    ${MODEL}[keywords][2][args]     location: GeoLocation
-    ${MODEL}[keywords][3][args]     list_of_str: List[str]    dict_str_int: Dict[str, int]    Whatever: Any    *args: List[typing.Any]
+    ${MODEL}[keywords][1][args]     arg: CustomType    arg2: CustomType2
+    ${MODEL}[keywords][2][args]     funny: bool | int | float | str | AssertionOperator | Small | GeoLocation | None = equal
+    ${MODEL}[keywords][3][args]     location: GeoLocation
+    ${MODEL}[keywords][4][args]     list_of_str: List[str]    dict_str_int: Dict[str, int]    Whatever: Any    *args: List[typing.Any]
 
 TypedDict
-    ${Model}[dataTypes][typedDicts][0][name]    GeoLocation
     ${Model}[dataTypes][typedDicts][0][type]    TypedDict
-    ${Model}[dataTypes][typedDicts][0][doc]    <p>Defines the geolocation.</p>
+    ${Model}[dataTypes][typedDicts][0][name]    GeoLocation
+    ${Model}[dataTypes][typedDicts][0][doc]     <p>Defines the geolocation.</p>
     ...    <ul>
     ...    <li><code>latitude</code> Latitude between -90 and 90.</li>
     ...    <li><code>longitude</code> Longitude between -180 and 180.</li>
@@ -58,8 +59,8 @@ TypedDict Items
     END
 
 Enum
-    ${Model}[dataTypes][enums][0][name]    AssertionOperator
     ${Model}[dataTypes][enums][0][type]    Enum
+    ${Model}[dataTypes][enums][0][name]    AssertionOperator
     ${Model}[dataTypes][enums][0][doc]     <p>This is some Doc</p>
     ...   <p>This has was defined by assigning to __doc__.</p>
 
@@ -69,6 +70,14 @@ Enum Members
     FOR   ${cur}    ${exp}    IN ZIP    ${Model}[dataTypes][enums][0][members]    ${exp_list}
         Run Keyword And Continue On Failure    Dictionaries Should Be Equal    ${cur}    ${exp}
     END
+
+Custom types
+    ${Model}[dataTypes][customs][0][type]    Custom
+    ${Model}[dataTypes][customs][0][name]    CustomType
+    ${Model}[dataTypes][customs][0][doc]     <p>Converter method doc is used when defined.</p>
+    ${Model}[dataTypes][customs][1][type]    Custom
+    ${Model}[dataTypes][customs][1][name]    CustomType2
+    ${Model}[dataTypes][customs][1][doc]     <p>Class doc is used when converter method has no doc.</p>
 
 *** Keywords ***
 Verify Argument Models

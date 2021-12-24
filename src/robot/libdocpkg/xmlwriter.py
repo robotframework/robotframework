@@ -36,7 +36,7 @@ class LibdocXmlWriter:
                  'format': libdoc.doc_format,
                  'scope': libdoc.scope,
                  'generated': generated,
-                 'specversion': '3'}
+                 'specversion': '4'}
         self._add_source_info(attrs, libdoc, writer.output)
         writer.start('keywordspec', attrs)
         writer.element('version', libdoc.version)
@@ -132,6 +132,7 @@ class LibdocXmlWriter:
                 writer.element('doc', typ_dict.doc)
                 writer.start('items')
                 for item in typ_dict.items:
+                    item = item.copy()
                     if item['required'] is None:
                         item.pop('required')
                     elif item['required']:
@@ -142,6 +143,13 @@ class LibdocXmlWriter:
                 writer.end('items')
                 writer.end('typeddict')
             writer.end('typeddicts')
+        if data_types.customs:
+            writer.start('customs')
+            for typ in data_types.customs:
+                writer.start('custom', {'name': typ.name})
+                writer.element('doc', typ.doc)
+                writer.end('custom')
+            writer.end('customs')
         writer.end('datatypes')
 
     def _write_end(self, writer):

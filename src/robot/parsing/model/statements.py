@@ -849,9 +849,9 @@ class IfHeader(IfElseHeader):
     def validate(self):
         conditions = len(self.get_tokens(Token.ARGUMENT))
         if conditions == 0:
-            self.errors += ('%s has no condition.' % self.type,)
+            self.errors += ('%s must have a condition.' % self.type,)
         if conditions > 1:
-            self.errors += ('%s has more than one condition.' % self.type,)
+            self.errors += ('%s cannot have more than one condition.' % self.type,)
 
 
 @Statement.register
@@ -882,24 +882,77 @@ class ElseHeader(IfElseHeader):
 
     def validate(self):
         if self.get_tokens(Token.ARGUMENT):
-            self.errors += ('ELSE has condition.',)
+            self.errors += ('ELSE does not accept arguments.',)
 
 
-@Statement.register
-class End(Statement):
-    type = Token.END
+class NoArgumentHeader(Statement):
 
     @classmethod
     def from_params(cls, indent=FOUR_SPACES, eol=EOL):
         return cls([
             Token(Token.SEPARATOR, indent),
-            Token(Token.END),
+            Token(cls.type),
             Token(Token.EOL, eol)
         ])
 
     def validate(self):
         if self.get_tokens(Token.ARGUMENT):
-            self.errors += ('END does not accept arguments.',)
+            self.errors += (f'{self.type} does not accept arguments.',)
+
+
+@Statement.register
+class TryHeader(NoArgumentHeader):
+    type = Token.TRY
+
+
+@Statement.register
+class ExceptHeader(Statement):
+    type = Token.EXCEPT
+
+    @classmethod
+    def from_params(cls, patterns=None, variable=None, indent=FOUR_SPACES,
+                    separator=FOUR_SPACES, eol=EOL):
+        tokens = [
+            Token(Token.SEPARATOR, indent),
+            Token(Token.EXCEPT),
+            Token(Token.SEPARATOR, separator)
+        ]
+        for pattern in patterns:
+            tokens.append(pattern)
+            tokens.append(Token(Token.SEPARATOR, separator))
+        if variable:
+            tokens.append(Token(Token.AS))
+            tokens.append(Token(Token.SEPARATOR, separator))
+            tokens.append(Token(Token.VARIABLE, variable))
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
+    @property
+    def patterns(self):
+        return self.get_values(Token.ARGUMENT)
+
+    @property
+    def variable(self):
+        return self.get_value(Token.VARIABLE)
+
+    def validate(self):
+        as_token = self.get_token(Token.AS)
+        if as_token:
+            if as_token is not self.tokens[-2]:
+                self.errors += ("EXCEPT's AS marker must be second to last.",)
+            var = self.tokens[-1].value
+            if not is_scalar_assign(var):
+                self.errors += (f"EXCEPT's AS variable '{var}' is invalid.",)
+
+
+@Statement.register
+class FinallyHeader(NoArgumentHeader):
+    type = Token.FINALLY
+
+
+@Statement.register
+class End(NoArgumentHeader):
+    type = Token.END
 
 
 @Statement.register

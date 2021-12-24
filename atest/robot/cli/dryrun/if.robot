@@ -37,7 +37,7 @@ Dryrun fail invalid ELSE in non executed branch
 Dryrun fail invalid ELSE IF in non executed branch
     Check Test Case    ${TESTNAME}
 
-Dryrun fail empty if in non executed branch
+Dryrun fail empty IF in non executed branch
     Check Test Case    ${TESTNAME}
 
 *** Keywords ***

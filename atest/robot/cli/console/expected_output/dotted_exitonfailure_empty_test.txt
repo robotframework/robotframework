@@ -3,7 +3,7 @@ Running suite 'Empty Testcase And Uk' with 9 tests.
 Fxxxxxxxx
 ------------------------------------------------------------------------------
 FAIL: Empty Testcase And Uk.
-Test case name cannot be empty.
+Test name cannot be empty.
 ==============================================================================
 Run suite 'Empty Testcase And Uk' with 9 tests in *.
 

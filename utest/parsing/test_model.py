@@ -6,13 +6,14 @@ from pathlib import Path
 
 from robot.parsing import get_model, get_resource_model, ModelVisitor, ModelTransformer, Token
 from robot.parsing.model.blocks import (
-    Block, CommentSection, File, For, If, Keyword, KeywordSection,
-    SettingSection, TestCase, TestCaseSection, VariableSection
+    Block, CommentSection, File, For, If, Try,
+    Keyword, KeywordSection, SettingSection, TestCase, TestCaseSection, VariableSection
 )
 from robot.parsing.model.statements import (
     Arguments, Comment, Documentation, ForHeader, End, ElseHeader, ElseIfHeader,
-    EmptyLine, Error, IfHeader, InlineIfHeader, KeywordCall, KeywordName,
-    ReturnStatement, SectionHeader, Statement, TestCaseName, Variable
+    EmptyLine, Error, IfHeader, InlineIfHeader, TryHeader, ExceptHeader,
+    FinallyHeader, KeywordCall, KeywordName, ReturnStatement, SectionHeader,
+    Statement, TestCaseName, Variable
 )
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
@@ -487,18 +488,18 @@ Example
         expected1 = If(
             header=IfHeader(
                 tokens=[Token(Token.IF, 'IF', 3, 4)],
-                errors=('IF has no condition.',)
+                errors=('IF must have a condition.',)
             ),
             orelse=If(
                 header=ElseHeader(
                     tokens=[Token(Token.ELSE, 'ELSE', 4, 4),
                             Token(Token.ARGUMENT, 'ooops', 4, 12)],
-                    errors=('ELSE has condition.',)
+                    errors=('ELSE does not accept arguments.',)
                 ),
                 orelse=If(
                     header=ElseIfHeader(
                         tokens=[Token(Token.ELSE_IF, 'ELSE IF', 5, 4)],
-                        errors=('ELSE IF has no condition.',)
+                        errors=('ELSE IF must have a condition.',)
                     ),
                     errors=('ELSE IF branch cannot be empty.',)
                 ),
@@ -515,7 +516,7 @@ Example
         expected2 = If(
             header=IfHeader(
                 tokens=[Token(Token.IF, 'IF', 8, 4)],
-                errors=('IF has no condition.',)
+                errors=('IF must have a condition.',)
             ),
             errors=('IF branch cannot be empty.',
                     'IF has no closing END.')
@@ -629,10 +630,53 @@ Example
             body=[KeywordCall([Token(Token.KEYWORD, 'ooops', 3, 36)])],
             orelse=If(
                 header=ElseIfHeader([Token(Token.ELSE_IF, 'ELSE IF', 3, 45)],
-                                    errors=('ELSE IF has no condition.',)),
+                                    errors=('ELSE IF must have a condition.',)),
                 errors=('ELSE IF branch cannot be empty.',),
             ),
             end=End([Token(Token.END, '', 3, 52)])
+        )
+        assert_model(node, expected)
+
+
+class TestTry(unittest.TestCase):
+
+    def test_try_except_else_finally(self):
+        model = get_model('''\
+*** Test Cases ***
+Example
+    TRY
+        Fail    Oh no!
+    EXCEPT   does not match
+        No operation
+    EXCEPT    AS    ${exp}
+        Log    Catch
+    ELSE
+        No operation
+    FINALLY
+        Log    finally here!
+    END
+''', data_only=True)
+        node = model.sections[0].body[0].body[0]
+        expected = Try(
+            header=TryHeader([Token(Token.TRY, 'TRY', 3, 4)]),
+            body=[KeywordCall([Token(Token.KEYWORD, 'Fail', 4, 8), Token(Token.ARGUMENT, 'Oh no!', 4, 16)])],
+            next=Try(
+                header=ExceptHeader([Token(Token.EXCEPT, 'EXCEPT', 5, 4), Token(Token.ARGUMENT, 'does not match', 5, 13)]),
+                body=[KeywordCall((Token(Token.KEYWORD, 'No operation', 6, 8),))],
+                next=Try(
+                    header=ExceptHeader((Token(Token.EXCEPT, 'EXCEPT', 7, 4), Token(Token.AS, 'AS', 7, 14), Token(Token.VARIABLE, '${exp}', 7, 20))),
+                    body=[KeywordCall((Token(Token.KEYWORD, 'Log', 8, 8), Token(Token.ARGUMENT, 'Catch', 8, 15)))],
+                    next=Try(
+                        header=ElseHeader((Token(Token.ELSE, 'ELSE', 9, 4),)),
+                        body=[KeywordCall((Token(Token.KEYWORD, 'No operation', 10, 8),))],
+                        next=Try(
+                            header=FinallyHeader((Token(Token.FINALLY, 'FINALLY', 11, 4),)),
+                            body=[KeywordCall((Token(Token.KEYWORD, 'Log', 12, 8), Token(Token.ARGUMENT, 'finally here!', 12, 15)))]
+                        )
+                    )
+                )
+            ),
+            end=End([Token(Token.END, 'END', 13, 4)])
         )
         assert_model(node, expected)
 

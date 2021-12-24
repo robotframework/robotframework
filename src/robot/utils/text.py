@@ -20,8 +20,8 @@ import re
 
 from .charwidth import get_char_width
 from .misc import seq2str2
-from .robottypes import is_string, is_unicode
-from .unic import unic
+from .robottypes import is_string
+from .unic import safe_str
 
 
 MAX_ERROR_LINES = 40
@@ -80,7 +80,7 @@ def _count_virtual_line_length(line):
 
 
 def format_assign_message(variable, value, cut_long=True):
-    formatter = {'$': unic, '@': seq2str2, '&': _dict_to_str}[variable[0]]
+    formatter = {'$': safe_str, '@': seq2str2, '&': _dict_to_str}[variable[0]]
     value = formatter(value)
     if cut_long:
         value = cut_assign_value(value)
@@ -89,13 +89,12 @@ def format_assign_message(variable, value, cut_long=True):
 def _dict_to_str(d):
     if not d:
         return '{ }'
-    return '{ %s }' % ' | '.join('%s=%s' % (unic(k), unic(v))
-                                 for k, v in d.items())
+    return '{ %s }' % ' | '.join('%s=%s' % (safe_str(k), safe_str(d[k])) for k in d)
 
 
 def cut_assign_value(value):
-    if not is_unicode(value):
-        value = unic(value)
+    if not is_string(value):
+        value = safe_str(value)
     if len(value) > _MAX_ASSIGN_LENGTH:
         value = value[:_MAX_ASSIGN_LENGTH] + '...'
     return value

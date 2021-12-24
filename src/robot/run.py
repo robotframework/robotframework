@@ -42,7 +42,7 @@ from robot.model import ModelModifier
 from robot.output import LOGGER, pyloggingconf
 from robot.reporting import ResultWriter
 from robot.running.builder import TestSuiteBuilder
-from robot.utils import Application, unic, text
+from robot.utils import Application, text
 
 
 USAGE = """Robot Framework -- A generic automation framework
@@ -52,22 +52,19 @@ Version:  <VERSION>
 Usage:  robot [options] paths
    or:  python -m robot [options] paths
    or:  python path/to/robot [options] paths
-   or:  java -jar robotframework.jar [options] paths
 
 Robot Framework is a generic open source automation framework for acceptance
 testing, acceptance test-driven development (ATDD) and robotic process
 automation (RPA). It has simple, easy-to-use syntax that utilizes the
 keyword-driven automation approach. Keywords adding new capabilities are
-implemented in libraries using either Python or Java. New higher level
+implemented in libraries using Python. New higher level
 keywords can also be created using Robot Framework's own syntax.
 
 The easiest way to execute Robot Framework is using the `robot` command created
 as part of the normal installation. Alternatively it is possible to execute
 the `robot` module directly like `python -m robot`, where `python` can be
-replaced with any supported Python interpreter such as `jython`, `ipy` or
-`python3`. Yet another alternative is running the `robot` directory like
-`python path/to/robot`. Finally, there is a standalone JAR distribution
-available.
+replaced with any supported Python interpreter. Yet another alternative
+is running the `robot` directory like `python path/to/robot`.
 
 Tests (or tasks in RPA terminology) are created in files typically having the
 `*.robot` extension. Files automatically create test (or task) suites and
@@ -329,18 +326,17 @@ Options
                           on:   always use colors
                           ansi: like `on` but use ANSI colors also on Windows
                           off:  disable colors altogether
-                          Note that colors do not work with Jython on Windows.
  -K --consolemarkers auto|on|off  Show markers on the console when top level
                           keywords in a test case end. Values have same
                           semantics as with --consolecolors.
- -P --pythonpath path *   Additional locations (directories, ZIPs, JARs) where
+ -P --pythonpath path *   Additional locations (directories, ZIPs) where
                           to search test libraries and other extensions when
                           they are imported. Multiple paths can be given by
                           separating them with a colon (`:`) or by using this
                           option several times. Given path can also be a glob
                           pattern matching multiple paths.
                           Examples:
-                          --pythonpath libs/ --pythonpath resources/*.jar
+                          --pythonpath libs/
                           --pythonpath /opt/testlibs:mylibs.zip:yourlibs
  -A --argumentfile path *  Text file to read more arguments from. Use special
                           path `STDIN` to read contents from the standard input
@@ -404,9 +400,6 @@ $ robot --include smoke --name "Smoke Tests" path/to/tests.robot
 # Executing `robot` module using Python.
 $ python -m robot path/to/tests
 
-# Running `robot` directory with Jython.
-$ jython /opt/robot tests.robot
-
 # Executing multiple test case files and using case-insensitive long options.
 $ robot --SuiteStatLevel 2 --Metadata Version:3 tests/*.robot more/tests.robot
 
@@ -432,7 +425,7 @@ class RobotFramework(Application):
         if settings['XUnitSkipNonCritical']:
             LOGGER.warn("Command line option --xunitskipnoncritical has been "
                         "deprecated and has no effect.")
-        LOGGER.info('Settings:\n%s' % unic(settings))
+        LOGGER.info(f'Settings:\n{settings}')
         builder = TestSuiteBuilder(settings['SuiteNames'],
                                    included_extensions=settings.extension,
                                    rpa=settings.rpa,

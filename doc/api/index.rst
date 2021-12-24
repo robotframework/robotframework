@@ -30,10 +30,9 @@ provide programmatic APIs. Following entry points exist:
   * :py:mod:`robot.rebot` entry point for post-processing outputs (Rebot).
   * :py:mod:`robot.libdoc` entry point for Libdoc tool.
   * :py:mod:`robot.testdoc` entry point for Testdoc tool.
-  * :py:mod:`robot.tidy` entry point for Tidy tool.
 
 See `built-in tool documentation`__ for more details about Rebot, Libdoc,
-Testdoc, and Tidy tools.
+and Testdoc tools.
 
 __ http://robotframework.org/robotframework/#built-in-tools
 

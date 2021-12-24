@@ -93,9 +93,6 @@ Examples:
 | ${date} =       | Convert Date | ${date}                 | result_format=%d.%m.%Y |
 | Should Be Equal | ${date}      | 28.05.2014              |
 
-Notice that locale aware directives like ``%b``  do not work correctly with
-Jython on non-English locales: http://bugs.jython.org/issue2285
-
 == Python datetime ==
 
 Python's standard
@@ -145,7 +142,7 @@ extent on the platform:
 
 - Timestamps support year 1900 and above.
 - Python datetime objects support year 1 and above.
-- Epoch time supports 1970 and above on Windows with Python and IronPython.
+- Epoch time supports 1970 and above on Windows.
 - On other platforms epoch time supports 1900 and above or even earlier.
 
 = Time formats =
@@ -529,7 +526,7 @@ class Date:
     def _seconds_to_datetime(self, secs):
         # Workaround microsecond rounding errors with IronPython:
         # https://github.com/IronLanguages/main/issues/1170
-        # Also Jython had similar problems, but they seem to be fixed in 2.7.
+        # TODO: can this be simplified now
         dt = datetime.fromtimestamp(secs)
         return dt.replace(microsecond=roundup(secs % 1 * 1e6))
 

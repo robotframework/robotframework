@@ -95,7 +95,7 @@ Generated Should Be Defined
     Element Attribute Should Match    ${LIBDOC}    generated    ????-??-??T??:??:??Z
 
 Spec version should be correct
-    Element Attribute Should Be    ${LIBDOC}    specversion    3
+    Element Attribute Should Be    ${LIBDOC}    specversion    4
 
 Should Have No Init
     ${inits} =    Get Elements    ${LIBDOC}    xpath=inits/init
@@ -278,3 +278,9 @@ DataType TypedDict Should Be
             END
         END
     END
+
+DataType Custom Should Be
+    [Arguments]    ${index}    ${name}    ${doc}
+    ${customs}=   Get Elements    ${LIBDOC}   xpath=datatypes/customs/custom
+    Element Attribute Should Be    ${customs}[${index}]     name      ${name}
+    Element Text Should Be         ${customs}[${index}]     ${doc}    xpath=doc

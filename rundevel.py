@@ -35,7 +35,8 @@ if not exists(tmp2):
     os.mkdir(tmp2)
 
 os.environ['ROBOT_SYSLOG_FILE'] = join(tmp, 'syslog.txt')
-os.environ['ROBOT_INTERNAL_TRACES'] = 'yes'
+if 'ROBOT_INTERNAL_TRACES' not in os.environ:
+    os.environ['ROBOT_INTERNAL_TRACES'] = 'true'
 os.environ['TEMPDIR'] = tmp2          # Used by tests under atest/testdata
 if 'PYTHONPATH' not in os.environ:    # Allow executed scripts to import robot
     os.environ['PYTHONPATH'] = src

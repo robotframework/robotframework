@@ -26,7 +26,6 @@ programmatic usage as follows:
     with command line argument processing.
   * :mod:`~robot.libdoc`: Module for library documentation generation.
   * :mod:`~robot.testdoc`: Module for test case documentation generation.
-  * :mod:`~robot.tidy`: Module for test data clean-up and format change.
 
 All the functions above can be imported like ``from robot import run``.
 Functions and classes provided by the modules need to be imported like

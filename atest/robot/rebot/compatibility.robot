@@ -12,6 +12,9 @@ RF 3.2 compatibility
 RF 4.0 compatibility
     Run Rebot And Validate Statistics    rebot/output-4.0.xml      172    10
 
+RF 5.0 compatibility
+    Run Rebot And Validate Statistics    rebot/output-5.0.xml      173    10
+
 Message directly under test
     Run Rebot And Validate Statistics    rebot/issue-3762.xml      1      0
     ${tc} =    Check Test Case    test A

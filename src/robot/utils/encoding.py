@@ -18,8 +18,8 @@ import sys
 
 from .encodingsniffer import get_console_encoding, get_system_encoding
 from .misc import isatty
-from .robottypes import is_unicode
-from .unic import unic
+from .robottypes import is_string
+from .unic import safe_str
 
 
 CONSOLE_ENCODING = get_console_encoding()
@@ -37,14 +37,14 @@ def console_decode(string, encoding=CONSOLE_ENCODING):
 
     If `string` is already Unicode, it is returned as-is.
     """
-    if is_unicode(string):
+    if is_string(string):
         return string
     encoding = {'CONSOLE': CONSOLE_ENCODING,
                 'SYSTEM': SYSTEM_ENCODING}.get(encoding.upper(), encoding)
     try:
         return string.decode(encoding)
     except UnicodeError:
-        return unic(string)
+        return safe_str(string)
 
 
 def console_encode(string, encoding=None, errors='replace', stream=sys.__stdout__,
@@ -80,8 +80,8 @@ def _get_console_encoding(stream):
 
 
 def system_decode(string):
-    return string if is_unicode(string) else unic(string)
+    return string if is_string(string) else safe_str(string)
 
 
 def system_encode(string):
-    return string if is_unicode(string) else unic(string)
+    return string if is_string(string) else safe_str(string)

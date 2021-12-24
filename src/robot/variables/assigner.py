@@ -90,18 +90,13 @@ class VariableAssigner:
     def __enter__(self):
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_val is None:
+    def __exit__(self, etype, error, tb):
+        if error is None:
             return
-        failure = self._get_failure(exc_type, exc_val, exc_tb)
-        if failure.can_continue(self._context):
-            self.assign(failure.return_value)
-
-    def _get_failure(self, exc_type, exc_val, exc_tb):
-        if isinstance(exc_val, ExecutionStatus):
-            return exc_val
-        exc_info = (exc_type, exc_val, exc_tb)
-        return HandlerExecutionFailed(ErrorDetails(exc_info))
+        if not isinstance(error, ExecutionStatus):
+            error = HandlerExecutionFailed(ErrorDetails(error))
+        if error.can_continue(self._context):
+            self.assign(error.return_value)
 
     def assign(self, return_value):
         context = self._context

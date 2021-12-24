@@ -19,7 +19,7 @@ class LibDocLib:
 
     def __init__(self, interpreter=None):
         self.interpreter = interpreter
-        self.schema = XMLSchema(join(ROOT, 'doc', 'schema', 'libdoc.03.xsd'))
+        self.schema = XMLSchema(join(ROOT, 'doc', 'schema', 'libdoc.04.xsd'))
 
     @property
     def libdoc(self):

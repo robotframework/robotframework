@@ -1,12 +1,12 @@
 *** Test Cases ***
 IF without condition
-    [Documentation]    FAIL    IF has no condition.
+    [Documentation]    FAIL    IF must have a condition.
     IF
         Fail    Should not be run
     END
 
 IF with ELSE without condition
-    [Documentation]    FAIL    IF has no condition.
+    [Documentation]    FAIL    IF must have a condition.
     IF
         Fail    Should not be run
     ELSE
@@ -59,7 +59,7 @@ IF with wrong case
     END
 
 ELSE IF without condition
-    [Documentation]    FAIL    ELSE IF has no condition.
+    [Documentation]    FAIL    ELSE IF must have a condition.
     IF    'mars' == 'mars'
         Fail    Should not be run
     ELSE IF
@@ -69,7 +69,7 @@ ELSE IF without condition
     END
 
 ELSE IF with multiple conditions
-    [Documentation]    FAIL    ELSE IF has more than one condition.
+    [Documentation]    FAIL    ELSE IF cannot have more than one condition.
     IF    'maa' == 'maa'
         Fail    Should not be run
     ELSE IF    ${False}    ${True}
@@ -79,7 +79,7 @@ ELSE IF with multiple conditions
     END
 
 ELSE with condition
-    [Documentation]    FAIL    ELSE has condition.
+    [Documentation]    FAIL    ELSE does not accept arguments.
     IF    'venus' != 'mars'
         Fail    Should not be run
     ELSE    ${True}
@@ -142,16 +142,16 @@ Invalid IF inside FOR
 Multiple errors
     [Documentation]    FAIL
     ...    Multiple errors:
-    ...    - IF has no condition.
+    ...    - IF must have a condition.
     ...    - IF branch cannot be empty.
     ...    - ELSE IF after ELSE.
     ...    - Multiple ELSE branches.
     ...    - IF has no closing END.
-    ...    - ELSE IF has more than one condition.
+    ...    - ELSE IF cannot have more than one condition.
     ...    - ELSE IF branch cannot be empty.
-    ...    - ELSE has condition.
+    ...    - ELSE does not accept arguments.
     ...    - ELSE branch cannot be empty.
-    ...    - ELSE IF has no condition.
+    ...    - ELSE IF must have a condition.
     ...    - ELSE IF branch cannot be empty.
     ...    - ELSE branch cannot be empty.
     IF

@@ -22,7 +22,7 @@ from .modelcombiner import ModelCombiner
 
 class StatusReporter:
 
-    def __init__(self, data, result, context, run=True):
+    def __init__(self, data, result, context, run=True, suppress=False):
         self.data = data
         self.result = result
         self.context = context
@@ -31,6 +31,7 @@ class StatusReporter:
             result.status = result.NOT_SET
         else:
             self.pass_status = result.status = result.NOT_RUN
+        self.suppress = suppress
         self.initial_test_status = None
 
     def __enter__(self):
@@ -63,6 +64,7 @@ class StatusReporter:
         context.end_keyword(ModelCombiner(self.data, result))
         if failure is not exc_val:
             raise failure
+        return self.suppress
 
     def _get_failure(self, exc_type, exc_value, exc_tb, context):
         if exc_value is None:
@@ -74,14 +76,14 @@ class StatusReporter:
             context.fail(msg)
             syntax = not isinstance(exc_value, (KeywordError, VariableError))
             return ExecutionFailed(msg, syntax=syntax)
-        exc_info = (exc_type, exc_value, exc_tb)
-        failure = HandlerExecutionFailed(ErrorDetails(exc_info))
+        error = ErrorDetails(exc_value)
+        failure = HandlerExecutionFailed(error)
         if failure.timeout:
             context.timeout_occurred = True
         if failure.skip:
-            context.skip(failure.full_message)
+            context.skip(error.message)
         else:
-            context.fail(failure.full_message)
-        if failure.traceback:
-            context.debug(failure.traceback)
+            context.fail(error.message)
+        if error.traceback:
+            context.debug(error.traceback)
         return failure

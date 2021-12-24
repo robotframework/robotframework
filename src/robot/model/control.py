@@ -15,7 +15,7 @@
 
 from robot.utils import setter
 
-from .body import Body, BodyItem, IfBranches
+from .body import Body, BodyItem, Branches
 from .keyword import Keywords
 
 
@@ -55,31 +55,6 @@ class For(BodyItem):
         return 'FOR    %s    %s    %s' % (variables, self.flavor, values)
 
 
-@Body.register
-class If(BodyItem):
-    """IF/ELSE structure root. Branches are stored in :attr:`body`."""
-    type = BodyItem.IF_ELSE_ROOT
-    body_class = IfBranches
-    __slots__ = ['parent']
-
-    def __init__(self, parent=None):
-        self.parent = parent
-        self.body = None
-
-    @setter
-    def body(self, body):
-        return self.body_class(self, body)
-
-    @property
-    def id(self):
-        """Root IF/ELSE id is always ``None``."""
-        return None
-
-    def visit(self, visitor):
-        visitor.visit_if(self)
-
-
-@IfBranches.register
 class IfBranch(BodyItem):
     body_class = Body
     repr_args = ('type', 'condition')
@@ -97,7 +72,7 @@ class IfBranch(BodyItem):
 
     @property
     def id(self):
-        """Branch id omits the root IF/ELSE object from the parent id part."""
+        """Branch id omits IF/ELSE root from the parent id part."""
         if not self.parent:
             return 'k1'
         index = self.parent.body.index(self) + 1
@@ -114,6 +89,122 @@ class IfBranch(BodyItem):
 
     def visit(self, visitor):
         visitor.visit_if_branch(self)
+
+
+@Body.register
+class If(BodyItem):
+    """IF/ELSE structure root. Branches are stored in :attr:`body`."""
+    type = BodyItem.IF_ELSE_ROOT
+    branch_class = IfBranch
+    __slots__ = ['parent']
+
+    def __init__(self, parent=None):
+        self.parent = parent
+        self.body = None
+
+    @setter
+    def body(self, branches):
+        return Branches(self.branch_class, self, branches)
+
+    @property
+    def id(self):
+        """Root IF/ELSE id is always ``None``."""
+        return None
+
+    def visit(self, visitor):
+        visitor.visit_if(self)
+
+
+class TryBranch(BodyItem):
+    body_class = Body
+    repr_args = ('type', 'patterns', 'variable')
+    __slots__ = ['type', 'patterns', 'variable']
+
+    def __init__(self, type=BodyItem.TRY, patterns=(), variable=None, parent=None):
+        if (patterns or variable) and type != BodyItem.EXCEPT:
+            raise TypeError(f"'{type}' branches do not accept patterns or variables.")
+        self.type = type
+        self.patterns = patterns
+        self.variable = variable
+        self.parent = parent
+        self.body = None
+
+    @setter
+    def body(self, body):
+        return self.body_class(self, body)
+
+    @property
+    def id(self):
+        """Branch id omits TRY/EXCEPT root from the parent id part."""
+        if not self.parent:
+            return 'k1'
+        index = self.parent.body.index(self) + 1
+        if not self.parent.parent:
+            return 'k%d' % index
+        return '%s-k%d' % (self.parent.parent.id, index)
+
+    def __str__(self):
+        if self.type != BodyItem.EXCEPT:
+            return self.type
+        patterns = '    '.join(self.patterns)
+        as_var = f'AS    {self.variable}' if self.variable else ''
+        sep1 = '    ' if patterns or as_var else ''
+        sep2 = '    ' if patterns and as_var else ''
+        return f'EXCEPT{sep1}{patterns}{sep2}{as_var}'
+
+    def __repr__(self):
+        repr_args = self.repr_args if self.type == BodyItem.EXCEPT else ['type']
+        return self._repr(repr_args)
+
+    def visit(self, visitor):
+        visitor.visit_try_branch(self)
+
+
+@Body.register
+class Try(BodyItem):
+    """TRY/EXCEPT structure root. Branches are stored in :attr:`body`."""
+    type = BodyItem.TRY_EXCEPT_ROOT
+    branch_class = TryBranch
+    __slots__ = []
+
+    def __init__(self, parent=None):
+        self.parent = parent
+        self.body = None
+
+    @setter
+    def body(self, branches):
+        return Branches(self.branch_class, self, branches)
+
+    @property
+    def try_branch(self):
+        if self.body and self.body[0].type == BodyItem.TRY:
+            return self.body[0]
+        raise TypeError("No 'TRY' branch or 'TRY' branch is not first.")
+
+    @property
+    def except_branches(self):
+        return [branch for branch in self.body if branch.type == BodyItem.EXCEPT]
+
+    @property
+    def else_branch(self):
+        for branch in self.body:
+            if branch.type == BodyItem.ELSE:
+                return branch
+        return None
+
+    @property
+    def finally_branch(self):
+        if self.body and self.body[-1].type == BodyItem.FINALLY:
+            return self.body[-1]
+        return None
+
+    @property
+    def id(self):
+        """Root TRY/EXCEPT id is always ``None``."""
+        return None
+
+    def visit(self, visitor):
+        visitor.visit_try(self)
 
 
 @Body.register

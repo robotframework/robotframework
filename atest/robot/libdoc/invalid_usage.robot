@@ -71,7 +71,7 @@ Invalid output file
     ...    Remove Directory    ${OUT XML}
 
 invalid Spec File version
-    ${TESTDATADIR}/OldSpec.xml ${OUT XML}    Invalid spec file version 'None'. Robot Framework 4.0 and newer requires spec version 3.
+    ${TESTDATADIR}/OldSpec.xml ${OUT XML}    Invalid spec file version 'None'. Supported versions are 3 and 4.
 
 *** Keywords ***
 Run libdoc and verify error

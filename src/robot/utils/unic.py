@@ -18,11 +18,11 @@ from pprint import PrettyPrinter
 from unicodedata import normalize
 
 
-def unic(item):
-    return normalize('NFC', _unic(item))
+def safe_str(item):
+    return normalize('NFC', _safe_str(item))
 
 
-def _unic(item):
+def _safe_str(item):
     if isinstance(item, str):
         return item
     if isinstance(item, (bytes, bytearray)):
@@ -37,7 +37,7 @@ def _unic(item):
 
 
 def prepr(item, width=80):
-    return unic(PrettyRepr(width=width).pformat(item))
+    return safe_str(PrettyRepr(width=width).pformat(item))
 
 
 class PrettyRepr(PrettyPrinter):

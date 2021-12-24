@@ -20,7 +20,7 @@ from robot.running import ArgInfo, ArgumentSpec
 from robot.utils import ET, ETSource
 
 from .model import LibraryDoc, KeywordDoc
-from .datatypes import EnumDoc, TypedDictDoc
+from .datatypes import EnumDoc, TypedDictDoc, CustomDoc
 
 
 class SpecDocBuilder:
@@ -35,8 +35,8 @@ class SpecDocBuilder:
                             doc_format=spec.get('format', 'ROBOT'),
                             source=spec.get('source'),
                             lineno=int(spec.get('lineno', -1)))
-        libdoc.inits = self._create_keywords(spec, 'inits/init')
-        libdoc.keywords = self._create_keywords(spec, 'keywords/kw')
+        libdoc.inits = self._create_keywords(spec, 'inits/init', libdoc.source)
+        libdoc.keywords = self._create_keywords(spec, 'keywords/kw', libdoc.source)
         libdoc.data_types.update(self._create_data_types(spec))
         return libdoc
 
@@ -48,16 +48,15 @@ class SpecDocBuilder:
         if root.tag != 'keywordspec':
             raise DataError("Invalid spec file '%s'." % path)
         version = root.get('specversion')
-        if version != '3':
-            raise DataError("Invalid spec file version '%s'. "
-                            "Robot Framework 4.0 and newer requires spec version 3."
-                            % version)
+        if version not in ('3', '4'):
+            raise DataError(f"Invalid spec file version '{version}'. "
+                            f"Supported versions are 3 and 4.")
         return root
 
-    def _create_keywords(self, spec, path):
-        return [self._create_keyword(elem) for elem in spec.findall(path)]
+    def _create_keywords(self, spec, path, lib_source):
+        return [self._create_keyword(elem, lib_source) for elem in spec.findall(path)]
 
-    def _create_keyword(self, elem):
+    def _create_keyword(self, elem, lib_source):
         # "deprecated" attribute isn't read because it is read from the doc
         # automatically. That should probably be changed at some point.
         return KeywordDoc(name=elem.get('name', ''),
@@ -65,7 +64,7 @@ class SpecDocBuilder:
                           doc=elem.find('doc').text or '',
                           shortdoc=elem.find('shortdoc').text or '',
                           tags=[t.text for t in elem.findall('tags/tag')],
-                          source=elem.get('source'),
+                          source=elem.get('source') or lib_source,
                           lineno=int(elem.get('lineno', -1)))
 
     def _create_arguments(self, elem):
@@ -99,7 +98,9 @@ class SpecDocBuilder:
                  for dt in spec.findall('datatypes/enums/enum')]
         typed_dicts = [self._create_typed_dict_doc(dt)
                        for dt in spec.findall('datatypes/typeddicts/typeddict')]
-        return enums + typed_dicts
+        custom = [self._create_custom_doc(dt)
+                  for dt in spec.findall('datatypes/customs/custom')]
+        return enums + typed_dicts + custom
 
     def _create_enum_doc(self, dt):
         return EnumDoc(name=dt.get('name'),
@@ -120,3 +121,7 @@ class SpecDocBuilder:
         return TypedDictDoc(name=dt.get('name'),
                             doc=dt.find('doc').text or '',
                             items=items)
+
+    def _create_custom_doc(self, dt):
+        return CustomDoc(name=dt.get('name'),
+                         doc=dt.find('doc').text or '')

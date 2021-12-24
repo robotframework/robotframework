@@ -174,6 +174,10 @@ def non_type(argument: 'this is string, not type', expected=None):
     _validate_type(argument, expected)
 
 
+def unhashable(argument: {}, expected=None):
+    _validate_type(argument, expected)
+
+
 # Causes SyntaxError with `typing.get_type_hints`
 def invalid(argument: 'import sys', expected=None):
     _validate_type(argument, expected)

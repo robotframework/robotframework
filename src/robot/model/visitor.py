@@ -239,12 +239,58 @@ class SuiteVisitor:
         """Called when IF/ELSE branch ends. Default implementation does nothing."""
         pass
 
-    def visit_return(self, return_):
-        """Called when RETURN is encountered. Default implementation does nothing.
+    def visit_try(self, try_):
+        """Implements traversing through TRY/EXCEPT structures.
 
-        Because RETURN cannot have children, does not call separate
-        ``start_return`` or ``end_return`` methods.
+        This method is used with the TRY/EXCEPT root element. Actual TRY, EXCEPT, ELSE
+        and FINALLY branches are visited separately.
         """
+        if self.start_try(try_) is not False:
+            try_.body.visit(self)
+            self.end_try(try_)
+
+    def start_try(self, try_):
+        """Called when TRY/EXCEPT structure starts. Default implementation does nothing.
+
+        Can return explicit ``False`` to stop visiting.
+        """
+        pass
+
+    def end_try(self, try_):
+        """Called when TRY/EXCEPT structure ends. Default implementation does nothing."""
+        pass
+
+    def visit_try_branch(self, branch):
+        """Visits individual TRY, EXCEPT, ELSE and FINALLY branches."""
+        if self.start_try_branch(branch) is not False:
+            branch.body.visit(self)
+            self.end_try_branch(branch)
+
+    def start_try_branch(self, branch):
+        """Called when TRY, EXCEPT, ELSE or FINALLY branch starts.
+
+        Can return explicit ``False`` to stop visiting.
+        """
+        pass
+
+    def end_try_branch(self, branch):
+        """Called when TRY, EXCEPT, ELSE or FINALLY branch ends."""
+        pass
+
+    def visit_return(self, return_):
+        """Visits RETURN elements."""
+        if self.start_return(return_) is not False:
+            self.end_return(return_)
+
+    def start_return(self, return_):
+        """Called when RETURN element starts.
+
+        Can return explicit ``False`` to avoid calling :meth:`end_return`.
+        """
+        pass
+
+    def end_return(self, return_):
+        """Called when RETURN element ends."""
         pass
 
     def visit_message(self, msg):

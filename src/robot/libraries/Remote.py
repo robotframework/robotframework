@@ -23,8 +23,8 @@ import xmlrpc.client
 from xml.parsers.expat import ExpatError
 
 from robot.errors import RemoteError
-from robot.utils import (is_bytes, is_dict_like, is_list_like, is_number,
-                         is_string, timestr_to_secs, unic, DotDict)
+from robot.utils import (DotDict, is_bytes, is_dict_like, is_list_like, is_number,
+                         is_string, safe_str, timestr_to_secs)
 
 
 class Remote:
@@ -42,8 +42,6 @@ class Remote:
         the operating system and its configuration. Notice that setting
         a timeout that is shorter than keyword execution time will interrupt
         the keyword.
-
-        Timeouts do not work with IronPython.
         """
         if '://' not in uri:
             uri = 'http://' + uri
@@ -157,7 +155,7 @@ class ArgumentCoercer:
         return item
 
     def _to_string(self, item):
-        item = unic(item) if item is not None else ''
+        item = safe_str(item) if item is not None else ''
         return self._handle_string(item)
 
     def _validate_key(self, key):
@@ -171,10 +169,10 @@ class RemoteResult:
         if not (is_dict_like(result) and 'status' in result):
             raise RuntimeError('Invalid remote result dictionary: %s' % result)
         self.status = result['status']
-        self.output = unic(self._get(result, 'output'))
+        self.output = safe_str(self._get(result, 'output'))
         self.return_ = self._get(result, 'return')
-        self.error = unic(self._get(result, 'error'))
-        self.traceback = unic(self._get(result, 'traceback'))
+        self.error = safe_str(self._get(result, 'error'))
+        self.traceback = safe_str(self._get(result, 'traceback'))
         self.fatal = bool(self._get(result, 'fatal', False))
         self.continuable = bool(self._get(result, 'continuable', False))
 

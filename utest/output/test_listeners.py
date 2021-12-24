@@ -170,6 +170,7 @@ class TestAttributesAreNotAccessedUnnecessarily(unittest.TestCase):
     def test_start_and_end_methods(self):
         class ModelStub:
             IF_ELSE_ROOT = 'IF/ELSE ROOT'
+            TRY_EXCEPT_ROOT = 'TRY/EXCEPT ROOT'
             type = 'xxx'
         for listeners in [Listeners([]), LibraryListeners()]:
             for name in dir(listeners):
