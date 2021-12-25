@@ -167,8 +167,7 @@ class TestStatus(_ExecutionStatus):
                  rpa=False):
         super().__init__(parent)
         self._test = test
-        self._skip_on_failure_tags = skip_on_failure
-        self._skip_on_failure_tags.append('robot:skip-on-failure')
+        self._skip_on_failure_tags = tuple(skip_on_failure or ()) + ('robot:skip-on-failure',)
         self._critical_tags = critical_tags
         self._rpa = rpa
 

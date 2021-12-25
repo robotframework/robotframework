@@ -128,7 +128,7 @@ class SuiteRunner(SuiteVisitor):
         if TagPatterns("robot:skip").match(test.tags):
             status.test_skipped(
                 test_or_task(
-                    '{Test} skipped since it is tagged with \'robot:skip\' tag',
+                    "{Test} skipped since it is tagged with 'robot:skip' tag.",
                     self._settings.rpa))
         if self._skipped_tags.match(test.tags):
             status.test_skipped(

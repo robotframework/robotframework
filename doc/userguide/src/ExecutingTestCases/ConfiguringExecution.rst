@@ -130,13 +130,16 @@ combining individual tags or patterns together::
    --exclude xxORyyORzz
    --include fooNOTbar
 
-It is also possible to use the reserved tag `robot:exclude` to achieve
-the same effect as with using the `--exclude` option::
+Starting from RF 5.0, it is also possible to use the reserved 
+tag `robot:exclude` to achieve
+the same effect as with using the `--exclude` option:
 
-    *** TEST CASES ***
-    Test Case
-        [Tags]    robot:exclude
-        Fail      this test will be excluded
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+      [Tags]    robot:exclude
+      Fail      this test will be excluded
 
 Selecting test cases by tags is a very flexible mechanism and allows
 many interesting possibilities:

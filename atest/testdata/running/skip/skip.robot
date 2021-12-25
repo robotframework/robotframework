@@ -262,7 +262,7 @@ Skipped although test fails since test is tagged with robot:skip-on-failure
     ...    We failed here, but the test is reported as skipped instead
     [Tags]  robot:skip-on-failure
     Fail   We failed here, but the test is reported as skipped instead
-    
+
 --NonCritical Is an Alias for --SkipOnFailure
     [Documentation]    SKIP
     ...    ${TEST_OR_TASK} failed but its tags matched '--SkipOnFailure' and it was marked skipped.
