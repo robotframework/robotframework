@@ -2955,10 +2955,9 @@ class _Misc(_BuiltInBase):
         disabled by giving the ``no_newline`` argument a true value (see
         `Boolean arguments`).
 
-        By default adds no alignment formatting. The format argument can be 
-        used to set the alignment of the log message, along with adding 
-        custom padding. Please see 
-        https://docs.python.org/3/library/string.html#formatspec for
+        By default adds no alignment formatting. The ``format`` argument allows,
+        for example, alignment and customized padding of the log message. Please see the
+        [https://docs.python.org/3/library/string.html#formatspec|format specification] for
         detailed alignment possibilities. This argument is new in Robot
         Framework 5.0.
 
