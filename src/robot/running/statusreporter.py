@@ -22,7 +22,7 @@ from .modelcombiner import ModelCombiner
 
 class StatusReporter:
 
-    def __init__(self, data, result, context, run=True):
+    def __init__(self, data, result, context, run=True, suppress=False):
         self.data = data
         self.result = result
         self.context = context
@@ -31,6 +31,7 @@ class StatusReporter:
             result.status = result.NOT_SET
         else:
             self.pass_status = result.status = result.NOT_RUN
+        self.suppress = suppress
         self.initial_test_status = None
 
     def __enter__(self):
@@ -63,6 +64,7 @@ class StatusReporter:
         context.end_keyword(ModelCombiner(self.data, result))
         if failure is not exc_val:
             raise failure
+        return self.suppress
 
     def _get_failure(self, exc_type, exc_value, exc_tb, context):
         if exc_value is None:

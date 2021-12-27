@@ -25,24 +25,24 @@ Regexp matcher
 Regexp escapes
     FAIL    PASS
 
+Regexp flags
+    FAIL    NOT RUN    PASS
+
 Variable in pattern
     FAIL    PASS
 
 Invalid variable in pattern
-    FAIL    NOT RUN    PASS    tc_status=FAIL
+    FAIL    NOT RUN    PASS       tc_status=FAIL
 
 Matcher type cannot be defined with variable
-    [Template]
-    ${tc}=    Verify try except and block statuses    FAIL    PASS
-    Block statuses should be    ${tc.body[1]}    FAIL    NOT RUN
+    FAIL    PASS       NOT RUN    tc_status=FAIL    path=body[0]
+    FAIL    NOT RUN               tc_status=FAIL    path=body[1]
 
 Skip cannot be caught
-    [Template]
-    Verify try except and block statuses    SKIP    NOT RUN    PASS    tc_status=SKIP
+    SKIP    NOT RUN    PASS       tc_status=SKIP
 
 Return cannot be caught
-    [Template]
-    Verify try except and block statuses in uk    PASS   NOT RUN    PASS
+    PASS    NOT RUN    PASS       path=body[0].body[0]
 
 AS gets the message
     FAIL    PASS

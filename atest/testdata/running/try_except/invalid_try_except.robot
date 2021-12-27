@@ -1,5 +1,5 @@
 *** Test Cases ***
-Try without END
+TRY without END
     [Documentation]    FAIL    TRY has no closing END.
     TRY
         Fail   Should not be executed
@@ -8,8 +8,8 @@ Try without END
     FINALLY
         Fail   Should not be executed
 
-Try without body
-    [Documentation]    FAIL    TRY block cannot be empty.
+TRY without body
+    [Documentation]    FAIL    TRY branch cannot be empty.
     TRY
     EXCEPT    Error
         Fail   Should not be executed
@@ -17,14 +17,22 @@ Try without body
         Fail   Should not be executed
     END
 
-Try without except or finally
-    [Documentation]    FAIL    TRY block must be followed by EXCEPT or FINALLY block.
+TRY without EXCEPT or FINALLY
+    [Documentation]    FAIL    TRY structure must have EXCEPT or FINALLY branch.
     TRY
         Fail   Should not be executed
     END
 
-Try with argument
-    [Documentation]    FAIL    TRY has an argument.
+TRY with ELSE without EXCEPT or FINALLY
+    [Documentation]    FAIL    TRY structure must have EXCEPT or FINALLY branch.
+    TRY
+        Fail   Should not be executed
+    ELSE
+        Not run either
+    END
+
+TRY with argument
+    [Documentation]    FAIL    TRY does not accept arguments.
     TRY    I should not be here
         Fail   Should not be executed
     EXCEPT    Error
@@ -33,8 +41,8 @@ Try with argument
         Fail   Should not be executed
     END
 
-Except without body
-    [Documentation]    FAIL    EXCEPT block cannot be empty.
+EXCEPT without body
+    [Documentation]    FAIL    EXCEPT branch cannot be empty.
     TRY
         Fail   Should not be executed
     EXCEPT    foo
@@ -44,8 +52,8 @@ Except without body
         Fail   Should not be executed
     END
 
-Default except not last
-    [Documentation]    FAIL    Default (empty) EXCEPT must be last.
+Default EXCEPT not last
+    [Documentation]    FAIL    EXCEPT without patterns must be last.
     TRY
         Fail   Should not be executed
     EXCEPT
@@ -56,20 +64,20 @@ Default except not last
         Fail   Should not be executed
     END
 
-Multiple default excepts
-    [Documentation]    FAIL    Multiple default (empty) EXCEPT blocks
+Multiple default EXCEPTs
+    [Documentation]    FAIL    Only one EXCEPT without patterns allowed.
     TRY
         Fail   Should not be executed
     EXCEPT
         Fail   Should not be executed
     EXCEPT
         Fail   Should not be executed
-    FINALLY
+    ELSE
         Fail   Should not be executed
     END
 
 AS not the second last token
-    [Documentation]    FAIL    AS must be second to last.
+    [Documentation]    FAIL    EXCEPT's AS marker must be second to last.
     TRY
         Fail   Should not be executed
     EXCEPT    AS    foo    ${foo}
@@ -77,15 +85,15 @@ AS not the second last token
     END
 
 Invalid AS variable
-    [Documentation]    FAIL    Invalid AS variable 'foo'.
+    [Documentation]    FAIL    EXCEPT's AS variable 'foo' is invalid.
     TRY
         Fail   Should not be executed
     EXCEPT    AS    foo
         Fail   Should not be executed
     END
 
-Else with argument
-    [Documentation]    FAIL    ELSE has condition.
+ELSE with argument
+    [Documentation]    FAIL    ELSE does not accept arguments.
     TRY
         Fail   Should not be executed
     EXCEPT    Error
@@ -96,8 +104,8 @@ Else with argument
         Fail   Should not be executed
     END
 
-Else without body
-    [Documentation]    FAIL    ELSE block cannot be empty.
+ELSE without body
+    [Documentation]    FAIL    ELSE branch cannot be empty.
     TRY
         Fail   Should not be executed
     EXCEPT    Error
@@ -107,8 +115,8 @@ Else without body
         Fail   Should not be executed
     END
 
-Multiple else blocks
-    [Documentation]    FAIL    Multiple ELSE blocks.
+Multiple ELSE blocks
+    [Documentation]    FAIL    Only one ELSE allowed.
     TRY
         Fail   Should not be executed
     EXCEPT    Error
@@ -121,8 +129,8 @@ Multiple else blocks
         Fail   Should not be executed
     END
 
-Finally with argument
-    [Documentation]    FAIL    FINALLY has an argument.
+FINALLY with argument
+    [Documentation]    FAIL    FINALLY does not accept arguments.
     TRY
         Fail   Should not be executed
     EXCEPT    Error
@@ -131,29 +139,27 @@ Finally with argument
         Fail   Should not be executed
     END
 
-Finally without body
-    [Documentation]    FAIL    FINALLY block cannot be empty.
+FINALLY without body
+    [Documentation]    FAIL    FINALLY branch cannot be empty.
+    TRY
+        Fail   Should not be executed
+    FINALLY
+    END
+
+Multiple FINALLY blocks
+    [Documentation]    FAIL    Only one FINALLY allowed.
     TRY
         Fail   Should not be executed
     EXCEPT    Error
         Fail   Should not be executed
     FINALLY
-    END
-
-Multiple finally blocks
-    [Documentation]    FAIL    Multiple FINALLY blocks.
-    TRY
-        Fail   Should not be executed
-    EXCEPT    Error
-        Fail   Should not be executed
-    FINALLY
         Fail   Should not be executed
     FINALLY
         Fail   Should not be executed
     END
 
-Else before except
-    [Documentation]    FAIL    ELSE block before EXCEPT block.
+ELSE before EXCEPT
+    [Documentation]    FAIL    EXCEPT not allowed after ELSE.
     TRY
         Fail   Should not be executed
     EXCEPT    Error
@@ -166,8 +172,8 @@ Else before except
         Fail   Should not be executed
     END
 
-Finally before except
-    [Documentation]    FAIL    FINALLY block before EXCEPT block.
+FINALLY before EXCEPT
+    [Documentation]    FAIL    EXCEPT not allowed after FINALLY.
     TRY
         Fail   Should not be executed
     EXCEPT    Error
@@ -178,8 +184,8 @@ Finally before except
         Fail   Should not be executed
     END
 
-Finally before else
-    [Documentation]    FAIL    FINALLY block before ELSE block.
+FINALLY before ELSE
+    [Documentation]    FAIL    ELSE not allowed after FINALLY.
     TRY
         Fail   Should not be executed
     EXCEPT    Error
@@ -190,18 +196,18 @@ Finally before else
         Fail   Should not be executed
     END
 
-Template with try except
-    [Template]    Log many
+Template with TRY
     [Documentation]    FAIL    Templates cannot be used with TRY.
+    [Template]    Log many
     TRY
         Fail   Should not be executed
     EXCEPT    Error
         Fail   Should not be executed
     END
 
-Template with try except inside if
-    [Template]    Log many
+Template with TRY inside IF
     [Documentation]    FAIL    Templates cannot be used with TRY.
+    [Template]    Log many
     IF    True
         TRY
             Fail   Should not be executed
@@ -209,3 +215,16 @@ Template with try except inside if
             Fail   Should not be executed
         END
     END
+
+Template with IF inside TRY
+    [Documentation]    FAIL
+    ...    Multiple errors:
+    ...    - TRY has no closing END.
+    ...    - Templates cannot be used with TRY.
+    [Template]    Log many
+    TRY
+        IF    True
+            Fail    Should not be executed
+        END
+    FINALLY
+        No Operation

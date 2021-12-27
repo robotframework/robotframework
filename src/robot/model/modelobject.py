@@ -65,7 +65,10 @@ class ModelObject(metaclass=SetterAwareType):
         return copied
 
     def __repr__(self):
-        args = ['%s=%r' % (n, getattr(self, n)) for n in self.repr_args]
+        return self._repr(self.repr_args)
+
+    def _repr(self, repr_args):
+        args = ['%s=%r' % (n, getattr(self, n)) for n in repr_args]
         module = type(self).__module__.split('.')
         if len(module) > 1 and module[0] == 'robot':
             module = module[:2]

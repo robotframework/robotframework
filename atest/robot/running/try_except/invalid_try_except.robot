@@ -4,64 +4,68 @@ Suite Setup       Run Tests    ${EMPTY}    running/try_except/invalid_try_except
 Test Template     Verify try except and block statuses
 
 *** Test Cases ***
-Try without END
-    FAIL    NOT RUN    NOT RUN
+TRY without END
+    TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN
 
-Try without body
-    FAIL    NOT RUN    NOT RUN
+TRY without body
+    TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN
 
-Try without except or finally
-    FAIL
+TRY without EXCEPT or FINALLY
+    TRY:FAIL
 
-Try with argument
-    FAIL    NOT RUN    NOT RUN
+TRY with ELSE without EXCEPT or FINALLY
+    TRY:FAIL    ELSE:NOT RUN
 
-Except without body
-    FAIL    NOT RUN    NOT RUN    NOT RUN
+TRY with argument
+    TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN
 
-Default except not last
-    FAIL    NOT RUN    NOT RUN    NOT RUN
+EXCEPT without body
+    TRY:FAIL    EXCEPT:NOT RUN    EXCEPT:NOT RUN    FINALLY:NOT RUN
 
-Multiple default excepts
-    FAIL    NOT RUN    NOT RUN    NOT RUN
+Default EXCEPT not last
+    TRY:FAIL    EXCEPT:NOT RUN    EXCEPT:NOT RUN    FINALLY:NOT RUN
+
+Multiple default EXCEPTs
+    TRY:FAIL    EXCEPT:NOT RUN    EXCEPT:NOT RUN    ELSE:NOT RUN
 
 AS not the second last token
-    FAIL    NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN
 
 Invalid AS variable
-    FAIL    NOT RUN
+    TRY:FAIL    EXCEPT:NOT RUN
 
-Else with argument
-    FAIL    NOT RUN    NOT RUN    NOT RUN
+ELSE with argument
+    TRY:FAIL    EXCEPT:NOT RUN    ELSE:NOT RUN    FINALLY:NOT RUN
 
-Else without body
-    FAIL    NOT RUN    NOT RUN
+ELSE without body
+    TRY:FAIL    EXCEPT:NOT RUN    ELSE:NOT RUN    FINALLY:NOT RUN
 
-Multiple else blocks
-    FAIL    NOT RUN    NOT RUN    NOT RUN
+Multiple ELSE blocks
+    TRY:FAIL    EXCEPT:NOT RUN    ELSE:NOT RUN    ELSE:NOT RUN    FINALLY:NOT RUN
 
-Finally with argument
-    FAIL    NOT RUN    NOT RUN
+FINALLY with argument
+    TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN
 
-Finally without body
-    FAIL    NOT RUN
+FINALLY without body
+    TRY:FAIL    FINALLY:NOT RUN
 
-Multiple finally blocks
-    FAIL    NOT RUN    NOT RUN
+Multiple FINALLY blocks
+    TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN    FINALLY:NOT RUN
 
-Else before except
-    FAIL    NOT RUN    NOT RUN    NOT RUN   NOT RUN
+ELSE before EXCEPT
+    TRY:FAIL    EXCEPT:NOT RUN    ELSE:NOT RUN    EXCEPT:NOT RUN   FINALLY:NOT RUN
 
-Finally before except
-    FAIL    NOT RUN    NOT RUN    NOT RUN
+FINALLY before EXCEPT
+    TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN    EXCEPT:NOT RUN
 
-Finally before else
-    FAIL    NOT RUN    NOT RUN    NOT RUN
+FINALLY before ELSE
+    TRY:FAIL    EXCEPT:NOT RUN    FINALLY:NOT RUN    ELSE:NOT RUN
 
-Template with try except
-    FAIL    NOT RUN
+Template with TRY
+    TRY:FAIL    EXCEPT:NOT RUN
 
-Template with try except inside if
-    [Template]
-    ${tc}=    Check Test Case    ${TEST NAME}
-    Block statuses should be    ${tc.body[0].body[0].body[0]}    FAIL    NOT RUN
+Template with TRY inside IF
+    TRY:FAIL    EXCEPT:NOT RUN    path=body[0].body[0].body[0]
+
+Template with IF inside TRY
+    TRY:FAIL    FINALLY:NOT RUN

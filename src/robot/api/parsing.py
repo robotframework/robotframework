@@ -490,8 +490,7 @@ from robot.parsing.model.blocks import (
     Keyword,
     For,
     If,
-    Try,
-    TryHandler
+    Try
 )
 from robot.parsing.model.statements import (
     SectionHeader,
