@@ -956,40 +956,6 @@ class End(NoArgumentHeader):
 
 
 @Statement.register
-class Continue(Statement):
-    type = Token.CONTIUNE
-
-    @classmethod
-    def from_params(cls, indent=FOUR_SPACES, eol=EOL):
-        return cls([
-            Token(Token.SEPARATOR, indent),
-            Token(Token.CONTIUNE),
-            Token(Token.EOL, eol)
-        ])
-
-    def validate(self):
-        if self.get_tokens(Token.ARGUMENT):
-            self.errors += ('CONTINUE does not accept arguments.',)
-
-
-@Statement.register
-class Break(Statement):
-    type = Token.BREAK
-
-    @classmethod
-    def from_params(cls, indent=FOUR_SPACES, eol=EOL):
-        return cls([
-            Token(Token.SEPARATOR, indent),
-            Token(Token.BREAK),
-            Token(Token.EOL, eol)
-        ])
-
-    def validate(self):
-        if self.get_tokens(Token.ARGUMENT):
-            self.errors += ('BREAK does not accept arguments.',)
-
-
-@Statement.register
 class ReturnStatement(Statement):
     type = Token.RETURN_STATEMENT
 
@@ -1006,40 +972,6 @@ class ReturnStatement(Statement):
                            Token(Token.ARGUMENT, value)])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
-
-
-@Statement.register
-class Continue(Statement):
-    type = Token.CONTINUE
-
-    @classmethod
-    def from_params(cls, indent=FOUR_SPACES, eol=EOL):
-        return cls([
-            Token(Token.SEPARATOR, indent),
-            Token(Token.CONTINUE),
-            Token(Token.EOL, eol)
-        ])
-
-    def validate(self):
-        if self.get_tokens(Token.ARGUMENT):
-            self.errors += ('CONTINUE does not accept arguments.',)
-
-
-@Statement.register
-class Break(Statement):
-    type = Token.BREAK
-
-    @classmethod
-    def from_params(cls, indent=FOUR_SPACES, eol=EOL):
-        return cls([
-            Token(Token.SEPARATOR, indent),
-            Token(Token.BREAK),
-            Token(Token.EOL, eol)
-        ])
-
-    def validate(self):
-        if self.get_tokens(Token.ARGUMENT):
-            self.errors += ('BREAK does not accept arguments.',)
 
 
 @Statement.register
