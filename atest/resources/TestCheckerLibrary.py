@@ -7,9 +7,9 @@ from robot import utils
 from robot.api import logger
 from robot.utils.asserts import assert_equal
 from robot.result import (ExecutionResultBuilder, For, If, IfBranch, ForIteration,
-                          Try, TryBranch, Keyword, Result, ResultVisitor, TestCase,
-                          TestSuite)
-from robot.result.model import Body, ForIterations
+                          Try, TryBranch, While, WhileIteration, Keyword, Result,
+                          ResultVisitor, TestCase, TestSuite)
+from robot.result.model import Body, ForIterations, WhileIterations
 from robot.libraries.BuiltIn import BuiltIn
 
 
@@ -29,11 +29,16 @@ class NoSlotsTry(Try):
     pass
 
 
+class NoSlotsWhile(While):
+    pass
+
+
 class NoSlotsBody(Body):
     keyword_class = NoSlotsKeyword
     for_class = NoSlotsFor
     if_class = NoSlotsIf
     try_class = NoSlotsTry
+    while_class = NoSlotsWhile
 
 
 class NoSlotsIfBranch(IfBranch):
@@ -53,10 +58,20 @@ class NoSlotsForIterations(ForIterations):
     keyword_class = NoSlotsKeyword
 
 
+class NoSlotsWhileIteration(WhileIteration):
+    body_class = NoSlotsBody
+
+
+class NoSlotsWhileIterations(WhileIterations):
+    while_iteration_class = NoSlotsWhileIteration
+    keyword_class = NoSlotsKeyword
+
+
 NoSlotsKeyword.body_class = NoSlotsBody
 NoSlotsFor.body_class = NoSlotsForIterations
 NoSlotsIf.branch_class = NoSlotsIfBranch
 NoSlotsTry.branch_class = NoSlotsTryBranch
+NoSlotsWhile.body_class = NoSlotsWhileIterations
 
 
 class NoSlotsTestCase(TestCase):
@@ -332,6 +347,12 @@ class ProcessResults(ResultVisitor):
 
     def start_if_branch(self, branch):
         self._add_kws_and_msgs(branch)
+
+    def start_while(self, while_):
+        self._add_kws_and_msgs(while_)
+
+    def start_while_iteration(self, iteration):
+        self._add_kws_and_msgs(iteration)
 
     def visit_errors(self, errors):
         errors.msgs = errors.messages
