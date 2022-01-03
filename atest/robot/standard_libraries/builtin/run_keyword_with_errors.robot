@@ -160,6 +160,9 @@ Expect Error With STARTS
 Expect Error With REGEXP
     Check Test Case    ${TEST NAME}
 
+Expect Error With REGEXP requires full match
+    Check Test Case    ${TEST NAME}
+
 Expect Error With Unrecognized Prefix
     Check Test Case    ${TEST NAME}
 
