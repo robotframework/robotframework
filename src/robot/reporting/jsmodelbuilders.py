@@ -22,10 +22,10 @@ from .jsexecutionresult import JsExecutionResult
 
 STATUSES = {'FAIL': 0, 'PASS': 1, 'SKIP': 2, 'NOT RUN': 3}
 KEYWORD_TYPES = {'KEYWORD': 0, 'SETUP': 1, 'TEARDOWN': 2,
-                 'FOR': 3, 'FOR ITERATION': 4,
+                 'FOR': 3, 'ITERATION': 4,
                  'IF': 5, 'ELSE IF': 6, 'ELSE': 7,
                  'RETURN': 8, 'TRY': 9, 'EXCEPT': 10,
-                 'FINALLY': 11, 'WHILE': 12, 'WHILE ITERATION': 13}
+                 'FINALLY': 11, 'WHILE': 12}
 
 
 class JsModelBuilder:

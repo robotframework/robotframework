@@ -175,7 +175,7 @@ class ForHandler(ElementHandler):
 
 
 @ElementHandler.register
-class ForIterationHandler(ElementHandler):
+class IterationHandler(ElementHandler):
     tag = 'iter'
     children = frozenset(('var', 'doc', 'status', 'kw', 'if', 'for', 'msg', 'try', 'return'))
 
@@ -336,7 +336,7 @@ class VarHandler(ElementHandler):
             result.assign += (value,)
         elif result.type == result.FOR:
             result.variables += (value,)
-        elif result.type == result.FOR_ITERATION:
+        elif result.type == result.ITERATION:
             result.variables[elem.get('name')] = value
         else:
             raise DataError("Invalid element '%s' for result '%r'." % (elem, result))

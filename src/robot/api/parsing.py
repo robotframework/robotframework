@@ -528,6 +528,7 @@ from robot.parsing.model.statements import (
     TryHeader,
     ExceptHeader,
     FinallyHeader,
+    WhileHeader,
     ReturnStatement,
     Comment,
     Error,

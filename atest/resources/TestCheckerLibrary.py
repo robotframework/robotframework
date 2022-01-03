@@ -6,10 +6,10 @@ from xmlschema import XMLSchema
 from robot import utils
 from robot.api import logger
 from robot.utils.asserts import assert_equal
-from robot.result import (ExecutionResultBuilder, For, If, IfBranch, ForIteration,
-                          Try, TryBranch, While, WhileIteration, Keyword, Result,
+from robot.result import (ExecutionResultBuilder, For, If, IfBranch, Iteration,
+                          Try, TryBranch, While, Keyword, Result,
                           ResultVisitor, TestCase, TestSuite)
-from robot.result.model import Body, ForIterations, WhileIterations
+from robot.result.model import Body, Iterations
 from robot.libraries.BuiltIn import BuiltIn
 
 
@@ -49,29 +49,20 @@ class NoSlotsTryBranch(TryBranch):
     body_class = NoSlotsBody
 
 
-class NoSlotsForIteration(ForIteration):
+class NoSlotsIteration(Iteration):
     body_class = NoSlotsBody
 
 
-class NoSlotsForIterations(ForIterations):
-    for_iteration_class = NoSlotsForIteration
-    keyword_class = NoSlotsKeyword
-
-
-class NoSlotsWhileIteration(WhileIteration):
-    body_class = NoSlotsBody
-
-
-class NoSlotsWhileIterations(WhileIterations):
-    while_iteration_class = NoSlotsWhileIteration
+class NoSlotsIterations(Iterations):
+    iteration_class = NoSlotsIteration
     keyword_class = NoSlotsKeyword
 
 
 NoSlotsKeyword.body_class = NoSlotsBody
-NoSlotsFor.body_class = NoSlotsForIterations
+NoSlotsFor.body_class = NoSlotsIterations
 NoSlotsIf.branch_class = NoSlotsIfBranch
 NoSlotsTry.branch_class = NoSlotsTryBranch
-NoSlotsWhile.body_class = NoSlotsWhileIterations
+NoSlotsWhile.body_class = NoSlotsIterations
 
 
 class NoSlotsTestCase(TestCase):

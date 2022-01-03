@@ -24,7 +24,7 @@ class BodyItem(ModelObject):
     SETUP = 'SETUP'
     TEARDOWN = 'TEARDOWN'
     FOR = 'FOR'
-    FOR_ITERATION = 'FOR ITERATION'
+    ITERATION = 'ITERATION'
     IF_ELSE_ROOT = 'IF/ELSE ROOT'
     IF = 'IF'
     ELSE_IF = 'ELSE IF'
@@ -34,7 +34,6 @@ class BodyItem(ModelObject):
     EXCEPT = 'EXCEPT'
     FINALLY = 'FINALLY'
     WHILE = 'WHILE'
-    WHILE_ITERATION = 'WHILE ITERATION'
     RETURN = 'RETURN'
     MESSAGE = 'MESSAGE'
     type = None

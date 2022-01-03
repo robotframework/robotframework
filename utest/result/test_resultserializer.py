@@ -1,9 +1,5 @@
 import unittest
-try:
-    from StringIO import StringIO
-    from io import BytesIO
-except ImportError:
-    from io import BytesIO, StringIO
+from io import BytesIO, StringIO
 
 from robot.result import ExecutionResult
 from robot.reporting.outputwriter import OutputWriter
