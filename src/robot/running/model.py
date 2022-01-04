@@ -185,9 +185,7 @@ class Continue(model.Return):
         self.lineno = lineno
 
     def run(self, context, run=True, templated=False):
-        with StatusReporter(self, ReturnResult(self.values), context, run):
-            if run:
-                raise ContinueForLoop(self.values)
+        raise ContinueForLoop()
 
 
 @Body.register
@@ -199,9 +197,7 @@ class Break(model.Return):
         self.lineno = lineno
 
     def run(self, context, run=True, templated=False):
-        with StatusReporter(self, ReturnResult(self.values), context, run):
-            if run:
-                raise ExitForLoop(self.values)
+        raise ExitForLoop()
 
 
 class TestCase(model.TestCase):
