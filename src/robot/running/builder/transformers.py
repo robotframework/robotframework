@@ -286,6 +286,9 @@ class KeywordBuilder(NodeVisitor):
     def visit_Try(self, node):
         TryBuilder(self.kw).build(node)
 
+    def visit_While(self, node):
+        WhileBuilder(self.kw).build(node)
+
 
 class ForBuilder(NodeVisitor):
 
@@ -323,6 +326,9 @@ class ForBuilder(NodeVisitor):
 
     def visit_Try(self, node):
         TryBuilder(self.model).build(node)
+
+    def visit_While(self, node):
+        WhileBuilder(self.model).build(node)
 
     def visit_ReturnStatement(self, node):
         self.model.body.create_return(node.values, lineno=node.lineno)
@@ -383,6 +389,9 @@ class IfBuilder(NodeVisitor):
     def visit_Try(self, node):
         TryBuilder(self.model).build(node)
 
+    def visit_While(self, node):
+        WhileBuilder(self.model).build(node)
+
     def visit_ReturnStatement(self, node):
         self.model.body.create_return(node.values, lineno=node.lineno)
 
@@ -425,6 +434,9 @@ class TryBuilder(NodeVisitor):
 
     def visit_Try(self, node):
         TryBuilder(self.model).build(node)
+
+    def visit_While(self, node):
+        WhileBuilder(self.model).build(node)
 
     def visit_ReturnStatement(self, node):
         self.model.body.create_return(node.values, lineno=node.lineno)
@@ -473,6 +485,9 @@ class WhileBuilder(NodeVisitor):
 
     def visit_Try(self, node):
         TryBuilder(self.model).build(node)
+
+    def visit_While(self, node):
+        WhileBuilder(self.model).build(node)
 
     def visit_ReturnStatement(self, node):
         self.model.body.create_return(node.values)

@@ -115,7 +115,8 @@ class KeywordHandler(ElementHandler):
     tag = 'kw'
     # 'arguments', 'assign' and 'tags' are for RF < 4 compatibility.
     children = frozenset(('doc', 'arguments', 'arg', 'assign', 'var', 'tags', 'tag',
-                          'timeout', 'status', 'msg', 'kw', 'if', 'for', 'try', 'return'))
+                          'timeout', 'status', 'msg', 'kw', 'if', 'for', 'try',
+                          'while' ,'return'))
 
     def start(self, elem, result):
         elem_type = elem.get('type')
@@ -177,7 +178,8 @@ class ForHandler(ElementHandler):
 @ElementHandler.register
 class IterationHandler(ElementHandler):
     tag = 'iter'
-    children = frozenset(('var', 'doc', 'status', 'kw', 'if', 'for', 'msg', 'try', 'return'))
+    children = frozenset(('var', 'doc', 'status', 'kw', 'if', 'for', 'msg', 'try',
+                          'while', 'return'))
 
     def start(self, elem, result):
         return result.body.create_iteration()
@@ -195,7 +197,8 @@ class IfHandler(ElementHandler):
 @ElementHandler.register
 class BranchHandler(ElementHandler):
     tag = 'branch'
-    children = frozenset(('status', 'kw', 'if', 'for', 'try', 'msg', 'doc', 'return', 'pattern'))
+    children = frozenset(('status', 'kw', 'if', 'for', 'try', 'while', 'msg',
+                          'doc', 'return', 'pattern'))
 
     def start(self, elem, result):
         return result.body.create_branch(**elem.attrib)

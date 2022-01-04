@@ -111,21 +111,15 @@ class XmlLogger(ResultVisitor):
         self._write_status(for_)
         self._writer.end('for')
 
-    def start_iteration(self, iteration):
+    def start_for_iteration(self, iteration):
         self._writer.start('iter')
         for name, value in iteration.variables.items():
             self._writer.element('var', value, {'name': name})
         self._writer.element('doc', iteration.doc)
 
-    # FIXME
-    start_for_iteration = start_while_iteration = start_iteration
-
-    def end_iteration(self, iteration):
+    def end_for_iteration(self, iteration):
         self._write_status(iteration)
         self._writer.end('iter')
-
-    # FIXME
-    end_for_iteration = end_while_iteration = end_iteration
 
     def start_try(self, root):
         self._writer.start('try')
@@ -152,6 +146,14 @@ class XmlLogger(ResultVisitor):
     def end_while(self, while_):
         self._write_status(while_)
         self._writer.end('while')
+
+    def start_while_iteration(self, iteration):
+        self._writer.start('iter')
+        self._writer.element('doc', iteration.doc)
+
+    def end_while_iteration(self, iteration):
+        self._write_status(iteration)
+        self._writer.end('iter')
 
     def start_return(self, return_):
         self._writer.start('return')

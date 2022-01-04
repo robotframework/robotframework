@@ -6,8 +6,8 @@ from xmlschema import XMLSchema
 from robot import utils
 from robot.api import logger
 from robot.utils.asserts import assert_equal
-from robot.result import (ExecutionResultBuilder, For, If, IfBranch, Iteration,
-                          Try, TryBranch, While, Keyword, Result,
+from robot.result import (ExecutionResultBuilder, For, If, IfBranch, ForIteration,
+                          Try, TryBranch, While, WhileIteration, Keyword, Result,
                           ResultVisitor, TestCase, TestSuite)
 from robot.result.model import Body, Iterations
 from robot.libraries.BuiltIn import BuiltIn
@@ -49,20 +49,25 @@ class NoSlotsTryBranch(TryBranch):
     body_class = NoSlotsBody
 
 
-class NoSlotsIteration(Iteration):
+class NoSlotsForIteration(ForIteration):
+    body_class = NoSlotsBody
+
+
+class NoSlotsWhileIteration(WhileIteration):
     body_class = NoSlotsBody
 
 
 class NoSlotsIterations(Iterations):
-    iteration_class = NoSlotsIteration
     keyword_class = NoSlotsKeyword
 
 
 NoSlotsKeyword.body_class = NoSlotsBody
 NoSlotsFor.body_class = NoSlotsIterations
+NoSlotsFor.iteration_class = NoSlotsForIteration
 NoSlotsIf.branch_class = NoSlotsIfBranch
 NoSlotsTry.branch_class = NoSlotsTryBranch
 NoSlotsWhile.body_class = NoSlotsIterations
+NoSlotsWhile.iteration_class = NoSlotsWhileIteration
 
 
 class NoSlotsTestCase(TestCase):
