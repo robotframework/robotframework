@@ -181,7 +181,7 @@ class Continue(model.Return):
     __slots__ = ['lineno']
 
     def __init__(self, values=(), parent=None, lineno=None):
-        model.Return.__init__(self, values, parent)
+        model.Return.__init__(self)
         self.lineno = lineno
 
     def run(self, context, run=True, templated=False):
@@ -193,7 +193,7 @@ class Break(model.Return):
     __slots__ = ['lineno']
 
     def __init__(self, values=(), parent=None, lineno=None):
-        model.Return.__init__(self, values, parent)
+        model.Return.__init__(self)
         self.lineno = lineno
 
     def run(self, context, run=True, templated=False):
