@@ -229,6 +229,11 @@ class TestCaseBuilder(NodeVisitor):
         self.test.body.create_keyword(name='RETURN', args=node.values,
                                       lineno=node.lineno)
 
+    def visit_Continue(self, node):
+        self.test.body.create_keyword(name='CONTINUE',lineno=node.lineno)
+
+    def visit_Break(self, node):
+        self.test.body.create_keyword(name='BREAK',lineno=node.lineno)
 
 class KeywordBuilder(NodeVisitor):
 
@@ -273,6 +278,12 @@ class KeywordBuilder(NodeVisitor):
 
     def visit_ReturnStatement(self, node):
         self.kw.body.create_return(node.values, lineno=node.lineno)
+
+    def visit_Continue(self, node):
+        self.kw.body.create_continue(lineno=node.lineno)
+
+    def visit_Break(self, node):
+        self.kw.body.create_break(lineno=node.lineno)
 
     def visit_For(self, node):
         ForBuilder(self.kw).build(node)
@@ -323,6 +334,12 @@ class ForBuilder(NodeVisitor):
 
     def visit_ReturnStatement(self, node):
         self.model.body.create_return(node.values, lineno=node.lineno)
+
+    def visit_Continue(self, node):
+        self.model.body.create_continue(lineno=node.lineno)
+
+    def visit_Break(self, node):
+        self.model.body.create_break(lineno=node.lineno)
 
 
 class IfBuilder(NodeVisitor):
@@ -383,6 +400,12 @@ class IfBuilder(NodeVisitor):
     def visit_ReturnStatement(self, node):
         self.model.body.create_return(node.values, lineno=node.lineno)
 
+    def visit_Continue(self, node):
+        self.model.body.create_continue(lineno=node.lineno)
+
+    def visit_Break(self, node):
+        self.model.body.create_break(lineno=node.lineno)
+
 
 class TryBuilder(NodeVisitor):
 
@@ -425,6 +448,12 @@ class TryBuilder(NodeVisitor):
 
     def visit_ReturnStatement(self, node):
         self.model.body.create_return(node.values, lineno=node.lineno)
+
+    def visit_Continue(self, node):
+        self.model.body.create_continue(lineno=node.lineno)
+
+    def visit_Break(self, node):
+        self.model.body.create_break(lineno=node.lineno)
 
     def visit_KeywordCall(self, node):
         self.model.body.create_keyword(name=node.keyword, args=node.args,
