@@ -82,3 +82,9 @@ In ELSE IF
     ELSE　IF    True
         Log    Should be executed
     END
+
+In inline ELSE IF
+    ${x} =    IF    False    Not run    ELSE IF    True    Set Variable    NBSP
+    ${y} =    IF    False    Not run    ELSE IF    True    Set Variable    OGHAM
+    ${z} =    IF    False    Not run    ELSE　IF    True    Set Variable    IDEOGRAPHIC
+    Should Be Equal    ${x}:${y}:${z}    NBSP:OGHAM:IDEOGRAPHIC

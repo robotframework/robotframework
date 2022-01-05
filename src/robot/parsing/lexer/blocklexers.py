@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.utils import normalize_whitespace
+
 from .tokens import Token
 from .statementlexers import (Lexer,
                               SettingSectionHeaderLexer, SettingLexer,
@@ -251,12 +253,12 @@ class InlineIfLexer(BlockLexer):
                 ReturnLexer, KeywordCallLexer)
 
     def input(self, statement):
-        for part in self._split_statements(statement):
+        for part in self._split(statement):
             if part:
                 super().input(part)
         return self
 
-    def _split_statements(self, statement):
+    def _split(self, statement):
         current = []
         expect_condition = False
         for token in statement:
@@ -266,11 +268,13 @@ class InlineIfLexer(BlockLexer):
                 yield current
                 current = []
                 expect_condition = False
-            elif token.value in ('IF', 'ELSE IF'):
-                token._add_eos_before = token.value == 'ELSE IF'
-                yield current
-                current = []
+            elif token.value == 'IF':
                 current.append(token)
+                expect_condition = True
+            elif normalize_whitespace(token.value) == 'ELSE IF':
+                token._add_eos_before = True
+                yield current
+                current = [token]
                 expect_condition = True
             elif token.value == 'ELSE':
                 token._add_eos_before = True
