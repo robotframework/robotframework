@@ -992,6 +992,282 @@ __ `Test setup and teardown`_
 __ `Suite setup and teardown`_
 __ `Keyword teardown`_
 
+`TRY/EXCEPT` syntax
+-------------------
+
+When a keyword fails, Robot Framework's default behavior is to stop the current
+test and executes its possible teardown_. There can, however, be needs to handle
+these failures during execution as well. Robot Framework 5.0 introduces native
+`TRY/EXCEPT` syntax for this purpose, but there also `other ways to handle errors`_.
+
+Robot Framework's `TRY/EXCEPT` syntax is inspired by Python's `exception handling`__
+syntax. It has same `TRY`, `EXCEPT`, `ELSE` and `FINALLY` branches as Python and
+they also mostly work the same way. A difference is that Python uses lowe case
+`try`, `except`, etc. but with Robot Framework all this kind of syntax must use
+upper case letters. A bigger difference is that with Python exceptions are objects
+and with Robot Framework you are dealing with error messages as strings.
+
+__ https://docs.python.org/tutorial/errors.html#handling-exceptions
+
+Catching exceptions with `EXCEPT`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The basic `TRY/EXCEPT` syntax can be used to handle failures based on
+error messages:
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    First example
+        TRY
+            Some Keyword
+        EXCEPT    Error message
+            Error Handler Keyword
+        END
+        Keyword Outside
+
+In the above example, if `Some Keyword` passes, the `EXCEPT` branch is not run
+and execution continues after the `TRY/EXCEPT` structure. If the keyword fails
+with a message `Error message` (case-sensitive), the `EXCEPT` branch is executed.
+If the `EXCEPT` branch succeeds, execution continues after the `TRY/EXCEPT`
+structure. If it fails, the test fails and remaining keywords are not executed.
+If `Some Keyword` fails with any other exception, that failure is not handled
+and the test fails without executing remaining keywords.
+
+There can be more than one `EXCEPT` branch. In that case they are matched one
+by one and the first matching branch is executed. One `EXCEPT` can also have
+multiple messages to match, and such a branch is executed if any of its messages
+match. In all these cases messages can be specified using variables in addition
+to literal strings.
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Multiple EXCEPT branches
+        TRY
+            Some Keyword
+        EXCEPT    Error message    # Try matching this first.
+            Error Handler 1
+        EXCEPT    Another error    # Try this if above did not match.
+            Error Handler 2
+        EXCEPT    ${message}       # Last match attempt, this time using a variable.
+            Error Handler 3
+        END
+
+    Multiple messages with one EXCEPT
+        TRY
+            Some Keyword
+        EXCEPT    Error message    Another error    ${message}    # Match any of these.
+            Error handler
+        END
+
+It is also possible to have an `EXCEPT` without messages, in which case it matches
+any error. There can be only one such `EXCEPT` and it must follow possible
+other `EXCEPT` branches:
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Match any error
+        TRY
+            Some Keyword
+        EXCEPT               # Match any error.
+            Error Handler
+        END
+
+    Match any after testing more specific errors
+        TRY
+            Some Keyword
+        EXCEPT    Error message    # Try matching this first
+            Error Handler 1
+        EXCEPT                     # Match any that did not match the above.
+            Error Handler 2
+        END
+
+Matching errors using patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+By default matching an error using `EXCEPT` requires an exact match. That can be
+changed by prefixing the message with `GLOB:`, `REGEXP:` or `STARTS:` (case-sensitive)
+to make the match a `glob pattern match`__, a `regular expression match`__, or
+to match only the beginning of the error, respectively. Prefixing the message with
+`EQUALS:` has the same effect as the default behavior. If an `EXCEPT` has multiple
+messages, possible prefixes apply only to messages they are attached to, not to
+other messages. The prefix must always be specified explicitly and cannot come
+from a variable.
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Glob pattern
+        TRY
+            Some Keyword
+        EXCEPT    GLOB: ValueError: *
+            Error Handler 1
+        EXCEPT    GLOB: [Ee]rror ?? occurred    GLOB: ${pattern}
+            Error Handler 2
+        END
+
+    Regular expression
+        TRY
+            Some Keyword
+        EXCEPT    REGEXP: ValueError: .*
+            Error Handler 1
+        EXCEPT    REGEXP: [Ee]rror \\d+ occurred    # Backslash needs to be escaped.
+            Error Handler 2
+        END
+
+    Match start
+        TRY
+            Some Keyword
+        EXCEPT    STARTS: ValueError:    STARTS: ${beginning}
+            Error Handler
+        END
+
+    Explicit exact match
+        TRY
+            Some Keyword
+        EXCEPT    EQUALS: ValueError: invalid literal for int() with base 10: 'ooops'
+            Error Handler
+        EXCEPT    EQUALS: Error 13 occurred
+            Error Handler 2
+        END
+
+.. note:: Remember that the backslash character often used with regular expressions
+          is an `escape character`__ in Robot Framework data. It thus needs to be
+          escaped with another backslash when using it in regular expressions.
+
+__ https://en.wikipedia.org/wiki/Glob_(programming)
+__ https://en.wikipedia.org/wiki/Regular_expression
+__ Escaping_
+
+Capturing error message
+~~~~~~~~~~~~~~~~~~~~~~~
+
+When `matching errors using patterns`_ and when using `EXCEPT` without any
+messages to match any error, it is often useful to know the actual error that
+occurred. Robot Framework supports that by making it possible to capture
+the error message into a variable by adding `AS  ${var}` at the
+end of the `EXCEPT` statement:
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Capture error
+        TRY
+            Some Keyword
+        EXCEPT    GLOB: ValueError: *    AS   ${error}
+            Error Handler 1    ${error}
+        EXCEPT    REGEXP: [Ee]rror \\d+    GLOB: ${pattern}    AS    ${error}
+            Error Handler 2    ${error}
+        EXCEPT    AS    ${error}
+            Error Handler 3    ${error}
+        END
+
+Using `ELSE` to execute keywords when there are no errors
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Optional `ELSE` branches make it possible to execute keywords if there is no error.
+There can be only one `ELSE` branch and it is allowed only after one or more
+`EXCEPT` branches:
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    ELSE branch
+        TRY
+            Some Keyword
+        EXCEPT    X
+            Log    Error 'X' occurred!
+        EXCEPT    Y
+            Log    Error 'Y' occurred!
+        ELSE
+            Log    No error occurred!
+        END
+        Keyword Outside
+
+In the above example, if `Some Keyword` passes, the `ELSE` branch is executed,
+and if it fails with message `X` or `Y`, the appropriate `EXCEPT` branch run.
+In all these cases execution continues after the whole `TRY/EXCEPT/ELSE` structure.
+If `Some Keyword` fail any other way, `EXCEPT` and `ELSE` branches are not run
+and the `TRY/EXCEPT/ELSE` structure fails.
+
+To handle both the case when there is any error and when there is no error,
+it is possible to use an `EXCEPT` without any message in combination with an `ELSE`:
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Handle everything
+        TRY
+            Some Keyword
+        EXCEPT    AS    ${err}
+            Log    Error occurred: ${err}
+        ELSE
+            Log    No error occurred!
+        END
+
+Using `FINALLY` to execute keywords regardless are there errors or not
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Optional `FINALLY` branches make it possible to execute keywords both when there
+is an error and when there is not. They are thus suitable for cleaning up
+after a keyword execution somewhat similarly as teardowns_. There can be only one
+`FINALLY` branch and it must always be last. They can be used in combination with
+`EXCEPT` and `ELSE` branches and having also `TRY/FINALLY` structure is possible:
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    TRY/EXCEPT/ELSE/FINALLY
+        TRY
+            Some keyword
+        EXCEPT
+            Log    Error occurred!
+        ELSE
+            Log    No error occurred.
+        FINALLY
+            Log    Always executed.
+        END
+
+    TRY/FINALLY
+        Open Connection
+        TRY
+            Use Connection
+        FINALLY
+            Close Connection
+        END
+
+Other ways to handle errors
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There are also other methods to execute keywords conditionally:
+
+- The BuiltIn_ keyword :name:`Run Keyword And Expect Error` executes a named
+  keyword and expects that it fails with a specified error message. It is basically
+  the same as using `TRY/EXCEPT` with a specified message. The syntax to specify
+  the error message is also identical except that this keyword uses glob pattern
+  matching, not exact match, by default. Using the native `TRY/EXCEPT` functionality
+  is generally recommended unless there is a need to support older Robot Framework
+  versions that do not support it.
+
+- The BuiltIn_ keyword :name:`Run Keyword And Ignore Error` executes a named keyword
+  and returns its status as string `PASS` or `FAIL` along with possible return value
+  or error message. It is basically the same as using `TRY/EXCEPT/ELSE` so that
+  `EXCEPT` catches all errors. Using the native syntax is recommended unless
+  old Robot Framework versions need to be supported.
+
+- The BuiltIn_ keyword :name:`Run Keyword And Return Status` executes a named keyword
+  and returns its status as a Boolean true or false. It is a wrapper for the
+  aforementioned :name:`Run Keyword And Ignore Error`. The native syntax is
+  nowadays recommended instead.
+
+- `Test teardowns`_ and `keyword teardowns`_ can be used for cleaning up activities
+  similarly as `FINALLY` branches.
+
+- When keywords are implemented in Python based libraries_, all Python's error
+  handling features are readily available. This is the recommended approach
+  especially if needed logic gets more complicated.
 
 Parallel execution of keywords
 ------------------------------
