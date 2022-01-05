@@ -10,7 +10,7 @@ from robot.parsing.model.blocks import (
     Keyword, KeywordSection, SettingSection, TestCase, TestCaseSection, VariableSection
 )
 from robot.parsing.model.statements import (
-    Arguments, Comment, Documentation, ForHeader, End, ElseHeader, ElseIfHeader,
+    Arguments, Break, Comment, Continue, Documentation, ForHeader, End, ElseHeader, ElseIfHeader,
     EmptyLine, Error, IfHeader, InlineIfHeader, TryHeader, ExceptHeader,
     FinallyHeader, KeywordCall, KeywordName, ReturnStatement, SectionHeader,
     Statement, TestCaseName, Variable
@@ -851,7 +851,7 @@ Name
                     ),
                     body=[
                         KeywordCall([Token(Token.KEYWORD, 'Continue', 3, 4)]),
-                        ReturnStatement([Token(Token.CONTINUE, 'CONTINUE', 4, 4)])
+                        Continue([Token(Token.CONTINUE, 'CONTINUE', 4, 4)])
                     ],
                 )
             ]
@@ -878,7 +878,7 @@ Name
                     ),
                     body=[
                         KeywordCall([Token(Token.KEYWORD, 'Break', 3, 4)]),
-                        ReturnStatement([Token(Token.BREAK, 'BREAK', 4, 4)])
+                        Break([Token(Token.BREAK, 'BREAK', 4, 4)])
                     ],
                 )
             ]
