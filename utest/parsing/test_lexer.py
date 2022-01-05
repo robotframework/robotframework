@@ -1829,7 +1829,7 @@ class TestContinue(unittest.TestCase):
         data = '    CONTINUE'
         expected = [(T.CONTINUE, 'CONTINUE', 3, 4),
                     (T.EOS, '', 3, 12)]
-        self._verify(data, expected, test=True)
+        self._verify(data, expected, test=False)
 
     def test_in_if(self):
         data = '''\
@@ -1854,6 +1854,31 @@ class TestContinue(unittest.TestCase):
                     (T.END, 'END', 7, 4),
                     (T.EOS, '', 6, 7)]
         self._verify(data, expected)
+
+
+    def test_in_try(self):
+        data = '''\
+    FOR    ${x}    IN    @{STUFF}
+        TRY
+            CONTINUE
+        END
+    END
+'''
+        expected = [(T.FOR, 'FOR', 3, 4),
+                    (T.VARIABLE, '${x}', 3, 11),
+                    (T.FOR_SEPARATOR, 'IN', 3, 19),
+                    (T.ARGUMENT, '@{STUFF}', 3, 25),
+                    (T.EOS, '', 3, 33),
+                    (T.TRY, 'IF', 4, 8),
+                    (T.EOS, '', 4, 11),
+                    (T.CONTINUE, 'CONTINUE', 5, 12),
+                    (T.EOS, '', 5, 20),
+                    (T.END, 'END', 6, 8),
+                    (T.EOS, '', 6, 7)
+                    (T.END, 'END', 7, 4),
+                    (T.EOS, '', 6, 7)]
+        self._verify(data, expected)
+
 
     def test_in_for(self):
             data = '''\
@@ -1900,7 +1925,7 @@ class TestBreak(unittest.TestCase):
         data = '    BREAK'
         expected = [(T.CONTINUE, 'BREAK', 3, 4),
                     (T.EOS, '', 3, 9)]
-        self._verify(data, expected, test=True)
+        self._verify(data, expected, test=False)
 
     def test_in_if(self):
         data = '''\
@@ -1942,6 +1967,31 @@ class TestBreak(unittest.TestCase):
                     (T.END, 'END', 6, 4),
                     (T.EOS, '', 6, 7)]
             self._verify(data, expected)
+    
+
+    def test_in_try(self):
+        data = '''\
+    FOR    ${x}    IN    @{STUFF}
+        TRY
+            BREAK
+        END
+    END
+'''
+        expected = [(T.FOR, 'FOR', 3, 4),
+                    (T.VARIABLE, '${x}', 3, 11),
+                    (T.FOR_SEPARATOR, 'IN', 3, 19),
+                    (T.ARGUMENT, '@{STUFF}', 3, 25),
+                    (T.EOS, '', 3, 33),
+                    (T.TRY, 'TRY', 4, 8),
+                    (T.EOS, '', 4, 11),
+                    (T.BREAK, 'BREAK', 5, 12),
+                    (T.EOS, '', 5, 17),
+                    (T.END, 'END', 6, 8),
+                    (T.EOS, '', 6, 11)
+                    (T.END, 'END', 7, 4),
+                    (T.EOS, '', 7, 7)]
+        self._verify(data, expected)
+
 
     def _verify(self, data, expected, test=False):
         if not test:

@@ -832,6 +832,60 @@ Name
         assert_model(model.sections[0], expected)
 
 
+    def test_continue(self):
+        model = get_model('''\
+*** Keywords ***
+Name
+    Continue
+    CONTINUE
+        ''', data_only=True)
+        expected = KeywordSection(
+            header=SectionHeader(
+                tokens=[Token(Token.KEYWORD_HEADER, '*** Keywords ***', 1, 0)]
+            ),
+            body=[
+
+                Keyword(
+                    header=KeywordName(
+                        tokens=[Token(Token.KEYWORD_NAME, 'Name', 2, 0)]
+                    ),
+                    body=[
+                        KeywordCall([Token(Token.KEYWORD, 'Continue', 3, 4)]),
+                        ReturnStatement([Token(Token.CONTINUE, 'CONTINUE', 4, 4)])
+                    ],
+                )
+            ]
+        )
+        assert_model(model.sections[0], expected)
+
+
+    def test_break(self):
+        model = get_model('''\
+*** Keywords ***
+Name
+    Break
+    BREAK
+        ''', data_only=True)
+        expected = KeywordSection(
+            header=SectionHeader(
+                tokens=[Token(Token.KEYWORD_HEADER, '*** Keywords ***', 1, 0)]
+            ),
+            body=[
+
+                Keyword(
+                    header=KeywordName(
+                        tokens=[Token(Token.KEYWORD_NAME, 'Name', 2, 0)]
+                    ),
+                    body=[
+                        KeywordCall([Token(Token.KEYWORD, 'Break', 3, 4)]),
+                        ReturnStatement([Token(Token.BREAK, 'BREAK', 4, 4)])
+                    ],
+                )
+            ]
+        )
+        assert_model(model.sections[0], expected)
+
+
 class TestError(unittest.TestCase):
 
     def test_get_errors_from_tokens(self):
