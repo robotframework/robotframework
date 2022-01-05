@@ -1850,9 +1850,9 @@ class TestContinue(unittest.TestCase):
                     (T.CONTINUE, 'CONTINUE', 5, 12),
                     (T.EOS, '', 5, 20),
                     (T.END, 'END', 6, 8),
-                    (T.EOS, '', 6, 7)
+                    (T.EOS, '', 6, 11)
                     (T.END, 'END', 7, 4),
-                    (T.EOS, '', 6, 7)]
+                    (T.EOS, '', 7, 7)]
         self._verify(data, expected)
 
 
@@ -1874,9 +1874,9 @@ class TestContinue(unittest.TestCase):
                     (T.CONTINUE, 'CONTINUE', 5, 12),
                     (T.EOS, '', 5, 20),
                     (T.END, 'END', 6, 8),
-                    (T.EOS, '', 6, 7)
+                    (T.EOS, '', 6, 11)
                     (T.END, 'END', 7, 4),
-                    (T.EOS, '', 6, 7)]
+                    (T.EOS, '', 7, 7)]
         self._verify(data, expected)
 
 
@@ -1891,8 +1891,10 @@ class TestContinue(unittest.TestCase):
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
-                    (T.END, 'END', 7, 4),
-                    (T.EOS, '', 6, 7)]
+                    (T.CONTINUE, 'CONTINUE', 4, 12),
+                    (T.EOS, '', 4, 20),
+                    (T.END, 'END', 5, 4),
+                    (T.EOS, '', 5, 7)]
             self._verify(data, expected)
 
     def _verify(self, data, expected, test=False):
@@ -1916,14 +1918,14 @@ class TestBreak(unittest.TestCase):
 
     def test_in_keyword(self):
         data = '    BREAK'
-        expected = [(T.CONTINUE, 'BREAK', 3, 4),
+        expected = [(T.BREAK, 'BREAK', 3, 4),
                     (T.EOS, '', 3, 9)]
         self._verify(data, expected)
 
     def test_in_test(self):
         # This is not valid usage but that's not recognized during lexing.
         data = '    BREAK'
-        expected = [(T.CONTINUE, 'BREAK', 3, 4),
+        expected = [(T.BREAK, 'BREAK', 3, 4),
                     (T.EOS, '', 3, 9)]
         self._verify(data, expected, test=False)
 
@@ -1962,10 +1964,10 @@ class TestBreak(unittest.TestCase):
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
-                    (T.BREAK, 'BREAK', 5, 8),
-                    (T.EOS, '', 5, 13),
-                    (T.END, 'END', 6, 4),
-                    (T.EOS, '', 6, 7)]
+                    (T.BREAK, 'BREAK', 4, 8),
+                    (T.EOS, '', 4, 13),
+                    (T.END, 'END', 5, 4),
+                    (T.EOS, '', 5, 7)]
             self._verify(data, expected)
     
 
