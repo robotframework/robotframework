@@ -68,6 +68,8 @@ class BaseBody(ItemList):
     if_class = None
     try_class = None
     return_class = None
+    continue_class = None
+    break_clss = None
     message_class = None
 
     def __init__(self, parent=None, items=None):
