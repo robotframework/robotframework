@@ -111,6 +111,12 @@ class BaseBody(ItemList):
     def create_return(self, *args, **kwargs):
         return self._create(self.return_class, 'create_return', args, kwargs)
 
+    def create_continue(self, **kwargs):
+        return self._create(self.continue_class, 'create_continue', kwargs)
+
+    def create_break(self, **kwargs):
+        return self._create(self.break_class, 'create_break', kwargs)
+
     def create_message(self, *args, **kwargs):
         return self._create(self.message_class, 'create_message', args, kwargs)
 
