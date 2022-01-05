@@ -26,7 +26,7 @@ from .statementlexers import (Lexer,
                               ForHeaderLexer, InlineIfHeaderLexer,
                               IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
                               TryHeaderLexer, ExceptHeaderLexer, FinallyHeaderLexer,
-                              EndLexer, ReturnLexer,ContinueLexer, BreakLexer)
+                              EndLexer, ReturnLexer, ContinueLexer, BreakLexer)
 
 class BlockLexer(Lexer):
 
@@ -247,7 +247,7 @@ class InlineIfLexer(BlockLexer):
 
     def lexer_classes(self):
         return (InlineIfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
-                ReturnLexer, KeywordCallLexer,ContinueLexer, BreakLexer)
+                ReturnLexer, KeywordCallLexer, ContinueLexer, BreakLexer)
 
     def input(self, statement):
         for part in self._split_statements(statement):
