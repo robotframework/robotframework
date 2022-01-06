@@ -277,6 +277,53 @@ class SuiteVisitor:
         """Called when TRY, EXCEPT, ELSE or FINALLY branch ends."""
         pass
 
+    def visit_while(self, while_):
+        """Implements traversing through WHILE loops.
+
+        Can be overridden to allow modifying the passed in ``while_`` without
+        calling :meth:`start_while` or :meth:`end_while` nor visiting body.
+        """
+        if self.start_while(while_) is not False:
+            while_.body.visit(self)
+            self.end_while(while_)
+
+    def start_while(self, while_):
+        """Called when WHILE loop starts. Default implementation does nothing.
+
+        Can return explicit ``False`` to stop visiting.
+        """
+        pass
+
+    def end_while(self, while_):
+        """Called when WHILE loop ends. Default implementation does nothing."""
+        pass
+
+    def visit_while_iteration(self, iteration):
+        """Implements traversing through single WHILE loop iteration.
+
+        This is only used with the result side model because on the running side
+        there are no iterations.
+
+        Can be overridden to allow modifying the passed in ``iteration`` without
+        calling :meth:`start_while_iteration` or :meth:`end_while_iteration` nor visiting
+        body.
+        """
+        if self.start_while_iteration(iteration) is not False:
+            iteration.body.visit(self)
+            self.end_while_iteration(iteration)
+
+    def start_while_iteration(self, iteration):
+        """Called when WHILE loop iteration starts. Default implementation does nothing.
+
+        Can return explicit ``False`` to stop visiting.
+        """
+        pass
+
+    def end_while_iteration(self, iteration):
+        """Called when WHILE loop iteration ends. Default implementation does nothing."""
+        pass
+
+
     def visit_return(self, return_):
         """Visits RETURN elements."""
         if self.start_return(return_) is not False:

@@ -351,7 +351,7 @@ class TestForIterations(unittest.TestCase):
                         iterations.create_if,
                         iterations.create_try,
                         iterations.create_return):
-            msg = "'ForIterations' object does not support '%s'." % creator.__name__
+            msg = "'Iterations' object does not support '%s'." % creator.__name__
             assert_raises_with_msg(TypeError, msg, creator)
 
 

@@ -51,15 +51,18 @@ class Body(model.BaseBody):
     __slots__ = []
 
 
-class ForIterations(model.BaseBody):
-    for_iteration_class = None
-    __slots__ = []
+class Iterations(model.BaseBody):
+    __slots__ = ['iteration_class']
+
+    def __init__(self, iteration_class, parent=None, items=None):
+        self.iteration_class = iteration_class
+        super().__init__(parent, items)
 
     def create_iteration(self, *args, **kwargs):
-        return self.append(self.for_iteration_class(*args, **kwargs))
+        return self.append(self.iteration_class(*args, **kwargs))
 
 
-@ForIterations.register
+@Iterations.register
 @Body.register
 class Message(model.Message):
     __slots__ = []
@@ -125,10 +128,9 @@ class StatusMixin:
         self.status = self.NOT_RUN
 
 
-@ForIterations.register
 class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     """Represents one FOR loop iteration."""
-    type = BodyItem.FOR_ITERATION
+    type = BodyItem.ITERATION
     body_class = Body
     repr_args = ('variables',)
     __slots__ = ['variables', 'status', 'starttime', 'endtime', 'doc']
@@ -158,7 +160,7 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
 
 @Body.register
 class For(model.For, StatusMixin, DeprecatedAttributesMixin):
-    body_class = ForIterations
+    iteration_class = ForIteration
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
     def __init__(self, variables=(),  flavor='IN', values=(), status='FAIL',
@@ -169,11 +171,65 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
         self.endtime = endtime
         self.doc = doc
 
+    @setter
+    def body(self, iterations):
+        return Iterations(self.iteration_class, self, iterations)
+
     @property
     @deprecated
     def name(self):
         return '%s %s [ %s ]' % (' | '.join(self.variables), self.flavor,
                                  ' | '.join(self.values))
+
+
+class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
+    """Represents one WHILE loop iteration."""
+    type = BodyItem.ITERATION
+    body_class = Body
+    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+
+    def __init__(self, status='FAIL', starttime=None, endtime=None,
+                 doc='', parent=None):
+        self.parent = parent
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.doc = doc
+        self.body = None
+
+    @setter
+    def body(self, body):
+        return self.body_class(self, body)
+
+    def visit(self, visitor):
+        visitor.visit_while_iteration(self)
+
+    @property
+    @deprecated
+    def name(self):
+        return ''
+
+
+@Body.register
+class While(model.While, StatusMixin, DeprecatedAttributesMixin):
+    iteration_class = WhileIteration
+    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+
+    def __init__(self, condition=None, parent=None, status='FAIL', starttime=None, endtime=None, doc=''):
+        super().__init__(condition, parent)
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.doc = doc
+
+    @setter
+    def body(self, iterations):
+        return Iterations(self.iteration_class, self, iterations)
+
+    @property
+    @deprecated
+    def name(self):
+        return self.condition
 
 
 class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
@@ -264,7 +320,7 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
         return ''
 
 
-@ForIterations.register
+@Iterations.register
 @Body.register
 class Keyword(model.Keyword, StatusMixin):
     """Represents results of a single keyword.

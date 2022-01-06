@@ -103,6 +103,19 @@ Try except inside for loop
        END
    END
 
+Try except inside while loop
+    ${i}=    Set variable   ${1}
+    WHILE   $i < 3
+       TRY
+           Should be equal    ${i}    ${1}
+       EXCEPT    2 != 1
+            Log    catch
+       ELSE
+            Log    all good
+       END
+       ${i}=    Evaluate    $i + 1
+   END
+
 If inside try failing
     TRY
         IF    True
@@ -276,6 +289,101 @@ For loop inside finally block failing
     FINALLY
         FOR   ${i}    IN    1    2
             Should be equal    ${i}    1
+        END
+    END
+
+While loop inside try failing
+    TRY
+        ${i}=    Set variable   ${1}
+        WHILE   $i < 3
+            Should be equal    ${i}    ${1}
+            ${i}=    Evaluate   $i + 1
+        END
+    EXCEPT    2 != 1
+        No operation
+    ELSE
+        Fail    Should not be executed
+    END
+
+While loop inside except handler
+    TRY
+        Fail    Oh no
+    EXCEPT    Oh no
+        ${i}=    Set variable   ${1}
+        WHILE   $i < 3
+            Should be equal    ${i}    ${i}
+            ${i}=    Evaluate   $i + 1
+        END
+    ELSE
+        Fail    Should not be executed
+    END
+
+While loop inside except handler failing
+    [Documentation]    FAIL 2 != 1
+    TRY
+        Fail    Oh no
+    EXCEPT    Oh no
+        ${i}=    Set variable   ${1}
+        WHILE   $i < 3
+            Should be equal    ${i}    ${1}
+            ${i}=    Evaluate   $i + 1
+        END
+    ELSE
+        Fail    Should not be executed
+    END
+
+While loop inside else block
+    TRY
+        No operation
+    EXCEPT    Oh no
+        Fail    Should not be executed
+    ELSE
+        ${i}=    Set variable   ${1}
+        WHILE   $i < 3
+            Should be equal    ${i}    ${i}
+            ${i}=    Evaluate   $i + 1
+        END
+    END
+
+While loop inside else block failing
+    [Documentation]    FAIL 2 != 1
+    TRY
+        No operation
+    EXCEPT    Oh no
+        Fail    Should not be executed
+    ELSE
+        ${i}=    Set variable   ${1}
+        WHILE   $i < 3
+            Should be equal    ${i}    ${1}
+            ${i}=    Evaluate   $i + 1
+        END
+    END
+
+While loop inside finally block
+    [Documentation]    FAIL cannot catch me
+    TRY
+        Fail   cannot catch me
+    EXCEPT    Oh no
+        Fail    Should not be executed
+    FINALLY
+        ${i}=    Set variable   ${1}
+        WHILE   $i < 3
+            Should be equal    ${i}    ${i}
+            ${i}=    Evaluate   $i + 1
+        END
+    END
+
+While loop inside finally block failing
+    [Documentation]    FAIL 2 != 1
+    TRY
+        No operation
+    EXCEPT    Oh no
+        Fail    Should not be executed
+    FINALLY
+        ${i}=    Set variable   ${1}
+        WHILE   $i < 3
+            Should be equal    ${i}    ${1}
+            ${i}=    Evaluate   $i + 1
         END
     END
 

@@ -33,5 +33,5 @@ Should be IN ENUMERATE loop
 
 Should be FOR iteration
     [Arguments]    ${iteration}    &{variables}
-    Should Be Equal    ${iteration.type}    FOR ITERATION
+    Should Be Equal    ${iteration.type}    ITERATION
     Should Be Equal    ${iteration.variables}    ${variables}
