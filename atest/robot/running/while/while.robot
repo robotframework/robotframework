@@ -1,5 +1,5 @@
 *** Settings ***
-Resource          while_resource.robot
+Resource          while.resource
 Suite Setup       Run Tests    ${EMPTY}    running/while/while.robot
 
 *** Test Cases ***

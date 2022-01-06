@@ -43,7 +43,7 @@ from robot.output import LOGGER, Output, pyloggingconf
 from robot.result import Return as ReturnResult
 from robot.utils import seq2str, setter
 
-from .bodyrunner import ForRunner, IfRunner, KeywordRunner, TryRunner, WhileRunner
+from .bodyrunner import ForRunner, WhileRunner, IfRunner, TryRunner, KeywordRunner
 from .randomizer import Randomizer
 from .statusreporter import StatusReporter
 
@@ -92,6 +92,24 @@ class For(model.For):
 
     def run(self, context, run=True, templated=False):
         return ForRunner(context, self.flavor, run, templated).run(self)
+
+
+@Body.register
+class While(model.While):
+    __slots__ = ['lineno', 'error']
+    body_class = Body
+
+    def __init__(self, parent=None, lineno=None, error=None):
+        super().__init__(parent)
+        self.lineno = lineno
+        self.error = error
+
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
+    def run(self, context, run=True, templated=False):
+        return WhileRunner(context, run, templated).run(self)
 
 
 class IfBranch(model.IfBranch):
@@ -155,24 +173,6 @@ class Try(model.Try):
 
     def run(self, context, run=True, templated=False):
         return TryRunner(context, run, templated).run(self)
-
-
-@Body.register
-class While(model.While):
-    __slots__ = ['lineno', 'error']
-    body_class = Body
-
-    def __init__(self, parent=None, lineno=None, error=None):
-        model.While.__init__(self, parent)
-        self.lineno = lineno
-        self.error = error
-
-    @property
-    def source(self):
-        return self.parent.source if self.parent is not None else None
-
-    def run(self, context, run=True, templated=False):
-        return WhileRunner(context, run, templated).run(self)
 
 
 @Body.register

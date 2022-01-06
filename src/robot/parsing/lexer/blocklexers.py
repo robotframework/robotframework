@@ -229,6 +229,16 @@ class ForLexer(NestedBlockLexer):
                 ReturnLexer, KeywordCallLexer)
 
 
+class WhileLexer(NestedBlockLexer):
+
+    def handles(self, statement):
+        return WhileHeaderLexer(self.ctx).handles(statement)
+
+    def lexer_classes(self):
+        return (WhileHeaderLexer, ForHeaderLexer, InlineIfLexer, IfLexer, TryLexer, EndLexer,
+                ReturnLexer, KeywordCallLexer)
+
+
 class IfLexer(NestedBlockLexer):
 
     def handles(self, statement):
@@ -298,13 +308,3 @@ class TryLexer(NestedBlockLexer):
         return (TryHeaderLexer, ExceptHeaderLexer, ElseHeaderLexer, FinallyHeaderLexer,
                 ForHeaderLexer, InlineIfLexer, IfLexer, WhileLexer, ReturnLexer,
                 EndLexer, KeywordCallLexer)
-
-
-class WhileLexer(NestedBlockLexer):
-
-    def handles(self, statement):
-        return WhileHeaderLexer(self.ctx).handles(statement)
-
-    def lexer_classes(self):
-        return (WhileHeaderLexer, ForHeaderLexer, InlineIfLexer, IfLexer, TryLexer, EndLexer,
-                ReturnLexer, KeywordCallLexer)

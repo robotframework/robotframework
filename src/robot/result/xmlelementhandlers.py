@@ -176,6 +176,15 @@ class ForHandler(ElementHandler):
 
 
 @ElementHandler.register
+class WhileHandler(ElementHandler):
+    tag = 'while'
+    children = frozenset(('doc', 'status', 'iter', 'msg', 'kw'))
+
+    def start(self, elem, result):
+        return result.body.create_while(condition=elem.get('condition'))
+
+
+@ElementHandler.register
 class IterationHandler(ElementHandler):
     tag = 'iter'
     children = frozenset(('var', 'doc', 'status', 'kw', 'if', 'for', 'msg', 'try',
@@ -229,15 +238,6 @@ class ReturnHandler(ElementHandler):
 
     def start(self, elem, result):
         return result.body.create_return()
-
-
-@ElementHandler.register
-class WhileHandler(ElementHandler):
-    tag = 'while'
-    children = frozenset(('var', 'value', 'doc', 'status', 'iter', 'msg', 'kw'))
-
-    def start(self, elem, result):
-        return result.body.create_while(condition=elem.get('condition'))
 
 
 @ElementHandler.register

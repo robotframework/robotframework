@@ -55,6 +55,29 @@ class For(BodyItem):
         return 'FOR    %s    %s    %s' % (variables, self.flavor, values)
 
 
+@Body.register
+class While(BodyItem):
+    type = BodyItem.WHILE
+    body_class = Body
+    repr_args = ('condition',)
+    __slots__ = ['condition']
+
+    def __init__(self, condition=None, parent=None):
+        self.condition = condition
+        self.parent = parent
+        self.body = None
+
+    @setter
+    def body(self, body):
+        return self.body_class(self, body)
+
+    def visit(self, visitor):
+        visitor.visit_while(self)
+
+    def __str__(self):
+        return f'WHILE    {self.condition}'
+
+
 class IfBranch(BodyItem):
     body_class = Body
     repr_args = ('type', 'condition')
@@ -205,29 +228,6 @@ class Try(BodyItem):
 
     def visit(self, visitor):
         visitor.visit_try(self)
-
-
-@Body.register
-class While(BodyItem):
-    type = BodyItem.WHILE
-    body_class = Body
-    repr_args = ('condition',)
-    __slots__ = ['condition']
-
-    def __init__(self, condition=None, parent=None):
-        self.condition = condition
-        self.parent = parent
-        self.body = None
-
-    @setter
-    def body(self, body):
-        return self.body_class(self, body)
-
-    def visit(self, visitor):
-        visitor.visit_while(self)
-
-    def __str__(self):
-        return f'WHILE    {self.condition}'
 
 
 @Body.register

@@ -975,9 +975,9 @@ class WhileHeader(Statement):
     def validate(self):
         conditions = len(self.get_tokens(Token.ARGUMENT))
         if conditions == 0:
-            self.errors += ('%s has no condition.' % self.type,)
+            self.errors += ('WHILE has no condition.',)
         if conditions > 1:
-            self.errors += ('%s has more than one condition.' % self.type,)
+            self.errors += ('WHILE has more than one condition.',)
 
 
 @Statement.register

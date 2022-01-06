@@ -160,7 +160,6 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
 
 @Body.register
 class For(model.For, StatusMixin, DeprecatedAttributesMixin):
-    body_class = Iterations
     iteration_class = ForIteration
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
@@ -181,6 +180,56 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
     def name(self):
         return '%s %s [ %s ]' % (' | '.join(self.variables), self.flavor,
                                  ' | '.join(self.values))
+
+
+class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
+    """Represents one WHILE loop iteration."""
+    type = BodyItem.ITERATION
+    body_class = Body
+    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+
+    def __init__(self, status='FAIL', starttime=None, endtime=None,
+                 doc='', parent=None):
+        self.parent = parent
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.doc = doc
+        self.body = None
+
+    @setter
+    def body(self, body):
+        return self.body_class(self, body)
+
+    def visit(self, visitor):
+        visitor.visit_while_iteration(self)
+
+    @property
+    @deprecated
+    def name(self):
+        return ''
+
+
+@Body.register
+class While(model.While, StatusMixin, DeprecatedAttributesMixin):
+    iteration_class = WhileIteration
+    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+
+    def __init__(self, condition=None, parent=None, status='FAIL', starttime=None, endtime=None, doc=''):
+        super().__init__(condition, parent)
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.doc = doc
+
+    @setter
+    def body(self, iterations):
+        return Iterations(self.iteration_class, self, iterations)
+
+    @property
+    @deprecated
+    def name(self):
+        return self.condition
 
 
 class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
@@ -246,60 +295,6 @@ class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
         self.starttime = starttime
         self.endtime = endtime
         self.doc = doc
-
-
-class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
-    """Represents one WHILE loop iteration."""
-    type = BodyItem.ITERATION
-    body_class = Body
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
-
-    def __init__(self, status='FAIL', starttime=None, endtime=None,
-                 doc='', parent=None):
-        self.parent = parent
-        self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
-        self.doc = doc
-        self.body = None
-
-    @setter
-    def body(self, body):
-        return self.body_class(self, body)
-
-    def visit(self, visitor):
-        if self.parent.type == BodyItem.FOR:
-            visitor.visit_for_iteration(self)
-        else:
-            visitor.visit_while_iteration(self)
-
-    @property
-    @deprecated
-    def name(self):
-        return ''
-
-
-@Body.register
-class While(model.While, StatusMixin, DeprecatedAttributesMixin):
-    body_class = Iterations
-    iteration_class = WhileIteration
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
-
-    def __init__(self, condition=None, parent=None, status='FAIL', starttime=None, endtime=None, doc=''):
-        model.While.__init__(self, condition, parent)
-        self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
-        self.doc = doc
-
-    @setter
-    def body(self, iterations):
-        return Iterations(self.iteration_class, self, iterations)
-
-    @property
-    @deprecated
-    def name(self):
-        return self.condition
 
 
 @Body.register

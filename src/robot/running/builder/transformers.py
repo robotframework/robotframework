@@ -190,14 +190,14 @@ class TestCaseBuilder(NodeVisitor):
     def visit_For(self, node):
         ForBuilder(self.test).build(node)
 
+    def visit_While(self, node):
+        WhileBuilder(self.test).build(node)
+
     def visit_If(self, node):
         IfBuilder(self.test).build(node)
 
     def visit_Try(self, node):
         TryBuilder(self.test).build(node)
-
-    def visit_While(self, node):
-        WhileBuilder(self.test).build(node)
 
     def visit_TemplateArguments(self, node):
         self.test.body.create_keyword(args=node.args, lineno=node.lineno)
@@ -280,14 +280,14 @@ class KeywordBuilder(NodeVisitor):
     def visit_For(self, node):
         ForBuilder(self.kw).build(node)
 
+    def visit_While(self, node):
+        WhileBuilder(self.kw).build(node)
+
     def visit_If(self, node):
         IfBuilder(self.kw).build(node)
 
     def visit_Try(self, node):
         TryBuilder(self.kw).build(node)
-
-    def visit_While(self, node):
-        WhileBuilder(self.kw).build(node)
 
 
 class ForBuilder(NodeVisitor):
@@ -321,14 +321,14 @@ class ForBuilder(NodeVisitor):
     def visit_For(self, node):
         ForBuilder(self.model).build(node)
 
+    def visit_While(self, node):
+        WhileBuilder(self.model).build(node)
+
     def visit_If(self, node):
         IfBuilder(self.model).build(node)
 
     def visit_Try(self, node):
         TryBuilder(self.model).build(node)
-
-    def visit_While(self, node):
-        WhileBuilder(self.model).build(node)
 
     def visit_ReturnStatement(self, node):
         self.model.body.create_return(node.values, lineno=node.lineno)
@@ -380,17 +380,17 @@ class IfBuilder(NodeVisitor):
     def visit_TemplateArguments(self, node):
         self.model.body.create_keyword(args=node.args, lineno=node.lineno)
 
-    def visit_If(self, node):
-        IfBuilder(self.model).build(node)
-
     def visit_For(self, node):
         ForBuilder(self.model).build(node)
 
-    def visit_Try(self, node):
-        TryBuilder(self.model).build(node)
-
     def visit_While(self, node):
         WhileBuilder(self.model).build(node)
+
+    def visit_If(self, node):
+        IfBuilder(self.model).build(node)
+
+    def visit_Try(self, node):
+        TryBuilder(self.model).build(node)
 
     def visit_ReturnStatement(self, node):
         self.model.body.create_return(node.values, lineno=node.lineno)
@@ -426,17 +426,17 @@ class TryBuilder(NodeVisitor):
             errors += node.end.errors
         return errors
 
-    def visit_If(self, node):
-        IfBuilder(self.model).build(node)
-
     def visit_For(self, node):
         ForBuilder(self.model).build(node)
 
-    def visit_Try(self, node):
-        TryBuilder(self.model).build(node)
-
     def visit_While(self, node):
         WhileBuilder(self.model).build(node)
+
+    def visit_If(self, node):
+        IfBuilder(self.model).build(node)
+
+    def visit_Try(self, node):
+        TryBuilder(self.model).build(node)
 
     def visit_ReturnStatement(self, node):
         self.model.body.create_return(node.values, lineno=node.lineno)
@@ -480,14 +480,14 @@ class WhileBuilder(NodeVisitor):
     def visit_For(self, node):
         ForBuilder(self.model).build(node)
 
+    def visit_While(self, node):
+        WhileBuilder(self.model).build(node)
+
     def visit_If(self, node):
         IfBuilder(self.model).build(node)
 
     def visit_Try(self, node):
         TryBuilder(self.model).build(node)
-
-    def visit_While(self, node):
-        WhileBuilder(self.model).build(node)
 
     def visit_ReturnStatement(self, node):
         self.model.body.create_return(node.values)
