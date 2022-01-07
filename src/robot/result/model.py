@@ -268,8 +268,8 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
 class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
     __slots__ = ['status', 'starttime', 'endtime']
 
-    def __init__(self, values=(), status='FAIL', starttime=None, endtime=None, parent=None):
-        super().__init__(values, parent)
+    def __init__(self, status='FAIL', starttime=None, endtime=None, parent=None):
+        super().__init__(parent)
         self.status = status
         self.starttime = starttime
         self.endtime = endtime
@@ -279,8 +279,8 @@ class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
 class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
     __slots__ = ['status', 'starttime', 'endtime']
 
-    def __init__(self, values=(), status='FAIL', starttime=None, endtime=None, parent=None):
-        super().__init__(values, parent)
+    def __init__(self, status='FAIL', starttime=None, endtime=None, parent=None):
+        super().__init__(parent)
         self.status = status
         self.starttime = starttime
         self.endtime = endtime
