@@ -898,6 +898,10 @@ class NoArgumentHeader(Statement):
     def validate(self):
         if self.get_tokens(Token.ARGUMENT):
             self.errors += (f'{self.type} does not accept arguments.',)
+    
+    @property
+    def values(self):
+        return self.get_values(Token.ARGUMENT)
 
 
 @Statement.register
