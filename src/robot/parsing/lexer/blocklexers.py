@@ -28,6 +28,7 @@ from .statementlexers import (Lexer,
                               TryHeaderLexer, ExceptHeaderLexer, FinallyHeaderLexer,
                               EndLexer, ReturnLexer, ContinueLexer, BreakLexer)
 
+
 class BlockLexer(Lexer):
 
     def __init__(self, ctx):
@@ -222,7 +223,7 @@ class ForLexer(NestedBlockLexer):
 
     def lexer_classes(self):
         return (ForHeaderLexer, InlineIfLexer, IfLexer, TryLexer, EndLexer,
-                ReturnLexer, KeywordCallLexer, ContinueLexer, BreakLexer)
+                ReturnLexer, ContinueLexer, BreakLexer, KeywordCallLexer)
 
 
 class IfLexer(NestedBlockLexer):
@@ -232,7 +233,7 @@ class IfLexer(NestedBlockLexer):
 
     def lexer_classes(self):
         return (InlineIfLexer, IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
-                ForLexer, TryLexer, EndLexer, ReturnLexer, KeywordCallLexer, ContinueLexer, BreakLexer)
+                ForLexer, TryLexer, EndLexer, ReturnLexer, ContinueLexer, BreakLexer, KeywordCallLexer)
 
 
 class InlineIfLexer(BlockLexer):
@@ -247,7 +248,7 @@ class InlineIfLexer(BlockLexer):
 
     def lexer_classes(self):
         return (InlineIfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
-                ReturnLexer, KeywordCallLexer, ContinueLexer, BreakLexer)
+                ReturnLexer, ContinueLexer, BreakLexer, KeywordCallLexer)
 
     def input(self, statement):
         for part in self._split_statements(statement):
