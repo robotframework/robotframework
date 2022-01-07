@@ -230,10 +230,12 @@ class TestCaseBuilder(NodeVisitor):
                                       lineno=node.lineno)
 
     def visit_Continue(self, node):
-        self.test.body.create_keyword(name='CONTINUE',lineno=node.lineno)
+        self.test.body.create_keyword(name='CONTINUE', args=node.values,
+                                      lineno=node.lineno)
 
     def visit_Break(self, node):
-        self.test.body.create_keyword(name='BREAK',lineno=node.lineno)
+        self.test.body.create_keyword(name='BREAK', args=node.values,
+                                      lineno=node.lineno)
 
 
 class KeywordBuilder(NodeVisitor):
