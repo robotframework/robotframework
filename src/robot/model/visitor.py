@@ -293,6 +293,38 @@ class SuiteVisitor:
         """Called when RETURN element ends."""
         pass
 
+    def visit_continue(self, continue_):
+        """Visits CONTINUE elements."""
+        if self.start_continue(continue_) is not False:
+            self.end_continue(continue_)
+
+    def start_continue(self, continue_):
+        """Called when CONTINUE element starts.
+
+        Can return explicit ``False`` to avoid calling :meth:`end_continue`.
+        """
+        pass
+
+    def end_continue(self, continue_):
+        """Called when CONTINUE element ends."""
+        pass
+
+    def visit_break(self, break_):
+        """Visits BREAK elements."""
+        if self.start_continue(break_) is not False:
+            self.end_continue(break_)
+
+    def start_continue(self, break_):
+        """Called when BREAK element starts.
+
+        Can return explicit ``False`` to avoid calling :meth:`end_break`.
+        """
+        pass
+
+    def end_break(self, break_):
+        """Called when BREAK element ends."""
+        pass
+
     def visit_message(self, msg):
         """Implements visiting messages.
 
