@@ -24,7 +24,7 @@ class BodyItem(ModelObject):
     SETUP = 'SETUP'
     TEARDOWN = 'TEARDOWN'
     FOR = 'FOR'
-    FOR_ITERATION = 'FOR ITERATION'
+    ITERATION = 'ITERATION'
     IF_ELSE_ROOT = 'IF/ELSE ROOT'
     IF = 'IF'
     ELSE_IF = 'ELSE IF'
@@ -33,6 +33,7 @@ class BodyItem(ModelObject):
     TRY = 'TRY'
     EXCEPT = 'EXCEPT'
     FINALLY = 'FINALLY'
+    WHILE = 'WHILE'
     RETURN = 'RETURN'
     MESSAGE = 'MESSAGE'
     type = None
@@ -67,6 +68,7 @@ class BaseBody(ItemList):
     for_class = None
     if_class = None
     try_class = None
+    while_class = None
     return_class = None
     continue_class = None
     break_clss = None
@@ -109,6 +111,9 @@ class BaseBody(ItemList):
 
     def create_try(self, *args, **kwargs):
         return self._create(self.try_class, 'create_try', args, kwargs)
+
+    def create_while(self, *args, **kwargs):
+        return self._create(self.while_class, 'create_while', args, kwargs)
 
     def create_return(self, *args, **kwargs):
         return self._create(self.return_class, 'create_return', args, kwargs)

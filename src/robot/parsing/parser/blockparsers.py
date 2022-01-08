@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from ..lexer import Token
-from ..model import TestCase, Keyword, For, If, Try
+from ..model import TestCase, Keyword, For, If, Try, While
 
 
 class Parser:
@@ -40,7 +40,8 @@ class BlockParser(Parser):
             Token.FOR: ForParser,
             Token.IF: IfParser,
             Token.INLINE_IF: IfParser,
-            Token.TRY: TryParser
+            Token.TRY: TryParser,
+            Token.WHILE: WhileParser
         }
 
     def handles(self, statement):
@@ -123,3 +124,9 @@ class TryParser(NestedBlockParser):
         if statement.type == Token.END and not self.handle_end:
             return False
         return super().handles(statement)
+
+
+class WhileParser(NestedBlockParser):
+
+    def __init__(self, header):
+        super().__init__(While(header))

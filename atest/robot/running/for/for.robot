@@ -1,6 +1,6 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    running/for.robot
-Resource          for_resource.robot
+Suite Setup       Run Tests    ${EMPTY}    running/for/for.robot
+Resource          for.resource
 
 *** Test Cases ***
 Simple loop

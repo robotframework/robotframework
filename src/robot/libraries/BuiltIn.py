@@ -2014,6 +2014,9 @@ class _RunKeyword(_BuiltInBase):
 
         Errors caused by invalid syntax, timeouts, or fatal exceptions are not
         caught by this keyword. Otherwise this keyword itself never fails.
+
+        *NOTE:* Robot Framework 5.0 introduced native TRY/EXCEPT functionality
+        that is generally recommended for error handling.
         """
         try:
             return 'PASS', self.run_keyword(name, *args)
@@ -2121,6 +2124,16 @@ class _RunKeyword(_BuiltInBase):
 
         Errors caused by invalid syntax, timeouts, or fatal exceptions are not
         caught by this keyword.
+
+        *NOTE:* Regular expression matching used to require only the beginning
+        of the error to match the given pattern. That was changed in Robot
+        Framework 5.0 and nowadays the pattern must match the error fully.
+        To match only the beginning, add ``.*`` at the end of the pattern like
+        ``REGEXP: Start.*``.
+
+        *NOTE:* Robot Framework 5.0 introduced native TRY/EXCEPT functionality
+        that is generally recommended for error handling. It supports same
+        pattern matching syntax as this keyword.
         """
         try:
             self.run_keyword(name, *args)
@@ -2141,7 +2154,7 @@ class _RunKeyword(_BuiltInBase):
         matchers = {'GLOB': glob,
                     'EQUALS': lambda s, p: s == p,
                     'STARTS': lambda s, p: s.startswith(p),
-                    'REGEXP': lambda s, p: re.match(p, s) is not None}
+                    'REGEXP': lambda s, p: re.match(p + r'\Z', s) is not None}
         prefixes = tuple(prefix + ':' for prefix in matchers)
         if not expected_error.startswith(prefixes):
             return glob(error, expected_error)

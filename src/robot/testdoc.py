@@ -225,6 +225,8 @@ class JsonConverter:
                 yield self._convert_keyword(kw, 'TEARDOWN')
             elif kw.type == kw.FOR:
                 yield self._convert_for(kw)
+            elif kw.type == kw.WHILE:
+                yield self._convert_while(kw)
             elif kw.type == kw.IF_ELSE_ROOT:
                 yield from self._convert_if(kw)
             elif kw.type == kw.TRY_EXCEPT_ROOT:
@@ -236,6 +238,9 @@ class JsonConverter:
         name = '%s %s %s' % (', '.join(data.variables), data.flavor,
                              seq2str2(data.values))
         return {'type': 'FOR', 'name': self._escape(name), 'arguments': ''}
+
+    def _convert_while(self, data):
+        return {'type': 'WHILE', 'name': self._escape(data.condition), 'arguments': ''}
 
     def _convert_if(self, data):
         for branch in data.body:

@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.utils import normalize_whitespace
+
 from .tokens import Token
 from .statementlexers import (Lexer,
                               SettingSectionHeaderLexer, SettingLexer,
@@ -26,7 +28,7 @@ from .statementlexers import (Lexer,
                               ForHeaderLexer, InlineIfHeaderLexer,
                               IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
                               TryHeaderLexer, ExceptHeaderLexer, FinallyHeaderLexer,
-                              EndLexer, ReturnLexer, ContinueLexer, BreakLexer)
+                              ContinueLexer, BreakLexer, WhileHeaderLexer, EndLexer, ReturnLexer)
 
 
 class BlockLexer(Lexer):
@@ -178,7 +180,7 @@ class TestOrKeywordLexer(BlockLexer):
 
     def lexer_classes(self):
         return (TestOrKeywordSettingLexer, ForLexer, InlineIfLexer, IfLexer,
-                ReturnLexer, TryLexer, KeywordCallLexer)
+                ReturnLexer, TryLexer, WhileLexer, KeywordCallLexer)
 
 
 class TestCaseLexer(TestOrKeywordLexer):
@@ -210,7 +212,8 @@ class NestedBlockLexer(BlockLexer):
 
     def input(self, statement):
         lexer = BlockLexer.input(self, statement)
-        if isinstance(lexer, (ForHeaderLexer, IfHeaderLexer, TryHeaderLexer)):
+        if isinstance(lexer, (ForHeaderLexer, IfHeaderLexer, TryHeaderLexer,
+                              WhileHeaderLexer)):
             self._block_level += 1
         if isinstance(lexer, EndLexer):
             self._block_level -= 1
@@ -222,8 +225,18 @@ class ForLexer(NestedBlockLexer):
         return ForHeaderLexer(self.ctx).handles(statement)
 
     def lexer_classes(self):
-        return (ForHeaderLexer, InlineIfLexer, IfLexer, TryLexer, EndLexer,
+        return (ForHeaderLexer, InlineIfLexer, IfLexer, TryLexer, WhileLexer, EndLexer,
                 ReturnLexer, ContinueLexer, BreakLexer, KeywordCallLexer)
+
+
+class WhileLexer(NestedBlockLexer):
+
+    def handles(self, statement):
+        return WhileHeaderLexer(self.ctx).handles(statement)
+
+    def lexer_classes(self):
+        return (WhileHeaderLexer, ForHeaderLexer, InlineIfLexer, IfLexer, TryLexer, EndLexer,
+                ReturnLexer, KeywordCallLexer)
 
 
 class IfLexer(NestedBlockLexer):
@@ -233,7 +246,7 @@ class IfLexer(NestedBlockLexer):
 
     def lexer_classes(self):
         return (InlineIfLexer, IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
-                ForLexer, TryLexer, EndLexer, ReturnLexer, ContinueLexer, BreakLexer, KeywordCallLexer)
+                ForLexer, TryLexer, WhileLexer, EndLexer, ReturnLexer, ContinueLexer, BreakLexer, KeywordCallLexer)
 
 
 class InlineIfLexer(BlockLexer):
@@ -251,12 +264,12 @@ class InlineIfLexer(BlockLexer):
                 ReturnLexer, ContinueLexer, BreakLexer, KeywordCallLexer)
 
     def input(self, statement):
-        for part in self._split_statements(statement):
+        for part in self._split(statement):
             if part:
                 super().input(part)
         return self
 
-    def _split_statements(self, statement):
+    def _split(self, statement):
         current = []
         expect_condition = False
         for token in statement:
@@ -266,11 +279,13 @@ class InlineIfLexer(BlockLexer):
                 yield current
                 current = []
                 expect_condition = False
-            elif token.value in ('IF', 'ELSE IF'):
-                token._add_eos_before = token.value == 'ELSE IF'
-                yield current
-                current = []
+            elif token.value == 'IF':
                 current.append(token)
+                expect_condition = True
+            elif normalize_whitespace(token.value) == 'ELSE IF':
+                token._add_eos_before = True
+                yield current
+                current = [token]
                 expect_condition = True
             elif token.value == 'ELSE':
                 token._add_eos_before = True
@@ -289,5 +304,6 @@ class TryLexer(NestedBlockLexer):
         return TryHeaderLexer(self.ctx).handles(statement)
 
     def lexer_classes(self):
-        return (TryHeaderLexer, ExceptHeaderLexer, ElseHeaderLexer, FinallyHeaderLexer, ForHeaderLexer,
-                InlineIfLexer, IfLexer, ReturnLexer, EndLexer, KeywordCallLexer)
+        return (TryHeaderLexer, ExceptHeaderLexer, ElseHeaderLexer, FinallyHeaderLexer,
+                ForHeaderLexer, InlineIfLexer, IfLexer, WhileLexer, ReturnLexer,
+                EndLexer, KeywordCallLexer)

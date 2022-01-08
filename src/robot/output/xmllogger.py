@@ -140,6 +140,21 @@ class XmlLogger(ResultVisitor):
         self._write_status(branch)
         self._writer.end('branch')
 
+    def start_while(self, while_):
+        self._writer.start('while', attrs={'condition': while_.condition})
+
+    def end_while(self, while_):
+        self._write_status(while_)
+        self._writer.end('while')
+
+    def start_while_iteration(self, iteration):
+        self._writer.start('iter')
+        self._writer.element('doc', iteration.doc)
+
+    def end_while_iteration(self, iteration):
+        self._write_status(iteration)
+        self._writer.end('iter')
+
     def start_return(self, return_):
         self._writer.start('return')
         for value in return_.values:

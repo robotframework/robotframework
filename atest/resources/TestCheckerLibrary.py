@@ -6,10 +6,10 @@ from xmlschema import XMLSchema
 from robot import utils
 from robot.api import logger
 from robot.utils.asserts import assert_equal
-from robot.result import (ExecutionResultBuilder, For, If, IfBranch, ForIteration,
-                          Try, TryBranch, Keyword, Result, ResultVisitor, TestCase,
-                          TestSuite)
-from robot.result.model import Body, ForIterations
+from robot.result import (ExecutionResultBuilder, Result, ResultVisitor,
+                          For, ForIteration, While, WhileIteration,
+                          If, IfBranch, Try, TryBranch, Keyword, TestCase, TestSuite)
+from robot.result.model import Body, Iterations
 from robot.libraries.BuiltIn import BuiltIn
 
 
@@ -18,6 +18,10 @@ class NoSlotsKeyword(Keyword):
 
 
 class NoSlotsFor(For):
+    pass
+
+
+class NoSlotsWhile(While):
     pass
 
 
@@ -34,6 +38,7 @@ class NoSlotsBody(Body):
     for_class = NoSlotsFor
     if_class = NoSlotsIf
     try_class = NoSlotsTry
+    while_class = NoSlotsWhile
 
 
 class NoSlotsIfBranch(IfBranch):
@@ -48,13 +53,17 @@ class NoSlotsForIteration(ForIteration):
     body_class = NoSlotsBody
 
 
-class NoSlotsForIterations(ForIterations):
-    for_iteration_class = NoSlotsForIteration
+class NoSlotsWhileIteration(WhileIteration):
+    body_class = NoSlotsBody
+
+
+class NoSlotsIterations(Iterations):
     keyword_class = NoSlotsKeyword
 
 
 NoSlotsKeyword.body_class = NoSlotsBody
-NoSlotsFor.body_class = NoSlotsForIterations
+NoSlotsFor.iteration_class = NoSlotsForIteration
+NoSlotsWhile.iteration_class = NoSlotsWhileIteration
 NoSlotsIf.branch_class = NoSlotsIfBranch
 NoSlotsTry.branch_class = NoSlotsTryBranch
 
@@ -332,6 +341,12 @@ class ProcessResults(ResultVisitor):
 
     def start_if_branch(self, branch):
         self._add_kws_and_msgs(branch)
+
+    def start_while(self, while_):
+        self._add_kws_and_msgs(while_)
+
+    def start_while_iteration(self, iteration):
+        self._add_kws_and_msgs(iteration)
 
     def visit_errors(self, errors):
         errors.msgs = errors.messages

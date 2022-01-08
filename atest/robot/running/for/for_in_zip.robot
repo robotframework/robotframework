@@ -1,6 +1,6 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    running/for_in_zip.robot
-Resource          for_resource.robot
+Suite Setup       Run Tests    ${EMPTY}    running/for/for_in_zip.robot
+Resource          for.resource
 
 *** Test Cases ***
 Two variables and lists

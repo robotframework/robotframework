@@ -1169,6 +1169,58 @@ class TestInlineIf(unittest.TestCase):
         ]
         self._verify(header, expected)
 
+    def test_else_if_with_non_ascii_space(self):
+        #             4     10   15    21
+        header = '    IF    1    K1    ELSE\N{NO-BREAK SPACE}IF    2    K2'
+        expected = [
+            (T.SEPARATOR, '    ', 3, 0),
+            (T.INLINE_IF, 'IF', 3, 4),
+            (T.SEPARATOR, '    ', 3, 6),
+            (T.ARGUMENT, '1', 3, 10),
+            (T.EOS, '', 3, 11),
+            (T.SEPARATOR, '    ', 3, 11),
+            (T.KEYWORD, 'K1', 3, 15),
+            (T.SEPARATOR, '    ', 3, 17),
+            (T.EOS, '', 3, 21),
+            (T.ELSE_IF, 'ELSE\N{NO-BREAK SPACE}IF', 3, 21),
+            (T.SEPARATOR, '    ', 3, 28),
+            (T.ARGUMENT, '2', 3, 32),
+            (T.EOS, '', 3, 33),
+            (T.SEPARATOR, '    ', 3, 33),
+            (T.KEYWORD, 'K2', 3, 37),
+            (T.EOL, '\n', 3, 39),
+            (T.EOS, '', 3, 40),
+            (T.END, '', 3, 40),
+            (T.EOS, '', 3, 40)
+        ]
+        self._verify(header, expected)
+
+    def test_assign(self):
+        #             4         14    20      28    34      42
+        header = '    ${x} =    IF    True    K1    ELSE    K2'
+        expected = [
+            (T.SEPARATOR, '    ', 3, 0),
+            (T.ASSIGN, '${x} =', 3, 4),
+            (T.SEPARATOR, '    ', 3, 10),
+            (T.INLINE_IF, 'IF', 3, 14),
+            (T.SEPARATOR, '    ', 3, 16),
+            (T.ARGUMENT, 'True', 3, 20),
+            (T.EOS, '', 3, 24),
+            (T.SEPARATOR, '    ', 3, 24),
+            (T.KEYWORD, 'K1', 3, 28),
+            (T.SEPARATOR, '    ', 3, 30),
+            (T.EOS, '', 3, 34),
+            (T.ELSE, 'ELSE', 3, 34),
+            (T.EOS, '', 3, 38),
+            (T.SEPARATOR, '    ', 3, 38),
+            (T.KEYWORD, 'K2', 3, 42),
+            (T.EOL, '\n', 3, 44),
+            (T.EOS, '', 3, 45),
+            (T.END, '', 3, 45),
+            (T.EOS, '', 3, 45),
+        ]
+        self._verify(header, expected)
+
     def test_multiline_and_comments(self):
         header = '''\
     IF                 # 3

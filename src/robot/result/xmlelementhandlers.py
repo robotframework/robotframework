@@ -104,7 +104,7 @@ class TestHandler(ElementHandler):
     tag = 'test'
     # 'tags' is for RF < 4 compatibility.
     children = frozenset(('doc', 'tags', 'tag', 'timeout', 'status', 'kw', 'if', 'for',
-                          'try', 'msg'))
+                          'try', 'while', 'msg'))
 
     def start(self, elem, result):
         return result.tests.create(name=elem.get('name', ''))
@@ -115,7 +115,8 @@ class KeywordHandler(ElementHandler):
     tag = 'kw'
     # 'arguments', 'assign' and 'tags' are for RF < 4 compatibility.
     children = frozenset(('doc', 'arguments', 'arg', 'assign', 'var', 'tags', 'tag',
-                          'timeout', 'status', 'msg', 'kw', 'if', 'for', 'try', 'return'))
+                          'timeout', 'status', 'msg', 'kw', 'if', 'for', 'try',
+                          'while' ,'return'))
 
     def start(self, elem, result):
         elem_type = elem.get('type')
@@ -175,9 +176,19 @@ class ForHandler(ElementHandler):
 
 
 @ElementHandler.register
-class ForIterationHandler(ElementHandler):
+class WhileHandler(ElementHandler):
+    tag = 'while'
+    children = frozenset(('doc', 'status', 'iter', 'msg', 'kw'))
+
+    def start(self, elem, result):
+        return result.body.create_while(condition=elem.get('condition'))
+
+
+@ElementHandler.register
+class IterationHandler(ElementHandler):
     tag = 'iter'
-    children = frozenset(('var', 'doc', 'status', 'kw', 'if', 'for', 'msg', 'try', 'return'))
+    children = frozenset(('var', 'doc', 'status', 'kw', 'if', 'for', 'msg', 'try',
+                          'while', 'return'))
 
     def start(self, elem, result):
         return result.body.create_iteration()
@@ -195,7 +206,8 @@ class IfHandler(ElementHandler):
 @ElementHandler.register
 class BranchHandler(ElementHandler):
     tag = 'branch'
-    children = frozenset(('status', 'kw', 'if', 'for', 'try', 'msg', 'doc', 'return', 'pattern'))
+    children = frozenset(('status', 'kw', 'if', 'for', 'try', 'while', 'msg',
+                          'doc', 'return', 'pattern'))
 
     def start(self, elem, result):
         return result.body.create_branch(**elem.attrib)
@@ -345,7 +357,7 @@ class VarHandler(ElementHandler):
             result.assign += (value,)
         elif result.type == result.FOR:
             result.variables += (value,)
-        elif result.type == result.FOR_ITERATION:
+        elif result.type == result.ITERATION:
             result.variables[elem.get('name')] = value
         else:
             raise DataError("Invalid element '%s' for result '%r'." % (elem, result))

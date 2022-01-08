@@ -88,6 +88,7 @@ class Token:
     EXCEPT = 'EXCEPT'
     FINALLY = 'FINALLY'
     AS = 'AS'
+    WHILE = 'WHILE'
     RETURN_STATEMENT = 'RETURN STATEMENT'
     CONTINUE = 'CONTINUE'
     BREAK = 'BREAK'

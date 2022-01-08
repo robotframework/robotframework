@@ -41,7 +41,7 @@ Nested control structure after failure
     Should Not Be Run    ${tc.body[1:]}    2
     Should Be Equal      ${tc.body[1].type}    FOR
     Should Not Be Run    ${tc.body[1].body}    1
-    Should Be Equal      ${tc.body[1].body[0].type}    FOR ITERATION
+    Should Be Equal      ${tc.body[1].body[0].type}    ITERATION
     Should Not Be Run    ${tc.body[1].body[0].body}    2
     Should Be Equal      ${tc.body[1].body[0].body[0].type}    IF/ELSE ROOT
     Should Not Be Run    ${tc.body[1].body[0].body[0].body}    2
@@ -49,7 +49,7 @@ Nested control structure after failure
     Should Not Be Run    ${tc.body[1].body[0].body[0].body[0].body}    2
     Should Be Equal      ${tc.body[1].body[0].body[0].body[0].body[0].type}    FOR
     Should Not Be Run    ${tc.body[1].body[0].body[0].body[0].body[0].body}    1
-    Should Be Equal      ${tc.body[1].body[0].body[0].body[0].body[0].body[0].type}    FOR ITERATION
+    Should Be Equal      ${tc.body[1].body[0].body[0].body[0].body[0].body[0].type}    ITERATION
     Should Not Be Run    ${tc.body[1].body[0].body[0].body[0].body[0].body[0].body}    3
     Should Be Equal      ${tc.body[1].body[0].body[0].body[0].body[0].body[0].body[0].type}    KEYWORD
     Should Be Equal      ${tc.body[1].body[0].body[0].body[0].body[0].body[0].body[1].type}    KEYWORD

@@ -20,8 +20,9 @@ import re
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           ExecutionStatus, ExitForLoop, ContinueForLoop, DataError,
                           ReturnFromKeyword)
-from robot.result import (For as ForResult, If as IfResult, IfBranch as IfBranchResult,
-                          Try as TryResult, TryBranch as TryBranchResult)
+from robot.result import (For as ForResult, While as WhileResult, If as IfResult,
+                          IfBranch as IfBranchResult, Try as TryResult,
+                          TryBranch as TryBranchResult)
 from robot.output import librarylogger as logger
 from robot.utils import (cut_assign_value, frange, get_error_message, is_string,
                          is_list_like, is_number, plural_or_not as s,
@@ -69,73 +70,6 @@ class KeywordRunner:
         if context.dry_run:
             return runner.dry_run(step, context)
         return runner.run(step, context, self._run)
-
-
-class IfRunner:
-    _dry_run_stack = []
-
-    def __init__(self, context, run=True, templated=False):
-        self._context = context
-        self._run = run
-        self._templated = templated
-
-    def run(self, data):
-        with self._dry_run_recursion_detection(data) as recursive_dry_run:
-            error = None
-            with StatusReporter(data, IfResult(), self._context, self._run):
-                for branch in data.body:
-                    try:
-                        if self._run_if_branch(branch, recursive_dry_run, data.error):
-                            self._run = False
-                    except ExecutionStatus as err:
-                        error = err
-                        self._run = False
-                if error:
-                    raise error
-
-    @contextmanager
-    def _dry_run_recursion_detection(self, data):
-        dry_run = self._context.dry_run
-        if dry_run:
-            recursive_dry_run = data in self._dry_run_stack
-            self._dry_run_stack.append(data)
-        else:
-            recursive_dry_run = False
-        try:
-            yield recursive_dry_run
-        finally:
-            if dry_run:
-                self._dry_run_stack.pop()
-
-    def _run_if_branch(self, branch, recursive_dry_run=False, error=None):
-        result = IfBranchResult(branch.type, branch.condition)
-        if error:
-            run_branch = False
-        else:
-            try:
-                run_branch = self._should_run_branch(branch.condition, recursive_dry_run)
-            except:
-                error = get_error_message()
-                run_branch = False
-        with StatusReporter(branch, result, self._context, run_branch):
-            runner = BodyRunner(self._context, run_branch, self._templated)
-            if not recursive_dry_run:
-                runner.run(branch.body)
-            if error and self._run:
-                raise DataError(error)
-        return run_branch
-
-    def _should_run_branch(self, condition, recursive_dry_run=False):
-        if self._context.dry_run:
-            return not recursive_dry_run
-        if not self._run:
-            return False
-        if condition is None:
-            return True
-        condition = self._context.variables.replace_scalar(condition)
-        if is_string(condition):
-            return evaluate_expression(condition, self._context.variables.current.store)
-        return bool(condition)
 
 
 def ForRunner(context, flavor='IN', run=True, templated=False):
@@ -384,6 +318,107 @@ class ForInEnumerateRunner(ForInRunner):
             'its variables (excluding the index). Got %d variables but %d '
             'value%s.' % (variables, values, s(values))
         )
+
+
+class WhileRunner:
+
+    def __init__(self, context, run=True, templated=False):
+        self._context = context
+        self._run = run
+        self._templated = templated
+
+    def run(self, data):
+        result = WhileResult(data.condition)
+        run_at_least_one_round = self._should_run(data.condition)
+        run = self._run and run_at_least_one_round
+        with StatusReporter(data, result, self._context, run):
+            if self._run and data.error:
+                raise DataError(data.error)
+            if run_at_least_one_round:
+                while self._should_run(data.condition):
+                    self._run_iteration(data, result, self._run)
+            else:
+                self._run_iteration(data, result, run)
+        return run
+
+    def _run_iteration(self, data, result, run):
+        runner = BodyRunner(self._context, run, self._templated)
+        with StatusReporter(data, result.body.create_iteration(),
+                            self._context, run):
+            runner.run(data.body)
+
+    def _should_run(self, condition):
+        condition = self._context.variables.replace_scalar(condition)
+        if is_string(condition):
+            return evaluate_expression(condition, self._context.variables.current.store)
+        return bool(condition)
+
+
+class IfRunner:
+    _dry_run_stack = []
+
+    def __init__(self, context, run=True, templated=False):
+        self._context = context
+        self._run = run
+        self._templated = templated
+
+    def run(self, data):
+        with self._dry_run_recursion_detection(data) as recursive_dry_run:
+            error = None
+            with StatusReporter(data, IfResult(), self._context, self._run):
+                for branch in data.body:
+                    try:
+                        if self._run_if_branch(branch, recursive_dry_run, data.error):
+                            self._run = False
+                    except ExecutionStatus as err:
+                        error = err
+                        self._run = False
+                if error:
+                    raise error
+
+    @contextmanager
+    def _dry_run_recursion_detection(self, data):
+        dry_run = self._context.dry_run
+        if dry_run:
+            recursive_dry_run = data in self._dry_run_stack
+            self._dry_run_stack.append(data)
+        else:
+            recursive_dry_run = False
+        try:
+            yield recursive_dry_run
+        finally:
+            if dry_run:
+                self._dry_run_stack.pop()
+
+    def _run_if_branch(self, branch, recursive_dry_run=False, error=None):
+        result = IfBranchResult(branch.type, branch.condition)
+        if error:
+            run_branch = False
+        else:
+            try:
+                run_branch = self._should_run_branch(branch.condition, recursive_dry_run)
+            except:
+                error = get_error_message()
+                run_branch = False
+        with StatusReporter(branch, result, self._context, run_branch):
+            runner = BodyRunner(self._context, run_branch, self._templated)
+            if not recursive_dry_run:
+                runner.run(branch.body)
+            if error and self._run:
+                raise DataError(error)
+        return run_branch
+
+    def _should_run_branch(self, condition, recursive_dry_run=False):
+        if self._context.dry_run:
+            return not recursive_dry_run
+        if not self._run:
+            return False
+        if condition is None:
+            return True
+        condition = self._context.variables.replace_scalar(condition)
+        if is_string(condition):
+            return evaluate_expression(condition, self._context.variables.current.store)
+        return bool(condition)
 
 
 class TryRunner:

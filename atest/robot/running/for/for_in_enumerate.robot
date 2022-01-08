@@ -1,6 +1,6 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    running/for_in_enumerate.robot
-Resource          for_resource.robot
+Suite Setup       Run Tests    ${EMPTY}    running/for/for_in_enumerate.robot
+Resource          for.resource
 
 *** Test Cases ***
 Index and item

@@ -33,6 +33,10 @@ Try except inside for loop
     PASS    NOT RUN    PASS               path=body[0].body[0].body[0]
     FAIL    PASS       NOT RUN            path=body[0].body[1].body[0]
 
+Try except inside while loop
+    PASS    NOT RUN    PASS               path=body[1].body[0].body[0]
+    FAIL    PASS       NOT RUN            path=body[1].body[1].body[0]
+
 If inside try failing
     FAIL    PASS       NOT RUN
 
@@ -73,6 +77,27 @@ For loop inside finally block
     FAIL    NOT RUN    PASS               tc_status=FAIL
 
 For loop inside finally block failing
+    PASS    NOT RUN    FAIL
+
+While loop inside try failing
+    FAIL    PASS       NOT RUN
+
+While loop inside except handler
+    FAIL    PASS       NOT RUN
+
+While loop inside except handler failing
+    FAIL    FAIL       NOT RUN
+
+While loop inside else block
+    PASS    NOT RUN    PASS
+
+While loop inside else block failing
+    PASS    NOT RUN    FAIL
+
+While loop inside finally block
+    FAIL    NOT RUN    PASS               tc_status=FAIL
+
+While loop inside finally block failing
     PASS    NOT RUN    FAIL
 
 Try Except in test setup
