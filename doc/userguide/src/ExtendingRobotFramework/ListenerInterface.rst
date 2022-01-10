@@ -213,24 +213,28 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `message`: Status message. Normally an error                 |
    |                  |                  |   message or an empty string.                                  |
    +------------------+------------------+----------------------------------------------------------------+
-   | start_keyword    | name, attributes | Called when a keyword starts.                                  |
+   | start_keyword    | name, attributes | Called when a keyword or a control structure such as `IF/ELSE` |
+   |                  |                  | or `TRY/EXCEPT` starts.                                        |
    |                  |                  |                                                                |
-   |                  |                  | `name` is the full keyword name containing                     |
-   |                  |                  | possible library or resource name as a prefix.                 |
-   |                  |                  | For example, `MyLibrary.Example Keyword`.                      |
+   |                  |                  | With keywords `name` is the full keyword name containing       |
+   |                  |                  | possible library or resource name as a prefix like             |
+   |                  |                  | `MyLibrary.Example Keyword`. With control structures `name`    |
+   |                  |                  | contains string representation of parameters.                  |
    |                  |                  |                                                                |
    |                  |                  | Contents of the attribute dictionary:                          |
    |                  |                  |                                                                |
-   |                  |                  | * `type`: String specifying keyword type. Possible values are: |
-   |                  |                  |   `KEYWORD`, `SETUP`, `TEARDOWN`, `FOR`, `FOR ITERATION`, `IF`,|
-   |                  |                  |   `ELSE IF` and `ELSE`. **NOTE:** Prior to RF 4.0 values were: |
-   |                  |                  |   `Keyword`, `Setup`, `Teardown`, `For` and `For Item`.        |
+   |                  |                  | * `type`: String specifying type of the started item. Possible |
+   |                  |                  |   values are: `KEYWORD`, `SETUP`, `TEARDOWN`, `FOR`, `WHILE`,  |
+   |                  |                  |   `ITERATION`, `IF`, `ELSE IF`, `ELSE`, `TRY`, `EXCEPT`,       |
+   |                  |                  |   `FINALLY`, `RETURN`, `BREAK` and `CONTINUE`. All type values |
+   |                  |                  |   were changed in RF 4.0 and in RF 5.0 `FOR ITERATION` was     |
+   |                  |                  |   changed to `ITERATION`.                                      |
    |                  |                  | * `kwname`: Name of the keyword without library or             |
    |                  |                  |   resource prefix. String representation of parameters with    |
-   |                  |                  |   FOR and IF/ELSE structures.                                  |
+   |                  |                  |   control structures.                                          |
    |                  |                  | * `libname`: Name of the library or resource file the keyword  |
-   |                  |                  |   belongs to. An empty string when the keyword is in a test    |
-   |                  |                  |   case file and with FOR and IF/ELSE structures.               |
+   |                  |                  |   belongs to. An empty string with user keywords in a test     |
+   |                  |                  |   case file and with control structures.                       |
    |                  |                  | * `doc`: Keyword documentation.                                |
    |                  |                  | * `args`: Keyword's arguments as a list of strings.            |
    |                  |                  | * `assign`: A list of variable names that keyword's            |
