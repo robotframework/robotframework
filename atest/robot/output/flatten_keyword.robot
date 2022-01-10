@@ -96,7 +96,7 @@ Flatten for loop iterations
     Length Should Be    ${tc.kws[0].kws}    10
     Should Be Empty    ${tc.kws[0].msgs}
     FOR    ${index}    IN RANGE    10
-        Should Be Equal      ${tc.kws[0].kws[${index}].type}    FOR ITERATION
+        Should Be Equal      ${tc.kws[0].kws[${index}].type}    ITERATION
         Should Be Equal      ${tc.kws[0].kws[${index}].doc}    ${FLAT TEXT}
         Should Be Empty      ${tc.kws[0].kws[${index}].kws}
         Length Should Be     ${tc.kws[0].kws[${index}].msgs}    6
