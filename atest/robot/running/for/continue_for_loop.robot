@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    running/continue_for_loop.robot
+Suite Setup       Run Tests    ${EMPTY}    running/for/continue_for_loop.robot
 Resource          atest_resource.robot
 
 *** Test Cases ***
