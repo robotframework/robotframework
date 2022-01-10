@@ -1872,14 +1872,14 @@ class TestContinue(unittest.TestCase):
 
     def test_in_keyword(self):
         data = '    CONTINUE'
-        expected = [(T.CONTINUE, 'CONTINUE', 3, 4),
+        expected = [(T.KEYWORD, 'CONTINUE', 3, 4),
                     (T.EOS, '', 3, 12)]
         self._verify(data, expected)
 
     def test_in_test(self):
         # This is not valid usage but that's not recognized during lexing.
         data = '    CONTINUE'
-        expected = [(T.CONTINUE, 'CONTINUE', 3, 4),
+        expected = [(T.KEYWORD, 'CONTINUE', 3, 4),
                     (T.EOS, '', 3, 12)]
         self._verify(data, expected, test=False)
 
@@ -1902,7 +1902,7 @@ class TestContinue(unittest.TestCase):
                     (T.CONTINUE, 'CONTINUE', 5, 12),
                     (T.EOS, '', 5, 20),
                     (T.END, 'END', 6, 8),
-                    (T.EOS, '', 6, 11)
+                    (T.EOS, '', 6, 11),
                     (T.END, 'END', 7, 4),
                     (T.EOS, '', 7, 7)]
         self._verify(data, expected)
@@ -1921,12 +1921,12 @@ class TestContinue(unittest.TestCase):
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
-                    (T.TRY, 'IF', 4, 8),
+                    (T.TRY, 'TRY', 4, 8),
                     (T.EOS, '', 4, 11),
-                    (T.CONTINUE, 'CONTINUE', 5, 12),
+                    (T.KEYWORD, 'CONTINUE', 5, 12),
                     (T.EOS, '', 5, 20),
                     (T.END, 'END', 6, 8),
-                    (T.EOS, '', 6, 11)
+                    (T.EOS, '', 6, 11),
                     (T.END, 'END', 7, 4),
                     (T.EOS, '', 7, 7)]
         self._verify(data, expected)
@@ -1943,8 +1943,8 @@ class TestContinue(unittest.TestCase):
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
-                    (T.CONTINUE, 'CONTINUE', 4, 12),
-                    (T.EOS, '', 4, 20),
+                    (T.CONTINUE, 'CONTINUE', 4, 8),
+                    (T.EOS, '', 4, 16),
                     (T.END, 'END', 5, 4),
                     (T.EOS, '', 5, 7)]
             self._verify(data, expected)
@@ -1970,14 +1970,14 @@ class TestBreak(unittest.TestCase):
 
     def test_in_keyword(self):
         data = '    BREAK'
-        expected = [(T.BREAK, 'BREAK', 3, 4),
+        expected = [(T.KEYWORD, 'BREAK', 3, 4),
                     (T.EOS, '', 3, 9)]
         self._verify(data, expected)
 
     def test_in_test(self):
         # This is not valid usage but that's not recognized during lexing.
         data = '    BREAK'
-        expected = [(T.BREAK, 'BREAK', 3, 4),
+        expected = [(T.KEYWORD, 'BREAK', 3, 4),
                     (T.EOS, '', 3, 9)]
         self._verify(data, expected, test=False)
 
@@ -2000,7 +2000,7 @@ class TestBreak(unittest.TestCase):
                     (T.BREAK, 'BREAK', 5, 12),
                     (T.EOS, '', 5, 17),
                     (T.END, 'END', 6, 8),
-                    (T.EOS, '', 6, 11)
+                    (T.EOS, '', 6, 11),
                     (T.END, 'END', 7, 4),
                     (T.EOS, '', 7, 7)]
         self._verify(data, expected)
@@ -2038,10 +2038,10 @@ class TestBreak(unittest.TestCase):
                     (T.EOS, '', 3, 33),
                     (T.TRY, 'TRY', 4, 8),
                     (T.EOS, '', 4, 11),
-                    (T.BREAK, 'BREAK', 5, 12),
+                    (T.KEYWORD, 'BREAK', 5, 12),
                     (T.EOS, '', 5, 17),
                     (T.END, 'END', 6, 8),
-                    (T.EOS, '', 6, 11)
+                    (T.EOS, '', 6, 11),
                     (T.END, 'END', 7, 4),
                     (T.EOS, '', 7, 7)]
         self._verify(data, expected)
