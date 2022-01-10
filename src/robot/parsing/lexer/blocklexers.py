@@ -246,7 +246,8 @@ class IfLexer(NestedBlockLexer):
 
     def lexer_classes(self):
         return (InlineIfLexer, IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
-                ForLexer, TryLexer, WhileLexer, EndLexer, ReturnLexer, ContinueLexer, BreakLexer, KeywordCallLexer)
+                ForLexer, TryLexer, WhileLexer, EndLexer, ReturnLexer, ContinueLexer, BreakLexer, 
+                KeywordCallLexer)
 
 
 class InlineIfLexer(BlockLexer):
