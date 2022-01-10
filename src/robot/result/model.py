@@ -160,6 +160,7 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
 
 @Body.register
 class For(model.For, StatusMixin, DeprecatedAttributesMixin):
+    iterations_class = Iterations
     iteration_class = ForIteration
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
@@ -173,7 +174,7 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
 
     @setter
     def body(self, iterations):
-        return Iterations(self.iteration_class, self, iterations)
+        return self.iterations_class(self.iteration_class, self, iterations)
 
     @property
     @deprecated
@@ -212,6 +213,7 @@ class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
 
 @Body.register
 class While(model.While, StatusMixin, DeprecatedAttributesMixin):
+    iterations_class = Iterations
     iteration_class = WhileIteration
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
@@ -224,7 +226,7 @@ class While(model.While, StatusMixin, DeprecatedAttributesMixin):
 
     @setter
     def body(self, iterations):
-        return Iterations(self.iteration_class, self, iterations)
+        return self.iterations_class(self.iteration_class, self, iterations)
 
     @property
     @deprecated
