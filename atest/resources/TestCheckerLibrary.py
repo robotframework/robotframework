@@ -62,7 +62,9 @@ class NoSlotsIterations(Iterations):
 
 
 NoSlotsKeyword.body_class = NoSlotsBody
+NoSlotsFor.iterations_class = NoSlotsIterations
 NoSlotsFor.iteration_class = NoSlotsForIteration
+NoSlotsWhile.iterations_class = NoSlotsIterations
 NoSlotsWhile.iteration_class = NoSlotsWhileIteration
 NoSlotsIf.branch_class = NoSlotsIfBranch
 NoSlotsTry.branch_class = NoSlotsTryBranch
@@ -325,6 +327,11 @@ class ProcessResults(ResultVisitor):
         self._add_kws_and_msgs(kw)
 
     def _add_kws_and_msgs(self, item):
+        # TODO: Consider not setting these special attributes:
+        # - Using normal `body` instead of special `kws` in tests would be better.
+        # - `msgs` isn't that much shorter than normal `messages`.
+        # - Counts likely not needed often enough. There are other ways to get them.
+        # - No need to construct "NoSlots" variants for all model objects.
         item.kws = item.body.filter(messages=False)
         item.msgs = item.body.filter(messages=True)
         item.keyword_count = item.kw_count = len(item.kws)
