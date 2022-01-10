@@ -265,10 +265,10 @@ class ReturnLexer(TypeAndArguments):
 
 
 class ContinueLexer(TypeAndArguments):
-    token_type = Token.CONTIUNE
+    token_type = Token.CONTINUE
 
     def handles(self, statement):
-        return statement[0].value == 'CONTIUNE'
+        return statement[0].value == 'CONTINUE'
 
 
 class BreakLexer(TypeAndArguments):

@@ -35,6 +35,8 @@ class BodyItem(ModelObject):
     FINALLY = 'FINALLY'
     WHILE = 'WHILE'
     RETURN = 'RETURN'
+    CONTINUE = 'CONTINUE'
+    BREAK = 'BREAK'
     MESSAGE = 'MESSAGE'
     type = None
     __slots__ = ['parent']
@@ -71,7 +73,7 @@ class BaseBody(ItemList):
     while_class = None
     return_class = None
     continue_class = None
-    break_clss = None
+    break_class = None
     message_class = None
 
     def __init__(self, parent=None, items=None):
