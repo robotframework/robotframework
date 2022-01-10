@@ -38,43 +38,43 @@ Not run keyword
 
 FOR
     START    FOR              \${x} IN [ first | second ]    21    NOT SET
-    START    FOR ITERATION    \${x} = first                  21    NOT SET
+    START    ITERATION        \${x} = first                  21    NOT SET
     START    KEYWORD          No Operation                   22    NOT SET
     END      KEYWORD          No Operation                   22    PASS
-    END      FOR ITERATION    \${x} = first                  21    PASS
-    START    FOR ITERATION    \${x} = second                 21    NOT SET
+    END      ITERATION        \${x} = first                  21    PASS
+    START    ITERATION        \${x} = second                 21    NOT SET
     START    KEYWORD          No Operation                   22    NOT SET
     END      KEYWORD          No Operation                   22    PASS
-    END      FOR ITERATION    \${x} = second                 21    PASS
+    END      ITERATION        \${x} = second                 21    PASS
     END      FOR              \${x} IN [ first | second ]    21    PASS
 
 FOR in keyword
     START    KEYWORD          FOR In Keyword                  26    NOT SET
     START    FOR              \${x} IN [ once ]               89    NOT SET
-    START    FOR ITERATION    \${x} = once                    89    NOT SET
+    START    ITERATION        \${x} = once                    89    NOT SET
     START    KEYWORD          No Operation                    90    NOT SET
     END      KEYWORD          No Operation                    90    PASS
-    END      FOR ITERATION    \${x} = once                    89    PASS
+    END      ITERATION        \${x} = once                    89    PASS
     END      FOR              \${x} IN [ once ]               89    PASS
     END      KEYWORD          FOR In Keyword                  26    PASS
 
 FOR in IF
     START    IF               True                           29    NOT SET
     START    FOR              \${x} | \${y} IN [ x | y ]     30    NOT SET
-    START    FOR ITERATION    \${x} = x, \${y} = y           30    NOT SET
+    START    ITERATION        \${x} = x, \${y} = y           30    NOT SET
     START    KEYWORD          No Operation                   31    NOT SET
     END      KEYWORD          No Operation                   31    PASS
-    END      FOR ITERATION    \${x} = x, \${y} = y           30    PASS
+    END      ITERATION        \${x} = x, \${y} = y           30    PASS
     END      FOR              \${x} | \${y} IN [ x | y ]     30    PASS
     END      IF               True                           29    PASS
 
 FOR in resource
     START    KEYWORD          FOR In Resource                36    NOT SET
     START    FOR              \${x} IN [ once ]               6    NOT SET    source=${RESOURCE FILE}
-    START    FOR ITERATION    \${x} = once                    6    NOT SET    source=${RESOURCE FILE}
+    START    ITERATION        \${x} = once                    6    NOT SET    source=${RESOURCE FILE}
     START    KEYWORD          Log                             7    NOT SET    source=${RESOURCE FILE}
     END      KEYWORD          Log                             7    PASS       source=${RESOURCE FILE}
-    END      FOR ITERATION    \${x} = once                    6    PASS       source=${RESOURCE FILE}
+    END      ITERATION        \${x} = once                    6    PASS       source=${RESOURCE FILE}
     END      FOR              \${x} IN [ once ]               6    PASS       source=${RESOURCE FILE}
     END      KEYWORD          FOR In Resource                36    PASS
 
@@ -104,7 +104,7 @@ IF in keyword
 
 IF in FOR
     START   FOR               \${x} IN [ 1 | 2 ]             52    NOT SET
-    START   FOR ITERATION     \${x} = 1                      52    NOT SET
+    START   ITERATION         \${x} = 1                      52    NOT SET
     START   IF                \${x} == 1                     53    NOT SET
     START   KEYWORD           Log                            54    NOT SET
     END     KEYWORD           Log                            54    PASS
@@ -113,8 +113,8 @@ IF in FOR
     START   KEYWORD           Fail                           56    NOT RUN
     END     KEYWORD           Fail                           56    NOT RUN
     END     ELSE              ${EMPTY}                       55    NOT RUN
-    END     FOR ITERATION     \${x} = 1                      52    PASS
-    START   FOR ITERATION     \${x} = 2                      52    NOT SET
+    END     ITERATION         \${x} = 1                      52    PASS
+    START   ITERATION         \${x} = 2                      52    NOT SET
     START   IF                \${x} == 1                     53    NOT RUN
     START   KEYWORD           Log                            54    NOT RUN
     END     KEYWORD           Log                            54    NOT RUN
@@ -123,7 +123,7 @@ IF in FOR
     START   KEYWORD           Fail                           56    NOT SET
     END     KEYWORD           Fail                           56    FAIL
     END     ELSE              ${EMPTY}                       55    FAIL
-    END     FOR ITERATION     \${x} = 2                      52    FAIL
+    END     ITERATION         \${x} = 2                      52    FAIL
     END     FOR               \${x} IN [ 1 | 2 ]             52    FAIL
 
 IF in resource

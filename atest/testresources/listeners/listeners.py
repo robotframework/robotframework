@@ -69,7 +69,7 @@ class KeywordType:
         if ' IN ' in kwname:
             return 'FOR'
         if ' = ' in kwname:
-            return 'FOR ITERATION'
+            return 'ITERATION'
         if not args:
             if kwname == "'IF' == 'WRONG'":
                 return 'IF'
