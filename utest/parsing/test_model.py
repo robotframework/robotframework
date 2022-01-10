@@ -851,7 +851,7 @@ Name
                     ),
                     body=[
                         KeywordCall([Token(Token.KEYWORD, 'Continue', 3, 4)]),
-                        Continue([Token(Token.CONTINUE, 'CONTINUE', 4, 4)])
+                        KeywordCall([Token(Token.KEYWORD, 'CONTINUE', 4, 4)])
                     ],
                 )
             ]
@@ -878,7 +878,7 @@ Name
                     ),
                     body=[
                         KeywordCall([Token(Token.KEYWORD, 'Break', 3, 4)]),
-                        Break([Token(Token.BREAK, 'BREAK', 4, 4)])
+                        KeywordCall([Token(Token.KEYWORD, 'BREAK', 4, 4)])
                     ],
                 )
             ]
