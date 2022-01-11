@@ -57,6 +57,14 @@ robot.running.arguments.argumentvalidator module
    :undoc-members:
    :show-inheritance:
 
+robot.running.arguments.customconverters module
+-----------------------------------------------
+
+.. automodule:: robot.running.arguments.customconverters
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.running.arguments.embedded module
 ---------------------------------------
 
@@ -65,34 +73,18 @@ robot.running.arguments.embedded module
    :undoc-members:
    :show-inheritance:
 
-robot.running.arguments.javaargumentcoercer module
---------------------------------------------------
-
-.. automodule:: robot.running.arguments.javaargumentcoercer
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-robot.running.arguments.py2argumentparser module
-------------------------------------------------
-
-.. automodule:: robot.running.arguments.py2argumentparser
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-robot.running.arguments.py3argumentparser module
-------------------------------------------------
-
-.. automodule:: robot.running.arguments.py3argumentparser
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 robot.running.arguments.typeconverters module
 ---------------------------------------------
 
 .. automodule:: robot.running.arguments.typeconverters
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+robot.running.arguments.typeinfo module
+---------------------------------------
+
+.. automodule:: robot.running.arguments.typeinfo
    :members:
    :undoc-members:
    :show-inheritance:
