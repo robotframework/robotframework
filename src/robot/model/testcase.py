@@ -46,7 +46,7 @@ class TestCase(ModelObject):
 
     @setter
     def body(self, body):
-        """Test case body as a :class:`~.Body` object."""
+        """Test body as a :class:`~robot.model.body.Body` object."""
         return self.body_class(self, body)
 
     @setter
