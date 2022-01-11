@@ -41,14 +41,6 @@ robot.utils.charwidth module
    :undoc-members:
    :show-inheritance:
 
-robot.utils.compat module
--------------------------
-
-.. automodule:: robot.utils.compat
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 robot.utils.compress module
 ---------------------------
 
@@ -253,22 +245,6 @@ robot.utils.robottypes module
 -----------------------------
 
 .. automodule:: robot.utils.robottypes
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-robot.utils.robottypes2 module
-------------------------------
-
-.. automodule:: robot.utils.robottypes2
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-robot.utils.robottypes3 module
-------------------------------
-
-.. automodule:: robot.utils.robottypes3
    :members:
    :undoc-members:
    :show-inheritance:

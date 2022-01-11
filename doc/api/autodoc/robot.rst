@@ -23,7 +23,6 @@ Subpackages
    robot.reporting
    robot.result
    robot.running
-   robot.tidypkg
    robot.utils
    robot.variables
 
@@ -34,14 +33,6 @@ robot.errors module
 -------------------
 
 .. automodule:: robot.errors
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-robot.jarrunner module
-----------------------
-
-.. automodule:: robot.jarrunner
    :members:
    :undoc-members:
    :show-inheritance:
@@ -82,14 +73,6 @@ robot.testdoc module
 --------------------
 
 .. automodule:: robot.testdoc
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-robot.tidy module
------------------
-
-.. automodule:: robot.tidy
    :members:
    :undoc-members:
    :show-inheritance:

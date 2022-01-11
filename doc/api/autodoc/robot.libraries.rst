@@ -113,22 +113,6 @@ robot.libraries.XML module
    :undoc-members:
    :show-inheritance:
 
-robot.libraries.dialogs\_ipy module
------------------------------------
-
-.. automodule:: robot.libraries.dialogs_ipy
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-robot.libraries.dialogs\_jy module
-----------------------------------
-
-.. automodule:: robot.libraries.dialogs_jy
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 robot.libraries.dialogs\_py module
 ----------------------------------
 
