@@ -336,7 +336,12 @@ class WhileRunner:
                 raise DataError(data.error)
             if run_at_least_one_round:
                 while self._should_run(data.condition):
-                    self._run_iteration(data, result, self._run)
+                    try:
+                        self._run_iteration(data, result, self._run)
+                    except ExitForLoop:
+                        break
+                    except ContinueForLoop:
+                        continue
             else:
                 self._run_iteration(data, result, run)
         return run
