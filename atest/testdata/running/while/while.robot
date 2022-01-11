@@ -42,6 +42,29 @@ Loop fails in keyword
     [Documentation]    FAIL 2 != 1
     Failing while keyword
 
+With RETURN
+    While with RETURN
+
+With Continue For Loop
+    [Documentation]    FAIL Oh no, got 4
+    WHILE    $variable < 6
+        ${variable}=    Evaluate    $variable + 1
+        IF    $variable == 4
+            Fail    Oh no, got 4
+        ELSE
+            Continue For Loop
+        END
+        Fail    should not be executed
+    END
+
+With Exit For Loop
+    WHILE    $variable < 6
+        ${variable}=    Evaluate    $variable + 1
+        IF    $variable == 3
+            Exit For Loop
+            Fail    should not be executed
+        END
+    END
 
 *** Keywords ***
 While keyword
@@ -53,4 +76,9 @@ Failing while keyword
     WHILE    $variable < 4
         Should be equal    ${variable}    ${1}
         ${variable}=    Evaluate    $variable + 1
+    END
+
+While with RETURN
+    WHILE    True
+        RETURN    123
     END
