@@ -11,7 +11,7 @@
 #  distributed under the License is distributed on an "AS IS" BASIS,
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
-#  limitations under the License.
+#  limitations under the License.   
 
 from robot.utils import normalize_whitespace
 
@@ -28,7 +28,7 @@ from .statementlexers import (Lexer,
                               ForHeaderLexer, InlineIfHeaderLexer,
                               IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
                               TryHeaderLexer, ExceptHeaderLexer, FinallyHeaderLexer,
-                              WhileHeaderLexer, EndLexer, ReturnLexer)
+                              ContinueLexer, BreakLexer, WhileHeaderLexer, EndLexer, ReturnLexer)
 
 
 class BlockLexer(Lexer):
@@ -226,7 +226,7 @@ class ForLexer(NestedBlockLexer):
 
     def lexer_classes(self):
         return (ForHeaderLexer, InlineIfLexer, IfLexer, TryLexer, WhileLexer, EndLexer,
-                ReturnLexer, KeywordCallLexer)
+                ReturnLexer, ContinueLexer, BreakLexer, KeywordCallLexer)
 
 
 class WhileLexer(NestedBlockLexer):
@@ -236,7 +236,7 @@ class WhileLexer(NestedBlockLexer):
 
     def lexer_classes(self):
         return (WhileHeaderLexer, ForHeaderLexer, InlineIfLexer, IfLexer, TryLexer, EndLexer,
-                ReturnLexer, KeywordCallLexer)
+                ReturnLexer, ContinueLexer, BreakLexer, KeywordCallLexer)
 
 
 class IfLexer(NestedBlockLexer):
@@ -246,7 +246,7 @@ class IfLexer(NestedBlockLexer):
 
     def lexer_classes(self):
         return (InlineIfLexer, IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
-                ForLexer, TryLexer, WhileLexer, EndLexer, ReturnLexer,
+                ForLexer, TryLexer, WhileLexer, EndLexer, ReturnLexer, ContinueLexer, BreakLexer, 
                 KeywordCallLexer)
 
 
@@ -262,7 +262,7 @@ class InlineIfLexer(BlockLexer):
 
     def lexer_classes(self):
         return (InlineIfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
-                ReturnLexer, KeywordCallLexer)
+                ReturnLexer, ContinueLexer, BreakLexer, KeywordCallLexer)
 
     def input(self, statement):
         for part in self._split(statement):

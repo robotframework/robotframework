@@ -188,7 +188,7 @@ class WhileHandler(ElementHandler):
 class IterationHandler(ElementHandler):
     tag = 'iter'
     children = frozenset(('var', 'doc', 'status', 'kw', 'if', 'for', 'msg', 'try',
-                          'while', 'return'))
+                          'while', 'return', 'break', 'continue'))
 
     def start(self, elem, result):
         return result.body.create_iteration()
@@ -207,7 +207,7 @@ class IfHandler(ElementHandler):
 class BranchHandler(ElementHandler):
     tag = 'branch'
     children = frozenset(('status', 'kw', 'if', 'for', 'try', 'while', 'msg',
-                          'doc', 'return', 'pattern'))
+                          'doc', 'return', 'pattern', 'break', 'continue'))
 
     def start(self, elem, result):
         return result.body.create_branch(**elem.attrib)
@@ -241,12 +241,30 @@ class ReturnHandler(ElementHandler):
 
 
 @ElementHandler.register
+class ContinueHandler(ElementHandler):
+    tag = 'continue'
+    children = frozenset(('status', 'msg'))
+
+    def start(self, elem, result):
+        return result.body.create_continue()
+
+
+@ElementHandler.register
+class BreakHandler(ElementHandler):
+    tag = 'break'
+    children = frozenset(('status', 'msg'))
+
+    def start(self, elem, result):
+        return result.body.create_break()
+
+
+@ElementHandler.register
 class MessageHandler(ElementHandler):
     tag = 'msg'
 
     def end(self, elem, result):
-        # Ignore messages under RETURN. They can only be logged by listeners.
-        if getattr(result, 'type', '') == 'RETURN':
+        # Ignore messages under RETURN, CONTINUE AND BREAK. They can only be logged by listeners.
+        if getattr(result, 'type', '') in ('RETURN', 'CONTINUE', 'BREAK'):
             return
         html_true = ('true', 'yes')    # 'yes' is compatibility for RF < 4.
         result.body.create_message(elem.text or '',

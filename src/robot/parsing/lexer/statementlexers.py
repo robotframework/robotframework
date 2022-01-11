@@ -262,3 +262,18 @@ class ReturnLexer(TypeAndArguments):
 
     def handles(self, statement):
         return statement[0].value == 'RETURN'
+
+
+class ContinueLexer(TypeAndArguments):
+    token_type = Token.CONTINUE
+
+    def handles(self, statement):
+        return statement[0].value == 'CONTINUE'
+
+
+class BreakLexer(TypeAndArguments):
+    token_type = Token.BREAK
+
+    def handles(self, statement):
+        return statement[0].value == 'BREAK'
+

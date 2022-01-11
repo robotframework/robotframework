@@ -10,7 +10,7 @@ from robot.parsing.model.blocks import (
     Keyword, KeywordSection, SettingSection, TestCase, TestCaseSection, VariableSection
 )
 from robot.parsing.model.statements import (
-    Arguments, Comment, Documentation, ForHeader, End, ElseHeader, ElseIfHeader,
+    Arguments, Break, Comment, Continue, Documentation, ForHeader, End, ElseHeader, ElseIfHeader,
     EmptyLine, Error, IfHeader, InlineIfHeader, TryHeader, ExceptHeader,
     FinallyHeader, KeywordCall, KeywordName, ReturnStatement, SectionHeader,
     Statement, TestCaseName, Variable

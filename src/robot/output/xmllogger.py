@@ -164,6 +164,20 @@ class XmlLogger(ResultVisitor):
         self._write_status(return_)
         self._writer.end('return')
 
+    def start_continue(self, continue_):
+        self._writer.start('continue')
+
+    def end_continue(self, continue_):
+        self._write_status(continue_)
+        self._writer.end('continue')
+
+    def start_break(self, break_):
+        self._writer.start('break')
+
+    def end_break(self, break_):
+        self._write_status(break_)
+        self._writer.end('break')
+
     def start_test(self, test):
         self._writer.start('test', {'id': test.id, 'name': test.name})
 

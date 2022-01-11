@@ -37,10 +37,10 @@ import os
 
 from robot import model
 from robot.conf import RobotSettings
-from robot.errors import ReturnFromKeyword
+from robot.errors import ReturnFromKeyword, ContinueForLoop, ExitForLoop
 from robot.model import Keywords, BodyItem
 from robot.output import LOGGER, Output, pyloggingconf
-from robot.result import Return as ReturnResult
+from robot.result import Return as ReturnResult, Break as BreakResult, Continue as ContinueResult
 from robot.utils import seq2str, setter
 
 from .bodyrunner import ForRunner, WhileRunner, IfRunner, TryRunner, KeywordRunner
@@ -191,6 +191,34 @@ class Return(model.Return):
         with StatusReporter(self, ReturnResult(self.values), context, run):
             if run:
                 raise ReturnFromKeyword(self.values)
+
+
+@Body.register
+class Continue(model.Continue):
+    __slots__ = ['lineno']
+
+    def __init__(self, parent=None, lineno=None):
+        super().__init__(parent)
+        self.lineno = lineno
+
+    def run(self, context, run=True, templated=False):
+        with StatusReporter(self, ContinueResult(), context, run):
+            if run:
+                raise ContinueForLoop()
+
+
+@Body.register
+class Break(model.Break):
+    __slots__ = ['lineno']
+
+    def __init__(self, parent=None, lineno=None):
+        super().__init__(parent)
+        self.lineno = lineno
+
+    def run(self, context, run=True, templated=False):
+        with StatusReporter(self, BreakResult(), context, run):
+            if run:
+                raise ExitForLoop()
 
 
 class TestCase(model.TestCase):
