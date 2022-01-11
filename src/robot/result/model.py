@@ -330,6 +330,16 @@ class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
         self.starttime = starttime
         self.endtime = endtime
 
+    @property
+    @deprecated
+    def args(self):
+        return ()
+
+    @property
+    @deprecated
+    def doc(self):
+        return ''
+
 
 @Body.register
 class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
@@ -340,6 +350,16 @@ class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
         self.status = status
         self.starttime = starttime
         self.endtime = endtime
+
+    @property
+    @deprecated
+    def args(self):
+        return ()
+
+    @property
+    @deprecated
+    def doc(self):
+        return ''
 
 
 @Iterations.register

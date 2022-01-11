@@ -40,7 +40,7 @@ from robot.conf import RobotSettings
 from robot.errors import ReturnFromKeyword, ContinueForLoop, ExitForLoop
 from robot.model import Keywords, BodyItem
 from robot.output import LOGGER, Output, pyloggingconf
-from robot.result import Return as ReturnResult
+from robot.result import Return as ReturnResult, Break as BreakResult, Continue as ContinueResult
 from robot.utils import seq2str, setter
 
 from .bodyrunner import ForRunner, WhileRunner, IfRunner, TryRunner, KeywordRunner
@@ -202,7 +202,9 @@ class Continue(model.Continue):
         self.lineno = lineno
 
     def run(self, context, run=True, templated=False):
-        raise ContinueForLoop()
+        with StatusReporter(self, ContinueResult(), context, run):
+            if run:
+                raise ContinueForLoop()
 
 
 @Body.register
@@ -214,7 +216,9 @@ class Break(model.Break):
         self.lineno = lineno
 
     def run(self, context, run=True, templated=False):
-        raise ExitForLoop()
+        with StatusReporter(self, BreakResult(), context, run):
+            if run:
+                raise ExitForLoop()
 
 
 class TestCase(model.TestCase):
