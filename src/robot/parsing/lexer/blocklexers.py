@@ -307,5 +307,5 @@ class TryLexer(NestedBlockLexer):
 
     def lexer_classes(self):
         return (TryHeaderLexer, ExceptHeaderLexer, ElseHeaderLexer, FinallyHeaderLexer,
-                ForHeaderLexer, InlineIfLexer, IfLexer, WhileLexer, ReturnLexer,
-                EndLexer, KeywordCallLexer)
+                ForHeaderLexer, InlineIfLexer, IfLexer, WhileLexer, EndLexer, ReturnLexer,
+                BreakLexer, ContinueLexer, KeywordCallLexer)
