@@ -759,6 +759,22 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         ]
         assert_created_statement(tokens, ReturnStatement, values=('x',))
 
+    def test_Break(self):
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.BREAK),
+            Token(Token.EOL)
+        ]
+        assert_created_statement(tokens, Break)
+
+    def test_Continue(self):
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.CONTINUE),
+            Token(Token.EOL)
+        ]
+        assert_created_statement(tokens, Continue)
+
     def test_Comment(self):
         tokens = [
             Token(Token.SEPARATOR, '    '),
