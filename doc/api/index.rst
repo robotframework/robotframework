@@ -36,14 +36,6 @@ and Testdoc tools.
 
 __ http://robotframework.org/robotframework/#built-in-tools
 
-Java entry points
-=================
-
-The Robot Framework Jar distribution contains also a Java API, in the form
-of the `org.robotframework.RobotFramework`__ class.
-
-__ _static/javadoc/index.html
-
 Public API
 ==========
 
@@ -73,7 +65,6 @@ return objects implemented in them.
     autodoc/robot.running
     autodoc/robot.utils
     autodoc/robot.variables
-    autodoc/robot.writer
 
 Indices
 =======
