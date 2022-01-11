@@ -251,7 +251,7 @@ class Continue(BodyItem):
 
     def __init__(self, parent=None):
         self.parent = parent
-        self.body = None
+        #self.body = None
 
     def visit(self, visitor):
         visitor.visit_continue(self)
@@ -264,7 +264,7 @@ class Break(BodyItem):
 
     def __init__(self, parent=None):
         self.parent = parent
-        self.body = None
+        #self.body = None
 
     def visit(self, visitor):
         visitor.visit_break(self)
