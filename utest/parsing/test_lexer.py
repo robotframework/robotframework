@@ -1949,6 +1949,23 @@ class TestContinue(unittest.TestCase):
                     (T.EOS, '', 5, 7)]
             self._verify(data, expected)
 
+    
+    def test_in_while(self):
+            data = '''\
+    WHILE    ${EXPR}
+        CONTINUE
+    END
+'''
+            expected = [(T.WHILE, 'WHILE', 3, 4),
+                    (T.ARGUMENT, '${EXPR}', 3, 13),
+                    (T.EOS, '', 3, 20),
+                    (T.CONTINUE, 'CONTINUE', 4, 8),
+                    (T.EOS, '', 4, 16),
+                    (T.END, 'END', 5, 4),
+                    (T.EOS, '', 5, 7)]
+            self._verify(data, expected)
+
+
     def _verify(self, data, expected, test=False):
         if not test:
             header = '*** Keywords ***'
@@ -2022,6 +2039,22 @@ class TestBreak(unittest.TestCase):
                     (T.EOS, '', 5, 7)]
             self._verify(data, expected)
     
+
+    def test_in_while(self):
+            data = '''\
+    WHILE    ${EXPR}
+        BREAK
+    END
+'''
+            expected = [(T.WHILE, 'WHILE', 3, 4),
+                    (T.ARGUMENT, '${EXPR}', 3, 13),
+                    (T.EOS, '', 3, 20),
+                    (T.BREAK, 'BREAK', 4, 8),
+                    (T.EOS, '', 4, 13),
+                    (T.END, 'END', 5, 4),
+                    (T.EOS, '', 5, 7)]
+            self._verify(data, expected)    
+
 
     def test_in_try(self):
         data = '''\
