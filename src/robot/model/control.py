@@ -245,26 +245,24 @@ class Return(BodyItem):
 
 
 @Body.register
-class Continue(BodyItem):  
+class Continue(BodyItem):
     type = BodyItem.CONTINUE
     __slots__ = []
 
     def __init__(self, parent=None):
         self.parent = parent
-        #self.body = None
 
     def visit(self, visitor):
         visitor.visit_continue(self)
 
 
 @Body.register
-class Break(BodyItem):  
+class Break(BodyItem):
     type = BodyItem.BREAK
     __slots__ = []
 
     def __init__(self, parent=None):
         self.parent = parent
-        #self.body = None
 
     def visit(self, visitor):
         visitor.visit_break(self)

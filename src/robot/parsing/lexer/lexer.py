@@ -18,7 +18,7 @@ from itertools import chain
 from robot.errors import DataError
 from robot.utils import get_error_message, FileReader
 
-from .blocklexers import FileLexer, InlineIfLexer
+from .blocklexers import FileLexer
 from .context import InitFileContext, TestCaseFileContext, ResourceFileContext
 from .tokenizer import Tokenizer
 from .tokens import EOS, END, Token

@@ -11,7 +11,7 @@
 #  distributed under the License is distributed on an "AS IS" BASIS,
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
-#  limitations under the License.   
+#  limitations under the License.
 
 from robot.utils import normalize_whitespace
 
@@ -25,17 +25,18 @@ from .statementlexers import (Lexer,
                               ErrorSectionHeaderLexer,
                               TestOrKeywordSettingLexer,
                               KeywordCallLexer,
-                              ForHeaderLexer, InlineIfHeaderLexer,
                               IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
+                              InlineIfHeaderLexer, EndLexer,
                               TryHeaderLexer, ExceptHeaderLexer, FinallyHeaderLexer,
-                              ContinueLexer, BreakLexer, WhileHeaderLexer, EndLexer, ReturnLexer)
+                              ForHeaderLexer, WhileHeaderLexer,
+                              ContinueLexer, BreakLexer, ReturnLexer)
 
 
 class BlockLexer(Lexer):
 
     def __init__(self, ctx):
         """:type ctx: :class:`robot.parsing.lexer.context.FileContext`"""
-        Lexer.__init__(self, ctx)
+        super().__init__(ctx)
         self.lexers = []
 
     def accepts_more(self, statement):
@@ -165,7 +166,7 @@ class TestOrKeywordLexer(BlockLexer):
     def input(self, statement):
         self._handle_name_or_indentation(statement)
         if statement:
-            BlockLexer.input(self, statement)
+            super().input(statement)
 
     def _handle_name_or_indentation(self, statement):
         if not self._name_seen:
@@ -188,7 +189,7 @@ class TestCaseLexer(TestOrKeywordLexer):
 
     def __init__(self, ctx):
         """:type ctx: :class:`robot.parsing.lexer.context.TestCaseFileContext`"""
-        TestOrKeywordLexer.__init__(self, ctx.test_case_context())
+        super().__init__(ctx.test_case_context())
 
     def lex(self,):
         self._lex_with_priority(priority=TestOrKeywordSettingLexer)
@@ -198,20 +199,20 @@ class KeywordLexer(TestOrKeywordLexer):
     name_type = Token.KEYWORD_NAME
 
     def __init__(self, ctx):
-        TestOrKeywordLexer.__init__(self, ctx.keyword_context())
+        super().__init__(ctx.keyword_context())
 
 
 class NestedBlockLexer(BlockLexer):
 
     def __init__(self, ctx):
-        BlockLexer.__init__(self, ctx)
+        super().__init__(ctx)
         self._block_level = 0
 
     def accepts_more(self, statement):
         return self._block_level > 0
 
     def input(self, statement):
-        lexer = BlockLexer.input(self, statement)
+        lexer = super().input(statement)
         if isinstance(lexer, (ForHeaderLexer, IfHeaderLexer, TryHeaderLexer,
                               WhileHeaderLexer)):
             self._block_level += 1
@@ -246,8 +247,8 @@ class IfLexer(NestedBlockLexer):
 
     def lexer_classes(self):
         return (InlineIfLexer, IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
-                ForLexer, TryLexer, WhileLexer, EndLexer, ReturnLexer, ContinueLexer, BreakLexer, 
-                KeywordCallLexer)
+                ForLexer, TryLexer, WhileLexer, EndLexer, ReturnLexer, ContinueLexer,
+                BreakLexer, KeywordCallLexer)
 
 
 class InlineIfLexer(BlockLexer):

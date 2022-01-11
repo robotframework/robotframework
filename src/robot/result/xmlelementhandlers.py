@@ -116,7 +116,7 @@ class KeywordHandler(ElementHandler):
     # 'arguments', 'assign' and 'tags' are for RF < 4 compatibility.
     children = frozenset(('doc', 'arguments', 'arg', 'assign', 'var', 'tags', 'tag',
                           'timeout', 'status', 'msg', 'kw', 'if', 'for', 'try',
-                          'while' ,'return'))
+                          'while', 'return'))
 
     def start(self, elem, result):
         elem_type = elem.get('type')
