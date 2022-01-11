@@ -35,6 +35,8 @@ class BodyItem(ModelObject):
     FINALLY = 'FINALLY'
     WHILE = 'WHILE'
     RETURN = 'RETURN'
+    CONTINUE = 'CONTINUE'
+    BREAK = 'BREAK'
     MESSAGE = 'MESSAGE'
     type = None
     __slots__ = ['parent']
@@ -70,6 +72,8 @@ class BaseBody(ItemList):
     try_class = None
     while_class = None
     return_class = None
+    continue_class = None
+    break_class = None
     message_class = None
 
     def __init__(self, parent=None, items=None):
@@ -115,6 +119,12 @@ class BaseBody(ItemList):
 
     def create_return(self, *args, **kwargs):
         return self._create(self.return_class, 'create_return', args, kwargs)
+
+    def create_continue(self, *args, **kwargs):
+        return self._create(self.continue_class, 'create_continue', args, kwargs)
+
+    def create_break(self, *args, **kwargs):
+        return self._create(self.break_class, 'create_break', args, kwargs)
 
     def create_message(self, *args, **kwargs):
         return self._create(self.message_class, 'create_message', args, kwargs)

@@ -898,6 +898,10 @@ class NoArgumentHeader(Statement):
     def validate(self):
         if self.get_tokens(Token.ARGUMENT):
             self.errors += (f'{self.type} does not accept arguments.',)
+    
+    @property
+    def values(self):
+        return self.get_values(Token.ARGUMENT)
 
 
 @Statement.register
@@ -997,6 +1001,16 @@ class ReturnStatement(Statement):
                            Token(Token.ARGUMENT, value)])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
+
+
+@Statement.register
+class Continue(NoArgumentHeader):
+    type = Token.CONTINUE
+
+
+@Statement.register
+class Break(NoArgumentHeader):
+    type = Token.BREAK
 
 
 @Statement.register

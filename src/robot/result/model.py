@@ -322,6 +322,48 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
         return ''
 
 
+@Body.register
+class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
+    __slots__ = ['status', 'starttime', 'endtime']
+
+    def __init__(self, status='FAIL', starttime=None, endtime=None, parent=None):
+        super().__init__(parent)
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+
+    @property
+    @deprecated
+    def args(self):
+        return ()
+
+    @property
+    @deprecated
+    def doc(self):
+        return ''
+
+
+@Body.register
+class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
+    __slots__ = ['status', 'starttime', 'endtime']
+
+    def __init__(self, status='FAIL', starttime=None, endtime=None, parent=None):
+        super().__init__(parent)
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+
+    @property
+    @deprecated
+    def args(self):
+        return ()
+
+    @property
+    @deprecated
+    def doc(self):
+        return ''
+
+
 @Iterations.register
 @Body.register
 class Keyword(model.Keyword, StatusMixin):

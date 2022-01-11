@@ -530,6 +530,8 @@ from robot.parsing.model.statements import (
     FinallyHeader,
     WhileHeader,
     ReturnStatement,
+    Continue,
+    Break,
     Comment,
     Error,
     EmptyLine
