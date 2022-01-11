@@ -42,7 +42,7 @@ class StatementLexer(Lexer):
     token_type = None
 
     def __init__(self, ctx):
-        Lexer.__init__(self, ctx)
+        super().__init__(ctx)
         self.statement = None
 
     def accepts_more(self, statement):
@@ -276,4 +276,3 @@ class BreakLexer(TypeAndArguments):
 
     def handles(self, statement):
         return statement[0].value == 'BREAK'
-

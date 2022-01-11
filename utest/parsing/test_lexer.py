@@ -1877,11 +1877,10 @@ class TestContinue(unittest.TestCase):
         self._verify(data, expected)
 
     def test_in_test(self):
-        # This is not valid usage but that's not recognized during lexing.
         data = '    CONTINUE'
         expected = [(T.KEYWORD, 'CONTINUE', 3, 4),
                     (T.EOS, '', 3, 12)]
-        self._verify(data, expected, test=False)
+        self._verify(data, expected, test=True)
 
     def test_in_if(self):
         data = '''\
@@ -1907,7 +1906,6 @@ class TestContinue(unittest.TestCase):
                     (T.EOS, '', 7, 7)]
         self._verify(data, expected)
 
-
     def test_in_try(self):
         data = '''\
     FOR    ${x}    IN    @{STUFF}
@@ -1931,14 +1929,13 @@ class TestContinue(unittest.TestCase):
                     (T.EOS, '', 7, 7)]
         self._verify(data, expected)
 
-
     def test_in_for(self):
-            data = '''\
+        data = '''\
     FOR    ${x}    IN    @{STUFF}
         CONTINUE
     END
 '''
-            expected = [(T.FOR, 'FOR', 3, 4),
+        expected = [(T.FOR, 'FOR', 3, 4),
                     (T.VARIABLE, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
@@ -1947,24 +1944,22 @@ class TestContinue(unittest.TestCase):
                     (T.EOS, '', 4, 16),
                     (T.END, 'END', 5, 4),
                     (T.EOS, '', 5, 7)]
-            self._verify(data, expected)
+        self._verify(data, expected)
 
-    
     def test_in_while(self):
-            data = '''\
+        data = '''\
     WHILE    ${EXPR}
         CONTINUE
     END
 '''
-            expected = [(T.WHILE, 'WHILE', 3, 4),
+        expected = [(T.WHILE, 'WHILE', 3, 4),
                     (T.ARGUMENT, '${EXPR}', 3, 13),
                     (T.EOS, '', 3, 20),
                     (T.CONTINUE, 'CONTINUE', 4, 8),
                     (T.EOS, '', 4, 16),
                     (T.END, 'END', 5, 4),
                     (T.EOS, '', 5, 7)]
-            self._verify(data, expected)
-
+        self._verify(data, expected)
 
     def _verify(self, data, expected, test=False):
         if not test:
@@ -1992,11 +1987,10 @@ class TestBreak(unittest.TestCase):
         self._verify(data, expected)
 
     def test_in_test(self):
-        # This is not valid usage but that's not recognized during lexing.
         data = '    BREAK'
         expected = [(T.KEYWORD, 'BREAK', 3, 4),
                     (T.EOS, '', 3, 9)]
-        self._verify(data, expected, test=False)
+        self._verify(data, expected, test=True)
 
     def test_in_if(self):
         data = '''\
@@ -2023,12 +2017,12 @@ class TestBreak(unittest.TestCase):
         self._verify(data, expected)
 
     def test_in_for(self):
-            data = '''\
+        data = '''\
     FOR    ${x}    IN    @{STUFF}
         BREAK
     END
 '''
-            expected = [(T.FOR, 'FOR', 3, 4),
+        expected = [(T.FOR, 'FOR', 3, 4),
                     (T.VARIABLE, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
@@ -2037,24 +2031,22 @@ class TestBreak(unittest.TestCase):
                     (T.EOS, '', 4, 13),
                     (T.END, 'END', 5, 4),
                     (T.EOS, '', 5, 7)]
-            self._verify(data, expected)
-    
+        self._verify(data, expected)
 
     def test_in_while(self):
-            data = '''\
+        data = '''\
     WHILE    ${EXPR}
         BREAK
     END
 '''
-            expected = [(T.WHILE, 'WHILE', 3, 4),
+        expected = [(T.WHILE, 'WHILE', 3, 4),
                     (T.ARGUMENT, '${EXPR}', 3, 13),
                     (T.EOS, '', 3, 20),
                     (T.BREAK, 'BREAK', 4, 8),
                     (T.EOS, '', 4, 13),
                     (T.END, 'END', 5, 4),
                     (T.EOS, '', 5, 7)]
-            self._verify(data, expected)    
-
+        self._verify(data, expected)
 
     def test_in_try(self):
         data = '''\
