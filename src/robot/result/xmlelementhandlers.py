@@ -161,9 +161,9 @@ class KeywordHandler(ElementHandler):
         return result.body.create_keyword(kwname=elem.get('name'), type='FOR')
 
     def _create_foritem(self, elem, result):
-        return result.body.create_keyword(kwname=elem.get('name'), type='FOR ITERATION')
+        return result.body.create_keyword(kwname=elem.get('name'), type='ITERATION')
 
-    _create_for_iteration = _create_foritem
+    _create_iteration = _create_foritem
 
 
 @ElementHandler.register
