@@ -17,7 +17,7 @@ from robot.errors import DataError
 
 from .dotted import DottedOutput
 from .quiet import NoOutput, QuietOutput
-from .verbose import VerboseOutput
+from .verbose import VerboseOutput, EnterpriseOutput
 
 
 def ConsoleOutput(type='verbose', width=78, colors='AUTO', markers='AUTO',
@@ -25,6 +25,8 @@ def ConsoleOutput(type='verbose', width=78, colors='AUTO', markers='AUTO',
     upper = type.upper()
     if upper == 'VERBOSE':
         return VerboseOutput(width, colors, markers, stdout, stderr)
+    if upper == 'ENTERPRISE':
+        return EnterpriseOutput(width, colors, markers, stdout, stderr)
     if upper == 'DOTTED':
         return DottedOutput(width, colors, stdout, stderr)
     if upper == 'QUIET':
@@ -32,4 +34,4 @@ def ConsoleOutput(type='verbose', width=78, colors='AUTO', markers='AUTO',
     if upper == 'NONE':
         return NoOutput()
     raise DataError("Invalid console output type '%s'. Available "
-                    "'VERBOSE', 'DOTTED', 'QUIET' and 'NONE'." % type)
+                    "'VERBOSE', 'ENTERPRISE', 'DOTTED', 'QUIET' and 'NONE'." % type)
