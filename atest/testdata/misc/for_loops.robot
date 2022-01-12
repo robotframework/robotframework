@@ -7,4 +7,7 @@ FOR loop in test
 FOR IN RANGE loop in test
     FOR    ${i}    IN RANGE    10
         Log    ${i}
+        IF    ${i} == 9    BREAK
+        CONTINUE
+        Not executed!
     END

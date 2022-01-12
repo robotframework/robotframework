@@ -12,7 +12,8 @@ While loop in keyword
 *** Keywords ***
 While loop executed multiple times
     ${variable}=     Set variable     ${1}
-    WHILE    $variable < 6
+    WHILE    True
         Log    ${variable}
         ${variable}=    Evaluate    $variable + 1
+        IF    $variable == 6    BREAK
     END

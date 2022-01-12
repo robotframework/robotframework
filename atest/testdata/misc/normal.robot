@@ -42,3 +42,5 @@ Nested keyword 2
 Nested keyword 3
     [Tags]    nested 3
     No operation
+    RETURN    Just testing...
+    Not executed

@@ -201,6 +201,10 @@ class Continue(model.Continue):
         super().__init__(parent)
         self.lineno = lineno
 
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
     def run(self, context, run=True, templated=False):
         with StatusReporter(self, ContinueResult(), context, run):
             if run:
@@ -214,6 +218,10 @@ class Break(model.Break):
     def __init__(self, parent=None, lineno=None):
         super().__init__(parent)
         self.lineno = lineno
+
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
 
     def run(self, context, run=True, templated=False):
         with StatusReporter(self, BreakResult(), context, run):
