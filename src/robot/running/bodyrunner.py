@@ -330,7 +330,7 @@ class WhileRunner:
     def run(self, data):
         result = WhileResult(data.condition)
         run_at_least_one_round = self._should_run(data.condition)
-        run = self._run and run_at_least_one_round
+        run = (self._run and run_at_least_one_round) or self._context.dry_run
         with StatusReporter(data, result, self._context, run):
             if self._run and data.error:
                 raise DataError(data.error)
@@ -353,6 +353,8 @@ class WhileRunner:
             runner.run(data.body)
 
     def _should_run(self, condition):
+        if self._context.dry_run:
+            return False
         condition = self._context.variables.replace_scalar(condition)
         if is_string(condition):
             return evaluate_expression(condition, self._context.variables.current.store)
