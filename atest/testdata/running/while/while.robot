@@ -52,7 +52,7 @@ With Continue For Loop
         IF    $variable == 4
             Fail    Oh no, got 4
         ELSE
-            Continue For Loop
+            CONTINUE
         END
         Fail    should not be executed
     END
@@ -61,7 +61,7 @@ With Exit For Loop
     WHILE    $variable < 6
         ${variable}=    Evaluate    $variable + 1
         IF    $variable == 3
-            Exit For Loop
+            BREAK
             Fail    should not be executed
         END
     END
