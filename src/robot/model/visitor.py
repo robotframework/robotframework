@@ -358,10 +358,10 @@ class SuiteVisitor:
 
     def visit_break(self, break_):
         """Visits BREAK elements."""
-        if self.start_continue(break_) is not False:
-            self.end_continue(break_)
+        if self.start_break(break_) is not False:
+            self.end_break(break_)
 
-    def start_continue(self, break_):
+    def start_break(self, break_):
         """Called when BREAK element starts.
 
         Can return explicit ``False`` to avoid calling :meth:`end_break`.

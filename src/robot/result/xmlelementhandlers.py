@@ -24,12 +24,15 @@ class XmlElementHandler:
     def start(self, elem):
         handler, result = self._stack[-1]
         handler = handler.get_child_handler(elem.tag)
-        result = handler.start(elem, result)
+        # Previous `result` being `None` means child elements should be ignored.
+        if result is not None:
+            result = handler.start(elem, result)
         self._stack.append((handler, result))
 
     def end(self, elem):
         handler, result = self._stack.pop()
-        handler.end(elem, result)
+        if result is not None:
+            handler.end(elem, result)
 
 
 class ElementHandler:
@@ -130,6 +133,9 @@ class KeywordHandler(ElementHandler):
         try:
             body = result.body
         except AttributeError:
+            # Ignore keywords under RETURN etc. They can only be run by listeners.
+            if getattr(result, 'type', '') in ('RETURN', 'CONTINUE', 'BREAK'):
+                return None
             body = self._get_body_for_suite_level_keyword(result)
         return body.create_keyword(kwname=elem.get('name', ''),
                                    libname=elem.get('library'),
@@ -234,7 +240,7 @@ class PatternHandler(ElementHandler):
 @ElementHandler.register
 class ReturnHandler(ElementHandler):
     tag = 'return'
-    children = frozenset(('status', 'value', 'msg'))
+    children = frozenset(('status', 'value', 'msg', 'kw'))
 
     def start(self, elem, result):
         return result.body.create_return()
@@ -243,7 +249,7 @@ class ReturnHandler(ElementHandler):
 @ElementHandler.register
 class ContinueHandler(ElementHandler):
     tag = 'continue'
-    children = frozenset(('status', 'msg'))
+    children = frozenset(('status', 'msg', 'kw'))
 
     def start(self, elem, result):
         return result.body.create_continue()
@@ -252,7 +258,7 @@ class ContinueHandler(ElementHandler):
 @ElementHandler.register
 class BreakHandler(ElementHandler):
     tag = 'break'
-    children = frozenset(('status', 'msg'))
+    children = frozenset(('status', 'msg', 'kw'))
 
     def start(self, elem, result):
         return result.body.create_break()
@@ -263,7 +269,7 @@ class MessageHandler(ElementHandler):
     tag = 'msg'
 
     def end(self, elem, result):
-        # Ignore messages under RETURN, CONTINUE AND BREAK. They can only be logged by listeners.
+        # Ignore messages under RETURN etc. They can only be logged by listeners.
         if getattr(result, 'type', '') in ('RETURN', 'CONTINUE', 'BREAK'):
             return
         html_true = ('true', 'yes')    # 'yes' is compatibility for RF < 4.

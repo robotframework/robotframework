@@ -129,6 +129,11 @@ class BaseBody(ItemList):
     def create_message(self, *args, **kwargs):
         return self._create(self.message_class, 'create_message', args, kwargs)
 
+    # FIXME: Add `whiles` and possibly also `returns`, `breaks` and `continues´.
+    # Could also consider having something generic like `controls` or `syntax`
+    # to include/exclude all control structures. Or perhaps we don't need that
+    # support at all and including/excluding using `keywords` and `messages` is
+    # enough.
     def filter(self, keywords=None, fors=None, ifs=None, trys=None, messages=None,
                predicate=None):
         """Filter body items based on type and/or custom predicate.
