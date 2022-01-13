@@ -12,6 +12,14 @@ User keyword after failure
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Not Be Run    ${tc.body[1:]}
 
+Non-existing keyword after failure
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Not Be Run    ${tc.body[1:]}
+
+Invalid keyword usage after failure
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Not Be Run    ${tc.body[1:]}
+
 Assignment after failure
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Not Be Run     ${tc.body[1:]}    4
@@ -35,6 +43,14 @@ FOR after failure
     Should Not Be Run     ${tc.body[1].body[0].body}    2
     Check Keyword Data    ${tc.body[1].body[0].body[1]}
     ...    BuiltIn.Fail    assign=\${x}    args=This should not be run either    status=NOT RUN
+
+TRY after failure
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Not Be Run     ${tc.body[1:]}
+    Should Not Be Run     ${tc.body[1].body}    4
+    FOR    ${step}    IN    @{tc.body[1].body}
+        Should Not Be Run     ${step.body}
+    END
 
 Nested control structure after failure
     ${tc} =    Check Test Case    ${TESTNAME}
@@ -60,14 +76,6 @@ Nested control structure after failure
     Should Be Equal      ${tc.body[1].body[0].body[0].body[1].body[0].type}    KEYWORD
     Should Be Equal      ${tc.body[1].body[0].body[1].type}    KEYWORD
     Should Be Equal      ${tc.body[2].type}    KEYWORD
-
-Non-existing keyword after failure
-    ${tc} =    Check Test Case    ${TESTNAME}
-    Should Not Be Run    ${tc.body[1:]}
-
-Invalid keyword usage after failure
-    ${tc} =    Check Test Case    ${TESTNAME}
-    Should Not Be Run    ${tc.body[1:]}
 
 Failure in user keyword
     ${tc} =    Check Test Case    ${TESTNAME}

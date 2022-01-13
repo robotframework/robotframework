@@ -15,6 +15,16 @@ User keyword after failure
     Fail    This fails
     User keyword
 
+Non-existing keyword after failure
+    [Documentation]    FAIL    This fails
+    Fail    This fails
+    This does not exist
+
+Invalid keyword usage after failure
+    [Documentation]    FAIL    This fails
+    Fail    This fails
+    No Operation    with    too    many    args
+
 Assignment after failure
     [Documentation]    FAIL    This fails
     Fail    This fails
@@ -40,6 +50,19 @@ FOR after failure
         ${x}    Fail    This should not be run either
     END
 
+TRY after failure
+    [Documentation]    FAIL    This fails
+    Fail    This fails
+    TRY
+        Fail    This should not be run
+    EXCEPT    ${nonex}
+        ${x}    Fail    This should not be run either
+    ELSE
+        Neither should ELSE
+    FINALLY
+        Nor FINALLY
+    END
+
 Nested control structure after failure
     [Documentation]    FAIL    This fails
     Fail    This fails
@@ -57,16 +80,6 @@ Nested control structure after failure
         Fail    This should not be run
     END
     Fail    This should not be run
-
-Non-existing keyword after failure
-    [Documentation]    FAIL    This fails
-    Fail    This fails
-    This does not exist
-
-Invalid keyword usage after failure
-    [Documentation]    FAIL    This fails
-    Fail    This fails
-    No Operation    with    too    many    args
 
 Failure in user keyword
     [Documentation]    FAIL    This fails
