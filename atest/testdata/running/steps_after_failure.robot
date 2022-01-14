@@ -79,6 +79,23 @@ WHILE after failure
         Fail    This should not be run
     END
 
+RETURN after failure
+    [Documentation]    FAIL    This fails
+    ${result} =    RETURN after failure
+    Fail    ${result}
+
+BREAK and CONTINUE after failure
+    [Documentation]    FAIL    This fails
+    WHILE    True
+        Fail    This fails
+        CONTINUE
+        BREAK
+    END
+    WHILE    whatever
+        CONTINUE
+        BREAK
+    END
+
 Nested control structure after failure
     [Documentation]    FAIL    This fails
     Fail    This fails
@@ -98,7 +115,7 @@ Nested control structure after failure
             TRY
                 Not run
             EXCEPT    Whatever
-                Not run
+                BREAK
             END
         END
         Fail    This should not be run
@@ -158,3 +175,8 @@ In user keyword
     Fail    This fails
     Fail    This should not be run
     Fail    This should not be run
+
+RETURN after failure
+    Fail    This fails
+    RETURN    ${not evaluated}
+    Not executed

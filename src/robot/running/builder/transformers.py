@@ -523,6 +523,12 @@ class WhileBuilder(NodeVisitor):
     def visit_ReturnStatement(self, node):
         self.model.body.create_return(node.values)
 
+    def visit_Break(self, node):
+        self.model.body.create_break()
+
+    def visit_Continue(self, node):
+        self.model.body.create_continue()
+
 
 def format_error(errors):
     if not errors:
