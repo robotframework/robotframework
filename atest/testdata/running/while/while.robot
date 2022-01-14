@@ -16,8 +16,8 @@ Loop executed multiple times
 
 Loop not executed
     WHILE    $variable > 2
-        Log    ${variable}
-        ${variable}=    Evaluate    $variable + 1
+        Fail    Not executed!
+        Not executed either
     END
 
 Execution fails on the first loop

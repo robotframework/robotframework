@@ -327,36 +327,39 @@ class WhileRunner:
         self._templated = templated
 
     def run(self, data):
+        run = self._run
+        executed_once = False
         result = WhileResult(data.condition)
-        run_at_least_one_round = self._should_run(data.condition)
-        run = (self._run and run_at_least_one_round) or self._context.dry_run
         with StatusReporter(data, result, self._context, run):
-            if self._run and data.error:
-                raise DataError(data.error)
-            if run_at_least_one_round:
-                while self._should_run(data.condition):
-                    try:
-                        self._run_iteration(data, result, self._run)
-                    except ExitForLoop:
-                        break
-                    except ContinueForLoop:
-                        continue
-            else:
+            if self._context.dry_run or not run:
                 self._run_iteration(data, result, run)
+                return
+            if data.error:
+                raise DataError(data.error)
+            while self._should_run(data.condition, self._context.variables):
+                executed_once = True
+                try:
+                    self._run_iteration(data, result, run)
+                except ExitForLoop:
+                    break
+                except ContinueForLoop:
+                    continue
+            if not executed_once:
+                self._run_iteration(data, result, run=False)
 
     def _run_iteration(self, data, result, run):
         runner = BodyRunner(self._context, run, self._templated)
-        with StatusReporter(data, result.body.create_iteration(),
-                            self._context, run):
+        with StatusReporter(data, result.body.create_iteration(), self._context, run):
             runner.run(data.body)
 
-    def _should_run(self, condition):
-        if self._context.dry_run:
-            return False
-        condition = self._context.variables.replace_scalar(condition)
-        if is_string(condition):
-            return evaluate_expression(condition, self._context.variables.current.store)
-        return bool(condition)
+    def _should_run(self, condition, variables):
+        try:
+            condition = variables.replace_scalar(condition)
+            if is_string(condition):
+                return evaluate_expression(condition, variables.current.store)
+            return bool(condition)
+        except DataError as err:
+            raise DataError(f'Evaluating WHILE loop condition failed: {err}')
 
 
 class IfRunner:
@@ -396,34 +399,40 @@ class IfRunner:
                 self._dry_run_stack.pop()
 
     def _run_if_branch(self, branch, recursive_dry_run=False, error=None):
+        context = self._context
         result = IfBranchResult(branch.type, branch.condition)
         if error:
             run_branch = False
         else:
             try:
-                run_branch = self._should_run_branch(branch.condition, recursive_dry_run)
+                run_branch = self._should_run_branch(branch, context, recursive_dry_run)
             except:
                 error = get_error_message()
                 run_branch = False
-        with StatusReporter(branch, result, self._context, run_branch):
-            runner = BodyRunner(self._context, run_branch, self._templated)
+        with StatusReporter(branch, result, context, run_branch):
+            runner = BodyRunner(context, run_branch, self._templated)
             if not recursive_dry_run:
                 runner.run(branch.body)
             if error and self._run:
                 raise DataError(error)
         return run_branch
 
-    def _should_run_branch(self, condition, recursive_dry_run=False):
-        if self._context.dry_run:
+    def _should_run_branch(self, branch, context, recursive_dry_run=False):
+        condition = branch.condition
+        variables = context.variables
+        if context.dry_run:
             return not recursive_dry_run
         if not self._run:
             return False
         if condition is None:
             return True
-        condition = self._context.variables.replace_scalar(condition)
-        if is_string(condition):
-            return evaluate_expression(condition, self._context.variables.current.store)
-        return bool(condition)
+        try:
+            condition = variables.replace_scalar(condition)
+            if is_string(condition):
+                return evaluate_expression(condition, variables.current.store)
+            return bool(condition)
+        except DataError as err:
+            raise DataError(f'Evaluating {branch.type} condition failed: {err}')
 
 
 class TryRunner:

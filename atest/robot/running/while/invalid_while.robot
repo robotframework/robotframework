@@ -1,17 +1,23 @@
 *** Settings ***
 Resource          while.resource
 Suite Setup       Run Tests    ${EMPTY}    running/while/invalid_while.robot
-Test Template     Check test case
 
 *** Test Cases ***
-While without END
-    ${TEST NAME}
+No condition
+    Check Test Case    ${TESTNAME}
 
-While without condition
-    ${TEST NAME}
+Multiple conditions
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.body[0].condition}    Too, many, !
 
-While with multiple conditions
-    ${TEST NAME}
+Invalid condition
+    Check Test Case    ${TESTNAME}
 
-While without body
-    ${TEST NAME}
+Non-existing variable in condition
+    Check Test Case    ${TESTNAME}
+
+No body
+    Check Test Case    ${TESTNAME}
+
+No END
+    Check Test Case    ${TESTNAME}

@@ -5,7 +5,7 @@ IF without condition
         Fail    Should not be run
     END
 
-IF with ELSE without condition
+IF without condition with ELSE
     [Documentation]    FAIL    IF must have a condition.
     IF
         Fail    Should not be run
@@ -14,13 +14,21 @@ IF with ELSE without condition
     END
 
 IF with invalid condition
-    [Documentation]    FAIL STARTS: Evaluating expression ''123'=123' failed: SyntaxError:
+    [Documentation]    FAIL STARTS: Evaluating IF condition failed: Evaluating expression ''123'=123' failed: SyntaxError:
     IF    '123'=${123}
         Fail    Should not be run
     END
 
-IF with ELSE with invalid condition
-    [Documentation]    FAIL Evaluating expression 'ooops' failed: NameError: name 'ooops' is not defined nor importable as module
+IF condition with non-existing variable
+    [Documentation]    FAIL Evaluating IF condition failed: Variable '\${ooop}' not found.
+    IF    ${ooop}
+        Fail    Should not be run
+    ELSE IF    ${not evaluated}
+        Not run
+    END
+
+IF with invalid condition with ELSE
+    [Documentation]    FAIL Evaluating IF condition failed: Evaluating expression 'ooops' failed: NameError: name 'ooops' is not defined nor importable as module
     IF    ooops
         Fail    Should not be run
     ELSE
@@ -28,7 +36,7 @@ IF with ELSE with invalid condition
     END
 
 ELSE IF with invalid condition
-    [Documentation]    FAIL STARTS: Evaluating expression '1/0' failed: ZeroDivisionError:
+    [Documentation]    FAIL STARTS: Evaluating ELSE IF condition failed: Evaluating expression '1/0' failed: ZeroDivisionError:
     IF    False
         Fail    Should not be run
     ELSE IF    False
@@ -72,7 +80,7 @@ ELSE IF with multiple conditions
     [Documentation]    FAIL    ELSE IF cannot have more than one condition.
     IF    'maa' == 'maa'
         Fail    Should not be run
-    ELSE IF    ${False}    ${True}
+    ELSE IF    ${False}    ooops    ${True}
         Fail    Should not be run
     ELSE
         Fail    Should not be run
