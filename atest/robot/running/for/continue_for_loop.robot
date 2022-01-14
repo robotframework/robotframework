@@ -9,8 +9,8 @@ Simple Continue For Loop
 Continue For Loop In `Run Keyword`
     Test And All Keywords Should Have Passed    allow not run=True
 
-Continue For Loop In User Keyword
-    Test And All Keywords Should Have Passed    allow not run=True
+Continue For Loop is not supported in user keyword
+    Check Test Case    ${TESTNAME}
 
 Continue For Loop Should Terminate Immediate Loop Only
     Test And All Keywords Should Have Passed    allow not run=True

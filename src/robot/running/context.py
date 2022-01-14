@@ -68,6 +68,7 @@ class _ExecutionContext:
         self._started_keywords = 0
         self.timeout_occurred = False
         self.user_keywords = []
+        self.step_types = []
 
     @contextmanager
     def suite_teardown(self):
@@ -135,6 +136,15 @@ class _ExecutionContext:
             return True
         return any('robot:recursive-continue-on-failure' in p.tags for p in parents)
 
+    @property
+    def allow_loop_control(self):
+        for typ in reversed(self.step_types):
+            if typ == 'ITERATION':
+                return True
+            if typ == 'KEYWORD':
+                return False
+        return False
+
     def end_suite(self, suite):
         for name in ['${PREV_TEST_NAME}',
                      '${PREV_TEST_STATUS}',
@@ -185,10 +195,14 @@ class _ExecutionContext:
         if self._started_keywords > self._started_keywords_threshold:
             raise DataError('Maximum limit of started keywords exceeded.')
         self.output.start_keyword(keyword)
+        if keyword.libname != 'BuiltIn':
+            self.step_types.append(keyword.type)
 
     def end_keyword(self, keyword):
         self.output.end_keyword(keyword)
         self._started_keywords -= 1
+        if keyword.libname != 'BuiltIn':
+            self.step_types.pop()
 
     def get_runner(self, name):
         return self.namespace.get_runner(name)

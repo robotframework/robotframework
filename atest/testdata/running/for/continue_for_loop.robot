@@ -14,12 +14,13 @@ Continue For Loop In `Run Keyword`
     END
     Should Be Equal    ${text}     onethree
 
-Continue For Loop In User Keyword
+Continue For Loop is not supported in user keyword
+    [Documentation]    FAIL 'Continue For Loop' can only be used inside a loop.
     FOR    ${var}    IN    one    two
         With Only Continue For Loop
         Fail    Should not be executed
     END
-    Should BE Equal    ${var}    two
+    Fail    Should not be executed
 
 Continue For Loop Should Terminate Immediate Loop Only
     FOR    ${var}    IN    one    two
@@ -43,11 +44,11 @@ Continue For Loop In User Keyword Calling User Keyword With Continue For Loop
     Should Be Equal    ${x}    two-extra
 
 Continue For Loop Without For Loop Should Fail
-   [Documentation]    FAIL Invalid 'CONTINUE' usage.
+   [Documentation]    FAIL 'Continue For Loop' can only be used inside a loop.
    Continue For Loop
 
 Continue For Loop In User Keyword Without For Loop Should Fail
-   [Documentation]    FAIL Invalid 'CONTINUE' usage.
+   [Documentation]    FAIL 'Continue For Loop' can only be used inside a loop.
    With Only Continue For Loop
 
 Continue For Loop In Test Teardown
@@ -59,7 +60,7 @@ Continue For Loop In Keyword Teardown
 
 Invalid Continue For Loop In User Keyword Teardown
     [Documentation]    FAIL Keyword teardown failed:
-    ...                Invalid 'CONTINUE' usage.
+    ...                'Continue For Loop' can only be used inside a loop.
     FOR    ${var}    IN    one   two
         Invalid Continue For Loop In User Keyword Teardown
     END
@@ -105,11 +106,13 @@ With Continuable Failure In User Keyword
     ...
     ...    3) ä/1
     ...
-    ...    4) ö/1
+    ...    4) ä/2
     ...
-    ...    5) ö/2
+    ...    5) ö/1
     ...
-    ...    6) The End
+    ...    6) ö/2
+    ...
+    ...    7) The End
     FOR    ${var}    IN    å    ä    ö
         With Continuable Failure In User Keyword    ${var}/1
         Run Keyword And Continue On Failure    Fail    ${var}/2
@@ -155,4 +158,3 @@ Invalid Continue For Loop In User Keyword Teardown
 With Continuable Failure In User Keyword
     [Arguments]    ${arg}
     Run Keyword And Continue On Failure    Fail    ${arg}
-    Continue For Loop If    'ä' in '${arg}'
