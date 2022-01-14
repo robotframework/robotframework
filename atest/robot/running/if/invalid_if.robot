@@ -7,13 +7,16 @@ Resource          atest_resource.robot
 IF without condition
     FAIL
 
-IF with ELSE without condition
+IF without condition with ELSE
     FAIL    NOT RUN
 
 IF with invalid condition
     FAIL
 
-IF with ELSE with invalid condition
+IF with invalid condition with ELSE
+    FAIL    NOT RUN
+
+IF condition with non-existing variable
     FAIL    NOT RUN
 
 ELSE IF with invalid condition
@@ -33,7 +36,9 @@ ELSE IF without condition
     FAIL    NOT RUN    NOT RUN
 
 ELSE IF with multiple conditions
-    FAIL    NOT RUN    NOT RUN
+    [Template]    NONE
+    ${tc} =    Branch statuses should be    FAIL    NOT RUN    NOT RUN
+    Should Be Equal    ${tc.body[0].body[1].condition}    \${False}, ooops, \${True}
 
 ELSE with condition
     FAIL    NOT RUN
@@ -68,3 +73,4 @@ Branch statuses should be
         Should Be Equal    ${branch.status}    ${status}
     END
     Should Be Equal    ${{len($tc.body[0].body)}}    ${{len($statuses)}}
+    RETURN    ${tc}

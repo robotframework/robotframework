@@ -7,6 +7,9 @@ Resource          if.resource
 Invalid condition
     FAIL    NOT RUN
 
+Condition with non-existing variable
+    FAIL
+
 Invalid condition with other error
     FAIL    NOT RUN
 

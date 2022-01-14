@@ -844,7 +844,10 @@ class IfHeader(IfElseHeader):
 
     @property
     def condition(self):
-        return self.get_value(Token.ARGUMENT)
+        values = self.get_values(Token.ARGUMENT)
+        if len(values) != 1:
+            return ', '.join(values) if values else None
+        return values[0]
 
     def validate(self):
         conditions = len(self.get_tokens(Token.ARGUMENT))
@@ -898,7 +901,7 @@ class NoArgumentHeader(Statement):
     def validate(self):
         if self.get_tokens(Token.ARGUMENT):
             self.errors += (f'{self.type} does not accept arguments.',)
-    
+
     @property
     def values(self):
         return self.get_values(Token.ARGUMENT)
@@ -974,14 +977,17 @@ class WhileHeader(Statement):
 
     @property
     def condition(self):
-        return self.get_value(Token.ARGUMENT)
+        values = self.get_values(Token.ARGUMENT)
+        if len(values) != 1:
+            return ', '.join(values) if values else None
+        return values[0]
 
     def validate(self):
         conditions = len(self.get_tokens(Token.ARGUMENT))
         if conditions == 0:
-            self.errors += ('WHILE has no condition.',)
+            self.errors += ('WHILE must have a condition.',)
         if conditions > 1:
-            self.errors += ('WHILE has more than one condition.',)
+            self.errors += ('WHILE cannot have more than one condition.',)
 
 
 @Statement.register

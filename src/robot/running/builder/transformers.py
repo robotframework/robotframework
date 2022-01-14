@@ -15,7 +15,6 @@
 
 from ast import NodeVisitor
 
-from robot.parsing import Token
 from robot.variables import VariableIterator
 
 from .testsettings import TestSettings

@@ -63,6 +63,22 @@ TRY after failure
         Nor FINALLY
     END
 
+WHILE after failure
+    [Documentation]    FAIL    This fails
+    Fail    This fails
+    WHILE    False
+        Fail    This should not be run
+        ${x}    Fail    This should not be run either
+        Neither should this
+    END
+    WHILE    True
+        Fail    This should not be run
+        Neither should this
+    END
+    WHILE    whatever
+        Fail    This should not be run
+    END
+
 Nested control structure after failure
     [Documentation]    FAIL    This fails
     Fail    This fails
@@ -75,7 +91,15 @@ Nested control structure after failure
             END
             Fail    This should not be run
         ELSE
-            Fail    This should not be run
+            WHILE    whatever
+                Fail    This should not be run
+                Neither should this
+            END
+            TRY
+                Not run
+            EXCEPT    Whatever
+                Not run
+            END
         END
         Fail    This should not be run
     END

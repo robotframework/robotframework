@@ -4,9 +4,9 @@ Resource    atest_resource.robot
 
 *** Keywords ***
 Check while loop
-    [Arguments]    ${status}    ${iterations}
+    [Arguments]    ${status}    ${iterations}    ${path}=body[0]
     ${tc}=    Check test case    ${TEST NAME}
-    ${loop}=    Check loop attributes     ${tc.body[0]}    ${status}    ${iterations}
+    ${loop}=    Check loop attributes     ${tc.${path}}    ${status}    ${iterations}
     RETURN    ${loop}
 
 Check loop attributes

@@ -1,22 +1,34 @@
 *** Test Cases ***
-While without END
-    [Documentation]    FAIL WHILE loop has no closing END.
-    WHILE    True
-        Log    a recursion!
-
-While without condition
-    [Documentation]    FAIL WHILE has no condition.
+No condition
+    [Documentation]    FAIL WHILE must have a condition.
     WHILE
-        Log    a recursion!
+        Fail    Not executed!
     END
 
-While with multiple conditions
-    [Documentation]    FAIL WHILE has no condition.
-    WHILE
-        Log    a recursion!
+Multiple conditions
+    [Documentation]    FAIL WHILE cannot have more than one condition.
+    WHILE    Too    many    !
+        Fail    Not executed!
     END
 
-While without body
+Invalid condition
+    [Documentation]    FAIL STARTS: Evaluating WHILE loop condition failed: Evaluating expression 'ooops!' failed: SyntaxError:
+    WHILE    ooops!
+        Fail    Not executed!
+    END
+
+Non-existing variable in condition
+    [Documentation]    FAIL Evaluating WHILE loop condition failed: Variable '\${ooops}' not found.
+    WHILE    ${ooops}
+        Fail    Not executed!
+    END
+
+No body
     [Documentation]    FAIL WHILE loop has empty body.
     WHILE    True
     END
+
+No END
+    [Documentation]    FAIL WHILE loop has no closing END.
+    WHILE    True
+        Fail    Not executed!
