@@ -17,8 +17,8 @@ from collections import OrderedDict
 from contextlib import contextmanager
 import re
 
-from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
-                          ExecutionStatus, ExitForLoop, ContinueForLoop, DataError)
+from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
+                          ExecutionFailures, ExecutionPassed, ExecutionStatus)
 from robot.result import (For as ForResult, While as WhileResult, If as IfResult,
                           IfBranch as IfBranchResult, Try as TryResult,
                           TryBranch as TryBranchResult)
@@ -45,9 +45,9 @@ class BodyRunner:
             try:
                 step.run(self._context, self._run, self._templated)
             except ExecutionPassed as exception:
-                if (isinstance(exception, (ExitForLoop, ContinueForLoop))
+                if (isinstance(exception, (BreakLoop, ContinueLoop))
                         and not self._context.allow_loop_control):
-                    name = 'BREAK' if isinstance(exception, ExitForLoop) else 'CONTINUE'
+                    name = 'BREAK' if isinstance(exception, BreakLoop) else 'CONTINUE'
                     raise ExecutionFailed(f'{name} can only be used inside a loop.',
                                           syntax=True)
                 exception.set_earlier_failures(errors)
@@ -112,11 +112,11 @@ class ForInRunner:
             executed = True
             try:
                 self._run_one_round(data, result, values)
-            except ExitForLoop as exception:
+            except BreakLoop as exception:
                 if exception.earlier_failures:
                     errors.extend(exception.earlier_failures.get_errors())
                 break
-            except ContinueForLoop as exception:
+            except ContinueLoop as exception:
                 if exception.earlier_failures:
                     errors.extend(exception.earlier_failures.get_errors())
                 continue
@@ -350,9 +350,9 @@ class WhileRunner:
                 executed_once = True
                 try:
                     self._run_iteration(data, result, run)
-                except ExitForLoop:
+                except BreakLoop:
                     break
-                except ContinueForLoop:
+                except ContinueLoop:
                     continue
             if not executed_once:
                 status.pass_status = result.NOT_RUN

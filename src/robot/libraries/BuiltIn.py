@@ -20,9 +20,9 @@ import time
 
 from robot.api import logger, SkipExecution
 from robot.api.deco import keyword
-from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
-                          ExecutionFailures, ExecutionPassed, ExitForLoop,
-                          PassExecution, ReturnFromKeyword, VariableError)
+from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
+                          ExecutionFailures, ExecutionPassed, PassExecution,
+                          ReturnFromKeyword, VariableError)
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
@@ -2530,7 +2530,7 @@ class _Control(_BuiltInBase):
         if not self._context.allow_loop_control:
             raise DataError("'Continue For Loop' can only be used inside a loop.")
         self.log("Continuing for loop from the next iteration.")
-        raise ContinueForLoop()
+        raise ContinueLoop()
 
     def continue_for_loop_if(self, condition):
         """Skips the current FOR loop iteration if the ``condition`` is true.
@@ -2597,7 +2597,7 @@ class _Control(_BuiltInBase):
         if not self._context.allow_loop_control:
             raise DataError("'Exit For Loop' can only be used inside a loop.")
         self.log("Exiting for loop altogether.")
-        raise ExitForLoop()
+        raise BreakLoop()
 
     def exit_for_loop_if(self, condition):
         """Stops executing the enclosing FOR loop if the ``condition`` is true.
