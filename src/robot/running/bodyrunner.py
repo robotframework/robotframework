@@ -90,17 +90,21 @@ class ForInRunner:
 
     def run(self, data):
         result = ForResult(data.variables, data.flavor, data.values)
-        with StatusReporter(data, result, self._context, self._run):
+        with StatusReporter(data, result, self._context, self._run) as status:
+            run_at_least_once = False
             if self._run:
                 if data.error:
                     raise DataError(data.error)
-                self._run_loop(data, result)
-            else:
-                self._run_one_round(data, result)
+                run_at_least_once = self._run_loop(data, result)
+            if not run_at_least_once:
+                status.pass_status = result.NOT_RUN
+                self._run_one_round(data, result, run=False)
 
     def _run_loop(self, data, result):
         errors = []
+        executed = False
         for values in self._get_values_for_rounds(data):
+            executed = True
             try:
                 self._run_one_round(data, result, values)
             except ExitForLoop as exception:
@@ -121,6 +125,7 @@ class ForInRunner:
                     break
         if errors:
             raise ExecutionFailures(errors)
+        return executed
 
     def _get_values_for_rounds(self, data):
         if self._context.dry_run:
@@ -201,18 +206,18 @@ class ForInRunner:
             'Got %d variables but %d value%s.' % (variables, values, s(values))
         )
 
-    def _run_one_round(self, data, result, values=None):
+    def _run_one_round(self, data, result, values=None, run=True):
         result = result.body.create_iteration()
         if values is not None:
             variables = self._context.variables
         else:    # Not really run (earlier failure, unexecuted IF branch, dry-run)
             variables = {}
-            values = data.variables
+            values = [''] * len(data.variables)
         for name, value in self._map_variables_and_values(data.variables, values):
             variables[name] = value
             result.variables[name] = cut_assign_value(value)
-        runner = BodyRunner(self._context, self._run, self._templated)
-        with StatusReporter(data, result, self._context, self._run):
+        runner = BodyRunner(self._context, run, self._templated)
+        with StatusReporter(data, result, self._context, run):
             runner.run(data.body)
 
     def _map_variables_and_values(self, variables, values):
@@ -330,7 +335,7 @@ class WhileRunner:
         run = self._run
         executed_once = False
         result = WhileResult(data.condition)
-        with StatusReporter(data, result, self._context, run):
+        with StatusReporter(data, result, self._context, run) as status:
             if self._context.dry_run or not run:
                 self._run_iteration(data, result, run)
                 return
@@ -345,6 +350,7 @@ class WhileRunner:
                 except ContinueForLoop:
                     continue
             if not executed_once:
+                status.pass_status = result.NOT_RUN
                 self._run_iteration(data, result, run=False)
 
     def _run_iteration(self, data, result, run):
