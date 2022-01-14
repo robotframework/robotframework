@@ -2497,11 +2497,26 @@ class _Control(_BuiltInBase):
             raise SkipExecution(msg or condition)
 
     def continue_for_loop(self):
-        """Skips the current for loop iteration and continues from the next.
+        """Skips the current FOR loop iteration and continues from the next.
 
-        Skips the remaining keywords in the current for loop iteration and
-        continues from the next one. Can be used directly in a for loop or
-        in a keyword that the loop uses.
+        ---
+
+        *NOTE:* Robot Framework 5.0 added support for native ``CONTINUE`` statement that
+        is recommended over this keyword. In the examples below, ``Continue For Loop``
+        can simply be replaced with ``CONTINUE``. In addition to that, native ``IF``
+        syntax (new in RF 4.0) or inline ``IF`` syntax (new in RF 5.0) can be used
+        instead of ``Run Keyword If``. For example, the first example below could be
+        written like this instead:
+
+        | IF    '${var}' == 'CONTINUE'    CONTINUE
+
+        This keyword will eventually be deprecated and removed.
+
+        ---
+
+        Skips the remaining keywords in the current FOR loop iteration and
+        continues from the next one. Starting from Robot Framework 5.0, this
+        keyword can only be used inside a loop, not in a keyword used in a loop.
 
         Example:
         | FOR | ${var}         | IN                     | @{VALUES}         |
@@ -2509,16 +2524,31 @@ class _Control(_BuiltInBase):
         |     | Do Something   | ${var}                 |
         | END |
 
-        See `Continue For Loop If` to conditionally continue a for loop without
+        See `Continue For Loop If` to conditionally continue a FOR loop without
         using `Run Keyword If` or other wrapper keywords.
         """
+        if not self._context.allow_loop_control:
+            raise DataError("'Continue For Loop' can only be used inside a loop.")
         self.log("Continuing for loop from the next iteration.")
         raise ContinueForLoop()
 
     def continue_for_loop_if(self, condition):
-        """Skips the current for loop iteration if the ``condition`` is true.
+        """Skips the current FOR loop iteration if the ``condition`` is true.
 
-        A wrapper for `Continue For Loop` to continue a for loop based on
+        ---
+
+        *NOTE:* Robot Framework 5.0 added support for native ``CONTINUE`` statement
+        and for inline ``IF``, and that combination should be used instead of this
+        keyword. For example, ``Continue For Loop If`` usage in the example below
+        could be replaced with
+
+        | IF    '${var}' == 'CONTINUE'    CONTINUE
+
+        This keyword will eventually be deprecated and removed.
+
+        ---
+
+        A wrapper for `Continue For Loop` to continue a FOR loop based on
         the given condition. The condition is evaluated using the same
         semantics as with `Should Be True` keyword.
 
@@ -2528,14 +2558,32 @@ class _Control(_BuiltInBase):
         |     | Do Something         | ${var}                 |
         | END |
         """
+        if not self._context.allow_loop_control:
+            raise DataError("'Continue For Loop If' can only be used inside a loop.")
         if self._is_true(condition):
             self.continue_for_loop()
 
     def exit_for_loop(self):
-        """Stops executing the enclosing for loop.
+        """Stops executing the enclosing FOR loop.
 
-        Exits the enclosing for loop and continues execution after it.
-        Can be used directly in a for loop or in a keyword that the loop uses.
+        ---
+
+        *NOTE:* Robot Framework 5.0 added support for native ``BREAK`` statement that
+        is recommended over this keyword. In the examples below, ``Exit For Loop``
+        can simply be replaced with ``BREAK``. In addition to that, native ``IF``
+        syntax (new in RF 4.0) or inline ``IF`` syntax (new in RF 5.0) can be used
+        instead of ``Run Keyword If``. For example, the first example below could be
+        written like this instead:
+
+        | IF    '${var}' == 'EXIT'    BREAK
+
+        This keyword will eventually be deprecated and removed.
+
+        ---
+
+        Exits the enclosing FOR loop and continues execution after it. Starting
+        from Robot Framework 5.0, this keyword can only be used inside a loop,
+        not in a keyword used in a loop.
 
         Example:
         | FOR | ${var}         | IN                 | @{VALUES}     |
@@ -2543,16 +2591,31 @@ class _Control(_BuiltInBase):
         |     | Do Something   | ${var} |
         | END |
 
-        See `Exit For Loop If` to conditionally exit a for loop without
+        See `Exit For Loop If` to conditionally exit a FOR loop without
         using `Run Keyword If` or other wrapper keywords.
         """
+        if not self._context.allow_loop_control:
+            raise DataError("'Exit For Loop' can only be used inside a loop.")
         self.log("Exiting for loop altogether.")
         raise ExitForLoop()
 
     def exit_for_loop_if(self, condition):
-        """Stops executing the enclosing for loop if the ``condition`` is true.
+        """Stops executing the enclosing FOR loop if the ``condition`` is true.
 
-        A wrapper for `Exit For Loop` to exit a for loop based on
+        ---
+
+        *NOTE:* Robot Framework 5.0 added support for native ``BREAK`` statement
+        and for inline ``IF``, and that combination should be used instead of this
+        keyword. For example, ``Exit For Loop If`` usage in the example below
+        could be replaced with
+
+        | IF    '${var}' == 'EXIT'    BREAK
+
+        This keyword will eventually be deprecated and removed.
+
+        ---
+
+        A wrapper for `Exit For Loop` to exit a FOR loop based on
         the given condition. The condition is evaluated using the same
         semantics as with `Should Be True` keyword.
 
@@ -2562,6 +2625,8 @@ class _Control(_BuiltInBase):
         |     | Do Something     | ${var}             |
         | END |
         """
+        if not self._context.allow_loop_control:
+            raise DataError("'Exit For Loop If' can only be used inside a loop.")
         if self._is_true(condition):
             self.exit_for_loop()
 
@@ -2637,7 +2702,7 @@ class _Control(_BuiltInBase):
         ---
 
         *NOTE:* Robot Framework 5.0 added support for native ``RETURN`` statement
-        and inline ``IF`` and that combination should be used instead of this
+        and for inline ``IF``, and that combination should be used instead of this
         keyword. For example, ``Return From Keyword`` usage in the example below
         could be replaced with
 

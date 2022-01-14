@@ -45,6 +45,11 @@ class BodyRunner:
             try:
                 step.run(self._context, self._run, self._templated)
             except ExecutionPassed as exception:
+                if (isinstance(exception, (ExitForLoop, ContinueForLoop))
+                        and not self._context.allow_loop_control):
+                    name = 'BREAK' if isinstance(exception, ExitForLoop) else 'CONTINUE'
+                    raise ExecutionFailed(f'{name} can only be used inside a loop.',
+                                          syntax=True)
                 exception.set_earlier_failures(errors)
                 passed = exception
                 self._run = False
