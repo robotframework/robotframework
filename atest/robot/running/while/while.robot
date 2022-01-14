@@ -11,7 +11,7 @@ Loop executed multiple times
     Check While Loop    PASS    5
 
 Loop not executed
-    ${loop} =    Check While Loop    PASS    1
+    ${loop} =    Check While Loop    NOT RUN    1
     Length Should Be    ${loop.body[0].body}    2
     FOR    ${item}    IN    ${loop.body[0]}    @{loop.body[0].body}
         Should Be Equal    ${item.status}    NOT RUN
