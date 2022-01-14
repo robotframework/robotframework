@@ -62,6 +62,19 @@ WHILE after failure
     Should Not Be Run     ${tc.body[3].body}
     Should Not Be Run     ${tc.body[3].body[0].body}    1
 
+RETURN after failure
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Not Be Run     ${tc.body[1:]}
+    Should Not Be Run     ${tc.body[0].body[1:]}    2
+    Should Be Equal       ${tc.body[0].body[1].type}    RETURN
+
+BREAK and CONTINUE after failure
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Not Be Run     ${tc.body[1:]}    1
+    Should Not Be Run     ${tc.body[0].body[0].body[1:]}    2
+    Should Not Be Run     ${tc.body[1].body}
+    Should Not Be Run     ${tc.body[1].body[0].body}    2
+
 Nested control structure after failure
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Not Be Run    ${tc.body[1:]}    2
@@ -96,7 +109,7 @@ Nested control structure after failure
     Should Be Equal      ${tc.body[1].body[0].body[0].body[1].body[1].body[0].body[0].type}    KEYWORD
     Should Be Equal      ${tc.body[1].body[0].body[0].body[1].body[1].body[1].type}    EXCEPT
     Should Not Be Run    ${tc.body[1].body[0].body[0].body[1].body[1].body[1].body}    1
-    Should Be Equal      ${tc.body[1].body[0].body[0].body[1].body[1].body[1].body[0].type}    KEYWORD
+    Should Be Equal      ${tc.body[1].body[0].body[0].body[1].body[1].body[1].body[0].type}    BREAK
     Should Be Equal      ${tc.body[1].body[0].body[1].type}    KEYWORD
     Should Be Equal      ${tc.body[2].type}    KEYWORD
 
