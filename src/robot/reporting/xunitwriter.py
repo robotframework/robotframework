@@ -67,9 +67,6 @@ class XUnitFileWriter(ResultVisitor):
             if suite.metadata:
                 for n, v in suite.metadata.items():
                     self._writer.element('property', attrs={'name': n, 'value': v})
-            if suite is self.root:
-                self._writer.element('property', attrs={'name': 'XUnit Documentation',
-                                                        'value': self.__doc__})
             self._writer.end('properties')
         self._writer.end('testsuite')
 
