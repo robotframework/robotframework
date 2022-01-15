@@ -36,7 +36,6 @@ XUnit Option Given
     Length Should Be    ${properties}    2
     Element Attribute Should be    ${properties}[0]    name    Suite Documentation
     Element Attribute Should be    ${properties}[0]    value    Normal test cases
-    Log File    ${OUTDIR}/xunit.xml
 
 Suite Stats
     [Template]    Suite Stats Should Be
