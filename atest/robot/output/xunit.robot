@@ -31,6 +31,8 @@ File Structure Is Correct
     Element Attribute Should Be    ${skips}[0]    message
     ...    Test failed but its tags matched '--SkipOnFailure' and it was marked skipped.\n\nOriginal failure:\n${MESSAGES}
     Element Attribute Should Be    ${skips}[0]    type    SkipExecution
+    Run Keyword And Expect Error    No element matching 'testsuite/properties' found.
+    ...    Get XUnit Node    testsuite/properties
 
 Non-ASCII Content
     ${tests} =    Get XUnit Nodes    testcase
