@@ -45,27 +45,6 @@ Loop fails in keyword
 With RETURN
     While with RETURN
 
-With Continue For Loop
-    [Documentation]    FAIL Oh no, got 4
-    WHILE    $variable < 6
-        ${variable}=    Evaluate    $variable + 1
-        IF    $variable == 4
-            Fail    Oh no, got 4
-        ELSE
-            CONTINUE
-        END
-        Fail    should not be executed
-    END
-
-With Exit For Loop
-    WHILE    $variable < 6
-        ${variable}=    Evaluate    $variable + 1
-        IF    $variable == 3
-            BREAK
-            Fail    should not be executed
-        END
-    END
-
 *** Keywords ***
 While keyword
     WHILE    $variable < 4

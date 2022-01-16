@@ -31,9 +31,3 @@ Loop fails in keyword
 
 With RETURN
     Check While Loop    PASS    1    path=body[0].body[0]
-
-With Continue For Loop
-    Check While Loop    FAIL    3
-
-With Exit For Loop
-    Check While Loop    PASS    2
