@@ -14,14 +14,10 @@ ${NORMAL SUITE}     misc/normal.robot
  
 *** Test Cases ***
 XUnit File Is Created
-    Stderr should be empty
-    Stdout Should Contain    XUnit:
-    File Should Exist    ${OUTDIR}/xunit.xml
-    File Should Exist    ${OUTDIR}/log.html
+    Verify Outputs
 
 File Structure Is Correct
-    ${root} =    Get XUnit Node
-    Should Be Equal    ${root.tag}    testsuite
+    ${root} =    Get Root Node
     Suite Stats Should Be    ${root}    8    3    1    ${SUITE.starttime}
     ${tests} =    Get XUnit Nodes    testcase
     Length Should Be    ${tests}    8
@@ -76,12 +72,8 @@ Skipping non-critical tests is deprecated
 
 XUnit File From Nested Suites
     Run Tests    -x xunit.xml -l log.html    ${TESTDATA} ${NESTED}
-    Stderr Should Be Empty
-    Stdout Should Contain    XUnit:
-    File Should Exist    ${OUTDIR}/xunit.xml
-    File Should Exist    ${OUTDIR}/log.html
-    ${root} =    Parse XML    ${OUTDIR}/xunit.xml
-    Should Be Equal    ${root.tag}    testsuite
+    Verify Outputs
+    ${root} =    Get Root Node
     ${suites} =    Get Elements    ${root}    testsuite
     Length Should Be    ${suites}    2
     ${tests} =    Get Elements    ${suites}[0]    testcase
@@ -100,32 +92,31 @@ XUnit File From Nested Suites
     Element Attribute Should be    ${properties}[1]    name     Something
     Element Attribute Should be    ${properties}[1]    value    My Value
 
-XUnit File Properties
+XUnit File Root Testsuite Properties From CLI
     Run Tests    -M METACLI:"meta CLI" -x xunit.xml -l log.html -v META_VALUE_FROM_CLI:"cli meta"    ${NORMAL SUITE} ${METADATA SUITE}
-    Stderr Should Be Empty
-    Stdout Should Contain    XUnit:
-    File Should Exist    ${OUTDIR}/xunit.xml
-    File Should Exist    ${OUTDIR}/log.html
-    ${root} =    Parse XML    ${OUTDIR}/xunit.xml
-    Should Be Equal    ${root.tag}    testsuite
-    # root testsuite has metadata from CLI
+    Verify Outputs
+    ${root} =    Get Root Node
     ${root_properties_element} =    Get Elements    ${root}    properties
     Length Should Be    ${root_properties_element}    1
     ${property_elements} =    Get Elements    ${root_properties_element}[0]    property
     Length Should Be    ${property_elements}    1
     Element Attribute Should be    ${property_elements}[0]    name     METACLI
     Element Attribute Should be    ${property_elements}[0]    value    meta CLI
-    # suites have their own metadata and suite documentation
+
+XUnit File Testsuite Properties From Suite Documentation
+    ${root} =    Get Root Node
     ${suites} =    Get Elements    ${root}    testsuite
     Length Should Be    ${suites}    2
-    # normal suite
     ${normal_properties_element} =    Get Elements    ${suites}[0]    properties
     Length Should Be    ${normal_properties_element}    1
     ${property_elements} =    Get Elements    ${normal_properties_element}[0]    property
     Length Should Be    ${property_elements}    2
     Element Attribute Should be    ${property_elements}[0]    name     Suite Documentation
     Element Attribute Should be    ${property_elements}[0]    value    Normal test cases
-    # metadata suite
+
+XUnit File Testsuite Properties From Metadata
+    ${root} =    Get Root Node
+    ${suites} =    Get Elements    ${root}    testsuite
     ${meta_properties_element} =    Get Elements    ${suites}[1]    properties
     Length Should Be    ${meta_properties_element}    1
     ${property_elements} =    Get Elements    ${meta_properties_element}[0]    property
@@ -167,3 +158,14 @@ Suite Stats Should Be
     Element Attribute Should Be       ${elem}    errors      0
     Element Attribute Should Be       ${elem}    timestamp
     ...    ${{datetime.datetime.strptime($starttime, '%Y%m%d %H:%M:%S.%f').strftime('%Y-%m-%dT%H:%M:%S.%f')}}
+
+Verify Outputs
+    Stderr should be empty
+    Stdout Should Contain    XUnit:
+    File Should Exist    ${OUTDIR}/xunit.xml
+    File Should Exist    ${OUTDIR}/log.html
+
+Get Root Node
+    ${root} =    Get XUnit Node
+    Should Be Equal    ${root.tag}    testsuite
+    [Return]    ${root}
