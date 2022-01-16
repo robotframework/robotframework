@@ -9,6 +9,8 @@ ${TESTDATA}         misc/non_ascii.robot
 ${PASS AND FAIL}    misc/pass_and_fail.robot
 ${INVALID}          %{TEMPDIR}${/}ïnvälïd-xünït.xml
 ${NESTED}           misc/suites
+${METADATA SUITE}   parsing/suite_metadata.robot
+${NORMAL SUITE}     misc/normal.robot
  
 *** Test Cases ***
 XUnit File Is Created
@@ -91,6 +93,59 @@ XUnit File From Nested Suites
     ${nested suite} =    Get Element    ${OUTDIR}/xunit.xml    xpath=testsuite[2]
     Element Attribute Should Be       ${nested suite}    tests       11
     Element Attribute Should Be       ${nested suite}    failures    1
+    ${properties} =    Get Elements    ${nested suite}    testsuite[6]/properties/property
+    Length Should Be    ${properties}    2
+    Element Attribute Should be    ${properties}[0]    name     Suite Documentation
+    Element Attribute Should be    ${properties}[0]    value    Normal test cases
+    Element Attribute Should be    ${properties}[1]    name     Something
+    Element Attribute Should be    ${properties}[1]    value    My Value
+
+XUnit File Properties
+    Run Tests    -M METACLI:"meta CLI" -x xunit.xml -l log.html -v META_VALUE_FROM_CLI:"cli meta"    ${NORMAL SUITE} ${METADATA SUITE}
+    Stderr Should Be Empty
+    Stdout Should Contain    XUnit:
+    File Should Exist    ${OUTDIR}/xunit.xml
+    File Should Exist    ${OUTDIR}/log.html
+    ${root} =    Parse XML    ${OUTDIR}/xunit.xml
+    Should Be Equal    ${root.tag}    testsuite
+    # root testsuite has metadata from CLI
+    ${root_properties_element} =    Get Elements    ${root}    properties
+    Length Should Be    ${root_properties_element}    1
+    ${property_elements} =    Get Elements    ${root_properties_element}[0]    property
+    Length Should Be    ${property_elements}    1
+    Element Attribute Should be    ${property_elements}[0]    name     METACLI
+    Element Attribute Should be    ${property_elements}[0]    value    meta CLI
+    # suites have their own metadata and suite documentation
+    ${suites} =    Get Elements    ${root}    testsuite
+    Length Should Be    ${suites}    2
+    # normal suite
+    ${normal_properties_element} =    Get Elements    ${suites}[0]    properties
+    Length Should Be    ${normal_properties_element}    1
+    ${property_elements} =    Get Elements    ${normal_properties_element}[0]    property
+    Length Should Be    ${property_elements}    2
+    Element Attribute Should be    ${property_elements}[0]    name     Suite Documentation
+    Element Attribute Should be    ${property_elements}[0]    value    Normal test cases
+    # metadata suite
+    ${meta_properties_element} =    Get Elements    ${suites}[1]    properties
+    Length Should Be    ${meta_properties_element}    1
+    ${property_elements} =    Get Elements    ${meta_properties_element}[0]    property
+    Length Should Be    ${property_elements}    8
+    Element Attribute Should be    ${property_elements}[0]    name     Escaping
+    Element Attribute Should be    ${property_elements}[0]    value    Three backslashes \\\\\\\ & \${version}
+    Element Attribute Should be    ${property_elements}[1]    name     Multiple columns
+    Element Attribute Should be    ${property_elements}[1]    value    Value in multiple columns
+    Element Attribute Should be    ${property_elements}[2]    name     multiple lines
+    Element Attribute Should be    ${property_elements}[2]    value    Metadata in multiple lines\nis parsed using\nsame semantics as documentation.\n| table |\n| ! |
+    Element Attribute Should be    ${property_elements}[3]    name     Name
+    Element Attribute Should be    ${property_elements}[3]    value    Value
+    Element Attribute Should be    ${property_elements}[4]    name     Overridden
+    Element Attribute Should be    ${property_elements}[4]    value    This overrides first value
+    Element Attribute Should be    ${property_elements}[5]    name     Value from CLI
+    Element Attribute Should be    ${property_elements}[5]    value    cli meta
+    Element Attribute Should be    ${property_elements}[6]    name     Variable from resource
+    Element Attribute Should be    ${property_elements}[6]    value    Variable from a resource file
+    Element Attribute Should be    ${property_elements}[7]    name     variables
+    Element Attribute Should be    ${property_elements}[7]    value    Version: 1.2
 
 *** Keywords ***
 Get XUnit Node
