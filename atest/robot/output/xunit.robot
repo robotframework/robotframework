@@ -96,8 +96,7 @@ XUnit File Root Testsuite Properties From CLI
     Run Tests    -M METACLI:"meta CLI" -x xunit.xml -l log.html -v META_VALUE_FROM_CLI:"cli meta"    ${NORMAL SUITE} ${METADATA SUITE}
     Verify Outputs
     ${root} =    Get Root Node
-    ${root_properties_element} =    Get Elements    ${root}    properties
-    Length Should Be    ${root_properties_element}    1
+    ${root_properties_element} =    Get Properties Node    ${root}
     ${property_elements} =    Get Elements    ${root_properties_element}[0]    property
     Length Should Be    ${property_elements}    1
     Element Attribute Should be    ${property_elements}[0]    name     METACLI
@@ -107,8 +106,7 @@ XUnit File Testsuite Properties From Suite Documentation
     ${root} =    Get Root Node
     ${suites} =    Get Elements    ${root}    testsuite
     Length Should Be    ${suites}    2
-    ${normal_properties_element} =    Get Elements    ${suites}[0]    properties
-    Length Should Be    ${normal_properties_element}    1
+    ${normal_properties_element} =    Get Properties Node    ${suites}[0]
     ${property_elements} =    Get Elements    ${normal_properties_element}[0]    property
     Length Should Be    ${property_elements}    2
     Element Attribute Should be    ${property_elements}[0]    name     Suite Documentation
@@ -117,8 +115,7 @@ XUnit File Testsuite Properties From Suite Documentation
 XUnit File Testsuite Properties From Metadata
     ${root} =    Get Root Node
     ${suites} =    Get Elements    ${root}    testsuite
-    ${meta_properties_element} =    Get Elements    ${suites}[1]    properties
-    Length Should Be    ${meta_properties_element}    1
+    ${meta_properties_element} =    Get Properties Node    ${suites}[1]
     ${property_elements} =    Get Elements    ${meta_properties_element}[0]    property
     Length Should Be    ${property_elements}    8
     Element Attribute Should be    ${property_elements}[0]    name     Escaping
@@ -169,3 +166,9 @@ Get Root Node
     ${root} =    Get XUnit Node
     Should Be Equal    ${root.tag}    testsuite
     [Return]    ${root}
+
+Get Properties Node
+    [Arguments]    ${source}
+    ${properties} =    Get Elements    ${source}    properties
+    Length Should Be    ${properties}    1
+    [Return]    ${properties}
