@@ -549,7 +549,7 @@ class OperatingSystem:
         self._link("File '%s' is empty.", path)
 
     def file_should_not_be_empty(self, path, msg=None):
-        """Fails if the specified directory is empty.
+        """Fails if the specified file is empty.
 
         The default error message can be overridden with the ``msg`` argument.
         """
