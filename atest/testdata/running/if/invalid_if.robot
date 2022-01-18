@@ -1,12 +1,12 @@
 *** Test Cases ***
 IF without condition
-    [Documentation]    FAIL    IF has no condition.
+    [Documentation]    FAIL    IF must have a condition.
     IF
         Fail    Should not be run
     END
 
-IF with ELSE without condition
-    [Documentation]    FAIL    IF has no condition.
+IF without condition with ELSE
+    [Documentation]    FAIL    IF must have a condition.
     IF
         Fail    Should not be run
     ELSE
@@ -14,13 +14,21 @@ IF with ELSE without condition
     END
 
 IF with invalid condition
-    [Documentation]    FAIL STARTS: Evaluating expression ''123'=123' failed: SyntaxError:
+    [Documentation]    FAIL STARTS: Evaluating IF condition failed: Evaluating expression ''123'=123' failed: SyntaxError:
     IF    '123'=${123}
         Fail    Should not be run
     END
 
-IF with ELSE with invalid condition
-    [Documentation]    FAIL Evaluating expression 'ooops' failed: NameError: name 'ooops' is not defined nor importable as module
+IF condition with non-existing variable
+    [Documentation]    FAIL Evaluating IF condition failed: Variable '\${ooop}' not found.
+    IF    ${ooop}
+        Fail    Should not be run
+    ELSE IF    ${not evaluated}
+        Not run
+    END
+
+IF with invalid condition with ELSE
+    [Documentation]    FAIL Evaluating IF condition failed: Evaluating expression 'ooops' failed: NameError: name 'ooops' is not defined nor importable as module
     IF    ooops
         Fail    Should not be run
     ELSE
@@ -28,7 +36,7 @@ IF with ELSE with invalid condition
     END
 
 ELSE IF with invalid condition
-    [Documentation]    FAIL STARTS: Evaluating expression '1/0' failed: ZeroDivisionError:
+    [Documentation]    FAIL STARTS: Evaluating ELSE IF condition failed: Evaluating expression '1/0' failed: ZeroDivisionError:
     IF    False
         Fail    Should not be run
     ELSE IF    False
@@ -59,7 +67,7 @@ IF with wrong case
     END
 
 ELSE IF without condition
-    [Documentation]    FAIL    ELSE IF has no condition.
+    [Documentation]    FAIL    ELSE IF must have a condition.
     IF    'mars' == 'mars'
         Fail    Should not be run
     ELSE IF
@@ -69,17 +77,17 @@ ELSE IF without condition
     END
 
 ELSE IF with multiple conditions
-    [Documentation]    FAIL    ELSE IF has more than one condition.
+    [Documentation]    FAIL    ELSE IF cannot have more than one condition.
     IF    'maa' == 'maa'
         Fail    Should not be run
-    ELSE IF    ${False}    ${True}
+    ELSE IF    ${False}    ooops    ${True}
         Fail    Should not be run
     ELSE
         Fail    Should not be run
     END
 
 ELSE with condition
-    [Documentation]    FAIL    ELSE has condition.
+    [Documentation]    FAIL    ELSE does not accept arguments.
     IF    'venus' != 'mars'
         Fail    Should not be run
     ELSE    ${True}
@@ -142,16 +150,16 @@ Invalid IF inside FOR
 Multiple errors
     [Documentation]    FAIL
     ...    Multiple errors:
-    ...    - IF has no condition.
+    ...    - IF must have a condition.
     ...    - IF branch cannot be empty.
     ...    - ELSE IF after ELSE.
     ...    - Multiple ELSE branches.
     ...    - IF has no closing END.
-    ...    - ELSE IF has more than one condition.
+    ...    - ELSE IF cannot have more than one condition.
     ...    - ELSE IF branch cannot be empty.
-    ...    - ELSE has condition.
+    ...    - ELSE does not accept arguments.
     ...    - ELSE branch cannot be empty.
-    ...    - ELSE IF has no condition.
+    ...    - ELSE IF must have a condition.
     ...    - ELSE IF branch cannot be empty.
     ...    - ELSE branch cannot be empty.
     IF

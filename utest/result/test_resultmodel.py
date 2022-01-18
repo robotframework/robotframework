@@ -348,8 +348,10 @@ class TestForIterations(unittest.TestCase):
     def test_create_not_supported(self):
         iterations = For().body
         for creator in (iterations.create_for,
-                        iterations.create_if):
-            msg = "'ForIterations' object does not support '%s'." % creator.__name__
+                        iterations.create_if,
+                        iterations.create_try,
+                        iterations.create_return):
+            msg = "'Iterations' object does not support '%s'." % creator.__name__
             assert_raises_with_msg(TypeError, msg, creator)
 
 

@@ -42,7 +42,7 @@ class StatementLexer(Lexer):
     token_type = None
 
     def __init__(self, ctx):
-        Lexer.__init__(self, ctx)
+        super().__init__(ctx)
         self.statement = None
 
     def accepts_more(self, statement):
@@ -173,16 +173,27 @@ class IfHeaderLexer(TypeAndArguments):
         return statement[0].value == 'IF' and len(statement) <= 2
 
 
-class InlineIfHeaderLexer(TypeAndArguments):
+class InlineIfHeaderLexer(StatementLexer):
     token_type = Token.INLINE_IF
 
     def handles(self, statement):
         for token in statement:
             if token.value == 'IF':
                 return True
-            if is_assign(token.value, allow_assign_mark=True):
-                continue
-            return False
+            if not is_assign(token.value, allow_assign_mark=True):
+                return False
+        return False
+
+    def lex(self):
+        if_seen = False
+        for token in self.statement:
+            if if_seen:
+                token.type = Token.ARGUMENT
+            elif token.value == 'IF':
+                token.type = Token.INLINE_IF
+                if_seen = True
+            else:
+                token.type = Token.ASSIGN
 
 
 class ElseIfHeaderLexer(TypeAndArguments):
@@ -232,6 +243,13 @@ class FinallyHeaderLexer(TypeAndArguments):
         return statement[0].value == 'FINALLY'
 
 
+class WhileHeaderLexer(TypeAndArguments):
+    token_type = Token.WHILE
+
+    def handles(self, statement):
+        return statement[0].value == 'WHILE'
+
+
 class EndLexer(TypeAndArguments):
     token_type = Token.END
 
@@ -244,3 +262,17 @@ class ReturnLexer(TypeAndArguments):
 
     def handles(self, statement):
         return statement[0].value == 'RETURN'
+
+
+class ContinueLexer(TypeAndArguments):
+    token_type = Token.CONTINUE
+
+    def handles(self, statement):
+        return statement[0].value == 'CONTINUE'
+
+
+class BreakLexer(TypeAndArguments):
+    token_type = Token.BREAK
+
+    def handles(self, statement):
+        return statement[0].value == 'BREAK'

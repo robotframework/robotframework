@@ -193,7 +193,7 @@ Template With IF Failing
 Invalid IF
     [Documentation]    FAIL
     ...    Multiple errors:
-    ...    - IF has no condition.
+    ...    - IF must have a condition.
     ...    - IF has no closing END.
     IF
         Not    Run

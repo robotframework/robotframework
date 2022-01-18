@@ -1,6 +1,6 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    running/for.robot
-Resource          for_resource.robot
+Suite Setup       Run Tests    ${EMPTY}    running/for/for.robot
+Resource          for.resource
 
 *** Test Cases ***
 Simple loop
@@ -95,7 +95,9 @@ Settings after FOR
 
 Looping over empty list variable is OK
     ${tc} =    Check test case    ${TEST NAME}
-    Should be FOR loop    ${tc.kws[0]}    0
+    Should be FOR loop         ${tc.kws[0]}                     1               NOT RUN
+    Should be FOR iteration    ${tc.body[0].body[0]}            \${var}=
+    Check keyword data         ${tc.body[0].body[0].body[0]}    BuiltIn.Fail    args=Not executed    status=NOT RUN
 
 Other iterables
     ${tc} =    Check test case    ${TEST NAME}
@@ -282,10 +284,10 @@ Syntax error in nested loop
 
 Unexecuted
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should be FOR loop         ${tc.body[1].body[0].body[0]}            1              NOT RUN
-    Should be FOR iteration    ${tc.body[1].body[0].body[0].body[0]}    \${x}=\${x}    \${y}=\${y}
-    Should be FOR loop         ${tc.body[5]}                            1              NOT RUN
-    Should be FOR iteration    ${tc.body[5].body[0]}                    \${x}=\${x}    \${y}=\${y}
+    Should be FOR loop         ${tc.body[1].body[0].body[0]}            1         NOT RUN
+    Should be FOR iteration    ${tc.body[1].body[0].body[0].body[0]}    \${x}=    \${y}=
+    Should be FOR loop         ${tc.body[5]}                            1         NOT RUN
+    Should be FOR iteration    ${tc.body[5].body[0]}                    \${x}=    \${y}=
 
 Header at the end of file
     Check Test Case    ${TESTNAME}

@@ -243,13 +243,10 @@ class SuiteVisitor:
         """Implements traversing through TRY/EXCEPT structures.
 
         This method is used with the TRY/EXCEPT root element. Actual TRY, EXCEPT, ELSE
-        and FINALLY blocks are visited separately.
+        and FINALLY branches are visited separately.
         """
         if self.start_try(try_) is not False:
-            try_.try_block.visit(self)
-            try_.except_blocks.visit(self)
-            try_.else_block.visit(self)
-            try_.finally_block.visit(self)
+            try_.body.visit(self)
             self.end_try(try_)
 
     def start_try(self, try_):
@@ -263,22 +260,69 @@ class SuiteVisitor:
         """Called when TRY/EXCEPT structure ends. Default implementation does nothing."""
         pass
 
-    def visit_try_block(self, block):
-        """Visits individual TRY, EXCEPT, ELSE and FINALLY blocks."""
-        if self.start_try_block(block) is not False:
-            block.body.visit(self)
-            self.end_try_block(block)
+    def visit_try_branch(self, branch):
+        """Visits individual TRY, EXCEPT, ELSE and FINALLY branches."""
+        if self.start_try_branch(branch) is not False:
+            branch.body.visit(self)
+            self.end_try_branch(branch)
 
-    def start_try_block(self, block):
-        """Called when TRY block starts. Default implementation does nothing.
+    def start_try_branch(self, branch):
+        """Called when TRY, EXCEPT, ELSE or FINALLY branch starts.
 
         Can return explicit ``False`` to stop visiting.
         """
         pass
 
-    def end_try_block(self, block):
-        """Called when TRY block ends. Default implementation does nothing."""
+    def end_try_branch(self, branch):
+        """Called when TRY, EXCEPT, ELSE or FINALLY branch ends."""
         pass
+
+    def visit_while(self, while_):
+        """Implements traversing through WHILE loops.
+
+        Can be overridden to allow modifying the passed in ``while_`` without
+        calling :meth:`start_while` or :meth:`end_while` nor visiting body.
+        """
+        if self.start_while(while_) is not False:
+            while_.body.visit(self)
+            self.end_while(while_)
+
+    def start_while(self, while_):
+        """Called when WHILE loop starts. Default implementation does nothing.
+
+        Can return explicit ``False`` to stop visiting.
+        """
+        pass
+
+    def end_while(self, while_):
+        """Called when WHILE loop ends. Default implementation does nothing."""
+        pass
+
+    def visit_while_iteration(self, iteration):
+        """Implements traversing through single WHILE loop iteration.
+
+        This is only used with the result side model because on the running side
+        there are no iterations.
+
+        Can be overridden to allow modifying the passed in ``iteration`` without
+        calling :meth:`start_while_iteration` or :meth:`end_while_iteration` nor visiting
+        body.
+        """
+        if self.start_while_iteration(iteration) is not False:
+            iteration.body.visit(self)
+            self.end_while_iteration(iteration)
+
+    def start_while_iteration(self, iteration):
+        """Called when WHILE loop iteration starts. Default implementation does nothing.
+
+        Can return explicit ``False`` to stop visiting.
+        """
+        pass
+
+    def end_while_iteration(self, iteration):
+        """Called when WHILE loop iteration ends. Default implementation does nothing."""
+        pass
+
 
     def visit_return(self, return_):
         """Visits RETURN elements."""
@@ -294,6 +338,38 @@ class SuiteVisitor:
 
     def end_return(self, return_):
         """Called when RETURN element ends."""
+        pass
+
+    def visit_continue(self, continue_):
+        """Visits CONTINUE elements."""
+        if self.start_continue(continue_) is not False:
+            self.end_continue(continue_)
+
+    def start_continue(self, continue_):
+        """Called when CONTINUE element starts.
+
+        Can return explicit ``False`` to avoid calling :meth:`end_continue`.
+        """
+        pass
+
+    def end_continue(self, continue_):
+        """Called when CONTINUE element ends."""
+        pass
+
+    def visit_break(self, break_):
+        """Visits BREAK elements."""
+        if self.start_break(break_) is not False:
+            self.end_break(break_)
+
+    def start_break(self, break_):
+        """Called when BREAK element starts.
+
+        Can return explicit ``False`` to avoid calling :meth:`end_break`.
+        """
+        pass
+
+    def end_break(self, break_):
+        """Called when BREAK element ends."""
         pass
 
     def visit_message(self, msg):

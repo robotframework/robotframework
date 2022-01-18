@@ -50,23 +50,21 @@ class TestSuiteBuilder:
                  rpa=None, allow_empty_suite=False, process_curdir=True):
         """
         :param include_suites:
-            List of suite names to include. If ``None`` or an empty list,
-            all suites are included. Same as using :option:`--suite` on
-            the command line.
+            List of suite names to include. If ``None`` or an empty list, all
+            suites are included. Same as using `--suite` on the command line.
         :param included_extensions:
-            List of extensions of files to parse. Same as :option:`--extension`.
-            This parameter was named ``extension`` before RF 3.2.
+            List of extensions of files to parse. Same as `--extension`.
         :param rpa: Explicit test execution mode. ``True`` for RPA and
-           ``False`` for test automation. By default mode is got from test
-           data headers and possible conflicting headers cause an error.
-           Same as :option:`--rpa` or :option:`--norpa`.
+           ``False`` for test automation. By default mode is got from data file
+           headers and possible conflicting headers cause an error.
+           Same as `--rpa` or `--norpa`.
         :param allow_empty_suite:
             Specify is it an error if the built suite contains no tests.
-            Same as :option:`--runemptysuite`. New in RF 3.2.
+            Same as `--runemptysuite`.
         :param process_curdir:
             Control processing the special ``${CURDIR}`` variable. It is
             resolved already at parsing time by default, but that can be
-            changed by giving this argument ``False`` value. New in RF 3.2.
+            changed by giving this argument ``False`` value.
         """
         self.rpa = rpa
         self.included_suites = included_suites

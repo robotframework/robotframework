@@ -22,10 +22,10 @@ from .jsexecutionresult import JsExecutionResult
 
 STATUSES = {'FAIL': 0, 'PASS': 1, 'SKIP': 2, 'NOT RUN': 3}
 KEYWORD_TYPES = {'KEYWORD': 0, 'SETUP': 1, 'TEARDOWN': 2,
-                 'FOR': 3, 'FOR ITERATION': 4,
+                 'FOR': 3, 'ITERATION': 4,
                  'IF': 5, 'ELSE IF': 6, 'ELSE': 7,
                  'RETURN': 8, 'TRY': 9, 'EXCEPT': 10,
-                 'TRY ELSE': 7, 'FINALLY': 11}
+                 'FINALLY': 11, 'WHILE': 12, 'CONTINUE': 13, 'BREAK': 14}
 
 
 class JsModelBuilder:
@@ -82,15 +82,8 @@ class _Builder:
     def _flatten(self, steps):
         result = []
         for step in steps:
-            if step.type == BodyItem.IF_ELSE_ROOT:
+            if step.type in (BodyItem.IF_ELSE_ROOT, BodyItem.TRY_EXCEPT_ROOT):
                 result.extend(step.body)
-            elif step.type == BodyItem.TRY_EXCEPT_ROOT:
-                result.append(step.try_block)
-                result.extend(step.except_blocks)
-                if step.else_block:
-                    result.append(step.else_block)
-                if step.finally_block:
-                    result.append(step.finally_block)
             else:
                 result.append(step)
         return result

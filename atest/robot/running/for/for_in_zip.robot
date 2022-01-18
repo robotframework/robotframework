@@ -1,6 +1,6 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    running/for_in_zip.robot
-Resource          for_resource.robot
+Suite Setup       Run Tests    ${EMPTY}    running/for/for_in_zip.robot
+Resource          for.resource
 
 *** Test Cases ***
 Two variables and lists
@@ -64,9 +64,11 @@ List variable containing iterables
 
 List variable with iterables can be empty
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should be IN ZIP loop    ${tc.body[0]}    0
-    Should be IN ZIP loop    ${tc.body[1]}    0
-    Check Log Message    ${tc.body[2].msgs[0]}    Executed!
+    Should be IN ZIP loop      ${tc.body[0]}            1         NOT RUN
+    Should be FOR iteration    ${tc.body[0].body[0]}    \${x}=
+    Should be IN ZIP loop      ${tc.body[1]}            1         NOT RUN
+    Should be FOR iteration    ${tc.body[1].body[0]}    \${x}=    \${y}=    \${z}=
+    Check Log Message          ${tc.body[2].msgs[0]}    Executed!
 
 Not iterable value
     Check test and failed loop    ${TEST NAME}    IN ZIP

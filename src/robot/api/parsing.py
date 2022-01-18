@@ -192,8 +192,10 @@ Blocks:
 - :class:`~robot.parsing.model.blocks.CommentSection`
 - :class:`~robot.parsing.model.blocks.TestCase`
 - :class:`~robot.parsing.model.blocks.Keyword`
-- :class:`~robot.parsing.model.blocks.For`
 - :class:`~robot.parsing.model.blocks.If`
+- :class:`~robot.parsing.model.blocks.Try`
+- :class:`~robot.parsing.model.blocks.For`
+- :class:`~robot.parsing.model.blocks.While`
 
 Statements:
 
@@ -223,12 +225,19 @@ Statements:
 - :class:`~robot.parsing.model.statements.Return`
 - :class:`~robot.parsing.model.statements.KeywordCall`
 - :class:`~robot.parsing.model.statements.TemplateArguments`
-- :class:`~robot.parsing.model.statements.ForHeader`
 - :class:`~robot.parsing.model.statements.IfHeader`
 - :class:`~robot.parsing.model.statements.InlineIfHeader`
 - :class:`~robot.parsing.model.statements.ElseIfHeader`
 - :class:`~robot.parsing.model.statements.ElseHeader`
+- :class:`~robot.parsing.model.statements.TryHeader`
+- :class:`~robot.parsing.model.statements.ExceptHeader`
+- :class:`~robot.parsing.model.statements.FinallyHeader`
+- :class:`~robot.parsing.model.statements.ForHeader`
+- :class:`~robot.parsing.model.statements.WhileHeader`
 - :class:`~robot.parsing.model.statements.End`
+- :class:`~robot.parsing.model.statements.ReturnStatement`
+- :class:`~robot.parsing.model.statements.Break`
+- :class:`~robot.parsing.model.statements.Continue`
 - :class:`~robot.parsing.model.statements.Comment`
 - :class:`~robot.parsing.model.statements.Error`
 - :class:`~robot.parsing.model.statements.EmptyLine`
@@ -488,10 +497,10 @@ from robot.parsing.model.blocks import (
     CommentSection,
     TestCase,
     Keyword,
-    For,
     If,
     Try,
-    TryHandler
+    For,
+    While
 )
 from robot.parsing.model.statements import (
     SectionHeader,
@@ -520,16 +529,19 @@ from robot.parsing.model.statements import (
     Return,
     KeywordCall,
     TemplateArguments,
-    ForHeader,
     IfHeader,
     InlineIfHeader,
     ElseIfHeader,
     ElseHeader,
-    End,
     TryHeader,
     ExceptHeader,
     FinallyHeader,
+    ForHeader,
+    WhileHeader,
+    End,
     ReturnStatement,
+    Continue,
+    Break,
     Comment,
     Error,
     EmptyLine

@@ -17,11 +17,11 @@ from collections import OrderedDict
 from contextlib import contextmanager
 import re
 
-from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
-                          ExecutionStatus, ExitForLoop, ContinueForLoop, DataError,
-                          ReturnFromKeyword)
-from robot.result import (For as ForResult, If as IfResult, IfBranch as IfBranchResult,
-                          Try as TryResult, Except as TryHandlerResult, Block as BlockResult)
+from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
+                          ExecutionFailures, ExecutionPassed, ExecutionStatus)
+from robot.result import (For as ForResult, While as WhileResult, If as IfResult,
+                          IfBranch as IfBranchResult, Try as TryResult,
+                          TryBranch as TryBranchResult)
 from robot.output import librarylogger as logger
 from robot.utils import (cut_assign_value, frange, get_error_message, is_string,
                          is_list_like, is_number, plural_or_not as s,
@@ -45,6 +45,11 @@ class BodyRunner:
             try:
                 step.run(self._context, self._run, self._templated)
             except ExecutionPassed as exception:
+                if (isinstance(exception, (BreakLoop, ContinueLoop))
+                        and not self._context.allow_loop_control):
+                    name = 'BREAK' if isinstance(exception, BreakLoop) else 'CONTINUE'
+                    raise ExecutionFailed(f'{name} can only be used inside a loop.',
+                                          syntax=True)
                 exception.set_earlier_failures(errors)
                 passed = exception
                 self._run = False
@@ -71,73 +76,6 @@ class KeywordRunner:
         return runner.run(step, context, self._run)
 
 
-class IfRunner:
-    _dry_run_stack = []
-
-    def __init__(self, context, run=True, templated=False):
-        self._context = context
-        self._run = run
-        self._templated = templated
-
-    def run(self, data):
-        with self._dry_run_recursion_detection(data) as recursive_dry_run:
-            error = None
-            with StatusReporter(data, IfResult(), self._context, self._run):
-                for branch in data.body:
-                    try:
-                        if self._run_if_branch(branch, recursive_dry_run, data.error):
-                            self._run = False
-                    except ExecutionStatus as err:
-                        error = err
-                        self._run = False
-                if error:
-                    raise error
-
-    @contextmanager
-    def _dry_run_recursion_detection(self, data):
-        dry_run = self._context.dry_run
-        if dry_run:
-            recursive_dry_run = data in self._dry_run_stack
-            self._dry_run_stack.append(data)
-        else:
-            recursive_dry_run = False
-        try:
-            yield recursive_dry_run
-        finally:
-            if dry_run:
-                self._dry_run_stack.pop()
-
-    def _run_if_branch(self, branch, recursive_dry_run=False, error=None):
-        result = IfBranchResult(branch.type, branch.condition)
-        if error:
-            run_branch = False
-        else:
-            try:
-                run_branch = self._should_run_branch(branch.condition, recursive_dry_run)
-            except:
-                error = get_error_message()
-                run_branch = False
-        with StatusReporter(branch, result, self._context, run_branch):
-            runner = BodyRunner(self._context, run_branch, self._templated)
-            if not recursive_dry_run:
-                runner.run(branch.body)
-            if error and self._run:
-                raise DataError(error)
-        return run_branch
-
-    def _should_run_branch(self, condition, recursive_dry_run=False):
-        if self._context.dry_run:
-            return not recursive_dry_run
-        if not self._run:
-            return False
-        if condition is None:
-            return True
-        condition = self._context.variables.replace_scalar(condition)
-        if is_string(condition):
-            return evaluate_expression(condition, self._context.variables.current.store)
-        return bool(condition)
-
-
 def ForRunner(context, flavor='IN', run=True, templated=False):
     runners = {'IN': ForInRunner,
                'IN RANGE': ForInRangeRunner,
@@ -157,24 +95,28 @@ class ForInRunner:
 
     def run(self, data):
         result = ForResult(data.variables, data.flavor, data.values)
-        with StatusReporter(data, result, self._context, self._run):
+        with StatusReporter(data, result, self._context, self._run) as status:
+            run_at_least_once = False
             if self._run:
                 if data.error:
                     raise DataError(data.error)
-                self._run_loop(data, result)
-            else:
-                self._run_one_round(data, result)
+                run_at_least_once = self._run_loop(data, result)
+            if not run_at_least_once:
+                status.pass_status = result.NOT_RUN
+                self._run_one_round(data, result, run=False)
 
     def _run_loop(self, data, result):
         errors = []
+        executed = False
         for values in self._get_values_for_rounds(data):
+            executed = True
             try:
                 self._run_one_round(data, result, values)
-            except ExitForLoop as exception:
+            except BreakLoop as exception:
                 if exception.earlier_failures:
                     errors.extend(exception.earlier_failures.get_errors())
                 break
-            except ContinueForLoop as exception:
+            except ContinueLoop as exception:
                 if exception.earlier_failures:
                     errors.extend(exception.earlier_failures.get_errors())
                 continue
@@ -188,6 +130,7 @@ class ForInRunner:
                     break
         if errors:
             raise ExecutionFailures(errors)
+        return executed
 
     def _get_values_for_rounds(self, data):
         if self._context.dry_run:
@@ -268,18 +211,18 @@ class ForInRunner:
             'Got %d variables but %d value%s.' % (variables, values, s(values))
         )
 
-    def _run_one_round(self, data, result, values=None):
+    def _run_one_round(self, data, result, values=None, run=True):
         result = result.body.create_iteration()
         if values is not None:
             variables = self._context.variables
         else:    # Not really run (earlier failure, unexecuted IF branch, dry-run)
             variables = {}
-            values = data.variables
+            values = [''] * len(data.variables)
         for name, value in self._map_variables_and_values(data.variables, values):
             variables[name] = value
             result.variables[name] = cut_assign_value(value)
-        runner = BodyRunner(self._context, self._run, self._templated)
-        with StatusReporter(data, result, self._context, self._run):
+        runner = BodyRunner(self._context, run, self._templated)
+        with StatusReporter(data, result, self._context, run):
             runner.run(data.body)
 
     def _map_variables_and_values(self, variables, values):
@@ -386,6 +329,123 @@ class ForInEnumerateRunner(ForInRunner):
         )
 
 
+class WhileRunner:
+
+    def __init__(self, context, run=True, templated=False):
+        self._context = context
+        self._run = run
+        self._templated = templated
+
+    def run(self, data):
+        run = self._run
+        executed_once = False
+        result = WhileResult(data.condition)
+        with StatusReporter(data, result, self._context, run) as status:
+            if self._context.dry_run or not run:
+                self._run_iteration(data, result, run)
+                return
+            if data.error:
+                raise DataError(data.error)
+            while self._should_run(data.condition, self._context.variables):
+                executed_once = True
+                try:
+                    self._run_iteration(data, result, run)
+                except BreakLoop:
+                    break
+                except ContinueLoop:
+                    continue
+            if not executed_once:
+                status.pass_status = result.NOT_RUN
+                self._run_iteration(data, result, run=False)
+
+    def _run_iteration(self, data, result, run):
+        runner = BodyRunner(self._context, run, self._templated)
+        with StatusReporter(data, result.body.create_iteration(), self._context, run):
+            runner.run(data.body)
+
+    def _should_run(self, condition, variables):
+        try:
+            condition = variables.replace_scalar(condition)
+            if is_string(condition):
+                return evaluate_expression(condition, variables.current.store)
+            return bool(condition)
+        except DataError as err:
+            raise DataError(f'Evaluating WHILE loop condition failed: {err}')
+
+
+class IfRunner:
+    _dry_run_stack = []
+
+    def __init__(self, context, run=True, templated=False):
+        self._context = context
+        self._run = run
+        self._templated = templated
+
+    def run(self, data):
+        with self._dry_run_recursion_detection(data) as recursive_dry_run:
+            error = None
+            with StatusReporter(data, IfResult(), self._context, self._run):
+                for branch in data.body:
+                    try:
+                        if self._run_if_branch(branch, recursive_dry_run, data.error):
+                            self._run = False
+                    except ExecutionStatus as err:
+                        error = err
+                        self._run = False
+                if error:
+                    raise error
+
+    @contextmanager
+    def _dry_run_recursion_detection(self, data):
+        dry_run = self._context.dry_run
+        if dry_run:
+            recursive_dry_run = data in self._dry_run_stack
+            self._dry_run_stack.append(data)
+        else:
+            recursive_dry_run = False
+        try:
+            yield recursive_dry_run
+        finally:
+            if dry_run:
+                self._dry_run_stack.pop()
+
+    def _run_if_branch(self, branch, recursive_dry_run=False, error=None):
+        context = self._context
+        result = IfBranchResult(branch.type, branch.condition)
+        if error:
+            run_branch = False
+        else:
+            try:
+                run_branch = self._should_run_branch(branch, context, recursive_dry_run)
+            except:
+                error = get_error_message()
+                run_branch = False
+        with StatusReporter(branch, result, context, run_branch):
+            runner = BodyRunner(context, run_branch, self._templated)
+            if not recursive_dry_run:
+                runner.run(branch.body)
+            if error and self._run:
+                raise DataError(error)
+        return run_branch
+
+    def _should_run_branch(self, branch, context, recursive_dry_run=False):
+        condition = branch.condition
+        variables = context.variables
+        if context.dry_run:
+            return not recursive_dry_run
+        if not self._run:
+            return False
+        if condition is None:
+            return True
+        try:
+            condition = variables.replace_scalar(condition)
+            if is_string(condition):
+                return evaluate_expression(condition, variables.current.store)
+            return bool(condition)
+        except DataError as err:
+            raise DataError(f'Evaluating {branch.type} condition failed: {err}')
+
+
 class TryRunner:
 
     def __init__(self, context, run=True, templated=False):
@@ -396,85 +456,73 @@ class TryRunner:
     def run(self, data):
         run = self._run
         with StatusReporter(data, TryResult(), self._context, run):
-            result = BlockResult(data.try_block.type)
-            failures = self._run_block(data.try_block, result, run, data.error)
-            self._run_handlers(data, failures)
-        return run
+            if data.error:
+                self._run_invalid(data)
+                return False
+            error = self._run_try(data, run)
+            run_excepts_or_else = self._should_run_excepts_or_else(error, run)
+            if error:
+                error = self._run_excepts(data, error, run=run_excepts_or_else)
+                self._run_else(data, run=False)
+            else:
+                self._run_excepts(data, error, run=False)
+                error = self._run_else(data, run=run_excepts_or_else)
+            error = self._run_finally(data, run) or error
+            if error:
+                raise error
 
-    def _run_block(self, block, result, run, error=None):
+    def _run_invalid(self, data):
+        error_reported = False
+        for branch in data.body:
+            result = TryBranchResult(branch.type, branch.patterns, branch.variable)
+            with StatusReporter(branch, result, self._context, run=False, suppress=True):
+                runner = BodyRunner(self._context, run=False, templated=self._templated)
+                runner.run(branch.body)
+                if not error_reported:
+                    error_reported = True
+                    raise ExecutionFailed(data.error)
+        raise ExecutionFailed(data.error)
+
+    def _run_try(self, data, run):
+        result = TryBranchResult(data.TRY)
+        return self._run_branch(data.try_branch, result, run)
+
+    def _should_run_excepts_or_else(self, error, run):
+        if not run:
+            return False
+        if not error:
+            return True
+        return not (error.skip or isinstance(error, ExecutionPassed))
+
+    def _run_branch(self, branch, result, run):
         try:
-            with StatusReporter(block, result, self._context, run):
-                if run:
-                    if error:
-                        raise DataError(error)
+            with StatusReporter(branch, result, self._context, run):
                 runner = BodyRunner(self._context, run, self._templated)
-                runner.run(block.body)
-        except (ExecutionFailures, ExecutionFailed, ReturnFromKeyword) as err:
+                runner.run(branch.body)
+        except ExecutionStatus as err:
             return err
         else:
             return None
 
-    def _run_handlers(self, data, failures):
-        handler_error, handler_matched = self._run_except_handlers(data, failures)
-        else_error = self._run_else_block(data, failures, handler_error)
-        self._run_finally_block(data)
-        if handler_error:
-            raise handler_error
-        if else_error:
-            raise else_error
-        if not handler_matched and failures:
-            raise failures
-
-    def _run_except_handlers(self, data, failures):
-        handler_matched = False
-        handler_error = None
-        for handler in data.except_blocks:
-            run, handler_error = self._should_run_handler(
-                data, failures, handler, handler_matched, handler_error)
-            if run:
-                handler_matched = True
-                if handler.variable:
-                    self._context.variables[handler.variable] = str(failures)
-            result = TryHandlerResult(handler.patterns, handler.variable)
-            if not handler_error:
-                handler_error = self._run_block(handler, result, run)
+    def _run_excepts(self, data, error, run):
+        for branch in data.except_branches:
+            try:
+                run_branch = run and self._should_run_except(branch, error)
+            except DataError as err:
+                run_branch = run = False
+                error = ExecutionFailed(str(err))
+            result = TryBranchResult(branch.type, branch.patterns, branch.variable)
+            if run_branch:
+                if branch.variable:
+                    self._context.variables[branch.variable] = str(error)
+                error = self._run_branch(branch, result, run=True)
+                run = False
             else:
-                self._run_block(handler, result, run)
-        return handler_error, handler_matched
+                self._run_branch(branch, result, run=False)
+        return error
 
-    def _should_run_handler(self,data, failures, handler, handler_matched,
-                            handler_error):
-        if not self._run or handler_matched or handler_error or data.error:
-            return False, None
-        try:
-            return failures and self._error_is_expected(failures, handler), None
-        except:
-            return False, ExecutionFailed(get_error_message())
-
-    def _run_else_block(self, data, failures, handler_error):
-        else_error = None
-        if data.else_block:
-            run = self._run and not failures and not handler_error
-            result = BlockResult(data.else_block.type)
-            else_error = self._run_block(data.else_block, result, run)
-        return else_error
-
-    def _run_finally_block(self, data):
-        if data.finally_block:
-            run = self._run and not data.error
-            with StatusReporter(data.finally_block, BlockResult(data.finally_block.type),
-                                self._context, run):
-                runner = BodyRunner(self._context, run, self._templated)
-                runner.run(data.finally_block.body)
-
-    def _error_is_expected(self, error, handler):
-        if isinstance(error, ReturnFromKeyword):
-            return False
-        if any(e.skip for e in error.get_errors()):
-            return False
-        patterns = handler.patterns
-        if not patterns:
-            # The default (empty) except matches everything
+    def _should_run_except(self, branch, error):
+        if not branch.patterns:
             return True
         matchers = {
             'GLOB:': lambda s, p: Matcher(p, spaceless=False, caseless=False).match(s),
@@ -483,7 +531,7 @@ class TryRunner:
             'REGEXP:': lambda s, p: re.match(rf'{p}\Z', s) is not None
         }
         message = error.message
-        for pattern in patterns:
+        for pattern in branch.patterns:
             if not pattern.startswith(tuple(matchers)):
                 pattern = self._context.variables.replace_scalar(pattern)
                 if message == pattern:
@@ -494,3 +542,13 @@ class TryRunner:
                 if matchers[f'{prefix}:'](message, pat):
                     return True
         return False
+
+    def _run_else(self, data, run):
+        if data.else_branch:
+            result = TryBranchResult(data.ELSE)
+            return self._run_branch(data.else_branch, result, run)
+
+    def _run_finally(self, data, run):
+        if data.finally_branch:
+            result = TryBranchResult(data.FINALLY)
+            return self._run_branch(data.finally_branch, result, run)

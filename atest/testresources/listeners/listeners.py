@@ -65,17 +65,20 @@ class KeywordType:
             raise AssertionError("Wrong keyword type '%s', expected '%s'."
                                  % (attrs['type'], expected))
 
-    def _get_expected_type(self, kwname, libname, args, **ignore):
+    def _get_expected_type(self, kwname, libname, args, source, lineno, **ignore):
         if ' IN ' in kwname:
             return 'FOR'
         if ' = ' in kwname:
-            return 'FOR ITERATION'
+            return 'ITERATION'
         if not args:
-            if kwname == "'IF' == 'WRONG'":
+            if kwname in ("'IF' == 'WRONG'", '${i} == 9'):
                 return 'IF'
             if kwname == "'ELSE IF' == 'ELSE IF'":
                 return 'ELSE IF'
             if kwname == '':
+                source = os.path.basename(source)
+                if source == 'for_loops.robot':
+                    return 'BREAK' if lineno == 10 else 'CONTINUE'
                 return 'ELSE'
         expected = args[0] if libname == 'BuiltIn' else kwname
         return {'Suite Setup': 'SETUP', 'Suite Teardown': 'TEARDOWN',

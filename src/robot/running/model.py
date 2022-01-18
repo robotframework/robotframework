@@ -37,32 +37,20 @@ import os
 
 from robot import model
 from robot.conf import RobotSettings
-from robot.errors import ReturnFromKeyword
+from robot.errors import BreakLoop, ContinueLoop, ReturnFromKeyword
 from robot.model import Keywords, BodyItem
 from robot.output import LOGGER, Output, pyloggingconf
-from robot.result import Return as ReturnResult
+from robot.result import (Break as BreakResult, Continue as ContinueResult,
+                          Return as ReturnResult)
 from robot.utils import seq2str, setter
 
-from .bodyrunner import ForRunner, IfRunner, KeywordRunner, TryRunner
+from .bodyrunner import ForRunner, IfRunner, KeywordRunner, TryRunner, WhileRunner
 from .randomizer import Randomizer
 from .statusreporter import StatusReporter
 
 
 class Body(model.Body):
     __slots__ = []
-
-
-class IfBranches(model.IfBranches):
-    __slots__ = []
-
-
-class ExceptBlocks(model.ExceptBlocks):
-    __slots__ = []
-
-
-class Block(model.Block):
-    __slots__ = ['lineno', 'error']
-    body_class = Body
 
 
 @Body.register
@@ -78,8 +66,7 @@ class Keyword(model.Keyword):
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(), timeout=None,
                  type=BodyItem.KEYWORD, parent=None, lineno=None):
-        model.Keyword.__init__(self, name, doc, args, assign, tags, timeout, type,
-                               parent)
+        super().__init__(name, doc, args, assign, tags, timeout, type, parent)
         self.lineno = lineno
 
     @property
@@ -96,7 +83,7 @@ class For(model.For):
     body_class = Body
 
     def __init__(self, variables, flavor, values, parent=None, lineno=None, error=None):
-        model.For.__init__(self, variables, flavor, values, parent)
+        super().__init__(variables, flavor, values, parent)
         self.lineno = lineno
         self.error = error
 
@@ -109,12 +96,43 @@ class For(model.For):
 
 
 @Body.register
-class If(model.If):
+class While(model.While):
     __slots__ = ['lineno', 'error']
-    body_class = IfBranches
+    body_class = Body
 
     def __init__(self, parent=None, lineno=None, error=None):
-        model.If.__init__(self, parent)
+        super().__init__(parent)
+        self.lineno = lineno
+        self.error = error
+
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
+    def run(self, context, run=True, templated=False):
+        return WhileRunner(context, run, templated).run(self)
+
+
+class IfBranch(model.IfBranch):
+    __slots__ = ['lineno']
+    body_class = Body
+
+    def __init__(self, type=BodyItem.IF, condition=None, parent=None, lineno=None):
+        super().__init__(type, condition, parent)
+        self.lineno = lineno
+
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
+
+@Body.register
+class If(model.If):
+    __slots__ = ['lineno', 'error']
+    branch_class = IfBranch
+
+    def __init__(self, parent=None, lineno=None, error=None):
+        super().__init__(parent)
         self.lineno = lineno
         self.error = error
 
@@ -126,13 +144,13 @@ class If(model.If):
         return IfRunner(context, run, templated).run(self)
 
 
-@IfBranches.register
-class IfBranch(model.IfBranch):
+class TryBranch(model.TryBranch):
     __slots__ = ['lineno']
     body_class = Body
 
-    def __init__(self, type=BodyItem.IF, condition=None, parent=None, lineno=None):
-        model.IfBranch.__init__(self, type, condition, parent)
+    def __init__(self, type=BodyItem.TRY, patterns=(), variable=None, parent=None,
+                 lineno=None):
+        super().__init__(type, patterns, variable, parent)
         self.lineno = lineno
 
     @property
@@ -143,31 +161,10 @@ class IfBranch(model.IfBranch):
 @Body.register
 class Try(model.Try):
     __slots__ = ['lineno', 'error']
-    try_class = Block
-    excepts_class = ExceptBlocks
-    else_class = Block
-    finally_class = Block
+    branch_class = TryBranch
 
     def __init__(self, parent=None, lineno=None, error=None):
-        model.Try.__init__(self, parent)
-        self.lineno = lineno
-        self.error = error
-
-    @property
-    def source(self):
-        return self.parent.source if self.parent is not None else None
-
-    def run(self, context, run=True, templated=False):
-        return TryRunner(context, run, templated).run(self)
-
-
-@ExceptBlocks.register
-class Except(model.Except):
-    __slots__ = ['lineno', 'error']
-    body_class = Body
-
-    def __init__(self, patterns=None, variable=None, parent=None, lineno=None, error=None):
-        model.Except.__init__(self, patterns, variable, parent)
+        super().__init__(parent)
         self.lineno = lineno
         self.error = error
 
@@ -184,7 +181,7 @@ class Return(model.Return):
     __slots__ = ['lineno']
 
     def __init__(self, values=(), parent=None, lineno=None):
-        model.Return.__init__(self, values, parent)
+        super().__init__(values, parent)
         self.lineno = lineno
 
     @property
@@ -195,6 +192,42 @@ class Return(model.Return):
         with StatusReporter(self, ReturnResult(self.values), context, run):
             if run:
                 raise ReturnFromKeyword(self.values)
+
+
+@Body.register
+class Continue(model.Continue):
+    __slots__ = ['lineno']
+
+    def __init__(self, parent=None, lineno=None):
+        super().__init__(parent)
+        self.lineno = lineno
+
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
+    def run(self, context, run=True, templated=False):
+        with StatusReporter(self, ContinueResult(), context, run):
+            if run:
+                raise ContinueLoop()
+
+
+@Body.register
+class Break(model.Break):
+    __slots__ = ['lineno']
+
+    def __init__(self, parent=None, lineno=None):
+        super().__init__(parent)
+        self.lineno = lineno
+
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
+    def run(self, context, run=True, templated=False):
+        with StatusReporter(self, BreakResult(), context, run):
+            if run:
+                raise BreakLoop()
 
 
 class TestCase(model.TestCase):
@@ -208,7 +241,7 @@ class TestCase(model.TestCase):
 
     def __init__(self, name='', doc='', tags=None, timeout=None, template=None,
                  lineno=None):
-        model.TestCase.__init__(self, name, doc, tags, timeout)
+        super().__init__(name, doc, tags, timeout)
         #: Name of the keyword that has been used as a template when building the test.
         # ``None`` if template is not used.
         self.template = template
@@ -229,7 +262,7 @@ class TestSuite(model.TestSuite):
     fixture_class = Keyword  #: Internal usage only.
 
     def __init__(self,  name='', doc='', metadata=None, source=None, rpa=None):
-        model.TestSuite.__init__(self, name, doc, metadata, source, rpa)
+        super().__init__(name, doc, metadata, source, rpa)
         #: :class:`ResourceFile` instance containing imports, variables and
         #: keywords the suite owns. When data is parsed from the file system,
         #: this data comes from the same test case file that creates the suite.
@@ -487,7 +520,7 @@ class Import:
 class Imports(model.ItemList):
 
     def __init__(self, source, imports=None):
-        model.ItemList.__init__(self, Import, {'source': source}, items=imports)
+        super().__init__(Import, {'source': source}, items=imports)
 
     def library(self, name, args=(), alias=None, lineno=None):
         self.create('Library', name, args, alias, lineno)

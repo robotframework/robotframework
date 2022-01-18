@@ -88,7 +88,10 @@ class Token:
     EXCEPT = 'EXCEPT'
     FINALLY = 'FINALLY'
     AS = 'AS'
+    WHILE = 'WHILE'
     RETURN_STATEMENT = 'RETURN STATEMENT'
+    CONTINUE = 'CONTINUE'
+    BREAK = 'BREAK'
 
     SEPARATOR = 'SEPARATOR'
     COMMENT = 'COMMENT'
@@ -151,7 +154,7 @@ class Token:
             value = {
                 Token.IF: 'IF', Token.ELSE_IF: 'ELSE IF', Token.ELSE: 'ELSE',
                 Token.INLINE_IF: 'IF', Token.FOR: 'FOR', Token.END: 'END',
-                Token.RETURN_STATEMENT: 'RETURN',
+                Token.RETURN_STATEMENT: 'RETURN', Token.CONTINUE: 'CONTINUE', Token.BREAK: 'BREAK',
                 Token.CONTINUATION: '...', Token.EOL: '\n', Token.WITH_NAME: 'WITH NAME'
             }.get(type, '')
         self.value = value

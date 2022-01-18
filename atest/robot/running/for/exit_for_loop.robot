@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    running/exit_for_loop.robot
+Suite Setup       Run Tests    ${EMPTY}    running/for/exit_for_loop.robot
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -9,8 +9,8 @@ Simple Exit For Loop
 Exit For Loop In `Run Keyword`
     Test And All Keywords Should Have Passed    allow not run=True
 
-Exit For Loop In User Keyword
-    Test And All Keywords Should Have Passed    allow not run=True
+Exit For Loop is not supported in user keyword
+    Check Test Case    ${TESTNAME}
 
 Exit For Loop In User Keyword With Loop
     Test And All Keywords Should Have Passed    allow not run=True
@@ -19,7 +19,7 @@ Exit For Loop In User Keyword With Loop Within Loop
     Test And All Keywords Should Have Passed    allow not run=True
 
 Exit For Loop In User Keyword Calling User Keyword With Exit For Loop
-    Test And All Keywords Should Have Passed    allow not run=True
+    Check Test Case    ${TESTNAME}
 
 Exit For Loop Without For Loop Should Fail
     Check Test Case    ${TESTNAME}

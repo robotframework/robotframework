@@ -245,37 +245,39 @@ class LoggerProxy(AbstractLoggerProxy):
     _methods = ('start_suite', 'end_suite', 'start_test', 'end_test',
                 'start_keyword', 'end_keyword', 'message', 'log_message',
                 'imported', 'output_file', 'close')
+
     _start_keyword_methods = {
-        'IF/ELSE ROOT': 'start_if',
-        'IF': 'start_if_branch',
-        'ELSE IF': 'start_if_branch',
-        'ELSE': 'start_if_branch',
-        'FOR': 'start_for',
-        'FOR ITERATION': 'start_for_iteration',
-        'TRY/EXCEPT ROOT': 'start_try',
-        'TRY': 'start_try_block',
-        'EXCEPT': 'start_try_block',
-        'TRY ELSE': 'start_try_block',
-        'FINALLY': 'start_try_block',
-        'RETURN': 'start_return'
+        'For': 'start_for',
+        'ForIteration': 'start_for_iteration',
+        'While': 'start_while',
+        'WhileIteration': 'start_while_iteration',
+        'If': 'start_if',
+        'IfBranch': 'start_if_branch',
+        'Try': 'start_try',
+        'TryBranch': 'start_try_branch',
+        'Return': 'start_return',
+        'Continue': 'start_continue',
+        'Break': 'start_break',
     }
     _end_keyword_methods = {
-        'IF/ELSE ROOT': 'end_if',
-        'IF': 'end_if_branch',
-        'ELSE IF': 'end_if_branch',
-        'ELSE': 'end_if_branch',
-        'FOR': 'end_for',
-        'FOR ITERATION': 'end_for_iteration',
-        'TRY/EXCEPT ROOT': 'end_try',
-        'TRY': 'end_try_block',
-        'EXCEPT': 'end_try_block',
-        'TRY ELSE': 'end_try_block',
-        'FINALLY': 'end_try_block',
-        'RETURN': 'end_return'
+        'For': 'end_for',
+        'ForIteration': 'end_for_iteration',
+        'While': 'end_while',
+        'WhileIteration': 'end_while_iteration',
+        'If': 'end_if',
+        'IfBranch': 'end_if_branch',
+        'Try': 'end_try',
+        'TryBranch': 'end_try_branch',
+        'Return': 'end_return',
+        'Continue': 'end_continue',
+        'Break': 'end_break',
     }
 
     def start_keyword(self, kw):
-        name = self._start_keyword_methods.get(kw.type)
+        # Dispatch start_keyword calls to more precise methods when logger
+        # implements them. This horrible hack is needed because internal logger
+        # knows only about keywords. It should be rewritten.
+        name = self._start_keyword_methods.get(type(kw.result).__name__)
         if name and hasattr(self.logger, name):
             method = getattr(self.logger, name)
         else:
@@ -283,7 +285,8 @@ class LoggerProxy(AbstractLoggerProxy):
         method(kw)
 
     def end_keyword(self, kw):
-        name = self._end_keyword_methods.get(kw.type)
+        # See start_keyword comment for explanation of this horrible hack.
+        name = self._end_keyword_methods.get(type(kw.result).__name__)
         if name and hasattr(self.logger, name):
             method = getattr(self.logger, name)
         else:

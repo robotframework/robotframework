@@ -284,15 +284,15 @@ class PassExecution(ExecutionPassed):
         super().__init__(message)
 
 
-class ContinueForLoop(ExecutionPassed):
-    """Used by 'CONTINUE' keyword."""
+class ContinueLoop(ExecutionPassed):
+    """Used by CONTINUE statement."""
 
     def __init__(self):
         super().__init__("Invalid 'CONTINUE' usage.")
 
 
-class ExitForLoop(ExecutionPassed):
-    """Used by 'BREAK' keyword."""
+class BreakLoop(ExecutionPassed):
+    """Used by BREAK statement."""
 
     def __init__(self):
         super().__init__("Invalid 'BREAK' usage.")

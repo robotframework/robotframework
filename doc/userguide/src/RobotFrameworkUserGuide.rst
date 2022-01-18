@@ -145,8 +145,12 @@
 .. _test suite documentation: `Test suite name and documentation`_
 .. _test setup: `Test setup and teardown`_
 .. _test teardown: `Test setup and teardown`_
+.. _test teardowns: `Test teardown`_
 .. _suite setup: `Suite setup and teardown`_
 .. _suite teardown: `Suite setup and teardown`_
+.. _keyword teardowns: `Keyword teardown`_
+.. _teardown: `Test teardown`_
+.. _teardowns: teardown_
 .. _tag: `Tagging test cases`_
 .. _tags: tag_
 .. _test template:  `Test templates`_
@@ -159,6 +163,7 @@
 .. _automatic variable: `Automatic variables`_
 .. _test libraries: `Using test libraries`_
 .. _test library: `test libraries`_
+.. _libraries: `test libraries`_
 .. _library keyword: `test libraries`_
 .. _library keywords: `library keyword`_
 .. _`With Name syntax`: `Setting custom name to test library`_

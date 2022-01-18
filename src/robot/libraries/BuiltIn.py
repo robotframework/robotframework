@@ -20,9 +20,9 @@ import time
 
 from robot.api import logger, SkipExecution
 from robot.api.deco import keyword
-from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
-                          ExecutionFailures, ExecutionPassed, ExitForLoop,
-                          PassExecution, ReturnFromKeyword, VariableError)
+from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
+                          ExecutionFailures, ExecutionPassed, PassExecution,
+                          ReturnFromKeyword, VariableError)
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
@@ -2014,6 +2014,9 @@ class _RunKeyword(_BuiltInBase):
 
         Errors caused by invalid syntax, timeouts, or fatal exceptions are not
         caught by this keyword. Otherwise this keyword itself never fails.
+
+        *NOTE:* Robot Framework 5.0 introduced native TRY/EXCEPT functionality
+        that is generally recommended for error handling.
         """
         try:
             return 'PASS', self.run_keyword(name, *args)
@@ -2121,6 +2124,16 @@ class _RunKeyword(_BuiltInBase):
 
         Errors caused by invalid syntax, timeouts, or fatal exceptions are not
         caught by this keyword.
+
+        *NOTE:* Regular expression matching used to require only the beginning
+        of the error to match the given pattern. That was changed in Robot
+        Framework 5.0 and nowadays the pattern must match the error fully.
+        To match only the beginning, add ``.*`` at the end of the pattern like
+        ``REGEXP: Start.*``.
+
+        *NOTE:* Robot Framework 5.0 introduced native TRY/EXCEPT functionality
+        that is generally recommended for error handling. It supports same
+        pattern matching syntax as this keyword.
         """
         try:
             self.run_keyword(name, *args)
@@ -2141,7 +2154,7 @@ class _RunKeyword(_BuiltInBase):
         matchers = {'GLOB': glob,
                     'EQUALS': lambda s, p: s == p,
                     'STARTS': lambda s, p: s.startswith(p),
-                    'REGEXP': lambda s, p: re.match(p, s) is not None}
+                    'REGEXP': lambda s, p: re.match(p + r'\Z', s) is not None}
         prefixes = tuple(prefix + ':' for prefix in matchers)
         if not expected_error.startswith(prefixes):
             return glob(error, expected_error)
@@ -2484,11 +2497,26 @@ class _Control(_BuiltInBase):
             raise SkipExecution(msg or condition)
 
     def continue_for_loop(self):
-        """Skips the current for loop iteration and continues from the next.
+        """Skips the current FOR loop iteration and continues from the next.
 
-        Skips the remaining keywords in the current for loop iteration and
-        continues from the next one. Can be used directly in a for loop or
-        in a keyword that the loop uses.
+        ---
+
+        *NOTE:* Robot Framework 5.0 added support for native ``CONTINUE`` statement that
+        is recommended over this keyword. In the examples below, ``Continue For Loop``
+        can simply be replaced with ``CONTINUE``. In addition to that, native ``IF``
+        syntax (new in RF 4.0) or inline ``IF`` syntax (new in RF 5.0) can be used
+        instead of ``Run Keyword If``. For example, the first example below could be
+        written like this instead:
+
+        | IF    '${var}' == 'CONTINUE'    CONTINUE
+
+        This keyword will eventually be deprecated and removed.
+
+        ---
+
+        Skips the remaining keywords in the current FOR loop iteration and
+        continues from the next one. Starting from Robot Framework 5.0, this
+        keyword can only be used inside a loop, not in a keyword used in a loop.
 
         Example:
         | FOR | ${var}         | IN                     | @{VALUES}         |
@@ -2496,16 +2524,31 @@ class _Control(_BuiltInBase):
         |     | Do Something   | ${var}                 |
         | END |
 
-        See `Continue For Loop If` to conditionally continue a for loop without
+        See `Continue For Loop If` to conditionally continue a FOR loop without
         using `Run Keyword If` or other wrapper keywords.
         """
+        if not self._context.allow_loop_control:
+            raise DataError("'Continue For Loop' can only be used inside a loop.")
         self.log("Continuing for loop from the next iteration.")
-        raise ContinueForLoop()
+        raise ContinueLoop()
 
     def continue_for_loop_if(self, condition):
-        """Skips the current for loop iteration if the ``condition`` is true.
+        """Skips the current FOR loop iteration if the ``condition`` is true.
 
-        A wrapper for `Continue For Loop` to continue a for loop based on
+        ---
+
+        *NOTE:* Robot Framework 5.0 added support for native ``CONTINUE`` statement
+        and for inline ``IF``, and that combination should be used instead of this
+        keyword. For example, ``Continue For Loop If`` usage in the example below
+        could be replaced with
+
+        | IF    '${var}' == 'CONTINUE'    CONTINUE
+
+        This keyword will eventually be deprecated and removed.
+
+        ---
+
+        A wrapper for `Continue For Loop` to continue a FOR loop based on
         the given condition. The condition is evaluated using the same
         semantics as with `Should Be True` keyword.
 
@@ -2515,14 +2558,32 @@ class _Control(_BuiltInBase):
         |     | Do Something         | ${var}                 |
         | END |
         """
+        if not self._context.allow_loop_control:
+            raise DataError("'Continue For Loop If' can only be used inside a loop.")
         if self._is_true(condition):
             self.continue_for_loop()
 
     def exit_for_loop(self):
-        """Stops executing the enclosing for loop.
+        """Stops executing the enclosing FOR loop.
 
-        Exits the enclosing for loop and continues execution after it.
-        Can be used directly in a for loop or in a keyword that the loop uses.
+        ---
+
+        *NOTE:* Robot Framework 5.0 added support for native ``BREAK`` statement that
+        is recommended over this keyword. In the examples below, ``Exit For Loop``
+        can simply be replaced with ``BREAK``. In addition to that, native ``IF``
+        syntax (new in RF 4.0) or inline ``IF`` syntax (new in RF 5.0) can be used
+        instead of ``Run Keyword If``. For example, the first example below could be
+        written like this instead:
+
+        | IF    '${var}' == 'EXIT'    BREAK
+
+        This keyword will eventually be deprecated and removed.
+
+        ---
+
+        Exits the enclosing FOR loop and continues execution after it. Starting
+        from Robot Framework 5.0, this keyword can only be used inside a loop,
+        not in a keyword used in a loop.
 
         Example:
         | FOR | ${var}         | IN                 | @{VALUES}     |
@@ -2530,16 +2591,31 @@ class _Control(_BuiltInBase):
         |     | Do Something   | ${var} |
         | END |
 
-        See `Exit For Loop If` to conditionally exit a for loop without
+        See `Exit For Loop If` to conditionally exit a FOR loop without
         using `Run Keyword If` or other wrapper keywords.
         """
+        if not self._context.allow_loop_control:
+            raise DataError("'Exit For Loop' can only be used inside a loop.")
         self.log("Exiting for loop altogether.")
-        raise ExitForLoop()
+        raise BreakLoop()
 
     def exit_for_loop_if(self, condition):
-        """Stops executing the enclosing for loop if the ``condition`` is true.
+        """Stops executing the enclosing FOR loop if the ``condition`` is true.
 
-        A wrapper for `Exit For Loop` to exit a for loop based on
+        ---
+
+        *NOTE:* Robot Framework 5.0 added support for native ``BREAK`` statement
+        and for inline ``IF``, and that combination should be used instead of this
+        keyword. For example, ``Exit For Loop If`` usage in the example below
+        could be replaced with
+
+        | IF    '${var}' == 'EXIT'    BREAK
+
+        This keyword will eventually be deprecated and removed.
+
+        ---
+
+        A wrapper for `Exit For Loop` to exit a FOR loop based on
         the given condition. The condition is evaluated using the same
         semantics as with `Should Be True` keyword.
 
@@ -2549,6 +2625,8 @@ class _Control(_BuiltInBase):
         |     | Do Something     | ${var}             |
         | END |
         """
+        if not self._context.allow_loop_control:
+            raise DataError("'Exit For Loop If' can only be used inside a loop.")
         if self._is_true(condition):
             self.exit_for_loop()
 
@@ -2624,7 +2702,7 @@ class _Control(_BuiltInBase):
         ---
 
         *NOTE:* Robot Framework 5.0 added support for native ``RETURN`` statement
-        and inline ``IF`` and that combination should be used instead of this
+        and for inline ``IF``, and that combination should be used instead of this
         keyword. For example, ``Return From Keyword`` usage in the example below
         could be replaced with
 
@@ -2944,26 +3022,37 @@ class _Misc(_BuiltInBase):
             else:
                 yield value
 
-    def log_to_console(self, message, stream='STDOUT', no_newline=False):
+    def log_to_console(self, message, stream='STDOUT', no_newline=False, format=''):
         """Logs the given message to the console.
 
         By default uses the standard output stream. Using the standard error
-        stream is possibly by giving the ``stream`` argument value ``STDERR``
+        stream is possible by giving the ``stream`` argument value ``STDERR``
         (case-insensitive).
 
         By default appends a newline to the logged message. This can be
         disabled by giving the ``no_newline`` argument a true value (see
         `Boolean arguments`).
 
+        By default adds no alignment formatting. The ``format`` argument allows,
+        for example, alignment and customized padding of the log message. Please see the
+        [https://docs.python.org/3/library/string.html#formatspec|format specification] for
+        detailed alignment possibilities. This argument is new in Robot
+        Framework 5.0.
+
         Examples:
         | Log To Console | Hello, console!             |                 |
         | Log To Console | Hello, stderr!              | STDERR          |
         | Log To Console | Message starts here and is  | no_newline=true |
         | Log To Console | continued without newline.  |                 |
+        | Log To Console | center message with * pad   | format=*^60     |
+        | Log To Console | 30 spaces before msg starts | format=>30      |
 
         This keyword does not log the message to the normal log file. Use
         `Log` keyword, possibly with argument ``console``, if that is desired.
         """
+        if format:
+            format = "{:" + format + "}"
+            message = format.format(message)
         logger.console(message, newline=is_falsy(no_newline), stream=stream)
 
     @run_keyword_variant(resolve=0)

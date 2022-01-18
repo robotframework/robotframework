@@ -24,7 +24,7 @@ class BodyItem(ModelObject):
     SETUP = 'SETUP'
     TEARDOWN = 'TEARDOWN'
     FOR = 'FOR'
-    FOR_ITERATION = 'FOR ITERATION'
+    ITERATION = 'ITERATION'
     IF_ELSE_ROOT = 'IF/ELSE ROOT'
     IF = 'IF'
     ELSE_IF = 'ELSE IF'
@@ -32,9 +32,11 @@ class BodyItem(ModelObject):
     TRY_EXCEPT_ROOT = 'TRY/EXCEPT ROOT'
     TRY = 'TRY'
     EXCEPT = 'EXCEPT'
-    TRY_ELSE = 'TRY ELSE'
     FINALLY = 'FINALLY'
+    WHILE = 'WHILE'
     RETURN = 'RETURN'
+    CONTINUE = 'CONTINUE'
+    BREAK = 'BREAK'
     MESSAGE = 'MESSAGE'
     type = None
     __slots__ = ['parent']
@@ -60,18 +62,19 @@ class BodyItem(ModelObject):
         return '%s-k%d' % (self.parent.id, steps.index(self) + 1)
 
 
-class Body(ItemList):
-    """A list-like object representing body of a suite, a test or a keyword.
-
-    Body contains the keywords and other structures such as for loops.
-    """
+class BaseBody(ItemList):
+    """Base class for Body and Branches objects."""
     __slots__ = []
     # Set using 'Body.register' when these classes are created.
     keyword_class = None
     for_class = None
     if_class = None
     try_class = None
+    while_class = None
     return_class = None
+    continue_class = None
+    break_class = None
+    message_class = None
 
     def __init__(self, parent=None, items=None):
         ItemList.__init__(self, BodyItem, {'parent': parent}, items)
@@ -111,10 +114,28 @@ class Body(ItemList):
     def create_try(self, *args, **kwargs):
         return self._create(self.try_class, 'create_try', args, kwargs)
 
+    def create_while(self, *args, **kwargs):
+        return self._create(self.while_class, 'create_while', args, kwargs)
+
     def create_return(self, *args, **kwargs):
         return self._create(self.return_class, 'create_return', args, kwargs)
 
-    def filter(self, keywords=None, fors=None, ifs=None, predicate=None):
+    def create_continue(self, *args, **kwargs):
+        return self._create(self.continue_class, 'create_continue', args, kwargs)
+
+    def create_break(self, *args, **kwargs):
+        return self._create(self.break_class, 'create_break', args, kwargs)
+
+    def create_message(self, *args, **kwargs):
+        return self._create(self.message_class, 'create_message', args, kwargs)
+
+    # FIXME: Add `whiles` and possibly also `returns`, `breaks` and `continues´.
+    # Could also consider having something generic like `controls` or `syntax`
+    # to include/exclude all control structures. Or perhaps we don't need that
+    # support at all and including/excluding using `keywords` and `messages` is
+    # enough.
+    def filter(self, keywords=None, fors=None, ifs=None, trys=None, messages=None,
+               predicate=None):
         """Filter body items based on type and/or custom predicate.
 
         To include or exclude items based on types, give matching arguments
@@ -131,40 +152,40 @@ class Body(ItemList):
         """
         return self._filter([(self.keyword_class, keywords),
                              (self.for_class, fors),
-                             (self.if_class, ifs)], predicate)
+                             (self.if_class, ifs),
+                             (self.try_class, trys),
+                             (self.message_class, messages)], predicate)
 
     def _filter(self, types, predicate):
-        include = [cls for cls, activated in types if activated is True and cls]
-        exclude = [cls for cls, activated in types if activated is False and cls]
+        include = tuple(cls for cls, activated in types if activated is True and cls)
+        exclude = tuple(cls for cls, activated in types if activated is False and cls)
         if include and exclude:
             raise ValueError('Items cannot be both included and excluded by type.')
         items = list(self)
         if include:
-            items = [item for item in items if isinstance(item, tuple(include))]
+            items = [item for item in items if isinstance(item, include)]
         if exclude:
-            items = [item for item in items if not isinstance(item, tuple(exclude))]
+            items = [item for item in items if not isinstance(item, exclude)]
         if predicate:
             items = [item for item in items if predicate(item)]
         return items
 
 
-class IfBranches(Body):
-    if_branch_class = None
-    keyword_class = None
-    for_class = None
-    if_class = None
-    __slots__ = []
+class Body(BaseBody):
+    """A list-like object representing body of a suite, a test or a keyword.
+
+    Body contains the keywords and other structures such as FOR loops.
+    """
+    pass
+
+
+class Branches(BaseBody):
+    """A list-like object representing branches IF and TRY objects contain."""
+    __slots__ = ['branch_class']
+
+    def __init__(self, branch_class, parent=None, items=None):
+        self.branch_class = branch_class
+        super().__init__(parent, items)
 
     def create_branch(self, *args, **kwargs):
-        return self.append(self.if_branch_class(*args, **kwargs))
-
-
-class ExceptBlocks(Body):
-    except_class = None
-    keyword_class = None
-    for_class = None
-    if_class = None
-    __slots__ = []
-
-    def create_except(self, *args, **kwargs):
-        return self.append(self.except_class(*args, **kwargs))
+        return self.append(self.branch_class(*args, **kwargs))

@@ -44,3 +44,5 @@ class ModelModifier(SuiteVisitor):
                 branch.status = 'PASS'
                 branch.condition = 'modified'
                 branch.body[0].args = ['got here!']
+        if branch.condition == '${i} == 9':
+            branch.condition = 'False'

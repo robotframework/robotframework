@@ -15,10 +15,9 @@
 
 from itertools import chain
 
-from robot.errors import (ExecutionFailed, ExecutionPassed, ExecutionStatus,
-                          ExitForLoop, ContinueForLoop, DataError,
-                          PassExecution, ReturnFromKeyword,
-                          UserKeywordExecutionFailed, VariableError)
+from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
+                          ExecutionPassed, ExecutionStatus, PassExecution,
+                          ReturnFromKeyword, UserKeywordExecutionFailed, VariableError)
 from robot.result import Keyword as KeywordResult
 from robot.utils import getshortdoc, DotDict, prepr, split_tags_from_doc
 from robot.variables import is_list_variable, VariableAssignment
@@ -156,7 +155,7 @@ class UserKeywordRunner:
         except ReturnFromKeyword as exception:
             return_ = exception
             error = exception.earlier_failures
-        except (ExitForLoop, ContinueForLoop) as exception:
+        except (BreakLoop, ContinueLoop) as exception:
             pass_ = exception
         except ExecutionPassed as exception:
             pass_ = exception

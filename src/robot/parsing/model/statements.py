@@ -844,14 +844,17 @@ class IfHeader(IfElseHeader):
 
     @property
     def condition(self):
-        return self.get_value(Token.ARGUMENT)
+        values = self.get_values(Token.ARGUMENT)
+        if len(values) != 1:
+            return ', '.join(values) if values else None
+        return values[0]
 
     def validate(self):
         conditions = len(self.get_tokens(Token.ARGUMENT))
         if conditions == 0:
-            self.errors += ('%s has no condition.' % self.type,)
+            self.errors += ('%s must have a condition.' % self.type,)
         if conditions > 1:
-            self.errors += ('%s has more than one condition.' % self.type,)
+            self.errors += ('%s cannot have more than one condition.' % self.type,)
 
 
 @Statement.register
@@ -882,7 +885,7 @@ class ElseHeader(IfElseHeader):
 
     def validate(self):
         if self.get_tokens(Token.ARGUMENT):
-            self.errors += ('ELSE has condition.',)
+            self.errors += ('ELSE does not accept arguments.',)
 
 
 class NoArgumentHeader(Statement):
@@ -897,7 +900,11 @@ class NoArgumentHeader(Statement):
 
     def validate(self):
         if self.get_tokens(Token.ARGUMENT):
-            self.errors += (f'{self.type} has an argument.',)
+            self.errors += (f'{self.type} does not accept arguments.',)
+
+    @property
+    def values(self):
+        return self.get_values(Token.ARGUMENT)
 
 
 @Statement.register
@@ -910,7 +917,8 @@ class ExceptHeader(Statement):
     type = Token.EXCEPT
 
     @classmethod
-    def from_params(cls, patterns=None, variable=None, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, patterns=None, variable=None, indent=FOUR_SPACES,
+                    separator=FOUR_SPACES, eol=EOL):
         tokens = [
             Token(Token.SEPARATOR, indent),
             Token(Token.EXCEPT),
@@ -935,16 +943,13 @@ class ExceptHeader(Statement):
         return self.get_value(Token.VARIABLE)
 
     def validate(self):
-        as_seen = False
-        for token in self.tokens:
-            if token.type == Token.AS:
-                as_seen = True
-                if token != self.tokens[-2]:
-                    self.errors += ('AS must be second to last.',)
-        if as_seen:
+        as_token = self.get_token(Token.AS)
+        if as_token:
+            if as_token is not self.tokens[-2]:
+                self.errors += ("EXCEPT's AS marker must be second to last.",)
             var = self.tokens[-1].value
-            if not is_scalar_assign(var, allow_assign_mark=False):
-                self.errors += (f"Invalid AS variable '{var}'.",)
+            if not is_scalar_assign(var):
+                self.errors += (f"EXCEPT's AS variable '{var}' is invalid.",)
 
 
 @Statement.register
@@ -953,20 +958,36 @@ class FinallyHeader(NoArgumentHeader):
 
 
 @Statement.register
-class End(Statement):
+class End(NoArgumentHeader):
     type = Token.END
 
+
+@Statement.register
+class WhileHeader(Statement):
+    type = Token.WHILE
+
     @classmethod
-    def from_params(cls, indent=FOUR_SPACES, eol=EOL):
-        return cls([
-            Token(Token.SEPARATOR, indent),
-            Token(Token.END),
-            Token(Token.EOL, eol)
-        ])
+    def from_params(cls, condition, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+        tokens = [Token(Token.SEPARATOR, indent),
+                  Token(cls.type),
+                  Token(Token.SEPARATOR, separator),
+                  Token(Token.ARGUMENT, condition),
+                  Token(Token.EOL, eol)]
+        return cls(tokens)
+
+    @property
+    def condition(self):
+        values = self.get_values(Token.ARGUMENT)
+        if len(values) != 1:
+            return ', '.join(values) if values else None
+        return values[0]
 
     def validate(self):
-        if self.get_tokens(Token.ARGUMENT):
-            self.errors += ('END does not accept arguments.',)
+        conditions = len(self.get_tokens(Token.ARGUMENT))
+        if conditions == 0:
+            self.errors += ('WHILE must have a condition.',)
+        if conditions > 1:
+            self.errors += ('WHILE cannot have more than one condition.',)
 
 
 @Statement.register
@@ -986,6 +1007,16 @@ class ReturnStatement(Statement):
                            Token(Token.ARGUMENT, value)])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
+
+
+@Statement.register
+class Continue(NoArgumentHeader):
+    type = Token.CONTINUE
+
+
+@Statement.register
+class Break(NoArgumentHeader):
+    type = Token.BREAK
 
 
 @Statement.register

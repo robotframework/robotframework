@@ -6,14 +6,14 @@ from pathlib import Path
 
 from robot.parsing import get_model, get_resource_model, ModelVisitor, ModelTransformer, Token
 from robot.parsing.model.blocks import (
-    Block, CommentSection, File, For, If, Try, TryHandler,
+    Block, CommentSection, File, For, If, Try, While,
     Keyword, KeywordSection, SettingSection, TestCase, TestCaseSection, VariableSection
 )
 from robot.parsing.model.statements import (
-    Arguments, Comment, Documentation, ForHeader, End, ElseHeader, ElseIfHeader,
-    EmptyLine, Error, IfHeader, InlineIfHeader, TryHeader, ExceptHeader,
+    Arguments, Break, Comment, Continue, Documentation, ForHeader, End, ElseHeader,
+    ElseIfHeader, EmptyLine, Error, IfHeader, InlineIfHeader, TryHeader, ExceptHeader,
     FinallyHeader, KeywordCall, KeywordName, ReturnStatement, SectionHeader,
-    Statement, TestCaseName, Variable
+    Statement, TestCaseName, Variable, WhileHeader
 )
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
@@ -33,6 +33,7 @@ Example
 Keyword
     [Arguments]    ${arg1}    ${arg2}
     Log    Got ${arg1} and ${arg}!
+    RETURN    x
 '''
 PATH = os.path.join(os.getenv('TEMPDIR') or tempfile.gettempdir(), 'test_model.robot')
 EXPECTED = File(sections=[
@@ -112,6 +113,13 @@ EXPECTED = File(sections=[
                         Token('SEPARATOR', '    ', 14, 7),
                         Token('ARGUMENT', 'Got ${arg1} and ${arg}!', 14, 11),
                         Token('EOL', '\n', 14, 34)
+                    ]),
+                    ReturnStatement([
+                        Token('SEPARATOR', '    ', 15, 0),
+                        Token('RETURN STATEMENT', 'RETURN', 15, 4),
+                        Token('SEPARATOR', '    ', 15, 10),
+                        Token('ARGUMENT', 'x', 15, 14),
+                        Token('EOL', '\n', 15, 15)
                     ])
                 ]
             )
@@ -144,6 +152,8 @@ def dump_model(model):
         return ast.dump(model)
     elif isinstance(model, (list, tuple)):
         return [dump_model(m) for m in model]
+    elif model is None:
+        return 'None'
     else:
         raise TypeError('Invalid model %r' % model)
 
@@ -488,18 +498,18 @@ Example
         expected1 = If(
             header=IfHeader(
                 tokens=[Token(Token.IF, 'IF', 3, 4)],
-                errors=('IF has no condition.',)
+                errors=('IF must have a condition.',)
             ),
             orelse=If(
                 header=ElseHeader(
                     tokens=[Token(Token.ELSE, 'ELSE', 4, 4),
                             Token(Token.ARGUMENT, 'ooops', 4, 12)],
-                    errors=('ELSE has condition.',)
+                    errors=('ELSE does not accept arguments.',)
                 ),
                 orelse=If(
                     header=ElseIfHeader(
                         tokens=[Token(Token.ELSE_IF, 'ELSE IF', 5, 4)],
-                        errors=('ELSE IF has no condition.',)
+                        errors=('ELSE IF must have a condition.',)
                     ),
                     errors=('ELSE IF branch cannot be empty.',)
                 ),
@@ -516,7 +526,7 @@ Example
         expected2 = If(
             header=IfHeader(
                 tokens=[Token(Token.IF, 'IF', 8, 4)],
-                errors=('IF has no condition.',)
+                errors=('IF must have a condition.',)
             ),
             errors=('IF branch cannot be empty.',
                     'IF has no closing END.')
@@ -630,7 +640,7 @@ Example
             body=[KeywordCall([Token(Token.KEYWORD, 'ooops', 3, 36)])],
             orelse=If(
                 header=ElseIfHeader([Token(Token.ELSE_IF, 'ELSE IF', 3, 45)],
-                                    errors=('ELSE IF has no condition.',)),
+                                    errors=('ELSE IF must have a condition.',)),
                 errors=('ELSE IF branch cannot be empty.',),
             ),
             end=End([Token(Token.END, '', 3, 52)])
@@ -660,16 +670,22 @@ Example
         expected = Try(
             header=TryHeader([Token(Token.TRY, 'TRY', 3, 4)]),
             body=[KeywordCall([Token(Token.KEYWORD, 'Fail', 4, 8), Token(Token.ARGUMENT, 'Oh no!', 4, 16)])],
-            blocks=[
-                TryHandler(header=ExceptHeader([Token(Token.EXCEPT, 'EXCEPT', 5, 4), Token(Token.ARGUMENT, 'does not match', 5, 13)]),
-                           body=[KeywordCall((Token(Token.KEYWORD, 'No operation', 6, 8),))]),
-                TryHandler(header=ExceptHeader((Token(Token.EXCEPT, 'EXCEPT', 7, 4), Token(Token.AS, 'AS', 7, 14), Token(Token.VARIABLE, '${exp}', 7, 20))),
-                           body=[KeywordCall((Token(Token.KEYWORD, 'Log', 8, 8), Token(Token.ARGUMENT, 'Catch', 8, 15)))]),
-                TryHandler(header=ElseHeader((Token(Token.ELSE, 'ELSE', 9, 4),)),
-                           body=[KeywordCall((Token(Token.KEYWORD, 'No operation', 10, 8),))]),
-                TryHandler(header=FinallyHeader((Token(Token.FINALLY, 'FINALLY', 11, 4),)),
-                           body=[KeywordCall((Token(Token.KEYWORD, 'Log', 12, 8), Token(Token.ARGUMENT, 'finally here!', 12, 15)))])
-            ],
+            next=Try(
+                header=ExceptHeader([Token(Token.EXCEPT, 'EXCEPT', 5, 4), Token(Token.ARGUMENT, 'does not match', 5, 13)]),
+                body=[KeywordCall((Token(Token.KEYWORD, 'No operation', 6, 8),))],
+                next=Try(
+                    header=ExceptHeader((Token(Token.EXCEPT, 'EXCEPT', 7, 4), Token(Token.AS, 'AS', 7, 14), Token(Token.VARIABLE, '${exp}', 7, 20))),
+                    body=[KeywordCall((Token(Token.KEYWORD, 'Log', 8, 8), Token(Token.ARGUMENT, 'Catch', 8, 15)))],
+                    next=Try(
+                        header=ElseHeader((Token(Token.ELSE, 'ELSE', 9, 4),)),
+                        body=[KeywordCall((Token(Token.KEYWORD, 'No operation', 10, 8),))],
+                        next=Try(
+                            header=FinallyHeader((Token(Token.FINALLY, 'FINALLY', 11, 4),)),
+                            body=[KeywordCall((Token(Token.KEYWORD, 'Log', 12, 8), Token(Token.ARGUMENT, 'finally here!', 12, 15)))]
+                        )
+                    )
+                )
+            ),
             end=End([Token(Token.END, 'END', 13, 4)])
         )
         assert_model(node, expected)
@@ -795,7 +811,6 @@ Invalid
 
 
 class TestControlStatements(unittest.TestCase):
-    # Tests for CONTINUE and BREAK can be added here as well.
 
     def test_return(self):
         model = get_model('''\
@@ -803,13 +818,12 @@ class TestControlStatements(unittest.TestCase):
 Name
     Return    RETURN
     RETURN    RETURN
-        ''', data_only=True)
+''', data_only=True)
         expected = KeywordSection(
             header=SectionHeader(
                 tokens=[Token(Token.KEYWORD_HEADER, '*** Keywords ***', 1, 0)]
             ),
             body=[
-
                 Keyword(
                     header=KeywordName(
                         tokens=[Token(Token.KEYWORD_NAME, 'Name', 2, 0)]
@@ -819,6 +833,74 @@ Name
                                      Token(Token.ARGUMENT, 'RETURN', 3, 14)]),
                         ReturnStatement([Token(Token.RETURN_STATEMENT, 'RETURN', 4, 4),
                                          Token(Token.ARGUMENT, 'RETURN', 4, 14)])
+                    ],
+                )
+            ]
+        )
+        assert_model(model.sections[0], expected)
+
+    def test_break(self):
+        model = get_model('''\
+*** Keywords ***
+Name
+    WHILE    True
+        Break    BREAK
+        BREAK
+    END
+''', data_only=True)
+        expected = KeywordSection(
+            header=SectionHeader(
+                tokens=[Token(Token.KEYWORD_HEADER, '*** Keywords ***', 1, 0)]
+            ),
+            body=[
+                Keyword(
+                    header=KeywordName(
+                        tokens=[Token(Token.KEYWORD_NAME, 'Name', 2, 0)]
+                    ),
+                    body=[
+                        While(
+                            header=WhileHeader([Token(Token.WHILE, 'WHILE', 3, 4),
+                                                Token(Token.ARGUMENT, 'True', 3, 13)]),
+                            body=[KeywordCall([Token(Token.KEYWORD, 'Break', 4, 8),
+                                               Token(Token.ARGUMENT, 'BREAK', 4, 17)]),
+                                  Break([Token(Token.BREAK, 'BREAK', 5, 8)])],
+                            end=End([Token(Token.END, 'END', 6, 4)])
+                        )
+                    ],
+                )
+            ]
+        )
+        assert_model(model.sections[0], expected)
+
+    def test_continue(self):
+        model = get_model('''\
+*** Keywords ***
+Name
+    FOR    ${x}    IN    @{stuff}
+        Continue    CONTINUE
+        CONTINUE
+    END
+''', data_only=True)
+        expected = KeywordSection(
+            header=SectionHeader(
+                tokens=[Token(Token.KEYWORD_HEADER, '*** Keywords ***', 1, 0)]
+            ),
+            body=[
+                Keyword(
+                    header=KeywordName(
+                        tokens=[Token(Token.KEYWORD_NAME, 'Name', 2, 0)]
+                    ),
+                    body=[
+                        For(
+                            header=ForHeader([Token(Token.FOR, 'FOR', 3, 4),
+                                              Token(Token.VARIABLE, '${x}', 3, 11),
+                                              Token(Token.FOR_SEPARATOR, 'IN', 3, 19),
+                                              Token(Token.ARGUMENT, '@{stuff}', 3, 25)]),
+                            body=[KeywordCall([Token(Token.KEYWORD, 'Continue', 4, 8),
+                                               Token(Token.ARGUMENT, 'CONTINUE', 4, 20)]),
+                                  Continue([Token(Token.CONTINUE, 'CONTINUE', 5, 8)])],
+                            end=End([Token(Token.END, 'END', 6, 4)])
+                        )
                     ],
                 )
             ]
@@ -1008,7 +1090,8 @@ class TestModelVisitors(unittest.TestCase):
         assert_equal(visitor.statements,
                      ['EOL', 'TESTCASE HEADER', 'EOL', 'TESTCASE NAME',
                       'COMMENT', 'KEYWORD', 'EOL', 'EOL', 'KEYWORD HEADER',
-                      'COMMENT', 'KEYWORD NAME', 'ARGUMENTS', 'KEYWORD'])
+                      'COMMENT', 'KEYWORD NAME', 'ARGUMENTS', 'KEYWORD',
+                      'RETURN STATEMENT'])
 
     def test_ast_NodeTransformer(self):
 

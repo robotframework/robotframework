@@ -233,7 +233,17 @@ Expect Error With REGEXP
     [Template]    Run Keyword And Expect Error
     REGEXP:My.*                       Fail    My message
     REGEXP: (My|Your) [Mm]\\w+ge!?    Fail    My message
+    REGEXP: (?i)MY MESSAGE            Fail    My message
     REGEXP:oopps                      Fail    My message
+
+Expect Error With REGEXP requires full match
+    [Documentation]    FAIL Expected error 'REGEXP: Start' but got 'Start and end'.
+    [Template]    Run Keyword And Expect Error
+    REGEXP: Start and end             Fail    Start and end
+    REGEXP: Start .*                  Fail    Start and end
+    REGEXP: Start .*$                 Fail    Start and end
+    REGEXP: \\AStart and end\\Z       Fail    Start and end
+    REGEXP: Start                     Fail    Start and end
 
 Expect Error With Unrecognized Prefix
     [Documentation]    FAIL Expected error '1:2:3:4:5' but got 'Ooops'.

@@ -128,19 +128,32 @@ class XmlLogger(ResultVisitor):
         self._write_status(root)
         self._writer.end('try')
 
-    def start_try_block(self, block):
-        block_type = block.type
-        if block_type == block.EXCEPT:
-            self._writer.start('block', attrs={'type': 'EXCEPT',
-                                               'variable': block.variable})
-            self._write_list('pattern', block.patterns)
+    def start_try_branch(self, branch):
+        if branch.type == branch.EXCEPT:
+            self._writer.start('branch', attrs={'type': 'EXCEPT',
+                                               'variable': branch.variable})
+            self._write_list('pattern', branch.patterns)
         else:
-            typ = block_type if block_type != block.TRY_ELSE else 'ELSE'
-            self._writer.start('block', attrs={'type': typ})
+            self._writer.start('branch', attrs={'type': branch.type})
 
-    def end_try_block(self, block):
-        self._write_status(block)
-        self._writer.end('block')
+    def end_try_branch(self, branch):
+        self._write_status(branch)
+        self._writer.end('branch')
+
+    def start_while(self, while_):
+        self._writer.start('while', attrs={'condition': while_.condition})
+
+    def end_while(self, while_):
+        self._write_status(while_)
+        self._writer.end('while')
+
+    def start_while_iteration(self, iteration):
+        self._writer.start('iter')
+        self._writer.element('doc', iteration.doc)
+
+    def end_while_iteration(self, iteration):
+        self._write_status(iteration)
+        self._writer.end('iter')
 
     def start_return(self, return_):
         self._writer.start('return')
@@ -150,6 +163,20 @@ class XmlLogger(ResultVisitor):
     def end_return(self, return_):
         self._write_status(return_)
         self._writer.end('return')
+
+    def start_continue(self, continue_):
+        self._writer.start('continue')
+
+    def end_continue(self, continue_):
+        self._write_status(continue_)
+        self._writer.end('continue')
+
+    def start_break(self, break_):
+        self._writer.start('break')
+
+    def end_break(self, break_):
+        self._write_status(break_)
+        self._writer.end('break')
 
     def start_test(self, test):
         self._writer.start('test', {'id': test.id, 'name': test.name})

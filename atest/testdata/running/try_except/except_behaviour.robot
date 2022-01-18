@@ -1,6 +1,6 @@
 *** Variables ***
-${expected}    failure
-${expected_with_pattern}    GLOB: *
+${expected}                 failure
+${expected_with_pattern}    GLOB: ?
 
 *** Test Cases ***
 Equals is the default matcher
@@ -56,6 +56,15 @@ Regexp escapes
         No operation
     END
 
+Regexp flags
+    TRY
+        Fail    MESSAGE\nIN\nMANY\nLINES
+    EXCEPT    REGEXP: message.*lines
+        Fail   Should not be executed
+    EXCEPT    REGEXP: (?is)message.*lines
+        No operation
+    END
+
 Variable in pattern
     TRY
         Fail    failure
@@ -76,9 +85,11 @@ Invalid variable in pattern
 Matcher type cannot be defined with variable
     [Documentation]    FAIL failure
     TRY
-        Fail    GLOB: *
+        Fail    GLOB: ?
     EXCEPT    ${expected_with_pattern}
-       No operation
+        No operation
+    ELSE
+        Fail    Should not be executed
     END
     TRY
         Fail    failure

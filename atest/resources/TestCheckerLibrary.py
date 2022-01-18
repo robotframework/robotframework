@@ -6,10 +6,10 @@ from xmlschema import XMLSchema
 from robot import utils
 from robot.api import logger
 from robot.utils.asserts import assert_equal
-from robot.result import (ExecutionResultBuilder, For, If, ForIteration, Try,
-                          ExceptBlocks, Except, Block, Keyword, Result,
-                          ResultVisitor, TestCase, TestSuite)
-from robot.result.model import Body, ForIterations, IfBranches, IfBranch
+from robot.result import (ExecutionResultBuilder, Result, ResultVisitor,
+                          For, ForIteration, While, WhileIteration,
+                          If, IfBranch, Try, TryBranch, Keyword, TestCase, TestSuite)
+from robot.result.model import Body, Iterations
 from robot.libraries.BuiltIn import BuiltIn
 
 
@@ -21,23 +21,16 @@ class NoSlotsFor(For):
     pass
 
 
+class NoSlotsWhile(While):
+    pass
+
+
 class NoSlotsIf(If):
     pass
 
 
-class NoSlotsExcept(Except):
-    pass
-
-
-class NoSlotsExceptBlocks(ExceptBlocks):
-    except_class = NoSlotsExcept
-    keyword_class = NoSlotsKeyword
-    for_class = NoSlotsFor
-    if_class = NoSlotsIf
-
-
 class NoSlotsTry(Try):
-    excepts_class = NoSlotsExceptBlocks
+    pass
 
 
 class NoSlotsBody(Body):
@@ -45,36 +38,36 @@ class NoSlotsBody(Body):
     for_class = NoSlotsFor
     if_class = NoSlotsIf
     try_class = NoSlotsTry
-
-
-class NoSlotsBlock(Block):
-    body_class = NoSlotsBody
+    while_class = NoSlotsWhile
 
 
 class NoSlotsIfBranch(IfBranch):
     body_class = NoSlotsBody
 
 
-class NoSlotsIfBranches(IfBranches):
-    if_branch_class = NoSlotsIfBranch
+class NoSlotsTryBranch(TryBranch):
+    body_class = NoSlotsBody
 
 
 class NoSlotsForIteration(ForIteration):
     body_class = NoSlotsBody
 
 
-class NoSlotsForIterations(ForIterations):
-    for_iteration_class = NoSlotsForIteration
+class NoSlotsWhileIteration(WhileIteration):
+    body_class = NoSlotsBody
+
+
+class NoSlotsIterations(Iterations):
     keyword_class = NoSlotsKeyword
 
 
 NoSlotsKeyword.body_class = NoSlotsBody
-NoSlotsFor.body_class = NoSlotsForIterations
-NoSlotsIf.body_class = NoSlotsIfBranches
-NoSlotsTry.try_class = NoSlotsBlock
-NoSlotsTry.else_class = NoSlotsBlock
-NoSlotsTry.finally_class = NoSlotsBlock
-NoSlotsExcept.body_class = NoSlotsBody
+NoSlotsFor.iterations_class = NoSlotsIterations
+NoSlotsFor.iteration_class = NoSlotsForIteration
+NoSlotsWhile.iterations_class = NoSlotsIterations
+NoSlotsWhile.iteration_class = NoSlotsWhileIteration
+NoSlotsIf.branch_class = NoSlotsIfBranch
+NoSlotsTry.branch_class = NoSlotsTryBranch
 
 
 class NoSlotsTestCase(TestCase):
@@ -334,6 +327,11 @@ class ProcessResults(ResultVisitor):
         self._add_kws_and_msgs(kw)
 
     def _add_kws_and_msgs(self, item):
+        # TODO: Consider not setting these special attributes:
+        # - Using normal `body` instead of special `kws` in tests would be better.
+        # - `msgs` isn't that much shorter than normal `messages`.
+        # - Counts likely not needed often enough. There are other ways to get them.
+        # - No need to construct "NoSlots" variants for all model objects.
         item.kws = item.body.filter(messages=False)
         item.msgs = item.body.filter(messages=True)
         item.keyword_count = item.kw_count = len(item.kws)
@@ -350,6 +348,12 @@ class ProcessResults(ResultVisitor):
 
     def start_if_branch(self, branch):
         self._add_kws_and_msgs(branch)
+
+    def start_while(self, while_):
+        self._add_kws_and_msgs(while_)
+
+    def start_while_iteration(self, iteration):
+        self._add_kws_and_msgs(iteration)
 
     def visit_errors(self, errors):
         errors.msgs = errors.messages

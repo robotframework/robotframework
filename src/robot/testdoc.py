@@ -225,6 +225,8 @@ class JsonConverter:
                 yield self._convert_keyword(kw, 'TEARDOWN')
             elif kw.type == kw.FOR:
                 yield self._convert_for(kw)
+            elif kw.type == kw.WHILE:
+                yield self._convert_while(kw)
             elif kw.type == kw.IF_ELSE_ROOT:
                 yield from self._convert_if(kw)
             elif kw.type == kw.TRY_EXCEPT_ROOT:
@@ -237,6 +239,9 @@ class JsonConverter:
                              seq2str2(data.values))
         return {'type': 'FOR', 'name': self._escape(name), 'arguments': ''}
 
+    def _convert_while(self, data):
+        return {'type': 'WHILE', 'name': self._escape(data.condition), 'arguments': ''}
+
     def _convert_if(self, data):
         for branch in data.body:
             yield {'type': branch.type,
@@ -244,17 +249,14 @@ class JsonConverter:
                    'arguments': ''}
 
     def _convert_try(self, data):
-        yield {'type': 'TRY', 'name': '', 'arguments': ''}
-        for block in data.except_blocks:
-            patterns = ', '.join(block.patterns)
-            as_var = f' AS {block.variable}' if block.variable else ''
-            yield {'type': 'EXCEPT',
-                   'name': f'{patterns}{as_var}',
-                   'arguments': ''}
-        if data.else_block:
-            yield {'type': 'ELSE', 'name': '', 'arguments': ''}
-        if data.finally_block:
-            yield {'type': 'FINALLY', 'name': '', 'arguments': ''}
+        for branch in data.body:
+            if branch.type == branch.EXCEPT:
+                patterns = ', '.join(branch.patterns)
+                as_var = f'AS {branch.variable}' if branch.variable else ''
+                name = f'{patterns} {as_var}'.strip()
+            else:
+                name = ''
+            yield {'type': branch.type, 'name': name, 'arguments': ''}
 
     def _convert_keyword(self, kw, kw_type):
         return {

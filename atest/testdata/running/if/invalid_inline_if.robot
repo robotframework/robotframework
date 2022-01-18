@@ -1,7 +1,11 @@
 *** Test Cases ***
 Invalid condition
-    [Documentation]    FAIL Evaluating expression 'ooops' failed: NameError: name 'ooops' is not defined nor importable as module
+    [Documentation]    FAIL Evaluating IF condition failed: Evaluating expression 'ooops' failed: NameError: name 'ooops' is not defined nor importable as module
     IF    ooops    Not run    ELSE    Not run either
+
+Condition with non-existing variable
+    [Documentation]    FAIL Evaluating IF condition failed: Variable '\${ooops}' not found.
+    IF    ${ooops}    Not run
 
 Invalid condition with other error
     [Documentation]    FAIL ELSE branch cannot be empty.
@@ -9,7 +13,7 @@ Invalid condition with other error
 
 Empty IF
     [Documentation]    FAIL Multiple errors:
-    ...    - IF has no condition.
+    ...    - IF must have a condition.
     ...    - IF branch cannot be empty.
     ...    - IF has no closing END.
     IF
@@ -29,21 +33,21 @@ IF without branch with ELSE
     IF    True    ELSE    Not run
 
 IF followed by ELSE IF
-    [Documentation]    FAIL STARTS: Evaluating expression 'ELSE IF' failed:
+    [Documentation]    FAIL STARTS: Evaluating IF condition failed: Evaluating expression 'ELSE IF' failed:
     IF    ELSE IF   False    Not run
 
 IF followed by ELSE
-    [Documentation]    FAIL Evaluating expression 'ELSE' failed: NameError: name 'ELSE' is not defined nor importable as module
+    [Documentation]    FAIL Evaluating IF condition failed: Evaluating expression 'ELSE' failed: NameError: name 'ELSE' is not defined nor importable as module
     IF    ELSE    Not run
 
 Empty ELSE IF 1
     [Documentation]    FAIL Multiple errors:
-    ...    - ELSE IF has no condition.
+    ...    - ELSE IF must have a condition.
     ...    - ELSE IF branch cannot be empty.
     IF    False    Not run    ELSE IF
 
 Empty ELSE IF 2
-    [Documentation]    FAIL Evaluating expression 'ELSE' failed: NameError: name 'ELSE' is not defined nor importable as module
+    [Documentation]    FAIL Evaluating ELSE IF condition failed: Evaluating expression 'ELSE' failed: NameError: name 'ELSE' is not defined nor importable as module
     IF    False    Not run    ELSE IF    ELSE    Not run
 
 ELSE IF without branch 1

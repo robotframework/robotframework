@@ -1,6 +1,6 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    running/for_dict_iteration.robot
-Resource          for_resource.robot
+Suite Setup       Run Tests    ${EMPTY}    running/for/for_dict_iteration.robot
+Resource          for.resource
 
 *** Test Cases ***
 FOR loop with one variable
