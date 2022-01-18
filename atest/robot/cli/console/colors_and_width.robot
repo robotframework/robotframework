@@ -54,8 +54,11 @@ Outputs should not have ANSI colors
     Stderr Should Contain    [ WARN ]
 
 Outputs should have ANSI colors when not on Windows
-    Run Keyword If    os.sep == '/'    Outputs should have ANSI colors
-    Run Keyword Unless    os.sep == '/'    Outputs should not have ANSI colors
+    IF    os.sep == '/'
+        Outputs should have ANSI colors
+    ELSE
+       Outputs should not have ANSI colors
+    END
 
 Outputs should have ANSI colors
     Stdout Should Not Contain    | PASS |

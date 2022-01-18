@@ -108,11 +108,15 @@ Run Keyword With ELSE and ELSE IF from Variable
 
 Run Keyword Unless With False Expression
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.body[1].body[0].msgs[0]}    ${EXECUTED}
+    Check Log Message    ${ERRORS[0]}                     Keyword 'BuiltIn.Run Keyword Unless' is deprecated.    WARN
+    Check Log Message    ${tc.body[1].body[0]}            Keyword 'BuiltIn.Run Keyword Unless' is deprecated.    WARN
+    Check Log Message    ${tc.body[1].body[1].msgs[0]}    ${EXECUTED}
 
 Run Keyword Unless With True Expression
     ${tc} =    Check Test Case    ${TEST NAME}
-    Length Should Be    ${tc.body[0].body}    0
+    Check Log Message    ${ERRORS[1]}                     Keyword 'BuiltIn.Run Keyword Unless' is deprecated.    WARN
+    Check Log Message    ${tc.body[0].body[0]}            Keyword 'BuiltIn.Run Keyword Unless' is deprecated.    WARN
+    Length Should Be     ${tc.body[0].body}               1
 
 Variable Values Should Not Be Visible As Keyword's Arguments
     ${tc} =    Check Test Case    Run Keyword In User Keyword

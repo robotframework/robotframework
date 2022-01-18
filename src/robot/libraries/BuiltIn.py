@@ -1909,27 +1909,24 @@ class _RunKeyword(_BuiltInBase):
         *NOTE:* Robot Framework 4.0 introduced built-in IF/ELSE support and using
         that is generally recommended over using this keyword.
 
-        The given ``condition`` is evaluated in Python as explained in
-        `Evaluating expressions`, and ``name`` and ``*args`` have same
+        The given ``condition`` is evaluated in Python as explained in the
+        `Evaluating expressions` section, and ``name`` and ``*args`` have same
         semantics as with `Run Keyword`.
 
         Example, a simple if/else construct:
-        | ${status} | ${value} = | `Run Keyword And Ignore Error` | `My Keyword` |
-        | `Run Keyword If`     | '${status}' == 'PASS' | `Some Action`    | arg |
-        | `Run Keyword Unless` | '${status}' == 'PASS' | `Another Action` |
+        | `Run Keyword If` | '${status}' == 'OK' | Some Action    | arg |
+        | `Run Keyword If` | '${status}' != 'OK' | Another Action |
 
-        In this example, only either `Some Action` or `Another Action` is
-        executed, based on the status of `My Keyword`. Instead of `Run Keyword
-        And Ignore Error` you can also use `Run Keyword And Return Status`.
+        In this example, only either ``Some Action`` or ``Another Action`` is
+        executed, based on the value of the ``${status}`` variable.
 
         Variables used like ``${variable}``, as in the examples above, are
         replaced in the expression before evaluation. Variables are also
         available in the evaluation namespace and can be accessed using special
-        syntax ``$variable`` as explained in the `Evaluating expressions`
-        section.
+        ``$variable`` syntax as explained in the `Evaluating expressions` section.
 
         Example:
-        | `Run Keyword If` | $result is None or $result == 'FAIL' | `Keyword` |
+        | `Run Keyword If` | $result is None or $result == 'FAIL' | Keyword |
 
         This keyword supports also optional ELSE and ELSE IF branches. Both
         of them are defined in ``*args`` and must use exactly format ``ELSE``
@@ -1942,21 +1939,20 @@ class _RunKeyword(_BuiltInBase):
         supported when using ELSE and/or ELSE IF branches.
 
         Given previous example, if/else construct can also be created like this:
-        | ${status} | ${value} = | `Run Keyword And Ignore Error` | `My Keyword` |
-        | `Run Keyword If` | '${status}' == 'PASS' | `Some Action` | arg | ELSE | `Another Action` |
+        | `Run Keyword If` | '${status}' == 'PASS' | Some Action | arg | ELSE | Another Action |
 
         The return value of this keyword is the return value of the actually
         executed keyword or Python ``None`` if no keyword was executed (i.e.
         if ``condition`` was false). Hence, it is recommended to use ELSE
         and/or ELSE IF branches to conditionally assign return values from
-        keyword to variables (see `Set Variable If` if you need to set fixed
+        keyword to variables (see `Set Variable If` you need to set fixed
         values conditionally). This is illustrated by the example below:
 
-        | ${var1} =   | `Run Keyword If` | ${rc} == 0     | `Some keyword returning a value` |
-        | ...         | ELSE IF          | 0 < ${rc} < 42 | `Another keyword` |
-        | ...         | ELSE IF          | ${rc} < 0      | `Another keyword with args` | ${rc} | arg2 |
-        | ...         | ELSE             | `Final keyword to handle abnormal cases` | ${rc} |
-        | ${var2} =   | `Run Keyword If` | ${condition}  | `Some keyword` |
+        | ${var1} =   | `Run Keyword If` | ${rc} == 0     | Some keyword returning a value |
+        | ...         | ELSE IF          | 0 < ${rc} < 42 | Another keyword |
+        | ...         | ELSE IF          | ${rc} < 0      | Another keyword with args | ${rc} | arg2 |
+        | ...         | ELSE             | Final keyword to handle abnormal cases | ${rc} |
+        | ${var2} =   | `Run Keyword If` | ${condition}  | Some keyword |
 
         In this example, ${var2} will be set to ``None`` if ${condition} is
         false.
@@ -1990,11 +1986,12 @@ class _RunKeyword(_BuiltInBase):
 
     @run_keyword_variant(resolve=2)
     def run_keyword_unless(self, condition, name, *args):
-        """Runs the given keyword with the given arguments if ``condition`` is false.
+        """*DEPRECATED since RF 5.0. Use Native IF/ELSE or `Run Keyword If` instead.*
 
-        See `Run Keyword If` for more information and an example. Notice that
-        this keyword does not support ``ELSE`` or ``ELSE IF`` branches like
-        `Run Keyword If` does, though.
+        Runs the given keyword with the given arguments if ``condition`` is false.
+
+        See `Run Keyword If` for more information and an example. Notice that this
+        keyword does not support ELSE or ELSE IF branches like `Run Keyword If` does.
         """
         if not self._is_true(condition):
             return self.run_keyword(name, *args)
