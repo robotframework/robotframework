@@ -1,8 +1,10 @@
 import unittest
 from os.path import dirname, join
 
+from robot.api.parsing import get_model
 from robot.result import ExecutionResult
 from robot.model import SuiteVisitor, TestSuite
+from robot.running import TestSuite as RunningSuite
 from robot.utils.asserts import assert_equal
 
 
@@ -113,6 +115,79 @@ class TestVisitingSuite(unittest.TestCase):
                      len(RESULT.suite.tests[0].body) + 2)
         assert_equal(suite.tests[0].body[-2].name, 'Added by start_keyword')
         assert_equal(suite.tests[0].body[-1].name, 'Added by end_keyword')
+
+    def test_start_end_body_item(self):
+        class Visitor(SuiteVisitor):
+            def __init__(self):
+                self.visited = []
+
+            def start_body_item(self, item):
+                self.visited.append(f'START {item.type}')
+
+            def end_body_item(self, item):
+                self.visited.append(f'END {item.type}')
+
+        visitor = Visitor()
+        RunningSuite.from_model(get_model('''
+*** Test Cases ***
+Example
+    IF    True
+        WHILE    True
+            BREAK
+        END
+    ELSE IF    True
+        FOR    ${x}    IN    @{stuff}
+            CONTINUE
+        END
+    ELSE
+        TRY
+            Keyword
+        EXCEPT    Something
+            Keyword
+        ELSE
+            Keyword
+        FINALLY
+            Keyword
+        END
+    END
+''')).visit(visitor)
+        expected = '''
+START IF/ELSE ROOT
+    START IF
+        START WHILE
+            START BREAK
+            END BREAK
+        END WHILE
+    END IF
+    START ELSE IF
+        START FOR
+            START CONTINUE
+            END CONTINUE
+        END FOR
+    END ELSE IF
+    START ELSE
+        START TRY/EXCEPT ROOT
+            START TRY
+                START KEYWORD
+                END KEYWORD
+            END TRY
+            START EXCEPT
+                START KEYWORD
+                END KEYWORD
+            END EXCEPT
+            START ELSE
+                START KEYWORD
+                END KEYWORD
+            END ELSE
+            START FINALLY
+                START KEYWORD
+                END KEYWORD
+            END FINALLY
+        END TRY/EXCEPT ROOT
+    END ELSE
+END IF/ELSE ROOT
+'''.strip().splitlines()
+        assert_equal(visitor.visited, [e.strip() for e in expected])
 
 
 class StartSuiteStopping(SuiteVisitor):
