@@ -34,11 +34,11 @@ Correct warnings should be shown in execution errors
     Correct start/end warnings should be shown in execution errors
 
 Execution errors should have messages from message and log_message methods
-    Check Log Message    ${ERRORS[0]}    message: INFO Robot Framework *    WARN    pattern=yes
+    Check Log Message    ${ERRORS[0]}     message: INFO Robot Framework *       WARN    pattern=yes
     Check Log Message    ${ERRORS[-4]}    log_message: FAIL Expected failure    WARN
 
 Correct start/end warnings should be shown in execution errors
-    ${msgs} =    Get start/end messages    ${ERRORS.msgs}
+    ${msgs} =    Get start/end messages    ${ERRORS}
     @{kw} =    Create List    start_keyword    end_keyword
     @{uk} =    Create List    start_keyword    @{kw}    @{kw}    @{kw}    @{kw}    end_keyword
     FOR    ${index}    ${method}    IN ENUMERATE
@@ -57,14 +57,13 @@ Correct start/end warnings should be shown in execution errors
     Length Should Be    ${msgs}    ${index + 1}
 
 Get start/end messages
-    [Arguments]    ${all msgs}
-    @{all msgs} =    Set Variable    ${all msgs}
-    ${return} =    Create List
-    FOR    ${msg}    IN    @{all msgs}
-        Run Keyword Unless    "message: " in $msg.message
-        ...    Append To List    ${return}    ${msg}
+    [Arguments]    ${messages}
+    ${result} =    Create List
+    FOR    ${msg}    IN    @{messages}
+        IF    "message: " not in $msg.message
+        ...    Append To List    ${result}    ${msg}
     END
-    [Return]    ${return}
+    RETURN    ${result}
 
 Correct messages should be logged to normal log
     'My Keyword' has correct messages    ${SUITE.setup}    Suite Setup
