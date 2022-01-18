@@ -1,25 +1,34 @@
+:root {
+    --col-toggle-color: #6c6c6c; /* same as in sort icon */
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --col-toggle-color: #adadad;
+    }
+}
 /* Generic table styles */
 table {
     margin: 0 1px;
-    background: white;
+    background: var(--background-color);
 }
 tr {
-    background: white;
+    background: var(--background-color);
 }
 th {
-    background: #ddd;
-    color: black;
+    background: var(--primary-color);
+    color: var(--text-color);
 }
 /* Summary and total/tag/suite details */
 .details {
-    border: 1px solid #ccc;
+    border: 1px solid var(--secondary-color);
     border-spacing: 0.2em;
     clear: both;
     width: 65em;
     margin-bottom: 1em;
 }
 .details th {
-    background: white;
+    background: var(--background-color);
     width: 11em;
     text-align: left;
     vertical-align: top;
@@ -46,8 +55,22 @@ th {
     display: none;
 }
 /* Search */
+input[type='submit'], input[type='button'] {
+    background-color: var(--primary-color);
+    border-radius: 4px;
+    border: 0;
+    padding: 4px 6px 4px 6px;
+    color: var(--text-color);
+}
+input[type='submit']:hover, input[type='button']:hover {
+    background-color: var(--secondary-color);
+}
 #search-suite, #search-test, #search-include, #search-exclude {
     width: 25em;
+    background-color: var(--background-color);
+    border: 2px solid var(--secondary-color);
+    border-radius: 2px;
+    color: var(--text-color);
 }
 #search a:hover {
     text-decoration: none;
@@ -55,8 +78,8 @@ th {
 #search-help div {
     margin: 0.5em 0.5em 0.7em 0;
     padding: 0.7em;
-    background: #eee;
-    border: 1px solid #ccc;
+    background: var(--highlight-color);
+    border: 1px solid var(--secondary-color);
     border-radius: 3px;
 }
 #search-help h3, #search-help p {
@@ -91,18 +114,18 @@ th {
 }
 .detail-tab {
     float: left;
-    background: #ddd;
-    border: 1px solid #ccc;
+    background: var(--primary-color);
+    border: 1px solid var(--secondary-color);
     border-bottom-width: 0;
     margin: 0 0.5em 0 0;
     padding-top: 0.1em;
     border-radius: 3px 3px 0 0;
 }
 .detail-tab:hover {
-    background: #ccc;
+    background: var(--secondary-color);
 }
 .detail-tab a {
-    color: black;
+    color: var(--text-color);
     text-decoration: none;
     font-weight: bold;
     padding: 0 1em;
@@ -110,19 +133,19 @@ th {
 .detail-tab-selected {
     position: relative;
     top: 1px;
-    background: white;
+    background: var(--background-color);
 }
 .detail-tab-selected:hover {
-    background: white;
+    background: var(--background-color);
 }
 /* Test details table */
 #test-details {
     width: 100%;
     border-spacing: 1px;
-    background-color: #ccc;
+    background-color: var(--primary-color);
 }
 #test-details > tbody > tr:hover {
-    background: #f4f4f4;
+    background: var(--highlight-color);
     cursor: pointer;
 }
 #test-details th, #test-details td {
@@ -137,11 +160,11 @@ th {
 }
 .details-col-toggle {
     float: left;
-    color: #6c6c6c; /* same as in sort icon */
+    color: var(--col-toggle-color);
     cursor: pointer;
 }
 .details-col-toggle:hover {
-    color: black;
+    color: var(--text-color);
 }
 .details-col-name {
     min-width: 20em;
@@ -182,5 +205,5 @@ th {
     background-image: none;
 }
 th.hidden:hover {
-    background-color: #ccc;
+    background-color: var(--primary-color);
 }
