@@ -77,10 +77,6 @@ Suite Properties
     2     xpath=testsuite[2]/testsuite[5]
     2     xpath=testsuite[2]/testsuite[6]
 
-XUnit skip non-criticals is deprecated
-    Run Rebot    --xUnit xunit.xml --xUnitSkipNonCritical     ${INPUT FILE}
-    Stderr Should Contain   Command line option --xunitskipnoncritical has been deprecated and has no effect.
-
 Invalid XUnit File
     Create Directory    ${INVALID}
     Run Rebot    -x ${INVALID} -l log.html    ${INPUT FILE}

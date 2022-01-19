@@ -42,8 +42,6 @@ class _BaseSettings:
                  'SetTag'           : ('settag', []),
                  'Include'          : ('include', []),
                  'Exclude'          : ('exclude', []),
-                 'Critical'         : ('critical', []),
-                 'NonCritical'      : ('noncritical', []),
                  'OutputDir'        : ('outputdir', abspath('.')),
                  'Log'              : ('log', 'log.html'),
                  'Report'           : ('report', 'report.html'),
@@ -67,8 +65,7 @@ class _BaseSettings:
                  'StatusRC'         : ('statusrc', True),
                  'ConsoleColors'    : ('consolecolors', 'AUTO'),
                  'StdOut'           : ('stdout', None),
-                 'StdErr'           : ('stderr', None),
-                 'XUnitSkipNonCritical' : ('xunitskipnoncritical', False)}
+                 'StdErr'           : ('stderr', None)}
     _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile']
 
     def __init__(self, options=None, **extra_options):
@@ -374,10 +371,6 @@ class _BaseSettings:
         }
 
     @property
-    def critical_tags(self):
-        return self['Critical']
-
-    @property
     def remove_keywords(self):
         return self['RemoveKeywords']
 
@@ -503,7 +496,7 @@ class RobotSettings(_BaseSettings):
 
     @property
     def skip_on_failure(self):
-        return (self['SkipOnFailure'] or []) + (self['NonCritical'] or [])
+        return self['SkipOnFailure']
 
     @property
     def skip_teardown_on_exit(self):

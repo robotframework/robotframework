@@ -88,14 +88,13 @@ Options
     --rpa                 Turn on the generic automation mode. Mainly affects
                           terminology so that "test" is replaced with "task"
                           in logs and reports. By default the mode is got
-                          from test/task header in data files. New in RF 3.1.
+                          from test/task header in data files.
  -F --extension value     Parse only files with this extension when executing
                           a directory. Has no effect when running individual
                           files or when using resource files. If more than one
                           extension is needed, separate them with a colon.
                           Examples: `--extension txt`, `--extension robot:txt`
-                          Starting from RF 3.2 only `*.robot` files are parsed
-                          by default.
+                          Only `*.robot` files are parsed by default.
  -N --name name           Set the name of the top level suite. By default the
                           name is created based on the executed file or
                           directory.
@@ -143,11 +142,9 @@ Options
                           e.g. with --include/--exclude when it is not an error
                           that no test matches the condition.
     --skip tag *          Tests having given tag will be skipped. Tag can be
-                          a pattern. New in RF 4.0.
+                          a pattern.
     --skiponfailure tag *  Tests having given tag will be skipped if they fail.
-                          Tag can be a pattern. New in RF 4.0.
- -n --noncritical tag *   Alias for --skiponfailure. Deprecated since RF 4.0.
- -c --critical tag *      Opposite of --noncritical. Deprecated since RF 4.0.
+                          Tag can be a pattern
  -v --variable name:value *  Set variables in the test data. Only scalar
                           variables with string value are supported and name is
                           given without `${}`. See --variablefile for a more
@@ -179,7 +176,6 @@ Options
                           similarly as --log. Default: report.html
  -x --xunit file          xUnit compatible result file. Not created unless this
                           option is specified.
-    --xunitskipnoncritical  Deprecated since RF 4.0 and has no effect anymore.
  -b --debugfile file      Debug file written during execution. Not created
                           unless this option is specified.
  -T --timestampoutputs    When this option is used, timestamp in a format
@@ -191,12 +187,13 @@ Options
     --splitlog            Split the log file into smaller pieces that open in
                           browsers transparently.
     --logtitle title      Title for the generated log file. The default title
-                          is `<SuiteName> Test Log`.
+                          is `<SuiteName> Log`.
     --reporttitle title   Title for the generated report file. The default
-                          title is `<SuiteName> Test Report`.
+                          title is `<SuiteName> Report`.
     --reportbackground colors  Background colors to use in the report file.
-                          Order is `passed:failed:skipped`. Both color names
-                          and codes work. `skipped` can be omitted.
+                          Given in format `passed:failed:skipped` where the
+                          `:skipped` part can be omitted. Both color names and
+                          codes work.
                           Examples: --reportbackground green:red:yellow
                                     --reportbackground #00E:#E00
     --maxerrorlines lines  Maximum number of error message lines to show in
@@ -244,7 +241,6 @@ Options
                           work using same rules as with --removekeywords.
                           Examples: --expandkeywords name:BuiltIn.Log
                                     --expandkeywords tag:expand
-                          New in RF 3.2.
     --removekeywords all|passed|for|wuks|name:<pattern>|tag:<pattern> *
                           Remove keyword data from the generated log file.
                           Keywords containing warnings are not removed except
@@ -293,7 +289,7 @@ Options
                           in test cases. Error codes are returned normally.
     --dryrun              Verifies test data and runs tests so that library
                           keywords are not executed.
- -X --exitonfailure       Stops test execution if any critical test fails.
+ -X --exitonfailure       Stops test execution if any test fails.
     --exitonerror         Stops test execution if any error occurs when parsing
                           test data, importing libraries, and so on.
     --skipteardownonexit  Causes teardowns to be skipped if test execution is
@@ -313,9 +309,8 @@ Options
                           model before creating reports and logs.
     --console type        How to report execution on the console.
                           verbose:  report every suite and test (default)
-                          dotted:   only show `.` for passed test, `f` for
-                                    failed non-critical tests, and `F` for
-                                    failed critical tests
+                          dotted:   only show `.` for passed test, `s` for
+                                    skipped tests, and `F` for failed tests
                           quiet:    no output except for errors and warnings
                           none:     no output whatsoever
  -. --dotted              Shortcut for `--console dotted`.
@@ -419,12 +414,6 @@ class RobotFramework(Application):
     def main(self, datasources, **options):
         settings = RobotSettings(options)
         LOGGER.register_console_logger(**settings.console_output_config)
-        if settings['Critical'] or settings['NonCritical']:
-            LOGGER.warn("Command line options --critical and --noncritical have been "
-                        "deprecated. Use --skiponfailure instead.")
-        if settings['XUnitSkipNonCritical']:
-            LOGGER.warn("Command line option --xunitskipnoncritical has been "
-                        "deprecated and has no effect.")
         LOGGER.info(f'Settings:\n{settings}')
         builder = TestSuiteBuilder(settings['SuiteNames'],
                                    included_extensions=settings.extension,
@@ -463,7 +452,7 @@ def run_cli(arguments=None, exit=True):
     """Command line execution entry point for running tests.
 
     :param arguments: Command line options and arguments as a list of strings.
-        Starting from RF 3.1, defaults to ``sys.argv[1:]`` if not given.
+        Defaults to ``sys.argv[1:]`` if not given.
     :param exit: If ``True``, call ``sys.exit`` with the return code denoting
         execution status, otherwise just return the rc.
 
@@ -527,9 +516,9 @@ def run(*tests, **options):
     respectively.
 
     A return code is returned similarly as when running on the command line.
-    Zero means that tests were executed and no critical test failed, values up
-    to 250 denote the number of failed critical tests, and values between
-    251-255 are for other statuses documented in the Robot Framework User Guide.
+    Zero means that tests were executed and no test failed, values up to 250
+    denote the number of failed tests, and values between 251-255 are for other
+    statuses documented in the Robot Framework User Guide.
 
     Example::
 

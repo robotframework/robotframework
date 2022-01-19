@@ -81,7 +81,7 @@ Options
     --rpa                 Turn on the generic automation mode. Mainly affects
                           terminology so that "test" is replaced with "task"
                           in logs and reports. By default the mode is got
-                          from the processed output files. New in RF 3.1.
+                          from the processed output files.
  -R --merge               When combining results, merge outputs together
                           instead of putting them under a new top level suite.
                           Example: rebot --merge orig.xml rerun.xml
@@ -124,8 +124,6 @@ Options
     --processemptysuite   Processes output also if the top level suite is
                           empty. Useful e.g. with --include/--exclude when it
                           is not an error that there are no matches.
- -c --critical tag *      Deprecated since RF 4.0 and has no effect anymore.
- -n --noncritical tag *   Deprecated since RF 4.0 and has no effect anymore.
                           Use --skiponfailure when starting execution instead.
  -d --outputdir dir       Where to create output files. The default is the
                           directory where Rebot is run from and the given path
@@ -141,7 +139,6 @@ Options
                           similarly as --log. Default: report.html
  -x --xunit file          xUnit compatible result file. Not created unless this
                           option is specified.
-    --xunitskipnoncritical  Deprecated since RF 4.0 and has no effect anymore.
  -T --timestampoutputs    When this option is used, timestamp in a format
                           `YYYYMMDD-hhmmss` is added to all generated output
                           files between their basename and extension. For
@@ -151,13 +148,14 @@ Options
     --splitlog            Split the log file into smaller pieces that open in
                           browsers transparently.
     --logtitle title      Title for the generated log file. The default title
-                          is `<SuiteName> Test Log`.
+                          is `<SuiteName> Log`.
     --reporttitle title   Title for the generated report file. The default
-                          title is `<SuiteName> Test Report`.
+                          title is `<SuiteName> Report`.
     --reportbackground colors  Background colors to use in the report file.
-                          Either `all_passed:critical_passed:failed` or
-                          `passed:failed`. Both color names and codes work.
-                          Examples: --reportbackground green:yellow:red
+                          Given in format `passed:failed:skipped` where the
+                          `:skipped` part can be omitted. Both color names and
+                          codes work.
+                          Examples: --reportbackground green:red:yellow
                                     --reportbackground #00E:#E00
  -L --loglevel level      Threshold for selecting messages. Available levels:
                           TRACE (default), DEBUG, INFO, WARN, NONE (no msgs).
@@ -201,7 +199,6 @@ Options
                           work using same rules as with --removekeywords.
                           Examples: --expandkeywords name:BuiltIn.Log
                                     --expandkeywords tag:expand
-                          New in RF 3.2.
     --removekeywords all|passed|for|wuks|name:<pattern>|tag:<pattern> *
                           Remove keyword data from all generated outputs.
                           Keywords containing warnings are not removed except
@@ -331,13 +328,6 @@ class Rebot(RobotFramework):
     def main(self, datasources, **options):
         settings = RebotSettings(options)
         LOGGER.register_console_logger(**settings.console_output_config)
-        if settings['Critical'] or settings['NonCritical']:
-            LOGGER.warn("Command line options --critical and --noncritical have been "
-                        "deprecated and have no effect with Rebot. Use --skiponfailure "
-                        "when starting execution instead.")
-        if settings['XUnitSkipNonCritical']:
-            LOGGER.warn("Command line option --xunitskipnoncritical has been "
-                        "deprecated and has no effect.")
         LOGGER.disable_message_cache()
         rc = ResultWriter(*datasources).write_results(settings)
         if rc < 0:
@@ -349,7 +339,7 @@ def rebot_cli(arguments=None, exit=True):
     """Command line execution entry point for post-processing outputs.
 
     :param arguments: Command line options and arguments as a list of strings.
-        Starting from RF 3.1, defaults to ``sys.argv[1:]`` if not given.
+        Defaults to ``sys.argv[1:]`` if not given.
     :param exit: If ``True``, call ``sys.exit`` with the return code denoting
         execution status, otherwise just return the rc.
 

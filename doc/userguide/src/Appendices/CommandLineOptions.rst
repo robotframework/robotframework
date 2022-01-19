@@ -29,11 +29,7 @@ Command line options for test execution
   -i, --include <tag>     `Selects the test cases`_ by tag.
   -e, --exclude <tag>     `Selects the test cases`_ by tag.
   --skip <tag>            Tests having given tag will be `skipped`_. Tag can be a pattern.
-                          New in RF 4.0.
   --skiponfailure <tag>   Tests having given tag will be `skipped`_ if they fail.
-                          New in RF 4.0.
-  -c, --critical <tag>    Opposite of --noncritical. Deprecated since RF 4.0.
-  -n, --noncritical <tag>  Alias for --skiponfailure. Deprecated since RF 4.0.
   -v, --variable <name:value>   Sets `individual variables`_.
   -V, --variablefile <path:args>  Sets variables using `variable files`_.
   -d, --outputdir <dir>   Defines where to `create output files`_.
@@ -41,7 +37,6 @@ Command line options for test execution
   -l, --log <file>        Sets the path to the generated `log file`_.
   -r, --report <file>     Sets the path to the generated `report file`_.
   -x, --xunit <file>      Sets the path to the generated `xUnit compatible result file`_.
-  --xunitskipnoncritical  Deprecated since RF 4.0 and has no effect anymore.
   -b, --debugfile <file>  A `debug file`_ that is written during execution.
   -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
   --splitlog              `Split log file`_ into smaller pieces that open in
@@ -74,7 +69,7 @@ Command line options for test execution
                           keywords originating from test libraries. Useful for
                           validating test data syntax.
   -X, --exitonfailure     `Stops test execution <Stopping when first test case fails_>`__
-                          if any critical test fails.
+                          if any test fails.
   --exitonerror           `Stops test execution <Stopping on parsing or execution error_>`__
                           if any error occurs when parsing test data, importing libraries, and so on.
   --skipteardownonexit    `Skips teardowns`_ if test execution is prematurely stopped.
@@ -107,14 +102,11 @@ Command line options for post-processing outputs
   -s, --suite <name>      `Selects the test suites`_ by name.
   -i, --include <tag>     `Selects the test cases`_ by tag.
   -e, --exclude <tag>     `Selects the test cases`_ by tag.
-  -c, --critical <tag>    Deprecated since RF 4.0 and has no effect anymore.
-  -n, --noncritical <tag>  Deprecated since RF 4.0 and has no effect anymore.
   -d, --outputdir <dir>   Defines where to `create output files`_.
   -o, --output <file>     Sets the path to the generated `output file`_.
   -l, --log <file>        Sets the path to the generated `log file`_.
   -r, --report <file>     Sets the path to the generated `report file`_.
   -x, --xunit <file>      Sets the path to the generated `xUnit compatible result file`_.
-  --xunitskipnoncritical  Deprecated since RF 4.0 and has no effect anymore.
   -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
   --splitlog              `Split log file`_ into smaller pieces that open in
                           browser transparently.

@@ -11,7 +11,7 @@ ${INVALID}          %{TEMPDIR}${/}ïnvälïd-xünït.xml
 ${NESTED}           misc/suites
 ${METADATA SUITE}   parsing/suite_metadata.robot
 ${NORMAL SUITE}     misc/normal.robot
- 
+
 *** Test Cases ***
 XUnit File Is Created
     Verify Outputs
@@ -29,7 +29,7 @@ File Structure Is Correct
     ${skips} =    Get XUnit Nodes    testcase/skipped
     Length Should Be    ${skips}    1
     Element Attribute Should Be    ${skips}[0]    message
-    ...    Test failed but its tags matched '--SkipOnFailure' and it was marked skipped.\n\nOriginal failure:\n${MESSAGES}
+    ...    Test failed but skip-on-failure mode was active and it was marked skipped.\n\nOriginal failure:\n${MESSAGES}
     Element Attribute Should Be    ${skips}[0]    type    SkipExecution
     Element Should Not Exist    ${root}    testsuite/properties
 
@@ -66,10 +66,6 @@ Invalid XUnit File
     ${path} =    Regexp Escape    ${INVALID}
     Stderr Should Match Regexp
     ...    \\[ ERROR \\] Opening xunit file '${path}' failed: .*
-
-Skipping non-critical tests is deprecated
-    Run tests    --xUnit xunit.xml --xUnitSkipNonCritical     ${PASS AND FAIL}
-    Stderr Should Contain   Command line option --xunitskipnoncritical has been deprecated and has no effect.
 
 XUnit File From Nested Suites
     Run Tests    -x xunit.xml -l log.html    ${TESTDATA} ${NESTED}
