@@ -47,7 +47,11 @@ from .keywordremover import KeywordRemover
 from .suiteteardownfailed import SuiteTeardownFailed, SuiteTeardownFailureHandler
 
 
-class Body(model.BaseBody):
+class Body(model.Body):
+    __slots__ = []
+
+
+class Branches(model.Branches):
     __slots__ = []
 
 
@@ -62,8 +66,9 @@ class Iterations(model.BaseBody):
         return self.append(self.iteration_class(*args, **kwargs))
 
 
-@Iterations.register
 @Body.register
+@Branches.register
+@Iterations.register
 class Message(model.Message):
     __slots__ = []
 
@@ -255,6 +260,7 @@ class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
 @Body.register
 class If(model.If, StatusMixin, DeprecatedAttributesMixin):
     branch_class = IfBranch
+    branches_class = Branches
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
     def __init__(self, status='FAIL', starttime=None, endtime=None, doc='', parent=None):
@@ -289,6 +295,7 @@ class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
 @Body.register
 class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
     branch_class = TryBranch
+    branches_class = Branches
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
     def __init__(self, status='FAIL', starttime=None, endtime=None, doc='', parent=None):
@@ -364,8 +371,9 @@ class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
         return ''
 
 
-@Iterations.register
 @Body.register
+@Branches.register
+@Iterations.register
 class Keyword(model.Keyword, StatusMixin):
     """Represents results of a single keyword.
 

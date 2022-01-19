@@ -175,7 +175,7 @@ class KeywordHandler(ElementHandler):
 @ElementHandler.register
 class ForHandler(ElementHandler):
     tag = 'for'
-    children = frozenset(('var', 'value', 'doc', 'status', 'iter', 'msg', 'kw'))
+    children = frozenset(('var', 'value', 'iter', 'status', 'doc', 'msg', 'kw'))
 
     def start(self, elem, result):
         return result.body.create_for(flavor=elem.get('flavor'))
@@ -184,7 +184,7 @@ class ForHandler(ElementHandler):
 @ElementHandler.register
 class WhileHandler(ElementHandler):
     tag = 'while'
-    children = frozenset(('doc', 'status', 'iter', 'msg', 'kw'))
+    children = frozenset(('iter', 'status', 'doc', 'msg', 'kw'))
 
     def start(self, elem, result):
         return result.body.create_while(condition=elem.get('condition'))
@@ -203,7 +203,7 @@ class IterationHandler(ElementHandler):
 @ElementHandler.register
 class IfHandler(ElementHandler):
     tag = 'if'
-    children = frozenset(('status', 'branch', 'msg', 'doc'))
+    children = frozenset(('branch', 'status', 'doc', 'msg', 'kw'))
 
     def start(self, elem, result):
         return result.body.create_if()
@@ -222,7 +222,7 @@ class BranchHandler(ElementHandler):
 @ElementHandler.register
 class TryHandler(ElementHandler):
     tag = 'try'
-    children = frozenset(('status', 'branch', 'msg', 'doc'))
+    children = frozenset(('branch', 'status', 'doc', 'msg', 'kw'))
 
     def start(self, elem, result):
         return result.body.create_try()
