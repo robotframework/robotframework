@@ -215,6 +215,16 @@ specified tags or tag patterns are skipped::
     --skip windowsANDversion9?
     --skip python2.* --skip python3.[0-6]
 
+Starting from RF 5.0, a test case can also be skipped by tagging the test with the 
+reserved tag `robot:skip`:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       [Tags]    robot:skip
+       Log       This is not executed
+
 The difference between :option:`--skip` and :option:`--exclude` is that with
 the latter tests are `omitted from the execution altogether`__ and they will not
 be shown in logs and reports. With the former they are included, but not actually
@@ -253,6 +263,16 @@ the :option:`--skip` option discussed above::
 
     --skiponfailure not-ready
     --skiponfailure experimentalANDmobile
+
+Starting from RF 5.0, the reserved tag `robot:skip-on-failure` can alternatively be used to
+achieve the same effect as above:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       [Tags]    robot:skip-on-failure
+       Fail      this test will be marked as skipped instead of failed
 
 The motivation for this functionality is allowing execution of tests that are not yet
 ready or that are testing a functionality that is not yet ready. Instead of such tests
