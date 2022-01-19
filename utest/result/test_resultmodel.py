@@ -2,7 +2,8 @@ import unittest
 import warnings
 
 from robot.model import Tags
-from robot.result import For, If, IfBranch, Keyword, Message, TestCase, TestSuite
+from robot.result import (Break, Continue, For, If, IfBranch, Keyword, Message,
+                          Return, TestCase, TestSuite, Try, While)
 from robot.utils.asserts import (assert_equal, assert_false, assert_raises,
                                  assert_raises_with_msg, assert_true)
 
@@ -151,9 +152,23 @@ class TestSlots(unittest.TestCase):
 
     def test_if(self):
         self._verify(If())
+        self._verify(If().body.create_branch())
 
     def test_for(self):
         self._verify(For())
+        self._verify(For().body.create_iteration())
+
+    def test_try(self):
+        self._verify(Try())
+        self._verify(Try().body.create_branch())
+
+    def test_while(self):
+        self._verify(While())
+        self._verify(While().body.create_iteration())
+
+    def test_break_continue_return(self):
+        for cls in Break, Continue, Return:
+            self._verify(cls())
 
     def test_message(self):
         self._verify(Message())
@@ -182,8 +197,11 @@ class TestModel(unittest.TestCase):
     def test_status_propertys_with_keyword(self):
         self._verify_status_propertys(Keyword())
 
-    def test_status_propertys_with_if(self):
-        self._verify_status_propertys(If())
+    def test_status_propertys_with_control_structures(self):
+        for obj in (Break(), Continue(), Return(), For(), For().body.create_iteration(),
+                    If(), If().body.create_branch(), Try(), Try().body.create_branch(),
+                    While(), While().body.create_iteration()):
+            self._verify_status_propertys(obj)
 
     def test_keyword_passed_after_dry_run(self):
         self._verify_status_propertys(Keyword(status=Keyword.NOT_RUN),
@@ -334,25 +352,48 @@ class TestBody(unittest.TestCase):
         assert_equal(kw.body[2].body[2].id, 's1-t1-k1-k2-m2')
 
 
-class TestForIterations(unittest.TestCase):
+class TestIterations(unittest.TestCase):
 
     def test_create_supported(self):
-        for_ = For()
-        iterations = for_.body
-        for creator in (iterations.create_iteration,
-                        iterations.create_message,
-                        iterations.create_keyword):
-            item = creator()
-            assert_equal(item.parent, for_)
+        for parent in For(), While():
+            iterations = parent.body
+            for creator in (iterations.create_iteration,
+                            iterations.create_message,
+                            iterations.create_keyword):
+                item = creator()
+                assert_equal(item.parent, parent)
 
     def test_create_not_supported(self):
-        iterations = For().body
-        for creator in (iterations.create_for,
-                        iterations.create_if,
-                        iterations.create_try,
-                        iterations.create_return):
-            msg = "'Iterations' object does not support '%s'." % creator.__name__
-            assert_raises_with_msg(TypeError, msg, creator)
+        for parent in For(), While():
+            iterations = parent.body
+            for creator in (iterations.create_for,
+                            iterations.create_if,
+                            iterations.create_try,
+                            iterations.create_return):
+                msg = f"'Iterations' object does not support '{creator.__name__}'."
+                assert_raises_with_msg(TypeError, msg, creator)
+
+
+class TestBranches(unittest.TestCase):
+
+    def test_create_supported(self):
+        for parent in If(), Try():
+            branches = parent.body
+            for creator in (branches.create_branch,
+                            branches.create_message,
+                            branches.create_keyword):
+                item = creator()
+                assert_equal(item.parent, parent)
+
+    def test_create_not_supported(self):
+        for parent in If(), Try():
+            branches = parent.body
+            for creator in (branches.create_for,
+                            branches.create_if,
+                            branches.create_try,
+                            branches.create_return):
+                msg = f"'Branches' object does not support '{creator.__name__}'."
+                assert_raises_with_msg(TypeError, msg, creator)
 
 
 class TestDeprecatedKeywordSpecificAttributes(unittest.TestCase):

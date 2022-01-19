@@ -119,6 +119,7 @@ class If(BodyItem):
     """IF/ELSE structure root. Branches are stored in :attr:`body`."""
     type = BodyItem.IF_ELSE_ROOT
     branch_class = IfBranch
+    branches_class = Branches
     __slots__ = ['parent']
 
     def __init__(self, parent=None):
@@ -127,7 +128,7 @@ class If(BodyItem):
 
     @setter
     def body(self, branches):
-        return Branches(self.branch_class, self, branches)
+        return self.branches_class(self.branch_class, self, branches)
 
     @property
     def id(self):
@@ -188,6 +189,7 @@ class Try(BodyItem):
     """TRY/EXCEPT structure root. Branches are stored in :attr:`body`."""
     type = BodyItem.TRY_EXCEPT_ROOT
     branch_class = TryBranch
+    branches_class = Branches
     __slots__ = []
 
     def __init__(self, parent=None):
@@ -196,7 +198,7 @@ class Try(BodyItem):
 
     @setter
     def body(self, branches):
-        return Branches(self.branch_class, self, branches)
+        return self.branches_class(self.branch_class, self, branches)
 
     @property
     def try_branch(self):
