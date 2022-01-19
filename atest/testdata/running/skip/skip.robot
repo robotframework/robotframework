@@ -208,6 +208,12 @@ Skipped with --skip
     [Tags]    skip-this
     Fail
 
+Skipped when test is tagged with robot:skip
+    [Documentation]    SKIP
+    ...    Test skipped since it is tagged with 'robot:skip' tag.
+    [Tags]    robot:skip
+    Fail      Test should not be executed
+
 Skipped with --SkipOnFailure
     [Documentation]    SKIP
     ...    ${TEST_OR_TASK} failed but its tags matched '--SkipOnFailure' and it was marked skipped.
@@ -247,6 +253,15 @@ Skipped with --SkipOnFailure when Set Tags Used in Teardown
     ...    Ooops, we fail!
     Fail    Ooops, we fail!
     [Teardown]    Set Tags    skip-on-failure
+
+Skipped although test fails since test is tagged with robot:skip-on-failure
+    [Documentation]    SKIP
+    ...    Test failed but its tags matched '--SkipOnFailure' and it was marked skipped.
+    ...
+    ...    Original failure:
+    ...    We failed here, but the test is reported as skipped instead
+    [Tags]  robot:skip-on-failure
+    Fail   We failed here, but the test is reported as skipped instead
 
 --NonCritical Is an Alias for --SkipOnFailure
     [Documentation]    SKIP

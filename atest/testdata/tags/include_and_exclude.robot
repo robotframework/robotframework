@@ -25,3 +25,7 @@ Excl-12
 Excl-123
     [Tags]  excl_1  excl_2  excl_3
     No Operation
+
+Robot-exclude
+    [Tags]  robot:exclude  ROBOT:EXCLUDE
+    Fail  This test will never be run
