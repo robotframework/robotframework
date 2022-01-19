@@ -34,7 +34,7 @@ XUnit Option Given
     Element Attribute Should be    ${failures}[0]    message    ${MESSAGES}
     ${properties} =    Get Elements    ${suites}[1]    testsuite[6]/properties/property
     Length Should Be    ${properties}    2
-    Element Attribute Should be    ${properties}[0]    name    Documentation
+    Element Attribute Should be    ${properties}[0]    name     Documentation
     Element Attribute Should be    ${properties}[0]    value    Normal test cases
 
 Suite Stats
