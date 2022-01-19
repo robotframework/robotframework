@@ -52,8 +52,7 @@ EXECUTION_CONTEXTS = ExecutionContexts()
 
 
 class _ExecutionContext:
-    # FIXME: can this be increased?
-    _started_keywords_threshold = 42  # Jython on Windows don't work with higher
+    _started_keywords_threshold = 100
 
     def __init__(self, suite, namespace, output, dry_run=False):
         self.suite = suite
@@ -193,7 +192,8 @@ class _ExecutionContext:
     def start_keyword(self, keyword):
         self._started_keywords += 1
         if self._started_keywords > self._started_keywords_threshold:
-            raise DataError('Maximum limit of started keywords exceeded.')
+            raise DataError('Maximum limit of started keywords and control '
+                            'structures exceeded.')
         self.output.start_keyword(keyword)
         if keyword.libname != 'BuiltIn':
             self.step_types.append(keyword.type)
