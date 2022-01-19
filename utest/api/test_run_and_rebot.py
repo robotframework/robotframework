@@ -101,10 +101,9 @@ class TestRun(RunningTestCase):
         self._assert_outputs()
 
     def test_multi_options_as_single_string(self):
-        assert_equal(run_without_outputs(self.data, exclude='fail', skip='pass',
-                                         skiponfailure='xxx'), 0)
-        self._assert_outputs([('FAIL', 0)])
-        self._assert_outputs([('1 test, 0 passed, 0 failed, 1 skipped', 1)])
+        assert_equal(run_without_outputs(self.data, include='?a??', skip='pass',
+                                         skiponfailure='fail'), 0)
+        self._assert_outputs([('2 tests, 0 passed, 0 failed, 2 skipped', 1)])
 
     def test_multi_options_as_tuples(self):
         assert_equal(run_without_outputs(self.data, exclude=('fail',), skip=('pass',),

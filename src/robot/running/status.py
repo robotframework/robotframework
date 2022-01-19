@@ -166,7 +166,7 @@ class TestStatus(_ExecutionStatus):
     def __init__(self, parent, test, skip_on_failure=None, rpa=False):
         super().__init__(parent)
         self._test = test
-        self._skip_on_failure_tags = tuple(skip_on_failure or ()) + ('robot:skip-on-failure',)
+        self._skip_on_failure_tags = skip_on_failure
         self._rpa = rpa
 
     def test_failed(self, message=None, error=None):
@@ -198,11 +198,12 @@ class TestStatus(_ExecutionStatus):
         return False
 
     def _skip_on_failure(self):
-        return TagPatterns(self._skip_on_failure_tags).match(self._test.tags)
+        tags = list(self._skip_on_failure_tags or []) + ['robot:skip-on-failure']
+        return TagPatterns(tags).match(self._test.tags)
 
     def _skip_on_fail_msg(self, msg):
         return test_or_task(
-            "{Test} failed but its tags matched '--SkipOnFailure' and it was marked "
+            "{Test} failed but skip-on-failure mode was active and it was marked "
             "skipped.\n\nOriginal failure:\n%s" % msg, rpa=self._rpa
         )
 

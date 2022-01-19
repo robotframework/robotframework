@@ -31,7 +31,7 @@ File Structure Is Correct
     ${skips} =    Get XUnit Nodes    testcase/skipped
     Length Should Be    ${skips}    1
     Element Attribute Should Be    ${skips}[0]    message
-    ...    Test failed but its tags matched '--SkipOnFailure' and it was marked skipped.\n\nOriginal failure:\n${MESSAGES}
+    ...    Test failed but skip-on-failure mode was active and it was marked skipped.\n\nOriginal failure:\n${MESSAGES}
     Element Attribute Should Be    ${skips}[0]    type    SkipExecution
 
 Non-ASCII Content
