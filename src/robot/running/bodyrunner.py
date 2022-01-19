@@ -18,7 +18,8 @@ from contextlib import contextmanager
 import re
 
 from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
-                          ExecutionFailures, ExecutionPassed, ExecutionStatus)
+                          ExecutionFailures, ExecutionPassed, ExecutionStatus,
+                          ReturnFromKeyword)
 from robot.result import (For as ForResult, While as WhileResult, If as IfResult,
                           IfBranch as IfBranchResult, Try as TryResult,
                           TryBranch as TryBranchResult)
@@ -549,6 +550,19 @@ class TryRunner:
             return self._run_branch(data.else_branch, result, run)
 
     def _run_finally(self, data, run):
+        cannot_be_used = {BreakLoop: 'BREAK', ContinueLoop: 'CONTINUE',
+                          ReturnFromKeyword: 'RETURN'}
         if data.finally_branch:
             result = TryBranchResult(data.FINALLY)
-            return self._run_branch(data.finally_branch, result, run)
+            try:
+                with StatusReporter(data.finally_branch, result, self._context, run):
+                    runner = BodyRunner(self._context, run, self._templated)
+                    try:
+                        runner.run(data.finally_branch.body)
+                    except tuple(cannot_be_used) as err:
+                        name = cannot_be_used[type(err)]
+                        raise DataError(f'{name} cannot be used in FINALLY branch.')
+            except ExecutionStatus as err:
+                return err
+            else:
+                return None

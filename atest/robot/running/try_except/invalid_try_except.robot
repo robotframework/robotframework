@@ -69,3 +69,12 @@ Template with TRY inside IF
 
 Template with IF inside TRY
     TRY:FAIL    FINALLY:NOT RUN
+
+BREAK in FINALLY
+    TRY:PASS    FINALLY:FAIL    path=body[0].body[0].body[0]
+
+CONTINUE in FINALLY
+    TRY:PASS    FINALLY:FAIL    path=body[0].body[0].body[0]
+
+RETURN in FINALLY
+    TRY:PASS    FINALLY:FAIL    path=body[0].body[0]
