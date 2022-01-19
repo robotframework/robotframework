@@ -144,9 +144,7 @@ Options
     --skip tag *          Tests having given tag will be skipped. Tag can be
                           a pattern.
     --skiponfailure tag *  Tests having given tag will be skipped if they fail.
-                          Tag can be a pattern. New in RF 4.0.
- -n --noncritical tag *   Alias for --skiponfailure. Deprecated since RF 4.0.
- -c --critical tag *      Opposite of --noncritical. Deprecated since RF 4.0.
+                          Tag can be a pattern
  -v --variable name:value *  Set variables in the test data. Only scalar
                           variables with string value are supported and name is
                           given without `${}`. See --variablefile for a more
@@ -416,9 +414,6 @@ class RobotFramework(Application):
     def main(self, datasources, **options):
         settings = RobotSettings(options)
         LOGGER.register_console_logger(**settings.console_output_config)
-        if settings['Critical'] or settings['NonCritical']:
-            LOGGER.warn("Command line options --critical and --noncritical have been "
-                        "deprecated. Use --skiponfailure instead.")
         LOGGER.info(f'Settings:\n{settings}')
         builder = TestSuiteBuilder(settings['SuiteNames'],
                                    included_extensions=settings.extension,

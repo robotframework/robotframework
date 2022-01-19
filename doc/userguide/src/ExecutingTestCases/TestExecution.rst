@@ -304,15 +304,9 @@ use case is nowadays covered by the skip-on-failure functionality discussed in
 the previous section.
 
 To ease migrating from criticality to skipping, the old :option:`--noncritical`
-option works as a direct alias for the new :option:`--skiponfailure`. When using
-:option:`--noncritical` earlier, matched tests were marked non-critical and their
-failures did not affect the final execution status. Nowadays using this option
-causes matched tests to be marked skipped if they fail and failures do not affect
-the final status either.
-
-Also the old :option:`--critical` option is preserved but using it in combination
-with :option:`--noncritical` does not work same way as earlier. Both of these
-options are deprecated and they do not anymore have any affect when used with Rebot_.
+option worked as an alias for the new :option:`--skiponfailure` in Robot Framework 4.0
+and also the old :option:`--critical` option was preserved. Both old options
+were deprecated and they were removed in Robot Framework 5.0.
 
 Suite status
 ~~~~~~~~~~~~

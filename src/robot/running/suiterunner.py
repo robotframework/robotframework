@@ -122,7 +122,6 @@ class SuiteRunner(SuiteVisitor):
         self._output.start_test(ModelCombiner(test, result))
         status = TestStatus(self._suite_status, result,
                             self._settings.skip_on_failure,
-                            self._settings.critical_tags,
                             self._settings.rpa)
         if status.exit:
             self._add_exit_combine()

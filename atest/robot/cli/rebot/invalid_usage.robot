@@ -59,17 +59,6 @@ Invalid --RemoveKeywords
     Invalid value for option '--removekeywords'. Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'TAG:<pattern>', 'FOR', or 'WUKS' but got 'Invalid'.
     ...    --removekeywords wuks --removek name:xxx --RemoveKeywords Invalid
 
---critical and --noncritical are deprecated
-    [Template]    NONE
-    ${result} =    Run Rebot    --critical pass --noncritical fail    ${INPUT}
-    ${messsage} =    Catenate
-    ...    Command line options --critical and --noncritical have been deprecated and have no effect with Rebot.
-    ...    Use --skiponfailure when starting execution instead.
-    Should Be Equal    ${result.stderr}    [ WARN ] ${messsage}
-    Should Be Equal As Integers   ${result.rc}    1
-    Check Test Case    Pass
-    Check Test Case    Fail
-
 *** Keywords ***
 Rebot Should Fail
     [Arguments]    ${error}    ${options}=    ${source}=${INPUT}
