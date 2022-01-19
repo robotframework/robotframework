@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  --skip skip-this --SkipOnFailure skip-on-failure --noncritical non-crit    running/skip/
+Suite Setup     Run Tests  --skip skip-this --SkipOnFailure skip-on-failure    running/skip/
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -127,24 +127,3 @@ Skipped although test fails since test is tagged with robot:skip-on-failure
 Using Skip Does Not Affect Passing And Failing Tests
     Check Test Case    Passing Test
     Check Test Case    Failing Test
-
---NonCritical Is an Alias for --SkipOnFailure
-    Check Test Case    ${TEST NAME}
-
---Critical Is a Negative Alias for --SkipOnFailure
-    Run Tests    --critical pass    misc/pass_and_fail.robot
-    ${message} =    Catenate    SEPARATOR=\n
-    ...    Test failed but its tags matched '--SkipOnFailure' and it was marked skipped.
-    ...
-    ...    Original failure:
-    ...    Expected failure
-    Check Test Case    Fail    SKIP    ${message}
-
---Critical and --NonCritical together
-    Run Tests    --critical force --noncritical fail    misc/pass_and_fail.robot
-    ${message} =    Catenate    SEPARATOR=\n
-    ...    Test failed but its tags matched '--SkipOnFailure' and it was marked skipped.
-    ...
-    ...    Original failure:
-    ...    Expected failure
-    Check Test Case    Fail    SKIP    ${message}

@@ -263,15 +263,6 @@ Skipped although test fails since test is tagged with robot:skip-on-failure
     [Tags]  robot:skip-on-failure
     Fail   We failed here, but the test is reported as skipped instead
 
---NonCritical Is an Alias for --SkipOnFailure
-    [Documentation]    SKIP
-    ...    ${TEST_OR_TASK} failed but its tags matched '--SkipOnFailure' and it was marked skipped.
-    ...
-    ...    Original failure:
-    ...    AssertionError
-    [Tags]    non-crit
-    Fail
-
 Failing Test
     [Documentation]    FAIL AssertionError
     Fail

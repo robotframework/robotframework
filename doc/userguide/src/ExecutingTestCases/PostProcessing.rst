@@ -125,7 +125,7 @@ Merging is done by using :option:`--merge (-R)` option which changes the way how
 Rebot combines two or more output files. This option itself takes no
 arguments and all other command line options can be used with it normally::
 
-   rebot --merge --name Example --critical regression original.xml merged.xml
+   rebot --merge --name Example original.xml merged.xml
 
 How merging works in practice is explained in the following sections discussing
 its two main use cases.

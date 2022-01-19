@@ -42,8 +42,6 @@ class _BaseSettings:
                  'SetTag'           : ('settag', []),
                  'Include'          : ('include', []),
                  'Exclude'          : ('exclude', []),
-                 'Critical'         : ('critical', []),
-                 'NonCritical'      : ('noncritical', []),
                  'OutputDir'        : ('outputdir', abspath('.')),
                  'Log'              : ('log', 'log.html'),
                  'Report'           : ('report', 'report.html'),
@@ -373,10 +371,6 @@ class _BaseSettings:
         }
 
     @property
-    def critical_tags(self):
-        return self['Critical']
-
-    @property
     def remove_keywords(self):
         return self['RemoveKeywords']
 
@@ -502,7 +496,7 @@ class RobotSettings(_BaseSettings):
 
     @property
     def skip_on_failure(self):
-        return (self['SkipOnFailure'] or []) + (self['NonCritical'] or [])
+        return self['SkipOnFailure']
 
     @property
     def skip_teardown_on_exit(self):
