@@ -37,7 +37,6 @@ class XUnitFileWriter(ResultVisitor):
 
     def __init__(self, xml_writer):
         self._writer = xml_writer
-        self.root = None
 
     def start_suite(self, suite):
         tests, failures, skipped = self._get_stats(suite.statistics)
@@ -49,8 +48,6 @@ class XUnitFileWriter(ResultVisitor):
                  'time': self._time_as_seconds(suite.elapsedtime),
                  'timestamp' : self._starttime_to_isoformat(suite.starttime)}
         self._writer.start('testsuite', attrs)
-        if not self.root:
-            self.root = suite
 
     def _get_stats(self, statistics):
         return (
