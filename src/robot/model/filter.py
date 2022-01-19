@@ -45,7 +45,7 @@ class Filter(EmptySuiteRemover):
         self.include_tests = include_tests
         self.include_tags = include_tags
         self.exclude_tags = exclude_tags
-        
+
     @setter
     def include_suites(self, suites):
         return SuiteNamePatterns(suites) \

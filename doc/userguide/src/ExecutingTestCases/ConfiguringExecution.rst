@@ -139,7 +139,7 @@ the same effect as with using the `--exclude` option:
    *** Test Cases ***
    Example
       [Tags]    robot:exclude
-      Fail      this test will be excluded
+      Fail      This is not executed
 
 Selecting test cases by tags is a very flexible mechanism and allows
 many interesting possibilities:

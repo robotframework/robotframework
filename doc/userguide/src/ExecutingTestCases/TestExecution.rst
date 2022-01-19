@@ -223,7 +223,7 @@ reserved tag `robot:skip`:
    *** Test Cases ***
    Example
        [Tags]    robot:skip
-       Log       this message is not logged
+       Log       This is not executed
 
 The difference between :option:`--skip` and :option:`--exclude` is that with
 the latter tests are `omitted from the execution altogether`__ and they will not

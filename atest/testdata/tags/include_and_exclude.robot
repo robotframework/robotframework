@@ -28,4 +28,4 @@ Excl-123
 
 Robot-exclude
     [Tags]  robot:exclude  ROBOT:EXCLUDE
-    Log  this test will never be run
+    Fail  This test will never be run
