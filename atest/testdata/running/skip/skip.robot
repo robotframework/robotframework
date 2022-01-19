@@ -210,7 +210,7 @@ Skipped with --skip
 
 Skipped when test is tagged with robot:skip
     [Documentation]    SKIP
-    ...    Test skipped since it is tagged with 'robot:skip' tag
+    ...    Test skipped since it is tagged with 'robot:skip' tag.
     [Tags]    robot:skip
     Fail      Test should not be executed
 

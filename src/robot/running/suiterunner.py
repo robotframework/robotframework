@@ -107,6 +107,8 @@ class SuiteRunner(SuiteVisitor):
         self._output.library_listeners.discard_suite_scope()
 
     def visit_test(self, test):
+        if TagPatterns("robot:exclude").match(test.tags):
+            return
         if test.name in self._executed_tests:
             self._output.warn("Multiple test cases with name '%s' executed in "
                               "test suite '%s'." % (test.name, self._suite.longname))
