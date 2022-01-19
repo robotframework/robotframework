@@ -3,7 +3,6 @@ Suite Setup      Run Tests    ${EMPTY}    running/prevent_recursion.robot
 Resource         atest_resource.robot
 
 *** Test Cases ***
-
 Infinite recursion
     Check Test Case    ${TESTNAME}
 
