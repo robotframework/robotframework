@@ -9,7 +9,7 @@ ${TESTDATA}         misc/non_ascii.robot
 ${PASS AND FAIL}    misc/pass_and_fail.robot
 ${INVALID}          %{TEMPDIR}${/}ïnvälïd-xünït.xml
 ${NESTED}           misc/suites
- 
+
 *** Test Cases ***
 XUnit File Is Created
     Stderr should be empty
@@ -67,10 +67,6 @@ Invalid XUnit File
     ${path} =    Regexp Escape    ${INVALID}
     Stderr Should Match Regexp
     ...    \\[ ERROR \\] Opening xunit file '${path}' failed: .*
-
-Skipping non-critical tests is deprecated
-    Run tests    --xUnit xunit.xml --xUnitSkipNonCritical     ${PASS AND FAIL}
-    Stderr Should Contain   Command line option --xunitskipnoncritical has been deprecated and has no effect.
 
 XUnit File From Nested Suites
     Run Tests    -x xunit.xml -l log.html    ${TESTDATA} ${NESTED}

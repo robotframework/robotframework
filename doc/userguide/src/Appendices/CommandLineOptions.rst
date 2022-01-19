@@ -41,7 +41,6 @@ Command line options for test execution
   -l, --log <file>        Sets the path to the generated `log file`_.
   -r, --report <file>     Sets the path to the generated `report file`_.
   -x, --xunit <file>      Sets the path to the generated `xUnit compatible result file`_.
-  --xunitskipnoncritical  Deprecated since RF 4.0 and has no effect anymore.
   -b, --debugfile <file>  A `debug file`_ that is written during execution.
   -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
   --splitlog              `Split log file`_ into smaller pieces that open in
@@ -114,7 +113,6 @@ Command line options for post-processing outputs
   -l, --log <file>        Sets the path to the generated `log file`_.
   -r, --report <file>     Sets the path to the generated `report file`_.
   -x, --xunit <file>      Sets the path to the generated `xUnit compatible result file`_.
-  --xunitskipnoncritical  Deprecated since RF 4.0 and has no effect anymore.
   -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
   --splitlog              `Split log file`_ into smaller pieces that open in
                           browser transparently.

@@ -67,8 +67,7 @@ class _BaseSettings:
                  'StatusRC'         : ('statusrc', True),
                  'ConsoleColors'    : ('consolecolors', 'AUTO'),
                  'StdOut'           : ('stdout', None),
-                 'StdErr'           : ('stderr', None),
-                 'XUnitSkipNonCritical' : ('xunitskipnoncritical', False)}
+                 'StdErr'           : ('stderr', None)}
     _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile']
 
     def __init__(self, options=None, **extra_options):
