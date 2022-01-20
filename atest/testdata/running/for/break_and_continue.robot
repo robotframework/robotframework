@@ -1,19 +1,14 @@
-*** Variables ***
-${variable}    ${1}
-
 *** Test Cases ***
 With CONTINUE
-    WHILE    $variable < 6
-        ${variable}=    Evaluate    $variable + 1
+    FOR    ${i}    IN     2     3     4
         CONTINUE
         Fail    should not be executed
     END
 
 With CONTINUE inside IF
     [Documentation]    FAIL Oh no, got 4
-    WHILE    $variable < 6
-        ${variable}=    Evaluate    $variable + 1
-        IF    $variable == 4
+    FOR    ${i}     IN RANGE    6
+        IF    $i == 4
             Fail    Oh no, got 4
         ELSE
             CONTINUE
@@ -22,8 +17,7 @@ With CONTINUE inside IF
     END
 
 With CONTINUE inside TRY
-    WHILE    $variable < 6
-        ${variable}=    Evaluate    $variable + 1
+    FOR    ${i}     IN RANGE    6
         TRY
             CONTINUE
             Fail    should not be executed
@@ -35,8 +29,7 @@ With CONTINUE inside TRY
     END
 
 With CONTINUE inside EXCEPT and TRY-ELSE
-    WHILE    $variable < 6
-        ${variable}=    Evaluate    $variable + 1
+    FOR    ${i}     IN RANGE    6
         TRY
             Should not be equal    ${variable}    ${4}
         EXCEPT
@@ -48,24 +41,22 @@ With CONTINUE inside EXCEPT and TRY-ELSE
     END
 
 With BREAK
-    WHILE    True
+    FOR    ${i}     IN RANGE    1000
         BREAK
-        ${variable}=    Evaluate    $variable + 1
+        Fail    should not be executed
     END
-    Should be equal    ${variable}    ${1}
+    Should be equal    ${i}    ${0}
 
 With BREAK inside IF
-    WHILE    $variable < 6
-        ${variable}=    Evaluate    $variable + 1
-        IF    $variable == 3
+    FOR    ${i}     IN RANGE    6
+        IF    $i == 3
             BREAK
             Fail    should not be executed
         END
     END
 
 With BREAK inside TRY
-    WHILE    $variable < 6
-        ${variable}=    Evaluate    $variable + 1
+    FOR    ${i}     IN RANGE    6
         TRY
             BREAK
             Fail    should not be executed
@@ -75,12 +66,11 @@ With BREAK inside TRY
             Fail    should not be executed
         END
         Fail    should not be executed
+    Should be equal    ${i}    ${0}
     END
-    Should be equal    ${variable}    ${2}
 
 With BREAK inside EXCEPT
-    WHILE    $variable < 6
-        ${variable}=    Evaluate    $variable + 1
+    FOR    ${i}     IN RANGE    6
         TRY
             Fail    This is excepted!
         EXCEPT    This is excepted!
@@ -90,11 +80,10 @@ With BREAK inside EXCEPT
         END
         Fail    should not be executed
     END
-    Should be equal    ${variable}    ${2}
+    Should be equal    ${i}    ${0}
 
 With BREAK inside TRY-ELSE
-    WHILE    $variable < 6
-        ${variable}=    Evaluate    $variable + 1
+    FOR    ${i}     IN RANGE    6
         TRY
             No operation
         EXCEPT    This is excepted!
@@ -104,7 +93,7 @@ With BREAK inside TRY-ELSE
         END
         Fail    should not be executed
     END
-    Should be equal    ${variable}    ${2}
+    Should be equal    ${i}    ${0}
 
 With CONTINUE in UK
     With CONTINUE in UK
@@ -136,17 +125,15 @@ With BREAK inside TRY-ELSE in UK
 
 *** Keywords ***
 With CONTINUE in UK
-    WHILE    $variable < 6
-        ${variable}=    Evaluate    $variable + 1
+    FOR    ${i}    IN     2     3     4
         CONTINUE
         Fail    should not be executed
     END
 
 With CONTINUE inside IF in UK
     [Documentation]    FAIL Oh no, got 4
-    WHILE    $variable < 6
-        ${variable}=    Evaluate    $variable + 1
-        IF    $variable == 4
+    FOR    ${i}     IN RANGE    6
+        IF    $i == 4
             Fail    Oh no, got 4
         ELSE
             CONTINUE
@@ -155,8 +142,7 @@ With CONTINUE inside IF in UK
     END
 
 With CONTINUE inside TRY in UK
-    WHILE    $variable < 6
-        ${variable}=    Evaluate    $variable + 1
+    FOR    ${i}     IN RANGE    6
         TRY
             CONTINUE
             Fail    should not be executed
@@ -168,8 +154,7 @@ With CONTINUE inside TRY in UK
     END
 
 With CONTINUE inside EXCEPT and TRY-ELSE in UK
-    WHILE    $variable < 6
-        ${variable}=    Evaluate    $variable + 1
+    FOR    ${i}     IN RANGE    6
         TRY
             Should not be equal    ${variable}    ${4}
         EXCEPT
@@ -181,24 +166,22 @@ With CONTINUE inside EXCEPT and TRY-ELSE in UK
     END
 
 With BREAK in UK
-    WHILE    True
+    FOR    ${i}     IN RANGE    1000
         BREAK
         Fail    should not be executed
     END
-    Should be equal    ${variable}    ${1}
+    Should be equal    ${i}    ${0}
 
 With BREAK inside IF in UK
-    WHILE    $variable < 6
-        ${variable}=    Evaluate    $variable + 1
-        IF    $variable == 3
+    FOR    ${i}     IN RANGE    6
+        IF    $i == 3
             BREAK
             Fail    should not be executed
         END
     END
 
 With BREAK inside TRY in UK
-    WHILE    $variable < 6
-        ${variable}=    Evaluate    $variable + 1
+    FOR    ${i}     IN RANGE    6
         TRY
             BREAK
             Fail    should not be executed
@@ -208,12 +191,11 @@ With BREAK inside TRY in UK
             Fail    should not be executed
         END
         Fail    should not be executed
+    Should be equal    ${i}    ${0}
     END
-    Should be equal    ${variable}    ${2}
 
 With BREAK inside EXCEPT in UK
-    WHILE    $variable < 6
-        ${variable}=    Evaluate    $variable + 1
+    FOR    ${i}     IN RANGE    6
         TRY
             Fail    This is excepted!
         EXCEPT    This is excepted!
@@ -223,11 +205,10 @@ With BREAK inside EXCEPT in UK
         END
         Fail    should not be executed
     END
-    Should be equal    ${variable}    ${2}
+    Should be equal    ${i}    ${0}
 
 With BREAK inside TRY-ELSE in UK
-    WHILE    $variable < 6
-        ${variable}=    Evaluate    $variable + 1
+    FOR    ${i}     IN RANGE    6
         TRY
             No operation
         EXCEPT    This is excepted!
@@ -237,4 +218,4 @@ With BREAK inside TRY-ELSE in UK
         END
         Fail    should not be executed
     END
-    Should be equal    ${variable}    ${2}
+    Should be equal    ${i}    ${0}
