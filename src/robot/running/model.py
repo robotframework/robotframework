@@ -37,7 +37,7 @@ import os
 
 from robot import model
 from robot.conf import RobotSettings
-from robot.errors import BreakLoop, ContinueLoop, ReturnFromKeyword
+from robot.errors import BreakLoop, ContinueLoop, ReturnFromKeyword, DataError
 from robot.model import Keywords, BodyItem
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.result import (Break as BreakResult, Continue as ContinueResult,
@@ -196,11 +196,12 @@ class Return(model.Return):
 
 @Body.register
 class Continue(model.Continue):
-    __slots__ = ['lineno']
+    __slots__ = ['lineno', 'error']
 
-    def __init__(self, parent=None, lineno=None):
+    def __init__(self, parent=None, lineno=None, error=None):
         super().__init__(parent)
         self.lineno = lineno
+        self.error = error
 
     @property
     def source(self):
@@ -208,17 +209,20 @@ class Continue(model.Continue):
 
     def run(self, context, run=True, templated=False):
         with StatusReporter(self, ContinueResult(), context, run):
+            if self.error:
+                raise DataError(self.error)
             if run:
                 raise ContinueLoop()
 
 
 @Body.register
 class Break(model.Break):
-    __slots__ = ['lineno']
+    __slots__ = ['lineno', 'error']
 
-    def __init__(self, parent=None, lineno=None):
+    def __init__(self, parent=None, lineno=None, error=None):
         super().__init__(parent)
         self.lineno = lineno
+        self.error = error
 
     @property
     def source(self):
@@ -226,6 +230,8 @@ class Break(model.Break):
 
     def run(self, context, run=True, templated=False):
         with StatusReporter(self, BreakResult(), context, run):
+            if self.error:
+                raise DataError(self.error)
             if run:
                 raise BreakLoop()
 
