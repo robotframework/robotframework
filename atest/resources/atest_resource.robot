@@ -126,14 +126,17 @@ Test And All Keywords Should Have Passed
     All Keywords Should Have Passed    ${tc}    ${allow not run}
 
 All Keywords Should Have Passed
-    [Arguments]    ${tc or kw}    ${allow not run}=False
-    FOR    ${index}    ${kw}    IN ENUMERATE    @{tc or kw.kws}
-        IF    ${allow not run} and ${index} > 0
-            Should Be True    $kw.status in ['PASS', 'NOT RUN']
-        ELSE
-            Should Be Equal    ${kw.status}    PASS
+    [Arguments]    ${tc_or_kw}    ${allow not run}=False
+    IF    hasattr($tc_or_kw, 'kws')
+        FOR    ${index}    ${kw}    IN ENUMERATE    @{tc_or_kw.kws}
+            IF    ${allow not run} and (${index} > 0 or $kw.type in ['IF', 'ELSE', 'EXCEPT', 'BREAK'])
+                Should Be True    $kw.status in ['PASS', 'NOT RUN']
+            ELSE
+                Log    ${kw.type}
+                Should Be Equal    ${kw.status}    PASS
+            END
+            All Keywords Should Have Passed    ${kw}    ${allow not run}
         END
-        All Keywords Should Have Passed    ${kw}    ${allow not run}
     END
 
 Get Output File
