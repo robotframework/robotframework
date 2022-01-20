@@ -501,6 +501,8 @@ class TryRunner:
                 runner = BodyRunner(self._context, run, self._templated)
                 runner.run(branch.body)
         except ExecutionStatus as err:
+            if isinstance(err, ExecutionFailed) and err.syntax:
+                raise err
             return err
         else:
             return None

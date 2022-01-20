@@ -288,7 +288,8 @@ class KeywordBuilder(NodeVisitor):
         self.kw.body.create_continue(lineno=node.lineno)
 
     def visit_Break(self, node):
-        self.kw.body.create_break(lineno=node.lineno)
+        self.kw.body.create_break(lineno=node.lineno,
+                                  error=format_error(node.errors))
 
     def visit_For(self, node):
         ForBuilder(self.kw).build(node)
@@ -347,10 +348,12 @@ class ForBuilder(NodeVisitor):
         self.model.body.create_return(node.values, lineno=node.lineno)
 
     def visit_Continue(self, node):
-        self.model.body.create_continue(lineno=node.lineno)
+        self.model.body.create_continue(lineno=node.lineno,
+                                        error=format_error(node.errors))
 
     def visit_Break(self, node):
-        self.model.body.create_break(lineno=node.lineno)
+        self.model.body.create_break(lineno=node.lineno,
+                                     error=format_error(node.errors))
 
 
 class IfBuilder(NodeVisitor):
@@ -415,10 +418,12 @@ class IfBuilder(NodeVisitor):
         self.model.body.create_return(node.values, lineno=node.lineno)
 
     def visit_Continue(self, node):
-        self.model.body.create_continue(lineno=node.lineno)
+        self.model.body.create_continue(lineno=node.lineno,
+                                        error=format_error(node.errors))
 
     def visit_Break(self, node):
-        self.model.body.create_break(lineno=node.lineno)
+        self.model.body.create_break(lineno=node.lineno,
+                                     error=format_error(node.errors))
 
 
 class TryBuilder(NodeVisitor):
@@ -467,10 +472,12 @@ class TryBuilder(NodeVisitor):
         self.model.body.create_return(node.values, lineno=node.lineno)
 
     def visit_Continue(self, node):
-        self.model.body.create_continue(lineno=node.lineno)
+        self.model.body.create_continue(lineno=node.lineno,
+                                        error=format_error(node.errors))
 
     def visit_Break(self, node):
-        self.model.body.create_break(lineno=node.lineno)
+        self.model.body.create_break(lineno=node.lineno,
+                                     error=format_error(node.errors))
 
     def visit_KeywordCall(self, node):
         self.model.body.create_keyword(name=node.keyword, args=node.args,
@@ -524,10 +531,10 @@ class WhileBuilder(NodeVisitor):
         self.model.body.create_return(node.values)
 
     def visit_Break(self, node):
-        self.model.body.create_break()
+        self.model.body.create_break(error=format_error(node.errors))
 
     def visit_Continue(self, node):
-        self.model.body.create_continue()
+        self.model.body.create_continue(error=format_error(node.errors))
 
 
 def format_error(errors):
