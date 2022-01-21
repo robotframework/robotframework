@@ -46,7 +46,7 @@ class LibdocXmlWriter:
     def _add_source_info(self, attrs, item, outfile, lib_source=None):
         if item.source and item.source != lib_source:
             attrs['source'] = self._format_source(item.source, outfile)
-        if item.lineno > 0:
+        if item.lineno and item.lineno > 0:
             attrs['lineno'] = str(item.lineno)
 
     def _format_source(self, source, outfile):

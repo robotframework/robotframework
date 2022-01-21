@@ -36,7 +36,7 @@ Embedded Arguments with BDD Prefixes
 
 Argument Namespaces with Embedded Arguments
     Check Test Case    ${TEST NAME}
-    File Should Contain    ${OUTFILE}    name="My embedded warrior" 
+    File Should Contain    ${OUTFILE}    name="My embedded warrior"
     File Should Contain    ${OUTFILE}    sourcename="My embedded \${var}"
     File Should Not Contain    ${OUTFILE}    sourcename="Log"
 
@@ -84,16 +84,15 @@ Custom Regexp Matching Variables When Regexp Does No Match Them
 
 Regexp Extensions Are Not Supported
     Check Test Case    ${TEST NAME}
-    Creating Keyword Failed    1
+    Creating Keyword Failed    1    263
     ...    Regexp extensions like \${x:(?x)re} are not supported
     ...    Regexp extensions are not allowed in embedded arguments.
 
 Invalid Custom Regexp
     Check Test Case    ${TEST NAME}
-    Creating Keyword Failed    2
+    Creating Keyword Failed    2    266
     ...    Invalid \${x:(} Regexp
     ...    Compiling embedded arguments regexp failed: *
-    ...    pattern=yes
 
 Escaping Values Given As Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -128,7 +127,7 @@ Keyword with embedded args cannot be used as "normal" keyword
     Check Test Case    ${TEST NAME}
 
 Creating keyword with both normal and embedded arguments fails
-    Creating Keyword Failed    0
+    Creating Keyword Failed    0    209
     ...    Keyword with \${embedded} and normal args is invalid
     ...    Keyword cannot have both normal and embedded arguments.
     Check Test Case    ${TEST NAME}
@@ -169,9 +168,6 @@ Match all allowed
 
 *** Keywords ***
 Creating Keyword Failed
-    [Arguments]    ${index}    ${name}    ${error}    ${pattern}=
-    ${source} =    Normalize Path    ${DATADIR}/keywords/embedded_arguments.robot
-    ${message} =    Catenate
-    ...    Error in test case file '${source}':
+    [Arguments]    ${index}    ${lineno}    ${name}    ${error}
+    Error In File    ${index}    keywords/embedded_arguments.robot    ${lineno}
     ...    Creating keyword '${name}' failed: ${error}
-    Check Log Message    ${ERRORS[${index}]}    ${message}    ERROR    pattern=${pattern}

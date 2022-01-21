@@ -42,7 +42,7 @@ class UserLibrary:
             try:
                 handler = self._create_handler(kw)
             except DataError as error:
-                handler = UserErrorHandler(error, kw.name, self.name)
+                handler = UserErrorHandler(error, kw.name, self.name, source, kw.lineno)
                 self._log_creating_failed(handler, error)
             embedded = isinstance(handler, EmbeddedArgumentsHandler)
             try:
@@ -61,9 +61,8 @@ class UserLibrary:
         return EmbeddedArgumentsHandler(kw, self.name, embedded)
 
     def _log_creating_failed(self, handler, error):
-        LOGGER.error("Error in %s '%s': Creating keyword '%s' failed: %s"
-                     % (self.source_type.lower(), self.source,
-                        handler.name, error.message))
+        LOGGER.error(f"Error in file '{self.source}' on line {handler.lineno}: "
+                     f"Creating keyword '{handler.name}' failed: {error.message}")
 
 
 # TODO: Should be merged with running.model.UserKeyword

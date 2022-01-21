@@ -29,17 +29,19 @@ class UserErrorHandler:
     is created and if it is ever run DataError is raised then.
     """
 
-    def __init__(self, error, name, libname=None):
+    def __init__(self, error, name, libname=None, source=None, lineno=None):
         """
         :param robot.errors.DataError error: Occurred error.
         :param str name: Name of the affected keyword.
         :param str libname: Name of the affected library or resource.
+        :param str source: Path to the source file.
+        :param int lineno: Line number of the failing keyword.
         """
+        self.error = error
         self.name = name
         self.libname = libname
-        self.error = error
-        self.source = None
-        self.lineno = -1
+        self.source = source
+        self.lineno = lineno
         self.arguments = ArgumentSpec()
         self.timeout = None
         self.tags = Tags()
