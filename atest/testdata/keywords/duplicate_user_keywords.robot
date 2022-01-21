@@ -1,5 +1,5 @@
 *** Settings ***
-Resource          dupe_keywords.robot
+Resource          dupe_keywords.resource
 
 *** Variables ***
 ${INDENT}         ${SPACE * 4}
@@ -33,7 +33,7 @@ Using keyword defined multiple times in resource fails
 
 Keyword with embedded arguments defined multiple times in resource fails at run-time
     [Documentation]    FAIL
-    ...    Resource file 'dupe_keywords.robot' contains multiple keywords matching name 'Embedded arguments twice in resource':
+    ...    Resource file 'dupe_keywords.resource' contains multiple keywords matching name 'Embedded arguments twice in resource':
     ...    ${INDENT}Embedded \${arguments match} TWICE IN RESOURCE
     ...    ${INDENT}Embedded \${arguments} twice in resource
     Embedded arguments twice in resource

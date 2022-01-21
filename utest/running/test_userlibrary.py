@@ -14,6 +14,7 @@ class UserHandlerStub:
     def __init__(self, kwdata, library):
         self.name = kwdata.name
         self.libname = library
+        self.lineno = 42
         if kwdata.name == 'FAIL':
             raise Exception('Expected failure')
 

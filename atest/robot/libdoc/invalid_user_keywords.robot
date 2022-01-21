@@ -6,12 +6,14 @@ Resource          libdoc_resource.robot
 Invalid arg spec
     Keyword Name Should Be    0    Invalid arg spec
     Keyword Doc Should Be     0    *Creating keyword failed:* Invalid argument specification: Only last argument can be kwargs.
-    Stdout should contain error    Invalid arg spec    Invalid argument specification: Only last argument can be kwargs.
+    Stdout should contain error    Invalid arg spec    2
+    ...    Invalid argument specification: Only last argument can be kwargs.
 
 Dublicate name
     Keyword Name Should Be    3    Same twice
     Keyword Doc Should Be     3    *Creating keyword failed:* Keyword with same name defined multiple times.
-    Stdout should contain error    Same twice    Keyword with same name defined multiple times
+    Stdout should contain error    Same twice    8
+    ...    Keyword with same name defined multiple times
 
 Dublicate name with embedded arguments
     Keyword Name Should Be    1    same \${embedded match}
@@ -21,9 +23,9 @@ Dublicate name with embedded arguments
 
 *** Keywords ***
 Stdout should contain error
-    [Arguments]    ${name}    ${error}
+    [Arguments]    ${name}    ${lineno}    ${error}
     ${path} =    Normalize Path    ${DATADIR}/libdoc/invalid_user_keywords.robot
     ${message} =    Catenate
-    ...    [ ERROR ] Error in resource file '${path}':
+    ...    [ ERROR ] Error in file '${path}' on line ${lineno}:
     ...    Creating keyword '${name}' failed: ${error}
     Should Contain    ${OUTPUT}    ${message}
