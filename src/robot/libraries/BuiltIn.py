@@ -3668,9 +3668,9 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     third party modules.
 
     Examples:
-    | `Should Be True`   | len('${result}') > 3 |
-    | `Run Keyword If`   | os.sep == '/'        | Non-Windows Keyword  |
-    | ${robot version} = | `Evaluate`           | robot.__version__    |
+    | `Should Be True`    len('${result}') > 3
+    | `Run Keyword If`    os.sep == '/'    Non-Windows Keyword
+    | ${version} =    `Evaluate`    robot.__version__
 
     `Evaluate` also allows configuring the execution namespace with a custom
     namespace and with custom modules to be imported. The latter functionality
@@ -3679,12 +3679,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     comprehensions. See the documentation of the `Evaluate` keyword for mode
     details.
 
-    *NOTE:* Automatic module import is a new feature in Robot Framework 3.2.
-    Earlier modules needed to be explicitly taken into use when using the
-    `Evaluate` keyword and other keywords only had access to ``sys`` and
-    ``os`` modules.
-
-    == Using variables ==
+    == Variables in expressions ==
 
     When a variable is used in the expressing using the normal ``${variable}``
     syntax, its value is replaced before the expression is evaluated. This
@@ -3697,20 +3692,20 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     be triple quoted.
 
     Examples:
-    | `Should Be True` | ${rc} < 10                | Return code greater than 10 |
-    | `Run Keyword If` | '${status}' == 'PASS'     | Log | Passed                |
-    | `Run Keyword If` | 'FAIL' in '''${output}''' | Log | Output contains FAIL  |
+    | `Should Be True`    ${rc} < 10                   Return code greater than 10
+    | `Run Keyword If`    '${status}' == 'PASS'        Log    Passed
+    | `Run Keyword If`    'FAIL' in '''${output}'''    Log    Output contains FAIL
 
     Actual variables values are also available in the evaluation namespace.
     They can be accessed using special variable syntax without the curly
     braces like ``$variable``. These variables should never be quoted.
 
     Examples:
-    | `Should Be True` | $rc < 10          | Return code greater than 10  |
-    | `Run Keyword If` | $status == 'PASS' | `Log` | Passed               |
-    | `Run Keyword If` | 'FAIL' in $output | `Log` | Output contains FAIL |
-    | `Should Be True` | len($result) > 1 and $result[1] == 'OK' |
-    | `Should Be True` | $result is not None                     |
+    | `Should Be True`    $rc < 10             Return code greater than 10
+    | `Run Keyword If`    $status == 'PASS'    `Log`    Passed
+    | `Run Keyword If`    'FAIL' in $output    `Log`    Output contains FAIL
+    | `Should Be True`    len($result) > 1 and $result[1] == 'OK'
+    | `Should Be True`    $result is not None
 
     Using the ``$variable`` syntax slows down expression evaluation a little.
     This should not typically matter, but should be taken into account if
@@ -3734,22 +3729,21 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
 
     True examples:
-    | `Should Be Equal` | ${x} | ${y}  | Custom error | values=True    | # Strings are generally true.    |
-    | `Should Be Equal` | ${x} | ${y}  | Custom error | values=yes     | # Same as the above.             |
-    | `Should Be Equal` | ${x} | ${y}  | Custom error | values=${TRUE} | # Python ``True`` is true.       |
-    | `Should Be Equal` | ${x} | ${y}  | Custom error | values=${42}   | # Numbers other than 0 are true. |
+    | `Should Be Equal`    ${x}    ${y}    Custom error    values=True         # Strings are generally true.
+    | `Should Be Equal`    ${x}    ${y}    Custom error    values=yes          # Same as the above.
+    | `Should Be Equal`    ${x}    ${y}    Custom error    values=${TRUE}      # Python ``True`` is true.
+    | `Should Be Equal`    ${x}    ${y}    Custom error    values=${42}        # Numbers other than 0 are true.
 
     False examples:
-    | `Should Be Equal` | ${x} | ${y}  | Custom error | values=False     | # String ``false`` is false.   |
-    | `Should Be Equal` | ${x} | ${y}  | Custom error | values=no        | # Also string ``no`` is false. |
-    | `Should Be Equal` | ${x} | ${y}  | Custom error | values=${EMPTY}  | # Empty string is false.       |
-    | `Should Be Equal` | ${x} | ${y}  | Custom error | values=${FALSE}  | # Python ``False`` is false.   |
-    | `Should Be Equal` | ${x} | ${y}  | Custom error | values=no values | # ``no values`` works with ``values`` argument |
+    | `Should Be Equal`    ${x}    ${y}    Custom error    values=False        # String ``false`` is false.
+    | `Should Be Equal`    ${x}    ${y}    Custom error    values=no           # Also string ``no`` is false.
+    | `Should Be Equal`    ${x}    ${y}    Custom error    values=${EMPTY}     # Empty string is false.
+    | `Should Be Equal`    ${x}    ${y}    Custom error    values=${FALSE}     # Python ``False`` is false.
+    | `Should Be Equal`    ${x}    ${y}    Custom error    values=no values    # ``no values`` works with ``values`` argument
 
     = Pattern matching =
 
-    Many keywords accepts arguments as either glob or regular expression
-    patterns.
+    Many keywords accept arguments as either glob or regular expression patterns.
 
     == Glob patterns ==
 
@@ -3789,9 +3783,9 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     format] if both strings have more than two lines.
 
     Example:
-    | ${first} =  | `Catenate` | SEPARATOR=\n | Not in second | Same | Differs | Same |
-    | ${second} = | `Catenate` | SEPARATOR=\n | Same | Differs2 | Same | Not in first |
-    | `Should Be Equal` | ${first} | ${second} |
+    | ${first} =     `Catenate`    SEPARATOR=\n    Not in second    Same    Differs    Same
+    | ${second} =    `Catenate`    SEPARATOR=\n    Same    Differs2    Same    Not in first
+    | `Should Be Equal`    ${first}    ${second}
 
     Results in the following error message:
 
@@ -3809,13 +3803,13 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     = String representations =
 
     Several keywords log values explicitly (e.g. `Log`) or implicitly (e.g.
-    `Should Be Equal` when there are failures). By default keywords log values
-    using "human readable" string representation, which means that strings
+    `Should Be Equal` when there are failures). By default, keywords log values
+    using human-readable string representation, which means that strings
     like ``Hello`` and numbers like ``42`` are logged as-is. Most of the time
     this is the desired behavior, but there are some problems as well:
 
     - It is not possible to see difference between different objects that
-      have same string representation like string ``42`` and integer ``42``.
+      have the same string representation like string ``42`` and integer ``42``.
       `Should Be Equal` and some other keywords add the type information to
       the error message in these cases, though.
 
@@ -3833,8 +3827,8 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     - Some Unicode characters can be represented using
       [https://en.wikipedia.org/wiki/Unicode_equivalence|different forms].
       For example, ``ä`` can be represented either as a single code point
-      ``\u00e4`` or using two code points ``\u0061`` and ``\u0308`` combined
-      together. Such forms are considered canonically equivalent, but strings
+      ``\u00e4`` or using two combined code points ``\u0061`` and ``\u0308``.
+      Such forms are considered canonically equivalent, but strings
       containing them are not considered equal when compared in Python. Error
       messages like ``ä != ä`` are not that helpful either.
 
@@ -3850,15 +3844,15 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     == str ==
 
-    Use the "human readable" string representation. Equivalent to using ``str()``
+    Use the human-readable string representation. Equivalent to using ``str()``
     in Python. This is the default.
 
     == repr ==
 
-    Use the "machine readable" string representation. Similar to using
-    ``repr()`` in Python, which means that strings like ``Hello`` are logged
-    like ``'Hello'``, newlines and non-printable characters are escaped like
-    ``\n`` and ``\x00``, and so on. Non-ASCII characters are shown as-is like ``ä``.
+    Use the machine-readable string representation. Similar to using ``repr()``
+    in Python, which means that strings like ``Hello`` are logged like
+    ``'Hello'``, newlines and non-printable characters are escaped like ``\n``
+    and ``\x00``, and so on. Non-ASCII characters are shown as-is like ``ä``.
 
     In this mode bigger lists, dictionaries and other containers are
     pretty-printed so that there is one item per row.
