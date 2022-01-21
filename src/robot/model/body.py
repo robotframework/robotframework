@@ -56,10 +56,22 @@ class BodyItem(ModelObject):
             return 'k1'
         setup = getattr(self.parent, 'setup', None)
         body = getattr(self.parent, 'body', ())
-        teardown = getattr(self.parent, 'teardown', None)
-        steps = [step for step in [setup] + list(body) + [teardown]
+        flatbodylist = self.flatten(list(body))
+        teardown = getattr(self.parent, 'teardown', None)        
+        steps = [step for step in [setup] + flatbodylist + [teardown]
                  if step and step.type != step.MESSAGE]
         return '%s-k%d' % (self.parent.id, steps.index(self) + 1)
+    
+    @classmethod
+    def flatten(cls, steps):
+        result = []
+        for step in steps:
+            if step.type in (cls.IF_ELSE_ROOT, cls.TRY_EXCEPT_ROOT):
+                result.extend(step.body)
+            else:
+                result.append(step)
+        return result
+        
 
 
 class BaseBody(ItemList):

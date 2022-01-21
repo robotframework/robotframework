@@ -73,20 +73,11 @@ class _Builder:
     def _build_keywords(self, steps, split=False):
         splitting = self._context.start_splitting_if_needed(split)
         # tuple([<listcomp>>]) is faster than tuple(<genex>) with short lists.
-        model = tuple([self._build_keyword(step) for step in self._flatten(steps)])
+        model = tuple([self._build_keyword(step) for step in BodyItem.flatten(steps)])
         return model if not splitting else self._context.end_splitting(model)
 
     def _build_keyword(self, step):
         raise NotImplementedError
-
-    def _flatten(self, steps):
-        result = []
-        for step in steps:
-            if step.type in (BodyItem.IF_ELSE_ROOT, BodyItem.TRY_EXCEPT_ROOT):
-                result.extend(step.body)
-            else:
-                result.append(step)
-        return result
 
 
 class SuiteBuilder(_Builder):
