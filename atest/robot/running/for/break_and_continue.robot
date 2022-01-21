@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    running/for/break_and_continue.robot
-Resource          atest_resource.robot
+Resource          for.resource
 Test Template     Test and all keywords should have passed
 
 *** Test Cases ***
@@ -10,7 +10,7 @@ With CONTINUE
 With CONTINUE inside IF
     [Template]     None
     ${tc}=    Check test case    ${TEST NAME}
-    Length should be     ${tc.body[0].body}    5
+    Should be FOR loop    ${tc.body[0]}    5    FAIL    IN RANGE
 
 With CONTINUE inside TRY
     allow not run=True
@@ -39,7 +39,7 @@ With CONTINUE in UK
 With CONTINUE inside IF in UK
     [Template]     None
     ${tc}=    Check test case    ${TEST NAME}
-    Length should be     ${tc.body[0].body[0].body}
+    Should be FOR loop    ${tc.body[0].body[0]}    5    FAIL    IN RANGE
 
 With CONTINUE inside TRY in UK
     allow not run=True
