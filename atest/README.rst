@@ -52,7 +52,7 @@ Running acceptance tests
 Robot Framework's acceptance tests are executed using the `<run.py>`__
 script. Its usage is as follows::
 
-    atest/run.py [--interpreter interpreter] [options] [data]
+    atest/run.py [--interpreter interpreter] [--schema-validation] [options] [data]
 
 `data` is path (or paths) of the file or directory under the `atest/robot`
 folder to execute. If `data` is not given, all tests except for tests tagged
@@ -67,6 +67,9 @@ running the `run.py` script. That can be changed by using the `--interpreter` (`
 option. It can be the name of the interpreter (e.g. `pypy3`) or a path to the
 selected interpreter (e.g. `/usr/bin/python39`). If the interpreter itself needs
 arguments, the interpreter and its arguments need to be quoted (e.g. `"py -3.9"`).
+
+`--schema-validation` can be used to enable `schema validation`_ for all output.xml
+files.
 
 Examples:
 
@@ -208,12 +211,13 @@ output.xml schema
 ~~~~~~~~~~~~~~~~~
 
 Created output.xml has a `schema <../doc/schema>`_ that can be tested as part of
-acceptance tests. The schema is always used to validate selected outputs in
-`<robot/rebot/compatibility.robot>`_, but validating all outputs would slow down
+acceptance tests. The schema is always used to validate selected outputs (e.g. in
+`<robot/rebot/compatibility.robot>`_), but validating all outputs would slow down
 execution a bit too much.
 
 It is, however, possible to enable validating all outputs by setting
-`ATEST_VALIDATE_OUTPUT` environment variable to `TRUE` (case-insensitive).
+`ATEST_VALIDATE_OUTPUT` environment variable to `TRUE` (case-insensitive)
+or by using `--schema-validation` (`-S`) option with `atest/run.py`.
 This is recommended especially if the schema is updated or output.xml changed.
 
 Libdoc XML and JSON spec schemas
