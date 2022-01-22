@@ -1483,22 +1483,21 @@ class _Variables(_BuiltInBase):
     @keyword(types=None)
     @run_keyword_variant(resolve=0)
     def get_variable_value(self, name, default=None):
-        """Returns variable value or ``default`` if the variable does not exist.
+        r"""Returns variable value or ``default`` if the variable does not exist.
 
         The name of the variable can be given either as a normal variable name
-        (e.g. ``${NAME}``) or in escaped format (e.g. ``\\${NAME}``). Notice
-        that the former has some limitations explained in `Set Suite Variable`.
+        like ``${name}`` or in escaped format like ``$name`` or ``\${name}``.
+        For the reasons explained in the `Using variables with keywords creating
+        or accessing variables` section, using the escaped format is recommended.
 
         Examples:
-        | ${x} = | Get Variable Value | ${a} | default |
-        | ${y} = | Get Variable Value | ${a} | ${b}    |
-        | ${z} = | Get Variable Value | ${z} |         |
+        | ${x} =    `Get Variable Value`    $a    default
+        | ${y} =    `Get Variable Value`    $a    ${b}
+        | ${z} =    `Get Variable Value`    $z
         =>
-        | ${x} gets value of ${a} if ${a} exists and string 'default' otherwise
-        | ${y} gets value of ${a} if ${a} exists and value of ${b} otherwise
-        | ${z} is set to Python None if it does not exist previously
-
-        See `Set Variable If` for another keyword to set variables dynamically.
+        - ``${x}`` gets value of ``${a}`` if ``${a}`` exists and string ``default`` otherwise
+        - ``${y}`` gets value of ``${a}`` if ``${a}`` exists and value of ``${b}`` otherwise
+        - ``${z}`` is set to Python ``None`` if it does not exist previously
         """
         name = self._get_var_name(name)
         try:
@@ -1529,11 +1528,12 @@ class _Variables(_BuiltInBase):
 
     @run_keyword_variant(resolve=0)
     def variable_should_exist(self, name, msg=None):
-        """Fails unless the given variable exists within the current scope.
+        r"""Fails unless the given variable exists within the current scope.
 
         The name of the variable can be given either as a normal variable name
-        (e.g. ``${NAME}``) or in escaped format (e.g. ``\\${NAME}``). Notice
-        that the former has some limitations explained in `Set Suite Variable`.
+        like ``${name}`` or in escaped format like ``$name`` or ``\${name}``.
+        For the reasons explained in the `Using variables with keywords creating
+        or accessing variables` section, using the escaped format is recommended.
 
         The default error message can be overridden with the ``msg`` argument.
 
@@ -1548,11 +1548,12 @@ class _Variables(_BuiltInBase):
 
     @run_keyword_variant(resolve=0)
     def variable_should_not_exist(self, name, msg=None):
-        """Fails if the given variable exists within the current scope.
+        r"""Fails if the given variable exists within the current scope.
 
         The name of the variable can be given either as a normal variable name
-        (e.g. ``${NAME}``) or in escaped format (e.g. ``\\${NAME}``). Notice
-        that the former has some limitations explained in `Set Suite Variable`.
+        like ``${name}`` or in escaped format like ``$name`` or ``\${name}``.
+        For the reasons explained in the `Using variables with keywords creating
+        or accessing variables` section, using the escaped format is recommended.
 
         The default error message can be overridden with the ``msg`` argument.
 
@@ -1615,7 +1616,7 @@ class _Variables(_BuiltInBase):
 
     @run_keyword_variant(resolve=0)
     def set_local_variable(self, name, *values):
-        """Makes a variable available everywhere within the local scope.
+        r"""Makes a variable available everywhere within the local scope.
 
         Variables set with this keyword are available within the
         local scope of the currently executed test case or in the local scope
@@ -1624,23 +1625,26 @@ class _Variables(_BuiltInBase):
         test cases or keywords will not see variables set with this keyword.
 
         This keyword is equivalent to a normal variable assignment based on a
-        keyword return value.
+        keyword return value. For example,
 
-        Example:
-        | @{list} =          | Create List | item1     | item2     | item3     |
+        | ${var} =    `Set Variable`    value
+        | @{list} =    `Create List`    item1    item2    item3
 
-        is equivalent with
+        are equivalent with
 
-        | Set Local Variable | @{list} | item1    | item2    | item3    |
+        | `Set Local Variable`    @var    value
+        | `Set Local Variable`    @list    item1    item2    item3
 
-        This keyword will provide the option of setting local variables inside keywords
-        like `Run Keyword If`, `Run Keyword And Return If`, `Run Keyword Unless`
-        which until now was not possible by using `Set Variable`.
+        The main use case for this keyword is creating local variables in
+        libraries.
 
-        It will also be possible to use this keyword from external libraries
-        that want to set local variables.
+        See `Set Suite Variable` for more information and usage examples. See
+        also the `Using variables with keywords creating or accessing variables`
+        section for information why it is recommended to give the variable name
+        in escaped format like ``$name`` or ``\${name}`` instead of the normal
+        ``${name}``.
 
-        New in Robot Framework 3.2.
+        See also `Set Global Variable` and `Set Test Variable`.
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
@@ -1649,7 +1653,7 @@ class _Variables(_BuiltInBase):
 
     @run_keyword_variant(resolve=0)
     def set_test_variable(self, name, *values):
-        """Makes a variable available everywhere within the scope of the current test.
+        r"""Makes a variable available everywhere within the scope of the current test.
 
         Variables set with this keyword are available everywhere within the
         scope of the currently executed test case. For example, if you set a
@@ -1659,7 +1663,14 @@ class _Variables(_BuiltInBase):
         It is an error to call `Set Test Variable` outside the
         scope of a test (e.g. in a Suite Setup or Teardown).
 
-        See `Set Suite Variable` for more information and examples.
+        See `Set Suite Variable` for more information and usage examples. See
+        also the `Using variables with keywords creating or accessing variables`
+        section for information why it is recommended to give the variable name
+        in escaped format like ``$name`` or ``\${name}`` instead of the normal
+        ``${name}``.
+
+        When creating automated tasks, not tests, it is possible to use `Set
+        Task Variable`. See also `Set Global Variable` and `Set Local Variable`.
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
@@ -1677,56 +1688,53 @@ class _Variables(_BuiltInBase):
 
     @run_keyword_variant(resolve=0)
     def set_suite_variable(self, name, *values):
-        """Makes a variable available everywhere within the scope of the current suite.
+        r"""Makes a variable available everywhere within the scope of the current suite.
 
         Variables set with this keyword are available everywhere within the
         scope of the currently executed test suite. Setting variables with this
-        keyword thus has the same effect as creating them using the Variable
-        table in the test data file or importing them from variable files.
+        keyword thus has the same effect as creating them using the Variables
+        section in the data file or importing them from variable files.
 
         Possible child test suites do not see variables set with this keyword
         by default, but that can be controlled by using ``children=<option>``
-        as the last argument. If the specified ``<option>`` given a true value
+        as the last argument. If the specified ``<option>`` is given a true value
         (see `Boolean arguments`), the variable is set also to the child
         suites. Parent and sibling suites will never see variables set with
         this keyword.
 
         The name of the variable can be given either as a normal variable name
-        (e.g. ``${NAME}``) or in escaped format as ``\\${NAME}`` or ``$NAME``.
-        Variable value can be given using the same syntax as when variables
-        are created in the Variable table.
+        like ``${NAME}`` or in escaped format as ``\${NAME}`` or ``$NAME``.
+        For the reasons explained in the `Using variables with keywords creating
+        or accessing variables` section, *using the escaped format is highly
+        recommended*.
+
+        Variable value can be specified using the same syntax as when variables
+        are created in the Variables section. Same way as in that section,
+        it is possible to create scalar values, lists and dictionaries.
+        The type is got from the variable name prefix ``$``, ``@`` and ``&``,
+        respectively.
 
         If a variable already exists within the new scope, its value will be
-        overwritten. Otherwise a new variable is created. If a variable already
-        exists within the current scope, the value can be left empty and the
-        variable within the new scope gets the value within the current scope.
+        overwritten. If a variable already exists within the current scope,
+        the value can be left empty and the variable within the new scope gets
+        the value within the current scope.
 
         Examples:
-        | Set Suite Variable | ${SCALAR} | Hello, world! |
-        | Set Suite Variable | ${SCALAR} | Hello, world! | children=true |
-        | Set Suite Variable | @{LIST}   | First item    | Second item   |
-        | Set Suite Variable | &{DICT}   | key=value     | foo=bar       |
-        | ${ID} =            | Get ID    |
-        | Set Suite Variable | ${ID}     |
+        | Set Suite Variable    $SCALAR    Hello, world!
+        | Set Suite Variable    $SCALAR    Hello, world!    children=True
+        | Set Suite Variable    @LIST      First item       Second item
+        | Set Suite Variable    &DICT      key=value        foo=bar
+        | ${ID} =    Get ID
+        | Set Suite Variable    $ID
 
         To override an existing value with an empty value, use built-in
         variables ``${EMPTY}``, ``@{EMPTY}`` or ``&{EMPTY}``:
 
-        | Set Suite Variable | ${SCALAR} | ${EMPTY} |
-        | Set Suite Variable | @{LIST}   | @{EMPTY} |
-        | Set Suite Variable | &{DICT}   | &{EMPTY} |
+        | Set Suite Variable    $SCALAR    ${EMPTY}
+        | Set Suite Variable    @LIST      @{EMPTY}
+        | Set Suite Variable    &DICT      &{EMPTY}
 
-        *NOTE:* If the variable has value which itself is a variable (escaped
-        or not), you must always use the escaped format to set the variable:
-
-        Example:
-        | ${NAME} =          | Set Variable | \\${var} |
-        | Set Suite Variable | ${NAME}      | value | # Sets variable ${var}  |
-        | Set Suite Variable | \\${NAME}    | value | # Sets variable ${NAME} |
-
-        This limitation applies also to `Set Test Variable`, `Set Global
-        Variable`, `Variable Should Exist`, `Variable Should Not Exist` and
-        `Get Variable Value` keywords.
+        See also `Set Global Variable`, `Set Test Variable` and `Set Local Variable`.
         """
         name = self._get_var_name(name)
         if values and is_string(values[-1]) and values[-1].startswith('children='):
@@ -1741,21 +1749,25 @@ class _Variables(_BuiltInBase):
 
     @run_keyword_variant(resolve=0)
     def set_global_variable(self, name, *values):
-        """Makes a variable available globally in all tests and suites.
+        r"""Makes a variable available globally in all tests and suites.
 
         Variables set with this keyword are globally available in all
         subsequent test suites, test cases and user keywords. Also variables
-        in variable tables are overridden. Variables assigned locally based
-        on keyword return values or by using `Set Test Variable` and
-        `Set Suite Variable` override these variables in that scope, but
-        the global value is not changed in those cases.
+        created Variables sections are overridden. Variables assigned locally
+        based on keyword return values or by using `Set Suite Variable`,
+        `Set Test Variable` or `Set Local Variable` override these variables
+        in that scope, but the global value is not changed in those cases.
 
         In practice setting variables with this keyword has the same effect
         as using command line options ``--variable`` and ``--variablefile``.
         Because this keyword can change variables everywhere, it should be
         used with care.
 
-        See `Set Suite Variable` for more information and examples.
+        See `Set Suite Variable` for more information and usage examples. See
+        also the `Using variables with keywords creating or accessing variables`
+        section for information why it is recommended to give the variable name
+        in escaped format like ``$name`` or ``\${name}`` instead of the normal
+        ``${name}``.
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
@@ -3651,6 +3663,40 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     with ``*HTML*``. See `Fail` keyword for a usage example. Notice that using
     HTML in messages is not limited to BuiltIn library but works with any
     error message.
+
+    = Using variables with keywords creating or accessing variables =
+
+    This library has special keywords `Set Global Variable`, `Set Suite Variable`,
+    `Set Test Variable` and `Set Local Variable` for creating variables in
+    different scopes. These keywords take the variable name and its value as
+    arguments. The name can be given using the normal ``${variable}`` syntax or
+    in escaped format either like ``$variable`` or ``\${variable}``. For example,
+    these are typically equivalent and create new suite level variable
+    ``${name}`` with value ``value``:
+
+    | Set Suite Variable    ${name}     value
+    | Set Suite Variable    $name       value
+    | Set Suite Variable    \${name}    value
+
+    A problem with using the normal ``${variable}`` syntax is that these
+    keywords cannot easily know is the idea to create a variable with exactly
+    that name or does that variable actually contain the name of the variable
+    to create. If the variable does not initially exist, it will always be
+    created. If it exists and its value is a variable name either in the normal
+    or in the escaped syntax, variable with _that_ name is created instead.
+    For example, if ``${name}`` variable would exist and contain value
+    ``$example``, these examples would create different variables:
+
+    | Set Suite Variable    ${name}     value    # Creates ${example}.
+    | Set Suite Variable    $name       value    # Creates ${name}.
+    | Set Suite Variable    \${name}    value    # Creates ${name}.
+
+    Because the behavior when using the normal ``${variable}`` syntax depends
+    on the possible existing value of the variable, it is *highly recommended
+    to use the escaped ``$variable`` or ``\${variable}`` format instead*.
+
+    This same problem occurs also with special keywords for accessing variables
+    `Get Variable Value`, `Variable Should Exist` and `Variable Should Not Exist`.
 
     = Evaluating expressions =
 
