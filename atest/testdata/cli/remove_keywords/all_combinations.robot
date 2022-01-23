@@ -4,6 +4,8 @@ ${PASS MESSAGE}    -PASSED -ALL
 ${FAIL MESSAGE}    -ALL +PASSED
 ${REMOVED FOR MESSAGE}     -FOR -ALL
 ${KEPT FOR MESSAGE}        +FOR -ALL
+${REMOVED WHILE MESSAGE}     -WHILE -ALL
+${KEPT WHILE MESSAGE}        +WHILE -ALL
 ${REMOVED WUKS MESSAGE}    -WUKS -ALL
 ${KEPT WUKS MESSAGE}       +WUKS -ALL
 ${REMOVED BY NAME MESSAGE}    -BYNAME -ALL
@@ -28,6 +30,14 @@ For when test fails
 
 For when test passes
     My FOR
+
+While when test fails
+    [Documentation]    FAIL Cannot pass
+    My WHILE
+    Fail    Cannot pass
+
+While when test passes
+    My WHILE
 
 WUKS when test fails
     [Documentation]    FAIL Cannot pass
@@ -88,10 +98,22 @@ Warnings and errors are preserved
 *** Keywords ***
 My FOR
     FOR    ${item}    IN    one    two    three    LAST
-        Run Keyword If    "${item}" == "LAST"
-        ...    Log    ${KEPT FOR MESSAGE} ${item}
-        ...    ELSE
-        ...    Log    ${REMOVED FOR MESSAGE} ${item}
+        IF    "${item}" == "LAST"
+            Log    ${KEPT FOR MESSAGE} ${item}
+        ELSE
+            Log    ${REMOVED FOR MESSAGE} ${item}
+        END
+    END
+
+My WHILE
+    ${i}=    Set variable     ${1}
+    WHILE    $i < 5
+        IF    $i == 4
+            Log    ${KEPT WHILE MESSAGE} ${i}
+        ELSE
+            Log    ${REMOVED WHILE MESSAGE} ${i}
+        END
+        ${i}=    Evaluate    $i + 1
     END
 
 My WUKS
