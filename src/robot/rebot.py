@@ -207,6 +207,7 @@ Options
                           passed:  remove data only from keywords in passed
                                    test cases and suites
                           for:     remove passed iterations from for loops
+                          while:   remove passed iterations from while loops
                           wuks:    remove all but the last failing keyword
                                    inside `BuiltIn.Wait Until Keyword Succeeds`
                           name:<pattern>:  remove data from keywords that match
