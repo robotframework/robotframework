@@ -4,6 +4,7 @@ from os.path import dirname, join
 from robot.api.parsing import get_model
 from robot.result import ExecutionResult
 from robot.model import SuiteVisitor, TestSuite
+from robot.result import TestSuite as ResultSuite
 from robot.running import TestSuite as RunningSuite
 from robot.utils.asserts import assert_equal
 
@@ -188,6 +189,41 @@ START IF/ELSE ROOT
 END IF/ELSE ROOT
 '''.strip().splitlines()
         assert_equal(visitor.visited, [e.strip() for e in expected])
+
+    def test_visit_return_continue_and_break(self):
+        suite = ResultSuite()
+        suite.tests.create().body.create_return().body.create_keyword(kwname='R')
+        suite.tests.create().body.create_continue().body.create_message(message='C')
+        suite.tests.create().body.create_break().body.create_keyword(kwname='B')
+
+        class Visitor(SuiteVisitor):
+            visited_return = visited_continue = visited_break = False
+            visited_return_body = visited_continue_body = visited_break_body = False
+
+            def start_return(self, return_):
+                self.visited_return = True
+
+            def end_continue(self, continue_):
+                self.visited_continue = True
+
+            def start_break(self, break_):
+                self.visited_break = True
+
+            def start_keyword(self, keyword):
+                if keyword.name == 'R':
+                    self.visited_return_body = True
+                if keyword.name == 'B':
+                    self.visited_break_body = True
+
+            def visit_message(self, msg):
+                if msg.message == 'C':
+                    self.visited_continue_body = True
+
+        visitor = Visitor()
+        suite.visit(visitor)
+        for visited in 'return', 'continue', 'break':
+            assert_equal(getattr(visitor, f'visited_{visited}'), True, visited)
+            assert_equal(getattr(visitor, f'visited_{visited}_body'), True, f'{visited}_body')
 
 
 class StartSuiteStopping(SuiteVisitor):

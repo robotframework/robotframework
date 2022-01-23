@@ -57,7 +57,7 @@ CONTINUE in TRY-ELSE
     Fail    Should not be executed
 
 CONTINUE with argument in FOR
-    [Documentation]    FAIL CONTINUE does not accept arguments.
+    [Documentation]    FAIL CONTINUE does not accept arguments, got 'should not work'.
     FOR    ${i}    IN     1    2
         Log    ${i}
         CONTINUE    should not work
@@ -65,10 +65,10 @@ CONTINUE with argument in FOR
     Fail    Should not be executed
 
 CONTINUE with argument in WHILE
-    [Documentation]    FAIL CONTINUE does not accept arguments.
+    [Documentation]    FAIL CONTINUE does not accept arguments, got 'should', 'not' and 'work'.
     WHILE    True
         No operation
-        CONTINUE    should not work
+        CONTINUE    should    not    work
     END
     Fail    Should not be executed
 
@@ -130,7 +130,7 @@ BREAK in TRY-ELSE
     Fail    Should not be executed
 
 BREAK with argument in FOR
-    [Documentation]    FAIL BREAK does not accept arguments.
+    [Documentation]    FAIL BREAK does not accept arguments, got 'should not work'.
     FOR    ${i}    IN     1    2
         Log    ${i}
         BREAK    should not work
@@ -138,10 +138,10 @@ BREAK with argument in FOR
     Fail    Should not be executed
 
 BREAK with argument in WHILE
-    [Documentation]    FAIL BREAK does not accept arguments.
+    [Documentation]    FAIL BREAK does not accept arguments, got 'should', 'not' and 'work'.
     WHILE    True
         No operation
-        BREAK    should not work
+        BREAK    should    not    work
     END
     Fail    Should not be executed
 

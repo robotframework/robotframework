@@ -345,7 +345,7 @@ Example
             end=End(
                 tokens=[Token(Token.END, 'END', 4, 4),
                         Token(Token.ARGUMENT, 'ooops', 4, 11)],
-                errors=('END does not accept arguments.',)
+                errors=("END does not accept arguments, got 'ooops'.",)
             ),
             errors=('FOR loop has empty body.',)
         )
@@ -504,7 +504,7 @@ Example
                 header=ElseHeader(
                     tokens=[Token(Token.ELSE, 'ELSE', 4, 4),
                             Token(Token.ARGUMENT, 'ooops', 4, 12)],
-                    errors=('ELSE does not accept arguments.',)
+                    errors=("ELSE does not accept arguments, got 'ooops'.",)
                 ),
                 orelse=If(
                     header=ElseIfHeader(
@@ -518,7 +518,7 @@ Example
             end=End(
                 tokens=[Token(Token.END, 'END', 6, 4),
                         Token(Token.ARGUMENT, 'ooops', 6, 11)],
-                errors=('END does not accept arguments.',)
+                errors=("END does not accept arguments, got 'ooops'.",)
             ),
             errors=('IF branch cannot be empty.',
                     'ELSE IF after ELSE.')

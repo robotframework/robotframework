@@ -309,14 +309,24 @@ class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
 @Body.register
 class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
     __slots__ = ['status', 'starttime', 'endtime']
+    body_class = Body
 
     def __init__(self, values=(), status='FAIL', starttime=None, endtime=None, parent=None):
         super().__init__(values, parent)
         self.status = status
         self.starttime = starttime
         self.endtime = endtime
+        self.body = None
 
-    # FIXME: Remove attributes.
+    @setter
+    def body(self, body):
+        """Child keywords and messages as a :class:`~.Body` object.
+
+        Typically empty. Only contains something if running RETURN has failed
+        due to a syntax error or listeners have logged messages or executed
+        keywords.
+        """
+        return self.body_class(self, body)
 
     @property
     @deprecated
@@ -332,12 +342,24 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
 @Body.register
 class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
     __slots__ = ['status', 'starttime', 'endtime']
+    body_class = Body
 
     def __init__(self, status='FAIL', starttime=None, endtime=None, parent=None):
         super().__init__(parent)
         self.status = status
         self.starttime = starttime
         self.endtime = endtime
+        self.body = None
+
+    @setter
+    def body(self, body):
+        """Child keywords and messages as a :class:`~.Body` object.
+
+        Typically empty. Only contains something if running CONTINUE has failed
+        due to a syntax error or listeners have logged messages or executed
+        keywords.
+        """
+        return self.body_class(self, body)
 
     @property
     @deprecated
@@ -353,12 +375,24 @@ class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
 @Body.register
 class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
     __slots__ = ['status', 'starttime', 'endtime']
+    body_class = Body
 
     def __init__(self, status='FAIL', starttime=None, endtime=None, parent=None):
         super().__init__(parent)
         self.status = status
         self.starttime = starttime
         self.endtime = endtime
+        self.body = None
+
+    @setter
+    def body(self, body):
+        """Child keywords and messages as a :class:`~.Body` object.
+
+        Typically empty. Only contains something if running BREAK has failed
+        due to a syntax error or listeners have logged messages or executed
+        keywords.
+        """
+        return self.body_class(self, body)
 
     @property
     @deprecated

@@ -380,6 +380,8 @@ class SuiteVisitor:
     def visit_return(self, return_):
         """Visits a RETURN elements."""
         if self.start_return(return_) is not False:
+            if hasattr(return_, 'body'):
+                return_.body.visit(self)
             self.end_return(return_)
 
     def start_return(self, return_):
@@ -401,6 +403,8 @@ class SuiteVisitor:
     def visit_continue(self, continue_):
         """Visits CONTINUE elements."""
         if self.start_continue(continue_) is not False:
+            if hasattr(continue_, 'body'):
+                continue_.body.visit(self)
             self.end_continue(continue_)
 
     def start_continue(self, continue_):
@@ -422,6 +426,8 @@ class SuiteVisitor:
     def visit_break(self, break_):
         """Visits BREAK elements."""
         if self.start_break(break_) is not False:
+            if hasattr(break_, 'body'):
+                break_.body.visit(self)
             self.end_break(break_)
 
     def start_break(self, break_):

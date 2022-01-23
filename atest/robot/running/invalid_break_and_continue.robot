@@ -1,59 +1,62 @@
 *** Settings ***
-Suite setup        Run tests    ${EMPTY}     running/invalid_break_and_continue.robot
-Test template      Check test case
-Resource           atest_resource.robot
+Suite Setup       Run Tests    ${EMPTY}    running/invalid_break_and_continue.robot
+Resource          atest_resource.robot
 
-*** Test cases ***
+*** Test Cases ***
 CONTINUE in test case
-    ${TEST NAME}
+    Check Test Case    ${TESTNAME}
 
 CONTINUE in keyword
-    ${TEST NAME}
+    Check Test Case    ${TESTNAME}
 
 CONTINUE in IF
-    ${TEST NAME}
+    Check Test Case    ${TESTNAME}
 
 CONTINUE in ELSE
-    ${TEST NAME}
+    Check Test Case    ${TESTNAME}
 
 CONTINUE in TRY
-    ${TEST NAME}
+    Check Test Case    ${TESTNAME}
 
 CONTINUE in EXCEPT
-    ${TEST NAME}
+    Check Test Case    ${TESTNAME}
 
 CONTINUE in TRY-ELSE
-    ${TEST NAME}
+    Check Test Case    ${TESTNAME}
 
 CONTINUE with argument in FOR
-    ${TEST NAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.body[0].body[0].body[1].body[0]}   CONTINUE does not accept arguments, got 'should not work'.    FAIL
 
 CONTINUE with argument in WHILE
-    ${TEST NAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.body[0].body[0].body[1].body[0]}   CONTINUE does not accept arguments, got 'should', 'not' and 'work'.    FAIL
 
 BREAK in test case
-    ${TEST NAME}
+    Check Test Case    ${TESTNAME}
 
 BREAK in keyword
-    ${TEST NAME}
+    Check Test Case    ${TESTNAME}
 
 BREAK in IF
-    ${TEST NAME}
+    Check Test Case    ${TESTNAME}
 
 BREAK in ELSE
-    ${TEST NAME}
+    Check Test Case    ${TESTNAME}
 
 BREAK in TRY
-    ${TEST NAME}
+    Check Test Case    ${TESTNAME}
 
 BREAK in EXCEPT
-    ${TEST NAME}
+    Check Test Case    ${TESTNAME}
 
 BREAK in TRY-ELSE
-    ${TEST NAME}
+    Check Test Case    ${TESTNAME}
 
 BREAK with argument in FOR
-    ${TEST NAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.body[0].body[0].body[1].body[0]}   BREAK does not accept arguments, got 'should not work'.    FAIL
 
 BREAK with argument in WHILE
-    ${TEST NAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.body[0].body[0].body[1].body[0]}   BREAK does not accept arguments, got 'should', 'not' and 'work'.    FAIL

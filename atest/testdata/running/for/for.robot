@@ -323,7 +323,7 @@ No END
     Fail    Not executed
 
 Invalid END
-    [Documentation]    FAIL    END does not accept arguments.
+    [Documentation]    FAIL    END does not accept arguments, got 'ooops'.
     FOR    ${var}    IN    one    two
         Fail    Not executed
     END    ooops

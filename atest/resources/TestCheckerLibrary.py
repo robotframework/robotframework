@@ -7,7 +7,7 @@ from robot import utils
 from robot.api import logger
 from robot.utils.asserts import assert_equal
 from robot.result import (ExecutionResultBuilder, Result, ResultVisitor,
-                          For, ForIteration, While, WhileIteration,
+                          For, ForIteration, While, WhileIteration, Return, Break, Continue,
                           If, IfBranch, Try, TryBranch, Keyword, TestCase, TestSuite)
 from robot.result.model import Body, Iterations
 from robot.libraries.BuiltIn import BuiltIn
@@ -33,12 +33,27 @@ class NoSlotsTry(Try):
     pass
 
 
+class NoSlotsReturn(Return):
+    pass
+
+
+class NoSlotsBreak(Break):
+    pass
+
+
+class NoSlotsContinue(Continue):
+    pass
+
+
 class NoSlotsBody(Body):
     keyword_class = NoSlotsKeyword
     for_class = NoSlotsFor
     if_class = NoSlotsIf
     try_class = NoSlotsTry
     while_class = NoSlotsWhile
+    return_class = NoSlotsReturn
+    break_class = NoSlotsBreak
+    continue_class = NoSlotsContinue
 
 
 class NoSlotsIfBranch(IfBranch):
@@ -61,10 +76,10 @@ class NoSlotsIterations(Iterations):
     keyword_class = NoSlotsKeyword
 
 
-NoSlotsKeyword.body_class = NoSlotsBody
-NoSlotsFor.iterations_class = NoSlotsIterations
+NoSlotsKeyword.body_class = NoSlotsReturn.body_class = NoSlotsBreak.body_class \
+    = NoSlotsContinue.body_class = NoSlotsBody
+NoSlotsFor.iterations_class = NoSlotsWhile.iterations_class =NoSlotsIterations
 NoSlotsFor.iteration_class = NoSlotsForIteration
-NoSlotsWhile.iterations_class = NoSlotsIterations
 NoSlotsWhile.iteration_class = NoSlotsWhileIteration
 NoSlotsIf.branch_class = NoSlotsIfBranch
 NoSlotsTry.branch_class = NoSlotsTryBranch

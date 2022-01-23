@@ -147,7 +147,7 @@ window.model = (function () {
         kw.libname = data.libname;
         kw.fullName = (kw.libname ? kw.libname + '.' : '') + kw.name;
         kw.type = data.type;
-        kw.template = flatTypes.indexOf(data.type) == -1 ? 'keywordTemplate' : 'flatTemplate';
+        kw.template = 'keywordTemplate';
         kw.arguments = data.args;
         kw.assign = data.assign + (data.assign ? ' =' : '');
         kw.tags = data.tags;
