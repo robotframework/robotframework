@@ -55,7 +55,7 @@ IF without END
         Fail    Should not be run
 
 Invalid END
-    [Documentation]    FAIL    END does not accept arguments.
+    [Documentation]    FAIL    END does not accept arguments, got 'this', 'is' and 'invalid'.
     IF    True
         Fail    Should not be run
     END    this    is    invalid
@@ -87,7 +87,7 @@ ELSE IF with multiple conditions
     END
 
 ELSE with condition
-    [Documentation]    FAIL    ELSE does not accept arguments.
+    [Documentation]    FAIL    ELSE does not accept arguments, got '\${True}'.
     IF    'venus' != 'mars'
         Fail    Should not be run
     ELSE    ${True}
@@ -157,7 +157,7 @@ Multiple errors
     ...    - IF has no closing END.
     ...    - ELSE IF cannot have more than one condition.
     ...    - ELSE IF branch cannot be empty.
-    ...    - ELSE does not accept arguments.
+    ...    - ELSE does not accept arguments, got 'oops'.
     ...    - ELSE branch cannot be empty.
     ...    - ELSE IF must have a condition.
     ...    - ELSE IF branch cannot be empty.

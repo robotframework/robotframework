@@ -32,7 +32,7 @@ TRY with ELSE without EXCEPT or FINALLY
     END
 
 TRY with argument
-    [Documentation]    FAIL    TRY does not accept arguments.
+    [Documentation]    FAIL    TRY does not accept arguments, got 'I should not be here'.
     TRY    I should not be here
         Fail   Should not be executed
     EXCEPT    Error
@@ -93,7 +93,7 @@ Invalid AS variable
     END
 
 ELSE with argument
-    [Documentation]    FAIL    ELSE does not accept arguments.
+    [Documentation]    FAIL    ELSE does not accept arguments, got 'I should not be here'.
     TRY
         Fail   Should not be executed
     EXCEPT    Error
@@ -130,12 +130,12 @@ Multiple ELSE blocks
     END
 
 FINALLY with argument
-    [Documentation]    FAIL    FINALLY does not accept arguments.
+    [Documentation]    FAIL    FINALLY does not accept arguments, got 'ooops', 'i', 'did', 'it' and 'again'.
     TRY
         Fail   Should not be executed
     EXCEPT    Error
         Fail   Should not be executed
-    FINALLY    I should not be here
+    FINALLY    ooops    i    did    it    again
         Fail   Should not be executed
     END
 

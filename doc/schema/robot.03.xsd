@@ -241,18 +241,24 @@
     <xs:complexType name="Return">
         <xs:choice maxOccurs="unbounded">
             <xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="status" type="BodyItemStatus" />
         </xs:choice>
     </xs:complexType>
     <xs:complexType name="Break">
-        <xs:sequence>
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="status" type="BodyItemStatus" />
-        </xs:sequence>
+        </xs:choice>
     </xs:complexType>
     <xs:complexType name="Continue">
-        <xs:sequence>
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="status" type="BodyItemStatus" />
-        </xs:sequence>
+        </xs:choice>
     </xs:complexType>
     <xs:complexType name="Message">
         <xs:simpleContent>

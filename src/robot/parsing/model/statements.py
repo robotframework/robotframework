@@ -17,7 +17,7 @@ import ast
 import re
 
 from robot.running.arguments import UserKeywordArgumentParser
-from robot.utils import normalize_whitespace, split_from_equals
+from robot.utils import normalize_whitespace, seq2str, split_from_equals
 from robot.variables import is_scalar_assign, is_dict_variable, search_variable
 
 from ..lexer import Token
@@ -885,7 +885,8 @@ class ElseHeader(IfElseHeader):
 
     def validate(self):
         if self.get_tokens(Token.ARGUMENT):
-            self.errors += ('ELSE does not accept arguments.',)
+            values = self.get_values(Token.ARGUMENT)
+            self.errors += (f'ELSE does not accept arguments, got {seq2str(values)}.',)
 
 
 class NoArgumentHeader(Statement):
@@ -900,7 +901,8 @@ class NoArgumentHeader(Statement):
 
     def validate(self):
         if self.get_tokens(Token.ARGUMENT):
-            self.errors += (f'{self.type} does not accept arguments.',)
+            self.errors += (f'{self.type} does not accept arguments, got '
+                            f'{seq2str(self.values)}.',)
 
     @property
     def values(self):

@@ -133,9 +133,6 @@ class KeywordHandler(ElementHandler):
         try:
             body = result.body
         except AttributeError:
-            # Ignore keywords under RETURN etc. They can only be run by listeners.
-            if getattr(result, 'type', '') in ('RETURN', 'CONTINUE', 'BREAK'):
-                return None
             body = self._get_body_for_suite_level_keyword(result)
         return body.create_keyword(kwname=elem.get('name', ''),
                                    libname=elem.get('library'),
@@ -269,9 +266,6 @@ class MessageHandler(ElementHandler):
     tag = 'msg'
 
     def end(self, elem, result):
-        # Ignore messages under RETURN etc. They can only be logged by listeners.
-        if getattr(result, 'type', '') in ('RETURN', 'CONTINUE', 'BREAK'):
-            return
         html_true = ('true', 'yes')    # 'yes' is compatibility for RF < 4.
         result.body.create_message(elem.text or '',
                                    elem.get('level', 'INFO'),

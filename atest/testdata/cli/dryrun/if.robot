@@ -49,7 +49,7 @@ Dryrun fail invalid IF in non executed branch
     This is validated
 
 Dryrun fail invalid ELSE in non executed branch
-    [Documentation]    FAIL    ELSE does not accept arguments.
+    [Documentation]    FAIL    ELSE does not accept arguments, got '\${False}'.
     IF  1 > 0
        No operation
     ELSE
