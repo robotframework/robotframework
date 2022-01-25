@@ -427,18 +427,21 @@ col.option, kbd .option {
     background: inherit;
 }
 h1 {
-    font-size: 2em;
+    font-size: 2.5em;
 }
 h2 {
-    font-size: 1.6em;
+    font-size: 2em;
 }
 h3 {
-    font-size: 1.4em;
+    font-size: 1.6em;
 }
 h4 {
-    font-size: 1.2em;
+    font-size: 1.4em;
 }
 h5 {
+    font-size: 1.2em;
+}
+h6 {
     font-size: 1em;
 }
 cite {
