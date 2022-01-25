@@ -536,6 +536,8 @@ class CustomConverter(TypeConverter):
     def _convert(self, value, explicit_type=True):
         try:
             return self.converter_info.converter(value)
+        except ValueError:
+            raise
         except Exception:
             raise ValueError(get_error_message())
 
