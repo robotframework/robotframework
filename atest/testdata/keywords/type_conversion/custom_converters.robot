@@ -43,7 +43,7 @@ Accept subscripted generics
 
 Failing conversion
     [Template]    Conversion should fail
-    Number     wrong         type=Number     error=ValueError: Don't know number 'wrong'.
+    Number     wrong         type=Number     error=Don't know number 'wrong'.
     US date    30.11.2021    type=UsDate     error=Value does not match '%m/%d/%Y'.
     US date    ${666}        type=UsDate     error=TypeError: Only strings accepted!    arg_type=integer
     FI date    ${666}        type=FiDate     arg_type=integer

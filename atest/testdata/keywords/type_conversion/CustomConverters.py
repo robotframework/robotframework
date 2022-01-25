@@ -27,7 +27,7 @@ class UsDate(date):
         try:
             return cls.fromordinal(datetime.strptime(value, '%m/%d/%Y').toordinal())
         except ValueError:
-            raise RuntimeError("Value does not match '%m/%d/%Y'.")
+            raise ValueError("Value does not match '%m/%d/%Y'.")
 
 
 class FiDate(date):
