@@ -147,7 +147,7 @@ class ExecutionResultBuilder:
         tags_match, by_tags = self._get_matcher(FlattenByTagMatcher, flattened)
         started = -1  # if 0 or more, we are flattening
         tags = []
-        containers = {'kw', 'for', 'iter', 'if'}
+        containers = {'kw', 'for', 'while', 'iter', 'if', 'try'}
         inside_kw = 0  # to make sure we don't read tags from a test
         seen_doc = False
         for event, elem in context:
