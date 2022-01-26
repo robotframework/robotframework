@@ -395,11 +395,12 @@ For more information and examples see `Libraries as listeners`_ section.
 
 An easy way to configure libraries implemented as Python classes is using
 the `robot.api.deco.library` class decorator. It allows configuring library's
-scope__, version__, `documentation format`_ and listener__ with optional
-arguments `scope`, `version`, `doc_format` and `listener`, respectively.
-When these arguments are used, they set the matching `ROBOT_LIBRARY_SCOPE`,
-`ROBOT_LIBRARY_VERSION`, `ROBOT_LIBRARY_DOC_FORMAT` and
-`ROBOT_LIBRARY_LISTENER` attributes automatically:
+scope__, version__, `custom argument converters`__, `documentation format`_
+and listener__ with optional arguments `scope`, `version`, `converter`,
+`doc_format` and `listener`, respectively. When these arguments are used, they
+set the matching `ROBOT_LIBRARY_SCOPE`, `ROBOT_LIBRARY_VERSION`,
+`ROBOT_LIBRARY_CONVERTERS`, `ROBOT_LIBRARY_DOC_FORMAT` and `ROBOT_LIBRARY_LISTENER`
+attributes automatically:
 
 .. sourcecode:: python
 
@@ -441,15 +442,18 @@ If needed, the automatic keyword discovery can be enabled by using the
         # ...
 
 The `@library` decorator only sets class attributes `ROBOT_LIBRARY_SCOPE`,
-`ROBOT_LIBRARY_VERSION`, `ROBOT_LIBRARY_DOC_FORMAT` and `ROBOT_LIBRARY_LISTENER`
-if the respective arguments `scope`, `version`, `doc_format` and `listener`
-are used. The `ROBOT_AUTO_KEYWORDS` attribute is set always. When attributes
-are set, they override possible existing class attributes.
+`ROBOT_LIBRARY_VERSION`, `ROBOT_LIBRARY_CONVERTERS`, `ROBOT_LIBRARY_DOC_FORMAT`
+and `ROBOT_LIBRARY_LISTENER` if the respective arguments `scope`, `version`,
+`converters`, `doc_format` and `listener` are used. The `ROBOT_AUTO_KEYWORDS`
+attribute is set always. When attributes are set, they override possible
+existing class attributes.
 
-.. note:: The `@library` decorator is new in Robot Framework 3.2.
+.. note:: The `@library` decorator is new in Robot Framework 3.2
+          and `converters` argument is new in Robot Framework 5.0.
 
 __ `library scope`_
 __ `library version`_
+__ `Custom argument converters`_
 __ `Library acting as listener`_
 __ `What methods are considered keywords`_
 
@@ -1195,10 +1199,8 @@ but using them as named arguments causes an error on Python side.
 
 __ https://www.python.org/dev/peps/pep-0570/
 
-.. _argument conversion:
-
-Argument types
-~~~~~~~~~~~~~~
+Argument conversion
+~~~~~~~~~~~~~~~~~~~
 
 Arguments defined in Robot Framework test data are, by default,
 passed to keywords as Unicode strings. There are, however, several ways
@@ -1207,10 +1209,11 @@ to use non-string values as well:
 - Variables_ can contain any kind of objects as values, and variables used
   as arguments are passed to keywords as-is.
 - Keywords can themselves `convert arguments they accept`__ to other types.
-- It is possible to specify argument types explicitly using Python 3
+- It is possible to specify argument types explicitly using
   `function annotations`__ or the `@keyword decorator`__. In these cases
   Robot Framework converts arguments automatically.
 - Automatic conversion is also done based on `keyword default values`__.
+- Libraries can register `custom argument converters`_.
 - Arguments to `Java keywords`__ are converted based on argument type
   information.
 
@@ -1579,9 +1582,18 @@ has multiple possible types is using Union_:
   def example(length: Union[int, float], padding: Union[int, str, None] = None):
       # ...
 
+When using Python 3.10 or newer, it is possible to use the native `type1 | type2`
+syntax instead:
+
+.. sourcecode:: python
+
+  def example(length: int | float, padding: int | str | None = None):
+      # ...
+
+
 An alternative is specifying types as a tuple. It is not recommended with annotations,
 because that syntax is not supported by other tools, but it works well with
-the `@keyword` decorator and is Python 2 compatible:
+the `@keyword` decorator:
 
 .. sourcecode:: python
 
@@ -1647,6 +1659,285 @@ to an integer but if that fails the keyword would get the original given argumen
 __ https://github.com/robotframework/robotframework/issues/3897
 __ https://github.com/robotframework/robotframework/issues/3908
 .. _Union: https://docs.python.org/3/library/typing.html#typing.Union
+
+Custom argument converters
+''''''''''''''''''''''''''
+
+In addition to doing argument conversion automatically as explained in the
+previous sections, Robot Framework supports custom argument conversion. This
+functionality has two main use cases:
+
+- Overriding the standard argument converters provided by the framework.
+
+- Adding argument conversion for custom types and for other types not supported
+  out-of-the-box.
+
+Argument converters are functions or other callables that get arguments used
+in data and convert them to desired format before arguments are passed to
+keywords. Converters are registered for libraries by setting
+`ROBOT_LIBRARY_CONVERTERS` attribute (case-insensitive) to a dictionary mapping
+desired types to converts. When implementing a library as a module, this
+attribute must be set on the module level, and with class based libraries
+it must be a class attribute. With libraries implemented as classes it is
+also possible to use the `converters` argument with the `@library decorator`_.
+Both of these approaches are illustrated by examples in the following sections.
+
+.. note:: Custom argument converters are new in Robot Framework 5.0.
+
+Overriding default converters
+`````````````````````````````
+
+Let's assume we wanted to create a keyword that accepts date_ objects for
+users in Finland where the commonly used date format is `dd.mm.yyyy`.
+The usage could look something like this:
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Example
+        Keyword    25.1.2022
+
+`Automatic argument conversion`__ supports dates, but it expects them
+to be in `yyyy-mm-dd` format so it will not work. A solution is creating
+a custom converter and registering it to handle date_ conversion:
+
+.. sourcecode:: python
+
+    from datetime import date
+
+
+    # Converter function.
+    def parse_fi_date(value):
+        day, month, year = value.split('.')
+        return date(int(year), int(month), int(day))
+
+
+    # Register converter function for the specified type.
+    ROBOT_LIBRARY_CONVERTERS = {date: parse_fi_date}
+
+
+    # Keyword using custom converter. Converter is got based on argument type.
+    def keyword(arg: date):
+        print(f'year: {arg.year}, month: {arg.month}, day: {arg.day}')
+
+
+__ `Supported conversions`_
+
+Conversion errors
+`````````````````
+
+If we try using the above keyword with invalid argument like `invalid`, it
+fails with this error::
+
+    ValueError: Argument 'arg' got value 'invalid' that cannot be converted to date: not enough values to unpack (expected 3, got 1)
+
+This error is not too informative and does not tell anything about the expected
+format. Robot Framework cannot provide more information automatically, but
+the converter itself can be enhanced to validate the input. If the input is
+invalid, the converter should raise a `ValueError` with an appropriate message.
+In this particular case there would be several ways to validate the input, but
+using `regular expressions`__ makes it possible to validate both that the input
+has dots (`.`) in correct places and that date parts contain correct amount
+of digits:
+
+.. sourcecode:: python
+
+    from datetime import date
+    import re
+
+
+    def parse_fi_date(value):
+        # Validate input using regular expression and raise ValueError if not valid.
+        match = re.match(r'(\d{1,2})\.(\d{1,2})\.(\d{4})$', value)
+        if not match:
+            raise ValueError(f"Expected date in format 'dd.mm.yyyy', got '{value}'.")
+        day, month, year = match.groups()
+        return date(int(year), int(month), int(day))
+
+
+    ROBOT_LIBRARY_CONVERTERS = {date: parse_fi_date}
+
+
+    def keyword(arg: date):
+        print(f'year: {arg.year}, month: {arg.month}, day: {arg.day}')
+
+With the above converter code, using the keyword with argument `invalid` fails
+with a lot more helpful error message::
+
+    ValueError: Argument 'arg' got value 'invalid' that cannot be converted to date: Expected date in format 'dd.mm.yyyy', got 'invalid'.
+
+__ https://en.wikipedia.org/wiki/Regular_expression
+
+Restricting value types
+```````````````````````
+
+By default Robot Framework tries to use converters with all given arguments
+regardless their type. This means that if the earlier example keyword would
+be used with a variable containing something else than a string, conversion
+code would fail in the `re.match` call. For example, trying to use it with
+argument `${42}` would fail like this::
+
+    ValueError: Argument 'arg' got value '42' (integer) that cannot be converted to date: TypeError: expected string or bytes-like object
+
+This error situation could naturally handled in the converter code by checking
+the value type, but if the converter only accepts certain types, it is typically
+easier to just restrict the value to that type. Doing it requires only adding
+appropriate type hint to the converter:
+
+.. sourcecode:: python
+
+    def parse_fi_date(value: str):
+         # ...
+
+Notice that this type hint *is not* used for converting the value before calling
+the converter, it is used for strictly restricting which types can be used.
+With the above addition calling the keyword with `${42}` would fail like this::
+
+    ValueError: Argument 'arg' got value '42' (integer) that cannot be converted to date.
+
+If the converter can accept multiple types, it is possible to specify types
+as a Union_. For example, if we wanted to enhance our keyword to accept also
+integers so that they would be considered seconds since the `Unix epoch`__,
+we could change the converter like this:
+
+.. sourcecode:: python
+
+    from datetime import date
+    import re
+    from typing import Union
+
+
+    # Accept both strings and integers.
+    def parse_fi_date(value: Union[str, int]):
+        # Integers are converted separately.
+        if isinstance(value, int):
+            return date.fromtimestamp(value)
+        match = re.match(r'(\d{1,2})\.(\d{1,2})\.(\d{4})$', value)
+        if not match:
+            raise ValueError(f"Expected date in format 'dd.mm.yyyy', got '{value}'.")
+        day, month, year = match.groups()
+        return date(int(year), int(month), int(day))
+
+
+    ROBOT_LIBRARY_CONVERTERS = {date: parse_fi_date}
+
+
+    def keyword(arg: date):
+        print(f'year: {arg.year}, month: {arg.month}, day: {arg.day}')
+
+__ https://en.wikipedia.org/wiki/Unix_time
+
+Converting custom types
+```````````````````````
+
+A problem with the earlier example is that date_ objects could only be given
+in `dd.mm.yyyy` format. It would would not work if there would be need to
+support dates in different formats like in this example:
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Example
+        Finnish     25.1.2022
+        US          1/25/2022
+        ISO 8601    2022-01-22
+
+A solution to this problem is creating custom types instead of overriding
+the default date_ conversion:
+
+.. sourcecode:: python
+
+    from datetime import date
+    import re
+    from typing import Union
+
+    from robot.api.deco import keyword, library
+
+
+    # Custom type. Extends an existing type but that is not required.
+    class FiDate(date):
+
+        # Converter function implemented as a classmethod. It could be a normal
+        # function as well, but this way all code is in the same class.
+        @classmethod
+        def from_string(cls, value: str):
+            match = re.match(r'(\d{1,2})\.(\d{1,2})\.(\d{4})$', value)
+            if not match:
+                raise ValueError(f"Expected date in format 'dd.mm.yyyy', got '{value}'.")
+            day, month, year = match.groups()
+            return cls(int(year), int(month), int(day))
+
+
+    # Another custom type.
+    class UsDate(date):
+
+        @classmethod
+        def from_string(cls, value: str):
+            match = re.match(r'(\d{1,2})/(\d{1,2})/(\d{4})$', value)
+            if not match:
+                raise ValueError(f"Expected date in format 'mm/dd/yyyy', got '{value}'.")
+            month, day, year = match.groups()
+            return cls(int(year), int(month), int(day))
+
+
+    # Register converters using '@library' decorator.
+    @library(converters={FiDate: FiDate.from_string, UsDate: UsDate.from_string})
+    class Library:
+
+        # Uses custom converter supporting 'dd.mm.yyyy' format.
+        @keyword
+        def finnish(self, arg: FiDate):
+            print(f'year: {arg.year}, month: {arg.month}, day: {arg.day}')
+
+        # Uses custom converter supporting 'mm/dd/yyyy' format.
+        @keyword
+        def us(self, arg: UsDate):
+            print(f'year: {arg.year}, month: {arg.month}, day: {arg.day}')
+
+        # Uses IS0-8601 compatible default conversion.
+        @keyword
+        def iso_8601(self, arg: date):
+            print(f'year: {arg.year}, month: {arg.month}, day: {arg.day}')
+
+        # Accepts date in different formats.
+        @keyword
+        def any(self, arg: Union[FiDate, UsDate, date]):
+            print(f'year: {arg.year}, month: {arg.month}, day: {arg.day}')
+
+Converter documentation
+```````````````````````
+
+Information about converters is added to outputs produced by Libdoc_
+automatically. This information includes the name of the type, accepted values
+(if specified using type hints) and documentation. Type information is
+automatically linked to all keywords using these types.
+
+Used documentation is got from the converter function by default. If it does
+not have any documentation, documentation is got from the type. Both of these
+approaches to add documentation to converters in the previous example thus
+produce the same result:
+
+.. sourcecode:: python
+
+    class FiDate(date):
+
+        @classmethod
+        def from_string(cls, value: str):
+            """Date in ``dd.mm.yyyy`` format."""
+            # ...
+
+
+    class UsDate(date):
+        """Date in ``mm/dd/yyyy`` format."""
+
+        @classmethod
+        def from_string(cls, value: str):
+            # ...
+
+Adding documentation is in general recommended to provide users more
+information about conversion. It is especially important to document
+converter functions registered for existing types, because their own
+documentation is likely not very useful in this context.
 
 Argument types with Java
 ''''''''''''''''''''''''
@@ -1795,7 +2086,7 @@ __ `Setting custom name`_
        Add 7 copies of coffee to cart
 
 By default arguments are passed to implementing keywords as strings, but
-automatic `argument type conversion`__ works if type information is specified
+automatic `argument conversion`_ works if type information is specified
 somehow. With Python 3 it is convenient to use `function annotations`__,
 and alternatively it is possible to pass types to the `@keyword decorator`__.
 This example uses annotations:
@@ -1806,7 +2097,6 @@ This example uses annotations:
     def add_copies_to_cart(quantity: int, item):
         # ...
 
-__ `Argument types`_
 __ `Specifying argument types using function annotations`_
 __ `Specifying argument types using @keyword decorator`_
 
@@ -2946,7 +3236,7 @@ because it was possible to specify arguments only as strings. As
 3.2 and nowadays default values returned like `('example', True)` are
 automatically used for this purpose.
 
-__ `Argument types`_
+__ `Argument conversion`_
 __ `Specifying argument types using @keyword decorator`_
 __ `Implicit argument types based on default values`_
 __ `Getting keyword arguments`_
