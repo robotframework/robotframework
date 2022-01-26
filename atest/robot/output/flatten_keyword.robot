@@ -7,11 +7,11 @@ ${FLATTEN}      --FlattenKeywords NAME:Keyword3
 ...             --flat name:key*others
 ...             --FLAT name:builtin.*
 ...             --flat TAG:flattenNOTkitty
-...             --flatten "name:Flatten IF in keyword"
+...             --flatten "name:Flatten controls in keyword"
 ...             --log log.html
 ${FLAT TEXT}    _*Keyword content flattened.*_
 ${FLAT HTML}    <p><i><b>Keyword content flattened.\\x3c/b>\\x3c/i>\\x3c/p>
-${ERROR}        [ ERROR ] Invalid value for option '--flattenkeywords'. Expected 'FOR', 'FORITEM', 'TAG:<pattern>', or 'NAME:<pattern>' but got 'invalid'.${USAGE TIP}\n
+${ERROR}        [ ERROR ] Invalid value for option '--flattenkeywords'. Expected 'FOR', 'WHILE', 'ITERATION', 'TAG:<pattern>', or 'NAME:<pattern>' but got 'invalid'.${USAGE TIP}\n
 
 *** Test Cases ***
 Non-matching keyword is not flattened
@@ -55,22 +55,27 @@ Flattened in log after execution
     Should Contain X Times    ${LOG}    Doc of keyword 3    1
     Should Contain X Times    ${LOG}    Doc of keyword 2    1
     Should Contain X Times    ${LOG}    Doc of keyword 1    1
-    Should Contain X Times    ${LOG}    Keyword content flattened    4
+    Should Contain X Times    ${LOG}    Keyword content flattened    6
     Should Contain    ${LOG}    *<p>Doc of keyword 3\\x3c/p>\\n${FLAT HTML}
     Should Contain    ${LOG}    *${FLAT HTML}
     Should Contain    ${LOG}    *<p>Logs the given message with the given level.\\x3c/p>\\n${FLAT HTML}
 
-Flatten IF in keyword
+Flatten controls in keyword
     ${tc} =    Check Test Case    ${TEST NAME}
     Length Should Be    ${tc.body[0].body.filter(keywords=True, ifs=True)}    0
-    Length Should Be    ${tc.body[0].body.filter(messages=True)}    7
-    Length Should Be    ${tc.body[0].body}    7
+    Length Should Be    ${tc.body[0].body.filter(messages=True)}    23
+    Length Should Be    ${tc.body[0].body}    23
     @{expected} =    Create List
-    ...    Outside IF    Inside IF    Nested IF
+    ...    Outside IF    Inside IF    1    Nested IF
     ...    3    2    1    BANG!
+    ...    FOR: 0    1    FOR: 1    1    FOR: 2    1
+    ...    WHILE: 2    1    \${i} = 1    WHILE: 1    1    \${i} = 0
     FOR    ${msg}    ${exp}    IN ZIP    ${tc.body[0].body}    ${expected}
         Check Log Message    ${msg}    ${exp}
     END
+    Check log message    ${tc.body[0].body[20]}    AssertionError    level=FAIL
+    Check log message    ${tc.body[0].body[21]}    1
+    Check log message    ${tc.body[0].body[22]}    finally
 
 Flatten for loops
     Run Rebot    --flatten For    ${OUTFILE COPY}
@@ -106,6 +111,46 @@ Flatten for loop iterations
         Check Log Message    ${tc.kws[0].kws[${index}].msgs[3]}    1
         Check Log Message    ${tc.kws[0].kws[${index}].msgs[4]}    2
         Check Log Message    ${tc.kws[0].kws[${index}].msgs[5]}    1
+    END
+
+Flatten while loops
+    Run Rebot    --flatten WHile    ${OUTFILE COPY}
+    ${tc} =    Check Test Case    WHILE loop
+    Should Be Equal    ${tc.body[1].type}    WHILE
+    # Should Be Equal    ${tc.body[1].doc}    ${FLAT TEXT}
+    Length Should Be    ${tc.body[1].kws}    0
+    Length Should Be    ${tc.body[1].msgs}    70
+    FOR    ${index}    IN RANGE    10
+        Check Log Message    ${tc.body[1].msgs[${index * 7 + 0}]}    index: ${index}
+        Check Log Message    ${tc.body[1].msgs[${index * 7 + 1}]}    3
+        Check Log Message    ${tc.body[1].msgs[${index * 7 + 2}]}    2
+        Check Log Message    ${tc.body[1].msgs[${index * 7 + 3}]}    1
+        Check Log Message    ${tc.body[1].msgs[${index * 7 + 4}]}    2
+        Check Log Message    ${tc.body[1].msgs[${index * 7 + 5}]}    1
+        ${i}=    Evaluate     $index + 1
+        Check Log Message    ${tc.body[1].msgs[${index * 7 + 6}]}    \${i} = ${i}
+    END
+
+Flatten while loop iterations
+    Run Rebot    --flatten iteration    ${OUTFILE COPY}
+    ${tc} =    Check Test Case    WHILE loop
+    Should Be Equal    ${tc.body[1].type}    WHILE
+    Should Be Empty    ${tc.body[1].doc}
+    Length Should Be    ${tc.body[1].body}    10
+    Should Be Empty    ${tc.body[1].msgs}
+    FOR    ${index}    IN RANGE    10
+        Should Be Equal      ${tc.kws[1].kws[${index}].type}    ITERATION
+        Should Be Equal      ${tc.kws[1].kws[${index}].doc}    ${FLAT TEXT}
+        Should Be Empty      ${tc.kws[1].kws[${index}].kws}
+        Length Should Be     ${tc.kws[1].kws[${index}].msgs}    7
+        Check Log Message    ${tc.kws[1].kws[${index}].msgs[0]}    index: ${index}
+        Check Log Message    ${tc.kws[1].kws[${index}].msgs[1]}    3
+        Check Log Message    ${tc.kws[1].kws[${index}].msgs[2]}    2
+        Check Log Message    ${tc.kws[1].kws[${index}].msgs[3]}    1
+        Check Log Message    ${tc.kws[1].kws[${index}].msgs[4]}    2
+        Check Log Message    ${tc.kws[1].kws[${index}].msgs[5]}    1
+        ${i}=    Evaluate     $index + 1
+        Check Log Message    ${tc.kws[1].kws[${index}].msgs[6]}    \${i} = ${i}
     END
 
 Invalid usage

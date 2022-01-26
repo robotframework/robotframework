@@ -226,12 +226,14 @@ Options
                                    `OR`, and `NOT` operators.
                                    Examples: --removekeywords foo
                                              --removekeywords fooANDbar*
-    --flattenkeywords for|foritem|name:<pattern>|tag:<pattern> *
+    --flattenkeywords for|while|iteration|name:<pattern>|tag:<pattern> *
                           Flattens matching keywords in all generated outputs.
                           Matching keywords get all log messages from their
                           child keywords and children are discarded otherwise.
-                          for:     flatten for loops fully
-                          foritem: flatten individual for loop iterations
+                          for:     flatten FOR loops fully
+                          while:   flatten WHILE loops fully
+                          iteration: flatten FOR/WHILE loop iterations
+                          foritem: deprecated alias for `iteration`
                           name:<pattern>:  flatten matched keywords using same
                                    matching rules as with
                                    `--removekeywords name:<pattern>`
