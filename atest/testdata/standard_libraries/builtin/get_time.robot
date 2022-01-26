@@ -1,5 +1,6 @@
 *** Settings ***
 Library           times.py
+Library           DateTime
 
 *** Test Cases ***
 Get Time As Timestamp
@@ -71,3 +72,19 @@ When Time Is UTC +- Something
     ${time minus} =    Get Time    epoch    UTC - 1 hour
     ${time plus} =    Get Time    epoch    UTC + 2 minutes 1 second
     Should Be True    ${time minus} < ${time} < ${time plus}
+
+DST is handled correctly when adding or substracting time
+    FOR    ${i}    IN RANGE    1    365
+        WHILE    True
+            ${now}=      Get Time   time_=now
+            ${past}=     Get Time   time_=now - ${i}day
+            ${future}=   Get Time   time_=now + ${i}day
+            ${now2}=     Get Time   time_=now
+            # Make sure seconds did not change between Get Time calls.
+            IF    '${now}' == '${now2}'    BREAK
+        END
+        ${delta}=   Subtract Date From Date   ${now}   ${past}   compact
+        Should Be Equal   ${delta}   ${i}d
+        ${delta}=   Subtract Date From Date   ${now}   ${future}   compact
+        Should Be Equal   ${delta}   - ${i}d
+    END
