@@ -36,3 +36,6 @@ When Time Is UTC
 
 When Time Is UTC +- something
     Check Test Case  ${TEST NAME}
+
+DST is handled correctly when adding or substracting time
+    Check Test Case  ${TEST NAME}
