@@ -522,8 +522,9 @@ class Process:
 
     def _wait(self, process):
         result = self._results[process]
+        mystdout, mystderr = process.communicate()
         result.rc = process.wait() or 0
-        result.close_streams()
+        result.close_streams(mystdout, mystderr)
         logger.info('Process completed.')
         return result
 
@@ -831,11 +832,11 @@ class ExecutionResult:
             self._read_stderr()
         return self._stderr
 
-    def _read_stdout(self):
-        self._stdout = self._read_stream(self.stdout_path, self._process.stdout)
+    def _read_stdout(self, mystdout):
+        self._stdout = mystdout
 
-    def _read_stderr(self):
-        self._stderr = self._read_stream(self.stderr_path, self._process.stderr)
+    def _read_stderr(self, mystderr):
+        self._stderr = mystderr
 
     def _read_stream(self, stream_path, stream):
         if stream_path:
@@ -861,18 +862,18 @@ class ExecutionResult:
             output = output[:-1]
         return output
 
-    def close_streams(self):
-        standard_streams = self._get_and_read_standard_streams(self._process)
+    def close_streams(self, mystdout, mystderr):
+        standard_streams = self._get_and_read_standard_streams(self._process, mystdout, mystderr)
         for stream in standard_streams + self._custom_streams:
             if self._is_open(stream):
                 stream.close()
 
-    def _get_and_read_standard_streams(self, process):
+    def _get_and_read_standard_streams(self, process, mystdout, mystderr):
         stdin, stdout, stderr = process.stdin, process.stdout, process.stderr
         if stdout:
-            self._read_stdout()
+            self._read_stdout(mystdout)
         if stderr:
-            self._read_stderr()
+            self._read_stderr(mystderr)
         return [stdin, stdout, stderr]
 
     def __str__(self):
