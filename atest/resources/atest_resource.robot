@@ -358,6 +358,20 @@ Error in file
     ...    ${error}
     Check Log Message    ${ERRORS}[${index}]    ${error}    level=ERROR    pattern=${pattern}
 
+Error in test case file
+    [Arguments]    ${index}    ${path}    @{message}    ${traceback}=
+    ...    ${stacktrace}=    ${pattern}=True
+    ${path} =    Join Path    ${DATADIR}    ${path}
+    ${message} =    Catenate    @{message}
+    ${error} =    Set Variable    Error in test case file '${path}': ${message}
+    ${error} =    Set Variable If    $traceback and not $stacktrace
+    ...    ${error}\nTraceback (most recent call last):\n*${traceback}*
+    ...    ${error}
+    ${error} =    Set Variable If    $stacktrace
+    ...    ${error}\n*${stacktrace}*
+    ...    ${error}
+    Check Log Message    ${ERRORS}[${index}]    ${error}    level=ERROR    pattern=${pattern}
+
 Error in library
     [Arguments]    ${name}    @{message}    ${pattern}=False    ${index}=0
     ${error} =    Catenate
