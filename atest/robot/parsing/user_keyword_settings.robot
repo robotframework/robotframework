@@ -107,7 +107,7 @@ Small typo should provide recommendation
     ...    ${SPACE*4}Documentation
 
 Invalid empty line continuation in arguments should throw an error    
-    Error in test case File    3   parsing/user_keyword_settings.robot    
+    Error in File    3   parsing/user_keyword_settings.robot     206
     ...    Creating keyword 'Invalid empty line continuation in arguments should throw an error' failed: Invalid argument specification: Invalid argument syntax ''.
 
 *** Keywords ***
