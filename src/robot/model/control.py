@@ -98,10 +98,9 @@ class IfBranch(BodyItem):
         """Branch id omits IF/ELSE root from the parent id part."""
         if not self.parent:
             return 'k1'
-        index = self.parent.body.index(self) + 1
         if not self.parent.parent:
-            return 'k%d' % index
-        return '%s-k%d' % (self.parent.parent.id, index)
+            return 'k%d' % (self.parent.body.index(self) + 1)
+        return self._get_id(self.parent.parent)
 
     def __str__(self):
         if self.type == self.IF:
@@ -162,10 +161,9 @@ class TryBranch(BodyItem):
         """Branch id omits TRY/EXCEPT root from the parent id part."""
         if not self.parent:
             return 'k1'
-        index = self.parent.body.index(self) + 1
         if not self.parent.parent:
-            return 'k%d' % index
-        return '%s-k%d' % (self.parent.parent.id, index)
+            return 'k%d' % (self.parent.body.index(self) + 1)
+        return self._get_id(self.parent.parent)
 
     def __str__(self):
         if self.type != BodyItem.EXCEPT:

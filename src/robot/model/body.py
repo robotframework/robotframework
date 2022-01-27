@@ -54,12 +54,15 @@ class BodyItem(ModelObject):
             return None
         if not self.parent:
             return 'k1'
-        setup = getattr(self.parent, 'setup', None)
-        body = getattr(self.parent, 'body', ())
-        teardown = getattr(self.parent, 'teardown', None)
+        return self._get_id(self.parent)
+
+    def _get_id(self, parent):
+        setup = getattr(parent, 'setup', None)
+        body = parent.body.flatten() if hasattr(parent, 'body') else ()
+        teardown = getattr(parent, 'teardown', None)
         steps = [step for step in [setup] + list(body) + [teardown]
                  if step and step.type != step.MESSAGE]
-        return '%s-k%d' % (self.parent.id, steps.index(self) + 1)
+        return '%s-k%d' % (parent.id, steps.index(self) + 1)
 
 
 class BaseBody(ItemList):
@@ -77,7 +80,7 @@ class BaseBody(ItemList):
     message_class = None
 
     def __init__(self, parent=None, items=None):
-        ItemList.__init__(self, BodyItem, {'parent': parent}, items)
+        super().__init__(BodyItem, {'parent': parent}, items)
 
     @classmethod
     def register(cls, item_class):
@@ -169,6 +172,21 @@ class BaseBody(ItemList):
         if predicate:
             items = [item for item in items if predicate(item)]
         return items
+
+    def flatten(self):
+        """Return steps so that IF and TRY structures are flattened.
+
+        Basically the IF/ELSE and TRY/EXCEPT root elements are replaced
+        with their branches. This is how they are shown in log files.
+        """
+        roots = BodyItem.IF_ELSE_ROOT, BodyItem.TRY_EXCEPT_ROOT
+        steps = []
+        for item in self:
+            if item.type in roots:
+                steps.extend(item.body)
+            else:
+                steps.append(item)
+        return steps
 
 
 class Body(BaseBody):
