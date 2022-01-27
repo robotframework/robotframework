@@ -1002,7 +1002,7 @@ these failures during execution as well. Robot Framework 5.0 introduces native
 
 Robot Framework's `TRY/EXCEPT` syntax is inspired by Python's `exception handling`__
 syntax. It has same `TRY`, `EXCEPT`, `ELSE` and `FINALLY` branches as Python and
-they also mostly work the same way. A difference is that Python uses lowe case
+they also mostly work the same way. A difference is that Python uses lower case
 `try`, `except`, etc. but with Robot Framework all this kind of syntax must use
 upper case letters. A bigger difference is that with Python exceptions are objects
 and with Robot Framework you are dealing with error messages as strings.

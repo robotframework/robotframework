@@ -1678,7 +1678,7 @@ keywords. Converters are registered for libraries by setting
 `ROBOT_LIBRARY_CONVERTERS` attribute (case-insensitive) to a dictionary mapping
 desired types to converts. When implementing a library as a module, this
 attribute must be set on the module level, and with class based libraries
-it must be a class attribute. With libraries implemented as classes it is
+it must be a class attribute. With libraries implemented as classes, it is
 also possible to use the `converters` argument with the `@library decorator`_.
 Both of these approaches are illustrated by examples in the following sections.
 
