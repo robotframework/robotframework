@@ -35,7 +35,8 @@ class TestSuite(ModelObject):
     test_class = TestCase    #: Internal usage only.
     fixture_class = Keyword  #: Internal usage only.
     repr_args = ('name',)
-    __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors', 'rpa']
+    __slots__ = ['parent', 'source', '_name', 'doc', '_setup', '_teardown',  'rpa',
+                 '_my_visitors']
 
     def __init__(self, name='', doc='', metadata=None, source=None, rpa=False,
                  parent=None):
@@ -47,8 +48,8 @@ class TestSuite(ModelObject):
         self.rpa = rpa        #: ``True`` when RPA mode is enabled.
         self.suites = None
         self.tests = None
-        self.setup = None
-        self.teardown = None
+        self._setup = None
+        self._teardown = None
         self._my_visitors = []
 
     @property
@@ -87,8 +88,8 @@ class TestSuite(ModelObject):
         """Tests as a :class:`~.TestCases` object."""
         return TestCases(self.test_class, self, tests)
 
-    @setter
-    def setup(self, setup):
+    @property
+    def setup(self):
         """Suite setup as a :class:`~.model.keyword.Keyword` object.
 
         This attribute is a ``Keyword`` object also when a suite has no setup
@@ -112,15 +113,52 @@ class TestSuite(ModelObject):
         New in Robot Framework 4.0. Earlier setup was accessed like
         ``suite.keywords.setup``.
         """
-        return create_fixture(setup, self, Keyword.SETUP)
+        if self._setup is None and self:
+            self._setup = create_fixture(None, self, Keyword.SETUP)
+        return self._setup
 
-    @setter
-    def teardown(self, teardown):
+    @setup.setter
+    def setup(self, setup):
+        self._setup = create_fixture(setup, self, Keyword.SETUP)
+
+    @property
+    def has_setup(self):
+        """Check does a suite have a setup without creating a setup object.
+
+        A difference between using ``if suite.has_setup:`` and ``if suite.setup:``
+        is that accessing the :attr:`setup` attribute creates a :class:`Keyword`
+        object representing the setup even when the suite actually does not have
+        one. This typically does not matter, but with bigger suite structures
+        containing a huge about of suites it can have some effect on memory usage.
+
+        New in Robot Framework 5.0.
+        """
+
+        return bool(self._setup)
+
+    @property
+    def teardown(self):
         """Suite teardown as a :class:`~.model.keyword.Keyword` object.
 
         See :attr:`setup` for more information.
         """
-        return create_fixture(teardown, self, Keyword.TEARDOWN)
+        if self._teardown is None and self:
+            self._teardown = create_fixture(None, self, Keyword.TEARDOWN)
+        return self._teardown
+
+    @teardown.setter
+    def teardown(self, teardown):
+        self._teardown = create_fixture(teardown, self, Keyword.TEARDOWN)
+
+    @property
+    def has_teardown(self):
+        """Check does a suite have a teardown without creating a teardown object.
+
+        See :attr:`has_setup` for more information.
+
+        New in Robot Framework 5.0.
+        """
+        return bool(self._teardown)
 
     @property
     def keywords(self):
