@@ -22,7 +22,6 @@ REPOSITORY = 'robotframework/robotframework'
 VERSION_PATH = Path('src/robot/version.py')
 VERSION_PATTERN = "VERSION = '(.*)'"
 SETUP_PATH = Path('setup.py')
-POM_PATH = Path('pom.xml')
 POM_VERSION_PATTERN = '<version>(.*)</version>'
 RELEASE_NOTES_PATH = Path('doc/releasenotes/rf-{version}.rst')
 RELEASE_NOTES_TITLE = 'Robot Framework {version}'
@@ -90,7 +89,6 @@ def set_version(ctx, version):
     version = Version(version, VERSION_PATH, VERSION_PATTERN)
     version.write()
     Version(str(version), SETUP_PATH, VERSION_PATTERN).write()
-    Version(str(version), POM_PATH, POM_VERSION_PATTERN).write()
     print(version)
 
 
