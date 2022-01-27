@@ -64,6 +64,14 @@ class TestIf(unittest.TestCase):
         assert_equal(root.body.create_branch().id, 't1-k1')
         assert_equal(root.body.create_branch().id, 't1-k2')
 
+    def test_branch_id_when_parent_has_setup(self):
+        tc = TestCase()
+        assert_equal(tc.setup.config(name='X').id, 't1-k1')
+        assert_equal(tc.body.create_keyword().id, 't1-k2')
+        assert_equal(tc.body.create_if().body.create_branch().id, 't1-k3')
+        assert_equal(tc.body.create_keyword().id, 't1-k4')
+        assert_equal(tc.body.create_if().body.create_branch().id, 't1-k5')
+
     def test_string_reprs(self):
         for if_, exp_str, exp_repr in [
             (IfBranch(),
@@ -118,6 +126,14 @@ class TestTry(unittest.TestCase):
         root = TestCase().body.create_try()
         assert_equal(root.body.create_branch().id, 't1-k1')
         assert_equal(root.body.create_branch().id, 't1-k2')
+
+    def test_branch_id_when_parent_has_setup(self):
+        tc = TestCase()
+        assert_equal(tc.setup.config(name='X').id, 't1-k1')
+        assert_equal(tc.body.create_keyword().id, 't1-k2')
+        assert_equal(tc.body.create_try().body.create_branch().id, 't1-k3')
+        assert_equal(tc.body.create_keyword().id, 't1-k4')
+        assert_equal(tc.body.create_try().body.create_branch().id, 't1-k5')
 
     def test_string_reprs(self):
         for try_, exp_str, exp_repr in [

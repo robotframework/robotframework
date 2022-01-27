@@ -73,20 +73,11 @@ class _Builder:
     def _build_keywords(self, steps, split=False):
         splitting = self._context.start_splitting_if_needed(split)
         # tuple([<listcomp>>]) is faster than tuple(<genex>) with short lists.
-        model = tuple([self._build_keyword(step) for step in self._flatten(steps)])
+        model = tuple([self._build_keyword(step) for step in steps])
         return model if not splitting else self._context.end_splitting(model)
 
     def _build_keyword(self, step):
         raise NotImplementedError
-
-    def _flatten(self, steps):
-        result = []
-        for step in steps:
-            if step.type in (BodyItem.IF_ELSE_ROOT, BodyItem.TRY_EXCEPT_ROOT):
-                result.extend(step.body)
-            else:
-                result.append(step)
-        return result
 
 
 class SuiteBuilder(_Builder):
@@ -142,7 +133,7 @@ class TestBuilder(_Builder):
         kws = []
         if test.setup:
             kws.append(test.setup)
-        kws.extend(test.body)
+        kws.extend(test.body.flatten())
         if test.teardown:
             kws.append(test.teardown)
         return kws
@@ -162,15 +153,10 @@ class KeywordBuilder(_Builder):
 
     def build_keyword(self, kw, split=False):
         self._context.check_expansion(kw)
-        if hasattr(kw, 'body'):
-            kws = list(kw.body)
-            if getattr(kw, 'has_teardown', False):
-                kws.append(kw.teardown)
-            prune = (kw.body,)
-        else:
-            kws = []
-            prune = ()
-        with self._context.prune_input(*prune):
+        kws = list(kw.body.flatten())
+        if getattr(kw, 'has_teardown', False):
+            kws.append(kw.teardown)
+        with self._context.prune_input(kw.body):
             return (KEYWORD_TYPES[kw.type],
                     self._string(kw.kwname, attr=True),
                     self._string(kw.libname, attr=True),
