@@ -147,14 +147,13 @@ __ https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-gith
 Set version
 -----------
 
-1. Set version information in `<src/robot/version.py>`_, `<setup.py>`_ and
-   `<pom.xml>`_::
+1. Set version information in `<src/robot/version.py>`_ and `<setup.py>`_::
 
       invoke set-version $VERSION
 
 2. Commit and push changes::
 
-      git commit -m "Updated version to $VERSION" src/robot/version.py setup.py pom.xml
+      git commit -m "Updated version to $VERSION" src/robot/version.py setup.py
       git push
 
 Tagging
