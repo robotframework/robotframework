@@ -14,7 +14,6 @@ ${REMOVED BY PATTERN MESSAGE}    -BYPATTERN -ALL
 ${KEPT BY PATTERN MESSAGE}    +BYPATTERN -ALL
 
 *** Test Case ***
-
 Passing
     Log    ${PASS MESSAGE}
 
@@ -23,20 +22,20 @@ Failing
     Log     ${FAIL MESSAGE}
     Fail    Message
 
-For when test fails
+FOR when test fails
     [Documentation]    FAIL Cannot pass
     My FOR
     Fail    Cannot pass
 
-For when test passes
+FOR when test passes
     My FOR
 
-While when test fails
+WHILE when test fails
     [Documentation]    FAIL Cannot pass
     My WHILE
     Fail    Cannot pass
 
-While when test passes
+WHILE when test passes
     My WHILE
 
 WUKS when test fails

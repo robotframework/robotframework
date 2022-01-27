@@ -84,17 +84,17 @@ Output should contain fail message
     Check Log Message    ${tc.kws[0].msgs[0]}    ${FAIL MESSAGE}
 
 Output should contain for messages
-    Test should contain for messages    For when test passes
-    Test should contain for messages    For when test fails
+    Test should contain for messages    FOR when test passes
+    Test should contain for messages    FOR when test fails
 
 Test should contain for messages
     [Arguments]    ${name}
     ${tc} =    Check test case    ${name}
     ${for} =    Set Variable    ${tc.kws[0].kws[0]}
-    Check log message    ${for.kws[0].kws[0].kws[0].msgs[0]}    ${REMOVED FOR MESSAGE} one
-    Check log message    ${for.kws[1].kws[0].kws[0].msgs[0]}    ${REMOVED FOR MESSAGE} two
-    Check log message    ${for.kws[2].kws[0].kws[0].msgs[0]}    ${REMOVED FOR MESSAGE} three
-    Check log message    ${for.kws[3].kws[0].kws[0].msgs[0]}    ${KEPT FOR MESSAGE} LAST
+    Check log message    ${for.body[0].body[0].body[1].body[0].body[0]}    ${REMOVED FOR MESSAGE} one
+    Check log message    ${for.body[1].body[0].body[1].body[0].body[0]}    ${REMOVED FOR MESSAGE} two
+    Check log message    ${for.body[2].body[0].body[1].body[0].body[0]}    ${REMOVED FOR MESSAGE} three
+    Check log message    ${for.body[3].body[0].body[0].body[0].body[0]}    ${KEPT FOR MESSAGE} LAST
 
 Output should contain WUKS messages
     Test should contain WUKS messages    WUKS when test passes
