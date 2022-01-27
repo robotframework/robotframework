@@ -153,9 +153,9 @@ class KeywordBuilder(_Builder):
 
     def build_keyword(self, kw, split=False):
         self._context.check_expansion(kw)
-        kws = list(kw.body.flatten())
-        if getattr(kw, 'has_teardown', False):
-            kws.append(kw.teardown)
+        items = kw.body.flatten()
+        if kw.has_teardown:
+            items.append(kw.teardown)
         with self._context.prune_input(kw.body):
             return (KEYWORD_TYPES[kw.type],
                     self._string(kw.kwname, attr=True),
@@ -166,7 +166,7 @@ class KeywordBuilder(_Builder):
                     self._string(', '.join(kw.assign)),
                     self._string(', '.join(kw.tags)),
                     self._get_status(kw),
-                    self._build_keywords(kws, split))
+                    self._build_keywords(items, split))
 
 
 class MessageBuilder(_Builder):

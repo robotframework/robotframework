@@ -92,10 +92,12 @@ class SuiteVisitor:
         suites, tests or setup and teardown at all.
         """
         if self.start_suite(suite) is not False:
-            suite.setup.visit(self)
+            if suite.has_setup:
+                suite.setup.visit(self)
             suite.suites.visit(self)
             suite.tests.visit(self)
-            suite.teardown.visit(self)
+            if suite.has_teardown:
+                suite.teardown.visit(self)
             self.end_suite(suite)
 
     def start_suite(self, suite):
@@ -116,9 +118,11 @@ class SuiteVisitor:
         :meth:`start_test` or :meth:`end_test` nor visiting the body of the test.
         """
         if self.start_test(test) is not False:
-            test.setup.visit(self)
+            if test.has_setup:
+                test.setup.visit(self)
             test.body.visit(self)
-            test.teardown.visit(self)
+            if test.has_teardown:
+                test.teardown.visit(self)
             self.end_test(test)
 
     def start_test(self, test):

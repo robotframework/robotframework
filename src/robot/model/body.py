@@ -57,12 +57,23 @@ class BodyItem(ModelObject):
         return self._get_id(self.parent)
 
     def _get_id(self, parent):
-        setup = getattr(parent, 'setup', None)
-        body = parent.body.flatten() if hasattr(parent, 'body') else ()
-        teardown = getattr(parent, 'teardown', None)
-        steps = [step for step in [setup] + list(body) + [teardown]
-                 if step and step.type != step.MESSAGE]
+        steps = []
+        if parent.has_setup:
+            steps.append(parent.setup)
+        if hasattr(parent, 'body'):
+            steps.extend(step for step in parent.body.flatten()
+                         if step.type != self.MESSAGE)
+        if parent.has_teardown:
+            steps.append(parent.teardown)
         return '%s-k%d' % (parent.id, steps.index(self) + 1)
+
+    @property
+    def has_setup(self):
+        return False
+
+    @property
+    def has_teardown(self):
+        return False
 
 
 class BaseBody(ItemList):
