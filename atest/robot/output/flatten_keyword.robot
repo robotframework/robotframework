@@ -62,7 +62,7 @@ Flattened in log after execution
 
 Flatten controls in keyword
     ${tc} =    Check Test Case    ${TEST NAME}
-    Length Should Be    ${tc.body[0].body.filter(keywords=True, ifs=True)}    0
+    Length Should Be    ${tc.body[0].body.filter(messages=False)}    0
     Length Should Be    ${tc.body[0].body.filter(messages=True)}    23
     Length Should Be    ${tc.body[0].body}    23
     @{expected} =    Create List

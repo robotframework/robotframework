@@ -1,42 +1,50 @@
 import unittest
 
-from robot.model import Body, BodyItem, If, For, Keyword, TestCase
+from robot.model import Body, BodyItem, If, For, Keyword, Message, TestCase
+from robot.result.model import Body as ResultBody
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
 
 class TestBody(unittest.TestCase):
 
     def test_no_create(self):
-        error = ("'Body' object has no attribute 'create'. "
+        error = ("'robot.model.Body' object has no attribute 'create'. "
                  "Use item specific methods like 'create_keyword' instead.")
         assert_raises_with_msg(AttributeError, error,
                                getattr, Body(), 'create')
-        assert_raises_with_msg(AttributeError, error.replace('Body', 'MyBody'),
-                               getattr, type('MyBody', (Body,), {})(), 'create')
+        assert_raises_with_msg(AttributeError, error.replace('.model.', '.result.'),
+                               getattr, ResultBody(), 'create')
 
-    def test_filter(self):
-        k1, k2, k3 = Keyword(), Keyword(), Keyword()
-        f1, i1, i2 = For(), If(), If()
-        body = Body(items=[k1, f1, i1, i2, k2, k3])
-        assert_equal(body.filter(keywords=True), [k1, k2, k3])
-        assert_equal(body.filter(keywords=False), [f1, i1, i2])
-        assert_equal(body.filter(ifs=True, fors=True), [f1, i1, i2])
-        assert_equal(body.filter(ifs=False, fors=False), [k1, k2, k3])
-        assert_equal(body.filter(), [k1, f1, i1, i2, k2, k3])
+    def test_base_body_does_not_support_filtering_by_messages(self):
+        error = "'robot.model.Body' object does not support filtering by 'messages'."
+        assert_raises_with_msg(TypeError, error,
+                               Body().filter, messages=True)
+        assert_raises_with_msg(TypeError, error,
+                               Body().filter, messages=False)
 
-    def test_filter_when_included_or_excluded_type_is_disabled(self):
-        class NoKeywords(Body):
-            keyword_class = None
-        f1, i1, i2 = For(), If(), If()
-        body = NoKeywords(items=[f1, i1, i2])
-        assert_equal(body.filter(keywords=False), [f1, i1, i2])
-        assert_equal(body.filter(ifs=True, keywords=True), [i1, i2])
+    def test_filter_when_messages_are_supported(self):
+        body = ResultBody()
+        k1 = body.create_keyword()
+        m1 = body.create_message()
+        i1 = body.create_if()
+        f1 = body.create_for()
+        i2 = body.create_if()
+        k2 = body.create_keyword()
+        m2 = body.create_message()
+        m3 = body.create_message()
+        assert_equal(body.filter(keywords=True), [k1, k2])
+        assert_equal(body.filter(keywords=False), [m1, i1, f1, i2, m2, m3])
+        assert_equal(body.filter(messages=True), [m1, m2, m3])
+        assert_equal(body.filter(messages=False), [k1, i1, f1, i2, k2])
+        assert_equal(body.filter(keywords=True, messages=True), [k1, m1, k2, m2, m3])
+        assert_equal(body.filter(keywords=False, messages=False), [i1, f1, i2])
+        assert_equal(body.filter(), [k1, m1, i1, f1, i2, k2, m2, m3])
 
-    def test_filter_with_includes_and_excludes_fails(self):
+    def test_cannot_filter_with_both_includes_and_excludes(self):
         assert_raises_with_msg(
             ValueError,
             'Items cannot be both included and excluded by type.',
-            Body().filter, keywords=True, ifs=False
+            ResultBody().filter, keywords=True, messages=False
         )
 
     def test_filter_with_predicate(self):

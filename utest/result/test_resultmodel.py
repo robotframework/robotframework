@@ -364,14 +364,14 @@ class TestIterations(unittest.TestCase):
                 assert_equal(item.parent, parent)
 
     def test_create_not_supported(self):
+        msg = "'robot.result.Iterations' object does not support '{}'."
         for parent in For(), While():
             iterations = parent.body
             for creator in (iterations.create_for,
                             iterations.create_if,
                             iterations.create_try,
                             iterations.create_return):
-                msg = f"'Iterations' object does not support '{creator.__name__}'."
-                assert_raises_with_msg(TypeError, msg, creator)
+                assert_raises_with_msg(TypeError, msg.format(creator.__name__), creator)
 
 
 class TestBranches(unittest.TestCase):
@@ -386,14 +386,14 @@ class TestBranches(unittest.TestCase):
                 assert_equal(item.parent, parent)
 
     def test_create_not_supported(self):
+        msg = "'robot.result.Branches' object does not support '{}'."
         for parent in If(), Try():
             branches = parent.body
             for creator in (branches.create_for,
                             branches.create_if,
                             branches.create_try,
                             branches.create_return):
-                msg = f"'Branches' object does not support '{creator.__name__}'."
-                assert_raises_with_msg(TypeError, msg, creator)
+                assert_raises_with_msg(TypeError, msg.format(creator.__name__), creator)
 
 
 class TestDeprecatedKeywordSpecificAttributes(unittest.TestCase):

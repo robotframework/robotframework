@@ -16,7 +16,7 @@
 import re
 
 from .itemlist import ItemList
-from .modelobject import ModelObject
+from .modelobject import ModelObject, full_name
 
 
 class BodyItem(ModelObject):
@@ -105,9 +105,8 @@ class BaseBody(ItemList):
     @property
     def create(self):
         raise AttributeError(
-            "'%s' object has no attribute 'create'. "
-            "Use item specific methods like 'create_keyword' instead."
-            % type(self).__name__
+            f"'{full_name(self)}' object has no attribute 'create'. "
+            f"Use item specific methods like 'create_keyword' instead."
         )
 
     def create_keyword(self, *args, **kwargs):
@@ -115,8 +114,7 @@ class BaseBody(ItemList):
 
     def _create(self, cls, name, args, kwargs):
         if cls is None:
-            raise TypeError("'%s' object does not support '%s'."
-                            % (type(self).__name__, name))
+            raise TypeError(f"'{full_name(self)}' object does not support '{name}'.")
         return self.append(cls(*args, **kwargs))
 
     def create_for(self, *args, **kwargs):
@@ -143,31 +141,34 @@ class BaseBody(ItemList):
     def create_message(self, *args, **kwargs):
         return self._create(self.message_class, 'create_message', args, kwargs)
 
-    # FIXME: Add `whiles` and possibly also `returns`, `breaks` and `continues´.
-    # Could also consider having something generic like `controls` or `syntax`
-    # to include/exclude all control structures. Or perhaps we don't need that
-    # support at all and including/excluding using `keywords` and `messages` is
-    # enough.
-    def filter(self, keywords=None, fors=None, ifs=None, trys=None, messages=None,
-               predicate=None):
+    def filter(self, keywords=None, messages=None, predicate=None):
         """Filter body items based on type and/or custom predicate.
 
         To include or exclude items based on types, give matching arguments
-        ``True`` or ``False`` values. For example, to include only keywords, use
-        ``body.filter(keywords=True)`` and to exclude FOR and IF constructs use
-        ``body.filter(fors=False, ifs=False)``. Including and excluding by types
-        at the same time is not supported.
+        ``True`` or ``False`` values. For example, to include only keywords,
+        use ``body.filter(keywords=True)`` and to exclude messages use
+        ``body.filter(messages=False)``. Including and excluding by types
+        at the same time is not supported and filtering my ``messages``
+        is supported only if the ``Body`` object actually supports messages.
 
         Custom ``predicate`` is a callable getting each body item as an argument
         that must return ``True/False`` depending on should the item be included
         or not.
 
         Selected items are returned as a list and the original body is not modified.
+
+        It was earlier possible to filter also based on FOR and IF types.
+        That support was removed in RF 5.0 because it was not considered useful
+        in general and because adding support for all new control structures
+        would have required extra work. To exclude all control structures, use
+        ``body.filter(keywords=True, messages=True)`` and to only include them
+        use ``body.filter(keywords=False``, messages=False)``. For more detailed
+        filtering it is possible to use ``predicate``.
         """
+        if messages is not None and not self.message_class:
+            raise TypeError(f"'{full_name(self)}' object does not support "
+                            f"filtering by 'messages'.")
         return self._filter([(self.keyword_class, keywords),
-                             (self.for_class, fors),
-                             (self.if_class, ifs),
-                             (self.try_class, trys),
                              (self.message_class, messages)], predicate)
 
     def _filter(self, types, predicate):
