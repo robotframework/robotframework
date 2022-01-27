@@ -74,7 +74,7 @@ When Time Is UTC +- Something
     Should Be True    ${time minus} < ${time} < ${time plus}
 
 DST is handled correctly when adding or substracting time
-    FOR    ${i}    IN RANGE    1    365
+    FOR    ${i}    IN    91    183    274
         WHILE    True
             ${now}=      Get Time   time_=now
             ${past}=     Get Time   time_=now - ${i}day
