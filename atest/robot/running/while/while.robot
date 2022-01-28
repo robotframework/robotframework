@@ -23,6 +23,10 @@ Execution fails on the first loop
 Execution fails after some loops
     Check While Loop    FAIL    3
 
+Loop in loop
+    Check While Loop    PASS    5
+    Check While Loop    PASS    3    path=body[0].body[0].body[2]
+
 In keyword
     Check While Loop    PASS    3    path=body[0].body[0]
 

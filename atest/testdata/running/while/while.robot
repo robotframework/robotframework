@@ -33,6 +33,18 @@ Execution fails after some loops
         IF    $variable == 4
             Fail    Oh no, got 4
         END
+        Log    ${variable}
+    END
+
+Loop in loop
+    WHILE    $variable < 6
+        Log    Outer ${variable}
+        ${i}=    Set variable    ${3}
+        WHILE    $i > 0
+            Log    Inner ${i}
+            ${i}=    Evaluate    $i - 1
+        END
+        ${variable}=    Evaluate    $variable + 1
     END
 
 In keyword
