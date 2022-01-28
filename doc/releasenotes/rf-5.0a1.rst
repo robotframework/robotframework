@@ -325,7 +325,7 @@ Examples:
 .. sourcecode:: robotframework
 
     *** Variables ***
-    ${x}        10
+    ${x}              10
 
     *** Test Cases ***
     Loop as long as condition is True
@@ -334,7 +334,7 @@ Examples:
             ${x} =    Evaluate    ${x} - 1
         END
 
-    Explicit BREAK
+    BREAK and CONTINUE
         WHILE    True
             Log    ${x}
             ${x} =    Evaluate    ${x} - 1
@@ -342,11 +342,7 @@ Examples:
                 Log    We are done!
                 BREAK
             END
-        END
-
-    CONTINUE
-        WHILE    $x > 0
-            IF    $x % 2 == 0    CONTINUE    # New inline IF.
+            IF    ${x} % 2 == 0    CONTINUE    # New inline IF.
             Log    Only executed if ${x} is odd.
         END
 
