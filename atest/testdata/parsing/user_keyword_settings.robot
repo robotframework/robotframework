@@ -202,3 +202,7 @@ Invalid failing
 Small typo should provide recommendation
     [Doc Umentation]
     No Operation
+
+Invalid empty line continuation in arguments should throw an error
+    [Arguments]
+    ...
