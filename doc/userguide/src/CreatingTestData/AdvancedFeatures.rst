@@ -769,6 +769,11 @@ to make the syntax easier to read.
 .. _if:
 .. _if/else structures:
 
+`WHILE loops`
+-------------
+
+TODO
+
 `IF/ELSE` syntax
 ----------------
 

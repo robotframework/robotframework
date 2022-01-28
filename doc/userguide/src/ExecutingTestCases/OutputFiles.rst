@@ -482,6 +482,9 @@ or warnings`__ are not removed except when using the `ALL` mode.
 `FOR`
    Remove all passed iterations from `FOR loops`_ except the last one.
 
+`WHILE`
+   Remove all passed iterations from `WHILE loops`_ except the last one.
+
 `WUKS`
    Remove all failing keywords inside BuiltIn_ keyword
    :name:`Wait Until Keyword Succeeds` except the last one.
@@ -526,8 +529,14 @@ supports the following modes:
 `FOR`
    Flatten `FOR loops`_ fully.
 
+`WHILE`
+   Flatten `WHILE loops`_ fully.
+
+`ITERATION`
+    Flatten individual `FOR` and `WHILE` loop iterations.
+
 `FORITEM`
-   Flatten individual `FOR` loop iterations.
+   Deprecated alias for `ITERATION`.
 
 `NAME:<pattern>`
    Flatten keywords matching the given pattern. Pattern matching rules are
