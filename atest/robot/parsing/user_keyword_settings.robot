@@ -106,6 +106,11 @@ Small typo should provide recommendation
     ...    Non-existing setting 'Doc Umentation'. Did you mean:
     ...    ${SPACE*4}Documentation
 
+Invalid empty line continuation in arguments should throw an error    
+    Error in File    3   parsing/user_keyword_settings.robot     206
+    ...    Creating keyword 'Invalid empty line continuation in arguments should throw an error' failed: Invalid argument specification: Invalid argument syntax ''.
+
+
 *** Keywords ***
 Verify Documentation
     [Arguments]    ${doc}    ${test}=${TEST NAME}
