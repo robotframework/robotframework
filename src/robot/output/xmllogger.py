@@ -142,6 +142,7 @@ class XmlLogger(ResultVisitor):
 
     def start_while(self, while_):
         self._writer.start('while', attrs={'condition': while_.condition})
+        self._writer.element('doc', while_.doc)
 
     def end_while(self, while_):
         self._write_status(while_)
