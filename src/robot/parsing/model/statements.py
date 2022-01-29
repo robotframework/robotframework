@@ -951,11 +951,10 @@ class ExceptHeader(Statement):
             
             if var is None:
                 self.errors += ("EXCEPT's AS expects a variable.",)
+            elif next((v for v in self.tokens[self.tokens.index(var) + 1:] if v.type not in Token.NON_DATA_TOKENS), None):
+                self.errors += (f"EXCEPT's AS can only have one variable.",)
             elif not is_scalar_assign(var.value):
                 self.errors += (f"EXCEPT's AS variable '{var.value}' is invalid.",)
-            
-            if var and next((v for v in self.tokens[self.tokens.index(var) + 1:] if v.type not in Token.NON_DATA_TOKENS), None):
-                self.errors += (f"EXCEPT's AS can only have one variable.",)
 
 
 @Statement.register

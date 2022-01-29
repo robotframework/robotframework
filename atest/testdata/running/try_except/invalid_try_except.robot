@@ -77,7 +77,8 @@ Multiple default EXCEPTs
     END
 
 AS not the second last token
-    [Documentation]    FAIL    EXCEPT's AS marker must be second to last.
+    [Documentation]    FAIL    EXCEPT's AS can only have one variable.
+    
     TRY
         Fail   Should not be executed
     EXCEPT    AS    foo    ${foo}
