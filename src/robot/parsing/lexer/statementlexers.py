@@ -226,12 +226,14 @@ class ExceptHeaderLexer(StatementLexer):
     def lex(self):
         self.statement[0].type = Token.EXCEPT
         as_seen = False
+        variable_seen = False
         for token in self.statement[1:]:
-            if token.value == 'AS':
+            if not as_seen and token.value == 'AS':
                 token.type = Token.AS
-                as_seen = True
-            elif as_seen:
+                as_seen = True                
+            elif as_seen and not variable_seen:                
                 token.type = Token.VARIABLE
+                variable_seen = True
             else:
                 token.type = Token.ARGUMENT
 
