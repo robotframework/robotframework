@@ -22,9 +22,9 @@ from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
 from robot.result.keywordremover import KeywordRemover
 from robot.result.flattenkeywordmatcher import validate_flatten_keyword
-from robot.utils import (abspath, create_destination_directory, escape,
-                         format_time, get_link_path, html_escape, is_list_like,
-                         split_args_from_name_or_path)
+from robot.utils import (abspath, create_destination_directory, escape, format_time,
+                         get_link_path, html_escape, is_list_like, plural_or_not as s,
+                         seq2str, split_args_from_name_or_path)
 
 from .gatherfailed import gather_failed_tests, gather_failed_suites
 
@@ -77,13 +77,15 @@ class _BaseSettings:
 
     def _process_cli_opts(self, opts):
         for name, (cli_name, default) in self._cli_opts.items():
-            value = opts[cli_name] if cli_name in opts else default
+            value = opts.pop(cli_name) if cli_name in opts else default
             if isinstance(default, list):
                 # Copy mutable values and support list values as scalars.
                 value = list(value) if is_list_like(value) else [value]
             self[name] = self._process_value(name, value)
         self['TestNames'] += self['ReRunFailed'] + self['TaskNames']
         self['SuiteNames'] += self['ReRunFailedSuites']
+        if opts:
+            raise DataError(f'Invalid option{s(opts)} {seq2str(opts)}.')
 
     def __setitem__(self, name, value):
         if name not in self._cli_opts:
@@ -163,12 +165,12 @@ class _BaseSettings:
 
     def _validate_log_level_and_default(self, log_level, default):
         if log_level not in loggerhelper.LEVELS:
-            raise DataError("Invalid log level '%s'" % log_level)
+            raise DataError("Invalid log level '%s'." % log_level)
         if default not in loggerhelper.LEVELS:
-            raise DataError("Invalid log level '%s'" % default)
+            raise DataError("Invalid log level '%s'." % default)
         if not loggerhelper.IsLogged(log_level)(default):
             raise DataError("Default visible log level '%s' is lower than "
-                            "log level '%s'" % (default, log_level))
+                            "log level '%s'." % (default, log_level))
 
     def _process_max_error_lines(self, value):
         if not value or value.upper() == 'NONE':

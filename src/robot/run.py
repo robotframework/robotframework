@@ -415,7 +415,12 @@ class RobotFramework(Application):
                              env_options='ROBOT_OPTIONS', logger=LOGGER)
 
     def main(self, datasources, **options):
-        settings = RobotSettings(options)
+        try:
+            settings = RobotSettings(options)
+        except:
+            LOGGER.register_console_logger(stdout=options.get('stdout'),
+                                           stderr=options.get('stderr'))
+            raise
         LOGGER.register_console_logger(**settings.console_output_config)
         LOGGER.info(f'Settings:\n{settings}')
         builder = TestSuiteBuilder(settings['SuiteNames'],

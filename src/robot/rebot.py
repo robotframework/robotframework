@@ -329,7 +329,12 @@ class Rebot(RobotFramework):
                              env_options='REBOT_OPTIONS', logger=LOGGER)
 
     def main(self, datasources, **options):
-        settings = RebotSettings(options)
+        try:
+            settings = RebotSettings(options)
+        except:
+            LOGGER.register_console_logger(stdout=options.get('stdout'),
+                                           stderr=options.get('stderr'))
+            raise
         LOGGER.register_console_logger(**settings.console_output_config)
         LOGGER.disable_message_cache()
         rc = ResultWriter(*datasources).write_results(settings)
