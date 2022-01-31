@@ -947,11 +947,13 @@ class ExceptHeader(Statement):
     def validate(self):
         as_token = self.get_token(Token.AS)
         if as_token:
-            if as_token is not self.tokens[-2]:
-                self.errors += ("EXCEPT's AS marker must be second to last.",)
-            var = self.tokens[-1].value
-            if not is_scalar_assign(var):
-                self.errors += (f"EXCEPT's AS variable '{var}' is invalid.",)
+            variables = self.get_tokens(Token.VARIABLE)
+            if not variables:
+                self.errors += ("EXCEPT's AS requires variable.",)
+            elif len(variables) > 1:
+                self.errors += ("EXCEPT's AS accepts only one variable.",)
+            elif not is_scalar_assign(variables[0].value):
+                self.errors += (f"EXCEPT's AS variable '{variables[0].value}' is invalid.",)
 
 
 @Statement.register

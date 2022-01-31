@@ -28,7 +28,10 @@ Default EXCEPT not last
 Multiple default EXCEPTs
     TRY:FAIL    EXCEPT:NOT RUN    EXCEPT:NOT RUN    ELSE:NOT RUN
 
-AS not the second last token
+AS requires variable
+    TRY:FAIL    EXCEPT:NOT RUN
+
+AS accepts only one variable
     TRY:FAIL    EXCEPT:NOT RUN
 
 Invalid AS variable
