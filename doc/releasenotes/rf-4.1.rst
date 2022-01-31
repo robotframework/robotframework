@@ -69,7 +69,7 @@ Argument conversion enhancements
 
 Automatic argument conversion has been improved in few different ways:
 
-- `Derived enumerations`__ `IntEnum` and `IntFlag` are not supported. With both
+- `Derived enumerations`__ `IntEnum` and `IntFlag` are now supported. With both
   of them the value that is used can be a member name, like with other
   enumerations, or the integer value of the member. (`#3910`_)
 
