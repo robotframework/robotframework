@@ -944,17 +944,16 @@ class ExceptHeader(Statement):
     def variable(self):
         return self.get_value(Token.VARIABLE)
 
-    def validate(self):
+    def validate(self):    
         as_token = self.get_token(Token.AS)
-        if as_token:                
-            var = self.get_token(Token.VARIABLE)
-            
-            if var is None:
-                self.errors += ("EXCEPT's AS expects a variable.",)
-            elif next((v for v in self.tokens[self.tokens.index(var) + 1:] if v.type not in Token.NON_DATA_TOKENS), None):
-                self.errors += (f"EXCEPT's AS can only have one variable.",)
-            elif not is_scalar_assign(var.value):
-                self.errors += (f"EXCEPT's AS variable '{var.value}' is invalid.",)
+        if as_token:
+            variables = self.get_tokens(Token.VARIABLE)
+            if not variables:
+                self.errors += ("EXCEPT's AS requires variable.",)
+            elif len(variables) > 1:
+                self.errors += ("EXCEPT's AS accepts only one variable.",)
+            elif not is_scalar_assign(variables[0].value):
+                self.errors += (f"EXCEPT's AS variable '{variables[0].value}' is invalid.",)
 
 
 @Statement.register

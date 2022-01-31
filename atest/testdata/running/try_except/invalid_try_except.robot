@@ -76,9 +76,16 @@ Multiple default EXCEPTs
         Fail   Should not be executed
     END
 
-AS not the second last token
-    [Documentation]    FAIL    EXCEPT's AS can only have one variable.
-    
+AS requires variable
+    [Documentation]    FAIL    EXCEPT's AS requires variable.
+    TRY
+        Fail   Should not be executed
+    EXCEPT    AS
+        Fail   Should not be executed
+    END
+
+AS accepts only one variable
+    [Documentation]    FAIL    EXCEPT's AS accepts only one variable.
     TRY
         Fail   Should not be executed
     EXCEPT    AS    foo    ${foo}

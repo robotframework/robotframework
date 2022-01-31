@@ -648,10 +648,17 @@ Example
         assert_model(node, expected)
 
 
+class RemoveNonDataTokensVisitor(ModelVisitor):
+    def visit_Statement(self, node):
+        node.tokens = node.data_tokens
+
+
 class TestTry(unittest.TestCase):
 
     def test_try_except_else_finally(self):
-        model = get_model('''\
+        for data_only in [True, False]:
+            with self.subTest(data_only=data_only):
+                model = get_model('''\
 *** Test Cases ***
 Example
     TRY
@@ -665,30 +672,40 @@ Example
     FINALLY
         Log    finally here!
     END
-''', data_only=True)
-        node = model.sections[0].body[0].body[0]
-        expected = Try(
-            header=TryHeader([Token(Token.TRY, 'TRY', 3, 4)]),
-            body=[KeywordCall([Token(Token.KEYWORD, 'Fail', 4, 8), Token(Token.ARGUMENT, 'Oh no!', 4, 16)])],
-            next=Try(
-                header=ExceptHeader([Token(Token.EXCEPT, 'EXCEPT', 5, 4), Token(Token.ARGUMENT, 'does not match', 5, 13)]),
-                body=[KeywordCall((Token(Token.KEYWORD, 'No operation', 6, 8),))],
-                next=Try(
-                    header=ExceptHeader((Token(Token.EXCEPT, 'EXCEPT', 7, 4), Token(Token.AS, 'AS', 7, 14), Token(Token.VARIABLE, '${exp}', 7, 20))),
-                    body=[KeywordCall((Token(Token.KEYWORD, 'Log', 8, 8), Token(Token.ARGUMENT, 'Catch', 8, 15)))],
+        ''', data_only=data_only)
+                node = model.sections[0].body[0].body[0]
+                expected = Try(
+                    header=TryHeader([Token(Token.TRY, 'TRY', 3, 4)]),
+                    body=[KeywordCall([Token(Token.KEYWORD, 'Fail', 4, 8), 
+                                       Token(Token.ARGUMENT, 'Oh no!', 4, 16)])],
                     next=Try(
-                        header=ElseHeader((Token(Token.ELSE, 'ELSE', 9, 4),)),
-                        body=[KeywordCall((Token(Token.KEYWORD, 'No operation', 10, 8),))],
+                        header=ExceptHeader([Token(Token.EXCEPT, 'EXCEPT', 5, 4), 
+                                             Token(Token.ARGUMENT, 'does not match', 5, 13)]),
+                        body=[KeywordCall((Token(Token.KEYWORD, 'No operation', 6, 8),))],
                         next=Try(
-                            header=FinallyHeader((Token(Token.FINALLY, 'FINALLY', 11, 4),)),
-                            body=[KeywordCall((Token(Token.KEYWORD, 'Log', 12, 8), Token(Token.ARGUMENT, 'finally here!', 12, 15)))]
+                            header=ExceptHeader((Token(Token.EXCEPT, 'EXCEPT', 7, 4), 
+                                                 Token(Token.AS, 'AS', 7, 14), 
+                                                 Token(Token.VARIABLE, '${exp}', 7, 20))),
+                            body=[KeywordCall((Token(Token.KEYWORD, 'Log', 8, 8), 
+                                               Token(Token.ARGUMENT, 'Catch', 8, 15)))],
+                            next=Try(
+                                header=ElseHeader((Token(Token.ELSE, 'ELSE', 9, 4),)),
+                                body=[KeywordCall((Token(Token.KEYWORD, 'No operation', 10, 8),))],
+                                next=Try(
+                                    header=FinallyHeader((Token(Token.FINALLY, 'FINALLY', 11, 4),)),
+                                    body=[KeywordCall((Token(Token.KEYWORD, 'Log', 12, 8), 
+                                                       Token(Token.ARGUMENT, 'finally here!', 12, 15)))]
+                                )
+                            )
                         )
-                    )
+                    ),
+                    end=End([Token(Token.END, 'END', 13, 4)])
                 )
-            ),
-            end=End([Token(Token.END, 'END', 13, 4)])
-        )
-        assert_model(node, expected)
+
+                if not data_only:
+                    RemoveNonDataTokensVisitor().visit(node)
+
+                assert_model(node, expected)
 
 
 class TestVariables(unittest.TestCase):
