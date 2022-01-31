@@ -117,7 +117,7 @@ Flatten while loops
     Run Rebot    --flatten WHile    ${OUTFILE COPY}
     ${tc} =    Check Test Case    WHILE loop
     Should Be Equal    ${tc.body[1].type}    WHILE
-    # Should Be Equal    ${tc.body[1].doc}    ${FLAT TEXT}
+    Should Be Equal    ${tc.body[1].doc}    ${FLAT TEXT}
     Length Should Be    ${tc.body[1].kws}    0
     Length Should Be    ${tc.body[1].msgs}    70
     FOR    ${index}    IN RANGE    10

@@ -196,13 +196,13 @@ class UserKeywordArgumentParser(_ArgumentSpecParser):
         return arg, default
 
     def _is_kwargs(self, arg):
-        return arg[0] == '&'
+        return arg and arg[0] == '&'
 
     def _format_kwargs(self, kwargs):
         return kwargs[2:-1]
 
     def _is_varargs(self, arg):
-        return arg[0] == '@'
+        return arg and arg[0] == '@'
 
     def _is_kw_only_separator(self, arg):
         return arg == '@{}'
