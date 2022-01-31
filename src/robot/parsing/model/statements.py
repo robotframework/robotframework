@@ -883,11 +883,6 @@ class ElseHeader(IfElseHeader):
             Token(Token.EOL, eol)
         ])
 
-    def validate(self):
-        if self.get_tokens(Token.ARGUMENT):
-            values = self.get_values(Token.ARGUMENT)
-            self.errors += (f'ELSE does not accept arguments, got {seq2str(values)}.',)
-
 
 class NoArgumentHeader(Statement):
 
@@ -910,8 +905,16 @@ class NoArgumentHeader(Statement):
 
 
 @Statement.register
-class TryHeader(NoArgumentHeader):
+class TryHeader(Statement):
     type = Token.TRY
+
+    @classmethod
+    def from_params(cls, indent=FOUR_SPACES, eol=EOL):
+        return cls([
+            Token(Token.SEPARATOR, indent),
+            Token(cls.type),
+            Token(Token.EOL, eol)
+        ])
 
 
 @Statement.register
@@ -944,27 +947,31 @@ class ExceptHeader(Statement):
     def variable(self):
         return self.get_value(Token.VARIABLE)
 
-    def validate(self):
-        as_token = self.get_token(Token.AS)
-        if as_token:                
-            var = self.get_token(Token.VARIABLE)
-            
-            if var is None:
-                self.errors += ("EXCEPT's AS expects a variable.",)
-            elif next((v for v in self.tokens[self.tokens.index(var) + 1:] if v.type not in Token.NON_DATA_TOKENS), None):
-                self.errors += (f"EXCEPT's AS can only have one variable.",)
-            elif not is_scalar_assign(var.value):
-                self.errors += (f"EXCEPT's AS variable '{var.value}' is invalid.",)
-
 
 @Statement.register
-class FinallyHeader(NoArgumentHeader):
+class FinallyHeader(Statement):
     type = Token.FINALLY
 
+    @classmethod
+    def from_params(cls, indent=FOUR_SPACES, eol=EOL):
+        return cls([
+            Token(Token.SEPARATOR, indent),
+            Token(cls.type),
+            Token(Token.EOL, eol)
+        ])
 
 @Statement.register
-class End(NoArgumentHeader):
+class End(Statement):
     type = Token.END
+
+    @classmethod
+    def from_params(cls, indent=FOUR_SPACES, eol=EOL):
+        return cls([
+            Token(Token.SEPARATOR, indent),
+            Token(cls.type),
+            Token(Token.EOL, eol)
+        ])
+
 
 
 @Statement.register

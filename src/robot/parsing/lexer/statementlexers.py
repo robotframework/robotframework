@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from robot.utils import normalize_whitespace
-from robot.variables import is_assign
+from robot.variables import is_assign, is_scalar_assign
 
 from .tokens import Token
 
@@ -202,15 +202,23 @@ class ElseIfHeaderLexer(TypeAndArguments):
     def handles(self, statement):
         return normalize_whitespace(statement[0].value) == 'ELSE IF'
 
+class NoArgumentsLexer(StatementLexer):
+    def lex(self):
+        self.statement[0].type = self.token_type
+        if len(self.statement)>1:
+            for token in self.statement[1:]:
+                token.type = Token.ERROR
+                token.error = f"{self.token_type} does not accept arguments, got '{token.value}'."
 
-class ElseHeaderLexer(TypeAndArguments):
+
+class ElseHeaderLexer(NoArgumentsLexer):
     token_type = Token.ELSE
 
     def handles(self, statement):
         return statement[0].value == 'ELSE'
 
 
-class TryHeaderLexer(TypeAndArguments):
+class TryHeaderLexer(NoArgumentsLexer):
     token_type = Token.TRY
 
     def handles(self, statement):
@@ -227,18 +235,26 @@ class ExceptHeaderLexer(StatementLexer):
         self.statement[0].type = Token.EXCEPT
         as_seen = False
         variable_seen = False
+
         for token in self.statement[1:]:
             if not as_seen and token.value == 'AS':
                 token.type = Token.AS
                 as_seen = True                
-            elif as_seen and not variable_seen:                
-                token.type = Token.VARIABLE
+            elif as_seen and not variable_seen:
+                if is_scalar_assign(token.value):
+                    token.type = Token.VARIABLE
+                else:
+                    token.type = Token.ERROR
+                    token.set_error(f"EXCEPT's AS variable '{token.value}' is invalid.")
                 variable_seen = True
+            elif variable_seen:
+                token.type = Token.ERROR
+                token.set_error("EXCEPT's AS can only have one variable.")
             else:
                 token.type = Token.ARGUMENT
 
 
-class FinallyHeaderLexer(TypeAndArguments):
+class FinallyHeaderLexer(NoArgumentsLexer):
     token_type = Token.FINALLY
 
     def handles(self, statement):
@@ -252,7 +268,7 @@ class WhileHeaderLexer(TypeAndArguments):
         return statement[0].value == 'WHILE'
 
 
-class EndLexer(TypeAndArguments):
+class EndLexer(NoArgumentsLexer):
     token_type = Token.END
 
     def handles(self, statement):

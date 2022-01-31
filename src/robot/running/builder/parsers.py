@@ -130,13 +130,31 @@ class ErrorReporter(NodeVisitor):
     def __init__(self, source):
         self.source = source
 
-    def visit_Error(self, node):
+    def _report_node(self, node):
         fatal = node.get_token(Token.FATAL_ERROR)
         if fatal:
             raise DataError(self._format_message(fatal))
         for error in node.get_tokens(Token.ERROR):
             LOGGER.error(self._format_message(error))
 
+        self.generic_visit(node)
+
     def _format_message(self, token):
         return ("Error in file '%s' on line %s: %s"
                 % (self.source, token.lineno, token.error))
+
+    def visit_TryHeader(self, node):
+        self._report_node(node)
+
+    def visit_ExceptHeader(self, node):
+        self._report_node(node)
+
+    def visit_FinallyHeader(self, node):
+        self._report_node(node)
+
+    def visit_End(self, node):
+        self._report_node(node)
+
+    def visit_Error(self, node):
+        self._report_node(node)
+
