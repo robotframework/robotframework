@@ -944,7 +944,7 @@ class ExceptHeader(Statement):
     def variable(self):
         return self.get_value(Token.VARIABLE)
 
-    def validate(self):    
+    def validate(self):
         as_token = self.get_token(Token.AS)
         if as_token:
             variables = self.get_tokens(Token.VARIABLE)
