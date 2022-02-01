@@ -50,6 +50,7 @@
 .. include:: CreatingTestData/Variables.rst
 .. include:: CreatingTestData/CreatingUserKeywords.rst
 .. include:: CreatingTestData/ResourceAndVariableFiles.rst
+.. include:: CreatingTestData/ControlStructures.rst
 .. include:: CreatingTestData/AdvancedFeatures.rst
 
 ~~~~~~~~~~~~~~~~~~~~~~~~
