@@ -62,7 +62,7 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_test(TestCase())
 
     def test_test_with_values(self):
-        test = TestCase('Name', '*Doc*', ['t1', 't2'], '1 minute', 'PASS', 'Msg',
+        test = TestCase('Name', '*Doc*', ['t1', 't2'], '1 minute', 42, 'PASS', 'Msg',
                         '20111204 19:22:22.222', '20111204 19:22:22.333')
         test.setup.config(kwname='setup')
         test.teardown.config(kwname='td')

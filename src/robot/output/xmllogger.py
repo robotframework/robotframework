@@ -180,7 +180,8 @@ class XmlLogger(ResultVisitor):
         self._writer.end('break')
 
     def start_test(self, test):
-        self._writer.start('test', {'id': test.id, 'name': test.name})
+        self._writer.start('test', {'id': test.id, 'name': test.name,
+                                    'line': str(test.lineno or '')})
 
     def end_test(self, test):
         self._writer.element('doc', test.doc)

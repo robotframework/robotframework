@@ -113,11 +113,12 @@ class SuiteRunner(SuiteVisitor):
             self._output.warn("Multiple test cases with name '%s' executed in "
                               "test suite '%s'." % (test.name, self._suite.longname))
         self._executed_tests[test.name] = True
-        result = self._suite.tests.create(name=self._resolve_setting(test.name),
-                                          doc=self._resolve_setting(test.doc),
-                                          tags=self._resolve_setting(test.tags),
-                                          starttime=get_timestamp(),
-                                          timeout=self._get_timeout(test))
+        result = self._suite.tests.create(self._resolve_setting(test.name),
+                                          self._resolve_setting(test.doc),
+                                          self._resolve_setting(test.tags),
+                                          self._get_timeout(test),
+                                          test.lineno,
+                                          starttime=get_timestamp())
         self._context.start_test(result)
         self._output.start_test(ModelCombiner(test, result))
         status = TestStatus(self._suite_status, result,

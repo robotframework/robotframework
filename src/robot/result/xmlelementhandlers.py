@@ -110,7 +110,10 @@ class TestHandler(ElementHandler):
                           'try', 'while', 'msg'))
 
     def start(self, elem, result):
-        return result.tests.create(name=elem.get('name', ''))
+        lineno = elem.get('line')
+        if lineno:
+            lineno = int(lineno)
+        return result.tests.create(name=elem.get('name', ''), lineno=lineno)
 
 
 @ElementHandler.register

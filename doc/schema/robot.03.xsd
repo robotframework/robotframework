@@ -73,6 +73,7 @@
         </xs:choice>
         <xs:attribute name="name" type="xs:string" />
         <xs:attribute name="id" type="xs:string" />
+        <xs:attribute name="line" type="xs:integer" />
     </xs:complexType>
     <!-- Keywords can be regular keywords or setup and teardown keywords.
          If the latter, they must have the `type` attribute set accordingly. -->

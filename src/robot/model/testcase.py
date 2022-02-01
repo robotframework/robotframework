@@ -32,13 +32,15 @@ class TestCase(ModelObject):
     body_class = Body
     fixture_class = Keyword
     repr_args = ('name',)
-    __slots__ = ['parent', 'name', 'doc', 'timeout', '_setup', '_teardown']
+    __slots__ = ['parent', 'name', 'doc', 'timeout', 'lineno', '_setup', '_teardown']
 
-    def __init__(self, name='', doc='', tags=None, timeout=None, parent=None):
+    def __init__(self, name='', doc='', tags=None, timeout=None, lineno=None,
+                 parent=None):
         self.name = name
         self.doc = doc
-        self.timeout = timeout
         self.tags = tags
+        self.timeout = timeout
+        self.lineno = lineno
         self.parent = parent
         self.body = None
         self._setup = None

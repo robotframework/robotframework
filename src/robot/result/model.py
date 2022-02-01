@@ -508,9 +508,10 @@ class TestCase(model.TestCase, StatusMixin):
     body_class = Body
     fixture_class = Keyword
 
-    def __init__(self, name='', doc='', tags=None, timeout=None, status='FAIL',
-                 message='', starttime=None, endtime=None, parent=None):
-        super().__init__(name, doc, tags, timeout, parent)
+    def __init__(self, name='', doc='', tags=None, timeout=None, lineno=None,
+                 status='FAIL', message='', starttime=None, endtime=None,
+                 parent=None):
+        super().__init__(name, doc, tags, timeout, lineno, parent)
         #: Status as a string ``PASS`` or ``FAIL``. See also :attr:`passed`.
         self.status = status
         #: Test message. Typically a failure message but can be set also when
