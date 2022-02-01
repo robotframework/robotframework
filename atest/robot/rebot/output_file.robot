@@ -28,4 +28,4 @@ Generate output with Rebot
 Parse output file
     ${root} =    Parse XML    ${OUTFILE}
     Remove element attributes    ${root}
-    [Return]    ${root}
+    RETURN    ${root}

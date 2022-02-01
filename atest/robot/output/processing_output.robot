@@ -49,50 +49,39 @@ My Run Robot And Rebot
     Run Rebot    ${EMPTY}    ${OUTFILE COPY}
 
 Check Normal Suite Defaults
-    [Arguments]    ${mysuite}    ${message}=    ${tests}=[]    ${setup}=${None}    ${teardown}=${None}
-    Log    ${mysuite.name}
-    Check Suite Defaults    ${mysuite}    ${message}    ${tests}    ${setup}    ${teardown}
-    Check Normal Suite Times    ${mysuite}
+    [Arguments]    ${suite}    ${message}=    ${setup}=${None}    ${teardown}=${None}
+    Log    ${suite.name}
+    Check Suite Defaults    ${suite}    ${message}    ${setup}    ${teardown}
+    Check Normal Suite Times    ${suite}
 
 Check Minimal Suite Defaults
-    [Arguments]    ${mysuite}    ${message}=
-    Check Suite Defaults    ${mysuite}    ${message}
-    Check Minimal Suite Times    ${mysuite}
+    [Arguments]    ${suite}    ${message}=
+    Check Suite Defaults    ${suite}    ${message}
+    Check Minimal Suite Times    ${suite}
 
 Check Normal Suite Times
-    [Arguments]    ${mysuite}
-    Timestamp Should Be Valid    ${mysuite.starttime}
-    Timestamp Should Be Valid    ${mysuite.endtime}
-    Elapsed Time Should Be Valid    ${mysuite.elapsedtime}
-    Should Be True    ${mysuite.elapsedtime} >= 1
+    [Arguments]    ${suite}
+    Timestamp Should Be Valid    ${suite.starttime}
+    Timestamp Should Be Valid    ${suite.endtime}
+    Elapsed Time Should Be Valid    ${suite.elapsedtime}
+    Should Be True    ${suite.elapsedtime} >= 1
 
 Check Minimal Suite Times
-    [Arguments]    ${mysuite}
-    Should Be Equal    ${mysuite.starttime}    ${NONE}
-    Should Be Equal    ${mysuite.endtime}    ${NONE}
-    Should Be Equal    ${mysuite.elapsedtime}    ${0}
+    [Arguments]    ${suite}
+    Should Be Equal    ${suite.starttime}      ${NONE}
+    Should Be Equal    ${suite.endtime}        ${NONE}
+    Should Be Equal    ${suite.elapsedtime}    ${0}
 
 Check Suite Defaults
-    [Arguments]    ${mysuite}    ${message}=    ${tests}=[]    ${setup}=${None}    ${teardown}=${None}
-    Should Be Equal    ${mysuite.message}    ${message}
-    Check Setup    ${mysuite}    ${setup}
-    Check Teardown    ${mysuite}    ${teardown}
-
-Check Setup
-    [Arguments]    ${suite}    ${expected}
-    Run Keyword If    "${expected}" != "None"   Should Be Equal   ${suite.setup.name}    ${expected}
-    Run Keyword If    "${expected}" == "None"   Setup Should Not Be Defined    ${suite}
-
-Check Teardown
-    [Arguments]    ${suite}    ${expected}
-    Run Keyword If    "${expected}" != "None"   Should Be Equal   ${suite.teardown.name}    ${expected}
-    Run Keyword If    "${expected}" == "None"   Teardown Should Not Be Defined    ${suite}
+    [Arguments]    ${suite}    ${message}=    ${setup}=${None}    ${teardown}=${None}
+    Should Be Equal    ${suite.message}          ${message}
+    Should Be Equal    ${suite.setup.name}       ${setup}
+    Should Be Equal    ${suite.teardown.name}    ${teardown}
 
 Check Suite Got From Misc/suites/ Directory
     Check Normal Suite Defaults    ${SUITE}    teardown=BuiltIn.Log
     Should Be Equal    ${SUITE.status}    FAIL
-    Should Contain Suites    ${SUITE}    Fourth    Subsuites    Subsuites2    Tsuite1    Tsuite2
-    ...    Tsuite3
+    Should Contain Suites    ${SUITE}    Fourth    Subsuites    Subsuites2    Tsuite1    Tsuite2    Tsuite3
     Should Be Empty    ${SUITE.tests}
     Should Contain Suites    ${SUITE.suites[1]}    Sub1    Sub2
     FOR    ${s}    IN
@@ -115,7 +104,7 @@ Check Suite Got From Misc/suites/ Directory
     ...    Suite3 First
     ...    Suite4 First
     ...    Test From Sub Suite 4
-    Check Normal Suite Defaults    ${SUITE.suites[0]}    ${EMPTY}    []    setup=BuiltIn.Log    teardown=BuiltIn.Log
+    Check Normal Suite Defaults    ${SUITE.suites[0]}    setup=BuiltIn.Log    teardown=BuiltIn.Log
     Check Normal Suite Defaults    ${SUITE.suites[1]}
     Check Normal Suite Defaults    ${SUITE.suites[1].suites[0]}    setup=Setup    teardown=BuiltIn.No Operation
     Check Normal Suite Defaults    ${SUITE.suites[1].suites[1]}
