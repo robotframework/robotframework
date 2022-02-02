@@ -73,7 +73,8 @@ class JsBuildingContext:
 
     def check_expansion(self, kw):
         if self._expand_matcher is not None:
-            self._expand_matcher.match(kw)
+            if kw.passed:
+                self._expand_matcher.match(kw)
 
     @property
     def expand_keywords(self):
