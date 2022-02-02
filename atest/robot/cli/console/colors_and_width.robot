@@ -41,7 +41,7 @@ Console Width
 
 Invalid Width
     Run Tests Without Processing Output    -W InVaLid    misc/pass_and_fail.robot
-    Stderr Should Be Equal To    [ ERROR ] Option '--consolewidth' expected integer value but got 'InVaLid'.${USAGE TIP}\n
+    Stderr Should Be Equal To    [ ERROR ] Invalid value for option '--consolewidth': Expected integer, got 'InVaLid'.${USAGE TIP}\n
 
 *** Keywords ***
 Run Tests With Colors

@@ -15,8 +15,8 @@ Three custom colors
     --reportback green:red:yellow  green  red  yellow
 
 Invalid Colors
-    Run Should Fail  --reportback invalid ${SUITE_SOURCE}
-    ...  Invalid report background colors 'invalid'.
+    Run Should Fail    --reportback invalid ${SUITE_SOURCE}
+    ...    Invalid value for option '--reportbackground': Expected format 'pass:fail:skip' or 'pass:fail', got 'invalid'.
 
 *** Keywords ***
 Report should have correct background

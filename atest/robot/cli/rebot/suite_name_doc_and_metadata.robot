@@ -41,7 +41,7 @@ Documentation and metadata from external file
 
 Invalid external file
     Run Rebot Without Processing Output    --doc .    ${INPUT FILE}
-    Stderr Should Match    [[] ERROR []] Reading documentation from an external file failed: *${USAGE TIP}\n
+    Stderr Should Match    [[] ERROR []] Invalid value for option '--doc': Reading documentation from '.' failed: *${USAGE TIP}\n
 
 *** Keywords ***
 Check All Names

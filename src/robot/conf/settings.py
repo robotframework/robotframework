@@ -89,7 +89,7 @@ class _BaseSettings:
 
     def __setitem__(self, name, value):
         if name not in self._cli_opts:
-            raise KeyError("Non-existing option '%s'." % name)
+            raise KeyError(f"Non-existing option '{name}'.")
         self._opts[name] = value
 
     def _process_value(self, name, value):
@@ -143,8 +143,8 @@ class _BaseSettings:
                 with open(value) as f:
                     value = f.read()
             except (OSError, IOError) as err:
-                raise DataError('Reading documentation from an external file failed: %s'
-                                % err)
+                self._raise_invalid('Doc', f"Reading documentation from '{value}' "
+                                           f"failed: {err}")
         return self._escape_doc(value).strip()
 
     def _escape_doc(self, value):
@@ -157,53 +157,47 @@ class _BaseSettings:
 
     def _split_log_level(self, level):
         if ':' in level:
-            level, visible_level = level.split(':', 1)
+            log_level, visible_level = level.split(':', 1)
         else:
-            visible_level = level
-        self._validate_log_level_and_default(level, visible_level)
-        return level, visible_level
-
-    def _validate_log_level_and_default(self, log_level, default):
-        if log_level not in loggerhelper.LEVELS:
-            raise DataError("Invalid log level '%s'." % log_level)
-        if default not in loggerhelper.LEVELS:
-            raise DataError("Invalid log level '%s'." % default)
-        if not loggerhelper.IsLogged(log_level)(default):
-            raise DataError("Default visible log level '%s' is lower than "
-                            "log level '%s'." % (default, log_level))
+            log_level = visible_level = level
+        for level in log_level, visible_level:
+            if level not in loggerhelper.LEVELS:
+                self._raise_invalid('LogLevel', f"Invalid level '{level}'.")
+        if not loggerhelper.IsLogged(log_level)(visible_level):
+            self._raise_invalid('LogLevel', f"Level in log '{visible_level}' is lower "
+                                            f"than execution level '{log_level}'.")
+        return log_level, visible_level
 
     def _process_max_error_lines(self, value):
         if not value or value.upper() == 'NONE':
             return None
-        value = self._convert_to_integer('maxerrorlines', value)
+        value = self._convert_to_integer('MaxErrorLines', value)
         if value < 10:
-            raise DataError("Option '--maxerrorlines' expected an integer "
-                            "value greater that 10 but got '%s'." % value)
+            self._raise_invalid('MaxErrorLines',
+                                f"Expected integer greater than 10, got {value}.")
         return value
 
     def _process_randomize_value(self, original):
-        value = original.lower()
+        value = original.upper()
         if ':' in value:
             value, seed = value.split(':', 1)
         else:
             seed = random.randint(0, sys.maxsize)
-        if value in ('test', 'suite'):
-            value += 's'
-        if value not in ('tests', 'suites', 'none', 'all'):
-            self._raise_invalid_option_value('--randomize', original)
+        if value in ('TEST', 'SUITE'):
+            value += 'S'
+        valid = ('TESTS', 'SUITES', 'ALL', 'NONE')
+        if value not in valid:
+            valid = seq2str(valid, lastsep=' or ')
+            self._raise_invalid('Randomize', f"Expected {valid}, got '{value}'.")
         try:
             seed = int(seed)
         except ValueError:
-            self._raise_invalid_option_value('--randomize', original)
+            self._raise_invalid('Randomize', f"Seed should be integer, got '{seed}'.")
         return value, seed
-
-    def _raise_invalid_option_value(self, option_name, given_value):
-        raise DataError("Option '%s' does not support value '%s'."
-                        % (option_name, given_value))
 
     def __getitem__(self, name):
         if name not in self._opts:
-            raise KeyError("Non-existing option '%s'." % name)
+            raise KeyError(f"Non-existing option '{name}'.")
         if name in self._output_opts:
             return self._get_output_file(name)
         return self._opts[name]
@@ -218,30 +212,30 @@ class _BaseSettings:
             return None
         if option == 'Log' and self._output_disabled():
             self['Log'] = None
-            LOGGER.error('Log file is not created if output.xml is disabled.')
+            LOGGER.error('Log file cannot be created if output.xml is disabled.')
             return None
         name = self._process_output_name(option, name)
         path = abspath(os.path.join(self['OutputDir'], name))
-        create_destination_directory(path, '%s file' % option.lower())
+        create_destination_directory(path, f'{option.lower()} file')
         return path
 
     def _process_output_name(self, option, name):
         base, ext = os.path.splitext(name)
         if self['TimestampOutputs']:
-            base = '%s-%s' % (base, self.start_timestamp)
+            base = f'{base}-{self.start_timestamp}'
         ext = self._get_output_extension(ext, option)
         return base + ext
 
-    def _get_output_extension(self, ext, type_):
-        if ext != '':
-            return ext
-        if type_ in ['Output', 'XUnit']:
+    def _get_output_extension(self, extension, file_type):
+        if extension:
+            return extension
+        if file_type in ['Output', 'XUnit']:
             return '.xml'
-        if type_ in ['Log', 'Report']:
+        if file_type in ['Log', 'Report']:
             return '.html'
-        if type_ == 'DebugFile':
+        if file_type == 'DebugFile':
             return '.txt'
-        raise FrameworkError("Invalid output file type: %s" % type_)
+        raise FrameworkError(f"Invalid output file type '{file_type}'.")
 
     def _process_metadata(self, value):
         name, value = self._split_from_colon(value)
@@ -257,7 +251,8 @@ class _BaseSettings:
 
     def _process_report_background(self, colors):
         if colors.count(':') not in [1, 2]:
-            raise DataError("Invalid report background colors '%s'." % colors)
+            self._raise_invalid('ReportBackground', f"Expected format 'pass:fail:skip' "
+                                                    f"or 'pass:fail', got '{colors}'.")
         colors = colors.split(':')
         if len(colors) == 2:
             return colors[0], colors[1], '#fed84f'
@@ -285,8 +280,8 @@ class _BaseSettings:
         tokens = value.split(':')
         if len(tokens) >= 3:
             return tokens[0], ':'.join(tokens[1:-1]), tokens[-1]
-        raise DataError("Invalid format for option '--tagstatlink'. "
-                        "Expected 'tag:link:title' but got '%s'." % value)
+        self._raise_invalid('TagStatLink',
+                            f"Expected format 'tag:link:title', got '{value}'.")
 
     def _convert_to_positive_integer_or_default(self, name, value):
         value = self._convert_to_integer(name, value)
@@ -296,8 +291,7 @@ class _BaseSettings:
         try:
             return int(value)
         except ValueError:
-            raise DataError("Option '--%s' expected integer value but got '%s'."
-                            % (name.lower(), value))
+            self._raise_invalid(name, f"Expected integer, got '{value}'.")
 
     def _get_default_value(self, name):
         return self._cli_opts[name][1]
@@ -307,27 +301,28 @@ class _BaseSettings:
             try:
                 KeywordRemover(value)
             except DataError as err:
-                raise DataError("Invalid value for option '--removekeywords'. %s" % err)
+                self._raise_invalid('RemoveKeywords', err)
 
     def _validate_flatten_keywords(self, values):
         try:
             validate_flatten_keyword(values)
         except DataError as err:
-            raise DataError("Invalid value for option '--flattenkeywords'. %s" % err)
+            self._raise_invalid('FlattenKeywords', err)
 
     def _validate_expandkeywords(self, values):
         for opt in values:
             if not opt.lower().startswith(('name:', 'tag:')):
-                raise DataError("Invalid value for option '--expandkeywords'. "
-                                "Expected 'TAG:<pattern>', or "
-                                "'NAME:<pattern>' but got '%s'." % opt)
+                self._raise_invalid('ExpandKeywords', f"Expected 'TAG:<pattern>' or "
+                                                      f"'NAME:<pattern>', got '{opt}'.")
+
+    def _raise_invalid(self, option, error):
+        raise DataError(f"Invalid value for option '--{option.lower()}': {error}")
 
     def __contains__(self, setting):
         return setting in self._cli_opts
 
     def __str__(self):
-        return '\n'.join('%s: %s' % (name, self._opts[name])
-                         for name in sorted(self._opts))
+        return '\n'.join(f'{name}: {self._opts[name]}' for name in sorted(self._opts))
 
     @property
     def output_directory(self):
@@ -474,11 +469,11 @@ class RobotSettings(_BaseSettings):
 
     @property
     def randomize_suites(self):
-        return self['Randomize'][0] in ('suites', 'all')
+        return self['Randomize'][0] in ('SUITES', 'ALL')
 
     @property
     def randomize_tests(self):
-        return self['Randomize'][0] in ('tests', 'all')
+        return self['Randomize'][0] in ('TESTS', 'ALL')
 
     @property
     def dry_run(self):

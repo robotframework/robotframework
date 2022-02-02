@@ -29,12 +29,20 @@ Invalid Options
 
 Invalid --SuiteStatLevel
     --suitestatlevel not_int tests.robot
-    ...  Option '--suitestatlevel' expected integer value but got 'not_int'.
+    ...    Invalid value for option '--suitestatlevel': Expected integer, got 'not_int'.
 
 Invalid --TagStatLink
     --tagstatlink a:b:c --TagStatLi less_than_3x_: tests.robot
-    ...    Invalid format for option '--tagstatlink'. Expected 'tag:link:title' but got 'less_than_3x_:'.
+    ...    Invalid value for option '--tagstatlink': Expected format 'tag:link:title', got 'less_than_3x_:'.
 
 Invalid --RemoveKeywords
     --removekeywords wuks --removek name:xxx --RemoveKeywords Invalid tests.robot
-    ...    Invalid value for option '--removekeywords'. Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'TAG:<pattern>', 'FOR', or 'WUKS' but got 'Invalid'.
+    ...    Invalid value for option '--removekeywords'. Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'TAG:<pattern>', 'FOR' or 'WUKS', got 'Invalid'.
+
+Invalid --loglevel
+    --loglevel bad tests.robot
+    ...    Invalid value for option '--loglevel': Invalid level 'BAD'.
+    --loglevel INFO:INV tests.robot
+    ...    Invalid value for option '--loglevel': Invalid level 'INV'.
+    -L INFO:DEBUG tests.robot
+    ...    Invalid value for option '--loglevel': Level in log 'DEBUG' is lower than execution level 'INFO'.

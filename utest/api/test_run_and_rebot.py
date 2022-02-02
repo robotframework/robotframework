@@ -161,7 +161,8 @@ class TestRun(RunningTestCase):
     def test_invalid_option_value(self):
         stderr = StringIO()
         assert_equal(run(self.data, loglevel='INV', stderr=stderr), 252)
-        self._assert_output(stderr, [("[ ERROR ] Invalid log level 'INV'.", 1)])
+        self._assert_output(stderr, [("[ ERROR ] Invalid value for option '--loglevel': "
+                                      "Invalid level 'INV'.", 1)])
         self._assert_outputs()
 
     def test_invalid_option(self):
@@ -232,14 +233,15 @@ class TestRebot(RunningTestCase):
 
     def test_invalid_option_value(self):
         stderr = StringIO()
-        assert_equal(rebot(self.data, loglevel='INV', stderr=stderr), 252)
-        self._assert_output(stderr, [("[ ERROR ] Invalid log level 'INV'.", 1)])
+        assert_equal(rebot(self.data, loglevel='INFO:INV', stderr=stderr), 252)
+        self._assert_output(stderr, [("[ ERROR ] Invalid value for option '--loglevel': "
+                                      "Invalid level 'INV'.", 1)])
         self._assert_outputs()
 
     def test_invalid_option(self):
         stderr = StringIO()
-        assert_equal(rebot(self.data, invalid=True, stderr=stderr), 252)
-        self._assert_output(stderr, [("[ ERROR ] Invalid option 'invalid'.", 1)])
+        assert_equal(rebot(self.data, inv=True, stderr=stderr, bad=-1), 252)
+        self._assert_output(stderr, [("[ ERROR ] Invalid options 'inv' and 'bad'.", 1)])
         self._assert_outputs()
 
     def test_rebot_cli_system_exits_by_default(self):

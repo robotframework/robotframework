@@ -42,7 +42,7 @@ Documentation and metadata from external file
 
 Invalid external file
     Run Tests Without Processing Output    --doc .    ${TEST FILE}
-    Stderr Should Match    [[] ERROR []] Reading documentation from an external file failed: *${USAGE TIP}\n
+    Stderr Should Match    [[] ERROR []] Invalid value for option '--doc': Reading documentation from '.' failed: *${USAGE TIP}\n
 
 *** Keywords ***
 Check All Names

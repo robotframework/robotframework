@@ -27,8 +27,8 @@ def validate_flatten_keyword(options):
         if not (low in ('for', 'while', 'iteration') or
                 low.startswith('name:') or
                 low.startswith('tag:')):
-            raise DataError("Expected 'FOR', 'WHILE', 'ITERATION', 'TAG:<pattern>'"
-                            ", or 'NAME:<pattern>' but got '%s'." % opt)
+            raise DataError(f"Expected 'FOR', 'WHILE', 'ITERATION', 'TAG:<pattern>' or "
+                            f"'NAME:<pattern>', got '{opt}'.")
 
 
 class FlattenByTypeMatcher:

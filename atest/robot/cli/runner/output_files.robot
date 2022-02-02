@@ -18,7 +18,7 @@ Output And Log
 Disabling output XML only disables log with a warning
     Run Tests Without Processing Output    --outputdir ${CLI OUTDIR} -o nOnE -r report.html -l mylog.html    ${TESTFILE}
     Output Directory Should Contain    report.html
-    Stderr Should Match Regexp    \\[ ERROR \\] Log file is not created if output.xml is disabled.
+    Stderr Should Match Regexp    \\[ ERROR \\] Log file cannot be created if output.xml is disabled.
 
 All output files disabled
     Run Tests Without Processing Output    --outputdir ${CLI OUTDIR} -o nOnE -r NONE -l none    ${TESTFILE}
