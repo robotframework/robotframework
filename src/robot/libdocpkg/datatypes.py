@@ -26,38 +26,32 @@ EnumType = type(Enum)
 class DataTypeCatalog:
 
     def __init__(self, converters=None):
-        self._converters = converters
-        self._customs = set()
-        self._enums = set()
-        self._typed_dicts = set()
+        self.converters = converters
+        self.types = set()
 
     def __iter__(self):
-        return iter(sorted(self._customs | self._enums | self._typed_dicts))
+        return iter(sorted(self.types))
 
     def __bool__(self):
-        return next(iter(self), None) is not None
+        return bool(self.types)
 
     @property
     def customs(self):
-        return sorted(self._customs)
+        return sorted(t for t in self.types if t.type == 'Custom')
 
     @property
     def enums(self):
-        return sorted(self._enums)
+        return sorted(t for t in self.types if t.type == 'Enum')
 
     @property
     def typed_dicts(self):
-        return sorted(self._typed_dicts)
+        return sorted(t for t in self.types if t.type == 'TypedDict')
 
     def update(self, types):
-        storages = {CustomDoc: self._customs,
-                    EnumDoc: self._enums,
-                    TypedDictDoc: self._typed_dicts}
         for typ in types:
             type_doc = self._get_type_doc_object(typ)
-            for type_cls in storages:
-                if isinstance(type_doc, type_cls):
-                    storages[type_cls].add(type_doc)
+            if type_doc:
+                self.types.add(type_doc)
 
     def _get_type_doc_object(self, typ):
         if isinstance(typ, DataType):
@@ -66,7 +60,7 @@ class DataTypeCatalog:
             return EnumDoc.from_type(typ)
         if isinstance(typ, typeddict_types):
             return TypedDictDoc.from_type(typ)
-        info = TypeConverter.type_info_for(typ, self._converters)
+        info = TypeConverter.type_info_for(typ, self.converters)
         if info:
             return CustomDoc(info.name, info.doc)
         if isinstance(typ, dict) and 'type' in typ:
