@@ -122,16 +122,6 @@ class LibraryDoc:
         data = self.to_dictionary()
         return json.dumps(data, indent=indent)
 
-    def _unicode_to_utf8(self, data):
-        if isinstance(data, dict):
-            return {self._unicode_to_utf8(key): self._unicode_to_utf8(value)
-                    for key, value in data.items()}
-        if isinstance(data, (list, tuple)):
-            return [self._unicode_to_utf8(item) for item in data]
-        if isinstance(data, str):
-            return data.encode('UTF-8')
-        return data
-
 
 class KeywordDoc(Sortable):
 

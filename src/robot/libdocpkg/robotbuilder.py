@@ -21,7 +21,7 @@ from robot.errors import DataError
 from robot.running import (TestLibrary, UserLibrary, UserErrorHandler,
                            ResourceFileBuilder)
 from robot.utils import split_tags_from_doc, unescape, is_string
-from robot.variables import VariableIterator, search_variable
+from robot.variables import search_variable
 
 from .model import LibraryDoc, KeywordDoc
 
