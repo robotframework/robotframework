@@ -23,7 +23,7 @@ from .model import LibraryDoc, KeywordDoc
 from .datatypes import EnumDoc, TypedDictDoc, CustomDoc
 
 
-class SpecDocBuilder:
+class XmlDocBuilder:
 
     def build(self, path):
         spec = self._parse_spec(path)

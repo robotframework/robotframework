@@ -18,13 +18,13 @@ import os
 from robot.errors import DataError
 from robot.utils import get_error_message
 
-from .robotbuilder import LibraryDocBuilder, ResourceDocBuilder
-from .specbuilder import SpecDocBuilder
 from .jsonbuilder import JsonDocBuilder
+from .robotbuilder import LibraryDocBuilder, ResourceDocBuilder
+from .xmlbuilder import XmlDocBuilder
 
 
 RESOURCE_EXTENSIONS = ('resource', 'robot', 'txt', 'tsv', 'rst', 'rest')
-SPEC_EXTENSIONS = ('xml', 'libspec')
+XML_EXTENSIONS = ('xml', 'libspec')
 
 
 def LibraryDocumentation(library_or_resource, name=None, version=None,
@@ -74,8 +74,8 @@ def DocumentationBuilder(library_or_resource):
         extension = _get_extension(library_or_resource)
         if extension in RESOURCE_EXTENSIONS:
             return ResourceDocBuilder()
-        if extension in SPEC_EXTENSIONS:
-            return SpecDocBuilder()
+        if extension in XML_EXTENSIONS:
+            return XmlDocBuilder()
         if extension == 'json':
             return JsonDocBuilder()
     return LibraryDocBuilder()
