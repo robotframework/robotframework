@@ -19,7 +19,7 @@ import os.path
 from robot.running import ArgInfo, ArgumentSpec
 from robot.errors import DataError
 
-from .datatypes import CustomDoc, EnumDoc, TypedDictDoc
+from .datatypes import CustomDoc, EnumDoc, EnumMember, TypedDictDoc, TypedDictItem
 from .model import LibraryDoc, KeywordDoc
 
 
@@ -94,18 +94,15 @@ class JsonDocBuilder:
     def _create_enum_doc(self, data):
         return EnumDoc(name=data['name'],
                        doc=data['doc'],
-                       members=[{'name': member['name'],
-                                 'value': member['value']}
+                       members=[EnumMember(member['name'], member['value'])
                                 for member in data['members']])
 
     def _create_typed_dict_doc(self, data):
         return TypedDictDoc(name=data['name'],
                             doc=data['doc'],
-                            items=[{'key': item['key'],
-                                    'type': item['type'],
-                                    'required': item.get('required')}
+                            items=[TypedDictItem(item['key'], item['type'],
+                                                 item.get('required'))
                                    for item in data['items']])
 
     def _create_custom_doc(self, data):
-        return CustomDoc(name=data['name'],
-                         doc=data['doc'])
+        return CustomDoc(name=data['name'], doc=data['doc'])

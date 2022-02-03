@@ -121,7 +121,8 @@ class LibdocXmlWriter:
                 writer.element('doc', enum.doc)
                 writer.start('members')
                 for member in enum.members:
-                    writer.element('member', attrs=member)
+                    writer.element('member', attrs={'name': member.name,
+                                                    'value': member.value})
                 writer.end('members')
                 writer.end('enum')
             writer.end('enums')
@@ -132,14 +133,10 @@ class LibdocXmlWriter:
                 writer.element('doc', typ_dict.doc)
                 writer.start('items')
                 for item in typ_dict.items:
-                    item = item.copy()
-                    if item['required'] is None:
-                        item.pop('required')
-                    elif item['required']:
-                        item['required'] = 'true'
-                    else:
-                        item['required'] = 'false'
-                    writer.element('item', attrs=item)
+                    attrs = {'key': item.key, 'type': item.type}
+                    if item.required is not None:
+                        attrs['required'] = 'true' if item.required else 'false'
+                    writer.element('item', attrs=attrs)
                 writer.end('items')
                 writer.end('typeddict')
             writer.end('typeddicts')

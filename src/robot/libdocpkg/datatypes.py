@@ -104,7 +104,7 @@ class TypedDictDoc(DataType):
         for key, value in typed_dict.__annotations__.items():
             typ = value.__name__ if isclass(value) else str(value)
             required = key in required_keys if required_keys or optional_keys else None
-            items.append({'key': key, 'type': typ, 'required': required})
+            items.append(TypedDictItem(key, typ, required))
         return cls(name=typed_dict.__name__,
                    doc=getdoc(typed_dict) or '',
                    items=items)
@@ -114,8 +114,23 @@ class TypedDictDoc(DataType):
             'type': self.type,
             'name': self.name,
             'doc': self.doc,
-            'items': self.items
+            'items': [i.to_dictionary() for i in self.items]
         }
+
+
+class TypedDictItem:
+
+    def __init__(self, key, type, required=None):
+        self.key = key
+        self.type = type
+        self.required = required
+
+    def to_dictionary(self):
+        data = {'key': self.key,
+                'type': self.type}
+        if self.required is not None:
+            data['required'] = self.required
+        return data
 
 
 class EnumDoc(DataType):
@@ -129,7 +144,7 @@ class EnumDoc(DataType):
     def from_type(cls, enum_type):
         return cls(name=enum_type.__name__,
                    doc=getdoc(enum_type) or '',
-                   members=[{'name': name, 'value': str(member.value)}
+                   members=[EnumMember(name, str(member.value))
                             for name, member in enum_type.__members__.items()])
 
     def to_dictionary(self):
@@ -137,7 +152,20 @@ class EnumDoc(DataType):
             'type': self.type,
             'name': self.name,
             'doc': self.doc,
-            'members': self.members
+            'members': [m.to_dictionary() for m in self.members]
+        }
+
+
+class EnumMember:
+
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+    def to_dictionary(self):
+        return {
+            'name': self.name,
+            'value': self.value
         }
 
 

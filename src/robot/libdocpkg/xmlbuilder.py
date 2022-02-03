@@ -20,7 +20,7 @@ from robot.running import ArgInfo, ArgumentSpec
 from robot.utils import ET, ETSource
 
 from .model import LibraryDoc, KeywordDoc
-from .datatypes import EnumDoc, TypedDictDoc, CustomDoc
+from .datatypes import CustomDoc, EnumDoc, EnumMember, TypedDictDoc, TypedDictItem
 
 
 class XmlDocBuilder:
@@ -102,26 +102,26 @@ class XmlDocBuilder:
                   for dt in spec.findall('datatypes/customs/custom')]
         return enums + typed_dicts + custom
 
-    def _create_enum_doc(self, dt):
-        return EnumDoc(name=dt.get('name'),
-                       doc=dt.find('doc').text or '',
-                       members=[{'name': member.get('name'),
-                                 'value': member.get('value')}
-                                for member in dt.findall('members/member')])
+    def _create_enum_doc(self, elem):
+        return EnumDoc(name=elem.get('name'),
+                       doc=elem.find('doc').text or '',
+                       members=[EnumMember(name=member.get('name'),
+                                           value=member.get('value'))
+                                for member in elem.findall('members/member')])
 
-    def _create_typed_dict_doc(self, dt):
+    def _create_typed_dict_doc(self, elem):
         items = []
-        for item in dt.findall('items/item'):
+        for item in elem.findall('items/item'):
             required = item.get('required', None)
             if required is not None:
-                required = True if required == 'true' else False
-            items.append({'key': item.get('key'),
-                          'type': item.get('type'),
-                          'required': required})
-        return TypedDictDoc(name=dt.get('name'),
-                            doc=dt.find('doc').text or '',
+                required = required == 'true'
+            items.append(TypedDictItem(key=item.get('key'),
+                                       type=item.get('type'),
+                                       required=required))
+        return TypedDictDoc(name=elem.get('name'),
+                            doc=elem.find('doc').text or '',
                             items=items)
 
-    def _create_custom_doc(self, dt):
-        return CustomDoc(name=dt.get('name'),
-                         doc=dt.find('doc').text or '')
+    def _create_custom_doc(self, elem):
+        return CustomDoc(name=elem.get('name'),
+                         doc=elem.find('doc').text or '')
