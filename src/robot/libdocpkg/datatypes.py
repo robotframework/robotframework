@@ -47,15 +47,12 @@ class DataTypeCatalog:
     def typed_dicts(self):
         return sorted(t for t in self.types if t.type == 'TypedDict')
 
-    def update(self, types):
-        for typ in types:
-            type_doc = self._get_type_doc_object(typ)
-            if type_doc:
-                self.types.add(type_doc)
+    def add(self, type):
+        type_doc = self._get_type_doc_object(type)
+        if type_doc:
+            self.types.add(type_doc)
 
     def _get_type_doc_object(self, typ):
-        if isinstance(typ, DataType):
-            return typ
         if isinstance(typ, EnumType):
             return EnumDoc.from_type(typ)
         if isinstance(typ, typeddict_types):
@@ -63,13 +60,6 @@ class DataTypeCatalog:
         info = TypeConverter.type_info_for(typ, self.converters)
         if info:
             return CustomDoc(info.name, info.doc)
-        if isinstance(typ, dict) and 'type' in typ:
-            cls = {EnumDoc.type: EnumDoc,
-                   TypedDictDoc.type: TypedDictDoc,
-                   CustomDoc.type: CustomDoc}.get(typ['type'])
-            if cls:
-                typ.pop('type')
-                return cls(**typ)
         return None
 
     def to_dictionary(self):

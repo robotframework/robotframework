@@ -19,6 +19,7 @@ import os.path
 from robot.running import ArgInfo, ArgumentSpec
 from robot.errors import DataError
 
+from .datatypes import CustomDoc, EnumDoc, TypedDictDoc
 from .model import LibraryDoc, KeywordDoc
 
 
@@ -37,11 +38,9 @@ class JsonDocBuilder:
                             doc_format=spec['docFormat'],
                             source=spec['source'],
                             lineno=int(spec.get('lineno', -1)))
-        libdoc.data_types.update(spec['dataTypes'].get('customs', []))
-        libdoc.data_types.update(spec['dataTypes'].get('enums', []))
-        libdoc.data_types.update(spec['dataTypes'].get('typedDicts', []))
         libdoc.inits = [self._create_keyword(kw) for kw in spec['inits']]
         libdoc.keywords = [self._create_keyword(kw) for kw in spec['keywords']]
+        libdoc.data_types.types = set(self._create_data_types(spec['dataTypes']))
         return libdoc
 
     def _parse_spec_json(self, path):
@@ -82,3 +81,31 @@ class JsonDocBuilder:
                 spec.types = {}
             spec.types[name] = tuple(arg_types)
         return spec
+
+    def _create_data_types(self, data_types):
+        enums = [self._create_enum_doc(dt)
+                 for dt in data_types.get('enums', [])]
+        typed_dicts = [self._create_typed_dict_doc(dt)
+                       for dt in data_types.get('typedDicts', [])]
+        customs = [self._create_custom_doc(dt)
+                   for dt in data_types.get('customs', [])]
+        return enums + typed_dicts + customs
+
+    def _create_enum_doc(self, data):
+        return EnumDoc(name=data['name'],
+                       doc=data['doc'],
+                       members=[{'name': member['name'],
+                                 'value': member['value']}
+                                for member in data['members']])
+
+    def _create_typed_dict_doc(self, data):
+        return TypedDictDoc(name=data['name'],
+                            doc=data['doc'],
+                            items=[{'key': item['key'],
+                                    'type': item['type'],
+                                    'required': item.get('required')}
+                                   for item in data['items']])
+
+    def _create_custom_doc(self, data):
+        return CustomDoc(name=data['name'],
+                         doc=data['doc'])

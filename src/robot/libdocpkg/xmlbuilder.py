@@ -32,12 +32,12 @@ class XmlDocBuilder:
                             version=spec.find('version').text or '',
                             doc=spec.find('doc').text or '',
                             scope=spec.get('scope'),
-                            doc_format=spec.get('format', 'ROBOT'),
+                            doc_format=spec.get('format') or 'ROBOT',
                             source=spec.get('source'),
-                            lineno=int(spec.get('lineno', -1)))
+                            lineno=int(spec.get('lineno')) or -1)
         libdoc.inits = self._create_keywords(spec, 'inits/init', libdoc.source)
         libdoc.keywords = self._create_keywords(spec, 'keywords/kw', libdoc.source)
-        libdoc.data_types.update(self._create_data_types(spec))
+        libdoc.data_types.types = set(self._create_data_types(spec))
         return libdoc
 
     def _parse_spec(self, path):

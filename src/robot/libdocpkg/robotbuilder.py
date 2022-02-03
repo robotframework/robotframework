@@ -44,7 +44,8 @@ class LibraryDocBuilder:
         libdoc.keywords = KeywordDocBuilder().build_keywords(lib)
         for kw in libdoc.inits + libdoc.keywords:
             for arg in kw.args:
-                libdoc.data_types.update(arg.types)
+                for typ in arg.types:
+                    libdoc.data_types.add(typ)
         return libdoc
 
     def _split_library_name_and_args(self, library):
