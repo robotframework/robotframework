@@ -87,7 +87,7 @@ __ `Dividing data to several rows`_
 Old `FOR` loop syntax
 ~~~~~~~~~~~~~~~~~~~~~
 
-Prior to Robot Framework 3.1 the `FOR` loop syntax was different than nowadays.
+Prior to Robot Framework 3.1, the `FOR` loop syntax was different than nowadays.
 The marker to start the loop was `:FOR` instead of `FOR` and loop contents needed
 to be explicitly marked with a backslash instead of using the `END` marker to end
 the loop. The first example above would look like this using the old syntax:
@@ -104,11 +104,11 @@ the loop. The first example above would look like this using the old syntax:
 The old syntax was deprecated in Robot Framework 3.2 and the support for it was
 removed altogether in Robot Framework 4.0.
 
-Nested `FOR` loops
-~~~~~~~~~~~~~~~~~~
+Nesting `FOR` loops
+~~~~~~~~~~~~~~~~~~~
 
 Starting from Robot Framework 4.0, it is possible to use nested `FOR` loops
-simply by adding another loop inside a loop:
+simply by adding a loop inside another loop:
 
 .. sourcecode:: robotframework
 
@@ -121,12 +121,13 @@ simply by adding another loop inside a loop:
            END
        END
 
-There can be multiple nesting levels and one loop can contain several loops:
+There can be multiple nesting levels and loops can also be combined with
+other control structures:
 
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Example
+   Multiple nesting levels
        FOR    ${root}    IN    r1    r2
            FOR    ${child}    IN    c1   c2    c3
                FOR    ${grandchild}    IN    g1    g2
@@ -134,21 +135,20 @@ There can be multiple nesting levels and one loop can contain several loops:
                END
            END
            FOR    ${sibling}    IN    s1    s2    s3
+               IF    '${sibling}' != 's2'
                    Log Many    ${root}    ${sibling}
+               END
            END
        END
-
-With earlier Robot Framework versions nesting `FOR` loops was not supported directly,
-but it was possible to have a user keyword inside a loop and have another loop there.
 
 Using several loop variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-It is also possible to use several loop variables. The syntax is the
-same as with the normal `FOR` loop, but all loop variables are listed in
-the cells between `FOR` and `IN`. There can be any number of loop
-variables, but the number of values must be evenly dividable by the number of
-variables.
+It is possible to iterate over multiple values in one iteration by using
+multiple loop variables between the `FOR` and `IN` markers. There can be
+any number of loop variables, but the number of values must be evenly
+dividable by the number of variables. Each iteration consumes as many
+values as there are variables.
 
 If there are lot of values to iterate, it is often convenient to organize
 them below the loop variables, as in the first loop of the example below:
@@ -158,9 +158,9 @@ them below the loop variables, as in the first loop of the example below:
    *** Test Cases ***
    Multiple loop variables
        FOR    ${index}    ${english}    ${finnish}    IN
-       ...     1           cat           kissa
-       ...     2           dog           koira
-       ...     3           horse         hevonen
+       ...    1           cat           kissa
+       ...    2           dog           koira
+       ...    3           horse         hevonen
            Add Translation    ${english}    ${finnish}    ${index}
        END
        FOR    ${name}    ${id}    IN    @{EMPLOYERS}
@@ -179,15 +179,15 @@ idiom using the `built-in range() function`__.
 __ http://docs.python.org/library/functions.html#func-range
 
 Similarly as other `FOR` loops, the `FOR-IN-RANGE` loop starts with
-`FOR` and the loop variable is in the next cell. In this format
+`FOR` that is followed by a loop variable. In this format
 there can be only one loop variable and it contains the current loop
-index. The next cell must contain `IN RANGE` (case-sensitive) and
-the subsequent cells loop limits.
+index. After the variable there must be `IN RANGE` marker (case-sensitive)
+that is followed by loop limits.
 
 In the simplest case, only the upper limit of the loop is
-specified. In this case, loop indexes start from zero and increase by one
+specified. In this case, loop indices start from zero and increase by one
 until, but excluding, the limit. It is also possible to give both the
-start and end limits. Then indexes start from the start limit, but
+start and end limits. Then indices start from the start limit, but
 increase similarly as in the simple case. Finally, it is possible to give
 also the step value that specifies the increment to use. If the step
 is negative, it is used as decrement.
@@ -201,37 +201,37 @@ integers, but using float values is possible as well.
 
    *** Test Cases ***
    Only upper limit
-       [Documentation]    Loops over values from 0 to 9
+       [Documentation]    Loops over values from 0 to 9.
        FOR    ${index}    IN RANGE    10
            Log    ${index}
        END
 
    Start and end
-       [Documentation]    Loops over values from 1 to 10
+       [Documentation]    Loops over values from 1 to 10.
        FOR    ${index}    IN RANGE    1    11
            Log    ${index}
        END
 
    Also step given
-       [Documentation]    Loops over values 5, 15, and 25
+       [Documentation]    Loops over values 5, 15, and 25.
        FOR    ${index}    IN RANGE    5    26    10
            Log    ${index}
        END
 
    Negative step
-       [Documentation]    Loops over values 13, 3, and -7
+       [Documentation]    Loops over values 13, 3, and -7.
        FOR    ${index}    IN RANGE    13    -13    -10
            Log    ${index}
        END
 
    Arithmetic
-       [Documentation]    Arithmetic with variable
+       [Documentation]    Arithmetic with variable.
        FOR    ${index}    IN RANGE    ${var} + 1
            Log    ${index}
        END
 
    Float parameters
-       [Documentation]    Loops over values 3.14, 4.34, and 5.54
+       [Documentation]    Loops over values 3.14, 4.34, and 5.54.
        FOR    ${index}    IN RANGE    3.14    6.09    1.2
            Log    ${index}
        END
@@ -246,11 +246,11 @@ This syntax is derived from the `Python built-in enumerate() function`__.
 
 __ http://docs.python.org/library/functions.html#enumerate
 
-`FOR-IN-ENUMERATE` loops work just like regular `FOR` loops, except the cell
-after its loop variables must say `IN ENUMERATE` (case-sensitive),
-and they must have an additional index variable before any other loop-variables.
-That index variable has a value of `0` for the first iteration, `1` for the
-second, etc.
+`FOR-IN-ENUMERATE` loops syntax is just like the regular `FOR` loop syntax,
+except that the separator between variables and values is `IN ENUMERATE`
+(case-sensitive). Typically they are used so that there is an additional index
+variable before any other loop-variables. By default the index has a value `0`
+on the first iteration, `1` on the second, and so on.
 
 For example, the following two test cases do the same thing:
 
@@ -273,7 +273,7 @@ For example, the following two test cases do the same thing:
        END
 
 Starting from Robot Framework 4.0, it is possible to specify a custom start index
-by using `start=<index>` syntax as the last item of the `FOR ... IN ENUMERATE`
+by using `start=<index>` syntax as the last item of the `FOR ... IN ENUMERATE ...`
 header:
 
 .. sourcecode:: robotframework
@@ -283,7 +283,7 @@ header:
    ${START}        10
 
    *** Test Cases ***
-   For-in-enumerate with start
+   FOR-IN-ENUMERATE with start
        FOR    ${index}    ${item}    IN ENUMERATE    @{LIST}    start=1
            My Keyword    ${index}    ${item}
        END
@@ -299,7 +299,7 @@ itself come from a variable. If the last actual item to enumerate would start wi
 
 Just like with regular `FOR` loops, you can loop over multiple values per loop
 iteration as long as the number of values in your list is evenly divisible by
-the number of loop-variables (excluding the first, index variable):
+the number of loop-variables (excluding the index variable):
 
 .. sourcecode:: robotframework
 
@@ -312,7 +312,7 @@ the number of loop-variables (excluding the first, index variable):
            Log    "${en}" in English is "${fi}" in Finnish (index: ${index})
        END
 
-If you only use one loop variable with FOR-IN-ENUMERATE loops, that variable
+If you only use one loop variable with `FOR-IN-ENUMERATE` loops, that variable
 will become a Python tuple containing the index and the iterated value:
 
 .. sourcecode:: robotframework
@@ -324,7 +324,7 @@ will become a Python tuple containing the index and the iterated value:
            Log    Index is ${x}[0] and item is ${x}[1].
        END
 
-.. note:: FOR-IN-ENUMERATE loops with only one loop variable is a new
+.. note:: `FOR-IN-ENUMERATE` loops with only one loop variable is a new
           feature in Robot Framework 3.2.
 
 `FOR-IN-ZIP` loop
@@ -356,9 +356,9 @@ This may be easiest to show with an example:
            Log Many    ${number}    ${name}
        END
 
-Similarly as FOR-IN-RANGE and FOR-IN-ENUMERATE loops, FOR-IN-ZIP loops require
-the cell after the loop variables to read `IN ZIP` (case-sensitive).
-Values used with FOR-IN-ZIP loops must be lists or list-like objects. Looping
+As the example above illustrates, `FOR-IN-ZIP` loops require their own custom
+separator `IN ZIP` (case-sensitive) between loop variables and values.
+Values used with `FOR-IN-ZIP` loops must be lists or list-like objects. Looping
 will stop when the shortest list is exhausted.
 
 Lists to iterate over must always be given either as `scalar variables`_ like
@@ -476,7 +476,7 @@ requires using dictionaries as `list variables`_:
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   One loop variable
+   Iterate over keys
        FOR    ${key}    IN    @{DICT}
            Log    Key is '${key}' and value is '${DICT}[${key}]'.
        END
@@ -485,69 +485,13 @@ requires using dictionaries as `list variables`_:
           Robot Framework 3.2. With earlier version it is possible to iterate
           over dictionary keys like the last example above demonstrates.
 
-Exiting `FOR` loop
-~~~~~~~~~~~~~~~~~~
-
-Normally `FOR` loops are executed until all the loop values have been iterated
-or a keyword used inside the loop fails. If there is a need to exit the loop
-earlier, `BREAK`_ statement can be used to accomplish that. It works similarly
-as `break` statement in Python, Java, and many other programming languages.
-
-`BREAK` can be used directly inside a `FOR` loop or in a keyword that
-the loop uses. In both cases test execution continues after the loop.
-
-.. note `BREAK` statement was introduced in Robot Framework 5.0. This
-  functionality was accomplished using BuiltIn_ keywords
-  :name:`Exit For Loop` and :name:`Exit For Loop If` in earlier versions.
-
-.. sourcecode:: robotframework
-
-   *** Test Cases ***
-   Exit Example
-       ${text} =    Set Variable    ${EMPTY}
-       FOR    ${var}    IN    one    two
-           IF    '${var}' == 'two'    BREAK
-           ${text} =    Set Variable    ${text}${var}
-       END
-       Should Be Equal    ${text}    one
-
-
-Continuing `FOR` loop
-~~~~~~~~~~~~~~~~~~~~~
-
-In addition to exiting a `FOR` loop prematurely, it is also possible to
-continue to the next iteration of the loop before all keywords have been
-executed. This can be done using the `CONTINUE`_ statement, that works
-like `continue` statement in many programming languages.
-
-`CONTINUE` can be used directly inside a `FOR` loop or in a keyword
-that the loop uses. In both cases rest of the keywords in that iteration
-are skipped and execution continues from the next iteration. If it is used
-on the last iteration, execution continues after the loop.
-
-.. sourcecode:: robotframework
-
-   *** Test Cases ***
-   Continue Example
-       ${text} =    Set Variable    ${EMPTY}
-       FOR    ${var}    IN    one    two    three
-           Continue For Loop If    '${var}' == 'two'
-           ${text} =    Set Variable    ${text}${var}
-       END
-       Should Be Equal    ${text}    onethree
-
-.. note `CONTINUE` statement was introduced in Robot Framework 5.0. This
-  functionality was accomplished using BuiltIn_ keywords
-  :name:`Continue For Loop` and :name:`Continue For Loop If` in earlier versions.
-
-
 Removing unnecessary keywords from outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 `FOR` loops with multiple iterations often create lots of output and
 considerably increase the size of the generated output_ and log_ files.
-It is possible to `remove unnecessary keywords`__ from the outputs using
-:option:`--RemoveKeywords FOR` command line option.
+It is possible to `remove or flatten unnecessary keywords`__ using
+:option:`--removekeywords` and :option:`--flattenkeywords` command line options.
 
 __ `Removing and flattening keywords`_
 
@@ -569,128 +513,151 @@ to make the syntax easier to read.
        Repeat Keyword    42 times    My Keyword
        Repeat Keyword    ${var}    Another Keyword    argument
 
+.. _WHILE:
 
 `WHILE loops`
 -------------
 
-While loops combine features of the `if/else structures`_ and `for loops`_.
-They specify a condition and repeat a keyword or keywords while the condition
-remains True. This can be utilised e.g. to repeat an undeterministic sequence
+`WHILE` loops combine features of `FOR loops`_ and `IF/ELSE structures`_.
+They specify a condition and repeat the loop body as long as the condition
+remains true. This can be utilised, for example, to repeat a nondeterministic sequence
 until the desired outcome happens, or in some cases they can be used as an
-alternative to `for loops`_
+alternative to `FOR loops`_.
 
-Basic while syntax
-~~~~~~~~~~~~~~~~~~
+.. note:: `WHILE` loops are new in Robot Framework 5.0.
+
+Basic `WHILE` syntax
+~~~~~~~~~~~~~~~~~~~~
 
 .. sourcecode:: robotframework
 
     *** Test Cases ***
     Example
-        ${rc}=   1
+        ${rc} =   Set Variable    1
         WHILE    ${rc} != 0
-            ${rc}=    Keyword that returns zero on success
+            ${rc} =    Keyword that returns zero on success
         END
 
-The condition is evaluated in Python so that Python builtins like
-`len()` are available and modules are imported automatically to support usages like
-`platform.system() == 'Linux'` and `math.ceil(${x}) == 1`.
+The `WHILE` loop condition is evaluated in Python so that Python builtins like
+`len()` are available and modules are imported automatically to support usages
+like `math.pi * math.pow(${radius}, 2) < 10`.
 Normal variables like `${rc}` in the above example are replaced before evaluation, but
 variables are also available in the evaluation namespace using the special `$rc` syntax.
 The latter approach is handy when the string representation of the variable cannot be
 used in the condition directly. For example, strings require quoting and multiline
-strings and string themselves containing quotes cause additional problems. For more
-information and examples related the evaluation syntax see the `Evaluating expressions`_
-appendix.
+strings and string themselves containing quotes cause additional problems. See the
+`Evaluating expressions`_ appendix for more information and examples related to
+the evaluation syntax
 
-There is currently no way to limit the number of loops in the while loop. This means that
+There is currently no way to limit the number of loops in the `WHILE` loop. This means that
 if in the above example the keyword never returns zero, the loop continues executing
 ad infinitum.
 
+Nesting `WHILE` loops
+~~~~~~~~~~~~~~~~~~~~~
 
-While and other control structures
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Other control structures (`for`_, `if`_, and `try/except`_) can be nested inside
-a while loop and vice versa. Here is an example with `if`_:
+`WHILE` loops can be nested and also combined with other control structures:
 
 .. sourcecode:: robotframework
 
     *** Test Cases ***
-    Example
-        ${condition}=   True
-        WHILE    ${condition}
-            ${rc}=    Some keyword
-            IF    ${rc} == 1 or ${rc} == 2
-                Set variable    $condition    False
+    Nesting WHILE
+        ${x} =   Set Variable    10
+        WHILE    ${x} > 0
+            ${y} =   Set Variable    ${x}
+            WHILE    ${y} > 0
+                ${y} =    Evaluate    ${y} - 1
+            END
+            IF    ${x} > 5
+                ${x} =    Evaluate    ${x} - 1
+            ELSE
+                ${x} =    Evaluate    ${x} - 2
             END
         END
-
-Here, the keyword :name:`Some keyword` is executed until it returns either 1 or 2.
-
-Exiting `WHILE` loop
-~~~~~~~~~~~~~~~~~~~~
-
-Normally `WHILE` loops are executed until the given condition is `False`,
-or a keyword used inside the loop fails. If there is a need to exit the loop
-earlier, the control statement `BREAK`_ can be used to accomplish that. It works
-similarly as `break` statement in Python, Java, and many other programming languages.
-
-:name:`BREAK` can be used directly inside a `WHILE` loop or in a keyword that the
-loop uses. In both cases test execution continues after the loop.
-
-.. sourcecode:: robotframework
-
-   *** Test Cases ***
-   Exit Example
-       WHILE    True
-           ${rc} =    Some keyword
-           IF    ${rc} == 0    BREAK
-       END
-
-Continuing `WHILE` loop
-~~~~~~~~~~~~~~~~~~~~~~~
-
-In addition to exiting a `WHILE` loop prematurely, it is also possible to
-continue to the next iteration of the loop before all keywords have been
-executed. This can be done using the `CONTINUE`_ statement, that works
-like `continue` statement in many programming languages.
-
-`CONTINUE` can be used directly inside a `WHILE` loop or in a keyword
-that the loop uses. In both cases rest of the keywords in that iteration
-are skipped and execution continues from the next iteration. If it is used
-on the last iteration, execution continues after the loop.
-
-.. sourcecode:: robotframework
-
-   *** Test Cases ***
-   CONTINUE and BREAK Example
-       WHILE    True
-           TRY
-                ${value}=    Do Something
-           EXCEPT
-               CONTINUE
-           Do something with value    ${value}
-           BREAK
-       END
-
-The above `WHILE` loop executes the keyword `Do Something` and if the
-execution fails, continues to the next loop iteration. If the keywords
-succeeds, the `${value}` is used and the loop exited afterwards.
-It also utilises the `try/except`_ structure documented below.
 
 Removing unnecessary keywords from outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 `WHILE` loops with multiple iterations often create lots of output and
 considerably increase the size of the generated output_ and log_ files.
-It is possible to `remove unnecessary keywords`__ from the outputs using
-:option:`--RemoveKeywords WHILE` command line option.
+It is possible to `remove or flatten unnecessary keywords`__ using
+:option:`--removekeywords` and :option:`--flattenkeywords` command line options.
 
 __ `Removing and flattening keywords`_
 
 .. _if:
+.. _if/else:
 .. _if/else structures:
 
+
+.. _BREAK:
+.. _CONTINUE:
+
+Loop control using `BREAK` and `CONTINUE`
+-----------------------------------------
+
+Both FOR_ and WHILE_ loop execution can be controlled with `BREAK` and `CONTINUE`
+statements. The former exits the whole loop prematurely and the latter stops
+executing the current loop iteration and continues to the next one. In practice
+they have the same semantics as `break` and `continue` statements in Python, Java,
+and many other programming languages.
+
+Both `BREAK` and `CONTINUE` are typically used conditionally with `IF/ELSE`_
+or `TRY/EXCEPT`_ structures, and especially the `inline IF`_ syntax is often
+convenient with them. These statements must be used in the loop body,
+possibly inside the aforementioned control structures, and using them in
+keyword called in the loop body is invalid.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   BREAK with FOR
+       ${text} =    Set Variable    zero
+       FOR    ${var}    IN    one    two    three
+           IF    '${var}' == 'two'    BREAK
+           ${text} =    Set Variable    ${text}-${var}
+       END
+       Should Be Equal    ${text}    zero-one
+
+   CONTINUE with FOR
+       ${text} =    Set Variable    zero
+       FOR    ${var}    IN    one    two    three
+           IF    '${var}' == 'two'    CONTINUE
+           ${text} =    Set Variable    ${text}-${var}
+       END
+       Should Be Equal    ${text}    zero-one-three
+
+   CONTINUE and BREAK with WHILE
+       WHILE    True
+           TRY
+                ${value} =    Do Something
+           EXCEPT
+               CONTINUE
+           Do something with value    ${value}
+           BREAK
+       END
+
+   Invalid BREAK usage
+       [Documentation]    BREAK and CONTINUE can only be used in the loop body,
+       ...                not in keywords used in the loop.
+       FOR    ${var}    IN    one    two    three
+           Invalid BREAK
+       END
+
+   *** Keywords ***
+   Invalid BREAK
+       [Documentation]    This keyword fails due to invalid syntax.
+       BREAK
+
+.. note:: `BREAK` and `CONTINUE` statements are new in Robot Framework 5.0 similarly
+          as `WHILE`. Earlier versions supported controlling `FOR` loops using
+          BuiltIn_ keywords :name:`Exit For Loop`, :name:`Exit For Loop If`,
+          :name:`Continue For Loop` and :name:`Continue For Loop If`. These
+          keywords still continue to work, but they will be deprecated and removed
+          in the future.
+
+.. note:: Also the RETURN_ statement can be used to a exit loop. It only works
+          when loops are used inside a `user keyword`_.
 
 `IF/ELSE` syntax
 ----------------
@@ -1194,23 +1161,3 @@ There are also other methods to execute keywords conditionally:
 - When keywords are implemented in Python based libraries_, all Python's error
   handling features are readily available. This is the recommended approach
   especially if needed logic gets more complicated.
-
-BREAK
------
-
-:name:`BREAK` statement was introduced in Robot Framework 5.0 as an alternative to
-BuiltIn_ keywords :name:`Exit For Loop` and :name:`Exit For Loop If`. It can
-be used to exit from a `FOR` or a `WHILE` loop prematurely and it works similarly as
-`break` statement in Python, Java, and many other programming languages.
-
-It is an error to use the :name:`BREAK` statement outside a `FOR` or a `WHILE` loop.
-
-CONTINUE
---------
-
-:name:`CONTINUE` statement was introduced in Robot Framework 5.0 as an alternative to
-BuiltIn_ keywords :name:`Continue For Loop` and :name:`Continue For Loop If`. It can
-be used to continue to the next iteration of a `FOR` or a `WHILE` loop before
-all keywords of the current loop have been executed.
-
-It is an error to use the :name:`CONTINUE` statement outside a `FOR` or a `WHILE` loop.

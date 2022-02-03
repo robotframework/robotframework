@@ -1,8 +1,8 @@
 Evaluating expressions
 ======================
 
-Constructs such as `IF/ELSE structures`_ and `inline Python evaluation`_ as well as
-several BuiltIn_ keywords accept an expression that is evaluated in Python:
+Constructs such as `IF/ELSE structures`_, `WHILE loops`_ and `inline Python evaluation`_
+as well as several BuiltIn_ keywords accept an expression that is evaluated in Python:
 
 .. sourcecode:: robotframework
 
