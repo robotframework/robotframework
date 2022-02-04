@@ -23,59 +23,23 @@ from robot.running import TypeConverter
 EnumType = type(Enum)
 
 
-class DataTypeCatalog:
-
-    def __init__(self, converters=None):
-        self.converters = converters
-        self.types = set()
-
-    def __iter__(self):
-        return iter(sorted(self.types))
-
-    def __bool__(self):
-        return bool(self.types)
-
-    @property
-    def customs(self):
-        return sorted(t for t in self.types if t.type == 'Custom')
-
-    @property
-    def enums(self):
-        return sorted(t for t in self.types if t.type == 'Enum')
-
-    @property
-    def typed_dicts(self):
-        return sorted(t for t in self.types if t.type == 'TypedDict')
-
-    def add(self, type):
-        type_doc = self._get_type_doc_object(type)
-        if type_doc:
-            self.types.add(type_doc)
-
-    def _get_type_doc_object(self, typ):
-        if isinstance(typ, EnumType):
-            return EnumDoc.from_type(typ)
-        if isinstance(typ, typeddict_types):
-            return TypedDictDoc.from_type(typ)
-        info = TypeConverter.type_info_for(typ, self.converters)
-        if info:
-            return CustomDoc(info.name, info.doc)
-        return None
-
-    def to_dictionary(self):
-        return {
-            'customs': [t.to_dictionary() for t in self.customs],
-            'enums': [t.to_dictionary() for t in self.enums],
-            'typedDicts': [t.to_dictionary() for t in self.typed_dicts]
-        }
-
-
-class DataType(Sortable):
+class TypeDoc(Sortable):
     type = None
 
     def __init__(self, name, doc):
         self.name = name
         self.doc = doc
+
+    @classmethod
+    def for_type(cls, type, converters):
+        if isinstance(type, EnumType):
+            return EnumDoc.from_type(type)
+        if isinstance(type, typeddict_types):
+            return TypedDictDoc.from_type(type)
+        info = TypeConverter.type_info_for(type, converters)
+        if info:
+            return CustomDoc(info.name, info.doc)
+        return None
 
     @property
     def _sort_key(self):
@@ -89,7 +53,7 @@ class DataType(Sortable):
         }
 
 
-class TypedDictDoc(DataType):
+class TypedDictDoc(TypeDoc):
     type = 'TypedDict'
 
     def __init__(self, name, doc, items=None):
@@ -133,7 +97,7 @@ class TypedDictItem:
         return data
 
 
-class EnumDoc(DataType):
+class EnumDoc(TypeDoc):
     type = 'Enum'
 
     def __init__(self, name, doc, members=None):
@@ -169,5 +133,5 @@ class EnumMember:
         }
 
 
-class CustomDoc(DataType):
+class CustomDoc(TypeDoc):
     type = 'Custom'

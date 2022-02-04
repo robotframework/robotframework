@@ -40,7 +40,7 @@ class JsonDocBuilder:
                             lineno=int(spec.get('lineno', -1)))
         libdoc.inits = [self._create_keyword(kw) for kw in spec['inits']]
         libdoc.keywords = [self._create_keyword(kw) for kw in spec['keywords']]
-        libdoc.data_types.types = set(self._create_data_types(spec['dataTypes']))
+        libdoc.types = self._create_data_types(spec['dataTypes'])
         return libdoc
 
     def _parse_spec_json(self, path):

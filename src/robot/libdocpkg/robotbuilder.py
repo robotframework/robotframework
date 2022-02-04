@@ -23,6 +23,7 @@ from robot.running import (TestLibrary, UserLibrary, UserErrorHandler,
 from robot.utils import split_tags_from_doc, unescape, is_string
 from robot.variables import search_variable
 
+from .datatypes import TypeDoc
 from .model import LibraryDoc, KeywordDoc
 
 
@@ -37,15 +38,11 @@ class LibraryDocBuilder:
                             version=lib.version,
                             scope=str(lib.scope),
                             doc_format=lib.doc_format,
-                            converters=lib.converters,
                             source=lib.source,
                             lineno=lib.lineno)
         libdoc.inits = self._get_initializers(lib)
         libdoc.keywords = KeywordDocBuilder().build_keywords(lib)
-        for kw in libdoc.inits + libdoc.keywords:
-            for arg in kw.args:
-                for typ in arg.types:
-                    libdoc.data_types.add(typ)
+        libdoc.types = self._get_types(libdoc.inits + libdoc.keywords, lib.converters)
         return libdoc
 
     def _split_library_name_and_args(self, library):
@@ -66,6 +63,13 @@ class LibraryDocBuilder:
         if lib.init.arguments.maxargs:
             return [KeywordDocBuilder().build_keyword(lib.init)]
         return []
+
+    def _get_types(self, keywords, converters):
+        types = [TypeDoc.for_type(typ, converters)
+                 for kw in keywords
+                 for arg in kw.args
+                 for typ in arg.types]
+        return [t for t in types if t is not None]
 
 
 class ResourceDocBuilder:

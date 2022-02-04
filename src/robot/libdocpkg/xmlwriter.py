@@ -26,7 +26,7 @@ class LibdocXmlWriter:
         self._write_start(libdoc, writer)
         self._write_keywords('inits', 'init', libdoc.inits, libdoc.source, writer)
         self._write_keywords('keywords', 'kw', libdoc.keywords, libdoc.source, writer)
-        self._write_data_types(libdoc.data_types, writer)
+        self._write_data_types(libdoc.types, writer)
         self._write_end(writer)
 
     def _write_start(self, libdoc, writer):
@@ -112,11 +112,14 @@ class LibdocXmlWriter:
         self._add_source_info(attrs, kw, writer.output, lib_source)
         return attrs
 
-    def _write_data_types(self, data_types, writer):
+    def _write_data_types(self, types, writer):
+        enums = sorted(t for t in types if t.type == 'Enum')
+        typed_dicts = sorted(t for t in types if t.type == 'TypedDict')
+        customs = sorted(t for t in types if t.type == 'Custom')
         writer.start('datatypes')
-        if data_types.enums:
+        if enums:
             writer.start('enums')
-            for enum in data_types.enums:
+            for enum in enums:
                 writer.start('enum', {'name': enum.name})
                 writer.element('doc', enum.doc)
                 writer.start('members')
@@ -126,9 +129,9 @@ class LibdocXmlWriter:
                 writer.end('members')
                 writer.end('enum')
             writer.end('enums')
-        if data_types.typed_dicts:
+        if typed_dicts:
             writer.start('typeddicts')
-            for typ_dict in data_types.typed_dicts:
+            for typ_dict in typed_dicts:
                 writer.start('typeddict', {'name': typ_dict.name})
                 writer.element('doc', typ_dict.doc)
                 writer.start('items')
@@ -140,9 +143,9 @@ class LibdocXmlWriter:
                 writer.end('items')
                 writer.end('typeddict')
             writer.end('typeddicts')
-        if data_types.customs:
+        if customs:
             writer.start('customs')
-            for typ in data_types.customs:
+            for typ in customs:
                 writer.start('custom', {'name': typ.name})
                 writer.element('doc', typ.doc)
                 writer.end('custom')

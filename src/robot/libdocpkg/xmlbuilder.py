@@ -37,7 +37,7 @@ class XmlDocBuilder:
                             lineno=int(spec.get('lineno')) or -1)
         libdoc.inits = self._create_keywords(spec, 'inits/init', libdoc.source)
         libdoc.keywords = self._create_keywords(spec, 'keywords/kw', libdoc.source)
-        libdoc.data_types.types = set(self._create_data_types(spec))
+        libdoc.types = self._create_data_types(spec)
         return libdoc
 
     def _parse_spec(self, path):

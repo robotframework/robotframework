@@ -20,7 +20,6 @@ from itertools import chain
 from robot.model import Tags
 from robot.utils import getshortdoc, get_timestamp, Sortable, setter
 
-from .datatypes import DataTypeCatalog
 from .htmlutils import HtmlToText, DocFormatter
 from .writer import LibdocWriter
 from .output import LibdocOutput
@@ -29,7 +28,7 @@ from .output import LibdocOutput
 class LibraryDoc:
 
     def __init__(self, name='', doc='', version='', type='LIBRARY', scope='TEST',
-                 doc_format='ROBOT', converters=None, source=None, lineno=-1):
+                 doc_format='ROBOT', source=None, lineno=-1):
         self.name = name
         self._doc = doc
         self.version = version
@@ -38,9 +37,9 @@ class LibraryDoc:
         self.doc_format = doc_format
         self.source = source
         self.lineno = lineno
-        self.data_types = DataTypeCatalog(converters)
-        self.inits = []
-        self.keywords = []
+        self.inits = ()
+        self.keywords = ()
+        self.types = ()
 
     @property
     def doc(self):
@@ -59,7 +58,7 @@ class LibraryDoc:
             entries.append('Importing')
         if self.keywords:
             entries.append('Keywords')
-        if self.data_types:
+        if self.types:
             entries.append('Data types')
         return '\n'.join('- `%s`' % entry for entry in entries)
 
@@ -74,6 +73,10 @@ class LibraryDoc:
     @setter
     def keywords(self, kws):
         return self._process_keywords(kws)
+
+    @setter
+    def types(self, types):
+        return set(types)
 
     def _process_keywords(self, kws):
         for keyword in kws:
@@ -90,15 +93,14 @@ class LibraryDoc:
             LibdocWriter(format).write(self, outfile)
 
     def convert_docs_to_html(self):
-        formatter = DocFormatter(self.keywords, self.data_types, self.doc,
-                                 self.doc_format)
+        formatter = DocFormatter(self.keywords, self.types, self.doc, self.doc_format)
         self._doc = formatter.html(self.doc, intro=True)
         self.doc_format = 'HTML'
         for init in self.inits:
             init.doc = formatter.html(init.doc)
         for keyword in self.keywords:
             keyword.doc = formatter.html(keyword.doc)
-        for type_doc in self.data_types:
+        for type_doc in self.types:
             type_doc.doc = formatter.html(type_doc.doc)
 
     def to_dictionary(self):
@@ -115,7 +117,17 @@ class LibraryDoc:
             'tags': list(self.all_tags),
             'inits': [init.to_dictionary() for init in self.inits],
             'keywords': [kw.to_dictionary() for kw in self.keywords],
-            'dataTypes': self.data_types.to_dictionary()
+            'dataTypes': self._types_to_dict(self.types)
+        }
+
+    def _types_to_dict(self, types):
+        enums = sorted(t for t in types if t.type == 'Enum')
+        typed_dicts = sorted(t for t in types if t.type == 'TypedDict')
+        customs = sorted(t for t in types if t.type == 'Custom')
+        return {
+            'customs': [t.to_dictionary() for t in customs],
+            'enums': [t.to_dictionary() for t in enums],
+            'typedDicts': [t.to_dictionary() for t in typed_dicts]
         }
 
     def to_json(self, indent=None):
