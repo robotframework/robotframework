@@ -90,11 +90,9 @@ class TypedDictItem:
         self.required = required
 
     def to_dictionary(self):
-        data = {'key': self.key,
-                'type': self.type}
-        if self.required is not None:
-            data['required'] = self.required
-        return data
+        return {'key': self.key,
+                'type': self.type,
+                'required': self.required}
 
 
 class EnumDoc(TypeDoc):

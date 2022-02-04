@@ -26,7 +26,10 @@ class LibdocXmlWriter:
         self._write_start(libdoc, writer)
         self._write_keywords('inits', 'init', libdoc.inits, libdoc.source, writer)
         self._write_keywords('keywords', 'kw', libdoc.keywords, libdoc.source, writer)
-        self._write_data_types(libdoc.types, writer)
+        # Write deprecated '<datatypes>' element.
+        self._write_deprecated_data_types(libdoc.types, writer)
+        # Write new '<types>' element.
+        self._write_types(libdoc.types, writer)
         self._write_end(writer)
 
     def _write_start(self, libdoc, writer):
@@ -112,7 +115,7 @@ class LibdocXmlWriter:
         self._add_source_info(attrs, kw, writer.output, lib_source)
         return attrs
 
-    def _write_data_types(self, types, writer):
+    def _write_deprecated_data_types(self, types, writer):
         enums = sorted(t for t in types if t.type == 'Enum')
         typed_dicts = sorted(t for t in types if t.type == 'TypedDict')
         customs = sorted(t for t in types if t.type == 'Custom')
@@ -122,11 +125,7 @@ class LibdocXmlWriter:
             for enum in enums:
                 writer.start('enum', {'name': enum.name})
                 writer.element('doc', enum.doc)
-                writer.start('members')
-                for member in enum.members:
-                    writer.element('member', attrs={'name': member.name,
-                                                    'value': member.value})
-                writer.end('members')
+                self._write_enum_members(enum, writer)
                 writer.end('enum')
             writer.end('enums')
         if typed_dicts:
@@ -134,13 +133,7 @@ class LibdocXmlWriter:
             for typ_dict in typed_dicts:
                 writer.start('typeddict', {'name': typ_dict.name})
                 writer.element('doc', typ_dict.doc)
-                writer.start('items')
-                for item in typ_dict.items:
-                    attrs = {'key': item.key, 'type': item.type}
-                    if item.required is not None:
-                        attrs['required'] = 'true' if item.required else 'false'
-                    writer.element('item', attrs=attrs)
-                writer.end('items')
+                self._write_typed_dict_items(typ_dict, writer)
                 writer.end('typeddict')
             writer.end('typeddicts')
         if customs:
@@ -151,6 +144,34 @@ class LibdocXmlWriter:
                 writer.end('custom')
             writer.end('customs')
         writer.end('datatypes')
+
+    def _write_types(self, types, writer):
+        writer.start('types')
+        for typ in sorted(types):
+            writer.start('type', {'name': typ.name, 'type': typ.type})
+            writer.element('doc', typ.doc)
+            if typ.type == 'Enum':
+                self._write_enum_members(typ, writer)
+            if typ.type == 'TypedDict':
+                self._write_typed_dict_items(typ, writer)
+            writer.end('type')
+        writer.end('types')
+
+    def _write_enum_members(self, enum, writer):
+        writer.start('members')
+        for member in enum.members:
+            writer.element('member', attrs={'name': member.name,
+                                            'value': member.value})
+        writer.end('members')
+
+    def _write_typed_dict_items(self, typed_dict, writer):
+        writer.start('items')
+        for item in typed_dict.items:
+            attrs = {'key': item.key, 'type': item.type}
+            if item.required is not None:
+                attrs['required'] = 'true' if item.required else 'false'
+            writer.element('item', attrs=attrs)
+        writer.end('items')
 
     def _write_end(self, writer):
         writer.end('keywordspec')

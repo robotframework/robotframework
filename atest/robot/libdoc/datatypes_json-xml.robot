@@ -4,7 +4,7 @@ Suite Setup       Run Libdoc And Parse Output    ${TESTDATADIR}/DataTypesLibrary
 
 *** Test Cases ***
 Enum
-    DataType Enums Should Be    0
+    DataType Enum Should Be    0
     ...    AssertionOperator
     ...    <p>This is some Doc</p>\n<p>This has was defined by assigning to __doc__.</p>
     ...    {"name": "equal","value": "=="}
@@ -13,8 +13,7 @@ Enum
     ...    {"name": ">","value": ">"}
     ...    {"name": "<=","value": "<="}
     ...    {"name": ">=","value": ">="}
-
-    DataType Enums Should Be    1
+    DataType Enum Should Be    1
     ...    Small
     ...    <p>This is the Documentation.</p>\n<p>This was defined within the class definition.</p>
     ...    {"name": "one","value": "1"}

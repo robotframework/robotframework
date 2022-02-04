@@ -37,7 +37,11 @@ class XmlDocBuilder:
                             lineno=int(spec.get('lineno')) or -1)
         libdoc.inits = self._create_keywords(spec, 'inits/init', libdoc.source)
         libdoc.keywords = self._create_keywords(spec, 'keywords/kw', libdoc.source)
-        libdoc.types = self._create_data_types(spec)
+        # RF >= 5 have 'types', RF >= 4 have 'datatypes', older/custom may have neither.
+        if spec.find('types'):
+            libdoc.types = self._parse_types(spec)
+        else:
+            libdoc.types = self._parse_data_types(spec)
         return libdoc
 
     def _parse_spec(self, path):
@@ -93,14 +97,20 @@ class XmlDocBuilder:
             spec.types[name] = tuple(t.text for t in type_elems)
         return spec
 
-    def _create_data_types(self, spec):
-        enums = [self._create_enum_doc(dt)
-                 for dt in spec.findall('datatypes/enums/enum')]
-        typed_dicts = [self._create_typed_dict_doc(dt)
-                       for dt in spec.findall('datatypes/typeddicts/typeddict')]
-        custom = [self._create_custom_doc(dt)
-                  for dt in spec.findall('datatypes/customs/custom')]
-        return enums + typed_dicts + custom
+    def _parse_types(self, spec):
+        for elem in spec.findall('types/type'):
+            creator = {'Enum': self._create_enum_doc,
+                       'TypedDict': self._create_typed_dict_doc,
+                       'Custom': self._create_custom_doc}[elem.get('type')]
+            yield creator(elem)
+
+    def _parse_data_types(self, spec):
+        for elem in spec.findall('datatypes/enums/enum'):
+            yield self._create_enum_doc(elem)
+        for elem in spec.findall('datatypes/typeddicts/typeddict'):
+            yield self._create_typed_dict_doc(elem)
+        for elem in spec.findall('datatypes/customs/custom'):
+            yield self._create_custom_doc(elem)
 
     def _create_enum_doc(self, elem):
         return EnumDoc(name=elem.get('name'),

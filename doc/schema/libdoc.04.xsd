@@ -9,7 +9,10 @@
             <xs:element name="tags" type="Tags" minOccurs="0" />
             <xs:element name="inits" type="Inits" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="keywords" type="Keywords" minOccurs="0" maxOccurs="unbounded" />
+            <!-- 'datatypes' was deprecated in RF 5.0. -->
             <xs:element name="datatypes" type="DataTypes" minOccurs="0" maxOccurs="unbounded" />
+            <!-- 'types' should be used instead. -->
+            <xs:element name="types" type="Types" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required" />
         <xs:attribute name="type" type="LibraryType" use="required" />
@@ -125,6 +128,29 @@
         <xs:attribute name="type" type="xs:string" use="required" />
         <xs:attribute name="required" type="xs:boolean" use="optional" />
     </xs:complexType>
+    <xs:complexType name="Types">
+        <xs:sequence>
+            <xs:element name="type" type="Type" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Type">
+        <xs:sequence>
+            <xs:element name="doc" type="xs:string" />
+            <!-- Only used when 'type' is 'Enum' -->
+            <xs:element name="members" type="EnumMembers" minOccurs="0" />
+            <!-- Only used when 'type' is 'TypedDict' -->
+            <xs:element name="items" type="TypedDictItems" minOccurs="0" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="type" type="TypeType" use="required" />
+    </xs:complexType>
+    <xs:simpleType name="TypeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Custom" />
+            <xs:enumeration value="Enum" />
+            <xs:enumeration value="TypedDict" />
+        </xs:restriction>
+    </xs:simpleType>
     <xs:complexType name="Tags">
         <xs:sequence>
             <xs:element name="tag" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
@@ -164,8 +190,8 @@
             <xs:element name="default" type="xs:string" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
         <xs:attribute name="kind" type="Kind" use="required" />
-        <xs:attribute name="required" type="xs:boolean" use="required"/>
-        <xs:attribute name="repr" type="xs:string" use="required"/>
+        <xs:attribute name="required" type="xs:boolean" use="required" />
+        <xs:attribute name="repr" type="xs:string" use="required" />
     </xs:complexType>
     <xs:simpleType name="Kind">
         <xs:restriction base="xs:string">

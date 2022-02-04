@@ -117,10 +117,12 @@ class LibraryDoc:
             'tags': list(self.all_tags),
             'inits': [init.to_dictionary() for init in self.inits],
             'keywords': [kw.to_dictionary() for kw in self.keywords],
-            'dataTypes': self._types_to_dict(self.types)
+            # 'dataTypes' was deprecated in RF 5, 'types' should be used instead.
+            'dataTypes': self._get_data_types(self.types),
+            'types': [t.to_dictionary() for t in self.types]
         }
 
-    def _types_to_dict(self, types):
+    def _get_data_types(self, types):
         enums = sorted(t for t in types if t.type == 'Enum')
         typed_dicts = sorted(t for t in types if t.type == 'TypedDict')
         customs = sorted(t for t in types if t.type == 'Custom')

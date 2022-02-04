@@ -144,24 +144,19 @@ Verify Arguments Structure
         ...    type=${type}
         ...    default=${default}
         ...    repr=${repr}
-        Run Keyword And Continue On Failure
-        ...    Verify Argument Model    ${arg_model}    ${exp_repr}
-        Run Keyword And Continue On Failure
-        ...    Should Be Equal    ${repr}    ${exp_repr}
+        Verify Argument Model    ${arg_model}    ${exp_repr}
+        Should Be Equal    ${repr}    ${exp_repr}
     END
     Should Be Equal    ${{len($arg_elems)}}    ${{len($expected)}}
 
 Get Element Optional Text
     [Arguments]    ${source}    ${xpath}
-    ${elem}=    Get Elements    ${source}    ${xpath}
-    ${text}=    Run Keyword If    len($elem) == 1
-    ...   Get Element Text    ${elem}[0]    .
-    ...   ELSE   Set Variable   ${NONE}
-    [Return]    ${text}
+    ${elems}=    Get Elements    ${source}    ${xpath}
+    ${text}=    IF    len($elems) == 1    Get Element Text    ${elems}[0]
+    RETURN    ${text}
 
 Verify Argument Model
     [Arguments]    ${arg_model}    ${expected_repr}    ${json}=False
-    Log  ${arg_model}
     IF    ${json}
         ${repr}=   Get Repr From Json Arg Model    ${arg_model}
     ELSE
@@ -174,7 +169,7 @@ Keyword Doc Should Start With
     [Arguments]    ${index}    @{doc}
     ${kws}=   Get Elements    ${LIBDOC}   xpath=keywords/kw
     ${doc}=    Catenate     SEPARATOR=\n    @{doc}
-    ${text} =    Get Element Text    ${kws}[${index}]    xpath=doc
+    ${text}=    Get Element Text    ${kws}[${index}]    xpath=doc
     Should Start With    ${text}    ${doc}
 
 Keyword Doc Should Be
@@ -244,43 +239,45 @@ List of Dict Should Be Equal
         Dictionaries Should Be Equal    ${dict1}    ${dict2}
     END
 
-DataType Enums Should Be
+DataType Enum Should Be
     [Arguments]    ${index}    ${name}    ${doc}    @{exp_members}
-    ${enums}=   Get Elements    ${LIBDOC}   xpath=datatypes/enums/enum
-    Element Attribute Should Be    ${enums}[${index}]     name   ${name}
-    Element Text Should Be    ${enums}[${index}]     ${doc}    xpath=doc
-    ${members}=    Get Elements    ${enums}[${index}]    xpath=members/member
-    FOR   ${member}    ${exp_member}    IN ZIP    ${members}    ${exp_members}
-        ${attrs}=    Get Element Attributes    ${member}
-        Log    ${attrs}
-        Element Attribute Should Be    ${member}    name    ${{${exp_member}}}[name]
-        Element Attribute Should Be    ${member}    value    ${{${exp_member}}}[value]
+    FOR    ${xpath}    IN    datatypes/enums/enum    types/type[@type='Enum']
+        ${enums}=   Get Elements    ${LIBDOC}   xpath=${xpath}
+        Element Attribute Should Be    ${enums}[${index}]     name   ${name}
+        Element Text Should Be    ${enums}[${index}]     ${doc}    xpath=doc
+        ${members}=    Get Elements    ${enums}[${index}]    xpath=members/member
+        FOR   ${member}    ${exp_member}    IN ZIP    ${members}    ${exp_members}
+            ${attrs}=    Get Element Attributes    ${member}
+            Element Attribute Should Be    ${member}    name     ${{${exp_member}}}[name]
+            Element Attribute Should Be    ${member}    value    ${{${exp_member}}}[value]
+        END
     END
 
 DataType TypedDict Should Be
     [Arguments]    ${index}    ${name}    ${doc}    @{exp_items}
-    ${typdict}=   Get Elements    ${LIBDOC}   xpath=datatypes/typeddicts/typeddict
-    Element Attribute Should Be    ${typdict}[${index}]     name   ${name}
-    Element Text Should Be    ${typdict}[${index}]     ${doc}    xpath=doc
-    ${items}=    Get Elements    ${typdict}[${index}]    xpath=items/item
-    FOR   ${exp_item}    IN    @{exp_items}
-        ${exp}    Evaluate    json.loads($exp_item)
-        FOR    ${item}    IN    @{items}
-            ${cur}=    Get Element Attributes    ${item}
-            IF    $cur['key'] == $exp['key']
-                Should Be Equal    ${cur}[key]         ${exp}[key]
-                Should Be Equal    ${cur}[type]        ${exp}[type]
-                IF    'required' in $exp
-                    Should Be Equal    ${cur}[required]    ${exp}[required]
+    FOR    ${xpath}    IN    datatypes/typeddicts/typeddict    types/type[@type='TypedDict']
+        ${dicts}=   Get Elements    ${LIBDOC}   xpath=${xpath}
+        Element Attribute Should Be    ${dicts}[${index}]     name   ${name}
+        Element Text Should Be    ${dicts}[${index}]     ${doc}    xpath=doc
+        ${items}=    Get Elements    ${dicts}[${index}]    xpath=items/item
+        FOR   ${exp_item}    IN    @{exp_items}
+            ${exp}=    Evaluate    json.loads($exp_item)
+            FOR    ${item}    IN    @{items}
+                ${cur}=    Get Element Attributes    ${item}
+                IF    $cur['key'] == $exp['key']
+                    Should Be Equal    ${cur}[key]     ${exp}[key]
+                    Should Be Equal    ${cur}[type]    ${exp}[type]
+                    IF    'required' in $exp
+                        Should Be Equal    ${cur}[required]    ${exp}[required]
+                    END
+                    BREAK
                 END
-                Log    ${cur} == ${exp}
-                Exit For Loop
             END
         END
     END
 
 DataType Custom Should Be
     [Arguments]    ${index}    ${name}    ${doc}
-    ${customs}=   Get Elements    ${LIBDOC}   xpath=datatypes/customs/custom
+    ${customs}=   Get Elements    ${LIBDOC}   xpath=types/type[@type='Custom']
     Element Attribute Should Be    ${customs}[${index}]     name      ${name}
     Element Text Should Be         ${customs}[${index}]     ${doc}    xpath=doc

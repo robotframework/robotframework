@@ -42,12 +42,12 @@
 
 <script type="text/javascript">
 
-    function linkArgs(container, dataTypes, usageName) {
+    function linkArgs(container, types, usageName) {
       container.forEach(function(keyword) {
         let user = usageName || keyword.name
           keyword.args.forEach(function (arg) {
             arg.linked = arg.types.filter(function(value) {
-              return dataTypes.filter(function (dataType) {
+              return types.filter(function (dataType) {
                  if (dataType.name === value) {
                    if (dataType.usage.indexOf(user) === -1) {
                     dataType.usage.push(user);
@@ -66,18 +66,12 @@
         parseTemplates();
         document.title = libdoc.name;
         storage.init('libdoc');
-        libdoc.dataTypes = [].concat(
-            libdoc.dataTypes.customs,
-            libdoc.dataTypes.enums,
-            libdoc.dataTypes.typedDicts,
-        );
-        libdoc.dataTypes = libdoc.dataTypes.map(function(dt) {
+        libdoc.types = libdoc.types.map(function(dt) {
           dt.usage = [];
           return dt;
         })
-        libdoc.dataTypes.sort(compare)
-        linkArgs(libdoc.inits, libdoc.dataTypes, "Importing");
-        linkArgs(libdoc.keywords, libdoc.dataTypes);
+        linkArgs(libdoc.inits, libdoc.types, "Importing");
+        linkArgs(libdoc.keywords, libdoc.types);
         renderTemplate('base', libdoc, $('body'));
         if (libdoc.inits.length) {
             renderTemplate('importing', libdoc);
@@ -105,16 +99,6 @@
           }
       }, 0);
     });
-
-     function compare( a, b ) {
-      if ( a.name < b.name ){
-        return -1;
-      }
-      if ( a.name > b.name ){
-        return 1;
-      }
-      return 0;
-    }
 
     function parseTemplates() {
         $('script[type="text/x-jquery-tmpl"]').map(function (idx, elem) {
@@ -290,8 +274,8 @@
             renderTemplate('tags', libdoc);
         }
         document.getElementById("keyword-statistics-header").innerText = ''+libdoc.keywords.length;
-        if (libdoc.dataTypes.length) {
-          document.getElementById("type-statistics-header").innerText = '' + libdoc.dataTypes.length;
+        if (libdoc.types.length) {
+          document.getElementById("type-statistics-header").innerText = '' + libdoc.types.length;
         }
         history.replaceState && history.replaceState(null, '', location.pathname);
     }
@@ -534,10 +518,10 @@ ${name}
 
 
 <script type="text/x-jquery-tmpl" id="data-types-template">
-    {{if dataTypes.length}}
+    {{if types.length}}
     <h2 id="Data types">Data types</h2>
     <div class="data-types">
-        {{each dataTypes}}
+        {{each types}}
         {{tmpl($value) 'data-type-template'}}
         {{/each}}
     </div>

@@ -40,7 +40,11 @@ class JsonDocBuilder:
                             lineno=int(spec.get('lineno', -1)))
         libdoc.inits = [self._create_keyword(kw) for kw in spec['inits']]
         libdoc.keywords = [self._create_keyword(kw) for kw in spec['keywords']]
-        libdoc.types = self._create_data_types(spec['dataTypes'])
+        # RF >= 5 have 'types', RF >= 4 have 'dataTypes', older/custom may have neither.
+        if 'types' in spec:
+            libdoc.types = self._parse_types(spec['types'])
+        elif 'dataTypes' in spec:
+            libdoc.types = self._parse_data_types(spec['dataTypes'])
         return libdoc
 
     def _parse_spec_json(self, path):
@@ -82,14 +86,20 @@ class JsonDocBuilder:
             spec.types[name] = tuple(arg_types)
         return spec
 
-    def _create_data_types(self, data_types):
-        enums = [self._create_enum_doc(dt)
-                 for dt in data_types.get('enums', [])]
-        typed_dicts = [self._create_typed_dict_doc(dt)
-                       for dt in data_types.get('typedDicts', [])]
-        customs = [self._create_custom_doc(dt)
-                   for dt in data_types.get('customs', [])]
-        return enums + typed_dicts + customs
+    def _parse_types(self, types):
+        for obj in types:
+            creator = {'Enum': self._create_enum_doc,
+                       'TypedDict': self._create_typed_dict_doc,
+                       'Custom': self._create_custom_doc}[obj.get('type')]
+            yield creator(obj)
+
+    def _parse_data_types(self, data_types):
+        for obj in data_types['enums']:
+            yield self._create_enum_doc(obj)
+        for obj in data_types['typedDicts']:
+            yield self._create_typed_dict_doc(obj)
+        for obj in data_types['customs']:
+            yield self._create_custom_doc(obj)
 
     def _create_enum_doc(self, data):
         return EnumDoc(name=data['name'],
