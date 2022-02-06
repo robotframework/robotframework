@@ -6,16 +6,18 @@ from pathlib import Path
 
 from robot.parsing import get_model, get_resource_model, ModelVisitor, ModelTransformer, Token
 from robot.parsing.model.blocks import (
-    Block, CommentSection, File, For, If, Try, While,
+    CommentSection, File, For, If, Try, While,
     Keyword, KeywordSection, SettingSection, TestCase, TestCaseSection, VariableSection
 )
 from robot.parsing.model.statements import (
     Arguments, Break, Comment, Continue, Documentation, ForHeader, End, ElseHeader,
     ElseIfHeader, EmptyLine, Error, IfHeader, InlineIfHeader, TryHeader, ExceptHeader,
     FinallyHeader, KeywordCall, KeywordName, ReturnStatement, SectionHeader,
-    Statement, TestCaseName, Variable, WhileHeader
+    TestCaseName, Variable, WhileHeader
 )
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
+
+from parsing_test_utils import assert_model, RemoveNonDataTokensVisitor
 
 
 DATA = '''\
@@ -128,60 +130,6 @@ EXPECTED = File(sections=[
 ])
 
 
-def assert_model(model, expected=EXPECTED, **expected_attrs):
-    if type(model) is not type(expected):
-        raise AssertionError('Incompatible types:\n%s\n%s'
-                             % (dump_model(model), dump_model(expected)))
-    if isinstance(model, list):
-        assert_equal(len(model), len(expected),
-                     '%r != %r' % (model, expected), values=False)
-        for m, e in zip(model, expected):
-            assert_model(m, e)
-    elif isinstance(model, Block):
-        assert_block(model, expected, expected_attrs)
-    elif isinstance(model, Statement):
-        assert_statement(model, expected)
-    elif model is None and expected is None:
-        pass
-    else:
-        raise AssertionError('Incompatible children:\n%r\n%r' % (model, expected))
-
-
-def dump_model(model):
-    if isinstance(model, ast.AST):
-        return ast.dump(model)
-    elif isinstance(model, (list, tuple)):
-        return [dump_model(m) for m in model]
-    elif model is None:
-        return 'None'
-    else:
-        raise TypeError('Invalid model %r' % model)
-
-
-def assert_block(model, expected, expected_attrs):
-    assert_equal(model._fields, expected._fields)
-    for field in expected._fields:
-        assert_model(getattr(model, field), getattr(expected, field))
-    for attr in expected._attributes:
-        exp = expected_attrs.get(attr, getattr(expected, attr))
-        assert_equal(getattr(model, attr), exp)
-
-
-def assert_statement(model, expected):
-    assert_equal(model._fields, ('type', 'tokens'))
-    assert_equal(model.type, expected.type)
-    assert_equal(len(model.tokens), len(expected.tokens))
-    for m, e in zip(model.tokens, expected.tokens):
-        assert_equal(m, e, formatter=repr)
-    assert_equal(model._attributes, ('lineno', 'col_offset', 'end_lineno',
-                                     'end_col_offset', 'errors'))
-    assert_equal(model.lineno, expected.tokens[0].lineno)
-    assert_equal(model.col_offset, expected.tokens[0].col_offset)
-    assert_equal(model.end_lineno, expected.tokens[-1].lineno)
-    assert_equal(model.end_col_offset, expected.tokens[-1].end_col_offset)
-    assert_equal(model.errors, expected.errors)
-
-
 class TestGetModel(unittest.TestCase):
 
     @classmethod
@@ -195,20 +143,20 @@ class TestGetModel(unittest.TestCase):
 
     def test_from_string(self):
         model = get_model(DATA)
-        assert_model(model)
+        assert_model(model, EXPECTED)
 
     def test_from_path_as_string(self):
         model = get_model(PATH)
-        assert_model(model, source=PATH)
+        assert_model(model, EXPECTED, source=PATH)
 
     def test_from_path_as_path(self):
         model = get_model(Path(PATH))
-        assert_model(model, source=PATH)
+        assert_model(model, EXPECTED, source=PATH)
 
     def test_from_open_file(self):
         with open(PATH) as f:
             model = get_model(f)
-        assert_model(model)
+        assert_model(model, EXPECTED)
 
 
 class TestSaveModel(unittest.TestCase):
@@ -226,25 +174,25 @@ class TestSaveModel(unittest.TestCase):
         model = get_model(PATH)
         os.remove(PATH)
         model.save()
-        assert_model(get_model(PATH), source=PATH)
+        assert_model(get_model(PATH), EXPECTED, source=PATH)
 
     def test_save_to_different_path(self):
         model = get_model(PATH)
         different = PATH + '.robot'
         model.save(different)
-        assert_model(get_model(different), source=different)
+        assert_model(get_model(different), EXPECTED, source=different)
 
     def test_save_to_original_path_as_path(self):
         model = get_model(Path(PATH))
         os.remove(PATH)
         model.save()
-        assert_model(get_model(PATH), source=PATH)
+        assert_model(get_model(PATH), EXPECTED, source=PATH)
 
     def test_save_to_different_path_as_path(self):
         model = get_model(PATH)
         different = PATH + '.robot'
         model.save(Path(different))
-        assert_model(get_model(different), source=different)
+        assert_model(get_model(different), EXPECTED, source=different)
 
     def test_save_to_original_fails_if_source_is_not_path(self):
         message = 'Saving model requires explicit output ' \
@@ -648,11 +596,6 @@ Example
         assert_model(node, expected)
 
 
-class RemoveNonDataTokensVisitor(ModelVisitor):
-    def visit_Statement(self, node):
-        node.tokens = node.data_tokens
-
-
 class TestTry(unittest.TestCase):
 
     def test_try_except_else_finally(self):
@@ -761,7 +704,7 @@ ${not     closed
                 Variable(
                     tokens=[Token(Token.VARIABLE, '${x}==', 4, 0),
                             Token(Token.ARGUMENT, 'invalid', 4, 10)],
-                    errors = ("Invalid variable name '${x}=='.",)
+                    errors=("Invalid variable name '${x}=='.",)
                 ),
                 Variable(
                     tokens=[Token(Token.VARIABLE, '${not', 5, 0),
