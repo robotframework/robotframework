@@ -55,27 +55,33 @@ Embedded Arguments
 
 Keyword Documentation
     Keyword Doc Should Be            1     A keyword.\n\nSee `get hello` for details.
+    Keyword Shortdoc Should Be       1     A keyword.
     Keyword Doc Should Be            0     Get hello.\n\nSee `importing` for explanation of nothing\nand `introduction` for no more information.
+    Keyword Shortdoc Should Be       0     Get hello.
     Keyword Doc Should Be            4     Set tags in documentation.
+    Keyword Shortdoc Should Be       4     Set tags in documentation.
 
 Multiline Documentation With Split Short Doc
     ${doc} =    Catenate    SEPARATOR=\n
     ...    This is short doc.
     ...    It can span multiple
     ...    physical
-    ...    lines.
-    ...    ${EMPTY}
+    ...    lines and contain *formatting*.
+    ...
     ...    This is body. It can naturally also
     ...    contain multiple lines.
-    ...    ${EMPTY}
+    ...
     ...    And paragraphs.
     Keyword Doc Should Be            5     ${doc}
+    Keyword Shortdoc Should Be       5     This is short doc. It can span multiple physical lines and contain *formatting*.
 
 Non-ASCII doc
-    Keyword Doc Should Be            7    Hyvää yötä.\n\nСпасибо!
+    Keyword Doc Should Be            7     Hyvää yötä.\n\nСпасибо!
+    Keyword Shortdoc Should Be       7     Hyvää yötä.
 
 Non-ASCII string doc with escapes
     Keyword Doc Should Be            8     Hyvää yötä.
+    Keyword Shortdoc Should Be       8     Hyvää yötä.
 
 Keyword tags
     Keyword Tags Should Be           1

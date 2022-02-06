@@ -69,12 +69,16 @@ Keyword Documentation
     ...    | Your Keyword | yyy |
     ...
     ...    See `My Keyword` for no more information.
+    Keyword Short Doc Should be    0    Takes one `arg` and *does nothing* with it.
     Keyword Doc Should Be          1
     ...    Does nothing & <doc> has "stuff" to 'escape'!! and ignored indentation
     ...    Tags: in spec these wont become tags
+    Keyword Short Doc Should be    1
+    ...    Does nothing & <doc> has "stuff" to 'escape'!! and ignored indentation Tags: in spec these wont become tags
 
 Non ASCII
     Keyword Doc Should Be          2    Hyvää yötä.\n\nСпасибо!
+    Keyword Shortdoc Should Be     2    Hyvää yötä.
 
 Keyword Tags
     Keyword Tags Should Be         0    tag1    tag2

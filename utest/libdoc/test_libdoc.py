@@ -35,11 +35,7 @@ def verify_shortdoc_output(doc_input, expected):
 def verify_keyword_shortdoc(doc_format, doc_input, expected):
     libdoc = LibraryDoc(doc_format=doc_format)
     libdoc.keywords = [KeywordDoc(doc=doc_input)]
-    formatter = DocToHtml(doc_format)
-    keyword = libdoc.keywords[0]
-    keyword.doc = formatter(keyword.doc)
-    libdoc.doc_format = 'HTML'
-    assert_equal(keyword.shortdoc, expected)
+    assert_equal(libdoc.keywords[0].shortdoc, expected)
 
 
 def run_libdoc_and_validate_json(filename):
@@ -95,9 +91,7 @@ class TestKeywordShortDoc(unittest.TestCase):
         verify_keyword_shortdoc('TEXT', doc, exp)
 
     def test_shortdoc_with_empty_plain_text(self):
-        doc = ""
-        exp = ""
-        verify_keyword_shortdoc('TEXT', doc, exp)
+        verify_keyword_shortdoc('TEXT', '', '')
 
     def test_shortdoc_with_multiline_robot_format(self):
         doc = """Writes the
@@ -151,7 +145,7 @@ automatically added to the message.
 By default the message is written to the standard output stream.
 Using the standard error stream is possibly by giving the ``stream``
 argument value ``'stderr'``."""
-        exp = "Writes the *message* to _the_ console."
+        exp = "Writes the **message** to *the* console."
         verify_keyword_shortdoc('REST', doc, exp)
 
     def test_shortdoc_with_empty_reST_format(self):

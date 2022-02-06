@@ -178,6 +178,12 @@ Keyword Doc Should Be
     ${doc}=    Catenate     SEPARATOR=\n    @{doc}
     Element Text Should Be    ${kws}[${index}]    ${doc}    xpath=doc
 
+Keyword Shortdoc Should Be
+    [Arguments]    ${index}    @{doc}
+    ${kws}=   Get Elements    ${LIBDOC}    xpath=keywords/kw
+    ${doc}=    Catenate     SEPARATOR=\n    @{doc}
+    Element Text Should Be    ${kws}[${index}]    ${doc}    xpath=shortdoc
+
 Keyword Tags Should Be
     [Arguments]    ${index}    @{expected}
     ${kws}=    Get Elements    ${LIBDOC}    xpath=keywords/kw

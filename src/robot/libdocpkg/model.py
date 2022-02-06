@@ -94,13 +94,14 @@ class LibraryDoc:
     def convert_docs_to_html(self):
         formatter = DocFormatter(self.keywords, self.types, self.doc, self.doc_format)
         self._doc = formatter.html(self.doc, intro=True)
-        self.doc_format = 'HTML'
-        for init in self.inits:
-            init.doc = formatter.html(init.doc)
-        for keyword in self.keywords:
-            keyword.doc = formatter.html(keyword.doc)
+        for item in self.inits + self.keywords:
+            # If 'shortdoc' is not set, it is generated automatically based on 'doc'
+            # when accessed. Generate and set it to avoid HTML format affecting it.
+            item.shortdoc = item.shortdoc
+            item.doc = formatter.html(item.doc)
         for type_doc in self.types:
             type_doc.doc = formatter.html(type_doc.doc)
+        self.doc_format = 'HTML'
 
     def to_dictionary(self):
         return {
@@ -151,14 +152,13 @@ class KeywordDoc(Sortable):
 
     @property
     def shortdoc(self):
-        if self._shortdoc:
-            return self._shortdoc
-        return self._get_shortdoc()
+        return self._shortdoc or self._doc_to_shortdoc()
 
-    def _get_shortdoc(self):
-        doc = self.doc
+    def _doc_to_shortdoc(self):
         if self.parent and self.parent.doc_format == 'HTML':
-            doc = HtmlToText().get_shortdoc_from_html(doc)
+            doc = HtmlToText().get_shortdoc_from_html(self.doc)
+        else:
+            doc = self.doc
         return ' '.join(getshortdoc(doc).splitlines())
 
     @shortdoc.setter
