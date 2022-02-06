@@ -26,9 +26,10 @@ EnumType = type(Enum)
 class TypeDoc(Sortable):
     type = None
 
-    def __init__(self, name, doc):
+    def __init__(self, name, doc, usages=None):
         self.name = name
         self.doc = doc
+        self.usages = usages or []
 
     @classmethod
     def for_type(cls, type, converters):
@@ -45,12 +46,19 @@ class TypeDoc(Sortable):
     def _sort_key(self):
         return self.name.lower()
 
-    def to_dictionary(self):
-        return {
+    def to_dictionary(self, usages=True):
+        return self._to_dict(usages)
+
+    def _to_dict(self, usages=True, **extra):
+        data = {
             'type': self.type,
             'name': self.name,
             'doc': self.doc,
         }
+        data.update(extra)
+        if usages:
+            data['usages'] = [u.to_dictionary() for u in self.usages]
+        return data
 
 
 class TypedDictDoc(TypeDoc):
@@ -73,13 +81,8 @@ class TypedDictDoc(TypeDoc):
                    doc=getdoc(typed_dict) or '',
                    items=items)
 
-    def to_dictionary(self):
-        return {
-            'type': self.type,
-            'name': self.name,
-            'doc': self.doc,
-            'items': [i.to_dictionary() for i in self.items]
-        }
+    def to_dictionary(self, usages=True):
+        return self._to_dict(usages, items=[i.to_dictionary() for i in self.items])
 
 
 class TypedDictItem:
@@ -109,13 +112,8 @@ class EnumDoc(TypeDoc):
                    members=[EnumMember(name, str(member.value))
                             for name, member in enum_type.__members__.items()])
 
-    def to_dictionary(self):
-        return {
-            'type': self.type,
-            'name': self.name,
-            'doc': self.doc,
-            'members': [m.to_dictionary() for m in self.members]
-        }
+    def to_dictionary(self, usages=True):
+        return self._to_dict(usages, members=[m.to_dictionary() for m in self.members])
 
 
 class EnumMember:
@@ -133,3 +131,16 @@ class EnumMember:
 
 class CustomDoc(TypeDoc):
     type = 'Custom'
+
+
+class Usage:
+
+    def __init__(self, keyword, arguments=None):
+        self.keyword = keyword
+        self.arguments = arguments or []
+
+    def to_dictionary(self):
+        return {
+            'kw': self.keyword,
+            'args': self.arguments
+        }

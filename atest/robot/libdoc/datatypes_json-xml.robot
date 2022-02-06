@@ -24,12 +24,22 @@ Enum
 TypedDict
     DataType TypedDict Should Be    0
     ...    GeoLocation
-    ...    <p>Defines the geolocation.</p>\n<ul>\n<li><code>latitude</code> Latitude between -90 and 90.</li>\n<li><code>longitude</code> Longitude between -180 and 180.</li>\n<li><code>accuracy</code> <b>Optional</b> Non-negative accuracy value. Defaults to 0. Example usage: <code>{'latitude': 59.95, 'longitude': 30.31667}</code></li>\n</ul>
+    ...    <p>Defines the geolocation.</p>\n<ul>\n<li><code>latitude</code> Latitude between -90 and 90.</li>\n<li><code>longitude</code> Longitude between -180 and 180.</li>\n<li><code>accuracy</code> <b>Optional</b> Non-negative accuracy value. Defaults to 0.</li>\n</ul>\n<p>Example usage: <code>{'latitude': 59.95, 'longitude': 30.31667}</code></p>
     ...    {"key": "longitude", "type": "float", "required": "true"}
     ...    {"key": "latitude", "type": "float", "required": "true"}
     ...    {"key": "accuracy", "type": "float", "required": "false"}
 
 Custom
     DataType Custom Should Be    0
-    ...    Example
-    ...    Hello, world!
+    ...    CustomType
+    ...    <p>Converter method doc is used when defined.</p>
+
+Usages
+    Usages Should Be    1    Custom    CustomType
+    ...    Custom=arg,arg3
+    Usages Should be    3    TypedDict    GeoLocation
+    ...    Funny Unions=funny
+    ...    Set Location=location
+    Usages Should Be    4    Enum    Small
+    ...    __init__=credentials
+    ...    Funny Unions=funny

@@ -21,7 +21,7 @@ Keyword Arguments
     [Tags]        require-py3.7
     [Template]    Verify Argument Models
     ${MODEL}[keywords][0][args]     value    operator: AssertionOperator | None = None    exp: str = something?
-    ${MODEL}[keywords][1][args]     arg: CustomType    arg2: CustomType2
+    ${MODEL}[keywords][1][args]     arg: CustomType    arg2: CustomType2    arg3: CustomType
     ${MODEL}[keywords][2][args]     funny: bool | int | float | str | AssertionOperator | Small | GeoLocation | None = equal
     ${MODEL}[keywords][3][args]     location: GeoLocation
     ${MODEL}[keywords][4][args]     list_of_str: List[str]    dict_str_int: Dict[str, int]    Whatever: Any    *args: List[typing.Any]
@@ -68,7 +68,7 @@ Enum Members
     [Template]    NONE
     ${exp_list}    Evaluate    [{"name": "equal","value": "=="},{"name": "==","value": "=="},{"name": "<","value": "<"},{"name": ">","value": ">"},{"name": "<=","value": "<="},{"name": ">=","value": ">="}]
     FOR   ${cur}    ${exp}    IN ZIP    ${Model}[dataTypes][enums][0][members]    ${exp_list}
-        Run Keyword And Continue On Failure    Dictionaries Should Be Equal    ${cur}    ${exp}
+        Dictionaries Should Be Equal    ${cur}    ${exp}
     END
 
 Custom types
@@ -78,6 +78,17 @@ Custom types
     ${Model}[dataTypes][customs][1][type]    Custom
     ${Model}[dataTypes][customs][1][name]    CustomType2
     ${Model}[dataTypes][customs][1][doc]     <p>Class doc is used when converter method has no doc.</p>
+
+Usages
+    ${MODEL}[types][1][type]      Custom
+    ${MODEL}[types][1][name]      CustomType
+    ${MODEL}[types][1][usages]    [{'kw': 'Custom', 'args': ['arg', 'arg3']}]
+    ${MODEL}[types][3][type]      TypedDict
+    ${MODEL}[types][3][name]      GeoLocation
+    ${MODEL}[types][3][usages]    [{'kw': 'Funny Unions', 'args': ['funny']}, {'kw': 'Set Location', 'args': ['location']}]
+    ${MODEL}[types][4][type]      Enum
+    ${MODEL}[types][4][name]      Small
+    ${MODEL}[types][4][usages]    [{'kw': '__init__', 'args': ['credentials']}, {'kw': 'Funny Unions', 'args': ['funny']}]
 
 *** Keywords ***
 Verify Argument Models

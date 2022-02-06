@@ -61,6 +61,8 @@ class _RunnableHandler:
                          tuple(tags or ()))
 
     def _get_name(self, handler_name, handler_method):
+        if handler_name == '__init__':
+            return handler_name
         robot_name = getattr(handler_method, 'robot_name', None)
         name = robot_name or printable_name(handler_name, code_style=True)
         if not name:

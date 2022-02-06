@@ -46,3 +46,13 @@ Custom
     DataType Custom Should Be    1
     ...    CustomType2
     ...    Class doc is used when converter method has no doc.
+
+Usages
+    Usages Should Be    1    Custom    CustomType
+    ...    Custom=arg,arg3
+    Usages Should be    3    TypedDict    GeoLocation
+    ...    Funny Unions=funny
+    ...    Set Location=location
+    Usages Should Be    4    Enum    Small
+    ...    __init__=credentials
+    ...    Funny Unions=funny

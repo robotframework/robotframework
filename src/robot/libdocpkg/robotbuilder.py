@@ -23,7 +23,7 @@ from robot.running import (TestLibrary, UserLibrary, UserErrorHandler,
 from robot.utils import split_tags_from_doc, unescape, is_string
 from robot.variables import search_variable
 
-from .datatypes import TypeDoc
+from .datatypes import TypeDoc, Usage
 from .model import LibraryDoc, KeywordDoc
 
 
@@ -57,7 +57,7 @@ class LibraryDocBuilder:
         return library
 
     def _get_doc(self, lib):
-        return lib.doc or "Documentation for library ``%s``." % lib.name
+        return lib.doc or f"Documentation for library ``{lib.name}``."
 
     def _get_initializers(self, lib):
         if lib.init.arguments.maxargs:
@@ -65,11 +65,17 @@ class LibraryDocBuilder:
         return []
 
     def _get_types(self, keywords, converters):
-        types = [TypeDoc.for_type(typ, converters)
-                 for kw in keywords
-                 for arg in kw.args
-                 for typ in arg.types]
-        return [t for t in types if t is not None]
+        types = {}
+        for kw in keywords:
+            for arg in kw.args:
+                for typ in arg.types:
+                    type_doc = TypeDoc.for_type(typ, converters)
+                    if type_doc:
+                        usages = types.setdefault(type_doc, {})
+                        usages.setdefault(kw.name, []).append(arg.name)
+        for type_doc, usages in types.items():
+            type_doc.usages = [Usage(kw, args) for kw, args in usages.items()]
+        return set(types)
 
 
 class ResourceDocBuilder:
@@ -97,12 +103,12 @@ class ResourceDocBuilder:
             candidate = os.path.normpath(os.path.join(dire, path))
             if os.path.isfile(candidate):
                 return candidate
-        raise DataError("Resource file '%s' does not exist." % path)
+        raise DataError(f"Resource file '{path}' does not exist.")
 
     def _get_doc(self, res):
         if res.doc:
             return unescape(res.doc)
-        return "Documentation for resource file ``%s``." % res.name
+        return f"Documentation for resource file ``{res.name}``."
 
 
 class KeywordDocBuilder:

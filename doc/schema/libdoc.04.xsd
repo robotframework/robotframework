@@ -136,6 +136,7 @@
     <xs:complexType name="Type">
         <xs:sequence>
             <xs:element name="doc" type="xs:string" />
+            <xs:element name="usages" type="Usages" />
             <!-- Only used when 'type' is 'Enum' -->
             <xs:element name="members" type="EnumMembers" minOccurs="0" />
             <!-- Only used when 'type' is 'TypedDict' -->
@@ -151,6 +152,17 @@
             <xs:enumeration value="TypedDict" />
         </xs:restriction>
     </xs:simpleType>
+    <xs:complexType name="Usages">
+        <xs:sequence>
+            <xs:element name="usage" type="Usage" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Usage">
+        <xs:sequence>
+            <xs:element name="arg" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="kw" type="xs:string" use="required" />
+    </xs:complexType>
     <xs:complexType name="Tags">
         <xs:sequence>
             <xs:element name="tag" type="xs:string" minOccurs="0" maxOccurs="unbounded" />

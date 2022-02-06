@@ -124,5 +124,5 @@ class DataTypesLibrary:
     def typing_types(self, list_of_str: List[str], dict_str_int: Dict[str, int], Whatever: Any, *args: List[Any]):
         pass
 
-    def custom(self, arg: CustomType, arg2: 'CustomType2'):
+    def custom(self, arg: CustomType, arg2: 'CustomType2', arg3: CustomType):
         pass

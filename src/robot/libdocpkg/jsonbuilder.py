@@ -19,7 +19,8 @@ import os.path
 from robot.running import ArgInfo, ArgumentSpec
 from robot.errors import DataError
 
-from .datatypes import CustomDoc, EnumDoc, EnumMember, TypedDictDoc, TypedDictItem
+from .datatypes import (CustomDoc, EnumDoc, EnumMember, TypedDictDoc, TypedDictItem,
+                        Usage)
 from .model import LibraryDoc, KeywordDoc
 
 
@@ -87,11 +88,14 @@ class JsonDocBuilder:
         return spec
 
     def _parse_types(self, types):
-        for obj in types:
+        for typ in types:
             creator = {'Enum': self._create_enum_doc,
                        'TypedDict': self._create_typed_dict_doc,
-                       'Custom': self._create_custom_doc}[obj.get('type')]
-            yield creator(obj)
+                       'Custom': self._create_custom_doc}[typ.get('type')]
+            type_doc = creator(typ)
+            for usage in typ.get('usages', []):
+                type_doc.usages.append(Usage(usage['kw'], usage['args']))
+            yield type_doc
 
     def _parse_data_types(self, data_types):
         for obj in data_types['enums']:

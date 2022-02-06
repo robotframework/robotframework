@@ -281,3 +281,17 @@ DataType Custom Should Be
     ${customs}=   Get Elements    ${LIBDOC}   xpath=types/type[@type='Custom']
     Element Attribute Should Be    ${customs}[${index}]     name      ${name}
     Element Text Should Be         ${customs}[${index}]     ${doc}    xpath=doc
+
+Usages Should Be
+    [Arguments]    ${index}    ${expected type}    ${expected name}    &{expected usages}
+    ${elem} =    Get Element    ${LIBDOC}   xpath=types/type[${{${index} + 1}}]
+    Element Attribute Should Be    ${elem}    type    ${expected type}
+    Element Attribute Should Be    ${elem}    name    ${expected name}
+    @{usages} =    Get Elements    ${elem}    usages/usage
+    Should Be Equal    ${{len($usages)}}    ${{len($expected_usages)}}
+    FOR    ${usage}    ${kw}    IN ZIP    ${usages}    ${expected usages}
+        @{actual args} =    Get Elements Texts    ${usage}    arg
+        @{expected args} =    Split String    ${expected usages}[${kw}]    ,
+        Should Be Equal    ${usage.get('kw')}    ${kw}
+        Should Be Equal    ${actual args}        ${expected args}
+    END

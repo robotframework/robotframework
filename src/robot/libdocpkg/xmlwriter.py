@@ -27,7 +27,7 @@ class LibdocXmlWriter:
         self._write_keywords('inits', 'init', libdoc.inits, libdoc.source, writer)
         self._write_keywords('keywords', 'kw', libdoc.keywords, libdoc.source, writer)
         # Write deprecated '<datatypes>' element.
-        self._write_deprecated_data_types(libdoc.types, writer)
+        self._write_data_types(libdoc.types, writer)
         # Write new '<types>' element.
         self._write_types(libdoc.types, writer)
         self._write_end(writer)
@@ -100,7 +100,7 @@ class LibdocXmlWriter:
         self._add_source_info(attrs, kw, lib_source)
         return attrs
 
-    def _write_deprecated_data_types(self, types, writer):
+    def _write_data_types(self, types, writer):
         enums = sorted(t for t in types if t.type == 'Enum')
         typed_dicts = sorted(t for t in types if t.type == 'TypedDict')
         customs = sorted(t for t in types if t.type == 'Custom')
@@ -135,6 +135,13 @@ class LibdocXmlWriter:
         for typ in sorted(types):
             writer.start('type', {'name': typ.name, 'type': typ.type})
             writer.element('doc', typ.doc)
+            writer.start('usages')
+            for usage in typ.usages:
+                writer.start('usage', attrs={'kw': usage.keyword})
+                for arg in usage.arguments:
+                    writer.element('arg', arg)
+                writer.end('usage')
+            writer.end('usages')
             if typ.type == 'Enum':
                 self._write_enum_members(typ, writer)
             if typ.type == 'TypedDict':

@@ -2,16 +2,16 @@
   "name": "DataTypesLibrary",
   "doc": "<p>This Library has Data Types.</p>\n<p>It has some in <code>__init__</code> and others in the <a href=\"#Keywords\" class=\"name\">Keywords</a>.</p>\n<p>The DataTypes are the following that should be linked. <span class=\"name\">HttpCredentials</span> , <a href=\"#GeoLocation\" class=\"name\">GeoLocation</a> , <a href=\"#Small\" class=\"name\">Small</a> and <a href=\"#AssertionOperator\" class=\"name\">AssertionOperator</a>.</p>",
   "version": "",
-  "generated": "2020-11-26 21:27:03",
+  "generated": "2022-02-06 18:55:20",
   "type": "LIBRARY",
   "scope": "TEST",
   "docFormat": "HTML",
-  "source": "/Source/robotframework/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
-  "lineno": 77,
+  "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
+  "lineno": 84,
   "tags": [],
   "inits": [
     {
-      "name": "Init",
+      "name": "__init__",
       "args": [
         {
           "name": "credentials",
@@ -27,8 +27,8 @@
       "doc": "<p>This is the init Docs.</p>\n<p>It links to <a href=\"#Set%20Location\" class=\"name\">Set Location</a> keyword and to <a href=\"#GeoLocation\" class=\"name\">GeoLocation</a> data type.</p>",
       "shortdoc": "This is the init Docs.",
       "tags": [],
-      "source": "/Source/robotframework/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
-      "lineno": 86
+      "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
+      "lineno": 93
     }
   ],
   "keywords": [
@@ -65,11 +65,51 @@
           "repr": "exp: str = something?"
         }
       ],
+      "doc": "<p>This links to <a href=\"#AssertionOperator\" class=\"name\">AssertionOperator</a> .</p>\n<p>This is the next Line that links to 'Set Location` .</p>",
+      "shortdoc": "This links to `AssertionOperator` .",
+      "tags": [],
+      "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
+      "lineno": 103
+    },
+    {
+      "name": "Custom",
+      "args": [
+        {
+          "name": "arg",
+          "types": [
+            "CustomType"
+          ],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "arg: CustomType"
+        },
+        {
+          "name": "arg2",
+          "types": [
+            "CustomType2"
+          ],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "arg2: CustomType2"
+        },
+        {
+          "name": "arg3",
+          "types": [
+            "CustomType"
+          ],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "arg3: CustomType"
+        }
+      ],
       "doc": "",
       "shortdoc": "",
       "tags": [],
-      "source": "/Source/robotframework/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
-      "lineno": 95
+      "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
+      "lineno": 127
     },
     {
       "name": "Funny Unions",
@@ -95,8 +135,8 @@
       "doc": "",
       "shortdoc": "",
       "tags": [],
-      "source": "/Source/robotframework/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
-      "lineno": 98
+      "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
+      "lineno": 110
     },
     {
       "name": "Set Location",
@@ -115,8 +155,8 @@
       "doc": "",
       "shortdoc": "",
       "tags": [],
-      "source": "/Source/robotframework/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
-      "lineno": 92
+      "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
+      "lineno": 100
     },
     {
       "name": "Typing Types",
@@ -165,15 +205,27 @@
       "doc": "",
       "shortdoc": "",
       "tags": [],
-      "source": "/Source/robotframework/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
-      "lineno": 112
+      "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
+      "lineno": 124
     }
   ],
   "dataTypes": {
+    "customs": [
+      {
+        "type": "Custom",
+        "name": "CustomType",
+        "doc": "<p>Converter method doc is used when defined.</p>"
+      },
+      {
+        "type": "Custom",
+        "name": "CustomType2",
+        "doc": "<p>Class doc is used when converter method has no doc.</p>"
+      }
+    ],
     "enums": [
       {
-        "name": "AssertionOperator",
         "type": "Enum",
+        "name": "AssertionOperator",
         "doc": "<p>This is some Doc</p>\n<p>This has was defined by assigning to __doc__.</p>",
         "members": [
           {
@@ -203,8 +255,8 @@
         ]
       },
       {
-        "name": "Small",
         "type": "Enum",
+        "name": "Small",
         "doc": "<p>This is the Documentation.</p>\n<p>This was defined within the class definition.</p>",
         "members": [
           {
@@ -228,9 +280,9 @@
     ],
     "typedDicts": [
       {
-        "name": "GeoLocation",
         "type": "TypedDict",
-        "doc": "<p>Defines the geolocation.</p>\n<ul>\n<li><code>latitude</code> Latitude between -90 and 90.</li>\n<li><code>longitude</code> Longitude between -180 and 180.</li>\n<li><code>accuracy</code> <b>Optional</b> Non-negative accuracy value. Defaults to 0. Example usage: <code>{'latitude': 59.95, 'longitude': 30.31667}</code></li>\n</ul>",
+        "name": "GeoLocation",
+        "doc": "<p>Defines the geolocation.</p>\n<ul>\n<li><code>latitude</code> Latitude between -90 and 90.</li>\n<li><code>longitude</code> Longitude between -180 and 180.</li>\n<li><code>accuracy</code> <b>Optional</b> Non-negative accuracy value. Defaults to 0.</li>\n</ul>\n<p>Example usage: <code>{'latitude': 59.95, 'longitude': 30.31667}</code></p>",
         "items": [
           {
             "key": "longitude",
@@ -249,13 +301,153 @@
           }
         ]
       }
-    ],
-    "customs": [
-      {
-        "name": "Example",
-        "doc": "Hello, world!",
-        "type": "Custom"
-      }
     ]
-  }
+  },
+  "types": [
+    {
+      "type": "Enum",
+      "name": "AssertionOperator",
+      "doc": "<p>This is some Doc</p>\n<p>This has was defined by assigning to __doc__.</p>",
+      "members": [
+        {
+          "name": "equal",
+          "value": "=="
+        },
+        {
+          "name": "==",
+          "value": "=="
+        },
+        {
+          "name": "<",
+          "value": "<"
+        },
+        {
+          "name": ">",
+          "value": ">"
+        },
+        {
+          "name": "<=",
+          "value": "<="
+        },
+        {
+          "name": ">=",
+          "value": ">="
+        }
+      ],
+      "usages": [
+        {
+          "kw": "Assert Something",
+          "args": [
+            "operator"
+          ]
+        },
+        {
+          "kw": "Funny Unions",
+          "args": [
+            "funny"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Custom",
+      "name": "CustomType",
+      "doc": "<p>Converter method doc is used when defined.</p>",
+      "usages": [
+        {
+          "kw": "Custom",
+          "args": [
+            "arg",
+            "arg3"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Custom",
+      "name": "CustomType2",
+      "doc": "<p>Class doc is used when converter method has no doc.</p>",
+      "usages": [
+        {
+          "kw": "Custom",
+          "args": [
+            "arg2"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "TypedDict",
+      "name": "GeoLocation",
+      "doc": "<p>Defines the geolocation.</p>\n<ul>\n<li><code>latitude</code> Latitude between -90 and 90.</li>\n<li><code>longitude</code> Longitude between -180 and 180.</li>\n<li><code>accuracy</code> <b>Optional</b> Non-negative accuracy value. Defaults to 0.</li>\n</ul>\n<p>Example usage: <code>{'latitude': 59.95, 'longitude': 30.31667}</code></p>",
+      "items": [
+        {
+          "key": "longitude",
+          "type": "float",
+          "required": true
+        },
+        {
+          "key": "latitude",
+          "type": "float",
+          "required": true
+        },
+        {
+          "key": "accuracy",
+          "type": "float",
+          "required": false
+        }
+      ],
+      "usages": [
+        {
+          "kw": "Funny Unions",
+          "args": [
+            "funny"
+          ]
+        },
+        {
+          "kw": "Set Location",
+          "args": [
+            "location"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Enum",
+      "name": "Small",
+      "doc": "<p>This is the Documentation.</p>\n<p>This was defined within the class definition.</p>",
+      "members": [
+        {
+          "name": "one",
+          "value": "1"
+        },
+        {
+          "name": "two",
+          "value": "2"
+        },
+        {
+          "name": "three",
+          "value": "3"
+        },
+        {
+          "name": "four",
+          "value": "4"
+        }
+      ],
+      "usages": [
+        {
+          "kw": "__init__",
+          "args": [
+            "credentials"
+          ]
+        },
+        {
+          "kw": "Funny Unions",
+          "args": [
+            "funny"
+          ]
+        }
+      ]
+    }
+  ]
 }

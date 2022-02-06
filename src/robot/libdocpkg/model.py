@@ -119,7 +119,7 @@ class LibraryDoc:
             'keywords': [kw.to_dictionary() for kw in self.keywords],
             # 'dataTypes' was deprecated in RF 5, 'types' should be used instead.
             'dataTypes': self._get_data_types(self.types),
-            'types': [t.to_dictionary() for t in self.types]
+            'types': [t.to_dictionary() for t in sorted(self.types)]
         }
 
     def _get_data_types(self, types):
@@ -127,9 +127,9 @@ class LibraryDoc:
         typed_dicts = sorted(t for t in types if t.type == 'TypedDict')
         customs = sorted(t for t in types if t.type == 'Custom')
         return {
-            'customs': [t.to_dictionary() for t in customs],
-            'enums': [t.to_dictionary() for t in enums],
-            'typedDicts': [t.to_dictionary() for t in typed_dicts]
+            'customs': [t.to_dictionary(usages=False) for t in customs],
+            'enums': [t.to_dictionary(usages=False) for t in enums],
+            'typedDicts': [t.to_dictionary(usages=False) for t in typed_dicts]
         }
 
     def to_json(self, indent=None):

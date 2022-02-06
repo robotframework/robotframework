@@ -19,8 +19,9 @@ from robot.errors import DataError
 from robot.running import ArgInfo, ArgumentSpec
 from robot.utils import ET, ETSource
 
+from .datatypes import (CustomDoc, EnumDoc, EnumMember, TypedDictDoc, TypedDictItem,
+                        Usage)
 from .model import LibraryDoc, KeywordDoc
-from .datatypes import CustomDoc, EnumDoc, EnumMember, TypedDictDoc, TypedDictItem
 
 
 class XmlDocBuilder:
@@ -98,11 +99,15 @@ class XmlDocBuilder:
         return spec
 
     def _parse_types(self, spec):
-        for elem in spec.findall('types/type'):
+        for typ in spec.findall('types/type'):
             creator = {'Enum': self._create_enum_doc,
                        'TypedDict': self._create_typed_dict_doc,
-                       'Custom': self._create_custom_doc}[elem.get('type')]
-            yield creator(elem)
+                       'Custom': self._create_custom_doc}[typ.get('type')]
+            type_doc = creator(typ)
+            for usage in typ.findall('usages/usage'):
+                args = [a.text for a in usage.findall('arg')]
+                type_doc.usages.append(Usage(usage.get('kw'), args))
+            yield type_doc
 
     def _parse_data_types(self, spec):
         for elem in spec.findall('datatypes/enums/enum'):
