@@ -125,9 +125,7 @@ class LibraryDoc:
     def _get_data_types(self, types):
         enums = sorted(t for t in types if t.type == 'Enum')
         typed_dicts = sorted(t for t in types if t.type == 'TypedDict')
-        customs = sorted(t for t in types if t.type == 'Custom')
         return {
-            'customs': [t.to_dictionary(usages=False) for t in customs],
             'enums': [t.to_dictionary(usages=False) for t in enums],
             'typedDicts': [t.to_dictionary(usages=False) for t in typed_dicts]
         }

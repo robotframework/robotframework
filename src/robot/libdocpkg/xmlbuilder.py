@@ -114,8 +114,6 @@ class XmlDocBuilder:
             yield self._create_enum_doc(elem)
         for elem in spec.findall('datatypes/typeddicts/typeddict'):
             yield self._create_typed_dict_doc(elem)
-        for elem in spec.findall('datatypes/customs/custom'):
-            yield self._create_custom_doc(elem)
 
     def _create_enum_doc(self, elem):
         return EnumDoc(name=elem.get('name'),

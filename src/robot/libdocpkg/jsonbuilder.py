@@ -102,8 +102,6 @@ class JsonDocBuilder:
             yield self._create_enum_doc(obj)
         for obj in data_types['typedDicts']:
             yield self._create_typed_dict_doc(obj)
-        for obj in data_types['customs']:
-            yield self._create_custom_doc(obj)
 
     def _create_enum_doc(self, data):
         return EnumDoc(name=data['name'],

@@ -121,13 +121,6 @@ class LibdocXmlWriter:
                 self._write_typed_dict_items(typ_dict, writer)
                 writer.end('typeddict')
             writer.end('typeddicts')
-        if customs:
-            writer.start('customs')
-            for typ in customs:
-                writer.start('custom', {'name': typ.name})
-                writer.element('doc', typ.doc)
-                writer.end('custom')
-            writer.end('customs')
         writer.end('datatypes')
 
     def _write_types(self, types, writer):

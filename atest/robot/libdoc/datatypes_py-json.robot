@@ -27,9 +27,18 @@ Keyword Arguments
     ${MODEL}[keywords][4][args]     list_of_str: List[str]    dict_str_int: Dict[str, int]    Whatever: Any    *args: List[typing.Any]
 
 TypedDict
-    ${Model}[dataTypes][typedDicts][0][type]    TypedDict
-    ${Model}[dataTypes][typedDicts][0][name]    GeoLocation
-    ${Model}[dataTypes][typedDicts][0][doc]     <p>Defines the geolocation.</p>
+    ${MODEL}[dataTypes][typedDicts][0][type]    TypedDict
+    ${MODEL}[dataTypes][typedDicts][0][name]    GeoLocation
+    ${MODEL}[dataTypes][typedDicts][0][doc]     <p>Defines the geolocation.</p>
+    ...    <ul>
+    ...    <li><code>latitude</code> Latitude between -90 and 90.</li>
+    ...    <li><code>longitude</code> Longitude between -180 and 180.</li>
+    ...    <li><code>accuracy</code> <b>Optional</b> Non-negative accuracy value. Defaults to 0.</li>
+    ...    </ul>
+    ...    <p>Example usage: <code>{'latitude': 59.95, 'longitude': 30.31667}</code></p>
+    ${MODEL}[types][3][type]    TypedDict
+    ${MODEL}[types][3][name]    GeoLocation
+    ${MODEL}[types][3][doc]     <p>Defines the geolocation.</p>
     ...    <ul>
     ...    <li><code>latitude</code> Latitude between -90 and 90.</li>
     ...    <li><code>longitude</code> Longitude between -180 and 180.</li>
@@ -59,25 +68,32 @@ TypedDict Items
     END
 
 Enum
-    ${Model}[dataTypes][enums][0][type]    Enum
-    ${Model}[dataTypes][enums][0][name]    AssertionOperator
-    ${Model}[dataTypes][enums][0][doc]     <p>This is some Doc</p>
+    ${MODEL}[dataTypes][enums][0][type]    Enum
+    ${MODEL}[dataTypes][enums][0][name]    AssertionOperator
+    ${MODEL}[dataTypes][enums][0][doc]     <p>This is some Doc</p>
+    ...   <p>This has was defined by assigning to __doc__.</p>
+    ${MODEL}[types][0][type]    Enum
+    ${MODEL}[types][0][name]    AssertionOperator
+    ${MODEL}[types][0][doc]     <p>This is some Doc</p>
     ...   <p>This has was defined by assigning to __doc__.</p>
 
 Enum Members
     [Template]    NONE
     ${exp_list}    Evaluate    [{"name": "equal","value": "=="},{"name": "==","value": "=="},{"name": "<","value": "<"},{"name": ">","value": ">"},{"name": "<=","value": "<="},{"name": ">=","value": ">="}]
-    FOR   ${cur}    ${exp}    IN ZIP    ${Model}[dataTypes][enums][0][members]    ${exp_list}
+    FOR   ${cur}    ${exp}    IN ZIP    ${MODEL}[dataTypes][enums][0][members]    ${exp_list}
+        Dictionaries Should Be Equal    ${cur}    ${exp}
+    END
+    FOR   ${cur}    ${exp}    IN ZIP    ${MODEL}[types][0][members]    ${exp_list}
         Dictionaries Should Be Equal    ${cur}    ${exp}
     END
 
 Custom types
-    ${Model}[dataTypes][customs][0][type]    Custom
-    ${Model}[dataTypes][customs][0][name]    CustomType
-    ${Model}[dataTypes][customs][0][doc]     <p>Converter method doc is used when defined.</p>
-    ${Model}[dataTypes][customs][1][type]    Custom
-    ${Model}[dataTypes][customs][1][name]    CustomType2
-    ${Model}[dataTypes][customs][1][doc]     <p>Class doc is used when converter method has no doc.</p>
+    ${Model}[types][1][type]    Custom
+    ${Model}[types][1][name]    CustomType
+    ${Model}[types][1][doc]     <p>Converter method doc is used when defined.</p>
+    ${Model}[types][2][type]    Custom
+    ${Model}[types][2][name]    CustomType2
+    ${Model}[types][2][doc]     <p>Class doc is used when converter method has no doc.</p>
 
 Usages
     ${MODEL}[types][1][type]      Custom
