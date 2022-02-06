@@ -84,7 +84,7 @@ Scope Should Be
 
 Source Should Be
     [Arguments]    ${source}
-    ${source} =    Relative Source    ${source}    %{TEMPDIR}
+    ${source} =    Normalize Path    ${source}
     Element Attribute Should Be    ${LIBDOC}    source    ${source}
 
 Lineno Should Be
@@ -192,7 +192,7 @@ Specfile Tags Should Be
 Keyword Source Should Be
     [Arguments]    ${index}    ${source}    ${xpath}=keywords/kw
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}
-    ${source} =    Relative Source    ${source}    %{TEMPDIR}
+    ${source} =    Normalize Path    ${source}
     Element Attribute Should Be    ${kws}[${index}]    source    ${source}
 
 Keyword Should Not Have Source

@@ -40,32 +40,17 @@ class LibdocXmlWriter:
                  'scope': libdoc.scope,
                  'generated': generated,
                  'specversion': '4'}
-        self._add_source_info(attrs, libdoc, writer.output)
+        self._add_source_info(attrs, libdoc)
         writer.start('keywordspec', attrs)
         writer.element('version', libdoc.version)
         writer.element('doc', libdoc.doc)
         self._write_tags(libdoc.all_tags, writer)
 
-    def _add_source_info(self, attrs, item, outfile, lib_source=None):
+    def _add_source_info(self, attrs, item, lib_source=None):
         if item.source and item.source != lib_source:
-            attrs['source'] = self._format_source(item.source, outfile)
+            attrs['source'] = item.source
         if item.lineno and item.lineno > 0:
             attrs['lineno'] = str(item.lineno)
-
-    def _format_source(self, source, outfile):
-        if not os.path.exists(source):
-            return source
-        source = os.path.normpath(source)
-        if not (hasattr(outfile, 'name')
-                and os.path.isfile(outfile.name)
-                and self._on_same_drive(source, outfile.name)):
-            return source
-        return os.path.relpath(source, os.path.dirname(outfile.name))
-
-    def _on_same_drive(self, path1, path2):
-        if not WINDOWS:
-            return True
-        return os.path.splitdrive(path1)[0] == os.path.splitdrive(path2)[0]
 
     def _get_old_style_scope(self, libdoc):
         if libdoc.type == 'RESOURCE':
@@ -77,7 +62,7 @@ class LibdocXmlWriter:
     def _write_keywords(self, list_name, kw_type, keywords, lib_source, writer):
         writer.start(list_name)
         for kw in keywords:
-            attrs = self._get_start_attrs(kw, lib_source, writer)
+            attrs = self._get_start_attrs(kw, lib_source)
             writer.start(kw_type, attrs)
             self._write_arguments(kw, writer)
             writer.element('doc', kw.doc)
@@ -108,11 +93,11 @@ class LibdocXmlWriter:
             writer.end('arg')
         writer.end('arguments')
 
-    def _get_start_attrs(self, kw, lib_source, writer):
+    def _get_start_attrs(self, kw, lib_source):
         attrs = {'name': kw.name}
         if kw.deprecated:
             attrs['deprecated'] = 'true'
-        self._add_source_info(attrs, kw, writer.output, lib_source)
+        self._add_source_info(attrs, kw, lib_source)
         return attrs
 
     def _write_deprecated_data_types(self, types, writer):

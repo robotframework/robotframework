@@ -276,7 +276,6 @@ class TestXmlSpec(unittest.TestCase):
         orig_data = orig_lib.to_dictionary()
         spec_data = spec_lib.to_dictionary()
         orig_data['generated'] = spec_data['generated'] = None
-        orig_data['source'] = spec_data['source'] = None
         self.maxDiff = None
         self.assertDictEqual(orig_data, spec_data)
 
