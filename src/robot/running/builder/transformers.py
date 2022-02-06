@@ -228,8 +228,8 @@ class TestCaseBuilder(NodeVisitor):
                                       assign=node.assign, lineno=node.lineno)
 
     def visit_ReturnStatement(self, node):
-        self.test.body.create_keyword(name='RETURN', args=node.values,
-                                      lineno=node.lineno)
+        self.test.body.create_return(node.values, lineno=node.lineno,
+                                     error=format_error(node.errors))
 
     def visit_Continue(self, node):
         self.test.body.create_keyword(name='CONTINUE', args=node.values,
@@ -282,7 +282,8 @@ class KeywordBuilder(NodeVisitor):
                                     assign=node.assign, lineno=node.lineno)
 
     def visit_ReturnStatement(self, node):
-        self.kw.body.create_return(node.values, lineno=node.lineno)
+        self.kw.body.create_return(node.values, lineno=node.lineno,
+                                   error=format_error(node.errors))
 
     def visit_Continue(self, node):
         self.kw.body.create_continue(lineno=node.lineno)
@@ -345,7 +346,8 @@ class ForBuilder(NodeVisitor):
         TryBuilder(self.model).build(node)
 
     def visit_ReturnStatement(self, node):
-        self.model.body.create_return(node.values, lineno=node.lineno)
+        self.model.body.create_return(node.values, lineno=node.lineno,
+                                      error=format_error(node.errors))
 
     def visit_Continue(self, node):
         self.model.body.create_continue(lineno=node.lineno,
@@ -415,7 +417,8 @@ class IfBuilder(NodeVisitor):
         TryBuilder(self.model).build(node)
 
     def visit_ReturnStatement(self, node):
-        self.model.body.create_return(node.values, lineno=node.lineno)
+        self.model.body.create_return(node.values, lineno=node.lineno,
+                                      error=format_error(node.errors))
 
     def visit_Continue(self, node):
         self.model.body.create_continue(lineno=node.lineno,
@@ -469,7 +472,8 @@ class TryBuilder(NodeVisitor):
         TryBuilder(self.model).build(node)
 
     def visit_ReturnStatement(self, node):
-        self.model.body.create_return(node.values, lineno=node.lineno)
+        self.model.body.create_return(node.values, lineno=node.lineno,
+                                      error=format_error(node.errors))
 
     def visit_Continue(self, node):
         self.model.body.create_continue(lineno=node.lineno,
@@ -528,7 +532,8 @@ class WhileBuilder(NodeVisitor):
         TryBuilder(self.model).build(node)
 
     def visit_ReturnStatement(self, node):
-        self.model.body.create_return(node.values)
+        self.model.body.create_return(node.values, lineno=node.lineno,
+                                      error=format_error(node.errors))
 
     def visit_Break(self, node):
         self.model.body.create_break(error=format_error(node.errors))

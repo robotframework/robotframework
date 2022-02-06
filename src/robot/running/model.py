@@ -178,11 +178,12 @@ class Try(model.Try):
 
 @Body.register
 class Return(model.Return):
-    __slots__ = ['lineno']
+    __slots__ = ['lineno', 'error']
 
-    def __init__(self, values=(), parent=None, lineno=None):
+    def __init__(self, values=(), parent=None, lineno=None, error=None):
         super().__init__(values, parent)
         self.lineno = lineno
+        self.error = error
 
     @property
     def source(self):
@@ -191,6 +192,8 @@ class Return(model.Return):
     def run(self, context, run=True, templated=False):
         with StatusReporter(self, ReturnResult(self.values), context, run):
             if run:
+                if self.error:
+                    raise DataError(self.error)
                 raise ReturnFromKeyword(self.values)
 
 

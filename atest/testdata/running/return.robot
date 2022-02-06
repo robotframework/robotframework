@@ -43,23 +43,37 @@ In nested FOR/IF structure
     Should be equal    ${x}    ${6}
 
 In test
-    [Documentation]    FAIL 'Return' is a reserved keyword.
+    [Documentation]    FAIL RETURN statement can only be used inside a user keyword.
     RETURN
 
 In test with values
-    [Documentation]    FAIL 'Return' is a reserved keyword.
+    [Documentation]    FAIL RETURN statement can only be used inside a user keyword.
     RETURN    v1    v2
 
 In test inside IF
-    [Documentation]    FAIL Invalid 'RETURN' usage.
+    [Documentation]    FAIL RETURN statement can only be used inside a user keyword.
     IF    True
         RETURN
     END
 
 In test inside FOR
-    [Documentation]    FAIL Invalid 'RETURN' usage.
+    [Documentation]    FAIL RETURN statement can only be used inside a user keyword.
     FOR    ${x}    IN    whatever
         RETURN
+    END
+
+In test inside WHILE
+    [Documentation]    FAIL RETURN statement can only be used inside a user keyword.
+    WHILE    True
+        RETURN
+    END
+
+In test inside TRY
+    [Documentation]    FAIL RETURN statement can only be used inside a user keyword.
+    TRY
+        RETURN
+    EXCEPT
+        Fail    should not be executed
     END
 
 *** Keywords ***

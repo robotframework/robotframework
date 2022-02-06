@@ -132,7 +132,7 @@ class Statement(ast.AST):
         if line:
             yield line
 
-    def validate(self):
+    def validate(self, context):
         pass
 
     def __iter__(self):
@@ -539,7 +539,7 @@ class Variable(Statement):
     def value(self):
         return self.get_values(Token.ARGUMENT)
 
-    def validate(self):
+    def validate(self, context):
         name = self.get_value(Token.VARIABLE)
         match = search_variable(name, ignore_errors=True)
         if not match.is_assign(allow_assign_mark=True):
@@ -696,7 +696,7 @@ class Arguments(MultiValue):
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
-    def validate(self):
+    def validate(self, context):
         errors = []
         UserKeywordArgumentParser(error_reporter=errors.append).parse(self.values)
         self.errors = tuple(errors)
@@ -801,7 +801,7 @@ class ForHeader(Statement):
         separator = self.get_token(Token.FOR_SEPARATOR)
         return normalize_whitespace(separator.value) if separator else None
 
-    def validate(self):
+    def validate(self, context):
         if not self.variables:
             self._add_error('no loop variables')
         if not self.flavor:
@@ -849,7 +849,7 @@ class IfHeader(IfElseHeader):
             return ', '.join(values) if values else None
         return values[0]
 
-    def validate(self):
+    def validate(self, context):
         conditions = len(self.get_tokens(Token.ARGUMENT))
         if conditions == 0:
             self.errors += ('%s must have a condition.' % self.type,)
@@ -883,7 +883,7 @@ class ElseHeader(IfElseHeader):
             Token(Token.EOL, eol)
         ])
 
-    def validate(self):
+    def validate(self, context):
         if self.get_tokens(Token.ARGUMENT):
             values = self.get_values(Token.ARGUMENT)
             self.errors += (f'ELSE does not accept arguments, got {seq2str(values)}.',)
@@ -899,7 +899,7 @@ class NoArgumentHeader(Statement):
             Token(Token.EOL, eol)
         ])
 
-    def validate(self):
+    def validate(self, context):
         if self.get_tokens(Token.ARGUMENT):
             self.errors += (f'{self.type} does not accept arguments, got '
                             f'{seq2str(self.values)}.',)
@@ -944,7 +944,7 @@ class ExceptHeader(Statement):
     def variable(self):
         return self.get_value(Token.VARIABLE)
 
-    def validate(self):
+    def validate(self, context):
         as_token = self.get_token(Token.AS)
         if as_token:
             variables = self.get_tokens(Token.VARIABLE)
@@ -986,7 +986,7 @@ class WhileHeader(Statement):
             return ', '.join(values) if values else None
         return values[0]
 
-    def validate(self):
+    def validate(self, context):
         conditions = len(self.get_tokens(Token.ARGUMENT))
         if conditions == 0:
             self.errors += ('WHILE must have a condition.',)
@@ -1011,6 +1011,10 @@ class ReturnStatement(Statement):
                            Token(Token.ARGUMENT, value)])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
+
+    def validate(self, context):
+        if not context.in_keyword:
+            self.errors += ("RETURN statement can only be used inside a user keyword.", )
 
 
 @Statement.register

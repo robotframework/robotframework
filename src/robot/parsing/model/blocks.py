@@ -49,7 +49,7 @@ class Block(ast.AST):
     def validate_model(self):
         ModelValidator().visit(self)
 
-    def validate(self):
+    def validate(self, context):
         pass
 
 
@@ -166,7 +166,7 @@ class If(Block):
     def assign(self):
         return self.header.assign
 
-    def validate(self):
+    def validate(self, context):
         self._validate_body()
         if self.type == Token.IF:
             self._validate_structure()
@@ -235,7 +235,7 @@ class For(Block):
     def flavor(self):
         return self.header.flavor
 
-    def validate(self):
+    def validate(self, context):
         if not self.body:
             self.errors += ('FOR loop has empty body.',)
         if not self.end:
@@ -264,7 +264,7 @@ class Try(Block):
     def variable(self):
         return getattr(self.header, 'variable', None)
 
-    def validate(self):
+    def validate(self, context):
         self._validate_body()
         if self.type == Token.TRY:
             self._validate_structure()
@@ -325,7 +325,7 @@ class While(Block):
     def condition(self):
         return self.header.condition
 
-    def validate(self):
+    def validate(self, context):
         if not self.body:
             self.errors += ('WHILE loop has empty body.',)
         if not self.end:
@@ -356,13 +356,35 @@ class ModelWriter(ModelVisitor):
 
 class ModelValidator(ModelVisitor):
 
+    def __init__(self):
+        self._context = ValidationContext()
+
     def visit_Block(self, node):
-        node.validate()
+        self._context.start_block(node)
+        node.validate(self._context)
         ModelVisitor.generic_visit(self, node)
+        self._context.end_block()
 
     def visit_Statement(self, node):
-        node.validate()
+        node.validate(self._context)
         ModelVisitor.generic_visit(self, node)
+
+
+class ValidationContext:
+
+    def __init__(self):
+        self.roots = []
+
+    def start_block(self, node):
+        self.roots.append(node)
+
+    def end_block(self):
+        self.roots.pop()
+    
+    @property
+    def in_keyword(self):
+        root_types = [type(r) for r in self.roots]
+        return Keyword in root_types
 
 
 class FirstStatementFinder(ModelVisitor):
