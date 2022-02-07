@@ -95,7 +95,7 @@ class DataTypesLibrary:
 
         It links to `Set Location` keyword and to `GeoLocation` data type.
         """
-        print(type(credentials))
+        pass
 
     def set_location(self, location: GeoLocation):
         pass

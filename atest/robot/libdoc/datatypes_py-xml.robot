@@ -53,6 +53,10 @@ Usages
     Usages Should be    3    TypedDict    GeoLocation
     ...    Funny Unions=funny
     ...    Set Location=location
-    Usages Should Be    4    Enum    Small
-    ...    __init__=credentials
-    ...    Funny Unions=funny
+    # With Python 3.6 `typing.get_type_hints` ignores `Small`.
+    # Apparently because it is based on `int` args also have `int`.
+    IF    $INTERPRETER.version_info >= (3, 7)
+        Usages Should Be    4    Enum    Small
+        ...    __init__=credentials
+        ...    Funny Unions=funny
+    END

@@ -104,12 +104,17 @@ Usages
     ${MODEL}[types][3][usages]    [{'kw': 'Funny Unions', 'args': ['funny']}, {'kw': 'Set Location', 'args': ['location']}]
     ${MODEL}[types][4][type]      Enum
     ${MODEL}[types][4][name]      Small
-    ${MODEL}[types][4][usages]    [{'kw': '__init__', 'args': ['credentials']}, {'kw': 'Funny Unions', 'args': ['funny']}]
+    # With Python 3.6 `typing.get_type_hints` ignores `Small`.
+    # Apparently because it is based on `int` args also have `int`.
+    IF    $INTERPRETER.version_info >= (3, 7)
+        ${MODEL}[types][4][usages]    [{'kw': '__init__', 'args': ['credentials']}, {'kw': 'Funny Unions', 'args': ['funny']}]
+    END
 
 *** Keywords ***
 Verify Argument Models
     [Arguments]    ${arg_models}    @{expected_reprs}
+    [Tags]    robot:continue-on-failure
     Should Be True    len($arg_models) == len($expected_reprs)
     FOR    ${arg_model}    ${expected_repr}    IN ZIP    ${arg_models}    ${expected_reprs}
-       Run Keyword And Continue On Failure   Verify Argument Model    ${arg_model}    ${expected_repr}    json=True
+         Verify Argument Model    ${arg_model}    ${expected_repr}    json=True
     END
