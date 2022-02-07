@@ -1014,9 +1014,9 @@ class ReturnStatement(Statement):
 
     def validate(self, context):
         if not context.in_keyword:
-            self.errors += ("RETURN can only be used inside a user keyword.", )
+            self.errors += ('RETURN can only be used inside a user keyword.', )
         if context.in_keyword and context.in_finally:
-            self.errors += ("RETURN cannot be used in FINALLY branch.", )
+            self.errors += ('RETURN cannot be used in FINALLY branch.', )
 
 
 @Statement.register

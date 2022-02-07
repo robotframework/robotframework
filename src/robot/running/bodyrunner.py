@@ -552,8 +552,7 @@ class TryRunner:
             return self._run_branch(data.else_branch, result, run)
 
     def _run_finally(self, data, run):
-        cannot_be_used = {BreakLoop: 'BREAK', ContinueLoop: 'CONTINUE',
-                          ReturnFromKeyword: 'RETURN'}
+        cannot_be_used = {BreakLoop: 'BREAK', ContinueLoop: 'CONTINUE'}
         if data.finally_branch:
             result = TryBranchResult(data.FINALLY)
             try:
