@@ -13,10 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os.path
 from datetime import datetime
 
-from robot.utils import WINDOWS, XmlWriter
+from robot.utils import XmlWriter
 
 
 class LibdocXmlWriter:

@@ -19,8 +19,7 @@ import os.path
 from robot.running import ArgInfo, ArgumentSpec
 from robot.errors import DataError
 
-from .datatypes import (CustomDoc, EnumDoc, EnumMember, TypedDictDoc, TypedDictItem,
-                        Usage)
+from .datatypes import EnumMember, TypedDictItem, TypeDoc, Usage
 from .model import LibraryDoc, KeywordDoc
 
 
@@ -88,14 +87,18 @@ class JsonDocBuilder:
         return spec
 
     def _parse_types(self, types):
-        for typ in types:
-            creator = {'Enum': self._create_enum_doc,
-                       'TypedDict': self._create_typed_dict_doc,
-                       'Custom': self._create_custom_doc}[typ.get('type')]
-            type_doc = creator(typ)
-            for usage in typ.get('usages', []):
-                type_doc.usages.append(Usage(usage['kw'], usage['args']))
-            yield type_doc
+        for data in types:
+            doc = TypeDoc(data['type'], data['name'], data['doc'])
+            doc.usages = [Usage(d['kw'], d['args']) for d in data['usages']]
+            if doc.type == TypeDoc.ENUM:
+                doc.members = [EnumMember(d['name'], d['value'])
+                               for d in data['members']]
+            if doc.type == TypeDoc.TYPED_DICT:
+                doc.items = [TypedDictItem(d['key'], d['type'], d['required'])
+                             for d in data['items']]
+            yield doc
+
+    # Code below used for parsing legacy 'dataTypes'.
 
     def _parse_data_types(self, data_types):
         for obj in data_types['enums']:
@@ -104,17 +107,11 @@ class JsonDocBuilder:
             yield self._create_typed_dict_doc(obj)
 
     def _create_enum_doc(self, data):
-        return EnumDoc(name=data['name'],
-                       doc=data['doc'],
+        return TypeDoc(TypeDoc.ENUM, data['name'], data['doc'],
                        members=[EnumMember(member['name'], member['value'])
                                 for member in data['members']])
 
     def _create_typed_dict_doc(self, data):
-        return TypedDictDoc(name=data['name'],
-                            doc=data['doc'],
-                            items=[TypedDictItem(item['key'], item['type'],
-                                                 item.get('required'))
-                                   for item in data['items']])
-
-    def _create_custom_doc(self, data):
-        return CustomDoc(name=data['name'], doc=data['doc'])
+        return TypeDoc(TypeDoc.TYPED_DICT, data['name'], data['doc'],
+                       items=[TypedDictItem(item['key'], item['type'], item['required'])
+                              for item in data['items']])

@@ -18,11 +18,10 @@ from robot.utils import Sortable
 
 class TypeInfo(Sortable):
 
-    def __init__(self, name, doc, used_as):
+    def __init__(self, name, doc):
         self.name = name
         self.doc = doc
-        self.used_as = used_as
 
     @property
     def _sort_key(self):
-        return self.name.lower(), self.used_as.lower()
+        return self.name.lower()

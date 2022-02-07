@@ -13,10 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from inspect import getdoc, isclass
+from inspect import isclass
 from enum import Enum
 
-from robot.utils import Sortable, typeddict_types
+from robot.utils import getdoc, Sortable, typeddict_types
 from robot.running import TypeConverter
 
 
@@ -24,52 +24,43 @@ EnumType = type(Enum)
 
 
 class TypeDoc(Sortable):
-    type = None
+    ENUM = 'Enum'
+    TYPED_DICT = 'TypedDict'
+    CUSTOM = 'Custom'
+    STANDARD = 'Standard'
 
-    def __init__(self, name, doc, usages=None):
+    def __init__(self, type, name, doc, usages=None, members=None, items=None):
+        self.type = type
         self.name = name
-        self.doc = doc
+        self.doc = doc or ''    # doc parsed from XML can be None.
         self.usages = usages or []
-
-    @classmethod
-    def for_type(cls, type, converters):
-        if isinstance(type, EnumType):
-            return EnumDoc.from_type(type)
-        if isinstance(type, typeddict_types):
-            return TypedDictDoc.from_type(type)
-        info = TypeConverter.type_info_for(type, converters)
-        if info:
-            return CustomDoc(info.name, info.doc)
-        return None
+        # Enum members and TypedDict items are used only with appropriate types.
+        self.members = members
+        self.items = items
 
     @property
     def _sort_key(self):
         return self.name.lower()
 
-    def to_dictionary(self, usages=True):
-        return self._to_dict(usages)
-
-    def _to_dict(self, usages=True, **extra):
-        data = {
-            'type': self.type,
-            'name': self.name,
-            'doc': self.doc,
-        }
-        data.update(extra)
-        if usages:
-            data['usages'] = [u.to_dictionary() for u in self.usages]
-        return data
-
-
-class TypedDictDoc(TypeDoc):
-    type = 'TypedDict'
-
-    def __init__(self, name, doc, items=None):
-        super().__init__(name, doc)
-        self.items = items or []
+    @classmethod
+    def for_type(cls, type, converters):
+        if isinstance(type, EnumType):
+            return cls.for_enum(type)
+        if isinstance(type, typeddict_types):
+            return cls.for_typed_dict(type)
+        info = TypeConverter.type_info_for(type, converters)
+        if info:
+            return TypeDoc(TypeDoc.CUSTOM, info.name, info.doc)
+        return None
 
     @classmethod
-    def from_type(cls, typed_dict):
+    def for_enum(cls, enum):
+        return cls(cls.ENUM, enum.__name__, doc=getdoc(enum),
+                   members=[EnumMember(name, str(member.value))
+                            for name, member in enum.__members__.items()])
+
+    @classmethod
+    def for_typed_dict(cls, typed_dict):
         items = []
         required_keys = list(getattr(typed_dict, '__required_keys__', []))
         optional_keys = list(getattr(typed_dict, '__optional_keys__', []))
@@ -77,12 +68,22 @@ class TypedDictDoc(TypeDoc):
             typ = value.__name__ if isclass(value) else str(value)
             required = key in required_keys if required_keys or optional_keys else None
             items.append(TypedDictItem(key, typ, required))
-        return cls(name=typed_dict.__name__,
-                   doc=getdoc(typed_dict) or '',
+        return cls(cls.TYPED_DICT, typed_dict.__name__, getdoc(typed_dict),
                    items=items)
 
     def to_dictionary(self, usages=True):
-        return self._to_dict(usages, items=[i.to_dictionary() for i in self.items])
+        data = {
+            'type': self.type,
+            'name': self.name,
+            'doc': self.doc,
+        }
+        if usages:
+            data['usages'] = [u.to_dictionary() for u in self.usages]
+        if self.members is not None:
+            data['members'] = [m.to_dictionary() for m in self.members]
+        if self.items is not None:
+            data['items'] = [i.to_dictionary() for i in self.items]
+        return data
 
 
 class TypedDictItem:
@@ -93,27 +94,7 @@ class TypedDictItem:
         self.required = required
 
     def to_dictionary(self):
-        return {'key': self.key,
-                'type': self.type,
-                'required': self.required}
-
-
-class EnumDoc(TypeDoc):
-    type = 'Enum'
-
-    def __init__(self, name, doc, members=None):
-        super().__init__(name, doc)
-        self.members = members or []
-
-    @classmethod
-    def from_type(cls, enum_type):
-        return cls(name=enum_type.__name__,
-                   doc=getdoc(enum_type) or '',
-                   members=[EnumMember(name, str(member.value))
-                            for name, member in enum_type.__members__.items()])
-
-    def to_dictionary(self, usages=True):
-        return self._to_dict(usages, members=[m.to_dictionary() for m in self.members])
+        return {'key': self.key, 'type': self.type, 'required': self.required}
 
 
 class EnumMember:
@@ -123,14 +104,7 @@ class EnumMember:
         self.value = value
 
     def to_dictionary(self):
-        return {
-            'name': self.name,
-            'value': self.value
-        }
-
-
-class CustomDoc(TypeDoc):
-    type = 'Custom'
+        return {'name': self.name, 'value': self.value}
 
 
 class Usage:
@@ -140,7 +114,4 @@ class Usage:
         self.arguments = arguments or []
 
     def to_dictionary(self):
-        return {
-            'kw': self.keyword,
-            'args': self.arguments
-        }
+        return {'kw': self.keyword, 'args': self.arguments}

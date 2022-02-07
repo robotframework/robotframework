@@ -19,8 +19,7 @@ from robot.errors import DataError
 from robot.running import ArgInfo, ArgumentSpec
 from robot.utils import ET, ETSource
 
-from .datatypes import (CustomDoc, EnumDoc, EnumMember, TypedDictDoc, TypedDictItem,
-                        Usage)
+from .datatypes import EnumMember, TypedDictItem, TypeDoc, Usage
 from .model import LibraryDoc, KeywordDoc
 
 
@@ -99,15 +98,31 @@ class XmlDocBuilder:
         return spec
 
     def _parse_types(self, spec):
-        for typ in spec.findall('types/type'):
-            creator = {'Enum': self._create_enum_doc,
-                       'TypedDict': self._create_typed_dict_doc,
-                       'Custom': self._create_custom_doc}[typ.get('type')]
-            type_doc = creator(typ)
-            for usage in typ.findall('usages/usage'):
-                args = [a.text for a in usage.findall('arg')]
-                type_doc.usages.append(Usage(usage.get('kw'), args))
-            yield type_doc
+        for elem in spec.findall('types/type'):
+            doc = TypeDoc(elem.get('type'), elem.get('name'), elem.find('doc').text)
+            doc.usages = self._parse_usages(elem)
+            if doc.type == TypeDoc.ENUM:
+                doc.members = self._parse_members(elem)
+            if doc.type == TypeDoc.TYPED_DICT:
+                doc.items = self._parse_items(elem)
+            yield doc
+
+    def _parse_usages(self, elem):
+        return [Usage(usage.get('kw'), [a.text for a in usage.findall('arg')])
+                for usage in elem.findall('usages/usage')]
+
+    def _parse_members(self, elem):
+        return [EnumMember(member.get('name'), member.get('value'))
+                for member in elem.findall('members/member')]
+
+    def _parse_items(self, elem):
+        def get_required(item):
+            required = item.get('required', None)
+            return None if required is None else required == 'true'
+        return [TypedDictItem(item.get('key'), item.get('type'), get_required(item))
+                for item in elem.findall('items/item')]
+
+    # Code below used for parsing legacy 'datatypes'.
 
     def _parse_data_types(self, spec):
         for elem in spec.findall('datatypes/enums/enum'):
@@ -116,25 +131,9 @@ class XmlDocBuilder:
             yield self._create_typed_dict_doc(elem)
 
     def _create_enum_doc(self, elem):
-        return EnumDoc(name=elem.get('name'),
-                       doc=elem.find('doc').text or '',
-                       members=[EnumMember(name=member.get('name'),
-                                           value=member.get('value'))
-                                for member in elem.findall('members/member')])
+        return TypeDoc(TypeDoc.ENUM, elem.get('name'), elem.find('doc').text,
+                       members=self._parse_members(elem))
 
     def _create_typed_dict_doc(self, elem):
-        items = []
-        for item in elem.findall('items/item'):
-            required = item.get('required', None)
-            if required is not None:
-                required = required == 'true'
-            items.append(TypedDictItem(key=item.get('key'),
-                                       type=item.get('type'),
-                                       required=required))
-        return TypedDictDoc(name=elem.get('name'),
-                            doc=elem.find('doc').text or '',
-                            items=items)
-
-    def _create_custom_doc(self, elem):
-        return CustomDoc(name=elem.get('name'),
-                         doc=elem.find('doc').text or '')
+        return TypeDoc(TypeDoc.TYPED_DICT, elem.get('name'), elem.find('doc').text,
+                       items=self._parse_items(elem))

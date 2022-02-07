@@ -146,15 +146,9 @@ class TypeConverter:
     @classmethod
     def type_info_for(cls, type_, custom_converters=None) -> TypeInfo:
         converter = cls.converter_for(type_, custom_converters)
-        if isinstance(type_, str):
-            used_as = type_
-        elif isinstance(type_, type):
-            used_as = type_.__name__
-        else:
-            used_as = str(type)
-        return converter.get_type_info(used_as) if converter else None
+        return converter.get_type_info() if converter else None
 
-    def get_type_info(self, used_as):
+    def get_type_info(self):
         return None
 
 
@@ -541,5 +535,5 @@ class CustomConverter(TypeConverter):
         except Exception:
             raise ValueError(get_error_message())
 
-    def get_type_info(self, used_as):
-        return TypeInfo(self.converter_info.name, self.converter_info.doc, used_as)
+    def get_type_info(self):
+        return TypeInfo(self.converter_info.name, self.converter_info.doc)
