@@ -24,7 +24,7 @@ Example
                 node = model.sections[0].body[0].body[0]
                 expected = ReturnStatement(
                     [Token(Token.RETURN_STATEMENT, 'RETURN', 3, 4)],
-                    errors=('RETURN statement can only be used inside a user keyword.',)
+                    errors=('RETURN can only be used inside a user keyword.',)
                 )
                 remove_non_data_nodes_and_assert(node, expected, data_only)
 
@@ -41,7 +41,7 @@ Example
                 node = model.sections[0].body[0].body[0].body[0]
                 expected = ReturnStatement(
                     [Token(Token.RETURN_STATEMENT, 'RETURN', 4, 8)],
-                    errors=('RETURN statement can only be used inside a user keyword.',)
+                    errors=('RETURN can only be used inside a user keyword.',)
                 )
                 remove_non_data_nodes_and_assert(node, expected, data_only)
 
@@ -58,7 +58,7 @@ Example
                 node = model.sections[0].body[0].body[0].body[0]
                 expected = ReturnStatement(
                     [Token(Token.RETURN_STATEMENT, 'RETURN', 4, 8)],
-                    errors=('RETURN statement can only be used inside a user keyword.',)
+                    errors=('RETURN can only be used inside a user keyword.',)
                 )
                 remove_non_data_nodes_and_assert(node, expected, data_only)
 
@@ -80,7 +80,7 @@ Example
                 node = ifroot.body[0]
                 expected = ReturnStatement(
                     [Token(Token.RETURN_STATEMENT, 'RETURN', 4, 8)],
-                    errors=('RETURN statement can only be used inside a user keyword.',)
+                    errors=('RETURN can only be used inside a user keyword.',)
                 )
                 remove_non_data_nodes_and_assert(node, expected, data_only)
                 expected.tokens[0].lineno = 6
@@ -108,7 +108,7 @@ Example
                 node = tryroot.body[0]
                 expected = ReturnStatement(
                     [Token(Token.RETURN_STATEMENT, 'RETURN', 4, 8)],
-                    errors=('RETURN statement can only be used inside a user keyword.',)
+                    errors=('RETURN can only be used inside a user keyword.',)
                 )
                 remove_non_data_nodes_and_assert(node, expected, data_only)
                 expected.tokens[0].lineno = 6
@@ -117,6 +117,51 @@ Example
                 remove_non_data_nodes_and_assert(tryroot.next.next.body[0], expected, data_only)
                 expected.tokens[0].lineno = 10
                 remove_non_data_nodes_and_assert(tryroot.next.next.next.body[0], expected, data_only)
+
+    def test_in_finally_in_uk(self):
+        for data_only in [True, False]:
+            with self.subTest(data_only=data_only):
+                model = get_model('''\
+*** Keywords ***
+Example
+    TRY
+        No operation
+    EXCEPT
+        No operation
+    FINALLY
+        RETURN
+    END
+        ''', data_only=data_only)
+                node = model.sections[0].body[0].body[0].next.next.body[0]
+                expected = ReturnStatement(
+                    [Token(Token.RETURN_STATEMENT, 'RETURN', 8, 8)],
+                    errors=('RETURN cannot be used in FINALLY branch.',)
+                )
+                remove_non_data_nodes_and_assert(node, expected, data_only)
+
+
+def test_in_nested_finally_in_uk(self):
+    for data_only in [True, False]:
+        with self.subTest(data_only=data_only):
+            model = get_model('''\
+*** Keywords ***
+Example
+    IF    True
+        TRY
+            No operation
+        EXCEPT
+            No operation
+        FINALLY
+            RETURN
+        END
+    END
+        ''', data_only=data_only)
+            node = model.sections[0].body[0].body[0].body[0].next.next.body[0]
+            expected = ReturnStatement(
+                [Token(Token.RETURN_STATEMENT, 'RETURN', 8, 8)],
+                errors=('RETURN cannot be used in FINALLY branch.',)
+            )
+            remove_non_data_nodes_and_assert(node, expected, data_only)
 
 
 if __name__ == '__main__':

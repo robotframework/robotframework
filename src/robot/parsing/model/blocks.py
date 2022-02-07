@@ -365,6 +365,12 @@ class ModelValidator(ModelVisitor):
         ModelVisitor.generic_visit(self, node)
         self._context.end_block()
 
+    def visit_Try(self, node):
+        if node.header.type == Token.FINALLY:
+            self._context.in_finally = True
+        self.visit_Block(node)
+        self._context.in_finally = False
+
     def visit_Statement(self, node):
         node.validate(self._context)
         ModelVisitor.generic_visit(self, node)
@@ -374,6 +380,7 @@ class ValidationContext:
 
     def __init__(self):
         self.roots = []
+        self.in_finally = False
 
     def start_block(self, node):
         self.roots.append(node)
@@ -383,8 +390,7 @@ class ValidationContext:
     
     @property
     def in_keyword(self):
-        root_types = [type(r) for r in self.roots]
-        return Keyword in root_types
+        return Keyword in [type(r) for r in self.roots]
 
 
 class FirstStatementFinder(ModelVisitor):
