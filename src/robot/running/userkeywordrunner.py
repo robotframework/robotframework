@@ -54,8 +54,6 @@ class UserKeywordRunner:
         with StatusReporter(kw, result, context, run):
             with assignment.assigner(context) as assigner:
                 if run:
-                    if kw.error:
-                        raise DataError(kw.error)
                     return_value = self._run(context, kw.args, result)
                     assigner.assign(return_value)
                     return return_value
