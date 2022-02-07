@@ -112,28 +112,26 @@ class TypeConverter:
     def _handle_error(self, name, value, error=None, strict=True):
         if not strict:
             return value
-        value_type = '' if isinstance(value, str) else ' (%s)' % type_name(value)
-        ending = ': %s' % error if (error and error.args) else '.'
+        value_type = '' if isinstance(value, str) else f' ({type_name(value)})'
+        ending = f': {error}' if (error and error.args) else '.'
         raise ValueError(
-            "Argument '%s' got value '%s'%s that cannot be converted to %s%s"
-            % (name, safe_str(value), value_type, self.type_name, ending)
+            f"Argument '{name}' got value '{safe_str(value)}'{value_type} that "
+            f"cannot be converted to {self.type_name}{ending}"
         )
 
     def _literal_eval(self, value, expected):
-        if expected is set:
+        if expected is set and value == 'set()':
             # `ast.literal_eval` has no way to define an empty set.
-            if value == 'set()':
-                return set()
+            return set()
         try:
             value = literal_eval(value)
         except (ValueError, SyntaxError):
             # Original errors aren't too informative in these cases.
             raise ValueError('Invalid expression.')
         except TypeError as err:
-            raise ValueError('Evaluating expression failed: %s' % err)
+            raise ValueError(f'Evaluating expression failed: {err}')
         if not isinstance(value, expected):
-            raise ValueError('Value is %s, not %s.' % (type_name(value),
-                                                       expected.__name__))
+            raise ValueError(f'Value is {type_name(value)}, not {expected.__name__}.')
         return value
 
     def _remove_number_separators(self, value):
@@ -174,26 +172,20 @@ class EnumConverter(TypeConverter):
             return self._find_by_normalized_name_or_int_value(enum, value)
 
     def _find_by_normalized_name_or_int_value(self, enum, value):
-        members = sorted(self._get_members(enum))
+        members = sorted(enum.__members__)
         matches = [m for m in members if eq(m, value, ignore='_')]
         if len(matches) == 1:
             return getattr(enum, matches[0])
         if len(matches) > 1:
-            raise ValueError("%s has multiple members matching '%s'. Available: %s"
-                             % (self.type_name, value, seq2str(matches)))
+            raise ValueError(f"{self.type_name} has multiple members matching "
+                             f"'{value}'. Available: {seq2str(matches)}")
         try:
             if issubclass(self.used_type, int):
                 return self._find_by_int_value(enum, value)
         except ValueError:
-            members = ['%s (%d)' % (m, getattr(enum, m)) for m in members]
-        raise ValueError("%s does not have member '%s'. Available: %s"
-                         % (self.type_name, value, seq2str(members)))
-
-    def _get_members(self, enum):
-        try:
-            return list(enum.__members__)
-        except AttributeError:    # old enum module
-            return [attr for attr in dir(enum) if not attr.startswith('_')]
+            members = [f'{m} ({getattr(enum, m)})' for m in members]
+        raise ValueError(f"{self.type_name} does not have member '{value}'. "
+                         f"Available: {seq2str(members)}")
 
     def _find_by_int_value(self, enum, value):
         value = int(value)
@@ -201,8 +193,8 @@ class EnumConverter(TypeConverter):
             if member.value == value:
                 return member
         values = sorted(member.value for member in enum)
-        raise ValueError("%s does not have value '%d'. Available: %s"
-                         % (self.type_name, value, seq2str(values)))
+        raise ValueError(f"{self.type_name} does not have value '{value}'. "
+                         f"Available: {seq2str(values)}")
 
 
 @TypeConverter.register
@@ -325,8 +317,8 @@ class BytesConverter(TypeConverter):
         try:
             return value.encode('latin-1')
         except UnicodeEncodeError as err:
-            raise ValueError("Character '%s' cannot be mapped to a byte."
-                             % value[err.start:err.start+1])
+            invalid = value[err.start:err.start+1]
+            raise ValueError(f"Character '{invalid}' cannot be mapped to a byte.")
 
 
 @TypeConverter.register
@@ -342,8 +334,8 @@ class ByteArrayConverter(TypeConverter):
         try:
             return bytearray(value, 'latin-1')
         except UnicodeEncodeError as err:
-            raise ValueError("Character '%s' cannot be mapped to a byte."
-                             % value[err.start:err.start+1])
+            invalid = value[err.start:err.start+1]
+            raise ValueError(f"Character '{invalid}' cannot be mapped to a byte.")
 
 
 @TypeConverter.register
