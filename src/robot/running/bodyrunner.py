@@ -18,8 +18,7 @@ from contextlib import contextmanager
 import re
 
 from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
-                          ExecutionFailures, ExecutionPassed, ExecutionStatus,
-                          ReturnFromKeyword)
+                          ExecutionFailures, ExecutionPassed, ExecutionStatus)
 from robot.result import (For as ForResult, While as WhileResult, If as IfResult,
                           IfBranch as IfBranchResult, Try as TryResult,
                           TryBranch as TryBranchResult)
@@ -46,11 +45,6 @@ class BodyRunner:
             try:
                 step.run(self._context, self._run, self._templated)
             except ExecutionPassed as exception:
-                if (isinstance(exception, (BreakLoop, ContinueLoop))
-                        and not self._context.allow_loop_control):
-                    name = 'BREAK' if isinstance(exception, BreakLoop) else 'CONTINUE'
-                    raise ExecutionFailed(f'{name} can only be used inside a loop.',
-                                          syntax=True)
                 exception.set_earlier_failures(errors)
                 passed = exception
                 self._run = False
@@ -552,17 +546,12 @@ class TryRunner:
             return self._run_branch(data.else_branch, result, run)
 
     def _run_finally(self, data, run):
-        cannot_be_used = {BreakLoop: 'BREAK', ContinueLoop: 'CONTINUE'}
         if data.finally_branch:
             result = TryBranchResult(data.FINALLY)
             try:
                 with StatusReporter(data.finally_branch, result, self._context, run):
                     runner = BodyRunner(self._context, run, self._templated)
-                    try:
-                        runner.run(data.finally_branch.body)
-                    except tuple(cannot_be_used) as err:
-                        name = cannot_be_used[type(err)]
-                        raise DataError(f'{name} cannot be used in FINALLY branch.')
+                    runner.run(data.finally_branch.body)
             except ExecutionStatus as err:
                 return err
             else:

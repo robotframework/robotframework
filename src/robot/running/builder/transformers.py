@@ -232,12 +232,12 @@ class TestCaseBuilder(NodeVisitor):
                                      error=format_error(node.errors))
 
     def visit_Continue(self, node):
-        self.test.body.create_keyword(name='CONTINUE', args=node.values,
-                                      lineno=node.lineno)
+        self.test.body.create_continue(lineno=node.lineno,
+                                       error=format_error(node.errors))
 
     def visit_Break(self, node):
-        self.test.body.create_keyword(name='BREAK', args=node.values,
-                                      lineno=node.lineno)
+        self.test.body.create_break(lineno=node.lineno,
+                                    error=format_error(node.errors))
 
 
 class KeywordBuilder(NodeVisitor):
@@ -286,7 +286,8 @@ class KeywordBuilder(NodeVisitor):
                                    error=format_error(node.errors))
 
     def visit_Continue(self, node):
-        self.kw.body.create_continue(lineno=node.lineno)
+        self.kw.body.create_continue(lineno=node.lineno,
+                                     error=format_error(node.errors))
 
     def visit_Break(self, node):
         self.kw.body.create_break(lineno=node.lineno,

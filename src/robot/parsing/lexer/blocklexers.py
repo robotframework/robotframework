@@ -180,8 +180,9 @@ class TestOrKeywordLexer(BlockLexer):
                 statement.pop(0).type = None    # These tokens will be ignored
 
     def lexer_classes(self):
-        return (TestOrKeywordSettingLexer, ForLexer, InlineIfLexer, IfLexer,
-                ReturnLexer, TryLexer, WhileLexer, KeywordCallLexer)
+        return (TestOrKeywordSettingLexer, BreakLexer, ContinueLexer,
+                ForLexer, InlineIfLexer, IfLexer, ReturnLexer, TryLexer,
+                WhileLexer, KeywordCallLexer)
 
 
 class TestCaseLexer(TestOrKeywordLexer):

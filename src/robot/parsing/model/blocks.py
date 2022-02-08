@@ -392,6 +392,14 @@ class ValidationContext:
     def in_keyword(self):
         return Keyword in [type(r) for r in self.roots]
 
+    @property
+    def in_for(self):
+        return For in [type(r) for r in self.roots]
+
+    @property
+    def in_while(self):
+        return While in [type(r) for r in self.roots]
+
 
 class FirstStatementFinder(ModelVisitor):
 

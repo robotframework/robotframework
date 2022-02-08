@@ -1019,13 +1019,23 @@ class ReturnStatement(Statement):
             self.errors += ('RETURN cannot be used in FINALLY branch.', )
 
 
+class LoopControl(NoArgumentHeader):
+
+    def validate(self, context):
+        super(LoopControl, self).validate(context)
+        if not (context.in_for or context.in_while):
+            self.errors += (f'{self.type} can only be used inside a loop.', )
+        if context.in_finally:
+            self.errors += (f'{self.type} cannot be used in FINALLY branch.', )
+
+
 @Statement.register
-class Continue(NoArgumentHeader):
+class Continue(LoopControl):
     type = Token.CONTINUE
 
 
 @Statement.register
-class Break(NoArgumentHeader):
+class Break(LoopControl):
     type = Token.BREAK
 
 

@@ -107,7 +107,7 @@ class TestHandler(ElementHandler):
     tag = 'test'
     # 'tags' is for RF < 4 compatibility.
     children = frozenset(('doc', 'tags', 'tag', 'timeout', 'status', 'kw', 'if', 'for',
-                          'try', 'while', 'return', 'msg'))
+                          'try', 'while', 'return', 'break', 'continue', 'msg'))
 
     def start(self, elem, result):
         lineno = elem.get('line')
@@ -122,7 +122,7 @@ class KeywordHandler(ElementHandler):
     # 'arguments', 'assign' and 'tags' are for RF < 4 compatibility.
     children = frozenset(('doc', 'arguments', 'arg', 'assign', 'var', 'tags', 'tag',
                           'timeout', 'status', 'msg', 'kw', 'if', 'for', 'try',
-                          'while', 'return'))
+                          'while', 'return', 'break', 'continue'))
 
     def start(self, elem, result):
         elem_type = elem.get('type')

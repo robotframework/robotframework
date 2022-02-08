@@ -1,12 +1,12 @@
 *** Test cases ***
 CONTINUE in test case
-    [Documentation]    FAIL 'Continue' is a reserved keyword.
+    [Documentation]    FAIL CONTINUE can only be used inside a loop.
     Log    all good
     CONTINUE
     Fail    Should not be executed
 
 CONTINUE in keyword
-    [Documentation]    FAIL 'Continue' is a reserved keyword.
+    [Documentation]    FAIL CONTINUE can only be used inside a loop.
     Continue in keyword
 
 CONTINUE in IF
@@ -73,13 +73,13 @@ CONTINUE with argument in WHILE
     Fail    Should not be executed
 
 BREAK in test case
-    [Documentation]    FAIL 'Break' is a reserved keyword.
+    [Documentation]    FAIL BREAK can only be used inside a loop.
     Log    all good
     BREAK
     Fail    Should not be executed
 
 BREAK in keyword
-    [Documentation]    FAIL 'Break' is a reserved keyword.
+    [Documentation]    FAIL BREAK can only be used inside a loop.
     Break in keyword
 
 BREAK in IF

@@ -1,7 +1,7 @@
 import unittest
 
 from robot.parsing import get_model, Token
-from robot.parsing.model.statements import ReturnStatement
+from robot.parsing.model.statements import ReturnStatement, Break, Continue
 
 from parsing_test_utils import assert_model, RemoveNonDataTokensVisitor
 
@@ -139,11 +139,10 @@ Example
                 )
                 remove_non_data_nodes_and_assert(node, expected, data_only)
 
-
-def test_in_nested_finally_in_uk(self):
-    for data_only in [True, False]:
-        with self.subTest(data_only=data_only):
-            model = get_model('''\
+    def test_in_nested_finally_in_uk(self):
+        for data_only in [True, False]:
+            with self.subTest(data_only=data_only):
+                model = get_model('''\
 *** Keywords ***
 Example
     IF    True
@@ -154,14 +153,255 @@ Example
         FINALLY
             RETURN
         END
-    END
-        ''', data_only=data_only)
-            node = model.sections[0].body[0].body[0].body[0].next.next.body[0]
-            expected = ReturnStatement(
-                [Token(Token.RETURN_STATEMENT, 'RETURN', 8, 8)],
-                errors=('RETURN cannot be used in FINALLY branch.',)
-            )
-            remove_non_data_nodes_and_assert(node, expected, data_only)
+    END''', data_only=data_only)
+                node = model.sections[0].body[0].body[0].body[0].next.next.body[0]
+                expected = ReturnStatement(
+                    [Token(Token.RETURN_STATEMENT, 'RETURN', 9, 12)],
+                    errors=('RETURN cannot be used in FINALLY branch.',)
+                )
+                remove_non_data_nodes_and_assert(node, expected, data_only)
+
+
+class TestBreak(unittest.TestCase):
+
+    def test_in_test_case_body(self):
+        for data_only in [True, False]:
+            with self.subTest(data_only=data_only):
+                model = get_model('''\
+*** Test Cases ***
+Example
+    BREAK''', data_only=data_only)
+                node = model.sections[0].body[0].body[0]
+                expected = Break(
+                    [Token(Token.BREAK, 'BREAK', 3, 4)],
+                    errors=('BREAK can only be used inside a loop.',)
+                )
+                remove_non_data_nodes_and_assert(node, expected, data_only)
+
+    def test_in_if_test_case_body(self):
+        for data_only in [True, False]:
+            with self.subTest(data_only=data_only):
+                model = get_model('''\
+*** Test Cases ***
+Example
+    IF    True
+        BREAK
+    END''', data_only=data_only)
+                node = model.sections[0].body[0].body[0].body[0]
+                expected = Break(
+                    [Token(Token.BREAK, 'BREAK', 4, 8)],
+                    errors=('BREAK can only be used inside a loop.',)
+                )
+                remove_non_data_nodes_and_assert(node, expected, data_only)
+
+    def test_in_try_test_case_body(self):
+        for data_only in [True, False]:
+            with self.subTest(data_only=data_only):
+                model = get_model('''\
+*** Test Cases ***
+Example
+    TRY    
+        BREAK
+    EXCEPT
+        no operation
+    END''', data_only=data_only)
+                node = model.sections[0].body[0].body[0].body[0]
+                expected = Break(
+                    [Token(Token.BREAK, 'BREAK', 4, 8)],
+                    errors=('BREAK can only be used inside a loop.',)
+                )
+                remove_non_data_nodes_and_assert(node, expected, data_only)
+
+    def test_in_finally_inside_loop(self):
+        for data_only in [True, False]:
+            with self.subTest(data_only=data_only):
+                model = get_model('''\
+*** Test Cases ***
+Example
+    WHILE    True
+        TRY    
+            Fail
+        EXCEPT
+            no operation
+        FINALLY
+           BREAK
+        END     
+    END''', data_only=data_only)
+                node = model.sections[0].body[0].body[0].body[0].next.next.body[0]
+                expected = Break(
+                    [Token(Token.BREAK, 'BREAK', 9, 11)],
+                    errors=('BREAK cannot be used in FINALLY branch.',)
+                )
+                remove_non_data_nodes_and_assert(node, expected, data_only)
+
+    def test_in_uk_body(self):
+        for data_only in [True, False]:
+            with self.subTest(data_only=data_only):
+                model = get_model('''\
+*** Keywords ***
+Example
+    BREAK''', data_only=data_only)
+                node = model.sections[0].body[0].body[0]
+                expected = Break(
+                    [Token(Token.BREAK, 'BREAK', 3, 4)],
+                    errors=('BREAK can only be used inside a loop.',)
+                )
+                remove_non_data_nodes_and_assert(node, expected, data_only)
+
+    def test_in_if_uk_body(self):
+        for data_only in [True, False]:
+            with self.subTest(data_only=data_only):
+                model = get_model('''\
+*** Keywords ***
+Example
+    IF    True
+        BREAK
+    END''', data_only=data_only)
+                node = model.sections[0].body[0].body[0].body[0]
+                expected = Break(
+                    [Token(Token.BREAK, 'BREAK', 4, 8)],
+                    errors=('BREAK can only be used inside a loop.',)
+                )
+                remove_non_data_nodes_and_assert(node, expected, data_only)
+
+    def test_in_try_uk_body(self):
+        for data_only in [True, False]:
+            with self.subTest(data_only=data_only):
+                model = get_model('''\
+*** Keywords ***
+Example
+    TRY    
+        BREAK
+    EXCEPT
+        no operation
+    END''', data_only=data_only)
+                node = model.sections[0].body[0].body[0].body[0]
+                expected = Break(
+                    [Token(Token.BREAK, 'BREAK', 4, 8)],
+                    errors=('BREAK can only be used inside a loop.',)
+                )
+                remove_non_data_nodes_and_assert(node, expected, data_only)
+
+
+class TestContinue(unittest.TestCase):
+
+    def test_in_test_case_body(self):
+        for data_only in [True, False]:
+            with self.subTest(data_only=data_only):
+                model = get_model('''\
+*** Test Cases ***
+Example
+    CONTINUE''', data_only=data_only)
+                node = model.sections[0].body[0].body[0]
+                expected = Continue(
+                    [Token(Token.CONTINUE, 'CONTINUE', 3, 4)],
+                    errors=('CONTINUE can only be used inside a loop.',)
+                )
+                remove_non_data_nodes_and_assert(node, expected, data_only)
+
+    def test_in_if_test_case_body(self):
+        for data_only in [True, False]:
+            with self.subTest(data_only=data_only):
+                model = get_model('''\
+*** Test Cases ***
+Example
+    IF    True
+        CONTINUE
+    END''', data_only=data_only)
+                node = model.sections[0].body[0].body[0].body[0]
+                expected = Continue(
+                    [Token(Token.CONTINUE, 'CONTINUE', 4, 8)],
+                    errors=('CONTINUE can only be used inside a loop.',)
+                )
+                remove_non_data_nodes_and_assert(node, expected, data_only)
+
+    def test_in_try_test_case_body(self):
+        for data_only in [True, False]:
+            with self.subTest(data_only=data_only):
+                model = get_model('''\
+*** Test Cases ***
+Example
+    TRY    
+        CONTINUE
+    EXCEPT
+        no operation
+    END''', data_only=data_only)
+                node = model.sections[0].body[0].body[0].body[0]
+                expected = Continue(
+                    [Token(Token.CONTINUE, 'CONTINUE', 4, 8)],
+                    errors=('CONTINUE can only be used inside a loop.',)
+                )
+                remove_non_data_nodes_and_assert(node, expected, data_only)
+
+    def test_in_finally_inside_loop(self):
+        for data_only in [True, False]:
+            with self.subTest(data_only=data_only):
+                model = get_model('''\
+*** Test Cases ***
+Example
+    WHILE    True
+        TRY    
+            Fail
+        EXCEPT
+            no operation
+        FINALLY
+           CONTINUE
+        END     
+    END''', data_only=data_only)
+                node = model.sections[0].body[0].body[0].body[0].next.next.body[0]
+                expected = Continue(
+                    [Token(Token.CONTINUE, 'CONTINUE', 9, 11)],
+                    errors=('CONTINUE cannot be used in FINALLY branch.',)
+                )
+                remove_non_data_nodes_and_assert(node, expected, data_only)
+
+    def test_in_uk_body(self):
+        for data_only in [True, False]:
+            with self.subTest(data_only=data_only):
+                model = get_model('''\
+*** Keywords ***
+Example
+    CONTINUE''', data_only=data_only)
+                node = model.sections[0].body[0].body[0]
+                expected = Continue(
+                    [Token(Token.CONTINUE, 'CONTINUE', 3, 4)],
+                    errors=('CONTINUE can only be used inside a loop.',)
+                )
+                remove_non_data_nodes_and_assert(node, expected, data_only)
+
+    def test_in_if_uk_body(self):
+        for data_only in [True, False]:
+            with self.subTest(data_only=data_only):
+                model = get_model('''\
+*** Keywords ***
+Example
+    IF    True
+        CONTINUE
+    END''', data_only=data_only)
+                node = model.sections[0].body[0].body[0].body[0]
+                expected = Continue(
+                    [Token(Token.CONTINUE, 'CONTINUE', 4, 8)],
+                    errors=('CONTINUE can only be used inside a loop.',)
+                )
+                remove_non_data_nodes_and_assert(node, expected, data_only)
+
+    def test_in_try_uk_body(self):
+        for data_only in [True, False]:
+            with self.subTest(data_only=data_only):
+                model = get_model('''\
+*** Keywords ***
+Example
+    TRY    
+        CONTINUE
+    EXCEPT
+        no operation
+    END''', data_only=data_only)
+                node = model.sections[0].body[0].body[0].body[0]
+                expected = Continue(
+                    [Token(Token.CONTINUE, 'CONTINUE', 4, 8)],
+                    errors=('CONTINUE can only be used inside a loop.',)
+                )
+                remove_non_data_nodes_and_assert(node, expected, data_only)
 
 
 if __name__ == '__main__':

@@ -1872,13 +1872,13 @@ class TestContinue(unittest.TestCase):
 
     def test_in_keyword(self):
         data = '    CONTINUE'
-        expected = [(T.KEYWORD, 'CONTINUE', 3, 4),
+        expected = [(T.CONTINUE, 'CONTINUE', 3, 4),
                     (T.EOS, '', 3, 12)]
         self._verify(data, expected)
 
     def test_in_test(self):
         data = '    CONTINUE'
-        expected = [(T.KEYWORD, 'CONTINUE', 3, 4),
+        expected = [(T.CONTINUE, 'CONTINUE', 3, 4),
                     (T.EOS, '', 3, 12)]
         self._verify(data, expected, test=True)
 
@@ -1988,13 +1988,13 @@ class TestBreak(unittest.TestCase):
 
     def test_in_keyword(self):
         data = '    BREAK'
-        expected = [(T.KEYWORD, 'BREAK', 3, 4),
+        expected = [(T.BREAK, 'BREAK', 3, 4),
                     (T.EOS, '', 3, 9)]
         self._verify(data, expected)
 
     def test_in_test(self):
         data = '    BREAK'
-        expected = [(T.KEYWORD, 'BREAK', 3, 4),
+        expected = [(T.BREAK, 'BREAK', 3, 4),
                     (T.EOS, '', 3, 9)]
         self._verify(data, expected, test=True)
 
