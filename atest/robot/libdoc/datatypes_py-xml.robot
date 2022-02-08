@@ -1,6 +1,9 @@
 *** Settings ***
-Resource          libdoc_resource.robot
+Documentation     Tests are not run using Python 3.6 because `typing.get_type_hints` handles
+...               Unions incorrectly with it making test results too different compared to others.
+Force Tags        require-py3.7
 Suite Setup       Run Libdoc And Parse Output    ${TESTDATADIR}/DataTypesLibrary.py
+Resource          libdoc_resource.robot
 
 *** Test Cases ***
 Enum
@@ -60,10 +63,13 @@ Usages
     Usages Should be    6    TypedDict    GeoLocation
     ...    Funny Unions=funny
     ...    Set Location=location
-    # With Python 3.6 `typing.get_type_hints` ignores `Small`.
-    # Apparently because it is based on `int` args also have `int`.
-    IF    $INTERPRETER.version_info >= (3, 7)
-        Usages Should Be    10    Enum    Small
-        ...    __init__=credentials
-        ...    Funny Unions=funny
-    END
+    Usages Should Be    10    Enum    Small
+    ...    __init__=credentials
+    ...    Funny Unions=funny
+
+Typedoc links in arguments
+    Typedoc links should be    0    1    AssertionOperator    None
+    Typedoc links should be    0    2    str:string
+    Typedoc links should be    1    0    CustomType
+    Typedoc links should be    1    1    CustomType2
+    Typedoc links should be    2    0    bool:boolean    int:integer    float    str:string    AssertionOperator    Small    GeoLocation    None

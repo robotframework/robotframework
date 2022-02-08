@@ -16,7 +16,7 @@
 import os.path
 
 from robot.errors import DataError
-from robot.running import ArgInfo, ArgumentSpec
+from robot.running import ArgInfo
 from robot.utils import ET, ETSource
 
 from .datatypes import EnumMember, TypedDictItem, TypeDoc, Usage
@@ -63,16 +63,17 @@ class XmlDocBuilder:
     def _create_keyword(self, elem, lib_source):
         # "deprecated" attribute isn't read because it is read from the doc
         # automatically. That should probably be changed at some point.
-        return KeywordDoc(name=elem.get('name', ''),
-                          args=self._create_arguments(elem),
-                          doc=elem.find('doc').text or '',
-                          shortdoc=elem.find('shortdoc').text or '',
-                          tags=[t.text for t in elem.findall('tags/tag')],
-                          source=elem.get('source') or lib_source,
-                          lineno=int(elem.get('lineno', -1)))
+        kw = KeywordDoc(name=elem.get('name', ''),
+                        doc=elem.find('doc').text or '',
+                        shortdoc=elem.find('shortdoc').text or '',
+                        tags=[t.text for t in elem.findall('tags/tag')],
+                        source=elem.get('source') or lib_source,
+                        lineno=int(elem.get('lineno', -1)))
+        self._create_arguments(elem, kw)
+        return kw
 
-    def _create_arguments(self, elem):
-        spec = ArgumentSpec()
+    def _create_arguments(self, elem, kw: KeywordDoc):
+        spec = kw.args
         setters = {
             ArgInfo.POSITIONAL_ONLY: spec.positional_only.append,
             ArgInfo.POSITIONAL_ONLY_MARKER: lambda value: None,
@@ -91,11 +92,16 @@ class XmlDocBuilder:
             default_elem = arg.find('default')
             if default_elem is not None:
                 spec.defaults[name] = default_elem.text or ''
-            type_elems = arg.findall('type')
             if not spec.types:
                 spec.types = {}
-            spec.types[name] = tuple(t.text for t in type_elems)
-        return spec
+            types = []
+            type_docs = {}
+            for typ in arg.findall('type'):
+                types.append(typ.text)
+                if typ.get('typedoc'):
+                    type_docs[typ.text] = typ.get('typedoc')
+            spec.types[name] = tuple(types)
+            kw.type_docs[name] = type_docs
 
     def _parse_types(self, spec):
         for elem in spec.findall('types/type'):

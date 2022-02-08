@@ -1,7 +1,10 @@
 *** Settings ***
-Resource          libdoc_resource.robot
+Documentation     Tests are not run using Python 3.6 because `typing.get_type_hints` handles
+...               Unions incorrectly with it making test results too different compared to others.
+Force Tags        require-py3.7
 Suite Setup       Run Libdoc And Parse Model From JSON    ${TESTDATADIR}/DataTypesLibrary.py
 Test Template     Should Be Equal Multiline
+Resource          libdoc_resource.robot
 
 *** Test Cases ***
 Documentation
@@ -18,7 +21,6 @@ Init docs
     ...   <p>It links to <a href="#Set%20Location" class="name">Set Location</a> keyword and to <a href="#GeoLocation" class="name">GeoLocation</a> data type.</p>
 
 Keyword Arguments
-    [Tags]        require-py3.7
     [Template]    Verify Argument Models
     ${MODEL}[keywords][0][args]     value    operator: AssertionOperator | None = None    exp: str = something?
     ${MODEL}[keywords][1][args]     arg: CustomType    arg2: CustomType2    arg3: CustomType
@@ -62,7 +64,7 @@ TypedDict Items
         FOR    ${item}    IN    @{Model}[dataTypes][typedDicts][0][items]
             IF    $exp['key'] == $item['key']
                 Dictionaries Should Be Equal    ${item}    ${exp}
-                Exit For Loop
+                BREAK
             END
         END
     END
@@ -101,18 +103,21 @@ Standard types
     ${Model}[types][1][doc]     <p>Strings <code>TRUE</code>, <code>YES</code>,   start=True
 
 Usages
-    ${MODEL}[types][1][type]      Standard
-    ${MODEL}[types][1][usages]    [{'kw': 'Funny Unions', 'args': ['funny']}]
-    ${MODEL}[types][2][type]      Custom
-    ${MODEL}[types][2][usages]    [{'kw': 'Custom', 'args': ['arg', 'arg3']}]
-    ${MODEL}[types][6][type]      TypedDict
-    ${MODEL}[types][6][usages]    [{'kw': 'Funny Unions', 'args': ['funny']}, {'kw': 'Set Location', 'args': ['location']}]
-    ${MODEL}[types][10][type]     Enum
-    # With Python 3.6 `typing.get_type_hints` ignores `Small`.
-    # Apparently because it is based on `int` args also have `int`.
-    IF    $INTERPRETER.version_info >= (3, 7)
-        ${MODEL}[types][10][usages]    [{'kw': '__init__', 'args': ['credentials']}, {'kw': 'Funny Unions', 'args': ['funny']}]
-    END
+    ${MODEL}[types][1][type]       Standard
+    ${MODEL}[types][1][usages]     [{'kw': 'Funny Unions', 'args': ['funny']}]
+    ${MODEL}[types][2][type]       Custom
+    ${MODEL}[types][2][usages]     [{'kw': 'Custom', 'args': ['arg', 'arg3']}]
+    ${MODEL}[types][6][type]       TypedDict
+    ${MODEL}[types][6][usages]     [{'kw': 'Funny Unions', 'args': ['funny']}, {'kw': 'Set Location', 'args': ['location']}]
+    ${MODEL}[types][10][type]      Enum
+    ${MODEL}[types][10][usages]    [{'kw': '__init__', 'args': ['credentials']}, {'kw': 'Funny Unions', 'args': ['funny']}]
+
+Typedoc links in arguments
+    ${MODEL}[keywords][0][args][1][typedocs]    {'AssertionOperator': 'AssertionOperator', 'None': 'None'}
+    ${MODEL}[keywords][0][args][2][typedocs]    {'str': 'string'}
+    ${MODEL}[keywords][1][args][0][typedocs]    {'CustomType': 'CustomType'}
+    ${MODEL}[keywords][1][args][1][typedocs]    {'CustomType2': 'CustomType2'}
+    ${MODEL}[keywords][2][args][0][typedocs]    {'bool': 'boolean', 'int': 'integer', 'float': 'float', 'str': 'string', 'AssertionOperator': 'AssertionOperator', 'Small': 'Small', 'GeoLocation': 'GeoLocation', 'None': 'None'}
 
 *** Keywords ***
 Verify Argument Models

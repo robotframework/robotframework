@@ -31,7 +31,7 @@ Examples: ``TRUE`` (converted to ``True``), ``off`` (converted to ``False``,
 ''',
     int: '''\
 Conversion is done using Python's ``int`` built-in function. Floating point
-numbers are converted only if they can be represented as integers exactly. 
+numbers are converted only if they can be represented as integers exactly.
 For example, ``1.0`` is accepted and ``1.1`` is not.
 
 Starting from RF 4.1, it is possible to use hexadecimal, octal and binary
@@ -40,7 +40,7 @@ numbers by prefixing values with ``0x``, ``0o`` and ``0b``, respectively.
 Starting from RF 4.1, spaces and underscores can be used as visual separators
 for digit grouping purposes.
 
-Examples: ``42``, ``-1``, ``0b1010``, ``10 000 000``, ``0xBAD_C0FFEE`` 
+Examples: ``42``, ``-1``, ``0b1010``, ``10 000 000``, ``0xBAD_C0FFEE``
 ''',
     float: 'TODO',
     Decimal: 'TODO',

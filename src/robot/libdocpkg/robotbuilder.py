@@ -20,7 +20,7 @@ import re
 from robot.errors import DataError
 from robot.running import (TestLibrary, UserLibrary, UserErrorHandler,
                            ResourceFileBuilder)
-from robot.utils import split_tags_from_doc, unescape, is_string
+from robot.utils import is_string, split_tags_from_doc, type_repr, unescape
 from robot.variables import search_variable
 
 from .datatypes import TypeDoc, Usage
@@ -64,13 +64,16 @@ class LibraryDocBuilder:
             return [KeywordDocBuilder().build_keyword(lib.init)]
         return []
 
-    def _get_types(self, keywords, converters):
+    def _get_types(self, keywords, custom_converters):
         types = {}
         for kw in keywords:
             for arg in kw.args:
+                type_docs = kw.type_docs[arg.name] = {}
                 for typ in arg.types:
-                    type_doc = TypeDoc.for_type(typ, converters)
+                    type_doc = TypeDoc.for_type(typ, custom_converters)
                     if type_doc:
+                        type_docs[type_repr(typ)] = type_doc.name
+                        # FIXME: No need to store arg names anymore!
                         usages = types.setdefault(type_doc, {})
                         usages.setdefault(kw.name, []).append(arg.name)
         for type_doc, usages in types.items():

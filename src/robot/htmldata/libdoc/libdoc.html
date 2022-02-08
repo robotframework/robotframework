@@ -46,9 +46,11 @@
         parseTemplates();
         document.title = libdoc.name;
         storage.init('libdoc');
-        linkArgsToUsages(libdoc.inits.concat(libdoc.keywords), getUsages(libdoc.types));
         renderTemplate('base', libdoc, $('body'));
         if (libdoc.inits.length) {
+            libdoc.types.map(function(type) { type.usages.map(function(usage) {
+                if (usage.kw == '__init__') usage.kw = 'Importing';
+            })});
             renderTemplate('importing', libdoc);
         }
         renderTemplate('shortcuts', libdoc);
@@ -79,47 +81,6 @@
         $('script[type="text/x-jquery-tmpl"]').map(function (idx, elem) {
             $.template(elem.id, elem.text);
         });
-    }
-
-    function getUsages(types) {
-        var usages = {};
-        for (var i = 0, len1 = types.length; i < len1; i++) {
-            var type = types[i];
-            for (var j = 0, len2 = type.usages.length; j < len2; j++) {
-                var usage = type.usages[j];
-                if (usage.kw == '__init__') {
-                    usage.kw = 'Importing';
-                }
-                if (!(usage.kw in usages)) {
-                    usages[usage.kw] = {};
-                }
-                for (var k = 0, len3 = usage.args.length; k < len3; k++) {
-                    var arg = usage.args[k];
-                    usages[usage.kw][arg] = type.name;
-                }
-            }
-        }
-        return usages;
-    }
-
-    function linkArgsToUsages(keywords, usages) {
-        for (var i = 0, len1 = keywords.length; i < len1; i++) {
-            var kw = keywords[i];
-            if (kw.name == '__init__') {
-                kw.name = 'Importing';
-            }
-            if (kw.name in usages) {
-                for (var j = 0, len2 = kw.args.length; j < len2; j++) {
-                    var arg = kw.args[j];
-                    if (arg.name in usages[kw.name]) {
-                        arg.typeLink = usages[kw.name][arg.name];
-                    }
-                    else {
-                        arg.typeLink = null;
-                    }
-                }
-            }
-        }
     }
 
     function renderTemplate(name, arguments, container) {
@@ -520,8 +481,8 @@ ${name}
 {{if types.length}}
   <span class="arg-type">
     {{each types}}
-      {{if $data.typeLink}}
-          &lt;<a class="type" href="#${$data.typeLink}" title="Click to show type information">${$value}</a>&gt;
+      {{if $value in $data.typedocs}}
+          &lt;<a class="type" href="#${$data.typedocs[$value]}" title="Click to show type information">${$value}</a>&gt;
       {{else}}
           &lt;<span class="type">${$value}</span>&gt;
       {{/if}}

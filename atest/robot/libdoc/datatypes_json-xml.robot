@@ -33,13 +33,25 @@ Custom
     DataType Custom Should Be    0
     ...    CustomType
     ...    <p>Converter method doc is used when defined.</p>
+    DataType Custom Should Be    1
+    ...    CustomType2
+    ...    <p>Class doc is used when converter method has no doc.</p>
 
 Usages
-    Usages Should Be    1    Custom    CustomType
+    Usages Should Be    1     Standard     boolean
+    ...    Funny Unions=funny
+    Usages Should Be    2     Custom       CustomType
     ...    Custom=arg,arg3
-    Usages Should be    3    TypedDict    GeoLocation
+    Usages Should be    6     TypedDict    GeoLocation
     ...    Funny Unions=funny
     ...    Set Location=location
-    Usages Should Be    4    Enum    Small
+    Usages Should Be    10    Enum         Small
     ...    __init__=credentials
     ...    Funny Unions=funny
+
+Typedoc links in arguments
+    Typedoc links should be    0    1    AssertionOperator    None
+    Typedoc links should be    0    2    str:string
+    Typedoc links should be    1    0    CustomType
+    Typedoc links should be    1    1    CustomType2
+    Typedoc links should be    2    0    bool:boolean    int:integer    float    str:string    AssertionOperator    Small    GeoLocation    None

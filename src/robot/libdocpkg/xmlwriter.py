@@ -85,8 +85,13 @@ class LibdocXmlWriter:
                                  'repr': str(arg)})
             if arg.name:
                 writer.element('name', arg.name)
+            type_docs = kw.type_docs[arg.name]
             for type_repr in arg.types_reprs:
-                writer.element('type', type_repr)
+                if type_repr in type_docs:
+                    attrs = {'typedoc': type_docs[type_repr]}
+                else:
+                    attrs = {}
+                writer.element('type', type_repr, attrs)
             if arg.default is not arg.NOTSET:
                 writer.element('default', arg.default_repr)
             writer.end('arg')

@@ -15,8 +15,10 @@
 
 from collections.abc import Iterable, Mapping
 from collections import UserString
+from inspect import isclass
 from io import IOBase
 from os import PathLike
+import re
 try:
     from types import UnionType
 except ImportError:    # Python < 3.10
@@ -99,6 +101,14 @@ def type_name(item, capitalize=False):
             elif name == 'Dict':
                 name = 'dictionary'
     return name.capitalize() if capitalize and name.islower() else name
+
+
+def type_repr(item):
+    if item is type(None):
+        return 'None'
+    if isclass(item):
+        return item.__name__
+    return re.sub(r'^typing\.(.+)', r'\1', str(item))
 
 
 def is_truthy(item):

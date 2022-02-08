@@ -18,6 +18,7 @@ import re
 from itertools import chain
 
 from robot.model import Tags
+from robot.running import ArgumentSpec
 from robot.utils import getshortdoc, get_timestamp, Sortable, setter
 
 from .htmlutils import DocFormatter, DocToHtml, HtmlToText
@@ -100,8 +101,11 @@ class LibraryDoc:
             item.shortdoc = item.shortdoc
             item.doc = formatter.html(item.doc)
         for type_doc in self.types:
+            # Standard docs are always in ROBOT format ...
             if type_doc.type == type_doc.STANDARD:
-                type_doc.doc = DocToHtml('ROBOT')(type_doc.doc)
+                # ... unless they have been converted to HTML already.
+                if not type_doc.doc.startswith('<p>'):
+                    type_doc.doc = DocToHtml('ROBOT')(type_doc.doc)
             else:
                 type_doc.doc = formatter.html(type_doc.doc)
         self.doc_format = 'HTML'
@@ -140,16 +144,18 @@ class LibraryDoc:
 
 class KeywordDoc(Sortable):
 
-    def __init__(self, name='', args=(), doc='', shortdoc='', tags=(), source=None,
+    def __init__(self, name='', args=None, doc='', shortdoc='', tags=(), source=None,
                  lineno=-1, parent=None):
         self.name = name
-        self.args = args
+        self.args = args or ArgumentSpec()
         self.doc = doc
         self._shortdoc = shortdoc
         self.tags = Tags(tags)
         self.source = source
         self.lineno = lineno
         self.parent = parent
+        # Map argument types to type documentations.
+        self.type_docs = {arg.name: {} for arg in self.args}
 
     @property
     def shortdoc(self):
@@ -189,7 +195,8 @@ class KeywordDoc(Sortable):
         return {
             'name': arg.name,
             'types': arg.types_reprs,
-            'defaultValue': arg.default_repr,
+            'typedocs': self.type_docs.get(arg.name, {}),
+            'defaultValue': arg.default_repr,    # FIXME: 'defaultValue' -> 'default'?
             'kind': arg.kind,
             'required': arg.required,
             'repr': str(arg)

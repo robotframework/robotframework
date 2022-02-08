@@ -20,19 +20,30 @@ Init docs
 Keyword Arguments
     [Template]    Verify Argument Models
     ${MODEL}[keywords][0][args]     value    operator: AssertionOperator | None = None    exp: str = something?
-    ${MODEL}[keywords][1][args]     funny: bool | int | float | str | AssertionOperator | Small | GeoLocation | None = equal
-    ${MODEL}[keywords][2][args]     location: GeoLocation
-    ${MODEL}[keywords][3][args]     list_of_str: List[str]    dict_str_int: Dict[str, int]    Whatever: Any    *args: List[typing.Any]
+    ${MODEL}[keywords][1][args]     arg: CustomType    arg2: CustomType2    arg3: CustomType
+    ${MODEL}[keywords][2][args]     funny: bool | int | float | str | AssertionOperator | Small | GeoLocation | None = equal
+    ${MODEL}[keywords][3][args]     location: GeoLocation
+    ${MODEL}[keywords][4][args]     list_of_str: List[str]    dict_str_int: Dict[str, int]    Whatever: Any    *args: List[typing.Any]
 
 TypedDict
-    ${Model}[dataTypes][typedDicts][0][name]    GeoLocation
-    ${Model}[dataTypes][typedDicts][0][type]    TypedDict
-    ${Model}[dataTypes][typedDicts][0][doc]    <p>Defines the geolocation.</p>
+    ${MODEL}[dataTypes][typedDicts][0][name]    GeoLocation
+    ${MODEL}[dataTypes][typedDicts][0][type]    TypedDict
+    ${MODEL}[dataTypes][typedDicts][0][doc]    <p>Defines the geolocation.</p>
     ...    <ul>
     ...    <li><code>latitude</code> Latitude between -90 and 90.</li>
     ...    <li><code>longitude</code> Longitude between -180 and 180.</li>
-    ...    <li><code>accuracy</code> <b>Optional</b> Non-negative accuracy value. Defaults to 0. Example usage: <code>{'latitude': 59.95, 'longitude': 30.31667}</code></li>
+    ...    <li><code>accuracy</code> <b>Optional</b> Non-negative accuracy value. Defaults to 0.</li>
     ...    </ul>
+    ...    <p>Example usage: <code>{'latitude': 59.95, 'longitude': 30.31667}</code></p>
+    ${MODEL}[types][6][type]    TypedDict
+    ${MODEL}[types][6][name]    GeoLocation
+    ${MODEL}[types][6][doc]     <p>Defines the geolocation.</p>
+    ...    <ul>
+    ...    <li><code>latitude</code> Latitude between -90 and 90.</li>
+    ...    <li><code>longitude</code> Longitude between -180 and 180.</li>
+    ...    <li><code>accuracy</code> <b>Optional</b> Non-negative accuracy value. Defaults to 0.</li>
+    ...    </ul>
+    ...    <p>Example usage: <code>{'latitude': 59.95, 'longitude': 30.31667}</code></p>
 
 TypedDict Items
     [Template]    NONE
@@ -49,21 +60,59 @@ TypedDict Items
     END
 
 Enum
-    ${Model}[dataTypes][enums][0][name]    AssertionOperator
-    ${Model}[dataTypes][enums][0][type]    Enum
-    ${Model}[dataTypes][enums][0][doc]     <p>This is some Doc</p>
+    ${MODEL}[dataTypes][enums][0][type]    Enum
+    ${MODEL}[dataTypes][enums][0][name]    AssertionOperator
+    ${MODEL}[dataTypes][enums][0][doc]     <p>This is some Doc</p>
+    ...   <p>This has was defined by assigning to __doc__.</p>
+    ${MODEL}[types][0][type]    Enum
+    ${MODEL}[types][0][name]    AssertionOperator
+    ${MODEL}[types][0][doc]     <p>This is some Doc</p>
     ...   <p>This has was defined by assigning to __doc__.</p>
 
 Enum Members
     [Template]    NONE
     ${exp_list}    Evaluate    [{"name": "equal","value": "=="},{"name": "==","value": "=="},{"name": "<","value": "<"},{"name": ">","value": ">"},{"name": "<=","value": "<="},{"name": ">=","value": ">="}]
-    FOR   ${cur}    ${exp}    IN ZIP    ${Model}[dataTypes][enums][0][members]    ${exp_list}
+    FOR   ${cur}    ${exp}    IN ZIP    ${MODEL}[dataTypes][enums][0][members]    ${exp_list}
         Dictionaries Should Be Equal    ${cur}    ${exp}
     END
+    FOR   ${cur}    ${exp}    IN ZIP    ${MODEL}[types][0][members]    ${exp_list}
+        Dictionaries Should Be Equal    ${cur}    ${exp}
+    END
+
+Custom types
+    ${Model}[types][2][type]    Custom
+    ${Model}[types][2][name]    CustomType
+    ${Model}[types][2][doc]     <p>Converter method doc is used when defined.</p>
+    ${Model}[types][3][type]    Custom
+    ${Model}[types][3][name]    CustomType2
+    ${Model}[types][3][doc]     <p>Class doc is used when converter method has no doc.</p>
+
+Standard types
+    ${Model}[types][1][type]    Standard
+    ${Model}[types][1][name]    boolean
+    ${Model}[types][1][doc]     <p>Strings <code>TRUE</code>, <code>YES</code>,   start=True
+
+Usages
+    ${MODEL}[types][1][type]       Standard
+    ${MODEL}[types][1][usages]     [{'kw': 'Funny Unions', 'args': ['funny']}]
+    ${MODEL}[types][2][type]       Custom
+    ${MODEL}[types][2][usages]     [{'kw': 'Custom', 'args': ['arg', 'arg3']}]
+    ${MODEL}[types][6][type]       TypedDict
+    ${MODEL}[types][6][usages]     [{'kw': 'Funny Unions', 'args': ['funny']}, {'kw': 'Set Location', 'args': ['location']}]
+    ${MODEL}[types][10][type]      Enum
+    ${MODEL}[types][10][usages]    [{'kw': '__init__', 'args': ['credentials']}, {'kw': 'Funny Unions', 'args': ['funny']}]
+
+Typedoc links in arguments
+    ${MODEL}[keywords][0][args][1][typedocs]    {'AssertionOperator': 'AssertionOperator', 'None': 'None'}
+    ${MODEL}[keywords][0][args][2][typedocs]    {'str': 'string'}
+    ${MODEL}[keywords][1][args][0][typedocs]    {'CustomType': 'CustomType'}
+    ${MODEL}[keywords][1][args][1][typedocs]    {'CustomType2': 'CustomType2'}
+    ${MODEL}[keywords][2][args][0][typedocs]    {'bool': 'boolean', 'int': 'integer', 'float': 'float', 'str': 'string', 'AssertionOperator': 'AssertionOperator', 'Small': 'Small', 'GeoLocation': 'GeoLocation', 'None': 'None'}
 
 *** Keywords ***
 Verify Argument Models
     [Arguments]    ${arg_models}    @{expected_reprs}
+    [Tags]    robot:continue-on-failure
     Should Be True    len($arg_models) == len($expected_reprs)
     FOR    ${arg_model}    ${expected_repr}    IN ZIP    ${arg_models}    ${expected_reprs}
         Verify Argument Model    ${arg_model}    ${expected_repr}    json=True

@@ -49,22 +49,23 @@ class JsonDocBuilder:
 
     def _parse_spec_json(self, path):
         if not os.path.isfile(path):
-            raise DataError("Spec file '%s' does not exist." % path)
+            raise DataError(f"Spec file '{path}' does not exist.")
         with open(path) as json_source:
             libdoc_dict = json.load(json_source)
         return libdoc_dict
 
-    def _create_keyword(self, kw):
-        return KeywordDoc(name=kw.get('name'),
-                          args=self._create_arguments(kw['args']),
-                          doc=kw['doc'],
-                          shortdoc=kw['shortdoc'],
-                          tags=kw['tags'],
-                          source=kw['source'],
-                          lineno=int(kw.get('lineno', -1)))
+    def _create_keyword(self, data):
+        kw = KeywordDoc(name=data.get('name'),
+                        doc=data['doc'],
+                        shortdoc=data['shortdoc'],
+                        tags=data['tags'],
+                        source=data['source'],
+                        lineno=int(data.get('lineno', -1)))
+        self._create_arguments(data['args'], kw)
+        return kw
 
-    def _create_arguments(self, arguments):
-        spec = ArgumentSpec()
+    def _create_arguments(self, arguments, kw: KeywordDoc):
+        spec = kw.args
         setters = {
             ArgInfo.POSITIONAL_ONLY: spec.positional_only.append,
             ArgInfo.POSITIONAL_ONLY_MARKER: lambda value: None,
@@ -84,7 +85,7 @@ class JsonDocBuilder:
             if not spec.types:
                 spec.types = {}
             spec.types[name] = tuple(arg_types)
-        return spec
+            kw.type_docs[name] = arg.get('typedocs', {})
 
     def _parse_types(self, types):
         for data in types:

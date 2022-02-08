@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<keywordspec name="DataTypesLibrary" type="LIBRARY" format="ROBOT" scope="TEST" generated="2020-11-26T20:27:08Z" specversion="3" source="DataTypesLibrary.py" lineno="77">
-<version></version>
+<keywordspec name="DataTypesLibrary" type="LIBRARY" format="ROBOT" scope="TEST" generated="2022-02-08T23:03:33Z" specversion="4" source="/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py" lineno="84">
+<version/>
 <doc>This Library has Data Types.
 
 It has some in ``__init__`` and others in the `Keywords`.
 
 The DataTypes are the following that should be linked.
 `HttpCredentials` , `GeoLocation` , `Small` and `AssertionOperator`.</doc>
-<tags></tags>
+<tags>
+</tags>
 <inits>
-<init name="Init" lineno="86">
+<init name="__init__" lineno="93">
 <arguments repr="credentials: Small = one">
 <arg kind="POSITIONAL_OR_NAMED" required="false" repr="credentials: Small = one">
 <name>credentials</name>
-<type>Small</type>
+<type typedoc="Small">Small</type>
 <default>one</default>
 </arg>
 </arguments>
@@ -24,63 +25,83 @@ It links to `Set Location` keyword and to `GeoLocation` data type.</doc>
 </init>
 </inits>
 <keywords>
-<kw name="Assert Something" lineno="95">
+<kw name="Assert Something" lineno="103">
 <arguments repr="value, operator: AssertionOperator | None = None, exp: str = something?">
 <arg kind="POSITIONAL_OR_NAMED" required="true" repr="value">
 <name>value</name>
 </arg>
 <arg kind="POSITIONAL_OR_NAMED" required="false" repr="operator: AssertionOperator | None = None">
 <name>operator</name>
-<type>AssertionOperator</type>
-<type>None</type>
+<type typedoc="AssertionOperator">AssertionOperator</type>
+<type typedoc="None">None</type>
 <default>None</default>
 </arg>
 <arg kind="POSITIONAL_OR_NAMED" required="false" repr="exp: str = something?">
 <name>exp</name>
-<type>str</type>
+<type typedoc="string">str</type>
 <default>something?</default>
 </arg>
 </arguments>
-<doc></doc>
-<shortdoc></shortdoc>
+<doc>This links to `AssertionOperator` .
+
+This is the next Line that links to 'Set Location` .</doc>
+<shortdoc>This links to `AssertionOperator` .</shortdoc>
 </kw>
-<kw name="Funny Unions" lineno="98">
+<kw name="Custom" lineno="127">
+<arguments repr="arg: CustomType, arg2: CustomType2, arg3: CustomType">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="arg: CustomType">
+<name>arg</name>
+<type typedoc="CustomType">CustomType</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="arg2: CustomType2">
+<name>arg2</name>
+<type typedoc="CustomType2">CustomType2</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="arg3: CustomType">
+<name>arg3</name>
+<type typedoc="CustomType">CustomType</type>
+</arg>
+</arguments>
+<doc/>
+<shortdoc/>
+</kw>
+<kw name="Funny Unions" lineno="110">
 <arguments repr="funny: bool | int | float | str | AssertionOperator | Small | GeoLocation | None = equal">
 <arg kind="POSITIONAL_OR_NAMED" required="false" repr="funny: bool | int | float | str | AssertionOperator | Small | GeoLocation | None = equal">
 <name>funny</name>
-<type>bool</type>
-<type>int</type>
-<type>float</type>
-<type>str</type>
-<type>AssertionOperator</type>
-<type>Small</type>
-<type>GeoLocation</type>
-<type>None</type>
+<type typedoc="boolean">bool</type>
+<type typedoc="integer">int</type>
+<type typedoc="float">float</type>
+<type typedoc="string">str</type>
+<type typedoc="AssertionOperator">AssertionOperator</type>
+<type typedoc="Small">Small</type>
+<type typedoc="GeoLocation">GeoLocation</type>
+<type typedoc="None">None</type>
 <default>equal</default>
 </arg>
 </arguments>
-<doc></doc>
-<shortdoc></shortdoc>
+<doc/>
+<shortdoc/>
 </kw>
-<kw name="Set Location" lineno="92">
+<kw name="Set Location" lineno="100">
 <arguments repr="location: GeoLocation">
 <arg kind="POSITIONAL_OR_NAMED" required="true" repr="location: GeoLocation">
 <name>location</name>
-<type>GeoLocation</type>
+<type typedoc="GeoLocation">GeoLocation</type>
 </arg>
 </arguments>
-<doc></doc>
-<shortdoc></shortdoc>
+<doc/>
+<shortdoc/>
 </kw>
-<kw name="Typing Types" lineno="112">
+<kw name="Typing Types" lineno="124">
 <arguments repr="list_of_str: List[str], dict_str_int: Dict[str, int], Whatever: Any, *args: List[typing.Any]">
 <arg kind="POSITIONAL_OR_NAMED" required="true" repr="list_of_str: List[str]">
 <name>list_of_str</name>
-<type>List[str]</type>
+<type typedoc="list">List[str]</type>
 </arg>
 <arg kind="POSITIONAL_OR_NAMED" required="true" repr="dict_str_int: Dict[str, int]">
 <name>dict_str_int</name>
-<type>Dict[str, int]</type>
+<type typedoc="dictionary">Dict[str, int]</type>
 </arg>
 <arg kind="POSITIONAL_OR_NAMED" required="true" repr="Whatever: Any">
 <name>Whatever</name>
@@ -88,11 +109,11 @@ It links to `Set Location` keyword and to `GeoLocation` data type.</doc>
 </arg>
 <arg kind="VAR_POSITIONAL" required="false" repr="*args: List[typing.Any]">
 <name>args</name>
-<type>List[typing.Any]</type>
+<type typedoc="list">List[typing.Any]</type>
 </arg>
 </arguments>
-<doc></doc>
-<shortdoc></shortdoc>
+<doc/>
+<shortdoc/>
 </kw>
 </keywords>
 <datatypes>
@@ -113,7 +134,7 @@ This has was defined by assigning to __doc__.</doc>
 <enum name="Small">
 <doc>This is the Documentation.
 
-    This was defined within the class definition.</doc>
+This was defined within the class definition.</doc>
 <members>
 <member name="one" value="1"/>
 <member name="two" value="2"/>
@@ -126,10 +147,11 @@ This has was defined by assigning to __doc__.</doc>
 <typeddict name="GeoLocation">
 <doc>Defines the geolocation.
 
-    - ``latitude`` Latitude between -90 and 90.
-    - ``longitude`` Longitude between -180 and 180.
-    - ``accuracy`` *Optional* Non-negative accuracy value. Defaults to 0.
-    Example usage: ``{'latitude': 59.95, 'longitude': 30.31667}``</doc>
+- ``latitude`` Latitude between -90 and 90.
+- ``longitude`` Longitude between -180 and 180.
+- ``accuracy`` *Optional* Non-negative accuracy value. Defaults to 0.
+
+Example usage: ``{'latitude': 59.95, 'longitude': 30.31667}``</doc>
 <items>
 <item key="longitude" type="float" required="true"/>
 <item key="latitude" type="float" required="true"/>
@@ -138,4 +160,168 @@ This has was defined by assigning to __doc__.</doc>
 </typeddict>
 </typeddicts>
 </datatypes>
+<types>
+<type name="AssertionOperator" type="Enum">
+<doc>This is some Doc
+
+This has was defined by assigning to __doc__.</doc>
+<usages>
+<usage kw="Assert Something">
+<arg>operator</arg>
+</usage>
+<usage kw="Funny Unions">
+<arg>funny</arg>
+</usage>
+</usages>
+<members>
+<member name="equal" value="=="/>
+<member name="==" value="=="/>
+<member name="&lt;" value="&lt;"/>
+<member name="&gt;" value="&gt;"/>
+<member name="&lt;=" value="&lt;="/>
+<member name="&gt;=" value="&gt;="/>
+</members>
+</type>
+<type name="boolean" type="Standard">
+<doc>Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to ``True``,
+the empty string as well as ``FALSE``, ``NO``, ``OFF`` and ``0``
+are converted to ``False``, and the string ``NONE`` is converted
+to ``None``. Other strings and all non-string arguments are
+passed as-is, allowing keywords to handle them specially if
+needed. All string comparisons are case-insensitive.
+
+Examples: ``TRUE`` (converted to ``True``), ``off`` (converted to ``False``,
+``example`` (used as-is)
+</doc>
+<usages>
+<usage kw="Funny Unions">
+<arg>funny</arg>
+</usage>
+</usages>
+</type>
+<type name="CustomType" type="Custom">
+<doc>Converter method doc is used when defined.</doc>
+<usages>
+<usage kw="Custom">
+<arg>arg</arg>
+<arg>arg3</arg>
+</usage>
+</usages>
+</type>
+<type name="CustomType2" type="Custom">
+<doc>Class doc is used when converter method has no doc.</doc>
+<usages>
+<usage kw="Custom">
+<arg>arg2</arg>
+</usage>
+</usages>
+</type>
+<type name="dictionary" type="Standard">
+<doc>TODO</doc>
+<usages>
+<usage kw="Typing Types">
+<arg>dict_str_int</arg>
+</usage>
+</usages>
+</type>
+<type name="float" type="Standard">
+<doc>TODO</doc>
+<usages>
+<usage kw="Funny Unions">
+<arg>funny</arg>
+</usage>
+</usages>
+</type>
+<type name="GeoLocation" type="TypedDict">
+<doc>Defines the geolocation.
+
+- ``latitude`` Latitude between -90 and 90.
+- ``longitude`` Longitude between -180 and 180.
+- ``accuracy`` *Optional* Non-negative accuracy value. Defaults to 0.
+
+Example usage: ``{'latitude': 59.95, 'longitude': 30.31667}``</doc>
+<usages>
+<usage kw="Funny Unions">
+<arg>funny</arg>
+</usage>
+<usage kw="Set Location">
+<arg>location</arg>
+</usage>
+</usages>
+<items>
+<item key="longitude" type="float" required="true"/>
+<item key="latitude" type="float" required="true"/>
+<item key="accuracy" type="float" required="false"/>
+</items>
+</type>
+<type name="integer" type="Standard">
+<doc>Conversion is done using Python's ``int`` built-in function. Floating point
+numbers are converted only if they can be represented as integers exactly. 
+For example, ``1.0`` is accepted and ``1.1`` is not.
+
+Starting from RF 4.1, it is possible to use hexadecimal, octal and binary
+numbers by prefixing values with ``0x``, ``0o`` and ``0b``, respectively.
+
+Starting from RF 4.1, spaces and underscores can be used as visual separators
+for digit grouping purposes.
+
+Examples: ``42``, ``-1``, ``0b1010``, ``10 000 000``, ``0xBAD_C0FFEE`` 
+</doc>
+<usages>
+<usage kw="Funny Unions">
+<arg>funny</arg>
+</usage>
+</usages>
+</type>
+<type name="list" type="Standard">
+<doc>TODO</doc>
+<usages>
+<usage kw="Typing Types">
+<arg>list_of_str</arg>
+<arg>args</arg>
+</usage>
+</usages>
+</type>
+<type name="None" type="Standard">
+<doc>TODO</doc>
+<usages>
+<usage kw="Assert Something">
+<arg>operator</arg>
+</usage>
+<usage kw="Funny Unions">
+<arg>funny</arg>
+</usage>
+</usages>
+</type>
+<type name="Small" type="Enum">
+<doc>This is the Documentation.
+
+This was defined within the class definition.</doc>
+<usages>
+<usage kw="__init__">
+<arg>credentials</arg>
+</usage>
+<usage kw="Funny Unions">
+<arg>funny</arg>
+</usage>
+</usages>
+<members>
+<member name="one" value="1"/>
+<member name="two" value="2"/>
+<member name="three" value="3"/>
+<member name="four" value="4"/>
+</members>
+</type>
+<type name="string" type="Standard">
+<doc>TODO</doc>
+<usages>
+<usage kw="Assert Something">
+<arg>exp</arg>
+</usage>
+<usage kw="Funny Unions">
+<arg>funny</arg>
+</usage>
+</usages>
+</type>
+</types>
 </keywordspec>

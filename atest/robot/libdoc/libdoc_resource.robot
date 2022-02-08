@@ -311,3 +311,17 @@ Usages Should Be
         Should Be Equal    ${usage.get('kw')}    ${kw}
         Should Be Equal    ${actual args}        ${expected args}
     END
+
+Typedoc links should be
+    [Arguments]    ${kw}    ${arg}    @{typedocs}
+    ${types} =    Get Elements    ${LIBDOC}    keywords/kw[${${kw} + 1}]/arguments/arg[${${arg} + 1}]/type
+    Length Should Be    ${types}    ${{len($typedocs)}}
+    FOR    ${type}    ${typedoc}    IN ZIP    ${types}    ${typedocs}
+        IF    ':' in $typedoc
+            ${typename}    ${typedoc} =    Split String    ${typedoc}    :
+        ELSE
+            ${typename} =    Set Variable    ${typedoc}
+        END
+        Element Text Should Be    ${type}    ${typename}
+        Element Attribute Should Be    ${type}    typedoc    ${typedoc}
+    END

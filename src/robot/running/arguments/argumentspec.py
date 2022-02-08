@@ -13,13 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import re
 import sys
 from enum import Enum
-from inspect import isclass
 from typing import Union
 
-from robot.utils import safe_str, setter
+from robot.utils import safe_str, setter, type_repr
 
 from .argumentconverter import ArgumentConverter
 from .argumentmapper import ArgumentMapper
@@ -149,14 +147,7 @@ class ArgInfo:
 
     @property
     def types_reprs(self):
-        return [self._type_repr(t) for t in self.types]
-
-    def _type_repr(self, typ):
-        if typ is type(None):
-            return 'None'
-        if isclass(typ):
-            return typ.__name__
-        return re.sub(r'^typing\.(.+)', r'\1', str(typ))
+        return [type_repr(t) for t in self.types]
 
     @property
     def default_repr(self):
