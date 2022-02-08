@@ -147,9 +147,10 @@
     </xs:complexType>
     <xs:simpleType name="TypeType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="Custom" />
             <xs:enumeration value="Enum" />
             <xs:enumeration value="TypedDict" />
+            <xs:enumeration value="Custom" />
+            <xs:enumeration value="Standard" />
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="Usages">

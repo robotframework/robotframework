@@ -9,7 +9,6 @@ Documentation
     ...   <p>It has some in <code>__init__</code> and others in the <a href=\"#Keywords\" class=\"name\">Keywords</a>.</p>
     ...   <p>The DataTypes are the following that should be linked. <span class=\"name\">HttpCredentials</span> , <a href=\"#GeoLocation\" class=\"name\">GeoLocation</a> , <a href=\"#Small\" class=\"name\">Small</a> and <a href=\"#AssertionOperator\" class=\"name\">AssertionOperator</a>.</p>
 
-
 Init Arguments
     [Template]    Verify Argument Models
     ${MODEL}[inits][0][args]     credentials: Small = one
@@ -17,7 +16,6 @@ Init Arguments
 Init docs
     ${MODEL}[inits][0][doc]     <p>This is the init Docs.</p>
     ...   <p>It links to <a href=\"#Set%20Location\" class=\"name\">Set Location</a> keyword and to <a href=\"#GeoLocation\" class=\"name\">GeoLocation</a> data type.</p>
-
 
 Keyword Arguments
     [Template]    Verify Argument Models
@@ -45,7 +43,7 @@ TypedDict Items
         FOR    ${item}    IN    @{Model}[dataTypes][typedDicts][0][items]
             IF    $exp['key'] == $item['key']
                 Dictionaries Should Be Equal    ${item}    ${exp}
-                Exit For Loop
+                BREAK
             END
         END
     END
@@ -60,7 +58,7 @@ Enum Members
     [Template]    NONE
     ${exp_list}    Evaluate    [{"name": "equal","value": "=="},{"name": "==","value": "=="},{"name": "<","value": "<"},{"name": ">","value": ">"},{"name": "<=","value": "<="},{"name": ">=","value": ">="}]
     FOR   ${cur}    ${exp}    IN ZIP    ${Model}[dataTypes][enums][0][members]    ${exp_list}
-        Run Keyword And Continue On Failure    Dictionaries Should Be Equal    ${cur}    ${exp}
+        Dictionaries Should Be Equal    ${cur}    ${exp}
     END
 
 *** Keywords ***
@@ -68,5 +66,5 @@ Verify Argument Models
     [Arguments]    ${arg_models}    @{expected_reprs}
     Should Be True    len($arg_models) == len($expected_reprs)
     FOR    ${arg_model}    ${expected_repr}    IN ZIP    ${arg_models}    ${expected_reprs}
-       Run Keyword And Continue On Failure   Verify Argument Model    ${arg_model}    ${expected_repr}    json=True
+        Verify Argument Model    ${arg_model}    ${expected_repr}    json=True
     END

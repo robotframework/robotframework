@@ -25,8 +25,6 @@ from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import (FALSE_STRINGS, TRUE_STRINGS, eq, get_error_message,
                          is_string, is_union, safe_str, seq2str, type_name)
 
-from .typeinfo import TypeInfo
-
 
 class TypeConverter:
     type = None
@@ -140,14 +138,6 @@ class TypeConverter:
                 if sep in value:
                     value = value.replace(sep, '')
         return value
-
-    @classmethod
-    def type_info_for(cls, type_, custom_converters=None) -> TypeInfo:
-        converter = cls.converter_for(type_, custom_converters)
-        return converter.get_type_info() if converter else None
-
-    def get_type_info(self):
-        return None
 
 
 @TypeConverter.register
@@ -526,6 +516,3 @@ class CustomConverter(TypeConverter):
             raise
         except Exception:
             raise ValueError(get_error_message())
-
-    def get_type_info(self):
-        return TypeInfo(self.converter_info.name, self.converter_info.doc)

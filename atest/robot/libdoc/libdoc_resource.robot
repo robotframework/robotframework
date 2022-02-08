@@ -235,9 +235,13 @@ Remove Output Files
     Remove Files    ${OUTBASE}*
 
 Should Be Equal Multiline
-    [Arguments]    ${actual}    @{expected}
+    [Arguments]    ${actual}    @{expected}    ${start}=False
     ${expected} =    Catenate    SEPARATOR=\n    @{expected}
-    Should Be Equal As Strings    ${actual}    ${expected}
+    IF    not ${start}
+        Should Be Equal As Strings    ${actual}    ${expected}
+    ELSE
+        Should Start With    ${actual}    ${expected}
+    END
 
 List of Dict Should Be Equal
     [Arguments]    ${list1}    ${list2}
@@ -287,6 +291,12 @@ DataType Custom Should Be
     ${customs}=   Get Elements    ${LIBDOC}   xpath=types/type[@type='Custom']
     Element Attribute Should Be    ${customs}[${index}]     name      ${name}
     Element Text Should Be         ${customs}[${index}]     ${doc}    xpath=doc
+
+DataType Standard Should Be
+    [Arguments]    ${index}    ${name}    ${doc}
+    ${customs}=   Get Elements    ${LIBDOC}   xpath=types/type[@type='Standard']
+    Element Attribute Should Be    ${customs}[${index}]     name      ${name}
+    Element Text Should Match         ${customs}[${index}]     ${doc}*    xpath=doc
 
 Usages Should Be
     [Arguments]    ${index}    ${expected type}    ${expected name}    &{expected usages}

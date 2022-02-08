@@ -20,7 +20,7 @@ from itertools import chain
 from robot.model import Tags
 from robot.utils import getshortdoc, get_timestamp, Sortable, setter
 
-from .htmlutils import HtmlToText, DocFormatter
+from .htmlutils import DocFormatter, DocToHtml, HtmlToText
 from .writer import LibdocWriter
 from .output import LibdocOutput
 
@@ -100,7 +100,10 @@ class LibraryDoc:
             item.shortdoc = item.shortdoc
             item.doc = formatter.html(item.doc)
         for type_doc in self.types:
-            type_doc.doc = formatter.html(type_doc.doc)
+            if type_doc.type == type_doc.STANDARD:
+                type_doc.doc = DocToHtml('ROBOT')(type_doc.doc)
+            else:
+                type_doc.doc = formatter.html(type_doc.doc)
         self.doc_format = 'HTML'
 
     def to_dictionary(self):

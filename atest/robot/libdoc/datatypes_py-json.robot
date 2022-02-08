@@ -36,9 +36,9 @@ TypedDict
     ...    <li><code>accuracy</code> <b>Optional</b> Non-negative accuracy value. Defaults to 0.</li>
     ...    </ul>
     ...    <p>Example usage: <code>{'latitude': 59.95, 'longitude': 30.31667}</code></p>
-    ${MODEL}[types][3][type]    TypedDict
-    ${MODEL}[types][3][name]    GeoLocation
-    ${MODEL}[types][3][doc]     <p>Defines the geolocation.</p>
+    ${MODEL}[types][6][type]    TypedDict
+    ${MODEL}[types][6][name]    GeoLocation
+    ${MODEL}[types][6][doc]     <p>Defines the geolocation.</p>
     ...    <ul>
     ...    <li><code>latitude</code> Latitude between -90 and 90.</li>
     ...    <li><code>longitude</code> Longitude between -180 and 180.</li>
@@ -88,26 +88,30 @@ Enum Members
     END
 
 Custom types
-    ${Model}[types][1][type]    Custom
-    ${Model}[types][1][name]    CustomType
-    ${Model}[types][1][doc]     <p>Converter method doc is used when defined.</p>
     ${Model}[types][2][type]    Custom
-    ${Model}[types][2][name]    CustomType2
-    ${Model}[types][2][doc]     <p>Class doc is used when converter method has no doc.</p>
+    ${Model}[types][2][name]    CustomType
+    ${Model}[types][2][doc]     <p>Converter method doc is used when defined.</p>
+    ${Model}[types][3][type]    Custom
+    ${Model}[types][3][name]    CustomType2
+    ${Model}[types][3][doc]     <p>Class doc is used when converter method has no doc.</p>
+
+Standard types
+    ${Model}[types][1][type]    Standard
+    ${Model}[types][1][name]    boolean
+    ${Model}[types][1][doc]     <p>Strings <code>TRUE</code>, <code>YES</code>,   start=True
 
 Usages
-    ${MODEL}[types][1][type]      Custom
-    ${MODEL}[types][1][name]      CustomType
-    ${MODEL}[types][1][usages]    [{'kw': 'Custom', 'args': ['arg', 'arg3']}]
-    ${MODEL}[types][3][type]      TypedDict
-    ${MODEL}[types][3][name]      GeoLocation
-    ${MODEL}[types][3][usages]    [{'kw': 'Funny Unions', 'args': ['funny']}, {'kw': 'Set Location', 'args': ['location']}]
-    ${MODEL}[types][4][type]      Enum
-    ${MODEL}[types][4][name]      Small
+    ${MODEL}[types][1][type]      Standard
+    ${MODEL}[types][1][usages]    [{'kw': 'Funny Unions', 'args': ['funny']}]
+    ${MODEL}[types][2][type]      Custom
+    ${MODEL}[types][2][usages]    [{'kw': 'Custom', 'args': ['arg', 'arg3']}]
+    ${MODEL}[types][6][type]      TypedDict
+    ${MODEL}[types][6][usages]    [{'kw': 'Funny Unions', 'args': ['funny']}, {'kw': 'Set Location', 'args': ['location']}]
+    ${MODEL}[types][10][type]     Enum
     # With Python 3.6 `typing.get_type_hints` ignores `Small`.
     # Apparently because it is based on `int` args also have `int`.
     IF    $INTERPRETER.version_info >= (3, 7)
-        ${MODEL}[types][4][usages]    [{'kw': '__init__', 'args': ['credentials']}, {'kw': 'Funny Unions', 'args': ['funny']}]
+        ${MODEL}[types][10][usages]    [{'kw': '__init__', 'args': ['credentials']}, {'kw': 'Funny Unions', 'args': ['funny']}]
     END
 
 *** Keywords ***

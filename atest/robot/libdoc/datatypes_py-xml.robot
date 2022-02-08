@@ -47,16 +47,23 @@ Custom
     ...    CustomType2
     ...    Class doc is used when converter method has no doc.
 
+Standard
+    DataType Standard Should Be    0
+    ...    boolean
+    ...    Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to ``True``,
+
 Usages
-    Usages Should Be    1    Custom    CustomType
+    Usages Should Be    1    Standard    boolean
+    ...    Funny Unions=funny
+    Usages Should Be    2    Custom    CustomType
     ...    Custom=arg,arg3
-    Usages Should be    3    TypedDict    GeoLocation
+    Usages Should be    6    TypedDict    GeoLocation
     ...    Funny Unions=funny
     ...    Set Location=location
     # With Python 3.6 `typing.get_type_hints` ignores `Small`.
     # Apparently because it is based on `int` args also have `int`.
     IF    $INTERPRETER.version_info >= (3, 7)
-        Usages Should Be    4    Enum    Small
+        Usages Should Be    10    Enum    Small
         ...    __init__=credentials
         ...    Funny Unions=funny
     END

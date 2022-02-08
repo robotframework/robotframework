@@ -19,6 +19,8 @@ from enum import Enum
 from robot.utils import getdoc, Sortable, typeddict_types
 from robot.running import TypeConverter
 
+from .standardtypes import STANDARD_TYPE_DOCS
+
 
 EnumType = type(Enum)
 
@@ -48,8 +50,14 @@ class TypeDoc(Sortable):
             return cls.for_enum(type)
         if isinstance(type, typeddict_types):
             return cls.for_typed_dict(type)
-        info = TypeConverter.type_info_for(type, converters)
-        if info:
+        converter = TypeConverter.converter_for(type, converters)
+        if not converter:
+            return None
+        if converter.type in STANDARD_TYPE_DOCS:
+            return TypeDoc(TypeDoc.STANDARD, converter.type_name,
+                           STANDARD_TYPE_DOCS[converter.type])
+        if hasattr(converter, 'converter_info'):
+            info = converter.converter_info
             return TypeDoc(TypeDoc.CUSTOM, info.name, info.doc)
         return None
 
