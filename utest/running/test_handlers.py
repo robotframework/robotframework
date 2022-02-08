@@ -354,7 +354,7 @@ class TestSourceAndLineno(unittest.TestCase):
     def test_dynamic_invalid_source(self):
         logger = LoggerMock()
         lib = TestLibrary('classes.DynamicWithSource', logger=logger)
-        self._verify(lib.handlers['invalid source'], None)
+        self._verify(lib.handlers['invalid source'], lib.source)
         error = (
             "Error in library 'classes.DynamicWithSource': "
             "Getting source information for keyword 'Invalid Source' failed: "

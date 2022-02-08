@@ -204,7 +204,7 @@ class _DynamicHandler(_RunnableHandler):
                 f"Getting source information for keyword '{self.name}' failed: {err}",
                 err.details
             )
-            return None, -1
+            source = None
         if source and ':' in source and source.rsplit(':', 1)[1].isdigit():
             source, lineno = source.rsplit(':', 1)
             lineno = int(lineno)
