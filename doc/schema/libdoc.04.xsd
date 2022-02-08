@@ -71,7 +71,6 @@
         <xs:sequence>
             <xs:element name="enums" type="EnumList" minOccurs="0" />
             <xs:element name="typeddicts" type="TypedDictList" minOccurs="0" />
-            <xs:element name="customs" type="CustomList" minOccurs="0" />
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="EnumList">
@@ -82,11 +81,6 @@
     <xs:complexType name="TypedDictList">
         <xs:sequence>
             <xs:element name="typeddict" type="TypedDictType" maxOccurs="unbounded" />
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="CustomList">
-        <xs:sequence>
-            <xs:element name="custom" type="CustomType" maxOccurs="unbounded" />
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="EnumType">
@@ -100,12 +94,6 @@
         <xs:sequence>
             <xs:element name="doc" type="xs:string" />
             <xs:element name="items" type="TypedDictItems" />
-        </xs:sequence>
-        <xs:attribute name="name" type="xs:string" use="required" />
-    </xs:complexType>
-    <xs:complexType name="CustomType">
-        <xs:sequence>
-            <xs:element name="doc" type="xs:string" />
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required" />
     </xs:complexType>
