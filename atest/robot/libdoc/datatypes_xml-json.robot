@@ -94,13 +94,13 @@ Standard types
 
 Usages
     ${MODEL}[types][1][type]       Standard
-    ${MODEL}[types][1][usages]     [{'kw': 'Funny Unions', 'args': ['funny']}]
+    ${MODEL}[types][1][usages]     ['Funny Unions']
     ${MODEL}[types][2][type]       Custom
-    ${MODEL}[types][2][usages]     [{'kw': 'Custom', 'args': ['arg', 'arg3']}]
+    ${MODEL}[types][2][usages]     ['Custom']
     ${MODEL}[types][6][type]       TypedDict
-    ${MODEL}[types][6][usages]     [{'kw': 'Funny Unions', 'args': ['funny']}, {'kw': 'Set Location', 'args': ['location']}]
+    ${MODEL}[types][6][usages]     ['Funny Unions', 'Set Location']
     ${MODEL}[types][10][type]      Enum
-    ${MODEL}[types][10][usages]    [{'kw': '__init__', 'args': ['credentials']}, {'kw': 'Funny Unions', 'args': ['funny']}]
+    ${MODEL}[types][10][usages]    ['__init__', 'Funny Unions']
 
 Typedoc links in arguments
     ${MODEL}[keywords][0][args][1][typedocs]    {'AssertionOperator': 'AssertionOperator', 'None': 'None'}

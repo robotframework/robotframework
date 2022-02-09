@@ -40,7 +40,7 @@ class LibraryDoc:
         self.lineno = lineno
         self.inits = ()
         self.keywords = ()
-        self.types = ()
+        self.type_docs = ()
 
     @property
     def doc(self):
@@ -59,7 +59,7 @@ class LibraryDoc:
             entries.append('Importing')
         if self.keywords:
             entries.append('Keywords')
-        if self.types:
+        if self.type_docs:
             entries.append('Data types')
         return '\n'.join('- `%s`' % entry for entry in entries)
 
@@ -76,8 +76,8 @@ class LibraryDoc:
         return self._process_keywords(kws)
 
     @setter
-    def types(self, types):
-        return set(types)
+    def type_docs(self, type_docs):
+        return set(type_docs)
 
     def _process_keywords(self, kws):
         for keyword in kws:
@@ -93,14 +93,14 @@ class LibraryDoc:
             LibdocWriter(format).write(self, outfile)
 
     def convert_docs_to_html(self):
-        formatter = DocFormatter(self.keywords, self.types, self.doc, self.doc_format)
+        formatter = DocFormatter(self.keywords, self.type_docs, self.doc, self.doc_format)
         self._doc = formatter.html(self.doc, intro=True)
         for item in self.inits + self.keywords:
             # If 'shortdoc' is not set, it is generated automatically based on 'doc'
             # when accessed. Generate and set it to avoid HTML format affecting it.
             item.shortdoc = item.shortdoc
             item.doc = formatter.html(item.doc)
-        for type_doc in self.types:
+        for type_doc in self.type_docs:
             # Standard docs are always in ROBOT format ...
             if type_doc.type == type_doc.STANDARD:
                 # ... unless they have been converted to HTML already.
@@ -125,8 +125,8 @@ class LibraryDoc:
             'inits': [init.to_dictionary() for init in self.inits],
             'keywords': [kw.to_dictionary() for kw in self.keywords],
             # 'dataTypes' was deprecated in RF 5, 'types' should be used instead.
-            'dataTypes': self._get_data_types(self.types),
-            'types': [t.to_dictionary() for t in sorted(self.types)]
+            'dataTypes': self._get_data_types(self.type_docs),
+            'types': [t.to_dictionary() for t in sorted(self.type_docs)]    # FIXME: 'types' -> 'typedocs'
         }
 
     def _get_data_types(self, types):

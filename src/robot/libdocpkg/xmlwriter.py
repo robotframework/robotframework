@@ -26,9 +26,9 @@ class LibdocXmlWriter:
         self._write_keywords('inits', 'init', libdoc.inits, libdoc.source, writer)
         self._write_keywords('keywords', 'kw', libdoc.keywords, libdoc.source, writer)
         # Write deprecated '<datatypes>' element.
-        self._write_data_types(libdoc.types, writer)
+        self._write_data_types(libdoc.type_docs, writer)
         # Write new '<types>' element.
-        self._write_types(libdoc.types, writer)
+        self._write_type_docs(libdoc.type_docs, writer)
         self._write_end(writer)
 
     def _write_start(self, libdoc, writer):
@@ -107,7 +107,6 @@ class LibdocXmlWriter:
     def _write_data_types(self, types, writer):
         enums = sorted(t for t in types if t.type == 'Enum')
         typed_dicts = sorted(t for t in types if t.type == 'TypedDict')
-        customs = sorted(t for t in types if t.type == 'Custom')
         writer.start('datatypes')
         if enums:
             writer.start('enums')
@@ -127,22 +126,19 @@ class LibdocXmlWriter:
             writer.end('typeddicts')
         writer.end('datatypes')
 
-    def _write_types(self, types, writer):
+    def _write_type_docs(self, type_docs, writer):
         writer.start('types')
-        for typ in sorted(types):
-            writer.start('type', {'name': typ.name, 'type': typ.type})
-            writer.element('doc', typ.doc)
+        for doc in sorted(type_docs):
+            writer.start('type', {'name': doc.name, 'type': doc.type})
+            writer.element('doc', doc.doc)
             writer.start('usages')
-            for usage in typ.usages:
-                writer.start('usage', attrs={'kw': usage.keyword})
-                for arg in usage.arguments:
-                    writer.element('arg', arg)
-                writer.end('usage')
+            for usage in doc.usages:
+                writer.element('usage', usage)
             writer.end('usages')
-            if typ.type == 'Enum':
-                self._write_enum_members(typ, writer)
-            if typ.type == 'TypedDict':
-                self._write_typed_dict_items(typ, writer)
+            if doc.type == 'Enum':
+                self._write_enum_members(doc, writer)
+            if doc.type == 'TypedDict':
+                self._write_typed_dict_items(doc, writer)
             writer.end('type')
         writer.end('types')
 

@@ -19,7 +19,7 @@ from robot.errors import DataError
 from robot.running import ArgInfo
 from robot.utils import ET, ETSource
 
-from .datatypes import EnumMember, TypedDictItem, TypeDoc, Usage
+from .datatypes import EnumMember, TypedDictItem, TypeDoc
 from .model import LibraryDoc, KeywordDoc
 
 
@@ -39,9 +39,9 @@ class XmlDocBuilder:
         libdoc.keywords = self._create_keywords(spec, 'keywords/kw', libdoc.source)
         # RF >= 5 have 'types', RF >= 4 have 'datatypes', older/custom may have neither.
         if spec.find('types'):
-            libdoc.types = self._parse_types(spec)
+            libdoc.type_docs = self._parse_type_docs(spec)
         else:
-            libdoc.types = self._parse_data_types(spec)
+            libdoc.type_docs = self._parse_data_types(spec)
         return libdoc
 
     def _parse_spec(self, path):
@@ -103,19 +103,15 @@ class XmlDocBuilder:
             spec.types[name] = tuple(types)
             kw.type_docs[name] = type_docs
 
-    def _parse_types(self, spec):
+    def _parse_type_docs(self, spec):
         for elem in spec.findall('types/type'):
-            doc = TypeDoc(elem.get('type'), elem.get('name'), elem.find('doc').text)
-            doc.usages = self._parse_usages(elem)
+            doc = TypeDoc(elem.get('type'), elem.get('name'), elem.find('doc').text,
+                          [usage.text for usage in elem.findall('usages/usage')])
             if doc.type == TypeDoc.ENUM:
                 doc.members = self._parse_members(elem)
             if doc.type == TypeDoc.TYPED_DICT:
                 doc.items = self._parse_items(elem)
             yield doc
-
-    def _parse_usages(self, elem):
-        return [Usage(usage.get('kw'), [a.text for a in usage.findall('arg')])
-                for usage in elem.findall('usages/usage')]
 
     def _parse_members(self, elem):
         return [EnumMember(member.get('name'), member.get('value'))

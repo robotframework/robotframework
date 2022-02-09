@@ -86,7 +86,7 @@ class TypeDoc(Sortable):
             'doc': self.doc,
         }
         if usages:
-            data['usages'] = [u.to_dictionary() for u in self.usages]
+            data['usages'] = self.usages
         if self.members is not None:
             data['members'] = [m.to_dictionary() for m in self.members]
         if self.items is not None:
@@ -113,13 +113,3 @@ class EnumMember:
 
     def to_dictionary(self):
         return {'name': self.name, 'value': self.value}
-
-
-class Usage:
-
-    def __init__(self, keyword, arguments=None):
-        self.keyword = keyword
-        self.arguments = arguments or []
-
-    def to_dictionary(self):
-        return {'kw': self.keyword, 'args': self.arguments}

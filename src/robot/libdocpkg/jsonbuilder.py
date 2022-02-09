@@ -16,10 +16,10 @@
 import json
 import os.path
 
-from robot.running import ArgInfo, ArgumentSpec
+from robot.running import ArgInfo
 from robot.errors import DataError
 
-from .datatypes import EnumMember, TypedDictItem, TypeDoc, Usage
+from .datatypes import EnumMember, TypedDictItem, TypeDoc
 from .model import LibraryDoc, KeywordDoc
 
 
@@ -42,9 +42,9 @@ class JsonDocBuilder:
         libdoc.keywords = [self._create_keyword(kw) for kw in spec['keywords']]
         # RF >= 5 have 'types', RF >= 4 have 'dataTypes', older/custom may have neither.
         if 'types' in spec:
-            libdoc.types = self._parse_types(spec['types'])
+            libdoc.type_docs = self._parse_type_docs(spec['types'])
         elif 'dataTypes' in spec:
-            libdoc.types = self._parse_data_types(spec['dataTypes'])
+            libdoc.type_docs = self._parse_data_types(spec['dataTypes'])
         return libdoc
 
     def _parse_spec_json(self, path):
@@ -87,10 +87,9 @@ class JsonDocBuilder:
             spec.types[name] = tuple(arg_types)
             kw.type_docs[name] = arg.get('typedocs', {})
 
-    def _parse_types(self, types):
-        for data in types:
-            doc = TypeDoc(data['type'], data['name'], data['doc'])
-            doc.usages = [Usage(d['kw'], d['args']) for d in data['usages']]
+    def _parse_type_docs(self, type_docs):
+        for data in type_docs:
+            doc = TypeDoc(data['type'], data['name'], data['doc'], data['usages'])
             if doc.type == TypeDoc.ENUM:
                 doc.members = [EnumMember(d['name'], d['value'])
                                for d in data['members']]

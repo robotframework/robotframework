@@ -23,7 +23,7 @@ from robot.running import (TestLibrary, UserLibrary, UserErrorHandler,
 from robot.utils import is_string, split_tags_from_doc, type_repr, unescape
 from robot.variables import search_variable
 
-from .datatypes import TypeDoc, Usage
+from .datatypes import TypeDoc
 from .model import LibraryDoc, KeywordDoc
 
 
@@ -42,7 +42,8 @@ class LibraryDocBuilder:
                             lineno=lib.lineno)
         libdoc.inits = self._get_initializers(lib)
         libdoc.keywords = KeywordDocBuilder().build_keywords(lib)
-        libdoc.types = self._get_types(libdoc.inits + libdoc.keywords, lib.converters)
+        libdoc.type_docs = self._get_type_docs(libdoc.inits + libdoc.keywords,
+                                               lib.converters)
         return libdoc
 
     def _split_library_name_and_args(self, library):
@@ -64,21 +65,19 @@ class LibraryDocBuilder:
             return [KeywordDocBuilder().build_keyword(lib.init)]
         return []
 
-    def _get_types(self, keywords, custom_converters):
-        types = {}
+    def _get_type_docs(self, keywords, custom_converters):
+        type_docs = {}
         for kw in keywords:
             for arg in kw.args:
-                type_docs = kw.type_docs[arg.name] = {}
+                kw.type_docs[arg.name] = {}
                 for typ in arg.types:
                     type_doc = TypeDoc.for_type(typ, custom_converters)
                     if type_doc:
-                        type_docs[type_repr(typ)] = type_doc.name
-                        # FIXME: No need to store arg names anymore!
-                        usages = types.setdefault(type_doc, {})
-                        usages.setdefault(kw.name, []).append(arg.name)
-        for type_doc, usages in types.items():
-            type_doc.usages = [Usage(kw, args) for kw, args in usages.items()]
-        return set(types)
+                        kw.type_docs[arg.name][type_repr(typ)] = type_doc.name
+                        type_docs.setdefault(type_doc, set()).add(kw.name)
+        for type_doc, usages in type_docs.items():
+            type_doc.usages = sorted(usages, key=str.lower)
+        return set(type_docs)
 
 
 class ResourceDocBuilder:

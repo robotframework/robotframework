@@ -39,15 +39,15 @@ Custom
 
 Usages
     Usages Should Be    1     Standard     boolean
-    ...    Funny Unions=funny
+    ...    Funny Unions
     Usages Should Be    2     Custom       CustomType
-    ...    Custom=arg,arg3
+    ...    Custom
     Usages Should be    6     TypedDict    GeoLocation
-    ...    Funny Unions=funny
-    ...    Set Location=location
+    ...    Funny Unions
+    ...    Set Location
     Usages Should Be    10    Enum         Small
-    ...    __init__=credentials
-    ...    Funny Unions=funny
+    ...    __init__
+    ...    Funny Unions
 
 Typedoc links in arguments
     Typedoc links should be    0    1    AssertionOperator    None
