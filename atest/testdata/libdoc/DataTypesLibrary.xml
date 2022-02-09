@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<keywordspec name="DataTypesLibrary" type="LIBRARY" format="ROBOT" scope="TEST" generated="2022-02-09T00:53:51Z" specversion="4" source="/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py" lineno="84">
+<keywordspec name="DataTypesLibrary" type="LIBRARY" format="ROBOT" scope="TEST" generated="2022-02-09T14:03:26Z" specversion="4" source="/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py" lineno="84">
 <version/>
 <doc>This Library has Data Types.
 
@@ -94,7 +94,7 @@ This is the next Line that links to 'Set Location` .</doc>
 <shortdoc/>
 </kw>
 <kw name="Typing Types" lineno="124">
-<arguments repr="list_of_str: List[str], dict_str_int: Dict[str, int], Whatever: Any, *args: List[typing.Any]">
+<arguments repr="list_of_str: List[str], dict_str_int: Dict[str, int], whatever: Any, *args: List[Any]">
 <arg kind="POSITIONAL_OR_NAMED" required="true" repr="list_of_str: List[str]">
 <name>list_of_str</name>
 <type typedoc="list">List[str]</type>
@@ -103,13 +103,13 @@ This is the next Line that links to 'Set Location` .</doc>
 <name>dict_str_int</name>
 <type typedoc="dictionary">Dict[str, int]</type>
 </arg>
-<arg kind="POSITIONAL_OR_NAMED" required="true" repr="Whatever: Any">
-<name>Whatever</name>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="whatever: Any">
+<name>whatever</name>
 <type>Any</type>
 </arg>
-<arg kind="VAR_POSITIONAL" required="false" repr="*args: List[typing.Any]">
+<arg kind="VAR_POSITIONAL" required="false" repr="*args: List[Any]">
 <name>args</name>
-<type typedoc="list">List[typing.Any]</type>
+<type typedoc="list">List[Any]</type>
 </arg>
 </arguments>
 <doc/>

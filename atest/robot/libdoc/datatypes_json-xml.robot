@@ -55,3 +55,7 @@ Typedoc links in arguments
     Typedoc links should be    1    0    CustomType
     Typedoc links should be    1    1    CustomType2
     Typedoc links should be    2    0    bool:boolean    int:integer    float    str:string    AssertionOperator    Small    GeoLocation    None
+    Typedoc links should be    4    0    List[str]:list
+    Typedoc links should be    4    1    Dict[str, int]:dictionary
+    Typedoc links should be    4    2    Any:
+    Typedoc links should be    4    3    List[Any]:list

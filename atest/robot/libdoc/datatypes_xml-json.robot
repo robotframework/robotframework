@@ -23,7 +23,7 @@ Keyword Arguments
     ${MODEL}[keywords][1][args]     arg: CustomType    arg2: CustomType2    arg3: CustomType
     ${MODEL}[keywords][2][args]     funny: bool | int | float | str | AssertionOperator | Small | GeoLocation | None = equal
     ${MODEL}[keywords][3][args]     location: GeoLocation
-    ${MODEL}[keywords][4][args]     list_of_str: List[str]    dict_str_int: Dict[str, int]    Whatever: Any    *args: List[typing.Any]
+    ${MODEL}[keywords][4][args]     list_of_str: List[str]    dict_str_int: Dict[str, int]    whatever: Any    *args: List[Any]
 
 TypedDict
     ${MODEL}[dataTypes][typedDicts][0][name]    GeoLocation
@@ -108,6 +108,10 @@ Typedoc links in arguments
     ${MODEL}[keywords][1][args][0][typedocs]    {'CustomType': 'CustomType'}
     ${MODEL}[keywords][1][args][1][typedocs]    {'CustomType2': 'CustomType2'}
     ${MODEL}[keywords][2][args][0][typedocs]    {'bool': 'boolean', 'int': 'integer', 'float': 'float', 'str': 'string', 'AssertionOperator': 'AssertionOperator', 'Small': 'Small', 'GeoLocation': 'GeoLocation', 'None': 'None'}
+    ${MODEL}[keywords][4][args][0][typedocs]    {'List[str]': 'list'}
+    ${MODEL}[keywords][4][args][1][typedocs]    {'Dict[str, int]': 'dictionary'}
+    ${MODEL}[keywords][4][args][2][typedocs]    {}
+    ${MODEL}[keywords][4][args][3][typedocs]    {'List[Any]': 'list'}
 
 *** Keywords ***
 Verify Argument Models

@@ -5,8 +5,8 @@ from collections import UserDict, UserList, UserString
 from collections.abc import Mapping
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
-from robot.utils import (is_bytes, is_falsy, is_dict_like, is_list_like,
-                         is_string, is_truthy, is_union, PY_VERSION, type_name)
+from robot.utils import (is_bytes, is_falsy, is_dict_like, is_list_like, is_string,
+                         is_truthy, is_union, PY_VERSION, type_name, type_repr)
 from robot.utils.asserts import assert_equal, assert_true
 
 
@@ -165,6 +165,10 @@ class TestTypeName(unittest.TestCase):
                           (Any, 'Any')]:
             assert_equal(type_name(item), exp)
 
+    if PY_VERSION >= (3, 10):
+        def test_union_syntax(self):
+            assert_equal(type_name(int | float), 'Union')
+
     def test_capitalize(self):
         class lowerclass: pass
         class CamelClass: pass
@@ -172,6 +176,38 @@ class TestTypeName(unittest.TestCase):
         assert_equal(type_name(None, capitalize=True), 'None')
         assert_equal(type_name(lowerclass(), capitalize=True), 'Lowerclass')
         assert_equal(type_name(CamelClass(), capitalize=True), 'CamelClass')
+
+
+class TestTypeRepr(unittest.TestCase):
+
+    def test_class(self):
+        class Foo:
+            pass
+        assert_equal(type_repr(Foo), 'Foo')
+
+    def test_none(self):
+        assert_equal(type_repr(None), 'None')
+
+    def test_string(self):
+        assert_equal(type_repr('MyType'), 'MyType')
+
+    def test_no_typing_prefix(self):
+        assert_equal(type_repr(List), 'List')
+
+    def test_generics_from_typing(self):
+        assert_equal(type_repr(List[Any]), 'List[Any]')
+        assert_equal(type_repr(Dict[int, None]), 'Dict[int, None]')
+
+    if PY_VERSION >= (3, 9):
+        def test_generics(self):
+            assert_equal(type_repr(list[Any]), 'list[Any]')
+            assert_equal(type_repr(dict[int, None]), 'dict[int, None]')
+
+    def test_union(self):
+        assert_equal(type_repr(Union[int, float]), 'int | float')
+        assert_equal(type_repr(Union[int, None, List[Any]]), 'int | None | List[Any]')
+        if PY_VERSION >= (3, 10):
+            assert_equal(type_repr(int | None | list[Any]), 'int | None | list[Any]')
 
 
 class TestIsTruthyFalsy(unittest.TestCase):

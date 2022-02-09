@@ -18,7 +18,7 @@ from collections import UserString
 from inspect import isclass
 from io import IOBase
 from os import PathLike
-import re
+from typing import Any, TypeVar
 try:
     from types import UnionType
 except ImportError:    # Python < 3.10
@@ -77,16 +77,22 @@ def is_dict_like(item):
 def is_union(item, allow_tuple=False):
     return (isinstance(item, UnionType)
             or getattr(item, '__origin__', None) is Union
-            or allow_tuple and isinstance(item, tuple))
+            or (allow_tuple and isinstance(item, tuple)))
 
 
 def type_name(item, capitalize=False):
+    """Return "non-technical" type name for objects and types.
+
+    For example, 'integer' instead of 'int' and 'file' instead of 'TextIOWrapper'.
+    """
     if getattr(item, '__origin__', None):
         item = item.__origin__
     if hasattr(item, '_name') and item._name:
         # Union, Any, etc. from typing have real name in _name and __name__ is just
-        # generic `SpecialForm`. Also pandas.Series has _name but it's None.
+        # generic `SpecialForm`. Also, pandas.Series has _name but it's None.
         name = item._name
+    elif is_union(item):
+        name = 'Union'
     elif isinstance(item, IOBase):
         name = 'file'
     else:
@@ -103,16 +109,42 @@ def type_name(item, capitalize=False):
     return name.capitalize() if capitalize and name.islower() else name
 
 
-def type_repr(item):
-    if item is type(None):
+def type_repr(typ):
+    """Return string representation for types.
+
+    Aims to look as much as the source code as possible. For example, 'List[Any]'
+    instead of 'typing.List[typing.Any]'.
+    """
+    if typ is type(None):
         return 'None'
-    if isclass(item):
-        return item.__name__
-    return re.sub(r'^typing\.(.+)', r'\1', str(item))
+    if typ is Any:  # Needed with Python 3.6, with newer `Any._name` exists.
+        return 'Any'
+    if is_union(typ):
+        return ' | '.join(type_repr(a) for a in typ.__args__)
+    name = _get_type_name(typ)
+    if _has_args(typ):
+        args = ', '.join(type_repr(a) for a in typ.__args__)
+        return f'{name}[{args}]'
+    return name
+
+
+def _get_type_name(typ):
+    for attr in '__name__', '_name':
+        name = getattr(typ, attr, None)
+        if name:
+            return name
+    return str(typ)
+
+
+def _has_args(typ):
+    args = getattr(typ, '__args__', ())
+    # TypeVar check needed due to Python 3.6 having such thing in `__args__`
+    # even if using just `List`.
+    return args and not isinstance(typ.__args__[0], TypeVar)
 
 
 def is_truthy(item):
-    """Returns `True` or `False` depending is the item considered true or not.
+    """Returns `True` or `False` depending on is the item considered true or not.
 
     Validation rules:
 

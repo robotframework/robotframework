@@ -320,5 +320,5 @@ Typedoc links should be
             ${typename} =    Set Variable    ${typedoc}
         END
         Element Text Should Be    ${type}    ${typename}
-        Element Attribute Should Be    ${type}    typedoc    ${typedoc}
+        Element Attribute Should Be    ${type}    typedoc    ${{$typedoc or None}}
     END

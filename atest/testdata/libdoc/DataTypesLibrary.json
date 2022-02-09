@@ -2,7 +2,7 @@
   "name": "DataTypesLibrary",
   "doc": "<p>This Library has Data Types.</p>\n<p>It has some in <code>__init__</code> and others in the <a href=\"#Keywords\" class=\"name\">Keywords</a>.</p>\n<p>The DataTypes are the following that should be linked. <span class=\"name\">HttpCredentials</span> , <a href=\"#GeoLocation\" class=\"name\">GeoLocation</a> , <a href=\"#Small\" class=\"name\">Small</a> and <a href=\"#AssertionOperator\" class=\"name\">AssertionOperator</a>.</p>",
   "version": "",
-  "generated": "2022-02-09 03:00:52",
+  "generated": "2022-02-09 16:03:33",
   "type": "LIBRARY",
   "scope": "TEST",
   "docFormat": "HTML",
@@ -221,7 +221,7 @@
           "repr": "dict_str_int: Dict[str, int]"
         },
         {
-          "name": "Whatever",
+          "name": "whatever",
           "types": [
             "Any"
           ],
@@ -229,20 +229,20 @@
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "Whatever: Any"
+          "repr": "whatever: Any"
         },
         {
           "name": "args",
           "types": [
-            "List[typing.Any]"
+            "List[Any]"
           ],
           "typedocs": {
-            "List[typing.Any]": "list"
+            "List[Any]": "list"
           },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
-          "repr": "*args: List[typing.Any]"
+          "repr": "*args: List[Any]"
         }
       ],
       "doc": "",
