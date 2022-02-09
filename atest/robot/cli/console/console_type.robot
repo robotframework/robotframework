@@ -17,6 +17,11 @@ Dotted with skip
     Stdout Should Be    dotted_with_skip.txt
     Stderr Should Be    empty.txt
 
+Dotted with skip only
+    Run tests    -. --skipon fail --skip pass    misc/pass_and_fail.robot
+    Stdout Should Be    dotted_with_skip_only.txt
+    Stderr Should Be    empty.txt
+
 Dotted with width
     Run tests    --Console dotted --ConsoleWidth 10    misc/suites misc/suites
     Stdout Should Be    warnings_and_errors_stdout_dotted_10.txt

@@ -1,0 +1,10 @@
+Running suite 'Pass And Fail' with 2 tests.
+==============================================================================
+ss
+==============================================================================
+Run suite 'Pass And Fail' with 2 tests in *.
+
+SKIPPED
+2 tests, 0 passed, 0 failed, 2 skipped
+
+Output:  *.xml
