@@ -2,7 +2,7 @@
   "name": "DataTypesLibrary",
   "doc": "<p>This Library has Data Types.</p>\n<p>It has some in <code>__init__</code> and others in the <a href=\"#Keywords\" class=\"name\">Keywords</a>.</p>\n<p>The DataTypes are the following that should be linked. <span class=\"name\">HttpCredentials</span> , <a href=\"#GeoLocation\" class=\"name\">GeoLocation</a> , <a href=\"#Small\" class=\"name\">Small</a> and <a href=\"#AssertionOperator\" class=\"name\">AssertionOperator</a>.</p>",
   "version": "",
-  "generated": "2022-02-09 16:03:33",
+  "generated": "2022-02-09 18:21:07",
   "type": "LIBRARY",
   "scope": "TEST",
   "docFormat": "HTML",
@@ -373,7 +373,7 @@
     {
       "type": "Standard",
       "name": "boolean",
-      "doc": "<p>Strings <code>TRUE</code>, <code>YES</code>, <code>ON</code> and <code>1</code> are converted to <code>True</code>, the empty string as well as <code>FALSE</code>, <code>NO</code>, <code>OFF</code> and <code>0</code> are converted to <code>False</code>, and the string <code>NONE</code> is converted to <code>None</code>. Other strings and all non-string arguments are passed as-is, allowing keywords to handle them specially if needed. All string comparisons are case-insensitive.</p>\n<p>Examples: <code>TRUE</code> (converted to <code>True</code>), <code>off</code> (converted to <code>False</code>, <code>example</code> (used as-is)</p>",
+      "doc": "<p>Strings <code>TRUE</code>, <code>YES</code>, <code>ON</code> and <code>1</code> are converted to Boolean <code>True</code>, the empty string as well as strings <code>FALSE</code>, <code>NO</code>, <code>OFF</code> and <code>0</code> are converted to Boolean <code>False</code>, and the string <code>NONE</code> is converted to the Python <code>None</code> object. Other strings and all non-string arguments are passed as-is, allowing keywords to handle them specially if needed. All string comparisons are case-insensitive.</p>\n<p>Examples: <code>TRUE</code> (converted to <code>True</code>), <code>off</code> (converted to <code>False</code>), <code>example</code> (used as-is)</p>",
       "usages": [
         "Funny Unions"
       ]
@@ -397,7 +397,7 @@
     {
       "type": "Standard",
       "name": "dictionary",
-      "doc": "<p>TODO</p>",
+      "doc": "<p>Strings must be Python <a href=\"https://docs.python.org/library/stdtypes.html#dict\">dictionary</a> literals. They are converted to actual dictionaries using the <a href=\"https://docs.python.org/library/ast.html#ast.literal_eval\">ast.literal_eval</a> function. They can contain any values <code>ast.literal_eval</code> supports, including dictionaries and other containers.</p>\n<p>Mappings that are not actual <code>dict</code> objects are accepted and used as-is.</p>\n<p>Examples: <code>{'a': 1, 'b': 2}</code>, <code>{'key': 1, 'nested': {'key': 2}}</code></p>",
       "usages": [
         "Typing Types"
       ]
@@ -405,7 +405,7 @@
     {
       "type": "Standard",
       "name": "float",
-      "doc": "<p>TODO</p>",
+      "doc": "<p>Conversion is done using Python's <a href=\"https://docs.python.org/library/functions.html#float\">float</a> built-in function.</p>\n<p>Starting from RF 4.1, spaces and underscores can be used as visual separators for digit grouping purposes.</p>\n<p>Examples: <code>3.14</code>, <code>2.9979e8</code>, <code>10 000.000 01</code></p>",
       "usages": [
         "Funny Unions"
       ]
@@ -439,7 +439,7 @@
     {
       "type": "Standard",
       "name": "integer",
-      "doc": "<p>Conversion is done using Python's <code>int</code> built-in function. Floating point numbers are converted only if they can be represented as integers exactly. For example, <code>1.0</code> is accepted and <code>1.1</code> is not.</p>\n<p>Starting from RF 4.1, it is possible to use hexadecimal, octal and binary numbers by prefixing values with <code>0x</code>, <code>0o</code> and <code>0b</code>, respectively.</p>\n<p>Starting from RF 4.1, spaces and underscores can be used as visual separators for digit grouping purposes.</p>\n<p>Examples: <code>42</code>, <code>-1</code>, <code>0b1010</code>, <code>10 000 000</code>, <code>0xBAD_C0FFEE</code></p>",
+      "doc": "<p>Conversion is done using Python's <a href=\"https://docs.python.org/library/functions.html#int\">int</a> built-in function. Floating point numbers are accepted only if they can be represented as integers exactly. For example, <code>1.0</code> is accepted and <code>1.1</code> is not.</p>\n<p>Starting from RF 4.1, it is possible to use hexadecimal, octal and binary numbers by prefixing values with <code>0x</code>, <code>0o</code> and <code>0b</code>, respectively.</p>\n<p>Starting from RF 4.1, spaces and underscores can be used as visual separators for digit grouping purposes.</p>\n<p>Examples: <code>42</code>, <code>-1</code>, <code>0b1010</code>, <code>10 000 000</code>, <code>0xBAD_C0FFEE</code></p>",
       "usages": [
         "Funny Unions"
       ]
@@ -447,7 +447,7 @@
     {
       "type": "Standard",
       "name": "list",
-      "doc": "<p>TODO</p>",
+      "doc": "<p>Strings must be Python <a href=\"https://docs.python.org/library/stdtypes.html#list\">list</a> literals. They are converted to actual lists using the <a href=\"https://docs.python.org/library/ast.html#ast.literal_eval\">ast.literal_eval</a> function. They can contain any values <code>ast.literal_eval</code> supports, including lists and other containers.</p>\n<p>Sequences that are not lists are accepted and converted to lists.</p>\n<p>Examples: <code>['one', 'two']</code>, <code>[('one', 1), ('two', 2)]</code></p>",
       "usages": [
         "Typing Types"
       ]
@@ -455,7 +455,7 @@
     {
       "type": "Standard",
       "name": "None",
-      "doc": "<p>TODO</p>",
+      "doc": "<p>String <code>NONE</code> (case-insensitive) is converted to Python <code>None</code> object. Other values cause an error.</p>",
       "usages": [
         "Assert Something",
         "Funny Unions"
@@ -491,7 +491,7 @@
     {
       "type": "Standard",
       "name": "string",
-      "doc": "<p>TODO</p>",
+      "doc": "<p>All arguments are converted to Unicode strings.</p>",
       "usages": [
         "Assert Something",
         "Funny Unions"
