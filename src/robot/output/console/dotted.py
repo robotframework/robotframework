@@ -79,7 +79,7 @@ class StatusReporter(SuiteVisitor):
                               'test' if not suite.rpa else 'task',
                               plural_or_not(stats.total),
                               secs_to_timestr(suite.elapsedtime/1000.0)))
-        self._stream.highlight(suite.status + 'ED', suite.status)
+        self._stream.highlight(suite.status + ('PED' if suite.status == 'SKIP' else 'ED'), suite.status)
         self._stream.write('\n%s\n' % stats.message)
 
     def visit_test(self, test):
