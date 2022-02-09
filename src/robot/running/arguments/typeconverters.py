@@ -32,6 +32,7 @@ class TypeConverter:
     abc = None
     aliases = ()
     value_types = (str,)
+    doc = None
     _converters = OrderedDict()
     _type_aliases = {}
 
@@ -207,10 +208,10 @@ class StringConverter(TypeConverter):
 
 @TypeConverter.register
 class BooleanConverter(TypeConverter):
-    value_types = (str, int, float, type(None))
     type = bool
     type_name = 'boolean'
     aliases = ('bool',)
+    value_types = (str, int, float, type(None))
 
     def _non_string_convert(self, value, explicit_type=True):
         return value
@@ -501,6 +502,10 @@ class CustomConverter(TypeConverter):
     @property
     def type_name(self):
         return self.converter_info.name
+
+    @property
+    def doc(self):
+        return self.converter_info.doc
 
     @property
     def value_types(self):

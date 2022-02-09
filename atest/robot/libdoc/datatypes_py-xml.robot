@@ -53,7 +53,7 @@ Custom
 Standard
     DataType Standard Should Be    0
     ...    boolean
-    ...    Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to ``True``,
+    ...    Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to Boolean ``True``,
 
 Usages
     Usages Should Be    1    Standard    boolean

@@ -53,13 +53,11 @@ class TypeDoc(Sortable):
         converter = TypeConverter.converter_for(type, converters)
         if not converter:
             return None
-        if converter.type in STANDARD_TYPE_DOCS:
-            return TypeDoc(TypeDoc.STANDARD, converter.type_name,
-                           STANDARD_TYPE_DOCS[converter.type])
-        if hasattr(converter, 'converter_info'):
-            info = converter.converter_info
-            return TypeDoc(TypeDoc.CUSTOM, info.name, info.doc)
-        return None
+        elif not converter.type:
+            return cls(cls.CUSTOM, converter.type_name, converter.doc)
+        else:
+            return cls(cls.STANDARD, converter.type_name,
+                       STANDARD_TYPE_DOCS[converter.type])
 
     @classmethod
     def for_enum(cls, enum):
