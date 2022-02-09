@@ -37,8 +37,8 @@ class XmlDocBuilder:
                             lineno=int(spec.get('lineno')) or -1)
         libdoc.inits = self._create_keywords(spec, 'inits/init', libdoc.source)
         libdoc.keywords = self._create_keywords(spec, 'keywords/kw', libdoc.source)
-        # RF >= 5 have 'types', RF >= 4 have 'datatypes', older/custom may have neither.
-        if spec.find('types'):
+        # RF >= 5 have 'typedocs', RF >= 4 have 'datatypes', older/custom may have neither.
+        if spec.find('typedocs'):
             libdoc.type_docs = self._parse_type_docs(spec)
         else:
             libdoc.type_docs = self._parse_data_types(spec)
@@ -104,7 +104,7 @@ class XmlDocBuilder:
             kw.type_docs[name] = type_docs
 
     def _parse_type_docs(self, spec):
-        for elem in spec.findall('types/type'):
+        for elem in spec.findall('typedocs/type'):
             doc = TypeDoc(elem.get('type'), elem.get('name'), elem.find('doc').text,
                           [usage.text for usage in elem.findall('usages/usage')])
             if doc.type == TypeDoc.ENUM:

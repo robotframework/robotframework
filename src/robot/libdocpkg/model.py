@@ -126,7 +126,7 @@ class LibraryDoc:
             'keywords': [kw.to_dictionary() for kw in self.keywords],
             # 'dataTypes' was deprecated in RF 5, 'types' should be used instead.
             'dataTypes': self._get_data_types(self.type_docs),
-            'types': [t.to_dictionary() for t in sorted(self.type_docs)]    # FIXME: 'types' -> 'typedocs'
+            'typedocs': [t.to_dictionary() for t in sorted(self.type_docs)]
         }
 
     def _get_data_types(self, types):

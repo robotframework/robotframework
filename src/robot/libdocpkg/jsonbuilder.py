@@ -40,9 +40,9 @@ class JsonDocBuilder:
                             lineno=int(spec.get('lineno', -1)))
         libdoc.inits = [self._create_keyword(kw) for kw in spec['inits']]
         libdoc.keywords = [self._create_keyword(kw) for kw in spec['keywords']]
-        # RF >= 5 have 'types', RF >= 4 have 'dataTypes', older/custom may have neither.
-        if 'types' in spec:
-            libdoc.type_docs = self._parse_type_docs(spec['types'])
+        # RF >= 5 have 'typedocs', RF >= 4 have 'dataTypes', older/custom may have neither.
+        if 'typedocs' in spec:
+            libdoc.type_docs = self._parse_type_docs(spec['typedocs'])
         elif 'dataTypes' in spec:
             libdoc.type_docs = self._parse_data_types(spec['dataTypes'])
         return libdoc

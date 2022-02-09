@@ -38,9 +38,9 @@ TypedDict
     ...    <li><code>accuracy</code> <b>Optional</b> Non-negative accuracy value. Defaults to 0.</li>
     ...    </ul>
     ...    <p>Example usage: <code>{'latitude': 59.95, 'longitude': 30.31667}</code></p>
-    ${MODEL}[types][6][type]    TypedDict
-    ${MODEL}[types][6][name]    GeoLocation
-    ${MODEL}[types][6][doc]     <p>Defines the geolocation.</p>
+    ${MODEL}[typedocs][6][type]    TypedDict
+    ${MODEL}[typedocs][6][name]    GeoLocation
+    ${MODEL}[typedocs][6][doc]     <p>Defines the geolocation.</p>
     ...    <ul>
     ...    <li><code>latitude</code> Latitude between -90 and 90.</li>
     ...    <li><code>longitude</code> Longitude between -180 and 180.</li>
@@ -74,9 +74,9 @@ Enum
     ${MODEL}[dataTypes][enums][0][name]    AssertionOperator
     ${MODEL}[dataTypes][enums][0][doc]     <p>This is some Doc</p>
     ...   <p>This has was defined by assigning to __doc__.</p>
-    ${MODEL}[types][0][type]    Enum
-    ${MODEL}[types][0][name]    AssertionOperator
-    ${MODEL}[types][0][doc]     <p>This is some Doc</p>
+    ${MODEL}[typedocs][0][type]    Enum
+    ${MODEL}[typedocs][0][name]    AssertionOperator
+    ${MODEL}[typedocs][0][doc]     <p>This is some Doc</p>
     ...   <p>This has was defined by assigning to __doc__.</p>
 
 Enum Members
@@ -85,32 +85,32 @@ Enum Members
     FOR   ${cur}    ${exp}    IN ZIP    ${MODEL}[dataTypes][enums][0][members]    ${exp_list}
         Dictionaries Should Be Equal    ${cur}    ${exp}
     END
-    FOR   ${cur}    ${exp}    IN ZIP    ${MODEL}[types][0][members]    ${exp_list}
+    FOR   ${cur}    ${exp}    IN ZIP    ${MODEL}[typedocs][0][members]    ${exp_list}
         Dictionaries Should Be Equal    ${cur}    ${exp}
     END
 
 Custom types
-    ${Model}[types][2][type]    Custom
-    ${Model}[types][2][name]    CustomType
-    ${Model}[types][2][doc]     <p>Converter method doc is used when defined.</p>
-    ${Model}[types][3][type]    Custom
-    ${Model}[types][3][name]    CustomType2
-    ${Model}[types][3][doc]     <p>Class doc is used when converter method has no doc.</p>
+    ${MODEL}[typedocs][2][type]       Custom
+    ${MODEL}[typedocs][2][name]       CustomType
+    ${MODEL}[typedocs][2][doc]        <p>Converter method doc is used when defined.</p>
+    ${MODEL}[typedocs][3][type]       Custom
+    ${MODEL}[typedocs][3][name]       CustomType2
+    ${MODEL}[typedocs][3][doc]        <p>Class doc is used when converter method has no doc.</p>
 
 Standard types
-    ${Model}[types][1][type]    Standard
-    ${Model}[types][1][name]    boolean
-    ${Model}[types][1][doc]     <p>Strings <code>TRUE</code>, <code>YES</code>,   start=True
+    ${MODEL}[typedocs][1][type]       Standard
+    ${MODEL}[typedocs][1][name]       boolean
+    ${MODEL}[typedocs][1][doc]        <p>Strings <code>TRUE</code>, <code>YES</code>,   start=True
 
 Usages
-    ${MODEL}[types][1][type]       Standard
-    ${MODEL}[types][1][usages]     ['Funny Unions']
-    ${MODEL}[types][2][type]       Custom
-    ${MODEL}[types][2][usages]     ['Custom']
-    ${MODEL}[types][6][type]       TypedDict
-    ${MODEL}[types][6][usages]     ['Funny Unions', 'Set Location']
-    ${MODEL}[types][10][type]      Enum
-    ${MODEL}[types][10][usages]    ['__init__', 'Funny Unions']
+    ${MODEL}[typedocs][1][type]       Standard
+    ${MODEL}[typedocs][1][usages]     ['Funny Unions']
+    ${MODEL}[typedocs][2][type]       Custom
+    ${MODEL}[typedocs][2][usages]     ['Custom']
+    ${MODEL}[typedocs][6][type]       TypedDict
+    ${MODEL}[typedocs][6][usages]     ['Funny Unions', 'Set Location']
+    ${MODEL}[typedocs][10][type]      Enum
+    ${MODEL}[typedocs][10][usages]    ['__init__', 'Funny Unions']
 
 Typedoc links in arguments
     ${MODEL}[keywords][0][args][1][typedocs]    {'AssertionOperator': 'AssertionOperator', 'None': 'None'}

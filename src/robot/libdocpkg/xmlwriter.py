@@ -127,7 +127,7 @@ class LibdocXmlWriter:
         writer.end('datatypes')
 
     def _write_type_docs(self, type_docs, writer):
-        writer.start('types')
+        writer.start('typedocs')
         for doc in sorted(type_docs):
             writer.start('type', {'name': doc.name, 'type': doc.type})
             writer.element('doc', doc.doc)
@@ -140,7 +140,7 @@ class LibdocXmlWriter:
             if doc.type == 'TypedDict':
                 self._write_typed_dict_items(doc, writer)
             writer.end('type')
-        writer.end('types')
+        writer.end('typedocs')
 
     def _write_enum_members(self, enum, writer):
         writer.start('members')

@@ -11,8 +11,8 @@
             <xs:element name="keywords" type="Keywords" minOccurs="0" maxOccurs="unbounded" />
             <!-- 'datatypes' was deprecated in RF 5.0. -->
             <xs:element name="datatypes" type="DataTypes" minOccurs="0" maxOccurs="unbounded" />
-            <!-- 'types' should be used instead. -->
-            <xs:element name="types" type="Types" minOccurs="0" maxOccurs="unbounded" />
+            <!-- 'typedocs' should be used instead. -->
+            <xs:element name="typedocs" type="TypeDocs" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required" />
         <xs:attribute name="type" type="LibraryType" use="required" />
@@ -116,7 +116,7 @@
         <xs:attribute name="type" type="xs:string" use="required" />
         <xs:attribute name="required" type="xs:boolean" use="optional" />
     </xs:complexType>
-    <xs:complexType name="Types">
+    <xs:complexType name="TypeDocs">
         <xs:sequence>
             <xs:element name="type" type="Type" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>

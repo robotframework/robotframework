@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<keywordspec name="DataTypesLibrary" type="LIBRARY" format="ROBOT" scope="TEST" generated="2022-02-09T00:31:09Z" specversion="4" source="/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py" lineno="84">
+<keywordspec name="DataTypesLibrary" type="LIBRARY" format="ROBOT" scope="TEST" generated="2022-02-09T00:53:51Z" specversion="4" source="/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py" lineno="84">
 <version/>
 <doc>This Library has Data Types.
 
@@ -160,7 +160,7 @@ Example usage: ``{'latitude': 59.95, 'longitude': 30.31667}``</doc>
 </typeddict>
 </typeddicts>
 </datatypes>
-<types>
+<typedocs>
 <type name="AssertionOperator" type="Enum">
 <doc>This is some Doc
 
@@ -287,5 +287,5 @@ This was defined within the class definition.</doc>
 <usage>Funny Unions</usage>
 </usages>
 </type>
-</types>
+</typedocs>
 </keywordspec>

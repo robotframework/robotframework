@@ -48,9 +48,10 @@
         storage.init('libdoc');
         renderTemplate('base', libdoc, $('body'));
         if (libdoc.inits.length) {
-            libdoc.types.map(function(type) { type.usages.map(function(usage) {
-                if (usage.kw == '__init__') usage.kw = 'Importing';
-            })});
+            libdoc.typedocs.map(function(type) {
+                var index = type.usages.indexOf('__init__');
+                if (index != -1) type.usages[index] = 'Importing';
+            });
             renderTemplate('importing', libdoc);
         }
         renderTemplate('shortcuts', libdoc);
@@ -251,8 +252,8 @@
             renderTemplate('tags', libdoc);
         }
         document.getElementById("keyword-statistics-header").innerText = ''+libdoc.keywords.length;
-        if (libdoc.types.length) {
-          document.getElementById("type-statistics-header").innerText = '' + libdoc.types.length;
+        if (libdoc.typedocs.length) {
+            document.getElementById("type-statistics-header").innerText = '' + libdoc.typedocs.length;
         }
         history.replaceState && history.replaceState(null, '', location.pathname);
     }
@@ -494,14 +495,14 @@ ${name}
 
 
 <script type="text/x-jquery-tmpl" id="data-types-template">
-    {{if types.length}}
+  {{if typedocs.length}}
     <h2 id="Data types">Data types</h2>
     <div class="data-types">
-        {{each types}}
+      {{each typedocs}}
         {{tmpl($value) 'data-type-template'}}
-        {{/each}}
+      {{/each}}
     </div>
-    {{/if}}
+  {{/if}}
 </script>
 
 <script type="text/x-jquery-tmpl" id="data-type-template">
@@ -553,7 +554,7 @@ ${name}
               <h4>Used in</h4>
               <ul class="dt-usage-list">
                 {{each usages}}
-                  <li><a href="#${encodeURIComponent($value.kw)}">${$value.kw}</a></li>
+                  <li><a href="#${encodeURIComponent($value)}">${$value}</a></li>
                 {{/each}}
               </ul>
             </div>

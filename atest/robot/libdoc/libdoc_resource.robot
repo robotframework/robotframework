@@ -251,7 +251,7 @@ List of Dict Should Be Equal
 
 DataType Enum Should Be
     [Arguments]    ${index}    ${name}    ${doc}    @{exp_members}
-    FOR    ${xpath}    IN    datatypes/enums/enum    types/type[@type='Enum']
+    FOR    ${xpath}    IN    datatypes/enums/enum    typedocs/type[@type='Enum']
         ${enums}=   Get Elements    ${LIBDOC}   xpath=${xpath}
         Element Attribute Should Be    ${enums}[${index}]     name   ${name}
         Element Text Should Be    ${enums}[${index}]     ${doc}    xpath=doc
@@ -265,7 +265,7 @@ DataType Enum Should Be
 
 DataType TypedDict Should Be
     [Arguments]    ${index}    ${name}    ${doc}    @{exp_items}
-    FOR    ${xpath}    IN    datatypes/typeddicts/typeddict    types/type[@type='TypedDict']
+    FOR    ${xpath}    IN    datatypes/typeddicts/typeddict    typedocs/type[@type='TypedDict']
         ${dicts}=   Get Elements    ${LIBDOC}   xpath=${xpath}
         Element Attribute Should Be    ${dicts}[${index}]     name   ${name}
         Element Text Should Be    ${dicts}[${index}]     ${doc}    xpath=doc
@@ -288,19 +288,19 @@ DataType TypedDict Should Be
 
 DataType Custom Should Be
     [Arguments]    ${index}    ${name}    ${doc}
-    ${customs}=   Get Elements    ${LIBDOC}   xpath=types/type[@type='Custom']
+    ${customs}=   Get Elements    ${LIBDOC}   xpath=typedocs/type[@type='Custom']
     Element Attribute Should Be    ${customs}[${index}]     name      ${name}
     Element Text Should Be         ${customs}[${index}]     ${doc}    xpath=doc
 
 DataType Standard Should Be
     [Arguments]    ${index}    ${name}    ${doc}
-    ${customs}=   Get Elements    ${LIBDOC}   xpath=types/type[@type='Standard']
-    Element Attribute Should Be    ${customs}[${index}]     name      ${name}
-    Element Text Should Match         ${customs}[${index}]     ${doc}*    xpath=doc
+    ${customs}=   Get Elements    ${LIBDOC}   xpath=typedocs/type[@type='Standard']
+    Element Attribute Should Be    ${customs}[${index}]     name       ${name}
+    Element Text Should Match      ${customs}[${index}]     ${doc}*    xpath=doc
 
 Usages Should Be
     [Arguments]    ${index}    ${expected type}    ${expected name}    @{expected usages}
-    ${elem} =    Get Element    ${LIBDOC}   xpath=types/type[${{${index} + 1}}]
+    ${elem} =    Get Element    ${LIBDOC}   xpath=typedocs/type[${{${index} + 1}}]
     Element Attribute Should Be    ${elem}    type    ${expected type}
     Element Attribute Should Be    ${elem}    name    ${expected name}
     @{usages} =    Get Elements    ${elem}    usages/usage
