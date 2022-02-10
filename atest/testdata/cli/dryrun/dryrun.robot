@@ -53,6 +53,14 @@ List variables are not checked in keyword arguments
     Fail    @{list}    @{nonex}
     This is validated
 
+Dict variables are not checked in keyword arguments
+    [Documentation]    See the doc of the previous test
+    &{dict} =    Create Dictionary    a1=1    a2=2    a3=3
+    Anarchy in the UK    &{dict}
+    Anarchy in the UK    &{nonex}
+    Fail    &{list}    &{nonex}
+    This is validated
+
 Variables are not checked in when arguments are embedded
     [Documentation]    See the doc of the previous test
     Embedded ${TESTNAME} here

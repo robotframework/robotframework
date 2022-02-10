@@ -44,6 +44,10 @@ List variables are not checked in keyword arguments
     [Documentation]    See the doc of the previous test
     Check Test Case    ${TESTNAME}
 
+Dict variables are not checked in keyword arguments
+    [Documentation]    See the doc of the previous test
+    Check Test Case    ${TESTNAME}
+
 Variables are not checked in when arguments are embedded
     [Documentation]    See the doc of the previous test
     ${tc}=    Check Test Case    ${TESTNAME}
@@ -94,7 +98,7 @@ Non-existing keyword name
 
 Invalid syntax in UK
     Check Test Case    ${TESTNAME}
-    Error In File    0    cli/dryrun/dryrun.robot    147
+    Error In File    0    cli/dryrun/dryrun.robot    155
     ...    Creating keyword 'Invalid Syntax UK' failed:
     ...    Invalid argument specification:
     ...    Invalid argument syntax '\${arg'.
