@@ -26,6 +26,9 @@ from robot.utils import (FALSE_STRINGS, TRUE_STRINGS, eq, get_error_message,
                          is_string, is_union, safe_str, seq2str, type_name)
 
 
+NoneType = type(None)
+
+
 class TypeConverter:
     type = None
     type_name = None
@@ -211,7 +214,7 @@ class BooleanConverter(TypeConverter):
     type = bool
     type_name = 'boolean'
     aliases = ('bool',)
-    value_types = (str, int, float, type(None))
+    value_types = (str, int, float, NoneType)
 
     def _non_string_convert(self, value, explicit_type=True):
         return value
@@ -363,12 +366,12 @@ class TimeDeltaConverter(TypeConverter):
 
 @TypeConverter.register
 class NoneConverter(TypeConverter):
-    type = type(None)
+    type = NoneType
     type_name = 'None'
 
     @classmethod
     def handles(cls, type_):
-        return type_ in (type(None), None)
+        return type_ in (NoneType, None)
 
     def _convert(self, value, explicit_type=True):
         if value.upper() == 'NONE':
