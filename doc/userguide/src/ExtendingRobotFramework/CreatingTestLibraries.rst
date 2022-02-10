@@ -1450,13 +1450,15 @@ Other types cause conversion failures.
    |             |               |            |              | visual separators for digit grouping purposes.                 |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | float_      | Real_         | double     | str_,        | Conversion is done using the float_ built-in.                  | | `3.14`                             |
-   |             |               |            | int_         |                                                                | | `2.9979e8`                         |
+   |             |               |            | Real_        |                                                                | | `2.9979e8`                         |
    |             |               |            |              | Starting from RF 4.1, spaces and underscores can be used as    | | `10 000.000 01`                    |
    |             |               |            |              | visual separators for digit grouping purposes.                 | | `10_000.000_01`                    |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | Decimal_    |               |            | str_,        | Conversion is done using the Decimal_ class.                   | | `3.14`                             |
-   |             |               |            | int_    ,    |                                                                | | `10 000.000 01`                    |
-   |             |               |            | float_       | Starting from RF 4.1, spaces and underscores can be used as    | | `10_000.000_01`                    |
+   | Decimal_    |               |            | str_,        | Conversion is done using the Decimal_ class. Decimal_ is       | | `3.14`                             |
+   |             |               |            | int_    ,    | recommended over float_ when decimal numbers need to be        | | `10 000.000 01`                    |
+   |             |               |            | float_       | represented exactly.                                           | | `10_000.000_01`                    |
+   |             |               |            |              |                                                                |                                      |
+   |             |               |            |              | Starting from RF 4.1, spaces and underscores can be used as    |                                      |
    |             |               |            |              | visual separators for digit grouping purposes.                 |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | str_        |               | string,    | Any          | All arguments are converted to Unicode strings. New in RF 4.0. |                                      |
@@ -1531,6 +1533,9 @@ Other types cause conversion failures.
    | frozenset_  |               |            | str_,        | Same conversion as with set_, but the result is a frozenset_.  |                                      |
    |             |               |            | Container_   |                                                                |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+
+.. note:: Starting from Robot Framework 5.0, types that are automatically converted are
+          automatically shown in Libdoc_ outputs.
 
 .. note:: Prior to Robot Framework 4.0, most types supported converting string `NONE` (case-insensitively) to Python
           `None`. That support has been removed and `None` conversion is only done if an argument has `None` as an

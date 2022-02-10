@@ -766,7 +766,7 @@ in libraries or in resource files:
   `free positional`__, `free named`__, or `normal argument`__ that can be given
   either by position or by name.
 - Possible default value. Shown like `= 42`.
-- Possible type. Shown like `<int>`. Can be a link to a custom type as explained
+- Possible type. Shown like `<int>`. Can be a link to type documentation as explained
   in the next section.
 
 __ `Positional-only arguments`_
@@ -778,21 +778,25 @@ __ `Keyword arguments`_
 When referring to arguments in keyword documentation, it is recommended to
 use `inline code style <inline styles_>`__ like :codesc:`\`\`argument\`\``.
 
-Automatically listing data types
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Automatically listing type documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As mentioned above, Libdoc automatically shows possible type information when
 listing arguments. If the type is a custom type based on Enum_ or TypedDict_,
+the type is `automatically converted`__, or the type has `custom converter`__,
 also the type itself is listed separately to show more information about it.
 When these types are used in arguments, the type name also becomes a link
 to the type information.
 
-All listed data types show possible type documentation. In addition to that,
-types based on `Enum` list available members and types based on `TypedDict`
-show the dictionary structure.
+All listed data types show possible type documentation as well as what argument
+types are supported. In addition to that, types based on `Enum` list available
+members and types based on `TypedDict` show the dictionary structure.
 
-.. note:: Automatically listing data types is new in Robot Framework 4.0.
+.. note:: Automatically listing types based on `Enum` and `TypedDict` is new
+          in Robot Framework 4.0. Listing other types is new in Robot Framework 5.0.
 
+__ `Supported conversions`_
+__ `Custom argument converters`_
 .. _TypedDict: https://docs.python.org/library/typing.html?highlight=typeddict#typing.TypedDict
 
 Libdoc example
