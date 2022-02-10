@@ -55,17 +55,28 @@ Standard
     ...    boolean
     ...    Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to Boolean ``True``,
 
+Accepted types
+    Accepted Types Should Be    1     Standard     boolean
+    ...    string    integer    float    None
+    Accepted Types Should Be    2     Custom       CustomType
+    ...    string    integer
+    Accepted Types Should Be    3     Custom       CustomType2
+    Accepted Types Should Be    6     TypedDict    GeoLocation
+    ...    string
+    Accepted Types Should Be    0     Enum         AssertionOperator
+    ...    string
+    Accepted Types Should Be    10    Enum         Small
+    ...    string    integer
+
 Usages
-    Usages Should Be    1    Standard    boolean
+    Usages Should Be    1     Standard     boolean
     ...    Funny Unions
-    Usages Should Be    2    Custom    CustomType
+    Usages Should Be    2     Custom       CustomType
     ...    Custom
-    Usages Should be    6    TypedDict    GeoLocation
-    ...    Funny Unions
-    ...    Set Location
-    Usages Should Be    10    Enum    Small
-    ...    __init__
-    ...    Funny Unions
+    Usages Should be    6     TypedDict    GeoLocation
+    ...    Funny Unions    Set Location
+    Usages Should Be    10    Enum         Small
+    ...    __init__    Funny Unions
 
 Typedoc links in arguments
     Typedoc links should be    0    1    AssertionOperator    None

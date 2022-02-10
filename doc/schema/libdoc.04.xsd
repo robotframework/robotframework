@@ -124,6 +124,7 @@
     <xs:complexType name="Type">
         <xs:sequence>
             <xs:element name="doc" type="xs:string" />
+            <xs:element name="accepts" type="Accepts" />
             <xs:element name="usages" type="Usages" />
             <!-- Only used when 'type' is 'Enum' -->
             <xs:element name="members" type="EnumMembers" minOccurs="0" />
@@ -141,6 +142,11 @@
             <xs:enumeration value="Standard" />
         </xs:restriction>
     </xs:simpleType>
+    <xs:complexType name="Accepts">
+        <xs:sequence>
+            <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
     <xs:complexType name="Usages">
         <xs:sequence>
             <xs:element name="usage" type="xs:string" minOccurs="0" maxOccurs="unbounded" />

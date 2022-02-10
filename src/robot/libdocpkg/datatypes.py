@@ -16,7 +16,7 @@
 from inspect import isclass
 from enum import Enum
 
-from robot.utils import getdoc, Sortable, typeddict_types
+from robot.utils import getdoc, Sortable, typeddict_types, type_name
 from robot.running import TypeConverter
 
 from .standardtypes import STANDARD_TYPE_DOCS
@@ -31,10 +31,12 @@ class TypeDoc(Sortable):
     CUSTOM = 'Custom'
     STANDARD = 'Standard'
 
-    def __init__(self, type, name, doc, usages=None, members=None, items=None):
+    def __init__(self, type, name, doc, accepts=(), usages=None,
+                 members=None, items=None):
         self.type = type
         self.name = name
         self.doc = doc or ''    # doc parsed from XML can be None.
+        self.accepts = [type_name(t) if not isinstance(t, str) else t for t in accepts]
         self.usages = usages or []
         # Enum members and TypedDict items are used only with appropriate types.
         self.members = members
@@ -54,14 +56,16 @@ class TypeDoc(Sortable):
         if not converter:
             return None
         elif not converter.type:
-            return cls(cls.CUSTOM, converter.type_name, converter.doc)
+            return cls(cls.CUSTOM, converter.type_name, converter.doc,
+                       converter.value_types)
         else:
             return cls(cls.STANDARD, converter.type_name,
-                       STANDARD_TYPE_DOCS[converter.type])
+                       STANDARD_TYPE_DOCS[converter.type], converter.value_types)
 
     @classmethod
     def for_enum(cls, enum):
-        return cls(cls.ENUM, enum.__name__, doc=getdoc(enum),
+        accepts = (str, int) if issubclass(enum, int) else (str,)
+        return cls(cls.ENUM, enum.__name__, getdoc(enum), accepts,
                    members=[EnumMember(name, str(member.value))
                             for name, member in enum.__members__.items()])
 
@@ -75,16 +79,17 @@ class TypeDoc(Sortable):
             required = key in required_keys if required_keys or optional_keys else None
             items.append(TypedDictItem(key, typ, required))
         return cls(cls.TYPED_DICT, typed_dict.__name__, getdoc(typed_dict),
-                   items=items)
+                   accepts=(str,), items=items)
 
-    def to_dictionary(self, usages=True):
+    def to_dictionary(self, legacy=False):
         data = {
             'type': self.type,
             'name': self.name,
             'doc': self.doc,
         }
-        if usages:
+        if not legacy:
             data['usages'] = self.usages
+            data['accepts'] = self.accepts
         if self.members is not None:
             data['members'] = [m.to_dictionary() for m in self.members]
         if self.items is not None:

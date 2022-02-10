@@ -515,6 +515,12 @@ ${name}
             </h2>
        </div>
        <div class="data-type-content">
+          {{if doc}}
+            <div class="dt-docs">
+              <h4>Documentation</h4>
+              <div class="dtdoc doc">{{html doc}}</div>
+            </div>
+          {{/if}}
           {{if members}}
             <div class="dt-members">
               <h4>Allowed Values</h4>
@@ -522,6 +528,9 @@ ${name}
                 {{each members}}
                 <li>
                   <span class="enum-member">${$value.name}</span>
+                  {{if accepts.indexOf("integer") != -1}}
+                    &nbsp; (<span class="enum-member">${$value.value}</span>)
+                  {{/if}}
                 </li>
                 {{/each}}
               </ul>
@@ -543,15 +552,17 @@ ${name}
                 </div>
             </div>
           {{/if}}
-          {{if doc}}
+          {{if accepts.length}}
             <div class="dt-docs">
-              <h4>Documentation</h4>
-              <div class="dtdoc doc">{{html doc}}</div>
+              <h4>Converted Types</h4>
+              {{each accepts}}
+                <span class="enum-member">${$value}</span>{{if $index < accepts.length - 1}}, {{/if}}
+              {{/each}}
             </div>
           {{/if}}
-          {{if usages}}
+          {{if usages.length}}
             <div class="dt-usage">
-              <h4>Used in</h4>
+              <h4>Usages</h4>
               <ul class="dt-usage-list">
                 {{each usages}}
                   <li><a href="#${encodeURIComponent($value)}">${$value}</a></li>

@@ -131,6 +131,10 @@ class LibdocXmlWriter:
         for doc in sorted(type_docs):
             writer.start('type', {'name': doc.name, 'type': doc.type})
             writer.element('doc', doc.doc)
+            writer.start('accepts')
+            for typ in doc.accepts:
+                writer.element('type', typ)
+            writer.end('accepts')
             writer.start('usages')
             for usage in doc.usages:
                 writer.element('usage', usage)

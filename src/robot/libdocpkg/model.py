@@ -133,8 +133,8 @@ class LibraryDoc:
         enums = sorted(t for t in types if t.type == 'Enum')
         typed_dicts = sorted(t for t in types if t.type == 'TypedDict')
         return {
-            'enums': [t.to_dictionary(usages=False) for t in enums],
-            'typedDicts': [t.to_dictionary(usages=False) for t in typed_dicts]
+            'enums': [t.to_dictionary(legacy=True) for t in enums],
+            'typedDicts': [t.to_dictionary(legacy=True) for t in typed_dicts]
         }
 
     def to_json(self, indent=None):

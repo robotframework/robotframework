@@ -92,6 +92,20 @@ Standard types
     ${MODEL}[typedocs][1][name]    boolean
     ${MODEL}[typedocs][1][doc]     <p>Strings <code>TRUE</code>, <code>YES</code>,   start=True
 
+Accepted types
+    ${MODEL}[typedocs][1][type]       Standard
+    ${MODEL}[typedocs][1][accepts]    ['string', 'integer', 'float', 'None']
+    ${MODEL}[typedocs][2][type]       Custom
+    ${MODEL}[typedocs][2][accepts]    ['string', 'integer']
+    ${MODEL}[typedocs][3][type]       Custom
+    ${MODEL}[typedocs][3][accepts]    []
+    ${MODEL}[typedocs][6][type]       TypedDict
+    ${MODEL}[typedocs][6][accepts]    ['string']
+    ${MODEL}[typedocs][0][type]       Enum
+    ${MODEL}[typedocs][0][accepts]    ['string']
+    ${MODEL}[typedocs][10][type]      Enum
+    ${MODEL}[typedocs][10][accepts]   ['string', 'integer']
+
 Usages
     ${MODEL}[typedocs][1][type]       Standard
     ${MODEL}[typedocs][1][usages]     ['Funny Unions']

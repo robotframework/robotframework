@@ -299,14 +299,25 @@ DataType Standard Should Be
     Element Text Should Match      ${customs}[${index}]     ${doc}*    xpath=doc
 
 Usages Should Be
-    [Arguments]    ${index}    ${expected type}    ${expected name}    @{expected usages}
+    [Arguments]    ${index}    ${type}    ${name}    @{expected}
     ${elem} =    Get Element    ${LIBDOC}   xpath=typedocs/type[${{${index} + 1}}]
-    Element Attribute Should Be    ${elem}    type    ${expected type}
-    Element Attribute Should Be    ${elem}    name    ${expected name}
+    Element Attribute Should Be    ${elem}    type    ${type}
+    Element Attribute Should Be    ${elem}    name    ${name}
     @{usages} =    Get Elements    ${elem}    usages/usage
-    Should Be Equal    ${{len($usages)}}    ${{len($expected_usages)}}
-    FOR    ${usage}    ${kw}    IN ZIP    ${usages}    ${expected usages}
+    Should Be Equal    ${{len($usages)}}    ${{len($expected)}}
+    FOR    ${usage}    ${kw}    IN ZIP    ${usages}    ${expected}
         Element Text Should Be    ${usage}    ${kw}
+    END
+
+Accepted Types Should Be
+    [Arguments]    ${index}    ${type}    ${name}    @{expected}
+    ${elem} =    Get Element    ${LIBDOC}   xpath=typedocs/type[${{${index} + 1}}]
+    Element Attribute Should Be    ${elem}    type    ${type}
+    Element Attribute Should Be    ${elem}    name    ${name}
+    @{accepts} =    Get Elements    ${elem}    accepts/type
+    Should Be Equal    ${{len($accepts)}}    ${{len($expected)}}
+    FOR    ${acc}    ${type}    IN ZIP    ${accepts}    ${expected}
+        Element Text Should Be    ${acc}    ${type}
     END
 
 Typedoc links should be

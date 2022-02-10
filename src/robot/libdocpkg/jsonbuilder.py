@@ -89,7 +89,8 @@ class JsonDocBuilder:
 
     def _parse_type_docs(self, type_docs):
         for data in type_docs:
-            doc = TypeDoc(data['type'], data['name'], data['doc'], data['usages'])
+            doc = TypeDoc(data['type'], data['name'], data['doc'], data['accepts'],
+                          data['usages'])
             if doc.type == TypeDoc.ENUM:
                 doc.members = [EnumMember(d['name'], d['value'])
                                for d in data['members']]
