@@ -563,11 +563,11 @@ ${name}
           {{if usages.length}}
             <div class="dt-usage">
               <h4>Usages</h4>
-              <ul class="dt-usage-list">
+              <div class="dt-usage-list">
                 {{each usages}}
-                  <li><a href="#${encodeURIComponent($value)}">${$value}</a></li>
+                  <a href="#${encodeURIComponent($value)}">${$value}</a>{{if $index < usages.length - 1}}, {{/if}}
                 {{/each}}
-              </ul>
+              </div>
             </div>
           {{/if}}
        </div>

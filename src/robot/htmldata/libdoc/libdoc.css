@@ -534,7 +534,7 @@ h4 {
     flex-direction: column;
 }
 
-.enum-type-members, .dt-usage-list {
+.enum-type-members {
     list-style: none;
 }
 
