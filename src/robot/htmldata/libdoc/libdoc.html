@@ -76,6 +76,7 @@
             openKeywordWall();
           }
       }, 0);
+        workaroundFirefoxWidthBug();
     });
 
     function parseTemplates() {
@@ -267,6 +268,11 @@
         };
     })();
 
+    function workaroundFirefoxWidthBug() {
+        // https://github.com/robotframework/robotframework/issues/3456
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=1613163
+        $('.dt-usages a').width('max-content');
+    }
 </script>
 
 <script type="text/x-jquery-tmpl" id="base-template">
@@ -561,9 +567,9 @@ ${name}
             </div>
           {{/if}}
           {{if usages.length}}
-            <div class="dt-usage">
+            <div class="dt-usages">
               <h4>Usages</h4>
-              <div class="dt-usage-list">
+              <div>
                 {{each usages}}
                   <a href="#${encodeURIComponent($value)}">${$value}</a>{{if $index < usages.length - 1}}, {{/if}}
                 {{/each}}

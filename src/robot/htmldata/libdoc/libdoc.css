@@ -267,6 +267,17 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
     padding-left: 0.5rem;
 }
 
+.dt-usages a {
+    text-decoration: none;
+    color: var(--text-color);
+    display: inline-block;
+    font-size: 0.9em;
+}
+.dt-usages a::first-letter {
+    font-weight: bold;
+    letter-spacing: 0.1em;
+}
+
 .arguments-list-container {
     overflow-y: auto;
 }
