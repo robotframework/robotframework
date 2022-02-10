@@ -29,7 +29,7 @@ class TestJsonConverter(unittest.TestCase):
                      fullName='Misc',
                      doc='<p>My doc</p>',
                      metadata=[('1', '<p>2</p>'), ('abc', '<p>123</p>')],
-                     numberOfTests=185,
+                     numberOfTests=188,
                      tests=[],
                      keywords=[])
         test_convert(self.suite['suites'][0],
@@ -106,7 +106,7 @@ class TestJsonConverter(unittest.TestCase):
                      tags=['d1', 'd2', 'f1'],
                      timeout='')
         test_convert(self.suite['suites'][-4]['tests'][0],
-                     id='s1-s12-t1',
+                     id='s1-s13-t1',
                      name='Default Test Timeout',
                      fullName='Misc.Timeouts.Default Test Timeout',
                      doc='<p>I have a timeout</p>',
