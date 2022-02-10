@@ -22,7 +22,7 @@ STANDARD_TYPE_DOCS = {
 Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to Boolean ``True``,
 the empty string as well as strings ``FALSE``, ``NO``, ``OFF`` and ``0``
 are converted to Boolean ``False``, and the string ``NONE`` is converted
-to the Python ``None`` object. Other strings and all non-string arguments are
+to the Python ``None`` object. Other strings and other accepted values are
 passed as-is, allowing keywords to handle them specially if
 needed. All string comparisons are case-insensitive.
 

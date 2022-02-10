@@ -1428,10 +1428,10 @@ Other types cause conversion failures.
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    |    Type     |      ABC      |  Aliases   |   Accepts    |                       Explanation                              |             Examples                 |
    +=============+===============+============+==============+================================================================+======================================+
-   | bool_       |               | boolean    | Any          | Strings `TRUE`, `YES`, `ON` and `1` are converted to `True`,   | | `TRUE` (converted to `True`)       |
-   |             |               |            |              | the empty string as well as `FALSE`, `NO`, `OFF` and `0`       | | `off` (converted to `False`)       |
-   |             |               |            |              | are converted to `False`, and the string `NONE` is converted   | | `example` (used as-is)             |
-   |             |               |            |              | to `None`. Other strings and all non-string arguments are      |                                      |
+   | bool_       |               | boolean    | string,      | Strings `TRUE`, `YES`, `ON` and `1` are converted to `True`,   | | `TRUE` (converted to `True`)       |
+   |             |               |            | integer,     | the empty string as well as `FALSE`, `NO`, `OFF` and `0`       | | `off` (converted to `False`)       |
+   |             |               |            | float,       | are converted to `False`, and the string `NONE` is converted   | | `example` (used as-is)             |
+   |             |               |            | None         | to `None`. Other strings and other accepted values are         |                                      |
    |             |               |            |              | passed as-is, allowing keywords to handle them specially if    |                                      |
    |             |               |            |              | needed. All string comparisons are case-insensitive.           |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
@@ -1450,13 +1450,13 @@ Other types cause conversion failures.
    |             |               |            |              | visual separators for digit grouping purposes.                 |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | float_      | Real_         | double     | string,      | Conversion is done using the float_ built-in.                  | | `3.14`                             |
-   |             |               |            | int          |                                                                | | `2.9979e8`                         |
+   |             |               |            | integer      |                                                                | | `2.9979e8`                         |
    |             |               |            |              | Starting from RF 4.1, spaces and underscores can be used as    | | `10 000.000 01`                    |
    |             |               |            |              | visual separators for digit grouping purposes.                 | | `10_000.000_01`                    |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Decimal_    |               |            | string,      | Conversion is done using the Decimal_ class.                   | | `3.14`                             |
-   |             |               |            | int, float   |                                                                | | `10 000.000 01`                    |
-   |             |               |            |              | Starting from RF 4.1, spaces and underscores can be used as    | | `10_000.000_01`                    |
+   |             |               |            | integer,     |                                                                | | `10 000.000 01`                    |
+   |             |               |            | float        | Starting from RF 4.1, spaces and underscores can be used as    | | `10_000.000_01`                    |
    |             |               |            |              | visual separators for digit grouping purposes.                 |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | str_        |               | string,    | Any          | All arguments are converted to Unicode strings. New in RF 4.0. |                                      |
@@ -1471,8 +1471,8 @@ Other types cause conversion failures.
    |             |               |            | bytes        |                                                                |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | `datetime   |               |            | string,      | Strings are expected to be timestamps in `ISO 8601`_ like      | | `2022-02-09T16:39:43.632269`       |
-   | <dt-mod_>`__|               |            | int, float   | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `2022-02-09 16:39`                 |
-   |             |               |            |              | character can be used as a separator or separators can be      | | `2022-02-09`                       |
+   | <dt-mod_>`__|               |            | integer,     | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `2022-02-09 16:39`                 |
+   |             |               |            | float        | character can be used as a separator or separators can be      | | `2022-02-09`                       |
    |             |               |            |              | omitted altogether. Additionally, only the date part is        | | `${1644417583.632269}` (Epoch time)|
    |             |               |            |              | mandatory, all possibly missing time components are considered |                                      |
    |             |               |            |              | to be zeros.                                                   |                                      |
@@ -1484,8 +1484,8 @@ Other types cause conversion failures.
    |             |               |            |              | time components are expected to be omitted or to be zeros.     |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | timedelta_  |               |            | string,      | Strings are expected to represent a time interval in one of    | | `42` (42 seconds)                  |
-   |             |               |            | int, float   | the time formats Robot Framework supports: `time as number`_,  | | `1 minute 2 seconds`               |
-   |             |               |            |              | `time as time string`_ or `time as "timer" string`_. Integers  | | `01:02` (same as above)            |
+   |             |               |            | integer,     | the time formats Robot Framework supports: `time as number`_,  | | `1 minute 2 seconds`               |
+   |             |               |            | float        | `time as time string`_ or `time as "timer" string`_. Integers  | | `01:02` (same as above)            |
    |             |               |            |              | and floats are considered to be seconds.                       |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Enum_       |               |            | string       | The specified type must be an enumeration (a subclass of Enum_ | .. sourcecode:: python               |
@@ -1497,8 +1497,8 @@ Other types cause conversion failures.
    |             |               |            |              |                                                                | | `NORTH` (Direction.NORTH)          |
    |             |               |            |              |                                                                | | `north west` (Direction.NORTH_WEST)|
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | IntEnum_    |               |            | string, int  | The specified type must be an integer based enumeration (a     | .. sourcecode:: python               |
-   |             |               |            |              | subclass of IntEnum_ or IntFlag_) and given arguments must     |                                      |
+   | IntEnum_    |               |            | string,      | The specified type must be an integer based enumeration (a     | .. sourcecode:: python               |
+   |             |               |            | integer      | subclass of IntEnum_ or IntFlag_) and given arguments must     |                                      |
    |             |               |            |              | match its member names or values.                              |    class PowerState(IntEnum):        |
    |             |               |            |              |                                                                |        OFF = 0                       |
    |             |               |            |              | Matching member names is case-, space- and                     |        ON = 1                        |
