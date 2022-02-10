@@ -31,16 +31,21 @@ Keyword tag
 Tag as pattern
     s1-s4-t2-k3-k1    s1-s4-t2-k4                 # TAG:Nest*2
 
+Keywords with skip status are expanded
+    s1-s9-t1-k2    s1-s9-t2-k2-k1                 # NAME:BuiltIn.Skip
+
 *** Keywords ***
 Run tests with expanding
     ${options} =    Catenate
     ...    --log log.html
     ...    --expandkeywords name:MyKeyword
     ...    --ExpandKeywords NAME:BuiltIn.Sleep
+    ...    --ExpandKeywords NAME:BuiltIn.Fail    # Failed and not run keywords aren't expanded so this doesn't match anything.
+    ...    --ExpandKeywords NAME:BuiltIn.Skip
     ...    --expand "Name:???-Ä* K?ywörd Näm?"
     ...    --expandkeywords name:<blink>NO</blink>
     ...    --expandkeywords name:nonasciilib????.Print*
-    ...    --expandkeywords name:NoMatch
+    ...    --expandkeywords name:NoMatchHere
     ...    --expandkeywords tag:tags
     ...    --ExpandKeywords TAG:Nest*2
     ...    --expandkeywords tag:NoMatch
@@ -51,6 +56,9 @@ Run tests with expanding
     ...    misc/normal.robot
     ...    misc/if_else.robot
     ...    misc/for_loops.robot
+    ...    misc/try_except.robot
+    ...    misc/while.robot
+    ...    misc/skip.robot
     Run Tests    ${options}    ${paths}
     ${EXPANDED} =    Get Expand Keywords    ${OUTDIR}/log.html
     Set Suite Variable    ${EXPANDED}

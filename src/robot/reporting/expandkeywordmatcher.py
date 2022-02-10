@@ -30,5 +30,6 @@ class ExpandKeywordMatcher:
         self._match_tags = MultiMatcher(tags).match_any
 
     def match(self, kw):
-        if self._match_name(kw.name or '') or self._match_tags(kw.tags):
+        if ((kw.passed or kw.skipped)
+                and (self._match_name(kw.name or '') or self._match_tags(kw.tags))):
             self.matched_ids.append(kw.id)
