@@ -1428,15 +1428,15 @@ Other types cause conversion failures.
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    |    Type     |      ABC      |  Aliases   |   Accepts    |                       Explanation                              |             Examples                 |
    +=============+===============+============+==============+================================================================+======================================+
-   | bool_       |               | boolean    | string,      | Strings `TRUE`, `YES`, `ON` and `1` are converted to `True`,   | | `TRUE` (converted to `True`)       |
-   |             |               |            | integer,     | the empty string as well as `FALSE`, `NO`, `OFF` and `0`       | | `off` (converted to `False`)       |
-   |             |               |            | float,       | are converted to `False`, and the string `NONE` is converted   | | `example` (used as-is)             |
-   |             |               |            | None         | to `None`. Other strings and other accepted values are         |                                      |
+   | bool_       |               | boolean    | str_,        | Strings `TRUE`, `YES`, `ON` and `1` are converted to `True`,   | | `TRUE` (converted to `True`)       |
+   |             |               |            | int_    ,    | the empty string as well as `FALSE`, `NO`, `OFF` and `0`       | | `off` (converted to `False`)       |
+   |             |               |            | float_,      | are converted to `False`, and the string `NONE` is converted   | | `example` (used as-is)             |
+   |             |               |            | None_        | to `None`. Other strings and other accepted values are         |                                      |
    |             |               |            |              | passed as-is, allowing keywords to handle them specially if    |                                      |
    |             |               |            |              | needed. All string comparisons are case-insensitive.           |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | int_        | Integral_     | integer,   | string,      | Conversion is done using the int_ built-in function. Floats    | | `42`                               |
-   |             |               | long       | float        | are accepted only if they can be represented as integers       | | `-1`                               |
+   | int_        | Integral_     | integer,   | str_,        | Conversion is done using the int_ built-in function. Floats    | | `42`                               |
+   |             |               | long       | float_       | are accepted only if they can be represented as integers       | | `-1`                               |
    |             |               |            |              | exactly. For example, `1.0` is accepted and `1.1` is not.      | | `0xFF`                             |
    |             |               |            |              | If converting a string to an integer fails and the type        | | `0o777`                            |
    |             |               |            |              | is got implicitly based on a default value, conversion to      | | `0b1010`                           |
@@ -1449,30 +1449,30 @@ Other types cause conversion failures.
    |             |               |            |              | Starting from RF 4.1, spaces and underscores can be used as    |                                      |
    |             |               |            |              | visual separators for digit grouping purposes.                 |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | float_      | Real_         | double     | string,      | Conversion is done using the float_ built-in.                  | | `3.14`                             |
-   |             |               |            | integer      |                                                                | | `2.9979e8`                         |
+   | float_      | Real_         | double     | str_,        | Conversion is done using the float_ built-in.                  | | `3.14`                             |
+   |             |               |            | int_         |                                                                | | `2.9979e8`                         |
    |             |               |            |              | Starting from RF 4.1, spaces and underscores can be used as    | | `10 000.000 01`                    |
    |             |               |            |              | visual separators for digit grouping purposes.                 | | `10_000.000_01`                    |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | Decimal_    |               |            | string,      | Conversion is done using the Decimal_ class.                   | | `3.14`                             |
-   |             |               |            | integer,     |                                                                | | `10 000.000 01`                    |
-   |             |               |            | float        | Starting from RF 4.1, spaces and underscores can be used as    | | `10_000.000_01`                    |
+   | Decimal_    |               |            | str_,        | Conversion is done using the Decimal_ class.                   | | `3.14`                             |
+   |             |               |            | int_    ,    |                                                                | | `10 000.000 01`                    |
+   |             |               |            | float_       | Starting from RF 4.1, spaces and underscores can be used as    | | `10_000.000_01`                    |
    |             |               |            |              | visual separators for digit grouping purposes.                 |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | str_        |               | string,    | Any          | All arguments are converted to Unicode strings. New in RF 4.0. |                                      |
    |             |               | unicode    |              |                                                                |                                      |
    |             |               |            |              |                                                                |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | bytes_      | ByteString_   |            | string,      | Strings are converted to bytes so that each Unicode code point | | `good`                             |
-   |             |               |            | bytearray    | below 256 is directly mapped to a matching byte. Higher code   | | `hyvä` (converted to `hyv\xe4`)    |
+   | bytes_      | ByteString_   |            | str_,        | Strings are converted to bytes so that each Unicode code point | | `good`                             |
+   |             |               |            | bytearray_   | below 256 is directly mapped to a matching byte. Higher code   | | `hyvä` (converted to `hyv\xe4`)    |
    |             |               |            |              | points are not allowed.                                        | | `\x00` (the null byte)             |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | bytearray_  |               |            | string,      | Same conversion as with bytes_ but the result is a bytearray_. |                                      |
-   |             |               |            | bytes        |                                                                |                                      |
+   | bytearray_  |               |            | str_,        | Same conversion as with bytes_ but the result is a bytearray_. |                                      |
+   |             |               |            | bytes_       |                                                                |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | `datetime   |               |            | string,      | Strings are expected to be timestamps in `ISO 8601`_ like      | | `2022-02-09T16:39:43.632269`       |
-   | <dt-mod_>`__|               |            | integer,     | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `2022-02-09 16:39`                 |
-   |             |               |            | float        | character can be used as a separator or separators can be      | | `2022-02-09`                       |
+   | `datetime   |               |            | str_,        | Strings are expected to be timestamps in `ISO 8601`_ like      | | `2022-02-09T16:39:43.632269`       |
+   | <dt-mod_>`__|               |            | int_    ,    | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `2022-02-09 16:39`                 |
+   |             |               |            | float_       | character can be used as a separator or separators can be      | | `2022-02-09`                       |
    |             |               |            |              | omitted altogether. Additionally, only the date part is        | | `${1644417583.632269}` (Epoch time)|
    |             |               |            |              | mandatory, all possibly missing time components are considered |                                      |
    |             |               |            |              | to be zeros.                                                   |                                      |
@@ -1480,15 +1480,15 @@ Other types cause conversion failures.
    |             |               |            |              | Integers and floats are considered to represent seconds since  |                                      |
    |             |               |            |              | the `Unix epoch`_.                                             |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | date_       |               |            | string       | Same string conversion as with `datetime <dt-mod_>`__ but all  | | `2018-09-12`                       |
+   | date_       |               |            | str_         | Same string conversion as with `datetime <dt-mod_>`__ but all  | | `2018-09-12`                       |
    |             |               |            |              | time components are expected to be omitted or to be zeros.     |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | timedelta_  |               |            | string,      | Strings are expected to represent a time interval in one of    | | `42` (42 seconds)                  |
-   |             |               |            | integer,     | the time formats Robot Framework supports: `time as number`_,  | | `1 minute 2 seconds`               |
-   |             |               |            | float        | `time as time string`_ or `time as "timer" string`_. Integers  | | `01:02` (same as above)            |
+   | timedelta_  |               |            | str_,        | Strings are expected to represent a time interval in one of    | | `42` (42 seconds)                  |
+   |             |               |            | int_    ,    | the time formats Robot Framework supports: `time as number`_,  | | `1 minute 2 seconds`               |
+   |             |               |            | float_       | `time as time string`_ or `time as "timer" string`_. Integers  | | `01:02` (same as above)            |
    |             |               |            |              | and floats are considered to be seconds.                       |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | Enum_       |               |            | string       | The specified type must be an enumeration (a subclass of Enum_ | .. sourcecode:: python               |
+   | Enum_       |               |            | str_         | The specified type must be an enumeration (a subclass of Enum_ | .. sourcecode:: python               |
    |             |               |            |              | or Flag_) and given arguments must match its member names.     |                                      |
    |             |               |            |              |                                                                |    class Direction(Enum):            |
    |             |               |            |              | Starting from RF 3.2.2, matching member names is case-, space- |        NORTH = auto()                |
@@ -1497,8 +1497,8 @@ Other types cause conversion failures.
    |             |               |            |              |                                                                | | `NORTH` (Direction.NORTH)          |
    |             |               |            |              |                                                                | | `north west` (Direction.NORTH_WEST)|
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | IntEnum_    |               |            | string,      | The specified type must be an integer based enumeration (a     | .. sourcecode:: python               |
-   |             |               |            | integer      | subclass of IntEnum_ or IntFlag_) and given arguments must     |                                      |
+   | IntEnum_    |               |            | str_,        | The specified type must be an integer based enumeration (a     | .. sourcecode:: python               |
+   |             |               |            | int_         | subclass of IntEnum_ or IntFlag_) and given arguments must     |                                      |
    |             |               |            |              | match its member names or values.                              |    class PowerState(IntEnum):        |
    |             |               |            |              |                                                                |        OFF = 0                       |
    |             |               |            |              | Matching member names is case-, space- and                     |        ON = 1                        |
@@ -1507,35 +1507,29 @@ Other types cause conversion failures.
    |             |               |            |              |                                                                | | `1` (PowerState.ON)                |
    |             |               |            |              | Support for IntEnum_ and IntFlag_ is new in RF 4.1.            |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | None_       |               | NoneType   | string       | String `NONE` (case-insensitive) is converted to the Python    | | `None`                             |
+   | None_       |               | NoneType   | str_         | String `NONE` (case-insensitive) is converted to the Python    | | `None`                             |
    |             |               |            |              | `None` object. Other values cause an error.                    |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | list_       | Sequence_     |            | string,      | Strings must be Python list literals. They are converted       | | `['one', 'two']`                   |
-   |             |               |            | tuple        | to actual lists using the `ast.literal_eval`_ function.        | | `[('one', 1), ('two', 2)]`         |
+   | list_       | Sequence_     |            | str_,        | Strings must be Python list literals. They are converted       | | `['one', 'two']`                   |
+   |             |               |            | Sequence_    | to actual lists using the `ast.literal_eval`_ function.        | | `[('one', 1), ('two', 2)]`         |
    |             |               |            |              | They can contain any values `ast.literal_eval` supports,       |                                      |
    |             |               |            |              | including lists and other containers.                          |                                      |
    |             |               |            |              |                                                                |                                      |
-   |             |               |            |              | Sequences that are not lists are accepted and converted        |                                      |
-   |             |               |            |              | to lists.                                                      |                                      |
+   |             |               |            |              | If the used type hint is list_ (e.g. `arg: list`), sequences   |                                      |
+   |             |               |            |              | that are not lists are converted to lists. If the type hint is |                                      |
+   |             |               |            |              | generic Sequence_, sequences are used without conversion.      |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | tuple_      |               |            | string, list | Same as list_ but string argument must a tuple literal.        | | `('one', 'two')`                   |
+   | tuple_      |               |            | str_,        | Same as list_, but string arguments must tuple literals.       | | `('one', 'two')`                   |
+   |             |               |            | Sequence_    |                                                                |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | dict_       | Mapping_      | dictionary,| string       | Same as list_ but string argument must be a dictionary         | | `{'a': 1, 'b': 2}`                 |
-   |             |               | map        |              | literal.                                                       | | `{'key': 1, 'nested': {'key': 2}}` |
-   |             |               |            |              |                                                                |                                      |
-   |             |               |            |              | Mappings that are not actual `dict` objects are accepted and   |                                      |
-   |             |               |            |              | used as-is.                                                    |                                      |
+   | dict_       | Mapping_      | dictionary,| str_,        | Same as list_, but string arguments must be dictionary         | | `{'a': 1, 'b': 2}`                 |
+   |             |               | map        | Mapping_     | literals.                                                      | | `{'key': 1, 'nested': {'key': 2}}` |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | set_        | `Set          |            | string,      | Same as list_ but string argument must be a set literal or     | | `{1, 2, 3, 42}`                    |
-   |             | <abc.Set_>`__ |            | list, tuple, | `set()` to create an empty set.                                | | `set()`                            |
-   |             |               |            | dictionary   |                                                                |                                      |
-   |             |               |            |              | Sequences that are not sets are accepted and converted         |                                      |
-   |             |               |            |              | to sets.                                                       |                                      |
+   | set_        | `Set          |            | str_,        | Same as list_, but string arguments must be set literals or    | | `{1, 2, 3, 42}`                    |
+   |             | <abc.Set_>`__ |            | Container_   | `set()` to create an empty set.                                | | `set()`                            |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | frozenset_  |               |            | string,      | Same conversion as with set_, but the result is a frozenset_.  |                                      |
-   |             |               |            | list, tuple, |                                                                |                                      |
-   |             |               |            | dictionary   | Normal sets and other sequences are accepted and converted     |                                      |
-   |             |               |            |              | to `frozenset` objects.                                        |                                      |
+   | frozenset_  |               |            | str_,        | Same conversion as with set_, but the result is a frozenset_.  |                                      |
+   |             |               |            | Container_   |                                                                |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
 
 .. note:: Prior to Robot Framework 4.0, most types supported converting string `NONE` (case-insensitively) to Python
@@ -1569,6 +1563,7 @@ Other types cause conversion failures.
 .. _set: https://docs.python.org/library/stdtypes.html#set
 .. _abc.Set: https://docs.python.org/library/collections.abc.html#collections.abc.Set
 .. _frozenset: https://docs.python.org/library/stdtypes.html#frozenset
+.. _Container: https://docs.python.org/library/collections.abc.html#collections.abc.Container
 .. _typing: https://docs.python.org/library/typing.html
 .. _ISO 8601: https://en.wikipedia.org/wiki/ISO_8601
 .. _ast.literal_eval: https://docs.python.org/library/ast.html#ast.literal_eval

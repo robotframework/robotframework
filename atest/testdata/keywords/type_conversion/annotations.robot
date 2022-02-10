@@ -8,6 +8,8 @@ Resource                 conversion.resource
 &{DICT}                  foo=${1}                  bar=${2}
 ${FRACTION 1/2}          ${{fractions.Fraction(1,2)}}
 ${DECIMAL 1/2}           ${{decimal.Decimal('0.5')}}
+${DEQUE}                 ${{collections.deque([1, 2, 3])}}
+${MAPPING}               ${{type('M', (collections.abc.Mapping,), {'__getitem__': lambda s, k: {'a': 1}[k], '__iter__': lambda s: iter({'a': 1}), '__len__': lambda s: 1})()}}
 
 *** Test Cases ***
 Integer
@@ -328,6 +330,7 @@ List
     List                 [{'nested': True}]        [{'nested': True}]
     List                 ${{[1, 2]}}               [1, 2]
     List                 ${{(1, 2)}}               [1, 2]
+    List                 ${DEQUE}                  [1, 2, 3]
 
 Invalid list
     [Template]           Conversion Should Fail
@@ -343,8 +346,10 @@ Invalid list
 Sequence (abc)
     Sequence             []                        []
     Sequence             ['foo', 'bar']            ${LIST}
+    Sequence             ${DEQUE}                  collections.deque([1, 2, 3])
     Mutable sequence     [1, 2, 3.14, -42]         [1, 2, 3.14, -42]
     Mutable sequence     ['\\x00', '\\x52']        ['\\x00', 'R']
+    Mutable sequence     ${DEQUE}                  collections.deque([1, 2, 3])
 
 Invalid sequence (abc)
     [Template]           Conversion Should Fail
@@ -363,6 +368,7 @@ Tuple
     Tuple                (['nested', True],)       (['nested', True],)
     Tuple                ${{(1, 2)}}               (1, 2)
     Tuple                ${{[1, 2]}}               (1, 2)
+    Tuple                ${DEQUE}                  (1, 2, 3)
 
 Invalid tuple
     [Template]           Conversion Should Fail
@@ -376,6 +382,7 @@ Dictionary
     Dictionary           {}                        {}
     Dictionary           {'foo': 1, "bar": 2}      dict(${DICT})
     Dictionary           {1: 2, 3.14: -42}         {1: 2, 3.14: -42}
+    Dictionary           ${MAPPING}                {'a': 1}
 
 Invalid dictionary
     [Template]           Conversion Should Fail
@@ -388,7 +395,9 @@ Invalid dictionary
 
 Mapping (abc)
     Mapping              {'foo': 1, 2: 'bar'}      {'foo': 1, 2: 'bar'}
+    Mapping              ${MAPPING}                ${MAPPING}
     Mutable mapping      {'foo': 1, 2: 'bar'}      {'foo': 1, 2: 'bar'}
+    Mutable mapping      ${MAPPING}                ${MAPPING}
 
 Invalid mapping (abc)
     [Template]           Conversion Should Fail
@@ -405,6 +414,8 @@ Set
     Set                  ${{[1]}}                  {1}
     Set                  ${{(1,)}}                 {1}
     Set                  ${{{1: 2}}}               {1}
+    Set                  ${DEQUE}                  {1, 2, 3}
+    Set                  ${MAPPING}                {'a'}
 
 Invalid set
     [Template]           Conversion Should Fail
@@ -421,9 +432,13 @@ Set (abc)
     Set abc              set()                     set()
     Set abc              {'foo', 'bar'}            {'foo', 'bar'}
     Set abc              {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
+    Set abc              ${DEQUE}                  {1, 2, 3}
+    Set abc              ${MAPPING}                {'a'}
     Mutable set          set()                     set()
     Mutable set          {'foo', 'bar'}            {'foo', 'bar'}
     Mutable set          {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
+    Mutable set          ${DEQUE}                  {1, 2, 3}
+    Mutable set          ${MAPPING}                {'a'}
 
 Invalid set (abc)
     [Template]           Conversion Should Fail
@@ -444,6 +459,8 @@ Frozenset
     Frozenset            ${{[1]}}                  frozenset({1})
     Frozenset            ${{(1,)}}                 frozenset({1})
     Frozenset            ${{{1: 2}}}               frozenset({1})
+    Frozenset            ${DEQUE}                  frozenset({1, 2, 3})
+    Frozenset            ${MAPPING}                frozenset({'a'})
 
 Invalid frozenset
     [Template]           Conversion Should Fail

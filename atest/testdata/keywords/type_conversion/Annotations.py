@@ -7,8 +7,11 @@ except ImportError:    # Python 3.5
     from enum import Enum, IntEnum
     Flag, IntFlag = Enum, IntEnum
 from functools import wraps
-from fractions import Fraction    # Needed by `eval()` in `_validate_type()`.
 from numbers import Integral, Real
+
+# Needed by `eval()` in `_validate_type()`.
+import collections
+from fractions import Fraction
 
 from robot.api.deco import keyword
 

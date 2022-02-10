@@ -14,8 +14,9 @@
 #  limitations under the License.
 
 from ast import literal_eval
-from collections import abc, OrderedDict
-from typing import Union
+from collections import OrderedDict
+from collections.abc import ByteString, Container, Mapping, Sequence, Set
+from typing import Any, Union
 from datetime import datetime, date, timedelta
 from decimal import InvalidOperation, Decimal
 from enum import Enum
@@ -196,6 +197,7 @@ class StringConverter(TypeConverter):
     type = str
     type_name = 'string'
     aliases = ('string', 'str', 'unicode')
+    value_types = (Any,)
 
     def _handles_value(self, value):
         return True
@@ -300,7 +302,7 @@ class DecimalConverter(TypeConverter):
 @TypeConverter.register
 class BytesConverter(TypeConverter):
     type = bytes
-    abc = abc.ByteString
+    abc = ByteString
     type_name = 'bytes'
     value_types = (str, bytearray)
 
@@ -383,13 +385,13 @@ class NoneConverter(TypeConverter):
 class ListConverter(TypeConverter):
     type = list
     type_name = 'list'
-    abc = abc.Sequence
-    value_types = (str, tuple)
+    abc = Sequence
+    value_types = (str, Sequence)
 
     def no_conversion_needed(self, value):
         if isinstance(value, str):
             return False
-        return TypeConverter.no_conversion_needed(self, value)
+        return super().no_conversion_needed(value)
 
     def _non_string_convert(self, value, explicit_type=True):
         return list(value)
@@ -402,7 +404,7 @@ class ListConverter(TypeConverter):
 class TupleConverter(TypeConverter):
     type = tuple
     type_name = 'tuple'
-    value_types = (str, list)
+    value_types = (str, Sequence)
 
     def _non_string_convert(self, value, explicit_type=True):
         return tuple(value)
@@ -414,9 +416,15 @@ class TupleConverter(TypeConverter):
 @TypeConverter.register
 class DictionaryConverter(TypeConverter):
     type = dict
-    abc = abc.Mapping
+    abc = Mapping
     type_name = 'dictionary'
     aliases = ('dict', 'map')
+    value_types = (str, Mapping)
+
+    def _non_string_convert(self, value, explicit_type=True):
+        if issubclass(self.used_type, dict) and not isinstance(value, dict):
+            return dict(value)
+        return value
 
     def _convert(self, value, explicit_type=True):
         return self._literal_eval(value, dict)
@@ -425,9 +433,9 @@ class DictionaryConverter(TypeConverter):
 @TypeConverter.register
 class SetConverter(TypeConverter):
     type = set
+    abc = Set
     type_name = 'set'
-    value_types = (str, frozenset, list, tuple, abc.Mapping)
-    abc = abc.Set
+    value_types = (str, Container)
 
     def _non_string_convert(self, value, explicit_type=True):
         return set(value)
@@ -440,7 +448,7 @@ class SetConverter(TypeConverter):
 class FrozenSetConverter(TypeConverter):
     type = frozenset
     type_name = 'frozenset'
-    value_types = (str, set, list, tuple, abc.Mapping)
+    value_types = (str, Container)
 
     def _non_string_convert(self, value, explicit_type=True):
         return frozenset(value)

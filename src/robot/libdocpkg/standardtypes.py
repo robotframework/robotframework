@@ -118,8 +118,6 @@ literals. They are converted to actual lists using the
 function. They can contain any values ``ast.literal_eval`` supports, including
 lists and other containers.
 
-Sequences that are not lists are accepted and converted to lists.
-
 Examples: ``['one', 'two']``, ``[('one', 1), ('two', 2)]``
 ''',
     tuple: '''\
@@ -128,8 +126,6 @@ literals. They are converted to actual tuples using the
 [https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
 function. They can contain any values ``ast.literal_eval`` supports, including
 tuples and other containers.
-
-Sequences that are not tuples are accepted and converted to tuples.
 
 Examples: ``('one', 'two')``, ``(('one', 1), ('two', 2))``
 ''',
@@ -140,8 +136,6 @@ literals. They are converted to actual dictionaries using the
 function. They can contain any values ``ast.literal_eval`` supports, including
 dictionaries and other containers.
 
-Mappings that are not actual ``dict`` objects are accepted and used as-is.
-
 Examples: ``{'a': 1, 'b': 2}``, ``{'key': 1, 'nested': {'key': 2}}``
 ''',
     set: '''\
@@ -149,8 +143,6 @@ Strings must be Python [https://docs.python.org/library/stdtypes.html#set|set]
 literals. They are converted to actual sets using the
 [https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
 function. They can contain any values ``ast.literal_eval`` supports.
-
-Sequences that are not sets are accepted and converted to sets.
 
 Examples: ``{1, 2, 3, 42}``, ``set()`` (an empty set)
 ''',
@@ -160,8 +152,6 @@ literals. They are converted to actual sets using the
 [https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
 function and then converted to ``frozenset`` objects. They can contain
 any values ``ast.literal_eval`` supports.
-
-Normal sets and other sequences are accepted and converted to ``frozenset`` objects.
 
 Examples: ``{1, 2, 3, 42}``, ``set()`` (an empty set)
 '''
