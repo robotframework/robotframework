@@ -20,11 +20,10 @@ class RecommendationFinder:
 
     def __init__(self, normalizer=None):
         self.normalizer = normalizer or (lambda x: x)
-        self.recommendations = None
 
     def find_and_format(self, name, candidates, message, max_matches=10):
-        self.find(name, candidates, max_matches)
-        return self.format(message)
+        recommendations = self.find(name, candidates, max_matches)
+        return self.format(message, recommendations)
 
     def find(self, name, candidates, max_matches=10):
         """Return a list of close matches to `name` from `candidates`."""
@@ -36,12 +35,9 @@ class RecommendationFinder:
         norm_matches = difflib.get_close_matches(
             norm_name, norm_candidates, n=max_matches, cutoff=cutoff
         )
-        self.recommendations = self._get_original_candidates(
-            norm_candidates, norm_matches
-        )
-        return self.recommendations
+        return self._get_original_candidates(norm_matches, norm_candidates)
 
-    def format(self, message, recommendations=None):
+    def format(self, message, recommendations):
         """Add recommendations to the given message.
 
         The recommendation string looks like::
@@ -51,7 +47,6 @@ class RecommendationFinder:
                 <recommendations[1]>
                 <recommendations[2]>
         """
-        recommendations = recommendations or self.recommendations
         if recommendations:
             message += " Did you mean:"
             for rec in recommendations:
@@ -60,25 +55,21 @@ class RecommendationFinder:
 
     def _get_normalized_candidates(self, candidates):
         norm_candidates = {}
-        # TODO: maybe this can be changed since Jython is not supported.
-        # sort before normalization for consistent Python/Jython ordering
         for cand in sorted(candidates):
             norm = self.normalizer(cand)
             norm_candidates.setdefault(norm, []).append(cand)
         return norm_candidates
 
-    def _get_original_candidates(self, norm_candidates, norm_matches):
+    def _get_original_candidates(self, norm_matches, norm_candidates):
         candidates = []
-        for norm_match in norm_matches:
-            candidates.extend(norm_candidates[norm_match])
+        for match in norm_matches:
+            candidates.extend(norm_candidates[match])
         return candidates
 
-    def _calculate_cutoff(self, string, min_cutoff=.5, max_cutoff=.85,
-                          step=.03):
+    def _calculate_cutoff(self, string, min_cutoff=0.5, max_cutoff=0.85, step=0.03):
         """Calculate a cutoff depending on string length.
 
-        Default values determined by manual tuning until the results
-        "look right".
+        Default values determined by manual tuning until the results "look right".
         """
         cutoff = min_cutoff + len(string) * step
         return min(cutoff, max_cutoff)

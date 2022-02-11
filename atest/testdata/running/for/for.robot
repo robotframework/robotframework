@@ -276,7 +276,7 @@ Characters that are illegal in XML
 
 Old :FOR syntax is not supported
     [Documentation]    FAIL
-    ...    Support for the old for loop syntax has been removed. Replace ':FOR' with 'FOR', end the loop with 'END', and remove escaping backslashes.
+    ...    Support for the old FOR loop syntax has been removed. Replace ':FOR' with 'FOR', end the loop with 'END', and remove escaping backslashes.
     :FOR    ${x}    IN    a    b    c
        Fail    Should not be executed
     END

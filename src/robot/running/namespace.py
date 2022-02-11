@@ -38,7 +38,7 @@ class Namespace:
     _library_import_by_path_endings = ('.py', '/', os.sep)
 
     def __init__(self, variables, suite, resource):
-        LOGGER.info("Initializing namespace for test suite '%s'" % suite.longname)
+        LOGGER.info(f"Initializing namespace for suite '{suite.longname}'.")
         self.variables = variables
         self._imports = resource.imports
         self._kw_store = KeywordStore(resource)
@@ -62,7 +62,7 @@ class Namespace:
         for item in import_settings:
             try:
                 if not item.name:
-                    raise DataError('%s setting requires value.' % item.type)
+                    raise DataError(f'{item.type} setting requires value.')
                 self._import(item)
             except DataError as err:
                 item.report_invalid_syntax(err.message)
@@ -89,14 +89,14 @@ class Namespace:
                             importer=import_setting.source,
                             source=path)
         else:
-            LOGGER.info("Resource file '%s' already imported by suite '%s'"
-                        % (path, self._suite_name))
+            LOGGER.info(f"Resource file '{path}' already imported by "
+                        f"suite '{self._suite_name}'.")
 
     def _validate_not_importing_init_file(self, path):
         name = os.path.splitext(os.path.basename(path))[0]
         if name.lower() == '__init__':
-            raise DataError("Initialization file '%s' cannot be imported as "
-                            "a resource file." % path)
+            raise DataError(f"Initialization file '{path}' cannot be imported as "
+                            f"a resource file.")
 
     def import_variables(self, name, args, overwrite=False):
         self._import_variables(Import('Variables', name, args), overwrite)
@@ -112,11 +112,10 @@ class Namespace:
                             importer=import_setting.source,
                             source=path)
         else:
-            msg = "Variable file '%s'" % path
+            msg = f"Variable file '{path}'"
             if args:
-                msg += " with arguments %s" % seq2str2(args)
-            LOGGER.info("%s already imported by suite '%s'"
-                        % (msg, self._suite_name))
+                msg += f" with arguments {seq2str2(args)}"
+            LOGGER.info(f"{msg} already imported by suite '{self._suite_name}'.")
 
     def import_library(self, name, args=(), alias=None, notify=True):
         self._import_library(Import('Library', name, args, alias),
@@ -127,8 +126,8 @@ class Namespace:
         lib = IMPORTER.import_library(name, import_setting.args,
                                       import_setting.alias, self.variables)
         if lib.name in self._kw_store.libraries:
-            LOGGER.info("Test library '%s' already imported by suite '%s'"
-                        % (lib.name, self._suite_name))
+            LOGGER.info(f"Test library '{lib.name}' already imported by "
+                        f"suite '{self._suite_name}'.")
             return
         if notify:
             LOGGER.imported("Library", lib.name,
@@ -141,23 +140,22 @@ class Namespace:
         if self._running_test:
             lib.start_test()
 
-    def _resolve_name(self, import_setting):
-        name = import_setting.name
+    def _resolve_name(self, setting):
+        name = setting.name
         try:
             name = self.variables.replace_string(name)
         except DataError as err:
-            self._raise_replacing_vars_failed(import_setting, err)
-        return self._get_name(name, import_setting)
+            self._raise_replacing_vars_failed(setting, err)
+        return self._get_name(name, setting)
 
-    def _raise_replacing_vars_failed(self, import_setting, err):
-        raise DataError("Replacing variables from setting '%s' failed: %s"
-                        % (import_setting.type, err.message))
+    def _raise_replacing_vars_failed(self, setting, error):
+        raise DataError(f"Replacing variables from setting '{setting.type}' "
+                        f"failed: {error}")
 
-    def _get_name(self, name, import_setting):
-        if import_setting.type == 'Library' and not self._is_library_by_path(name):
+    def _get_name(self, name, setting):
+        if setting.type == 'Library' and not self._is_library_by_path(name):
             return name
-        return find_file(name, import_setting.directory,
-                         file_type=import_setting.type)
+        return find_file(name, setting.directory, file_type=setting.type)
 
     def _is_library_by_path(self, path):
         return path.lower().endswith(self._library_import_by_path_endings)
@@ -246,8 +244,8 @@ class KeywordStore:
 
     def _no_library_found(self, name, multiple=False):
         if multiple:
-            raise DataError("Multiple libraries matching '%s' found." % name)
-        raise DataError("No library '%s' found." % name)
+            raise DataError(f"Multiple libraries matching '{name}' found.")
+        raise DataError(f"No library '{name}' found.")
 
     def _get_lib_by_instance(self, instance):
         for lib in self.libraries.values():
@@ -264,22 +262,20 @@ class KeywordStore:
     def _raise_no_keyword_found(self, name):
         if name.strip(': ').upper() == 'FOR':
             raise KeywordError(
-                "Support for the old for loop syntax has been removed. "
-                "Replace '%s' with 'FOR', end the loop with 'END', and "
-                "remove escaping backslashes." % name
+                f"Support for the old FOR loop syntax has been removed. "
+                f"Replace '{name}' with 'FOR', end the loop with 'END', and "
+                f"remove escaping backslashes."
             )
         if name == '\\':
             raise KeywordError(
                 "No keyword with name '\\' found. If it is used inside a for "
                 "loop, remove escaping backslashes and end the loop with 'END'."
             )
-        msg = "No keyword with name '%s' found." % name
+        message = f"No keyword with name '{name}' found."
         finder = KeywordRecommendationFinder(self.user_keywords,
                                              self.libraries,
                                              self.resources)
-        recommendations = finder.recommend_similar_keywords(name)
-        msg = finder.format_recommendations(msg, recommendations)
-        raise KeywordError(msg)
+        raise KeywordError(finder.recommend_similar_keywords(name, message))
 
     def _get_runner(self, name):
         if not name:
@@ -363,17 +359,17 @@ class KeywordStore:
     def _custom_and_standard_keyword_conflict_warning(self, custom, standard):
         custom_with_name = standard_with_name = ''
         if custom.library.name != custom.library.orig_name:
-            custom_with_name = " imported as '%s'" % custom.library.name
+            custom_with_name = f" imported as '{custom.library.name}'"
         if standard.library.name != standard.library.orig_name:
-            standard_with_name = " imported as '%s'" % standard.library.name
-        warning = Message("Keyword '%s' found both from a custom test library "
-                          "'%s'%s and a standard library '%s'%s. The custom "
-                          "keyword is used. To select explicitly, and to get "
-                          "rid of this warning, use either '%s' or '%s'."
-                          % (standard.name,
-                             custom.library.orig_name, custom_with_name,
-                             standard.library.orig_name, standard_with_name,
-                             custom.longname, standard.longname), level='WARN')
+            standard_with_name = f" imported as '{standard.library.name}'"
+        warning = Message(
+            f"Keyword '{standard.name}' found both from a custom test library "
+            f"'{custom.library.orig_name}'{custom_with_name} and a standard library "
+            f"'{standard.library.orig_name}'{standard_with_name}. The custom keyword "
+            f"is used. To select explicitly, and to get rid of this warning, use "
+            f"either '{custom.longname}' or '{standard.longname}'.",
+            level='WARN'
+        )
         if custom.pre_run_messages:
             custom.pre_run_messages.append(warning)
         else:
@@ -398,7 +394,7 @@ class KeywordStore:
                 if eq(owner.name, owner_name) and name in owner.handlers]
 
     def _raise_multiple_keywords_found(self, name, found, implicit=True):
-        error = "Multiple keywords with name '%s' found" % name
+        error = f"Multiple keywords with name '{name}' found"
         if implicit:
             error += ". Give the full name of the keyword you want to use"
         names = sorted(runner.longname for runner in found)
@@ -412,13 +408,13 @@ class KeywordRecommendationFinder:
         self.libraries = libraries
         self.resources = resources
 
-    def recommend_similar_keywords(self, name):
+    def recommend_similar_keywords(self, name, message):
         """Return keyword names similar to `name`."""
         candidates = self._get_candidates('.' in name)
         finder = RecommendationFinder(
-            lambda name: normalize(candidates.get(name, name), ignore='_')
+            lambda name: normalize(candidates.get(name, name), ignore='_'),
         )
-        return finder.find(name, candidates)
+        return finder.find_and_format(name, candidates, message)
 
     @staticmethod
     def format_recommendations(message, recommendations):
@@ -427,7 +423,7 @@ class KeywordRecommendationFinder:
     def _get_candidates(self, use_full_name):
         names = {}
         for owner, name in self._get_all_handler_names():
-            full_name = '%s.%s' % (owner, name) if owner else name
+            full_name = f'{owner}.{name}' if owner else name
             names[full_name] = full_name if use_full_name else name
         return names
 
@@ -441,6 +437,4 @@ class KeywordRecommendationFinder:
                     ((library.name or '',
                       printable_name(handler.name, code_style=True))
                      for handler in library.handlers))
-        # TODO: is this still needed?
-        # sort handlers to ensure consistent ordering between Jython and Python
         return sorted(handlers)
