@@ -412,9 +412,10 @@ class KeywordRecommendationFinder:
         """Return keyword names similar to `name`."""
         candidates = self._get_candidates('.' in name)
         finder = RecommendationFinder(
-            lambda name: normalize(candidates.get(name, name), ignore='_'),
+            lambda name: normalize(candidates.get(name, name), ignore='_')
         )
-        return finder.find_and_format(name, candidates, message)
+        return finder.find_and_format(name, candidates, message,
+                                      check_missing_argument_separator=True)
 
     @staticmethod
     def format_recommendations(message, recommendations):

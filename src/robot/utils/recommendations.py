@@ -15,15 +15,24 @@
 
 import difflib
 
+from robot.utils import seq2str
+
 
 class RecommendationFinder:
 
     def __init__(self, normalizer=None):
         self.normalizer = normalizer or (lambda x: x)
 
-    def find_and_format(self, name, candidates, message, max_matches=10):
+    def find_and_format(self, name, candidates, message, max_matches=10,
+                        check_missing_argument_separator=False):
         recommendations = self.find(name, candidates, max_matches)
-        return self.format(message, recommendations)
+        if recommendations:
+            return self.format(message, recommendations)
+        if check_missing_argument_separator and name:
+            recommendation = self._check_missing_argument_separator(name, candidates)
+            if recommendation:
+                return f'{message} {recommendation}'
+        return message
 
     def find(self, name, candidates, max_matches=10):
         """Return a list of close matches to `name` from `candidates`."""
@@ -73,3 +82,13 @@ class RecommendationFinder:
         """
         cutoff = min_cutoff + len(string) * step
         return min(cutoff, max_cutoff)
+
+    def _check_missing_argument_separator(self, name, candidates):
+        name = self.normalizer(name)
+        candidates = self._get_normalized_candidates(candidates)
+        matches = [c for c in candidates if name.startswith(c)]
+        if not matches:
+            return None
+        candidates = self._get_original_candidates(matches, candidates)
+        return (f"Did you try using keyword {seq2str(candidates, lastsep=' or ')} "
+                f"and forgot to use enough whitespace between keyword and arguments?")
