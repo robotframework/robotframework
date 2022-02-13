@@ -160,6 +160,7 @@ class VariableScopes:
 
 
 class GlobalVariables(Variables):
+    _import_by_path_ends = ('.py', '/', os.sep, '.yaml', '.yml')
 
     def __init__(self, settings):
         Variables.__init__(self)
@@ -167,10 +168,11 @@ class GlobalVariables(Variables):
         self._set_built_in_variables(settings)
 
     def _set_cli_variables(self, settings):
-        for path, args in settings.variable_files:
+        for name, args in settings.variable_files:
             try:
-                path = find_file(path, file_type='Variable file')
-                self.set_from_file(path, args)
+                if name.lower().endswith(self._import_by_path_ends):
+                    name = find_file(name, file_type='Variable file')
+                self.set_from_file(name, args)
             except:
                 msg, details = get_error_details()
                 LOGGER.error(msg)

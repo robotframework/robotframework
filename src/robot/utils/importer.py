@@ -59,7 +59,7 @@ class Importer:
             using them.
         :param return_source:
             When true, returns a tuple containing the imported module or class
-            and a path to it. By default returns only the imported module or class.
+            and a path to it. By default, returns only the imported module or class.
 
         The class or module to import can be specified either as a name, in which
         case it must be in the module search path, or as a path to the file or

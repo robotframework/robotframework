@@ -35,7 +35,8 @@ IMPORTER = Importer()
 
 class Namespace:
     _default_libraries = ('BuiltIn', 'Reserved', 'Easter')
-    _library_import_by_path_endings = ('.py', '/', os.sep)
+    _library_import_by_path_ends = ('.py', '/', os.sep)
+    _variables_import_by_path_ends = _library_import_by_path_ends + ('.yaml', '.yml')
 
     def __init__(self, variables, suite, resource):
         LOGGER.info(f"Initializing namespace for suite '{suite.longname}'.")
@@ -146,19 +147,20 @@ class Namespace:
             name = self.variables.replace_string(name)
         except DataError as err:
             self._raise_replacing_vars_failed(setting, err)
-        return self._get_name(name, setting)
+        if self._is_import_by_path(setting.type, name):
+            return find_file(name, setting.directory, file_type=setting.type)
+        return name
 
     def _raise_replacing_vars_failed(self, setting, error):
         raise DataError(f"Replacing variables from setting '{setting.type}' "
                         f"failed: {error}")
 
-    def _get_name(self, name, setting):
-        if setting.type == 'Library' and not self._is_library_by_path(name):
-            return name
-        return find_file(name, setting.directory, file_type=setting.type)
-
-    def _is_library_by_path(self, path):
-        return path.lower().endswith(self._library_import_by_path_endings)
+    def _is_import_by_path(self, import_type, path):
+        if import_type == 'Library':
+            return path.lower().endswith(self._library_import_by_path_ends)
+        if import_type == 'Variables':
+            return path.lower().endswith(self._variables_import_by_path_ends)
+        return True
 
     def _resolve_args(self, import_setting):
         try:

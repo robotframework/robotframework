@@ -92,7 +92,7 @@ class YamlImporter:
 class PythonImporter:
 
     def import_variables(self, path, args=None):
-        importer = Importer('variable file', LOGGER).import_class_or_module_by_path
+        importer = Importer('variable file', LOGGER).import_class_or_module
         var_file = importer(path, instantiate_with_args=())
         return self._get_variables(var_file, args)
 

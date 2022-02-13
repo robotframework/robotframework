@@ -25,3 +25,10 @@ Variable File From PYTHONPATH
 Variable File From PYTHONPATH with arguments
     Should Be Equal  ${PYTHONPATH VAR 3}  Varfile found from PYTHONPATH
     Should Be Equal  ${PYTHONPATH ARGS 3}  1-2-3
+
+Variable File From PYTHONPATH as module
+    Should Be Equal  ${PYTHONPATH VAR 2}    Varfile found from PYTHONPATH
+    Should Be Equal  ${PYTHONPATH ARGS 2}   as-module
+
+Variable File From PYTHONPATH as submodule
+    Should be Equal    ${VARIABLE IN SUBMODULE}    VALUE IN SUBMODULE
