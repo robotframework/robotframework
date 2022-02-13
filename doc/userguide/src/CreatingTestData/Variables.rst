@@ -1007,6 +1007,13 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    +------------------------+-------------------------------------------------------+------------+
    | ${PREV TEST MESSAGE}   | The possible error message of the previous test case. | Everywhere |
    +------------------------+-------------------------------------------------------+------------+
+   | ${SETTINGS}            | A dictionary exposing some command line options used  | Everywhere |
+   |                        | for running the current test:                         |            |
+   |                        | - EXCLUDE_TAGS                                        |            |
+   |                        |   A list of tags provided by the -exclude (-e) option |            |
+   |                        | - INCLUDE_TAGS                                        |            |
+   |                        |   A list of tags provided by the -include (-i) option |            |
+   +------------------------+-------------------------------------------------------+------------+
    | ${SUITE NAME}          | The full name of the current test suite.              | Everywhere |
    +------------------------+-------------------------------------------------------+------------+
    | ${SUITE SOURCE}        | An absolute path to the suite file or directory.      | Everywhere |

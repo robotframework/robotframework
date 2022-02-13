@@ -185,6 +185,8 @@ class GlobalVariables(Variables):
     def _set_built_in_variables(self, settings):
         for name, value in [('${TEMPDIR}', abspath(tempfile.gettempdir())),
                             ('${EXECDIR}', abspath('.')),
+                            ('&{SETTINGS}',    {"EXCLUDE_TAGS": settings.suite_config['exclude_tags'], 
+                                                "INCLUDE_TAGS": settings.suite_config['include_tags']}),
                             ('${/}', os.sep),
                             ('${:}', os.pathsep),
                             ('${\\n}', os.linesep),

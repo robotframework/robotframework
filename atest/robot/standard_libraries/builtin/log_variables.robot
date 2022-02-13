@@ -29,6 +29,7 @@ Log Variables In Suite Setup
     Check Variable Message    \${PREV_TEST_STATUS} =
     Check Variable Message    \${REPORT_FILE} = NONE
     Check Variable Message    \${SCALAR} = Hi tellus
+    Check Variable Message    \&{SETTINGS} = { EXCLUDE_TAGS=[] | INCLUDE_TAGS=[] }
     Check Variable Message    \${SPACE} =
     Check Variable Message    \${SUITE_DOCUMENTATION} =
     Check Variable Message    \&{SUITE_METADATA} = { }
@@ -41,7 +42,7 @@ Log Variables In Suite Setup
     Check Variable Message    \${SUITE_SOURCE} = *    pattern=yes
     Check Variable Message    \${TEMPDIR} = *    pattern=yes
     Check Variable Message    \${True} = *    pattern=yes
-    Should Be Equal As Integers    ${kw.message_count}    34    Wrong total message count
+    Should Be Equal As Integers    ${kw.message_count}    35    Wrong total message count
 
 Log Variables In Test
     ${test} =    Check Test Case    Log Variables
@@ -69,6 +70,7 @@ Log Variables In Test
     Check Variable Message    \${PREV_TEST_STATUS} = PASS
     Check Variable Message    \${REPORT_FILE} = NONE
     Check Variable Message    \${SCALAR} = Hi tellus
+    Check Variable Message    \&{SETTINGS} = { EXCLUDE_TAGS=[] | INCLUDE_TAGS=[] }
     Check Variable Message    \${SPACE} =
     Check Variable Message    \${SUITE_DOCUMENTATION} =
     Check Variable Message    \&{SUITE_METADATA} = { }
@@ -83,7 +85,7 @@ Log Variables In Test
     Check Variable Message    \${TEST_NAME} = Log Variables
     Check Variable Message    \@{TEST_TAGS} = [ ]
     Check Variable Message    \${True} = *    pattern=yes
-    Should Be Equal As Integers    ${kw.message_count}    38    Wrong total message count
+    Should Be Equal As Integers    ${kw.message_count}    39    Wrong total message count
 
 Log Variables After Setting New Variables
     ${test} =    Check Test Case    Log Variables
@@ -113,6 +115,7 @@ Log Variables After Setting New Variables
     Check Variable Message    \${PREV_TEST_STATUS} = PASS    DEBUG
     Check Variable Message    \${REPORT_FILE} = NONE    DEBUG
     Check Variable Message    \${SCALAR} = Hi tellus    DEBUG
+    Check Variable Message    \&{SETTINGS} = { EXCLUDE_TAGS=[] | INCLUDE_TAGS=[] }    DEBUG
     Check Variable Message    \${SPACE} =    DEBUG
     Check Variable Message    \${SUITE_DOCUMENTATION} =    DEBUG
     Check Variable Message    \&{SUITE_METADATA} = { }    DEBUG
@@ -128,7 +131,7 @@ Log Variables After Setting New Variables
     Check Variable Message    \@{TEST_TAGS} = [ ]    DEBUG
     Check Variable Message    \${True} = *    DEBUG    pattern=yes
     Check Variable Message    \${var} = Hello    DEBUG
-    Should Be Equal As Integers    ${kw.message_count}    41    Wrong total message count
+    Should Be Equal As Integers    ${kw.message_count}    42    Wrong total message count
 
 Log Variables In User Keyword
     ${test} =    Check Test Case    Log Variables
@@ -156,6 +159,7 @@ Log Variables In User Keyword
     Check Variable Message    \${PREV_TEST_STATUS} = PASS
     Check Variable Message    \${REPORT_FILE} = NONE
     Check Variable Message    \${SCALAR} = Hi tellus
+    Check Variable Message    \&{SETTINGS} = { EXCLUDE_TAGS=[] | INCLUDE_TAGS=[] }
     Check Variable Message    \${SPACE} =
     Check Variable Message    \${SUITE_DOCUMENTATION} =
     Check Variable Message    \&{SUITE_METADATA} = { }
@@ -171,7 +175,7 @@ Log Variables In User Keyword
     Check Variable Message    \@{TEST_TAGS} = [ ]
     Check Variable Message    \${True} = *    pattern=yes
     Check Variable Message    \${ukvar} = Value of an uk variable
-    Should Be Equal As Integers    ${kw.message_count}    39    Wrong total message count
+    Should Be Equal As Integers    ${kw.message_count}    40    Wrong total message count
 
 List and dict variables failing during iteration
     Check Test Case    ${TEST NAME}
