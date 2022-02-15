@@ -36,7 +36,13 @@ Embedded Arguments as Variables
     Should Be Equal    ${name}-${item}    42-${SPACE*10}
     ${name}    ${item} =    User ${name} Selects ${TEST TAGS} From Webshop
     Should Be Equal    ${name}    ${42}
-    Should Be True    ${item} == []
+    Should Be Equal    ${item}    ${{[]}}
+
+Embedded Arguments as List And Dict Variables
+    ${i1}    ${i2} =    Evaluate    [1, 2, 3, 'neljä'], {'a': 1, 'b': 2}
+    ${o1}    ${o2} =    User @{i1} Selects &{i2} From Webshop
+    Should Be Equal    ${o1}    ${i1}
+    Should Be Equal    ${o2}    ${i2}
 
 Non-Existing Variable in Embedded Arguments
     [Documentation]    FAIL Variable '${non existing}' not found.

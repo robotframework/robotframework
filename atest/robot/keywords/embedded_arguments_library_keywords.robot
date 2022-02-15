@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  keywords/embedded_arguments_library_keywords.robot
+Suite Setup     Run Tests    ${EMPTY}    keywords/embedded_arguments_library_keywords.robot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -22,7 +22,7 @@ Complex Embedded Arguments
     Check Log Message    ${tc.kws[0].msgs[0]}    feature-works
     Check Log Message    ${tc.kws[1].msgs[0]}    test case-is *executed*
     Check Log Message    ${tc.kws[2].msgs[0]}    issue-is about to be done!
-    File Should Contain    ${OUTFILE}    sourcename="\${prefix:Given|When|Then} this 
+    File Should Contain    ${OUTFILE}    sourcename="\${prefix:Given|When|Then} this
     File Should Not Contain    ${OUTFILE}    sourcename="Log"
 
 Embedded Arguments with BDD Prefixes
@@ -53,6 +53,10 @@ Embedded Arguments as Variables
     File Should Contain    ${OUTFILE}
     ...    name="User \${name} Selects \${SPACE * 10} From Webshop"
     File Should Not Contain    ${OUTFILE}    sourcename="Log"
+
+Embedded Arguments as List And Dict Variables
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Keyword Data    ${tc.kws[1]}    embedded_args_in_lk_1.User \@{i1} Selects \&{i2} From Webshop    \${o1}, \${o2}
 
 Non-Existing Variable in Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}

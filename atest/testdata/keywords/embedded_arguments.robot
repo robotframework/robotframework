@@ -36,11 +36,25 @@ Embedded Arguments as Variables
     Should Be Equal    ${name}-${item}    42-${SPACE*10}
     ${name}    ${item} =    User ${name} Selects ${TEST TAGS} From Webshop
     Should Be Equal    ${name}    ${42}
-    Should Be True    ${item} == []
+    Should Be Equal    ${item}    ${{[]}}
+
+Embedded Arguments as List And Dict Variables
+    ${i1}    ${i2} =    Evaluate    [1, 2, 3, 'neljä'], {'a': 1, 'b': 2}
+    ${o1}    ${o2} =    User @{i1} Selects &{i2} From Webshop
+    Should Be Equal    ${o1}    ${i1}
+    Should Be Equal    ${o2}    ${i2}
 
 Non-Existing Variable in Embedded Arguments
     [Documentation]    FAIL Variable '${non existing}' not found.
     User ${non existing} Selects ${variables} From Webshop
+
+Invalid List Variable as Embedded Argument
+    [Documentation]    FAIL Value of variable '\@{TEST NAME}' is not list or list-like.
+    User @{TEST NAME} Selects ${whatever} From Webshop
+
+Invalid Dict Variable as Embedded Argument
+    [Documentation]    FAIL Value of variable '\&{TEST NAME}' is not dictionary or dictionary-like.
+    User &{TEST NAME} Selects ${whatever} From Webshop
 
 Non-Existing Variable in Embedded Arguments and Positional Arguments
     [Documentation]    FAIL Keyword 'User \${user} Selects \${item} From Webshop' expected 0 arguments, got 2.
@@ -195,7 +209,7 @@ Same name with same regexp fails
 *** Keywords ***
 User ${user} Selects ${item} From Webshop
     Log    This is always executed
-    [Return]    ${user}    ${item}
+    RETURN    ${user}    ${item}
 
 ${prefix:Given|When|Then} this "${item}" ${no good name for this arg ...}
     Log    ${item}-${no good name for this arg ...}
@@ -258,7 +272,7 @@ Custom Regexp With ${pattern:\\\\{}}
     Should Be Equal    ${pattern}    \\{}
 
 Grouping ${x:Cu(st|ts)(om)?} ${y:Regexp\(?erts\)?}
-    [Return]    ${x}-${y}
+    RETURN    ${x}-${y}
 
 Regexp extensions like ${x:(?x)re} are not supported
     This is not executed

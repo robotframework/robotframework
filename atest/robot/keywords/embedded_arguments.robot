@@ -54,9 +54,19 @@ Embedded Arguments as Variables
     ...    sourcename="User \${user} Selects \${item} From Webshop"
     File Should Not Contain    ${OUTFILE}    sourcename="Log">
 
+Embedded Arguments as List And Dict Variables
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Keyword Data    ${tc.kws[1]}    User \@{i1} Selects \&{i2} From Webshop    \${o1}, \${o2}
+
 Non-Existing Variable in Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0]}    User \${non existing} Selects \${variables} From Webshop    status=FAIL
+
+Invalid List Variable as Embedded Argument
+    Check Test Case    ${TEST NAME}
+
+Invalid Dict Variable as Embedded Argument
+    Check Test Case    ${TEST NAME}
 
 Non-Existing Variable in Embedded Arguments and Positional Arguments
     Check Test Case    ${TEST NAME}
@@ -84,13 +94,13 @@ Custom Regexp Matching Variables When Regexp Does No Match Them
 
 Regexp Extensions Are Not Supported
     Check Test Case    ${TEST NAME}
-    Creating Keyword Failed    1    263
+    Creating Keyword Failed    1    277
     ...    Regexp extensions like \${x:(?x)re} are not supported
     ...    Regexp extensions are not allowed in embedded arguments.
 
 Invalid Custom Regexp
     Check Test Case    ${TEST NAME}
-    Creating Keyword Failed    2    266
+    Creating Keyword Failed    2    280
     ...    Invalid \${x:(} Regexp
     ...    Compiling embedded arguments regexp failed: *
 
@@ -127,7 +137,7 @@ Keyword with embedded args cannot be used as "normal" keyword
     Check Test Case    ${TEST NAME}
 
 Creating keyword with both normal and embedded arguments fails
-    Creating Keyword Failed    0    209
+    Creating Keyword Failed    0    223
     ...    Keyword with \${embedded} and normal args is invalid
     ...    Keyword cannot have both normal and embedded arguments.
     Check Test Case    ${TEST NAME}

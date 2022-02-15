@@ -305,6 +305,13 @@ class EmbeddedArgumentsHandler:
     def create_runner(self, name):
         return EmbeddedArgumentsRunner(self, name)
 
+    def resolve_arguments(self, args, variables=None):
+        positional = [variables.replace_scalar(a) for a in args] if variables else args
+        named = {}
+        argspec = self._orig_handler.arguments
+        return argspec.convert(positional, named, self.library.converters,
+                               dry_run=not variables)
+
     def __copy__(self):
         orig_handler = copy(self._orig_handler)
         return EmbeddedArgumentsHandler(self.name_regexp, orig_handler)
