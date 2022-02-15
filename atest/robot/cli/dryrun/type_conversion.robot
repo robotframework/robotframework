@@ -11,5 +11,5 @@ Keyword Decorator
     Should be equal    ${SUITE.status}    PASS
 
 Custom converters
-    Run Tests    --dryrun    keywords/type_conversion/custom_converters.robot
+    Run Tests    --dryrun --exclude no-dry-run    keywords/type_conversion/custom_converters.robot
     Should be equal    ${SUITE.status}    PASS

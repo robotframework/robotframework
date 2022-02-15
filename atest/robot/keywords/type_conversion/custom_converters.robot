@@ -39,6 +39,18 @@ Non-type annotation
 Using library decorator
     Check Test Case    ${TESTNAME}
 
+With embedded arguments
+    Check Test Case    ${TESTNAME}
+
+Failing conversion with embedded arguments
+    Check Test Case    ${TESTNAME}
+
+With dynamic library
+    Check Test Case    ${TESTNAME}
+
+Failing conversion with dynamic library
+    Check Test Case    ${TESTNAME}
+
 Invalid converter dictionary
     Check Test Case    ${TESTNAME}
     Check Log Message    ${ERRORS}[-1]

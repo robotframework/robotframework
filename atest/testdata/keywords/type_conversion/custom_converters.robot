@@ -1,6 +1,7 @@
 *** Settings ***
 Library           CustomConverters.py
 Library           CustomConvertersWithLibraryDecorator.py
+Library           CustomConvertersWithDynamicLibrary.py
 Library           InvalidCustomConverters.py
 Resource          conversion.resource
 
@@ -60,7 +61,24 @@ Non-type annotation
 
 Using library decorator
     Using library decorator    one    1
-    Using library decorator    two    2
+    Using library decorator    expected=2    value=two
+
+With embedded arguments
+    Embedded "one" should be equal to "1"
+    Embedded "two" should be equal to "2"
+
+Failing conversion with embedded arguments
+    [Documentation]    FAIL    ValueError: Argument 'value' got value 'bad' that cannot be converted to Number: Don't know number 'bad'.
+    [Tags]    no-dry-run
+    Embedded "bad" should be equal to "1"
+
+With dynamic library
+    Dynamic keyword    one    1
+    Dynamic keyword    expected=2    argument=two
+
+Failing conversion with dynamic library
+    [Template]    Conversion should fail
+    Dynamic keyword    bad    1    type=Number     error=Don't know number 'bad'.
 
 Invalid converter dictionary
     Keyword in library with invalid converters    666
