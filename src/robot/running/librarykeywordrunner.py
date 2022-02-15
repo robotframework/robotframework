@@ -130,20 +130,20 @@ class LibraryKeywordRunner:
 class EmbeddedArgumentsRunner(LibraryKeywordRunner):
 
     def __init__(self, handler, name):
-        LibraryKeywordRunner.__init__(self, handler, name)
+        super().__init__(handler, name)
         self._embedded_args = handler.name_regexp.match(name).groups()
 
     def _run(self, context, args):
         if args:
             raise DataError("Positional arguments are not allowed when using "
                             "embedded arguments.")
-        return LibraryKeywordRunner._run(self, context, self._embedded_args)
+        return super()._run(context, self._embedded_args)
 
     def _dry_run(self, context, args):
-        return LibraryKeywordRunner._dry_run(self, context, self._embedded_args)
+        return super()._dry_run(context, self._embedded_args)
 
     def _get_result(self, kw, assignment):
-        result = LibraryKeywordRunner._get_result(self, kw, assignment)
+        result = super()._get_result(kw, assignment)
         result.sourcename = self._handler.name
         return result
 
@@ -151,7 +151,7 @@ class EmbeddedArgumentsRunner(LibraryKeywordRunner):
 class RunKeywordRunner(LibraryKeywordRunner):
 
     def __init__(self, handler, default_dry_run_keywords=False):
-        LibraryKeywordRunner.__init__(self, handler)
+        super().__init__(handler)
         self._default_dry_run_keywords = default_dry_run_keywords
 
     def _get_timeout(self, context):
@@ -161,7 +161,7 @@ class RunKeywordRunner(LibraryKeywordRunner):
         return self._run_with_signal_monitoring(runner, context)
 
     def _dry_run(self, context, args):
-        LibraryKeywordRunner._dry_run(self, context, args)
+        super()._dry_run(context, args)
         keywords = [kw for kw in self._get_dry_run_keywords(args)
                     if not contains_variable(kw.name)]
         BodyRunner(context).run(keywords)
@@ -199,7 +199,7 @@ class RunKeywordRunner(LibraryKeywordRunner):
         expr_and_call = given_args[:index]
         remaining = given_args[index+1:]
         if not (self._validate_kw_call(expr_and_call) and
-                    self._validate_kw_call(remaining, required_after)):
+                self._validate_kw_call(remaining, required_after)):
             raise DataError("Invalid 'Run Keyword If' usage.")
         if is_list_variable(expr_and_call[0]):
             return (), remaining

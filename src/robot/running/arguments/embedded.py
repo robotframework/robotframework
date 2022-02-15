@@ -86,6 +86,6 @@ class EmbeddedArgumentParser:
     def _compile_regexp(self, pattern):
         try:
             return re.compile(''.join(pattern), re.IGNORECASE)
-        except:
+        except Exception:
             raise DataError("Compiling embedded arguments regexp failed: %s"
                             % get_error_message())
