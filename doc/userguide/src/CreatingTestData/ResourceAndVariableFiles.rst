@@ -170,6 +170,8 @@ directories in the `module search path`_. The path can also contain variables,
 and slashes are converted to backslashes on Windows. If an `argument file takes
 arguments`__, they are specified in the cells after the path and also they
 can contain variables.
+When using the syntax `packagename.modulename`, a standard Python package is
+needed with a `__init__.py` file in the package folder.
 
 __ `Taking resource files into use`_
 __ `Getting variables from a special function`_
@@ -178,9 +180,13 @@ __ `Getting variables from a special function`_
 
    *** Settings ***
    Variables    myvariables.py
+   Variables    modulename
+   Variables    packagename.modulename
    Variables    ../data/variables.py
    Variables    ${RESOURCES}/common.py
    Variables    taking_arguments.py    arg1    ${ARG2}
+   Variables    module_taking_arguments    arg1    ${ARG2}
+   Variables    packagename.module_taking_arguments    arg1    ${ARG2}
 
 All variables from a variable file are available in the test data file
 that imports it. If several variable files are imported and they
@@ -196,9 +202,13 @@ Another way to take variable files into use is using the command line option
 and possible arguments are joined to the path with a colon (`:`)::
 
    --variablefile myvariables.py
+   --variablefile modulename
+   --variablefile packagename.modulename
    --variablefile path/variables.py
    --variablefile /absolute/path/common.py
    --variablefile taking_arguments.py:arg1:arg2
+   --variablefile module_taking_arguments:arg1:arg2
+   --variablefile packagename.module_taking_arguments:arg1:arg2
 
 Variable files taken into use from the
 command line are also searched from the `module search path`_ similarly as
