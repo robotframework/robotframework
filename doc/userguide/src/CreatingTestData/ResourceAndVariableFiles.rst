@@ -11,8 +11,8 @@ as well. The main difference is that resource files cannot have tests.
 *Variable files* provide a powerful mechanism for creating and sharing
 variables. For example, they allow values other than strings and
 enable creating variables dynamically. Their flexibility comes from
-the fact that they are created using Python code, which also makes
-them somewhat more complicated than `Variable sections`_.
+the fact that they are created using Python or YAML, which
+also makes them somewhat more complicated than `Variable sections`_.
 
 .. contents::
    :depth: 2
@@ -127,8 +127,8 @@ Variable files
 --------------
 
 Variable files contain variables_ that can be used in the test
-data. Variables can also be created using Variable sections or set from
-the command line, but variable files allow creating them dynamically
+data. Variables can also be created using `Variable sections`_ or `set from
+the command line`__, but variable files allow creating them dynamically
 and also make it easy to create other variable values than strings.
 
 Variable files are typically implemented as Python modules and there are
@@ -151,6 +151,7 @@ that the framework will instantiate. Also in this case it is possible to create
 variables as attributes or get them dynamically from the `get_variables`
 method. Variable files can also be created as `YAML files`__.
 
+__ `Setting variables in command line`_
 __ `Implementing variable file as Python or Java class`_
 __ `Variable file as YAML`_
 
@@ -160,33 +161,44 @@ Taking variable files into use
 Setting section
 '''''''''''''''
 
-All test data files can import variables using the
-:setting:`Variables` setting in the Setting section, in the same way as
-`resource files are imported`__ using the :setting:`Resource`
-setting. Similarly to resource files, the path to the imported
-variable file is considered relative to the directory where the
-importing file is, and if not found, it is searched from the
-directories in the `module search path`_. The path can also contain variables,
-and slashes are converted to backslashes on Windows. If an `argument file takes
-arguments`__, they are specified in the cells after the path and also they
-can contain variables.
-When using the syntax `packagename.modulename`, a standard Python package is
-needed with a `__init__.py` file in the package folder.
+All test data files can import variable files using the :setting:`Variables`
+setting in the Setting section. Variable files are typically imported using
+a path to the file same way as `resource files are imported`__ using
+the :setting:`Resource` setting. Similarly to resource files, the path to
+the imported variable file is considered relative to the directory where the
+importing file is, and if not found, it is searched from directories
+in the `module search path`_. The path can also contain variables,
+and slashes are converted to backslashes on Windows.
 
-__ `Taking resource files into use`_
-__ `Getting variables from a special function`_
+Examples:
 
 .. sourcecode:: robotframework
 
    *** Settings ***
    Variables    myvariables.py
-   Variables    modulename
-   Variables    packagename.modulename
    Variables    ../data/variables.py
-   Variables    ${RESOURCES}/common.py
-   Variables    taking_arguments.py    arg1    ${ARG2}
-   Variables    module_taking_arguments    arg1    ${ARG2}
-   Variables    packagename.module_taking_arguments    arg1    ${ARG2}
+   Variables    ${RESOURCES}/common.yaml
+
+Starting from Robot Framework 5.0, variable files implemented using Python
+can also be imported using the module name `similarly as libraries`__.
+When using this approach, the module needs to be in the `module search path`_.
+
+Examples:
+
+.. sourcecode:: robotframework
+
+   *** Settings ***
+   Variables    myvariables
+   Variables    rootmodule.Variables
+
+If a `variable file accepts arguments`__, they are specified after the path
+or name of the variable file to import:
+
+.. sourcecode:: robotframework
+
+   *** Settings ***
+   Variables    arguments.py    arg1    ${ARG2}
+   Variables    arguments    argument
 
 All variables from a variable file are available in the test data file
 that imports it. If several variable files are imported and they
@@ -194,25 +206,29 @@ contain a variable with the same name, the one in the earliest imported file is
 taken into use. Additionally, variables created in Variable sections and
 set from the command line override variables from variable files.
 
+__ `Taking resource files into use`_
+__ `Specifying library to import`_
+__ `Getting variables from a special function`_
+
 Command line
 ''''''''''''
 
 Another way to take variable files into use is using the command line option
-:option:`--variablefile`. Variable files are referenced using a path to them,
-and possible arguments are joined to the path with a colon (`:`)::
+:option:`--variablefile`. Variable files are referenced using a path or
+module name similarly as when importing them using the :setting:`Variables`
+setting. Possible arguments are joined to the path with a colon (`:`)::
 
    --variablefile myvariables.py
-   --variablefile modulename
-   --variablefile packagename.modulename
    --variablefile path/variables.py
    --variablefile /absolute/path/common.py
-   --variablefile taking_arguments.py:arg1:arg2
-   --variablefile module_taking_arguments:arg1:arg2
-   --variablefile packagename.module_taking_arguments:arg1:arg2
+   --variablefile variablemodule
+   --variablefile arguments.py:arg1:arg2
+   --variablefile rootmodule.Variables:arg1:arg2
 
 Variable files taken into use from the
 command line are also searched from the `module search path`_ similarly as
-variable files imported in the Setting section.
+variable files imported in the Setting section. Relative paths are considered
+relative to the directory where execution is started from.
 
 If a variable file is given as an absolute Windows path, the colon after the
 drive letter is not considered a separator::
@@ -224,12 +240,12 @@ It is also possible to use a semicolon
 themselves contain colons, but requires surrounding the whole value with
 quotes on UNIX-like operating systems::
 
-   --variablefile "myvariables.py;argument:with:colons"
    --variablefile C:\path\variables.py;D:\data.xls
+   --variablefile "myvariables.py;argument:with:colons"
 
-Variables in these variable files are globally available in all test data
-files, similarly as `individual variables`__ set with the
-:option:`--variable` option. If both :option:`--variablefile` and
+Variables in variable files taken use on the command line are globally
+available in all test data files, similarly as `individual variables`__
+set with the :option:`--variable` option. If both :option:`--variablefile` and
 :option:`--variable` options are used and there are variables with same
 names, those that are set individually with
 :option:`--variable` option take precedence.
