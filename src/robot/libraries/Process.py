@@ -28,7 +28,7 @@ from robot.api import logger
 
 
 class Process:
-    """Robot Framework test library for running processes.
+    """Robot Framework library for running processes.
 
     This library utilizes Python's
     [http://docs.python.org/library/subprocess.html|subprocess]
@@ -114,8 +114,8 @@ class Process:
 
     == Current working directory ==
 
-    By default the child process will be executed in the same directory
-    as the parent process, the process running tests, is executed. This
+    By default, the child process will be executed in the same directory
+    as the parent process, the process running Robot Framework, is executed. This
     can be changed by giving an alternative location using the ``cwd`` argument.
     Forward slashes in the given path are automatically converted to
     backslashes on Windows.

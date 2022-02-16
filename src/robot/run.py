@@ -306,7 +306,7 @@ Options
                           The seed must be an integer.
                           Examples: --randomize all
                                     --randomize tests:1234
-    --prerunmodifier class *  Class to programmatically modify the test suite
+    --prerunmodifier class *  Class to programmatically modify the suite
                           structure before execution.
     --prerebotmodifier class *  Class to programmatically modify the result
                           model before creating reports and logs.
@@ -327,15 +327,14 @@ Options
  -K --consolemarkers auto|on|off  Show markers on the console when top level
                           keywords in a test case end. Values have same
                           semantics as with --consolecolors.
- -P --pythonpath path *   Additional locations (directories, ZIPs) where
-                          to search test libraries and other extensions when
-                          they are imported. Multiple paths can be given by
-                          separating them with a colon (`:`) or by using this
-                          option several times. Given path can also be a glob
-                          pattern matching multiple paths.
-                          Examples:
-                          --pythonpath libs/
-                          --pythonpath /opt/testlibs:mylibs.zip:yourlibs
+ -P --pythonpath path *   Additional locations (directories, ZIPs) where to
+                          search libraries and other extensions when they are
+                          imported. Multiple paths can be given by separating
+                          them with a colon (`:`) or by using this option
+                          several times. Given path can also be a glob pattern
+                          matching multiple paths.
+                          Examples: --pythonpath libs/
+                                    --pythonpath /opt/libs:libraries.zip
  -A --argumentfile path *  Text file to read more arguments from. Use special
                           path `STDIN` to read contents from the standard input
                           stream. File can have both options and input files
@@ -347,7 +346,7 @@ Options
                           |  --include regression
                           |  --name Regression Tests
                           |  # This is a comment line
-                          |  my_tests.robot
+                          |  tests.robot
                           |  path/to/test/directory/
                           Examples:
                           --argumentfile argfile.txt --argumentfile STDIN

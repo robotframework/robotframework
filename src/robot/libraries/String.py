@@ -27,7 +27,7 @@ from robot.version import get_version
 
 
 class String:
-    """A test library for string manipulation and verification.
+    """A library for string manipulation and verification.
 
     ``String`` is Robot Framework's standard library for manipulating
     strings (e.g. `Replace String Using Regexp`, `Split To Lines`) and
@@ -102,7 +102,7 @@ class String:
         "example" on it own and also if followed by ".", "!" or "?".
         See `BuiltIn.Should Match Regexp` for more information about Python
         regular expression syntax in general and how to use it in Robot
-        Framework test data in particular.
+        Framework data in particular.
 
         Examples:
         | ${str1} = | Convert To Title Case | hello, world!     |
@@ -340,7 +340,7 @@ class String:
 
         See `BuiltIn.Should Match Regexp` for more information about
         Python regular expression syntax in general and how to use it
-        in Robot Framework test data in particular.
+        in Robot Framework data in particular.
 
         By default lines match only if they match the pattern fully, but
         partial matching can be enabled by giving the ``partial_match``
@@ -384,7 +384,7 @@ class String:
         ``string`` is the string to find matches from and ``pattern`` is the
         regular expression. See `BuiltIn.Should Match Regexp` for more
         information about Python regular expression syntax in general and how
-        to use it in Robot Framework test data in particular.
+        to use it in Robot Framework data in particular.
 
         If no groups are used, the returned list contains full matches. If one
         group is used, the list contains only contents of that group. If
@@ -446,7 +446,7 @@ class String:
         the ``pattern`` to search for is considered to be a regular
         expression.  See `BuiltIn.Should Match Regexp` for more
         information about Python regular expression syntax in general
-        and how to use it in Robot Framework test data in particular.
+        and how to use it in Robot Framework data in particular.
 
         If you need to just remove a string see `Remove String Using Regexp`.
 
@@ -749,7 +749,7 @@ class String:
         "example" on it own and also if followed by ".", "!" or "?".
         See `BuiltIn.Should Match Regexp` for more information about Python
         regular expression syntax in general and how to use it in Robot
-        Framework test data in particular.
+        Framework data in particular.
 
         See also `Should Be Upper Case` and `Should Be Lower Case`.
         """

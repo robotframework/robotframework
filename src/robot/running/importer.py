@@ -72,7 +72,7 @@ class Importer:
         args = positional + ['%s=%s' % arg for arg in named]
         key = (name, positional, named)
         if key in self._library_cache:
-            LOGGER.info("Found test library '%s' with arguments %s from cache"
+            LOGGER.info("Found library '%s' with arguments %s from cache."
                         % (name, seq2str2(args)))
             return self._library_cache[key]
         lib.create_handlers()

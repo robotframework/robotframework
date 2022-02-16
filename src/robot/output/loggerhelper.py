@@ -81,7 +81,7 @@ class Message(BaseMessage):
         message = self._normalize_message(message)
         level, html = self._get_level_and_html(level, html)
         timestamp = timestamp or get_timestamp()
-        BaseMessage.__init__(self, message, level, html, timestamp)
+        super().__init__(message, level, html, timestamp)
 
     def _normalize_message(self, msg):
         if callable(msg):

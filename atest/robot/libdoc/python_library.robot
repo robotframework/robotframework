@@ -8,7 +8,7 @@ Name
 
 Documentation
     Doc Should Start With
-    ...    A test library providing communication over Telnet connections.
+    ...    A library providing communication over Telnet connections.
     ...
     ...    ``Telnet`` is Robot Framework's standard library that makes it possible to
 
@@ -80,7 +80,7 @@ Keyword Source Info
     # This keyword is from an external library component.
     Keyword Name Should Be           7    Read Until Prompt
     Keyword Should Not Have Source   7
-    Keyword Lineno Should Be         7    1011
+    Keyword Lineno Should Be         7    1009
 
 KwArgs and VarArgs
     Run Libdoc And Parse Output      Process

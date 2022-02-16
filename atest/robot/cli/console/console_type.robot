@@ -49,7 +49,7 @@ Invalid
 --dotted with --rpa
     Run and verify tests    --dotted --rpa
     Stdout Should Be    warnings_and_errors_stdout_dotted.txt    tests=tasks
-    Stderr Should Be    warnings_and_errors_stderr.txt
+    Stderr Should Be    warnings_and_errors_stderr.txt    tests=tasks
 
 --quiet
     Run and verify tests    --Quiet

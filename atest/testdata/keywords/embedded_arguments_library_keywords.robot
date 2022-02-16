@@ -104,7 +104,7 @@ Embedded Arguments Syntax is Underscore Sensitive
     User Janne Selects x from_webshop
 
 Keyword Matching Multiple Keywords In Library File
-    [Documentation]    FAIL Test library 'embedded_args_in_lk_1' contains multiple keywords matching name 'foo+lib+bar-lib-zap':
+    [Documentation]    FAIL Library 'embedded_args_in_lk_1' contains multiple keywords matching name 'foo+lib+bar-lib-zap':
     ...    ${INDENT}\${a}+lib+\${b}
     ...    ${INDENT}\${a}-lib-\${b}
     foo+lib+bar
@@ -147,14 +147,14 @@ Same name with different regexp works
 
 Same name with different regexp matching multiple fails
     [Documentation]    FAIL
-    ...    Test library 'embedded_args_in_lk_1' contains multiple keywords matching name 'It is a cat':
+    ...    Library 'embedded_args_in_lk_1' contains multiple keywords matching name 'It is a cat':
     ...    ${INDENT}It is ${animal:a (cat|cow)}
     ...    ${INDENT}It is ${animal:a (dog|cat)}
     It is a cat
 
 Same name with same regexp fails
     [Documentation]    FAIL
-    ...    Test library 'embedded_args_in_lk_1' contains multiple keywords matching name 'It is totally same':
+    ...    Library 'embedded_args_in_lk_1' contains multiple keywords matching name 'It is totally same':
     ...    ${INDENT}It is totally ${same}
     ...    ${INDENT}It is totally ${same}
     It is totally same

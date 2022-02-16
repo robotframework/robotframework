@@ -136,7 +136,7 @@ def find_file(path, basedir='.', file_type=None):
     if ret:
         return ret
     default = file_type or 'File'
-    file_type = {'Library': 'Test library',
+    file_type = {'Library': 'Library',
                  'Variables': 'Variable file',
                  'Resource': 'Resource file'}.get(file_type, default)
     raise DataError("%s '%s' does not exist." % (file_type, path))

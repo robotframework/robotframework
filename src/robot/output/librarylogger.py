@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Implementation of the public test library logging API.
+"""Implementation of the public logging API for libraries.
 
 This is exposed via :py:mod:`robot.api.logger`. Implementation must reside
 here to avoid cyclic imports.

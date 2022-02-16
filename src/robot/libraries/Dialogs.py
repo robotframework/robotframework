@@ -13,10 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""A test library providing dialogs for interacting with users.
+"""A library providing dialogs for interacting with users.
 
 ``Dialogs`` is Robot Framework's standard library that provides means
-for pausing the test execution and getting input from users.
+for pausing the test or task execution and getting input from users.
 
 Long lines in the provided messages are wrapped automatically. If you want
 to wrap lines manually, you can add newlines using the ``\\n`` character
@@ -37,8 +37,8 @@ __all__ = ['execute_manual_step', 'get_value_from_user',
            'get_selection_from_user', 'pause_execution', 'get_selections_from_user']
 
 
-def pause_execution(message='Test execution paused. Press OK to continue.'):
-    """Pauses test execution until user clicks ``Ok`` button.
+def pause_execution(message='Execution paused. Press OK to continue.'):
+    """Pauses execution until user clicks ``Ok`` button.
 
     ``message`` is the message shown in the dialog.
     """
@@ -46,7 +46,7 @@ def pause_execution(message='Test execution paused. Press OK to continue.'):
 
 
 def execute_manual_step(message, default_error=''):
-    """Pauses test execution until user sets the keyword status.
+    """Pauses execution until user sets the keyword status.
 
     User can press either ``PASS`` or ``FAIL`` button. In the latter case execution
     fails and an additional dialog is opened for defining the error message.
@@ -61,7 +61,7 @@ def execute_manual_step(message, default_error=''):
 
 
 def get_value_from_user(message, default_value='', hidden=False):
-    """Pauses test execution and asks user to input a value.
+    """Pauses execution and asks user to input a value.
 
     Value typed by the user, or the possible default value, is returned.
     Returning an empty value is fine, but pressing ``Cancel`` fails the keyword.
@@ -84,7 +84,7 @@ def get_value_from_user(message, default_value='', hidden=False):
 
 
 def get_selection_from_user(message, *values):
-    """Pauses test execution and asks user to select a value.
+    """Pauses execution and asks user to select a value.
 
     The selected value is returned. Pressing ``Cancel`` fails the keyword.
 
@@ -98,7 +98,7 @@ def get_selection_from_user(message, *values):
 
 
 def get_selections_from_user(message, *values):
-    """Pauses test execution and asks user to select multiple values.
+    """Pauses execution and asks user to select multiple values.
 
     The selected values are returned as a list. Selecting no values is OK
     and in that case the returned list is empty. Pressing ``Cancel`` fails
@@ -109,8 +109,6 @@ def get_selections_from_user(message, *values):
 
     Example:
     | ${users} = | Get Selections From User | Select users | user1 | user2 | admin |
-
-    New in Robot Framework 3.1.
     """
     return _validate_user_input(MultipleSelectionDialog(message, values))
 

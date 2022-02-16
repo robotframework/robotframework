@@ -35,7 +35,7 @@ PROCESSES = ConnectionCache('No active processes.')
 
 
 class OperatingSystem:
-    r"""A test library providing keywords for OS related tasks.
+    r"""A library providing keywords for operating system related tasks.
 
     ``OperatingSystem`` is Robot Framework's standard library that
     enables various operating system related tasks to be performed in
@@ -943,8 +943,8 @@ class OperatingSystem:
     def get_environment_variable(self, name, default=None):
         """Returns the value of an environment variable with the given name.
 
-        If no such environment variable is set, returns the default value, if
-        given. Otherwise fails the test case.
+        If no environment variable is found, returns possible default value.
+        If no default value is given, the keyword fails.
 
         Returned variables are automatically decoded to Unicode using
         the system encoding.

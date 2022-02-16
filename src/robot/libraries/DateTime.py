@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""A test library for handling date and time values.
+"""A library for handling date and time values.
 
 ``DateTime`` is a Robot Framework standard library that supports creating and
 converting date and time values (e.g. `Get Current Date`, `Convert Time`),

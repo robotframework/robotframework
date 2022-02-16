@@ -25,6 +25,7 @@ There Should Be No Warning When There Are Multiple Tests With Same Name In Data 
 *** Keywords ***
 Check Multiple Tests Log Message
     [Arguments]    ${error}    ${test}
-    ${message} =    Catenate    Multiple test cases with name '${test}'
-    ...    executed in test suite 'Same Test Multiple Times In Suite'.
-    Check Log Message    ${error}    ${message}    WARN
+    Check Log Message
+    ...    ${error}
+    ...    Multiple tests with name '${test}' executed in suite 'Same Test Multiple Times In Suite'.
+    ...    WARN

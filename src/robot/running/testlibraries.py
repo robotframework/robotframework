@@ -73,7 +73,7 @@ class _BaseTestLibrary:
         self.source = source
         self.logger = logger
         self.converters = self._get_converters(libcode)
-        self.handlers = HandlerStore(self.name, HandlerStore.TEST_LIBRARY_TYPE)
+        self.handlers = HandlerStore(self.name, HandlerStore.LIBRARY_TYPE)
         self.has_listener = None  # Set when first instance is created
         self._doc = None
         self.doc_format = self._get_doc_format(libcode)
@@ -112,7 +112,7 @@ class _BaseTestLibrary:
         self.reset_instance()
 
     def reload(self):
-        self.handlers = HandlerStore(self.name, HandlerStore.TEST_LIBRARY_TYPE)
+        self.handlers = HandlerStore(self.name, HandlerStore.LIBRARY_TYPE)
         self._create_handlers(self.get_instance())
 
     def start_suite(self):

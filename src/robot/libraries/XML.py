@@ -35,10 +35,10 @@ should_match = BuiltIn().should_match
 
 
 class XML:
-    """Robot Framework test library for verifying and modifying XML documents.
+    """Robot Framework library for verifying and modifying XML documents.
 
-    As the name implies, _XML_ is a test library for verifying contents of XML
-    files. In practice it is a pretty thin wrapper on top of Python's
+    As the name implies, _XML_ is a library for verifying contents of XML files.
+    In practice, it is a pretty thin wrapper on top of Python's
     [http://docs.python.org/library/xml.etree.elementtree.html|ElementTree XML API].
 
     The library has the following main usages:
@@ -77,12 +77,12 @@ class XML:
     structure, other keywords also accept paths to XML files and strings
     containing XML similarly as `Parse XML`. Notice that keywords that modify
     XML do not write those changes back to disk even if the source would be
-    given as a path to a file. Changes must always saved explicitly using
+    given as a path to a file. Changes must always be saved explicitly using
     `Save XML` keyword.
 
     When the source is given as a path to a file, the forward slash character
     (``/``) can be used as the path separator regardless the operating system.
-    On Windows also the backslash works, but it the test data it needs to be
+    On Windows also the backslash works, but in the data it needs to be
     escaped by doubling it (``\\\\``). Using the built-in variable ``${/}``
     naturally works too.
 
@@ -90,7 +90,7 @@ class XML:
 
     = Using lxml =
 
-    By default this library uses Python's standard
+    By default, this library uses Python's standard
     [http://docs.python.org/library/xml.etree.elementtree.html|ElementTree]
     module for parsing XML, but it can be configured to use
     [http://lxml.de|lxml] module instead when `importing` the library.
@@ -244,10 +244,10 @@ class XML:
     contain several useful attributes that can be accessed directly using
     the extended variable syntax.
 
-    The attributes that are both useful and convenient to use in the test
-    data are explained below. Also other attributes, including methods, can
+    The attributes that are both useful and convenient to use in the data
+    are explained below. Also other attributes, including methods, can
     be accessed, but that is typically better to do in custom libraries than
-    directly in the test data.
+    directly in the data.
 
     The examples use the same ``${XML}`` structure as the earlier examples.
 

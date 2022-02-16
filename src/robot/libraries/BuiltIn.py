@@ -2435,8 +2435,7 @@ class _RunKeyword(_BuiltInBase):
         ctx = self._context
         if ctx.test and ctx.in_test_teardown:
             return ctx.test
-        raise RuntimeError("Keyword '%s' can only be used in test teardown."
-                           % kwname)
+        raise RuntimeError(f"Keyword '{kwname}' can only be used in test teardown.")
 
     @run_keyword_variant(resolve=1)
     def run_keyword_if_all_critical_tests_passed(self, name, *args):
@@ -2672,7 +2671,7 @@ class _Control(_BuiltInBase):
         a for loop. That, as well as returning values, is demonstrated by the
         `Find Index` keyword in the following somewhat advanced example.
         Notice that it is often a good idea to move this kind of complicated
-        logic into a test library.
+        logic into a library.
 
         | ***** Variables *****
         | @{LIST} =    foo    baz
@@ -3608,10 +3607,10 @@ class _Misc(_BuiltInBase):
         self.log('Removed tag%s %s.' % (s(tags), seq2str(tags)))
 
     def get_library_instance(self, name=None, all=False):
-        """Returns the currently active instance of the specified test library.
+        """Returns the currently active instance of the specified library.
 
-        This keyword makes it easy for test libraries to interact with
-        other test libraries that have state. This is illustrated by
+        This keyword makes it easy for libraries to interact with
+        other libraries that have state. This is illustrated by
         the Python example below:
 
         | from robot.libraries.BuiltIn import BuiltIn
@@ -3759,7 +3758,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     constrains.
 
     Notice that instead of creating complicated expressions, it is often better
-    to move the logic into a test library. That eases maintenance and can also
+    to move the logic into a library. That eases maintenance and can also
     enhance execution speed.
 
     = Boolean arguments =

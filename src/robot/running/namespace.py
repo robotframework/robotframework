@@ -127,8 +127,8 @@ class Namespace:
         lib = IMPORTER.import_library(name, import_setting.args,
                                       import_setting.alias, self.variables)
         if lib.name in self._kw_store.libraries:
-            LOGGER.info(f"Test library '{lib.name}' already imported by "
-                        f"suite '{self._suite_name}'.")
+            LOGGER.info(f"Library '{lib.name}' already imported by suite "
+                        f"'{self._suite_name}'.")
             return
         if notify:
             LOGGER.imported("Library", lib.name,
@@ -223,8 +223,7 @@ class Namespace:
 class KeywordStore:
 
     def __init__(self, resource):
-        self.user_keywords = UserLibrary(resource,
-                                         UserLibrary.TEST_CASE_FILE_TYPE)
+        self.user_keywords = UserLibrary(resource, UserLibrary.TEST_CASE_FILE_TYPE)
         self.libraries = OrderedDict()
         self.resources = ImportCache()
         self.search_order = ()
@@ -365,7 +364,7 @@ class KeywordStore:
         if standard.library.name != standard.library.orig_name:
             standard_with_name = f" imported as '{standard.library.name}'"
         warning = Message(
-            f"Keyword '{standard.name}' found both from a custom test library "
+            f"Keyword '{standard.name}' found both from a custom library "
             f"'{custom.library.orig_name}'{custom_with_name} and a standard library "
             f"'{standard.library.orig_name}'{standard_with_name}. The custom keyword "
             f"is used. To select explicitly, and to get rid of this warning, use "

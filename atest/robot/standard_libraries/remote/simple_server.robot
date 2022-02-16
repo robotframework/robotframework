@@ -34,7 +34,7 @@ Keyword name conflict with custom library
 Keyword name conflict with standard library
     ${tc} =    Check Test Case    ${TESTNAME}
     ${warning} =    Catenate
-    ...    Keyword 'Should Be True' found both from a custom test library
+    ...    Keyword 'Should Be True' found both from a custom library
     ...    'Remote' and a standard library 'BuiltIn'. The custom keyword
     ...    is used. To select explicitly, and to get rid of this warning,
     ...    use either 'Remote.Should Be True' or 'BuiltIn.Should Be True'.

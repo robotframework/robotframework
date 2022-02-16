@@ -59,7 +59,7 @@ Verify override message
     ${std long} =    Set Variable If    "${std with name}"    ${std with name}    ${standard}
     ${ctm long} =    Set Variable If    "${ctm with name}"    ${ctm with name}    ${custom}
     ${expected} =    Catenate
-    ...    Keyword '${kw}' found both from a custom test library '${custom}'${ctm imported as}
+    ...    Keyword '${kw}' found both from a custom library '${custom}'${ctm imported as}
     ...    and a standard library '${standard}'${std imported as}. The custom keyword is used.
     ...    To select explicitly, and to get rid of this warning, use either '${ctm long}.${kw}'
     ...    or '${std long}.${kw}'.

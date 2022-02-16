@@ -22,7 +22,7 @@ from .usererrorhandler import UserErrorHandler
 
 
 class HandlerStore:
-    TEST_LIBRARY_TYPE = 'Test library'
+    LIBRARY_TYPE = 'Library'
     TEST_CASE_FILE_TYPE = 'Test case file'
     RESOURCE_FILE_TYPE = 'Resource file'
 
@@ -65,8 +65,7 @@ class HandlerStore:
             return self._find_embedded(name)
 
     def _find_embedded(self, name):
-        embedded = [template for template in self._embedded
-                    if template.matches(name)]
+        embedded = [template for template in self._embedded if template.matches(name)]
         if len(embedded) == 1:
             return embedded[0]
         self._raise_no_single_match(name, embedded)
@@ -78,7 +77,7 @@ class HandlerStore:
             source = "%s '%s'" % (self.source_type, self.source)
         if not found:
             raise KeywordError("%s contains no keywords matching name '%s'."
-                                % (source, name))
+                               % (source, name))
         error = ["%s contains multiple keywords matching name '%s':"
                  % (source, name)]
         names = sorted(handler.name for handler in found)

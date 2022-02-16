@@ -107,11 +107,13 @@ class SuiteRunner(SuiteVisitor):
         self._output.library_listeners.discard_suite_scope()
 
     def visit_test(self, test):
+        settings = self._settings
         if TagPatterns("robot:exclude").match(test.tags):
             return
         if test.name in self._executed_tests:
-            self._output.warn("Multiple test cases with name '%s' executed in "
-                              "test suite '%s'." % (test.name, self._suite.longname))
+            self._output.warn(
+                test_or_task(f"Multiple {{test}}s with name '{test.name}' executed in "
+                             f"suite '{self._suite.longname}'.", settings.rpa))
         self._executed_tests[test.name] = True
         result = self._suite.tests.create(self._resolve_setting(test.name),
                                           self._resolve_setting(test.doc),
@@ -121,27 +123,26 @@ class SuiteRunner(SuiteVisitor):
                                           starttime=get_timestamp())
         self._context.start_test(result)
         self._output.start_test(ModelCombiner(test, result))
-        status = TestStatus(self._suite_status, result,
-                            self._settings.skip_on_failure,
-                            self._settings.rpa)
+        status = TestStatus(self._suite_status, result, settings.skip_on_failure,
+                            settings.rpa)
         if status.exit:
             self._add_exit_combine()
             result.tags.add('robot:exit')
         if status.passed:
             if not test.name:
                 status.test_failed(
-                    test_or_task('{Test} name cannot be empty.', self._settings.rpa))
+                    test_or_task('{Test} name cannot be empty.', settings.rpa))
             elif not test.body:
                 status.test_failed(
-                    test_or_task('{Test} contains no keywords.', self._settings.rpa))
+                    test_or_task('{Test} contains no keywords.', settings.rpa))
             elif TagPatterns('robot:skip').match(test.tags):
                 status.test_skipped(
                     test_or_task("{Test} skipped using 'robot:skip' tag.",
-                                 self._settings.rpa))
+                                 settings.rpa))
             elif self._skipped_tags.match(test.tags):
                 status.test_skipped(
                     test_or_task("{Test} skipped using '--skip' command line option.",
-                                 self._settings.rpa))
+                                 settings.rpa))
         self._run_setup(test.setup, status, result)
         if status.passed:
             try:
