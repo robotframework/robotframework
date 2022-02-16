@@ -22,6 +22,7 @@ Log Variables In Suite Setup
     Check Variable Message    \${LOG_LEVEL} = INFO
     Check Variable Message    \${None} = None
     Check Variable Message    \${null} = None
+    Check Variable Message    \&{OPTIONS} = { exclude=[] | include=[] | skip=[] }
     Check Variable Message    \${OUTPUT_DIR} = *    pattern=yes
     Check Variable Message    \${OUTPUT_FILE} = *    pattern=yes
     Check Variable Message    \${PREV_TEST_MESSAGE} =
@@ -29,7 +30,6 @@ Log Variables In Suite Setup
     Check Variable Message    \${PREV_TEST_STATUS} =
     Check Variable Message    \${REPORT_FILE} = NONE
     Check Variable Message    \${SCALAR} = Hi tellus
-    Check Variable Message    \&{SETTINGS} = { EXCLUDE_TAGS=[] | INCLUDE_TAGS=[] }
     Check Variable Message    \${SPACE} =
     Check Variable Message    \${SUITE_DOCUMENTATION} =
     Check Variable Message    \&{SUITE_METADATA} = { }
@@ -63,6 +63,7 @@ Log Variables In Test
     Check Variable Message    \${LOG_LEVEL} = TRACE
     Check Variable Message    \${None} = None
     Check Variable Message    \${null} = None
+    Check Variable Message    \&{OPTIONS} = { exclude=[] | include=[] | skip=[] }
     Check Variable Message    \${OUTPUT_DIR} = *    pattern=yes
     Check Variable Message    \${OUTPUT_FILE} = *    pattern=yes
     Check Variable Message    \${PREV_TEST_MESSAGE} =
@@ -70,7 +71,6 @@ Log Variables In Test
     Check Variable Message    \${PREV_TEST_STATUS} = PASS
     Check Variable Message    \${REPORT_FILE} = NONE
     Check Variable Message    \${SCALAR} = Hi tellus
-    Check Variable Message    \&{SETTINGS} = { EXCLUDE_TAGS=[] | INCLUDE_TAGS=[] }
     Check Variable Message    \${SPACE} =
     Check Variable Message    \${SUITE_DOCUMENTATION} =
     Check Variable Message    \&{SUITE_METADATA} = { }
@@ -108,6 +108,7 @@ Log Variables After Setting New Variables
     Check Variable Message    \${LOG_LEVEL} = TRACE    DEBUG
     Check Variable Message    \${None} = None    DEBUG
     Check Variable Message    \${null} = None    DEBUG
+    Check Variable Message    \&{OPTIONS} = { exclude=[] | include=[] | skip=[] }    DEBUG
     Check Variable Message    \${OUTPUT_DIR} = *    DEBUG    pattern=yes
     Check Variable Message    \${OUTPUT_FILE} = *    DEBUG    pattern=yes
     Check Variable Message    \${PREV_TEST_MESSAGE} =    DEBUG
@@ -115,7 +116,6 @@ Log Variables After Setting New Variables
     Check Variable Message    \${PREV_TEST_STATUS} = PASS    DEBUG
     Check Variable Message    \${REPORT_FILE} = NONE    DEBUG
     Check Variable Message    \${SCALAR} = Hi tellus    DEBUG
-    Check Variable Message    \&{SETTINGS} = { EXCLUDE_TAGS=[] | INCLUDE_TAGS=[] }    DEBUG
     Check Variable Message    \${SPACE} =    DEBUG
     Check Variable Message    \${SUITE_DOCUMENTATION} =    DEBUG
     Check Variable Message    \&{SUITE_METADATA} = { }    DEBUG
@@ -152,6 +152,7 @@ Log Variables In User Keyword
     Check Variable Message    \${LOG_LEVEL} = TRACE
     Check Variable Message    \${None} = None
     Check Variable Message    \${null} = None
+    Check Variable Message    \&{OPTIONS} = { exclude=[] | include=[] | skip=[] }
     Check Variable Message    \${OUTPUT_DIR} = *    pattern=yes
     Check Variable Message    \${OUTPUT_FILE} = *    pattern=yes
     Check Variable Message    \${PREV_TEST_MESSAGE} =
@@ -159,7 +160,6 @@ Log Variables In User Keyword
     Check Variable Message    \${PREV_TEST_STATUS} = PASS
     Check Variable Message    \${REPORT_FILE} = NONE
     Check Variable Message    \${SCALAR} = Hi tellus
-    Check Variable Message    \&{SETTINGS} = { EXCLUDE_TAGS=[] | INCLUDE_TAGS=[] }
     Check Variable Message    \${SPACE} =
     Check Variable Message    \${SUITE_DOCUMENTATION} =
     Check Variable Message    \&{SUITE_METADATA} = { }

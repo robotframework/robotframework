@@ -19,6 +19,7 @@ import tempfile
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.utils import abspath, find_file, get_error_details, NormalizedDict
+from robot.model import Tags
 
 from .variables import Variables
 
@@ -185,8 +186,10 @@ class GlobalVariables(Variables):
     def _set_built_in_variables(self, settings):
         for name, value in [('${TEMPDIR}', abspath(tempfile.gettempdir())),
                             ('${EXECDIR}', abspath('.')),
-                            ('&{SETTINGS}',    {"EXCLUDE_TAGS": settings.suite_config['exclude_tags'], 
-                                                "INCLUDE_TAGS": settings.suite_config['include_tags']}),
+                            ('&{OPTIONS}',      {"exclude": Tags(settings.suite_config['exclude_tags']), 
+                                                 "include": Tags(settings.suite_config['include_tags']),
+                                                 "skip": Tags(settings.skipped_tags),
+                                                 "skiponfailure": Tags(settings.skip_on_failure)}),
                             ('${/}', os.sep),
                             ('${:}', os.pathsep),
                             ('${\\n}', os.linesep),

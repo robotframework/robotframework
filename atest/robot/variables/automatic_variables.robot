@@ -1,5 +1,7 @@
 *** Setting ***
-Suite Setup       Run Tests    --exclude exclude_this_test --include include_this_test   variables/automatic_variables/
+Suite Setup       Run Tests    
+...               --exclude exclude_this_test --include include_this_test --skip skip_me --skiponfailure me_too
+...               variables/automatic_variables/
 Resource          atest_resource.robot
 
 *** Test Case ***

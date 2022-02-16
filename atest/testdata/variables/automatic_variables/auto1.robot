@@ -17,7 +17,7 @@ ${VARIABLE}          variable value
 ${EXP_SUITE_NAME}    Automatic Variables.Auto1
 ${EXP_SUITE_DOC}     This is suite documentation. With ${VARIABLE}.
 ${EXP_SUITE_META}    {'MeTa1': 'Value', 'meta2': '${VARIABLE}'}
-${EXP_SUITE_STATS}   18 tests, 16 passed, 2 failed
+${EXP_SUITE_STATS}   19 tests, 17 passed, 2 failed
 @{LAST_TEST}         Previous Test Variables Should Have Correct Values When That Test Fails    PASS
 
 *** Test Case ***
@@ -49,10 +49,14 @@ Modifying ${TEST TAGS} does not affect actual tags test has
     Check Test Tags    Force 1    include this test    mytag    not really added
 
 Include-tags Available As Automatic Variables
-    Should Contain    ${SETTINGS.INCLUDE_TAGS}    include this test
+    Should Contain    ${OPTIONS.include}    include this test
 
 Exclude-tags Available As Automatic Variables
-    Should Contain    ${SETTINGS.EXCLUDE_TAGS}    exclude this test
+    Should Contain    ${OPTIONS.exclude}    exclude this test
+
+Skip-tags Available As Automatic Variables
+    Should Contain    ${OPTIONS.skip}    Skip_Me
+    Should Contain    ${OPTIONS.skiponfailure}    me_too
 
 Suite Name
     Should Be Equal    ${SUITE_NAME}    ${EXP_SUITE_NAME}
