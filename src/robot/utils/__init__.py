@@ -79,8 +79,9 @@ def read_rest_data(rstfile):
 
 
 # Deprecated Python 2/3 compatibility layer. Not needed by Robot Framework itself
-# since Python 2 support was dropped in RF 5. Preserved at least until RF 5.2
-# to avoid breaking external libraries and tools that use it.
+# anymore because Python 2 support was dropped in RF 5. Preserved at least until
+# RF 5.2 to avoid breaking external libraries and tools that use it. There's also
+# `PY2` in the `platform` submodule.
 # https://github.com/robotframework/robotframework/issues/4150
 
 from io import StringIO

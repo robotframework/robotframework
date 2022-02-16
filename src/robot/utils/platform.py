@@ -23,6 +23,11 @@ UNIXY = os.sep == '/'
 WINDOWS = not UNIXY
 RERAISED_EXCEPTIONS = (KeyboardInterrupt, SystemExit, MemoryError)
 
+# Part of the deprecated Python 2/3 compatibility layer. For more details see
+# the comment in `utils/__init__.py`. This constant was added to support
+# SSHLibrary: https://github.com/robotframework/SSHLibrary/issues/401
+PY2 = False
+
 
 def isatty(stream):
     # first check if buffer was detached
