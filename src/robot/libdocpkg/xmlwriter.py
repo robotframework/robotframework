@@ -51,13 +51,6 @@ class LibdocXmlWriter:
         if item.lineno and item.lineno > 0:
             attrs['lineno'] = str(item.lineno)
 
-    def _get_old_style_scope(self, libdoc):
-        if libdoc.type == 'RESOURCE':
-            return ''
-        return {'GLOBAL': 'global',
-                'SUITE': 'test suite',
-                'TEST': 'test case'}[libdoc.scope]
-
     def _write_keywords(self, list_name, kw_type, keywords, lib_source, writer):
         writer.start(list_name)
         for kw in keywords:
