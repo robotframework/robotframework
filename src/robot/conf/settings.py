@@ -319,7 +319,7 @@ class _BaseSettings:
         raise DataError(f"Invalid value for option '--{option.lower()}': {error}")
 
     def __contains__(self, setting):
-        return setting in self._cli_opts
+        return setting in self._opts
 
     def __str__(self):
         return '\n'.join(f'{name}: {self._opts[name]}' for name in sorted(self._opts))
@@ -419,17 +419,12 @@ class RobotSettings(_BaseSettings):
     def get_rebot_settings(self):
         settings = RebotSettings()
         settings.start_timestamp = self.start_timestamp
-        settings._opts.update(self._opts)
-        for name in ['Variables', 'VariableFiles', 'Listeners']:
-            del(settings._opts[name])
-        for name in ['Include', 'Exclude', 'TestNames', 'SuiteNames', 'Metadata']:
-            settings._opts[name] = []
-        for name in ['Name', 'Doc']:
-            settings._opts[name] = None
-        settings._opts['Output'] = None
-        settings._opts['LogLevel'] = 'TRACE'
+        not_copied = {'Include', 'Exclude', 'TestNames', 'SuiteNames', 'Name', 'Doc',
+                      'Metadata', 'Output', 'LogLevel', 'TimestampOutputs'}
+        for opt in settings._opts:
+            if opt in self and opt not in not_copied:
+                settings._opts[opt] = self[opt]
         settings._opts['ProcessEmptySuite'] = self['RunEmptySuite']
-        settings._opts['ExpandKeywords'] = self['ExpandKeywords']
         return settings
 
     def _output_disabled(self):

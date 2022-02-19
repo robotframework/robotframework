@@ -2,7 +2,7 @@ import unittest
 
 from robot.conf.settings import _BaseSettings, RobotSettings, RebotSettings
 from robot.errors import DataError
-from robot.utils.asserts import assert_equal
+from robot.utils.asserts import assert_equal, assert_true
 
 
 class SettingWrapper(_BaseSettings):
@@ -68,6 +68,11 @@ class TestRobotAndRebotSettings(unittest.TestCase):
     def test_default_log_level(self):
         self._verify_log_levels(RobotSettings(), 'INFO')
         self._verify_log_levels(RebotSettings(), 'TRACE')
+
+    def test_get_rebot_settings_returns_only_rebot_settings(self):
+        expected = set(RebotSettings()._opts)
+        for opt in RobotSettings().get_rebot_settings()._opts:
+            assert_true(opt in expected, opt)
 
     def _verify_log_level(self, input, level=None, default=None):
         level = level or input
