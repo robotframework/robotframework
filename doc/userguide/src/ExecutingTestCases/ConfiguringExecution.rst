@@ -130,7 +130,7 @@ combining individual tags or patterns together::
    --exclude xxORyyORzz
    --include fooNOTbar
 
-Starting from RF 5.0, it is also possible to use the reserved 
+Starting from RF 5.0, it is also possible to use the reserved
 tag `robot:exclude` to achieve
 the same effect as with using the `--exclude` option:
 
@@ -356,19 +356,26 @@ Using `--pythonpath` option
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework has a separate command line option :option:`--pythonpath (-P)`
-for adding locations to the module search path. Although the option name has
-the word Python in it, it works also on Jython and IronPython.
+for adding locations to the module search path.
 
-Multiple locations can be given by separating them with a colon, regardless
-the operating system, or by using this option several times. The given path
-can also be a glob pattern matching multiple paths, but then it typically
-needs to be escaped when used on the console.
+Multiple locations can be given by separating them with a colon (`:`) or
+a semicolon (`;`) or by using this option multiple times. If the value
+contains both colons and semicolons, it is split from semicolons. Paths
+can also be `glob patterns`__ matching multiple paths, but they typically
+need to be escaped when used on the console.
 
 Examples::
 
    --pythonpath libs
    --pythonpath /opt/testlibs:mylibs.zip:yourlibs
-   --pythonpath mylib.jar --pythonpath lib/\*.jar    # '*' is escaped
+   --pythonpath /opt/testlibs --pythonpath mylibs.zip --pythonpath yourlibs
+   --pythonpath c:\temp;d:\resources
+   --pythonpath  lib/\*.zip    # '*' is escaped
+
+.. note:: Both colon and semicolon work regardless the operating system.
+          Using semicolon is new in Robot Framework 5.0.
+
+__ https://en.wikipedia.org/wiki/Glob_(programming)
 
 Configuring `sys.path` programmatically
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

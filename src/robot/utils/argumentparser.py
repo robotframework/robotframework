@@ -14,12 +14,13 @@
 #  limitations under the License.
 
 import getopt
+import glob
 import os
 import re
 import shlex
 import sys
-import glob
 import string
+import warnings
 
 from robot.errors import DataError, Information, FrameworkError
 from robot.version import get_full_version
@@ -54,7 +55,7 @@ class ArgumentParser:
 
     def __init__(self, usage, name=None, version=None, arg_limits=None,
                  validator=None, env_options=None, auto_help=True,
-                 auto_version=True, auto_pythonpath=True,
+                 auto_version=True, auto_pythonpath='DEPRECATED',
                  auto_argumentfile=True):
         """Available options and tool name are read from the usage.
 
@@ -70,6 +71,12 @@ class ArgumentParser:
         self._validator = validator
         self._auto_help = auto_help
         self._auto_version = auto_version
+        if auto_pythonpath == 'DEPRECATED':
+            auto_pythonpath = False
+        else:
+            warnings.warn("ArgumentParser option 'auto_pythonpath' is deprecated "
+                          "since Robot Framework 5.0.",
+                          DeprecationWarning)
         self._auto_pythonpath = auto_pythonpath
         self._auto_argumentfile = auto_argumentfile
         self._env_options = env_options
@@ -113,6 +120,7 @@ class ArgumentParser:
         stdin instead of a file.
 
         --pythonpath can be used to add extra path(s) to sys.path.
+        This functionality was deprecated in Robot Framework 5.0.
 
         --help and --version automatically generate help and version messages.
         Version is generated based on the tool name and version -- see __init__

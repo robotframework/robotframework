@@ -325,8 +325,8 @@ $ python -m robot.rebot --name Combined outputs/*.xml
 class Rebot(RobotFramework):
 
     def __init__(self):
-        Application.__init__(self, USAGE, arg_limits=(1,),
-                             env_options='REBOT_OPTIONS', logger=LOGGER)
+        Application.__init__(self, USAGE, arg_limits=(1,), env_options='REBOT_OPTIONS',
+                             logger=LOGGER)
 
     def main(self, datasources, **options):
         try:
@@ -336,6 +336,8 @@ class Rebot(RobotFramework):
                                            stderr=options.get('stderr'))
             raise
         LOGGER.register_console_logger(**settings.console_output_config)
+        if settings.pythonpath:
+            sys.path = settings.pythonpath + sys.path
         LOGGER.disable_message_cache()
         rc = ResultWriter(*datasources).write_results(settings)
         if rc < 0:

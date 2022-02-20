@@ -13,8 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import glob
 import os
 import random
+import string
 import sys
 import time
 
@@ -64,6 +66,7 @@ class _BaseSettings:
                  'PreRebotModifiers': ('prerebotmodifier', []),
                  'StatusRC'         : ('statusrc', True),
                  'ConsoleColors'    : ('consolecolors', 'AUTO'),
+                 'PythonPath'       : ('pythonpath', []),
                  'StdOut'           : ('stdout', None),
                  'StdErr'           : ('stderr', None)}
     _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile']
@@ -127,6 +130,8 @@ class _BaseSettings:
             return self._process_randomize_value(value)
         if name == 'MaxErrorLines':
             return self._process_max_error_lines(value)
+        if name == 'PythonPath':
+            return self._process_pythonpath(value)
         if name == 'RemoveKeywords':
             self._validate_remove_keywords(value)
         if name == 'FlattenKeywords':
@@ -296,6 +301,35 @@ class _BaseSettings:
     def _get_default_value(self, name):
         return self._cli_opts[name][1]
 
+    def _process_pythonpath(self, paths):
+        return [os.path.abspath(globbed)
+                for path in paths
+                for split in self._split_pythonpath(path)
+                for globbed in glob.glob(split) or [split]]
+
+    def _split_pythonpath(self, path):
+        path = path.replace('/', os.sep)
+        if ';' in path:
+            yield from path.split(';')
+        elif os.sep == '/':
+            yield from path.split(':')
+        else:
+            drive = ''
+            for item in path.split(':'):
+                if drive:
+                    if item.startswith('\\'):
+                        yield f'{drive}:{item}'
+                        drive = ''
+                        continue
+                    yield drive
+                    drive = ''
+                if len(item) == 1 and item in string.ascii_letters:
+                    drive = item
+                else:
+                    yield item
+            if drive:
+                yield drive
+
     def _validate_remove_keywords(self, values):
         for value in values:
             try:
@@ -351,6 +385,14 @@ class _BaseSettings:
     @property
     def split_log(self):
         return self['SplitLog']
+
+    @property
+    def suite_names(self):
+        return self['SuiteNames']
+
+    @property
+    def pythonpath(self):
+        return self['PythonPath']
 
     @property
     def status_rc(self):

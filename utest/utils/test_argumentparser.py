@@ -1,5 +1,6 @@
-import unittest
 import os
+import unittest
+import warnings
 
 from robot.utils.argumentparser import ArgumentParser
 from robot.utils.asserts import (assert_equal, assert_raises,
@@ -235,7 +236,6 @@ class TestArgumentParserParseArgs(unittest.TestCase):
         ap = ArgumentParser('''Usage:
  -h --help
  -v --version
- --pythonpath path
  --argumentfile path
  --option
 ''')
@@ -246,13 +246,17 @@ class TestArgumentParserParseArgs(unittest.TestCase):
         ap = ArgumentParser('''Usage:
  -h --help
  -v --version
- --pythonpath path
  --argumentfile path
-''', auto_help=False, auto_version=False,
-     auto_pythonpath=False, auto_argumentfile=False)
-        opts, args = ap.parse_args(['--help', '-v', '--pythonpath', 'xxx'])
-        assert_equal(opts, {'help': True, 'version': True, 'pythonpath': 'xxx',
-                             'argumentfile': None})
+''', auto_help=False, auto_version=False, auto_argumentfile=False)
+        opts, args = ap.parse_args(['--help', '-v', '--arg', 'xxx'])
+        assert_equal(opts, {'help': True, 'version': True, 'argumentfile': 'xxx'})
+
+    def test_auto_pythopath_is_deprecated(self):
+        with warnings.catch_warnings(record=True) as w:
+            ArgumentParser('-x', auto_pythonpath=False)
+        assert_equal(str(w[0].message),
+                     "ArgumentParser option 'auto_pythonpath' is deprecated "
+                     "since Robot Framework 5.0.")
 
     def test_non_list_args(self):
         ap = ArgumentParser('''Options:

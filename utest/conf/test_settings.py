@@ -1,7 +1,9 @@
+from os.path import abspath, dirname, join, normpath
 import unittest
 
 from robot.conf.settings import _BaseSettings, RobotSettings, RebotSettings
 from robot.errors import DataError
+from robot.utils import WINDOWS
 from robot.utils.asserts import assert_equal, assert_true
 
 
@@ -68,6 +70,19 @@ class TestRobotAndRebotSettings(unittest.TestCase):
     def test_default_log_level(self):
         self._verify_log_levels(RobotSettings(), 'INFO')
         self._verify_log_levels(RebotSettings(), 'TRACE')
+
+    def test_pythonpath(self):
+        curdir = normpath(dirname(abspath(__file__)))
+        for inp, exp in [('foo', [abspath('foo')]),
+                         (['a:b:c', 'zap'], [abspath(p) for p in ('a', 'b', 'c', 'zap')]),
+                         (['foo;bar', 'zap'], [abspath(p) for p in ('foo', 'bar', 'zap')]),
+                         (join(curdir, 't*_set*.??'), [join(curdir, 'test_settings.py')])]:
+            assert_equal(RobotSettings(pythonpath=inp).pythonpath, exp)
+        if WINDOWS:
+            assert_equal(RobotSettings(pythonpath=r'c:\temp:d:\e\f').pythonpath,
+                         [r'c:\temp', r'd:\e\f'])
+            assert_equal(RobotSettings(pythonpath=r'c:\temp;d:\e\f').pythonpath,
+                         [r'c:\temp', r'd:\e\f'])
 
     def test_get_rebot_settings_returns_only_rebot_settings(self):
         expected = set(RebotSettings()._opts)

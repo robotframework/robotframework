@@ -175,7 +175,9 @@ class LibDoc(Application):
         return options, arguments
 
     def main(self, args, name='', version='', format=None, docformat=None,
-             specdocformat=None, quiet=False):
+             specdocformat=None, pythonpath=None, quiet=False):
+        if pythonpath:
+            sys.path = pythonpath + sys.path
         lib_or_res, output = args[:2]
         docformat = self._get_docformat(docformat)
         libdoc = LibraryDocumentation(lib_or_res, name, version, docformat)

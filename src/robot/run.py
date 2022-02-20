@@ -410,8 +410,8 @@ $ robot tests.robot
 class RobotFramework(Application):
 
     def __init__(self):
-        Application.__init__(self, USAGE, arg_limits=(1,),
-                             env_options='ROBOT_OPTIONS', logger=LOGGER)
+        Application.__init__(self, USAGE, arg_limits=(1,), env_options='ROBOT_OPTIONS',
+                             logger=LOGGER)
 
     def main(self, datasources, **options):
         try:
@@ -422,7 +422,9 @@ class RobotFramework(Application):
             raise
         LOGGER.register_console_logger(**settings.console_output_config)
         LOGGER.info(f'Settings:\n{settings}')
-        builder = TestSuiteBuilder(settings['SuiteNames'],
+        if settings.pythonpath:
+            sys.path = settings.pythonpath + sys.path
+        builder = TestSuiteBuilder(settings.suite_names,
                                    included_extensions=settings.extension,
                                    rpa=settings.rpa,
                                    allow_empty_suite=settings.run_empty_suite)
