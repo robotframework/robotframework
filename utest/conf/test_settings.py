@@ -79,10 +79,10 @@ class TestRobotAndRebotSettings(unittest.TestCase):
                          (join(curdir, 't*_set*.??'), [join(curdir, 'test_settings.py')])]:
             assert_equal(RobotSettings(pythonpath=inp).pythonpath, exp)
         if WINDOWS:
-            assert_equal(RobotSettings(pythonpath=r'c:\temp:d:\e\f').pythonpath,
-                         [r'c:\temp', r'd:\e\f'])
-            assert_equal(RobotSettings(pythonpath=r'c:\temp;d:\e\f').pythonpath,
-                         [r'c:\temp', r'd:\e\f'])
+            assert_equal(RobotSettings(pythonpath=r'c:\temp:d:\e\f:g').pythonpath,
+                         [r'c:\temp', r'd:\e\f', abspath('g')])
+            assert_equal(RobotSettings(pythonpath=r'c:\temp;d:\e\f;g').pythonpath,
+                         [r'c:\temp', r'd:\e\f', abspath('g')])
 
     def test_get_rebot_settings_returns_only_rebot_settings(self):
         expected = set(RebotSettings()._opts)

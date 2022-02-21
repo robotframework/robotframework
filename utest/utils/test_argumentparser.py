@@ -242,7 +242,7 @@ class TestArgumentParserParseArgs(unittest.TestCase):
         opts, args = ap.parse_args(['--option'])
         assert_equal(opts, {'option': True})
 
-    def test_special_options_can_be_turned_to_normal_optios(self):
+    def test_special_options_can_be_turned_to_normal_options(self):
         ap = ArgumentParser('''Usage:
  -h --help
  -v --version
@@ -251,7 +251,7 @@ class TestArgumentParserParseArgs(unittest.TestCase):
         opts, args = ap.parse_args(['--help', '-v', '--arg', 'xxx'])
         assert_equal(opts, {'help': True, 'version': True, 'argumentfile': 'xxx'})
 
-    def test_auto_pythopath_is_deprecated(self):
+    def test_auto_pythonpath_is_deprecated(self):
         with warnings.catch_warnings(record=True) as w:
             ArgumentParser('-x', auto_pythonpath=False)
         assert_equal(str(w[0].message),
