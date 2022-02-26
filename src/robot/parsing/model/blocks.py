@@ -325,6 +325,10 @@ class While(Block):
     def condition(self):
         return self.header.condition
 
+    @property
+    def limit(self):
+        return self.header.limit
+
     def validate(self, context):
         if not self.body:
             self.errors += ('WHILE loop has empty body.',)

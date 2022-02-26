@@ -971,26 +971,38 @@ class WhileHeader(Statement):
     type = Token.WHILE
 
     @classmethod
-    def from_params(cls, condition, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, condition, limit=None, indent=FOUR_SPACES,
+                    separator=FOUR_SPACES, eol=EOL):
         tokens = [Token(Token.SEPARATOR, indent),
                   Token(cls.type),
                   Token(Token.SEPARATOR, separator),
-                  Token(Token.ARGUMENT, condition),
-                  Token(Token.EOL, eol)]
+                  Token(Token.ARGUMENT, condition)
+                  ]
+        if limit:
+            tokens.extend([Token(Token.SEPARATOR, indent),
+                           Token(Token.ARGUMENT, limit)])
+        tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
     @property
     def condition(self):
+        return self.get_value(Token.ARGUMENT)
+
+    @property
+    def limit(self):
         values = self.get_values(Token.ARGUMENT)
-        if len(values) != 1:
-            return ', '.join(values) if values else None
-        return values[0]
+        if len(values) < 2:
+            return None
+        return values[1]
 
     def validate(self, context):
-        conditions = len(self.get_tokens(Token.ARGUMENT))
-        if conditions == 0:
+        arguments = self.get_tokens(Token.ARGUMENT)
+        if len(arguments) == 0:
             self.errors += ('WHILE must have a condition.',)
-        if conditions > 1:
+        if len(arguments) == 2 and not arguments[1].value.startswith('limit='):
+            self.errors += (
+                f"Second WHILE loop argument must be 'limit', got {arguments[1]}.",)
+        if len(arguments) > 2:
             self.errors += ('WHILE cannot have more than one condition.',)
 
 

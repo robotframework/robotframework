@@ -59,11 +59,12 @@ class For(BodyItem):
 class While(BodyItem):
     type = BodyItem.WHILE
     body_class = Body
-    repr_args = ('condition',)
-    __slots__ = ['condition']
+    repr_args = ('condition', 'limit')
+    __slots__ = ['condition', 'limit']
 
-    def __init__(self, condition=None, parent=None):
+    def __init__(self, condition=None, limit=None, parent=None):
         self.condition = condition
+        self.limit = limit
         self.parent = parent
         self.body = None
 
@@ -75,7 +76,7 @@ class While(BodyItem):
         visitor.visit_while(self)
 
     def __str__(self):
-        return f'WHILE    {self.condition}'
+        return f'WHILE    {self.condition}' + f'    {self.limit}' if self.limit else ''
 
 
 class IfBranch(BodyItem):

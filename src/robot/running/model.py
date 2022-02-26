@@ -100,8 +100,8 @@ class While(model.While):
     __slots__ = ['lineno', 'error']
     body_class = Body
 
-    def __init__(self, parent=None, lineno=None, error=None):
-        super().__init__(parent)
+    def __init__(self, condition=None, limit=None, parent=None, lineno=None, error=None):
+        super().__init__(condition, limit, parent)
         self.lineno = lineno
         self.error = error
 

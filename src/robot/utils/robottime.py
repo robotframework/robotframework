@@ -39,10 +39,13 @@ def _float_secs_to_secs_and_millis(secs):
     return (isecs, millis) if millis < 1000 else (isecs+1, 0)
 
 
-def timestr_to_secs(timestr, round_to=3):
+def timestr_to_secs(timestr, round_to=3, accept_plain_values=True):
     """Parses time like '1h 10s', '01:00:10' or '42' and returns seconds."""
     if is_string(timestr) or is_number(timestr):
-        for converter in _number_to_secs, _timer_to_secs, _time_string_to_secs:
+        converters = [_timer_to_secs, _time_string_to_secs]
+        if accept_plain_values:
+            converters.insert(0, _number_to_secs)
+        for converter in converters:
             secs = converter(timestr)
             if secs is not None:
                 return secs if round_to is None else roundup(secs, round_to)

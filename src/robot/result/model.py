@@ -222,8 +222,8 @@ class While(model.While, StatusMixin, DeprecatedAttributesMixin):
     iteration_class = WhileIteration
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
-    def __init__(self, condition=None, parent=None, status='FAIL', starttime=None, endtime=None, doc=''):
-        super().__init__(condition, parent)
+    def __init__(self, condition=None, limit=None, parent=None, status='FAIL', starttime=None, endtime=None, doc=''):
+        super().__init__(condition, limit, parent)
         self.status = status
         self.starttime = starttime
         self.endtime = endtime
@@ -236,7 +236,7 @@ class While(model.While, StatusMixin, DeprecatedAttributesMixin):
     @property
     @deprecated
     def name(self):
-        return self.condition
+        return self.condition + f' | {self.limit}' if self.limit else ''
 
 
 class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):

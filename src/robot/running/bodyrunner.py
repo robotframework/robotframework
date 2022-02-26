@@ -16,6 +16,7 @@
 from collections import OrderedDict
 from contextlib import contextmanager
 import re
+import time
 
 from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExecutionStatus)
@@ -25,7 +26,7 @@ from robot.result import (For as ForResult, While as WhileResult, If as IfResult
 from robot.output import librarylogger as logger
 from robot.utils import (cut_assign_value, frange, get_error_message, is_string,
                          is_list_like, is_number, plural_or_not as s,
-                         split_from_equals, type_name, Matcher)
+                         split_from_equals, type_name, Matcher, timestr_to_secs)
 from robot.variables import is_dict_variable, evaluate_expression
 
 from .statusreporter import StatusReporter
@@ -334,21 +335,29 @@ class WhileRunner:
     def run(self, data):
         run = self._run
         executed_once = False
-        result = WhileResult(data.condition)
+        result = WhileResult(data.condition, data.limit)
         with StatusReporter(data, result, self._context, run) as status:
             if self._context.dry_run or not run:
                 self._run_iteration(data, result, run)
                 return
             if data.error:
                 raise DataError(data.error)
-            while self._should_run(data.condition, self._context.variables):
+            limit = WhileLimit.create(data.limit, self._context.variables)
+            while self._should_run(data.condition, limit, self._context.variables):
                 executed_once = True
                 try:
-                    self._run_iteration(data, result, run)
+                    with limit:
+                        self._run_iteration(data, result, run)
                 except BreakLoop:
                     break
                 except ContinueLoop:
                     continue
+                except WhileLimitExceeded:
+                    raise ExecutionFailed(
+                        "WHILE loop was aborted because it did not finish within the "
+                        f"limit of {limit}. Use the 'limit' argument to increase or "
+                        "remove the limit if needed."
+                    )
             if not executed_once:
                 status.pass_status = result.NOT_RUN
                 self._run_iteration(data, result, run=False)
@@ -358,7 +367,7 @@ class WhileRunner:
         with StatusReporter(data, result.body.create_iteration(), self._context, run):
             runner.run(data.body)
 
-    def _should_run(self, condition, variables):
+    def _should_run(self, condition, limit, variables):
         try:
             condition = variables.replace_scalar(condition)
             if is_string(condition):
@@ -556,3 +565,81 @@ class TryRunner:
                 return err
             else:
                 return None
+
+
+class WhileLimitExceeded(RuntimeError):
+    pass
+
+
+class WhileLimit:
+
+    @staticmethod
+    def parse_iteration_count(limit):
+        try:
+            limit = int(limit)
+            if limit <= 0:
+                raise ValueError
+            return limit
+        except ValueError:
+            raise ValueError("Iteration limit must be positive integer when using "
+                             f"'x' or 'times', got: '{limit}'")
+
+    @classmethod
+    def create(cls, limit, variables):
+        try:
+            if not limit:
+                return IterationCountLimit(100)
+            value = limit.replace('limit=', '')
+            if value.upper() == 'NONE':
+                return NoLimit()
+            value = variables.replace_scalar(value)
+            if value.endswith('x'):
+                return IterationCountLimit(cls.parse_iteration_count(value[:-1]))
+            if value.endswith('times'):
+                return IterationCountLimit(cls.parse_iteration_count(value[:-5]))
+            return DurationLimit(timestr_to_secs(value, accept_plain_values=False))
+        except Exception as error:
+            raise DataError(f'Invalid WHILE loop limit: {error}')
+
+    def __enter__(self):
+        raise NotImplementedError
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        return None
+
+
+class DurationLimit(WhileLimit):
+
+    def __init__(self, max_time):
+        self.max_time = max_time
+        self.start_time = None
+
+    def __enter__(self):
+        if not self.start_time:
+            self.start_time = time.time()
+        if time.time() - self.start_time > self.max_time:
+            raise WhileLimitExceeded()
+
+    def __str__(self):
+        return f'{self.max_time} seconds'
+
+
+class IterationCountLimit(WhileLimit):
+
+    def __init__(self, max_iterations):
+        self.max_iterations = max_iterations
+        self.current_iterations = 0
+
+    def __enter__(self):
+        if self.current_iterations >= self.max_iterations:
+            raise WhileLimitExceeded()
+        self.current_iterations += 1
+
+    def __str__(self):
+        return f'{self.max_iterations} iterations'
+
+
+class NoLimit(WhileLimit):
+
+    def __enter__(self):
+        pass
