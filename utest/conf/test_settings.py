@@ -85,9 +85,22 @@ class TestRobotAndRebotSettings(unittest.TestCase):
                          [r'c:\temp', r'd:\e\f', abspath('g')])
 
     def test_get_rebot_settings_returns_only_rebot_settings(self):
-        expected = set(RebotSettings()._opts)
+        expected = RebotSettings()
         for opt in RobotSettings().get_rebot_settings()._opts:
             assert_true(opt in expected, opt)
+
+    def test_get_rebot_settings_excludes_settings_handled_already_in_execution(self):
+        settings = RobotSettings(
+            name='N', doc=':doc:', metadata='m:d', settag='s',
+            include='i', exclude='e', test='t', suite='s',
+            output='out.xml', loglevel='DEBUG:INFO', timestampoutputs=True
+        ).get_rebot_settings()
+        for name in 'Name', 'Doc', 'Output':
+            assert_equal(settings[name], None)
+        for name in 'Metadata', 'SetTag', 'Include', 'Exclude', 'TestNames', 'SuiteNames':
+            assert_equal(settings[name], [])
+        assert_equal(settings['LogLevel'], 'TRACE')
+        assert_equal(settings['TimestampOutputs'], False)
 
     def _verify_log_level(self, input, level=None, default=None):
         level = level or input

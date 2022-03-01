@@ -462,7 +462,7 @@ class RobotSettings(_BaseSettings):
         settings = RebotSettings()
         settings.start_timestamp = self.start_timestamp
         not_copied = {'Include', 'Exclude', 'TestNames', 'SuiteNames', 'Name', 'Doc',
-                      'Metadata', 'Output', 'LogLevel', 'TimestampOutputs'}
+                      'Metadata', 'SetTag', 'Output', 'LogLevel', 'TimestampOutputs'}
         for opt in settings._opts:
             if opt in self and opt not in not_copied:
                 settings._opts[opt] = self[opt]
