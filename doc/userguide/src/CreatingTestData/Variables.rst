@@ -1007,6 +1007,15 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    +------------------------+-------------------------------------------------------+------------+
    | ${PREV TEST MESSAGE}   | The possible error message of the previous test case. | Everywhere |
    +------------------------+-------------------------------------------------------+------------+
+   | ${OPTIONS}             | A dictionary exposing command line options used for   | Everywhere |
+   |                        | running the current test. The dictionary keys are     |            |
+   |                        | matching the command line options. New in RF 5.0.     |            |
+   |                        | Currently available:                                  |            |
+   |                        | - :option:`--exclude` `${OPTIONS.exclude}`            |            |
+   |                        | - :option:`--include` `${OPTIONS.include}`            |            |
+   |                        | - :option:`--skip` `${OPTIONS.skip}`                  |            |
+   |                        | - :option:`--skiponfailure` `${OPTIONS.skiponfailure}`|            |
+   +------------------------+-------------------------------------------------------+------------+
    | ${SUITE NAME}          | The full name of the current test suite.              | Everywhere |
    +------------------------+-------------------------------------------------------+------------+
    | ${SUITE SOURCE}        | An absolute path to the suite file or directory.      | Everywhere |
