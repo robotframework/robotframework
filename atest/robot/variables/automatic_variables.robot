@@ -1,6 +1,6 @@
 *** Setting ***
 Suite Setup       Run Tests
-...               --exclude exclude_this_test --include include_this_test --skip skip_me --skiponfailure me_too
+...               --exclude exclude -e e2 --include include_this_test --skip skip_me --skiponfailure sof
 ...               variables/automatic_variables/
 Resource          atest_resource.robot
 

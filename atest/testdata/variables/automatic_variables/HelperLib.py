@@ -1,23 +1,15 @@
 class HelperLib:
 
-    def __init__(self, source, name, doc, metadata):
-        self.source = source
+    def __init__(self, name, doc, metadata, source, options):
         self.name = name
         self.doc = doc
         self.metadata = metadata
+        self.source = source
+        self.options = options
 
-    def source_should_be(self, expected):
-        self._test(self.source, expected)
-
-    def name_should_be(self, expected):
-        self._test(self.name, expected)
-
-    def documentation_should_be(self, expected):
-        self._test(self.doc, expected)
-
-    def metadata_should_be(self, expected):
-        self._test(self.metadata, eval(expected))
-
-    def _test(self, actual, expected):
+    def import_time_value_should_be(self, name, expected):
+        actual = getattr(self, name)
+        if not isinstance(actual, str):
+            expected = eval(expected)
         if actual != expected:
-            raise AssertionError('%s != %s' % (actual, expected))
+            raise AssertionError(f'{actual} != {expected}')
