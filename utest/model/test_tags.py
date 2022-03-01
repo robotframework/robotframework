@@ -143,9 +143,13 @@ class TestTags(unittest.TestCase):
     def test__eq__(self):
         assert_equal(Tags(['x']), Tags(['x']))
         assert_equal(Tags(['X']), Tags(['x']))
-        assert_equal(Tags(['X']), Tags(('x',)))
-        assert_not_equal(Tags(['X']), ['x'])
-        assert_not_equal(Tags(['X']), ('x',))
+        assert_equal(Tags(['X', 'YZ']), Tags(('x', 'y_z')))
+        assert_not_equal(Tags(['X']), Tags(['Y']))
+
+    def test__eq__converts_other_to_tags(self):
+        assert_equal(Tags(['X']), ['x'])
+        assert_equal(Tags(['X']), 'x')
+        assert_not_equal(Tags(['X']), 'y')
 
     def test__eq__normalized(self):
         assert_equal(Tags(['Hello world', 'Foo', 'Not_world']),

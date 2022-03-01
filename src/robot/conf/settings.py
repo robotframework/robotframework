@@ -19,6 +19,7 @@ import random
 import string
 import sys
 import time
+import warnings
 
 from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
@@ -391,6 +392,14 @@ class _BaseSettings:
         return self['SuiteNames']
 
     @property
+    def include(self):
+        return self['Include']
+
+    @property
+    def exclude(self):
+        return self['Exclude']
+
+    @property
     def pythonpath(self):
         return self['PythonPath']
 
@@ -490,8 +499,8 @@ class RobotSettings(_BaseSettings):
             'doc': self['Doc'],
             'metadata': dict(self['Metadata']),
             'set_tags': self['SetTag'],
-            'include_tags': self['Include'],
-            'exclude_tags': self['Exclude'],
+            'include_tags': self.include,
+            'exclude_tags': self.exclude,
             'include_suites': self['SuiteNames'],
             'include_tests': self['TestNames'],
             'empty_suite_ok': self.run_empty_suite,
@@ -525,8 +534,13 @@ class RobotSettings(_BaseSettings):
         return self['ExitOnError']
 
     @property
-    def skipped_tags(self):
+    def skip(self):
         return self['Skip']
+
+    @property
+    def skipped_tags(self):
+        warnings.warn("'RobotSettings.skipped_tags' is deprecated. Use 'skip' instead.")
+        return self.skip
 
     @property
     def skip_on_failure(self):
@@ -606,8 +620,8 @@ class RebotSettings(_BaseSettings):
             'doc': self['Doc'],
             'metadata': dict(self['Metadata']),
             'set_tags': self['SetTag'],
-            'include_tags': self['Include'],
-            'exclude_tags': self['Exclude'],
+            'include_tags': self.include,
+            'exclude_tags': self.exclude,
             'include_suites': self['SuiteNames'],
             'include_tests': self['TestNames'],
             'empty_suite_ok': self.process_empty_suite,

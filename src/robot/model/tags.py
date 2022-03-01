@@ -63,7 +63,7 @@ class Tags:
 
     def __eq__(self, other):
         if not isinstance(other, Tags):
-            return False
+            other = Tags(other)
         self_normalized = [normalize(tag, ignore='_') for tag in self]
         other_normalized = [normalize(tag, ignore='_') for tag in other]
         return sorted(self_normalized) == sorted(other_normalized)

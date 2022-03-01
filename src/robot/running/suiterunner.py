@@ -37,7 +37,7 @@ class SuiteRunner(SuiteVisitor):
         self._suite = None
         self._suite_status = None
         self._executed_tests = None
-        self._skipped_tags = TagPatterns(settings.skipped_tags)
+        self._skipped_tags = TagPatterns(settings.skip)
 
     @property
     def _context(self):

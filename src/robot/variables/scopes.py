@@ -188,10 +188,12 @@ class GlobalVariables(Variables):
     def _set_built_in_variables(self, settings):
         for name, value in [('${TEMPDIR}', abspath(tempfile.gettempdir())),
                             ('${EXECDIR}', abspath('.')),
-                            ('&{OPTIONS}',      {"exclude": Tags(settings.suite_config['exclude_tags']), 
-                                                 "include": Tags(settings.suite_config['include_tags']),
-                                                 "skip": Tags(settings.skipped_tags),
-                                                 "skiponfailure": Tags(settings.skip_on_failure)}),
+                            ('&{OPTIONS}', {
+                                'include': Tags(settings.include),
+                                'exclude': Tags(settings.exclude),
+                                'skip': Tags(settings.skip),
+                                'skip_on_failure': Tags(settings.skip_on_failure)
+                            }),
                             ('${/}', os.sep),
                             ('${:}', os.pathsep),
                             ('${\\n}', os.linesep),

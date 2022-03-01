@@ -1,5 +1,5 @@
 *** Setting ***
-Suite Setup       Run Tests    
+Suite Setup       Run Tests
 ...               --exclude exclude_this_test --include include_this_test --skip skip_me --skiponfailure me_too
 ...               variables/automatic_variables/
 Resource          atest_resource.robot
@@ -69,3 +69,6 @@ Suite And Prev Test Variables Work Correctly In Setup
 Suite And Prev Test Variables Work Correctly In Teardown
     Should Be Equal    ${SUITE.suites[0].teardown.status}    PASS
     Should Be Equal    ${SUITE.suites[1].teardown.status}    PASS
+
+\&{OPTIONS}
+    Check Test Case    ${TEST NAME}

@@ -17,8 +17,8 @@ ${VARIABLE}          variable value
 ${EXP_SUITE_NAME}    Automatic Variables.Auto1
 ${EXP_SUITE_DOC}     This is suite documentation. With ${VARIABLE}.
 ${EXP_SUITE_META}    {'MeTa1': 'Value', 'meta2': '${VARIABLE}'}
-${EXP_SUITE_STATS}   19 tests, 17 passed, 2 failed
-@{LAST_TEST}         Previous Test Variables Should Have Correct Values When That Test Fails    PASS
+${EXP_SUITE_STATS}   17 tests, 15 passed, 2 failed
+@{LAST_TEST}         \&{OPTIONS}    PASS
 
 *** Test Case ***
 Previous Test Variables Should Have Default Values
@@ -47,16 +47,6 @@ Modifying ${TEST TAGS} does not affect actual tags test has
     [Tags]    mytag
     Append To List    ${TEST TAGS}    not really added
     Check Test Tags    Force 1    include this test    mytag    not really added
-
-Include-tags Available As Automatic Variables
-    Should Contain    ${OPTIONS.include}    include this test
-
-Exclude-tags Available As Automatic Variables
-    Should Contain    ${OPTIONS.exclude}    exclude this test
-
-Skip-tags Available As Automatic Variables
-    Should Contain    ${OPTIONS.skip}    Skip_Me
-    Should Contain    ${OPTIONS.skiponfailure}    me_too
 
 Suite Name
     Should Be Equal    ${SUITE_NAME}    ${EXP_SUITE_NAME}
@@ -117,6 +107,13 @@ Previous Test Variables Should Have Correct Values When That Test Fails
     Check Previous Test variables    Test Status When Setup Fails    FAIL    Setup failed:\nExpected failure in setup
     [Teardown]    Check Previous Test variables    Test Status When Setup Fails    FAIL    Setup failed:\nExpected failure in setup
 
-This Test Should Be Excluded
-    [Tags]    exclude this test
-    Fail    Should not be executed
+\&{OPTIONS}
+    FOR    ${name}    ${expected}    IN
+    ...    include    include this test
+    ...    exclude    exclude this test
+    ...    skip       Skip_Me
+    ...    skip_on_failure    me_too
+        ${expected} =    Create List    ${expected}
+        Should Be Equal    ${OPTIONS.${name}}     ${expected}
+        Should Be Equal    ${OPTIONS}[${name}]    ${expected}
+    END

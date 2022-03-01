@@ -8,7 +8,7 @@ Force Tags        include this test
 Resource          resource.robot
 
 *** Variable ***
-@{PREV_TEST}      Previous Test Variables Should Have Correct Values When That Test Fails    PASS
+@{PREV_TEST}      \&{OPTIONS}    PASS
 @{LAST_TEST}      Previous Test Variables Should Have Default Values From Previous Suite    FAIL    Expected failure
 
 *** Test Case ***
