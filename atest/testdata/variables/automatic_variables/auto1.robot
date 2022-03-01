@@ -25,21 +25,21 @@ Previous Test Variables Should Have Default Values
     Check Previous Test Variables
 
 Test Name
-    [Setup]    Should Be Equal    ${TEST_NAME}    Test Name
-    Should Be Equal    ${TEST_NAME}    Test Name
+    [Setup]       Should Be Equal    ${TEST_NAME}    Test Name
+                  Should Be Equal    ${TEST_NAME}    Test Name
     [Teardown]    Should Be Equal    ${TEST_NAME}    Test Name
 
 Test Documentation
     [Documentation]    My doc.
     ...                In 2 lines! And with ${VARIABLE}!!
-    [Setup]    Should Be Equal    ${TEST DOCUMENTATION}    My doc.\nIn 2 lines! And with ${VARIABLE}!!
-    Should Be Equal    ${TEST DOCUMENTATION}    My doc.\nIn 2 lines! And with ${VARIABLE}!!
+    [Setup]       Should Be Equal    ${TEST DOCUMENTATION}    My doc.\nIn 2 lines! And with ${VARIABLE}!!
+                  Should Be Equal    ${TEST DOCUMENTATION}    My doc.\nIn 2 lines! And with ${VARIABLE}!!
     [Teardown]    Should Be Equal    ${TEST DOCUMENTATION}    My doc.\nIn 2 lines! And with ${VARIABLE}!!
 
 Test Tags
     [Tags]    id-${42}    Hello, world!    ${VARIABLE}
-    [Setup]    Check Test Tags    Force 1    Hello, world!    id-42    include this test    ${VARIABLE}
-    Check Test Tags    Force 1    Hello, world!    id-42    include this test    ${VARIABLE}
+    [Setup]       Check Test Tags    Force 1    Hello, world!    id-42    include this test    ${VARIABLE}
+                  Check Test Tags    Force 1    Hello, world!    id-42    include this test    ${VARIABLE}
     [Teardown]    Check Test Tags    Force 1    Hello, world!    id-42    include this test    ${VARIABLE}
 
 Modifying ${TEST TAGS} does not affect actual tags test has
