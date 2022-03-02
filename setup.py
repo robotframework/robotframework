@@ -49,6 +49,9 @@ setup(
     author       = 'Pekka Kl\xe4rck',
     author_email = 'peke@eliga.fi',
     url          = 'https://robotframework.org/',
+    project_urls = {
+        'Source': 'https://github.com/robotframework/robotframework',
+    },
     download_url = 'https://pypi.org/project/robotframework/',
     license      = 'Apache License 2.0',
     description  = DESCRIPTION,
