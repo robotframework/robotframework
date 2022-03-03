@@ -8,7 +8,7 @@ No condition
 
 Multiple conditions
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.body[0].condition}    Too
+    Should Be Equal    ${tc.body[0].condition}    Too, many, !
 
 Invalid condition
     Check Test Case    ${TESTNAME}

@@ -976,33 +976,30 @@ class WhileHeader(Statement):
         tokens = [Token(Token.SEPARATOR, indent),
                   Token(cls.type),
                   Token(Token.SEPARATOR, separator),
-                  Token(Token.ARGUMENT, condition)
-                  ]
+                  Token(Token.ARGUMENT, condition)]
         if limit:
             tokens.extend([Token(Token.SEPARATOR, indent),
-                           Token(Token.ARGUMENT, limit)])
+                           Token(Token.OPTION, limit)])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
     @property
     def condition(self):
-        return self.get_value(Token.ARGUMENT)
+        return ', '.join(self.get_values(Token.ARGUMENT))
 
     @property
     def limit(self):
-        values = self.get_values(Token.ARGUMENT)
-        if len(values) < 2:
-            return None
-        return values[1]
+        value = self.get_value(Token.OPTION)
+        return value.replace('limit=', '') if value else None
 
     def validate(self, context):
-        arguments = self.get_tokens(Token.ARGUMENT)
-        if len(arguments) == 0:
+        values = self.get_values(Token.ARGUMENT)
+        if len(values) == 0:
             self.errors += ('WHILE must have a condition.',)
-        if len(arguments) == 2 and not arguments[1].value.startswith('limit='):
+        if len(values) == 2:
             self.errors += (
-                f"Second WHILE loop argument must be 'limit', got {arguments[1]}.",)
-        if len(arguments) > 2:
+                f"Second WHILE loop argument must be 'limit', got {values[1]}.",)
+        if len(values) > 2:
             self.errors += ('WHILE cannot have more than one condition.',)
 
 

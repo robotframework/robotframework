@@ -352,12 +352,6 @@ class WhileRunner:
                     break
                 except ContinueLoop:
                     continue
-                except WhileLimitExceeded:
-                    raise ExecutionFailed(
-                        "WHILE loop was aborted because it did not finish within the "
-                        f"limit of {limit}. Use the 'limit' argument to increase or "
-                        "remove the limit if needed."
-                    )
             if not executed_once:
                 status.pass_status = result.NOT_RUN
                 self._run_iteration(data, result, run=False)
@@ -567,14 +561,26 @@ class TryRunner:
                 return None
 
 
-class WhileLimitExceeded(RuntimeError):
-    pass
-
-
 class WhileLimit:
 
+    @classmethod
+    def create(cls, limit, variables):
+        try:
+            if not limit:
+                return IterationCountLimit(100)
+            if limit.upper() == 'NONE':
+                return NoLimit()
+            value = variables.replace_string(limit)
+            if value.endswith('x'):
+                return IterationCountLimit(cls._parse_iteration_count(value[:-1]))
+            if value.endswith('times'):
+                return IterationCountLimit(cls._parse_iteration_count(value[:-5]))
+            return DurationLimit(timestr_to_secs(value, accept_plain_values=False))
+        except Exception as error:
+            raise DataError(f'Invalid WHILE loop limit: {error}')
+
     @staticmethod
-    def parse_iteration_count(limit):
+    def _parse_iteration_count(limit):
         try:
             limit = int(limit)
             if limit <= 0:
@@ -584,22 +590,10 @@ class WhileLimit:
             raise ValueError("Iteration limit must be positive integer when using "
                              f"'x' or 'times', got: '{limit}'")
 
-    @classmethod
-    def create(cls, limit, variables):
-        try:
-            if not limit:
-                return IterationCountLimit(100)
-            value = limit.replace('limit=', '')
-            if value.upper() == 'NONE':
-                return NoLimit()
-            value = variables.replace_scalar(value)
-            if value.endswith('x'):
-                return IterationCountLimit(cls.parse_iteration_count(value[:-1]))
-            if value.endswith('times'):
-                return IterationCountLimit(cls.parse_iteration_count(value[:-5]))
-            return DurationLimit(timestr_to_secs(value, accept_plain_values=False))
-        except Exception as error:
-            raise DataError(f'Invalid WHILE loop limit: {error}')
+    def limit_exceeded(self):
+        raise ExecutionFailed(f"WHILE loop was aborted because it did not finish within the "
+                              f"limit of {self}. Use the 'limit' argument to increase or "
+                              f"remove the limit if needed.")
 
     def __enter__(self):
         raise NotImplementedError
@@ -618,7 +612,7 @@ class DurationLimit(WhileLimit):
         if not self.start_time:
             self.start_time = time.time()
         if time.time() - self.start_time > self.max_time:
-            raise WhileLimitExceeded()
+            self.limit_exceeded()
 
     def __str__(self):
         return f'{self.max_time} seconds'
@@ -632,7 +626,7 @@ class IterationCountLimit(WhileLimit):
 
     def __enter__(self):
         if self.current_iterations >= self.max_iterations:
-            raise WhileLimitExceeded()
+            self.limit_exceeded()
         self.current_iterations += 1
 
     def __str__(self):

@@ -243,11 +243,18 @@ class FinallyHeaderLexer(TypeAndArguments):
         return statement[0].value == 'FINALLY'
 
 
-class WhileHeaderLexer(TypeAndArguments):
+class WhileHeaderLexer(StatementLexer):
     token_type = Token.WHILE
 
     def handles(self, statement):
         return statement[0].value == 'WHILE'
+
+    def lex(self):
+        self.statement[0].type = Token.WHILE
+        for token in self.statement[1:]:
+            token.type = Token.ARGUMENT
+        if self.statement[-1].value.startswith('limit='):
+            self.statement[-1].type = Token.OPTION
 
 
 class EndLexer(TypeAndArguments):

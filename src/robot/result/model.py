@@ -236,7 +236,7 @@ class While(model.While, StatusMixin, DeprecatedAttributesMixin):
     @property
     @deprecated
     def name(self):
-        return self.condition + f' | {self.limit}' if self.limit else ''
+        return self.condition + (f' | {self.limit}' if self.limit else '')
 
 
 class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):

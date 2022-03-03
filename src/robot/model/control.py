@@ -76,7 +76,7 @@ class While(BodyItem):
         visitor.visit_while(self)
 
     def __str__(self):
-        return f'WHILE    {self.condition}' + f'    {self.limit}' if self.limit else ''
+        return f'WHILE    {self.condition}' + (f'    {self.limit}' if self.limit else '')
 
 
 class IfBranch(BodyItem):

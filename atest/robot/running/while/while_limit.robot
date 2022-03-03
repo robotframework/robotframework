@@ -10,12 +10,16 @@ Limit with x iterations
     Check while loop     FAIL    5
 
 Limit with times iterations
-    Check Test Case    ${TESTNAME}
+    ${tc}=   Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.body[0].limit}    3 times
 
 Limit as timestr
     Check Test Case    ${TESTNAME}
 
 Limit from variable
+    Check Test Case    ${TESTNAME}
+
+Part of limit from variable
     Check Test Case    ${TESTNAME}
 
 Limit can be disabled
@@ -32,3 +36,7 @@ Invalid negative limit
 
 Invalid limit mistyped prefix
     Check Test Case    ${TESTNAME}
+
+Invalid values after limit
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.body[0].condition}    $variable < 2, limit=-1x, invalid, values

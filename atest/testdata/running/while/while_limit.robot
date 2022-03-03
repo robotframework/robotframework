@@ -1,6 +1,7 @@
 *** Variables ***
 ${variable}    ${1}
 ${limit}       11 x
+${number}      ${8}
 
 *** Test Cases ***
 Default limit is 100 iterations
@@ -33,6 +34,12 @@ Limit from variable
         Log     ${variable}
     END
 
+Part of limit from variable
+    [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 8 iterations. Use the 'limit' argument to increase or remove the limit if needed.
+    WHILE    $variable < 2    limit=${number} times
+        Log     ${variable}
+    END
+
 Limit can be disabled
     WHILE    $variable < 110    limit=NoNe
         Log     ${variable}
@@ -60,5 +67,11 @@ Invalid negative limit
 Invalid limit mistyped prefix
     [Documentation]     FAIL Second WHILE loop argument must be 'limit', got limitation=-1x.
     WHILE    $variable < 2    limitation=-1x
+        Log     ${variable}
+    END
+
+Invalid values after limit
+    [Documentation]     FAIL WHILE cannot have more than one condition.
+    WHILE    $variable < 2    limit=-1x    invalid    values
         Log     ${variable}
     END
