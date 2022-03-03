@@ -1058,7 +1058,7 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    |                        | - `${OPTIONS.skip_on_failure}`                        |            |
    |                        |   (:option:`--skiponfailure`)                         |            |
    |                        |                                                       |            |
-   |                        | New in RF 5.0                                         |            |
+   |                        | New in RF 5.0. More options can be exposed later.     |            |
    +------------------------+-------------------------------------------------------+------------+
 
 Suite related variables `${SUITE SOURCE}`, `${SUITE NAME}`, `${SUITE DOCUMENTATION}`

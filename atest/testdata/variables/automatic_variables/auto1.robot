@@ -114,8 +114,12 @@ Previous Test Variables Should Have Correct Values When That Test Fails
     ...    include    include this test
     ...    exclude    exclude, e2
     ...    skip       Skip Me
-    ...    skip_on_failure    sof
+    ...    skip_on_failure    s o f
         ${expected} =    Evaluate    $expected.split(', ')
         Should Be Equal    ${OPTIONS.${name}}     ${expected}
-        Should Be Equal    ${OPTIONS}[${name}]    ${expected}
+        Should Be Equal    ${OPTIONS}[${name}]    ${{[exp.upper() for exp in $expected]}}
+        FOR    ${exp}    IN    @{expected}
+            Should Contain    ${OPTIONS}[${name}]    ${exp}
+            Should Contain    ${OPTIONS.${name}}     ${exp.upper()}
+        END
     END
