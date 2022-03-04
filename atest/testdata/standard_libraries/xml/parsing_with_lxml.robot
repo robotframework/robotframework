@@ -12,6 +12,10 @@ Parse file using system path separator
     ${root} =   Parse XML     ${CURDIR}${/}test.xml
     Should be equal     ${root.tag}     test
 
+Parse file using pathlib.Path
+    ${root} =   Parse XML     ${{pathlib.Path('${CURDIR}/test.xml')}}
+    Should be equal     ${root.tag}     test
+
 Parse string
     ${root} =   Parse XML     <simple>päivää</simple>
     Should be equal     ${root.tag}     simple

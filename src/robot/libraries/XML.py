@@ -14,8 +14,9 @@
 #  limitations under the License.
 
 import copy
-import re
 import os
+import pathlib
+import re
 
 try:
     from lxml import etree as lxml_etree
@@ -507,6 +508,8 @@ class XML:
         the whole structure. See `Parsing XML` section for more details and
         examples.
         """
+        if isinstance(source, pathlib.Path):
+            source = str(source)
         with ETSource(source) as source:
             tree = self.etree.parse(source)
         if self.lxml_etree:
@@ -577,7 +580,7 @@ class XML:
         | ${children} =    | Get Elements | ${XML} | first/child |
         | Should Be Empty  |  ${children} |        |             |
         """
-        if is_string(source) or is_bytes(source):
+        if is_string(source) or is_bytes(source) or isinstance(source, pathlib.Path):
             source = self.parse_xml(source)
         finder = ElementFinder(self.etree, self.modern_etree, self.lxml_etree)
         return finder.find_all(source, xpath)

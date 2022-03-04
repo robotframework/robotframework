@@ -10,6 +10,9 @@ Get element from parent element
 Get element from xml file
     Check Test Case    ${TESTNAME}
 
+Get element from xml file using pathlib.Path
+    Check Test Case    ${TESTNAME}
+
 Get element from xml string
     Check Test Case    ${TESTNAME}
 
@@ -29,6 +32,9 @@ Get element fails when no elements match
     Check Test Case    ${TESTNAME}
 
 Get elements
+    Check Test Case    ${TESTNAME}
+
+Get elements using pathlib.Path
     Check Test Case    ${TESTNAME}
 
 Get elements from xml string

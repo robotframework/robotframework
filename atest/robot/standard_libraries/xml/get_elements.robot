@@ -3,11 +3,13 @@ Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/get_elements.ro
 Resource         xml_resource.robot
 
 *** Test Cases ***
-
 Get element from parent element
     Check Test Case    ${TESTNAME}
 
 Get element from xml file
+    Check Test Case    ${TESTNAME}
+
+Get element from xml file using pathlib.Path
     Check Test Case    ${TESTNAME}
 
 Get element from xml string
@@ -29,6 +31,9 @@ Get element fails when no elements match
     Check Test Case    ${TESTNAME}
 
 Get elements
+    Check Test Case    ${TESTNAME}
+
+Get elements using pathlib.Path
     Check Test Case    ${TESTNAME}
 
 Get elements from xml string

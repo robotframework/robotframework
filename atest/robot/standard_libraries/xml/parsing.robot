@@ -9,6 +9,9 @@ Parse file using forwards slash as path separator
 Parse file using system path separator
     Check Test Case    ${TESTNAME}
 
+Parse file using pathlib.Path
+    Check Test Case    ${TESTNAME}
+
 Parse string
     Check Test Case    ${TESTNAME}
 
