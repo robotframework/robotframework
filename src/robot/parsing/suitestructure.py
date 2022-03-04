@@ -149,7 +149,10 @@ class SuiteStructureBuilder:
         return incl_suites.match(self._split_prefix(name))
 
     def _split_prefix(self, name):
-        return name.split('__', 1)[-1]
+        result = name.split('__', 1)[-1]
+        if result:
+            return result
+        return name
 
 
 class SuiteStructureVisitor:

@@ -29,7 +29,7 @@ class TestJsonConverter(unittest.TestCase):
                      fullName='Misc',
                      doc='<p>My doc</p>',
                      metadata=[('1', '<p>2</p>'), ('abc', '<p>123</p>')],
-                     numberOfTests=188,
+                     numberOfTests=190,
                      tests=[],
                      keywords=[])
         test_convert(self.suite['suites'][0],

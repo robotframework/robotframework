@@ -70,11 +70,14 @@ class TestBuilding(unittest.TestCase):
     def test_directory_suite(self):
         suite = build('suites')
         assert_equal(suite.name, 'Suites')
-        assert_equal(suite.suites[1].name, 'Subsuites')
+        assert_equal(suite.suites[0].name, 'Suite With Prefix')
+        assert_equal(suite.suites[2].name, 'Subsuites')
+        assert_equal(suite.suites[4].name, 'Suite With Double Underscore')
+        assert_equal(suite.suites[4].suites[0].name, 'Tests With Double Underscore')
         assert_equal(suite.suites[-1].name, 'Tsuite3')
-        assert_equal(suite.suites[1].suites[1].name, 'Sub2')
-        assert_equal(len(suite.suites[1].suites[1].tests), 1)
-        assert_equal(suite.suites[1].suites[1].tests[0].id, 's1-s2-s2-t1')
+        assert_equal(suite.suites[2].suites[1].name, 'Sub2')
+        assert_equal(len(suite.suites[2].suites[1].tests), 1)
+        assert_equal(suite.suites[2].suites[1].tests[0].id, 's1-s3-s2-t1')
 
     def test_multiple_inputs(self):
         suite = build('pass_and_fail.robot', 'normal.robot')

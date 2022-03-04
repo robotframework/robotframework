@@ -40,7 +40,7 @@ Run tests with stat related options
 Verify total stats
     [Arguments]    ${file}
     ${all} =    Get Total Stats    ${OUTDIR}${/}${file}
-    Verify stat    ${all[0]}    label:All Tests    pass:10    fail:1    skip:0
+    Verify stat    ${all[0]}    label:All Tests    pass:12    fail:1    skip:0
 
 Verify tag stats
     [Arguments]    ${file}
@@ -57,18 +57,22 @@ Verify tag stats
 Verify suite stats
     [Arguments]    ${file}
     ${stats} =    Get Suite Stats    ${OUTDIR}${/}${file}
-    Length Should Be    ${stats}    7
+    Length Should Be    ${stats}    9
     Verify stat    ${stats[0]}    label:Suites    name:Suites
-    ...    id:s1    pass:10    fail:1    skip:0
-    Verify stat    ${stats[1]}    label:Suites.Fourth    name:Fourth
-    ...    id:s1-s1    pass:0    fail:1    skip:0
-    Verify stat    ${stats[2]}    label:Suites.Subsuites    name:Subsuites
-    ...    id:s1-s2    pass:2    fail:0    skip:0
-    Verify stat    ${stats[3]}    label:Suites.Subsuites2    name:Subsuites2
-    ...    id:s1-s3    pass:3    fail:0    skip:0
-    Verify stat    ${stats[4]}    label:Suites.Tsuite1    name:Tsuite1
+    ...    id:s1    pass:12    fail:1    skip:0
+    Verify stat    ${stats[1]}    label:Suites.Suite With Prefix    name:Suite With Prefix
+    ...    id:s1-s1    pass:1    fail:0    skip:0
+    Verify stat    ${stats[2]}    label:Suites.Fourth    name:Fourth
+    ...    id:s1-s2    pass:0    fail:1    skip:0
+    Verify stat    ${stats[3]}    label:Suites.Subsuites    name:Subsuites
+    ...    id:s1-s3    pass:2    fail:0    skip:0
+    Verify stat    ${stats[4]}    label:Suites.Subsuites2    name:Subsuites2
     ...    id:s1-s4    pass:3    fail:0    skip:0
-    Verify stat    ${stats[5]}    label:Suites.Tsuite2    name:Tsuite2
+    Verify stat    ${stats[5]}    label:Suites.Suite With Double Underscore    name:Suite With Double Underscore
     ...    id:s1-s5    pass:1    fail:0    skip:0
-    Verify stat    ${stats[6]}    label:Suites.Tsuite3    name:Tsuite3
-    ...    id:s1-s6    pass:1    fail:0    skip:0
+    Verify stat    ${stats[6]}    label:Suites.Tsuite1    name:Tsuite1
+    ...    id:s1-s6    pass:3    fail:0    skip:0
+    Verify stat    ${stats[7]}    label:Suites.Tsuite2    name:Tsuite2
+    ...    id:s1-s7    pass:1    fail:0    skip:0
+    Verify stat    ${stats[8]}    label:Suites.Tsuite3    name:Tsuite3
+    ...    id:s1-s8    pass:1    fail:0    skip:0

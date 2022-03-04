@@ -109,7 +109,10 @@ class NoInitFileDirectoryParser(BaseParser):
 
 def format_name(source):
     def strip_possible_prefix_from_name(name):
-        return name.split('__', 1)[-1]
+        result = name.split('__', 1)[-1]
+        if result:
+            return result
+        return name
 
     def format_name(name):
         name = strip_possible_prefix_from_name(name)
