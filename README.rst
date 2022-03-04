@@ -134,7 +134,7 @@ Contributing
 ------------
 
 Interested to contribute to Robot Framework? Great! In that case it is a good
-start by looking at the `Contribution guidelines <CONTRIBUTING.rst>`_. If you
+start by looking at the `<CONTRIBUTING.rst>`__. If you
 do not already have an issue you would like to work on, you can check
 issues with `good new issue`__ and `help wanted`__ labels.
 
