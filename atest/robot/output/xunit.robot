@@ -80,7 +80,7 @@ XUnit File From Nested Suites
     Length Should Be    ${failures}    4
     Element Attribute Should be    ${failures}[0]    message    ${MESSAGES}
     ${nested suite} =    Get Element    ${OUTDIR}/xunit.xml    xpath=testsuite[2]
-    Element Attribute Should Be       ${nested suite}    tests       11
+    Element Attribute Should Be       ${nested suite}    tests       13
     Element Attribute Should Be       ${nested suite}    failures    1
     ${properties} =    Get Elements    ${nested suite}    testsuite[6]/properties/property
     Length Should Be    ${properties}    2

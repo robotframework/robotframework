@@ -81,20 +81,21 @@ Check Suite Defaults
 Check Suite Got From Misc/suites/ Directory
     Check Normal Suite Defaults    ${SUITE}    teardown=BuiltIn.Log
     Should Be Equal    ${SUITE.status}    FAIL
-    Should Contain Suites    ${SUITE}    Fourth    Subsuites    Subsuites2    Tsuite1    Tsuite2    Tsuite3
+    Should Contain Suites    ${SUITE}    Suite With Prefix    Fourth    Subsuites    Subsuites2    Suite With Double Underscore    Tsuite1    Tsuite2    Tsuite3
     Should Be Empty    ${SUITE.tests}
-    Should Contain Suites    ${SUITE.suites[1]}    Sub1    Sub2
+    Should Contain Suites    ${SUITE.suites[2]}    Sub1    Sub2
     FOR    ${s}    IN
-    ...    ${SUITE.suites[0]}
-    ...    ${SUITE.suites[1].suites[0]}
-    ...    ${SUITE.suites[1].suites[1]}
+    ...    ${SUITE.suites[1]}
     ...    ${SUITE.suites[2].suites[0]}
-    ...    ${SUITE.suites[3]}
-    ...    ${SUITE.suites[4]}
+    ...    ${SUITE.suites[2].suites[1]}
+    ...    ${SUITE.suites[3].suites[0]}
+
     ...    ${SUITE.suites[5]}
+    ...    ${SUITE.suites[6]}
         Should Be Empty    ${s.suites}
     END
     Should Contain Tests    ${SUITE}
+    ...    Test With Prefix
     ...    SubSuite1 First
     ...    SubSuite2 First
     ...    SubSuite3 First
@@ -103,11 +104,15 @@ Check Suite Got From Misc/suites/ Directory
     ...    Suite1 Second    Third In Suite1    Suite2 First
     ...    Suite3 First
     ...    Suite4 First
+    ...    Test With Double Underscore
     ...    Test From Sub Suite 4
-    Check Normal Suite Defaults    ${SUITE.suites[0]}    setup=BuiltIn.Log    teardown=BuiltIn.Log
-    Check Normal Suite Defaults    ${SUITE.suites[1]}
-    Check Normal Suite Defaults    ${SUITE.suites[1].suites[0]}    setup=Setup    teardown=BuiltIn.No Operation
-    Check Normal Suite Defaults    ${SUITE.suites[1].suites[1]}
-    Check Normal Suite Defaults    ${SUITE.suites[2].suites[0]}
-    Check Normal Suite Defaults    ${SUITE.suites[3]}
+    Check Normal Suite Defaults    ${SUITE.suites[0]}
+    Check Normal Suite Defaults    ${SUITE.suites[1]}    setup=BuiltIn.Log    teardown=BuiltIn.Log
+    Check Normal Suite Defaults    ${SUITE.suites[2]}
+    Check Normal Suite Defaults    ${SUITE.suites[2].suites[0]}    setup=Setup    teardown=BuiltIn.No Operation
+    Check Normal Suite Defaults    ${SUITE.suites[2].suites[1]}
+    Check Normal Suite Defaults    ${SUITE.suites[3].suites[0]}
     Check Normal Suite Defaults    ${SUITE.suites[4]}
+    Check Normal Suite Defaults    ${SUITE.suites[4].suites[0]}
+    Check Normal Suite Defaults    ${SUITE.suites[5]}
+    Check Normal Suite Defaults    ${SUITE.suites[6]}

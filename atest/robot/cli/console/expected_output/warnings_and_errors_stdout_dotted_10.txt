@@ -1,8 +1,8 @@
-Running suite 'Suites & Suites' with 22 tests.
+Running suite 'Suites & Suites' with 26 tests.
 ==========
-F.........
 .F........
-..
+....F.....
+......
 ----------
 FAIL: Suites & Suites.Suites.Fourth.Suite4 First
 Expected
@@ -10,9 +10,9 @@ Expected
 FAIL: Suites & Suites.Suites.Fourth.Suite4 First
 Expected
 ==========
-Run suite 'Suites & Suites' with 22 tests in *
+Run suite 'Suites & Suites' with 26 tests in *
 
 FAILED
-22 tests, 20 passed, 2 failed
+26 tests, 24 passed, 2 failed
 
 Output:  *

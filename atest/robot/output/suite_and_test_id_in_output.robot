@@ -14,10 +14,10 @@ Ids in output after rebot
 *** Keywords ***
 Suite And Test Ids Should Be Correct
     Should Be Equal    ${SUITE.id}                                   s1
-    Should Be Equal    ${SUITE.suites[0].id}                         s1-s1
-    Should Be Equal    ${SUITE.suites[0].tests[-1].id}               s1-s1-t1
-    Should Be Equal    ${SUITE.suites[1].suites[0].id}               s1-s2-s1
-    Should Be Equal    ${SUITE.suites[1].suites[-1].id}              s1-s2-s2
-    Should Be Equal    ${SUITE.suites[1].suites[-1].tests[-1].id}    s1-s2-s2-t1
-    Should Be Equal    ${SUITE.suites[3].tests[-1].id}               s1-s4-t3
-    Should Be Equal    ${SUITE.suites[-1].id}                        s1-s6
+    Should Be Equal    ${SUITE.suites[1].id}                         s1-s2
+    Should Be Equal    ${SUITE.suites[1].tests[-1].id}               s1-s2-t1
+    Should Be Equal    ${SUITE.suites[2].suites[0].id}               s1-s3-s1
+    Should Be Equal    ${SUITE.suites[2].suites[-1].id}              s1-s3-s2
+    Should Be Equal    ${SUITE.suites[2].suites[-1].tests[-1].id}    s1-s3-s2-t1
+    Should Be Equal    ${SUITE.suites[5].tests[-1].id}               s1-s6-t3
+    Should Be Equal    ${SUITE.suites[-1].id}                        s1-s8

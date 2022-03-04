@@ -12,9 +12,11 @@ ${MERGE 1}        %{TEMPDIR}/merge-1.xml
 ${MERGE 2}        %{TEMPDIR}/merge-2.xml
 @{ALL TESTS}      Suite4 First             SubSuite1 First    SubSuite2 First
 ...               Test From Sub Suite 4    SubSuite3 First    SubSuite3 Second
-...               Suite1 First             Suite1 Second      Third In Suite1
+...               Suite1 First             Suite1 Second      
+...               Test With Double Underscore    Test With Prefix    Third In Suite1
 ...               Suite2 First             Suite3 First
 @{ALL SUITES}     Fourth                   Subsuites          Subsuites2
+...               Suite With Double Underscore    Suite With Prefix
 ...               Tsuite1                  Tsuite2            Tsuite3
 @{SUB SUITES 1}   Sub1                     Sub2
 @{SUB SUITES 2}   Sub.suite.4              Subsuite3
@@ -88,8 +90,8 @@ Run original tests
 Verify original tests
     Should Be Equal    ${SUITE.name}    Suites
     Should Contain Suites    ${SUITE}    @{ALL SUITES}
-    Should Contain Suites    ${SUITE.suites[1]}    @{SUB SUITES 1}
-    Should Contain Suites    ${SUITE.suites[2]}    @{SUB SUITES 2}
+    Should Contain Suites    ${SUITE.suites[2]}    @{SUB SUITES 1}
+    Should Contain Suites    ${SUITE.suites[3]}    @{SUB SUITES 2}
     Should Contain Tests    ${SUITE}    @{ALL TESTS}
     ...    SubSuite1 First=FAIL:This test was doomed to fail: YES != NO
 
@@ -138,8 +140,8 @@ Test merge should have been successful
     ...    ${status 2}=PASS    ${message 2}=
     Should Be Equal    ${SUITE.name}    ${suite name}
     Should Contain Suites    ${SUITE}    @{ALL SUITES}
-    Should Contain Suites    ${SUITE.suites[1]}    @{SUB SUITES 1}
-    Should Contain Suites    ${SUITE.suites[2]}    @{SUB SUITES 2}
+    Should Contain Suites    ${SUITE.suites[2]}    @{SUB SUITES 1}
+    Should Contain Suites    ${SUITE.suites[3]}    @{SUB SUITES 2}
     ${message 1} =    Create expected merge message    ${message 1}
     ...    FAIL    Expected    FAIL    Expected
     ${message 2} =    Create expected merge message    ${message 2}
@@ -149,33 +151,33 @@ Test merge should have been successful
     ...    SubSuite1 First=${status 2}:${message 2}
     Timestamps should be cleared
     ...    ${SUITE}
-    ...    ${SUITE.suites[0]}
     ...    ${SUITE.suites[1]}
-    ...    ${SUITE.suites[1].suites[0]}
-    Timestamps should be set
-    ...    ${SUITE.suites[1].suites[1]}
     ...    ${SUITE.suites[2]}
     ...    ${SUITE.suites[2].suites[0]}
+    Timestamps should be set
     ...    ${SUITE.suites[2].suites[1]}
     ...    ${SUITE.suites[3]}
+    ...    ${SUITE.suites[3].suites[0]}
+    ...    ${SUITE.suites[3].suites[1]}
     ...    ${SUITE.suites[4]}
-    ...    ${SUITE.suites[5]}
+    ...    ${SUITE.suites[6]}
+    ...    ${SUITE.suites[7]}
 
 Suite setup and teardown should have been merged
     Should Be Equal      ${SUITE.setup.name}                           BuiltIn.No Operation
     Should Be Equal      ${SUITE.teardown.name}                        ${NONE}
-    Should Be Equal      ${SUITE.suites[0].name}                       Fourth
-    Check Log Message    ${SUITE.suites[0].setup.msgs[0]}              Rerun!
-    Check Log Message    ${SUITE.suites[0].teardown.msgs[0]}           New!
-    Should Be Equal      ${SUITE.suites[1].suites[0].name}             Sub1
-    Should Be Equal      ${SUITE.suites[1].suites[0].setup.name}       ${NONE}
-    Should Be Equal      ${SUITE.suites[1].suites[0].teardown.name}    ${NONE}
+    Should Be Equal      ${SUITE.suites[1].name}                       Fourth
+    Check Log Message    ${SUITE.suites[1].setup.msgs[0]}              Rerun!
+    Check Log Message    ${SUITE.suites[1].teardown.msgs[0]}           New!
+    Should Be Equal      ${SUITE.suites[2].suites[0].name}             Sub1
+    Should Be Equal      ${SUITE.suites[2].suites[0].setup.name}       ${NONE}
+    Should Be Equal      ${SUITE.suites[2].suites[0].teardown.name}    ${NONE}
 
 Test add should have been successful
     Should Be Equal    ${SUITE.name}    Suites
     Should Contain Suites    ${SUITE}    @{ALL SUITES}
-    Should Contain Suites    ${SUITE.suites[1]}    @{SUB SUITES 1}
-    Should Contain Suites    ${SUITE.suites[2]}    @{SUB SUITES 2}
+    Should Contain Suites    ${SUITE.suites[2]}    @{SUB SUITES 1}
+    Should Contain Suites    ${SUITE.suites[3]}    @{SUB SUITES 2}
     Should Contain Tests    ${SUITE}    @{ALL TESTS}
     ...    SubSuite1 First=FAIL:This test was doomed to fail: YES != NO
     ...    Pass=PASS:*HTML* Test added from merged output.
@@ -183,42 +185,42 @@ Test add should have been successful
     Timestamps should be cleared
     ...    ${SUITE}
     Timestamps should be set
-    ...    ${SUITE.suites[0]}
     ...    ${SUITE.suites[1]}
-    ...    ${SUITE.suites[1].suites[0]}
-    ...    ${SUITE.suites[1].suites[1]}
     ...    ${SUITE.suites[2]}
     ...    ${SUITE.suites[2].suites[0]}
     ...    ${SUITE.suites[2].suites[1]}
     ...    ${SUITE.suites[3]}
+    ...    ${SUITE.suites[3].suites[0]}
+    ...    ${SUITE.suites[3].suites[1]}
     ...    ${SUITE.suites[4]}
-    ...    ${SUITE.suites[5]}
+    ...    ${SUITE.suites[6]}
+    ...    ${SUITE.suites[7]}
 
 Suite add should have been successful
     Should Be Equal    ${SUITE.name}    Suites
     Should Contain Suites    ${SUITE}    @{ALL SUITES}    Pass And Fail
-    Should Contain Suites    ${SUITE.suites[1]}    @{SUB SUITES 1}
-    Should Contain Suites    ${SUITE.suites[2]}    @{SUB SUITES 2}
+    Should Contain Suites    ${SUITE.suites[2]}    @{SUB SUITES 1}
+    Should Contain Suites    ${SUITE.suites[3]}    @{SUB SUITES 2}
     Should Contain Tests    ${SUITE}    @{ALL TESTS}
     ...    Pass    Fail
     ...    SubSuite1 First=FAIL:This test was doomed to fail: YES != NO
-    Should Be Equal    ${SUITE.suites[6].name}    Pass And Fail
-    Should Contain Tests    ${SUITE.suites[6]}    Pass    Fail
-    Should Be Equal    ${SUITE.suites[6].message}    *HTML* Suite added from merged output.
+    Should Be Equal    ${SUITE.suites[8].name}    Pass And Fail
+    Should Contain Tests    ${SUITE.suites[8]}    Pass    Fail
+    Should Be Equal    ${SUITE.suites[8].message}    *HTML* Suite added from merged output.
     Timestamps should be cleared
     ...    ${SUITE}
     Timestamps should be set
-    ...    ${SUITE.suites[0]}
     ...    ${SUITE.suites[1]}
-    ...    ${SUITE.suites[1].suites[0]}
-    ...    ${SUITE.suites[1].suites[1]}
     ...    ${SUITE.suites[2]}
     ...    ${SUITE.suites[2].suites[0]}
     ...    ${SUITE.suites[2].suites[1]}
     ...    ${SUITE.suites[3]}
+    ...    ${SUITE.suites[3].suites[0]}
+    ...    ${SUITE.suites[3].suites[1]}
     ...    ${SUITE.suites[4]}
-    ...    ${SUITE.suites[5]}
     ...    ${SUITE.suites[6]}
+    ...    ${SUITE.suites[7]}
+    ...    ${SUITE.suites[8]}
 
 Warnings should have been merged
     Length Should Be    ${ERRORS}    2

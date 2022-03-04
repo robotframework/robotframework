@@ -12,7 +12,7 @@ Statistics Should Be Written to XML
 Total statistics should be Correct
     ${stats} =    Get Element    ${OUTFILE}    statistics/total
     ${total} =    Call Method    ${stats}    find    stat
-    Node Should Be Correct    ${total}    All Tests    10    1
+    Node Should Be Correct    ${total}    All Tests    12    1
 
 Tag statistics should be Correct
     ${stats} =    Get Element    ${OUTFILE}    statistics/tag
@@ -31,17 +31,19 @@ Tag statistics should be Correct
     Tag Node Should Be Correct    ${stats[6]}    t1
     ...    5    1
     Tag Node Should Be Correct    ${stats[7]}    XxX
-    ...    10    1
+    ...    12    1
 
 Suite statistics should be Correct
     ${stats} =    Get Element    ${OUTFILE}    statistics/suite
-    Node Should Be Correct    ${stats[0]}    Suites    10    1
-    Node Should Be Correct    ${stats[1]}    Suites.Fourth    0    1
-    Node Should Be Correct    ${stats[2]}    Suites.Subsuites    2    0
-    Node Should Be Correct    ${stats[3]}    Suites.Subsuites2    3    0
-    Node Should Be Correct    ${stats[4]}    Suites.Tsuite1    3    0
-    Node Should Be Correct    ${stats[5]}    Suites.Tsuite2    1    0
-    Node Should Be Correct    ${stats[6]}    Suites.Tsuite3    1    0
+    Node Should Be Correct    ${stats[0]}    Suites    12    1
+    Node Should Be Correct    ${stats[1]}    Suites.Suite With Prefix    1    0
+    Node Should Be Correct    ${stats[2]}    Suites.Fourth    0    1
+    Node Should Be Correct    ${stats[3]}    Suites.Subsuites    2    0
+    Node Should Be Correct    ${stats[4]}    Suites.Subsuites2    3    0
+    Node Should Be Correct    ${stats[5]}    Suites.Suite With Double Underscore    1    0
+    Node Should Be Correct    ${stats[6]}    Suites.Tsuite1    3    0
+    Node Should Be Correct    ${stats[7]}    Suites.Tsuite2    1    0
+    Node Should Be Correct    ${stats[8]}    Suites.Tsuite3    1    0
 
 *** Keywords ***
 My Setup
