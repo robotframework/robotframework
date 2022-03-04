@@ -154,6 +154,10 @@ class TestTime(unittest.TestCase):
             assert_raises_with_msg(ValueError, "Invalid time string '%s'." % inv,
                                    timestr_to_secs, inv)
 
+    def test_timestr_to_secs_accept_plain_values(self):
+        assert_raises_with_msg(ValueError, "Invalid time string '100'.",
+                               timestr_to_secs, '100', accept_plain_values=False)
+
     def test_secs_to_timestr(self):
         for inp, compact, verbose in [
             (0.001, '1ms', '1 millisecond'),

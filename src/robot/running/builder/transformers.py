@@ -501,7 +501,7 @@ class WhileBuilder(NodeVisitor):
     def build(self, node):
         error = format_error(self._get_errors(node))
         self.model = self.parent.body.create_while(
-            node.condition, lineno=node.lineno, error=error
+            node.condition, node.limit, lineno=node.lineno, error=error
         )
         for step in node.body:
             self.visit(step)
