@@ -15,14 +15,14 @@ Overriding Name, Doc & Metadata And Escaping
     ...    -N this_is_overridden_next
     ...    --name "my COOL Name.!!."
     ...    --doc "Even \\cooooler\\ doc!?"
-    ...    --metadata something:New
+    ...    --metadata something:New!
     ...    --metadata "two parts:three parts here"
     ...    -M path:c:\\temp\\new.txt
     ...    -M esc:*?$&#!!
     Run Rebot    ${options}    ${INPUT FILE}
     Check All Names    ${SUITE}    my COOL Name.!!.
     Should Be Equal    ${SUITE.doc}    Even \\cooooler\\ doc!?
-    Should Be Equal    ${SUITE.metadata['Something']}    New
+    Should Be Equal    ${SUITE.metadata['Something']}    New!
     Should Be Equal    ${SUITE.metadata['two parts']}    three parts here
     Should Be Equal    ${SUITE.metadata['path']}    c:\\temp\\new.txt
     Should Be Equal    ${SUITE.metadata['esc']}    *?$&#!!
