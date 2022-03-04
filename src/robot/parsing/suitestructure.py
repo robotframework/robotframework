@@ -155,7 +155,6 @@ class SuiteStructureBuilder:
         return name
 
 
-
 class SuiteStructureVisitor:
 
     def visit_file(self, structure):
