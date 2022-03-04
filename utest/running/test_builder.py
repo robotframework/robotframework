@@ -71,6 +71,8 @@ class TestBuilding(unittest.TestCase):
         suite = build('suites')
         assert_equal(suite.name, 'Suites')
         assert_equal(suite.suites[1].name, 'Subsuites')
+        assert_equal(suite.suites[3].name, 'Suite With Double Underscore')
+        assert_equal(suite.suites[3].suites[0].name, 'Tests With Double Underscore')
         assert_equal(suite.suites[-1].name, 'Tsuite3')
         assert_equal(suite.suites[1].suites[1].name, 'Sub2')
         assert_equal(len(suite.suites[1].suites[1].tests), 1)
