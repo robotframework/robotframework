@@ -848,7 +848,7 @@ class XML:
         should_match(attr, pattern, message, values=False)
 
     def element_should_not_have_attribute(self, source, name, xpath='.', message=None):
-        """Verifies that the specified element does not have  attribute ``name``.
+        """Verifies that the specified element does not have attribute ``name``.
 
         The element whose attribute is verified is specified using ``source``
         and ``xpath``. They have exactly the same semantics as with
@@ -965,8 +965,10 @@ class XML:
         Like `Set Element Tag` but sets the tag of all elements matching
         the given ``xpath``.
         """
+        source = self.get_element(source)
         for elem in self.get_elements(source, xpath):
             self.set_element_tag(elem, tag)
+        return source
 
     @keyword(types=None)
     def set_element_text(self, source, text=None, tail=None, xpath='.'):
@@ -1007,8 +1009,10 @@ class XML:
         Like `Set Element Text` but sets the text or tail of all elements
         matching the given ``xpath``.
         """
+        source = self.get_element(source)
         for elem in self.get_elements(source, xpath):
             self.set_element_text(elem, text, tail)
+        return source
 
     def set_element_attribute(self, source, name, value, xpath='.'):
         """Sets attribute ``name`` of the specified element to ``value``.
@@ -1043,8 +1047,10 @@ class XML:
         Like `Set Element Attribute` but sets the attribute of all elements
         matching the given ``xpath``.
         """
+        source = self.get_element(source)
         for elem in self.get_elements(source, xpath):
             self.set_element_attribute(elem, name, value)
+        return source
 
     def remove_element_attribute(self, source, name, xpath='.'):
         """Removes attribute ``name`` from the specified element.
@@ -1077,8 +1083,10 @@ class XML:
         Like `Remove Element Attribute` but removes the attribute of all
         elements matching the given ``xpath``.
         """
+        source = self.get_element(source)
         for elem in self.get_elements(source, xpath):
             self.remove_element_attribute(elem, name)
+        return source
 
     def remove_element_attributes(self, source, xpath='.'):
         """Removes all attributes from the specified element.
@@ -1108,8 +1116,10 @@ class XML:
         Like `Remove Element Attributes` but removes all attributes of all
         elements matching the given ``xpath``.
         """
+        source = self.get_element(source)
         for elem in self.get_elements(source, xpath):
             self.remove_element_attributes(elem)
+        return source
 
     def add_element(self, source, element, index=None, xpath='.'):
         """Adds a child element to the specified element.
