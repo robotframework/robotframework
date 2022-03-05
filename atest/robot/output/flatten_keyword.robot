@@ -40,10 +40,15 @@ Pattern match
     Check Log Message    ${TC.kws[2].msgs[4]}    1
     Check Log Message    ${TC.kws[2].msgs[5]}    1
 
-Tag match
-    Should Be Equal    ${TC.kws[5].doc}    Doc of flat tag\n\n${FLAT TEXT}
-    Length Should Be    ${TC.kws[5].kws}    0
+Tag match when keyword has documentation
+    Should Be Equal     ${TC.kws[5].doc}     Doc of flat keyword.\n\n${FLAT TEXT}
+    Length Should Be    ${TC.kws[5].kws}     0
     Length Should Be    ${TC.kws[5].msgs}    1
+
+Tag match when keyword has no documentation
+    Should Be Equal     ${TC.kws[6].doc}     ${FLAT TEXT}
+    Length Should Be    ${TC.kws[6].kws}     0
+    Length Should Be    ${TC.kws[6].msgs}    1
 
 Match full name
     Should Be Equal    ${TC.kws[3].doc}    Logs the given message with the given level.\n\n${FLAT TEXT}

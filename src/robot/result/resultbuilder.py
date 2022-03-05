@@ -164,14 +164,12 @@ class ExecutionResultBuilder:
                 elif by_type and type_match(tag):
                     started = 0
                     seen_doc = False
-            elif started < 0 and by_tags and inside_kw:
-                if end and tag == 'tag':
-                    tags.append(elem.text or '')
-                elif end and tags:
-                    if tags_match(tags):
-                        started = 0
-                        seen_doc = False
-                    tags = []
+                tags = []
+            elif end and by_tags and inside_kw and started < 0 and tag == 'tag':
+                tags.append(elem.text or '')
+                if tags_match(tags):
+                    started = 0
+                    seen_doc = False
             if end and tag in containers:
                 inside_kw -= 1
                 if started == 0 and not seen_doc:

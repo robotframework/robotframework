@@ -6,7 +6,8 @@ Flatten stuff
     Keyword calling others
     Log    Flatten me too!!
     Keyword with tags not flatten
-    Keyword with fags flatten
+    Keyword with tags and doc flatten
+    Keyword with tags and no doc flatten
 
 For loop
     FOR    ${i}    IN RANGE    10
@@ -53,8 +54,12 @@ Keyword with tags not flatten
     [Tags]   hello    kitty
     Keyword 1
 
-Keyword with fags flatten
-    [Documentation]    Doc of flat tag
+Keyword with tags and doc flatten
+    [Documentation]    Doc of flat keyword.
+    [Tags]   hello    flatten
+    Keyword 1
+
+Keyword with tags and no doc flatten
     [Tags]   hello    flatten
     Keyword 1
 
