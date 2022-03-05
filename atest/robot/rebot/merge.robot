@@ -12,7 +12,7 @@ ${MERGE 1}        %{TEMPDIR}/merge-1.xml
 ${MERGE 2}        %{TEMPDIR}/merge-2.xml
 @{ALL TESTS}      Suite4 First             SubSuite1 First    SubSuite2 First
 ...               Test From Sub Suite 4    SubSuite3 First    SubSuite3 Second
-...               Suite1 First             Suite1 Second      
+...               Suite1 First             Suite1 Second
 ...               Test With Double Underscore    Test With Prefix    Third In Suite1
 ...               Suite2 First             Suite3 First
 @{ALL SUITES}     Fourth                   Subsuites          Subsuites2
@@ -303,4 +303,4 @@ Create expected multi-merge message
 Log should have been created with all Log keywords flattened
     ${log} =    Get File    ${OUTDIR}/log.html
     Should Not Contain    ${log}    "*<p>Logs the given message with the given level.\\x3c/p>"
-    Should Contain    ${log}    "*<p>Logs the given message with the given level.\\x3c/p>\\n<p><i><b>Keyword content flattened.\\x3c/b>\\x3c/i>\\x3c/p>"
+    Should Contain    ${log}    "*<p>Logs the given message with the given level.\\x3c/p>\\n<p><i><b>Content flattened.\\x3c/b>\\x3c/i>\\x3c/p>"

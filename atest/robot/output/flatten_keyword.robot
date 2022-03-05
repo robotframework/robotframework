@@ -9,8 +9,8 @@ ${FLATTEN}      --FlattenKeywords NAME:Keyword3
 ...             --flat TAG:flattenNOTkitty
 ...             --flatten "name:Flatten controls in keyword"
 ...             --log log.html
-${FLAT TEXT}    _*Keyword content flattened.*_
-${FLAT HTML}    <p><i><b>Keyword content flattened.\\x3c/b>\\x3c/i>\\x3c/p>
+${FLAT TEXT}    _*Content flattened.*_
+${FLAT HTML}    <p><i><b>Content flattened.\\x3c/b>\\x3c/i>\\x3c/p>
 ${ERROR}        [ ERROR ] Invalid value for option '--flattenkeywords': Expected 'FOR', 'WHILE', 'ITERATION', 'TAG:<pattern>' or 'NAME:<pattern>', got 'invalid'.${USAGE TIP}\n
 
 *** Test Cases ***
@@ -60,7 +60,7 @@ Flattened in log after execution
     Should Contain X Times    ${LOG}    Doc of keyword 3    1
     Should Contain X Times    ${LOG}    Doc of keyword 2    1
     Should Contain X Times    ${LOG}    Doc of keyword 1    1
-    Should Contain X Times    ${LOG}    Keyword content flattened    6
+    Should Contain X Times    ${LOG}    ${FLAT HTML}        6
     Should Contain    ${LOG}    *<p>Doc of keyword 3\\x3c/p>\\n${FLAT HTML}
     Should Contain    ${LOG}    *${FLAT HTML}
     Should Contain    ${LOG}    *<p>Logs the given message with the given level.\\x3c/p>\\n${FLAT HTML}
