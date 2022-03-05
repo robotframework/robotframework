@@ -312,6 +312,53 @@ Example
         assert_model(loop2, expected2)
 
 
+class TestWhileLoop(unittest.TestCase):
+
+    def test_valid(self):
+        model = get_model('''\
+*** Test Cases ***
+Example
+    WHILE    True
+        Log    ${x}
+    END
+''', data_only=True)
+        loop = model.sections[0].body[0].body[0]
+        expected = While(
+            header=WhileHeader([
+                Token(Token.WHILE, 'WHILE', 3, 4),
+                Token(Token.ARGUMENT, 'True', 3, 13),
+            ]),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'Log', 4, 8),
+                             Token(Token.ARGUMENT, '${x}', 4, 15)])
+            ],
+            end=End([
+                Token(Token.END, 'END', 5, 4)
+            ])
+        )
+        assert_model(loop, expected)
+
+    def test_header_parsing(self):
+        model = get_model('''\
+*** Test Cases ***
+Example
+    WHILE    True    limit=100
+        Log    ${x}
+    END
+''', data_only=False)
+        header = model.sections[0].body[0].body[0].header
+        expected = WhileHeader([
+                Token(Token.SEPARATOR, '    ', 3, 0),
+                Token(Token.WHILE, 'WHILE', 3, 4),
+                Token(Token.SEPARATOR, '    ', 3, 9),
+                Token(Token.ARGUMENT, 'True', 3, 13),
+                Token(Token.SEPARATOR, '    ', 3, 17),
+                Token(Token.OPTION, 'limit=100', 3, 21),
+                Token(Token.EOL, '\n', 3, 30),
+            ])
+        assert_model(header, expected)
+
+
 class TestIf(unittest.TestCase):
 
     def test_if(self):
