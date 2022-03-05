@@ -567,15 +567,18 @@ class WhileLimit:
     def create(cls, limit, variables):
         try:
             if not limit:
-                return IterationCountLimit(100)
+                return IterationCountLimit(10000)
             if limit.upper() == 'NONE':
                 return NoLimit()
             value = variables.replace_string(limit)
-            if value.endswith('x'):
-                return IterationCountLimit(cls._parse_iteration_count(value[:-1]))
-            if value.endswith('times'):
-                return IterationCountLimit(cls._parse_iteration_count(value[:-5]))
-            return DurationLimit(timestr_to_secs(value, accept_plain_values=False))
+            try:
+                count = int(value.replace(' ', ''))
+                if count <= 0:
+                    raise DataError(f"Iteration limit must be a positive integer, "
+                                    f"got: '{count}'.")
+                return IterationCountLimit(count)
+            except ValueError:
+                return DurationLimit(timestr_to_secs(value))
         except Exception as error:
             raise DataError(f'Invalid WHILE loop limit: {error}')
 

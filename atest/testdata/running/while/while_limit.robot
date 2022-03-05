@@ -1,24 +1,30 @@
 *** Variables ***
 ${variable}    ${1}
-${limit}       11 x
-${number}      ${8}
+${limit}       11
+${number}      ${0.7}
 
 *** Test Cases ***
-Default limit is 100 iterations
-    [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 100 iterations. Use the 'limit' argument to increase or remove the limit if needed.
+Default limit is 10000 iterations
+    [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 10000 iterations. Use the 'limit' argument to increase or remove the limit if needed.
     WHILE    $variable < 2
         Log    ${variable}
     END
 
-Limit with x iterations
+Limit with iteration count
     [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 5 iterations. Use the 'limit' argument to increase or remove the limit if needed.
-    WHILE    $variable < 2    limit=5x
+    WHILE    $variable < 2    limit=5
         Log    ${variable}
     END
 
-Limit with times iterations
-    [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 3 iterations. Use the 'limit' argument to increase or remove the limit if needed.
-    WHILE    $variable < 2    limit=3 times
+Limit with iteration count with spaces
+    [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 30 iterations. Use the 'limit' argument to increase or remove the limit if needed.
+    WHILE    $variable < 2    limit=3 0
+        Log    ${variable}
+    END
+
+Limit with iteration count with underscore
+    [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 10 iterations. Use the 'limit' argument to increase or remove the limit if needed.
+    WHILE    $variable < 2    limit=1_0
         Log    ${variable}
     END
 
@@ -35,8 +41,8 @@ Limit from variable
     END
 
 Part of limit from variable
-    [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 8 iterations. Use the 'limit' argument to increase or remove the limit if needed.
-    WHILE    $variable < 2    limit=${number} times
+    [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 0.7 seconds. Use the 'limit' argument to increase or remove the limit if needed.
+    WHILE    $variable < 2    limit=${number} s
         Log     ${variable}
     END
 
@@ -46,21 +52,15 @@ Limit can be disabled
         ${variable}=    Evaluate    $variable + 1
     END
 
-Invalid limit no suffix
-    [Documentation]     FAIL Invalid WHILE loop limit: Invalid time string '1'.
-    WHILE    $variable < 2    limit=1
+Invalid limit invalid suffix
+    [Documentation]     FAIL Invalid WHILE loop limit: Invalid time string '1 times'.
+    WHILE    $variable < 2    limit=1 times
         Log     ${variable}
     END
 
 Invalid limit invalid value
-    [Documentation]     FAIL Invalid WHILE loop limit: Iteration limit must be positive integer when using 'x' or 'times', got: 'fdas '
-    WHILE    $variable < 2    limit=fdas x
-        Log     ${variable}
-    END
-
-Invalid negative limit
-    [Documentation]     FAIL Invalid WHILE loop limit: Iteration limit must be positive integer when using 'x' or 'times', got: '-1'
-    WHILE    $variable < 2    limit=-1x
+    [Documentation]     FAIL Invalid WHILE loop limit: Iteration limit must be a positive integer, got: '-100'.
+    WHILE    $variable < 2    limit=-100
         Log     ${variable}
     END
 

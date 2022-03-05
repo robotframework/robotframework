@@ -3,15 +3,19 @@ Suite Setup       Run Tests    ${EMPTY}    running/while/while_limit.robot
 Resource          while.resource
 
 *** Test Cases ***
-Default limit is 100 iterations
+Default limit is 10000 iterations
     Check Test Case    ${TESTNAME}
 
-Limit with x iterations
+Limit with iteration count
     Check while loop     FAIL    5
 
-Limit with times iterations
+Limit with iteration count with spaces
     ${tc}=   Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.body[0].limit}    3 times
+    Should Be Equal    ${tc.body[0].limit}    3 0
+
+Limit with iteration count with underscore
+    ${tc}=   Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.body[0].limit}    1_0
 
 Limit as timestr
     Check Test Case    ${TESTNAME}
@@ -25,13 +29,10 @@ Part of limit from variable
 Limit can be disabled
     Check Test Case    ${TESTNAME}
 
-Invalid limit no suffix
+Invalid limit invalid suffix
     Check Test Case    ${TESTNAME}
 
 Invalid limit invalid value
-    Check Test Case    ${TESTNAME}
-
-Invalid negative limit
     Check Test Case    ${TESTNAME}
 
 Invalid limit mistyped prefix
