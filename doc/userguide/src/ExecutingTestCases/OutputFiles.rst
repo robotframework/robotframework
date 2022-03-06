@@ -139,9 +139,15 @@ XUnit output files are not created unless the command line option
 :option:`--xunit (-x)` is used explicitly. This option requires a path to
 the generated xUnit file, relatively to the `output directory`_, as a value.
 
+XUnit output files were changed pretty heavily in Robot Framework 5.0.
+They nowadays contain separate `<testsuite>` elements for each suite,
+`<testsuite>` elements have `timestamp` attribute, and `test suite documentation`_
+and metadata__ is stored as `<property>` elements.
+
 __ http://en.wikipedia.org/wiki/XUnit
 __ http://jenkins-ci.org
 __ https://wiki.jenkins-ci.org/display/JENKINS/Robot+Framework+Plugin
+__ `Free test suite metadata`_
 
 Debug file
 ~~~~~~~~~~
