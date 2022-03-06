@@ -38,6 +38,7 @@ class SuiteRunner(SuiteVisitor):
         self._suite_status = None
         self._executed_tests = None
         self._skipped_tags = TagPatterns(settings.skip)
+        self._executed_tests = NormalizedDict(ignore='_')
 
     @property
     def _context(self):
@@ -81,7 +82,6 @@ class SuiteRunner(SuiteVisitor):
                                                test_count=suite.test_count))
         self._output.register_error_listener(self._suite_status.error_occurred)
         self._run_setup(suite.setup, self._suite_status)
-        self._executed_tests = NormalizedDict(ignore='_')
 
     def _resolve_setting(self, value):
         if is_list_like(value):
@@ -110,11 +110,11 @@ class SuiteRunner(SuiteVisitor):
         settings = self._settings
         if TagPatterns("robot:exclude").match(test.tags):
             return
-        if test.name in self._executed_tests:
+        if test.longname in self._executed_tests:
             self._output.warn(
                 test_or_task(f"Multiple {{test}}s with name '{test.name}' executed in "
                              f"suite '{self._suite.longname}'.", settings.rpa))
-        self._executed_tests[test.name] = True
+        self._executed_tests[test.longname] = True
         result = self._suite.tests.create(self._resolve_setting(test.name),
                                           self._resolve_setting(test.doc),
                                           self._resolve_setting(test.tags),

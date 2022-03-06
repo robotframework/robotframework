@@ -1,0 +1,13 @@
+[ WARN ] Multiple tests with name 'Test With Prefix' executed in suite 'Suites & Suites.Suites.Suite With Prefix.Tests With Prefix'.
+[ WARN ] Multiple tests with name 'Suite4 First' executed in suite 'Suites & Suites.Suites.Fourth'.
+[ WARN ] Multiple tests with name 'SubSuite1 First' executed in suite 'Suites & Suites.Suites.Subsuites.Sub1'.
+[ WARN ] Multiple tests with name 'SubSuite2 First' executed in suite 'Suites & Suites.Suites.Subsuites.Sub2'.
+[ WARN ] Multiple tests with name 'Test From Sub Suite 4' executed in suite 'Suites & Suites.Suites.Subsuites2.Sub.Suite.4'.
+[ WARN ] Multiple tests with name 'SubSuite3 First' executed in suite 'Suites & Suites.Suites.Subsuites2.Subsuite3'.
+[ WARN ] Multiple tests with name 'SubSuite3 Second' executed in suite 'Suites & Suites.Suites.Subsuites2.Subsuite3'.
+[ WARN ] Multiple tests with name 'Test With Double Underscore' executed in suite 'Suites & Suites.Suites.Suite With Double Underscore.Tests With Double Underscore'.
+[ WARN ] Multiple tests with name 'Suite1 First' executed in suite 'Suites & Suites.Suites.Tsuite1'.
+[ WARN ] Multiple tests with name 'Suite1 Second' executed in suite 'Suites & Suites.Suites.Tsuite1'.
+[ WARN ] Multiple tests with name 'Third In Suite1' executed in suite 'Suites & Suites.Suites.Tsuite1'.
+[ WARN ] Multiple tests with name 'Suite2 First' executed in suite 'Suites & Suites.Suites.Tsuite2'.
+[ WARN ] Multiple tests with name 'Suite3 First' executed in suite 'Suites & Suites.Suites.Tsuite3'.
