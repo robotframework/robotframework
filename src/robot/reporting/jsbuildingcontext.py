@@ -17,8 +17,8 @@ from contextlib import contextmanager
 from os.path import exists, dirname
 
 from robot.output.loggerhelper import LEVELS
-from robot.utils import (attribute_escape, get_link_path, html_escape, html_format,
-                         is_string, safe_str, timestamp_to_secs)
+from robot.utils import (attribute_escape, get_link_path, html_escape, is_string,
+                         safe_str, timestamp_to_secs)
 
 from .expandkeywordmatcher import ExpandKeywordMatcher
 from .stringcache import StringCache
@@ -48,7 +48,7 @@ class JsBuildingContext:
         return self._strings.add(string)
 
     def html(self, string):
-        return self.string(html_format(string), escape=False)
+        return self._strings.add(string, html=True)
 
     def relative_source(self, source):
         rel_source = get_link_path(source, self._log_dir) \
