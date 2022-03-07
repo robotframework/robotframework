@@ -48,7 +48,7 @@ class JsBuildingContext:
             string = (html_escape if not attr else attribute_escape)(string)
         return self._strings.add(string)
 
-    @functools.lru_cache
+    @functools.lru_cache(maxsize=128)
     def html(self, string):
         return self.string(html_format(string), escape=False)
 
