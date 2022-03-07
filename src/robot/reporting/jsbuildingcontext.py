@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from contextlib import contextmanager
+import functools
 from os.path import exists, dirname
 
 from robot.output.loggerhelper import LEVELS
@@ -47,6 +48,7 @@ class JsBuildingContext:
             string = (html_escape if not attr else attribute_escape)(string)
         return self._strings.add(string)
 
+    @functools.lru_cache
     def html(self, string):
         return self.string(html_format(string), escape=False)
 
