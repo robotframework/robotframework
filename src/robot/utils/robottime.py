@@ -380,6 +380,9 @@ def _timestamp_to_millis(timestamp, seps=None):
     if seps:
         timestamp = _normalize_timestamp(timestamp, seps)
     Y, M, D, h, m, s, millis = _split_timestamp(timestamp)
+    # PERFORMANCE: according to the docs https://docs.python.org/3/library/datetime.html#datetime.date.timetuple
+    # Every call of .timetuple() performs `yday = d.toordinal() - date(d.year, 1, 1).toordinal() + 1` which
+    # is a relatively expensive computation
     secs = time.mktime(datetime.datetime(Y, M, D, h, m, s).timetuple())
     return roundup(1000*secs + millis)
 
