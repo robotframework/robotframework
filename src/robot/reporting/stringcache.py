@@ -13,9 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections import OrderedDict
-
-from robot.utils import compress_text
+from robot.utils import compress_text, html_format
 
 
 class StringIndex(int):
@@ -28,27 +26,25 @@ class StringCache:
     _zero_index = StringIndex(0)
 
     def __init__(self):
-        self._cache = OrderedDict({'*': self._zero_index})
+        self._cache = {('', False): self._zero_index}
 
-    def add(self, text):
+    def add(self, text, html=False):
         if not text:
             return self._zero_index
-        text = self._encode(text)
-        if text not in self._cache:
-            self._cache[text] = StringIndex(len(self._cache))
-        return self._cache[text]
-
-    def _encode(self, text):
-        raw = self._raw(text)
-        if raw in self._cache or len(raw) < self._compress_threshold:
-            return raw
-        compressed = compress_text(text)
-        if len(compressed) * self._use_compressed_threshold < len(raw):
-            return compressed
-        return raw
-
-    def _raw(self, text):
-        return '*'+text
+        key = (text, html)
+        if key not in self._cache:
+            self._cache[key] = StringIndex(len(self._cache))
+        return self._cache[key]
 
     def dump(self):
-        return tuple(self._cache)
+        return tuple(self._encode(text, html) for text, html in self._cache)
+
+    def _encode(self, text, html=False):
+        if html:
+            text = html_format(text)
+        if len(text) > self._compress_threshold:
+            compressed = compress_text(text)
+            if len(compressed) * self._use_compressed_threshold < len(text):
+                return compressed
+        # Strings starting with '*' are raw, others are compressed.
+        return '*' + text

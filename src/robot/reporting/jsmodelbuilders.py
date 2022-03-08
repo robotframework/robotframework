@@ -13,7 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.model import BodyItem
 from robot.output import LEVELS
 
 from .jsbuildingcontext import JsBuildingContext
