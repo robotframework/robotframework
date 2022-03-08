@@ -549,9 +549,51 @@ strings and string themselves containing quotes cause additional problems. See t
 `Evaluating expressions`_ appendix for more information and examples related to
 the evaluation syntax
 
-There is currently no way to limit the number of loops in the `WHILE` loop. This means that
-if in the above example the keyword never returns zero, the loop continues executing
-ad infinitum.
+
+Limiting `WHILE` loop iterations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+With `WHILE` loop, there is always a possibility to achieve an infinite loop,
+either by intention or by mistake. This happens when the loop condition never becomes
+`False`. While infinite loops have some utility in application programming, in test
+automation / RPA, an infinite loop is rarely a desired outcome. For this reason, `WHILE`
+loops in Robot Framework have a built-in iteration limit of 10000.
+
+In this example, the loop will be terminated after 10000 iterations.
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Example
+        WHILE    True
+            Log    Hello
+        END
+
+The limit can be changed with a configuration option to the loop. Valid values for the
+option are positive integers and `time as time string`_. In the following example, the
+first loop has a limit of 15 iterations, whereas the second loop has a limit of 35 seconds.
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Example
+        WHILE    True    limit=15
+            Log    Hello
+        END
+        WHILE    True    limit=35s
+            Log    Hello
+        END
+
+Finally, the limit can be disabled altogether by using the string 'none'
+(case insensitive) as the limit.
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Example
+        WHILE    True    limit=none
+            Log    Hello
+        END
+
 
 Nesting `WHILE` loops
 ~~~~~~~~~~~~~~~~~~~~~
