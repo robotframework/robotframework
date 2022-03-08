@@ -1,6 +1,11 @@
+import os
+import re
+import time
 import unittest
+import unittest.mock
 
 from robot.utils.asserts import assert_equal, assert_true, assert_false
+from robot.utils.robottime import format_time
 
 from robot.output.logger import Logger
 from robot.output.console.verbose import VerboseOutput
@@ -48,7 +53,19 @@ class TestLogger(unittest.TestCase):
         logger = LoggerMock(('Hello, world!', 'INFO'))
         self.logger.register_logger(logger)
         self.logger.write('Hello, world!', 'INFO')
-        assert_true(logger.msg.timestamp.startswith('20'))
+        # Verify that the timestamp is formatted like
+        # "20220308 15:21:12.717".
+        assert_true(re.match(r'[0-9]{8} [0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}',
+                             logger.msg.timestamp))
+
+    @unittest.mock.patch.dict(os.environ, {'SOURCE_DATE_EPOCH': "0"})
+    def test_write_to_logger_with_source_date_epoch_set(self):
+        logger = LoggerMock(('Hello, SOURCE_DATE_EPOCH!', 'INFO'))
+        self.logger.register_logger(logger)
+        self.logger.write('Hello, SOURCE_DATE_EPOCH!', 'INFO')
+        expected = format_time(
+            time.localtime(int(os.environ['SOURCE_DATE_EPOCH'])))
+        assert_true(logger.msg.timestamp.startswith(expected))
 
     def test_write_to_one_logger_with_trace_level(self):
         logger = LoggerMock(('expected message', 'TRACE'))

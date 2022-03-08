@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os
 import re
 import time
 
@@ -420,6 +421,8 @@ class TimestampCache:
 
     # Seam for mocking
     def _get_epoch(self):
+        if os.getenv('SOURCE_DATE_EPOCH'):
+            return float(os.getenv('SOURCE_DATE_EPOCH'))
         return time.time()
 
     def _use_cache(self, secs, *separators):
