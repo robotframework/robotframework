@@ -199,6 +199,10 @@ Options
     --maxerrorlines lines  Maximum number of error message lines to show in
                           report when tests fail. Default is 40, minimum is 10
                           and `NONE` can be used to show the full message.
+    --maxassignlength characters  Maximum number of characters to show in
+                          report when variable is assigned. Default is 200,
+                          minimum is 10 and -1 can be used to remove assigned
+                          value.
  -L --loglevel level      Threshold level for logging. Available levels: TRACE,
                           DEBUG, INFO (default), WARN, NONE (no logging). Use
                           syntax `LOGLEVEL:DEFAULT` to define the default
@@ -437,6 +441,7 @@ class RobotFramework(Application):
         with pyloggingconf.robot_handler_enabled(settings.log_level):
             old_max_error_lines = text.MAX_ERROR_LINES
             text.MAX_ERROR_LINES = settings.max_error_lines
+            text.MAX_ASSIGN_LENGTH = settings.max_assign_length
             try:
                 result = suite.run(settings)
             finally:
