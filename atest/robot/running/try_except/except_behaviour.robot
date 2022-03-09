@@ -29,22 +29,28 @@ Variable in pattern
     FAIL    PASS
 
 Invalid variable in pattern
-    FAIL    NOT RUN    PASS       tc_status=FAIL
+    FAIL    FAIL    PASS
+
+Non-string pattern
+    FAIL    NOT RUN    NOT RUN    NOT RUN    NOT RUN
 
 Variable in pattern type
     FAIL    PASS
 
 Invalid variable in pattern type
-    FAIL    NOT RUN    PASS       tc_status=FAIL
+    FAIL    FAIL    PASS
 
 Invalid pattern type
-    FAIL    NOT RUN
+    FAIL    FAIL
+
+Non-string pattern type
+    FAIL    FAIL
 
 Pattern type without patterns
     FAIL    PASS
 
 Skip cannot be caught
-    SKIP    NOT RUN    PASS       tc_status=SKIP
+    SKIP    NOT RUN    PASS    tc_status=SKIP
 
 Return cannot be caught
     PASS    NOT RUN    PASS       path=body[0].body[0]

@@ -495,9 +495,11 @@ class TryRunner:
             return True
         return not (error.skip or isinstance(error, ExecutionPassed))
 
-    def _run_branch(self, branch, result, run):
+    def _run_branch(self, branch, result, run=True, error=None):
         try:
             with StatusReporter(branch, result, self._context, run):
+                if error:
+                    raise error
                 runner = BodyRunner(self._context, run, self._templated)
                 runner.run(branch.body)
         except ExecutionStatus as err:
@@ -512,14 +514,16 @@ class TryRunner:
             try:
                 run_branch = run and self._should_run_except(branch, error)
             except DataError as err:
-                run_branch = run = False
-                error = ExecutionFailed(str(err))
+                run_branch = True
+                pattern_error = err
+            else:
+                pattern_error = None
             result = TryBranchResult(branch.type, branch.patterns,
                                      branch.pattern_type, branch.variable)
             if run_branch:
                 if branch.variable:
                     self._context.variables[branch.variable] = str(error)
-                error = self._run_branch(branch, result, run=True)
+                error = self._run_branch(branch, result, error=pattern_error)
                 run = False
             else:
                 self._run_branch(branch, result, run=False)
@@ -529,12 +533,11 @@ class TryRunner:
         if not branch.patterns:
             return True
         matchers = {
-            'GLOB': lambda s, p: Matcher(p, spaceless=False, caseless=False).match(s),
-            'LITERAL': lambda s, p: s == p,
-            'REGEXP': lambda s, p: re.match(rf'{p}\Z', s) is not None,
-            'START': lambda s, p: s.startswith(p)
+            'GLOB': lambda m, p: Matcher(p, spaceless=False, caseless=False).match(m),
+            'LITERAL': lambda m, p: m == p,
+            'REGEXP': lambda m, p: re.match(rf'{p}\Z', m) is not None,
+            'START': lambda m, p: m.startswith(p)
         }
-        message = error.message
         if branch.pattern_type:
             pattern_type = self._context.variables.replace_string(branch.pattern_type)
         else:
@@ -544,7 +547,7 @@ class TryRunner:
             raise DataError(f"Invalid EXCEPT pattern type '{pattern_type}', "
                             f"expected {seq2str(matchers, lastsep=' or ')}.")
         for pattern in branch.patterns:
-            if matcher(message, self._context.variables.replace_scalar(pattern)):
+            if matcher(error.message, self._context.variables.replace_string(pattern)):
                 return True
         return False
 

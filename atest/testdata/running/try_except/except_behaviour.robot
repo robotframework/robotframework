@@ -61,10 +61,9 @@ Regexp flags
 Variable in pattern
     TRY
         Fail    failure
-    EXCEPT    fai?lu.*    type=${regexp}
+    EXCEPT    ${expected}
         No operation
     END
-
 
 Invalid variable in pattern
     [Documentation]    FAIL    Variable '${does not exist}' not found.
@@ -76,10 +75,24 @@ Invalid variable in pattern
         Log    finally here
     END
 
+Non-string pattern
+    [Documentation]    FAIL    failure
+    TRY
+        Fail    failure
+    EXCEPT    ${42}
+        Fail   Should not be executed
+    EXCEPT    ${42}    type=glob
+        Fail   Should not be executed
+    EXCEPT    ${42}    type=regexp
+        Fail   Should not be executed
+    EXCEPT    ${42}    type=start
+        Fail   Should not be executed
+    END
+
 Variable in pattern type
     TRY
         Fail    failure
-    EXCEPT    ${expected}
+    EXCEPT    fai?lu.*    type=${regexp}
         No operation
     END
 
@@ -98,6 +111,14 @@ Invalid pattern type
     TRY
         Fail   Should not be executed
     EXCEPT    x    type=invalid
+        Fail   Should not be executed
+    END
+
+Non-string pattern type
+    [Documentation]    FAIL    Invalid EXCEPT pattern type '42', expected 'GLOB', 'LITERAL', 'REGEXP' or 'START'.
+    TRY
+        Fail    failure
+    EXCEPT    x    type=${42}
         Fail   Should not be executed
     END
 
