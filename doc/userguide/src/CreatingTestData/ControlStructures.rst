@@ -1023,48 +1023,50 @@ Matching errors using patterns
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 By default matching an error using `EXCEPT` requires an exact match. That can be
-changed by prefixing the message with `GLOB:`, `REGEXP:` or `STARTS:` (case-sensitive)
+changed using a configuration option `type=` as an argument to the except clause.
+Valid values for the option are `GLOB`, `REGEXP` or `START` (case-insensitive)
 to make the match a `glob pattern match`__, a `regular expression match`__, or
-to match only the beginning of the error, respectively. Prefixing the message with
-`EQUALS:` has the same effect as the default behavior. If an `EXCEPT` has multiple
-messages, possible prefixes apply only to messages they are attached to, not to
-other messages. The prefix must always be specified explicitly and cannot come
-from a variable.
+to match only the beginning of the error, respectively. Using value
+`LITERAL` has the same effect as the default behavior. If an `EXCEPT` has multiple
+messages, this option applies to all of them. The value of the option
+can be defined with a variable as well.
 
 .. sourcecode:: robotframework
+    *** Settings ***
+    ${regexp}     regexp
 
     *** Test Cases ***
     Glob pattern
         TRY
             Some Keyword
-        EXCEPT    GLOB: ValueError: *
+        EXCEPT    ValueError: *    type=GLOB
             Error Handler 1
-        EXCEPT    GLOB: [Ee]rror ?? occurred    GLOB: ${pattern}
+        EXCEPT    [Ee]rror ?? occurred    ${pattern}    type=glob
             Error Handler 2
         END
 
     Regular expression
         TRY
             Some Keyword
-        EXCEPT    REGEXP: ValueError: .*
+        EXCEPT    ValueError: .*    type=${regexp}
             Error Handler 1
-        EXCEPT    REGEXP: [Ee]rror \\d+ occurred    # Backslash needs to be escaped.
+        EXCEPT    [Ee]rror \\d+ occurred    type=Regexp    # Backslash needs to be escaped.
             Error Handler 2
         END
 
     Match start
         TRY
             Some Keyword
-        EXCEPT    STARTS: ValueError:    STARTS: ${beginning}
+        EXCEPT    ValueError:    ${beginning}    type=start
             Error Handler
         END
 
     Explicit exact match
         TRY
             Some Keyword
-        EXCEPT    EQUALS: ValueError: invalid literal for int() with base 10: 'ooops'
+        EXCEPT    ValueError: invalid literal for int() with base 10: 'ooops'    type=LITERAL
             Error Handler
-        EXCEPT    EQUALS: Error 13 occurred
+        EXCEPT    Error 13 occurred    type=LITERAL
             Error Handler 2
         END
 
