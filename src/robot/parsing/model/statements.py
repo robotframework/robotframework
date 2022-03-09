@@ -941,6 +941,11 @@ class ExceptHeader(Statement):
         return self.get_values(Token.ARGUMENT)
 
     @property
+    def pattern_type(self):
+        value = self.get_value(Token.OPTION)
+        return value[len('type='):] if value else None
+
+    @property
     def variable(self):
         return self.get_value(Token.VARIABLE)
 
@@ -990,7 +995,7 @@ class WhileHeader(Statement):
     @property
     def limit(self):
         value = self.get_value(Token.OPTION)
-        return value.replace('limit=', '') if value else None
+        return value[len('limit='):] if value else None
 
     def validate(self, context):
         values = self.get_values(Token.ARGUMENT)

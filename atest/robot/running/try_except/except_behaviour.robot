@@ -13,9 +13,6 @@ Equals with whitespace
 Glob matcher
     FAIL    NOT RUN    PASS
 
-Glob with leading whitespace
-    FAIL    PASS
-
 Startswith matcher
     FAIL    PASS
 
@@ -34,9 +31,17 @@ Variable in pattern
 Invalid variable in pattern
     FAIL    NOT RUN    PASS       tc_status=FAIL
 
-Matcher type cannot be defined with variable
-    FAIL    PASS       NOT RUN    tc_status=FAIL    path=body[0]
-    FAIL    NOT RUN               tc_status=FAIL    path=body[1]
+Variable in pattern type
+    FAIL    PASS
+
+Invalid variable in pattern type
+    FAIL    NOT RUN    PASS       tc_status=FAIL
+
+Invalid pattern type
+    FAIL    NOT RUN
+
+Pattern type without patterns
+    FAIL    PASS
 
 Skip cannot be caught
     SKIP    NOT RUN    PASS       tc_status=SKIP

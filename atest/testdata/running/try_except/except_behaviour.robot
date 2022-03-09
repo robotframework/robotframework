@@ -1,6 +1,6 @@
 *** Variables ***
-${expected}                 failure
-${expected_with_pattern}    GLOB: ?
+${expected}    failure
+${regexp}      regexp
 
 *** Test Cases ***
 Equals is the default matcher
@@ -20,57 +20,51 @@ Equals with whitespace
 Glob matcher
     TRY
         Fail    failure
-    EXCEPT    GLOB: FAI*
+    EXCEPT    FAI*    type=GloB
         Fail   Should not be executed
-    EXCEPT    GLOB: f*
-        No operation
-    END
-
-Glob with leading whitespace
-    TRY
-        Fail    ${SPACE}failure
-    EXCEPT    GLOB: ${SPACE}f*
+    EXCEPT    f*    type=gloB
         No operation
     END
 
 Startswith matcher
     TRY
         Fail    failure
-    EXCEPT    STARTS: fai
+    EXCEPT    fai        type=start
         No operation
     END
 
 Regexp matcher
     TRY
         Fail    failure
-    EXCEPT    REGEXP: fai?lu
+    EXCEPT    fai?lu    type=REGEXP
         Fail   Should not be executed
-    EXCEPT    REGEXP: fai?lu.*
+    EXCEPT    fai?lu.*    type=REGEXP
         No operation
     END
 
 Regexp escapes
     TRY
         Fail    000failure
-    EXCEPT    REGEXP: \\d\\d\\dfai?lu.*
+    EXCEPT    \\d\\d\\dfai?lu.*    type=REGEXP
         No operation
     END
 
 Regexp flags
     TRY
         Fail    MESSAGE\nIN\nMANY\nLINES
-    EXCEPT    REGEXP: message.*lines
+    EXCEPT    message.*lines    type=REGEXP
         Fail   Should not be executed
-    EXCEPT    REGEXP: (?is)message.*lines
+    EXCEPT    (?is)message.*lines    type=REGEXP
         No operation
     END
 
 Variable in pattern
     TRY
         Fail    failure
-    EXCEPT    ${expected}
+    EXCEPT    fai?lu.*    type=${regexp}
         No operation
     END
+
 
 Invalid variable in pattern
     [Documentation]    FAIL    Variable '${does not exist}' not found.
@@ -82,19 +76,36 @@ Invalid variable in pattern
         Log    finally here
     END
 
-Matcher type cannot be defined with variable
-    [Documentation]    FAIL failure
-    TRY
-        Fail    GLOB: ?
-    EXCEPT    ${expected_with_pattern}
-        No operation
-    ELSE
-        Fail    Should not be executed
-    END
+Variable in pattern type
     TRY
         Fail    failure
-    EXCEPT    ${expected_with_pattern}
-        Fail    Should not be executed
+    EXCEPT    ${expected}
+        No operation
+    END
+
+Invalid variable in pattern type
+    [Documentation]    FAIL    Variable '${does not exist}' not found.
+    TRY
+        Fail   Oh no!
+    EXCEPT    foo    type=${does not exist}
+        Fail   Should not be executed
+    FINALLY
+        Log    finally here
+    END
+
+Invalid pattern type
+    [Documentation]    FAIL    Invalid EXCEPT pattern type 'invalid', expected 'GLOB', 'LITERAL', 'REGEXP' or 'START'.
+    TRY
+        Fail   Should not be executed
+    EXCEPT    x    type=invalid
+        Fail   Should not be executed
+    END
+
+Pattern type without patterns
+    TRY
+        Fail   oh no
+    EXCEPT    type=glob
+        No operation
     END
 
 Skip cannot be caught
@@ -121,7 +132,7 @@ AS gets the message
 AS with multiple pattern
     TRY
         Fail    failure
-    EXCEPT    fa    GLOB: fa?lur?    AS    ${err}
+    EXCEPT    fa    fa?lur?    type=glob    AS    ${err}
         Should be equal    ${err}    failure
     END
 
@@ -129,7 +140,7 @@ AS with many failures
     TRY
         Run keyword and continue on failure    Fail    oh no!
         Fail    fail again!
-    EXCEPT    GLOB: Several*    AS   ${err}
+    EXCEPT    Several*    type=glob    AS   ${err}
         Should be equal    ${err}    Several failures occurred:\n\n1) oh no!\n\n2) fail again!
     END
 

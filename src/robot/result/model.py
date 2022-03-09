@@ -275,9 +275,9 @@ class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
     body_class = Body
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
-    def __init__(self, type=BodyItem.TRY, patterns=(), variable=None, status='FAIL',
-                 starttime=None, endtime=None, doc='', parent=None):
-        super().__init__(type, patterns, variable, parent)
+    def __init__(self, type=BodyItem.TRY, patterns=(), pattern_type=None, variable=None,
+                 status='FAIL', starttime=None, endtime=None, doc='', parent=None):
+        super().__init__(type, patterns, pattern_type, variable, parent)
         self.status = status
         self.starttime = starttime
         self.endtime = endtime
@@ -286,10 +286,13 @@ class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
     @property
     @deprecated
     def name(self):
-        patterns = ' | '.join(self.patterns)
-        as_var = f'AS {self.variable}' if self.variable else ''
-        sep = ' ' if patterns and as_var else ''
-        return f'{patterns}{sep}{as_var}'
+        result = ' | '.join(self.patterns)
+        if self.pattern_type:
+            result += f' | type={self.pattern_type}'
+        if self.variable:
+            sep = ' ' if result else ''
+            result += f'{sep}AS {self.variable}'
+        return result
 
 
 @Body.register

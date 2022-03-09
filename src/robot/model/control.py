@@ -141,14 +141,16 @@ class If(BodyItem):
 
 class TryBranch(BodyItem):
     body_class = Body
-    repr_args = ('type', 'patterns', 'variable')
-    __slots__ = ['type', 'patterns', 'variable']
+    repr_args = ('type', 'patterns', 'pattern_type', 'variable')
+    __slots__ = ['type', 'patterns', 'pattern_type', 'variable']
 
-    def __init__(self, type=BodyItem.TRY, patterns=(), variable=None, parent=None):
-        if (patterns or variable) and type != BodyItem.EXCEPT:
+    def __init__(self, type=BodyItem.TRY, patterns=(), pattern_type=None,
+                 variable=None, parent=None):
+        if (patterns or pattern_type or variable) and type != BodyItem.EXCEPT:
             raise TypeError(f"'{type}' branches do not accept patterns or variables.")
         self.type = type
         self.patterns = patterns
+        self.pattern_type = pattern_type
         self.variable = variable
         self.parent = parent
         self.body = None
@@ -169,11 +171,13 @@ class TryBranch(BodyItem):
     def __str__(self):
         if self.type != BodyItem.EXCEPT:
             return self.type
-        patterns = '    '.join(self.patterns)
-        as_var = f'AS    {self.variable}' if self.variable else ''
-        sep1 = '    ' if patterns or as_var else ''
-        sep2 = '    ' if patterns and as_var else ''
-        return f'EXCEPT{sep1}{patterns}{sep2}{as_var}'
+        parts = ['EXCEPT'] + list(self.patterns)
+        if self.pattern_type:
+            parts.append(f'type={self.pattern_type}')
+        if self.variable:
+            parts.extend(['AS', self.variable])
+
+        return '    '.join(parts)
 
     def __repr__(self):
         repr_args = self.repr_args if self.type == BodyItem.EXCEPT else ['type']

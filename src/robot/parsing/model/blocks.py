@@ -261,6 +261,10 @@ class Try(Block):
         return getattr(self.header, 'patterns', ())
 
     @property
+    def pattern_type(self):
+        return getattr(self.header, 'pattern_type', None)
+
+    @property
     def variable(self):
         return getattr(self.header, 'variable', None)
 

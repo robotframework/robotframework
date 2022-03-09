@@ -225,6 +225,7 @@ class ExceptHeaderLexer(StatementLexer):
 
     def lex(self):
         self.statement[0].type = Token.EXCEPT
+        last_pattern = None
         as_seen = False
         for token in self.statement[1:]:
             if token.value == 'AS':
@@ -234,6 +235,9 @@ class ExceptHeaderLexer(StatementLexer):
                 token.type = Token.VARIABLE
             else:
                 token.type = Token.ARGUMENT
+                last_pattern = token
+        if last_pattern and last_pattern.value.startswith('type='):
+            last_pattern.type = Token.OPTION
 
 
 class FinallyHeaderLexer(TypeAndArguments):

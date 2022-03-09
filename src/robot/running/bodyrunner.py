@@ -25,7 +25,7 @@ from robot.result import (For as ForResult, While as WhileResult, If as IfResult
                           TryBranch as TryBranchResult)
 from robot.output import librarylogger as logger
 from robot.utils import (cut_assign_value, frange, get_error_message, is_string,
-                         is_list_like, is_number, plural_or_not as s,
+                         is_list_like, is_number, plural_or_not as s, seq2str,
                          split_from_equals, type_name, Matcher, timestr_to_secs)
 from robot.variables import is_dict_variable, evaluate_expression
 
@@ -514,7 +514,8 @@ class TryRunner:
             except DataError as err:
                 run_branch = run = False
                 error = ExecutionFailed(str(err))
-            result = TryBranchResult(branch.type, branch.patterns, branch.variable)
+            result = TryBranchResult(branch.type, branch.patterns,
+                                     branch.pattern_type, branch.variable)
             if run_branch:
                 if branch.variable:
                     self._context.variables[branch.variable] = str(error)
@@ -528,22 +529,23 @@ class TryRunner:
         if not branch.patterns:
             return True
         matchers = {
-            'GLOB:': lambda s, p: Matcher(p, spaceless=False, caseless=False).match(s),
-            'EQUALS:': lambda s, p: s == p,
-            'STARTS:': lambda s, p: s.startswith(p),
-            'REGEXP:': lambda s, p: re.match(rf'{p}\Z', s) is not None
+            'GLOB': lambda s, p: Matcher(p, spaceless=False, caseless=False).match(s),
+            'LITERAL': lambda s, p: s == p,
+            'REGEXP': lambda s, p: re.match(rf'{p}\Z', s) is not None,
+            'START': lambda s, p: s.startswith(p)
         }
         message = error.message
+        if branch.pattern_type:
+            pattern_type = self._context.variables.replace_string(branch.pattern_type)
+        else:
+            pattern_type = 'LITERAL'
+        matcher = matchers.get(pattern_type.upper())
+        if not matcher:
+            raise DataError(f"Invalid EXCEPT pattern type '{pattern_type}', "
+                            f"expected {seq2str(matchers, lastsep=' or ')}.")
         for pattern in branch.patterns:
-            if not pattern.startswith(tuple(matchers)):
-                pattern = self._context.variables.replace_scalar(pattern)
-                if message == pattern:
-                    return True
-            else:
-                prefix, pat = pattern.split(':', 1)
-                pat = self._context.variables.replace_scalar(pat.lstrip())
-                if matchers[f'{prefix}:'](message, pat):
-                    return True
+            if matcher(message, self._context.variables.replace_scalar(pattern)):
+                return True
         return False
 
     def _run_else(self, data, run):

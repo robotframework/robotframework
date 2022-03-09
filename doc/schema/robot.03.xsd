@@ -204,6 +204,7 @@
             <xs:element name="status" type="BodyItemStatus" />
         </xs:choice>
         <xs:attribute name="type" type="TryType" use="required" />
+        <xs:attribute name="pattern_type" type="xs:string" />
         <xs:attribute name="variable" type="xs:string" />
     </xs:complexType>
     <xs:simpleType name="TryType">
