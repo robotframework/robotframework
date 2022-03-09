@@ -176,7 +176,6 @@ class TryBranch(BodyItem):
             parts.append(f'type={self.pattern_type}')
         if self.variable:
             parts.extend(['AS', self.variable])
-
         return '    '.join(parts)
 
     def __repr__(self):

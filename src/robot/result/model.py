@@ -286,13 +286,15 @@ class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
     @property
     @deprecated
     def name(self):
-        result = ' | '.join(self.patterns)
+        patterns = list(self.patterns)
         if self.pattern_type:
-            result += f' | type={self.pattern_type}'
+            patterns.append(f'type={self.pattern_type}')
+        parts = []
+        if patterns:
+            parts.append(' | '.join(patterns))
         if self.variable:
-            sep = ' ' if result else ''
-            result += f'{sep}AS {self.variable}'
-        return result
+            parts.append(f'AS {self.variable}')
+        return ' '.join(parts)
 
 
 @Body.register
