@@ -1032,6 +1032,7 @@ messages, this option applies to all of them. The value of the option
 can be defined with a variable as well.
 
 .. sourcecode:: robotframework
+
     *** Settings ***
     ${regexp}     regexp
 
