@@ -760,6 +760,27 @@ It is an error if the returned list has more or less values than there are
 scalar variables to assign. Additionally, only one list variable is allowed
 and dictionary variables can only be assigned alone.
 
+Automatically logging assigned variable value
+'''''''''''''''''''''''''''''''''''''''''''''
+
+To make it easier to understand what happens during execution,
+the beginning of value that is assigned is automatically logged.
+The default is to show 200 first characters, but this can be changed
+by using the :option:`--maxassignlength` command line option when
+running tests. If the value is zero or negative, the whole assigned
+value is hidden.
+
+.. sourcecode:: bash
+
+   --maxassignlength 1000
+   --maxassignlength 0
+
+The reason the value is not logged fully is that it could be really
+big. If you always want to see a certain value fully, it is possible
+to use the BuiltIn_ :name:`Log` keyword to log it after the assignment.
+
+.. note:: The :option:`--maxassignlength` option is new in Robot Framework 5.0.
+
 Using :name:`Set Test/Suite/Global Variable` keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

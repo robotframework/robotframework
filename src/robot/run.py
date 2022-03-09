@@ -199,10 +199,10 @@ Options
     --maxerrorlines lines  Maximum number of error message lines to show in
                           report when tests fail. Default is 40, minimum is 10
                           and `NONE` can be used to show the full message.
-    --maxassignlength characters  Maximum number of characters to show in
-                          report when variable is assigned. Default is 200,
-                          minimum is 10 and -1 can be used to remove assigned
-                          value.
+    --maxassignlength characters  Maximum number of characters to show in log
+                          when variables are assigned. Zero or negative values
+                          can be used to avoid showing assigned values at all.
+                          Default is 200.
  -L --loglevel level      Threshold level for logging. Available levels: TRACE,
                           DEBUG, INFO (default), WARN, NONE (no logging). Use
                           syntax `LOGLEVEL:DEFAULT` to define the default

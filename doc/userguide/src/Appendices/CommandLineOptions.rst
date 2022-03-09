@@ -44,9 +44,9 @@ Command line options for test execution
   --logtitle <title>      `Sets a title`_ for the generated test log.
   --reporttitle <title>   `Sets a title`_ for the generated test report.
   --reportbackground <colors>  `Sets background colors`_ of the generated report.
-  --maxerrorlines <lines>  Sets the number of `error lines`_ shown in reports when tests fail.
-  --maxassignlength <characters>  Sets the number of `characters`_ shown in reports when
-                           variable is assigned.
+  --maxerrorlines <lines>  Sets the number of `error lines`_ shown in report when tests fail.
+  --maxassignlength <characters>  Sets the number of characters shown in log when
+                           `variables are assigned <Automatically logging assigned variable value_>`__.
   -L, --loglevel <level>  `Sets the threshold level`_ for logging. Optionally
                           the default `visible log level`_ can be given
                           separated with a colon (:).

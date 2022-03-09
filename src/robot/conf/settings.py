@@ -186,13 +186,8 @@ class _BaseSettings:
         return value
 
     def _process_max_assign_length(self, value):
-        value = self._convert_to_integer('maxassignlength', value)
-        if value == -1:
-            return None
-        if value < 10:
-            raise DataError("Option '--maxassignlength' expected an integer "
-                            "value greater that 10 but got '%s'." % value)
-        return value
+        value = self._convert_to_integer('MaxAssignLength', value)
+        return max(value, 0)
 
     def _process_randomize_value(self, original):
         value = original.upper()

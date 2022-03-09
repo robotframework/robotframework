@@ -1,43 +1,73 @@
 *** Settings ***
 Documentation     Testing that long variable value are truncated
+Test Template     Assignment messages should be
 Resource          atest_resource.robot
 
+*** Variables ***
+@{TESTS}          10 chars    200 chars    201 chars    1000 chars    1001 chars
+
 *** Test Cases ***
-Without Max Assign Length
-    Run Tests    ${EMPTY}    ./misc/long_variable_value.robot
-    ${expected_value}=    Evaluate    '\${variable} = ' + 'a'*200
-    ${XML}=    Parse output file
-    Element Text Should Be    ${XML}    ${expected_value}    suite/test/kw[1]/msg    normalize_whitespace=yes
+Default limit
+    ${EMPTY}
+    ...    '0123456789'
+    ...    '0123456789' * 20
+    ...    '0123456789' * 20 + '...'
+    ...    '0123456789' * 20 + '...'
+    ...    '0123456789' * 20 + '...'
 
-Max Assign Length 10
-    [Template]    Positive Test
-    10   10   ...
+Custom limit
+    10
+    ...    '0123456789'
+    ...    '0123456789' + '...'
+    ...    '0123456789' + '...'
+    ...    '0123456789' + '...'
+    ...    '0123456789' + '...'
+    1000
+    ...    '0123456789'
+    ...    '0123456789' * 20
+    ...    '0123456789' * 20 + '0'
+    ...    '0123456789' * 100
+    ...    '0123456789' * 100 + '...'
+    10000
+    ...    '0123456789'
+    ...    '0123456789' * 20
+    ...    '0123456789' * 20 + '0'
+    ...    '0123456789' * 100
+    ...    '0123456789' * 100 + '0'
 
-Max Assign Length 199
-    [Template]    Positive Test
-    199   199   ...
+Hide value
+    0
+    ...    '...'
+    ...    '...'
+    ...    '...'
+    ...    '...'
+    ...    '...'
+    -666
+    ...    '...'
+    ...    '...'
+    ...    '...'
+    ...    '...'
+    ...    '...'
 
-Max Assign Length Equals Value Length
-    [Template]    Positive Test
-    200   200
-
-Max Assign Length More Than Value Length
-    [Template]    Positive Test
-    201   200
-
-Invalid Values Max Assign Length
-    Run Tests Without Processing Output    --maxassignlength 9    ./misc/long_variable_value.robot
-    Stderr Should Be Equal To    [ ERROR ] Option '--maxassignlength' expected an integer value greater that 10 but got '9'.\n\nTry --help for usage information.\n
+Invalid
+    [Template]    NONE
+    Run Tests Without Processing Output    --maxass oops    cli/console/max_assign_length.robot
+    Stderr Should Be Equal To
+    ...    [ ERROR ] Invalid value for option '--maxassignlength':
+    ...    Expected integer, got 'oops'.${USAGE TIP}\n
 
 
 *** Keywords ***
-Parse output file
-    ${root} =    Parse XML    ${OUTFILE}
-    RETURN    ${root}
-
-Positive Test
-    [Arguments]    ${maxassignlength}   ${exp_length}    ${dots}=${EMPTY}
-    Run Tests    --maxassignlength ${maxassignlength}    ./misc/long_variable_value.robot
-    ${expected_value}=    Evaluate    '\${variable} = ' + 'a'*${exp_length} + '${dots}'
-    ${XML}=    Parse output file
-    Element Text Should Be    ${XML}    ${expected_value}    suite/test/kw[1]/msg    normalize_whitespace=yes
+Assignment messages should be
+    [Arguments]    ${limit}    @{messages}
+    IF    $limit
+        Run Tests    --maxassignlength ${limit}    cli/console/max_assign_length.robot
+    ELSE
+        Run Tests    ${EMPTY}    cli/console/max_assign_length.robot
+    END
+    Length Should Be    ${messages}    5
+    FOR    ${name}    ${msg}    IN ZIP    ${TESTS}    ${MESSAGES}
+        ${tc} =    Check Test Case    ${name}
+        ${msg} =    Evaluate    ${msg}
+        Check Log Message    ${tc.body[0].messages[0]}    \${value} = ${msg}
+    END

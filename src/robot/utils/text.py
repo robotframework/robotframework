@@ -82,8 +82,6 @@ def _count_virtual_line_length(line):
 def format_assign_message(variable, value, cut_long=True):
     formatter = {'$': safe_str, '@': seq2str2, '&': _dict_to_str}[variable[0]]
     value = formatter(value)
-    if MAX_ASSIGN_LENGTH is None:
-        return '%s = ...' % variable
     if cut_long:
         value = cut_assign_value(value)
     return '%s = %s' % (variable, value)
