@@ -1,4 +1,5 @@
 *** Settings ***
+Library           OperatingSystem
 Suite Setup       Run Libdoc And Parse Output    ${TESTDATADIR}/ExampleSpec.xml
 Resource          libdoc_resource.robot
 
@@ -97,6 +98,13 @@ Keyword Source Info
     Copy File    ${TESTDATADIR}/ExampleSpec.xml    %{TEMPDIR}/Example.libspec
     Run Libdoc And Parse Output    %{TEMPDIR}/Example.libspec
     Test Everything
+
+SOURCE_DATE_EPOCH is honored in Libdoc output
+    [Setup]    Set Environment Variable    SOURCE_DATE_EPOCH    0
+    Copy File    ${TESTDATADIR}/ExampleSpec.xml    %{TEMPDIR}/Example.libspec
+    Run Libdoc And Parse Output    %{TEMPDIR}/Example.libspec
+    Generated Should Be    1970-01-01T00:00:00+00:00
+    [Teardown]    Remove Environment Variable    SOURCE_DATE_EPOCH
 
 *** Keywords ***
 Test Everything

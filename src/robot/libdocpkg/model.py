@@ -19,11 +19,11 @@ from itertools import chain
 
 from robot.model import Tags
 from robot.running import ArgumentSpec
-from robot.utils import getshortdoc, get_timestamp, Sortable, setter
+from robot.utils import getshortdoc, Sortable, setter
 
 from .htmlutils import DocFormatter, DocToHtml, HtmlToText
 from .writer import LibdocWriter
-from .output import LibdocOutput
+from .output import LibdocOutput, get_generation_time
 
 
 class LibraryDoc:
@@ -114,7 +114,7 @@ class LibraryDoc:
             'name': self.name,
             'doc': self.doc,
             'version': self.version,
-            'generated': get_timestamp(daysep='-', millissep=None),
+            'generated': get_generation_time(),
             'type': self.type,
             'scope': self.scope,
             'docFormat': self.doc_format,

@@ -204,6 +204,12 @@ Creating distributions
 
 7. Documentation
 
+   - For a reproducible build, set the ``SOURCE_DATE_EPOCH``
+     environment variable to a constant value, corresponding to the
+     date in seconds since the Epoch (also known as Epoch time).  For
+     more information regarding this environment variable, see
+     https://reproducible-builds.org/docs/source-date-epoch/.
+
    - Generate library documentation::
 
        invoke library-docs all

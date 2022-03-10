@@ -15,7 +15,7 @@ Version
 
 Generated
     [Template]    Should Match Regexp
-    ${MODEL}[generated]     \\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}
+    ${MODEL}[generated]     \\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[+-]\\d{2}:\\d{2}
 
 Scope
     ${MODEL}[scope]         GLOBAL

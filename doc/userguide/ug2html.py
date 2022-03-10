@@ -150,8 +150,7 @@ def create_userguide():
     install_file = _copy_installation_instructions()
 
     description = 'HTML generator for Robot Framework User Guide.'
-    arguments = ['--time',
-                 '--stylesheet-path', ['src/userguide.css'],
+    arguments = ['--stylesheet-path', ['src/userguide.css'],
                  'src/RobotFrameworkUserGuide.rst',
                  'RobotFrameworkUserGuide.html']
     os.chdir(CURDIR)
