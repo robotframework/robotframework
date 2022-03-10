@@ -36,7 +36,6 @@ class SuiteRunner(SuiteVisitor):
         self._variables = VariableScopes(settings)
         self._suite = None
         self._suite_status = None
-        self._executed_tests = None
         self._skipped_tags = TagPatterns(settings.skip)
         self._executed_tests = NormalizedDict(ignore='_')
 
@@ -45,6 +44,9 @@ class SuiteRunner(SuiteVisitor):
         return EXECUTION_CONTEXTS.current
 
     def start_suite(self, suite):
+        if self._suite is not None and self._suite.source is None:
+            self._executed_tests.clear()
+
         self._output.library_listeners.new_suite_scope()
         result = TestSuite(source=suite.source,
                            name=suite.name,
