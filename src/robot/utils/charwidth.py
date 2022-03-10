@@ -23,13 +23,12 @@ contains `generate_wild_chars.py` script that was originally used to create
 `_EAST_ASIAN_WILD_CHARS` mapping. An updated version of the script is attached
 to issue 1096. Big thanks for xieyanbo for the script and the original patch.
 
-Note that Python's `unicodedata` module is not used here because importing
-it takes several seconds on Jython.
+Python's `unicodedata` module was not used here because importing it took
+several seconds on Jython. That could possibly be changed now.
 
 [1] https://github.com/robotframework/robotframework/issues/604
 [2] https://github.com/robotframework/robotframework/issues/1096
 """
-# TODO: can the implementation use unicodedata now?
 
 
 def get_char_width(char):

@@ -844,8 +844,8 @@ class ExecutionResult:
             return ''
         try:
             content = stream.read()
-        except IOError:  # TODO: can this be removed? http://bugs.jython.org/issue2218
-            return ''
+        except IOError:
+            content = ''
         finally:
             if stream_path:
                 stream.close()
