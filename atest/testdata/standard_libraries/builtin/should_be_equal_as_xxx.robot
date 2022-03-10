@@ -40,14 +40,17 @@ Should Be Equal As Numbers
     1    1.0001    Only this message    False
 
 Should Be Equal As Numbers with precision
-    [Documentation]    FAIL Failure: 110.0 != 150.0
+    [Documentation]    FAIL Failure: 120.0 != 140.0
     [Template]    Should Be Equal As Numbers
     1.123       1.456      precision=0
     1.123       ${1.1}     precision=1
     ${1.123}    ${1.12}    precision=2
     1123        1456       precision=-3
     112         145        precision=-2
-    112         145        precision=-1    msg=Failure
+    # Due to "bankers rounding" algorithm used by `round`, 145 is rounded to 140,
+    # not to 150, as we learned in school.
+    135         145        precision=-1
+    115         145        precision=-1    msg=Failure
 
 Should Not Be Equal As Numbers
     [Documentation]    FAIL Fails again: 1.0 == 1.0

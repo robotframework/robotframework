@@ -20,33 +20,6 @@ from .robottypes import is_integer
 from .unic import safe_str
 
 
-def roundup(number, ndigits=0, return_type=None):
-    """Rounds number to the given number of digits.
-
-    Numbers equally close to a certain precision are always rounded away from
-    zero. By default return value is float when ``ndigits`` is positive and
-    int otherwise, but that can be controlled with ``return_type``.
-    """
-    result = _roundup(number, ndigits)
-    if not return_type:
-        return_type = float if ndigits > 0 else int
-    return return_type(result)
-
-
-# Python 3 uses "bankers' rounding" that rounds half towards the even number.
-# We round always up partly because that's more familiar algorithm for users
-# but mainly because Python 2 behaved that way and we wanted consistent rounding
-# behavior. This could be changed and the whole `roundup` removed not that we
-# don't need to care about Python 2 anymore.
-# TODO: Check could `roundup` be removed and `round` used instead.
-def _roundup(number, ndigits):
-    precision = 10 ** (-1 * ndigits)
-    if number % (0.5 * precision) == 0 and number % precision != 0:
-        operator = add if number > 0 else sub
-        number = operator(number, 0.1 * precision)
-    return round(number, ndigits)
-
-
 def printable_name(string, code_style=False):
     """Generates and returns printable name from the given string.
 

@@ -2,7 +2,7 @@ import unittest
 
 from robot.utils.asserts import assert_equal, assert_false, assert_true
 from robot.utils import (PY2, PY3, StringIO, JYTHON, IRONPYTHON, py2to3, py3to2,
-                         is_unicode, platform, unicode, unic)
+                         is_unicode, platform, roundup, unicode, unic)
 
 
 class TestCompatibilityLayer(unittest.TestCase):
@@ -43,6 +43,9 @@ class TestCompatibilityLayer(unittest.TestCase):
         assert_true(is_unicode('Paha'))
         assert_false(is_unicode(b'xxx'))
         assert_false(is_unicode(42))
+
+    def test_roundup(self):
+        assert_true(roundup is round)
 
     def test_unicode(self):
         assert_true(unicode is str)

@@ -30,8 +30,8 @@ from robot.utils import (DotDict, escape, format_assign_message, get_error_messa
                          get_time, html_escape, is_falsy, is_integer, is_list_like,
                          is_string, is_truthy, Matcher, normalize,
                          normalize_whitespace, parse_time, prepr, plural_or_not as s,
-                         RERAISED_EXCEPTIONS, roundup, safe_str, secs_to_timestr,
-                         seq2str, split_from_equals, timestr_to_secs, type_name)
+                         RERAISED_EXCEPTIONS, safe_str, secs_to_timestr, seq2str,
+                         split_from_equals, timestr_to_secs, type_name)
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (evaluate_expression, is_dict_variable,
                              is_list_variable, search_variable,
@@ -265,8 +265,7 @@ class _Converter(_BuiltInBase):
     def _convert_to_number(self, item, precision=None):
         number = self._convert_to_number_without_precision(item)
         if precision is not None:
-            number = roundup(number, self._convert_to_integer(precision),
-                             return_type=float)
+            number = float(round(number, self._convert_to_integer(precision)))
         return number
 
     def _convert_to_number_without_precision(self, item):

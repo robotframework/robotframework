@@ -294,7 +294,7 @@ import time
 
 from robot.version import get_version
 from robot.utils import (elapsed_time_to_string, is_falsy, is_number, is_string,
-                         roundup, secs_to_timestr, timestr_to_secs, type_name)
+                         secs_to_timestr, timestr_to_secs, type_name)
 
 __version__ = get_version()
 __all__ = ['convert_time', 'convert_date', 'subtract_date_from_date',
@@ -559,7 +559,7 @@ class Date:
     def _convert_to_timestamp(self, dt, millis=True):
         if not millis:
             return dt.strftime('%Y-%m-%d %H:%M:%S')
-        ms = roundup(dt.microsecond / 1000.0)
+        ms = round(dt.microsecond / 1000)
         if ms == 1000:
             dt += timedelta(seconds=1)
             ms = 0
@@ -601,7 +601,7 @@ class Time:
             result_converter = getattr(self, '_convert_to_%s' % format.lower())
         except AttributeError:
             raise ValueError("Unknown format '%s'." % format)
-        seconds = self.seconds if millis else float(roundup(self.seconds))
+        seconds = self.seconds if millis else float(round(self.seconds))
         return result_converter(seconds, millis)
 
     def _convert_to_number(self, seconds, millis=True):

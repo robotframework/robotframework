@@ -43,7 +43,10 @@ Ignore millis         [Template]         Time conversion without millis should s
                       61.5               compact      1min 2s
                       61.5               timer        00:01:02
                       61.5               timedelta    ${timedelta(seconds=62)}
-                      0.5                number       ${1}
+                      # Due to "bankers rounding" algorithm used by `round`, 0.5 is
+                      # rounded to 0, not to 1, as we learned in school.
+                      0.5                number       ${0}
+                      1.5                number       ${2}
 
 Number is float regardless are millis included or not
                       [Template]    Number format should be

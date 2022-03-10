@@ -1,65 +1,7 @@
 import unittest
 
 from robot.utils.asserts import assert_equal
-from robot.utils import printable_name, seq2str, roundup, plural_or_not, test_or_task
-
-
-class TestRoundup(unittest.TestCase):
-
-    def test_basics(self):
-        for number in range(1000):
-            for extra in range(5):
-                extra /= 10.0
-                assert_equal(roundup(number + extra), number, +extra)
-                assert_equal(roundup(number - extra), number, -extra)
-            assert_equal(roundup(number + 0.5), number+1)
-
-    def test_negative(self):
-        for number in range(1000):
-            number *= -1
-            for extra in range(5):
-                extra /= 10.0
-                assert_equal(roundup(number + extra), number)
-                assert_equal(roundup(number - extra), number)
-            assert_equal(roundup(number - 0.5), number-1)
-
-    def test_ndigits_below_zero(self):
-        assert_equal(roundup(7, -1), 10)
-        assert_equal(roundup(77, -1), 80)
-        assert_equal(roundup(123, -2), 100)
-        assert_equal(roundup(-1234, -2), -1200)
-        assert_equal(roundup(9999, -2), 10000)
-
-    def test_ndigits_above_zero(self):
-        assert_equal(roundup(0.1234, 1), 0.1)
-        assert_equal(roundup(0.9999, 1), 1.0)
-        assert_equal(roundup(0.9876, 3), 0.988)
-
-    def test_round_even_up(self):
-        assert_equal(roundup(0.5), 1)
-        assert_equal(roundup(5, -1), 10)
-        assert_equal(roundup(500, -3), 1000)
-        assert_equal(roundup(0.05, 1), 0.1)
-        assert_equal(roundup(0.49951, 3), 0.5)
-
-    def test_round_even_down_when_negative(self):
-        assert_equal(roundup(-0.5), -1)
-        assert_equal(roundup(-5, -1), -10)
-        assert_equal(roundup(-5.0, -1), -10)
-        assert_equal(roundup(-500, -3), -1000)
-        assert_equal(roundup(-0.05, 1), -0.1)
-        assert_equal(roundup(-0.49951, 3), -0.5)
-
-    def test_return_type(self):
-        for n in [1, 1000, 0.1, 0.001]:
-            for d in [-3, -2, -1, 0, 1, 2, 3]:
-                assert_equal(type(roundup(n, d)), float if d > 0 else int)
-                assert_equal(type(roundup(n, d, return_type=int)), int)
-                assert_equal(type(roundup(n, d, return_type=float)), float)
-
-    def test_problems(self):
-        assert_equal(roundup(59.85, 1), 59.9)    # This caused #2872
-        assert_equal(roundup(1.15, 1), 1.1)      # 1.15 is actually 1.49999..
+from robot.utils import printable_name, seq2str, plural_or_not, test_or_task
 
 
 class TestSeg2Str(unittest.TestCase):
