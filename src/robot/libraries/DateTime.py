@@ -518,17 +518,10 @@ class Date:
         if isinstance(date, datetime):
             return date
         if is_number(date):
-            return self._seconds_to_datetime(date)
+            return datetime.fromtimestamp(date)
         if is_string(date):
             return self._string_to_datetime(date, input_format)
         raise ValueError("Unsupported input '%s'." % date)
-
-    def _seconds_to_datetime(self, secs):
-        # Workaround microsecond rounding errors with IronPython:
-        # https://github.com/IronLanguages/main/issues/1170
-        # TODO: can this be simplified now
-        dt = datetime.fromtimestamp(secs)
-        return dt.replace(microsecond=roundup(secs % 1 * 1e6))
 
     def _string_to_datetime(self, ts, input_format):
         if not input_format:
