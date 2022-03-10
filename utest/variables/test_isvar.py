@@ -1,5 +1,4 @@
 import unittest
-import warnings
 
 from robot.variables import (contains_variable,
                              is_variable, is_assign,
@@ -7,7 +6,6 @@ from robot.variables import (contains_variable,
                              is_list_variable, is_list_assign,
                              is_dict_variable, is_dict_assign,
                              search_variable)
-from robot.utils.asserts import assert_equal
 
 
 SCALARS = ['${var}', '${  v A  R }']
@@ -79,20 +77,6 @@ class TestIsVariable(unittest.TestCase):
             assert contains_variable(ok + ok)
         for nok in NOKS:
             assert not contains_variable(nok)
-
-    def test_deprecated_utils(self):
-        from robot.variables import (is_var, is_scalar_var, is_list_var,
-                                     is_dict_var, contains_var)
-        for util, inp in [(is_var, '${x}'),
-                          (is_scalar_var, '${x}'),
-                          (is_list_var, '@{x}'),
-                          (is_dict_var, '&{x}'),
-                          (contains_var, 'x${x}x')]:
-            with warnings.catch_warnings(record=True) as w:
-                assert util(inp)
-                assert not util('xxx')
-                assert_equal(w[0].message.args[0], util.__doc__)
-                assert_equal(w[0].category, UserWarning)
 
 
 class TestIsAssign(unittest.TestCase):
