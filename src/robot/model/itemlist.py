@@ -13,14 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from collections.abc import MutableSequence
 from functools import total_ordering
-
-# FIXME: Now that Python 2 support is dropped, we could extend MutableSequence.
-# In Python 2 it didn't have slots: https://bugs.python.org/issue11333
 
 
 @total_ordering
-class ItemList:
+class ItemList(MutableSequence):
     __slots__ = ['_item_class', '_common_attrs', '_items']
 
     def __init__(self, item_class, common_attrs=None, items=None):
@@ -55,12 +53,6 @@ class ItemList:
     def insert(self, index, item):
         self._check_type_and_set_attrs(item)
         self._items.insert(index, item)
-
-    def pop(self, *index):
-        return self._items.pop(*index)
-
-    def remove(self, item):
-        self._items.remove(item)
 
     def index(self, item, *start_and_end):
         return self._items.index(item, *start_and_end)

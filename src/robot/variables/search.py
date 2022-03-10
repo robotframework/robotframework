@@ -39,17 +39,12 @@ def is_scalar_variable(string):
     return is_variable(string, '$')
 
 
-# FIXME: Nowadays is_list_variable and is_dict_variable ought to be able to use
-# is_variable same way as is_scalar variable. That wasn't the case before RF 4.
-
 def is_list_variable(string):
-    match = search_variable(string, '@', ignore_errors=True)
-    return match.is_list_variable()
+    return is_variable(string, '@')
 
 
 def is_dict_variable(string):
-    match = search_variable(string, '&', ignore_errors=True)
-    return match.is_dict_variable()
+    return is_variable(string, '&')
 
 
 def is_assign(string, identifiers='$@&', allow_assign_mark=False):
