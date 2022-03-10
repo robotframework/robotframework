@@ -196,7 +196,7 @@ class KeywordDoc(Sortable):
             'name': arg.name,
             'types': arg.types_reprs,
             'typedocs': self.type_docs.get(arg.name, {}),
-            'defaultValue': arg.default_repr,    # FIXME: 'defaultValue' -> 'default'?
+            'defaultValue': arg.default_repr,
             'kind': arg.kind,
             'required': arg.required,
             'repr': str(arg)
