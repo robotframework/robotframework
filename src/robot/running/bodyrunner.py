@@ -32,6 +32,9 @@ from robot.variables import is_dict_variable, evaluate_expression
 from .statusreporter import StatusReporter
 
 
+DEFAULT_WHILE_LIMIT = 10_000
+
+
 class BodyRunner:
 
     def __init__(self, context, run=True, templated=False):
@@ -570,14 +573,13 @@ class TryRunner:
 
 
 class WhileLimit:
-    DEFAULT_LIMIT = 10000
     is_valid = True
 
     @classmethod
     def create(cls, limit, variables):
         try:
             if not limit:
-                return IterationCountLimit(cls.DEFAULT_LIMIT)
+                return IterationCountLimit(DEFAULT_WHILE_LIMIT)
             if limit.upper() == 'NONE':
                 return NoLimit()
             value = variables.replace_string(limit)
