@@ -440,12 +440,14 @@ class RobotFramework(Application):
         suite.configure(**settings.suite_config)
         with pyloggingconf.robot_handler_enabled(settings.log_level):
             old_max_error_lines = text.MAX_ERROR_LINES
+            old_max_assign_length = text.MAX_ASSIGN_LENGTH
             text.MAX_ERROR_LINES = settings.max_error_lines
             text.MAX_ASSIGN_LENGTH = settings.max_assign_length
             try:
                 result = suite.run(settings)
             finally:
                 text.MAX_ERROR_LINES = old_max_error_lines
+                text.MAX_ASSIGN_LENGTH = old_max_assign_length
             LOGGER.info("Tests execution ended. Statistics:\n%s"
                         % result.suite.stat_message)
             if settings.log or settings.report or settings.xunit:
