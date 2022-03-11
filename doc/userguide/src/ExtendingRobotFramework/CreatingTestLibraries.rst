@@ -1685,7 +1685,7 @@ functionality has two main use cases:
 Argument converters are functions or other callables that get arguments used
 in data and convert them to desired format before arguments are passed to
 keywords. Converters are registered for libraries by setting
-`ROBOT_LIBRARY_CONVERTERS` attribute (case-insensitive) to a dictionary mapping
+`ROBOT_LIBRARY_CONVERTERS` attribute (case-sensitive) to a dictionary mapping
 desired types to converts. When implementing a library as a module, this
 attribute must be set on the module level, and with class based libraries
 it must be a class attribute. With libraries implemented as classes, it is
@@ -1839,7 +1839,7 @@ Converting custom types
 ```````````````````````
 
 A problem with the earlier example is that date_ objects could only be given
-in `dd.mm.yyyy` format. It would would not work if there would be need to
+in `dd.mm.yyyy` format. It would not work if there was a need to
 support dates in different formats like in this example:
 
 .. sourcecode:: robotframework

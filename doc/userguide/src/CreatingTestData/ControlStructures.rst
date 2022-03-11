@@ -549,51 +549,46 @@ strings and string themselves containing quotes cause additional problems. See t
 `Evaluating expressions`_ appendix for more information and examples related to
 the evaluation syntax
 
-
 Limiting `WHILE` loop iterations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-With `WHILE` loop, there is always a possibility to achieve an infinite loop,
-either by intention or by mistake. This happens when the loop condition never becomes
-`False`. While infinite loops have some utility in application programming, in test
-automation / RPA, an infinite loop is rarely a desired outcome. For this reason, `WHILE`
-loops in Robot Framework have a built-in iteration limit of 10000.
 
-In this example, the loop will be terminated after 10000 iterations.
+With `WHILE` loops, there is always a possibility to achieve an infinite loop,
+either by intention or by mistake. This happens when the loop condition never
+becomes false. While infinite loops have some utility in application programming,
+in automation an infinite loop is rarely a desired outcome. If such a loop occurs
+with Robot Framework, the execution must be forcefully stopped and no log or report
+can be created. For this reason, `WHILE` loops in Robot Framework have a default
+limit of 10 000 iterations. If the limit is exceeded, the loop fails.
 
-.. sourcecode:: robotframework
-
-    *** Test Cases ***
-    Example
-        WHILE    True
-            Log    Hello
-        END
-
-The limit can be changed with a configuration option to the loop. Valid values for the
-option are positive integers and `time as time string`_. In the following example, the
-first loop has a limit of 15 iterations, whereas the second loop has a limit of 35 seconds.
+The limit can be changed with the `limit` configuration parameter. Valid values
+are positive integers denoting iteration count and `time strings`__ like `10s` or
+`1 hour 10 minutes` denoting maximum iteration time. The limit can also be disabled
+altogether by using `NONE` (case-insensitive). All these options are illustrated
+by the examples below.
 
 .. sourcecode:: robotframework
 
     *** Test Cases ***
-    Example
-        WHILE    True    limit=15
-            Log    Hello
-        END
-        WHILE    True    limit=35s
-            Log    Hello
+    Limit as iteration count
+        WHILE    True    limit=100
+            Log    This is run 100 times.
         END
 
-Finally, the limit can be disabled altogether by using the string 'none'
-(case insensitive) as the limit.
-
-.. sourcecode:: robotframework
-
-    *** Test Cases ***
-    Example
-        WHILE    True    limit=none
-            Log    Hello
+    Limit as time
+        WHILE    True    limit=10 seconds
+            Log    This is run 10 seconds.
         END
 
+    No limit
+        WHILE    True    limit=NONE
+            Log    This must be forcefully stopped.
+        END
+
+Keywords in a loop are not forcefully stopped if the limit is exceeded. Instead
+the loop is exited similarly as if the loop condition would have become false.
+A major difference is that the loop status will be `FAIL` in this case.
+
+__ `Time format`_
 
 Nesting `WHILE` loops
 ~~~~~~~~~~~~~~~~~~~~~

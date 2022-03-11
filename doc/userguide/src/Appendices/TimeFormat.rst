@@ -14,6 +14,12 @@ interpreted to be seconds. Both integers and floating point numbers
 work, and it is possible to use either real numbers or strings
 containing numerical values.
 
+.. note:: In some contexts plain numbers can be interpreted otherwise as
+          times. For example, with `WHILE loop limit`__ integers denote
+          the maximum iteration count.
+
+__ `Limiting WHILE loop iterations`_
+
 Time as time string
 -------------------
 
