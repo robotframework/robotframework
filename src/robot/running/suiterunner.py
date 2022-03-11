@@ -36,7 +36,7 @@ class SuiteRunner(SuiteVisitor):
         self._variables = VariableScopes(settings)
         self._suite = None
         self._suite_status = None
-        self._executed_tests = None
+        self._executed = [NormalizedDict(ignore='_')]
         self._skipped_tags = TagPatterns(settings.skip)
 
     @property
@@ -44,6 +44,11 @@ class SuiteRunner(SuiteVisitor):
         return EXECUTION_CONTEXTS.current
 
     def start_suite(self, suite):
+        if suite.name in self._executed[-1] and suite.parent.source:
+            self._output.warn(f"Multiple suites with name '{suite.name}' executed in "
+                              f"suite '{suite.parent.longname}'.")
+        self._executed[-1][suite.name] = True
+        self._executed.append(NormalizedDict(ignore='_'))
         self._output.library_listeners.new_suite_scope()
         result = TestSuite(source=suite.source,
                            name=suite.name,
@@ -81,7 +86,6 @@ class SuiteRunner(SuiteVisitor):
                                                test_count=suite.test_count))
         self._output.register_error_listener(self._suite_status.error_occurred)
         self._run_setup(suite.setup, self._suite_status)
-        self._executed_tests = NormalizedDict(ignore='_')
 
     def _resolve_setting(self, value):
         if is_list_like(value):
@@ -102,6 +106,7 @@ class SuiteRunner(SuiteVisitor):
         self._suite.endtime = get_timestamp()
         self._suite.message = self._suite_status.message
         self._context.end_suite(ModelCombiner(suite, self._suite))
+        self._executed.pop()
         self._suite = self._suite.parent
         self._suite_status = self._suite_status.parent
         self._output.library_listeners.discard_suite_scope()
@@ -110,11 +115,11 @@ class SuiteRunner(SuiteVisitor):
         settings = self._settings
         if TagPatterns("robot:exclude").match(test.tags):
             return
-        if test.name in self._executed_tests:
+        if test.name in self._executed[-1]:
             self._output.warn(
                 test_or_task(f"Multiple {{test}}s with name '{test.name}' executed in "
-                             f"suite '{self._suite.longname}'.", settings.rpa))
-        self._executed_tests[test.name] = True
+                             f"suite '{test.parent.longname}'.", settings.rpa))
+        self._executed[-1][test.name] = True
         result = self._suite.tests.create(self._resolve_setting(test.name),
                                           self._resolve_setting(test.doc),
                                           self._resolve_setting(test.tags),
