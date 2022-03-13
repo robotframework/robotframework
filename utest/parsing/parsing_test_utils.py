@@ -1,6 +1,6 @@
 import ast
 
-from robot.parsing import ModelVisitor
+from robot.parsing import ModelTransformer
 from robot.parsing.model.blocks import Block
 from robot.parsing.model.statements import Statement
 
@@ -65,7 +65,14 @@ def remove_non_data(model):
     RemoveNonDataTokensVisitor().visit(model)
 
 
-class RemoveNonDataTokensVisitor(ModelVisitor):
+class RemoveNonDataTokensVisitor(ModelTransformer):
 
     def visit_Statement(self, node):
         node.tokens = node.data_tokens
+        return node
+
+    def visit_EmptyLine(self, none):
+        return None
+
+    def visit_Comment(self, node):
+        return None

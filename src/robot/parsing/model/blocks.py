@@ -17,6 +17,7 @@ import ast
 
 from robot.utils import file_writer, is_pathlike, is_string
 
+from .statements import Comment, EmptyLine
 from .visitor import ModelVisitor
 from ..lexer import Token
 
@@ -51,6 +52,12 @@ class Block(ast.AST):
 
     def validate(self, context):
         pass
+
+    def _body_is_empty(self):
+        for node in self.body:
+            if not isinstance(node, (EmptyLine, Comment)):
+                return False
+        return True
 
 
 class HeaderAndBody(Block):
@@ -176,7 +183,7 @@ class If(Block):
             self._validate_inline_if()
 
     def _validate_body(self):
-        if not self.body:
+        if self._body_is_empty():
             type = self.type if self.type != Token.INLINE_IF else 'IF'
             self.errors += (f'{type} branch cannot be empty.',)
 
@@ -236,7 +243,7 @@ class For(Block):
         return self.header.flavor
 
     def validate(self, context):
-        if not self.body:
+        if self._body_is_empty():
             self.errors += ('FOR loop has empty body.',)
         if not self.end:
             self.errors += ('FOR loop has no closing END.',)
@@ -275,7 +282,7 @@ class Try(Block):
             self._validate_end()
 
     def _validate_body(self):
-        if not self.body:
+        if self._body_is_empty():
             self.errors += (f'{self.type} branch cannot be empty.',)
 
     def _validate_structure(self):
@@ -334,7 +341,7 @@ class While(Block):
         return self.header.limit
 
     def validate(self, context):
-        if not self.body:
+        if self._body_is_empty():
             self.errors += ('WHILE loop has empty body.',)
         if not self.end:
             self.errors += ('WHILE loop has no closing END.',)
@@ -395,7 +402,7 @@ class ValidationContext:
 
     def end_block(self):
         self.roots.pop()
-    
+
     @property
     def in_keyword(self):
         return Keyword in [type(r) for r in self.roots]

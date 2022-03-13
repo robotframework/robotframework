@@ -288,6 +288,7 @@ Example
 *** Test Cases ***
 Example
     FOR
+
     END    ooops
 '''
         data2 = '''
@@ -302,8 +303,8 @@ Example
                         "FOR loop has no 'IN' or other valid separator."),
             ),
             end=End(
-                tokens=[Token(Token.END, 'END', 4, 4),
-                        Token(Token.ARGUMENT, 'ooops', 4, 11)],
+                tokens=[Token(Token.END, 'END', 5, 4),
+                        Token(Token.ARGUMENT, 'ooops', 5, 11)],
                 errors=("END does not accept arguments, got 'ooops'.",)
             ),
             errors=('FOR loop has empty body.',)
@@ -369,6 +370,29 @@ Example
             end=End([
                 Token(Token.END, 'END', 5, 4)
             ])
+        )
+        get_and_assert_model(data, expected)
+
+    def test_invalid(self):
+        data = '''
+*** Test Cases ***
+Example
+    WHILE    too    many    values
+        # Empty body
+    END
+'''
+        expected = While(
+            header=WhileHeader(
+                tokens=[Token(Token.WHILE, 'WHILE', 3, 4),
+                        Token(Token.ARGUMENT, 'too', 3, 13),
+                        Token(Token.ARGUMENT, 'many', 3, 20),
+                        Token(Token.ARGUMENT, 'values', 3, 28)],
+                errors=('WHILE cannot have more than one condition.',)
+            ),
+            end=End([
+                Token(Token.END, 'END', 5, 4)
+            ]),
+            errors=('WHILE loop has empty body.',)
         )
         get_and_assert_model(data, expected)
 
@@ -495,7 +519,9 @@ Example
 Example
     IF
     ELSE    ooops
+        # Empty
     ELSE IF
+
     END    ooops
 '''
         data2 = '''
@@ -516,7 +542,7 @@ Example
                 ),
                 orelse=If(
                     header=ElseIfHeader(
-                        tokens=[Token(Token.ELSE_IF, 'ELSE IF', 5, 4)],
+                        tokens=[Token(Token.ELSE_IF, 'ELSE IF', 6, 4)],
                         errors=('ELSE IF must have a condition.',)
                     ),
                     errors=('ELSE IF branch cannot be empty.',)
@@ -524,8 +550,8 @@ Example
                 errors=('ELSE branch cannot be empty.',)
             ),
             end=End(
-                tokens=[Token(Token.END, 'END', 6, 4),
-                        Token(Token.ARGUMENT, 'ooops', 6, 11)],
+                tokens=[Token(Token.END, 'END', 8, 4),
+                        Token(Token.ARGUMENT, 'ooops', 8, 11)],
                 errors=("END does not accept arguments, got 'ooops'.",)
             ),
             errors=('IF branch cannot be empty.',
@@ -711,6 +737,55 @@ Example
                 )
             ),
             end=End([Token(Token.END, 'END', 13, 4)])
+        )
+        get_and_assert_model(data, expected)
+
+    def test_invalid(self):
+        data = '''
+*** Test Cases ***
+Example
+    TRY             invalid
+    ELSE            invalid
+
+    FINALLY         invalid
+    #
+    EXCEPT    AS    invalid
+'''
+        expected = Try(
+            header=TryHeader(
+                tokens=[Token(Token.TRY, 'TRY', 3, 4),
+                        Token(Token.ARGUMENT, 'invalid', 3, 20)],
+                errors=("TRY does not accept arguments, got 'invalid'.",)
+            ),
+            next=Try(
+                header=ElseHeader(
+                    tokens=[Token(Token.ELSE, 'ELSE', 4, 4),
+                            Token(Token.ARGUMENT, 'invalid', 4, 20)],
+                    errors=("ELSE does not accept arguments, got 'invalid'.",)
+                ),
+                errors=('ELSE branch cannot be empty.',),
+                next=Try(
+                    header=FinallyHeader(
+                        tokens=[Token(Token.FINALLY, 'FINALLY', 6, 4),
+                                Token(Token.ARGUMENT, 'invalid', 6, 20)],
+                        errors=("FINALLY does not accept arguments, got 'invalid'.",)
+                    ),
+                    errors=('FINALLY branch cannot be empty.',),
+                    next=Try(
+                        header=ExceptHeader(
+                            tokens=[Token(Token.EXCEPT, 'EXCEPT', 8, 4),
+                                    Token(Token.AS, 'AS', 8, 14),
+                                    Token(Token.VARIABLE, 'invalid', 8, 20)],
+                            errors=("EXCEPT's AS variable 'invalid' is invalid.",)
+                        ),
+                        errors=('EXCEPT branch cannot be empty.',)
+                    )
+                ),
+            ),
+            errors=('TRY branch cannot be empty.',
+                    'EXCEPT not allowed after ELSE.',
+                    'EXCEPT not allowed after FINALLY.',
+                    'TRY has no closing END.')
         )
         get_and_assert_model(data, expected)
 
