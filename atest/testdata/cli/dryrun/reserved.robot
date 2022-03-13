@@ -47,7 +47,7 @@ End
     End
 
 End after valid FOR header
-    [Documentation]    FAIL    FOR loop has no closing END.
+    [Documentation]    FAIL    FOR loop must have closing END.
     FOR    ${x}   IN    whatever
         Log    ${x}
     End

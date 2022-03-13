@@ -1,6 +1,6 @@
 *** Test Cases ***
 TRY without END
-    [Documentation]    FAIL    TRY has no closing END.
+    [Documentation]    FAIL    TRY must have closing END.
     TRY
         Fail   Should not be executed
     EXCEPT    Error
@@ -227,7 +227,7 @@ Template with TRY inside IF
 Template with IF inside TRY
     [Documentation]    FAIL
     ...    Multiple errors:
-    ...    - TRY has no closing END.
+    ...    - TRY must have closing END.
     ...    - Templates cannot be used with TRY.
     [Template]    Log many
     TRY

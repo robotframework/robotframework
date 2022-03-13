@@ -15,13 +15,13 @@ Empty IF
     [Documentation]    FAIL Multiple errors:
     ...    - IF must have a condition.
     ...    - IF branch cannot be empty.
-    ...    - IF has no closing END.
+    ...    - IF must have closing END.
     IF
 
 IF without branch
     [Documentation]    FAIL Multiple errors:
     ...    - IF branch cannot be empty.
-    ...    - IF has no closing END.
+    ...    - IF must have closing END.
     IF    True
 
 IF without branch with ELSE IF
@@ -63,19 +63,19 @@ Empty ELSE
     IF    True    Not run    ELSE IF    True    Not run    ELSE
 
 ELSE IF after ELSE 1
-    [Documentation]    FAIL ELSE IF after ELSE.
+    [Documentation]    FAIL ELSE IF not allowed after ELSE.
     IF    True    Not run    ELSE    Not run    ELSE IF    True    Not run
 
 ELSE IF after ELSE 2
-    [Documentation]    FAIL ELSE IF after ELSE.
+    [Documentation]    FAIL ELSE IF not allowed after ELSE.
     IF    True    Not run    ELSE    Not run    ELSE IF    True    Not run     ELSE IF    True    Not run
 
 Multiple ELSEs 1
-    [Documentation]    FAIL Multiple ELSE branches.
+    [Documentation]    FAIL Only one ELSE allowed.
     IF    True    Not run    ELSE    Not run    ELSE    Not run
 
 Multiple ELSEs 2
-    [Documentation]    FAIL Multiple ELSE branches.
+    [Documentation]    FAIL Only one ELSE allowed.
     IF    True    Not run    ELSE    Not run    ELSE    Not run    ELSE    Not run
 
 Nested IF 1

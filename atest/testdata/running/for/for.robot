@@ -312,13 +312,13 @@ Invalid END usage 2
     Invalid END usage in UK
 
 Empty body
-    [Documentation]    FAIL    FOR loop has empty body.
+    [Documentation]    FAIL    FOR loop cannot be empty.
     FOR    ${var}    IN    one    two
     END
     Fail    Not executed
 
 No END
-    [Documentation]    FAIL    FOR loop has no closing END.
+    [Documentation]    FAIL    FOR loop must have closing END.
     FOR    ${var}    IN    one    two
     Fail    Not executed
 
@@ -437,7 +437,7 @@ Syntax error in nested loop 1
     END
 
 Syntax error in nested loop 2
-    [Documentation]    FAIL    FOR loop has no closing END.
+    [Documentation]    FAIL    FOR loop must have closing END.
     FOR    ${x}    IN    end    missing
         FOR    ${y}    IN    ok
             Fail    Should not be executed
@@ -465,8 +465,8 @@ Unexecuted
 Header at the end of file
     [Documentation]    FAIL
     ...    Multiple errors:
-    ...    - FOR loop has empty body.
-    ...    - FOR loop has no closing END.
+    ...    - FOR loop cannot be empty.
+    ...    - FOR loop must have closing END.
     Header at the end of file
 
 *** Keywords ***

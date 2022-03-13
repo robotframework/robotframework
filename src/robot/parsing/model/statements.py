@@ -1002,8 +1002,8 @@ class WhileHeader(Statement):
         if len(values) == 0:
             self.errors += ('WHILE must have a condition.',)
         if len(values) == 2:
-            self.errors += (
-                f"Second WHILE loop argument must be 'limit', got {values[1]}.",)
+            self.errors += (f"Second WHILE loop argument must be 'limit', "
+                            f"got '{values[1]}'.",)
         if len(values) > 2:
             self.errors += ('WHILE cannot have more than one condition.',)
 

@@ -159,7 +159,7 @@ Invalid FOR
     [Documentation]    FAIL
     ...    Multiple errors:
     ...    - FOR loop has no loop values.
-    ...    - FOR loop has no closing END.
+    ...    - FOR loop must have closing END.
     FOR    ${x}    IN
         ${x}    not run
 
@@ -194,7 +194,7 @@ Invalid IF
     [Documentation]    FAIL
     ...    Multiple errors:
     ...    - IF must have a condition.
-    ...    - IF has no closing END.
+    ...    - IF must have closing END.
     IF
         Not    Run
 

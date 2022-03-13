@@ -24,11 +24,11 @@ Non-existing variable in condition
     END
 
 No body
-    [Documentation]    FAIL WHILE loop has empty body.
+    [Documentation]    FAIL WHILE loop cannot be empty.
     WHILE    True
     END
 
 No END
-    [Documentation]    FAIL WHILE loop has no closing END.
+    [Documentation]    FAIL WHILE loop must have closing END.
     WHILE    True
         Fail    Not executed!

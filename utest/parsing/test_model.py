@@ -307,7 +307,7 @@ Example
                         Token(Token.ARGUMENT, 'ooops', 5, 11)],
                 errors=("END does not accept arguments, got 'ooops'.",)
             ),
-            errors=('FOR loop has empty body.',)
+            errors=('FOR loop cannot be empty.',)
         )
         expected2 = For(
             header=ForHeader(
@@ -317,8 +317,8 @@ Example
                 errors=("FOR loop has invalid loop variable 'wrong'.",
                         "FOR loop has no loop values."),
             ),
-            errors=('FOR loop has empty body.',
-                    'FOR loop has no closing END.')
+            errors=('FOR loop cannot be empty.',
+                    'FOR loop must have closing END.')
         )
         get_and_assert_model(data1, expected1)
         get_and_assert_model(data2, expected2)
@@ -392,7 +392,7 @@ Example
             end=End([
                 Token(Token.END, 'END', 5, 4)
             ]),
-            errors=('WHILE loop has empty body.',)
+            errors=('WHILE loop cannot be empty.',)
         )
         get_and_assert_model(data, expected)
 
@@ -555,7 +555,7 @@ Example
                 errors=("END does not accept arguments, got 'ooops'.",)
             ),
             errors=('IF branch cannot be empty.',
-                    'ELSE IF after ELSE.')
+                    'ELSE IF not allowed after ELSE.')
         )
         expected2 = If(
             header=IfHeader(
@@ -563,7 +563,7 @@ Example
                 errors=('IF must have a condition.',)
             ),
             errors=('IF branch cannot be empty.',
-                    'IF has no closing END.')
+                    'IF must have closing END.')
         )
         get_and_assert_model(data1, expected1)
         get_and_assert_model(data2, expected2)
@@ -785,7 +785,7 @@ Example
             errors=('TRY branch cannot be empty.',
                     'EXCEPT not allowed after ELSE.',
                     'EXCEPT not allowed after FINALLY.',
-                    'TRY has no closing END.')
+                    'TRY must have closing END.')
         )
         get_and_assert_model(data, expected)
 

@@ -50,7 +50,7 @@ ELSE IF with invalid condition
     END
 
 IF without END
-    [Documentation]    FAIL    IF has no closing END.
+    [Documentation]    FAIL    IF must have closing END.
     IF    ${True}
         Fail    Should not be run
 
@@ -116,7 +116,7 @@ ELSE IF with empty body
     END
 
 ELSE after ELSE
-    [Documentation]    FAIL    Multiple ELSE branches.
+    [Documentation]    FAIL    Only one ELSE allowed.
     IF    'kuu' == 'maa'
         Fail    Should not be run
     ELSE
@@ -126,7 +126,7 @@ ELSE after ELSE
     END
 
 ELSE IF after ELSE
-    [Documentation]    FAIL    ELSE IF after ELSE.
+    [Documentation]    FAIL    ELSE IF not allowed after ELSE.
     IF    'kuu' == 'maa'
         Fail    Should not be run
     ELSE
@@ -136,7 +136,7 @@ ELSE IF after ELSE
     END
 
 Invalid IF inside FOR
-    [Documentation]    FAIL    ELSE IF after ELSE.
+    [Documentation]    FAIL    ELSE IF not allowed after ELSE.
     FOR    ${value}    IN    1    2    3
         IF    ${value} == 1
             Fail    Should not be run
@@ -152,9 +152,9 @@ Multiple errors
     ...    Multiple errors:
     ...    - IF must have a condition.
     ...    - IF branch cannot be empty.
-    ...    - ELSE IF after ELSE.
-    ...    - Multiple ELSE branches.
-    ...    - IF has no closing END.
+    ...    - ELSE IF not allowed after ELSE.
+    ...    - Only one ELSE allowed.
+    ...    - IF must have closing END.
     ...    - ELSE IF cannot have more than one condition.
     ...    - ELSE IF branch cannot be empty.
     ...    - ELSE does not accept arguments, got 'oops'.
