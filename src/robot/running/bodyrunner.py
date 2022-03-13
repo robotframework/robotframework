@@ -341,7 +341,10 @@ class WhileRunner:
         result = WhileResult(data.condition, data.limit)
         with StatusReporter(data, result, self._context, run) as status:
             if self._context.dry_run or not run:
-                self._run_iteration(data, result, run)
+                try:
+                    self._run_iteration(data, result, run)
+                except (BreakLoop, ContinueLoop):
+                    pass
                 return
             if data.error:
                 raise DataError(data.error)
