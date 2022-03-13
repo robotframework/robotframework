@@ -100,8 +100,6 @@ LIBSPEC Doc Should Have Been Created
     Run Keyword If       "${version}"    Version Should Match    ${version}
 
 Path to output should be in stdout
-    [Documentation]    Printed path may be in different format than original.
-    ...                IronPython seems to like 'c:\olddos~1\format~2.ext'.
     [Arguments]    ${path}    ${stdout}
     File Should Exist    ${stdout}
     Remove File    ${path}

@@ -45,8 +45,7 @@ Decode Non-ASCII Bytes To String Using Incompatible Encoding And Error Handler
     ${string} =    Decode Bytes To String    ${UTF-8}    ASCII    errors=ignore
     Should Be Equal    ${string}    Hyv
     ${string} =    Decode Bytes To String    ${UTF-8}    ASCII    replace
-    # Cannot compare exactly because replacement character is different in IronPython than elsewhere
-    Should Match    ${string}    Hyv??
+    Should Be Equal    ${string}    Hyv\ufffd\ufffd
 
 Decoding String Fails
     [Documentation]    FAIL TypeError: Cannot decode strings.
