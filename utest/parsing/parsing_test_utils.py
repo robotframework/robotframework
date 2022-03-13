@@ -61,6 +61,10 @@ def assert_statement(model, expected):
     assert_equal(model.errors, expected.errors)
 
 
+def remove_non_data(model):
+    RemoveNonDataTokensVisitor().visit(model)
+
+
 class RemoveNonDataTokensVisitor(ModelVisitor):
 
     def visit_Statement(self, node):
