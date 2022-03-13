@@ -1195,6 +1195,68 @@ class TestInlineIf(unittest.TestCase):
         ]
         self._verify(header, expected)
 
+    def test_empty_else(self):
+        header = '    IF    e    K    ELSE'
+        expected = [
+            (T.SEPARATOR, '    ', 3, 0),
+            (T.INLINE_IF, 'IF', 3, 4),
+            (T.SEPARATOR, '    ', 3, 6),
+            (T.ARGUMENT, 'e', 3, 10),
+            (T.EOS, '', 3, 11),
+            (T.SEPARATOR, '    ', 3, 11),
+            (T.KEYWORD, 'K', 3, 15),
+            (T.SEPARATOR, '    ', 3, 16),
+            (T.EOS, '', 3, 20),
+            (T.ELSE, 'ELSE', 3, 20),
+            (T.EOL, '\n', 3, 24),
+            (T.EOS, '', 3, 25),
+            (T.END, '', 3, 25),
+            (T.EOS, '', 3, 25)
+        ]
+        self._verify(header, expected)
+
+    def test_empty_else_if(self):
+        header = '    IF    e    K    ELSE IF'
+        expected = [
+            (T.SEPARATOR, '    ', 3, 0),
+            (T.INLINE_IF, 'IF', 3, 4),
+            (T.SEPARATOR, '    ', 3, 6),
+            (T.ARGUMENT, 'e', 3, 10),
+            (T.EOS, '', 3, 11),
+            (T.SEPARATOR, '    ', 3, 11),
+            (T.KEYWORD, 'K', 3, 15),
+            (T.SEPARATOR, '    ', 3, 16),
+            (T.EOS, '', 3, 20),
+            (T.ELSE_IF, 'ELSE IF', 3, 20),
+            (T.EOL, '\n', 3, 27),
+            (T.EOS, '', 3, 28),
+            (T.END, '', 3, 28),
+            (T.EOS, '', 3, 28)
+        ]
+        self._verify(header, expected)
+
+    def test_else_if_with_only_expression(self):
+        header = '    IF    e    K    ELSE IF    e'
+        expected = [
+            (T.SEPARATOR, '    ', 3, 0),
+            (T.INLINE_IF, 'IF', 3, 4),
+            (T.SEPARATOR, '    ', 3, 6),
+            (T.ARGUMENT, 'e', 3, 10),
+            (T.EOS, '', 3, 11),
+            (T.SEPARATOR, '    ', 3, 11),
+            (T.KEYWORD, 'K', 3, 15),
+            (T.SEPARATOR, '    ', 3, 16),
+            (T.EOS, '', 3, 20),
+            (T.ELSE_IF, 'ELSE IF', 3, 20),
+            (T.SEPARATOR, '    ', 3, 27),
+            (T.ARGUMENT, 'e', 3, 31),
+            (T.EOL, '\n', 3, 32),
+            (T.EOS, '', 3, 33),
+            (T.END, '', 3, 33),
+            (T.EOS, '', 3, 33)
+        ]
+        self._verify(header, expected)
+
     def test_assign(self):
         #             4         14    20      28    34      42
         header = '    ${x} =    IF    True    K1    ELSE    K2'
@@ -1218,6 +1280,29 @@ class TestInlineIf(unittest.TestCase):
             (T.EOS, '', 3, 45),
             (T.END, '', 3, 45),
             (T.EOS, '', 3, 45),
+        ]
+        self._verify(header, expected)
+
+    def test_assign_with_empty_else(self):
+        #             4         14    20      28    34
+        header = '    ${x} =    IF    True    K1    ELSE'
+        expected = [
+            (T.SEPARATOR, '    ', 3, 0),
+            (T.ASSIGN, '${x} =', 3, 4),
+            (T.SEPARATOR, '    ', 3, 10),
+            (T.INLINE_IF, 'IF', 3, 14),
+            (T.SEPARATOR, '    ', 3, 16),
+            (T.ARGUMENT, 'True', 3, 20),
+            (T.EOS, '', 3, 24),
+            (T.SEPARATOR, '    ', 3, 24),
+            (T.KEYWORD, 'K1', 3, 28),
+            (T.SEPARATOR, '    ', 3, 30),
+            (T.EOS, '', 3, 34),
+            (T.ELSE, 'ELSE', 3, 34),
+            (T.EOL, '\n', 3, 38),
+            (T.EOS, '', 3, 39),
+            (T.END, '', 3, 39),
+            (T.EOS, '', 3, 39),
         ]
         self._verify(header, expected)
 

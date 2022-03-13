@@ -277,7 +277,8 @@ class InlineIfLexer(BlockLexer):
         expect_condition = False
         for token in statement:
             if expect_condition:
-                token._add_eos_after = True
+                if token is not statement[-1]:
+                    token._add_eos_after = True
                 current.append(token)
                 yield current
                 current = []
@@ -292,7 +293,8 @@ class InlineIfLexer(BlockLexer):
                 expect_condition = True
             elif token.value == 'ELSE':
                 token._add_eos_before = True
-                token._add_eos_after = True
+                if token is not statement[-1]:
+                    token._add_eos_after = True
                 yield current
                 current = []
                 yield [token]
