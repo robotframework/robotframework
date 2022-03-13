@@ -77,7 +77,6 @@ Run Python Process
 
 Safe Remove File
     [Documentation]    Ignore errors caused by process being locked.
-    ...                That happens at least with IronPython.
     [Arguments]    @{paths}
     Run Keyword And Ignore Error    Remove Files    @{paths}
 
