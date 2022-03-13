@@ -15,8 +15,7 @@ on the console.
 
 Documentation can be created for:
 
-- libraries implemented with Python__ or Java__ using the normal
-  static library API,
+- libraries implemented using the normal static library API__,
 - libraries using the `dynamic API`__, including remote libraries, and
 - `resource files`_.
 
@@ -26,7 +25,6 @@ earlier as an input.
 .. note:: The support for the JSON spec files is new in Robot Framework 4.0.
 
 __ `Python libraries`_
-__ `Java libraries`_
 __ `Dynamic libraries`_
 
 General usage
@@ -121,20 +119,6 @@ must be catenated with the library name or path using two colons like
 `MyLibrary::arg1::arg2`. If arguments change what keywords the library
 provides or otherwise alter its documentation, it might be a good idea to use
 :option:`--name` option to also change the library name accordingly.
-
-Java libraries with path
-''''''''''''''''''''''''
-
-A Java test library implemented using the `static library API`_ can be
-specified by giving the path to the source code file containing the
-library implementation. When using Java 9 or newer, documentation can be
-generated without external dependencies, but with older Java versions the
-:file:`tools.jar`, which is part of the Java JDK distribution, must be found
-from the ``CLASSPATH`` when Libdoc is executed. Notice that generating
-documentation for Java libraries works only with Jython.
-
-.. note:: Generating documentation without :file:`tools.jar` when using
-          Java 9 or newer is a new feature in Robot Framework 3.1.
 
 Resource files with path
 ''''''''''''''''''''''''
@@ -303,13 +287,12 @@ Examples::
 Writing documentation
 ---------------------
 
-This section discusses writing documentation for Python__ and Java__ based test
+This section discusses writing documentation for Python__ based test
 libraries that use the static library API as well as for `dynamic libraries`_
 and `resource files`__. `Creating test libraries`_ and `resource files`_ is
 described in more details elsewhere in the User Guide.
 
 __ `Python libraries`_
-__ `Java libraries`_
 __ `Resource file documentation`_
 
 Python libraries
@@ -344,46 +327,6 @@ __ `Libdoc example`_
 __ http://www.python.org/dev/peps/pep-0263
 __ http://www.python.org/dev/peps/pep-0257
 
-Java libraries
-~~~~~~~~~~~~~~
-
-Documentation for Java libraries that use the `static library API`_ is written
-as normal `Javadoc comments`__ for the library class and methods. In this case
-Libdoc actually uses the Javadoc tool internally, and thus
-:file:`tools.jar` containing it must be in ``CLASSPATH``. This jar file is part
-of the normal Java SDK distribution and ought to be found from :file:`bin`
-directory under the Java SDK installation.
-
-The following simple example has exactly same documentation (and functionality)
-than the earlier Python example.
-
-.. sourcecode:: java
-
-    /**
-     * Library for demo purposes.
-     *
-     * This library is only used in an example and it doesn't do anything useful.
-     */
-    public class ExampleLibrary {
-
-        /**
-         * Does nothing.
-         */
-        public void myKeyword() {
-        }
-
-        /**
-         * Takes one argument and *does nothing* with it.
-         *
-         * Examples:
-         * | Your Keyword | xxx |
-         * | Your Keyword | yyy |
-         */
-        public void yourKeyword(String arg) {
-        }
-    }
-
-__ http://en.wikipedia.org/wiki/Javadoc
 
 Dynamic libraries
 ~~~~~~~~~~~~~~~~~
@@ -403,10 +346,9 @@ Importing section
 ~~~~~~~~~~~~~~~~~
 
 A separate section about how the library is imported is created based on its
-initialization methods. For a Python library, if it has an  `__init__`
+initialization methods. If the library has an  `__init__`
 method that takes arguments in addition to `self`, its documentation and
-arguments are shown. For a Java library, if it has a public constructor that
-accepts arguments, all its public constructors are shown.
+arguments are shown.
 
 .. sourcecode:: python
 

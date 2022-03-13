@@ -23,14 +23,12 @@ Synopsis
 ::
 
     rebot [options] robot_outputs
-    python|jython|ipy|pypy -m robot.rebot [options] robot_outputs
-    python|jython|ipy|pypy path/to/robot/rebot.py [options] robot_outputs
-    java -jar robotframework.jar rebot [options] robot_outputs
+    python|pypy -m robot.rebot [options] robot_outputs
+    python|pypy path/to/robot/rebot.py [options] robot_outputs
 
 The most common way to use Rebot is using the ``rebot`` `runner script`_.
 Alternatively it is possible to execute the installed `robot.rebot module`__
-or `robot/rebot.py file`__ directly using the selected interpreter. The final
-alternative is using the `standalone JAR distribution`_.
+or `robot/rebot.py file`__ directly using the selected interpreter.
 
 __ `Executing installed robot module`_
 __ `Executing installed robot directory`_
@@ -83,10 +81,7 @@ Another common usage is creating only the output file when running tests
 (log and report generation can be disabled with  `--log NONE
 --report NONE`) and generating logs and reports later. Tests can,
 for example, be executed on different environments, output files collected
-to a central place, and reports and logs created there. This approach can
-also work very well if generating reports and logs takes a lot of time when
-running tests on Jython. Disabling log and report generation and generating
-them later with Rebot can save a lot of time and use less memory.
+to a central place, and reports and logs created there.
 
 Combining outputs
 -----------------

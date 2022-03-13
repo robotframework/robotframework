@@ -15,9 +15,6 @@ started with it.
     Demonstrates how to create tests and higher level keywords. The system
     under test is a simple web page that is tested using SeleniumLibrary_.
 
-`SwingLibrary demo <https://github.com/robotframework/SwingLibrary/wiki/SwingLibrary-Demo>`_
-    Demonstrates using SwingLibrary_ for testing Java GUI applications.
-
 `ATDD with Robot Framework <https://code.google.com/p/atdd-with-robot-framework>`__
     Demonstrates how to use Robot Framework when following
     Acceptance Test Driven Development (ATDD) process.

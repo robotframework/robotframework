@@ -311,8 +311,6 @@ Python based extension, it uses the Python interpreter to import the module
 containing the extension from the system. The list of locations where modules
 are looked for is called *the module search path*, and its contents can be
 configured using different approaches explained in this section.
-When importing Java based libraries or other extensions on Jython, Java
-classpath is used in addition to the normal module search path.
 
 Robot Framework uses Python's module search path also when importing `resource
 and variable files`_ if the specified path does not match any file directly.
@@ -336,14 +334,13 @@ any additional configuration.
 
 __ `Packaging libraries`_
 
-``PYTHONPATH``, ``JYTHONPATH`` and ``IRONPYTHONPATH``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``PYTHONPATH``
+~~~~~~~~~~~~~~
 
-Python, Jython and IronPython read additional locations to be added to
-the module search path from ``PYTHONPATH``, ``JYTHONPATH`` and
-``IRONPYTHONPATH`` environment variables, respectively. If you want to
-specify more than one location in any of them, you need to separate
-the locations with a colon on UNIX-like machines (e.g.
+Python reads additional locations to be added to
+the module search path from ``PYTHONPATH`` environment variables.
+If you want to specify more than one location in any of them, you
+need to separate the locations with a colon on UNIX-like machines (e.g.
 `/opt/libs:$HOME/testlibs`) and with a semicolon on Windows (e.g.
 `D:\libs;%HOMEPATH%\testlibs`).
 
@@ -387,27 +384,6 @@ are taken into account next time when something is imported.
 
 __ http://docs.python.org/library/sys.html#sys.path
 
-Java classpath
-~~~~~~~~~~~~~~
-
-When libraries implemented in Java are imported with Jython, they can be
-either in Jython's normal module search path or in `Java classpath`__. The most
-common way to alter classpath is setting the ``CLASSPATH`` environment variable
-similarly as ``PYTHONPATH``, ``JYTHONPATH`` or ``IRONPYTHONPATH``.
-Alternatively it is possible to use Java's :option:`-cp` command line option.
-This option is not exposed to the ``robot`` `runner script`_, but it is
-possible to use it with Jython by adding :option:`-J` prefix like
-`jython -J-cp example.jar -m robot.run tests.robot`.
-
-When using the standalone JAR distribution, the classpath has to be set a
-bit differently, due to the fact that `java -jar` command does support
-the ``CLASSPATH`` environment variable nor the :option:`-cp` option. There are
-two different ways to configure the classpath::
-
-  java -cp lib/testlibrary.jar:lib/app.jar:robotframework-3.1.jar org.robotframework.RobotFramework tests.robot
-  java -Xbootclasspath/a:lib/testlibrary.jar:lib/app.jar -jar robotframework-3.1.jar tests.robot
-
-__ https://docs.oracle.com/javase/8/docs/technotes/tools/findingclasses.html
 
 Setting variables
 -----------------
@@ -674,8 +650,7 @@ Console colors
 The :option:`--consolecolors (-C)` option is used to control whether
 colors should be used in the console output. Colors are implemented
 using `ANSI colors`__ except on Windows where, by default, Windows
-APIs are used instead. Accessing these APIs from Jython is not possible,
-and as a result colors do not work with Jython on Windows.
+APIs are used instead.
 
 This option supports the following case-insensitive values:
 

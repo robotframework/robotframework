@@ -146,13 +146,13 @@ two different approaches for creating variables:
    (or `getVariables`) method that returns variables as a mapping.
    Because the method can take arguments this approach is very flexible.
 
-Alternatively variable files can be implemented as `Python or Java classes`__
+Alternatively variable files can be implemented as `Python classes`__
 that the framework will instantiate. Also in this case it is possible to create
 variables as attributes or get them dynamically from the `get_variables`
 method. Variable files can also be created as `YAML files`__.
 
 __ `Setting variables in command line`_
-__ `Implementing variable file as Python or Java class`_
+__ `Implementing variable file as a Python class`_
 __ `Variable file as YAML`_
 
 Taking variable files into use
@@ -329,20 +329,8 @@ Using objects as values
 Variables in variable files are not limited to having only strings or
 other base types as values like Variable sections. Instead, their
 variables can contain any objects. In the example below, the variable
-`${MAPPING}` contains a Java Hashtable with two values (this
-example works only when running tests on Jython).
-
-.. sourcecode:: python
-
-    from java.util import Hashtable
-
-    MAPPING = Hashtable()
-    MAPPING.put("one", 1)
-    MAPPING.put("two", 2)
-
-The second example creates `${MAPPING}` as a Python dictionary
-and also has two variables created from a custom object implemented in
-the same file.
+`${MAPPING}` contains a Python dictionary and also has two variables
+created from a custom object implemented in the same file.
 
 .. sourcecode:: python
 
@@ -453,8 +441,8 @@ Getting variables from a special function
 An alternative approach for getting variables is having a special
 `get_variables` function (also camelCase syntax `getVariables` is possible)
 in a variable file. If such a function exists, Robot Framework calls it and
-expects to receive variables as a Python dictionary or a Java `Map` with
-variable names as keys and variable values as values. Created variables can
+expects to receive variables as a Python dictionary with variable names as keys
+and variable values as values. Created variables can
 be used as scalars, lists, and dictionaries exactly like when `getting
 variables directly from a module`_, and it is possible to use `LIST__` and
 `DICT__` prefixes to make creating list and dictionary variables more explicit.
@@ -497,27 +485,21 @@ or database where to read variables from.
         else:
             return variables2
 
-Implementing variable file as Python or Java class
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Implementing variable file as a Python class
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-It is possible to implement variables files also as Python or Java classes.
+It is possible to implement variables files also as a Python class.
 
 Implementation
 ''''''''''''''
 
-Because variable files are always imported using a file system path, creating
-them as classes has some restrictions:
+Because variable files are always imported using a file system path,
+the class must have the same name as the module it is located in.
 
-  - Python classes must have the same name as the module they are located.
-  - Java classes must live in the default package.
-  - Paths to Java classes must end with either :file:`.java` or :file:`.class`.
-    The class file must exists in both cases.
-
-Regardless the implementation language, the framework will create an instance
-of the class using no arguments and variables will be gotten from the instance.
-Similarly as with modules, variables can be defined as attributes directly
-in the instance or gotten from a special `get_variables`
-(or `getVariables`) method.
+The framework will create an instance of the class using no arguments and
+variables will be gotten from the instance. Similarly as with modules,
+variables can be defined as attributes directly
+in the instance or gotten from a special `get_variables` method.
 
 When variables are defined directly in an instance, all attributes containing
 callable values are ignored to avoid creating variables from possible methods
@@ -527,8 +509,8 @@ to use other approaches to create variable files.
 Examples
 ''''''''
 
-The first examples create variables from attributes using both Python and Java.
-Both of them create variables `${VARIABLE}` and `@{LIST}` from class
+The first examples create variables from attributes.
+It creates variables `${VARIABLE}` and `@{LIST}` from class
 attributes and `${ANOTHER VARIABLE}` from an instance attribute.
 
 .. sourcecode:: python
@@ -541,21 +523,9 @@ attributes and `${ANOTHER VARIABLE}` from an instance attribute.
         def __init__(self):
             self.another_variable = 'another value'
 
-.. sourcecode:: java
 
-    public class StaticJavaExample {
-        public static String variable = "value";
-        public static String[] LIST__list = {1, 2, 3};
-        private String notVariable = "is private";
-        public String anotherVariable;
-
-        public StaticJavaExample() {
-            anotherVariable = "another value";
-        }
-    }
-
-The second examples utilizes dynamic approach for getting variables. Both of
-them create only one variable `${DYNAMIC VARIABLE}`.
+The second examples utilizes dynamic approach for getting variables. It
+creates only one variable `${DYNAMIC VARIABLE}`.
 
 .. sourcecode:: python
 
@@ -564,19 +534,6 @@ them create only one variable `${DYNAMIC VARIABLE}`.
         def get_variables(self, *args):
             return {'dynamic variable': ' '.join(args)}
 
-.. sourcecode:: java
-
-    import java.util.Map;
-    import java.util.HashMap;
-
-    public class DynamicJavaExample {
-
-        public Map<String, String> getVariables(String arg1, String arg2) {
-            HashMap<String, String> variables = new HashMap<String, String>();
-            variables.put("dynamic variable", arg1 + " " + arg2);
-            return variables;
-        }
-    }
 
 Variable file as YAML
 ~~~~~~~~~~~~~~~~~~~~~

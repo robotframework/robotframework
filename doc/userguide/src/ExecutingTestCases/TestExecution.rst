@@ -497,9 +497,8 @@ Pressing `Ctrl-C`
 ~~~~~~~~~~~~~~~~~
 
 The execution is stopped when `Ctrl-C` is pressed in the console
-where the tests are running. When running the tests on Python, the
-execution is stopped immediately, but with Jython it ends only after
-the currently executing keyword ends.
+where the tests are running. The execution is stopped immediately,
+but reports and logs are still generated.
 
 If `Ctrl-C` is pressed again, the execution ends immediately and
 reports and logs are not created.
@@ -512,8 +511,6 @@ using signals `INT` and `TERM`. These signals can be sent
 from the command line using ``kill`` command, and sending signals can
 also be easily automated.
 
-Signals have the same limitation on Jython as pressing `Ctrl-C`.
-Similarly also the second signal stops the execution forcefully.
 
 Using keywords
 ~~~~~~~~~~~~~~

@@ -20,15 +20,11 @@ Supported programming languages
 
 Robot Framework itself is written with Python_ and naturally test
 libraries extending it can be implemented using the same
-language. When running the framework on Jython_, libraries can also be
-implemented using Java_. Pure Python code works both on Python and
-Jython, assuming that it does not use syntax or modules that are not
-available on Jython. When using Python, it is also possible to
-implement libraries with C using `Python C API`__, although it is
-often easier to interact with C code from Python libraries using
-ctypes__ module.
+language. It is also possible to implement libraries with C
+using `Python C API`__, although it is often easier to interact with
+C code from Python libraries using ctypes__ module.
 
-Libraries implemented using these natively supported languages can
+Libraries implemented using Python can
 also act as wrappers to functionality implemented using other
 programming languages. A good example of this approach is the `Remote
 library`_, and another widely used approaches is running external
@@ -44,8 +40,8 @@ Robot Framework has three different test library APIs.
 
 Static API
 
-  The simplest approach is having a module (in Python) or a class
-  (in Python or Java) with methods which map directly to
+  The simplest approach is having a module or a class
+  with functions/methods which map directly to
   `keyword names`_. Keywords also take the same `arguments`__ as
   the methods implementing them.  Keywords `report failures`__ with
   exceptions, `log`__ by writing to standard output and can `return
@@ -73,11 +69,6 @@ how the static API works, so its functions are discussed first. How
 the `dynamic library API`_ and the `hybrid library API`_ differ from it
 is then discussed in sections of their own.
 
-The examples in this chapter are mainly about using Python, but they
-should be easy to understand also for Java-only developers. In those
-few cases where APIs have differences, both usages are explained with
-adequate examples.
-
 __ `Keyword arguments`_
 __ `Reporting keyword status`_
 __ `Logging information`_
@@ -86,8 +77,7 @@ __ `Returning values`_
 Creating test library class or module
 -------------------------------------
 
-Test libraries can be implemented as Python modules and Python or Java
-classes.
+Test libraries can be implemented as Python modules or classes.
 
 Library name
 ~~~~~~~~~~~~
@@ -96,8 +86,7 @@ The name of a test library that is used when a library is imported is
 the same as the name of the module or class implementing it. For
 example, if you have a Python module `MyLibrary` (that is,
 file :file:`MyLibrary.py`), it will create a library with name
-:name:`MyLibrary`. Similarly, a Java class `YourLibrary`, when
-it is not in any package, creates a library with exactly that name.
+:name:`MyLibrary`.
 
 Python classes are always inside a module. If the name of a class
 implementing a library is the same as the name of the module, Robot
@@ -110,13 +99,8 @@ works. If the module name and class name are different, libraries must be
 taken into use using both module and class names, such as
 :name:`mymodule.MyLibrary` or :name:`parent.submodule.MyLib`.
 
-Java classes in a non-default package must be taken into use with the
-full name. For example, class `MyLib` in `com.mycompany.myproject`
-package must be imported with name :name:`com.mycompany.myproject.MyLib`.
-
-.. tip:: If the library name is really long, for example when the Java
-         package name is long, it is recommended to give the library a
-         simpler alias by using the `WITH NAME syntax`_.
+.. tip:: If the library name is really long, it is recommended to give
+         the library a simpler alias by using the `WITH NAME syntax`_.
 
 Providing arguments to libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -130,8 +114,7 @@ cannot take any arguments, so trying to use those results in an error.
 The number of arguments needed by the library is the same
 as the number of arguments accepted by the library's
 constructor. The default values and variable number of arguments work
-similarly as with `keyword arguments`_, with the exception that there
-is no variable argument support for Java libraries. Arguments passed
+similarly as with `keyword arguments`_. Arguments passed
 to the library, as well as the library name itself, can be specified
 using variables, so it is possible to alter them, for example, from the
 command line.
@@ -142,8 +125,7 @@ command line.
    Library    MyLibrary     10.0.0.1    8080
    Library    AnotherLib    ${VAR}
 
-Example implementations, first one in Python and second in Java, for
-the libraries used in the above example:
+Example implementations for the libraries used in the above example:
 
 .. sourcecode:: python
 
@@ -157,21 +139,17 @@ the libraries used in the above example:
       def send_message(self, message):
           self._conn.send(message)
 
-.. sourcecode:: java
+.. sourcecode:: python
 
-   public class AnotherLib {
-       private String setting = null;
+   class AnotherLib:
+       setting = None
 
-       public AnotherLib(String setting) {
-           setting = setting;
-       }
+       def __init__(self, setting):
+           self.setting = setting
 
-       public void doSomething() {
-           if setting.equals("42") {
+       def do_something(self):
+           if setting.equals("42"):
                // do something ...
-           }
-       }
-   }
 
 Library scope
 ~~~~~~~~~~~~~
@@ -252,23 +230,6 @@ Example Python library using the `SUITE` scope:
         def clear_counter(self):
             self._counter = 0
 
-Example Java library using the `GLOBAL` scope:
-
-.. sourcecode:: java
-
-    public class ExampleLibrary {
-        public static final String ROBOT_LIBRARY_SCOPE = "GLOBAL";
-        private int counter = 0;
-
-        public void count() {
-            counter += 1;
-            System.out.println(counter);
-        }
-
-        public void clearCounter() {
-            counter = 0;
-        }
-    }
 
 __ `Providing arguments to libraries`_
 
@@ -287,8 +248,7 @@ read from `ROBOT_LIBRARY_SCOPE`. If
 `ROBOT_LIBRARY_VERSION` does not exist, information is tried to
 be read from `__version__` attribute. These attributes must be
 class or module attributes, depending whether the library is
-implemented as a class or a module.  For Java libraries the version
-attribute must be declared as `static final`.
+implemented as a class or a module.
 
 An example Python module using `__version__`:
 
@@ -299,16 +259,6 @@ An example Python module using `__version__`:
     def keyword():
         pass
 
-A Java class using `ROBOT_LIBRARY_VERSION`:
-
-.. sourcecode:: java
-
-    public class VersionExample {
-        public static final String ROBOT_LIBRARY_VERSION = "1.0.2";
-
-        public void keyword() {
-        }
-    }
 
 Documentation format
 ~~~~~~~~~~~~~~~~~~~~
@@ -325,8 +275,8 @@ The possible case-insensitive values for documentation format are
 and `reST` (reStructuredText_). Using the `reST` format requires
 the docutils_ module to be installed when documentation is generated.
 
-Setting the documentation format is illustrated by the following Python and
-Java examples that use reStructuredText and HTML formats, respectively.
+Setting the documentation format is illustrated by the following example that
+uses reStructuredText format.
 See `Documenting libraries`_ section and Libdoc_ chapter for more information
 about documenting test libraries in general.
 
@@ -353,27 +303,6 @@ about documenting test libraries in general.
         """
         pass
 
-.. sourcecode:: java
-
-    /**
-     * A library for <i>documentation format</i> demonstration purposes.
-     *
-     * This documentation is created using <a href="http://www.w3.org/html">HTML</a>.
-     * Here is a link to the only `Keyword`.
-     */
-    public class DocFormatExample {
-        public static final String ROBOT_LIBRARY_DOC_FORMAT = "HTML";
-
-        /**<b>Nothing</b> to see here. Not even in the table below.
-         *
-         * <table>
-         * <tr><td>Table</td><td>here</td><td>has</td></tr>
-         * <tr><td>nothing</td><td>to</td><td>see.</td></tr>
-         * </table>
-         */
-        public void keyword() {
-        }
-    }
 
 __ `Library scope`_
 __ `Library version`_
@@ -465,11 +394,9 @@ What methods are considered keywords
 
 When the static library API is used, Robot Framework uses introspection
 to find out what keywords the library class or module implements.
-By default it excludes methods and functions starting with an underscore,
-and with Java based libraries it ignores also private methods as well as
-methods implemented only in `java.lang.Object`. All the methods and functions
-that are not ignored are considered keywords. For example, the Python and Java
-libraries below implement a single keyword :name:`My Keyword`.
+By default it excludes methods and functions starting with an underscore.
+All the methods and functions that are not ignored are considered keywords.
+For example, the library below implements a single keyword :name:`My Keyword`.
 
 .. sourcecode:: python
 
@@ -481,18 +408,6 @@ libraries below implement a single keyword :name:`My Keyword`.
         def _helper_method(self, arg):
             return arg.upper()
 
-.. sourcecode:: java
-
-    public class MyLibrary {
-
-        public String myKeyword(String arg) {
-            return helperMethod(arg);
-        }
-
-        private String helperMethod(String arg) {
-            return arg.toUpperCase();
-        }
-    }
 
 Limiting public methods becoming keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -679,7 +594,7 @@ example, the method `hello` maps to the keyword name
 `do_nothing` and `doNothing` methods can be used as the
 :name:`Do Nothing` keyword in the test data.
 
-Example Python library implemented as a module in the :file:`MyLibrary.py` file:
+Example library implemented as a module in the :file:`MyLibrary.py` file:
 
 .. sourcecode:: python
 
@@ -689,22 +604,8 @@ Example Python library implemented as a module in the :file:`MyLibrary.py` file:
   def do_nothing():
       pass
 
-Example Java library implemented as a class in the :file:`MyLibrary.java` file:
 
-.. sourcecode:: java
-
-  public class MyLibrary {
-
-      public void hello(String name) {
-          System.out.println("Hello, " + name + "!");
-      }
-
-      public void doNothing() {
-      }
-
-  }
-
-The example below illustrates how the example libraries above can be
+The example below illustrates how the example library above can be
 used. If you want to try this yourself, make sure that the library is
 in the `module search path`_.
 
@@ -808,7 +709,7 @@ Libraries using the `dynamic library API`_ have other means for sharing
 this information, so this section is not relevant to them.
 
 The most common and also the simplest situation is when a keyword needs an
-exact number of arguments. In this case, both the Python and Java methods
+exact number of arguments. In this case, the method
 simply take exactly those arguments. For example, a method implementing a
 keyword with no arguments takes no arguments either, a method
 implementing a keyword with one argument also takes one argument, and
@@ -827,21 +728,12 @@ Example Python keywords taking different numbers of arguments:
   def three_arguments(a1, a2, a3):
       print("Keyword got three arguments '%s', '%s' and '%s'." % (a1, a2, a3))
 
-.. note:: A major limitation with Java libraries using the static library API
-          is that they do not support the `named argument syntax`_. If this
-          is a blocker, it is possible to either use Python or switch to
-          the `dynamic library API`_.
 
 Default values to keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is often useful that some of the arguments that a keyword uses have
-default values. Python and Java have different syntax for handling default
-values to methods, and the natural syntax of these languages can be
-used when creating test libraries for Robot Framework.
-
-Default values with Python
-''''''''''''''''''''''''''
+default values.
 
 In Python a method has always exactly one implementation and possible
 default values are specified in the method signature. The syntax,
@@ -873,37 +765,6 @@ with one to three arguments.
        Multiple Defaults    required arg    optional
        Multiple Defaults    required arg    optional 1    optional 2
 
-Default values with Java
-''''''''''''''''''''''''
-
-In Java one method can have several implementations with different
-signatures. Robot Framework regards all these implementations as one
-keyword, which can be used with different arguments. This syntax can
-thus be used to provide support for the default values. This is
-illustrated by the example below, which is functionally identical to
-the earlier Python example:
-
-.. sourcecode:: java
-
-   public void oneDefault(String arg) {
-       System.out.println("Argument has value " + arg);
-   }
-
-   public void oneDefault() {
-       oneDefault("default");
-   }
-
-   public void multipleDefaults(String arg1, String arg2, String arg3) {
-       System.out.println("Got arguments " + arg1 + ", " + arg2 + " and " + arg3);
-   }
-
-   public void multipleDefaults(String arg1, String arg2) {
-       multipleDefaults(arg1, arg2, "default 2");
-   }
-
-   public void multipleDefaults(String arg1) {
-       multipleDefaults(arg1, "default 1");
-   }
 
 .. _varargs-library:
 
@@ -911,11 +772,7 @@ Variable number of arguments (`*varargs`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework supports also keywords that take any number of
-arguments. Similarly as with the default values, the actual syntax to use
-in test libraries is different in Python and Java.
-
-Variable number of arguments with Python
-''''''''''''''''''''''''''''''''''''''''
+arguments.
 
 Python supports methods accepting any number of arguments. The same
 syntax works in libraries and, as the examples below show, it can also
@@ -949,76 +806,17 @@ be combined with other ways of specifying arguments:
        Also Defaults    required    these two    have defaults
        Also Defaults    1    2    3    4    5    6
 
-Variable number of arguments with Java
-''''''''''''''''''''''''''''''''''''''
-
-Robot Framework supports `Java varargs syntax`__ for defining variable number of
-arguments. For example, the following two keywords are functionally identical
-to the above Python examples with same names:
-
-.. sourcecode:: java
-
-  public void anyArguments(String... varargs) {
-      System.out.println("Got arguments:");
-      for (String arg: varargs) {
-          System.out.println(arg);
-      }
-  }
-
-  public void oneRequired(String required, String... others) {
-      System.out.println("Required: " + required + "\nOthers:");
-      for (String arg: others) {
-          System.out.println(arg);
-      }
-  }
-
-It is also possible to use variable number of arguments also by
-having an array or `java.util.List` as the last argument, or second to last
-if `free keyword arguments (**kwargs)`_ are used. This is illustrated
-by the following examples that are functionally identical to
-the previous ones:
-
-.. sourcecode:: java
-
-  public void anyArguments(String[] varargs) {
-      System.out.println("Got arguments:");
-      for (String arg: varargs) {
-          System.out.println(arg);
-      }
-  }
-
-  public void oneRequired(String required, List<String> others) {
-      System.out.println("Required: " + required + "\nOthers:");
-      for (String arg: others) {
-          System.out.println(arg);
-      }
-  }
-
-.. note:: Only `java.util.List` is supported as varargs, not any of
-          its sub types.
-
-The support for variable number of arguments with Java keywords has one
-limitation: it works only when methods have one signature. Thus it is not
-possible to have Java keywords with both default values and varargs.
-
-__ http://docs.oracle.com/javase/1.5.0/docs/guide/language/varargs.html
 
 .. _kwargs-library:
 
 Free keyword arguments (`**kwargs`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework supports `Python's **kwargs syntax`__ and extends that support
-also to Java. How to use use keywords that accept *free keyword arguments*,
+Robot Framework supports `Python's **kwargs syntax`__.
+How to use use keywords that accept *free keyword arguments*,
 also known as *free named arguments*, is `discussed under the Creating test
 cases section`__. In this section we take a look at how to create such keywords
-using Python and Java.
-
-__ https://docs.python.org/tutorial/controlflow.html#keyword-arguments
-__ `Free named arguments`_
-
-Free keyword arguments with Python
-''''''''''''''''''''''''''''''''''
+using Python.
 
 If you are already familiar how kwargs work with Python, understanding how
 they work with Robot Framework test libraries is rather simple. The example
@@ -1080,41 +878,9 @@ For a real world example of using a signature exactly like in the above
 example, see :name:`Run Process` and :name:`Start Keyword` keywords in the
 Process_ library.
 
+__ https://docs.python.org/tutorial/controlflow.html#keyword-arguments
+__ `Free named arguments`_
 __ Escaping_
-
-Free keyword arguments with Java
-''''''''''''''''''''''''''''''''
-
-Also Java libraries support the free
-keyword arguments syntax. Java itself has no kwargs syntax, but keywords
-can have `java.util.Map` as the last argument to specify that they
-accept kwargs.
-
-If a Java keyword accepts kwargs, Robot Framework will automatically pack
-all arguments in `name=value` syntax at the end of the keyword call
-into a `Map` and pass it to the keyword. For example, following
-example keywords can be used exactly like the previous Python examples:
-
-.. sourcecode:: java
-
-    public void exampleKeyword(Map<String, String> stuff):
-        for (String key: stuff.keySet())
-            System.out.println(key + " " + stuff.get(key));
-
-    public void variousArgs(String arg, List<String> varargs, Map<String, Object> kwargs):
-        System.out.println("arg: " + arg);
-        for (String varg: varargs)
-            System.out.println("vararg: " + varg);
-        for (String key: kwargs.keySet())
-            System.out.println("kwarg: " + key + " " + kwargs.get(key));
-
-.. note:: The type of the kwargs argument must be exactly `java.util.Map`,
-          not any of its sub types.
-
-.. note:: Similarly as with the `varargs support`__, a keyword supporting
-          kwargs cannot have more than one signature.
-
-__ `Variable number of arguments with Java`_
 
 Keyword-only arguments
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -1149,8 +915,6 @@ Example:
        Sort Words    Foo    bar    baZ    case_sensitive=True
        Strip Spaces    ${word}    left=False
 
-Due to keyword-only arguments being a Python 3 feature, libraries using
-Python 2 cannot use it. Time to upgrade!
 
 __ https://www.python.org/dev/peps/pep-3102
 
@@ -1214,8 +978,6 @@ to use non-string values as well:
   Robot Framework converts arguments automatically.
 - Automatic conversion is also done based on `keyword default values`__.
 - Libraries can register `custom argument converters`_.
-- Arguments to `Java keywords`__ are converted based on argument type
-  information.
 
 Automatic argument conversion based on function annotations, types specified
 using the `@keyword` decorator, and argument default values are all new
@@ -1229,7 +991,6 @@ __ `Manual argument conversion`_
 __ `Specifying argument types using function annotations`_
 __ `Specifying argument types using @keyword decorator`_
 __ `Implicit argument types based on default values`_
-__ `Argument types with Java`_
 
 Manual argument conversion
 ''''''''''''''''''''''''''
@@ -1947,64 +1708,6 @@ information about conversion. It is especially important to document
 converter functions registered for existing types, because their own
 documentation is likely not very useful in this context.
 
-Argument types with Java
-''''''''''''''''''''''''
-
-Arguments to Java methods have types, and all the base types are
-handled automatically. This means that arguments that are normal
-strings in the test data are coerced to correct type at runtime. The
-types that can be coerced are:
-
-- integer types (`byte`, `short`, `int`, `long`)
-- floating point types (`float` and `double`)
-- the `boolean` type
-- object versions of the above types e.g. `java.lang.Integer`
-
-The coercion is done for arguments that have the same or compatible
-type across all the signatures of the keyword method. In the following
-example, the conversion can be done for keywords `doubleArgument`
-and `compatibleTypes`, but not for `conflictingTypes`.
-
-.. sourcecode:: java
-
-   public void doubleArgument(double arg) {}
-
-   public void compatibleTypes(String arg1, Integer arg2) {}
-   public void compatibleTypes(String arg2, Integer arg2, Boolean arg3) {}
-
-   public void conflictingTypes(String arg1, int arg2) {}
-   public void conflictingTypes(int arg1, String arg2) {}
-
-The coercion works with the numeric types if the test data has a
-string containing a number, and with the boolean type the data must
-contain either string `true` or `false`. Coercion is only
-done if the original value was a string from the test data, but it is
-of course still possible to use variables containing correct types with
-these keywords. Using variables is the only option if keywords have
-conflicting signatures.
-
-.. sourcecode:: robotframework
-
-   *** Test Cases ***
-   Coercion
-       Double Argument     3.14
-       Double Argument     2e16
-       Compatible Types    Hello, world!    1234
-       Compatible Types    Hi again!    -10    true
-
-   No Coercion
-       Double Argument    ${3.14}
-       Conflicting Types    1       ${2}    # must use variables
-       Conflicting Types    ${1}    2
-
-Argument type coercion works also with `Java library constructors`__.
-
-__ `Providing arguments to libraries`_
-
-.. note:: Converting arguments passed to Java based keywords is an old feature
-          and independent on the support to convert arguments of Python
-          keywords in Robot Framework 3.1 and newer. Conversion functionality
-          may be unified in the future.
 
 `@keyword` decorator
 ~~~~~~~~~~~~~~~~~~~~
@@ -2152,14 +1855,6 @@ Python:
     class MyError(RuntimeError):
         ROBOT_SUPPRESS_NAME = True
 
-Java:
-
-.. sourcecode:: java
-
-    public class MyError extends RuntimeException {
-        public static final boolean ROBOT_SUPPRESS_NAME = true;
-    }
-
 In all cases, it is important for the users that the exception message is as
 informative as possible.
 
@@ -2260,14 +1955,6 @@ Python:
     class MyContinuableError(RuntimeError):
         ROBOT_CONTINUE_ON_FAILURE = True
 
-Java:
-
-.. sourcecode:: java
-
-    public class MyContinuableError extends RuntimeException {
-        public static final boolean ROBOT_CONTINUE_ON_FAILURE = true;
-    }
-
 __ `Continue on failure`_
 __ `Exceptions provided by Robot Framework`_
 
@@ -2297,14 +1984,6 @@ Python:
 
     class MySkippingError(RuntimeError):
         ROBOT_SKIP_EXECUTION = True
-
-Java:
-
-.. sourcecode:: java
-
-    public class MySkippingError extends RuntimeException {
-        public static final boolean ROBOT_SKIP_EXECUTION = true;
-    }
 
 __ `Exceptions provided by Robot Framework`_
 
@@ -2336,13 +2015,6 @@ Python:
     class MyFatalError(RuntimeError):
         ROBOT_EXIT_ON_FAILURE = True
 
-Java:
-
-.. sourcecode:: java
-
-    public class MyFatalError extends RuntimeException {
-        public static final boolean ROBOT_EXIT_ON_FAILURE = true;
-    }
 
 __ `Stopping test execution gracefully`_
 __ `Exceptions provided by Robot Framework`_
@@ -2419,11 +2091,10 @@ separated from it with a colon::
    *INFO:1308435758660* Message with timestamp
    *HTML:1308435758661* <b>HTML</b> message with timestamp
 
-As illustrated by the examples below, adding the timestamp is easy
-both using Python and Java. If you are using Python, it is, however,
-even easier to get accurate timestamps using the `programmatic logging
-APIs`_. A big benefit of adding timestamps explicitly is that this
-approach works also with the `remote library interface`_.
+As illustrated by the examples below, adding the timestamp is easy.
+It is, however, even easier to get accurate timestamps using the
+`programmatic logging APIs`_. A big benefit of adding timestamps explicitly
+is that this approach works also with the `remote library interface`_.
 
 Python:
 
@@ -2434,14 +2105,6 @@ Python:
 
     def example_keyword():
         print('*INFO:%d* Message with timestamp' % (time.time()*1000))
-
-Java:
-
-.. sourcecode:: java
-
-    public void exampleKeyword() {
-        System.out.println("*INFO:" + System.currentTimeMillis() + "* Message with timestamp");
-    }
 
 .. _Unix epoch: http://en.wikipedia.org/wiki/Unix_time
 __ `Using log levels`_
@@ -2454,12 +2117,10 @@ options. As already discussed, warnings and all messages written to the
 standard error stream are written both to the log file and to the
 console. Both of these options have a limitation that the messages end
 up to the console only after the currently executing keyword
-finishes. A bonus is that these approaches work both with Python and
-Java based libraries.
+finishes.
 
-Another option, that is only available with Python, is writing
-messages to `sys.__stdout__` or `sys.__stderr__`. When
-using this approach, messages are written to the console immediately
+Another option is writing messages to `sys.__stdout__` or `sys.__stderr__`.
+When using this approach, messages are written to the console immediately
 and are not written to the log file at all:
 
 .. sourcecode:: python
@@ -2494,8 +2155,7 @@ be used to make messages more visible and `HTML` is useful if any
 kind of formatting is needed.
 
 The following examples clarify how logging with different levels
-works. Java programmers should regard the code `print('message')`
-as pseudocode meaning `System.out.println("message");`.
+works.
 
 .. sourcecode:: python
 
@@ -2640,21 +2300,6 @@ Logging during the import and initialization is possible both using the
 `standard output and error streams`__ and the `programmatic logging APIs`_.
 Both of these are demonstrated below.
 
-Java library logging via stdout during initialization:
-
-.. sourcecode:: java
-
-   public class LoggingDuringInitialization {
-
-       public LoggingDuringInitialization() {
-           System.out.println("*INFO* Initializing library");
-       }
-
-       public void keyword() {
-           // ...
-       }
-   }
-
 Python library logging using the logging API during import:
 
 .. sourcecode:: python
@@ -2669,7 +2314,7 @@ Python library logging using the logging API during import:
        # ...
 
 .. note:: If you log something during initialization, i.e. in Python
-          `__init__` or in Java constructor, the messages may be
+          `__init__`, the messages may be
           logged multiple times depending on the `library scope`_.
 
 __ `Logging information`_
@@ -2683,9 +2328,9 @@ generated by some other means. The returned values can be `assigned to
 variables`__ in the test data and then used as inputs for other keywords,
 even from different test libraries.
 
-Values are returned using the `return` statement both from
-the Python and Java methods. Normally, one value is assigned into one
-`scalar variable`__, as illustrated in the example below. This example
+Values are returned using the `return` statement in methods. Normally,
+one value is assigned into one `scalar variable`__, as illustrated in
+the example below. This example
 also illustrates that it is possible to return any objects and to use
 `extended variable syntax`_ to access object attributes.
 
@@ -2715,8 +2360,7 @@ __ `Scalar variables`_
 Keywords can also return values so that they can be assigned into
 several `scalar variables`_ at once, into `a list variable`__, or
 into scalar variables and a list variable. All these usages require
-that returned values are Python lists or tuples or
-in Java arrays, Lists, or Iterators.
+that returned values are Python lists or tuples.
 
 __ `List variables`_
 
@@ -2781,8 +2425,7 @@ A test library without documentation about what keywords it
 contains and what those keywords do is rather useless. To ease
 maintenance, it is highly recommended that library documentation is
 included in the source code and generated from it. Basically, that
-means using docstrings_ with Python and Javadoc_ with Java, as in
-the examples below.
+means using docstrings_ as in the example below.
 
 .. sourcecode:: python
 
@@ -2801,44 +2444,18 @@ the examples below.
             """
             pass
 
-.. sourcecode:: java
-
-    /**
-     *  This is an example library with some documentation.
-     */
-    public class MyLibrary {
-
-        /**
-         * This keyword has only a short documentation
-         */
-        public void keywordWithShortDocumentation(String argument) {
-        }
-
-        /**
-         * First line of the documentation is here.
-         *
-         * Longer documentation continues here and it can contain
-         * multiple lines or paragraphs.
-         */
-        public void keywordWithLongerDocumentation() {
-        }
-
-    }
-
-Both Python and Java have tools for creating an API documentation of a
+Python has tools for creating an API documentation of a
 library documented as above. However, outputs from these tools can be slightly
 technical for some users. Another alternative is using Robot
 Framework's own documentation tool Libdoc_. This tool can
-create a library documentation from both Python and Java libraries
+create a library documentation from libraries
 using the static library API, such as the ones above, but it also handles
 libraries using the `dynamic library API`_ and `hybrid library API`_.
 
 The first logical line of a keyword documentation, until the first empty line,
 is used for a special purpose and should contain a short overall description
 of the keyword. It is used as a *short documentation* by Libdoc_ (for example,
-as a tool tip) and also shown in the `test logs`_. The latter does not work
-with Java libraries using the static API, though, because their documentation
-is not available at runtime.
+as a tool tip) and also shown in the `test logs`_.
 
 By default documentation is considered to follow Robot Framework's
 `documentation formatting`_ rules. This simple format allows often used
@@ -2857,7 +2474,6 @@ Libdoc_ chapter for more information about the formats in general.
           UTF-8 is the default source encoding.
 
 .. _docstrings: http://www.python.org/dev/peps/pep-0257
-.. _javadoc: http://java.sun.com/j2se/javadoc/writingdoccomments/index.html
 __ http://www.python.org/dev/peps/pep-0263
 
 Testing libraries
@@ -2867,7 +2483,7 @@ Any non-trivial test library needs to be thoroughly tested to prevent
 bugs in them. Of course, this testing should be automated to make it
 easy to rerun tests when libraries are changed.
 
-Both Python and Java have excellent unit testing tools, and they suite
+Python has excellent unit testing tools, and they suite
 very well for testing libraries. There are no major differences in
 using them for this purpose compared to using them for some other
 testing. The developers familiar with these tools do not need to learn
@@ -2903,11 +2519,6 @@ using normal packaging tools. For information about packaging and
 distributing Python code see https://packaging.python.org/. When such
 a package is installed using pip_ or other tools, it is automatically
 in the `module search path`_.
-
-When using Java, it is natural to package libraries into a JAR
-archive. The JAR package must be put into the `module search path`_
-before running tests, but it is easy to create a `start-up script`_ that
-does that automatically.
 
 Deprecating keywords
 ~~~~~~~~~~~~~~~~~~~~
@@ -2951,15 +2562,11 @@ keyword is executed, there will be a warning like shown below in the log file.
    </table>
 
 This deprecation system works with most test libraries and also with
-`user keywords`__.  The only exception are keywords implemented in a
-Java test library that uses the `static library interface`__ because
-their documentation is not available at runtime. With such keywords,
-it possible to use user keywords as wrappers and deprecate them.
+`user keywords`__.
 
 __ `Errors and warnings during execution`_
 __ `Documenting libraries`_
 __ `User keyword name and documentation`_
-__ `Creating keywords`_
 
 .. _Dynamic library:
 
@@ -2977,9 +2584,8 @@ Only differences between static and dynamic libraries are
 how Robot Framework discovers what keywords a library implements,
 what arguments and documentation these keywords have, and how the
 keywords are actually executed. With the static API, all this is
-done using reflection (except for the documentation of Java libraries),
-but dynamic libraries have special methods that are used for these
-purposes.
+done using reflection, but dynamic libraries have special methods
+that are used for these purposes.
 
 One of the benefits of the dynamic API is that you have more flexibility
 in organizing your library. With the static API, you must have all
@@ -3001,13 +2607,9 @@ Framework and dynamic libraries. It does not matter for Robot
 Framework how these libraries are actually implemented (for example,
 how calls to the `run_keyword` method are mapped to a correct
 keyword implementation), and many different approaches are
-possible. However, if you use Java, you may want to examine the
-JavaLibCore__ project before implementing your own system. This collection
-of reusable tools supports several ways of creating keywords, and it is
-likely that it already has a mechanism that suites your needs.
-Python users may also find the similar PythonLibCore__ project useful.
+possible.
+Python users may also find the PythonLibCore__ project useful.
 
-__ https://github.com/robotframework/JavalibCore
 __ https://github.com/robotframework/PythonLibCore
 
 .. _`Getting dynamic keyword names`:
@@ -3016,8 +2618,7 @@ Getting keyword names
 ~~~~~~~~~~~~~~~~~~~~~
 
 Dynamic libraries tell what keywords they implement with the
-`get_keyword_names` method. The method also has the alias
-`getKeywordNames` that is recommended when using Java. This
+`get_keyword_names` method. This
 method cannot take any arguments, and it must return a list or array
 of strings containing the names of the keywords that the library implements.
 
@@ -3080,7 +2681,7 @@ method to get it executed. This method takes two or three arguments.
 The first argument is a string containing the name of the keyword to be
 executed in the same format as returned by `get_keyword_names`. The second
 argument is a list of `positional arguments`_ given to the keyword in
-the test data, and the optional third argument is a dictionary (map in Java)
+the test data, and the optional third argument is a dictionary
 containing `named arguments`_. If the third argument is missing, `free named
 arguments`__ and `named-only arguments`__ are not supported, and other
 named arguments are mapped to positional arguments.
@@ -3137,9 +2738,7 @@ Similarly as other keywords, dynamic keywords can require any number
 of `positional arguments`_, have `default values`_, accept `variable number of
 arguments`_, accept `free named arguments`_ and have `named-only arguments`_.
 The syntax how to represent all these different variables is derived from how
-they are specified in Python and explained in the following table. Note that
-the examples use Python syntax for lists, but Java developers should use
-Java lists or String arrays instead.
+they are specified in Python and explained in the following table.
 
 .. table:: Representing different arguments with `get_keyword_arguments`
    :class: tabular
@@ -3205,8 +2804,8 @@ For consistency reasons, also arguments that do not accept default values can
 be specified as one item tuples. For example, `['a', 'b=c', '*d']` and
 `[('a',), ('b', 'c'), ('*d',)]` are equivalent.
 
-If `get_keyword_arguments` is missing or returns Python `None` or Java
-`null` for a certain keyword, that keyword gets an argument specification
+If `get_keyword_arguments` is missing or returns Python `None` for a certain
+keyword, that keyword gets an argument specification
 accepting all arguments. This automatic argument spec is either
 `[*varargs, **kwargs]` or `[*varargs]`, depending does
 `run_keyword` `support free named arguments`__ or not.
@@ -3314,7 +2913,7 @@ implementing yet another optional dynamic method named `get_keyword_source`
 (alias `getKeywordSource`) that returns the source information.
 
 The return value from the `get_keyword_source` method must be a string or
-`None` (`null` in Java) if no source information is available. In the simple
+`None` if no source information is available. In the simple
 case it is enough to simply return an absolute path to the file implementing
 the keyword. If the line number where the keyword implementation starts
 is known, it can be embedded to the return value like `path:lineno`.
@@ -3499,35 +3098,6 @@ __ `Getting keyword tags`_
 __ `Getting keyword documentation`_
 __ `Getting keyword source information`_
 
-It is possible to write a formal interface specification in Java as
-below. However, remember that libraries *do not need* to implement
-any explicit interface, because Robot Framework directly checks with
-reflection if the library has the required `get_keyword_names` and
-`run_keyword` methods or their camelCase aliases.
-
-.. sourcecode:: java
-
-   public interface RobotFrameworkDynamicAPI {
-
-       List<String> getKeywordNames();
-
-       Object runKeyword(String name, List arguments);
-
-       Object runKeyword(String name, List arguments, Map kwargs);
-
-       List<String> getKeywordArguments(String name);
-
-       List<String> getKeywordTypes(String name);
-
-       List<String> getKeywordTags(String name);
-
-       String getKeywordDocumentation(String name);
-
-   }
-
-.. note:: In addition to using `List`, it is possible to use also arrays
-          like `Object[]` or `String[]`.
-
 A good example of using the dynamic API is Robot Framework's own
 `Remote library`_.
 
@@ -3592,11 +3162,6 @@ the class itself must be returned in the same format as they are
 defined. For example, the library above would not work correctly, if
 `get_keyword_names` returned `My Keyword` instead of
 `my_keyword`.
-
-The hybrid API is not very useful with Java, because it is not
-possible to handle missing methods with it. Of course, it is possible
-to implement all the methods in the library class, but that brings few
-benefits compared to the static API.
 
 Getting keyword arguments and documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -3713,9 +3278,7 @@ Using inheritance
 
 Another straightforward way to extend an existing library is using
 inheritance. This is illustrated by the example below that adds new
-:name:`Title Should Start With` keyword to the SeleniumLibrary_. This
-example uses Python, but you can obviously extend an existing Java
-library in Java code the same way.
+:name:`Title Should Start With` keyword to the SeleniumLibrary_.
 
 .. sourcecode:: python
 

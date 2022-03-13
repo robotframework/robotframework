@@ -104,10 +104,8 @@ directory where current test data file is situated similarly as paths
 to `resource and variable files`_. The main benefit of this approach
 is that there is no need to configure the module search path.
 
-If the library is a file, the path to it must contain extension. For
-Python libraries the extension is naturally :file:`.py` and for Java
-libraries it can either be :file:`.class` or :file:`.java`, but the
-class file must always be available. If Python library is implemented
+If the library is a file, the path to it must contain extension,
+i.e. :file:`.py`. If a library is implemented
 as a directory, the path to it must have a trailing forward slash (`/`)
 if the path is relative. With absolute paths the trailing slash is optional.
 Following examples demonstrate these different usages.
@@ -116,14 +114,12 @@ Following examples demonstrate these different usages.
 
    *** Settings ***
    Library    PythonLibrary.py
-   Library    /absolute/path/JavaLibrary.java
    Library    relative/path/PythonDirLib/    possible    arguments
    Library    ${RESOURCES}/Example.class
 
 
 A limitation of this approach is that libraries implemented as Python classes `must
-be in a module with the same name as the class`__. Additionally, importing
-libraries distributed in JAR or ZIP packages is not possible with this mechanism.
+be in a module with the same name as the class`__.
 
 __ `Library name`_
 
@@ -141,8 +137,7 @@ __ `Handling keywords with same names`_
 - There is a need to import the same library several times with
   different arguments. This is not possible otherwise.
 
-- The library name is inconveniently long. This can happen, for
-  example, if a Java library has a long package name.
+- The library name is inconveniently long.
 
 - You want to use variables to import different libraries in
   different environments, but refer to them with the same name.

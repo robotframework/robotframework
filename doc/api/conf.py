@@ -34,14 +34,7 @@ autodoc_member_order = 'bysource'
 autodoc_mock_imports = [
     # Standard libs. Prevents errors from Py2 incompatible imports in Py3 code.
     'collections',
-    # Java code related to the standalone jar.
-    'org.robotframework',  'org.robotframework.RobotRunner',
-    # Java standard libs.
-    'java.io', 'java.lang', 'java.awt', 'java.awt.event',
-    'javax.swing', 'javax.swing.JOptionPane',
-    # .NET standard libs.
-    'System.Threading', 'System.Drawing', 'System.Windows',
-    'System.Windows.Controls', 'wpf']
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
