@@ -7,9 +7,8 @@ external test monitors, sending a mail message when a test fails, and
 communicating with other systems. Listener API version 3 also makes
 it possible to modify tests and results during the test execution.
 
-Listeners are classes or modules with certain special methods, and they
-can be implemented both with Python and Java. Listeners that monitor
-the whole test execution must be taken into use from the command line.
+Listeners are classes or modules with certain special methods. Listeners that
+monitor the whole test execution must be taken into use from the command line.
 In addition to that, `test libraries can register listeners`__ that receive
 notifications while that library is active.
 
@@ -96,9 +95,6 @@ gets information about the execution but cannot directly affect it. The latter
 interface gets data and result objects Robot Framework itself uses and is thus
 able to alter execution and change results. See `listener examples`_ for more
 information about what listeners can do.
-
-Another difference between versions 2 and 3 is that the former supports
-both Python and Java but the latter supports only Python.
 
 Listener interface methods
 --------------------------
@@ -303,7 +299,7 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `originalname`: The original library name when using the     |
    |                  |                  |   WITH NAME syntax, otherwise same as `name`.                  |
    |                  |                  | * `source`: An absolute path to the library source. `None`     |
-   |                  |                  |   with libraries implemented with Java or if getting the       |
+   |                  |                  |   if getting the                                               |
    |                  |                  |   source of the library failed for some reason.                |
    |                  |                  | * `importer`: An absolute path to the file importing the       |
    |                  |                  |   library. `None` when BuiltIn_ is imported well as when       |
@@ -360,29 +356,6 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | of scope.                                                      |
    +------------------+------------------+----------------------------------------------------------------+
 
-The available methods and their arguments are also shown in a formal Java
-interface specification below. Contents of the `java.util.Map attributes` are
-as in the table above.  It should be remembered that a listener *does not* need
-to implement any explicit interface or have all these methods.
-
-.. sourcecode:: java
-
-   public interface RobotListenerInterface {
-       public static final int ROBOT_LISTENER_API_VERSION = 2;
-       void startSuite(String name, java.util.Map attributes);
-       void endSuite(String name, java.util.Map attributes);
-       void startTest(String name, java.util.Map attributes);
-       void endTest(String name, java.util.Map attributes);
-       void startKeyword(String name, java.util.Map attributes);
-       void endKeyword(String name, java.util.Map attributes);
-       void logMessage(java.util.Map message);
-       void message(java.util.Map message);
-       void outputFile(String path);
-       void logFile(String path);
-       void reportFile(String path);
-       void debugFile(String path);
-       void close();
-   }
 
 Listener version 3
 ~~~~~~~~~~~~~~~~~~
@@ -586,63 +559,6 @@ probably more useful than this example.
        def close(self):
             self.outfile.close()
 
-The following example implements the same functionality as the previous one,
-but uses Java instead of Python.
-
-.. sourcecode:: java
-
-   import java.io.*;
-   import java.util.Map;
-   import java.util.List;
-
-
-   public class JavaListener {
-       public static final int ROBOT_LISTENER_API_VERSION = 2;
-       public static final String DEFAULT_FILENAME = "listen_java.txt";
-       private BufferedWriter outfile = null;
-
-       public JavaListener() throws IOException {
-           this(DEFAULT_FILENAME);
-       }
-
-       public JavaListener(String filename) throws IOException {
-           String tmpdir = System.getProperty("java.io.tmpdir");
-           String sep = System.getProperty("file.separator");
-           String outpath = tmpdir + sep + filename;
-           outfile = new BufferedWriter(new FileWriter(outpath));
-       }
-
-       public void startSuite(String name, Map attrs) throws IOException {
-           outfile.write(name + " '" + attrs.get("doc") + "'\n");
-       }
-
-       public void startTest(String name, Map attrs) throws IOException {
-           outfile.write("- " + name + " '" + attrs.get("doc") + "' [ ");
-           List tags = (List)attrs.get("tags");
-           for (int i=0; i < tags.size(); i++) {
-              outfile.write(tags.get(i) + " ");
-           }
-           outfile.write(" ] :: ");
-       }
-
-       public void endTest(String name, Map attrs) throws IOException {
-           String status = attrs.get("status").toString();
-           if (status.equals("PASS")) {
-               outfile.write("PASS\n");
-           }
-           else {
-               outfile.write("FAIL: " + attrs.get("message") + "\n");
-           }
-       }
-
-       public void endSuite(String name, Map attrs) throws IOException {
-           outfile.write(attrs.get("status") + "\n" + attrs.get("message") + "\n");
-       }
-
-       public void close() throws IOException {
-           outfile.close();
-       }
-   }
 
 Modifying execution and results
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -759,21 +675,20 @@ attribute. The value of this attribute should be an instance of the listener
 to use. It may be a totally independent listener or the library itself can
 act as a listener. To avoid listener methods to be exposed as keywords in
 the latter case, it is possible to prefix them with an underscore.
-For example, instead of using `end_suite` or `endSuite`, it is
-possible to use `_end_suite` or `_endSuite`.
+For example, instead of using `end_suite` it is possible to use `_end_suite`.
 
 Following examples illustrates using an external listener as well as library
 acting as a listener itself:
 
-.. sourcecode:: java
+.. sourcecode:: python
 
-   import my.project.Listener;
+   from listener import Listener
 
 
-   public class JavaLibraryWithExternalListener {
-       public static final Listener ROBOT_LIBRARY_LISTENER = new Listener();
-       public static final String ROBOT_LIBRARY_SCOPE = "GLOBAL";
-       public static final int ROBOT_LISTENER_API_VERSION = 2;
+   class LibraryWithExternalListener:
+       ROBOT_LIBRARY_LISTENER = Listener()
+       ROBOT_LIBRARY_SCOPE = 'GLOBAL'
+       ROBOT_LISTENER_API_VERSION = 2
 
        // actual library code here ...
    }

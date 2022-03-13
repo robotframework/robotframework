@@ -23,21 +23,19 @@ Synopsis
 ::
 
     robot [options] data_sources
-    python|jython|ipy|pypy -m robot [options] data_sources
-    python|jython|ipy|pypy path/to/robot/ [options] data_sources
-    java -jar robotframework.jar [options] data_sources
+    python|pypy -m robot [options] data_sources
+    python|pypy path/to/robot/ [options] data_sources
 
 Test execution is normally started using the ``robot`` `runner script`_.
 Alternatively it is possible to execute the installed `robot module`__ or
-`robot directory`__ directly using the selected interpreter. The final
-alternative is using the `standalone JAR distribution`_.
+`robot directory`__ directly using the selected interpreter.
 
 .. note::
     The ``robot`` script is new in Robot Framework 3.0. Prior to that,
     there were ``pybot``, ``jybot`` and ``ipybot`` scripts that
     executed tests using Python, Jython and IronPython, respectively.
     These scripts were removed in Robot Framework 3.1 and nowadays
-    ``robot`` must be used regardless the interpreter.
+    ``robot`` must be used.
 
 Regardless of execution approach, the path (or paths) to the test data to be
 executed is given as an argument after the command. Additionally, different
@@ -453,13 +451,13 @@ briefly explain the available command line options.
 
 All runner scripts also support getting the version information with
 the option :option:`--version`. This information also contains Python
-or Jython version and the platform type::
+version and the platform type::
 
    $ robot --version
-   Robot Framework 3.1 (Jython 2.7.0 on java1.7.0_45)
+   Robot Framework 5.0 (Python 3.8.12 on darwin)
 
    C:\>rebot --version
-   Rebot 3.1 (Python 3.7.0 on win32)
+   Rebot 5.0 (Python 3.7.0 on win32)
 
 .. _start-up script:
 .. _start-up scripts:
@@ -550,23 +548,6 @@ available in ``sys.argv``:
 
 __ https://docs.python.org/library/subprocess.html
 __ https://robot-framework.readthedocs.io
-
-Modifying Java startup parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Sometimes when using Jython there is need to alter the Java startup parameters.
-The most common use case is increasing the JVM maximum memory size as the
-default value may not be enough for creating reports and logs when
-outputs are very big. There are two easy ways to configure JVM options:
-
-1. Set ``JYTHON_OPTS`` environment variable. This can be done permanently
-   in operating system level or per execution in a custom start-up script.
-
-2. Pass the needed Java parameters with :option:`-J` option to Jython that
-   will pass them forward to Java. This is especially easy when `executing
-   installed robot module`_ directly::
-
-      jython -J-Xmx1024m -m robot tests.robot
 
 Making :file:`*.robot` files executable
 ---------------------------------------

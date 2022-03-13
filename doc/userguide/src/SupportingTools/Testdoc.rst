@@ -54,12 +54,10 @@ Data can be given as a single file, directory, or as multiple files and
 directories. In all these cases, the last argument must be the file where
 to write the output.
 
-Testdoc works with all interpreters supported by Robot Framework (Python,
-Jython and IronPython). It can be executed as an installed module like
+Testdoc can be executed as an installed module like
 `python -m robot.testdoc` or as a script like `python path/robot/testdoc.py`.
 
 Examples::
 
   python -m robot.testdoc my_test.robot testdoc.html
-  jython -m robot.testdoc --name "Smoke tests" --include smoke path/to/tests smoke.html
-  ipy path/to/robot/testdoc.py first.robot second.robot output.html
+  python path/to/robot/testdoc.py --name "Smoke tests" --include smoke path/to/tests smoke.html

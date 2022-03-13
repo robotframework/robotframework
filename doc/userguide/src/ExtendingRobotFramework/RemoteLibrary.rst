@@ -4,7 +4,7 @@ Remote library interface
 The remote library interface provides means for having test libraries
 on different machines than where Robot Framework itself is running,
 and also for implementing libraries using other languages than the
-natively supported Python and Java. For a test library, user remote
+natively supported Python. For a test library, user remote
 libraries look pretty much the same as any other test library, and
 developing test libraries using the remote library interface is also
 very close to creating `normal test libraries`__.
@@ -77,8 +77,7 @@ to the server and if a connection accidentally closes. Timeout can be
 given in Robot Framework `time format`_ like `60s` or `2 minutes 10 seconds`.
 The default timeout is typically several minutes, but it depends on the
 operating system and its configuration. Notice that setting a timeout that
-is shorter than keyword execution time will interrupt the keyword. Setting
-a custom timeout does not work with IronPython.
+is shorter than keyword execution time will interrupt the keyword.
 
 .. note:: Port `8270` is the default port that remote servers are expected
           to use and it has been `registered by IANA`__ for this purpose.

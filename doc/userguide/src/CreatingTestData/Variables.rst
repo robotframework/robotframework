@@ -122,17 +122,17 @@ a string and then concatenated with the other data.
 The example below demonstrates the difference between having a
 variable in alone or with other content. First, let us assume
 that we have a variable `${STR}` set to a string `Hello,
-world!` and `${OBJ}` set to an instance of the following Java
+world!` and `${OBJ}` set to an instance of the following Python
 object:
 
-.. sourcecode:: java
+.. sourcecode:: python
 
- public class MyObj {
+ class MyObj:
 
-     public String toString() {
-         return "Hi, terra!";
-     }
- }
+     def __str__():
+         return "Hi, terra!"
+
+
 
 With these two variables set, we then have the following test data:
 
@@ -451,21 +451,6 @@ not effective after the test execution.
 
 .. note:: Support for specifying the default value is new in Robot Framework 3.2.
 
-Java system properties
-~~~~~~~~~~~~~~~~~~~~~~
-
-When running tests with Jython, it is possible to access `Java system properties`__
-using same syntax as `environment variables`_. If an environment variable and a
-system property with same name exist, the environment variable will be used.
-
-.. sourcecode:: robotframework
-
-   *** Test Cases ***
-   System properties
-       Log    %{user.name} running tests on %{os.name}
-       Log    %{custom.property=default value}
-
-__ http://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
 
 Creating variables
 ------------------
@@ -905,7 +890,7 @@ The syntax is case insensitive.
 Boolean and None/null variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Also Boolean values and Python `None` and Java `null` can
+Also Boolean values and Python `None` can
 be created using the variable syntax similarly as numbers.
 
 .. sourcecode:: robotframework
@@ -918,15 +903,9 @@ be created using the variable syntax similarly as numbers.
    None
        Do XYZ    ${None}                   # Do XYZ gets Python None as an argument
 
-   Null
-       ${ret} =    Get Value    arg        # Checking that Get Value returns Java null
-       Should Be Equal    ${ret}    ${null}
 
 These variables are case-insensitive, so for example `${True}` and
-`${true}` are equivalent. Additionally, `${None}` and
-`${null}` are synonyms, because when running tests on the Jython
-interpreter, Jython automatically converts `None` and
-`null` to the correct format when necessary.
+`${true}` are equivalent.
 
 Space and empty variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1304,37 +1283,6 @@ The extended variable syntax is evaluated in the following order:
 
 5. The whole extended variable is replaced with the value returned
    from the evaluation.
-
-If the object that is used is implemented with Java, the extended
-variable syntax allows you to access attributes using so-called bean
-properties. In essence, this means that if you have an object with the
-`getName`  method set into a variable `${OBJ}`, then the
-syntax `${OBJ.name}` is equivalent to but clearer than
-`${OBJ.getName()}`. The Python object used in the previous example
-could thus be replaced with the following Java implementation:
-
-.. sourcecode:: java
-
- public class MyObject:
-
-     private String name;
-
-     public MyObject(String name) {
-         name = name;
-     }
-
-     public String getName() {
-         return name;
-     }
-
-     public String eat(String what) {
-         return name + " eats " + what;
-     }
-
-     public String toString() {
-         return name;
-     }
- }
 
 Many standard Python objects, including strings and numbers, have
 methods that can be used with the extended variable syntax either
