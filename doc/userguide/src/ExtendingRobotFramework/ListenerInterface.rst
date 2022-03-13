@@ -499,7 +499,7 @@ version 2`_.
    def end_test(name, attrs):
        if attrs['status'] == 'FAIL':
            print('Test "%s" failed: %s' % (name, attrs['message']))
-           raw_input('Press enter to continue.')
+           input('Press enter to continue.')
 
 If the above example would be saved to, for example, :file:`PauseExecution.py`
 file, it could be used from the command line like this::
@@ -518,7 +518,7 @@ The same example could also be implemented also using the newer
    def end_test(data, result):
        if not result.passed:
            print('Test "%s" failed: %s' % (result.name, result.message))
-           raw_input('Press enter to continue.')
+           input('Press enter to continue.')
 
 The next example, which still uses Python, is slightly more complicated. It
 writes all the information it gets into a text file in a temporary directory
