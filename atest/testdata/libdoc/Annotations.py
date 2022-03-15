@@ -84,5 +84,5 @@ def K_union_syntax(a: int | str | list | tuple):
 def K_union_syntax_with_default(a: int | str | list | tuple = None):
     pass
 ''')
-except SyntaxError:    # Python < 3.10
+except TypeError:    # Python < 3.10
     pass
