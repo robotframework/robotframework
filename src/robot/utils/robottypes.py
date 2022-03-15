@@ -15,7 +15,6 @@
 
 from collections.abc import Iterable, Mapping
 from collections import UserString
-from inspect import isclass
 from io import IOBase
 from os import PathLike
 from typing import Any, TypeVar

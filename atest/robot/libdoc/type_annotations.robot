@@ -30,3 +30,12 @@ Non-type annotations
 
 Drop `typing.` prefix
     Keyword Arguments Should Be     7    a: Any    b: List    c: Any | List
+
+Union from typing
+    Keyword Arguments Should Be     8    a: int | str | list | tuple
+    Keyword Arguments Should Be     9    a: int | str | list | tuple | None = None
+
+Union syntax
+    [Tags]    require-py3.10
+    Keyword Arguments Should Be     10   a: int | str | list | tuple
+    Keyword Arguments Should Be     11   a: int | str | list | tuple | None = None

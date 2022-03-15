@@ -15,9 +15,8 @@
 
 import sys
 from enum import Enum
-from typing import Union
 
-from robot.utils import safe_str, setter, type_repr
+from robot.utils import is_union, safe_str, setter, type_repr
 
 from .argumentconverter import ArgumentConverter
 from .argumentmapper import ArgumentMapper
@@ -136,7 +135,7 @@ class ArgInfo:
             return tuple()
         if isinstance(typ, tuple):
             return typ
-        if getattr(typ, '__origin__', None) is Union:
+        if is_union(typ):
             return typ.__args__
         return (typ,)
 
