@@ -12,9 +12,7 @@ the project root.
 Examples:
     ./rundevel.py --name Example tests.robot          # Run with default Python
     ./rundevel.py run --name Example tests.robot      # Same as the above
-    jython rundevel.py --name Example tests.robot     # Run with Jython
-    ./rundevel.py rebot --name Example out.robot      # Rebot with Jython
-    ipy rundevel.py rebot --name Example out.robot    # Rebot with IronPython
+    ./rundevel.py rebot --name Example out.robot      # Rebot
 """
 
 from os.path import abspath, dirname, exists, join
