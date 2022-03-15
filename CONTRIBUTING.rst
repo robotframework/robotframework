@@ -47,7 +47,7 @@ and preferably also reproduce it. Key things to have in good bug report:
 1. Version information
 
    - Robot Framework version
-   - Python interpreter type (Python, Jython, IronPython, PyPy) and version
+   - Python interpreter version
    - Operating system and its version
 
 2. Steps to reproduce the problem. With more complex problems it is often
@@ -261,8 +261,8 @@ or both.
 
 Make sure to run all of the tests before submitting a pull request to be sure
 that your changes do not break anything. If you can, test in multiple
-environments and interpreters (Windows, Linux, OS X, Python, Jython,
-IronPython, Python 3, etc). Pull requests are also automatically tested on
+environments and interpreters (Windows, Linux, OS X, different Python
+versions etc). Pull requests are also automatically tested on
 continuous integration.
 
 Executing changed code

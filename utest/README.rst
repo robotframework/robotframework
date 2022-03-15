@@ -20,9 +20,7 @@ Running unit tests
 ------------------
 
 All unit tests can be run with script ``run.py``. To get more
-information run ``python run.py --help``. It can be executed with
-Python, Jython and IronPython to verify interoperability with all supported
-interpreters.
+information run ``python run.py --help``.
 
 Unit test files should always start with prefix ``test_``. This is the
 mechanism the unit tests are found by the ``run.py`` script.
@@ -62,4 +60,3 @@ All content in the ``utest`` directory is under the following copyright::
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-
