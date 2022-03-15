@@ -2,14 +2,6 @@
 Library         OperatingSystem
 Library         Collections
 
-*** Variables ***
-${TEMPDIR}      Cannot be overridden
-${TRUE}         Cannot be overridden
-${SPACE}        Cannot be overridden
-${TEST_NAME}    Cannot be overridden
-${1234}         Can be overridden
-${-4.1}         Can be overridden
-
 *** Test Cases ***
 Integer Variables
     [Documentation]    FAIL    Variable '${FF}' not found.
@@ -124,7 +116,7 @@ $CURDIR
     Directory Should Exist    ${CURDIR}
     Should Not End With    ${CURDIR}    /
     Should Not End With    ${CURDIR}    \\
-    Comment    $\{CURDIR} is resolved differently than other variables and cannot be escaped with a backslash before it
+    # ${CURDIR} is resolved differently than other variables and cannot be escaped with a backslash before it
     Should Start With    $\{CURDIR}    $
 
 \${LOG LEVEL}
@@ -134,35 +126,3 @@ $CURDIR
     Set Log Level    NONE
     Should Be Equal    ${LOG_LEVEL}    NONE
     [Teardown]    Set Log Level    INFO
-
-Built-In Variables Cannot Be Overridden In Variable Table Or From CLI
-    [Documentation]    Except for number variabels
-    Should Not Be Equal    ${TEMPDIR}    Cannot be overridden
-    Should Not Be Equal    ${TRUE}    Cannot be overridden
-    Should Not Be Equal    ${SPACE}    Cannot be overridden
-    Should Not Be Equal    ${TEST_NAME}    Cannot be overridden
-    Should Not Be Equal    ${FALSE}    CLI
-
-Number Variables Can Be Overridden In Variable Table And From CLI
-    Should Be Equal    ${1234}    Can be overridden
-    Should Be Equal    ${-4.1}    Can be overridden
-    Should Be Equal    ${77}    CLI
-
-Built-In Variables Can Be Overridden In Local Scope 1
-    ${TEMPDIR} =    Set Variable    Local value 1
-    ${TRUE} =    Set Variable    Local value 2
-    ${SPACE} =    Set Variable    Local value 3
-    ${TEST_NAME} =    Set Variable    Local value 4
-    ${1} =    Set Variable    Local value 5
-    Should Be Equal    ${TEMPDIR}    Local value 1
-    Should Be Equal    ${TRUE}    Local value 2
-    Should Be Equal    ${SPACE}    Local value 3
-    Should Be Equal    ${TEST_NAME}    Local value 4
-    Should Be Equal    ${1}    Local value 5
-
-Built-In Variables Can Be Overridden In Local Scope 2
-    Should Not Be Equal    ${TEMPDIR}    Local value 1
-    Should Not Be Equal    ${TRUE}    Local value 2
-    Should Not Be Equal    ${SPACE}    Local value 3
-    Should Not Be Equal    ${TEST_NAME}    Local value 4
-    Should Not Be Equal    ${1}    Local value 5

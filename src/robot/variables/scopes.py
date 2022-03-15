@@ -18,9 +18,10 @@ import tempfile
 
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.utils import abspath, find_file, get_error_details, NormalizedDict
+from robot.utils import abspath, find_file, get_error_details, DotDict, NormalizedDict
 from robot.model import Tags
 
+from .resolvable import GlobalVariableValue
 from .variables import Variables
 
 
@@ -164,9 +165,9 @@ class GlobalVariables(Variables):
     _import_by_path_ends = ('.py', '/', os.sep, '.yaml', '.yml')
 
     def __init__(self, settings):
-        Variables.__init__(self)
-        self._set_cli_variables(settings)
+        super().__init__()
         self._set_built_in_variables(settings)
+        self._set_cli_variables(settings)
 
     def _set_cli_variables(self, settings):
         for name, args in settings.variable_files:
@@ -188,12 +189,12 @@ class GlobalVariables(Variables):
     def _set_built_in_variables(self, settings):
         for name, value in [('${TEMPDIR}', abspath(tempfile.gettempdir())),
                             ('${EXECDIR}', abspath('.')),
-                            ('&{OPTIONS}', {
+                            ('${OPTIONS}', DotDict({
                                 'include': Tags(settings.include),
                                 'exclude': Tags(settings.exclude),
                                 'skip': Tags(settings.skip),
                                 'skip_on_failure': Tags(settings.skip_on_failure)
-                            }),
+                            })),
                             ('${/}', os.sep),
                             ('${:}', os.pathsep),
                             ('${\\n}', os.linesep),
@@ -211,7 +212,7 @@ class GlobalVariables(Variables):
                             ('${PREV_TEST_NAME}', ''),
                             ('${PREV_TEST_STATUS}', ''),
                             ('${PREV_TEST_MESSAGE}', '')]:
-            self[name] = value
+            self[name] = GlobalVariableValue(value)
 
 
 class SetVariables:

@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests    --variable FALSE:CLI --variable 77:CLI    variables/builtin_variables.robot
+Suite Setup     Run Tests    ${EMPTY}    variables/builtin_variables.robot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -53,15 +53,3 @@ $CURDIR
 
 \${LOG LEVEL}
     Check Test Case    ${TESTNAME}
-
-Built-In Variables Cannot Be Overridden In Variable Table Or From CLI
-    [Documentation]    Except for number variabels
-    Check Test Case    ${TESTNAME}
-
-Number Variables Can Be Overridden In Variable Table And From CLI
-    Check Test Case    ${TESTNAME}
-
-Built-In Variables Can Be Overridden In Local Scope
-    [Documentation]    Actually $CURDIR cannot be ever overridden
-    Check Test Case    ${TESTNAME} 1
-    Check Test Case    ${TESTNAME} 2
