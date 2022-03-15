@@ -634,7 +634,7 @@ the failed keywords.
 Programmatic modification of results
 ------------------------------------
 
-If the provided built-in features to modify results are are not enough,
+If the provided built-in features to modify results are not enough,
 Robot Framework makes it possible to do custom modifications
 programmatically. This is accomplished by creating a model modifier and
 activating it using the :option:`--prerebotmodifier` option.
