@@ -5,7 +5,7 @@ from os.path import abspath, dirname, join, normpath
 
 BASE = dirname(abspath(__file__))
 SRC = normpath(join(BASE, '..', '..', '..', '..', 'src'))
-INPUT = join(BASE, 'libdoc.txt')
+INPUT = join(BASE, 'libdoc_data.py')
 OUTPUT = join(BASE, 'libdoc.js')
 
 sys.path.insert(0, SRC)
