@@ -701,6 +701,9 @@ span.or {
     z-index: 1;
 }
 .modal {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
     width: 720px;
     max-width: calc(100vw - 2rem);
     margin: 3rem auto;
@@ -710,6 +713,19 @@ span.or {
     border: 1px solid var(--border-color);
     z-index: 2;
     transition-delay: 0.1s;
+}
+.modal > .modal-content > .data-type-container {
+    border-top: none;
+}
+.modal-close-button-wrapper {
+    display: flex;
+    justify-content: flex-end;
+}
+.modal-close-button {
+    margin: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
 }
 .modal-background.visible, .modal.visible {
     opacity: 1;
