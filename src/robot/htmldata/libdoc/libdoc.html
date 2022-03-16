@@ -291,7 +291,6 @@
         modal.appendChild(modalContent);
 
         modalBackground.appendChild(modal);
-        console.log(modal)
         document.body.appendChild(modalBackground);
         document.addEventListener('keydown', ({ key }) => {
             if (key === 'Escape') hideModal()
@@ -300,7 +299,6 @@
     function showModal(content) {
         const modalBackground = document.getElementById('modal-background');
         const modal = document.getElementById('modal');
-        console.log(modal)
         const modalContent = document.getElementById('modal-content');
         modalBackground.classList.add('visible');
         modal.classList.add('visible');
@@ -551,7 +549,7 @@ ${name}
   <span class="arg-type">
     {{each types}}
       {{if $value in $data.typedocs}}
-          &lt;<a class="type" href="#${$data.typedocs[$value]}" title="Click to show type information">${$value}</a><button class="modal-icon" onclick="showModal(${$value})">&nbsp;</button>&gt;
+          &lt;<a class="type" href="#${$data.typedocs[$value]}" onclick="showModal(${$value})" title="Click to show type information">${$value}</a>>&gt;
       {{else}}
           &lt;<span class="type">${$value}</span>&gt;
       {{/if}}
