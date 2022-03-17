@@ -77,6 +77,7 @@
           }
       }, 0);
         workaroundFirefoxWidthBug();
+        createModal();
     });
 
     function parseTemplates() {
@@ -549,7 +550,7 @@ ${name}
   <span class="arg-type">
     {{each types}}
       {{if $value in $data.typedocs}}
-          &lt;<a class="type" href="#${$data.typedocs[$value]}" onclick="showModal(${$value})" title="Click to show type information">${$value}</a>>&gt;
+          &lt;<a style="cursor: pointer;" class="type" title="Click to show type information" onclick="showModal(${$data.typedocs[$value]})">${$value}</a>&gt;
       {{else}}
           &lt;<span class="type">${$value}</span>&gt;
       {{/if}}

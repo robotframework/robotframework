@@ -714,6 +714,9 @@ span.or {
     z-index: 2;
     transition-delay: 0.1s;
 }
+.modal-content {
+    margin-bottom: 3rem;
+}
 .modal > .modal-content > .data-type-container {
     border-top: none;
 }
