@@ -37,7 +37,7 @@ to install exactly this version. Alternatively you can download the source
 distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
-Robot Framework 5.0 release candidate 2 was released on Thursday March 17, 2022.
+Robot Framework 5.0 release candidate 2 was released on Friday March 18, 2022.
 The final release is targeted for Wednesday March 23, 2022. Please test the
 release candidate in your environment and provide feedback about possible
 problems, so that we can address them before the final release.
