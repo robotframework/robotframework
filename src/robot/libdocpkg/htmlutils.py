@@ -40,7 +40,6 @@ class DocFormatter:
             'importing': 'Importing',
             'library importing': 'Importing',
             'keywords': 'Keywords',
-            'data types': 'Data types'
         }
         for kw in keywords:
             targets[kw.name] = kw.name

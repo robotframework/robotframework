@@ -59,8 +59,6 @@ class LibraryDoc:
             entries.append('Importing')
         if self.keywords:
             entries.append('Keywords')
-        if self.type_docs:
-            entries.append('Data types')
         return '\n'.join('- `%s`' % entry for entry in entries)
 
     @setter
