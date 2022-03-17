@@ -38,6 +38,15 @@
     window.addEventListener("hashchange", function() {
       document.getElementsByClassName("hamburger-menu")[0].checked = false;
     }, false);
+    window.addEventListener("hashchange", function() {
+      if (window.location.hash) {
+            var hash = window.location.hash;
+            const typeDoc = document.querySelector(".data-types").querySelector(decodeURI(hash));
+            if (typeDoc) {
+              showModal(typeDoc);
+            }
+        }
+    }, false);
 </script>
 
 <script type="text/javascript">
@@ -267,6 +276,23 @@
             if (target.id === 'modal-background') hideModal()
         })
 
+        const modalCloseButton = document.createElement('button');
+        modalCloseButton.innerHTML = `<svg xmlns="
+      http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="2rem" height="2rem" className="block" data-v-2754030d="" data-v-512b0344="">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"
+                    data-v-2754030d="" fill="var(--text-color)"></path></svg>`;
+        modalCloseButton.classList.add('modal-close-button');
+        const modalCloseButtonContainer = document.createElement('div');
+        modalCloseButtonContainer.classList.add('modal-close-button-container');
+        modalCloseButtonContainer.appendChild(modalCloseButton);
+        modalCloseButton.addEventListener('click', () => {
+            hideModal()
+        })
+        modalBackground.appendChild(modalCloseButtonContainer);
+        modalCloseButtonContainer.addEventListener('click', () => {
+            hideModal()
+        })
+
         const modal = document.createElement('div');
         modal.id = 'modal';
         modal.classList.add('modal');
@@ -274,16 +300,6 @@
             if (target.tagName.toUpperCase() === 'A') hideModal()
         })
 
-        const modalCloseButtonWrapper = document.createElement('div');
-        modalCloseButtonWrapper.classList.add('modal-close-button-wrapper');
-        const modalCloseButton = document.createElement('button');
-        modalCloseButton.innerHTML = 'X';
-        modalCloseButton.classList.add('modal-close-button');
-        modalCloseButtonWrapper.appendChild(modalCloseButton)
-        modalCloseButton.addEventListener('click', () => {
-            hideModal()
-        })
-        modal.appendChild(modalCloseButtonWrapper);
 
         const modalContent = document.createElement('div');
         modalContent.id = 'modal-content';
@@ -314,6 +330,9 @@
         modalBackground.classList.remove('visible');
         modal.classList.remove('visible');
         document.body.style.overflow = 'auto';
+        if (document.querySelector(".data-types").querySelector(decodeURI(window.location.hash))) {
+          window.location.hash = window.location.hash + "_";
+        }
         // modal is hidden with a fading transition, timeout prevents premature emptying of modal
         setTimeout(() => {
             modalContent.innerHTML = '';

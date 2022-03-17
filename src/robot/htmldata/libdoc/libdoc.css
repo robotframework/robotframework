@@ -21,6 +21,7 @@
         --highlighted-background-color: yellow;
         --less-important-text-color: #5b6a6f;
         --link-color: #52adff;
+        color-scheme: dark;
     }
 }
 
@@ -706,11 +707,12 @@ span.or {
     flex-direction: column;
     width: 720px;
     max-width: calc(100vw - 2rem);
-    margin: 3rem auto;
+    margin: 0 auto;
     height: calc(100vh - 6rem);
     overflow: auto;
     background-color: var(--background-color);
     border: 1px solid var(--border-color);
+    border-radius: 3px;
     z-index: 2;
     transition-delay: 0.1s;
 }
@@ -724,12 +726,22 @@ span.or {
     display: flex;
     justify-content: flex-end;
 }
+
+.modal-close-button-container {
+    width: 720px;
+    max-width: calc(100vw - 2rem);
+    margin: 0 auto;
+    overflow: auto;
+}
+
 .modal-close-button {
-    margin: 0.5rem;
+    margin: 0.5rem 0;
     padding: 0.25rem 0.5rem;
+    border-radius:3px;
     border: 1px solid var(--border-color);
     cursor: pointer;
 }
+
 .modal-background.visible, .modal.visible {
     opacity: 1;
     pointer-events: all;
