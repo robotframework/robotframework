@@ -21,6 +21,144 @@ See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
 customize this style sheet.
 */
 
+:root {
+    --background-color: white;
+    --text-color: black;
+    --border-color: #e0e0e2;
+    --light-background-color: #f3f3f3;
+    --robot-highlight: #00c0b5;
+    --highlighted-color: var(--text-color);
+    --highlighted-background-color: yellow;
+    --less-important-text-color: gray;
+    --link-color: #0000ee;
+    --code-bg: #f8f8f8;
+    --code-bg-hll: #ffffcc;
+}
+
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+        --background-color: #1c2227;
+        --text-color: #e2e1d7;
+        --border-color: #4e4e4e;
+        --light-background-color: #002b36;
+        --robot-highlight: yellow;
+        --highlighted-color: var(--background-color);
+        --highlighted-background-color: yellow;
+        --less-important-text-color: #5b6a6f;
+        --link-color: #52adff;
+        --code-bg: #002b36;
+        --code-bg-hll: #073642;
+    }
+}
+
+body {
+    background: var(--background-color);
+    color: var(--text-color);
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+@media (max-width: 999px) {
+    #table-of-contents ul ul ul {
+        visibility: hidden;
+        height: 0px;
+    }
+
+    body > * {
+        overflow: hidden
+    }
+
+}
+
+@media (min-width: 1000px) {
+    body > * {
+        padding-left: calc(min(28%, 440px));
+        overflow: hidden;
+        max-width: 1000px;
+    }
+
+    #table-of-contents > .topic-title{
+        white-space: nowrap;
+        font-size: 1.6em;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+
+    #table-of-contents{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 25%;
+        height: 100vh;
+        margin-top: 1em;
+        max-width: 400px;
+    }
+
+    #table-of-contents > ul{
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        border: 1px solid var(--border-color);
+        border-radius: 3px;
+        padding: 0.5em;
+        max-height: calc(100vh - 6em);
+        overflow: auto;
+    }
+    #table-of-contents a{
+        display: block;
+        text-decoration: none;
+        white-space: nowrap;
+        color: var(--text-color);
+        padding: 0.2rem;
+    }
+
+    #table-of-contents > ul > li > a {
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+
+
+}
+
+@media (min-width: 1400px) {
+    body > * {
+        padding-left: calc(min(600px, 100vw - 1000px));
+    }
+
+    #table-of-contents{
+        width: max(25%, 100vw - 1020px);
+        max-width: 580px;
+    }
+}
+
+a {
+    color: var(--link-color);
+}
+
+:target,
+.section > h2 ~ .section {
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    padding: 0.5rem 1.0rem 0.5rem 1.0rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    scroll-margin-top: 60px;
+}
+
+:target {
+    box-shadow: 0 0 4px var(--robot-highlight);
+    margin: 0.2em;
+}
+
+.section {
+    padding-left: 1%;
+}
+
 /* used to remove borders from tables and images */
 .borderless, table.borderless td, table.borderless th {
   border: 0 }
@@ -42,7 +180,7 @@ table.borderless td, table.borderless th {
 
 a.toc-backref {
   text-decoration: none ;
-  color: black }
+  color: var(--text-color) }
 
 blockquote.epigraph {
   margin: 2em 5em ; }
@@ -71,15 +209,13 @@ div.hint, div.important, div.note, div.tip, div.warning {
 div.admonition p.admonition-title, div.hint p.admonition-title,
 div.important p.admonition-title, div.note p.admonition-title,
 div.tip p.admonition-title {
-  font-weight: bold ;
-  font-family: sans-serif }
+  font-weight: bold  }
 
 div.attention p.admonition-title, div.caution p.admonition-title,
 div.danger p.admonition-title, div.error p.admonition-title,
 div.warning p.admonition-title {
   color: red ;
-  font-weight: bold ;
-  font-family: sans-serif }
+  font-weight: bold }
 
 /* Uncomment (and remove this text!) to get reduced vertical space in
    compound paragraphs.
@@ -121,13 +257,12 @@ div.sidebar {
   margin: 0 0 0.5em 1em ;
   border: medium outset ;
   padding: 1em ;
-  background-color: #ffffee ;
+  background-color: var(--code-bg-hll) ;
   width: 40% ;
   float: right ;
   clear: right }
 
 div.sidebar p.rubric {
-  font-family: sans-serif ;
   font-size: medium }
 
 div.system-messages {
@@ -205,18 +340,21 @@ p.rubric {
   text-align: center }
 
 p.sidebar-title {
-  font-family: sans-serif ;
   font-weight: bold ;
   font-size: larger }
 
 p.sidebar-subtitle {
-  font-family: sans-serif ;
   font-weight: bold }
 
 p.topic-title {
   font-weight: bold }
 
+pre {
+    overflow: auto
+}
+
 pre.address {
+  background-color: var(--code-bg);
   margin-bottom: 0 ;
   margin-top: 0 ;
   font-family: serif ;
@@ -227,15 +365,12 @@ pre.literal-block, pre.doctest-block {
   margin-right: 2em }
 
 span.classifier {
-  font-family: sans-serif ;
   font-style: oblique }
 
 span.classifier-delimiter {
-  font-family: sans-serif ;
-  font-weight: bold }
+   font-weight: bold }
 
-span.interpreted {
-  font-family: sans-serif }
+
 
 span.option {
   white-space: nowrap }
@@ -251,7 +386,7 @@ span.section-subtitle {
   font-size: 80% }
 
 table.citation {
-  border-left: solid 1px gray;
+  border-left: solid 1px var(--border-color);
   margin-left: 1px }
 
 table.docinfo {
@@ -262,7 +397,7 @@ table.docutils {
   margin-bottom: 0.5em }
 
 table.footnote {
-  border-left: solid 1px black;
+  border-left: solid 1px var(--text-color);
   margin-left: 1px }
 
 table.docutils td, table.docutils th,
@@ -282,7 +417,22 @@ h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
   font-size: 100% }
 
 ul.auto-toc {
-  list-style-type: none }
+  list-style-type: none ;
+}
+
+ul.auto-toc ul:not(.auto-toc) {
+    padding-inline-start: 1em;
+    list-style-type: none
+}
+
+ul.auto-toc ul:not(.auto-toc) li::before {
+    content: "\2022";  /* Add content: \2022 is the CSS Code/unicode for a bullet */
+    color: var(--link-color); /* Change the color */
+    font-weight: bold; /* If you want it to be bold */
+    display: inline-block; /* Needed to add space between the bullet and the text */
+    width: 1em; /* Also needed for space (tweak if needed) */
+    margin-left: -1em; /* Also needed for space (tweak if needed) */
+  }
 
 
 /* **************************************** *
@@ -295,7 +445,7 @@ ul.auto-toc {
    - tabular: normal tabular information
 */
 table.example, table.tsv-example, table.messages, table.tabular {
-    border: 1px solid #808080;
+    border: 1px solid var(--border-color);
     border-collapse: collapse;
     margin: 5px 20px;
 }
@@ -307,7 +457,7 @@ table.example caption, table.tsv-example caption, table.tabular caption {
     width: 100%;
 }
 table.example th, table.example td, table.tsv-example td {
-    border: 1px solid #808080;
+    border: 1px solid var(--border-color);
     font-family: arial,helvetica,sans-serif;
     height: 1.2em;
     font-size: 0.8em;
@@ -320,13 +470,13 @@ table.example td, table.tsv-example td {
     padding: 0.1em 1em 0.1em 0.3em;
 }
 table.tabular th, table.tabular td {
-    border: 1px solid black;
+    border: 1px solid var(--border-color);
     padding: 0.1em 0.3em;
     height: 1.2em;
     font-size: 0.9em;
 }
 table.messages {
-    border: 1px solid gray;
+    border: 1px solid var(--border-color);
     font-family: monospace;
     margin: 10px 20px;
     width: 60%;
@@ -358,7 +508,7 @@ table.messages td.warn {
 .doc {
     margin-left: 20px;
     margin-right: 20px;
-    background: #f4f4f4;
+    background: var(--code-bg);
     font-size: 0.9em;
 }
 .doc > * {
@@ -372,14 +522,14 @@ table.messages td.warn {
     margin-top: 0.1em;
 }
 .doc table {
-    border: 1px solid gray;
+    border: 1px solid var(--border-color);
     background: transparent;
     border-collapse: collapse;
     empty-cells: show;
     font-size: 0.9em;
 }
 .doc table th, .doc table td {
-    border: 1px solid gray;
+    border: 1px solid var(--border-color);
     padding: 0.1em 0.3em;
     height: 1.2em;
 }
@@ -389,14 +539,14 @@ table.messages td.warn {
 }
 .doc pre {
     font-size: 1.1em;
-    background: #F4F4FF;
+    background: var(--code-bg);
 }
 .doc li {
     list-style-position: inside;
     list-style-type: square;
 }
 .doc img {
-    border: 1px solid gray;
+    border: 1px solid var(--border-color);
 }
 .doc hr {
     background: gray;
@@ -407,7 +557,7 @@ table.messages td.warn {
 /* Roles -- explained in roles.rst file */
 
 code, .codesc, .option {
-    background: #f4f4f4;
+    background: var(--code-bg);
     font-family: monospace;
 }
 .file {
@@ -427,21 +577,18 @@ col.option, kbd .option {
     background: inherit;
 }
 h1 {
-    font-size: 2.5em;
-}
-h2 {
     font-size: 2em;
 }
-h3 {
+h2 {
     font-size: 1.6em;
 }
-h4 {
+h3 {
     font-size: 1.4em;
 }
-h5 {
+h4 {
     font-size: 1.2em;
 }
-h6 {
+h5 {
     font-size: 1em;
 }
 cite {
@@ -449,15 +596,15 @@ cite {
 }
 div.admonition, div.attention, div.caution, div.danger, div.error,
 div.hint, div.important, div.note, div.tip, div.warning {
-    border: 1px solid gray;
+    border: 1px solid var(--border-color);
     margin: 10px 20px;
     padding: 0.7em 1em;
     font-size: 0.9em;
 }
 pre.literal-block, pre.doctest-block {
+    background-color: var(--code-bg);
     margin-left: 20px;
     margin-right: 20px;
-    background: #f4f4f4;
 }
 li, li p.first {
     margin-top: 0.3em;
@@ -468,7 +615,7 @@ div.contents li {
     margin-bottom: 0;
 }
 a img {
-    border: 1px solid blue;
+    border: 1px solid var(--border-color);
 }
 div.figure, div.topic {
     margin-left: 20px;
@@ -483,12 +630,17 @@ div.figure, div.topic {
 */
 
 .highlight  { background: #f4f4f4; margin: 10px 20px; }
+
+.highlight .hll { background-color: var(--code-bg-hll) }
+.highlight  { background: var(--code-bg) }
 .highlight .c { color: #408080; font-style: italic } /* Comment */
 .highlight .err { border: 1px solid #FF0000 } /* Error */
 .highlight .k { color: #008000; font-weight: bold } /* Keyword */
 .highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .highlight .cp { color: #BC7A00 } /* Comment.Preproc */
+.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
 .highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
 .highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
 .highlight .gd { color: #A00000 } /* Generic.Deleted */
@@ -496,13 +648,14 @@ div.figure, div.topic {
 .highlight .gr { color: #FF0000 } /* Generic.Error */
 .highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
 .highlight .gi { color: #00A000 } /* Generic.Inserted */
-.highlight .go { color: #808080 } /* Generic.Output */
+.highlight .go { color: #888888 } /* Generic.Output */
 .highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
 .highlight .gs { font-weight: bold } /* Generic.Strong */
 .highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.highlight .gt { color: #0040D0 } /* Generic.Traceback */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
 .highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
 .highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
 .highlight .kp { color: #008000 } /* Keyword.Pseudo */
 .highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
 .highlight .kt { color: #B00040 } /* Keyword.Type */
@@ -522,12 +675,15 @@ div.figure, div.topic {
 .highlight .nv { color: #19177C } /* Name.Variable */
 .highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
 .highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
 .highlight .mf { color: #666666 } /* Literal.Number.Float */
 .highlight .mh { color: #666666 } /* Literal.Number.Hex */
 .highlight .mi { color: #666666 } /* Literal.Number.Integer */
 .highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
 .highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
 .highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
 .highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
 .highlight .s2 { color: #BA2121 } /* Literal.String.Double */
 .highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
@@ -538,7 +694,89 @@ div.figure, div.topic {
 .highlight .s1 { color: #BA2121 } /* Literal.String.Single */
 .highlight .ss { color: #19177C } /* Literal.String.Symbol */
 .highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #0000FF } /* Name.Function.Magic */
 .highlight .vc { color: #19177C } /* Name.Variable.Class */
 .highlight .vg { color: #19177C } /* Name.Variable.Global */
 .highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
 .highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+
+@media (prefers-color-scheme: dark) {
+    .highlight .hll { background-color: #073642 }
+    .highlight  { background: #002b36; color: #839496 }
+    .highlight .c { color: #546E7A; font-style: italic } /* Comment */
+    .highlight .err { color: #FF5370 } /* Error */
+    .highlight .esc { color: #89DDFF } /* Escape */
+    .highlight .g { color: #EEFFFF } /* Generic */
+    .highlight .k { color: #BB80B3 } /* Keyword */
+    .highlight .l { color: #C3E88D } /* Literal */
+    .highlight .n { color: #EEFFFF } /* Name */
+    .highlight .o { color: #89DDFF } /* Operator */
+    .highlight .p { color: #89DDFF } /* Punctuation */
+    .highlight .ch { color: #546E7A; font-style: italic } /* Comment.Hashbang */
+    .highlight .cm { color: #546E7A; font-style: italic } /* Comment.Multiline */
+    .highlight .cp { color: #546E7A; font-style: italic } /* Comment.Preproc */
+    .highlight .cpf { color: #546E7A; font-style: italic } /* Comment.PreprocFile */
+    .highlight .c1 { color: #546E7A; font-style: italic } /* Comment.Single */
+    .highlight .cs { color: #546E7A; font-style: italic } /* Comment.Special */
+    .highlight .gd { color: #FF5370 } /* Generic.Deleted */
+    .highlight .ge { color: #89DDFF } /* Generic.Emph */
+    .highlight .gr { color: #FF5370 } /* Generic.Error */
+    .highlight .gh { color: #C3E88D } /* Generic.Heading */
+    .highlight .gi { color: #C3E88D } /* Generic.Inserted */
+    .highlight .go { color: #546E7A } /* Generic.Output */
+    .highlight .gp { color: #FFCB6B } /* Generic.Prompt */
+    .highlight .gs { color: #FF5370 } /* Generic.Strong */
+    .highlight .gu { color: #89DDFF } /* Generic.Subheading */
+    .highlight .gt { color: #FF5370 } /* Generic.Traceback */
+    .highlight .kc { color: #89DDFF } /* Keyword.Constant */
+    .highlight .kd { color: #BB80B3 } /* Keyword.Declaration */
+    .highlight .kn { color: #89DDFF; font-style: italic } /* Keyword.Namespace */
+    .highlight .kp { color: #89DDFF } /* Keyword.Pseudo */
+    .highlight .kr { color: #BB80B3 } /* Keyword.Reserved */
+    .highlight .kt { color: #BB80B3 } /* Keyword.Type */
+    .highlight .ld { color: #C3E88D } /* Literal.Date */
+    .highlight .m { color: #F78C6C } /* Literal.Number */
+    .highlight .s { color: #C3E88D } /* Literal.String */
+    .highlight .na { color: #BB80B3 } /* Name.Attribute */
+    .highlight .nb { color: #82AAFF } /* Name.Builtin */
+    .highlight .nc { color: #FFCB6B } /* Name.Class */
+    .highlight .no { color: #EEFFFF } /* Name.Constant */
+    .highlight .nd { color: #82AAFF } /* Name.Decorator */
+    .highlight .ni { color: #89DDFF } /* Name.Entity */
+    .highlight .ne { color: #FFCB6B } /* Name.Exception */
+    .highlight .nf { color: #82AAFF } /* Name.Function */
+    .highlight .nl { color: #82AAFF } /* Name.Label */
+    .highlight .nn { color: #FFCB6B } /* Name.Namespace */
+    .highlight .nx { color: #EEFFFF } /* Name.Other */
+    .highlight .py { color: #FFCB6B } /* Name.Property */
+    .highlight .nt { color: #FF5370 } /* Name.Tag */
+    .highlight .nv { color: #89DDFF } /* Name.Variable */
+    .highlight .ow { color: #89DDFF; font-style: italic } /* Operator.Word */
+    .highlight .w { color: #EEFFFF } /* Text.Whitespace */
+    .highlight .mb { color: #F78C6C } /* Literal.Number.Bin */
+    .highlight .mf { color: #F78C6C } /* Literal.Number.Float */
+    .highlight .mh { color: #F78C6C } /* Literal.Number.Hex */
+    .highlight .mi { color: #F78C6C } /* Literal.Number.Integer */
+    .highlight .mo { color: #F78C6C } /* Literal.Number.Oct */
+    .highlight .sa { color: #BB80B3 } /* Literal.String.Affix */
+    .highlight .sb { color: #C3E88D } /* Literal.String.Backtick */
+    .highlight .sc { color: #C3E88D } /* Literal.String.Char */
+    .highlight .dl { color: #EEFFFF } /* Literal.String.Delimiter */
+    .highlight .sd { color: #546E7A; font-style: italic } /* Literal.String.Doc */
+    .highlight .s2 { color: #C3E88D } /* Literal.String.Double */
+    .highlight .se { color: #EEFFFF } /* Literal.String.Escape */
+    .highlight .sh { color: #C3E88D } /* Literal.String.Heredoc */
+    .highlight .si { color: #89DDFF } /* Literal.String.Interpol */
+    .highlight .sx { color: #C3E88D } /* Literal.String.Other */
+    .highlight .sr { color: #89DDFF } /* Literal.String.Regex */
+    .highlight .s1 { color: #C3E88D } /* Literal.String.Single */
+    .highlight .ss { color: #89DDFF } /* Literal.String.Symbol */
+    .highlight .bp { color: #89DDFF } /* Name.Builtin.Pseudo */
+    .highlight .fm { color: #82AAFF } /* Name.Function.Magic */
+    .highlight .vc { color: #89DDFF } /* Name.Variable.Class */
+    .highlight .vg { color: #89DDFF } /* Name.Variable.Global */
+    .highlight .vi { color: #89DDFF } /* Name.Variable.Instance */
+    .highlight .vm { color: #82AAFF } /* Name.Variable.Magic */
+    .highlight .il { color: #F78C6C } /* Literal.Number.Integer.Long */
+}

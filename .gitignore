@@ -19,6 +19,7 @@ ext-lib
 .DS_Store
 doc/api/_build
 doc/libraries/*.html
+doc/libraries/*.json
 doc/userguide/RobotFrameworkUserGuide.html
 src/robotframework.egg-info
 log.html
