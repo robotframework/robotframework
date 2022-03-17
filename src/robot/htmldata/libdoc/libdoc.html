@@ -77,6 +77,7 @@
           }
       }, 0);
         workaroundFirefoxWidthBug();
+        createModal();
     });
 
     function parseTemplates() {
@@ -257,6 +258,66 @@
             document.getElementById("type-statistics-header").innerText = '' + libdoc.typedocs.length;
         }
         history.replaceState && history.replaceState(null, '', location.pathname);
+    }
+
+    function createModal() {
+        const modalBackground = document.createElement('div');
+        modalBackground.id = 'modal-background';
+        modalBackground.classList.add('modal-background');
+        modalBackground.addEventListener('click', ({ target }) => {
+            if (target.id === 'modal-background') hideModal()
+        })
+
+        const modal = document.createElement('div');
+        modal.id = 'modal';
+        modal.classList.add('modal');
+        modal.addEventListener('click', ({ target }) => {
+            if (target.tagName.toUpperCase() === 'A') hideModal()
+        })
+
+        const modalCloseButtonWrapper = document.createElement('div');
+        modalCloseButtonWrapper.classList.add('modal-close-button-wrapper');
+        const modalCloseButton = document.createElement('button');
+        modalCloseButton.innerHTML = 'X';
+        modalCloseButton.classList.add('modal-close-button');
+        modalCloseButtonWrapper.appendChild(modalCloseButton)
+        modalCloseButton.addEventListener('click', () => {
+            hideModal()
+        })
+        modal.appendChild(modalCloseButtonWrapper);
+
+        const modalContent = document.createElement('div');
+        modalContent.id = 'modal-content';
+        modalContent.classList.add('modal-content');
+        modal.appendChild(modalContent);
+
+        modalBackground.appendChild(modal);
+        document.body.appendChild(modalBackground);
+        document.addEventListener('keydown', ({ key }) => {
+            if (key === 'Escape') hideModal()
+        })
+    }
+    function showModal(content) {
+        const modalBackground = document.getElementById('modal-background');
+        const modal = document.getElementById('modal');
+        const modalContent = document.getElementById('modal-content');
+        modalBackground.classList.add('visible');
+        modal.classList.add('visible');
+        modalContent.appendChild(content.cloneNode(true));
+        document.body.style.overflow = 'hidden'
+    }
+    function hideModal() {
+        const modalBackground = document.getElementById('modal-background');
+        const modal = document.getElementById('modal');
+        const modalContent = document.getElementById('modal-content');
+
+        modalBackground.classList.remove('visible');
+        modal.classList.remove('visible');
+        document.body.style.overflow = 'auto'
+        // modal is hidden with a fading transition, timeout prevents premature emptying of modal
+        setTimeout(() => {
+            modalContent.innerHTML = ''
+        }, 200)
     }
 
     // http://stackoverflow.com/a/18484799
@@ -489,7 +550,7 @@ ${name}
   <span class="arg-type">
     {{each types}}
       {{if $value in $data.typedocs}}
-          &lt;<a class="type" href="#${$data.typedocs[$value]}" title="Click to show type information">${$value}</a>&gt;
+          &lt;<a style="cursor: pointer;" class="type" title="Click to show type information" onclick="showModal(${$data.typedocs[$value]})">${$value}</a>&gt;
       {{else}}
           &lt;<span class="type">${$value}</span>&gt;
       {{/if}}

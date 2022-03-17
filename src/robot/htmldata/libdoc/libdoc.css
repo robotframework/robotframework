@@ -669,3 +669,71 @@ span.or {
 .no-match .kw-name {
     color: var(--less-important-text-color);
 }
+
+.modal-icon {
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0 0.25rem;
+    width: 1rem;
+    height: 1rem;
+    padding: 0;
+    border: none;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="100%" width="100%"><path stroke="black" fill="none" stroke-width="2px" stroke-linecap="round" d="M1 8 L1 1 L8 1 M16 1 L23 1 L23 8 M23 16 L23 23 L16 23 M8 23 L1 23 L1 16"></path><path fill="black" stroke="none" stroke-width="1px" transform="scale(1.3) translate(-3 -2.5)" d="M19 7.97zm-8 9.2-4-2.3v-4.63l4 2.33v4.6zm1-6.33L8.04 8.53 12 6.25l3.96 2.28L12 10.84zm5 4.03-4 2.3v-4.6l4-2.33v4.63z"></path></svg>');
+}
+@media (prefers-color-scheme: dark) {
+    .modal-icon {
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="100%" width="100%"><path stroke="%23e2e1d7" fill="none" stroke-width="2px" stroke-linecap="round" d="M1 8 L1 1 L8 1 M16 1 L23 1 L23 8 M23 16 L23 23 L16 23 M8 23 L1 23 L1 16"></path><path fill="%23e2e1d7" stroke="none" stroke-width="1px" transform="scale(1.3) translate(-3 -2.5)" d="M19 7.97zm-8 9.2-4-2.3v-4.63l4 2.33v4.6zm1-6.33L8.04 8.53 12 6.25l3.96 2.28L12 10.84zm5 4.03-4 2.3v-4.6l4-2.33v4.63z"></path></svg>');
+    }
+}
+.modal-background, .modal {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+.modal-background {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+}
+.modal {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    width: 720px;
+    max-width: calc(100vw - 2rem);
+    margin: 3rem auto;
+    height: calc(100vh - 6rem);
+    overflow: auto;
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    z-index: 2;
+    transition-delay: 0.1s;
+}
+.modal-content {
+    margin-bottom: 3rem;
+}
+.modal > .modal-content > .data-type-container {
+    border-top: none;
+}
+.modal-close-button-wrapper {
+    display: flex;
+    justify-content: flex-end;
+}
+.modal-close-button {
+    margin: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+}
+.modal-background.visible, .modal.visible {
+    opacity: 1;
+    pointer-events: all;
+}
+#data-types-container {
+    display: none;
+}
