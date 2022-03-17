@@ -59,6 +59,7 @@ ROBOT_LIBRARY_CONVERTERS = {date: parse_date}
 
 
 def type_hints(a: int, b: Direction, c: Point, d: date, e: bool = True, f: Union[int, date] = None):
+    """We use `int`, `Direction`, and many other types."""
     pass
 
 
