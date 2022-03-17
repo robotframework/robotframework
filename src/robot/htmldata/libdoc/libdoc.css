@@ -734,3 +734,6 @@ span.or {
     opacity: 1;
     pointer-events: all;
 }
+#data-types-container {
+    display: none;
+}
