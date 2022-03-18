@@ -268,8 +268,9 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
     padding-left: 0.5rem;
 }
 
-.dt-usages-list {
+.enum-type-members, .dt-usages-list {
     list-style: none;
+    padding-left: 1em;
 }
 
 .dt-usages-list > li {
@@ -552,10 +553,6 @@ h4 {
 .keyword-content {
     display: flex;
     flex-direction: column;
-}
-
-.enum-type-members {
-    list-style: none;
 }
 
 .data-type-container {
