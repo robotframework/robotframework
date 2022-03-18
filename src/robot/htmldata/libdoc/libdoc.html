@@ -320,7 +320,6 @@
         modal.classList.add('visible');
         modalContent.appendChild(content.cloneNode(true));
         document.body.style.overflow = 'hidden';
-        workaroundFirefoxWidthBug();
     }
     function hideModal() {
         const modalBackground = document.getElementById('modal-background');
@@ -346,12 +345,6 @@
             timer = setTimeout(callback, ms);
         };
     })();
-
-    function workaroundFirefoxWidthBug() {
-        // https://github.com/robotframework/robotframework/issues/3456
-        // https://bugzilla.mozilla.org/show_bug.cgi?id=1613163
-        $('.dt-usages a').width('max-content');
-    }
 </script>
 
 <script type="text/x-jquery-tmpl" id="base-template">
@@ -644,11 +637,11 @@ ${name}
           {{if usages.length}}
             <div class="dt-usages">
               <h4>Usages</h4>
-              <div>
+              <ul>
                 {{each usages}}
-                  <a href="#${encodeURIComponent($value)}">${$value}</a>{{if $index < usages.length - 1}}, {{/if}}
+                  <li><a href="#${encodeURIComponent($value)}">${$value}</a></li>
                 {{/each}}
-              </div>
+              </ul>
             </div>
           {{/if}}
        </div>
