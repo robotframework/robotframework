@@ -629,15 +629,17 @@ ${name}
           {{if accepts.length}}
             <div class="dt-docs">
               <h4>Converted Types</h4>
+              <ul class="dt-usages-list">
               {{each accepts}}
-                <span class="enum-member">${$value}</span>{{if $index < accepts.length - 1}}, {{/if}}
+                <li>${$value}</li>
               {{/each}}
+              </ul>
             </div>
           {{/if}}
           {{if usages.length}}
             <div class="dt-usages">
               <h4>Usages</h4>
-              <ul>
+              <ul class="dt-usages-list">
                 {{each usages}}
                   <li><a href="#${encodeURIComponent($value)}">${$value}</a></li>
                 {{/each}}
