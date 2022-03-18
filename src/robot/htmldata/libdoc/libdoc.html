@@ -593,11 +593,7 @@ ${name}
 <script type="text/x-jquery-tmpl" id="data-type-template">
     <div class="data-type-container {{if hidden}}no-{{/if}}match" id="${name}">
        <div class="data-type-name">
-            <h2>
-            <a class="dt-name" href="#${encodeURIComponent(name)}"
-               title="Link to this type">${name}</a>
-            (${type})
-            </h2>
+            <h2>${name} (${type})</h2>
        </div>
        <div class="data-type-content">
           {{if doc}}
