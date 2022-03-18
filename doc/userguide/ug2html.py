@@ -93,34 +93,26 @@ from docutils.parsers.rst import directives
 from pygments import highlight, __version__ as pygments_version
 from pygments.lexers import get_lexer_by_name
 
-# Use latest version, not version bundled with Pygments
-import robotframeworklexer
-
 
 def too_old(version_string, minimum):
     version = tuple(int(v) for v in version_string.split('.')[:2])
     return version < minimum
 
 
-if too_old(getattr(robotframeworklexer, '__version__', '1.0'), (1, 1)):
-    sys.exit('robotframeworklexer >= 1.1 is required.')
-if too_old(pygments_version, (2, 1)):
-    sys.exit('Pygments >= 2.1 is required.')
+if too_old(pygments_version, (2, 8)):
+    sys.exit('Pygments >= 2.8 is required.')
 
 
 def pygments_directive(name, arguments, options, content, lineno,
                        content_offset, block_text, state, state_machine):
     try:
-        if arguments[0] == 'robotframework':
-            lexer = robotframeworklexer.RobotFrameworkLexer()
-        else:
-            lexer = get_lexer_by_name(arguments[0])
+        lexer = get_lexer_by_name(arguments[0])
     except ValueError as err:
         raise ValueError(f'Invalid syntax highlighting language "{arguments[0]}".')
     # take an arbitrary option if more than one is given
     formatter = options and VARIANTS[options.keys()[0]] or DEFAULT
     # possibility to read the content from an external file
-    filtered = [ line for line in content if line.strip() ]
+    filtered = [line for line in content if line.strip()]
     if len(filtered) == 1:
         path = filtered[0].replace('/', os.sep)
         if os.path.isfile(path):
