@@ -10,7 +10,7 @@ Resource          libdoc_resource.robot
 Documentation
     ${MODEL}[doc]    <p>This Library has Data Types.</p>
     ...   <p>It has some in <code>__init__</code> and others in the <a href="#Keywords" class="name">Keywords</a>.</p>
-    ...   <p>The DataTypes are the following that should be linked. <span class="name">HttpCredentials</span> , <a href="#GeoLocation" class="name">GeoLocation</a> , <a href="#Small" class="name">Small</a> and <a href="#AssertionOperator" class="name">AssertionOperator</a>.</p>
+    ...   <p>The DataTypes are the following that should be linked. <span class="name">HttpCredentials</span> , <a href="#type-GeoLocation" class="name">GeoLocation</a> , <a href="#type-Small" class="name">Small</a> and <a href="#type-AssertionOperator" class="name">AssertionOperator</a>.</p>
 
 Init Arguments
     [Template]    Verify Argument Models
@@ -18,7 +18,7 @@ Init Arguments
 
 Init docs
     ${MODEL}[inits][0][doc]     <p>This is the init Docs.</p>
-    ...   <p>It links to <a href="#Set%20Location" class="name">Set Location</a> keyword and to <a href="#GeoLocation" class="name">GeoLocation</a> data type.</p>
+    ...   <p>It links to <a href="#Set%20Location" class="name">Set Location</a> keyword and to <a href="#type-GeoLocation" class="name">GeoLocation</a> data type.</p>
 
 Keyword Arguments
     [Template]    Verify Argument Models
