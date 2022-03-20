@@ -48,9 +48,15 @@ def _build(builder, source):
         # did not exist has been considered to be a library earlier, now we try to
         # parse it as a resource file.
         if (isinstance(builder, LibraryDocBuilder)
+                and '::' not in source
                 and not os.path.exists(source)
                 and _get_extension(source) in RESOURCE_EXTENSIONS):
-            return _build(ResourceDocBuilder(), source)
+            initial_error_message = get_error_message()
+            try:
+                return _build(ResourceDocBuilder(), source)
+            except DataError:
+                raise DataError("Building library '%s' failed. Failures:\n%s\n%s"
+                                % (source, initial_error_message, get_error_message()))
         raise
     except:
         raise DataError("Building library '%s' failed: %s"

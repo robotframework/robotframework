@@ -61,7 +61,7 @@ Resource file in PYTHONPATH
 Non-existing resource
     [Template]    NONE
     ${stdout} =    Run Libdoc    nonexisting.resource whatever.xml
-    Should Be Equal    ${stdout}     Resource file 'nonexisting.resource' does not exist.${USAGE TIP}\n
+    Should contain    ${stdout}     Resource file 'nonexisting.resource' does not exist.${USAGE TIP}\n
 
 *** Keywords ***
 Run Libdoc And Verify Created Output File
