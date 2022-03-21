@@ -14,8 +14,9 @@ text syntax and it can be extended easily with libraries implemented using
 Python or Java.
 
 Robot Framework is operating system and application independent. The core
-framework is implemented using `Python <http://python.org>`_, supports both
-Python 2.7 and Python 3.5+, and runs also on `Jython <http://jython.org>`_ (JVM),
+framework is implemented using `Python <http://python.org>`_, and starting with
+Robot Framework 5.0, only Python 3.6 or above is supported, although Robot Framework `4.1 <https://pypi.org/project/robotframework/4.1.3/>`_
+still supports Python 2.7 and runs also on `Jython <http://jython.org>`_ (JVM),
 `IronPython <http://ironpython.net>`_ (.NET) and `PyPy <http://pypy.org>`_.
 The framework has a rich ecosystem around it consisting of various generic
 libraries and tools that are developed as separate projects. For more
@@ -56,8 +57,8 @@ from GitHub_. After that you can install the framework with::
 
     python setup.py install
 
-For more detailed installation instructions, including installing Python,
-Jython, IronPython and PyPy or installing from git, see `<INSTALL.rst>`__.
+For more detailed installation instructions, including installing Python
+or installing from git, see `<INSTALL.rst>`__.
 
 Example
 -------
@@ -88,8 +89,7 @@ Usage
 -----
 
 Tests (or tasks) are executed from the command line using the ``robot``
-command or by executing the ``robot`` module directly like ``python -m robot``
-or ``jython -m robot``.
+command or by executing the ``robot`` module directly like ``python -m robot`` .
 
 The basic usage is giving a path to a test (or task) file or directory as an
 argument with possible command line options before the path::
