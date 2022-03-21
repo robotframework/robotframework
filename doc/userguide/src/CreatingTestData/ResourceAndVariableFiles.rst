@@ -131,7 +131,7 @@ data. Variables can also be created using `Variable sections`_ or `set from
 the command line`__, but variable files allow creating them dynamically
 and also make it easy to create other variable values than strings.
 
-Variable files are typically implemented as Python modules and there are
+Variable files are typically implemented as modules and there are
 two different approaches for creating variables:
 
 `Getting variables directly from a module`_
@@ -146,13 +146,13 @@ two different approaches for creating variables:
    (or `getVariables`) method that returns variables as a mapping.
    Because the method can take arguments this approach is very flexible.
 
-Alternatively variable files can be implemented as `Python classes`__
+Alternatively variable files can be implemented as `classes`__
 that the framework will instantiate. Also in this case it is possible to create
 variables as attributes or get them dynamically from the `get_variables`
 method. Variable files can also be created as `YAML files`__.
 
 __ `Setting variables in command line`_
-__ `Implementing variable file as a Python class`_
+__ `Implementing variable file as a class`_
 __ `Variable file as YAML`_
 
 Taking variable files into use
@@ -485,10 +485,10 @@ or database where to read variables from.
         else:
             return variables2
 
-Implementing variable file as a Python class
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Implementing variable file as a class
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-It is possible to implement variables files also as a Python class.
+It is possible to implement variables files also as a class.
 
 Implementation
 ''''''''''''''
@@ -515,7 +515,7 @@ attributes and `${ANOTHER VARIABLE}` from an instance attribute.
 
 .. sourcecode:: python
 
-    class StaticPythonExample:
+    class StaticExample:
         variable = 'value'
         LIST__list = [1, 2, 3]
         _not_variable = 'starts with an underscore'
@@ -529,7 +529,7 @@ creates only one variable `${DYNAMIC VARIABLE}`.
 
 .. sourcecode:: python
 
-    class DynamicPythonExample:
+    class DynamicExample:
 
         def get_variables(self, *args):
             return {'dynamic variable': ' '.join(args)}

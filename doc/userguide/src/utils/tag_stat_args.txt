@@ -1,6 +1,6 @@
 --tagstatlink owner-*:mailto:%1@domain.com?subject=Acceptance_Tests:Send_mail 
 --tagstatlink mytag:http://google.com:Google i
---tagstatlink jython-bug-*:http://jython.org/bugs/%1:Jython-bugs
+--tagstatlink example-bug-*:http://example.com
 --tagstatcombine owner-*
 --tagstatcombine smokeANDmytag 
 --tagstatcombine smokeNOTowner-janne* 
