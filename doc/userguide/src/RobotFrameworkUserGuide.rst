@@ -15,7 +15,7 @@
 | Licensed under the `Creative Commons Attribution 3.0 Unported`_ license
 
 .. contents:: Table of Contents
-   :depth: 2
+   :depth: 3
 
 .. sectnum::
    :depth: 3

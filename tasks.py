@@ -118,6 +118,7 @@ def library_docs(ctx, name):
             raise Exit(f"'{name}' is not a unique library prefix.")
     for lib in libraries:
         libdoc(lib, str(Path(f'doc/libraries/{lib}.html')))
+        libdoc(lib, str(Path(f'doc/libraries/{lib}.json')), specdocformat='RAW')
 
 
 @task
