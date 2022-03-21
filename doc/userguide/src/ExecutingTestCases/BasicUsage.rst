@@ -23,8 +23,8 @@ Synopsis
 ::
 
     robot [options] data_sources
-    python|pypy -m robot [options] data_sources
-    python|pypy path/to/robot/ [options] data_sources
+    python -m robot [options] data_sources
+    python path/to/robot/ [options] data_sources
 
 Test execution is normally started using the ``robot`` `runner script`_.
 Alternatively it is possible to execute the installed `robot module`__ or

@@ -23,8 +23,8 @@ Synopsis
 ::
 
     rebot [options] robot_outputs
-    python|pypy -m robot.rebot [options] robot_outputs
-    python|pypy path/to/robot/rebot.py [options] robot_outputs
+    python -m robot.rebot [options] robot_outputs
+    python path/to/robot/rebot.py [options] robot_outputs
 
 The most common way to use Rebot is using the ``rebot`` `runner script`_.
 Alternatively it is possible to execute the installed `robot.rebot module`__
