@@ -101,7 +101,7 @@ reports_ and logs_.
 
 .. figure:: src/GettingStarted/testdata_screenshots.png
 
-   Test case files
+   Test case file
 
 .. figure:: src/GettingStarted/screenshots.png
 
