@@ -7,7 +7,7 @@ Robot Framework
 Introduction
 ------------
 
-`Robot Framework <http://robotframework.org>`_ is a generic open source
+`Robot Framework <http://robotframework.org>`_ |tm| is a generic open source
 automation framework for acceptance testing, acceptance test driven
 development (ATDD), and robotic process automation (RPA). It has simple plain
 text syntax and it can be extended easily with generic and custom libraries.
@@ -120,7 +120,8 @@ Documentation
 Support and contact
 -------------------
 
-- `Slack <https://robotframework-slack-invite.herokuapp.com>`_
+- `Slack <https://robotframework.slack.com/>`_
+  (`click for invite <https://robotframework-slack-invite.herokuapp.com>`__)
 - `Forum <https://forum.robotframework.org/>`_
 - `robotframework-users
   <https://groups.google.com/group/robotframework-users/>`_ mailing list
@@ -141,13 +142,17 @@ contribute to!
 __ https://github.com/robotframework/robotframework/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
 __ https://github.com/robotframework/robotframework/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22
 
-License
--------
+License and Trademark
+---------------------
 
 Robot Framework is open source software provided under the `Apache License 2.0`__.
 Robot Framework documentation and other similar content use the
 `Creative Commons Attribution 3.0 Unported`__ license. Most libraries and tools
 in the ecosystem are also open source, but they may use different licenses.
 
+Robot Framework trademark is owned by `Robot Framework Foundation`_.
+
 __ http://apache.org/licenses/LICENSE-2.0
 __ http://creativecommons.org/licenses/by/3.0
+
+.. |tm| unicode:: U+2122
