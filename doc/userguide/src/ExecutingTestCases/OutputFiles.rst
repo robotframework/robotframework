@@ -107,7 +107,6 @@ The command line option :option:`--report (-r)` determines where
 report files are created. Similarly as log files, reports are always
 created unless `NONE` is used as a value, and their default
 name is :file:`report.html`.
-FIXME: new screenshots of report / log.
 
 .. figure:: src/ExecutingTestCases/report_passed.png
    :target: src/ExecutingTestCases/report_passed.html
