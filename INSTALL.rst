@@ -75,7 +75,7 @@ Installing Python on Windows
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 On Windows Python is not available by default, but it is easy to install.
-The recommended way to install it is using the official Windows installer available
+The recommended way to install it is using the official Windows installers available
 at http://python.org. For other alternatives, such as installing from the
 Microsoft Store, see the `official Python documentation`__.
 
@@ -107,16 +107,16 @@ __ https://docs.python.org/3/using/windows.html
 __ https://docs.python.org/3/using/windows.html#windows-full
 __ https://docs.python.org/3/using/windows.html#launcher
 
-Installing Python on OSX
-~~~~~~~~~~~~~~~~~~~~~~~~
+Installing Python on macOS
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Mac OSX does not provide Python 3 compatible Python version by default, so it
+MacOS does not provide Python 3 compatible Python version by default, so it
 needs to be installed separately. The recommended  approach is using the official
-OSX installer available at http://python.org. If you are using a package
+macOS installers available at http://python.org. If you are using a package
 manager like `Homebrew <https://brew.sh/>`_, installing Python via it is
 possible as well.
 
-You can validate Python installation on OSX using `python --version` like on
+You can validate Python installation on macOS using `python --version` like on
 other operating systems.
 
 PyPy installation
@@ -128,12 +128,10 @@ but this depends on the context where and how it is used. If execution speed
 is important, at least testing PyPy is probably a good idea.
 
 Installing PyPy is a straightforward procedure and you can find both installers
-and installation instructions at https://pypy.org. To validate that PyPy installation
+and installation instructions at http://pypy.org. To validate that PyPy installation
 was successful, run `pypy --version` or `pypy3 --version`.
 
 .. note:: Using Robot Framework with PyPy is officially supported only on Linux.
-
-.. _PATH:
 
 Configuring `PATH`
 ~~~~~~~~~~~~~~~~~~
@@ -146,7 +144,7 @@ into `PATH`.
 
 __ https://en.wikipedia.org/wiki/PATH_(variable)
 
-When using Python on Linux or OSX, Python and tools installed with it should be
+When using Python on Linux or macOS, Python and tools installed with it should be
 automatically in `PATH`. If you nevertheless need to update `PATH`, you
 typically need to edit some system wide or user specific configuration file.
 Which file to edit and how depends on the operating system and you need to
@@ -277,7 +275,7 @@ rights. It is also used for creating different distribution packages. Run
 Verifying installation
 ----------------------
 
-To make that the correct Robot Framework version has been installed, run
+To make sure that the correct Robot Framework version has been installed, run
 the following command:
 
 .. sourcecode:: bash
@@ -319,5 +317,6 @@ two main use cases:
 
 __ https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment
 
+.. _PATH: `Configuring path`_
 .. _PyPI: https://pypi.org/project/robotframework
-.. _GitHub: https://pypi.org/project/robotframework
+.. _GitHub: https://github.com/robotframework/robotframework

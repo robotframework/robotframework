@@ -30,7 +30,7 @@ Execution is normally started using the ``robot`` command created as part of
 installation__. Alternatively it is possible to execute the installed ``robot``
 module using the selected Python interpreter. This is especially convenient
 if Robot Framework has been installed under multiple Python versions.
-Finally, if you know where the installed ``robot`` directory exits, it can
+Finally, if you know where the installed ``robot`` directory exists, it can
 be executed using Python as well.
 
 Regardless of execution approach, the path (or paths) to the test data to be
