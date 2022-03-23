@@ -7,7 +7,7 @@ Robot Framework
 Introduction
 ------------
 
-`Robot Framework <http://robotframework.org>`_ |tm| is a generic open source
+`Robot Framework <http://robotframework.org>`_ |r| is a generic open source
 automation framework for acceptance testing, acceptance test driven
 development (ATDD), and robotic process automation (RPA). It has simple plain
 text syntax and it can be extended easily with generic and custom libraries.
@@ -41,26 +41,19 @@ the framework and developing it further.
 Installation
 ------------
 
-If you already have Python_ with `pip <http://pip-installer.org>`_ installed,
+If you already have Python_ with `pip <https://pip.pypa.io>`_ installed,
 you can simply run::
 
     pip install robotframework
-
-Alternatively you can get Robot Framework source code by downloading the source
-distribution from PyPI_ and extracting it, or by cloning the project repository
-from GitHub_. After that you can install the framework with::
-
-    python setup.py install
 
 For more detailed installation instructions, including installing Python, see
 `<INSTALL.rst>`__.
 
 Robot Framework requires Python 3.6 or newer and runs also on `PyPy <http://pypy.org>`_.
-If you need to use older Python versions, you can use `Robot Framework 4.1.3`__
-that also supports `Jython <http://jython.org>`_ and `IronPython <http://ironpython.net>`_.
+If you need to use Python 2, `Jython <http://jython.org>`_ or
+`IronPython <http://ironpython.net>`_, you can use `Robot Framework 4.1.3`__.
 
-__ https://pypi.org/project/robotframework/4.1.3/
-
+__ https://github.com/robotframework/robotframework/tree/v4.1.3#readme
 
 Example
 -------
@@ -117,7 +110,7 @@ Documentation
 - `API documentation <http://robot-framework.readthedocs.org>`_
 - `General documentation <http://robotframework.org/>`_
 
-Support and contact
+Support and Contact
 -------------------
 
 - `Slack <https://robotframework.slack.com/>`_
@@ -155,4 +148,4 @@ Robot Framework trademark is owned by `Robot Framework Foundation`_.
 __ http://apache.org/licenses/LICENSE-2.0
 __ http://creativecommons.org/licenses/by/3.0
 
-.. |tm| unicode:: U+2122
+.. |r| unicode:: U+00AE
