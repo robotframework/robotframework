@@ -1,21 +1,22 @@
 {
   "name": "XML",
-  "doc": "Robot Framework test library for verifying and modifying XML documents.\n\nAs the name implies, _XML_ is a test library for verifying contents of XML\nfiles. In practice it is a pretty thin wrapper on top of Python's\n[http://docs.python.org/library/xml.etree.elementtree.html|ElementTree XML API].\n\nThe library has the following main usages:\n\n- Parsing an XML file, or a string containing XML, into an XML element\n  structure and finding certain elements from it for for further analysis\n  (e.g. `Parse XML` and `Get Element` keywords).\n- Getting text or attributes of elements\n  (e.g. `Get Element Text` and `Get Element Attribute`).\n- Directly verifying text, attributes, or whole elements\n  (e.g `Element Text Should Be` and `Elements Should Be Equal`).\n- Modifying XML and saving it (e.g. `Set Element Text`, `Add Element`\n  and `Save XML`).\n\n== Table of contents ==\n\n- `Parsing XML`\n- `Using lxml`\n- `Example`\n- `Finding elements with xpath`\n- `Element attributes`\n- `Handling XML namespaces`\n- `Boolean arguments`\n- `Importing`\n- `Keywords`\n\n= Parsing XML =\n\nXML can be parsed into an element structure using `Parse XML` keyword.\nThe XML to be parsed can be specified using a path to an XML file or as\na string or bytes that contain XML directly. The keyword returns the root\nelement of the structure, which then contains other elements as its\nchildren and their children. Possible comments and processing instructions\nin the source XML are removed.\n\nXML is not validated during parsing even if has a schema defined. How\npossible doctype elements are handled otherwise depends on the used XML\nmodule and on the platform. The standard ElementTree strips doctypes\naltogether but when `using lxml` they are preserved when XML is saved.\n\nThe element structure returned by `Parse XML`, as well as elements\nreturned by keywords such as `Get Element`, can be used as the ``source``\nargument with other keywords. In addition to an already parsed XML\nstructure, other keywords also accept paths to XML files and strings\ncontaining XML similarly as `Parse XML`. Notice that keywords that modify\nXML do not write those changes back to disk even if the source would be\ngiven as a path to a file. Changes must always saved explicitly using\n`Save XML` keyword.\n\nWhen the source is given as a path to a file, the forward slash character\n(``/``) can be used as the path separator regardless the operating system.\nOn Windows also the backslash works, but it the test data it needs to be\nescaped by doubling it (``\\\\``). Using the built-in variable ``${/}``\nnaturally works too.\n\nNote: Support for XML as bytes is new in Robot Framework 3.2.\n\n= Using lxml =\n\nBy default this library uses Python's standard\n[http://docs.python.org/library/xml.etree.elementtree.html|ElementTree]\nmodule for parsing XML, but it can be configured to use\n[http://lxml.de|lxml] module instead when `importing` the library.\nThe resulting element structure has same API regardless which module\nis used for parsing.\n\nThe main benefits of using lxml is that it supports richer xpath syntax\nthan the standard ElementTree and enables using `Evaluate Xpath` keyword.\nIt also preserves the doctype and possible namespace prefixes saving XML.\n\n= Example =\n\nThe following simple example demonstrates parsing XML and verifying its\ncontents both using keywords in this library and in _BuiltIn_ and\n_Collections_ libraries. How to use xpath expressions to find elements\nand what attributes the returned elements contain are discussed, with\nmore examples, in `Finding elements with xpath` and `Element attributes`\nsections.\n\nIn this example, as well as in many other examples in this documentation,\n``${XML}`` refers to the following example XML document. In practice\n``${XML}`` could either be a path to an XML file or it could contain the XML\nitself.\n\n| <example>\n|   <first id=\"1\">text</first>\n|   <second id=\"2\">\n|     <child/>\n|   </second>\n|   <third>\n|     <child>more text</child>\n|     <second id=\"child\"/>\n|     <child><grandchild/></child>\n|   </third>\n|   <html>\n|     <p>\n|       Text with <b>bold</b> and <i>italics</i>.\n|     </p>\n|   </html>\n| </example>\n\n| ${root} =                | `Parse XML`   | ${XML}  |       |             |\n| `Should Be Equal`        | ${root.tag}   | example |       |             |\n| ${first} =               | `Get Element` | ${root} | first |             |\n| `Should Be Equal`        | ${first.text} | text    |       |             |\n| `Dictionary Should Contain Key` | ${first.attrib}  | id    |             |\n| `Element Text Should Be` | ${first}      | text    |       |             |\n| `Element Attribute Should Be` | ${first} | id      | 1     |             |\n| `Element Attribute Should Be` | ${root}  | id      | 1     | xpath=first |\n| `Element Attribute Should Be` | ${XML}   | id      | 1     | xpath=first |\n\nNotice that in the example three last lines are equivalent. Which one to\nuse in practice depends on which other elements you need to get or verify.\nIf you only need to do one verification, using the last line alone would\nsuffice. If more verifications are needed, parsing the XML with `Parse XML`\nonly once would be more efficient.\n\n= Finding elements with xpath =\n\nElementTree, and thus also this library, supports finding elements using\nxpath expressions. ElementTree does not, however, support the full xpath\nstandard. The supported xpath syntax is explained below and\n[https://docs.python.org/library/xml.etree.elementtree.html#xpath-support|\nElementTree documentation] provides more details. In the examples\n``${XML}`` refers to the same XML structure as in the earlier example.\n\nIf lxml support is enabled when `importing` the library, the whole\n[http://www.w3.org/TR/xpath/|xpath 1.0 standard] is supported.\nThat includes everything listed below but also lot of other useful\nconstructs.\n\n== Tag names ==\n\nWhen just a single tag name is used, xpath matches all direct child\nelements that have that tag name.\n\n| ${elem} =          | `Get Element`  | ${XML}      | third |\n| `Should Be Equal`  | ${elem.tag}    | third       |       |\n| @{children} =      | `Get Elements` | ${elem}     | child |\n| `Length Should Be` | ${children}    | 2           |       |\n\n== Paths ==\n\nPaths are created by combining tag names with a forward slash (``/``). For\nexample, ``parent/child`` matches all ``child`` elements under ``parent``\nelement. Notice that if there are multiple ``parent`` elements that all\nhave ``child`` elements, ``parent/child`` xpath will match all these\n``child`` elements.\n\n| ${elem} =         | `Get Element` | ${XML}     | second/child            |\n| `Should Be Equal` | ${elem.tag}   | child      |                         |\n| ${elem} =         | `Get Element` | ${XML}     | third/child/grandchild  |\n| `Should Be Equal` | ${elem.tag}   | grandchild |                         |\n\n== Wildcards ==\n\nAn asterisk (``*``) can be used in paths instead of a tag name to denote\nany element.\n\n| @{children} =      | `Get Elements` | ${XML} | */child |\n| `Length Should Be` | ${children}    | 3      |         |\n\n== Current element ==\n\nThe current element is denoted with a dot (``.``). Normally the current\nelement is implicit and does not need to be included in the xpath.\n\n== Parent element ==\n\nThe parent element of another element is denoted with two dots (``..``).\nNotice that it is not possible to refer to the parent of the current\nelement.\n\n| ${elem} =         | `Get Element` | ${XML} | */second/.. |\n| `Should Be Equal` | ${elem.tag}   | third  |             |\n\n== Search all sub elements ==\n\nTwo forward slashes (``//``) mean that all sub elements, not only the\ndirect children, are searched. If the search is started from the current\nelement, an explicit dot is required.\n\n| @{elements} =      | `Get Elements` | ${XML} | .//second |\n| `Length Should Be` | ${elements}    | 2      |           |\n| ${b} =             | `Get Element`  | ${XML} | html//b   |\n| `Should Be Equal`  | ${b.text}      | bold   |           |\n\n== Predicates ==\n\nPredicates allow selecting elements using also other criteria than tag\nnames, for example, attributes or position. They are specified after the\nnormal tag name or path using syntax ``path[predicate]``. The path can have\nwildcards and other special syntax explained earlier. What predicates\nthe standard ElementTree supports is explained in the table below.\n\n|  = Predicate =  |             = Matches =           |    = Example =     |\n| @attrib         | Elements with attribute ``attrib``. | second[@id]        |\n| @attrib=\"value\" | Elements with attribute ``attrib`` having value ``value``. | *[@id=\"2\"] |\n| position        | Elements at the specified position. Position can be an integer (starting from 1), expression ``last()``, or relative expression like ``last() - 1``. | third/child[1] |\n| tag             | Elements with a child element named ``tag``. | third/child[grandchild] |\n\nPredicates can also be stacked like ``path[predicate1][predicate2]``.\nA limitation is that possible position predicate must always be first.\n\n= Element attributes =\n\nAll keywords returning elements, such as `Parse XML`, and `Get Element`,\nreturn ElementTree's\n[http://docs.python.org/library/xml.etree.elementtree.html#element-objects|Element objects].\nThese elements can be used as inputs for other keywords, but they also\ncontain several useful attributes that can be accessed directly using\nthe extended variable syntax.\n\nThe attributes that are both useful and convenient to use in the test\ndata are explained below. Also other attributes, including methods, can\nbe accessed, but that is typically better to do in custom libraries than\ndirectly in the test data.\n\nThe examples use the same ``${XML}`` structure as the earlier examples.\n\n== tag ==\n\nThe tag of the element.\n\n| ${root} =         | `Parse XML` | ${XML}  |\n| `Should Be Equal` | ${root.tag} | example |\n\n== text ==\n\nThe text that the element contains or Python ``None`` if the element has no\ntext. Notice that the text _does not_ contain texts of possible child\nelements nor text after or between children. Notice also that in XML\nwhitespace is significant, so the text contains also possible indentation\nand newlines. To get also text of the possible children, optionally\nwhitespace normalized, use `Get Element Text` keyword.\n\n| ${1st} =          | `Get Element` | ${XML}  | first        |\n| `Should Be Equal` | ${1st.text}   | text    |              |\n| ${2nd} =          | `Get Element` | ${XML}  | second/child |\n| `Should Be Equal` | ${2nd.text}   | ${NONE} |              |\n| ${p} =            | `Get Element` | ${XML}  | html/p       |\n| `Should Be Equal` | ${p.text}     | \\n${SPACE*6}Text with${SPACE} |\n\n== tail ==\n\nThe text after the element before the next opening or closing tag. Python\n``None`` if the element has no tail. Similarly as with ``text``, also\n``tail`` contains possible indentation and newlines.\n\n| ${b} =            | `Get Element` | ${XML}  | html/p/b  |\n| `Should Be Equal` | ${b.tail}     | ${SPACE}and${SPACE} |\n\n== attrib ==\n\nA Python dictionary containing attributes of the element.\n\n| ${2nd} =          | `Get Element`       | ${XML} | second |\n| `Should Be Equal` | ${2nd.attrib['id']} | 2      |        |\n| ${3rd} =          | `Get Element`       | ${XML} | third  |\n| `Should Be Empty` | ${3rd.attrib}       |        |        |\n\n= Handling XML namespaces =\n\nElementTree and lxml handle possible namespaces in XML documents by adding\nthe namespace URI to tag names in so called Clark Notation. That is\ninconvenient especially with xpaths, and by default this library strips\nthose namespaces away and moves them to ``xmlns`` attribute instead. That\ncan be avoided by passing ``keep_clark_notation`` argument to `Parse XML`\nkeyword. Alternatively `Parse XML` supports stripping namespace information\naltogether by using ``strip_namespaces`` argument. The pros and cons of\ndifferent approaches are discussed in more detail below.\n\n== How ElementTree handles namespaces ==\n\nIf an XML document has namespaces, ElementTree adds namespace information\nto tag names in [http://www.jclark.com/xml/xmlns.htm|Clark Notation]\n(e.g. ``{http://ns.uri}tag``) and removes original ``xmlns`` attributes.\nThis is done both with default namespaces and with namespaces with a prefix.\nHow it works in practice is illustrated by the following example, where\n``${NS}`` variable contains this XML document:\n\n| <xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\n|                 xmlns=\"http://www.w3.org/1999/xhtml\">\n|   <xsl:template match=\"/\">\n|     <html></html>\n|   </xsl:template>\n| </xsl:stylesheet>\n\n| ${root} = | `Parse XML` | ${NS} | keep_clark_notation=yes |\n| `Should Be Equal` | ${root.tag} | {http://www.w3.org/1999/XSL/Transform}stylesheet |\n| `Element Should Exist` | ${root} | {http://www.w3.org/1999/XSL/Transform}template/{http://www.w3.org/1999/xhtml}html |\n| `Should Be Empty` | ${root.attrib} |\n\nAs you can see, including the namespace URI in tag names makes xpaths\nreally long and complex.\n\nIf you save the XML, ElementTree moves namespace information back to\n``xmlns`` attributes. Unfortunately it does not restore the original\nprefixes:\n\n| <ns0:stylesheet xmlns:ns0=\"http://www.w3.org/1999/XSL/Transform\">\n|   <ns0:template match=\"/\">\n|     <ns1:html xmlns:ns1=\"http://www.w3.org/1999/xhtml\"></ns1:html>\n|   </ns0:template>\n| </ns0:stylesheet>\n\nThe resulting output is semantically same as the original, but mangling\nprefixes like this may still not be desirable. Notice also that the actual\noutput depends slightly on ElementTree version.\n\n== Default namespace handling ==\n\nBecause the way ElementTree handles namespaces makes xpaths so complicated,\nthis library, by default, strips namespaces from tag names and moves that\ninformation back to ``xmlns`` attributes. How this works in practice is\nshown by the example below, where ``${NS}`` variable contains the same XML\ndocument as in the previous example.\n\n| ${root} = | `Parse XML` | ${NS} |\n| `Should Be Equal` | ${root.tag} | stylesheet |\n| `Element Should Exist` | ${root} | template/html |\n| `Element Attribute Should Be` | ${root} | xmlns | http://www.w3.org/1999/XSL/Transform |\n| `Element Attribute Should Be` | ${root} | xmlns | http://www.w3.org/1999/xhtml | xpath=template/html |\n\nNow that tags do not contain namespace information, xpaths are simple again.\n\nA minor limitation of this approach is that namespace prefixes are lost.\nAs a result the saved output is not exactly same as the original one in\nthis case either:\n\n| <stylesheet xmlns=\"http://www.w3.org/1999/XSL/Transform\">\n|   <template match=\"/\">\n|     <html xmlns=\"http://www.w3.org/1999/xhtml\"></html>\n|   </template>\n| </stylesheet>\n\nAlso this output is semantically same as the original. If the original XML\nhad only default namespaces, the output would also look identical.\n\n== Namespaces when using lxml ==\n\nThis library handles namespaces same way both when `using lxml` and when\nnot using it. There are, however, differences how lxml internally handles\nnamespaces compared to the standard ElementTree. The main difference is\nthat lxml stores information about namespace prefixes and they are thus\npreserved if XML is saved. Another visible difference is that lxml includes\nnamespace information in child elements got with `Get Element` if the\nparent element has namespaces.\n\n== Stripping namespaces altogether ==\n\nBecause namespaces often add unnecessary complexity, `Parse XML` supports\nstripping them altogether by using ``strip_namespaces=True``. When this\noption is enabled, namespaces are not shown anywhere nor are they included\nif XML is saved.\n\n== Attribute namespaces ==\n\nAttributes in XML documents are, by default, in the same namespaces as\nthe element they belong to. It is possible to use different namespaces\nby using prefixes, but this is pretty rare.\n\nIf an attribute has a namespace prefix, ElementTree will replace it with\nClark Notation the same way it handles elements. Because stripping\nnamespaces from attributes could cause attribute conflicts, this library\ndoes not handle attribute namespaces at all. Thus the following example\nworks the same way regardless how namespaces are handled.\n\n| ${root} = | `Parse XML` | <root id=\"1\" ns:id=\"2\" xmlns:ns=\"http://my.ns\"/> |\n| `Element Attribute Should Be` | ${root} | id | 1 |\n| `Element Attribute Should Be` | ${root} | {http://my.ns}id | 2 |\n\n= Boolean arguments =\n\nSome keywords accept arguments that are handled as Boolean values true or\nfalse. If such an argument is given as a string, it is considered false if\nit is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or\n``0``, case-insensitively. Other strings are considered true regardless\ntheir value, and other argument types are tested using the same\n[http://docs.python.org/library/stdtypes.html#truth|rules as in Python].\n\nTrue examples:\n| `Parse XML` | ${XML} | keep_clark_notation=True    | # Strings are generally true.    |\n| `Parse XML` | ${XML} | keep_clark_notation=yes     | # Same as the above.             |\n| `Parse XML` | ${XML} | keep_clark_notation=${TRUE} | # Python ``True`` is true.       |\n| `Parse XML` | ${XML} | keep_clark_notation=${42}   | # Numbers other than 0 are true. |\n\nFalse examples:\n| `Parse XML` | ${XML} | keep_clark_notation=False    | # String ``false`` is false.   |\n| `Parse XML` | ${XML} | keep_clark_notation=no       | # Also string ``no`` is false. |\n| `Parse XML` | ${XML} | keep_clark_notation=${EMPTY} | # Empty string is false.       |\n| `Parse XML` | ${XML} | keep_clark_notation=${FALSE} | # Python ``False`` is false.   |\n\nConsidering ``OFF`` and ``0`` false is new in Robot Framework 3.1.\n\n== Pattern matching ==\n\nSome keywords, for example `Elements Should Match`, support so called\n[http://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:\n\n| ``*``        | matches any string, even an empty string                |\n| ``?``        | matches any single character                            |\n| ``[chars]``  | matches one character in the bracket                    |\n| ``[!chars]`` | matches one character not in the bracket                |\n| ``[a-z]``    | matches one character from the range in the bracket     |\n| ``[!a-z]``   | matches one character not from the range in the bracket |\n\nUnlike with glob patterns normally, path separator characters ``/`` and\n``\\`` and the newline character ``\\n`` are matches by the above\nwildcards.\n\nSupport for brackets like ``[abc]`` and ``[!a-z]`` is new in\nRobot Framework 3.1",
-  "version": "4.1.3",
-  "generated": "2021-12-20 22:45:35",
+  "doc": "Robot Framework library for verifying and modifying XML documents.\n\nAs the name implies, _XML_ is a library for verifying contents of XML files.\nIn practice, it is a pretty thin wrapper on top of Python's\n[http://docs.python.org/library/xml.etree.elementtree.html|ElementTree XML API].\n\nThe library has the following main usages:\n\n- Parsing an XML file, or a string containing XML, into an XML element\n  structure and finding certain elements from it for for further analysis\n  (e.g. `Parse XML` and `Get Element` keywords).\n- Getting text or attributes of elements\n  (e.g. `Get Element Text` and `Get Element Attribute`).\n- Directly verifying text, attributes, or whole elements\n  (e.g `Element Text Should Be` and `Elements Should Be Equal`).\n- Modifying XML and saving it (e.g. `Set Element Text`, `Add Element`\n  and `Save XML`).\n\n== Table of contents ==\n\n- `Parsing XML`\n- `Using lxml`\n- `Example`\n- `Finding elements with xpath`\n- `Element attributes`\n- `Handling XML namespaces`\n- `Boolean arguments`\n- `Importing`\n- `Keywords`\n\n= Parsing XML =\n\nXML can be parsed into an element structure using `Parse XML` keyword.\nThe XML to be parsed can be specified using a path to an XML file or as\na string or bytes that contain XML directly. The keyword returns the root\nelement of the structure, which then contains other elements as its\nchildren and their children. Possible comments and processing instructions\nin the source XML are removed.\n\nXML is not validated during parsing even if has a schema defined. How\npossible doctype elements are handled otherwise depends on the used XML\nmodule and on the platform. The standard ElementTree strips doctypes\naltogether but when `using lxml` they are preserved when XML is saved.\n\nThe element structure returned by `Parse XML`, as well as elements\nreturned by keywords such as `Get Element`, can be used as the ``source``\nargument with other keywords. In addition to an already parsed XML\nstructure, other keywords also accept paths to XML files and strings\ncontaining XML similarly as `Parse XML`. Notice that keywords that modify\nXML do not write those changes back to disk even if the source would be\ngiven as a path to a file. Changes must always be saved explicitly using\n`Save XML` keyword.\n\nWhen the source is given as a path to a file, the forward slash character\n(``/``) can be used as the path separator regardless the operating system.\nOn Windows also the backslash works, but in the data it needs to be\nescaped by doubling it (``\\\\``). Using the built-in variable ``${/}``\nnaturally works too.\n\nNote: Support for XML as bytes is new in Robot Framework 3.2.\n\n= Using lxml =\n\nBy default, this library uses Python's standard\n[http://docs.python.org/library/xml.etree.elementtree.html|ElementTree]\nmodule for parsing XML, but it can be configured to use\n[http://lxml.de|lxml] module instead when `importing` the library.\nThe resulting element structure has same API regardless which module\nis used for parsing.\n\nThe main benefits of using lxml is that it supports richer xpath syntax\nthan the standard ElementTree and enables using `Evaluate Xpath` keyword.\nIt also preserves the doctype and possible namespace prefixes saving XML.\n\n= Example =\n\nThe following simple example demonstrates parsing XML and verifying its\ncontents both using keywords in this library and in _BuiltIn_ and\n_Collections_ libraries. How to use xpath expressions to find elements\nand what attributes the returned elements contain are discussed, with\nmore examples, in `Finding elements with xpath` and `Element attributes`\nsections.\n\nIn this example, as well as in many other examples in this documentation,\n``${XML}`` refers to the following example XML document. In practice\n``${XML}`` could either be a path to an XML file or it could contain the XML\nitself.\n\n| <example>\n|   <first id=\"1\">text</first>\n|   <second id=\"2\">\n|     <child/>\n|   </second>\n|   <third>\n|     <child>more text</child>\n|     <second id=\"child\"/>\n|     <child><grandchild/></child>\n|   </third>\n|   <html>\n|     <p>\n|       Text with <b>bold</b> and <i>italics</i>.\n|     </p>\n|   </html>\n| </example>\n\n| ${root} =                | `Parse XML`   | ${XML}  |       |             |\n| `Should Be Equal`        | ${root.tag}   | example |       |             |\n| ${first} =               | `Get Element` | ${root} | first |             |\n| `Should Be Equal`        | ${first.text} | text    |       |             |\n| `Dictionary Should Contain Key` | ${first.attrib}  | id    |             |\n| `Element Text Should Be` | ${first}      | text    |       |             |\n| `Element Attribute Should Be` | ${first} | id      | 1     |             |\n| `Element Attribute Should Be` | ${root}  | id      | 1     | xpath=first |\n| `Element Attribute Should Be` | ${XML}   | id      | 1     | xpath=first |\n\nNotice that in the example three last lines are equivalent. Which one to\nuse in practice depends on which other elements you need to get or verify.\nIf you only need to do one verification, using the last line alone would\nsuffice. If more verifications are needed, parsing the XML with `Parse XML`\nonly once would be more efficient.\n\n= Finding elements with xpath =\n\nElementTree, and thus also this library, supports finding elements using\nxpath expressions. ElementTree does not, however, support the full xpath\nstandard. The supported xpath syntax is explained below and\n[https://docs.python.org/library/xml.etree.elementtree.html#xpath-support|\nElementTree documentation] provides more details. In the examples\n``${XML}`` refers to the same XML structure as in the earlier example.\n\nIf lxml support is enabled when `importing` the library, the whole\n[http://www.w3.org/TR/xpath/|xpath 1.0 standard] is supported.\nThat includes everything listed below but also lot of other useful\nconstructs.\n\n== Tag names ==\n\nWhen just a single tag name is used, xpath matches all direct child\nelements that have that tag name.\n\n| ${elem} =          | `Get Element`  | ${XML}      | third |\n| `Should Be Equal`  | ${elem.tag}    | third       |       |\n| @{children} =      | `Get Elements` | ${elem}     | child |\n| `Length Should Be` | ${children}    | 2           |       |\n\n== Paths ==\n\nPaths are created by combining tag names with a forward slash (``/``). For\nexample, ``parent/child`` matches all ``child`` elements under ``parent``\nelement. Notice that if there are multiple ``parent`` elements that all\nhave ``child`` elements, ``parent/child`` xpath will match all these\n``child`` elements.\n\n| ${elem} =         | `Get Element` | ${XML}     | second/child            |\n| `Should Be Equal` | ${elem.tag}   | child      |                         |\n| ${elem} =         | `Get Element` | ${XML}     | third/child/grandchild  |\n| `Should Be Equal` | ${elem.tag}   | grandchild |                         |\n\n== Wildcards ==\n\nAn asterisk (``*``) can be used in paths instead of a tag name to denote\nany element.\n\n| @{children} =      | `Get Elements` | ${XML} | */child |\n| `Length Should Be` | ${children}    | 3      |         |\n\n== Current element ==\n\nThe current element is denoted with a dot (``.``). Normally the current\nelement is implicit and does not need to be included in the xpath.\n\n== Parent element ==\n\nThe parent element of another element is denoted with two dots (``..``).\nNotice that it is not possible to refer to the parent of the current\nelement.\n\n| ${elem} =         | `Get Element` | ${XML} | */second/.. |\n| `Should Be Equal` | ${elem.tag}   | third  |             |\n\n== Search all sub elements ==\n\nTwo forward slashes (``//``) mean that all sub elements, not only the\ndirect children, are searched. If the search is started from the current\nelement, an explicit dot is required.\n\n| @{elements} =      | `Get Elements` | ${XML} | .//second |\n| `Length Should Be` | ${elements}    | 2      |           |\n| ${b} =             | `Get Element`  | ${XML} | html//b   |\n| `Should Be Equal`  | ${b.text}      | bold   |           |\n\n== Predicates ==\n\nPredicates allow selecting elements using also other criteria than tag\nnames, for example, attributes or position. They are specified after the\nnormal tag name or path using syntax ``path[predicate]``. The path can have\nwildcards and other special syntax explained earlier. What predicates\nthe standard ElementTree supports is explained in the table below.\n\n|  = Predicate =  |             = Matches =           |    = Example =     |\n| @attrib         | Elements with attribute ``attrib``. | second[@id]        |\n| @attrib=\"value\" | Elements with attribute ``attrib`` having value ``value``. | *[@id=\"2\"] |\n| position        | Elements at the specified position. Position can be an integer (starting from 1), expression ``last()``, or relative expression like ``last() - 1``. | third/child[1] |\n| tag             | Elements with a child element named ``tag``. | third/child[grandchild] |\n\nPredicates can also be stacked like ``path[predicate1][predicate2]``.\nA limitation is that possible position predicate must always be first.\n\n= Element attributes =\n\nAll keywords returning elements, such as `Parse XML`, and `Get Element`,\nreturn ElementTree's\n[http://docs.python.org/library/xml.etree.elementtree.html#element-objects|Element objects].\nThese elements can be used as inputs for other keywords, but they also\ncontain several useful attributes that can be accessed directly using\nthe extended variable syntax.\n\nThe attributes that are both useful and convenient to use in the data\nare explained below. Also other attributes, including methods, can\nbe accessed, but that is typically better to do in custom libraries than\ndirectly in the data.\n\nThe examples use the same ``${XML}`` structure as the earlier examples.\n\n== tag ==\n\nThe tag of the element.\n\n| ${root} =         | `Parse XML` | ${XML}  |\n| `Should Be Equal` | ${root.tag} | example |\n\n== text ==\n\nThe text that the element contains or Python ``None`` if the element has no\ntext. Notice that the text _does not_ contain texts of possible child\nelements nor text after or between children. Notice also that in XML\nwhitespace is significant, so the text contains also possible indentation\nand newlines. To get also text of the possible children, optionally\nwhitespace normalized, use `Get Element Text` keyword.\n\n| ${1st} =          | `Get Element` | ${XML}  | first        |\n| `Should Be Equal` | ${1st.text}   | text    |              |\n| ${2nd} =          | `Get Element` | ${XML}  | second/child |\n| `Should Be Equal` | ${2nd.text}   | ${NONE} |              |\n| ${p} =            | `Get Element` | ${XML}  | html/p       |\n| `Should Be Equal` | ${p.text}     | \\n${SPACE*6}Text with${SPACE} |\n\n== tail ==\n\nThe text after the element before the next opening or closing tag. Python\n``None`` if the element has no tail. Similarly as with ``text``, also\n``tail`` contains possible indentation and newlines.\n\n| ${b} =            | `Get Element` | ${XML}  | html/p/b  |\n| `Should Be Equal` | ${b.tail}     | ${SPACE}and${SPACE} |\n\n== attrib ==\n\nA Python dictionary containing attributes of the element.\n\n| ${2nd} =          | `Get Element`       | ${XML} | second |\n| `Should Be Equal` | ${2nd.attrib['id']} | 2      |        |\n| ${3rd} =          | `Get Element`       | ${XML} | third  |\n| `Should Be Empty` | ${3rd.attrib}       |        |        |\n\n= Handling XML namespaces =\n\nElementTree and lxml handle possible namespaces in XML documents by adding\nthe namespace URI to tag names in so called Clark Notation. That is\ninconvenient especially with xpaths, and by default this library strips\nthose namespaces away and moves them to ``xmlns`` attribute instead. That\ncan be avoided by passing ``keep_clark_notation`` argument to `Parse XML`\nkeyword. Alternatively `Parse XML` supports stripping namespace information\naltogether by using ``strip_namespaces`` argument. The pros and cons of\ndifferent approaches are discussed in more detail below.\n\n== How ElementTree handles namespaces ==\n\nIf an XML document has namespaces, ElementTree adds namespace information\nto tag names in [http://www.jclark.com/xml/xmlns.htm|Clark Notation]\n(e.g. ``{http://ns.uri}tag``) and removes original ``xmlns`` attributes.\nThis is done both with default namespaces and with namespaces with a prefix.\nHow it works in practice is illustrated by the following example, where\n``${NS}`` variable contains this XML document:\n\n| <xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\n|                 xmlns=\"http://www.w3.org/1999/xhtml\">\n|   <xsl:template match=\"/\">\n|     <html></html>\n|   </xsl:template>\n| </xsl:stylesheet>\n\n| ${root} = | `Parse XML` | ${NS} | keep_clark_notation=yes |\n| `Should Be Equal` | ${root.tag} | {http://www.w3.org/1999/XSL/Transform}stylesheet |\n| `Element Should Exist` | ${root} | {http://www.w3.org/1999/XSL/Transform}template/{http://www.w3.org/1999/xhtml}html |\n| `Should Be Empty` | ${root.attrib} |\n\nAs you can see, including the namespace URI in tag names makes xpaths\nreally long and complex.\n\nIf you save the XML, ElementTree moves namespace information back to\n``xmlns`` attributes. Unfortunately it does not restore the original\nprefixes:\n\n| <ns0:stylesheet xmlns:ns0=\"http://www.w3.org/1999/XSL/Transform\">\n|   <ns0:template match=\"/\">\n|     <ns1:html xmlns:ns1=\"http://www.w3.org/1999/xhtml\"></ns1:html>\n|   </ns0:template>\n| </ns0:stylesheet>\n\nThe resulting output is semantically same as the original, but mangling\nprefixes like this may still not be desirable. Notice also that the actual\noutput depends slightly on ElementTree version.\n\n== Default namespace handling ==\n\nBecause the way ElementTree handles namespaces makes xpaths so complicated,\nthis library, by default, strips namespaces from tag names and moves that\ninformation back to ``xmlns`` attributes. How this works in practice is\nshown by the example below, where ``${NS}`` variable contains the same XML\ndocument as in the previous example.\n\n| ${root} = | `Parse XML` | ${NS} |\n| `Should Be Equal` | ${root.tag} | stylesheet |\n| `Element Should Exist` | ${root} | template/html |\n| `Element Attribute Should Be` | ${root} | xmlns | http://www.w3.org/1999/XSL/Transform |\n| `Element Attribute Should Be` | ${root} | xmlns | http://www.w3.org/1999/xhtml | xpath=template/html |\n\nNow that tags do not contain namespace information, xpaths are simple again.\n\nA minor limitation of this approach is that namespace prefixes are lost.\nAs a result the saved output is not exactly same as the original one in\nthis case either:\n\n| <stylesheet xmlns=\"http://www.w3.org/1999/XSL/Transform\">\n|   <template match=\"/\">\n|     <html xmlns=\"http://www.w3.org/1999/xhtml\"></html>\n|   </template>\n| </stylesheet>\n\nAlso this output is semantically same as the original. If the original XML\nhad only default namespaces, the output would also look identical.\n\n== Namespaces when using lxml ==\n\nThis library handles namespaces same way both when `using lxml` and when\nnot using it. There are, however, differences how lxml internally handles\nnamespaces compared to the standard ElementTree. The main difference is\nthat lxml stores information about namespace prefixes and they are thus\npreserved if XML is saved. Another visible difference is that lxml includes\nnamespace information in child elements got with `Get Element` if the\nparent element has namespaces.\n\n== Stripping namespaces altogether ==\n\nBecause namespaces often add unnecessary complexity, `Parse XML` supports\nstripping them altogether by using ``strip_namespaces=True``. When this\noption is enabled, namespaces are not shown anywhere nor are they included\nif XML is saved.\n\n== Attribute namespaces ==\n\nAttributes in XML documents are, by default, in the same namespaces as\nthe element they belong to. It is possible to use different namespaces\nby using prefixes, but this is pretty rare.\n\nIf an attribute has a namespace prefix, ElementTree will replace it with\nClark Notation the same way it handles elements. Because stripping\nnamespaces from attributes could cause attribute conflicts, this library\ndoes not handle attribute namespaces at all. Thus the following example\nworks the same way regardless how namespaces are handled.\n\n| ${root} = | `Parse XML` | <root id=\"1\" ns:id=\"2\" xmlns:ns=\"http://my.ns\"/> |\n| `Element Attribute Should Be` | ${root} | id | 1 |\n| `Element Attribute Should Be` | ${root} | {http://my.ns}id | 2 |\n\n= Boolean arguments =\n\nSome keywords accept arguments that are handled as Boolean values true or\nfalse. If such an argument is given as a string, it is considered false if\nit is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or\n``0``, case-insensitively. Other strings are considered true regardless\ntheir value, and other argument types are tested using the same\n[http://docs.python.org/library/stdtypes.html#truth|rules as in Python].\n\nTrue examples:\n| `Parse XML` | ${XML} | keep_clark_notation=True    | # Strings are generally true.    |\n| `Parse XML` | ${XML} | keep_clark_notation=yes     | # Same as the above.             |\n| `Parse XML` | ${XML} | keep_clark_notation=${TRUE} | # Python ``True`` is true.       |\n| `Parse XML` | ${XML} | keep_clark_notation=${42}   | # Numbers other than 0 are true. |\n\nFalse examples:\n| `Parse XML` | ${XML} | keep_clark_notation=False    | # String ``false`` is false.   |\n| `Parse XML` | ${XML} | keep_clark_notation=no       | # Also string ``no`` is false. |\n| `Parse XML` | ${XML} | keep_clark_notation=${EMPTY} | # Empty string is false.       |\n| `Parse XML` | ${XML} | keep_clark_notation=${FALSE} | # Python ``False`` is false.   |\n\nConsidering ``OFF`` and ``0`` false is new in Robot Framework 3.1.\n\n== Pattern matching ==\n\nSome keywords, for example `Elements Should Match`, support so called\n[http://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:\n\n| ``*``        | matches any string, even an empty string                |\n| ``?``        | matches any single character                            |\n| ``[chars]``  | matches one character in the bracket                    |\n| ``[!chars]`` | matches one character not in the bracket                |\n| ``[a-z]``    | matches one character from the range in the bracket     |\n| ``[!a-z]``   | matches one character not from the range in the bracket |\n\nUnlike with glob patterns normally, path separator characters ``/`` and\n``\\`` and the newline character ``\\n`` are matches by the above\nwildcards.\n\nSupport for brackets like ``[abc]`` and ``[!a-z]`` is new in\nRobot Framework 3.1",
+  "version": "5.0",
+  "generated": "2022-03-23 17:15:25",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
   "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-  "lineno": 37,
+  "lineno": 38,
   "tags": [],
   "inits": [
     {
-      "name": "Init",
+      "name": "__init__",
       "args": [
         {
           "name": "use_lxml",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -26,7 +27,7 @@
       "shortdoc": "Import library with optionally lxml mode enabled.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 452
+      "lineno": 453
     }
   ],
   "keywords": [
@@ -36,6 +37,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -44,6 +46,7 @@
         {
           "name": "element",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -52,6 +55,7 @@
         {
           "name": "index",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -60,6 +64,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -70,7 +75,7 @@
       "shortdoc": "Adds a child element to the specified element.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1114
+      "lineno": 1127
     },
     {
       "name": "Clear Element",
@@ -78,6 +83,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -86,6 +92,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -94,6 +101,7 @@
         {
           "name": "clear_tail",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -104,7 +112,7 @@
       "shortdoc": "Clears the contents of the specified element.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1224
+      "lineno": 1236
     },
     {
       "name": "Copy Element",
@@ -112,6 +120,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -120,6 +129,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -130,7 +140,7 @@
       "shortdoc": "Returns a copy of the specified element.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1257
+      "lineno": 1269
     },
     {
       "name": "Element Attribute Should Be",
@@ -138,6 +148,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -146,6 +157,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -154,6 +166,7 @@
         {
           "name": "expected",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -162,6 +175,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -170,6 +184,7 @@
         {
           "name": "message",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -180,7 +195,7 @@
       "shortdoc": "Verifies that the specified attribute is ``expected``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 804
+      "lineno": 807
     },
     {
       "name": "Element Attribute Should Match",
@@ -188,6 +203,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -196,6 +212,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -204,6 +221,7 @@
         {
           "name": "pattern",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -212,6 +230,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -220,6 +239,7 @@
         {
           "name": "message",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -230,7 +250,7 @@
       "shortdoc": "Verifies that the specified attribute matches ``expected``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 829
+      "lineno": 832
     },
     {
       "name": "Element Should Exist",
@@ -238,6 +258,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -246,6 +267,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -254,6 +276,7 @@
         {
           "name": "message",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -264,7 +287,7 @@
       "shortdoc": "Verifies that one or more element match the given ``xpath``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 615
+      "lineno": 618
     },
     {
       "name": "Element Should Not Exist",
@@ -272,6 +295,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -280,6 +304,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -288,6 +313,7 @@
         {
           "name": "message",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -298,7 +324,7 @@
       "shortdoc": "Verifies that no element match the given ``xpath``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 630
+      "lineno": 633
     },
     {
       "name": "Element Should Not Have Attribute",
@@ -306,6 +332,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -314,6 +341,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -322,6 +350,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -330,17 +359,18 @@
         {
           "name": "message",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "message=None"
         }
       ],
-      "doc": "Verifies that the specified element does not have  attribute ``name``.\n\nThe element whose attribute is verified is specified using ``source``\nand ``xpath``. They have exactly the same semantics as with\n`Get Element` keyword.\n\nThe keyword fails if the specified element has attribute ``name``. The\ndefault error message can be overridden with the ``message`` argument.\n\nExamples using ``${XML}`` structure from `Example`:\n| Element Should Not Have Attribute | ${XML} | id  |\n| Element Should Not Have Attribute | ${XML} | xxx | xpath=first |\n\nSee also `Get Element Attribute`, `Get Element Attributes`,\n`Element Text Should Be` and `Element Text Should Match`.",
-      "shortdoc": "Verifies that the specified element does not have  attribute ``name``.",
+      "doc": "Verifies that the specified element does not have attribute ``name``.\n\nThe element whose attribute is verified is specified using ``source``\nand ``xpath``. They have exactly the same semantics as with\n`Get Element` keyword.\n\nThe keyword fails if the specified element has attribute ``name``. The\ndefault error message can be overridden with the ``message`` argument.\n\nExamples using ``${XML}`` structure from `Example`:\n| Element Should Not Have Attribute | ${XML} | id  |\n| Element Should Not Have Attribute | ${XML} | xxx | xpath=first |\n\nSee also `Get Element Attribute`, `Get Element Attributes`,\n`Element Text Should Be` and `Element Text Should Match`.",
+      "shortdoc": "Verifies that the specified element does not have attribute ``name``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 850
+      "lineno": 853
     },
     {
       "name": "Element Text Should Be",
@@ -348,6 +378,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -356,6 +387,7 @@
         {
           "name": "expected",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -364,6 +396,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -372,6 +405,7 @@
         {
           "name": "normalize_whitespace",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -380,6 +414,7 @@
         {
           "name": "message",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -390,7 +425,7 @@
       "shortdoc": "Verifies that the text of the specified element is ``expected``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 714
+      "lineno": 717
     },
     {
       "name": "Element Text Should Match",
@@ -398,6 +433,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -406,6 +442,7 @@
         {
           "name": "pattern",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -414,6 +451,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -422,6 +460,7 @@
         {
           "name": "normalize_whitespace",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -430,6 +469,7 @@
         {
           "name": "message",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -440,7 +480,7 @@
       "shortdoc": "Verifies that the text of the specified element matches ``expected``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 741
+      "lineno": 744
     },
     {
       "name": "Element To String",
@@ -448,6 +488,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -456,6 +497,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -464,6 +506,7 @@
         {
           "name": "encoding",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -474,7 +517,7 @@
       "shortdoc": "Returns the string representation of the specified element.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1278
+      "lineno": 1290
     },
     {
       "name": "Elements Should Be Equal",
@@ -482,6 +525,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -490,6 +534,7 @@
         {
           "name": "expected",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -498,6 +543,7 @@
         {
           "name": "exclude_children",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -506,6 +552,7 @@
         {
           "name": "normalize_whitespace",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -516,7 +563,7 @@
       "shortdoc": "Verifies that the given ``source`` element is equal to ``expected``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 872
+      "lineno": 875
     },
     {
       "name": "Elements Should Match",
@@ -524,6 +571,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -532,6 +580,7 @@
         {
           "name": "expected",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -540,6 +589,7 @@
         {
           "name": "exclude_children",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -548,6 +598,7 @@
         {
           "name": "normalize_whitespace",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -558,7 +609,7 @@
       "shortdoc": "Verifies that the given ``source`` element matches ``expected``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 912
+      "lineno": 915
     },
     {
       "name": "Evaluate Xpath",
@@ -566,6 +617,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -574,6 +626,7 @@
         {
           "name": "expression",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -582,6 +635,7 @@
         {
           "name": "context",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -592,7 +646,7 @@
       "shortdoc": "Evaluates the given xpath expression and returns results.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1351
+      "lineno": 1363
     },
     {
       "name": "Get Child Elements",
@@ -600,6 +654,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -608,6 +663,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -618,7 +674,7 @@
       "shortdoc": "Returns the child elements of the specified element as a list.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 585
+      "lineno": 588
     },
     {
       "name": "Get Element",
@@ -626,6 +682,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -634,6 +691,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -644,7 +702,7 @@
       "shortdoc": "Returns an element in the ``source`` matching the ``xpath``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 520
+      "lineno": 523
     },
     {
       "name": "Get Element Attribute",
@@ -652,6 +710,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -660,6 +719,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -668,6 +728,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -676,6 +737,7 @@
         {
           "name": "default",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -686,7 +748,7 @@
       "shortdoc": "Returns the named attribute of the specified element.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 762
+      "lineno": 765
     },
     {
       "name": "Get Element Attributes",
@@ -694,6 +756,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -702,6 +765,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -712,7 +776,7 @@
       "shortdoc": "Returns all attributes of the specified element.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 784
+      "lineno": 787
     },
     {
       "name": "Get Element Count",
@@ -720,6 +784,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -728,6 +793,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -738,7 +804,7 @@
       "shortdoc": "Returns and logs how many elements the given ``xpath`` matches.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 603
+      "lineno": 606
     },
     {
       "name": "Get Element Text",
@@ -746,6 +812,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -754,6 +821,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -762,6 +830,7 @@
         {
           "name": "normalize_whitespace",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -772,7 +841,7 @@
       "shortdoc": "Returns all text of the element, possibly whitespace normalized.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 645
+      "lineno": 648
     },
     {
       "name": "Get Elements",
@@ -780,6 +849,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -788,6 +858,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -798,7 +869,7 @@
       "shortdoc": "Returns a list of elements in the ``source`` matching the ``xpath``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 563
+      "lineno": 566
     },
     {
       "name": "Get Elements Texts",
@@ -806,6 +877,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -814,6 +886,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -822,6 +895,7 @@
         {
           "name": "normalize_whitespace",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -832,7 +906,7 @@
       "shortdoc": "Returns text of all elements matching ``xpath`` as a list.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 694
+      "lineno": 697
     },
     {
       "name": "Log Element",
@@ -840,6 +914,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -848,6 +923,7 @@
         {
           "name": "level",
           "types": [],
+          "typedocs": {},
           "defaultValue": "INFO",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -856,6 +932,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -866,7 +943,7 @@
       "shortdoc": "Logs the string representation of the specified element.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1298
+      "lineno": 1310
     },
     {
       "name": "Parse Xml",
@@ -874,6 +951,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -882,6 +960,7 @@
         {
           "name": "keep_clark_notation",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -890,6 +969,7 @@
         {
           "name": "strip_namespaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -900,7 +980,7 @@
       "shortdoc": "Parses the given XML file or string into an element structure.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 479
+      "lineno": 480
     },
     {
       "name": "Remove Element",
@@ -908,6 +988,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -916,6 +997,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": "",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -924,6 +1006,7 @@
         {
           "name": "remove_tail",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -934,7 +1017,7 @@
       "shortdoc": "Removes the element matching ``xpath`` from the ``source`` structure.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1150
+      "lineno": 1163
     },
     {
       "name": "Remove Element Attribute",
@@ -942,6 +1025,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -950,6 +1034,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -958,6 +1043,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -968,7 +1054,7 @@
       "shortdoc": "Removes attribute ``name`` from the specified element.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1049
+      "lineno": 1058
     },
     {
       "name": "Remove Element Attributes",
@@ -976,6 +1062,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -984,6 +1071,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -994,7 +1082,7 @@
       "shortdoc": "Removes all attributes from the specified element.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1083
+      "lineno": 1094
     },
     {
       "name": "Remove Elements",
@@ -1002,6 +1090,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1010,6 +1099,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": "",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1018,6 +1108,7 @@
         {
           "name": "remove_tail",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1028,7 +1119,7 @@
       "shortdoc": "Removes all elements matching ``xpath`` from the ``source`` structure.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1176
+      "lineno": 1189
     },
     {
       "name": "Remove Elements Attribute",
@@ -1036,6 +1127,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1044,6 +1136,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1052,6 +1145,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1062,7 +1156,7 @@
       "shortdoc": "Removes attribute ``name`` from the specified elements.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1074
+      "lineno": 1083
     },
     {
       "name": "Remove Elements Attributes",
@@ -1070,6 +1164,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1078,6 +1173,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1088,7 +1184,7 @@
       "shortdoc": "Removes all attributes from the specified elements.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1105
+      "lineno": 1116
     },
     {
       "name": "Save Xml",
@@ -1096,6 +1192,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1104,6 +1201,7 @@
         {
           "name": "path",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1112,6 +1210,7 @@
         {
           "name": "encoding",
           "types": [],
+          "typedocs": {},
           "defaultValue": "UTF-8",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1122,7 +1221,7 @@
       "shortdoc": "Saves the given element to the specified file.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1311
+      "lineno": 1323
     },
     {
       "name": "Set Element Attribute",
@@ -1130,6 +1229,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1138,6 +1238,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1146,6 +1247,7 @@
         {
           "name": "value",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1154,6 +1256,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1164,7 +1267,7 @@
       "shortdoc": "Sets attribute ``name`` of the specified element to ``value``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1013
+      "lineno": 1020
     },
     {
       "name": "Set Element Tag",
@@ -1172,6 +1275,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1180,6 +1284,7 @@
         {
           "name": "tag",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1188,6 +1293,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1198,7 +1304,7 @@
       "shortdoc": "Sets the tag of the specified element.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 940
+      "lineno": 943
     },
     {
       "name": "Set Element Text",
@@ -1206,6 +1312,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1214,6 +1321,7 @@
         {
           "name": "text",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1222,6 +1330,7 @@
         {
           "name": "tail",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1230,6 +1339,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1240,7 +1350,7 @@
       "shortdoc": "Sets text and/or tail text of the specified element.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 972
+      "lineno": 977
     },
     {
       "name": "Set Elements Attribute",
@@ -1248,6 +1358,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1256,6 +1367,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1264,6 +1376,7 @@
         {
           "name": "value",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1272,6 +1385,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1282,7 +1396,7 @@
       "shortdoc": "Sets attribute ``name`` of the specified elements to ``value``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1040
+      "lineno": 1047
     },
     {
       "name": "Set Elements Tag",
@@ -1290,6 +1404,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1298,6 +1413,7 @@
         {
           "name": "tag",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1306,6 +1422,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1316,7 +1433,7 @@
       "shortdoc": "Sets the tag of the specified elements.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 962
+      "lineno": 965
     },
     {
       "name": "Set Elements Text",
@@ -1324,6 +1441,7 @@
         {
           "name": "source",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1332,6 +1450,7 @@
         {
           "name": "text",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1340,6 +1459,7 @@
         {
           "name": "tail",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1348,6 +1468,7 @@
         {
           "name": "xpath",
           "types": [],
+          "typedocs": {},
           "defaultValue": ".",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1358,11 +1479,12 @@
       "shortdoc": "Sets text and/or tail text of the specified elements.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1004
+      "lineno": 1009
     }
   ],
   "dataTypes": {
     "enums": [],
     "typedDicts": []
-  }
+  },
+  "typedocs": []
 }

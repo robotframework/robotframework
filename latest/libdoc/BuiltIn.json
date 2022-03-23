@@ -1,13 +1,13 @@
 {
   "name": "BuiltIn",
-  "doc": "An always available standard library with often needed keywords.\n\n``BuiltIn`` is Robot Framework's standard library that provides a set\nof generic keywords needed often. It is imported automatically and\nthus always available. The provided keywords can be used, for example,\nfor verifications (e.g. `Should Be Equal`, `Should Contain`),\nconversions (e.g. `Convert To Integer`) and for various other purposes\n(e.g. `Log`, `Sleep`, `Run Keyword If`, `Set Global Variable`).\n\n== Table of contents ==\n\n- `HTML error messages`\n- `Evaluating expressions`\n- `Boolean arguments`\n- `Pattern matching`\n- `Multiline string comparison`\n- `String representations`\n- `Keywords`\n\n= HTML error messages =\n\nMany of the keywords accept an optional error message to use if the keyword\nfails, and it is possible to use HTML in these messages by prefixing them\nwith ``*HTML*``. See `Fail` keyword for a usage example. Notice that using\nHTML in messages is not limited to BuiltIn library but works with any\nerror message.\n\n= Evaluating expressions =\n\nMany keywords, such as `Evaluate`, `Run Keyword If` and `Should Be True`,\naccept an expression that is evaluated in Python.\n\n== Evaluation namespace ==\n\nExpressions are evaluated using Python's\n[http://docs.python.org/library/functions.html#eval|eval] function so\nthat all Python built-ins like ``len()`` and ``int()`` are available.\nIn addition to that, all unrecognized variables are considered to be\nmodules that are automatically imported. It is possible to use all\navailable Python modules, including the standard modules and the installed\nthird party modules.\n\nExamples:\n| `Should Be True`   | len('${result}') > 3 |\n| `Run Keyword If`   | os.sep == '/'        | Non-Windows Keyword  |\n| ${robot version} = | `Evaluate`           | robot.__version__    |\n\n`Evaluate` also allows configuring the execution namespace with a custom\nnamespace and with custom modules to be imported. The latter functionality\nis useful in special cases where the automatic module import does not work\nsuch as when using nested modules like ``rootmod.submod`` or list\ncomprehensions. See the documentation of the `Evaluate` keyword for mode\ndetails.\n\n*NOTE:* Automatic module import is a new feature in Robot Framework 3.2.\nEarlier modules needed to be explicitly taken into use when using the\n`Evaluate` keyword and other keywords only had access to ``sys`` and\n``os`` modules.\n\n== Using variables ==\n\nWhen a variable is used in the expressing using the normal ``${variable}``\nsyntax, its value is replaced before the expression is evaluated. This\nmeans that the value used in the expression will be the string\nrepresentation of the variable value, not the variable value itself.\nThis is not a problem with numbers and other objects that have a string\nrepresentation that can be evaluated directly, but with other objects\nthe behavior depends on the string representation. Most importantly,\nstrings must always be quoted, and if they can contain newlines, they must\nbe triple quoted.\n\nExamples:\n| `Should Be True` | ${rc} < 10                | Return code greater than 10 |\n| `Run Keyword If` | '${status}' == 'PASS'     | Log | Passed                |\n| `Run Keyword If` | 'FAIL' in '''${output}''' | Log | Output contains FAIL  |\n\nActual variables values are also available in the evaluation namespace.\nThey can be accessed using special variable syntax without the curly\nbraces like ``$variable``. These variables should never be quoted.\n\nExamples:\n| `Should Be True` | $rc < 10          | Return code greater than 10  |\n| `Run Keyword If` | $status == 'PASS' | `Log` | Passed               |\n| `Run Keyword If` | 'FAIL' in $output | `Log` | Output contains FAIL |\n| `Should Be True` | len($result) > 1 and $result[1] == 'OK' |\n| `Should Be True` | $result is not None                     |\n\nUsing the ``$variable`` syntax slows down expression evaluation a little.\nThis should not typically matter, but should be taken into account if\ncomplex expressions are evaluated often and there are strict time\nconstrains.\n\nNotice that instead of creating complicated expressions, it is often better\nto move the logic into a test library. That eases maintenance and can also\nenhance execution speed.\n\n= Boolean arguments =\n\nSome keywords accept arguments that are handled as Boolean values true or\nfalse. If such an argument is given as a string, it is considered false if\nit is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or\n``0``, case-insensitively. Keywords verifying something that allow dropping\nactual and expected values from the possible error message also consider\nstring ``no values`` to be false. Other strings are considered true unless\nthe keyword documentation explicitly states otherwise, and other argument\ntypes are tested using the same\n[http://docs.python.org/library/stdtypes.html#truth|rules as in Python].\n\nTrue examples:\n| `Should Be Equal` | ${x} | ${y}  | Custom error | values=True    | # Strings are generally true.    |\n| `Should Be Equal` | ${x} | ${y}  | Custom error | values=yes     | # Same as the above.             |\n| `Should Be Equal` | ${x} | ${y}  | Custom error | values=${TRUE} | # Python ``True`` is true.       |\n| `Should Be Equal` | ${x} | ${y}  | Custom error | values=${42}   | # Numbers other than 0 are true. |\n\nFalse examples:\n| `Should Be Equal` | ${x} | ${y}  | Custom error | values=False     | # String ``false`` is false.   |\n| `Should Be Equal` | ${x} | ${y}  | Custom error | values=no        | # Also string ``no`` is false. |\n| `Should Be Equal` | ${x} | ${y}  | Custom error | values=${EMPTY}  | # Empty string is false.       |\n| `Should Be Equal` | ${x} | ${y}  | Custom error | values=${FALSE}  | # Python ``False`` is false.   |\n| `Should Be Equal` | ${x} | ${y}  | Custom error | values=no values | # ``no values`` works with ``values`` argument |\n\n= Pattern matching =\n\nMany keywords accepts arguments as either glob or regular expression\npatterns.\n\n== Glob patterns ==\n\nSome keywords, for example `Should Match`, support so called\n[http://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:\n\n| ``*``        | matches any string, even an empty string                |\n| ``?``        | matches any single character                            |\n| ``[chars]``  | matches one character in the bracket                    |\n| ``[!chars]`` | matches one character not in the bracket                |\n| ``[a-z]``    | matches one character from the range in the bracket     |\n| ``[!a-z]``   | matches one character not from the range in the bracket |\n\nUnlike with glob patterns normally, path separator characters ``/`` and\n``\\`` and the newline character ``\\n`` are matches by the above\nwildcards.\n\n== Regular expressions ==\n\nSome keywords, for example `Should Match Regexp`, support\n[http://en.wikipedia.org/wiki/Regular_expression|regular expressions]\nthat are more powerful but also more complicated that glob patterns.\nThe regular expression support is implemented using Python's\n[http://docs.python.org/library/re.html|re module] and its documentation\nshould be consulted for more information about the syntax.\n\nBecause the backslash character (``\\``) is an escape character in\nRobot Framework test data, possible backslash characters in regular\nexpressions need to be escaped with another backslash like ``\\\\d\\\\w+``.\nStrings that may contain special characters but should be handled\nas literal strings, can be escaped with the `Regexp Escape` keyword.\n\n= Multiline string comparison =\n\n`Should Be Equal` and `Should Be Equal As Strings` report the failures using\n[http://en.wikipedia.org/wiki/Diff_utility#Unified_format|unified diff\nformat] if both strings have more than two lines.\n\nExample:\n| ${first} =  | `Catenate` | SEPARATOR=\\n | Not in second | Same | Differs | Same |\n| ${second} = | `Catenate` | SEPARATOR=\\n | Same | Differs2 | Same | Not in first |\n| `Should Be Equal` | ${first} | ${second} |\n\nResults in the following error message:\n\n| Multiline strings are different:\n| --- first\n| +++ second\n| @@ -1,4 +1,4 @@\n| -Not in second\n|  Same\n| -Differs\n| +Differs2\n|  Same\n| +Not in first\n\n= String representations =\n\nSeveral keywords log values explicitly (e.g. `Log`) or implicitly (e.g.\n`Should Be Equal` when there are failures). By default keywords log values\nusing \"human readable\" string representation, which means that strings\nlike ``Hello`` and numbers like ``42`` are logged as-is. Most of the time\nthis is the desired behavior, but there are some problems as well:\n\n- It is not possible to see difference between different objects that\n  have same string representation like string ``42`` and integer ``42``.\n  `Should Be Equal` and some other keywords add the type information to\n  the error message in these cases, though.\n\n- Non-printable characters such as the null byte are not visible.\n\n- Trailing whitespace is not visible.\n\n- Different newlines (``\\r\\n`` on Windows, ``\\n`` elsewhere) cannot\n  be separated from each others.\n\n- There are several Unicode characters that are different but look the\n  same. One example is the Latin ``a`` (``\\u0061``) and the Cyrillic\n  ``\u0430`` (``\\u0430``). Error messages like ``a != \u0430`` are\n  not very helpful.\n\n- Some Unicode characters can be represented using\n  [https://en.wikipedia.org/wiki/Unicode_equivalence|different forms].\n  For example, ``\u00e4`` can be represented either as a single code point\n  ``\\u00e4`` or using two code points ``\\u0061`` and ``\\u0308`` combined\n  together. Such forms are considered canonically equivalent, but strings\n  containing them are not considered equal when compared in Python. Error\n  messages like ``\u00e4 != a\u0308`` are not that helpful either.\n\n- Containers such as lists and dictionaries are formatted into a single\n  line making it hard to see individual items they contain.\n\nTo overcome the above problems, some keywords such as `Log` and\n`Should Be Equal` have an optional ``formatter`` argument that can be\nused to configure the string representation. The supported values are\n``str`` (default), ``repr``, and ``ascii`` that work similarly as\n[https://docs.python.org/library/functions.html|Python built-in functions]\nwith same names. More detailed semantics are explained below.\n\n== str ==\n\nUse the \"human readable\" string representation. Equivalent to using\n``str()`` in Python 3 and ``unicode()`` in Python 2. This is the default.\n\n== repr ==\n\nUse the \"machine readable\" string representation. Similar to using\n``repr()`` in Python, which means that strings like ``Hello`` are logged\nlike ``'Hello'``, newlines and non-printable characters are escaped like\n``\\n`` and ``\\x00``, and so on. Non-ASCII characters are shown as-is\nlike ``\u00e4`` in Python 3 and in escaped format like ``\\xe4`` in Python 2.\nUse ``ascii`` to always get the escaped format.\n\nThere are also some enhancements compared to the standard ``repr()``:\n- Bigger lists, dictionaries and other containers are pretty-printed so\n  that there is one item per row.\n- On Python 2 the ``u`` prefix is omitted with Unicode strings and\n  the ``b`` prefix is added to byte strings.\n\n== ascii ==\n\nSame as using ``ascii()`` in Python 3 or ``repr()`` in Python 2 where\n``ascii()`` does not exist. Similar to using ``repr`` explained above\nbut with the following differences:\n\n- On Python 3 non-ASCII characters are escaped like ``\\xe4`` instead of\n  showing them as-is like ``\u00e4``. This makes it easier to see differences\n  between Unicode characters that look the same but are not equal. This\n  is how ``repr()`` works in Python 2.\n- On Python 2 just uses the standard ``repr()`` meaning that Unicode\n  strings get the ``u`` prefix and no ``b`` prefix is added to byte\n  strings.\n- Containers are not pretty-printed.",
-  "version": "4.1.3",
-  "generated": "2021-12-20 22:45:34",
+  "doc": "An always available standard library with often needed keywords.\n\n``BuiltIn`` is Robot Framework's standard library that provides a set\nof generic keywords needed often. It is imported automatically and\nthus always available. The provided keywords can be used, for example,\nfor verifications (e.g. `Should Be Equal`, `Should Contain`),\nconversions (e.g. `Convert To Integer`) and for various other purposes\n(e.g. `Log`, `Sleep`, `Run Keyword If`, `Set Global Variable`).\n\n== Table of contents ==\n\n- `HTML error messages`\n- `Using variables with keywords creating or accessing variables`\n- `Evaluating expressions`\n- `Boolean arguments`\n- `Pattern matching`\n- `Multiline string comparison`\n- `String representations`\n- `Keywords`\n\n= HTML error messages =\n\nMany of the keywords accept an optional error message to use if the keyword\nfails, and it is possible to use HTML in these messages by prefixing them\nwith ``*HTML*``. See `Fail` keyword for a usage example. Notice that using\nHTML in messages is not limited to BuiltIn library but works with any\nerror message.\n\n= Using variables with keywords creating or accessing variables =\n\nThis library has special keywords `Set Global Variable`, `Set Suite Variable`,\n`Set Test Variable` and `Set Local Variable` for creating variables in\ndifferent scopes. These keywords take the variable name and its value as\narguments. The name can be given using the normal ``${variable}`` syntax or\nin escaped format either like ``$variable`` or ``\\${variable}``. For example,\nthese are typically equivalent and create new suite level variable\n``${name}`` with value ``value``:\n\n| Set Suite Variable    ${name}     value\n| Set Suite Variable    $name       value\n| Set Suite Variable    \\${name}    value\n\nA problem with using the normal ``${variable}`` syntax is that these\nkeywords cannot easily know is the idea to create a variable with exactly\nthat name or does that variable actually contain the name of the variable\nto create. If the variable does not initially exist, it will always be\ncreated. If it exists and its value is a variable name either in the normal\nor in the escaped syntax, variable with _that_ name is created instead.\nFor example, if ``${name}`` variable would exist and contain value\n``$example``, these examples would create different variables:\n\n| Set Suite Variable    ${name}     value    # Creates ${example}.\n| Set Suite Variable    $name       value    # Creates ${name}.\n| Set Suite Variable    \\${name}    value    # Creates ${name}.\n\nBecause the behavior when using the normal ``${variable}`` syntax depends\non the possible existing value of the variable, it is *highly recommended\nto use the escaped ``$variable`` or ``\\${variable}`` format instead*.\n\nThis same problem occurs also with special keywords for accessing variables\n`Get Variable Value`, `Variable Should Exist` and `Variable Should Not Exist`.\n\n= Evaluating expressions =\n\nMany keywords, such as `Evaluate`, `Run Keyword If` and `Should Be True`,\naccept an expression that is evaluated in Python.\n\n== Evaluation namespace ==\n\nExpressions are evaluated using Python's\n[http://docs.python.org/library/functions.html#eval|eval] function so\nthat all Python built-ins like ``len()`` and ``int()`` are available.\nIn addition to that, all unrecognized variables are considered to be\nmodules that are automatically imported. It is possible to use all\navailable Python modules, including the standard modules and the installed\nthird party modules.\n\nExamples:\n| `Should Be True`    len('${result}') > 3\n| `Run Keyword If`    os.sep == '/'    Non-Windows Keyword\n| ${version} =    `Evaluate`    robot.__version__\n\n`Evaluate` also allows configuring the execution namespace with a custom\nnamespace and with custom modules to be imported. The latter functionality\nis useful in special cases where the automatic module import does not work\nsuch as when using nested modules like ``rootmod.submod`` or list\ncomprehensions. See the documentation of the `Evaluate` keyword for mode\ndetails.\n\n== Variables in expressions ==\n\nWhen a variable is used in the expressing using the normal ``${variable}``\nsyntax, its value is replaced before the expression is evaluated. This\nmeans that the value used in the expression will be the string\nrepresentation of the variable value, not the variable value itself.\nThis is not a problem with numbers and other objects that have a string\nrepresentation that can be evaluated directly, but with other objects\nthe behavior depends on the string representation. Most importantly,\nstrings must always be quoted, and if they can contain newlines, they must\nbe triple quoted.\n\nExamples:\n| `Should Be True`    ${rc} < 10                   Return code greater than 10\n| `Run Keyword If`    '${status}' == 'PASS'        Log    Passed\n| `Run Keyword If`    'FAIL' in '''${output}'''    Log    Output contains FAIL\n\nActual variables values are also available in the evaluation namespace.\nThey can be accessed using special variable syntax without the curly\nbraces like ``$variable``. These variables should never be quoted.\n\nExamples:\n| `Should Be True`    $rc < 10             Return code greater than 10\n| `Run Keyword If`    $status == 'PASS'    `Log`    Passed\n| `Run Keyword If`    'FAIL' in $output    `Log`    Output contains FAIL\n| `Should Be True`    len($result) > 1 and $result[1] == 'OK'\n| `Should Be True`    $result is not None\n\nUsing the ``$variable`` syntax slows down expression evaluation a little.\nThis should not typically matter, but should be taken into account if\ncomplex expressions are evaluated often and there are strict time\nconstrains.\n\nNotice that instead of creating complicated expressions, it is often better\nto move the logic into a library. That eases maintenance and can also\nenhance execution speed.\n\n= Boolean arguments =\n\nSome keywords accept arguments that are handled as Boolean values true or\nfalse. If such an argument is given as a string, it is considered false if\nit is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or\n``0``, case-insensitively. Keywords verifying something that allow dropping\nactual and expected values from the possible error message also consider\nstring ``no values`` to be false. Other strings are considered true unless\nthe keyword documentation explicitly states otherwise, and other argument\ntypes are tested using the same\n[http://docs.python.org/library/stdtypes.html#truth|rules as in Python].\n\nTrue examples:\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=True         # Strings are generally true.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=yes          # Same as the above.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=${TRUE}      # Python ``True`` is true.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=${42}        # Numbers other than 0 are true.\n\nFalse examples:\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=False        # String ``false`` is false.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=no           # Also string ``no`` is false.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=${EMPTY}     # Empty string is false.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=${FALSE}     # Python ``False`` is false.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=no values    # ``no values`` works with ``values`` argument\n\n= Pattern matching =\n\nMany keywords accept arguments as either glob or regular expression patterns.\n\n== Glob patterns ==\n\nSome keywords, for example `Should Match`, support so called\n[http://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:\n\n| ``*``        | matches any string, even an empty string                |\n| ``?``        | matches any single character                            |\n| ``[chars]``  | matches one character in the bracket                    |\n| ``[!chars]`` | matches one character not in the bracket                |\n| ``[a-z]``    | matches one character from the range in the bracket     |\n| ``[!a-z]``   | matches one character not from the range in the bracket |\n\nUnlike with glob patterns normally, path separator characters ``/`` and\n``\\`` and the newline character ``\\n`` are matches by the above\nwildcards.\n\n== Regular expressions ==\n\nSome keywords, for example `Should Match Regexp`, support\n[http://en.wikipedia.org/wiki/Regular_expression|regular expressions]\nthat are more powerful but also more complicated that glob patterns.\nThe regular expression support is implemented using Python's\n[http://docs.python.org/library/re.html|re module] and its documentation\nshould be consulted for more information about the syntax.\n\nBecause the backslash character (``\\``) is an escape character in\nRobot Framework test data, possible backslash characters in regular\nexpressions need to be escaped with another backslash like ``\\\\d\\\\w+``.\nStrings that may contain special characters but should be handled\nas literal strings, can be escaped with the `Regexp Escape` keyword.\n\n= Multiline string comparison =\n\n`Should Be Equal` and `Should Be Equal As Strings` report the failures using\n[http://en.wikipedia.org/wiki/Diff_utility#Unified_format|unified diff\nformat] if both strings have more than two lines.\n\nExample:\n| ${first} =     `Catenate`    SEPARATOR=\\n    Not in second    Same    Differs    Same\n| ${second} =    `Catenate`    SEPARATOR=\\n    Same    Differs2    Same    Not in first\n| `Should Be Equal`    ${first}    ${second}\n\nResults in the following error message:\n\n| Multiline strings are different:\n| --- first\n| +++ second\n| @@ -1,4 +1,4 @@\n| -Not in second\n|  Same\n| -Differs\n| +Differs2\n|  Same\n| +Not in first\n\n= String representations =\n\nSeveral keywords log values explicitly (e.g. `Log`) or implicitly (e.g.\n`Should Be Equal` when there are failures). By default, keywords log values\nusing human-readable string representation, which means that strings\nlike ``Hello`` and numbers like ``42`` are logged as-is. Most of the time\nthis is the desired behavior, but there are some problems as well:\n\n- It is not possible to see difference between different objects that\n  have the same string representation like string ``42`` and integer ``42``.\n  `Should Be Equal` and some other keywords add the type information to\n  the error message in these cases, though.\n\n- Non-printable characters such as the null byte are not visible.\n\n- Trailing whitespace is not visible.\n\n- Different newlines (``\\r\\n`` on Windows, ``\\n`` elsewhere) cannot\n  be separated from each others.\n\n- There are several Unicode characters that are different but look the\n  same. One example is the Latin ``a`` (``\\u0061``) and the Cyrillic\n  ``\u0430`` (``\\u0430``). Error messages like ``a != \u0430`` are not very helpful.\n\n- Some Unicode characters can be represented using\n  [https://en.wikipedia.org/wiki/Unicode_equivalence|different forms].\n  For example, ``\u00e4`` can be represented either as a single code point\n  ``\\u00e4`` or using two combined code points ``\\u0061`` and ``\\u0308``.\n  Such forms are considered canonically equivalent, but strings\n  containing them are not considered equal when compared in Python. Error\n  messages like ``\u00e4 != \u00e4`` are not that helpful either.\n\n- Containers such as lists and dictionaries are formatted into a single\n  line making it hard to see individual items they contain.\n\nTo overcome the above problems, some keywords such as `Log` and\n`Should Be Equal` have an optional ``formatter`` argument that can be\nused to configure the string representation. The supported values are\n``str`` (default), ``repr``, and ``ascii`` that work similarly as\n[https://docs.python.org/library/functions.html|Python built-in functions]\nwith same names. More detailed semantics are explained below.\n\n== str ==\n\nUse the human-readable string representation. Equivalent to using ``str()``\nin Python. This is the default.\n\n== repr ==\n\nUse the machine-readable string representation. Similar to using ``repr()``\nin Python, which means that strings like ``Hello`` are logged like\n``'Hello'``, newlines and non-printable characters are escaped like ``\\n``\nand ``\\x00``, and so on. Non-ASCII characters are shown as-is like ``\u00e4``.\n\nIn this mode bigger lists, dictionaries and other containers are\npretty-printed so that there is one item per row.\n\n== ascii ==\n\nSame as using ``ascii()`` in Python. Similar to using ``repr`` explained above\nbut with the following differences:\n\n- Non-ASCII characters are escaped like ``\\xe4`` instead of\n  showing them as-is like ``\u00e4``. This makes it easier to see differences\n  between Unicode characters that look the same but are not equal.\n- Containers are not pretty-printed.",
+  "version": "5.0",
+  "generated": "2022-03-23 17:15:24",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
   "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-  "lineno": 3563,
+  "lineno": 3633,
   "tags": [],
   "inits": [],
   "keywords": [
@@ -17,6 +17,7 @@
         {
           "name": "object",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -25,6 +26,7 @@
         {
           "name": "method_name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -33,6 +35,7 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -41,6 +44,7 @@
         {
           "name": "kwargs",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
@@ -51,7 +55,7 @@
       "shortdoc": "Calls the named method of the given object with the provided arguments.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3311
+      "lineno": 3381
     },
     {
       "name": "Catenate",
@@ -59,6 +63,7 @@
         {
           "name": "items",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -69,7 +74,7 @@
       "shortdoc": "Catenates the given items together and returns the resulted string.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2836
+      "lineno": 2891
     },
     {
       "name": "Comment",
@@ -77,6 +82,7 @@
         {
           "name": "messages",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -87,16 +93,16 @@
       "shortdoc": "Displays the given messages in the log file as keyword arguments.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2985
+      "lineno": 3056
     },
     {
       "name": "Continue For Loop",
       "args": [],
-      "doc": "Skips the current for loop iteration and continues from the next.\n\nSkips the remaining keywords in the current for loop iteration and\ncontinues from the next one. Can be used directly in a for loop or\nin a keyword that the loop uses.\n\nExample:\n| FOR | ${var}         | IN                     | @{VALUES}         |\n|     | Run Keyword If | '${var}' == 'CONTINUE' | Continue For Loop |\n|     | Do Something   | ${var}                 |\n| END |\n\nSee `Continue For Loop If` to conditionally continue a for loop without\nusing `Run Keyword If` or other wrapper keywords.",
-      "shortdoc": "Skips the current for loop iteration and continues from the next.",
+      "doc": "Skips the current FOR loop iteration and continues from the next.\n\n---\n\n*NOTE:* Robot Framework 5.0 added support for native ``CONTINUE`` statement that\nis recommended over this keyword. In the examples below, ``Continue For Loop``\ncan simply be replaced with ``CONTINUE``. In addition to that, native ``IF``\nsyntax (new in RF 4.0) or inline ``IF`` syntax (new in RF 5.0) can be used\ninstead of ``Run Keyword If``. For example, the first example below could be\nwritten like this instead:\n\n| IF    '${var}' == 'CONTINUE'    CONTINUE\n\nThis keyword will eventually be deprecated and removed.\n\n---\n\nSkips the remaining keywords in the current FOR loop iteration and\ncontinues from the next one. Starting from Robot Framework 5.0, this\nkeyword can only be used inside a loop, not in a keyword used in a loop.\n\nExample:\n| FOR | ${var}         | IN                     | @{VALUES}         |\n|     | Run Keyword If | '${var}' == 'CONTINUE' | Continue For Loop |\n|     | Do Something   | ${var}                 |\n| END |\n\nSee `Continue For Loop If` to conditionally continue a FOR loop without\nusing `Run Keyword If` or other wrapper keywords.",
+      "shortdoc": "Skips the current FOR loop iteration and continues from the next.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2532
+      "lineno": 2496
     },
     {
       "name": "Continue For Loop If",
@@ -104,17 +110,18 @@
         {
           "name": "condition",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "condition"
         }
       ],
-      "doc": "Skips the current for loop iteration if the ``condition`` is true.\n\nA wrapper for `Continue For Loop` to continue a for loop based on\nthe given condition. The condition is evaluated using the same\nsemantics as with `Should Be True` keyword.\n\nExample:\n| FOR | ${var}               | IN                     | @{VALUES} |\n|     | Continue For Loop If | '${var}' == 'CONTINUE' |\n|     | Do Something         | ${var}                 |\n| END |",
-      "shortdoc": "Skips the current for loop iteration if the ``condition`` is true.",
+      "doc": "Skips the current FOR loop iteration if the ``condition`` is true.\n\n---\n\n*NOTE:* Robot Framework 5.0 added support for native ``CONTINUE`` statement\nand for inline ``IF``, and that combination should be used instead of this\nkeyword. For example, ``Continue For Loop If`` usage in the example below\ncould be replaced with\n\n| IF    '${var}' == 'CONTINUE'    CONTINUE\n\nThis keyword will eventually be deprecated and removed.\n\n---\n\nA wrapper for `Continue For Loop` to continue a FOR loop based on\nthe given condition. The condition is evaluated using the same\nsemantics as with `Should Be True` keyword.\n\nExample:\n| FOR | ${var}               | IN                     | @{VALUES} |\n|     | Continue For Loop If | '${var}' == 'CONTINUE' |\n|     | Do Something         | ${var}                 |\n| END |",
+      "shortdoc": "Skips the current FOR loop iteration if the ``condition`` is true.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2551
+      "lineno": 2532
     },
     {
       "name": "Convert To Binary",
@@ -122,6 +129,7 @@
         {
           "name": "item",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -130,6 +138,7 @@
         {
           "name": "base",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -138,6 +147,7 @@
         {
           "name": "prefix",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -146,6 +156,7 @@
         {
           "name": "length",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -156,7 +167,7 @@
       "shortdoc": "Converts the given item to a binary string.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 169
+      "lineno": 149
     },
     {
       "name": "Convert To Boolean",
@@ -164,6 +175,7 @@
         {
           "name": "item",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -174,7 +186,7 @@
       "shortdoc": "Converts the given item to Boolean true or false.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 322
+      "lineno": 296
     },
     {
       "name": "Convert To Bytes",
@@ -182,6 +194,7 @@
         {
           "name": "input",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -190,17 +203,18 @@
         {
           "name": "input_type",
           "types": [],
+          "typedocs": {},
           "defaultValue": "text",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "input_type=text"
         }
       ],
-      "doc": "Converts the given ``input`` to bytes according to the ``input_type``.\n\nValid input types are listed below:\n\n- ``text:`` Converts text to bytes character by character. All\n  characters with ordinal below 256 can be used and are converted to\n  bytes with same values. Many characters are easiest to represent\n  using escapes like ``\\x00`` or ``\\xff``. Supports both Unicode\n  strings and bytes.\n\n- ``int:`` Converts integers separated by spaces to bytes. Similarly as\n  with `Convert To Integer`, it is possible to use binary, octal, or\n  hex values by prefixing the values with ``0b``, ``0o``, or ``0x``,\n  respectively.\n\n- ``hex:`` Converts hexadecimal values to bytes. Single byte is always\n  two characters long (e.g. ``01`` or ``FF``). Spaces are ignored and\n  can be used freely as a visual separator.\n\n- ``bin:`` Converts binary values to bytes. Single byte is always eight\n  characters long (e.g. ``00001010``). Spaces are ignored and can be\n  used freely as a visual separator.\n\nIn addition to giving the input as a string, it is possible to use\nlists or other iterables containing individual characters or numbers.\nIn that case numbers do not need to be padded to certain length and\nthey cannot contain extra spaces.\n\nExamples (last column shows returned bytes):\n| ${bytes} = | Convert To Bytes | hyv\u00e4    |     | # hyv\\xe4        |\n| ${bytes} = | Convert To Bytes | \\xff\\x07 |     | # \\xff\\x07      |\n| ${bytes} = | Convert To Bytes | 82 70      | int | # RF              |\n| ${bytes} = | Convert To Bytes | 0b10 0x10  | int | # \\x02\\x10      |\n| ${bytes} = | Convert To Bytes | ff 00 07   | hex | # \\xff\\x00\\x07 |\n| ${bytes} = | Convert To Bytes | 5246212121 | hex | # RF!!!           |\n| ${bytes} = | Convert To Bytes | 0000 1000  | bin | # \\x08           |\n| ${input} = | Create List      | 1          | 2   | 12                |\n| ${bytes} = | Convert To Bytes | ${input}   | int | # \\x01\\x02\\x0c |\n| ${bytes} = | Convert To Bytes | ${input}   | hex | # \\x01\\x02\\x12 |\n\nUse `Encode String To Bytes` in ``String`` library if you need to\nconvert text to bytes using a certain encoding.",
+      "doc": "Converts the given ``input`` to bytes according to the ``input_type``.\n\nValid input types are listed below:\n\n- ``text:`` Converts text to bytes character by character. All\n  characters with ordinal below 256 can be used and are converted to\n  bytes with same values. Many characters are easiest to represent\n  using escapes like ``\\x00`` or ``\\xff``. Supports both Unicode\n  strings and bytes.\n\n- ``int:`` Converts integers separated by spaces to bytes. Similarly as\n  with `Convert To Integer`, it is possible to use binary, octal, or\n  hex values by prefixing the values with ``0b``, ``0o``, or ``0x``,\n  respectively.\n\n- ``hex:`` Converts hexadecimal values to bytes. Single byte is always\n  two characters long (e.g. ``01`` or ``FF``). Spaces are ignored and\n  can be used freely as a visual separator.\n\n- ``bin:`` Converts binary values to bytes. Single byte is always eight\n  characters long (e.g. ``00001010``). Spaces are ignored and can be\n  used freely as a visual separator.\n\nIn addition to giving the input as a string, it is possible to use\nlists or other iterables containing individual characters or numbers.\nIn that case numbers do not need to be padded to certain length and\nthey cannot contain extra spaces.\n\nExamples (last column shows returned bytes):\n| ${bytes} = | Convert To Bytes | hyv\u00e4      |     | # hyv\\xe4      |\n| ${bytes} = | Convert To Bytes | hyv\\xe4   |     | # hyv\\xe4      |\n| ${bytes} = | Convert To Bytes | \\xff\\x07  |     | # \\xff\\x07     |\n| ${bytes} = | Convert To Bytes | 82 70     | int | # RF           |\n| ${bytes} = | Convert To Bytes | 0b10 0x10 | int | # \\x02\\x10     |\n| ${bytes} = | Convert To Bytes | ff 00 07  | hex | # \\xff\\x00\\x07 |\n| ${bytes} = | Convert To Bytes | 52462121  | hex | # RF!!         |\n| ${bytes} = | Convert To Bytes | 0000 1000 | bin | # \\x08         |\n| ${input} = | Create List      | 1         | 2   | 12             |\n| ${bytes} = | Convert To Bytes | ${input}  | int | # \\x01\\x02\\x0c |\n| ${bytes} = | Convert To Bytes | ${input}  | hex | # \\x01\\x02\\x12 |\n\nUse `Encode String To Bytes` in ``String`` library if you need to\nconvert text to bytes using a certain encoding.",
       "shortdoc": "Converts the given ``input`` to bytes according to the ``input_type``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 338
+      "lineno": 312
     },
     {
       "name": "Convert To Hex",
@@ -208,6 +222,7 @@
         {
           "name": "item",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -216,6 +231,7 @@
         {
           "name": "base",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -224,6 +240,7 @@
         {
           "name": "prefix",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -232,6 +249,7 @@
         {
           "name": "length",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -240,6 +258,7 @@
         {
           "name": "lowercase",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -250,7 +269,7 @@
       "shortdoc": "Converts the given item to a hexadecimal string.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 213
+      "lineno": 193
     },
     {
       "name": "Convert To Integer",
@@ -258,6 +277,7 @@
         {
           "name": "item",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -266,6 +286,7 @@
         {
           "name": "base",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -276,7 +297,7 @@
       "shortdoc": "Converts the given item to an integer number.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 106
+      "lineno": 96
     },
     {
       "name": "Convert To Number",
@@ -284,6 +305,7 @@
         {
           "name": "item",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -292,6 +314,7 @@
         {
           "name": "precision",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -302,7 +325,7 @@
       "shortdoc": "Converts the given item to a floating point number.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 252
+      "lineno": 232
     },
     {
       "name": "Convert To Octal",
@@ -310,6 +333,7 @@
         {
           "name": "item",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -318,6 +342,7 @@
         {
           "name": "base",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -326,6 +351,7 @@
         {
           "name": "prefix",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -334,6 +360,7 @@
         {
           "name": "length",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -344,7 +371,7 @@
       "shortdoc": "Converts the given item to an octal string.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 191
+      "lineno": 171
     },
     {
       "name": "Convert To String",
@@ -352,6 +379,7 @@
         {
           "name": "item",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -362,7 +390,7 @@
       "shortdoc": "Converts the given item to a Unicode string.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 305
+      "lineno": 282
     },
     {
       "name": "Create Dictionary",
@@ -370,6 +398,7 @@
         {
           "name": "items",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -380,7 +409,7 @@
       "shortdoc": "Creates and returns a dictionary based on the given ``items``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 446
+      "lineno": 418
     },
     {
       "name": "Create List",
@@ -388,6 +417,7 @@
         {
           "name": "items",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -398,7 +428,7 @@
       "shortdoc": "Returns a list containing given items.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 432
+      "lineno": 404
     },
     {
       "name": "Evaluate",
@@ -406,6 +436,7 @@
         {
           "name": "expression",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -414,6 +445,7 @@
         {
           "name": "modules",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -422,6 +454,7 @@
         {
           "name": "namespace",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -432,16 +465,16 @@
       "shortdoc": "Evaluates the given expression in Python and returns the result.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3255
+      "lineno": 3325
     },
     {
       "name": "Exit For Loop",
       "args": [],
-      "doc": "Stops executing the enclosing for loop.\n\nExits the enclosing for loop and continues execution after it.\nCan be used directly in a for loop or in a keyword that the loop uses.\n\nExample:\n| FOR | ${var}         | IN                 | @{VALUES}     |\n|     | Run Keyword If | '${var}' == 'EXIT' | Exit For Loop |\n|     | Do Something   | ${var} |\n| END |\n\nSee `Exit For Loop If` to conditionally exit a for loop without\nusing `Run Keyword If` or other wrapper keywords.",
-      "shortdoc": "Stops executing the enclosing for loop.",
+      "doc": "Stops executing the enclosing FOR loop.\n\n---\n\n*NOTE:* Robot Framework 5.0 added support for native ``BREAK`` statement that\nis recommended over this keyword. In the examples below, ``Exit For Loop``\ncan simply be replaced with ``BREAK``. In addition to that, native ``IF``\nsyntax (new in RF 4.0) or inline ``IF`` syntax (new in RF 5.0) can be used\ninstead of ``Run Keyword If``. For example, the first example below could be\nwritten like this instead:\n\n| IF    '${var}' == 'EXIT'    BREAK\n\nThis keyword will eventually be deprecated and removed.\n\n---\n\nExits the enclosing FOR loop and continues execution after it. Starting\nfrom Robot Framework 5.0, this keyword can only be used inside a loop,\nnot in a keyword used in a loop.\n\nExample:\n| FOR | ${var}         | IN                 | @{VALUES}     |\n|     | Run Keyword If | '${var}' == 'EXIT' | Exit For Loop |\n|     | Do Something   | ${var} |\n| END |\n\nSee `Exit For Loop If` to conditionally exit a FOR loop without\nusing `Run Keyword If` or other wrapper keywords.",
+      "shortdoc": "Stops executing the enclosing FOR loop.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2567
+      "lineno": 2563
     },
     {
       "name": "Exit For Loop If",
@@ -449,17 +482,18 @@
         {
           "name": "condition",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "condition"
         }
       ],
-      "doc": "Stops executing the enclosing for loop if the ``condition`` is true.\n\nA wrapper for `Exit For Loop` to exit a for loop based on\nthe given condition. The condition is evaluated using the same\nsemantics as with `Should Be True` keyword.\n\nExample:\n| FOR | ${var}           | IN                 | @{VALUES} |\n|     | Exit For Loop If | '${var}' == 'EXIT' |\n|     | Do Something     | ${var}             |\n| END |",
-      "shortdoc": "Stops executing the enclosing for loop if the ``condition`` is true.",
+      "doc": "Stops executing the enclosing FOR loop if the ``condition`` is true.\n\n---\n\n*NOTE:* Robot Framework 5.0 added support for native ``BREAK`` statement\nand for inline ``IF``, and that combination should be used instead of this\nkeyword. For example, ``Exit For Loop If`` usage in the example below\ncould be replaced with\n\n| IF    '${var}' == 'EXIT'    BREAK\n\nThis keyword will eventually be deprecated and removed.\n\n---\n\nA wrapper for `Exit For Loop` to exit a FOR loop based on\nthe given condition. The condition is evaluated using the same\nsemantics as with `Should Be True` keyword.\n\nExample:\n| FOR | ${var}           | IN                 | @{VALUES} |\n|     | Exit For Loop If | '${var}' == 'EXIT' |\n|     | Do Something     | ${var}             |\n| END |",
+      "shortdoc": "Stops executing the enclosing FOR loop if the ``condition`` is true.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2585
+      "lineno": 2599
     },
     {
       "name": "Fail",
@@ -467,6 +501,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -475,6 +510,7 @@
         {
           "name": "tags",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -485,7 +521,7 @@
       "shortdoc": "Fails the test with the given message and optionally alters its tags.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 510
+      "lineno": 482
     },
     {
       "name": "Fatal Error",
@@ -493,6 +529,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -503,7 +540,7 @@
       "shortdoc": "Stops the whole test execution.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 536
+      "lineno": 508
     },
     {
       "name": "Get Count",
@@ -511,6 +548,7 @@
         {
           "name": "container",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -519,6 +557,7 @@
         {
           "name": "item",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -529,7 +568,7 @@
       "shortdoc": "Returns and logs how many times ``item`` is found from ``container``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1287
+      "lineno": 1249
     },
     {
       "name": "Get Length",
@@ -537,6 +576,7 @@
         {
           "name": "item",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -547,7 +587,7 @@
       "shortdoc": "Returns and logs the length of the given item as an integer.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1400
+      "lineno": 1362
     },
     {
       "name": "Get Library Instance",
@@ -555,6 +595,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -563,17 +604,18 @@
         {
           "name": "all",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "all=False"
         }
       ],
-      "doc": "Returns the currently active instance of the specified test library.\n\nThis keyword makes it easy for test libraries to interact with\nother test libraries that have state. This is illustrated by\nthe Python example below:\n\n| from robot.libraries.BuiltIn import BuiltIn\n|\n| def title_should_start_with(expected):\n|     seleniumlib = BuiltIn().get_library_instance('SeleniumLibrary')\n|     title = seleniumlib.get_title()\n|     if not title.startswith(expected):\n|         raise AssertionError(\"Title '%s' did not start with '%s'\"\n|                              % (title, expected))\n\nIt is also possible to use this keyword in the test data and\npass the returned library instance to another keyword. If a\nlibrary is imported with a custom name, the ``name`` used to get\nthe instance must be that name and not the original library name.\n\nIf the optional argument ``all`` is given a true value, then a\ndictionary mapping all library names to instances will be returned.\n\nExample:\n| &{all libs} = | Get library instance | all=True |",
-      "shortdoc": "Returns the currently active instance of the specified test library.",
+      "doc": "Returns the currently active instance of the specified library.\n\nThis keyword makes it easy for libraries to interact with\nother libraries that have state. This is illustrated by\nthe Python example below:\n\n| from robot.libraries.BuiltIn import BuiltIn\n|\n| def title_should_start_with(expected):\n|     seleniumlib = BuiltIn().get_library_instance('SeleniumLibrary')\n|     title = seleniumlib.get_title()\n|     if not title.startswith(expected):\n|         raise AssertionError(\"Title '%s' did not start with '%s'\"\n|                              % (title, expected))\n\nIt is also possible to use this keyword in the test data and\npass the returned library instance to another keyword. If a\nlibrary is imported with a custom name, the ``name`` used to get\nthe instance must be that name and not the original library name.\n\nIf the optional argument ``all`` is given a true value, then a\ndictionary mapping all library names to instances will be returned.\n\nExample:\n| &{all libs} = | Get library instance | all=True |",
+      "shortdoc": "Returns the currently active instance of the specified library.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3528
+      "lineno": 3598
     },
     {
       "name": "Get Time",
@@ -581,6 +623,7 @@
         {
           "name": "format",
           "types": [],
+          "typedocs": {},
           "defaultValue": "timestamp",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -589,6 +632,7 @@
         {
           "name": "time_",
           "types": [],
+          "typedocs": {},
           "defaultValue": "NOW",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -599,7 +643,7 @@
       "shortdoc": "Returns the given time in the requested format.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3172
+      "lineno": 3242
     },
     {
       "name": "Get Variable Value",
@@ -607,6 +651,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -615,17 +660,18 @@
         {
           "name": "default",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "default=None"
         }
       ],
-      "doc": "Returns variable value or ``default`` if the variable does not exist.\n\nThe name of the variable can be given either as a normal variable name\n(e.g. ``${NAME}``) or in escaped format (e.g. ``\\${NAME}``). Notice\nthat the former has some limitations explained in `Set Suite Variable`.\n\nExamples:\n| ${x} = | Get Variable Value | ${a} | default |\n| ${y} = | Get Variable Value | ${a} | ${b}    |\n| ${z} = | Get Variable Value | ${z} |         |\n=>\n| ${x} gets value of ${a} if ${a} exists and string 'default' otherwise\n| ${y} gets value of ${a} if ${a} exists and value of ${b} otherwise\n| ${z} is set to Python None if it does not exist previously\n\nSee `Set Variable If` for another keyword to set variables dynamically.",
+      "doc": "Returns variable value or ``default`` if the variable does not exist.\n\nThe name of the variable can be given either as a normal variable name\nlike ``${name}`` or in escaped format like ``$name`` or ``\\${name}``.\nFor the reasons explained in the `Using variables with keywords creating\nor accessing variables` section, using the escaped format is recommended.\n\nExamples:\n| ${x} =    `Get Variable Value`    $a    default\n| ${y} =    `Get Variable Value`    $a    ${b}\n| ${z} =    `Get Variable Value`    $z\n=>\n- ``${x}`` gets value of ``${a}`` if ``${a}`` exists and string ``default`` otherwise\n- ``${y}`` gets value of ``${a}`` if ``${a}`` exists and value of ``${b}`` otherwise\n- ``${z}`` is set to Python ``None`` if it does not exist previously",
       "shortdoc": "Returns variable value or ``default`` if the variable does not exist.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1522
+      "lineno": 1484
     },
     {
       "name": "Get Variables",
@@ -633,6 +679,7 @@
         {
           "name": "no_decoration",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -643,7 +690,7 @@
       "shortdoc": "Returns a dictionary containing all variables in the current scope.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1492
+      "lineno": 1454
     },
     {
       "name": "Import Library",
@@ -651,6 +698,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -659,17 +707,18 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*args"
         }
       ],
-      "doc": "Imports a library with the given name and optional arguments.\n\nThis functionality allows dynamic importing of libraries while tests\nare running. That may be necessary, if the library itself is dynamic\nand not yet available when test data is processed. In a normal case,\nlibraries should be imported using the Library setting in the Setting\nsection.\n\nThis keyword supports importing libraries both using library\nnames and physical paths. When paths are used, they must be\ngiven in absolute format or found from\n[http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#module-search-path|\nsearch path]. Forward slashes can be used as path separators in all\noperating systems.\n\nIt is possible to pass arguments to the imported library and also\nnamed argument syntax works if the library supports it. ``WITH NAME``\nsyntax can be used to give a custom name to the imported library.\n\nExamples:\n| Import Library | MyLibrary |\n| Import Library | ${CURDIR}/../Library.py | arg1 | named=arg2 |\n| Import Library | ${LIBRARIES}/Lib.java | arg | WITH NAME | JavaLib |",
+      "doc": "Imports a library with the given name and optional arguments.\n\nThis functionality allows dynamic importing of libraries while tests\nare running. That may be necessary, if the library itself is dynamic\nand not yet available when test data is processed. In a normal case,\nlibraries should be imported using the Library setting in the Setting\nsection.\n\nThis keyword supports importing libraries both using library\nnames and physical paths. When paths are used, they must be\ngiven in absolute format or found from\n[http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#module-search-path|\nsearch path]. Forward slashes can be used as path separators in all\noperating systems.\n\nIt is possible to pass arguments to the imported library and also\nnamed argument syntax works if the library supports it. ``WITH NAME``\nsyntax can be used to give a custom name to the imported library.\n\nExamples:\n| Import Library | MyLibrary |\n| Import Library | ${CURDIR}/Lib.py | arg1 | named=arg2 | WITH NAME | Custom |",
       "shortdoc": "Imports a library with the given name and optional arguments.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3029
+      "lineno": 3100
     },
     {
       "name": "Import Resource",
@@ -677,17 +726,18 @@
         {
           "name": "path",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "path"
         }
       ],
-      "doc": "Imports a resource file with the given path.\n\nResources imported with this keyword are set into the test suite scope\nsimilarly when importing them in the Setting table using the Resource\nsetting.\n\nThe given path must be absolute or found from\n[http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#pythonpath-jythonpath-and-ironpythonpath|\nsearch path]. Forward slashes can be used as path separator regardless\nthe operating system.\n\nExamples:\n| Import Resource | ${CURDIR}/resource.txt |\n| Import Resource | ${CURDIR}/../resources/resource.html |\n| Import Resource | found_from_pythonpath.robot |",
+      "doc": "Imports a resource file with the given path.\n\nResources imported with this keyword are set into the test suite scope\nsimilarly when importing them in the Setting table using the Resource\nsetting.\n\nThe given path must be absolute or found from\n[http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#module-search-path|search path].\nForward slashes can be used as path separator regardless\nthe operating system.\n\nExamples:\n| Import Resource | ${CURDIR}/resource.txt |\n| Import Resource | ${CURDIR}/../resources/resource.html |\n| Import Resource | found_from_pythonpath.robot |",
       "shortdoc": "Imports a resource file with the given path.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3091
+      "lineno": 3161
     },
     {
       "name": "Import Variables",
@@ -695,6 +745,7 @@
         {
           "name": "path",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -703,17 +754,18 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*args"
         }
       ],
-      "doc": "Imports a variable file with the given path and optional arguments.\n\nVariables imported with this keyword are set into the test suite scope\nsimilarly when importing them in the Setting table using the Variables\nsetting. These variables override possible existing variables with\nthe same names. This functionality can thus be used to import new\nvariables, for example, for each test in a test suite.\n\nThe given path must be absolute or found from\n[http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#pythonpath-jythonpath-and-ironpythonpath|\nsearch path]. Forward slashes can be used as path separator regardless\nthe operating system.\n\nExamples:\n| Import Variables | ${CURDIR}/variables.py   |      |      |\n| Import Variables | ${CURDIR}/../vars/env.py | arg1 | arg2 |\n| Import Variables | file_from_pythonpath.py  |      |      |",
+      "doc": "Imports a variable file with the given path and optional arguments.\n\nVariables imported with this keyword are set into the test suite scope\nsimilarly when importing them in the Setting table using the Variables\nsetting. These variables override possible existing variables with\nthe same names. This functionality can thus be used to import new\nvariables, for example, for each test in a test suite.\n\nThe given path must be absolute or found from\n[http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html##module-search-path|search path].\nForward slashes can be used as path separator regardless\nthe operating system.\n\nExamples:\n| Import Variables | ${CURDIR}/variables.py   |      |      |\n| Import Variables | ${CURDIR}/../vars/env.py | arg1 | arg2 |\n| Import Variables | file_from_pythonpath.py  |      |      |",
       "shortdoc": "Imports a variable file with the given path and optional arguments.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3066
+      "lineno": 3136
     },
     {
       "name": "Keyword Should Exist",
@@ -721,6 +773,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -729,6 +782,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -739,7 +793,7 @@
       "shortdoc": "Fails unless the given keyword exists in the current scope.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3154
+      "lineno": 3224
     },
     {
       "name": "Length Should Be",
@@ -747,6 +801,7 @@
         {
           "name": "item",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -755,6 +810,7 @@
         {
           "name": "length",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -763,6 +819,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -773,7 +830,7 @@
       "shortdoc": "Verifies that the length of the given item is correct.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1448
+      "lineno": 1410
     },
     {
       "name": "Log",
@@ -781,6 +838,7 @@
         {
           "name": "message",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -789,6 +847,7 @@
         {
           "name": "level",
           "types": [],
+          "typedocs": {},
           "defaultValue": "INFO",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -797,6 +856,7 @@
         {
           "name": "html",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -805,6 +865,7 @@
         {
           "name": "console",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -813,25 +874,27 @@
         {
           "name": "repr",
           "types": [],
-          "defaultValue": "False",
+          "typedocs": {},
+          "defaultValue": "DEPRECATED",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "repr=False"
+          "repr": "repr=DEPRECATED"
         },
         {
           "name": "formatter",
           "types": [],
+          "typedocs": {},
           "defaultValue": "str",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "formatter=str"
         }
       ],
-      "doc": "Logs the given message with the given level.\n\nValid levels are TRACE, DEBUG, INFO (default), HTML, WARN, and ERROR.\nMessages below the current active log level are ignored. See\n`Set Log Level` keyword and ``--loglevel`` command line option\nfor more details about setting the level.\n\nMessages logged with the WARN or ERROR levels will be automatically\nvisible also in the console and in the Test Execution Errors section\nin the log file.\n\nIf the ``html`` argument is given a true value (see `Boolean\narguments`), the message will be considered HTML and special characters\nsuch as ``<`` are not escaped. For example, logging\n``<img src=\"image.png\">`` creates an image when ``html`` is true, but\notherwise the message is that exact string. An alternative to using\nthe ``html`` argument is using the HTML pseudo log level. It logs\nthe message as HTML using the INFO level.\n\nIf the ``console`` argument is true, the message will be written to\nthe console where test execution was started from in addition to\nthe log file. This keyword always uses the standard output stream\nand adds a newline after the written message. Use `Log To Console`\ninstead if either of these is undesirable,\n\nThe ``formatter`` argument controls how to format the string\nrepresentation of the message. Possible values are ``str`` (default),\n``repr`` and ``ascii``, and they work similarly to Python built-in\nfunctions with same names. When using ``repr``, bigger lists,\ndictionaries and other containers are also pretty-printed so that\nthere is one item per row. For more details see `String\nrepresentations`.\n\nThe old way to control string representation was using the ``repr``\nargument, and ``repr=True`` is still equivalent to using\n``formatter=repr``. The ``repr`` argument will be deprecated in the\nfuture, though, and using ``formatter`` is thus recommended.\n\nExamples:\n| Log | Hello, world!        |          |   | # Normal INFO message.   |\n| Log | Warning, world!      | WARN     |   | # Warning.               |\n| Log | <b>Hello</b>, world! | html=yes |   | # INFO message as HTML.  |\n| Log | <b>Hello</b>, world! | HTML     |   | # Same as above.         |\n| Log | <b>Hello</b>, world! | DEBUG    | html=true | # DEBUG as HTML. |\n| Log | Hello, console!   | console=yes | | # Log also to the console. |\n| Log | Null is \\x00  | formatter=repr | | # Log ``'Null is \\x00'``. |\n\nSee `Log Many` if you want to log multiple messages in one go, and\n`Log To Console` if you only want to write to the console.",
+      "doc": "Logs the given message with the given level.\n\nValid levels are TRACE, DEBUG, INFO (default), HTML, WARN, and ERROR.\nMessages below the current active log level are ignored. See\n`Set Log Level` keyword and ``--loglevel`` command line option\nfor more details about setting the level.\n\nMessages logged with the WARN or ERROR levels will be automatically\nvisible also in the console and in the Test Execution Errors section\nin the log file.\n\nIf the ``html`` argument is given a true value (see `Boolean\narguments`), the message will be considered HTML and special characters\nsuch as ``<`` are not escaped. For example, logging\n``<img src=\"image.png\">`` creates an image when ``html`` is true, but\notherwise the message is that exact string. An alternative to using\nthe ``html`` argument is using the HTML pseudo log level. It logs\nthe message as HTML using the INFO level.\n\nIf the ``console`` argument is true, the message will be written to\nthe console where test execution was started from in addition to\nthe log file. This keyword always uses the standard output stream\nand adds a newline after the written message. Use `Log To Console`\ninstead if either of these is undesirable,\n\nThe ``formatter`` argument controls how to format the string\nrepresentation of the message. Possible values are ``str`` (default),\n``repr``, ``ascii``, ``len``, and ``type``. They work similarly to\nPython built-in functions with same names. When using ``repr``, bigger\nlists, dictionaries and other containers are also pretty-printed so\nthat there is one item per row. For more details see `String\nrepresentations`.\n\nThe old way to control string representation was using the ``repr``\nargument. This argument has been deprecated and ``formatter=repr``\nshould be used instead.\n\nExamples:\n| Log | Hello, world!        |          |   | # Normal INFO message.   |\n| Log | Warning, world!      | WARN     |   | # Warning.               |\n| Log | <b>Hello</b>, world! | html=yes |   | # INFO message as HTML.  |\n| Log | <b>Hello</b>, world! | HTML     |   | # Same as above.         |\n| Log | <b>Hello</b>, world! | DEBUG    | html=true | # DEBUG as HTML. |\n| Log | Hello, console!   | console=yes | | # Log also to the console. |\n| Log | Null is \\x00    | formatter=repr | | # Log ``'Null is \\x00'``. |\n\nSee `Log Many` if you want to log multiple messages in one go, and\n`Log To Console` if you only want to write to the console.\n\nFormatter options ``type`` and ``log`` are new in Robot Framework 5.0.",
       "shortdoc": "Logs the given message with the given level.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2862
+      "lineno": 2917
     },
     {
       "name": "Log Many",
@@ -839,6 +902,7 @@
         {
           "name": "messages",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -849,7 +913,7 @@
       "shortdoc": "Logs the given messages as separate entries using the INFO level.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2934
+      "lineno": 2994
     },
     {
       "name": "Log To Console",
@@ -857,6 +921,7 @@
         {
           "name": "message",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -865,6 +930,7 @@
         {
           "name": "stream",
           "types": [],
+          "typedocs": {},
           "defaultValue": "STDOUT",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -873,17 +939,27 @@
         {
           "name": "no_newline",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "no_newline=False"
+        },
+        {
+          "name": "format",
+          "types": [],
+          "typedocs": {},
+          "defaultValue": "",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "format="
         }
       ],
-      "doc": "Logs the given message to the console.\n\nBy default uses the standard output stream. Using the standard error\nstream is possibly by giving the ``stream`` argument value ``STDERR``\n(case-insensitive).\n\nBy default appends a newline to the logged message. This can be\ndisabled by giving the ``no_newline`` argument a true value (see\n`Boolean arguments`).\n\nExamples:\n| Log To Console | Hello, console!             |                 |\n| Log To Console | Hello, stderr!              | STDERR          |\n| Log To Console | Message starts here and is  | no_newline=true |\n| Log To Console | continued without newline.  |                 |\n\nThis keyword does not log the message to the normal log file. Use\n`Log` keyword, possibly with argument ``console``, if that is desired.",
+      "doc": "Logs the given message to the console.\n\nBy default uses the standard output stream. Using the standard error\nstream is possible by giving the ``stream`` argument value ``STDERR``\n(case-insensitive).\n\nBy default appends a newline to the logged message. This can be\ndisabled by giving the ``no_newline`` argument a true value (see\n`Boolean arguments`).\n\nBy default adds no alignment formatting. The ``format`` argument allows,\nfor example, alignment and customized padding of the log message. Please see the\n[https://docs.python.org/3/library/string.html#formatspec|format specification] for\ndetailed alignment possibilities. This argument is new in Robot\nFramework 5.0.\n\nExamples:\n| Log To Console | Hello, console!             |                 |\n| Log To Console | Hello, stderr!              | STDERR          |\n| Log To Console | Message starts here and is  | no_newline=true |\n| Log To Console | continued without newline.  |                 |\n| Log To Console | center message with * pad   | format=*^60     |\n| Log To Console | 30 spaces before msg starts | format=>30      |\n\nThis keyword does not log the message to the normal log file. Use\n`Log` keyword, possibly with argument ``console``, if that is desired.",
       "shortdoc": "Logs the given message to the console.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2962
+      "lineno": 3022
     },
     {
       "name": "Log Variables",
@@ -891,6 +967,7 @@
         {
           "name": "level",
           "types": [],
+          "typedocs": {},
           "defaultValue": "INFO",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -901,7 +978,7 @@
       "shortdoc": "Logs all variables in the current scope with given log level.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1546
+      "lineno": 1507
     },
     {
       "name": "No Operation",
@@ -910,7 +987,7 @@
       "shortdoc": "Does absolutely nothing.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2798
+      "lineno": 2853
     },
     {
       "name": "Pass Execution",
@@ -918,6 +995,7 @@
         {
           "name": "message",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -926,6 +1004,7 @@
         {
           "name": "tags",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -936,7 +1015,7 @@
       "shortdoc": "Skips rest of the current test, setup, or teardown with PASS status.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2724
+      "lineno": 2779
     },
     {
       "name": "Pass Execution If",
@@ -944,6 +1023,7 @@
         {
           "name": "condition",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -952,6 +1032,7 @@
         {
           "name": "message",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -960,6 +1041,7 @@
         {
           "name": "tags",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -970,7 +1052,7 @@
       "shortdoc": "Conditionally skips rest of the current test, setup, or teardown with PASS status.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2776
+      "lineno": 2831
     },
     {
       "name": "Regexp Escape",
@@ -978,6 +1060,7 @@
         {
           "name": "patterns",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -988,7 +1071,7 @@
       "shortdoc": "Returns each argument string escaped for use as a regular expression.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3342
+      "lineno": 3412
     },
     {
       "name": "Reload Library",
@@ -996,6 +1079,7 @@
         {
           "name": "name_or_instance",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1006,7 +1090,7 @@
       "shortdoc": "Rechecks what keywords the specified library provides.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3014
+      "lineno": 3085
     },
     {
       "name": "Remove Tags",
@@ -1014,6 +1098,7 @@
         {
           "name": "tags",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1024,7 +1109,7 @@
       "shortdoc": "Removes given ``tags`` from the current test or all tests in a suite.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3500
+      "lineno": 3570
     },
     {
       "name": "Repeat Keyword",
@@ -1032,6 +1117,7 @@
         {
           "name": "repeat",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1040,6 +1126,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1048,6 +1135,7 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1058,7 +1146,7 @@
       "shortdoc": "Executes the specified keyword multiple times.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2198
+      "lineno": 2173
     },
     {
       "name": "Replace Variables",
@@ -1066,6 +1154,7 @@
         {
           "name": "text",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1076,7 +1165,7 @@
       "shortdoc": "Replaces variables in the given text with their current values.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1607
+      "lineno": 1570
     },
     {
       "name": "Return From Keyword",
@@ -1084,17 +1173,18 @@
         {
           "name": "return_values",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*return_values"
         }
       ],
-      "doc": "Returns from the enclosing user keyword.\n\nThis keyword can be used to return from a user keyword with PASS status\nwithout executing it fully. It is also possible to return values\nsimilarly as with the ``[Return]`` setting. For more detailed information\nabout working with the return values, see the User Guide.\n\nThis keyword is typically wrapped to some other keyword, such as\n`Run Keyword If` or `Run Keyword If Test Passed`, to return based\non a condition:\n\n| Run Keyword If | ${rc} < 0 | Return From Keyword |\n| Run Keyword If Test Passed | Return From Keyword |\n\nIt is possible to use this keyword to return from a keyword also inside\na for loop. That, as well as returning values, is demonstrated by the\n`Find Index` keyword in the following somewhat advanced example.\nNotice that it is often a good idea to move this kind of complicated\nlogic into a test library.\n\n| ***** Variables *****\n| @{LIST} =    foo    baz\n|\n| ***** Test Cases *****\n| Example\n|     ${index} =    Find Index    baz    @{LIST}\n|     Should Be Equal    ${index}    ${1}\n|     ${index} =    Find Index    non existing    @{LIST}\n|     Should Be Equal    ${index}    ${-1}\n|\n| ***** Keywords *****\n| Find Index\n|    [Arguments]    ${element}    @{items}\n|    ${index} =    Set Variable    ${0}\n|    FOR    ${item}    IN    @{items}\n|        Run Keyword If    '${item}' == '${element}'    Return From Keyword    ${index}\n|        ${index} =    Set Variable    ${index + 1}\n|    END\n|    Return From Keyword    ${-1}    # Also [Return] would work here.\n\nThe most common use case, returning based on an expression, can be\naccomplished directly with `Return From Keyword If`. See also\n`Run Keyword And Return` and `Run Keyword And Return If`.",
+      "doc": "Returns from the enclosing user keyword.\n\n---\n\n*NOTE:* Robot Framework 5.0 added support for native ``RETURN`` statement that\nis recommended over this keyword. In the examples below, ``Return From Keyword``\ncan simply be replaced with ``RETURN``. In addition to that, native ``IF``\nsyntax (new in RF 4.0) or inline ``IF`` syntax (new in RF 5.0) can be used\ninstead of ``Run Keyword If``. For example, the first example below could be\nwritten like this instead:\n\n| IF    ${rc} < 0    RETURN\n\nThis keyword will eventually be deprecated and removed.\n\n---\n\nThis keyword can be used to return from a user keyword with PASS status\nwithout executing it fully. It is also possible to return values\nsimilarly as with the ``[Return]`` setting. For more detailed information\nabout working with the return values, see the User Guide.\n\nThis keyword is typically wrapped to some other keyword, such as\n`Run Keyword If`, to return based on a condition:\n\n| Run Keyword If    ${rc} < 0    Return From Keyword\n\nIt is possible to use this keyword to return from a keyword also inside\na for loop. That, as well as returning values, is demonstrated by the\n`Find Index` keyword in the following somewhat advanced example.\nNotice that it is often a good idea to move this kind of complicated\nlogic into a library.\n\n| ***** Variables *****\n| @{LIST} =    foo    baz\n|\n| ***** Test Cases *****\n| Example\n|     ${index} =    Find Index    baz    @{LIST}\n|     Should Be Equal    ${index}    ${1}\n|     ${index} =    Find Index    non existing    @{LIST}\n|     Should Be Equal    ${index}    ${-1}\n|\n| ***** Keywords *****\n| Find Index\n|    [Arguments]    ${element}    @{items}\n|    ${index} =    Set Variable    ${0}\n|    FOR    ${item}    IN    @{items}\n|        Run Keyword If    '${item}' == '${element}'    Return From Keyword    ${index}\n|        ${index} =    Set Variable    ${index + 1}\n|    END\n|    Return From Keyword    ${-1}\n\nThe most common use case, returning based on an expression, can be\naccomplished directly with `Return From Keyword If`. See also\n`Run Keyword And Return` and `Run Keyword And Return If`.",
       "shortdoc": "Returns from the enclosing user keyword.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2602
+      "lineno": 2631
     },
     {
       "name": "Return From Keyword If",
@@ -1102,6 +1192,7 @@
         {
           "name": "condition",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1110,17 +1201,18 @@
         {
           "name": "return_values",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*return_values"
         }
       ],
-      "doc": "Returns from the enclosing user keyword if ``condition`` is true.\n\nA wrapper for `Return From Keyword` to return based on the given\ncondition. The condition is evaluated using the same semantics as\nwith `Should Be True` keyword.\n\nGiven the same example as in `Return From Keyword`, we can rewrite the\n`Find Index` keyword as follows:\n\n| ***** Keywords *****\n| Find Index\n|    [Arguments]    ${element}    @{items}\n|    ${index} =    Set Variable    ${0}\n|    FOR    ${item}    IN    @{items}\n|        Return From Keyword If    '${item}' == '${element}'    ${index}\n|        ${index} =    Set Variable    ${index + 1}\n|    END\n|    Return From Keyword    ${-1}    # Also [Return] would work here.\n\nSee also `Run Keyword And Return` and `Run Keyword And Return If`.",
+      "doc": "Returns from the enclosing user keyword if ``condition`` is true.\n\n---\n\n*NOTE:* Robot Framework 5.0 added support for native ``RETURN`` statement\nand for inline ``IF``, and that combination should be used instead of this\nkeyword. For example, ``Return From Keyword`` usage in the example below\ncould be replaced with\n\n| IF    '${item}' == '${element}'    RETURN    ${index}\n\nThis keyword will eventually be deprecated and removed.\n\n---\n\nA wrapper for `Return From Keyword` to return based on the given\ncondition. The condition is evaluated using the same semantics as\nwith `Should Be True` keyword.\n\nGiven the same example as in `Return From Keyword`, we can rewrite the\n`Find Index` keyword as follows:\n\n| ***** Keywords *****\n| Find Index\n|    [Arguments]    ${element}    @{items}\n|    ${index} =    Set Variable    ${0}\n|    FOR    ${item}    IN    @{items}\n|        Return From Keyword If    '${item}' == '${element}'    ${index}\n|        ${index} =    Set Variable    ${index + 1}\n|    END\n|    Return From Keyword    ${-1}\n\nSee also `Run Keyword And Return` and `Run Keyword And Return If`.",
       "shortdoc": "Returns from the enclosing user keyword if ``condition`` is true.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2654
+      "lineno": 2696
     },
     {
       "name": "Run Keyword",
@@ -1128,6 +1220,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1136,6 +1229,7 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1146,7 +1240,7 @@
       "shortdoc": "Executes the given keyword with the given arguments.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1860
+      "lineno": 1834
     },
     {
       "name": "Run Keyword And Continue On Failure",
@@ -1154,6 +1248,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1162,6 +1257,7 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1172,7 +1268,7 @@
       "shortdoc": "Runs the keyword and continues execution even if a failure occurs.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2112
+      "lineno": 2077
     },
     {
       "name": "Run Keyword And Expect Error",
@@ -1180,6 +1276,7 @@
         {
           "name": "expected_error",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1188,6 +1285,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1196,17 +1294,18 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*args"
         }
       ],
-      "doc": "Runs the keyword and checks that the expected error occurred.\n\nThe keyword to execute and its arguments are specified using ``name``\nand ``*args`` exactly like with `Run Keyword`.\n\nThe expected error must be given in the same format as in Robot Framework\nreports. By default it is interpreted as a glob pattern with ``*``, ``?``\nand ``[chars]`` as wildcards, but that can be changed by using various\nprefixes explained in the table below. Prefixes are case-sensitive and\nthey must be separated from the actual message with a colon and an\noptional space like ``PREFIX: Message`` or ``PREFIX:Message``.\n\n| = Prefix = | = Explanation = |\n| ``EQUALS`` | Exact match. Especially useful if the error contains glob wildcards. |\n| ``STARTS`` | Error must start with the specified error. |\n| ``REGEXP`` | Regular expression match. |\n| ``GLOB``   | Same as the default behavior. |\n\nSee the `Pattern matching` section for more information about glob\npatterns and regular expressions.\n\nIf the expected error occurs, the error message is returned and it can\nbe further processed or tested if needed. If there is no error, or the\nerror does not match the expected error, this keyword fails.\n\nExamples:\n| Run Keyword And Expect Error | My error            | Keyword | arg |\n| Run Keyword And Expect Error | ValueError: *       | Some Keyword  |\n| Run Keyword And Expect Error | STARTS: ValueError: | Some Keyword  |\n| Run Keyword And Expect Error | EQUALS:No match for '//input[@type=\"text\"]' |\n| ...                          | Find Element | //input[@type=\"text\"] |\n| ${msg} =                     | Run Keyword And Expect Error | * |\n| ...                          | Keyword | arg1 | arg2 |\n| Log To Console | ${msg} |\n\nErrors caused by invalid syntax, timeouts, or fatal exceptions are not\ncaught by this keyword.",
+      "doc": "Runs the keyword and checks that the expected error occurred.\n\nThe keyword to execute and its arguments are specified using ``name``\nand ``*args`` exactly like with `Run Keyword`.\n\nThe expected error must be given in the same format as in Robot Framework\nreports. By default it is interpreted as a glob pattern with ``*``, ``?``\nand ``[chars]`` as wildcards, but that can be changed by using various\nprefixes explained in the table below. Prefixes are case-sensitive and\nthey must be separated from the actual message with a colon and an\noptional space like ``PREFIX: Message`` or ``PREFIX:Message``.\n\n| = Prefix = | = Explanation = |\n| ``EQUALS`` | Exact match. Especially useful if the error contains glob wildcards. |\n| ``STARTS`` | Error must start with the specified error. |\n| ``REGEXP`` | Regular expression match. |\n| ``GLOB``   | Same as the default behavior. |\n\nSee the `Pattern matching` section for more information about glob\npatterns and regular expressions.\n\nIf the expected error occurs, the error message is returned and it can\nbe further processed or tested if needed. If there is no error, or the\nerror does not match the expected error, this keyword fails.\n\nExamples:\n| Run Keyword And Expect Error | My error            | Keyword | arg |\n| Run Keyword And Expect Error | ValueError: *       | Some Keyword  |\n| Run Keyword And Expect Error | STARTS: ValueError: | Some Keyword  |\n| Run Keyword And Expect Error | EQUALS:No match for '//input[@type=\"text\"]' |\n| ...                          | Find Element | //input[@type=\"text\"] |\n| ${msg} =                     | Run Keyword And Expect Error | * |\n| ...                          | Keyword | arg1 | arg2 |\n| Log To Console | ${msg} |\n\nErrors caused by invalid syntax, timeouts, or fatal exceptions are not\ncaught by this keyword.\n\n*NOTE:* Regular expression matching used to require only the beginning\nof the error to match the given pattern. That was changed in Robot\nFramework 5.0 and nowadays the pattern must match the error fully.\nTo match only the beginning, add ``.*`` at the end of the pattern like\n``REGEXP: Start.*``.\n\n*NOTE:* Robot Framework 5.0 introduced native TRY/EXCEPT functionality\nthat is generally recommended for error handling. It supports same\npattern matching syntax as this keyword.",
       "shortdoc": "Runs the keyword and checks that the expected error occurred.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2132
+      "lineno": 2097
     },
     {
       "name": "Run Keyword And Ignore Error",
@@ -1214,6 +1313,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1222,17 +1322,18 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*args"
         }
       ],
-      "doc": "Runs the given keyword with the given arguments and ignores possible error.\n\nThis keyword returns two values, so that the first is either string\n``PASS`` or ``FAIL``, depending on the status of the executed keyword.\nThe second value is either the return value of the keyword or the\nreceived error message. See `Run Keyword And Return Status` If you are\nonly interested in the execution status.\n\nThe keyword name and arguments work as in `Run Keyword`. See\n`Run Keyword If` for a usage example.\n\nErrors caused by invalid syntax, timeouts, or fatal exceptions are not\ncaught by this keyword. Otherwise this keyword itself never fails.",
+      "doc": "Runs the given keyword with the given arguments and ignores possible error.\n\nThis keyword returns two values, so that the first is either string\n``PASS`` or ``FAIL``, depending on the status of the executed keyword.\nThe second value is either the return value of the keyword or the\nreceived error message. See `Run Keyword And Return Status` If you are\nonly interested in the execution status.\n\nThe keyword name and arguments work as in `Run Keyword`. See\n`Run Keyword If` for a usage example.\n\nErrors caused by invalid syntax, timeouts, or fatal exceptions are not\ncaught by this keyword. Otherwise this keyword itself never fails.\n\n*NOTE:* Robot Framework 5.0 introduced native TRY/EXCEPT functionality\nthat is generally recommended for error handling.",
       "shortdoc": "Runs the given keyword with the given arguments and ignores possible error.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2049
+      "lineno": 2011
     },
     {
       "name": "Run Keyword And Return",
@@ -1240,6 +1341,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1248,6 +1350,7 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1258,7 +1361,7 @@
       "shortdoc": "Runs the specified keyword and returns from the enclosing user keyword.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2680
+      "lineno": 2735
     },
     {
       "name": "Run Keyword And Return If",
@@ -1266,6 +1369,7 @@
         {
           "name": "condition",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1274,6 +1378,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1282,6 +1387,7 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1292,7 +1398,7 @@
       "shortdoc": "Runs the specified keyword and returns from the enclosing user keyword.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2706
+      "lineno": 2761
     },
     {
       "name": "Run Keyword And Return Status",
@@ -1300,6 +1406,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1308,6 +1415,7 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1318,7 +1426,7 @@
       "shortdoc": "Runs the given keyword with given arguments and returns the status as a Boolean value.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2091
+      "lineno": 2056
     },
     {
       "name": "Run Keyword And Warn On Failure",
@@ -1326,6 +1434,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1334,6 +1443,7 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1344,7 +1454,7 @@
       "shortdoc": "Runs the specified keyword logs a warning if the keyword fails.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2072
+      "lineno": 2037
     },
     {
       "name": "Run Keyword If",
@@ -1352,6 +1462,7 @@
         {
           "name": "condition",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1360,6 +1471,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1368,43 +1480,18 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*args"
         }
       ],
-      "doc": "Runs the given keyword with the given arguments, if ``condition`` is true.\n\n*NOTE:* Robot Framework 4.0 introduced built-in IF/ELSE support and using\nthat is generally recommended over using this keyword.\n\nThe given ``condition`` is evaluated in Python as explained in\n`Evaluating expressions`, and ``name`` and ``*args`` have same\nsemantics as with `Run Keyword`.\n\nExample, a simple if/else construct:\n| ${status} | ${value} = | `Run Keyword And Ignore Error` | `My Keyword` |\n| `Run Keyword If`     | '${status}' == 'PASS' | `Some Action`    | arg |\n| `Run Keyword Unless` | '${status}' == 'PASS' | `Another Action` |\n\nIn this example, only either `Some Action` or `Another Action` is\nexecuted, based on the status of `My Keyword`. Instead of `Run Keyword\nAnd Ignore Error` you can also use `Run Keyword And Return Status`.\n\nVariables used like ``${variable}``, as in the examples above, are\nreplaced in the expression before evaluation. Variables are also\navailable in the evaluation namespace and can be accessed using special\nsyntax ``$variable`` as explained in the `Evaluating expressions`\nsection.\n\nExample:\n| `Run Keyword If` | $result is None or $result == 'FAIL' | `Keyword` |\n\nThis keyword supports also optional ELSE and ELSE IF branches. Both\nof them are defined in ``*args`` and must use exactly format ``ELSE``\nor ``ELSE IF``, respectively. ELSE branches must contain first the\nname of the keyword to execute and then its possible arguments. ELSE\nIF branches must first contain a condition, like the first argument\nto this keyword, and then the keyword to execute and its possible\narguments. It is possible to have ELSE branch after ELSE IF and to\nhave multiple ELSE IF branches. Nested `Run Keyword If` usage is not\nsupported when using ELSE and/or ELSE IF branches.\n\nGiven previous example, if/else construct can also be created like this:\n| ${status} | ${value} = | `Run Keyword And Ignore Error` | `My Keyword` |\n| `Run Keyword If` | '${status}' == 'PASS' | `Some Action` | arg | ELSE | `Another Action` |\n\nThe return value of this keyword is the return value of the actually\nexecuted keyword or Python ``None`` if no keyword was executed (i.e.\nif ``condition`` was false). Hence, it is recommended to use ELSE\nand/or ELSE IF branches to conditionally assign return values from\nkeyword to variables (see `Set Variable If` if you need to set fixed\nvalues conditionally). This is illustrated by the example below:\n\n| ${var1} =   | `Run Keyword If` | ${rc} == 0     | `Some keyword returning a value` |\n| ...         | ELSE IF          | 0 < ${rc} < 42 | `Another keyword` |\n| ...         | ELSE IF          | ${rc} < 0      | `Another keyword with args` | ${rc} | arg2 |\n| ...         | ELSE             | `Final keyword to handle abnormal cases` | ${rc} |\n| ${var2} =   | `Run Keyword If` | ${condition}  | `Some keyword` |\n\nIn this example, ${var2} will be set to ``None`` if ${condition} is\nfalse.\n\nNotice that ``ELSE`` and ``ELSE IF`` control words must be used\nexplicitly and thus cannot come from variables. If you need to use\nliteral ``ELSE`` and ``ELSE IF`` strings as arguments, you can escape\nthem with a backslash like ``\\ELSE`` and ``\\ELSE IF``.\n\nPython's [http://docs.python.org/library/os.html|os] and\n[http://docs.python.org/library/sys.html|sys] modules are\nautomatically imported when evaluating the ``condition``.\nAttributes they contain can thus be used in the condition:\n\n| `Run Keyword If` | os.sep == '/' | `Unix Keyword`        |\n| ...              | ELSE IF       | sys.platform.startswith('java') | `Jython Keyword` |\n| ...              | ELSE          | `Windows Keyword`     |",
+      "doc": "Runs the given keyword with the given arguments, if ``condition`` is true.\n\n*NOTE:* Robot Framework 4.0 introduced built-in IF/ELSE support and using\nthat is generally recommended over using this keyword.\n\nThe given ``condition`` is evaluated in Python as explained in the\n`Evaluating expressions` section, and ``name`` and ``*args`` have same\nsemantics as with `Run Keyword`.\n\nExample, a simple if/else construct:\n| `Run Keyword If` | '${status}' == 'OK' | Some Action    | arg |\n| `Run Keyword If` | '${status}' != 'OK' | Another Action |\n\nIn this example, only either ``Some Action`` or ``Another Action`` is\nexecuted, based on the value of the ``${status}`` variable.\n\nVariables used like ``${variable}``, as in the examples above, are\nreplaced in the expression before evaluation. Variables are also\navailable in the evaluation namespace and can be accessed using special\n``$variable`` syntax as explained in the `Evaluating expressions` section.\n\nExample:\n| `Run Keyword If` | $result is None or $result == 'FAIL' | Keyword |\n\nThis keyword supports also optional ELSE and ELSE IF branches. Both\nof them are defined in ``*args`` and must use exactly format ``ELSE``\nor ``ELSE IF``, respectively. ELSE branches must contain first the\nname of the keyword to execute and then its possible arguments. ELSE\nIF branches must first contain a condition, like the first argument\nto this keyword, and then the keyword to execute and its possible\narguments. It is possible to have ELSE branch after ELSE IF and to\nhave multiple ELSE IF branches. Nested `Run Keyword If` usage is not\nsupported when using ELSE and/or ELSE IF branches.\n\nGiven previous example, if/else construct can also be created like this:\n| `Run Keyword If` | '${status}' == 'PASS' | Some Action | arg | ELSE | Another Action |\n\nThe return value of this keyword is the return value of the actually\nexecuted keyword or Python ``None`` if no keyword was executed (i.e.\nif ``condition`` was false). Hence, it is recommended to use ELSE\nand/or ELSE IF branches to conditionally assign return values from\nkeyword to variables (see `Set Variable If` you need to set fixed\nvalues conditionally). This is illustrated by the example below:\n\n| ${var1} =   | `Run Keyword If` | ${rc} == 0     | Some keyword returning a value |\n| ...         | ELSE IF          | 0 < ${rc} < 42 | Another keyword |\n| ...         | ELSE IF          | ${rc} < 0      | Another keyword with args | ${rc} | arg2 |\n| ...         | ELSE             | Final keyword to handle abnormal cases | ${rc} |\n| ${var2} =   | `Run Keyword If` | ${condition}  | Some keyword |\n\nIn this example, ${var2} will be set to ``None`` if ${condition} is\nfalse.\n\nNotice that ``ELSE`` and ``ELSE IF`` control words must be used\nexplicitly and thus cannot come from variables. If you need to use\nliteral ``ELSE`` and ``ELSE IF`` strings as arguments, you can escape\nthem with a backslash like ``\\ELSE`` and ``\\ELSE IF``.",
       "shortdoc": "Runs the given keyword with the given arguments, if ``condition`` is true.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1943
-    },
-    {
-      "name": "Run Keyword If All Critical Tests Passed",
-      "args": [
-        {
-          "name": "name",
-          "types": [],
-          "defaultValue": null,
-          "kind": "POSITIONAL_OR_NAMED",
-          "required": true,
-          "repr": "name"
-        },
-        {
-          "name": "args",
-          "types": [],
-          "defaultValue": null,
-          "kind": "VAR_POSITIONAL",
-          "required": false,
-          "repr": "*args"
-        }
-      ],
-      "doc": "*DEPRECATED.* Use `BuiltIn.Run Keyword If All Tests Passed` instead.",
-      "shortdoc": "*DEPRECATED.* Use `BuiltIn.Run Keyword If All Tests Passed` instead.",
-      "tags": [],
-      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2466
+      "lineno": 1917
     },
     {
       "name": "Run Keyword If All Tests Passed",
@@ -1412,6 +1499,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1420,6 +1508,7 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1430,33 +1519,7 @@
       "shortdoc": "Runs the given keyword with the given arguments, if all tests passed.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2476
-    },
-    {
-      "name": "Run Keyword If Any Critical Tests Failed",
-      "args": [
-        {
-          "name": "name",
-          "types": [],
-          "defaultValue": null,
-          "kind": "POSITIONAL_OR_NAMED",
-          "required": true,
-          "repr": "name"
-        },
-        {
-          "name": "args",
-          "types": [],
-          "defaultValue": null,
-          "kind": "VAR_POSITIONAL",
-          "required": false,
-          "repr": "*args"
-        }
-      ],
-      "doc": "*DEPRECATED.* Use `BuiltIn.Run Keyword If Any Tests Failed` instead.",
-      "shortdoc": "*DEPRECATED.* Use `BuiltIn.Run Keyword If Any Tests Failed` instead.",
-      "tags": [],
-      "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2471
+      "lineno": 2440
     },
     {
       "name": "Run Keyword If Any Tests Failed",
@@ -1464,6 +1527,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1472,6 +1536,7 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1482,7 +1547,7 @@
       "shortdoc": "Runs the given keyword with the given arguments, if one or more tests failed.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2490
+      "lineno": 2454
     },
     {
       "name": "Run Keyword If Test Failed",
@@ -1490,6 +1555,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1498,6 +1564,7 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1508,7 +1575,7 @@
       "shortdoc": "Runs the given keyword with the given arguments, if the test failed.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2417
+      "lineno": 2392
     },
     {
       "name": "Run Keyword If Test Passed",
@@ -1516,6 +1583,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1524,6 +1592,7 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1534,7 +1603,7 @@
       "shortdoc": "Runs the given keyword with the given arguments, if the test passed.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2431
+      "lineno": 2406
     },
     {
       "name": "Run Keyword If Timeout Occurred",
@@ -1542,6 +1611,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1550,6 +1620,7 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1560,7 +1631,7 @@
       "shortdoc": "Runs the given keyword if either a test or a keyword timeout has occurred.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2445
+      "lineno": 2420
     },
     {
       "name": "Run Keyword Unless",
@@ -1568,6 +1639,7 @@
         {
           "name": "condition",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1576,6 +1648,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1584,17 +1657,18 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*args"
         }
       ],
-      "doc": "Runs the given keyword with the given arguments if ``condition`` is false.\n\nSee `Run Keyword If` for more information and an example. Notice that\nthis keyword does not support ``ELSE`` or ``ELSE IF`` branches like\n`Run Keyword If` does, though.",
-      "shortdoc": "Runs the given keyword with the given arguments if ``condition`` is false.",
+      "doc": "*DEPRECATED since RF 5.0. Use Native IF/ELSE or `Run Keyword If` instead.*\n\nRuns the given keyword with the given arguments if ``condition`` is false.\n\nSee `Run Keyword If` for more information and an example. Notice that this\nkeyword does not support ELSE or ELSE IF branches like `Run Keyword If` does.",
+      "shortdoc": "*DEPRECATED since RF 5.0. Use Native IF/ELSE or `Run Keyword If` instead.*",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2038
+      "lineno": 1999
     },
     {
       "name": "Run Keywords",
@@ -1602,6 +1676,7 @@
         {
           "name": "keywords",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1612,7 +1687,7 @@
       "shortdoc": "Executes all the given keywords in a sequence.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1873
+      "lineno": 1847
     },
     {
       "name": "Set Global Variable",
@@ -1620,6 +1695,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1628,17 +1704,18 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*values"
         }
       ],
-      "doc": "Makes a variable available globally in all tests and suites.\n\nVariables set with this keyword are globally available in all\nsubsequent test suites, test cases and user keywords. Also variables\nin variable tables are overridden. Variables assigned locally based\non keyword return values or by using `Set Test Variable` and\n`Set Suite Variable` override these variables in that scope, but\nthe global value is not changed in those cases.\n\nIn practice setting variables with this keyword has the same effect\nas using command line options ``--variable`` and ``--variablefile``.\nBecause this keyword can change variables everywhere, it should be\nused with care.\n\nSee `Set Suite Variable` for more information and examples.",
+      "doc": "Makes a variable available globally in all tests and suites.\n\nVariables set with this keyword are globally available in all\nsubsequent test suites, test cases and user keywords. Also variables\ncreated Variables sections are overridden. Variables assigned locally\nbased on keyword return values or by using `Set Suite Variable`,\n`Set Test Variable` or `Set Local Variable` override these variables\nin that scope, but the global value is not changed in those cases.\n\nIn practice setting variables with this keyword has the same effect\nas using command line options ``--variable`` and ``--variablefile``.\nBecause this keyword can change variables everywhere, it should be\nused with care.\n\nSee `Set Suite Variable` for more information and usage examples. See\nalso the `Using variables with keywords creating or accessing variables`\nsection for information why it is recommended to give the variable name\nin escaped format like ``$name`` or ``\\${name}`` instead of the normal\n``${name}``.",
       "shortdoc": "Makes a variable available globally in all tests and suites.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1780
+      "lineno": 1750
     },
     {
       "name": "Set Library Search Order",
@@ -1646,6 +1723,7 @@
         {
           "name": "search_order",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1656,7 +1734,7 @@
       "shortdoc": "Sets the resolution order to use when a name matches multiple keywords.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3113
+      "lineno": 3183
     },
     {
       "name": "Set Local Variable",
@@ -1664,6 +1742,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1672,17 +1751,18 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*values"
         }
       ],
-      "doc": "Makes a variable available everywhere within the local scope.\n\nVariables set with this keyword are available within the\nlocal scope of the currently executed test case or in the local scope\nof the keyword in which they are defined. For example, if you set a\nvariable in a user keyword, it is available only in that keyword. Other\ntest cases or keywords will not see variables set with this keyword.\n\nThis keyword is equivalent to a normal variable assignment based on a\nkeyword return value.\n\nExample:\n| @{list} =          | Create List | item1     | item2     | item3     |\n\nis equivalent with\n\n| Set Local Variable | @{list} | item1    | item2    | item3    |\n\nThis keyword will provide the option of setting local variables inside keywords\nlike `Run Keyword If`, `Run Keyword And Return If`, `Run Keyword Unless`\nwhich until now was not possible by using `Set Variable`.\n\nIt will also be possible to use this keyword from external libraries\nthat want to set local variables.\n\nNew in Robot Framework 3.2.",
+      "doc": "Makes a variable available everywhere within the local scope.\n\nVariables set with this keyword are available within the\nlocal scope of the currently executed test case or in the local scope\nof the keyword in which they are defined. For example, if you set a\nvariable in a user keyword, it is available only in that keyword. Other\ntest cases or keywords will not see variables set with this keyword.\n\nThis keyword is equivalent to a normal variable assignment based on a\nkeyword return value. For example,\n\n| ${var} =    `Set Variable`    value\n| @{list} =    `Create List`    item1    item2    item3\n\nare equivalent with\n\n| `Set Local Variable`    @var    value\n| `Set Local Variable`    @list    item1    item2    item3\n\nThe main use case for this keyword is creating local variables in\nlibraries.\n\nSee `Set Suite Variable` for more information and usage examples. See\nalso the `Using variables with keywords creating or accessing variables`\nsection for information why it is recommended to give the variable name\nin escaped format like ``$name`` or ``\\${name}`` instead of the normal\n``${name}``.\n\nSee also `Set Global Variable` and `Set Test Variable`.",
       "shortdoc": "Makes a variable available everywhere within the local scope.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1654
+      "lineno": 1617
     },
     {
       "name": "Set Log Level",
@@ -1690,6 +1770,7 @@
         {
           "name": "level",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1700,7 +1781,7 @@
       "shortdoc": "Sets the log threshold to the specified level and returns the old level.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2996
+      "lineno": 3067
     },
     {
       "name": "Set Suite Documentation",
@@ -1708,6 +1789,7 @@
         {
           "name": "doc",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1716,6 +1798,7 @@
         {
           "name": "append",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1724,6 +1807,7 @@
         {
           "name": "top",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1734,7 +1818,7 @@
       "shortdoc": "Sets documentation for the current test suite.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3432
+      "lineno": 3502
     },
     {
       "name": "Set Suite Metadata",
@@ -1742,6 +1826,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1750,6 +1835,7 @@
         {
           "name": "value",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1758,6 +1844,7 @@
         {
           "name": "append",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1766,6 +1853,7 @@
         {
           "name": "top",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1776,7 +1864,7 @@
       "shortdoc": "Sets metadata for the current test suite.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3452
+      "lineno": 3522
     },
     {
       "name": "Set Suite Variable",
@@ -1784,6 +1872,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1792,17 +1881,18 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*values"
         }
       ],
-      "doc": "Makes a variable available everywhere within the scope of the current suite.\n\nVariables set with this keyword are available everywhere within the\nscope of the currently executed test suite. Setting variables with this\nkeyword thus has the same effect as creating them using the Variable\ntable in the test data file or importing them from variable files.\n\nPossible child test suites do not see variables set with this keyword\nby default, but that can be controlled by using ``children=<option>``\nas the last argument. If the specified ``<option>`` given a true value\n(see `Boolean arguments`), the variable is set also to the child\nsuites. Parent and sibling suites will never see variables set with\nthis keyword.\n\nThe name of the variable can be given either as a normal variable name\n(e.g. ``${NAME}``) or in escaped format as ``\\${NAME}`` or ``$NAME``.\nVariable value can be given using the same syntax as when variables\nare created in the Variable table.\n\nIf a variable already exists within the new scope, its value will be\noverwritten. Otherwise a new variable is created. If a variable already\nexists within the current scope, the value can be left empty and the\nvariable within the new scope gets the value within the current scope.\n\nExamples:\n| Set Suite Variable | ${SCALAR} | Hello, world! |\n| Set Suite Variable | ${SCALAR} | Hello, world! | children=true |\n| Set Suite Variable | @{LIST}   | First item    | Second item   |\n| Set Suite Variable | &{DICT}   | key=value     | foo=bar       |\n| ${ID} =            | Get ID    |\n| Set Suite Variable | ${ID}     |\n\nTo override an existing value with an empty value, use built-in\nvariables ``${EMPTY}``, ``@{EMPTY}`` or ``&{EMPTY}``:\n\n| Set Suite Variable | ${SCALAR} | ${EMPTY} |\n| Set Suite Variable | @{LIST}   | @{EMPTY} |\n| Set Suite Variable | &{DICT}   | &{EMPTY} |\n\n*NOTE:* If the variable has value which itself is a variable (escaped\nor not), you must always use the escaped format to set the variable:\n\nExample:\n| ${NAME} =          | Set Variable | \\${var} |\n| Set Suite Variable | ${NAME}      | value | # Sets variable ${var}  |\n| Set Suite Variable | \\${NAME}    | value | # Sets variable ${NAME} |\n\nThis limitation applies also to `Set Test Variable`, `Set Global\nVariable`, `Variable Should Exist`, `Variable Should Not Exist` and\n`Get Variable Value` keywords.",
+      "doc": "Makes a variable available everywhere within the scope of the current suite.\n\nVariables set with this keyword are available everywhere within the\nscope of the currently executed test suite. Setting variables with this\nkeyword thus has the same effect as creating them using the Variables\nsection in the data file or importing them from variable files.\n\nPossible child test suites do not see variables set with this keyword\nby default, but that can be controlled by using ``children=<option>``\nas the last argument. If the specified ``<option>`` is given a true value\n(see `Boolean arguments`), the variable is set also to the child\nsuites. Parent and sibling suites will never see variables set with\nthis keyword.\n\nThe name of the variable can be given either as a normal variable name\nlike ``${NAME}`` or in escaped format as ``\\${NAME}`` or ``$NAME``.\nFor the reasons explained in the `Using variables with keywords creating\nor accessing variables` section, *using the escaped format is highly\nrecommended*.\n\nVariable value can be specified using the same syntax as when variables\nare created in the Variables section. Same way as in that section,\nit is possible to create scalar values, lists and dictionaries.\nThe type is got from the variable name prefix ``$``, ``@`` and ``&``,\nrespectively.\n\nIf a variable already exists within the new scope, its value will be\noverwritten. If a variable already exists within the current scope,\nthe value can be left empty and the variable within the new scope gets\nthe value within the current scope.\n\nExamples:\n| Set Suite Variable    $SCALAR    Hello, world!\n| Set Suite Variable    $SCALAR    Hello, world!    children=True\n| Set Suite Variable    @LIST      First item       Second item\n| Set Suite Variable    &DICT      key=value        foo=bar\n| ${ID} =    Get ID\n| Set Suite Variable    $ID\n\nTo override an existing value with an empty value, use built-in\nvariables ``${EMPTY}``, ``@{EMPTY}`` or ``&{EMPTY}``:\n\n| Set Suite Variable    $SCALAR    ${EMPTY}\n| Set Suite Variable    @LIST      @{EMPTY}\n| Set Suite Variable    &DICT      &{EMPTY}\n\nSee also `Set Global Variable`, `Set Test Variable` and `Set Local Variable`.",
       "shortdoc": "Makes a variable available everywhere within the scope of the current suite.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1716
+      "lineno": 1689
     },
     {
       "name": "Set Tags",
@@ -1810,6 +1900,7 @@
         {
           "name": "tags",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1820,7 +1911,7 @@
       "shortdoc": "Adds given ``tags`` for the current test or all tests in a suite.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3475
+      "lineno": 3545
     },
     {
       "name": "Set Task Variable",
@@ -1828,6 +1919,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1836,6 +1928,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1846,7 +1939,7 @@
       "shortdoc": "Makes a variable available everywhere within the scope of the current task.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1707
+      "lineno": 1680
     },
     {
       "name": "Set Test Documentation",
@@ -1854,6 +1947,7 @@
         {
           "name": "doc",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1862,6 +1956,7 @@
         {
           "name": "append",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1872,7 +1967,7 @@
       "shortdoc": "Sets documentation for the current test case.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3413
+      "lineno": 3483
     },
     {
       "name": "Set Test Message",
@@ -1880,6 +1975,7 @@
         {
           "name": "message",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1888,6 +1984,7 @@
         {
           "name": "append",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1898,7 +1995,7 @@
       "shortdoc": "Sets message for the current test case.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3360
+      "lineno": 3430
     },
     {
       "name": "Set Test Variable",
@@ -1906,6 +2003,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1914,17 +2012,18 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*values"
         }
       ],
-      "doc": "Makes a variable available everywhere within the scope of the current test.\n\nVariables set with this keyword are available everywhere within the\nscope of the currently executed test case. For example, if you set a\nvariable in a user keyword, it is available both in the test case level\nand also in all other user keywords used in the current test. Other\ntest cases will not see variables set with this keyword.\nIt is an error to call `Set Test Variable` outside the\nscope of a test (e.g. in a Suite Setup or Teardown).\n\nSee `Set Suite Variable` for more information and examples.",
+      "doc": "Makes a variable available everywhere within the scope of the current test.\n\nVariables set with this keyword are available everywhere within the\nscope of the currently executed test case. For example, if you set a\nvariable in a user keyword, it is available both in the test case level\nand also in all other user keywords used in the current test. Other\ntest cases will not see variables set with this keyword.\nIt is an error to call `Set Test Variable` outside the\nscope of a test (e.g. in a Suite Setup or Teardown).\n\nSee `Set Suite Variable` for more information and usage examples. See\nalso the `Using variables with keywords creating or accessing variables`\nsection for information why it is recommended to give the variable name\nin escaped format like ``$name`` or ``\\${name}`` instead of the normal\n``${name}``.\n\nWhen creating automated tasks, not tests, it is possible to use `Set\nTask Variable`. See also `Set Global Variable` and `Set Local Variable`.",
       "shortdoc": "Makes a variable available everywhere within the scope of the current test.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1688
+      "lineno": 1654
     },
     {
       "name": "Set Variable",
@@ -1932,6 +2031,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1942,7 +2042,7 @@
       "shortdoc": "Returns the given values which can then be assigned to a variables.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1626
+      "lineno": 1589
     },
     {
       "name": "Set Variable If",
@@ -1950,6 +2050,7 @@
         {
           "name": "condition",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1958,6 +2059,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1968,7 +2070,7 @@
       "shortdoc": "Sets variable based on the given condition.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2359
+      "lineno": 2334
     },
     {
       "name": "Should Be Empty",
@@ -1976,6 +2078,7 @@
         {
           "name": "item",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1984,6 +2087,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1994,7 +2098,7 @@
       "shortdoc": "Verifies that the given item is empty.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1460
+      "lineno": 1422
     },
     {
       "name": "Should Be Equal",
@@ -2002,6 +2106,7 @@
         {
           "name": "first",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2010,6 +2115,7 @@
         {
           "name": "second",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2018,6 +2124,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2026,6 +2133,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2034,6 +2142,7 @@
         {
           "name": "ignore_case",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2042,6 +2151,7 @@
         {
           "name": "formatter",
           "types": [],
+          "typedocs": {},
           "defaultValue": "str",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2050,6 +2160,7 @@
         {
           "name": "strip_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2058,6 +2169,7 @@
         {
           "name": "collapse_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2068,7 +2180,7 @@
       "shortdoc": "Fails if the given objects are unequal.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 599
+      "lineno": 561
     },
     {
       "name": "Should Be Equal As Integers",
@@ -2076,6 +2188,7 @@
         {
           "name": "first",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2084,6 +2197,7 @@
         {
           "name": "second",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2092,6 +2206,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2100,6 +2215,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2108,6 +2224,7 @@
         {
           "name": "base",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2118,7 +2235,7 @@
       "shortdoc": "Fails if objects are unequal after converting them to integers.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 756
+      "lineno": 718
     },
     {
       "name": "Should Be Equal As Numbers",
@@ -2126,6 +2243,7 @@
         {
           "name": "first",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2134,6 +2252,7 @@
         {
           "name": "second",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2142,6 +2261,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2150,6 +2270,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2158,6 +2279,7 @@
         {
           "name": "precision",
           "types": [],
+          "typedocs": {},
           "defaultValue": "6",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2168,7 +2290,7 @@
       "shortdoc": "Fails if objects are unequal after converting them to real numbers.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 793
+      "lineno": 755
     },
     {
       "name": "Should Be Equal As Strings",
@@ -2176,6 +2298,7 @@
         {
           "name": "first",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2184,6 +2307,7 @@
         {
           "name": "second",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2192,6 +2316,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2200,6 +2325,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2208,6 +2334,7 @@
         {
           "name": "ignore_case",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2216,6 +2343,7 @@
         {
           "name": "strip_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2224,6 +2352,7 @@
         {
           "name": "formatter",
           "types": [],
+          "typedocs": {},
           "defaultValue": "str",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2232,6 +2361,7 @@
         {
           "name": "collapse_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2242,7 +2372,7 @@
       "shortdoc": "Fails if objects are unequal after converting them to strings.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 872
+      "lineno": 834
     },
     {
       "name": "Should Be True",
@@ -2250,6 +2380,7 @@
         {
           "name": "condition",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2258,17 +2389,18 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "msg=None"
         }
       ],
-      "doc": "Fails if the given condition is not true.\n\nIf ``condition`` is a string (e.g. ``${rc} < 10``), it is evaluated as\na Python expression as explained in `Evaluating expressions` and the\nkeyword status is decided based on the result. If a non-string item is\ngiven, the status is got directly from its\n[http://docs.python.org/library/stdtypes.html#truth|truth value].\n\nThe default error message (``<condition> should be true``) is not very\ninformative, but it can be overridden with the ``msg`` argument.\n\nExamples:\n| Should Be True | ${rc} < 10            |\n| Should Be True | '${status}' == 'PASS' | # Strings must be quoted |\n| Should Be True | ${number}   | # Passes if ${number} is not zero |\n| Should Be True | ${list}     | # Passes if ${list} is not empty  |\n\nVariables used like ``${variable}``, as in the examples above, are\nreplaced in the expression before evaluation. Variables are also\navailable in the evaluation namespace, and can be accessed using\nspecial ``$variable`` syntax as explained in the `Evaluating\nexpressions` section.\n\nExamples:\n| Should Be True | $rc < 10          |\n| Should Be True | $status == 'PASS' | # Expected string must be quoted |\n\n`Should Be True` automatically imports Python's\n[http://docs.python.org/library/os.html|os] and\n[http://docs.python.org/library/sys.html|sys] modules that contain\nseveral useful attributes:\n\n| Should Be True | os.linesep == '\\n'             | # Unixy   |\n| Should Be True | os.linesep == '\\r\\n'          | # Windows |\n| Should Be True | sys.platform == 'darwin'        | # OS X    |\n| Should Be True | sys.platform.startswith('java') | # Jython  |",
+      "doc": "Fails if the given condition is not true.\n\nIf ``condition`` is a string (e.g. ``${rc} < 10``), it is evaluated as\na Python expression as explained in `Evaluating expressions` and the\nkeyword status is decided based on the result. If a non-string item is\ngiven, the status is got directly from its\n[http://docs.python.org/library/stdtypes.html#truth|truth value].\n\nThe default error message (``<condition> should be true``) is not very\ninformative, but it can be overridden with the ``msg`` argument.\n\nExamples:\n| Should Be True | ${rc} < 10            |\n| Should Be True | '${status}' == 'PASS' | # Strings must be quoted |\n| Should Be True | ${number}   | # Passes if ${number} is not zero |\n| Should Be True | ${list}     | # Passes if ${list} is not empty  |\n\nVariables used like ``${variable}``, as in the examples above, are\nreplaced in the expression before evaluation. Variables are also\navailable in the evaluation namespace, and can be accessed using\nspecial ``$variable`` syntax as explained in the `Evaluating\nexpressions` section.\n\nExamples:\n| Should Be True | $rc < 10          |\n| Should Be True | $status == 'PASS' | # Expected string must be quoted |",
       "shortdoc": "Fails if the given condition is not true.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 558
+      "lineno": 530
     },
     {
       "name": "Should Contain",
@@ -2276,6 +2408,7 @@
         {
           "name": "container",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2284,6 +2417,7 @@
         {
           "name": "item",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2292,6 +2426,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2300,6 +2435,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2308,6 +2444,7 @@
         {
           "name": "ignore_case",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2316,6 +2453,7 @@
         {
           "name": "strip_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2324,6 +2462,7 @@
         {
           "name": "collapse_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2334,7 +2473,7 @@
       "shortdoc": "Fails if ``container`` does not contain ``item`` one or more times.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1056
+      "lineno": 1018
     },
     {
       "name": "Should Contain Any",
@@ -2342,6 +2481,7 @@
         {
           "name": "container",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2350,6 +2490,7 @@
         {
           "name": "items",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -2358,6 +2499,7 @@
         {
           "name": "configuration",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
@@ -2368,7 +2510,7 @@
       "shortdoc": "Fails if ``container`` does not contain any of the ``*items``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1112
+      "lineno": 1074
     },
     {
       "name": "Should Contain X Times",
@@ -2376,6 +2518,7 @@
         {
           "name": "container",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2384,6 +2527,7 @@
         {
           "name": "item",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2392,6 +2536,7 @@
         {
           "name": "count",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2400,6 +2545,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2408,6 +2554,7 @@
         {
           "name": "ignore_case",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2416,6 +2563,7 @@
         {
           "name": "strip_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2424,6 +2572,7 @@
         {
           "name": "collapse_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2434,7 +2583,7 @@
       "shortdoc": "Fails if ``container`` does not contain ``item`` ``count`` times.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1229
+      "lineno": 1191
     },
     {
       "name": "Should End With",
@@ -2442,6 +2591,7 @@
         {
           "name": "str1",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2450,6 +2600,7 @@
         {
           "name": "str2",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2458,6 +2609,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2466,6 +2618,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2474,6 +2627,7 @@
         {
           "name": "ignore_case",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2482,6 +2636,7 @@
         {
           "name": "strip_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2490,6 +2645,7 @@
         {
           "name": "collapse_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2500,7 +2656,7 @@
       "shortdoc": "Fails if the string ``str1`` does not end with the string ``str2``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 978
+      "lineno": 940
     },
     {
       "name": "Should Match",
@@ -2508,6 +2664,7 @@
         {
           "name": "string",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2516,6 +2673,7 @@
         {
           "name": "pattern",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2524,6 +2682,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2532,6 +2691,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2540,6 +2700,7 @@
         {
           "name": "ignore_case",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2550,7 +2711,7 @@
       "shortdoc": "Fails if the given ``string`` does not match the given ``pattern``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1325
+      "lineno": 1287
     },
     {
       "name": "Should Match Regexp",
@@ -2558,6 +2719,7 @@
         {
           "name": "string",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2566,6 +2728,7 @@
         {
           "name": "pattern",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2574,6 +2737,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2582,6 +2746,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2592,7 +2757,7 @@
       "shortdoc": "Fails if ``string`` does not match ``pattern`` as a regular expression.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1344
+      "lineno": 1306
     },
     {
       "name": "Should Not Be Empty",
@@ -2600,6 +2765,7 @@
         {
           "name": "item",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2608,6 +2774,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2618,7 +2785,7 @@
       "shortdoc": "Verifies that the given item is not empty.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1469
+      "lineno": 1431
     },
     {
       "name": "Should Not Be Equal",
@@ -2626,6 +2793,7 @@
         {
           "name": "first",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2634,6 +2802,7 @@
         {
           "name": "second",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2642,6 +2811,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2650,6 +2820,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2658,6 +2829,7 @@
         {
           "name": "ignore_case",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2666,6 +2838,7 @@
         {
           "name": "strip_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2674,6 +2847,7 @@
         {
           "name": "collapse_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2684,7 +2858,7 @@
       "shortdoc": "Fails if the given objects are equal.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 699
+      "lineno": 661
     },
     {
       "name": "Should Not Be Equal As Integers",
@@ -2692,6 +2866,7 @@
         {
           "name": "first",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2700,6 +2875,7 @@
         {
           "name": "second",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2708,6 +2884,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2716,6 +2893,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2724,6 +2902,7 @@
         {
           "name": "base",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2734,7 +2913,7 @@
       "shortdoc": "Fails if objects are equal after converting them to integers.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 739
+      "lineno": 701
     },
     {
       "name": "Should Not Be Equal As Numbers",
@@ -2742,6 +2921,7 @@
         {
           "name": "first",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2750,6 +2930,7 @@
         {
           "name": "second",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2758,6 +2939,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2766,6 +2948,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2774,6 +2957,7 @@
         {
           "name": "precision",
           "types": [],
+          "typedocs": {},
           "defaultValue": "6",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2784,7 +2968,7 @@
       "shortdoc": "Fails if objects are equal after converting them to real numbers.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 776
+      "lineno": 738
     },
     {
       "name": "Should Not Be Equal As Strings",
@@ -2792,6 +2976,7 @@
         {
           "name": "first",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2800,6 +2985,7 @@
         {
           "name": "second",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2808,6 +2994,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2816,6 +3003,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2824,6 +3012,7 @@
         {
           "name": "ignore_case",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2832,6 +3021,7 @@
         {
           "name": "strip_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2840,6 +3030,7 @@
         {
           "name": "collapse_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2850,7 +3041,7 @@
       "shortdoc": "Fails if objects are equal after converting them to strings.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 831
+      "lineno": 793
     },
     {
       "name": "Should Not Be True",
@@ -2858,6 +3049,7 @@
         {
           "name": "condition",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2866,6 +3058,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2876,7 +3069,7 @@
       "shortdoc": "Fails if the given condition is true.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 549
+      "lineno": 521
     },
     {
       "name": "Should Not Contain",
@@ -2884,6 +3077,7 @@
         {
           "name": "container",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2892,6 +3086,7 @@
         {
           "name": "item",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2900,6 +3095,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2908,6 +3104,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2916,6 +3113,7 @@
         {
           "name": "ignore_case",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2924,6 +3122,7 @@
         {
           "name": "strip_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2932,6 +3131,7 @@
         {
           "name": "collapse_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -2942,7 +3142,7 @@
       "shortdoc": "Fails if ``container`` contains ``item`` one or more times.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 999
+      "lineno": 961
     },
     {
       "name": "Should Not Contain Any",
@@ -2950,6 +3150,7 @@
         {
           "name": "container",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2958,6 +3159,7 @@
         {
           "name": "items",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -2966,6 +3168,7 @@
         {
           "name": "configuration",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
@@ -2976,7 +3179,7 @@
       "shortdoc": "Fails if ``container`` contains one or more of the ``*items``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1171
+      "lineno": 1133
     },
     {
       "name": "Should Not End With",
@@ -2984,6 +3187,7 @@
         {
           "name": "str1",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -2992,6 +3196,7 @@
         {
           "name": "str2",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -3000,6 +3205,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3008,6 +3214,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3016,6 +3223,7 @@
         {
           "name": "ignore_case",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3024,6 +3232,7 @@
         {
           "name": "strip_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3032,6 +3241,7 @@
         {
           "name": "collapse_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3042,7 +3252,7 @@
       "shortdoc": "Fails if the string ``str1`` ends with the string ``str2``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 956
+      "lineno": 918
     },
     {
       "name": "Should Not Match",
@@ -3050,6 +3260,7 @@
         {
           "name": "string",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -3058,6 +3269,7 @@
         {
           "name": "pattern",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -3066,6 +3278,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3074,6 +3287,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3082,6 +3296,7 @@
         {
           "name": "ignore_case",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3092,7 +3307,7 @@
       "shortdoc": "Fails if the given ``string`` matches the given ``pattern``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1307
+      "lineno": 1269
     },
     {
       "name": "Should Not Match Regexp",
@@ -3100,6 +3315,7 @@
         {
           "name": "string",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -3108,6 +3324,7 @@
         {
           "name": "pattern",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -3116,6 +3333,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3124,6 +3342,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3134,7 +3353,7 @@
       "shortdoc": "Fails if ``string`` matches ``pattern`` as a regular expression.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1391
+      "lineno": 1353
     },
     {
       "name": "Should Not Start With",
@@ -3142,6 +3361,7 @@
         {
           "name": "str1",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -3150,6 +3370,7 @@
         {
           "name": "str2",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -3158,6 +3379,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3166,6 +3388,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3174,6 +3397,7 @@
         {
           "name": "ignore_case",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3182,6 +3406,7 @@
         {
           "name": "strip_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3190,6 +3415,7 @@
         {
           "name": "collapse_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3200,7 +3426,7 @@
       "shortdoc": "Fails if the string ``str1`` starts with the string ``str2``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 913
+      "lineno": 875
     },
     {
       "name": "Should Start With",
@@ -3208,6 +3434,7 @@
         {
           "name": "str1",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -3216,6 +3443,7 @@
         {
           "name": "str2",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -3224,6 +3452,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3232,6 +3461,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3240,6 +3470,7 @@
         {
           "name": "ignore_case",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3248,6 +3479,7 @@
         {
           "name": "strip_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3256,6 +3488,7 @@
         {
           "name": "collapse_spaces",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3266,7 +3499,7 @@
       "shortdoc": "Fails if the string ``str1`` does not start with the string ``str2``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 935
+      "lineno": 897
     },
     {
       "name": "Skip",
@@ -3274,6 +3507,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "Skipped with Skip keyword.",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3284,7 +3518,7 @@
       "shortdoc": "Skips the rest of the current test.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2512
+      "lineno": 2476
     },
     {
       "name": "Skip If",
@@ -3292,6 +3526,7 @@
         {
           "name": "condition",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -3300,6 +3535,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3310,7 +3546,7 @@
       "shortdoc": "Skips the rest of the current test if the ``condition`` is True.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2520
+      "lineno": 2484
     },
     {
       "name": "Sleep",
@@ -3318,6 +3554,7 @@
         {
           "name": "time_",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -3326,6 +3563,7 @@
         {
           "name": "reason",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -3336,7 +3574,7 @@
       "shortdoc": "Pauses the test executed for the given time.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2801
+      "lineno": 2856
     },
     {
       "name": "Variable Should Exist",
@@ -3344,6 +3582,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -3352,17 +3591,18 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "msg=None"
         }
       ],
-      "doc": "Fails unless the given variable exists within the current scope.\n\nThe name of the variable can be given either as a normal variable name\n(e.g. ``${NAME}``) or in escaped format (e.g. ``\\${NAME}``). Notice\nthat the former has some limitations explained in `Set Suite Variable`.\n\nThe default error message can be overridden with the ``msg`` argument.\n\nSee also `Variable Should Not Exist` and `Keyword Should Exist`.",
+      "doc": "Fails unless the given variable exists within the current scope.\n\nThe name of the variable can be given either as a normal variable name\nlike ``${name}`` or in escaped format like ``$name`` or ``\\${name}``.\nFor the reasons explained in the `Using variables with keywords creating\nor accessing variables` section, using the escaped format is recommended.\n\nThe default error message can be overridden with the ``msg`` argument.\n\nSee also `Variable Should Not Exist` and `Keyword Should Exist`.",
       "shortdoc": "Fails unless the given variable exists within the current scope.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1568
+      "lineno": 1529
     },
     {
       "name": "Variable Should Not Exist",
@@ -3370,6 +3610,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -3378,17 +3619,18 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "msg=None"
         }
       ],
-      "doc": "Fails if the given variable exists within the current scope.\n\nThe name of the variable can be given either as a normal variable name\n(e.g. ``${NAME}``) or in escaped format (e.g. ``\\${NAME}``). Notice\nthat the former has some limitations explained in `Set Suite Variable`.\n\nThe default error message can be overridden with the ``msg`` argument.\n\nSee also `Variable Should Exist` and `Keyword Should Exist`.",
+      "doc": "Fails if the given variable exists within the current scope.\n\nThe name of the variable can be given either as a normal variable name\nlike ``${name}`` or in escaped format like ``$name`` or ``\\${name}``.\nFor the reasons explained in the `Using variables with keywords creating\nor accessing variables` section, using the escaped format is recommended.\n\nThe default error message can be overridden with the ``msg`` argument.\n\nSee also `Variable Should Exist` and `Keyword Should Exist`.",
       "shortdoc": "Fails if the given variable exists within the current scope.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1587
+      "lineno": 1549
     },
     {
       "name": "Wait Until Keyword Succeeds",
@@ -3396,6 +3638,7 @@
         {
           "name": "retry",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -3404,6 +3647,7 @@
         {
           "name": "retry_interval",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -3412,6 +3656,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -3420,6 +3665,7 @@
         {
           "name": "args",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -3430,11 +3676,12 @@
       "shortdoc": "Runs the specified keyword and retries if it fails.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2277
+      "lineno": 2252
     }
   ],
   "dataTypes": {
     "enums": [],
     "typedDicts": []
-  }
+  },
+  "typedocs": []
 }

@@ -1,13 +1,13 @@
 {
   "name": "Collections",
-  "doc": "A test library providing keywords for handling lists and dictionaries.\n\n``Collections`` is Robot Framework's standard library that provides a\nset of keywords for handling Python lists and dictionaries. This\nlibrary has keywords, for example, for modifying and getting\nvalues from lists and dictionaries (e.g. `Append To List`, `Get\nFrom Dictionary`) and for verifying their contents (e.g. `Lists\nShould Be Equal`, `Dictionary Should Contain Value`).\n\n== Table of contents ==\n\n- `Related keywords in BuiltIn`\n- `Using with list-like and dictionary-like objects`\n- `Boolean arguments`\n- `Data in examples`\n- `Keywords`\n\n= Related keywords in BuiltIn =\n\nFollowing keywords in the BuiltIn library can also be used with\nlists and dictionaries:\n\n| = Keyword Name =             | = Applicable With = |\n| `Create List`                | lists |\n| `Create Dictionary`          | dicts |\n| `Get Length`                 | both  |\n| `Length Should Be`           | both  |\n| `Should Be Empty`            | both  |\n| `Should Not Be Empty`        | both  |\n| `Should Contain`             | both  |\n| `Should Not Contain`         | both  |\n| `Should Contain X Times`     | lists |\n| `Should Not Contain X Times` | lists |\n| `Get Count`                  | lists |\n\n= Using with list-like and dictionary-like objects =\n\nList keywords that do not alter the given list can also be used\nwith tuples, and to some extend also with other iterables.\n`Convert To List` can be used to convert tuples and other iterables\nto Python ``list`` objects.\n\nSimilarly dictionary keywords can, for most parts, be used with other\nmappings. `Convert To Dictionary` can be used if real Python ``dict``\nobjects are needed.\n\n= Boolean arguments =\n\nSome keywords accept arguments that are handled as Boolean values true or\nfalse. If such an argument is given as a string, it is considered false if\nit is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or\n``0``, case-insensitively. Keywords verifying something that allow dropping\nactual and expected values from the possible error message also consider\nstring ``no values`` to be false. Other strings are considered true\nregardless their value, and other argument types are tested using the same\n[http://docs.python.org/library/stdtypes.html#truth|rules as in Python].\n\nTrue examples:\n| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=True    | # Strings are generally true.    |\n| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=yes     | # Same as the above.             |\n| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${TRUE} | # Python ``True`` is true.       |\n| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${42}   | # Numbers other than 0 are true. |\n\nFalse examples:\n| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=False    | # String ``false`` is false.   |\n| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=no       | # Also string ``no`` is false. |\n| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${EMPTY} | # Empty string is false.       |\n| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${FALSE} | # Python ``False`` is false.   |\n| `Lists Should Be Equal` | ${x}   | ${y} | Custom error | values=no values | # ``no values`` works with ``values`` argument |\n\nConsidering ``OFF`` and ``0`` false is new in Robot Framework 3.1.\n\n= Data in examples =\n\nList related keywords use variables in format ``${Lx}`` in their examples.\nThey mean lists with as many alphabetic characters as specified by ``x``.\nFor example, ``${L1}`` means ``['a']`` and ``${L3}`` means\n``['a', 'b', 'c']``.\n\nDictionary keywords use similar ``${Dx}`` variables. For example, ``${D1}``\nmeans ``{'a': 1}`` and ``${D3}`` means ``{'a': 1, 'b': 2, 'c': 3}``.",
-  "version": "4.1.3",
-  "generated": "2021-12-20 22:45:34",
+  "doc": "A library providing keywords for handling lists and dictionaries.\n\n``Collections`` is Robot Framework's standard library that provides a\nset of keywords for handling Python lists and dictionaries. This\nlibrary has keywords, for example, for modifying and getting\nvalues from lists and dictionaries (e.g. `Append To List`, `Get\nFrom Dictionary`) and for verifying their contents (e.g. `Lists\nShould Be Equal`, `Dictionary Should Contain Value`).\n\n== Table of contents ==\n\n- `Related keywords in BuiltIn`\n- `Using with list-like and dictionary-like objects`\n- `Boolean arguments`\n- `Data in examples`\n- `Keywords`\n\n= Related keywords in BuiltIn =\n\nFollowing keywords in the BuiltIn library can also be used with\nlists and dictionaries:\n\n| = Keyword Name =             | = Applicable With = |\n| `Create List`                | lists |\n| `Create Dictionary`          | dicts |\n| `Get Length`                 | both  |\n| `Length Should Be`           | both  |\n| `Should Be Empty`            | both  |\n| `Should Not Be Empty`        | both  |\n| `Should Contain`             | both  |\n| `Should Not Contain`         | both  |\n| `Should Contain X Times`     | lists |\n| `Should Not Contain X Times` | lists |\n| `Get Count`                  | lists |\n\n= Using with list-like and dictionary-like objects =\n\nList keywords that do not alter the given list can also be used\nwith tuples, and to some extend also with other iterables.\n`Convert To List` can be used to convert tuples and other iterables\nto Python ``list`` objects.\n\nSimilarly dictionary keywords can, for most parts, be used with other\nmappings. `Convert To Dictionary` can be used if real Python ``dict``\nobjects are needed.\n\n= Boolean arguments =\n\nSome keywords accept arguments that are handled as Boolean values true or\nfalse. If such an argument is given as a string, it is considered false if\nit is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or\n``0``, case-insensitively. Keywords verifying something that allow dropping\nactual and expected values from the possible error message also consider\nstring ``no values`` to be false. Other strings are considered true\nregardless their value, and other argument types are tested using the same\n[http://docs.python.org/library/stdtypes.html#truth|rules as in Python].\n\nTrue examples:\n| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=True    | # Strings are generally true.    |\n| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=yes     | # Same as the above.             |\n| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${TRUE} | # Python ``True`` is true.       |\n| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${42}   | # Numbers other than 0 are true. |\n\nFalse examples:\n| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=False    | # String ``false`` is false.   |\n| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=no       | # Also string ``no`` is false. |\n| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${EMPTY} | # Empty string is false.       |\n| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${FALSE} | # Python ``False`` is false.   |\n| `Lists Should Be Equal` | ${x}   | ${y} | Custom error | values=no values | # ``no values`` works with ``values`` argument |\n\nConsidering ``OFF`` and ``0`` false is new in Robot Framework 3.1.\n\n= Data in examples =\n\nList related keywords use variables in format ``${Lx}`` in their examples.\nThey mean lists with as many alphabetic characters as specified by ``x``.\nFor example, ``${L1}`` means ``['a']`` and ``${L3}`` means\n``['a', 'b', 'c']``.\n\nDictionary keywords use similar ``${Dx}`` variables. For example, ``${D1}``\nmeans ``{'a': 1}`` and ``${D3}`` means ``{'a': 1, 'b': 2, 'c': 3}``.",
+  "version": "5.0",
+  "generated": "2022-03-23 17:15:24",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
   "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-  "lineno": 826,
+  "lineno": 828,
   "tags": [],
   "inits": [],
   "keywords": [
@@ -17,6 +17,7 @@
         {
           "name": "list_",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -25,6 +26,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -35,7 +37,7 @@
       "shortdoc": "Adds ``values`` to the end of ``list``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 41
+      "lineno": 43
     },
     {
       "name": "Combine Lists",
@@ -43,6 +45,7 @@
         {
           "name": "lists",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -53,7 +56,7 @@
       "shortdoc": "Combines the given ``lists`` together and returns the result.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 79
+      "lineno": 81
     },
     {
       "name": "Convert To Dictionary",
@@ -61,6 +64,7 @@
         {
           "name": "item",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -71,7 +75,7 @@
       "shortdoc": "Converts the given ``item`` to a Python ``dict`` type.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 480
+      "lineno": 482
     },
     {
       "name": "Convert To List",
@@ -79,6 +83,7 @@
         {
           "name": "item",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -89,7 +94,7 @@
       "shortdoc": "Converts the given ``item`` to a Python ``list`` type.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 33
+      "lineno": 35
     },
     {
       "name": "Copy Dictionary",
@@ -97,6 +102,7 @@
         {
           "name": "dictionary",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -105,6 +111,7 @@
         {
           "name": "deepcopy",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -115,7 +122,7 @@
       "shortdoc": "Returns a copy of the given dictionary.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 571
+      "lineno": 573
     },
     {
       "name": "Copy List",
@@ -123,6 +130,7 @@
         {
           "name": "list_",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -131,6 +139,7 @@
         {
           "name": "deepcopy",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -141,7 +150,7 @@
       "shortdoc": "Returns a copy of the given list.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 266
+      "lineno": 268
     },
     {
       "name": "Count Values In List",
@@ -149,6 +158,7 @@
         {
           "name": "list_",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -157,6 +167,7 @@
         {
           "name": "value",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -165,6 +176,7 @@
         {
           "name": "start",
           "types": [],
+          "typedocs": {},
           "defaultValue": "0",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -173,6 +185,7 @@
         {
           "name": "end",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -183,7 +196,7 @@
       "shortdoc": "Returns the number of occurrences of the given ``value`` in ``list``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 227
+      "lineno": 229
     },
     {
       "name": "Dictionaries Should Be Equal",
@@ -191,6 +204,7 @@
         {
           "name": "dict1",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -199,6 +213,7 @@
         {
           "name": "dict2",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -207,6 +222,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -215,6 +231,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -225,7 +242,7 @@
       "shortdoc": "Fails if the given dictionaries are not equal.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 740
+      "lineno": 742
     },
     {
       "name": "Dictionary Should Contain Item",
@@ -233,6 +250,7 @@
         {
           "name": "dictionary",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -241,6 +259,7 @@
         {
           "name": "key",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -249,6 +268,7 @@
         {
           "name": "value",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -257,6 +277,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -267,7 +288,7 @@
       "shortdoc": "An item of ``key`` / ``value`` must be found in a ``dictionary``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 709
+      "lineno": 711
     },
     {
       "name": "Dictionary Should Contain Key",
@@ -275,6 +296,7 @@
         {
           "name": "dictionary",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -283,6 +305,7 @@
         {
           "name": "key",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -291,6 +314,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -301,7 +325,7 @@
       "shortdoc": "Fails if ``key`` is not found from ``dictionary``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 691
+      "lineno": 693
     },
     {
       "name": "Dictionary Should Contain Sub Dictionary",
@@ -309,6 +333,7 @@
         {
           "name": "dict1",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -317,6 +342,7 @@
         {
           "name": "dict2",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -325,6 +351,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -333,6 +360,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -343,7 +371,7 @@
       "shortdoc": "Fails unless all items in ``dict2`` are found from ``dict1``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 756
+      "lineno": 758
     },
     {
       "name": "Dictionary Should Contain Value",
@@ -351,6 +379,7 @@
         {
           "name": "dictionary",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -359,6 +388,7 @@
         {
           "name": "value",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -367,6 +397,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -377,7 +408,7 @@
       "shortdoc": "Fails if ``value`` is not found from ``dictionary``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 722
+      "lineno": 724
     },
     {
       "name": "Dictionary Should Not Contain Key",
@@ -385,6 +416,7 @@
         {
           "name": "dictionary",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -393,6 +425,7 @@
         {
           "name": "key",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -401,6 +434,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -411,7 +445,7 @@
       "shortdoc": "Fails if ``key`` is found from ``dictionary``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 700
+      "lineno": 702
     },
     {
       "name": "Dictionary Should Not Contain Value",
@@ -419,6 +453,7 @@
         {
           "name": "dictionary",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -427,6 +462,7 @@
         {
           "name": "value",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -435,6 +471,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -445,7 +482,7 @@
       "shortdoc": "Fails if ``value`` is found from ``dictionary``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 731
+      "lineno": 733
     },
     {
       "name": "Get Dictionary Items",
@@ -453,6 +490,7 @@
         {
           "name": "dictionary",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -461,6 +499,7 @@
         {
           "name": "sort_keys",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -471,7 +510,7 @@
       "shortdoc": "Returns items of the given ``dictionary`` as a list.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 643
+      "lineno": 645
     },
     {
       "name": "Get Dictionary Keys",
@@ -479,6 +518,7 @@
         {
           "name": "dictionary",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -487,6 +527,7 @@
         {
           "name": "sort_keys",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -497,7 +538,7 @@
       "shortdoc": "Returns keys of the given ``dictionary`` as a list.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 588
+      "lineno": 590
     },
     {
       "name": "Get Dictionary Values",
@@ -505,6 +546,7 @@
         {
           "name": "dictionary",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -513,6 +555,7 @@
         {
           "name": "sort_keys",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -523,7 +566,7 @@
       "shortdoc": "Returns values of the given ``dictionary`` as a list.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 618
+      "lineno": 620
     },
     {
       "name": "Get From Dictionary",
@@ -531,6 +574,7 @@
         {
           "name": "dictionary",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -539,6 +583,7 @@
         {
           "name": "key",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -549,7 +594,7 @@
       "shortdoc": "Returns a value from the given ``dictionary`` based on the given ``key``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 672
+      "lineno": 674
     },
     {
       "name": "Get From List",
@@ -557,6 +602,7 @@
         {
           "name": "list_",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -565,6 +611,7 @@
         {
           "name": "index",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -575,7 +622,7 @@
       "shortdoc": "Returns the value specified with an ``index`` from ``list``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 172
+      "lineno": 174
     },
     {
       "name": "Get Index From List",
@@ -583,6 +630,7 @@
         {
           "name": "list_",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -591,6 +639,7 @@
         {
           "name": "value",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -599,6 +648,7 @@
         {
           "name": "start",
           "types": [],
+          "typedocs": {},
           "defaultValue": "0",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -607,6 +657,7 @@
         {
           "name": "end",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -617,7 +668,7 @@
       "shortdoc": "Returns the index of the first occurrence of the ``value`` on the list.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 243
+      "lineno": 245
     },
     {
       "name": "Get Match Count",
@@ -625,6 +676,7 @@
         {
           "name": "list",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -633,6 +685,7 @@
         {
           "name": "pattern",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -641,6 +694,7 @@
         {
           "name": "case_insensitive",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -649,6 +703,7 @@
         {
           "name": "whitespace_insensitive",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -659,7 +714,7 @@
       "shortdoc": "Returns the count of matches to ``pattern`` in ``list``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 984
+      "lineno": 986
     },
     {
       "name": "Get Matches",
@@ -667,6 +722,7 @@
         {
           "name": "list",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -675,6 +731,7 @@
         {
           "name": "pattern",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -683,6 +740,7 @@
         {
           "name": "case_insensitive",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -691,6 +749,7 @@
         {
           "name": "whitespace_insensitive",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -701,7 +760,7 @@
       "shortdoc": "Returns a list of matches to ``pattern`` in ``list``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 968
+      "lineno": 970
     },
     {
       "name": "Get Slice From List",
@@ -709,6 +768,7 @@
         {
           "name": "list_",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -717,6 +777,7 @@
         {
           "name": "start",
           "types": [],
+          "typedocs": {},
           "defaultValue": "0",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -725,6 +786,7 @@
         {
           "name": "end",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -735,7 +797,7 @@
       "shortdoc": "Returns a slice of the given list between ``start`` and ``end`` indexes.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 197
+      "lineno": 199
     },
     {
       "name": "Insert Into List",
@@ -743,6 +805,7 @@
         {
           "name": "list_",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -751,6 +814,7 @@
         {
           "name": "index",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -759,6 +823,7 @@
         {
           "name": "value",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -769,7 +834,7 @@
       "shortdoc": "Inserts ``value`` into ``list`` to the position specified with ``index``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 55
+      "lineno": 57
     },
     {
       "name": "Keep In Dictionary",
@@ -777,6 +842,7 @@
         {
           "name": "dictionary",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -785,6 +851,7 @@
         {
           "name": "keys",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -795,7 +862,7 @@
       "shortdoc": "Keeps the given ``keys`` in the ``dictionary`` and removes all other.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 556
+      "lineno": 558
     },
     {
       "name": "List Should Contain Sub List",
@@ -803,6 +870,7 @@
         {
           "name": "list1",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -811,6 +879,7 @@
         {
           "name": "list2",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -819,6 +888,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -827,6 +897,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -837,7 +908,7 @@
       "shortdoc": "Fails if not all of the elements in ``list2`` are found in ``list1``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 421
+      "lineno": 423
     },
     {
       "name": "List Should Contain Value",
@@ -845,6 +916,7 @@
         {
           "name": "list_",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -853,6 +925,7 @@
         {
           "name": "value",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -861,6 +934,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -871,7 +945,7 @@
       "shortdoc": "Fails if the ``value`` is not found from ``list``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 305
+      "lineno": 307
     },
     {
       "name": "List Should Not Contain Duplicates",
@@ -879,6 +953,7 @@
         {
           "name": "list_",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -887,6 +962,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -897,7 +973,7 @@
       "shortdoc": "Fails if any element in the ``list`` is found from it more than once.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 323
+      "lineno": 325
     },
     {
       "name": "List Should Not Contain Value",
@@ -905,6 +981,7 @@
         {
           "name": "list_",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -913,6 +990,7 @@
         {
           "name": "value",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -921,6 +999,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -931,7 +1010,7 @@
       "shortdoc": "Fails if the ``value`` is found from ``list``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 314
+      "lineno": 316
     },
     {
       "name": "Lists Should Be Equal",
@@ -939,6 +1018,7 @@
         {
           "name": "list1",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -947,6 +1027,7 @@
         {
           "name": "list2",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -955,6 +1036,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -963,6 +1045,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -971,6 +1054,7 @@
         {
           "name": "names",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -979,6 +1063,7 @@
         {
           "name": "ignore_order",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -989,7 +1074,7 @@
       "shortdoc": "Fails if given lists are unequal.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 348
+      "lineno": 350
     },
     {
       "name": "Log Dictionary",
@@ -997,6 +1082,7 @@
         {
           "name": "dictionary",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1005,6 +1091,7 @@
         {
           "name": "level",
           "types": [],
+          "typedocs": {},
           "defaultValue": "INFO",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1015,7 +1102,7 @@
       "shortdoc": "Logs the size and contents of the ``dictionary`` using given ``level``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 772
+      "lineno": 774
     },
     {
       "name": "Log List",
@@ -1023,6 +1110,7 @@
         {
           "name": "list_",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1031,6 +1119,7 @@
         {
           "name": "level",
           "types": [],
+          "typedocs": {},
           "defaultValue": "INFO",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1041,7 +1130,7 @@
       "shortdoc": "Logs the length and contents of the ``list`` using given ``level``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 435
+      "lineno": 437
     },
     {
       "name": "Pop From Dictionary",
@@ -1049,6 +1138,7 @@
         {
           "name": "dictionary",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1057,6 +1147,7 @@
         {
           "name": "key",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1065,6 +1156,7 @@
         {
           "name": "default",
           "types": [],
+          "typedocs": {},
           "defaultValue": "",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1075,7 +1167,7 @@
       "shortdoc": "Pops the given ``key`` from the ``dictionary`` and returns its value.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 537
+      "lineno": 539
     },
     {
       "name": "Remove Duplicates",
@@ -1083,6 +1175,7 @@
         {
           "name": "list_",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1093,7 +1186,7 @@
       "shortdoc": "Returns a list without duplicates based on the given ``list``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 155
+      "lineno": 157
     },
     {
       "name": "Remove From Dictionary",
@@ -1101,6 +1194,7 @@
         {
           "name": "dictionary",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1109,6 +1203,7 @@
         {
           "name": "keys",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1119,7 +1214,7 @@
       "shortdoc": "Removes the given ``keys`` from the ``dictionary``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 518
+      "lineno": 520
     },
     {
       "name": "Remove From List",
@@ -1127,6 +1222,7 @@
         {
           "name": "list_",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1135,6 +1231,7 @@
         {
           "name": "index",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1145,7 +1242,7 @@
       "shortdoc": "Removes and returns the value specified with an ``index`` from ``list``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 134
+      "lineno": 136
     },
     {
       "name": "Remove Values From List",
@@ -1153,6 +1250,7 @@
         {
           "name": "list_",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1161,6 +1259,7 @@
         {
           "name": "values",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1171,7 +1270,7 @@
       "shortdoc": "Removes all occurrences of given ``values`` from ``list``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 119
+      "lineno": 121
     },
     {
       "name": "Reverse List",
@@ -1179,6 +1278,7 @@
         {
           "name": "list_",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1189,7 +1289,7 @@
       "shortdoc": "Reverses the given list in place.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 279
+      "lineno": 281
     },
     {
       "name": "Set List Value",
@@ -1197,6 +1297,7 @@
         {
           "name": "list_",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1205,6 +1306,7 @@
         {
           "name": "index",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1213,6 +1315,7 @@
         {
           "name": "value",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1223,7 +1326,7 @@
       "shortdoc": "Sets the value of ``list`` specified by ``index`` to the given ``value``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 98
+      "lineno": 100
     },
     {
       "name": "Set To Dictionary",
@@ -1231,6 +1334,7 @@
         {
           "name": "dictionary",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1239,6 +1343,7 @@
         {
           "name": "key_value_pairs",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -1247,6 +1352,7 @@
         {
           "name": "items",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
@@ -1257,7 +1363,7 @@
       "shortdoc": "Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 492
+      "lineno": 494
     },
     {
       "name": "Should Contain Match",
@@ -1265,6 +1371,7 @@
         {
           "name": "list",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1273,6 +1380,7 @@
         {
           "name": "pattern",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1281,6 +1389,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1289,6 +1398,7 @@
         {
           "name": "case_insensitive",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1297,6 +1407,7 @@
         {
           "name": "whitespace_insensitive",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1307,7 +1418,7 @@
       "shortdoc": "Fails if ``pattern`` is not found in ``list``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 908
+      "lineno": 910
     },
     {
       "name": "Should Not Contain Match",
@@ -1315,6 +1426,7 @@
         {
           "name": "list",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1323,6 +1435,7 @@
         {
           "name": "pattern",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1331,6 +1444,7 @@
         {
           "name": "msg",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1339,6 +1453,7 @@
         {
           "name": "case_insensitive",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1347,6 +1462,7 @@
         {
           "name": "whitespace_insensitive",
           "types": [],
+          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1357,7 +1473,7 @@
       "shortdoc": "Fails if ``pattern`` is found in ``list``.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 953
+      "lineno": 955
     },
     {
       "name": "Sort List",
@@ -1365,6 +1481,7 @@
         {
           "name": "list_",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1375,11 +1492,12 @@
       "shortdoc": "Sorts the given list in place.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 292
+      "lineno": 294
     }
   ],
   "dataTypes": {
     "enums": [],
     "typedDicts": []
-  }
+  },
+  "typedocs": []
 }

@@ -1,21 +1,22 @@
 {
   "name": "Screenshot",
-  "doc": "Test library for taking screenshots on the machine where tests are run.\n\nNotice that successfully taking screenshots requires tests to be run with\na physical or virtual display.\n\n== Table of contents ==\n\n- `Using with Python`\n- `Using with Jython and IronPython`\n- `Where screenshots are saved`\n- `ScreenCapLibrary`\n- `Importing`\n- `Keywords`\n\n= Using with Python =\n\nHow screenshots are taken when using Python depends on the operating\nsystem. On OSX screenshots are taken using the built-in ``screencapture``\nutility. On other operating systems you need to have one of the following\ntools or Python modules installed. You can specify the tool/module to use\nwhen `importing` the library. If no tool or module is specified, the first\none found will be used.\n\n- wxPython :: http://wxpython.org :: Required also by RIDE so many Robot\n  Framework users already have this module installed.\n- PyGTK :: http://pygtk.org :: This module is available by default on most\n  Linux distributions.\n- Pillow :: http://python-pillow.github.io ::\n  Only works on Windows. Also the original PIL package is supported.\n- Scrot :: http://en.wikipedia.org/wiki/Scrot :: Not used on Windows.\n  Install with ``apt-get install scrot`` or similar.\n\n= Using with Jython and IronPython =\n\nWith Jython and IronPython this library uses APIs provided by JVM and .NET\nplatforms, respectively. These APIs are always available and thus no\nexternal modules are needed.\n\n= Where screenshots are saved =\n\nBy default screenshots are saved into the same directory where the Robot\nFramework log file is written. If no log is created, screenshots are saved\ninto the directory where the XML output file is written.\n\nIt is possible to specify a custom location for screenshots using\n``screenshot_directory`` argument when `importing` the library and\nusing `Set Screenshot Directory` keyword during execution. It is also\npossible to save screenshots using an absolute path.\n\n= ScreenCapLibrary =\n\n[https://github.com/mihaiparvu/ScreenCapLibrary|ScreenCapLibrary] is an\nexternal Robot Framework library that can be used as an alternative,\nwhich additionally provides support for multiple formats, adjusting the\nquality, using GIFs and video capturing.",
-  "version": "4.1.3",
-  "generated": "2021-12-20 22:45:34",
+  "doc": "Library for taking screenshots on the machine where tests are executed.\n\nTaking the actual screenshot requires a suitable tool or module that may\nneed to be installed separately. Taking screenshots also requires tests\nto be run with a physical or virtual display.\n\n== Table of contents ==\n\n- `Supported screenshot taking tools and modules`\n- `Where screenshots are saved`\n- `ScreenCapLibrary`\n- `Importing`\n- `Keywords`\n\n= Supported screenshot taking tools and modules =\n\nHow screenshots are taken depends on the operating system. On OSX\nscreenshots are taken using the built-in ``screencapture`` utility. On\nother operating systems you need to have one of the following tools or\nPython modules installed. You can specify the tool/module to use when\n`importing` the library. If no tool or module is specified, the first\none found will be used.\n\n- wxPython :: http://wxpython.org :: Generic Python GUI toolkit.\n- PyGTK :: http://pygtk.org :: This module is available by default on most\n  Linux distributions.\n- Pillow :: http://python-pillow.github.io ::\n  Only works on Windows. Also the original PIL package is supported.\n- Scrot :: http://en.wikipedia.org/wiki/Scrot :: Not used on Windows.\n  Install with ``apt-get install scrot`` or similar.\n\n= Where screenshots are saved =\n\nBy default screenshots are saved into the same directory where the Robot\nFramework log file is written. If no log is created, screenshots are saved\ninto the directory where the XML output file is written.\n\nIt is possible to specify a custom location for screenshots using\n``screenshot_directory`` argument when `importing` the library and\nusing `Set Screenshot Directory` keyword during execution. It is also\npossible to save screenshots using an absolute path.\n\n= ScreenCapLibrary =\n\n[https://github.com/mihaiparvu/ScreenCapLibrary|ScreenCapLibrary] is an\nexternal Robot Framework library that can be used as an alternative,\nwhich additionally provides support for multiple formats, adjusting the\nquality, using GIFs and video capturing.",
+  "version": "5.0",
+  "generated": "2022-03-23 17:15:25",
   "type": "LIBRARY",
   "scope": "SUITE",
   "docFormat": "ROBOT",
   "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Screenshot.py",
-  "lineno": 51,
+  "lineno": 39,
   "tags": [],
   "inits": [
     {
-      "name": "Init",
+      "name": "__init__",
       "args": [
         {
           "name": "screenshot_directory",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -24,17 +25,18 @@
         {
           "name": "screenshot_module",
           "types": [],
+          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "screenshot_module=None"
         }
       ],
-      "doc": "Configure where screenshots are saved.\n\nIf ``screenshot_directory`` is not given, screenshots are saved into\nsame directory as the log file. The directory can also be set using\n`Set Screenshot Directory` keyword.\n\n``screenshot_module`` specifies the module or tool to use when using\nthis library on Python outside OSX. Possible values are ``wxPython``,\n``PyGTK``, ``PIL`` and ``scrot``, case-insensitively. If no value is\ngiven, the first module/tool found is used in that order. See `Using\nwith Python` for more information.\n\nExamples (use only one of these):\n| =Setting= |  =Value=   |  =Value=   |\n| Library   | Screenshot |            |\n| Library   | Screenshot | ${TEMPDIR} |\n| Library   | Screenshot | screenshot_module=PyGTK |",
+      "doc": "Configure where screenshots are saved.\n\nIf ``screenshot_directory`` is not given, screenshots are saved into\nsame directory as the log file. The directory can also be set using\n`Set Screenshot Directory` keyword.\n\n``screenshot_module`` specifies the module or tool to use when using\nthis library outside OSX. Possible values are ``wxPython``,\n``PyGTK``, ``PIL`` and ``scrot``, case-insensitively. If no value is\ngiven, the first module/tool found is used in that order.\n\nExamples:\n| =Setting= |  =Value=   |  =Value=   |\n| Library   | Screenshot |            |\n| Library   | Screenshot | ${TEMPDIR} |\n| Library   | Screenshot | screenshot_module=PyGTK |",
       "shortdoc": "Configure where screenshots are saved.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Screenshot.py",
-      "lineno": 107
+      "lineno": 89
     }
   ],
   "keywords": [
@@ -44,6 +46,7 @@
         {
           "name": "path",
           "types": [],
+          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -54,7 +57,7 @@
       "shortdoc": "Sets the directory where screenshots are saved.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Screenshot.py",
-      "lineno": 146
+      "lineno": 127
     },
     {
       "name": "Take Screenshot",
@@ -62,6 +65,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": "screenshot",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -70,6 +74,7 @@
         {
           "name": "width",
           "types": [],
+          "typedocs": {},
           "defaultValue": "800px",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -80,7 +85,7 @@
       "shortdoc": "Takes a screenshot in JPEG format and embeds it into the log file.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Screenshot.py",
-      "lineno": 161
+      "lineno": 142
     },
     {
       "name": "Take Screenshot Without Embedding",
@@ -88,6 +93,7 @@
         {
           "name": "name",
           "types": [],
+          "typedocs": {},
           "defaultValue": "screenshot",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -98,11 +104,12 @@
       "shortdoc": "Takes a screenshot and links it from the log file.",
       "tags": [],
       "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Screenshot.py",
-      "lineno": 190
+      "lineno": 171
     }
   ],
   "dataTypes": {
     "enums": [],
     "typedDicts": []
-  }
+  },
+  "typedocs": []
 }

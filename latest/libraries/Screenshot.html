@@ -6,7 +6,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta content="Robot Framework 4.1.3 (Python 3.10.0 on darwin)" name="Generator">
+<meta content="Robot Framework 5.0 (Python 3.10.0 on darwin)" name="Generator">
 <script defer data-domain="robotframework.org" src="https://plausible.io/js/plausible.js"></script>
 <script>
   window.addEventListener("hashchange", ({ oldURL, newURL }) => {
@@ -28,7 +28,6 @@
 }
 @media (prefers-color-scheme: dark) {
     :root {
-        color-scheme: dark;
         --background-color: #1c2227;
         --text-color: #e2e1d7;
         --border-color: #4e4e4e;
@@ -38,6 +37,7 @@
         --highlighted-background-color: yellow;
         --less-important-text-color: #5b6a6f;
         --link-color: #52adff;
+        color-scheme: dark;
     }
 }
 body {
@@ -241,6 +241,23 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
 .shortcuts.keyword-wall a::after {
     content: '·';
     padding-left: 0.5rem;
+}
+.enum-type-members, .dt-usages-list {
+    list-style: none;
+    padding-left: 1em;
+}
+.dt-usages-list > li {
+    margin-bottom: 0.2em;
+}
+.dt-usages a {
+    text-decoration: none;
+    color: var(--text-color);
+    display: inline-block;
+    font-size: 0.9em;
+}
+.dt-usages a::first-letter {
+    font-weight: bold;
+    letter-spacing: 0.1em;
 }
 .arguments-list-container {
     overflow-y: auto;
@@ -474,9 +491,6 @@ h4 {
     display: flex;
     flex-direction: column;
 }
-.enum-type-members, .dt-usage-list {
-    list-style: none;
-}
 .data-type-container {
     border-top: 1px solid var(--border-color);
     padding: 0.5rem 1.0rem 0.5rem 1.0rem;
@@ -578,6 +592,81 @@ span.or {
 .no-match .dt-name,
 .no-match .kw-name {
     color: var(--less-important-text-color);
+}
+.modal-icon {
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0 0.25rem;
+    width: 1rem;
+    height: 1rem;
+    padding: 0;
+    border: none;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="100%" width="100%"><path stroke="black" fill="none" stroke-width="2px" stroke-linecap="round" d="M1 8 L1 1 L8 1 M16 1 L23 1 L23 8 M23 16 L23 23 L16 23 M8 23 L1 23 L1 16"></path><path fill="black" stroke="none" stroke-width="1px" transform="scale(1.3) translate(-3 -2.5)" d="M19 7.97zm-8 9.2-4-2.3v-4.63l4 2.33v4.6zm1-6.33L8.04 8.53 12 6.25l3.96 2.28L12 10.84zm5 4.03-4 2.3v-4.6l4-2.33v4.63z"></path></svg>');
+}
+@media (prefers-color-scheme: dark) {
+    .modal-icon {
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="100%" width="100%"><path stroke="%23e2e1d7" fill="none" stroke-width="2px" stroke-linecap="round" d="M1 8 L1 1 L8 1 M16 1 L23 1 L23 8 M23 16 L23 23 L16 23 M8 23 L1 23 L1 16"></path><path fill="%23e2e1d7" stroke="none" stroke-width="1px" transform="scale(1.3) translate(-3 -2.5)" d="M19 7.97zm-8 9.2-4-2.3v-4.63l4 2.33v4.6zm1-6.33L8.04 8.53 12 6.25l3.96 2.28L12 10.84zm5 4.03-4 2.3v-4.6l4-2.33v4.63z"></path></svg>');
+    }
+}
+.modal-background, .modal {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+.modal-background {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+}
+.modal {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    width: 720px;
+    max-width: calc(100vw - 2rem);
+    margin: 0 auto;
+    height: calc(100vh - 6rem);
+    overflow: auto;
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    z-index: 2;
+    transition-delay: 0.1s;
+}
+.modal-content {
+    margin-bottom: 3rem;
+}
+.modal > .modal-content > .data-type-container {
+    border-top: none;
+}
+.modal-close-button-wrapper {
+    display: flex;
+    justify-content: flex-end;
+}
+.modal-close-button-container {
+    width: 720px;
+    max-width: calc(100vw - 2rem);
+    margin: 0 auto;
+    overflow: auto;
+}
+.modal-close-button {
+    margin: 0.5rem 0;
+    padding: 0.25rem 0.5rem;
+    border-radius:3px;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+}
+.modal-background.visible, .modal.visible {
+    opacity: 1;
+    pointer-events: all;
+}
+#data-types-container {
+    display: none;
 }
 </style>
 <style media="all" type="text/css">
@@ -1109,7 +1198,7 @@ window.util = function () {
 jQuery.extend({highlight:function(e,t,n,r){if(e.nodeType===3){var i=e.data.match(t);if(i){var s=document.createElement(n||"span");s.className=r||"highlight";var o=e.splitText(i.index);o.splitText(i[0].length);var u=o.cloneNode(true);s.appendChild(u);o.parentNode.replaceChild(s,o);return 1}}else if(e.nodeType===1&&e.childNodes&&!/(script|style)/i.test(e.tagName)&&!(e.tagName===n.toUpperCase()&&e.className===r)){for(var a=0;a<e.childNodes.length;a++){a+=jQuery.highlight(e.childNodes[a],t,n,r)}}return 0}});jQuery.fn.unhighlight=function(e){var t={className:"highlight",element:"span"};jQuery.extend(t,e);return this.find(t.element+"."+t.className).each(function(){var e=this.parentNode;e.replaceChild(this.firstChild,this);e.normalize()}).end()};jQuery.fn.highlight=function(e,t){var n={className:"highlight",element:"span",caseSensitive:false,wordsOnly:false};jQuery.extend(n,t);if(e.constructor===String){e=[e]}e=jQuery.grep(e,function(e,t){return e!=""});e=jQuery.map(e,function(e,t){return e.replace(/[-[\]{}()*+?.,\\^$|#\s]/g,"\\$&")});if(e.length==0){return this}var r=n.caseSensitive?"":"i";var i="("+e.join("|")+")";if(n.wordsOnly){i="\\b"+i+"\\b"}var s=new RegExp(i,r);return this.each(function(){jQuery.highlight(this,s,n.element,n.className)})}
 </script>
 <script type="text/javascript">
-libdoc = {"name": "Screenshot", "doc": "<p>Test library for taking screenshots on the machine where tests are run.</p>\n<p>Notice that successfully taking screenshots requires tests to be run with a physical or virtual display.</p>\n<h3 id=\"Table of contents\">Table of contents</h3>\n<ul>\n<li><a href=\"#Using%20with%20Python\" class=\"name\">Using with Python</a></li>\n<li><a href=\"#Using%20with%20Jython%20and%20IronPython\" class=\"name\">Using with Jython and IronPython</a></li>\n<li><a href=\"#Where%20screenshots%20are%20saved\" class=\"name\">Where screenshots are saved</a></li>\n<li><a href=\"#ScreenCapLibrary\" class=\"name\">ScreenCapLibrary</a></li>\n<li><a href=\"#Importing\" class=\"name\">Importing</a></li>\n<li><a href=\"#Keywords\" class=\"name\">Keywords</a></li>\n</ul>\n<h2 id=\"Using with Python\">Using with Python</h2>\n<p>How screenshots are taken when using Python depends on the operating system. On OSX screenshots are taken using the built-in <code>screencapture</code> utility. On other operating systems you need to have one of the following tools or Python modules installed. You can specify the tool/module to use when <a href=\"#Importing\" class=\"name\">importing</a> the library. If no tool or module is specified, the first one found will be used.</p>\n<ul>\n<li>wxPython :: <a href=\"http://wxpython.org\">http://wxpython.org</a> :: Required also by RIDE so many Robot Framework users already have this module installed.</li>\n<li>PyGTK :: <a href=\"http://pygtk.org\">http://pygtk.org</a> :: This module is available by default on most Linux distributions.</li>\n<li>Pillow :: <a href=\"http://python-pillow.github.io\">http://python-pillow.github.io</a> :: Only works on Windows. Also the original PIL package is supported.</li>\n<li>Scrot :: <a href=\"http://en.wikipedia.org/wiki/Scrot\">http://en.wikipedia.org/wiki/Scrot</a> :: Not used on Windows. Install with <code>apt-get install scrot</code> or similar.</li>\n</ul>\n<h2 id=\"Using with Jython and IronPython\">Using with Jython and IronPython</h2>\n<p>With Jython and IronPython this library uses APIs provided by JVM and .NET platforms, respectively. These APIs are always available and thus no external modules are needed.</p>\n<h2 id=\"Where screenshots are saved\">Where screenshots are saved</h2>\n<p>By default screenshots are saved into the same directory where the Robot Framework log file is written. If no log is created, screenshots are saved into the directory where the XML output file is written.</p>\n<p>It is possible to specify a custom location for screenshots using <code>screenshot_directory</code> argument when <a href=\"#Importing\" class=\"name\">importing</a> the library and using <a href=\"#Set%20Screenshot%20Directory\" class=\"name\">Set Screenshot Directory</a> keyword during execution. It is also possible to save screenshots using an absolute path.</p>\n<h2 id=\"ScreenCapLibrary\">ScreenCapLibrary</h2>\n<p><a href=\"https://github.com/mihaiparvu/ScreenCapLibrary\">ScreenCapLibrary</a> is an external Robot Framework library that can be used as an alternative, which additionally provides support for multiple formats, adjusting the quality, using GIFs and video capturing.</p>", "version": "4.1.3", "generated": "2021-12-20 22:45:34", "type": "LIBRARY", "scope": "SUITE", "docFormat": "HTML", "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Screenshot.py", "lineno": 51, "tags": [], "inits": [{"name": "Init", "args": [{"name": "screenshot_directory", "types": [], "defaultValue": "None", "kind": "POSITIONAL_OR_NAMED", "required": false, "repr": "screenshot_directory=None"}, {"name": "screenshot_module", "types": [], "defaultValue": "None", "kind": "POSITIONAL_OR_NAMED", "required": false, "repr": "screenshot_module=None"}], "doc": "<p>Configure where screenshots are saved.</p>\n<p>If <code>screenshot_directory</code> is not given, screenshots are saved into same directory as the log file. The directory can also be set using <a href=\"#Set%20Screenshot%20Directory\" class=\"name\">Set Screenshot Directory</a> keyword.</p>\n<p><code>screenshot_module</code> specifies the module or tool to use when using this library on Python outside OSX. Possible values are <code>wxPython</code>, <code>PyGTK</code>, <code>PIL</code> and <code>scrot</code>, case-insensitively. If no value is given, the first module/tool found is used in that order. See <a href=\"#Using%20with%20Python\" class=\"name\">Using with Python</a> for more information.</p>\n<p>Examples (use only one of these):</p>\n<table border=\"1\">\n<tr>\n<th>Setting</th>\n<th>Value</th>\n<th>Value</th>\n</tr>\n<tr>\n<td>Library</td>\n<td>Screenshot</td>\n<td></td>\n</tr>\n<tr>\n<td>Library</td>\n<td>Screenshot</td>\n<td>${TEMPDIR}</td>\n</tr>\n<tr>\n<td>Library</td>\n<td>Screenshot</td>\n<td>screenshot_module=PyGTK</td>\n</tr>\n</table>", "shortdoc": "Configure where screenshots are saved.", "tags": [], "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Screenshot.py", "lineno": 107}], "keywords": [{"name": "Set Screenshot Directory", "args": [{"name": "path", "types": [], "defaultValue": null, "kind": "POSITIONAL_OR_NAMED", "required": true, "repr": "path"}], "doc": "<p>Sets the directory where screenshots are saved.</p>\n<p>It is possible to use <code>/</code> as a path separator in all operating systems. Path to the old directory is returned.</p>\n<p>The directory can also be set in <a href=\"#Importing\" class=\"name\">importing</a>.</p>", "shortdoc": "Sets the directory where screenshots are saved.", "tags": [], "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Screenshot.py", "lineno": 146}, {"name": "Take Screenshot", "args": [{"name": "name", "types": [], "defaultValue": "screenshot", "kind": "POSITIONAL_OR_NAMED", "required": false, "repr": "name=screenshot"}, {"name": "width", "types": [], "defaultValue": "800px", "kind": "POSITIONAL_OR_NAMED", "required": false, "repr": "width=800px"}], "doc": "<p>Takes a screenshot in JPEG format and embeds it into the log file.</p>\n<p>Name of the file where the screenshot is stored is derived from the given <code>name</code>. If the <code>name</code> ends with extension <code>.jpg</code> or <code>.jpeg</code>, the screenshot will be stored with that exact name. Otherwise a unique name is created by adding an underscore, a running index and an extension to the <code>name</code>.</p>\n<p>The name will be interpreted to be relative to the directory where the log file is written. It is also possible to use absolute paths. Using <code>/</code> as a path separator works in all operating systems.</p>\n<p><code>width</code> specifies the size of the screenshot in the log file.</p>\n<p>Examples: (LOGDIR is determined automatically by the library)</p>\n<table border=\"1\">\n<tr>\n<td>Take Screenshot</td>\n<td></td>\n<td></td>\n<td># LOGDIR/screenshot_1.jpg (index automatically incremented)</td>\n</tr>\n<tr>\n<td>Take Screenshot</td>\n<td>mypic</td>\n<td></td>\n<td># LOGDIR/mypic_1.jpg (index automatically incremented)</td>\n</tr>\n<tr>\n<td>Take Screenshot</td>\n<td>${TEMPDIR}/mypic</td>\n<td></td>\n<td># /tmp/mypic_1.jpg (index automatically incremented)</td>\n</tr>\n<tr>\n<td>Take Screenshot</td>\n<td>pic.jpg</td>\n<td></td>\n<td># LOGDIR/pic.jpg (always uses this file)</td>\n</tr>\n<tr>\n<td>Take Screenshot</td>\n<td>images/login.jpg</td>\n<td>80%</td>\n<td># Specify both name and width.</td>\n</tr>\n<tr>\n<td>Take Screenshot</td>\n<td>width=550px</td>\n<td></td>\n<td># Specify only width.</td>\n</tr>\n</table>\n<p>The path where the screenshot is saved is returned.</p>", "shortdoc": "Takes a screenshot in JPEG format and embeds it into the log file.", "tags": [], "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Screenshot.py", "lineno": 161}, {"name": "Take Screenshot Without Embedding", "args": [{"name": "name", "types": [], "defaultValue": "screenshot", "kind": "POSITIONAL_OR_NAMED", "required": false, "repr": "name=screenshot"}], "doc": "<p>Takes a screenshot and links it from the log file.</p>\n<p>This keyword is otherwise identical to <a href=\"#Take%20Screenshot\" class=\"name\">Take Screenshot</a> but the saved screenshot is not embedded into the log file. The screenshot is linked so it is nevertheless easily available.</p>", "shortdoc": "Takes a screenshot and links it from the log file.", "tags": [], "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Screenshot.py", "lineno": 190}], "dataTypes": {"enums": [], "typedDicts": []}}
+libdoc = {"name": "Screenshot", "doc": "<p>Library for taking screenshots on the machine where tests are executed.</p>\n<p>Taking the actual screenshot requires a suitable tool or module that may need to be installed separately. Taking screenshots also requires tests to be run with a physical or virtual display.</p>\n<h3 id=\"Table of contents\">Table of contents</h3>\n<ul>\n<li><a href=\"#Supported%20screenshot%20taking%20tools%20and%20modules\" class=\"name\">Supported screenshot taking tools and modules</a></li>\n<li><a href=\"#Where%20screenshots%20are%20saved\" class=\"name\">Where screenshots are saved</a></li>\n<li><a href=\"#ScreenCapLibrary\" class=\"name\">ScreenCapLibrary</a></li>\n<li><a href=\"#Importing\" class=\"name\">Importing</a></li>\n<li><a href=\"#Keywords\" class=\"name\">Keywords</a></li>\n</ul>\n<h2 id=\"Supported screenshot taking tools and modules\">Supported screenshot taking tools and modules</h2>\n<p>How screenshots are taken depends on the operating system. On OSX screenshots are taken using the built-in <code>screencapture</code> utility. On other operating systems you need to have one of the following tools or Python modules installed. You can specify the tool/module to use when <a href=\"#Importing\" class=\"name\">importing</a> the library. If no tool or module is specified, the first one found will be used.</p>\n<ul>\n<li>wxPython :: <a href=\"http://wxpython.org\">http://wxpython.org</a> :: Generic Python GUI toolkit.</li>\n<li>PyGTK :: <a href=\"http://pygtk.org\">http://pygtk.org</a> :: This module is available by default on most Linux distributions.</li>\n<li>Pillow :: <a href=\"http://python-pillow.github.io\">http://python-pillow.github.io</a> :: Only works on Windows. Also the original PIL package is supported.</li>\n<li>Scrot :: <a href=\"http://en.wikipedia.org/wiki/Scrot\">http://en.wikipedia.org/wiki/Scrot</a> :: Not used on Windows. Install with <code>apt-get install scrot</code> or similar.</li>\n</ul>\n<h2 id=\"Where screenshots are saved\">Where screenshots are saved</h2>\n<p>By default screenshots are saved into the same directory where the Robot Framework log file is written. If no log is created, screenshots are saved into the directory where the XML output file is written.</p>\n<p>It is possible to specify a custom location for screenshots using <code>screenshot_directory</code> argument when <a href=\"#Importing\" class=\"name\">importing</a> the library and using <a href=\"#Set%20Screenshot%20Directory\" class=\"name\">Set Screenshot Directory</a> keyword during execution. It is also possible to save screenshots using an absolute path.</p>\n<h2 id=\"ScreenCapLibrary\">ScreenCapLibrary</h2>\n<p><a href=\"https://github.com/mihaiparvu/ScreenCapLibrary\">ScreenCapLibrary</a> is an external Robot Framework library that can be used as an alternative, which additionally provides support for multiple formats, adjusting the quality, using GIFs and video capturing.</p>", "version": "5.0", "generated": "2022-03-23 17:15:25", "type": "LIBRARY", "scope": "SUITE", "docFormat": "HTML", "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Screenshot.py", "lineno": 39, "tags": [], "inits": [{"name": "__init__", "args": [{"name": "screenshot_directory", "types": [], "typedocs": {}, "defaultValue": "None", "kind": "POSITIONAL_OR_NAMED", "required": false, "repr": "screenshot_directory=None"}, {"name": "screenshot_module", "types": [], "typedocs": {}, "defaultValue": "None", "kind": "POSITIONAL_OR_NAMED", "required": false, "repr": "screenshot_module=None"}], "doc": "<p>Configure where screenshots are saved.</p>\n<p>If <code>screenshot_directory</code> is not given, screenshots are saved into same directory as the log file. The directory can also be set using <a href=\"#Set%20Screenshot%20Directory\" class=\"name\">Set Screenshot Directory</a> keyword.</p>\n<p><code>screenshot_module</code> specifies the module or tool to use when using this library outside OSX. Possible values are <code>wxPython</code>, <code>PyGTK</code>, <code>PIL</code> and <code>scrot</code>, case-insensitively. If no value is given, the first module/tool found is used in that order.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<th>Setting</th>\n<th>Value</th>\n<th>Value</th>\n</tr>\n<tr>\n<td>Library</td>\n<td>Screenshot</td>\n<td></td>\n</tr>\n<tr>\n<td>Library</td>\n<td>Screenshot</td>\n<td>${TEMPDIR}</td>\n</tr>\n<tr>\n<td>Library</td>\n<td>Screenshot</td>\n<td>screenshot_module=PyGTK</td>\n</tr>\n</table>", "shortdoc": "Configure where screenshots are saved.", "tags": [], "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Screenshot.py", "lineno": 89}], "keywords": [{"name": "Set Screenshot Directory", "args": [{"name": "path", "types": [], "typedocs": {}, "defaultValue": null, "kind": "POSITIONAL_OR_NAMED", "required": true, "repr": "path"}], "doc": "<p>Sets the directory where screenshots are saved.</p>\n<p>It is possible to use <code>/</code> as a path separator in all operating systems. Path to the old directory is returned.</p>\n<p>The directory can also be set in <a href=\"#Importing\" class=\"name\">importing</a>.</p>", "shortdoc": "Sets the directory where screenshots are saved.", "tags": [], "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Screenshot.py", "lineno": 127}, {"name": "Take Screenshot", "args": [{"name": "name", "types": [], "typedocs": {}, "defaultValue": "screenshot", "kind": "POSITIONAL_OR_NAMED", "required": false, "repr": "name=screenshot"}, {"name": "width", "types": [], "typedocs": {}, "defaultValue": "800px", "kind": "POSITIONAL_OR_NAMED", "required": false, "repr": "width=800px"}], "doc": "<p>Takes a screenshot in JPEG format and embeds it into the log file.</p>\n<p>Name of the file where the screenshot is stored is derived from the given <code>name</code>. If the <code>name</code> ends with extension <code>.jpg</code> or <code>.jpeg</code>, the screenshot will be stored with that exact name. Otherwise a unique name is created by adding an underscore, a running index and an extension to the <code>name</code>.</p>\n<p>The name will be interpreted to be relative to the directory where the log file is written. It is also possible to use absolute paths. Using <code>/</code> as a path separator works in all operating systems.</p>\n<p><code>width</code> specifies the size of the screenshot in the log file.</p>\n<p>Examples: (LOGDIR is determined automatically by the library)</p>\n<table border=\"1\">\n<tr>\n<td>Take Screenshot</td>\n<td></td>\n<td></td>\n<td># LOGDIR/screenshot_1.jpg (index automatically incremented)</td>\n</tr>\n<tr>\n<td>Take Screenshot</td>\n<td>mypic</td>\n<td></td>\n<td># LOGDIR/mypic_1.jpg (index automatically incremented)</td>\n</tr>\n<tr>\n<td>Take Screenshot</td>\n<td>${TEMPDIR}/mypic</td>\n<td></td>\n<td># /tmp/mypic_1.jpg (index automatically incremented)</td>\n</tr>\n<tr>\n<td>Take Screenshot</td>\n<td>pic.jpg</td>\n<td></td>\n<td># LOGDIR/pic.jpg (always uses this file)</td>\n</tr>\n<tr>\n<td>Take Screenshot</td>\n<td>images/login.jpg</td>\n<td>80%</td>\n<td># Specify both name and width.</td>\n</tr>\n<tr>\n<td>Take Screenshot</td>\n<td>width=550px</td>\n<td></td>\n<td># Specify only width.</td>\n</tr>\n</table>\n<p>The path where the screenshot is saved is returned.</p>", "shortdoc": "Takes a screenshot in JPEG format and embeds it into the log file.", "tags": [], "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Screenshot.py", "lineno": 142}, {"name": "Take Screenshot Without Embedding", "args": [{"name": "name", "types": [], "typedocs": {}, "defaultValue": "screenshot", "kind": "POSITIONAL_OR_NAMED", "required": false, "repr": "name=screenshot"}], "doc": "<p>Takes a screenshot and links it from the log file.</p>\n<p>This keyword is otherwise identical to <a href=\"#Take%20Screenshot\" class=\"name\">Take Screenshot</a> but the saved screenshot is not embedded into the log file. The screenshot is linked so it is nevertheless easily available.</p>", "shortdoc": "Takes a screenshot and links it from the log file.", "tags": [], "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Screenshot.py", "lineno": 171}], "dataTypes": {"enums": [], "typedDicts": []}, "typedocs": []}
 </script>
 <title></title>
 </head>
@@ -1130,44 +1219,29 @@ libdoc = {"name": "Screenshot", "doc": "<p>Test library for taking screenshots o
     window.addEventListener("hashchange", function() {
       document.getElementsByClassName("hamburger-menu")[0].checked = false;
     }, false);
+    window.addEventListener("hashchange", function() {
+        if (window.location.hash.indexOf('#type-') == 0) {
+            const hash = '#' + decodeURI(window.location.hash.slice(6));
+            const typeDoc = document.querySelector(".data-types").querySelector(hash);
+            if (typeDoc) {
+              showModal(typeDoc);
+            }
+        }
+    }, false);
 </script>
 
 <script type="text/javascript">
-
-    function linkArgs(container, dataTypes, usageName) {
-      container.forEach(function(keyword) {
-        let user = usageName || keyword.name
-          keyword.args.forEach(function (arg) {
-            arg.linked = arg.types.filter(function(value) {
-              return dataTypes.filter(function (dataType) {
-                 if (dataType.name === value) {
-                   if (dataType.usage.indexOf(user) === -1) {
-                    dataType.usage.push(user);
-                   }
-                   return true;
-                 }
-                 return false;
-              })[0];
-            });
-          })
-        }
-      );
-    }
 
     $(document).ready(function() {
         parseTemplates();
         document.title = libdoc.name;
         storage.init('libdoc');
-        libdoc.dataTypes = libdoc.dataTypes.enums.concat(libdoc.dataTypes.typedDicts);
-        libdoc.dataTypes = libdoc.dataTypes.map(function(dt) {
-          dt.usage = [];
-          return dt;
-        })
-        libdoc.dataTypes.sort(compare)
-        linkArgs(libdoc.inits, libdoc.dataTypes, "Importing");
-        linkArgs(libdoc.keywords, libdoc.dataTypes);
         renderTemplate('base', libdoc, $('body'));
         if (libdoc.inits.length) {
+            libdoc.typedocs.map(function(type) {
+                var index = type.usages.indexOf('__init__');
+                if (index != -1) type.usages[index] = 'Importing';
+            });
             renderTemplate('importing', libdoc);
         }
         renderTemplate('shortcuts', libdoc);
@@ -1192,17 +1266,8 @@ libdoc = {"name": "Screenshot", "doc": "<p>Test library for taking screenshots o
             openKeywordWall();
           }
       }, 0);
+        createModal();
     });
-
-     function compare( a, b ) {
-      if ( a.name < b.name ){
-        return -1;
-      }
-      if ( a.name > b.name ){
-        return 1;
-      }
-      return 0;
-    }
 
     function parseTemplates() {
         $('script[type="text/x-jquery-tmpl"]').map(function (idx, elem) {
@@ -1378,10 +1443,79 @@ libdoc = {"name": "Screenshot", "doc": "<p>Test library for taking screenshots o
             renderTemplate('tags', libdoc);
         }
         document.getElementById("keyword-statistics-header").innerText = ''+libdoc.keywords.length;
-        if (libdoc.dataTypes.length) {
-          document.getElementById("type-statistics-header").innerText = '' + libdoc.dataTypes.length;
+        if (libdoc.typedocs.length) {
+            document.getElementById("type-statistics-header").innerText = '' + libdoc.typedocs.length;
         }
         history.replaceState && history.replaceState(null, '', location.pathname);
+    }
+
+    function createModal() {
+        const modalBackground = document.createElement('div');
+        modalBackground.id = 'modal-background';
+        modalBackground.classList.add('modal-background');
+        modalBackground.addEventListener('click', ({ target }) => {
+            if (target.id === 'modal-background') hideModal()
+        })
+
+        const modalCloseButton = document.createElement('button');
+        modalCloseButton.innerHTML = `<svg xmlns="
+      http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="2em" height="2em" className="block" data-v-2754030d="" data-v-512b0344="">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"
+                    data-v-2754030d="" fill="var(--text-color)"></path></svg>`;
+        modalCloseButton.classList.add('modal-close-button');
+        const modalCloseButtonContainer = document.createElement('div');
+        modalCloseButtonContainer.classList.add('modal-close-button-container');
+        modalCloseButtonContainer.appendChild(modalCloseButton);
+        modalCloseButton.addEventListener('click', () => {
+            hideModal()
+        })
+        modalBackground.appendChild(modalCloseButtonContainer);
+        modalCloseButtonContainer.addEventListener('click', () => {
+            hideModal()
+        })
+
+        const modal = document.createElement('div');
+        modal.id = 'modal';
+        modal.classList.add('modal');
+        modal.addEventListener('click', ({ target }) => {
+            if (target.tagName.toUpperCase() === 'A') hideModal()
+        })
+
+
+        const modalContent = document.createElement('div');
+        modalContent.id = 'modal-content';
+        modalContent.classList.add('modal-content');
+        modal.appendChild(modalContent);
+
+        modalBackground.appendChild(modal);
+        document.body.appendChild(modalBackground);
+        document.addEventListener('keydown', ({ key }) => {
+            if (key === 'Escape') hideModal()
+        })
+    }
+    function showModal(content) {
+        const modalBackground = document.getElementById('modal-background');
+        const modal = document.getElementById('modal');
+        const modalContent = document.getElementById('modal-content');
+        modalBackground.classList.add('visible');
+        modal.classList.add('visible');
+        modalContent.appendChild(content.cloneNode(true));
+        document.body.style.overflow = 'hidden';
+    }
+    function hideModal() {
+        const modalBackground = document.getElementById('modal-background');
+        const modal = document.getElementById('modal');
+        const modalContent = document.getElementById('modal-content');
+
+        modalBackground.classList.remove('visible');
+        modal.classList.remove('visible');
+        document.body.style.overflow = 'auto';
+        if (window.location.hash.indexOf('#type-') == 0)
+            history.pushState("", document.title, window.location.pathname);
+        // modal is hidden with a fading transition, timeout prevents premature emptying of modal
+        setTimeout(() => {
+            modalContent.innerHTML = '';
+        }, 200);
     }
 
     // http://stackoverflow.com/a/18484799
@@ -1392,7 +1526,6 @@ libdoc = {"name": "Screenshot", "doc": "<p>Test library for taking screenshots o
             timer = setTimeout(callback, ms);
         };
     })();
-
 </script>
 
 <script type="text/x-jquery-tmpl" id="base-template">
@@ -1606,34 +1739,43 @@ ${name}
 {{/if}}
 
 {{if types.length}}
-  <span class="arg-type" title="Argument '${name}' will be converter to type ${types}">
-    ${( $data.linked = linked ),''}
-    {{each types}}&lt;{{if $data.linked.indexOf($value) > -1}}<a class="type" href="#${$value}">${$value}</a>{{else}}<span class="type">${$value}</span>{{/if}}&gt;<span class="or"></span>{{/each}}
+  <span class="arg-type">
+    {{each types}}
+      {{if $value in $data.typedocs}}
+          &lt;<a style="cursor: pointer;" class="type" title="Click to show type information" onclick="showModal(${$data.typedocs[$value]})">${$value}</a>&gt;
+      {{else}}
+          &lt;<span class="type">${$value}</span>&gt;
+      {{/if}}
+      <span class="or"></span>
+    {{/each}}
   </span>
 {{/if}}
 </script>
 
 
 <script type="text/x-jquery-tmpl" id="data-types-template">
-    {{if dataTypes.length}}
+  {{if typedocs.length}}
     <h2 id="Data types">Data types</h2>
     <div class="data-types">
-        {{each dataTypes}}
+      {{each typedocs}}
         {{tmpl($value) 'data-type-template'}}
-        {{/each}}
+      {{/each}}
     </div>
-    {{/if}}
+  {{/if}}
 </script>
 
 <script type="text/x-jquery-tmpl" id="data-type-template">
     <div class="data-type-container {{if hidden}}no-{{/if}}match" id="${name}">
        <div class="data-type-name">
-            <h2>Type:
-            <a class="dt-name" href="#${encodeURIComponent(name)}"
-               title="Link to this data type">${name}</a>
-            </h2>
+            <h2>${name} (${type})</h2>
        </div>
        <div class="data-type-content">
+          {{if doc}}
+            <div class="dt-docs">
+              <h4>Documentation</h4>
+              <div class="dtdoc doc">{{html doc}}</div>
+            </div>
+          {{/if}}
           {{if members}}
             <div class="dt-members">
               <h4>Allowed Values</h4>
@@ -1641,6 +1783,9 @@ ${name}
                 {{each members}}
                 <li>
                   <span class="enum-member">${$value.name}</span>
+                  {{if accepts.indexOf("integer") != -1}}
+                    &nbsp; (<span class="enum-member">${$value.value}</span>)
+                  {{/if}}
                 </li>
                 {{/each}}
               </ul>
@@ -1662,20 +1807,22 @@ ${name}
                 </div>
             </div>
           {{/if}}
-          {{if doc}}
+          {{if accepts.length}}
             <div class="dt-docs">
-              <h4>Documentation</h4>
-              <div class="dtdoc doc">{{html doc}}</div>
+              <h4>Converted Types</h4>
+              <ul class="dt-usages-list">
+              {{each accepts}}
+                <li>${$value}</li>
+              {{/each}}
+              </ul>
             </div>
           {{/if}}
-          {{if usage}}
-            <div class="dt-usage">
-              <h4>Used in</h4>
-              <ul class="dt-usage-list">
-                {{each usage}}
-                <li>
-                <a href="#${encodeURIComponent($value)}">${$value}</a>
-                </li>
+          {{if usages.length}}
+            <div class="dt-usages">
+              <h4>Usages</h4>
+              <ul class="dt-usages-list">
+                {{each usages}}
+                  <li><a href="#${encodeURIComponent($value)}">${$value}</a></li>
                 {{/each}}
               </ul>
             </div>
