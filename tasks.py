@@ -18,6 +18,15 @@ from invoke import task
 assert os.getcwd() == os.path.dirname(__file__)
 
 
+plausible_script = """<script defer data-domain="robotframework.org" src="https://plausible.io/js/plausible.js"></script>
+<script>
+  window.addEventListener("hashchange", ({ oldURL, newURL }) => {
+      plausible(`Anchor click - ${document.title}`, { props: { to: window.location.hash.replaceAll("%20", " ") } })
+  }, false)
+</script>
+"""
+
+
 @task
 def add_docs(ctx, version, push=False):
     """Add documentation of given version.
@@ -32,6 +41,7 @@ def add_docs(ctx, version, push=False):
     extract_ug(version)
     if not is_preview(version):
         update_latest(version)
+        add_plausible_to_lastest()
         copy_libdoc_jsons()
     update_index(version)
     add_changes(ctx, version)
@@ -87,6 +97,21 @@ def copy_libdoc_jsons():
     for file in files:
         if os.path.isfile(file):
             shutil.copy(file, target)
+
+
+def add_plausible_to_lastest():
+    latest_libs_path = os.path.join('latest', 'libraries', "*.html")
+    files = list(glob.iglob(latest_libs_path))
+    files.append(os.path.join('latest', 'RobotFrameworkUserGuide.html'))
+    for file in files:
+        print("Adding plausible to {} ".format(file))
+        with open(file, 'r') as original:
+            contents = original.readlines()
+        with open(file, 'w') as out:
+            for row in contents:
+                out.write(row)
+                if re.match(r'<meta.*name=\"generator\".*>', row, re.IGNORECASE):
+                    out.write(plausible_script)
 
 
 def update_index(version):
