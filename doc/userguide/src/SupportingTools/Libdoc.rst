@@ -88,10 +88,7 @@ multiple Python versions and want to use a specific version with Libdoc::
     python -m robot.libdoc ExampleLibrary ExampleLibrary.html
     python3.9 -m robot.libdoc ExampleLibrary ExampleLibrary.html
 
-Yet another alternative is running the `robot.libdoc` module as a script.
-This can be useful if you have done a `manual installation`_ or otherwise
-just have the :file:`robot` directory with the source code somewhere in your
-system::
+Yet another alternative is running the `robot.libdoc` module as a script::
 
     python path/to/robot/libdoc.py ExampleLibrary ExampleLibrary.html
 

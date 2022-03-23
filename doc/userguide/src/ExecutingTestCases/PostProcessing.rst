@@ -22,16 +22,14 @@ Synopsis
 
 ::
 
-    rebot [options] robot_outputs
-    python -m robot.rebot [options] robot_outputs
-    python path/to/robot/rebot.py [options] robot_outputs
+    rebot [options] outputs
+    python -m robot.rebot [options] outputs
+    python path/to/robot/rebot.py [options] outputs
 
-The most common way to use Rebot is using the ``rebot`` `runner script`_.
-Alternatively it is possible to execute the installed `robot.rebot module`__
-or `robot/rebot.py file`__ directly using the selected interpreter.
-
-__ `Executing installed robot module`_
-__ `Executing installed robot directory`_
+The most common way to use Rebot is using the ``rebot`` command.
+Alternatively it is possible to execute the installed ``robot.rebot``
+module or the ``robot/rebot.py`` file using the selected Python
+interpreter.
 
 Specifying options and arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -62,7 +60,6 @@ are processed and they have conflicting modes.
 
 __ `Test execution`_
 __ `Task execution`_
-
 
 Creating different reports and logs
 -----------------------------------
