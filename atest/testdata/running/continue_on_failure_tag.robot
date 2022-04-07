@@ -213,8 +213,8 @@ Recursive continue in nested keyword
     Fail   This should not be executed
 
 No-continue-on-failure in Teardown
-    [Documentation]    FAIL 1
-    [Teardown]   teardown-no-continue-on-failure
+    [Documentation]    FAIL kw1a
+    [Teardown]   Failure in user keyword with no-continue tag
     Log    does not matter
 
 *** Keywords ***
@@ -281,9 +281,3 @@ IF in user keyword without tag
         Fail    kw1c
         Fail    kw1d
     END
-
-teardown-no-continue-on-failure
-    [Tags]    robot:no-continue-on-failure
-    Fail   1
-    Log    this should not be executed
-    Fail   2
