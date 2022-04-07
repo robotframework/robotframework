@@ -217,6 +217,12 @@ No-continue-on-failure in Teardown
     [Teardown]   Failure in user keyword with no-continue tag
     Log    does not matter
 
+No-continue-on-failure-2 in Teardown
+    [Documentation]    FAIL 1
+    [Tags]   robot:no-continue-on-failure
+    [Teardown]   Run Keywords   Fail   1   AND   Fail  2
+    Log    does not matter
+
 *** Keywords ***
 Failure in user keyword with tag
     [Arguments]    ${run_kw}=No Operation

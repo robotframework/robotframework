@@ -74,3 +74,6 @@ Recursive continue in nested keyword
 
 No-continue-on-failure in Teardown
     Check Test Case    ${TESTNAME}     FAIL    Teardown failed:\nkw1a
+
+No-continue-on-failure-2 in Teardown
+    Check Test Case    ${TESTNAME}     FAIL    Teardown failed:\n1
