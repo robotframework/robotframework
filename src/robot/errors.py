@@ -144,7 +144,9 @@ class ExecutionStatus(RobotError):
             if context.in_teardown:
                 self.keyword_timeout = False
             return False
-        if context.in_teardown or context.continue_on_failure:
+        if context.in_teardown:
+            return context.continue_on_failure_in_teardown
+        if context.continue_on_failure:
             return True
         return self.continue_on_failure
 

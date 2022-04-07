@@ -133,7 +133,18 @@ class _ExecutionContext:
             return False
         if 'robot:continue-on-failure' in parents[-1].tags:
             return True
+        if 'robot:no-continue-on-failure' in parents[-1].tags:
+            return False
         return any('robot:recursive-continue-on-failure' in p.tags for p in parents)
+
+    @property
+    def continue_on_failure_in_teardown(self):
+        parents = ([self.test] if self.test else []) + self.user_keywords
+        if not parents:
+            return True
+        if 'robot:no-continue-on-failure' in parents[-1].tags:
+            return False
+        return True
 
     @property
     def allow_loop_control(self):

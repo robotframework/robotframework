@@ -63,8 +63,14 @@ Recursive continue in test with Set Tags and two nested UK without tag
 Recursive continue in test with tag and two nested UK with and without tag
     Check Test Case    ${TESTNAME}
 
+Recursive continue in test with tag and UK with no-continue tag
+    Check Test Case    ${TESTNAME}
+
 Recursive continue in user keyword
     Check Test Case    ${TESTNAME}
 
 Recursive continue in nested keyword
     Check Test Case    ${TESTNAME}
+
+No-continue-on-failure in Teardown
+    Check Test Case    ${TESTNAME}     FAIL    Teardown failed:\n1

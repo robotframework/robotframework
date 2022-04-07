@@ -188,6 +188,14 @@ Recursive continue in test with tag and two nested UK with and without tag
     Failure in user keyword with tag     run_kw=Failure in user keyword without tag
     Fail   This should be executed
 
+Recursive continue in test with tag and UK with no-continue tag
+    [Documentation]    FAIL ${HEADER}\n\n
+    ...    1) kw1a\n\n
+    ...    2) This should be executed
+    [Tags]   robot:recursive-continue-on-failure
+    Failure in user keyword with no-continue tag
+    Fail   This should be executed
+
 Recursive continue in user keyword
     [Documentation]    FAIL ${HEADER}\n\n
     ...    1) kw1a\n\n
@@ -203,6 +211,11 @@ Recursive continue in nested keyword
     ...    2) kw1b
     Failure in user keyword without tag     run_kw=Failure in user keyword with recursive tag
     Fail   This should not be executed
+
+No-continue-on-failure in Teardown
+    [Documentation]    FAIL 1
+    [Teardown]   teardown-no-continue-on-failure
+    Log    does not matter
 
 *** Keywords ***
 Failure in user keyword with tag
@@ -226,6 +239,12 @@ Failure in user keyword with recursive tag
     Fail   kw1b
     Log    This should be executed
     Run Keyword   ${run_kw}
+
+Failure in user keyword with no-continue tag
+    [Tags]   robot:no-continue-on-failure
+    Fail   kw1a
+    Log    This should not be executed
+    Fail   kw1b
 
 FOR loop in in user keyword with tag
     [Tags]   robot:continue-on-failure
@@ -262,3 +281,9 @@ IF in user keyword without tag
         Fail    kw1c
         Fail    kw1d
     END
+
+teardown-no-continue-on-failure
+    [Tags]    robot:no-continue-on-failure
+    Fail   1
+    Log    this should not be executed
+    Fail   2
