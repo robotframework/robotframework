@@ -146,9 +146,7 @@ class ExecutionStatus(RobotError):
             return False
         if context.in_teardown:
             return context.continue_on_failure_in_teardown
-        if context.continue_on_failure:
-            return True
-        return self.continue_on_failure
+        return context.continue_on_failure or self.continue_on_failure
 
     def get_errors(self):
         return [self]

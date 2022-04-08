@@ -213,15 +213,20 @@ Recursive continue in nested keyword
     Fail   This should not be executed
 
 No-continue-on-failure in Teardown
-    [Documentation]    FAIL kw1a
+    [Documentation]    FAIL    Teardown failed:\nkw1a
     [Teardown]   Failure in user keyword with no-continue tag
-    Log    does not matter
+    No Operation
 
 No-continue-on-failure-2 in Teardown
-    [Documentation]    FAIL 1
+    [Documentation]    FAIL    Teardown failed:\n1
     [Tags]   robot:no-continue-on-failure
     [Teardown]   Run Keywords   Fail   1   AND   Fail  2
     Log    does not matter
+
+No-continue-on-failure in User Keyword
+    [Documentation]    FAIL    Teardown failed:\nKeyword teardown failed:\nkw1a
+    [Teardown]   User Keyword Teardown
+    No Operation
 
 *** Keywords ***
 Failure in user keyword with tag
@@ -251,6 +256,11 @@ Failure in user keyword with no-continue tag
     Fail   kw1a
     Log    This should not be executed
     Fail   kw1b
+
+User Keyword Teardown
+    [Tags]   robot:no-continue-on-failure
+    [Teardown]   Run Keywords    Fail  kw1a   AND   Fail   kw1b
+    No Operation
 
 FOR loop in in user keyword with tag
     [Tags]   robot:continue-on-failure
