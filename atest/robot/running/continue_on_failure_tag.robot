@@ -80,3 +80,6 @@ No-continue-on-failure-2 in Teardown
 
 No-continue-on-failure in User Keyword
     Check Test Case    ${TESTNAME}
+
+No-continue-on-failure with Template
+    Check Test Case    ${TESTNAME}

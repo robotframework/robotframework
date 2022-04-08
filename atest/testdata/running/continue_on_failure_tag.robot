@@ -228,6 +228,14 @@ No-continue-on-failure in User Keyword
     [Teardown]   User Keyword Teardown
     No Operation
 
+No-continue-on-failure with Template
+    [Documentation]    FAIL    42 != 43
+    [Tags]   robot:no-continue-on-failure
+    [Template]    Should Be Equal
+    Same         Same
+    42           43
+    Something    Different
+
 *** Keywords ***
 Failure in user keyword with tag
     [Arguments]    ${run_kw}=No Operation

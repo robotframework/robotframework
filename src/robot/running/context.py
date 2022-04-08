@@ -138,11 +138,10 @@ class _ExecutionContext:
         return any('robot:recursive-continue-on-failure' in p.tags for p in parents)
 
     @property
-    def continue_on_failure_in_teardown(self):
+    def continue_on_failure_default_on(self):
+        # logic for teardown/template where continue-on-failure is on by default
         parents = ([self.test] if self.test else []) + self.user_keywords
-        if not parents:
-            return True
-        if 'robot:no-continue-on-failure' in parents[-1].tags:
+        if parents and 'robot:no-continue-on-failure' in parents[-1].tags:
             return False
         return True
 
