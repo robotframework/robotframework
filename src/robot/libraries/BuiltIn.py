@@ -2884,9 +2884,9 @@ class _Misc(_BuiltInBase):
         See `Sleep` for accepted formats
 
         Examples:
-        | Sleep | 10                   | 100
-        | Sleep | 1.5                  | 20s
-        | Sleep | 2 minutes 10 seconds | 30 minutes
+        | Sleep Between | 10                   | 100
+        | Sleep Between | 1.5                  | 20s
+        | Sleep Between | 2 minutes 10 seconds | 30 minutes
 
         """        
         min_seconds = timestr_to_secs(min_time_)
