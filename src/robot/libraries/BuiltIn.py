@@ -15,6 +15,7 @@
 
 from collections import OrderedDict
 import difflib
+import random
 import re
 import time
 
@@ -2876,6 +2877,27 @@ class _Misc(_BuiltInBase):
         self.log('Slept %s' % secs_to_timestr(seconds))
         if reason:
             self.log(reason)
+
+    def sleep_between(self, min_time_, max_time_, reason=None):
+        """Pauses the test executed for random time between min and max given times.
+
+        See `Sleep` for accepted formats
+
+        Examples:
+        | Sleep | 10                   | 100
+        | Sleep | 1.5                  | 20s
+        | Sleep | 2 minutes 10 seconds | 30 minutes
+
+        """        
+        min_seconds = timestr_to_secs(min_time_)
+        max_seconds = timestr_to_secs(max_time_)
+        if min_seconds < 0:
+            min_seconds = 0
+        if max_seconds < 0:
+            max_seconds = 0
+        actual_wait = random.uniform(min_seconds, max_seconds)
+
+        self.sleep(actual_wait, reason=reason)
 
     def _sleep_in_parts(self, seconds):
         # time.sleep can't be stopped in windows
