@@ -188,6 +188,14 @@ Recursive continue in test with tag and two nested UK with and without tag
     Failure in user keyword with tag     run_kw=Failure in user keyword without tag
     Fail   This should be executed
 
+Recursive continue in test with tag and UK with stop-on-failure tag
+    [Documentation]    FAIL ${HEADER}\n\n
+    ...    1) kw1a\n\n
+    ...    2) This should be executed
+    [Tags]   robot:recursive-continue-on-failure
+    Failure in user keyword with stop-on-failure tag
+    Fail   This should be executed
+
 Recursive continue in user keyword
     [Documentation]    FAIL ${HEADER}\n\n
     ...    1) kw1a\n\n
@@ -203,6 +211,32 @@ Recursive continue in nested keyword
     ...    2) kw1b
     Failure in user keyword without tag     run_kw=Failure in user keyword with recursive tag
     Fail   This should not be executed
+
+stop-on-failure in keyword in Teardown
+    [Documentation]    FAIL    Teardown failed:\nkw1a
+    [Teardown]   Failure in user keyword with stop-on-failure tag
+    No Operation
+
+stop-on-failure in test case in Teardown
+    [Documentation]    FAIL    Teardown failed:\n${HEADER}\n\n
+    ...    1) 1\n\n
+    ...    2) 2
+    [Tags]   robot:stop-on-failure
+    [Teardown]   Run Keywords   Fail   1   AND   Fail  2
+    No Operation
+
+stop-on-failure in User Keyword
+    [Documentation]    FAIL    Teardown failed:\nKeyword teardown failed:\nkw1a
+    [Teardown]   User Keyword Teardown
+    No Operation
+
+stop-on-failure with Template
+    [Documentation]    FAIL    42 != 43
+    [Tags]   robot:stop-on-failure
+    [Template]    Should Be Equal
+    Same         Same
+    42           43
+    Something    Different
 
 *** Keywords ***
 Failure in user keyword with tag
@@ -226,6 +260,17 @@ Failure in user keyword with recursive tag
     Fail   kw1b
     Log    This should be executed
     Run Keyword   ${run_kw}
+
+Failure in user keyword with stop-on-failure tag
+    [Tags]   robot:stop-on-failure
+    Fail   kw1a
+    Log    This should not be executed
+    Fail   kw1b
+
+User Keyword Teardown
+    [Tags]   robot:stop-on-failure
+    [Teardown]   Run Keywords    Fail  kw1a   AND   Fail   kw1b
+    No Operation
 
 FOR loop in in user keyword with tag
     [Tags]   robot:continue-on-failure
