@@ -225,9 +225,9 @@ stop-on-failure in test case in Teardown
     [Teardown]   Run Keywords   Fail   1   AND   Fail  2
     No Operation
 
-stop-on-failure in User Keyword
-    [Documentation]    FAIL    Teardown failed:\nKeyword teardown failed:\nkw1a
-    [Teardown]   User Keyword Teardown
+ User Keyword teardown
+    [Documentation]    FAIL    Keyword teardown failed:\nkw1a
+    Teardown in User Keyword
     No Operation
 
 stop-on-failure with Template
@@ -278,7 +278,7 @@ Failure in user keyword with stop-on-failure tag
     Log    This should not be executed
     Fail   kw1b
 
-User Keyword Teardown
+Teardown in User Keyword
     [Tags]   robot:stop-on-failure
     [Teardown]   Run Keywords    Fail  kw1a   AND   Fail   kw1b
     No Operation

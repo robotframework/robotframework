@@ -78,7 +78,7 @@ stop-on-failure in keyword in Teardown
 stop-on-failure in test case in Teardown
     Check Test Case    ${TESTNAME}
 
-stop-on-failure in User Keyword
+User Keyword teardown
     Check Test Case    ${TESTNAME}
 
 stop-on-failure with Template
