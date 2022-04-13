@@ -83,3 +83,6 @@ stop-on-failure in User Keyword
 
 stop-on-failure with Template
     Check Test Case    ${TESTNAME}
+
+stop-on-failure with Template and Teardown
+    Check Test Case    ${TESTNAME}

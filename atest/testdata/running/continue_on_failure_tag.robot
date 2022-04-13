@@ -238,6 +238,17 @@ stop-on-failure with Template
     42           43
     Something    Different
 
+stop-on-failure with Template and Teardown
+    [Documentation]    FAIL    42 != 43\n\nAlso teardown failed:\n${HEADER}\n\n
+    ...    1) 1\n\n
+    ...    2) 2
+    [Tags]   robot:stop-on-failure
+    [Teardown]   Run Keywords   Fail   1   AND   Fail  2
+    [Template]    Should Be Equal
+    Same         Same
+    42           43
+    Something    Different
+
 *** Keywords ***
 Failure in user keyword with tag
     [Arguments]    ${run_kw}=No Operation
