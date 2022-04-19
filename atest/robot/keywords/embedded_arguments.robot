@@ -15,6 +15,20 @@ Embedded Arguments In User Keyword Name
     ...    sourcename="User \${user} Selects \${item} From Webshop"
     File Should Not Contain    ${OUTFILE}    sourcename="Log"
 
+Embedded Arguments In User Keyword Name and additional Arguments
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    This is always executed
+    Check Keyword Data    ${tc.kws[0]}    User Zachariah Selects Raspberry Pi From Advanced Webshop    \${name}, \${book}, \${Pos1}, \${named}    pos
+    Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    This is always executed
+    Check Keyword Data    ${tc.kws[2]}    User Zara Selects Blueberry Pie From Advanced Webshop    \${name}, \${book}, \${Pos1}, \${named}    and cream, named\=frozen
+    Check Log Message    ${tc.kws[4].kws[0].msgs[0]}    This is always executed
+    Check Keyword Data    ${tc.kws[4]}    User Zappa Selects Blueberry Pie From Advanced Webshop    \${name}, \${book}, \${Pos1}, \${named}    and cream, whipped
+    File Should Contain    ${OUTFILE}
+    ...    name="User Zachariah Selects Raspberry Pi From Advanced Webshop"
+    File Should Contain    ${OUTFILE}
+    ...    sourcename="User \${user} Selects \${item} From Advanced Webshop"
+    File Should Not Contain    ${OUTFILE}    sourcename="Log"
+
 Complex Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    feature-works
@@ -52,6 +66,16 @@ Embedded Arguments as Variables
     ...    name="User \${name} Selects \${SPACE * 10} From Webshop"
     File Should Contain    ${OUTFILE}
     ...    sourcename="User \${user} Selects \${item} From Webshop"
+    # And with additional parameters
+    Check Keyword Data    ${tc.kws[7]}    User \${42} Selects \${33 * 2} From Advanced Webshop    \${name}, \${item}, \${Pos1}, \${named}    \${4711}
+    Check Keyword Data    ${tc.kws[9]}    User \${name} Selects \${SPACE * 10} From Advanced Webshop    \${name}, \${item}, \${Pos1}, \${named}    star, named\=wars
+    Check Keyword Data    ${tc.kws[11]}    User Another Selects TV series is From Advanced Webshop    \${name}, \${item}, \${Pos1}, \${named}    babylon, \${5}
+    File Should Contain    ${OUTFILE}
+    ...    name="User \${42} Selects \${33 * 2} From Advanced Webshop"
+    File Should Contain    ${OUTFILE}
+    ...    sourcename="User \${user} Selects \${item} From Advanced Webshop"
+    File Should Contain    ${OUTFILE}
+    ...    name="User Another Selects TV series is From Advanced Webshop"
     File Should Not Contain    ${OUTFILE}    sourcename="Log">
 
 Embedded Arguments as List And Dict Variables
@@ -130,16 +154,7 @@ Embedded Arguments In Resource File Used Explicitly
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0]}    embedded_args_in_uk_1.peke uses resource file    \${ret}
 
-Embedded And Positional Arguments Do Not Work Together
-    Check Test Case    ${TEST NAME}
-
 Keyword with embedded args cannot be used as "normal" keyword
-    Check Test Case    ${TEST NAME}
-
-Creating keyword with both normal and embedded arguments fails
-    Creating Keyword Failed    0    223
-    ...    Keyword with \${embedded} and normal args is invalid
-    ...    Keyword cannot have both normal and embedded arguments.
     Check Test Case    ${TEST NAME}
 
 Keyword matching multiple keywords in test case file

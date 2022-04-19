@@ -12,6 +12,14 @@ Embedded Arguments In User Keyword Name
     ${name}    ${book} =    User Juha Selects Playboy From Webshop
     Should Be Equal    ${name}-${book}    Juha-Playboy
 
+Embedded Arguments In User Keyword Name and additional Arguments
+    ${name}    ${book}    ${Pos1}    ${named} =    User Zachariah Selects Raspberry Pi From Advanced Webshop   pos
+    Should Be Equal    ${name}-${book}-${Pos1}-${named}    Zachariah-Raspberry Pi-pos-default
+    ${name}    ${book}    ${Pos1}    ${named} =    User Zara Selects Blueberry Pie From Advanced Webshop   and cream    named=frozen
+    Should Be Equal    ${name}-${book}-${Pos1}-${named}    Zara-Blueberry Pie-and cream-frozen
+    ${name}    ${book}    ${Pos1}    ${named} =    User Zappa Selects Blueberry Pie From Advanced Webshop   and cream    whipped
+    Should Be Equal    ${name}-${book}-${Pos1}-${named}    Zappa-Blueberry Pie-and cream-whipped
+
 Complex Embedded Arguments
     # Notice that Given/When/Then is part of the keyword name
     Given this "feature" works
@@ -23,6 +31,12 @@ Embedded Arguments with BDD Prefixes
     When user x selects y from webshop
     ${x}    ${y} =    Then user x selects y from webshop
     Should Be Equal    ${x}-${y}    x-y
+
+Embedded Arguments with BDD Prefixes and additional Arguments
+    Given user x selects y from advanced webshop   z    named=letters
+    When user x selects y from advanced webshop    z    named=letters
+    ${x}    ${y}    ${Pos1}    ${named}=    Then user x selects y from advanced webshop   z    named=letters
+    Should Be Equal    ${x}-${y}-${Pos1}-${named}    x-y-z-letters
 
 Argument Namespaces with Embedded Arguments
     ${var}=    Set Variable    hello
@@ -37,6 +51,13 @@ Embedded Arguments as Variables
     ${name}    ${item} =    User ${name} Selects ${TEST TAGS} From Webshop
     Should Be Equal    ${name}    ${42}
     Should Be Equal    ${item}    ${{[]}}
+    # And with additional parameters
+    ${name}    ${item}    ${Pos1}    ${named} =    User ${42} Selects ${33 * 2} From Advanced Webshop    ${4711}
+    Should Be Equal    ${name}-${item}-${Pos1}-${named}    42-66-4711-default
+    ${name}    ${item}    ${Pos1}    ${named} =    User ${name} Selects ${SPACE * 10} From Advanced Webshop   star   named=wars
+    Should Be Equal    ${name}-${item}-${Pos1}-${named}    42-${SPACE*10}-star-wars
+    ${name}    ${item}    ${Pos1}    ${named} =    User Another Selects TV series is From Advanced Webshop   babylon    ${5}
+    Should Be Equal    ${name}-${item}-${Pos1}-${named}    Another-TV series is-babylon-5
 
 Embedded Arguments as List And Dict Variables
     ${i1}    ${i2} =    Evaluate    [1, 2, 3, 'neljä'], {'a': 1, 'b': 2}
@@ -57,11 +78,11 @@ Invalid Dict Variable as Embedded Argument
     User &{TEST NAME} Selects ${whatever} From Webshop
 
 Non-Existing Variable in Embedded Arguments and Positional Arguments
-    [Documentation]    FAIL Keyword 'User \${user} Selects \${item} From Webshop' expected 0 arguments, got 2.
+    [Documentation]    FAIL Variable '${non existing}' not found.
     User ${non existing} Selects ${variables} From Webshop    invalid    args
 
 Non-Existing Variable in Embedded Arguments and in Positional Arguments
-    [Documentation]    FAIL Variable '\${nonex pos}' not found.
+    [Documentation]    FAIL Variable '\${nonex emb}' not found.
     User ${nonex emb} Selects ${variables} From Webshop    ${nonex pos}
 
 Custom Embedded Argument Regexp
@@ -142,18 +163,9 @@ Embedded Arguments In Resource File Used Explicitly
     Should Be Equal    ${ret}    peke-resource
     embedded_args_in_uk_2.-r1-r2-+r1+
 
-Embedded And Positional Arguments Do Not Work Together
-    [Documentation]    FAIL Keyword 'User \${user} Selects \${item} From Webshop' expected 0 arguments, got 1.
-    Given this "usage" with @{EMPTY} works    @{EMPTY}
-    Then User Invalid Selects Invalid From Webshop    invalid
-
 Keyword with embedded args cannot be used as "normal" keyword
     [Documentation]    FAIL Variable '${user}' not found.
     User ${user} Selects ${item} From Webshop
-
-Creating keyword with both normal and embedded arguments fails
-    [Documentation]    FAIL Keyword cannot have both normal and embedded arguments.
-    Keyword with ${embedded} and normal args is invalid    arg1    arg2
 
 Keyword Matching Multiple Keywords In Test Case File
     [Documentation]    FAIL Test case file contains multiple keywords matching name 'foo+tc+bar-tc-zap':
@@ -211,6 +223,11 @@ User ${user} Selects ${item} From Webshop
     Log    This is always executed
     RETURN    ${user}    ${item}
 
+User ${user} Selects ${item} From Advanced Webshop
+    [Arguments]    ${pos1}    ${named}=default
+    Log    This is always executed
+    RETURN    ${user}    ${item}    ${pos1}    ${named}
+
 ${prefix:Given|When|Then} this "${item}" ${no good name for this arg ...}
     Log    ${item}-${no good name for this arg ...}
 
@@ -219,10 +236,6 @@ My embedded ${var}
 
 ${x:x} gets ${y:\w} from the ${z:.}
     Should Be Equal    ${x}-${y}-${z}    x-y-z
-
-Keyword with ${embedded} and normal args is invalid
-    [Arguments]    ${arg1}    ${arg2}
-    Fail    Creating keyword should fail. This should never be executed
 
 ${a}-tc-${b}
     Log    ${a}-tc-${b}

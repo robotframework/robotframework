@@ -231,15 +231,15 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
         self.embedded_args = list(zip(handler.embedded_args, match.groups()))
 
     def _resolve_arguments(self, args, variables=None):
-        # Validates that no arguments given.
-        self.arguments.resolve(args, variables)
-        if not variables:
-            return []
-        return [(n, variables.replace_scalar(v)) for n, v in self.embedded_args]
+        if variables:
+            self.embedded_args = [(n, variables.replace_scalar(v))
+                                  for n, v in self.embedded_args]
+        return super()._resolve_arguments(args, variables)
 
-    def _set_arguments(self, embedded_args, context):
+    def _set_arguments(self, args, context):
+        super()._set_arguments(args, context)
         variables = context.variables
-        for name, value in embedded_args:
+        for name, value in self.embedded_args:
             variables['${%s}' % name] = value
         context.output.trace(lambda: self._trace_log_args_message(variables))
 

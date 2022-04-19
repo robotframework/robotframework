@@ -56,8 +56,6 @@ class UserLibrary:
         embedded = EmbeddedArguments(kw.name)
         if not embedded:
             return UserKeywordHandler(kw, self.name)
-        if kw.args:
-            raise DataError('Keyword cannot have both normal and embedded arguments.')
         return EmbeddedArgumentsHandler(kw, self.name, embedded)
 
     def _log_creating_failed(self, handler, error):
