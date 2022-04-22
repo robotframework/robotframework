@@ -57,7 +57,8 @@ class PythonArgumentParser(_ArgumentParser):
         # `inspect.signature` drops `self` with bound methods and that's the case when
         # inspecting keywords. `__init__` is got directly from class (i.e. isn't bound)
         # so we need to handle that case ourselves.
-        if handler.__name__ == '__init__':
+        # Partial objects do not have __name__ at least in Python =< 3.10.
+        if getattr(handler, '__name__', None) == '__init__':
             parameters = parameters[1:]
         setters = {
             Parameter.POSITIONAL_ONLY: spec.positional_only.append,

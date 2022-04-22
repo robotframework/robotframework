@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from functools import partial
 import inspect
 import os
 
@@ -289,7 +290,8 @@ class _BaseTestLibrary:
         return method
 
     def _validate_handler_method(self, method):
-        if not inspect.isroutine(method):
+        # isroutine returns false for partial objects. This may change in Python 3.11.
+        if not (inspect.isroutine(method) or isinstance(method, partial)):
             raise DataError('Not a method or function.')
         if getattr(method, 'robot_not_keyword', False):
             raise DataError('Not exposed as a keyword.')
