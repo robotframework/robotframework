@@ -224,7 +224,7 @@ class _BaseTestLibrary:
         try:
             if method:
                 method()
-        except:
+        except Exception:
             message, details = get_error_details()
             name = getattr(listener, '__name__', None) or type_name(listener)
             self.report_error("Calling method '%s' of listener '%s' failed: %s"
@@ -233,7 +233,7 @@ class _BaseTestLibrary:
     def _create_handlers(self, libcode):
         try:
             names = self._get_handler_names(libcode)
-        except:
+        except Exception:
             message, details = get_error_details()
             raise DataError("Getting keyword names from library '%s' failed: %s"
                             % (self.name, message), details)
@@ -282,17 +282,16 @@ class _BaseTestLibrary:
     def _get_handler_method(self, libcode, name):
         try:
             method = getattr(libcode, name)
-        except:
+        except Exception:
             message, details = get_error_details()
-            raise DataError('Getting handler method failed: %s' % message,
-                            details)
+            raise DataError(f'Getting handler method failed: {message}', details)
         self._validate_handler_method(method)
         return method
 
     def _validate_handler_method(self, method):
         if not inspect.isroutine(method):
             raise DataError('Not a method or function.')
-        if getattr(method, 'robot_not_keyword', False) is True:
+        if getattr(method, 'robot_not_keyword', False):
             raise DataError('Not exposed as a keyword.')
         return method
 
@@ -326,8 +325,7 @@ class _BaseTestLibrary:
     def _raise_creating_instance_failed(self):
         msg, details = get_error_details()
         if self.positional_args or self.named_args:
-            args = self.positional_args \
-                + ['%s=%s' % item for item in self.named_args]
+            args = self.positional_args + ['%s=%s' % item for item in self.named_args]
             args_text = 'arguments %s' % seq2str2(args)
         else:
             args_text = 'no arguments'
