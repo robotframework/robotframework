@@ -48,32 +48,32 @@ class GatherFailedSuites(SuiteVisitor):
         pass
 
 
-def gather_failed_tests(output):
-    if output.upper() == 'NONE':
-        return []
+def gather_failed_tests(output, empty_suite_ok=False):
+    if output is None:
+        return None
     gatherer = GatherFailedTests()
     tests_or_tasks = 'tests or tasks'
     try:
         suite = ExecutionResult(output, include_keywords=False).suite
         suite.visit(gatherer)
         tests_or_tasks = 'tests' if not suite.rpa else 'tasks'
-        if not gatherer.tests:
+        if not gatherer.tests and not empty_suite_ok:
             raise DataError('All %s passed.' % tests_or_tasks)
-    except:
+    except Exception:
         raise DataError("Collecting failed %s from '%s' failed: %s"
                         % (tests_or_tasks, output, get_error_message()))
     return gatherer.tests
 
 
-def gather_failed_suites(output):
-    if output.upper() == 'NONE':
-        return []
+def gather_failed_suites(output, empty_suite_ok=False):
+    if output is None:
+        return None
     gatherer = GatherFailedSuites()
     try:
         ExecutionResult(output, include_keywords=False).suite.visit(gatherer)
-        if not gatherer.suites:
+        if not gatherer.suites and not empty_suite_ok:
             raise DataError('All suites passed.')
-    except:
+    except Exception:
         raise DataError("Collecting failed suites from '%s' failed: %s"
                         % (output, get_error_message()))
     return gatherer.suites

@@ -39,8 +39,6 @@ class _BaseSettings:
                  'Metadata'         : ('metadata', []),
                  'TestNames'        : ('test', []),
                  'TaskNames'        : ('task', []),
-                 'ReRunFailed'      : ('rerunfailed', 'NONE'),
-                 'ReRunFailedSuites': ('rerunfailedsuites', 'NONE'),
                  'SuiteNames'       : ('suite', []),
                  'SetTag'           : ('settag', []),
                  'Include'          : ('include', []),
@@ -86,8 +84,6 @@ class _BaseSettings:
                 # Copy mutable values and support list values as scalars.
                 value = list(value) if is_list_like(value) else [value]
             self[name] = self._process_value(name, value)
-        self['TestNames'] += self['ReRunFailed'] + self['TaskNames']
-        self['SuiteNames'] += self['ReRunFailedSuites']
         if opts:
             raise DataError(f'Invalid option{s(opts)} {seq2str(opts)}.')
 
@@ -97,10 +93,6 @@ class _BaseSettings:
         self._opts[name] = value
 
     def _process_value(self, name, value):
-        if name == 'ReRunFailed':
-            return gather_failed_tests(value)
-        if name == 'ReRunFailedSuites':
-            return gather_failed_suites(value)
         if name == 'LogLevel':
             return self._process_log_level(value)
         if value == self._get_default_value(name):
@@ -113,8 +105,8 @@ class _BaseSettings:
             return [self._process_tagdoc(v) for v in value]
         if name in ['Include', 'Exclude']:
             return [self._format_tag_patterns(v) for v in value]
-        if name in self._output_opts and (not value or value.upper() == 'NONE'):
-            return None
+        if name in self._output_opts or name in ['ReRunFailed', 'ReRunFailedSuites']:
+            return value if value and value.upper() != 'NONE' else None
         if name == 'OutputDir':
             return abspath(value)
         if name in ['SuiteStatLevel', 'ConsoleWidth']:
@@ -395,15 +387,19 @@ class _BaseSettings:
 
     @property
     def suite_names(self):
-        return self['SuiteNames']
+        return self['SuiteNames'] or None
+
+    @property
+    def test_names(self):
+        return (self['TestNames'] + self['TaskNames']) or None
 
     @property
     def include(self):
-        return self['Include']
+        return self['Include'] or None
 
     @property
     def exclude(self):
-        return self['Exclude']
+        return self['Exclude'] or None
 
     @property
     def pythonpath(self):
@@ -461,6 +457,8 @@ class RobotSettings(_BaseSettings):
                        'Skip'               : ('skip', []),
                        'SkipOnFailure'      : ('skiponfailure', []),
                        'SkipTeardownOnExit' : ('skipteardownonexit', False),
+                       'ReRunFailed'        : ('rerunfailed', None),
+                       'ReRunFailedSuites'  : ('rerunfailedsuites', None),
                        'Randomize'          : ('randomize', 'NONE'),
                        'RunEmptySuite'      : ('runemptysuite', False),
                        'Variables'          : ('variable', []),
@@ -508,13 +506,34 @@ class RobotSettings(_BaseSettings):
             'set_tags': self['SetTag'],
             'include_tags': self.include,
             'exclude_tags': self.exclude,
-            'include_suites': self['SuiteNames'],
-            'include_tests': self['TestNames'],
+            'include_suites': self.suite_names,
+            'include_tests': self.test_names,
             'empty_suite_ok': self.run_empty_suite,
             'randomize_suites': self.randomize_suites,
             'randomize_tests': self.randomize_tests,
             'randomize_seed': self.randomize_seed,
         }
+
+    @property
+    def suite_names(self):
+        return self._names_and_rerun()
+
+    @property
+    def test_names(self):
+        return self._names_and_rerun(for_test=True)
+
+    def _names_and_rerun(self, for_test=False):
+        if for_test:
+            names = self['TestNames'] + self['TaskNames']
+            rerun = gather_failed_tests(self['ReRunFailed'], self['RunEmptySuite'])
+        else:
+            names = self['SuiteNames']
+            rerun = gather_failed_suites(self['ReRunFailedSuites'], self['RunEmptySuite'])
+        # `rerun` is None if `--rerunfailed(suites)` wasn't used and a list otherwise.
+        # The list is empty all tests passed and running empty suite is allowed.
+        if rerun:
+            return names + rerun
+        return names or rerun
 
     @property
     def randomize_seed(self):
@@ -633,8 +652,8 @@ class RebotSettings(_BaseSettings):
             'set_tags': self['SetTag'],
             'include_tags': self.include,
             'exclude_tags': self.exclude,
-            'include_suites': self['SuiteNames'],
-            'include_tests': self['TestNames'],
+            'include_suites': self.suite_names,
+            'include_tests': self.test_names,
             'empty_suite_ok': self.process_empty_suite,
             'remove_keywords': self.remove_keywords,
             'log_level': self['LogLevel'],

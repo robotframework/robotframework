@@ -60,6 +60,12 @@ class TestRobotAndRebotSettings(unittest.TestCase):
             if hasattr(settings, attr):
                 assert_equal(getattr(settings, attr), None)
 
+    def test_rerun_failed_as_none_string_and_object(self):
+        for name in 'ReRunFailed', 'ReRunFailedSuites':
+            assert_equal(RobotSettings({name.lower(): 'NONE'})[name], None, name)
+            assert_equal(RobotSettings({name.lower(): 'NoNe'})[name], None)
+            assert_equal(RobotSettings({name.lower(): None})[name], None)
+
     def test_log_levels(self):
         self._verify_log_level('TRACE')
         self._verify_log_level('DEBUG')
