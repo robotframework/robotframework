@@ -1,5 +1,6 @@
 from os.path import abspath, dirname, join, normpath
 import unittest
+from pathlib import Path
 
 from robot.conf.settings import _BaseSettings, RobotSettings, RebotSettings
 from robot.errors import DataError
@@ -60,11 +61,38 @@ class TestRobotAndRebotSettings(unittest.TestCase):
             if hasattr(settings, attr):
                 assert_equal(getattr(settings, attr), None)
 
+    def test_output_files_as_pathlib_objects(self):
+        for name in 'Output.xml', 'Report.html', 'Log.html', 'XUnit.xml', 'DebugFile.txt':
+            name, ext = name.split('.')
+            expected = abspath(f'test.{ext}')
+            attr = (name[:-4] if name.endswith('File') else name).lower()
+            settings = RobotSettings({name.lower(): Path('test')})
+            assert_equal(settings[name], expected)
+            if hasattr(settings, attr):
+                assert_equal(getattr(settings, attr), expected)
+
+    def test_output_dir_as_pathlib_object(self):
+        assert_equal(RobotSettings({'outputdir': Path('.')})['OutputDir'], abspath('.'))
+
     def test_rerun_failed_as_none_string_and_object(self):
         for name in 'ReRunFailed', 'ReRunFailedSuites':
-            assert_equal(RobotSettings({name.lower(): 'NONE'})[name], None, name)
+            assert_equal(RobotSettings({name.lower(): 'NONE'})[name], None)
             assert_equal(RobotSettings({name.lower(): 'NoNe'})[name], None)
             assert_equal(RobotSettings({name.lower(): None})[name], None)
+
+    def test_rerun_failed_as_pathlib_object(self):
+        for name in 'ReRunFailed', 'ReRunFailedSuites':
+            assert_equal(RobotSettings({name.lower(): Path('R.xml')})[name], 'R.xml')
+
+    def test_doc(self):
+        assert_equal(RobotSettings()['Doc'], None)
+        assert_equal(RobotSettings({'doc': None})['Doc'], None)
+        assert_equal(RobotSettings({'doc': 'The doc!'})['Doc'], 'The doc!')
+
+    def test_doc_from_file(self):
+        for doc in __file__, Path(__file__):
+            doc = RobotSettings({'doc': doc})['Doc']
+            assert_true('def test_doc_from_file(self):' in doc)
 
     def test_log_levels(self):
         self._verify_log_level('TRACE')

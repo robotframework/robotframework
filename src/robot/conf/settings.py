@@ -20,6 +20,7 @@ import string
 import sys
 import time
 import warnings
+from pathlib import Path
 
 from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
@@ -106,6 +107,8 @@ class _BaseSettings:
         if name in ['Include', 'Exclude']:
             return [self._format_tag_patterns(v) for v in value]
         if name in self._output_opts or name in ['ReRunFailed', 'ReRunFailedSuites']:
+            if isinstance(value, Path):
+                return str(value)
             return value if value and value.upper() != 'NONE' else None
         if name == 'OutputDir':
             return abspath(value)
@@ -138,7 +141,7 @@ class _BaseSettings:
         return value
 
     def _process_doc(self, value):
-        if os.path.exists(value) and value.strip() == value:
+        if isinstance(value, Path) or (os.path.exists(value) and value.strip() == value):
             try:
                 with open(value) as f:
                     value = f.read()
