@@ -171,18 +171,20 @@ iteratively fix failing test cases.
   robot --rerunfailed output.xml tests    # then re-execute failing
 
 Behind the scenes this option selects the failed tests as they would have been
-selected individually with the :option:`--test` option. It is possible to further
+selected individually using the :option:`--test` option. It is possible to further
 fine-tune the list of selected tests by using :option:`--test`, :option:`--suite`,
 :option:`--include` and :option:`--exclude` options.
 
+It is an error if the output contains no failed tests, but this behavior can be
+changed by using the :option:`--runemptysuite` option `discussed below`__.
 Using an output not originating from executing the same tests that are run
-now causes undefined results. Additionally, it is an error if the output
-contains no failed tests. Using a special value `NONE` as the output
-is same as not specifying this option at all.
+now causes undefined results. Using a special value `NONE` as the output is
+same as not specifying this option at all.
 
 .. tip:: Re-execution results and original results can be `merged together`__
          using the :option:`--merge` command line option.
 
+__ `When no tests match selection`_
 __ `Merging outputs`_
 
 Re-executing failed test suites
@@ -210,10 +212,11 @@ with an error like::
 
 Because no outputs are generated, this behavior can be problematic if tests
 are executed and results processed automatically. Luckily a command line
-option :option:`--RunEmptySuite` can be used to force the suite to be executed
-also in this case. As a result normal outputs are created but show zero
-executed tests. The same option can be used also to alter the behavior when
-an empty directory or a test case file containing no tests is executed.
+option :option:`--RunEmptySuite` (case-insensitive) can be used to force
+the suite to be executed also in this case. As a result normal outputs are
+created but show zero executed tests. The same option can be used also to
+alter the behavior when an empty directory or a test case file containing
+no tests is executed.
 
 Similar situation can occur also when processing output files with Rebot_.
 It is possible that no test match the used filtering criteria or that
@@ -222,6 +225,10 @@ Rebot fails in these cases, but it has a separate
 :option:`--ProcessEmptySuite` option that can be used to alter the behavior.
 In practice this option works the same way as :option:`--RunEmptySuite` when
 running tests.
+
+.. note:: Using :option:`--RunEmptySuite` with :option:`--ReRunFailed`
+          or :option:`--ReRunFailedSuites` requires Robot Framework 5.0.1
+          or newer.
 
 Setting metadata
 ----------------
