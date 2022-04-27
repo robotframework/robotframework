@@ -2,7 +2,7 @@ import json
 import os
 import pprint
 import shlex
-from os.path import abspath, dirname, exists, join, normpath, relpath
+from pathlib import Path
 from subprocess import run, PIPE, STDOUT
 
 from jsonschema import Draft202012Validator
@@ -13,15 +13,15 @@ from robot.utils import SYSTEM_ENCODING
 from robot.running.arguments import ArgInfo
 
 
-ROOT = join(dirname(abspath(__file__)), '..', '..', '..')
+ROOT = Path(__file__).absolute().parent.parent.parent.parent
 
 
 class LibDocLib:
 
     def __init__(self, interpreter=None):
         self.interpreter = interpreter
-        self.xml_schema = XMLSchema(join(ROOT, 'doc', 'schema', 'libdoc.04.xsd'))
-        with open(join(ROOT, 'doc', 'schema', 'libdoc.json')) as f:
+        self.xml_schema = XMLSchema(ROOT/'doc/schema/libdoc.04.xsd')
+        with open(ROOT/'doc/schema/libdoc.json') as f:
             self.json_schema = Draft202012Validator(json.load(f))
 
     @property
@@ -32,7 +32,7 @@ class LibDocLib:
         cmd = self.libdoc + self._split_args(args)
         cmd[-1] = cmd[-1].replace('/', os.sep)
         logger.info(' '.join(cmd))
-        result = run(cmd, cwd=join(ROOT, 'src'), stdout=PIPE, stderr=STDOUT,
+        result = run(cmd, cwd=ROOT/'src', stdout=PIPE, stderr=STDOUT,
                      encoding=SYSTEM_ENCODING, timeout=120, universal_newlines=True)
         logger.info(result.stdout)
         return result.stdout
