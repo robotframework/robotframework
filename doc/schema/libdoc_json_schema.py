@@ -121,6 +121,13 @@ class Libdoc(BaseModel):
     dataTypes: dict = Field({}, description="Deprecated. Use 'typedocs' instead.")
     typedocs: List[TypeDoc]
 
+    # pydantic doesn't add schema version automatically.
+    # https://github.com/samuelcolvin/pydantic/issues/1478
+    class Config:
+        schema_extra = {
+            '$schema': 'https://json-schema.org/draft/2020-12/schema'
+        }
+
 
 if __name__ == '__main__':
     path = Path(__file__).parent / 'libdoc.json'
