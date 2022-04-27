@@ -110,6 +110,7 @@ class LibraryDoc:
 
     def to_dictionary(self):
         return {
+            'specversion': 1,
             'name': self.name,
             'doc': self.doc,
             'version': self.version,

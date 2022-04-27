@@ -8,6 +8,11 @@ from typing import List, Optional, Union
 from pydantic import BaseModel, Field, PositiveInt
 
 
+class SpecVersion(int, Enum):
+    """Version of the spec."""
+    VERSION = 1
+
+
 class DocumentationType(str, Enum):
     """Type of the doc: LIBRARY or RESOURCE."""
     LIBRARY = 'LIBRARY'
@@ -105,7 +110,11 @@ class TypeDoc(BaseModel):
 
 
 class Libdoc(BaseModel):
-    #specversion
+    """Libdoc JSON spec file schema.
+
+    Compatible with JSON Schema Draft 2020-12.
+    """
+    specversion: SpecVersion
     name: str
     doc: str
     version: str

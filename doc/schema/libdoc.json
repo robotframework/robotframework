@@ -1,7 +1,11 @@
 {
   "title": "Libdoc",
+  "description": "Libdoc JSON spec file schema.\n\nCompatible with JSON Schema Draft 2020-12.",
   "type": "object",
   "properties": {
+    "specversion": {
+      "$ref": "#/definitions/SpecVersion"
+    },
     "name": {
       "title": "Name",
       "type": "string"
@@ -75,6 +79,7 @@
     }
   },
   "required": [
+    "specversion",
     "name",
     "doc",
     "version",
@@ -91,6 +96,14 @@
   ],
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "definitions": {
+    "SpecVersion": {
+      "title": "SpecVersion",
+      "description": "Version of the spec.",
+      "enum": [
+        1
+      ],
+      "type": "integer"
+    },
     "DocumentationType": {
       "title": "DocumentationType",
       "description": "Type of the doc: LIBRARY or RESOURCE.",
