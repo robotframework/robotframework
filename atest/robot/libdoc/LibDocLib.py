@@ -5,6 +5,7 @@ import shlex
 from os.path import abspath, dirname, exists, join, normpath, relpath
 from subprocess import run, PIPE, STDOUT
 
+from jsonschema import Draft202012Validator
 from xmlschema import XMLSchema
 
 from robot.api import logger
@@ -19,7 +20,9 @@ class LibDocLib:
 
     def __init__(self, interpreter=None):
         self.interpreter = interpreter
-        self.schema = XMLSchema(join(ROOT, 'doc', 'schema', 'libdoc.04.xsd'))
+        self.xml_schema = XMLSchema(join(ROOT, 'doc', 'schema', 'libdoc.04.xsd'))
+        with open(join(ROOT, 'doc', 'schema', 'libdoc.json')) as f:
+            self.json_schema = Draft202012Validator(json.load(f))
 
     @property
     def libdoc(self):
@@ -53,8 +56,12 @@ class LibDocLib:
                 return line.split('=', 1)[1].strip(' \n;')
         raise RuntimeError('No model found from HTML')
 
-    def validate_spec(self, path):
-        self.schema.validate(path)
+    def validate_xml_spec(self, path):
+        self.xml_schema.validate(path)
+
+    def validate_json_spec(self, path):
+        with open(path) as f:
+            self.json_schema.validate(json.load(f))
 
     def relative_source(self, path, start):
         if not exists(path):

@@ -25,7 +25,7 @@ Run Libdoc And Parse Output
     Run Libdoc And Set Output    ${arguments} ${OUTXML}
     Should Not Contain    ${OUTPUT}    --help    Execution failed:\n\n${OUTPUT}    values=False
     Log File    ${OUTXML}
-    Validate Spec    ${OUTXML}
+    Validate XML Spec    ${OUTXML}
     ${LIBDOC}=    Parse Xml    ${OUTXML}
     Set Suite Variable    ${LIBDOC}
 
@@ -44,6 +44,7 @@ Run Libdoc And Parse Model From HTML
 Run Libdoc And Parse Model From JSON
     [Arguments]    ${args}
     Run Libdoc    ${args} ${OUTJSON}
+    Validate JSON spec    ${OUTJSON}
     ${model_string}=    Get File    ${OUTJSON}
     ${MODEL} =    Evaluate    json.loads($model_string)
     Set Suite Variable    ${MODEL}
