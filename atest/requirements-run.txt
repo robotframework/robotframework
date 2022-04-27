@@ -1,2 +1,2 @@
-jsonschema
+jsonschema >= 4.0
 xmlschema
