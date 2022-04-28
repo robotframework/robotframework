@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
 
+"""Libdoc JSON schema model definition.
+
+The schema is modeled using pydantic in this file. After updating the model,
+execute this file to regenerate the actual schema file in libdoc.json.
+
+https://pydantic-docs.helpmanual.io/usage/schema/
+"""
+
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
