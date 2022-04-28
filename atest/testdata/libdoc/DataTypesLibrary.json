@@ -1,4 +1,5 @@
 {
+  "specversion": 1,
   "name": "DataTypesLibrary",
   "doc": "<p>This Library has Data Types.</p>\n<p>It has some in <code>__init__</code> and others in the <a href=\"#Keywords\" class=\"name\">Keywords</a>.</p>\n<p>The DataTypes are the following that should be linked. <span class=\"name\">HttpCredentials</span> , <a href=\"#GeoLocation\" class=\"name\">GeoLocation</a> , <a href=\"#Small\" class=\"name\">Small</a> and <a href=\"#AssertionOperator\" class=\"name\">AssertionOperator</a>.</p>",
   "version": "",

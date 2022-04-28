@@ -1,4 +1,5 @@
 {
+  "specversion": 1,
   "name": "DynamicLibrary",
   "doc": "<p>Dummy documentation for <span class=\"name\">__intro__</span>.</p>",
   "version": "0.1",
