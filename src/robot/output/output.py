@@ -36,7 +36,7 @@ class Output(AbstractLogger):
         LOGGER.register_xml_logger(self._xmllogger)
         LOGGER.register_listeners(self.listeners or None, self.library_listeners)
         if debug_file:
-            LOGGER.register_logger(debug_file)
+            LOGGER.register_debugfile_logger(debug_file)
 
     def register_error_listener(self, listener):
         LOGGER.register_error_listener(listener)

@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import threading
+from multiprocessing import Lock
 from robot.errors import DataError
 from robot.utils import get_timestamp, file_writer, seq2str2
 
@@ -20,7 +22,7 @@ from .logger import LOGGER
 from .loggerhelper import IsLogged
 
 
-def DebugFile(path):
+def DebugFile(path, use_lock=True):
     if not path:
         LOGGER.info('No debug file')
         return None
@@ -31,18 +33,22 @@ def DebugFile(path):
         return None
     else:
         LOGGER.info('Debug file: %s' % path)
-        return _DebugFileWriter(outfile)
+        return _DebugFileWriter(outfile, use_lock=use_lock)
 
+
+_DEBUGFILE_LOCK = Lock()
 
 class _DebugFileWriter:
     _separators = {'SUITE': '=', 'TEST': '-', 'KEYWORD': '~'}
+    _lock = None
 
-    def __init__(self, outfile):
+    def __init__(self, outfile, use_lock=True):
         self._indent = 0
         self._kw_level = 0
         self._separator_written_last = False
         self._outfile = outfile
         self._is_logged = IsLogged('DEBUG')
+        self._lock = _DEBUGFILE_LOCK if use_lock else None
 
     def start_suite(self, suite):
         self._separator('SUITE')
@@ -101,7 +107,16 @@ class _DebugFileWriter:
         if separator and self._separator_written_last:
             return
         if not separator:
-            text = '%s - %s - %s' % (timestamp or get_timestamp(), level, text)
-        self._outfile.write(text.rstrip() + '\n')
-        self._outfile.flush()
+            thread_name = threading.currentThread().getName()
+            text = '%s - %s - %s - %s' % (
+                timestamp or get_timestamp(), level, thread_name, text
+            )
+        if self._lock:
+            self._lock.acquire()
+        try:
+            self._outfile.write(text.rstrip() + '\n')
+            self._outfile.flush()
+        finally:
+            if self._lock:
+                self._lock.release()
         self._separator_written_last = separator
