@@ -60,8 +60,8 @@ using the :class:`~robot.running.model.TestSuite` class::
     suite = TestSuite('Activate Skynet')
     suite.resource.imports.library('OperatingSystem')
     test = suite.tests.create('Should Activate Skynet', tags=['smoke'])
-    test.setup.config('Set Environment Variable', args=['SKYNET', 'activated'])
-    test.keywords.create('Environment Variable Should Be Set', args=['SKYNET'])
+    test.setup.config(name='Set Environment Variable', args=['SKYNET', 'activated'])
+    test.body.create_keyword('Environment Variable Should Be Set', args=['SKYNET'])
 
 Not that complicated either, especially considering the flexibility. Notice
 that the suite created based on the file could also be edited further using
@@ -80,7 +80,7 @@ information::
     assert test.name == 'Should Activate Skynet'
     assert test.passed
     stats = result.suite.statistics
-    assert stats.total == 1 and stats.failed == 0
+    assert stats.total == 1 and stats.passed == 1 and stats.failed == 0
 
 Running the suite generates a normal output XML file, unless it is disabled
 by using ``output=None``. Generating log, report, and xUnit files based on
