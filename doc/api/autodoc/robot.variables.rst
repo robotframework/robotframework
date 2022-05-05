@@ -57,6 +57,14 @@ robot.variables.replacer module
    :undoc-members:
    :show-inheritance:
 
+robot.variables.resolvable module
+---------------------------------
+
+.. automodule:: robot.variables.resolvable
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.variables.scopes module
 -----------------------------
 
