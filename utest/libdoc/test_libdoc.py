@@ -41,7 +41,7 @@ def verify_keyword_shortdoc(doc_format, doc_input, expected):
 def run_libdoc_and_validate_json(filename):
     library = join(DATADIR, filename)
     json_spec = LibraryDocumentation(library).to_json()
-    with open(join(CURDIR, '../../doc/schema/libdoc_schema.json')) as f:
+    with open(join(CURDIR, '../../doc/schema/libdoc.json')) as f:
         schema = json.load(f)
     validate(instance=json.loads(json_spec), schema=schema)
 
