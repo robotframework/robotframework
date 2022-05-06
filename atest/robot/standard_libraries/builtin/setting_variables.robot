@@ -67,6 +67,9 @@ Set Test Variable Not Affecting Other Tests
 Test Variables Set In One Suite Are Not Available In Another
     Check Test Case    ${TESTNAME}
 
+Set Test Variable cannot be used in suite setup or teardown
+    Check Test Case    ${TESTNAME}
+
 Set Task Variable as alias for Set Test Variable
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Be Equal    ${tc.kws[0].doc}    Makes a variable available everywhere within the scope of the current task.

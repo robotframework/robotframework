@@ -16,10 +16,10 @@
 import os
 import tempfile
 
-from robot.errors import DataError
+from robot.errors import VariableError
+from robot.model import Tags
 from robot.output import LOGGER
 from robot.utils import abspath, find_file, get_error_details, DotDict, NormalizedDict
-from robot.model import Tags
 
 from .resolvable import GlobalVariableValue
 from .variables import Variables
@@ -145,7 +145,7 @@ class VariableScopes:
 
     def set_test(self, name, value):
         if self._test is None:
-            raise DataError('Cannot set test variable when no test is started.')
+            raise VariableError('Cannot set test variable when no test is started.')
         for scope in self._scopes_until_test:
             name, value = self._set_global_suite_or_test(scope, name, value)
         self._variables_set.set_test(name, value)
