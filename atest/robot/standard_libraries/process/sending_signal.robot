@@ -24,7 +24,8 @@ Send other well-known signals
     Check Test Case    ${TESTNAME}
 
 By default signal is not sent to process running in shell
-    [Tags]    no-osx
+    [Documentation]    This depends on shell semantics and is tested only on Linux.
+    [Tags]    require-linux
     Check Test Case    ${TESTNAME}
 
 By default signal is sent only to parent process

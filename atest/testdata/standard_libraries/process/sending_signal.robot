@@ -22,7 +22,7 @@ Send other well-known signals
     END
 
 By default signal is not sent to process running in shell
-    Precondition not OSX
+    Check Precondition    sys.platform == 'linux'
     Start Countdown    shell=yes
     Send Signal To Process    TERM
     Countdown should not have stopped

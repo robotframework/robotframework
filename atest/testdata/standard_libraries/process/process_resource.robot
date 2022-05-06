@@ -86,13 +86,7 @@ Safe Remove Directory
 
 Check Precondition
     [Arguments]    ${precondition}
-    ${ok} =    Evaluate    ${precondition}    modules=sys,os,signal
-    Run Keyword If    not ${ok}
-    ...    Fail    Precondition '${precondition}' was not true.    precondition-fail
-
-Precondition not OSX
-    Run Keyword If    ${{sys.platform == 'darwin'}}
-    ...    Fail    Platform is OSX, where this test wont work.    precondition-fail
+    Should Be True    ${precondition}    Precondition '${precondition}' was not true.
 
 Wait until countdown started
     Wait Until Created    ${TEMPFILE}
