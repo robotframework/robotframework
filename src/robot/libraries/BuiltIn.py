@@ -1498,8 +1498,8 @@ class _Variables(_BuiltInBase):
         - ``${y}`` gets value of ``${a}`` if ``${a}`` exists and value of ``${b}`` otherwise
         - ``${z}`` is set to Python ``None`` if it does not exist previously
         """
-        name = self._get_var_name(name)
         try:
+            name = self._get_var_name(name, require_assign=False)
             return self._variables.replace_scalar(name)
         except VariableError:
             return self._variables.replace_scalar(default)
@@ -1775,7 +1775,7 @@ class _Variables(_BuiltInBase):
 
     # Helpers
 
-    def _get_var_name(self, original):
+    def _get_var_name(self, original, require_assign=True):
         try:
             replaced = self._variables.replace_string(original)
         except VariableError:
@@ -1784,9 +1784,10 @@ class _Variables(_BuiltInBase):
             name = self._resolve_var_name(replaced)
         except ValueError:
             name = original
-        match = search_variable(name)
+        match = search_variable(name, identifiers='$@&')
         match.resolve_base(self._variables)
-        if not match.is_assign():
+        valid = match.is_assign() if require_assign else match.is_variable()
+        if not valid:
             raise DataError("Invalid variable name '%s'." % name)
         return str(match)
 
