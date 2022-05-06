@@ -34,6 +34,9 @@ Multiple except patterns
 Default except pattern
     FAIL    PASS
 
+Syntax errors cannot be caught
+    FAIL
+
 Finally block executed when no failures
     [Template]    None
     ${tc}=   Verify try except and block statuses    PASS    NOT RUN    PASS    PASS

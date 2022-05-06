@@ -1014,6 +1014,8 @@ other `EXCEPT` branches:
             Error Handler 2
         END
 
+.. note:: It is not possible to catch exceptions caused by invalid syntax.
+
 Matching errors using patterns
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
