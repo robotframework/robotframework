@@ -25,6 +25,9 @@ Log with different levels
     Check Log Message    ${ERRORS[1]}            Error level    ERROR
     Length Should Be     ${ERRORS}               4    # Two deprecation warnings from `repr`.
 
+Invalid log level failure is catchable
+    Check Test Case    ${TEST NAME}
+
 HTML is escaped by default
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    <b>not bold</b>
@@ -200,7 +203,7 @@ Log To Console
     Stdout Should Contain    stdout äö w/o new......line äö
     Stderr Should Contain    stderr äö w/ newline\n
     Stdout Should Contain    42
-    
+
 Log To Console With Formatting
     Stdout Should Contain    ************test middle align with star padding*************
     Stdout Should Contain    ####################test right align with hash padding

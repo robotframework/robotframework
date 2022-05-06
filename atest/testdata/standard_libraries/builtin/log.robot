@@ -15,7 +15,6 @@ Log
     Log    ${OBJ}
 
 Log with different levels
-    [Documentation]    FAIL Invalid log level 'INVALID'.
     [Setup]    Set Log Level    TRACE
     Log    Log says: Hello from tests!
     Log    Trace level    TRACE
@@ -23,7 +22,11 @@ Log with different levels
     Log    Info level    Info
     Log    Warn level    wArN
     Log    Error level    ERROR
-    Log    Invalid level    INVALID
+
+Invalid log level failure is catchable
+    Run Keyword And Expect Error
+    ...   Invalid log level 'INVALID'.
+    ...   Log    Invalid level    INVALID
 
 HTML is escaped by default
     Log    <b>not bold</b>
@@ -163,7 +166,7 @@ Log To Console
     Log To Console    stderr äö w/ newline    stdERR
     Log To Console    ...line äö   stdout    continue without newlines
     Log To Console    ${42}
-    
+
 Log To Console With Formatting
     Log to console    test right align with hash padding    format=#>60
     Log to console    test middle align with star padding    format=*^60

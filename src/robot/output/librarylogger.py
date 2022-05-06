@@ -22,7 +22,6 @@ here to avoid cyclic imports.
 import sys
 import threading
 
-from robot.errors import DataError
 from robot.utils import console_encode
 
 from .logger import LOGGER
@@ -39,7 +38,7 @@ def write(msg, level, html=False):
     if callable(msg):
         msg = str(msg)
     if level.upper() not in ('TRACE', 'DEBUG', 'INFO', 'HTML', 'WARN', 'ERROR'):
-        raise DataError("Invalid log level '%s'." % level)
+        raise RuntimeError("Invalid log level '%s'." % level)
     if threading.current_thread().name in LOGGING_THREADS:
         LOGGER.log_message(Message(msg, level, html))
 
