@@ -29,6 +29,8 @@ distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
 Robot Framework 5.0.1 rc 1 was released on Monday May 9, 2022.
+The plan is to get the final release out on Monday May 16, just before the
+`RoboCon 2022 <https://robocon.io>`_ conference.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
