@@ -20,7 +20,7 @@ class LibDocLib:
 
     def __init__(self, interpreter=None):
         self.interpreter = interpreter
-        self.xml_schema = XMLSchema(ROOT/'doc/schema/libdoc.xsd')
+        self.xml_schema = XMLSchema(str(ROOT/'doc/schema/libdoc.xsd'))
         with open(ROOT/'doc/schema/libdoc.json') as f:
             self.json_schema = Draft202012Validator(json.load(f))
 
