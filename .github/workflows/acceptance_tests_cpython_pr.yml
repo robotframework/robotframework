@@ -62,12 +62,6 @@ jobs:
           choco install zip -y --no-progress
         if: runner.os == 'Windows'
 
-      - name: Install Ubuntu PyPy dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get -y -q install libxslt-dev libxml2-dev
-        if: contains(matrix.python-version, 'pypy') && contains(matrix.os, 'ubuntu')
-
       - name: Install screen and report handling tools, and other required libraries to Linux
         run: |
           sudo apt-get update
