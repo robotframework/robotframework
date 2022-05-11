@@ -19,10 +19,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ 'ubuntu-latest', 'windows-latest' ]
-        python-version: [ '3.6', '3.7', '3.8', '3.9', 'pypy3' ]
+        python-version: [ '3.6', '3.7', '3.8', '3.9', '3.10', 'pypy3.8' ]
         exclude:
           - os: windows-latest
-            python-version: 'pypy3'
+            python-version: 'pypy3.8'
 
     runs-on: ${{ matrix.os }}
 

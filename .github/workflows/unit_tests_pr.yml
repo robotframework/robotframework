@@ -16,9 +16,6 @@ jobs:
       matrix:
         os: [ 'ubuntu-latest', 'windows-latest' ]
         python-version: [ '3.6', '3.9' ]
-        exclude:
-          - os: windows-latest
-            python-version: 'pypy3'
 
     runs-on: ${{ matrix.os }}
 

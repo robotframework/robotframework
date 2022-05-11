@@ -18,19 +18,15 @@ jobs:
       fail-fast: false
       matrix:
         os: [ 'ubuntu-latest', 'windows-latest' ]
-        python-version: [ '3.6', '3.7', '3.8', '3.9', 'pypy3' ]
+        python-version: [ '3.6', '3.7', '3.8', '3.9', '3.10', 'pypy3.8' ]
         include:
           - os: ubuntu-latest
             set_display: export DISPLAY=:99; Xvfb :99 -screen 0 1024x768x24 -ac -noreset & sleep 3
           - os: windows-latest
             set_codepage: chcp 850
-          - os: windows-latest
-            python-version: '3.9'
-            set_codepage: chcp 850
-            atest_args: --exclude require-lxml --exclude require-screenshot
         exclude:
           - os: windows-latest
-            python-version: 'pypy3'
+            python-version: 'pypy3.8'
 
     runs-on: ${{ matrix.os }}
 
