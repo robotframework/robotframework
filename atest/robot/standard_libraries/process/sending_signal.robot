@@ -23,18 +23,13 @@ Sending INT signal as a number
 Send other well-known signals
     Check Test Case    ${TESTNAME}
 
-By default signal is not sent to process running in shell
-    [Documentation]    This depends on shell semantics and is tested only on Linux.
-    [Tags]    require-linux
-    Check Test Case    ${TESTNAME}
-
 By default signal is sent only to parent process
     Check Test Case    ${TESTNAME}
 
-Signal can be sent to process running in shell
+Signal can be sent to child processes
     Check Test Case    ${TESTNAME}
 
-Signal can be sent to child processes
+Signal can be sent to process running in shell
     Check Test Case    ${TESTNAME}
 
 Sending an unknown signal

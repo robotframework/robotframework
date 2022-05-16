@@ -21,22 +21,16 @@ Send other well-known signals
         Killer signal    ${signal}
     END
 
-By default signal is not sent to process running in shell
-    Check Precondition    sys.platform == 'linux'
-    Start Countdown    shell=yes
-    Send Signal To Process    TERM
-    Countdown should not have stopped
-
 By default signal is sent only to parent process
     Start Countdown    children=3
     Send Signal To Process    SIGTERM
     Countdown should not have stopped
 
-Signal can be sent to process running in shell
-    Killer signal    TERM    shell=True    group=yes
-
 Signal can be sent to child processes
     Killer signal    TERM    children=3    group=${True}
+
+Signal can be sent to process running in shell
+    Killer signal    TERM    shell=True    group=yes
 
 Sending an unknown signal
     [Documentation]    FAIL Unsupported signal 'unknown'.
