@@ -66,7 +66,8 @@ class StatusReporter:
         # check if status have changed in listener's end_keyword
         if result_status_before != result.status and result.failed:
             failure = ExecutionFailed(
-                message=f"Keyword {self.data.name} failed in listener method 'end_keyword'.",
+                message=f"Keyword {self.data.name} failed in listener "
+                        f"method 'end_keyword'.",
                 exit=True,
             )
         if failure is not exc_val:
