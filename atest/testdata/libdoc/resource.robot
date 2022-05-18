@@ -69,3 +69,6 @@ non ascii doc
 
 Deprecation
     [Documentation]    *DEPRECATED* for some reason.
+
+Private
+    [Tags]    robot:private

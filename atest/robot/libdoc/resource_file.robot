@@ -43,7 +43,7 @@ Spec version
 
 Resource Tags
     Specfile Tags Should Be          \${3}    ?!?!??    a      b    bar    dar
-    ...                              foo      Has       kw4    tags
+    ...                              foo      Has       kw4    robot:private    tags
 
 Resource Has No Inits
     Should Have No Init

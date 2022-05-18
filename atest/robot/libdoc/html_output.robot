@@ -105,6 +105,15 @@ User keyword documentation formatting
     ...    </tr>
     ...    </table>
 
+Private keyword should be excluded
+    [Template]    None
+    Run Libdoc And Parse Model From HTML    ${TESTDATADIR}/resource.robot
+    FOR    ${keyword}    IN    @{MODEL}[keywords]
+        IF    '${keyword}[name]' == 'Private'
+            Fail    Keyword 'Private' should be excluded from html
+        END
+    END
+
 *** Keywords ***
 Verify Argument Models
     [Arguments]    ${arg_models}    @{expected_reprs}
