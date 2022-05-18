@@ -106,9 +106,10 @@ User keyword documentation formatting
     ...    </table>
 
 Private user keyword should be included
-    [Template]    None
-    Run Libdoc And Parse Model From JSON    ${TESTDATADIR}/resource.robot
-    Should Be Equal As Strings    ${MODEL}[keywords][11][name]    Private
+    [Setup]    Run Libdoc And Parse Model From JSON    ${TESTDATADIR}/resource.robot
+    [Template]    Should Be Equal As Strings
+    ${MODEL}[keywords][-1][name]    Private
+    ${MODEL}[keywords][-1][tags]    ['robot:private']
 
 *** Keywords ***
 Verify Argument Models
