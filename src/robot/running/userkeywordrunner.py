@@ -52,6 +52,7 @@ class UserKeywordRunner:
         assignment = VariableAssignment(kw.assign)
         result = self._get_result(kw, assignment, context.variables)
         with StatusReporter(kw, result, context, run):
+            context.warn_on_invalid_private_call(self._handler)
             with assignment.assigner(context) as assigner:
                 if run:
                     return_value = self._run(context, kw.args, result)
