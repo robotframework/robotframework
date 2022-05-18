@@ -61,7 +61,14 @@ class StatusReporter:
         if self.initial_test_status == 'PASS':
             context.test.status = result.status
         result.endtime = get_timestamp()
+        result_status_before = result.status
         context.end_keyword(ModelCombiner(self.data, result))
+        # check if status have changed in listener's end_keyword
+        if result_status_before != result.status and result.failed:
+            failure = ExecutionFailed(
+                message=f"Keyword {self.data.name} failed in listener method 'end_keyword'.",
+                exit=True,
+            )
         if failure is not exc_val:
             raise failure
         return self.suppress
