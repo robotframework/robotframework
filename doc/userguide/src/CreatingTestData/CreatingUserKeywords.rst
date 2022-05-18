@@ -894,3 +894,27 @@ can also be a variable.
        [Teardown]    ${TEARDOWN}
 
 __ `test setup and teardown`_
+
+Private user keywords
+---------------------
+
+You can tag User Keywords as private to indicate that they should only
+be used in the file where they are created.
+
+To achieve this, tag them as `robot:private`.
+
+.. sourcecode:: robotframework
+
+   # resource_1.resource
+
+   *** Keywords ***
+   Public Keyword
+       Private Keyword
+
+   Private Keyword
+       [Tags]    robot:private
+       [Documentation]    This is a private keyword.
+       ...     It should only be used in keywords within the same file.
+       No Operation
+
+Private user keywords are new since Robot Framework 5.1
