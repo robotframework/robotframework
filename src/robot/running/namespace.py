@@ -320,6 +320,7 @@ class KeywordStore:
         if not found:
             return None
         if len(found) > 1:
+            found = self._remove_private_keywords(found)
             found = self._get_runner_based_on_search_order(found)
         if len(found) == 1:
             return found[0]
@@ -337,6 +338,12 @@ class KeywordStore:
         if len(found) == 1:
             return found[0]
         self._raise_multiple_keywords_found(name, found)
+
+    def _remove_private_keywords(self, runners):
+        for runner in runners:
+            if 'robot:private' in runner.tags:
+                runners.remove(runner)
+        return runners
 
     def _get_runner_based_on_search_order(self, runners):
         for libname in self.search_order:

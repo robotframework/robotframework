@@ -44,6 +44,10 @@ class UserKeywordRunner:
         return self._handler.libname
 
     @property
+    def tags(self):
+        return self._handler.tags
+
+    @property
     def arguments(self):
         """:rtype: :py:class:`robot.running.arguments.ArgumentSpec`"""
         return self._handler.arguments

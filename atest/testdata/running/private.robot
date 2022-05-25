@@ -17,6 +17,9 @@ Invalid Usage With Resource Keyword
 Invalid Usage In Resource file
     Call Private Keyword From Private 2 Resource
 
+Keyword With Same Name Should Resolve Public Keyword
+    Same Name
+
 *** Keywords ***
 Public Keyword
     Private Keyword

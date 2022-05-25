@@ -26,6 +26,10 @@ Invalid Usage in Resource File
     Private Call Warning Should Be    private2.Private Keyword In Resource 2   ${tc.body[0].body[0].body[0]}    ${ERRORS[2]}
     Length Should Be    ${tc.body[0].body[0].body}    2
 
+Keyword With Same Name Should Resolve Public Keyword
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Length Should Be    ${tc.body[0].body}    1
+
 *** Keywords ***
 Private Call Warning Should Be
     [Arguments]    ${name}    @{messages}

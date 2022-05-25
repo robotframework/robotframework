@@ -11,3 +11,6 @@ Private Keyword In Resource
 
 Call Private Keyword From Private 2 Resource
     Private Keyword In Resource 2
+
+Same Name
+    Log    Public

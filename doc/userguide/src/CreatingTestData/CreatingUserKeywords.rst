@@ -905,8 +905,6 @@ To achieve this, tag them as `robot:private`.
 
 .. sourcecode:: robotframework
 
-   # resource_1.resource
-
    *** Keywords ***
    Public Keyword
        Private Keyword
@@ -916,5 +914,8 @@ To achieve this, tag them as `robot:private`.
        [Documentation]    This is a private keyword.
        ...     It should only be used in keywords within the same file.
        No Operation
+
+If there is both a private and a public User Keyword with the same name
+in the current scope, Robot Framework will execute the public one.
 
 Private user keywords are new since Robot Framework 5.1
