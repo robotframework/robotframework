@@ -92,3 +92,6 @@ stop-on-failure with Template
 
 stop-on-failure with Template and Teardown
     Check Test Case    ${TESTNAME}
+
+stop-on-failure does not stop continuable failure
+    Check Test Case    ${TESTNAME}

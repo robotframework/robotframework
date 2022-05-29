@@ -1,5 +1,9 @@
+*** Settings ***
+Library              Exceptions
+
 *** Variables ***
 ${HEADER}                 Several failures occurred:
+${EXC}                    ContinuableApocalypseException
 
 *** Test Cases ***
 Continue in test with continue tag
@@ -258,6 +262,14 @@ stop-on-failure with Template and Teardown
     Same         Same
     42           43
     Something    Different
+
+stop-on-failure does not stop continuable failure
+    [Documentation]     FAIL ${HEADER}\n\n
+    ...    1) ${EXC}: 1\n\n
+    ...    2) 2
+    [Tags]   robot:stop-on-failure
+    Raise Continuable Failure    1
+    Fail    2
 
 *** Keywords ***
 Failure in user keyword with continue tag
