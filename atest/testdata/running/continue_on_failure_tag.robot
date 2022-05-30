@@ -1,5 +1,9 @@
+*** Settings ***
+Library              Exceptions
+
 *** Variables ***
 ${HEADER}                 Several failures occurred:
+${EXC}                    ContinuableApocalypseException
 
 *** Test Cases ***
 Continue in test with continue tag
@@ -217,6 +221,16 @@ stop-on-failure in keyword in Teardown
     [Teardown]   Failure in user keyword with stop tag
     No Operation
 
+stop-on-failure with continuable failure in keyword in Teardown
+    [Documentation]     FAIL    Teardown failed:\n${EXC}: kw9a
+    [Teardown]   Continuable Failure in user keyword with stop tag
+    No Operation
+
+stop-on-failure with run-kw-and-continue failure in keyword in Teardown
+    [Documentation]     FAIL    Teardown failed:\nkw10a
+    [Teardown]   run-kw-and-continue failure in user keyword with stop tag
+    No Operation
+
 stop-on-failure in test case in Teardown
     [Documentation]    FAIL    Teardown failed:\n${HEADER}\n\n
     ...    1) 1\n\n
@@ -259,7 +273,7 @@ stop-on-failure with Template and Teardown
     42           43
     Something    Different
 
-stop-on-failure does not stop continuable failure
+stop-on-failure does not stop continuable failure in test
     [Documentation]     FAIL ${HEADER}\n\n
     ...    1) 1\n\n
     ...    2) 2
@@ -342,3 +356,15 @@ IF in user keyword without tag
         Fail    kw8c
         Fail    kw8d
     END
+
+Continuable Failure in user keyword with stop tag
+    [Tags]   robot:stop-on-failure
+    Raise Continuable Failure    kw9a
+    Log    This is not executed
+    Fail    kw9b
+
+run-kw-and-continue failure in user keyword with stop tag
+    [Tags]   robot:stop-on-failure
+    Run Keyword And Continue On Failure    Fail    kw10a
+    Log    This is not executed
+    Fail    kw10b

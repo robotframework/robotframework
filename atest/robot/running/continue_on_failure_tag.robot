@@ -75,6 +75,12 @@ Recursive continue in nested keyword
 stop-on-failure in keyword in Teardown
     Check Test Case    ${TESTNAME}
 
+stop-on-failure with continuable failure in keyword in Teardown
+    Check Test Case    ${TESTNAME}
+
+stop-on-failure with run-kw-and-continue failure in keyword in Teardown
+    Check Test Case    ${TESTNAME}
+
 stop-on-failure in test case in Teardown
     Check Test Case    ${TESTNAME}
 
@@ -93,5 +99,5 @@ stop-on-failure with Template
 stop-on-failure with Template and Teardown
     Check Test Case    ${TESTNAME}
 
-stop-on-failure does not stop continuable failure
+stop-on-failure does not stop continuable failure in test
     Check Test Case    ${TESTNAME}
