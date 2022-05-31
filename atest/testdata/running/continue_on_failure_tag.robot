@@ -206,14 +206,14 @@ Recursive continue in user keyword
     ...    2) kw3b\n\n
     ...    3) kw2a\n\n
     ...    4) kw2b
-    Failure in user keyword with recursive tag     run_kw=Failure in user keyword without tag
+    Failure in user keyword with recursive continue tag     run_kw=Failure in user keyword without tag
     Fail   This should not be executed
 
 Recursive continue in nested keyword
     [Documentation]    FAIL ${HEADER}\n\n
     ...    1) kw3a\n\n
     ...    2) kw3b
-    Failure in user keyword without tag     run_kw=Failure in user keyword with recursive tag
+    Failure in user keyword without tag     run_kw=Failure in user keyword with recursive continue tag
     Fail   This should not be executed
 
 stop-on-failure in keyword in Teardown
@@ -247,6 +247,7 @@ Test Teardown with recursive stop tag in user keyword
     Teardown with recursive stop tag in user keyword
 
 Test Teardown with recursive stop tag and UK with continue tag
+    # continue-on-failure overrides recursive-stop-on-failure
     [Documentation]    FAIL    Keyword teardown failed:\n${HEADER}\n\n
     ...    1) kw1a\n\n
     ...    2) kw1b
@@ -255,6 +256,14 @@ Test Teardown with recursive stop tag and UK with continue tag
 stop-on-failure with Template
     [Documentation]    FAIL    42 != 43
     [Tags]   robot:stop-on-failure
+    [Template]    Should Be Equal
+    Same         Same
+    42           43
+    Something    Different
+
+recursive-stop-on-failure with Template
+    [Documentation]    FAIL    42 != 43
+    [Tags]   robot:recursive-stop-on-failure
     [Template]    Should Be Equal
     Same         Same
     42           43
@@ -277,6 +286,31 @@ stop-on-failure does not stop continuable failure in test
     Run Keyword And Continue On Failure    Fail    1
     Fail    2
 
+Test recursive-continue-recursive-stop
+    [Documentation]    FAIL ${HEADER}\n\n
+    ...    1) kw11a\n\n
+    ...    2) 2
+    [Tags]    robot:recursive-continue-on-failure
+    Failure in user keyword with recursive stop tag
+    Fail    2
+
+Test recursive-stop-recursive-continue
+    [Documentation]    FAIL ${HEADER}\n\n
+    ...    1) kw3a\n\n
+    ...    2) kw3b
+    [Tags]    robot:recursive-stop-on-failure
+    Failure in user keyword with recursive continue tag
+    Fail    2
+
+Test recursive-stop-recursive-continue-recursive-stop
+    [Documentation]    FAIL ${HEADER}\n\n
+    ...    1) kw3a\n\n
+    ...    2) kw3b\n\n
+    ...    3) kw11a
+    [Tags]    robot:recursive-stop-on-failure
+    Failure in user keyword with recursive continue tag    run_kw=Failure in user keyword with recursive stop tag
+    Fail    2
+
 *** Keywords ***
 Failure in user keyword with continue tag
     [Arguments]    ${run_kw}=No Operation
@@ -292,7 +326,7 @@ Failure in user keyword without tag
     Fail   kw2a
     Fail   kw2b
 
-Failure in user keyword with recursive tag
+Failure in user keyword with recursive continue tag
     [Arguments]    ${run_kw}=No Operation
     [Tags]   robot:recursive-continue-on-failure
     Fail   kw3a
@@ -305,6 +339,12 @@ Failure in user keyword with stop tag
     Fail   kw4a
     Log    This should not be executed
     Fail   kw4b
+
+Failure in user keyword with recursive stop tag
+    [Tags]    robot:recursive-stop-on-failure
+    Fail    kw11a
+    Log     This is not executed
+    Fail    kw11b
 
 Teardown with stop tag in user keyword
     [Tags]   robot:stop-on-failure

@@ -96,8 +96,21 @@ Test Teardown with recursive stop tag and UK with continue tag
 stop-on-failure with Template
     Check Test Case    ${TESTNAME}
 
+recursive-stop-on-failure with Template
+    Check Test Case    ${TESTNAME}
+
 stop-on-failure with Template and Teardown
     Check Test Case    ${TESTNAME}
 
 stop-on-failure does not stop continuable failure in test
     Check Test Case    ${TESTNAME}
+
+Test recursive-continue-recursive-stop
+    Check Test Case    ${TESTNAME}
+
+Test recursive-stop-recursive-continue
+    Check Test Case    ${TESTNAME}
+
+Test recursive-stop-recursive-continue-recursive-stop
+    Check Test Case    ${TESTNAME}
+
