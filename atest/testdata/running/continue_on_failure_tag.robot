@@ -232,9 +232,7 @@ stop-on-failure with run-kw-and-continue failure in keyword in Teardown
     No Operation
 
 stop-on-failure in test case in Teardown
-    [Documentation]    FAIL    Teardown failed:\n${HEADER}\n\n
-    ...    1) 1\n\n
-    ...    2) 2
+    [Documentation]    FAIL    Teardown failed:\n1
     [Tags]   robot:stop-on-failure
     [Teardown]   Run Keywords    Fail    1    AND    Fail    2
     No Operation
@@ -263,9 +261,7 @@ stop-on-failure with Template
     Something    Different
 
 stop-on-failure with Template and Teardown
-    [Documentation]    FAIL    42 != 43\n\nAlso teardown failed:\n${HEADER}\n\n
-    ...    1) 1\n\n
-    ...    2) 2
+    [Documentation]    FAIL    42 != 43\n\nAlso teardown failed:\n1
     [Tags]   robot:stop-on-failure
     [Teardown]   Run Keywords   Fail   1   AND   Fail  2
     [Template]    Should Be Equal

@@ -139,14 +139,14 @@ class ExecutionStatus(RobotError):
         if self.syntax or self.exit or self.skip or self.test_timeout:
             return False
         if templated:
-            return context.continue_on_failure(default=True)
+            return context.continue_on_failure(default_continue=True)
         if self.keyword_timeout:
             if context.in_teardown:
                 self.keyword_timeout = False
             return False
         if context.in_teardown:
-            return context.continue_on_failure(default=True)
-        return self.continue_on_failure or context.continue_on_failure(default=False)
+            return context.continue_on_failure(default_continue=True)
+        return self.continue_on_failure or context.continue_on_failure(default_continue=False)
 
     def get_errors(self):
         return [self]

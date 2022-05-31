@@ -126,22 +126,20 @@ class _ExecutionContext:
     def variables(self):
         return self.namespace.variables
 
-    def continue_on_failure(self, default=False):
-        if self.in_teardown:
-            parents = self.user_keywords
-        else:
-            parents = ([self.test] if self.test else []) + self.user_keywords
+    def continue_on_failure(self, default_continue=False):
+        parents = ([self.test] if self.test else []) + self.user_keywords
         if not parents:
-            return default
+            return default_continue
         if 'robot:stop-on-failure' in parents[-1].tags:
             return False
         if 'robot:continue-on-failure' in parents[-1].tags:
             return True
-        if any('robot:recursive-stop-on-failure' in p.tags for p in parents):
-            return False
-        if any('robot:recursive-continue-on-failure' in p.tags for p in parents):
-            return True
-        return default
+        for parent in reversed(parents):
+            if 'robot:recursive-stop-on-failure' in parent.tags:
+                return False
+            if 'robot:recursive-continue-on-failure' in parent.tags:
+                return True
+        return default_continue
 
     @property
     def allow_loop_control(self):
