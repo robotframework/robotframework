@@ -231,10 +231,24 @@ stop-on-failure with run-kw-and-continue failure in keyword in Teardown
     [Teardown]   run-kw-and-continue failure in user keyword with stop tag
     No Operation
 
-stop-on-failure in test case in Teardown
+Test teardown using run keywords with stop tag in test case
     [Documentation]    FAIL    Teardown failed:\n1
     [Tags]   robot:stop-on-failure
     [Teardown]   Run Keywords    Fail    1    AND    Fail    2
+    No Operation
+
+Test teardown using user keyword with stop tag in test case
+    [Documentation]    FAIL    Teardown failed:\n${HEADER}\n\n
+    ...    1) kw2a\n\n
+    ...    2) kw2b
+    [Tags]   robot:stop-on-failure
+    [Teardown]    Failure in user keyword without tag
+    No Operation
+
+Test teardown using user keyword with recursive stop tag in test case
+    [Documentation]    FAIL    Teardown failed:\nkw2a
+    [Tags]   robot:recursive-stop-on-failure
+    [Teardown]    Failure in user keyword without tag
     No Operation
 
 Test Teardown with stop tag in user keyword
