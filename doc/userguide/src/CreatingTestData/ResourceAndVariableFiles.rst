@@ -577,7 +577,7 @@ as this Variable section:
    ${STRING}     Hello, world!
    ${INTEGER}    ${42}
    @{LIST}       one         two
-   &{DICT}       one=yksi    two=kaksi
+   &{DICT}       one=yksi    two=kaksi    with spaces=kolme
 
 YAML files used as variable files must always be mappings in the top level.
 As the above example demonstrates, keys and values in the mapping become
