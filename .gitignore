@@ -29,3 +29,4 @@ __pycache__
 .classpath
 .settings
 .jython_cache
+/.mypy_cache/
