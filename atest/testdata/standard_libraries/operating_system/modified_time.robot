@@ -14,13 +14,13 @@ Get Modified Time As Timestamp
 
 Get Modified Time As Seconds After Epoch
     ${dirtime} =    Get Modified Time    ${CURDIR}    epoch
-    Should Be True    1000000000 < ${dirtime} < 2000000000
+    Should Be True    ${dirtime} > 0
     ${current} =    Get Time    epoch
     Should Be True    ${current} >= ${dirtime}
 
 Get Modified Time As Parts
     ${year} =    Get Modified Time    ${CURDIR}    year
-    Should Be True    2000 < ${year} < 2100
+    Should Match Regexp    ${year}    \\d{4}
     ${yyyy}    ${mm}    ${dd} =    Get Modified Time    ${CURDIR}    year, month, day
     Should Be Equal    ${yyyy}    ${year}
     # Must use `int('x')` because otherwise 08 and 09 are considered octal

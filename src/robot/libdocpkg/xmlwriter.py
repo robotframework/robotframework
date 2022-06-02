@@ -13,9 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from datetime import datetime
-
 from robot.utils import XmlWriter
+
+from .output import get_generation_time
 
 
 class LibdocXmlWriter:
@@ -32,12 +32,11 @@ class LibdocXmlWriter:
         self._write_end(writer)
 
     def _write_start(self, libdoc, writer):
-        generated = datetime.utcnow().replace(microsecond=0).isoformat() + 'Z'
         attrs = {'name': libdoc.name,
                  'type': libdoc.type,
                  'format': libdoc.doc_format,
                  'scope': libdoc.scope,
-                 'generated': generated,
+                 'generated': get_generation_time(),
                  'specversion': '4'}
         self._add_source_info(attrs, libdoc)
         writer.start('keywordspec', attrs)

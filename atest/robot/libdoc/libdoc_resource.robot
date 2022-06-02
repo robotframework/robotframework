@@ -93,7 +93,13 @@ Lineno Should Be
     Element Attribute Should Be    ${LIBDOC}    lineno    ${lineno}
 
 Generated Should Be Defined
-    Element Attribute Should Match    ${LIBDOC}    generated    ????-??-??T??:??:??Z
+    # For example, '1970-01-01T00:00:01+00:00'.
+    Element Attribute Should Match    ${LIBDOC}    generated    ????-??-??T??:??:?????:??
+
+Generated Should Be
+    [Arguments]    ${generated}
+    Generated Should Be Defined
+    Element Attribute Should Be    ${LIBDOC}    generated    ${generated}
 
 Spec version should be correct
     Element Attribute Should Be    ${LIBDOC}    specversion    4
