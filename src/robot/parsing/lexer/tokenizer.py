@@ -72,51 +72,48 @@ class Tokenizer:
         yield rest, True
 
     def _cleanup_tokens(self, tokens, data_only):
-        # Handle comments
-        has_data = False
+        has_data, continues = self._handle_comments_and_continuation(tokens)
+        self._remove_trailing_empty(tokens)
+        if continues:
+            self._remove_leading_empty(tokens)
+            if not has_data:
+                self._ensure_data_after_continuation(tokens)
+            starts_new = False
+        else:
+            starts_new = has_data
+        if data_only:
+            tokens = self._remove_non_data(tokens)
+        return tokens, starts_new
 
-        iter_in_tokens = iter(tokens)
-        for token in iter_in_tokens:
+    def _handle_comments_and_continuation(self, tokens):
+        has_data = False
+        continues = False
+        commented = False
+        for token in tokens:
             if token.type is None:
                 # lstrip needed to strip possible leading space from first token.
                 # Other leading/trailing spaces have been consumed as separators.
                 value = token.value.lstrip()
-                if value:
+                if commented:
+                    token.type = Token.COMMENT
+                elif value:
                     if value[0] == '#':
-                        # When we find a #, consume iterator and mark remaining
-                        # tokens as comments.
                         token.type = Token.COMMENT
-                        for token in iter_in_tokens:
-                            if token.type is None:
-                                token.type = Token.COMMENT
-                    else:
-                        has_data = True
+                        commented = True
+                    elif not has_data:
+                        if value == '...' and not continues:
+                            token.type = Token.CONTINUATION
+                            continues = True
+                        else:
+                            has_data = True
+        return has_data, continues
 
-        # Handle continuation
-        continues = False
-        for token in tokens:
-            if token.value == '...' and token.type is None:
-                token.type = Token.CONTINUATION
-                continues = True
-                break
-            elif token.value and token.type != Token.SEPARATOR:
-                continues = False
-                break
-
-        # Remove trailing empty
+    def _remove_trailing_empty(self, tokens):
         for token in reversed(tokens):
             if not token.value and token.type != Token.EOL:
                 tokens.remove(token)
             elif token.type is None:
                 break
-
-        if continues:
-            self._remove_leading_empty(tokens)
-            self._ensure_data_after_continuation(tokens)
-        if data_only:
-            # Remove non data
-            tokens = [t for t in tokens if t.type is None]
-        return tokens, has_data and not continues
 
     def _remove_leading_empty(self, tokens):
         data_or_continuation = (None, Token.CONTINUATION)
@@ -127,13 +124,14 @@ class Tokenizer:
                 break
 
     def _ensure_data_after_continuation(self, tokens):
-        if not any(t.type is None for t in tokens):
-            cont = self._find_continuation(tokens)
-            token = Token(lineno=cont.lineno, col_offset=cont.end_col_offset)
-            tokens.insert(tokens.index(cont) + 1, token)
+        cont = self._find_continuation(tokens)
+        token = Token(lineno=cont.lineno, col_offset=cont.end_col_offset)
+        tokens.insert(tokens.index(cont) + 1, token)
 
     def _find_continuation(self, tokens):
         for token in tokens:
             if token.type == Token.CONTINUATION:
                 return token
 
+    def _remove_non_data(self, tokens):
+        return [t for t in tokens if t.type is None]
