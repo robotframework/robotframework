@@ -139,7 +139,7 @@ class _ExecutionContext:
                 return False
             if 'robot:recursive-continue-on-failure' in parent.tags:
                 return True
-        return default_continue
+        return default_continue or self.in_teardown
 
     @property
     def allow_loop_control(self):

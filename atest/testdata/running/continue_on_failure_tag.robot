@@ -222,14 +222,24 @@ stop-on-failure in keyword in Teardown
     No Operation
 
 stop-on-failure with continuable failure in keyword in Teardown
-    [Documentation]     FAIL    Teardown failed:\n${EXC}: kw9a
+    [Documentation]     FAIL    Teardown failed:\n${HEADER}\n\n
+    ...    1) ${EXC}: kw9a\n\n
+    ...    2) kw9b
     [Teardown]   Continuable Failure in user keyword with stop tag
     No Operation
 
 stop-on-failure with run-kw-and-continue failure in keyword in Teardown
-    [Documentation]     FAIL    Teardown failed:\nkw10a
+    [Documentation]     FAIL    Teardown failed:\n${HEADER}\n\n
+    ...    1) kw10a\n\n
+    ...    2) kw10b
     [Teardown]   run-kw-and-continue failure in user keyword with stop tag
     No Operation
+
+stop-on-failure with run-kw-and-continue failure in keyword
+    [Documentation]     FAIL    ${HEADER}\n\n
+    ...    1) kw10a\n\n
+    ...    2) kw10b
+    run-kw-and-continue failure in user keyword with stop tag
 
 Test teardown using run keywords with stop tag in test case
     [Documentation]    FAIL    Teardown failed:\n1
@@ -410,11 +420,13 @@ IF in user keyword without tag
 Continuable Failure in user keyword with stop tag
     [Tags]   robot:stop-on-failure
     Raise Continuable Failure    kw9a
-    Log    This is not executed
     Fail    kw9b
+    Log    This is not executed
+    Fail    kw9c
 
 run-kw-and-continue failure in user keyword with stop tag
     [Tags]   robot:stop-on-failure
     Run Keyword And Continue On Failure    Fail    kw10a
-    Log    This is not executed
     Fail    kw10b
+    Log    This is not executed
+    Fail    kw10c

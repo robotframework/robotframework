@@ -81,6 +81,9 @@ stop-on-failure with continuable failure in keyword in Teardown
 stop-on-failure with run-kw-and-continue failure in keyword in Teardown
     Check Test Case    ${TESTNAME}
 
+stop-on-failure with run-kw-and-continue failure in keyword
+    Check Test Case    ${TESTNAME}
+
 Test teardown using run keywords with stop tag in test case
     Check Test Case    ${TESTNAME}
 
