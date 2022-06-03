@@ -24,7 +24,7 @@ from .tokenizer import Tokenizer
 from .tokens import EOS, END, Token
 
 
-def get_tokens(source, data_only=False, tokenize_variables=False):
+def get_tokens(source, data_only=False, tokenize_variables=False, lang=None):
     """Parses the given source to tokens.
 
     :param source: The source where to read the data. Can be a path to
@@ -42,30 +42,30 @@ def get_tokens(source, data_only=False, tokenize_variables=False):
     Returns a generator that yields :class:`~robot.parsing.lexer.tokens.Token`
     instances.
     """
-    lexer = Lexer(TestCaseFileContext(), data_only, tokenize_variables)
+    lexer = Lexer(TestCaseFileContext(lang=lang), data_only, tokenize_variables)
     lexer.input(source)
     return lexer.get_tokens()
 
 
-def get_resource_tokens(source, data_only=False, tokenize_variables=False):
+def get_resource_tokens(source, data_only=False, tokenize_variables=False, lang=None):
     """Parses the given source to resource file tokens.
 
     Otherwise same as :func:`get_tokens` but the source is considered to be
     a resource file. This affects, for example, what settings are valid.
     """
-    lexer = Lexer(ResourceFileContext(), data_only, tokenize_variables)
+    lexer = Lexer(ResourceFileContext(lang=lang), data_only, tokenize_variables)
     lexer.input(source)
     return lexer.get_tokens()
 
 
-def get_init_tokens(source, data_only=False, tokenize_variables=False):
+def get_init_tokens(source, data_only=False, tokenize_variables=False, lang=None):
     """Parses the given source to init file tokens.
 
     Otherwise same as :func:`get_tokens` but the source is considered to be
     a suite initialization file. This affects, for example, what settings are
     valid.
     """
-    lexer = Lexer(InitFileContext(), data_only, tokenize_variables)
+    lexer = Lexer(InitFileContext(lang=lang), data_only, tokenize_variables)
     lexer.input(source)
     return lexer.get_tokens()
 

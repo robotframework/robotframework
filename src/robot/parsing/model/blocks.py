@@ -107,11 +107,12 @@ class VariableSection(Section):
     pass
 
 
+# FIXME: should there be a separate TaskSection?
 class TestCaseSection(Section):
 
     @property
     def tasks(self):
-        return self.header.name.upper() in ('TASKS', 'TASK')
+        return self.header.type == Token.TASK_HEADER
 
 
 class KeywordSection(Section):

@@ -38,9 +38,10 @@ class Namespace:
     _library_import_by_path_ends = ('.py', '/', os.sep)
     _variables_import_by_path_ends = _library_import_by_path_ends + ('.yaml', '.yml')
 
-    def __init__(self, variables, suite, resource):
+    def __init__(self, variables, suite, resource, languages):
         LOGGER.info(f"Initializing namespace for suite '{suite.longname}'.")
         self.variables = variables
+        self.languages = languages
         self._imports = resource.imports
         self._kw_store = KeywordStore(resource)
         self._imported_variable_files = ImportCache()
@@ -81,7 +82,7 @@ class Namespace:
         path = self._resolve_name(import_setting)
         self._validate_not_importing_init_file(path)
         if overwrite or path not in self._kw_store.resources:
-            resource = IMPORTER.import_resource(path)
+            resource = IMPORTER.import_resource(path, self.languages)
             self.variables.set_from_variable_table(resource.variables, overwrite)
             user_library = UserLibrary(resource)
             self._kw_store.resources[path] = user_library

@@ -19,30 +19,31 @@ from .tokens import Token
 
 
 class Sections:
-    setting_markers = ('Settings', 'Setting')
-    variable_markers = ('Variables', 'Variable')
-    test_case_markers = ('Test Cases', 'Test Case', 'Tasks', 'Task')
-    keyword_markers = ('Keywords', 'Keyword')
-    comment_markers = ('Comments', 'Comment')
+
+    def __init__(self, markers):
+        self.markers = markers
 
     def setting(self, statement):
-        return self._handles(statement, self.setting_markers)
+        return self._handles(statement, self.markers.setting_section)
 
     def variable(self, statement):
-        return self._handles(statement, self.variable_markers)
+        return self._handles(statement, self.markers.variable_section)
 
     def test_case(self, statement):
         return False
 
+    def task(self, statement):
+        return False
+
     def keyword(self, statement):
-        return self._handles(statement, self.keyword_markers)
+        return self._handles(statement, self.markers.keyword_section)
 
     def comment(self, statement):
-        return self._handles(statement, self.comment_markers)
+        return self._handles(statement, self.markers.comment_section)
 
-    def _handles(self, statement, markers):
+    def _handles(self, statement, validator):
         marker = statement[0].value
-        return marker.startswith('*') and self._normalize(marker) in markers
+        return marker.startswith('*') and validator(self._normalize(marker))
 
     def _normalize(self, marker):
         return normalize_whitespace(marker).strip('* ').title()
@@ -60,7 +61,10 @@ class Sections:
 class TestCaseFileSections(Sections):
 
     def test_case(self, statement):
-        return self._handles(statement, self.test_case_markers)
+        return self._handles(statement, self.markers.test_case_section)
+
+    def task(self, statement):
+        return self._handles(statement, self.markers.task_section)
 
     def _get_invalid_section_error(self, header):
         return ("Unrecognized section header '%s'. Valid sections: "
@@ -72,7 +76,7 @@ class ResourceFileSections(Sections):
 
     def _get_invalid_section_error(self, header):
         name = self._normalize(header)
-        if name in self.test_case_markers:
+        if self.markers.test_case_section(name) or self.markers.task_section(name):
             message = "Resource file with '%s' section is invalid." % name
             fatal = True
         else:
@@ -87,7 +91,7 @@ class InitFileSections(Sections):
 
     def _get_invalid_section_error(self, header):
         name = self._normalize(header)
-        if name in self.test_case_markers:
+        if self.markers.test_case_section(name) or self.markers.task_section(name):
             message = ("'%s' section is not allowed in suite initialization "
                        "file." % name)
         else:

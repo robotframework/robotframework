@@ -90,6 +90,10 @@ class TestCaseSectionHeaderLexer(SectionHeaderLexer):
     token_type = Token.TESTCASE_HEADER
 
 
+class TaskSectionHeaderLexer(SectionHeaderLexer):
+    token_type = Token.TASK_HEADER
+
+
 class KeywordSectionHeaderLexer(SectionHeaderLexer):
     token_type = Token.KEYWORD_HEADER
 

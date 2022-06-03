@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from .markers import Markers
 from .sections import (InitFileSections, TestCaseFileSections,
                        ResourceFileSections)
 from .settings import (InitFileSettings, TestCaseFileSettings,
@@ -22,8 +23,13 @@ from .settings import (InitFileSettings, TestCaseFileSettings,
 class LexingContext:
     settings_class = None
 
-    def __init__(self, settings=None):
-        self.settings = settings or self.settings_class()
+    def __init__(self, settings=None, lang=None):
+        if not settings:
+            self.markers = Markers(lang)
+            self.settings = self.settings_class(self.markers)
+        else:
+            self.markers = settings.markers
+            self.settings = settings
 
     def lex_setting(self, statement):
         self.settings.lex(statement)
@@ -32,9 +38,10 @@ class LexingContext:
 class FileContext(LexingContext):
     sections_class = None
 
-    def __init__(self, settings=None):
-        LexingContext.__init__(self, settings)
-        self.sections = self.sections_class()
+    def __init__(self, settings=None, lang=None):
+        super().__init__(settings, lang)
+        # TODO: should .sections be removed as unnecessary indirection?
+        self.sections = self.sections_class(self.markers)
 
     def setting_section(self, statement):
         return self.sections.setting(statement)
@@ -45,6 +52,9 @@ class FileContext(LexingContext):
     def test_case_section(self, statement):
         return self.sections.test_case(statement)
 
+    def task_section(self, statement):
+        return self.sections.task(statement)
+
     def keyword_section(self, statement):
         return self.sections.keyword(statement)
 
@@ -52,7 +62,7 @@ class FileContext(LexingContext):
         return self.sections.comment(statement)
 
     def keyword_context(self):
-        return KeywordContext(settings=KeywordSettings())
+        return KeywordContext(settings=KeywordSettings(self.markers))
 
     def lex_invalid_section(self, statement):
         self.sections.lex_invalid(statement)
@@ -63,7 +73,8 @@ class TestCaseFileContext(FileContext):
     settings_class = TestCaseFileSettings
 
     def test_case_context(self):
-        return TestCaseContext(settings=TestCaseSettings(self.settings))
+        return TestCaseContext(settings=TestCaseSettings(self.settings,
+                                                         self.markers))
 
 
 class ResourceFileContext(FileContext):

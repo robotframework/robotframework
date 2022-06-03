@@ -210,13 +210,14 @@ class Fixture(Statement):
 @Statement.register
 class SectionHeader(Statement):
     handles_types = (Token.SETTING_HEADER, Token.VARIABLE_HEADER,
-                     Token.TESTCASE_HEADER, Token.KEYWORD_HEADER,
-                     Token.COMMENT_HEADER)
+                     Token.TESTCASE_HEADER, Token.TASK_HEADER,
+                     Token.KEYWORD_HEADER, Token.COMMENT_HEADER)
 
     @classmethod
     def from_params(cls, type, name=None, eol=EOL):
         if not name:
-            names = ('Settings', 'Variables', 'Test Cases', 'Keywords', 'Comments')
+            names = ('Settings', 'Variables', 'Test Cases', 'Tasks',
+                     'Keywords', 'Comments')
             name = dict(zip(cls.handles_types, names))[type]
         if not name.startswith('*'):
             name = '*** %s ***' % name

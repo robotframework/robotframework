@@ -20,6 +20,7 @@ from .statementlexers import (Lexer,
                               SettingSectionHeaderLexer, SettingLexer,
                               VariableSectionHeaderLexer, VariableLexer,
                               TestCaseSectionHeaderLexer,
+                              TaskSectionHeaderLexer,
                               KeywordSectionHeaderLexer,
                               CommentSectionHeaderLexer, CommentLexer,
                               ErrorSectionHeaderLexer,
@@ -82,9 +83,9 @@ class FileLexer(BlockLexer):
 
     def lexer_classes(self):
         return (SettingSectionLexer, VariableSectionLexer,
-                TestCaseSectionLexer, KeywordSectionLexer,
-                CommentSectionLexer, ErrorSectionLexer,
-                ImplicitCommentSectionLexer)
+                TestCaseSectionLexer, TaskSectionLexer,
+                KeywordSectionLexer, CommentSectionLexer,
+                ErrorSectionLexer, ImplicitCommentSectionLexer)
 
 
 class SectionLexer(BlockLexer):
@@ -121,6 +122,16 @@ class TestCaseSectionLexer(SectionLexer):
 
     def lexer_classes(self):
         return (TestCaseSectionHeaderLexer, TestCaseLexer)
+
+
+class TaskSectionLexer(SectionLexer):
+
+    @classmethod
+    def handles(cls, statement, ctx):
+        return ctx.task_section(statement)
+
+    def lexer_classes(self):
+        return (TaskSectionHeaderLexer, TestCaseLexer)
 
 
 class KeywordSectionLexer(SettingSectionLexer):

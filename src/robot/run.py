@@ -98,6 +98,7 @@ Options
  -N --name name           Set the name of the top level suite. By default the
                           name is created based on the executed file or
                           directory.
+   --language lang *      TODO
  -D --doc documentation   Set the documentation of the top level suite.
                           Simple formatting is supported (e.g. *bold*). If the
                           documentation contains spaces, it must be quoted.
@@ -431,6 +432,7 @@ class RobotFramework(Application):
         builder = TestSuiteBuilder(settings.suite_names,
                                    included_extensions=settings.extension,
                                    rpa=settings.rpa,
+                                   lang=settings.languages,
                                    allow_empty_suite=settings.run_empty_suite)
         suite = builder.build(*datasources)
         settings.rpa = suite.rpa

@@ -473,7 +473,8 @@ class RobotSettings(_BaseSettings):
                        'ConsoleTypeQuiet'   : ('quiet', False),
                        'ConsoleWidth'       : ('consolewidth', 78),
                        'ConsoleMarkers'     : ('consolemarkers', 'AUTO'),
-                       'DebugFile'          : ('debugfile', None)}
+                       'DebugFile'          : ('debugfile', None),
+                       'Language'           : ('language', [])}
 
     def get_rebot_settings(self):
         settings = RebotSettings()
@@ -499,6 +500,10 @@ class RobotSettings(_BaseSettings):
     @property
     def debug_file(self):
         return self['DebugFile']
+
+    @property
+    def languages(self):
+        return self['Language']
 
     @property
     def suite_config(self):

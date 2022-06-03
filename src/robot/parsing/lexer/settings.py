@@ -51,39 +51,37 @@ class Settings:
         'Library',
     )
 
-    def __init__(self):
+    def __init__(self, markers):
         self.settings = {n: None for n in self.names}
+        self.markers = markers
 
     def lex(self, statement):
         setting = statement[0]
-        name = self._format_name(setting.value)
-        normalized = self._normalize_name(name)
+        orig = self._format_name(setting.value)
+        name = normalize_whitespace(orig).title()
+        name = self.markers.translate(name)
+        if name in self.aliases:
+            name = self.aliases[name]
         try:
-            self._validate(name, normalized, statement)
+            self._validate(orig, name, statement)
         except ValueError as err:
             self._lex_error(setting, statement[1:], err.args[0])
         else:
-            self._lex_setting(setting, statement[1:], normalized)
+            self._lex_setting(setting, statement[1:], name)
 
     def _format_name(self, name):
         return name
 
-    def _normalize_name(self, name):
-        name = normalize_whitespace(name).title()
-        if name in self.aliases:
-            return self.aliases[name]
-        return name
-
-    def _validate(self, name, normalized, statement):
-        if normalized not in self.settings:
-            message = self._get_non_existing_setting_message(name, normalized)
+    def _validate(self, orig, name, statement):
+        if name not in self.settings:
+            message = self._get_non_existing_setting_message(orig, name)
             raise ValueError(message)
-        if self.settings[normalized] is not None and normalized not in self.multi_use:
+        if self.settings[name] is not None and name not in self.multi_use:
             raise ValueError("Setting '%s' is allowed only once. "
-                             "Only the first value is used." % name)
-        if normalized in self.single_value and len(statement) > 2:
+                             "Only the first value is used." % orig)
+        if name in self.single_value and len(statement) > 2:
             raise ValueError("Setting '%s' accepts only one value, got %s."
-                             % (name, len(statement) - 1))
+                             % (orig, len(statement) - 1))
 
     def _get_non_existing_setting_message(self, name, normalized):
         if normalized in TestCaseFileSettings.names:
@@ -188,8 +186,8 @@ class TestCaseSettings(Settings):
         'Timeout'
     )
 
-    def __init__(self, parent):
-        Settings.__init__(self)
+    def __init__(self, parent, markers):
+        super().__init__(markers)
         self.parent = parent
 
     def _format_name(self, name):

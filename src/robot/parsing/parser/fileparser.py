@@ -46,6 +46,7 @@ class FileParser(Parser):
             Token.SETTING_HEADER: SettingSectionParser,
             Token.VARIABLE_HEADER: VariableSectionParser,
             Token.TESTCASE_HEADER: TestCaseSectionParser,
+            Token.TASK_HEADER: TestCaseSectionParser,
             Token.KEYWORD_HEADER: KeywordSectionParser,
             Token.COMMENT_HEADER: CommentSectionParser,
             Token.COMMENT: ImplicitCommentSectionParser,

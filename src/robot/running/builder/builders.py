@@ -47,7 +47,8 @@ class TestSuiteBuilder:
     """
 
     def __init__(self, included_suites=None, included_extensions=('robot',),
-                 rpa=None, allow_empty_suite=False, process_curdir=True):
+                 rpa=None, lang=None, allow_empty_suite=False,
+                 process_curdir=True):
         """
         :param include_suites:
             List of suite names to include. If ``None`` or an empty list, all
@@ -67,6 +68,7 @@ class TestSuiteBuilder:
             changed by giving this argument ``False`` value.
         """
         self.rpa = rpa
+        self.lang = lang
         self.included_suites = included_suites
         self.included_extensions = included_extensions
         self.allow_empty_suite = allow_empty_suite
@@ -80,7 +82,7 @@ class TestSuiteBuilder:
         structure = SuiteStructureBuilder(self.included_extensions,
                                           self.included_suites).build(paths)
         parser = SuiteStructureParser(self.included_extensions,
-                                      self.rpa, self.process_curdir)
+                                      self.rpa, self.lang, self.process_curdir)
         suite = parser.parse(structure)
         if not self.included_suites and not self.allow_empty_suite:
             self._validate_test_counts(suite, multisource=len(paths) > 1)
@@ -101,16 +103,16 @@ class TestSuiteBuilder:
 
 class SuiteStructureParser(SuiteStructureVisitor):
 
-    def __init__(self, included_extensions, rpa=None, process_curdir=True):
+    def __init__(self, included_extensions, rpa=None, lang=None, process_curdir=True):
         self.rpa = rpa
         self._rpa_given = rpa is not None
         self.suite = None
         self._stack = []
-        self.parsers = self._get_parsers(included_extensions, process_curdir)
+        self.parsers = self._get_parsers(included_extensions, lang, process_curdir)
 
-    def _get_parsers(self, extensions, process_curdir):
-        robot_parser = RobotParser(process_curdir)
-        rest_parser = RestParser(process_curdir)
+    def _get_parsers(self, extensions, lang, process_curdir):
+        robot_parser = RobotParser(lang, process_curdir)
+        rest_parser = RestParser(lang, process_curdir)
         parsers = {
             None: NoInitFileDirectoryParser(),
             'robot': robot_parser,
@@ -190,7 +192,8 @@ class SuiteStructureParser(SuiteStructureVisitor):
 
 class ResourceFileBuilder:
 
-    def __init__(self, process_curdir=True):
+    def __init__(self, lang=None, process_curdir=True):
+        self.lang = lang
         self.process_curdir = process_curdir
 
     def build(self, source):
@@ -205,5 +208,5 @@ class ResourceFileBuilder:
 
     def _parse(self, source):
         if os.path.splitext(source)[1].lower() in ('.rst', '.rest'):
-            return RestParser(self.process_curdir).parse_resource_file(source)
-        return RobotParser(self.process_curdir).parse_resource_file(source)
+            return RestParser(self.lang, self.process_curdir).parse_resource_file(source)
+        return RobotParser(self.lang, self.process_curdir).parse_resource_file(source)

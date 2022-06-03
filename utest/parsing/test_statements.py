@@ -56,6 +56,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token.SETTING_HEADER: 'Settings',
             Token.VARIABLE_HEADER: 'Variables',
             Token.TESTCASE_HEADER: 'Test Cases',
+            Token.TASK_HEADER: 'Tasks',
             Token.KEYWORD_HEADER: 'Keywords',
             Token.COMMENT_HEADER: 'Comments'
         }
