@@ -36,6 +36,34 @@ Execution fails after some loops
         Log    ${variable}
     END
 
+Continuable failure in loop
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) Oh no 1!
+    ...
+    ...    2) Oh no 2!
+    ...
+    ...    3) Oh no 3!
+    [Tags]    robot:continue-on-failure
+    WHILE    $variable < 4
+        Fail    Oh no ${variable}!
+        ${variable}=    Evaluate    $variable + 1
+    END
+
+Normal failure after continuable failure in loop
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) Oh no!
+    ...
+    ...    2) Oh no for real!
+    WHILE    True
+        IF    $variable > 1    Fail    Oh no for real!
+        Run Keyword And Continue On Failure    Fail    Oh no!
+        ${variable}=    Evaluate    $variable + 1
+    END
+
 Loop in loop
     WHILE    $variable < 6
         Log    Outer ${variable}

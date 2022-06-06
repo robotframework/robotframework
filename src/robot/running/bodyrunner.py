@@ -349,6 +349,7 @@ class WhileRunner:
             if data.error:
                 raise DataError(data.error)
             limit = WhileLimit.create(data.limit, self._context.variables)
+            errors = []
             while self._should_run(data.condition, self._context.variables) \
                     and limit.is_valid:
                 executed_once = True
@@ -359,9 +360,15 @@ class WhileRunner:
                     break
                 except ContinueLoop:
                     continue
+                except ExecutionFailed as err:
+                    errors.extend(err.get_errors())
+                    if not err.can_continue(self._context, self._templated):
+                        break
             if not executed_once:
                 status.pass_status = result.NOT_RUN
                 self._run_iteration(data, result, run=False)
+            if errors:
+                raise ExecutionFailures(errors)
             if not limit.is_valid:
                 raise DataError(limit.reason)
 
