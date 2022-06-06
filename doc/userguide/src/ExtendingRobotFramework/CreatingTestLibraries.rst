@@ -1186,7 +1186,7 @@ Other types cause conversion failures.
    |    Type     |      ABC      |  Aliases   |   Accepts    |                       Explanation                              |             Examples                 |
    +=============+===============+============+==============+================================================================+======================================+
    | bool_       |               | boolean    | str_,        | Strings `TRUE`, `YES`, `ON` and `1` are converted to `True`,   | | `TRUE` (converted to `True`)       |
-   |             |               |            | int_    ,    | the empty string as well as `FALSE`, `NO`, `OFF` and `0`       | | `off` (converted to `False`)       |
+   |             |               |            | int_,        | the empty string as well as `FALSE`, `NO`, `OFF` and `0`       | | `off` (converted to `False`)       |
    |             |               |            | float_,      | are converted to `False`, and the string `NONE` is converted   | | `example` (used as-is)             |
    |             |               |            | None_        | to `None`. Other strings and other accepted values are         |                                      |
    |             |               |            |              | passed as-is, allowing keywords to handle them specially if    |                                      |
@@ -1212,7 +1212,7 @@ Other types cause conversion failures.
    |             |               |            |              | visual separators for digit grouping purposes.                 | | `10_000.000_01`                    |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Decimal_    |               |            | str_,        | Conversion is done using the Decimal_ class. Decimal_ is       | | `3.14`                             |
-   |             |               |            | int_    ,    | recommended over float_ when decimal numbers need to be        | | `10 000.000 01`                    |
+   |             |               |            | int_,        | recommended over float_ when decimal numbers need to be        | | `10 000.000 01`                    |
    |             |               |            | float_       | represented exactly.                                           | | `10_000.000_01`                    |
    |             |               |            |              |                                                                |                                      |
    |             |               |            |              | Starting from RF 4.1, spaces and underscores can be used as    |                                      |
@@ -1230,7 +1230,7 @@ Other types cause conversion failures.
    |             |               |            | bytes_       |                                                                |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | `datetime   |               |            | str_,        | Strings are expected to be timestamps in `ISO 8601`_ like      | | `2022-02-09T16:39:43.632269`       |
-   | <dt-mod_>`__|               |            | int_    ,    | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `2022-02-09 16:39`                 |
+   | <dt-mod_>`__|               |            | int_,        | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `2022-02-09 16:39`                 |
    |             |               |            | float_       | character can be used as a separator or separators can be      | | `2022-02-09`                       |
    |             |               |            |              | omitted altogether. Additionally, only the date part is        | | `${1644417583.632269}` (Epoch time)|
    |             |               |            |              | mandatory, all possibly missing time components are considered |                                      |
@@ -1243,7 +1243,7 @@ Other types cause conversion failures.
    |             |               |            |              | time components are expected to be omitted or to be zeros.     |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | timedelta_  |               |            | str_,        | Strings are expected to represent a time interval in one of    | | `42` (42 seconds)                  |
-   |             |               |            | int_    ,    | the time formats Robot Framework supports: `time as number`_,  | | `1 minute 2 seconds`               |
+   |             |               |            | int_,        | the time formats Robot Framework supports: `time as number`_,  | | `1 minute 2 seconds`               |
    |             |               |            | float_       | `time as time string`_ or `time as "timer" string`_. Integers  | | `01:02` (same as above)            |
    |             |               |            |              | and floats are considered to be seconds.                       |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
