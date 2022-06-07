@@ -1091,9 +1091,9 @@ end of the `EXCEPT` statement:
     Capture error
         TRY
             Some Keyword
-        EXCEPT    GLOB: ValueError: *    AS   ${error}
+        EXCEPT    ValueError: *    type=GLOB    AS   ${error}
             Error Handler 1    ${error}
-        EXCEPT    REGEXP: [Ee]rror \\d+    GLOB: ${pattern}    AS    ${error}
+        EXCEPT    [Ee]rror \\d+    (Invalid|Bad) usage    type=REGEXP    AS    ${error}
             Error Handler 2    ${error}
         EXCEPT    AS    ${error}
             Error Handler 3    ${error}
