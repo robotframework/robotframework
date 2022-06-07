@@ -197,6 +197,26 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             name='${variable_name}',
             value="{'a': 4, 'b': 'abc'}"
         )
+        # ${var}    first    second    third
+        # @{var}    first    second    third
+        # &{var}    first    second    third
+        for name in ['${var}', '@{var}', '&{var}']:
+            tokens = [
+                Token(Token.VARIABLE, name),
+                Token(Token.SEPARATOR, '    '),
+                Token(Token.ARGUMENT, 'first'),
+                Token(Token.SEPARATOR, '    '),
+                Token(Token.ARGUMENT, 'second'),
+                Token(Token.SEPARATOR, '    '),
+                Token(Token.ARGUMENT, 'third'),
+                Token(Token.EOL, '\n')
+            ]
+            assert_created_statement(
+                tokens,
+                Variable,
+                name=name,
+                value=['first', 'second', 'third']
+            )
 
     def test_TestCaseName(self):
         tokens = [Token(Token.TESTCASE_NAME, 'Example test case name'), Token(Token.EOL, '\n')]

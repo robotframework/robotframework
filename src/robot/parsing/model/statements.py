@@ -17,7 +17,7 @@ import ast
 import re
 
 from robot.running.arguments import UserKeywordArgumentParser
-from robot.utils import normalize_whitespace, seq2str, split_from_equals
+from robot.utils import is_list_like, normalize_whitespace, seq2str, split_from_equals
 from robot.variables import is_scalar_assign, is_dict_variable, search_variable
 
 from ..lexer import Token
@@ -83,7 +83,7 @@ class Statement(ast.AST):
         settings header or test/keyword.
 
         Most implementations support following general properties:
-        - `separator` whitespace inserted between each token. Default is four spaces.
+        - ``separator`` whitespace inserted between each token. Default is four spaces.
         - ``indent`` whitespace inserted before first token. Default is four spaces.
         - ``eol`` end of line sign. Default is ``'\\n'``.
         """
@@ -521,12 +521,14 @@ class Variable(Statement):
 
     @classmethod
     def from_params(cls, name, value, separator=FOUR_SPACES, eol=EOL):
-        return cls([
-            Token(Token.VARIABLE, name),
-            Token(Token.SEPARATOR, separator),
-            Token(Token.ARGUMENT, value),
-            Token(Token.EOL, eol)
-        ])
+        """``value`` can be given either as a string or as a list of strings."""
+        values = value if is_list_like(value) else [value]
+        tokens = [Token(Token.VARIABLE, name)]
+        for value in values:
+            tokens.extend([Token(Token.SEPARATOR, separator),
+                           Token(Token.ARGUMENT, value)])
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
 
     @property
     def name(self):
