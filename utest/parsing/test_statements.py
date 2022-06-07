@@ -1,46 +1,7 @@
 import unittest
 
+from robot.parsing.model.statements import *
 from robot.parsing import Token
-from robot.parsing.model.statements import (
-    Statement,
-    SectionHeader,
-    LibraryImport,
-    ResourceImport,
-    VariablesImport,
-    Documentation,
-    Metadata,
-    Tags,
-    TestCaseName,
-    KeywordName,
-    ForceTags,
-    DefaultTags,
-    SuiteSetup,
-    SuiteTeardown,
-    TestSetup,
-    TestTeardown,
-    TestTemplate,
-    TestTimeout,
-    Variable,
-    Setup,
-    Teardown,
-    Template,
-    Timeout,
-    Arguments,
-    Return,
-    ReturnStatement,
-    KeywordCall,
-    TemplateArguments,
-    ForHeader,
-    IfHeader,
-    InlineIfHeader,
-    Continue,
-    Break,
-    ElseHeader,
-    ElseIfHeader,
-    End,
-    Comment,
-    EmptyLine
-)
 from robot.utils.asserts import assert_equal, assert_true
 from robot.utils import type_name
 
@@ -68,14 +29,16 @@ def compare_statements(first, second):
 
 
 def assert_statements(st1, st2):
+    assert_equal(len(st1), len(st2),
+                 f'Statement lengths are not equal:\n'
+                 f'{len(st1)} for {st1}\n'
+                 f'{len(st2)} for {st2}')
     for t1, t2 in zip(st1, st2):
         assert_equal(t1, t2, formatter=repr)
-    assert_true(
-        compare_statements(st1, st2),
-        'Statements are not equal. %s (%s) != %s (%s)' % (st1, type_name(st1),
-                                                          st2, type_name(st2))
-    )
-    assert_equal(len(st1), len(st2))
+    assert_true(compare_statements(st1, st2),
+                f'Statements are not equal:\n'
+                f'{st1} {type_name(st1)}\n'
+                f'{st2} {type_name(st2)}')
 
 
 class TestCreateStatementsFromParams(unittest.TestCase):
@@ -586,7 +549,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             args=['${arg1}', '${arg2}=4']
         )
 
-    def test_Return(self):
+    def test_ReturnSetting(self):
         # Keyword
         #     [Return]    ${arg1}    ${arg2}=4
         tokens = [
@@ -732,6 +695,144 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             ElseHeader
         )
 
+    def test_TryHeader(self):
+        # TRY
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.TRY),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            TryHeader
+        )
+
+    def test_ExceptHeader(self):
+        # EXCEPT
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.EXCEPT),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            ExceptHeader
+        )
+        # EXCEPT    one
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.EXCEPT),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'one'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            ExceptHeader,
+            patterns=['one']
+        )
+        # EXCEPT    one    two    AS    ${var}
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.EXCEPT),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'one'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'two'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.AS, 'AS'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.VARIABLE, '${var}'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            ExceptHeader,
+            patterns=['one', 'two'],
+            variable='${var}'
+        )
+        # EXCEPT    Example: *    type=glob
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.EXCEPT),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'Example: *'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.OPTION, 'type=glob'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            ExceptHeader,
+            patterns=['Example: *'],
+            type='glob'
+        )
+        # EXCEPT    Error \\d    (x|y)    type=regexp    AS    ${var}
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.EXCEPT),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'Error \\d'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, '(x|y)'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.OPTION, 'type=regexp'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.AS, 'AS'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.VARIABLE, '${var}'),
+            Token(Token.EOL, '\n')]
+        assert_created_statement(
+            tokens,
+            ExceptHeader,
+            patterns=['Error \\d', '(x|y)'],
+            type='regexp',
+            variable='${var}'
+        )
+
+    def test_FinallyHeader(self):
+        # FINALLY
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.FINALLY),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            FinallyHeader
+        )
+
+    def test_WhileHeader(self):
+        # WHILE    $cond
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.WHILE),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, '$cond'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            WhileHeader,
+            condition='$cond'
+        )
+        # WHILE    $cond    limit=100s
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.WHILE),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, '$cond'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.OPTION, 'limit=100s'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            WhileHeader,
+            condition='$cond',
+            limit='100s'
+        )
+
     def test_End(self):
         tokens = [
             Token(Token.SEPARATOR, '    '),
@@ -743,7 +844,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             End
         )
 
-    def test_Return(self):
+    def test_ReturnStatement(self):
         tokens = [
             Token(Token.SEPARATOR, '    '),
             Token(Token.RETURN_STATEMENT),

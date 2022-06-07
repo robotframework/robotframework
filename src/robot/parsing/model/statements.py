@@ -919,7 +919,7 @@ class ExceptHeader(Statement):
     type = Token.EXCEPT
 
     @classmethod
-    def from_params(cls, patterns=None, variable=None, indent=FOUR_SPACES,
+    def from_params(cls, patterns=(), type=None, variable=None, indent=FOUR_SPACES,
                     separator=FOUR_SPACES, eol=EOL):
         tokens = [
             Token(Token.SEPARATOR, indent),
@@ -927,12 +927,17 @@ class ExceptHeader(Statement):
             Token(Token.SEPARATOR, separator)
         ]
         for pattern in patterns:
-            tokens.append(pattern)
-            tokens.append(Token(Token.SEPARATOR, separator))
+            tokens.extend([Token(Token.ARGUMENT, pattern),
+                           Token(Token.SEPARATOR, separator)])
+        if type:
+            tokens.extend([Token(Token.OPTION, f'type={type}'),
+                           Token(Token.SEPARATOR, separator)])
         if variable:
-            tokens.append(Token(Token.AS))
-            tokens.append(Token(Token.SEPARATOR, separator))
-            tokens.append(Token(Token.VARIABLE, variable))
+            tokens.extend([Token(Token.AS),
+                           Token(Token.SEPARATOR, separator),
+                           Token(Token.VARIABLE, variable)])
+        if tokens[-1].type == Token.SEPARATOR:
+            tokens.pop()
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
@@ -984,7 +989,7 @@ class WhileHeader(Statement):
                   Token(Token.ARGUMENT, condition)]
         if limit:
             tokens.extend([Token(Token.SEPARATOR, indent),
-                           Token(Token.OPTION, limit)])
+                           Token(Token.OPTION, f'limit={limit}')])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
