@@ -410,10 +410,10 @@ Thus, the following two test cases :name:`Test 1` and :name:`Test 2` behave iden
        Log   this message is logged
 
 
-These tags also influence continue-on-failure in FOR loops and
+These tags also influence continue-on-failure in FOR and WHILE loops and
 within IF/ELSE branches.
 The below test case will execute the test 10 times, no matter if
-the "Perform some test keyword" failed or not.
+the "Perform some test" keyword failed or not.
 
 .. sourcecode:: robotframework
 
@@ -480,7 +480,7 @@ You can override the recursive continue behavior using the reserved
        Log   this is not executed
 
 The `robot:stop-on-failure` and its recursive variant
-`robot:recursive-stop-on-failure` can be used to alter
+`robot:recursive-stop-on-failure` can also be used to alter
 the default continue behavior of Teardowns and Templates:
 
 In the example below, the 2nd teardown2 keyword will not be executed in case
