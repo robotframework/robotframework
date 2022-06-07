@@ -20,6 +20,11 @@ def assert_created_statement(tokens, base_class, **params):
         new_statement,
         Statement.from_tokens(tokens)
     )
+    if len(set(id(t) for t in new_statement.tokens)) != len(tokens):
+        lines = '\n'.join(f'{i:18}{t}' for i, t in
+                          [('ID', 'TOKEN')] +
+                          [(str(id(t)), repr(t)) for t in new_statement.tokens])
+        raise AssertionError(f'Tokens should not be reused!\n\n{lines}')
 
 
 def compare_statements(first, second):
