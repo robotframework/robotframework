@@ -13,7 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import is_string
+import inspect
+
+from robot.utils import is_string, Importer
 
 
 class Language:
@@ -48,9 +50,14 @@ class Language:
     @classmethod
     def get_languages(cls, languages):
         languages = cls._resolve_languages(languages)
-        available = {c.__name__.lower(): c() for c in cls.__subclasses__()}
-        # FIXME: support for external lang files
-        return [available[name.lower()] for name in languages if name.lower() in available]
+        available = {c.__name__.lower(): c for c in cls.__subclasses__()}
+        returned = []
+        for lang in languages:
+            if lang.lower() in available:
+                returned.append(available[lang.lower()])
+            else:
+                returned.extend(cls._import_languages(lang))
+        return [subclass() for subclass in returned]
 
     @classmethod
     def _resolve_languages(cls, languages):
@@ -61,6 +68,17 @@ class Language:
         if 'en' not in languages:
             languages.append('en')
         return languages
+
+    @classmethod
+    def _import_languages(cls, lang):
+        def find_subclass(member):
+            return (inspect.isclass(member)
+                    and issubclass(member, Language)
+                    and member is not Language)
+        # FIXME: make sure only module is imported
+        # FIXME: error handling
+        module = Importer().import_class_or_module(lang)
+        return [value for _, value in inspect.getmembers(module, find_subclass)]
 
     @property
     def settings(self):
