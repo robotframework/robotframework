@@ -76,11 +76,10 @@ class Language:
             return (inspect.isclass(member)
                     and issubclass(member, Language)
                     and member is not Language)
-        # FIXME: make sure only module is imported
         # FIXME: error handling
         if os.path.exists(lang):
             lang = os.path.abspath(lang)
-        module = Importer().import_class_or_module(lang)
+        module = Importer().import_module(lang)
         return [value for _, value in inspect.getmembers(module, find_subclass)]
 
     @property
