@@ -14,17 +14,18 @@
 #  limitations under the License.
 
 import inspect
+import os.path
 
 from robot.utils import is_string, Importer
 
 
 class Language:
-    setting_headers = {}
-    variable_headers = {}
-    test_case_headers = {}
-    task_headers = {}
-    keyword_headers = {}
-    comment_headers = {}
+    setting_headers = set()
+    variable_headers = set()
+    test_case_headers = set()
+    task_headers = set()
+    keyword_headers = set()
+    comment_headers = set()
     library = None
     resource = None
     variables = None
@@ -77,6 +78,8 @@ class Language:
                     and member is not Language)
         # FIXME: make sure only module is imported
         # FIXME: error handling
+        if os.path.exists(lang):
+            lang = os.path.abspath(lang)
         module = Importer().import_class_or_module(lang)
         return [value for _, value in inspect.getmembers(module, find_subclass)]
 
