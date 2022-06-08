@@ -66,6 +66,9 @@ Recursive continue in test with continue tag and two nested UK with and without 
 Recursive continue in test with continue tag and UK with stop tag
     Check Test Case    ${TESTNAME}
 
+Recursive continue in test with continue tag and UK with recursive stop tag
+    Check Test Case    ${TESTNAME}
+
 Recursive continue in user keyword
     Check Test Case    ${TESTNAME}
 
@@ -100,6 +103,9 @@ Test Teardown with recursive stop tag in user keyword
     Check Test Case    ${TESTNAME}
 
 Test Teardown with recursive stop tag and UK with continue tag
+    Check Test Case    ${TESTNAME}
+
+Test Teardown with recursive stop tag and UK with recursive continue tag
     Check Test Case    ${TESTNAME}
 
 stop-on-failure with Template
