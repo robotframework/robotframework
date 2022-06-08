@@ -381,6 +381,9 @@ originating from library keywords.
 Controlling continue on failure using reserved tags
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+robot:continue-on-failure
+'''''''''''''''''''''''''
+
 All keywords executed as part of test cases or user keywords which are
 tagged with the reserved tag `robot:continue-on-failure` are considered continuable
 by default.
@@ -410,7 +413,8 @@ Thus, the following two test cases :name:`Test 1` and :name:`Test 2` behave iden
        Log   this message is logged
 
 
-These tags also influence continue-on-failure in FOR and WHILE loops and
+These tags also influence continue-on-failure in FOR and WHILE loops
+(support in WHILE loops was added in RobotFramework 5.1) and
 within IF/ELSE branches.
 The below test case will execute the test 10 times, no matter if
 the "Perform some test" keyword failed or not.
@@ -432,7 +436,7 @@ executed from within a user keyword with the reserved tag set).
 
 To support use cases where the behavior should propagate from
 test cases into user keywords (and/or from user keywords into other
-user keywords), the reserved tag `robot:recursive-continue-on-failure`
+user keywords), the reserved tag **`robot:recursive-continue-on-failure`**
 can be used. The below examples executes all the keywords listed.
 
 .. sourcecode:: robotframework
@@ -479,20 +483,28 @@ You can override the recursive continue behavior using the reserved
        Should be Equal   5   6
        Log   this is not executed
 
-The `robot:stop-on-failure` and its recursive variant
-`robot:recursive-stop-on-failure` can also be used to alter
-the default continue behavior of Teardowns and Templates:
+robot:stop-on-failure
+'''''''''''''''''''''
 
-In the example below, the 2nd teardown2 keyword will not be executed in case
-the first teardown1 keyword fails.
+The `robot:stop-on-failure` can also be used to alter
+the default continue behavior of `Execution continues on teardowns automatically`_
+and `All top-level keywords are executed when tests have templates`_:
+
+In the example below, the teardown keyword will not continue following the failure.
 
 .. sourcecode:: robotframework
 
    *** Test Cases ***
    Test
-       [Teardown]    Run Keywords    teardown1    AND    teardown2
-       [Tags]    robot:stop-on-failure
        No Operation
+       [Teardown]    Teardown keyword
+
+   *** Keywords ***
+   Teardown keyword
+       [Tags]    robot:stop-on-failure
+       Should be Equal   1   2
+       Log    this is not executed
+
 
 The same is true for Template exection. In the below example, the template
 execution stops after the failure comparing 'Something' and 'Different'.
@@ -507,36 +519,40 @@ execution stops after the failure comparing 'Something' and 'Different'.
        Something    Different
        This is      not compared
 
-Please note that `robot:stop-on-failure` defined in the test case does
+The tag `robot:stop-on-failure` defined in the test case does
 not propagate to user keywords executed in Teardown or in Template.
-If this behavior is desired, you can leverage the `robot:recursive-stop-on-failure`
-tag which propagates to all user keywords executed, similar to the
-`robot:recursive-continue-on-failure` seen earlier.
+If this behavior is desired, you can leverage the **`robot:recursive-stop-on-failure`**
+tag in the test case (or user keyword) which propagates to all user
+keywords executed from within the test case (or user keyword), similar
+to the `robot:recursive-continue-on-failure` seen earlier.
 
-The specific `robot:stop-on-failure` and `robot:continue-on-failure` tags
-in a test case or user keyword take preference over `robot:recursive-stop-on-failure`
-and `robot:recursive-continue-on-failure` defined in its parents.
-If both `robot:recursive-stop-on-failure` and `robot:recursive-continue-on-failure`
-are defined in a user keyword's parents, the one "closest" to the user keyword
-in the call chain takes preference.
-If both reserved stop and continue tags are set on a test case or user keyword, the stop
-variant takes preference.
+.. note::
 
-Please note that `robot:stop-on-failure` or `robot:recursive-stop-on-failure` do NOT
-alter the behavior of continuable keywords. In the following example, all
-keywords are executed:
+  - The specific `robot:stop-on-failure` and `robot:continue-on-failure` tags
+    in a test case or user keyword take preference over `robot:recursive-stop-on-failure`
+    and `robot:recursive-continue-on-failure` defined in its parents.
+  - If both `robot:recursive-stop-on-failure` and `robot:recursive-continue-on-failure`
+    are defined in a user keyword's parents, the one "closest" to the user keyword
+    in the call chain takes preference.
+  - If both reserved stop and continue tags are set on a test case or user keyword, the stop
+    variant takes preference.
+  - Both `robot:stop-on-failure` or `robot:recursive-stop-on-failure` do NOT
+    alter the behavior of continuable keywords. In the following example, all
+    keywords are executed:
 
-   *** Test Cases ***
-   Test
-       [Tags]    robot:stop-on-failure
-       Run Keyword and Continue on Failure    Fail    failure
-       Log    this is executed
+    .. sourcecode:: robotframework
+
+      *** Test Cases ***
+      Test
+          [Tags]    robot:stop-on-failure
+          Run Keyword and Continue on Failure    Fail    failure
+          Log    this is executed
 
 
-The `robot:continue-on-failure` and `robot:recursive-continue-on-failure`
-tags are new in Robot Framework 4.1.
-The `robot:stop-on-failure` and `robot:recursive-stop-on-failure`
-tags are new in Robot Framework 5.1.
+  - The `robot:continue-on-failure` and `robot:recursive-continue-on-failure`
+    tags are new in Robot Framework 4.1.
+  - The `robot:stop-on-failure` and `robot:recursive-stop-on-failure`
+    tags are new in Robot Framework 5.1.
 
 Execution continues on teardowns automatically
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -546,7 +562,7 @@ continue on failure mode is automatically on in `test and suite
 teardowns`__. In practice this means that in teardowns all the
 keywords in all levels are always executed.
 
-The reserved tags  `robot:stop-on-failure` and `robot:recursive-stop-on-failure`
+The reserved tags  `robot:stop-on-failure`_ and `robot:recursive-stop-on-failure`
 can be used to alter this behavior.
 
 __ `Setups and teardowns`_
@@ -559,7 +575,7 @@ make it sure that all the different combinations are tested. In this
 usage continuing is limited to the top-level keywords, and inside them
 the execution ends normally if there are non-continuable failures.
 
-The reserved tags  `robot:stop-on-failure` and `robot:recursive-stop-on-failure`
+The reserved tags  `robot:stop-on-failure`_ and `robot:recursive-stop-on-failure`
 can be used to alter this behavior.
 
 Stopping test execution gracefully
