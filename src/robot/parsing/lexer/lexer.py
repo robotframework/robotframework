@@ -24,6 +24,7 @@ from .tokenizer import Tokenizer
 from .tokens import EOS, END, Token
 
 
+# FIXME: Documentation for `lang`.
 def get_tokens(source, data_only=False, tokenize_variables=False, lang=None):
     """Parses the given source to tokens.
 
