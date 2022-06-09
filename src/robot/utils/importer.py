@@ -15,8 +15,8 @@
 
 import os
 import sys
+import importlib
 import inspect
-from importlib import invalidate_caches as invalidate_import_caches
 
 from robot.errors import DataError
 
@@ -92,14 +92,11 @@ class Importer:
         else:
             return self._handle_return_values(imported, source, return_source)
 
-    def import_module(self, name_or_path, return_source=False):
+    def import_module(self, name_or_path):
         """Imports Python module based on the given name or path.
 
         :param name_or_path:
             Name or path of the module to import.
-        :param return_source:
-            When true, returns a tuple containing the imported module
-            and a path to it. By default, returns only the imported module.
 
         The module to import can be specified either as a name, in which
         case it must be in the module search path, or as a path to the file or
@@ -117,7 +114,7 @@ class Importer:
         except DataError as err:
             self._raise_import_failed(name_or_path, err)
         else:
-            return self._handle_return_values(imported, source, return_source)
+            return imported
 
     def _import(self, name, get_class=True):
         for importer in self._importers:
@@ -215,7 +212,7 @@ class _Importer:
         if name in sys.builtin_module_names:
             raise DataError('Cannot import custom module with same name as '
                             'Python built-in module.')
-        invalidate_import_caches()
+        importlib.invalidate_caches()
         try:
             return __import__(name, fromlist=fromlist)
         except:

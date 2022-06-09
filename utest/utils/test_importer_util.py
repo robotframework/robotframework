@@ -258,7 +258,7 @@ class TestImportClassOrModule(unittest.TestCase):
         module = self._import_module(join(LIBDIR, 'module_library.py'))
         assert_equal(module.__name__, expected.__name__)
         assert_equal(dirname(normpath(module.__file__)),
-                      dirname(normpath(expected.__file__)))
+                     dirname(normpath(expected.__file__)))
         assert_equal(dir(module), dir(expected))
 
     def test_import_class_from_file_by_path(self):
@@ -299,6 +299,19 @@ class TestImportClassOrModule(unittest.TestCase):
 
     def _import(self, name, type=None, logger=None):
         return Importer(type, logger or LoggerStub()).import_class_or_module(name)
+
+
+class TestImportModule(unittest.TestCase):
+
+    def test_import_module(self):
+        module = Importer().import_module('ExampleLibrary')
+        assert_equal(module.ExampleLibrary().return_string_from_library('xxx'), 'xxx')
+
+    def test_logging(self):
+        logger = LoggerStub(remove_extension=True)
+        Importer(logger=logger).import_module('ExampleLibrary')
+        logger.assert_message("Imported module 'ExampleLibrary' from '%s'."
+                              % join(LIBDIR, 'ExampleLibrary'))
 
 
 class TestErrorDetails(unittest.TestCase):
