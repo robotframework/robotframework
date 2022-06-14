@@ -6,6 +6,10 @@ Built-in language
     Run Tests    --lang fi    parsing/finnish.robot
     Validate Translations
 
+Custom language
+    Run Tests    --lang ${DATADIR}/parsing/custom-lang.py    parsing/custom.robot
+    Validate Translations
+
 *** Keywords ***
 Validate Translations
     Should Be Equal    ${SUITE.doc}                   Suite documentation.
