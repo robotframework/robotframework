@@ -320,8 +320,9 @@ class KeywordStore:
         if not found:
             return None
         if len(found) > 1:
-            found = self._remove_private_keywords(found)
             found = self._get_runner_based_on_search_order(found)
+        if len(found) == 2:
+            found = self._filter_private_runner(*found)
         if len(found) == 1:
             return found[0]
         self._raise_multiple_keywords_found(name, found)
@@ -339,11 +340,28 @@ class KeywordStore:
             return found[0]
         self._raise_multiple_keywords_found(name, found)
 
-    def _remove_private_keywords(self, runners):
-        for runner in runners:
-            if 'robot:private' in runner.tags:
-                runners.remove(runner)
-        return runners
+    def _filter_private_runner(self, runner1, runner2):
+        if all(['robot:private' in runner.tags for runner in [runner1, runner2]]):
+            return [runner1, runner2]
+        if 'robot:private' in runner1.tags:
+            private, public = runner1, runner2
+        elif 'robot:private' in runner2.tags:
+            private, public = runner2, runner1
+        self._public_and_private_keyword_conflict_warning(public, private)
+        return [public]
+
+    def _public_and_private_keyword_conflict_warning(self, public, private):
+        warning = Message(
+            f"There were both public and private keyword found with the name '{public.name}', "
+            f"'{public.longname}' being public and '{private.longname}' being private. "
+            f"The public keyword is used. To select explicitly, and to get rid of this warning, "
+            f"use either '{public.longname}' or '{private.longname}'.",
+            level='WARN'
+        )
+        if public.pre_run_messages:
+            public.pre_run_messages.append(warning)
+        else:
+            public.pre_run_messages = [warning]
 
     def _get_runner_based_on_search_order(self, runners):
         for libname in self.search_order:

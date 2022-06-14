@@ -33,6 +33,7 @@ class UserKeywordRunner:
     def __init__(self, handler, name=None):
         self._handler = handler
         self.name = name or handler.name
+        self.pre_run_messages = None
 
     @property
     def longname(self):
@@ -77,6 +78,9 @@ class UserKeywordRunner:
                              type=kw.type)
 
     def _run(self, context, args, result):
+        if self.pre_run_messages:
+            for message in self.pre_run_messages:
+                context.output.message(message)
         variables = context.variables
         args = self._resolve_arguments(args, variables)
         with context.user_keyword(self._handler):
@@ -216,6 +220,9 @@ class UserKeywordRunner:
             self._dry_run(context, kw.args, result)
 
     def _dry_run(self, context, args, result):
+        if self.pre_run_messages:
+            for message in self.pre_run_messages:
+                context.output.message(message)
         self._resolve_arguments(args)
         with context.user_keyword(self._handler):
             timeout = self._get_timeout()
