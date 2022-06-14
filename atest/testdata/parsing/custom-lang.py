@@ -1,7 +1,7 @@
 from robot.conf import Language
 
 
-class Fi(Language):
+class Custom(Language):
     setting_headers = {'H 1'}
     variable_headers = {'H 2'}
     test_case_headers = {'H 3'}
