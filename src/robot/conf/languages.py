@@ -127,14 +127,46 @@ class En(Language):
     test_setup = 'Test Setup'
     test_teardown = 'Test Teardown'
     test_template = 'Test Template'
-    test_timeout = 'Test Timeout'
     force_tags = 'Force Tags'
     default_tags = 'Default Tags'
-    tags = 'Tags'
+    test_timeout = 'Test Timeout'
     setup = 'Setup'
     teardown = 'Teardown'
     template = 'Template'
+    tags = 'Tags'
     timeout = 'Timeout'
     arguments = 'Arguments'
     return_ = 'Return'
     bdd_prefixes = {'Given', 'When', 'Then', 'And', 'But'}
+
+
+class Fi(Language):
+    # FIXME: Update based on terms agreed at
+    # https://robotframework.crowdin.com/robot-framework
+    setting_headers = {'Asetukset', 'Asetus'}
+    variable_headers = {'Muuttujat', 'Muuttuja'}
+    test_case_headers = {'Testit', 'Testi'}
+    task_headers = {'Tehtävät', 'Tehtävä'}
+    keyword_headers = {'Avainsanat', 'Avainsana'}
+    comment_headers = {'Kommentit', 'Kommentti'}
+    library = 'Kirjasto'
+    resource = 'Resurssi'
+    variables = 'Muuttujat'
+    documentation = 'Dokumentaatio'
+    metadata = 'Metadata'
+    suite_setup = 'Setin Alustus'
+    suite_teardown = 'Setin Purku'
+    test_setup = 'Testin Alustus'
+    test_teardown = 'Testin Purku'
+    test_template = 'Testin Malli'
+    force_tags = 'Testin Tagit'
+    default_tags = 'Oletus Tagit'
+    test_timeout = 'Testin Aikaraja'
+    setup = 'Alustus'
+    teardown = 'Purku'
+    template = 'Malli'
+    tags = 'Tagit'
+    timeout = 'Aikaraja'
+    arguments = 'Argumentit'
+    return_ = 'Paluuarvo'
+    bdd_prefixes = {}
