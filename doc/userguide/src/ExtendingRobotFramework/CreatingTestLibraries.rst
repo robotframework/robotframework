@@ -3262,10 +3262,12 @@ inheritance. This is illustrated by the example below that adds new
 .. sourcecode:: python
 
    from SeleniumLibrary import SeleniumLibrary
+   from SeleniumLibrary.base import keyword
 
 
    class ExtendedSeleniumLibrary(SeleniumLibrary):
 
+       @keyword
        def title_should_start_with(self, expected):
            title = self.get_title()
            if not title.startswith(expected):
