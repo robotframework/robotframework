@@ -915,7 +915,8 @@ To achieve this, tag them as `robot:private`.
        ...     It should only be used in keywords within the same file.
        No Operation
 
-If there is both a private and a public User Keyword with the same name
-in the current scope, Robot Framework will execute the public one.
+If there is both a public and one or more private User Keywords with the same name
+in the current scope, Robot Framework will execute the public one. In addition to that,
+a warning will be emitted.
 
 Private user keywords are new since Robot Framework 5.1
