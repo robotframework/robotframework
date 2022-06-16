@@ -45,11 +45,14 @@ Continuable failure in loop
     ...    2) Oh no 2!
     ...
     ...    3) Oh no 3!
+    ...
+    ...    4) Oh no outside loop!
     [Tags]    robot:continue-on-failure
     WHILE    $variable < 4
         Fail    Oh no ${variable}!
         ${variable}=    Evaluate    $variable + 1
     END
+    Fail    Oh no outside loop!
 
 Normal failure after continuable failure in loop
     [Documentation]    FAIL
@@ -63,6 +66,22 @@ Normal failure after continuable failure in loop
         Run Keyword And Continue On Failure    Fail    Oh no!
         ${variable}=    Evaluate    $variable + 1
     END
+
+Normal failure outside loop after continuable failures in loop
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) Oh no 1!
+    ...
+    ...    2) Oh no 2!
+    ...
+    ...    3) Oh no for real!
+    WHILE    $variable < 3
+        Run Keyword And Continue On Failure    Fail    Oh no ${variable}!
+        ${variable}=    Evaluate    $variable + 1
+    END
+    Fail    Oh no for real!
+    Fail    Should not be executed.
 
 Loop in loop
     WHILE    $variable < 6

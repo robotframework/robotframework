@@ -29,6 +29,9 @@ Continuable failure in loop
 Normal failure after continuable failure in loop
     Check While Loop    FAIL    2
 
+Normal failure outside loop after continuable failures in loop
+    Check While Loop    FAIL    2
+
 Loop in loop
     Check While Loop    PASS    5
     Check While Loop    PASS    3    path=body[0].body[0].body[2]
