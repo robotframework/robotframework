@@ -1,5 +1,7 @@
 *** Settings ***
 Resource    private.resource
+Resource    private2.resource
+Resource    private3.resource
 
 *** Test Cases ***
 Valid Usage With Local Keyword
@@ -28,10 +30,16 @@ If Both Keywords Are Private Raise Multiple Keywords Found
     First Public Keyword With Nested Private Keyword
     Second Public Keyword With Nested Private Keyword
 
+If One Keyword Is Public And Multiple Private Keywords Run Public And Warn
+    Keyword With One Public And Two Private Possible Keywords
+
 *** Keywords ***
 Public Keyword
     Private Keyword
 
 Private Keyword
     [Tags]    robot:private
-    Log    Hello
+    No Operation
+
+Keyword With One Public And Two Private Possible Keywords
+    Possible Keyword
