@@ -14,3 +14,10 @@ Call Private Keyword From Private 2 Resource
 
 Same Name
     Log    Public
+
+First Public Keyword With Nested Private Keyword
+    Nested Private Keyword
+
+Nested Private Keyword
+    [Tags]    robot:private
+    Log    Nested private
