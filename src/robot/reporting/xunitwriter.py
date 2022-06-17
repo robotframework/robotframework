@@ -39,22 +39,15 @@ class XUnitFileWriter(ResultVisitor):
         self._writer = xml_writer
 
     def start_suite(self, suite):
-        tests, failures, skipped = self._get_stats(suite.statistics)
+        stats = suite.statistics  # Accessing property only once.
         attrs = {'name': suite.name,
-                 'tests': tests,
+                 'tests': f'{stats.total}',
                  'errors': '0',
-                 'failures': failures,
-                 'skipped': skipped,
+                 'failures': f'{stats.failed}',
+                 'skipped': f'{stats.skipped}',
                  'time': self._time_as_seconds(suite.elapsedtime),
                  'timestamp' : self._starttime_to_isoformat(suite.starttime)}
         self._writer.start('testsuite', attrs)
-
-    def _get_stats(self, statistics):
-        return (
-            str(statistics.total),
-            str(statistics.failed),
-            str(statistics.skipped)
-        )
 
     def end_suite(self, suite):
         if suite.metadata or suite.doc:
@@ -80,7 +73,7 @@ class XUnitFileWriter(ResultVisitor):
         self._writer.end('testcase')
 
     def _time_as_seconds(self, millis):
-        return '{:.3f}'.format(millis / 1000)
+        return format(millis / 1000, '.3f')
 
     def visit_keyword(self, kw):
         pass
