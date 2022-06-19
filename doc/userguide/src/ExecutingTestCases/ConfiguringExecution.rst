@@ -3,10 +3,8 @@ Configuring execution
 
 This section explains different command line options that can be used
 for configuring the `test execution`_ or `post-processing
-outputs`_. Options related to generated output files are discussed in
-the `next section`__.
-
-__ `Created outputs`_
+outputs`_. Options related to generated `output files`_ are discussed in
+the next section.
 
 .. contents::
    :depth: 2

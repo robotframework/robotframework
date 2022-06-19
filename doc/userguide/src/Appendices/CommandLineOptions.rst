@@ -38,7 +38,7 @@ Command line options for test execution
   -r, --report <file>     Sets the path to the generated `report file`_.
   -x, --xunit <file>      Sets the path to the generated `xUnit compatible result file`_.
   -b, --debugfile <file>  A `debug file`_ that is written during execution.
-  -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
+  -T, --timestampoutputs  `Adds a timestamp`_ to `output files`_ listed above.
   --splitlog              `Split log file`_ into smaller pieces that open in
                           browser transparently.
   --logtitle <title>      `Sets a title`_ for the generated test log.
@@ -109,7 +109,7 @@ Command line options for post-processing outputs
   -l, --log <file>        Sets the path to the generated `log file`_.
   -r, --report <file>     Sets the path to the generated `report file`_.
   -x, --xunit <file>      Sets the path to the generated `xUnit compatible result file`_.
-  -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
+  -T, --timestampoutputs  `Adds a timestamp`_ to `output files`_ listed above.
   --splitlog              `Split log file`_ into smaller pieces that open in
                           browser transparently.
   --logtitle <title>      `Sets a title`_ for the generated test log.
