@@ -58,7 +58,8 @@ def _build(builder, source):
 
 
 def _get_extension(source):
-    return os.path.splitext(source)[1][1:].lower()
+    path, *args = source.split('::')
+    return os.path.splitext(path)[1][1:].lower()
 
 
 def DocumentationBuilder(library_or_resource):

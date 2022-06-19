@@ -21,6 +21,9 @@ Using --specdocformat to specify doc format in output
     --format XML --specdocformat RAW String ${OUTBASE}.libspec     XML        String      path=${OUTBASE}.libspec
     --format XML --specdocformat HTML String ${OUTBASE}.libspec    LIBSPEC    String      path=${OUTBASE}.libspec
 
+Library arguments
+    ${TESTDATADIR}/LibraryArguments.py::required::true ${OUTHTML}    HTML    LibraryArguments
+
 Library name matching spec extension
     --pythonpath ${DATADIR}/libdoc LIBPKG.JSON ${OUTXML}        XML    LIBPKG.JSON    path=${OUTXML}
     [Teardown]    Keyword Name Should Be    0    Keyword In Json
@@ -28,6 +31,19 @@ Library name matching spec extension
 Library name matching resource extension
     --pythonpath ${DATADIR}/libdoc LIBPKG.resource ${OUTXML}    XML    LIBPKG.resource    path=${OUTXML}
     [Teardown]    Keyword Name Should Be    0    Keyword In Resource
+
+Library argument matching resource extension
+    ${TESTDATADIR}/LibraryArguments.py::required::true::foo.resource ${OUTHTML}    HTML    LibraryArguments
+
+Library argument matching resource extension when import fails
+    [Template]    Run libdoc and verify output
+    NonExisting::foo.resource ${OUTHTML}
+    ...    Importing library 'NonExisting' failed: ModuleNotFoundError: No module named 'NonExisting'
+    ...    Traceback (most recent call last):
+    ...    ${SPACE*2}None
+    ...    PYTHONPATH:
+    ...    *
+    ...    ${USAGE TIP[1:]}
 
 Override name and version
     --name MyName --version 42 String ${OUTHTML}    HTML    MyName    42
