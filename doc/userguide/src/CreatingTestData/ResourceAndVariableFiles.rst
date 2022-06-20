@@ -25,21 +25,22 @@ Taking resource files into use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Resource files are imported using the :setting:`Resource` setting in the
-Settings section. The path to the resource file is given as an argument
-to the setting. When using the `plain text format`__ for creating resource
-files, it is possible to use the normal :file:`.robot` extension but the
-dedicated :file:`.resource` extension is recommended to separate resource
-files from test case files.
+Settings section so that the path to the resource file is given as an argument
+to the setting. The recommended extension for resource files is
+:file:`.resource`, but also the normal :file:`.robot` extension works.
 
-__ `Supported file formats`_
-
-If the path is given in an absolute format, it is used directly. In other
-cases, the resource file is first searched relatively to the directory
+If the resource file path is absolute, it is used directly. Otherwise,
+the resource file is first searched relatively to the directory
 where the importing file is located. If the file is not found there,
 it is then searched from the directories in Python's `module search path`_.
-The path can contain variables, and it is recommended to use them to make paths
-system-independent (for example, :file:`${RESOURCES}/login.resource` or
-:file:`${RESOURCE_PATH}`). Additionally, forward slashes (`/`) in the path
+Searching resource files from the module search path makes it possible to
+bundle them into Python packages as `package data`__ and importing
+them like :file:`package/example.resource`.
+
+The resource file path can contain variables, and it is recommended to use
+them to make paths system-independent (for example,
+:file:`${RESOURCES}/login.resource` or just :file:`${RESOURCE_PATH}`).
+Additionally, forward slashes (`/`) in the path
 are automatically changed to backslashes (:codesc:`\\`) on Windows.
 
 .. sourcecode:: robotframework
@@ -47,6 +48,7 @@ are automatically changed to backslashes (:codesc:`\\`) on Windows.
    *** Settings ***
    Resource    example.resource
    Resource    ../data/resources.robot
+   Resource    package/example.resource
    Resource    ${RESOURCES}/common.resource
 
 The user keywords and variables defined in a resource file are
@@ -56,6 +58,8 @@ libraries, resource files and variable files imported by the said
 resource file.
 
 .. note:: The :file:`.resource` extension is new in Robot Framework 3.1.
+
+__ https://packaging.python.org/en/latest/guides/distributing-packages-using-setuptools/#package-data
 
 Resource file structure
 ~~~~~~~~~~~~~~~~~~~~~~~
