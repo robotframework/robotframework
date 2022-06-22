@@ -118,7 +118,7 @@ class Settings:
     def _lex_name_arguments_and_with_name(self, tokens):
         self._lex_name_and_arguments(tokens)
         if len(tokens) > 1 and \
-                normalize_whitespace(tokens[-2].value) == 'WITH NAME':
+                normalize_whitespace(tokens[-2].value) in ('WITH NAME', 'AS'):
             tokens[-2].type = Token.WITH_NAME
             tokens[-1].type = Token.NAME
 

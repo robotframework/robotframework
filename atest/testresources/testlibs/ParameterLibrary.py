@@ -2,11 +2,11 @@ from robot.libraries.BuiltIn import BuiltIn
 
 
 class ParameterLibrary:
-    
+
     def __init__(self, host='localhost', port='8080'):
         self.host = host
         self.port = port
-        
+
     def parameters(self):
         return self.host, self.port
 
@@ -21,3 +21,4 @@ class V2(ParameterLibrary): pass
 class V3(ParameterLibrary): pass
 class V4(ParameterLibrary): pass
 class V5(ParameterLibrary): pass
+class V6(ParameterLibrary): pass

@@ -3129,7 +3129,7 @@ class _Misc(_BuiltInBase):
             raise RuntimeError(str(err))
 
     def _split_alias(self, args):
-        if len(args) > 1 and normalize_whitespace(args[-2]) == 'WITH NAME':
+        if len(args) > 1 and normalize_whitespace(args[-2]) in ('WITH NAME', 'AS'):
             return args[:-2], args[-1]
         return args, None
 
