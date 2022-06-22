@@ -31,6 +31,7 @@ from robot.utils import (abspath, create_destination_directory, escape, format_t
                          seq2str, split_args_from_name_or_path)
 
 from .gatherfailed import gather_failed_tests, gather_failed_suites
+from .languages import Languages
 
 
 class _BaseSettings:
@@ -475,6 +476,7 @@ class RobotSettings(_BaseSettings):
                        'ConsoleMarkers'     : ('consolemarkers', 'AUTO'),
                        'DebugFile'          : ('debugfile', None),
                        'Language'           : ('language', [])}
+    _languages = None
 
     def get_rebot_settings(self):
         settings = RebotSettings()
@@ -503,7 +505,9 @@ class RobotSettings(_BaseSettings):
 
     @property
     def languages(self):
-        return self['Language']
+        if not self._languages:
+            self._languages = Languages(self['Language'])
+        return self._languages
 
     @property
     def suite_config(self):

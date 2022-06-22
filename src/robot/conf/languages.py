@@ -19,6 +19,46 @@ import os.path
 from robot.utils import is_string, Importer
 
 
+class Languages:
+
+    def __init__(self, languages):
+        self.languages = self._get_languages(languages)
+
+    def _get_languages(self, languages):
+        languages = self._resolve_languages(languages)
+        available = {c.__name__.lower(): c for c in Language.__subclasses__()}
+        returned = []
+        for lang in languages:
+            if lang.lower() in available:
+                returned.append(available[lang.lower()])
+            else:
+                returned.extend(self._import_languages(lang))
+        return [subclass() for subclass in returned]
+
+    def _resolve_languages(self, languages):
+        if not languages:
+            languages = []
+        if is_string(languages):
+            languages = [languages]
+        if 'en' not in languages:
+            languages.append('en')
+        return languages
+
+    def _import_languages(self, lang):
+        def find_subclass(member):
+            return (inspect.isclass(member)
+                    and issubclass(member, Language)
+                    and member is not Language)
+        # FIXME: error handling
+        if os.path.exists(lang):
+            lang = os.path.abspath(lang)
+        module = Importer().import_module(lang)
+        return [value for _, value in inspect.getmembers(module, find_subclass)]
+
+    def __iter__(self):
+        return iter(self.languages)
+
+
 class Language:
     setting_headers = set()
     variable_headers = set()
@@ -47,40 +87,6 @@ class Language:
     arguments = None
     return_ = None
     bdd_prefixes = set()  # These are not used yet
-
-    @classmethod
-    def get_languages(cls, languages):
-        languages = cls._resolve_languages(languages)
-        available = {c.__name__.lower(): c for c in cls.__subclasses__()}
-        returned = []
-        for lang in languages:
-            if lang.lower() in available:
-                returned.append(available[lang.lower()])
-            else:
-                returned.extend(cls._import_languages(lang))
-        return [subclass() for subclass in returned]
-
-    @classmethod
-    def _resolve_languages(cls, languages):
-        if not languages:
-            languages = []
-        if is_string(languages):
-            languages = [languages]
-        if 'en' not in languages:
-            languages.append('en')
-        return languages
-
-    @classmethod
-    def _import_languages(cls, lang):
-        def find_subclass(member):
-            return (inspect.isclass(member)
-                    and issubclass(member, Language)
-                    and member is not Language)
-        # FIXME: error handling
-        if os.path.exists(lang):
-            lang = os.path.abspath(lang)
-        module = Importer().import_module(lang)
-        return [value for _, value in inspect.getmembers(module, find_subclass)]
 
     @property
     def settings(self):
