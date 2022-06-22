@@ -296,7 +296,7 @@ class KeywordStore:
 
     def _get_bdd_style_runner(self, name):
         parts = name.split(maxsplit=1)
-        if len(parts) == 1:
+        if len(parts) < 2:
             return None
         prefix, keyword = parts
         for lang in self.languages:
