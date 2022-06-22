@@ -43,7 +43,7 @@ class Namespace:
         self.variables = variables
         self.languages = languages
         self._imports = resource.imports
-        self._kw_store = KeywordStore(resource)
+        self._kw_store = KeywordStore(resource, languages)
         self._imported_variable_files = ImportCache()
         self._suite_name = suite.longname
         self._running_test = False
@@ -223,11 +223,12 @@ class Namespace:
 
 class KeywordStore:
 
-    def __init__(self, resource):
+    def __init__(self, resource, languages):
         self.user_keywords = UserLibrary(resource, UserLibrary.TEST_CASE_FILE_TYPE)
         self.libraries = OrderedDict()
         self.resources = ImportCache()
         self.search_order = ()
+        self.languages = languages
 
     def get_library(self, name_or_instance):
         if name_or_instance is None:
@@ -294,10 +295,13 @@ class KeywordStore:
         return runner
 
     def _get_bdd_style_runner(self, name):
-        lower = name.lower()
-        for prefix in ['given ', 'when ', 'then ', 'and ', 'but ']:
-            if lower.startswith(prefix):
-                runner = self._get_runner(name[len(prefix):])
+        parts = name.split(maxsplit=1)
+        if len(parts) == 1:
+            return None
+        prefix, keyword = parts
+        for lang in self.languages:
+            if prefix.title() in lang.bdd_prefixes:
+                runner = self._get_runner(keyword)
                 if runner:
                     runner = copy.copy(runner)
                     runner.name = name

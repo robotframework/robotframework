@@ -175,4 +175,4 @@ class Fi(Language):
     timeout = 'Aikaraja'
     arguments = 'Argumentit'
     return_ = 'Paluuarvo'
-    bdd_prefixes = {}
+    bdd_prefixes = {'Oletetaan', 'Kun', 'Niin', 'Ja', 'Mutta'}

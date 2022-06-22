@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  keywords/optional_given_when_then.robot
+Suite Setup     Run Tests  --lang fi  keywords/optional_given_when_then.robot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -46,3 +46,14 @@ Keyword can be used with and without prefix
     Should Be Equal  ${tc.kws[5].name}  Then we are in Berlin city
     Should Be Equal  ${tc.kws[6].name}  we are in Berlin city
 
+In user keyword name with normal arguments and localized prefixes
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Should Be Equal  ${tc.kws[0].name}  Oletetaan we don't drink too many beers
+    Should Be Equal  ${tc.kws[1].name}  Kun we are in
+    Should Be Equal  ${tc.kws[2].name}  mutta we don't drink too many beers
+    Should Be Equal  ${tc.kws[3].name}  Ja time
+    Should Be Equal  ${tc.kws[4].name}  Niin we get this feature ready today
+    Should Be Equal  ${tc.kws[5].name}  ja we don't drink too many beers
+
+Prefix must be followed by space
+    Check Test Case  ${TEST NAME}

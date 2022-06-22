@@ -17,6 +17,7 @@ from robot.conf import Languages
 
 
 class Markers:
+    # FIXME: should this be merged with conf.Languages
 
     def __init__(self, languages):
         if not isinstance(languages, Languages):
