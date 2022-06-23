@@ -15,6 +15,7 @@
 
 from ast import NodeVisitor
 
+from robot.output import LOGGER
 from robot.variables import VariableIterator
 
 from .testsettings import TestSettings
@@ -218,6 +219,7 @@ class TestCaseBuilder(NodeVisitor):
         self.settings.timeout = node.value
 
     def visit_Tags(self, node):
+        deprecate_tags_starting_with_hyphen(node, self.suite.source)
         self.settings.tags = node.values
 
     def visit_Template(self, node):
@@ -264,6 +266,7 @@ class KeywordBuilder(NodeVisitor):
                              % format_error(node.errors))
 
     def visit_Tags(self, node):
+        deprecate_tags_starting_with_hyphen(node, self.resource.source)
         self.kw.tags = node.values
 
     def visit_Return(self, node):
@@ -550,3 +553,15 @@ def format_error(errors):
     if len(errors) == 1:
         return errors[0]
     return '\n- '.join(('Multiple errors:',) + errors)
+
+
+def deprecate_tags_starting_with_hyphen(node, source):
+    for tag in node.values:
+        if tag.startswith('-'):
+            LOGGER.warn(
+                f"Error in file '{source}' on line {node.lineno}: "
+                f"Settings tags starting with a hyphen using the '[Tags]' setting "
+                f"is deprecated. In Robot Framework 5.2 this syntax will be used "
+                f"for removing tags. Escape '{tag}' like '\\{tag}' to use the "
+                f"literal value and to avoid this warning."
+            )

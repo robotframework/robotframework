@@ -349,7 +349,7 @@ Reset PYTHONPATH
 
 Error in file
     [Arguments]    ${index}    ${path}    ${lineno}    @{message}    ${traceback}=
-    ...    ${stacktrace}=    ${pattern}=True
+    ...    ${stacktrace}=    ${pattern}=True    ${level}=ERROR
     ${path} =    Join Path    ${DATADIR}    ${path}
     ${message} =    Catenate    @{message}
     ${error} =    Set Variable    Error in file '${path}' on line ${lineno}: ${message}
@@ -359,7 +359,7 @@ Error in file
     ${error} =    Set Variable If    $stacktrace
     ...    ${error}\n*${stacktrace}*
     ...    ${error}
-    Check Log Message    ${ERRORS}[${index}]    ${error}    level=ERROR    pattern=${pattern}
+    Check Log Message    ${ERRORS}[${index}]    ${error}    level=${level}    pattern=${pattern}
 
 Error in library
     [Arguments]    ${name}    @{message}    ${pattern}=False    ${index}=0
