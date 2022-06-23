@@ -247,14 +247,11 @@ class KeywordBuilder(NodeVisitor):
     def __init__(self, resource):
         self.resource = resource
         self.kw = None
-        self.teardown = None
 
     def visit_Keyword(self, node):
-        self.kw = self.resource.keywords.create(name=node.name,
-                                                lineno=node.lineno)
+        self.kw = self.resource.keywords.create(name=node.name, lineno=node.lineno)
         self.generic_visit(node)
-        if self.teardown is not None:
-            self.kw.teardown.config(**self.teardown)
+
 
     def visit_Documentation(self, node):
         self.kw.doc = node.value
@@ -262,8 +259,8 @@ class KeywordBuilder(NodeVisitor):
     def visit_Arguments(self, node):
         self.kw.args = node.values
         if node.errors:
-            self.kw.error = ('Invalid argument specification: %s'
-                             % format_error(node.errors))
+            error = format_error(node.errors)
+            self.kw.error = f'Invalid argument specification: {error}'
 
     def visit_Tags(self, node):
         deprecate_tags_starting_with_hyphen(node, self.resource.source)
@@ -276,9 +273,8 @@ class KeywordBuilder(NodeVisitor):
         self.kw.timeout = node.value
 
     def visit_Teardown(self, node):
-        self.teardown = {
-            'name': node.name, 'args': node.args, 'lineno': node.lineno
-        }
+        self.kw.teardown.config(name=node.name, args=node.args,
+                                lineno=node.lineno)
 
     def visit_KeywordCall(self, node):
         self.kw.body.create_keyword(name=node.keyword, args=node.args,
