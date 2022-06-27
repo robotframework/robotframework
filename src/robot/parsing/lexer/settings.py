@@ -148,6 +148,8 @@ class TestCaseFileSettings(Settings):
         'Task Teardown': 'Test Teardown',
         'Task Template': 'Test Template',
         'Task Timeout': 'Test Timeout',
+        'Test Tags': 'Force Tags',
+        'Task Tags': 'Force Tags',
     }
 
 

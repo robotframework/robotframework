@@ -1,10 +1,10 @@
 *** Settings ***
-Suite Setup      Run Tests    --loglevel DEBUG    rpa/task_setup_teardown_template_timeout.robot
+Suite Setup      Run Tests    --loglevel DEBUG    rpa/task_aliases.robot
 Resource         atest_resource.robot
 
 *** Test Cases ***
 Defaults
-    ${tc} =    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Tags    ${TESTNAME}          task    tags
     Check timeout message    ${tc.setup.msgs[0]}       1 minute 10 seconds
     Check log message        ${tc.setup.msgs[1]}       Setup has an alias!
     Check timeout message    ${tc.kws[0].msgs[0]}      1 minute 10 seconds
@@ -13,7 +13,7 @@ Defaults
     Should be equal          ${tc.timeout}             1 minute 10 seconds
 
 Override
-    ${tc} =    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Tags    ${TESTNAME}          task    tags    own
     Check log message        ${tc.setup.msgs[0]}       Overriding setup
     Check log message        ${tc.kws[0].msgs[0]}      Overriding settings
     Check log message        ${tc.teardown.msgs[0]}    Overriding teardown as well
@@ -29,7 +29,7 @@ Invalid task timeout
 
 Task aliases are included in setting recommendations
     Error In File
-    ...    0    rpa/task_setup_teardown_template_timeout.robot    6
+    ...    0    rpa/task_aliases.robot    7
     ...    SEPARATOR=\n
     ...    Non-existing setting 'Tesk Setup'. Did you mean:
     ...    ${SPACE*4}Test Setup

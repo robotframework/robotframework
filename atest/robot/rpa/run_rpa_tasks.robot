@@ -29,7 +29,7 @@ Conflicting headers cause error
     [Template]    Run and validate conflict
     rpa/tests.robot rpa/tasks     rpa/tasks/stuff.robot    tasks    tests
     rpa/                          rpa/tests.robot          tests    tasks
-    ...    [[] ERROR ] Error in file '*[/\\]task_setup_teardown_template_timeout.robot' on line 6:
+    ...    [[] ERROR ] Error in file '*[/\\]task_aliases.robot' on line 7:
     ...    Non-existing setting 'Tesk Setup'. Did you mean:\n
     ...    ${SPACE*3}Test Setup\n
     ...    ${SPACE*3}Task Setup\n

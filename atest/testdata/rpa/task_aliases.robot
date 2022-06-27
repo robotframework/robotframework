@@ -1,4 +1,5 @@
 *** Settings ***
+Task Tags               task    tags
 Task Setup              Log    Setup has an alias!
 Task Teardown           Log    Also teardown has an alias!!
 Task Template           Log
@@ -14,6 +15,7 @@ Defaults
     Using default settings
 
 Override
+    [Tags]        own    tags
     [Setup]       Log    Overriding setup
     [Template]    NONE
     [Timeout]     NONE
