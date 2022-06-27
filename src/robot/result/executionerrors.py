@@ -47,3 +47,10 @@ class ExecutionErrors:
 
     def __getitem__(self, index):
         return self.messages[index]
+
+    def __str__(self):
+        if not self:
+            return 'No execution errors'
+        if len(self) == 1:
+            return f'Execution error: {self[0]}'
+        return '\n'.join(['Execution errors:'] + ['- ' + str(m) for m in self])
