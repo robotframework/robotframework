@@ -84,9 +84,10 @@ Get Execution Arguments
 Set Execution Environment
     Remove Directory    ${OUTDIR}    recursive
     Create Directory    ${OUTDIR}
-    Return From Keyword If    not ${SET SYSLOG}
-    Set Environment Variable    ROBOT_SYSLOG_FILE    ${SYSLOG FILE}
-    Set Environment Variable    ROBOT_SYSLOG_LEVEL    ${SYSLOG LEVEL}
+    IF    ${SET SYSLOG}
+        Set Environment Variable    ROBOT_SYSLOG_FILE    ${SYSLOG FILE}
+        Set Environment Variable    ROBOT_SYSLOG_LEVEL    ${SYSLOG LEVEL}
+    END
 
 Copy Previous Outfile
     Copy File    ${OUTFILE}    ${OUTFILE COPY}
@@ -94,7 +95,8 @@ Copy Previous Outfile
 Check Test Suite
     [Arguments]    ${name}    ${message}    ${status}=${None}
     ${suite} =    Get Test Suite    ${name}
-    Run Keyword If    $status is not None    Should Be Equal    ${suite.status}    ${status}
+    IF    $status is not None
+    ...    Should Be Equal    ${suite.status}    ${status}
     Should Be Equal    ${suite.full_message}    ${message}
     [Return]    ${suite}
 
@@ -142,7 +144,7 @@ All Keywords Should Have Passed
 Get Output File
     [Arguments]    ${path}
     [Documentation]    Output encoding avare helper
-    ${encoding} =    Set Variable If    r'${path}' in [r'${STDERR FILE}',r'${STDOUT FILE}']    SYSTEM    UTF-8
+    ${encoding} =    Set Variable If    r'${path}' in [r'${STDERR FILE}', r'${STDOUT FILE}']    SYSTEM    UTF-8
     ${file} =    Get File    ${path}    ${encoding}
     [Return]    ${file}
 
@@ -305,7 +307,7 @@ Elapsed Time Should Be Valid
     Should Be True    isinstance($time, int)    Not valid elapsed time: ${time}
     # On CI elapsed time has sometimes been negative. We cannot control system time there,
     # so better to log a warning than fail the test in that case.
-    Run Keyword If    $time < 0
+    IF    $time < 0
     ...    Log    Negative elapsed time '${time}'. Someone messing with system time?    WARN
 
 Previous test should have passed
