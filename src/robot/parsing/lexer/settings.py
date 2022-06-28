@@ -144,12 +144,12 @@ class TestCaseFileSettings(Settings):
         'Variables'
     )
     aliases = {
+        'Test Tags': 'Force Tags',
+        'Task Tags': 'Force Tags',
         'Task Setup': 'Test Setup',
         'Task Teardown': 'Test Teardown',
         'Task Template': 'Test Template',
         'Task Timeout': 'Test Timeout',
-        'Test Tags': 'Force Tags',
-        'Task Tags': 'Force Tags',
     }
 
 
@@ -167,6 +167,13 @@ class InitFileSettings(Settings):
         'Resource',
         'Variables'
     )
+    aliases = {
+        'Test Tags': 'Force Tags',
+        'Task Tags': 'Force Tags',
+        'Task Setup': 'Test Setup',
+        'Task Teardown': 'Test Teardown',
+        'Task Timeout': 'Test Timeout',
+    }
 
 
 class ResourceFileSettings(Settings):
