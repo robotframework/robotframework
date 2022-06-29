@@ -339,8 +339,8 @@ continue-on-failure mode is automatically enabled in `suite, test and keyword
 teardowns`__. In practice this means that in teardowns all the
 keywords in all levels are always executed.
 
-If this behavior is not desired, it `can be disabled`__ using the special
-`robot:stop-on-failure` and `robot:recursive-stop-on-failure` tags.
+If this behavior is not desired, the special `robot:stop-on-failure` and
+`robot:recursive-stop-on-failure` tags can be used to `disable it`__.
 
 __ `Setups and teardowns`_
 __ `Disabling continue-on-failure using tags`_
@@ -361,8 +361,8 @@ the execution ends normally if there are non-continuable failures.
        this    fails
        this    is run
 
-If this behavior is not desired, it `can be disabled`__ using the special
-`robot:stop-on-failure` and `robot:recursive-stop-on-failure` tags.
+If this behavior is not desired, the special `robot:stop-on-failure` and
+`robot:recursive-stop-on-failure` tags can be used to `disable it`__.
 
 __ `Disabling continue-on-failure using tags`_
 

@@ -590,85 +590,109 @@ Tagging test cases
 ------------------
 
 Using tags in Robot Framework is a simple, yet powerful mechanism for
-classifying test cases. Tags are free text and they can be used at
-least for the following purposes:
+classifying test cases and also `user keywords`_. Tags are free text and
+Robot Framework itself has no special meaning for them except for the
+`reserved tags`_ discussed below. Tags can be used at least for the following
+purposes:
 
-- Tags are shown in test reports_, logs_ and, of course, in the test
+- They are shown in test reports_, logs_ and, of course, in the test
   data, so they provide metadata to test cases.
-- Statistics__ about test cases (total, passed, failed  are
-  automatically collected based on tags).
-- With tags, you can `include or exclude`__ test cases to be executed.
-- With tags, you can specify which test cases should be skipped_.
+- Statistics__ about test cases (total, passed, failed and skipped) are
+  automatically collected based on them.
+- They can be used to `include and exclude`__ as well as to skip_ test cases.
 
 __ `Configuring statistics`_
 __ `By tag names`_
 
-In this section it is only explained how to set tags for test
-cases, and different ways to do it are listed below. These
-approaches can naturally be used together.
+There are multiple ways how to specify tags for test cases explained below:
 
-`Force Tags`:setting: in the Setting section
-   All test cases in a test case file with this setting always get
-   specified tags. If it is used in the `test suite initialization file`,
-   all test cases in sub test suites get these tags.
+`Test Tags`:setting: in the Setting section
+   All tests in a test case file with this setting always get specified tags.
+   If this setting is used in a `test suite initialization file`_, all tests
+   in child suites get these tags.
 
-`Default Tags`:setting: in the Setting section
-   Test cases that do not have a :setting:`[Tags]` setting of their own
-   get these tags. Default tags are not supported in test suite initialization
-   files.
-
-`[Tags]`:setting: in the Test Case section
-   A test case always gets these tags. Additionally, it does not get the
-   possible tags specified with :setting:`Default Tags`, so it is possible
-   to override the :setting:`Default Tags` by using empty value. It is
-   also possible to use value `NONE` to override default tags.
+`[Tags]`:setting: with each test case
+   Tests get these tags in addition to tags specified using the
+   :setting:`Test Tags` setting.
 
 `--settag`:option: command line option
-   All executed test cases get tags set with this option in addition
-   to tags they got elsewhere.
+   All tests get tags set with this option in addition to tags they got elsewhere.
 
 `Set Tags`:name:, `Remove Tags`:name:, `Fail`:name: and `Pass Execution`:name: keywords
    These BuiltIn_ keywords can be used to manipulate tags dynamically
    during the test execution.
 
-Tags are free text, but they are normalized so that they are converted
-to lowercase and all spaces are removed. If a test case gets the same tag
-several times, other occurrences than the first one are removed. Tags
-can be created using variables, assuming that those variables exist.
+Example:
 
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Force Tags      req-42
-   Default Tags    owner-john    smoke
+   Test Tags       requirement: 42    smoke
 
    *** Variables ***
    ${HOST}         10.0.1.42
 
    *** Test Cases ***
    No own tags
-       [Documentation]    This test has tags owner-john, smoke and req-42.
+       [Documentation]    This test has tags 'requirement: 42' and 'smoke'.
        No Operation
 
-   With own tags
-       [Documentation]    This test has tags not_ready, owner-mrx and req-42.
-       [Tags]    owner-mrx    not_ready
+   Own tags
+       [Documentation]    This test has tags 'requirement: 42', 'smoke' and 'not ready'.
+       [Tags]    not ready
        No Operation
 
-   Own tags with variables
-       [Documentation]    This test has tags host-10.0.1.42 and req-42.
-       [Tags]    host-${HOST}
+   Own tags with variable
+       [Documentation]    This test has tags 'requirement: 42', 'smoke' and 'host: 10.0.1.42'.
+       [Tags]    host: ${HOST}
        No Operation
 
-   Empty own tags
-       [Documentation]    This test has only tag req-42.
-       [Tags]
-       No Operation
+   Set Tags and Remove Tags keywords
+       [Documentation]    This test has tags 'smoke', 'example' and 'another'.
+       Set Tags    example    another
+       Remove Tags    requirement: *
 
-   Set Tags and Remove Tags Keywords
-       [Documentation]    This test has tags mytag and owner-john.
-       Set Tags    mytag
-       Remove Tags    smoke    req-*
+As the example shows, tags can be created using variables, but otherwise they
+preserve the exact name used in the data. When tags are compared, for example,
+to collect statistics, to select test to be executed, or to remove duplicates,
+comparisons are case, space and underscore insensitive.
+
+.. note:: The :setting:`Test Tags` setting is new in Robot Framework 5.1.
+          Earlier versions support :setting:`Force Tags` and :setting:`Default Tags`
+          settings discussed below.
+
+Deprecation of :setting:`Force Tags` and :setting:`Default Tags`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Prior to Robot Framework 5.1, tags could be specified to tests in the Setting section
+using two different settings:
+
+:setting:`Force Tags`
+    All tests unconditionally get these tags. This is exactly the same as
+    :setting:`Test Tags` nowadays.
+
+:setting:`Default Tags`
+    All tests get these tags by default. If a test has :setting:`[Tags]`,
+    it will not get these tags.
+
+Both of these settings still work, but they are considered deprecated.
+A visible deprecation warning will be added in the future, most likely
+in Robot Framework 6.0, and eventually these settings will be removed.
+Tools like Tidy__ can be used to ease transition.
+
+Robot Framework 5.2 will introduce a new way for tests to indicate they
+`should not get certain globally specified tags`__. Instead of using a separate
+setting that tests can override, tests can use syntax `-tag` with their
+:setting:`[Tags]` setting to tell they should not get a tag named `tag`.
+This syntax *does not* yet work in Robot Framework 5.1, but using
+:setting:`[Tags]` with a literal value like `-tag` `is now deprecated`__.
+If such tags are needed, they can be set using :setting:`Test Tags` or
+escaped__ syntax `\-tag` can be used with :setting:`[Tags]`.
+
+__ https://robotidy.readthedocs.io/
+__ https://github.com/robotframework/robotframework/issues/4374
+__ https://github.com/robotframework/robotframework/issues/4380
+__ escaping_
 
 Reserved tags
 ~~~~~~~~~~~~~
@@ -679,19 +703,42 @@ Framework itself, and using them for other purposes can have unexpected
 results. All special tags Robot Framework has and will have in the future
 have the `robot:` prefix. To avoid problems, users should thus not use any
 tag with this prefixes unless actually activating the special functionality.
+The current reserved tags are listed below, but more such tags are likely
+to be added in the future.
 
-At the time of writing, the only special tags are `robot:exit`, that is
-automatically added to tests when `stopping test execution gracefully`_,
-and `robot:no-dry-run`, that can be used to disable the `dry run`_ mode as
-well as `robot:continue-on-failure` which controls continuable execution.
-More usages are likely to be added in the future.
+`robot:continue-on-failure` and `robot:recursive-continue-on-failure`
+    Used for `enabling the continue-on-failure mode`__.
 
-As of RobotFramework 4.1, reserved tags are suppressed by default in the
-test suite's tag statistics. They will be shown when they are explicitly
-included via the `--tagstatinclude 'robot:*'` command line option.
+`robot:stop-on-failure` and `robot:recursive-stop-on-failure`
+    Used for `disabling the continue-on-failure mode`__.
 
-As of RobotFramework 5.0, new reserved tags include `robot:skip`, 
-`robot:skip-on-failure` and `robot:exclude`. 
+`robot:skip-on-failure`
+    Mark test to be `skipped if it fails`__.
+
+`robot:skip`
+    Mark test to be `unconditionally skipped`__.
+
+`robot:exclude`
+    Mark test to be `unconditionally excluded`__.
+
+`robot:no-dry-run`
+    Mark keyword not to be executed in the `dry run`_ mode.
+
+`robot:exit`
+    Added to tests automatically when `execution is stopped gracefully`__.
+
+__ `Enabling continue-on-failure using tags`_
+__ `Disabling continue-on-failure using tags`_
+__ `Automatically skipping failed tests`_
+__ `Skipping before execution`_
+__ `By tag names`_
+__ `stopping test execution gracefully`_
+
+As of RobotFramework 4.1, reserved tags are suppressed by default in
+`tag statistics`__. They will be shown when they are explicitly
+included via the `--tagstatinclude robot:*` command line option.
+
+__ `Configuring statistics`_
 
 Test setup and teardown
 -----------------------
