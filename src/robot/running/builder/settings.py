@@ -16,8 +16,7 @@
 NOTSET = object()
 
 
-# FIXME: Rename to Defaults
-class TestDefaults:
+class Defaults:
 
     def __init__(self, parent=None):
         self.parent = parent

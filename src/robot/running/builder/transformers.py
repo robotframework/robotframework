@@ -18,15 +18,14 @@ from ast import NodeVisitor
 from robot.output import LOGGER
 from robot.variables import VariableIterator
 
-from .testsettings import TestDefaults, TestSettings
+from .settings import Defaults, TestSettings
 
 
 class SettingsBuilder(NodeVisitor):
 
-    def __init__(self, suite, test_defaults):
+    def __init__(self, suite, defaults):
         self.suite = suite
-        # FIXME: Rename test_defaults -> defaults
-        self.test_defaults = test_defaults
+        self.defaults = defaults
 
     def visit_Documentation(self, node):
         self.suite.doc = node.value
@@ -43,29 +42,29 @@ class SettingsBuilder(NodeVisitor):
                                    lineno=node.lineno)
 
     def visit_TestSetup(self, node):
-        self.test_defaults.setup = {
+        self.defaults.setup = {
             'name': node.name, 'args': node.args, 'lineno': node.lineno
         }
 
     def visit_TestTeardown(self, node):
-        self.test_defaults.teardown = {
+        self.defaults.teardown = {
             'name': node.name, 'args': node.args, 'lineno': node.lineno
         }
 
     def visit_TestTimeout(self, node):
-        self.test_defaults.timeout = node.value
+        self.defaults.timeout = node.value
 
     def visit_DefaultTags(self, node):
-        self.test_defaults.default_tags = node.values
+        self.defaults.default_tags = node.values
 
     def visit_ForceTags(self, node):
-        self.test_defaults.force_tags = node.values
+        self.defaults.force_tags = node.values
 
     def visit_KeywordTags(self, node):
-        self.test_defaults.keyword_tags = node.values
+        self.defaults.keyword_tags = node.values
 
     def visit_TestTemplate(self, node):
-        self.test_defaults.template = node.value
+        self.defaults.template = node.value
 
     def visit_ResourceImport(self, node):
         self.suite.resource.imports.create(type='Resource', name=node.name,
@@ -92,10 +91,9 @@ class SettingsBuilder(NodeVisitor):
 
 class SuiteBuilder(NodeVisitor):
 
-    def __init__(self, suite, test_defaults):
+    def __init__(self, suite, defaults):
         self.suite = suite
-        # FIXME: Rename
-        self.test_defaults = test_defaults
+        self.defaults = defaults
 
     def visit_SettingSection(self, node):
         pass
@@ -107,17 +105,17 @@ class SuiteBuilder(NodeVisitor):
                                              error=format_error(node.errors))
 
     def visit_TestCase(self, node):
-        TestCaseBuilder(self.suite, self.test_defaults).visit(node)
+        TestCaseBuilder(self.suite, self.defaults).visit(node)
 
     def visit_Keyword(self, node):
-        KeywordBuilder(self.suite.resource, self.test_defaults).visit(node)
+        KeywordBuilder(self.suite.resource, self.defaults).visit(node)
 
 
 class ResourceBuilder(NodeVisitor):
 
     def __init__(self, resource):
         self.resource = resource
-        self.defaults = TestDefaults()
+        self.defaults = Defaults()
 
     def visit_Documentation(self, node):
         self.resource.doc = node.value
