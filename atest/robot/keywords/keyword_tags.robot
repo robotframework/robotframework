@@ -50,9 +50,14 @@ Keyword tags setting in test case file
     first    own    second    index=1
 
 Keyword tags setting in init file
+    in init           kw=${SUITE.setup}
+    in init    own    kw=${SUITE.teardown}
 
 *** Keywords ***
 Keyword tags should be
-    [Arguments]    @{tags}    ${index}=0
-    ${tc}=    Check Test Case    ${TESTNAME}
-    Lists should be equal    ${tc.body[${index}].tags}    ${tags}
+    [Arguments]    @{tags}    ${index}=0    ${kw}=
+    IF    not $kw
+        ${tc}=    Check Test Case    ${TESTNAME}
+        ${kw}=    Set Variable    ${tc.body}[${index}]
+    END
+    Lists should be equal    ${kw.tags}    ${tags}
