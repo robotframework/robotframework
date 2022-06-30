@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    keywords/keyword_tags.robot keywords/keyword_tags_setting.robot
+Suite Setup      Run Tests    ${EMPTY}    keywords/keyword_tags
 Resource         atest_resource.robot
 Test Template    Keyword tags should be
 
