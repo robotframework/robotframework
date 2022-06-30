@@ -46,6 +46,35 @@ def assert_statements(st1, st2):
                 f'{st2} {type_name(st2)}')
 
 
+class TestStatementFromTokens(unittest.TestCase):
+
+    def test_keyword_call_with_assignment(self):
+        tokens = [Token(Token.SEPARATOR, '  '),
+                  Token(Token.ASSIGN, '${var}'),
+                  Token(Token.SEPARATOR, '  '),
+                  Token(Token.KEYWORD, 'Keyword'),
+                  Token(Token.SEPARATOR, '  '),
+                  Token(Token.ARGUMENT, 'arg'),
+                  Token(Token.EOL)]
+        assert_statements(Statement.from_tokens(tokens), KeywordCall(tokens))
+
+    def test_inline_if_with_assignment(self):
+        tokens = [Token(Token.SEPARATOR, '  '),
+                  Token(Token.ASSIGN, '${var}'),
+                  Token(Token.SEPARATOR, '  '),
+                  Token(Token.INLINE_IF, 'IF'),
+                  Token(Token.SEPARATOR, '  '),
+                  Token(Token.ARGUMENT, 'True'),
+                  Token(Token.EOL)]
+        assert_statements(Statement.from_tokens(tokens), InlineIfHeader(tokens))
+
+    def test_assign_only(self):
+        tokens = [Token(Token.SEPARATOR, '  '),
+                  Token(Token.ASSIGN, '${var}'),
+                  Token(Token.EOL)]
+        assert_statements(Statement.from_tokens(tokens), KeywordCall(tokens))
+
+
 class TestCreateStatementsFromParams(unittest.TestCase):
 
     def test_Statement(self):

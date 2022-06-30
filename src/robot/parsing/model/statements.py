@@ -67,7 +67,7 @@ class Statement(ast.AST):
         for token in tokens:
             if token.type in handlers:
                 return handlers[token.type](tokens)
-        if tokens and all(token.type == Token.ASSIGN for token in tokens):
+        if any(token.type == Token.ASSIGN for token in tokens):
             return KeywordCall(tokens)
         return EmptyLine(tokens)
 
