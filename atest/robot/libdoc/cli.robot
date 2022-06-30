@@ -72,7 +72,7 @@ Resource file in PYTHONPATH
     [Template]    NONE
     Run Libdoc And Parse Output    --pythonpath ${DATADIR}/libdoc resource.resource
     Name Should Be    resource
-    Keyword Name Should Be    0    Yay, I got new extension!
+    Keyword Name Should Be    -1    Yay, I got new extension!
 
 Non-existing resource
     [Template]    NONE
