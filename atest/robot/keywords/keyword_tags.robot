@@ -43,11 +43,13 @@ Dynamic library keyword with tags
 
 Keyword tags setting in resource file
     in resource
-    in resource    own    index=1
+    in resource    own       index=1
+    in doc    in resource    index=2
 
 Keyword tags setting in test case file
     first    second
-    first    own    second    index=1
+    first    own    second          index=1
+    doc    first    in    second    index=2
 
 Keyword tags setting in init file
     in init           kw=${SUITE.setup}
