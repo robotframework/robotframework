@@ -408,6 +408,20 @@ class DefaultTags(MultiValue):
 
 
 @Statement.register
+class KeywordTags(MultiValue):
+    type = Token.KEYWORD_TAGS
+
+    @classmethod
+    def from_params(cls, values, separator=FOUR_SPACES, eol=EOL):
+        tokens = [Token(Token.KEYWORD_TAGS, 'Keyword Tags')]
+        for tag in values:
+            tokens.extend([Token(Token.SEPARATOR, separator),
+                           Token(Token.ARGUMENT, tag)])
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
+
+@Statement.register
 class SuiteSetup(Fixture):
     type = Token.SUITE_SETUP
 

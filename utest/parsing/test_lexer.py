@@ -41,6 +41,7 @@ Test Setup        None Shall Pass    ${NONE}
 TEST TEARDOWN     No Operation
 Test Timeout      1 day
 Force Tags        foo    bar
+Keyword Tags      tag
 '''
         expected = [
             (T.SETTING_HEADER, '*** Settings ***', 1, 0),
@@ -83,6 +84,9 @@ Force Tags        foo    bar
             (T.ARGUMENT, 'foo', 11, 18),
             (T.ARGUMENT, 'bar', 11, 25),
             (T.EOS, '', 11, 28),
+            (T.KEYWORD_TAGS, 'Keyword Tags', 12, 0),
+            (T.ARGUMENT, 'tag', 12, 18),
+            (T.EOS, '', 12, 21),
         ]
         assert_tokens(data, expected, get_tokens, data_only=True)
         assert_tokens(data, expected, get_init_tokens, data_only=True)

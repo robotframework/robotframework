@@ -18,13 +18,14 @@ from ast import NodeVisitor
 from robot.output import LOGGER
 from robot.variables import VariableIterator
 
-from .testsettings import TestSettings
+from .testsettings import TestDefaults, TestSettings
 
 
 class SettingsBuilder(NodeVisitor):
 
     def __init__(self, suite, test_defaults):
         self.suite = suite
+        # FIXME: Rename test_defaults -> defaults
         self.test_defaults = test_defaults
 
     def visit_Documentation(self, node):
@@ -60,6 +61,9 @@ class SettingsBuilder(NodeVisitor):
     def visit_ForceTags(self, node):
         self.test_defaults.force_tags = node.values
 
+    def visit_KeywordTags(self, node):
+        self.test_defaults.keyword_tags = node.values
+
     def visit_TestTemplate(self, node):
         self.test_defaults.template = node.value
 
@@ -90,6 +94,7 @@ class SuiteBuilder(NodeVisitor):
 
     def __init__(self, suite, test_defaults):
         self.suite = suite
+        # FIXME: Rename
         self.test_defaults = test_defaults
 
     def visit_SettingSection(self, node):
@@ -105,16 +110,20 @@ class SuiteBuilder(NodeVisitor):
         TestCaseBuilder(self.suite, self.test_defaults).visit(node)
 
     def visit_Keyword(self, node):
-        KeywordBuilder(self.suite.resource).visit(node)
+        KeywordBuilder(self.suite.resource, self.test_defaults).visit(node)
 
 
 class ResourceBuilder(NodeVisitor):
 
     def __init__(self, resource):
         self.resource = resource
+        self.defaults = TestDefaults()
 
     def visit_Documentation(self, node):
         self.resource.doc = node.value
+
+    def visit_KeywordTags(self, node):
+        self.defaults.keyword_tags = node.values
 
     def visit_LibraryImport(self, node):
         self.resource.imports.create(type='Library', name=node.name,
@@ -136,7 +145,7 @@ class ResourceBuilder(NodeVisitor):
                                        error=format_error(node.errors))
 
     def visit_Keyword(self, node):
-        KeywordBuilder(self.resource).visit(node)
+        KeywordBuilder(self.resource, self.defaults).visit(node)
 
 
 class TestCaseBuilder(NodeVisitor):
@@ -244,14 +253,16 @@ class TestCaseBuilder(NodeVisitor):
 
 class KeywordBuilder(NodeVisitor):
 
-    def __init__(self, resource):
+    def __init__(self, resource, defaults):
         self.resource = resource
+        self.defaults = defaults
         self.kw = None
 
     def visit_Keyword(self, node):
-        self.kw = self.resource.keywords.create(name=node.name, lineno=node.lineno)
+        self.kw = self.resource.keywords.create(name=node.name,
+                                                tags=self.defaults.keyword_tags,
+                                                lineno=node.lineno)
         self.generic_visit(node)
-
 
     def visit_Documentation(self, node):
         self.kw.doc = node.value
@@ -264,7 +275,7 @@ class KeywordBuilder(NodeVisitor):
 
     def visit_Tags(self, node):
         deprecate_tags_starting_with_hyphen(node, self.resource.source)
-        self.kw.tags = node.values
+        self.kw.tags.add(node.values)
 
     def visit_Return(self, node):
         self.kw.return_ = node.values

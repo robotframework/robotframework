@@ -16,6 +16,7 @@
 NOTSET = object()
 
 
+# FIXME: Rename to Defaults
 class TestDefaults:
 
     def __init__(self, parent=None):
@@ -24,6 +25,7 @@ class TestDefaults:
         self._teardown = {}
         self._force_tags = ()
         self.default_tags = ()
+        self.keyword_tags = ()
         self.template = None
         self._timeout = None
 

@@ -160,7 +160,6 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         )
 
     def test_TestTemplate(self):
-        # *** Settings ***
         # Test Template    Keyword Template
         tokens = [
             Token(Token.TEST_TEMPLATE, 'Test Template'),
@@ -175,7 +174,6 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         )
 
     def test_TestTimeout(self):
-        # *** Settings ***
         # Test Timeout    1 min
         tokens = [
             Token(Token.TEST_TIMEOUT, 'Test Timeout'),
@@ -187,6 +185,22 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             tokens,
             TestTimeout,
             value='1 min'
+        )
+
+    def test_KeywordTags(self):
+        # Keyword Tags    first    second
+        tokens = [
+            Token(Token.KEYWORD_TAGS, 'Keyword Tags'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'first'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'second'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            KeywordTags,
+            values=['first', 'second']
         )
 
     def test_Variable(self):

@@ -139,6 +139,7 @@ class TestCaseFileSettings(Settings):
         'Test Timeout',
         'Force Tags',
         'Default Tags',
+        'Keyword Tags',
         'Library',
         'Resource',
         'Variables'
@@ -163,6 +164,7 @@ class InitFileSettings(Settings):
         'Test Teardown',
         'Test Timeout',
         'Force Tags',
+        'Keyword Tags',
         'Library',
         'Resource',
         'Variables'
@@ -179,6 +181,7 @@ class InitFileSettings(Settings):
 class ResourceFileSettings(Settings):
     names = (
         'Documentation',
+        'Keyword Tags',
         'Library',
         'Resource',
         'Variables'

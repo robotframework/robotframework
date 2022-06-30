@@ -58,6 +58,7 @@ class Token:
     TEST_TIMEOUT = 'TEST TIMEOUT'
     FORCE_TAGS = 'FORCE TAGS'
     DEFAULT_TAGS = 'DEFAULT TAGS'
+    KEYWORD_TAGS = 'KEYWORD TAGS'
     LIBRARY = 'LIBRARY'
     RESOURCE = 'RESOURCE'
     VARIABLES = 'VARIABLES'
@@ -122,6 +123,7 @@ class Token:
         TEST_TIMEOUT,
         FORCE_TAGS,
         DEFAULT_TAGS,
+        KEYWORD_TAGS,
         LIBRARY,
         RESOURCE,
         VARIABLES,

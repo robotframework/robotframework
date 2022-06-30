@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    keywords/keyword_tags.robot
+Suite Setup      Run Tests    ${EMPTY}    keywords/keyword_tags.robot keywords/keyword_tags_setting.robot
 Resource         atest_resource.robot
 Test Template    Keyword tags should be
 
@@ -41,8 +41,18 @@ User keyword tags with duplicates
 Dynamic library keyword with tags
     bar    foo
 
+Keyword tags setting in resource file
+    in resource
+    in resource    own    index=1
+
+Keyword tags setting in test case file
+    first    second
+    first    own    second    index=1
+
+Keyword tags setting in init file
+
 *** Keywords ***
 Keyword tags should be
-    [Arguments]    @{tags}
+    [Arguments]    @{tags}    ${index}=0
     ${tc}=    Check Test Case    ${TESTNAME}
-    Lists should be equal    ${tc.kws[0].tags}    ${tags}
+    Lists should be equal    ${tc.body[${index}].tags}    ${tags}
