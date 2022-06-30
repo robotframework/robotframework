@@ -41,6 +41,9 @@ importing libraries, resources, and variables.
    | Default Tags    | Used for specifying default values for tags when       |
    |                 | `tagging test cases`_.                                 |
    +-----------------+--------------------------------------------------------+
+   | Keyword Tags    | User for specifying `user keyword tags`_ for all       |
+   |                 | keywords in a certain file.                            |
+   +-----------------+--------------------------------------------------------+
    | Test Setup      | Used for specifying a default `test setup`_.           |
    +-----------------+--------------------------------------------------------+
    | Test Teardown   | Used for specifying a default `test teardown`_.        |
