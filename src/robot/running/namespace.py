@@ -21,8 +21,8 @@ from itertools import chain
 from robot.errors import DataError, KeywordError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER, Message
-from robot.utils import (RecommendationFinder, eq, find_file, is_string,
-                         normalize, printable_name, seq2str2)
+from robot.utils import (RecommendationFinder, eq, find_file, is_string, normalize,
+                         plural_or_not as s, printable_name, seq2str, seq2str2)
 
 from .importer import ImportCache, Importer
 from .model import Import
@@ -326,10 +326,11 @@ class KeywordStore:
             return None
         if len(found) > 1:
             found = self._get_runner_based_on_search_order(found)
-            found = self._handle_private_runners(found)
+        if len(found) > 1:
+            found = self._handle_private_user_keywords(found, name)
         if len(found) == 1:
             return found[0]
-        self._raise_multiple_keywords_found(name, found)
+        self._raise_multiple_keywords_found(found, name)
 
     def _get_runner_from_libraries(self, name):
         found = [lib.handlers.create_runner(name) for lib in self.libraries.values()
@@ -342,43 +343,28 @@ class KeywordStore:
             found = self._filter_stdlib_runner(*found)
         if len(found) == 1:
             return found[0]
-        self._raise_multiple_keywords_found(name, found)
+        self._raise_multiple_keywords_found(found, name)
 
-    def _handle_private_runners(self, runners):
-        sum_public = sum("robot:private" not in runner.tags for runner in runners)
-        sum_private = sum("robot:private" in runner.tags for runner in runners)
-
-        if sum_public == len(runners) or sum_private == len(runners) or sum_public > 1:
+    def _handle_private_user_keywords(self, runners, used_as):
+        public = [r for r in runners if not r.private]
+        if len(public) != 1:
             return runners
+        private = [r for r in runners if r.private]
+        self._public_and_private_keyword_warning(public[0], private, used_as)
+        return public
 
-        for runner in runners:
-            if 'robot:private' not in runner.tags:
-                public_runner = runner
-                private_runners = runners.copy()
-                private_runners.remove(public_runner)
-                break
-
-        self._public_and_private_keyword_conflict_warning(public_runner, private_runners)
-        return [public_runner]
-
-    def _public_and_private_keyword_conflict_warning(self, public_runner, private_runners):
-        private_runners_str = ""
-        for runner in private_runners:
-            if runner != private_runners[-1]:
-                private_runners_str += f"'{runner.longname}' / "
-            else:
-                private_runners_str += f"'{runner.longname}'"
+    def _public_and_private_keyword_warning(self, public, private, used_as):
         warning = Message(
-            f"There were both public and private keyword found with the name '{public_runner.name}', "
-            f"'{public_runner.longname}' being public and {private_runners_str} being private. "
-            f"The public keyword is used. To select explicitly, and to get rid of this warning, "
-            f"use either '{public_runner.longname}' or {private_runners_str}.",
+            f"Both public and private keywords with name '{used_as}' found. The public "
+            f"keyword '{public.longname}' is used and private keyword{s(private)} "
+            f"{seq2str(p.longname for p in private)} ignored. To select explicitly, "
+            f"and to get rid of this warning, use the long name of the keyword.",
             level='WARN'
         )
-        if public_runner.pre_run_messages:
-            public_runner.pre_run_messages.append(warning)
+        if public.pre_run_messages:
+            public.pre_run_messages.append(warning)
         else:
-            public_runner.pre_run_messages = [warning]
+            public.pre_run_messages = [warning]
 
     def _get_runner_based_on_search_order(self, runners):
         for libname in self.search_order:
@@ -423,7 +409,7 @@ class KeywordStore:
         for owner_name, kw_name in self._yield_owner_and_kw_names(name):
             found.extend(self._find_keywords(owner_name, kw_name))
         if len(found) > 1:
-            self._raise_multiple_keywords_found(name, found, implicit=False)
+            self._raise_multiple_keywords_found(found, name, implicit=False)
         return found[0] if found else None
 
     def _yield_owner_and_kw_names(self, full_name):
@@ -436,11 +422,11 @@ class KeywordStore:
                 for owner in chain(self.libraries.values(), self.resources.values())
                 if eq(owner.name, owner_name) and name in owner.handlers]
 
-    def _raise_multiple_keywords_found(self, name, found, implicit=True):
-        error = f"Multiple keywords with name '{name}' found"
+    def _raise_multiple_keywords_found(self, runners, used_as, implicit=True):
+        error = f"Multiple keywords with name '{used_as}' found"
         if implicit:
             error += ". Give the full name of the keyword you want to use"
-        names = sorted(runner.longname for runner in found)
+        names = sorted(r.longname for r in runners)
         raise KeywordError('\n    '.join([error+':'] + names))
 
 

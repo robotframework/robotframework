@@ -29,11 +29,10 @@ Invalid Usage in Resource File
 Keyword With Same Name Should Resolve Public Keyword
     ${tc}=    Check Test Case    ${TESTNAME}
     ${warning}=    Catenate
-    ...    There were both public and private keyword found with the name 'Same Name',
-    ...    'private.Same Name' being public and 'private2.Same Name' being private.
-    ...    The public keyword is used.
-    ...    To select explicitly, and to get rid of this warning,
-    ...    use either 'private.Same Name' or 'private2.Same Name'.
+    ...    Both public and private keywords with name 'Same Name' found.
+    ...    The public keyword 'private.Same Name' is used and
+    ...    private keyword 'private2.Same Name' ignored.
+    ...    To select explicitly, and to get rid of this warning, use the long name of the keyword.
     Public And Private Keyword Conflict Warning Should Be    ${warning}    ${tc.body[0].body[0]}    ${ERRORS[3]}
     Length Should Be    ${tc.body[0].body}    2
 
@@ -43,11 +42,10 @@ If Both Keywords Are Private Raise Multiple Keywords Found
 If One Keyword Is Public And Multiple Private Keywords Run Public And Warn
     ${tc}=    Check Test Case    ${TESTNAME}
     ${warning}=    Catenate
-    ...    There were both public and private keyword found with the name 'Possible Keyword',
-    ...    'private.Possible Keyword' being public and 'private2.Possible Keyword' / 'private3.Possible Keyword' being private.
-    ...    The public keyword is used.
-    ...    To select explicitly, and to get rid of this warning,
-    ...    use either 'private.Possible Keyword' or 'private2.Possible Keyword' / 'private3.Possible Keyword'.
+    ...    Both public and private keywords with name 'Possible Keyword' found.
+    ...    The public keyword 'private.Possible Keyword' is used and
+    ...    private keywords 'private2.Possible Keyword' and 'private3.Possible Keyword' ignored.
+    ...    To select explicitly, and to get rid of this warning, use the long name of the keyword.
     Public And Private Keyword Conflict Warning Should Be    ${warning}    ${tc.body[0].body[0].body[0]}    ${ERRORS[4]}
     Length Should Be    ${tc.body[0].body[0].body}    2
 

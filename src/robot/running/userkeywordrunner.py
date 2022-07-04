@@ -49,6 +49,10 @@ class UserKeywordRunner:
         return self._handler.tags
 
     @property
+    def private(self):
+        return self._handler.private
+
+    @property
     def arguments(self):
         """:rtype: :py:class:`robot.running.arguments.ArgumentSpec`"""
         return self._handler.arguments
@@ -57,7 +61,7 @@ class UserKeywordRunner:
         assignment = VariableAssignment(kw.assign)
         result = self._get_result(kw, assignment, context.variables)
         with StatusReporter(kw, result, context, run):
-            if self._handler.private:
+            if self.private:
                 context.warn_on_invalid_private_call(self._handler)
             with assignment.assigner(context) as assigner:
                 if run:
