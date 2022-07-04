@@ -721,6 +721,9 @@ to be added in the future.
 `robot:exclude`
     Mark test to be `unconditionally excluded`__.
 
+`robot:private`
+    Mark keyword to be private__.
+
 `robot:no-dry-run`
     Mark keyword not to be executed in the `dry run`_ mode.
 
@@ -732,6 +735,7 @@ __ `Disabling continue-on-failure using tags`_
 __ `Automatically skipping failed tests`_
 __ `Skipping before execution`_
 __ `By tag names`_
+__ `Private user keywords`_
 __ `stopping test execution gracefully`_
 
 As of RobotFramework 4.1, reserved tags are suppressed by default in
