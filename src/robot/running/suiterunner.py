@@ -113,7 +113,7 @@ class SuiteRunner(SuiteVisitor):
 
     def visit_test(self, test):
         settings = self._settings
-        if TagPatterns("robot:exclude").match(test.tags):
+        if test.tags.robot('exclude'):
             return
         if test.name in self._executed[-1]:
             self._output.warn(
@@ -140,7 +140,7 @@ class SuiteRunner(SuiteVisitor):
             elif not test.body:
                 status.test_failed(
                     test_or_task('{Test} contains no keywords.', settings.rpa))
-            elif TagPatterns('robot:skip').match(test.tags):
+            elif test.tags.robot('skip'):
                 status.test_skipped(
                     test_or_task("{Test} skipped using 'robot:skip' tag.",
                                  settings.rpa))

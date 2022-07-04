@@ -198,8 +198,9 @@ class TestStatus(_ExecutionStatus):
         return False
 
     def _skip_on_failure(self):
-        tags = list(self._skip_on_failure_tags or []) + ['robot:skip-on-failure']
-        return TagPatterns(tags).match(self._test.tags)
+        return (self._test.tags.robot('skip-on-failure')
+                or self._skip_on_failure_tags
+                and TagPatterns(self._skip_on_failure_tags).match(self._test.tags))
 
     def _skip_on_fail_msg(self, msg):
         return test_or_task(
