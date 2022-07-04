@@ -33,6 +33,7 @@ class UserKeywordRunner:
     def __init__(self, handler, name=None):
         self._handler = handler
         self.name = name or handler.name
+        self.pre_run_messages = None
 
     @property
     def longname(self):
@@ -44,6 +45,10 @@ class UserKeywordRunner:
         return self._handler.libname
 
     @property
+    def tags(self):
+        return self._handler.tags
+
+    @property
     def arguments(self):
         """:rtype: :py:class:`robot.running.arguments.ArgumentSpec`"""
         return self._handler.arguments
@@ -52,6 +57,7 @@ class UserKeywordRunner:
         assignment = VariableAssignment(kw.assign)
         result = self._get_result(kw, assignment, context.variables)
         with StatusReporter(kw, result, context, run):
+            context.warn_on_invalid_private_call(self._handler)
             with assignment.assigner(context) as assigner:
                 if run:
                     return_value = self._run(context, kw.args, result)
@@ -72,6 +78,9 @@ class UserKeywordRunner:
                              type=kw.type)
 
     def _run(self, context, args, result):
+        if self.pre_run_messages:
+            for message in self.pre_run_messages:
+                context.output.message(message)
         variables = context.variables
         args = self._resolve_arguments(args, variables)
         with context.user_keyword(self._handler):
@@ -211,6 +220,9 @@ class UserKeywordRunner:
             self._dry_run(context, kw.args, result)
 
     def _dry_run(self, context, args, result):
+        if self.pre_run_messages:
+            for message in self.pre_run_messages:
+                context.output.message(message)
         self._resolve_arguments(args)
         with context.user_keyword(self._handler):
             timeout = self._get_timeout()

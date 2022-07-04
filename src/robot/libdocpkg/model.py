@@ -108,7 +108,7 @@ class LibraryDoc:
                 type_doc.doc = formatter.html(type_doc.doc)
         self.doc_format = 'HTML'
 
-    def to_dictionary(self):
+    def to_dictionary(self, include_private=False):
         return {
             'specversion': 1,
             'name': self.name,
@@ -122,7 +122,8 @@ class LibraryDoc:
             'lineno': self.lineno,
             'tags': list(self.all_tags),
             'inits': [init.to_dictionary() for init in self.inits],
-            'keywords': [kw.to_dictionary() for kw in self.keywords],
+            'keywords': [kw.to_dictionary() for kw in self.keywords
+                        if include_private or not kw.private],
             # 'dataTypes' was deprecated in RF 5, 'typedoc' should be used instead.
             'dataTypes': self._get_data_types(self.type_docs),
             'typedocs': [t.to_dictionary() for t in sorted(self.type_docs)]
@@ -136,8 +137,8 @@ class LibraryDoc:
             'typedDicts': [t.to_dictionary(legacy=True) for t in typed_dicts]
         }
 
-    def to_json(self, indent=None):
-        data = self.to_dictionary()
+    def to_json(self, indent=None, include_private=True):
+        data = self.to_dictionary(include_private)
         return json.dumps(data, indent=indent)
 
 
@@ -170,6 +171,10 @@ class KeywordDoc(Sortable):
     @shortdoc.setter
     def shortdoc(self, shortdoc):
         self._shortdoc = shortdoc
+
+    @property
+    def private(self):
+        return 'robot:private' in self.tags
 
     @property
     def deprecated(self):

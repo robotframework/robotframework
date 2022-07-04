@@ -326,6 +326,7 @@ class KeywordStore:
             return None
         if len(found) > 1:
             found = self._get_runner_based_on_search_order(found)
+            found = self._handle_private_runners(found)
         if len(found) == 1:
             return found[0]
         self._raise_multiple_keywords_found(name, found)
@@ -342,6 +343,42 @@ class KeywordStore:
         if len(found) == 1:
             return found[0]
         self._raise_multiple_keywords_found(name, found)
+
+    def _handle_private_runners(self, runners):
+        sum_public = sum("robot:private" not in runner.tags for runner in runners)
+        sum_private = sum("robot:private" in runner.tags for runner in runners)
+
+        if sum_public == len(runners) or sum_private == len(runners) or sum_public > 1:
+            return runners
+
+        for runner in runners:
+            if 'robot:private' not in runner.tags:
+                public_runner = runner
+                private_runners = runners.copy()
+                private_runners.remove(public_runner)
+                break
+
+        self._public_and_private_keyword_conflict_warning(public_runner, private_runners)
+        return [public_runner]
+
+    def _public_and_private_keyword_conflict_warning(self, public_runner, private_runners):
+        private_runners_str = ""
+        for runner in private_runners:
+            if runner != private_runners[-1]:
+                private_runners_str += f"'{runner.longname}' / "
+            else:
+                private_runners_str += f"'{runner.longname}'"
+        warning = Message(
+            f"There were both public and private keyword found with the name '{public_runner.name}', "
+            f"'{public_runner.longname}' being public and {private_runners_str} being private. "
+            f"The public keyword is used. To select explicitly, and to get rid of this warning, "
+            f"use either '{public_runner.longname}' or {private_runners_str}.",
+            level='WARN'
+        )
+        if public_runner.pre_run_messages:
+            public_runner.pre_run_messages.append(warning)
+        else:
+            public_runner.pre_run_messages = [warning]
 
     def _get_runner_based_on_search_order(self, runners):
         for libname in self.search_order:
