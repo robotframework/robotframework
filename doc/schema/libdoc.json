@@ -228,6 +228,10 @@
             "type": "string"
           }
         },
+        "private": {
+          "title": "Private",
+          "type": "boolean"
+        },
         "deprecated": {
           "title": "Deprecated",
           "type": "boolean"

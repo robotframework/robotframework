@@ -91,6 +91,8 @@ class LibdocXmlWriter:
 
     def _get_start_attrs(self, kw, lib_source):
         attrs = {'name': kw.name}
+        if kw.private:
+            attrs['private'] = 'true'
         if kw.deprecated:
             attrs['deprecated'] = 'true'
         self._add_source_info(attrs, kw, lib_source)

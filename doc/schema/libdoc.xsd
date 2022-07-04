@@ -43,7 +43,6 @@
             <xs:element name="shortdoc" type="xs:string" />
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="optional" />
-        <xs:attribute name="deprecated" type="xs:boolean" use="optional" />
         <!-- See the KeywordSpec level comment about "source" and "lineno". -->
         <xs:attribute name="source" type="xs:string" use="optional" />
         <xs:attribute name="lineno" type="xs:positiveInteger" use="optional" />
@@ -56,6 +55,7 @@
             <xs:element name="tags" type="Tags" minOccurs="0" />
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="private" type="xs:boolean" use="optional" />
         <xs:attribute name="deprecated" type="xs:boolean" use="optional" />
         <!-- See the KeywordSpec level comment about "source" and "lineno". -->
         <xs:attribute name="source" type="xs:string" use="optional" />

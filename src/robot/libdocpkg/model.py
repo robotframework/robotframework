@@ -144,13 +144,14 @@ class LibraryDoc:
 
 class KeywordDoc(Sortable):
 
-    def __init__(self, name='', args=None, doc='', shortdoc='', tags=(),
+    def __init__(self, name='', args=None, doc='', shortdoc='', tags=(), private=False,
                  deprecated=False, source=None, lineno=-1, parent=None):
         self.name = name
         self.args = args or ArgumentSpec()
         self.doc = doc
         self._shortdoc = shortdoc
         self.tags = Tags(tags)
+        self.private = private
         self.deprecated = deprecated
         self.source = source
         self.lineno = lineno
@@ -174,10 +175,6 @@ class KeywordDoc(Sortable):
         self._shortdoc = shortdoc
 
     @property
-    def private(self):
-        return 'robot:private' in self.tags
-
-    @property
     def _sort_key(self):
         return self.name.lower()
 
@@ -191,6 +188,8 @@ class KeywordDoc(Sortable):
             'source': self.source,
             'lineno': self.lineno
         }
+        if self.private:
+            data['private'] = True
         if self.deprecated:
             data['deprecated'] = True
         return data

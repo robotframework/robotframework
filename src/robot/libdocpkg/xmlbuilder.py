@@ -65,6 +65,7 @@ class XmlDocBuilder:
                         doc=elem.find('doc').text or '',
                         shortdoc=elem.find('shortdoc').text or '',
                         tags=[t.text for t in elem.findall('tags/tag')],
+                        private=elem.get('private', 'false') == 'true',
                         deprecated=elem.get('deprecated', 'false') == 'true',
                         source=elem.get('source') or lib_source,
                         lineno=int(elem.get('lineno', -1)))

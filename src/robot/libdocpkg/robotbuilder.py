@@ -129,6 +129,7 @@ class KeywordDocBuilder:
                           args=kw.arguments,
                           doc=doc,
                           tags=tags,
+                          private='robot:private' in tags,
                           deprecated=doc.startswith('*DEPRECATED') and '*' in doc[1:],
                           source=kw.source,
                           lineno=kw.lineno)
