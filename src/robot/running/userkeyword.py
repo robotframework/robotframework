@@ -92,6 +92,15 @@ class UserKeywordHandler:
     def shortdoc(self):
         return getshortdoc(self.doc)
 
+    @property
+    def private(self):
+        # TODO: Make checking is keyword private faster.
+        # `'robot:private' in self.tags` is a bit slow. First checking do we
+        # have tags avoids it in the common case but not if keywords have tags.
+        # Tags objects probably should make checking special tags like this faster
+        # in general. That would then speed up other similar usages as well.
+        return bool(self.tags and 'robot:private' in self.tags)
+
     def create_runner(self, name):
         return UserKeywordRunner(self)
 

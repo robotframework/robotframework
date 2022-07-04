@@ -109,11 +109,10 @@ class _ExecutionContext:
             self.user_keywords.pop()
 
     def warn_on_invalid_private_call(self, handler):
-        if 'robot:private' in handler.tags:
-            parent = self.user_keywords[-1] if self.user_keywords else None
-            if not parent or parent.source != handler.source:
-                self.warn(f"Keyword '{handler.longname}' is private and should only "
-                          f"be called by keywords in the same file.")
+        parent = self.user_keywords[-1] if self.user_keywords else None
+        if not parent or parent.source != handler.source:
+            self.warn(f"Keyword '{handler.longname}' is private and should only "
+                      f"be called by keywords in the same file.")
 
     @contextmanager
     def timeout(self, timeout):
