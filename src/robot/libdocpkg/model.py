@@ -144,13 +144,14 @@ class LibraryDoc:
 
 class KeywordDoc(Sortable):
 
-    def __init__(self, name='', args=None, doc='', shortdoc='', tags=(), source=None,
-                 lineno=-1, parent=None):
+    def __init__(self, name='', args=None, doc='', shortdoc='', tags=(),
+                 deprecated=False, source=None, lineno=-1, parent=None):
         self.name = name
         self.args = args or ArgumentSpec()
         self.doc = doc
         self._shortdoc = shortdoc
         self.tags = Tags(tags)
+        self.deprecated = deprecated
         self.source = source
         self.lineno = lineno
         self.parent = parent
@@ -177,15 +178,11 @@ class KeywordDoc(Sortable):
         return 'robot:private' in self.tags
 
     @property
-    def deprecated(self):
-        return self.doc.startswith('*DEPRECATED') and '*' in self.doc[1:]
-
-    @property
     def _sort_key(self):
         return self.name.lower()
 
     def to_dictionary(self):
-        return {
+        data = {
             'name': self.name,
             'args': [self._arg_to_dict(arg) for arg in self.args],
             'doc': self.doc,
@@ -194,6 +191,9 @@ class KeywordDoc(Sortable):
             'source': self.source,
             'lineno': self.lineno
         }
+        if self.deprecated:
+            data['deprecated'] = True
+        return data
 
     def _arg_to_dict(self, arg):
         return {

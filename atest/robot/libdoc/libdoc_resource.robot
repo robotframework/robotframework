@@ -199,7 +199,7 @@ Keyword Tags Should Be
 
 Specfile Tags Should Be
     [Arguments]    @{expected}
-    ${tags}    Get Elements Texts    ${LIBDOC}    xpath=tags/tag
+    ${tags}=    Get Elements Texts    ${LIBDOC}    xpath=tags/tag
     Should Be Equal    ${tags}    ${expected}
 
 Keyword Source Should Be

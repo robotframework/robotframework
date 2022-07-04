@@ -228,6 +228,10 @@
             "type": "string"
           }
         },
+        "deprecated": {
+          "title": "Deprecated",
+          "type": "boolean"
+        },
         "source": {
           "title": "Source",
           "type": "string",

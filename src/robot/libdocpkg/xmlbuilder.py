@@ -61,12 +61,11 @@ class XmlDocBuilder:
         return [self._create_keyword(elem, lib_source) for elem in spec.findall(path)]
 
     def _create_keyword(self, elem, lib_source):
-        # "deprecated" attribute isn't read because it is read from the doc
-        # automatically. That should probably be changed at some point.
         kw = KeywordDoc(name=elem.get('name', ''),
                         doc=elem.find('doc').text or '',
                         shortdoc=elem.find('shortdoc').text or '',
                         tags=[t.text for t in elem.findall('tags/tag')],
+                        deprecated=elem.get('deprecated', 'false') == 'true',
                         source=elem.get('source') or lib_source,
                         lineno=int(elem.get('lineno', -1)))
         self._create_arguments(elem, kw)
