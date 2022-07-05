@@ -4,4 +4,11 @@ Private In Two Resources And Public In One
 
 Private Keyword In All Resources
     [Tags]    ROBOT: PRIVATE
-    No Operation
+    Fail    Not executed
+
+Private In One Resource And Public In Another
+    [Tags]    ROBOT: PRIVATE
+    Fail    Not executed
+
+Private In One Resource And Public In Two
+    Fail    Not executed

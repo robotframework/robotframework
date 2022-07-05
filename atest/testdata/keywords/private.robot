@@ -20,12 +20,13 @@ Invalid Usage In Resource file
     Call Private Keyword From Private 2 Resource
 
 Local Private Keyword In Resource File Has Precedence Over Keywords In Another Resource
-    Use Local Private Keyword Instead Keywords From Other Resources
+    Use Local Private Keyword Instead Of Keywords From Other Resources
 
-Keyword With Same Name Should Resolve Public Keyword
-    Same Name
+Imported Public Keyword Has Precedence Over Imported Private Keywords
+    Private In One Resource And Public In Another
+    Use Imported Public Keyword Instead Instead Of Imported Private Keyword
 
-If Both Keywords Are Private Raise Multiple Keywords Found
+If All Keywords Are Private Raise Multiple Keywords Found
     [Documentation]    FAIL Multiple keywords with name 'Private Keyword In All Resources' found. \
     ...    Give the full name of the keyword you want to use:
     ...    ${SPACE*4}private.Private Keyword In All Resources
@@ -33,8 +34,13 @@ If Both Keywords Are Private Raise Multiple Keywords Found
     ...    ${SPACE*4}private3.Private Keyword In All Resources
     Private Keyword In All Resources
 
-If One Keyword Is Public And Multiple Private Keywords Run Public And Warn
-    Private In Two Resources And Public In One
+If More Than Two Keywords Are Public Raise Multiple Keywords Found
+    [Documentation]    FAIL Multiple keywords with name 'Private In One Resource And Public In Two' found. \
+    ...    Give the full name of the keyword you want to use:
+    ...    ${SPACE*4}private.Private In One Resource And Public In Two
+    ...    ${SPACE*4}private2.Private In One Resource And Public In Two
+    ...    ${SPACE*4}private3.Private In One Resource And Public In Two
+    Private In One Resource And Public In Two
 
 *** Keywords ***
 Public Keyword

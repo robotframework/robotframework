@@ -330,7 +330,7 @@ class KeywordStore:
         if len(found) > 1:
             found = self._get_runner_from_same_resource_file(found)
         if len(found) > 1:
-            found = self._handle_private_user_keywords(found, name)
+            found = self._handle_private_user_keywords(found)
         if len(found) == 1:
             return found[0]
         self._raise_multiple_keywords_found(found, name)
@@ -358,26 +358,9 @@ class KeywordStore:
                 return [runner]
         return found
 
-    def _handle_private_user_keywords(self, runners, used_as):
+    def _handle_private_user_keywords(self, runners):
         public = [r for r in runners if not r.private]
-        if len(public) != 1:
-            return runners
-        private = [r for r in runners if r.private]
-        self._public_and_private_keyword_warning(public[0], private, used_as)
-        return public
-
-    def _public_and_private_keyword_warning(self, public, private, used_as):
-        warning = Message(
-            f"Both public and private keywords with name '{used_as}' found. The public "
-            f"keyword '{public.longname}' is used and private keyword{s(private)} "
-            f"{seq2str(p.longname for p in private)} ignored. To select explicitly, "
-            f"and to get rid of this warning, use the long name of the keyword.",
-            level='WARN'
-        )
-        if public.pre_run_messages:
-            public.pre_run_messages.append(warning)
-        else:
-            public.pre_run_messages = [warning]
+        return public if len(public) == 1 else runners
 
     def _get_runner_based_on_search_order(self, runners):
         for libname in self.search_order:

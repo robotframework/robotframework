@@ -5,12 +5,14 @@ Private Keyword In Resource 2
 
 Private Keyword In All Resources
     [Tags]    robot: private
-    No Operation
+    Fail    Not executed
 
 Private In Two Resources And Public In One
     [Tags]    robot: private
     Log    private2.resource
 
-Same Name
-    [Tags]    robot:private
-    No Operation
+Private In One Resource And Public In Another
+    Log    private2.resource
+
+Private In One Resource And Public In Two
+    Fail    Not executed
