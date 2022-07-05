@@ -19,19 +19,22 @@ Invalid Usage With Resource Keyword
 Invalid Usage In Resource file
     Call Private Keyword From Private 2 Resource
 
+Local Private Keyword In Resource File Has Precedence Over Keywords In Another Resource
+    Use Local Private Keyword Instead Keywords From Other Resources
+
 Keyword With Same Name Should Resolve Public Keyword
     Same Name
 
 If Both Keywords Are Private Raise Multiple Keywords Found
-    [Documentation]    FAIL Multiple keywords with name 'Nested Private Keyword' found. \
+    [Documentation]    FAIL Multiple keywords with name 'Private Keyword In All Resources' found. \
     ...    Give the full name of the keyword you want to use:
-    ...    ${SPACE*4}private.Nested Private Keyword
-    ...    ${SPACE*4}private2.Nested Private Keyword
-    First Public Keyword With Nested Private Keyword
-    Second Public Keyword With Nested Private Keyword
+    ...    ${SPACE*4}private.Private Keyword In All Resources
+    ...    ${SPACE*4}private2.Private Keyword In All Resources
+    ...    ${SPACE*4}private3.Private Keyword In All Resources
+    Private Keyword In All Resources
 
 If One Keyword Is Public And Multiple Private Keywords Run Public And Warn
-    Keyword With One Public And Two Private Possible Keywords
+    Private In Two Resources And Public In One
 
 *** Keywords ***
 Public Keyword
@@ -40,6 +43,3 @@ Public Keyword
 Private Keyword
     [Tags]    robot:private
     No Operation
-
-Keyword With One Public And Two Private Possible Keywords
-    Possible Keyword

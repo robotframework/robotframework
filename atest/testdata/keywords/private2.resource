@@ -3,17 +3,14 @@ Private Keyword In Resource 2
     [Tags]    robot:private
     No Operation
 
+Private Keyword In All Resources
+    [Tags]    robot: private
+    No Operation
+
+Private In Two Resources And Public In One
+    [Tags]    robot: private
+    Log    private2.resource
+
 Same Name
-    [Tags]    robot:private
-    No Operation
-
-Second Public Keyword With Nested Private Keyword
-    Nested Private Keyword
-
-Nested Private Keyword
-    [Tags]    robot:private
-    No Operation
-
-Possible Keyword
     [Tags]    robot:private
     No Operation

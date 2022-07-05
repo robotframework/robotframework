@@ -49,6 +49,10 @@ class UserKeywordRunner:
         return self._handler.tags
 
     @property
+    def source(self):
+        return self._handler.source
+
+    @property
     def private(self):
         return self._handler.private
 

@@ -2,6 +2,9 @@
 Keyword Only In Resource 2
     Log    Keyword in resource 2
 
+Use local keyword that exists also in another resource 2
+    Keyword In Both Resources
+
 Keyword In Both Resources
     Log    Keyword in resource 2
 

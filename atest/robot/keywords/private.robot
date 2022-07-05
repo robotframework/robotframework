@@ -26,6 +26,11 @@ Invalid Usage in Resource File
     Private Call Warning Should Be    private2.Private Keyword In Resource 2   ${tc.body[0].body[0].body[0]}    ${ERRORS[2]}
     Length Should Be    ${tc.body[0].body[0].body}    2
 
+Local Private Keyword In Resource File Has Precedence Over Keywords In Another Resource
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.body[0].body[0].body[0].msgs[0]}    private.resource
+    Check Log Message    ${tc.body[0].body[1].body[0].msgs[0]}    private.resource
+
 Keyword With Same Name Should Resolve Public Keyword
     ${tc}=    Check Test Case    ${TESTNAME}
     ${warning}=    Catenate
@@ -42,12 +47,13 @@ If Both Keywords Are Private Raise Multiple Keywords Found
 If One Keyword Is Public And Multiple Private Keywords Run Public And Warn
     ${tc}=    Check Test Case    ${TESTNAME}
     ${warning}=    Catenate
-    ...    Both public and private keywords with name 'Possible Keyword' found.
-    ...    The public keyword 'private.Possible Keyword' is used and
-    ...    private keywords 'private2.Possible Keyword' and 'private3.Possible Keyword' ignored.
+    ...    Both public and private keywords with name 'Private In Two Resources And Public In One' found.
+    ...    The public keyword 'private3.Private In Two Resources And Public In One' is
+    ...    used and private keywords 'private.Private In Two Resources And Public In One'
+    ...    and 'private2.Private In Two Resources And Public In One' ignored.
     ...    To select explicitly, and to get rid of this warning, use the long name of the keyword.
-    Public And Private Keyword Conflict Warning Should Be    ${warning}    ${tc.body[0].body[0].body[0]}    ${ERRORS[4]}
-    Length Should Be    ${tc.body[0].body[0].body}    2
+    Public And Private Keyword Conflict Warning Should Be    ${warning}    ${tc.body[0].body[0]}    ${ERRORS[4]}
+    Length Should Be    ${tc.body[0].body}    2
 
 *** Keywords ***
 Private Call Warning Should Be

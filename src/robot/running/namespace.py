@@ -24,6 +24,7 @@ from robot.output import LOGGER, Message
 from robot.utils import (RecommendationFinder, eq, find_file, is_string, normalize,
                          plural_or_not as s, printable_name, seq2str, seq2str2)
 
+from .context import EXECUTION_CONTEXTS
 from .importer import ImportCache, Importer
 from .model import Import
 from .runkwregister import RUN_KW_REGISTER
@@ -327,6 +328,8 @@ class KeywordStore:
         if len(found) > 1:
             found = self._get_runner_based_on_search_order(found)
         if len(found) > 1:
+            found = self._get_runner_from_same_resource_file(found)
+        if len(found) > 1:
             found = self._handle_private_user_keywords(found, name)
         if len(found) == 1:
             return found[0]
@@ -344,6 +347,16 @@ class KeywordStore:
         if len(found) == 1:
             return found[0]
         self._raise_multiple_keywords_found(found, name)
+
+    def _get_runner_from_same_resource_file(self, found):
+        user_keywords = EXECUTION_CONTEXTS.current.user_keywords
+        if not user_keywords:
+            return found
+        parent_source = user_keywords[-1].source
+        for runner in found:
+            if runner.source == parent_source:
+                return [runner]
+        return found
 
     def _handle_private_user_keywords(self, runners, used_as):
         public = [r for r in runners if not r.private]
