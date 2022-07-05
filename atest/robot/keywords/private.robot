@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    running/private.robot
+Suite Setup       Run Tests    ${EMPTY}    keywords/private.robot
 Resource          atest_resource.robot
 
 *** Test Cases ***
