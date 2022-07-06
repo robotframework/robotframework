@@ -26,7 +26,6 @@ class LexingContext:
 
     def __init__(self, settings=None, lang=None):
         if not settings:
-            # FIXME: Add unit test
             self.languages = lang if isinstance(lang, Languages) else Languages(lang)
             self.settings = self.settings_class(self.languages)
         else:
