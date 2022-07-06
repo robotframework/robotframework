@@ -140,6 +140,7 @@ Test Template     NONE
 Test Timeout      1 day
 Force Tags        foo    bar
 Default Tags      zap
+Task Tags         quux
 Documentation     Valid in all data files.
 '''
         # Values of invalid settings are ignored with `data_only=True`.
@@ -173,9 +174,12 @@ Documentation     Valid in all data files.
             (T.ERROR, 'Default Tags', 10, 0,
              "Setting 'Default Tags' is not allowed in resource file."),
             (T.EOS, '', 10, 12),
-            (T.DOCUMENTATION, 'Documentation', 11, 0),
-            (T.ARGUMENT, 'Valid in all data files.', 11, 18),
-            (T.EOS, '', 11, 42)
+            (T.ERROR, 'Task Tags', 11, 0,
+             "Setting 'Task Tags' is not allowed in resource file."),
+            (T.EOS, '', 11, 9),
+            (T.DOCUMENTATION, 'Documentation', 12, 0),
+            (T.ARGUMENT, 'Valid in all data files.', 12, 18),
+            (T.EOS, '', 12, 42)
         ]
         assert_tokens(data, expected, get_resource_tokens, data_only=True)
 

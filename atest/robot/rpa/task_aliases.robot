@@ -65,4 +65,4 @@ Validate invalid setting error
     [Arguments]    ${index}    ${lineno}    ${setting}
     Error In File
     ...    ${index}    rpa/resource_with_invalid_task_settings.robot    ${lineno}
-    ...    Non-existing setting '${setting}'.
+    ...    Setting '${setting}' is not allowed in resource file.

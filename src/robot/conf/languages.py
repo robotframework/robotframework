@@ -77,16 +77,15 @@ class Language:
     test_teardown = None
     test_template = None
     test_timeout = None
-    force_tags = None
-    default_tags = None
+    test_tags = None
+    keyword_tags = None
     tags = None
     setup = None
     teardown = None
     template = None
     timeout = None
     arguments = None
-    return_ = None
-    bdd_prefixes = set()  # These are not used yet
+    bdd_prefixes = set()
 
     @property
     def settings(self):
@@ -102,15 +101,14 @@ class Language:
             self.test_teardown: En.test_teardown,
             self.test_template: En.test_template,
             self.test_timeout: En.test_timeout,
-            self.force_tags: En.force_tags,
-            self.default_tags: En.default_tags,
+            self.test_tags: En.test_tags,
+            self.keyword_tags: En.keyword_tags,
             self.tags: En.tags,
             self.setup: En.setup,
             self.teardown: En.teardown,
             self.template: En.template,
             self.timeout: En.timeout,
             self.arguments: En.arguments,
-            self.return_: En.return_
         }
         settings.pop(None, None)
         return settings
@@ -133,16 +131,15 @@ class En(Language):
     test_setup = 'Test Setup'
     test_teardown = 'Test Teardown'
     test_template = 'Test Template'
-    force_tags = 'Force Tags'
-    default_tags = 'Default Tags'
     test_timeout = 'Test Timeout'
+    test_tags = 'Test Tags'
+    keyword_tags = 'Keyword Tags'
     setup = 'Setup'
     teardown = 'Teardown'
     template = 'Template'
     tags = 'Tags'
     timeout = 'Timeout'
     arguments = 'Arguments'
-    return_ = 'Return'
     bdd_prefixes = {'Given', 'When', 'Then', 'And', 'But'}
 
 
@@ -165,14 +162,13 @@ class Fi(Language):
     test_setup = 'Testin Alustus'
     test_teardown = 'Testin Purku'
     test_template = 'Testin Malli'
-    force_tags = 'Testin Tagit'
-    default_tags = 'Oletus Tagit'
     test_timeout = 'Testin Aikaraja'
+    test_tags = 'Testin Tagit'
+    keyword_tags = 'Avainsanan Tagit'
     setup = 'Alustus'
     teardown = 'Purku'
     template = 'Malli'
     tags = 'Tagit'
     timeout = 'Aikaraja'
     arguments = 'Argumentit'
-    return_ = 'Paluuarvo'
     bdd_prefixes = {'Oletetaan', 'Kun', 'Niin', 'Ja', 'Mutta'}
