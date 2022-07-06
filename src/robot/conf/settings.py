@@ -505,8 +505,11 @@ class RobotSettings(_BaseSettings):
 
     @property
     def languages(self):
-        if not self._languages:
-            self._languages = Languages(self['Language'])
+        if self._languages is None:
+            try:
+                self._languages = Languages(self['Language'])
+            except DataError as err:
+                self._raise_invalid('Language', err)
         return self._languages
 
     @property

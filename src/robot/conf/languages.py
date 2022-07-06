@@ -45,15 +45,14 @@ class Languages:
         return languages
 
     def _import_languages(self, lang):
-        def find_subclass(member):
+        def is_language(member):
             return (inspect.isclass(member)
                     and issubclass(member, Language)
                     and member is not Language)
-        # FIXME: error handling
         if os.path.exists(lang):
             lang = os.path.abspath(lang)
-        module = Importer().import_module(lang)
-        return [value for _, value in inspect.getmembers(module, find_subclass)]
+        module = Importer('language file').import_module(lang)
+        return [value for _, value in inspect.getmembers(module, is_language)]
 
     def __iter__(self):
         return iter(self.languages)

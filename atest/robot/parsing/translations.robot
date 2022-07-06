@@ -10,6 +10,16 @@ Custom language
     Run Tests    --lang ${DATADIR}/parsing/custom-lang.py    parsing/custom.robot
     Validate Translations
 
+Invalid
+    ${result} =    Run Tests Without Processing Output    --lang bad    parsing/finnish.robot
+    Should Be Equal        ${result.rc}        ${252}
+    Should Be Empty        ${result.stdout}
+    ${error} =    Catenate    SEPARATOR=\n
+    ...    Invalid value for option '--language': Importing language file 'bad' failed: ModuleNotFoundError: No module named 'bad'
+    ...    Traceback \\(most recent call last\\):
+    ...    .*${USAGE TIP}
+    Should Match Regexp    ${result.stderr}    (?s)^\\[ ERROR \\] ${error}$
+
 *** Keywords ***
 Validate Translations
     Should Be Equal    ${SUITE.doc}                   Suite documentation.
