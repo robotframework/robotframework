@@ -16,7 +16,7 @@
 NOTSET = object()
 
 
-class TestDefaults:
+class Defaults:
 
     def __init__(self, parent=None):
         self.parent = parent
@@ -24,6 +24,7 @@ class TestDefaults:
         self._teardown = {}
         self._force_tags = ()
         self.default_tags = ()
+        self.keyword_tags = ()
         self.template = None
         self._timeout = None
 

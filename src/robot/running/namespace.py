@@ -21,9 +21,10 @@ from itertools import chain
 from robot.errors import DataError, KeywordError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER, Message
-from robot.utils import (RecommendationFinder, eq, find_file, is_string,
-                         normalize, printable_name, seq2str2)
+from robot.utils import (RecommendationFinder, eq, find_file, is_string, normalize,
+                         plural_or_not as s, printable_name, seq2str, seq2str2)
 
+from .context import EXECUTION_CONTEXTS
 from .importer import ImportCache, Importer
 from .model import Import
 from .runkwregister import RUN_KW_REGISTER
@@ -43,7 +44,7 @@ class Namespace:
         self.variables = variables
         self.languages = languages
         self._imports = resource.imports
-        self._kw_store = KeywordStore(resource)
+        self._kw_store = KeywordStore(resource, languages)
         self._imported_variable_files = ImportCache()
         self._suite_name = suite.longname
         self._running_test = False
@@ -223,11 +224,12 @@ class Namespace:
 
 class KeywordStore:
 
-    def __init__(self, resource):
+    def __init__(self, resource, languages):
         self.user_keywords = UserLibrary(resource, UserLibrary.TEST_CASE_FILE_TYPE)
         self.libraries = OrderedDict()
         self.resources = ImportCache()
         self.search_order = ()
+        self.languages = languages
 
     def get_library(self, name_or_instance):
         if name_or_instance is None:
@@ -294,10 +296,13 @@ class KeywordStore:
         return runner
 
     def _get_bdd_style_runner(self, name):
-        lower = name.lower()
-        for prefix in ['given ', 'when ', 'then ', 'and ', 'but ']:
-            if lower.startswith(prefix):
-                runner = self._get_runner(name[len(prefix):])
+        parts = name.split(maxsplit=1)
+        if len(parts) < 2:
+            return None
+        prefix, keyword = parts
+        for lang in self.languages:
+            if prefix.title() in lang.bdd_prefixes:
+                runner = self._get_runner(keyword)
                 if runner:
                     runner = copy.copy(runner)
                     runner.name = name
@@ -322,9 +327,13 @@ class KeywordStore:
             return None
         if len(found) > 1:
             found = self._get_runner_based_on_search_order(found)
+        if len(found) > 1:
+            found = self._get_runner_from_same_resource_file(found)
+        if len(found) > 1:
+            found = self._handle_private_user_keywords(found)
         if len(found) == 1:
             return found[0]
-        self._raise_multiple_keywords_found(name, found)
+        self._raise_multiple_keywords_found(found, name)
 
     def _get_runner_from_libraries(self, name):
         found = [lib.handlers.create_runner(name) for lib in self.libraries.values()
@@ -337,7 +346,21 @@ class KeywordStore:
             found = self._filter_stdlib_runner(*found)
         if len(found) == 1:
             return found[0]
-        self._raise_multiple_keywords_found(name, found)
+        self._raise_multiple_keywords_found(found, name)
+
+    def _get_runner_from_same_resource_file(self, found):
+        user_keywords = EXECUTION_CONTEXTS.current.user_keywords
+        if not user_keywords:
+            return found
+        parent_source = user_keywords[-1].source
+        for runner in found:
+            if runner.source == parent_source:
+                return [runner]
+        return found
+
+    def _handle_private_user_keywords(self, runners):
+        public = [r for r in runners if not r.private]
+        return public if len(public) == 1 else runners
 
     def _get_runner_based_on_search_order(self, runners):
         for libname in self.search_order:
@@ -382,7 +405,7 @@ class KeywordStore:
         for owner_name, kw_name in self._yield_owner_and_kw_names(name):
             found.extend(self._find_keywords(owner_name, kw_name))
         if len(found) > 1:
-            self._raise_multiple_keywords_found(name, found, implicit=False)
+            self._raise_multiple_keywords_found(found, name, implicit=False)
         return found[0] if found else None
 
     def _yield_owner_and_kw_names(self, full_name):
@@ -395,11 +418,11 @@ class KeywordStore:
                 for owner in chain(self.libraries.values(), self.resources.values())
                 if eq(owner.name, owner_name) and name in owner.handlers]
 
-    def _raise_multiple_keywords_found(self, name, found, implicit=True):
-        error = f"Multiple keywords with name '{name}' found"
+    def _raise_multiple_keywords_found(self, runners, used_as, implicit=True):
+        error = f"Multiple keywords with name '{used_as}' found"
         if implicit:
             error += ". Give the full name of the keyword you want to use"
-        names = sorted(runner.longname for runner in found)
+        names = sorted(r.longname for r in runners)
         raise KeywordError('\n    '.join([error+':'] + names))
 
 

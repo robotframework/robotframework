@@ -105,6 +105,20 @@ User keyword documentation formatting
     ...    </tr>
     ...    </table>
 
+Private user keyword should be included
+    [Setup]    Run Libdoc And Parse Model From JSON    ${TESTDATADIR}/resource.robot
+    ${MODEL}[keywords][-1][name]                 Private
+    ${MODEL}[keywords][-1][tags]                 ['robot:private']
+    ${MODEL}[keywords][-1][private]              True
+    ${MODEL['keywords'][0].get('private')}       None
+
+Deprecation
+    [Setup]    Run Libdoc And Parse Model From JSON    ${TESTDATADIR}/Deprecation.py
+    ${MODEL}[keywords][0][deprecated]            True
+    ${MODEL}[keywords][1][deprecated]            True
+    ${MODEL['keywords'][2].get('deprecated')}    None
+    ${MODEL['keywords'][3].get('deprecated')}    None
+
 *** Keywords ***
 Verify Argument Models
     [Arguments]    ${arg_models}    @{expected_reprs}

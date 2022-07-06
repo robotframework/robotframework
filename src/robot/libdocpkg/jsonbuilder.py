@@ -59,6 +59,8 @@ class JsonDocBuilder:
                         doc=data['doc'],
                         shortdoc=data['shortdoc'],
                         tags=data['tags'],
+                        private=data.get('private', False),
+                        deprecated=data.get('deprecated', False),
                         source=data['source'],
                         lineno=int(data.get('lineno', -1)))
         self._create_arguments(data['args'], kw)

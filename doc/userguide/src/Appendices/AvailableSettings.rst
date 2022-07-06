@@ -35,11 +35,14 @@ importing libraries, resources, and variables.
    +-----------------+--------------------------------------------------------+
    | Suite Teardown  | Used for specifying the `suite teardown`_.             |
    +-----------------+--------------------------------------------------------+
-   | Force Tags      | Used for specifying forced values for tags when        |
-   |                 | `tagging test cases`_.                                 |
+   | Test  Tags      | Used for specifying `test case tags`_ for all tests    |
+   |                 | in a suite.                                            |
    +-----------------+--------------------------------------------------------+
-   | Default Tags    | Used for specifying default values for tags when       |
-   |                 | `tagging test cases`_.                                 |
+   | Force Tags,     | `Deprecated settings`__ for specifying test case tags. |
+   | Default Tags    |                                                        |
+   +-----------------+--------------------------------------------------------+
+   | Keyword Tags    | User for specifying `user keyword tags`_ for all       |
+   |                 | keywords in a certain file.                            |
    +-----------------+--------------------------------------------------------+
    | Test Setup      | Used for specifying a default `test setup`_.           |
    +-----------------+--------------------------------------------------------+
@@ -58,6 +61,7 @@ importing libraries, resources, and variables.
 
 __ `Test suite documentation`_
 __ `Documenting resource files`_
+__ `Deprecation of Force Tags and Default Tags`_
 
 Test Case section
 -----------------

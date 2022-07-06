@@ -13,12 +13,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.conf import Language
+from robot.conf import Languages
 
 
 class Markers:
+    # FIXME: should this be merged with conf.Languages
 
     def __init__(self, languages):
+        if not isinstance(languages, Languages):
+            # FIXME: add unit test
+            languages = Languages(languages)
         self.setting_headers = set()
         self.variable_headers = set()
         self.test_case_headers = set()
@@ -26,7 +30,7 @@ class Markers:
         self.keyword_headers = set()
         self.comment_headers = set()
         self.settings = {}
-        for lang in Language.get_languages(languages):
+        for lang in languages:
             self.setting_headers |= lang.setting_headers
             self.variable_headers |= lang.variable_headers
             self.test_case_headers |= lang.test_case_headers

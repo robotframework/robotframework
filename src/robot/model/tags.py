@@ -17,31 +17,41 @@ from robot.utils import is_string, normalize, NormalizedDict, Matcher
 
 
 class Tags:
-    __slots__ = ['_tags']
+    __slots__ = ['_tags', '_reserved']
 
     def __init__(self, tags=None):
-        self._tags = self._init_tags(tags)
+        self._tags, self._reserved = self._init_tags(tags)
+
+    def robot(self, name):
+        """Check do tags contain a special tag in format `robot:<name>`.
+
+        This is same as `'robot:<name>' in tags` but considerably faster.
+        """
+        return name in self._reserved
 
     def _init_tags(self, tags):
         if not tags:
-            return ()
+            return (), ()
         if is_string(tags):
             tags = (tags,)
         return self._normalize(tags)
 
     def _normalize(self, tags):
         normalized = NormalizedDict([(str(t), None) for t in tags], ignore='_')
-        for remove in '', 'NONE':
-            if remove in normalized:
-                normalized.pop(remove)
-        return tuple(normalized)
+        if '' in normalized:
+            del normalized['']
+        if 'NONE' in normalized:
+            del normalized['NONE']
+        reserved = tuple(tag.split(':')[1] for tag in normalized._keys
+                         if tag[:6] == 'robot:')
+        return tuple(normalized), reserved
 
     def add(self, tags):
-        self._tags = self._normalize(tuple(self) + tuple(Tags(tags)))
+        self.__init__(tuple(self) + tuple(Tags(tags)))
 
     def remove(self, tags):
         tags = TagPatterns(tags)
-        self._tags = tuple([t for t in self if not tags.match(t)])
+        self.__init__([t for t in self if not tags.match(t)])
 
     def match(self, tags):
         return TagPatterns(tags).match(self)
@@ -82,6 +92,8 @@ class TagPatterns:
         self._patterns = tuple(TagPattern(p) for p in Tags(patterns))
 
     def match(self, tags):
+        if not self._patterns:
+            return False
         tags = tags if isinstance(tags, Tags) else Tags(tags)
         return any(p.match(tags) for p in self._patterns)
 

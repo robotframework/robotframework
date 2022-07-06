@@ -92,6 +92,10 @@ class UserKeywordHandler:
     def shortdoc(self):
         return getshortdoc(self.doc)
 
+    @property
+    def private(self):
+        return bool(self.tags and self.tags.robot('private'))
+
     def create_runner(self, name):
         return UserKeywordRunner(self)
 

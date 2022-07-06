@@ -56,6 +56,10 @@ Keyword From Test Case File Overrides Keywords From Resources And Libraries
 Keyword From Resource Overrides Keywords From Libraries
     Keyword In Resource Overrides Libraries
 
+Local keyword in resource file has precedence over keywords in other resource files
+    Use local keyword that exists also in another resource 1
+    Use local keyword that exists also in another resource 2
+
 Keyword From Custom Library Overrides Keywords From Standard Library
     Comment
     Copy Directory

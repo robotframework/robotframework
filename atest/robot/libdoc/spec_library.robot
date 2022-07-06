@@ -86,6 +86,16 @@ Keyword Tags
     Keyword Tags Should Be         1
     Keyword Tags Should Be         2
 
+Private Keywords
+    Keyword Should Not Be Private       0
+    Keyword Should Be Private           1
+    Keyword Should Not Be Private       2
+
+Keyword Deprecation
+    Keyword Should Not Be Deprecated    0
+    Keyword Should Be Deprecated        1
+    Keyword Should Not Be Deprecated    2
+
 Keyword Source Info
     Keyword Should Not Have Source    0
     Keyword Should Not Have Lineno    0
@@ -138,6 +148,12 @@ Test Everything
     Keyword Tags Should Be            0    tag1    tag2
     Keyword Tags Should Be            1
     Keyword Tags Should Be            2
+    Keyword Should Not Be Private     0
+    Keyword Should Be Private         1
+    Keyword Should Not Be Private     2
+    Keyword Should Not Be Deprecated  0
+    Keyword Should Be Deprecated      1
+    Keyword Should Not Be Deprecated  2
     Keyword Should Not Have Source    0
     Keyword Should Not Have Lineno    0
     Keyword Should Not Have Source    1

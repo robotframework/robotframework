@@ -21,7 +21,7 @@ from robot.output import LOGGER
 from robot.parsing import get_model, get_resource_model, get_init_model, Token
 from robot.utils import FileReader, read_rest_data
 
-from .testsettings import TestDefaults
+from .settings import Defaults
 from .transformers import SuiteBuilder, SettingsBuilder, ResourceBuilder
 from ..model import TestSuite, ResourceFile
 
@@ -60,7 +60,7 @@ class RobotParser(BaseParser):
 
     def _build(self, suite, source, defaults, model=None, get_model=get_model):
         if defaults is None:
-            defaults = TestDefaults()
+            defaults = Defaults()
         if model is None:
             model = get_model(self._get_source(source), data_only=True,
                               curdir=self._get_curdir(source), lang=self.lang)

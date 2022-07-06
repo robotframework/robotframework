@@ -108,6 +108,12 @@ class _ExecutionContext:
             self.namespace.end_user_keyword()
             self.user_keywords.pop()
 
+    def warn_on_invalid_private_call(self, handler):
+        parent = self.user_keywords[-1] if self.user_keywords else None
+        if not parent or parent.source != handler.source:
+            self.warn(f"Keyword '{handler.longname}' is private and should only "
+                      f"be called by keywords in the same file.")
+
     @contextmanager
     def timeout(self, timeout):
         self._add_timeout(timeout)
@@ -129,11 +135,11 @@ class _ExecutionContext:
     def continue_on_failure(self, default=False):
         parents = ([self.test] if self.test else []) + self.user_keywords
         for index, parent in enumerate(reversed(parents)):
-            if ('robot:recursive-stop-on-failure' in parent.tags
-                    or index == 0 and 'robot:stop-on-failure' in parent.tags):
+            if (parent.tags.robot('recursive-stop-on-failure')
+                    or index == 0 and parent.tags.robot('stop-on-failure')):
                 return False
-            if ('robot:recursive-continue-on-failure' in parent.tags
-                    or index == 0 and 'robot:continue-on-failure' in parent.tags):
+            if (parent.tags.robot('recursive-continue-on-failure')
+                    or index == 0 and parent.tags.robot('continue-on-failure')):
                 return True
         return default or self.in_teardown
 

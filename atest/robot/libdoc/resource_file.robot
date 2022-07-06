@@ -43,7 +43,7 @@ Spec version
 
 Resource Tags
     Specfile Tags Should Be          \${3}    ?!?!??    a      b    bar    dar
-    ...                              foo      Has       kw4    tags
+    ...                              foo      Has       kw4    robot:private    tags
 
 Resource Has No Inits
     Should Have No Init
@@ -116,8 +116,13 @@ Keyword Source Info
     Run Libdoc And Parse Output       ${TESTDATADIR}/resource.resource
     Source Should Be                  ${TESTDATADIR}/resource.resource
     Lineno Should Be                  1
-    Keyword Name Should Be            0    Yay, I got new extension!
-    Keyword Arguments Should Be       0    Awesome!!
-    Keyword Doc Should Be             0    Yeah!!!
-    Keyword Should Not Have Source    0
-    Keyword Lineno Should Be          0    2
+    Keyword Name Should Be            2    Yay, I got new extension!
+    Keyword Arguments Should Be       2    Awesome!!
+    Keyword Doc Should Be             2    Yeah!!!
+    Keyword Should Not Have Source    2
+    Keyword Lineno Should Be          2    5
+
+Keyword Tags setting
+    Keyword Tags Should Be            0    keyword    own    tags
+    Keyword Tags Should Be            1    in doc    keyword    own    tags
+    Keyword Tags Should Be            2    keyword    tags

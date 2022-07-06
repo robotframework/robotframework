@@ -112,8 +112,12 @@ With Name When Library Arguments Are Not Strings
     Syslog Should Contain    Imported library 'ParameterLibrary' with arguments [ 1 | 2 ]
 
 'WITH NAME' is case-sensitive
-    Error In File    -1    test_libraries/with_name_3.robot    5
+    # WITH NAME
+    Error In File    -2    test_libraries/with_name_3.robot    5
     ...    Library 'ParameterLibrary' expected 0 to 2 arguments, got 4.
+    # AS
+    Error In File    -1    test_libraries/with_name_3.robot    6
+    ...    Library 'ParameterLibrary' expected 0 to 2 arguments, got 5.
 
 'WITH NAME' cannot come from variable
     Check Test Case    ${TEST NAME}

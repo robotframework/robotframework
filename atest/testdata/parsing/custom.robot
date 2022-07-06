@@ -6,9 +6,9 @@ S 4                Suite Teardown
 S 5                Test Setup
 S 6                Test Teardown
 S 7                Test Template
-S 8                forced tag
-S 9                default tag
-S 10               1 minute
+S 8                1 minute
+S 9                test    tags
+S 10               keyword    tags
 L                  OperatingSystem
 R                  custom.resource
 V                  variables.py
@@ -23,12 +23,11 @@ Test without settings
 Test with settings
     [S 1]              Test documentation.
     [S 14]             own tag
-    [S 11]              NONE
-    [S 12]              NONE
-    [S 13]              NONE
-    [S 15]              NONE
-    ${result} =        Keyword      ${VARIABLE}
-    Should Be Equal    ${result}    To be deprecated
+    [S 11]             NONE
+    [S 12]             NONE
+    [S 13]             NONE
+    [S 15]             NONE
+    Keyword            ${VARIABLE}
 
 *** H 5 ***
 Suite Setup
@@ -52,11 +51,10 @@ Test Template
 Keyword
     [S 1]     Keyword documentation.
     [S 16]    ${arg}
-    [S 14]    kw tag
+    [S 14]    own tag
     [S 15]    1h
     Should Be Equal    ${arg}    ${VARIABLE}
     [S 12]    No Operation
-    [S 17]    To be deprecated
 
 *** H 6 ***
 Ignored comments.

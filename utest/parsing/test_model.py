@@ -655,6 +655,21 @@ Example
         )
         get_and_assert_model(data, expected)
 
+    def test_assign_only_inside(self):
+        data = '''
+*** Test Cases ***
+Example
+    IF    ${cond}    ${assign}
+'''
+        expected = If(
+            header=InlineIfHeader([Token(Token.INLINE_IF, 'IF', 3, 4),
+                                   Token(Token.ARGUMENT, '${cond}', 3, 10)]),
+            body=[KeywordCall([Token(Token.ASSIGN, '${assign}', 3, 21)])],
+            end=End([Token(Token.END, '', 3, 30)]),
+            errors=('Inline IF branches cannot contain assignments.',)
+        )
+        get_and_assert_model(data, expected)
+
     def test_invalid(self):
         data1 = '''
 *** Test Cases ***

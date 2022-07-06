@@ -67,7 +67,7 @@ class Statement(ast.AST):
         for token in tokens:
             if token.type in handlers:
                 return handlers[token.type](tokens)
-        if tokens and all(token.type == Token.ASSIGN for token in tokens):
+        if any(token.type == Token.ASSIGN for token in tokens):
             return KeywordCall(tokens)
         return EmptyLine(tokens)
 
@@ -400,6 +400,20 @@ class DefaultTags(MultiValue):
     @classmethod
     def from_params(cls, values, separator=FOUR_SPACES, eol=EOL):
         tokens = [Token(Token.DEFAULT_TAGS, 'Default Tags')]
+        for tag in values:
+            tokens.extend([Token(Token.SEPARATOR, separator),
+                           Token(Token.ARGUMENT, tag)])
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
+
+@Statement.register
+class KeywordTags(MultiValue):
+    type = Token.KEYWORD_TAGS
+
+    @classmethod
+    def from_params(cls, values, separator=FOUR_SPACES, eol=EOL):
+        tokens = [Token(Token.KEYWORD_TAGS, 'Keyword Tags')]
         for tag in values:
             tokens.extend([Token(Token.SEPARATOR, separator),
                            Token(Token.ARGUMENT, tag)])

@@ -77,6 +77,8 @@ class Keyword(BaseModel):
     doc: str
     shortdoc: str
     tags: List[str]
+    private: Optional[bool]
+    deprecated: Optional[bool]
     source: Path
     lineno: int
 

@@ -15,16 +15,17 @@
 
 from ast import NodeVisitor
 
+from robot.output import LOGGER
 from robot.variables import VariableIterator
 
-from .testsettings import TestSettings
+from .settings import Defaults, TestSettings
 
 
 class SettingsBuilder(NodeVisitor):
 
-    def __init__(self, suite, test_defaults):
+    def __init__(self, suite, defaults):
         self.suite = suite
-        self.test_defaults = test_defaults
+        self.defaults = defaults
 
     def visit_Documentation(self, node):
         self.suite.doc = node.value
@@ -41,26 +42,29 @@ class SettingsBuilder(NodeVisitor):
                                    lineno=node.lineno)
 
     def visit_TestSetup(self, node):
-        self.test_defaults.setup = {
+        self.defaults.setup = {
             'name': node.name, 'args': node.args, 'lineno': node.lineno
         }
 
     def visit_TestTeardown(self, node):
-        self.test_defaults.teardown = {
+        self.defaults.teardown = {
             'name': node.name, 'args': node.args, 'lineno': node.lineno
         }
 
     def visit_TestTimeout(self, node):
-        self.test_defaults.timeout = node.value
+        self.defaults.timeout = node.value
 
     def visit_DefaultTags(self, node):
-        self.test_defaults.default_tags = node.values
+        self.defaults.default_tags = node.values
 
     def visit_ForceTags(self, node):
-        self.test_defaults.force_tags = node.values
+        self.defaults.force_tags = node.values
+
+    def visit_KeywordTags(self, node):
+        self.defaults.keyword_tags = node.values
 
     def visit_TestTemplate(self, node):
-        self.test_defaults.template = node.value
+        self.defaults.template = node.value
 
     def visit_ResourceImport(self, node):
         self.suite.resource.imports.create(type='Resource', name=node.name,
@@ -87,9 +91,9 @@ class SettingsBuilder(NodeVisitor):
 
 class SuiteBuilder(NodeVisitor):
 
-    def __init__(self, suite, test_defaults):
+    def __init__(self, suite, defaults):
         self.suite = suite
-        self.test_defaults = test_defaults
+        self.defaults = defaults
 
     def visit_SettingSection(self, node):
         pass
@@ -101,19 +105,23 @@ class SuiteBuilder(NodeVisitor):
                                              error=format_error(node.errors))
 
     def visit_TestCase(self, node):
-        TestCaseBuilder(self.suite, self.test_defaults).visit(node)
+        TestCaseBuilder(self.suite, self.defaults).visit(node)
 
     def visit_Keyword(self, node):
-        KeywordBuilder(self.suite.resource).visit(node)
+        KeywordBuilder(self.suite.resource, self.defaults).visit(node)
 
 
 class ResourceBuilder(NodeVisitor):
 
     def __init__(self, resource):
         self.resource = resource
+        self.defaults = Defaults()
 
     def visit_Documentation(self, node):
         self.resource.doc = node.value
+
+    def visit_KeywordTags(self, node):
+        self.defaults.keyword_tags = node.values
 
     def visit_LibraryImport(self, node):
         self.resource.imports.create(type='Library', name=node.name,
@@ -135,7 +143,7 @@ class ResourceBuilder(NodeVisitor):
                                        error=format_error(node.errors))
 
     def visit_Keyword(self, node):
-        KeywordBuilder(self.resource).visit(node)
+        KeywordBuilder(self.resource, self.defaults).visit(node)
 
 
 class TestCaseBuilder(NodeVisitor):
@@ -218,6 +226,7 @@ class TestCaseBuilder(NodeVisitor):
         self.settings.timeout = node.value
 
     def visit_Tags(self, node):
+        deprecate_tags_starting_with_hyphen(node, self.suite.source)
         self.settings.tags = node.values
 
     def visit_Template(self, node):
@@ -242,17 +251,16 @@ class TestCaseBuilder(NodeVisitor):
 
 class KeywordBuilder(NodeVisitor):
 
-    def __init__(self, resource):
+    def __init__(self, resource, defaults):
         self.resource = resource
+        self.defaults = defaults
         self.kw = None
-        self.teardown = None
 
     def visit_Keyword(self, node):
         self.kw = self.resource.keywords.create(name=node.name,
+                                                tags=self.defaults.keyword_tags,
                                                 lineno=node.lineno)
         self.generic_visit(node)
-        if self.teardown is not None:
-            self.kw.teardown.config(**self.teardown)
 
     def visit_Documentation(self, node):
         self.kw.doc = node.value
@@ -260,11 +268,12 @@ class KeywordBuilder(NodeVisitor):
     def visit_Arguments(self, node):
         self.kw.args = node.values
         if node.errors:
-            self.kw.error = ('Invalid argument specification: %s'
-                             % format_error(node.errors))
+            error = format_error(node.errors)
+            self.kw.error = f'Invalid argument specification: {error}'
 
     def visit_Tags(self, node):
-        self.kw.tags = node.values
+        deprecate_tags_starting_with_hyphen(node, self.resource.source)
+        self.kw.tags.add(node.values)
 
     def visit_Return(self, node):
         self.kw.return_ = node.values
@@ -273,9 +282,8 @@ class KeywordBuilder(NodeVisitor):
         self.kw.timeout = node.value
 
     def visit_Teardown(self, node):
-        self.teardown = {
-            'name': node.name, 'args': node.args, 'lineno': node.lineno
-        }
+        self.kw.teardown.config(name=node.name, args=node.args,
+                                lineno=node.lineno)
 
     def visit_KeywordCall(self, node):
         self.kw.body.create_keyword(name=node.keyword, args=node.args,
@@ -550,3 +558,15 @@ def format_error(errors):
     if len(errors) == 1:
         return errors[0]
     return '\n- '.join(('Multiple errors:',) + errors)
+
+
+def deprecate_tags_starting_with_hyphen(node, source):
+    for tag in node.values:
+        if tag.startswith('-'):
+            LOGGER.warn(
+                f"Error in file '{source}' on line {node.lineno}: "
+                f"Settings tags starting with a hyphen using the '[Tags]' setting "
+                f"is deprecated. In Robot Framework 5.2 this syntax will be used "
+                f"for removing tags. Escape '{tag}' like '\\{tag}' to use the "
+                f"literal value and to avoid this warning."
+            )

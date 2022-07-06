@@ -108,7 +108,7 @@ class LibraryDoc:
                 type_doc.doc = formatter.html(type_doc.doc)
         self.doc_format = 'HTML'
 
-    def to_dictionary(self):
+    def to_dictionary(self, include_private=False):
         return {
             'specversion': 1,
             'name': self.name,
@@ -122,7 +122,8 @@ class LibraryDoc:
             'lineno': self.lineno,
             'tags': list(self.all_tags),
             'inits': [init.to_dictionary() for init in self.inits],
-            'keywords': [kw.to_dictionary() for kw in self.keywords],
+            'keywords': [kw.to_dictionary() for kw in self.keywords
+                        if include_private or not kw.private],
             # 'dataTypes' was deprecated in RF 5, 'typedoc' should be used instead.
             'dataTypes': self._get_data_types(self.type_docs),
             'typedocs': [t.to_dictionary() for t in sorted(self.type_docs)]
@@ -136,20 +137,22 @@ class LibraryDoc:
             'typedDicts': [t.to_dictionary(legacy=True) for t in typed_dicts]
         }
 
-    def to_json(self, indent=None):
-        data = self.to_dictionary()
+    def to_json(self, indent=None, include_private=True):
+        data = self.to_dictionary(include_private)
         return json.dumps(data, indent=indent)
 
 
 class KeywordDoc(Sortable):
 
-    def __init__(self, name='', args=None, doc='', shortdoc='', tags=(), source=None,
-                 lineno=-1, parent=None):
+    def __init__(self, name='', args=None, doc='', shortdoc='', tags=(), private=False,
+                 deprecated=False, source=None, lineno=-1, parent=None):
         self.name = name
         self.args = args or ArgumentSpec()
         self.doc = doc
         self._shortdoc = shortdoc
         self.tags = Tags(tags)
+        self.private = private
+        self.deprecated = deprecated
         self.source = source
         self.lineno = lineno
         self.parent = parent
@@ -172,15 +175,11 @@ class KeywordDoc(Sortable):
         self._shortdoc = shortdoc
 
     @property
-    def deprecated(self):
-        return self.doc.startswith('*DEPRECATED') and '*' in self.doc[1:]
-
-    @property
     def _sort_key(self):
         return self.name.lower()
 
     def to_dictionary(self):
-        return {
+        data = {
             'name': self.name,
             'args': [self._arg_to_dict(arg) for arg in self.args],
             'doc': self.doc,
@@ -189,6 +188,11 @@ class KeywordDoc(Sortable):
             'source': self.source,
             'lineno': self.lineno
         }
+        if self.private:
+            data['private'] = True
+        if self.deprecated:
+            data['deprecated'] = True
+        return data
 
     def _arg_to_dict(self, arg):
         return {

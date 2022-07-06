@@ -35,7 +35,7 @@ This library is only used in an example and it doesn't do anything useful.</doc>
 </init>
 </inits>
 <keywords>
-<kw name="Keyword">
+<kw name="Keyword" deprecated="false" private="false">
 <arguments repr="arg">
 <arg kind="POSITIONAL_OR_NAMED" required="true" repr="arg">
 <name>arg</name>
@@ -54,7 +54,7 @@ See `My Keyword` for no more information.</doc>
 <tag>tag2</tag>
 </tags>
 </kw>
-<kw name="My Keyword" lineno="42">
+<kw name="My Keyword" lineno="42" deprecated="true" private="true">
 <arguments repr="">
 </arguments>
 <doc>Does nothing &amp; &lt;doc&gt; has "stuff" to 'escape'!! and ignored indentation

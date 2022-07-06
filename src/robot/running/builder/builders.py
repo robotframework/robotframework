@@ -20,7 +20,7 @@ from robot.output import LOGGER
 from robot.parsing import SuiteStructureBuilder, SuiteStructureVisitor
 
 from .parsers import RobotParser, NoInitFileDirectoryParser, RestParser
-from .testsettings import TestDefaults
+from .settings import Defaults
 
 
 class TestSuiteBuilder:
@@ -161,7 +161,7 @@ class SuiteStructureParser(SuiteStructureVisitor):
     def _build_suite(self, structure):
         parent_defaults = self._stack[-1][-1] if self._stack else None
         source = structure.source
-        defaults = TestDefaults(parent_defaults)
+        defaults = Defaults(parent_defaults)
         parser = self._get_parser(structure.extension)
         try:
             if structure.is_directory:

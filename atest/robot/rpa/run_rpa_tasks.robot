@@ -5,7 +5,7 @@ Test Template     Run and validate RPA tasks
 Resource          atest_resource.robot
 
 *** Variables ***
-@{ALL TASKS}      Task    Another task    Task    Failing    Passing    Test
+@{ALL TASKS}      Defaults    Override    Task    Another task    Task    Failing    Passing    Test
 ...               Defaults    Override    Task timeout exceeded    Invalid task timeout
 
 *** Test Cases ***
@@ -16,30 +16,30 @@ Task header in multiple files
     ${EMPTY}      rpa/tasks1.robot rpa/tasks2.robot    Task    Failing    Passing
 
 Task header in directory
-    ${EMPTY}      rpa/tasks                            Task    Another task
+    ${EMPTY}      rpa/tasks                            Task    Another task    Defaults    Override
 
 Test header with --rpa
     --rpa         rpa/tests.robot                      Test
 
 Task header with --norpa
     [Template]    Run and validate test cases
-    --norpa       rpa/tasks                            Task    Another task
+    --norpa       rpa/tasks                            Task    Another task    Defaults    Override
 
 Conflicting headers cause error
     [Template]    Run and validate conflict
-    rpa/tests.robot rpa/tasks     rpa/tasks/stuff.robot    tasks    tests
-    rpa/                          rpa/tests.robot          tests    tasks
-    ...    [[] ERROR ] Error in file '*[/\\]task_setup_teardown_template_timeout.robot' on line 6:
+    rpa/tests.robot rpa/tasks    rpa/tasks/aliases.robot    tasks    tests
+    rpa/                         rpa/tests.robot            tests    tasks
+    ...    [[] ERROR ] Error in file '*[/\\]task_aliases.robot' on line 7:
     ...    Non-existing setting 'Tesk Setup'. Did you mean:\n
     ...    ${SPACE*3}Test Setup\n
     ...    ${SPACE*3}Task Setup\n
 
 Conflicting headers with --rpa are fine
-    --RPA       rpa/tasks rpa/tests.robot    Task    Another task    Test
+    --RPA       rpa/tasks rpa/tests.robot              Task    Another task    Defaults    Override    Test
 
 Conflicting headers with --norpa are fine
     [Template]    Run and validate test cases
-    --NorPA -v TIMEOUT:Test    rpa/    @{ALL TASKS}
+    --NorPA -v TIMEOUT:Test    rpa/                    @{ALL TASKS}
 
 Conflicting headers in same file cause error
     [Documentation]    Using --rpa or --norpa doesn't affect the behavior.

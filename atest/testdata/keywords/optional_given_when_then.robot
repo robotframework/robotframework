@@ -42,6 +42,21 @@ Keyword can be used with and without prefix
     Then we are in Berlin city
     we are in Berlin city
 
+In user keyword name with normal arguments and localized prefixes
+    Oletetaan we don't drink too many beers
+    Kun we are in  museum  cafe
+    mutta we don't drink too many beers
+    Ja time  does  not  run  out
+    Niin we get this feature ready today
+    ja we don't drink too many beers
+
+Prefix must be followed by space
+    [Documentation]  FAIL
+    ...    No keyword with name 'Givenwe don't drink too many beers' found. Did you mean:
+    ...    ${SPACE*4}We Don't Drink Too Many Beers
+    Givenwe don't drink too many beers
+
+
 *** Keywords ***
 We don't drink too many beers
     No Operation
@@ -68,4 +83,3 @@ We ${x} This ${thing} Implemented
 
 We Go To ${somewhere}
     Should Be Equal  ${somewhere}  walking tour
-

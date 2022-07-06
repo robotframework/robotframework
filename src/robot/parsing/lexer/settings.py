@@ -84,7 +84,8 @@ class Settings:
                              % (orig, len(statement) - 1))
 
     def _get_non_existing_setting_message(self, name, normalized):
-        if normalized in TestCaseFileSettings.names:
+        if normalized in (set(TestCaseFileSettings.names) |
+                          set(TestCaseFileSettings.aliases)):
             is_resource = isinstance(self, ResourceFileSettings)
             return "Setting '%s' is not allowed in %s file." % (
                 name, 'resource' if is_resource else 'suite initialization'
@@ -102,7 +103,8 @@ class Settings:
 
     def _lex_setting(self, setting, values, name):
         self.settings[name] = values
-        setting.type = name.upper()
+        # TODO: Change token type from 'FORCE TAGS' to 'TEST TAGS' in RF 5.2.
+        setting.type = name.upper() if name != 'Test Tags' else 'FORCE TAGS'
         if name in self.name_and_arguments:
             self._lex_name_and_arguments(values)
         elif name in self.name_arguments_and_with_name:
@@ -118,7 +120,7 @@ class Settings:
     def _lex_name_arguments_and_with_name(self, tokens):
         self._lex_name_and_arguments(tokens)
         if len(tokens) > 1 and \
-                normalize_whitespace(tokens[-2].value) == 'WITH NAME':
+                normalize_whitespace(tokens[-2].value) in ('WITH NAME', 'AS'):
             tokens[-2].type = Token.WITH_NAME
             tokens[-1].type = Token.NAME
 
@@ -137,13 +139,16 @@ class TestCaseFileSettings(Settings):
         'Test Teardown',
         'Test Template',
         'Test Timeout',
-        'Force Tags',
+        'Test Tags',
         'Default Tags',
+        'Keyword Tags',
         'Library',
         'Resource',
         'Variables'
     )
     aliases = {
+        'Force Tags': 'Test Tags',
+        'Task Tags': 'Test Tags',
         'Task Setup': 'Test Setup',
         'Task Teardown': 'Test Teardown',
         'Task Template': 'Test Template',
@@ -160,16 +165,25 @@ class InitFileSettings(Settings):
         'Test Setup',
         'Test Teardown',
         'Test Timeout',
-        'Force Tags',
+        'Test Tags',
+        'Keyword Tags',
         'Library',
         'Resource',
         'Variables'
     )
+    aliases = {
+        'Force Tags': 'Test Tags',
+        'Task Tags': 'Test Tags',
+        'Task Setup': 'Test Setup',
+        'Task Teardown': 'Test Teardown',
+        'Task Timeout': 'Test Timeout',
+    }
 
 
 class ResourceFileSettings(Settings):
     names = (
         'Documentation',
+        'Keyword Tags',
         'Library',
         'Resource',
         'Variables'

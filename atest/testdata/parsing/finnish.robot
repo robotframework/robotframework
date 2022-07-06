@@ -1,20 +1,20 @@
 *** Asetukset ***
-Dokumentaatio      Suite documentation.
-Metadata           Metadata    Value
-Setin Alustus      Suite Setup
-Setin Purku        Suite Teardown
-Testin Alustus     Test Setup
-Testin Purku       Test Teardown
-Testin Malli       Test Template
-Testin Tagit       forced tag
-Oletus Tagit       default tag
-Testin Aikaraja    1 minute
-Kirjasto           OperatingSystem
-Resurssi           finnish.resource
-Muuttujat          variables.py
+Dokumentaatio       Suite documentation.
+Metadata            Metadata    Value
+Setin Alustus       Suite Setup
+Setin Purku         Suite Teardown
+Testin Alustus      Test Setup
+Testin Purku        Test Teardown
+Testin Malli        Test Template
+Testin Aikaraja     1 minute
+Testin Tagit        test    tags
+Avainsanan Tagit    keyword    tags
+Kirjasto            OperatingSystem
+Resurssi            finnish.resource
+Muuttujat           variables.py
 
 *** Muuttujat ***
-${VARIABLE}        variable value
+${VARIABLE}         variable value
 
 *** Testit ***
 Test without settings
@@ -27,8 +27,7 @@ Test with settings
     [Purku]            NONE
     [Malli]            NONE
     [Aikaraja]         NONE
-    ${result} =        Keyword      ${VARIABLE}
-    Should Be Equal    ${result}    To be deprecated
+    Keyword            ${VARIABLE}
 
 *** Avainsanat ***
 Suite Setup
@@ -52,11 +51,10 @@ Test Template
 Keyword
     [Dokumentaatio]    Keyword documentation.
     [Argumentit]       ${arg}
-    [Tagit]            kw tag
+    [Tagit]            own tag
     [Aikaraja]         1h
     Should Be Equal    ${arg}    ${VARIABLE}
     [Purku]            No Operation
-    [Paluuarvo]        To be deprecated
 
 *** Kommentit ***
 Ignored comments.

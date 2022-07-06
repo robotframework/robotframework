@@ -24,5 +24,5 @@ are likely to be rewritten at some point to be more convenient to use.
 Instantiating them is not likely to change, though.
 """
 
-from .languages import Language
+from .languages import Languages, Language
 from .settings import RobotSettings, RebotSettings

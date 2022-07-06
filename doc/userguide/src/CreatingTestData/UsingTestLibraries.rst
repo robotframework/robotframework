@@ -145,38 +145,41 @@ __ `Handling keywords with same names`_
 - The library name is misleading or otherwise poor. In this case,
   changing the actual name is, of course, a better solution.
 
-
 The basic syntax for specifying the new name is having the text
-`WITH NAME` (case-sensitive) after the library name and then
-having the new name in the next cell. The specified name is shown in
+`AS` (case-sensitive) after the library name and then
+having the new name after that. The specified name is shown in
 logs and must be used in the test data when using keywords' full name
 (:name:`LibraryName.Keyword Name`).
 
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Library    com.company.TestLib    WITH NAME    TestLib
-   Library    ${LIBRARY}             WITH NAME    MyName
+   Library    packagename.TestLib    AS    TestLib
+   Library    ${LIBRARY}    AS    MyName
 
-Possible arguments to the library are placed into cells between the
-original library name and the `WITH NAME` text. The following example
+Possible arguments to the library are placed between the
+original library name and the `AS` marker. The following example
 illustrates how the same library can be imported several times with
 different arguments:
 
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Library    SomeLibrary    localhost        1234    WITH NAME    LocalLib
-   Library    SomeLibrary    server.domain    8080    WITH NAME    RemoteLib
+   Library    SomeLibrary    localhost        1234    AS    LocalLib
+   Library    SomeLibrary    server.domain    8080    AS    RemoteLib
 
    *** Test Cases ***
-   My Test
+   Example
        LocalLib.Some Keyword     some arg       second arg
        RemoteLib.Some Keyword    another arg    whatever
        LocalLib.Another Keyword
 
 Setting a custom name to a test library works both when importing a
 library in the Setting section and when using the :name:`Import Library` keyword.
+
+.. note:: Prior to Robot Framework 5.1 the marker to use when giving a custom name
+          to a library was `WITH NAME` instead of `AS`. The old syntax continues
+          to work, but it is considered deprecated and will eventually be removed.
 
 Standard libraries
 ------------------

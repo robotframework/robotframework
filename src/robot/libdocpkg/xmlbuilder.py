@@ -38,7 +38,7 @@ class XmlDocBuilder:
         libdoc.inits = self._create_keywords(spec, 'inits/init', libdoc.source)
         libdoc.keywords = self._create_keywords(spec, 'keywords/kw', libdoc.source)
         # RF >= 5 have 'typedocs', RF >= 4 have 'datatypes', older/custom may have neither.
-        if spec.find('typedocs'):
+        if spec.find('typedocs') is not None:
             libdoc.type_docs = self._parse_type_docs(spec)
         else:
             libdoc.type_docs = self._parse_data_types(spec)
@@ -46,11 +46,11 @@ class XmlDocBuilder:
 
     def _parse_spec(self, path):
         if not os.path.isfile(path):
-            raise DataError("Spec file '%s' does not exist." % path)
+            raise DataError(f"Spec file '{path}' does not exist.")
         with ETSource(path) as source:
             root = ET.parse(source).getroot()
         if root.tag != 'keywordspec':
-            raise DataError("Invalid spec file '%s'." % path)
+            raise DataError(f"Invalid spec file '{path}'.")
         version = root.get('specversion')
         if version not in ('3', '4'):
             raise DataError(f"Invalid spec file version '{version}'. "
@@ -61,12 +61,12 @@ class XmlDocBuilder:
         return [self._create_keyword(elem, lib_source) for elem in spec.findall(path)]
 
     def _create_keyword(self, elem, lib_source):
-        # "deprecated" attribute isn't read because it is read from the doc
-        # automatically. That should probably be changed at some point.
         kw = KeywordDoc(name=elem.get('name', ''),
                         doc=elem.find('doc').text or '',
                         shortdoc=elem.find('shortdoc').text or '',
                         tags=[t.text for t in elem.findall('tags/tag')],
+                        private=elem.get('private', 'false') == 'true',
+                        deprecated=elem.get('deprecated', 'false') == 'true',
                         source=elem.get('source') or lib_source,
                         lineno=int(elem.get('lineno', -1)))
         self._create_arguments(elem, kw)

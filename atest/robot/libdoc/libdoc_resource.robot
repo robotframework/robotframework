@@ -199,7 +199,7 @@ Keyword Tags Should Be
 
 Specfile Tags Should Be
     [Arguments]    @{expected}
-    ${tags}    Get Elements Texts    ${LIBDOC}    xpath=tags/tag
+    ${tags}=    Get Elements Texts    ${LIBDOC}    xpath=tags/tag
     Should Be Equal    ${tags}    ${expected}
 
 Keyword Source Should Be
@@ -222,6 +222,16 @@ Keyword Should Not Have Lineno
     [Arguments]    ${index}    ${xpath}=keywords/kw
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}
     Element Should Not Have Attribute    ${kws}[${index}]    lineno
+
+Keyword Should Be Private
+    [Arguments]    ${index}
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=keywords/kw
+    Element Attribute Should be    ${kws}[${index}]    private    true
+
+Keyword Should Not Be Private
+    [Arguments]    ${index}
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=keywords/kw
+    Element Should Not Have Attribute    ${kws}[${index}]    private
 
 Keyword Should Be Deprecated
     [Arguments]    ${index}

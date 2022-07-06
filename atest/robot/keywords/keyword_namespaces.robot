@@ -25,6 +25,11 @@ Keyword From Test Case File Overrides Keywords From Resources And Libraries
 Keyword From Resource Overrides Keywords From Libraries
     Check Test Case    ${TEST NAME}
 
+Local keyword in resource file has precedence over keywords in other resource files
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.body[0].body[0].body[0].msgs[0]}    Keyword in resource 1
+    Check Log Message    ${tc.body[1].body[0].body[0].msgs[0]}    Keyword in resource 2
+
 Keyword From Custom Library Overrides Keywords From Standard Library
     ${tc} =    Check Test Case    ${TEST NAME}
     Verify Override Message    ${ERRORS[1]}    ${tc.kws[0].msgs[0]}    Comment    BuiltIn
