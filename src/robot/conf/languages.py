@@ -23,6 +23,23 @@ class Languages:
 
     def __init__(self, languages):
         self.languages = self._get_languages(languages)
+        self.setting_headers = set()
+        self.variable_headers = set()
+        self.test_case_headers = set()
+        self.task_headers = set()
+        self.keyword_headers = set()
+        self.comment_headers = set()
+        self.settings = {}
+        self.bdd_prefixes = set()
+        for lang in self.languages:
+            self.setting_headers |= lang.setting_headers
+            self.variable_headers |= lang.variable_headers
+            self.test_case_headers |= lang.test_case_headers
+            self.task_headers |= lang.task_headers
+            self.keyword_headers |= lang.keyword_headers
+            self.comment_headers |= lang.comment_headers
+            self.settings.update(lang.settings)
+            self.bdd_prefixes |= lang.bdd_prefixes
 
     def _get_languages(self, languages):
         languages = self._resolve_languages(languages)
@@ -53,6 +70,9 @@ class Languages:
             lang = os.path.abspath(lang)
         module = Importer('language file').import_module(lang)
         return [value for _, value in inspect.getmembers(module, is_language)]
+
+    def translate_setting(self, name):
+        return self.settings.get(name, name)
 
     def __iter__(self):
         return iter(self.languages)

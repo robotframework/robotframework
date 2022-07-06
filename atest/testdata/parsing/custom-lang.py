@@ -27,4 +27,4 @@ class Custom(Language):
     tags = 'S 14'
     timeout = 'S 15'
     arguments = 'S 16'
-    bdd_prefixes = {}
+    bdd_prefixes = set()

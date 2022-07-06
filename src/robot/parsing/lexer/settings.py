@@ -51,15 +51,15 @@ class Settings:
         'Library',
     )
 
-    def __init__(self, markers):
+    def __init__(self, languages):
         self.settings = {n: None for n in self.names}
-        self.markers = markers
+        self.languages = languages
 
     def lex(self, statement):
         setting = statement[0]
         orig = self._format_name(setting.value)
         name = normalize_whitespace(orig).title()
-        name = self.markers.translate(name)
+        name = self.languages.translate_setting(name)
         if name in self.aliases:
             name = self.aliases[name]
         try:

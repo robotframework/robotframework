@@ -300,12 +300,11 @@ class KeywordStore:
         if len(parts) < 2:
             return None
         prefix, keyword = parts
-        for lang in self.languages:
-            if prefix.title() in lang.bdd_prefixes:
-                runner = self._get_runner(keyword)
-                if runner:
-                    runner = copy.copy(runner)
-                    runner.name = name
+        if prefix.title() in self.languages.bdd_prefixes:
+            runner = self._get_runner(keyword)
+            if runner:
+                runner = copy.copy(runner)
+                runner.name = name
                 return runner
         return None
 
