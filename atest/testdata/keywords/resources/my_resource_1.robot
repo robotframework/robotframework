@@ -14,6 +14,9 @@ Keyword In All Resources And Libraries
 Keyword In Resource 1 And Libraries
     Log    Keyword in resource 1
 
+Use test case file keyword even when local keyword with same name exists
+    Keyword Everywhere
+
 Keyword Everywhere
     Log    Keyword in resource 1
 

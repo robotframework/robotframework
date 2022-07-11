@@ -315,8 +315,28 @@ class KeywordStore:
         return runner
 
     def _get_runner_from_test_case_file(self, name):
-        if name in self.user_keywords.handlers:
-            return self.user_keywords.handlers.create_runner(name)
+        if name not in self.user_keywords.handlers:
+            return None
+        runner = self.user_keywords.handlers.create_runner(name)
+        ctx = EXECUTION_CONTEXTS.current
+        caller = ctx.user_keywords[-1] if ctx.user_keywords else ctx.test
+        if caller and runner.source != caller.source:
+            local_runner = self._get_runner_from_resource_file(name, caller.source)
+            if local_runner:
+                message = (
+                    f"Keyword '{caller.longname}' called keyword '{name}' that "
+                    f"exist both in the same resource file and in the test case "
+                    f"file using that resource. The keyword in the test case file "
+                    f"is used now, but this will change in Robot Framework 6.0."
+                )
+                runner.pre_run_messages += Message(message, level='WARN'),
+        return runner
+
+    def _get_runner_from_resource_file(self, name, source):
+        for resource in self.resources.values():
+            if resource.source == source and name in resource.handlers:
+                return resource.handlers.create_runner(name)
+        return None
 
     def _get_runner_from_resource_files(self, name):
         found = [lib.handlers.create_runner(name)
@@ -386,18 +406,14 @@ class KeywordStore:
             custom_with_name = f" imported as '{custom.library.name}'"
         if standard.library.name != standard.library.orig_name:
             standard_with_name = f" imported as '{standard.library.name}'"
-        warning = Message(
+        message = (
             f"Keyword '{standard.name}' found both from a custom library "
             f"'{custom.library.orig_name}'{custom_with_name} and a standard library "
             f"'{standard.library.orig_name}'{standard_with_name}. The custom keyword "
             f"is used. To select explicitly, and to get rid of this warning, use "
-            f"either '{custom.longname}' or '{standard.longname}'.",
-            level='WARN'
+            f"either '{custom.longname}' or '{standard.longname}'."
         )
-        if custom.pre_run_messages:
-            custom.pre_run_messages.append(warning)
-        else:
-            custom.pre_run_messages = [warning]
+        custom.pre_run_messages += Message(message, level='WARN'),
 
     def _get_explicit_runner(self, name):
         found = []

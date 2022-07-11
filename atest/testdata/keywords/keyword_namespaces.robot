@@ -56,6 +56,9 @@ Keyword From Test Case File Overrides Keywords From Resources And Libraries
 Keyword From Resource Overrides Keywords From Libraries
     Keyword In Resource Overrides Libraries
 
+Keyword From Test Case File Overriding Local Keyword In Resource File Is Deprecated
+    Use test case file keyword even when local keyword with same name exists
+
 Local keyword in resource file has precedence over keywords in other resource files
     Use local keyword that exists also in another resource 1
     Use local keyword that exists also in another resource 2
