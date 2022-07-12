@@ -104,7 +104,7 @@ class Fr(Language):
     bdd_prefixes = {'Étant donné', 'Lorsque', 'Alors', 'Et', 'Mais'}
 
 
-class Pt(Language):
+class Pt-Br(Language):
     """Portuguese, Brazilian"""
     setting_headers = {'Configuração', 'Configurações'}
     variable_headers = {'Variável', 'Variáveis'}
