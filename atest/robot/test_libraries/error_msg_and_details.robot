@@ -104,11 +104,9 @@ Verify Test Case, Error In Log And No Details
 
 Verify Traceback
     [Arguments]    ${msg}    @{entries}    ${error}
-    ${exp} =    Set Variable    Traceback \\(most recent call last\\):
+    ${exp} =    Set Variable    Traceback (most recent call last):
     FOR    ${path}    ${func}    ${text}    IN    @{entries}
         ${path} =    Normalize Path    ${DATADIR}/${path}
-        ${path}    ${func}    ${text} =    Regexp Escape    ${path}    ${func}    ${text}
-        ${exp} =    Set Variable    ${exp}\n\\s+File ".*${path}.*", line \\d+, in ${func}\n\\s+${text}
+        ${exp} =    Set Variable    ${exp}\n${SPACE*2}File "${path}", line *, in ${func}\n${SPACE*4}${text}
     END
-    Should Match Regexp    ${msg.message}    ^${exp}\n${error}$
-    Should Be Equal    ${msg.level}    DEBUG
+    Check Log Message    ${msg}    ${exp}\n${error}    DEBUG    pattern=True    traceback=True
