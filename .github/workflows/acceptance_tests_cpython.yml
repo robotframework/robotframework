@@ -26,7 +26,7 @@ jobs:
             set_codepage: chcp 850
         exclude:
           - os: windows-latest
-            python-version: 'pypy-3.8'
+            python-version: [ 'pypy-3.8', '3.11.0-beta - 3.11' ]
 
     runs-on: ${{ matrix.os }}
 
