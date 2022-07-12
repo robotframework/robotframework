@@ -20,6 +20,14 @@ Invalid
     ...    .*${USAGE TIP}
     Should Match Regexp    ${result.stderr}    (?s)^\\[ ERROR \\] ${error}$
 
+Portuguese language test case
+    Run Tests    --lang pt    parsing/portuguese_test.robot
+    Validate Translations
+
+Portuguese language task
+    Run Tests    --lang pt-pt    parsing/portuguese_task.robot
+    Validate Translations
+
 *** Keywords ***
 Validate Translations
     Should Be Equal    ${SUITE.doc}                   Suite documentation.

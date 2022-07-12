@@ -191,3 +191,35 @@ class Fi(Language):
     timeout = 'Aikaraja'
     arguments = 'Argumentit'
     bdd_prefixes = {'Oletetaan', 'Kun', 'Niin', 'Ja', 'Mutta'}
+
+
+class Pt(Language):
+    """Portuguese pt-pt"""
+    # https://robotframework.crowdin.com/robot-framework
+    # 2022/07/12
+    setting_headers = {'Definição', 'Definições'}
+    variable_headers = {'Variável', 'Variáveis'}
+    test_case_headers = {'Caso de Teste', 'Casos de Teste'}
+    task_headers = {'Tarefa', 'Tarefas'}
+    keyword_headers = {'Palavra-Chave', 'Palavras-Chave'}
+    comment_headers = {'Comentário', 'Comentários'}
+    library = 'Biblioteca'
+    resource = 'Recurso'
+    variables = 'Variável'
+    documentation = 'Documentação'
+    metadata = 'Metadados'
+    suite_setup = 'Inicialização de Suíte'
+    suite_teardown = 'Finalização de Suíte'
+    test_setup = 'Inicialização de Teste'
+    test_teardown = 'Finalização de Teste'
+    test_template = 'Modelo de Teste'
+    test_timeout = 'Tempo Limite de Teste'
+    test_tags = 'Etiquetas de Testes'
+    keyword_tags = 'Etiquetas de Palavra-Chave'
+    tags = 'Etiquetas'
+    setup = 'Inicialização'
+    teardown = 'Finalização'
+    template = 'Modelo'
+    timeout = 'Tempo Limite'
+    arguments = 'Argumentos'
+    bdd_prefixes = {'Dado', 'Quando', 'Então', 'E', 'Mas'}
