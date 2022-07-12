@@ -31,7 +31,7 @@ jobs:
       - name: Setup python for starting the tests
         uses: actions/setup-python@v4.0.0
         with:
-          python-version: 3.10
+          python-version: '3.10'
           architecture: 'x64'
 
       - name: Get test starter Python at Windows
