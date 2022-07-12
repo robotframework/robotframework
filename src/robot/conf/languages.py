@@ -253,6 +253,36 @@ class Nl(Language):
     bdd_prefixes = {'Stel', 'Als', 'Dan', 'En', 'Maar'}
 
 
+class De(Language):
+    """German"""
+    setting_headers = {'Einstellung', 'Einstellungen'}
+    variable_headers = {'Variable', 'Variablen'}
+    test_case_headers = {'Testfall', 'Testfälle'}
+    task_headers = {'Aufgabe', 'Aufgaben'}
+    keyword_headers = {'Schlüsselwort', 'Schlüsselwörter'}
+    comment_headers = {'Kommentar', 'Kommentare'}
+    library = 'Bibliothek'
+    resource = 'Ressource'
+    variables = 'Variable'
+    documentation = 'Dokumentation'
+    metadata = 'Metadaten'
+    suite_setup = 'Suitevorbereitung'
+    suite_teardown = 'Suitenachbereitung'
+    test_setup = 'Testvorbereitung'
+    test_teardown = 'Testnachbereitung'
+    test_template = 'Testvorlage'
+    test_timeout = 'Testzeitlimit'
+    test_tags = 'Test Marker'
+    keyword_tags = 'Schlüsselwort Marker'
+    tags = 'Marker'
+    setup = 'Vorbereitung'
+    teardown = 'Nachbereitung'
+    template = 'Vorlage'
+    timeout = 'Zeitlimit'
+    arguments = 'Argumente'
+    bdd_prefixes = {'Angenommen', 'Wenn', 'Dann', 'Und', 'Aber'}
+
+
 class Fr(Language):
     """French"""
     setting_headers = {'Paramètre', 'Paramètres'}
