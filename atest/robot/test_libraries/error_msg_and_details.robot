@@ -84,10 +84,12 @@ Include internal traces when ROBOT_INTERNAL_TRACE is set
     Set Environment Variable    ROBOT_INTERNAL_TRACES    show, please
     Run Tests    -L DEBUG -t "Generic Failure"    test_libraries/error_msg_and_details.robot
     ${tc} =    Check Test Case    Generic Failure
-    ${tb} =    Set Variable    ${tc.kws[0].msgs[1].message}
+    # Remove '^^^' lines added by Python 3.11+.
+    ${tb} =    Evaluate    '\\n'.join(line for line in $tc.kws[0].msgs[1].message.splitlines() if line.strip('^ '))
     Should Start With    ${tb}    Traceback (most recent call last):
-    Should End With    ${tb}    raise exception(msg)\nAssertionError: foo != bar
-    Should Be True    len($tb.splitlines()) > 5
+    Should Contain       ${tb}    librarykeywordrunner.py
+    Should End With      ${tb}    raise exception(msg)\nAssertionError: foo != bar
+    Should Be True       len($tb.splitlines()) > 5
     [Teardown]    Remove Environment Variable    ROBOT_INTERNAL_TRACES
 
 *** Keyword ***
