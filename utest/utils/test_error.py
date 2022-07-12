@@ -98,6 +98,8 @@ Traceback \(most recent call last\):
             tb = ErrorDetails(error).traceback
         else:
             raise AssertionError
+        # Remove lines indicating error location with `^^^^` used by Python 3.11+.
+        tb = '\n'.join(line for line in tb.splitlines() if line.strip('^ '))
         if not re.match(expected, tb):
             raise AssertionError('\nExpected:\n%s\n\nActual:\n%s' % (expected, tb))
 
