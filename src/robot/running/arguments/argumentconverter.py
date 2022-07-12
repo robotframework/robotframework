@@ -50,6 +50,12 @@ class ArgumentConverter:
                 or self._dry_run and contains_variable(value, identifiers='$@&%')):
             return value
         conversion_error = None
+        # Don't convert None if argument has None as a default value.
+        # Python < 3.11 adds None to type hints automatically when using None as
+        # a default value which preserves None automatically. This code keeps
+        # the same behavior also with newer Python versions.
+        if value is None and name in spec.defaults and spec.defaults[name] is None:
+            return value
         if name in spec.types:
             converter = TypeConverter.converter_for(spec.types[name], self._converters)
             if converter:
