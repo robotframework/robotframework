@@ -23,8 +23,8 @@ Debugfile
     Debug file should contain    ${content}    + END SUITE: Normal
     Syslog Should Contain  DebugFile: DeBug.TXT
     ${path} =  Set Variable  [:.\\w /\\\\~+-]*DeBug\\.TXT
-    Stdout Should Match Regexp  (?s).*Debug: {3}${path}.*
-    Syslog Should Match Regexp  (?s).*Debug: ${path}.*
+    Stdout Should Match Regexp  .*Debug: {3}${path}.*
+    Syslog Should Match Regexp  .*Debug: ${path}.*
 
 Debugfile Log Level Should Always Be Debug
     [Documentation]  --loglevel option should not affect what's written to debugfile
