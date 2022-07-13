@@ -3,12 +3,12 @@ Resource         atest_resource.robot
 
 *** Test Cases ***
 Built-in language
-    Run Tests    --lang fi    parsing/finnish.robot
-    Validate Translations
+    Run Tests    --lang fi    parsing/finnish
+    Validate Translations    ${SUITE.suites[0]}
 
 Custom language
     Run Tests    --lang ${DATADIR}/parsing/custom-lang.py    parsing/custom.robot
-    Validate Translations
+    Validate Translations    ${SUITE}
 
 Invalid
     ${result} =    Run Tests Without Processing Output    --lang bad    parsing/finnish.robot
@@ -22,11 +22,12 @@ Invalid
 
 *** Keywords ***
 Validate Translations
-    Should Be Equal    ${SUITE.doc}                   Suite documentation.
-    Should Be Equal    ${SUITE.metadata}[Metadata]    Value
-    Should Be Equal    ${SUITE.setup.name}            Suite Setup
-    Should Be Equal    ${SUITE.teardown.name}         Suite Teardown
-    Should Be Equal    ${SUITE.status}                PASS
+    [Arguments]    ${suite}
+    Should Be Equal    ${suite.doc}                   Suite documentation.
+    Should Be Equal    ${suite.metadata}[Metadata]    Value
+    Should Be Equal    ${suite.setup.name}            Suite Setup
+    Should Be Equal    ${suite.teardown.name}         Suite Teardown
+    Should Be Equal    ${suite.status}                PASS
     ${tc} =            Check Test Case                Test without settings
     Should Be Equal    ${tc.doc}                      ${EMPTY}
     Should Be Equal    ${tc.tags}                     ${{['test', 'tags']}}
