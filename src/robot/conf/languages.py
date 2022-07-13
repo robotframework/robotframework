@@ -93,10 +93,15 @@ class Language:
     suite_setup = None
     suite_teardown = None
     test_setup = None
+    task_setup = None
     test_teardown = None
+    task_teardown = None
     test_template = None
+    task_template = None
     test_timeout = None
+    task_timeout = None
     test_tags = None
+    task_tags = None
     keyword_tags = None
     tags = None
     setup = None
@@ -117,10 +122,15 @@ class Language:
             self.suite_setup: En.suite_setup,
             self.suite_teardown: En.suite_teardown,
             self.test_setup: En.test_setup,
+            self.task_setup: En.task_setup,
             self.test_teardown: En.test_teardown,
+            self.task_teardown: En.task_teardown,
             self.test_template: En.test_template,
+            self.task_template: En.task_template,
             self.test_timeout: En.test_timeout,
+            self.task_timeout: En.task_timeout,
             self.test_tags: En.test_tags,
+            self.task_tags: En.task_tags,
             self.keyword_tags: En.keyword_tags,
             self.tags: En.tags,
             self.setup: En.setup,
@@ -148,10 +158,15 @@ class En(Language):
     suite_setup = 'Suite Setup'
     suite_teardown = 'Suite Teardown'
     test_setup = 'Test Setup'
+    task_setup = 'Task Setup'
     test_teardown = 'Test Teardown'
+    task_teardown = 'Task Teardown'
     test_template = 'Test Template'
+    task_template = 'Task Template'
     test_timeout = 'Test Timeout'
+    task_timeout = 'Task Timeout'
     test_tags = 'Test Tags'
+    task_tags = 'Task Tags'
     keyword_tags = 'Keyword Tags'
     setup = 'Setup'
     teardown = 'Teardown'
@@ -179,10 +194,15 @@ class Fi(Language):
     suite_setup = 'Setin Alustus'
     suite_teardown = 'Setin Purku'
     test_setup = 'Testin Alustus'
+    task_setup = 'Tehtävän Alustus'
     test_teardown = 'Testin Purku'
+    task_teardown = 'Tehtävän Purku'
     test_template = 'Testin Malli'
+    task_template = 'Tehtävän Malli'
     test_timeout = 'Testin Aikaraja'
+    task_timeout = 'Tehtävän Aikaraja'
     test_tags = 'Testin Tagit'
+    task_tags = 'Tehtävän Tagit'
     keyword_tags = 'Avainsanan Tagit'
     setup = 'Alustus'
     teardown = 'Purku'

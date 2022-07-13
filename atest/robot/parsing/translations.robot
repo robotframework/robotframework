@@ -3,12 +3,17 @@ Resource         atest_resource.robot
 
 *** Test Cases ***
 Built-in language
-    Run Tests    --lang fi    parsing/finnish
-    Validate Translations    ${SUITE.suites[0]}
+    Run Tests    --language fi    parsing/finnish/tests.robot
+    Validate Translations
 
 Custom language
     Run Tests    --lang ${DATADIR}/parsing/custom-lang.py    parsing/custom.robot
-    Validate Translations    ${SUITE}
+    Validate Translations
+
+Task translations
+    [Documentation]    Also test that '--language' works when running a directory.
+    Run Tests    --language fi --rpa    parsing/finnish
+    Validate Task Translations
 
 Invalid
     ${result} =    Run Tests Without Processing Output    --lang bad    parsing/finnish.robot
@@ -22,12 +27,11 @@ Invalid
 
 *** Keywords ***
 Validate Translations
-    [Arguments]    ${suite}
-    Should Be Equal    ${suite.doc}                   Suite documentation.
-    Should Be Equal    ${suite.metadata}[Metadata]    Value
-    Should Be Equal    ${suite.setup.name}            Suite Setup
-    Should Be Equal    ${suite.teardown.name}         Suite Teardown
-    Should Be Equal    ${suite.status}                PASS
+    Should Be Equal    ${SUITE.doc}                   Suite documentation.
+    Should Be Equal    ${SUITE.metadata}[Metadata]    Value
+    Should Be Equal    ${SUITE.setup.name}            Suite Setup
+    Should Be Equal    ${SUITE.teardown.name}         Suite Teardown
+    Should Be Equal    ${SUITE.status}                PASS
     ${tc} =            Check Test Case                Test without settings
     Should Be Equal    ${tc.doc}                      ${EMPTY}
     Should Be Equal    ${tc.tags}                     ${{['test', 'tags']}}
@@ -48,3 +52,18 @@ Validate Translations
     Should Be Equal    ${tc.body[0].timeout}          1 hour
     Should Be Equal    ${tc.body[0].teardown.name}    BuiltIn.No Operation
 
+Validate Task Translations
+    ${tc} =            Check Test Case                Task without settings
+    Should Be Equal    ${tc.doc}                      ${EMPTY}
+    Should Be Equal    ${tc.tags}                     ${{['task', 'tags']}}
+    Should Be Equal    ${tc.timeout}                  1 minute
+    Should Be Equal    ${tc.setup.name}               Task Setup
+    Should Be Equal    ${tc.teardown.name}            Task Teardown
+    Should Be Equal    ${tc.body[0].name}             Task Template
+    ${tc} =            Check Test Case                Task with settings
+    Should Be Equal    ${tc.doc}                      Task documentation.
+    Should Be Equal    ${tc.tags}                     ${{['task', 'tags', 'own tag']}}
+    Should Be Equal    ${tc.timeout}                  ${NONE}
+    Should Be Equal    ${tc.setup.name}               ${NONE}
+    Should Be Equal    ${tc.teardown.name}            ${NONE}
+    Should Be Equal    ${tc.body[0].name}             BuiltIn.Log
