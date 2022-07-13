@@ -13,11 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .markers import Markers
-from .sections import (InitFileSections, TestCaseFileSections,
-                       ResourceFileSections)
-from .settings import (InitFileSettings, TestCaseFileSettings,
-                       ResourceFileSettings, TestCaseSettings, KeywordSettings)
+from robot.conf import Languages
+from robot.utils import normalize_whitespace
+
+from .settings import (InitFileSettings, TestCaseFileSettings, ResourceFileSettings,
+                       TestCaseSettings, KeywordSettings)
+from .tokens import Token
 
 
 class LexingContext:
@@ -25,10 +26,10 @@ class LexingContext:
 
     def __init__(self, settings=None, lang=None):
         if not settings:
-            self.markers = Markers(lang)
-            self.settings = self.settings_class(self.markers)
+            self.languages = lang if isinstance(lang, Languages) else Languages(lang)
+            self.settings = self.settings_class(self.languages)
         else:
-            self.markers = settings.markers
+            self.languages = settings.languages
             self.settings = settings
 
     def lex_setting(self, statement):
@@ -36,55 +37,92 @@ class LexingContext:
 
 
 class FileContext(LexingContext):
-    sections_class = None
 
     def __init__(self, settings=None, lang=None):
         super().__init__(settings, lang)
-        # TODO: should .sections be removed as unnecessary indirection?
-        self.sections = self.sections_class(self.markers)
-
-    def setting_section(self, statement):
-        return self.sections.setting(statement)
-
-    def variable_section(self, statement):
-        return self.sections.variable(statement)
-
-    def test_case_section(self, statement):
-        return self.sections.test_case(statement)
-
-    def task_section(self, statement):
-        return self.sections.task(statement)
-
-    def keyword_section(self, statement):
-        return self.sections.keyword(statement)
-
-    def comment_section(self, statement):
-        return self.sections.comment(statement)
 
     def keyword_context(self):
-        return KeywordContext(settings=KeywordSettings(self.markers))
+        return KeywordContext(settings=KeywordSettings(self.languages))
+
+    def setting_section(self, statement):
+        return self._handles_section(statement, self.languages.setting_headers)
+
+    def variable_section(self, statement):
+        return self._handles_section(statement, self.languages.variable_headers)
+
+    def test_case_section(self, statement):
+        return False
+
+    def task_section(self, statement):
+        return False
+
+    def keyword_section(self, statement):
+        return self._handles_section(statement, self.languages.keyword_headers)
+
+    def comment_section(self, statement):
+        return self._handles_section(statement, self.languages.comment_headers)
 
     def lex_invalid_section(self, statement):
-        self.sections.lex_invalid(statement)
+        message, fatal = self._get_invalid_section_error(statement[0].value)
+        statement[0].set_error(message, fatal)
+        for token in statement[1:]:
+            token.type = Token.COMMENT
+
+    def _get_invalid_section_error(self, header):
+        raise NotImplementedError
+
+    def _handles_section(self, statement, headers):
+        marker = statement[0].value
+        return marker.startswith('*') and self._normalize(marker) in headers
+
+    def _normalize(self, marker):
+        return normalize_whitespace(marker).strip('* ').title()
 
 
 class TestCaseFileContext(FileContext):
-    sections_class = TestCaseFileSections
     settings_class = TestCaseFileSettings
 
     def test_case_context(self):
-        return TestCaseContext(settings=TestCaseSettings(self.settings,
-                                                         self.markers))
+        return TestCaseContext(settings=TestCaseSettings(self.settings, self.languages))
+
+    def test_case_section(self, statement):
+        return self._handles_section(statement, self.languages.test_case_headers)
+
+    def task_section(self, statement):
+        return self._handles_section(statement, self.languages.task_headers)
+
+    def _get_invalid_section_error(self, header):
+        return (f"Unrecognized section header '{header}'. Valid sections: "
+                f"'Settings', 'Variables', 'Test Cases', 'Tasks', 'Keywords' "
+                f"and 'Comments'."), False
 
 
 class ResourceFileContext(FileContext):
-    sections_class = ResourceFileSections
     settings_class = ResourceFileSettings
+
+    def _get_invalid_section_error(self, header):
+        name = self._normalize(header)
+        if name in self.languages.test_case_headers | self.languages.task_headers:
+            message = f"Resource file with '{name}' section is invalid."
+            fatal = True
+        else:
+            message = (f"Unrecognized section header '{header}'. Valid sections: "
+                       f"'Settings', 'Variables', 'Keywords' and 'Comments'.")
+            fatal = False
+        return message, fatal
 
 
 class InitFileContext(FileContext):
-    sections_class = InitFileSections
     settings_class = InitFileSettings
+
+    def _get_invalid_section_error(self, header):
+        name = self._normalize(header)
+        if name in self.languages.test_case_headers | self.languages.task_headers:
+            message = f"'{name}' section is not allowed in suite initialization file."
+        else:
+            message = (f"Unrecognized section header '{header}'. Valid sections: "
+                       f"'Settings', 'Variables', 'Keywords' and 'Comments'.")
+        return message, False
 
 
 class TestCaseContext(LexingContext):

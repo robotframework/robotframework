@@ -373,7 +373,7 @@ Traceback (most recent call last):
                 return
             if line == start:
                 include = True
-            if include:
+            if include and line.strip('^ '):
                 yield line
 
 

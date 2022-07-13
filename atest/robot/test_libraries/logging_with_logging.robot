@@ -36,7 +36,7 @@ Log exception
     ...    ${SPACE*2}File "*", line 56, in log_exception
     ...    ${SPACE*4}raise ValueError('Bang!')
     ...    ValueError: Bang!
-    Check log message    ${tc.kws[0].msgs[0]}    ${message}    ERROR    pattern=True
+    Check log message    ${tc.kws[0].msgs[0]}    ${message}    ERROR    pattern=True    traceback=True
 
 Messages below threshold level are ignored fully
     ${tc}=    Check test case    ${TEST NAME}

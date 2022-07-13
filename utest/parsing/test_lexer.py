@@ -4,6 +4,7 @@ import tempfile
 from io import StringIO
 from pathlib import Path
 
+from robot.conf import Languages
 from robot.utils.asserts import assert_equal
 from robot.parsing import get_tokens, get_init_tokens, get_resource_tokens, Token
 
@@ -2191,6 +2192,37 @@ class TestBreak(unittest.TestCase):
                     (name_type, 'Name', 2, 0),
                     (T.EOS, '', 2, 4)] + expected
         assert_tokens(data, expected, data_only=True)
+
+
+class TestLanguageConfig(unittest.TestCase):
+
+    def test_lang_as_string(self):
+        self._test('fi')
+
+    def test_lang_as_list(self):
+        self._test(['fi'])
+
+    def test_lang_as_Languages(self):
+        self._test(Languages('fi'))
+
+    def _test(self, lang):
+        data = '''\
+*** Asetukset ***
+Dokumentaatio    Documentation
+'''
+        expected = [
+            (T.SETTING_HEADER, '*** Asetukset ***', 1, 0),
+            (T.EOL, '\n', 1, 17),
+            (T.EOS, '', 1, 18),
+            (T.DOCUMENTATION, 'Dokumentaatio', 2, 0),
+            (T.SEPARATOR, '    ', 2, 13),
+            (T.ARGUMENT, 'Documentation', 2, 17),
+            (T.EOL, '\n', 2, 30),
+            (T.EOS, '', 2, 31),
+        ]
+        assert_tokens(data, expected, get_tokens, lang=lang)
+        assert_tokens(data, expected, get_init_tokens, lang=lang)
+        assert_tokens(data, expected, get_resource_tokens, lang=lang)
 
 
 if __name__ == '__main__':

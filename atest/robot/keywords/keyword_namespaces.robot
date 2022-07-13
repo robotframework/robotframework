@@ -25,6 +25,15 @@ Keyword From Test Case File Overrides Keywords From Resources And Libraries
 Keyword From Resource Overrides Keywords From Libraries
     Check Test Case    ${TEST NAME}
 
+Keyword From Test Case File Overriding Local Keyword In Resource File Is Deprecated
+    ${tc} =    Check Test Case    ${TEST NAME}
+    ${message} =    Catenate
+    ...    Keyword 'my_resource_1.Use test case file keyword even when local keyword with same name exists' called
+    ...    keyword 'Keyword Everywhere' that exist both in the same resource file and in the test case file using
+    ...    that resource. The keyword in the test case file is used now, but this will change in Robot Framework 6.0.
+    Check Log Message    ${tc.body[0].body[0].msgs[0]}    ${message}    WARN
+    Check Log Message    ${ERRORS}[1]                     ${message}    WARN
+
 Local keyword in resource file has precedence over keywords in other resource files
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.body[0].body[0].body[0].msgs[0]}    Keyword in resource 1
@@ -32,12 +41,12 @@ Local keyword in resource file has precedence over keywords in other resource fi
 
 Keyword From Custom Library Overrides Keywords From Standard Library
     ${tc} =    Check Test Case    ${TEST NAME}
-    Verify Override Message    ${ERRORS[1]}    ${tc.kws[0].msgs[0]}    Comment    BuiltIn
-    Verify Override Message    ${ERRORS[2]}    ${tc.kws[1].msgs[0]}    Copy Directory    OperatingSystem
+    Verify Override Message    ${ERRORS}[2]    ${tc.kws[0].msgs[0]}    Comment    BuiltIn
+    Verify Override Message    ${ERRORS}[3]    ${tc.kws[1].msgs[0]}    Copy Directory    OperatingSystem
 
 Keyword From Custom Library Overrides Keywords From Standard Library Even When Std Lib Imported With Different Name
     ${tc} =    Check Test Case    ${TEST NAME}
-    Verify Override Message    ${ERRORS[3]}    ${tc.kws[0].msgs[0]}    Replace String
+    Verify Override Message    ${ERRORS}[4]    ${tc.kws[0].msgs[0]}    Replace String
     ...    String    MyLibrary2    Std With Name    My With Name
 
 No Warning When Custom Library Keyword Is Registered As RunKeyword Variant And It Has Same Name As Std Keyword

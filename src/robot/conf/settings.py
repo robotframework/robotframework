@@ -142,7 +142,7 @@ class _BaseSettings:
         return value
 
     def _process_doc(self, value):
-        if isinstance(value, Path) or (os.path.exists(value) and value.strip() == value):
+        if isinstance(value, Path) or (os.path.isfile(value) and value.strip() == value):
             try:
                 with open(value) as f:
                     value = f.read()
@@ -505,8 +505,11 @@ class RobotSettings(_BaseSettings):
 
     @property
     def languages(self):
-        if not self._languages:
-            self._languages = Languages(self['Language'])
+        if self._languages is None:
+            try:
+                self._languages = Languages(self['Language'])
+            except DataError as err:
+                self._raise_invalid('Language', err)
         return self._languages
 
     @property

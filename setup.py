@@ -27,6 +27,7 @@ Programming Language :: Python :: 3.7
 Programming Language :: Python :: 3.8
 Programming Language :: Python :: 3.9
 Programming Language :: Python :: 3.10
+Programming Language :: Python :: 3.11
 Programming Language :: Python :: Implementation :: CPython
 Programming Language :: Python :: Implementation :: PyPy
 Topic :: Software Development :: Testing
@@ -48,8 +49,15 @@ setup(
     version      = VERSION,
     author       = 'Pekka Kl\xe4rck',
     author_email = 'peke@eliga.fi',
-    url          = 'https://robotframework.org/',
-    download_url = 'https://pypi.org/project/robotframework/',
+    url          = 'https://robotframework.org',
+    project_urls = {
+        'Source': 'https://github.com/robotframework/robotframework',
+        'Issue Tracker': 'https://github.com/robotframework/robotframework/issues',
+        'Documentation': 'https://robotframework.org/robotframework',
+        'Release Notes': f'https://github.com/robotframework/robotframework/blob/master/doc/releasenotes/rf-{VERSION}.rst',
+        'Twitter': 'https://twitter.com/robotframework',
+    },
+    download_url = 'https://pypi.org/project/robotframework',
     license      = 'Apache License 2.0',
     description  = DESCRIPTION,
     long_description = LONG_DESCRIPTION,

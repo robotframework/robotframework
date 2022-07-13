@@ -11,7 +11,7 @@ Testin Tagit        test    tags
 Avainsanan Tagit    keyword    tags
 Kirjasto            OperatingSystem
 Resurssi            finnish.resource
-Muuttujat           variables.py
+Muuttujat           ../variables.py
 
 *** Muuttujat ***
 ${VARIABLE}         variable value

@@ -84,10 +84,12 @@ Include internal traces when ROBOT_INTERNAL_TRACE is set
     Set Environment Variable    ROBOT_INTERNAL_TRACES    show, please
     Run Tests    -L DEBUG -t "Generic Failure"    test_libraries/error_msg_and_details.robot
     ${tc} =    Check Test Case    Generic Failure
-    ${tb} =    Set Variable    ${tc.kws[0].msgs[1].message}
+    # Remove '^^^' lines added by Python 3.11+.
+    ${tb} =    Evaluate    '\\n'.join(line for line in $tc.kws[0].msgs[1].message.splitlines() if line.strip('^ '))
     Should Start With    ${tb}    Traceback (most recent call last):
-    Should End With    ${tb}    raise exception(msg)\nAssertionError: foo != bar
-    Should Be True    len($tb.splitlines()) > 5
+    Should Contain       ${tb}    librarykeywordrunner.py
+    Should End With      ${tb}    raise exception(msg)\nAssertionError: foo != bar
+    Should Be True       len($tb.splitlines()) > 5
     [Teardown]    Remove Environment Variable    ROBOT_INTERNAL_TRACES
 
 *** Keyword ***
@@ -104,11 +106,9 @@ Verify Test Case, Error In Log And No Details
 
 Verify Traceback
     [Arguments]    ${msg}    @{entries}    ${error}
-    ${exp} =    Set Variable    Traceback \\(most recent call last\\):
+    ${exp} =    Set Variable    Traceback (most recent call last):
     FOR    ${path}    ${func}    ${text}    IN    @{entries}
         ${path} =    Normalize Path    ${DATADIR}/${path}
-        ${path}    ${func}    ${text} =    Regexp Escape    ${path}    ${func}    ${text}
-        ${exp} =    Set Variable    ${exp}\n\\s+File ".*${path}.*", line \\d+, in ${func}\n\\s+${text}
+        ${exp} =    Set Variable    ${exp}\n${SPACE*2}File "${path}", line *, in ${func}\n${SPACE*4}${text}
     END
-    Should Match Regexp    ${msg.message}    ^${exp}\n${error}$
-    Should Be Equal    ${msg.level}    DEBUG
+    Check Log Message    ${msg}    ${exp}\n${error}    DEBUG    pattern=True    traceback=True

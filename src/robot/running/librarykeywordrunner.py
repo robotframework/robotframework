@@ -31,7 +31,7 @@ class LibraryKeywordRunner:
     def __init__(self, handler, name=None):
         self._handler = handler
         self.name = name or handler.name
-        self.pre_run_messages = None
+        self.pre_run_messages = ()
 
     @property
     def library(self):

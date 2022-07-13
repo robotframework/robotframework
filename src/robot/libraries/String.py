@@ -368,9 +368,11 @@ class String:
         String` if you do not need full regular expression powers (and
         complexity).
         """
-        if not is_truthy(partial_match):
-            pattern = '^%s$' % pattern
-        return self._get_matching_lines(string, re.compile(pattern).search)
+        if is_truthy(partial_match):
+            match = re.compile(pattern).search
+        else:
+            match = re.compile(pattern + '$').match
+        return self._get_matching_lines(string, match)
 
     def _get_matching_lines(self, string, matches):
         lines = string.splitlines()
