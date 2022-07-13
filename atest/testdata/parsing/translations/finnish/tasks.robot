@@ -26,5 +26,5 @@ Task Teardown
     No Operation
 
 Task Template
-    [Arguments]    ${msg}
+    [Argumentit]    ${msg}
     Log    ${msg}

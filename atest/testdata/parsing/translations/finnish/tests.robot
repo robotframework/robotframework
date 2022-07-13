@@ -10,8 +10,8 @@ Testin Aikaraja     1 minute
 Testin Tagit        test    tags
 Avainsanan Tagit    keyword    tags
 Kirjasto            OperatingSystem
-Resurssi            finnish.resource
-Muuttujat           ../variables.py
+Resurssi            resource.resource
+Muuttujat           ../../variables.py
 
 *** Muuttujat ***
 ${VARIABLE}         variable value

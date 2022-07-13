@@ -10,8 +10,8 @@ T ti               1 minute
 t Ta               test    tags
 k T                keyword    tags
 L                  OperatingSystem
-R                  custom.resource
-V                  variables.py
+R                  resource.resource
+V                  ../../variables.py
 
 *** H 2 ***
 ${VARIABLE}        variable value

@@ -2,17 +2,21 @@
 Resource         atest_resource.robot
 
 *** Test Cases ***
-Built-in language
-    Run Tests    --language fi    parsing/finnish/tests.robot
+Finnish
+    Run Tests    --language fi    parsing/translations/finnish/tests.robot
     Validate Translations
 
-Custom language
-    Run Tests    --lang ${DATADIR}/parsing/custom-lang.py    parsing/custom.robot
-    Validate Translations
-
-Task translations
+Finnish task aliases
     [Documentation]    Also test that '--language' works when running a directory.
-    Run Tests    --language fi --rpa    parsing/finnish
+    Run Tests    --language fi --rpa    parsing/translations/finnish
+    Validate Task Translations
+
+Custom
+    Run Tests    --lang ${DATADIR}/parsing/translations/custom/custom.py    parsing/translations/custom/tests.robot
+    Validate Translations
+
+Custom task aliases
+    Run Tests    --lang ${DATADIR}/parsing/translations/custom/custom.py --rpa    parsing/translations/custom
     Validate Task Translations
 
 Invalid
