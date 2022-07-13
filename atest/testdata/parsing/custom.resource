@@ -1,5 +1,5 @@
 *** h 1 ***
-S 1                 Example documentation.
+D                   Example documentation.
 
 *** h 2 ***
 ${RESOURCE FILE}    variable in resource file
