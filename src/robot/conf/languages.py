@@ -162,37 +162,6 @@ class En(Language):
     bdd_prefixes = {'Given', 'When', 'Then', 'And', 'But'}
 
 
-class Fi(Language):
-    # FIXME: Update based on terms agreed at
-    # https://robotframework.crowdin.com/robot-framework
-    setting_headers = {'Asetukset', 'Asetus'}
-    variable_headers = {'Muuttujat', 'Muuttuja'}
-    test_case_headers = {'Testit', 'Testi'}
-    task_headers = {'Tehtävät', 'Tehtävä'}
-    keyword_headers = {'Avainsanat', 'Avainsana'}
-    comment_headers = {'Kommentit', 'Kommentti'}
-    library = 'Kirjasto'
-    resource = 'Resurssi'
-    variables = 'Muuttujat'
-    documentation = 'Dokumentaatio'
-    metadata = 'Metadata'
-    suite_setup = 'Setin Alustus'
-    suite_teardown = 'Setin Purku'
-    test_setup = 'Testin Alustus'
-    test_teardown = 'Testin Purku'
-    test_template = 'Testin Malli'
-    test_timeout = 'Testin Aikaraja'
-    test_tags = 'Testin Tagit'
-    keyword_tags = 'Avainsanan Tagit'
-    setup = 'Alustus'
-    teardown = 'Purku'
-    template = 'Malli'
-    tags = 'Tagit'
-    timeout = 'Aikaraja'
-    arguments = 'Argumentit'
-    bdd_prefixes = {'Oletetaan', 'Kun', 'Niin', 'Ja', 'Mutta'}
-
-
 class Cs(Language):
     """Czech"""
     setting_headers = {'Nastavení', 'Nastavení', 'Nastavení', 'Nastavení'}
@@ -213,6 +182,11 @@ class Cs(Language):
     test_template = 'Šablona testu'
     test_timeout = 'Časový limit testu'
     test_tags = 'Štítky testů'
+    task_setup = 'Příprava úlohy'
+    task_teardown = 'Ukončení úlohy'
+    task_template = 'Šablona úlohy'
+    task_timeout = 'Časový limit úlohy'
+    task_tags = 'Štítky úloh'
     keyword_tags = 'Štítky klíčových slov'
     tags = 'Štítky'
     setup = 'Příprava'
@@ -243,6 +217,11 @@ class Nl(Language):
     test_template = 'Test Sjabloon'
     test_timeout = 'Test Time-out'
     test_tags = 'Test Labels'
+    task_setup = 'Taak Preconditie'
+    task_teardown = 'Taak Postconditie'
+    task_template = 'Taak Sjabloon'
+    task_timeout = 'Taak Time-out'
+    task_tags = 'Taak Labels'
     keyword_tags = 'Sleutelwoord Labels'
     tags = 'Labels'
     setup = 'Preconditie'
@@ -253,34 +232,39 @@ class Nl(Language):
     bdd_prefixes = {'Stel', 'Als', 'Dan', 'En', 'Maar'}
 
 
-class De(Language):
-    """German"""
-    setting_headers = {'Einstellung', 'Einstellungen'}
-    variable_headers = {'Variable', 'Variablen'}
-    test_case_headers = {'Testfall', 'Testfälle'}
-    task_headers = {'Aufgabe', 'Aufgaben'}
-    keyword_headers = {'Schlüsselwort', 'Schlüsselwörter'}
-    comment_headers = {'Kommentar', 'Kommentare'}
-    library = 'Bibliothek'
-    resource = 'Ressource'
-    variables = 'Variable'
-    documentation = 'Dokumentation'
-    metadata = 'Metadaten'
-    suite_setup = 'Suitevorbereitung'
-    suite_teardown = 'Suitenachbereitung'
-    test_setup = 'Testvorbereitung'
-    test_teardown = 'Testnachbereitung'
-    test_template = 'Testvorlage'
-    test_timeout = 'Testzeitlimit'
-    test_tags = 'Test Marker'
-    keyword_tags = 'Schlüsselwort Marker'
-    tags = 'Marker'
-    setup = 'Vorbereitung'
-    teardown = 'Nachbereitung'
-    template = 'Vorlage'
-    timeout = 'Zeitlimit'
-    arguments = 'Argumente'
-    bdd_prefixes = {'Angenommen', 'Wenn', 'Dann', 'Und', 'Aber'}
+class Fi(Language):
+    """Finnish"""
+    setting_headers = {'Asetus', 'Asetukset'}
+    variable_headers = {'Muuttuja', 'Muuttujat'}
+    test_case_headers = {'Testi', 'Testit'}
+    task_headers = {'Tehtävä', 'Tehtävät'}
+    keyword_headers = {'Avainsana', 'Avainsanat'}
+    comment_headers = {'Kommentti', 'Kommentit'}
+    library = 'Kirjasto'
+    resource = 'Resurssi'
+    variables = 'Muuttujat'
+    documentation = 'Dokumentaatio'
+    metadata = 'Metatiedot'
+    suite_setup = 'Setin Alustus'
+    suite_teardown = 'Setin Alasajo'
+    test_setup = 'Testin Alustus'
+    test_teardown = 'Testin Purku'
+    test_template = 'Testin Malli'
+    test_timeout = 'Testin Aikaraja'
+    test_tags = 'Testin Tagit'
+    task_setup = 'Tehtävän Alustus'
+    task_teardown = 'Tehtävän Purku'
+    task_template = 'Tehtävän Malli'
+    task_timeout = 'Tehtävän Aikaraja'
+    task_tags = 'Tehtävän Tagit'
+    keyword_tags = 'Avainsanan Tagit'
+    tags = 'Tagit'
+    setup = 'Ylösajo'
+    teardown = 'Alasajo'
+    template = 'Malli'
+    timeout = 'Aikaraja'
+    arguments = 'Argumentit'
+    bdd_prefixes = {'Oletetaan', 'Kun', 'Niin', 'Ja', 'Mutta'}
 
 
 class Fr(Language):
@@ -303,6 +287,11 @@ class Fr(Language):
     test_template = 'Modèle de test'
     test_timeout = 'Délai de test'
     test_tags = 'Étiquette de test'
+    task_setup = 'Mise en place de tâche'
+    task_teardown = 'Démontage de test'
+    task_template = 'Modèle de tâche'
+    task_timeout = 'Délai de tâche'
+    task_tags = 'Étiquette de tâche'
     keyword_tags = 'Etiquette de mot-clé'
     tags = 'Étiquette'
     setup = 'Mise en place'
@@ -311,6 +300,41 @@ class Fr(Language):
     timeout = 'Délai d'attente'
     arguments = 'Arguments'
     bdd_prefixes = {'Étant donné', 'Lorsque', 'Alors', 'Et', 'Mais'}
+
+
+class De(Language):
+    """German"""
+    setting_headers = {'Einstellung', 'Einstellungen'}
+    variable_headers = {'Variable', 'Variablen'}
+    test_case_headers = {'Testfall', 'Testfälle'}
+    task_headers = {'Aufgabe', 'Aufgaben'}
+    keyword_headers = {'Schlüsselwort', 'Schlüsselwörter'}
+    comment_headers = {'Kommentar', 'Kommentare'}
+    library = 'Bibliothek'
+    resource = 'Ressource'
+    variables = 'Variable'
+    documentation = 'Dokumentation'
+    metadata = 'Metadaten'
+    suite_setup = 'Suitevorbereitung'
+    suite_teardown = 'Suitenachbereitung'
+    test_setup = 'Testvorbereitung'
+    test_teardown = 'Testnachbereitung'
+    test_template = 'Testvorlage'
+    test_timeout = 'Testzeitlimit'
+    test_tags = 'Test Marker'
+    task_setup = 'Aufgabenvorbereitung'
+    task_teardown = 'Aufgabennachbereitung'
+    task_template = 'Aufgabenvorlage'
+    task_timeout = 'Aufgabenzeitlimit'
+    task_tags = 'Aufgaben Marker'
+    keyword_tags = 'Schlüsselwort Marker'
+    tags = 'Marker'
+    setup = 'Vorbereitung'
+    teardown = 'Nachbereitung'
+    template = 'Vorlage'
+    timeout = 'Zeitlimit'
+    arguments = 'Argumente'
+    bdd_prefixes = {'Angenommen', 'Wenn', 'Dann', 'Und', 'Aber'}
 
 
 class Pt-Br(Language):
@@ -332,8 +356,13 @@ class Pt-Br(Language):
     test_teardown = 'Finalização de Teste'
     test_template = 'Modelo de Teste'
     test_timeout = 'Tempo Limite de Teste'
-    test_tags = 'Etiquetas de Teste'
-    keyword_tags = 'Etiquetas de Palavra-Chave'
+    test_tags = 'Test Tags'
+    task_setup = 'Inicialização de Tarefa'
+    task_teardown = 'Finalização de Tarefa'
+    task_template = 'Modelo de Tarefa'
+    task_timeout = 'Tempo Limite de Tarefa'
+    task_tags = 'Task Tags'
+    keyword_tags = 'Keyword Tags'
     tags = 'Etiquetas'
     setup = 'Inicialização'
     teardown = 'Finalização'
@@ -363,7 +392,12 @@ class Pt(Language):
     test_template = 'Modelo de Teste'
     test_timeout = 'Tempo Limite de Teste'
     test_tags = 'Etiquetas de Testes'
-    keyword_tags = 'Etiquetas de Palavra-Chave'
+    task_setup = 'Inicialização de Tarefa'
+    task_teardown = 'Finalização de Tarefa'
+    task_template = 'Modelo de Tarefa'
+    task_timeout = 'Tempo Limite de Tarefa'
+    task_tags = 'Etiquetas de Tarefas'
+    keyword_tags = 'Etiquetas de Palavras-Chave'
     tags = 'Etiquetas'
     setup = 'Inicialização'
     teardown = 'Finalização'
