@@ -139,8 +139,7 @@ class Language:
             self.timeout: En.timeout,
             self.arguments: En.arguments,
         }
-        settings.pop(None, None)
-        return settings
+        return {name.title(): settings[name] for name in settings if name}
 
 
 class En(Language):
