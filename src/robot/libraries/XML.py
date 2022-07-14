@@ -22,6 +22,11 @@ try:
     from lxml import etree as lxml_etree
 except ImportError:
     lxml_etree = None
+else:
+    # `_Attrib` doesn't inherit `Mapping` and thus our `is_dict_like` doesn't
+    # recognize it. Registering explicitly avoids that problem.
+    from collections.abc import Mapping
+    Mapping.register(lxml_etree._Attrib)
 
 from robot.api import logger
 from robot.api.deco import keyword
