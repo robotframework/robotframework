@@ -271,10 +271,6 @@ class Fi(Language):
     test_timeout = 'Testin Aikaraja'
     task_timeout = 'Tehtävän Aikaraja'
     test_tags = 'Testin Tagit'
-    task_setup = 'Tehtävän Alustus'
-    task_teardown = 'Tehtävän Purku'
-    task_template = 'Tehtävän Malli'
-    task_timeout = 'Tehtävän Aikaraja'
     task_tags = 'Tehtävän Tagit'
     keyword_tags = 'Avainsanan Tagit'
     tags = 'Tagit'
@@ -356,7 +352,7 @@ class De(Language):
     bdd_prefixes = {'Angenommen', 'Wenn', 'Dann', 'Und', 'Aber'}
 
 
-class Pt-Br(Language):
+class PtBr(Language):
     """Portuguese, Brazilian"""
     setting_headers = {'Configuração', 'Configurações'}
     variable_headers = {'Variável', 'Variáveis'}
