@@ -474,6 +474,11 @@ keywords in the following example are executed:
        Should be Equal    5    6
        Log    This is executed
 
+Setting `robot:continue-on-failure` or `robot:recursive-continue-on-failure` in a
+test case does NOT alter the behaviour of a failure in the keyword(s) executed
+as part of the `[Setup]`:setting:: The test case is marked as failed and no
+test case keywords are executed.
+
 .. note:: The `robot:continue-on-failure` and `robot:recursive-continue-on-failure`
           tags are new in Robot Framework 4.1. They do not work properly with
           `WHILE` loops prior to Robot Framework 5.1.
