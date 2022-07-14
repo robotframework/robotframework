@@ -1,10 +1,10 @@
 *** Asetukset ***
 Dokumentaatio       Suite documentation.
-Metadata            Metadata    Value
+Metatiedot          Metadata    Value
 Setin Alustus       Suite Setup
-Setin Purku         Suite Teardown
+Setin Alasajo       Suite Teardown
 Testin Alustus      Test Setup
-Testin Purku        Test Teardown
+Testin Alasajo      Test Teardown
 Testin Malli        Test Template
 Testin Aikaraja     1 minute
 Testin Tagit        test    tags
@@ -24,7 +24,7 @@ Test with settings
     [Dokumentaatio]    Test documentation.
     [Tagit]            own tag
     [Alustus]          NONE
-    [Purku]            NONE
+    [Alasajo]          NONE
     [Malli]            NONE
     [Aikaraja]         NONE
     Keyword            ${VARIABLE}
@@ -54,7 +54,7 @@ Keyword
     [Tagit]            own tag
     [Aikaraja]         1h
     Should Be Equal    ${arg}    ${VARIABLE}
-    [Purku]            No Operation
+    [Alasajo]          No Operation
 
 *** Kommentit ***
 Ignored comments.

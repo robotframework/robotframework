@@ -260,11 +260,11 @@ class Fi(Language):
     documentation = 'Dokumentaatio'
     metadata = 'Metatiedot'
     suite_setup = 'Setin Alustus'
-    suite_teardown = 'Setin Purku'
+    suite_teardown = 'Setin Alasajo'
     test_setup = 'Testin Alustus'
     task_setup = 'Tehtävän Alustus'
-    test_teardown = 'Testin Purku'
-    task_teardown = 'Tehtävän Purku'
+    test_teardown = 'Testin Alasajo'
+    task_teardown = 'Tehtävän Alasajo'
     test_template = 'Testin Malli'
     task_template = 'Tehtävän Malli'
     test_timeout = 'Testin Aikaraja'
@@ -274,7 +274,7 @@ class Fi(Language):
     keyword_tags = 'Avainsanan Tagit'
     tags = 'Tagit'
     setup = 'Alustus'
-    teardown = 'Purku'
+    teardown = 'Alasajo'
     template = 'Malli'
     timeout = 'Aikaraja'
     arguments = 'Argumentit'
@@ -311,7 +311,7 @@ class Fr(Language):
     setup = 'Mise en place'
     teardown = 'Démontage'
     template = 'Modèle'
-    timeout = 'Délai d'attente'
+    timeout = "Délai d'attente"
     arguments = 'Arguments'
     bdd_prefixes = {'Étant donné', 'Lorsque', 'Alors', 'Et', 'Mais'}
 

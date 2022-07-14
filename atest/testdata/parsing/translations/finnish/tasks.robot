@@ -1,6 +1,6 @@
 *** Asetukset ***
 Tehtävän Alustus      Task Setup
-Tehtävän Purku        Task Teardown
+Tehtävän Alasajo      Task Teardown
 Tehtävän Malli        Task Template
 Tehtävän Aikaraja     1 minute
 Tehtävän Tagit        task    tags
@@ -13,7 +13,7 @@ Task with settings
     [Dokumentaatio]    Task documentation.
     [Tagit]            own tag
     [Alustus]          NONE
-    [Purku]            NONE
+    [Alasajo]          NONE
     [Malli]            NONE
     [Aikaraja]         NONE
     Log    Nothing to see here
