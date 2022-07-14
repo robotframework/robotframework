@@ -62,6 +62,9 @@ Get From Dictionary With Invalid Key
     Check Test Case    ${TEST NAME} 1
     Check Test Case    ${TEST NAME} 2
 
+Get From Dictionary With Default
+    Check Test Case    ${TEST NAME}
+
 Dictionary Should Contain Key
     Check Test Case    ${TEST NAME}
 

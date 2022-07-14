@@ -671,11 +671,12 @@ class _Dictionary:
         keys = self.get_dictionary_keys(dictionary, sort_keys=sort_keys)
         return [i for key in keys for i in (key, dictionary[key])]
 
-    def get_from_dictionary(self, dictionary, key):
+    def get_from_dictionary(self, dictionary, key, default=NOT_SET):
         """Returns a value from the given ``dictionary`` based on the given ``key``.
 
         If the given ``key`` cannot be found from the ``dictionary``, this
-        keyword fails.
+        keyword fails. If optional ``default`` value is given, it will be
+        returned instead of failing.
 
         The given dictionary is never altered by this keyword.
 
@@ -688,7 +689,10 @@ class _Dictionary:
         try:
             return dictionary[key]
         except KeyError:
-            raise RuntimeError("Dictionary does not contain key '%s'." % (key,))
+            if default is NOT_SET:
+                raise RuntimeError("Dictionary does not contain key '%s'." % (key,))
+            else:
+                return default
 
     def dictionary_should_contain_key(self, dictionary, key, msg=None):
         """Fails if ``key`` is not found from ``dictionary``.
