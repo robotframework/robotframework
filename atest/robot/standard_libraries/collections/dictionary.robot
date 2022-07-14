@@ -81,6 +81,12 @@ Dictionary Should Contain Item With Missing Key
 Dictionary Should Contain Item With Wrong Value
     Check Test Case    ${TEST NAME}
 
+Dictionary Should Contain Item With Value Looking Same But With Different Type
+    Check Test Case    ${TEST NAME}
+
+Dictionary Should Contain Item With Custom Message
+    Check Test Case    ${TEST NAME}
+
 Dictionary Should Not Contain Key
     Check Test Case    ${TEST NAME}
 

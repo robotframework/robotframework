@@ -122,7 +122,7 @@ Dictionary Should Contain Key With Missing Key 2
     Dictionary Should Contain Key    ${D3}    ${TUPLE}
 
 Dictionary Should Contain Item
-    Dictionary Should Contain Item    ${D3}    a    1
+    Dictionary Should Contain Item    ${D3}    a    ${1}
 
 Dictionary Should Contain Item With Missing Key
     [Documentation]    FAIL Dictionary does not contain key 'x'.
@@ -131,6 +131,14 @@ Dictionary Should Contain Item With Missing Key
 Dictionary Should Contain Item With Wrong Value
     [Documentation]    FAIL Value of dictionary key 'a' does not match: 1 != 2
     Dictionary Should Contain Item    ${D3}    a    2
+
+Dictionary Should Contain Item With Value Looking Same But With Different Type
+    [Documentation]    FAIL Value of dictionary key 'a' does not match: 1 (integer) != 1 (string)
+    Dictionary Should Contain Item    ${D3}    a    1
+
+Dictionary Should Contain Item With Custom Message
+    [Documentation]    FAIL Custom message
+    Dictionary Should Contain Item    ${D3}    a    1    Custom message
 
 Dictionary Should Not Contain Key
     Dictionary Should Not Contain Key    ${D3}    x

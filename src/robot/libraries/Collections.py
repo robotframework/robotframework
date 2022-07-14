@@ -727,11 +727,9 @@ class _Dictionary:
         """
         self._validate_dictionary(dictionary)
         self.dictionary_should_contain_key(dictionary, key, msg)
-        actual = dictionary[key]
-        _verify_condition(str(actual) == str(value),   # FIXME!!
-                          f"Value of dictionary key '{key}' does not match: "
-                          f"{actual} != {value}",
-                          msg)
+        assert_equal(dictionary[key], value,
+                     msg or f"Value of dictionary key '{key}' does not match",
+                     values=not msg)
 
     def dictionary_should_contain_value(self, dictionary, value, msg=None):
         """Fails if ``value`` is not found from ``dictionary``.
