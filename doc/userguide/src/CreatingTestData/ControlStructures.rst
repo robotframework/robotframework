@@ -670,6 +670,7 @@ keyword called in the loop body is invalid.
                 ${value} =    Do Something
            EXCEPT
                CONTINUE
+           END
            Do something with value    ${value}
            BREAK
        END
