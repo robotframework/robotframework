@@ -103,6 +103,13 @@ Get From Dictionary With Invalid Key 2
     [Documentation]    FAIL Dictionary does not contain key '(1, 2)'.
     Get From Dictionary    ${D3}    ${TUPLE}
 
+Get From Dictionary With Default
+    ${dict} =    Create Dictionary    a=a    b=b
+    ${value} =    Get From Dictionary    ${dict}    x     default_value
+    Should Be Equal    ${value}    default_value
+    ${value} =    Get From Dictionary    ${dict}    a     default_value
+    Should Be Equal    ${value}    a
+
 Dictionary Should Contain Key
     Dictionary Should Contain Key    ${D3}    a
 
