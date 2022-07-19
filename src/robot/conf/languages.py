@@ -422,6 +422,41 @@ class Pt(Language):
     bdd_prefixes = {'Dado', 'Quando', 'Então', 'E', 'Mas'}
 
 
+class Th(Language):
+    """Thai"""
+    setting_headers = {'การตั้งค่า'}
+    variable_headers = {'กำหนดตัวแปร'}
+    test_case_headers = {'การทดสอบ'}
+    task_headers = {'งาน'}
+    keyword_headers = {'คำสั่งเพิ่มเติม'}
+    comment_headers = {'คำอธิบาย'}
+    library = 'ชุดคำสั่งที่ใช้'
+    resource = 'ไฟล์ที่ใช้'
+    variables = 'ชุดตัวแปร'
+    documentation = 'เอกสาร'
+    metadata = 'รายละเอียดเพิ่มเติม'
+    suite_setup = 'กำหนดค่าเริ่มต้นของชุดการทดสอบ'
+    suite_teardown = 'คืนค่าของชุดการทดสอบ'
+    test_setup = 'กำหนดค่าเริ่มต้นของการทดสอบ'
+    task_setup = 'กำหนดค่าเริ่มต้นของงาน'
+    test_teardown = 'คืนค่าของการทดสอบ'
+    task_teardown = 'คืนค่าของงาน'
+    test_template = 'โครงสร้างของการทดสอบ'
+    task_template = 'โครงสร้างของงาน'
+    test_timeout = 'เวลารอของการทดสอบ'
+    task_timeout = 'เวลารอของงาน'
+    test_tags = 'กลุ่มของการทดสอบ'
+    task_tags = 'กลุ่มของงาน'
+    keyword_tags = 'กลุ่มของคำสั่งเพิ่มเติม'
+    setup = 'กำหนดค่าเริ่มต้น'
+    teardown = 'คืนค่า'
+    template = 'โครงสร้าง'
+    tags = 'กลุ่ม'
+    timeout = 'หมดเวลา'
+    arguments = 'ค่าที่ส่งเข้ามา'
+    bdd_prefixes = {'กำหนดให้', 'เมื่อ', 'ดังนั้น', 'และ', 'แต่'}
+
+
 class Pl(Language):
     """Polish"""
     setting_headers = {'Ustawienia'}
