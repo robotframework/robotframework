@@ -1,9 +1,9 @@
-*** h 1 ***
+*** h s ***
 D                   Example documentation.
 
-*** h 2 ***
+*** H V ***
 ${RESOURCE FILE}    variable in resource file
 
-*** h 5 ***
+*** H k ***
 Keyword In Resource
     No Operation

@@ -32,14 +32,16 @@ class Languages:
         self.settings = {}
         self.bdd_prefixes = set()
         for lang in self.languages:
-            self.setting_headers |= lang.setting_headers
-            self.variable_headers |= lang.variable_headers
-            self.test_case_headers |= lang.test_case_headers
-            self.task_headers |= lang.task_headers
-            self.keyword_headers |= lang.keyword_headers
-            self.comment_headers |= lang.comment_headers
-            self.settings.update(lang.settings)
-            self.bdd_prefixes |= lang.bdd_prefixes
+            self.setting_headers |= {h.title() for h in lang.setting_headers}
+            self.variable_headers |= {h.title() for h in lang.variable_headers}
+            self.test_case_headers |= {h.title() for h in lang.test_case_headers}
+            self.task_headers |= {h.title() for h in lang.task_headers}
+            self.keyword_headers |= {h.title() for h in lang.keyword_headers}
+            self.comment_headers |= {h.title() for h in lang.comment_headers}
+            self.settings.update(
+                {name.title(): lang.settings[name] for name in lang.settings if name}
+            )
+            self.bdd_prefixes |= {p.title() for p in lang.bdd_prefixes}
 
     def _get_languages(self, languages):
         languages = self._resolve_languages(languages)
@@ -113,7 +115,7 @@ class Language:
 
     @property
     def settings(self):
-        settings = {
+        return {
             self.library: En.library,
             self.resource: En.resource,
             self.variables: En.variables,
@@ -139,7 +141,6 @@ class Language:
             self.timeout: En.timeout,
             self.arguments: En.arguments,
         }
-        return {name.title(): settings[name] for name in settings if name}
 
 
 class En(Language):

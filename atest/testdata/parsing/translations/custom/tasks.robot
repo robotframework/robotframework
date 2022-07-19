@@ -1,11 +1,11 @@
-*** H 1 ***
+*** h s ***
 Ta S         Task Setup
 Ta Tea       Task Teardown
 ta tem       Task Template
 TA TI        1 minute
 Ta Ta        task    tags
 
-*** h 4 ***
+*** h ta ***
 Task without settings
     Nothing to see here
 
@@ -18,7 +18,7 @@ Task with settings
     [Ti]     NONE
     Log      Nothing to see here
 
-*** H 5 ***
+*** H K ***
 Task Setup
     No Operation
 
