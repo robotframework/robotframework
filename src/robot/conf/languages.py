@@ -32,14 +32,16 @@ class Languages:
         self.settings = {}
         self.bdd_prefixes = set()
         for lang in self.languages:
-            self.setting_headers |= lang.setting_headers
-            self.variable_headers |= lang.variable_headers
-            self.test_case_headers |= lang.test_case_headers
-            self.task_headers |= lang.task_headers
-            self.keyword_headers |= lang.keyword_headers
-            self.comment_headers |= lang.comment_headers
-            self.settings.update(lang.settings)
-            self.bdd_prefixes |= lang.bdd_prefixes
+            self.setting_headers |= {h.title() for h in lang.setting_headers}
+            self.variable_headers |= {h.title() for h in lang.variable_headers}
+            self.test_case_headers |= {h.title() for h in lang.test_case_headers}
+            self.task_headers |= {h.title() for h in lang.task_headers}
+            self.keyword_headers |= {h.title() for h in lang.keyword_headers}
+            self.comment_headers |= {h.title() for h in lang.comment_headers}
+            self.settings.update(
+                {name.title(): lang.settings[name] for name in lang.settings if name}
+            )
+            self.bdd_prefixes |= {p.title() for p in lang.bdd_prefixes}
 
     def _get_languages(self, languages):
         languages = self._resolve_languages(languages)
@@ -113,7 +115,7 @@ class Language:
 
     @property
     def settings(self):
-        settings = {
+        return {
             self.library: En.library,
             self.resource: En.resource,
             self.variables: En.variables,
@@ -139,7 +141,6 @@ class Language:
             self.timeout: En.timeout,
             self.arguments: En.arguments,
         }
-        return {name.title(): settings[name] for name in settings if name}
 
 
 class En(Language):
@@ -178,12 +179,12 @@ class En(Language):
 
 class Cs(Language):
     """Czech"""
-    setting_headers = {'Nastavení', 'Nastavení', 'Nastavení', 'Nastavení'}
-    variable_headers = {'Proměnná', 'Proměnné', 'Proměnné', 'Proměnné'}
-    test_case_headers = {'Testovací případ', 'Testovací případy', 'Testovací případy', 'Testovací případy'}
-    task_headers = {'Úloha', 'Úlohy', 'Úlohy', 'Úlohy'}
-    keyword_headers = {'Klíčové slovo', 'Klíčová slova', 'Klíčová slova', 'Klíčová slova'}
-    comment_headers = {'Komentář', 'Komentáře', 'Komentáře', 'Komentáře'}
+    setting_headers = {'Nastavení'}
+    variable_headers = {'Proměnná', 'Proměnné'}
+    test_case_headers = {'Testovací případ', 'Testovací případy'}
+    task_headers = {'Úlohy', 'Úloha'}
+    keyword_headers = {'Klíčové slovo', 'Klíčová slova'}
+    comment_headers = {'Komentáře', 'Komentář'}
     library = 'Knihovna'
     resource = 'Zdroj'
     variables = 'Proměnná'
@@ -420,7 +421,9 @@ class Pt(Language):
     arguments = 'Argumentos'
     bdd_prefixes = {'Dado', 'Quando', 'Então', 'E', 'Mas'}
 
+
 class Th(Language):
+    """Thai"""
     setting_headers = {'การตั้งค่า'}
     variable_headers = {'กำหนดตัวแปร'}
     test_case_headers = {'การทดสอบ'}
@@ -452,3 +455,38 @@ class Th(Language):
     timeout = 'หมดเวลา'
     arguments = 'ค่าที่ส่งเข้ามา'
     bdd_prefixes = {'กำหนดให้', 'เมื่อ', 'ดังนั้น', 'และ', 'แต่'}
+
+
+class Pl(Language):
+    """Polish"""
+    setting_headers = {'Ustawienia'}
+    variable_headers = {'Zmienna', 'Zmienne'}
+    test_case_headers = {'Przypadek testowy', 'Przypadki testowe', 'Test', 'Testy', 'Scenariusz', 'Scenariusze'}
+    task_headers = {'Zadanie', 'Zadania'}
+    keyword_headers = {'Słowo kluczowe', 'Słowa kluczowe', 'Funkcja', 'Funkcje'}
+    comment_headers = {'Komentarz', 'Komentarze'}
+    library = 'Biblioteka'
+    resource = 'Zasób'
+    variables = 'Zmienne'
+    documentation = 'Dokumentacja'
+    metadata = 'Metadane'
+    suite_setup = 'Inicjalizacja zestawu'
+    suite_teardown = 'Ukończenie zestawu'
+    test_setup = 'Inicjalizacja testu'
+    test_teardown = 'Ukończenie testu'
+    test_template = 'Szablon testu'
+    test_timeout = 'Limit czasowy testu'
+    test_tags = 'Znaczniki testu'
+    task_setup = 'Inicjalizacja zadania'
+    task_teardown = 'Ukończenie zadania'
+    task_template = 'Szablon zadania'
+    task_timeout = 'Limit czasowy zadania'
+    task_tags = 'Znaczniki zadania'
+    keyword_tags = 'Znaczniki słowa kluczowego'
+    tags = 'Znaczniki'
+    setup = 'Inicjalizacja'
+    teardown = 'Ukończenie'
+    template = 'Szablon'
+    timeout = 'Limit czasowy'
+    arguments = 'Argumenty'
+    bdd_prefixes = {'Zakładając', 'Zakładając, że', 'Mając', 'Jeżeli', 'Jeśli', 'Gdy', 'Kiedy', 'Wtedy', 'Oraz', 'I', 'Ale'}

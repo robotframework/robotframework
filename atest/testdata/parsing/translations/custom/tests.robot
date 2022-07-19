@@ -1,4 +1,4 @@
-*** H 1 ***
+*** H S ***
 D                  Suite documentation.
 M                  Metadata    Value
 S S                Suite Setup
@@ -13,10 +13,10 @@ L                  OperatingSystem
 R                  resource.resource
 V                  ../../variables.py
 
-*** H 2 ***
+*** h v ***
 ${VARIABLE}        variable value
 
-*** H 3 ***
+*** H TE ***
 Test without settings
     Nothing to see here
 
@@ -29,7 +29,7 @@ Test with settings
     [ti]           NONE
     Keyword        ${VARIABLE}
 
-*** H 5 ***
+*** h K ***
 Suite Setup
     Directory Should Exist    ${CURDIR}
 
@@ -56,5 +56,5 @@ Keyword
     Should Be Equal    ${arg}    ${VARIABLE}
     [TEA]    No Operation
 
-*** H 6 ***
+*** H C ***
 Ignored comments.

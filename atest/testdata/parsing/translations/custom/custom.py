@@ -2,12 +2,12 @@ from robot.conf import Language
 
 
 class Custom(Language):
-    setting_headers = {'H 1'}
-    variable_headers = {'H 2'}
-    test_case_headers = {'H 3'}
-    task_headers = {'H 4'}
-    keyword_headers = {'H 5'}
-    comment_headers = {'H 6'}
+    setting_headers = {'H S'}
+    variable_headers = {'H v'}
+    test_case_headers = {'h te'}
+    task_headers = {'H Ta'}
+    keyword_headers = {'H k'}
+    comment_headers = {'h C'}
     library = 'L'
     resource = 'R'
     variables = 'V'
