@@ -179,12 +179,12 @@ class En(Language):
 
 class Cs(Language):
     """Czech"""
-    setting_headers = {'Nastavení', 'Nastavení', 'Nastavení', 'Nastavení'}
-    variable_headers = {'Proměnná', 'Proměnné', 'Proměnné', 'Proměnné'}
-    test_case_headers = {'Testovací případ', 'Testovací případy', 'Testovací případy', 'Testovací případy'}
-    task_headers = {'Úloha', 'Úlohy', 'Úlohy', 'Úlohy'}
-    keyword_headers = {'Klíčové slovo', 'Klíčová slova', 'Klíčová slova', 'Klíčová slova'}
-    comment_headers = {'Komentář', 'Komentáře', 'Komentáře', 'Komentáře'}
+    setting_headers = {'Nastavení'}
+    variable_headers = {'Proměnná', 'Proměnné'}
+    test_case_headers = {'Testovací případ', 'Testovací případy'}
+    task_headers = {'Úlohy', 'Úloha'}
+    keyword_headers = {'Klíčové slovo', 'Klíčová slova'}
+    comment_headers = {'Komentáře', 'Komentář'}
     library = 'Knihovna'
     resource = 'Zdroj'
     variables = 'Proměnná'
