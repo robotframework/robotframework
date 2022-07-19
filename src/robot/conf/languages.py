@@ -420,3 +420,38 @@ class Pt(Language):
     timeout = 'Tempo Limite'
     arguments = 'Argumentos'
     bdd_prefixes = {'Dado', 'Quando', 'Então', 'E', 'Mas'}
+
+
+class Pl(Language):
+    """Polish"""
+    setting_headers = {'Ustawienia'}
+    variable_headers = {'Zmienna', 'Zmienne'}
+    test_case_headers = {'Przypadek testowy', 'Przypadki testowe', 'Test', 'Testy', 'Scenariusz', 'Scenariusze'}
+    task_headers = {'Zadanie', 'Zadania'}
+    keyword_headers = {'Słowo kluczowe', 'Słowa kluczowe', 'Funkcja', 'Funkcje'}
+    comment_headers = {'Komentarz', 'Komentarze'}
+    library = 'Biblioteka'
+    resource = 'Zasób'
+    variables = 'Zmienne'
+    documentation = 'Dokumentacja'
+    metadata = 'Metadane'
+    suite_setup = 'Inicjalizacja zestawu'
+    suite_teardown = 'Ukończenie zestawu'
+    test_setup = 'Inicjalizacja testu'
+    test_teardown = 'Ukończenie testu'
+    test_template = 'Szablon testu'
+    test_timeout = 'Limit czasowy testu'
+    test_tags = 'Znaczniki testu'
+    task_setup = 'Inicjalizacja zadania'
+    task_teardown = 'Ukończenie zadania'
+    task_template = 'Szablon zadania'
+    task_timeout = 'Limit czasowy zadania'
+    task_tags = 'Znaczniki zadania'
+    keyword_tags = 'Znaczniki słowa kluczowego'
+    tags = 'Znaczniki'
+    setup = 'Inicjalizacja'
+    teardown = 'Ukończenie'
+    template = 'Szablon'
+    timeout = 'Limit czasowy'
+    arguments = 'Argumenty'
+    bdd_prefixes = {'Zakładając', 'Zakładając, że', 'Mając', 'Jeżeli', 'Jeśli', 'Gdy', 'Kiedy', 'Wtedy', 'Oraz', 'I', 'Ale'}
