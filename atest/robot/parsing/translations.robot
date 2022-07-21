@@ -7,8 +7,12 @@ Finnish
     Validate Translations
 
 Finnish task aliases
-    [Documentation]    Also test that '--language' works when running a directory.
-    Run Tests    --language fi --rpa    parsing/translations/finnish
+    [Documentation]
+    ...    Also tests that
+    ...    - '--language' works when running a directory,
+    ...    - it is possible to use language class docstring, and
+    ...    - '-' is ignored in the given name to support e.g. 'pt-br'.
+    Run Tests    --language fin-nish --rpa    parsing/translations/finnish
     Validate Task Translations
 
 Custom

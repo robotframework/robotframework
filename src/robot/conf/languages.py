@@ -16,7 +16,7 @@
 import inspect
 import os.path
 
-from robot.utils import is_string, Importer
+from robot.utils import getdoc, is_string, Importer
 
 
 class Languages:
@@ -45,11 +45,12 @@ class Languages:
 
     def _get_languages(self, languages):
         languages = self._resolve_languages(languages)
-        available = {c.__name__.lower(): c for c in Language.__subclasses__()}
+        available = self._get_available_languages()
         returned = []
         for lang in languages:
-            if lang.lower() in available:
-                returned.append(available[lang.lower()])
+            normalized = lang.lower().replace('-', '')
+            if normalized in available:
+                returned.append(available[normalized])
             else:
                 returned.extend(self._import_languages(lang))
         return [subclass() for subclass in returned]
@@ -62,6 +63,14 @@ class Languages:
         if 'en' not in languages:
             languages.append('en')
         return languages
+
+    def _get_available_languages(self):
+        available = {}
+        for lang in Language.__subclasses__():
+            available[lang.__name__.lower()] = lang
+            if lang.__doc__:
+                available[lang.__doc__.lower()] = lang
+        return available
 
     def _import_languages(self, lang):
         def is_language(member):
@@ -112,6 +121,14 @@ class Language:
     timeout = None
     arguments = None
     bdd_prefixes = set()
+
+    @classmethod
+    def from_name(cls, name):
+        normalized = name.lower().replace('-', '')
+        for subcls in cls.__subclasses__():
+            if normalized in (subcls.__name__.lower(), getdoc(subcls).lower()):
+                return subcls()
+        raise ValueError(f"No language with name '{name}' found.")
 
     @property
     def settings(self):
