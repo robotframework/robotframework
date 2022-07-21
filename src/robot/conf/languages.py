@@ -507,3 +507,73 @@ class Pl(Language):
     timeout = 'Limit czasowy'
     arguments = 'Argumenty'
     bdd_prefixes = {'Zakładając', 'Zakładając, że', 'Mając', 'Jeżeli', 'Jeśli', 'Gdy', 'Kiedy', 'Wtedy', 'Oraz', 'I', 'Ale'}
+
+
+class Es(Language):
+    """Spanish"""
+    setting_headers = {'Configuración', 'Configuraciones'}
+    variable_headers = {'Variable', 'Variables'}
+    test_case_headers = {'Caso de prueba', 'Casos de prueba'}
+    task_headers = {'Tarea', 'Tareas'}
+    keyword_headers = {'Palabra clave', 'Palabras clave'}
+    comment_headers = {'Comentario', 'Comentarios'}
+    library = 'Biblioteca'
+    resource = 'Recursos'
+    variables = 'Variable'
+    documentation = 'Documentación'
+    metadata = 'Metadatos'
+    suite_setup = 'Configuración de la Suite'
+    suite_teardown = 'Desmontaje de la Suite'
+    test_setup = 'Configuración de prueba'
+    test_teardown = 'Desmontaje de la prueba'
+    test_template = 'Plantilla de prueba'
+    test_timeout = 'Tiempo de espera de la prueba'
+    test_tags = 'Etiquetas de la prueba'
+    task_setup = 'Configuración de tarea'
+    task_teardown = 'Desmontaje de tareas'
+    task_template = 'Plantilla de tareas'
+    task_timeout = 'Tiempo de espera de las tareas'
+    task_tags = 'Etiquetas de las tareas'
+    keyword_tags = 'Etiquetas de palabras clave'
+    tags = 'Etiquetas'
+    setup = 'Configuración'
+    teardown = 'Desmontaje'
+    template = 'Plantilla'
+    timeout = 'Tiempo agotado'
+    arguments = 'Argumentos'
+    bdd_prefixes = {'Dado', 'Cuando', 'Entonces', 'Y', 'Pero'}
+
+
+class ZhCn(Language):
+    """Chinese Simplified"""
+    setting_headers = {'设置'}
+    variable_headers = {'变量'}
+    test_case_headers = {'用例'}
+    task_headers = {'任务'}
+    keyword_headers = {'关键字'}
+    comment_headers = {'备注'}
+    library = '库'
+    resource = '资源'
+    variables = '变量'
+    documentation = '说明文档'
+    metadata = '元数据'
+    suite_setup = '用例集预置'
+    suite_teardown = '用例集收尾'
+    test_setup = '用例预置'
+    test_teardown = '用例收尾'
+    test_template = '测试模板'
+    test_timeout = '用例超时'
+    test_tags = '测试标签'
+    task_setup = '任务启程'
+    task_teardown = '任务收尾'
+    task_template = '任务模板'
+    task_timeout = '任务超时'
+    task_tags = '任务标签'
+    keyword_tags = '关键字标签'
+    tags = '标签'
+    setup = '预设'
+    teardown = '终程'
+    template = '模板'
+    timeout = '超时'
+    arguments = '参数'
+    bdd_prefixes = {'输入', '当', '则', '且', '但'}
