@@ -35,14 +35,20 @@ Documentation and metadata from external file
     Check All Names    ${SUITE}    Normal
     Should Be Equal    ${SUITE.doc}    ${value.rstrip()}
     Should Be Equal    ${SUITE.metadata['name']}    ${value.rstrip()}
-    Run Tests    --doc " ${path}" --metadata "name: ${path}"    ${TEST FILE}
+    Run Tests    --doc " ${path}" --metadata "name: ${path}" -M dir:%{TEMPDIR}    ${TEST FILE}
     Check All Names    ${SUITE}    Normal
     Should Be Equal    ${SUITE.doc}    ${path}
     Should Be Equal    ${SUITE.metadata['name']}    ${path}
+    Should Be Equal    ${SUITE.metadata['dir']}    %{TEMPDIR}
 
 Invalid external file
-    Run Tests Without Processing Output    --doc .    ${TEST FILE}
-    Stderr Should Match    [[] ERROR []] Invalid value for option '--doc': Reading documentation from '.' failed: *${USAGE TIP}\n
+    [Tags]    no-windows
+    ${path} =    Normalize Path    %{TEMPDIR}/file.txt
+    Create File    ${path}
+    Evaluate    os.chmod('${path}', 0)
+    Run Tests Without Processing Output    --doc ${path}    ${TEST FILE}
+    Stderr Should Match    [[] ERROR []] Invalid value for option '--doc': Reading documentation from '${path}' failed: *${USAGE TIP}\n
+    [Teardown]    Remove File    ${path}
 
 *** Keywords ***
 Check All Names

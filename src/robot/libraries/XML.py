@@ -22,6 +22,15 @@ try:
     from lxml import etree as lxml_etree
 except ImportError:
     lxml_etree = None
+else:
+    # `lxml.etree._Attrib` doesn't extend `Mapping` and thus our `is_dict_like`
+    # doesn't recognize it unless we register it ourselves. Fixed in lxml 4.9.2:
+    # https://bugs.launchpad.net/lxml/+bug/1981760
+    from collections.abc import MutableMapping
+    Attrib = getattr(lxml_etree, '_Attrib', None)
+    if Attrib and not isinstance(Attrib, MutableMapping):
+        MutableMapping.register(Attrib)
+    del Attrib, MutableMapping
 
 from robot.api import logger
 from robot.api.deco import keyword

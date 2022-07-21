@@ -16,8 +16,8 @@
 import copy
 
 from robot.api import logger
-from robot.utils import (is_dict_like, is_list_like, is_number, is_string, is_truthy,
-                         Matcher, plural_or_not, seq2str, seq2str2, type_name)
+from robot.utils import (is_dict_like, is_list_like, is_string, is_truthy, Matcher,
+                         plural_or_not as s, seq2str, seq2str2, type_name)
 from robot.utils.asserts import assert_equal
 from robot.version import get_version
 
@@ -168,7 +168,7 @@ class _List:
             if item not in ret:
                 ret.append(item)
         removed = len(list_) - len(ret)
-        logger.info('%d duplicate%s removed.' % (removed, plural_or_not(removed)))
+        logger.info(f'{removed} duplicate{s(removed)} removed.')
         return ret
 
     def get_from_list(self, list_, index):
@@ -310,8 +310,9 @@ class _List:
         Use the ``msg`` argument to override the default error message.
         """
         self._validate_list(list_)
-        default = "%s does not contain value '%s'." % (seq2str2(list_), value)
-        _verify_condition(value in list_, default, msg)
+        _verify_condition(value in list_,
+                          f"{seq2str2(list_)} does not contain value '{value}'.",
+                          msg)
 
     def list_should_not_contain_value(self, list_, value, msg=None):
         """Fails if the ``value`` is found from ``list``.
@@ -319,8 +320,9 @@ class _List:
         Use the ``msg`` argument to override the default error message.
         """
         self._validate_list(list_)
-        default = "%s contains value '%s'." % (seq2str2(list_), value)
-        _verify_condition(value not in list_, default, msg)
+        _verify_condition(value not in list_,
+                          f"{seq2str2(list_)} contains value '{value}'.",
+                          msg)
 
     def list_should_not_contain_duplicates(self, list_, msg=None):
         """Fails if any element in the ``list`` is found from it more than once.
@@ -341,11 +343,10 @@ class _List:
             if item not in dupes:
                 count = list_.count(item)
                 if count > 1:
-                    logger.info("'%s' found %d times." % (item, count))
+                    logger.info(f"'{item}' found {count} times.")
                     dupes.append(item)
         if dupes:
-            raise AssertionError(msg or
-                                 '%s found multiple times.' % seq2str(dupes))
+            raise AssertionError(msg or f'{seq2str(dupes)} found multiple times.')
 
     def lists_should_be_equal(self, list1, list2, msg=None, values=True,
                               names=None, ignore_order=False):
@@ -369,8 +370,8 @@ class _List:
         The optional ``names`` argument can be used for naming the indices
         shown in the default error message. It can either be a list of names
         matching the indices in the lists or a dictionary where keys are
-        indices that need to be named. It is not necessary to name all of
-        the indices.  When using a dictionary, keys can be either integers
+        indices that need to be named. It is not necessary to name all indices.
+        When using a dictionary, keys can be either integers
         or strings that can be converted to integers.
 
         Examples:
@@ -395,15 +396,17 @@ class _List:
         self._validate_lists(list1, list2)
         len1 = len(list1)
         len2 = len(list2)
-        default = 'Lengths are different: %d != %d' % (len1, len2)
-        _verify_condition(len1 == len2, default, msg, values)
+        _verify_condition(len1 == len2,
+                          f'Lengths are different: {len1} != {len2}',
+                          msg, values)
         names = self._get_list_index_name_mapping(names, len1)
         if ignore_order:
             list1 = sorted(list1)
             list2 = sorted(list2)
-        diffs = list(self._yield_list_diffs(list1, list2, names))
-        default = 'Lists are different:\n' + '\n'.join(diffs)
-        _verify_condition(diffs == [], default, msg, values)
+        diffs = '\n'.join(self._yield_list_diffs(list1, list2, names))
+        _verify_condition(not diffs,
+                          f'Lists are different:\n{diffs}',
+                          msg, values)
 
     def _get_list_index_name_mapping(self, names, list_length):
         if not names:
@@ -414,14 +417,14 @@ class _List:
 
     def _yield_list_diffs(self, list1, list2, names):
         for index, (item1, item2) in enumerate(zip(list1, list2)):
-            name = ' (%s)' % names[index] if index in names else ''
+            name = f' ({names[index]})' if index in names else ''
             try:
-                assert_equal(item1, item2, msg='Index %d%s' % (index, name))
+                assert_equal(item1, item2, msg=f'Index {index}{name}')
             except AssertionError as err:
                 yield str(err)
 
     def list_should_contain_sub_list(self, list1, list2, msg=None, values=True):
-        """Fails if not all of the elements in ``list2`` are found in ``list1``.
+        """Fails if not all elements in ``list2`` are found in ``list1``.
 
         The order of values and the number of values are not taken into
         account.
@@ -431,8 +434,9 @@ class _List:
         """
         self._validate_lists(list1, list2)
         diffs = ', '.join(str(item) for item in list2 if item not in list1)
-        default = 'Following values were not found from first list: ' + diffs
-        _verify_condition(not diffs, default, msg, values)
+        _verify_condition(not diffs,
+                          f'Following values were not found from first list: {diffs}',
+                          msg, values)
 
     def log_list(self, list_, level='INFO'):
         """Logs the length and contents of the ``list`` using given ``level``.
@@ -449,11 +453,11 @@ class _List:
         if not list_:
             yield 'List is empty.'
         elif len(list_) == 1:
-            yield 'List has one item:\n%s' % (list_[0],)
+            yield f'List has one item:\n{list_[0]}'
         else:
-            yield 'List length is %d and it contains following items:' % len(list_)
+            yield f'List length is {len(list_)} and it contains following items:'
             for index, item in enumerate(list_):
-                yield '%s: %s' % (index, item)
+                yield f'{index}: {item}'
 
     def _index_to_int(self, index, empty_to_zero=False):
         if empty_to_zero and not index:
@@ -461,16 +465,15 @@ class _List:
         try:
             return int(index)
         except ValueError:
-            raise ValueError("Cannot convert index '%s' to an integer." % index)
+            raise ValueError(f"Cannot convert index '{index}' to an integer.")
 
     def _index_error(self, list_, index):
-        raise IndexError('Given index %s is out of the range 0-%d.'
-                         % (index, len(list_)-1))
+        raise IndexError(f'Given index {index} is out of the range 0-{len(list_)-1}.')
 
     def _validate_list(self, list_, position=1):
         if not is_list_like(list_):
-            raise TypeError("Expected argument %d to be a list or list-like, "
-                            "got %s instead." % (position, type_name(list_)))
+            raise TypeError(f"Expected argument {position} to be a list or list-like, "
+                            f"got {type_name(list_)} instead.")
 
     def _validate_lists(self, *lists):
         for index, item in enumerate(lists, start=1):
@@ -532,9 +535,9 @@ class _Dictionary:
         for key in keys:
             if key in dictionary:
                 value = dictionary.pop(key)
-                logger.info("Removed item with key '%s' and value '%s'." % (key, value))
+                logger.info(f"Removed item with key '{key}' and value '{value}'.")
             else:
-                logger.info("Key '%s' not found." % (key,))
+                logger.info(f"Key '{key}' not found.")
 
     def pop_from_dictionary(self, dictionary, key, default=NOT_SET):
         """Pops the given ``key`` from the ``dictionary`` and returns its value.
@@ -671,11 +674,12 @@ class _Dictionary:
         keys = self.get_dictionary_keys(dictionary, sort_keys=sort_keys)
         return [i for key in keys for i in (key, dictionary[key])]
 
-    def get_from_dictionary(self, dictionary, key):
+    def get_from_dictionary(self, dictionary, key, default=NOT_SET):
         """Returns a value from the given ``dictionary`` based on the given ``key``.
 
         If the given ``key`` cannot be found from the ``dictionary``, this
-        keyword fails.
+        keyword fails. If optional ``default`` value is given, it will be
+        returned instead of failing.
 
         The given dictionary is never altered by this keyword.
 
@@ -683,12 +687,16 @@ class _Dictionary:
         | ${value} = | Get From Dictionary | ${D3} | b |
         =>
         | ${value} = 2
+
+        Support for ``default`` is new in Robot Framework 5.1.
         """
         self._validate_dictionary(dictionary)
         try:
             return dictionary[key]
         except KeyError:
-            raise RuntimeError("Dictionary does not contain key '%s'." % (key,))
+            if default is not NOT_SET:
+                return default
+            raise RuntimeError(f"Dictionary does not contain key '{key}'.")
 
     def dictionary_should_contain_key(self, dictionary, key, msg=None):
         """Fails if ``key`` is not found from ``dictionary``.
@@ -696,8 +704,9 @@ class _Dictionary:
         Use the ``msg`` argument to override the default error message.
         """
         self._validate_dictionary(dictionary)
-        default = "Dictionary does not contain key '%s'." % (key,)
-        _verify_condition(key in dictionary, default, msg)
+        _verify_condition(key in dictionary,
+                          f"Dictionary does not contain key '{key}'.",
+                          msg)
 
     def dictionary_should_not_contain_key(self, dictionary, key, msg=None):
         """Fails if ``key`` is found from ``dictionary``.
@@ -705,8 +714,9 @@ class _Dictionary:
         Use the ``msg`` argument to override the default error message.
         """
         self._validate_dictionary(dictionary)
-        default = "Dictionary contains key '%s'." % (key,)
-        _verify_condition(key not in dictionary, default, msg)
+        _verify_condition(key not in dictionary,
+                          f"Dictionary contains key '{key}'.",
+                          msg)
 
     def dictionary_should_contain_item(self, dictionary, key, value, msg=None):
         """An item of ``key`` / ``value`` must be found in a ``dictionary``.
@@ -717,9 +727,9 @@ class _Dictionary:
         """
         self._validate_dictionary(dictionary)
         self.dictionary_should_contain_key(dictionary, key, msg)
-        actual, expected = str(dictionary[key]), str(value)
-        default = "Value of dictionary key '%s' does not match: %s != %s" % (key, actual, expected)
-        _verify_condition(actual == expected, default, msg)
+        assert_equal(dictionary[key], value,
+                     msg or f"Value of dictionary key '{key}' does not match",
+                     values=not msg)
 
     def dictionary_should_contain_value(self, dictionary, value, msg=None):
         """Fails if ``value`` is not found from ``dictionary``.
@@ -727,8 +737,9 @@ class _Dictionary:
         Use the ``msg`` argument to override the default error message.
         """
         self._validate_dictionary(dictionary)
-        default = "Dictionary does not contain value '%s'." % (value,)
-        _verify_condition(value in dictionary.values(), default, msg)
+        _verify_condition(value in dictionary.values(),
+                          f"Dictionary does not contain value '{value}'.",
+                          msg)
 
     def dictionary_should_not_contain_value(self, dictionary, value, msg=None):
         """Fails if ``value`` is found from ``dictionary``.
@@ -736,8 +747,9 @@ class _Dictionary:
         Use the ``msg`` argument to override the default error message.
         """
         self._validate_dictionary(dictionary)
-        default = "Dictionary contains value '%s'." % (value,)
-        _verify_condition(not value in dictionary.values(), default, msg)
+        _verify_condition(value not in dictionary.values(),
+                          f"Dictionary contains value '{value}'.",
+                          msg)
 
     def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True):
         """Fails if the given dictionaries are not equal.
@@ -765,10 +777,10 @@ class _Dictionary:
         self._validate_dictionary(dict1)
         self._validate_dictionary(dict2, 2)
         keys = self.get_dictionary_keys(dict2)
-        diffs = [str(k) for k in keys if k not in dict1]
-        default = "Following keys missing from first dictionary: %s" \
-                  % ', '.join(diffs)
-        _verify_condition(not diffs, default, msg, values)
+        diffs = ', '.join(str(k) for k in keys if k not in dict1)
+        _verify_condition(not diffs,
+                          f"Following keys missing from first dictionary: {diffs}",
+                          msg, values)
         self._key_values_should_be_equal(keys, dict1, dict2, msg, values)
 
     def log_dictionary(self, dictionary, level='INFO'):
@@ -788,41 +800,40 @@ class _Dictionary:
         elif len(dictionary) == 1:
             yield 'Dictionary has one item:'
         else:
-            yield 'Dictionary size is %d and it contains following items:' % len(dictionary)
+            yield f'Dictionary size is {len(dictionary)} and it contains following items:'
         for key in self.get_dictionary_keys(dictionary):
-            yield '%s: %s' % (key, dictionary[key])
+            yield f'{key}: {dictionary[key]}'
 
     def _keys_should_be_equal(self, dict1, dict2, msg, values):
         keys1 = self.get_dictionary_keys(dict1)
         keys2 = self.get_dictionary_keys(dict2)
-        miss1 = [str(k) for k in keys2 if k not in dict1]
-        miss2 = [str(k) for k in keys1 if k not in dict2]
+        miss1 = ', '.join(str(k) for k in keys2 if k not in dict1)
+        miss2 = ', '.join(str(k) for k in keys1 if k not in dict2)
         error = []
         if miss1:
-            error += ['Following keys missing from first dictionary: %s'
-                      % ', '.join(miss1)]
+            error += [f'Following keys missing from first dictionary: {miss1}']
         if miss2:
-            error += ['Following keys missing from second dictionary: %s'
-                      % ', '.join(miss2)]
+            error += [f'Following keys missing from second dictionary: {miss2}']
         _verify_condition(not error, '\n'.join(error), msg, values)
         return keys1
 
     def _key_values_should_be_equal(self, keys, dict1, dict2, msg, values):
-        diffs = list(self._yield_dict_diffs(keys, dict1, dict2))
-        default = 'Following keys have different values:\n' + '\n'.join(diffs)
-        _verify_condition(not diffs, default, msg, values)
+        diffs = '\n'.join(self._yield_dict_diffs(keys, dict1, dict2))
+        _verify_condition(not diffs,
+                          f'Following keys have different values:\n{diffs}',
+                          msg, values)
 
     def _yield_dict_diffs(self, keys, dict1, dict2):
         for key in keys:
             try:
-                assert_equal(dict1[key], dict2[key], msg='Key %s' % (key,))
+                assert_equal(dict1[key], dict2[key], msg=f'Key {key}')
             except AssertionError as err:
                 yield str(err)
 
     def _validate_dictionary(self, dictionary, position=1):
-        if is_string(dictionary) or is_number(dictionary):
-            raise TypeError("Expected argument %d to be a dictionary or dictionary-like, "
-                            "got %s instead." % (position, type_name(dictionary)))
+        if not is_dict_like(dictionary):
+            raise TypeError(f"Expected argument {position} to be a dictionary or "
+                            f"dictionary-like, got {type_name(dictionary)} instead.")
 
 
 class Collections(_List, _Dictionary):
@@ -948,8 +959,7 @@ class Collections(_List, _Dictionary):
         _List._validate_list(self, list)
         matches = _get_matches_in_iterable(list, pattern, case_insensitive,
                                            whitespace_insensitive)
-        default = "%s does not contain match for pattern '%s'." \
-                  % (seq2str2(list), pattern)
+        default = f"{seq2str2(list)} does not contain match for pattern '{pattern}'."
         _verify_condition(matches, default, msg)
 
     def should_not_contain_match(self, list, pattern, msg=None,
@@ -963,8 +973,7 @@ class Collections(_List, _Dictionary):
         _List._validate_list(self, list)
         matches = _get_matches_in_iterable(list, pattern, case_insensitive,
                                            whitespace_insensitive)
-        default = "%s contains match for pattern '%s'." \
-                  % (seq2str2(list), pattern)
+        default = f"{seq2str2(list)} contains match for pattern '{pattern}'."
         _verify_condition(not matches, default, msg)
 
     def get_matches(self, list, pattern, case_insensitive=False,
@@ -1013,7 +1022,7 @@ def _verify_condition(condition, default_msg, msg, values=False):
 def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
                              whitespace_insensitive=False):
     if not is_string(pattern):
-        raise TypeError("Pattern must be string, got '%s'." % type_name(pattern))
+        raise TypeError(f"Pattern must be string, got '{type_name(pattern)}'.")
     regexp = False
     if pattern.startswith('regexp='):
         pattern = pattern[7:]

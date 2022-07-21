@@ -15,7 +15,7 @@ jobs:
       fail-fast: true
       matrix:
         os: [ 'ubuntu-latest', 'windows-latest' ]
-        python-version: [ '3.6', '3.9' ]
+        python-version: [ '3.6', '3.10' ]
         include:
           - os: ubuntu-latest
             set_display: export DISPLAY=:99; Xvfb :99 -screen 0 1024x768x24 -ac -noreset & sleep 3
@@ -29,9 +29,9 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Setup python for starting the tests
-        uses: actions/setup-python@v4.0.0
+        uses: actions/setup-python@v4.1.0
         with:
-          python-version: 3.6
+          python-version: '3.10'
           architecture: 'x64'
 
       - name: Get test starter Python at Windows
@@ -43,7 +43,7 @@ jobs:
         if: runner.os != 'Windows'
 
       - name: Setup python ${{ matrix.python-version }} for running the tests
-        uses: actions/setup-python@v4.0.0
+        uses: actions/setup-python@v4.1.0
         with:
           python-version: ${{ matrix.python-version }}
           architecture: 'x64'

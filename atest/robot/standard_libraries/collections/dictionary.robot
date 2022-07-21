@@ -62,6 +62,9 @@ Get From Dictionary With Invalid Key
     Check Test Case    ${TEST NAME} 1
     Check Test Case    ${TEST NAME} 2
 
+Get From Dictionary With Default
+    Check Test Case    ${TEST NAME}
+
 Dictionary Should Contain Key
     Check Test Case    ${TEST NAME}
 
@@ -76,6 +79,12 @@ Dictionary Should Contain Item With Missing Key
     Check Test Case    ${TEST NAME}
 
 Dictionary Should Contain Item With Wrong Value
+    Check Test Case    ${TEST NAME}
+
+Dictionary Should Contain Item With Value Looking Same But With Different Type
+    Check Test Case    ${TEST NAME}
+
+Dictionary Should Contain Item With Custom Message
     Check Test Case    ${TEST NAME}
 
 Dictionary Should Not Contain Key

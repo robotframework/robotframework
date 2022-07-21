@@ -142,7 +142,7 @@ class _BaseSettings:
         return value
 
     def _process_doc(self, value):
-        if isinstance(value, Path) or (os.path.exists(value) and value.strip() == value):
+        if isinstance(value, Path) or (os.path.isfile(value) and value.strip() == value):
             try:
                 with open(value) as f:
                     value = f.read()

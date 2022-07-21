@@ -58,6 +58,8 @@ Currently exposed APIs are:
   returned by the :func:`~robot.result.resultbuilder.ExecutionResult` or
   an executed :class:`~robot.running.model.TestSuite`.
 
+* :class:`~robot.conf.languages.Language` base class for custom translations.
+
 All of the above names can be imported like::
 
     from robot.api import ApiName
@@ -68,6 +70,7 @@ See documentations of the individual APIs for more details.
         via the :mod:`robot` root package.
 """
 
+from robot.conf.languages import Language
 from robot.model import SuiteVisitor
 from robot.parsing import (get_tokens, get_resource_tokens, get_init_tokens,
                            get_model, get_resource_model, get_init_model,

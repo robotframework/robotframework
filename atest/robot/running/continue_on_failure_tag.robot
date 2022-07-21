@@ -129,3 +129,8 @@ Test recursive-stop-recursive-continue
 Test recursive-stop-recursive-continue-recursive-stop
     Check Test Case    ${TESTNAME}
 
+Test test setup with continue-on-failure
+    Check Test Case    ${TESTNAME}
+
+Test test setup with recursive-continue-on-failure
+    Check Test Case    ${TESTNAME}
