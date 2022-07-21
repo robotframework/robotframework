@@ -124,6 +124,14 @@ class Language:
 
     @classmethod
     def from_name(cls, name):
+        """Return langauge class based on given `name`.
+
+        Name is matched both against the class name (language short name)
+        and possible docstring (full language name). Matching is case-insensitive
+        and hyphen (`-`) is ignored to support, for example, `PT-BR`.
+
+        Raises `ValueError` if no matching langauge is found.
+        """
         normalized = name.lower().replace('-', '')
         for subcls in cls.__subclasses__():
             if normalized in (subcls.__name__.lower(), getdoc(subcls).lower()):
