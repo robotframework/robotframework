@@ -352,7 +352,7 @@ class De(Language):
     comment_headers = {'Kommentar', 'Kommentare'}
     library = 'Bibliothek'
     resource = 'Ressource'
-    variables = 'Variable'
+    variables = 'Variablen'
     documentation = 'Dokumentation'
     metadata = 'Metadaten'
     suite_setup = 'Suitevorbereitung'
