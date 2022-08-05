@@ -35,9 +35,16 @@ Non-ASCII strings
 Dictionary is dot-accessible
     ${DICT.a}                1
     ${DICT.b}                ${2}
-    ${NESTED DICT.dict}      ${DICT}
+
+Nested dictionary is dot-accessible
+    ${NESTED DICT.dict}      ${EXPECTED DICT}
     ${NESTED DICT.dict.a}    1
     ${NESTED DICT.dict.b}    ${2}
+
+Dictionary inside list is dot-accessible
+    ${LIST WITH DICT[1].key}               value
+    ${LIST WITH DICT[2].dict}              ${EXPECTED DICT}
+    ${LIST WITH DICT[2].nested[0].leaf}    value
 
 YAML file in PYTHONPATH
     ${YAML FILE IN PYTHONPATH}    ${TRUE}
