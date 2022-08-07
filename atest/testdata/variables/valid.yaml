@@ -14,3 +14,6 @@ dict:
   key with spaces: value with spaces
 nested dict:
   dict: *alias
+dict inside list:
+  - *alias
+  - *alias

@@ -38,6 +38,15 @@ Dictionary is dot-accessible
     ${NESTED DICT.dict}      ${DICT}
     ${NESTED DICT.dict.a}    1
     ${NESTED DICT.dict.b}    ${2}
+    ${DICT INSIDE LIST[0]}    ${DICT}
+    ${DICT INSIDE LIST[0].a}    1
+    ${DICT INSIDE LIST[0].b}    ${2}
+    ${DICT INSIDE LIST[1]}    ${DICT}
+    ${DICT INSIDE LIST[1].a}    1
+    ${DICT INSIDE LIST[1].b}    ${2}
+
+
+
 
 YAML file in PYTHONPATH
     ${YAML FILE IN PYTHONPATH}    ${TRUE}
