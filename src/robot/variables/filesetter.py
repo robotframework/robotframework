@@ -85,9 +85,9 @@ class YamlImporter:
 
     def _dot_dict(self, value):
         if is_dict_like(value):
-            value = DotDict((n, self._dot_dict(v)) for n, v in value.items())
+            return DotDict((n, self._dot_dict(v)) for n, v in value.items())
         if is_list_like(value):
-            value = [self._dot_dict(v) for v in value]
+            return [self._dot_dict(v) for v in value]
         return value
 
 
