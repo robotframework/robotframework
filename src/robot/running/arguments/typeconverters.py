@@ -24,11 +24,11 @@ from numbers import Integral, Real
 
 from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import (FALSE_STRINGS, TRUE_STRINGS, eq, get_error_message,
-                         is_string, is_union, safe_str, seq2str, type_name)
+                         is_string, is_union, is_list_like, is_dict_like,
+                         safe_str, seq2str, type_name)
 
 
 NoneType = type(None)
-
 
 class TypeConverter:
     type = None
@@ -53,12 +53,17 @@ class TypeConverter:
         return converter
 
     @classmethod
+    def _is_nested_type(cls, type_):
+        return getattr(type_, '__origin__', None)\
+                       and type_.__origin__ not in [Union, dict, list]
+
+    @classmethod
     def converter_for(cls, type_, custom_converters=None):
         try:
             hash(type_)
         except TypeError:
             return None
-        if getattr(type_, '__origin__', None) and type_.__origin__ is not Union:
+        if cls._is_nested_type(type_):
             type_ = type_.__origin__
         if isinstance(type_, str):
             try:
@@ -386,19 +391,49 @@ class ListConverter(TypeConverter):
     type = list
     type_name = 'list'
     abc = Sequence
-    value_types = (str, Sequence)
+    value_types = (str, Sequence, tuple)
+    aliases = ('list',)
+
+    def __init__(self, type_, custom_converters=None):
+        super().__init__(self._get_types(type_))
+        self.converters = [TypeConverter.converter_for(t, custom_converters)
+                           for t in self.used_type]
+
+    def _get_types(self, type_):
+        return type_.__args__ if hasattr(type_, '__args__') else ()
+
+    @property
+    def type_name(self):
+        return f'List[{self.used_type[0].__name__}]' if len(self.used_type) else 'list'
+
+    @classmethod
+    def handles(cls, type_):
+        return type_.__origin__ is list if hasattr(type_, '__origin__') else False
+
+    def _handles_value(self, value):
+        return True
 
     def no_conversion_needed(self, value):
-        if isinstance(value, str):
-            return False
-        return super().no_conversion_needed(value)
+        # Nested checking required, which would only cost more performance
+        return False
 
     def _non_string_convert(self, value, explicit_type=True):
-        return list(value)
+        if isinstance(value, str):
+            converted_list = self._literal_eval(value, list)
+        elif is_list_like(value):
+            converted_list = list(value)
+        else:
+            raise ValueError()
 
-    def _convert(self, value, explicit_type=True):
-        return self._literal_eval(value, list)
+        if self.used_type:
+            if TypeConverter.converter_for(self.used_type[0]):
+                for i, elem in enumerate(converted_list) :
+                    converter = TypeConverter.converter_for(self.used_type[0])
+                    if converter :
+                        converted_list[i] = converter.convert("List[%s]" % i , elem)
+        return converted_list
 
+    _convert = _non_string_convert
 
 @TypeConverter.register
 class TupleConverter(TypeConverter):
@@ -418,17 +453,68 @@ class DictionaryConverter(TypeConverter):
     type = dict
     abc = Mapping
     type_name = 'dictionary'
-    aliases = ('dict', 'map')
+    aliases = ('dict', 'dictionary', 'map')
     value_types = (str, Mapping)
 
+    def __init__(self, type_, custom_converters=None):
+        super().__init__(self._get_types(type_))
+        self.converters = [TypeConverter.converter_for(t, custom_converters)
+                           for t in self.used_type]
+
+    def _get_types(self, type_):
+        return type_.__args__ if hasattr(type_, '__args__') else ()
+
+    @property
+    def type_name(self):
+        if len(self.used_type):
+            return f'Dict[{self.used_type[0].__name__}:{self.used_type[1].__name__}]'
+        else:
+            return 'dictionary'
+
+    @classmethod
+    def handles(cls, type_):
+        return hasattr(type_, '__origin__') and type_.__origin__ is dict
+
+    def _handles_value(self, value):
+        return True
+
+    def no_conversion_needed(self, value):
+        # Nested checking required, which would only cost more performance
+        return False
+
     def _non_string_convert(self, value, explicit_type=True):
-        if issubclass(self.used_type, dict) and not isinstance(value, dict):
-            return dict(value)
-        return value
+        if isinstance(value, str):
+            converted_dict = self._literal_eval(value, dict)
+        elif is_dict_like(value):
+            converted_dict = dict(value)
+        else:
+            raise ValueError()
+
+        if type(self.used_type) is tuple and len(self.used_type) == 2:
+            for key, elem in converted_dict.copy().items():
+                key_converter  = TypeConverter.converter_for(self.used_type[0])
+                elem_converter = TypeConverter.converter_for(self.used_type[1])
+
+                if key_converter:
+                    converted_key = key_converter.convert(str(key),key)
+                else:
+                    converted_key  = key
+                if elem_converter:
+                    converted_elem = elem_converter.convert(str(elem),elem)
+                else:
+                    converted_elem = elem
+
+                replace_elem = type(converted_elem) != type(elem) 
+                if converted_key != key:
+                    converted_dict.pop(key)
+                    replace_elem = True
+                if replace_elem:
+                    converted_dict[converted_key] = converted_elem
+
+        return converted_dict
 
     def _convert(self, value, explicit_type=True):
-        return self._literal_eval(value, dict)
-
+        return self._non_string_convert(value, explicit_type)
 
 @TypeConverter.register
 class SetConverter(TypeConverter):

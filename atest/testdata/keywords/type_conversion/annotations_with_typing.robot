@@ -9,15 +9,18 @@ List
     List                      [1, 2, 3.14, -42]           [1, 2, 3.14, -42]
 
 List with params
-    List with params          []                          []
-    List with params          ['foo', 'bar']              ['foo', 'bar']
-    List with params          [1, 2, 3.14, -42]           [1, 2, 3.14, -42]
+    List with ints            []                          []
+    @{numbers}=               Create list  1  ${2}  3  -42
+    List with ints            ${numbers}                  [1, 2, 3, -42]
+    List with ints            [1, ${2}, 1313, -42]        [1, 2, 1313, -42]
+    List with enums           ['foo', 'bar']              [MyEnum.foo, MyEnum.bar]
 
 Invalid list
     [Template]                Conversion Should Fail
     List                      [1, oops]                                        error=Invalid expression.
     List                      ()                                               error=Value is tuple, not list.
-    List with params          ooops                       type=list            error=Invalid expression.
+    List with ints            ooops                       type=List[int]       error=Invalid expression.
+    List with ints            [1, ${2}, 3.14, -42]        type=List[int]       error=Argument 'List[2]' got value '3.14' (float) that cannot be converted to integer: Conversion would lose precision.
 
 Sequence
     Sequence                  []                          []
@@ -42,9 +45,10 @@ Dict
     Dict                      {1: 2, 3.14: -42}           {1: 2, 3.14: -42}
 
 Dict with params
-    Dict with params          {}                          {}
-    Dict with params          {'foo': 1, "bar": 2}        {'foo': 1, "bar": 2}
-    Dict with params          {1: 2, 3.14: -42}           {1: 2, 3.14: -42}
+    Dict with str_int         {}                             {}
+    Dict with str_int         {'foo': 1, "bar": 2}           {'foo': 1, "bar": 2}
+    Dict with str_int         {1: 2, 3.14: -42}              {'1': 2, '3.14': -42}
+    Dict with enums           {'foo': True, 'bar': 'False'}  {MyEnum.foo: True, MyEnum.bar: False}
 
 TypedDict
     TypedDict                 {'x': 1}                    {'x': 1}
@@ -57,7 +61,7 @@ Invalid dictionary
     [Template]                Conversion Should Fail
     Dict                      {1: ooops}                  type=dictionary      error=Invalid expression.
     Dict                      []                          type=dictionary      error=Value is list, not dict.
-    Dict with params          ooops                       type=dictionary      error=Invalid expression.
+    Dict with str_int         ooops                       type=Dict[str:int]   error=Invalid expression.
 
 Mapping
     Mapping                   {}                          {}

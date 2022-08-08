@@ -1,6 +1,8 @@
 from typing import (List, Sequence, MutableSequence,
                     Dict, Mapping, MutableMapping,
                     Set, MutableSet)
+from enum import Enum
+
 try:
     from typing import TypedDict
 except ImportError:
@@ -20,57 +22,75 @@ class BadIntMeta(type(int)):
 class BadInt(int, metaclass=BadIntMeta):
     pass
 
+class MyEnum(Enum):
+    foo = 1
+    bar = 2
 
 def list_(argument: List, expected=None):
     _validate_type(argument, expected)
 
-
-def list_with_params(argument: List[int], expected=None):
+def list_with_ints(argument: List[int], expected=None):
     _validate_type(argument, expected)
+    _validate_list_subtype(argument, expected)
 
+def list_with_enums(argument: List[MyEnum], expected=None):
+    _validate_type(argument, expected)
+    _validate_list_subtype(argument, expected)
 
 def sequence(argument: Sequence, expected=None):
     _validate_type(argument, expected)
-
+    _validate_list_subtype(argument, expected)
 
 def sequence_with_params(argument: Sequence[bool], expected=None):
     _validate_type(argument, expected)
+    _validate_list_subtype(argument, expected)
 
 
 def mutable_sequence(argument: MutableSequence, expected=None):
     _validate_type(argument, expected)
+    _validate_list_subtype(argument, expected)
 
 
 def mutable_sequence_with_params(argument: MutableSequence[bool], expected=None):
     _validate_type(argument, expected)
+    _validate_list_subtype(argument, expected)
 
 
 def dict_(argument: Dict, expected=None):
     _validate_type(argument, expected)
+    _validate_dict_subtypes(argument, expected)
 
-
-def dict_with_params(argument: Dict[str, int], expected=None):
+def dict_with_str_int(argument: Dict[str, int], expected=None):
     _validate_type(argument, expected)
+    _validate_dict_subtypes(argument, expected)
 
+def dict_with_enums(argument: Dict[MyEnum, bool], expected=None):
+    _validate_type(argument, expected)
+    _validate_dict_subtypes(argument, expected)
 
 def typeddict(argument: TypedDict('X', x=int), expected=None):
     _validate_type(argument, expected)
+    _validate_dict_subtypes(argument, expected)
 
 
 def mapping(argument: Mapping, expected=None):
     _validate_type(argument, expected)
+    _validate_dict_subtypes(argument, expected)
 
 
 def mapping_with_params(argument: Mapping[bool, int], expected=None):
     _validate_type(argument, expected)
+    _validate_dict_subtypes(argument, expected)
 
 
 def mutable_mapping(argument: MutableMapping, expected=None):
     _validate_type(argument, expected)
+    _validate_dict_subtypes(argument, expected)
 
 
 def mutable_mapping_with_params(argument: MutableMapping[bool, int], expected=None):
     _validate_type(argument, expected)
+    _validate_dict_subtypes(argument, expected)
 
 
 def set_(argument: Set, expected=None):
@@ -112,3 +132,24 @@ def _validate_type(argument, expected):
         raise AssertionError('%r (%s) != %r (%s)'
                              % (argument, type(argument).__name__,
                                 expected, type(expected).__name__))
+
+def _validate_list_subtype(argument, expected):
+    if isinstance(expected, str):
+        expected = eval(expected)
+    for i in range(len(expected)):
+        if argument[i] != expected[i] or type(argument[i]) != type(expected[i]):
+            raise AssertionError('%r (%s) != %r (%s)'
+                                 % (argument[i], type(argument[i]).__name__,
+                                    expected[i], type(expected[i]).__name__))
+
+def _validate_dict_subtypes(argument, expected):
+    if isinstance(expected, str):
+        expected = eval(expected)
+    for k in expected:
+        if k not in argument:
+            raise AssertionError('expected key %r (%s) not present in %r'
+                                 % (k, type(k).__name__, argument))
+        if argument[k] != expected[k] or type(argument[k]) != type(expected[k]):
+            raise AssertionError('%r (%s) != %r (%s)'
+                                 % (argument[k], type(argument[k]).__name__,
+                                    expected[k], type(expected[k]).__name__))
