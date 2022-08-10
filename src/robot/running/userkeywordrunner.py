@@ -19,7 +19,7 @@ from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
                           ExecutionPassed, ExecutionStatus, PassExecution,
                           ReturnFromKeyword, UserKeywordExecutionFailed, VariableError)
 from robot.result import Keyword as KeywordResult
-from robot.utils import getshortdoc, DotDict, prepr, split_tags_from_doc
+from robot.utils import DotDict, getshortdoc, prepr, split_tags_from_doc
 from robot.variables import is_list_variable, VariableAssignment
 
 from .arguments import DefaultValue
@@ -245,18 +245,16 @@ class UserKeywordRunner:
 class EmbeddedArgumentsRunner(UserKeywordRunner):
 
     def __init__(self, handler, name):
-        UserKeywordRunner.__init__(self, handler, name)
-        match = handler.embedded_name.match(name)
-        if not match:
-            raise ValueError('Does not match given name')
-        self.embedded_args = list(zip(handler.embedded_args, match.groups()))
+        super().__init__(handler, name)
+        self.embedded_args = handler.embedded.match(name).groups()
 
     def _resolve_arguments(self, args, variables=None):
         # Validates that no arguments given.
         self.arguments.resolve(args, variables)
         if not variables:
             return []
-        return [(n, variables.replace_scalar(v)) for n, v in self.embedded_args]
+        embedded = [variables.replace_scalar(e) for e in self.embedded_args]
+        return self._handler.embedded.map(embedded)
 
     def _set_arguments(self, embedded_args, context):
         variables = context.variables
@@ -265,7 +263,7 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
         context.output.trace(lambda: self._trace_log_args_message(variables))
 
     def _trace_log_args_message(self, variables):
-        args = ['${%s}' % arg for arg, _ in self.embedded_args]
+        args = [f'${{{arg}}}' for arg in self._handler.embedded.args]
         return self._format_trace_log_args_message(args, variables)
 
     def _get_result(self, kw, assignment, variables):

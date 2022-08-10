@@ -313,10 +313,10 @@ class _BaseTestLibrary:
         return Handler(self, handler_name, handler_method)
 
     def _get_possible_embedded_args_handler(self, handler):
-        embedded = EmbeddedArguments(handler.name)
+        embedded = EmbeddedArguments.from_name(handler.name)
         if embedded:
             self._validate_embedded_count(embedded, handler.arguments)
-            return EmbeddedArgumentsHandler(embedded.name, handler), True
+            return EmbeddedArgumentsHandler(embedded, handler), True
         return handler, False
 
     def _validate_embedded_count(self, embedded, arguments):

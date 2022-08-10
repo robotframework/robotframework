@@ -4,6 +4,9 @@ Resource          resources/embedded_args_in_uk_2.robot
 
 *** Variables ***
 ${INDENT}         ${SPACE * 4}
+${foo}            foo
+${bar}            bar
+${zap}            zap
 
 *** Test Cases ***
 Embedded Arguments In User Keyword Name
@@ -77,6 +80,7 @@ Custom Regexp With Curly Braces
     Today is Tuesday and tomorrow is Wednesday
     Literal { Brace
     Literal } Brace
+    Literal {} Braces
 
 Custom Regexp With Escape Chars
     Custom Regexp With Escape Chars e.g. \\, \\\\ and c:\\temp\\test.txt
@@ -91,17 +95,24 @@ Grouping Custom Regexp
     Should Be Equal    ${matches}    Cuts-Regexperts
 
 Custom Regexp Matching Variables
-    [Documentation]    FAIL 42 != foo
-    ${foo}    ${bar}    ${zap} =    Create List    foo    bar    zap
+    [Documentation]    FAIL bar != foo
     I execute "${foo}"
     I execute "${bar}" with "${zap}"
-    I execute "${42}"
+    I execute "${bar}"
 
-Custom Regexp Matching Variables When Regexp Does No Match Them
+Non Matching Variable Is Not Accepted With Custom Regexp
+    [Documentation]    FAIL ValueError: Embedded argument 'x' got value 'foo' that does not match custom pattern 'bar'.
+    I execute "${foo}" with "${bar}"
+
+Partially Matching Variable Is Not Accepted With Custom Regexp
+    [Documentation]    FAIL ValueError: Embedded argument 'x' got value 'ba' that does not match custom pattern 'bar'.
+    I execute "${bar[:2]}" with "${zap}"
+
+Non String Variable Is Accepted With Custom Regexp
+    [Documentation]    FAIL 42 != foo
     Result of ${3} + ${-1} is ${2}
     Result of ${40} - ${-2} is ${42}
-    ${s42} =    Set Variable    42
-    I want ${42} and ${s42} as variables
+    I execute "${42}"
 
 Regexp Extensions Are Not Supported
     [Documentation]    FAIL Regexp extensions are not allowed in embedded arguments.
@@ -240,10 +251,6 @@ I execute "${x:bar}" with "${y:...}"
 Result of ${a:\d+} ${operator:[+-]} ${b:\d+} is ${result}
     Should Be True    ${a} ${operator} ${b} == ${result}
 
-I want ${integer:whatever} and ${string:everwhat} as variables
-    Should Be Equal    ${integer}    ${42}
-    Should Be Equal    ${string}    42
-
 Today is ${date:\d{4}-\d{2}-\d{2}}
     Should Be Equal    ${date}    2011-06-21
 
@@ -257,18 +264,21 @@ Literal ${Curly:\{} Brace
 Literal ${Curly:\}} Brace
     Should Be Equal    ${Curly}    }
 
-Custom Regexp With Escape Chars e.g. ${1E:\\\\}, ${2E:\\\\\\\\} and ${PATH:c:\\\\temp\\.*}
+Literal ${Curly:{}} Braces
+    Should Be Equal    ${Curly}    {}
+
+Custom Regexp With Escape Chars e.g. ${1E:\\}, ${2E:\\\\} and ${PATH:c:\\temp\\.*}
     Should Be Equal    ${1E}    \\
     Should Be Equal    ${2E}    \\\\
     Should Be Equal    ${PATH}    c:\\temp\\test.txt
 
-Custom Regexp With ${pattern:\\\\\}}
+Custom Regexp With ${pattern:\\\}}
     Should Be Equal    ${pattern}    \\}
 
-Custom Regexp With ${pattern:\\\\\{}
+Custom Regexp With ${pattern:\\\{}
     Should Be Equal    ${pattern}    \\{
 
-Custom Regexp With ${pattern:\\\\{}}
+Custom Regexp With ${pattern:\\{}}
     Should Be Equal    ${pattern}    \\{}
 
 Grouping ${x:Cu(st|ts)(om)?} ${y:Regexp\(?erts\)?}

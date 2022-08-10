@@ -1799,7 +1799,7 @@ This example uses annotations:
 .. sourcecode:: python
 
     @keyword('Add ${quantity:\d+} copies of ${item} to cart')
-    def add_copies_to_cart(quantity: int, item):
+    def add_copies_to_cart(quantity: int, item: str):
         # ...
 
 __ `Specifying argument types using function annotations`_
