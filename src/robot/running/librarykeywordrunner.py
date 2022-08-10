@@ -131,7 +131,7 @@ class EmbeddedArgumentsRunner(LibraryKeywordRunner):
 
     def __init__(self, handler, name):
         super().__init__(handler, name)
-        self._embedded_args = handler.name_regexp.match(name).groups()
+        self._embedded_args = handler.embedded.match(name).groups()
 
     def _run(self, context, args):
         if args:

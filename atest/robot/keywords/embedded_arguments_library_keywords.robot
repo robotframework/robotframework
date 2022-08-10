@@ -77,7 +77,13 @@ Grouping Custom Regexp
 Custom Regexp Matching Variables
     Check Test Case    ${TEST NAME}
 
-Custom Regexp Matching Variables When Regexp Does No Match Them
+Non Matching Variable Is Not Accepted With Custom Regexp
+    Check Test Case    ${TEST NAME}
+
+Partially Matching Variable Is Not Accepted With Custom Regexp
+    Check Test Case    ${TEST NAME}
+
+Non String Variable Is Accepted With Custom Regexp
     Check Test Case    ${TEST NAME}
 
 Embedded Arguments Syntax is Space Sensitive

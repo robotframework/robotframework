@@ -639,8 +639,7 @@ Being implemented with Python, Robot Framework naturally uses Python's
 :name:`re` module that has pretty standard `regular expressions
 syntax`__. This syntax is otherwise fully supported with embedded
 arguments, but regexp extensions in format `(?...)` cannot be
-used. Notice also that matching embedded arguments is done
-case-insensitively. If the regular expression syntax is invalid,
+used. If the regular expression syntax is invalid,
 creating the keyword fails with an error visible in `test execution
 errors`__.
 
@@ -652,26 +651,32 @@ to escape characters that have a special meaning in regexps (e.g. `\$`) and
 to form special sequences (e.g. `\d`). Typically in Robot Framework data
 backslash characters `need to be escaped`__ with another backslash, but
 that is not required in this context. If there is a need to have a literal
-backslash in the pattern, then the backslash must be escaped.
+backslash in the pattern, then the backslash must be escaped__ like
+`${path:c:\\temp\\.*}`.
+
+__ escaping_
 
 Possible lone opening and closing curly braces in the pattern must be escaped
-like `${open:\}}` and `${close:\{}`. If there are matching braces like
-`${two digits:\d{2}}`, escaping is not needed. Escaping only opening or
+like `${open:\{}` and `${close:\}}`. If there are matching braces like
+`${digits:\d{2}}`, escaping is not needed. Escaping only opening or
 closing brace is not allowed.
 
-.. warning:: Prior to Robot Framework 3.2 it was mandatory to escape all
-             closing curly braces in the pattern like `${two digits:\d{2\}}`.
-             This syntax is unfortunately not supported by Robot Framework 3.2
-             or newer and keywords using it must be updated when upgrading.
+.. note:: Prior to Robot Framework 3.2, it was mandatory to escape all
+          closing curly braces in the pattern like `${digits:\d{2\}}`.
+          This syntax is unfortunately not supported by Robot Framework 3.2
+          or newer and keywords using it must be updated when upgrading.
+
+.. note:: Prior to Robot Framework 5.1, using literal backslashes in the pattern
+          required double escaping them like `${path:c:\\\\temp\\\\.*}`.
+          Patterns using literal backslashes need to be updated when upgrading.
 
 Using variables with custom embedded argument regular expressions
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-Whenever custom embedded argument regular expressions are used, Robot
+When custom embedded argument regular expressions are used, Robot
 Framework automatically enhances the specified regexps so that they
-match variables in addition to the text matching the pattern. This
-means that it is always possible to use variables with keywords having
-embedded arguments. For example, the following test case would pass
+match variables in addition to the text matching the pattern.
+For example, the following test case would pass
 using the keywords from the earlier example.
 
 .. sourcecode:: robotframework
@@ -681,14 +686,15 @@ using the keywords from the earlier example.
 
    *** Test Cases ***
    Example
-       I type ${1} + ${2}
        Today is ${DATE}
+       I type ${1} + ${2}
 
-A drawback of variables automatically matching custom regular
-expressions is that it is possible that the value the keyword gets
-does not actually match the specified regexp. For example, variable
-`${DATE}` in the above example could contain any value and
-:name:`Today is ${DATE}` would still match the same keyword.
+If the value of the variable is a string, it must match the custom regular
+expression. Non-string values are accepted without validation.
+
+.. note:: Validating string values against custom regular expressions is new
+          in Robot Framework 5.1. Earlier all variable values were accepted
+          without validation.
 
 __ http://en.wikipedia.org/wiki/Regular_expression
 __ `Embedded arguments matching too much`_

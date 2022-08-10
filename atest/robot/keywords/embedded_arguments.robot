@@ -89,18 +89,24 @@ Grouping Custom Regexp
 Custom Regexp Matching Variables
     Check Test Case    ${TEST NAME}
 
-Custom Regexp Matching Variables When Regexp Does No Match Them
+Non Matching Variable Is Not Accepted With Custom Regexp
+    Check Test Case    ${TEST NAME}
+
+Partially Matching Variable Is Not Accepted With Custom Regexp
+    Check Test Case    ${TEST NAME}
+
+Non String Variable Is Accepted With Custom Regexp
     Check Test Case    ${TEST NAME}
 
 Regexp Extensions Are Not Supported
     Check Test Case    ${TEST NAME}
-    Creating Keyword Failed    1    277
+    Creating Keyword Failed    1    287
     ...    Regexp extensions like \${x:(?x)re} are not supported
     ...    Regexp extensions are not allowed in embedded arguments.
 
 Invalid Custom Regexp
     Check Test Case    ${TEST NAME}
-    Creating Keyword Failed    2    280
+    Creating Keyword Failed    2    290
     ...    Invalid \${x:(} Regexp
     ...    Compiling embedded arguments regexp failed: *
 
@@ -137,7 +143,7 @@ Keyword with embedded args cannot be used as "normal" keyword
     Check Test Case    ${TEST NAME}
 
 Creating keyword with both normal and embedded arguments fails
-    Creating Keyword Failed    0    223
+    Creating Keyword Failed    0    234
     ...    Keyword with \${embedded} and normal args is invalid
     ...    Keyword cannot have both normal and embedded arguments.
     Check Test Case    ${TEST NAME}
