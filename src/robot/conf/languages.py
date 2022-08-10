@@ -507,3 +507,38 @@ class Pl(Language):
     timeout = 'Limit czasowy'
     arguments = 'Argumenty'
     bdd_prefixes = {'Zakładając', 'Zakładając, że', 'Mając', 'Jeżeli', 'Jeśli', 'Gdy', 'Kiedy', 'Wtedy', 'Oraz', 'I', 'Ale'}
+
+    
+class Uk(Language):
+    """Ukrainian"""
+    setting_headers = {'Налаштування', 'Налаштування', 'Налаштування', 'Налаштування'}
+    variable_headers = {'Змінна', 'Змінні', 'Змінних', 'Змінних'}
+    test_case_headers = {'Тест-кейс', 'Тест-кейси', 'Тест-кейсів', 'Тест-кейси'}
+    task_headers = {'Завдання', 'Завадання', 'Завдань', 'Завдань'}
+    keyword_headers = {'Ключове слово', 'Ключових слова', 'Ключових слів', 'Ключових слова'}
+    comment_headers = {'Коментувати', 'Коментувати', 'Коментувати', 'Коментарів'}
+    library = 'Бібліотека'
+    resource = 'Ресурс'
+    variables = 'Змінна'
+    documentation = 'Документація'
+    metadata = 'Метадані'
+    suite_setup = 'Налаштування Suite'
+    suite_teardown = 'Розбірка Suite'
+    test_setup = 'Налаштування тесту'
+    test_teardown = 'Розбирання тестy'
+    test_template = 'Тестовий шаблон'
+    test_timeout = 'Час тестування'
+    test_tags = 'Тестові теги'
+    task_setup = 'Налаштування завдання'
+    task_teardown = 'Розбір завдання'
+    task_template = 'Шаблон завдання'
+    task_timeout = 'Час очікування завдання'
+    task_tags = 'Теги завдань'
+    keyword_tags = 'Теги ключових слів'
+    tags = 'Теги'
+    setup = 'Встановлення'
+    teardown = 'Cпростовувати пункт за пунктом'
+    template = 'Шаблон'
+    timeout = 'Час вийшов'
+    arguments = 'Аргументи'
+    bdd_prefixes = {'Дано', 'Коли', 'Тоді', 'Та', 'Але'}
