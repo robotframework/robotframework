@@ -620,4 +620,3 @@ class ZhCn(Language):
     timeout = '超时'
     arguments = '参数'
     bdd_prefixes = {'输入', '当', '则', '且', '但'}
-
