@@ -16,6 +16,8 @@
 from collections.abc import MutableSequence
 from functools import total_ordering
 
+from robot.utils import type_name
+
 
 @total_ordering
 class ItemList(MutableSequence):
@@ -40,9 +42,8 @@ class ItemList(MutableSequence):
         common_attrs = self._common_attrs or {}
         for item in items:
             if not isinstance(item, self._item_class):
-                raise TypeError("Only %s objects accepted, got %s."
-                                % (self._item_class.__name__,
-                                   item.__class__.__name__))
+                raise TypeError(f'Only {type_name(self._item_class)} objects '
+                                f'accepted, got {type_name(item)}.')
             for attr in common_attrs:
                 setattr(item, attr, common_attrs[attr])
         return items
@@ -71,9 +72,9 @@ class ItemList(MutableSequence):
             index += 1
 
     def __getitem__(self, index):
-        if not isinstance(index, slice):
-            return self._items[index]
-        return self._create_new_from(self._items[index])
+        if isinstance(index, slice):
+            return self._create_new_from(self._items[index])
+        return self._items[index]
 
     def _create_new_from(self, items):
         # Cannot pass common_attrs directly to new object because all
@@ -100,12 +101,12 @@ class ItemList(MutableSequence):
         return len(self._items)
 
     def __str__(self):
-        return '[%s]' % ', '.join(repr(item) for item in self)
+        return str(list(self))
 
     def __repr__(self):
-        return '%s(item_class=%s, items=%s)' % (type(self).__name__,
-                                                self._item_class.__name__,
-                                                self._items)
+        class_name = type(self).__name__
+        item_name = self._item_class.__name__
+        return f'{class_name}(item_class={item_name}, items={self._items})'
 
     def count(self, item):
         return self._items.count(item)
@@ -133,21 +134,21 @@ class ItemList(MutableSequence):
 
     def __lt__(self, other):
         if not isinstance(other, ItemList):
-            raise TypeError('Cannot order ItemList and %s' % type(other).__name__)
+            raise TypeError(f'Cannot order ItemList and {type_name(other)}.')
         if not self._is_compatible(other):
-            raise TypeError('Cannot order incompatible ItemLists')
+            raise TypeError('Cannot order incompatible ItemLists.')
         return self._items < other._items
 
     def __add__(self, other):
         if not isinstance(other, ItemList):
-            raise TypeError('Cannot add ItemList and %s' % type(other).__name__)
+            raise TypeError(f'Cannot add ItemList and {type_name(other)}.')
         if not self._is_compatible(other):
-            raise TypeError('Cannot add incompatible ItemLists')
+            raise TypeError('Cannot add incompatible ItemLists.')
         return self._create_new_from(self._items + other._items)
 
     def __iadd__(self, other):
         if isinstance(other, ItemList) and not self._is_compatible(other):
-            raise TypeError('Cannot add incompatible ItemLists')
+            raise TypeError('Cannot add incompatible ItemLists.')
         self.extend(other)
         return self
 
