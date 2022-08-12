@@ -122,10 +122,10 @@ class TestTestOrTask(unittest.TestCase):
 class TestParseReFlags(unittest.TestCase):
 
     def test_parse(self):
-        for inp in ['DOTALL', 'I', 'IGNORECASE|dotall', 'MULTILINE']:
-            exp = 0
-            for i in inp.split('|'):
-                exp |= getattr(re, i.upper())
+        for inp, exp in [('DOTALL', re.DOTALL),
+                         ('I', re.I),
+                         ('IGNORECASE|dotall', re.IGNORECASE | re.DOTALL),
+                         (' MULTILINE ', re.MULTILINE)]:
             assert_equal(parse_re_flags(inp), exp)
 
     def test_parse_empty(self):
@@ -137,6 +137,7 @@ class TestParseReFlags(unittest.TestCase):
             with self.assertRaises(ValueError) as e:
                 parse_re_flags(inp)
             self.assertTrue('unknown flag' in str(e.exception))
+
 
 if __name__ == "__main__":
     unittest.main()
