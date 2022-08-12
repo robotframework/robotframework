@@ -27,7 +27,11 @@ Replace String With Invalid Count
 Replace String Using Regexp
     ${result} =    Replace String Using Regexp    Robot Framework    F.*k    Class
     Should be equal    ${result}    Robot Class
+    ${result} =    Replace String Using Regexp    Robot Framework    f.*k    Class    flags=IGNORECASE
+    Should be equal    ${result}    Robot Class
     ${result} =    Replace String Using Regexp    Robot Framework    o\\w    foo    2
+    Should be equal    ${result}    Rfoofoo Framework
+    ${result} =    Replace String Using Regexp    Robot Framework    O\\w    foo    2    flags=IGNORECASE
     Should be equal    ${result}    Rfoofoo Framework
 
 Replace String Using Regexp With Count 0

@@ -1,7 +1,8 @@
 import unittest
+import re
 
 from robot.utils.asserts import assert_equal
-from robot.utils import printable_name, seq2str, plural_or_not, test_or_task
+from robot.utils import printable_name, seq2str, plural_or_not, test_or_task, parse_re_flags
 
 
 class TestSeg2Str(unittest.TestCase):
@@ -117,6 +118,25 @@ class TestTestOrTask(unittest.TestCase):
         assert_equal(test_or_task('Contains {test}, {TEST} and {TesT}', True),
                      'Contains task, TASK and TasK')
 
+
+class TestParseReFlags(unittest.TestCase):
+
+    def test_parse(self):
+        for inp in ['DOTALL', 'I', 'IGNORECASE|dotall', 'MULTILINE']:
+            exp = 0
+            for i in inp.split('|'):
+                exp |= getattr(re, i.upper())
+            assert_equal(parse_re_flags(inp), exp)
+
+    def test_parse_empty(self):
+        for inp in ['', None]:
+            assert_equal(parse_re_flags(inp), 0)
+
+    def test_parse_negative(self):
+        for inp in ['foo', 'IGNORECASE|foo']:
+            with self.assertRaises(ValueError) as e:
+                parse_re_flags(inp)
+            self.assertTrue('unknown flag' in str(e.exception))
 
 if __name__ == "__main__":
     unittest.main()

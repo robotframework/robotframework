@@ -22,7 +22,7 @@ from string import ascii_lowercase, ascii_uppercase, digits
 
 from robot.api import logger
 from robot.api.deco import keyword
-from robot.utils import FileReader, is_bytes, is_string, is_truthy, safe_str, type_name
+from robot.utils import FileReader, is_bytes, is_string, is_truthy, safe_str, type_name, parse_re_flags
 from robot.version import get_version
 
 
@@ -335,7 +335,7 @@ class String:
             matches = lambda line: fnmatchcase(line, pattern)
         return self._get_matching_lines(string, matches)
 
-    def get_lines_matching_regexp(self, string, pattern, partial_match=False):
+    def get_lines_matching_regexp(self, string, pattern, partial_match=False, flags=''):
         """Returns lines of the given ``string`` that match the regexp ``pattern``.
 
         See `BuiltIn.Should Match Regexp` for more information about
@@ -352,8 +352,9 @@ class String:
         If the pattern is empty, it matches only empty lines by default.
         When partial matching is enabled, empty pattern matches all lines.
 
-        Notice that to make the match case-insensitive, you need to prefix
-        the pattern with case-insensitive flag ``(?i)``.
+        To make the match case-insensitive, you can to prefix
+        the pattern with case-insensitive flag ``(?i)`` or use the
+        ``flags=IGNORECASE`` argument (new in RobotFramework 5.1)
 
         Lines are returned as one string concatenated back together with
         newlines. Possible trailing newline is never returned. The
@@ -363,15 +364,16 @@ class String:
         | ${lines} = | Get Lines Matching Regexp | ${result} | Reg\\\\w{3} example |
         | ${lines} = | Get Lines Matching Regexp | ${result} | Reg\\\\w{3} example | partial_match=true |
         | ${ret} =   | Get Lines Matching Regexp | ${ret}    | (?i)FAIL: .* |
+        | ${ret} =   | Get Lines Matching Regexp | ${ret}    | FAIL: .* | flags=IGNORECASE
 
         See `Get Lines Matching Pattern` and `Get Lines Containing
         String` if you do not need full regular expression powers (and
         complexity).
         """
         if is_truthy(partial_match):
-            match = re.compile(pattern).search
+            match = re.compile(pattern, flags=parse_re_flags(flags)).search
         else:
-            match = re.compile(pattern + '$').match
+            match = re.compile(pattern + '$', flags=parse_re_flags(flags)).match
         return self._get_matching_lines(string, match)
 
     def _get_matching_lines(self, string, matches):
@@ -380,7 +382,7 @@ class String:
         logger.info('%d out of %d lines matched' % (len(matching), len(lines)))
         return '\n'.join(matching)
 
-    def get_regexp_matches(self, string, pattern, *groups):
+    def get_regexp_matches(self, string, pattern, *groups, flags=''):
         """Returns a list of all non-overlapping matches in the given string.
 
         ``string`` is the string to find matches from and ``pattern`` is the
@@ -397,6 +399,7 @@ class String:
         Examples:
         | ${no match} =    | Get Regexp Matches | the string | xxx     |
         | ${matches} =     | Get Regexp Matches | the string | t..     |
+        | ${matches} =     | Get Regexp Matches | the string | T..     | flags=IGNORECASE
         | ${one group} =   | Get Regexp Matches | the string | t(..)   | 1 |
         | ${named group} = | Get Regexp Matches | the string | t(?P<name>..) | name |
         | ${two groups} =  | Get Regexp Matches | the string | t(.)(.) | 1 | 2 |
@@ -406,8 +409,10 @@ class String:
         | ${one group} = ['he', 'ri']
         | ${named group} = ['he', 'ri']
         | ${two groups} = [('h', 'e'), ('r', 'i')]
+
+        The ``flags`` option has been introduced in RobotFramework 5.1
         """
-        regexp = re.compile(pattern)
+        regexp = re.compile(pattern, flags=parse_re_flags(flags))
         groups = [self._parse_group(g) for g in groups]
         return [m.group(*groups) for m in regexp.finditer(string)]
 
@@ -441,7 +446,7 @@ class String:
         count = self._convert_to_integer(count, 'count')
         return string.replace(search_for, replace_with, count)
 
-    def replace_string_using_regexp(self, string, pattern, replace_with, count=-1):
+    def replace_string_using_regexp(self, string, pattern, replace_with, count=-1, flags=''):
         """Replaces ``pattern`` in the given ``string`` with ``replace_with``.
 
         This keyword is otherwise identical to `Replace String`, but
@@ -460,7 +465,7 @@ class String:
         # re.sub handles 0 and negative counts differently than string.replace
         if count == 0:
             return string
-        return re.sub(pattern, replace_with, string, max(count, 0))
+        return re.sub(pattern, replace_with, string, max(count, 0), flags=parse_re_flags(flags))
 
     def remove_string(self, string, *removables):
         """Removes all ``removables`` from the given ``string``.
@@ -486,7 +491,7 @@ class String:
             string = self.replace_string(string, removable, '')
         return string
 
-    def remove_string_using_regexp(self, string, *patterns):
+    def remove_string_using_regexp(self, string, *patterns, flags=''):
         """Removes ``patterns`` from the given ``string``.
 
         This keyword is otherwise identical to `Remove String`, but
@@ -497,7 +502,7 @@ class String:
         occurrences.
         """
         for pattern in patterns:
-            string = self.replace_string_using_regexp(string, pattern, '')
+            string = self.replace_string_using_regexp(string, pattern, '', flags=flags)
         return string
 
     @keyword(types=None)

@@ -27,7 +27,13 @@ Remove String Using Regexp Not Found
 Remove String Using Regexp
     ${result} =    Remove String Using Regexp    RobotFramework    F.*k
     Should Be Equal    ${result}    Robot
+    ${result} =    Remove String Using Regexp    RobotFramework    f.*k    flags=I
+    Should Be Equal    ${result}    Robot
+    ${result} =    Remove String Using Regexp    RobotFrame\nwork    f.*k    flags=IGNORECASE|DOTALL
+    Should Be Equal    ${result}    Robot
 
 Remove String Using Regexp Multiple Patterns
     ${result} =    Remove String Using Regexp    RobotFramework    o.o    r.*w
     Should Be Equal    ${result}    RtFork
+    ${result} =    Remove String Using Regexp    RobotFrame\nwork    o.o    f.*w    flags=IGNORECASE|DOTALL
+    Should Be Equal    ${result}    Rtork

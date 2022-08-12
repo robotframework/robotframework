@@ -115,3 +115,20 @@ def isatty(stream):
         return stream.isatty()
     except ValueError:    # Occurs if file is closed.
         return False
+
+def parse_re_flags(flags_as_str):
+    result = 0
+    if flags_as_str:
+        unknown = []
+        for f in flags_as_str.split('|'):
+            try:
+                flag = getattr(re, f.upper().strip())
+                if isinstance(flag, re.RegexFlag):
+                    result |= flag
+                else:
+                    unknown.append(f)
+            except AttributeError:
+                unknown.append(f)
+        if unknown:
+            raise ValueError('unknown flag{}: {}'.format(plural_or_not(unknown), seq2str(unknown)))
+    return result
