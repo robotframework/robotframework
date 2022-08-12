@@ -16,7 +16,7 @@
 import inspect
 import os.path
 
-from robot.utils import getdoc, is_string, Importer
+from robot.utils import getdoc, is_string, Importer, normalize
 
 
 class Languages:
@@ -48,7 +48,7 @@ class Languages:
         available = self._get_available_languages()
         returned = []
         for lang in languages:
-            normalized = lang.lower().replace('-', '')
+            normalized = normalize(lang, ignore='-')
             if normalized in available:
                 returned.append(available[normalized])
             else:
@@ -67,9 +67,9 @@ class Languages:
     def _get_available_languages(self):
         available = {}
         for lang in Language.__subclasses__():
-            available[lang.__name__.lower()] = lang
+            available[normalize(lang.__name__)] = lang
             if lang.__doc__:
-                available[lang.__doc__.lower()] = lang
+                available[normalize(lang.__doc__)] = lang
         return available
 
     def _import_languages(self, lang):
@@ -126,17 +126,29 @@ class Language:
     def from_name(cls, name):
         """Return langauge class based on given `name`.
 
-        Name is matched both against the class name (language short name)
-        and possible docstring (full language name). Matching is case-insensitive
-        and hyphen (`-`) is ignored to support, for example, `PT-BR`.
+        Name can either be a language name (e.g. 'Finnish' or 'Brazilian Portuguese')
+        or a language code (e.g. 'fi' or 'pt-BR'). Matching is case and space
+        insensitive and the hyphen is ignored when matching language codes.
 
         Raises `ValueError` if no matching langauge is found.
         """
-        normalized = name.lower().replace('-', '')
+        normalized = normalize(name, ignore='-')
         for subcls in cls.__subclasses__():
-            if normalized in (subcls.__name__.lower(), getdoc(subcls).lower()):
+            if normalized in (normalize(subcls.__name__),
+                              normalize(getdoc(subcls))):
                 return subcls()
         raise ValueError(f"No language with name '{name}' found.")
+
+    @property
+    def code(self):
+        name = type(self).__name__
+        if len(name) < 3:
+            return name.lower()
+        return f'{name[:2].lower()}-{name[2:].upper()}'
+
+    @property
+    def name(self):
+        return self.__doc__ or ''
 
     @property
     def settings(self):
@@ -378,7 +390,7 @@ class De(Language):
 
 
 class PtBr(Language):
-    """Portuguese, Brazilian"""
+    """Brazilian Portuguese"""
     setting_headers = {'Configuração', 'Configurações'}
     variable_headers = {'Variável', 'Variáveis'}
     test_case_headers = {'Caso de Teste', 'Casos de Teste'}
