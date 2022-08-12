@@ -352,7 +352,7 @@ class String:
         If the pattern is empty, it matches only empty lines by default.
         When partial matching is enabled, empty pattern matches all lines.
 
-        To make the match case-insensitive, you can to prefix
+        To make the match case-insensitive, you can prefix
         the pattern with case-insensitive flag ``(?i)`` or use the
         ``flags=IGNORECASE`` argument (new in RobotFramework 5.1)
 

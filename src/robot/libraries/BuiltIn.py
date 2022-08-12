@@ -1315,14 +1315,14 @@ class _Verify(_BuiltInBase):
         to denote the beginning and end of the string, respectively.
         For example, ``^ello$`` only matches the exact string ``ello``.
 
-        Prior to RobotFramework 5.1, possible flags altering how the expression is parsed (e.g.
-        ``re.IGNORECASE``, ``re.MULTILINE``) had to be embedded to the
+        Possible flags altering how the expression is parsed (e.g.
+        ``re.IGNORECASE``, ``re.MULTILINE``) can be embedded to the
         pattern like ``(?im)pattern``. The most useful flags are ``i``
         (case-insensitive), ``m`` (multiline mode), ``s`` (dotall mode)
-        and ``x`` (verbose).
-        RobotFramework 5.1 introduced the optional ``flags`` argument to specify
-        the flags as string argument, i.e. ``flags=MULTILINE`` or
-        ``flags=IGNORECASE|MULTILINE``. All valid Python re flags are supported.
+        and ``x`` (verbose). Alternatively, RobotFramework 5.1 introduced the
+        optional ``flags`` argument to specify the flags directly,
+        i.e. ``flags=MULTILINE`` or ``flags=IGNORECASE|DOTALL``.
+        All valid Python re.XXX flags are supported.
 
         If this keyword passes, it returns the portion of the string that
         matched the pattern. Additionally, the possible captured groups are
