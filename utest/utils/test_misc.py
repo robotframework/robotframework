@@ -134,7 +134,7 @@ class TestParseReFlags(unittest.TestCase):
             assert_equal(parse_re_flags(inp), 0)
 
     def test_parse_negative(self):
-        for inp in ['foo', 'IGNORECASE|foo']:
+        for inp in ['foo', 'IGNORECASE|foo', 'compile']:
             assert_raises(ValueError, parse_re_flags, inp)
 
 
