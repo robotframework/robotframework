@@ -307,10 +307,13 @@ class EmbeddedArgumentsHandler:
         return EmbeddedArgumentsRunner(self, name)
 
     def resolve_arguments(self, args, variables=None):
-        if variables:
-            args = [variables.replace_scalar(a) for a in args]
-            self.embedded.validate(args)
         argspec = self._orig_handler.arguments
+        if variables:
+            if argspec.var_positional:
+                args = variables.replace_list(args)
+            else:
+                args = [variables.replace_scalar(a) for a in args]
+            self.embedded.validate(args)
         return argspec.convert(args, named={}, converters=self.library.converters,
                                dry_run=not variables)
 

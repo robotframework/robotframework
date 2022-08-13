@@ -129,8 +129,8 @@ def optional_args_are_okay(nonembedded=1, okay=2, indeed=3):
     pass
 
 
-@keyword(name="Star Args With ${embedded} Args Are ${okay}")
-def star_args_are_okay(*args):
+@keyword(name="Varargs With ${embedded} Args Are ${okay}")
+def varargs_are_okay(*args):
     return args
 
 

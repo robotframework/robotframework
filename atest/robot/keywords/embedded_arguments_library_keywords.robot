@@ -116,7 +116,13 @@ Embedded argument count must match accepted arguments
 Optional Non-Embedded Args Are Okay
     Check Test Case    ${TESTNAME}
 
-Star Args With Embedded Args Are Okay
+Varargs With Embedded Args Are Okay
+    Check Test Case    ${TESTNAME}
+
+List variable is expanded when keyword accepts varargs
+    Check Test Case    ${TESTNAME}
+
+Scalar variable containing list is not expanded when keyword accepts varargs
     Check Test Case    ${TESTNAME}
 
 Same name with different regexp works

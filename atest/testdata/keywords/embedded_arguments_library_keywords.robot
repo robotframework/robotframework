@@ -7,6 +7,7 @@ ${INDENT}         ${SPACE * 4}
 ${foo}            foo
 ${bar}            bar
 ${zap}            zap
+@{list}           first    ${2}    third
 
 *** Test Cases ***
 Embedded Arguments In Library Keyword Name
@@ -146,10 +147,17 @@ Embedded argument count must match accepted arguments
 Optional Non-Embedded Args Are Okay
     Optional Non-Embedded Args Are Okay
 
-Star Args With Embedded Args Are Okay
-    @{ret} =    Star Args With Embedded Args are Okay
-    @{args} =    Create List    Embedded    Okay
-    Should Be Equal    ${ret}    ${args}
+Varargs With Embedded Args Are Okay
+    @{ret} =    Varargs With Embedded Args are Okay
+    Should Be Equal    ${ret}    ${{['Embedded', 'Okay']}}
+
+List variable is expanded when keyword accepts varargs
+    @{ret} =    Varargs With @{list} Args are Okay
+    Should Be Equal    ${ret}    ${{['first', 2, 'third', 'Okay']}}
+
+Scalar variable containing list is not expanded when keyword accepts varargs
+    @{ret} =    Varargs With ${list} Args are Okay
+    Should Be Equal    ${ret}    ${{[['first', 2, 'third'], 'Okay']}}
 
 Same name with different regexp works
     It is a car
