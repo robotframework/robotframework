@@ -19,10 +19,10 @@ from fnmatch import fnmatchcase
 from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
 
-
 from robot.api import logger
 from robot.api.deco import keyword
-from robot.utils import FileReader, is_bytes, is_string, is_truthy, safe_str, type_name, parse_re_flags
+from robot.utils import (FileReader, is_bytes, is_string, is_truthy,
+                         parse_re_flags, safe_str, type_name)
 from robot.version import get_version
 
 

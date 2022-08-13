@@ -29,9 +29,10 @@ from robot.running.usererrorhandler import UserErrorHandler
 from robot.utils import (DotDict, escape, format_assign_message, get_error_message,
                          get_time, html_escape, is_falsy, is_integer, is_list_like,
                          is_string, is_truthy, Matcher, normalize,
-                         normalize_whitespace, parse_re_flags, parse_time, prepr, plural_or_not as s,
-                         RERAISED_EXCEPTIONS, safe_str, secs_to_timestr, seq2str,
-                         split_from_equals, timestr_to_secs, type_name)
+                         normalize_whitespace, parse_re_flags, parse_time, prepr,
+                         plural_or_not as s, RERAISED_EXCEPTIONS, safe_str,
+                         secs_to_timestr, seq2str, split_from_equals,
+                         timestr_to_secs, type_name)
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (evaluate_expression, is_dict_variable,
                              is_list_variable, search_variable,
@@ -1354,7 +1355,7 @@ class _Verify(_BuiltInBase):
             return [match] + list(groups)
         return match
 
-    def should_not_match_regexp(self, string, pattern, msg=None, values=True,  flags=''):
+    def should_not_match_regexp(self, string, pattern, msg=None, values=True, flags=''):
         """Fails if ``string`` matches ``pattern`` as a regular expression.
 
         See `Should Match Regexp` for more information about arguments.

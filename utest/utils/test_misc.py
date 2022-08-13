@@ -1,8 +1,9 @@
-import unittest
 import re
+import unittest
 
-from robot.utils.asserts import assert_equal
-from robot.utils import printable_name, seq2str, plural_or_not, test_or_task, parse_re_flags
+from robot.utils import (parse_re_flags, plural_or_not, printable_name,
+                         seq2str, test_or_task)
+from robot.utils.asserts import assert_equal, assert_raises
 
 
 class TestSeg2Str(unittest.TestCase):
@@ -134,9 +135,7 @@ class TestParseReFlags(unittest.TestCase):
 
     def test_parse_negative(self):
         for inp in ['foo', 'IGNORECASE|foo']:
-            with self.assertRaises(ValueError) as e:
-                parse_re_flags(inp)
-            self.assertTrue('unknown flag' in str(e.exception))
+            assert_raises(ValueError, parse_re_flags, inp)
 
 
 if __name__ == "__main__":
