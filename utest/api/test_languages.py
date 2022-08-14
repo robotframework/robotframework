@@ -17,6 +17,14 @@ class TestLanguage(unittest.TestCase):
         assert_equal(Fi().name, 'Finnish')
         assert_equal(PtBr().name, 'Brazilian Portuguese')
 
+    def test_name_with_multiline_docstring(self):
+        class X(Language):
+            """Language Name
+
+            Other lines are ignored.
+            """
+        assert_equal(X().name, 'Language Name')
+
 
 class TestFromName(unittest.TestCase):
 

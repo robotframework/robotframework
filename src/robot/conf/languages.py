@@ -90,6 +90,14 @@ class Languages:
 
 
 class Language:
+    """Base class for language definitions.
+
+    New translations can be added by extending this class and setting class
+    attributes listed below.
+
+    Language :attr:`code` is got based on the class name and :attr:`name`
+    based on the docstring.
+    """
     setting_headers = set()
     variable_headers = set()
     test_case_headers = set()
@@ -141,14 +149,24 @@ class Language:
 
     @property
     def code(self):
-        name = type(self).__name__
-        if len(name) < 3:
-            return name.lower()
-        return f'{name[:2].lower()}-{name[2:].upper()}'
+        """Language code like 'fi' or 'pt-BR'.
+
+        Got based on the class name. If the class name is two characters (or less),
+        the code is just the name in lower case. If it is longer, a hyphen is added
+        remainder of the class name is upper-cased.
+        """
+        code = type(self).__name__.lower()
+        if len(code) < 3:
+            return code
+        return f'{code[:2]}-{code[2:].upper()}'
 
     @property
     def name(self):
-        return self.__doc__ or ''
+        """Language name like 'Finnish' or 'Brazilian Portuguese'.
+
+        Got from the first line of the class docstring.
+        """
+        return getdoc(self).splitlines()[0]
 
     @property
     def settings(self):
@@ -528,7 +546,7 @@ class Pl(Language):
     arguments = 'Argumenty'
     bdd_prefixes = {'Zakładając', 'Zakładając, że', 'Mając', 'Jeżeli', 'Jeśli', 'Gdy', 'Kiedy', 'Wtedy', 'Oraz', 'I', 'Ale'}
 
-    
+
 class Uk(Language):
     """Ukrainian"""
     setting_headers = {'Налаштування', 'Налаштування', 'Налаштування', 'Налаштування'}
