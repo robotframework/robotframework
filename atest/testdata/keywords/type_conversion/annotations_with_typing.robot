@@ -37,7 +37,7 @@ Invalid Sequence
     [Template]                Conversion Should Fail
     Sequence                  [1, oops]                   type=list            error=Invalid expression.
     Mutable sequence          ()                          type=list            error=Value is tuple, not list.
-    Sequence with params      ooops                       type=list            error=Invalid expression.
+    Sequence with params      ooops                       type=List[bool]      error=Invalid expression.
 
 Dict
     Dict                      {}                          {}
@@ -78,7 +78,7 @@ Invalid mapping
     [Template]                Conversion Should Fail
     Mapping                   {1: ooops}                  type=dictionary      error=Invalid expression.
     Mutable mapping           []                          type=dictionary      error=Value is list, not dict.
-    Mapping with params       ooops                       type=dictionary      error=Invalid expression.
+    Mapping with params       ooops                       type=Dict[bool:int]  error=Invalid expression.
 
 Set
     Set                       set()                       set()
