@@ -94,7 +94,7 @@ def seq2str2(sequence):
     return '[ %s ]' % ' | '.join(safe_str(item) for item in sequence)
 
 
-def test_or_task(text, rpa=False):
+def test_or_task(text: str, rpa: bool):
     """Replace 'test' with 'task' in the given `text` depending on `rpa`.
 
      If given text is `test`, `test` or `task` is returned directly. Otherwise,

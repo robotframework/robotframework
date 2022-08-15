@@ -99,7 +99,7 @@ class TestTestOrTask(unittest.TestCase):
 
     def test_no_match(self):
         for inp in ['', 'No match', 'No {match}', '{No} {task} {match}']:
-            assert_equal(test_or_task(inp), inp)
+            assert_equal(test_or_task(inp, rpa=False), inp)
             assert_equal(test_or_task(inp, rpa=True), inp)
 
     def test_match(self):
