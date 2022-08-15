@@ -617,6 +617,41 @@ class Es(Language):
     bdd_prefixes = {'Dado', 'Cuando', 'Entonces', 'Y', 'Pero'}
 
 
+class Ru(Language):
+    """Russian"""
+    setting_headers = {'Настройки'}
+    variable_headers = {'Переменная', 'Переменные'}
+    test_case_headers = {'Заголовки тестов'}
+    task_headers = {'Задача'}
+    keyword_headers = {'Ключевое слово', 'Ключевые слова'}
+    comment_headers = {'Комментарий', 'Комментарии'}
+    library = 'Библиотека'
+    resource = 'Ресурс'
+    variables = 'Переменные'
+    documentation = 'Документация'
+    metadata = 'Метаданные'
+    suite_setup = 'Инициализация комплекта тестов'
+    suite_teardown = 'Завершение комплекта тестов'
+    test_setup = 'Инициализация теста'
+    test_teardown = 'Завершение теста'
+    test_template = 'Шаблон теста'
+    test_timeout = 'Лимит выполнения теста'
+    test_tags = 'Теги тестов'
+    task_setup = 'Инициализация задания'
+    task_teardown = 'Завершение задания'
+    task_template = 'Шаблон задания'
+    task_timeout = 'Лимит задания'
+    task_tags = 'Метки заданий'
+    keyword_tags = 'Метки ключевых слов'
+    tags = 'Метки'
+    setup = 'Инициализация'
+    teardown = 'Завершение'
+    template = 'Шаблон'
+    timeout = 'Лимит'
+    arguments = 'Аргументы'
+    bdd_prefixes = {'Дано', 'Когда', 'Тогда', 'И', 'Но'}
+
+
 class ZhCn(Language):
     """Chinese Simplified"""
     setting_headers = {'设置'}
