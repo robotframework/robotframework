@@ -303,7 +303,7 @@ the number of loop-variables (excluding the index variable):
 
 .. sourcecode:: robotframework
 
-   *** Test Case ***
+   *** Test Cases ***
    FOR-IN-ENUMERATE with two values per iteration
        FOR    ${index}    ${en}    ${fi}    IN ENUMERATE
        ...    cat      kissa
@@ -317,7 +317,7 @@ will become a Python tuple containing the index and the iterated value:
 
 .. sourcecode:: robotframework
 
-   *** Test Case ***
+   *** Test Cases ***
    FOR-IN-ENUMERATE with one loop variable
        FOR    ${x}    IN ENUMERATE    @{LIST}
            Length Should Be    ${x}    2
@@ -801,7 +801,7 @@ equivalent:
 
 .. sourcecode:: robotframework
 
-    *** Keyword ***
+    *** Keywords ***
     Normal IF
         IF    $condition1
             Keyword    argument
@@ -818,7 +818,7 @@ The inline `IF` syntax supports also `ELSE` and `ELSE IF` branches:
 
 .. sourcecode:: robotframework
 
-    *** Keyword ***
+    *** Keywords ***
     Inline IF/ELSE
         IF    $condition    Keyword    argument    ELSE    Another Keyword
 
@@ -840,7 +840,7 @@ assignment is used and no branch is run, the variable gets value `None`.
 
 .. sourcecode:: robotframework
 
-    *** Keyword ***
+    *** Keywords ***
     Inline IF/ELSE with assignment
         ${var} =    IF    $condition    Keyword    argument    ELSE    Another Keyword
 
@@ -862,7 +862,7 @@ as `FOR-IN-ENUMERATE loop`_, `named-only arguments with user keywords`_ and
 
 .. sourcecode:: robotframework
 
-    *** Keyword ***
+    *** Keywords ***
     Log items
         [Arguments]    @{items}    ${log_values}=True
         IF    not ${items}

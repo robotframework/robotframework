@@ -77,10 +77,13 @@ called tables, listed below:
 Different sections are recognized by their header row. The recommended
 header format is `*** Settings ***`, but the header is case-insensitive,
 surrounding spaces are optional, and the number of asterisk characters can
-vary as long as there is one asterisk in the beginning. In addition to using
-the plural format, also singular variants like `Setting` and `Test Case` are
-accepted. In other words, also `*setting` would be recognized as a section
-header.
+vary as long as there is at least one asterisk in the beginning. For example,
+also `*settings` would be recognized as a section header.
+
+Robot Framework also supports the singular form with headers like
+`*** Setting ***,` but that support is deprecated. There are no visible
+deprecation warnings yet, but warnings will emitted in the future and
+singular headers will eventually not be supported at all.
 
 The header row can contain also other data than the actual section header.
 The extra data must be separated from the section header using the data
@@ -90,14 +93,6 @@ purposes. This is especially useful when creating test cases using the
 `data-driven style`_.
 
 Possible data before the first section is ignored.
-
-.. note:: Section names used to be space-insensitive, but that was deprecated
-          in Robot Framework 3.1 and trying to use something like `TestCases`
-          or `S e t t i n g s` causes an error in Robot Framework 3.2.
-
-.. note:: Prior to Robot Framework 3.1, all unrecognized sections were silently
-          ignored but nowadays they cause an error. `Comments` sections can
-          be used if sections not containing actual test data are needed.
 
 Supported file formats
 ----------------------
@@ -286,9 +281,9 @@ marked using the `code` directive, but Robot Framework supports also
 
        # Both space and pipe separated formats are supported.
 
-       | *** Keyword ***  |                        |         |
-       | My Keyword       | [Arguments]            | ${path} |
-       |                  | Directory Should Exist | ${path} |
+       | *** Keywords ***  |                        |         |
+       | My Keyword        | [Arguments]            | ${path} |
+       |                   | Directory Should Exist | ${path} |
 
     .. code:: python
 
@@ -507,7 +502,7 @@ __ `Newlines in test data`_
    Documentation      Here we have documentation for this suite.\nDocumentation is often quite long.\n\nIt can also contain multiple paragraphs.
    Default Tags       default tag 1    default tag 2    default tag 3    default tag 4    default tag 5
 
-   *** Variable ***
+   *** Variables ***
    ${STRING}          This is a long string. It has multiple sentences. It does not have newlines.
    ${MULTILINE}       This is a long multiline string.\nThis is the second line.\nThis is the third and the last line.
    @{LIST}            this     list     is    quite    long     and    items in it can also be long
@@ -529,7 +524,7 @@ __ `Newlines in test data`_
    Default Tags       default tag 1    default tag 2    default tag 3
    ...                default tag 4    default tag 5
 
-   *** Variable ***
+   *** Variables ***
    ${STRING}          This is a long string.
    ...                It has multiple sentences.
    ...                It does not have newlines.
