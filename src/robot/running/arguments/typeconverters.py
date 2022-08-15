@@ -15,7 +15,8 @@
 
 from ast import literal_eval
 from collections import OrderedDict
-from collections.abc import ByteString, Container, Mapping, Sequence, Set
+from collections.abc import ByteString, Container, Sequence, Set, \
+                            Mapping, MutableMapping
 from typing import Any, Union
 from datetime import datetime, date, timedelta
 from decimal import InvalidOperation, Decimal
@@ -389,21 +390,20 @@ class ListConverter(TypeConverter):
     aliases = ('list',)
 
     def __init__(self, type_, custom_converters=None):
-        super().__init__(self._get_types(type_))
-
-    def _get_types(self, type_):
-        return type_.__args__ if hasattr(type_, '__args__') else ()
+        super().__init__(type_)
+        self.nested_types = getattr(type_, '__args__', ())
 
     @property
     def type_name(self):
-        return f'List[{self.used_type[0].__name__}]' if len(self.used_type) else 'list'
+        return f'List[{self.nested_types[0].__name__}]' if self.nested_types else 'list'
 
     def _handles_value(self, value):
         return True
 
     def no_conversion_needed(self, value):
-        # Nested checking required, which would only cost more performance
-        return False
+        return not self.nested_types \
+               and isinstance(value, self.used_type) \
+               and not isinstance(value, str)
 
     def _non_string_convert(self, value, explicit_type=True):
         if isinstance(value, str):
@@ -413,10 +413,10 @@ class ListConverter(TypeConverter):
         else:
             raise ValueError
 
-        if self.used_type:
-            if TypeConverter.converter_for(self.used_type[0]):
+        if self.nested_types:
+            if TypeConverter.converter_for(self.nested_types[0]):
                 for i, elem in enumerate(converted_list) :
-                    converter = TypeConverter.converter_for(self.used_type[0])
+                    converter = TypeConverter.converter_for(self.nested_types[0])
                     if converter :
                         converted_list[i] = converter.convert("List[%s]" % i , elem)
         return converted_list
@@ -440,20 +440,19 @@ class TupleConverter(TypeConverter):
 class DictionaryConverter(TypeConverter):
     type = dict
     abc = Mapping
+    abc = (Mapping, MutableMapping)
     type_name = 'dictionary'
     aliases = ('dict', 'dictionary', 'map')
     value_types = (str, Mapping)
 
     def __init__(self, type_, custom_converters=None):
-        super().__init__(self._get_types(type_))
-
-    def _get_types(self, type_):
-        return type_.__args__ if hasattr(type_, '__args__') else ()
+        super().__init__(type_)
+        self.nested_types = getattr(type_, '__args__', ())
 
     @property
     def type_name(self):
-        if len(self.used_type):
-            return f'Dict[{self.used_type[0].__name__}:{self.used_type[1].__name__}]'
+        if self.nested_types:
+            return f'Dict[{self.nested_types[0].__name__}:{self.nested_types[1].__name__}]'
         else:
             return 'dictionary'
 
@@ -461,8 +460,7 @@ class DictionaryConverter(TypeConverter):
         return True
 
     def no_conversion_needed(self, value):
-        # Nested checking required, which would only cost more performance
-        return False
+        return self.used_type in self.abc and issubclass(type(value), self.abc)
 
     def _non_string_convert(self, value, explicit_type=True):
         if isinstance(value, str):
@@ -472,10 +470,10 @@ class DictionaryConverter(TypeConverter):
         else:
             raise ValueError
 
-        if type(self.used_type) is tuple and len(self.used_type) == 2:
+        if self.nested_types and len(self.nested_types) == 2:
             for key, elem in converted_dict.copy().items():
-                key_converter  = TypeConverter.converter_for(self.used_type[0])
-                elem_converter = TypeConverter.converter_for(self.used_type[1])
+                key_converter  = TypeConverter.converter_for(self.nested_types[0])
+                elem_converter = TypeConverter.converter_for(self.nested_types[1])
 
                 if key_converter:
                     converted_key = key_converter.convert(str(key),key)
