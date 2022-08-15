@@ -335,7 +335,7 @@ class String:
             matches = lambda line: fnmatchcase(line, pattern)
         return self._get_matching_lines(string, matches)
 
-    def get_lines_matching_regexp(self, string, pattern, partial_match=False, flags=''):
+    def get_lines_matching_regexp(self, string, pattern, partial_match=False, flags=None):
         """Returns lines of the given ``string`` that match the regexp ``pattern``.
 
         See `BuiltIn.Should Match Regexp` for more information about
@@ -364,7 +364,7 @@ class String:
         | ${lines} = | Get Lines Matching Regexp | ${result} | Reg\\\\w{3} example |
         | ${lines} = | Get Lines Matching Regexp | ${result} | Reg\\\\w{3} example | partial_match=true |
         | ${ret} =   | Get Lines Matching Regexp | ${ret}    | (?i)FAIL: .* |
-        | ${ret} =   | Get Lines Matching Regexp | ${ret}    | FAIL: .* | flags=IGNORECASE
+        | ${ret} =   | Get Lines Matching Regexp | ${ret}    | FAIL: .* | flags=IGNORECASE |
 
         See `Get Lines Matching Pattern` and `Get Lines Containing
         String` if you do not need full regular expression powers (and
@@ -382,7 +382,7 @@ class String:
         logger.info('%d out of %d lines matched' % (len(matching), len(lines)))
         return '\n'.join(matching)
 
-    def get_regexp_matches(self, string, pattern, *groups, flags=''):
+    def get_regexp_matches(self, string, pattern, *groups, flags=None):
         """Returns a list of all non-overlapping matches in the given string.
 
         ``string`` is the string to find matches from and ``pattern`` is the
@@ -399,7 +399,7 @@ class String:
         Examples:
         | ${no match} =    | Get Regexp Matches | the string | xxx     |
         | ${matches} =     | Get Regexp Matches | the string | t..     |
-        | ${matches} =     | Get Regexp Matches | the string | T..     | flags=IGNORECASE
+        | ${matches} =     | Get Regexp Matches | the string | T..     | flags=IGNORECASE |
         | ${one group} =   | Get Regexp Matches | the string | t(..)   | 1 |
         | ${named group} = | Get Regexp Matches | the string | t(?P<name>..) | name |
         | ${two groups} =  | Get Regexp Matches | the string | t(.)(.) | 1 | 2 |
@@ -410,7 +410,7 @@ class String:
         | ${named group} = ['he', 'ri']
         | ${two groups} = [('h', 'e'), ('r', 'i')]
 
-        The ``flags`` option has been introduced in RobotFramework 5.1
+        The ``flags`` option has been introduced in RobotFramework 5.1.
         """
         regexp = re.compile(pattern, flags=parse_re_flags(flags))
         groups = [self._parse_group(g) for g in groups]
@@ -446,7 +446,7 @@ class String:
         count = self._convert_to_integer(count, 'count')
         return string.replace(search_for, replace_with, count)
 
-    def replace_string_using_regexp(self, string, pattern, replace_with, count=-1, flags=''):
+    def replace_string_using_regexp(self, string, pattern, replace_with, count=-1, flags=None):
         """Replaces ``pattern`` in the given ``string`` with ``replace_with``.
 
         This keyword is otherwise identical to `Replace String`, but
@@ -491,7 +491,7 @@ class String:
             string = self.replace_string(string, removable, '')
         return string
 
-    def remove_string_using_regexp(self, string, *patterns, flags=''):
+    def remove_string_using_regexp(self, string, *patterns, flags=None):
         """Removes ``patterns`` from the given ``string``.
 
         This keyword is otherwise identical to `Remove String`, but

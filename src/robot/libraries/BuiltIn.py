@@ -1304,7 +1304,7 @@ class _Verify(_BuiltInBase):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'does not match'))
 
-    def should_match_regexp(self, string, pattern, msg=None, values=True, flags=''):
+    def should_match_regexp(self, string, pattern, msg=None, values=True, flags=None):
         """Fails if ``string`` does not match ``pattern`` as a regular expression.
 
         See the `Regular expressions` section for more information about
@@ -1336,7 +1336,7 @@ class _Verify(_BuiltInBase):
         | Should Match Regexp | ${output} | \\\\d{6}   | # Output contains six numbers  |
         | Should Match Regexp | ${output} | ^\\\\d{6}$ | # Six numbers and nothing more |
         | ${ret} = | Should Match Regexp | Foo: 42 | (?i)foo: \\\\d+ |
-        | ${ret} = | Should Match Regexp | Foo: 42 | foo: \\\\d+ | flags=IGNORECASE
+        | ${ret} = | Should Match Regexp | Foo: 42 | foo: \\\\d+ | flags=IGNORECASE |
         | ${match} | ${group1} | ${group2} = |
         | ...      | Should Match Regexp | Bar: 43 | (Foo|Bar): (\\\\d+) |
         =>
@@ -1355,7 +1355,7 @@ class _Verify(_BuiltInBase):
             return [match] + list(groups)
         return match
 
-    def should_not_match_regexp(self, string, pattern, msg=None, values=True, flags=''):
+    def should_not_match_regexp(self, string, pattern, msg=None, values=True, flags=None):
         """Fails if ``string`` matches ``pattern`` as a regular expression.
 
         See `Should Match Regexp` for more information about arguments.
