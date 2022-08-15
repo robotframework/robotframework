@@ -117,6 +117,14 @@ class TestTestOrTask(unittest.TestCase):
         assert_equal(test_or_task('Contains {test}, {TEST} and {TesT}', True),
                      'Contains task, TASK and TasK')
 
+    def test_test_without_curlies(self):
+        for test, task in [('test', 'task'),
+                           ('Test', 'Task'),
+                           ('TEST', 'TASK'),
+                           ('tESt', 'tASk')]:
+            assert_equal(test_or_task(test, rpa=False), test)
+            assert_equal(test_or_task(test, rpa=True), task)
+
 
 if __name__ == "__main__":
     unittest.main()

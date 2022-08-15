@@ -95,14 +95,23 @@ def seq2str2(sequence):
 
 
 def test_or_task(text, rpa=False):
-    """Replaces `{test}` in `text` with `test` or `task` depending on `rpa`."""
-    def replace(match):
-        test = match.group(1)
+    """Replace 'test' with 'task' in the given `text` depending on `rpa`.
+
+     If given text is `test`, `test` or `task` is returned directly. Otherwise,
+     pattern `{test}` is searched from the text and occurrences replaced with
+     `test` or `task`.
+
+     In both cases matching the word `test` is case-insensitive and the returned
+     `test` or `task` has exactly same case as the original.
+     """
+    def replace(test):
         if not rpa:
             return test
         upper = [c.isupper() for c in test]
         return ''.join(c.upper() if up else c for c, up in zip('task', upper))
-    return re.sub('{(test)}', replace, text, flags=re.IGNORECASE)
+    if text.upper() == 'TEST':
+        return replace(text)
+    return re.sub('{(test)}', lambda m: replace(m.group(1)), text, flags=re.IGNORECASE)
 
 
 def isatty(stream):
