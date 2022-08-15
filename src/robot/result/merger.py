@@ -37,13 +37,15 @@ class Merger(SuiteVisitor):
             old = self._find(self.current.suites, suite.name)
         if old is not None:
             old.starttime = old.endtime = None
+            old.doc = suite.doc
+            old.metadata.update(suite.metadata)
             old.setup = suite.setup
             old.teardown = suite.teardown
             self.current = old
         else:
             suite.message = self._create_add_message(suite, suite=True)
             self.current.suites.append(suite)
-        return bool(old)
+        return old is not None
 
     def _find_root(self, name):
         root = self.result.suite
