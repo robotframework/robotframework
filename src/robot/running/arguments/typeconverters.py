@@ -409,7 +409,6 @@ class ListConverter(TypeConverter):
             converted_list = list(value)
         else:
             raise ValueError
-
         if self.nested_types:
             if TypeConverter.converter_for(self.nested_types[0]):
                 for i, elem in enumerate(converted_list) :
@@ -419,6 +418,7 @@ class ListConverter(TypeConverter):
         return converted_list
 
     _convert = _non_string_convert
+
 
 @TypeConverter.register
 class TupleConverter(TypeConverter):
@@ -449,7 +449,9 @@ class DictionaryConverter(TypeConverter):
     @property
     def type_name(self):
         if self.nested_types:
-            return f'Dict[{self.nested_types[0].__name__}:{self.nested_types[1].__name__}]'
+            key_type = self.nested_types[0]
+            value_type = self.nested_types[1]
+            return f'Dict[{key_type.__name__}:{value_type.__name__}]'
         else:
             return 'dictionary'
 
@@ -463,12 +465,10 @@ class DictionaryConverter(TypeConverter):
             converted_dict = dict(value)
         else:
             raise ValueError
-
         if self.nested_types and len(self.nested_types) == 2:
             for key, elem in converted_dict.copy().items():
                 key_converter  = TypeConverter.converter_for(self.nested_types[0])
                 elem_converter = TypeConverter.converter_for(self.nested_types[1])
-
                 if key_converter:
                     converted_key = key_converter.convert("Dict key", key)
                 else:
@@ -477,17 +477,16 @@ class DictionaryConverter(TypeConverter):
                     converted_elem = elem_converter.convert(f"Dict[{key}]",elem)
                 else:
                     converted_elem = elem
-
                 replace_elem = type(converted_elem) != type(elem) 
                 if converted_key != key:
                     converted_dict.pop(key)
                     replace_elem = True
                 if replace_elem:
                     converted_dict[converted_key] = converted_elem
-
         return converted_dict
 
     _convert = _non_string_convert
+
 
 @TypeConverter.register
 class SetConverter(TypeConverter):
@@ -503,7 +502,7 @@ class SetConverter(TypeConverter):
 
     @property
     def type_name(self):
-        return f'Set[{self.nested_types[0].__name__}]' if len(self.nested_types) else 'set'
+        return f'Set[{self.nested_types[0].__name__}]' if self.nested_types else 'set'
 
     def no_conversion_needed(self, value):
         # Nested checking required, which would only cost more performance
@@ -516,17 +515,17 @@ class SetConverter(TypeConverter):
             converted_set = set(value)
         else:
             raise ValueError
-
         if self.nested_types:
             for elem in converted_set:
                 converter = TypeConverter.converter_for(self.nested_types[0])
                 if converter:
                     converted_set.remove(elem)
-                    celem = converter.convert("Set[%s]" % self.nested_types[0].__name__, elem)
-                    converted_set.add(celem)
+                    type_name = self.nested_types[0].__name__
+                    converted_set.add(converter.convert(f"Set[{type_name}]", elem))
         return converted_set
 
     _convert = _non_string_convert
+
 
 @TypeConverter.register
 class FrozenSetConverter(TypeConverter):
