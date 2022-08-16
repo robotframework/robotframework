@@ -95,19 +95,23 @@ def mutable_mapping_with_params(argument: MutableMapping[bool, int], expected=No
 
 def set_(argument: Set, expected=None):
     _validate_type(argument, expected)
+    _validate_set_subtype(argument, expected)
 
-
-def set_with_params(argument: Set[bool], expected=None):
+def set_with_bool(argument: Set[bool], expected=None):
     _validate_type(argument, expected)
+    _validate_set_subtype(argument, expected)
 
+def set_with_enum(argument: Set[MyEnum], expected=None):
+    _validate_type(argument, expected)
+    _validate_set_subtype(argument, expected)
 
 def mutable_set(argument: MutableSet, expected=None):
     _validate_type(argument, expected)
+    _validate_set_subtype(argument, expected)
 
-
-def mutable_set_with_params(argument: MutableSet[bool], expected=None):
+def mutable_set_with_params(argument: MutableSet[MyEnum], expected=None):
     _validate_type(argument, expected)
-
+    _validate_set_subtype(argument, expected)
 
 def none_as_default(argument: List = None, expected=None):
     _validate_type(argument, expected)
@@ -153,3 +157,11 @@ def _validate_dict_subtypes(argument, expected):
             raise AssertionError('%r (%s) != %r (%s)'
                                  % (argument[k], type(argument[k]).__name__,
                                     expected[k], type(expected[k]).__name__))
+
+def _validate_set_subtype(argument, expected):
+    if isinstance(expected, str):
+        expected = eval(expected)
+    for i in expected:
+        if i not in argument:
+            raise AssertionError('%r (%s) not in %r'
+                                 % (i, type(i).__name__, expected))

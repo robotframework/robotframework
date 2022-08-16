@@ -59,9 +59,11 @@ TypedDict
 
 Invalid dictionary
     [Template]                Conversion Should Fail
-    Dict                      {1: ooops}                  type=dictionary      error=Invalid expression.
-    Dict                      []                          type=dictionary      error=Value is list, not dict.
-    Dict with str_int         ooops                       type=Dict[str:int]   error=Invalid expression.
+    Dict                      {1: ooops}                  type=dictionary          error=Invalid expression.
+    Dict                      []                          type=dictionary          error=Value is list, not dict.
+    Dict with str_int         ooops                       type=Dict[str:int]       error=Invalid expression.
+    Dict with str_int         {'foo': 1, "bar": 3.14}     type=Dict[str:int]       error=Argument 'Dict[bar]' got value '3.14' (float) that cannot be converted to integer: Conversion would lose precision.
+    Dict with enums           {'oops': 1, 'bar': 2}       type=Dict[MyEnum:bool]   error=Argument 'Dict key' got value 'oops' that cannot be converted to MyEnum: MyEnum does not have member 'oops'. Available: 'bar' and 'foo'
 
 Mapping
     Mapping                   {}                          {}
@@ -86,15 +88,18 @@ Set
     Mutable set               {1, 2, 3.14, -42}           {1, 2, 3.14, -42}
 
 Set with params
-    Set with params           set()                       set()
-    Set with params           {'foo', 'bar'}              {'foo', 'bar'}
-    Mutable set with params   {1, 2, 3.14, -42}           {1, 2, 3.14, -42}
+    Set with bool             set()                       set()
+    Set with bool             {'true', 'false'}           {True, False}
+    Set with bool             {'TruE', 'FalsE'}           {True, False}
+    Set with enum             {'foo', 'bar'}              {MyEnum.foo, MyEnum.bar}
+    Mutable set with params   {'foo', 'bar'}              {MyEnum.foo, MyEnum.bar}
 
 Invalid Set
     [Template]                Conversion Should Fail
     Set                       {1, ooops}                                       error=Invalid expression.
     Set                       {}                                               error=Value is dictionary, not set.
     Set                       ooops                                            error=Invalid expression.
+    Set with enum             {'foo', 'oops'}             type=Set[MyEnum]     error=Argument 'Set[MyEnum]' got value 'oops' that cannot be converted to MyEnum: MyEnum does not have member 'oops'. Available: 'bar' and 'foo'
 
 None as default
     None as default

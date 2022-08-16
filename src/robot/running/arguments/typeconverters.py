@@ -476,11 +476,11 @@ class DictionaryConverter(TypeConverter):
                 elem_converter = TypeConverter.converter_for(self.nested_types[1])
 
                 if key_converter:
-                    converted_key = key_converter.convert(str(key),key)
+                    converted_key = key_converter.convert("Dict key", key)
                 else:
                     converted_key  = key
                 if elem_converter:
-                    converted_elem = elem_converter.convert(str(elem),elem)
+                    converted_elem = elem_converter.convert(f"Dict[{key}]",elem)
                 else:
                     converted_elem = elem
 
@@ -504,14 +504,12 @@ class SetConverter(TypeConverter):
     value_types = (str, Container)
 
     def __init__(self, type_, custom_converters=None):
-        super().__init__(self._get_types(type_))
-
-    def _get_types(self, type_):
-        return type_.__args__ if hasattr(type_, '__args__') else ()
+        super().__init__(type_)
+        self.nested_types = getattr(type_, '__args__', ())
 
     @property
     def type_name(self):
-        return f'Set[{self.used_type[0].__name__}]' if len(self.used_type) else 'set'
+        return f'Set[{self.nested_types[0].__name__}]' if len(self.nested_types) else 'set'
 
     def _handles_value(self, value):
         return True
@@ -522,11 +520,20 @@ class SetConverter(TypeConverter):
 
     def _non_string_convert(self, value, explicit_type=True):
         if isinstance(value, str):
-            return self._literal_eval(value, set)
+            converted_set = self._literal_eval(value, set)
         elif is_list_like(value):
-            return set(value)
+            converted_set = set(value)
         else:
             raise ValueError
+
+        if self.nested_types:
+            for elem in converted_set:
+                converter = TypeConverter.converter_for(self.nested_types[0])
+                if converter:
+                    converted_set.remove(elem)
+                    celem = converter.convert("Set[%s]" % self.nested_types[0].__name__, elem)
+                    converted_set.add(celem)
+        return converted_set
 
     _convert = _non_string_convert
 
