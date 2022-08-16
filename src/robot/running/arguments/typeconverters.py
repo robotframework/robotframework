@@ -397,9 +397,6 @@ class ListConverter(TypeConverter):
     def type_name(self):
         return f'List[{self.nested_types[0].__name__}]' if self.nested_types else 'list'
 
-    def _handles_value(self, value):
-        return True
-
     def no_conversion_needed(self, value):
         return not self.nested_types \
                and isinstance(value, self.used_type) \
@@ -456,9 +453,6 @@ class DictionaryConverter(TypeConverter):
         else:
             return 'dictionary'
 
-    def _handles_value(self, value):
-        return True
-
     def no_conversion_needed(self, value):
         return self.used_type in self.abc and issubclass(type(value), self.abc)
 
@@ -510,9 +504,6 @@ class SetConverter(TypeConverter):
     @property
     def type_name(self):
         return f'Set[{self.nested_types[0].__name__}]' if len(self.nested_types) else 'set'
-
-    def _handles_value(self, value):
-        return True
 
     def no_conversion_needed(self, value):
         # Nested checking required, which would only cost more performance
