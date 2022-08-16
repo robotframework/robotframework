@@ -4,7 +4,7 @@ import tempfile
 from io import StringIO
 from pathlib import Path
 
-from robot.conf import Languages
+from robot.conf import Language, Languages
 from robot.utils.asserts import assert_equal
 from robot.parsing import get_tokens, get_init_tokens, get_resource_tokens, Token
 
@@ -2196,11 +2196,24 @@ class TestBreak(unittest.TestCase):
 
 class TestLanguageConfig(unittest.TestCase):
 
-    def test_lang_as_string(self):
+    def test_lang_as_code(self):
         self._test('fi')
+        self._test('F-I')
+
+    def test_lang_as_name(self):
+        self._test('Finnish')
+        self._test('FINNISH')
+
+    def test_lang_as_Language(self):
+        self._test(Language.from_name('fi'))
 
     def test_lang_as_list(self):
-        self._test(['fi'])
+        self._test(['fi', Language.from_name('de')])
+        self._test([Language.from_name('fi'), 'de'])
+
+    def test_lang_as_tuple(self):
+        self._test(('f-i', Language.from_name('de')))
+        self._test((Language.from_name('fi'), 'de'))
 
     def test_lang_as_Languages(self):
         self._test(Languages('fi'))

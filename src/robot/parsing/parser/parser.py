@@ -38,8 +38,11 @@ def get_model(source, data_only=False, curdir=None, lang=None):
         When not given, the variable is left as-is. Should only be given
         only if the model will be executed afterwards. If the model is saved
         back to disk, resolving ``${CURDIR}`` is typically not a good idea.
-    # FIXME: docs
-    :param lang: Additional languages to be supported during parsing
+    :param lang: Additional languages to be supported during parsing.
+        Can be a string matching any of the supported language codes or names,
+        an initialized :class:`~robot.conf.languages.Language` subsclass,
+        a list containing such strings or instances, or a
+        :class:`~robot.conf.languages.Languages` instance.
 
     Use :func:`get_resource_model` or :func:`get_init_model` when parsing
     resource or suite initialization files, respectively.

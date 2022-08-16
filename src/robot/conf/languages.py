@@ -16,7 +16,7 @@
 import inspect
 import os.path
 
-from robot.utils import getdoc, is_string, Importer, normalize
+from robot.utils import is_list_like, Importer, normalize
 
 
 class Languages:
@@ -48,20 +48,24 @@ class Languages:
         available = self._get_available_languages()
         returned = []
         for lang in languages:
-            normalized = normalize(lang, ignore='-')
-            if normalized in available:
-                returned.append(available[normalized])
+            if isinstance(lang, Language):
+                returned.append(lang)
             else:
-                returned.extend(self._import_languages(lang))
-        return [subclass() for subclass in returned]
+                normalized = normalize(lang, ignore='-')
+                if normalized in available:
+                    returned.append(available[normalized]())
+                else:
+                    returned.extend(self._import_languages(lang))
+        return returned
 
     def _resolve_languages(self, languages):
         if not languages:
             languages = []
-        if is_string(languages):
+        elif is_list_like(languages):
+            languages = list(languages)
+        else:
             languages = [languages]
-        if 'en' not in languages:
-            languages.append('en')
+        languages.append(En())
         return languages
 
     def _get_available_languages(self):
@@ -80,7 +84,7 @@ class Languages:
         if os.path.exists(lang):
             lang = os.path.abspath(lang)
         module = Importer('language file').import_module(lang)
-        return [value for _, value in inspect.getmembers(module, is_language)]
+        return [value() for _, value in inspect.getmembers(module, is_language)]
 
     def translate_setting(self, name):
         return self.settings.get(name, name)

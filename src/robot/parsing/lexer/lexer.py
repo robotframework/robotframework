@@ -24,7 +24,6 @@ from .tokenizer import Tokenizer
 from .tokens import EOS, END, Token
 
 
-# FIXME: Documentation for `lang`.
 def get_tokens(source, data_only=False, tokenize_variables=False, lang=None):
     """Parses the given source to tokens.
 
@@ -39,6 +38,11 @@ def get_tokens(source, data_only=False, tokenize_variables=False, lang=None):
         arguments and elsewhere are tokenized. See the
         :meth:`~robot.parsing.lexer.tokens.Token.tokenize_variables`
         method for details.
+    :param lang: Additional languages to be supported during parsing.
+        Can be a string matching any of the supported language codes or names,
+        an initialized :class:`~robot.conf.languages.Language` subsclass,
+        a list containing such strings or instances, or a
+        :class:`~robot.conf.languages.Languages` instance.
 
     Returns a generator that yields :class:`~robot.parsing.lexer.tokens.Token`
     instances.
@@ -51,7 +55,7 @@ def get_tokens(source, data_only=False, tokenize_variables=False, lang=None):
 def get_resource_tokens(source, data_only=False, tokenize_variables=False, lang=None):
     """Parses the given source to resource file tokens.
 
-    Otherwise same as :func:`get_tokens` but the source is considered to be
+    Same as :func:`get_tokens` otherwise, but the source is considered to be
     a resource file. This affects, for example, what settings are valid.
     """
     lexer = Lexer(ResourceFileContext(lang=lang), data_only, tokenize_variables)
@@ -62,7 +66,7 @@ def get_resource_tokens(source, data_only=False, tokenize_variables=False, lang=
 def get_init_tokens(source, data_only=False, tokenize_variables=False, lang=None):
     """Parses the given source to init file tokens.
 
-    Otherwise same as :func:`get_tokens` but the source is considered to be
+    Same as :func:`get_tokens` otherwise, but the source is considered to be
     a suite initialization file. This affects, for example, what settings are
     valid.
     """
@@ -96,7 +100,7 @@ class Lexer:
         try:
             with FileReader(source, accept_text=True) as reader:
                 return reader.read()
-        except:
+        except Exception:
             raise DataError(get_error_message())
 
     def get_tokens(self):
