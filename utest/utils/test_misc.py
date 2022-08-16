@@ -3,7 +3,7 @@ import unittest
 
 from robot.utils import (parse_re_flags, plural_or_not, printable_name,
                          seq2str, test_or_task)
-from robot.utils.asserts import assert_equal, assert_raises
+from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
 
 class TestSeg2Str(unittest.TestCase):
@@ -134,8 +134,10 @@ class TestParseReFlags(unittest.TestCase):
             assert_equal(parse_re_flags(inp), 0)
 
     def test_parse_negative(self):
-        for inp in ['foo', 'IGNORECASE|foo', 'compile']:
-            assert_raises(ValueError, parse_re_flags, inp)
+        for inp, exp_msg in [('foo', 'Unknown regexp flag: foo'),
+                             ('IGNORECASE|foo', 'Unknown regexp flag: foo'),
+                             ('compile', 'Unknown regexp flag: compile')]:
+            assert_raises_with_msg(ValueError, exp_msg, parse_re_flags, inp)
 
 
 if __name__ == "__main__":
