@@ -1,4 +1,4 @@
-from typing import (List, Sequence, MutableSequence,
+from typing import (List, Sequence, Tuple, MutableSequence,
                     Dict, Mapping, MutableMapping,
                     Set, MutableSet)
 from enum import Enum
@@ -45,16 +45,21 @@ def sequence_with_params(argument: Sequence[bool], expected=None):
     _validate_type(argument, expected)
     _validate_list_subtype(argument, expected)
 
-
 def mutable_sequence(argument: MutableSequence, expected=None):
     _validate_type(argument, expected)
     _validate_list_subtype(argument, expected)
-
 
 def mutable_sequence_with_params(argument: MutableSequence[bool], expected=None):
     _validate_type(argument, expected)
     _validate_list_subtype(argument, expected)
 
+def tuple(argument: Tuple, expected=None):
+    _validate_type(argument, expected)
+    _validate_list_subtype(argument, expected)
+
+def tuple_with_params(argument: Tuple[int, float, str, MyEnum], expected=None):
+    _validate_type(argument, expected)
+    _validate_list_subtype(argument, expected)
 
 def dict_(argument: Dict, expected=None):
     _validate_type(argument, expected)

@@ -386,7 +386,7 @@ class ListConverter(TypeConverter):
     type = list
     type_name = 'list'
     abc = Sequence
-    value_types = (str, Sequence, tuple)
+    value_types = (str, Sequence)
     aliases = ('list',)
 
     def __init__(self, type_, custom_converters=None):
@@ -396,6 +396,14 @@ class ListConverter(TypeConverter):
     @property
     def type_name(self):
         return f'List[{self.nested_types[0].__name__}]' if self.nested_types else 'list'
+
+    @classmethod
+    def handles(cls, type_):
+        base_type = getattr(type_, '__origin__', type_)
+        handled = (cls.type, cls.abc) if cls.abc else cls.type
+        if base_type is tuple:
+            return False
+        return isinstance(base_type, type) and issubclass(base_type, handled)
 
     def no_conversion_needed(self, value):
         return not self.nested_types \
@@ -414,7 +422,7 @@ class ListConverter(TypeConverter):
                 for i, elem in enumerate(converted_list) :
                     converter = TypeConverter.converter_for(self.nested_types[0])
                     if converter :
-                        converted_list[i] = converter.convert("List[%s]" % i , elem)
+                        converted_list[i] = converter.convert(f"List[{i}]", elem)
         return converted_list
 
     _convert = _non_string_convert
@@ -425,13 +433,36 @@ class TupleConverter(TypeConverter):
     type = tuple
     type_name = 'tuple'
     value_types = (str, Sequence)
+    aliases = ('tuple',)
+
+    def __init__(self, type_, custom_converters=None):
+        super().__init__(type_)
+        self.nested_types = getattr(type_, '__args__', ())
+
+    @property
+    def type_name(self):
+        if self.nested_types:
+            return f"Tuple[{', '.join([t.__name__ for t in self.nested_types])}]"
+        else:
+            return 'tuple'
 
     def _non_string_convert(self, value, explicit_type=True):
-        return tuple(value)
+        if isinstance(value, str):
+            converted_tuple = self._literal_eval(value, tuple)
+        elif is_list_like(value):
+            converted_tuple = tuple(value)
+        else:
+            raise ValueError
+        if self.nested_types:
+            tmp_list = list(converted_tuple)
+            for i, elem in enumerate(converted_tuple):
+                converter = TypeConverter.converter_for(self.nested_types[i])
+                if converter:
+                    tmp_list[i] = converter.convert(f"Tuple[{i}]", elem)
+            converted_tuple = tuple(tmp_list)
+        return converted_tuple
 
-    def _convert(self, value, explicit_type=True):
-        return self._literal_eval(value, tuple)
-
+    _convert = _non_string_convert
 
 @TypeConverter.register
 class DictionaryConverter(TypeConverter):
@@ -505,8 +536,7 @@ class SetConverter(TypeConverter):
         return f'Set[{self.nested_types[0].__name__}]' if self.nested_types else 'set'
 
     def no_conversion_needed(self, value):
-        # Nested checking required, which would only cost more performance
-        return False
+        return not self.nested_types and isinstance(value, self.used_type)
 
     def _non_string_convert(self, value, explicit_type=True):
         if isinstance(value, str):

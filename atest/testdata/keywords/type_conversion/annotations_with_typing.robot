@@ -39,6 +39,18 @@ Invalid Sequence
     Mutable sequence          ()                          type=list            error=Value is tuple, not list.
     Sequence with params      ooops                       type=List[bool]      error=Invalid expression.
 
+Tuple
+    Tuple                     ()                          ()
+    Tuple                     (1, 3.14, 'text', 'foo')    (1, 3.14, 'text', 'foo')
+
+Tuple with params
+    Tuple with params         (1, '3.14', 'text', 'foo')  (1, 3.14, 'text', MyEnum.foo)
+
+Invalid tuple
+    [Template]                Conversion Should Fail
+    Tuple                     oops                        type=tuple                           error=Invalid expression.
+    Tuple with params         (1, 3.14, 'text', 'oops')   type=Tuple[int, float, str, MyEnum]  error=Argument 'Tuple[3]' got value 'oops' that cannot be converted to MyEnum: MyEnum does not have member 'oops'. Available: 'bar' and 'foo'
+
 Dict
     Dict                      {}                          {}
     Dict                      {'foo': 1, "bar": 2}        {'foo': 1, "bar": 2}
@@ -90,7 +102,7 @@ Set
 Set with params
     Set with bool             set()                       set()
     Set with bool             {'true', 'false'}           {True, False}
-    Set with bool             {'TruE', 'FalsE'}           {True, False}
+    Set with bool             {'TruE', 'off'}             {True, False}
     Set with enum             {'foo', 'bar'}              {MyEnum.foo, MyEnum.bar}
     Mutable set with params   {'foo', 'bar'}              {MyEnum.foo, MyEnum.bar}
 
