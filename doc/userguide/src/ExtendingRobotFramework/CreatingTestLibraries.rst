@@ -1166,8 +1166,8 @@ argument is converted to the concrete type.
 
 Also types in in the typing_ module that map to the supported concrete
 types or ABCs (e.g. `List`) are supported. With generics also the subscription
-syntax (e.g. `List[int]`) works, but no validation is done for container
-contents.
+syntax (e.g. `List[int]`) works. When using subscripting, validation and
+conversion is extended to the container contents.
 
 In addition to using the actual types (e.g. `int`), it is possible to specify
 the type using type names as a string (e.g. `'int'`) and some types also have
