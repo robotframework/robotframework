@@ -1,9 +1,9 @@
-*** Asetus ***
+*** Asetukset ***
 Dokumentaatio       Example documentation.
 
-*** Muuttuja ***
+*** Muuttujat ***
 ${RESOURCE FILE}    variable in resource file
 
-*** Avainsana ***
+*** Avainsanat ***
 Keyword In Resource
     No Operation

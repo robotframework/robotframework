@@ -18,7 +18,7 @@ Task with settings
     [Aikaraja]         NONE
     Log    Nothing to see here
 
-*** Avainsana ***
+*** Avainsanat ***
 Task Setup
     No Operation
 
