@@ -25,6 +25,12 @@ class TestLanguage(unittest.TestCase):
             """
         assert_equal(X().name, 'Language Name')
 
+    def test_name_without_docstring(self):
+        class X(Language):
+            pass
+        X.__doc__ = None
+        assert_equal(X().name, '')
+
 
 class TestFromName(unittest.TestCase):
 

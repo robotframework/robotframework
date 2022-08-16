@@ -69,7 +69,7 @@ class Languages:
         for lang in Language.__subclasses__():
             available[normalize(lang.__name__)] = lang
             if lang.__doc__:
-                available[normalize(lang.__doc__)] = lang
+                available[normalize(lang.__doc__.splitlines()[0])] = lang
         return available
 
     def _import_languages(self, lang):
@@ -141,10 +141,11 @@ class Language:
         Raises `ValueError` if no matching langauge is found.
         """
         normalized = normalize(name, ignore='-')
-        for subcls in cls.__subclasses__():
-            if normalized in (normalize(subcls.__name__),
-                              normalize(getdoc(subcls))):
-                return subcls()
+        for lang in cls.__subclasses__():
+            if normalized == normalize(lang.__name__):
+                return lang()
+            if lang.__doc__ and normalized == normalize(lang.__doc__.splitlines()[0]):
+                return lang()
         raise ValueError(f"No language with name '{name}' found.")
 
     @property
@@ -166,7 +167,7 @@ class Language:
 
         Got from the first line of the class docstring.
         """
-        return getdoc(self).splitlines()[0]
+        return self.__doc__.splitlines()[0] if self.__doc__ else ''
 
     @property
     def settings(self):
