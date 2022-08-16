@@ -124,3 +124,19 @@ def isatty(stream):
         return stream.isatty()
     except ValueError:    # Occurs if file is closed.
         return False
+
+def parse_re_flags(flags=None):
+    result = 0
+    if not flags:
+        return result
+    for flag in flags.split('|'):
+        try:
+            re_flag = getattr(re, flag.upper().strip())
+        except AttributeError:
+            raise ValueError(f'Unknown regexp flag: {flag}')
+        else:
+            if isinstance(re_flag, re.RegexFlag):
+                result |= re_flag
+            else:
+                raise ValueError(f'Unknown regexp flag: {flag}')
+    return result
