@@ -1316,14 +1316,10 @@ class _Verify(_BuiltInBase):
         to denote the beginning and end of the string, respectively.
         For example, ``^ello$`` only matches the exact string ``ello``.
 
-        Possible flags altering how the expression is parsed (e.g.
-        ``re.IGNORECASE``, ``re.MULTILINE``) can be embedded to the
-        pattern like ``(?im)pattern``. The most useful flags are ``i``
-        (case-insensitive), ``m`` (multiline mode), ``s`` (dotall mode)
-        and ``x`` (verbose). Alternatively, RobotFramework 5.1 introduced the
-        optional ``flags`` argument to specify the flags directly,
-        i.e. ``flags=MULTILINE`` or ``flags=IGNORECASE|DOTALL``.
-        All valid Python re.XXX flags are supported.
+        Possible flags altering how the expression is parsed (e.g. ``re.IGNORECASE``,
+        ``re.MULTILINE``) can be given using the ``flags`` argument (e.g.
+        ``flags=IGNORECASE | MULTILINE``) or embedded to the pattern (e.g.
+        ``(?im)pattern``).
 
         If this keyword passes, it returns the portion of the string that
         matched the pattern. Additionally, the possible captured groups are
@@ -1335,8 +1331,8 @@ class _Verify(_BuiltInBase):
         Examples:
         | Should Match Regexp | ${output} | \\\\d{6}   | # Output contains six numbers  |
         | Should Match Regexp | ${output} | ^\\\\d{6}$ | # Six numbers and nothing more |
-        | ${ret} = | Should Match Regexp | Foo: 42 | (?i)foo: \\\\d+ |
         | ${ret} = | Should Match Regexp | Foo: 42 | foo: \\\\d+ | flags=IGNORECASE |
+        | ${ret} = | Should Match Regexp | Foo: 42 | (?i)foo: \\\\d+ |
         | ${match} | ${group1} | ${group2} = |
         | ...      | Should Match Regexp | Bar: 43 | (Foo|Bar): (\\\\d+) |
         =>
@@ -1344,6 +1340,8 @@ class _Verify(_BuiltInBase):
         | ${match} = 'Bar: 43'
         | ${group1} = 'Bar'
         | ${group2} = '43'
+
+        The ``flags`` argument is new in Robot Framework 5.1.
         """
         res = re.search(pattern, string, flags=parse_re_flags(flags))
         if res is None:

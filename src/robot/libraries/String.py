@@ -342,7 +342,7 @@ class String:
         Python regular expression syntax in general and how to use it
         in Robot Framework data in particular.
 
-        By default lines match only if they match the pattern fully, but
+        Lines match only if they match the pattern fully by default, but
         partial matching can be enabled by giving the ``partial_match``
         argument a true value. The value is considered true
         if it is a non-empty string that is not equal to ``false``, ``none`` or
@@ -352,9 +352,10 @@ class String:
         If the pattern is empty, it matches only empty lines by default.
         When partial matching is enabled, empty pattern matches all lines.
 
-        To make the match case-insensitive, you can prefix
-        the pattern with case-insensitive flag ``(?i)`` or use the
-        ``flags=IGNORECASE`` argument (new in RobotFramework 5.1)
+        Possible flags altering how the expression is parsed (e.g. ``re.IGNORECASE``,
+        ``re.VERBOSE``) can be given using the ``flags`` argument (e.g.
+        ``flags=IGNORECASE | VERBOSE``) or embedded to the pattern (e.g.
+        ``(?ix)pattern``).
 
         Lines are returned as one string concatenated back together with
         newlines. Possible trailing newline is never returned. The
@@ -366,9 +367,10 @@ class String:
         | ${ret} =   | Get Lines Matching Regexp | ${ret}    | (?i)FAIL: .* |
         | ${ret} =   | Get Lines Matching Regexp | ${ret}    | FAIL: .* | flags=IGNORECASE |
 
-        See `Get Lines Matching Pattern` and `Get Lines Containing
-        String` if you do not need full regular expression powers (and
-        complexity).
+        See `Get Lines Matching Pattern` and `Get Lines Containing String` if you
+        do not need the full regular expression powers (and complexity).
+
+        The ``flags`` argument is new in Robot Framework 5.1.
         """
         if is_truthy(partial_match):
             match = re.compile(pattern, flags=parse_re_flags(flags)).search
@@ -396,6 +398,11 @@ class String:
         individual group contents. All groups can be given as indexes (starting
         from 1) and named groups also as names.
 
+        Possible flags altering how the expression is parsed (e.g. ``re.IGNORECASE``,
+        ``re.MULTILINE``) can be given using the ``flags`` argument (e.g.
+        ``flags=IGNORECASE | MULTILINE``) or embedded to the pattern (e.g.
+        ``(?im)pattern``).
+
         Examples:
         | ${no match} =    | Get Regexp Matches | the string | xxx     |
         | ${matches} =     | Get Regexp Matches | the string | t..     |
@@ -410,7 +417,7 @@ class String:
         | ${named group} = ['he', 'ri']
         | ${two groups} = [('h', 'e'), ('r', 'i')]
 
-        The ``flags`` option has been introduced in RobotFramework 5.1.
+        The ``flags`` argument is new in Robot Framework 5.1.
         """
         regexp = re.compile(pattern, flags=parse_re_flags(flags))
         groups = [self._parse_group(g) for g in groups]
@@ -455,11 +462,18 @@ class String:
         information about Python regular expression syntax in general
         and how to use it in Robot Framework data in particular.
 
+        Possible flags altering how the expression is parsed (e.g. ``re.IGNORECASE``,
+        ``re.MULTILINE``) can be given using the ``flags`` argument (e.g.
+        ``flags=IGNORECASE | MULTILINE``) or embedded to the pattern (e.g.
+        ``(?im)pattern``).
+
         If you need to just remove a string see `Remove String Using Regexp`.
 
         Examples:
         | ${str} = | Replace String Using Regexp | ${str} | 20\\\\d\\\\d-\\\\d\\\\d-\\\\d\\\\d | <DATE> |
         | ${str} = | Replace String Using Regexp | ${str} | (Hello|Hi) | ${EMPTY} | count=1 |
+
+        The ``flags`` argument is new in Robot Framework 5.1.
         """
         count = self._convert_to_integer(count, 'count')
         # re.sub handles 0 and negative counts differently than string.replace
@@ -500,6 +514,13 @@ class String:
         about the regular expression syntax. That keyword can also be
         used if there is a need to remove only a certain number of
         occurrences.
+
+        Possible flags altering how the expression is parsed (e.g. ``re.IGNORECASE``,
+        ``re.MULTILINE``) can be given using the ``flags`` argument (e.g.
+        ``flags=IGNORECASE | MULTILINE``) or embedded to the pattern (e.g.
+        ``(?im)pattern``).
+
+        The ``flags`` argument is new in Robot Framework 5.1.
         """
         for pattern in patterns:
             string = self.replace_string_using_regexp(string, pattern, '', flags=flags)
