@@ -31,6 +31,11 @@ class TestLanguage(unittest.TestCase):
         X.__doc__ = None
         assert_equal(X().name, '')
 
+    def test_all_standard_languages_have_code_and_name(self):
+        for cls in Language.__subclasses__():
+            lang = cls()
+            assert lang.code
+            assert lang.name
 
 class TestFromName(unittest.TestCase):
 

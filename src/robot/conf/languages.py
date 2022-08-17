@@ -204,6 +204,7 @@ class Language:
 
 
 class En(Language):
+    """English"""
     setting_headers = {'Settings', 'Setting'}
     variable_headers = {'Variables', 'Variable'}
     test_case_headers = {'Test Cases', 'Test Case'}
