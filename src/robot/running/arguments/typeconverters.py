@@ -393,10 +393,6 @@ class ListConverter(TypeConverter):
         super().__init__(type_)
         self.nested_types = getattr(type_, '__args__', ())
 
-    @property
-    def type_name(self):
-        return f'List[{self.nested_types[0].__name__}]' if self.nested_types else 'list'
-
     @classmethod
     def handles(cls, type_):
         base_type = getattr(type_, '__origin__', type_)
@@ -421,8 +417,9 @@ class ListConverter(TypeConverter):
             if TypeConverter.converter_for(self.nested_types[0]):
                 for i, elem in enumerate(converted_list) :
                     converter = TypeConverter.converter_for(self.nested_types[0])
-                    if converter :
-                        converted_list[i] = converter.convert(f"List[{i}]", elem)
+                    if converter:
+                        elem_info = f"List[{self.nested_types[0].__name__}] index {i}"
+                        converted_list[i] = converter.convert(elem_info, elem)
         return converted_list
 
     _convert = _non_string_convert
@@ -439,13 +436,6 @@ class TupleConverter(TypeConverter):
         super().__init__(type_)
         self.nested_types = getattr(type_, '__args__', ())
 
-    @property
-    def type_name(self):
-        if self.nested_types:
-            return f"Tuple[{', '.join([t.__name__ for t in self.nested_types])}]"
-        else:
-            return 'tuple'
-
     def _non_string_convert(self, value, explicit_type=True):
         if isinstance(value, str):
             converted_tuple = self._literal_eval(value, tuple)
@@ -458,7 +448,8 @@ class TupleConverter(TypeConverter):
             for i, elem in enumerate(converted_tuple):
                 converter = TypeConverter.converter_for(self.nested_types[i])
                 if converter:
-                    tmp_list[i] = converter.convert(f"Tuple[{i}]", elem)
+                    types = f"[{', '.join([t.__name__ for t in self.nested_types])}]"
+                    tmp_list[i] = converter.convert(f"Tuple{types} index {i}", elem)
             converted_tuple = tuple(tmp_list)
         return converted_tuple
 
@@ -477,15 +468,6 @@ class DictionaryConverter(TypeConverter):
         super().__init__(type_)
         self.nested_types = getattr(type_, '__args__', ())
 
-    @property
-    def type_name(self):
-        if self.nested_types:
-            key_type = self.nested_types[0]
-            value_type = self.nested_types[1]
-            return f'Dict[{key_type.__name__}:{value_type.__name__}]'
-        else:
-            return 'dictionary'
-
     def no_conversion_needed(self, value):
         return self.used_type in self.abc and issubclass(type(value), self.abc)
 
@@ -498,14 +480,17 @@ class DictionaryConverter(TypeConverter):
             raise ValueError
         if self.nested_types and len(self.nested_types) == 2:
             for key, elem in converted_dict.copy().items():
-                key_converter  = TypeConverter.converter_for(self.nested_types[0])
-                elem_converter = TypeConverter.converter_for(self.nested_types[1])
+                key_type = self.nested_types[0]
+                value_type = self.nested_types[1]
+                d_info = f"Dict[{key_type.__name__}, {value_type.__name__}]"
+                key_converter  = TypeConverter.converter_for(key_type)
+                elem_converter = TypeConverter.converter_for(value_type)
                 if key_converter:
-                    converted_key = key_converter.convert("Dict key", key)
+                    converted_key = key_converter.convert(f"key for {d_info}", key)
                 else:
                     converted_key  = key
                 if elem_converter:
-                    converted_elem = elem_converter.convert(f"Dict[{key}]",elem)
+                    converted_elem = elem_converter.convert(f"{d_info} key {key}", elem)
                 else:
                     converted_elem = elem
                 replace_elem = type(converted_elem) != type(elem) 

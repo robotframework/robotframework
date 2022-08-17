@@ -19,8 +19,8 @@ Invalid list
     [Template]                Conversion Should Fail
     List                      [1, oops]                                        error=Invalid expression.
     List                      ()                                               error=Value is tuple, not list.
-    List with ints            ooops                       type=List[int]       error=Invalid expression.
-    List with ints            [1, ${2}, 3.14, -42]        type=List[int]       error=Argument 'List[2]' got value '3.14' (float) that cannot be converted to integer: Conversion would lose precision.
+    List with ints            ooops                       type=list            error=Invalid expression.
+    List with ints            [1, ${2}, 3.14, -42]        type=list            error=Argument 'List[int] index 2' got value '3.14' (float) that cannot be converted to integer: Conversion would lose precision.
 
 Sequence
     Sequence                  []                          []
@@ -37,7 +37,7 @@ Invalid Sequence
     [Template]                Conversion Should Fail
     Sequence                  [1, oops]                   type=list            error=Invalid expression.
     Mutable sequence          ()                          type=list            error=Value is tuple, not list.
-    Sequence with params      ooops                       type=List[bool]      error=Invalid expression.
+    Sequence with params      ooops                       type=list            error=Invalid expression.
 
 Tuple
     Tuple                     ()                          ()
@@ -49,7 +49,7 @@ Tuple with params
 Invalid tuple
     [Template]                Conversion Should Fail
     Tuple                     oops                        type=tuple                           error=Invalid expression.
-    Tuple with params         (1, 3.14, 'text', 'oops')   type=Tuple[int, float, str, MyEnum]  error=Argument 'Tuple[3]' got value 'oops' that cannot be converted to MyEnum: MyEnum does not have member 'oops'. Available: 'bar' and 'foo'
+    Tuple with params         (1, 3.14, 'text', 'oops')   type=tuple                           error=Argument 'Tuple[int, float, str, MyEnum] index 3' got value 'oops' that cannot be converted to MyEnum: MyEnum does not have member 'oops'. Available: 'bar' and 'foo'
 
 Dict
     Dict                      {}                          {}
@@ -73,9 +73,9 @@ Invalid dictionary
     [Template]                Conversion Should Fail
     Dict                      {1: ooops}                  type=dictionary          error=Invalid expression.
     Dict                      []                          type=dictionary          error=Value is list, not dict.
-    Dict with str_int         ooops                       type=Dict[str:int]       error=Invalid expression.
-    Dict with str_int         {'foo': 1, "bar": 3.14}     type=Dict[str:int]       error=Argument 'Dict[bar]' got value '3.14' (float) that cannot be converted to integer: Conversion would lose precision.
-    Dict with enums           {'oops': 1, 'bar': 2}       type=Dict[MyEnum:bool]   error=Argument 'Dict key' got value 'oops' that cannot be converted to MyEnum: MyEnum does not have member 'oops'. Available: 'bar' and 'foo'
+    Dict with str_int         ooops                       type=dictionary          error=Invalid expression.
+    Dict with str_int         {'foo': 1, "bar": 3.14}     type=dictionary          error=Argument 'Dict[str, int] key bar' got value '3.14' (float) that cannot be converted to integer: Conversion would lose precision.
+    Dict with enums           {'oops': 1, 'bar': 2}       type=dictionary          error=Argument 'key for Dict[MyEnum, bool]' got value 'oops' that cannot be converted to MyEnum: MyEnum does not have member 'oops'. Available: 'bar' and 'foo'
 
 Mapping
     Mapping                   {}                          {}
@@ -92,7 +92,7 @@ Invalid mapping
     [Template]                Conversion Should Fail
     Mapping                   {1: ooops}                  type=dictionary      error=Invalid expression.
     Mutable mapping           []                          type=dictionary      error=Value is list, not dict.
-    Mapping with params       ooops                       type=Dict[bool:int]  error=Invalid expression.
+    Mapping with params       ooops                       type=dictionary      error=Invalid expression.
 
 Set
     Set                       set()                       set()
