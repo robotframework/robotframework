@@ -418,7 +418,7 @@ class ListConverter(TypeConverter):
                 for i, elem in enumerate(converted_list) :
                     converter = TypeConverter.converter_for(self.nested_types[0])
                     if converter:
-                        elem_info = f"List[{self.nested_types[0].__name__}] index {i}"
+                        elem_info = f"List[{self.nested_types[0].__name__}]"
                         converted_list[i] = converter.convert(elem_info, elem)
         return converted_list
 
@@ -448,8 +448,8 @@ class TupleConverter(TypeConverter):
             for i, elem in enumerate(converted_tuple):
                 converter = TypeConverter.converter_for(self.nested_types[i])
                 if converter:
-                    types = f"[{', '.join([t.__name__ for t in self.nested_types])}]"
-                    tmp_list[i] = converter.convert(f"Tuple{types} index {i}", elem)
+                    types = ', '.join([t.__name__ for t in self.nested_types])
+                    tmp_list[i] = converter.convert(f"Tuple[{types}]", elem)
             converted_tuple = tuple(tmp_list)
         return converted_tuple
 
@@ -490,7 +490,7 @@ class DictionaryConverter(TypeConverter):
                 else:
                     converted_key  = key
                 if elem_converter:
-                    converted_elem = elem_converter.convert(f"{d_info} key {key}", elem)
+                    converted_elem = elem_converter.convert(d_info, elem)
                 else:
                     converted_elem = elem
                 replace_elem = type(converted_elem) != type(elem) 
@@ -515,10 +515,6 @@ class SetConverter(TypeConverter):
     def __init__(self, type_, custom_converters=None):
         super().__init__(type_)
         self.nested_types = getattr(type_, '__args__', ())
-
-    @property
-    def type_name(self):
-        return f'Set[{self.nested_types[0].__name__}]' if self.nested_types else 'set'
 
     def no_conversion_needed(self, value):
         return not self.nested_types and isinstance(value, self.used_type)

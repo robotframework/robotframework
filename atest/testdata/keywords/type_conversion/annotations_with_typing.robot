@@ -20,7 +20,7 @@ Invalid list
     List                      [1, oops]                                        error=Invalid expression.
     List                      ()                                               error=Value is tuple, not list.
     List with ints            ooops                       type=list            error=Invalid expression.
-    List with ints            [1, ${2}, 3.14, -42]        type=list            error=Argument 'List[int] index 2' got value '3.14' (float) that cannot be converted to integer: Conversion would lose precision.
+    List with ints            [1, ${2}, 3.14, -42]        type=list            error=Argument 'List[int]' got value '3.14' (float) that cannot be converted to integer: Conversion would lose precision.
 
 Sequence
     Sequence                  []                          []
@@ -49,7 +49,7 @@ Tuple with params
 Invalid tuple
     [Template]                Conversion Should Fail
     Tuple                     oops                        type=tuple                           error=Invalid expression.
-    Tuple with params         (1, 3.14, 'text', 'oops')   type=tuple                           error=Argument 'Tuple[int, float, str, MyEnum] index 3' got value 'oops' that cannot be converted to MyEnum: MyEnum does not have member 'oops'. Available: 'bar' and 'foo'
+    Tuple with params         (1, 3.14, 'text', 'oops')   type=tuple                           error=Argument 'Tuple[int, float, str, MyEnum]' got value 'oops' that cannot be converted to MyEnum: MyEnum does not have member 'oops'. Available: 'bar' and 'foo'
 
 Dict
     Dict                      {}                          {}
@@ -74,7 +74,7 @@ Invalid dictionary
     Dict                      {1: ooops}                  type=dictionary          error=Invalid expression.
     Dict                      []                          type=dictionary          error=Value is list, not dict.
     Dict with str_int         ooops                       type=dictionary          error=Invalid expression.
-    Dict with str_int         {'foo': 1, "bar": 3.14}     type=dictionary          error=Argument 'Dict[str, int] key bar' got value '3.14' (float) that cannot be converted to integer: Conversion would lose precision.
+    Dict with str_int         {'foo': 1, "bar": 3.14}     type=dictionary          error=Argument 'Dict[str, int]' got value '3.14' (float) that cannot be converted to integer: Conversion would lose precision.
     Dict with enums           {'oops': 1, 'bar': 2}       type=dictionary          error=Argument 'key for Dict[MyEnum, bool]' got value 'oops' that cannot be converted to MyEnum: MyEnum does not have member 'oops'. Available: 'bar' and 'foo'
 
 Mapping
@@ -111,7 +111,7 @@ Invalid Set
     Set                       {1, ooops}                                       error=Invalid expression.
     Set                       {}                                               error=Value is dictionary, not set.
     Set                       ooops                                            error=Invalid expression.
-    Set with enum             {'foo', 'oops'}             type=Set[MyEnum]     error=Argument 'Set[MyEnum]' got value 'oops' that cannot be converted to MyEnum: MyEnum does not have member 'oops'. Available: 'bar' and 'foo'
+    Set with enum             {'foo', 'oops'}             type=set             error=Argument 'Set[MyEnum]' got value 'oops' that cannot be converted to MyEnum: MyEnum does not have member 'oops'. Available: 'bar' and 'foo'
 
 None as default
     None as default
