@@ -1,13 +1,5 @@
 import os
 
-try:
-    basestring
-    long
-except NameError:
-    basestring = str
-    long = int
-
-
 OUTFILE = open(os.path.join(os.getenv('TEMPDIR'), 'listener_attrs.txt'), 'w')
 START = 'doc starttime '
 END = START + 'endtime elapsedtime status '
@@ -20,24 +12,24 @@ KW_TYPES = {'FOR': 'variables flavor values',
             'ELSE IF': 'condition',
             'EXCEPT': 'patterns pattern_type variable',
             'RETURN': 'values'}
-EXPECTED_TYPES = {'tags': [basestring],
-                  'args': [basestring],
-                  'assign': [basestring],
-                  'metadata': {basestring: basestring},
-                  'tests': [basestring],
-                  'suites': [basestring],
+EXPECTED_TYPES = {'tags': [str],
+                  'args': [str],
+                  'assign': [str],
+                  'metadata': {str: str},
+                  'tests': [str],
+                  'suites': [str],
                   'totaltests': int,
-                  'elapsedtime': (int, long),
+                  'elapsedtime': int,
                   'lineno': (int, type(None)),
-                  'source': (basestring, type(None)),
+                  'source': (str, type(None)),
                   'variables': (dict, list),
-                  'flavor': basestring,
+                  'flavor': str,
                   'values': (list, dict),
-                  'condition': basestring,
-                  'limit': (basestring, type(None)),
-                  'patterns': (basestring, list),
-                  'pattern_type': (basestring, type(None)),
-                  'variable': (basestring, type(None))}
+                  'condition': str,
+                  'limit': (str, type(None)),
+                  'patterns': (str, list),
+                  'pattern_type': (str, type(None)),
+                  'variable': (str, type(None))}
 
 
 def verify_attrs(method_name, attrs, names):
@@ -49,7 +41,7 @@ def verify_attrs(method_name, attrs, names):
         return
     for name in names:
         value = attrs[name]
-        exp_type = EXPECTED_TYPES.get(name, basestring)
+        exp_type = EXPECTED_TYPES.get(name, str)
         if isinstance(exp_type, list):
             verify_attr(name, value, list)
             for index, item in enumerate(value):
@@ -73,9 +65,9 @@ def verify_attr(name, value, exp_type):
 
 
 def format_value(value):
-    if isinstance(value, basestring):
+    if isinstance(value, str):
         return value
-    if isinstance(value, (int, long)):
+    if isinstance(value, int):
         return str(value)
     if isinstance(value, list):
         return '[%s]' % ', '.join(format_value(item) for item in value)
