@@ -21,7 +21,7 @@ from robot.utils import is_list_like, Importer, normalize
 
 class Languages:
 
-    def __init__(self, languages):
+    def __init__(self, languages=None):
         self.languages = []
         # The English singular forms are added for backwards compatibility
         self.headers = {
@@ -37,6 +37,12 @@ class Languages:
         for lang in self._get_languages(languages):
             self._add_language(lang)
 
+    def reset(self, languages=None):
+        self.__init__(languages)
+
+    def add_language(self, name):
+        self._add_language(Language.from_name(name))
+
     def _add_language(self, lang):
         if lang in self.languages:
             return
@@ -44,10 +50,6 @@ class Languages:
         self.headers.update({n.title(): lang.headers[n] for n in lang.headers if n})
         self.settings.update({n.title(): lang.settings[n] for n in lang.settings if n})
         self.bdd_prefixes |= {p.title() for p in lang.bdd_prefixes}
-
-    def add_language(self, name):
-        lang = Language.from_name(name)
-        self._add_language(lang)
 
     def _get_languages(self, languages):
         languages = self._resolve_languages(languages)
@@ -91,9 +93,6 @@ class Languages:
             lang = os.path.abspath(lang)
         module = Importer('language file').import_module(lang)
         return [value() for _, value in inspect.getmembers(module, is_language)]
-
-    def translate_setting(self, name):
-        return self.settings.get(name, name)
 
     def __iter__(self):
         return iter(self.languages)

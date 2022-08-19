@@ -1,7 +1,7 @@
 import unittest
 
-from robot.api import Language
-from robot.conf.languages import Languages, En, Fi, PtBr, Th
+from robot.api import Language, Languages
+from robot.conf.languages import En, Fi, PtBr, Th
 from robot.utils.asserts import assert_equal, assert_not_equal, assert_raises_with_msg
 
 
@@ -71,6 +71,21 @@ class TestLanguageFromName(unittest.TestCase):
 
 
 class TestLanguages(unittest.TestCase):
+
+    def test_init(self):
+        assert_equal(list(Languages()), [En()])
+        assert_equal(list(Languages('fi')), [Fi(), En()])
+        assert_equal(list(Languages(['fi'])), [Fi(), En()])
+        assert_equal(list(Languages(['fi', PtBr()])), [Fi(), PtBr(), En()])
+
+    def test_reset(self):
+        langs = Languages(['fi'])
+        langs.reset()
+        assert_equal(list(langs), [En()])
+        langs.reset('fi')
+        assert_equal(list(langs), [Fi(), En()])
+        langs.reset(['fi', PtBr()])
+        assert_equal(list(langs), [Fi(), PtBr(), En()])
 
     def test_duplicates_are_not_added(self):
         langs = Languages(['Finnish', 'en', Fi(), 'pt-br'])
