@@ -24,12 +24,14 @@ class Languages:
     def __init__(self, languages):
         self.languages = []
         # The English singular forms are added for backwards compatibility
-        self.setting_headers = {'Setting'}
-        self.variable_headers = {'Variable'}
-        self.test_case_headers = {'Test Case'}
-        self.task_headers = {'Task'}
-        self.keyword_headers = {'Keyword'}
-        self.comment_headers = {'Comment'}
+        self.headers = {
+            'Setting': 'Settings',
+            'Variable': 'Variables',
+            'Test Case': 'Test Cases',
+            'Task': 'Tasks',
+            'Keyword': 'Keywords',
+            'Comment': 'Comments'
+        }
         self.settings = {}
         self.bdd_prefixes = set()
         for lang in self._get_languages(languages):
@@ -39,13 +41,7 @@ class Languages:
         if lang in self.languages:
             return
         self.languages.append(lang)
-        # FIXME: Headers should be added only when defined.
-        self.setting_headers.add(lang.settings_header.title())
-        self.variable_headers.add(lang.variables_header.title())
-        self.test_case_headers.add(lang.test_cases_header.title())
-        self.task_headers.add(lang.tasks_header.title())
-        self.keyword_headers.add(lang.keywords_header.title())
-        self.comment_headers.add(lang.comments_header.title())
+        self.headers.update({n.title(): lang.headers[n] for n in lang.headers if n})
         self.settings.update({n.title(): lang.settings[n] for n in lang.settings if n})
         self.bdd_prefixes |= {p.title() for p in lang.bdd_prefixes}
 
@@ -53,7 +49,7 @@ class Languages:
         try:
             lang = Language.from_name(name)
         except ValueError:
-            raise  # FIXME
+            raise  # FIXME: Proper error handling!!
         self._add_language(lang)
 
     def _get_languages(self, languages):
@@ -115,12 +111,12 @@ class Language:
     Language :attr:`code` is got based on the class name and :attr:`name`
     based on the docstring.
     """
-    settings_header = ""
-    variables_header = ""
-    test_cases_header = ""
-    tasks_header = ""
-    keywords_header = ""
-    comments_header = ""
+    settings_header = None
+    variables_header = None
+    test_cases_header = None
+    tasks_header = None
+    keywords_header = None
+    comments_header = None
     library_setting = None
     resource_setting = None
     variables_setting = None
@@ -189,6 +185,17 @@ class Language:
         Got from the first line of the class docstring.
         """
         return self.__doc__.splitlines()[0] if self.__doc__ else ''
+
+    @property
+    def headers(self):
+        return {
+            self.settings_header: En.settings_header,
+            self.variables_header: En.variables_header,
+            self.test_cases_header: En.test_cases_header,
+            self.tasks_header: En.tasks_header,
+            self.keywords_header: En.keywords_header,
+            self.comments_header: En.comments_header
+        }
 
     @property
     def settings(self):
