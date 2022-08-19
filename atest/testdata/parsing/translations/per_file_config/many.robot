@@ -3,7 +3,7 @@ LANGUAGE: Brazilian Portuguese
 
 This is not language: config
 
-language: THAI    language: ukrainian
+language: THAI    language: invalid    language: ukrainian
 
 *** Einstellungen ***
 Documentação          Exemplo

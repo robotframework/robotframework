@@ -43,6 +43,10 @@ Per file configuration with multiple languages
     ${tc} =    Check Test Case    ตัวอย่าง
     Should Be Equal    ${tc.doc}    приклад
 
+Invalid per file configuration
+    Error in file    0    parsing/translations/per_file_config/many.robot    6
+    ...    Invalid language configuration: No language with name 'invalid' found.
+
 Per file configuration bleeds to other files
     [Documentation]    This is a technical limitation and will hopefully change!
     Run Tests    ${EMPTY}    parsing/translations/per_file_config/fi.robot parsing/translations/finnish/tests.robot

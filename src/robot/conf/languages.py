@@ -46,10 +46,7 @@ class Languages:
         self.bdd_prefixes |= {p.title() for p in lang.bdd_prefixes}
 
     def add_language(self, name):
-        try:
-            lang = Language.from_name(name)
-        except ValueError:
-            raise  # FIXME: Proper error handling!!
+        lang = Language.from_name(name)
         self._add_language(lang)
 
     def _get_languages(self, languages):

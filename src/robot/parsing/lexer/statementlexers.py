@@ -122,7 +122,15 @@ class ImplicitCommentLexer(CommentLexer):
         for token in statement:
             match = self.language.match(token.value)
             if match:
-                self.ctx.add_language(match.group(1).strip())
+                try:
+                    self.ctx.add_language(match.group(1).strip())
+                except ValueError as err:
+                    token.set_error(f'Invalid language configuration: {err}')
+
+    def lex(self):
+        for token in self.statement:
+            if not token.type:
+                token.type = self.token_type
 
 
 class SettingLexer(StatementLexer):
