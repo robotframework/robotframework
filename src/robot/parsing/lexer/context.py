@@ -41,6 +41,9 @@ class FileContext(LexingContext):
     def __init__(self, settings=None, lang=None):
         super().__init__(settings, lang)
 
+    def add_language(self, lang):
+        self.languages.add_language(lang)
+
     def keyword_context(self):
         return KeywordContext(settings=KeywordSettings(self.languages))
 

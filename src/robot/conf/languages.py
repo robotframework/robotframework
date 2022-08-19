@@ -22,7 +22,7 @@ from robot.utils import is_list_like, Importer, normalize
 class Languages:
 
     def __init__(self, languages):
-        self.languages = self._get_languages(languages)
+        self.languages = []
         # The English singular forms are added for backwards compatibility
         self.setting_headers = {'Setting'}
         self.variable_headers = {'Variable'}
@@ -32,17 +32,29 @@ class Languages:
         self.comment_headers = {'Comment'}
         self.settings = {}
         self.bdd_prefixes = set()
-        for lang in self.languages:
-            self.setting_headers.add(lang.settings_header.title())
-            self.variable_headers.add(lang.variables_header.title())
-            self.test_case_headers.add(lang.test_cases_header.title())
-            self.task_headers.add(lang.tasks_header.title())
-            self.keyword_headers.add(lang.keywords_header.title())
-            self.comment_headers.add(lang.comments_header.title())
-            self.settings.update(
-                {name.title(): lang.settings[name] for name in lang.settings if name}
-            )
-            self.bdd_prefixes |= {p.title() for p in lang.bdd_prefixes}
+        for lang in self._get_languages(languages):
+            self._add_language(lang)
+
+    def _add_language(self, lang):
+        if lang in self.languages:
+            return
+        self.languages.append(lang)
+        # FIXME: Headers should be added only when defined.
+        self.setting_headers.add(lang.settings_header.title())
+        self.variable_headers.add(lang.variables_header.title())
+        self.test_case_headers.add(lang.test_cases_header.title())
+        self.task_headers.add(lang.tasks_header.title())
+        self.keyword_headers.add(lang.keywords_header.title())
+        self.comment_headers.add(lang.comments_header.title())
+        self.settings.update({n.title(): lang.settings[n] for n in lang.settings if n})
+        self.bdd_prefixes |= {p.title() for p in lang.bdd_prefixes}
+
+    def add_language(self, name):
+        try:
+            lang = Language.from_name(name)
+        except ValueError:
+            raise  # FIXME
+        self._add_language(lang)
 
     def _get_languages(self, languages):
         languages = self._resolve_languages(languages)
@@ -209,8 +221,14 @@ class Language:
 
     @property
     def bdd_prefixes(self):
-        return self.given_prefix | self.when_prefix | self.then_prefix \
-            | self.and_prefix | self.but_prefix
+        return (self.given_prefix | self.when_prefix | self.then_prefix |
+                self.and_prefix | self.but_prefix)
+
+    def __eq__(self, other):
+        return isinstance(other, type(self))
+
+    def __hash__(self):
+        return hash(type(self))
 
 
 class En(Language):

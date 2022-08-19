@@ -22,7 +22,7 @@ from .statementlexers import (Lexer,
                               TestCaseSectionHeaderLexer,
                               TaskSectionHeaderLexer,
                               KeywordSectionHeaderLexer,
-                              CommentSectionHeaderLexer, CommentLexer,
+                              CommentSectionHeaderLexer, CommentLexer, ImplicitCommentLexer,
                               ErrorSectionHeaderLexer,
                               TestOrKeywordSettingLexer,
                               KeywordCallLexer,
@@ -161,7 +161,7 @@ class ImplicitCommentSectionLexer(SectionLexer):
         return True
 
     def lexer_classes(self):
-        return (CommentLexer,)
+        return (ImplicitCommentLexer,)
 
 
 class ErrorSectionLexer(SectionLexer):

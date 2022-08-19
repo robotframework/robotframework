@@ -31,15 +31,32 @@ Invalid
     ...    Invalid value for option '--language': Importing language file 'bad' failed: ModuleNotFoundError: No module named 'bad'
     ...    Traceback \\(most recent call last\\):
     ...    .*${USAGE TIP}
-    Should Match Regexp    ${result.stderr}    (?s)^\\[ ERROR \\] ${error}$
+    Should Match Regexp    ${result.stderr}    ^\\[ ERROR \\] ${error}$    flags=DOTALL
+
+Per file configuration
+    Run Tests    ${EMPTY}    parsing/translations/per_file_config/fi.robot
+    Validate Translations
+
+Per file configuration with multiple languages
+    Run Tests    ${EMPTY}    parsing/translations/per_file_config/many.robot
+    Should Be Equal    ${SUITE.doc}    Exemplo
+    ${tc} =    Check Test Case    ตัวอย่าง
+    Should Be Equal    ${tc.doc}    приклад
+
+Per file configuration bleeds to other files
+    [Documentation]    This is a technical limitation and will hopefully change!
+    Run Tests    ${EMPTY}    parsing/translations/per_file_config/fi.robot parsing/translations/finnish/tests.robot
+    Validate Translations    ${SUITE.suites[0]}
+    Validate Translations    ${SUITE.suites[1]}
 
 *** Keywords ***
 Validate Translations
-    Should Be Equal    ${SUITE.doc}                   Suite documentation.
-    Should Be Equal    ${SUITE.metadata}[Metadata]    Value
-    Should Be Equal    ${SUITE.setup.name}            Suite Setup
-    Should Be Equal    ${SUITE.teardown.name}         Suite Teardown
-    Should Be Equal    ${SUITE.status}                PASS
+    [Arguments]    ${suite}=${SUITE}
+    Should Be Equal    ${suite.doc}                   Suite documentation.
+    Should Be Equal    ${suite.metadata}[Metadata]    Value
+    Should Be Equal    ${suite.setup.name}            Suite Setup
+    Should Be Equal    ${suite.teardown.name}         Suite Teardown
+    Should Be Equal    ${suite.status}                PASS
     ${tc} =            Check Test Case                Test without settings
     Should Be Equal    ${tc.doc}                      ${EMPTY}
     Should Be Equal    ${tc.tags}                     ${{['test', 'tags']}}

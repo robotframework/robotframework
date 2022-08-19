@@ -1,8 +1,8 @@
 import unittest
 
 from robot.api import Language
-from robot.conf.languages import Fi, PtBr
-from robot.utils.asserts import assert_equal, assert_raises_with_msg
+from robot.conf.languages import Languages, En, Fi, PtBr, Th
+from robot.utils.asserts import assert_equal, assert_not_equal, assert_raises_with_msg
 
 
 class TestLanguage(unittest.TestCase):
@@ -37,7 +37,17 @@ class TestLanguage(unittest.TestCase):
             assert lang.code
             assert lang.name
 
-class TestFromName(unittest.TestCase):
+    def test_eq(self):
+        assert_equal(Fi(), Fi())
+        assert_equal(Language.from_name('fi'), Fi())
+        assert_not_equal(Fi(), PtBr())
+
+    def test_hash(self):
+        assert_equal(hash(Fi()), hash(Fi()))
+        assert_equal({Fi(): 'value'}[Fi()], 'value')
+
+
+class TestLanguageFromName(unittest.TestCase):
 
     def test_code(self):
         assert isinstance(Language.from_name('fi'), Fi)
@@ -58,6 +68,17 @@ class TestFromName(unittest.TestCase):
     def test_no_match(self):
         assert_raises_with_msg(ValueError, "No language with name 'no match' found.",
                                Language.from_name, 'no match')
+
+
+class TestLanguages(unittest.TestCase):
+
+    def test_duplicates_are_not_added(self):
+        langs = Languages(['Finnish', 'en', Fi(), 'pt-br'])
+        assert_equal(list(langs), [Fi(), En(), PtBr()])
+        langs.add_language('en')
+        assert_equal(list(langs), [Fi(), En(), PtBr()])
+        langs.add_language('th')
+        assert_equal(list(langs), [Fi(), En(), PtBr(), Th()])
 
 
 if __name__ == '__main__':
