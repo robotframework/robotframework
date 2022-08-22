@@ -41,14 +41,17 @@ class FileContext(LexingContext):
     def __init__(self, settings=None, lang=None):
         super().__init__(settings, lang)
 
+    def add_language(self, lang):
+        self.languages.add_language(lang)
+
     def keyword_context(self):
         return KeywordContext(settings=KeywordSettings(self.languages))
 
     def setting_section(self, statement):
-        return self._handles_section(statement, self.languages.setting_headers)
+        return self._handles_section(statement, 'Settings')
 
     def variable_section(self, statement):
-        return self._handles_section(statement, self.languages.variable_headers)
+        return self._handles_section(statement, 'Variables')
 
     def test_case_section(self, statement):
         return False
@@ -57,10 +60,10 @@ class FileContext(LexingContext):
         return False
 
     def keyword_section(self, statement):
-        return self._handles_section(statement, self.languages.keyword_headers)
+        return self._handles_section(statement, 'Keywords')
 
     def comment_section(self, statement):
-        return self._handles_section(statement, self.languages.comment_headers)
+        return self._handles_section(statement, 'Comments')
 
     def lex_invalid_section(self, statement):
         message, fatal = self._get_invalid_section_error(statement[0].value)
@@ -71,9 +74,10 @@ class FileContext(LexingContext):
     def _get_invalid_section_error(self, header):
         raise NotImplementedError
 
-    def _handles_section(self, statement, headers):
+    def _handles_section(self, statement, header):
         marker = statement[0].value
-        return marker.startswith('*') and self._normalize(marker) in headers
+        return (marker[:1] == '*' and
+                self.languages.headers.get(self._normalize(marker)) == header)
 
     def _normalize(self, marker):
         return normalize_whitespace(marker).strip('* ').title()
@@ -86,10 +90,10 @@ class TestCaseFileContext(FileContext):
         return TestCaseContext(settings=TestCaseSettings(self.settings, self.languages))
 
     def test_case_section(self, statement):
-        return self._handles_section(statement, self.languages.test_case_headers)
+        return self._handles_section(statement, 'Test Cases')
 
     def task_section(self, statement):
-        return self._handles_section(statement, self.languages.task_headers)
+        return self._handles_section(statement, 'Tasks')
 
     def _get_invalid_section_error(self, header):
         return (f"Unrecognized section header '{header}'. Valid sections: "
@@ -102,7 +106,7 @@ class ResourceFileContext(FileContext):
 
     def _get_invalid_section_error(self, header):
         name = self._normalize(header)
-        if name in self.languages.test_case_headers | self.languages.task_headers:
+        if self.languages.headers.get(name) in ('Test Cases', 'Tasks'):
             message = f"Resource file with '{name}' section is invalid."
             fatal = True
         else:
@@ -117,7 +121,7 @@ class InitFileContext(FileContext):
 
     def _get_invalid_section_error(self, header):
         name = self._normalize(header)
-        if name in self.languages.test_case_headers | self.languages.task_headers:
+        if self.languages.headers.get(name) in ('Test Cases', 'Tasks'):
             message = f"'{name}' section is not allowed in suite initialization file."
         else:
             message = (f"Unrecognized section header '{header}'. Valid sections: "

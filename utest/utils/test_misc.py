@@ -1,7 +1,9 @@
+import re
 import unittest
 
-from robot.utils.asserts import assert_equal
-from robot.utils import printable_name, seq2str, plural_or_not, test_or_task
+from robot.utils import (parse_re_flags, plural_or_not, printable_name,
+                         seq2str, test_or_task)
+from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
 
 class TestSeg2Str(unittest.TestCase):
@@ -99,7 +101,7 @@ class TestTestOrTask(unittest.TestCase):
 
     def test_no_match(self):
         for inp in ['', 'No match', 'No {match}', '{No} {task} {match}']:
-            assert_equal(test_or_task(inp), inp)
+            assert_equal(test_or_task(inp, rpa=False), inp)
             assert_equal(test_or_task(inp, rpa=True), inp)
 
     def test_match(self):
@@ -116,6 +118,34 @@ class TestTestOrTask(unittest.TestCase):
                      'Contains test, TEST and TesT')
         assert_equal(test_or_task('Contains {test}, {TEST} and {TesT}', True),
                      'Contains task, TASK and TasK')
+
+    def test_test_without_curlies(self):
+        for test, task in [('test', 'task'),
+                           ('Test', 'Task'),
+                           ('TEST', 'TASK'),
+                           ('tESt', 'tASk')]:
+            assert_equal(test_or_task(test, rpa=False), test)
+            assert_equal(test_or_task(test, rpa=True), task)
+
+
+class TestParseReFlags(unittest.TestCase):
+
+    def test_parse(self):
+        for inp, exp in [('DOTALL', re.DOTALL),
+                         ('I', re.I),
+                         ('IGNORECASE|dotall', re.IGNORECASE | re.DOTALL),
+                         (' MULTILINE ', re.MULTILINE)]:
+            assert_equal(parse_re_flags(inp), exp)
+
+    def test_parse_empty(self):
+        for inp in ['', None]:
+            assert_equal(parse_re_flags(inp), 0)
+
+    def test_parse_negative(self):
+        for inp, exp_msg in [('foo', 'Unknown regexp flag: foo'),
+                             ('IGNORECASE|foo', 'Unknown regexp flag: foo'),
+                             ('compile', 'Unknown regexp flag: compile')]:
+            assert_raises_with_msg(ValueError, exp_msg, parse_re_flags, inp)
 
 
 if __name__ == "__main__":

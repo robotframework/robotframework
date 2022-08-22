@@ -217,7 +217,11 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | `MyLibrary.Example Keyword`. With control structures `name`    |
    |                  |                  | contains string representation of parameters.                  |
    |                  |                  |                                                                |
-   |                  |                  | Contents of the attribute dictionary:                          |
+   |                  |                  | Keywords and control structures share most of attributes, but  |
+   |                  |                  | control structures can have additional attributes depending    |
+   |                  |                  | on their `type`.                                               |
+   |                  |                  |                                                                |
+   |                  |                  | Shared attributes:                                             |
    |                  |                  |                                                                |
    |                  |                  | * `type`: String specifying type of the started item. Possible |
    |                  |                  |   values are: `KEYWORD`, `SETUP`, `TEARDOWN`, `FOR`, `WHILE`,  |
@@ -243,12 +247,49 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |   not executed (e.g. due to an earlier failure), `NOT SET`     |
    |                  |                  |   otherwise. New in RF 4.0.                                    |
    |                  |                  | * `starttime`: Keyword execution start time.                   |
+   |                  |                  |                                                                |
+   |                  |                  | Additional attributes for `FOR` types:                         |
+   |                  |                  |                                                                |
+   |                  |                  | * `variables`: Assigned variables for each loop iteration.     |
+   |                  |                  | * `flavor`: Type of loop (e.g. `IN RANGE`).                    |
+   |                  |                  | * `values`: List of values being looped over.                  |
+   |                  |                  |                                                                |
+   |                  |                  | Additional attributes for `ITERATION` types:                   |
+   |                  |                  |                                                                |
+   |                  |                  | * `variables`: Variables and string representations of their   |
+   |                  |                  |   contents for one `FOR` loop iteration.                       |
+   |                  |                  |                                                                |
+   |                  |                  | Additional attributes for `WHILE` types:                       |
+   |                  |                  |                                                                |
+   |                  |                  | * `condition`: The looping condition.                          |
+   |                  |                  | * `limit`: The maximum iteration limit.                        |
+   |                  |                  |                                                                |
+   |                  |                  | Additional attributes for `IF` and `ELSE_IF` types:            |
+   |                  |                  |                                                                |
+   |                  |                  | * `condition`: The conditional expression being evaluated.     |
+   |                  |                  |                                                                |
+   |                  |                  | Additional attributes for `EXCEPT` types:                      |
+   |                  |                  |                                                                |
+   |                  |                  | * `patterns`: The exception pattern being matched.             |
+   |                  |                  | * `pattern_type`: The type of pattern match (e.g. `GLOB`).     |
+   |                  |                  | * `variable`: The variable containing the captured exception.  |
+   |                  |                  |                                                                |
+   |                  |                  | Additional attributes for `RETURN` types:                      |
+   |                  |                  |                                                                |
+   |                  |                  | * `values`: Return values from a keyword.                      |
+   |                  |                  |                                                                |
+   |                  |                  | Additional attributes for control structures are new in RF 5.1.|
+   |                  |                  |                                                                |
    +------------------+------------------+----------------------------------------------------------------+
    | end_keyword      | name, attributes | Called when a keyword ends.                                    |
    |                  |                  |                                                                |
    |                  |                  | `name` is the full keyword name containing                     |
    |                  |                  | possible library or resource name as a prefix.                 |
    |                  |                  | For example, `MyLibrary.Example Keyword`.                      |
+   |                  |                  |                                                                |
+   |                  |                  | Control structures have additional attributes, which change    |
+   |                  |                  | based on the `type` attribute. For descriptions of all         |
+   |                  |                  | possible attributes, see the `start_keyword` section.          |
    |                  |                  |                                                                |
    |                  |                  | Contents of the attribute dictionary:                          |
    |                  |                  |                                                                |

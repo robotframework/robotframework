@@ -59,7 +59,7 @@ class Settings:
         setting = statement[0]
         orig = self._format_name(setting.value)
         name = normalize_whitespace(orig).title()
-        name = self.languages.translate_setting(name)
+        name = self.languages.settings.get(name, name)
         if name in self.aliases:
             name = self.aliases[name]
         try:

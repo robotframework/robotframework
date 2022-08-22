@@ -29,9 +29,10 @@ from robot.running.usererrorhandler import UserErrorHandler
 from robot.utils import (DotDict, escape, format_assign_message, get_error_message,
                          get_time, html_escape, is_falsy, is_integer, is_list_like,
                          is_string, is_truthy, Matcher, normalize,
-                         normalize_whitespace, parse_time, prepr, plural_or_not as s,
-                         RERAISED_EXCEPTIONS, safe_str, secs_to_timestr, seq2str,
-                         split_from_equals, timestr_to_secs, type_name)
+                         normalize_whitespace, parse_re_flags, parse_time, prepr,
+                         plural_or_not as s, RERAISED_EXCEPTIONS, safe_str,
+                         secs_to_timestr, seq2str, split_from_equals,
+                         timestr_to_secs, type_name)
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (evaluate_expression, is_dict_variable,
                              is_list_variable, search_variable,
@@ -1303,7 +1304,7 @@ class _Verify(_BuiltInBase):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'does not match'))
 
-    def should_match_regexp(self, string, pattern, msg=None, values=True):
+    def should_match_regexp(self, string, pattern, msg=None, values=True, flags=None):
         """Fails if ``string`` does not match ``pattern`` as a regular expression.
 
         See the `Regular expressions` section for more information about
@@ -1315,11 +1316,10 @@ class _Verify(_BuiltInBase):
         to denote the beginning and end of the string, respectively.
         For example, ``^ello$`` only matches the exact string ``ello``.
 
-        Possible flags altering how the expression is parsed (e.g.
-        ``re.IGNORECASE``, ``re.MULTILINE``) must be embedded to the
-        pattern like ``(?im)pattern``. The most useful flags are ``i``
-        (case-insensitive), ``m`` (multiline mode), ``s`` (dotall mode)
-        and ``x`` (verbose).
+        Possible flags altering how the expression is parsed (e.g. ``re.IGNORECASE``,
+        ``re.MULTILINE``) can be given using the ``flags`` argument (e.g.
+        ``flags=IGNORECASE | MULTILINE``) or embedded to the pattern (e.g.
+        ``(?im)pattern``).
 
         If this keyword passes, it returns the portion of the string that
         matched the pattern. Additionally, the possible captured groups are
@@ -1331,6 +1331,7 @@ class _Verify(_BuiltInBase):
         Examples:
         | Should Match Regexp | ${output} | \\\\d{6}   | # Output contains six numbers  |
         | Should Match Regexp | ${output} | ^\\\\d{6}$ | # Six numbers and nothing more |
+        | ${ret} = | Should Match Regexp | Foo: 42 | foo: \\\\d+ | flags=IGNORECASE |
         | ${ret} = | Should Match Regexp | Foo: 42 | (?i)foo: \\\\d+ |
         | ${match} | ${group1} | ${group2} = |
         | ...      | Should Match Regexp | Bar: 43 | (Foo|Bar): (\\\\d+) |
@@ -1339,8 +1340,10 @@ class _Verify(_BuiltInBase):
         | ${match} = 'Bar: 43'
         | ${group1} = 'Bar'
         | ${group2} = '43'
+
+        The ``flags`` argument is new in Robot Framework 5.1.
         """
-        res = re.search(pattern, string)
+        res = re.search(pattern, string, flags=parse_re_flags(flags))
         if res is None:
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'does not match'))
@@ -1350,12 +1353,12 @@ class _Verify(_BuiltInBase):
             return [match] + list(groups)
         return match
 
-    def should_not_match_regexp(self, string, pattern, msg=None, values=True):
+    def should_not_match_regexp(self, string, pattern, msg=None, values=True, flags=None):
         """Fails if ``string`` matches ``pattern`` as a regular expression.
 
         See `Should Match Regexp` for more information about arguments.
         """
-        if re.search(pattern, string) is not None:
+        if re.search(pattern, string, flags=parse_re_flags(flags)) is not None:
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'matches'))
 

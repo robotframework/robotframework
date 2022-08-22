@@ -142,5 +142,4 @@ class ErrorReporter(NodeVisitor):
             LOGGER.error(self._format_message(error))
 
     def _format_message(self, token):
-        return ("Error in file '%s' on line %s: %s"
-                % (self.source, token.lineno, token.error))
+        return f"Error in file '{self.source}' on line {token.lineno}: {token.error}"

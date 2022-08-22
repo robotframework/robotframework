@@ -21,7 +21,7 @@ Listen Some
 
 Correct Attributes To Listener Methods
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
-    Stderr Should Not Contain    attributeverifyinglistener
+    Stderr Should Not Contain    VerifyAttributes
     Should Not Contain    ${status}    FAILED
 
 Keyword Tags
@@ -56,10 +56,16 @@ Test Template
     Stderr Should Be Empty
 
 Keyword Arguments Are Always Strings
-    ${result} =    Run Tests    --listener attributeverifyinglistener    ${LISTENER DIR}/keyword_argument_types.robot
+    ${result} =    Run Tests    --listener VerifyAttributes    ${LISTENER DIR}/keyword_argument_types.robot
     Should Be Empty    ${result.stderr}
     Check Test Tags    Run Keyword with already resolved non-string arguments in test data    1    2
     Check Test Case    Run Keyword with non-string arguments in library
+    ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
+    Should Not Contain    ${status}    FAILED
+
+Keyword Attributes For Control Structures
+    Run Tests    --listener VerifyAttributes    misc/for_loops.robot misc/while.robot misc/try_except.robot
+    Stderr Should Be Empty
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
     Should Not Contain    ${status}    FAILED
 
@@ -79,7 +85,7 @@ Run Tests With Listeners
     ...    --listener    ListenAll:%{TEMPDIR}${/}${ALL_FILE2}
     ...    --listener    module_listener
     ...    --listener    listeners.ListenSome
-    ...    --listener    attributeverifyinglistener
+    ...    --listener    VerifyAttributes
     ...    --metadata    ListenerMeta:Hello
     Run Tests    ${args}    misc/pass_and_fail.robot
 

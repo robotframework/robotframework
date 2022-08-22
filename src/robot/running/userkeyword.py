@@ -53,7 +53,7 @@ class UserLibrary:
     def _create_handler(self, kw):
         if kw.error:
             raise DataError(kw.error)
-        embedded = EmbeddedArguments(kw.name)
+        embedded = EmbeddedArguments.from_name(kw.name)
         if not embedded:
             return UserKeywordHandler(kw, self.name)
         if kw.args:
@@ -78,7 +78,6 @@ class UserKeywordHandler:
         self.tags = keyword.tags
         self.arguments = UserKeywordArgumentParser().parse(tuple(keyword.args),
                                                            self.longname)
-        self._kw = keyword
         self.timeout = keyword.timeout
         self.body = keyword.body
         self.return_value = tuple(keyword.return_)
@@ -103,13 +102,12 @@ class UserKeywordHandler:
 class EmbeddedArgumentsHandler(UserKeywordHandler):
 
     def __init__(self, keyword, libname, embedded):
-        UserKeywordHandler.__init__(self, keyword, libname)
+        super().__init__(keyword, libname)
         self.keyword = keyword
-        self.embedded_name = embedded.name
-        self.embedded_args = embedded.args
+        self.embedded = embedded
 
     def matches(self, name):
-        return self.embedded_name.match(name) is not None
+        return self.embedded.match(name) is not None
 
     def create_runner(self, name):
         return EmbeddedArgumentsRunner(self, name)

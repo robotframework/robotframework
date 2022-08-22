@@ -350,6 +350,21 @@ Test recursive-stop-recursive-continue-recursive-stop
     Failure in user keyword with recursive continue tag    run_kw=Failure in user keyword with recursive stop tag
     Fail    2
 
+Test test setup with continue-on-failure
+    [Documentation]    FAIL Setup failed:\n
+    ...    setup-1
+    [Tags]      robot:continue-on-failure
+    [Setup]     test setup
+    Fail    should-not-run
+
+Test test setup with recursive-continue-on-failure
+    [Documentation]    FAIL Setup failed:\n${HEADER}\n\n
+    ...    1) setup-1\n\n
+    ...    2) setup-2
+    [Tags]      robot:recursive-continue-on-failure
+    [Setup]     test setup
+    Fail    should-not-run
+
 *** Keywords ***
 Failure in user keyword with continue tag
     [Arguments]    ${run_kw}=No Operation
@@ -447,3 +462,7 @@ run-kw-and-continue failure in user keyword with stop tag
     Fail    kw10b
     Log    This is not executed
     Fail    kw10c
+
+test setup
+    Fail    setup-1
+    Fail    setup-2

@@ -32,8 +32,7 @@ class ArgumentResolver:
 
     def resolve(self, arguments, variables=None):
         positional, named = self._named_resolver.resolve(arguments, variables)
-        positional, named = self._variable_replacer.replace(positional, named,
-                                                            variables)
+        positional, named = self._variable_replacer.replace(positional, named, variables)
         positional, named = self._dict_to_kwargs.handle(positional, named)
         self._argument_validator.validate(positional, named,
                                           dryrun=variables is None)

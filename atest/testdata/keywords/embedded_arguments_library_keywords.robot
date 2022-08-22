@@ -4,6 +4,10 @@ Library        resources/embedded_args_in_lk_2.py
 
 *** Variables ***
 ${INDENT}         ${SPACE * 4}
+${foo}            foo
+${bar}            bar
+${zap}            zap
+@{list}           first    ${2}    third
 
 *** Test Cases ***
 Embedded Arguments In Library Keyword Name
@@ -61,6 +65,7 @@ Custom Regexp With Curly Braces
     Today is Tuesday and tomorrow is Wednesday
     Literal { Brace
     Literal } Brace
+    Literal {} Braces
 
 Custom Regexp With Escape Chars
     Custom Regexp With Escape Chars e.g. \\, \\\\ and c:\\temp\\test.txt
@@ -75,17 +80,24 @@ Grouping Custom Regexp
     Should Be Equal    ${matches}    Cuts-Regexperts
 
 Custom Regexp Matching Variables
-    [Documentation]    FAIL 42 != foo
-    ${foo}    ${bar}    ${zap} =    Create List    foo    bar    zap
+    [Documentation]    FAIL bar != foo
     I execute "${foo}"
     I execute "${bar}" with "${zap}"
-    I execute "${42}"
+    I execute "${bar}"
 
-Custom Regexp Matching Variables When Regexp Does No Match Them
+Non Matching Variable Is Not Accepted With Custom Regexp
+    [Documentation]    FAIL ValueError: Embedded argument 'x' got value 'foo' that does not match custom pattern 'bar'.
+    I execute "${foo}" with "${bar}"
+
+Partially Matching Variable Is Not Accepted With Custom Regexp
+    [Documentation]    FAIL ValueError: Embedded argument 'x' got value 'ba' that does not match custom pattern 'bar'.
+    I execute "${bar[:2]}" with "${zap}"
+
+Non String Variable Is Accepted With Custom Regexp
+    [Documentation]    FAIL 42 != foo
     Result of ${3} + ${-1} is ${2}
     Result of ${40} - ${-2} is ${42}
-    ${s42} =    Set Variable    42
-    I want ${42} and ${s42} as variables
+    I execute "${42}"
 
 Escaping Values Given As Embedded Arguments
     ${name}    ${item} =    User \${nonex} Selects \\ From Webshop
@@ -135,10 +147,17 @@ Embedded argument count must match accepted arguments
 Optional Non-Embedded Args Are Okay
     Optional Non-Embedded Args Are Okay
 
-Star Args With Embedded Args Are Okay
-    @{ret} =    Star Args With Embedded Args are Okay
-    @{args} =    Create List    Embedded    Okay
-    Should Be Equal    ${ret}    ${args}
+Varargs With Embedded Args Are Okay
+    @{ret} =    Varargs With Embedded Args are Okay
+    Should Be Equal    ${ret}    ${{['Embedded', 'Okay']}}
+
+List variable is expanded when keyword accepts varargs
+    @{ret} =    Varargs With @{list} Args are Okay
+    Should Be Equal    ${ret}    ${{['first', 2, 'third', 'Okay']}}
+
+Scalar variable containing list is not expanded when keyword accepts varargs
+    @{ret} =    Varargs With ${list} Args are Okay
+    Should Be Equal    ${ret}    ${{[['first', 2, 'third'], 'Okay']}}
 
 Same name with different regexp works
     It is a car

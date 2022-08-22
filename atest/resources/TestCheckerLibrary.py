@@ -316,10 +316,14 @@ class TestCheckerLibrary:
         self.should_contain_keywords(test.body[kw_index], *kw_names)
         return test
 
-    def check_log_message(self, item, msg, level='INFO', html=False, pattern=False):
+    def check_log_message(self, item, expected, level='INFO', html=False, pattern=False, traceback=False):
+        message = item.message.rstrip()
+        if traceback:
+            # Remove `^^^` lines added by Python 3.11+.
+            message = '\n'.join(line for line in message.splitlines() if line.strip('^ '))
         b = BuiltIn()
         matcher = b.should_match if pattern else b.should_be_equal
-        matcher(item.message.rstrip(), msg.rstrip(), 'Wrong log message')
+        matcher(message, expected.rstrip(), 'Wrong log message')
         b.should_be_equal(item.level, 'INFO' if level == 'HTML' else level, 'Wrong log level')
         b.should_be_equal(str(item.html), str(html or level == 'HTML'), 'Wrong HTML status')
 

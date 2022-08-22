@@ -284,9 +284,9 @@ class _PythonInitHandler(_PythonHandler):
 
 class EmbeddedArgumentsHandler:
 
-    def __init__(self, name_regexp, orig_handler):
+    def __init__(self, embedded, orig_handler):
         self.arguments = ArgumentSpec()  # Show empty argument spec for Libdoc
-        self.name_regexp = name_regexp
+        self.embedded = embedded
         self._orig_handler = orig_handler
 
     def __getattr__(self, item):
@@ -301,18 +301,21 @@ class EmbeddedArgumentsHandler:
         self._orig_handler.library = library
 
     def matches(self, name):
-        return self.name_regexp.match(name) is not None
+        return self.embedded.match(name) is not None
 
     def create_runner(self, name):
         return EmbeddedArgumentsRunner(self, name)
 
     def resolve_arguments(self, args, variables=None):
-        positional = [variables.replace_scalar(a) for a in args] if variables else args
-        named = {}
         argspec = self._orig_handler.arguments
-        return argspec.convert(positional, named, self.library.converters,
+        if variables:
+            if argspec.var_positional:
+                args = variables.replace_list(args)
+            else:
+                args = [variables.replace_scalar(a) for a in args]
+            self.embedded.validate(args)
+        return argspec.convert(args, named={}, converters=self.library.converters,
                                dry_run=not variables)
 
     def __copy__(self):
-        orig_handler = copy(self._orig_handler)
-        return EmbeddedArgumentsHandler(self.name_regexp, orig_handler)
+        return EmbeddedArgumentsHandler(self.embedded, copy(self._orig_handler))
