@@ -559,9 +559,10 @@ class CombinedConverter(TypeConverter):
     type = Union
 
     def __init__(self, union, custom_converters):
-        super().__init__(self._get_types(union))
+        super().__init__(union)
+        self.nested_types = self._get_types(union)
         self.converters = [TypeConverter.converter_for(t, custom_converters)
-                           for t in self.used_type]
+                           for t in self.nested_types]
 
     def _get_types(self, union):
         if not union:
@@ -572,7 +573,7 @@ class CombinedConverter(TypeConverter):
 
     @property
     def type_name(self):
-        return ' or '.join(type_name(t) for t in self.used_type)
+        return ' or '.join(type_name(t) for t in self.nested_types)
 
     @classmethod
     def handles(cls, type_):
