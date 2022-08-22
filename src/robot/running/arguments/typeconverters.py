@@ -418,8 +418,9 @@ class ListConverter(TypeConverter):
                 for i, elem in enumerate(converted_list) :
                     converter = TypeConverter.converter_for(self.nested_types[0])
                     if converter:
-                        elem_info = f"List[{self.nested_types[0].__name__}]"
-                        converted_list[i] = converter.convert(elem_info, elem, explicit_type)
+                        elem_info = f"List[{type_name(self.nested_types[0])}]"
+                        converted_list[i] = converter.convert(elem_info, elem,
+                                                              explicit_type)
         return converted_list
 
     _convert = _non_string_convert
@@ -448,8 +449,9 @@ class TupleConverter(TypeConverter):
             for i, elem in enumerate(converted_tuple):
                 converter = TypeConverter.converter_for(self.nested_types[i])
                 if converter:
-                    types = ', '.join([t.__name__ for t in self.nested_types])
-                    tmp_list[i] = converter.convert(f"Tuple[{types}]", elem, explicit_type)
+                    types = ', '.join([type_name(t) for t in self.nested_types])
+                    tmp_list[i] = converter.convert(f"Tuple[{types}]", elem,
+                                                    explicit_type)
             converted_tuple = tuple(tmp_list)
         return converted_tuple
 
@@ -482,11 +484,12 @@ class DictionaryConverter(TypeConverter):
             for key, elem in converted_dict.copy().items():
                 key_type = self.nested_types[0]
                 value_type = self.nested_types[1]
-                d_info = f"Dict[{key_type.__name__}, {value_type.__name__}]"
+                d_info = f"Dict[{type_name(key_type)}, {type_name(value_type)}]"
                 key_converter  = TypeConverter.converter_for(key_type)
                 elem_converter = TypeConverter.converter_for(value_type)
                 if key_converter:
-                    converted_key = key_converter.convert(f"key for {d_info}", key, explicit_type)
+                    converted_key = key_converter.convert(f"key for {d_info}", key,
+                                                          explicit_type)
                 else:
                     converted_key  = key
                 if elem_converter:
@@ -531,8 +534,9 @@ class SetConverter(TypeConverter):
                 converter = TypeConverter.converter_for(self.nested_types[0])
                 if converter:
                     converted_set.remove(elem)
-                    type_name = self.nested_types[0].__name__
-                    converted_set.add(converter.convert(f"Set[{type_name}]", elem, explicit_type))
+                    t_name = type_name(self.nested_types[0])
+                    converted_set.add(converter.convert(f"Set[{t_name}]", elem,
+                                                        explicit_type))
         return converted_set
 
     _convert = _non_string_convert
