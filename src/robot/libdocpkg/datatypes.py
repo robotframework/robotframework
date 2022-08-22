@@ -58,9 +58,11 @@ class TypeDoc(Sortable):
         elif not converter.type:
             return cls(cls.CUSTOM, converter.type_name, converter.doc,
                        converter.value_types)
-        else:
+        elif converter.type in STANDARD_TYPE_DOCS:
             return cls(cls.STANDARD, converter.type_name,
                        STANDARD_TYPE_DOCS[converter.type], converter.value_types)
+        else:
+            return None
 
     @classmethod
     def for_enum(cls, enum):
