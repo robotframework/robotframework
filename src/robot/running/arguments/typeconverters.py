@@ -419,7 +419,7 @@ class ListConverter(TypeConverter):
                     converter = TypeConverter.converter_for(self.nested_types[0])
                     if converter:
                         elem_info = f"List[{self.nested_types[0].__name__}]"
-                        converted_list[i] = converter.convert(elem_info, elem)
+                        converted_list[i] = converter.convert(elem_info, elem, explicit_type)
         return converted_list
 
     _convert = _non_string_convert
@@ -449,7 +449,7 @@ class TupleConverter(TypeConverter):
                 converter = TypeConverter.converter_for(self.nested_types[i])
                 if converter:
                     types = ', '.join([t.__name__ for t in self.nested_types])
-                    tmp_list[i] = converter.convert(f"Tuple[{types}]", elem)
+                    tmp_list[i] = converter.convert(f"Tuple[{types}]", elem, explicit_type)
             converted_tuple = tuple(tmp_list)
         return converted_tuple
 
@@ -486,11 +486,11 @@ class DictionaryConverter(TypeConverter):
                 key_converter  = TypeConverter.converter_for(key_type)
                 elem_converter = TypeConverter.converter_for(value_type)
                 if key_converter:
-                    converted_key = key_converter.convert(f"key for {d_info}", key)
+                    converted_key = key_converter.convert(f"key for {d_info}", key, explicit_type)
                 else:
                     converted_key  = key
                 if elem_converter:
-                    converted_elem = elem_converter.convert(d_info, elem)
+                    converted_elem = elem_converter.convert(d_info, elem, explicit_type)
                 else:
                     converted_elem = elem
                 replace_elem = type(converted_elem) != type(elem) 
@@ -532,7 +532,7 @@ class SetConverter(TypeConverter):
                 if converter:
                     converted_set.remove(elem)
                     type_name = self.nested_types[0].__name__
-                    converted_set.add(converter.convert(f"Set[{type_name}]", elem))
+                    converted_set.add(converter.convert(f"Set[{type_name}]", elem, explicit_type))
         return converted_set
 
     _convert = _non_string_convert
