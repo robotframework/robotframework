@@ -113,6 +113,14 @@ Invalid Set
     Set                       ooops                                            error=Invalid expression.
     Set with enum             {'foo', 'oops'}             type=set             error=Argument 'Set[MyEnum]' got value 'oops' that cannot be converted to MyEnum: MyEnum does not have member 'oops'. Available: 'bar' and 'foo'
 
+Optionals
+    Optional int                                          expected=None
+    Optional int              None                        expected=None
+    Optional int              ${13}                       expected=${13}
+    Optional int              13                          expected=${13}
+    Optional enum             None                        expected=None
+    Optional enum             foo                         expected=MyEnum.foo
+
 None as default
     None as default
     None as default           [1, 2, 3, 4]                [1, 2, 3, 4]

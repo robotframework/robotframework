@@ -1,6 +1,6 @@
 from typing import (List, Sequence, Tuple, MutableSequence,
                     Dict, Mapping, MutableMapping,
-                    Set, MutableSet)
+                    Set, MutableSet, Optional)
 from enum import Enum
 
 try:
@@ -117,6 +117,12 @@ def mutable_set(argument: MutableSet, expected=None):
 def mutable_set_with_params(argument: MutableSet[MyEnum], expected=None):
     _validate_type(argument, expected)
     _validate_set_subtype(argument, expected)
+
+def optional_int(argument: Optional[int]=None, expected=None):
+    _validate_type(argument, expected)
+
+def optional_enum(argument: Optional[MyEnum], expected=None):
+    _validate_type(argument, expected)
 
 def none_as_default(argument: List = None, expected=None):
     _validate_type(argument, expected)
