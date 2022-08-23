@@ -56,6 +56,10 @@ class AcceptSubscriptedGenerics:
         self.sum = sum(numbers)
 
 
+class Strict:
+    pass
+
+
 class Invalid:
     pass
 
@@ -81,6 +85,7 @@ ROBOT_LIBRARY_CONVERTERS = {Number: string_to_int,
                             ClassAsConverter: ClassAsConverter,
                             ClassWithHintsAsConverter: ClassWithHintsAsConverter,
                             AcceptSubscriptedGenerics: AcceptSubscriptedGenerics,
+                            Strict: None,
                             Invalid: 666,
                             TooFewArgs: TooFewArgs,
                             TooManyArgs: TooManyArgs,
@@ -131,6 +136,10 @@ def number_or_int(number: Union[Number, int]):
 
 def int_or_number(number: Union[int, Number]):
     assert number == 1
+
+
+def strict(argument: Strict):
+    assert isinstance(argument, Strict)
 
 
 def invalid(a: Invalid, b: TooFewArgs, c: TooManyArgs, d: KwOnlyNotOk):

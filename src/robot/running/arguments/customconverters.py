@@ -69,6 +69,10 @@ class ConverterInfo:
         if not isinstance(type_, type):
             raise TypeError(f'Custom converters must be specified using types, '
                             f'got {type_name(type_)} {type_!r}.')
+        if converter is None:
+            def converter(arg):
+                raise TypeError(f'Only {type_.__name__} instances are accepted, '
+                                f'got {type_name(arg)}.')
         if not callable(converter):
             raise TypeError(f'Custom converters must be callable, converter for '
                             f'{type_name(type_)} is {type_name(converter)}.')

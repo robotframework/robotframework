@@ -1669,6 +1669,50 @@ the default date_ conversion:
         def any(self, arg: Union[FiDate, UsDate, date]):
             print(f'year: {arg.year}, month: {arg.month}, day: {arg.day}')
 
+
+Strict type validation
+``````````````````````
+
+Converters are not used at all if the argument is of the specified type to
+begin with. It is thus easy to enable strict type validation with a custom
+converter that does not accept any value. For example, the :name:`Example`
+keyword accepts only `Strict` instances:
+
+.. sourcecode:: python
+
+    class Strict:
+        pass
+
+
+    def strict(arg):
+        raise TypeError(f'Only Strict instances accepted, got {type(arg).__name__}.')
+
+
+    ROBOT_LIBRARY_CONVERTERS = {Strict: strict}
+
+
+    def example(argument: Strict):
+        assert isinstance(argument, Strict)
+
+As a convenience, Robot Framework allows setting converter to `None` to get
+the same effect. For example, this code behaves example the same way as
+the code above:
+
+.. sourcecode:: python
+
+    class Strict:
+        pass
+
+
+    ROBOT_LIBRARY_CONVERTERS = {Strict: None}
+
+
+    def example(argument: Strict):
+        assert isinstance(argument, Strict)
+
+.. note:: Using `None` as a strict converter is new in Robot Framework 5.1.
+          With earlier versions it causes and error.
+
 Converter documentation
 ```````````````````````
 
