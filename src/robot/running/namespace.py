@@ -18,11 +18,11 @@ import os
 from collections import OrderedDict
 from itertools import chain
 
-from robot.errors import DataError, KeywordError
+from robot.errors import DataError, KeywordError, VariableError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER, Message
 from robot.utils import (RecommendationFinder, eq, find_file, is_string, normalize,
-                         plural_or_not as s, printable_name, seq2str, seq2str2)
+                         printable_name, seq2str2)
 
 from .context import EXECUTION_CONTEXTS
 from .importer import ImportCache, Importer
@@ -39,7 +39,7 @@ class Namespace:
     _library_import_by_path_ends = ('.py', '/', os.sep)
     _variables_import_by_path_ends = _library_import_by_path_ends + ('.yaml', '.yml')
 
-    def __init__(self, variables, suite, resource, languages):
+    def __init__(self, variables, suite, resource, languages, dry_run=False):
         LOGGER.info(f"Initializing namespace for suite '{suite.longname}'.")
         self.variables = variables
         self.languages = languages
@@ -48,6 +48,7 @@ class Namespace:
         self._imported_variable_files = ImportCache()
         self._suite_name = suite.longname
         self._running_test = False
+        self._dry_run = dry_run
 
     @property
     def libraries(self):
@@ -68,6 +69,9 @@ class Namespace:
                     raise DataError(f'{item.type} setting requires value.')
                 self._import(item)
             except DataError as err:
+                if isinstance(err, VariableError):
+                    if self._dry_run:
+                        continue
                 item.report_invalid_syntax(err.message)
 
     def _import(self, import_setting):
@@ -154,8 +158,8 @@ class Namespace:
         return name
 
     def _raise_replacing_vars_failed(self, setting, error):
-        raise DataError(f"Replacing variables from setting '{setting.type}' "
-                        f"failed: {error}")
+        raise VariableError(f"Replacing variables from setting '{setting.type}' "
+                            f"failed: {error}")
 
     def _is_import_by_path(self, import_type, path):
         if import_type == 'Library':
