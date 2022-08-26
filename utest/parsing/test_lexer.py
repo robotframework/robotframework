@@ -2197,28 +2197,28 @@ class TestBreak(unittest.TestCase):
 class TestLanguageConfig(unittest.TestCase):
 
     def test_lang_as_code(self):
-        self._test('fi')
-        self._test('F-I')
+        self._test_explicit_config('fi')
+        self._test_explicit_config('F-I')
 
     def test_lang_as_name(self):
-        self._test('Finnish')
-        self._test('FINNISH')
+        self._test_explicit_config('Finnish')
+        self._test_explicit_config('FINNISH')
 
     def test_lang_as_Language(self):
-        self._test(Language.from_name('fi'))
+        self._test_explicit_config(Language.from_name('fi'))
 
     def test_lang_as_list(self):
-        self._test(['fi', Language.from_name('de')])
-        self._test([Language.from_name('fi'), 'de'])
+        self._test_explicit_config(['fi', Language.from_name('de')])
+        self._test_explicit_config([Language.from_name('fi'), 'de'])
 
     def test_lang_as_tuple(self):
-        self._test(('f-i', Language.from_name('de')))
-        self._test((Language.from_name('fi'), 'de'))
+        self._test_explicit_config(('f-i', Language.from_name('de')))
+        self._test_explicit_config((Language.from_name('fi'), 'de'))
 
     def test_lang_as_Languages(self):
-        self._test(Languages('fi'))
+        self._test_explicit_config(Languages('fi'))
 
-    def _test(self, lang):
+    def _test_explicit_config(self, lang):
         data = '''\
 *** Asetukset ***
 Dokumentaatio    Documentation
@@ -2237,6 +2237,84 @@ Dokumentaatio    Documentation
         assert_tokens(data, expected, get_init_tokens, lang=lang)
         assert_tokens(data, expected, get_resource_tokens, lang=lang)
 
+    def test_per_file_config(self):
+        data = '''\
+language: pt    not recognized
+language: fi
+ignored    language: pt
+Language:German    # ok!
+*** Asetukset ***
+Dokumentaatio    Documentation
+'''
+        expected = [
+            (T.COMMENT, 'language: pt', 1, 0),
+            (T.SEPARATOR, '    ', 1, 12),
+            (T.COMMENT, 'not recognized', 1, 16),
+            (T.EOL, '\n', 1, 30),
+            (T.EOS, '', 1, 31),
+            (T.CONFIG, 'language: fi', 2, 0),
+            (T.EOL, '\n', 2, 12),
+            (T.EOS, '', 2, 13),
+            (T.COMMENT, 'ignored', 3, 0),
+            (T.SEPARATOR, '    ', 3, 7),
+            (T.COMMENT, 'language: pt', 3, 11),
+            (T.EOL, '\n', 3, 23),
+            (T.EOS, '', 3, 24),
+            (T.CONFIG, 'Language:German', 4, 0),
+            (T.SEPARATOR, '    ', 4, 15),
+            (T.COMMENT, '# ok!', 4, 19),
+            (T.EOL, '\n', 4, 24),
+            (T.EOS, '', 4, 25),
+            (T.SETTING_HEADER, '*** Asetukset ***', 5, 0),
+            (T.EOL, '\n', 5, 17),
+            (T.EOS, '', 5, 18),
+            (T.DOCUMENTATION, 'Dokumentaatio', 6, 0),
+            (T.SEPARATOR, '    ', 6, 13),
+            (T.ARGUMENT, 'Documentation', 6, 17),
+            (T.EOL, '\n', 6, 30),
+            (T.EOS, '', 6, 31),
+        ]
+        assert_tokens(data, expected, get_tokens)
+        lang = Languages()
+        assert_tokens(data, expected, get_init_tokens, lang=lang)
+        assert_equal(lang.languages,
+                     [Language.from_name(lang) for lang in ('en', 'fi', 'de')])
+
+    def test_invalid_per_file_config(self):
+        data = '''\
+language: in:va:lid
+language: bad again    but not recognized as config and ignored
+Language: Finnish
+*** Asetukset ***
+Dokumentaatio    Documentation
+'''
+        expected = [
+            (T.ERROR, 'language: in:va:lid', 1, 0,
+             "Invalid language configuration: No language with name 'in:va:lid' found."),
+            (T.EOL, '\n', 1, 19),
+            (T.EOS, '', 1, 20),
+            (T.COMMENT, 'language: bad again', 2, 0),
+            (T.SEPARATOR, '    ', 2, 19),
+            (T.COMMENT, 'but not recognized as config and ignored', 2, 23),
+            (T.EOL, '\n', 2, 63),
+            (T.EOS, '', 2, 64),
+            (T.CONFIG, 'Language: Finnish', 3, 0),
+            (T.EOL, '\n', 3, 17),
+            (T.EOS, '', 3, 18),
+            (T.SETTING_HEADER, '*** Asetukset ***', 4, 0),
+            (T.EOL, '\n', 4, 17),
+            (T.EOS, '', 4, 18),
+            (T.DOCUMENTATION, 'Dokumentaatio', 5, 0),
+            (T.SEPARATOR, '    ', 5, 13),
+            (T.ARGUMENT, 'Documentation', 5, 17),
+            (T.EOL, '\n', 5, 30),
+            (T.EOS, '', 5, 31),
+        ]
+        assert_tokens(data, expected, get_tokens)
+        lang = Languages()
+        assert_tokens(data, expected, get_init_tokens, lang=lang)
+        assert_equal(lang.languages,
+                     [Language.from_name(lang) for lang in ('en', 'fi')])
 
 if __name__ == '__main__':
     unittest.main()

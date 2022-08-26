@@ -1,9 +1,11 @@
 Language: DE
 LANGUAGE: Brazilian Portuguese
 
-This is not language: config
+language: invalid
+language: bad again    but not recognized due to this text
 
-language: THAI    language: invalid    language: ukrainian
+language: THAI         # comment here is fine
+language:ukrainian
 
 *** Einstellungen ***
 Documentação          Exemplo

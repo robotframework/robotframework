@@ -115,17 +115,17 @@ class CommentLexer(SingleType):
 
 
 class ImplicitCommentLexer(CommentLexer):
-    language = re.compile(r'language:(.+)', re.IGNORECASE)
 
     def input(self, statement):
         super().input(statement)
-        for token in statement:
-            match = self.language.match(token.value)
-            if match:
-                try:
-                    self.ctx.add_language(match.group(1).strip())
-                except ValueError as err:
-                    token.set_error(f'Invalid language configuration: {err}')
+        if len(statement) == 1 and statement[0].value.lower().startswith('language:'):
+            lang = statement[0].value.split(':', 1)[1].strip()
+            try:
+                self.ctx.add_language(lang)
+            except ValueError as err:
+                statement[0].set_error(f'Invalid language configuration: {err}')
+            else:
+                statement[0].type = Token.CONFIG
 
     def lex(self):
         for token in self.statement:

@@ -44,7 +44,7 @@ Per file configuration with multiple languages
     Should Be Equal    ${tc.doc}    приклад
 
 Invalid per file configuration
-    Error in file    0    parsing/translations/per_file_config/many.robot    6
+    Error in file    0    parsing/translations/per_file_config/many.robot    4
     ...    Invalid language configuration: No language with name 'invalid' found.
 
 Per file configuration bleeds to other files

@@ -16,6 +16,7 @@
 import ast
 import re
 
+from robot.conf import Language
 from robot.running.arguments import UserKeywordArgumentParser
 from robot.utils import is_list_like, normalize_whitespace, seq2str, split_from_equals
 from robot.variables import is_scalar_assign, is_dict_variable, search_variable
@@ -1055,6 +1056,23 @@ class Comment(Statement):
             Token(Token.COMMENT, comment),
             Token(Token.EOL, eol)
         ])
+
+
+@Statement.register
+class Config(Statement):
+    type = Token.CONFIG
+
+    @classmethod
+    def from_params(cls, config, eol=EOL):
+        return cls([
+            Token(Token.CONFIG, config),
+            Token(Token.EOL, eol)
+        ])
+
+    @property
+    def language(self):
+        value = self.get_value(Token.CONFIG)
+        return Language.from_name(value[len('language:'):]) if value else None
 
 
 @Statement.register

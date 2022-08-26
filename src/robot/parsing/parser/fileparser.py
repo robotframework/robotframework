@@ -49,6 +49,7 @@ class FileParser(Parser):
             Token.TASK_HEADER: TestCaseSectionParser,
             Token.KEYWORD_HEADER: KeywordSectionParser,
             Token.COMMENT_HEADER: CommentSectionParser,
+            Token.CONFIG: ImplicitCommentSectionParser,
             Token.COMMENT: ImplicitCommentSectionParser,
             Token.ERROR: ImplicitCommentSectionParser,
             Token.EOL: ImplicitCommentSectionParser

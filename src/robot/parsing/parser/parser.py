@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from ..lexer import Token, get_tokens, get_resource_tokens, get_init_tokens
-from ..model import Statement
+from ..model import Statement, ModelVisitor
 
 from .fileparser import FileParser
 
@@ -100,4 +100,16 @@ def _statements_to_model(statements, source=None):
         parser = stack[-1].parse(statement)
         if parser:
             stack.append(parser)
+    # Implicit comment sections have no header.
+    if model.sections and model.sections[0].header is None:
+        SetLanguages(model).visit(model.sections[0])
     return model
+
+
+class SetLanguages(ModelVisitor):
+
+    def __init__(self, file):
+        self.file = file
+
+    def visit_Config(self, node):
+        self.file.languages += (node.language.code,)
