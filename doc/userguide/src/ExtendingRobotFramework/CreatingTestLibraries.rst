@@ -1676,42 +1676,42 @@ Strict type validation
 Converters are not used at all if the argument is of the specified type to
 begin with. It is thus easy to enable strict type validation with a custom
 converter that does not accept any value. For example, the :name:`Example`
-keyword accepts only `Strict` instances:
+keyword accepts only `StrictType` instances:
 
 .. sourcecode:: python
 
-    class Strict:
+    class StrictType:
         pass
 
 
-    def strict(arg):
-        raise TypeError(f'Only Strict instances accepted, got {type(arg).__name__}.')
+    def strict_converter(arg):
+        raise TypeError(f'Only StrictType instances accepted, got {type(arg).__name__}.')
 
 
-    ROBOT_LIBRARY_CONVERTERS = {Strict: strict}
+    ROBOT_LIBRARY_CONVERTERS = {StrictType: strict_converter}
 
 
-    def example(argument: Strict):
-        assert isinstance(argument, Strict)
+    def example(argument: StrictType):
+        assert isinstance(argument, StrictType)
 
 As a convenience, Robot Framework allows setting converter to `None` to get
-the same effect. For example, this code behaves example the same way as
+the same effect. For example, this code behaves exactly the same way as
 the code above:
 
 .. sourcecode:: python
 
-    class Strict:
+    class StrictType:
         pass
 
 
-    ROBOT_LIBRARY_CONVERTERS = {Strict: None}
+    ROBOT_LIBRARY_CONVERTERS = {StrictType: None}
 
 
-    def example(argument: Strict):
-        assert isinstance(argument, Strict)
+    def example(argument: StrictType):
+        assert isinstance(argument, StrictType)
 
 .. note:: Using `None` as a strict converter is new in Robot Framework 5.1.
-          With earlier versions it causes and error.
+          An explicit converter function needs to be used with earlier versions.
 
 Converter documentation
 ```````````````````````
