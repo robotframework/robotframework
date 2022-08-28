@@ -50,6 +50,8 @@ class UserLibrary:
             except DataError as error:
                 self._log_creating_failed(handler, error)
 
+        self.languages = resource.languages
+
     def _create_handler(self, kw):
         if kw.error:
             raise DataError(kw.error)

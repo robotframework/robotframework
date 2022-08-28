@@ -39,10 +39,11 @@ class Namespace:
     _library_import_by_path_ends = ('.py', '/', os.sep)
     _variables_import_by_path_ends = _library_import_by_path_ends + ('.yaml', '.yml')
 
-    def __init__(self, variables, suite, resource, languages):
+    def __init__(self, variables, suite, resource, languages, suite_languages):
         LOGGER.info(f"Initializing namespace for suite '{suite.longname}'.")
         self.variables = variables
         self.languages = languages
+        self.suite_languages = suite_languages
         self._imports = resource.imports
         self._kw_store = KeywordStore(resource, languages)
         self._imported_variable_files = ImportCache()
@@ -295,12 +296,25 @@ class KeywordStore:
             runner = self._get_bdd_style_runner(name)
         return runner
 
+    def _get_current_languages(self):
+        ctx = EXECUTION_CONTEXTS.current
+        if ctx is None:
+            return self.languages
+
+        caller = ctx.user_keywords[-1] if ctx.user_keywords else ctx.test
+
+        for resource in self.resources.values():
+            if resource.source == caller.source:
+                return resource.languages
+
+        return ctx.namespace.suite_languages or self.languages
+
     def _get_bdd_style_runner(self, name):
         parts = name.split(maxsplit=1)
         if len(parts) < 2:
             return None
         prefix, keyword = parts
-        if prefix.title() in self.languages.bdd_prefixes:
+        if prefix.title() in self._get_current_languages().bdd_prefixes:
             runner = self._get_runner(keyword)
             if runner:
                 runner = copy.copy(runner)

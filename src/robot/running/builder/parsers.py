@@ -16,6 +16,7 @@
 import os
 from ast import NodeVisitor
 
+from robot.conf.languages import Languages
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.parsing import get_model, get_resource_model, get_init_model, Token
@@ -24,7 +25,6 @@ from robot.utils import FileReader, read_rest_data
 from .settings import Defaults
 from .transformers import SuiteBuilder, SettingsBuilder, ResourceBuilder
 from ..model import TestSuite, ResourceFile
-
 
 class BaseParser:
 
@@ -63,7 +63,10 @@ class RobotParser(BaseParser):
             defaults = Defaults()
         if model is None:
             model = get_model(self._get_source(source), data_only=True,
-                              curdir=self._get_curdir(source), lang=self.lang)
+                              curdir=self._get_curdir(source), lang=Languages(self.lang.languages))
+
+        suite.languages = Languages([*self.lang.languages, *model.languages])
+
         ErrorReporter(source).visit(model)
         SettingsBuilder(suite, defaults).visit(model)
         SuiteBuilder(suite, defaults).visit(model)
@@ -80,8 +83,11 @@ class RobotParser(BaseParser):
 
     def parse_resource_file(self, source):
         model = get_resource_model(self._get_source(source), data_only=True,
-                                   curdir=self._get_curdir(source), lang=self.lang)
+                                   curdir=self._get_curdir(source), lang=Languages(self.lang.languages))
         resource = ResourceFile(source=source)
+
+        resource.languages = Languages([*self.lang.languages, *model.languages])
+
         ErrorReporter(source).visit(model)
         ResourceBuilder(resource).visit(model)
         return resource

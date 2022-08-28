@@ -265,7 +265,7 @@ class TestSuite(model.TestSuite):
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = ['resource']
+    __slots__ = ['resource', 'languages']
     test_class = TestCase    #: Internal usage only.
     fixture_class = Keyword  #: Internal usage only.
 
@@ -275,6 +275,7 @@ class TestSuite(model.TestSuite):
         #: keywords the suite owns. When data is parsed from the file system,
         #: this data comes from the same test case file that creates the suite.
         self.resource = ResourceFile(source=source)
+        self.languages = None
 
     @classmethod
     def from_file_system(cls, *paths, **config):
@@ -432,6 +433,7 @@ class ResourceFile:
         self.imports = []
         self.keywords = []
         self.variables = []
+        self.languages = None
 
     @setter
     def imports(self, imports):
