@@ -63,9 +63,12 @@ class RobotParser(BaseParser):
             defaults = Defaults()
         if model is None:
             model = get_model(self._get_source(source), data_only=True,
-                              curdir=self._get_curdir(source), lang=Languages(self.lang.languages))
+                              curdir=self._get_curdir(source),
+                              lang=Languages(self.lang.languages) if self.lang is not None else None)
 
-        suite.languages = Languages([*self.lang.languages, *model.languages])
+        suite.languages = Languages(
+            [*(self.lang.languages if self.lang is not None else []), *model.languages]
+        )
 
         ErrorReporter(source).visit(model)
         SettingsBuilder(suite, defaults).visit(model)
@@ -83,10 +86,13 @@ class RobotParser(BaseParser):
 
     def parse_resource_file(self, source):
         model = get_resource_model(self._get_source(source), data_only=True,
-                                   curdir=self._get_curdir(source), lang=Languages(self.lang.languages))
+                                   curdir=self._get_curdir(source),
+                                   lang=Languages(self.lang.languages) if self.lang is not None else None)
         resource = ResourceFile(source=source)
 
-        resource.languages = Languages([*self.lang.languages, *model.languages])
+        resource.languages = Languages(
+            [*(self.lang.languages if self.lang is not None else []), *model.languages]
+        )
 
         ErrorReporter(source).visit(model)
         ResourceBuilder(resource).visit(model)
