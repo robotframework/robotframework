@@ -34,6 +34,8 @@ class Languages:
         }
         self.settings = {}
         self.bdd_prefixes = set()
+        self.true_strings = {'1'}
+        self.false_strings = {'0', ''}
         for lang in self._get_languages(languages):
             self._add_language(lang)
 
@@ -50,6 +52,8 @@ class Languages:
         self.headers.update({n.title(): lang.headers[n] for n in lang.headers if n})
         self.settings.update({n.title(): lang.settings[n] for n in lang.settings if n})
         self.bdd_prefixes |= {p.title() for p in lang.bdd_prefixes}
+        self.true_strings |= {s.upper() for s in lang.true_strings}
+        self.false_strings |= {s.upper() for s in lang.false_strings}
 
     def _get_languages(self, languages):
         languages = self._resolve_languages(languages)
@@ -142,6 +146,8 @@ class Language:
     then_prefix = set()
     and_prefix = set()
     but_prefix = set()
+    true_strings = set()
+    false_strings = set()
 
     @classmethod
     def from_name(cls, name):
@@ -271,6 +277,8 @@ class En(Language):
     then_prefix = {'Then'}
     and_prefix = {'And'}
     but_prefix = {'But'}
+    true_strings = {'TRUE', 'YES', 'ON'}
+    false_strings = {'FALSE', 'NO', 'OFF', 'NONE'}
 
 
 class Cs(Language):
@@ -388,6 +396,8 @@ class Fi(Language):
     then_prefix = {'Niin'}
     and_prefix = {'Ja'}
     but_prefix = {'Mutta'}
+    true_strings = {'TOSI', 'KYLLÄ', 'PÄÄLLÄ'}
+    false_strings = {'EPÄTOSI', 'EI', 'POIS'}
 
 
 class Fr(Language):
