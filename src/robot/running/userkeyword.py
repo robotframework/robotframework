@@ -95,7 +95,7 @@ class UserKeywordHandler:
     def private(self):
         return bool(self.tags and self.tags.robot('private'))
 
-    def create_runner(self, name):
+    def create_runner(self, name, languages=None):
         return UserKeywordRunner(self)
 
 
@@ -109,5 +109,5 @@ class EmbeddedArgumentsHandler(UserKeywordHandler):
     def matches(self, name):
         return self.embedded.match(name) is not None
 
-    def create_runner(self, name):
+    def create_runner(self, name, languages=None):
         return EmbeddedArgumentsRunner(self, name)

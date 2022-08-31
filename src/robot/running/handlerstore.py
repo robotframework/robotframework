@@ -55,8 +55,8 @@ class HandlerStore:
             return True
         return any(template.matches(name) for template in self._embedded)
 
-    def create_runner(self, name):
-        return self[name].create_runner(name)
+    def create_runner(self, name, languages=None):
+        return self[name].create_runner(name, languages)
 
     def __getitem__(self, name):
         try:

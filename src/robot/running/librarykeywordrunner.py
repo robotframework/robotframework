@@ -28,10 +28,11 @@ from .statusreporter import StatusReporter
 
 class LibraryKeywordRunner:
 
-    def __init__(self, handler, name=None):
+    def __init__(self, handler, name=None, languages=None):
         self._handler = handler
         self.name = name or handler.name
         self.pre_run_messages = ()
+        self.languages = languages
 
     @property
     def library(self):
@@ -70,7 +71,8 @@ class LibraryKeywordRunner:
             for message in self.pre_run_messages:
                 context.output.message(message)
         variables = context.variables if not context.dry_run else None
-        positional, named = self._handler.resolve_arguments(args, variables)
+        positional, named = self._handler.resolve_arguments(args, variables,
+                                                            self.languages)
         context.output.trace(lambda: self._trace_log_args(positional, named))
         runner = self._runner_for(context, self._handler.current_handler(),
                                   positional, dict(named))
@@ -116,7 +118,7 @@ class LibraryKeywordRunner:
         if self._executed_in_dry_run(self._handler):
             self._run(context, args)
         else:
-            self._handler.resolve_arguments(args)
+            self._handler.resolve_arguments(args, languages=self.languages)
 
     def _executed_in_dry_run(self, handler):
         keywords_to_execute = ('BuiltIn.Import Library',

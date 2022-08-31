@@ -355,7 +355,8 @@ class KeywordStore:
         self._raise_multiple_keywords_found(found, name)
 
     def _get_runner_from_libraries(self, name):
-        found = [lib.handlers.create_runner(name) for lib in self.libraries.values()
+        found = [lib.handlers.create_runner(name, self.languages)
+                 for lib in self.libraries.values()
                  if name in lib.handlers]
         if not found:
             return None
