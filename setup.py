@@ -55,6 +55,7 @@ setup(
         'Issue Tracker': 'https://github.com/robotframework/robotframework/issues',
         'Documentation': 'https://robotframework.org/robotframework',
         'Release Notes': f'https://github.com/robotframework/robotframework/blob/master/doc/releasenotes/rf-{VERSION}.rst',
+        'Slack': 'http://slack.robotframework.org',
         'Twitter': 'https://twitter.com/robotframework',
     },
     download_url = 'https://pypi.org/project/robotframework',
