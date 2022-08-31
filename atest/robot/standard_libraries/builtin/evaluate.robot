@@ -36,6 +36,9 @@ Explicit modules can override builtins
 Explicit modules used in lambda
     Check Test Case    ${TESTNAME}
 
+Evaluation namespace is mutable
+    Check Test Case    ${TESTNAME}
+
 Custom namespace
     Check Test Case    ${TESTNAME}
 
