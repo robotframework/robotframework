@@ -35,7 +35,7 @@ class Languages:
         self.settings = {}
         self.bdd_prefixes = set()
         self.true_strings = {'1'}
-        self.false_strings = {'0', ''}
+        self.false_strings = {'0', 'NONE', ''}
         for lang in self._get_languages(languages):
             self._add_language(lang)
 
@@ -278,7 +278,7 @@ class En(Language):
     and_prefix = {'And'}
     but_prefix = {'But'}
     true_strings = {'TRUE', 'YES', 'ON'}
-    false_strings = {'FALSE', 'NO', 'OFF', 'NONE'}
+    false_strings = {'FALSE', 'NO', 'OFF'}
 
 
 class Cs(Language):
