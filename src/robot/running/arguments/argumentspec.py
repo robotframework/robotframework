@@ -65,15 +65,16 @@ class ArgumentSpec:
 
     def resolve(self, arguments, variables=None, converters=None,
                 resolve_named=True, resolve_variables_until=None,
-                dict_to_kwargs=False):
+                dict_to_kwargs=False, languages=None):
         resolver = ArgumentResolver(self, resolve_named,
                                     resolve_variables_until, dict_to_kwargs)
         positional, named = resolver.resolve(arguments, variables)
-        return self.convert(positional, named, converters, dry_run=not variables)
+        return self.convert(positional, named, converters, dry_run=not variables,
+                            languages=languages)
 
-    def convert(self, positional, named, converters=None, dry_run=False):
+    def convert(self, positional, named, converters=None, dry_run=False, languages=None):
         if self.types or self.defaults:
-            converter = ArgumentConverter(self, converters, dry_run)
+            converter = ArgumentConverter(self, converters, dry_run, languages)
             positional, named = converter.convert(positional, named)
         return positional, named
 

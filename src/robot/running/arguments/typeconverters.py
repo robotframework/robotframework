@@ -22,9 +22,10 @@ from decimal import InvalidOperation, Decimal
 from enum import Enum
 from numbers import Integral, Real
 
+from robot.conf import Languages
 from robot.libraries.DateTime import convert_date, convert_time
-from robot.utils import (FALSE_STRINGS, TRUE_STRINGS, eq, get_error_message,
-                         is_string, is_union, safe_str, seq2str, type_name)
+from robot.utils import (eq, get_error_message, is_string, is_union,
+                         safe_str, seq2str, type_name)
 
 
 NoneType = type(None)
@@ -40,9 +41,10 @@ class TypeConverter:
     _converters = OrderedDict()
     _type_aliases = {}
 
-    def __init__(self, used_type, custom_converters=None):
+    def __init__(self, used_type, custom_converters=None, languages=None):
         self.used_type = used_type
         self.custom_converters = custom_converters
+        self.languages = languages or Languages()
 
     @classmethod
     def register(cls, converter):
@@ -53,7 +55,7 @@ class TypeConverter:
         return converter
 
     @classmethod
-    def converter_for(cls, type_, custom_converters=None):
+    def converter_for(cls, type_, custom_converters=None, languages=None):
         try:
             hash(type_)
         except TypeError:
@@ -70,10 +72,10 @@ class TypeConverter:
             if info:
                 return CustomConverter(type_, info)
         if type_ in cls._converters:
-            return cls._converters[type_](type_)
+            return cls._converters[type_](type_, languages=languages)
         for converter in cls._converters.values():
             if converter.handles(type_):
-                return converter(type_, custom_converters)
+                return converter(type_, custom_converters, languages)
         return None
 
     @classmethod
@@ -225,9 +227,9 @@ class BooleanConverter(TypeConverter):
         upper = value.upper()
         if upper == 'NONE':
             return None
-        if upper in TRUE_STRINGS:
+        if upper in self.languages.true_strings:
             return True
-        if upper in FALSE_STRINGS:
+        if upper in self.languages.false_strings:
             return False
         return value
 
@@ -464,9 +466,9 @@ class FrozenSetConverter(TypeConverter):
 class CombinedConverter(TypeConverter):
     type = Union
 
-    def __init__(self, union, custom_converters):
+    def __init__(self, union, custom_converters, languages=None):
         super().__init__(self._get_types(union))
-        self.converters = [TypeConverter.converter_for(t, custom_converters)
+        self.converters = [TypeConverter.converter_for(t, custom_converters, languages)
                            for t in self.used_type]
 
     def _get_types(self, union):
@@ -506,8 +508,8 @@ class CombinedConverter(TypeConverter):
 
 class CustomConverter(TypeConverter):
 
-    def __init__(self, used_type, converter_info):
-        super().__init__(used_type)
+    def __init__(self, used_type, converter_info, languages=None):
+        super().__init__(used_type, languages=languages)
         self.converter_info = converter_info
 
     @property

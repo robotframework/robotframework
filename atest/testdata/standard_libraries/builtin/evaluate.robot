@@ -103,6 +103,14 @@ Explicit modules used in lambda
     ${result} =    Evaluate    ''.join(filter(lambda s: re.match('^He',s), $HELLO))    modules=re
     Should Be Equal    ${result}    Hello
 
+Evaluation namespace is mutable
+    [Documentation]    FAIL
+    ...    Evaluating expression 'locals().__setitem__('var', 1) or locals().__delitem__('var') or var' failed: \
+    ...    NameError: name 'var' is not defined nor importable as module
+    ${variable} =    Evaluate    locals().__setitem__('variable', 'value') or variable
+    Should Be Equal    ${variable}    value
+    Evaluate    locals().__setitem__('var', 1) or locals().__delitem__('var') or var
+
 Custom namespace
     ${ns} =    Create Dictionary    a=x    b=${2}    c=2
     ${result} =    Evaluate    a*3 if b==2 and c!=2 else a    namespace=${ns}
