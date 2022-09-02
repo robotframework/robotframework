@@ -318,6 +318,8 @@ class Cs(Language):
     then_prefix = {'Pak'}
     and_prefix = {'A'}
     but_prefix = {'Ale'}
+    true_strings = {'PRAVDA', 'ANO', 'ZAPNUTO'}
+    false_strings = {'NEPRAVDA', 'NE', 'VYPNUTO', 'NIC'}
 
 
 class Nl(Language):
@@ -371,7 +373,7 @@ class Bs(Language):
     comments_header = 'Komentari'
     library_setting = 'Biblioteka'
     resource_setting = 'Resursi'
-    variables_setting = 'Varijabla'
+    variables_setting = 'Varijable'
     documentation_setting = 'Dokumentacija'
     metadata_setting = 'Metadata'
     suite_setup_setting = 'Suite Postavke'
@@ -517,6 +519,8 @@ class De(Language):
     then_prefix = {'Dann'}
     and_prefix = {'Und'}
     but_prefix = {'Aber'}
+    true_strings = {'WAHR', 'JA', 'AN', 'EIN'}
+    false_strings = {'FALSCH', 'NEIN', 'AUS', 'UNWAHR'}
 
 
 class PtBr(Language):
@@ -556,6 +560,8 @@ class PtBr(Language):
     then_prefix = {'Então'}
     and_prefix = {'E'}
     but_prefix = {'Mas'}
+    true_strings = {'VERDADEIRO', 'VERDADE', 'SIM', 'LIGADO'}
+    false_strings = {'FALSO', 'NÃO', 'DESLIGADO', 'DESATIVADO', 'NADA'}
 
 
 class Pt(Language):
@@ -595,6 +601,8 @@ class Pt(Language):
     then_prefix = {'Então'}
     and_prefix = {'E'}
     but_prefix = {'Mas'}
+    true_strings = {'VERDADEIRO', 'VERDADE', 'SIM', 'LIGADO'}
+    false_strings = {'FALSO', 'NÃO', 'DESLIGADO', 'DESATIVADO', 'NADA'}
 
 
 class Th(Language):
