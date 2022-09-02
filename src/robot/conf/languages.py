@@ -363,44 +363,42 @@ class Nl(Language):
 
 class Bs(Language):
     """Bosnian"""
-    setting_headers = {'Postavka', 'Postavke', 'Postavke'}
-    variable_headers = {'Varijabla', 'Varijable', 'Varijable'}
-    test_case_headers = {'Test Case', 'Test Cases', 'Test Cases'}
-    task_headers = {'Task', 'Taskovi', 'Taskovi'}
-    keyword_headers = {'Keyword', 'Keywords', 'Keywords'}
-    comment_headers = {'Komentar', 'Komentari', 'Komentari'}
-    library = 'Biblioteka'
-    resource = 'Resursi'
-    variables = 'Varijabla'
-    documentation = 'Dokumentacija'
-    metadata = 'Metadata'
-    suite_setup = 'Suite Postavke'
-    suite_teardown = 'Suite Teardown'
-    test_setup = 'Test Postavke'
-    test_teardown = 'Test Teardown'
-    test_template = 'Test Template'
-    test_timeout = 'Test Timeout'
-    test_tags = 'Test Tagovi'
-    task_setup = 'Task Postavke'
-    task_teardown = 'Task Teardown'
-    task_template = 'Task Template'
-    task_timeout = 'Task Timeout'
-    task_tags = 'Task Tagovi'
-    keyword_tags = 'Keyword Tagovi'
-    tags = 'Tagovi'
-    setup = 'Postavke'
-    teardown = 'Teardown'
-    template = 'Template'
-    timeout = 'Timeout'
-    arguments = 'Argumenti'
+    settings_header = 'Postavke'
+    variables_header = 'Varijable'
+    test_cases_header = 'Test Cases'
+    tasks_header = 'Taskovi'
+    keywords_header = 'Keywords'
+    comments_header = 'Komentari'
+    library_setting = 'Biblioteka'
+    resource_setting = 'Resursi'
+    variables_setting = 'Varijabla'
+    documentation_setting = 'Dokumentacija'
+    metadata_setting = 'Metadata'
+    suite_setup_setting = 'Suite Postavke'
+    suite_teardown_setting = 'Suite Teardown'
+    test_setup_setting = 'Test Postavke'
+    test_teardown_setting = 'Test Teardown'
+    test_template_setting = 'Test Template'
+    test_timeout_setting = 'Test Timeout'
+    test_tags_setting = 'Test Tagovi'
+    task_setup_setting = 'Task Postavke'
+    task_teardown_setting = 'Task Teardown'
+    task_template_setting = 'Task Template'
+    task_timeout_setting = 'Task Timeout'
+    task_tags_setting = 'Task Tagovi'
+    keyword_tags_setting = 'Keyword Tagovi'
+    tags_setting = 'Tagovi'
+    setup_setting = 'Postavke'
+    teardown_setting = 'Teardown'
+    template_setting = 'Template'
+    timeout_setting = 'Timeout'
+    arguments_setting = 'Argumenti'
     given_prefix = {'Uslovno'}
     when_prefix = {'Kada'}
     then_prefix = {'Tada'}
     and_prefix = {'I'}
     but_prefix = {'Ali'}
-    true_strings = {'TRUE', 'YES', 'ON'}
-    false_strings = {'FALSE', 'NO', 'OFF', 'NONE'}
-    
+
 
 class Fi(Language):
     """Finnish"""
