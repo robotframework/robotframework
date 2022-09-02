@@ -171,6 +171,13 @@ only used with keywords but also with all control structures. Earlier these meth
 always got exactly the same information, but nowadays there is additional context
 specific details with control structures (`#4335`_).
 
+Performance enhancements for executing user keywords
+----------------------------------------------------
+
+The overhead in executing user keywords has been reduced. The difference
+can be seen especially if user keywords fail often, for example, when using
+`Wait Until Keyword Succeeds` or a loop with `TRY/EXCEPT`. (`#4388`_)
+
 Python 3.11 support
 --------------------
 
@@ -180,13 +187,6 @@ versions work fairly well.
 
 At the other end of the spectrum, Python 3.6 is deprecated and will not
 anymore be supported by Robot Framework 6.0 (`#4295`_).
-
-Performance enhancements for executing user keywords
-----------------------------------------------------
-
-The overhead in executing user keywords has been reduced. The difference
-can be seen especially if user keywords fail often, for example, when using
-`Wait Until Keyword Succeeds` or a loop with `TRY/EXCEPT`. (`#4388`_)
 
 
 Backwards incompatible changes
@@ -204,46 +204,36 @@ Backwards incompatible changes
   that is equivalent with the new format. JSON spec files did not include the timezone
   information at all and the format was `2022-05-27 19:07:15`. (`#4262`_)
 
-Deprecated features
-===================
+Deprecations
+============
 
 `Force Tags` and `Default Tags` settings
 ----------------------------------------
 
 As `discussed above`__, new `Test Tags` setting has been added to replace `Force Tags`
 and there is a plan to remove `Default Tags` altogether. Both of these settings still
-work but they are considered deprecated. There is not visible deprecation warning yet,
+work but they are considered deprecated. There is no visible deprecation warning yet,
 but such a warning will be emitted starting from Robot Framework 6.0 and eventually these
 settings will be removed. (`#4368`_)
 
 The plan is to add new `-tag` syntax that can be used with the `[Tags]` setting
-to enable similar functionality that `Default Tags` provide. As the result
-using tags starting with a hyphen with the `[Tags]` setting is deprecated.
-If such literal values are needed, it is possible to use escaped format like
-`\-tag`. (`#4380`_)
+to enable similar functionality that the `Default Tags` setting provides. Because
+of that, using tags starting with a hyphen with the `[Tags]` setting is now deprecated.
+If such literal values are needed, it is possible to use escaped format like `\-tag`.
+(`#4380`_)
 
 __ `Enhancements for setting keyword and test tags`_
-
-Python 3.6
-----------
-
-Python 3.6 `reached end-of-life`__ in December 2021. It will be still supported
-by Robot Framework 5.1 and all future RF 5.x releases, but not anymore by
-Robot Framework 6.0 (`#4295`_). Users are recommended to upgrade to newer
-versions already now.
-
-__  https://endoflife.date/python
 
 Keywords in test case files having precedence over local keywords in resource files
 -----------------------------------------------------------------------------------
 
 Keywords in test cases files currently always have the highest precedence. They
 are used even when a keyword in a resource file uses a keyword that would exist also
-in the same resource file. This will change in Robot Framework 5.2 so that local
-keywords always have highest precedence and the current behavior is deprecated. (`#4366`_)
+in the same resource file. This will change so that local keywords always have
+highest precedence and the current behavior is deprecated. (`#4366`_)
 
-`WITH NAME` deprecated in favor of `AS` when giving alias to imported library
------------------------------------------------------------------------------
+`WITH NAME` in favor of `AS` when giving alias to imported library
+------------------------------------------------------------------
 
 `WITH NAME` marker that is used when giving an alias to an imported library
 will be renamed to `AS` (`#4371`_). The motivation is to be consistent with
@@ -256,8 +246,8 @@ In Robot Framework 5.1 both `AS` and `WITH NAME` work when setting an alias
 for a library. `WITH NAME` is considered deprecated, but there will not be
 visible deprecation warnings until Robot Framework 6.0.
 
-Singular section headers like `Test Case` are deprecated
---------------------------------------------------------
+Singular section headers like `Test Case`
+-----------------------------------------
 
 Robot Framework has earlier accepted both plural (e.g. `Test Cases`) and singular
 (e.g. `Test Case`) section headers. The singular variants are now deprecated
@@ -265,12 +255,22 @@ and their support will eventually be removed (`#4431`_). The is no visible
 deprecation warning yet, but they will most likely be emitted starting from
 Robot Framework 6.0.
 
+Python 3.6 support
+------------------
+
+Python 3.6 `reached end-of-life`__ in December 2021. It will be still supported
+by Robot Framework 5.1 and all future RF 5.x releases, but not anymore by
+Robot Framework 6.0 (`#4295`_). Users are recommended to upgrade to newer
+versions already now.
+
+__  https://endoflife.date/python
+
 Acknowledgements
 ================
 
 Robot Framework development is sponsored by the `Robot Framework Foundation`_
-and its close to 50 member organizations. Robot Framework 5.1 team funded by
-them consisted of `Pekka Klärck <https://github.com/pekkaklarck>`_ and
+and its ~50 member organizations. Robot Framework 5.1 team funded by the foundation
+consisted of `Pekka Klärck <https://github.com/pekkaklarck>`_ and
 `Janne Härkönen <https://github.com/yanne>`_ (part time).
 In addition to that, the wider open source community has provided several
 great contributions:
