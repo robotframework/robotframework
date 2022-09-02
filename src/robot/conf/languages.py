@@ -352,12 +352,55 @@ class Nl(Language):
     template_setting = 'Sjabloon'
     timeout_setting = 'Time-out'
     arguments_setting = 'Parameters'
-    given_prefix = {'Stel'}
+    given_prefix = {'Stel', 'Gegeven'}
     when_prefix = {'Als'}
     then_prefix = {'Dan'}
     and_prefix = {'En'}
     but_prefix = {'Maar'}
+    true_strings = {'WAAR', 'JA', 'AAN'}
+    false_strings = {'ONWAAR', 'NEE', 'UIT', 'GEEN'}
 
+
+class Bs(Language):
+    """Bosnian"""
+    setting_headers = {'Postavka', 'Postavke', 'Postavke'}
+    variable_headers = {'Varijabla', 'Varijable', 'Varijable'}
+    test_case_headers = {'Test Case', 'Test Cases', 'Test Cases'}
+    task_headers = {'Task', 'Taskovi', 'Taskovi'}
+    keyword_headers = {'Keyword', 'Keywords', 'Keywords'}
+    comment_headers = {'Komentar', 'Komentari', 'Komentari'}
+    library = 'Biblioteka'
+    resource = 'Resursi'
+    variables = 'Varijabla'
+    documentation = 'Dokumentacija'
+    metadata = 'Metadata'
+    suite_setup = 'Suite Postavke'
+    suite_teardown = 'Suite Teardown'
+    test_setup = 'Test Postavke'
+    test_teardown = 'Test Teardown'
+    test_template = 'Test Template'
+    test_timeout = 'Test Timeout'
+    test_tags = 'Test Tagovi'
+    task_setup = 'Task Postavke'
+    task_teardown = 'Task Teardown'
+    task_template = 'Task Template'
+    task_timeout = 'Task Timeout'
+    task_tags = 'Task Tagovi'
+    keyword_tags = 'Keyword Tagovi'
+    tags = 'Tagovi'
+    setup = 'Postavke'
+    teardown = 'Teardown'
+    template = 'Template'
+    timeout = 'Timeout'
+    arguments = 'Argumenti'
+    given_prefix = {'Uslovno'}
+    when_prefix = {'Kada'}
+    then_prefix = {'Tada'}
+    and_prefix = {'I'}
+    but_prefix = {'Ali'}
+    true_strings = {'TRUE', 'YES', 'ON'}
+    false_strings = {'FALSE', 'NO', 'OFF', 'NONE'}
+    
 
 class Fi(Language):
     """Finnish"""
