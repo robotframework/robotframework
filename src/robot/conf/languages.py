@@ -560,6 +560,8 @@ class PtBr(Language):
     then_prefix = {'Então'}
     and_prefix = {'E'}
     but_prefix = {'Mas'}
+    true_strings = {'VERDADEIRO', 'VERDADE', 'SIM', 'LIGADO'}
+    false_strings = {'FALSO', 'NÃO', 'DESLIGADO', 'DESATIVADO', 'NADA'}
 
 
 class Pt(Language):
@@ -599,6 +601,8 @@ class Pt(Language):
     then_prefix = {'Então'}
     and_prefix = {'E'}
     but_prefix = {'Mas'}
+    true_strings = {'VERDADEIRO', 'VERDADE', 'SIM', 'LIGADO'}
+    false_strings = {'FALSO', 'NÃO', 'DESLIGADO', 'DESATIVADO', 'NADA'}
 
 
 class Th(Language):
