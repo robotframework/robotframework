@@ -74,8 +74,8 @@ class ArgumentSpec:
 
     def convert(self, positional, named, converters=None, dry_run=False, languages=None):
         if self.types or self.defaults:
-            converter = ArgumentConverter(self, converters, dry_run)
-            positional, named = converter.convert(positional, named, languages)
+            converter = ArgumentConverter(self, converters, dry_run, languages)
+            positional, named = converter.convert(positional, named)
         return positional, named
 
     def map(self, positional, named, replace_defaults=True):

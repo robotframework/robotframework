@@ -20,32 +20,32 @@ from .typeconverters import TypeConverter
 
 class ArgumentConverter:
 
-    def __init__(self, argspec, converters, dry_run=False):
+    def __init__(self, argspec, converters, dry_run=False, languages=None):
         """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
         self._argspec = argspec
         self._converters = converters
         self._dry_run = dry_run
+        self._languages = languages
 
-    def convert(self, positional, named, languages):
-        return self._convert_positional(positional, languages), \
-               self._convert_named(named, languages)
+    def convert(self, positional, named):
+        return self._convert_positional(positional), self._convert_named(named)
 
-    def _convert_positional(self, positional, languages):
+    def _convert_positional(self, positional):
         names = self._argspec.positional
-        converted = [self._convert(name, value, languages)
+        converted = [self._convert(name, value)
                      for name, value in zip(names, positional)]
         if self._argspec.var_positional:
-            converted.extend(self._convert(self._argspec.var_positional, value, languages)
+            converted.extend(self._convert(self._argspec.var_positional, value)
                              for value in positional[len(names):])
         return converted
 
-    def _convert_named(self, named, languages):
+    def _convert_named(self, named):
         names = set(self._argspec.positional) | set(self._argspec.named_only)
         var_named = self._argspec.var_named
-        return [(name, self._convert(name if name in names else var_named, value, languages))
+        return [(name, self._convert(name if name in names else var_named, value))
                 for name, value in named]
 
-    def _convert(self, name, value, languages=None):
+    def _convert(self, name, value):
         spec = self._argspec
         if (spec.types is None
                 or self._dry_run and contains_variable(value, identifiers='$@&%')):
@@ -59,7 +59,7 @@ class ArgumentConverter:
             return value
         if name in spec.types:
             converter = TypeConverter.converter_for(spec.types[name], self._converters,
-                                                    languages)
+                                                    self._languages)
             if converter:
                 try:
                     return converter.convert(name, value)
@@ -67,7 +67,7 @@ class ArgumentConverter:
                     conversion_error = err
         if name in spec.defaults:
             converter = TypeConverter.converter_for(type(spec.defaults[name]),
-                                                    languages=languages)
+                                                    languages=self._languages)
             if converter:
                 try:
                     return converter.convert(name, value, explicit_type=False,

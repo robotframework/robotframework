@@ -225,13 +225,11 @@ class BooleanConverter(TypeConverter):
 
     def _convert(self, value, explicit_type=True):
         upper = value.upper()
-        true_strings = self.languages.true_strings
-        false_strings = self.languages.false_strings
         if upper == 'NONE':
             return None
-        if upper in true_strings:
+        if upper in self.languages.true_strings:
             return True
-        if upper in false_strings:
+        if upper in self.languages.false_strings:
             return False
         return value
 
