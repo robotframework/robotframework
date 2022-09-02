@@ -46,6 +46,13 @@ class TestLanguage(unittest.TestCase):
         assert_equal(hash(Fi()), hash(Fi()))
         assert_equal({Fi(): 'value'}[Fi()], 'value')
 
+    def test_subclasses_dont_have_wrong_attributes(self):
+        for cls in Language.__subclasses__():
+            for attr in dir(cls):
+                if not hasattr(Language, attr):
+                    raise AssertionError(f"Language class '{cls}' has attribute "
+                                         f"'{attr}' not found on the base class.")
+
 
 class TestLanguageFromName(unittest.TestCase):
 

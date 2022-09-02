@@ -35,7 +35,7 @@ class Languages:
         self.settings = {}
         self.bdd_prefixes = set()
         self.true_strings = {'1'}
-        self.false_strings = {'0', ''}
+        self.false_strings = {'0', 'NONE', ''}
         for lang in self._get_languages(languages):
             self._add_language(lang)
 
@@ -278,7 +278,7 @@ class En(Language):
     and_prefix = {'And'}
     but_prefix = {'But'}
     true_strings = {'TRUE', 'YES', 'ON'}
-    false_strings = {'FALSE', 'NO', 'OFF', 'NONE'}
+    false_strings = {'FALSE', 'NO', 'OFF'}
 
 
 class Cs(Language):
@@ -352,11 +352,52 @@ class Nl(Language):
     template_setting = 'Sjabloon'
     timeout_setting = 'Time-out'
     arguments_setting = 'Parameters'
-    given_prefix = {'Stel'}
+    given_prefix = {'Stel', 'Gegeven'}
     when_prefix = {'Als'}
     then_prefix = {'Dan'}
     and_prefix = {'En'}
     but_prefix = {'Maar'}
+    true_strings = {'WAAR', 'JA', 'AAN'}
+    false_strings = {'ONWAAR', 'NEE', 'UIT', 'GEEN'}
+
+
+class Bs(Language):
+    """Bosnian"""
+    settings_header = 'Postavke'
+    variables_header = 'Varijable'
+    test_cases_header = 'Test Cases'
+    tasks_header = 'Taskovi'
+    keywords_header = 'Keywords'
+    comments_header = 'Komentari'
+    library_setting = 'Biblioteka'
+    resource_setting = 'Resursi'
+    variables_setting = 'Varijabla'
+    documentation_setting = 'Dokumentacija'
+    metadata_setting = 'Metadata'
+    suite_setup_setting = 'Suite Postavke'
+    suite_teardown_setting = 'Suite Teardown'
+    test_setup_setting = 'Test Postavke'
+    test_teardown_setting = 'Test Teardown'
+    test_template_setting = 'Test Template'
+    test_timeout_setting = 'Test Timeout'
+    test_tags_setting = 'Test Tagovi'
+    task_setup_setting = 'Task Postavke'
+    task_teardown_setting = 'Task Teardown'
+    task_template_setting = 'Task Template'
+    task_timeout_setting = 'Task Timeout'
+    task_tags_setting = 'Task Tagovi'
+    keyword_tags_setting = 'Keyword Tagovi'
+    tags_setting = 'Tagovi'
+    setup_setting = 'Postavke'
+    teardown_setting = 'Teardown'
+    template_setting = 'Template'
+    timeout_setting = 'Timeout'
+    arguments_setting = 'Argumenti'
+    given_prefix = {'Uslovno'}
+    when_prefix = {'Kada'}
+    then_prefix = {'Tada'}
+    and_prefix = {'I'}
+    but_prefix = {'Ali'}
 
 
 class Fi(Language):
