@@ -27,7 +27,6 @@ from robot.utils import console_encode
 from .logger import LOGGER
 from .loggerhelper import Message
 
-
 LOGGING_THREADS = ('MainThread', 'RobotFrameworkTimeoutThread')
 
 
@@ -69,6 +68,14 @@ def console(msg, newline=True, stream='stdout'):
     msg = str(msg)
     if newline:
         msg += '\n'
+    stream = sys.__stdout__ if stream.lower() != 'stderr' else sys.__stderr__
+    stream.write(console_encode(msg, stream=stream))
+    stream.flush()
+
+
+def countdown(timer, stream='stdout'):
+    msg = str(timer)
+    msg += '\r'
     stream = sys.__stdout__ if stream.lower() != 'stderr' else sys.__stderr__
     stream.write(console_encode(msg, stream=stream))
     stream.flush()

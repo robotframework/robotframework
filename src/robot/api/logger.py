@@ -65,6 +65,7 @@ Example
         logger.info('<i>This</i> is a boring example.', html=True)
 """
 
+import time
 import logging
 
 from robot.output import librarylogger
@@ -138,3 +139,12 @@ def console(msg, newline=True, stream='stdout'):
     argument value ``'stderr'``.
     """
     librarylogger.console(msg, newline, stream)
+
+
+def countdown(time_in_second):
+    while time_in_second:
+        minutes, seconds = divmod(time_in_second, 60)
+        timer = '{:02d}:{:02d}'.format(minutes, seconds)
+        librarylogger.countdown(timer)
+        time.sleep(1)
+        time_in_second -= 1
