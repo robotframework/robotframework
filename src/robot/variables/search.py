@@ -22,7 +22,7 @@ from robot.utils import is_string
 def search_variable(string, identifiers='$@&%*', ignore_errors=False):
     if not (is_string(string) and '{' in string):
         return VariableMatch(string)
-    return VariableSearcher(identifiers, ignore_errors).search(string)
+    return _search_variable(string, identifiers, ignore_errors)
 
 
 def contains_variable(string, identifiers='$@&'):
@@ -142,119 +142,77 @@ class VariableMatch:
         return '%s{%s}%s' % (self.identifier, self.base, items)
 
 
-class VariableSearcher:
+def _search_variable(string, identifiers, ignore_errors=False):
+    start = _find_variable_start(string, identifiers)
+    if start < 0:
+        return VariableMatch(string)
 
-    def __init__(self, identifiers, ignore_errors=False):
-        self.identifiers = identifiers
-        self._ignore_errors = ignore_errors
-        self.start = -1
-        self.variable_chars = []
-        self.item_chars = []
-        self.items = []
-        self._open_brackets = 0    # Used both with curly and square brackets
-        self._escaped = False
+    match = VariableMatch(string, identifier=string[start], start=start)
+    left_brace, right_brace = '{', '}'
+    open_braces = 1
+    escaped = False
+    items = []
+    indices_and_chars = enumerate(string[start+2:], start=start+2)
 
-    def search(self, string):
-        if not self._search(string):
+    for index, char in indices_and_chars:
+        if char == left_brace and not escaped:
+            open_braces += 1
+
+        elif char == right_brace and not escaped:
+            open_braces -= 1
+
+            if open_braces == 0:
+                next_char = string[index+1] if index+1 < len(string) else None
+
+                if left_brace == '{':     # Parsing name.
+                    match.base = string[start+2:index]
+                    if match.identifier not in '$@&' or next_char != '[':
+                        match.end = index + 1
+                        break
+                    left_brace, right_brace = '[', ']'
+
+                else:                      # Parsing items.
+                    items.append(string[start+1:index])
+                    if next_char != '[':
+                        match.end = index + 1
+                        match.items = tuple(items)
+                        break
+
+                next(indices_and_chars)    # Consume '['.
+                start = index + 1          # Start of the next item.
+                open_braces = 1
+
+        else:
+            escaped = False if char != '\\' else not escaped
+
+    if open_braces:
+        if ignore_errors:
             return VariableMatch(string)
-        match = VariableMatch(string=string,
-                              identifier=self.variable_chars[0],
-                              base=''.join(self.variable_chars[2:-1]),
-                              start=self.start,
-                              end=self.start + len(self.variable_chars))
-        if self.items:
-            match.items = tuple(self.items)
-            match.end += sum(len(i) for i in self.items) + 2 * len(self.items)
-        return match
+        incomplete = string[match.start:]
+        if left_brace == '{':
+            raise VariableError(f"Variable '{incomplete}' was not closed properly.")
+        raise VariableError(f"Variable item '{incomplete}' was not closed properly.")
 
-    def _search(self, string):
-        start = self._find_variable_start(string)
-        if start == -1:
-            return False
-        self.start = start
-        self._open_brackets += 1
-        self.variable_chars = [string[start], '{']
-        start += 2
-        state = self.variable_state
-        for char in string[start:]:
-            state = state(char)
-            self._escaped = False if char != '\\' else not self._escaped
-            if state is None:
-                break
-        if state:
-            try:
-                self._validate_end_state(state)
-            except VariableError:
-                if self._ignore_errors:
-                    return False
-                raise
-        return True
+    return match if match else VariableMatch(match)
 
-    def _find_variable_start(self, string):
-        start = 1
-        while True:
-            start = string.find('{', start) - 1
-            if start < 0:
-                return -1
-            if self._start_index_is_ok(string, start):
-                return start
-            start += 2
 
-    def _start_index_is_ok(self, string, index):
-        return (string[index] in self.identifiers
-                and not self._is_escaped(string, index))
+def _find_variable_start(string, identifiers):
+    index = 1
+    while True:
+        index = string.find('{', index) - 1
+        if index < 0:
+            return -1
+        if string[index] in identifiers and _not_escaped(string, index):
+            return index
+        index += 2
 
-    def _is_escaped(self, string, index):
-        escaped = False
-        while index > 0 and string[index-1] == '\\':
-            index -= 1
-            escaped = not escaped
-        return escaped
 
-    def variable_state(self, char):
-        self.variable_chars.append(char)
-        if char == '}' and not self._escaped:
-            self._open_brackets -= 1
-            if self._open_brackets == 0:
-                if not self._can_have_items():
-                    return None
-                return self.waiting_item_state
-        elif char == '{' and not self._escaped:
-            self._open_brackets += 1
-        return self.variable_state
-
-    def _can_have_items(self):
-        return self.variable_chars[0] in '$@&'
-
-    def waiting_item_state(self, char):
-        if char == '[':
-            self._open_brackets += 1
-            return self.item_state
-        return None
-
-    def item_state(self, char):
-        if char == ']' and not self._escaped:
-            self._open_brackets -= 1
-            if self._open_brackets == 0:
-                self.items.append(''.join(self.item_chars))
-                self.item_chars = []
-                return self.waiting_item_state
-        elif char == '[' and not self._escaped:
-            self._open_brackets += 1
-        self.item_chars.append(char)
-        return self.item_state
-
-    def _validate_end_state(self, state):
-        if state == self.variable_state:
-            incomplete = ''.join(self.variable_chars)
-            raise VariableError("Variable '%s' was not closed properly."
-                                % incomplete)
-        if state == self.item_state:
-            variable = ''.join(self.variable_chars)
-            items = ''.join('[%s]' % i for i in self.items)
-            incomplete = ''.join(self.item_chars)
-            raise VariableError("Variable item '%s%s[%s' was not closed "
-                                "properly." % (variable, items, incomplete))
+def _not_escaped(string, index):
+    escaped = False
+    while index > 0 and string[index-1] == '\\':
+        index -= 1
+        escaped = not escaped
+    return not escaped
 
 
 def unescape_variable_syntax(item):
