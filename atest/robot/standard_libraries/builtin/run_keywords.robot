@@ -43,6 +43,12 @@ In test setup
 In test teardown
     Check Test Case    ${TESTNAME}
 
+In test teardown with non-existing variable in keyword name (with AND)
+    Check Test Case    ${TESTNAME}
+
+In test teardown with non-existing variable in keyword name (without AND)
+    Check Test Case    ${TESTNAME}
+
 In test teardown with ExecutionPassed exception
     Check Test Case    ${TESTNAME}
 

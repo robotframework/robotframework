@@ -1898,13 +1898,17 @@ class _RunKeyword(_BuiltInBase):
 
     def _split_run_keywords(self, keywords):
         if 'AND' not in keywords:
-            for name in self._variables.replace_list(keywords):
+            for name in self._split_run_keywords_without_and(keywords):
                 yield name, ()
         else:
-            for name, args in self._split_run_keywords_from_and(keywords):
+            for name, args in self._split_run_keywords_with_and(keywords):
                 yield name, args
 
-    def _split_run_keywords_from_and(self, keywords):
+    def _split_run_keywords_without_and(self, keywords):
+        ignore_errors = self._context.in_teardown
+        return self._variables.replace_list(keywords, ignore_errors=ignore_errors)
+
+    def _split_run_keywords_with_and(self, keywords):
         while 'AND' in keywords:
             index = keywords.index('AND')
             yield self._resolve_run_keywords_name_and_args(keywords[:index])
@@ -1912,7 +1916,8 @@ class _RunKeyword(_BuiltInBase):
         yield self._resolve_run_keywords_name_and_args(keywords)
 
     def _resolve_run_keywords_name_and_args(self, kw_call):
-        kw_call = self._variables.replace_list(kw_call, replace_until=1)
+        kw_call = self._variables.replace_list(kw_call, replace_until=1,
+                                               ignore_errors=self._context.in_teardown)
         if not kw_call:
             raise DataError('Incorrect use of AND')
         return kw_call[0], kw_call[1:]

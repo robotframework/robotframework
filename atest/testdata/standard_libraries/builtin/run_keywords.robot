@@ -84,6 +84,44 @@ In test teardown
     ...    Non-existing Variable    Fail    Non-Existing Keyword
     ...    Syntax Error    Not Executed After Previous Syntax Error
 
+In test teardown with non-existing variable in keyword name (with AND)
+    [Documentation]
+    ...    FAIL Teardown failed:
+    ...    Several failures occurred:
+    ...
+    ...    1) No keyword with name '\${bad}' found.
+    ...
+    ...    2) Executed
+    ...
+    ...    3) Variable '\${bad}' not found.
+    ...
+    ...    4) Executed${ATD ERR}
+    No Operation
+    [Teardown]    Run keywords
+    ...    ${bad}                     AND
+    ...    ${{'Fail'}}    Executed    AND
+    ...    Embedded ${bad}            AND
+    ...    Fail    Executed
+
+In test teardown with non-existing variable in keyword name (without AND)
+    [Documentation]
+    ...    FAIL Teardown failed:
+    ...    Several failures occurred:
+    ...
+    ...    1) No keyword with name '\${bad}' found.
+    ...
+    ...    2) AssertionError
+    ...
+    ...    3) Variable '\${bad}' not found.
+    ...
+    ...    4) AssertionError${ATD ERR}
+    No Operation
+    [Teardown]    Run keywords
+    ...    ${bad}
+    ...    ${{'Fail'}}
+    ...    Embedded ${bad}
+    ...    Fail
+
 In test teardown with ExecutionPassed exception
     [Documentation]    FAIL Stop here${ATD ERR}
     No Operation
@@ -126,3 +164,6 @@ Non-existing Variable
 
 Syntax Error
     ${invalid}
+
+Embedded ${arg}
+    Log    ${arg}
