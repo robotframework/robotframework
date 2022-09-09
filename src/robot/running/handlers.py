@@ -242,14 +242,12 @@ class _DynamicHandler(_RunnableHandler):
 class _RunKeywordHandler(_PythonHandler):
 
     def create_runner(self, name, languages=None):
-        default_dry_run_keywords = ('name' in self.arguments.positional and
-                                    self._args_to_process)
-        return RunKeywordRunner(self, default_dry_run_keywords)
+        dry_run = RUN_KW_REGISTER.get_dry_run(self.library.orig_name, self.name)
+        return RunKeywordRunner(self, execute_in_dry_run=dry_run)
 
     @property
     def _args_to_process(self):
-        return RUN_KW_REGISTER.get_args_to_process(self.library.orig_name,
-                                                   self.name)
+        return RUN_KW_REGISTER.get_args_to_process(self.library.orig_name, self.name)
 
     def resolve_arguments(self, args, variables=None, languages=None):
         return self.arguments.resolve(args, variables, self.library.converters,
