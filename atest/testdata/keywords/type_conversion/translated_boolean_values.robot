@@ -10,3 +10,7 @@ Boolean
     Boolean              EpäTOSI                   False
     Boolean              EI                        False
     Boolean              Pois                      False
+
+Via Run Keyword
+    Run Keyword    Boolean    Kyllä    True
+    Run Keyword    Boolean    EI       False
