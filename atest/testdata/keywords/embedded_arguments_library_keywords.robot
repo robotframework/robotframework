@@ -85,12 +85,12 @@ Custom Regexp Matching Variables
     I execute "${bar}" with "${zap}"
     I execute "${bar}"
 
-Non Matching Variable Is Not Accepted With Custom Regexp
-    [Documentation]    FAIL ValueError: Embedded argument 'x' got value 'foo' that does not match custom pattern 'bar'.
+Non Matching Variable Is Accepted With Custom Regexp (But Not For Long)
+    [Documentation]    FAIL    foo != bar    # ValueError: Embedded argument 'x' got value 'foo' that does not match custom pattern 'bar'.
     I execute "${foo}" with "${bar}"
 
-Partially Matching Variable Is Not Accepted With Custom Regexp
-    [Documentation]    FAIL ValueError: Embedded argument 'x' got value 'ba' that does not match custom pattern 'bar'.
+Partially Matching Variable Is Accepted With Custom Regexp (But Not For Long)
+    [Documentation]    FAIL     ba != bar    # ValueError: Embedded argument 'x' got value 'ba' that does not match custom pattern 'bar'.
     I execute "${bar[:2]}" with "${zap}"
 
 Non String Variable Is Accepted With Custom Regexp
