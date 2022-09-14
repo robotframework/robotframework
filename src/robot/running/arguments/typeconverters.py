@@ -391,8 +391,8 @@ class ListConverter(TypeConverter):
     value_types = (str, Sequence)
     aliases = ('list',)
 
-    def __init__(self, type_, custom_converters=None):
-        super().__init__(type_)
+    def __init__(self, type_, custom_converters=None, languages=None):
+        super().__init__(type_, languages=languages)
         self.nested_types = getattr(type_, '__args__', ())
 
     @classmethod
@@ -416,9 +416,11 @@ class ListConverter(TypeConverter):
         else:
             raise ValueError
         if self.nested_types:
-            if TypeConverter.converter_for(self.nested_types[0]):
+            if TypeConverter.converter_for(self.nested_types[0],
+                                           languages=self.languages):
                 for i, elem in enumerate(converted_list) :
-                    converter = TypeConverter.converter_for(self.nested_types[0])
+                    converter = TypeConverter.converter_for(self.nested_types[0],
+                                                            languages=self.languages)
                     if converter:
                         elem_info = f"List[{type_name(self.nested_types[0])}]"
                         converted_list[i] = converter.convert(elem_info, elem,
@@ -435,8 +437,8 @@ class TupleConverter(TypeConverter):
     value_types = (str, Sequence)
     aliases = ('tuple',)
 
-    def __init__(self, type_, custom_converters=None):
-        super().__init__(type_)
+    def __init__(self, type_, custom_converters=None, languages=None):
+        super().__init__(type_, languages=languages)
         self.nested_types = getattr(type_, '__args__', ())
 
     def _non_string_convert(self, value, explicit_type=True):
@@ -449,7 +451,8 @@ class TupleConverter(TypeConverter):
         if self.nested_types:
             tmp_list = list(converted_tuple)
             for i, elem in enumerate(converted_tuple):
-                converter = TypeConverter.converter_for(self.nested_types[i])
+                converter = TypeConverter.converter_for(self.nested_types[i],
+                                                        languages=self.languages)
                 if converter:
                     types = ', '.join([type_name(t) for t in self.nested_types])
                     tmp_list[i] = converter.convert(f"Tuple[{types}]", elem,
@@ -468,8 +471,8 @@ class DictionaryConverter(TypeConverter):
     aliases = ('dict', 'dictionary', 'map')
     value_types = (str, Mapping)
 
-    def __init__(self, type_, custom_converters=None):
-        super().__init__(type_)
+    def __init__(self, type_, custom_converters=None, languages=None):
+        super().__init__(type_, languages=languages)
         self.nested_types = getattr(type_, '__args__', ())
 
     def no_conversion_needed(self, value):
@@ -487,8 +490,10 @@ class DictionaryConverter(TypeConverter):
                 key_type = self.nested_types[0]
                 value_type = self.nested_types[1]
                 d_info = f"Dict[{type_name(key_type)}, {type_name(value_type)}]"
-                key_converter  = TypeConverter.converter_for(key_type)
-                elem_converter = TypeConverter.converter_for(value_type)
+                key_converter  = TypeConverter.converter_for(key_type,
+                                                             languages=self.languages)
+                elem_converter = TypeConverter.converter_for(value_type,
+                                                             languages=self.languages)
                 if key_converter:
                     converted_key = key_converter.convert(f"key for {d_info}", key,
                                                           explicit_type)
@@ -517,8 +522,8 @@ class SetConverter(TypeConverter):
     aliases = ('set',)
     value_types = (str, Container)
 
-    def __init__(self, type_, custom_converters=None):
-        super().__init__(type_)
+    def __init__(self, type_, custom_converters=None, languages=None):
+        super().__init__(type_, languages=languages)
         self.nested_types = getattr(type_, '__args__', ())
 
     def no_conversion_needed(self, value):
@@ -533,7 +538,8 @@ class SetConverter(TypeConverter):
             raise ValueError
         if self.nested_types:
             for elem in converted_set:
-                converter = TypeConverter.converter_for(self.nested_types[0])
+                converter = TypeConverter.converter_for(self.nested_types[0],
+                                                        languages=self.languages)
                 if converter:
                     converted_set.remove(elem)
                     t_name = type_name(self.nested_types[0])
@@ -565,9 +571,10 @@ class CombinedConverter(TypeConverter):
     type = Union
 
     def __init__(self, union, custom_converters, languages=None):
-        super().__init__(union)
+        super().__init__(union, languages=languages)
         self.nested_types = self._get_types(union)
-        self.converters = [TypeConverter.converter_for(t, custom_converters, languages)
+        self.converters = [TypeConverter.converter_for(t, custom_converters,
+                                                       languages=languages)
                            for t in self.nested_types]
 
     def _get_types(self, union):
