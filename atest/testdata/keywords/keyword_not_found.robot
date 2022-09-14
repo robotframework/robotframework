@@ -25,6 +25,13 @@ Non Existing Explicit In User Keyword
     [Documentation]    FAIL No keyword with name 'BuiltIn.No Keyword With This Name' found.
     Non Existing Explicit In User Keyword
 
+Misspelled keyword yields recommendations
+    [Documentation]  FAIL
+    ...  No keyword with name 'should be eQQual' found. Did you mean:
+    ...  \ \ \ \ BuiltIn.Should Be Equal
+    ...  \ \ \ \ BuiltIn.Should Not Be Equal
+    should be eQQual
+
 Non Existing Library
     [Documentation]    FAIL No keyword with name 'NoSuchLib.No Operation' found.
     No Operation

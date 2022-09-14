@@ -31,6 +31,9 @@ Keyword does not exist
 Keyword does not exist with custom message
     Check Test Case  ${TESTNAME}
 
+Misspelled keyword does not exist, no recommendations
+    Check Test Case  ${TESTNAME}
+
 Duplicate keywords
     Check Test Case  ${TESTNAME}
 
