@@ -1,6 +1,7 @@
 *** Settings ***
 Library                       AnnotationsWithTyping.py
 Resource                      conversion.resource
+Force Tags                    require-py3.7
 
 *** Test Cases ***
 List

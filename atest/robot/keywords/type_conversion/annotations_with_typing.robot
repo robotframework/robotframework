@@ -1,6 +1,7 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    keywords/type_conversion/annotations_with_typing.robot
 Resource         atest_resource.robot
+Force Tags       require-py3.7
 
 *** Test Cases ***
 List
