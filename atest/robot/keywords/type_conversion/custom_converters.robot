@@ -24,6 +24,9 @@ Accept subscripted generics
 Failing conversion
     Check Test Case    ${TESTNAME}
 
+`None` as strict converter
+    Check Test Case    ${TESTNAME}
+
 Invalid converters
     Check Test Case    ${TESTNAME}
     Validate Errors

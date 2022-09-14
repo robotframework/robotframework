@@ -58,13 +58,13 @@ class TestItemLists(unittest.TestCase):
 
     def test_only_matching_types_can_be_added(self):
         assert_raises_with_msg(TypeError,
-                               'Only int objects accepted, got str.',
+                               'Only integer objects accepted, got string.',
                                ItemList(int).append, 'not integer')
         assert_raises_with_msg(TypeError,
-                               'Only int objects accepted, got Object.',
+                               'Only integer objects accepted, got Object.',
                                ItemList(int).extend, [Object()])
         assert_raises_with_msg(TypeError,
-                               'Only Object objects accepted, got int.',
+                               'Only Object objects accepted, got integer.',
                                ItemList(Object).insert, 0, 42)
 
     def test_common_attrs(self):
@@ -146,7 +146,7 @@ class TestItemLists(unittest.TestCase):
 
     def test_setitem_slice_invalid_type(self):
         assert_raises_with_msg(TypeError,
-                               'Only int objects accepted, got float.',
+                               'Only integer objects accepted, got float.',
                                ItemList(int).__setitem__, slice(0), [1, 1.1])
 
     def test_delitem(self):
@@ -312,9 +312,9 @@ class TestItemLists(unittest.TestCase):
     def test_compare_incompatible(self):
         assert_false(ItemList(int) == ItemList(str))
         assert_false(ItemList(int) == ItemList(int, {'a': 1}))
-        assert_raises_with_msg(TypeError, 'Cannot order incompatible ItemLists',
+        assert_raises_with_msg(TypeError, 'Cannot order incompatible ItemLists.',
                                ItemList(int).__gt__, ItemList(str))
-        assert_raises_with_msg(TypeError, 'Cannot order incompatible ItemLists',
+        assert_raises_with_msg(TypeError, 'Cannot order incompatible ItemLists.',
                                ItemList(int).__gt__, ItemList(int, {'a': 1}))
 
     def test_comparisons_with_other_objects(self):
@@ -325,11 +325,11 @@ class TestItemLists(unittest.TestCase):
         assert_true(items != 123)
         assert_true(items != [1, 2, 3])
         assert_true(items != (1, 2, 3))
-        assert_raises_with_msg(TypeError, 'Cannot order ItemList and int',
+        assert_raises_with_msg(TypeError, 'Cannot order ItemList and integer.',
                                items.__gt__, 1)
-        assert_raises_with_msg(TypeError, 'Cannot order ItemList and list',
+        assert_raises_with_msg(TypeError, 'Cannot order ItemList and list.',
                                items.__lt__, [1, 2, 3])
-        assert_raises_with_msg(TypeError, 'Cannot order ItemList and tuple',
+        assert_raises_with_msg(TypeError, 'Cannot order ItemList and tuple.',
                                items.__ge__, (1, 2, 3))
 
     def test_add(self):
@@ -338,13 +338,13 @@ class TestItemLists(unittest.TestCase):
 
     def test_add_incompatible(self):
         assert_raises_with_msg(TypeError,
-                               'Cannot add ItemList and list',
+                               'Cannot add ItemList and list.',
                                ItemList(int).__add__, [])
         assert_raises_with_msg(TypeError,
-                               'Cannot add incompatible ItemLists',
+                               'Cannot add incompatible ItemLists.',
                                ItemList(int).__add__, ItemList(str))
         assert_raises_with_msg(TypeError,
-                               'Cannot add incompatible ItemLists',
+                               'Cannot add incompatible ItemLists.',
                                ItemList(int).__add__, ItemList(int, {'a': 1}))
 
     def test_iadd(self):
@@ -358,14 +358,14 @@ class TestItemLists(unittest.TestCase):
 
     def test_iadd_incompatible(self):
         items = ItemList(int, items=[1, 2])
-        assert_raises_with_msg(TypeError, 'Cannot add incompatible ItemLists',
+        assert_raises_with_msg(TypeError, 'Cannot add incompatible ItemLists.',
                                items.__iadd__, ItemList(str))
-        assert_raises_with_msg(TypeError, 'Cannot add incompatible ItemLists',
+        assert_raises_with_msg(TypeError, 'Cannot add incompatible ItemLists.',
                                items.__iadd__, ItemList(int, {'a': 1}))
 
     def test_iadd_wrong_type(self):
         assert_raises_with_msg(TypeError,
-                               'Only int objects accepted, got str.',
+                               'Only integer objects accepted, got string.',
                                ItemList(int).__iadd__, ['a', 'b', 'c'])
 
     def test_mul(self):

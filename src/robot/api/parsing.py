@@ -239,6 +239,7 @@ Statements:
 - :class:`~robot.parsing.model.statements.Break`
 - :class:`~robot.parsing.model.statements.Continue`
 - :class:`~robot.parsing.model.statements.Comment`
+- :class:`~robot.parsing.model.statements.Config` (new in 5.1)
 - :class:`~robot.parsing.model.statements.Error`
 - :class:`~robot.parsing.model.statements.EmptyLine`
 
@@ -257,7 +258,7 @@ case file contains::
     class TestNamePrinter(ModelVisitor):
 
         def visit_File(self, node):
-            print(f"File '{node.source}' has following tests:")
+            print(f"File '{node.source}' has the following tests:")
             # Call `generic_visit` to visit also child nodes.
             self.generic_visit(node)
 
@@ -272,7 +273,7 @@ case file contains::
 When the above code is run using the earlier :file:`example.robot`, the
 output is this::
 
-    File 'example.robot' has following tests:
+    File 'example.robot' has the following tests:
     - Example (on line 2)
     - Second example (on line 5)
 
@@ -544,6 +545,7 @@ from robot.parsing.model.statements import (
     Continue,
     Break,
     Comment,
+    Config,
     Error,
     EmptyLine
 )

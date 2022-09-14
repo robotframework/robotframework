@@ -29,9 +29,10 @@ from robot.running.usererrorhandler import UserErrorHandler
 from robot.utils import (DotDict, escape, format_assign_message, get_error_message,
                          get_time, html_escape, is_falsy, is_integer, is_list_like,
                          is_string, is_truthy, Matcher, normalize,
-                         normalize_whitespace, parse_time, prepr, plural_or_not as s,
-                         RERAISED_EXCEPTIONS, safe_str, secs_to_timestr, seq2str,
-                         split_from_equals, timestr_to_secs, type_name)
+                         normalize_whitespace, parse_re_flags, parse_time, prepr,
+                         plural_or_not as s, RERAISED_EXCEPTIONS, safe_str,
+                         secs_to_timestr, seq2str, split_from_equals,
+                         timestr_to_secs, type_name)
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (evaluate_expression, is_dict_variable,
                              is_list_variable, search_variable,
@@ -42,10 +43,11 @@ from robot.version import get_version
 # FIXME: Clean-up registering run keyword variants in RF 5!
 # https://github.com/robotframework/robotframework/issues/2190
 
-def run_keyword_variant(resolve):
+def run_keyword_variant(resolve, dry_run=False):
     def decorator(method):
         RUN_KW_REGISTER.register_run_keyword('BuiltIn', method.__name__,
-                                             resolve, deprecation_warning=False)
+                                             resolve, deprecation_warning=False,
+                                             dry_run=dry_run)
         return method
     return decorator
 
@@ -1303,7 +1305,7 @@ class _Verify(_BuiltInBase):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'does not match'))
 
-    def should_match_regexp(self, string, pattern, msg=None, values=True):
+    def should_match_regexp(self, string, pattern, msg=None, values=True, flags=None):
         """Fails if ``string`` does not match ``pattern`` as a regular expression.
 
         See the `Regular expressions` section for more information about
@@ -1315,11 +1317,10 @@ class _Verify(_BuiltInBase):
         to denote the beginning and end of the string, respectively.
         For example, ``^ello$`` only matches the exact string ``ello``.
 
-        Possible flags altering how the expression is parsed (e.g.
-        ``re.IGNORECASE``, ``re.MULTILINE``) must be embedded to the
-        pattern like ``(?im)pattern``. The most useful flags are ``i``
-        (case-insensitive), ``m`` (multiline mode), ``s`` (dotall mode)
-        and ``x`` (verbose).
+        Possible flags altering how the expression is parsed (e.g. ``re.IGNORECASE``,
+        ``re.MULTILINE``) can be given using the ``flags`` argument (e.g.
+        ``flags=IGNORECASE | MULTILINE``) or embedded to the pattern (e.g.
+        ``(?im)pattern``).
 
         If this keyword passes, it returns the portion of the string that
         matched the pattern. Additionally, the possible captured groups are
@@ -1331,6 +1332,7 @@ class _Verify(_BuiltInBase):
         Examples:
         | Should Match Regexp | ${output} | \\\\d{6}   | # Output contains six numbers  |
         | Should Match Regexp | ${output} | ^\\\\d{6}$ | # Six numbers and nothing more |
+        | ${ret} = | Should Match Regexp | Foo: 42 | foo: \\\\d+ | flags=IGNORECASE |
         | ${ret} = | Should Match Regexp | Foo: 42 | (?i)foo: \\\\d+ |
         | ${match} | ${group1} | ${group2} = |
         | ...      | Should Match Regexp | Bar: 43 | (Foo|Bar): (\\\\d+) |
@@ -1339,8 +1341,10 @@ class _Verify(_BuiltInBase):
         | ${match} = 'Bar: 43'
         | ${group1} = 'Bar'
         | ${group2} = '43'
+
+        The ``flags`` argument is new in Robot Framework 5.1.
         """
-        res = re.search(pattern, string)
+        res = re.search(pattern, string, flags=parse_re_flags(flags))
         if res is None:
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'does not match'))
@@ -1350,12 +1354,12 @@ class _Verify(_BuiltInBase):
             return [match] + list(groups)
         return match
 
-    def should_not_match_regexp(self, string, pattern, msg=None, values=True):
+    def should_not_match_regexp(self, string, pattern, msg=None, values=True, flags=None):
         """Fails if ``string`` matches ``pattern`` as a regular expression.
 
         See `Should Match Regexp` for more information about arguments.
         """
-        if re.search(pattern, string) is not None:
+        if re.search(pattern, string, flags=parse_re_flags(flags)) is not None:
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'matches'))
 
@@ -1831,7 +1835,7 @@ class _RunKeyword(_BuiltInBase):
     # other run keyword variant keywords in BuiltIn which can also be seen
     # at the end of this file.
 
-    @run_keyword_variant(resolve=1)
+    @run_keyword_variant(resolve=0, dry_run=True)
     def run_keyword(self, name, *args):
         """Executes the given keyword with the given arguments.
 
@@ -1839,12 +1843,31 @@ class _RunKeyword(_BuiltInBase):
         can be a variable and thus set dynamically, e.g. from a return value of
         another keyword or from the command line.
         """
+        if (is_string(name)
+                and not self._context.dry_run
+                and not self._accepts_embedded_arguments(name)):
+            name, args = self._replace_variables_in_name([name] + list(args))
         if not is_string(name):
             raise RuntimeError('Keyword name must be a string.')
         kw = Keyword(name, args=args)
         return kw.run(self._context)
 
-    @run_keyword_variant(resolve=0)
+    def _accepts_embedded_arguments(self, name):
+        if '{' in name:
+            runner = self._context.get_runner(name)
+            if hasattr(runner, 'embedded_args'):
+                return True
+        return False
+
+    def _replace_variables_in_name(self, name_and_args):
+        resolved = self._variables.replace_list(name_and_args, replace_until=1,
+                                                ignore_errors=self._context.in_teardown)
+        if not resolved:
+            raise DataError(f'Keyword name missing: Given arguments {name_and_args} '
+                            f'resolved to an empty list.')
+        return resolved[0], resolved[1:]
+
+    @run_keyword_variant(resolve=0, dry_run=True)
     def run_keywords(self, *keywords):
         """Executes all the given keywords in a sequence.
 
@@ -1895,26 +1918,34 @@ class _RunKeyword(_BuiltInBase):
 
     def _split_run_keywords(self, keywords):
         if 'AND' not in keywords:
-            for name in self._variables.replace_list(keywords):
+            for name in self._split_run_keywords_without_and(keywords):
                 yield name, ()
         else:
-            for name, args in self._split_run_keywords_from_and(keywords):
-                yield name, args
+            for kw_call in self._split_run_keywords_with_and(keywords):
+                if not kw_call:
+                    raise DataError('AND must have keyword before and after.')
+                yield kw_call[0], kw_call[1:]
 
-    def _split_run_keywords_from_and(self, keywords):
+    def _split_run_keywords_without_and(self, keywords):
+        replace_list = self._variables.replace_list
+        ignore_errors = self._context.in_teardown
+        # `run_keyword` resolves variables, but list variables must be expanded
+        # here to pass it each keyword name separately.
+        for name in keywords:
+            if is_list_variable(name):
+                for n in replace_list([name], ignore_errors=ignore_errors):
+                    yield escape(n)
+            else:
+                yield name
+
+    def _split_run_keywords_with_and(self, keywords):
         while 'AND' in keywords:
             index = keywords.index('AND')
-            yield self._resolve_run_keywords_name_and_args(keywords[:index])
+            yield keywords[:index]
             keywords = keywords[index+1:]
-        yield self._resolve_run_keywords_name_and_args(keywords)
+        yield keywords
 
-    def _resolve_run_keywords_name_and_args(self, kw_call):
-        kw_call = self._variables.replace_list(kw_call, replace_until=1)
-        if not kw_call:
-            raise DataError('Incorrect use of AND')
-        return kw_call[0], kw_call[1:]
-
-    @run_keyword_variant(resolve=2)
+    @run_keyword_variant(resolve=1, dry_run=True)
     def run_keyword_if(self, condition, name, *args):
         """Runs the given keyword with the given arguments, if ``condition`` is true.
 
@@ -1996,7 +2027,7 @@ class _RunKeyword(_BuiltInBase):
             raise DataError('%s requires %s.' % (control_word, required_error))
         return args[:index], branch
 
-    @run_keyword_variant(resolve=2)
+    @run_keyword_variant(resolve=1, dry_run=True)
     def run_keyword_unless(self, condition, name, *args):
         """*DEPRECATED since RF 5.0. Use Native IF/ELSE or `Run Keyword If` instead.*
 
@@ -2008,7 +2039,7 @@ class _RunKeyword(_BuiltInBase):
         if not self._is_true(condition):
             return self.run_keyword(name, *args)
 
-    @run_keyword_variant(resolve=1)
+    @run_keyword_variant(resolve=0, dry_run=True)
     def run_keyword_and_ignore_error(self, name, *args):
         """Runs the given keyword with the given arguments and ignores possible error.
 
@@ -2034,7 +2065,7 @@ class _RunKeyword(_BuiltInBase):
                 raise
             return 'FAIL', str(err)
 
-    @run_keyword_variant(resolve=1)
+    @run_keyword_variant(resolve=0, dry_run=True)
     def run_keyword_and_warn_on_failure(self, name, *args):
         """Runs the specified keyword logs a warning if the keyword fails.
 
@@ -2053,7 +2084,7 @@ class _RunKeyword(_BuiltInBase):
             logger.warn("Executing keyword '%s' failed:\n%s" % (name, message))
         return status, message
 
-    @run_keyword_variant(resolve=1)
+    @run_keyword_variant(resolve=0, dry_run=True)
     def run_keyword_and_return_status(self, name, *args):
         """Runs the given keyword with given arguments and returns the status as a Boolean value.
 
@@ -2074,7 +2105,7 @@ class _RunKeyword(_BuiltInBase):
         status, _ = self.run_keyword_and_ignore_error(name, *args)
         return status == 'PASS'
 
-    @run_keyword_variant(resolve=1)
+    @run_keyword_variant(resolve=0, dry_run=True)
     def run_keyword_and_continue_on_failure(self, name, *args):
         """Runs the keyword and continues execution even if a failure occurs.
 
@@ -2094,7 +2125,7 @@ class _RunKeyword(_BuiltInBase):
                 err.continue_on_failure = True
             raise err
 
-    @run_keyword_variant(resolve=2)
+    @run_keyword_variant(resolve=1, dry_run=True)
     def run_keyword_and_expect_error(self, expected_error, name, *args):
         """Runs the keyword and checks that the expected error occurred.
 
@@ -2170,7 +2201,7 @@ class _RunKeyword(_BuiltInBase):
         prefix, expected_error = expected_error.split(':', 1)
         return matchers[prefix](error, expected_error.lstrip())
 
-    @run_keyword_variant(resolve=2)
+    @run_keyword_variant(resolve=1, dry_run=True)
     def repeat_keyword(self, repeat, name, *args):
         """Executes the specified keyword multiple times.
 
@@ -2249,7 +2280,7 @@ class _RunKeyword(_BuiltInBase):
                         secs_to_timestr(maxtime - time.time(), compact=True)))
             yield name, args
 
-    @run_keyword_variant(resolve=3)
+    @run_keyword_variant(resolve=2, dry_run=True)
     def wait_until_keyword_succeeds(self, retry, retry_interval, name, *args):
         """Runs the specified keyword and retries if it fails.
 
@@ -2389,7 +2420,7 @@ class _RunKeyword(_BuiltInBase):
             return self._verify_values_for_set_variable_if(values)
         return values
 
-    @run_keyword_variant(resolve=1)
+    @run_keyword_variant(resolve=0, dry_run=True)
     def run_keyword_if_test_failed(self, name, *args):
         """Runs the given keyword with the given arguments, if the test failed.
 
@@ -2403,7 +2434,7 @@ class _RunKeyword(_BuiltInBase):
         if test.failed:
             return self.run_keyword(name, *args)
 
-    @run_keyword_variant(resolve=1)
+    @run_keyword_variant(resolve=0, dry_run=True)
     def run_keyword_if_test_passed(self, name, *args):
         """Runs the given keyword with the given arguments, if the test passed.
 
@@ -2417,7 +2448,7 @@ class _RunKeyword(_BuiltInBase):
         if test.passed:
             return self.run_keyword(name, *args)
 
-    @run_keyword_variant(resolve=1)
+    @run_keyword_variant(resolve=0, dry_run=True)
     def run_keyword_if_timeout_occurred(self, name, *args):
         """Runs the given keyword if either a test or a keyword timeout has occurred.
 
@@ -2437,7 +2468,7 @@ class _RunKeyword(_BuiltInBase):
             return ctx.test
         raise RuntimeError(f"Keyword '{kwname}' can only be used in test teardown.")
 
-    @run_keyword_variant(resolve=1)
+    @run_keyword_variant(resolve=0, dry_run=True)
     def run_keyword_if_all_tests_passed(self, name, *args):
         """Runs the given keyword with the given arguments, if all tests passed.
 
@@ -2451,7 +2482,7 @@ class _RunKeyword(_BuiltInBase):
         if suite.statistics.failed == 0:
             return self.run_keyword(name, *args)
 
-    @run_keyword_variant(resolve=1)
+    @run_keyword_variant(resolve=0, dry_run=True)
     def run_keyword_if_any_tests_failed(self, name, *args):
         """Runs the given keyword with the given arguments, if one or more tests failed.
 
@@ -2732,7 +2763,7 @@ class _Control(_BuiltInBase):
         if self._is_true(condition):
             self._return_from_keyword(return_values)
 
-    @run_keyword_variant(resolve=1)
+    @run_keyword_variant(resolve=0, dry_run=True)
     def run_keyword_and_return(self, name, *args):
         """Runs the specified keyword and returns from the enclosing user keyword.
 
@@ -2758,7 +2789,7 @@ class _Control(_BuiltInBase):
         else:
             self._return_from_keyword(return_values=[escape(ret)])
 
-    @run_keyword_variant(resolve=2)
+    @run_keyword_variant(resolve=1, dry_run=True)
     def run_keyword_and_return_if(self, condition, name, *args):
         """Runs the specified keyword and returns from the enclosing user keyword.
 
@@ -3916,51 +3947,63 @@ class RobotNotRunningError(AttributeError):
     pass
 
 
-def register_run_keyword(library, keyword, args_to_process=None,
-                         deprecation_warning=True):
+def register_run_keyword(library, keyword, args_to_process=0, deprecation_warning=True):
     """Tell Robot Framework that this keyword runs other keywords internally.
 
     *NOTE:* This API will change in the future. For more information see
-    https://github.com/robotframework/robotframework/issues/2190. Use with
-    `deprecation_warning=False` to avoid related deprecation warnings.
+    https://github.com/robotframework/robotframework/issues/2190.
 
-    1) Why is this method needed
+    :param library: Name of the library the keyword belongs to.
+    :param keyword: Name of the keyword itself.
+    :param args_to_process: How many arguments to process normally before
+        passing them to the keyword. Other arguments are not touched at all.
+    :param deprecation_warning: Set to ``False```to avoid the warning.
 
-    Keywords running other keywords internally using `Run Keyword` or its variants
-    like `Run Keyword If` need some special handling by the framework. This includes
-    not processing arguments (e.g. variables in them) twice, special handling of
-    timeouts, and so on.
+    Registered keywords are handled specially by Robot so that:
 
-    2) How to use this method
+    - Their arguments are not resolved normally (use ``args_to_process``
+      to control that). This basically means not replacing variables or
+      handling escapes.
+    - They are not stopped by timeouts.
+    - If there are conflicts with keyword names, these keywords have
+      *lower* precedence than other keywords.
 
-    `library` is the name of the library where the registered keyword is implemented.
+    Main use cases are:
 
-    `keyword` is the name of the keyword. With Python 2 it is possible to pass also
-    the function or method implementing the keyword.
+    - Library keyword is using `BuiltIn.run_keyword` internally to execute other
+      keywords. Registering the caller as a "run keyword variant" avoids variables
+      and escapes in arguments being resolved multiple times. All arguments passed
+      to `run_keyword` can and should be left unresolved.
+    - Keyword has some need to not resolve variables in arguments. This way
+      variable values are not logged anywhere by Robot automatically.
 
-    `args_to_process`` defines how many of the arguments to the registered keyword must
-    be processed normally.
+    As mentioned above, this API will likely be reimplemented in the future
+    or there could be new API for library keywords to execute other keywords.
+    External libraries can nevertheless use this API if they really need it and
+    are aware of the possible breaking changes in the future.
 
-    3) Examples
+    Examples::
 
-    from robot.libraries.BuiltIn import BuiltIn, register_run_keyword
+        from robot.libraries.BuiltIn import BuiltIn, register_run_keyword
 
-    def my_run_keyword(name, *args):
-        # do something
-        return BuiltIn().run_keyword(name, *args)
-
-    register_run_keyword(__name__, 'My Run Keyword', 1)
-
-    -------------
-
-    from robot.libraries.BuiltIn import BuiltIn, register_run_keyword
-
-    class MyLibrary:
-        def my_run_keyword_if(self, expression, name, *args):
+        def my_run_keyword(name, *args):
             # do something
-            return BuiltIn().run_keyword_if(expression, name, *args)
+            return BuiltIn().run_keyword(name, *args)
 
-    register_run_keyword('MyLibrary', 'my_run_keyword_if', 2)
+        register_run_keyword(__name__, 'My Run Keyword')
+
+        -------------
+
+        from robot.libraries.BuiltIn import BuiltIn, register_run_keyword
+
+        class MyLibrary:
+            def my_run_keyword_if(self, expression, name, *args):
+                # Do something
+                if self._is_true(expression):
+                    return BuiltIn().run_keyword(name, *args)
+
+        # Process one argument normally to get `expression` resolved.
+        register_run_keyword('MyLibrary', 'my_run_keyword_if', args_to_process=1)
     """
     RUN_KW_REGISTER.register_run_keyword(library, keyword, args_to_process,
                                          deprecation_warning)

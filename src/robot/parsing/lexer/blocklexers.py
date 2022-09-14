@@ -22,7 +22,7 @@ from .statementlexers import (Lexer,
                               TestCaseSectionHeaderLexer,
                               TaskSectionHeaderLexer,
                               KeywordSectionHeaderLexer,
-                              CommentSectionHeaderLexer, CommentLexer,
+                              CommentSectionHeaderLexer, CommentLexer, ImplicitCommentLexer,
                               ErrorSectionHeaderLexer,
                               TestOrKeywordSettingLexer,
                               KeywordCallLexer,
@@ -57,8 +57,8 @@ class BlockLexer(Lexer):
             if cls.handles(statement, self.ctx):
                 lexer = cls(self.ctx)
                 return lexer
-        raise TypeError("%s did not find lexer for statement %s."
-                        % (type(self).__name__, statement))
+        raise TypeError(f"{type(self).__name__} does not have lexer for "
+                        f"statement {statement}.")
 
     def lexer_classes(self):
         return ()
@@ -161,7 +161,7 @@ class ImplicitCommentSectionLexer(SectionLexer):
         return True
 
     def lexer_classes(self):
-        return (CommentLexer,)
+        return (ImplicitCommentLexer,)
 
 
 class ErrorSectionLexer(SectionLexer):

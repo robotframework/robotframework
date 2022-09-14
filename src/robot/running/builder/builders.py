@@ -32,7 +32,7 @@ class TestSuiteBuilder:
 
     - Execute the created suite by using its
       :meth:`~robot.running.model.TestSuite.run` method. The suite can be
-      can be modified before execution if needed.
+      modified before execution if needed.
 
     - Inspect the suite to see, for example, what tests it has or what tags
       tests have. This can be more convenient than using the lower level
@@ -56,9 +56,14 @@ class TestSuiteBuilder:
         :param included_extensions:
             List of extensions of files to parse. Same as `--extension`.
         :param rpa: Explicit test execution mode. ``True`` for RPA and
-           ``False`` for test automation. By default mode is got from data file
-           headers and possible conflicting headers cause an error.
-           Same as `--rpa` or `--norpa`.
+            ``False`` for test automation. By default, mode is got from data file
+            headers and possible conflicting headers cause an error.
+            Same as `--rpa` or `--norpa`.
+        :param lang: Additional languages to be supported during parsing.
+            Can be a string matching any of the supported language codes or names,
+            an initialized :class:`~robot.conf.languages.Language` subsclass,
+            a list containing such strings or instances, or a
+            :class:`~robot.conf.languages.Languages` instance.
         :param allow_empty_suite:
             Specify is it an error if the built suite contains no tests.
             Same as `--runemptysuite`.

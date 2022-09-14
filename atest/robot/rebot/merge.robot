@@ -33,6 +33,10 @@ Merge suite setup and teardown
     [Setup]   Should Be Equal    ${PREV_TEST_STATUS}    PASS
     Suite setup and teardown should have been merged
 
+Merge suite documentation and metadata
+    [Setup]   Should Be Equal    ${PREV_TEST_STATUS}    PASS
+    Suite documentation and metadata should have been merged
+
 Merge re-executed and re-re-executed tests
     Re-run tests
     Re-re-run tests
@@ -84,7 +88,12 @@ Merge ignores skip
 
 *** Keywords ***
 Run original tests
-    Create Output With Robot    ${ORIGINAL}    --variable FAIL:YES --variable LEVEL:WARN    ${SUITES}
+    ${options} =    Catenate
+    ...    --variable FAIL:YES
+    ...    --variable LEVEL:WARN
+    ...    --doc "Doc for original run"
+    ...    --metadata Original:True
+    Create Output With Robot    ${ORIGINAL}    ${options}    ${SUITES}
     Verify original tests
 
 Verify original tests
@@ -98,6 +107,8 @@ Verify original tests
 Re-run tests
     [Arguments]    ${options}=
     ${options} =    Catenate
+    ...    --doc "Doc for re-run"
+    ...    --metadata ReRun:True
     ...    --variable SUITE_SETUP:NoOperation  # Affects misc/suites/__init__.robot
     ...    --variable SUITE_TEARDOWN:NONE      #           -- ;; --
     ...    --variable SETUP_MSG:Rerun!         # Affects misc/suites/fourth.robot
@@ -172,6 +183,11 @@ Suite setup and teardown should have been merged
     Should Be Equal      ${SUITE.suites[2].suites[0].name}             Sub1
     Should Be Equal      ${SUITE.suites[2].suites[0].setup.name}       ${NONE}
     Should Be Equal      ${SUITE.suites[2].suites[0].teardown.name}    ${NONE}
+
+Suite documentation and metadata should have been merged
+    Should Be Equal      ${SUITE.doc}                                  Doc for re-run
+    Should Be Equal      ${SUITE.metadata}[ReRun]                      True
+    Should Be Equal      ${SUITE.metadata}[Original]                   True
 
 Test add should have been successful
     Should Be Equal    ${SUITE.name}    Suites

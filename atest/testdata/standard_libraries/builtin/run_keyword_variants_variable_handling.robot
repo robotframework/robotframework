@@ -6,7 +6,6 @@ Variables         variable.py
 @{NEEDS ESCAPING}    c:\\temp\\foo    \${notvar}
 @{KEYWORD AND ARG WHICH NEEDS ESCAPING}    \\Log Many    \${notvar}
 @{KEYWORD AND ARGS WHICH NEEDS ESCAPING}    \\Log Many    @{NEEDS ESCAPING}
-@{EMPTY}
 @{EXPRESSION}     ${TRUE}
 @{ARGS}           @{NEEDS ESCAPING}
 ${KEYWORD}        \\Log Many
@@ -19,6 +18,16 @@ Variable Values Should Not Be Visible As Keyword's Arguments
 Run Keyword When Keyword and Arguments Are in List Variable
     Run Keyword    @{KEYWORD AND ARGS WHICH NEEDS ESCAPING}
     Run Keyword    @{KEYWORD AND ARG WHICH NEEDS ESCAPING}
+
+Run Keyword With Empty List Variable
+    [Documentation]    FAIL
+    ...    Keyword name missing: Given arguments ['\@{EMPTY}'] resolved to an empty list.
+    Run Keyword    @{EMPTY}
+
+Run Keyword With Multiple Empty List Variables
+    [Documentation]    FAIL
+    ...    Keyword name missing: Given arguments ['\@{EMPTY}', '\@{{{}}}', '\@{EMPTY}'] resolved to an empty list.
+    Run Keyword    @{EMPTY}    @{{{}}}    @{EMPTY}
 
 Run Keyword If When Arguments are In Multiple List
     Run Keyword If    @{EXPRESSION}    @{KEYWORD LIST}    @{ARGS}
@@ -50,6 +59,8 @@ Run Keyword If With List And One Argument That needs to Be Processed
 My UK
     [Arguments]    ${name}    @{args}
     Run Keyword    ${name}    @{args}
+    Run Keyword    ${name}    ${args}[0]
+    Should Be Equal    ${args[0].name}    Robot
 
 \Log Many
     [Arguments]    @{args}

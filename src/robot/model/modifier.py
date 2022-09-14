@@ -14,8 +14,8 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import (get_error_details, is_string,
-                         split_args_from_name_or_path, type_name, Importer)
+from robot.utils import (get_error_details, Importer, is_string,
+                         split_args_from_name_or_path, type_name)
 
 from .visitor import SuiteVisitor
 
@@ -25,31 +25,28 @@ class ModelModifier(SuiteVisitor):
     def __init__(self, visitors, empty_suite_ok, logger):
         self._log_error = logger.error
         self._empty_suite_ok = empty_suite_ok
-        self._visitors = list(self._yield_visitors(visitors))
+        self._visitors = list(self._yield_visitors(visitors, logger))
 
     def visit_suite(self, suite):
         for visitor in self._visitors:
             try:
                 suite.visit(visitor)
-            except:
+            except Exception:
                 message, details = get_error_details()
-                self._log_error("Executing model modifier '%s' failed: %s\n%s"
-                                % (type_name(visitor), message, details))
+                self._log_error(f"Executing model modifier '{type_name(visitor)}' "
+                                f"failed: {message}\n{details}")
         if not (suite.test_count or self._empty_suite_ok):
-            raise DataError("Suite '%s' contains no tests after model modifiers."
-                            % suite.name)
+            raise DataError(f"Suite '{suite.name}' contains no tests after "
+                            f"model modifiers.")
 
-    def _yield_visitors(self, visitors):
-        # Avoid cyclic imports. Yuck.
-        from robot.output import LOGGER
-
-        importer = Importer('model modifier', logger=LOGGER)
+    def _yield_visitors(self, visitors, logger):
+        importer = Importer('model modifier', logger=logger)
         for visitor in visitors:
-            try:
-                if not is_string(visitor):
-                    yield visitor
-                else:
-                    name, args = split_args_from_name_or_path(visitor)
+            if is_string(visitor):
+                name, args = split_args_from_name_or_path(visitor)
+                try:
                     yield importer.import_class_or_module(name, args)
-            except DataError as err:
-                self._log_error(err.message)
+                except DataError as err:
+                    logger.error(err.message)
+            else:
+                yield visitor

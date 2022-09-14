@@ -36,6 +36,34 @@ Run Keyword With UK
 Run Keyword In Multiple Levels And With UK
     Check test Case    ${TEST NAME}
 
+With keyword accepting embedded arguments
+    ${tc} =    Check test Case    ${TEST NAME}
+    Check Run Keyword With Embedded Args    ${tc.kws[0]}    Embedded "arg"    arg
+
+With library keyword accepting embedded arguments
+    ${tc} =    Check test Case    ${TEST NAME}
+    Check Run Keyword With Embedded Args    ${tc.kws[0]}   Embedded "arg" in library    arg
+
+With keyword accepting embedded arguments as variables
+    ${tc} =    Check test Case    ${TEST NAME}
+    Check Run Keyword With Embedded Args    ${tc.kws[0]}    Embedded "\${VARIABLE}"    value
+    Check Run Keyword With Embedded Args    ${tc.kws[1]}    Embedded "\${1}"           1
+
+With library keyword accepting embedded arguments as variables
+    ${tc} =    Check test Case    ${TEST NAME}
+    Check Run Keyword With Embedded Args    ${tc.kws[0]}    Embedded "\${VARIABLE}" in library    value
+    Check Run Keyword With Embedded Args    ${tc.kws[1]}    Embedded "\${1}" in library           1
+
+With keyword accepting embedded arguments as variables containing objects
+    ${tc} =    Check test Case    ${TEST NAME}
+    Check Run Keyword With Embedded Args    ${tc.kws[0]}    Embedded "\${OBJECT}"           Robot
+    Check Run Keyword With Embedded Args    ${tc.kws[1]}    Embedded object "\${OBJECT}"    Robot
+
+With library keyword accepting embedded arguments as variables containing objects
+    ${tc} =    Check test Case    ${TEST NAME}
+    Check Run Keyword With Embedded Args    ${tc.kws[0]}    Embedded "\${OBJECT}" in library          Robot
+    Check Run Keyword With Embedded Args    ${tc.kws[1]}    Embedded object "\${OBJECT}" in library    Robot
+
 Run Keyword In For Loop
     ${tc} =    Check test Case    ${TEST NAME}
     Check Run Keyword    ${tc.kws[0].kws[0].kws[0]}    BuiltIn.Log    hello from for loop
@@ -81,3 +109,15 @@ Check Run Keyword In Uk
     Should Be Equal    ${kw.name}    BuiltIn.Run Keyword
     Should Be Equal    ${kw.kws[0].name}    My UK
     Check Run Keyword    ${kw.kws[0].kws[0]}    ${subkw_name}    @{msgs}
+
+Check Run Keyword With Embedded Args
+    [Arguments]    ${kw}    ${subkw_name}    ${msg}
+    Should Be Equal    ${kw.name}    BuiltIn.Run Keyword
+    IF    ${subkw_name.endswith('library')}
+        Should Be Equal      ${kw.kws[0].name}       embedded_args.${subkw_name}
+        Check Log Message    ${kw.kws[0].msgs[0]}    ${msg}
+    ELSE
+        Should Be Equal      ${kw.kws[0].name}              ${subkw_name}
+        Should Be Equal      ${kw.kws[0].kws[0].name}       BuiltIn.Log
+        Check Log Message    ${kw.kws[0].kws[0].msgs[0]}    ${msg}
+    END

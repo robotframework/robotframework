@@ -419,9 +419,9 @@ class Variable:
 
     def report_invalid_syntax(self, message, level='ERROR'):
         source = self.source or '<unknown>'
-        line = ' on line %s' % self.lineno if self.lineno is not None else ''
-        LOGGER.write("Error in file '%s'%s: Setting variable '%s' failed: %s"
-                     % (source, line, self.name, message), level)
+        line = f' on line {self.lineno}' if self.lineno else ''
+        LOGGER.write(f"Error in file '{source}'{line}: "
+                     f"Setting variable '{self.name}' failed: {message}", level)
 
 
 class ResourceFile:
@@ -502,8 +502,8 @@ class Import:
 
     def __init__(self, type, name, args=(), alias=None, source=None, lineno=None):
         if type not in self.ALLOWED_TYPES:
-            raise ValueError("Invalid import type '%s'. Should be one of %s."
-                             % (type, seq2str(self.ALLOWED_TYPES, lastsep=' or ')))
+            raise ValueError(f"Invalid import type '{type}'. Should be one of "
+                             f"{seq2str(self.ALLOWED_TYPES, lastsep=' or ')}.")
         self.type = type
         self.name = name
         self.args = args
@@ -521,8 +521,8 @@ class Import:
 
     def report_invalid_syntax(self, message, level='ERROR'):
         source = self.source or '<unknown>'
-        line = ' on line %s' % self.lineno if self.lineno is not None else ''
-        LOGGER.write("Error in file '%s'%s: %s" % (source, line, message), level)
+        line = f' on line {self.lineno}' if self.lineno else ''
+        LOGGER.write(f"Error in file '{source}'{line}: {message}", level)
 
 
 class Imports(model.ItemList):

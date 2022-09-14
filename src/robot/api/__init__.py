@@ -70,7 +70,7 @@ See documentations of the individual APIs for more details.
         via the :mod:`robot` root package.
 """
 
-from robot.conf.languages import Language
+from robot.conf.languages import Language, Languages
 from robot.model import SuiteVisitor
 from robot.parsing import (get_tokens, get_resource_tokens, get_init_tokens,
                            get_model, get_resource_model, get_init_model,

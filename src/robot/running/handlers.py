@@ -82,8 +82,9 @@ class _RunnableHandler:
             return self._get_global_handler(method, name)
         return None
 
-    def resolve_arguments(self, args, variables=None):
-        return self.arguments.resolve(args, variables, self.library.converters)
+    def resolve_arguments(self, args, variables=None, languages=None):
+        return self.arguments.resolve(args, variables, self.library.converters,
+                                      languages=languages)
 
     @property
     def doc(self):
@@ -109,8 +110,8 @@ class _RunnableHandler:
     def lineno(self):
         return -1
 
-    def create_runner(self, name):
-        return LibraryKeywordRunner(self)
+    def create_runner(self, name, languages=None):
+        return LibraryKeywordRunner(self, languages=languages)
 
     def current_handler(self):
         if self._method:
@@ -216,8 +217,8 @@ class _DynamicHandler(_RunnableHandler):
             self._source_info = self._get_source_info()
         return self._source_info[1]
 
-    def resolve_arguments(self, arguments, variables=None):
-        positional, named = super().resolve_arguments(arguments, variables)
+    def resolve_arguments(self, arguments, variables=None, languages=None):
+        positional, named = super().resolve_arguments(arguments, variables, languages)
         if not self._supports_kwargs:
             positional, named = self.arguments.map(positional, named)
         return positional, named
@@ -240,17 +241,15 @@ class _DynamicHandler(_RunnableHandler):
 
 class _RunKeywordHandler(_PythonHandler):
 
-    def create_runner(self, name):
-        default_dry_run_keywords = ('name' in self.arguments.positional and
-                                    self._args_to_process)
-        return RunKeywordRunner(self, default_dry_run_keywords)
+    def create_runner(self, name, languages=None):
+        dry_run = RUN_KW_REGISTER.get_dry_run(self.library.orig_name, self.name)
+        return RunKeywordRunner(self, execute_in_dry_run=dry_run)
 
     @property
     def _args_to_process(self):
-        return RUN_KW_REGISTER.get_args_to_process(self.library.orig_name,
-                                                   self.name)
+        return RUN_KW_REGISTER.get_args_to_process(self.library.orig_name, self.name)
 
-    def resolve_arguments(self, args, variables=None):
+    def resolve_arguments(self, args, variables=None, languages=None):
         return self.arguments.resolve(args, variables, self.library.converters,
                                       resolve_named=False,
                                       resolve_variables_until=self._args_to_process)
@@ -284,9 +283,9 @@ class _PythonInitHandler(_PythonHandler):
 
 class EmbeddedArgumentsHandler:
 
-    def __init__(self, name_regexp, orig_handler):
+    def __init__(self, embedded, orig_handler):
         self.arguments = ArgumentSpec()  # Show empty argument spec for Libdoc
-        self.name_regexp = name_regexp
+        self.embedded = embedded
         self._orig_handler = orig_handler
 
     def __getattr__(self, item):
@@ -301,18 +300,21 @@ class EmbeddedArgumentsHandler:
         self._orig_handler.library = library
 
     def matches(self, name):
-        return self.name_regexp.match(name) is not None
+        return self.embedded.match(name) is not None
 
-    def create_runner(self, name):
+    def create_runner(self, name, languages=None):
         return EmbeddedArgumentsRunner(self, name)
 
-    def resolve_arguments(self, args, variables=None):
-        positional = [variables.replace_scalar(a) for a in args] if variables else args
-        named = {}
+    def resolve_arguments(self, args, variables=None, languages=None):
         argspec = self._orig_handler.arguments
-        return argspec.convert(positional, named, self.library.converters,
+        if variables:
+            if argspec.var_positional:
+                args = variables.replace_list(args)
+            else:
+                args = [variables.replace_scalar(a) for a in args]
+            self.embedded.validate(args)
+        return argspec.convert(args, named={}, converters=self.library.converters,
                                dry_run=not variables)
 
     def __copy__(self):
-        orig_handler = copy(self._orig_handler)
-        return EmbeddedArgumentsHandler(self.name_regexp, orig_handler)
+        return EmbeddedArgumentsHandler(self.embedded, copy(self._orig_handler))

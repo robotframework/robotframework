@@ -10,7 +10,7 @@ from robot.parsing.model.blocks import (
     Keyword, KeywordSection, SettingSection, TestCase, TestCaseSection, VariableSection
 )
 from robot.parsing.model.statements import (
-    Arguments, Break, Comment, Continue, Documentation, ForHeader, End, ElseHeader,
+    Arguments, Break, Comment, Config, Continue, Documentation, ForHeader, End, ElseHeader,
     ElseIfHeader, EmptyLine, Error, IfHeader, InlineIfHeader, TryHeader, ExceptHeader,
     FinallyHeader, KeywordCall, KeywordName, ReturnStatement, SectionHeader,
     TestCaseName, Variable, WhileHeader
@@ -1263,6 +1263,62 @@ Example
                 ]
             )
         ])
+        assert_model(model, expected)
+
+
+class TestLanguageConfig(unittest.TestCase):
+
+    def test_valid(self):
+        model = get_model('''\
+language: fi
+language: bad
+language: bad    but ignored
+language: de     # ok
+*** Einstellungen ***
+Dokumentaatio    Header is de and setting is fi.
+''')
+        expected = File(
+            languages=('fi', 'de'),
+            sections=[
+                CommentSection(body=[
+                    Config([
+                        Token('CONFIG', 'language: fi', 1, 0),
+                        Token('EOL', '\n', 1, 12)
+                    ]),
+                    Error([
+                        Token('ERROR', 'language: bad', 2, 0,
+                              "Invalid language configuration: No language with name 'bad' found."),
+                        Token('EOL', '\n', 2, 13)
+                    ]),
+                    Comment([
+                        Token('COMMENT', 'language: bad', 3, 0),
+                        Token('SEPARATOR', '    ', 3, 13),
+                        Token('COMMENT', 'but ignored', 3, 17),
+                        Token('EOL', '\n', 3, 28)
+                    ]),
+                    Config([
+                        Token('CONFIG', 'language: de', 4, 0),
+                        Token('SEPARATOR', '     ', 4, 12),
+                        Token('COMMENT', '# ok', 4, 17),
+                        Token('EOL', '\n', 4, 21)
+                    ]),
+                ]),
+                SettingSection(
+                    header=SectionHeader([
+                        Token('SETTING HEADER', '*** Einstellungen ***', 5, 0),
+                        Token('EOL', '\n', 5, 21)
+                    ]),
+                    body=[
+                        Documentation([
+                            Token('DOCUMENTATION', 'Dokumentaatio', 6, 0),
+                            Token('SEPARATOR', '    ', 6, 13),
+                            Token('ARGUMENT', 'Header is de and setting is fi.', 6, 17),
+                            Token('EOL', '\n', 6, 48)
+                        ])
+                    ]
+                )
+            ]
+        )
         assert_model(model, expected)
 
 

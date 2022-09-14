@@ -15,7 +15,7 @@
 
 import builtins
 import token
-from collections.abc import Mapping
+from collections.abc import MutableMapping
 from io import StringIO
 from tokenize import generate_tokens, untokenize
 
@@ -91,7 +91,7 @@ def _import_modules(module_names):
     return modules
 
 
-class EvaluationNamespace(Mapping):
+class EvaluationNamespace(MutableMapping):
 
     def __init__(self, variable_store, namespace):
         self.namespace = namespace
@@ -103,6 +103,12 @@ class EvaluationNamespace(Mapping):
         if key in self.namespace:
             return self.namespace[key]
         return self._import_module(key)
+
+    def __setitem__(self, key, value):
+        self.namespace[key] = value
+
+    def __delitem__(self, key):
+        self.namespace.pop(key)
 
     def _import_module(self, name):
         if name in PYTHON_BUILTINS:

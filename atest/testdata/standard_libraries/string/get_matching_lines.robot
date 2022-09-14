@@ -65,6 +65,7 @@ Get Lines Matching Regexp Matching Some Lines
 
 Get Lines Matching Regexp With Case-Insensitive
     Test Get Lines Matching Regexp    ${INPUT}    (?i).*line.*    Line 1\nLine 2\nThird line
+    Test Get Lines Matching Regexp with Flags    ${INPUT}    .*line.*    IGNORECASE    Line 1\nLine 2\nThird line
     Test Get Lines Matching Regexp    ${INPUT}    (?i).*LINE    Third line
     Test Get Lines Matching Regexp    ${INPUT}    .*LINE.*    ${EMPTY}
 
@@ -107,6 +108,11 @@ Test Get Lines Matching Pattern
 Test Get Lines Matching Regexp
     [Arguments]    ${input}    ${pattern}    ${expected}
     ${actual} =    Get Lines Matching Regexp    ${input}    ${pattern}
+    Should Be Equal    ${actual}    ${expected}
+
+Test Get Lines Matching Regexp With Flags
+    [Arguments]    ${input}    ${pattern}    ${flags}    ${expected}
+    ${actual} =    Get Lines Matching Regexp    ${input}    ${pattern}    flags=${flags}
     Should Be Equal    ${actual}    ${expected}
 
 Test Get Lines Containing Regexp

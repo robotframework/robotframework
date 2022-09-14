@@ -1669,6 +1669,50 @@ the default date_ conversion:
         def any(self, arg: Union[FiDate, UsDate, date]):
             print(f'year: {arg.year}, month: {arg.month}, day: {arg.day}')
 
+
+Strict type validation
+``````````````````````
+
+Converters are not used at all if the argument is of the specified type to
+begin with. It is thus easy to enable strict type validation with a custom
+converter that does not accept any value. For example, the :name:`Example`
+keyword accepts only `StrictType` instances:
+
+.. sourcecode:: python
+
+    class StrictType:
+        pass
+
+
+    def strict_converter(arg):
+        raise TypeError(f'Only StrictType instances accepted, got {type(arg).__name__}.')
+
+
+    ROBOT_LIBRARY_CONVERTERS = {StrictType: strict_converter}
+
+
+    def example(argument: StrictType):
+        assert isinstance(argument, StrictType)
+
+As a convenience, Robot Framework allows setting converter to `None` to get
+the same effect. For example, this code behaves exactly the same way as
+the code above:
+
+.. sourcecode:: python
+
+    class StrictType:
+        pass
+
+
+    ROBOT_LIBRARY_CONVERTERS = {StrictType: None}
+
+
+    def example(argument: StrictType):
+        assert isinstance(argument, StrictType)
+
+.. note:: Using `None` as a strict converter is new in Robot Framework 5.1.
+          An explicit converter function needs to be used with earlier versions.
+
 Converter documentation
 ```````````````````````
 
@@ -1799,7 +1843,7 @@ This example uses annotations:
 .. sourcecode:: python
 
     @keyword('Add ${quantity:\d+} copies of ${item} to cart')
-    def add_copies_to_cart(quantity: int, item):
+    def add_copies_to_cart(quantity: int, item: str):
         # ...
 
 __ `Specifying argument types using function annotations`_

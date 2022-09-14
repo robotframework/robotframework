@@ -59,11 +59,11 @@ Failing Keyword with Teardown
     Log   Executed if in nested Teardown
     [Teardown]  Log  In Failing UK Teardown
 
-Keyword with Teardown and ${embedded} ${arguments:a.*}
+Keyword with Teardown and ${embedded} ${arguments:A.*}
     Log  In UK with ${embedded} ${arguments}
     [Teardown]  Log  In Teardown of UK with ${embedded} ${arguments}
 
-Failing Keyword with Teardown and ${embedded} ${arguments:a.*}
+Failing Keyword with Teardown and ${embedded} ${arguments:[Aa].*}
     Fail  Expected Failure in UK with ${embedded} ${arguments}
     [Teardown]  Log  In Teardown of Failing UK with ${embedded} ${arguments}
 

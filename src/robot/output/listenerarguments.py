@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.model import BodyItem
 from robot.utils import is_list_like, is_dict_like, is_string, safe_str
 
 
@@ -128,10 +129,23 @@ class EndTestArguments(StartTestArguments):
 class StartKeywordArguments(_ListenerArgumentsFromItem):
     _attribute_names = ('doc', 'assign', 'tags', 'lineno', 'source', 'type', 'status',
                         'starttime')
+    _type_attributes = {
+        BodyItem.FOR: ('variables', 'flavor', 'values'),
+        BodyItem.IF: ('condition',),
+        BodyItem.ELSE_IF: ('condition'),
+        BodyItem.EXCEPT: ('patterns', 'pattern_type', 'variable'),
+        BodyItem.WHILE: ('condition', 'limit'),
+        BodyItem.RETURN: ('values',),
+        BodyItem.ITERATION: ('variables',)}
 
     def _get_extra_attributes(self, kw):
         args = [a if is_string(a) else safe_str(a) for a in kw.args]
-        return {'kwname': kw.kwname or '', 'libname': kw.libname or '', 'args': args}
+        attrs = {'kwname': kw.kwname or '', 'libname': kw.libname or '', 'args': args}
+        if kw.type in self._type_attributes:
+            attrs.update({name: self._get_attribute_value(kw, name)
+                          for name in self._type_attributes[kw.type]
+                          if hasattr(kw, name)})
+        return attrs
 
 
 class EndKeywordArguments(StartKeywordArguments):

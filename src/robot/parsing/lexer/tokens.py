@@ -99,6 +99,7 @@ class Token:
     SEPARATOR = 'SEPARATOR'
     COMMENT = 'COMMENT'
     CONTINUATION = 'CONTINUATION'
+    CONFIG = 'CONFIG'
     EOL = 'EOL'
     EOS = 'EOS'
 

@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from ..lexer import Token, get_tokens, get_resource_tokens, get_init_tokens
-from ..model import Statement
+from ..model import Statement, ModelVisitor
 
 from .fileparser import FileParser
 
@@ -38,8 +38,11 @@ def get_model(source, data_only=False, curdir=None, lang=None):
         When not given, the variable is left as-is. Should only be given
         only if the model will be executed afterwards. If the model is saved
         back to disk, resolving ``${CURDIR}`` is typically not a good idea.
-    # FIXME: docs
-    :param lang: Additional languages to be supported during parsing
+    :param lang: Additional languages to be supported during parsing.
+        Can be a string matching any of the supported language codes or names,
+        an initialized :class:`~robot.conf.languages.Language` subsclass,
+        a list containing such strings or instances, or a
+        :class:`~robot.conf.languages.Languages` instance.
 
     Use :func:`get_resource_model` or :func:`get_init_model` when parsing
     resource or suite initialization files, respectively.
@@ -97,4 +100,16 @@ def _statements_to_model(statements, source=None):
         parser = stack[-1].parse(statement)
         if parser:
             stack.append(parser)
+    # Implicit comment sections have no header.
+    if model.sections and model.sections[0].header is None:
+        SetLanguages(model).visit(model.sections[0])
     return model
+
+
+class SetLanguages(ModelVisitor):
+
+    def __init__(self, file):
+        self.file = file
+
+    def visit_Config(self, node):
+        self.file.languages += (node.language.code,)

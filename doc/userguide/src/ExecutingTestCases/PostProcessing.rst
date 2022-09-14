@@ -117,10 +117,19 @@ Merging is done by using :option:`--merge (-R)` option which changes the way how
 Rebot combines two or more output files. This option itself takes no
 arguments and all other command line options can be used with it normally::
 
-   rebot --merge --name Example original.xml merged.xml
+   rebot --merge original.xml merged.xml
+   rebot --merge --name Example first.xml second.xml third.xml
 
-How merging works in practice is explained in the following sections discussing
-its two main use cases.
+
+When suites are merged, documentation, suite setup and suite teardown are got
+from the last merged suite. Suite metadata from all merged suites is preserved
+so that values in latter suites have precedence.
+
+How merging tests works is explained in the following sections discussing
+the two main merge use cases.
+
+.. note:: Getting suite documentation and metadata from merged suites is new in
+          Robot Framework 5.1.
 
 Merging re-executed tests
 ~~~~~~~~~~~~~~~~~~~~~~~~~

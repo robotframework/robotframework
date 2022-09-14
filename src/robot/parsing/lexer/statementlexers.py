@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
+
 from robot.utils import normalize_whitespace
 from robot.variables import is_assign
 
@@ -110,6 +112,25 @@ class ErrorSectionHeaderLexer(SectionHeaderLexer):
 
 class CommentLexer(SingleType):
     token_type = Token.COMMENT
+
+
+class ImplicitCommentLexer(CommentLexer):
+
+    def input(self, statement):
+        super().input(statement)
+        if len(statement) == 1 and statement[0].value.lower().startswith('language:'):
+            lang = statement[0].value.split(':', 1)[1].strip()
+            try:
+                self.ctx.add_language(lang)
+            except ValueError as err:
+                statement[0].set_error(f'Invalid language configuration: {err}')
+            else:
+                statement[0].type = Token.CONFIG
+
+    def lex(self):
+        for token in self.statement:
+            if not token.type:
+                token.type = self.token_type
 
 
 class SettingLexer(StatementLexer):

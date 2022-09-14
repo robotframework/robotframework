@@ -52,6 +52,11 @@ Failing conversion
     Class with hints as converter
     ...        ${1.2}        type=ClassWithHintsAsConverter    arg_type=float
 
+`None` as strict converter
+    Strict    ${{CustomConverters.Strict()}}
+    Conversion should fail    Strict    wrong type
+    ...    type=Strict    error=TypeError: Only Strict instances are accepted, got string.
+
 Invalid converters
     Invalid    a    b    c    d
 
