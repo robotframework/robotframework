@@ -328,10 +328,10 @@ class KeywordStore:
         if caller and runner.source != caller.source:
             if self._exists_in_resource_file(name, caller.source):
                 message = (
-                    f"Keyword '{caller.longname}' called keyword '{name}' that "
-                    f"exist both in the same resource file and in the test case "
-                    f"file using that resource. The keyword in the test case file "
-                    f"is used now, but this will change in Robot Framework 6.0."
+                    f"Keyword '{caller.longname}' called keyword '{name}' that exists "
+                    f"both in the same resource file as the caller and in the suite "
+                    f"file using that resource. The keyword in the suite file is used "
+                    f"now, but this will change in Robot Framework 6.0."
                 )
                 runner.pre_run_messages += Message(message, level='WARN'),
         return runner
