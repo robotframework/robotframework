@@ -319,7 +319,9 @@ class KeywordStore:
             return None
         handlers = self.user_keywords.handlers.get_handlers(name)
         if len(handlers) > 1:
-            self._raise_multiple_keywords_found(handlers, name)
+            handlers = self._select_best_embedded_match(handlers)
+            if len(handlers) > 1:
+                self._raise_multiple_keywords_found(handlers, name)
         runner = handlers[0].create_runner(name, self.languages)
         ctx = EXECUTION_CONTEXTS.current
         caller = ctx.user_keywords[-1] if ctx.user_keywords else ctx.test
@@ -334,6 +336,23 @@ class KeywordStore:
                 runner.pre_run_messages += Message(message, level='WARN'),
         return runner
 
+    def _select_best_embedded_match(self, handlers):
+        if all(hand.supports_embedded_args for hand in handlers):
+            for hand in handlers:
+                if self._is_best_embedded_match(hand, handlers):
+                    return [hand]
+        return handlers
+
+    def _is_best_embedded_match(self, candidate, alternatives):
+        # Match is considered better than another match if it doesn't match
+        # the other but the other matches it.
+        for other in alternatives:
+            if candidate is other:
+                continue
+            if candidate.matches(other.name) or not other.matches(candidate.name):
+                return False
+        return True
+
     def _exists_in_resource_file(self, name, source):
         for resource in self.resources.values():
             if resource.source == source and name in resource.handlers:
@@ -346,9 +365,9 @@ class KeywordStore:
         if not handlers:
             return None
         if len(handlers) > 1:
-            handlers = self._prioritize_handlers_from_same_file(handlers)
+            handlers = self._prioritize_same_file_or_public(handlers)
             if len(handlers) > 1:
-                handlers = self._filter_private_user_keywords(handlers)
+                handlers = self._select_best_embedded_match(handlers)
                 if len(handlers) > 1:
                     handlers = self._filter_based_on_search_order(handlers)
         if len(handlers) != 1:
@@ -362,9 +381,11 @@ class KeywordStore:
             return None
         pre_run_message = None
         if len(handlers) > 1:
-            handlers = self._filter_based_on_search_order(handlers)
+            handlers = self._select_best_embedded_match(handlers)
             if len(handlers) > 1:
                 handlers, pre_run_message = self._filter_stdlib_handler(handlers)
+                if len(handlers) > 1:
+                    handlers = self._filter_based_on_search_order(handlers)
         if len(handlers) != 1:
             self._raise_multiple_keywords_found(handlers, name)
         runner = handlers[0].create_runner(name, self.languages)
@@ -372,17 +393,15 @@ class KeywordStore:
             runner.pre_run_messages += (pre_run_message,)
         return runner
 
-    def _prioritize_handlers_from_same_file(self, handlers):
+    def _prioritize_same_file_or_public(self, handlers):
         user_keywords = EXECUTION_CONTEXTS.current.user_keywords
-        if not user_keywords:
-            return handlers
-        parent_source = user_keywords[-1].source
-        matches = [h for h in handlers if h.source == parent_source]
-        return matches or handlers
-
-    def _filter_private_user_keywords(self, handlers):
+        if user_keywords:
+            parent_source = user_keywords[-1].source
+            matches = [h for h in handlers if h.source == parent_source]
+            if matches:
+                return matches
         matches = [handler for handler in handlers if not handler.private]
-        return matches if len(matches) == 1 else handlers
+        return matches or handlers
 
     def _filter_based_on_search_order(self, handlers):
         for libname in self.search_order:
@@ -428,10 +447,14 @@ class KeywordStore:
         ]
         if not handlers_and_names:
             return None
-        if len(handlers_and_names) > 1:
+        if len(handlers_and_names) == 1:
+            handler, kw_name = handlers_and_names[0]
+        else:
             handlers = [h for h, n in handlers_and_names]
-            self._raise_multiple_keywords_found(handlers, name, implicit=False)
-        handler, kw_name = handlers_and_names[0]
+            matches = self._select_best_embedded_match(handlers)
+            if len(matches) > 1:
+                self._raise_multiple_keywords_found(handlers, name, implicit=False)
+            handler, kw_name = handlers_and_names[handlers.index(matches[0])]
         return handler.create_runner(kw_name, self.languages)
 
     def _yield_owner_and_kw_names(self, full_name):

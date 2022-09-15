@@ -1,0 +1,17 @@
+from robot.api.deco import keyword
+
+
+@keyword('${match} in ${both} libraries')
+def match_in_both_libraries(match, both):
+    assert match == 'Match'
+    assert both == 'both'
+
+
+@keyword('Unresolvable ${conflict} in library')
+def unresolvable_conflict_in_library(conflict):
+    assert False
+
+
+@keyword('${possible} conflict in library')
+def possible_conflict_in_library(possible):
+    assert possible == 'No'
