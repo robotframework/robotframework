@@ -30,3 +30,6 @@ Match in same resource wins over better match elsewhere
 Another match ${in both resource files}
     [Tags]    robot:private
     Should be equal    ${in both resource files}    in both resource files
+
+Match with and without embedded arguments in different files
+    No operation

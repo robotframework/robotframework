@@ -3,7 +3,6 @@ Resource          embedded_arguments_conflicts/resource.resource
 Resource          embedded_arguments_conflicts/resource2.resource
 Library           embedded_arguments_conflicts/library.py
 Library           embedded_arguments_conflicts/library2.py
-Suite Setup       Set library search order    resource2    library2
 
 *** Variables ***
 ${INDENT}         ${SPACE * 4}
@@ -88,30 +87,42 @@ Conflict in library with explicit usage
     library.y in library
 
 Search order resolves conflict with resources
+    [Setup]    Enable search order
     Match in both resources
+    [Teardown]    Disable search order
 
 Best match in resource wins over search order
+    [Setup]    Enable search order
     Best match in one of resources
+    [Teardown]    Disable search order
 
 Search order resolves conflict with libraries
+    [Setup]    Enable search order
     Match in both libraries
+    [Teardown]    Disable search order
 
 Best match in library wins over search order
+    [Setup]    Enable search order
     Best match in one of libraries
+    [Teardown]    Disable search order
 
 Search order cannot resolve conflict within resource
     [Documentation]    FAIL
     ...    Multiple keywords matching name 'Unresolvable conflict in resource' found:
     ...    ${INDENT}resource2.\${possible} conflict in resource
     ...    ${INDENT}resource2.Unresolvable \${conflict} in resource
+    [Setup]    Enable search order
     Unresolvable conflict in resource
+    [Teardown]    Disable search order
 
 Search order cannot resolve conflict within library
     [Documentation]    FAIL
     ...    Multiple keywords matching name 'Unresolvable conflict in library' found:
     ...    ${INDENT}library2.\${possible} conflict in library
     ...    ${INDENT}library2.Unresolvable \${conflict} in library
+    [Setup]    Enable search order
     Unresolvable conflict in library
+    [Teardown]    Disable search order
 
 Public match wins over better private match in different resource
     [Documentation]    and better match wins when both are in same file
@@ -121,9 +132,13 @@ Match in same resource wins over better match elsewhere
     [Documentation]    even if match in same file would be private
     Match in same resource wins over better match elsewhere
 
-Keyword without embedded arguments wins over keyword with them
+Keyword without embedded arguments wins over keyword with them in same file
     Match with and without embedded arguments
     Match with embedded arguments
+
+Keyword without embedded arguments wins over keyword with them in different file
+    Match with and without embedded arguments in different files
+    Match with embedded arguments in different files
 
 *** Keywords ***
 Execute "${command}"
@@ -145,5 +160,11 @@ Robot ${x}
 Match with and without embedded arguments
     No Operation
 
-Match ${with} embedded arguments
-    Should be equal    ${with}    with
+Match ${with and without} embedded arguments
+    Should be equal    ${with and without}    with
+
+Enable search order
+    Set library search order    resource2    library2
+
+Disable search order
+    Set library search order

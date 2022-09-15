@@ -319,7 +319,7 @@ class KeywordStore:
             return None
         handlers = self.user_keywords.handlers.get_handlers(name)
         if len(handlers) > 1:
-            handlers = self._select_best_embedded_match(handlers)
+            handlers = self._select_best_match(handlers)
             if len(handlers) > 1:
                 self._raise_multiple_keywords_found(handlers, name)
         runner = handlers[0].create_runner(name, self.languages)
@@ -336,15 +336,18 @@ class KeywordStore:
                 runner.pre_run_messages += Message(message, level='WARN'),
         return runner
 
-    def _select_best_embedded_match(self, handlers):
-        if all(hand.supports_embedded_args for hand in handlers):
-            for hand in handlers:
-                if self._is_best_embedded_match(hand, handlers):
-                    return [hand]
+    def _select_best_match(self, handlers):
+        # "Normal" match is considered exact and wins over embedded matches.
+        normal = [hand for hand in handlers if not hand.supports_embedded_args]
+        if normal:
+            return normal if len(normal) == 1 else handlers
+        for hand in handlers:
+            if self._is_best_embedded_match(hand, handlers):
+                return [hand]
         return handlers
 
     def _is_best_embedded_match(self, candidate, alternatives):
-        # Match is considered better than another match if it doesn't match
+        # Embedded match is considered better than another if it doesn't match
         # the other but the other matches it.
         for other in alternatives:
             if candidate is other:
@@ -367,7 +370,7 @@ class KeywordStore:
         if len(handlers) > 1:
             handlers = self._prioritize_same_file_or_public(handlers)
             if len(handlers) > 1:
-                handlers = self._select_best_embedded_match(handlers)
+                handlers = self._select_best_match(handlers)
                 if len(handlers) > 1:
                     handlers = self._filter_based_on_search_order(handlers)
         if len(handlers) != 1:
@@ -381,7 +384,7 @@ class KeywordStore:
             return None
         pre_run_message = None
         if len(handlers) > 1:
-            handlers = self._select_best_embedded_match(handlers)
+            handlers = self._select_best_match(handlers)
             if len(handlers) > 1:
                 handlers, pre_run_message = self._filter_stdlib_handler(handlers)
                 if len(handlers) > 1:
@@ -451,7 +454,7 @@ class KeywordStore:
             handler, kw_name = handlers_and_names[0]
         else:
             handlers = [h for h, n in handlers_and_names]
-            matches = self._select_best_embedded_match(handlers)
+            matches = self._select_best_match(handlers)
             if len(matches) > 1:
                 self._raise_multiple_keywords_found(handlers, name, implicit=False)
             handler, kw_name = handlers_and_names[handlers.index(matches[0])]

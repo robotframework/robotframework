@@ -15,3 +15,6 @@ Better ${private} match
 
 Another ${match} in both resource files
     Fail    Better match but should not be run due to being in different file
+
+Match ${with and without} embedded arguments in different files
+    Should be equal    ${with and without}    with

@@ -73,5 +73,8 @@ Public match wins over better private match in different resource
 Match in same resource wins over better match elsewhere
     Check Test Case    ${TESTNAME}
 
-Keyword without embedded arguments wins over keyword with them
+Keyword without embedded arguments wins over keyword with them in same file
+    Check Test Case    ${TESTNAME}
+
+Keyword without embedded arguments wins over keyword with them in different file
     Check Test Case    ${TESTNAME}
