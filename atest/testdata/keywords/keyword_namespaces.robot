@@ -63,6 +63,12 @@ Local keyword in resource file has precedence over keywords in other resource fi
     Use local keyword that exists also in another resource 1
     Use local keyword that exists also in another resource 2
 
+Local keyword in resource file has precedence even if search order is set
+    [Setup]    Set library search order    my_resource_1
+    Use local keyword that exists also in another resource 1
+    Use local keyword that exists also in another resource 2
+    [Teardown]    Set library search order
+
 Keyword From Custom Library Overrides Keywords From Standard Library
     Comment
     Copy Directory

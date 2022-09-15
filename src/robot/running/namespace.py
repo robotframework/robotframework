@@ -346,11 +346,11 @@ class KeywordStore:
         if not handlers:
             return None
         if len(handlers) > 1:
-            handlers = self._filter_based_on_search_order(handlers)
+            handlers = self._prioritize_handlers_from_same_file(handlers)
             if len(handlers) > 1:
-                handlers = self._prioritize_handlers_from_same_file(handlers)
+                handlers = self._filter_private_user_keywords(handlers)
                 if len(handlers) > 1:
-                    handlers = self._filter_private_user_keywords(handlers)
+                    handlers = self._filter_based_on_search_order(handlers)
         if len(handlers) != 1:
             self._raise_multiple_keywords_found(handlers, name)
         return handlers[0].create_runner(name, self.languages)

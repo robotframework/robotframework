@@ -31,6 +31,11 @@ Local Private Keyword In Resource File Has Precedence Over Keywords In Another R
     Check Log Message    ${tc.body[0].body[0].body[0].msgs[0]}    private.resource
     Check Log Message    ${tc.body[0].body[1].body[0].msgs[0]}    private.resource
 
+Local Private Keyword In Resource File Has Precedence Even If Search Order Is Set
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.body[0].body[0].body[0].msgs[0]}    private.resource
+    Check Log Message    ${tc.body[0].body[1].body[0].msgs[0]}    private.resource
+
 Imported Public Keyword Has Precedence Over Imported Private Keywords
     ${tc}=    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.body[0].body[0].msgs[0]}            private2.resource

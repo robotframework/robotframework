@@ -3215,12 +3215,12 @@ class _Misc(_BuiltInBase):
     def set_library_search_order(self, *search_order):
         """Sets the resolution order to use when a name matches multiple keywords.
 
-        The library search order is used to resolve conflicts when a keyword
-        name in the test data matches multiple keywords. The first library
+        The library search order is used to resolve conflicts when a keyword name
+        that is used matches multiple keyword implementations. The first library
         (or resource, see below) containing the keyword is selected and that
         keyword implementation used. If the keyword is not found from any library
-        (or resource), test executing fails the same way as when the search
-        order is not set.
+        (or resource), execution fails the same way as when the search order is
+        not set.
 
         When this keyword is used, there is no need to use the long
         ``LibraryName.Keyword Name`` notation.  For example, instead of
@@ -3244,10 +3244,11 @@ class _Misc(_BuiltInBase):
         | Set Library Search Order | resource | another_resource |
 
         *NOTE:*
-        - The search order is valid only in the suite where this keywords is used.
+        - The search order is valid only in the suite where this keyword is used.
         - Keywords in resources always have higher priority than
           keywords in libraries regardless the search order.
         - The old order is returned and can be used to reset the search order later.
+        - Calling this keyword without arguments removes possible search order.
         - Library and resource names in the search order are both case and space
           insensitive.
         """
@@ -3256,7 +3257,7 @@ class _Misc(_BuiltInBase):
     def keyword_should_exist(self, name, msg=None):
         """Fails unless the given keyword exists in the current scope.
 
-        Fails also if there are more than one keywords with the same name.
+        Fails also if there is more than one keyword with the same name.
         Works both with the short name (e.g. ``Log``) and the full name
         (e.g. ``BuiltIn.Log``).
 
