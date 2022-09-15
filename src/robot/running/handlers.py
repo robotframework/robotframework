@@ -45,6 +45,7 @@ def InitHandler(library, method=None, docgetter=None):
 
 
 class _RunnableHandler:
+    supports_embedded_args = False
 
     def __init__(self, library, handler_name, handler_method, doc='', tags=None):
         self.library = library
@@ -282,6 +283,7 @@ class _PythonInitHandler(_PythonHandler):
 
 
 class EmbeddedArgumentsHandler:
+    supports_embedded_args = True
 
     def __init__(self, embedded, orig_handler):
         self.arguments = ArgumentSpec()  # Show empty argument spec for Libdoc

@@ -26,18 +26,14 @@ from .usererrorhandler import UserErrorHandler
 
 
 class UserLibrary:
-    TEST_CASE_FILE_TYPE = HandlerStore.TEST_CASE_FILE_TYPE
-    RESOURCE_FILE_TYPE = HandlerStore.RESOURCE_FILE_TYPE
 
-    def __init__(self, resource, source_type=RESOURCE_FILE_TYPE):
+    def __init__(self, resource, resource_file=True):
         source = resource.source
         basename = os.path.basename(source) if source else None
-        self.name = os.path.splitext(basename)[0] \
-            if source_type == self.RESOURCE_FILE_TYPE else None
+        self.name = os.path.splitext(basename)[0] if resource_file else None
         self.doc = resource.doc
-        self.handlers = HandlerStore(basename, source_type)
+        self.handlers = HandlerStore()
         self.source = source
-        self.source_type = source_type
         for kw in resource.keywords:
             try:
                 handler = self._create_handler(kw)
@@ -64,10 +60,14 @@ class UserLibrary:
         LOGGER.error(f"Error in file '{self.source}' on line {handler.lineno}: "
                      f"Creating keyword '{handler.name}' failed: {error.message}")
 
+    def handlers_for(self, name):
+        return self.handlers.get_handlers(name)
+
 
 # TODO: Should be merged with running.model.UserKeyword
 
 class UserKeywordHandler:
+    supports_embedded_args = False
 
     def __init__(self, keyword, libname):
         self.name = keyword.name
@@ -100,10 +100,10 @@ class UserKeywordHandler:
 
 
 class EmbeddedArgumentsHandler(UserKeywordHandler):
+    supports_embedded_args = True
 
     def __init__(self, keyword, libname, embedded):
         super().__init__(keyword, libname)
-        self.keyword = keyword
         self.embedded = embedded
 
     def matches(self, name):

@@ -28,6 +28,7 @@ class UserErrorHandler:
     tests in affected test case file from executing. Instead UserErrorHandler
     is created and if it is ever run DataError is raised then.
     """
+    supports_embedded_arguments = False
 
     def __init__(self, error, name, libname=None, source=None, lineno=None):
         """

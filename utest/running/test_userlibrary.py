@@ -3,8 +3,7 @@ import os
 
 from robot.running import userkeyword
 from robot.running.model import ResourceFile, UserKeyword
-from robot.running.userkeyword import UserLibrary
-from robot.errors import DataError
+from robot.running.userkeyword import EmbeddedArguments, UserLibrary
 from robot.utils.asserts import (assert_equal, assert_none,
                                  assert_raises_with_msg, assert_true)
 
@@ -25,12 +24,13 @@ class UserHandlerStub:
 class EmbeddedArgsHandlerStub:
 
     def __init__(self, kwdata, library, embedded):
-        self.name = kwdata.name
-        if kwdata.name != 'Embedded ${arg}':
+        if '${' not in kwdata.name:
             raise TypeError
+        self.name = kwdata.name
+        self.embedded = embedded
 
     def matches(self, name):
-        return name == self.name
+        return self.embedded.match(name)
 
 
 class TestUserLibrary(unittest.TestCase):
@@ -101,9 +101,17 @@ class TestUserLibrary(unittest.TestCase):
     def test_handlers_getitem_with_non_existing_keyword(self):
         lib = self._get_userlibrary('kw')
         assert_raises_with_msg(
-            DataError,
-            "Test case file contains no keywords matching name 'non existing'.",
-            lib.handlers.__getitem__, 'non existing')
+            ValueError, "No handler with name 'non existing' found.",
+            lib.handlers.__getitem__, 'non existing'
+        )
+
+    def test_handlers_getitem_with_multiple_matching_keywords(self):
+        lib = self._get_userlibrary('Embedded ${a}', 'Embedded ${b}')
+        assert_raises_with_msg(
+            ValueError,
+            "Multiple handlers matching name 'Embedded x' found: 'Embedded ${a}' and 'Embedded ${b}'",
+            lib.handlers.__getitem__, 'Embedded x'
+        )
 
     def test_handlers_getitem_with_existing_keyword(self):
         lib = self._get_userlibrary('kw')
@@ -113,9 +121,7 @@ class TestUserLibrary(unittest.TestCase):
     def _get_userlibrary(self, *keywords, **conf):
         resource = ResourceFile(**conf)
         resource.keywords = [UserKeyword(name) for name in keywords]
-        resource_type = UserLibrary.TEST_CASE_FILE_TYPE \
-                if 'source' not in conf else UserLibrary.RESOURCE_FILE_TYPE
-        return UserLibrary(resource, resource_type)
+        return UserLibrary(resource, resource_file='source' in conf)
 
     def _lib_has_embedded_arg_keyword(self, lib, count=1):
         assert_true('Embedded ${arg}' in lib.handlers)

@@ -15,14 +15,14 @@ Using keyword defined thrice fails as well
 
 Keyword with embedded arguments defined twice fails at run-time: Called with embedded args
     [Documentation]    FAIL
-    ...    Library 'DupeKeywords' contains multiple keywords matching name 'Embedded arguments twice':
-    ...    ${INDENT}Embedded \${arguments match} TWICE
-    ...    ${INDENT}Embedded \${arguments} twice
+    ...    Multiple keywords matching name 'Embedded arguments twice' found:
+    ...    ${INDENT}DupeKeywords.Embedded \${arguments match} TWICE
+    ...    ${INDENT}DupeKeywords.Embedded \${arguments} twice
     Embedded arguments twice
 
 Keyword with embedded arguments defined twice fails at run-time: Called with exact name
     [Documentation]    FAIL
-    ...    Library 'DupeKeywords' contains multiple keywords matching name 'Embedded ${arguments match} twice':
-    ...    ${INDENT}Embedded \${arguments match} TWICE
-    ...    ${INDENT}Embedded \${arguments} twice
+    ...    Multiple keywords matching name 'Embedded \${arguments match} twice' found:
+    ...    ${INDENT}DupeKeywords.Embedded \${arguments match} TWICE
+    ...    ${INDENT}DupeKeywords.Embedded \${arguments} twice
     Embedded ${arguments match} twice

@@ -11,9 +11,9 @@ Using keyword defined multiple times fails
 
 Keyword with embedded arguments defined multiple times fails at run-time
     [Documentation]    FAIL
-    ...    Library 'DupeDynamicKeywords' contains multiple keywords matching name 'Embedded twice':
-    ...    ${INDENT}EMBEDDED \${ARG}
-    ...    ${INDENT}Embedded \${twice}
+    ...    Multiple keywords matching name 'Embedded twice' found:
+    ...    ${INDENT}DupeDynamicKeywords.EMBEDDED \${ARG}
+    ...    ${INDENT}DupeDynamicKeywords.Embedded \${twice}
     Embedded twice
 
 Exact duplicate is accepted
