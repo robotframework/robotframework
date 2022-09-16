@@ -7,6 +7,11 @@ def match_in_both_libraries(match, both):
     assert both == 'both'
 
 
+@keyword('${match} libraries')
+def match_libraries(match):
+    assert False
+
+
 @keyword('Unresolvable ${conflict} in library')
 def unresolvable_conflict_in_library(conflict):
     assert False

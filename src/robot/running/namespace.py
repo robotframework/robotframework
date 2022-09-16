@@ -319,7 +319,7 @@ class KeywordStore:
             return None
         handlers = self.user_keywords.handlers.get_handlers(name)
         if len(handlers) > 1:
-            handlers = self._select_best_match(handlers)
+            handlers = self._select_best_matches(handlers)
             if len(handlers) > 1:
                 self._raise_multiple_keywords_found(handlers, name)
         runner = handlers[0].create_runner(name, self.languages)
@@ -336,25 +336,27 @@ class KeywordStore:
                 runner.pre_run_messages += Message(message, level='WARN'),
         return runner
 
-    def _select_best_match(self, handlers):
-        # "Normal" match is considered exact and wins over embedded matches.
+    def _select_best_matches(self, handlers):
+        # "Normal" matches are considered exact and win over embedded matches.
         normal = [hand for hand in handlers if not hand.supports_embedded_args]
         if normal:
-            return normal if len(normal) == 1 else handlers
-        for hand in handlers:
-            if self._is_best_embedded_match(hand, handlers):
-                return [hand]
-        return handlers
+            return normal
+        matches = [hand for hand in handlers
+                   if not self._is_worse_match_than_others(hand, handlers)]
+        return matches or handlers
 
-    def _is_best_embedded_match(self, candidate, alternatives):
-        # Embedded match is considered better than another if it doesn't match
-        # the other but the other matches it.
+    def _is_worse_match_than_others(self, candidate, alternatives):
         for other in alternatives:
-            if candidate is other:
-                continue
-            if candidate.matches(other.name) or not other.matches(candidate.name):
-                return False
-        return True
+            if (candidate is not other
+                    and self._is_better_match(other, candidate)
+                    and not self._is_better_match(candidate, other)):
+                return True
+        return False
+
+    def _is_better_match(self, candidate, other):
+        # Embedded match is considered better than another if the other matches
+        # it, but it doesn't match the other.
+        return other.matches(candidate.name) and not candidate.matches(other.name)
 
     def _exists_in_resource_file(self, name, source):
         for resource in self.resources.values():
@@ -370,7 +372,7 @@ class KeywordStore:
         if len(handlers) > 1:
             handlers = self._prioritize_same_file_or_public(handlers)
             if len(handlers) > 1:
-                handlers = self._select_best_match(handlers)
+                handlers = self._select_best_matches(handlers)
                 if len(handlers) > 1:
                     handlers = self._filter_based_on_search_order(handlers)
         if len(handlers) != 1:
@@ -384,7 +386,7 @@ class KeywordStore:
             return None
         pre_run_message = None
         if len(handlers) > 1:
-            handlers = self._select_best_match(handlers)
+            handlers = self._select_best_matches(handlers)
             if len(handlers) > 1:
                 handlers, pre_run_message = self._filter_stdlib_handler(handlers)
                 if len(handlers) > 1:
@@ -454,7 +456,7 @@ class KeywordStore:
             handler, kw_name = handlers_and_names[0]
         else:
             handlers = [h for h, n in handlers_and_names]
-            matches = self._select_best_match(handlers)
+            matches = self._select_best_matches(handlers)
             if len(matches) > 1:
                 self._raise_multiple_keywords_found(handlers, name, implicit=False)
             handler, kw_name = handlers_and_names[handlers.index(matches[0])]

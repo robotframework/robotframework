@@ -3,6 +3,9 @@ ${match} in ${both} resources
     Should be equal    ${match}    Match
     Should be equal    ${both}     both
 
+${match} resources
+    Fail    Should not be run due to being worse match than above
+
 Unresolvable ${conflict} in resource
     Fail    Should not be run due to conflict
 
