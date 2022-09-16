@@ -109,6 +109,12 @@ With Space
     Split Path And Check    with space/and another    with space    and another
     Split Extension And Check    with space.and another    with space    and another
 
+Path as `pathlib.Path`
+    Join Path And Check    foo/bar    ${{pathlib.Path('foo')}}    ${{pathlib.Path('bar')}}
+    Normalize Path And Check     ${{pathlib.Path('foo/../bar')}}    bar
+    Split Path And Check         ${{pathlib.Path('foo/bar')}}       foo    bar
+    Split Extension And Check    ${{pathlib.Path('foo.bar')}}       foo    bar
+
 *** Keywords ***
 Join Path And Check
     [Arguments]    ${expected}    @{inputs}

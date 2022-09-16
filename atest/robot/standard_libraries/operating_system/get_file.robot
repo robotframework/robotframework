@@ -133,3 +133,6 @@ Grep File with 'replace' Error Handler
 Grep File With Windows line endings
     ${tc}=    Check testcase    ${TESTNAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    1 out of 5 lines matched
+
+Path as `pathlib.Path`
+    Check Test Case    ${TESTNAME}

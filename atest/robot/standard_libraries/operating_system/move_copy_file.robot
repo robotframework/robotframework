@@ -91,3 +91,6 @@ Move File returns destination path
 
 Copy File returns destination path
     Check Test Case    ${TESTNAME}
+
+Path as `pathlib.Path`
+    Check Test Case    ${TESTNAME}

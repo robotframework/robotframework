@@ -35,3 +35,6 @@ Create And Remove Non-ASCII Directory
 
 Create And Remove Directory With Space
     Check Test Case    ${TESTNAME}
+
+Path as `pathlib.Path`
+    Check Test Case    ${TESTNAME}

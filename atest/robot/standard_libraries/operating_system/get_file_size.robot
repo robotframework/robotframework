@@ -19,3 +19,6 @@ Get size of non-existing file
 
 Get size of directory
     Check testcase    ${TESTNAME}
+
+Path as `pathlib.Path`
+    Check Test Case    ${TESTNAME}

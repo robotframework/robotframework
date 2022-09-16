@@ -5,6 +5,7 @@ Library           String
 
 *** Variables ***
 ${BASE}           %{TEMPDIR}${/}robot-os-tests
+${PATH}           ${{pathlib.Path($BASE)}}
 ${TESTFILE SHORT NAME}    f1.txt
 ${TESTFILE}       ${BASE}${/}${TESTFILE SHORT NAME}
 ${TESTFILE 2 SHORT NAME}    f2.txt

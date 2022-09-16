@@ -8,3 +8,6 @@ Tilde in path
 
 Tilde and username in path
     Check testcase    ${TESTNAME}
+
+Path as `pathlib.Path`
+    Check Test Case    ${TESTNAME}

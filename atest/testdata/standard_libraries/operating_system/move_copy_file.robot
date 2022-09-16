@@ -167,3 +167,11 @@ Copy File returns destination path
     Should Be Equal    ${path}    ${BASE}${/}new.txt
     ${path} =    Copy File    ${BASE}/f*.txt    ${BASE}/dir
     Should Be Equal    ${path}    ${BASE}${/}dir${/}file.txt
+
+Path as `pathlib.Path`
+    Create File              ${BASE}/file
+    Move File                ${PATH/'file'}    ${PATH/'new'}
+    Copy File                ${PATH/'new'}    ${PATH/'copy'}
+    File Should Not Exist    ${BASE}/file
+    File Should Exist        ${BASE}/new
+    File Should Exist        ${BASE}/copy

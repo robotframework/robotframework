@@ -26,3 +26,6 @@ Touching Directory Fails
 
 Touch When Parent Does Not Exist Fails
     Check testcase    ${TESTNAME}
+
+Path as `pathlib.Path`
+    Check Test Case    ${TESTNAME}

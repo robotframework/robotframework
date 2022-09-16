@@ -32,3 +32,6 @@ Moving Non-Existing Directory Fails
 
 Copying Non-Existing Directory Fails
     Check Test Case    ${TESTNAME}
+
+Path as `pathlib.Path`
+    Check Test Case    ${TESTNAME}

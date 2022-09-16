@@ -49,3 +49,6 @@ Creating Binary File Using Unicode With Ordinal > 255 Fails
 
 Append To File
     Check Test Case    ${TESTNAME}
+
+Path as `pathlib.Path`
+    Check Test Case    ${TESTNAME}

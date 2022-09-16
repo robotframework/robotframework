@@ -54,3 +54,6 @@ Set And Get Modified Time Of Non-ASCII File
 
 Set And Get Modified Time Of File With Spaces In Name
     Check Test Case    ${TESTNAME}
+
+Path as `pathlib.Path`
+    Check Test Case    ${TESTNAME}

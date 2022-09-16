@@ -61,3 +61,12 @@ Remove file containing glob pattern
     File Should Exist    ${BASE}/[foo]bar.txt
     Remove File    ${BASE}/[foo]bar.txt
     Should Not Exist    ${BASE}/[foo]bar.txt
+
+Path as `pathlib.Path`
+    Create File         ${BASE}/file1.txt
+    Create File         ${BASE}/file2.txt
+    Create File         ${BASE}/file3.txt
+    Create File         ${BASE}/file4.txt
+    Remove File         ${PATH/'file1.txt'}
+    Remove Files        ${PATH/'file2.txt'}    ${PATH/'file[34].txt'}
+    Should Not Exist    ${BASE}/file*.txt
