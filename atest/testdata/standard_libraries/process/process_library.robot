@@ -20,7 +20,7 @@ Start And Wait Process
 
 Change Current Working Directory
     ${result}=    Run Process    python    -c    import os; print(os.path.abspath(os.curdir))    cwd=.
-    ${result2}=    Run Process    python    -c    import os; print(os.path.abspath(os.curdir))    cwd=..
+    ${result2}=    Run Process    python    -c    import os; print(os.path.abspath(os.curdir))    cwd=${{pathlib.Path('..')}}
     Should Not Be Equal    ${result.stdout}    ${result2.stdout}
 
 Running a process in a shell

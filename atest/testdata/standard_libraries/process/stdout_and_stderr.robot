@@ -11,6 +11,10 @@ Custom stdout
     ${result} =    Run Stdout Stderr Process    stdout=${STDOUT}
     Result Should Equal    ${result}    stdout    stderr    stdout_path=${STDOUT}
 
+Custom stdout as `pathlib.Path`
+    ${result} =    Run Stdout Stderr Process    stdout=${{pathlib.Path($STDOUT)}}
+    Result Should Equal    ${result}    stdout    stderr    stdout_path=${STDOUT}
+
 Redirecting stdout to DEVNULL
     ${result} =    Run Stdout Stderr Process    stdout=DEVNULL
     Should Not Exist      ${EXECDIR}/DEVNULL
@@ -20,6 +24,10 @@ Redirecting stdout to DEVNULL
 
 Custom stderr
     ${result} =    Run Stdout Stderr Process    stderr=${STDERR}
+    Result Should Equal    ${result}    stdout    stderr    stderr_path=${STDERR}
+
+Custom stderr as `pathlib.Path`
+    ${result} =    Run Stdout Stderr Process    stderr=${{pathlib.Path($STDERR)}}
     Result Should Equal    ${result}    stdout    stderr    stderr_path=${STDERR}
 
 Custom stdout and stderr

@@ -16,7 +16,10 @@ Stdin can be disabled
 Stdin can be disabled with None object
     Check Test Case    ${TESTNAME}
 
-Stdin as file
+Stdin as path
+    Check Test Case    ${TESTNAME}
+
+Stdin as `pathlib.Path`
     Check Test Case    ${TESTNAME}
 
 Stdin as text
