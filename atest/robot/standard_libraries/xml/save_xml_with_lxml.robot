@@ -25,6 +25,9 @@ Save Non-ASCII XML
 Save Non-ASCII XML Using Custom Encoding
     Check Test Case    ${TESTNAME}
 
+Save to `pathlib.Path`
+    Check Test Case    ${TESTNAME}
+
 Save to Invalid File
     Check Test Case    ${TESTNAME}
 
