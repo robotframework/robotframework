@@ -110,7 +110,11 @@ class Screenshot:
     def _norm_path(self, path):
         if not path:
             return path
-        return os.path.normpath(path.replace('/', os.sep))
+        elif isinstance(path, os.PathLike):
+            path = str(path)
+        else:
+            path = path.replace('/', os.sep)
+        return os.path.normpath(path)
 
     @property
     def _screenshot_dir(self):
@@ -179,8 +183,9 @@ class Screenshot:
         self._link_screenshot(path)
         return path
 
-    def _save_screenshot(self, basename, directory=None):
-        path = self._get_screenshot_path(basename, directory)
+    def _save_screenshot(self, name):
+        name = str(name) if isinstance(name, os.PathLike) else name.replace('/', os.sep)
+        path = self._get_screenshot_path(name)
         return self._screenshot_to_file(path)
 
     def _screenshot_to_file(self, path):
@@ -202,14 +207,13 @@ class Screenshot:
                                "does not exist" % os.path.dirname(path))
         return path
 
-    def _get_screenshot_path(self, basename, directory):
-        directory = self._norm_path(directory) if directory else self._screenshot_dir
+    def _get_screenshot_path(self, basename):
         if basename.lower().endswith(('.jpg', '.jpeg')):
-            return os.path.join(directory, basename)
+            return os.path.join(self._screenshot_dir, basename)
         index = 0
         while True:
             index += 1
-            path = os.path.join(directory, "%s_%d.jpg" % (basename, index))
+            path = os.path.join(self._screenshot_dir, "%s_%d.jpg" % (basename, index))
             if not os.path.exists(path):
                 return path
 
