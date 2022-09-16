@@ -38,3 +38,6 @@ Resource Search Order Is Case Insensitive
 
 Default Resource Order Should Be Suite Specific
     Check Test Case  ${TEST NAME}
+
+Exact match wins over match containing embedded arguments regardless search order
+    Check Test Case  ${TEST NAME}
