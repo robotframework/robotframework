@@ -110,7 +110,7 @@ With Space
     Split Extension And Check    with space.and another    with space    and another
 
 Path as `pathlib.Path`
-    Join Path And Check    foo/bar    ${{pathlib.Path('foo')}}    ${{pathlib.Path('bar')}}
+    Join Path And Check    foo${/}bar    ${{pathlib.Path('foo')}}    ${{pathlib.Path('bar')}}
     Normalize Path And Check     ${{pathlib.Path('foo/../bar')}}    bar
     Split Path And Check         ${{pathlib.Path('foo/bar')}}       foo    bar
     Split Extension And Check    ${{pathlib.Path('foo.bar')}}       foo    bar
