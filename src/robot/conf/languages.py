@@ -837,3 +837,44 @@ class ZhCn(Language):
     then_prefix = {'则'}
     and_prefix = {'且'}
     but_prefix = {'但'}
+
+
+class Tr(Language):
+    """Turkish"""
+    settings_header = 'Ayarlar'
+    variables_header = 'Değişkenler'
+    test_cases_header = 'Test Cases'
+    tasks_header = 'Görevler'
+    keywords_header = 'Anahtar Kelimeler'
+    comments_header = 'Yorumlar'
+    library_setting = 'Kütüphane'
+    resource_setting = 'Kaynak'
+    variables_setting = 'Değişkenler'
+    documentation_setting = 'Dokümentasyon'
+    metadata_setting = 'Üstveri'
+    suite_setup_setting = 'Takım Kurulumu'
+    suite_teardown_setting =  'Takım Bitişi'
+    test_setup_setting = 'Test Kurulumu'
+    task_setup_setting = 'Görev Kurulumu'
+    test_teardown_setting = 'Test Bitişi'
+    task_teardown_setting = 'Görev Bitişi'
+    test_template_setting = 'Test Taslağı'
+    task_template_setting = 'Görev Taslağı'
+    test_timeout_setting = 'Test Zaman Aşımı'
+    task_timeout_setting = 'Görev Zaman Aşımı'
+    test_tags_setting = 'Test Etiketleri'
+    task_tags_setting = 'Görev Etiketleri'
+    keyword_tags_setting = 'Anahtar Kelime Etiketleri'
+    setup_setting = 'Kurulum'
+    teardown_setting = 'Bitiş'
+    template_setting = 'Taslak'
+    tags_setting = 'Etiketler'
+    timeout_setting = 'Zaman Aşımı'
+    arguments_setting = 'Argümanlar'
+    given_prefix = {'Diyelim ki'}
+    when_prefix = {'Eğer ki'}
+    then_prefix = {'O zaman'}
+    and_prefix = {'Ve'}
+    but_prefix = {'Ancak'}
+    true_strings = {'DOGRU', 'EVET', 'AÇIK'}
+    false_strings = {'YANLIS', 'HAYIR', 'KAPALI'}
