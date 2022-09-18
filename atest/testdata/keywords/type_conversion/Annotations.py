@@ -1,13 +1,11 @@
 from collections import abc
 from datetime import datetime, date, timedelta
 from decimal import Decimal
-try:
-    from enum import Flag, Enum, IntFlag, IntEnum
-except ImportError:    # Python 3.5
-    from enum import Enum, IntEnum
-    Flag, IntFlag = Enum, IntEnum
+from enum import Flag, Enum, IntFlag, IntEnum
 from functools import wraps
 from numbers import Integral, Real
+from os import PathLike
+from pathlib import Path, PurePath
 
 # Needed by `eval()` in `_validate_type()`.
 import collections
@@ -98,6 +96,18 @@ def date_(argument: date, expected=None):
 
 
 def timedelta_(argument: timedelta, expected=None):
+    _validate_type(argument, expected)
+
+
+def path(argument: Path, expected=None):
+    _validate_type(argument, expected)
+
+
+def pure_path(argument: PurePath, expected=None):
+    _validate_type(argument, expected)
+
+
+def path_like(argument: PathLike, expected=None):
     _validate_type(argument, expected)
 
 

@@ -5,6 +5,8 @@ Resource                 conversion.resource
 *** Variables ***
 @{LIST}                  foo                       bar
 &{DICT}                  foo=${1}                  bar=${2}
+${PATH}                  ${{pathlib.Path('x/y')}}
+${PUREPATH}              ${{pathlib.PurePath('x/y')}}
 
 *** Test Cases ***
 Integer
@@ -173,6 +175,22 @@ Invalid timedelta
     [Template]           Invalid value is passed as-is
     Timedelta            foobar
     Timedelta            01:02:03:04
+
+Path
+    Path                 path                      Path('path')
+    Path                 two/components            Path(r'two${/}components')
+    Path                 two${/}components         Path(r'two${/}components')
+    Path                 ${PATH}                   Path('x/y')
+    Path                 ${PUREPATH}               Path('x/y')
+    PurePath             path                      Path('path')
+    PurePath             two/components            Path(r'two${/}components')
+    PurePath             two${/}components         Path(r'two${/}components')
+    PurePath             ${PATH}                   Path('x/y')
+    PurePath             ${PUREPATH}               PurePath('x/y')
+
+Invalid Path
+    [Template]           Invalid value is passed as-is
+    Path                 ${1}                      ${1}
 
 Enum
     Enum                 FOO                       MyEnum.FOO

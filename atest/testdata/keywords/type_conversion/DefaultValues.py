@@ -1,6 +1,7 @@
 from enum import Flag, Enum, IntFlag, IntEnum
 from datetime import datetime, date, timedelta
 from decimal import Decimal
+from pathlib import Path, PurePath    # Path needed by `eval()` in `_validate_type()`.
 
 from robot.api.deco import keyword
 
@@ -67,6 +68,14 @@ def date_(argument=date.today(), expected=None):
 
 
 def timedelta_(argument=timedelta(), expected=None):
+    _validate_type(argument, expected)
+
+
+def path(argument=Path(), expected=None):
+    _validate_type(argument, expected)
+
+
+def pure_path(argument=PurePath(), expected=None):
     _validate_type(argument, expected)
 
 

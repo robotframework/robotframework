@@ -4,6 +4,8 @@ from decimal import Decimal
 from enum import Flag, Enum, IntFlag, IntEnum
 from fractions import Fraction    # Needed by `eval()` in `_validate_type()`.
 from numbers import Integral, Real
+from os import PathLike
+from pathlib import Path, PurePath
 from typing import Union
 
 from robot.api.deco import keyword
@@ -98,6 +100,21 @@ def date_(argument, expected=None):
 
 @keyword(types={'argument': timedelta})
 def timedelta_(argument, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(types={'argument': Path})
+def path(argument, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(types={'argument': PurePath})
+def pure_path(argument, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(types={'argument': PathLike})
+def path_like(argument, expected=None):
     _validate_type(argument, expected)
 
 

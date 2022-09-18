@@ -8,7 +8,8 @@ Resource                 conversion.resource
 &{DICT}                  foo=${1}                  bar=${2}
 ${FRACTION 1/2}          ${{fractions.Fraction(1,2)}}
 ${DECIMAL 1/2}           ${{decimal.Decimal('0.5')}}
-${u}                     ${{'u' if sys.version_info[0] == 2 and sys.platform != 'cli' else ''}}
+${PATH}                  ${{pathlib.Path('x/y')}}
+${PUREPATH}              ${{pathlib.PurePath('x/y')}}
 
 *** Test Cases ***
 Integer
@@ -152,7 +153,7 @@ String
     String               2                         '2'
     String               ${42}                     '42'
     String               ${None}                   'None'
-    String               ${LIST}                   "[${u}'foo', ${u}'bar']"
+    String               ${LIST}                   "['foo', 'bar']"
 
 Invalid string
     [Template]           Conversion Should Fail
@@ -258,6 +259,27 @@ Invalid timedelta
     Timedelta            1 foo                     error=Invalid time string '1 foo'.
     Timedelta            01:02:03:04               error=Invalid time string '01:02:03:04'.
     Timedelta            ${LIST}                   arg_type=list
+
+Path
+    Path                 path                      Path('path')
+    Path                 two/components            Path(r'two${/}components')
+    Path                 two${/}components         Path(r'two${/}components')
+    Path                 ${PATH}                   Path('x/y')
+    Path                 ${PUREPATH}               Path('x/y')
+    PurePath             path                      Path('path')
+    PurePath             two/components            Path(r'two${/}components')
+    PurePath             two${/}components         Path(r'two${/}components')
+    PurePath             ${PATH}                   Path('x/y')
+    PurePath             ${PUREPATH}               PurePath('x/y')
+    PathLike             path                      Path('path')
+    PathLike             two/components            Path(r'two${/}components')
+    PathLike             two${/}components         Path(r'two${/}components')
+    PathLike             ${PATH}                   Path('x/y')
+    PathLike             ${PUREPATH}               PurePath('x/y')
+
+Invalid Path
+    [Template]           Conversion Should Fail
+    Path                 ${1}                      type=Path    arg_type=integer
 
 Enum
     Enum                 FOO                       MyEnum.FOO
