@@ -689,18 +689,16 @@ using the keywords from the earlier example.
        Today is ${DATE}
        I type ${1} + ${2}
 
-If the value of the variable is a string, it must match the custom regular
-expression. Non-string values are accepted without validation.
-
-.. note:: Validating string values against custom regular expressions is new
-          in Robot Framework 5.1. Earlier all variable values were accepted
-          without validation.
+Notice that the actual value of the variable does not need to match the custom
+regular expression. This is likely to change in the future, though,
+as discussed in `issue #4069`__.
 
 __ http://en.wikipedia.org/wiki/Regular_expression
 __ `Embedded arguments matching too much`_
 __ http://docs.python.org/library/re.html
 __ `Errors and warnings during execution`_
 __ Escaping_
+__ https://github.com/robotframework/robotframework/issues/4069
 
 Behavior-driven development example
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

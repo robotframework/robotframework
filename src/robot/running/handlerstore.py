@@ -13,22 +13,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from operator import attrgetter
+from itertools import chain
 
-from robot.errors import DataError, KeywordError
-from robot.utils import NormalizedDict
+from robot.errors import DataError
+from robot.utils import NormalizedDict, seq2str
 
 from .usererrorhandler import UserErrorHandler
 
 
 class HandlerStore:
-    LIBRARY_TYPE = 'Library'
-    TEST_CASE_FILE_TYPE = 'Test case file'
-    RESOURCE_FILE_TYPE = 'Resource file'
 
-    def __init__(self, source, source_type):
-        self.source = source
-        self.source_type = source_type
+    def __init__(self):
         self._normal = NormalizedDict(ignore='_')
         self._embedded = []
 
@@ -44,8 +39,7 @@ class HandlerStore:
             raise error
 
     def __iter__(self):
-        handlers = list(self._normal.values()) + self._embedded
-        return iter(sorted(handlers, key=attrgetter('name')))
+        return chain(self._normal.values(), self._embedded)
 
     def __len__(self):
         return len(self._normal) + len(self._embedded)
@@ -55,30 +49,16 @@ class HandlerStore:
             return True
         return any(template.matches(name) for template in self._embedded)
 
-    def create_runner(self, name, languages=None):
-        return self[name].create_runner(name, languages)
-
     def __getitem__(self, name):
-        try:
-            return self._normal[name]
-        except KeyError:
-            return self._find_embedded(name)
+        handlers = self.get_handlers(name)
+        if len(handlers) == 1:
+            return handlers[0]
+        if not handlers:
+            raise ValueError(f"No handler with name '{name}' found.")
+        names = seq2str([handler.name for handler in handlers])
+        raise ValueError(f"Multiple handlers matching name '{name}' found: {names}")
 
-    def _find_embedded(self, name):
-        embedded = [template for template in self._embedded if template.matches(name)]
-        if len(embedded) == 1:
-            return embedded[0]
-        self._raise_no_single_match(name, embedded)
-
-    def _raise_no_single_match(self, name, found):
-        if self.source_type == self.TEST_CASE_FILE_TYPE:
-            source = self.source_type
-        else:
-            source = "%s '%s'" % (self.source_type, self.source)
-        if not found:
-            raise KeywordError("%s contains no keywords matching name '%s'."
-                               % (source, name))
-        error = ["%s contains multiple keywords matching name '%s':"
-                 % (source, name)]
-        names = sorted(handler.name for handler in found)
-        raise KeywordError('\n    '.join(error + names))
+    def get_handlers(self, name):
+        if name in self._normal:
+            return [self._normal[name]]
+        return [template for template in self._embedded if template.matches(name)]

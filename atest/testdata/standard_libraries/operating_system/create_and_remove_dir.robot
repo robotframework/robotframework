@@ -1,6 +1,6 @@
 *** Settings ***
-Suite Teardown    Remove Base Test Directory
 Test Setup        Create Base Test Directory
+Suite Teardown    Remove Base Test Directory
 Resource          os_resource.robot
 
 *** Test Cases ***
@@ -8,8 +8,8 @@ Create Directory
     Create Directory    ${TESTDIR}
     Directory Should Exist    ${TESTDIR}
     Create Directory    ${TESTDIR}
-    Create Directory    ${TESTDIR}${/}sub${/}dirs${/}here
-    Directory Should Exist    ${TESTDIR}${/}sub${/}dirs${/}here
+    Create Directory    ${TESTDIR}/sub/dirs/here
+    Directory Should Exist    ${TESTDIR}/sub/dirs/here
 
 Creating Directory Over Existing File Fails
     [Documentation]    FAIL Path '${TESTFILE}' is not a directory.
@@ -23,8 +23,8 @@ Remove Directory
     Should Not Exist    ${TESTDIR}
 
 Remove Directory Recursively
-    Create File    ${TESTDIR}${/}file.txt
-    Create File    ${TESTDIR}${/}sub${/}file2.txt
+    Create File    ${TESTDIR}/file.txt
+    Create File    ${TESTDIR}/sub/file2.txt
     Remove Directory    ${TESTDIR}    Recursive
     Should Not Exist    ${TESTDIR}
 
@@ -34,7 +34,7 @@ Removing Non-Existing Directory Is Ok
 Removing Non-Empty Directory When Not Recursive Fails
     [Documentation]    FAIL Directory '${TESTDIR}' is not empty.
     Create Directory    ${TESTDIR}
-    Create File    ${TESTDIR}${/}file.txt
+    Create File    ${TESTDIR}/file.txt
     Remove Directory    ${TESTDIR}    recursive=no
 
 Empty Directory
@@ -64,3 +64,11 @@ Create And Remove Directory With Space
     Directory Should Exist    ${WITH SPACE}
     Remove Directory    ${WITH SPACE}
     Should Not Exist    ${WITH SPACE}
+
+Path as `pathlib.Path`
+    ${path} =    Set Variable    ${{pathlib.Path($TESTDIR)}}
+    Create Directory     ${path}
+    Create File          ${path/'file.txt'}
+    File Should Exist    ${TESTDIR}/file.txt
+    Empty Directory      ${path}
+    Remove Directory     ${path}

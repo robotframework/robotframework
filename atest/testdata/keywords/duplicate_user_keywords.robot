@@ -15,14 +15,14 @@ Using keyword defined thrice fails as well
 
 Keyword with embedded arguments defined twice fails at run-time: Called with embedded args
     [Documentation]    FAIL
-    ...    Test case file contains multiple keywords matching name 'Embedded arguments twice':
+    ...    Multiple keywords matching name 'Embedded arguments twice' found:
     ...    ${INDENT}Embedded \${arguments match} TWICE
     ...    ${INDENT}Embedded \${arguments} twice
     Embedded arguments twice
 
 Keyword with embedded arguments defined twice fails at run-time: Called with exact name
     [Documentation]    FAIL
-    ...    Test case file contains multiple keywords matching name 'Embedded ${arguments match} twice':
+    ...    Multiple keywords matching name 'Embedded \${arguments match} twice' found:
     ...    ${INDENT}Embedded \${arguments match} TWICE
     ...    ${INDENT}Embedded \${arguments} twice
     Embedded ${arguments match} twice
@@ -33,9 +33,9 @@ Using keyword defined multiple times in resource fails
 
 Keyword with embedded arguments defined multiple times in resource fails at run-time
     [Documentation]    FAIL
-    ...    Resource file 'dupe_keywords.resource' contains multiple keywords matching name 'Embedded arguments twice in resource':
-    ...    ${INDENT}Embedded \${arguments match} TWICE IN RESOURCE
-    ...    ${INDENT}Embedded \${arguments} twice in resource
+    ...    Multiple keywords matching name 'Embedded arguments twice in resource' found:
+    ...    ${INDENT}dupe_keywords.Embedded \${arguments match} TWICE IN RESOURCE
+    ...    ${INDENT}dupe_keywords.Embedded \${arguments} twice in resource
     Embedded arguments twice in resource
 
 *** Keywords ***

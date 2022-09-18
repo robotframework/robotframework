@@ -68,6 +68,15 @@ File Should Not Be Empty When File Does Not Exist
     [Documentation]    FAIL File '${NON ASCII}' does not exist.
     File Should Not Be Empty    ${NON ASCII}
 
+Path as `pathlib.Path`
+    Create Directory                 ${BASE}/dir
+    Directory Should Be Empty        ${PATH/'dir'}
+    Create File                      ${BASE}/dir/file.txt
+    File Should Be Empty             ${PATH/'dir/file.txt'}
+    Create File                      ${BASE}/dir/file.txt    content
+    File Should Not Be Empty         ${PATH/'dir/file.txt'}
+    Directory Should Not Be Empty    ${PATH/'dir'}
+
 *** Keywords ***
 Test Directory Should Be Empty
     [Arguments]    ${dir}

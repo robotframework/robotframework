@@ -1031,8 +1031,8 @@ can be defined with a variable as well.
 
 .. sourcecode:: robotframework
 
-    *** Settings ***
-    ${regexp}     regexp
+    *** Variables ***
+    ${MATCH TYPE}     regexp
 
     *** Test Cases ***
     Glob pattern
@@ -1047,7 +1047,7 @@ can be defined with a variable as well.
     Regular expression
         TRY
             Some Keyword
-        EXCEPT    ValueError: .*    type=${regexp}
+        EXCEPT    ValueError: .*    type=${MATCH TYPE}
             Error Handler 1
         EXCEPT    [Ee]rror \\d+ occurred    type=Regexp    # Backslash needs to be escaped.
             Error Handler 2

@@ -176,3 +176,15 @@ Directory Should Not Exist With Pattern Matching Multiple Dirs
     Create Directory    ${BASE}/dir
     Create Directory    ${BASE}/another
     Directory Should Not Exist    ${BASE}${/}*r
+
+Path as `pathlib.Path`
+    Create File                   ${BASE}/file.txt
+    File Should Exist             ${PATH/'file.txt'}
+    Directory Should Not Exist    ${PATH/'file.txt'}
+    Should Exist                  ${PATH/'file.txt'}
+    File Should Not Exist         ${PATH}
+    Directory Should Exist        ${PATH}
+    Should Exist                  ${PATH}
+    File Should Not Exist         ${PATH/'nonex'}
+    Directory Should Not Exist    ${PATH/'nonex'}
+    Should Not Exist              ${PATH/'nonex'}

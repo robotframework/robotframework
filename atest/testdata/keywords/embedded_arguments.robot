@@ -100,12 +100,12 @@ Custom Regexp Matching Variables
     I execute "${bar}" with "${zap}"
     I execute "${bar}"
 
-Non Matching Variable Is Not Accepted With Custom Regexp
-    [Documentation]    FAIL ValueError: Embedded argument 'x' got value 'foo' that does not match custom pattern 'bar'.
+Non Matching Variable Is Accepted With Custom Regexp (But Not For Long)
+    [Documentation]    FAIL    foo != bar    # ValueError: Embedded argument 'x' got value 'foo' that does not match custom pattern 'bar'.
     I execute "${foo}" with "${bar}"
 
-Partially Matching Variable Is Not Accepted With Custom Regexp
-    [Documentation]    FAIL ValueError: Embedded argument 'x' got value 'ba' that does not match custom pattern 'bar'.
+Partially Matching Variable Is Accepted With Custom Regexp (But Not For Long)
+    [Documentation]    FAIL    ba != bar    # ValueError: Embedded argument 'x' got value 'ba' that does not match custom pattern 'bar'.
     I execute "${bar[:2]}" with "${zap}"
 
 Non String Variable Is Accepted With Custom Regexp
@@ -167,7 +167,8 @@ Creating keyword with both normal and embedded arguments fails
     Keyword with ${embedded} and normal args is invalid    arg1    arg2
 
 Keyword Matching Multiple Keywords In Test Case File
-    [Documentation]    FAIL Test case file contains multiple keywords matching name 'foo+tc+bar-tc-zap':
+    [Documentation]    FAIL
+    ...    Multiple keywords matching name 'foo+tc+bar-tc-zap' found:
     ...    ${INDENT}\${a}+tc+\${b}
     ...    ${INDENT}\${a}-tc-\${b}
     foo+tc+bar
@@ -176,26 +177,29 @@ Keyword Matching Multiple Keywords In Test Case File
     foo+tc+bar-tc-zap
 
 Keyword Matching Multiple Keywords In One Resource File
-    [Documentation]    FAIL Resource file 'embedded_args_in_uk_1.robot' contains multiple keywords matching name 'foo+r1+bar-r1-zap':
-    ...    ${INDENT}\${a}+r1+\${b}
-    ...    ${INDENT}\${a}-r1-\${b}
+    [Documentation]    FAIL
+    ...    Multiple keywords matching name 'foo+r1+bar-r1-zap' found:
+    ...    ${INDENT}embedded_args_in_uk_1.\${a}+r1+\${b}
+    ...    ${INDENT}embedded_args_in_uk_1.\${a}-r1-\${b}
     foo+r1+bar
     foo-r1-bar
     foo+r1+bar-r1-zap
 
 Keyword Matching Multiple Keywords In Different Resource Files
-    [Documentation]    FAIL Multiple keywords with name 'foo-r1-bar-r2-zap' found. \
-    ...    Give the full name of the keyword you want to use:
-    ...    ${INDENT}embedded_args_in_uk_1.foo-r1-bar-r2-zap
-    ...    ${INDENT}embedded_args_in_uk_2.foo-r1-bar-r2-zap
+    [Documentation]    FAIL
+    ...    Multiple keywords matching name 'foo-r1-bar-r2-zap' found:
+    ...    ${INDENT}embedded_args_in_uk_1.\${a}-r1-\${b}
+    ...    ${INDENT}embedded_args_in_uk_2.\${arg1}-r2-\${arg2}
     foo-r1-bar
     foo-r2-bar
     foo-r1-bar-r2-zap
 
 Keyword Matching Multiple Keywords In One And Different Resource Files
-    [Documentation]    FAIL Resource file 'embedded_args_in_uk_1.robot' contains multiple keywords matching name '-r1-r2-+r1+':
-    ...    ${INDENT}\${a}+r1+\${b}
-    ...    ${INDENT}\${a}-r1-\${b}
+    [Documentation]    FAIL
+    ...    Multiple keywords matching name '-r1-r2-+r1+' found:
+    ...    ${INDENT}embedded_args_in_uk_1.\${a}+r1+\${b}
+    ...    ${INDENT}embedded_args_in_uk_1.\${a}-r1-\${b}
+    ...    ${INDENT}embedded_args_in_uk_2.\${arg1}-r2-\${arg2}
     -r1-r2-+r1+
 
 Same name with different regexp works
@@ -205,14 +209,14 @@ Same name with different regexp works
 
 Same name with different regexp matching multiple fails
     [Documentation]    FAIL
-    ...    Test case file contains multiple keywords matching name 'It is a cat':
+    ...    Multiple keywords matching name 'It is a cat' found:
     ...    ${INDENT}It is \${animal:a (cat|cow)}
     ...    ${INDENT}It is \${animal:a (dog|cat)}
     It is a cat
 
 Same name with same regexp fails
     [Documentation]    FAIL
-    ...    Test case file contains multiple keywords matching name 'It is totally same':
+    ...    Multiple keywords matching name 'It is totally same' found:
     ...    ${INDENT}It is totally \${same}
     ...    ${INDENT}It is totally \${same}
     It is totally same

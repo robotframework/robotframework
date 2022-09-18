@@ -21,6 +21,8 @@ from datetime import datetime, date, timedelta
 from decimal import InvalidOperation, Decimal
 from enum import Enum
 from numbers import Integral, Real
+from os import PathLike
+from pathlib import Path, PurePath
 
 from robot.conf import Languages
 from robot.libraries.DateTime import convert_date, convert_time
@@ -366,6 +368,17 @@ class TimeDeltaConverter(TypeConverter):
 
     def _convert(self, value, explicit_type=True):
         return convert_time(value, result_format='timedelta')
+
+
+@TypeConverter.register
+class PathConverter(TypeConverter):
+    type = Path
+    abc = PathLike
+    type_name = 'Path'
+    value_types = (str, PurePath)
+
+    def _convert(self, value, explicit_type=True):
+        return Path(value)
 
 
 @TypeConverter.register

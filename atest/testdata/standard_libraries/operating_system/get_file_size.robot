@@ -15,7 +15,7 @@ Get File Size
     ${size} =    Get File Size    ${WITH SPACE}
     Should Be Equal    ${size}    ${12}
     ${size} =    Get File Size    ${CURDIR}/get_file_size.robot
-    Should Be True    0 < ${size} < 1000
+    Should Be True    0 < ${size} < 1111
 
 Get size of non-existing file
     [Documentation]    FAIL File '${EXECDIR}${/}non.ex' does not exist.
@@ -24,3 +24,8 @@ Get size of non-existing file
 Get size of directory
     [Documentation]    FAIL File '${CURDIR}' does not exist.
     Get File Size    ${CURDIR}
+
+Path as `pathlib.Path`
+    Create File    ${BASE}/file.txt    content
+    ${size} =    Get File Size    ${PATH/'file.txt'}
+    Should Be Equal    ${size}    ${7}

@@ -98,7 +98,7 @@ class Importer:
         lib.name = name
         lib.scope = type(lib.scope)(lib)
         lib.reset_instance()
-        lib.handlers = HandlerStore(orig.handlers.source, orig.handlers.source_type)
+        lib.handlers = HandlerStore()
         for handler in orig.handlers._normal.values():
             handler = copy.copy(handler)
             handler.library = lib

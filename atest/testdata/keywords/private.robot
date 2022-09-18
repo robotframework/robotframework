@@ -22,12 +22,18 @@ Invalid Usage In Resource file
 Local Private Keyword In Resource File Has Precedence Over Keywords In Another Resource
     Use Local Private Keyword Instead Of Keywords From Other Resources
 
+Local Private Keyword In Resource File Has Precedence Even If Search Order Is Set
+    [Setup]    Set Library Search Order    private2    private3
+    Use Local Private Keyword Instead Of Keywords From Other Resources
+    [Teardown]    Set Library Search Order
+
 Imported Public Keyword Has Precedence Over Imported Private Keywords
     Private In One Resource And Public In Another
     Use Imported Public Keyword Instead Instead Of Imported Private Keyword
 
 If All Keywords Are Private Raise Multiple Keywords Found
-    [Documentation]    FAIL Multiple keywords with name 'Private Keyword In All Resources' found. \
+    [Documentation]    FAIL
+    ...    Multiple keywords with name 'Private Keyword In All Resources' found. \
     ...    Give the full name of the keyword you want to use:
     ...    ${SPACE*4}private.Private Keyword In All Resources
     ...    ${SPACE*4}private2.Private Keyword In All Resources
@@ -35,9 +41,9 @@ If All Keywords Are Private Raise Multiple Keywords Found
     Private Keyword In All Resources
 
 If More Than Two Keywords Are Public Raise Multiple Keywords Found
-    [Documentation]    FAIL Multiple keywords with name 'Private In One Resource And Public In Two' found. \
+    [Documentation]    FAIL
+    ...    Multiple keywords with name 'Private In One Resource And Public In Two' found. \
     ...    Give the full name of the keyword you want to use:
-    ...    ${SPACE*4}private.Private In One Resource And Public In Two
     ...    ${SPACE*4}private2.Private In One Resource And Public In Two
     ...    ${SPACE*4}private3.Private In One Resource And Public In Two
     Private In One Resource And Public In Two

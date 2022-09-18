@@ -74,3 +74,6 @@ Copying From Name With Glob
 
 Moving From Name With Glob
     Check Test Case    ${TESTNAME}
+
+Path as `pathlib.Path`
+    Check Test Case    ${TESTNAME}

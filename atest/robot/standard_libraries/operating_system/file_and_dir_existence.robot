@@ -80,3 +80,6 @@ Directory Should Not Exist With Pattern Matching One Dir
 
 Directory Should Not Exist With Pattern Matching Multiple Dirs
     Check Test Case    ${TESTNAME}
+
+Path as `pathlib.Path`
+    Check Test Case    ${TESTNAME}

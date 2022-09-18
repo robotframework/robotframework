@@ -1247,6 +1247,10 @@ Other types cause conversion failures.
    |             |               |            | float_       | `time as time string`_ or `time as "timer" string`_. Integers  | | `01:02` (same as above)            |
    |             |               |            |              | and floats are considered to be seconds.                       |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | `Path       | PathLike_     |            | str_         | Strings are converted `Path <pathli_>`__ objects. On Windows   | | `/tmp/absolute/path`               |
+   | <pathli_>`__|               |            |              | `/` is converted to :codesc:`\\` automatically. New in RF 5.1. | | `relative/path/file.ext`           |
+   |             |               |            |              |                                                                | | `name_only.txt`                    |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Enum_       |               |            | str_         | The specified type must be an enumeration (a subclass of Enum_ | .. sourcecode:: python               |
    |             |               |            |              | or Flag_) and given arguments must match its member names.     |                                      |
    |             |               |            |              |                                                                |    class Direction(Enum):            |
@@ -1311,6 +1315,8 @@ Other types cause conversion failures.
 .. _dt-mod: https://docs.python.org/library/datetime.html#datetime.datetime
 .. _date: https://docs.python.org/library/datetime.html#datetime.date
 .. _timedelta: https://docs.python.org/library/datetime.html#datetime.timedelta
+.. _pathli: https://docs.python.org/library/pathlib.html
+.. _PathLike: https://docs.python.org/library/os.html#os.PathLike
 .. _Enum: https://docs.python.org/library/enum.html#enum.Enum
 .. _Flag: https://docs.python.org/library/enum.html#enum.Flag
 .. _IntEnum: https://docs.python.org/library/enum.html#enum.IntEnum

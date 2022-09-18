@@ -20,6 +20,9 @@ from robot.utils import get_error_message, is_string
 from robot.variables import VariableIterator
 
 
+ENABLE_STRICT_ARGUMENT_VALIDATION = False
+
+
 class EmbeddedArguments:
 
     def __init__(self, name=None, args=(), custom_patterns=None):
@@ -39,6 +42,24 @@ class EmbeddedArguments:
         return list(zip(self.args, values))
 
     def validate(self, values):
+        # Validating that embedded args match custom regexps also if args are
+        # given as variables was initially implemented in RF 5.1. It needed
+        # to be reverted due to backwards incompatibility reasons:
+        # https://github.com/robotframework/robotframework/issues/4069
+        #
+        # We hopefully can add validation back in RF 5.2 or 6.0. A precondition
+        # is implementing better approach to handle conflicts with keywords
+        # using embedded arguments:
+        # https://github.com/robotframework/robotframework/issues/4454
+        #
+        # Because the plan is to add validation back, the code was not removed
+        # but the `ENABLE_STRICT_ARGUMENT_VALIDATION` guard was added instead.
+        # Enabling validation requires only removing the following two lines
+        # (along with this comment). If someone wants to enable strict validation
+        # already now, they set `ENABLE_STRICT_ARGUMENT_VALIDATION` to True
+        # before running tests.
+        if not ENABLE_STRICT_ARGUMENT_VALIDATION:
+            return
         if not self.custom_patterns:
             return
         for arg, value in zip(self.args, values):

@@ -77,10 +77,10 @@ Grouping Custom Regexp
 Custom Regexp Matching Variables
     Check Test Case    ${TEST NAME}
 
-Non Matching Variable Is Not Accepted With Custom Regexp
+Non Matching Variable Is Accepted With Custom Regexp (But Not For Long)
     Check Test Case    ${TEST NAME}
 
-Partially Matching Variable Is Not Accepted With Custom Regexp
+Partially Matching Variable Is Accepted With Custom Regexp (But Not For Long)
     Check Test Case    ${TEST NAME}
 
 Non String Variable Is Accepted With Custom Regexp

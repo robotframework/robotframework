@@ -2,6 +2,7 @@
 Suite Setup       Set Library Search Order    resource1    resource2
 Resource          resource1.robot
 Resource          resource2.robot
+Resource          embedded.resource
 Library           ../set_library_search_order/TestLibrary.py
 Library           ../set_library_search_order/TestLibrary.py    AnotherLibrary    WITH NAME    AnotherLibrary
 
@@ -55,6 +56,10 @@ Resource Search Order Is Space Insensitive
 
 Resource Search Order Is Case Insensitive
     Set Library Search Order    Resource1    resource2
+    Active Resource Should Be    resource1
+
+Exact match wins over match containing embedded arguments regardless search order
+    Set Library Search Order    embedded    resource1
     Active Resource Should Be    resource1
 
 *** Keywords ***

@@ -183,6 +183,13 @@ Grep File With Windows line endings
     Grep And Check File    f*a    foo bar    ${UTF-8 WINDOWS FILE}
     Grep And Check File    f.*a    foo bar    ${UTF-8 WINDOWS FILE}    regexp=${True}
 
+Path as `pathlib.Path`
+    Create File    ${BASE}/file.txt    content\nthree\nlines
+    ${content} =    Get File    ${PATH/'file.txt'}
+    Should Be Equal    ${content}    content\nthree\nlines
+    ${content} =    Grep File    ${PATH/'file.txt'}    t
+    Should Be Equal    ${content}    content\nthree
+
 *** Keywords ***
 Get And Check File
     [Arguments]    ${path}    ${expected}

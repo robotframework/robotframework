@@ -1,9 +1,10 @@
-class O:
-  def __init__(self, n):
-    self.n = n
-  def __str__(self):
-    return self.n
+class Object:
+
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return self.name
 
 
-object = O('Hello! ' * 100)
-
+OBJECT = Object('Robot')

@@ -85,12 +85,12 @@ Custom Regexp Matching Variables
     I execute "${bar}" with "${zap}"
     I execute "${bar}"
 
-Non Matching Variable Is Not Accepted With Custom Regexp
-    [Documentation]    FAIL ValueError: Embedded argument 'x' got value 'foo' that does not match custom pattern 'bar'.
+Non Matching Variable Is Accepted With Custom Regexp (But Not For Long)
+    [Documentation]    FAIL    foo != bar    # ValueError: Embedded argument 'x' got value 'foo' that does not match custom pattern 'bar'.
     I execute "${foo}" with "${bar}"
 
-Partially Matching Variable Is Not Accepted With Custom Regexp
-    [Documentation]    FAIL ValueError: Embedded argument 'x' got value 'ba' that does not match custom pattern 'bar'.
+Partially Matching Variable Is Accepted With Custom Regexp (But Not For Long)
+    [Documentation]    FAIL     ba != bar    # ValueError: Embedded argument 'x' got value 'ba' that does not match custom pattern 'bar'.
     I execute "${bar[:2]}" with "${zap}"
 
 Non String Variable Is Accepted With Custom Regexp
@@ -116,19 +116,20 @@ Embedded Arguments Syntax is Underscore Sensitive
     User Janne Selects x from_webshop
 
 Keyword Matching Multiple Keywords In Library File
-    [Documentation]    FAIL Library 'embedded_args_in_lk_1' contains multiple keywords matching name 'foo+lib+bar-lib-zap':
-    ...    ${INDENT}\${a}+lib+\${b}
-    ...    ${INDENT}\${a}-lib-\${b}
+    [Documentation]    FAIL
+    ...    Multiple keywords matching name 'foo+lib+bar-lib-zap' found:
+    ...    ${INDENT}embedded_args_in_lk_1.\${a}+lib+\${b}
+    ...    ${INDENT}embedded_args_in_lk_1.\${a}-lib-\${b}
     foo+lib+bar
     foo-lib-bar
     foo+lib+bar+lib+zap
     foo+lib+bar-lib-zap
 
 Keyword Matching Multiple Keywords In Different Library Files
-    [Documentation]    FAIL Multiple keywords with name 'foo*lib*bar' found. \
-    ...    Give the full name of the keyword you want to use:
-    ...    ${INDENT}embedded_args_in_lk_1.foo*lib*bar
-    ...    ${INDENT}embedded_args_in_lk_2.foo*lib*bar
+    [Documentation]    FAIL
+    ...    Multiple keywords matching name 'foo*lib*bar' found:
+    ...    ${INDENT}embedded_args_in_lk_1.\${a}*lib*\${b}
+    ...    ${INDENT}embedded_args_in_lk_2.\${a}*lib*\${b}
     foo*lib*bar
 
 Embedded And Positional Arguments Do Not Work Together
@@ -166,14 +167,14 @@ Same name with different regexp works
 
 Same name with different regexp matching multiple fails
     [Documentation]    FAIL
-    ...    Library 'embedded_args_in_lk_1' contains multiple keywords matching name 'It is a cat':
-    ...    ${INDENT}It is ${animal:a (cat|cow)}
-    ...    ${INDENT}It is ${animal:a (dog|cat)}
+    ...    Multiple keywords matching name 'It is a cat' found:
+    ...    ${INDENT}embedded_args_in_lk_1.It is \${animal:a (cat|cow)}
+    ...    ${INDENT}embedded_args_in_lk_1.It is \${animal:a (dog|cat)}
     It is a cat
 
 Same name with same regexp fails
     [Documentation]    FAIL
-    ...    Library 'embedded_args_in_lk_1' contains multiple keywords matching name 'It is totally same':
-    ...    ${INDENT}It is totally ${same}
-    ...    ${INDENT}It is totally ${same}
+    ...    Multiple keywords matching name 'It is totally same' found:
+    ...    ${INDENT}embedded_args_in_lk_1.It is totally ${same}
+    ...    ${INDENT}embedded_args_in_lk_1.It is totally ${same}
     It is totally same

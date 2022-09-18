@@ -38,7 +38,7 @@ class UserKeywordRunner:
     @property
     def longname(self):
         libname = self._handler.libname
-        return '%s.%s' % (libname, self.name) if libname else self.name
+        return f'{libname}.{self.name}' if libname else self.name
 
     @property
     def libname(self):
@@ -53,10 +53,6 @@ class UserKeywordRunner:
         return self._handler.source
 
     @property
-    def private(self):
-        return self._handler.private
-
-    @property
     def arguments(self):
         """:rtype: :py:class:`robot.running.arguments.ArgumentSpec`"""
         return self._handler.arguments
@@ -65,7 +61,7 @@ class UserKeywordRunner:
         assignment = VariableAssignment(kw.assign)
         result = self._get_result(kw, assignment, context.variables)
         with StatusReporter(kw, result, context, run):
-            if self.private:
+            if self._handler.private:
                 context.warn_on_invalid_private_call(self._handler)
             with assignment.assigner(context) as assigner:
                 if run:

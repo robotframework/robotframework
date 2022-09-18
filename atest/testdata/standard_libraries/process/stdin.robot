@@ -1,6 +1,5 @@
 *** Settings ***
-Library           OperatingSystem
-Library           Process
+Resource           process_resource.robot
 
 *** Test Cases ***
 Stdin is PIPE by defauls
@@ -38,11 +37,17 @@ Stdin can be disabled with None object
     Should Be Equal    ${process.stdin}    ${None}
     Should Be Equal    ${result.stdout}    Hello, world!
 
-Stdin as file
-    Create File    %{TEMPDIR}/stdin.txt    Hyvää päivää maailma!    encoding=CONSOLE
-    ${result} =    Run Process    python    -c    import sys; print(sys.stdin.read())    stdin=%{TEMPDIR}/stdin.txt
+Stdin as path
+    Create File    ${STDIN}    Hyvää päivää maailma!    encoding=CONSOLE
+    ${result} =    Run Process    python    -c    import sys; print(sys.stdin.read())    stdin=${STDIN}
     Should Be Equal    ${result.stdout}    Hyvää päivää maailma!
-    [Teardown]    Remove File    %{TEMPDIR}/stdin.txt
+    [Teardown]    Remove File    ${STDIN}
+
+Stdin as `pathlib.Path`
+    Create File    ${STDIN}    Hyvää päivää maailma!    encoding=CONSOLE
+    ${result} =    Run Process    python    -c    import sys; print(sys.stdin.read())    stdin=${{pathlib.Path($STDIN)}}
+    Should Be Equal    ${result.stdout}    Hyvää päivää maailma!
+    [Teardown]    Remove File    ${STDIN}
 
 Stdin as text
     ${result} =    Run Process    python    -c    import sys; print(sys.stdin.read())    stdin=Hyvää päivää maailma!

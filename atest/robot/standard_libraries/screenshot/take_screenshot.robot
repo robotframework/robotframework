@@ -20,6 +20,10 @@ Basename With Extension Turns Off Index Generation
     Check Embedding In Log  ${tc.kws[0].kws[0].msgs[1]}  xxx.jpg
     Check Embedding In Log  ${tc.kws[1].kws[0].msgs[1]}  yyy.jpeg
 
+Name as `pathlib.Path`
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Check Embedding In Log  ${tc.kws[0].msgs[1]}  name.jpg
+
 Screenshot Width Can Be Given
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Embedding In Log  ${tc.kws[0].msgs[1]}  screenshot_1.jpg  300px

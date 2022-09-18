@@ -14,14 +14,14 @@
 #  limitations under the License.
 
 import os
+import signal as signal_module
 import subprocess
 import time
 from tempfile import TemporaryFile
-import signal as signal_module
 
 from robot.utils import (abspath, cmdline2list, ConnectionCache, console_decode,
-                         console_encode, is_list_like, is_string, is_truthy,
-                         NormalizedDict, secs_to_timestr, system_decode,
+                         console_encode, is_list_like, is_pathlike, is_string,
+                         is_truthy, NormalizedDict, secs_to_timestr, system_decode,
                          system_encode, timestr_to_secs, WINDOWS)
 from robot.version import get_version
 from robot.api import logger
@@ -883,7 +883,7 @@ class ProcessConfiguration:
 
     def __init__(self, cwd=None, shell=False, stdout=None, stderr=None, stdin='PIPE',
                  output_encoding='CONSOLE', alias=None, env=None, **rest):
-        self.cwd = self._get_cwd(cwd)
+        self.cwd = os.path.normpath(cwd) if cwd else abspath('.')
         self.shell = is_truthy(shell)
         self.alias = alias
         self.output_encoding = output_encoding
@@ -891,11 +891,6 @@ class ProcessConfiguration:
         self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
         self.stdin_stream = self._get_stdin(stdin)
         self.env = self._construct_env(env, rest)
-
-    def _get_cwd(self, cwd):
-        if cwd:
-            return cwd.replace('/', os.sep)
-        return abspath('.')
 
     def _new_stream(self, name):
         if name == 'DEVNULL':
@@ -913,19 +908,19 @@ class ProcessConfiguration:
         return self._new_stream(stderr)
 
     def _get_stdin(self, stdin):
-        if not is_string(stdin):
+        if is_pathlike(stdin):
+            stdin = str(stdin)
+        elif not is_string(stdin):
             return stdin
-        if stdin.upper() == 'NONE':
+        elif stdin.upper() == 'NONE':
             return None
-        if stdin == 'PIPE':
+        elif stdin == 'PIPE':
             return subprocess.PIPE
         path = os.path.normpath(os.path.join(self.cwd, stdin))
         if os.path.isfile(path):
             return open(path)
         stdin_file = TemporaryFile()
-        if is_string(stdin):
-            stdin = console_encode(stdin, self.output_encoding, force=True)
-        stdin_file.write(stdin)
+        stdin_file.write(console_encode(stdin, self.output_encoding, force=True))
         stdin_file.seek(0)
         return stdin_file
 

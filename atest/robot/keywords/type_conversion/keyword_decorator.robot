@@ -93,6 +93,12 @@ Timedelta
 Invalid timedelta
     Check Test Case    ${TESTNAME}
 
+Path
+    Check Test Case    ${TESTNAME}
+
+Invalid Path
+    Check Test Case    ${TESTNAME}
+
 Enum
     Check Test Case    ${TESTNAME}
 

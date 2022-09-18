@@ -50,3 +50,6 @@ File With Space Should Not Be Empty
 
 File Should Not Be Empty When File Does Not Exist
     Check testcase    ${TESTNAME}
+
+Path as `pathlib.Path`
+    Check Test Case    ${TESTNAME}

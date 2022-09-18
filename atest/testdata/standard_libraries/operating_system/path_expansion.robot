@@ -18,32 +18,26 @@ Tilde and username in path
     Should Be Equal    ${path}    ${home}${/}foo
     Directory Should Exist    ~${user}
 
+Path as `pathlib.Path`
+    ${path} =    Normalize Path    ${{pathlib.Path('~/foo')}}
+    ${home} =    Get Home
+    Should Be Equal    ${path}    ${home}${/}foo
+    Directory Should Exist    ${{pathlib.Path('~')}}
+
 *** Keywords ***
 Get Home
     [Arguments]    ${case_normalize}=False
-    ${home} =    Run Keyword If    ${WINDOWS}
-    ...    Get Windows Home
-    ...    ELSE
-    ...    Get Posix Home
+    IF    ${WINDOWS}
+        ${home} =    Get Environment Variable    USERPROFILE    %{HOMEDRIVE}%{HOMEPATH}
+    ELSE
+        ${home} =    Get Environment Variable    HOME
+    END
     ${home} =    Normalize Path    ${home}    ${case_normalize}
-    [Return]    ${home}
-
-Get Windows Home
-    ${home} =    Get Environment Variable    USERPROFILE    %{HOMEDRIVE}%{HOMEPATH}
-    [Return]    ${home}
-
-Get Posix Home
-    [Return]    %{HOME}
+    RETURN    ${home}
 
 Get User
-    ${user} =    Run Keyword If    ${WINDOWS}
-    ...    Get Windows User
-    ...    ELSE
-    ...    Get Posix User
-    [Return]    ${user}
-
-Get Windows User
-    [Return]    %{USERNAME}
-
-Get Posix User
-    [Return]    %{USER}
+    IF    ${WINDOWS}
+        RETURN    %{USERNAME}
+    ELSE
+        RETURN    %{USER}
+    END

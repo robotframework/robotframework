@@ -34,6 +34,10 @@ Save Non-ASCII XML Using Custom Encoding
     Save XML    ${NON-ASCII}    ${OUTPUT}    ISO-8859-1
     XML Content Should Be    ${NON-ASCII}    ISO-8859-1
 
+Save to `pathlib.Path`
+    Save XML    ${SIMPLE}    ${{pathlib.Path($OUTPUT)}}
+    XML Content Should Be    ${SIMPLE}
+
 Save to Invalid File
     [Documentation]    FAIL REGEXP: (IOError|IsADirectoryError|PermissionError): .*
     Save XML    ${SIMPLE}    %{TEMPDIR}
