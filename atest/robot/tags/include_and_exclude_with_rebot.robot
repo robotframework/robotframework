@@ -19,6 +19,9 @@ ${INPUT FILES}    ${INPUT FILE}
 No Includes Or Excludes
     ${EMPTY}    @{ALL}
 
+Empty iclude and exclude are ignored
+    --include= --exclude=    @{ALL}    times_are_none=False
+
 One Include
     --include incl1    @{INCL_ALL}
 
@@ -148,14 +151,19 @@ Create Input Files
     Create Output With Robot    ${INPUT FILE}    ${EMPTY}    ${TEST FILE}
 
 Run And Check Include And Exclude
-    [Arguments]    ${params}    @{tests}
+    [Arguments]    ${params}    @{tests}    ${times_are_none}=${{bool($params)}}
     Run Rebot    ${params}    ${INPUT FILES}
     Stderr Should Be Empty
     Should Contain Tests    ${SUITE}    @{tests}
     Should Be True    $SUITE.statistics.passed == len($tests)
     Should Be True    $SUITE.statistics.failed == 0
-    Should Be Equal    ${SUITE.starttime}    ${{None if $params else $ORIG_START}}
-    Should Be Equal    ${SUITE.endtime}      ${{None if $params else $ORIG_END}}
+    IF    ${times_are_none}
+        Should Be Equal    ${SUITE.starttime}    ${None}
+        Should Be Equal    ${SUITE.endtime}      ${None}
+    ELSE
+        Should Be Equal    ${SUITE.starttime}    ${ORIG_START}
+        Should Be Equal    ${SUITE.endtime}      ${ORIG_END}
+    END
     Elapsed Time Should Be Valid    ${SUITE.elapsedtime}
     Should Be True    $SUITE.elapsedtime <= $ORIG_ELAPSED + 1
 

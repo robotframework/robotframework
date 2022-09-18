@@ -391,19 +391,22 @@ class _BaseSettings:
 
     @property
     def suite_names(self):
-        return self['SuiteNames'] or None
+        return self._filter_empty(self['SuiteNames'])
+
+    def _filter_empty(self, items):
+        return [i for i in items if i] or None
 
     @property
     def test_names(self):
-        return (self['TestNames'] + self['TaskNames']) or None
+        return self._filter_empty(self['TestNames'] + self['TaskNames'])
 
     @property
     def include(self):
-        return self['Include'] or None
+        return self._filter_empty(self['Include'])
 
     @property
     def exclude(self):
-        return self['Exclude'] or None
+        return self._filter_empty(self['Exclude'])
 
     @property
     def pythonpath(self):

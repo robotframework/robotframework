@@ -3,7 +3,7 @@ Test Template     Run And Check Include And Exclude
 Resource          atest_resource.robot
 
 *** Variables ***
-# Note: The test case Robot-exclude in 
+# Note: The test case Robot-exclude in
 # atest\testdata\tags\include_and_exclude.robot
 # should always be automatically excluded since it
 # uses the robot:exclude tag
@@ -15,6 +15,9 @@ ${DATA SOURCES}   tags/include_and_exclude.robot
 *** Test Cases ***
 No Includes Or Excludes
     ${EMPTY}    @{ALL}
+
+Empty iclude and exclude are ignored
+    --include= --exclude=    @{ALL}
 
 One Include
     --include incl1    @{INCL_ALL}
