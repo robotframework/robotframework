@@ -843,14 +843,14 @@ class Tr(Language):
     """Turkish"""
     settings_header = 'Ayarlar'
     variables_header = 'Değişkenler'
-    test_cases_header = 'Test Cases'
+    test_cases_header = 'Test Durumları'
     tasks_header = 'Görevler'
     keywords_header = 'Anahtar Kelimeler'
     comments_header = 'Yorumlar'
     library_setting = 'Kütüphane'
     resource_setting = 'Kaynak'
     variables_setting = 'Değişkenler'
-    documentation_setting = 'Dokümentasyon'
+    documentation_setting = 'Dokümantasyon'
     metadata_setting = 'Üstveri'
     suite_setup_setting = 'Takım Kurulumu'
     suite_teardown_setting =  'Takım Bitişi'
@@ -876,5 +876,5 @@ class Tr(Language):
     then_prefix = {'O zaman'}
     and_prefix = {'Ve'}
     but_prefix = {'Ancak'}
-    true_strings = {'DOGRU', 'EVET', 'AÇIK'}
-    false_strings = {'YANLIS', 'HAYIR', 'KAPALI'}
+    true_strings = {'DOĞRU', 'EVET', 'AÇIK'}
+    false_strings = {'YANLIŞ', 'HAYIR', 'KAPALI'}
