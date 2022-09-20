@@ -45,9 +45,9 @@ Keyword does not exist with custom message
     [Documentation]  FAIL Custom message
     Non Existing  Custom message
 
-Misspelled keyword does not exist, no recommendations
+Recommendations not shown if keyword does not exist
     [Documentation]  FAIL No keyword with name 'should be eQQual' found.
-    should be eQQual  No keyword with name 'should be eQQual' found.
+    should be eQQual
 
 Duplicate keywords
     [Documentation]  FAIL

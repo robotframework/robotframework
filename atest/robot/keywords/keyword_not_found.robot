@@ -21,8 +21,5 @@ Non Existing Implicit In User Keyword
 Non Existing Explicit In User Keyword
     Check Test Case    ${TEST NAME}
 
-Misspelled keyword yields recommendations
-    Check Test Case    ${TEST NAME}
-
 Non Existing Library
     Check Test Case    ${TEST NAME}
