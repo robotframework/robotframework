@@ -22,56 +22,70 @@ class BadIntMeta(type(int)):
 class BadInt(int, metaclass=BadIntMeta):
     pass
 
+
 class MyEnum(Enum):
     foo = 1
     bar = 2
 
+
 def list_(argument: List, expected=None):
     _validate_type(argument, expected)
+
 
 def list_with_ints(argument: List[int], expected=None):
     _validate_type(argument, expected)
     _validate_list_subtype(argument, expected)
 
+
 def list_with_enums(argument: List[MyEnum], expected=None):
     _validate_type(argument, expected)
     _validate_list_subtype(argument, expected)
+
 
 def sequence(argument: Sequence, expected=None):
     _validate_type(argument, expected)
     _validate_list_subtype(argument, expected)
 
+
 def sequence_with_params(argument: Sequence[bool], expected=None):
     _validate_type(argument, expected)
     _validate_list_subtype(argument, expected)
+
 
 def mutable_sequence(argument: MutableSequence, expected=None):
     _validate_type(argument, expected)
     _validate_list_subtype(argument, expected)
 
+
 def mutable_sequence_with_params(argument: MutableSequence[bool], expected=None):
     _validate_type(argument, expected)
     _validate_list_subtype(argument, expected)
+
 
 def tuple(argument: Tuple, expected=None):
     _validate_type(argument, expected)
     _validate_list_subtype(argument, expected)
 
+
 def tuple_with_params(argument: Tuple[int, float, str, MyEnum], expected=None):
     _validate_type(argument, expected)
     _validate_list_subtype(argument, expected)
+
 
 def dict_(argument: Dict, expected=None):
     _validate_type(argument, expected)
     _validate_dict_subtypes(argument, expected)
 
+
 def dict_with_str_int(argument: Dict[str, int], expected=None):
     _validate_type(argument, expected)
     _validate_dict_subtypes(argument, expected)
 
+
 def dict_with_enums(argument: Dict[MyEnum, bool], expected=None):
     _validate_type(argument, expected)
     _validate_dict_subtypes(argument, expected)
+
 
 def typeddict(argument: TypedDict('X', x=int), expected=None):
     _validate_type(argument, expected)
@@ -102,27 +116,34 @@ def set_(argument: Set, expected=None):
     _validate_type(argument, expected)
     _validate_set_subtype(argument, expected)
 
+
 def set_with_bool(argument: Set[bool], expected=None):
     _validate_type(argument, expected)
     _validate_set_subtype(argument, expected)
+
 
 def set_with_enum(argument: Set[MyEnum], expected=None):
     _validate_type(argument, expected)
     _validate_set_subtype(argument, expected)
 
+
 def mutable_set(argument: MutableSet, expected=None):
     _validate_type(argument, expected)
     _validate_set_subtype(argument, expected)
+
 
 def mutable_set_with_params(argument: MutableSet[MyEnum], expected=None):
     _validate_type(argument, expected)
     _validate_set_subtype(argument, expected)
 
+
 def optional_int(argument: Optional[int]=None, expected=None):
     _validate_type(argument, expected)
 
+
 def optional_enum(argument: Optional[MyEnum], expected=None):
     _validate_type(argument, expected)
+
 
 def none_as_default(argument: List = None, expected=None):
     _validate_type(argument, expected)
@@ -148,6 +169,7 @@ def _validate_type(argument, expected):
                              % (argument, type(argument).__name__,
                                 expected, type(expected).__name__))
 
+
 def _validate_list_subtype(argument, expected):
     if isinstance(expected, str):
         expected = eval(expected)
@@ -156,6 +178,7 @@ def _validate_list_subtype(argument, expected):
             raise AssertionError('%r (%s) != %r (%s)'
                                  % (argument[i], type(argument[i]).__name__,
                                     expected[i], type(expected[i]).__name__))
+
 
 def _validate_dict_subtypes(argument, expected):
     if isinstance(expected, str):
@@ -168,6 +191,7 @@ def _validate_dict_subtypes(argument, expected):
             raise AssertionError('%r (%s) != %r (%s)'
                                  % (argument[k], type(argument[k]).__name__,
                                     expected[k], type(expected[k]).__name__))
+
 
 def _validate_set_subtype(argument, expected):
     if isinstance(expected, str):
