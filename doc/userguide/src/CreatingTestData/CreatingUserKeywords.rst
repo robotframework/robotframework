@@ -486,108 +486,223 @@ __ `Default values with user keywords`_
 Embedding arguments into keyword name
 -------------------------------------
 
-Robot Framework has also another approach to pass arguments to user
-keywords than specifying them in cells after the keyword name as
-explained in the previous section. This method is based on embedding
-the arguments directly into the keyword name, and its main benefit is
-making it easier to use real and clear sentences as keywords.
+The previous section explained how to pass arguments to keywords so
+that they are listed separately after the keyword name. Robot
+Framework has also another approach to pass arguments, embedding them
+directly to the keyword name, used by the second test below:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Normal arguments
+       Select from list    cat
+
+   Embedded arguments
+       Select cat from list
+
+As the example illustrates, embedding arguments to keyword names
+can make the data easier to read and understand even for people without
+any Robot Framework experience.
 
 Basic syntax
 ~~~~~~~~~~~~
 
-It has always been possible to use keywords like :name:`Select dog
-from list` and :name:`Selects cat from list`, but all such keywords
-must have been implemented separately. The idea of embedding arguments
-into the keyword name is that all you need is a keyword with name like
-:name:`Select ${animal} from list`.
+The previous example showed how using a keyword :name:`Select cat from list` is
+more fluent than using :name:`Select from list` so that `cat` is passed to
+it as an argument. We obviously could implement :name:`Select cat from list`
+as a normal keyword accepting no arguments, but then we needed to implement
+various other keywords like :name:`Select dog from list` for other animals.
+Embedded arguments simplify this and we can instead implement just one
+keyword with name :name:`Select ${animal} from list` and use it with any
+animal:
 
 .. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Embedded arguments
+       Select cat from list
+       Select dog from list
 
    *** Keywords ***
    Select ${animal} from list
        Open Page    Pet Selection
        Select Item From List    animal_list    ${animal}
 
-Keywords using embedded arguments cannot take any "normal" arguments
-(specified with :setting:`[Arguments]` setting) but otherwise they are
-created just like other user keywords. The arguments used in the name
-will naturally be available inside the keyword and they have different
-value depending on how the keyword is called. For example,
-`${animal}` in the previous has value `dog` if the keyword
-is used like :name:`Select dog from list`. Obviously it is not
-mandatory to use all these arguments inside the keyword, and they can
-thus be used as wildcards.
+As the above example shows, embedded arguments are specified simply by using
+variables in keyword names. The arguments used in the name are naturally
+available inside the keyword and they have different values depending on how
+the keyword is called. In the above example, `${animal}` has value `cat` when
+the keyword is used for the first time and `dog` when it is used for
+the second time.
 
-These kind of keywords are also used the same way as other keywords
-except that spaces and underscores are not ignored in their
-names. They are, however, case-insensitive like other keywords. For
-example, the keyword in the example above could be used like
-:name:`select x from list`, but not like :name:`Select x fromlist`.
+Keywords using embedded arguments cannot take any "normal" arguments
+(specified with :setting:`[Arguments]` setting), but otherwise they are
+created just like other user keywords. They are also used the same way as
+other keywords except that spaces and underscores are not ignored in their
+names when keywords are matched. They are, however, case-insensitive like
+other keywords. For example, the keyword in the example above could be used like
+:name:`select cow from list`, but not like :name:`Select cow fromlist`.
 
 Embedded arguments do not support default values or variable number of
-arguments like normal arguments do. Using variables when
-calling these keywords is possible but that can reduce readability.
-Notice also that embedded arguments only work with user keywords.
+arguments like normal arguments do. If such functionality is needed, normal
+arguments should be used instead. Passing embedded arguments as variables
+is possible, but that can reduce readability:
 
-Embedded arguments matching too much
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   ${SELECT}        cat
+
+   *** Test Cases ***
+   Embedded arguments with variable
+       Select ${SELECT} from list
+
+   *** Keywords ***
+   Select ${animal} from list
+       Open Page    Pet Selection
+       Select Item From List    animal_list    ${animal}
+
+Embedded arguments matching wrong values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 One tricky part in using embedded arguments is making sure that the
 values used when calling the keyword match the correct arguments. This
 is a problem especially if there are multiple arguments and characters
 separating them may also appear in the given values. For example,
-keyword :name:`Select ${city} ${team}` does not work correctly if used
-with city containing two parts like :name:`Select Los Angeles Lakers`.
-
-An easy solution to this problem is quoting the arguments (e.g.
-:name:`Select "${city}" "${team}"`) and using the keyword in quoted
-format (e.g. :name:`Select "Los Angeles" "Lakers"`). This approach is
-not enough to resolve all this kind of conflicts, though, but it is
-still highly recommended because it makes arguments stand out from
-rest of the keyword. A more powerful but also more complicated
-solution, `using custom regular expressions`_ when defining variables,
-is explained in the next section. Finally, if things get complicated,
-it might be a better idea to use normal positional arguments instead.
-
-The problem of arguments matching too much occurs often when creating
-keywords that `ignore given/when/then/and/but prefixes`__ . For example,
-:name:`${name} goes home` matches :name:`Given Janne goes home` so
-that `${name}` gets value `Given Janne`. Quotes around the
-argument, like in :name:`"${name}" goes home`, resolve this problem
-easily.
-
-__ `Ignoring Given/When/Then/And/But prefixes`_
-
-Using custom regular expressions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-When keywords with embedded arguments are called, the values are
-matched internally using `regular expressions`__
-(regexps for short). The default logic goes so that every argument in
-the name is replaced with a pattern `.*?` that basically matches
-any string. This logic works fairly well normally, but as just
-discussed above, sometimes keywords `match more than
-intended`__. Quoting or otherwise separating arguments from the other
-text can help but, for example, the test below fails because keyword
-:name:`I execute "ls" with "-lh"` matches both of the defined
-keywords.
+:name:`Select Los Angeles Lakers` in the following example matches
+:name:`Select ${city} ${team}` so that `${city}` contains `Los` and
+`${team}` contains `Angeles Lakers`:
 
 .. sourcecode:: robotframework
 
    *** Test Cases ***
    Example
-       I execute "ls"
-       I execute "ls" with "-lh"
+       Select Chicago Bulls
+       Select Los Angeles Lakers
 
    *** Keywords ***
-   I execute "${cmd}"
+   Select ${city} ${team}
+       Log    Selected ${team} from ${city}.
+
+An easy solution to this problem is surrounding arguments with double quotes or
+other characters not used in the actual values. This fixed example works so
+that cities and teams match correctly:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       Select "Chicago" "Bulls"
+       Select "Los Angeles" "Lakers"
+
+   *** Keywords ***
+   Select "${city}" "${team}"
+       Log    Selected ${team} from ${city}.
+
+This approach is not enough to resolve all conflicts, but it helps in common
+cases and is generally recommended. Another benefit is that it makes arguments
+stand out from rest of the keyword.
+
+The problem of arguments matching too much occurs often when creating
+keywords that `ignore the given/when/then/and/but prefixes`__ typically used
+in Behavior Driven Development (BDD). For example,
+:name:`${name} goes home` matches :name:`Given Janne goes home` so
+that `${name}` gets value `Given Janne`. Quotes around the
+argument, like in :name:`"${name}" goes home`, resolve this problem
+easily.
+
+An alternative solution for limiting what values arguments match is
+`using custom regular expressions`_.
+
+__ `Ignoring Given/When/Then/And/But prefixes`_
+
+Resolving conflicts
+~~~~~~~~~~~~~~~~~~~
+
+When using embedded arguments, it is pretty common that there are multiple
+keyword implementations that match the keyword that is used. For example,
+:name:`Execute "ls" with "lf"` in the example below matches both of the keywords.
+It matching :name:`Execute "${cmd}" with "${opts}"` is pretty obvious and what
+we want, but it also matches :name:`Execute "${cmd}"` so that `${cmd}` matches
+`ls" with "-lh`.
+
+.. sourcecode:: robotframework
+
+   *** Settings ***
+   Library          Process
+
+   *** Test Cases ***
+   Automatic conflict resolution
+       Execute "ls"
+       Execute "ls" with "-lh"
+
+   *** Keywords ***
+   Execute "${cmd}"
        Run Process    ${cmd}    shell=True
 
-   I execute "${cmd}" with "${opts}"
+   Execute "${cmd}" with "${opts}"
        Run Process    ${cmd} ${opts}    shell=True
 
-A solution to this problem is using a custom regular expression that
-makes sure that the keyword matches only what it should in that
+When this kind of conflicts occur, Robot Framework tries to automatically select
+the best match and use that. In the above example, :name:`Execute "${cmd}" with "${opts}"`
+is considered a better match than the more generic :name:`Execute "${cmd}"` and
+running the example thus succeeds without conflicts.
+
+It is not always possible to find a single match that is better than others.
+For example, the second test below fails because :name:`Robot Framework` matches
+both of the keywords equally well. This kind of conflicts need to be resolved
+manually either by renaming keywords or by `using custom regular expressions`_.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   No conflict
+       Automation framework
+       Robot uprising
+
+   Unresolvable conflict
+       Robot Framework
+
+   *** Keywords ***
+   ${type} Framework
+       Should Be Equal    ${type}    Automation
+
+   Robot ${action}
+       Should Be Equal    ${action}    uprising
+
+Keywords that accept only "normal" arguments or no arguments at all are
+considered to match better than keywords accepting embedded arguments.
+For example, if the following keyword is added to the above example,
+:name:`Robot Framework` used by the latter test matches it and the test
+succeeds:
+
+.. sourcecode:: robotframework
+
+   *** Keywords ***
+   Robot Framework
+       No Operation
+
+Before looking which match is best, Robot Framework checks are some of the matching
+keywords implemented in the same file as the caller keyword. If there are such keywords,
+they are given precedence over other keywords. If there are still conflicts
+after looking for best matches, Robot Framework checks can they be
+resolved based on the `library search order`_.
+
+.. note:: Automatically resolving conflicts if multiple keywords with embedded
+          arguments match is a new feature in Robot Framework 5.1. With older
+          versions custom regular expressions explained below can be used instead.
+
+Using custom regular expressions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When keywords with embedded arguments are called, the values are matched
+internally using `regular expressions`__ (regexps for short). The default
+logic goes so that every argument in the name is replaced with a pattern `.*?`
+that matches any string and tries to match as little as possible. This logic works
+fairly well normally, but as discussed above, sometimes keywords
+`match wrong values`__ and sometimes there are `conflicts that cannot
+be resolved`__ . A solution in these cases is specifying a custom regular
+expression that makes sure that the keyword matches only what it should in that
 particular context. To be able to use this feature, and to fully
 understand the examples in this section, you need to understand at
 least the basics of the regular expression syntax.
@@ -595,71 +710,82 @@ least the basics of the regular expression syntax.
 A custom embedded argument regular expression is defined after the
 base name of the argument so that the argument and the regexp are
 separated with a colon. For example, an argument that should match
-only numbers can be defined like `${arg:\d+}`. Using custom
-regular expressions is illustrated by the examples below.
+only numbers can be defined like `${arg:\d+}`.
+
+Using custom regular expressions is illustrated by the following examples.
+Notice that the first one shows how the earlier problem with
+:name:`Select ${city} ${team}` not matching :name:`Select Los Angeles Lakers`
+properly can be resolved without quoting. That is achieved by implementing
+the keyword so that `${team}` can only contain non-whitespace characters.
 
 .. sourcecode:: robotframework
 
+   *** Settings ***
+   Library          DateTime
+
    *** Test Cases ***
-   Example
-       I execute "ls"
-       I execute "ls" with "-lh"
-       I type 1 + 2
-       I type 53 - 11
-       Today is 2011-06-27
+   Do not match whitespace characters
+       Select Chicago Bulls
+       Select Los Angeles Lakers
+
+   Match numbers and characters from set
+       1 + 2 = 3
+       53 - 11 = 42
+
+   Match either date or literal 'today'
+       Deadline is 2022-09-21
+       Deadline is today
 
    *** Keywords ***
-   I execute "${cmd:[^"]+}"
-       Run Process    ${cmd}    shell=True
+   Select ${city} ${team:\S+}
+       Log    Selected ${team} from ${city}.
 
-   I execute "${cmd}" with "${opts}"
-       Run Process    ${cmd} ${opts}    shell=True
+   ${number1:\d+} ${operator:[+-]} ${number2:\d+} = ${expected:\d+}
+       ${result} =    Evaluate    ${number1} ${operator} ${number2}
+       Should Be Equal As Integers    ${result}    ${expected}
 
-   I type ${num1:\d+} ${operator:[+-]} ${num2:\d+}
-       Calculate    ${num1}    ${operator}    ${num2}
+   Deadline is ${date:(\d{4}-\d{2}-\d{2}|today)}
+       IF    '${date}' == 'today'
+           ${date} =    Get Current Date
+       ELSE
+           ${date} =    Convert Date    ${date}
+       END
+       Log    Deadline is on ${date}.
 
-   Today is ${date:\d{4}-\d{2}-\d{2}}
-       Log    ${date}
-
-In the above example keyword :name:`I execute "ls" with "-lh"` matches
-only :name:`I execute "${cmd}" with "${opts}"`. That is guaranteed
-because the custom regular expression `[^"]+` in :name:`I execute
-"${cmd:[^"]}"` means that a matching argument cannot contain any
-quotes. In this case there is no need to add custom regexps to the
-other :name:`I execute` variant.
-
-.. tip:: If you quote arguments, using regular expression `[^"]+`
-         guarantees that the argument matches only until the first
-         closing quote.
+__ http://en.wikipedia.org/wiki/Regular_expression
+__ `Embedded arguments matching wrong values`_
+__ `Resolving conflicts`_
 
 Supported regular expression syntax
 '''''''''''''''''''''''''''''''''''
 
 Being implemented with Python, Robot Framework naturally uses Python's
-:name:`re` module that has pretty standard `regular expressions
-syntax`__. This syntax is otherwise fully supported with embedded
-arguments, but regexp extensions in format `(?...)` cannot be
-used. If the regular expression syntax is invalid,
-creating the keyword fails with an error visible in `test execution
-errors`__.
+`re module`__ that has pretty standard regular expressions syntax.
+This syntax is otherwise fully supported with embedded arguments, but
+regexp extensions in format `(?...)` cannot be used. If the regular
+expression syntax is invalid, creating the keyword fails with an error
+visible in `test execution errors`__.
+
+__ http://docs.python.org/library/re.html
+__ `Errors and warnings during execution`_
 
 Escaping special characters
 '''''''''''''''''''''''''''
 
 Regular expressions use the backslash character (:codesc:`\\`) heavily both
-to escape characters that have a special meaning in regexps (e.g. `\$`) and
-to form special sequences (e.g. `\d`). Typically in Robot Framework data
+to form special sequences (e.g. `\d`) and to escape characters that have
+a special meaning in regexps (e.g. `\$`). Typically in Robot Framework data
 backslash characters `need to be escaped`__ with another backslash, but
 that is not required in this context. If there is a need to have a literal
-backslash in the pattern, then the backslash must be escaped__ like
+backslash in the pattern, then the backslash must be escaped like
 `${path:c:\\temp\\.*}`.
 
-__ escaping_
+__ Escaping_
 
 Possible lone opening and closing curly braces in the pattern must be escaped
-like `${open:\{}` and `${close:\}}`. If there are matching braces like
-`${digits:\d{2}}`, escaping is not needed. Escaping only opening or
-closing brace is not allowed.
+like `${open:\{}` and `${close:\}}` or otherwise Robot Framework is not able
+to parse the variable syntax correctly. If there are matching braces like in
+`${digits:\d{2}}`, escaping is not needed.
 
 .. note:: Prior to Robot Framework 3.2, it was mandatory to escape all
           closing curly braces in the pattern like `${digits:\d{2\}}`.
@@ -673,7 +799,7 @@ closing brace is not allowed.
 Using variables with custom embedded argument regular expressions
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-When custom embedded argument regular expressions are used, Robot
+When embedded arguments are used with custom regular expressions, Robot
 Framework automatically enhances the specified regexps so that they
 match variables in addition to the text matching the pattern.
 For example, the following test case would pass
@@ -686,28 +812,25 @@ using the keywords from the earlier example.
 
    *** Test Cases ***
    Example
-       Today is ${DATE}
-       I type ${1} + ${2}
+       Deadline is ${DATE}
+       ${1} + ${2} = ${3}
 
-Notice that the actual value of the variable does not need to match the custom
-regular expression. This is likely to change in the future, though,
-as discussed in `issue #4069`__.
+A limitation of using variables is that their actual values are not matched against
+custom regular expressions. As the result keywords may be called with
+values that their custom regexps would not allow. This behavior is deprecated
+starting from Robot Framework 5.1 and values will be validated in the future.
+For more information see issue `#4462`__.
 
-__ http://en.wikipedia.org/wiki/Regular_expression
-__ `Embedded arguments matching too much`_
-__ http://docs.python.org/library/re.html
-__ `Errors and warnings during execution`_
-__ Escaping_
-__ https://github.com/robotframework/robotframework/issues/4069
+__ https://github.com/robotframework/robotframework/issues/4462
 
 Behavior-driven development example
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The biggest benefit of having arguments as part of the keyword name is that it
-makes it easier to use higher-level sentence-like keywords when writing test
-cases in `behavior-driven style`_. The example below illustrates this. Notice
-also that prefixes :name:`Given`, :name:`When` and :name:`Then` are `left out
-of the keyword definitions`__.
+A big benefit of having arguments as part of the keyword name is that it
+makes it easier to use higher-level sentence-like keywords when using the
+`behavior-driven style`_ to write tests. As the example below shows, this
+support is typically used in combination with the possibility to
+`omit Given, When and Then prefixes`__ in keyword definitions:
 
 .. sourcecode:: robotframework
 
@@ -737,10 +860,10 @@ of the keyword definitions`__.
        Should Be Equal    ${result}    ${expected}
 
 .. note:: Embedded arguments feature in Robot Framework is inspired by
-          how *step definitions* are created in a popular BDD tool Cucumber__.
+          how *step definitions* are created in the popular BDD tool Cucumber__.
 
 __ `Ignoring Given/When/Then/And/But prefixes`_
-__ http://cukes.info
+__ https://cucumber.io
 
 User keyword return values
 --------------------------
