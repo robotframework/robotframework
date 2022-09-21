@@ -214,7 +214,7 @@ def get_time(format='timestamp', time_=None):
     - Otherwise (and by default) the time is returned as a timestamp string in
       format '2006-02-24 15:08:31'
     """
-    time_ = int(time_ or time.time())
+    time_ = int(time.time() if time_ is None else time_)
     format = format.lower()
     # 1) Return time in seconds since epoc
     if 'epoch' in format:
