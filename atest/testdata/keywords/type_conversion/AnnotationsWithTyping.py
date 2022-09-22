@@ -1,7 +1,7 @@
+from enum import Enum
 from typing import (List, Sequence, Tuple, MutableSequence,
                     Dict, Mapping, MutableMapping,
                     Set, MutableSet, Optional)
-from enum import Enum
 
 try:
     from typing import TypedDict

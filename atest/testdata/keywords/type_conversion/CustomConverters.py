@@ -118,6 +118,10 @@ def dates(us: 'UsDate', fi: 'FiDate'):
     assert us == fi
 
 
+def date_list(argument: List[FiDate], *expected: date):
+    assert all(a == e for a, e in zip(argument, expected))
+
+
 def class_as_converter(argument: ClassAsConverter, expected):
     assert argument.greeting == expected
 

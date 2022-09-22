@@ -25,6 +25,8 @@ Subclasses
     US date      11/30/2021    2021-11-30
     FI date      30.11.2021    2021-11-30
     Dates        11/30/2021    30.11.2021
+    @{dates}=    Create list   27.07.1977    01.10.2005
+    Date list    ${dates}      1977-07-27    2005-10-01
 
 Class as converter
     Class as converter               Robot    Hello, Robot!

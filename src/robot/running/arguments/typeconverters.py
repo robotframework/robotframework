@@ -16,7 +16,7 @@
 from ast import literal_eval
 from collections import OrderedDict
 from collections.abc import (ByteString, Container, Sequence, Set,
-                            Mapping, MutableMapping)
+                             Mapping, MutableMapping)
 from typing import Any, Union
 from datetime import datetime, date, timedelta
 from decimal import InvalidOperation, Decimal
