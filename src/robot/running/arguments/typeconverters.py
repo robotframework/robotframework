@@ -421,7 +421,8 @@ class ListConverter(TypeConverter):
         if not self.nested_types:
             return list(value)
         converter = TypeConverter.converter_for(self.nested_types[0],
-                                                languages=self.languages)
+                                                self.custom_converters,
+                                                self.languages)
         if not converter:
             return list(value)
         elem_info = f"List[{type_name(self.nested_types[0])}]"
@@ -454,7 +455,8 @@ class TupleConverter(TypeConverter):
         converted_list = list()
         for index, elem in enumerate(value):
             converter = TypeConverter.converter_for(self.nested_types[index],
-                                                    languages=self.languages)
+                                                    self.custom_converters,
+                                                    self.languages)
             if converter:
                 converted_list.append(converter.convert(f"Tuple[{types}]", elem,
                                                         explicit_type))
@@ -480,39 +482,35 @@ class DictionaryConverter(TypeConverter):
         return self.used_type in self.abc and issubclass(type(value), self.abc)
 
     def _non_string_convert(self, value, explicit_type=True):
-        if isinstance(value, str):
-            converted_dict = self._literal_eval(value, dict)
-        elif is_dict_like(value):
-            converted_dict = dict(value)
-        else:
+        if not is_dict_like(value):
             raise ValueError
-        if self.nested_types and len(self.nested_types) == 2:
-            for key, elem in converted_dict.copy().items():
-                key_type = self.nested_types[0]
-                value_type = self.nested_types[1]
-                d_info = f"Dict[{type_name(key_type)}, {type_name(value_type)}]"
-                key_converter  = TypeConverter.converter_for(key_type,
-                                                             languages=self.languages)
-                elem_converter = TypeConverter.converter_for(value_type,
-                                                             languages=self.languages)
-                if key_converter:
-                    converted_key = key_converter.convert(f"key for {d_info}", key,
-                                                          explicit_type)
-                else:
-                    converted_key  = key
-                if elem_converter:
-                    converted_elem = elem_converter.convert(d_info, elem, explicit_type)
-                else:
-                    converted_elem = elem
-                replace_elem = type(converted_elem) != type(elem) 
-                if converted_key != key:
-                    converted_dict.pop(key)
-                    replace_elem = True
-                if replace_elem:
-                    converted_dict[converted_key] = converted_elem
-        return converted_dict
+        return self.__nested_conversion(value, explicit_type)
 
-    _convert = _non_string_convert
+    def _convert(self, value, explicit_type=True):
+        converted_dict = self._literal_eval(value, dict)
+        return self.__nested_conversion(converted_dict, explicit_type)
+
+    def __nested_conversion(self, value, explicit_type):
+        if not self.nested_types or len(self.nested_types) != 2:
+            return dict(value)
+        key_type = self.nested_types[0]
+        value_type = self.nested_types[1]
+        d_info = f"Dict[{type_name(key_type)}, {type_name(value_type)}]"
+        key_converter  = TypeConverter.converter_for(key_type,
+                                                     self.custom_converters,
+                                                     self.languages)
+        value_converter = TypeConverter.converter_for(value_type,
+                                                      self.custom_converters,
+                                                      self.languages)
+        converted_dict = dict()
+        for key, elem in value.items():
+            if key_converter:
+                key = key_converter.convert(f"key for {d_info}", key,
+                                                      explicit_type)
+            if value_converter:
+                elem = value_converter.convert(d_info, elem, explicit_type)
+            converted_dict[key] = elem
+        return converted_dict
 
 
 @TypeConverter.register
@@ -520,7 +518,6 @@ class SetConverter(TypeConverter):
     type = set
     abc = Set
     type_name = 'set'
-    aliases = ('set',)
     value_types = (str, Container)
 
     def __init__(self, type_, custom_converters=None, languages=None):
@@ -531,24 +528,29 @@ class SetConverter(TypeConverter):
         return not self.nested_types and isinstance(value, self.used_type)
 
     def _non_string_convert(self, value, explicit_type=True):
-        if isinstance(value, str):
-            converted_set = self._literal_eval(value, set)
-        elif is_list_like(value):
-            converted_set = set(value)
-        else:
+        if not is_list_like(value):
             raise ValueError
-        if self.nested_types:
-            for elem in converted_set:
-                converter = TypeConverter.converter_for(self.nested_types[0],
-                                                        languages=self.languages)
-                if converter:
-                    converted_set.remove(elem)
-                    t_name = type_name(self.nested_types[0])
-                    converted_set.add(converter.convert(f"Set[{t_name}]", elem,
-                                                        explicit_type))
-        return converted_set
+        return self.__nested_conversion(value, explicit_type)
 
-    _convert = _non_string_convert
+    def _convert(self, value, explicit_type=True):
+        converted_set = self._literal_eval(value, set)
+        return self.__nested_conversion(converted_set, explicit_type)
+
+    def __nested_conversion(self, value, explicit_type):
+        if not self.nested_types:
+            return set(value)
+        converter = TypeConverter.converter_for(self.nested_types[0],
+                                                self.custom_converters,
+                                                self.languages)
+        t_name = type_name(self.nested_types[0])
+        converted_set = set()
+        for elem in value:
+            if converter:
+                converted_set.add(converter.convert(f"Set[{t_name}]", elem,
+                                                    explicit_type))
+            else:
+                converted_set.add(elem)
+        return converted_set
 
 
 @TypeConverter.register
@@ -574,8 +576,7 @@ class CombinedConverter(TypeConverter):
     def __init__(self, union, custom_converters, languages=None):
         super().__init__(union, custom_converters, languages)
         self.nested_types = self._get_types(union)
-        self.converters = [TypeConverter.converter_for(t, custom_converters,
-                                                       languages=languages)
+        self.converters = [TypeConverter.converter_for(t, custom_converters, languages)
                            for t in self.nested_types]
 
     def _get_types(self, union):
