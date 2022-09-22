@@ -45,6 +45,10 @@ Keyword does not exist with custom message
     [Documentation]  FAIL Custom message
     Non Existing  Custom message
 
+Recommendations not shown if keyword does not exist
+    [Documentation]  FAIL No keyword with name 'should be eQQual' found.
+    should be eQQual
+
 Duplicate keywords
     [Documentation]  FAIL
     ...  Multiple keywords with name 'Duplicated keyword' found. \

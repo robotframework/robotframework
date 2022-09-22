@@ -70,6 +70,8 @@ cases, either the files or the keywords must be renamed. The full name
 of the keyword is case-, space- and underscore-insensitive, similarly
 as normal keyword names.
 
+.. _library search order:
+
 Specifying explicit priority between libraries and resources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

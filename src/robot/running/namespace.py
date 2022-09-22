@@ -216,9 +216,9 @@ class Namespace:
         library.reload()
         return library
 
-    def get_runner(self, name):
+    def get_runner(self, name, recommend_on_failure=True):
         try:
-            return self._kw_store.get_runner(name)
+            return self._kw_store.get_runner(name, recommend_on_failure)
         except DataError as error:
             return UserErrorHandler(error, name)
 
@@ -258,13 +258,13 @@ class KeywordStore:
                 return lib
         self._no_library_found(instance)
 
-    def get_runner(self, name):
+    def get_runner(self, name, recommend=True):
         runner = self._get_runner(name)
         if runner is None:
-            self._raise_no_keyword_found(name)
+            self._raise_no_keyword_found(name, recommend)
         return runner
 
-    def _raise_no_keyword_found(self, name):
+    def _raise_no_keyword_found(self, name, recommend=True):
         if name.strip(': ').upper() == 'FOR':
             raise KeywordError(
                 f"Support for the old FOR loop syntax has been removed. "
@@ -277,10 +277,13 @@ class KeywordStore:
                 "loop, remove escaping backslashes and end the loop with 'END'."
             )
         message = f"No keyword with name '{name}' found."
-        finder = KeywordRecommendationFinder(self.user_keywords,
-                                             self.libraries,
-                                             self.resources)
-        raise KeywordError(finder.recommend_similar_keywords(name, message))
+        if recommend:
+            finder = KeywordRecommendationFinder(self.user_keywords,
+                                                 self.libraries,
+                                                 self.resources)
+            raise KeywordError(finder.recommend_similar_keywords(name, message))
+        else:
+            raise KeywordError(message)
 
     def _get_runner(self, name):
         if not name:

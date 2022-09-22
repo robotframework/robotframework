@@ -15,6 +15,7 @@
 
 from datetime import date, datetime, timedelta
 from decimal import Decimal
+from pathlib import Path
 
 
 STANDARD_TYPE_DOCS = {
@@ -106,6 +107,12 @@ Integers and floats are considered to be seconds.
 
 See the [https://robotframework.org/robotframework/|Robot Framework User Guide]
 for more details about the supported time formats.
+''',
+    Path: '''\
+Strings are converted [https://docs.python.org/library/pathlib.html|Path] objects.
+On Windows ``/`` is converted to ``\\`` automatically.
+
+Examples: ``/tmp/absolute/path``, ``relative/path/to/file.ext``, ``name.txt``
 ''',
     type(None): '''\
 String ``NONE`` (case-insensitive) is converted to Python ``None`` object.

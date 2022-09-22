@@ -328,7 +328,10 @@ class TestTime(unittest.TestCase):
             parsed = parse_time(input.upper().replace('NOW', 'UtC'))
             zone = time.altzone if time.localtime().tm_isdst else time.timezone
             expected += zone
-            assert_true(expected <= parsed <= expected + 1),
+            assert_true(expected <= parsed <= expected + 1)
+
+    def test_get_time_with_zero(self):
+        assert_equal(get_time('epoch', 0), 0)
 
     def test_parse_modified_time_with_invalid_times(self):
         for value, msg in [("-100", "Epoch time must be positive (got -100)."),

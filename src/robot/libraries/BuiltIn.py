@@ -3266,7 +3266,7 @@ class _Misc(_BuiltInBase):
         See also `Variable Should Exist`.
         """
         try:
-            runner = self._namespace.get_runner(name)
+            runner = self._namespace.get_runner(name, recommend_on_failure=False)
         except DataError as error:
             raise AssertionError(msg or error.message)
         if isinstance(runner, UserErrorHandler):

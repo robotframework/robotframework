@@ -1248,8 +1248,8 @@ Other types cause conversion failures.
    |             |               |            |              | and floats are considered to be seconds.                       |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | `Path       | PathLike_     |            | str_         | Strings are converted `Path <pathli_>`__ objects. On Windows   | | `/tmp/absolute/path`               |
-   | <pathli_>`__|               |            |              | `/` is converted to :codesc:`\\` automatically. New in RF 5.1. | | `relative/path/file.ext`           |
-   |             |               |            |              |                                                                | | `name_only.txt`                    |
+   | <pathli_>`__|               |            |              | `/` is converted to :codesc:`\\` automatically. New in RF 5.1. | | `relative/path/to/file.ext`        |
+   |             |               |            |              |                                                                | | `name.txt`                         |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Enum_       |               |            | str_         | The specified type must be an enumeration (a subclass of Enum_ | .. sourcecode:: python               |
    |             |               |            |              | or Flag_) and given arguments must match its member names.     |                                      |
