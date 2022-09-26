@@ -42,6 +42,11 @@ def list_with_enums(argument: List[MyEnum], expected=None):
     _validate_list_subtype(argument, expected)
 
 
+def list_with_ints_or_enums(argument: List[int|MyEnum], expected=None):
+    _validate_type(argument, expected)
+    _validate_list_subtype(argument, expected)
+
+
 def sequence(argument: Sequence, expected=None):
     _validate_type(argument, expected)
     _validate_list_subtype(argument, expected)
@@ -165,9 +170,8 @@ def _validate_type(argument, expected):
     if isinstance(expected, str):
         expected = eval(expected)
     if argument != expected or type(argument) != type(expected):
-        raise AssertionError('%r (%s) != %r (%s)'
-                             % (argument, type(argument).__name__,
-                                expected, type(expected).__name__))
+        raise AssertionError(f"{repr(argument)} ({type(argument).__name__}) ≠ "
+                             f"{repr(expected)} ({type(expected).__name__})")
 
 
 def _validate_list_subtype(argument, expected):
@@ -175,9 +179,8 @@ def _validate_list_subtype(argument, expected):
         expected = eval(expected)
     for i in range(len(expected)):
         if argument[i] != expected[i] or type(argument[i]) != type(expected[i]):
-            raise AssertionError('%r (%s) != %r (%s)'
-                                 % (argument[i], type(argument[i]).__name__,
-                                    expected[i], type(expected[i]).__name__))
+            raise AssertionError(f"{repr(argument[i])} ({type(argument[i]).__name__}) ≠"
+                                 f" {repr(expected[i])} ({type(expected[i]).__name__})")
 
 
 def _validate_dict_subtypes(argument, expected):
@@ -185,12 +188,11 @@ def _validate_dict_subtypes(argument, expected):
         expected = eval(expected)
     for k in expected:
         if k not in argument:
-            raise AssertionError('expected key %r (%s) not present in %r'
-                                 % (k, type(k).__name__, argument))
+            raise AssertionError(f"expected key {repr(k)} ({type(k).__name__}) "
+                                 f"not present in {repr(argument)}")
         if argument[k] != expected[k] or type(argument[k]) != type(expected[k]):
-            raise AssertionError('%r (%s) != %r (%s)'
-                                 % (argument[k], type(argument[k]).__name__,
-                                    expected[k], type(expected[k]).__name__))
+            raise AssertionError(f"{repr(argument[k])} ({type(argument[k]).__name__}) ≠"
+                                 f" {repr(expected[k])} ({type(expected[k]).__name__})")
 
 
 def _validate_set_subtype(argument, expected):
@@ -198,5 +200,5 @@ def _validate_set_subtype(argument, expected):
         expected = eval(expected)
     for i in expected:
         if i not in argument:
-            raise AssertionError('%r (%s) not in %r'
-                                 % (i, type(i).__name__, expected))
+            raise AssertionError(f"{repr(i)} ({type(i).__name__})"
+                                 f" not in {repr(expected)}")

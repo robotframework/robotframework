@@ -15,6 +15,7 @@ List with params
     List with ints            ${numbers}                  [1, 2, 3, -42]
     List with ints            [1, ${2}, 1313, -42]        [1, 2, 1313, -42]
     List with enums           ['foo', 'bar']              [MyEnum.foo, MyEnum.bar]
+    List with ints or enums   ['foo', 313]                [MyEnum.foo, 313]
 
 Invalid list
     [Template]                Conversion Should Fail
