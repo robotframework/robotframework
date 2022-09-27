@@ -122,20 +122,17 @@ class ForInRunner:
             executed = True
             try:
                 self._run_one_round(data, result, values)
-            except BreakLoop as exception:
-                if exception.earlier_failures:
-                    errors.extend(exception.earlier_failures.get_errors())
-                break
-            except ContinueLoop as exception:
-                if exception.earlier_failures:
-                    errors.extend(exception.earlier_failures.get_errors())
-                continue
-            except ExecutionPassed as exception:
-                exception.set_earlier_failures(errors)
-                raise exception
-            except ExecutionFailed as exception:
-                errors.extend(exception.get_errors())
-                if not exception.can_continue(self._context, self._templated):
+            except (BreakLoop, ContinueLoop) as ctrl:
+                if ctrl.earlier_failures:
+                    errors.extend(ctrl.earlier_failures.get_errors())
+                if isinstance(ctrl, BreakLoop):
+                    break
+            except ExecutionPassed as passed:
+                passed.set_earlier_failures(errors)
+                raise passed
+            except ExecutionFailed as failed:
+                errors.extend(failed.get_errors())
+                if not failed.can_continue(self._context, self._templated):
                     break
         if errors:
             raise ExecutionFailures(errors)
@@ -364,13 +361,17 @@ class WhileRunner:
                 try:
                     with limit:
                         self._run_iteration(data, result)
-                except BreakLoop:
-                    break
-                except ContinueLoop:
-                    pass
-                except ExecutionFailed as err:
-                    errors.extend(err.get_errors())
-                    if not err.can_continue(ctx, self._templated):
+                except (BreakLoop, ContinueLoop) as ctrl:
+                    if ctrl.earlier_failures:
+                        errors.extend(ctrl.earlier_failures.get_errors())
+                    if isinstance(ctrl, BreakLoop):
+                        break
+                except ExecutionPassed as passed:
+                    passed.set_earlier_failures(errors)
+                    raise passed
+                except ExecutionFailed as failed:
+                    errors.extend(failed.get_errors())
+                    if not failed.can_continue(ctx, self._templated):
                         break
                 if not self._should_run(data.condition, ctx.variables):
                     break

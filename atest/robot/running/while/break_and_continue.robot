@@ -31,6 +31,12 @@ With BREAK inside EXCEPT
 With BREAK inside TRY-ELSE
     PASS    1
 
+BREAK with continuable failures
+    FAIL    1
+
+CONTINUE with continuable failures
+    FAIL    2
+
 Invalid BREAK
     FAIL    1
 
