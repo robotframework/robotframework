@@ -166,6 +166,12 @@ class TestSlots(unittest.TestCase):
         self._verify(While())
         self._verify(While().body.create_iteration())
 
+    def test_while_name(self):
+        assert_equal(While().name, '')
+        assert_equal(While('$x > 0').name, '$x > 0')
+        assert_equal(While('True', '1 minute').name, 'True | limit=1 minute')
+        assert_equal(While(limit='1 minute').name, 'limit=1 minute')
+
     def test_break_continue_return(self):
         for cls in Break, Continue, Return:
             self._verify(cls())
