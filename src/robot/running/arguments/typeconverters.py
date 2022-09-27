@@ -45,6 +45,7 @@ class TypeConverter:
 
     def __init__(self, used_type, custom_converters=None, languages=None):
         self.used_type = used_type
+        self.nested_types = getattr(used_type, '__args__', ())
         self.custom_converters = custom_converters
         self.languages = languages or Languages()
 
@@ -391,10 +392,6 @@ class ListConverter(TypeConverter):
     abc = Sequence
     value_types = (str, Sequence)
 
-    def __init__(self, type_, custom_converters=None, languages=None):
-        super().__init__(type_, custom_converters, languages)
-        self.nested_types = getattr(type_, '__args__', ())
-
     @classmethod
     def handles(cls, type_):
         base_type = getattr(type_, '__origin__', type_)
@@ -434,10 +431,6 @@ class TupleConverter(TypeConverter):
     type = tuple
     type_name = 'tuple'
     value_types = (str, Sequence)
-
-    def __init__(self, type_, custom_converters=None, languages=None):
-        super().__init__(type_, custom_converters, languages)
-        self.nested_types = getattr(type_, '__args__', ())
 
     def _non_string_convert(self, value, explicit_type=True):
         if not is_list_like(value):
@@ -481,10 +474,6 @@ class DictionaryConverter(TypeConverter):
     aliases = ('dict', 'dictionary', 'map')
     value_types = (str, Mapping)
 
-    def __init__(self, type_, custom_converters=None, languages=None):
-        super().__init__(type_, custom_converters, languages)
-        self.nested_types = getattr(type_, '__args__', ())
-
     def no_conversion_needed(self, value):
         return self.used_type in self.abc and issubclass(type(value), self.abc)
 
@@ -526,10 +515,6 @@ class SetConverter(TypeConverter):
     abc = Set
     type_name = 'set'
     value_types = (str, Container)
-
-    def __init__(self, type_, custom_converters=None, languages=None):
-        super().__init__(type_, custom_converters, languages)
-        self.nested_types = getattr(type_, '__args__', ())
 
     def no_conversion_needed(self, value):
         return not self.nested_types and isinstance(value, self.used_type)
@@ -582,16 +567,10 @@ class CombinedConverter(TypeConverter):
 
     def __init__(self, union, custom_converters, languages=None):
         super().__init__(union, custom_converters, languages)
-        self.nested_types = self._get_types(union)
+        if isinstance(union, tuple):
+            self.nested_types = union
         self.converters = [TypeConverter.converter_for(t, custom_converters, languages)
                            for t in self.nested_types]
-
-    def _get_types(self, union):
-        if not union:
-            return ()
-        if isinstance(union, tuple):
-            return union
-        return union.__args__
 
     @property
     def type_name(self):
