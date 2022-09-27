@@ -3434,13 +3434,13 @@ class _Misc(_BuiltInBase):
         try:
             method = getattr(object, method_name)
         except AttributeError:
-            raise RuntimeError("%s object does not have method '%s'."
-                               % (type_name(object), method_name))
+            raise RuntimeError(f"{type(object).__name__} object does not have "
+                               f"method '{method_name}'.")
         try:
             return method(*args, **kwargs)
-        except:
-            raise RuntimeError("Calling method '%s' failed: %s"
-                               % (method_name, get_error_message()))
+        except Exception as err:
+            msg = get_error_message()
+            raise RuntimeError(f"Calling method '{method_name}' failed: {msg}") from err
 
     def regexp_escape(self, *patterns):
         """Returns each argument string escaped for use as a regular expression.

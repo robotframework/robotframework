@@ -53,11 +53,34 @@ class TestGetErrorDetails(unittest.TestCase):
         except Exception:
             try:
                 raise ValueError
-            except Exception as err:
+            except Exception:
                 try:
-                    raise RuntimeError('last error') from err
+                    raise RuntimeError('last error')
                 except Exception as err:
                     assert_equal(ErrorDetails(err).traceback, format_traceback())
+
+    def test_chaining_without_traceback(self):
+        try:
+            try:
+                raise ValueError('lower')
+            except ValueError as err:
+                raise RuntimeError('higher') from err
+        except Exception as err:
+            err.__traceback__ = None
+            assert_equal(ErrorDetails(err).traceback, format_traceback())
+
+    def test_cause(self):
+        try:
+            raise ValueError('err') from TypeError('cause')
+        except ValueError as err:
+            assert_equal(ErrorDetails(err).traceback, format_traceback())
+
+    def test_cause_without_traceback(self):
+        try:
+            raise ValueError('err') from TypeError('cause')
+        except ValueError as err:
+            err.__traceback__ = None
+            assert_equal(ErrorDetails(err).traceback, format_traceback())
 
 
 class TestRemoveRobotEntriesFromTraceback(unittest.TestCase):
