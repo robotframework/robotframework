@@ -2891,7 +2891,9 @@ class _Misc(_BuiltInBase):
         ``time`` may be either a number or a time string. Time strings are in
         a format such as ``1 day 2 hours 3 minutes 4 seconds 5milliseconds`` or
         ``1d 2h 3m 4s 5ms``, and they are fully explained in an appendix of
-        Robot Framework User Guide. Optional `reason` can be used to explain why
+        Robot Framework User Guide. Providing a value without specifying minutes
+        or seconds, defaults to seconds.
+        Optional `reason` can be used to explain why
         sleeping is necessary. Both the time slept and the reason are logged.
 
         Examples:
