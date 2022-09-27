@@ -32,18 +32,18 @@ Multiline Error With CRLF
 Message And Internal Trace Are Removed From Details When Exception In Library
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    Generic Failure    foo != bar
-    Verify Traceback    ${tc.kws[0].msgs[1]}
+    Traceback Should Be    ${tc.kws[0].msgs[1]}
     ...    ../testresources/testlibs/ExampleLibrary.py    exception    raise exception(msg)
     ...    error=AssertionError: foo != bar
     ${tc} =    Verify Test Case And Error In Log    Non Generic Failure    FloatingPointError: Too Large A Number !!
-    Verify Traceback    ${tc.kws[0].msgs[1]}
+    Traceback Should Be    ${tc.kws[0].msgs[1]}
     ...    ../testresources/testlibs/ExampleLibrary.py    exception    raise exception(msg)
     ...    error=FloatingPointError: Too Large A Number !!
 
 Message and Internal Trace Are Removed From Details When Exception In External Code
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    External Failure    UnboundLocalError: Raised from an external object!
-    Verify Traceback    ${tc.kws[0].msgs[1]}
+    Traceback Should Be    ${tc.kws[0].msgs[1]}
     ...    ../testresources/testlibs/ExampleLibrary.py    external_exception    ObjectToReturn('failure').exception(name, msg)
     ...    ../testresources/testlibs/objecttoreturn.py    exception             raise exception(msg)
     ...    error=UnboundLocalError: Raised from an external object!
@@ -62,7 +62,7 @@ Chained exceptions
 Failure in library in non-ASCII directory
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    ${TEST NAME}    Keyword in 'nön_äscii_dïr' fails!    index=1
-    Verify Traceback    ${tc.kws[1].msgs[1]}
+    Traceback Should Be    ${tc.kws[1].msgs[1]}
     ...    test_libraries/nön_äscii_dïr/valid.py    failing_keyword_in_non_ascii_dir    raise AssertionError("Keyword in 'nön_äscii_dïr' fails!")
     ...    error=AssertionError: Keyword in 'nön_äscii_dïr' fails!
 
@@ -103,12 +103,3 @@ Verify Test Case, Error In Log And No Details
     [Arguments]    ${name}    ${error}    ${msg_index}=${0}
     ${tc} =    Verify Test Case And Error In Log    ${name}    ${error}    0    ${msg_index}
     Length Should Be    ${tc.kws[0].msgs}    ${msg_index + 1}
-
-Verify Traceback
-    [Arguments]    ${msg}    @{entries}    ${error}
-    ${exp} =    Set Variable    Traceback (most recent call last):
-    FOR    ${path}    ${func}    ${text}    IN    @{entries}
-        ${path} =    Normalize Path    ${DATADIR}/${path}
-        ${exp} =    Set Variable    ${exp}\n${SPACE*2}File "${path}", line *, in ${func}\n${SPACE*4}${text}
-    END
-    Check Log Message    ${msg}    ${exp}\n${error}    DEBUG    pattern=True    traceback=True

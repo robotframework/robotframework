@@ -320,7 +320,8 @@ class TestCheckerLibrary:
         message = item.message.rstrip()
         if traceback:
             # Remove `^^^` lines added by Python 3.11+.
-            message = '\n'.join(line for line in message.splitlines() if line.strip('^ '))
+            message = '\n'.join(line for line in message.splitlines()
+                                if '^' not in line or line.strip('^ '))
         b = BuiltIn()
         matcher = b.should_match if pattern else b.should_be_equal
         matcher(message, expected.rstrip(), 'Wrong log message')
