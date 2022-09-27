@@ -468,10 +468,9 @@ class TupleConverter(TypeConverter):
 @TypeConverter.register
 class DictionaryConverter(TypeConverter):
     type = dict
-    abc = Mapping
     abc = (Mapping, MutableMapping)
     type_name = 'dictionary'
-    aliases = ('dict', 'dictionary', 'map')
+    aliases = ('dict', 'map')
     value_types = (str, Mapping)
 
     def no_conversion_needed(self, value):
