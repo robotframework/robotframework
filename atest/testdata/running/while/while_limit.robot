@@ -1,7 +1,7 @@
 *** Variables ***
 ${variable}    ${1}
 ${limit}       11
-${number}      ${0.7}
+${number}      ${0.2}
 
 *** Test Cases ***
 Default limit is 10000 iterations
@@ -29,8 +29,8 @@ Limit with iteration count with underscore
     END
 
 Limit as timestr
-    [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 0.5 seconds. Use the 'limit' argument to increase or remove the limit if needed.
-    WHILE    $variable < 2    limit=0.5s
+    [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 0.1 seconds. Use the 'limit' argument to increase or remove the limit if needed.
+    WHILE    $variable < 2    limit=0.1s
         Log     ${variable}
     END
 
@@ -41,7 +41,7 @@ Limit from variable
     END
 
 Part of limit from variable
-    [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 0.7 seconds. Use the 'limit' argument to increase or remove the limit if needed.
+    [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 0.2 seconds. Use the 'limit' argument to increase or remove the limit if needed.
     WHILE    $variable < 2    limit=${number} s
         Log     ${variable}
     END
@@ -59,7 +59,7 @@ Invalid limit invalid suffix
     END
 
 Invalid limit invalid value
-    [Documentation]     FAIL Invalid WHILE loop limit: Iteration limit must be a positive integer, got: '-100'.
+    [Documentation]     FAIL Invalid WHILE loop limit: Iteration count must be a positive integer, got '-100'.
     WHILE    $variable < 2    limit=-100
         Log     ${variable}
     END

@@ -106,6 +106,32 @@ With BREAK inside TRY-ELSE
     END
     Should be equal    ${variable}    ${2}
 
+Invalid BREAK
+    [Documentation]    FAIL    BREAK does not accept arguments, got 'bad'.
+    WHILE   True
+        BREAK    bad
+    END
+
+Invalid CONTINUE
+    [Documentation]    FAIL    CONTINUE does not accept arguments, got 'bad'.
+    WHILE   True
+        CONTINUE    bad
+    END
+
+Invalid BREAK not executed
+    WHILE   True
+        IF    False
+            BREAK    bad
+        ELSE
+            BREAK
+        END
+    END
+
+Invalid CONTINUE not executed
+    WHILE   False
+        CONTINUE    bad
+    END
+
 With CONTINUE in UK
     With CONTINUE in UK
 

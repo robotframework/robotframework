@@ -319,43 +319,45 @@ class WhileRunner:
         self._templated = templated
 
     def run(self, data):
-        run = self._run
-        executed_once = False
-        result = WhileResult(data.condition, data.limit)
-        with StatusReporter(data, result, self._context, run) as status:
-            if self._context.dry_run or not run:
-                try:
-                    self._run_iteration(data, result, run)
-                except (BreakLoop, ContinueLoop):
-                    pass
-                return
+        ctx = self._context
+        error = None
+        run = False
+        limit = None
+        if self._run:
             if data.error:
-                raise DataError(data.error, syntax=True)
-            limit = WhileLimit.create(data.limit, self._context.variables)
+                error = DataError(data.error, syntax=True)
+            elif not ctx.dry_run:
+                try:
+                    limit = WhileLimit.create(data.limit, ctx.variables)
+                    run = self._should_run(data.condition, ctx.variables)
+                except DataError as err:
+                    error = err
+        result = WhileResult(data.condition, data.limit)
+        with StatusReporter(data, result, self._context, run):
+            if ctx.dry_run or not run:
+                self._run_iteration(data, result, run)
+                if error:
+                    raise error
+                return
             errors = []
-            while self._should_run(data.condition, self._context.variables) \
-                    and limit.is_valid:
-                executed_once = True
+            while True:
                 try:
                     with limit:
-                        self._run_iteration(data, result, run)
+                        self._run_iteration(data, result)
                 except BreakLoop:
                     break
                 except ContinueLoop:
-                    continue
+                    pass
                 except ExecutionFailed as err:
                     errors.extend(err.get_errors())
-                    if not err.can_continue(self._context, self._templated):
+                    if not err.can_continue(ctx, self._templated):
                         break
-            if not executed_once:
-                status.pass_status = result.NOT_RUN
-                self._run_iteration(data, result, run=False)
+                if not self._should_run(data.condition, ctx.variables):
+                    break
             if errors:
                 raise ExecutionFailures(errors)
-            if not limit.is_valid:
-                raise DataError(limit.reason)
 
-    def _run_iteration(self, data, result, run):
+    def _run_iteration(self, data, result, run=True):
         runner = BodyRunner(self._context, run, self._templated)
         with StatusReporter(data, result.body.create_iteration(), self._context, run):
             runner.run(data.body)
@@ -570,26 +572,29 @@ class TryRunner:
 
 
 class WhileLimit:
-    is_valid = True
 
     @classmethod
     def create(cls, limit, variables):
+        if not limit:
+            return IterationCountLimit(DEFAULT_WHILE_LIMIT)
+        value = variables.replace_string(limit)
+        if value.upper() == 'NONE':
+            return NoLimit()
         try:
-            if not limit:
-                return IterationCountLimit(DEFAULT_WHILE_LIMIT)
-            if limit.upper() == 'NONE':
-                return NoLimit()
-            value = variables.replace_string(limit)
-            try:
-                count = int(value.replace(' ', ''))
-                if count <= 0:
-                    return InvalidLimit(f"Iteration limit must be a positive integer, "
-                                        f"got: '{count}'.")
-                return IterationCountLimit(count)
-            except ValueError:
-                return DurationLimit(timestr_to_secs(value))
-        except Exception as error:
-            return InvalidLimit(error)
+            count = int(value.replace(' ', ''))
+        except ValueError:
+            pass
+        else:
+            if count <= 0:
+                raise DataError(f"Invalid WHILE loop limit: Iteration count must be "
+                                f"a positive integer, got '{count}'.")
+            return IterationCountLimit(count)
+        try:
+            secs = timestr_to_secs(value)
+        except ValueError as err:
+            raise DataError(f'Invalid WHILE loop limit: {err.args[0]}')
+        else:
+            return DurationLimit(secs)
 
     def limit_exceeded(self):
         raise ExecutionFailed(f"WHILE loop was aborted because it did not finish "
@@ -638,13 +643,3 @@ class NoLimit(WhileLimit):
 
     def __enter__(self):
         pass
-
-
-class InvalidLimit(WhileLimit):
-    is_valid = False
-
-    def __init__(self, reason):
-        self.reason = f'Invalid WHILE loop limit: {reason}'
-
-    def __enter__(self):
-        raise DataError(self.reason)

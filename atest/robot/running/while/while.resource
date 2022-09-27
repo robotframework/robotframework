@@ -1,9 +1,8 @@
 *** Settings ***
-Resource    atest_resource.robot
-
+Resource        atest_resource.robot
 
 *** Keywords ***
-Check while loop
+Check WHILE loop
     [Arguments]    ${status}    ${iterations}    ${path}=body[0]
     ${tc}=    Check test case    ${TEST NAME}
     ${loop}=    Check loop attributes     ${tc.${path}}    ${status}    ${iterations}

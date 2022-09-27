@@ -17,6 +17,17 @@ Invalid condition
         Fail    Not executed!
     END
 
+Invalid condition on second round
+    [Documentation]    FAIL Evaluating WHILE condition failed: Evaluating expression 'bad' failed: NameError: name 'bad' is not defined nor importable as module
+    ${condition} =    Set Variable    True
+    WHILE    ${condition}
+        IF    ${condition}
+            ${condition} =    Set Variable    bad
+        ELSE
+            Fail    Not executed!
+        END
+    END
+
 Non-existing variable in condition
     [Documentation]    FAIL Evaluating WHILE condition failed: Variable '\${ooops}' not found.
     WHILE    ${ooops}
