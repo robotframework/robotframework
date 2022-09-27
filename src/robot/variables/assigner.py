@@ -63,7 +63,8 @@ class AssignmentValidator:
 
     def _validate_assign_mark(self, variable):
         if self._seen_assign_mark:
-            raise DataError("Assign mark '=' can be used only with the last variable.")
+            raise DataError("Assign mark '=' can be used only with the last variable.",
+                            syntax=True)
         if variable.endswith('='):
             self._seen_assign_mark = True
             return variable[:-1].rstrip()
@@ -71,10 +72,11 @@ class AssignmentValidator:
 
     def _validate_state(self, is_list, is_dict):
         if is_list and self._seen_list:
-            raise DataError('Assignment can contain only one list variable.')
+            raise DataError('Assignment can contain only one list variable.',
+                            syntax=True)
         if self._seen_dict or is_dict and self._seen_any_var:
-            raise DataError('Dictionary variable cannot be assigned with '
-                            'other variables.')
+            raise DataError('Dictionary variable cannot be assigned with other '
+                            'variables.', syntax=True)
         self._seen_list += is_list
         self._seen_dict += is_dict
         self._seen_any_var = True

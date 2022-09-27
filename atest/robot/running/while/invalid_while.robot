@@ -21,3 +21,12 @@ No body
 
 No END
     Check Test Case    ${TESTNAME}
+
+Invalid data causes syntax error
+    Check Test Case    ${TEST NAME}
+
+Invalid condition causes normal error
+    Check Test Case    ${TEST NAME}
+
+Non-existing variable in condition causes normal error
+    Check Test Case    ${TEST NAME}

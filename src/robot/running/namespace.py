@@ -286,9 +286,9 @@ class KeywordStore:
 
     def _get_runner(self, name):
         if not name:
-            raise DataError('Keyword name cannot be empty.')
+            raise DataError('Keyword name cannot be empty.', syntax=True)
         if not is_string(name):
-            raise DataError('Keyword name must be a string.')
+            raise DataError('Keyword name must be a string.', syntax=True)
         runner = self._get_runner_from_suite_file(name)
         if not runner and '.' in name:
             runner = self._get_explicit_runner(name)

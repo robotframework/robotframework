@@ -57,8 +57,8 @@ Run Keyword And Continue On Failure with failure in keyoword teardown
     Fail    The End
 
 Run Keyword And Continue On Failure With Syntax Error
-    [Documentation]    FAIL    Keyword 'BuiltIn.No Operation' expected 0 arguments, got 1.
-    Run keyword And Continue On Failure    No Operation    illegal argument
+    [Documentation]    FAIL    Assign mark '=' can be used only with the last variable.
+    Run keyword And Continue On Failure    Syntax Error
     Fail    This Should Not Be Executed!
 
 Run Keyword And Continue On Failure With Timeout
@@ -107,3 +107,6 @@ RKACOF in UK 2
 Keyword With Failing Teardown
     No Operation
     [Teardown]    Fail    Expected error
+
+Syntax Error
+    ${x} =    ${y} =    Create List    x    y

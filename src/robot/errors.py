@@ -57,6 +57,9 @@ class DataError(RobotError):
     DataErrors are not caught by keywords that run other keywords
     (e.g. `Run Keyword And Expect Error`).
     """
+    def __init__(self, message='', details='', syntax=False):
+        super().__init__(message, details)
+        self.syntax = syntax
 
 
 class VariableError(DataError):
@@ -65,6 +68,8 @@ class VariableError(DataError):
     VariableErrors are caught by keywords that run other keywords
     (e.g. `Run Keyword And Expect Error`).
     """
+    def __init__(self, message='', details=''):
+        super().__init__(message, details)
 
 
 class KeywordError(DataError):
@@ -73,6 +78,8 @@ class KeywordError(DataError):
     KeywordErrors are caught by keywords that run other keywords
     (e.g. `Run Keyword And Expect Error`).
     """
+    def __init__(self, message='', details=''):
+        super().__init__(message, details)
 
 
 class TimeoutError(RobotError):
@@ -165,8 +172,7 @@ class HandlerExecutionFailed(ExecutionFailed):
         timeout = isinstance(error, TimeoutError)
         test_timeout = timeout and error.test_timeout
         keyword_timeout = timeout and error.keyword_timeout
-        syntax = (isinstance(error, DataError)
-                  and not isinstance(error, (KeywordError, VariableError)))
+        syntax = isinstance(error, DataError) and error.syntax
         exit_on_failure = self._get(error, 'EXIT_ON_FAILURE')
         continue_on_failure = self._get(error, 'CONTINUE_ON_FAILURE')
         skip = self._get(error, 'SKIP_EXECUTION')

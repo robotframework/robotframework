@@ -193,7 +193,7 @@ class Return(model.Return):
         with StatusReporter(self, ReturnResult(self.values), context, run):
             if run:
                 if self.error:
-                    raise DataError(self.error)
+                    raise DataError(self.error, syntax=True)
                 raise ReturnFromKeyword(self.values)
 
 
@@ -213,7 +213,7 @@ class Continue(model.Continue):
     def run(self, context, run=True, templated=False):
         with StatusReporter(self, ContinueResult(), context, run):
             if self.error:
-                raise DataError(self.error)
+                raise DataError(self.error, syntax=True)
             if run:
                 raise ContinueLoop()
 
@@ -234,7 +234,7 @@ class Break(model.Break):
     def run(self, context, run=True, templated=False):
         with StatusReporter(self, BreakResult(), context, run):
             if self.error:
-                raise DataError(self.error)
+                raise DataError(self.error, syntax=True)
             if run:
                 raise BreakLoop()
 

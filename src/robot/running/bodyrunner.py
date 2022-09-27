@@ -98,7 +98,7 @@ class ForInRunner:
             run_at_least_once = False
             if self._run:
                 if data.error:
-                    raise DataError(data.error)
+                    raise DataError(data.error, syntax=True)
                 run_at_least_once = self._run_loop(data, result)
             if not run_at_least_once:
                 status.pass_status = result.NOT_RUN
@@ -173,7 +173,7 @@ class ForInRunner:
                 if value is None:
                     raise DataError(f"Invalid FOR loop value '{item}'. When iterating "
                                     f"over dictionaries, values must be '&{{dict}}' "
-                                    f"variables or use 'key=value' syntax.")
+                                    f"variables or use 'key=value' syntax.", syntax=True)
                 try:
                     result[replace_scalar(key)] = replace_scalar(value)
                 except TypeError:
@@ -184,7 +184,8 @@ class ForInRunner:
     def _map_dict_values_to_rounds(self, values, per_round):
         if per_round > 2:
             raise DataError(f'Number of FOR loop variables must be 1 or 2 when '
-                            f'iterating over dictionaries, got {per_round}.')
+                            f'iterating over dictionaries, got {per_round}.',
+                            syntax=True)
         return values
 
     def _resolve_values(self, values):
@@ -227,11 +228,12 @@ class ForInRangeRunner(ForInRunner):
 
     def _resolve_dict_values(self, values):
         raise DataError('FOR IN RANGE loops do not support iterating over '
-                        'dictionaries.')
+                        'dictionaries.', syntax=True)
 
     def _map_values_to_rounds(self, values, per_round):
         if not 1 <= len(values) <= 3:
-            raise DataError(f'FOR IN RANGE expected 1-3 values, got {len(values)}.')
+            raise DataError(f'FOR IN RANGE expected 1-3 values, got {len(values)}.',
+                            syntax=True)
         try:
             values = [self._to_number_with_arithmetic(v) for v in values]
         except Exception:
@@ -254,7 +256,8 @@ class ForInZipRunner(ForInRunner):
     _start = 0
 
     def _resolve_dict_values(self, values):
-        raise DataError('FOR IN ZIP loops do not support iterating over dictionaries.')
+        raise DataError('FOR IN ZIP loops do not support iterating over dictionaries.',
+                        syntax=True)
 
     def _map_values_to_rounds(self, values, per_round):
         for item in values:
@@ -282,7 +285,7 @@ class ForInEnumerateRunner(ForInRunner):
             return 0, values
         start = self._context.variables.replace_string(values[-1][6:])
         if len(values) == 1:
-            raise DataError('FOR loop has no loop values.')
+            raise DataError('FOR loop has no loop values.', syntax=True)
         try:
             return int(start), values[:-1]
         except ValueError:
@@ -290,8 +293,9 @@ class ForInEnumerateRunner(ForInRunner):
 
     def _map_dict_values_to_rounds(self, values, per_round):
         if per_round > 3:
-            raise DataError(f'Number of FOR IN ENUMERATE loop variables must be '
-                            f'1-3 when iterating over dictionaries, got {per_round}.')
+            raise DataError(f'Number of FOR IN ENUMERATE loop variables must be 1-3 '
+                            f'when iterating over dictionaries, got {per_round}.',
+                            syntax=True)
         if per_round == 2:
             return ((i, v) for i, v in enumerate(values, start=self._start))
         return ((i,) + v for i, v in enumerate(values, start=self._start))
@@ -326,7 +330,7 @@ class WhileRunner:
                     pass
                 return
             if data.error:
-                raise DataError(data.error)
+                raise DataError(data.error, syntax=True)
             limit = WhileLimit.create(data.limit, self._context.variables)
             errors = []
             while self._should_run(data.condition, self._context.variables) \
@@ -362,8 +366,9 @@ class WhileRunner:
             if is_string(condition):
                 return evaluate_expression(condition, variables.current.store)
             return bool(condition)
-        except DataError as err:
-            raise DataError(f'Evaluating WHILE loop condition failed: {err}')
+        except Exception:
+            msg = get_error_message()
+            raise DataError(f'Evaluating WHILE condition failed: {msg}')
 
 
 class IfRunner:
@@ -402,23 +407,25 @@ class IfRunner:
             if dry_run:
                 self._dry_run_stack.pop()
 
-    def _run_if_branch(self, branch, recursive_dry_run=False, error=None):
+    def _run_if_branch(self, branch, recursive_dry_run=False, syntax_error=None):
         context = self._context
         result = IfBranchResult(branch.type, branch.condition)
-        if error:
+        error = None
+        if syntax_error:
             run_branch = False
+            error = DataError(syntax_error, syntax=True)
         else:
             try:
                 run_branch = self._should_run_branch(branch, context, recursive_dry_run)
-            except Exception:
-                error = get_error_message()
+            except DataError as err:
+                error = err
                 run_branch = False
         with StatusReporter(branch, result, context, run_branch):
             runner = BodyRunner(context, run_branch, self._templated)
             if not recursive_dry_run:
                 runner.run(branch.body)
             if error and self._run:
-                raise DataError(error)
+                raise error
         return run_branch
 
     def _should_run_branch(self, branch, context, recursive_dry_run=False):
@@ -435,8 +442,9 @@ class IfRunner:
             if is_string(condition):
                 return evaluate_expression(condition, variables.current.store)
             return bool(condition)
-        except DataError as err:
-            raise DataError(f'Evaluating {branch.type} condition failed: {err}')
+        except Exception:
+            msg = get_error_message()
+            raise DataError(f'Evaluating {branch.type} condition failed: {msg}')
 
 
 class TryRunner:
