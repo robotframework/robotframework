@@ -252,11 +252,10 @@ Invalid END
     Check test and failed loop    ${TEST NAME}
 
 No loop values
-    ${tc} =    Check test case    ${TEST NAME}
-    Should be FOR loop    ${tc.body[0]}    0    FAIL
+    Check test and failed loop    ${TEST NAME}
 
 No loop variables
-    Check Test Case    ${TESTNAME}
+    Check test and failed loop    ${TEST NAME}
 
 Invalid loop variable
     Check test and failed loop    ${TEST NAME} 1

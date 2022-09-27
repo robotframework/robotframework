@@ -5,18 +5,21 @@ Resource          atest_resource.robot
 Check test and get loop
     [Arguments]    ${test name}    ${loop index}=0
     ${tc} =    Check Test Case    ${test name}
-    [Return]    ${tc.kws}[${loop index}]
+    RETURN    ${tc.kws}[${loop index}]
 
 Check test and failed loop
     [Arguments]    ${test name}    ${type}=FOR    ${loop index}=0
     ${loop} =    Check test and get loop    ${test name}    ${loop index}
-    Run Keyword    Should Be ${type} loop    ${loop}    0   FAIL
+    Length Should Be    ${loop.body}    2
+    Should Be Equal     ${loop.body[0].type}    ITERATION
+    Should Be Equal     ${loop.body[1].type}    MESSAGE
+    Run Keyword    Should Be ${type} loop    ${loop}    1    FAIL
 
 Should be FOR loop
     [Arguments]    ${loop}    ${iterations}    ${status}=PASS    ${flavor}=IN
     Should Be Equal     ${loop.type}      FOR
     Should Be Equal     ${loop.flavor}    ${flavor}
-    Length Should Be    ${loop.kws}       ${iterations}
+    Length Should Be    ${loop.body.filter(messages=False)}    ${iterations}
     Should Be Equal     ${loop.status}    ${status}
 
 Should be IN RANGE loop

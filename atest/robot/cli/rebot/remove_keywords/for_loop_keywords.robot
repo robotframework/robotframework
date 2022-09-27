@@ -51,8 +51,10 @@ Steps From Loops In Keywords From Loops Are Removed
 
 Empty Loops Are Handled Correctly
     ${tc}=    Check Test Case    Empty body
-    Should Be Empty    ${tc.kws[0].kws}
-    Should Be Equal    ${tc.kws[0].doc}    ${0 REMOVED}
+    Should Be Equal    ${tc.body[0].body[0].type}      ITERATION
+    Should Be Equal    ${tc.body[0].body[0].status}    NOT RUN
+    Should Be Empty    ${tc.body[0].body[0].body}
+    Should Be Equal    ${tc.body[0].doc}               ${0 REMOVED}
 
 *** Keywords ***
 Remove For Loop Keywords With Rebot

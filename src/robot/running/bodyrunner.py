@@ -93,21 +93,32 @@ class ForInRunner:
         self._templated = templated
 
     def run(self, data):
+        error = None
+        run = False
+        if self._run:
+            if data.error:
+                error = DataError(data.error, syntax=True)
+            else:
+                run = True
         result = ForResult(data.variables, data.flavor, data.values)
-        with StatusReporter(data, result, self._context, self._run) as status:
-            run_at_least_once = False
-            if self._run:
-                if data.error:
-                    raise DataError(data.error, syntax=True)
-                run_at_least_once = self._run_loop(data, result)
-            if not run_at_least_once:
-                status.pass_status = result.NOT_RUN
-                self._run_one_round(data, result, run=False)
+        with StatusReporter(data, result, self._context, run) as status:
+            if run:
+                try:
+                    values_for_rounds = self._get_values_for_rounds(data)
+                except DataError as err:
+                    error = err
+                else:
+                    if self._run_loop(data, result, values_for_rounds):
+                        return
+            status.pass_status = result.NOT_RUN
+            self._run_one_round(data, result, run=False)
+            if error:
+                raise error
 
-    def _run_loop(self, data, result):
+    def _run_loop(self, data, result, values_for_rounds):
         errors = []
         executed = False
-        for values in self._get_values_for_rounds(data):
+        for values in values_for_rounds:
             executed = True
             try:
                 self._run_one_round(data, result, values)
@@ -124,8 +135,7 @@ class ForInRunner:
                 raise exception
             except ExecutionFailed as exception:
                 errors.extend(exception.get_errors())
-                if not exception.can_continue(self._context,
-                                              self._templated):
+                if not exception.can_continue(self._context, self._templated):
                     break
         if errors:
             raise ExecutionFailures(errors)
@@ -150,7 +160,7 @@ class ForInRunner:
                 return True
             if split_from_equals(item)[1] is None:
                 all_name_value = False
-        if all_name_value:
+        if all_name_value and values:
             name, value = split_from_equals(values[0])
             logger.warn(
                 f"FOR loop iteration over values that are all in 'name=value' "
@@ -272,6 +282,11 @@ class ForInZipRunner(ForInRunner):
 class ForInEnumerateRunner(ForInRunner):
     flavor = 'IN ENUMERATE'
 
+    def _is_dict_iteration(self, values):
+        if values and values[-1].startswith('start='):
+            values = values[:-1]
+        return super()._is_dict_iteration(values)
+
     def _resolve_dict_values(self, values):
         self._start, values = self._get_start(values)
         return ForInRunner._resolve_dict_values(self, values)
@@ -283,13 +298,18 @@ class ForInEnumerateRunner(ForInRunner):
     def _get_start(self, values):
         if not values[-1].startswith('start='):
             return 0, values
-        start = self._context.variables.replace_string(values[-1][6:])
-        if len(values) == 1:
+        *values, start = values
+        if not values:
             raise DataError('FOR loop has no loop values.', syntax=True)
         try:
-            return int(start), values[:-1]
-        except ValueError:
-            raise ValueError(f"Invalid FOR IN ENUMERATE start value '{start}'.")
+            start = self._context.variables.replace_string(start[6:])
+            try:
+                start = int(start)
+            except ValueError:
+                raise DataError(f"Start value must be an integer, got '{start}'.")
+        except DataError as err:
+            raise DataError(f'Invalid start value: {err}')
+        return start, values
 
     def _map_dict_values_to_rounds(self, values, per_round):
         if per_round > 3:
