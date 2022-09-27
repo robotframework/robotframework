@@ -77,6 +77,11 @@ def tuple_with_params(argument: Tuple[int, float, str, MyEnum], expected=None):
     _validate_list_subtype(argument, expected)
 
 
+def tuple_with_ellipsis(argument: Tuple[int, ...], expected=None):
+    _validate_type(argument, expected)
+    _validate_list_subtype(argument, expected)
+
+
 def dict_(argument: Dict, expected=None):
     _validate_type(argument, expected)
     _validate_dict_subtypes(argument, expected)

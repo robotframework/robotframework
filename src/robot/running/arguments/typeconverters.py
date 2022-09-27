@@ -454,9 +454,16 @@ class TupleConverter(TypeConverter):
         types = ', '.join([type_name(t) for t in self.nested_types])
         converted_list = list()
         for index, elem in enumerate(value):
-            converter = TypeConverter.converter_for(self.nested_types[index],
-                                                    self.custom_converters,
-                                                    self.languages)
+            if len(self.nested_types) <= index:
+                if self.nested_types[-1] is not Ellipsis:
+                    raise ValueError
+                converter = TypeConverter.converter_for(self.nested_types[0],
+                                                        self.custom_converters,
+                                                        self.languages)
+            else:
+                converter = TypeConverter.converter_for(self.nested_types[index],
+                                                        self.custom_converters,
+                                                        self.languages)
             if converter:
                 converted_list.append(converter.convert(f"Tuple[{types}]", elem,
                                                         explicit_type))

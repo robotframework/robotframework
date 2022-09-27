@@ -47,6 +47,8 @@ Tuple
 
 Tuple with params
     Tuple with params         (1, '3.14', 'text', 'foo')  (1, 3.14, 'text', MyEnum.foo)
+    tuple with ellipsis       (13,)                       (13,)
+    tuple with ellipsis       (13, 313, 1313)             (13, 313, 1313)
 
 Invalid tuple
     [Template]                Conversion Should Fail
