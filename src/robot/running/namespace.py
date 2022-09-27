@@ -22,7 +22,7 @@ from robot.errors import DataError, KeywordError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER, Message
 from robot.utils import (RecommendationFinder, eq, find_file, is_string, normalize,
-                         plural_or_not as s, printable_name, seq2str, seq2str2)
+                         printable_name, seq2str2)
 
 from .context import EXECUTION_CONTEXTS
 from .importer import ImportCache, Importer

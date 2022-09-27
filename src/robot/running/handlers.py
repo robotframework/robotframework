@@ -74,8 +74,7 @@ class _RunnableHandler:
     def _get_tags_from_attribute(self, handler_method):
         tags = getattr(handler_method, 'robot_tags', ())
         if not is_list_like(tags):
-            raise DataError("Expected tags to be list-like, got %s."
-                            % type_name(tags))
+            raise DataError(f"Expected tags to be list-like, got {type_name(tags)}.")
         return tags
 
     def _get_initial_handler(self, library, name, method):
@@ -93,7 +92,7 @@ class _RunnableHandler:
 
     @property
     def longname(self):
-        return '%s.%s' % (self.library.name, self.name)
+        return f'{self.library.name}.{self.name}'
 
     @property
     def shortdoc(self):
@@ -135,8 +134,7 @@ class _RunnableHandler:
 class _PythonHandler(_RunnableHandler):
 
     def __init__(self, library, handler_name, handler_method):
-        _RunnableHandler.__init__(self, library, handler_name, handler_method,
-                                  getdoc(handler_method))
+        super().__init__(library, handler_name, handler_method, getdoc(handler_method))
 
     def _parse_arguments(self, handler_method):
         return PythonArgumentParser().parse(handler_method, self.longname)
@@ -166,25 +164,26 @@ class _PythonHandler(_RunnableHandler):
 
 class _DynamicHandler(_RunnableHandler):
 
-    def __init__(self, library, handler_name, dynamic_method, doc='',
-                 argspec=None, tags=None):
+    def __init__(self, library, handler_name, dynamic_method, doc='', argspec=None,
+                 tags=None):
         self._argspec = argspec
         self._run_keyword_method_name = dynamic_method.name
         self._supports_kwargs = dynamic_method.supports_kwargs
-        _RunnableHandler.__init__(self, library, handler_name,
-                                  dynamic_method.method, doc, tags)
+        # Cannot use super() here due to multi-inheritance in _DynamicRunKeywordHandler
+        _RunnableHandler.__init__(self, library, handler_name, dynamic_method.method,
+                                  doc, tags)
         self._source_info = None
 
     def _parse_arguments(self, handler_method):
         spec = DynamicArgumentParser().parse(self._argspec, self.longname)
         if not self._supports_kwargs:
+            name = self._run_keyword_method_name
             if spec.var_named:
-                raise DataError("Too few '%s' method parameters for **kwargs "
-                                "support." % self._run_keyword_method_name)
+                raise DataError(f"Too few '{name}' method parameters for "
+                                f"**kwargs support.")
             if spec.named_only:
-                raise DataError("Too few '%s' method parameters for "
-                                "keyword-only arguments support."
-                                % self._run_keyword_method_name)
+                raise DataError(f"Too few '{name}' method parameters for "
+                                f"keyword-only arguments support.")
         get_keyword_types = GetKeywordTypes(self.library.get_instance())
         spec.types = get_keyword_types(self._handler_name)
         return spec
@@ -264,7 +263,7 @@ class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):
 class _PythonInitHandler(_PythonHandler):
 
     def __init__(self, library, handler_name, handler_method, docgetter):
-        _PythonHandler.__init__(self, library, handler_name, handler_method)
+        super().__init__(library, handler_name, handler_method)
         self._docgetter = docgetter
 
     def _get_name(self, handler_name, handler_method):

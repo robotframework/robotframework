@@ -153,13 +153,12 @@ class ForInRunner:
         if all_name_value:
             name, value = split_from_equals(values[0])
             logger.warn(
-                "FOR loop iteration over values that are all in 'name=value' "
-                "format like '%s' is deprecated. In the future this syntax "
-                "will mean iterating over names and values separately like "
-                "when iterating over '&{dict} variables. Escape at least one "
-                "of the values like '%s\\=%s' to use normal FOR loop "
-                "iteration and to disable this warning."
-                % (values[0], name, value)
+                f"FOR loop iteration over values that are all in 'name=value' "
+                f"format like '{values[0]}' is deprecated. In the future this syntax "
+                f"will mean iterating over names and values separately like "
+                f"when iterating over '&{{dict}} variables. Escape at least one "
+                f"of the values like '{name}\\={value}' to use normal FOR loop "
+                f"iteration and to disable this warning."
             )
         return False
 
@@ -172,26 +171,20 @@ class ForInRunner:
             else:
                 key, value = split_from_equals(item)
                 if value is None:
-                    raise DataError(
-                        "Invalid FOR loop value '%s'. When iterating over "
-                        "dictionaries, values must be '&{dict}' variables "
-                        "or use 'key=value' syntax." % item
-                    )
+                    raise DataError(f"Invalid FOR loop value '{item}'. When iterating "
+                                    f"over dictionaries, values must be '&{{dict}}' "
+                                    f"variables or use 'key=value' syntax.")
                 try:
                     result[replace_scalar(key)] = replace_scalar(value)
                 except TypeError:
-                    raise DataError(
-                        "Invalid dictionary item '%s': %s"
-                        % (item, get_error_message())
-                    )
+                    err = get_error_message()
+                    raise DataError(f"Invalid dictionary item '{item}': {err}")
         return result.items()
 
     def _map_dict_values_to_rounds(self, values, per_round):
         if per_round > 2:
-            raise DataError(
-                'Number of FOR loop variables must be 1 or 2 when iterating '
-                'over dictionaries, got %d.' % per_round
-            )
+            raise DataError(f'Number of FOR loop variables must be 1 or 2 when '
+                            f'iterating over dictionaries, got {per_round}.')
         return values
 
     def _resolve_values(self, values):
@@ -205,10 +198,9 @@ class ForInRunner:
         return (values[i:i+per_round] for i in range(0, count, per_round))
 
     def _raise_wrong_variable_count(self, variables, values):
-        raise DataError(
-            'Number of FOR loop values should be multiple of its variables. '
-            'Got %d variables but %d value%s.' % (variables, values, s(values))
-        )
+        raise DataError(f'Number of FOR loop values should be multiple of its '
+                        f'variables. Got {variables} variables but {values} '
+                        f'value{s(values)}.')
 
     def _run_one_round(self, data, result, values=None, run=True):
         result = result.body.create_iteration()
@@ -234,22 +226,17 @@ class ForInRangeRunner(ForInRunner):
     flavor = 'IN RANGE'
 
     def _resolve_dict_values(self, values):
-        raise DataError(
-            'FOR IN RANGE loops do not support iterating over dictionaries.'
-        )
+        raise DataError('FOR IN RANGE loops do not support iterating over '
+                        'dictionaries.')
 
     def _map_values_to_rounds(self, values, per_round):
         if not 1 <= len(values) <= 3:
-            raise DataError(
-                'FOR IN RANGE expected 1-3 values, got %d.' % len(values)
-            )
+            raise DataError(f'FOR IN RANGE expected 1-3 values, got {len(values)}.')
         try:
             values = [self._to_number_with_arithmetic(v) for v in values]
-        except:
-            raise DataError(
-                'Converting FOR IN RANGE values failed: %s.'
-                % get_error_message()
-            )
+        except Exception:
+            msg = get_error_message()
+            raise DataError(f'Converting FOR IN RANGE values failed: {msg}.')
         values = frange(*values)
         return ForInRunner._map_values_to_rounds(self, values, per_round)
 
@@ -258,7 +245,7 @@ class ForInRangeRunner(ForInRunner):
             return item
         number = eval(str(item), {})
         if not is_number(number):
-            raise TypeError("Expected number, got %s." % type_name(item))
+            raise TypeError(f'Expected number, got {type_name(item)}.')
         return number
 
 
@@ -267,17 +254,13 @@ class ForInZipRunner(ForInRunner):
     _start = 0
 
     def _resolve_dict_values(self, values):
-        raise DataError(
-            'FOR IN ZIP loops do not support iterating over dictionaries.'
-        )
+        raise DataError('FOR IN ZIP loops do not support iterating over dictionaries.')
 
     def _map_values_to_rounds(self, values, per_round):
         for item in values:
             if not is_list_like(item):
-                raise DataError(
-                    "FOR IN ZIP items must all be list-like, got %s '%s'."
-                    % (type_name(item), item)
-                )
+                raise DataError(f"FOR IN ZIP items must all be list-like, "
+                                f"got {type_name(item)} '{item}'.")
         if len(values) % per_round != 0:
             self._raise_wrong_variable_count(per_round, len(values))
         return zip(*(list(item) for item in values))
@@ -303,14 +286,12 @@ class ForInEnumerateRunner(ForInRunner):
         try:
             return int(start), values[:-1]
         except ValueError:
-            raise ValueError("Invalid FOR IN ENUMERATE start value '%s'." % start)
+            raise ValueError(f"Invalid FOR IN ENUMERATE start value '{start}'.")
 
     def _map_dict_values_to_rounds(self, values, per_round):
         if per_round > 3:
-            raise DataError(
-                'Number of FOR IN ENUMERATE loop variables must be 1-3 when '
-                'iterating over dictionaries, got %d.' % per_round
-            )
+            raise DataError(f'Number of FOR IN ENUMERATE loop variables must be '
+                            f'1-3 when iterating over dictionaries, got {per_round}.')
         if per_round == 2:
             return ((i, v) for i, v in enumerate(values, start=self._start))
         return ((i,) + v for i, v in enumerate(values, start=self._start))
@@ -321,11 +302,9 @@ class ForInEnumerateRunner(ForInRunner):
         return ([i] + v for i, v in enumerate(values, start=self._start))
 
     def _raise_wrong_variable_count(self, variables, values):
-        raise DataError(
-            'Number of FOR IN ENUMERATE loop values should be multiple of '
-            'its variables (excluding the index). Got %d variables but %d '
-            'value%s.' % (variables, values, s(values))
-        )
+        raise DataError(f'Number of FOR IN ENUMERATE loop values should be multiple of '
+                        f'its variables (excluding the index). Got {variables} '
+                        f'variables but {values} value{s(values)}.')
 
 
 class WhileRunner:
@@ -431,7 +410,7 @@ class IfRunner:
         else:
             try:
                 run_branch = self._should_run_branch(branch, context, recursive_dry_run)
-            except:
+            except Exception:
                 error = get_error_message()
                 run_branch = False
         with StatusReporter(branch, result, context, run_branch):
@@ -605,9 +584,9 @@ class WhileLimit:
             return InvalidLimit(error)
 
     def limit_exceeded(self):
-        raise ExecutionFailed(f"WHILE loop was aborted because it did not finish within the "
-                              f"limit of {self}. Use the 'limit' argument to increase or "
-                              f"remove the limit if needed.")
+        raise ExecutionFailed(f"WHILE loop was aborted because it did not finish "
+                              f"within the limit of {self}. Use the 'limit' argument "
+                              f"to increase or remove the limit if needed.")
 
     def __enter__(self):
         raise NotImplementedError
