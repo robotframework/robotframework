@@ -62,7 +62,7 @@ class StatusReporter:
             context.test.status = result.status
         result.endtime = get_timestamp()
         context.end_keyword(ModelCombiner(self.data, result))
-        if failure is not exc_val:
+        if failure is not exc_val and not self.suppress:
             raise failure
         return self.suppress
 

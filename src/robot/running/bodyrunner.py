@@ -482,7 +482,7 @@ class TryRunner:
         with StatusReporter(data, TryResult(), self._context, run):
             if data.error:
                 self._run_invalid(data)
-                return False
+                return
             error = self._run_try(data, run)
             run_excepts_or_else = self._should_run_excepts_or_else(error, run)
             if error:
@@ -504,8 +504,8 @@ class TryRunner:
                 runner.run(branch.body)
                 if not error_reported:
                     error_reported = True
-                    raise ExecutionFailed(data.error)
-        raise ExecutionFailed(data.error)
+                    raise DataError(data.error, syntax=True)
+        raise ExecutionFailed(data.error, syntax=True)
 
     def _run_try(self, data, run):
         result = TryBranchResult(data.TRY)
@@ -516,7 +516,7 @@ class TryRunner:
             return False
         if not error:
             return True
-        return not (error.skip or isinstance(error, ExecutionPassed))
+        return not (error.skip or error.syntax or isinstance(error, ExecutionPassed))
 
     def _run_branch(self, branch, result, run=True, error=None):
         try:
@@ -526,8 +526,6 @@ class TryRunner:
                 runner = BodyRunner(self._context, run, self._templated)
                 runner.run(branch.body)
         except ExecutionStatus as err:
-            if isinstance(err, ExecutionFailed) and err.syntax:
-                raise err
             return err
         else:
             return None
