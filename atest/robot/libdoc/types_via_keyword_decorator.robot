@@ -13,7 +13,7 @@ Varargs and kwargs
     Keyword Arguments Should Be     2    *varargs: int    **kwargs: bool
 
 Unknown types
-    Keyword Arguments Should Be     3    unknown: UnknownType    unrecognized: Ellipsis
+    Keyword Arguments Should Be     3    unknown: UnknownType    unrecognized: ...
 
 Non-type annotations
     Keyword Arguments Should Be     4    arg: One of the usages in PEP-3107

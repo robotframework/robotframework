@@ -188,6 +188,9 @@ class TestTypeRepr(unittest.TestCase):
     def test_none(self):
         assert_equal(type_repr(None), 'None')
 
+    def test_ellipsis(self):
+        assert_equal(type_repr(...), '...')
+
     def test_string(self):
         assert_equal(type_repr('MyType'), 'MyType')
 
@@ -197,6 +200,7 @@ class TestTypeRepr(unittest.TestCase):
     def test_generics_from_typing(self):
         assert_equal(type_repr(List[Any]), 'List[Any]')
         assert_equal(type_repr(Dict[int, None]), 'Dict[int, None]')
+        assert_equal(type_repr(Tuple[int, ...]), 'Tuple[int, ...]')
 
     if PY_VERSION >= (3, 9):
         def test_generics(self):

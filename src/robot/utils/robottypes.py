@@ -116,6 +116,8 @@ def type_repr(typ):
     """
     if typ is type(None):
         return 'None'
+    if typ is Ellipsis:
+        return '...'
     if typ is Any:  # Needed with Python 3.6, with newer `Any._name` exists.
         return 'Any'
     if is_union(typ):
@@ -137,9 +139,11 @@ def _get_type_name(typ):
 
 def _has_args(typ):
     args = getattr(typ, '__args__', ())
-    # TypeVar check needed due to Python 3.6 having such thing in `__args__`
-    # even if using just `List`.
-    return args and not isinstance(typ.__args__[0], TypeVar)
+    # __args__ contains TypeVars when accessed directly from typing.List and other
+    # such types withPython 3.7-3.8. With Python 3.6 __args__ is None in that case
+    # and with Python 3.9+ it doesn't exist at all. When using like List[int].__args__
+    # everything works the same way regardless the version.
+    return args and not all(isinstance(t, TypeVar) for t in args)
 
 
 def is_truthy(item):

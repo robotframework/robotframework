@@ -21,6 +21,9 @@ Custom in Union
 Accept subscripted generics
     Check Test Case    ${TESTNAME}
 
+With generics
+    Check Test Case    ${TESTNAME}
+
 Failing conversion
     Check Test Case    ${TESTNAME}
 

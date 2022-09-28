@@ -1,6 +1,5 @@
-from typing import (List, Sequence, MutableSequence,
-                    Dict, Mapping, MutableMapping,
-                    Set, MutableSet)
+from typing import (Dict, List, Mapping, MutableMapping, MutableSet, MutableSequence,
+                    Set, Sequence, Tuple, Union)
 try:
     from typing import TypedDict
 except ImportError:
@@ -25,7 +24,19 @@ def list_(argument: List, expected=None):
     _validate_type(argument, expected)
 
 
-def list_with_params(argument: List[int], expected=None):
+def list_with_types(argument: List[int], expected=None):
+    _validate_type(argument, expected)
+
+
+def tuple_(argument: Tuple, expected=None):
+    _validate_type(argument, expected)
+
+
+def tuple_with_types(argument: Tuple[bool, int], expected=None):
+    _validate_type(argument, expected)
+
+
+def homogenous_tuple(argument: Tuple[int, ...], expected=None):
     _validate_type(argument, expected)
 
 
@@ -33,7 +44,7 @@ def sequence(argument: Sequence, expected=None):
     _validate_type(argument, expected)
 
 
-def sequence_with_params(argument: Sequence[bool], expected=None):
+def sequence_with_types(argument: Sequence[Union[int, float]], expected=None):
     _validate_type(argument, expected)
 
 
@@ -41,7 +52,7 @@ def mutable_sequence(argument: MutableSequence, expected=None):
     _validate_type(argument, expected)
 
 
-def mutable_sequence_with_params(argument: MutableSequence[bool], expected=None):
+def mutable_sequence_with_types(argument: MutableSequence[int], expected=None):
     _validate_type(argument, expected)
 
 
@@ -49,7 +60,7 @@ def dict_(argument: Dict, expected=None):
     _validate_type(argument, expected)
 
 
-def dict_with_params(argument: Dict[str, int], expected=None):
+def dict_with_types(argument: Dict[int, float], expected=None):
     _validate_type(argument, expected)
 
 
@@ -61,7 +72,7 @@ def mapping(argument: Mapping, expected=None):
     _validate_type(argument, expected)
 
 
-def mapping_with_params(argument: Mapping[bool, int], expected=None):
+def mapping_with_types(argument: Mapping[int, float], expected=None):
     _validate_type(argument, expected)
 
 
@@ -69,7 +80,7 @@ def mutable_mapping(argument: MutableMapping, expected=None):
     _validate_type(argument, expected)
 
 
-def mutable_mapping_with_params(argument: MutableMapping[bool, int], expected=None):
+def mutable_mapping_with_types(argument: MutableMapping[int, float], expected=None):
     _validate_type(argument, expected)
 
 
@@ -77,7 +88,7 @@ def set_(argument: Set, expected=None):
     _validate_type(argument, expected)
 
 
-def set_with_params(argument: Set[bool], expected=None):
+def set_with_types(argument: Set[int], expected=None):
     _validate_type(argument, expected)
 
 
@@ -85,7 +96,7 @@ def mutable_set(argument: MutableSet, expected=None):
     _validate_type(argument, expected)
 
 
-def mutable_set_with_params(argument: MutableSet[bool], expected=None):
+def mutable_set_with_types(argument: MutableSet[float], expected=None):
     _validate_type(argument, expected)
 
 
@@ -97,7 +108,7 @@ def forward_reference(argument: 'List', expected=None):
     _validate_type(argument, expected)
 
 
-def forward_ref_with_params(argument: 'List[int]', expected=None):
+def forward_ref_with_types(argument: 'List[int]', expected=None):
     _validate_type(argument, expected)
 
 
@@ -109,6 +120,6 @@ def _validate_type(argument, expected):
     if isinstance(expected, str):
         expected = eval(expected)
     if argument != expected or type(argument) != type(expected):
-        raise AssertionError('%r (%s) != %r (%s)'
-                             % (argument, type(argument).__name__,
-                                expected, type(expected).__name__))
+        atype = type(argument).__name__
+        etype = type(expected).__name__
+        raise AssertionError(f'{argument!r} ({atype}) != {expected!r} ({etype})')

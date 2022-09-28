@@ -55,6 +55,17 @@ Standard
     ...    boolean
     ...    Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to Boolean ``True``,
 
+Standard with generics
+    DataType Standard Should Be    1
+    ...    Dict[str, int]
+    ...    Strings must be Python [[]https://docs.python.org/library/stdtypes.html#dict|dictionary]
+    DataType Standard Should Be    4
+    ...    List[Any]
+    ...    Strings must be Python [[]https://docs.python.org/library/stdtypes.html#list|list]
+    DataType Standard Should Be    5
+    ...    List[str]
+    ...    Strings must be Python [[]https://docs.python.org/library/stdtypes.html#list|list]
+
 Accepted types
     Accepted Types Should Be    1     Standard     boolean
     ...    string    integer    float    None
@@ -65,17 +76,19 @@ Accepted types
     ...    string
     Accepted Types Should Be    0     Enum         AssertionOperator
     ...    string
-    Accepted Types Should Be    10    Enum         Small
+    Accepted Types Should Be    11    Enum         Small
     ...    string    integer
 
 Usages
     Usages Should Be    1     Standard     boolean
     ...    Funny Unions
+    Usages Should Be    4     Standard     Dict[str, int]
+    ...    Typing Types
     Usages Should Be    2     Custom       CustomType
     ...    Custom
     Usages Should be    6     TypedDict    GeoLocation
     ...    Funny Unions    Set Location
-    Usages Should Be    10    Enum         Small
+    Usages Should Be    11    Enum         Small
     ...    __init__    Funny Unions
 
 Typedoc links in arguments

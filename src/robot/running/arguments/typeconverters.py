@@ -16,7 +16,7 @@
 from ast import literal_eval
 from collections import OrderedDict
 from collections.abc import ByteString, Container, Mapping, Sequence, Set
-from typing import Any, Union
+from typing import Any, Tuple, TypeVar, Union
 from datetime import datetime, date, timedelta
 from decimal import InvalidOperation, Decimal
 from enum import Enum
@@ -26,8 +26,8 @@ from pathlib import Path, PurePath
 
 from robot.conf import Languages
 from robot.libraries.DateTime import convert_date, convert_time
-from robot.utils import (eq, get_error_message, is_string, is_union,
-                         safe_str, seq2str, type_name)
+from robot.utils import (eq, get_error_message, is_string, is_union, plural_or_not as s,
+                         safe_str, seq2str, type_name, type_repr)
 
 
 NoneType = type(None)
@@ -62,22 +62,23 @@ class TypeConverter:
             hash(type_)
         except TypeError:
             return None
-        if getattr(type_, '__origin__', None) and type_.__origin__ is not Union:
-            type_ = type_.__origin__
         if isinstance(type_, str):
             try:
                 type_ = cls._type_aliases[type_.lower()]
             except KeyError:
                 return None
+        used_type = type_
+        if getattr(type_, '__origin__', None) and type_.__origin__ is not Union:
+            type_ = type_.__origin__
         if custom_converters:
             info = custom_converters.get_converter_info(type_)
             if info:
-                return CustomConverter(type_, info)
+                return CustomConverter(used_type, info)
         if type_ in cls._converters:
-            return cls._converters[type_](type_, languages=languages)
+            return cls._converters[type_](used_type, custom_converters, languages)
         for converter in cls._converters.values():
             if converter.handles(type_):
-                return converter(type_, custom_converters, languages)
+                return converter(used_type, custom_converters, languages)
         return None
 
     @classmethod
@@ -85,17 +86,17 @@ class TypeConverter:
         handled = (cls.type, cls.abc) if cls.abc else cls.type
         return isinstance(type_, type) and issubclass(type_, handled)
 
-    def convert(self, name, value, explicit_type=True, strict=True):
+    def convert(self, name, value, explicit_type=True, strict=True, kind='Argument'):
         if self.no_conversion_needed(value):
             return value
         if not self._handles_value(value):
-            return self._handle_error(name, value, strict=strict)
+            return self._handle_error(name, value, kind, strict=strict)
         try:
             if not isinstance(value, str):
                 return self._non_string_convert(value, explicit_type)
             return self._convert(value, explicit_type)
         except ValueError as error:
-            return self._handle_error(name, value, error, strict)
+            return self._handle_error(name, value, kind, error, strict)
 
     def no_conversion_needed(self, value):
         try:
@@ -116,13 +117,19 @@ class TypeConverter:
     def _convert(self, value, explicit_type=True):
         raise NotImplementedError
 
-    def _handle_error(self, name, value, error=None, strict=True):
+    def _handle_error(self, name, value, kind, error=None, strict=True):
         if not strict:
             return value
         value_type = '' if isinstance(value, str) else f' ({type_name(value)})'
+        value = safe_str(value)
         ending = f': {error}' if (error and error.args) else '.'
+        if name is None:
+            raise ValueError(
+                f"{kind} '{value}'{value_type} "
+                f"cannot be converted to {self.type_name}{ending}"
+            )
         raise ValueError(
-            f"Argument '{name}' got value '{safe_str(value)}'{value_type} that "
+            f"{kind} '{name}' got value '{value}'{value_type} that "
             f"cannot be converted to {self.type_name}{ending}"
         )
 
@@ -140,6 +147,19 @@ class TypeConverter:
         if not isinstance(value, expected):
             raise ValueError(f'Value is {type_name(value)}, not {expected.__name__}.')
         return value
+
+    def _get_nested_types(self, type_hint, expected_count=None):
+        types = getattr(type_hint, '__args__', ())
+        # With generics from typing like Dict, __args__ is None with Python 3.6 and
+        # contains TypeVars with 3.7-3.8. Newer versions don't have __args__ at all.
+        # Subscripted usages like Dict[x, y].__args__ work fine with all.
+        if not types or all(isinstance(a, TypeVar) for a in types):
+            return ()
+        if expected_count and len(types) != expected_count:
+            raise TypeError(f'{type_hint.__name__}[] construct used as a type hint '
+                            f'requires exactly {expected_count} nested '
+                            f'type{s(expected_count)}, got {len(types)}.')
+        return types
 
     def _remove_number_separators(self, value):
         if is_string(value):
@@ -403,16 +423,36 @@ class ListConverter(TypeConverter):
     abc = Sequence
     value_types = (str, Sequence)
 
+    def __init__(self, used_type, custom_converters=None, languages=None):
+        super().__init__(used_type, custom_converters, languages)
+        types = self._get_nested_types(used_type, expected_count=1)
+        if not types:
+            self.converter = None
+        else:
+            self.type_name = type_repr(used_type)
+            self.converter = self.converter_for(types[0], custom_converters, languages)
+
+    @classmethod
+    def handles(cls, type_):
+        # `type_ is not Tuple` is needed with Python 3.6.
+        return super().handles(type_) and type_ is not Tuple
+
     def no_conversion_needed(self, value):
         if isinstance(value, str):
             return False
         return super().no_conversion_needed(value)
 
     def _non_string_convert(self, value, explicit_type=True):
-        return list(value)
+        return self._convert_items(list(value), explicit_type)
 
     def _convert(self, value, explicit_type=True):
-        return self._literal_eval(value, list)
+        return self._convert_items(self._literal_eval(value, list), explicit_type)
+
+    def _convert_items(self, value, explicit_type):
+        if not self.converter:
+            return value
+        return [self.converter.convert(i, v, explicit_type, kind='Item')
+                for i, v in enumerate(value)]
 
 
 @TypeConverter.register
@@ -421,11 +461,41 @@ class TupleConverter(TypeConverter):
     type_name = 'tuple'
     value_types = (str, Sequence)
 
+    def __init__(self, used_type, custom_converters=None, languages=None):
+        super().__init__(used_type, custom_converters, languages)
+        self.converters = ()
+        self.homogenous = False
+        types = self._get_nested_types(used_type)
+        if not types:
+            return
+        if types[-1] is Ellipsis:
+            types = types[:-1]
+            if len(types) != 1:
+                raise TypeError(f'Homogenous tuple used as a type hint requires '
+                                f'exactly one nested type, got {len(types)}.')
+            self.homogenous = True
+        self.type_name = type_repr(used_type)
+        self.converters = tuple(self.converter_for(t, custom_converters, languages)
+                                for t in types)
+
     def _non_string_convert(self, value, explicit_type=True):
-        return tuple(value)
+        return self._convert_items(tuple(value), explicit_type)
 
     def _convert(self, value, explicit_type=True):
-        return self._literal_eval(value, tuple)
+        return self._convert_items(self._literal_eval(value, tuple), explicit_type)
+
+    def _convert_items(self, value, explicit_type):
+        if not self.converters:
+            return value
+        if self.homogenous:
+            conv = self.converters[0]
+            return tuple(conv.convert(str(i), v, explicit_type, kind='Item')
+                         for i, v in enumerate(value))
+        if len(self.converters) != len(value):
+            raise ValueError(f'Expected {len(self.converters)} '
+                             f'item{s(self.converters)}, got {len(value)}.')
+        return tuple(conv.convert(i, v, explicit_type, kind='Item')
+                     for i, (conv, v) in enumerate(zip(self.converters, value)))
 
 
 @TypeConverter.register
@@ -436,13 +506,36 @@ class DictionaryConverter(TypeConverter):
     aliases = ('dict', 'map')
     value_types = (str, Mapping)
 
+    def __init__(self, used_type, custom_converters=None, languages=None):
+        super().__init__(used_type, custom_converters, languages)
+        types = self._get_nested_types(used_type, expected_count=2)
+        if not types:
+            self.converters = ()
+        else:
+            self.type_name = type_repr(used_type)
+            self.converters = tuple(self.converter_for(t, custom_converters, languages)
+                                    for t in types)
+
     def _non_string_convert(self, value, explicit_type=True):
         if issubclass(self.used_type, dict) and not isinstance(value, dict):
-            return dict(value)
-        return value
+            value = dict(value)
+        return self._convert_items(value, explicit_type)
 
     def _convert(self, value, explicit_type=True):
-        return self._literal_eval(value, dict)
+        return self._convert_items(self._literal_eval(value, dict), explicit_type)
+
+    def _convert_items(self, value, explicit_type):
+        if not self.converters:
+            return value
+        convert_key = self.__get_converter(self.converters[0], explicit_type, 'Key')
+        convert_value = self.__get_converter(self.converters[1], explicit_type, 'Item')
+        return {convert_key(None, k): convert_value(str(k), v) for k, v in value.items()}
+
+    def __get_converter(self, converter, explicit_type, kind):
+        if not converter:
+            return lambda name, value: value
+        return lambda name, value: converter.convert(name, value, explicit_type,
+                                                     kind=kind)
 
 
 @TypeConverter.register
@@ -452,27 +545,41 @@ class SetConverter(TypeConverter):
     type_name = 'set'
     value_types = (str, Container)
 
+    def __init__(self, used_type, custom_converters=None, languages=None):
+        super().__init__(used_type, custom_converters, languages)
+        types = self._get_nested_types(used_type, expected_count=1)
+        if not types:
+            self.converter = None
+        else:
+            self.type_name = type_repr(used_type)
+            self.converter = self.converter_for(types[0], custom_converters, languages)
+
     def _non_string_convert(self, value, explicit_type=True):
-        return set(value)
+        return self._convert_items(set(value), explicit_type)
 
     def _convert(self, value, explicit_type=True):
-        return self._literal_eval(value, set)
+        return self._convert_items(self._literal_eval(value, set), explicit_type)
+
+    def _convert_items(self, value, explicit_type):
+        if not self.converter:
+            return value
+        return {self.converter.convert(None, v, explicit_type, kind='Item')
+                for v in value}
 
 
 @TypeConverter.register
-class FrozenSetConverter(TypeConverter):
+class FrozenSetConverter(SetConverter):
     type = frozenset
     type_name = 'frozenset'
-    value_types = (str, Container)
 
     def _non_string_convert(self, value, explicit_type=True):
-        return frozenset(value)
+        return frozenset(super()._non_string_convert(value, explicit_type))
 
     def _convert(self, value, explicit_type=True):
         # There are issues w/ literal_eval. See self._literal_eval for details.
         if value == 'frozenset()':
             return frozenset()
-        return frozenset(self._literal_eval(value, set))
+        return frozenset(super()._convert(value, explicit_type))
 
 
 @TypeConverter.register
@@ -481,8 +588,8 @@ class CombinedConverter(TypeConverter):
 
     def __init__(self, union, custom_converters, languages=None):
         super().__init__(self._get_types(union))
-        self.converters = [TypeConverter.converter_for(t, custom_converters, languages)
-                           for t in self.used_type]
+        self.converters = tuple(self.converter_for(t, custom_converters, languages)
+                                for t in self.used_type)
 
     def _get_types(self, union):
         if not union:

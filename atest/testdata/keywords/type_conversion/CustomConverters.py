@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import List, Union
+from typing import Dict, List, Set, Tuple, Union
 
 
 class Number:
@@ -128,6 +128,14 @@ def class_with_hints_as_converter(argument: ClassWithHintsAsConverter, expected=
 
 def accept_subscripted_generics(argument: AcceptSubscriptedGenerics, expected):
     assert argument.sum == expected
+
+
+def with_generics(a: List[Number], b: Tuple[FiDate, UsDate], c: Dict[Number, FiDate], d: Set[Number]):
+    expected_date = date(2022, 9, 28)
+    assert a == [1, 2, 3], a
+    assert b == (expected_date, expected_date), b
+    assert c == {1: expected_date}, c
+    assert d == {1, 2, 3}, d
 
 
 def number_or_int(number: Union[Number, int]):

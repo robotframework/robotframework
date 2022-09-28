@@ -1161,13 +1161,9 @@ __ `Implicit argument types based on default values`_
 
 The type to use can be specified either using concrete types (e.g. list_),
 by using Abstract Base Classes (ABC) (e.g. Sequence_), or by using sub
-classes of these types (e.g. MutableSequence_). In all these cases the
-argument is converted to the concrete type.
-
-Also types in in the typing_ module that map to the supported concrete
-types or ABCs (e.g. `List`) are supported. With generics also the subscription
-syntax (e.g. `List[int]`) works, but no validation is done for container
-contents.
+classes of these types (e.g. MutableSequence_). Also types in in the typing_
+module that map to the supported concrete types or ABCs (e.g. `List`) are
+supported. In all these cases the argument is converted to the concrete type.
 
 In addition to using the actual types (e.g. `int`), it is possible to specify
 the type using type names as a string (e.g. `'int'`) and some types also have
@@ -1432,6 +1428,38 @@ to an integer but if that fails the keyword would get the original given argumen
 __ https://github.com/robotframework/robotframework/issues/3897
 __ https://github.com/robotframework/robotframework/issues/3908
 .. _Union: https://docs.python.org/3/library/typing.html#typing.Union
+
+Type conversion with generics
+'''''''''''''''''''''''''''''
+
+With generics also the parameterized syntax like `list[int]` or `dict[str, int]`
+works. When this syntax is used, the given value is first converted to the base
+type and then individual items are converted to the nested types. Conversion
+with different generic types works according to these rules:
+
+- With lists there can be only one type like `list[float]`. All list items are
+  converted to that type.
+- With tuples there can be any number of types like `tuple[int, int]` and
+  `tuple[str, int, bool]`. Tuples used as arguments are expected to have
+  exactly that amount of items and they are converted to matching types.
+- To create a homogeneous tuple, it is possible to use exactly one type and
+  ellipsis like `tuple[int, ...]`. In this case tuple can have any number
+  of items and they are all converted to the specified type.
+- With dictionaries there must be exactly two types like `dict[str, int]`.
+  Dictionary keys are converted using the former type and values using the latter.
+- With sets there can be exactly one type like `set[float]`. Conversion logic
+  is the same as with lists.
+
+.. note:: Support for converting nested types with generics is new in
+          Robot Framework 5.1. Same syntax works also with earlier versions,
+          but arguments are only converted to the base type and nested types
+          are not used for anything.
+
+.. note:: Using generics with Python standard types like `list[int]` is new
+          in `Python 3.9`__. With earlier versions matching types from
+          the typing_ module can be used like `List[int]`.
+
+__ https://peps.python.org/pep-0585/
 
 Custom argument converters
 ''''''''''''''''''''''''''
