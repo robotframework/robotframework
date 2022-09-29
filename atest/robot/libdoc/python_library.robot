@@ -13,7 +13,7 @@ Documentation
     ...    ``Telnet`` is Robot Framework's standard library that makes it possible to
 
 Version
-    Version Should Match             [345].*
+    Version Should Match             [6789].*
 
 Type
     Type Should Be                   LIBRARY
