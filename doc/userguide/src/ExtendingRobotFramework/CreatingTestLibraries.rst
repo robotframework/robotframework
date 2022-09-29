@@ -1278,17 +1278,25 @@ Other types cause conversion failures.
    |             |               |            |              | that are not lists are converted to lists. If the type hint is |                                      |
    |             |               |            |              | generic Sequence_, sequences are used without conversion.      |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | tuple_      |               |            | str_,        | Same as list_, but string arguments must tuple literals.       | | `('one', 'two')`                   |
+   | tuple_      |               |            | str_,        | Same as `list`, but string arguments must tuple literals.      | | `('one', 'two')`                   |
    |             |               |            | Sequence_    |                                                                |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | dict_       | Mapping_      | dictionary,| str_,        | Same as list_, but string arguments must be dictionary         | | `{'a': 1, 'b': 2}`                 |
-   |             |               | map        | Mapping_     | literals.                                                      | | `{'key': 1, 'nested': {'key': 2}}` |
-   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | set_        | `Set          |            | str_,        | Same as list_, but string arguments must be set literals or    | | `{1, 2, 3, 42}`                    |
+   | set_        | `Set          |            | str_,        | Same as `list`, but string arguments must be set literals or   | | `{1, 2, 3, 42}`                    |
    |             | <abc.Set_>`__ |            | Container_   | `set()` to create an empty set.                                | | `set()`                            |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | frozenset_  |               |            | str_,        | Same conversion as with set_, but the result is a frozenset_.  |                                      |
-   |             |               |            | Container_   |                                                                |                                      |
+   | frozenset_  |               |            | str_,        | Same as `set`, but the result is a frozenset_.                 | | `{1, 2, 3, 42}`                    |
+   |             |               |            | Container_   |                                                                | | `frozenset()`                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | dict_       | Mapping_      | dictionary,| str_,        | Same as `list`, but string arguments must be dictionary        | | `{'a': 1, 'b': 2}`                 |
+   |             |               | map        | Mapping_     | literals.                                                      | | `{'key': 1, 'nested': {'key': 2}}` |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | TypedDict_  |               |            | str_,        | Same as `dict`, but dictionary items are also converted        | .. sourcecode:: python               |
+   |             |               |            | Mapping_     | to the specified types and items not included in the type      |                                      |
+   |             |               |            |              | spec are not allowed.                                          |    class Config(TypedDict):          |
+   |             |               |            |              |                                                                |        width: int                    |
+   |             |               |            |              | New in RF 5.1. Normal `dict` conversion was used earlier.      |        enabled: bool                 |
+   |             |               |            |              |                                                                |                                      |
+   |             |               |            |              |                                                                | | `{'width': 1600, 'enabled': True}` |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
 
 .. note:: Starting from Robot Framework 5.0, types that are automatically converted are
@@ -1327,6 +1335,7 @@ Other types cause conversion failures.
 .. _set: https://docs.python.org/library/stdtypes.html#set
 .. _abc.Set: https://docs.python.org/library/collections.abc.html#collections.abc.Set
 .. _frozenset: https://docs.python.org/library/stdtypes.html#frozenset
+.. _TypedDict: https://docs.python.org/library/typing.html#typing.TypedDict
 .. _Container: https://docs.python.org/library/collections.abc.html#collections.abc.Container
 .. _typing: https://docs.python.org/library/typing.html
 .. _ISO 8601: https://en.wikipedia.org/wiki/ISO_8601
