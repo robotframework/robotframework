@@ -104,14 +104,11 @@ Standard types
 
 Standard types with generics
     ${MODEL}[typedocs][4][type]       Standard
-    ${MODEL}[typedocs][4][name]       Dict[str, int]
+    ${MODEL}[typedocs][4][name]       dictionary
     ${MODEL}[typedocs][4][doc]        <p>Strings must be Python <a    start=True
     ${MODEL}[typedocs][8][type]       Standard
-    ${MODEL}[typedocs][8][name]       List[Any]
+    ${MODEL}[typedocs][8][name]       list
     ${MODEL}[typedocs][8][doc]        <p>Strings must be Python <a    start=True
-    ${MODEL}[typedocs][9][type]       Standard
-    ${MODEL}[typedocs][9][name]       List[str]
-    ${MODEL}[typedocs][9][doc]        <p>Strings must be Python <a    start=True
 
 Accepted types
     ${MODEL}[typedocs][1][type]       Standard
@@ -124,8 +121,8 @@ Accepted types
     ${MODEL}[typedocs][6][accepts]    ['string']
     ${MODEL}[typedocs][0][type]       Enum
     ${MODEL}[typedocs][0][accepts]    ['string']
-    ${MODEL}[typedocs][11][type]      Enum
-    ${MODEL}[typedocs][11][accepts]   ['string', 'integer']
+    ${MODEL}[typedocs][10][type]      Enum
+    ${MODEL}[typedocs][10][accepts]   ['string', 'integer']
 
 Usages
     ${MODEL}[typedocs][1][type]       Standard
@@ -136,8 +133,8 @@ Usages
     ${MODEL}[typedocs][2][usages]     ['Custom']
     ${MODEL}[typedocs][6][type]       TypedDict
     ${MODEL}[typedocs][6][usages]     ['Funny Unions', 'Set Location']
-    ${MODEL}[typedocs][11][type]      Enum
-    ${MODEL}[typedocs][11][usages]    ['__init__', 'Funny Unions']
+    ${MODEL}[typedocs][10][type]      Enum
+    ${MODEL}[typedocs][10][usages]    ['__init__', 'Funny Unions']
 
 Typedoc links in arguments
     ${MODEL}[keywords][0][args][1][typedocs]    {'AssertionOperator': 'AssertionOperator', 'None': 'None'}

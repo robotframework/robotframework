@@ -31,13 +31,12 @@ class TypeDoc(Sortable):
     CUSTOM = 'Custom'
     STANDARD = 'Standard'
 
-    def __init__(self, type, name, doc, accepts=(), usages=None, origin=None,
+    def __init__(self, type, name, doc, accepts=(), usages=None,
                  members=None, items=None):
         self.type = type
         self.name = name
         self.doc = doc or ''    # doc parsed from XML can be None.
         self.accepts = [type_name(t) if not isinstance(t, str) else t for t in accepts]
-        self.origin = origin or name
         self.usages = usages or []
         # Enum members and TypedDict items are used only with appropriate types.
         self.members = members
@@ -60,9 +59,10 @@ class TypeDoc(Sortable):
             return cls(cls.CUSTOM, converter.type_name, converter.doc,
                        converter.value_types)
         else:
-            return cls(cls.STANDARD, converter.type_name,
-                       STANDARD_TYPE_DOCS[converter.type], converter.value_types,
-                       origin=type(converter).type_name)
+            # Get `type_name` from class, not from instance, to get the original
+            # name with generics like `list[int]` that override it in instance.
+            return cls(cls.STANDARD, type(converter).type_name,
+                       STANDARD_TYPE_DOCS[converter.type], converter.value_types)
 
     @classmethod
     def for_enum(cls, enum):

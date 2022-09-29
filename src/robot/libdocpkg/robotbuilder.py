@@ -73,7 +73,7 @@ class LibraryDocBuilder:
                 for typ in arg.types:
                     type_doc = TypeDoc.for_type(typ, custom_converters)
                     if type_doc:
-                        kw.type_docs[arg.name][type_repr(typ)] = type_doc.origin
+                        kw.type_docs[arg.name][type_repr(typ)] = type_doc.name
                         type_docs.setdefault(type_doc, set()).add(kw.name)
         for type_doc, usages in type_docs.items():
             type_doc.usages = sorted(usages, key=str.lower)
