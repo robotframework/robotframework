@@ -370,7 +370,7 @@ class String:
         See `Get Lines Matching Pattern` and `Get Lines Containing String` if you
         do not need the full regular expression powers (and complexity).
 
-        The ``flags`` argument is new in Robot Framework 5.1.
+        The ``flags`` argument is new in Robot Framework 6.0.
         """
         if is_truthy(partial_match):
             match = re.compile(pattern, flags=parse_re_flags(flags)).search
@@ -417,7 +417,7 @@ class String:
         | ${named group} = ['he', 'ri']
         | ${two groups} = [('h', 'e'), ('r', 'i')]
 
-        The ``flags`` argument is new in Robot Framework 5.1.
+        The ``flags`` argument is new in Robot Framework 6.0.
         """
         regexp = re.compile(pattern, flags=parse_re_flags(flags))
         groups = [self._parse_group(g) for g in groups]
@@ -473,7 +473,7 @@ class String:
         | ${str} = | Replace String Using Regexp | ${str} | 20\\\\d\\\\d-\\\\d\\\\d-\\\\d\\\\d | <DATE> |
         | ${str} = | Replace String Using Regexp | ${str} | (Hello|Hi) | ${EMPTY} | count=1 |
 
-        The ``flags`` argument is new in Robot Framework 5.1.
+        The ``flags`` argument is new in Robot Framework 6.0.
         """
         count = self._convert_to_integer(count, 'count')
         # re.sub handles 0 and negative counts differently than string.replace
@@ -520,7 +520,7 @@ class String:
         ``flags=IGNORECASE | MULTILINE``) or embedded to the pattern (e.g.
         ``(?im)pattern``).
 
-        The ``flags`` argument is new in Robot Framework 5.1.
+        The ``flags`` argument is new in Robot Framework 6.0.
         """
         for pattern in patterns:
             string = self.replace_string_using_regexp(string, pattern, '', flags=flags)

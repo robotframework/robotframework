@@ -1244,7 +1244,7 @@ Other types cause conversion failures.
    |             |               |            |              | and floats are considered to be seconds.                       |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | `Path       | PathLike_     |            | str_         | Strings are converted `Path <pathli_>`__ objects. On Windows   | | `/tmp/absolute/path`               |
-   | <pathli_>`__|               |            |              | `/` is converted to :codesc:`\\` automatically. New in RF 5.1. | | `relative/path/to/file.ext`        |
+   | <pathli_>`__|               |            |              | `/` is converted to :codesc:`\\` automatically. New in RF 6.0. | | `relative/path/to/file.ext`        |
    |             |               |            |              |                                                                | | `name.txt`                         |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Enum_       |               |            | str_         | The specified type must be an enumeration (a subclass of Enum_ | .. sourcecode:: python               |
@@ -1294,7 +1294,7 @@ Other types cause conversion failures.
    |             |               |            | Mapping_     | to the specified types and items not included in the type      |                                      |
    |             |               |            |              | spec are not allowed.                                          |    class Config(TypedDict):          |
    |             |               |            |              |                                                                |        width: int                    |
-   |             |               |            |              | New in RF 5.1. Normal `dict` conversion was used earlier.      |        enabled: bool                 |
+   |             |               |            |              | New in RF 6.0. Normal `dict` conversion was used earlier.      |        enabled: bool                 |
    |             |               |            |              |                                                                |                                      |
    |             |               |            |              |                                                                | | `{'width': 1600, 'enabled': True}` |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
@@ -1460,7 +1460,7 @@ with different generic types works according to these rules:
   is the same as with lists.
 
 .. note:: Support for converting nested types with generics is new in
-          Robot Framework 5.1. Same syntax works also with earlier versions,
+          Robot Framework 6.0. Same syntax works also with earlier versions,
           but arguments are only converted to the base type and nested types
           are not used for anything.
 
@@ -1753,7 +1753,7 @@ the code above:
     def example(argument: StrictType):
         assert isinstance(argument, StrictType)
 
-.. note:: Using `None` as a strict converter is new in Robot Framework 5.1.
+.. note:: Using `None` as a strict converter is new in Robot Framework 6.0.
           An explicit converter function needs to be used with earlier versions.
 
 Converter documentation

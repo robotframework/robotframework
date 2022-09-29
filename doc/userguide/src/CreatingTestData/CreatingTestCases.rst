@@ -657,14 +657,14 @@ preserve the exact name used in the data. When tags are compared, for example,
 to collect statistics, to select test to be executed, or to remove duplicates,
 comparisons are case, space and underscore insensitive.
 
-.. note:: The :setting:`Test Tags` setting is new in Robot Framework 5.1.
+.. note:: The :setting:`Test Tags` setting is new in Robot Framework 6.0.
           Earlier versions support :setting:`Force Tags` and :setting:`Default Tags`
           settings discussed below.
 
 Deprecation of :setting:`Force Tags` and :setting:`Default Tags`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Prior to Robot Framework 5.1, tags could be specified to tests in the Setting section
+Prior to Robot Framework 6.0, tags could be specified to tests in the Setting section
 using two different settings:
 
 :setting:`Force Tags`
@@ -684,7 +684,7 @@ Robot Framework 5.2 will introduce a new way for tests to indicate they
 `should not get certain globally specified tags`__. Instead of using a separate
 setting that tests can override, tests can use syntax `-tag` with their
 :setting:`[Tags]` setting to tell they should not get a tag named `tag`.
-This syntax *does not* yet work in Robot Framework 5.1, but using
+This syntax *does not* yet work in Robot Framework 6.0, but using
 :setting:`[Tags]` with a literal value like `-tag` `is now deprecated`__.
 If such tags are needed, they can be set using :setting:`Test Tags` or
 escaped__ syntax `\-tag` can be used with :setting:`[Tags]`.

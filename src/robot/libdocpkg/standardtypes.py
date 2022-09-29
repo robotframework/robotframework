@@ -126,7 +126,7 @@ function. They can contain any values ``ast.literal_eval`` supports, including
 lists and other containers.
 
 If the type has nested types like ``list[int]``, items are converted
-to those types automatically. This in new in Robot Framework 5.1.
+to those types automatically. This in new in Robot Framework 6.0.
 
 Examples: ``['one', 'two']``, ``[('one', 1), ('two', 2)]``
 ''',
@@ -138,7 +138,7 @@ function. They can contain any values ``ast.literal_eval`` supports, including
 tuples and other containers.
 
 If the type has nested types like ``tuple[str, int, int]``, items are converted
-to those types automatically. This in new in Robot Framework 5.1.
+to those types automatically. This in new in Robot Framework 6.0.
 
 Examples: ``('one', 'two')``, ``(('one', 1), ('two', 2))``
 ''',
@@ -150,7 +150,7 @@ function. They can contain any values ``ast.literal_eval`` supports, including
 dictionaries and other containers.
 
 If the type has nested types like ``dict[str, int]``, items are converted
-to those types automatically. This in new in Robot Framework 5.1.
+to those types automatically. This in new in Robot Framework 6.0.
 
 Examples: ``{'a': 1, 'b': 2}``, ``{'key': 1, 'nested': {'key': 2}}``
 ''',
@@ -161,7 +161,7 @@ literals. They are converted to actual sets using the
 function. They can contain any values ``ast.literal_eval`` supports.
 
 If the type has nested types like ``set[int]``, items are converted
-to those types automatically. This in new in Robot Framework 5.1.
+to those types automatically. This in new in Robot Framework 6.0.
 
 Examples: ``{1, 2, 3, 42}``, ``set()`` (an empty set)
 ''',
@@ -173,7 +173,7 @@ function and then converted to ``frozenset`` objects. They can contain
 any values ``ast.literal_eval`` supports.
 
 If the type has nested types like ``frozenset[int]``, items are converted
-to those types automatically. This in new in Robot Framework 5.1.
+to those types automatically. This in new in Robot Framework 6.0.
 
 Examples: ``{1, 2, 3, 42}``, ``set()`` (an empty set)
 '''

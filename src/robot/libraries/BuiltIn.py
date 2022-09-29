@@ -1342,7 +1342,7 @@ class _Verify(_BuiltInBase):
         | ${group1} = 'Bar'
         | ${group2} = '43'
 
-        The ``flags`` argument is new in Robot Framework 5.1.
+        The ``flags`` argument is new in Robot Framework 6.0.
         """
         res = re.search(pattern, string, flags=parse_re_flags(flags))
         if res is None:
