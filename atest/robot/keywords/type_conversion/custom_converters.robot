@@ -24,6 +24,9 @@ Accept subscripted generics
 With generics
     Check Test Case    ${TESTNAME}
 
+With TypedDict
+    Check Test Case    ${TESTNAME}
+
 Failing conversion
     Check Test Case    ${TESTNAME}
 

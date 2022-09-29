@@ -1,5 +1,14 @@
 from datetime import date, datetime
 from typing import Dict, List, Set, Tuple, Union
+try:
+    from typing import TypedDict
+except ImportError:
+    from typing_extensions import TypedDict
+
+from robot.api.deco import not_keyword
+
+
+not_keyword(TypedDict)
 
 
 class Number:
@@ -136,6 +145,12 @@ def with_generics(a: List[Number], b: Tuple[FiDate, UsDate], c: Dict[Number, FiD
     assert b == (expected_date, expected_date), b
     assert c == {1: expected_date}, c
     assert d == {1, 2, 3}, d
+
+
+def typeddict(dates: TypedDict('Dates', {'fi': FiDate, 'us': UsDate})):
+    fi, us = dates['fi'], dates['us']
+    exp = date(2022, 9, 29)
+    assert isinstance(fi, FiDate) and isinstance(us, UsDate) and fi == us == exp
 
 
 def number_or_int(number: Union[Number, int]):

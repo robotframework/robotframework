@@ -96,13 +96,6 @@ Dict with incompatible types
     Dict with types           {666: 'bad'}                type=Dict[int, float]         error=Item '666' got value 'bad' that cannot be converted to float.
     Dict with types           {0: None}                   type=Dict[int, float]         error=Item '0' got value 'None' (None) that cannot be converted to float.
 
-TypedDict
-    TypedDict                 {'x': 1}                    {'x': 1}
-    # Following would fail if we'd validate TypedDict and didn't only convert to dict.
-    TypedDict                 {}                          {}
-    TypedDict                 {'foo': 1, "bar": 2}        {'foo': 1, "bar": 2}
-    TypedDict                 {1: 2, 3.14: -42}           {1: 2, 3.14: -42}
-
 Invalid dictionary
     [Template]                Conversion Should Fail
     Dict                      {1: ooops}                  type=dictionary               error=Invalid expression.
@@ -129,6 +122,35 @@ Invalid mapping
     Mapping                   {1: ooops}                  type=dictionary               error=Invalid expression.
     Mutable mapping           []                          type=dictionary               error=Value is list, not dict.
     Mapping with types        ooops                       type=Mapping[int, float]      error=Invalid expression.
+
+TypedDict
+    TypedDict                 {'x': 1, 'y': 2}            {'x': 1, 'y': 2}
+    TypedDict                 {'x': -10_000, 'y': '2'}    {'x': -10000, 'y': 2}
+    TypedDict with optional   {'x': 1, 'y': 2, 'z': 3}    {'x': 1, 'y': 2, 'z': 3}
+
+Optional TypedDict keys can be omitted
+    TypedDict with optional   {'x': 0, 'y': 0}            {'x': 0, 'y': 0}
+
+Required TypedDict keys cannot be omitted
+    [Documentation]           This test would fail if using Python 3.8 without typing_extensions!
+    ...                       In that case there's no information about required/optional keys.
+    [Template]                Conversion Should Fail
+    TypedDict                 {'x': 123}                  type=Point2D                  error=Required item 'y' missing.
+    TypedDict                 {}                          type=Point2D                  error=Required items 'x' and 'y' missing.
+    TypedDict with optional   {}                          type=Point                    error=Required items 'x' and 'y' missing.
+
+Incompatible TypedDict
+    [Template]                Conversion Should Fail
+    TypedDict                 {'x': 'bad'}                type=Point2D                  error=Item 'x' got value 'bad' that cannot be converted to integer.
+    TypedDict                 {'bad': 1}                  type=Point2D                  error=Item 'bad' not allowed. Available items: 'x' and 'y'
+    TypedDict                 {'x': 1, 'y': 2, 'z': 3}    type=Point2D                  error=Item 'z' not allowed.
+    TypedDict with optional   {'x': 1, 'b': 2, 'z': 3}    type=Point                    error=Item 'b' not allowed. Available item: 'y'
+    TypedDict with optional   {'b': 1, 'a': 2, 'd': 3}    type=Point                    error=Items 'a', 'b' and 'd' not allowed. Available items: 'x', 'y' and 'z'
+
+Invalid TypedDict
+    [Template]                Conversion Should Fail
+    TypedDict                 {'x': oops}                 type=Point2D                  error=Invalid expression.
+    TypedDict                 []                          type=Point2D                  error=Value is list, not dict.
 
 Set
     Set                       set()                       set()

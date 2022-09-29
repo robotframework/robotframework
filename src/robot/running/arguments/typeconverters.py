@@ -27,7 +27,7 @@ from pathlib import Path, PurePath
 from robot.conf import Languages
 from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import (eq, get_error_message, is_string, is_union, plural_or_not as s,
-                         safe_str, seq2str, type_name, type_repr)
+                         safe_str, seq2str, type_name, type_repr, typeddict_types)
 
 
 NoneType = type(None)
@@ -496,6 +496,55 @@ class TupleConverter(TypeConverter):
                              f'item{s(self.converters)}, got {len(value)}.')
         return tuple(conv.convert(i, v, explicit_type, kind='Item')
                      for i, (conv, v) in enumerate(zip(self.converters, value)))
+
+
+@TypeConverter.register
+class TypedDictConverter(TypeConverter):
+    type = 'TypedDict'
+    value_types = (str, Mapping)
+
+    def __init__(self, used_type, custom_converters, languages=None):
+        super().__init__(used_type, custom_converters, languages)
+        self.converters = {n: self.converter_for(t, custom_converters, languages)
+                           for n, t in used_type.__annotations__.items()}
+        self.type_name = used_type.__name__
+        # __required_keys__ is new in Python 3.9.
+        self.required_keys = getattr(used_type, '__required_keys__', frozenset())
+
+    @classmethod
+    def handles(cls, type_):
+        return isinstance(type_, typeddict_types)
+
+    def no_conversion_needed(self, value):
+        return False
+
+    def _non_string_convert(self, value, explicit_type=True):
+        return self._convert_items(value)
+
+    def _convert(self, value, explicit_type=True):
+        return self._convert_items(self._literal_eval(value, dict))
+
+    def _convert_items(self, value):
+        not_allowed = []
+        for key in value:
+            try:
+                converter = self.converters[key]
+            except KeyError:
+                not_allowed.append(key)
+            else:
+                if converter:
+                    value[key] = converter.convert(key, value[key], kind='Item')
+        if not_allowed:
+            error = f'Item{s(not_allowed)} {seq2str(sorted(not_allowed))} not allowed.'
+            available = [key for key in self.converters if key not in value]
+            if available:
+                error += f' Available item{s(available)}: {seq2str(sorted(available))}'
+            raise ValueError(error)
+        missing = [key for key in self.required_keys if key not in value]
+        if missing:
+            raise ValueError(f"Required item{s(missing)} "
+                             f"{seq2str(sorted(missing))} missing.")
+        return value
 
 
 @TypeConverter.register

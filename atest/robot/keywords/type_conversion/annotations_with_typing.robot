@@ -54,9 +54,6 @@ Dict with types
 Dict with incompatible types
     Check Test Case    ${TESTNAME}
 
-TypedDict
-    Check Test Case    ${TESTNAME}
-
 Invalid dictionary
     Check Test Case    ${TESTNAME}
 
@@ -70,6 +67,21 @@ Mapping with incompatible types
     Check Test Case    ${TESTNAME}
 
 Invalid mapping
+    Check Test Case    ${TESTNAME}
+
+TypedDict
+    Check Test Case    ${TESTNAME}
+
+Optional TypedDict keys can be omitted
+    Check Test Case    ${TESTNAME}
+
+Required TypedDict keys cannot be omitted
+    Check Test Case    ${TESTNAME}
+
+Incompatible TypedDict
+    Check Test Case    ${TESTNAME}
+
+Invalid TypedDict
     Check Test Case    ${TESTNAME}
 
 Set

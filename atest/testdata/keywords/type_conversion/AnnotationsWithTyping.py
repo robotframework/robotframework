@@ -1,14 +1,23 @@
 from typing import (Dict, List, Mapping, MutableMapping, MutableSet, MutableSequence,
                     Set, Sequence, Tuple, Union)
 try:
-    from typing import TypedDict
-except ImportError:
     from typing_extensions import TypedDict
+except ImportError:
+    from typing import TypedDict
 
 from robot.api.deco import not_keyword
 
 
 TypedDict = not_keyword(TypedDict)
+
+
+class Point2D(TypedDict):
+    x: int
+    y: int
+
+
+class Point(Point2D, total=False):
+    z: int
 
 
 class BadIntMeta(type(int)):
@@ -64,10 +73,6 @@ def dict_with_types(argument: Dict[int, float], expected=None):
     _validate_type(argument, expected)
 
 
-def typeddict(argument: TypedDict('X', x=int), expected=None):
-    _validate_type(argument, expected)
-
-
 def mapping(argument: Mapping, expected=None):
     _validate_type(argument, expected)
 
@@ -81,6 +86,14 @@ def mutable_mapping(argument: MutableMapping, expected=None):
 
 
 def mutable_mapping_with_types(argument: MutableMapping[int, float], expected=None):
+    _validate_type(argument, expected)
+
+
+def typeddict(argument: Point2D, expected=None):
+    _validate_type(argument, expected)
+
+
+def typeddict_with_optional(argument: Point, expected=None):
     _validate_type(argument, expected)
 
 
