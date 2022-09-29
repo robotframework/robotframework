@@ -761,6 +761,8 @@ class Es(Language):
     then_prefix = {'Entonces'}
     and_prefix = {'Y'}
     but_prefix = {'Pero'}
+    true_strings = {'Verdadero', 'Si', 'ON'}
+    false_strings = {'Falso', 'No', 'OFF', 'Ninguno'}
 
 
 class Ru(Language):
