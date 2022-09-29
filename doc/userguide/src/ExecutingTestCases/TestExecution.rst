@@ -481,7 +481,7 @@ test case keywords are executed.
 
 .. note:: The `robot:continue-on-failure` and `robot:recursive-continue-on-failure`
           tags are new in Robot Framework 4.1. They do not work properly with
-          `WHILE` loops prior to Robot Framework 5.1.
+          `WHILE` loops prior to Robot Framework 6.0.
 
 Disabling continue-on-failure using tags
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -544,7 +544,7 @@ __ `Special failures from keywords`_
 __ `Run Keyword And Continue On Failure keyword`_
 
 .. note:: The `robot:stop-on-failure` and `robot:recursive-stop-on-failure`
-          tags are new in Robot Framework 5.1.
+          tags are new in Robot Framework 6.0.
 
 TRY/EXCEPT
 ~~~~~~~~~~

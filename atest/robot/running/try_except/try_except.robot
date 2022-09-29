@@ -35,7 +35,7 @@ Default except pattern
     FAIL    PASS
 
 Syntax errors cannot be caught
-    FAIL
+    FAIL    NOT RUN    NOT RUN
 
 Finally block executed when no failures
     [Template]    None

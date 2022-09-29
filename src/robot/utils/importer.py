@@ -106,7 +106,7 @@ class Importer:
         Use :meth:`import_class_or_module` if it is desired to get a class
         from the imported module automatically.
 
-        New in Robot Framework 5.1.
+        New in Robot Framework 6.0.
         """
         try:
             imported, source = self._import(name_or_path, get_class=False)

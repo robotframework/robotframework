@@ -191,13 +191,13 @@ prefix are reserved__ for special features by Robot Framework
 itself. Users should thus not use any tag with these prefixes unless actually
 activating the special functionality.
 
-.. note:: :setting:`Keyword Tags` is new in Robot Framework 5.1. With earlier
+.. note:: :setting:`Keyword Tags` is new in Robot Framework 6.0. With earlier
           versions all keyword tags need to be specified using the
           :setting:`[Tags]` setting.
 
 .. note:: Robot Framework 5.2 will support `removing globally set tags`__ using
           the `-tag` syntax with the :setting:`[Tags]` setting. Creating tags
-          with literal value like `-tag` `is deprecated`__ in Robot Framework 5.1
+          with literal value like `-tag` `is deprecated`__ in Robot Framework 6.0
           and escaped__ syntax `\-tag` must be used if such tags are actually
           needed.
 
@@ -689,7 +689,7 @@ after looking for best matches, Robot Framework checks can they be
 resolved based on the `library search order`_.
 
 .. note:: Automatically resolving conflicts if multiple keywords with embedded
-          arguments match is a new feature in Robot Framework 5.1. With older
+          arguments match is a new feature in Robot Framework 6.0. With older
           versions custom regular expressions explained below can be used instead.
 
 Using custom regular expressions
@@ -792,7 +792,7 @@ to parse the variable syntax correctly. If there are matching braces like in
           This syntax is unfortunately not supported by Robot Framework 3.2
           or newer and keywords using it must be updated when upgrading.
 
-.. note:: Prior to Robot Framework 5.1, using literal backslashes in the pattern
+.. note:: Prior to Robot Framework 6.0, using literal backslashes in the pattern
           required double escaping them like `${path:c:\\\\temp\\\\.*}`.
           Patterns using literal backslashes need to be updated when upgrading.
 
@@ -818,7 +818,7 @@ using the keywords from the earlier example.
 A limitation of using variables is that their actual values are not matched against
 custom regular expressions. As the result keywords may be called with
 values that their custom regexps would not allow. This behavior is deprecated
-starting from Robot Framework 5.1 and values will be validated in the future.
+starting from Robot Framework 6.0 and values will be validated in the future.
 For more information see issue `#4462`__.
 
 __ https://github.com/robotframework/robotframework/issues/4462
@@ -1080,6 +1080,6 @@ the public one will be used but also this situation causes a warning.
 Private keywords are included in spec files created by Libdoc_ but not in its
 HTML output files.
 
-.. note:: Private user keywords are new in Robot Framework 5.1.
+.. note:: Private user keywords are new in Robot Framework 6.0.
 
 __ `User keyword tags`_

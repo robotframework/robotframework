@@ -1342,7 +1342,7 @@ class _Verify(_BuiltInBase):
         | ${group1} = 'Bar'
         | ${group2} = '43'
 
-        The ``flags`` argument is new in Robot Framework 5.1.
+        The ``flags`` argument is new in Robot Framework 6.0.
         """
         res = re.search(pattern, string, flags=parse_re_flags(flags))
         if res is None:
@@ -2891,7 +2891,9 @@ class _Misc(_BuiltInBase):
         ``time`` may be either a number or a time string. Time strings are in
         a format such as ``1 day 2 hours 3 minutes 4 seconds 5milliseconds`` or
         ``1d 2h 3m 4s 5ms``, and they are fully explained in an appendix of
-        Robot Framework User Guide. Optional `reason` can be used to explain why
+        Robot Framework User Guide. Providing a value without specifying minutes
+        or seconds, defaults to seconds.
+        Optional `reason` can be used to explain why
         sleeping is necessary. Both the time slept and the reason are logged.
 
         Examples:
@@ -3434,13 +3436,13 @@ class _Misc(_BuiltInBase):
         try:
             method = getattr(object, method_name)
         except AttributeError:
-            raise RuntimeError("%s object does not have method '%s'."
-                               % (type_name(object), method_name))
+            raise RuntimeError(f"{type(object).__name__} object does not have "
+                               f"method '{method_name}'.")
         try:
             return method(*args, **kwargs)
-        except:
-            raise RuntimeError("Calling method '%s' failed: %s"
-                               % (method_name, get_error_message()))
+        except Exception as err:
+            msg = get_error_message()
+            raise RuntimeError(f"Calling method '{method_name}' failed: {msg}") from err
 
     def regexp_escape(self, *patterns):
         """Returns each argument string escaped for use as a regular expression.

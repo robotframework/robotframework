@@ -278,7 +278,7 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |                                                                |
    |                  |                  | * `values`: Return values from a keyword.                      |
    |                  |                  |                                                                |
-   |                  |                  | Additional attributes for control structures are new in RF 5.1.|
+   |                  |                  | Additional attributes for control structures are new in RF 6.0.|
    |                  |                  |                                                                |
    +------------------+------------------+----------------------------------------------------------------+
    | end_keyword      | name, attributes | Called when a keyword ends.                                    |

@@ -69,16 +69,19 @@ Retry count must be positive
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
 
-Invalid Number Of Arguments Inside Wait Until Keyword Succeeds
+No retry after syntax error
     Check Test Case    ${TESTNAME}
 
-Invalid Keyword Inside Wait Until Keyword Succeeds
+No retry if keyword name is not string
     Check Test Case    ${TESTNAME}
 
-Keyword Not Found Inside Wait Until Keyword Succeeds
+Retry if keyword is not found
     Check Test Case    ${TESTNAME}
 
-Fail With Nonexisting Variable Inside Wait Until Keyword Succeeds
+Retry if wrong number of arguments
+    Check Test Case    ${TESTNAME}
+
+Retry if variable is not found
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    Variable '\${nonexisting}' not found.    FAIL
     Check Log Message    ${tc.kws[0].kws[1].kws[0].msgs[0]}    Variable '\${nonexisting}' not found.    FAIL

@@ -55,6 +55,14 @@ Standard
     ...    boolean
     ...    Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to Boolean ``True``,
 
+Standard with generics
+    DataType Standard Should Be    1
+    ...    dictionary
+    ...    Strings must be Python [[]https://docs.python.org/library/stdtypes.html#dict|dictionary]
+    DataType Standard Should Be    4
+    ...    list
+    ...    Strings must be Python [[]https://docs.python.org/library/stdtypes.html#list|list]
+
 Accepted types
     Accepted Types Should Be    1     Standard     boolean
     ...    string    integer    float    None
@@ -71,6 +79,8 @@ Accepted types
 Usages
     Usages Should Be    1     Standard     boolean
     ...    Funny Unions
+    Usages Should Be    4     Standard     dictionary
+    ...    Typing Types
     Usages Should Be    2     Custom       CustomType
     ...    Custom
     Usages Should be    6     TypedDict    GeoLocation

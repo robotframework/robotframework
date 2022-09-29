@@ -43,7 +43,7 @@ class EmbeddedArguments:
 
     def validate(self, values):
         # Validating that embedded args match custom regexps also if args are
-        # given as variables was initially implemented in RF 5.1. It needed
+        # given as variables was initially implemented in RF 6.0. It needed
         # to be reverted due to backwards incompatibility reasons:
         # https://github.com/robotframework/robotframework/issues/4069
         #

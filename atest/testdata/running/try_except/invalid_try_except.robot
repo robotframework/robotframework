@@ -261,6 +261,19 @@ RETURN in FINALLY
     [Documentation]    FAIL    RETURN cannot be used in FINALLY branch.
     RETURN in FINALLY
 
+Invalid TRY/EXCEPT causes syntax error that cannot be caught
+    [Documentation]    FAIL    TRY branch cannot be empty.
+    TRY
+        TRY
+        EXCEPT
+            Fail    Not run
+        END
+    EXCEPT
+        Fail    Not run because error cannot be caught
+    ELSE
+        Fail    Not run either
+    END
+
 *** Keywords ***
 RETURN in FINALLY
     TRY

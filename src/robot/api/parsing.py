@@ -239,7 +239,7 @@ Statements:
 - :class:`~robot.parsing.model.statements.Break`
 - :class:`~robot.parsing.model.statements.Continue`
 - :class:`~robot.parsing.model.statements.Comment`
-- :class:`~robot.parsing.model.statements.Config` (new in 5.1)
+- :class:`~robot.parsing.model.statements.Config` (new in 6.0)
 - :class:`~robot.parsing.model.statements.Error`
 - :class:`~robot.parsing.model.statements.EmptyLine`
 

@@ -736,7 +736,6 @@ members and types based on `TypedDict` show the dictionary structure.
 
 __ `Supported conversions`_
 __ `Custom argument converters`_
-.. _TypedDict: https://docs.python.org/library/typing.html?highlight=typeddict#typing.TypedDict
 
 Libdoc example
 --------------

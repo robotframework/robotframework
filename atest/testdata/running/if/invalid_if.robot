@@ -167,3 +167,59 @@ Multiple errors
     ELSE    oops
     ELSE IF
     ELSE
+
+Invalid data causes syntax error
+    [Documentation]    FAIL    IF branch cannot be empty.
+    TRY
+        IF    True
+        END
+    EXCEPT
+        Fail    Syntax error cannot be caught
+    END
+
+Invalid condition causes normal error
+    [Documentation]    FAIL    Teardown failed:
+    ...    Several failures occurred:
+    ...
+    ...    1) Evaluating IF condition failed: Evaluating expression 'bad in teardown' failed: NameError: name 'bad' is not defined nor importable as module
+    ...
+    ...    2) Should be run in teardown
+    TRY
+        IF    bad
+            Fail    Should not be run
+        END
+    EXCEPT    Evaluating IF condition failed: Evaluating expression 'bad' failed: NameError: name 'bad' is not defined nor importable as module
+        No Operation
+    END
+    [Teardown]    Invalid condition
+
+Non-existing variable in condition causes normal error
+    [Documentation]    FAIL    Teardown failed:
+    ...    Several failures occurred:
+    ...
+    ...    1) Evaluating IF condition failed: Variable '\${bad}' not found.
+    ...
+    ...    2) Should be run in teardown
+    TRY
+        IF    ${bad}
+            Fail    Should not be run
+        END
+    EXCEPT    Evaluating IF condition failed: Variable '\${bad}' not found.
+        No Operation
+    END
+    [Teardown]    Non-existing variable in condition
+
+*** Keywords ***
+Invalid condition
+    IF    bad in teardown
+        Fail    Should not be run
+    ELSE
+        Fail    Sould not be run either
+    END
+    Fail    Should be run in teardown
+
+Non-existing variable in condition
+    IF    ${bad}
+        Fail    Should not be run
+    END
+    Fail    Should be run in teardown

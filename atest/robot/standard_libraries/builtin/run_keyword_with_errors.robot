@@ -41,10 +41,10 @@ Ignore Error When Timeout Occurs
 Ignore Error When Timeout Occurs In UK
     Check Test Case    ${TEST NAME}
 
-Ignore Error When Syntax Error At Parsing Time
+Ignore Error Cannot Catch Syntax Errors
     Check Test Case    ${TEST NAME}
 
-Ignore Error When Syntax Error At Run Time
+Ignore Error Can Catch Non-Syntax Errors
     Check Test Case    ${TEST NAME}
 
 Ignore Error When Syntax Error In Setting Variables
@@ -119,10 +119,10 @@ Expect Error When Timeout Occurs
 Expect Error When Timeout Occurs In UK
     Check Test Case    ${TEST NAME}
 
-Expect Error When Syntax Error At Parsing Time
+Expect Error Cannot Catch Syntax Errors
     Check Test Case    ${TEST NAME}
 
-Expect Error When Syntax Error At Run Time
+Expect Error Can Catch Non-Syntax Errors
     Check Test Case    ${TEST NAME}
 
 Expect Error When Syntax Error In Setting Variables

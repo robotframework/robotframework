@@ -33,12 +33,10 @@ Escape start
     Should be IN ENUMERATE loop    ${loop}    2
 
 Invalid start
-    ${loop} =    Check test and get loop    ${TEST NAME}
-    Should be IN ENUMERATE loop    ${loop}    0    status=FAIL
+    Check test and failed loop    ${TEST NAME}    IN ENUMERATE
 
 Invalid variable in start
-    ${loop} =    Check test and get loop    ${TEST NAME}
-    Should be IN ENUMERATE loop    ${loop}    0    status=FAIL
+    Check test and failed loop    ${TEST NAME}    IN ENUMERATE
 
 Index and two items
     ${loop} =    Check test and get loop    ${TEST NAME}    1

@@ -177,7 +177,7 @@ different arguments:
 Setting a custom name to a test library works both when importing a
 library in the Setting section and when using the :name:`Import Library` keyword.
 
-.. note:: Prior to Robot Framework 5.1 the marker to use when giving a custom name
+.. note:: Prior to Robot Framework 6.0 the marker to use when giving a custom name
           to a library was `WITH NAME` instead of `AS`. The old syntax continues
           to work, but it is considered deprecated and will eventually be removed.
 

@@ -129,7 +129,7 @@ How merging tests works is explained in the following sections discussing
 the two main merge use cases.
 
 .. note:: Getting suite documentation and metadata from merged suites is new in
-          Robot Framework 5.1.
+          Robot Framework 6.0.
 
 Merging re-executed tests
 ~~~~~~~~~~~~~~~~~~~~~~~~~

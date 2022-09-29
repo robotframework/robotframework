@@ -327,18 +327,22 @@ Templated test with for loop continues after keyword timeout
     END
 
 Templated test ends after syntax errors
-    [Documentation]    FAIL   Keyword 'BuiltIn.Should Be Equal' expected 2 to 8 arguments, got 9.
-    The    syntax    error    makes    any    test    end     again    here
-    Not compared    anymore
+    [Documentation]    FAIL   IF must have closing END.
+    [Template]    Syntax Error
+    fails here
+    not run
 
-Templated test continues after variable error
+Templated test continues after non-syntax errors
     [Documentation]    FAIL
     ...    Several failures occurred:
     ...
     ...    1) Variable '\${this does not exist}' not found.
     ...
-    ...    2) Compared and not equal != Fails
+    ...    2) Keyword 'BuiltIn.Should Be Equal' expected 2 to 8 arguments, got 1.
+    ...
+    ...    3) Compared and not equal != Fails
     ${this does not exist}    ${this does not exist either}
+    Too few args
     Compared and equal        Compared and equal
     Compared and not equal    Fails
 
@@ -393,3 +397,8 @@ Template with timeout
     [Timeout]    ${timeout}
     Sleep    ${sleep}
     Fail    Failing after ${sleep} sleep and before ${timeout} timeout.
+
+Syntax Error
+    [Arguments]    ${arg}
+    IF    ${arg}
+        Fail    Should not be run due to END missing.

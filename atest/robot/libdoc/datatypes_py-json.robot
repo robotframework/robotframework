@@ -102,6 +102,14 @@ Standard types
     ${MODEL}[typedocs][1][name]       boolean
     ${MODEL}[typedocs][1][doc]        <p>Strings <code>TRUE</code>, <code>YES</code>,   start=True
 
+Standard types with generics
+    ${MODEL}[typedocs][4][type]       Standard
+    ${MODEL}[typedocs][4][name]       dictionary
+    ${MODEL}[typedocs][4][doc]        <p>Strings must be Python <a    start=True
+    ${MODEL}[typedocs][8][type]       Standard
+    ${MODEL}[typedocs][8][name]       list
+    ${MODEL}[typedocs][8][doc]        <p>Strings must be Python <a    start=True
+
 Accepted types
     ${MODEL}[typedocs][1][type]       Standard
     ${MODEL}[typedocs][1][accepts]    ['string', 'integer', 'float', 'None']
@@ -119,6 +127,8 @@ Accepted types
 Usages
     ${MODEL}[typedocs][1][type]       Standard
     ${MODEL}[typedocs][1][usages]     ['Funny Unions']
+    ${MODEL}[typedocs][4][type]       Standard
+    ${MODEL}[typedocs][4][usages]     ['Typing Types']
     ${MODEL}[typedocs][2][type]       Custom
     ${MODEL}[typedocs][2][usages]     ['Custom']
     ${MODEL}[typedocs][6][type]       TypedDict

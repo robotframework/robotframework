@@ -42,6 +42,16 @@ Custom in Union
 Accept subscripted generics
     Accept subscripted generics    ${{[1, 2, 3]}}    ${6}
 
+With generics
+    With generics
+    ...    ['one', 'two', 'three']
+    ...    ('28.9.2022', '9/28/2022')
+    ...    {'one': '28.9.2022'}
+    ...    {'one', 'two', 'three'}
+
+With TypedDict
+    TypedDict    {'fi': '29.9.2022', 'us': '9/29/2022'}
+
 Failing conversion
     [Template]    Conversion should fail
     Number     wrong         type=Number     error=Don't know number 'wrong'.

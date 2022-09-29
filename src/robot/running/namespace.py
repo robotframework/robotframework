@@ -22,7 +22,7 @@ from robot.errors import DataError, KeywordError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER, Message
 from robot.utils import (RecommendationFinder, eq, find_file, is_string, normalize,
-                         plural_or_not as s, printable_name, seq2str, seq2str2)
+                         printable_name, seq2str2)
 
 from .context import EXECUTION_CONTEXTS
 from .importer import ImportCache, Importer
@@ -287,9 +287,9 @@ class KeywordStore:
 
     def _get_runner(self, name):
         if not name:
-            raise DataError('Keyword name cannot be empty.')
+            raise DataError('Keyword name cannot be empty.', syntax=True)
         if not is_string(name):
-            raise DataError('Keyword name must be a string.')
+            raise DataError('Keyword name must be a string.', syntax=True)
         runner = self._get_runner_from_suite_file(name)
         if not runner and '.' in name:
             runner = self._get_explicit_runner(name)

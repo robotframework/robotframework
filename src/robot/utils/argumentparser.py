@@ -71,7 +71,7 @@ class ArgumentParser:
         self._validator = validator
         self._auto_help = auto_help
         self._auto_version = auto_version
-        # TODO: Change DeprecationWarning to more loud UserWarning in RF 5.1.
+        # TODO: Change DeprecationWarning to more loud UserWarning in RF 6.1.
         if auto_pythonpath == 'DEPRECATED':
             auto_pythonpath = False
         else:

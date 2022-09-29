@@ -1,7 +1,7 @@
 *** Settings ***
 Resource          while.resource
 Suite Setup       Run Tests    ${EMPTY}    running/while/break_and_continue.robot
-Test Template     Check while loop
+Test Template     Check WHILE loop
 
 *** Test Cases ***
 With CONTINUE
@@ -30,6 +30,24 @@ With BREAK inside EXCEPT
 
 With BREAK inside TRY-ELSE
     PASS    1
+
+BREAK with continuable failures
+    FAIL    1
+
+CONTINUE with continuable failures
+    FAIL    2
+
+Invalid BREAK
+    FAIL    1
+
+Invalid CONTINUE
+    FAIL    1
+
+Invalid BREAK not executed
+    PASS    1
+
+Invalid CONTINUE not executed
+    NOT RUN    1
 
 With CONTINUE in UK
     PASS    5    body[0].body[0]

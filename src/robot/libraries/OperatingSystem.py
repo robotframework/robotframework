@@ -110,7 +110,7 @@ class OperatingSystem:
 
     = ``pathlib.Path`` support =
 
-    Starting from Robot Framework 5.1, arguments representing paths can be given
+    Starting from Robot Framework 6.0, arguments representing paths can be given
     as [https://docs.python.org/3/library/pathlib.html pathlib.Path] instances
     in addition to strings.
 

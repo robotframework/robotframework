@@ -38,7 +38,6 @@ Custom
     ...    <p>Class doc is used when converter method has no doc.</p>
 
 Accepted types
-
     Accepted Types Should Be    1     Standard     boolean
     ...    string    integer    float    None
     Accepted Types Should Be    2     Custom       CustomType

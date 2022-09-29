@@ -106,22 +106,28 @@ Retry count must be positive 2
     [Documentation]    FAIL ValueError: Retry count -8 is not positive.
     Wait Until Keyword Succeeds    -8x    1s    No Operation
 
-Invalid Number Of Arguments Inside Wait Until Keyword Succeeds
-    [Documentation]    FAIL Keyword 'BuiltIn.No Operation' expected 0 arguments, got 3.
-    Wait Until Keyword Succeeds    1 second    0.1s    No Operation    No    args    accepted
+No retry after syntax error
+    [Documentation]    FAIL FOR loop cannot be empty.
+    Wait Until Keyword Succeeds    10 second    1s    Syntax Error
 
-Invalid Keyword Inside Wait Until Keyword Succeeds
+No retry if keyword name is not string
     [Documentation]    FAIL Keyword name must be a string.
     ${list} =    Create List    1    2
     Wait Until Keyword Succeeds    1 second    0.1s    ${list}
 
-Keyword Not Found Inside Wait Until Keyword Succeeds
+Retry if keyword is not found
     [Documentation]    FAIL
     ...    Keyword 'Non Existing KW' failed after retrying for 300 milliseconds. \
     ...    The last error was: No keyword with name 'Non Existing KW' found.
     Wait Until Keyword Succeeds    0.3s    0.1s    Non Existing KW
 
-Fail With Nonexisting Variable Inside Wait Until Keyword Succeeds
+Retry if wrong number of arguments
+    [Documentation]    FAIL
+    ...    Keyword 'No Operation' failed after retrying for 50 milliseconds. \
+    ...    The last error was: Keyword 'BuiltIn.No Operation' expected 0 arguments, got 3.
+    Wait Until Keyword Succeeds    0.05 second    0.01s    No Operation    No    args    accepted
+
+Retry if variable is not found
     [Documentation]    FAIL
     ...    Keyword 'Access Nonexisting Variable' failed after retrying 3 times. \
     ...    The last error was: Variable '\${nonexisting}' not found.
@@ -166,3 +172,7 @@ Access Nonexisting Variable
 Access Initially Nonexisting Variable
     Log    ${created after accessing first time}
     [Teardown]    Set Test Variable    ${created after accessing first time}    created in keyword teardown
+
+Syntax Error
+    FOR    ${x}    IN    cannot    have    empty    body
+    END

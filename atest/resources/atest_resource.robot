@@ -377,3 +377,12 @@ Setup Should Not Be Defined
 Teardown Should Not Be Defined
     [Arguments]    ${model_object}
     Should Not Be True     ${model_object.teardown}
+
+Traceback Should Be
+    [Arguments]    ${msg}    @{entries}    ${error}
+    ${exp} =    Set Variable    Traceback (most recent call last):
+    FOR    ${path}    ${func}    ${text}    IN    @{entries}
+        ${path} =    Normalize Path    ${DATADIR}/${path}
+        ${exp} =    Set Variable    ${exp}\n${SPACE*2}File "${path}", line *, in ${func}\n${SPACE*4}${text}
+    END
+    Check Log Message    ${msg}    ${exp}\n${error}    DEBUG    pattern=True    traceback=True

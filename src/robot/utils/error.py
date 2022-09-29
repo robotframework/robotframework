@@ -88,6 +88,10 @@ class ErrorDetails:
         while tb and self._is_robot_traceback(tb):
             tb = tb.tb_next
         error.__traceback__ = tb
+        if error.__context__:
+            self._remove_robot_traces(error.__context__)
+        if error.__cause__:
+            self._remove_robot_traces(error.__cause__)
 
     def _is_robot_traceback(self, tb):
         module = tb.tb_frame.f_globals.get('__name__')
@@ -97,7 +101,7 @@ class ErrorDetails:
         prefix = 'Traceback (most recent call last):\n'
         empty_tb = [prefix, '  None\n']
         if self._full_traceback:
-            if tb:
+            if tb or value.__context__ or value.__cause__:
                 return traceback.format_exception(etype, value, tb)
             else:
                 return empty_tb + traceback.format_exception_only(etype, value)

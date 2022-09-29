@@ -64,6 +64,18 @@ Invalid IF inside FOR
 Multiple errors
     FAIL    NOT RUN    NOT RUN    NOT RUN    NOT RUN
 
+Invalid data causes syntax error
+    [Template]    NONE
+    Check Test Case    ${TEST NAME}
+
+Invalid condition causes normal error
+    [Template]    NONE
+    Check Test Case    ${TEST NAME}
+
+Non-existing variable in condition causes normal error
+    [Template]    NONE
+    Check Test Case    ${TEST NAME}
+
 *** Keywords ***
 Branch statuses should be
     [Arguments]    @{statuses}

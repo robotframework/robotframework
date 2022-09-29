@@ -1161,13 +1161,9 @@ __ `Implicit argument types based on default values`_
 
 The type to use can be specified either using concrete types (e.g. list_),
 by using Abstract Base Classes (ABC) (e.g. Sequence_), or by using sub
-classes of these types (e.g. MutableSequence_). In all these cases the
-argument is converted to the concrete type.
-
-Also types in in the typing_ module that map to the supported concrete
-types or ABCs (e.g. `List`) are supported. With generics also the subscription
-syntax (e.g. `List[int]`) works, but no validation is done for container
-contents.
+classes of these types (e.g. MutableSequence_). Also types in in the typing_
+module that map to the supported concrete types or ABCs (e.g. `List`) are
+supported. In all these cases the argument is converted to the concrete type.
 
 In addition to using the actual types (e.g. `int`), it is possible to specify
 the type using type names as a string (e.g. `'int'`) and some types also have
@@ -1248,7 +1244,7 @@ Other types cause conversion failures.
    |             |               |            |              | and floats are considered to be seconds.                       |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | `Path       | PathLike_     |            | str_         | Strings are converted `Path <pathli_>`__ objects. On Windows   | | `/tmp/absolute/path`               |
-   | <pathli_>`__|               |            |              | `/` is converted to :codesc:`\\` automatically. New in RF 5.1. | | `relative/path/to/file.ext`        |
+   | <pathli_>`__|               |            |              | `/` is converted to :codesc:`\\` automatically. New in RF 6.0. | | `relative/path/to/file.ext`        |
    |             |               |            |              |                                                                | | `name.txt`                         |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Enum_       |               |            | str_         | The specified type must be an enumeration (a subclass of Enum_ | .. sourcecode:: python               |
@@ -1282,17 +1278,25 @@ Other types cause conversion failures.
    |             |               |            |              | that are not lists are converted to lists. If the type hint is |                                      |
    |             |               |            |              | generic Sequence_, sequences are used without conversion.      |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | tuple_      |               |            | str_,        | Same as list_, but string arguments must tuple literals.       | | `('one', 'two')`                   |
+   | tuple_      |               |            | str_,        | Same as `list`, but string arguments must tuple literals.      | | `('one', 'two')`                   |
    |             |               |            | Sequence_    |                                                                |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | dict_       | Mapping_      | dictionary,| str_,        | Same as list_, but string arguments must be dictionary         | | `{'a': 1, 'b': 2}`                 |
-   |             |               | map        | Mapping_     | literals.                                                      | | `{'key': 1, 'nested': {'key': 2}}` |
-   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | set_        | `Set          |            | str_,        | Same as list_, but string arguments must be set literals or    | | `{1, 2, 3, 42}`                    |
+   | set_        | `Set          |            | str_,        | Same as `list`, but string arguments must be set literals or   | | `{1, 2, 3, 42}`                    |
    |             | <abc.Set_>`__ |            | Container_   | `set()` to create an empty set.                                | | `set()`                            |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | frozenset_  |               |            | str_,        | Same conversion as with set_, but the result is a frozenset_.  |                                      |
-   |             |               |            | Container_   |                                                                |                                      |
+   | frozenset_  |               |            | str_,        | Same as `set`, but the result is a frozenset_.                 | | `{1, 2, 3, 42}`                    |
+   |             |               |            | Container_   |                                                                | | `frozenset()`                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | dict_       | Mapping_      | dictionary,| str_,        | Same as `list`, but string arguments must be dictionary        | | `{'a': 1, 'b': 2}`                 |
+   |             |               | map        | Mapping_     | literals.                                                      | | `{'key': 1, 'nested': {'key': 2}}` |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | TypedDict_  |               |            | str_,        | Same as `dict`, but dictionary items are also converted        | .. sourcecode:: python               |
+   |             |               |            | Mapping_     | to the specified types and items not included in the type      |                                      |
+   |             |               |            |              | spec are not allowed.                                          |    class Config(TypedDict):          |
+   |             |               |            |              |                                                                |        width: int                    |
+   |             |               |            |              | New in RF 6.0. Normal `dict` conversion was used earlier.      |        enabled: bool                 |
+   |             |               |            |              |                                                                |                                      |
+   |             |               |            |              |                                                                | | `{'width': 1600, 'enabled': True}` |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
 
 .. note:: Starting from Robot Framework 5.0, types that are automatically converted are
@@ -1331,6 +1335,7 @@ Other types cause conversion failures.
 .. _set: https://docs.python.org/library/stdtypes.html#set
 .. _abc.Set: https://docs.python.org/library/collections.abc.html#collections.abc.Set
 .. _frozenset: https://docs.python.org/library/stdtypes.html#frozenset
+.. _TypedDict: https://docs.python.org/library/typing.html#typing.TypedDict
 .. _Container: https://docs.python.org/library/collections.abc.html#collections.abc.Container
 .. _typing: https://docs.python.org/library/typing.html
 .. _ISO 8601: https://en.wikipedia.org/wiki/ISO_8601
@@ -1432,6 +1437,38 @@ to an integer but if that fails the keyword would get the original given argumen
 __ https://github.com/robotframework/robotframework/issues/3897
 __ https://github.com/robotframework/robotframework/issues/3908
 .. _Union: https://docs.python.org/3/library/typing.html#typing.Union
+
+Type conversion with generics
+'''''''''''''''''''''''''''''
+
+With generics also the parameterized syntax like `list[int]` or `dict[str, int]`
+works. When this syntax is used, the given value is first converted to the base
+type and then individual items are converted to the nested types. Conversion
+with different generic types works according to these rules:
+
+- With lists there can be only one type like `list[float]`. All list items are
+  converted to that type.
+- With tuples there can be any number of types like `tuple[int, int]` and
+  `tuple[str, int, bool]`. Tuples used as arguments are expected to have
+  exactly that amount of items and they are converted to matching types.
+- To create a homogeneous tuple, it is possible to use exactly one type and
+  ellipsis like `tuple[int, ...]`. In this case tuple can have any number
+  of items and they are all converted to the specified type.
+- With dictionaries there must be exactly two types like `dict[str, int]`.
+  Dictionary keys are converted using the former type and values using the latter.
+- With sets there can be exactly one type like `set[float]`. Conversion logic
+  is the same as with lists.
+
+.. note:: Support for converting nested types with generics is new in
+          Robot Framework 6.0. Same syntax works also with earlier versions,
+          but arguments are only converted to the base type and nested types
+          are not used for anything.
+
+.. note:: Using generics with Python standard types like `list[int]` is new
+          in `Python 3.9`__. With earlier versions matching types from
+          the typing_ module can be used like `List[int]`.
+
+__ https://peps.python.org/pep-0585/
 
 Custom argument converters
 ''''''''''''''''''''''''''
@@ -1716,7 +1753,7 @@ the code above:
     def example(argument: StrictType):
         assert isinstance(argument, StrictType)
 
-.. note:: Using `None` as a strict converter is new in Robot Framework 5.1.
+.. note:: Using `None` as a strict converter is new in Robot Framework 6.0.
           An explicit converter function needs to be used with earlier versions.
 
 Converter documentation

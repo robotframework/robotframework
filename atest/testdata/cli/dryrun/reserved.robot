@@ -47,7 +47,7 @@ End
     End
 
 End after valid FOR header
-    [Documentation]    FAIL    FOR loop must have closing END.
+    [Documentation]    FAIL    'End' is a reserved keyword. It must be an upper case 'END' when used as a marker to close a block.
     FOR    ${x}   IN    whatever
         Log    ${x}
     End

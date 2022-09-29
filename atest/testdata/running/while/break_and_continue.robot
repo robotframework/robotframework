@@ -106,6 +106,61 @@ With BREAK inside TRY-ELSE
     END
     Should be equal    ${variable}    ${2}
 
+BREAK with continuable failures
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) Failure
+    ...
+    ...    2) Another failure
+    [Tags]    robot:continue-on-failure
+    WHILE    True
+        Fail    Failure
+        Fail    Another failure
+        BREAK
+        Fail    Not run
+    END
+
+CONTINUE with continuable failures
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) Failure 1
+    ...
+    ...    2) Failure 0
+    WHILE    $variable >= 0
+        Run Keyword And Continue On Failure    Fail    Failure ${variable}
+        ${variable} =    Set Variable    ${variable - 1}
+        CONTINUE
+        Fail    Not run
+    END
+
+Invalid BREAK
+    [Documentation]    FAIL    BREAK does not accept arguments, got 'bad'.
+    WHILE   True
+        BREAK    bad
+    END
+
+Invalid CONTINUE
+    [Documentation]    FAIL    CONTINUE does not accept arguments, got 'bad'.
+    WHILE   True
+        CONTINUE    bad
+    END
+
+Invalid BREAK not executed
+    WHILE   True
+        IF    False
+            BREAK    bad
+        ELSE
+            BREAK
+        END
+    END
+
+Invalid CONTINUE not executed
+    WHILE   False
+        CONTINUE    bad
+    END
+
 With CONTINUE in UK
     With CONTINUE in UK
 

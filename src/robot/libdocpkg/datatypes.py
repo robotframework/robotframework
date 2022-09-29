@@ -47,19 +47,21 @@ class TypeDoc(Sortable):
         return self.name.lower()
 
     @classmethod
-    def for_type(cls, type, converters):
-        if isinstance(type, EnumType):
-            return cls.for_enum(type)
-        if isinstance(type, typeddict_types):
-            return cls.for_typed_dict(type)
-        converter = TypeConverter.converter_for(type, converters)
+    def for_type(cls, type_hint, converters):
+        if isinstance(type_hint, EnumType):
+            return cls.for_enum(type_hint)
+        if isinstance(type_hint, typeddict_types):
+            return cls.for_typed_dict(type_hint)
+        converter = TypeConverter.converter_for(type_hint, converters)
         if not converter:
             return None
         elif not converter.type:
             return cls(cls.CUSTOM, converter.type_name, converter.doc,
                        converter.value_types)
         else:
-            return cls(cls.STANDARD, converter.type_name,
+            # Get `type_name` from class, not from instance, to get the original
+            # name with generics like `list[int]` that override it in instance.
+            return cls(cls.STANDARD, type(converter).type_name,
                        STANDARD_TYPE_DOCS[converter.type], converter.value_types)
 
     @classmethod

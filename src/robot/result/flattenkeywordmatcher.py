@@ -21,7 +21,7 @@ from robot.utils import MultiMatcher, is_list_like
 def validate_flatten_keyword(options):
     for opt in options:
         low = opt.lower()
-        # TODO: deprecate 'foritem' in RF 5.1
+        # TODO: Deprecate 'foritem' in RF 6.1!
         if low == 'foritem':
             low = 'iteration'
         if not (low in ('for', 'while', 'iteration') or

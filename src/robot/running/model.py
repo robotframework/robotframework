@@ -193,8 +193,9 @@ class Return(model.Return):
         with StatusReporter(self, ReturnResult(self.values), context, run):
             if run:
                 if self.error:
-                    raise DataError(self.error)
-                raise ReturnFromKeyword(self.values)
+                    raise DataError(self.error, syntax=True)
+                if not context.dry_run:
+                    raise ReturnFromKeyword(self.values)
 
 
 @Body.register
@@ -212,10 +213,11 @@ class Continue(model.Continue):
 
     def run(self, context, run=True, templated=False):
         with StatusReporter(self, ContinueResult(), context, run):
-            if self.error:
-                raise DataError(self.error)
             if run:
-                raise ContinueLoop()
+                if self.error:
+                    raise DataError(self.error, syntax=True)
+                if not context.dry_run:
+                    raise ContinueLoop()
 
 
 @Body.register
@@ -233,10 +235,11 @@ class Break(model.Break):
 
     def run(self, context, run=True, templated=False):
         with StatusReporter(self, BreakResult(), context, run):
-            if self.error:
-                raise DataError(self.error)
             if run:
-                raise BreakLoop()
+                if self.error:
+                    raise DataError(self.error, syntax=True)
+                if not context.dry_run:
+                    raise BreakLoop()
 
 
 class TestCase(model.TestCase):

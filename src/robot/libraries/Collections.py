@@ -688,7 +688,7 @@ class _Dictionary:
         =>
         | ${value} = 2
 
-        Support for ``default`` is new in Robot Framework 5.1.
+        Support for ``default`` is new in Robot Framework 6.0.
         """
         self._validate_dictionary(dictionary)
         try:

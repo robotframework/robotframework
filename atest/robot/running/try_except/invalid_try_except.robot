@@ -81,3 +81,6 @@ CONTINUE in FINALLY
 
 RETURN in FINALLY
     TRY:PASS    FINALLY:FAIL    path=body[0].body[0]
+
+Invalid TRY/EXCEPT causes syntax error that cannot be caught
+    TRY:FAIL    EXCEPT:NOT RUN    ELSE:NOT RUN

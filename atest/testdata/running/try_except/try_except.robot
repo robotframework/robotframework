@@ -91,6 +91,8 @@ Syntax errors cannot be caught
         ${y} =    ${x}     Set Variable
     EXCEPT
         Fail    Should not be run
+    ELSE
+        Fail    Should not be run
     END
 
 Finally block executed when no failures
