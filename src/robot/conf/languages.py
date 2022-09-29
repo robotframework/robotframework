@@ -480,6 +480,8 @@ class Fr(Language):
     then_prefix = {'Alors'}
     and_prefix = {'Et'}
     but_prefix = {'Mais'}
+    true_strings = {'VRAI', 'OUI', 'ACTIF'}
+    false_strings = {'FAUX', 'NON', 'Désactivé', 'AUCUN'}
 
 
 class De(Language):
