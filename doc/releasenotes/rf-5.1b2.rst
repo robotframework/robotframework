@@ -4,6 +4,10 @@ Robot Framework 5.1 beta 2
 
 .. default-role:: code
 
+.. note:: Robot Framework 5.1 grew so big that we considered it is better to call
+          it a major release and changed the version number accordingly.
+          The next release after RF 5.1 beta 2 was thus `RF 6.0 rc 1 <rf-6.0rc1.rst>`__.
+
 `Robot Framework`_ 5.1 is a new feature release that starts Robot Framework's
 localization efforts and also brings in other nice enhancements.
 Robot Framework 5.1 preview releases are targeted especially
