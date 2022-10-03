@@ -201,9 +201,9 @@ class ResourceFileBuilder:
         self.lang = lang
         self.process_curdir = process_curdir
 
-    def build(self, source):
+    def build(self, source, parse_as_suite=False):
         LOGGER.info("Parsing resource file '%s'." % source)
-        resource = self._parse(source)
+        resource = self._parse(source, parse_as_suite)
         if resource.imports or resource.variables or resource.keywords:
             LOGGER.info("Imported resource file '%s' (%d keywords)."
                         % (source, len(resource.keywords)))
@@ -211,7 +211,7 @@ class ResourceFileBuilder:
             LOGGER.warn("Imported resource file '%s' is empty." % source)
         return resource
 
-    def _parse(self, source):
+    def _parse(self, source, parse_as_suite=False):
         if os.path.splitext(source)[1].lower() in ('.rst', '.rest'):
-            return RestParser(self.lang, self.process_curdir).parse_resource_file(source)
-        return RobotParser(self.lang, self.process_curdir).parse_resource_file(source)
+            return RestParser(self.lang, self.process_curdir).parse_resource_file(source, parse_as_suite)
+        return RobotParser(self.lang, self.process_curdir).parse_resource_file(source, parse_as_suite)

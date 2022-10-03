@@ -78,9 +78,13 @@ class RobotParser(BaseParser):
     def _get_source(self, source):
         return source
 
-    def parse_resource_file(self, source):
-        model = get_resource_model(self._get_source(source), data_only=True,
-                                   curdir=self._get_curdir(source), lang=self.lang)
+    def parse_resource_file(self, source, parse_as_suite=False):
+        if parse_as_suite:
+            model = get_model(self._get_source(source), data_only=True,
+                                    curdir=self._get_curdir(source), lang=self.lang)
+        else:
+            model = get_resource_model(self._get_source(source), data_only=True,
+                                    curdir=self._get_curdir(source), lang=self.lang)
         resource = ResourceFile(source=source)
         ErrorReporter(source).visit(model)
         ResourceBuilder(resource).visit(model)

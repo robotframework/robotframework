@@ -95,7 +95,7 @@ class ResourceDocBuilder:
 
     def _import_resource(self, path):
         ast = ResourceFileBuilder(process_curdir=False).build(
-            self._find_resource_file(path))
+            self._find_resource_file(path), True)
         return UserLibrary(ast)
 
     def _find_resource_file(self, path):
