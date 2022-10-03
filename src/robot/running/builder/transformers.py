@@ -145,6 +145,10 @@ class ResourceBuilder(NodeVisitor):
     def visit_Keyword(self, node):
         KeywordBuilder(self.resource, self.defaults).visit(node)
 
+    def visit_TestCaseSection(self, node):
+        self.resource.type = "SUITE"
+
+
 
 class TestCaseBuilder(NodeVisitor):
 

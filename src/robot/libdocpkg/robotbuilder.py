@@ -83,10 +83,10 @@ class LibraryDocBuilder:
 class ResourceDocBuilder:
 
     def build(self, path):
-        res = self._import_resource(path)
+        res, type = self._import_resource(path)
         libdoc = LibraryDoc(name=res.name,
                             doc=self._get_doc(res),
-                            type='RESOURCE',
+                            type=type,
                             scope='GLOBAL',
                             source=res.source,
                             lineno=1)
@@ -96,7 +96,7 @@ class ResourceDocBuilder:
     def _import_resource(self, path):
         ast = ResourceFileBuilder(process_curdir=False).build(
             self._find_resource_file(path), True)
-        return UserLibrary(ast)
+        return UserLibrary(ast), ast.type
 
     def _find_resource_file(self, path):
         if os.path.isfile(path):

@@ -435,6 +435,7 @@ class ResourceFile:
         self.imports = []
         self.keywords = []
         self.variables = []
+        self.type="RESOURCE"
 
     @setter
     def imports(self, imports):
