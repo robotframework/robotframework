@@ -109,7 +109,8 @@
       "description": "Type of the doc: LIBRARY or RESOURCE.",
       "enum": [
         "LIBRARY",
-        "RESOURCE"
+        "RESOURCE",
+        "SUITE"
       ],
       "type": "string"
     },

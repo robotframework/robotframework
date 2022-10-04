@@ -19,7 +19,7 @@ from robot.errors import DataError
 from robot.utils import get_error_message
 
 from .jsonbuilder import JsonDocBuilder
-from .robotbuilder import LibraryDocBuilder, ResourceDocBuilder
+from .robotbuilder import LibraryDocBuilder, ResourceDocBuilder, SuiteDocBuilder
 from .xmlbuilder import XmlDocBuilder
 
 
@@ -51,10 +51,12 @@ def _build(builder, source):
                 and not os.path.exists(source)
                 and _get_extension(source) in RESOURCE_EXTENSIONS):
             return _build(ResourceDocBuilder(), source)
+        # Resource file with other extension than '.resource' parsed as a suite file.
+        if isinstance(builder, SuiteDocBuilder):
+            return _build(ResourceDocBuilder(), source)
         raise
-    except:
-        raise DataError("Building library '%s' failed: %s"
-                        % (source, get_error_message()))
+    except Exception:
+        raise DataError(f"Building library '{source}' failed: {get_error_message()}")
 
 
 def _get_extension(source):
@@ -73,8 +75,10 @@ def DocumentationBuilder(library_or_resource):
     """
     if os.path.exists(library_or_resource):
         extension = _get_extension(library_or_resource)
-        if extension in RESOURCE_EXTENSIONS:
+        if extension == 'resource':
             return ResourceDocBuilder()
+        if extension in RESOURCE_EXTENSIONS:
+            return SuiteDocBuilder()
         if extension in XML_EXTENSIONS:
             return XmlDocBuilder()
         if extension == 'json':

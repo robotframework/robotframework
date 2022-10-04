@@ -18,8 +18,8 @@ import sys
 import re
 
 from robot.errors import DataError
-from robot.running import (TestLibrary, UserLibrary, UserErrorHandler,
-                           ResourceFileBuilder)
+from robot.running import (ResourceFileBuilder, TestLibrary, TestSuiteBuilder,
+                           UserLibrary, UserErrorHandler)
 from robot.utils import is_string, split_tags_from_doc, type_repr, unescape
 from robot.variables import search_variable
 
@@ -81,12 +81,14 @@ class LibraryDocBuilder:
 
 
 class ResourceDocBuilder:
+    type = 'RESOURCE'
 
     def build(self, path):
-        res = self._import_resource(path)
-        libdoc = LibraryDoc(name=res.name,
-                            doc=self._get_doc(res),
-                            type='RESOURCE',
+        path = self._find_resource_file(path)
+        res, name = self._import_resource(path)
+        libdoc = LibraryDoc(name=name,
+                            doc=self._get_doc(res, name),
+                            type=self.type,
                             scope='GLOBAL',
                             source=res.source,
                             lineno=1)
@@ -94,9 +96,9 @@ class ResourceDocBuilder:
         return libdoc
 
     def _import_resource(self, path):
-        ast = ResourceFileBuilder(process_curdir=False).build(
-            self._find_resource_file(path))
-        return UserLibrary(ast)
+        model = ResourceFileBuilder(process_curdir=False).build(path)
+        resource = UserLibrary(model)
+        return resource, resource.name
 
     def _find_resource_file(self, path):
         if os.path.isfile(path):
@@ -107,10 +109,21 @@ class ResourceDocBuilder:
                 return candidate
         raise DataError(f"Resource file '{path}' does not exist.")
 
-    def _get_doc(self, res):
-        if res.doc:
-            return unescape(res.doc)
-        return f"Documentation for resource file ``{res.name}``."
+    def _get_doc(self, resource, name):
+        if resource.doc:
+            return unescape(resource.doc)
+        return f"Documentation for resource file ``{name}``."
+
+
+class SuiteDocBuilder(ResourceDocBuilder):
+    type = 'SUITE'
+
+    def _import_resource(self, path):
+        suite = TestSuiteBuilder(process_curdir=False).build(path)
+        return UserLibrary(suite.resource), suite.name
+
+    def _get_doc(self, resource, name):
+        return f"Documentation for keywords in suite ``{name}``."
 
 
 class KeywordDocBuilder:

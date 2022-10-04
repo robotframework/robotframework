@@ -169,6 +169,7 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="LIBRARY" />
             <xs:enumeration value="RESOURCE" />
+            <xs:enumeration value="SUITE" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="SpecVersion">

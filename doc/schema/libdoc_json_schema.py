@@ -25,6 +25,7 @@ class DocumentationType(str, Enum):
     """Type of the doc: LIBRARY or RESOURCE."""
     LIBRARY = 'LIBRARY'
     RESOURCE = 'RESOURCE'
+    SUITE = 'SUITE'
 
 
 class LibraryScope(str, Enum):
