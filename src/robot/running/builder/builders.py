@@ -97,8 +97,7 @@ class TestSuiteBuilder:
     def _validate_test_counts(self, suite, multisource=False):
         def validate(suite):
             if not suite.has_tests:
-                raise DataError("Suite '%s' contains no tests or tasks."
-                                % suite.name)
+                raise DataError(f"Suite '{suite.name}' contains no tests or tasks.")
         if not multisource:
             validate(suite)
         else:
@@ -141,7 +140,7 @@ class SuiteStructureParser(SuiteStructureVisitor):
         return self.suite
 
     def visit_file(self, structure):
-        LOGGER.info("Parsing file '%s'." % structure.source)
+        LOGGER.info(f"Parsing file '{structure.source}'.")
         suite, _ = self._build_suite(structure)
         if self._stack:
             self._stack[-1][0].suites.append(suite)
@@ -150,7 +149,7 @@ class SuiteStructureParser(SuiteStructureVisitor):
 
     def start_directory(self, structure):
         if structure.source:
-            LOGGER.info("Parsing directory '%s'." % structure.source)
+            LOGGER.info(f"Parsing directory '{structure.source}'.")
         suite, defaults = self._build_suite(structure)
         if self.suite is None:
             self.suite = suite
@@ -174,10 +173,10 @@ class SuiteStructureParser(SuiteStructureVisitor):
             else:
                 suite = parser.parse_suite_file(source, defaults)
                 if not suite.tests:
-                    LOGGER.info("Data source '%s' has no tests or tasks." % source)
+                    LOGGER.info(f"Data source '{source}' has no tests or tasks.")
             self._validate_execution_mode(suite)
         except DataError as err:
-            raise DataError("Parsing '%s' failed: %s" % (source, err.message))
+            raise DataError(f"Parsing '{source}' failed: {err.message}")
         return suite, defaults
 
     def _validate_execution_mode(self, suite):
@@ -189,10 +188,10 @@ class SuiteStructureParser(SuiteStructureVisitor):
             self.rpa = suite.rpa
         elif self.rpa is not suite.rpa:
             this, that = ('tasks', 'tests') if suite.rpa else ('tests', 'tasks')
-            raise DataError("Conflicting execution modes. File has %s "
-                            "but files parsed earlier have %s. Fix headers "
-                            "or use '--rpa' or '--norpa' options to set the "
-                            "execution mode explicitly." % (this, that))
+            raise DataError(f"Conflicting execution modes. File has {this} "
+                            f"but files parsed earlier have {that}. Fix headers "
+                            f"or use '--rpa' or '--norpa' options to set the "
+                            f"execution mode explicitly.")
 
 
 class ResourceFileBuilder:
@@ -202,13 +201,13 @@ class ResourceFileBuilder:
         self.process_curdir = process_curdir
 
     def build(self, source):
-        LOGGER.info("Parsing resource file '%s'." % source)
+        LOGGER.info(f"Parsing resource file '{source}'.")
         resource = self._parse(source)
         if resource.imports or resource.variables or resource.keywords:
-            LOGGER.info("Imported resource file '%s' (%d keywords)."
-                        % (source, len(resource.keywords)))
+            LOGGER.info(f"Imported resource file '{source}' ({len(resource.keywords)} "
+                        f"keywords).")
         else:
-            LOGGER.warn("Imported resource file '%s' is empty." % source)
+            LOGGER.warn(f"Imported resource file '{source}' is empty.")
         return resource
 
     def _parse(self, source):
