@@ -136,9 +136,8 @@
 .. _data-driven approach: `Data-driven style`_
 .. _test case file: `Test case files`_
 .. _test suite directory: `Test suite directories`_
-.. _initialization file: `Initialization files`_
-.. _test suite initialization file: `Initialization files`_
-.. _test suite initialization files: `Initialization files`_
+.. _initialization file: `Suite initialization files`_
+.. _suite initialization file: `Suite initialization files`_
 .. _test case name: `Test case name and documentation`_
 .. _test case documentation: `Test case name and documentation`_
 .. _test suite name: `Test suite name and documentation`_

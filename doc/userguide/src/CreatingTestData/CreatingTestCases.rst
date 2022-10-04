@@ -608,7 +608,7 @@ There are multiple ways how to specify tags for test cases explained below:
 
 `Test Tags`:setting: in the Setting section
    All tests in a test case file with this setting always get specified tags.
-   If this setting is used in a `test suite initialization file`_, all tests
+   If this setting is used in a `suite initialization file`_, all tests
    in child suites get these tags.
 
 `[Tags]`:setting: with each test case

@@ -60,8 +60,8 @@ If a file or directory that is processed does not contain any test
 cases, it is silently ignored (a message is written to the syslog_)
 and the processing continues.
 
-Initialization files
-~~~~~~~~~~~~~~~~~~~~
+Suite initialization files
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A test suite created from a directory can have similar settings as a suite
 created from a test case file. Because a directory alone cannot have that
@@ -190,8 +190,7 @@ Not only `test cases`__ but also test suites can have a setup and
 a teardown. A suite setup is executed before running any of the suite's
 test cases or child test suites, and a test teardown is executed after
 them. All test suites can have a setup and a teardown; with suites created
-from a directory they must be specified in a `test suite
-initialization file`_.
+from a directory they must be specified in a `suite initialization file`_.
 
 __ `Test setup and teardown`_
 
