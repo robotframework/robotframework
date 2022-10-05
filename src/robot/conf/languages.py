@@ -48,7 +48,7 @@ class Languages:
 
     def _get_languages(self, languages, add_default=True):
         languages = self._resolve_languages(languages, add_default)
-        available = self._get_available_languages()
+        available = self.get_available_languages()
         returned = []
         for lang in languages:
             if isinstance(lang, Language):
@@ -58,7 +58,7 @@ class Languages:
                 if normalized in available:
                     returned.append(available[normalized]())
                 else:
-                    returned.extend(self._import_languages(lang))
+                    returned.extend(self.import_languages(lang))
         return returned
 
     def _resolve_languages(self, languages, add_default=True):
