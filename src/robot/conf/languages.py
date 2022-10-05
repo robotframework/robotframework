@@ -21,22 +21,13 @@ from robot.utils import is_list_like, Importer, normalize
 
 class Languages:
 
-    def __init__(self, languages=None):
+    def __init__(self, languages=None, add_default=True):
         self.languages = []
-        # The English singular forms are added for backwards compatibility
-        self.headers = {
-            'Setting': 'Settings',
-            'Variable': 'Variables',
-            'Test Case': 'Test Cases',
-            'Task': 'Tasks',
-            'Keyword': 'Keywords',
-            'Comment': 'Comments'
-        }
         self.settings = {}
         self.bdd_prefixes = set()
         self.true_strings = {'1'}
         self.false_strings = {'0', 'NONE', ''}
-        for lang in self._get_languages(languages):
+        for lang in self._get_languages(languages, add_default):
             self._add_language(lang)
 
     def reset(self, languages=None):
@@ -55,8 +46,8 @@ class Languages:
         self.true_strings |= {s.upper() for s in lang.true_strings}
         self.false_strings |= {s.upper() for s in lang.false_strings}
 
-    def _get_languages(self, languages):
-        languages = self._resolve_languages(languages)
+    def _get_languages(self, languages, add_default=True):
+        languages = self._resolve_languages(languages, add_default)
         available = self._get_available_languages()
         returned = []
         for lang in languages:
@@ -70,17 +61,28 @@ class Languages:
                     returned.extend(self._import_languages(lang))
         return returned
 
-    def _resolve_languages(self, languages):
+    def _resolve_languages(self, languages, add_default=True):
         if not languages:
             languages = []
         elif is_list_like(languages):
             languages = list(languages)
         else:
             languages = [languages]
-        languages.append(En())
+        if add_default:
+            languages.append(En())
+            # The English singular forms are added for backwards compatibility
+            self.headers = {
+                'Setting': 'Settings',
+                'Variable': 'Variables',
+                'Test Case': 'Test Cases',
+                'Task': 'Tasks',
+                'Keyword': 'Keywords',
+                'Comment': 'Comments'
+            }
         return languages
 
-    def _get_available_languages(self):
+    @staticmethod
+    def get_available_languages(self):
         available = {}
         for lang in Language.__subclasses__():
             available[normalize(lang.__name__)] = lang
@@ -88,7 +90,8 @@ class Languages:
                 available[normalize(lang.__doc__.splitlines()[0])] = lang
         return available
 
-    def _import_languages(self, lang):
+    @staticmethod
+    def import_languages(self, lang):
         def is_language(member):
             return (inspect.isclass(member)
                     and issubclass(member, Language)
