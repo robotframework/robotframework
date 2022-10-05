@@ -91,7 +91,7 @@ class Languages:
         return available
 
     @staticmethod
-    def import_languages(self):
+    def import_languages(lang):
         def is_language(member):
             return (inspect.isclass(member)
                     and issubclass(member, Language)
