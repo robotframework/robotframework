@@ -82,7 +82,7 @@ class Languages:
         return languages
 
     @staticmethod
-    def get_available_languages(self):
+    def get_available_languages():
         available = {}
         for lang in Language.__subclasses__():
             available[normalize(lang.__name__)] = lang
@@ -91,7 +91,7 @@ class Languages:
         return available
 
     @staticmethod
-    def import_languages(self, lang):
+    def import_languages(self):
         def is_language(member):
             return (inspect.isclass(member)
                     and issubclass(member, Language)
