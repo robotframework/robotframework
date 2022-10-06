@@ -843,7 +843,7 @@ functionally fully identical.
 
 .. sourcecode:: robotframework
 
-   *** Test Cases **
+   *** Test Cases ***
    Normal test case
        Example keyword    first argument    second argument
 
