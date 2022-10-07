@@ -246,12 +246,12 @@ class BooleanConverter(TypeConverter):
         return value
 
     def _convert(self, value, explicit_type=True):
-        upper = value.upper()
-        if upper == 'NONE':
+        normalized = value.title()
+        if normalized == 'None':
             return None
-        if upper in self.languages.true_strings:
+        if normalized in self.languages.true_strings:
             return True
-        if upper in self.languages.false_strings:
+        if normalized in self.languages.false_strings:
             return False
         return value
 

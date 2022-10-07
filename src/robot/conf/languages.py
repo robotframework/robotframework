@@ -52,8 +52,8 @@ class Languages:
         self.headers.update({n.title(): lang.headers[n] for n in lang.headers if n})
         self.settings.update({n.title(): lang.settings[n] for n in lang.settings if n})
         self.bdd_prefixes |= {p.title() for p in lang.bdd_prefixes}
-        self.true_strings |= {s.upper() for s in lang.true_strings}
-        self.false_strings |= {s.upper() for s in lang.false_strings}
+        self.true_strings |= {s.title() for s in lang.true_strings}
+        self.false_strings |= {s.title() for s in lang.false_strings}
 
     def _get_languages(self, languages):
         languages = self._resolve_languages(languages)
@@ -1048,4 +1048,3 @@ class Ro(Language):
     but_prefix = {'Dar'}
     true_strings = {'ADEVARAT', 'DA', 'CAND'}
     false_strings = {'FALS', 'NU', 'OPRIT', 'NICIUN'}
-    
