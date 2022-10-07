@@ -929,12 +929,12 @@ class Tr(Language):
 
 class Sv(Language):
     """Swedish"""
-    setting_header = 'Inställningar'
-    variable_header = 'Variabler'
-    test_case_header = 'Testfall'
-    task_header = 'Taskar'
-    keyword_header = 'Nyckelord'
-    comment_header = 'Kommentarer'
+    settings_header = 'Inställningar'
+    variables_header = 'Variabler'
+    test_cases_header = 'Testfall'
+    tasks_header = 'Taskar'
+    keywords_header = 'Nyckelord'
+    comments_header = 'Kommentarer'
     library_setting = 'Bibliotek'
     resource_setting = 'Resurs'
     variables_setting = 'Variabel'
@@ -970,12 +970,12 @@ class Sv(Language):
 
 class Bg(Language):
     """Bulgarian"""
-    setting_header = 'Настройки'
-    variable_header = 'Променливи'
-    test_case_header = 'Тестови случаи'
-    task_header = 'Задачи'
-    keyword_header = 'Ключови думи'
-    comment_header = 'Коментари'
+    settings_header = 'Настройки'
+    variables_header = 'Променливи'
+    test_cases_header = 'Тестови случаи'
+    tasks_header = 'Задачи'
+    keywords_header = 'Ключови думи'
+    comments_header = 'Коментари'
     library_setting = 'Библиотека'
     resource_setting = 'Ресурс'
     variables_setting = 'Променлива'
@@ -1011,12 +1011,12 @@ class Bg(Language):
 
 class Ro(Language):
     """Romanian"""
-    setting_header = 'Setari'
-    variable_header = 'Variabile'
-    test_case_header = 'Cazuri De Test'
-    task_header = 'Sarcini'
-    keyword_header = 'Cuvinte Cheie'
-    comment_header = 'Comentarii'
+    settings_header = 'Setari'
+    variables_header = 'Variabile'
+    test_cases_header = 'Cazuri De Test'
+    tasks_header = 'Sarcini'
+    keywords_header = 'Cuvinte Cheie'
+    comments_header = 'Comentarii'
     library_setting = 'Librarie'
     resource_setting = 'Resursa'
     variables_setting = 'Variabila'
