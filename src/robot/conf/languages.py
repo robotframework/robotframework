@@ -925,3 +925,127 @@ class Tr(Language):
     but_prefix = {'Ancak'}
     true_strings = {'DOĞRU', 'EVET', 'AÇIK'}
     false_strings = {'YANLIŞ', 'HAYIR', 'KAPALI'}
+
+
+class Sv(Language):
+    """Swedish"""
+    settings_header = 'Inställningar'
+    variables_header = 'Variabler'
+    test_cases_header = 'Testfall'
+    tasks_header = 'Taskar'
+    keywords_header = 'Nyckelord'
+    comments_header = 'Kommentarer'
+    library_setting = 'Bibliotek'
+    resource_setting = 'Resurs'
+    variables_setting = 'Variabel'
+    documentation_setting = 'Dokumentation'
+    metadata_setting = 'Metadata'
+    suite_setup_setting = 'Svit konfigurering'
+    suite_teardown_setting = 'Svit nedrivning'
+    test_setup_setting = 'Test konfigurering'
+    test_teardown_setting = 'Test nedrivning'
+    test_template_setting = 'Test mall'
+    test_timeout_setting = 'Test timeout'
+    test_tags_setting = 'Test taggar'
+    task_setup_setting = 'Task konfigurering'
+    task_teardown_setting = 'Task nedrivning'
+    task_template_setting = 'Task mall'
+    task_timeout_setting = 'Task timeout'
+    task_tags_setting = 'Arbetsuppgift taggar'
+    keyword_tags_setting = 'Nyckelord taggar'
+    tags_setting = 'Taggar'
+    setup_setting = 'Konfigurering'
+    teardown_setting = 'Nedrivning'
+    template_setting = 'Mall'
+    timeout_setting = 'Timeout'
+    arguments_setting = 'Argument'
+    given_prefix = {'Givet'}
+    when_prefix = {'När'}
+    then_prefix = {'Då'}
+    and_prefix = {'Och'}
+    but_prefix = {'Men'}
+    true_strings = {'SANT', 'JA', 'PÅ'}
+    false_strings = {'FALSKT', 'NEJ', 'AV', 'INGEN'}
+
+
+class Bg(Language):
+    """Bulgarian"""
+    settings_header = 'Настройки'
+    variables_header = 'Променливи'
+    test_cases_header = 'Тестови случаи'
+    tasks_header = 'Задачи'
+    keywords_header = 'Ключови думи'
+    comments_header = 'Коментари'
+    library_setting = 'Библиотека'
+    resource_setting = 'Ресурс'
+    variables_setting = 'Променлива'
+    documentation_setting = 'Документация'
+    metadata_setting = 'Метаданни'
+    suite_setup_setting = 'Първоначални настройки на комплекта'
+    suite_teardown_setting = 'Приключване на комплекта'
+    test_setup_setting = 'Първоначални настройки на тестове'
+    test_teardown_setting = 'Приключване на тестове'
+    test_template_setting = 'Шаблон за тестове'
+    test_timeout_setting = 'Таймаут за тестове'
+    test_tags_setting = 'Етикети за тестове'
+    task_setup_setting = 'Първоначални настройки на задачи'
+    task_teardown_setting = 'Приключване на задачи'
+    task_template_setting = 'Шаблон за задачи'
+    task_timeout_setting = 'Таймаут за задачи'
+    task_tags_setting = 'Етикети за задачи'
+    keyword_tags_setting = 'Етикети за ключови думи'
+    tags_setting = 'Етикети'
+    setup_setting = 'Първоначални настройки'
+    teardown_setting = 'Приключване'
+    template_setting = 'Шаблон'
+    timeout_setting = 'Таймаут'
+    arguments_setting = 'Аргументи'
+    given_prefix = {'В случай че'}
+    when_prefix = {'Когато'}
+    then_prefix = {'Тогава'}
+    and_prefix = {'И'}
+    but_prefix = {'Но'}
+    true_strings = {'Вярно', 'Да', 'Включен'}
+    false_strings = {'Невярно', 'Не', 'Изключен', 'Нищо'}
+
+
+class Ro(Language):
+    """Romanian"""
+    settings_header = 'Setari'
+    variables_header = 'Variabile'
+    test_cases_header = 'Cazuri De Test'
+    tasks_header = 'Sarcini'
+    keywords_header = 'Cuvinte Cheie'
+    comments_header = 'Comentarii'
+    library_setting = 'Librarie'
+    resource_setting = 'Resursa'
+    variables_setting = 'Variabila'
+    documentation_setting = 'Documentatie'
+    metadata_setting = 'Metadate'
+    suite_setup_setting = 'Configurare De Suita'
+    suite_teardown_setting = 'Configurare De Intrerupere'
+    test_setup_setting = 'Setare De Test'
+    test_teardown_setting = 'Inrerupere De Test'
+    test_template_setting = 'Sablon De Test'
+    test_timeout_setting = 'Timp Expirare Test'
+    test_tags_setting = 'Taguri De Test'
+    task_setup_setting = 'Configuarare activitate'
+    task_teardown_setting = 'Intrerupere activitate'
+    task_template_setting = 'Sablon de activitate'
+    task_timeout_setting = 'Timp de expirare activitate'
+    task_tags_setting = 'Etichete activitate'
+    keyword_tags_setting = 'Etichete metode'
+    tags_setting = 'Etichete'
+    setup_setting = 'Setare'
+    teardown_setting = 'Intrerupere'
+    template_setting = 'Sablon'
+    timeout_setting = 'Expirare'
+    arguments_setting = 'Argumente'
+    given_prefix = {'Fie ca'}
+    when_prefix = {'Cand'}
+    then_prefix = {'Atunci'}
+    and_prefix = {'Si'}
+    but_prefix = {'Dar'}
+    true_strings = {'ADEVARAT', 'DA', 'CAND'}
+    false_strings = {'FALS', 'NU', 'OPRIT', 'NICIUN'}
+    
