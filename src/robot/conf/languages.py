@@ -34,8 +34,8 @@ class Languages:
         }
         self.settings = {}
         self.bdd_prefixes = set()
-        self.true_strings = {'1'}
-        self.false_strings = {'0', 'NONE', ''}
+        self.true_strings = {'True', '1'}
+        self.false_strings = {'False', '0', 'None', ''}
         for lang in self._get_languages(languages):
             self._add_language(lang)
 
