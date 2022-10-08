@@ -62,9 +62,9 @@ from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
                         get_time, get_timestamp, secs_to_timestamp,
                         secs_to_timestr, timestamp_to_secs, timestr_to_secs,
                         parse_time)
-from .robottypes import (FALSE_STRINGS, TRUE_STRINGS, is_bytes, is_dict_like, is_falsy,
-                         is_integer, is_list_like, is_number, is_pathlike, is_string,
-                         is_truthy, is_union, type_name, type_repr, typeddict_types)
+from .robottypes import (is_bytes, is_dict_like, is_falsy, is_integer, is_list_like,
+                         is_number, is_pathlike, is_string, is_truthy, is_union,
+                         type_name, type_repr, typeddict_types)
 from .setter import setter, SetterAwareType
 from .sortable import Sortable
 from .text import (cut_assign_value, cut_long_message, format_assign_message,
@@ -78,11 +78,16 @@ def read_rest_data(rstfile):
     return read_rest_data(rstfile)
 
 
+# Quietly deprecated utils. Should be deprecated loudly in RF 7.0.
+# https://github.com/robotframework/robotframework/issues/4501
+
+from .robottypes import FALSE_STRINGS, TRUE_STRINGS
+
+
 # Deprecated Python 2/3 compatibility layer. Not needed by Robot Framework itself
-# anymore because Python 2 support was dropped in RF 5. Preserved at least until
-# RF 5.2 to avoid breaking external libraries and tools that use it. There's also
-# `PY2` in the `platform` submodule.
-# https://github.com/robotframework/robotframework/issues/4150
+# after RF 5.0 when Python 2 support was dropped. Should be deprecated loudly in
+# RF 7.0. Notice that there's also `PY2` in the `platform` submodule.
+# https://github.com/robotframework/robotframework/issues/4501
 
 from io import StringIO
 
