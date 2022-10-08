@@ -277,8 +277,8 @@ class En(Language):
     then_prefix = {'Then'}
     and_prefix = {'And'}
     but_prefix = {'But'}
-    true_strings = {'TRUE', 'YES', 'ON'}
-    false_strings = {'FALSE', 'NO', 'OFF'}
+    true_strings = {'True', 'Yes', 'On'}
+    false_strings = {'False', 'No', 'Off'}
 
 
 class Cs(Language):
@@ -318,8 +318,8 @@ class Cs(Language):
     then_prefix = {'Pak'}
     and_prefix = {'A'}
     but_prefix = {'Ale'}
-    true_strings = {'PRAVDA', 'ANO', 'ZAPNUTO'}
-    false_strings = {'NEPRAVDA', 'NE', 'VYPNUTO', 'NIC'}
+    true_strings = {'Pravda', 'Ano', 'Zapnuto'}
+    false_strings = {'Nepravda', 'Ne', 'Vypnuto', 'Nic'}
 
 
 class Nl(Language):
@@ -359,8 +359,8 @@ class Nl(Language):
     then_prefix = {'Dan'}
     and_prefix = {'En'}
     but_prefix = {'Maar'}
-    true_strings = {'WAAR', 'JA', 'AAN'}
-    false_strings = {'ONWAAR', 'NEE', 'UIT', 'GEEN'}
+    true_strings = {'Waar', 'Ja', 'Aan'}
+    false_strings = {'Onwaar', 'Nee', 'Uit', 'Geen'}
 
 
 class Bs(Language):
@@ -439,8 +439,8 @@ class Fi(Language):
     then_prefix = {'Niin'}
     and_prefix = {'Ja'}
     but_prefix = {'Mutta'}
-    true_strings = {'TOSI', 'KYLLÄ', 'PÄÄLLÄ'}
-    false_strings = {'EPÄTOSI', 'EI', 'POIS'}
+    true_strings = {'Tosi', 'Kyllä', 'Päällä'}
+    false_strings = {'Epätosi', 'Ei', 'Pois'}
 
 
 class Fr(Language):
@@ -480,8 +480,8 @@ class Fr(Language):
     then_prefix = {'Alors'}
     and_prefix = {'Et'}
     but_prefix = {'Mais'}
-    true_strings = {'VRAI', 'OUI', 'ACTIF'}
-    false_strings = {'FAUX', 'NON', 'Désactivé', 'AUCUN'}
+    true_strings = {'Vrai', 'Oui', 'Actif'}
+    false_strings = {'Faux', 'Non', 'Désactivé', 'Aucun'}
 
 
 class De(Language):
@@ -521,8 +521,8 @@ class De(Language):
     then_prefix = {'Dann'}
     and_prefix = {'Und'}
     but_prefix = {'Aber'}
-    true_strings = {'WAHR', 'JA', 'AN', 'EIN'}
-    false_strings = {'FALSCH', 'NEIN', 'AUS', 'UNWAHR'}
+    true_strings = {'Wahr', 'Ja', 'An', 'Ein'}
+    false_strings = {'Falsch', 'Nein', 'Aus', 'Unwahr'}
 
 
 class PtBr(Language):
@@ -562,8 +562,8 @@ class PtBr(Language):
     then_prefix = {'Então'}
     and_prefix = {'E'}
     but_prefix = {'Mas'}
-    true_strings = {'VERDADEIRO', 'VERDADE', 'SIM', 'LIGADO'}
-    false_strings = {'FALSO', 'NÃO', 'DESLIGADO', 'DESATIVADO', 'NADA'}
+    true_strings = {'Verdadeiro', 'Verdade', 'Sim', 'Ligado'}
+    false_strings = {'Falso', 'Não', 'Desligado', 'Desativado', 'Nada'}
 
 
 class Pt(Language):
@@ -603,8 +603,8 @@ class Pt(Language):
     then_prefix = {'Então'}
     and_prefix = {'E'}
     but_prefix = {'Mas'}
-    true_strings = {'VERDADEIRO', 'VERDADE', 'SIM', 'LIGADO'}
-    false_strings = {'FALSO', 'NÃO', 'DESLIGADO', 'DESATIVADO', 'NADA'}
+    true_strings = {'Verdadeiro', 'Verdade', 'Sim', 'Ligado'}
+    false_strings = {'Falso', 'Não', 'Desligado', 'Desativado', 'Nada'}
 
 
 class Th(Language):
@@ -761,8 +761,8 @@ class Es(Language):
     then_prefix = {'Entonces'}
     and_prefix = {'Y'}
     but_prefix = {'Pero'}
-    true_strings = {'Verdadero', 'Si', 'ON'}
-    false_strings = {'Falso', 'No', 'OFF', 'Ninguno'}
+    true_strings = {'Verdadero', 'Si', 'On'}
+    false_strings = {'Falso', 'No', 'Off', 'Ninguno'}
 
 
 class Ru(Language):
@@ -923,8 +923,8 @@ class Tr(Language):
     then_prefix = {'O zaman'}
     and_prefix = {'Ve'}
     but_prefix = {'Ancak'}
-    true_strings = {'DOĞRU', 'EVET', 'AÇIK'}
-    false_strings = {'YANLIŞ', 'HAYIR', 'KAPALI'}
+    true_strings = {'Doğru', 'Evet', 'Açik'}
+    false_strings = {'Yanliş', 'Hayir', 'Kapali'}
 
 
 class Sv(Language):
@@ -964,8 +964,8 @@ class Sv(Language):
     then_prefix = {'Då'}
     and_prefix = {'Och'}
     but_prefix = {'Men'}
-    true_strings = {'SANT', 'JA', 'PÅ'}
-    false_strings = {'FALSKT', 'NEJ', 'AV', 'INGEN'}
+    true_strings = {'Sant', 'Ja', 'På'}
+    false_strings = {'Falskt', 'Nej', 'Av', 'Ingen'}
 
 
 class Bg(Language):
@@ -1046,5 +1046,5 @@ class Ro(Language):
     then_prefix = {'Atunci'}
     and_prefix = {'Si'}
     but_prefix = {'Dar'}
-    true_strings = {'ADEVARAT', 'DA', 'CAND'}
-    false_strings = {'FALS', 'NU', 'OPRIT', 'NICIUN'}
+    true_strings = {'Adevarat', 'Da', 'Cand'}
+    false_strings = {'Fals', 'Nu', 'Oprit', 'Niciun'}
