@@ -20,6 +20,17 @@ from robot.utils import is_list_like, Importer, normalize
 
 
 class Languages:
+    """Keeps a list of languages and unifies the translations in the properties.
+
+    Parameters:
+        languages: a language or a list of languages. Can be the name, the code or an instance.
+        add_default: if True the default language (En) and some aliases is (Default: True)
+
+    Example::
+
+        languages = Languages(["de"])
+        print(languages.settings)
+    """
 
     def __init__(self, languages=None, add_default=True):
         self.languages = []
@@ -30,8 +41,9 @@ class Languages:
         for lang in self._get_languages(languages, add_default):
             self._add_language(lang)
 
-    def reset(self, languages=None):
-        self.__init__(languages)
+    def reset(self, languages=None, add_default=True):
+        """Resets the instance to the given languages."""
+        self.__init__(languages, add_default)
 
     def add_language(self, name):
         self._add_language(Language.from_name(name))
@@ -58,7 +70,7 @@ class Languages:
                 if normalized in available:
                     returned.append(available[normalized]())
                 else:
-                    returned.extend(self.import_languages(lang))
+                    returned.extend(self.import_languages_module(lang))
         return returned
 
     def _resolve_languages(self, languages, add_default=True):
@@ -83,6 +95,7 @@ class Languages:
 
     @staticmethod
     def get_available_languages():
+        """Returns the currently available Languages."""
         available = {}
         for lang in Language.__subclasses__():
             available[normalize(lang.__name__)] = lang
@@ -91,7 +104,8 @@ class Languages:
         return available
 
     @staticmethod
-    def import_languages(lang):
+    def import_languages_module(lang):
+        """Imports a custom language module and returns the available languages."""
         def is_language(member):
             return (inspect.isclass(member)
                     and issubclass(member, Language)
