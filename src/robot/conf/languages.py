@@ -15,7 +15,6 @@
 
 import inspect
 import os.path
-from robot.errors import DataError
 
 from robot.utils import is_list_like, Importer, normalize
 
@@ -117,9 +116,7 @@ class Languages:
 
         if os.path.exists(path_or_name):
             path_or_name = os.path.abspath(path_or_name)
-
         path_or_name = Importer('language file').import_module(path_or_name)
-
         available = {}
         for _, lang in inspect.getmembers(path_or_name, is_language):
             available[normalize(lang.__name__)] = lang
