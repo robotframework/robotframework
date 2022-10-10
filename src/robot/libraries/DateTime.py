@@ -186,6 +186,8 @@ times. The available time specifiers are:
 - ``minutes``, ``minute``, ``mins``, ``min``, ``m``
 - ``seconds``, ``second``, ``secs``, ``sec``, ``s``
 - ``milliseconds``, ``millisecond``, ``millis``, ``ms``
+- ``microseconds``, ``microsecond``, ``us``, ``μs`` (new in RF 6.0)
+- ``nanoseconds``, ``nanosecond``, ``ns`` (new in RF 6.0)
 
 When returning a time string, it is possible to select between ``verbose``
 and ``compact`` representations using ``result_format`` argument. The verbose
