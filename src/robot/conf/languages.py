@@ -34,6 +34,7 @@ class Languages:
 
     def __init__(self, languages=None, add_default=True):
         self.languages = []
+        self.headers = {}
         self.settings = {}
         self.bdd_prefixes = set()
         self.true_strings = {'1'}
@@ -70,7 +71,7 @@ class Languages:
                 if normalized in available:
                     returned.append(available[normalized]())
                 else:
-                    returned.extend(self.import_languages_module(lang))
+                    returned.extend(v() for v in self.import_languages_module(lang).values())
         return returned
 
     def _resolve_languages(self, languages, add_default=True):
@@ -95,7 +96,7 @@ class Languages:
 
     @staticmethod
     def get_available_languages():
-        """Returns the currently available Languages."""
+        """Returns the currently available Languages as a dict of names and classes."""
         available = {}
         for lang in Language.__subclasses__():
             available[normalize(lang.__name__)] = lang
@@ -104,16 +105,23 @@ class Languages:
         return available
 
     @staticmethod
-    def import_languages_module(lang):
+    def import_languages_module(file_or_module):
         """Imports a custom language module and returns the available languages."""
         def is_language(member):
             return (inspect.isclass(member)
                     and issubclass(member, Language)
                     and member is not Language)
-        if os.path.exists(lang):
-            lang = os.path.abspath(lang)
-        module = Importer('language file').import_module(lang)
-        return [value() for _, value in inspect.getmembers(module, is_language)]
+
+        if os.path.exists(file_or_module):
+            file_or_module = os.path.abspath(file_or_module)
+        file_or_module = Importer('language file').import_module(file_or_module)
+
+        available = {}
+        for _, lang in inspect.getmembers(file_or_module, is_language):
+            available[normalize(lang.__name__)] = lang
+            if lang.__doc__:
+                available[normalize(lang.__doc__.splitlines()[0])] = lang
+        return available
 
     def __iter__(self):
         return iter(self.languages)

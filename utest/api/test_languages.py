@@ -1,8 +1,10 @@
 import unittest
 
+from os.path import abspath, dirname, join
+
 from robot.api import Language, Languages
 from robot.conf.languages import En, Fi, PtBr, Th
-from robot.utils.asserts import assert_equal, assert_not_equal, assert_raises_with_msg
+from robot.utils.asserts import assert_equal, assert_not_equal, assert_raises_with_msg, assert_true
 
 
 class TestLanguage(unittest.TestCase):
@@ -85,6 +87,12 @@ class TestLanguages(unittest.TestCase):
         assert_equal(list(Languages(['fi'])), [Fi(), En()])
         assert_equal(list(Languages(['fi', PtBr()])), [Fi(), PtBr(), En()])
 
+    def test_init_without_default(self):
+        assert_equal(list(Languages(add_default=False)), [])
+        assert_equal(list(Languages('fi', add_default=False)), [Fi()])
+        assert_equal(list(Languages(['fi'], add_default=False)), [Fi()])
+        assert_equal(list(Languages(['fi', PtBr()], add_default=False)), [Fi(), PtBr()])
+
     def test_reset(self):
         langs = Languages(['fi'])
         langs.reset()
@@ -94,6 +102,15 @@ class TestLanguages(unittest.TestCase):
         langs.reset(['fi', PtBr()])
         assert_equal(list(langs), [Fi(), PtBr(), En()])
 
+    def test_reset_with_default(self):
+        langs = Languages(['fi'])
+        langs.reset(add_default=False)
+        assert_equal(list(langs), [])
+        langs.reset('fi', add_default=False)
+        assert_equal(list(langs), [Fi()])
+        langs.reset(['fi', PtBr()], add_default=False)
+        assert_equal(list(langs), [Fi(), PtBr()])
+
     def test_duplicates_are_not_added(self):
         langs = Languages(['Finnish', 'en', Fi(), 'pt-br'])
         assert_equal(list(langs), [Fi(), En(), PtBr()])
@@ -101,6 +118,40 @@ class TestLanguages(unittest.TestCase):
         assert_equal(list(langs), [Fi(), En(), PtBr()])
         langs.add_language('th')
         assert_equal(list(langs), [Fi(), En(), PtBr(), Th()])
+
+    def test_get_available_languages(self):
+        languages = Languages.get_available_languages()
+        self.assertIn(("en", En), languages.items())
+        self.assertIn(("english", En), languages.items())
+        self.assertIn(("fi", Fi), languages.items())
+        self.assertIn(("finnish", Fi), languages.items())
+
+    def test_import_language_module(self):
+        data = join(abspath(dirname(__file__)), 'elvish_languages.py')
+        languages = Languages.import_languages_module(data)
+
+        self.assertIn("elvsin", languages)
+        self.assertIn("elvishsindarin", languages)
+        self.assertIn("elvque", languages)
+        self.assertIn("elvishquenya", languages)
+
+        avail_languages = Languages.get_available_languages()
+
+        self.assertIn("elvsin", avail_languages)
+        self.assertIn("elvishsindarin", avail_languages)
+        self.assertIn("elvque", avail_languages)
+        self.assertIn("elvishquenya", avail_languages)
+
+    def test_init_with_language_module(self):
+        data = join(abspath(dirname(__file__)), 'orcish_languages.py')
+
+        languages = [(v.name, v.code) for v in Languages(data)]
+
+        self.assertIn(("OrcishLoud", "or-CLOU"), languages)
+        self.assertIn(("Orcish Quiet", "or-CQUI"), languages)
+        self.assertIn(("English", "en"), languages)
+
+
 
 
 if __name__ == '__main__':
