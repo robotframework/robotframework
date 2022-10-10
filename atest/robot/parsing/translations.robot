@@ -19,9 +19,38 @@ Custom
     Run Tests    --lang ${DATADIR}/parsing/translations/custom/custom.py    parsing/translations/custom/tests.robot
     Validate Translations
 
+Custom With Only One Lang
+    Run Tests    --lang ${DATADIR}/parsing/translations/custom/custom.py:cu-STOM    parsing/translations/custom/tests.robot
+    Validate Translations
+
 Custom task aliases
     Run Tests    --lang ${DATADIR}/parsing/translations/custom/custom.py --rpa    parsing/translations/custom
     Validate Task Translations
+
+Custom task aliases With Only One Lang
+    Run Tests    --lang ${DATADIR}/parsing/translations/custom/custom.py:Custom --rpa    parsing/translations/custom
+    Validate Task Translations
+
+Invalid Custom Lang Module
+    ${result} =    Run Tests Without Processing Output    --lang bad:Custom    parsing/finnish.robot
+    Should Be Equal        ${result.rc}        ${252}
+    Should Be Empty        ${result.stdout}
+    ${error} =    Catenate    SEPARATOR=\n
+    ...    Invalid value for option '--language': Importing language file 'bad:Custom' failed: ModuleNotFoundError: No module named 'bad:Custom'
+    ...    Traceback \\(most recent call last\\):
+    ...    .*${USAGE TIP}
+    Should Match Regexp    ${result.stderr}    ^\\[ ERROR \\] ${error}$    flags=DOTALL
+
+Invalid Custom Lang
+    ${result} =    Run Tests Without Processing Output    --lang ${DATADIR}/parsing/translations/custom/custom.py:BadCustom    parsing/finnish.robot
+    Should Be Equal        ${result.rc}        ${252}
+    Should Be Empty        ${result.stdout}
+    ${error} =    Catenate    SEPARATOR=\n
+    ...    Invalid value for option '--language': Importing language file 'BadCustom' failed: ModuleNotFoundError: No module named 'BadCustom'
+    ...    Traceback \\(most recent call last\\):
+    ...    .*${USAGE TIP}
+    Should Match Regexp    ${result.stderr}    ^\\[ ERROR \\] ${error}$    flags=DOTALL
+
 
 Invalid
     ${result} =    Run Tests Without Processing Output    --lang bad    parsing/finnish.robot
