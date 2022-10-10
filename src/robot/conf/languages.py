@@ -73,7 +73,7 @@ class Languages:
                 module, lang_part = lang.rsplit(":", 1) if ":" in lang else (None, lang)
                 if module is not None:
                     try:
-                        available.update(self.import_languages_module(module))
+                        available.update(self.import_language_module(module))
                         lang = lang_part
                     except DataError:
                         pass
@@ -81,7 +81,7 @@ class Languages:
                 if normalized in available:
                     returned.append(available[normalized]())
                 else:
-                    returned.extend(v() for v in self.import_languages_module(lang).values())
+                    returned.extend(v() for v in self.import_language_module(lang).values())
         return returned
 
     def _resolve_languages(self, languages, add_default=True):
@@ -115,7 +115,7 @@ class Languages:
         return available
 
     @staticmethod
-    def import_languages_module(path_or_name):
+    def import_language_module(path_or_name):
         """Imports a custom language module and returns the available languages."""
         def is_language(member):
             return (inspect.isclass(member)

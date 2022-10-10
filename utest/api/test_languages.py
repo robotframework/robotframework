@@ -128,7 +128,7 @@ class TestLanguages(unittest.TestCase):
 
     def test_import_language_module(self):
         data = join(abspath(dirname(__file__)), 'elvish_languages.py')
-        languages = Languages.import_languages_module(data)
+        languages = Languages.import_language_module(data)
 
         self.assertIn("elvsin", languages)
         self.assertIn("elvishsindarin", languages)
