@@ -40,15 +40,19 @@ times. The available time specifiers are:
 * minutes, minute, mins, min, m
 * seconds, second, secs, sec, s
 * milliseconds, millisecond, millis, ms
+* microseconds, microsecond, us, μs
+* nanoseconds, nanosecond, ns
 
 Examples::
 
    1 min 30 secs
    1.5 minutes
    90 s
-   1 day 2 hours 3 minutes 4 seconds 5 milliseconds
-   1d 2h 3m 4s 5ms
+   1 day 2 hours 3 minutes 4 seconds 5 milliseconds 6 microseconds 7 nanoseconds
+   1d 2h 3m 4s 5ms 6μs 7 ns
    - 10 seconds
+
+.. note:: Support for micro and nanoseconds is new in Robot Framework 6.0.
 
 Time as "timer" string
 ----------------------
