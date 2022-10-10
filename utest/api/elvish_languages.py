@@ -1,10 +1,10 @@
 from robot.api import Language
 
 class ElvSin(Language):
-    """ElvishSindarin"""
+    """Elvish Sindarin"""
     settings_header="Wrangella"
 
 
 class ElvQue(Language):
-    """ElvishQuenya"""
+    """Elvish Quenya"""
     settings_header="Krisxalim"

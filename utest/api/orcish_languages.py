@@ -5,5 +5,5 @@ class OrcQui(Language):
     settings_header="Jiivo"
 
 class OrcLou(Language):
-    """OrcishLoud"""
+    """Orcish Loud"""
     settings_header="JIIVA"
