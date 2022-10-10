@@ -22,9 +22,11 @@ from robot.utils import is_list_like, Importer, normalize
 class Languages:
     """Keeps a list of languages and unifies the translations in the properties.
 
-    Parameters:
-        languages: a language or a list of languages. Can be the name, the code or an instance.
-        add_default: if True the default language (En) and some aliases is (Default: True)
+    :param languages: a language or a list of languages.
+        Can be the name, the code or an instance.
+    :type languages: str, class: Language, list[str, class: Language], optional
+    :param add_default: if True the default language (En) and some aliases is (Default: True)
+    :type add_default: bool, optional
 
     Example::
 
@@ -105,19 +107,18 @@ class Languages:
         return available
 
     @staticmethod
-    def import_languages_module(file_or_module):
+    def import_languages_module(path_or_name):
         """Imports a custom language module and returns the available languages."""
         def is_language(member):
             return (inspect.isclass(member)
                     and issubclass(member, Language)
                     and member is not Language)
 
-        if os.path.exists(file_or_module):
-            file_or_module = os.path.abspath(file_or_module)
-        file_or_module = Importer('language file').import_module(file_or_module)
-
+        if os.path.exists(path_or_name):
+            path_or_name = os.path.abspath(path_or_name)
+        path_or_name = Importer('language file').import_module(path_or_name)
         available = {}
-        for _, lang in inspect.getmembers(file_or_module, is_language):
+        for _, lang in inspect.getmembers(path_or_name, is_language):
             available[normalize(lang.__name__)] = lang
             if lang.__doc__:
                 available[normalize(lang.__doc__.splitlines()[0])] = lang

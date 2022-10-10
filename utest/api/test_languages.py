@@ -144,14 +144,10 @@ class TestLanguages(unittest.TestCase):
 
     def test_init_with_language_module(self):
         data = join(abspath(dirname(__file__)), 'orcish_languages.py')
-
         languages = [(v.name, v.code) for v in Languages(data)]
-
         self.assertIn(("OrcishLoud", "or-CLOU"), languages)
         self.assertIn(("Orcish Quiet", "or-CQUI"), languages)
         self.assertIn(("English", "en"), languages)
-
-
 
 
 if __name__ == '__main__':
