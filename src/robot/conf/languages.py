@@ -1048,3 +1048,44 @@ class Ro(Language):
     but_prefix = {'Dar'}
     true_strings = {'Adevarat', 'Da', 'Cand'}
     false_strings = {'Fals', 'Nu', 'Oprit', 'Niciun'}
+
+
+class It(Language):
+    """Italian"""
+    settings_header = 'Impostazioni'
+    variables_header = 'Variabili'
+    test_cases_header = 'Casi Di Test'
+    tasks_header = 'Attività'
+    keywords_header = 'Parole Chiave'
+    comments_header = 'Commenti'
+    library_setting = 'Libreria'
+    resource_setting = 'Risorsa'
+    variables_setting = 'Variabile'
+    documentation_setting = 'Documentazione'
+    metadata_setting = 'Metadati'
+    suite_setup_setting = 'Configurazione Suite'
+    suite_teardown_setting = 'Distruzione Suite'
+    test_setup_setting = 'Configurazione Test'
+    test_teardown_setting = 'Distruzione Test'
+    test_template_setting = 'Modello Test'
+    test_timeout_setting = 'Timeout Test'
+    test_tags_setting = 'Tag Del Test'
+    task_setup_setting = 'Configurazione Attività'
+    task_teardown_setting = 'Distruzione Attività'
+    task_template_setting = 'Modello Attività'
+    task_timeout_setting = 'Timeout Attività'
+    task_tags_setting = 'Tag Attività'
+    keyword_tags_setting = 'Tag Parola Chiave'
+    tags_setting = 'Tag'
+    setup_setting = 'Configurazione'
+    teardown_setting = 'Distruzione'
+    template_setting = 'Template'
+    timeout_setting = 'Timeout'
+    arguments_setting = 'Parametri'
+    given_prefix = {'Dato'}
+    when_prefix = {'Quando'}
+    then_prefix = {'Allora'}
+    and_prefix = {'E'}
+    but_prefix = {'Ma'}
+    true_strings = {'Vero', 'Sì', 'On'}
+    false_strings = {'Falso', 'No', 'Off', 'Nessuno'}
