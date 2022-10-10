@@ -100,6 +100,20 @@ class TestTime(unittest.TestCase):
                          ('0day 0hour 0minute 0seconds 0millisecond', 0)]:
             assert_equal(timestr_to_secs(inp), exp, inp)
 
+    def test_timestr_to_secs_with_time_string_ns_accuracy(self):
+        for input, expected in [("1 us", 1E-6),
+                                ("1 μs", 1E-6),
+                                ("1 microsecond", 1E-6),
+                                ("1 microseconds", 1E-6),
+                                ("2 us", 2E-6),
+                                ("1 ns", 1E-9),
+                                ("1 nanosecond", 1E-9),
+                                ("1 nanoseconds", 1E-9),
+                                ("2 ns", 2E-9),
+                                ("-100 ns", -100E-9),
+                                ("1.2us", 1.2E-6)]:
+            assert_equal(timestr_to_secs(input, round_to=9), expected)
+
     def test_timestr_to_secs_with_timer_string(self):
         for inp, exp in [('00:00:00', 0),
                          ('00:00:01', 1),
