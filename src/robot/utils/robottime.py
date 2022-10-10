@@ -78,7 +78,7 @@ def _time_string_to_secs(timestr):
     timestr = _normalize_timestr(timestr)
     if not timestr:
         return None
-    millis = secs = mins = hours = days = 0
+    nanos = micros = millis = secs = mins = hours = days = 0
     if timestr[0] == '-':
         sign = -1
         timestr = timestr[1:]
@@ -87,7 +87,9 @@ def _time_string_to_secs(timestr):
     temp = []
     for c in timestr:
         try:
-            if   c == 'x': millis = float(''.join(temp)); temp = []
+            if   c == 'n': nanos  = float(''.join(temp)); temp = []
+            elif c == 'u': micros = float(''.join(temp)); temp = []
+            elif c == 'x': millis = float(''.join(temp)); temp = []
             elif c == 's': secs   = float(''.join(temp)); temp = []
             elif c == 'm': mins   = float(''.join(temp)); temp = []
             elif c == 'h': hours  = float(''.join(temp)); temp = []
@@ -97,12 +99,15 @@ def _time_string_to_secs(timestr):
             return None
     if temp:
         return None
-    return sign * (millis/1000 + secs + mins*60 + hours*60*60 + days*60*60*24)
+    return sign * (nanos/1E9 + micros/1E6 + millis/1000 + secs +
+                   mins*60 + hours*60*60 + days*60*60*24)
 
 
 def _normalize_timestr(timestr):
     timestr = normalize(timestr)
-    for specifier, aliases in [('x', ['millisecond', 'millisec', 'millis',
+    for specifier, aliases in [('n', ['nanosecond', 'ns']),
+                               ('u', ['microsecond', 'us', 'μs']),
+                               ('x', ['millisecond', 'millisec', 'millis',
                                       'msec', 'ms']),
                                ('s', ['second', 'sec']),
                                ('m', ['minute', 'min']),
