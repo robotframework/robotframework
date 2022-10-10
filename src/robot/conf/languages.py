@@ -70,13 +70,6 @@ class Languages:
             if isinstance(lang, Language):
                 returned.append(lang)
             else:
-                module, lang_part = lang.rsplit(":", 1) if ":" in lang else (None, lang)
-                if module is not None:
-                    try:
-                        available.update(self.import_language_module(module))
-                        lang = lang_part
-                    except DataError:
-                        pass
                 normalized = normalize(lang, ignore='-')
                 if normalized in available:
                     returned.append(available[normalized]())

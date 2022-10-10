@@ -149,19 +149,6 @@ class TestLanguages(unittest.TestCase):
         self.assertIn(("Orcish Quiet", "or-CQUI"), languages)
         self.assertIn(("English", "en"), languages)
 
-    def test_init_with_language_module_select_one_lang(self):
-        data = join(abspath(dirname(__file__)), 'klingon_languages.py') +":Klingon-Krotmag"
-        languages = [(v.name, v.code) for v in Languages(data)]
-        self.assertIn(("Klingon Krotmag", "kl-IKRO"), languages)
-        self.assertNotIn(("Klingon Takev", "kl-ITAK"), languages)
-        self.assertIn(("English", "en"), languages)
-
-        data = 'klingon_languages'+":klingontakev"
-        languages = [(v.name, v.code) for v in Languages(data)]
-        self.assertNotIn(("Klingon Krotmag", "kl-IKRO"), languages)
-        self.assertIn(("Klingon Takev", "kl-ITAK"), languages)
-        self.assertIn(("English", "en"), languages)
-
 
 if __name__ == '__main__':
     unittest.main()
