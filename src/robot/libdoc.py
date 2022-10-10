@@ -76,22 +76,22 @@ Options
  -f --format HTML|XML|JSON|LIBSPEC
                           Specifies whether to generate an HTML output for
                           humans or a machine readable spec file in XML or JSON
-                          format. The `libspec` format means XML spec with
+                          format. The LIBSPEC format means XML spec with
                           documentations converted to HTML. The default format
                           is got from the output file extension.
  -s --specdocformat RAW|HTML
                           Specifies the documentation format used with XML and
-                          JSON spec files. `raw` means preserving the original
-                          documentation format and `html` means converting
-                          documentation to HTML. The default is `raw` with XML
-                          spec files and `html` with JSON specs and when using
-                          the special `libspec` format. New in RF 4.0.
+                          JSON spec files. RAW means preserving the original
+                          documentation format and HTML means converting
+                          documentation to HTML. The default is RAW with XML
+                          spec files and HTML with JSON specs and when using
+                          the special LIBSPEC format. New in RF 4.0.
  -F --docformat ROBOT|HTML|TEXT|REST
                           Specifies the source documentation format. Possible
                           values are Robot Framework's documentation format,
                           HTML, plain text, and reStructuredText. The default
                           value can be specified in library source code and
-                          the initial default value is `ROBOT`.
+                          the initial default value is ROBOT.
  -n --name name           Sets the name of the documented library or resource.
  -v --version version     Sets the version of the documented library or
                           resource.
@@ -195,28 +195,26 @@ class LibDoc(Application):
             self.console(os.path.abspath(output))
 
     def _get_docformat(self, docformat):
-        return self._validate_format('Doc format', docformat,
-                                     ['ROBOT', 'TEXT', 'HTML', 'REST'])
+        return self._validate('Doc format', docformat, 'ROBOT', 'TEXT', 'HTML', 'REST')
 
     def _get_format_and_specdocformat(self, format, specdocformat, output):
         extension = os.path.splitext(output)[1][1:]
-        format = self._validate_format('Format', format or extension,
-                                       ['HTML', 'XML', 'JSON', 'LIBSPEC'])
-        specdocformat = self._validate_format('Spec doc format', specdocformat,
-                                              ['RAW', 'HTML'])
+        format = self._validate('Format', format or extension,
+                                'HTML', 'XML', 'JSON', 'LIBSPEC')
+        specdocformat = self._validate('Spec doc format', specdocformat, 'RAW', 'HTML')
         if format == 'HTML' and specdocformat:
             raise DataError("The --specdocformat option is not applicable with "
                             "HTML outputs.")
         return format, specdocformat
 
-    def _validate_format(self, type, format, valid):
-        if format is None:
+    def _validate(self, kind, value, *valid):
+        if not value:
             return None
-        format = format.upper()
-        if format not in valid:
-            raise DataError("%s must be %s, got '%s'."
-                            % (type, seq2str(valid, lastsep=' or '), format))
-        return format
+        value = value.upper()
+        if value not in valid:
+            raise DataError(f"{kind} must be {seq2str(valid, lastsep=' or ')}, "
+                            f"got '{value}'.")
+        return value
 
 
 def libdoc_cli(arguments=None, exit=True):
