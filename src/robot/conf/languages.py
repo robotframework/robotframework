@@ -1052,12 +1052,12 @@ class Ro(Language):
 
 class It(Language):
     """Italian"""
-    setting_header = 'Impostazioni'
-    variable_header = 'Variabili'
-    test_case_header = 'Casi Di Test'
-    task_header = 'Attività'
-    keyword_header = 'Parole Chiave'
-    comment_header = 'Commenti'
+    settings_header = 'Impostazioni'
+    variables_header = 'Variabili'
+    test_cases_header = 'Casi Di Test'
+    tasks_header = 'Attività'
+    keywords_header = 'Parole Chiave'
+    comments_header = 'Commenti'
     library_setting = 'Libreria'
     resource_setting = 'Risorsa'
     variables_setting = 'Variabile'
