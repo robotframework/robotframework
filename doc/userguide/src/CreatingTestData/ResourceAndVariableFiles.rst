@@ -1,7 +1,7 @@
 Resource and variable files
 ===========================
 
-User keywords and variables in `test case files`_ and `test suite
+User keywords and variables in `test case files`_ and `suite
 initialization files`_ can only be used in files where they are
 created, but *resource files* provide a mechanism for sharing them.
 The high level syntax for creating resource files is exactly the same

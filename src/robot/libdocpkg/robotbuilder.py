@@ -102,11 +102,11 @@ class ResourceDocBuilder:
 
     def _find_resource_file(self, path):
         if os.path.isfile(path):
-            return os.path.normpath(path)
+            return os.path.normpath(os.path.abspath(path))
         for dire in [item for item in sys.path if os.path.isdir(item)]:
             candidate = os.path.normpath(os.path.join(dire, path))
             if os.path.isfile(candidate):
-                return candidate
+                return os.path.abspath(candidate)
         raise DataError(f"Resource file '{path}' does not exist.")
 
     def _get_doc(self, resource, name):
@@ -119,7 +119,12 @@ class SuiteDocBuilder(ResourceDocBuilder):
     type = 'SUITE'
 
     def _import_resource(self, path):
-        suite = TestSuiteBuilder(process_curdir=False).build(path)
+        builder = TestSuiteBuilder(process_curdir=False)
+        if os.path.basename(path).lower() == '__init__.robot':
+            path = os.path.dirname(path)
+            builder.included_suites = ()
+            builder.allow_empty_suite = True
+        suite = builder.build(path)
         return UserLibrary(suite.resource), suite.name
 
     def _get_doc(self, resource, name):

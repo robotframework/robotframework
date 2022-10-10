@@ -43,8 +43,8 @@ class Languages:
         self.headers.update({n.title(): lang.headers[n] for n in lang.headers if n})
         self.settings.update({n.title(): lang.settings[n] for n in lang.settings if n})
         self.bdd_prefixes |= {p.title() for p in lang.bdd_prefixes}
-        self.true_strings |= {s.upper() for s in lang.true_strings}
-        self.false_strings |= {s.upper() for s in lang.false_strings}
+        self.true_strings |= {s.title() for s in lang.true_strings}
+        self.false_strings |= {s.title() for s in lang.false_strings}
 
     def _get_languages(self, languages, add_default=True):
         languages = self._resolve_languages(languages, add_default)
@@ -280,8 +280,8 @@ class En(Language):
     then_prefix = {'Then'}
     and_prefix = {'And'}
     but_prefix = {'But'}
-    true_strings = {'TRUE', 'YES', 'ON'}
-    false_strings = {'FALSE', 'NO', 'OFF'}
+    true_strings = {'True', 'Yes', 'On'}
+    false_strings = {'False', 'No', 'Off'}
 
 
 class Cs(Language):
@@ -321,8 +321,8 @@ class Cs(Language):
     then_prefix = {'Pak'}
     and_prefix = {'A'}
     but_prefix = {'Ale'}
-    true_strings = {'PRAVDA', 'ANO', 'ZAPNUTO'}
-    false_strings = {'NEPRAVDA', 'NE', 'VYPNUTO', 'NIC'}
+    true_strings = {'Pravda', 'Ano', 'Zapnuto'}
+    false_strings = {'Nepravda', 'Ne', 'Vypnuto', 'Nic'}
 
 
 class Nl(Language):
@@ -362,8 +362,8 @@ class Nl(Language):
     then_prefix = {'Dan'}
     and_prefix = {'En'}
     but_prefix = {'Maar'}
-    true_strings = {'WAAR', 'JA', 'AAN'}
-    false_strings = {'ONWAAR', 'NEE', 'UIT', 'GEEN'}
+    true_strings = {'Waar', 'Ja', 'Aan'}
+    false_strings = {'Onwaar', 'Nee', 'Uit', 'Geen'}
 
 
 class Bs(Language):
@@ -442,8 +442,8 @@ class Fi(Language):
     then_prefix = {'Niin'}
     and_prefix = {'Ja'}
     but_prefix = {'Mutta'}
-    true_strings = {'TOSI', 'KYLLÄ', 'PÄÄLLÄ'}
-    false_strings = {'EPÄTOSI', 'EI', 'POIS'}
+    true_strings = {'Tosi', 'Kyllä', 'Päällä'}
+    false_strings = {'Epätosi', 'Ei', 'Pois'}
 
 
 class Fr(Language):
@@ -483,8 +483,8 @@ class Fr(Language):
     then_prefix = {'Alors'}
     and_prefix = {'Et'}
     but_prefix = {'Mais'}
-    true_strings = {'VRAI', 'OUI', 'ACTIF'}
-    false_strings = {'FAUX', 'NON', 'Désactivé', 'AUCUN'}
+    true_strings = {'Vrai', 'Oui', 'Actif'}
+    false_strings = {'Faux', 'Non', 'Désactivé', 'Aucun'}
 
 
 class De(Language):
@@ -524,8 +524,8 @@ class De(Language):
     then_prefix = {'Dann'}
     and_prefix = {'Und'}
     but_prefix = {'Aber'}
-    true_strings = {'WAHR', 'JA', 'AN', 'EIN'}
-    false_strings = {'FALSCH', 'NEIN', 'AUS', 'UNWAHR'}
+    true_strings = {'Wahr', 'Ja', 'An', 'Ein'}
+    false_strings = {'Falsch', 'Nein', 'Aus', 'Unwahr'}
 
 
 class PtBr(Language):
@@ -565,8 +565,8 @@ class PtBr(Language):
     then_prefix = {'Então'}
     and_prefix = {'E'}
     but_prefix = {'Mas'}
-    true_strings = {'VERDADEIRO', 'VERDADE', 'SIM', 'LIGADO'}
-    false_strings = {'FALSO', 'NÃO', 'DESLIGADO', 'DESATIVADO', 'NADA'}
+    true_strings = {'Verdadeiro', 'Verdade', 'Sim', 'Ligado'}
+    false_strings = {'Falso', 'Não', 'Desligado', 'Desativado', 'Nada'}
 
 
 class Pt(Language):
@@ -606,8 +606,8 @@ class Pt(Language):
     then_prefix = {'Então'}
     and_prefix = {'E'}
     but_prefix = {'Mas'}
-    true_strings = {'VERDADEIRO', 'VERDADE', 'SIM', 'LIGADO'}
-    false_strings = {'FALSO', 'NÃO', 'DESLIGADO', 'DESATIVADO', 'NADA'}
+    true_strings = {'Verdadeiro', 'Verdade', 'Sim', 'Ligado'}
+    false_strings = {'Falso', 'Não', 'Desligado', 'Desativado', 'Nada'}
 
 
 class Th(Language):
@@ -764,8 +764,8 @@ class Es(Language):
     then_prefix = {'Entonces'}
     and_prefix = {'Y'}
     but_prefix = {'Pero'}
-    true_strings = {'Verdadero', 'Si', 'ON'}
-    false_strings = {'Falso', 'No', 'OFF', 'Ninguno'}
+    true_strings = {'Verdadero', 'Si', 'On'}
+    false_strings = {'Falso', 'No', 'Off', 'Ninguno'}
 
 
 class Ru(Language):
@@ -926,5 +926,128 @@ class Tr(Language):
     then_prefix = {'O zaman'}
     and_prefix = {'Ve'}
     but_prefix = {'Ancak'}
-    true_strings = {'DOĞRU', 'EVET', 'AÇIK'}
-    false_strings = {'YANLIŞ', 'HAYIR', 'KAPALI'}
+    true_strings = {'Doğru', 'Evet', 'Açik'}
+    false_strings = {'Yanliş', 'Hayir', 'Kapali'}
+
+
+class Sv(Language):
+    """Swedish"""
+    settings_header = 'Inställningar'
+    variables_header = 'Variabler'
+    test_cases_header = 'Testfall'
+    tasks_header = 'Taskar'
+    keywords_header = 'Nyckelord'
+    comments_header = 'Kommentarer'
+    library_setting = 'Bibliotek'
+    resource_setting = 'Resurs'
+    variables_setting = 'Variabel'
+    documentation_setting = 'Dokumentation'
+    metadata_setting = 'Metadata'
+    suite_setup_setting = 'Svit konfigurering'
+    suite_teardown_setting = 'Svit nedrivning'
+    test_setup_setting = 'Test konfigurering'
+    test_teardown_setting = 'Test nedrivning'
+    test_template_setting = 'Test mall'
+    test_timeout_setting = 'Test timeout'
+    test_tags_setting = 'Test taggar'
+    task_setup_setting = 'Task konfigurering'
+    task_teardown_setting = 'Task nedrivning'
+    task_template_setting = 'Task mall'
+    task_timeout_setting = 'Task timeout'
+    task_tags_setting = 'Arbetsuppgift taggar'
+    keyword_tags_setting = 'Nyckelord taggar'
+    tags_setting = 'Taggar'
+    setup_setting = 'Konfigurering'
+    teardown_setting = 'Nedrivning'
+    template_setting = 'Mall'
+    timeout_setting = 'Timeout'
+    arguments_setting = 'Argument'
+    given_prefix = {'Givet'}
+    when_prefix = {'När'}
+    then_prefix = {'Då'}
+    and_prefix = {'Och'}
+    but_prefix = {'Men'}
+    true_strings = {'Sant', 'Ja', 'På'}
+    false_strings = {'Falskt', 'Nej', 'Av', 'Ingen'}
+
+
+class Bg(Language):
+    """Bulgarian"""
+    settings_header = 'Настройки'
+    variables_header = 'Променливи'
+    test_cases_header = 'Тестови случаи'
+    tasks_header = 'Задачи'
+    keywords_header = 'Ключови думи'
+    comments_header = 'Коментари'
+    library_setting = 'Библиотека'
+    resource_setting = 'Ресурс'
+    variables_setting = 'Променлива'
+    documentation_setting = 'Документация'
+    metadata_setting = 'Метаданни'
+    suite_setup_setting = 'Първоначални настройки на комплекта'
+    suite_teardown_setting = 'Приключване на комплекта'
+    test_setup_setting = 'Първоначални настройки на тестове'
+    test_teardown_setting = 'Приключване на тестове'
+    test_template_setting = 'Шаблон за тестове'
+    test_timeout_setting = 'Таймаут за тестове'
+    test_tags_setting = 'Етикети за тестове'
+    task_setup_setting = 'Първоначални настройки на задачи'
+    task_teardown_setting = 'Приключване на задачи'
+    task_template_setting = 'Шаблон за задачи'
+    task_timeout_setting = 'Таймаут за задачи'
+    task_tags_setting = 'Етикети за задачи'
+    keyword_tags_setting = 'Етикети за ключови думи'
+    tags_setting = 'Етикети'
+    setup_setting = 'Първоначални настройки'
+    teardown_setting = 'Приключване'
+    template_setting = 'Шаблон'
+    timeout_setting = 'Таймаут'
+    arguments_setting = 'Аргументи'
+    given_prefix = {'В случай че'}
+    when_prefix = {'Когато'}
+    then_prefix = {'Тогава'}
+    and_prefix = {'И'}
+    but_prefix = {'Но'}
+    true_strings = {'Вярно', 'Да', 'Включен'}
+    false_strings = {'Невярно', 'Не', 'Изключен', 'Нищо'}
+
+
+class Ro(Language):
+    """Romanian"""
+    settings_header = 'Setari'
+    variables_header = 'Variabile'
+    test_cases_header = 'Cazuri De Test'
+    tasks_header = 'Sarcini'
+    keywords_header = 'Cuvinte Cheie'
+    comments_header = 'Comentarii'
+    library_setting = 'Librarie'
+    resource_setting = 'Resursa'
+    variables_setting = 'Variabila'
+    documentation_setting = 'Documentatie'
+    metadata_setting = 'Metadate'
+    suite_setup_setting = 'Configurare De Suita'
+    suite_teardown_setting = 'Configurare De Intrerupere'
+    test_setup_setting = 'Setare De Test'
+    test_teardown_setting = 'Inrerupere De Test'
+    test_template_setting = 'Sablon De Test'
+    test_timeout_setting = 'Timp Expirare Test'
+    test_tags_setting = 'Taguri De Test'
+    task_setup_setting = 'Configuarare activitate'
+    task_teardown_setting = 'Intrerupere activitate'
+    task_template_setting = 'Sablon de activitate'
+    task_timeout_setting = 'Timp de expirare activitate'
+    task_tags_setting = 'Etichete activitate'
+    keyword_tags_setting = 'Etichete metode'
+    tags_setting = 'Etichete'
+    setup_setting = 'Setare'
+    teardown_setting = 'Intrerupere'
+    template_setting = 'Sablon'
+    timeout_setting = 'Expirare'
+    arguments_setting = 'Argumente'
+    given_prefix = {'Fie ca'}
+    when_prefix = {'Cand'}
+    then_prefix = {'Atunci'}
+    and_prefix = {'Si'}
+    but_prefix = {'Dar'}
+    true_strings = {'Adevarat', 'Da', 'Cand'}
+    false_strings = {'Fals', 'Nu', 'Oprit', 'Niciun'}

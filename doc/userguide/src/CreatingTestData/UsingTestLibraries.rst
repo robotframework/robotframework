@@ -45,7 +45,7 @@ __ `Using arguments`_
    Library    ${LIBRARY}
 
 It is possible to import test libraries in `test case files`_,
-`resource files`_ and `test suite initialization files`_. In all these
+`resource files`_ and `suite initialization files`_. In all these
 cases, all the keywords in the imported library are available in that
 file. With resource files, those keywords are also available in other
 files using them.
