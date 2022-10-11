@@ -92,6 +92,10 @@ Options
                           HTML, plain text, and reStructuredText. The default
                           value can be specified in library source code and
                           the initial default value is ROBOT.
+    --theme DARK|LIGHT|NONE
+                          Use dark or light HTML theme. If this option is not
+                          used, or the value is NONE, the theme is selected
+                          based on the browser color scheme. New in RF 6.0.
  -n --name name           Sets the name of the documented library or resource.
  -v --version version     Sets the version of the documented library or
                           resource.
@@ -175,7 +179,7 @@ class LibDoc(Application):
         return options, arguments
 
     def main(self, args, name='', version='', format=None, docformat=None,
-             specdocformat=None, pythonpath=None, quiet=False):
+             specdocformat=None, theme=None, pythonpath=None, quiet=False):
         if pythonpath:
             sys.path = pythonpath + sys.path
         lib_or_res, output = args[:2]
@@ -190,7 +194,7 @@ class LibDoc(Application):
                 or specdocformat == 'HTML'
                 or format in ('JSON', 'LIBSPEC') and specdocformat != 'RAW'):
             libdoc.convert_docs_to_html()
-        libdoc.save(output, format)
+        libdoc.save(output, format, self._validate_theme(theme, format))
         if not quiet:
             self.console(os.path.abspath(output))
 
@@ -215,6 +219,14 @@ class LibDoc(Application):
             raise DataError(f"{kind} must be {seq2str(valid, lastsep=' or ')}, "
                             f"got '{value}'.")
         return value
+
+    def _validate_theme(self, theme, format):
+        theme = self._validate('Theme', theme, 'DARK', 'LIGHT', 'NONE')
+        if not theme or theme == 'NONE':
+            return None
+        if format != 'HTML':
+            raise DataError("The --theme option is only applicable with HTML outputs.")
+        return theme
 
 
 def libdoc_cli(arguments=None, exit=True):

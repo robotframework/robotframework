@@ -55,6 +55,7 @@
         parseTemplates();
         document.title = libdoc.name;
         storage.init('libdoc');
+        setTheme();
         renderTemplate('base', libdoc, $('body'));
         if (libdoc.inits.length) {
             libdoc.typedocs.map(function(type) {
@@ -87,6 +88,20 @@
       }, 0);
         createModal();
     });
+
+    function setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme || getTheme());
+    }
+
+    function getTheme() {
+        if (libdoc['theme']) {
+            return libdoc['theme'];
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return 'dark';
+        } else {
+            return 'light;'
+        }
+    }
 
     function parseTemplates() {
         $('script[type="text/x-jquery-tmpl"]').map(function (idx, elem) {

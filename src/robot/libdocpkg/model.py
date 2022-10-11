@@ -86,9 +86,9 @@ class LibraryDoc:
     def all_tags(self):
         return Tags(chain.from_iterable(kw.tags for kw in self.keywords))
 
-    def save(self, output=None, format='HTML'):
+    def save(self, output=None, format='HTML', theme=None):
         with LibdocOutput(output, format) as outfile:
-            LibdocWriter(format).write(self, outfile)
+            LibdocWriter(format, theme).write(self, outfile)
 
     def convert_docs_to_html(self):
         formatter = DocFormatter(self.keywords, self.type_docs, self.doc, self.doc_format)
@@ -108,8 +108,8 @@ class LibraryDoc:
                 type_doc.doc = formatter.html(type_doc.doc)
         self.doc_format = 'HTML'
 
-    def to_dictionary(self, include_private=False):
-        return {
+    def to_dictionary(self, include_private=False, theme=None):
+        data = {
             'specversion': 1,
             'name': self.name,
             'doc': self.doc,
@@ -123,11 +123,14 @@ class LibraryDoc:
             'tags': list(self.all_tags),
             'inits': [init.to_dictionary() for init in self.inits],
             'keywords': [kw.to_dictionary() for kw in self.keywords
-                        if include_private or not kw.private],
+                         if include_private or not kw.private],
             # 'dataTypes' was deprecated in RF 5, 'typedoc' should be used instead.
             'dataTypes': self._get_data_types(self.type_docs),
             'typedocs': [t.to_dictionary() for t in sorted(self.type_docs)]
         }
+        if theme:
+            data['theme'] = theme.lower()
+        return data
 
     def _get_data_types(self, types):
         enums = sorted(t for t in types if t.type == 'Enum')
@@ -137,8 +140,8 @@ class LibraryDoc:
             'typedDicts': [t.to_dictionary(legacy=True) for t in typed_dicts]
         }
 
-    def to_json(self, indent=None, include_private=True):
-        data = self.to_dictionary(include_private)
+    def to_json(self, indent=None, include_private=True, theme=None):
+        data = self.to_dictionary(include_private, theme)
         return json.dumps(data, indent=indent)
 
 

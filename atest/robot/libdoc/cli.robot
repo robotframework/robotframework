@@ -56,6 +56,11 @@ Missing destination subdirectory is created
 Quiet
     --quiet String ${OUTHTML}    HTML    String    quiet=True
 
+Theme
+    --theme DARK String ${OUTHTML}     HTML    String    theme=dark
+    --theme light String ${OUTHTML}    HTML    String    theme=light
+    --theme NoNe String ${OUTHTML}     HTML    String    theme=
+
 Relative path with Python libraries
     [Template]    NONE
     ${dir in libdoc exec dir}=    Normalize Path     ${ROBOTPATH}/../TempDirInExecDir
@@ -81,10 +86,15 @@ Non-existing resource
 
 *** Keywords ***
 Run Libdoc And Verify Created Output File
-    [Arguments]    ${args}   ${format}    ${name}    ${version}=    ${path}=${OUTHTML}    ${quiet}=False
+    [Arguments]    ${args}   ${format}    ${name}    ${version}=    ${path}=${OUTHTML}    ${theme}=    ${quiet}=False
     ${stdout} =    Run Libdoc    ${args}
     Run Keyword    ${format} Doc Should Have Been Created    ${path}    ${name}    ${version}
     File Should Have Correct Line Separators    ${path}
+    IF    "${theme}"
+        File Should Contain    ${path}    "theme": "${theme}"
+    ELSE
+        File Should Not Contain    ${path}    "theme":
+    END
     IF    not ${quiet}
         Path to output should be in stdout    ${path}    ${stdout.rstrip()}
     ELSE

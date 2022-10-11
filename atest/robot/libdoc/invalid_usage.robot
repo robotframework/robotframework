@@ -35,6 +35,10 @@ Invalid doc format
 Invalid doc format in library
     ${TESTDATADIR}/DocFormatInvalid.py ${OUT HTML}   Invalid documentation format 'INVALID'.
 
+Invalid theme
+    --theme bad String ${OUT XML}                    Theme must be 'DARK', 'LIGHT' or 'NONE', got 'BAD'.
+    --theme light --format xml String ${OUT XML}     The --theme option is only applicable with HTML outputs.
+
 Non-existing library
     NonExistingLib ${OUT HTML}   Importing library 'NonExistingLib' failed: *
 

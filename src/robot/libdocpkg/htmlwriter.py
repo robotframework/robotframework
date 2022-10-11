@@ -18,19 +18,23 @@ from robot.htmldata import HtmlFileWriter, ModelWriter, LIBDOC
 
 class LibdocHtmlWriter:
 
+    def __init__(self, theme=None):
+        self.theme = theme
+
     def write(self, libdoc, output):
-        model_writer = LibdocModelWriter(output, libdoc)
+        model_writer = LibdocModelWriter(output, libdoc, self.theme)
         HtmlFileWriter(output, model_writer).write(LIBDOC)
 
 
 class LibdocModelWriter(ModelWriter):
 
-    def __init__(self, output, libdoc):
+    def __init__(self, output, libdoc, theme=None):
         self.output = output
         self.libdoc = libdoc
+        self.theme = theme
 
     def write(self, line):
-        self.output.write('<script type="text/javascript">\n'
-                          'libdoc = %s\n'
-                          '</script>\n'
-                          % self.libdoc.to_json(include_private=False))
+        data = self.libdoc.to_json(include_private=False, theme=self.theme)
+        self.output.write(f'<script type="text/javascript">\n'
+                          f'libdoc = {data}\n'
+                          f'</script>\n')

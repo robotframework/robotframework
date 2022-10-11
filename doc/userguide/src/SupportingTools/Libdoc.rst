@@ -65,6 +65,11 @@ Options
                            HTML, plain text, and reStructuredText. Default value
                            can be specified in test library source code and
                            the initial default value is `robot`.
+  --theme <dark|light|none>
+                           Use dark or light HTML theme. If this option is not used,
+                           or the value is `none`, the theme is selected based on
+                           the browser color scheme. Only applicable with HTML outputs.
+                           New in Robot Framework 6.0.
   -N, --name <newname>     Sets the name of the documented library or resource.
   -V, --version <newversion>  Sets the version of the documented library or
                            resource. The default value for test libraries is
