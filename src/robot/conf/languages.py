@@ -16,34 +16,49 @@
 import inspect
 import os.path
 
+from robot.errors import DataError
 from robot.utils import is_list_like, Importer, normalize
 
 
 class Languages:
+    """Keeps a list of languages and unifies the translations in the properties.
 
-    def __init__(self, languages=None):
+    :param languages: a language or a list of languages.
+        Can be the name, the code or an instance.
+    :type languages: str, class: Language, list[str, class: Language], optional
+    :param add_default: if True the default language (En) and some aliases is (Default: True)
+    :type add_default: bool, optional
+
+    Example::
+
+        languages = Languages(["de"])
+        print(languages.settings)
+    """
+
+    def __init__(self, languages=None, add_english=True):
         self.languages = []
-        # The English singular forms are added for backwards compatibility
-        self.headers = {
-            'Setting': 'Settings',
-            'Variable': 'Variables',
-            'Test Case': 'Test Cases',
-            'Task': 'Tasks',
-            'Keyword': 'Keywords',
-            'Comment': 'Comments'
-        }
+        self.headers = {}
         self.settings = {}
         self.bdd_prefixes = set()
         self.true_strings = {'True', '1'}
         self.false_strings = {'False', '0', 'None', ''}
-        for lang in self._get_languages(languages):
+        for lang in self._get_languages(languages, add_english):
             self._add_language(lang)
 
-    def reset(self, languages=None):
-        self.__init__(languages)
+    def reset(self, languages=None, add_english=True):
+        """Resets the instance to the given languages."""
+        self.__init__(languages, add_english)
 
     def add_language(self, name):
-        self._add_language(Language.from_name(name))
+        try:
+            languages = [Language.from_name(name)]
+        except ValueError:
+            try:
+                languages = self._import_languages(name)
+            except DataError:
+                raise ValueError(f'Language "{name}" not found nor importable as a module.')
+        for lang in languages:
+            self._add_language(lang)
 
     def _add_language(self, lang):
         if lang in self.languages:
@@ -55,8 +70,8 @@ class Languages:
         self.true_strings |= {s.title() for s in lang.true_strings}
         self.false_strings |= {s.title() for s in lang.false_strings}
 
-    def _get_languages(self, languages):
-        languages = self._resolve_languages(languages)
+    def _get_languages(self, languages, add_english=True):
+        languages = self._resolve_languages(languages, add_english)
         available = self._get_available_languages()
         returned = []
         for lang in languages:
@@ -70,14 +85,24 @@ class Languages:
                     returned.extend(self._import_languages(lang))
         return returned
 
-    def _resolve_languages(self, languages):
+    def _resolve_languages(self, languages, add_english=True):
         if not languages:
             languages = []
         elif is_list_like(languages):
             languages = list(languages)
         else:
             languages = [languages]
-        languages.append(En())
+        if add_english:
+            languages.append(En())
+            # The English singular forms are added for backwards compatibility
+            self.headers = {
+                'Setting': 'Settings',
+                'Variable': 'Variables',
+                'Test Case': 'Test Cases',
+                'Task': 'Tasks',
+                'Keyword': 'Keywords',
+                'Comment': 'Comments'
+            }
         return languages
 
     def _get_available_languages(self):
@@ -97,6 +122,7 @@ class Languages:
             lang = os.path.abspath(lang)
         module = Importer('language file').import_module(lang)
         return [value() for _, value in inspect.getmembers(module, is_language)]
+
 
     def __iter__(self):
         return iter(self.languages)

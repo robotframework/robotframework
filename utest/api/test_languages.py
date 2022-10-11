@@ -1,5 +1,7 @@
 import unittest
 
+from os.path import abspath, dirname, join
+
 from robot.api import Language, Languages
 from robot.conf.languages import En, Fi, PtBr, Th
 from robot.utils.asserts import assert_equal, assert_not_equal, assert_raises_with_msg
@@ -85,6 +87,12 @@ class TestLanguages(unittest.TestCase):
         assert_equal(list(Languages(['fi'])), [Fi(), En()])
         assert_equal(list(Languages(['fi', PtBr()])), [Fi(), PtBr(), En()])
 
+    def test_init_without_default(self):
+        assert_equal(list(Languages(add_english=False)), [])
+        assert_equal(list(Languages('fi', add_english=False)), [Fi()])
+        assert_equal(list(Languages(['fi'], add_english=False)), [Fi()])
+        assert_equal(list(Languages(['fi', PtBr()], add_english=False)), [Fi(), PtBr()])
+
     def test_reset(self):
         langs = Languages(['fi'])
         langs.reset()
@@ -94,6 +102,15 @@ class TestLanguages(unittest.TestCase):
         langs.reset(['fi', PtBr()])
         assert_equal(list(langs), [Fi(), PtBr(), En()])
 
+    def test_reset_with_default(self):
+        langs = Languages(['fi'])
+        langs.reset(add_english=False)
+        assert_equal(list(langs), [])
+        langs.reset('fi', add_english=False)
+        assert_equal(list(langs), [Fi()])
+        langs.reset(['fi', PtBr()], add_english=False)
+        assert_equal(list(langs), [Fi(), PtBr()])
+
     def test_duplicates_are_not_added(self):
         langs = Languages(['Finnish', 'en', Fi(), 'pt-br'])
         assert_equal(list(langs), [Fi(), En(), PtBr()])
@@ -101,6 +118,20 @@ class TestLanguages(unittest.TestCase):
         assert_equal(list(langs), [Fi(), En(), PtBr()])
         langs.add_language('th')
         assert_equal(list(langs), [Fi(), En(), PtBr(), Th()])
+
+    def test_add_language_with_custom_module(self):
+        data = join(abspath(dirname(__file__)), 'orcish_languages.py')
+        langs = Languages()
+        langs.add_language(data)
+        self.assertIn(("Orcish Loud", "or-CLOU"), [(v.name, v.code) for v in langs])
+        self.assertIn(("Orcish Quiet", "or-CQUI"), [(v.name, v.code) for v in langs])
+
+    def test_add_language_with_invalid_custom_module(self):
+        langs = Languages()
+        with self.assertRaises(ValueError) as context:
+            langs.add_language("invalid")
+        self.assertTrue('Language "invalid" not found nor importable as a module.' in context.exception.args)
+
 
 
 if __name__ == '__main__':
