@@ -2290,7 +2290,7 @@ Dokumentaatio    Documentation
 '''
         expected = [
             (T.ERROR, 'language: in:va:lid', 1, 0,
-             "Invalid language configuration: No language with name 'in:va:lid' found."),
+             'Invalid language configuration: Language "in:va:lid" not found nor importable as a module.'),
             (T.EOL, '\n', 1, 19),
             (T.EOS, '', 1, 20),
             (T.COMMENT, 'language: bad again', 2, 0),
