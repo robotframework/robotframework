@@ -104,11 +104,11 @@ class TestLanguages(unittest.TestCase):
 
     def test_reset_with_default(self):
         langs = Languages(['fi'])
-        langs.reset(add_default=False)
+        langs.reset(add_english=False)
         assert_equal(list(langs), [])
-        langs.reset('fi', add_default=False)
+        langs.reset('fi', add_english=False)
         assert_equal(list(langs), [Fi()])
-        langs.reset(['fi', PtBr()], add_default=False)
+        langs.reset(['fi', PtBr()], add_english=False)
         assert_equal(list(langs), [Fi(), PtBr()])
 
     def test_duplicates_are_not_added(self):

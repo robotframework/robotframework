@@ -45,9 +45,9 @@ class Languages:
         for lang in self._get_languages(languages, add_english):
             self._add_language(lang)
 
-    def reset(self, languages=None, add_default=True):
+    def reset(self, languages=None, add_english=True):
         """Resets the instance to the given languages."""
-        self.__init__(languages, add_default)
+        self.__init__(languages, add_english)
 
     def add_language(self, name):
         try:
@@ -70,8 +70,8 @@ class Languages:
         self.true_strings |= {s.title() for s in lang.true_strings}
         self.false_strings |= {s.title() for s in lang.false_strings}
 
-    def _get_languages(self, languages, add_default=True):
-        languages = self._resolve_languages(languages, add_default)
+    def _get_languages(self, languages, add_english=True):
+        languages = self._resolve_languages(languages, add_english)
         available = self._get_available_languages()
         returned = []
         for lang in languages:
@@ -85,14 +85,14 @@ class Languages:
                     returned.extend(self._import_languages(lang))
         return returned
 
-    def _resolve_languages(self, languages, add_default=True):
+    def _resolve_languages(self, languages, add_english=True):
         if not languages:
             languages = []
         elif is_list_like(languages):
             languages = list(languages)
         else:
             languages = [languages]
-        if add_default:
+        if add_english:
             languages.append(En())
             # The English singular forms are added for backwards compatibility
             self.headers = {
