@@ -3,8 +3,9 @@ import unittest
 from os.path import abspath, dirname, join
 
 from robot.api import Language, Languages
-from robot.conf.languages import En, Fi, PtBr, Th
-from robot.utils.asserts import assert_equal, assert_not_equal, assert_raises_with_msg, assert_true
+from robot.conf.languages import (En, Fi, PtBr, Th, get_available_languages,
+    import_language_module)
+from robot.utils.asserts import assert_equal, assert_not_equal, assert_raises_with_msg
 
 
 class TestLanguage(unittest.TestCase):
@@ -119,8 +120,15 @@ class TestLanguages(unittest.TestCase):
         langs.add_language('th')
         assert_equal(list(langs), [Fi(), En(), PtBr(), Th()])
 
+    def test_add_language_with_custom_module(self):
+        data = join(abspath(dirname(__file__)), 'orcish_languages.py')
+        langs = Languages()
+        langs.add_language(data)
+        self.assertIn(("Orcish Loud", "or-CLOU"), [(v.name, v.code) for v in langs])
+        self.assertIn(("Orcish Quiet", "or-CQUI"), [(v.name, v.code) for v in langs])
+
     def test_get_available_languages(self):
-        languages = Languages.get_available_languages()
+        languages = get_available_languages()
         self.assertIn(("en", En), languages.items())
         self.assertIn(("english", En), languages.items())
         self.assertIn(("fi", Fi), languages.items())
@@ -128,12 +136,12 @@ class TestLanguages(unittest.TestCase):
 
     def test_import_language_module(self):
         data = join(abspath(dirname(__file__)), 'elvish_languages.py')
-        languages = Languages.import_language_module(data)
+        languages = import_language_module(data)
         self.assertIn("elvsin", languages)
         self.assertIn("elvishsindarin", languages)
         self.assertIn("elvque", languages)
         self.assertIn("elvishquenya", languages)
-        avail_languages = Languages.get_available_languages()
+        avail_languages = get_available_languages()
         self.assertIn("elvsin", avail_languages)
         self.assertIn("elvishsindarin", avail_languages)
         self.assertIn("elvque", avail_languages)

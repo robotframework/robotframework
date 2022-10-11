@@ -16,6 +16,7 @@
 import inspect
 import os.path
 
+from robot.errors import DataError
 from robot.utils import is_list_like, Importer, normalize
 
 
@@ -49,7 +50,17 @@ class Languages:
         self.__init__(languages, add_default)
 
     def add_language(self, name):
-        self._add_language(Language.from_name(name))
+        try:
+            languages = [Language.from_name(name)]
+        except ValueError:
+            try:
+                languages = self._import_language(name)
+            except DataError:
+                # Should we include the error from importing to the error we raise?
+                # Should we raise DataError like we raise with Languages(['bad'])?
+                raise ValueError(f'Language "{name}" not found nor importable as a module.')
+        for lang in languages:
+            self._add_language(lang)
 
     def _add_language(self, lang):
         if lang in self.languages:
@@ -63,7 +74,7 @@ class Languages:
 
     def _get_languages(self, languages, add_default=True):
         languages = self._resolve_languages(languages, add_default)
-        available = self.get_available_languages()
+        available = get_available_languages()
         returned = []
         for lang in languages:
             if isinstance(lang, Language):
@@ -73,7 +84,7 @@ class Languages:
                 if normalized in available:
                     returned.append(available[normalized]())
                 else:
-                    returned.extend(v() for v in self.import_language_module(lang).values())
+                    returned.extend(self._import_language(lang))
         return returned
 
     def _resolve_languages(self, languages, add_default=True):
@@ -96,36 +107,52 @@ class Languages:
             }
         return languages
 
-    @staticmethod
-    def get_available_languages():
-        """Returns the currently available Languages as a dict of names and classes."""
-        available = {}
-        for lang in Language.__subclasses__():
-            available[normalize(lang.__name__)] = lang
-            if lang.__doc__:
-                available[normalize(lang.__doc__.splitlines()[0])] = lang
-        return available
-
-    @staticmethod
-    def import_language_module(path_or_name):
-        """Imports a custom language module and returns the available languages."""
-        def is_language(member):
-            return (inspect.isclass(member)
-                    and issubclass(member, Language)
-                    and member is not Language)
-
-        if os.path.exists(path_or_name):
-            path_or_name = os.path.abspath(path_or_name)
-        path_or_name = Importer('language file').import_module(path_or_name)
-        available = {}
-        for _, lang in inspect.getmembers(path_or_name, is_language):
-            available[normalize(lang.__name__)] = lang
-            if lang.__doc__:
-                available[normalize(lang.__doc__.splitlines()[0])] = lang
-        return available
+    def _import_language(self, path_or_name):
+        return [v() for v in import_language_module(path_or_name).values()]
 
     def __iter__(self):
         return iter(self.languages)
+
+
+def get_available_languages():
+    """Returns the currently available languages as a dict of possible names and classes.
+    The dict is normalized, means everything is in lowercase and space and `-` are
+    removed.
+
+    return: the available names and languages
+    rtype: dict[str, Type[Lanaguage]]
+    """
+    available = {}
+    for lang in Language.__subclasses__():
+        available[normalize(lang.__name__)] = lang
+        if lang.__doc__:
+            available[normalize(lang.__doc__.splitlines()[0])] = lang
+    return available
+
+
+def import_language_module(path_or_name):
+    """Imports a custom language module and returns the available languages as a
+    dict of possible names and classes.
+    The dict is normalized, means everything is in lowercase and space and `-` are
+    removed.
+
+    return: the available names and languages
+    rtype: dict[str, Type[Lanaguage]]
+    """
+    def is_language(member):
+        return (inspect.isclass(member)
+                and issubclass(member, Language)
+                and member is not Language)
+
+    if os.path.exists(path_or_name):
+        path_or_name = os.path.abspath(path_or_name)
+    path_or_name = Importer('language file').import_module(path_or_name)
+    available = {}
+    for _, lang in inspect.getmembers(path_or_name, is_language):
+        available[normalize(lang.__name__)] = lang
+        if lang.__doc__:
+            available[normalize(lang.__doc__.splitlines()[0])] = lang
+    return available
 
 
 class Language:

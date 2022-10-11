@@ -20,8 +20,12 @@ Custom
     Validate Translations
 
 Custom task aliases
-    Run Tests    --lang ${DATADIR}/parsing/translations/custom/custom.py --rpa    parsing/translations/custom
+    Run Tests    --lang ${DATADIR}/parsing/translations/custom/custom.py --rpa    parsing/translations/custom/tasks.robot
     Validate Task Translations
+
+Custom Per file configuration
+    Run Tests    -P ${DATADIR}/parsing/translations/custom    parsing/translations/custom/custom_per_file.robot
+    Validate Translations
 
 Invalid
     ${result} =    Run Tests Without Processing Output    --lang bad    parsing/finnish.robot
@@ -44,8 +48,9 @@ Per file configuration with multiple languages
     Should Be Equal    ${tc.doc}    приклад
 
 Invalid per file configuration
+    Run Tests    ${EMPTY}    parsing/translations/per_file_config/many.robot
     Error in file    0    parsing/translations/per_file_config/many.robot    4
-    ...    Invalid language configuration: No language with name 'invalid' found.
+    ...    Invalid language configuration: Language "invalid" not found nor importable as a module.
 
 Per file configuration bleeds to other files
     [Documentation]    This is a technical limitation and will hopefully change!
