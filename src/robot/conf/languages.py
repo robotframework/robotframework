@@ -1095,8 +1095,8 @@ class Hi(Language):
     """Hindi"""
     settings_header = 'स्थापना'
     variables_header = 'चर'
-    test_cases_header = 'जांच पड़ताल'
-    tasks_header = 'कार्य नियत कार्य'
+    test_cases_header = 'नियत कार्य प्रवेशिका'
+    tasks_header = 'कार्य प्रवेशिका'
     keywords_header = 'कुंजीशब्द'
     comments_header = 'टिप्पणी'
     library_setting = 'कोड़ प्रतिबिंब संग्रह'
