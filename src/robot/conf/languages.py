@@ -54,11 +54,11 @@ class Languages:
         """Resets the instance to the given languages."""
         self.__init__(languages, add_english)
 
-    def add_language(self, name):
+    def add_language(self, lang):
         """Add new language.
 
-        :param name: Name or code of a language to add, or name or path of
-            a language module to load.
+        :param lang: Language to add. Can be a language code or name, name or
+            path of a language module to load, or a :class:`Language` instance.
         :raises: :class:`~robot.errors.DataError` if the language is not found.
 
         Language codes and names are passed to by :meth:`Language.from_name`.
@@ -66,10 +66,13 @@ class Languages:
         loaded.
         """
         try:
-            languages = [Language.from_name(name)]
+            if isinstance(lang, Language):
+                languages = [lang]
+            else:
+                languages = [Language.from_name(lang)]
         except ValueError as err1:
             try:
-                languages = self._import_languages(name)
+                languages = self._import_languages(lang)
             except DataError as err2:
                 raise DataError(f'{err1} {err2}')
         for lang in languages:

@@ -128,20 +128,27 @@ class TestLanguages(unittest.TestCase):
         langs.add_language('th')
         assert_equal(list(langs), [Fi(), En(), PtBr(), Th()])
 
-    def test_add_language_with_custom_module(self):
+    def test_add_language_using_custom_module(self):
         data = join(abspath(dirname(__file__)), 'orcish_languages.py')
         langs = Languages()
         langs.add_language(data)
         self.assertIn(("Orcish Loud", "or-CLOU"), [(v.name, v.code) for v in langs])
         self.assertIn(("Orcish Quiet", "or-CQUI"), [(v.name, v.code) for v in langs])
 
-    def test_add_language_with_invalid_custom_module(self):
+    def test_add_language_using_invalid_custom_module(self):
         with self.assertRaises(DataError) as context:
             Languages().add_language('invalid')
         assert_true(context.exception.args[0].startswith(
             "No language with name 'invalid' found. "
             "Importing language file 'invalid' failed: "
         ))
+
+    def test_add_language_using_Language_instance(self):
+        languages = Languages(add_english=False)
+        to_add = [Fi(), PtBr(), Th()]
+        for lang in to_add:
+            languages.add_language(lang)
+        assert_equal(list(languages), to_add)
 
 
 if __name__ == '__main__':
