@@ -13,7 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from operator import add, sub
 import re
 
 from .robottypes import is_integer
@@ -125,6 +124,7 @@ def isatty(stream):
     except ValueError:    # Occurs if file is closed.
         return False
 
+
 def parse_re_flags(flags=None):
     result = 0
     if not flags:
@@ -140,3 +140,30 @@ def parse_re_flags(flags=None):
             else:
                 raise ValueError(f'Unknown regexp flag: {flag}')
     return result
+
+
+class classproperty(property):
+    """Property that works with classes in addition to instances.
+
+    Only supports getters. Setters and deleters cannot work with classes due
+    to how the descriptor protocol works, and they are thus explicitly disabled.
+    Metaclasses must be used if they are needed.
+    """
+
+    def __init__(self, fget, fset=None, fdel=None, doc=None):
+        if fset:
+            self.setter(fset)
+        if fdel:
+            self.deleter(fset)
+        super().__init__(fget)
+        if doc:
+            self.__doc__ = doc
+
+    def __get__(self, instance, owner):
+        return self.fget(owner)
+
+    def setter(self, fset):
+        raise TypeError('Setters are not supported.')
+
+    def deleter(self, fset):
+        raise TypeError('Deleters are not supported.')

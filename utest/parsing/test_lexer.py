@@ -2290,7 +2290,8 @@ Dokumentaatio    Documentation
 '''
         expected = [
             (T.ERROR, 'language: in:va:lid', 1, 0,
-             'Invalid language configuration: Language "in:va:lid" not found nor importable as a module.'),
+             "Invalid language configuration: Language 'in:va:lid' not found "
+             "nor importable as a language module."),
             (T.EOL, '\n', 1, 19),
             (T.EOS, '', 1, 20),
             (T.COMMENT, 'language: bad again', 2, 0),
@@ -2315,6 +2316,7 @@ Dokumentaatio    Documentation
         assert_tokens(data, expected, get_init_tokens, lang=lang)
         assert_equal(lang.languages,
                      [Language.from_name(lang) for lang in ('en', 'fi')])
+
 
 if __name__ == '__main__':
     unittest.main()

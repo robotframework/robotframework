@@ -13,8 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import re
-
+from robot.errors import DataError
 from robot.utils import normalize_whitespace
 from robot.variables import is_assign
 
@@ -122,8 +121,11 @@ class ImplicitCommentLexer(CommentLexer):
             lang = statement[0].value.split(':', 1)[1].strip()
             try:
                 self.ctx.add_language(lang)
-            except ValueError as err:
-                statement[0].set_error(f'Invalid language configuration: {err}')
+            except DataError:
+                statement[0].set_error(
+                    f"Invalid language configuration: "
+                    f"Language '{lang}' not found nor importable as a language module."
+                )
             else:
                 statement[0].type = Token.CONFIG
 

@@ -17,25 +17,30 @@ import inspect
 import os.path
 
 from robot.errors import DataError
-from robot.utils import is_list_like, Importer, normalize
+from robot.utils import classproperty, is_list_like, Importer, normalize
 
 
 class Languages:
     """Keeps a list of languages and unifies the translations in the properties.
 
-    :param languages: a language or a list of languages.
-        Can be the name, the code or an instance.
-    :type languages: str, class: Language, list[str, class: Language], optional
-    :param add_default: if True the default language (En) and some aliases is (Default: True)
-    :type add_default: bool, optional
-
     Example::
 
-        languages = Languages(["de"])
+        languages = Languages('de', add_english=False)
         print(languages.settings)
+        languages = Languages(['pt-BR', 'Finnish', 'MyLang.py'])
+        print(list(languages))
     """
 
     def __init__(self, languages=None, add_english=True):
+        """
+        :param languages: Initial language or list of languages.
+            Languages can be given as language codes or names, paths or names of
+            language modules to load, or as :class:`Language` instances.
+        :param add_english: If True, English is added automatically.
+        :raises :class:`~robot.errors.DataError` if a given language is not found.
+
+        :meth:`add.language` can be used to add languages after initialization.
+        """
         self.languages = []
         self.headers = {}
         self.settings = {}
@@ -50,13 +55,23 @@ class Languages:
         self.__init__(languages, add_english)
 
     def add_language(self, name):
+        """Add new language.
+
+        :param name: Name or code of a language to add, or name or path of
+            a language module to load.
+        :raises: :class:`~robot.errors.DataError` if the language is not found.
+
+        Language codes and names are passed to by :meth:`Language.from_name`.
+        Language modules are imported and :class:`Language` subclasses in them
+        loaded.
+        """
         try:
             languages = [Language.from_name(name)]
-        except ValueError:
+        except ValueError as err1:
             try:
                 languages = self._import_languages(name)
-            except DataError:
-                raise ValueError(f'Language "{name}" not found nor importable as a module.')
+            except DataError as err2:
+                raise DataError(f'{err1} {err2}')
         for lang in languages:
             self._add_language(lang)
 
@@ -108,9 +123,10 @@ class Languages:
     def _get_available_languages(self):
         available = {}
         for lang in Language.__subclasses__():
-            available[normalize(lang.__name__)] = lang
-            if lang.__doc__:
-                available[normalize(lang.__doc__.splitlines()[0])] = lang
+            available[normalize(lang.code, ignore='-')] = lang
+            available[normalize(lang.name)] = lang
+        if '' in available:
+            available.pop('')
         return available
 
     def _import_languages(self, lang):
@@ -122,7 +138,6 @@ class Languages:
             lang = os.path.abspath(lang)
         module = Importer('language file').import_module(lang)
         return [value() for _, value in inspect.getmembers(module, is_language)]
-
 
     def __iter__(self):
         return iter(self.languages)
@@ -193,26 +208,26 @@ class Language:
                 return lang()
         raise ValueError(f"No language with name '{name}' found.")
 
-    @property
-    def code(self):
+    @classproperty
+    def code(cls):
         """Language code like 'fi' or 'pt-BR'.
 
         Got based on the class name. If the class name is two characters (or less),
         the code is just the name in lower case. If it is longer, a hyphen is added
         remainder of the class name is upper-cased.
         """
-        code = type(self).__name__.lower()
+        code = cls.__name__.lower()
         if len(code) < 3:
             return code
         return f'{code[:2]}-{code[2:].upper()}'
 
-    @property
-    def name(self):
+    @classproperty
+    def name(cls):
         """Language name like 'Finnish' or 'Brazilian Portuguese'.
 
         Got from the first line of the class docstring.
         """
-        return self.__doc__.splitlines()[0] if self.__doc__ else ''
+        return cls.__doc__.splitlines()[0] if cls.__doc__ else ''
 
     @property
     def headers(self):
@@ -926,7 +941,7 @@ class Tr(Language):
     documentation_setting = 'Dokümantasyon'
     metadata_setting = 'Üstveri'
     suite_setup_setting = 'Takım Kurulumu'
-    suite_teardown_setting =  'Takım Bitişi'
+    suite_teardown_setting = 'Takım Bitişi'
     test_setup_setting = 'Test Kurulumu'
     task_setup_setting = 'Görev Kurulumu'
     test_teardown_setting = 'Test Bitişi'

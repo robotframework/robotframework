@@ -1268,7 +1268,7 @@ Example
 
 class TestLanguageConfig(unittest.TestCase):
 
-    def test_valid(self):
+    def test_config(self):
         model = get_model('''\
 language: fi
 language: bad
@@ -1287,7 +1287,8 @@ Dokumentaatio    Header is de and setting is fi.
                     ]),
                     Error([
                         Token('ERROR', 'language: bad', 2, 0,
-                              'Invalid language configuration: Language "bad" not found nor importable as a module.'),
+                              "Invalid language configuration: Language 'bad' "
+                              "not found nor importable as a language module."),
                         Token('EOL', '\n', 2, 13)
                     ]),
                     Comment([

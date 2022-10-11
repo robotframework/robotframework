@@ -1,9 +1,9 @@
 import re
 import unittest
 
-from robot.utils import (parse_re_flags, plural_or_not, printable_name,
+from robot.utils import (classproperty, parse_re_flags, plural_or_not, printable_name,
                          seq2str, test_or_task)
-from robot.utils.asserts import assert_equal, assert_raises_with_msg
+from robot.utils.asserts import assert_equal, assert_raises, assert_raises_with_msg
 
 
 class TestSeg2Str(unittest.TestCase):
@@ -96,7 +96,6 @@ class TestPluralOrNot(unittest.TestCase):
             assert_equal(plural_or_not(plural), 's')
 
 
-
 class TestTestOrTask(unittest.TestCase):
 
     def test_no_match(self):
@@ -146,6 +145,71 @@ class TestParseReFlags(unittest.TestCase):
                              ('IGNORECASE|foo', 'Unknown regexp flag: foo'),
                              ('compile', 'Unknown regexp flag: compile')]:
             assert_raises_with_msg(ValueError, exp_msg, parse_re_flags, inp)
+
+
+class TestClassProperty(unittest.TestCase):
+
+    def setUp(self):
+        class Class:
+            @classproperty
+            def p(cls):
+                assert cls is Class
+                return 1
+        self.cls = Class
+
+    def test_get_from_class(self):
+        assert self.cls.p == 1
+
+    def test_get_from_instance(self):
+        assert self.cls().p == 1
+
+    def test_set_in_class_overrides(self):
+        # This cannot be avoided without using metaclasses.
+        self.cls.p = 2
+        assert self.cls.p == 2
+        assert self.cls().p == 2
+
+    def test_set_in_instance_fails(self):
+        assert_raises(AttributeError, setattr, self.cls(), 'p', 2)
+
+    def test_cannot_have_setter(self):
+        code = '''
+class Class:
+    @classproperty
+    def p(cls):
+        pass
+    @p.setter
+    def p(cls):
+        pass
+'''
+        assert_raises_with_msg(TypeError, 'Setters are not supported.',
+                               exec, code, globals())
+        assert_raises_with_msg(TypeError, 'Setters are not supported.',
+                               classproperty, lambda c: None, lambda c, v: None)
+
+    def test_cannot_have_deleter(self):
+        code = '''
+class Class:
+    @classproperty
+    def p(cls):
+        pass
+    @p.deleter
+    def p(cls):
+        pass
+'''
+        assert_raises_with_msg(TypeError, 'Deleters are not supported.',
+                               exec, code, globals())
+        assert_raises_with_msg(TypeError, 'Deleters are not supported.',
+                               classproperty, lambda c: None, None, lambda c, v: None)
+
+    def test_doc(self):
+        class Class(self.cls):
+            @classproperty
+            def p(cls):
+                """Doc for p."""
+            q = classproperty(lambda cls: None, doc='Doc for q.')
+        assert_equal(Class.__dict__['p'].__doc__, 'Doc for p.')
+        assert_equal(Class.__dict__['q'].__doc__, 'Doc for q.')
 
 
 if __name__ == "__main__":

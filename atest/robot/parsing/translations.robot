@@ -50,7 +50,8 @@ Per file configuration with multiple languages
 Invalid per file configuration
     Run Tests    ${EMPTY}    parsing/translations/per_file_config/many.robot
     Error in file    0    parsing/translations/per_file_config/many.robot    4
-    ...    Invalid language configuration: Language "invalid" not found nor importable as a module.
+    ...    Invalid language configuration:
+    ...    Language 'invalid' not found nor importable as a language module.
 
 Per file configuration bleeds to other files
     [Documentation]    This is a technical limitation and will hopefully change!

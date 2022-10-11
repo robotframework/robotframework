@@ -4,20 +4,26 @@ from os.path import abspath, dirname, join
 
 from robot.api import Language, Languages
 from robot.conf.languages import En, Fi, PtBr, Th
-from robot.utils.asserts import assert_equal, assert_not_equal, assert_raises_with_msg
+from robot.errors import DataError
+from robot.utils.asserts import (assert_equal, assert_not_equal, assert_true,
+                                 assert_raises_with_msg)
 
 
 class TestLanguage(unittest.TestCase):
 
     def test_one_part_code(self):
         assert_equal(Fi().code, 'fi')
+        assert_equal(Fi.code, 'fi')
 
     def test_two_part_code(self):
         assert_equal(PtBr().code, 'pt-BR')
+        assert_equal(PtBr.code, 'pt-BR')
 
     def test_name(self):
         assert_equal(Fi().name, 'Finnish')
+        assert_equal(Fi.name, 'Finnish')
         assert_equal(PtBr().name, 'Brazilian Portuguese')
+        assert_equal(PtBr.name, 'Brazilian Portuguese')
 
     def test_name_with_multiline_docstring(self):
         class X(Language):
@@ -26,18 +32,21 @@ class TestLanguage(unittest.TestCase):
             Other lines are ignored.
             """
         assert_equal(X().name, 'Language Name')
+        assert_equal(X.name, 'Language Name')
 
     def test_name_without_docstring(self):
         class X(Language):
             pass
         X.__doc__ = None
         assert_equal(X().name, '')
+        assert_equal(X.name, '')
 
     def test_all_standard_languages_have_code_and_name(self):
         for cls in Language.__subclasses__():
-            lang = cls()
-            assert lang.code
-            assert lang.name
+            assert cls().code
+            assert cls.code
+            assert cls().name
+            assert cls.name
 
     def test_eq(self):
         assert_equal(Fi(), Fi())
@@ -127,11 +136,12 @@ class TestLanguages(unittest.TestCase):
         self.assertIn(("Orcish Quiet", "or-CQUI"), [(v.name, v.code) for v in langs])
 
     def test_add_language_with_invalid_custom_module(self):
-        langs = Languages()
-        with self.assertRaises(ValueError) as context:
-            langs.add_language("invalid")
-        self.assertTrue('Language "invalid" not found nor importable as a module.' in context.exception.args)
-
+        with self.assertRaises(DataError) as context:
+            Languages().add_language('invalid')
+        assert_true(context.exception.args[0].startswith(
+            "No language with name 'invalid' found. "
+            "Importing language file 'invalid' failed: "
+        ))
 
 
 if __name__ == '__main__':
