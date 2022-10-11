@@ -17,6 +17,14 @@ robot.conf.gatherfailed module
    :undoc-members:
    :show-inheritance:
 
+robot.conf.languages module
+---------------------------
+
+.. automodule:: robot.conf.languages
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.conf.settings module
 --------------------------
 

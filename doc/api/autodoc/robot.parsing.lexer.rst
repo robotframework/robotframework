@@ -33,14 +33,6 @@ robot.parsing.lexer.lexer module
    :undoc-members:
    :show-inheritance:
 
-robot.parsing.lexer.sections module
------------------------------------
-
-.. automodule:: robot.parsing.lexer.sections
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 robot.parsing.lexer.settings module
 -----------------------------------
 
