@@ -58,7 +58,9 @@ Currently exposed APIs are:
   returned by the :func:`~robot.result.resultbuilder.ExecutionResult` or
   an executed :class:`~robot.running.model.TestSuite`.
 
-* :class:`~robot.conf.languages.Language` base class for custom translations.
+* :class:`~robot.conf.languages.Languages` and :class:`~robot.conf.languages.Language`
+  classes for external tools that need to work with different translations.
+  The latter is also the base class to use with custom translations.
 
 All of the above names can be imported like::
 

@@ -28,7 +28,8 @@ class Languages:
         languages = Languages('de', add_english=False)
         print(languages.settings)
         languages = Languages(['pt-BR', 'Finnish', 'MyLang.py'])
-        print(list(languages))
+        for lang in languages:
+            print(lang.name, lang.code)
     """
 
     def __init__(self, languages=None, add_english=True):
@@ -37,7 +38,7 @@ class Languages:
             Languages can be given as language codes or names, paths or names of
             language modules to load, or as :class:`Language` instances.
         :param add_english: If True, English is added automatically.
-        :raises :class:`~robot.errors.DataError` if a given language is not found.
+        :raises: :class:`~robot.errors.DataError` if a given language is not found.
 
         :meth:`add.language` can be used to add languages after initialization.
         """
@@ -217,8 +218,12 @@ class Language:
 
         Got based on the class name. If the class name is two characters (or less),
         the code is just the name in lower case. If it is longer, a hyphen is added
-        remainder of the class name is upper-cased.
+        and the remainder of the class name is upper-cased.
+
+        This special property can be accessed also directly from the class.
         """
+        if cls is Language:
+            return cls.__dict__['code']
         code = cls.__name__.lower()
         if len(code) < 3:
             return code
@@ -229,7 +234,11 @@ class Language:
         """Language name like 'Finnish' or 'Brazilian Portuguese'.
 
         Got from the first line of the class docstring.
+
+        This special property can be accessed also directly from the class.
         """
+        if cls is Language:
+            return cls.__dict__['name']
         return cls.__doc__.splitlines()[0] if cls.__doc__ else ''
 
     @property

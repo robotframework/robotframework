@@ -48,6 +48,10 @@ class TestLanguage(unittest.TestCase):
             assert cls().name
             assert cls.name
 
+    def test_code_and_name_of_Language_base_class_are_propertys(self):
+        assert isinstance(Language.code, property)
+        assert isinstance(Language.name, property)
+
     def test_eq(self):
         assert_equal(Fi(), Fi())
         assert_equal(Language.from_name('fi'), Fi())
