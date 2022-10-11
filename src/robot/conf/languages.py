@@ -1089,3 +1089,44 @@ class It(Language):
     but_prefix = {'Ma'}
     true_strings = {'Vero', 'Sì', 'On'}
     false_strings = {'Falso', 'No', 'Off', 'Nessuno'}
+
+
+class Hi(Language):
+    """Hindi"""
+    settings_header = 'स्थापना'
+    variables_header = 'चर'
+    test_cases_header = 'नियत कार्य प्रवेशिका'
+    tasks_header = 'कार्य प्रवेशिका'
+    keywords_header = 'कुंजीशब्द'
+    comments_header = 'टिप्पणी'
+    library_setting = 'कोड़ प्रतिबिंब संग्रह'
+    resource_setting = 'संसाधन'
+    variables_setting = 'चर'
+    documentation_setting = 'प्रलेखन'
+    metadata_setting = 'अधि-आंकड़ा'
+    suite_setup_setting = 'जांच की शुरुवात'
+    suite_teardown_setting = 'परीक्षण कार्य अंत'
+    test_setup_setting = 'परीक्षण कार्य प्रारंभ'
+    test_teardown_setting = 'परीक्षण कार्य अंत'
+    test_template_setting = 'परीक्षण ढांचा'
+    test_timeout_setting = 'परीक्षण कार्य समय समाप्त'
+    test_tags_setting = 'जाँचका उपनाम'
+    task_setup_setting = 'परीक्षण कार्य प्रारंभ'
+    task_teardown_setting = 'परीक्षण कार्य अंत'
+    task_template_setting = 'परीक्षण ढांचा'
+    task_timeout_setting = 'कार्य समयबाह्य'
+    task_tags_setting = 'कार्यका उपनाम'
+    keyword_tags_setting = 'कुंजीशब्द का उपनाम'
+    tags_setting = 'निशान'
+    setup_setting = 'व्यवस्थापना'
+    teardown_setting = 'विमोचन'
+    template_setting = 'साँचा'
+    timeout_setting = 'समय समाप्त'
+    arguments_setting = 'प्राचल'
+    given_prefix = {'दिया हुआ'}
+    when_prefix = {'जब'}
+    then_prefix = {'तब'}
+    and_prefix = {'और'}
+    but_prefix = {'परंतु'}
+    true_strings = {'यथार्थ', 'निश्चित', 'हां', 'पर'}
+    false_strings = {'गलत', 'नहीं', 'हालाँकि', 'यद्यपि', 'नहीं', 'हैं'}
