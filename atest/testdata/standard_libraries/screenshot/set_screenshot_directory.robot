@@ -1,6 +1,7 @@
 *** Settings ***
 Suite Setup       Clean Temp Files And Create Directory
 Test Setup        Save Start Time
+Test Teardown     Clean Temp Files And Create Directory
 Suite Teardown    Clean Temp Files
 Resource          screenshot_resource.robot
 
@@ -20,6 +21,7 @@ Set Screenshot Directory
 Set Screenshot Directory as `pathlib.Path`
     ${old} =                   Set Screenshot Directory    ${{pathlib.Path($SCREENSHOT_DIR)}}
     Paths Should Be Equal      ${OUTPUT DIR}               ${old}
+    Set Suite Variable         ${OUTPUT DIR}               ${SCREENSHOT DIR}
     Take Screenshot
     Screenshot Should Exist    ${FIRST SCREENSHOT}
 
