@@ -1,5 +1,5 @@
 =======================================
-Robot Framework 6.0 release candidate 1
+Robot Framework 6.0 release candidate 2
 =======================================
 
 .. default-role:: code
@@ -7,18 +7,19 @@ Robot Framework 6.0 release candidate 1
 `Robot Framework`_ 6.0 is a new major release that starts Robot Framework's
 localization efforts. In addition to that, it contains several nice enhancements
 related to, for example, automatic argument conversion and using embedded arguments.
-Robot Framework 6.0 rc 1 is the first and hopefully also the last release candidate
+Robot Framework 6.0 rc 2 is the second and hopefully the last release candidate
 containing all features and fixes planned to be included in the final release.
 
 Robot Framework 6.0 was initially labeled Robot Framework 5.1 and considered
 a feature release. In the end it grow so big that we decided to make it a major
-release instead. The previous preview release was `RF 5.1 beta 2 <rf-5.1b2.rst>`_.
+release instead.
 
 Questions and comments related to the release can be sent to the
 `robotframework-users`_ mailing list or to `Robot Framework Slack`_,
 and possible bugs submitted to the `issue tracker`_.
 
 If you have pip_ installed, just run
+
 
 ::
 
@@ -28,18 +29,17 @@ to install the latest available release or use
 
 ::
 
-   pip install robotframework==6.0rc1
+   pip install robotframework==6.0rc2
 
 to install exactly this version. Alternatively you can download the source
 distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
-Robot Framework 6.0 rc 1 was released on Friday September 30, 2022.
-The final release was planned to be released on Wednesday October 5, 2022,
-just in time for the `RoboCon Germany <https://robocon.io/germany>`_ conference.
-It was, however, delayed due to us wanting to add some features that
-make IDE integration easier. `Robot Framework 6.0 rc 2 <rf-6.0rc2.rst>`_
-was released on Tuesday October 11, 2022.
+Robot Framework 6.0 rc 2 was released on Tuesday October 11, 2022.
+The first release candidate did not contain problems preventing the final
+release, but we wanted to add few features that make IDE integration easier
+and a new release candidate was needed. The final release is planned to be
+released on Tuesday October 18, 2022.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -48,13 +48,14 @@ was released on Tuesday October 11, 2022.
 .. _issue tracker milestone: https://github.com/robotframework/robotframework/issues?q=milestone%3Av6.0
 .. _issue tracker: https://github.com/robotframework/robotframework/issues
 .. _robotframework-users: http://groups.google.com/group/robotframework-users
-.. _Robot Framework Slack: http://slack.robotframework.org/
-.. _Slack: http://slack.robotframework.org/
+.. _Slack: http://slack.robotframework.org
+.. _Robot Framework Slack: Slack_
 .. _installation instructions: ../../INSTALL.rst
 
 .. contents::
    :depth: 2
    :local:
+
 
 Most important enhancements
 ===========================
@@ -94,16 +95,21 @@ Robot Framework 6.0 contains built-in support for these languages in addition
 to English that is automatically supported:
 
 - Bosnian (bs)
+- Bulgarian (bg)
 - Chinese Simplified (zh-CN) and Chinese Traditional (zh-TW)
 - Czech (cs)
 - Dutch (nl)
 - Finnish (fi)
 - French (fr)
 - German (de)
+- Hindi (hi)
+- Italian (it)
 - Polish (pl)
 - Portuguese (pt) and Brazilian Portuguese (pt-BR)
+- Romanian (ro)
 - Russian (ru)
 - Spanish (es)
+- Swedish (sv)
 - Thai (th)
 - Turkish (tr)
 - Ukrainian (uk)
@@ -245,7 +251,22 @@ continue-on-failure mode when needed by using `robot:stop-on-failure` and
 When using the listener API v2, `start_keyword` and `end_keyword` methods are not
 only used with keywords but also with all control structures. Earlier these methods
 always got exactly the same information, but nowadays there is additional context
-specific details with control structures (`#4335`_).
+specific details with control structures. (`#4335`_)
+
+Libdoc enhancements
+-------------------
+
+Libdoc can now generate keyword documentation not only for libraries and
+resource files, but also for suite files (e.g. `tests.robot`) and for suite
+initialization files (`__init__.robot`). The primary use case was making it
+possible for editors to show HTML documentation for keywords regardless
+the file user is editing, but naturally such HTML documentation can be useful
+also otherwise. (`#4493`_)
+
+Libdoc has also got new `--theme` option that can be used to enforce dark
+or light theme. The theme used by the browser is used by default as earlier.
+External tools can control the theme also programmatically when generating
+documentation and by calling the `setTheme()` Javascript function. (`#4497`_)
 
 Performance enhancements for executing user keywords
 ----------------------------------------------------
@@ -356,6 +377,20 @@ Custom patterns have often been used to avoid conflicts when using embedded argu
 That need is nowadays smaller because Robot Framework 6.0 can typically resolve
 conflicts automatically. (`#4454`_)
 
+`robot.utils.TRUE_STRINGS` and `robot.utils.FALSE_STRINGS`
+----------------------------------------------------------
+
+These constants were earlier sometimes needed by libraries when converting
+arguments passed to keywords to Boolean values. Nowadays automatic argument
+conversion takes care of that and these constants do not have any real usage.
+They can still be used and there is not even a deprecation warning yet,
+but they will be loudly deprecated and eventually removed later. (`#4500`_)
+
+These constants are internally used by `is_truthy` and `is_falsy` utility
+functions that some of Robot Framework standard libraries still use.
+Also these utils are likely to be deprecated in the future, and users are
+advised to use the automatic argument conversion instead of them.
+
 Python 3.6 support
 ------------------
 
@@ -380,6 +415,10 @@ great contributions:
   (`#4390`_). Individual translations have been provided by the following people:
 
   - Bosnian by `Namik <https://github.com/Delilovic>`_
+  - Bulgarian by `Ivo <https://github.com/naschenez>`_
+  - Chinese Simplified and Chinese Traditional
+    by `@nixuewei <https://github.com/nixuewei>`_
+    and `charis <https://github.com/mawentao119>`_
   - Czech by `Václav Fuksa <https://github.com/MoreFamed>`_
   - Dutch by `Pim Jansen <https://github.com/pimjansen>`_
     and `Elout van Leeuwen <https://github.com/leeuwe>`_
@@ -387,14 +426,15 @@ great contributions:
     and `Martin Malorni <https://github.com/mmalorni>`_
   - German by `René <https://github.com/Snooz82>`_
     and `Markus <https://github.com/Noordsestern>`_
+  - Hindi by `Bharat Patel <https://github.com/bbpatel2001>`_
+  - Italian by `Luca Giorgi  <https://github.com/lugi0>`_
   - Polish by `Bartłomiej Hirsz <https://github.com/bhirsz>`_
   - Portuguese and Brazilian Portuguese
     by `Hélio Guilherme <https://github.com/HelioGuilherme66>`_
+  - Romanian by `Liviu Avram <https://github.com/zastress>`_
   - Russian by `Anatoly Kolpakov <https://github.com/axxyhtrx>`_
-  - Simplified and Traditional Chinese
-    by `@nixuewei <https://github.com/nixuewei>`_
-    and `charis <https://github.com/mawentao119>`_
   - Spanish by Miguel Angel Apolayo Mendoza
+  - Swedish by `Richard Ludwig <https://github.com/JockeJarre>`_
   - Thai by `Somkiat Puisungnoen <https://github.com/up1>`_
   - Turkish by `Yusuf Can Bayrak <https://github.com/yusufcanb>`_
   - Ukrainian by `@Sunshine0000000 <https://github.com/Sunshine0000000>`_
@@ -420,6 +460,12 @@ great contributions:
 
 - `Fabio Zadrozny <https://github.com/fabioz>`_ provided a pull request speeding up
   user keyword execution (`#4353`_).
+
+- `Daniel Biehl <https://github.com/d-biehl>`_ helped making the public
+  `robot.api.Languages` API easier to use for external tools (`#4096`_).
+
+- `@mikkuja <https://github.com/mikkuja>`_ added support to parse time strings
+  containing micro and nanoseconds like (`#4490`_).
 
 - `@Apteryks <https://github.com/Apteryks>`_ added support to generate deterministic
   library documentation by using `SOURCE_DATE_EPOCH`__ environment variable (`#4262`_).
@@ -464,7 +510,7 @@ Full list of fixes and enhancements
     * - `#4348`_
       - bug
       - high
-      - Invalid IF or WHILE condition should not cause error that does not allow continuation
+      - Invalid IF or WHILE conditions should not cause errors that don't allow continuation
       - rc 1
     * - `#4483`_
       - bug
@@ -541,6 +587,11 @@ Full list of fixes and enhancements
       - high
       - Convert and validate `TypedDict` items
       - rc 1
+    * - `#4493`_
+      - enhancement
+      - high
+      - Libdoc: Support generating keyword documentation for suite files
+      - rc 2
     * - `#4351`_
       - bug
       - medium
@@ -711,6 +762,16 @@ Full list of fixes and enhancements
       - medium
       - Enhance `Keyword Should Exist` performance by not looking for possible recommendations
       - beta 2
+    * - `#4490`_
+      - enhancement
+      - medium
+      - Time string parsing for micro and nanoseconds
+      - rc 2
+    * - `#4497`_
+      - enhancement
+      - medium
+      - Libdoc: Support setting dark or light mode explicitly
+      - rc 2
     * - `#4349`_
       - bug
       - low
@@ -749,15 +810,20 @@ Full list of fixes and enhancements
     * - `#4485`_
       - enhancement
       - low
-      - Update docstring for kw Sleep to specify the default value
+      - Explain the default value of `Sleep` keyword better in its documentation
       - rc 1
+    * - `#4500`_
+      - enhancement
+      - low
+      - Deprecate `robot.utils.TRUE/FALSE_STRINGS`
+      - rc 2
     * - `#4394`_
       - bug
       - ---
       - Error when `--doc` or `--metadata` value matches an existing directory
       - alpha 1
 
-Altogether 62 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av6.0>`__.
+Altogether 66 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av6.0>`__.
 
 .. _#4096: https://github.com/robotframework/robotframework/issues/4096
 .. _#519: https://github.com/robotframework/robotframework/issues/519
@@ -778,6 +844,7 @@ Altogether 62 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#4433: https://github.com/robotframework/robotframework/issues/4433
 .. _#4454: https://github.com/robotframework/robotframework/issues/4454
 .. _#4477: https://github.com/robotframework/robotframework/issues/4477
+.. _#4493: https://github.com/robotframework/robotframework/issues/4493
 .. _#4351: https://github.com/robotframework/robotframework/issues/4351
 .. _#4355: https://github.com/robotframework/robotframework/issues/4355
 .. _#4357: https://github.com/robotframework/robotframework/issues/4357
@@ -812,6 +879,8 @@ Altogether 62 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#4461: https://github.com/robotframework/robotframework/issues/4461
 .. _#4462: https://github.com/robotframework/robotframework/issues/4462
 .. _#4470: https://github.com/robotframework/robotframework/issues/4470
+.. _#4490: https://github.com/robotframework/robotframework/issues/4490
+.. _#4497: https://github.com/robotframework/robotframework/issues/4497
 .. _#4349: https://github.com/robotframework/robotframework/issues/4349
 .. _#4358: https://github.com/robotframework/robotframework/issues/4358
 .. _#4453: https://github.com/robotframework/robotframework/issues/4453
@@ -820,5 +889,6 @@ Altogether 62 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#4346: https://github.com/robotframework/robotframework/issues/4346
 .. _#4372: https://github.com/robotframework/robotframework/issues/4372
 .. _#4485: https://github.com/robotframework/robotframework/issues/4485
+.. _#4500: https://github.com/robotframework/robotframework/issues/4500
 .. _#4394: https://github.com/robotframework/robotframework/issues/4394
 .. _#4390: https://github.com/robotframework/robotframework/issues/4390
