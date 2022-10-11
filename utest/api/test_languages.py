@@ -3,8 +3,7 @@ import unittest
 from os.path import abspath, dirname, join
 
 from robot.api import Language, Languages
-from robot.conf.languages import (En, Fi, PtBr, Th, get_available_languages,
-    import_language_module)
+from robot.conf.languages import En, Fi, PtBr, Th
 from robot.utils.asserts import assert_equal, assert_not_equal, assert_raises_with_msg
 
 
@@ -89,10 +88,10 @@ class TestLanguages(unittest.TestCase):
         assert_equal(list(Languages(['fi', PtBr()])), [Fi(), PtBr(), En()])
 
     def test_init_without_default(self):
-        assert_equal(list(Languages(add_default=False)), [])
-        assert_equal(list(Languages('fi', add_default=False)), [Fi()])
-        assert_equal(list(Languages(['fi'], add_default=False)), [Fi()])
-        assert_equal(list(Languages(['fi', PtBr()], add_default=False)), [Fi(), PtBr()])
+        assert_equal(list(Languages(add_english=False)), [])
+        assert_equal(list(Languages('fi', add_english=False)), [Fi()])
+        assert_equal(list(Languages(['fi'], add_english=False)), [Fi()])
+        assert_equal(list(Languages(['fi', PtBr()], add_english=False)), [Fi(), PtBr()])
 
     def test_reset(self):
         langs = Languages(['fi'])
@@ -127,32 +126,12 @@ class TestLanguages(unittest.TestCase):
         self.assertIn(("Orcish Loud", "or-CLOU"), [(v.name, v.code) for v in langs])
         self.assertIn(("Orcish Quiet", "or-CQUI"), [(v.name, v.code) for v in langs])
 
-    def test_get_available_languages(self):
-        languages = get_available_languages()
-        self.assertIn(("en", En), languages.items())
-        self.assertIn(("english", En), languages.items())
-        self.assertIn(("fi", Fi), languages.items())
-        self.assertIn(("finnish", Fi), languages.items())
+    def test_add_language_with_invalid_custom_module(self):
+        langs = Languages()
+        with self.assertRaises(ValueError) as context:
+            langs.add_language("invalid")
+        self.assertTrue('Language "invalid" not found nor importable as a module.' in context.exception.args)
 
-    def test_import_language_module(self):
-        data = join(abspath(dirname(__file__)), 'elvish_languages.py')
-        languages = import_language_module(data)
-        self.assertIn("elvsin", languages)
-        self.assertIn("elvishsindarin", languages)
-        self.assertIn("elvque", languages)
-        self.assertIn("elvishquenya", languages)
-        avail_languages = get_available_languages()
-        self.assertIn("elvsin", avail_languages)
-        self.assertIn("elvishsindarin", avail_languages)
-        self.assertIn("elvque", avail_languages)
-        self.assertIn("elvishquenya", avail_languages)
-
-    def test_init_with_language_module(self):
-        data = join(abspath(dirname(__file__)), 'orcish_languages.py')
-        languages = [(v.name, v.code) for v in Languages(data)]
-        self.assertIn(("Orcish Loud", "or-CLOU"), languages)
-        self.assertIn(("Orcish Quiet", "or-CQUI"), languages)
-        self.assertIn(("English", "en"), languages)
 
 
 if __name__ == '__main__':
