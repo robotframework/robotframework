@@ -63,7 +63,8 @@ Robot Framework {version} was released on {date}.
 .. _issue tracker milestone: https://github.com/robotframework/robotframework/issues?q=milestone%3A{version.milestone}
 .. _issue tracker: https://github.com/robotframework/robotframework/issues
 .. _robotframework-users: http://groups.google.com/group/robotframework-users
-.. _Robot Framework Slack: https://robotframework-slack-invite.herokuapp.com
+.. _Slack: http://slack.robotframework.org
+.. _Robot Framework Slack: Slack_
 .. _installation instructions: ../../INSTALL.rst
 '''
 
