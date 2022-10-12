@@ -1183,3 +1183,44 @@ class Hi(Language):
     but_prefix = {'परंतु'}
     true_strings = {'यथार्थ', 'निश्चित', 'हां', 'पर'}
     false_strings = {'गलत', 'नहीं', 'हालाँकि', 'यद्यपि', 'नहीं', 'हैं'}
+
+
+class Ar(Language):
+    """Arabic"""
+    settings_header = 'الاعدادات'
+    variables_header = 'المتغيرات'
+    test_cases_header = 'حالات الاختبار'
+    tasks_header = 'مهام'
+    keywords_header = 'كلمات مفتاحية'
+    comments_header = 'تعليقات'
+    library_setting = 'مكتبة'
+    resource_setting = 'مصدر'
+    variables_setting = 'متغير'
+    documentation_setting = 'توثيق'
+    metadata_setting = 'بيانات وصفية'
+    suite_setup_setting = 'ضبط المجموعة'
+    suite_teardown_setting = 'تفكيك المجموعة'
+    test_setup_setting = 'ضبط الاختبار'
+    test_teardown_setting = 'تفكيك الاختبار'
+    test_template_setting = 'قالب الاختبار'
+    test_timeout_setting = 'مهلة الاختبار'
+    test_tags_setting = 'علامات الاختبار'
+    task_setup_setting = 'ضبط المهمة'
+    task_teardown_setting = 'تفكيك المهمة'
+    task_template_setting = 'قالب المهمة'
+    task_timeout_setting = 'مهلة المهمة'
+    task_tags_setting = 'علامة المهمة'
+    keyword_tags_setting = 'علامات الكلمات المفتاحية'
+    tags_setting = 'علامات'
+    setup_setting = 'ضبط'
+    teardown_setting = 'تفكيك'
+    template_setting = 'قالب'
+    timeout_setting = 'مهلة'
+    arguments_setting = 'حجج'
+    given_prefix = {'معطى'}
+    when_prefix = {'عندما'}
+    then_prefix = {'بعد'}
+    and_prefix = {'و'}
+    but_prefix = {'لكن'}
+    true_strings = {'صحيح', 'نعم', 'مفعل'}
+    false_strings = {'خاطئ', 'لا', 'معطل', 'لاشيء'}
