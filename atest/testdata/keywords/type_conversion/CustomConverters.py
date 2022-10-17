@@ -41,7 +41,7 @@ class UsDate(date):
 
 class FiDate(date):
     @classmethod
-    def from_string(cls, value: str):
+    def from_string(cls, value: str, ign1=None, *ign2, ign3=None, **ign4):
         try:
             return cls.fromordinal(datetime.strptime(value, '%d.%m.%Y').toordinal())
         except ValueError:
@@ -82,8 +82,13 @@ class TooManyArgs:
         pass
 
 
+class NoPositionalArg:
+    def __init__(self, *varargs):
+        pass
+
+
 class KwOnlyNotOk:
-    def __init__(self, arg, *, kwo):
+    def __init__(self, arg, *, kwo, another):
         pass
 
 
@@ -98,6 +103,7 @@ ROBOT_LIBRARY_CONVERTERS = {Number: string_to_int,
                             Invalid: 666,
                             TooFewArgs: TooFewArgs,
                             TooManyArgs: TooManyArgs,
+                            NoPositionalArg: NoPositionalArg,
                             KwOnlyNotOk: KwOnlyNotOk,
                             'Bad': int}
 

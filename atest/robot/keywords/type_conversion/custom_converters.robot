@@ -37,9 +37,10 @@ Invalid converters
     Check Test Case    ${TESTNAME}
     Validate Errors
     ...    Custom converters must be callable, converter for Invalid is integer.
-    ...    Custom converters must accept exactly one positional argument, converter 'TooFewArgs' accepts 0.
-    ...    Custom converters must accept exactly one positional argument, converter 'TooManyArgs' accepts 2.
-    ...    Custom converter 'KwOnlyNotOk' accepts keyword-only arguments which is not supported.
+    ...    Custom converters must accept one positional argument, 'TooFewArgs' accepts none.
+    ...    Custom converters cannot have more than one mandatory argument, 'TooManyArgs' has 'one' and 'two'.
+    ...    Custom converters must accept one positional argument, 'NoPositionalArg' accepts none.
+    ...    Custom converters cannot have mandatory keyword-only arguments, 'KwOnlyNotOk' has 'another' and 'kwo'.
     ...    Custom converters must be specified using types, got string 'Bad'.
 
 Non-type annotation
