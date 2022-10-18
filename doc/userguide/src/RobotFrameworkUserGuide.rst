@@ -125,6 +125,7 @@
 
 .. _test data: `Creating test data`_
 .. _general parsing rules: `Test data syntax`_
+.. _section headers: `Test data sections`_
 .. _test case: `Creating test cases`_
 .. _test cases: `test case`_
 .. _test suite: `Creating test suites`_
@@ -237,3 +238,4 @@
 .. _AutoIT: http://www.autoitscript.com/autoit3
 .. _XML-RPC: http://www.xmlrpc.com/
 .. _RIDE: https://github.com/robotframework/RIDE
+.. _Slack: http://slack.robotframework.org
