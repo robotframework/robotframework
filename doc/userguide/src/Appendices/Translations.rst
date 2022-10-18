@@ -1,14 +1,27 @@
 Translations
 ============
 
-Robot Framework supports translating `section headers`_, settings__, Given/Whe
+Robot Framework supports translating `section headers`__, settings_,
+`Given/When/Then prefixes`__ used in Behavior Driven Development (BDD)
+as well as `true and false strings`__ used in automatic Boolean argument
+conversion. This appendix lists all translations for all languages,
+excluding English, that Robot Framework supports out-of-the-box.
+
+How to actually activate translations is explained in the Localization_ section.
+That section also explains how to create custom translations,
+how to contribute new translations, and how to enhance existing ones.
+
+__ `Test data sections`_
+__ `Behavior-driven style`_
+__ `Supported conversions`_
+
 .. contents::
-   :depth: 2
+   :depth: 1
    :local:
 
-.. Content below has been generated using `document_translations.py`.
-.. Don't edit manually, update the script instead.
-.. GENERATED CONTENT BEGINS
+.. Content below has been generated using translations.py used by ug2html.py.
+
+.. START GENERATED CONTENT
 
 Bulgarian (bg)
 --------------
@@ -17,6 +30,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -40,6 +54,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -99,6 +114,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -120,6 +136,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -127,10 +144,9 @@ Boolean strings
     * - True/False
       - Values
     * - True
-      - Включен, Вярно, Да
+      - Да, Включен, Вярно
     * - False
-      - Изключен, Нищо, Не, Невярно
-
+      - Невярно, Нищо, Изключен, Не
 
 
 Bosnian (bs)
@@ -140,6 +156,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -163,6 +180,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -222,6 +240,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -243,6 +262,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -255,7 +275,6 @@ Boolean strings
       -
 
 
-
 Czech (cs)
 ----------
 
@@ -263,6 +282,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -286,6 +306,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -345,6 +366,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -366,6 +388,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -373,10 +396,9 @@ Boolean strings
     * - True/False
       - Values
     * - True
-      - Zapnuto, Ano, Pravda
+      - Zapnuto, Pravda, Ano
     * - False
-      - Ne, Nic, Vypnuto, Nepravda
-
+      - Nic, Nepravda, Vypnuto, Ne
 
 
 German (de)
@@ -386,6 +408,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -409,6 +432,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -446,11 +470,11 @@ Settings
     * - Task Timeout
       - Aufgabenzeitlimit
     * - Test Tags
-      - Test Marker
+      - Testmarker
     * - Task Tags
-      - Aufgaben Marker
+      - Aufgabenmarker
     * - Keyword Tags
-      - Schlüsselwort Marker
+      - Schlüsselwortmarker
     * - Tags
       - Marker
     * - Setup
@@ -468,6 +492,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -489,6 +514,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -496,10 +522,9 @@ Boolean strings
     * - True/False
       - Values
     * - True
-      - Ein, Ja, Wahr, An
+      - Wahr, Ja, An, Ein
     * - False
-      - Nein, Aus, Unwahr, Falsch
-
+      - Nein, Aus, Falsch, Unwahr
 
 
 Spanish (es)
@@ -509,6 +534,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -532,6 +558,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -591,6 +618,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -612,6 +640,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -619,10 +648,9 @@ Boolean strings
     * - True/False
       - Values
     * - True
-      - Verdadero, On, Si
+      - On, Si, Verdadero
     * - False
-      - Ninguno, No, Falso, Off
-
+      - Ninguno, No, Off, Falso
 
 
 Finnish (fi)
@@ -632,6 +660,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -655,6 +684,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -714,6 +744,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -735,6 +766,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -742,10 +774,9 @@ Boolean strings
     * - True/False
       - Values
     * - True
-      - Tosi, Kyllä, Päällä
+      - Tosi, Päällä, Kyllä
     * - False
       - Ei, Pois, Epätosi
-
 
 
 French (fr)
@@ -755,6 +786,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -778,6 +810,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -837,6 +870,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -858,6 +892,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -865,10 +900,9 @@ Boolean strings
     * - True/False
       - Values
     * - True
-      - Vrai, Actif, Oui
+      - Vrai, Oui, Actif
     * - False
-      - Faux, Désactivé, Non, Aucun
-
+      - Désactivé, Non, Faux, Aucun
 
 
 Hindi (hi)
@@ -878,6 +912,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -901,6 +936,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -960,6 +996,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -981,6 +1018,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -988,10 +1026,9 @@ Boolean strings
     * - True/False
       - Values
     * - True
-      - निश्चित, हां, यथार्थ, पर
+      - हां, यथार्थ, निश्चित, पर
     * - False
-      - गलत, हालाँकि, यद्यपि, हैं, नहीं
-
+      - हालाँकि, नहीं, गलत, यद्यपि, हैं
 
 
 Italian (it)
@@ -1001,6 +1038,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1024,6 +1062,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1083,6 +1122,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1104,6 +1144,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1111,10 +1152,9 @@ Boolean strings
     * - True/False
       - Values
     * - True
-      - Vero, On, Sì
+      - On, Sì, Vero
     * - False
-      - Nessuno, No, Falso, Off
-
+      - Nessuno, No, Off, Falso
 
 
 Dutch (nl)
@@ -1124,6 +1164,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1147,6 +1188,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1206,6 +1248,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1213,7 +1256,7 @@ BDD prefixes
     * - Prefix
       - Translation
     * - Given
-      - Stel, Gegeven
+      - Gegeven, Stel
     * - When
       - Als
     * - Then
@@ -1227,6 +1270,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1234,10 +1278,9 @@ Boolean strings
     * - True/False
       - Values
     * - True
-      - Waar, Ja, Aan
+      - Ja, Aan, Waar
     * - False
       - Nee, Onwaar, Geen, Uit
-
 
 
 Polish (pl)
@@ -1247,6 +1290,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1270,6 +1314,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1329,6 +1374,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1336,13 +1382,13 @@ BDD prefixes
     * - Prefix
       - Translation
     * - Given
-      - Zakładając, że, Zakładając, Mając
+      - Mając, Zakładając, Zakładając, że
     * - When
-      - Gdy, Kiedy, Jeżeli, Jeśli
+      - Jeśli, Jeżeli, Gdy, Kiedy
     * - Then
       - Wtedy
     * - And
-      - I, Oraz
+      - Oraz, I
     * - But
       - Ale
 
@@ -1350,6 +1396,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1362,7 +1409,6 @@ Boolean strings
       -
 
 
-
 Portuguese (pt)
 ---------------
 
@@ -1370,6 +1416,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1393,6 +1440,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1452,6 +1500,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1473,6 +1522,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1480,10 +1530,9 @@ Boolean strings
     * - True/False
       - Values
     * - True
-      - Ligado, Verdadeiro, Verdade, Sim
+      - Verdade, Verdadeiro, Sim, Ligado
     * - False
-      - Desativado, Falso, Desligado, Nada, Não
-
+      - Nada, Desligado, Desativado, Falso, Não
 
 
 Brazilian Portuguese (pt-BR)
@@ -1493,6 +1542,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1516,6 +1566,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1575,6 +1626,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1596,6 +1648,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1603,10 +1656,9 @@ Boolean strings
     * - True/False
       - Values
     * - True
-      - Ligado, Verdadeiro, Verdade, Sim
+      - Verdade, Verdadeiro, Sim, Ligado
     * - False
-      - Desativado, Falso, Desligado, Nada, Não
-
+      - Nada, Desligado, Desativado, Falso, Não
 
 
 Romanian (ro)
@@ -1616,6 +1668,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1639,6 +1692,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1698,6 +1752,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1719,6 +1774,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1726,10 +1782,9 @@ Boolean strings
     * - True/False
       - Values
     * - True
-      - Da, Cand, Adevarat
+      - Cand, Adevarat, Da
     * - False
-      - Nu, Niciun, Fals, Oprit
-
+      - Niciun, Fals, Oprit, Nu
 
 
 Russian (ru)
@@ -1739,6 +1794,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1762,6 +1818,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1821,6 +1878,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1842,6 +1900,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1854,7 +1913,6 @@ Boolean strings
       -
 
 
-
 Swedish (sv)
 ------------
 
@@ -1862,6 +1920,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1885,6 +1944,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1944,6 +2004,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1965,6 +2026,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -1972,10 +2034,9 @@ Boolean strings
     * - True/False
       - Values
     * - True
-      - Sant, Ja, På
+      - Ja, Sant, På
     * - False
-      - Nej, Av, Ingen, Falskt
-
+      - Av, Falskt, Ingen, Nej
 
 
 Thai (th)
@@ -1985,6 +2046,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2008,6 +2070,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2067,6 +2130,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2088,6 +2152,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2100,7 +2165,6 @@ Boolean strings
       -
 
 
-
 Turkish (tr)
 ------------
 
@@ -2108,6 +2172,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2131,6 +2196,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2190,6 +2256,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2211,6 +2278,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2218,10 +2286,9 @@ Boolean strings
     * - True/False
       - Values
     * - True
-      - Doğru, Evet, Açik
+      - Açik, Evet, Doğru
     * - False
-      - Hayir, Yanliş, Kapali
-
+      - Kapali, Yanliş, Hayir
 
 
 Ukrainian (uk)
@@ -2231,6 +2298,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2254,6 +2322,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2313,6 +2382,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2334,6 +2404,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2346,7 +2417,6 @@ Boolean strings
       -
 
 
-
 Chinese Simplified (zh-CN)
 --------------------------
 
@@ -2354,6 +2424,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2377,6 +2448,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2436,6 +2508,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2457,6 +2530,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2464,10 +2538,9 @@ Boolean strings
     * - True/False
       - Values
     * - True
-      - 是, 开, 真
+      - 开, 是, 真
     * - False
-      - 假, 关, 否, 空
-
+      - 空, 关, 假, 否
 
 
 Chinese Traditional (zh-TW)
@@ -2477,6 +2550,7 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2500,6 +2574,7 @@ Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2559,6 +2634,7 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2580,6 +2656,7 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
@@ -2587,6 +2664,6 @@ Boolean strings
     * - True/False
       - Values
     * - True
-      - 是, 開, 真
+      - 開, 是, 真
     * - False
-      - 假, 關, 否, 空
+      - 空, 假, 關, 否

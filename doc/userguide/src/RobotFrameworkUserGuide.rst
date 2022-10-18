@@ -103,6 +103,7 @@
 
 .. include:: Appendices/AvailableSettings.rst
 .. include:: Appendices/CommandLineOptions.rst
+.. include:: Appendices/Translations.rst
 .. include:: Appendices/DocumentationFormatting.rst
 .. include:: Appendices/TimeFormat.rst
 .. include:: Appendices/BooleanArguments.rst
@@ -168,6 +169,7 @@
 .. _`With Name syntax`: `Setting custom name to test library`_
 .. _SeleniumLibrary: https://github.com/robotframework/SeleniumLibrary
 .. _SwingLibrary: https://github.com/robotframework/SwingLibrary
+.. _localized: Localization_
 
 .. 3. Executing test cases
 
@@ -203,7 +205,7 @@
 .. 5. Appendices
 
 .. _HTML formatting: `Documentation formatting`_
-.. _command line options: `All command line options`_
+.. _settings: `Available settings`_
 
 .. 6. Misc
 

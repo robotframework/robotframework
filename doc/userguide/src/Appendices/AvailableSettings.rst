@@ -1,5 +1,10 @@
-All available settings in test data
-===================================
+Available settings
+==================
+
+This appendix lists all settings that can be used in different sections.
+
+.. note:: Settings can be localized_. See the Translations_ appendix for
+          supported translations.
 
 .. contents::
    :depth: 2
@@ -8,7 +13,7 @@ All available settings in test data
 Setting section
 ---------------
 
-The Setting section is used to import test libraries, resource files and
+The Setting section is used to import libraries, resource files and
 variable files and to define metadata for test suites and test
 cases. It can be included in test case files and resource files. Note
 that in a resource file, a Setting section can only include settings for

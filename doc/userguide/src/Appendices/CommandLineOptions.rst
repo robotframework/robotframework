@@ -1,5 +1,5 @@
-All command line options
-========================
+Command line options
+====================
 
 This appendix lists all the command line options that are available
 when `executing test cases`_  and when `post-processing outputs`_.

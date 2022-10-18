@@ -224,7 +224,7 @@ other list variables.
 Using list variables with settings
 ''''''''''''''''''''''''''''''''''
 
-List variables can be used only with some of the settings__. They can
+List variables can be used only with some of the settings_. They can
 be used in arguments to imported libraries and variable files, but
 library and variable file names themselves cannot be list
 variables. Also with setups and teardowns list variable can not be used
@@ -242,8 +242,6 @@ those places where list variables are not supported.
    Suite Setup     ${KEYWORD}          @{KW ARGS}     # This works
    Suite Setup     @{KEYWORD AND ARGS}                # This does not work
    Default Tags    @{TAGS}                            # This works
-
-__ `All available settings in test data`_
 
 .. _dictionary variable:
 .. _dictionary variables:

@@ -1093,6 +1093,9 @@ also allows using the same keyword with different prefixes. For example
 :name:`Welcome page should be open` could also used as :name:`And welcome page
 should be open`.
 
+.. note:: These prefixes can be localized_. See the Translations_ appendix
+          for supported translations.
+
 Embedding data to keywords
 ''''''''''''''''''''''''''
 

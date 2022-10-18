@@ -1,4 +1,13 @@
 from pathlib import Path
+import sys
+
+
+CURDIR = Path(__file__).absolute().parent
+TRANSLATIONS = CURDIR / 'src/Appendices/Translations.rst'
+LOCALIZATION = CURDIR / 'src/CreatingTestData/TestDataSyntax.rst'
+
+sys.path.insert(0, str(CURDIR / '../../src'))
+
 
 from robot.api import Language
 
@@ -53,10 +62,11 @@ Section headers
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
-    
+
     * - Header
       - Translation
     * - Settings
@@ -71,15 +81,16 @@ Section headers
       - {lang.keywords_header}
     * - Comments
       - {lang.comments_header}
-    
+
 Settings
 ~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
-    
+
     * - Setting
       - Translation
     * - Library
@@ -135,10 +146,11 @@ BDD prefixes
 ~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
-    
+
     * - Prefix
       - Translation
     * - Given
@@ -156,10 +168,11 @@ Boolean strings
 ~~~~~~~~~~~~~~~
 
 .. list-table::
+    :class: tabular
     :width: 40em
     :widths: 2 3
     :header-rows: 1
-    
+
     * - True/False
       - Values
     * - True
@@ -169,20 +182,33 @@ Boolean strings
 '''
 
 
-def document_translations(file):
-    languages = [lang for lang in Language.__subclasses__() if lang.code != 'en']
-    for index, lang in enumerate(sorted(languages, key=lambda lang: lang.code)):
-        file.write(TEMPLATE.format(lang=LanguageWrapper(lang)))
+def update_translations():
+    languages = sorted([lang for lang in Language.__subclasses__() if lang.code != 'en'],
+                       key=lambda lang: lang.code)
+    update(TRANSLATIONS, generate_docs(languages))
+    update(LOCALIZATION, list_translations(languages))
+
+
+def generate_docs(languages):
+    for index, lang in enumerate(languages):
+        yield from TEMPLATE.format(lang=LanguageWrapper(lang)).splitlines()
         if index < len(languages) - 1:
-            file.write('\n\n')
+            yield ''
 
 
-if __name__ == '__main__':
-    target = Path(__file__).absolute().parent / 'src/Appendices/Translations.rst'
-    source = target.read_text(encoding='UTF-8')
-    with open(target, 'w', encoding='UTF-8') as file:
-        for line in source.splitlines(keepends=True):
-            file.write(line)
-            if line == '.. GENERATED CONTENT BEGINS\n':
+def list_translations(languages):
+    yield from ['', 'Supported languages:', '']
+    for lang in languages:
+        yield f'- `{lang.name} ({lang.code})`_'
+
+
+def update(path: Path, content):
+    source = path.read_text(encoding='UTF-8').splitlines()
+    write = True
+    with open(path, 'w') as file:
+        for line in source:
+            file.write(line + '\n')
+            if line == '.. START GENERATED CONTENT':
                 break
-        document_translations(file)
+        for line in content:
+            file.write(line.rstrip() + '\n')

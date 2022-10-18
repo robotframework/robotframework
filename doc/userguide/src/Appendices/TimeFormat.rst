@@ -6,6 +6,10 @@ to understand. It is used by several keywords (for example, BuiltIn_ keywords
 :name:`Sleep` and :name:`Wait Until Keyword Succeeds`), DateTime_ library, and
 `timeouts`_.
 
+.. contents::
+   :depth: 2
+   :local:
+
 Time as number
 --------------
 

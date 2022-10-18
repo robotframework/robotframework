@@ -1187,6 +1187,9 @@ Other types cause conversion failures.
    |             |               |            | None_        | to `None`. Other strings and other accepted values are         |                                      |
    |             |               |            |              | passed as-is, allowing keywords to handle them specially if    |                                      |
    |             |               |            |              | needed. All string comparisons are case-insensitive.           |                                      |
+   |             |               |            |              |                                                                |                                      |
+   |             |               |            |              | True and false strings can be localized_. See the              |                                      |
+   |             |               |            |              | Translations_ appendix for supported translations.             |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | int_        | Integral_     | integer,   | str_,        | Conversion is done using the int_ built-in function. Floats    | | `42`                               |
    |             |               | long       | float_       | are accepted only if they can be represented as integers       | | `-1`                               |

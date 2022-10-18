@@ -1,13 +1,23 @@
 Evaluating expressions
 ======================
 
+This appendix explains how expressions are evaluated using Python in different
+contexts and how variables in expressions are handled.
+
+.. contents::
+   :depth: 2
+   :local:
+
+Introduction
+------------
+
 Constructs such as `IF/ELSE structures`_, `WHILE loops`_ and `inline Python evaluation`_
 as well as several BuiltIn_ keywords accept an expression that is evaluated in Python:
 
 .. sourcecode:: robotframework
 
     *** Test Cases ***
-    If expression
+    IF/ELSE
         IF    ${x} > 0
             Log to console   ${x} is positive
         ELSE
@@ -24,8 +34,7 @@ as well as several BuiltIn_ keywords accept an expression that is evaluated in P
     Should Be True keyword
         Should Be True    ${x} > 0
 
-This section explains how the expression is evaluated and how variables in
-the expression are handled. Notice that instead of creating complicated
+Notice that instead of creating complicated
 expressions, it is often better to move the logic into a `test library`_.
 That typically eases maintenance and also enhances execution speed.
 

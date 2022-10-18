@@ -94,6 +94,9 @@ purposes. This is especially useful when creating test cases using the
 
 Possible data before the first section is ignored.
 
+.. note:: Section headers can be localized_. See the Translations_ appendix for
+          supported translations.
+
 Supported file formats
 ----------------------
 
@@ -546,3 +549,36 @@ __ `Newlines in test data`_
        ${var} =    Get X
        ...    first argument passed to this keyword is pretty long
        ...    second argument passed to this keyword is long too
+
+Localization
+------------
+
+TODO
+
+.. Content below has been generated using translations.py used by ug2html.py.
+
+.. START GENERATED CONTENT
+
+Supported languages:
+
+- `Bulgarian (bg)`_
+- `Bosnian (bs)`_
+- `Czech (cs)`_
+- `German (de)`_
+- `Spanish (es)`_
+- `Finnish (fi)`_
+- `French (fr)`_
+- `Hindi (hi)`_
+- `Italian (it)`_
+- `Dutch (nl)`_
+- `Polish (pl)`_
+- `Portuguese (pt)`_
+- `Brazilian Portuguese (pt-BR)`_
+- `Romanian (ro)`_
+- `Russian (ru)`_
+- `Swedish (sv)`_
+- `Thai (th)`_
+- `Turkish (tr)`_
+- `Ukrainian (uk)`_
+- `Chinese Simplified (zh-CN)`_
+- `Chinese Traditional (zh-TW)`_

@@ -24,6 +24,8 @@ import os
 import sys
 import shutil
 
+from translations import update_translations
+
 # First part of this file is Pygments configuration and actual
 # documentation generation follows it.
 #
@@ -146,6 +148,8 @@ def create_userguide():
     from docutils.core import publish_cmdline
 
     print('Creating user guide ...')
+    print('Updating translations')
+    update_translations()
     version, version_file = _update_version()
     install_file = _copy_installation_instructions()
 
