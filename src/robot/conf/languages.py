@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import inspect
+from itertools import chain
 import os.path
 
 from robot.errors import DataError
@@ -186,13 +187,13 @@ class Language:
     template_setting = None
     timeout_setting = None
     arguments_setting = None
-    given_prefix = set()
-    when_prefix = set()
-    then_prefix = set()
-    and_prefix = set()
-    but_prefix = set()
-    true_strings = set()
-    false_strings = set()
+    given_prefixes = []
+    when_prefixes = []
+    then_prefixes = []
+    and_prefixes = []
+    but_prefixes = []
+    true_strings = []
+    false_strings = []
 
     @classmethod
     def from_name(cls, name):
@@ -283,8 +284,8 @@ class Language:
 
     @property
     def bdd_prefixes(self):
-        return (self.given_prefix | self.when_prefix | self.then_prefix |
-                self.and_prefix | self.but_prefix)
+        return set(chain(self.given_prefixes, self.when_prefixes, self.then_prefixes,
+                         self.and_prefixes, self.but_prefixes))
 
     def __eq__(self, other):
         return isinstance(other, type(self))
@@ -325,13 +326,13 @@ class En(Language):
     tags_setting = 'Tags'
     timeout_setting = 'Timeout'
     arguments_setting = 'Arguments'
-    given_prefix = {'Given'}
-    when_prefix = {'When'}
-    then_prefix = {'Then'}
-    and_prefix = {'And'}
-    but_prefix = {'But'}
-    true_strings = {'True', 'Yes', 'On'}
-    false_strings = {'False', 'No', 'Off'}
+    given_prefixes = ['Given']
+    when_prefixes = ['When']
+    then_prefixes = ['Then']
+    and_prefixes = ['And']
+    but_prefixes = ['But']
+    true_strings = ['True', 'Yes', 'On']
+    false_strings = ['False', 'No', 'Off']
 
 
 class Cs(Language):
@@ -366,13 +367,13 @@ class Cs(Language):
     template_setting = 'Šablona'
     timeout_setting = 'Časový limit'
     arguments_setting = 'Argumenty'
-    given_prefix = {'Pokud'}
-    when_prefix = {'Když'}
-    then_prefix = {'Pak'}
-    and_prefix = {'A'}
-    but_prefix = {'Ale'}
-    true_strings = {'Pravda', 'Ano', 'Zapnuto'}
-    false_strings = {'Nepravda', 'Ne', 'Vypnuto', 'Nic'}
+    given_prefixes = ['Pokud']
+    when_prefixes = ['Když']
+    then_prefixes = ['Pak']
+    and_prefixes = ['A']
+    but_prefixes = ['Ale']
+    true_strings = ['Pravda', 'Ano', 'Zapnuto']
+    false_strings = ['Nepravda', 'Ne', 'Vypnuto', 'Nic']
 
 
 class Nl(Language):
@@ -407,13 +408,13 @@ class Nl(Language):
     template_setting = 'Sjabloon'
     timeout_setting = 'Time-out'
     arguments_setting = 'Parameters'
-    given_prefix = {'Stel', 'Gegeven'}
-    when_prefix = {'Als'}
-    then_prefix = {'Dan'}
-    and_prefix = {'En'}
-    but_prefix = {'Maar'}
-    true_strings = {'Waar', 'Ja', 'Aan'}
-    false_strings = {'Onwaar', 'Nee', 'Uit', 'Geen'}
+    given_prefixes = ['Stel', 'Gegeven']
+    when_prefixes = ['Als']
+    then_prefixes = ['Dan']
+    and_prefixes = ['En']
+    but_prefixes = ['Maar']
+    true_strings = ['Waar', 'Ja', 'Aan']
+    false_strings = ['Onwaar', 'Nee', 'Uit', 'Geen']
 
 
 class Bs(Language):
@@ -448,11 +449,11 @@ class Bs(Language):
     template_setting = 'Template'
     timeout_setting = 'Timeout'
     arguments_setting = 'Argumenti'
-    given_prefix = {'Uslovno'}
-    when_prefix = {'Kada'}
-    then_prefix = {'Tada'}
-    and_prefix = {'I'}
-    but_prefix = {'Ali'}
+    given_prefixes = ['Uslovno']
+    when_prefixes = ['Kada']
+    then_prefixes = ['Tada']
+    and_prefixes = ['I']
+    but_prefixes = ['Ali']
 
 
 class Fi(Language):
@@ -487,13 +488,13 @@ class Fi(Language):
     template_setting = 'Malli'
     timeout_setting = 'Aikaraja'
     arguments_setting = 'Argumentit'
-    given_prefix = {'Oletetaan'}
-    when_prefix = {'Kun'}
-    then_prefix = {'Niin'}
-    and_prefix = {'Ja'}
-    but_prefix = {'Mutta'}
-    true_strings = {'Tosi', 'Kyllä', 'Päällä'}
-    false_strings = {'Epätosi', 'Ei', 'Pois'}
+    given_prefixes = ['Oletetaan']
+    when_prefixes = ['Kun']
+    then_prefixes = ['Niin']
+    and_prefixes = ['Ja']
+    but_prefixes = ['Mutta']
+    true_strings = ['Tosi', 'Kyllä', 'Päällä']
+    false_strings = ['Epätosi', 'Ei', 'Pois']
 
 
 class Fr(Language):
@@ -528,13 +529,13 @@ class Fr(Language):
     template_setting = 'Modèle'
     timeout_setting = "Délai d'attente"
     arguments_setting = 'Arguments'
-    given_prefix = {'Étant donné'}
-    when_prefix = {'Lorsque'}
-    then_prefix = {'Alors'}
-    and_prefix = {'Et'}
-    but_prefix = {'Mais'}
-    true_strings = {'Vrai', 'Oui', 'Actif'}
-    false_strings = {'Faux', 'Non', 'Désactivé', 'Aucun'}
+    given_prefixes = ['Étant donné']
+    when_prefixes = ['Lorsque']
+    then_prefixes = ['Alors']
+    and_prefixes = ['Et']
+    but_prefixes = ['Mais']
+    true_strings = ['Vrai', 'Oui', 'Actif']
+    false_strings = ['Faux', 'Non', 'Désactivé', 'Aucun']
 
 
 class De(Language):
@@ -569,13 +570,13 @@ class De(Language):
     template_setting = 'Vorlage'
     timeout_setting = 'Zeitlimit'
     arguments_setting = 'Argumente'
-    given_prefix = {'Angenommen'}
-    when_prefix = {'Wenn'}
-    then_prefix = {'Dann'}
-    and_prefix = {'Und'}
-    but_prefix = {'Aber'}
-    true_strings = {'Wahr', 'Ja', 'An', 'Ein'}
-    false_strings = {'Falsch', 'Nein', 'Aus', 'Unwahr'}
+    given_prefixes = ['Angenommen']
+    when_prefixes = ['Wenn']
+    then_prefixes = ['Dann']
+    and_prefixes = ['Und']
+    but_prefixes = ['Aber']
+    true_strings = ['Wahr', 'Ja', 'An', 'Ein']
+    false_strings = ['Falsch', 'Nein', 'Aus', 'Unwahr']
 
 
 class PtBr(Language):
@@ -610,13 +611,13 @@ class PtBr(Language):
     template_setting = 'Modelo'
     timeout_setting = 'Tempo Limite'
     arguments_setting = 'Argumentos'
-    given_prefix = {'Dado'}
-    when_prefix = {'Quando'}
-    then_prefix = {'Então'}
-    and_prefix = {'E'}
-    but_prefix = {'Mas'}
-    true_strings = {'Verdadeiro', 'Verdade', 'Sim', 'Ligado'}
-    false_strings = {'Falso', 'Não', 'Desligado', 'Desativado', 'Nada'}
+    given_prefixes = ['Dado']
+    when_prefixes = ['Quando']
+    then_prefixes = ['Então']
+    and_prefixes = ['E']
+    but_prefixes = ['Mas']
+    true_strings = ['Verdadeiro', 'Verdade', 'Sim', 'Ligado']
+    false_strings = ['Falso', 'Não', 'Desligado', 'Desativado', 'Nada']
 
 
 class Pt(Language):
@@ -651,13 +652,13 @@ class Pt(Language):
     template_setting = 'Modelo'
     timeout_setting = 'Tempo Limite'
     arguments_setting = 'Argumentos'
-    given_prefix = {'Dado'}
-    when_prefix = {'Quando'}
-    then_prefix = {'Então'}
-    and_prefix = {'E'}
-    but_prefix = {'Mas'}
-    true_strings = {'Verdadeiro', 'Verdade', 'Sim', 'Ligado'}
-    false_strings = {'Falso', 'Não', 'Desligado', 'Desativado', 'Nada'}
+    given_prefixes = ['Dado']
+    when_prefixes = ['Quando']
+    then_prefixes = ['Então']
+    and_prefixes = ['E']
+    but_prefixes = ['Mas']
+    true_strings = ['Verdadeiro', 'Verdade', 'Sim', 'Ligado']
+    false_strings = ['Falso', 'Não', 'Desligado', 'Desativado', 'Nada']
 
 
 class Th(Language):
@@ -692,11 +693,11 @@ class Th(Language):
     tags_setting = 'กลุ่ม'
     timeout_setting = 'หมดเวลา'
     arguments_setting = 'ค่าที่ส่งเข้ามา'
-    given_prefix = {'กำหนดให้'}
-    when_prefix = {'เมื่อ'}
-    then_prefix = {'ดังนั้น'}
-    and_prefix = {'และ'}
-    but_prefix = {'แต่'}
+    given_prefixes = ['กำหนดให้']
+    when_prefixes = ['เมื่อ']
+    then_prefixes = ['ดังนั้น']
+    and_prefixes = ['และ']
+    but_prefixes = ['แต่']
 
 
 class Pl(Language):
@@ -731,11 +732,11 @@ class Pl(Language):
     template_setting = 'Szablon'
     timeout_setting = 'Limit czasowy'
     arguments_setting = 'Argumenty'
-    given_prefix = {'Zakładając', 'Zakładając, że', 'Mając'}
-    when_prefix = {'Jeżeli', 'Jeśli', 'Gdy', 'Kiedy'}
-    then_prefix = {'Wtedy'}
-    and_prefix = {'Oraz', 'I'}
-    but_prefix = {'Ale'}
+    given_prefixes = ['Zakładając', 'Zakładając, że', 'Mając']
+    when_prefixes = ['Jeżeli', 'Jeśli', 'Gdy', 'Kiedy']
+    then_prefixes = ['Wtedy']
+    and_prefixes = ['Oraz', 'I']
+    but_prefixes = ['Ale']
 
 
 class Uk(Language):
@@ -770,11 +771,11 @@ class Uk(Language):
     template_setting = 'Шаблон'
     timeout_setting = 'Час вийшов'
     arguments_setting = 'Аргументи'
-    given_prefix = {'Дано'}
-    when_prefix = {'Коли'}
-    then_prefix = {'Тоді'}
-    and_prefix = {'Та'}
-    but_prefix = {'Але'}
+    given_prefixes = ['Дано']
+    when_prefixes = ['Коли']
+    then_prefixes = ['Тоді']
+    and_prefixes = ['Та']
+    but_prefixes = ['Але']
 
 
 class Es(Language):
@@ -809,13 +810,13 @@ class Es(Language):
     template_setting = 'Plantilla'
     timeout_setting = 'Tiempo agotado'
     arguments_setting = 'Argumentos'
-    given_prefix = {'Dado'}
-    when_prefix = {'Cuando'}
-    then_prefix = {'Entonces'}
-    and_prefix = {'Y'}
-    but_prefix = {'Pero'}
-    true_strings = {'Verdadero', 'Si', 'On'}
-    false_strings = {'Falso', 'No', 'Off', 'Ninguno'}
+    given_prefixes = ['Dado']
+    when_prefixes = ['Cuando']
+    then_prefixes = ['Entonces']
+    and_prefixes = ['Y']
+    but_prefixes = ['Pero']
+    true_strings = ['Verdadero', 'Si', 'On']
+    false_strings = ['Falso', 'No', 'Off', 'Ninguno']
 
 
 class Ru(Language):
@@ -850,11 +851,11 @@ class Ru(Language):
     template_setting = 'Шаблон'
     timeout_setting = 'Лимит'
     arguments_setting = 'Аргументы'
-    given_prefix = {'Дано'}
-    when_prefix = {'Когда'}
-    then_prefix = {'Тогда'}
-    and_prefix = {'И'}
-    but_prefix = {'Но'}
+    given_prefixes = ['Дано']
+    when_prefixes = ['Когда']
+    then_prefixes = ['Тогда']
+    and_prefixes = ['И']
+    but_prefixes = ['Но']
 
 
 class ZhCn(Language):
@@ -889,13 +890,13 @@ class ZhCn(Language):
     template_setting = '模板'
     timeout_setting = '超时'
     arguments_setting = '参数'
-    given_prefix = {'假定'}
-    when_prefix = {'当'}
-    then_prefix = {'那么'}
-    and_prefix = {'并且'}
-    but_prefix = {'但是'}
-    true_strings = {'真', '是', '开'}
-    false_strings = {'假', '否', '关', '空'}
+    given_prefixes = ['假定']
+    when_prefixes = ['当']
+    then_prefixes = ['那么']
+    and_prefixes = ['并且']
+    but_prefixes = ['但是']
+    true_strings = ['真', '是', '开']
+    false_strings = ['假', '否', '关', '空']
 
 
 class ZhTw(Language):
@@ -930,13 +931,13 @@ class ZhTw(Language):
     template_setting = '模板'
     timeout_setting = '逾時'
     arguments_setting = '参数'
-    given_prefix = {'假定'}
-    when_prefix = {'當'}
-    then_prefix = {'那麼'}
-    and_prefix = {'並且'}
-    but_prefix = {'但是'}
-    true_strings = {'真', '是', '開'}
-    false_strings = {'假', '否', '關', '空'}
+    given_prefixes = ['假定']
+    when_prefixes = ['當']
+    then_prefixes = ['那麼']
+    and_prefixes = ['並且']
+    but_prefixes = ['但是']
+    true_strings = ['真', '是', '開']
+    false_strings = ['假', '否', '關', '空']
 
 
 class Tr(Language):
@@ -971,13 +972,13 @@ class Tr(Language):
     tags_setting = 'Etiketler'
     timeout_setting = 'Zaman Aşımı'
     arguments_setting = 'Argümanlar'
-    given_prefix = {'Diyelim ki'}
-    when_prefix = {'Eğer ki'}
-    then_prefix = {'O zaman'}
-    and_prefix = {'Ve'}
-    but_prefix = {'Ancak'}
-    true_strings = {'Doğru', 'Evet', 'Açik'}
-    false_strings = {'Yanliş', 'Hayir', 'Kapali'}
+    given_prefixes = ['Diyelim ki']
+    when_prefixes = ['Eğer ki']
+    then_prefixes = ['O zaman']
+    and_prefixes = ['Ve']
+    but_prefixes = ['Ancak']
+    true_strings = ['Doğru', 'Evet', 'Açik']
+    false_strings = ['Yanliş', 'Hayir', 'Kapali']
 
 
 class Sv(Language):
@@ -1012,13 +1013,13 @@ class Sv(Language):
     template_setting = 'Mall'
     timeout_setting = 'Timeout'
     arguments_setting = 'Argument'
-    given_prefix = {'Givet'}
-    when_prefix = {'När'}
-    then_prefix = {'Då'}
-    and_prefix = {'Och'}
-    but_prefix = {'Men'}
-    true_strings = {'Sant', 'Ja', 'På'}
-    false_strings = {'Falskt', 'Nej', 'Av', 'Ingen'}
+    given_prefixes = ['Givet']
+    when_prefixes = ['När']
+    then_prefixes = ['Då']
+    and_prefixes = ['Och']
+    but_prefixes = ['Men']
+    true_strings = ['Sant', 'Ja', 'På']
+    false_strings = ['Falskt', 'Nej', 'Av', 'Ingen']
 
 
 class Bg(Language):
@@ -1053,13 +1054,13 @@ class Bg(Language):
     template_setting = 'Шаблон'
     timeout_setting = 'Таймаут'
     arguments_setting = 'Аргументи'
-    given_prefix = {'В случай че'}
-    when_prefix = {'Когато'}
-    then_prefix = {'Тогава'}
-    and_prefix = {'И'}
-    but_prefix = {'Но'}
-    true_strings = {'Вярно', 'Да', 'Включен'}
-    false_strings = {'Невярно', 'Не', 'Изключен', 'Нищо'}
+    given_prefixes = ['В случай че']
+    when_prefixes = ['Когато']
+    then_prefixes = ['Тогава']
+    and_prefixes = ['И']
+    but_prefixes = ['Но']
+    true_strings = ['Вярно', 'Да', 'Включен']
+    false_strings = ['Невярно', 'Не', 'Изключен', 'Нищо']
 
 
 class Ro(Language):
@@ -1094,13 +1095,13 @@ class Ro(Language):
     template_setting = 'Sablon'
     timeout_setting = 'Expirare'
     arguments_setting = 'Argumente'
-    given_prefix = {'Fie ca'}
-    when_prefix = {'Cand'}
-    then_prefix = {'Atunci'}
-    and_prefix = {'Si'}
-    but_prefix = {'Dar'}
-    true_strings = {'Adevarat', 'Da', 'Cand'}
-    false_strings = {'Fals', 'Nu', 'Oprit', 'Niciun'}
+    given_prefixes = ['Fie ca']
+    when_prefixes = ['Cand']
+    then_prefixes = ['Atunci']
+    and_prefixes = ['Si']
+    but_prefixes = ['Dar']
+    true_strings = ['Adevarat', 'Da', 'Cand']
+    false_strings = ['Fals', 'Nu', 'Oprit', 'Niciun']
 
 
 class It(Language):
@@ -1135,13 +1136,13 @@ class It(Language):
     template_setting = 'Template'
     timeout_setting = 'Timeout'
     arguments_setting = 'Parametri'
-    given_prefix = {'Dato'}
-    when_prefix = {'Quando'}
-    then_prefix = {'Allora'}
-    and_prefix = {'E'}
-    but_prefix = {'Ma'}
-    true_strings = {'Vero', 'Sì', 'On'}
-    false_strings = {'Falso', 'No', 'Off', 'Nessuno'}
+    given_prefixes = ['Dato']
+    when_prefixes = ['Quando']
+    then_prefixes = ['Allora']
+    and_prefixes = ['E']
+    but_prefixes = ['Ma']
+    true_strings = ['Vero', 'Sì', 'On']
+    false_strings = ['Falso', 'No', 'Off', 'Nessuno']
 
 
 class Hi(Language):
@@ -1176,10 +1177,10 @@ class Hi(Language):
     template_setting = 'साँचा'
     timeout_setting = 'समय समाप्त'
     arguments_setting = 'प्राचल'
-    given_prefix = {'दिया हुआ'}
-    when_prefix = {'जब'}
-    then_prefix = {'तब'}
-    and_prefix = {'और'}
-    but_prefix = {'परंतु'}
-    true_strings = {'यथार्थ', 'निश्चित', 'हां', 'पर'}
-    false_strings = {'गलत', 'नहीं', 'हालाँकि', 'यद्यपि', 'नहीं', 'हैं'}
+    given_prefixes = ['दिया हुआ']
+    when_prefixes = ['जब']
+    then_prefixes = ['तब']
+    and_prefixes = ['और']
+    but_prefixes = ['परंतु']
+    true_strings = ['यथार्थ', 'निश्चित', 'हां', 'पर']
+    false_strings = ['गलत', 'नहीं', 'हालाँकि', 'यद्यपि', 'नहीं', 'हैं']
