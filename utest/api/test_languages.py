@@ -68,6 +68,14 @@ class TestLanguage(unittest.TestCase):
                     raise AssertionError(f"Language class '{cls}' has attribute "
                                          f"'{attr}' not found on the base class.")
 
+    def test_bdd_prefixes(self):
+        class X(Language):
+            given_prefixes = ['List', 'is', 'default']
+            when_prefixes = {}
+            but_prefixes = ('but', 'any', 'iterable', 'works')
+        assert_equal(X().bdd_prefixes, {'List', 'is', 'default',
+                                        'but', 'any', 'iterable', 'works'})
+
 
 class TestLanguageFromName(unittest.TestCase):
 
