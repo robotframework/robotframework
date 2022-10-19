@@ -6,9 +6,10 @@ Robot Framework 6.0
 
 `Robot Framework`_ 6.0 is a new major release that starts Robot Framework's
 localization efforts. In addition to that, it contains several nice enhancements
-related to, for example, automatic argument conversion and using embedded arguments.
-Initially it had version 5.1 and was considered a feature release, but it grow
-so big that we decided to make it a major release instead.
+related to, for example, automatic argument conversion, keyword namespaces and
+using embedded arguments. It was initially considered a feature release and
+had version 5.1, but it grew so big that we considered flipping the major
+number more appropriate.
 
 Questions and comments related to the release can be sent to the
 `robotframework-users`_ mailing list or to `Robot Framework Slack`_,
