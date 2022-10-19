@@ -6,7 +6,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta content="Robot Framework 5.0 (Python 3.10.0 on darwin)" name="Generator">
+<meta content="Robot Framework 6.0 (Python 3.8.10 on linux)" name="Generator">
 <script defer data-domain="robotframework.org" src="https://plausible.io/js/plausible.js"></script>
 <script>
   window.addEventListener("hashchange", ({ oldURL, newURL }) => {
@@ -26,19 +26,17 @@
     --less-important-text-color: gray;
     --link-color: #0000ee;
 }
-@media (prefers-color-scheme: dark) {
-    :root {
-        --background-color: #1c2227;
-        --text-color: #e2e1d7;
-        --border-color: #4e4e4e;
-        --light-background-color: #002b36;
-        --robot-highlight: yellow;
-        --highlighted-color: var(--background-color);
-        --highlighted-background-color: yellow;
-        --less-important-text-color: #5b6a6f;
-        --link-color: #52adff;
-        color-scheme: dark;
-    }
+[data-theme="dark"] {
+    --background-color: #1c2227;
+    --text-color: #e2e1d7;
+    --border-color: #4e4e4e;
+    --light-background-color: #002b36;
+    --robot-highlight: yellow;
+    --highlighted-color: var(--background-color);
+    --highlighted-background-color: yellow;
+    --less-important-text-color: #5b6a6f;
+    --link-color: #52adff;
+    color-scheme: dark;
 }
 body {
     background: var(--background-color);
@@ -1198,7 +1196,7 @@ window.util = function () {
 jQuery.extend({highlight:function(e,t,n,r){if(e.nodeType===3){var i=e.data.match(t);if(i){var s=document.createElement(n||"span");s.className=r||"highlight";var o=e.splitText(i.index);o.splitText(i[0].length);var u=o.cloneNode(true);s.appendChild(u);o.parentNode.replaceChild(s,o);return 1}}else if(e.nodeType===1&&e.childNodes&&!/(script|style)/i.test(e.tagName)&&!(e.tagName===n.toUpperCase()&&e.className===r)){for(var a=0;a<e.childNodes.length;a++){a+=jQuery.highlight(e.childNodes[a],t,n,r)}}return 0}});jQuery.fn.unhighlight=function(e){var t={className:"highlight",element:"span"};jQuery.extend(t,e);return this.find(t.element+"."+t.className).each(function(){var e=this.parentNode;e.replaceChild(this.firstChild,this);e.normalize()}).end()};jQuery.fn.highlight=function(e,t){var n={className:"highlight",element:"span",caseSensitive:false,wordsOnly:false};jQuery.extend(n,t);if(e.constructor===String){e=[e]}e=jQuery.grep(e,function(e,t){return e!=""});e=jQuery.map(e,function(e,t){return e.replace(/[-[\]{}()*+?.,\\^$|#\s]/g,"\\$&")});if(e.length==0){return this}var r=n.caseSensitive?"":"i";var i="("+e.join("|")+")";if(n.wordsOnly){i="\\b"+i+"\\b"}var s=new RegExp(i,r);return this.each(function(){jQuery.highlight(this,s,n.element,n.className)})}
 </script>
 <script type="text/javascript">
-libdoc = {"name": "Dialogs", "doc": "<p>A library providing dialogs for interacting with users.</p>\n<p><code>Dialogs</code> is Robot Framework's standard library that provides means for pausing the test or task execution and getting input from users.</p>\n<p>Long lines in the provided messages are wrapped automatically. If you want to wrap lines manually, you can add newlines using the <code>\\n</code> character sequence.</p>\n<p>The library has a known limitation that it cannot be used with timeouts.</p>", "version": "5.0", "generated": "2022-03-23 17:15:24", "type": "LIBRARY", "scope": "GLOBAL", "docFormat": "HTML", "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Dialogs.py", "lineno": 1, "tags": [], "inits": [], "keywords": [{"name": "Execute Manual Step", "args": [{"name": "message", "types": [], "typedocs": {}, "defaultValue": null, "kind": "POSITIONAL_OR_NAMED", "required": true, "repr": "message"}, {"name": "default_error", "types": [], "typedocs": {}, "defaultValue": "", "kind": "POSITIONAL_OR_NAMED", "required": false, "repr": "default_error="}], "doc": "<p>Pauses execution until user sets the keyword status.</p>\n<p>User can press either <code>PASS</code> or <code>FAIL</code> button. In the latter case execution fails and an additional dialog is opened for defining the error message.</p>\n<p><code>message</code> is the instruction shown in the initial dialog and <code>default_error</code> is the default value shown in the possible error message dialog.</p>", "shortdoc": "Pauses execution until user sets the keyword status.", "tags": [], "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Dialogs.py", "lineno": 48}, {"name": "Get Selection From User", "args": [{"name": "message", "types": [], "typedocs": {}, "defaultValue": null, "kind": "POSITIONAL_OR_NAMED", "required": true, "repr": "message"}, {"name": "values", "types": [], "typedocs": {}, "defaultValue": null, "kind": "VAR_POSITIONAL", "required": false, "repr": "*values"}], "doc": "<p>Pauses execution and asks user to select a value.</p>\n<p>The selected value is returned. Pressing <code>Cancel</code> fails the keyword.</p>\n<p><code>message</code> is the instruction shown in the dialog and <code>values</code> are the options given to the user.</p>\n<p>Example:</p>\n<table border=\"1\">\n<tr>\n<td>${user} =</td>\n<td>Get Selection From User</td>\n<td>Select user</td>\n<td>user1</td>\n<td>user2</td>\n<td>admin</td>\n</tr>\n</table>", "shortdoc": "Pauses execution and asks user to select a value.", "tags": [], "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Dialogs.py", "lineno": 86}, {"name": "Get Selections From User", "args": [{"name": "message", "types": [], "typedocs": {}, "defaultValue": null, "kind": "POSITIONAL_OR_NAMED", "required": true, "repr": "message"}, {"name": "values", "types": [], "typedocs": {}, "defaultValue": null, "kind": "VAR_POSITIONAL", "required": false, "repr": "*values"}], "doc": "<p>Pauses execution and asks user to select multiple values.</p>\n<p>The selected values are returned as a list. Selecting no values is OK and in that case the returned list is empty. Pressing <code>Cancel</code> fails the keyword.</p>\n<p><code>message</code> is the instruction shown in the dialog and <code>values</code> are the options given to the user.</p>\n<p>Example:</p>\n<table border=\"1\">\n<tr>\n<td>${users} =</td>\n<td>Get Selections From User</td>\n<td>Select users</td>\n<td>user1</td>\n<td>user2</td>\n<td>admin</td>\n</tr>\n</table>", "shortdoc": "Pauses execution and asks user to select multiple values.", "tags": [], "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Dialogs.py", "lineno": 100}, {"name": "Get Value From User", "args": [{"name": "message", "types": [], "typedocs": {}, "defaultValue": null, "kind": "POSITIONAL_OR_NAMED", "required": true, "repr": "message"}, {"name": "default_value", "types": [], "typedocs": {}, "defaultValue": "", "kind": "POSITIONAL_OR_NAMED", "required": false, "repr": "default_value="}, {"name": "hidden", "types": [], "typedocs": {}, "defaultValue": "False", "kind": "POSITIONAL_OR_NAMED", "required": false, "repr": "hidden=False"}], "doc": "<p>Pauses execution and asks user to input a value.</p>\n<p>Value typed by the user, or the possible default value, is returned. Returning an empty value is fine, but pressing <code>Cancel</code> fails the keyword.</p>\n<p><code>message</code> is the instruction shown in the dialog and <code>default_value</code> is the possible default value shown in the input field.</p>\n<p>If <code>hidden</code> is given a true value, the value typed by the user is hidden. <code>hidden</code> is considered true if it is a non-empty string not equal to <code>false</code>, <code>none</code> or <code>no</code>, case-insensitively. If it is not a string, its truth value is got directly using same <a href=\"http://docs.python.org/library/stdtypes.html#truth\">rules as in Python</a>.</p>\n<p>Example:</p>\n<table border=\"1\">\n<tr>\n<td>${username} =</td>\n<td>Get Value From User</td>\n<td>Input user name</td>\n<td>default</td>\n</tr>\n<tr>\n<td>${password} =</td>\n<td>Get Value From User</td>\n<td>Input password</td>\n<td>hidden=yes</td>\n</tr>\n</table>", "shortdoc": "Pauses execution and asks user to input a value.", "tags": [], "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Dialogs.py", "lineno": 63}, {"name": "Pause Execution", "args": [{"name": "message", "types": [], "typedocs": {}, "defaultValue": "Execution paused. Press OK to continue.", "kind": "POSITIONAL_OR_NAMED", "required": false, "repr": "message=Execution paused. Press OK to continue."}], "doc": "<p>Pauses execution until user clicks <code>Ok</code> button.</p>\n<p><code>message</code> is the message shown in the dialog.</p>", "shortdoc": "Pauses execution until user clicks ``Ok`` button.", "tags": [], "source": "/System/Volumes/Data/Source/robotframework/robotframework/src/robot/libraries/Dialogs.py", "lineno": 40}], "dataTypes": {"enums": [], "typedDicts": []}, "typedocs": []}
+libdoc = {"specversion": 1, "name": "Dialogs", "doc": "<p>A library providing dialogs for interacting with users.</p>\n<p><code>Dialogs</code> is Robot Framework's standard library that provides means for pausing the test or task execution and getting input from users.</p>\n<p>Long lines in the provided messages are wrapped automatically. If you want to wrap lines manually, you can add newlines using the <code>\\n</code> character sequence.</p>\n<p>The library has a known limitation that it cannot be used with timeouts.</p>", "version": "6.0", "generated": "2022-10-19T10:37:13+00:00", "type": "LIBRARY", "scope": "GLOBAL", "docFormat": "HTML", "source": "/home/peke/Devel/robotframework/src/robot/libraries/Dialogs.py", "lineno": 1, "tags": [], "inits": [], "keywords": [{"name": "Execute Manual Step", "args": [{"name": "message", "types": [], "typedocs": {}, "defaultValue": null, "kind": "POSITIONAL_OR_NAMED", "required": true, "repr": "message"}, {"name": "default_error", "types": [], "typedocs": {}, "defaultValue": "", "kind": "POSITIONAL_OR_NAMED", "required": false, "repr": "default_error="}], "doc": "<p>Pauses execution until user sets the keyword status.</p>\n<p>User can press either <code>PASS</code> or <code>FAIL</code> button. In the latter case execution fails and an additional dialog is opened for defining the error message.</p>\n<p><code>message</code> is the instruction shown in the initial dialog and <code>default_error</code> is the default value shown in the possible error message dialog.</p>", "shortdoc": "Pauses execution until user sets the keyword status.", "tags": [], "source": "/home/peke/Devel/robotframework/src/robot/libraries/Dialogs.py", "lineno": 48}, {"name": "Get Selection From User", "args": [{"name": "message", "types": [], "typedocs": {}, "defaultValue": null, "kind": "POSITIONAL_OR_NAMED", "required": true, "repr": "message"}, {"name": "values", "types": [], "typedocs": {}, "defaultValue": null, "kind": "VAR_POSITIONAL", "required": false, "repr": "*values"}], "doc": "<p>Pauses execution and asks user to select a value.</p>\n<p>The selected value is returned. Pressing <code>Cancel</code> fails the keyword.</p>\n<p><code>message</code> is the instruction shown in the dialog and <code>values</code> are the options given to the user.</p>\n<p>Example:</p>\n<table border=\"1\">\n<tr>\n<td>${user} =</td>\n<td>Get Selection From User</td>\n<td>Select user</td>\n<td>user1</td>\n<td>user2</td>\n<td>admin</td>\n</tr>\n</table>", "shortdoc": "Pauses execution and asks user to select a value.", "tags": [], "source": "/home/peke/Devel/robotframework/src/robot/libraries/Dialogs.py", "lineno": 86}, {"name": "Get Selections From User", "args": [{"name": "message", "types": [], "typedocs": {}, "defaultValue": null, "kind": "POSITIONAL_OR_NAMED", "required": true, "repr": "message"}, {"name": "values", "types": [], "typedocs": {}, "defaultValue": null, "kind": "VAR_POSITIONAL", "required": false, "repr": "*values"}], "doc": "<p>Pauses execution and asks user to select multiple values.</p>\n<p>The selected values are returned as a list. Selecting no values is OK and in that case the returned list is empty. Pressing <code>Cancel</code> fails the keyword.</p>\n<p><code>message</code> is the instruction shown in the dialog and <code>values</code> are the options given to the user.</p>\n<p>Example:</p>\n<table border=\"1\">\n<tr>\n<td>${users} =</td>\n<td>Get Selections From User</td>\n<td>Select users</td>\n<td>user1</td>\n<td>user2</td>\n<td>admin</td>\n</tr>\n</table>", "shortdoc": "Pauses execution and asks user to select multiple values.", "tags": [], "source": "/home/peke/Devel/robotframework/src/robot/libraries/Dialogs.py", "lineno": 100}, {"name": "Get Value From User", "args": [{"name": "message", "types": [], "typedocs": {}, "defaultValue": null, "kind": "POSITIONAL_OR_NAMED", "required": true, "repr": "message"}, {"name": "default_value", "types": [], "typedocs": {}, "defaultValue": "", "kind": "POSITIONAL_OR_NAMED", "required": false, "repr": "default_value="}, {"name": "hidden", "types": [], "typedocs": {}, "defaultValue": "False", "kind": "POSITIONAL_OR_NAMED", "required": false, "repr": "hidden=False"}], "doc": "<p>Pauses execution and asks user to input a value.</p>\n<p>Value typed by the user, or the possible default value, is returned. Returning an empty value is fine, but pressing <code>Cancel</code> fails the keyword.</p>\n<p><code>message</code> is the instruction shown in the dialog and <code>default_value</code> is the possible default value shown in the input field.</p>\n<p>If <code>hidden</code> is given a true value, the value typed by the user is hidden. <code>hidden</code> is considered true if it is a non-empty string not equal to <code>false</code>, <code>none</code> or <code>no</code>, case-insensitively. If it is not a string, its truth value is got directly using same <a href=\"http://docs.python.org/library/stdtypes.html#truth\">rules as in Python</a>.</p>\n<p>Example:</p>\n<table border=\"1\">\n<tr>\n<td>${username} =</td>\n<td>Get Value From User</td>\n<td>Input user name</td>\n<td>default</td>\n</tr>\n<tr>\n<td>${password} =</td>\n<td>Get Value From User</td>\n<td>Input password</td>\n<td>hidden=yes</td>\n</tr>\n</table>", "shortdoc": "Pauses execution and asks user to input a value.", "tags": [], "source": "/home/peke/Devel/robotframework/src/robot/libraries/Dialogs.py", "lineno": 63}, {"name": "Pause Execution", "args": [{"name": "message", "types": [], "typedocs": {}, "defaultValue": "Execution paused. Press OK to continue.", "kind": "POSITIONAL_OR_NAMED", "required": false, "repr": "message=Execution paused. Press OK to continue."}], "doc": "<p>Pauses execution until user clicks <code>Ok</code> button.</p>\n<p><code>message</code> is the message shown in the dialog.</p>", "shortdoc": "Pauses execution until user clicks ``Ok`` button.", "tags": [], "source": "/home/peke/Devel/robotframework/src/robot/libraries/Dialogs.py", "lineno": 40}], "dataTypes": {"enums": [], "typedDicts": []}, "typedocs": []}
 </script>
 <title></title>
 </head>
@@ -1221,7 +1219,7 @@ libdoc = {"name": "Dialogs", "doc": "<p>A library providing dialogs for interact
     }, false);
     window.addEventListener("hashchange", function() {
         if (window.location.hash.indexOf('#type-') == 0) {
-            const hash = '#' + decodeURI(window.location.hash.slice(6));
+            const hash = '#type-modal-' + decodeURI(window.location.hash.slice(6));
             const typeDoc = document.querySelector(".data-types").querySelector(hash);
             if (typeDoc) {
               showModal(typeDoc);
@@ -1236,6 +1234,7 @@ libdoc = {"name": "Dialogs", "doc": "<p>A library providing dialogs for interact
         parseTemplates();
         document.title = libdoc.name;
         storage.init('libdoc');
+        setTheme();
         renderTemplate('base', libdoc, $('body'));
         if (libdoc.inits.length) {
             libdoc.typedocs.map(function(type) {
@@ -1268,6 +1267,20 @@ libdoc = {"name": "Dialogs", "doc": "<p>A library providing dialogs for interact
       }, 0);
         createModal();
     });
+
+    function setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme || getTheme());
+    }
+
+    function getTheme() {
+        if (libdoc['theme']) {
+            return libdoc['theme'];
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return 'dark';
+        } else {
+            return 'light;'
+        }
+    }
 
     function parseTemplates() {
         $('script[type="text/x-jquery-tmpl"]').map(function (idx, elem) {
@@ -1742,7 +1755,7 @@ ${name}
   <span class="arg-type">
     {{each types}}
       {{if $value in $data.typedocs}}
-          &lt;<a style="cursor: pointer;" class="type" title="Click to show type information" onclick="showModal(${$data.typedocs[$value]})">${$value}</a>&gt;
+          &lt;<a style="cursor: pointer;" class="type" title="Click to show type information" onclick="showModal(document.querySelector('#type-modal-${$data.typedocs[$value]}'))">${$value}</a>&gt;
       {{else}}
           &lt;<span class="type">${$value}</span>&gt;
       {{/if}}
@@ -1765,7 +1778,7 @@ ${name}
 </script>
 
 <script type="text/x-jquery-tmpl" id="data-type-template">
-    <div class="data-type-container {{if hidden}}no-{{/if}}match" id="${name}">
+    <div class="data-type-container {{if hidden}}no-{{/if}}match" id="type-modal-${name}">
        <div class="data-type-name">
             <h2>${name} (${type})</h2>
        </div>
