@@ -100,7 +100,9 @@ taken into use using both module and class names, such as
 :name:`mymodule.MyLibrary` or :name:`parent.submodule.MyLib`.
 
 .. tip:: If the library name is really long, it is recommended to give
-         the library a simpler alias by using the `WITH NAME syntax`_.
+         the library a `simpler alias`__ by using `AS`.
+
+__ `Setting custom name to library`_
 
 Providing arguments to libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

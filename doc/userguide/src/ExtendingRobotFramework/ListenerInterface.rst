@@ -331,14 +331,14 @@ it. If that is needed, `listener version 3`_ can be used instead.
    | library_import   | name, attributes | Called when a library has been imported.                       |
    |                  |                  |                                                                |
    |                  |                  | `name` is the name of the imported library. If the library     |
-   |                  |                  | has been imported using the `WITH NAME syntax`_, `name` is     |
-   |                  |                  | the specified alias.                                           |
+   |                  |                  | has been given a custom name when imported it using `AS`,      |
+   |                  |                  | `name` is the specified alias.                                 |
    |                  |                  |                                                                |
    |                  |                  | Contents of the attribute dictionary:                          |
    |                  |                  |                                                                |
    |                  |                  | * `args`: Arguments passed to the library as a list.           |
-   |                  |                  | * `originalname`: The original library name when using the     |
-   |                  |                  |   WITH NAME syntax, otherwise same as `name`.                  |
+   |                  |                  | * `originalname`: The original library name if the library has |
+   |                  |                  |   been given an alias using `AS`, otherwise same as `name`.    |
    |                  |                  | * `source`: An absolute path to the library source. `None`     |
    |                  |                  |   if getting the                                               |
    |                  |                  |   source of the library failed for some reason.                |

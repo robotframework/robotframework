@@ -123,8 +123,8 @@ be in a module with the same name as the class`__.
 
 __ `Library name`_
 
-Setting custom name to test library
------------------------------------
+Setting custom name to library
+------------------------------
 
 The library name is shown in test logs before keyword names, and if
 multiple keywords have the same name, they must be used so that the

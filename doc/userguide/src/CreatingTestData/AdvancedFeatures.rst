@@ -56,8 +56,8 @@ from the OperatingSystem_ library could be used as
 :name:`OperatingSystem.Run`, even if there was another :name:`Run`
 keyword somewhere else. If the library is in a module or package, the
 full module or package name must be used (for example,
-:name:`com.company.Library.Some Keyword`). If a custom name is given
-to a library using the `WITH NAME syntax`_, the specified name must be
+:name:`com.company.Library.Some Keyword`). If a `custom name`__ is given
+to a library when importing it, the specified name must be
 used also in the full keyword name.
 
 Resource files are specified in the full keyword name, similarly as
@@ -69,6 +69,8 @@ work, if several resource files have the same basename. In such
 cases, either the files or the keywords must be renamed. The full name
 of the keyword is case-, space- and underscore-insensitive, similarly
 as normal keyword names.
+
+__ `Setting custom name to library`_
 
 .. _library search order:
 
