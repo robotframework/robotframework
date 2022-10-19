@@ -41,7 +41,7 @@ class Languages:
         :param add_english: If True, English is added automatically.
         :raises: :class:`~robot.errors.DataError` if a given language is not found.
 
-        :meth:`add.language` can be used to add languages after initialization.
+        :meth:`add_language` can be used to add languages after initialization.
         """
         self.languages = []
         self.headers = {}
