@@ -89,9 +89,9 @@ Options
                           terminology so that "test" is replaced with "task"
                           in logs and reports. By default the mode is got
                           from test/task header in data files.
-    --language lang *     Activate the specified language. `lang` can be a name
-                          or a code of a built-in language to active or a path
-                          or a module name of a custom language file.
+    --language lang *     Activate localization. `lang` can be a name or a code
+                          of a built-in language, or a path or a module name of
+                          a custom language file.
  -F --extension value     Parse only files with this extension when executing
                           a directory. Has no effect when running individual
                           files or when using resource files. If more than one
