@@ -103,7 +103,7 @@ class Settings:
 
     def _lex_setting(self, setting, values, name):
         self.settings[name] = values
-        # TODO: Change token type from 'FORCE TAGS' to 'TEST TAGS' in RF 5.2.
+        # TODO: Change token type from 'FORCE TAGS' to 'TEST TAGS' in RF 7.0.
         setting.type = name.upper() if name != 'Test Tags' else 'FORCE TAGS'
         if name in self.name_and_arguments:
             self._lex_name_and_arguments(values)

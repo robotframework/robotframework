@@ -40,7 +40,7 @@ from robot.variables import (evaluate_expression, is_dict_variable,
 from robot.version import get_version
 
 
-# FIXME: Clean-up registering run keyword variants in RF 5!
+# FIXME: Clean-up registering run keyword variants!
 # https://github.com/robotframework/robotframework/issues/2190
 
 def run_keyword_variant(resolve, dry_run=False):
@@ -3001,7 +3001,7 @@ class _Misc(_BuiltInBase):
 
         Formatter options ``type`` and ``log`` are new in Robot Framework 5.0.
         """
-        # TODO: Remove `repr` altogether in RF 5.2. It was deprecated in RF 5.0.
+        # TODO: Remove `repr` altogether in RF 7.0. It was deprecated in RF 5.0.
         if repr == 'DEPRECATED':
             formatter = self._get_formatter(formatter)
         else:
