@@ -46,7 +46,7 @@ Keyword can be used with and without prefix
     Should Be Equal  ${tc.kws[5].name}  Then we are in Berlin city
     Should Be Equal  ${tc.kws[6].name}  we are in Berlin city
 
-In user keyword name with normal arguments and localized prefixes
+Localized prefixes
     ${tc} =  Check Test Case  ${TEST NAME}
     Should Be Equal  ${tc.kws[0].name}  Oletetaan we don't drink too many beers
     Should Be Equal  ${tc.kws[1].name}  Kun we are in
@@ -54,6 +54,16 @@ In user keyword name with normal arguments and localized prefixes
     Should Be Equal  ${tc.kws[3].name}  Ja time
     Should Be Equal  ${tc.kws[4].name}  Niin we get this feature ready today
     Should Be Equal  ${tc.kws[5].name}  ja we don't drink too many beers
+
+Prefix consisting of multiple words
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Should Be Equal  ${tc.kws[0].name}  Étant donné multipart prefixes didn't work with RF 6.0
+    Should Be Equal  ${tc.kws[1].name}  Zakładając, że multipart prefixes didn't work with RF 6.0
+    Should Be Equal  ${tc.kws[2].name}  Diyelim ki multipart prefixes didn't work with RF 6.0
+    Should Be Equal  ${tc.kws[3].name}  Eğer ki multipart prefixes didn't work with RF 6.0
+    Should Be Equal  ${tc.kws[4].name}  O zaman multipart prefixes didn't work with RF 6.0
+    Should Be Equal  ${tc.kws[5].name}  В случай че multipart prefixes didn't work with RF 6.0
+    Should Be Equal  ${tc.kws[6].name}  Fie ca multipart prefixes didn't work with RF 6.0
 
 Prefix must be followed by space
     Check Test Case  ${TEST NAME}

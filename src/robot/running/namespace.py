@@ -295,20 +295,19 @@ class KeywordStore:
         if not runner:
             runner = self._get_implicit_runner(name)
         if not runner:
-            runner = self._get_bdd_style_runner(name)
+            runner = self._get_bdd_style_runner(name, self.languages.bdd_prefixes)
         return runner
 
-    def _get_bdd_style_runner(self, name):
-        parts = name.split(maxsplit=1)
-        if len(parts) < 2:
-            return None
-        prefix, keyword = parts
-        if prefix.title() in self.languages.bdd_prefixes:
-            runner = self._get_runner(keyword)
-            if runner:
-                runner = copy.copy(runner)
-                runner.name = name
-                return runner
+    def _get_bdd_style_runner(self, name, prefixes):
+        parts = name.split()
+        for index in range(1, len(parts)):
+            prefix = ' '.join(parts[:index]).title()
+            if prefix in prefixes:
+                runner = self._get_runner(' '.join(parts[index:]))
+                if runner:
+                    runner = copy.copy(runner)
+                    runner.name = name
+                    return runner
         return None
 
     def _get_implicit_runner(self, name):
