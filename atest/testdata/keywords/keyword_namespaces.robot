@@ -73,6 +73,18 @@ Keyword From Custom Library Overrides Keywords From Standard Library
     Comment
     Copy Directory
 
+Search order can give presedence to standard library keyword over custom keyword
+    Set Library Search Order    BuiltIn
+    Comment    Used from BuiltIn
+    Copy Directory
+    [Teardown]    Set Library Search Order
+
+Search order can give presedence to custom keyword over standard library keyword
+    Set Library Search Order    MyLibrary1
+    Comment
+    Copy Directory
+    [Teardown]    Set Library Search Order
+
 Keyword From Custom Library Overrides Keywords From Standard Library Even When Std Lib Imported With Different Name
     ${ret} =    Replace String
     Should Be Equal    ${ret}    I replace nothing!

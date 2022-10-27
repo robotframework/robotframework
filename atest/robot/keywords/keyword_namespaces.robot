@@ -46,12 +46,24 @@ Local keyword in resource file has precedence even if search order is set
 
 Keyword From Custom Library Overrides Keywords From Standard Library
     ${tc} =    Check Test Case    ${TEST NAME}
-    Verify Override Message    ${ERRORS}[2]    ${tc.kws[0].msgs[0]}    Comment    BuiltIn
-    Verify Override Message    ${ERRORS}[3]    ${tc.kws[1].msgs[0]}    Copy Directory    OperatingSystem
+    Verify Override Message    ${ERRORS}[2]    ${tc.kws[0]}    Comment    BuiltIn
+    Verify Override Message    ${ERRORS}[3]    ${tc.kws[1]}    Copy Directory    OperatingSystem
+
+Search order can give presedence to standard library keyword over custom keyword
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Keyword Data         ${tc.kws[1]}    BuiltIn.Comment    args=Used from BuiltIn
+    Verify Override Message    ${ERRORS}[4]    ${tc.kws[2]}    Copy Directory    OperatingSystem
+
+Search order can give presedence to custom keyword over standard library keyword
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Keyword Data    ${tc.kws[1]}           MyLibrary1.Comment
+    Check Log Message     ${tc.kws[1].msgs[0]}   Overrides keyword from BuiltIn library
+    Check Keyword Data    ${tc.kws[2]}           MyLibrary1.Copy Directory
+    Check Log Message     ${tc.kws[2].msgs[0]}   Overrides keyword from OperatingSystem library
 
 Keyword From Custom Library Overrides Keywords From Standard Library Even When Std Lib Imported With Different Name
     ${tc} =    Check Test Case    ${TEST NAME}
-    Verify Override Message    ${ERRORS}[4]    ${tc.kws[0].msgs[0]}    Replace String
+    Verify Override Message    ${ERRORS}[5]    ${tc.kws[0]}    Replace String
     ...    String    MyLibrary2    Std With Name    My With Name
 
 No Warning When Custom Library Keyword Is Registered As RunKeyword Variant And It Has Same Name As Std Keyword
@@ -71,16 +83,17 @@ Keywords are first searched from test case file even if they contain dot
 
 *** Keywords ***
 Verify override message
-    [Arguments]    ${error msg}    ${kw msg}    ${kw}    ${standard}    ${custom}=MyLibrary1
+    [Arguments]    ${error msg}    ${kw}    ${name}    ${standard}    ${custom}=MyLibrary1
     ...    ${std with name}=    ${ctm with name}=
     ${std imported as} =    Set Variable If    "${std with name}"    ${SPACE}imported as '${std with name}'    ${EMPTY}
     ${ctm imported as} =    Set Variable If    "${ctm with name}"    ${SPACE}imported as '${ctm with name}'    ${EMPTY}
     ${std long} =    Set Variable If    "${std with name}"    ${std with name}    ${standard}
     ${ctm long} =    Set Variable If    "${ctm with name}"    ${ctm with name}    ${custom}
     ${expected} =    Catenate
-    ...    Keyword '${kw}' found both from a custom library '${custom}'${ctm imported as}
+    ...    Keyword '${name}' found both from a custom library '${custom}'${ctm imported as}
     ...    and a standard library '${standard}'${std imported as}. The custom keyword is used.
-    ...    To select explicitly, and to get rid of this warning, use either '${ctm long}.${kw}'
-    ...    or '${std long}.${kw}'.
+    ...    To select explicitly, and to get rid of this warning, use either '${ctm long}.${name}'
+    ...    or '${std long}.${name}'.
     Check Log Message    ${error msg}    ${expected}    WARN
-    Check Log Message    ${kw msg}    ${expected}    WARN
+    Check Log Message    ${kw.msgs[0]}    ${expected}    WARN
+    Check Log Message    ${kw.msgs[1]}    Overrides keyword from ${standard} library

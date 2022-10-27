@@ -390,9 +390,9 @@ class KeywordStore:
         if len(handlers) > 1:
             handlers = self._select_best_matches(handlers)
             if len(handlers) > 1:
-                handlers, pre_run_message = self._filter_stdlib_handler(handlers)
+                handlers = self._filter_based_on_search_order(handlers)
                 if len(handlers) > 1:
-                    handlers = self._filter_based_on_search_order(handlers)
+                    handlers, pre_run_message = self._filter_stdlib_handler(handlers)
         if len(handlers) != 1:
             self._raise_multiple_keywords_found(handlers, name)
         runner = handlers[0].create_runner(name, self.languages)
