@@ -27,8 +27,32 @@ RESOURCE_EXTENSIONS = ('resource', 'robot', 'txt', 'tsv', 'rst', 'rest')
 XML_EXTENSIONS = ('xml', 'libspec')
 
 
-def LibraryDocumentation(library_or_resource, name=None, version=None,
-                         doc_format=None):
+def LibraryDocumentation(library_or_resource, name=None, version=None, doc_format=None):
+    """Generate keyword documentation for the given library, resource or suite file.
+
+    :param library_or_resource:
+        Name or path of the library, or path of a resource or a suite file.
+    :param name:
+        Set name with the given value.
+    :param version:
+        Set version to the given value.
+    :param doc_format:
+        Set documentation format to the given value.
+    :return:
+        :class:`~.model.LibraryDoc` instance.
+
+    This factory method is the recommended API to generate keyword documentation
+    programmatically. It should be imported via the :mod:`robot.libdoc` module.
+
+    Example::
+
+        from robot.libdoc import LibraryDocumentation
+
+        lib = LibraryDocumentation('OperatingSystem')
+        print(lib.name, lib.version)
+        for kw in lib.keywords:
+            print(kw.name)
+    """
     builder = DocumentationBuilder(library_or_resource)
     libdoc = _build(builder, library_or_resource)
     if name:

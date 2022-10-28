@@ -23,10 +23,12 @@ approaches::
     python -m robot.libdoc
     python path/to/robot/libdoc.py
 
-Instead of ``python`` it is possible to use also other Python interpreters.
+This module also exposes the following public API:
 
-This module also provides :func:`libdoc` and :func:`libdoc_cli` functions
-that can be used programmatically. Other code is for internal usage.
+- :func:`libdoc_cli` function for simple command line tools.
+- :func:`libdoc` function as a high level programmatic API.
+- :func:`~robot.libdocpkg.builder.LibraryDocumentation` as the API to generate
+  :class:`~robot.libdocpkg.model.LibraryDoc` instances.
 
 Libdoc itself is implemented in the :mod:`~robot.libdocpkg` package.
 """
@@ -255,7 +257,7 @@ def libdoc(library_or_resource, outfile, name='', version='', format=None,
 
     :param library_or_resource: Name or path of the library or resource
         file to be documented.
-    :param outfile: Path path to the file where to write outputs.
+    :param outfile: Path to the file where to write outputs.
     :param name: Custom name to give to the documented library or resource.
     :param version: Version to give to the documented library or resource.
     :param format: Specifies whether to generate HTML, XML or JSON output.

@@ -27,6 +27,7 @@ from .output import LibdocOutput, get_generation_time
 
 
 class LibraryDoc:
+    """Documentation for a library, a resource file or a suite file."""
 
     def __init__(self, name='', doc='', version='', type='LIBRARY', scope='TEST',
                  doc_format='ROBOT', source=None, lineno=-1):
@@ -67,10 +68,12 @@ class LibraryDoc:
 
     @setter
     def inits(self, inits):
+        """Initializer docs as :class:`~KeywordDoc` instances."""
         return self._process_keywords(inits)
 
     @setter
     def keywords(self, kws):
+        """Keyword docs as :class:`~KeywordDoc` instances."""
         return self._process_keywords(kws)
 
     @setter
@@ -146,6 +149,7 @@ class LibraryDoc:
 
 
 class KeywordDoc(Sortable):
+    """Documentation for a single keyword or an initializer."""
 
     def __init__(self, name='', args=None, doc='', shortdoc='', tags=(), private=False,
                  deprecated=False, source=None, lineno=-1, parent=None):

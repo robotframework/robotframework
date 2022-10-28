@@ -43,6 +43,10 @@ class TestLibdoc(unittest.TestCase):
         with open(output) as f:
             assert '"name": "String"' in f.read()
 
+    def test_LibraryDocumentation(self):
+        doc = libdoc.LibraryDocumentation('OperatingSystem')
+        assert_equal(doc.name, 'OperatingSystem')
+
 
 if __name__ == '__main__':
     unittest.main()
