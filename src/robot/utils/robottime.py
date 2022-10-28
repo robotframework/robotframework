@@ -15,6 +15,7 @@
 
 import re
 import time
+from datetime import timedelta
 
 from .normalizing import normalize
 from .misc import plural_or_not
@@ -39,7 +40,16 @@ def _float_secs_to_secs_and_millis(secs):
 
 
 def timestr_to_secs(timestr, round_to=3, accept_plain_values=True):
-    """Parses time like '1h 10s', '01:00:10' or '42' and returns seconds."""
+    """Parses time strings like '1h 10s', '01:00:10' and '42' and returns seconds.
+
+    Time can also be given as an integer or float or, starting from RF 6.0.1,
+    as a `timedelta` instance.
+
+    The result is rounded according to the `round_to` argument.
+    Use `round_to=None` to disable rounding altogether.
+
+    `accept_plain_values` is considered deprecated and should not be used.
+    """
     if is_string(timestr) or is_number(timestr):
         if accept_plain_values:
             converters = [_number_to_secs, _timer_to_secs, _time_string_to_secs]
@@ -49,6 +59,8 @@ def timestr_to_secs(timestr, round_to=3, accept_plain_values=True):
             secs = converter(timestr)
             if secs is not None:
                 return secs if round_to is None else round(secs, round_to)
+    if isinstance(timestr, timedelta):
+        return timestr.total_seconds()
     raise ValueError("Invalid time string '%s'." % timestr)
 
 

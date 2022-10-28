@@ -1,7 +1,7 @@
 import unittest
 import re
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from robot.utils.asserts import (assert_equal, assert_raises_with_msg,
                                  assert_true, assert_not_none)
@@ -153,6 +153,10 @@ class TestTime(unittest.TestCase):
                 inp += '.500'
                 exp += 0.5 if inp[0] != '-' else -0.5
                 assert_equal(timestr_to_secs(inp), exp, inp)
+
+    def test_timestr_to_secs_with_timedelta(self):
+        assert_equal(timestr_to_secs(timedelta(minutes=1)), 60)
+        assert_equal(timestr_to_secs(timedelta(microseconds=1000)), 0.001)
 
     def test_timestr_to_secs_custom_rounding(self):
         secs = 0.123456789
