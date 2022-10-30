@@ -340,13 +340,17 @@ class TestTime(unittest.TestCase):
                                 ('now - 1 day 100 seconds', -86500),
                                 ('now + 1day 10hours 1minute 10secs', 122470),
                                 ('NOW - 1D 10H 1MIN 10S', -122470)]:
-            expected = get_time('epoch') + adjusted
+            now = int(time.time())
             parsed = parse_time(input)
-            assert_true(expected <= parsed <= expected + 1),
+            expected = now + adjusted
+            if time.localtime(now).tm_isdst is not time.localtime(expected).tm_isdst:
+                dst_diff = time.timezone - time.altzone
+                expected += dst_diff if time.localtime(now).tm_isdst else -dst_diff
+            assert_true(expected - parsed < 0.1)
             parsed = parse_time(input.upper().replace('NOW', 'UtC'))
-            zone = time.altzone if time.localtime().tm_isdst else time.timezone
+            zone = time.altzone if time.localtime(now).tm_isdst else time.timezone
             expected += zone
-            assert_true(expected <= parsed <= expected + 1)
+            assert_true(expected - parsed < 0.1)
 
     def test_get_time_with_zero(self):
         assert_equal(get_time('epoch', 0), 0)
