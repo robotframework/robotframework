@@ -44,13 +44,12 @@ class EmbeddedArguments:
     def validate(self, values):
         # Validating that embedded args match custom regexps also if args are
         # given as variables was initially implemented in RF 6.0. It needed
-        # to be reverted due to backwards incompatibility reasons:
+        # to be reverted due to backwards incompatibility reasons but the plan
+        # is to enable it again in RF 7.0:
         # https://github.com/robotframework/robotframework/issues/4069
         #
-        # We hopefully can add validation back in RF 5.2 or 6.0. A precondition
-        # is implementing better approach to handle conflicts with keywords
-        # using embedded arguments:
-        # https://github.com/robotframework/robotframework/issues/4454
+        # TODO: Emit deprecation warnings if patterns don't match in RF 6.1:
+        # https://github.com/robotframework/robotframework/issues/4524
         #
         # Because the plan is to add validation back, the code was not removed
         # but the `ENABLE_STRICT_ARGUMENT_VALIDATION` guard was added instead.
@@ -65,7 +64,7 @@ class EmbeddedArguments:
         for arg, value in zip(self.args, values):
             if arg in self.custom_patterns and is_string(value):
                 pattern = self.custom_patterns[arg]
-                if not re.match(pattern + '$', value):
+                if not re.fullmatch(pattern, value):
                     raise ValueError(f"Embedded argument '{arg}' got value '{value}' "
                                      f"that does not match custom pattern '{pattern}'.")
 

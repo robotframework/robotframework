@@ -566,7 +566,7 @@ def deprecate_tags_starting_with_hyphen(node, source):
             LOGGER.warn(
                 f"Error in file '{source}' on line {node.lineno}: "
                 f"Settings tags starting with a hyphen using the '[Tags]' setting "
-                f"is deprecated. In Robot Framework 5.2 this syntax will be used "
+                f"is deprecated. In Robot Framework 6.1 this syntax will be used "
                 f"for removing tags. Escape '{tag}' like '\\{tag}' to use the "
                 f"literal value and to avoid this warning."
             )

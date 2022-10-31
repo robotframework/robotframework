@@ -31,6 +31,6 @@ Check Deprecation Warning
     [Arguments]    ${index}    ${source}    ${lineno}    ${tag}
     Error in file    ${index}    ${source}    ${lineno}
     ...    Settings tags starting with a hyphen using the '[Tags]' setting is deprecated.
-    ...    In Robot Framework 5.2 this syntax will be used for removing tags.
+    ...    In Robot Framework 6.1 this syntax will be used for removing tags.
     ...    Escape '${tag}' like '\\${tag}' to use the literal value and to avoid this warning.
     ...    level=WARN    pattern=False

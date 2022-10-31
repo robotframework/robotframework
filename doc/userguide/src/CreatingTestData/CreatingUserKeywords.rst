@@ -195,7 +195,7 @@ activating the special functionality.
           versions all keyword tags need to be specified using the
           :setting:`[Tags]` setting.
 
-.. note:: Robot Framework 5.2 will support `removing globally set tags`__ using
+.. note:: Robot Framework 6.1 will support `removing globally set tags`__ using
           the `-tag` syntax with the :setting:`[Tags]` setting. Creating tags
           with literal value like `-tag` `is deprecated`__ in Robot Framework 6.0
           and escaped__ syntax `\-tag` must be used if such tags are actually

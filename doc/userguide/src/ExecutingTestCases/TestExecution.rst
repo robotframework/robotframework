@@ -621,7 +621,6 @@ using signals `INT` and `TERM`. These signals can be sent
 from the command line using ``kill`` command, and sending signals can
 also be easily automated.
 
-
 Using keywords
 ~~~~~~~~~~~~~~
 

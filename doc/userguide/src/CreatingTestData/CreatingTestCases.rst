@@ -677,10 +677,10 @@ using two different settings:
 
 Both of these settings still work, but they are considered deprecated.
 A visible deprecation warning will be added in the future, most likely
-in Robot Framework 6.0, and eventually these settings will be removed.
+in Robot Framework 7.0, and eventually these settings will be removed.
 Tools like Tidy__ can be used to ease transition.
 
-Robot Framework 5.2 will introduce a new way for tests to indicate they
+Robot Framework 6.1 will introduce a new way for tests to indicate they
 `should not get certain globally specified tags`__. Instead of using a separate
 setting that tests can override, tests can use syntax `-tag` with their
 :setting:`[Tags]` setting to tell they should not get a tag named `tag`.
@@ -689,7 +689,7 @@ This syntax *does not* yet work in Robot Framework 6.0, but using
 If such tags are needed, they can be set using :setting:`Test Tags` or
 escaped__ syntax `\-tag` can be used with :setting:`[Tags]`.
 
-__ https://robotidy.readthedocs.io/
+__ https://robotidy.readthedocs.io
 __ https://github.com/robotframework/robotframework/issues/4374
 __ https://github.com/robotframework/robotframework/issues/4380
 __ escaping_
