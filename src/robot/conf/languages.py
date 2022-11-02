@@ -737,6 +737,8 @@ class Pl(Language):
     then_prefixes = ['Wtedy']
     and_prefixes = ['Oraz', 'I']
     but_prefixes = ['Ale']
+    true_strings = ['Prawda', 'Tak', 'Włączone']
+    false_strings = ['Fałsz', 'Nie', 'Wyłączone', 'Nic']
 
 
 class Uk(Language):
