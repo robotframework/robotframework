@@ -24,9 +24,10 @@ from robot.result import (For as ForResult, While as WhileResult, If as IfResult
                           IfBranch as IfBranchResult, Try as TryResult,
                           TryBranch as TryBranchResult)
 from robot.output import librarylogger as logger
-from robot.utils import (cut_assign_value, frange, get_error_message, is_string,
-                         is_list_like, is_number, plural_or_not as s, seq2str,
-                         split_from_equals, type_name, Matcher, timestr_to_secs)
+from robot.utils import (cut_assign_value, frange, get_error_message, get_timestamp,
+                         is_string, is_list_like, is_number, plural_or_not as s,
+                         seq2str, split_from_equals, type_name, Matcher,
+                         timestr_to_secs)
 from robot.variables import is_dict_variable, evaluate_expression
 
 from .statusreporter import StatusReporter
@@ -340,6 +341,8 @@ class WhileRunner:
         error = None
         run = False
         limit = None
+        loop_result = WhileResult(data.condition, data.limit, starttime=get_timestamp())
+        iter_result = loop_result.body.create_iteration(starttime=get_timestamp())
         if self._run:
             if data.error:
                 error = DataError(data.error, syntax=True)
@@ -349,10 +352,9 @@ class WhileRunner:
                     run = self._should_run(data.condition, ctx.variables)
                 except DataError as err:
                     error = err
-        result = WhileResult(data.condition, data.limit)
-        with StatusReporter(data, result, self._context, run):
+        with StatusReporter(data, loop_result, self._context, run):
             if ctx.dry_run or not run:
-                self._run_iteration(data, result, run)
+                self._run_iteration(data, iter_result, run)
                 if error:
                     raise error
                 return
@@ -360,7 +362,7 @@ class WhileRunner:
             while True:
                 try:
                     with limit:
-                        self._run_iteration(data, result)
+                        self._run_iteration(data, iter_result)
                 except (BreakLoop, ContinueLoop) as ctrl:
                     if ctrl.earlier_failures:
                         errors.extend(ctrl.earlier_failures.get_errors())
@@ -373,6 +375,7 @@ class WhileRunner:
                     errors.extend(failed.get_errors())
                     if not failed.can_continue(ctx, self._templated):
                         break
+                iter_result = loop_result.body.create_iteration(starttime=get_timestamp())
                 if not self._should_run(data.condition, ctx.variables):
                     break
             if errors:
@@ -380,7 +383,7 @@ class WhileRunner:
 
     def _run_iteration(self, data, result, run=True):
         runner = BodyRunner(self._context, run, self._templated)
-        with StatusReporter(data, result.body.create_iteration(), self._context, run):
+        with StatusReporter(data, result, self._context, run):
             runner.run(data.body)
 
     def _should_run(self, condition, variables):
@@ -432,7 +435,7 @@ class IfRunner:
 
     def _run_if_branch(self, branch, recursive_dry_run=False, syntax_error=None):
         context = self._context
-        result = IfBranchResult(branch.type, branch.condition)
+        result = IfBranchResult(branch.type, branch.condition, starttime=get_timestamp())
         error = None
         if syntax_error:
             run_branch = False

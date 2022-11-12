@@ -44,3 +44,8 @@ Loop fails in keyword
 
 With RETURN
     Check While Loop    PASS    1    path=body[0].body[0]
+
+Condition evaluation time is included in elapsed time
+    ${loop} =    Check WHILE loop    PASS    1
+    Should Be True    ${loop.elapsedtime} >= 200
+    Should Be True    ${loop.body[0].elapsedtime} >= 100

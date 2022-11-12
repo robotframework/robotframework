@@ -38,7 +38,8 @@ class StatusReporter:
         context = self.context
         result = self.result
         self.initial_test_status = context.test.status if context.test else None
-        result.starttime = get_timestamp()
+        if not result.starttime:
+            result.starttime = get_timestamp()
         context.start_keyword(ModelCombiner(self.data, result))
         self._warn_if_deprecated(result.doc, result.name)
         return self

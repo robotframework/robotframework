@@ -104,6 +104,11 @@ Loop fails in keyword
 With RETURN
     While with RETURN
 
+Condition evaluation time is included in elapsed time
+    WHILE    ${{time.sleep(0.1)}} or ${variable}
+        ${variable}=    Evaluate    $variable - 1
+    END
+
 *** Keywords ***
 While keyword
     WHILE    $variable < 4

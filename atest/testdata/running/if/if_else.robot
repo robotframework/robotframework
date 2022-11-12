@@ -66,6 +66,15 @@ If failing in else keyword
     [Documentation]    FAIL expected
     Failing else keyword
 
+Expression evaluation time is included in elapsed time
+    IF    ${{time.sleep(0.1)}}
+        Fail    Not run
+    ELSE IF    ${{time.sleep(0.1)}} is None
+        Log    Run
+    ELSE IF    ${{time.sleep(1)}} is None
+        Fail     Not run
+    END
+
 *** Keywords ***
 Passing if keyword
     IF    ${1}
