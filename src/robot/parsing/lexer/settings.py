@@ -77,11 +77,11 @@ class Settings:
             message = self._get_non_existing_setting_message(orig, name)
             raise ValueError(message)
         if self.settings[name] is not None and name not in self.multi_use:
-            raise ValueError("Setting '%s' is allowed only once. "
-                             "Only the first value is used." % orig)
+            raise ValueError(f"Setting '{orig}' is allowed only once. "
+                             f"Only the first value is used.")
         if name in self.single_value and len(statement) > 2:
-            raise ValueError("Setting '%s' accepts only one value, got %s."
-                             % (orig, len(statement) - 1))
+            raise ValueError(f"Setting '{orig}' accepts only one value, "
+                             f"got {len(statement)-1}.")
 
     def _get_non_existing_setting_message(self, name, normalized):
         if normalized in (set(TestCaseFileSettings.names) |
@@ -93,7 +93,7 @@ class Settings:
         return RecommendationFinder(normalize).find_and_format(
             name=normalized,
             candidates=tuple(self.settings) + tuple(self.aliases),
-            message="Non-existing setting '%s'." % name
+            message=f"Non-existing setting '{name}'."
         )
 
     def _lex_error(self, setting, values, error):
