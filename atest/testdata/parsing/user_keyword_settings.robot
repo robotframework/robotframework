@@ -1,7 +1,7 @@
-*** Variable ***
+*** Variables ***
 ${VERSION}      1.2
 
-*** Test Case ***
+*** Test Cases ***
 Normal name
     Normal name
 
@@ -91,7 +91,7 @@ Invalid setting
 Small typo should provide recommendation
     Small typo should provide recommendation
 
-*** Keyword ***
+*** Keywords ***
 Normal name
     No Operation
 

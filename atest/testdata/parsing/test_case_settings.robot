@@ -1,12 +1,12 @@
-*** Setting ***
+*** Settings ***
 Test Setup        Log    Default setup
 Test Teardown     Log    Default teardown    INFO
 Force Tags        \    force-1       # Empty tags should be ignored
 Default Tags      @{DEFAULT TAGS}    \    default-3
 Test Timeout      ${TIMEOUT} milliseconds
 
-*** Variable ***
-${VARIABLE}           variable
+*** Variables ***
+${VARIABLE}           variable
 ${DOC VERSION}        1.2
 @{DEFAULT TAGS}       default-1    default-2    # default-3 added separately
 ${TAG BASE}           test
@@ -14,7 +14,7 @@ ${TAG BASE}           test
 ${LOG}                Log
 ${TIMEOUT}            99999
 
-*** Test Case ***
+*** Test Cases ***
 Normal name
     No Operation
 
