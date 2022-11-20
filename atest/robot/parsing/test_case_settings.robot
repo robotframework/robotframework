@@ -179,9 +179,17 @@ Invalid setting
     Error In File    1    parsing/test_case_settings.robot    217
     ...    Non-existing setting 'Invalid'.
 
+Setting not valid with tests
+    Check Test Case    ${TEST NAME}
+    Error In File    2    parsing/test_case_settings.robot    221
+    ...    Setting 'Metadata' is not allowed with tests or tasks.
+    Check Test Case    ${TEST NAME}
+    Error In File    3    parsing/test_case_settings.robot    222
+    ...    Setting 'Arguments' is not allowed with tests or tasks.
+
 Small typo should provide recommendation
     Check Test Doc    ${TEST NAME}
-    Error In File    2    parsing/test_case_settings.robot    221
+    Error In File    4    parsing/test_case_settings.robot    226
     ...    SEPARATOR=\n
     ...    Non-existing setting 'Doc U ment a tion'. Did you mean:
     ...    ${SPACE*4}Documentation

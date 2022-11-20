@@ -217,6 +217,11 @@ Invalid setting
     [Invalid]    This is invalid
     No Operation
 
+Setting not valid with tests
+    [Metadata]    Not valid.
+    [Arguments]    Not valid.
+    No Operation
+
 Small typo should provide recommendation
     [Doc U ment a tion]    This actually worked before RF 3.2.
     No Operation

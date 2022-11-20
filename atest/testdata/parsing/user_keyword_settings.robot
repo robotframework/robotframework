@@ -88,6 +88,9 @@ Invalid setting
     Invalid passing
     Invalid failing
 
+Setting not valid with user keywords
+    Setting not valid with user keywords
+
 Small typo should provide recommendation
     Small typo should provide recommendation
 
@@ -198,6 +201,11 @@ Invalid passing
 Invalid failing
     [invalid]    Yes, this is also invalid
     Fail    Keywords are executed regardless invalid settings
+
+Setting not valid with user keywords
+    [Metadata]    Not valid.
+    [Template]    Not valid.
+    No Operation
 
 Small typo should provide recommendation
     [Doc Umentation]
