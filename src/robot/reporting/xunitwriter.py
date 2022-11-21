@@ -63,6 +63,7 @@ class XUnitFileWriter(ResultVisitor):
         self._writer.start('testcase',
                            {'classname': test.parent.longname,
                             'name': test.name,
+                            'file': test.source,
                             'time': self._time_as_seconds(test.elapsedtime)})
         if test.failed:
             self._writer.element('failure', attrs={'message': test.message,
