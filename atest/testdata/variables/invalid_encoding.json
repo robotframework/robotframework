@@ -1,0 +1,5 @@
+{
+  "encoding": "latin-1",
+  "expected": "utf-8",
+  "non-ascii": "hyvää yötä!"
+}
