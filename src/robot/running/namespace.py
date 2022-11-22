@@ -37,7 +37,7 @@ IMPORTER = Importer()
 class Namespace:
     _default_libraries = ('BuiltIn', 'Reserved', 'Easter')
     _library_import_by_path_ends = ('.py', '/', os.sep)
-    _variables_import_by_path_ends = _library_import_by_path_ends + ('.yaml', '.yml')
+    _variables_import_by_path_ends = _library_import_by_path_ends + ('.yaml', '.yml') + ('.json',)
 
     def __init__(self, variables, suite, resource, languages):
         LOGGER.info(f"Initializing namespace for suite '{suite.longname}'.")
