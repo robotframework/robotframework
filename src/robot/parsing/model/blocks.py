@@ -342,6 +342,10 @@ class While(Block):
     def limit(self):
         return self.header.limit
 
+    @property
+    def limit_exceed_message(self):
+        return self.header.limit_exceed_message
+
     def validate(self, context):
         if self._body_is_empty():
             self.errors += ('WHILE loop cannot be empty.',)

@@ -298,6 +298,11 @@ class WhileHeaderLexer(StatementLexer):
             token.type = Token.ARGUMENT
         if self.statement[-1].value.startswith('limit='):
             self.statement[-1].type = Token.OPTION
+        if len(self.statement) > 3:
+            if self.statement[-2].value.startswith('limit='):
+                self.statement[-2].type = Token.OPTION
+            if self.statement[-1].value.startswith('limit_exceed_message='):
+                self.statement[-1].type = Token.OPTION
 
 
 class EndLexer(TypeAndArguments):
