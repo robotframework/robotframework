@@ -7,7 +7,7 @@ No condition
 
 Multiple conditions
     [Documentation]    FAIL WHILE cannot have more than one condition.
-    WHILE    Too    many    !
+    WHILE    Too    many    conditions    !
         Fail    Not executed!
     END
 
