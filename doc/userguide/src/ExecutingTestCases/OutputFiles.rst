@@ -194,32 +194,31 @@ Example::
 Setting background colors
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default the `report file`_ has a green background when all the
-tests pass, yellow background when all the test have been skipped and
-a red background if there are any test failrues. These colors
-can be customized by using the :option:`--reportbackground` command line
-option, which takes two or three colors separated with a colon as an
-argument::
+By default the `report file`_ has red background if there are failures,
+green background if there are passed tests and possibly some skipped ones,
+and a yellow background if all tests are skipped or no tests have been run.
+These colors can be customized by using the :option:`--reportbackground`
+command line option, which takes two or three colors separated with a colon
+as an argument::
 
    --reportbackground blue:red
-   --reportbackground green:yellow:red
+   --reportbackground blue:red:orange
    --reportbackground #00E:#E00
 
 If you specify two colors, the first one will be used instead of the
-default green color and the second instead of the default red. This
-allows, for example, using blue instead of green to make backgrounds
+default green (pass) color and the second instead of the default red (fail).
+This allows, for example, using blue instead of green to make backgrounds
 easier to separate for color blind people.
 
-If you specify three colors, the first one will be used when all the
-tests pass, the second when all tests have been skipped, and
-the last when there are any failures.
+If you specify three colors, the first two have same semantics as earlier
+and the last one replaces the default yellow (skip) color.
 
 The specified colors are used as a value for the `body`
 element's `background` CSS property. The value is used as-is and
 can be a HTML color name (e.g. `red`), a hexadecimal value
 (e.g. `#f00` or `#ff0000`), or an RGB value
-(e.g. `rgb(255,0,0)`). The default green and red colors are
-specified using hexadecimal values `#9e9` and `#f66`,
+(e.g. `rgb(255,0,0)`). The default green, red and yellow colors are
+specified using hexadecimal values `#9e9`, `#f66` and `#fed84f`,
 respectively.
 
 Log levels
