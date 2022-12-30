@@ -250,7 +250,7 @@ avoid the need to repeat them every time tests are run or Rebot used.
 
    export ROBOT_OPTIONS="--outputdir results --tagdoc 'mytag:Example doc with spaces'"
    robot tests.robot
-   export REBOT_OPTIONS="--reportbackground green:yellow:red"
+   export REBOT_OPTIONS="--reportbackground blue:red:yellow"
    rebot --name example output.xml
 
 __ `Post-processing outputs`_
