@@ -65,7 +65,7 @@ Invalid limit invalid value
     END
 
 Invalid limit mistyped prefix
-    [Documentation]     FAIL Second WHILE loop argument must be 'limit', got 'limitation=-1x'.
+    [Documentation]     FAIL WHILE loop arguments must be 'limit' or 'on_limit_message', got 'limitation=-1x'.
     WHILE    $variable < 2    limitation=-1x
         Log     ${variable}
     END

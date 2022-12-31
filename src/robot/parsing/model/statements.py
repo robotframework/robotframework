@@ -991,39 +991,29 @@ class WhileHeader(Statement):
 
     @property
     def limit(self):
-        value = self.get_value(Token.OPTION)
-        return value[len('limit='):] if value else None
+        values = self.get_values(Token.OPTION)
+        for value in values:
+            if value.startswith('limit='):
+                return value[len('limit='):]
+        return None
 
     @property
     def on_limit_message(self):
         values = self.get_values(Token.OPTION)
-        if(len(values) > 1):
-            value = values[1]
-        else:
-            value = None
-        return value[len('on_limit_message='):] if value else None
+        for value in values:
+            if value.startswith('on_limit_message='):
+                return value[len('on_limit_message='):]
+        return None
 
     def validate(self, context):
         values = self.get_values(Token.ARGUMENT)
-        options = self.get_values(Token.OPTION)
-        print(values, options)
         if len(values) == 0:
             self.errors += ('WHILE must have a condition.',)
-        if len(values) == 2:
-            if(len(options) > 0):
-                if("limit=" not in options[0]):
-                    self.errors += (
-                            f"Second WHILE loop argument must be 'limit', "
+        if len(values) == 2 or len(values) == 3:
+            self.errors += (
+                            f"WHILE loop arguments must be 'limit' "
+                            f"or 'on_limit_message', "
                             f"got '{values[1]}'.",)
-                elif("on_limit_message=" not in options[0]):
-                    self.errors += (
-                        f"Third WHILE loop argument must be "
-                        f"'on_limit_message', "
-                        f"got '{values[1]}'.",)
-            else:
-                self.errors += (
-                    f"Second WHILE loop argument must be 'limit', "
-                    f"got '{values[1]}'.",)
         if len(values) > 3:
             self.errors += ('WHILE cannot have more than one condition.',)
 
