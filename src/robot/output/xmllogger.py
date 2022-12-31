@@ -146,7 +146,7 @@ class XmlLogger(ResultVisitor):
         self._writer.start('while', attrs={
             'condition': while_.condition,
             'limit': while_.limit,
-            'limit_exceed_message': while_.limit_exceed_message
+            'on_limit_message': while_.on_limit_message
         })
         self._writer.element('doc', while_.doc)
 

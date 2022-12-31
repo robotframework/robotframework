@@ -591,15 +591,14 @@ A major difference is that the loop status will be `FAIL` in this case.
 By default, the error message raised when the limit is reached is
 `WHILE loop was aborted because it did not finish within the limit of 0.5
 seconds. Use the 'limit' argument to increase or remove the limit if 
-needed.`. The error message can be changed with the `limit_exceed_message`
-configuration parameter. This parameter must be placed after the `limit`
+needed.`. The error message can be changed with the `on_limit_message`
 configuration parameter.
 
 .. sourcecode:: robotframework
 
     *** Test Cases ***
     Limit as iteration count
-        WHILE    True    limit=0.5s    limit_exceed_message=Custom While loop error message
+        WHILE    True    limit=0.5s    on_limit_message=Custom While loop error message
             Log    This is run 0.5 seconds.
         END
 

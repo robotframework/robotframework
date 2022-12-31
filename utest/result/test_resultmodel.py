@@ -172,9 +172,9 @@ class TestSlots(unittest.TestCase):
         assert_equal(While('True', '1 minute').name, 'True | limit=1 minute')
         assert_equal(While(limit='1 minute').name, 'limit=1 minute')
         assert_equal(While('True', '1 s', 'Error message').name,
-                     'True | limit=1 s | limit_exceed_message=Error message')
-        assert_equal(While(limit_exceed_message='Error message').name,
-                     'limit_exceed_message=Error message')
+                     'True | limit=1 s | on_limit_message=Error message')
+        assert_equal(While(on_limit_message='Error message').name,
+                     'on_limit_message=Error message')
 
     def test_break_continue_return(self):
         for cls in Break, Continue, Return:

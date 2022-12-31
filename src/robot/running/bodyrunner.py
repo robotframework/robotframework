@@ -342,7 +342,7 @@ class WhileRunner:
         run = False
         limit = None
         loop_result = WhileResult(data.condition, data.limit,
-                                  data.limit_exceed_message,
+                                  data.on_limit_message,
                                   starttime=get_timestamp()
                                   )
         iter_result = loop_result.body.create_iteration(starttime=get_timestamp())
@@ -352,7 +352,7 @@ class WhileRunner:
             elif not ctx.dry_run:
                 try:
                     limit = WhileLimit.create(data.limit,
-                                              data.limit_exceed_message,
+                                              data.on_limit_message,
                                               ctx.variables
                                               )
                     run = self._should_run(data.condition, ctx.variables)
@@ -602,14 +602,14 @@ class TryRunner:
 class WhileLimit:
 
     @classmethod
-    def create(cls, limit, limit_exceed_message, variables):
+    def create(cls, limit, on_limit_message, variables):
         if not limit:
             return IterationCountLimit(DEFAULT_WHILE_LIMIT,
-                                       limit_exceed_message
+                                       on_limit_message
                                        )
-        if limit_exceed_message:
-            limit_exceed_message = variables.replace_string(
-                limit_exceed_message)
+        if on_limit_message:
+            on_limit_message = variables.replace_string(
+                on_limit_message)
         value = variables.replace_string(limit)
         if value.upper() == 'NONE':
             return NoLimit()
@@ -621,17 +621,17 @@ class WhileLimit:
             if count <= 0:
                 raise DataError(f"Invalid WHILE loop limit: Iteration count must be "
                                 f"a positive integer, got '{count}'.")
-            return IterationCountLimit(count, limit_exceed_message)
+            return IterationCountLimit(count, on_limit_message)
         try:
             secs = timestr_to_secs(value)
         except ValueError as err:
             raise DataError(f'Invalid WHILE loop limit: {err.args[0]}')
         else:
-            return DurationLimit(secs, limit_exceed_message)
+            return DurationLimit(secs, on_limit_message)
 
-    def limit_exceeded(self, limit_exceed_message):
-        if limit_exceed_message:
-            raise ExecutionFailed(limit_exceed_message)
+    def limit_exceeded(self, on_limit_message):
+        if on_limit_message:
+            raise ExecutionFailed(on_limit_message)
         else:
             raise ExecutionFailed(f"WHILE loop was aborted because "
                                   f"it did not finish "
@@ -648,8 +648,8 @@ class WhileLimit:
 
 class DurationLimit(WhileLimit):
 
-    def __init__(self, max_time, limit_exceed_message):
-        self.limit_exceed_message = limit_exceed_message
+    def __init__(self, max_time, on_limit_message):
+        self.on_limit_message = on_limit_message
         self.max_time = max_time
         self.start_time = None
 
@@ -657,7 +657,7 @@ class DurationLimit(WhileLimit):
         if not self.start_time:
             self.start_time = time.time()
         if time.time() - self.start_time > self.max_time:
-            self.limit_exceeded(self.limit_exceed_message)
+            self.limit_exceeded(self.on_limit_message)
 
     def __str__(self):
         return f'{self.max_time} seconds'
@@ -665,14 +665,14 @@ class DurationLimit(WhileLimit):
 
 class IterationCountLimit(WhileLimit):
 
-    def __init__(self, max_iterations, limit_exceed_message):
-        self.limit_exceed_message = limit_exceed_message
+    def __init__(self, max_iterations, on_limit_message):
+        self.on_limit_message = on_limit_message
         self.max_iterations = max_iterations
         self.current_iterations = 0
 
     def __enter__(self):
         if self.current_iterations >= self.max_iterations:
-            self.limit_exceeded(self.limit_exceed_message)
+            self.limit_exceeded(self.on_limit_message)
         self.current_iterations += 1
 
     def __str__(self):

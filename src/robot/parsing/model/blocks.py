@@ -343,8 +343,8 @@ class While(Block):
         return self.header.limit
 
     @property
-    def limit_exceed_message(self):
-        return self.header.limit_exceed_message
+    def on_limit_message(self):
+        return self.header.on_limit_message
 
     def validate(self, context):
         if self._body_is_empty():

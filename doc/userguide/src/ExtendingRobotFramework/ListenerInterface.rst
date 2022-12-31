@@ -263,8 +263,8 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |                                                                |
    |                  |                  | * `condition`: The looping condition.                          |
    |                  |                  | * `limit`: The maximum iteration limit.                        |
-   |                  |                  | * `limit_exceed_message`: The custom error message if the      |
-   |                  |                  |   limit is reached.                                            |
+   |                  |                  | * `on_limit_message`: The custom error raised when the         |
+   |                  |                  |   limit of the WHILE loop is reached.                          |
    |                  |                  |                                                                |
    |                  |                  | Additional attributes for `IF` and `ELSE_IF` types:            |
    |                  |                  |                                                                |

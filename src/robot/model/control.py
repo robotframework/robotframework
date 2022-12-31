@@ -59,14 +59,14 @@ class For(BodyItem):
 class While(BodyItem):
     type = BodyItem.WHILE
     body_class = Body
-    repr_args = ('condition', 'limit', 'limit_exceed_message')
-    __slots__ = ['condition', 'limit', 'limit_exceed_message']
+    repr_args = ('condition', 'limit', 'on_limit_message')
+    __slots__ = ['condition', 'limit', 'on_limit_message']
 
     def __init__(self, condition=None, limit=None,
-                 limit_exceed_message=None, parent=None):
+                 on_limit_message=None, parent=None):
         self.condition = condition
         self.limit = limit
-        self.limit_exceed_message = limit_exceed_message
+        self.on_limit_message = on_limit_message
         self.parent = parent
         self.body = None
 
@@ -78,7 +78,7 @@ class While(BodyItem):
         visitor.visit_while(self)
 
     def __str__(self):
-        return f'WHILE    {self.condition}' + (f'    {self.limit}' if self.limit else '') + (f'    {self.limit_exceed_message}' if self.limit_exceed_message else '')
+        return f'WHILE    {self.condition}' + (f'    {self.limit}' if self.limit else '') + (f'    {self.on_limit_message}' if self.on_limit_message else '')
 
 
 class IfBranch(BodyItem):

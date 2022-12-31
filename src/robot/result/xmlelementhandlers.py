@@ -190,7 +190,7 @@ class WhileHandler(ElementHandler):
         return result.body.create_while(
             condition=elem.get('condition'),
             limit=elem.get('limit'),
-            limit_exceed_message=elem.get('limit_exceed_message')
+            on_limit_message=elem.get('on_limit_message')
         )
 
 

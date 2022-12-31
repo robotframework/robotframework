@@ -968,7 +968,7 @@ class WhileHeader(Statement):
     type = Token.WHILE
 
     @classmethod
-    def from_params(cls, condition, limit=None, limit_exceed_message=None,
+    def from_params(cls, condition, limit=None, on_limit_message=None,
                     indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
         tokens = [Token(Token.SEPARATOR, indent),
                   Token(cls.type),
@@ -977,10 +977,10 @@ class WhileHeader(Statement):
         if limit:
             tokens.extend([Token(Token.SEPARATOR, indent),
                            Token(Token.OPTION, f'limit={limit}')])
-        if limit_exceed_message:
+        if on_limit_message:
             tokens.extend([Token(Token.SEPARATOR, indent),
                            Token(Token.OPTION,
-                                 f'limit_exceed_message={limit_exceed_message}'
+                                 f'on_limit_message={on_limit_message}'
                                  )])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
@@ -995,17 +995,18 @@ class WhileHeader(Statement):
         return value[len('limit='):] if value else None
 
     @property
-    def limit_exceed_message(self):
+    def on_limit_message(self):
         values = self.get_values(Token.OPTION)
         if(len(values) > 1):
             value = values[1]
         else:
             value = None
-        return value[len('limit_exceed_message='):] if value else None
+        return value[len('on_limit_message='):] if value else None
 
     def validate(self, context):
         values = self.get_values(Token.ARGUMENT)
         options = self.get_values(Token.OPTION)
+        print(values, options)
         if len(values) == 0:
             self.errors += ('WHILE must have a condition.',)
         if len(values) == 2:
@@ -1014,10 +1015,10 @@ class WhileHeader(Statement):
                     self.errors += (
                             f"Second WHILE loop argument must be 'limit', "
                             f"got '{values[1]}'.",)
-                elif("limit_exceed_message=" not in options[0]):
+                elif("on_limit_message=" not in options[0]):
                     self.errors += (
                         f"Third WHILE loop argument must be "
-                        f"'limit_exceed_message', "
+                        f"'on_limit_message', "
                         f"got '{values[1]}'.",)
             else:
                 self.errors += (

@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    running/while/while_limit_exceed_message.robot
+Suite Setup       Run Tests    ${EMPTY}    running/while/on_limit_message.robot
 Resource          while.resource
 
 *** Test Cases ***

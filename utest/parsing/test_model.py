@@ -373,11 +373,11 @@ Example
         )
         get_and_assert_model(data, expected)
 
-    def test_limit_exceed_message(self):
+    def test_on_limit_message(self):
         data = '''
 *** Test Cases ***
 Example
-    WHILE    True    limit=10s    limit_exceed_message=Error message
+    WHILE    True    limit=10s    on_limit_message=Error message
         Log    ${x}
     END
 '''
@@ -386,7 +386,7 @@ Example
                 Token(Token.WHILE, 'WHILE', 3, 4),
                 Token(Token.ARGUMENT, 'True', 3, 13),
                 Token(Token.OPTION, 'limit=10s', 3, 21),
-                Token(Token.OPTION, 'limit_exceed_message=Error message',
+                Token(Token.OPTION, 'on_limit_message=Error message',
                       3, 34)
             ]),
             body=[
