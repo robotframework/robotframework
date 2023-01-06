@@ -333,7 +333,7 @@ class KeywordStore:
                     f"Keyword '{caller.longname}' called keyword '{name}' that exists "
                     f"both in the same resource file as the caller and in the suite "
                     f"file using that resource. The keyword in the suite file is used "
-                    f"now, but this will change in Robot Framework 6.0."
+                    f"now, but this will change in Robot Framework 7.0."
                 )
                 runner.pre_run_messages += Message(message, level='WARN'),
         return runner
