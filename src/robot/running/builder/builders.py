@@ -170,8 +170,6 @@ class SuiteStructureParser(SuiteStructureVisitor):
         try:
             if structure.is_directory:
                 suite = parser.parse_init_file(structure.init_file or source, defaults)
-                if structure.source is None:
-                    suite.name = None
             else:
                 suite = parser.parse_suite_file(source, defaults)
                 if not suite.tests:
