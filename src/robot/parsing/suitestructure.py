@@ -58,8 +58,22 @@ class SuiteStructureBuilder:
         paths = list(self._normalize_paths(paths))
         if len(paths) == 1:
             return self._build(paths[0], self.included_suites)
-        children = [self._build(p, self.included_suites) for p in paths]
-        return SuiteStructure(children=children)
+        sources, init_file = self._get_sources(paths)
+        return SuiteStructure(children=sources, init_file=init_file)
+
+    def _get_sources(self, paths):
+        init_file = None
+        sources = []
+        for p in paths:
+            base, ext = os.path.splitext(os.path.basename(p))
+            ext = ext[1:].lower()
+            if self._is_init_file(p, base, ext):
+                if init_file:
+                    raise DataError("Multiple init files not allowed.")
+                init_file = p
+            else:
+                sources.append(self._build(p, self.included_suites))
+        return sources, init_file
 
     def _normalize_paths(self, paths):
         if not paths:
