@@ -80,11 +80,19 @@ example below::
    robot my_tests.robot your_tests.robot
    robot --name Example path/to/tests/pattern_*.robot
 
+Starting from Robot Framework 6.1, it is also possible to define a
+`test suite initialisation file`__ for the automatically created top-level
+suite. The path to the init file is given similarly to the
+test case files::
+
+    robot __init__.robot my_tests.robot other_tests.robot
+
 __ `Test case files`_
 __ `Test suite directories`_
 __ `Setting the name`_
 __ `Test suite name and documentation`_
 __ `Test suite directories`_
+__ `Suite initialization files`_
 
 Using command line options
 --------------------------

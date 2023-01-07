@@ -45,6 +45,24 @@ Wildcards
     Should Contain Tests    ${SUITE.suites[2]}    Suite3 First
     Check Names    ${SUITE.suites[2].tests[0]}    Suite3 First    Tsuite1 & Tsuite2 & Tsuite3.Tsuite3.
 
+With Init File Included
+    Run Tests    ${EMPTY}    misc/suites/tsuite1.robot misc/suites/tsuite2.robot misc/suites/__init__.robot
+    Check Names    ${SUITE}    Tsuite1 & Tsuite2
+    Should Contain Suites    ${SUITE}    Tsuite1    Tsuite2
+    Check Keyword Data    ${SUITE.teardown}    BuiltIn.Log    args=\${SUITE_TEARDOWN_ARG}    type=TEARDOWN
+    Check Names    ${SUITE.suites[0]}    Tsuite1    Tsuite1 & Tsuite2.
+    Should Contain Tests    ${SUITE.suites[0]}    Suite1 First    Suite1 Second    Third In Suite1
+    Check Names    ${SUITE.suites[0].tests[0]}    Suite1 First    Tsuite1 & Tsuite2.Tsuite1.
+    Check Names    ${SUITE.suites[0].tests[1]}    Suite1 Second    Tsuite1 & Tsuite2.Tsuite1.
+    Check Names    ${SUITE.suites[0].tests[2]}    Third In Suite1    Tsuite1 & Tsuite2.Tsuite1.
+    Check Names    ${SUITE.suites[1]}    Tsuite2    Tsuite1 & Tsuite2.
+    Should Contain Tests    ${SUITE.suites[1]}    Suite2 First
+    Check Names    ${SUITE.suites[1].tests[0]}    Suite2 First    Tsuite1 & Tsuite2.Tsuite2.
+
+Multiple Init Files Not Allowed
+    Run Tests Without Processing Output    ${EMPTY}    misc/suites/tsuite1.robot misc/suites/__init__.robot misc/suites/__init__.robot
+    Stderr Should Contain    [ ERROR ] Multiple init files not allowed.
+
 Failure When Parsing Any Data Source Fails
     Run Tests Without Processing Output    ${EMPTY}    nönex misc/pass_and_fail.robot
     ${nönex} =    Normalize Path    ${DATADIR}/nönex

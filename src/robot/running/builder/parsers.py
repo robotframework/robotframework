@@ -28,10 +28,10 @@ from ..model import TestSuite, ResourceFile
 
 class BaseParser:
 
-    def parse_init_file(self, source, defaults=None):
+    def parse_init_file(self, source, name, defaults=None):
         raise NotImplementedError
 
-    def parse_suite_file(self, source, defaults=None):
+    def parse_suite_file(self, source, name, defaults=None):
         raise NotImplementedError
 
     def parse_resource_file(self, source):
@@ -44,13 +44,13 @@ class RobotParser(BaseParser):
         self.lang = lang
         self.process_curdir = process_curdir
 
-    def parse_init_file(self, source, defaults=None):
+    def parse_init_file(self, source, name, defaults=None):
         directory = os.path.dirname(source)
-        suite = TestSuite(name=format_name(directory), source=directory)
+        suite = TestSuite(name=name, source=directory)
         return self._build(suite, source, defaults, get_model=get_init_model)
 
-    def parse_suite_file(self, source, defaults=None):
-        suite = TestSuite(name=format_name(source), source=source)
+    def parse_suite_file(self, source, name, defaults=None):
+        suite = TestSuite(name=name, source=source)
         return self._build(suite, source, defaults)
 
     def build_suite(self, model, name=None, defaults=None):
@@ -104,29 +104,8 @@ class RestParser(RobotParser):
 
 class NoInitFileDirectoryParser(BaseParser):
 
-    def parse_init_file(self, source, defaults=None):
-        return TestSuite(name=format_name(source), source=source)
-
-
-def format_name(source):
-    def strip_possible_prefix_from_name(name):
-        result = name.split('__', 1)[-1]
-        if result:
-            return result
-        return name
-
-    def format_name(name):
-        name = strip_possible_prefix_from_name(name)
-        name = name.replace('_', ' ').strip()
-        return name.title() if name.islower() else name
-
-    if source is None:
-        return None
-    if os.path.isdir(source):
-        basename = os.path.basename(source)
-    else:
-        basename = os.path.splitext(os.path.basename(source))[0]
-    return format_name(basename)
+    def parse_init_file(self, source, name=None, defaults=None):
+        return TestSuite(name=name, source=source)
 
 
 class ErrorReporter(NodeVisitor):

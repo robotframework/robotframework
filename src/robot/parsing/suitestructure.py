@@ -25,6 +25,7 @@ class SuiteStructure:
 
     def __init__(self, source=None, init_file=None, children=None):
         self.source = source
+        self.name = self._format_name(source)
         self.init_file = init_file
         self.children = children
         self.extension = self._get_extension(source, init_file)
@@ -45,6 +46,27 @@ class SuiteStructure:
         else:
             visitor.visit_directory(self)
 
+    def _format_name(self, source):
+        def strip_possible_prefix_from_name(name):
+            result = name.split('__', 1)[-1]
+            if result:
+                return result
+            return name
+
+        def format_name(name):
+            name = strip_possible_prefix_from_name(name)
+            name = name.replace('_', ' ').strip()
+            return name.title() if name.islower() else name
+
+        if source is None:
+            return None
+        if os.path.isdir(source):
+            basename = os.path.basename(source)
+        else:
+            basename = os.path.splitext(os.path.basename(source))[0]
+        return format_name(basename)
+
+
 
 class SuiteStructureBuilder:
     ignored_prefixes = ('_', '.')
@@ -58,8 +80,22 @@ class SuiteStructureBuilder:
         paths = list(self._normalize_paths(paths))
         if len(paths) == 1:
             return self._build(paths[0], self.included_suites)
-        children = [self._build(p, self.included_suites) for p in paths]
-        return SuiteStructure(children=children)
+        sources, init_file = self._get_sources(paths)
+        return SuiteStructure(children=sources, init_file=init_file)
+
+    def _get_sources(self, paths):
+        init_file = None
+        sources = []
+        for p in paths:
+            base, ext = os.path.splitext(os.path.basename(p))
+            ext = ext[1:].lower()
+            if self._is_init_file(p, base, ext):
+                if init_file:
+                    raise DataError("Multiple init files not allowed.")
+                init_file = p
+            else:
+                sources.append(self._build(p, self.included_suites))
+        return sources, init_file
 
     def _normalize_paths(self, paths):
         if not paths:
@@ -171,3 +207,5 @@ class SuiteStructureVisitor:
 
     def end_directory(self, structure):
         pass
+
+
