@@ -4,9 +4,9 @@ Robot Framework 6.0.2
 
 .. default-role:: code
 
-`Robot Framework`_ 6.0.2 the second also the last maintenance release in the
-`RF 6.0 <rf-6.0.rst>`_ series. It does not contain any high priority fixes or
-enhancements and was released mainly to make it possible to fully concentrate
+`Robot Framework`_ 6.0.2 is the second and also the last maintenance release in
+the `RF 6.0 <rf-6.0.rst>`_ series. It does not contain any high priority fixes
+or enhancements and was released mainly to make it possible to fully concentrate
 on Robot Framework 6.1.
 
 Questions and comments related to the release can be sent to the
