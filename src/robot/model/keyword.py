@@ -56,6 +56,14 @@ class Keyword(BodyItem):
         parts = list(self.assign) + [self.name] + list(self.args)
         return '    '.join(str(p) for p in parts)
 
+    def to_dict(self):
+        data = {'name': self.name}
+        if self.args:
+            data['args'] = list(self.args)
+        if self.assign:
+            data['assign'] = list(self.assign)
+        return data
+
 
 class Keywords(ItemList):
     """A list-like object representing keywords in a suite, a test or a keyword.

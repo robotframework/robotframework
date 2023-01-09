@@ -77,6 +77,12 @@ class Keyword(model.Keyword):
     def source(self):
         return self.parent.source if self.parent is not None else None
 
+    def to_dict(self):
+        data = super().to_dict()
+        if self.lineno:
+            data['lineno'] = self.lineno
+        return data
+
     def run(self, context, run=True, templated=None):
         return KeywordRunner(context, run).run(self)
 
@@ -86,7 +92,8 @@ class For(model.For):
     __slots__ = ['lineno', 'error']
     body_class = Body
 
-    def __init__(self, variables, flavor, values, parent=None, lineno=None, error=None):
+    def __init__(self, variables=(), flavor='IN', values=(), parent=None,
+                 lineno=None, error=None):
         super().__init__(variables, flavor, values, parent)
         self.lineno = lineno
         self.error = error
@@ -94,6 +101,14 @@ class For(model.For):
     @property
     def source(self):
         return self.parent.source if self.parent is not None else None
+
+    def to_dict(self):
+        data = super().to_dict()
+        if self.lineno:
+            data['lineno'] = self.lineno
+        if self.error:
+            data['error'] = self.error
+        return data
 
     def run(self, context, run=True, templated=False):
         return ForRunner(context, self.flavor, run, templated).run(self)
@@ -113,6 +128,14 @@ class While(model.While):
     def source(self):
         return self.parent.source if self.parent is not None else None
 
+    def to_dict(self):
+        data = super().to_dict()
+        if self.lineno:
+            data['lineno'] = self.lineno
+        if self.error:
+            data['error'] = self.error
+        return data
+
     def run(self, context, run=True, templated=False):
         return WhileRunner(context, run, templated).run(self)
 
@@ -128,6 +151,12 @@ class IfBranch(model.IfBranch):
     @property
     def source(self):
         return self.parent.source if self.parent is not None else None
+
+    def to_dict(self):
+        data = super().to_dict()
+        if self.lineno:
+            data['lineno'] = self.lineno
+        return data
 
 
 @Body.register
@@ -147,6 +176,14 @@ class If(model.If):
     def run(self, context, run=True, templated=False):
         return IfRunner(context, run, templated).run(self)
 
+    def to_dict(self):
+        data = super().to_dict()
+        if self.lineno:
+            data['lineno'] = self.lineno
+        if self.error:
+            data['error'] = self.error
+        return data
+
 
 class TryBranch(model.TryBranch):
     __slots__ = ['lineno']
@@ -160,6 +197,12 @@ class TryBranch(model.TryBranch):
     @property
     def source(self):
         return self.parent.source if self.parent is not None else None
+
+    def to_dict(self):
+        data = super().to_dict()
+        if self.lineno:
+            data['lineno'] = self.lineno
+        return data
 
 
 @Body.register
@@ -178,6 +221,14 @@ class Try(model.Try):
 
     def run(self, context, run=True, templated=False):
         return TryRunner(context, run, templated).run(self)
+
+    def to_dict(self):
+        data = super().to_dict()
+        if self.lineno:
+            data['lineno'] = self.lineno
+        if self.error:
+            data['error'] = self.error
+        return data
 
 
 @Body.register
@@ -201,6 +252,14 @@ class Return(model.Return):
                 if not context.dry_run:
                     raise ReturnFromKeyword(self.values)
 
+    def to_dict(self):
+        data = super().to_dict()
+        if self.lineno:
+            data['lineno'] = self.lineno
+        if self.error:
+            data['error'] = self.error
+        return data
+
 
 @Body.register
 class Continue(model.Continue):
@@ -222,6 +281,14 @@ class Continue(model.Continue):
                     raise DataError(self.error, syntax=True)
                 if not context.dry_run:
                     raise ContinueLoop()
+
+    def to_dict(self):
+        data = super().to_dict()
+        if self.lineno:
+            data['lineno'] = self.lineno
+        if self.error:
+            data['error'] = self.error
+        return data
 
 
 @Body.register
@@ -245,6 +312,14 @@ class Break(model.Break):
                 if not context.dry_run:
                     raise BreakLoop()
 
+    def to_dict(self):
+        data = super().to_dict()
+        if self.lineno:
+            data['lineno'] = self.lineno
+        if self.error:
+            data['error'] = self.error
+        return data
+
 
 class TestCase(model.TestCase):
     """Represents a single executable test case.
@@ -265,6 +340,12 @@ class TestCase(model.TestCase):
     @property
     def source(self):
         return self.parent.source if self.parent is not None else None
+
+    def to_dict(self):
+        data = super().to_dict()
+        if self.template:
+            data['template'] = self.template
+        return data
 
 
 class TestSuite(model.TestSuite):
@@ -344,7 +425,7 @@ class TestSuite(model.TestSuite):
         self.visit(Randomizer(suites, tests, seed))
 
     def run(self, settings=None, **options):
-        """Executes the suite based based the given ``settings`` or ``options``.
+        """Executes the suite based on the given ``settings`` or ``options``.
 
         :param settings: :class:`~robot.conf.settings.RobotSettings` object
             to configure test execution.

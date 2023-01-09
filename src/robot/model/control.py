@@ -54,6 +54,12 @@ class For(BodyItem):
         values = '    '.join(self.values)
         return 'FOR    %s    %s    %s' % (variables, self.flavor, values)
 
+    def to_dict(self):
+        return {'type': self.type,
+                'variables': list(self.variables),
+                'flavor': self.flavor,
+                'values': list(self.values)}
+
 
 @Body.register
 class While(BodyItem):
@@ -77,6 +83,12 @@ class While(BodyItem):
 
     def __str__(self):
         return f'WHILE    {self.condition}' + (f'    {self.limit}' if self.limit else '')
+
+    def to_dict(self):
+        data = {'type': self.type, 'condition': self.condition}
+        if self.limit:
+            data['limit'] = self.limit
+        return data
 
 
 class IfBranch(BodyItem):
@@ -113,6 +125,14 @@ class IfBranch(BodyItem):
     def visit(self, visitor):
         visitor.visit_if_branch(self)
 
+    def to_dict(self):
+        data = {'type': self.type,
+                'condition': self.condition,
+                'body': self.body.to_dicts()}
+        if self.type == self.ELSE:
+            data.pop('condition')
+        return data
+
 
 @Body.register
 class If(BodyItem):
@@ -137,6 +157,9 @@ class If(BodyItem):
 
     def visit(self, visitor):
         visitor.visit_if(self)
+
+    def to_dict(self):
+        return {'type': self.type, 'body': self.body.to_dicts()}
 
 
 class TryBranch(BodyItem):
@@ -184,6 +207,17 @@ class TryBranch(BodyItem):
 
     def visit(self, visitor):
         visitor.visit_try_branch(self)
+
+    def to_dict(self):
+        data = {'type': self.type}
+        if self.type == self.EXCEPT:
+            data['patterns'] = list(self.patterns)
+            if self.pattern_type:
+                data['pattern_type'] = self.pattern_type
+            if self.variable:
+                data['variable'] = self.variable
+        data['body'] = self.body.to_dicts()
+        return data
 
 
 @Body.register
@@ -233,6 +267,9 @@ class Try(BodyItem):
     def visit(self, visitor):
         visitor.visit_try(self)
 
+    def to_dict(self):
+        return {'type': self.type, 'body': self.body.to_dicts()}
+
 
 @Body.register
 class Return(BodyItem):
@@ -247,6 +284,9 @@ class Return(BodyItem):
     def visit(self, visitor):
         visitor.visit_return(self)
 
+    def to_dict(self):
+        return {'type': self.type, 'values': list(self.values)}
+
 
 @Body.register
 class Continue(BodyItem):
@@ -259,6 +299,9 @@ class Continue(BodyItem):
     def visit(self, visitor):
         visitor.visit_continue(self)
 
+    def to_dict(self):
+        return {'type': self.type}
+
 
 @Body.register
 class Break(BodyItem):
@@ -270,3 +313,6 @@ class Break(BodyItem):
 
     def visit(self, visitor):
         visitor.visit_break(self)
+
+    def to_dict(self):
+        return {'type': self.type}

@@ -1,17 +1,17 @@
 import copy
 import os
-from os.path import abspath, normpath, join
 import tempfile
 import unittest
 import warnings
+from os.path import abspath, join, normpath
 
 from robot import api, model
 from robot.model.modelobject import ModelObject
-from robot.running.model import TestSuite, TestCase, Keyword, UserKeyword
 from robot.running import TestSuiteBuilder
-from robot.utils.asserts import (assert_equal, assert_not_equal, assert_false,
+from robot.running.model import (Break, Continue, For, If, IfBranch, Keyword, Return,
+                                 TestCase, TestSuite, Try, TryBranch, UserKeyword, While)
+from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal,
                                  assert_raises, assert_true)
-
 
 MISC_DIR = normpath(join(abspath(__file__), '..', '..', '..',
                          'atest', 'testdata', 'misc'))
@@ -19,7 +19,7 @@ MISC_DIR = normpath(join(abspath(__file__), '..', '..', '..',
 
 class TestModelTypes(unittest.TestCase):
 
-    def test_suite_setup(self):
+    def test_suite_setup_and_teardown(self):
         suite = TestSuite()
         assert_equal(type(suite.setup), Keyword)
         assert_equal(type(suite.teardown), Keyword)
@@ -189,10 +189,10 @@ class TestCopy(unittest.TestCase):
 
 
 class TestLineNumberAndSource(unittest.TestCase):
+    source = join(MISC_DIR, 'pass_and_fail.robot')
 
     @classmethod
     def setUpClass(cls):
-        cls.source = join(MISC_DIR, 'pass_and_fail.robot')
         cls.suite = TestSuite.from_file_system(cls.source)
 
     def test_suite(self):
@@ -218,6 +218,131 @@ class TestLineNumberAndSource(unittest.TestCase):
     def _assert_lineno_and_source(self, item, lineno):
         assert_equal(item.source, self.source)
         assert_equal(item.lineno, lineno)
+
+
+class TestToDict(unittest.TestCase):
+
+    def test_keyword(self):
+        self._verify(Keyword(), name='')
+        self._verify(Keyword('Name'), name='Name')
+        self._verify(Keyword('N', tuple('args'), ('${result}',)),
+                     name='N', args=list('args'), assign=['${result}'])
+        self._verify(Keyword('Setup', type=Keyword.SETUP, lineno=1),
+                     name='Setup', lineno=1)
+
+    def test_for(self):
+        self._verify(For(), type='FOR', variables=[], flavor='IN', values=[])
+        self._verify(For(['${i}'], 'IN RANGE', ['10'], lineno=2), type='FOR',
+                     variables=['${i}'], flavor='IN RANGE', values=['10'], lineno=2)
+
+    def test_while(self):
+        self._verify(While(), type='WHILE', condition=None)
+        self._verify(While('1 > 0', '1 min'),
+                     type='WHILE', condition='1 > 0', limit='1 min')
+        self._verify(While('True', lineno=3, error='x'),
+                     type='WHILE', condition='True', lineno=3, error='x')
+
+    def test_if(self):
+        self._verify(If(), type='IF/ELSE ROOT', body=[])
+        self._verify(If(lineno=4, error='E'),
+                     type='IF/ELSE ROOT', body=[], lineno=4, error='E')
+
+    def test_if_branch(self):
+        self._verify(IfBranch(), type='IF', condition=None, body=[])
+        self._verify(IfBranch(If.ELSE_IF, '1 > 0'),
+                     type='ELSE IF', condition='1 > 0', body=[])
+        self._verify(IfBranch(If.ELSE, lineno=5),
+                     type='ELSE', body=[], lineno=5)
+
+    def test_if_structure(self):
+        root = If()
+        root.body.create_branch(If.IF, '$c').body.create_keyword('K1')
+        root.body.create_branch(If.ELSE).body.create_keyword('K2', ['a'])
+        self._verify(root,
+                     type='IF/ELSE ROOT',
+                     body=[{'type': 'IF', 'condition': '$c', 'body': [{'name': 'K1'}]},
+                           {'type': 'ELSE', 'body': [{'name': 'K2', 'args': ['a']}]}])
+
+    def test_try(self):
+        self._verify(Try(), type='TRY/EXCEPT ROOT', body=[])
+        self._verify(Try(lineno=6, error='E'),
+                     type='TRY/EXCEPT ROOT', body=[], lineno=6, error='E')
+
+    def test_try_branch(self):
+        self._verify(TryBranch(), type='TRY', body=[])
+        self._verify(TryBranch(Try.EXCEPT), type='EXCEPT', patterns=[], body=[])
+        self._verify(TryBranch(Try.EXCEPT, ['Pa*'], 'glob', '${err}'), type='EXCEPT',
+                     patterns=['Pa*'], pattern_type='glob', variable='${err}', body=[])
+        self._verify(TryBranch(Try.ELSE, lineno=7), type='ELSE', body=[], lineno=7)
+        self._verify(TryBranch(Try.FINALLY, lineno=8), type='FINALLY', body=[], lineno=8)
+
+    def test_try_structure(self):
+        root = Try()
+        root.body.create_branch(Try.TRY).body.create_keyword('K1')
+        root.body.create_branch(Try.EXCEPT).body.create_keyword('K2')
+        root.body.create_branch(Try.ELSE).body.create_keyword('K3')
+        root.body.create_branch(Try.FINALLY).body.create_keyword('K4')
+        self._verify(root,
+                     type='TRY/EXCEPT ROOT',
+                     body=[{'type': 'TRY', 'body': [{'name': 'K1'}]},
+                           {'type': 'EXCEPT', 'patterns': [], 'body': [{'name': 'K2'}]},
+                           {'type': 'ELSE', 'body': [{'name': 'K3'}]},
+                           {'type': 'FINALLY', 'body': [{'name': 'K4'}]}])
+
+    def test_return_continue_break(self):
+        self._verify(Return(), type='RETURN', values=[])
+        self._verify(Return(('x', 'y'), lineno=9, error='E'),
+                     type='RETURN', values=['x', 'y'], lineno=9, error='E')
+        self._verify(Continue(), type='CONTINUE')
+        self._verify(Continue(lineno=10, error='E'),
+                     type='CONTINUE', lineno=10, error='E')
+        self._verify(Break(), type='BREAK')
+        self._verify(Break(lineno=11, error='E'),
+                     type='BREAK', lineno=11, error='E')
+
+    def test_test(self):
+        self._verify(TestCase(), name='', body=[])
+        self._verify(TestCase('N', 'D', 'T', '1s', lineno=12),
+                     name='N', doc='D', tags=['T'], timeout='1s', lineno=12, body=[])
+        self._verify(TestCase(template='K'), name='', body=[], template='K')
+
+    def test_test_structure(self):
+        test = TestCase('TC')
+        test.setup.config(name='Setup')
+        test.teardown.config(name='Teardown', args='a')
+        test.body.create_keyword('K1')
+        test.body.create_if().body.create_branch().body.create_keyword('K2')
+        self._verify(test,
+                     name='TC',
+                     setup={'name': 'Setup'},
+                     teardown={'name': 'Teardown', 'args': ['a']},
+                     body=[{'name': 'K1'},
+                           {'type': 'IF/ELSE ROOT',
+                            'body': [{'type': 'IF', 'condition': None,
+                                      'body': [{'name': 'K2'}]}]}])
+
+    def test_suite(self):
+        self._verify(TestSuite(), name='')
+        self._verify(TestSuite('N', 'D', {'M': 'V'}, 'x', rpa=True),
+                     name='N', doc='D', metadata={'M': 'V'}, source='x', rpa=True)
+
+    def test_suite_structure(self):
+        suite = TestSuite('Root')
+        suite.setup.config(name='Setup')
+        suite.teardown.config(name='Teardown', args='a')
+        suite.tests.create('T1').body.create_keyword('K')
+        suite.suites.create('Child').tests.create('T2')
+        self._verify(suite,
+                     name='Root',
+                     setup={'name': 'Setup'},
+                     teardown={'name': 'Teardown', 'args': ['a']},
+                     tests=[{'name': 'T1', 'body': [{'name': 'K'}]}],
+                     suites=[{'name': 'Child',
+                              'tests': [{'name': 'T2', 'body': []}]}])
+
+    def _verify(self, obj, **expected):
+        assert_equal(obj.to_dict(), expected)
+        assert_equal(list(obj.to_dict()), list(expected))
 
 
 if __name__ == '__main__':

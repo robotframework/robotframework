@@ -265,9 +265,29 @@ class TestSuite(ModelObject):
     def __str__(self):
         return self.name
 
+    def to_dict(self):
+        data = {'name': self.name}
+        if self.doc:
+            data['doc'] = self.doc
+        if self.metadata:
+            data['metadata'] = dict(self.metadata)
+        if self.source:
+            data['source'] = self.source
+        if self.rpa:
+            data['rpa'] = self.rpa
+        if self.has_setup:
+            data['setup'] = self.setup.to_dict()
+        if self.has_teardown:
+            data['teardown'] = self.teardown.to_dict()
+        if self.tests:
+            data['tests'] = self.tests.to_dicts()
+        if self.suites:
+            data['suites'] = self.suites.to_dicts()
+        return data
+
 
 class TestSuites(ItemList):
     __slots__ = []
 
     def __init__(self, suite_class=TestSuite, parent=None, suites=None):
-        ItemList.__init__(self, suite_class, {'parent': parent}, suites)
+        super().__init__(suite_class, {'parent': parent}, suites)

@@ -35,6 +35,12 @@ class ModelObject(metaclass=SetterAwareType):
     def from_json(cls, data):
         return cls.from_dict(json.loads(data))
 
+    def to_dict(self):
+        raise NotImplementedError
+
+    def to_json(self):
+        return json.dumps(self.to_dict())
+
     def config(self, **attributes):
         """Configure model object with given attributes.
 

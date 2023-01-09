@@ -169,6 +169,23 @@ class TestCase(ModelObject):
     def __str__(self):
         return self.name
 
+    def to_dict(self):
+        data = {'name': self.name}
+        if self.doc:
+            data['doc'] = self.doc
+        if self.tags:
+            data['tags'] = list(self.tags)
+        if self.timeout:
+            data['timeout'] = self.timeout
+        if self.lineno:
+            data['lineno'] = self.lineno
+        if self.has_setup:
+            data['setup'] = self.setup.to_dict()
+        if self.has_teardown:
+            data['teardown'] = self.teardown.to_dict()
+        data['body'] = self.body.to_dicts()
+        return data
+
 
 class TestCases(ItemList):
     __slots__ = []

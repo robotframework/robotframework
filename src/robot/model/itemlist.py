@@ -181,3 +181,6 @@ class ItemList(MutableSequence):
 
     def __rmul__(self, other):
         return self * other
+
+    def to_dicts(self):
+        return [item.to_dict() for item in self]

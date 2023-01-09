@@ -75,11 +75,14 @@ class BodyItem(ModelObject):
     def has_teardown(self):
         return False
 
+    def to_dict(self):
+        raise NotImplementedError
+
 
 class BaseBody(ItemList):
     """Base class for Body and Branches objects."""
     __slots__ = []
-    # Set using 'Body.register' when these classes are created.
+    # Set using 'BaseBody.register' when these classes are created.
     keyword_class = None
     for_class = None
     if_class = None
