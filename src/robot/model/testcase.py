@@ -174,11 +174,10 @@ class TestCases(ItemList):
     __slots__ = []
 
     def __init__(self, test_class=TestCase, parent=None, tests=None):
-        ItemList.__init__(self, test_class, {'parent': parent}, tests)
+        super().__init__(test_class, {'parent': parent}, tests)
 
-    def _check_type_and_set_attrs(self, *tests):
-        tests = ItemList._check_type_and_set_attrs(self, *tests)
-        for test in tests:
-            for visitor in test.parent._visitors:
-                test.visit(visitor)
-        return tests
+    def _check_type_and_set_attrs(self, test):
+        test = super()._check_type_and_set_attrs(test)
+        for visitor in test.parent._visitors:
+            test.visit(visitor)
+        return test

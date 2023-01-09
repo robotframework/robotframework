@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import copy
+import json
 
 from robot.utils import SetterAwareType
 
@@ -21,6 +22,18 @@ from robot.utils import SetterAwareType
 class ModelObject(metaclass=SetterAwareType):
     repr_args = ()
     __slots__ = []
+
+    @classmethod
+    def from_dict(cls, data):
+        try:
+            return cls().config(**data)
+        except AttributeError as err:
+            raise ValueError(f"Creating '{full_name(cls)}' object from dictionary "
+                             f"failed: {err}\nDictionary:\n{data}")
+
+    @classmethod
+    def from_json(cls, data):
+        return cls.from_dict(json.loads(data))
 
     def config(self, **attributes):
         """Configure model object with given attributes.
@@ -73,7 +86,8 @@ class ModelObject(metaclass=SetterAwareType):
 
 
 def full_name(obj):
-    parts = type(obj).__module__.split('.') + [type(obj).__name__]
+    typ = type(obj) if not isinstance(obj, type) else obj
+    parts = typ.__module__.split('.') + [typ.__name__]
     if len(parts) > 1 and parts[0] == 'robot':
         parts[2:-1] = []
     return '.'.join(parts)

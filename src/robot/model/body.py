@@ -93,12 +93,17 @@ class BaseBody(ItemList):
     def __init__(self, parent=None, items=None):
         super().__init__(BodyItem, {'parent': parent}, items)
 
+    def _item_from_dict(self, data):
+        # FIXME: This doesn't work with all objects!
+        class_name = data.get('type', BodyItem.KEYWORD).lower() + '_class'
+        return getattr(self, class_name).from_dict(data)
+
     @classmethod
     def register(cls, item_class):
         name_parts = re.findall('([A-Z][a-z]+)', item_class.__name__) + ['class']
         name = '_'.join(name_parts).lower()
         if not hasattr(cls, name):
-            raise TypeError("Cannot register '%s'." % name)
+            raise TypeError(f"Cannot register '{name}'.")
         setattr(cls, name, item_class)
         return item_class
 
@@ -202,7 +207,7 @@ class BaseBody(ItemList):
 
 
 class Body(BaseBody):
-    """A list-like object representing body of a suite, a test or a keyword.
+    """A list-like object representing a body of a test, keyword, etc.
 
     Body contains the keywords and other structures such as FOR loops.
     """
@@ -210,7 +215,7 @@ class Body(BaseBody):
 
 
 class Branches(BaseBody):
-    """A list-like object representing branches IF and TRY objects contain."""
+    """A list-like object representing IF and TRY branches."""
     __slots__ = ['branch_class']
 
     def __init__(self, branch_class, parent=None, items=None):

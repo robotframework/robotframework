@@ -67,6 +67,10 @@ class TestItemLists(unittest.TestCase):
                                'Only Object objects accepted, got integer.',
                                ItemList(Object).insert, 0, 42)
 
+    def test_initial_items(self):
+        assert_equal(list(ItemList(Object, items=[])), [])
+        assert_equal(list(ItemList(int, items=(1, 2, 3))), [1, 2, 3])
+
     def test_common_attrs(self):
         item1 = Object()
         item2 = Object()
@@ -383,6 +387,30 @@ class TestItemLists(unittest.TestCase):
         assert_equal(2 * ItemList(int, items=[1, 2, 3]),
                      ItemList(int, items=[1, 2, 3, 1, 2, 3]))
         assert_raises(TypeError, ItemList(int).__rmul__, ItemList(int))
+
+    def test_items_as_dicts_without_from_dict(self):
+        items = ItemList(Object, items=[{'id': 1}, {}])
+        items.append({'id': 3})
+        assert_equal(items[0].id, 1)
+        assert_equal(items[1].id, None)
+        assert_equal(items[2].id, 3)
+
+    def test_items_as_dicts_with_from_dict(self):
+        class ObjectWithFromDict(Object):
+            @classmethod
+            def from_dict(cls, data):
+                obj = cls()
+                for name in data:
+                    setattr(obj, name, data[name])
+                return obj
+
+        items = ItemList(ObjectWithFromDict, items=[{'id': 1, 'attr': 2}])
+        items.extend([{}, {'new': 3}])
+        assert_equal(items[0].id, 1)
+        assert_equal(items[0].attr, 2)
+        assert_equal(items[1].id, None)
+        assert_equal(items[1].attr, 1)
+        assert_equal(items[2].new, 3)
 
 
 if __name__ == '__main__':

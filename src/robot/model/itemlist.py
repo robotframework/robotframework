@@ -21,6 +21,19 @@ from robot.utils import type_name
 
 @total_ordering
 class ItemList(MutableSequence):
+    """List of items of a certain enforced type.
+
+    New items can be created using the :meth:`create` method and existing items
+    added using the common list methods like :meth:`append` or :meth:`insert`.
+    In addition to the common type, items can have certain common and
+    automatically assigned attributes.
+
+    Starting from RF 6.1, items can be added as dictionaries and actual items
+    are generated based on them automatically. If the type has a ``from_dict``
+    classmethod, it is used, and otherwise dictionary data is passed to
+    the type as keyword arguments.
+    """
+
     __slots__ = ['_item_class', '_common_attrs', '_items']
 
     def __init__(self, item_class, common_attrs=None, items=None):
@@ -34,25 +47,32 @@ class ItemList(MutableSequence):
         return self.append(self._item_class(*args, **kwargs))
 
     def append(self, item):
-        self._check_type_and_set_attrs(item)
+        item = self._check_type_and_set_attrs(item)
         self._items.append(item)
         return item
 
-    def _check_type_and_set_attrs(self, *items):
-        common_attrs = self._common_attrs or {}
-        for item in items:
-            if not isinstance(item, self._item_class):
+    def _check_type_and_set_attrs(self, item):
+        if not isinstance(item, self._item_class):
+            if isinstance(item, dict):
+                item = self._item_from_dict(item)
+            else:
                 raise TypeError(f'Only {type_name(self._item_class)} objects '
                                 f'accepted, got {type_name(item)}.')
-            for attr in common_attrs:
-                setattr(item, attr, common_attrs[attr])
-        return items
+        if self._common_attrs:
+            for attr, value in self._common_attrs.items():
+                setattr(item, attr, value)
+        return item
+
+    def _item_from_dict(self, data):
+        if hasattr(self._item_class, 'from_dict'):
+            return self._item_class.from_dict(data)
+        return self._item_class(**data)
 
     def extend(self, items):
-        self._items.extend(self._check_type_and_set_attrs(*items))
+        self._items.extend(self._check_type_and_set_attrs(i) for i in items)
 
     def insert(self, index, item):
-        self._check_type_and_set_attrs(item)
+        item = self._check_type_and_set_attrs(item)
         self._items.insert(index, item)
 
     def index(self, item, *start_and_end):
@@ -86,9 +106,9 @@ class ItemList(MutableSequence):
 
     def __setitem__(self, index, item):
         if isinstance(index, slice):
-            self._check_type_and_set_attrs(*item)
+            item = [self._check_type_and_set_attrs(i) for i in item]
         else:
-            self._check_type_and_set_attrs(item)
+            item = self._check_type_and_set_attrs(item)
         self._items[index] = item
 
     def __delitem__(self, index):
