@@ -7,7 +7,6 @@ from os.path import abspath, join, normpath
 
 from robot import api, model
 from robot.model.modelobject import ModelObject
-from robot.running import TestSuiteBuilder
 from robot.running.model import (Break, Continue, For, If, IfBranch, Keyword, Return,
                                  TestCase, TestSuite, Try, TryBranch, UserKeyword, While)
 from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal,
@@ -129,8 +128,9 @@ Keyword
 
 class TestCopy(unittest.TestCase):
 
-    def setUp(self):
-        self.suite = TestSuiteBuilder().build(MISC_DIR)
+    @classmethod
+    def setUpClass(cls):
+        cls.suite = TestSuite.from_file_system(MISC_DIR)
 
     def test_copy(self):
         self.assert_copy(self.suite, self.suite.copy())
@@ -220,7 +220,7 @@ class TestLineNumberAndSource(unittest.TestCase):
         assert_equal(item.lineno, lineno)
 
 
-class TestToDict(unittest.TestCase):
+class TestToFromDict(unittest.TestCase):
 
     def test_keyword(self):
         self._verify(Keyword(), name='')
@@ -340,9 +340,16 @@ class TestToDict(unittest.TestCase):
                      suites=[{'name': 'Child',
                               'tests': [{'name': 'T2', 'body': []}]}])
 
+    def test_bigger_suite_structure(self):
+        suite = TestSuite.from_file_system(MISC_DIR)
+        self._verify(suite, **suite.to_dict())
+
     def _verify(self, obj, **expected):
-        assert_equal(obj.to_dict(), expected)
-        assert_equal(list(obj.to_dict()), list(expected))
+        data = obj.to_dict()
+        assert_equal(data, expected)
+        assert_equal(list(data), list(expected))
+        roundtrip = type(obj).from_dict(data).to_dict()
+        assert_equal(roundtrip, expected)
 
 
 if __name__ == '__main__':

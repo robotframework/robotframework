@@ -1,4 +1,3 @@
-import re
 import unittest
 
 from robot.model.modelobject import ModelObject
@@ -49,12 +48,9 @@ class TestFromDictAndJson(unittest.TestCase):
         class X(ModelObject):
             __slots__ = ['a']
         assert_equal(X.from_dict({'a': 1}).a, 1)
-        err = assert_raises(ValueError, X.from_dict, {'b': 'bad'})
-        expected = (f"Creating '{__name__}.X' object from dictionary failed: .*\n"
-                    f"Dictionary:\n{{'b': 'bad'}}")
-        if not re.fullmatch(expected, str(err)):
-            raise AssertionError(f'Unexpected error message. Expected:\n{expected}\n\n'
-                                 f'Actual:\n{err}')
+        error = assert_raises(ValueError, X.from_dict, {'b': 'bad'})
+        assert_equal(str(error).split(':')[0],
+                     f"Creating '{__name__}.X' object from dictionary failed")
 
 
 if __name__ == '__main__':

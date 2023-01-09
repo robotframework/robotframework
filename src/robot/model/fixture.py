@@ -13,15 +13,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-def create_fixture(fixture, parent, type):
+from collections.abc import Mapping
+
+
+def create_fixture(fixture, parent, fixture_type):
     # TestCase and TestSuite have 'fixture_class', Keyword doesn't.
     fixture_class = getattr(parent, 'fixture_class', parent.__class__)
+    if isinstance(fixture, fixture_class):
+        return fixture.config(parent=parent, type=fixture_type)
+    if isinstance(fixture, Mapping):
+        return fixture_class.from_dict(fixture).config(parent=parent, type=fixture_type)
     if fixture is None:
-        fixture = fixture_class(None, parent=parent, type=type)
-    elif isinstance(fixture, fixture_class):
-        fixture.parent = parent
-        fixture.type = type
-    else:
-        raise TypeError("Only %s objects accepted, got %s."
-                        % (fixture_class.__name__, fixture.__class__.__name__))
-    return fixture
+        return fixture_class(None, parent=parent, type=fixture_type)
+    raise TypeError(f"Invalid fixture type '{type(fixture).__name__}'.")

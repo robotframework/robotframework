@@ -85,9 +85,9 @@ class BaseBody(ItemList):
     # Set using 'BaseBody.register' when these classes are created.
     keyword_class = None
     for_class = None
+    while_class = None
     if_class = None
     try_class = None
-    while_class = None
     return_class = None
     continue_class = None
     break_class = None
@@ -97,9 +97,16 @@ class BaseBody(ItemList):
         super().__init__(BodyItem, {'parent': parent}, items)
 
     def _item_from_dict(self, data):
-        # FIXME: This doesn't work with all objects!
-        class_name = data.get('type', BodyItem.KEYWORD).lower() + '_class'
-        return getattr(self, class_name).from_dict(data)
+        item_type = data.get('type', None)
+        if not item_type:
+            item_class = self.keyword_class
+        elif item_type == BodyItem.IF_ELSE_ROOT:
+            item_class = self.if_class
+        elif item_type == BodyItem.TRY_EXCEPT_ROOT:
+            item_class = self.try_class
+        else:
+            item_class = getattr(self, item_type.lower() + '_class')
+        return item_class.from_dict(data)
 
     @classmethod
     def register(cls, item_class):
@@ -224,6 +231,9 @@ class Branches(BaseBody):
     def __init__(self, branch_class, parent=None, items=None):
         self.branch_class = branch_class
         super().__init__(parent, items)
+
+    def _item_from_dict(self, data):
+        return self.branch_class.from_dict(data)
 
     def create_branch(self, *args, **kwargs):
         return self.append(self.branch_class(*args, **kwargs))

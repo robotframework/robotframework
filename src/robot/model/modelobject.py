@@ -29,7 +29,7 @@ class ModelObject(metaclass=SetterAwareType):
             return cls().config(**data)
         except AttributeError as err:
             raise ValueError(f"Creating '{full_name(cls)}' object from dictionary "
-                             f"failed: {err}\nDictionary:\n{data}")
+                             f"failed: {err}")
 
     @classmethod
     def from_json(cls, data):
@@ -50,7 +50,15 @@ class ModelObject(metaclass=SetterAwareType):
         New in Robot Framework 4.0.
         """
         for name in attributes:
-            setattr(self, name, attributes[name])
+            try:
+                setattr(self, name, attributes[name])
+            except AttributeError:
+                # Ignore error setting attribute if the object already has it.
+                # Avoids problems with `to/from_dict` roundtrip with body items
+                # having unsettable `type` attribute that is needed in dict data.
+                if getattr(self, name, object()) == attributes[name]:
+                    continue
+                raise AttributeError
         return self
 
     def copy(self, **attributes):
