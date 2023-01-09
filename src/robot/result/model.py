@@ -37,7 +37,7 @@ from itertools import chain
 import warnings
 
 from robot import model
-from robot.model import BodyItem, Keywords, TotalStatisticsBuilder
+from robot.model import BodyItem, create_fixture, Keywords, Tags, TotalStatisticsBuilder
 from robot.utils import get_elapsed_time, setter
 
 from .configurer import SuiteConfigurer
@@ -420,37 +420,39 @@ class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
 @Branches.register
 @Iterations.register
 class Keyword(model.Keyword, StatusMixin):
-    """Represents results of a single keyword.
-
-    See the base class for documentation of attributes not documented here.
-    """
+    """Represents an executed library or user keyword."""
     body_class = Body
-    __slots__ = ['kwname', 'libname', 'status', 'starttime', 'endtime', 'message',
-                 'sourcename']
+    __slots__ = ['kwname', 'libname', 'doc', 'timeout', 'status', '_teardown',
+                 'starttime', 'endtime', 'message', 'sourcename']
 
     def __init__(self, kwname='', libname='', doc='', args=(), assign=(), tags=(),
                  timeout=None, type=BodyItem.KEYWORD, status='FAIL', starttime=None,
                  endtime=None, parent=None, sourcename=None):
-        super().__init__(None, doc, args, assign, tags, timeout, type, parent)
+        super().__init__(None, args, assign, type, parent)
         #: Name of the keyword without library or resource name.
         self.kwname = kwname
         #: Name of the library or resource containing this keyword.
         self.libname = libname
-        #: Execution status as a string. ``PASS``, ``FAIL``, ``SKIP`` or ``NOT RUN``.
+        self.doc = doc
+        self.tags = tags
+        self.timeout = timeout
         self.status = status
-        #: Keyword execution start time in format ``%Y%m%d %H:%M:%S.%f``.
         self.starttime = starttime
-        #: Keyword execution end time in format ``%Y%m%d %H:%M:%S.%f``.
         self.endtime = endtime
         #: Keyword status message. Used only if suite teardowns fails.
         self.message = ''
         #: Original name of keyword with embedded arguments.
         self.sourcename = sourcename
+        self._teardown = None
         self.body = None
 
     @setter
     def body(self, body):
-        """Child keywords and messages as a :class:`~.Body` object."""
+        """Possible keyword body as a :class:`~.Body` object.
+
+        Body can consist of child keywords, messages, and control structures
+        such as IF/ELSE. Library keywords typically have an empty body.
+        """
         return self.body_class(self, body)
 
     @property
@@ -508,6 +510,62 @@ class Keyword(model.Keyword, StatusMixin):
                                  "Set 'kwname' and 'libname' separately instead.")
         self.kwname = None
         self.libname = None
+
+    @property    # Cannot use @setter because it would create teardowns recursively.
+    def teardown(self):
+        """Keyword teardown as a :class:`Keyword` object.
+
+        Teardown can be modified by setting attributes directly::
+
+            keyword.teardown.name = 'Example'
+            keyword.teardown.args = ('First', 'Second')
+
+        Alternatively the :meth:`config` method can be used to set multiple
+        attributes in one call::
+
+            keyword.teardown.config(name='Example', args=('First', 'Second'))
+
+        The easiest way to reset the whole teardown is setting it to ``None``.
+        It will automatically recreate the underlying ``Keyword`` object::
+
+            keyword.teardown = None
+
+        This attribute is a ``Keyword`` object also when a keyword has no teardown
+        but in that case its truth value is ``False``. If there is a need to just
+        check does a keyword have a teardown, using the :attr:`has_teardown`
+        attribute avoids creating the ``Keyword`` object and is thus more memory
+        efficient.
+
+        New in Robot Framework 4.0. Earlier teardown was accessed like
+        ``keyword.keywords.teardown``. :attr:`has_teardown` is new in Robot
+        Framework 4.1.2.
+        """
+        if self._teardown is None and self:
+            self._teardown = create_fixture(None, self, self.TEARDOWN)
+        return self._teardown
+
+    @teardown.setter
+    def teardown(self, teardown):
+        self._teardown = create_fixture(teardown, self, self.TEARDOWN)
+
+    @property
+    def has_teardown(self):
+        """Check does a keyword have a teardown without creating a teardown object.
+
+        A difference between using ``if kw.has_teardown:`` and ``if kw.teardown:``
+        is that accessing the :attr:`teardown` attribute creates a :class:`Keyword`
+        object representing a teardown even when the keyword actually does not
+        have one. This typically does not matter, but with bigger suite structures
+        having lots of keywords it can have a considerable effect on memory usage.
+
+        New in Robot Framework 4.1.2.
+        """
+        return bool(self._teardown)
+
+    @setter
+    def tags(self, tags):
+        """Keyword tags as a :class:`~.model.tags.Tags` object."""
+        return Tags(tags)
 
 
 class TestCase(model.TestCase, StatusMixin):

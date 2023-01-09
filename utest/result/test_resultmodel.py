@@ -265,6 +265,25 @@ class TestModel(unittest.TestCase):
             assert_equal(item.status, 'NOT RUN')
             assert_raises(ValueError, setattr, item, 'not_run', False)
 
+    def test_keyword_teardown(self):
+        kw = Keyword()
+        assert_true(not kw.has_teardown)
+        assert_true(not kw.teardown)
+        assert_equal(kw.teardown.name, None)
+        assert_equal(kw.teardown.type, 'TEARDOWN')
+        assert_true(not kw.has_teardown)
+        assert_true(not kw.teardown)
+        kw.teardown = Keyword()
+        assert_true(kw.has_teardown)
+        assert_true(kw.teardown)
+        assert_equal(kw.teardown.name, '')
+        assert_equal(kw.teardown.type, 'TEARDOWN')
+        kw.teardown = None
+        assert_true(not kw.has_teardown)
+        assert_true(not kw.teardown)
+        assert_equal(kw.teardown.name, None)
+        assert_equal(kw.teardown.type, 'TEARDOWN')
+
     def test_keywords_deprecation(self):
         kw = Keyword()
         kw.body = [Keyword(), Message(), Keyword(), Keyword(), Message()]

@@ -55,18 +55,22 @@ class Body(model.Body):
 
 @Body.register
 class Keyword(model.Keyword):
-    """Represents a single executable keyword.
+    """Represents an executable keyword call.
 
-    These keywords never have child keywords or messages. The actual keyword
-    that is executed depends on the context where this model is executed.
+    A keyword call consists only of a keyword name, arguments and possible
+    assignment in the data::
 
-    See the base class for documentation of attributes not documented here.
+        Keyword    arg
+        ${result} =    Another Keyword    arg1    arg2
+
+    The actual keyword that is executed depends on the context where this model
+    is executed.
     """
     __slots__ = ['lineno']
 
-    def __init__(self, name='', doc='', args=(), assign=(), tags=(), timeout=None,
-                 type=BodyItem.KEYWORD, parent=None, lineno=None):
-        super().__init__(name, doc, args, assign, tags, timeout, type, parent)
+    def __init__(self, name='', args=(), assign=(), type=BodyItem.KEYWORD, parent=None,
+                 lineno=None):
+        super().__init__(name, args, assign, type, parent)
         self.lineno = lineno
 
     @property
