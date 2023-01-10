@@ -15,8 +15,10 @@
 
 import copy
 import json
+import os
+import pathlib
 
-from robot.utils import SetterAwareType
+from robot.utils import SetterAwareType, type_name
 
 
 class ModelObject(metaclass=SetterAwareType):
@@ -25,6 +27,10 @@ class ModelObject(metaclass=SetterAwareType):
 
     @classmethod
     def from_dict(cls, data):
+        """Create this object based on data in a dictionary.
+
+        Data can be got from the :meth:`to_dict` method or created externally.
+        """
         try:
             return cls().config(**data)
         except AttributeError as err:
@@ -32,14 +38,53 @@ class ModelObject(metaclass=SetterAwareType):
                              f"failed: {err}")
 
     @classmethod
-    def from_json(cls, data):
-        return cls.from_dict(json.loads(data))
+    def from_json(cls, source):
+        """Create this object based on JSON data.
+
+        The data is given as the ``source`` parameter. It can be
+        - a string (or bytes) containing the data directly,
+        - an open file object where to read the data, or
+        - a path (string or ``pathlib.Path``) to a UTF-8 encoded file to read.
+
+        The JSON data is first converted to a Python dictionary and the object
+        created using the :meth:`from_dict` method.
+
+        Notice that ``source`` is considered to be JSON data if it is a string
+        and contains ``{``. If you need to use ``{`` in a file path, pass it in
+        as a ``pathlib.Path`` instance.
+        """
+        try:
+            data = JsonLoader().load(source)
+        except ValueError as err:
+            raise ValueError(f'Loading JSON data failed: {err}')
+        return cls.from_dict(data)
 
     def to_dict(self):
+        """Serialize this object into a dictionary.
+
+        The object can be later restored by using the :meth:`from_dict` method.
+        """
         raise NotImplementedError
 
-    def to_json(self):
-        return json.dumps(self.to_dict())
+    def to_json(self, file=None, *, ensure_ascii=False, indent=0,
+                separators=(',', ':')):
+        """Serialize this object into JSON.
+
+        The object is first converted to a Python dictionary using the
+        :meth:`to_dict` method and then the dictionary is converted to JSON.
+
+        The ``file`` parameter controls what to do with the resulting JSON data.
+        It can be
+        - ``None`` (default) to return the data as a string,
+        - an open file object where to write the data, or
+        - a path to a file where to write the data using UTF-8 encoding.
+
+        JSON formatting can be configured using optional parameters that
+        are passed directly to the underlying ``json`` module. Notice that
+        the defaults differ from what ``json`` uses.
+        """
+        return JsonDumper(ensure_ascii=ensure_ascii, indent=indent,
+                          separators=separators).dump(self.to_dict(), file)
 
     def config(self, **attributes):
         """Configure model object with given attributes.
@@ -52,13 +97,12 @@ class ModelObject(metaclass=SetterAwareType):
         for name in attributes:
             try:
                 setattr(self, name, attributes[name])
-            except AttributeError:
+            except AttributeError as err:
                 # Ignore error setting attribute if the object already has it.
                 # Avoids problems with `to/from_dict` roundtrip with body items
                 # having unsettable `type` attribute that is needed in dict data.
-                if getattr(self, name, object()) == attributes[name]:
-                    continue
-                raise AttributeError
+                if getattr(self, name, object()) != attributes[name]:
+                    raise AttributeError(f"Setting attribute '{name}' failed: {err}")
         return self
 
     def copy(self, **attributes):
@@ -105,3 +149,48 @@ def full_name(obj):
     if len(parts) > 1 and parts[0] == 'robot':
         parts[2:-1] = []
     return '.'.join(parts)
+
+
+class JsonLoader:
+
+    def load(self, source):
+        try:
+            data = self._load(source)
+        except (json.JSONDecodeError, TypeError) as err:
+            raise ValueError(f'Invalid JSON data: {err}')
+        if not isinstance(data, dict):
+            raise ValueError(f"Expected dictionary, got {type_name(data)}.")
+        return data
+
+    def _load(self, source):
+        if self._is_path(source):
+            with open(source, encoding='UTF-8') as file:
+                return json.load(file)
+        if hasattr(source, 'read'):
+            return json.load(source)
+        return json.loads(source)
+
+    def _is_path(self, source):
+        if isinstance(source, os.PathLike):
+            return True
+        if not isinstance(source, str) or '{' in source:
+            return False
+        return os.path.isfile(source)
+
+
+class JsonDumper:
+
+    def __init__(self, **config):
+        self.config = config
+
+    def dump(self, data, output=None):
+        if not output:
+            return json.dumps(data, **self.config)
+        elif isinstance(output, (str, pathlib.Path)):
+            with open(output, 'w', encoding='UTF-8') as file:
+                json.dump(data, file, **self.config)
+        elif hasattr(output, 'write'):
+            json.dump(data, output, **self.config)
+        else:
+            raise TypeError(f"Output should be None, open file or path, "
+                            f"got {type_name(output)}.")
