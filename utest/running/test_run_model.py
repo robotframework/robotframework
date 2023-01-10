@@ -7,8 +7,9 @@ from os.path import abspath, join, normpath
 
 from robot import api, model
 from robot.model.modelobject import ModelObject
-from robot.running.model import (Break, Continue, For, If, IfBranch, Keyword, Return,
-                                 TestCase, TestSuite, Try, TryBranch, UserKeyword, While)
+from robot.running.model import (Break, Continue, For, If, IfBranch, Keyword,
+                                 ResourceFile, Return, TestCase, TestSuite, Try,
+                                 TryBranch, UserKeyword, While)
 from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal,
                                  assert_raises, assert_true)
 
@@ -114,7 +115,7 @@ Keyword
         assert_equal(suite.name, name)
         assert_equal(suite.doc, 'Some text.')
         assert_equal(suite.rpa, rpa)
-        assert_equal(suite.resource.imports[0].type, 'Library')
+        assert_equal(suite.resource.imports[0].type, 'LIBRARY')
         assert_equal(suite.resource.imports[0].name, 'ExampleLibrary')
         assert_equal(suite.resource.variables[0].name, '${VAR}')
         assert_equal(suite.resource.variables[0].value, ('Value',))
@@ -322,9 +323,10 @@ class TestToFromDict(unittest.TestCase):
                                       'body': [{'name': 'K2'}]}]}])
 
     def test_suite(self):
-        self._verify(TestSuite(), name='')
-        self._verify(TestSuite('N', 'D', {'M': 'V'}, 'x', rpa=True),
-                     name='N', doc='D', metadata={'M': 'V'}, source='x', rpa=True)
+        self._verify(TestSuite(), name='', resource={})
+        self._verify(TestSuite('N', 'D', {'M': 'V'}, 'x.robot', rpa=True),
+                     name='N', doc='D', metadata={'M': 'V'}, source='x.robot', rpa=True,
+                     resource={'source': 'x.robot'})
 
     def test_suite_structure(self):
         suite = TestSuite('Root')
@@ -338,7 +340,57 @@ class TestToFromDict(unittest.TestCase):
                      teardown={'name': 'Teardown', 'args': ['a']},
                      tests=[{'name': 'T1', 'body': [{'name': 'K'}]}],
                      suites=[{'name': 'Child',
-                              'tests': [{'name': 'T2', 'body': []}]}])
+                              'tests': [{'name': 'T2', 'body': []}],
+                              'resource': {}}],
+                     resource={})
+
+    def test_user_keyword(self):
+        self._verify(UserKeyword(), name='', body=[])
+        self._verify(UserKeyword('N', 'a', 'd', 't', 'r', 't', 1, error='E'),
+                     name='N',
+                     args=['a'],
+                     doc='d',
+                     tags=['t'],
+                     return_='r',
+                     timeout='t',
+                     lineno=1,
+                     error='E',
+                     body=[])
+
+    def test_user_keyword_structure(self):
+        uk = UserKeyword('UK')
+        uk.body.create_keyword('K1')
+        uk.body.create_if().body.create_branch(condition='$c').body.create_keyword('K2')
+        uk.teardown.config(name='Teardown')
+        self._verify(uk, name='UK',
+                     body=[{'name': 'K1'},
+                           {'type': 'IF/ELSE ROOT',
+                            'body': [{'type': 'IF', 'condition': '$c',
+                                      'body': [{'name': 'K2'}]}]}],
+                     teardown={'name': 'Teardown'})
+
+    def test_resource_file(self):
+        self._verify(ResourceFile())
+        resource = ResourceFile('x.resource', 'doc')
+        resource.imports.library('L', 'a', 'A', 1)
+        resource.imports.resource('R', 2)
+        resource.imports.variables('V', 'a', 3)
+        resource.variables.create('${x}', 'value')
+        resource.variables.create('@{y}', ['v1', 'v2'], lineno=4)
+        resource.variables.create('&{z}', ['k=v'], error='E')
+        resource.keywords.create('UK').body.create_keyword('K')
+        self._verify(resource,
+                     source='x.resource',
+                     doc='doc',
+                     imports=[{'type': 'LIBRARY', 'name': 'L', 'args': ['a'],
+                               'alias': 'A', 'lineno': 1},
+                              {'type': 'RESOURCE', 'name': 'R', 'lineno': 2},
+                              {'type': 'VARIABLES', 'name': 'V', 'args': ['a'],
+                               'lineno': 3}],
+                     variables=[{'name': '${x}', 'value': 'value'},
+                                {'name': '@{y}', 'value': ['v1', 'v2'], 'lineno': 4},
+                                {'name': '&{z}', 'value': ['k=v'], 'error': 'E'}],
+                     keywords=[{'name': 'UK', 'body': [{'name': 'K'}]}])
 
     def test_bigger_suite_structure(self):
         suite = TestSuite.from_file_system(MISC_DIR)

@@ -35,7 +35,7 @@ class TestBuilding(unittest.TestCase):
 
     def test_imports(self):
         imp = build('dummy_lib_test.robot').resource.imports[0]
-        assert_equal(imp.type, 'Library')
+        assert_equal(imp.type, 'LIBRARY')
         assert_equal(imp.name, 'DummyLib')
         assert_equal(imp.args, ())
 

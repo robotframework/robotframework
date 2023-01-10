@@ -66,18 +66,14 @@ class SettingsBuilder(NodeVisitor):
     def visit_TestTemplate(self, node):
         self.defaults.template = node.value
 
-    def visit_ResourceImport(self, node):
-        self.suite.resource.imports.create(type='Resource', name=node.name,
-                                           lineno=node.lineno)
-
     def visit_LibraryImport(self, node):
-        self.suite.resource.imports.create(type='Library', name=node.name,
-                                           args=node.args, alias=node.alias,
-                                           lineno=node.lineno)
+        self.suite.resource.imports.library(node.name, node.args, node.alias, node.lineno)
+
+    def visit_ResourceImport(self, node):
+        self.suite.resource.imports.resource(node.name, node.lineno)
 
     def visit_VariablesImport(self, node):
-        self.suite.resource.imports.create(type='Variables', name=node.name,
-                                           args=node.args, lineno=node.lineno)
+        self.suite.resource.imports.variables(node.name, node.args, node.lineno)
 
     def visit_VariableSection(self, node):
         pass
@@ -124,17 +120,13 @@ class ResourceBuilder(NodeVisitor):
         self.defaults.keyword_tags = node.values
 
     def visit_LibraryImport(self, node):
-        self.resource.imports.create(type='Library', name=node.name,
-                                     args=node.args, alias=node.alias,
-                                     lineno=node.lineno)
+        self.resource.imports.library(node.name, node.args, node.alias, node.lineno)
 
     def visit_ResourceImport(self, node):
-        self.resource.imports.create(type='Resource', name=node.name,
-                                     lineno=node.lineno)
+        self.resource.imports.resource(node.name, node.lineno)
 
     def visit_VariablesImport(self, node):
-        self.resource.imports.create(type='Variables', name=node.name,
-                                     args=node.args, lineno=node.lineno)
+        self.resource.imports.variables(node.name, node.args, node.lineno)
 
     def visit_Variable(self, node):
         self.resource.variables.create(name=node.name,

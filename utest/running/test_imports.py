@@ -1,7 +1,7 @@
 from io import StringIO
 import unittest
 
-from robot.running import TestSuite
+from robot.running.model import TestSuite, Import
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
 
@@ -27,16 +27,20 @@ def assert_test(test, name, status, tags=(), msg=''):
 
 class TestImports(unittest.TestCase):
 
-    def test_imports(self):
+    def test_create(self):
         suite = TestSuite(name='Suite')
         suite.resource.imports.create('Library', 'OperatingSystem')
-        suite.tests.create(name='Test').body.create_keyword('Directory Should Exist',
-                                                            args=['.'])
+        suite.resource.imports.create('RESOURCE', 'test_resource.txt')
+        suite.resource.imports.create(type='LibRary', name='String')
+        test = suite.tests.create(name='Test')
+        test.body.create_keyword('Directory Should Exist', args=['.'])
+        test.body.create_keyword('My Test Keyword')
+        test.body.create_keyword('Convert To Lower Case', args=['ROBOT'])
         result = run(suite)
         assert_suite(result, 'Suite', 'PASS')
         assert_test(result.tests[0], 'Test', 'PASS')
 
-    def test_library_imports(self):
+    def test_library(self):
         suite = TestSuite(name='Suite')
         suite.resource.imports.library('OperatingSystem')
         suite.tests.create(name='Test').body.create_keyword('Directory Should Exist',
@@ -45,7 +49,7 @@ class TestImports(unittest.TestCase):
         assert_suite(result, 'Suite', 'PASS')
         assert_test(result.tests[0], 'Test', 'PASS')
 
-    def test_resource_imports(self):
+    def test_resource(self):
         suite = TestSuite(name='Suite')
         suite.resource.imports.resource('test_resource.txt')
         suite.tests.create(name='Test').body.create_keyword('My Test Keyword')
@@ -54,7 +58,7 @@ class TestImports(unittest.TestCase):
         assert_suite(result, 'Suite', 'PASS')
         assert_test(result.tests[0], 'Test', 'PASS')
 
-    def test_variable_imports(self):
+    def test_variables(self):
         suite = TestSuite(name='Suite')
         suite.resource.imports.variables('variables_file.py')
         suite.tests.create(name='Test').body.create_keyword(
@@ -65,12 +69,22 @@ class TestImports(unittest.TestCase):
         assert_suite(result, 'Suite', 'PASS')
         assert_test(result.tests[0], 'Test', 'PASS')
 
-    def test_invalid_import_type(self):
+    def test_invalid_type(self):
         assert_raises_with_msg(ValueError,
-                               "Invalid import type 'InvalidType'. Should be "
-                               "one of 'Library', 'Resource' or 'Variables'.",
+                               "Invalid import type: Expected 'LIBRARY', 'RESOURCE' "
+                               "or 'VARIABLES', got 'INVALIDTYPE'.",
                                TestSuite().resource.imports.create,
                                'InvalidType', 'Name')
+
+    def test_repr(self):
+        assert_equal(repr(Import(Import.LIBRARY, 'X')),
+                     "robot.running.Import(type='LIBRARY', name='X')")
+        assert_equal(repr(Import(Import.LIBRARY, 'X', ['a'], 'A')),
+                     "robot.running.Import(type='LIBRARY', name='X', args=['a'], alias='A')")
+        assert_equal(repr(Import(Import.RESOURCE, 'X')),
+                     "robot.running.Import(type='RESOURCE', name='X')")
+        assert_equal(repr(Import(Import.VARIABLES, '')),
+                     "robot.running.Import(type='VARIABLES', name='')")
 
 
 if __name__ == '__main__':
