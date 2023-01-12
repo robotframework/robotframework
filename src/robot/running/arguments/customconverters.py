@@ -24,13 +24,13 @@ class CustomArgumentConverters:
         self.converters = converters
 
     @classmethod
-    def from_dict(cls, converters, error_reporter):
+    def from_dict(cls, converters, library):
         valid = []
         for type_, conv in converters.items():
             try:
-                info = ConverterInfo.for_converter(type_, conv)
+                info = ConverterInfo.for_converter(type_, conv, library)
             except TypeError as err:
-                error_reporter(str(err))
+                library.report_error(str(err))
             else:
                 valid.append(info)
         return cls(valid)
@@ -51,10 +51,12 @@ class CustomArgumentConverters:
 
 class ConverterInfo:
 
-    def __init__(self, type, converter, value_types):
+    def __init__(self, type, converter, value_types, min_args, library):
         self.type = type
         self.converter = converter
         self.value_types = value_types
+        self._min_args = min_args
+        self._library = library
 
     @property
     def name(self):
@@ -65,7 +67,7 @@ class ConverterInfo:
         return getdoc(self.converter) or getdoc(self.type)
 
     @classmethod
-    def for_converter(cls, type_, converter):
+    def for_converter(cls, type_, converter, library):
         if not isinstance(type_, type):
             raise TypeError(f'Custom converters must be specified using types, '
                             f'got {type_name(type_)} {type_!r}.')
@@ -76,7 +78,8 @@ class ConverterInfo:
         if not callable(converter):
             raise TypeError(f'Custom converters must be callable, converter for '
                             f'{type_name(type_)} is {type_name(converter)}.')
-        arg_type = cls._get_arg_type(converter)
+        arg_spec = cls._get_arg_spec(converter)
+        arg_type = arg_spec.types.get(arg_spec.positional[0])
         if arg_type is None:
             accepts = ()
         elif is_union(arg_type):
@@ -85,15 +88,15 @@ class ConverterInfo:
             accepts = (arg_type.__origin__,)
         else:
             accepts = (arg_type,)
-        return cls(type_, converter, accepts)
+        return cls(type_, converter, accepts, arg_spec.minargs, library)
 
     @classmethod
-    def _get_arg_type(cls, converter):
+    def _get_arg_spec(cls, converter):
         spec = PythonArgumentParser(type='Converter').parse(converter)
-        if spec.minargs > 1:
+        if spec.minargs > 2:
             required = seq2str([a for a in spec.positional if a not in spec.defaults])
-            raise TypeError(f"Custom converters cannot have more than one mandatory "
-                            f"argument, '{converter.__name__}' has {required}.")
+            raise TypeError(f"Custom converters cannot have more than two mandatory "
+                            f"arguments, '{converter.__name__}' has {required}.")
         if not spec.positional:
             raise TypeError(f"Custom converters must accept one positional argument, "
                             f"'{converter.__name__}' accepts none.")
@@ -101,4 +104,9 @@ class ConverterInfo:
             required = seq2str(sorted(set(spec.named_only) - set(spec.defaults)))
             raise TypeError(f"Custom converters cannot have mandatory keyword-only "
                             f"arguments, '{converter.__name__}' has {required}.")
-        return spec.types.get(spec.positional[0])
+        return spec
+
+    def convert(self, value):
+        if self._min_args == 1:
+            return self.converter(value)
+        return self.converter(value, self._library.get_instance())
