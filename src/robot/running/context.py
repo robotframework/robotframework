@@ -199,6 +199,7 @@ class _ExecutionContext:
 
     def start_keyword(self, keyword):
         self._started_keywords += 1
+        self.variables.set_test('${KEYWORD_NAME}', keyword.name)
         if self._started_keywords > self._started_keywords_threshold:
             raise DataError('Maximum limit of started keywords and control '
                             'structures exceeded.')
