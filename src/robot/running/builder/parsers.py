@@ -55,7 +55,8 @@ class RobotParser(BaseParser):
 
     def build_suite(self, model, name=None, defaults=None):
         source = model.source
-        suite = TestSuite(name=name or format_name(source), source=source)
+        name = name or TestSuite.name_from_source(source)
+        suite = TestSuite(name=name, source=source)
         return self._build(suite, source, defaults, model)
 
     def _build(self, suite, source, defaults, model=None, get_model=get_model):
