@@ -47,7 +47,8 @@ class TestBuildTestSuite(unittest.TestCase):
                            message='Message', start=0, elapsed=42001)
 
     def test_relative_source(self):
-        self._verify_suite(TestSuite(source='non-existing'), source='non-existing')
+        self._verify_suite(TestSuite(source='non-existing'),
+                           name='Non-Existing', source='non-existing')
         source = CURDIR / 'test_jsmodelbuilders.py'
         self._verify_suite(TestSuite(name='x', source=source),
                            name='x', source=str(source), relsource=str(source.name))

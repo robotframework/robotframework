@@ -1,11 +1,12 @@
 import unittest
 import warnings
-from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
-                                 assert_raises_with_msg)
+from pathlib import Path
 
 from robot.model import TestSuite
 from robot.running import TestSuite as RunningTestSuite
 from robot.result import TestSuite as ResultTestSuite
+from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
+                                 assert_raises_with_msg)
 
 
 class TestTestSuite(unittest.TestCase):
@@ -39,7 +40,25 @@ class TestTestSuite(unittest.TestCase):
         assert_true(s2.parent is self.suite)
         assert_equal(list(self.suite.suites), [s1, s2])
 
-    def test_suite_name(self):
+    def test_name_from_source(self):
+        for inp, exp in [(None, ''), ('', ''), ('name', 'Name'), ('name.robot', 'Name'),
+                         ('naMe', 'naMe'), ('na_me', 'Na Me'), ('na_M_e_', 'na M e'),
+                         ('prefix__name', 'Name'), ('__n', 'N'), ('naMe__', 'naMe')]:
+            assert_equal(TestSuite(source=inp).name, exp)
+            if inp:
+                assert_equal(TestSuite(source=Path(inp)).name, exp)
+                assert_equal(TestSuite(source=Path(inp).resolve()).name, exp)
+
+
+    def test_suite_name_from_source(self):
+        suite = TestSuite(source='example.robot')
+        assert_equal(suite.name, 'Example')
+        suite.suites.create(name='child')
+        assert_equal(suite.name, 'Example')
+        suite.name = 'new name'
+        assert_equal(suite.name, 'new name')
+
+    def test_suite_name_from_child_suites(self):
         suite = TestSuite()
         assert_equal(suite.name, '')
         assert_equal(suite.suites.create(name='foo').name, 'foo')

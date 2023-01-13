@@ -54,6 +54,18 @@ class TestSuite(ModelObject):
         self._teardown = None
         self._my_visitors = []
 
+    @staticmethod
+    def name_from_source(source: Path):
+        if not source:
+            return ''
+        if not isinstance(source, Path):
+            source = Path(source)
+        name = source.name if source.is_dir() else source.stem
+        if '__' in name:
+            name = name.split('__', 1)[1] or name
+        name = name.replace('_', ' ').strip()
+        return name.title() if name.islower() else name
+
     @property
     def _visitors(self):
         parent_visitors = self.parent._visitors if self.parent else []
@@ -61,8 +73,14 @@ class TestSuite(ModelObject):
 
     @property
     def name(self):
-        """Test suite name. If not set, constructed from child suite names."""
-        return self._name or ' & '.join(s.name for s in self.suites)
+        """Test suite name.
+
+        If name is not set, it is constructed from source. If source is not set,
+        name is constructed from child suite names or.
+        """
+        return (self._name
+                or self.name_from_source(self.source)
+                or ' & '.join(s.name for s in self.suites))
 
     @name.setter
     def name(self, name):
