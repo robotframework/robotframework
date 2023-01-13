@@ -138,7 +138,7 @@ class _BaseSettings:
         if name == 'ExpandKeywords':
             self._validate_expandkeywords(value)
         if name == 'Extension':
-            return tuple(ext.lower().lstrip('.') for ext in value.split(':'))
+            return tuple('.' + ext.lower().lstrip('.') for ext in value.split(':'))
         return value
 
     def _process_doc(self, value):
@@ -453,7 +453,7 @@ class _BaseSettings:
 
 
 class RobotSettings(_BaseSettings):
-    _extra_cli_opts = {'Extension'          : ('extension', ('robot',)),
+    _extra_cli_opts = {'Extension'          : ('extension', ('.robot',)),
                        'Output'             : ('output', 'output.xml'),
                        'LogLevel'           : ('loglevel', 'INFO'),
                        'MaxErrorLines'      : ('maxerrorlines', 40),

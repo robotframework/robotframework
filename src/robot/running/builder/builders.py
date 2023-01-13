@@ -46,7 +46,7 @@ class TestSuiteBuilder:
     :mod:`robot.api` package.
     """
 
-    def __init__(self, included_suites=None, included_extensions=('robot',),
+    def __init__(self, included_suites=None, included_extensions=('.robot',),
                  rpa=None, lang=None, allow_empty_suite=False,
                  process_curdir=True):
         """
@@ -168,15 +168,14 @@ class SuiteStructureParser(SuiteStructureVisitor):
         defaults = Defaults(parent_defaults)
         parser = self._get_parser(structure.extension)
         try:
-            if structure.is_directory:
-                suite = parser.parse_init_file(structure.init_file or source,
-                                               structure.name, defaults)
-                if structure.source is None:
-                    suite.name = None
-            else:
-                suite = parser.parse_suite_file(source, structure.name, defaults)
+            if structure.is_file:
+                suite = parser.parse_suite_file(source, defaults)
                 if not suite.tests:
                     LOGGER.info(f"Data source '{source}' has no tests or tasks.")
+            else:
+                suite = parser.parse_init_file(structure.init_file or source, defaults)
+                if not source:
+                    suite.config(name='', source=None)
             self._validate_execution_mode(suite)
         except DataError as err:
             raise DataError(f"Parsing '{source}' failed: {err.message}")

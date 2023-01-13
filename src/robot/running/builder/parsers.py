@@ -15,6 +15,7 @@
 
 import os
 from ast import NodeVisitor
+from pathlib import Path
 
 from robot.errors import DataError
 from robot.output import LOGGER
@@ -28,13 +29,13 @@ from ..model import TestSuite, ResourceFile
 
 class BaseParser:
 
-    def parse_init_file(self, source, name, defaults=None):
+    def parse_init_file(self, source: Path, defaults: Defaults = None):
         raise NotImplementedError
 
-    def parse_suite_file(self, source, name, defaults=None):
+    def parse_suite_file(self, source: Path, defaults: Defaults = None):
         raise NotImplementedError
 
-    def parse_resource_file(self, source):
+    def parse_resource_file(self, source: Path):
         raise NotImplementedError
 
 
@@ -44,12 +45,14 @@ class RobotParser(BaseParser):
         self.lang = lang
         self.process_curdir = process_curdir
 
-    def parse_init_file(self, source, name, defaults=None):
-        directory = os.path.dirname(source)
+    def parse_init_file(self, source, defaults=None):
+        directory = source.parent
+        name = TestSuite.name_from_source(directory)
         suite = TestSuite(name=name, source=directory)
         return self._build(suite, source, defaults, get_model=get_init_model)
 
-    def parse_suite_file(self, source, name, defaults=None):
+    def parse_suite_file(self, source, defaults=None):
+        name = TestSuite.name_from_source(source)
         suite = TestSuite(name=name, source=source)
         return self._build(suite, source, defaults)
 
@@ -105,7 +108,8 @@ class RestParser(RobotParser):
 
 class NoInitFileDirectoryParser(BaseParser):
 
-    def parse_init_file(self, source, name=None, defaults=None):
+    def parse_init_file(self, source, defaults=None):
+        name = TestSuite.name_from_source(source)
         return TestSuite(name=name, source=source)
 
 
