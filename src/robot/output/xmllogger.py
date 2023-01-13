@@ -197,7 +197,9 @@ class XmlLogger(ResultVisitor):
         self._writer.end('test')
 
     def start_suite(self, suite):
-        attrs = {'id': suite.id, 'name': suite.name, 'source': suite.source}
+        attrs = {'id': suite.id, 'name': suite.name}
+        if suite.source:
+            attrs['source'] = str(suite.source)
         self._writer.start('suite', attrs)
 
     def end_suite(self, suite):

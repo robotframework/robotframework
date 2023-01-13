@@ -1,7 +1,7 @@
 import base64
 import unittest
 import zlib
-from os.path import abspath, basename, dirname, join
+from pathlib import Path
 
 from robot.utils.asserts import assert_equal, assert_true
 from robot.result import Keyword, Message, TestCase, TestSuite
@@ -14,7 +14,7 @@ from robot.reporting.jsmodelbuilders import (
 from robot.reporting.stringcache import StringIndex
 
 
-CURDIR = dirname(abspath(__file__))
+CURDIR = Path(__file__).resolve().parent
 
 
 def decode_string(string):
@@ -48,9 +48,9 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_relative_source(self):
         self._verify_suite(TestSuite(source='non-existing'), source='non-existing')
-        source = join(CURDIR, 'test_jsmodelbuilders.py')
-        self._verify_suite(TestSuite(source=source), source=source,
-                           relsource=basename(source))
+        source = CURDIR / 'test_jsmodelbuilders.py'
+        self._verify_suite(TestSuite(name='x', source=source),
+                           name='x', source=str(source), relsource=str(source.name))
 
     def test_suite_html_formatting(self):
         self._verify_suite(TestSuite(name='*xxx*', doc='*bold* <&>',
@@ -233,7 +233,7 @@ class TestBuildTestSuite(unittest.TestCase):
         assert_equal(self.context.min_level, expected)
 
     def _build_and_verify(self, builder_class, item, *expected):
-        self.context = JsBuildingContext(log_path=join(CURDIR, 'log.html'))
+        self.context = JsBuildingContext(log_path=CURDIR / 'log.html')
         model = builder_class(self.context).build(item)
         self._verify_mapped(model, self.context.strings, expected)
         return expected

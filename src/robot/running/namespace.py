@@ -89,7 +89,7 @@ class Namespace:
             self._kw_store.resources[path] = user_library
             self._handle_imports(resource.imports)
             LOGGER.imported("Resource", user_library.name,
-                            importer=import_setting.source,
+                            importer=str(import_setting.source),
                             source=path)
         else:
             LOGGER.info(f"Resource file '{path}' already imported by "
@@ -112,7 +112,7 @@ class Namespace:
             self.variables.set_from_file(path, args, overwrite)
             LOGGER.imported("Variables", os.path.basename(path),
                             args=list(args),
-                            importer=import_setting.source,
+                            importer=str(import_setting.source),
                             source=path)
         else:
             msg = f"Variable file '{path}'"
@@ -135,7 +135,7 @@ class Namespace:
             LOGGER.imported("Library", lib.name,
                             args=list(import_setting.args),
                             originalname=lib.orig_name,
-                            importer=import_setting.source,
+                            importer=str(import_setting.source),
                             source=lib.source)
         self._kw_store.libraries[lib.name] = lib
         lib.start_suite()

@@ -1,10 +1,10 @@
 import unittest
-from os.path import abspath, dirname, join, normpath
+from pathlib import Path
 
 from robot.utils.asserts import assert_equal
 from robot.testdoc import JsonConverter, TestSuiteFactory
 
-DATADIR = join(dirname(abspath(__file__)), '..', '..', 'atest', 'testdata', 'misc')
+DATADIR = (Path(__file__).parent / '../../atest/testdata/misc').resolve()
 
 
 def test_convert(item, **expected):
@@ -17,12 +17,11 @@ class TestJsonConverter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         suite = TestSuiteFactory(DATADIR, doc='My doc', metadata=['abc:123', '1:2'])
-        output = join(DATADIR, '..', 'output.html')
-        cls.suite = JsonConverter(output).convert(suite)
+        cls.suite = JsonConverter(DATADIR / '../output.html').convert(suite)
 
     def test_suite(self):
         test_convert(self.suite,
-                     source=normpath(DATADIR),
+                     source=str(DATADIR),
                      relativeSource='misc',
                      id='s1',
                      name='Misc',
@@ -33,7 +32,7 @@ class TestJsonConverter(unittest.TestCase):
                      tests=[],
                      keywords=[])
         test_convert(self.suite['suites'][0],
-                     source=join(normpath(DATADIR), 'dummy_lib_test.robot'),
+                     source=str(DATADIR / 'dummy_lib_test.robot'),
                      relativeSource='misc/dummy_lib_test.robot',
                      id='s1-s1',
                      name='Dummy Lib Test',
@@ -44,8 +43,7 @@ class TestJsonConverter(unittest.TestCase):
                      suites=[],
                      keywords=[])
         test_convert(self.suite['suites'][5]['suites'][1]['suites'][-1],
-                     source=join(normpath(DATADIR), 'multiple_suites',
-                                 '02__sub.suite.1', 'second__.Sui.te.2..robot'),
+                     source=str(DATADIR / 'multiple_suites/02__sub.suite.1/second__.Sui.te.2..robot'),
                      relativeSource='misc/multiple_suites/02__sub.suite.1/second__.Sui.te.2..robot',
                      id='s1-s6-s2-s2',
                      name='.Sui.te.2.',
@@ -57,8 +55,8 @@ class TestJsonConverter(unittest.TestCase):
                      keywords=[])
 
     def test_multi_suite(self):
-        data = TestSuiteFactory([join(DATADIR, 'normal.robot'),
-                                 join(DATADIR, 'pass_and_fail.robot')])
+        data = TestSuiteFactory([DATADIR / 'normal.robot',
+                                 DATADIR / 'pass_and_fail.robot'])
         suite = JsonConverter().convert(data)
         test_convert(suite,
                      source='',
@@ -72,7 +70,7 @@ class TestJsonConverter(unittest.TestCase):
                      keywords=[],
                      tests=[])
         test_convert(suite['suites'][0],
-                     source=normpath(join(DATADIR, 'normal.robot')),
+                     source=str(DATADIR / 'normal.robot'),
                      relativeSource='',
                      id='s1-s1',
                      name='Normal',
@@ -81,7 +79,7 @@ class TestJsonConverter(unittest.TestCase):
                      metadata=[('Something', '<p>My Value</p>')],
                      numberOfTests=2)
         test_convert(suite['suites'][1],
-                     source=normpath(join(DATADIR, 'pass_and_fail.robot')),
+                     source=str(DATADIR / 'pass_and_fail.robot'),
                      relativeSource='',
                      id='s1-s2',
                      name='Pass And Fail',
@@ -177,7 +175,7 @@ class TestFormattingAndEscaping(unittest.TestCase):
 
     def setUp(self):
         if not self.suite:
-            suite = TestSuiteFactory(join(DATADIR, 'formatting_and_escaping.robot'),
+            suite = TestSuiteFactory(DATADIR / 'formatting_and_escaping.robot',
                                      name='<suite>', metadata=['CLI>:*bold*'])
             self.__class__.suite = JsonConverter().convert(suite)
 

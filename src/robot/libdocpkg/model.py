@@ -121,7 +121,7 @@ class LibraryDoc:
             'type': self.type,
             'scope': self.scope,
             'docFormat': self.doc_format,
-            'source': self.source,
+            'source': str(self.source) if self.source else '',
             'lineno': self.lineno,
             'tags': list(self.all_tags),
             'inits': [init.to_dictionary() for init in self.inits],

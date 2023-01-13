@@ -100,7 +100,7 @@ class StartSuiteArguments(_ListenerArgumentsFromItem):
         return {'tests': [t.name for t in suite.tests],
                 'suites': [s.name for s in suite.suites],
                 'totaltests': suite.test_count,
-                'source': suite.source or ''}
+                'source': str(suite.source or '')}
 
 
 class EndSuiteArguments(StartSuiteArguments):
@@ -108,27 +108,27 @@ class EndSuiteArguments(StartSuiteArguments):
                         'endtime', 'elapsedtime', 'status', 'message')
 
     def _get_extra_attributes(self, suite):
-        attrs = StartSuiteArguments._get_extra_attributes(self, suite)
+        attrs = super()._get_extra_attributes(suite)
         attrs['statistics'] = suite.stat_message
         return attrs
 
 
 class StartTestArguments(_ListenerArgumentsFromItem):
-    _attribute_names = ('id', 'longname', 'doc', 'tags', 'lineno', 'source', 'starttime')
+    _attribute_names = ('id', 'longname', 'doc', 'tags', 'lineno', 'starttime')
 
     def _get_extra_attributes(self, test):
-        return {'template': test.template or '',
+        return {'source': str(test.source or ''),
+                'template': test.template or '',
                 'originalname': test.data.name}
 
 
 class EndTestArguments(StartTestArguments):
-    _attribute_names = ('id', 'longname', 'doc', 'tags', 'lineno', 'source', 'starttime',
+    _attribute_names = ('id', 'longname', 'doc', 'tags', 'lineno', 'starttime',
                         'endtime', 'elapsedtime', 'status', 'message')
 
 
 class StartKeywordArguments(_ListenerArgumentsFromItem):
-    _attribute_names = ('doc', 'assign', 'tags', 'lineno', 'source', 'type', 'status',
-                        'starttime')
+    _attribute_names = ('doc', 'assign', 'tags', 'lineno', 'type', 'status', 'starttime')
     _type_attributes = {
         BodyItem.FOR: ('variables', 'flavor', 'values'),
         BodyItem.IF: ('condition',),
@@ -136,11 +136,14 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
         BodyItem.EXCEPT: ('patterns', 'pattern_type', 'variable'),
         BodyItem.WHILE: ('condition', 'limit'),
         BodyItem.RETURN: ('values',),
-        BodyItem.ITERATION: ('variables',)}
+        BodyItem.ITERATION: ('variables',)
+    }
 
     def _get_extra_attributes(self, kw):
-        args = [a if is_string(a) else safe_str(a) for a in kw.args]
-        attrs = {'kwname': kw.kwname or '', 'libname': kw.libname or '', 'args': args}
+        attrs = {'kwname': kw.kwname or '',
+                 'libname': kw.libname or '',
+                 'args': [a if is_string(a) else safe_str(a) for a in kw.args],
+                 'source': str(kw.source or '')}
         if kw.type in self._type_attributes:
             attrs.update({name: self._get_attribute_value(kw, name)
                           for name in self._type_attributes[kw.type]
@@ -149,5 +152,5 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
 
 
 class EndKeywordArguments(StartKeywordArguments):
-    _attribute_names = ('doc', 'assign', 'tags', 'lineno', 'source', 'type', 'status',
+    _attribute_names = ('doc', 'assign', 'tags', 'lineno', 'type', 'status',
                         'starttime', 'endtime', 'elapsedtime')

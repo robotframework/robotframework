@@ -3,7 +3,7 @@ import os
 import tempfile
 import unittest
 import warnings
-from os.path import abspath, join, normpath
+from pathlib import Path
 
 from robot import api, model
 from robot.model.modelobject import ModelObject
@@ -13,8 +13,7 @@ from robot.running.model import (Break, Continue, For, If, IfBranch, Keyword,
 from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal,
                                  assert_raises, assert_true)
 
-MISC_DIR = normpath(join(abspath(__file__), '..', '..', '..',
-                         'atest', 'testdata', 'misc'))
+MISC_DIR = (Path(__file__).parent / '../../atest/testdata/misc').resolve()
 
 
 class TestModelTypes(unittest.TestCase):
@@ -52,7 +51,7 @@ class TestUserKeyword(unittest.TestCase):
 
 
 class TestSuiteFromSources(unittest.TestCase):
-    path = join(os.getenv('TEMPDIR') or tempfile.gettempdir(),
+    path = Path(os.getenv('TEMPDIR') or tempfile.gettempdir(),
                 'test_run_model.robot')
     data = '''
 *** Settings ***
@@ -190,7 +189,7 @@ class TestCopy(unittest.TestCase):
 
 
 class TestLineNumberAndSource(unittest.TestCase):
-    source = join(MISC_DIR, 'pass_and_fail.robot')
+    source = MISC_DIR / 'pass_and_fail.robot'
 
     @classmethod
     def setUpClass(cls):

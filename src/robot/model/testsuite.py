@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from pathlib import Path
+
 from robot.utils import setter
 
 from .configurer import SuiteConfigurer
@@ -35,16 +37,16 @@ class TestSuite(ModelObject):
     test_class = TestCase    #: Internal usage only.
     fixture_class = Keyword  #: Internal usage only.
     repr_args = ('name',)
-    __slots__ = ['parent', 'source', '_name', 'doc', '_setup', '_teardown',  'rpa',
+    __slots__ = ['parent', '_name', 'doc', '_setup', '_teardown',  'rpa',
                  '_my_visitors']
 
-    def __init__(self, name='', doc='', metadata=None, source=None, rpa=False,
-                 parent=None):
+    def __init__(self, name: str = '', doc: str = '', metadata: dict = None,
+                 source: Path = None, rpa: bool = False, parent: 'TestSuite' = None):
         self._name = name
         self.doc = doc
         self.metadata = metadata
-        self.source = source  #: Path to the source file or directory.
-        self.parent = parent  #: Parent suite. ``None`` with the root suite.
+        self.source = source
+        self.parent = parent
         self.rpa = rpa        #: ``True`` when RPA mode is enabled.
         self.suites = None
         self.tests = None
@@ -65,6 +67,10 @@ class TestSuite(ModelObject):
     @name.setter
     def name(self, name):
         self._name = name
+
+    @setter
+    def source(self, source):
+        return source if isinstance(source, (Path, type(None))) else Path(source)
 
     @property
     def longname(self):
@@ -272,7 +278,7 @@ class TestSuite(ModelObject):
         if self.metadata:
             data['metadata'] = dict(self.metadata)
         if self.source:
-            data['source'] = self.source
+            data['source'] = str(self.source)
         if self.rpa:
             data['rpa'] = self.rpa
         if self.has_setup:

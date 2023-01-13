@@ -42,7 +42,7 @@ from robot.conf import RobotSettings
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, TESTDOC
 from robot.running import TestSuiteBuilder
 from robot.utils import (abspath, Application, file_writer, get_link_path,
-                         html_escape, html_format, is_string, secs_to_timestr,
+                         html_escape, html_format, is_list_like, secs_to_timestr,
                          seq2str2, timestr_to_secs, unescape)
 
 
@@ -130,7 +130,7 @@ class TestDoc(Application):
 
 def TestSuiteFactory(datasources, **options):
     settings = RobotSettings(options)
-    if is_string(datasources):
+    if not is_list_like(datasources):
         datasources = [datasources]
     suite = TestSuiteBuilder(process_curdir=False).build(*datasources)
     suite.configure(**settings.suite_config)
@@ -169,7 +169,7 @@ class JsonConverter:
 
     def _convert_suite(self, suite):
         return {
-            'source': suite.source or '',
+            'source': str(suite.source or ''),
             'relativeSource': self._get_relative_source(suite.source),
             'id': suite.id,
             'name': self._escape(suite.name),

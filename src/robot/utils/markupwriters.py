@@ -100,7 +100,7 @@ class XmlWriter(_MarkupWriter):
 
     def element(self, name, content=None, attrs=None, escape=True, newline=True):
         if content:
-            _MarkupWriter.element(self, name, content, attrs, escape, newline)
+            super().element(name, content, attrs, escape, newline)
         else:
             self._self_closing_element(name, attrs, newline)
 
