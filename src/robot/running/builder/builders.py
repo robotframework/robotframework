@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
+from pathlib import Path
 
 from robot.errors import DataError
 from robot.output import LOGGER
@@ -202,7 +202,9 @@ class ResourceFileBuilder:
         self.lang = lang
         self.process_curdir = process_curdir
 
-    def build(self, source):
+    def build(self, source: Path):
+        if not isinstance(source, Path):
+            source = Path(source)
         LOGGER.info(f"Parsing resource file '{source}'.")
         resource = self._parse(source)
         if resource.imports or resource.variables or resource.keywords:
@@ -213,6 +215,6 @@ class ResourceFileBuilder:
         return resource
 
     def _parse(self, source):
-        if os.path.splitext(source)[1].lower() in ('.rst', '.rest'):
+        if source.suffix.lower() in ('.rst', '.rest'):
             return RestParser(self.lang, self.process_curdir).parse_resource_file(source)
         return RobotParser(self.lang, self.process_curdir).parse_resource_file(source)

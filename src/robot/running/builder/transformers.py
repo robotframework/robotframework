@@ -15,15 +15,18 @@
 
 from ast import NodeVisitor
 
+from robot.errors import DataError
 from robot.output import LOGGER
+from robot.parsing import File, Token
 from robot.variables import VariableIterator
 
 from .settings import Defaults, TestSettings
+from ..model import ResourceFile, TestSuite
 
 
 class SettingsBuilder(NodeVisitor):
 
-    def __init__(self, suite, defaults):
+    def __init__(self, suite: TestSuite, defaults: Defaults):
         self.suite = suite
         self.defaults = defaults
 
@@ -87,9 +90,17 @@ class SettingsBuilder(NodeVisitor):
 
 class SuiteBuilder(NodeVisitor):
 
-    def __init__(self, suite, defaults):
+    def __init__(self, suite: TestSuite, defaults: Defaults = None):
         self.suite = suite
-        self.defaults = defaults
+        self.defaults = defaults or Defaults()
+        self.rpa = None
+
+    def build(self, model: File):
+        ErrorReporter(model.source).visit(model)
+        SettingsBuilder(self.suite, self.defaults).visit(model)
+        self.visit(model)
+        if self.rpa is not None:
+            self.suite.rpa = self.rpa
 
     def visit_SettingSection(self, node):
         pass
@@ -100,6 +111,13 @@ class SuiteBuilder(NodeVisitor):
                                              lineno=node.lineno,
                                              error=format_error(node.errors))
 
+    def visit_TestCaseSection(self, node):
+        if self.rpa is None:
+            self.rpa = node.tasks
+        elif self.rpa != node.tasks:
+            raise DataError('One file cannot have both tests and tasks.')
+        self.generic_visit(node)
+
     def visit_TestCase(self, node):
         TestCaseBuilder(self.suite, self.defaults).visit(node)
 
@@ -109,9 +127,13 @@ class SuiteBuilder(NodeVisitor):
 
 class ResourceBuilder(NodeVisitor):
 
-    def __init__(self, resource):
+    def __init__(self, resource: ResourceFile):
         self.resource = resource
         self.defaults = Defaults()
+
+    def build(self, model: File):
+        ErrorReporter(model.source).visit(model)
+        self.visit(model)
 
     def visit_Documentation(self, node):
         self.resource.doc = node.value
@@ -140,7 +162,7 @@ class ResourceBuilder(NodeVisitor):
 
 class TestCaseBuilder(NodeVisitor):
 
-    def __init__(self, suite, defaults):
+    def __init__(self, suite: TestSuite, defaults: Defaults):
         self.suite = suite
         self.settings = TestSettings(defaults)
         self.test = None
@@ -243,7 +265,7 @@ class TestCaseBuilder(NodeVisitor):
 
 class KeywordBuilder(NodeVisitor):
 
-    def __init__(self, resource, defaults):
+    def __init__(self, resource: ResourceFile, defaults: Defaults):
         self.resource = resource
         self.defaults = defaults
         self.kw = None
@@ -562,3 +584,19 @@ def deprecate_tags_starting_with_hyphen(node, source):
                 f"for removing tags. Escape '{tag}' like '\\{tag}' to use the "
                 f"literal value and to avoid this warning."
             )
+
+
+class ErrorReporter(NodeVisitor):
+
+    def __init__(self, source):
+        self.source = source
+
+    def visit_Error(self, node):
+        fatal = node.get_token(Token.FATAL_ERROR)
+        if fatal:
+            raise DataError(self._format_message(fatal))
+        for error in node.get_tokens(Token.ERROR):
+            LOGGER.error(self._format_message(error))
+
+    def _format_message(self, token):
+        return f"Error in file '{self.source}' on line {token.lineno}: {token.error}"

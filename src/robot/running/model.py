@@ -395,7 +395,10 @@ class TestSuite(model.TestSuite):
         New in Robot Framework 3.2.
         """
         from .builder import RobotParser
-        return RobotParser().build_suite(model, name)
+        suite = RobotParser().parse_model(model)
+        if name is not None:
+            suite.name = name
+        return suite
 
     def configure(self, randomize_suites=False, randomize_tests=False,
                   randomize_seed=None, **options):

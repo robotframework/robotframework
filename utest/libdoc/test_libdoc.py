@@ -1,8 +1,8 @@
 import json
 import os
-from os.path import dirname, join, normpath
-import unittest
 import tempfile
+import unittest
+from pathlib import Path
 
 from jsonschema import validate
 
@@ -15,9 +15,9 @@ from robot.libdocpkg.htmlutils import HtmlToText, DocToHtml
 get_shortdoc = HtmlToText().get_shortdoc_from_html
 get_text = HtmlToText().html_to_plain_text
 
-CURDIR = dirname(__file__)
-DATADIR = normpath(join(CURDIR, '../../atest/testdata/libdoc/'))
-TEMPDIR = os.getenv('TEMPDIR') or tempfile.gettempdir()
+CURDIR = Path(__file__).resolve().parent
+DATADIR = (CURDIR / '../../atest/testdata/libdoc/').resolve()
+TEMPDIR = Path(os.getenv('TEMPDIR') or tempfile.gettempdir())
 
 try:
     from typing_extensions import TypedDict
@@ -39,10 +39,10 @@ def verify_keyword_shortdoc(doc_format, doc_input, expected):
 
 
 def run_libdoc_and_validate_json(filename):
-    library = join(DATADIR, filename)
+    library = DATADIR / filename
     json_spec = LibraryDocumentation(library).to_json()
-    with open(join(CURDIR, '../../doc/schema/libdoc.json')) as f:
-        schema = json.load(f)
+    with open(CURDIR / '../../doc/schema/libdoc.json') as file:
+        schema = json.load(file)
     validate(instance=json.loads(json_spec), schema=schema)
 
 
@@ -233,7 +233,7 @@ class TestJson(unittest.TestCase):
         self._test('DataTypesLibrary.json')
 
     def _test(self, lib):
-        path = join(DATADIR, lib)
+        path = DATADIR / lib
         spec = LibraryDocumentation(path).to_json()
         data = json.loads(spec)
         with open(path) as f:
@@ -252,8 +252,8 @@ class TestXmlSpec(unittest.TestCase):
         self._test('DataTypesLibrary.json')
 
     def _test(self, lib):
-        path = join(TEMPDIR, 'libdoc-utest-spec.xml')
-        orig_lib = LibraryDocumentation(join(DATADIR, lib))
+        path = TEMPDIR / 'libdoc-utest-spec.xml'
+        orig_lib = LibraryDocumentation(DATADIR / lib)
         orig_lib.save(path, format='XML')
         spec_lib = LibraryDocumentation(path)
         orig_data = orig_lib.to_dictionary()
@@ -266,7 +266,7 @@ class TestXmlSpec(unittest.TestCase):
 class TestLibdocTypedDictKeys(unittest.TestCase):
 
     def test_typed_dict_keys(self):
-        library = join(DATADIR, 'DataTypesLibrary.py')
+        library = DATADIR / 'DataTypesLibrary.py'
         spec = LibraryDocumentation(library).to_json()
         current_items = json.loads(spec)['dataTypes']['typedDicts'][0]['items']
         expected_items = [

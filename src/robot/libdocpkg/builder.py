@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import os
+from pathlib import Path
 
 from robot.errors import DataError
 from robot.utils import get_error_message
@@ -79,6 +80,11 @@ class DocumentationBuilder:
         pass
 
     def build(self, source):
+        # Source can contain arguments separated with `::` so we cannot convert
+        # it to Path and instead need to make sure it's a string. It would be
+        # better to separate arguments earlier, or latest here, and use Path.
+        if isinstance(source, Path):
+            source = str(source)
         builder = self._get_builder(source)
         return self._build(builder, source)
 

@@ -121,7 +121,7 @@ class LibraryDoc:
             'type': self.type,
             'scope': self.scope,
             'docFormat': self.doc_format,
-            'source': str(self.source) if self.source else '',
+            'source': str(self.source) if self.source else None,
             'lineno': self.lineno,
             'tags': list(self.all_tags),
             'inits': [init.to_dictionary() for init in self.inits],
@@ -192,7 +192,7 @@ class KeywordDoc(Sortable):
             'doc': self.doc,
             'shortdoc': self.shortdoc,
             'tags': list(self.tags),
-            'source': self.source,
+            'source': str(self.source) if self.source else None,
             'lineno': self.lineno
         }
         if self.private:
