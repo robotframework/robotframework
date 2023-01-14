@@ -411,6 +411,20 @@ class TestSuite(model.TestSuite):
             suite.name = name
         return suite
 
+    @classmethod
+    def from_string(cls, string, **config):
+        """Create a :class:`TestSuite` object based on the given ``string``.
+
+        The string is internally parsed into a model by using the
+        :func:`~robot.parsing.parser.parser.get_model` function and ``config``
+        can be used to configure it. The model is then converted into a suite
+        by using :meth:`from_model`.
+
+        New in Robot Framework 6.1.
+        """
+        from robot.parsing import get_model
+        return cls.from_model(get_model(string, data_only=True, **config))
+
     def configure(self, randomize_suites=False, randomize_tests=False,
                   randomize_seed=None, **options):
         """A shortcut to configure a suite using one method call.

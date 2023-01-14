@@ -114,6 +114,15 @@ Keyword
                              "Set the name to the returned suite separately.")
             self._verify_suite(suite, 'Custom name')
 
+    def test_from_string(self):
+        suite = TestSuite.from_string(self.data)
+        self._verify_suite(suite, name='')
+
+    def test_from_string_config(self):
+        suite = TestSuite.from_string(self.data.replace('Test Cases', 'Testit'),
+                                      lang='Finnish', curdir='.')
+        self._verify_suite(suite, name='')
+
     def _verify_suite(self, suite, name='Test Run Model', rpa=False):
         assert_equal(suite.name, name)
         assert_equal(suite.doc, 'Some text.')
