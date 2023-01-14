@@ -3,6 +3,9 @@ Test Setup      Create Output Directory
 Resource        cli_resource.robot
 Test Template   Run Should Fail
 
+*** Variables ***
+${VALID}        ${DATA DIR}/${TEST FILE}
+
 *** Test Cases ***
 No Input
     ${EMPTY}    Expected at least 1 argument, got 0.
@@ -14,14 +17,16 @@ Non-Existing Input
     nonexisting.robot    Parsing '${EXECDIR}${/}nonexisting.robot' failed: File or directory to execute does not exist.
 
 Non-Existing Input With Non-Ascii Characters
-    eitäällä.robot    Parsing '${EXECDIR}${/}eitäällä.robot' failed: File or directory to execute does not exist.
+    nö.röböt ${VALID} bäd
+    ...    Parsing '${EXECDIR}${/}nö.röböt' and '${EXECDIR}${/}bäd' failed: File or directory to execute does not exist.
 
 Invalid Output Directory
     [Setup]    Create File    %{TEMPDIR}/not-dir
-    -d %{TEMPDIR}/not-dir/dir ${DATADIR}/${TEST FILE}
+    -d %{TEMPDIR}/not-dir/dir ${VALID}
     ...    Creating output file directory '.*not-dir.dir' failed: .*    regexp=True
-    -d %{TEMPDIR}/not-dir/dir -o %{TEMPDIR}/out.xml ${DATADIR}/${TEST FILE}
+    -d %{TEMPDIR}/not-dir/dir -o %{TEMPDIR}/out.xml ${VALID}
     ...    Creating report file directory '.*not-dir.dir' failed: .*    regexp=True
+    [Teardown]    Remove File    %{TEMPDIR}/not-dir
 
 Invalid Options
     --invalid option    option --invalid not recognized

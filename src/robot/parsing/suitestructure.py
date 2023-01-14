@@ -13,13 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from os.path import normpath
 from pathlib import Path
 from typing import List
 
 from robot.errors import DataError
 from robot.model import SuiteNamePatterns
 from robot.output import LOGGER
-from robot.utils import get_error_message
+from robot.utils import get_error_message, seq2str
 
 
 class SuiteStructure:
@@ -92,11 +93,16 @@ class SuiteStructureBuilder:
     def _normalize_paths(self, paths):
         if not paths:
             raise DataError('One or more source paths required.')
-        try:
-            return [Path(p).resolve(strict=True) for p in paths]
-        except OSError as err:
-            raise DataError(f"Parsing '{Path(err.filename).resolve()}' failed: "
+        # Cannot use `Path.resolve()` here because it resolves all symlinks which
+        # isn't desired. `Path` doesn't have any methods for normalizing paths
+        # so need to use `os.path.normpath()`. Also that _may_ resolve symlinks,
+        # but we need to do it for backwards compatibility.
+        paths = [Path(normpath(p)).absolute() for p in paths]
+        non_existing = [p for p in paths if not p.exists()]
+        if non_existing:
+            raise DataError(f"Parsing {seq2str(non_existing)} failed: "
                             f"File or directory to execute does not exist.")
+        return paths
 
     def _build(self, path, included_suites):
         if path.is_file():
