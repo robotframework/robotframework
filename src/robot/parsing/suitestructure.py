@@ -95,7 +95,7 @@ class SuiteStructureBuilder:
         try:
             return [Path(p).resolve(strict=True) for p in paths]
         except OSError as err:
-            raise DataError(f"Parsing '{err.filename}' failed: "
+            raise DataError(f"Parsing '{Path(err.filename).resolve()}' failed: "
                             f"File or directory to execute does not exist.")
 
     def _build(self, path, included_suites):
