@@ -107,7 +107,11 @@ Keyword
     def test_from_model_with_custom_name(self):
         for source in [self.data, self.path]:
             model = api.get_model(source)
-            suite = TestSuite.from_model(model, name='Custom name')
+            with warnings.catch_warnings(record=True) as w:
+                suite = TestSuite.from_model(model, name='Custom name')
+                assert_equal(str(w[0].message),
+                             "'name' argument of 'TestSuite.from_model' is deprecated. "
+                             "Set the name to the returned suite separately.")
             self._verify_suite(suite, 'Custom name')
 
     def _verify_suite(self, suite, name='Test Run Model', rpa=False):

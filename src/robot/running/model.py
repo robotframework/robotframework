@@ -33,6 +33,7 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-interface
 """
 
+import warnings
 from pathlib import Path
 
 from robot import model
@@ -392,11 +393,21 @@ class TestSuite(model.TestSuite):
         :func:`~robot.parsing.parser.parser.get_model` function and possibly
         modified by other tooling in the :mod:`robot.parsing` module.
 
+        The ``name`` argument is deprecated since Robot Framework 6.1. Users
+        should set the name and possible other attributes to the returned suite
+        separately. One easy way is using the :meth:`config` method like this::
+
+            suite = TestSuite.from_model(model).config(name='X', doc='Example')
+
         New in Robot Framework 3.2.
         """
         from .builder import RobotParser
         suite = RobotParser().parse_model(model)
         if name is not None:
+            # TODO: Change DeprecationWarning to more visible UserWarning in RF 6.2.
+            warnings.warn("'name' argument of 'TestSuite.from_model' is deprecated. "
+                          "Set the name to the returned suite separately.",
+                          DeprecationWarning)
             suite.name = name
         return suite
 
