@@ -71,12 +71,11 @@ class ArgumentParser:
         self._validator = validator
         self._auto_help = auto_help
         self._auto_version = auto_version
-        # TODO: Change DeprecationWarning to more loud UserWarning in RF 6.1.
         if auto_pythonpath == 'DEPRECATED':
             auto_pythonpath = False
         else:
             warnings.warn("ArgumentParser option 'auto_pythonpath' is deprecated "
-                          "since Robot Framework 5.0.", DeprecationWarning)
+                          "since Robot Framework 5.0.")
         self._auto_pythonpath = auto_pythonpath
         self._auto_argumentfile = auto_argumentfile
         self._env_options = env_options
