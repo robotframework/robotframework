@@ -3,7 +3,7 @@ Resource        atest_resource.robot
 Suite Setup     Run Tests    ${EMPTY}    misc/suites/subsuites2
 
 *** Variables ***
-${SOURCE}       ${{pathlib.Path('${DATADIR}/misc/suites/subsuites2')}}
+${SOURCE}       ${{pathlib.Path(r'${DATADIR}/misc/suites/subsuites2')}}
 
 *** Test Cases ***
 Suite source and test lineno in output after execution

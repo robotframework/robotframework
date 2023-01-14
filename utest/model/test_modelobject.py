@@ -76,7 +76,7 @@ class TestFromDictAndJson(unittest.TestCase):
         assert_equal(obj.c, "åäö")
 
     def test_json_as_path(self):
-        with tempfile.NamedTemporaryFile('w', delete=False) as file:
+        with tempfile.NamedTemporaryFile('w', encoding='UTF-8', delete=False) as file:
             file.write('{"a": null, "b": 42, "c": "åäö"}')
         try:
             for path in file.name, pathlib.Path(file.name):
@@ -142,7 +142,7 @@ class TestToJson(unittest.TestCase):
                 for config in {}, self.custom_config:
                     Example(**self.data).to_json(path, **config)
                     expected = json.dumps(self.data, **(config or self.default_config))
-                    with open(path) as file:
+                    with open(path, encoding='UTF-8') as file:
                         assert_equal(file.read(), expected)
         finally:
             os.remove(file.name)
