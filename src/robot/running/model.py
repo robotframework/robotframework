@@ -33,7 +33,7 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-interface
 """
 
-import os
+from pathlib import Path
 
 from robot import model
 from robot.conf import RobotSettings
@@ -696,16 +696,13 @@ class Import(ModelObject):
         return super()._repr(repr_args)
 
     @property
-    def source(self):
+    def source(self) -> Path:
         return self.parent.source if self.parent is not None else None
 
     @property
-    def directory(self):
-        if not self.source:
-            return None
-        if os.path.isdir(self.source):
-            return self.source
-        return os.path.dirname(self.source)
+    def directory(self) -> Path:
+        source = self.source
+        return source.parent if source and source.is_file() else source
 
     @property
     def setting_name(self):
