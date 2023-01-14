@@ -28,10 +28,10 @@ class ItemList(MutableSequence):
     In addition to the common type, items can have certain common and
     automatically assigned attributes.
 
-    Starting from RF 6.1, items can be added as dictionaries and actual items
-    are generated based on them automatically. If the type has a ``from_dict``
-    classmethod, it is used, and otherwise dictionary data is passed to
-    the type as keyword arguments.
+    Starting from Robot Framework 6.1, items can be added as dictionaries and
+    actual items are generated based on them automatically. If the type has
+    a ``from_dict`` class method, it is used, and otherwise dictionary data is
+    passed to the type as keyword arguments.
     """
 
     __slots__ = ['_item_class', '_common_attrs', '_items']
@@ -44,6 +44,7 @@ class ItemList(MutableSequence):
             self.extend(items)
 
     def create(self, *args, **kwargs):
+        """Create a new item using the provided arguments."""
         return self.append(self._item_class(*args, **kwargs))
 
     def append(self, item):
@@ -183,4 +184,13 @@ class ItemList(MutableSequence):
         return self * other
 
     def to_dicts(self):
+        """Return list of items converted to dictionaries.
+
+        Items are converted to dictionaries using the ``to_dict`` method, if
+        they have it, or the built-in ``vars()``.
+
+        New in Robot Framework 6.1.
+        """
+        if not hasattr(self._item_class, 'to_dict'):
+            return [vars(item) for item in self]
         return [item.to_dict() for item in self]

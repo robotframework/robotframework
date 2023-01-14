@@ -11,6 +11,9 @@ class Object:
     def __init__(self, id=None):
         self.id = id
 
+    def __eq__(self, other):
+        return isinstance(other, Object) and self.id == other.id
+
 
 class CustomItems(ItemList):
     pass
@@ -411,6 +414,20 @@ class TestItemLists(unittest.TestCase):
         assert_equal(items[1].id, None)
         assert_equal(items[1].attr, 1)
         assert_equal(items[2].new, 3)
+
+    def test_to_dicts_without_to_dict(self):
+        items = ItemList(Object, items=[Object(1), Object(2)])
+        dicts = items.to_dicts()
+        assert_equal(dicts, [{'id': 1}, {'id': 2}])
+        assert_equal(ItemList(Object, items=dicts), items)
+
+    def test_to_dicts_with_to_dict(self):
+        class ObjectWithToDict(Object):
+            def to_dict(self):
+                return {'id': self.id, 'x': 42}
+
+        items = ItemList(ObjectWithToDict, items=[ObjectWithToDict(1)])
+        assert_equal(items.to_dicts(), [{'id': 1, 'x': 42}])
 
 
 if __name__ == '__main__':
