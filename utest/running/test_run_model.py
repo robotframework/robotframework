@@ -338,7 +338,7 @@ class TestToFromDict(unittest.TestCase):
         self._verify(TestSuite(), name='', resource={})
         self._verify(TestSuite('N', 'D', {'M': 'V'}, 'x.robot', rpa=True),
                      name='N', doc='D', metadata={'M': 'V'}, source='x.robot', rpa=True,
-                     resource={'source': 'x.robot'})
+                     resource={})
 
     def test_suite_structure(self):
         suite = TestSuite('Root')
@@ -383,12 +383,12 @@ class TestToFromDict(unittest.TestCase):
 
     def test_resource_file(self):
         self._verify(ResourceFile())
-        resource = ResourceFile('x.resource', 'doc')
+        resource = ResourceFile('x.resource', doc='doc')
         resource.imports.library('L', 'a', 'A', 1)
         resource.imports.resource('R', 2)
         resource.imports.variables('V', 'a', 3)
-        resource.variables.create('${x}', 'value')
-        resource.variables.create('@{y}', ['v1', 'v2'], lineno=4)
+        resource.variables.create('${x}', ('value',))
+        resource.variables.create('@{y}', ('v1', 'v2'), lineno=4)
         resource.variables.create('&{z}', ['k=v'], error='E')
         resource.keywords.create('UK').body.create_keyword('K')
         self._verify(resource,
@@ -399,7 +399,7 @@ class TestToFromDict(unittest.TestCase):
                               {'type': 'RESOURCE', 'name': 'R', 'lineno': 2},
                               {'type': 'VARIABLES', 'name': 'V', 'args': ['a'],
                                'lineno': 3}],
-                     variables=[{'name': '${x}', 'value': 'value'},
+                     variables=[{'name': '${x}', 'value': ['value']},
                                 {'name': '@{y}', 'value': ['v1', 'v2'], 'lineno': 4},
                                 {'name': '&{z}', 'value': ['k=v'], 'error': 'E'}],
                      keywords=[{'name': 'UK', 'body': [{'name': 'K'}]}])
@@ -410,10 +410,12 @@ class TestToFromDict(unittest.TestCase):
 
     def _verify(self, obj, **expected):
         data = obj.to_dict()
-        assert_equal(data, expected)
-        assert_equal(list(data), list(expected))
+        self.assertListEqual(list(data), list(expected))
+        self.assertDictEqual(data, expected)
         roundtrip = type(obj).from_dict(data).to_dict()
-        assert_equal(roundtrip, expected)
+        self.assertDictEqual(roundtrip, expected)
+        roundtrip = type(obj).from_json(obj.to_json()).to_dict()
+        self.assertDictEqual(roundtrip, expected)
 
 
 if __name__ == '__main__':

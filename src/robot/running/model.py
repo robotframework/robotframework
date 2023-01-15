@@ -363,12 +363,13 @@ class TestSuite(model.TestSuite):
         #: :class:`ResourceFile` instance containing imports, variables and
         #: keywords the suite owns. When data is parsed from the file system,
         #: this data comes from the same test case file that creates the suite.
-        self.resource = ResourceFile(source)
+        self.resource = ResourceFile(parent=self)
 
     @setter
     def resource(self, resource):
         if isinstance(resource, dict):
             resource = ResourceFile.from_dict(resource)
+            resource.parent = self
         return resource
 
     @classmethod
@@ -538,7 +539,7 @@ class TestSuite(model.TestSuite):
 class Variable(ModelObject):
     repr_args = ('name', 'value')
 
-    def __init__(self, name, value, parent=None, lineno=None, error=None):
+    def __init__(self, name, value=(), parent=None, lineno=None, error=None):
         self.name = name
         self.value = value
         self.parent = parent
@@ -560,7 +561,7 @@ class Variable(ModelObject):
         return cls(**data)
 
     def to_dict(self):
-        data = {'name': self.name, 'value': self.value}
+        data = {'name': self.name, 'value': list(self.value)}
         if self.lineno:
             data['lineno'] = self.lineno
         if self.error:
@@ -570,14 +571,29 @@ class Variable(ModelObject):
 
 class ResourceFile(ModelObject):
     repr_args = ('source',)
-    __slots__ = ('source', 'doc')
+    __slots__ = ('_source', 'parent', 'doc')
 
-    def __init__(self, source=None, doc=''):
-        self.source = source
+    def __init__(self, source=None, parent=None, doc=''):
+        self._source = source
+        self.parent = parent
         self.doc = doc
         self.imports = []
         self.variables = []
         self.keywords = []
+
+    @property
+    def source(self):
+        if self._source:
+            return self._source
+        if self.parent:
+            return self.parent.source
+        return None
+
+    @source.setter
+    def source(self, source):
+        if not isinstance(source, (Path, type(None))):
+            source = Path(source)
+        self._source = source
 
     @setter
     def imports(self, imports):
@@ -593,8 +609,8 @@ class ResourceFile(ModelObject):
 
     def to_dict(self):
         data = {}
-        if self.source:
-            data['source'] = self.source
+        if self._source:
+            data['source'] = str(self.source)
         if self.doc:
             data['doc'] = self.doc
         if self.imports:
