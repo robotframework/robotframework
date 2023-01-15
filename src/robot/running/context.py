@@ -65,9 +65,8 @@ class _ExecutionContext:
         self.in_test_teardown = False
         self.in_keyword_teardown = 0
         self.timeout_occurred = False
-        self.keywords = []
+        self.steps = []
         self.user_keywords = []
-        self.step_types = []
 
     @contextmanager
     def suite_teardown(self):
@@ -145,10 +144,10 @@ class _ExecutionContext:
 
     @property
     def allow_loop_control(self):
-        for typ in reversed(self.step_types):
-            if typ == 'ITERATION':
+        for step in reversed(self.steps):
+            if step.type == 'ITERATION':
                 return True
-            if typ == 'KEYWORD':
+            if step.type == 'KEYWORD' and step.libname != 'BuiltIn':
                 return False
         return False
 
@@ -198,19 +197,15 @@ class _ExecutionContext:
         self.timeout_occurred = False
 
     def start_keyword(self, keyword):
-        self.keywords.append(keyword)
-        if len(self.keywords) > self._started_keywords_threshold:
+        self.steps.append(keyword)
+        if len(self.steps) > self._started_keywords_threshold:
             raise DataError('Maximum limit of started keywords and control '
                             'structures exceeded.')
         self.output.start_keyword(keyword)
-        if keyword.libname != 'BuiltIn':
-            self.step_types.append(keyword.type)
 
     def end_keyword(self, keyword):
         self.output.end_keyword(keyword)
-        self.keywords.pop()
-        if keyword.libname != 'BuiltIn':
-            self.step_types.pop()
+        self.steps.pop()
 
     def get_runner(self, name):
         return self.namespace.get_runner(name)

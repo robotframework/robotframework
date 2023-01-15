@@ -1850,7 +1850,7 @@ class _RunKeyword(_BuiltInBase):
             name, args = self._replace_variables_in_name([name] + list(args))
         if not is_string(name):
             raise RuntimeError('Keyword name must be a string.')
-        parent = ctx.keywords[-1] if ctx.keywords else (ctx.test or ctx.suite)
+        parent = ctx.steps[-1] if ctx.steps else (ctx.test or ctx.suite)
         kw = Keyword(name, args=args, parent=parent,
                      lineno=getattr(parent, 'lineno', None))
         return kw.run(ctx)
