@@ -13,10 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections import OrderedDict
 import difflib
 import re
 import time
+from collections import OrderedDict
 
 from robot.api import logger, SkipExecution
 from robot.api.deco import keyword
@@ -32,7 +32,7 @@ from robot.utils import (DotDict, escape, format_assign_message, get_error_messa
                          normalize_whitespace, parse_re_flags, parse_time, prepr,
                          plural_or_not as s, RERAISED_EXCEPTIONS, safe_str,
                          secs_to_timestr, seq2str, split_from_equals,
-                         timestr_to_secs, type_name)
+                         timestr_to_secs)
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (evaluate_expression, is_dict_variable,
                              is_list_variable, search_variable,
@@ -1843,14 +1843,17 @@ class _RunKeyword(_BuiltInBase):
         can be a variable and thus set dynamically, e.g. from a return value of
         another keyword or from the command line.
         """
+        ctx = self._context
         if (is_string(name)
-                and not self._context.dry_run
+                and not ctx.dry_run
                 and not self._accepts_embedded_arguments(name)):
             name, args = self._replace_variables_in_name([name] + list(args))
         if not is_string(name):
             raise RuntimeError('Keyword name must be a string.')
-        kw = Keyword(name, args=args)
-        return kw.run(self._context)
+        parent = ctx.keywords[-1] if ctx.keywords else (ctx.test or ctx.suite)
+        kw = Keyword(name, args=args, parent=parent,
+                     lineno=getattr(parent, 'lineno', None))
+        return kw.run(ctx)
 
     def _accepts_embedded_arguments(self, name):
         if '{' in name:

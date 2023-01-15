@@ -30,6 +30,7 @@ class LinenoAndSource:
         self.output.close()
         self.output = self.test_output
         self.report('END', type='TEST', name=name, **attrs)
+        self.output = self.suite_output
 
     def start_keyword(self, name, attrs):
         self.report('START', **attrs)

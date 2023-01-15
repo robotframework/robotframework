@@ -15,12 +15,12 @@ Keyword
     END      KEYWORD          No Operation                    6    PASS
 
 User keyword
-    START    KEYWORD          User Keyword                     9    NOT SET
-    START    KEYWORD          No Operation                    85    NOT SET
-    END      KEYWORD          No Operation                    85    PASS
-    START    RETURN           ${EMPTY}                        86    NOT SET
-    END      RETURN           ${EMPTY}                        86    PASS
-    END      KEYWORD          User Keyword                     9    PASS
+    START    KEYWORD          User Keyword                    9    NOT SET
+    START    KEYWORD          No Operation                  101    NOT SET
+    END      KEYWORD          No Operation                  101    PASS
+    START    RETURN           ${EMPTY}                      102    NOT SET
+    END      RETURN           ${EMPTY}                      102    PASS
+    END      KEYWORD          User Keyword                    9    PASS
 
 User keyword in resource
     START    KEYWORD          User Keyword In Resource       12    NOT SET
@@ -49,14 +49,14 @@ FOR
     END      FOR              \${x} IN [ first | second ]    21    PASS
 
 FOR in keyword
-    START    KEYWORD          FOR In Keyword                  26    NOT SET
-    START    FOR              \${x} IN [ once ]               89    NOT SET
-    START    ITERATION        \${x} = once                    89    NOT SET
-    START    KEYWORD          No Operation                    90    NOT SET
-    END      KEYWORD          No Operation                    90    PASS
-    END      ITERATION        \${x} = once                    89    PASS
-    END      FOR              \${x} IN [ once ]               89    PASS
-    END      KEYWORD          FOR In Keyword                  26    PASS
+    START    KEYWORD          FOR In Keyword                 26    NOT SET
+    START    FOR              \${x} IN [ once ]             105    NOT SET
+    START    ITERATION        \${x} = once                  105    NOT SET
+    START    KEYWORD          No Operation                  106    NOT SET
+    END      KEYWORD          No Operation                  106    PASS
+    END      ITERATION        \${x} = once                  105    PASS
+    END      FOR              \${x} IN [ once ]             105    PASS
+    END      KEYWORD          FOR In Keyword                 26    PASS
 
 FOR in IF
     START    IF               True                           29    NOT SET
@@ -93,14 +93,14 @@ IF
     END     ELSE              ${EMPTY}                       43    NOT RUN
 
 IF in keyword
-    START    KEYWORD           IF In Keyword                  48    NOT SET
-    START    IF                True                           94    NOT SET
-    START    KEYWORD           No Operation                   95    NOT SET
-    END      KEYWORD           No Operation                   95    PASS
-    START    RETURN            ${EMPTY}                       96    NOT SET
-    END      RETURN            ${EMPTY}                       96    PASS
-    END      IF                True                           94    PASS
-    END      KEYWORD           IF In Keyword                  48    PASS
+    START    KEYWORD           IF In Keyword                 48    NOT SET
+    START    IF                True                         110    NOT SET
+    START    KEYWORD           No Operation                 111    NOT SET
+    END      KEYWORD           No Operation                 111    PASS
+    START    RETURN            ${EMPTY}                     112    NOT SET
+    END      RETURN            ${EMPTY}                     112    PASS
+    END      IF                True                         110    PASS
+    END      KEYWORD           IF In Keyword                 48    PASS
 
 IF in FOR
     START   FOR               \${x} IN [ 1 | 2 ]             52    NOT SET
@@ -156,24 +156,24 @@ TRY
 
 TRY in keyword
     START    KEYWORD          TRY In Keyword                 78    NOT SET
-    START    TRY              ${EMPTY}                      100    NOT SET
-    START    RETURN           ${EMPTY}                      101    NOT SET
-    END      RETURN           ${EMPTY}                      101    PASS
-    START    KEYWORD          Fail                          102    NOT RUN
-    END      KEYWORD          Fail                          102    NOT RUN
-    END      TRY              ${EMPTY}                      100    PASS
-    START    EXCEPT           No match AS \${var}           103    NOT RUN
-    START    KEYWORD          Fail                          104    NOT RUN
-    END      KEYWORD          Fail                          104    NOT RUN
-    END      EXCEPT           No match AS \${var}           103    NOT RUN
-    START    EXCEPT           No | Match | 2 AS \${x}       105    NOT RUN
-    START    KEYWORD          Fail                          106    NOT RUN
-    END      KEYWORD          Fail                          106    NOT RUN
-    END      EXCEPT           No | Match | 2 AS \${x}       105    NOT RUN
-    START    EXCEPT           ${EMPTY}                      107    NOT RUN
-    START    KEYWORD          Fail                          108    NOT RUN
-    END      KEYWORD          Fail                          108    NOT RUN
-    END      EXCEPT           ${EMPTY}                      107    NOT RUN
+    START    TRY              ${EMPTY}                      116    NOT SET
+    START    RETURN           ${EMPTY}                      117    NOT SET
+    END      RETURN           ${EMPTY}                      117    PASS
+    START    KEYWORD          Fail                          118    NOT RUN
+    END      KEYWORD          Fail                          118    NOT RUN
+    END      TRY              ${EMPTY}                      116    PASS
+    START    EXCEPT           No match AS \${var}           119    NOT RUN
+    START    KEYWORD          Fail                          120    NOT RUN
+    END      KEYWORD          Fail                          120    NOT RUN
+    END      EXCEPT           No match AS \${var}           119    NOT RUN
+    START    EXCEPT           No | Match | 2 AS \${x}       121    NOT RUN
+    START    KEYWORD          Fail                          122    NOT RUN
+    END      KEYWORD          Fail                          122    NOT RUN
+    END      EXCEPT           No | Match | 2 AS \${x}       121    NOT RUN
+    START    EXCEPT           ${EMPTY}                      123    NOT RUN
+    START    KEYWORD          Fail                          124    NOT RUN
+    END      KEYWORD          Fail                          124    NOT RUN
+    END      EXCEPT           ${EMPTY}                      123    NOT RUN
     END      KEYWORD          TRY In Keyword                 78    PASS
 
 TRY in resource
@@ -187,6 +187,50 @@ TRY in resource
     END      KEYWORD          Log                            19    PASS       source=${RESOURCE FILE}
     END      FINALLY          ${EMPTY}                       18    PASS       source=${RESOURCE FILE}
     END      KEYWORD          TRY In Resource                81    PASS
+
+Run Keyword
+    START    KEYWORD          Run Keyword                    84    NOT SET
+    START    KEYWORD          Log                            84    NOT SET
+    END      KEYWORD          Log                            84    PASS
+    END      KEYWORD          Run Keyword                    84    PASS
+    START    KEYWORD          Run Keyword If                 85    NOT SET
+    START    KEYWORD          User Keyword                   85    NOT SET
+    START    KEYWORD          No Operation                  101    NOT SET
+    END      KEYWORD          No Operation                  101    PASS
+    START    RETURN           ${EMPTY}                      102    NOT SET
+    END      RETURN           ${EMPTY}                      102    PASS
+    END      KEYWORD          User Keyword                   85    PASS
+    END      KEYWORD          Run Keyword If                 85    PASS
+
+Run Keyword in keyword
+    START    KEYWORD          Run Keyword in keyword         89    NOT SET
+    START    KEYWORD          Run Keyword                   128    NOT SET
+    START    KEYWORD          No Operation                  128    NOT SET
+    END      KEYWORD          No Operation                  128    PASS
+    END      KEYWORD          Run Keyword                   128    PASS
+    END      KEYWORD          Run Keyword in keyword         89    PASS
+
+Run Keyword in resource
+    START    KEYWORD          Run Keyword in resource        92    NOT SET
+    START    KEYWORD          Run Keyword                    23    NOT SET    source=${RESOURCE FILE}
+    START    KEYWORD          Log                            23    NOT SET    source=${RESOURCE FILE}
+    END      KEYWORD          Log                            23    PASS       source=${RESOURCE FILE}
+    END      KEYWORD          Run Keyword                    23    PASS       source=${RESOURCE FILE}
+    END      KEYWORD          Run Keyword in resource        92    PASS
+
+In setup and teardown
+    START    SETUP            User Keyword                   95    NOT SET
+    START    KEYWORD          No Operation                  101    NOT SET
+    END      KEYWORD          No Operation                  101    PASS
+    START    RETURN           ${EMPTY}                      102    NOT SET
+    END      RETURN           ${EMPTY}                      102    PASS
+    END      SETUP            User Keyword                   95    PASS
+    START    KEYWORD          No Operation                   96    NOT SET
+    END      KEYWORD          No Operation                   96    PASS
+    START    TEARDOWN         Run Keyword                    97    NOT SET
+    START    KEYWORD          Log                            97    NOT SET
+    END      KEYWORD          Log                            97    PASS
+    END      TEARDOWN         Run Keyword                    97    PASS
 
 Test
     [Template]    Expect test
@@ -205,6 +249,10 @@ Test
     \TRY                        63    FAIL
     TRY in keyword              77
     TRY in resource             80
+    Run Keyword                 83
+    Run Keyword in keyword      88
+    Run Keyword in resource     91
+    In setup and teardown       94
     [Teardown]    Validate tests
 
 Suite

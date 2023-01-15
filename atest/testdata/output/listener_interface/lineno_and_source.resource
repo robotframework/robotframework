@@ -18,3 +18,7 @@ TRY In Resource
     FINALLY
         Log    Nothing interesting here either...
     END
+
+Run Keyword in resource
+    Run Keyword
+    ...    Log    resource

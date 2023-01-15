@@ -64,8 +64,8 @@ class _ExecutionContext:
         self.in_suite_teardown = False
         self.in_test_teardown = False
         self.in_keyword_teardown = 0
-        self._started_keywords = 0
         self.timeout_occurred = False
+        self.keywords = []
         self.user_keywords = []
         self.step_types = []
 
@@ -198,8 +198,8 @@ class _ExecutionContext:
         self.timeout_occurred = False
 
     def start_keyword(self, keyword):
-        self._started_keywords += 1
-        if self._started_keywords > self._started_keywords_threshold:
+        self.keywords.append(keyword)
+        if len(self.keywords) > self._started_keywords_threshold:
             raise DataError('Maximum limit of started keywords and control '
                             'structures exceeded.')
         self.output.start_keyword(keyword)
@@ -208,7 +208,7 @@ class _ExecutionContext:
 
     def end_keyword(self, keyword):
         self.output.end_keyword(keyword)
-        self._started_keywords -= 1
+        self.keywords.pop()
         if keyword.libname != 'BuiltIn':
             self.step_types.pop()
 
