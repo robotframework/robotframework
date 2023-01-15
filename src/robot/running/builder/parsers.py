@@ -86,6 +86,18 @@ class RestParser(RobotParser):
             return read_rest_data(reader)
 
 
+class JsonParser(BaseParser):
+
+    def parse_suite_file(self, source: Path, defaults: Defaults = None):
+        return TestSuite.from_json(source)
+
+    def parse_init_file(self, source: Path, defaults: Defaults = None):
+        return TestSuite.from_json(source)
+
+    def parse_resource_file(self, source: Path):
+        return ResourceFile.from_json(source)
+
+
 class NoInitFileDirectoryParser(BaseParser):
 
     def parse_init_file(self, source, defaults=None):

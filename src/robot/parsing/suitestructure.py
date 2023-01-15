@@ -72,7 +72,7 @@ class SuiteStructureBuilder:
     ignored_prefixes = ('_', '.')
     ignored_dirs = ('CVS',)
 
-    def __init__(self, included_extensions=('.robot',), included_suites=None):
+    def __init__(self, included_extensions=('.robot', '.rbt'), included_suites=None):
         self.included_extensions = included_extensions
         self.included_suites = None if not included_suites else \
             SuiteNamePatterns(self._create_included_suites(included_suites))

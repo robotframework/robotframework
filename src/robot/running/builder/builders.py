@@ -19,7 +19,7 @@ from robot.errors import DataError
 from robot.output import LOGGER
 from robot.parsing import SuiteStructureBuilder, SuiteStructureVisitor
 
-from .parsers import RobotParser, NoInitFileDirectoryParser, RestParser
+from .parsers import JsonParser, RobotParser, NoInitFileDirectoryParser, RestParser
 from .settings import Defaults
 
 
@@ -46,9 +46,8 @@ class TestSuiteBuilder:
     :mod:`robot.api` package.
     """
 
-    def __init__(self, included_suites=None, included_extensions=('.robot',),
-                 rpa=None, lang=None, allow_empty_suite=False,
-                 process_curdir=True):
+    def __init__(self, included_suites=None, included_extensions=('.robot', '.rbt'),
+                 rpa=None, lang=None, allow_empty_suite=False, process_curdir=True):
         """
         :param include_suites:
             List of suite names to include. If ``None`` or an empty list, all
@@ -117,11 +116,14 @@ class SuiteStructureParser(SuiteStructureVisitor):
     def _get_parsers(self, extensions, lang, process_curdir):
         robot_parser = RobotParser(lang, process_curdir)
         rest_parser = RestParser(lang, process_curdir)
+        json_parser = JsonParser()
         parsers = {
             None: NoInitFileDirectoryParser(),
             'robot': robot_parser,
             'rst': rest_parser,
-            'rest': rest_parser
+            'rest': rest_parser,
+            'rbt': json_parser,
+            'json': json_parser
         }
         for ext in extensions:
             if ext not in parsers:
