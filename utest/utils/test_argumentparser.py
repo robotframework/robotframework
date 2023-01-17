@@ -256,7 +256,7 @@ class TestArgumentParserParseArgs(unittest.TestCase):
         ap = ArgumentParser('''Usage:
  -h --help
  -v --version
- --argumentfile path
+ --Argument-File path
  --option
 ''')
         opts, args = ap.parse_args(['--option'])

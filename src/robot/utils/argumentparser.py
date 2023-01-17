@@ -356,7 +356,9 @@ class ArgFileParser:
         for opt in self._options:
             start = opt + '=' if opt.startswith('--') else opt
             for index, arg in enumerate(args):
-                normalized_arg = arg.lower() if opt.startswith('--') else arg
+                normalized_arg = (
+                    '--' + arg.lower().replace('-', '') if opt.startswith('--') else arg
+                )
                 # Handles `--argumentfile foo` and `-A foo`
                 if normalized_arg == opt and index + 1 < len(args):
                     return args[index+1], slice(index, index+2)
