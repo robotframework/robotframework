@@ -13,7 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Module that adds directories needed by Robot to sys.path when imported."""
+"""Module that adds directories needed by Robot to sys.path when imported.
+
+This is suposed to run if the robotframework is running but the robotframework is not in the module search path...
+This should not execute in a zipapp.
+"""
 
 import sys
 import fnmatch

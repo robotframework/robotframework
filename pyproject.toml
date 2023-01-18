@@ -1,4 +1,8 @@
 [tool.pdm]
+[tool.pdm.dev-dependencies]
+dev = [
+    "-e file:///C:/local_git_repos/robotframework#egg=robotframework",
+]
 
 [project]
 name = "packed_robotframework"
@@ -9,7 +13,6 @@ authors = [
 ]
 
 dependencies = [
-    "robotframework @ file:///C:/local_git_repos/robotframework",
     "invoke>=2.0.0",
     "rellu>=0.7",
     "twine>=4.0.2",
@@ -20,6 +23,10 @@ dependencies = [
     "setuptools>=66.0.0",
     "xmlschema>=2.1.1",
     "jsonschema>=4.17.3",
+    "ipython>=8.8.0",
 ]
 requires-python = ">=3.10"
 license = {text = "-"}
+
+[project.scripts]
+robot = "robot:run_cli"

@@ -13,78 +13,25 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
 from os.path import abspath, dirname, join, normpath
 import importlib.resources
 import pathlib
-import sys
-import logging
-
-# class HtmlTemplate:
-#     def __init__(self, filename):
-#         logging.error("---------------------")
-#         logging.error(filename)
-#         parts = pathlib.Path(filename).parts
-#         resource_name = parts[-1]
-#         parts = list(parts[:-1])
-#         idx = len(parts) - 1
-#         #logging.error(parts)
-#         idx = 0
-#         while idx < (len(parts)):
-#             if parts[idx] == ".." and len(parts)>idx:
-#                 del parts[idx]
-#                 del parts[idx-1]
-#                 logging.error(parts)
-#                 logging.error(idx)
-#             idx+=1
-
-#         parts = (item.replace(".", "") for item in parts)
-
-#         modulepart = "robot.htmldata." + ".".join(parts)
-#         logging.error(modulepart +": " + resource_name)
-
-#         self._data = importlib.resources.open_text(modulepart, resource_name).read().split()
-#         #logging.error(self._data)
-
-#     def __iter__(self):
-#         for line in self._data:
-#             yield line.rstrip()
 
 
-#def HtmlTemplate(filename):
-#    importlib.resources.open_text("robot.htmldata", "common.css")
+def HtmlTemplate(filename):
+    parts = pathlib.Path(filename).parts
+    resource_name = parts[-1]
+    parts = list(parts[:-1])
 
+    idx = 0
+    while idx < len(parts):
+        if parts[idx] == "..":
+            del parts[idx]
+            del parts[idx-1]
+            idx -= 1
+        else:
+            idx += 1
+    parts = (item.replace(".", "") for item in parts)
 
-
-class HtmlTemplate:
-    _base_dir = join(dirname(abspath(__file__)), '..', 'htmldata')
-
-    def __init__(self, filename):
-        self._path = normpath(join(self._base_dir, filename.replace('/', os.sep)))
-        logging.error("---------------------")
-        logging.error(filename)
-        parts = pathlib.Path(filename).parts
-        resource_name = parts[-1]
-        parts = list(parts[:-1])
-        idx = len(parts) - 1
-        #logging.error(parts)
-        idx = 0
-        while idx < (len(parts)):
-            if parts[idx] == ".." and len(parts)>idx:
-                del parts[idx]
-                del parts[idx-1]
-                logging.error(parts)
-                logging.error(idx)
-            idx+=1
-
-        parts = (item.replace(".", "") for item in parts)
-
-        modulepart = "robot.htmldata." + ".".join(parts)
-        logging.error(modulepart +": " + resource_name)
-
-        self._data = importlib.resources.open_text(modulepart, resource_name)
-#         #logging.error(self._data)
-
-    def __iter__(self):
-        for line in self._data:
-            yield line
+    modulepart = "robot.htmldata." + ".".join(parts)
+    return iter(importlib.resources.open_text(modulepart, resource_name))
