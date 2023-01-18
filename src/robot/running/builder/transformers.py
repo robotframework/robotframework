@@ -272,9 +272,11 @@ class KeywordBuilder(NodeVisitor):
         self.kw = None
 
     def visit_Keyword(self, node):
+        error = format_error(node.errors + node.header.errors)
         self.kw = self.resource.keywords.create(name=node.name,
                                                 tags=self.defaults.keyword_tags,
-                                                lineno=node.lineno)
+                                                lineno=node.lineno,
+                                                error=error)
         self.generic_visit(node)
 
     def visit_Documentation(self, node):

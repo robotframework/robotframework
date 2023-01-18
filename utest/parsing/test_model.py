@@ -913,6 +913,7 @@ Invalid
                             'Only last argument can be kwargs.')
                 )
             ],
+            errors=("User keyword 'Invalid' contains no keywords.",)
         )
         get_and_assert_model(data, expected, depth=1)
 

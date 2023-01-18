@@ -17,7 +17,7 @@ import ast
 
 from robot.utils import file_writer, is_pathlike, is_string
 
-from .statements import KeywordCall, TemplateArguments, Continue, Break, Return
+from .statements import KeywordCall, TemplateArguments, Continue, Break, Return, ReturnStatement
 from .visitor import ModelVisitor
 from ..lexer import Token
 
@@ -54,7 +54,7 @@ class Block(ast.AST):
         pass
 
     def _body_is_empty(self):
-        valid = (KeywordCall, TemplateArguments, Continue, Return, Break, For, If, While, Try)
+        valid = (KeywordCall, TemplateArguments, Continue, ReturnStatement, Break, For, If, While, Try)
         return not any(isinstance(node, valid) for node in self.body)
 
 
@@ -142,13 +142,19 @@ class TestCase(Block):
 class Keyword(Block):
     _fields = ('header', 'body')
 
-    def __init__(self, header, body=None):
+    def __init__(self, header, body=None, errors=()):
         self.header = header
         self.body = body or []
+        self.errors = errors
 
     @property
     def name(self):
         return self.header.name
+
+    def validate(self, context):
+        if self._body_is_empty():
+            if not any(isinstance(node, Return) for node in self.body):
+                self.errors += (f"User keyword '{self.name}' contains no keywords.",)
 
 
 class If(Block):
