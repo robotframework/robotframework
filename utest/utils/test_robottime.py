@@ -1,6 +1,7 @@
 import unittest
 import re
 import time
+import warnings
 from datetime import datetime, timedelta
 
 from robot.utils.asserts import (assert_equal, assert_raises_with_msg,
@@ -177,8 +178,11 @@ class TestTime(unittest.TestCase):
                                    timestr_to_secs, inv)
 
     def test_timestr_to_secs_accept_plain_values(self):
-        assert_raises_with_msg(ValueError, "Invalid time string '100'.",
-                               timestr_to_secs, '100', accept_plain_values=False)
+        with warnings.catch_warnings(record=True) as w:
+            assert_raises_with_msg(ValueError, "Invalid time string '100'.",
+                                   timestr_to_secs, '100', accept_plain_values=False)
+            assert_equal(str(w[-1].message),
+                         "'accept_plain_values' is deprecated and will be removed in RF 7.0.")
 
     def test_secs_to_timestr(self):
         for inp, compact, verbose in [
