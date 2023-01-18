@@ -25,7 +25,7 @@ from .settings import Defaults
 from robot.utils import Importer, split_args_from_name_or_path
 
 
-@functools.cache
+@functools.lru_cache(maxsize=None)
 def import_parser(parser, lang, process_curdir):
     name, args = split_args_from_name_or_path(parser)
 
