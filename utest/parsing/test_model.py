@@ -1212,7 +1212,7 @@ Remove
                     TestCase(TestCaseName([
                         Token('TESTCASE NAME', 'EXAMPLE', 2, 0),
                         Token('EOL', '\n', 2, 7)
-                    ])),
+                    ]), errors= ('Test contains no keywords.',)),
                     TestCase(TestCaseName([
                         Token('TESTCASE NAME', 'Added'),
                         Token('EOL', '\n')

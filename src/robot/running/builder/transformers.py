@@ -168,7 +168,8 @@ class TestCaseBuilder(NodeVisitor):
         self.test = None
 
     def visit_TestCase(self, node):
-        self.test = self.suite.tests.create(name=node.name, lineno=node.lineno)
+        self.test = self.suite.tests.create(name=node.name, lineno=node.lineno,
+                                            error=format_error(node.errors + node.header.errors))
         self.generic_visit(node)
         self._set_settings(self.test, self.settings)
 
