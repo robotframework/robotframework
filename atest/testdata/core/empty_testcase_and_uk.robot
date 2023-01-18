@@ -21,7 +21,6 @@ User Keyword With Only Non-Empty [Return] Works
     UK With Return
 
 User Keyword With Empty [Return] Does Not Work
-    [Documentation]  FAIL User keyword 'UK With Empty Return' contains no keywords.
     UK With Empty Return
 
 Empty User Keyword With Other Settings Than [Return]

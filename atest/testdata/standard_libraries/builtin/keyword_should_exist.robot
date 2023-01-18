@@ -78,11 +78,14 @@ My User Keyword
     Fail  This is never executed
 
 Duplicate keyword in same resource
+    No Operation
 
 Duplicate keyword in same resource
+    No Operation
 
 No Operation
     [Documentation]  Override keyword from BuiltIn
+    No Operation
 
 ${Prefix} this ${keyword:keyword} exists
     Fail  Not executed

@@ -49,7 +49,7 @@ Modifiers are used before normal configuration
     ...    --include added --prerun ${CURDIR}/ModelModifier.py:CREATE:name=Created:tags=added    ${TEST DATA}
     Stderr Should Be Empty
     Length Should Be    ${SUITE.tests}    1
-    ${tc} =    Check test case    Created    FAIL    Test contains no keywords.
+    ${tc} =    Check test case    Created
     Lists should be equal    ${tc.tags}    ${{['added']}}
 
 Modify FOR and IF

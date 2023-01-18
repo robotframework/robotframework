@@ -13,7 +13,8 @@ class ModelModifier(SuiteVisitor):
         if config[0] == 'FAIL':
             raise RuntimeError(' '.join(self.config[1:]))
         elif config[0] == 'CREATE':
-            suite.tests.create(**dict(conf.split('-', 1) for conf in config[1:]))
+            tc = suite.tests.create(**dict(conf.split('-', 1) for conf in config[1:]))
+            tc.body.create_keyword('No operation')
             self.config = []
         elif config == ('REMOVE', 'ALL', 'TESTS'):
             suite.tests = []

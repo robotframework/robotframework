@@ -110,7 +110,7 @@ Non ASCII
 Keyword Source Info
     Keyword Name Should Be            0    curdir
     Keyword Should Not Have Source    0
-    Keyword Lineno Should Be          0    65
+    Keyword Lineno Should Be          0    71
 
 '*.resource' extension is accepted
     Run Libdoc And Parse Output       ${TESTDATADIR}/resource.resource

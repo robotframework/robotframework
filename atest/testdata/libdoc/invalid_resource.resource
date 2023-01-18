@@ -7,3 +7,4 @@ Definitely not allowed
 
 *** Keywords ***
 Example
+    No Operation
