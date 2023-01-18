@@ -1,0 +1,25 @@
+[tool.pdm]
+
+[project]
+name = "packed_robotframework"
+description = "derived work from / inrobotframework"
+dynamic = ["version"]
+authors = [
+    {name = "Pekka Klaerck", email = "peke@eliga.fi"}
+]
+
+dependencies = [
+    "robotframework @ file:///C:/local_git_repos/robotframework",
+    "invoke>=2.0.0",
+    "rellu>=0.7",
+    "twine>=4.0.2",
+    "wheel>=0.38.4",
+    "docutils>=0.19",
+    "pygments>=2.14.0",
+    "pydantic>=1.10.4",
+    "setuptools>=66.0.0",
+    "xmlschema>=2.1.1",
+    "jsonschema>=4.17.3",
+]
+requires-python = ">=3.10"
+license = {text = "-"}
