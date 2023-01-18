@@ -485,6 +485,13 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             settings_section=False
         )
 
+    def test_documentation_value(self):
+        # TODO: need clarification of there should be a empty line between
+        # first and second paragraph.
+        # Tokens are ok, but the value is not
+        doc = Documentation.from_params('First line.\nSecond line aligned.\n\nSecond paragraph.')
+        assert_equal(doc.value, 'First line. Second line aligned. Second paragraph.')
+
     def test_Metadata(self):
         tokens = [
             Token(Token.METADATA, 'Metadata'),
