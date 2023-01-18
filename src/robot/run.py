@@ -295,6 +295,7 @@ Options
                           the name using a colon or a semicolon as a separator.
                           Examples: --listener MyListenerClass
                                     --listener path/to/Listener.py:arg1:arg2
+    --parser class *      TODO
     --nostatusrc          Sets the return code to zero regardless of failures
                           in test cases. Error codes are returned normally.
     --dryrun              Verifies test data and runs tests so that library
@@ -435,7 +436,8 @@ class RobotFramework(Application):
                                    included_extensions=settings.extension,
                                    rpa=settings.rpa,
                                    lang=settings.languages,
-                                   allow_empty_suite=settings.run_empty_suite)
+                                   allow_empty_suite=settings.run_empty_suite,
+                                   parsers=settings.parsers)
         suite = builder.build(*datasources)
         settings.rpa = suite.rpa
         if settings.pre_run_modifiers:

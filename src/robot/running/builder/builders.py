@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import functools
 from pathlib import Path
 
 from robot.errors import DataError
@@ -21,6 +22,17 @@ from robot.parsing import SuiteStructureBuilder, SuiteStructureVisitor
 
 from .parsers import JsonParser, RobotParser, NoInitFileDirectoryParser, RestParser
 from .settings import Defaults
+from robot.utils import Importer, split_args_from_name_or_path
+
+
+@functools.cache
+def import_parser(parser, lang, process_curdir):
+    name, args = split_args_from_name_or_path(parser)
+
+    if Path(name).exists():
+        name = Path(name).absolute()
+
+    return Importer('parser').import_class_or_module(name, (lang, process_curdir, *args))
 
 
 class TestSuiteBuilder:
@@ -47,7 +59,8 @@ class TestSuiteBuilder:
     """
 
     def __init__(self, included_suites=None, included_extensions=('.robot', '.rbt'),
-                 rpa=None, lang=None, allow_empty_suite=False, process_curdir=True):
+                 rpa=None, lang=None, allow_empty_suite=False, process_curdir=True,
+                 parsers=None):
         """
         :param include_suites:
             List of suite names to include. If ``None`` or an empty list, all
@@ -77,6 +90,11 @@ class TestSuiteBuilder:
         self.included_extensions = included_extensions
         self.allow_empty_suite = allow_empty_suite
         self.process_curdir = process_curdir
+        self.parsers = parsers
+        if self.parsers:
+            for parser in self.parsers:
+                parser_instance = import_parser(parser, self.lang, self.process_curdir)
+                self.included_extensions += tuple(parser_instance.included_extensions)
 
     def build(self, *paths):
         """
@@ -86,7 +104,7 @@ class TestSuiteBuilder:
         structure = SuiteStructureBuilder(self.included_extensions,
                                           self.included_suites).build(paths)
         parser = SuiteStructureParser(self.included_extensions,
-                                      self.rpa, self.lang, self.process_curdir)
+                                      self.rpa, self.lang, self.process_curdir, self.parsers)
         suite = parser.parse(structure)
         if not self.included_suites and not self.allow_empty_suite:
             self._validate_test_counts(suite, multisource=len(paths) > 1)
@@ -106,29 +124,37 @@ class TestSuiteBuilder:
 
 class SuiteStructureParser(SuiteStructureVisitor):
 
-    def __init__(self, included_extensions, rpa=None, lang=None, process_curdir=True):
+    def __init__(self, included_extensions, rpa=None, lang=None, process_curdir=True, parsers=None):
         self.rpa = rpa
         self._rpa_given = rpa is not None
         self.suite = None
         self._stack = []
-        self.parsers = self._get_parsers(included_extensions, lang, process_curdir)
+        self.parsers = self._get_parsers(included_extensions, lang, process_curdir, parsers)
 
-    def _get_parsers(self, extensions, lang, process_curdir):
+    def _get_parsers(self, extensions, lang, process_curdir, parsers):
         robot_parser = RobotParser(lang, process_curdir)
         rest_parser = RestParser(lang, process_curdir)
         json_parser = JsonParser()
-        parsers = {
+        result = {
             None: NoInitFileDirectoryParser(),
-            'robot': robot_parser,
-            'rst': rest_parser,
-            'rest': rest_parser,
-            'rbt': json_parser,
-            'json': json_parser
         }
+        for parser in (robot_parser, rest_parser, json_parser, *(parsers or [])):
+            try:
+                parser_instance = (
+                    import_parser(parser, lang, process_curdir)
+                    if isinstance(parser, str)
+                    else parser
+                )
+                for ext in parser_instance.extensions:
+                    result[ext] = parser_instance
+            except DataError as err:
+                LOGGER.error(err.message)
+            except AttributeError as err:
+                LOGGER.error(str(err))
         for ext in extensions:
-            if ext not in parsers:
-                parsers[ext] = robot_parser
-        return parsers
+            if ext not in result:
+                result[ext] = robot_parser
+        return result
 
     def _get_parser(self, extension):
         try:

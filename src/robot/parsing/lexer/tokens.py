@@ -152,9 +152,9 @@ class Token:
     ))
 
     __slots__ = ['type', 'value', 'lineno', 'col_offset', 'error',
-                 '_add_eos_before', '_add_eos_after']
+                 '_add_eos_before', '_add_eos_after', '_end_col_offset']
 
-    def __init__(self, type=None, value=None, lineno=-1, col_offset=-1, error=None):
+    def __init__(self, type=None, value=None, lineno=-1, col_offset=-1, error=None, end_col_offset=None):
         self.type = type
         if value is None:
             value = {
@@ -168,6 +168,7 @@ class Token:
         self.value = value
         self.lineno = lineno
         self.col_offset = col_offset
+        self._end_col_offset = end_col_offset
         self.error = error
         # Used internally be lexer to indicate that EOS is needed before/after.
         self._add_eos_before = False
@@ -177,7 +178,13 @@ class Token:
     def end_col_offset(self):
         if self.col_offset == -1:
             return -1
+        if self._end_col_offset is not None:
+            return self._end_col_offset
         return self.col_offset + len(self.value)
+
+    @end_col_offset.setter
+    def end_col_offset(self, value):
+        self._end_col_offset = value
 
     def set_error(self, error, fatal=False):
         self.type = Token.ERROR if not fatal else Token.FATAL_ERROR

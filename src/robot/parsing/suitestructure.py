@@ -34,7 +34,7 @@ class SuiteStructure:
     @property
     def extension(self):
         source = self.source if self.is_file else self.init_file
-        return source.suffix[1:].lower() if source else None
+        return source.suffix.lower() if source else None
 
     @property
     def is_file(self):

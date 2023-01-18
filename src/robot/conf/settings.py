@@ -478,7 +478,8 @@ class RobotSettings(_BaseSettings):
                        'ConsoleWidth'       : ('consolewidth', 78),
                        'ConsoleMarkers'     : ('consolemarkers', 'AUTO'),
                        'DebugFile'          : ('debugfile', None),
-                       'Language'           : ('language', [])}
+                       'Language'           : ('language', []),
+                       'Parsers'            : ('parser', [])}
     _languages = None
 
     def get_rebot_settings(self):
@@ -501,6 +502,10 @@ class RobotSettings(_BaseSettings):
     @property
     def listeners(self):
         return self['Listeners']
+
+    @property
+    def parsers(self):
+        return self['Parsers']
 
     @property
     def debug_file(self):

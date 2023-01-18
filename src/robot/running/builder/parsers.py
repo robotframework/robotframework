@@ -25,6 +25,10 @@ from ..model import ResourceFile, TestSuite
 
 class BaseParser:
 
+    def __init__(self, lang=None, process_curdir=True):
+        self.lang = lang
+        self.process_curdir = process_curdir
+
     def parse_init_file(self, source: Path, defaults: Defaults = None):
         raise NotImplementedError
 
@@ -34,12 +38,24 @@ class BaseParser:
     def parse_resource_file(self, source: Path):
         raise NotImplementedError
 
+    @property
+    def extensions(self):
+        raise NotImplementedError
+
+    @property
+    def included_extensions(self):
+        return self.extensions
+
+    def _get_curdir(self, source):
+        return str(source.parent).replace('\\', '\\\\') if self.process_curdir else None
+
+    def _get_source(self, source):
+        return source
+
 
 class RobotParser(BaseParser):
 
-    def __init__(self, lang=None, process_curdir=True):
-        self.lang = lang
-        self.process_curdir = process_curdir
+    extensions = ["robot"]
 
     def parse_init_file(self, source, defaults=None):
         directory = source.parent
@@ -65,12 +81,6 @@ class RobotParser(BaseParser):
         SuiteBuilder(suite, defaults).build(model)
         return suite
 
-    def _get_curdir(self, source):
-        return str(source.parent).replace('\\', '\\\\') if self.process_curdir else None
-
-    def _get_source(self, source):
-        return source
-
     def parse_resource_file(self, source):
         model = get_resource_model(self._get_source(source), data_only=True,
                                    curdir=self._get_curdir(source), lang=self.lang)
@@ -81,12 +91,16 @@ class RobotParser(BaseParser):
 
 class RestParser(RobotParser):
 
+    extensions = ["rst", "rest"]
+
     def _get_source(self, source):
         with FileReader(source) as reader:
             return read_rest_data(reader)
 
 
 class JsonParser(BaseParser):
+
+    extensions = ["json", "rbt"]
 
     def parse_suite_file(self, source: Path, defaults: Defaults = None):
         return TestSuite.from_json(source)
