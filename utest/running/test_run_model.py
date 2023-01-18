@@ -244,16 +244,17 @@ class TestToFromDict(unittest.TestCase):
                      name='Setup', lineno=1)
 
     def test_for(self):
-        self._verify(For(), type='FOR', variables=[], flavor='IN', values=[])
-        self._verify(For(['${i}'], 'IN RANGE', ['10'], lineno=2), type='FOR',
-                     variables=['${i}'], flavor='IN RANGE', values=['10'], lineno=2)
+        self._verify(For(), type='FOR', variables=[], flavor='IN', values=[], body=[])
+        self._verify(For(['${i}'], 'IN RANGE', ['10'], lineno=2),
+                     type='FOR', variables=['${i}'], flavor='IN RANGE', values=['10'],
+                     body=[], lineno=2)
 
     def test_while(self):
-        self._verify(While(), type='WHILE', condition=None)
+        self._verify(While(), type='WHILE', body=[])
         self._verify(While('1 > 0', '1 min'),
-                     type='WHILE', condition='1 > 0', limit='1 min')
+                     type='WHILE', condition='1 > 0', limit='1 min', body=[])
         self._verify(While('True', lineno=3, error='x'),
-                     type='WHILE', condition='True', lineno=3, error='x')
+                     type='WHILE', condition='True', body=[], lineno=3, error='x')
 
     def test_if(self):
         self._verify(If(), type='IF/ELSE ROOT', body=[])

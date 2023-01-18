@@ -58,7 +58,8 @@ class For(BodyItem):
         return {'type': self.type,
                 'variables': list(self.variables),
                 'flavor': self.flavor,
-                'values': list(self.values)}
+                'values': list(self.values),
+                'body': self.body.to_dicts()}
 
 
 @Body.register
@@ -85,9 +86,12 @@ class While(BodyItem):
         return f'WHILE    {self.condition}' + (f'    {self.limit}' if self.limit else '')
 
     def to_dict(self):
-        data = {'type': self.type, 'condition': self.condition}
+        data = {'type': self.type}
+        if self.condition:
+            data['condition'] = self.condition
         if self.limit:
             data['limit'] = self.limit
+        data['body'] = self.body.to_dicts()
         return data
 
 
