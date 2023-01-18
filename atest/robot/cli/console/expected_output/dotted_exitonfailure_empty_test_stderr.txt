@@ -1,2 +1,2 @@
-[ ERROR ] Error in file '/Users/jth/Code/robotframework/atest/testdata/core/empty_testcase_and_uk.robot' on line 45: Creating keyword 'Empty UK' failed: User keyword 'Empty UK' contains no keywords.
-[ ERROR ] Error in file '/Users/jth/Code/robotframework/atest/testdata/core/empty_testcase_and_uk.robot' on line 47: Creating keyword 'Empty UK With Settings' failed: User keyword 'Empty UK With Settings' contains no keywords.
+[[] ERROR ] Error in file '*' on line 45: Creating keyword 'Empty UK' failed: User keyword 'Empty UK' contains no keywords.
+[[] ERROR ] Error in file '*' on line 47: Creating keyword 'Empty UK With Settings' failed: User keyword 'Empty UK With Settings' contains no keywords.
