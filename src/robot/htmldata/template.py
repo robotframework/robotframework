@@ -14,7 +14,10 @@
 #  limitations under the License.
 
 from os.path import abspath, dirname, join, normpath
-import importlib.resources
+try:
+    import importlib.resources as ir
+except:
+    import importlib_resources as ir
 import pathlib
 
 
@@ -34,4 +37,4 @@ def HtmlTemplate(filename):
     parts = (item.replace(".", "") for item in parts)
 
     modulepart = "robot.htmldata." + ".".join(parts)
-    return iter(importlib.resources.open_text(modulepart, resource_name))
+    return iter(ir.open_text(modulepart, resource_name))
