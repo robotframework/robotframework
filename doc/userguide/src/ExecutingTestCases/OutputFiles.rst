@@ -559,6 +559,37 @@ Flattening keywords is done already when the `output file`_ is parsed
 initially. This can save a significant amount of memory especially with
 deeply nested keyword structures.
 
+Flattening keyword during execution time
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Starting from Robot Framework 6.1, it is possible to enable the keyword flattening during
+the execution time. This can be done only on an user keyword level by defining the `reserved tag`__
+`robot:flatten` as a `keyword tag`__. Using this tag will work similarly as the command line
+option described in the previous chapter, e.g. all content except for log messages is removed
+from under the keyword having the tag. One important difference is that in this case, the removed
+content is not written to the output file at all, and thus cannot be accessed at later time.
+
+Some examples
+
+.. sourcecode:: robotframework
+
+    *** Keywords ***
+    Flattening affects this keyword and all it's children
+        [Tags]    robot:flatten
+        Log    something
+        FOR     ${i}     IN RANGE     2
+             Log    The message is preserved but for loop iteration is not
+        END
+
+    *** Settings ***
+    # Flatten content of all uer keywords
+    Keyword Tags    robot:flatten
+
+
+__ `Reserved tags`_
+__ `Keyword tags`_
+
+
 Automatically expanding keywords
 --------------------------------
 

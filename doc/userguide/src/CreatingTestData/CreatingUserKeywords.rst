@@ -189,7 +189,9 @@ tag, and new usages for keywords tags are possibly added in later releases.
 Similarly as with `test case tags`_, user keyword tags with the `robot:`
 prefix are reserved__ for special features by Robot Framework
 itself. Users should thus not use any tag with these prefixes unless actually
-activating the special functionality.
+activating the special functionality. Starting from Robot Framework 6.1,
+`flattening keyword during execution time`_ can be taken into use using
+reserved tag `robot:flatten`.
 
 .. note:: :setting:`Keyword Tags` is new in Robot Framework 6.0. With earlier
           versions all keyword tags need to be specified using the
