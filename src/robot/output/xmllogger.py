@@ -253,3 +253,82 @@ class XmlLogger(ResultVisitor):
         if not (item.starttime and item.endtime):
             attrs['elapsedtime'] = str(item.elapsedtime)
         self._writer.element('status', item.message, attrs)
+
+
+class FlatXmlLogger(XmlLogger):
+
+    def __init__(self, real_xml_logger):
+        super().__init__(None)
+        self._writer = real_xml_logger._writer
+
+    def start_keyword(self, kw):
+        pass
+
+    def end_keyword(self, kw):
+        pass
+
+    def start_for(self, for_):
+        pass
+
+    def end_for(self, for_):
+        pass
+
+    def start_for_iteration(self, iteration):
+        pass
+
+    def end_for_iteration(self, iteration):
+        pass
+
+    def start_if(self, if_):
+        pass
+
+    def end_if(self, if_):
+        pass
+
+    def start_if_branch(self, branch):
+        pass
+
+    def end_if_branch(self, branch):
+        pass
+
+    def start_try(self, root):
+        pass
+
+    def end_try(self, root):
+        pass
+
+    def start_try_branch(self, branch):
+        pass
+
+    def end_try_branch(self, branch):
+        pass
+
+    def start_while(self, while_):
+        pass
+
+    def end_while(self, while_):
+        pass
+
+    def start_while_iteration(self, iteration):
+        pass
+
+    def end_while_iteration(self, iteration):
+        pass
+
+    def start_break(self, break_):
+        pass
+
+    def end_break(self, break_):
+        pass
+
+    def start_continue(self, continue_):
+        pass
+
+    def end_continue(self, continue_):
+        pass
+
+    def start_return(self, return_):
+        pass
+
+    def end_return(self, return_):
+        pass

@@ -102,7 +102,8 @@ class VariableAssigner:
 
     def assign(self, return_value):
         context = self._context
-        context.trace(lambda: 'Return: %s' % prepr(return_value))
+        context.output.trace(lambda: 'Return: %s' % prepr(return_value),
+                             write_if_flat=False)
         resolver = ReturnValueResolver(self._assignment)
         for name, value in resolver.resolve(return_value):
             if not self._extended_assign(name, value, context.variables):
