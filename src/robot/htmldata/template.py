@@ -18,21 +18,25 @@ import pathlib
 import os
 
 try:
-    import importlib.resources as ir
-    HtmlTemplate_importlib = _HtmlTemplate_importlib
-except:
+    from importlib.resources import open_text
+except ModuleNotFoundError:
     try:
         # This code is here to optionally suport zipapps with python 3.6,
         # under the condition that the backport importlib-resources is
         # installed.
-        import importlib_resources as ir
-        HtmlTemplate_importlib = _HtmlTemplate_importlib
+        from importlib_resources import open_text
     except:
-        HtmlTemplate_importlib = _HtmlTemplate_no_importlib
+        # use our own...
+
+        def open_text(modulepath, resource_part, encoding='utf-8'):
+            base_dir = pathlib.Path(__file__).parent.parent
+            resource_path = base_dir / pathlib.Path(modulepath.replace(".", os.sep)) / pathlib.Path(resource_part)
+            with open(resource_path, "r", encoding=encoding) as file:
+                for line in file:
+                    yield line
 
 
-
-def _HtmlTemplate_importlib(filename):
+def HtmlTemplate(filename):
     parts = pathlib.Path(filename).parts
     resource_name = parts[-1]
     parts = list(parts[:-1])
@@ -48,15 +52,4 @@ def _HtmlTemplate_importlib(filename):
     parts = (item.replace(".", "") for item in parts)
 
     modulepart = "robot.htmldata." + ".".join(parts)
-    return iter(ir.open_text(modulepart, resource_name))
-
-
-class _HtmlTemplate_no_importlib:
-    _base_dir = join(dirname(abspath(__file__)), '..', 'htmldata')
-
-    def __init__(self, filename):
-        self._path = normpath(join(self._base_dir, filename.replace('/', os.sep)))
-     def __iter__(self):
-        with open(self._path, encoding='UTF-8') as file:
-            for line in file:
-                yield line.rstrip()
+    return iter(open_text(modulepart, resource_name, encoding='utf-8'))
