@@ -325,13 +325,14 @@ __ https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtua
 Zipapp 
 --------------------
 For example to create a zipapp (https://docs.python.org/3/library/zipapp.html) using pdm 
-(https://pdm.fming.dev/latest/).
+(https://pdm.fming.dev/latest/) with the packer extension (https://github.com/frostming/pdm-packer).
 
 .. sourcecode:: bash
-    pdm init 
-    pdm add robotframework
-    pdm pack -m robot:run_cli
+    
+    $ pdm init 
+    $ pdm add robotframework
+    $ pdm pack -m robot:run_cli
 
-At this point you have created a zipapp. You can add more pyackes using `pdm add`.
+At this point you have created a zipapp.
 
 
