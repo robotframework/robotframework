@@ -14,14 +14,25 @@
 #  limitations under the License.
 
 from os.path import abspath, dirname, join, normpath
+import pathlib
+import os
+
 try:
     import importlib.resources as ir
+    HtmlTemplate_importlib = _HtmlTemplate_importlib
 except:
-    import importlib_resources as ir
-import pathlib
+    try:
+        # This code is here to optionally suport zipapps with python 3.6,
+        # under the condition that the backport importlib-resources is
+        # installed.
+        import importlib_resources as ir
+        HtmlTemplate_importlib = _HtmlTemplate_importlib
+    except:
+        HtmlTemplate_importlib = _HtmlTemplate_no_importlib
 
 
-def HtmlTemplate(filename):
+
+def _HtmlTemplate_importlib(filename):
     parts = pathlib.Path(filename).parts
     resource_name = parts[-1]
     parts = list(parts[:-1])
@@ -38,3 +49,14 @@ def HtmlTemplate(filename):
 
     modulepart = "robot.htmldata." + ".".join(parts)
     return iter(ir.open_text(modulepart, resource_name))
+
+
+class _HtmlTemplate_no_importlib:
+    _base_dir = join(dirname(abspath(__file__)), '..', 'htmldata')
+
+    def __init__(self, filename):
+        self._path = normpath(join(self._base_dir, filename.replace('/', os.sep)))
+     def __iter__(self):
+        with open(self._path, encoding='UTF-8') as file:
+            for line in file:
+                yield line.rstrip()
