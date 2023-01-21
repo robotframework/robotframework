@@ -28,14 +28,16 @@ except ModuleNotFoundError:
         # use our own...
 
         def open_text(modulepath, resource_part, encoding='utf-8'):
-            base_dir = pathlib.Path(__file__).parent.parent.parent.parent
+            base_dir = pathlib.Path(__file__).parent.parent.parent
             resource_path = base_dir / pathlib.Path(modulepath.replace(".", os.sep)) / pathlib.Path(resource_part)
             with open(resource_path, "r", encoding=encoding) as file:
                 for line in file:
                     yield line
 
+import logging
 
 def HtmlTemplate(filename):
+    logging.error(filename)
     parts = pathlib.Path(filename).parts
     resource_name = parts[-1]
     parts = list(parts[:-1])
