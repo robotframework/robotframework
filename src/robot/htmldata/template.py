@@ -34,10 +34,7 @@ except ModuleNotFoundError:
                 for line in file:
                     yield line
 
-import logging
-
 def HtmlTemplate(filename):
-    logging.error(filename)
     parts = pathlib.Path(filename).parts
     resource_name = parts[-1]
     parts = list(parts[:-1])
