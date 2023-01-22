@@ -331,8 +331,7 @@ For example to create a zipapp (https://docs.python.org/3/library/zipapp.html) u
     
     $ pdm init 
     $ pdm add robotframework
+    $ #If the target is python 3.6: pdm add importlib_resources         
     $ pdm pack -m robot:run_cli
 
 At this point you have created a zipapp.
-
-
