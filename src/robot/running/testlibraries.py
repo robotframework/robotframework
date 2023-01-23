@@ -167,7 +167,7 @@ class _BaseTestLibrary:
             self.report_error(f'Argument converters must be given as a dictionary, '
                               f'got {type_name(converters)}.')
             return None
-        return CustomArgumentConverters.from_dict(converters, self.report_error)
+        return CustomArgumentConverters.from_dict(converters, self)
 
     def reset_instance(self, instance=None):
         prev = self._libinst

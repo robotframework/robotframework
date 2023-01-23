@@ -134,12 +134,9 @@ class SuiteRunner(SuiteVisitor):
             self._add_exit_combine()
             result.tags.add('robot:exit')
         if status.passed:
-            if not test.name:
-                status.test_failed(
-                    test_or_task('{Test} name cannot be empty.', settings.rpa))
-            elif not test.body:
-                status.test_failed(
-                    test_or_task('{Test} contains no keywords.', settings.rpa))
+            if test.error:
+                error = test.error if not settings.rpa else test.error.replace('Test', 'Task')
+                status.test_failed(error)
             elif test.tags.robot('skip'):
                 status.test_skipped(
                     test_or_task("{Test} skipped using 'robot:skip' tag.",

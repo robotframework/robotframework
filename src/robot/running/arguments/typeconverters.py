@@ -698,7 +698,7 @@ class CustomConverter(TypeConverter):
 
     def _convert(self, value, explicit_type=True):
         try:
-            return self.converter_info.converter(value)
+            return self.converter_info.convert(value)
         except ValueError:
             raise
         except Exception:

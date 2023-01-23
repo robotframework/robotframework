@@ -168,7 +168,8 @@ class TestCaseBuilder(NodeVisitor):
         self.test = None
 
     def visit_TestCase(self, node):
-        self.test = self.suite.tests.create(name=node.name, lineno=node.lineno)
+        self.test = self.suite.tests.create(name=node.name, lineno=node.lineno,
+                                            error=format_error(node.errors + node.header.errors))
         self.generic_visit(node)
         self._set_settings(self.test, self.settings)
 
@@ -271,9 +272,11 @@ class KeywordBuilder(NodeVisitor):
         self.kw = None
 
     def visit_Keyword(self, node):
+        error = format_error(node.errors + node.header.errors)
         self.kw = self.resource.keywords.create(name=node.name,
                                                 tags=self.defaults.keyword_tags,
-                                                lineno=node.lineno)
+                                                lineno=node.lineno,
+                                                error=error)
         self.generic_visit(node)
 
     def visit_Documentation(self, node):

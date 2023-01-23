@@ -577,6 +577,10 @@ class TestCaseName(Statement):
     def name(self):
         return self.get_value(Token.TESTCASE_NAME)
 
+    def validate(self, context):
+        if not self.name:
+            self.errors += (f'Test name cannot be empty.',)
+
 
 @Statement.register
 class KeywordName(Statement):

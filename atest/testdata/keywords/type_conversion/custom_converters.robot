@@ -1,5 +1,7 @@
 *** Settings ***
 Library           CustomConverters.py
+Library           CustomConverters.StatefulLibrary
+Library           CustomConverters.StatefulGlobalLibrary
 Library           CustomConvertersWithLibraryDecorator.py
 Library           CustomConvertersWithDynamicLibrary.py
 Library           InvalidCustomConverters.py
@@ -66,6 +68,25 @@ Failing conversion
     Strict    ${{CustomConverters.Strict()}}
     Conversion should fail    Strict    wrong type
     ...    type=Strict    error=TypeError: Only Strict instances are accepted, got string.
+
+With library as argument to converter
+    String    ${123}
+
+Test scope library instance is reset between test 1
+    Multiply    2    ${2}
+    Multiply    2    ${4}
+    Multiply    4    ${12}
+
+Test scope library instance is reset between test 2
+    Multiply    2    ${2}
+
+Global scope library instance is not reset between test 1
+    Global Multiply    2    ${2}
+    Global Multiply    2    ${4}
+
+Global scope library instance is not reset between test 2
+    Global Multiply    4    ${12}
+
 
 Invalid converters
     Invalid    a    b    c    d

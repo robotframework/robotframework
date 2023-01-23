@@ -163,8 +163,6 @@ class UserKeywordRunner:
 
     def _execute(self, context):
         handler = self._handler
-        if not (handler.body or handler.return_value):
-            raise DataError("User keyword '%s' contains no keywords." % self.name)
         if context.dry_run and handler.tags.robot('no-dry-run'):
             return None, None
         error = return_ = pass_ = None

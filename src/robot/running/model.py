@@ -327,16 +327,17 @@ class TestCase(model.TestCase):
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = ['template']
+    __slots__ = ['template', 'error']
     body_class = Body        #: Internal usage only.
     fixture_class = Keyword  #: Internal usage only.
 
     def __init__(self, name='', doc='', tags=None, timeout=None, template=None,
-                 lineno=None):
+                 lineno=None, error=None):
         super().__init__(name, doc, tags, timeout, lineno)
         #: Name of the keyword that has been used as a template when building the test.
         # ``None`` if template is not used.
         self.template = template
+        self.error = error
 
     @property
     def source(self):
@@ -346,6 +347,8 @@ class TestCase(model.TestCase):
         data = super().to_dict()
         if self.template:
             data['template'] = self.template
+        if self.error:
+            data['error'] = self.error
         return data
 
 
