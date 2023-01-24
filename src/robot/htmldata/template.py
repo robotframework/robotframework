@@ -50,4 +50,4 @@ def HtmlTemplate(filename):
     parts = (item.replace(".", "") for item in parts)
 
     modulepart = "robot.htmldata." + ".".join(parts)
-    return iter(open_text(modulepart, resource_name, encoding='utf-8'))
+    return iter(item.rstrip() for item in open_text(modulepart, resource_name, encoding='utf-8'))
