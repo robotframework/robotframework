@@ -12,7 +12,6 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
 import pathlib
 import os
 
@@ -48,8 +47,7 @@ def HtmlTemplate(filename):
         else:
             idx += 1
     parts = ("." + item.replace(".", "") for item in parts)
-
     modulepart = "robot.htmldata" + "".join(parts)
     with open_text(modulepart, resource_name, encoding='utf-8') as f:
         for item in f:
-            yield f.rstrip()
+             yield item.rstrip()
