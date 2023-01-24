@@ -47,7 +47,9 @@ def HtmlTemplate(filename):
             idx -= 1
         else:
             idx += 1
-    parts = (item.replace(".", "") for item in parts)
+    parts = ("." + item.replace(".", "") for item in parts)
 
-    modulepart = "robot.htmldata." + ".".join(parts)
-    return iter(item.rstrip() for item in open_text(modulepart, resource_name, encoding='utf-8'))
+    modulepart = "robot.htmldata" + "".join(parts)
+    with open_text(modulepart, resource_name, encoding='utf-8') as f:
+        for item in f:
+            yield f.rstrip()
