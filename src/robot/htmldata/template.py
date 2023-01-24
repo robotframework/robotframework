@@ -29,9 +29,7 @@ except ModuleNotFoundError:
         def open_text(modulepath, resource_part, encoding='utf-8'):
             base_dir = pathlib.Path(__file__).parent.parent.parent
             resource_path = base_dir / pathlib.Path(modulepath.replace(".", os.sep)) / pathlib.Path(resource_part)
-            with open(resource_path, "r", encoding=encoding) as file:
-                for line in file:
-                    yield line
+            return open(resource_path, "r", encoding=encoding)
 
 def HtmlTemplate(filename):
     parts = pathlib.Path(filename).parts
@@ -46,8 +44,9 @@ def HtmlTemplate(filename):
             idx -= 1
         else:
             idx += 1
+
     parts = ("." + item.replace(".", "") for item in parts)
     modulepart = "robot.htmldata" + "".join(parts)
     with open_text(modulepart, resource_name, encoding='utf-8') as f:
         for item in f:
-             yield item.rstrip()
+            yield item.rstrip()
