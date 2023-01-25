@@ -14,6 +14,8 @@
 #  limitations under the License.
 import pathlib
 import os
+import warnings
+
 
 try:
     from importlib.resources import open_text
@@ -47,6 +49,10 @@ def HtmlTemplate(filename):
 
     parts = ("." + item.replace(".", "") for item in parts)
     modulepart = "robot.htmldata" + "".join(parts)
-    with open_text(modulepart, resource_name, encoding='utf-8') as f:
-        for item in f:
-            yield item.rstrip()
+    with warnings.catch_warnings():
+        # This is necessay as open_text is deprecated started from python 
+        # 3.11, but the alternatives given did create issues in zipapps...
+        warnings.simplefilter("ignore")
+        with open_text(modulepart, resource_name, encoding='utf-8') as f:
+            for item in f:
+                yield item.rstrip()
