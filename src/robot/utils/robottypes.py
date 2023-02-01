@@ -36,6 +36,15 @@ except ImportError:
 else:
     typeddict_types += (type(ExtTypedDict('Dummy', {})),)
 
+try:
+    from typing import Literal as LiteralType
+except ImportError:  # Python < 3.8
+    try:
+        from typing_extensions import Literal as LiteralType
+    except ImportError:  # no typing_extensions
+        LiteralType = ()
+
+
 from .platform import PY_VERSION
 
 

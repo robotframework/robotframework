@@ -12,14 +12,14 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
+import sys
 from ast import literal_eval
 from collections import OrderedDict
 from collections.abc import ByteString, Container, Mapping, Sequence, Set
 from typing import Any, Tuple, TypeVar, Union
 from datetime import datetime, date, timedelta
 from decimal import InvalidOperation, Decimal
-from enum import Enum
+from enum import Enum, EnumMeta
 from numbers import Integral, Real
 from os import PathLike
 from pathlib import Path, PurePath
@@ -28,7 +28,12 @@ from robot.conf import Languages
 from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import (eq, get_error_message, is_string, is_union, plural_or_not as s,
                          safe_str, seq2str, type_name, type_repr, typeddict_types)
+from robot.utils.robottypes import LiteralType
 
+try:
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
 
 NoneType = type(None)
 
@@ -670,6 +675,71 @@ class CombinedConverter(TypeConverter):
                 return value
             try:
                 return converter.convert('', value, explicit_type)
+            except ValueError:
+                pass
+        raise ValueError
+
+
+@TypeConverter.register
+class LiteralConverter(CombinedConverter):
+    type = 'Literal'
+
+    def _get_types(self, union):
+        if not union:
+            return ()
+        if isinstance(union, tuple):
+            return union
+        if sys.version_info < (3, 9):
+            args = self._flatten_args(union.__args__)
+        else:
+            args = union.__args__
+        self._used_args = args
+        return tuple(type(self._validate_literal(argument)) for argument in args)
+
+    @classmethod
+    def _flatten_args(cls, args):
+        result = []
+        for arg in args:
+            if getattr(arg, '__origin__', type) is LiteralType:
+                result.extend(cls._flatten_args(arg.__args__))
+            else:
+                result.append(arg)
+        return result
+
+    @classmethod
+    def _validate_literal(cls, value):
+        if (
+            value is None
+            or type(value) in (str, int, bool, bytes)
+            or type(type(value)) is EnumMeta
+        ):
+            return value
+        raise TypeError(
+            f'{value} ({type(value).__name__}) is not valid as an argument for Literal'
+        )
+
+    @classmethod
+    def handles(cls, type_):
+        return type_ is LiteralType
+
+    @property
+    def type_name(self):
+        arg_list = ', '.join(
+            (repr if isinstance(argument, str) else str)(argument) for argument in self._used_args
+        )
+        return f'Literal[{arg_list}]'
+
+    def no_conversion_needed(self, value):
+        return value in self._used_args
+
+    def _convert(self, value, explicit_type=True):
+        for converter in self.converters:
+            if not converter:
+                return value
+            try:
+                result = converter.convert('', value, explicit_type)
+                if result in self._used_args:
+                    return result
             except ValueError:
                 pass
         raise ValueError
