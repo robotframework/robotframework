@@ -33,6 +33,9 @@ Failing conversion
 `None` as strict converter
     Check Test Case    ${TESTNAME}
 
+Only vararg
+    Check Test Case    ${TESTNAME}
+
 With library as argument to converter
     Check Test Case    ${TESTNAME}
 
