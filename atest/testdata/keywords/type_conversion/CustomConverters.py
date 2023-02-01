@@ -78,6 +78,11 @@ class AcceptSubscriptedGenerics:
         self.sum = sum(numbers)
 
 
+class OnlyVarArg:
+    def __init__(self, *varargs):
+        self.value = varargs[0]
+
+
 class Strict:
     pass
 
@@ -96,7 +101,7 @@ class TooManyArgs:
 
 
 class NoPositionalArg:
-    def __init__(self, *varargs):
+    def __init__(self, *, args):
         pass
 
 
@@ -113,6 +118,7 @@ ROBOT_LIBRARY_CONVERTERS = {Number: string_to_int,
                             ClassAsConverter: ClassAsConverter,
                             ClassWithHintsAsConverter: ClassWithHintsAsConverter,
                             AcceptSubscriptedGenerics: AcceptSubscriptedGenerics,
+                            OnlyVarArg: OnlyVarArg,
                             Strict: None,
                             Invalid: 666,
                             TooFewArgs: TooFewArgs,
@@ -120,6 +126,11 @@ ROBOT_LIBRARY_CONVERTERS = {Number: string_to_int,
                             NoPositionalArg: NoPositionalArg,
                             KwOnlyNotOk: KwOnlyNotOk,
                             'Bad': int}
+
+
+def only_var_arg(argument: OnlyVarArg, expected):
+    assert isinstance(argument, OnlyVarArg)
+    assert argument.value == expected
 
 
 def number(argument: Number, expected: int = 0):
