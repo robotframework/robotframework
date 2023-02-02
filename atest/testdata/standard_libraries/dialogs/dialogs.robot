@@ -7,21 +7,25 @@ ${FILLER} =     Wräp < & シ${SPACE}
 
 *** Test Cases ***
 Pause Execution
-    Pause Execution    Press OK.
+    Pause Execution    Press OK button.
+    Pause Execution    Press <Enter> key.
+    Pause Execution    Press <O> key.
+    Pause Execution    Press <o> key.
 
 Pause Execution With Long Line
-    Pause Execution    Verify that the long text below is wrapped nicely.\n\n${FILLER*200}\n\nAnd then press <Enter>.
+    Pause Execution    Verify that the long text below is wrapped nicely.\n\n${FILLER*200}\n\nThen press OK or <Enter>.
 
 Pause Execution With Multiple Lines
-    Pause Execution    Verify that\nthis multi\nline text\nis displayed\nnicely.\n\nʕ•ᴥ•ʔ\n\nAnd then press <Esc>.
+    Pause Execution    Verify that\nthis multi\nline text\nis displayed\nnicely.\n\nʕ•ᴥ•ʔ\n\nThen press <Esc>.
 
 Execute Manual Step Passing
     Execute Manual Step    Press PASS.
     Execute Manual Step    Press <Enter> and validate that the dialog is *NOT* closed.\n\nThen press PASS.
+    Execute Manual Step    Press <P> or <p>.    This should not be shown!!
 
 Execute Manual Step Failing
     [Documentation]  FAIL Predefined error message
-    Execute Manual Step    Press FAIL and then OK on next dialog.    Predefined error message
+    Execute Manual Step    Press FAIL, <F> or <f> and then OK the on next dialog.    Predefined error message
 
 Execute Manual Step Exit
     [Documentation]  FAIL No value provided by user.
@@ -65,7 +69,7 @@ Get Selection From User
 
 Get Selection From User Cancelled
     [Documentation]  FAIL No value provided by user.
-    Get Selection From User    Press Cancel.    zip    zap    foo
+    Get Selection From User    Press <C> or <c>.    zip    zap    foo
 
 Get Selection From User Exited
     [Documentation]  FAIL No value provided by user.
@@ -105,6 +109,5 @@ Get Selections From User Exited
 
 Multiple dialogs in a row
     [Documentation]  FAIL No value provided by user.
-    Pause Execution    Verify that dialog is closed immediately.\n\nAfter pressing OK o <Enter>.
-    Sleep    0.5s
-    Get Value From User    Verify that dialog is closed immediately.\n\nAfter pressing Cancel.
+    Pause Execution    Verify that dialog is closed immediately.\n\nAfter pressing OK or <Enter>.
+    Get Value From User    Verify that dialog is closed immediately.\n\nAfter pressing Cancel or <Esc>.

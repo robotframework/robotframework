@@ -88,8 +88,10 @@ class TkDialog(Toplevel):
 
     def _create_button(self, parent, label, callback):
         if label:
-            button = Button(parent, text=label, width=10, command=callback)
+            button = Button(parent, text=label, width=10, command=callback, underline=0)
             button.pack(side=LEFT, padx=5, pady=5)
+            self.bind(label[0], callback)
+            self.bind(label[0].lower(), callback)
 
     def _left_button_clicked(self, event=None):
         if self._validate_value():
