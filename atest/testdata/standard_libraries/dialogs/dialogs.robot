@@ -10,13 +10,14 @@ Pause Execution
     Pause Execution    Press OK.
 
 Pause Execution With Long Line
-    Pause Execution    Verify that the long text below is wrapped nicely.\n\n${FILLER*200}\n\nAnd then press OK.
+    Pause Execution    Verify that the long text below is wrapped nicely.\n\n${FILLER*200}\n\nAnd then press <Enter>.
 
 Pause Execution With Multiple Lines
     Pause Execution    Verify that\nthis multi\nline text\nis displayed\nnicely.\n\nʕ•ᴥ•ʔ\n\nAnd then press <Esc>.
 
 Execute Manual Step Passing
     Execute Manual Step    Press PASS.
+    Execute Manual Step    Press <Enter> and validate that the dialog is *NOT* closed.\n\nThen press PASS.
 
 Execute Manual Step Failing
     [Documentation]  FAIL Predefined error message
@@ -31,17 +32,17 @@ Get Value From User
     Should Be Equal    ${value}    value
 
 Get Non-ASCII Value From User
-    ${value} =    Get Value From User    Press OK.    ʕ•ᴥ•ʔ
+    ${value} =    Get Value From User    Press <Enter>.    ʕ•ᴥ•ʔ
     Should Be Equal    ${value}    ʕ•ᴥ•ʔ
 
 Get Empty Value From User
-    ${value} =    Get Value From User    Press OK.
+    ${value} =    Get Value From User    Press OK or <Enter>.
     Should Be Equal    ${value}    ${EMPTY}
 
 Get Hidden Value From User
-    ${value} =    Get Value From User    Type 'value' and press OK.    hidden=yes
+    ${value} =    Get Value From User    Type 'value' and press OK or <Enter>.    hidden=yes
     Should Be Equal    ${value}    value
-    ${value} =    Get Value From User    Press OK.    initial value    hide
+    ${value} =    Get Value From User    Press OK or <Enter>.    initial value    hide
     Should Be Equal    ${value}    initial value
 
 Get Value From User Cancelled
@@ -74,9 +75,9 @@ Get Selection From User Exited
 
 Get Selections From User
     ${values}=    Get Selections From User
-    ...    Select 'FOO', 'BAR' & 'ZÄP' and press OK.\n\nAlso verify that the dialog is resized properly.
+    ...    Select 'FOO', 'BAR' & 'ZÄP' and press <Enter>.\n\nAlso verify that the dialog is resized properly.
     ...    1    FOO    3    ʕ•ᴥ•ʔ    BAR    6    ZÄP    7
-    ...    This is a really long string and the window should change the size properly to content.
+    ...    This is a rather long value and the dialog size should be set so that it fits.
     ...    9    10    11    12    13    14    15    16    17    18    19    20
     Should Be True    type($values) is list
     ${expected values}=    Create List    FOO    BAR    ZÄP
@@ -84,7 +85,7 @@ Get Selections From User
 
 Get Selections From User When No Input Provided
     ${values}=    Get Selections From User
-    ...    Press OK.
+    ...    Press OK or <Enter>.
     ...    value 1    value 2    value 3    value 4
     Should Be True    type($values) is list
     ${expected values}=    Create List
@@ -104,6 +105,6 @@ Get Selections From User Exited
 
 Multiple dialogs in a row
     [Documentation]  FAIL No value provided by user.
-    Pause Execution    Verify that dialog is closed immediately.\n\nAfter pressing OK.
+    Pause Execution    Verify that dialog is closed immediately.\n\nAfter pressing OK o <Enter>.
     Sleep    0.5s
     Get Value From User    Verify that dialog is closed immediately.\n\nAfter pressing Cancel.

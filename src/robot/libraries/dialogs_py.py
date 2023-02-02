@@ -49,6 +49,8 @@ class TkDialog(Toplevel):
         self.title('Robot Framework')
         self.protocol("WM_DELETE_WINDOW", self._close)
         self.bind("<Escape>", self._close)
+        if self._left_button == TkDialog._left_button:
+            self.bind("<Return>", self._left_button_clicked)
 
     def _finalize_dialog(self):
         self.update()    # Needed to get accurate dialog size.
