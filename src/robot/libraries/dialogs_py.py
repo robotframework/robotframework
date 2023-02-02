@@ -65,6 +65,8 @@ class TkDialog(Toplevel):
         self.geometry(f'{width}x{height}+{x}+{y}')
         self.lift()
         self.deiconify()
+        if self.widget:
+            self.widget.focus_set()
 
     def _create_body(self, message, value, **config) -> Union[Entry, Listbox, None]:
         frame = Frame(self)
@@ -74,7 +76,6 @@ class TkDialog(Toplevel):
         widget = self._create_widget(frame, value, **config)
         if widget:
             widget.pack(fill=BOTH)
-            widget.focus_set()
         frame.pack(padx=5, pady=5, expand=1, fill=BOTH)
         return widget
 
