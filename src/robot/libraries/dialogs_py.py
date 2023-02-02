@@ -14,10 +14,9 @@
 #  limitations under the License.
 
 import sys
-import time
 from threading import current_thread
 from tkinter import (BOTH, Button, END, Entry, Frame, Label, LEFT, Listbox,
-                     TclError, Tk, Toplevel, W, Widget)
+                     Tk, Toplevel, W, Widget)
 from typing import Optional
 
 
@@ -32,6 +31,7 @@ class TkDialog(Toplevel):
         self._initialize_dialog()
         self._create_body(message, value, **config)
         self._create_buttons()
+        self._finalize_dialog()
         self._result = None
 
     def _prevent_execution_with_timeouts(self):
@@ -45,38 +45,29 @@ class TkDialog(Toplevel):
         return parent
 
     def _initialize_dialog(self):
+        self.withdraw()    # Remove from display until finalized.
         self.title('Robot Framework')
-        self.grab_set()
         self.protocol("WM_DELETE_WINDOW", self._close)
         self.bind("<Escape>", self._close)
-        self.minsize(250, 80)
-        self.geometry("+%d+%d" % self._get_center_location())
-        self._bring_to_front()
 
-    def grab_set(self, timeout=30):
-        max_time = time.time() + timeout
-        while time.time() < max_time:
-            try:
-                # Fails at least on Linux if mouse is hold down.
-                return Toplevel.grab_set(self)
-            except TclError:
-                pass
-        raise RuntimeError(f'Failed to open dialog in {timeout} seconds. '
-                           f'One possible reason is holding down mouse button.')
-
-    def _get_center_location(self):
-        x = (self.winfo_screenwidth() - self.winfo_reqwidth()) // 2
-        y = (self.winfo_screenheight() - self.winfo_reqheight()) // 2
-        return x, y
-
-    def _bring_to_front(self):
+    def _finalize_dialog(self):
+        self.update()    # Needed to get accurate dialog size.
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        min_width = screen_width // 6
+        min_height = screen_height // 10
+        width = max(self.winfo_reqwidth(), min_width)
+        height = max(self.winfo_reqheight(), min_height)
+        x = (screen_width - width) // 2
+        y = (screen_height - height) // 2
+        self.geometry(f'{width}x{height}+{x}+{y}')
         self.lift()
-        self.attributes('-topmost', True)
-        self.after_idle(self.attributes, '-topmost', False)
+        self.deiconify()
 
     def _create_body(self, message, value, **config):
         frame = Frame(self)
-        label = Label(frame, text=message, anchor=W, justify=LEFT, wraplength=800)
+        max_width = self.winfo_screenwidth() // 2
+        label = Label(frame, text=message, anchor=W, justify=LEFT, wraplength=max_width)
         label.pack(fill=BOTH)
         widget = self._create_widget(frame, value, **config)
         if widget:
