@@ -15,21 +15,21 @@
 
 import sys
 from threading import current_thread
-from tkinter import (BOTH, Button, END, Entry, Frame, Label, LEFT, Listbox,
-                     Tk, Toplevel, W, Widget)
-from typing import Optional
+from tkinter import (BOTH, Button, END, Entry, Frame, Label, LEFT, Listbox, Tk,
+                     Toplevel, W)
+from typing import Any, Union
 
 
 class TkDialog(Toplevel):
-    _left_button = 'OK'
-    _right_button = 'Cancel'
+    left_button = 'OK'
+    right_button = 'Cancel'
 
     def __init__(self, message, value=None, **config):
         self._prevent_execution_with_timeouts()
-        self._parent = self._get_parent()
-        super().__init__(self._parent)
+        self.root = self._get_root()
+        super().__init__(self.root)
         self._initialize_dialog()
-        self._create_body(message, value, **config)
+        self.widget = self._create_body(message, value, **config)
         self._create_buttons()
         self._finalize_dialog()
         self._result = None
@@ -39,17 +39,17 @@ class TkDialog(Toplevel):
             raise RuntimeError('Dialogs library is not supported with '
                                'timeouts on Python on this platform.')
 
-    def _get_parent(self) -> Tk:
-        parent = Tk()
-        parent.withdraw()
-        return parent
+    def _get_root(self) -> Tk:
+        root = Tk()
+        root.withdraw()
+        return root
 
     def _initialize_dialog(self):
         self.withdraw()    # Remove from display until finalized.
         self.title('Robot Framework')
         self.protocol("WM_DELETE_WINDOW", self._close)
         self.bind("<Escape>", self._close)
-        if self._left_button == TkDialog._left_button:
+        if self.left_button == TkDialog.left_button:
             self.bind("<Return>", self._left_button_clicked)
 
     def _finalize_dialog(self):
@@ -66,7 +66,7 @@ class TkDialog(Toplevel):
         self.lift()
         self.deiconify()
 
-    def _create_body(self, message, value, **config):
+    def _create_body(self, message, value, **config) -> Union[Entry, Listbox, None]:
         frame = Frame(self)
         max_width = self.winfo_screenwidth() // 2
         label = Label(frame, text=message, anchor=W, justify=LEFT, wraplength=max_width)
@@ -76,14 +76,15 @@ class TkDialog(Toplevel):
             widget.pack(fill=BOTH)
             widget.focus_set()
         frame.pack(padx=5, pady=5, expand=1, fill=BOTH)
+        return widget
 
-    def _create_widget(self, frame, value) -> Optional[Widget]:
+    def _create_widget(self, frame, value) -> Union[Entry, Listbox, None]:
         return None
 
     def _create_buttons(self):
         frame = Frame(self)
-        self._create_button(frame, self._left_button, self._left_button_clicked)
-        self._create_button(frame, self._right_button, self._right_button_clicked)
+        self._create_button(frame, self.left_button, self._left_button_clicked)
+        self._create_button(frame, self.right_button, self._right_button_clicked)
         frame.pack()
 
     def _create_button(self, parent, label, callback):
@@ -98,30 +99,30 @@ class TkDialog(Toplevel):
             self._result = self._get_value()
             self._close()
 
-    def _validate_value(self):
+    def _validate_value(self) -> bool:
         return True
 
-    def _get_value(self):
+    def _get_value(self) -> Any:
         return None
 
     def _close(self, event=None):
         # self.destroy() is not enough on Linux
-        self._parent.destroy()
+        self.root.destroy()
 
     def _right_button_clicked(self, event=None):
         self._result = self._get_right_button_value()
         self._close()
 
-    def _get_right_button_value(self):
+    def _get_right_button_value(self) -> Any:
         return None
 
-    def show(self):
+    def show(self) -> Any:
         self.wait_window(self)
         return self._result
 
 
 class MessageDialog(TkDialog):
-    _right_button = None
+    right_button = None
 
 
 class InputDialog(TkDialog):
@@ -129,52 +130,52 @@ class InputDialog(TkDialog):
     def __init__(self, message, default='', hidden=False):
         super().__init__(message, default, hidden=hidden)
 
-    def _create_widget(self, parent, default, hidden=False):
-        self._entry = Entry(parent, show='*' if hidden else '')
-        self._entry.insert(0, default)
-        self._entry.select_range(0, END)
-        return self._entry
+    def _create_widget(self, parent, default, hidden=False) -> Entry:
+        widget = Entry(parent, show='*' if hidden else '')
+        widget.insert(0, default)
+        widget.select_range(0, END)
+        return widget
 
-    def _get_value(self):
-        return self._entry.get()
+    def _get_value(self) -> str:
+        return self.widget.get()
 
 
 class SelectionDialog(TkDialog):
 
-    def _create_widget(self, parent, values):
-        self._listbox = Listbox(parent)
+    def _create_widget(self, parent, values) -> Listbox:
+        widget = Listbox(parent)
         for item in values:
-            self._listbox.insert(END, item)
-        self._listbox.config(width=0)
-        return self._listbox
+            widget.insert(END, item)
+        widget.config(width=0)
+        return widget
 
-    def _validate_value(self):
-        return bool(self._listbox.curselection())
+    def _validate_value(self) -> bool:
+        return bool(self.widget.curselection())
 
-    def _get_value(self):
-        return self._listbox.get(self._listbox.curselection())
+    def _get_value(self) -> str:
+        return self.widget.get(self.widget.curselection())
 
 
 class MultipleSelectionDialog(TkDialog):
 
-    def _create_widget(self, parent, values):
-        self._listbox = Listbox(parent, selectmode='multiple')
+    def _create_widget(self, parent, values) -> Listbox:
+        widget = Listbox(parent, selectmode='multiple')
         for item in values:
-            self._listbox.insert(END, item)
-        self._listbox.config(width=0)
-        return self._listbox
+            widget.insert(END, item)
+        widget.config(width=0)
+        return widget
 
-    def _get_value(self):
-        selected_values = [self._listbox.get(i) for i in self._listbox.curselection()]
+    def _get_value(self) -> list:
+        selected_values = [self.widget.get(i) for i in self.widget.curselection()]
         return selected_values
 
 
 class PassFailDialog(TkDialog):
-    _left_button = 'PASS'
-    _right_button = 'FAIL'
+    left_button = 'PASS'
+    right_button = 'FAIL'
 
-    def _get_value(self):
+    def _get_value(self) -> bool:
         return True
 
-    def _get_right_button_value(self):
+    def _get_right_button_value(self) -> bool:
         return False
