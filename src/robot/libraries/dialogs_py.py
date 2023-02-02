@@ -14,27 +14,23 @@
 #  limitations under the License.
 
 import sys
-from threading import current_thread
 import time
-
-try:
-    from Tkinter import (Button, Entry, Frame, Label, Listbox, TclError,
-                         Toplevel, Tk, BOTH, END, LEFT, W)
-except ImportError:
-    from tkinter import (Button, Entry, Frame, Label, Listbox, TclError,
-                         Toplevel, Tk, BOTH, END, LEFT, W)
+from threading import current_thread
+from tkinter import (BOTH, Button, END, Entry, Frame, Label, LEFT, Listbox,
+                     TclError, Tk, Toplevel, W, Widget)
+from typing import Optional
 
 
-class _TkDialog(Toplevel):
+class TkDialog(Toplevel):
     _left_button = 'OK'
     _right_button = 'Cancel'
 
-    def __init__(self, message, value=None, **extra):
+    def __init__(self, message, value=None, **config):
         self._prevent_execution_with_timeouts()
         self._parent = self._get_parent()
-        Toplevel.__init__(self, self._parent)
+        super().__init__(self._parent)
         self._initialize_dialog()
-        self._create_body(message, value, **extra)
+        self._create_body(message, value, **config)
         self._create_buttons()
         self._result = None
 
@@ -43,7 +39,7 @@ class _TkDialog(Toplevel):
             raise RuntimeError('Dialogs library is not supported with '
                                'timeouts on Python on this platform.')
 
-    def _get_parent(self):
+    def _get_parent(self) -> Tk:
         parent = Tk()
         parent.withdraw()
         return parent
@@ -58,15 +54,15 @@ class _TkDialog(Toplevel):
         self._bring_to_front()
 
     def grab_set(self, timeout=30):
-        maxtime = time.time() + timeout
-        while time.time() < maxtime:
+        max_time = time.time() + timeout
+        while time.time() < max_time:
             try:
                 # Fails at least on Linux if mouse is hold down.
                 return Toplevel.grab_set(self)
             except TclError:
                 pass
-        raise RuntimeError('Failed to open dialog in %s seconds. One possible '
-                           'reason is holding down mouse button.' % timeout)
+        raise RuntimeError(f'Failed to open dialog in {timeout} seconds. '
+                           f'One possible reason is holding down mouse button.')
 
     def _get_center_location(self):
         x = (self.winfo_screenwidth() - self.winfo_reqwidth()) // 2
@@ -78,24 +74,23 @@ class _TkDialog(Toplevel):
         self.attributes('-topmost', True)
         self.after_idle(self.attributes, '-topmost', False)
 
-    def _create_body(self, message, value, **extra):
+    def _create_body(self, message, value, **config):
         frame = Frame(self)
-        Label(frame, text=message, anchor=W, justify=LEFT, wraplength=800).pack(fill=BOTH)
-        selector = self._create_selector(frame, value, **extra)
-        if selector:
-            selector.pack(fill=BOTH)
-            selector.focus_set()
+        label = Label(frame, text=message, anchor=W, justify=LEFT, wraplength=800)
+        label.pack(fill=BOTH)
+        widget = self._create_widget(frame, value, **config)
+        if widget:
+            widget.pack(fill=BOTH)
+            widget.focus_set()
         frame.pack(padx=5, pady=5, expand=1, fill=BOTH)
 
-    def _create_selector(self, frame, value):
+    def _create_widget(self, frame, value) -> Optional[Widget]:
         return None
 
     def _create_buttons(self):
         frame = Frame(self)
-        self._create_button(frame, self._left_button,
-                            self._left_button_clicked)
-        self._create_button(frame, self._right_button,
-                            self._right_button_clicked)
+        self._create_button(frame, self._left_button, self._left_button_clicked)
+        self._create_button(frame, self._right_button, self._right_button_clicked)
         frame.pack()
 
     def _create_button(self, parent, label, callback):
@@ -130,16 +125,16 @@ class _TkDialog(Toplevel):
         return self._result
 
 
-class MessageDialog(_TkDialog):
+class MessageDialog(TkDialog):
     _right_button = None
 
 
-class InputDialog(_TkDialog):
+class InputDialog(TkDialog):
 
     def __init__(self, message, default='', hidden=False):
-        _TkDialog.__init__(self, message, default, hidden=hidden)
+        super().__init__(message, default, hidden=hidden)
 
-    def _create_selector(self, parent, default, hidden):
+    def _create_widget(self, parent, default, hidden=False):
         self._entry = Entry(parent, show='*' if hidden else '')
         self._entry.insert(0, default)
         self._entry.select_range(0, END)
@@ -149,12 +144,9 @@ class InputDialog(_TkDialog):
         return self._entry.get()
 
 
-class SelectionDialog(_TkDialog):
+class SelectionDialog(TkDialog):
 
-    def __init__(self, message, values):
-        _TkDialog.__init__(self, message, values)
-
-    def _create_selector(self, parent, values):
+    def _create_widget(self, parent, values):
         self._listbox = Listbox(parent)
         for item in values:
             self._listbox.insert(END, item)
@@ -168,12 +160,9 @@ class SelectionDialog(_TkDialog):
         return self._listbox.get(self._listbox.curselection())
 
 
-class MultipleSelectionDialog(_TkDialog):
+class MultipleSelectionDialog(TkDialog):
 
-    def __init__(self, message, values):
-        _TkDialog.__init__(self, message, values)
-
-    def _create_selector(self, parent, values):
+    def _create_widget(self, parent, values):
         self._listbox = Listbox(parent, selectmode='multiple')
         for item in values:
             self._listbox.insert(END, item)
@@ -185,7 +174,7 @@ class MultipleSelectionDialog(_TkDialog):
         return selected_values
 
 
-class PassFailDialog(_TkDialog):
+class PassFailDialog(TkDialog):
     _left_button = 'PASS'
     _right_button = 'FAIL'
 
