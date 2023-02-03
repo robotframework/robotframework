@@ -177,6 +177,15 @@ None as default
     None as default
     None as default           [1, 2, 3, 4]                [1, 2, 3, 4]
 
+None as default with Any
+    [Documentation]    `a: Any = None` was same as `a: Any|None = None` prior to Python 3.11.
+    ...                With unions we don't look at the default in this case and that
+    ...                behavior is preserved for backwards compatiblity.
+    None as default with Any
+    None as default with Any    hi!                       'hi!'
+    None as default with Any    ${42}                     42
+    None as default with Any    None                      'None'
+
 Forward references
     Forward reference         [1, 2, 3, 4]                [1, 2, 3, 4]
     Forward ref with types    [1, '2', 3, 4.0]            [1, 2, 3, 4]
