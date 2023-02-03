@@ -88,13 +88,12 @@ class ExecutionResultBuilder:
         """
         :param source: Path to the XML output file to build
             :class:`~.executionresult.Result` objects from.
-        :param include_keywords: Boolean controlling whether to include
-            keyword information in the result or not. Keywords are
-            not needed when generating only report. Although the the option name
-            has word "keyword", it controls also including FOR and IF structures.
-        :param flatten_keywords: List of patterns controlling what keywords to
-            flatten. See the documentation of ``--flattenkeywords`` option for
-            more details.
+        :param include_keywords: Controls whether to include keywords and control
+            structures like FOR and IF in the result or not. They are not needed
+            when generating only a report.
+        :param flattened_keywords: List of patterns controlling what keywords
+            and control structures to flatten. See the documentation of
+            the ``--flattenkeywords`` option for more details.
         """
         self._source = source \
             if isinstance(source, ETSource) else ETSource(source)
