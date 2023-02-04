@@ -210,7 +210,10 @@ Invalid kwonly
 Return value annotation causes no error
     Check Test Case    ${TESTNAME}
 
-None as default
+None as default with known type
+    Check Test Case    ${TESTNAME}
+
+None as default with unknown type
     Check Test Case    ${TESTNAME}
 
 Forward references

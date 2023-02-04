@@ -65,7 +65,7 @@ class ArgumentConverter:
                     return converter.convert(name, value)
                 except ValueError as err:
                     conversion_error = err
-        if name in spec.defaults:
+        if self._convert_based_on_defaults(name, spec, bool(conversion_error)):
             converter = TypeConverter.converter_for(type(spec.defaults[name]),
                                                     languages=self._languages)
             if converter:
@@ -77,3 +77,15 @@ class ArgumentConverter:
         if conversion_error:
             raise conversion_error
         return value
+
+    def _convert_based_on_defaults(self, name, spec, has_known_type):
+        if name not in spec.defaults:
+            return False
+        # Handle `arg: T = None` consistently with different Python versions
+        # regardless is `T` a known type or not. Prior to 3.11 this syntax was
+        # considered same as `arg: Union[T, None] = None` and with unions we
+        # don't look at the possible default value if `T` is not known.
+        # https://github.com/robotframework/robotframework/issues/4626
+        return (name not in spec.types
+                or spec.defaults[name] is not None
+                or has_known_type)

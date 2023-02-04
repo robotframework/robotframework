@@ -212,6 +212,10 @@ def none_as_default(argument: list = None, expected=None):
     _validate_type(argument, expected)
 
 
+def none_as_default_with_unknown_type(argument: Unknown = None, expected=None):
+    _validate_type(argument, expected)
+
+
 def forward_referenced_concrete_type(argument: 'int', expected=None):
     _validate_type(argument, expected)
 

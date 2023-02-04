@@ -561,12 +561,20 @@ Invalid kwonly
 Return value annotation causes no error
     Return value annotation                    42    42
 
-None as default
+None as default with known type
     None as default
     None as default                            []    []
 
+None as default with unknown type
+    [Documentation]    `a: T = None` was same as `a: T|None = None` prior to Python 3.11.
+    ...                With unions we don't look at the default if `T` isn't a known type
+    ...                and that behavior is preserved for backwards compatiblity.
+    None as default with unknown type
+    None as default with unknown type          hi!      'hi!'
+    None as default with unknown type          ${42}    42
+    None as default with unknown type          None     'None'
+
 Forward references
-    [Tags]    require-py3.5
     Forward referenced concrete type           42    42
     Forward referenced ABC                     []    []
 
