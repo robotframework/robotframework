@@ -478,7 +478,8 @@ class RobotSettings(_BaseSettings):
                        'ConsoleWidth'       : ('consolewidth', 78),
                        'ConsoleMarkers'     : ('consolemarkers', 'AUTO'),
                        'DebugFile'          : ('debugfile', None),
-                       'Language'           : ('language', [])}
+                       'Language'           : ('language', []),
+                       'StrictTypeConverters': ('strict-type-converters', 'AUTO')}
     _languages = None
 
     def get_rebot_settings(self):
@@ -514,6 +515,10 @@ class RobotSettings(_BaseSettings):
             except DataError as err:
                 self._raise_invalid('Language', err)
         return self._languages
+
+    @property
+    def strict_type_converters(self):
+        return self['StrictTypeConverters']
 
     @property
     def suite_config(self):

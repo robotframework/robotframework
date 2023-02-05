@@ -357,6 +357,8 @@ Options
                           |  path/to/test/directory/
                           Examples:
                           --argumentfile argfile.txt --argumentfile STDIN
+    --strict-type-converters auto|on|off  Enables strict conversion for type
+                          converters.
  -h -? --help             Print usage instructions.
  --version                Print version information.
 
@@ -427,6 +429,11 @@ class RobotFramework(Application):
             LOGGER.register_console_logger(stdout=options.get('stdout'),
                                            stderr=options.get('stderr'))
             raise
+
+        from robot.running import TypeConverter
+        TypeConverter.strict = {'AUTO': False, 'ON': True, 'OFF': False}[
+            settings.strict_type_converters.upper()
+        ]
         LOGGER.register_console_logger(**settings.console_output_config)
         LOGGER.info(f'Settings:\n{settings}')
         if settings.pythonpath:

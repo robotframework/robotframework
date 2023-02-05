@@ -42,6 +42,7 @@ class TypeConverter:
     doc = None
     _converters = OrderedDict()
     _type_aliases = {}
+    strict = False
 
     def __init__(self, used_type, custom_converters=None, languages=None):
         self.used_type = used_type
@@ -79,6 +80,8 @@ class TypeConverter:
         for converter in cls._converters.values():
             if converter.handles(type_):
                 return converter(used_type, custom_converters, languages)
+        if cls.strict:
+            return DefaultConverter(used_type, custom_converters, languages)
         return None
 
     @classmethod
@@ -169,6 +172,18 @@ class TypeConverter:
         return value
 
 
+class DefaultConverter(TypeConverter):
+
+    def convert(self, name, value, explicit_type=True, strict=True, kind='Argument'):
+        if self.no_conversion_needed(value):
+            return value
+        value_type = '' if isinstance(value, str) else f' ({type_name(value)})'
+        value = safe_str(value)
+        raise TypeError(f"When attempting to convert the value '{value}'{value_type} to "
+                        f"the type '{self.used_type.__module__}.{self.used_type.__name__}', no "
+                        "converter was found.")
+
+
 @TypeConverter.register
 class EnumConverter(TypeConverter):
     type = Enum
@@ -247,12 +262,14 @@ class BooleanConverter(TypeConverter):
 
     def _convert(self, value, explicit_type=True):
         normalized = value.title()
-        if normalized == 'None':
+        if normalized == 'None' and not self.strict:
             return None
         if normalized in self.languages.true_strings:
             return True
         if normalized in self.languages.false_strings:
             return False
+        if self.strict:
+            raise ValueError
         return value
 
 
