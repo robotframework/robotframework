@@ -83,8 +83,19 @@ class _RunnableHandler:
         return None
 
     def resolve_arguments(self, args, variables=None, languages=None):
-        return self.arguments.resolve(args, variables, self.library.converters,
-                                      languages=languages)
+        if not self.arguments.overloads:
+            return self.arguments.resolve(args, variables, self.library.converters,
+                                          languages=languages)
+        errors = []
+        for spec in self.arguments.overloads:
+            try:
+                return spec.resolve(args, variables, self.library.converters,
+                                    languages=languages)
+            except ValueError as e:
+                errors.append(str(e))
+        message = '\n  '.join(errors)
+        raise ValueError(f"Couldn't convert to any overload:\n  {message}")
+
 
     @property
     def doc(self):
