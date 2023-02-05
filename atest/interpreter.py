@@ -56,7 +56,7 @@ class Interpreter:
     def excludes(self):
         if self.is_pypy:
             yield 'require-lxml'
-        for require in [(3, 7), (3, 8), (3, 9), (3, 10)]:
+        for require in [(3, 8), (3, 9), (3, 10)]:
             if self.version_info < require:
                 yield 'require-py%d.%d' % require
         if self.is_windows:

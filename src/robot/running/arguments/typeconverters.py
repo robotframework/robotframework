@@ -434,8 +434,7 @@ class ListConverter(TypeConverter):
 
     @classmethod
     def handles(cls, type_):
-        # `type_ is not Tuple` is needed with Python 3.6.
-        return super().handles(type_) and type_ is not Tuple
+        return super().handles(type_)
 
     def no_conversion_needed(self, value):
         if isinstance(value, str):

@@ -1,7 +1,4 @@
 *** Settings ***
-Documentation     Tests are not run using Python 3.6 because `typing.get_type_hints` handles
-...               Unions incorrectly with it making test results too different compared to others.
-Force Tags        require-py3.7
 Suite Setup       Run Libdoc And Parse Model From JSON    ${TESTDATADIR}/DataTypesLibrary.py
 Test Template     Should Be Equal Multiline
 Resource          libdoc_resource.robot

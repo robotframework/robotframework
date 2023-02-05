@@ -1,6 +1,5 @@
 *** Settings ***
 Library           PositionalOnly.py
-Force Tags        require-py3.8
 
 *** Test Cases ***
 Normal usage

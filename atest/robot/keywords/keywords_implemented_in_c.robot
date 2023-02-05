@@ -8,10 +8,8 @@ Use with correct arguments
     Check Log Message    ${tc.kws[-1].msgs[0]}    This is a bit weird ...
 
 Use with incorrect arguments
-    ${error} =    Set Variable If    ${INTERPRETER.is_pypy} or ${INTERPRETER.version_info} >= (3, 7)
+    Check Test Case    ${TEST NAME}    FAIL
     ...    Keyword 'KeywordsImplementedInC.Eq' expected 2 arguments, got 3.
-    ...    STARTS: TypeError:
-    Check Test Case    ${TEST NAME}    FAIL    ${error}
 
 Built-ins not set to attributes are not exposes
     Check Test Case    ${TEST NAME}

@@ -1,7 +1,6 @@
 *** Settings ***
 Library                  FutureAnnotations.py
 Resource                 conversion.resource
-Force Tags               require-py3.7
 
 *** Test Cases ***
 Concrete types

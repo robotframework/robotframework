@@ -28,7 +28,7 @@ is having Python or its alternative implementation `PyPy <https://pypy.org>`_
 installed. Another recommended precondition is having the pip_ package manager
 available.
 
-Robot Framework requires Python 3.6 or newer. If you need to use Python 2,
+Robot Framework requires Python 3.8 or newer. If you need to use Python 2,
 `Jython <http://jython.org>`_ or `IronPython <http://ironpython.net>`_,
 you can use `Robot Framework 4.1.3`__.
 

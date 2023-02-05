@@ -93,7 +93,6 @@ Keyword-only Arguments
     Keyword Arguments Should Be      1    *varargs    kwo    another=default
 
 Positional-only Arguments
-    [Tags]    require-py3.8
     Run Libdoc And Parse Output      ${DATADIR}/keywords/PositionalOnly.py
     Keyword Arguments Should Be      2    arg    /
     Keyword Arguments Should Be      5    posonly    /    normal

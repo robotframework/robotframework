@@ -69,7 +69,7 @@ class TestEmbeddedArgs(unittest.TestCase):
 
     def test_get_multiple_embedded_args_and_regexp(self):
         assert_equal(self.tmp2.embedded.args, ['x', 'y', 'z'])
-        quote = '"' if sys.version_info[:2] >= (3, 7) else '\\"'
+        quote = '"'
         assert_equal(self.tmp2.embedded.name.pattern,
                      '^(.*?)\\ \\*\\ (.*?)\\ from\\ {0}(.*?){0}$'.format(quote))
 

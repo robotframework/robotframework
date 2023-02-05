@@ -20,13 +20,13 @@ Generating releases has only been tested on Linux, but it ought to work the
 same way also on OSX and other unixes. Generating releases on Windows may
 work but is not tested, supported, or recommended.
 
-Creating releases is only supported with Python 3.6 or newer. If you are
-using Ubuntu or one of its derivatives and don't have Python 3.6 in the
+Creating releases is only supported with Python 3.8 or newer. If you are
+using Ubuntu or one of its derivatives and don't have Python 3.8 in the
 official package repository, you may consider using the
 `Dead Snakes PPA <https://launchpad.net/~deadsnakes/+archive/ubuntu/ppa>`_.
 
 The ``pip`` and ``invoke`` commands below are also expected to run on Python
-3.6+. Alternatively, it's possible to use the ``python3.6 -m pip`` approach
+3.8+. Alternatively, it's possible to use the ``python3.8 -m pip`` approach
 to run these commands.
 
 Python dependencies
