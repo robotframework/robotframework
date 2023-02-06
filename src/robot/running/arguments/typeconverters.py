@@ -16,13 +16,13 @@
 from ast import literal_eval
 from collections import OrderedDict
 from collections.abc import ByteString, Container, Mapping, Sequence, Set
-from typing import Any, Tuple, TypeVar, Union
 from datetime import datetime, date, timedelta
 from decimal import InvalidOperation, Decimal
 from enum import Enum
 from numbers import Integral, Real
 from os import PathLike
 from pathlib import Path, PurePath
+from typing import Any, Tuple, TypeVar, Union
 
 from robot.conf import Languages
 from robot.libraries.DateTime import convert_date, convert_time
@@ -214,6 +214,27 @@ class EnumConverter(TypeConverter):
         values = sorted(member.value for member in enum)
         raise ValueError(f"{self.type_name} does not have value '{value}'. "
                          f"Available: {seq2str(values)}")
+
+
+@TypeConverter.register
+class AnyConverter(TypeConverter):
+    type = Any
+    type_name = 'Any'
+    aliases = ('any',)
+    value_types = (Any,)
+
+    @classmethod
+    def handles(cls, type_):
+        return type_ is Any
+
+    def no_conversion_needed(self, value):
+        return True
+
+    def _convert(self, value, explicit_type=True):
+        return value
+
+    def _handles_value(self, value):
+        return True
 
 
 @TypeConverter.register

@@ -113,6 +113,10 @@ def mutable_set_with_types(argument: MutableSet[float], expected=None):
     _validate_type(argument, expected)
 
 
+def any_(argument: Any = 1, expected=None):
+    _validate_type(argument, expected)
+
+
 def none_as_default(argument: List = None, expected=None):
     _validate_type(argument, expected)
 

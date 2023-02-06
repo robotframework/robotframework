@@ -52,40 +52,47 @@ Custom
 
 Standard
     DataType Standard Should Be    0
+    ...    Any
+    ...    Any value is accepted. No conversion is done.
+    DataType Standard Should Be    1
     ...    boolean
     ...    Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to Boolean ``True``,
 
 Standard with generics
-    DataType Standard Should Be    1
+    DataType Standard Should Be    2
     ...    dictionary
     ...    Strings must be Python [[]https://docs.python.org/library/stdtypes.html#dict|dictionary]
-    DataType Standard Should Be    4
+    DataType Standard Should Be    5
     ...    list
     ...    Strings must be Python [[]https://docs.python.org/library/stdtypes.html#list|list]
 
 Accepted types
-    Accepted Types Should Be    1     Standard     boolean
+    Accepted Types Should Be    0     Standard     Any
+    ...    Any
+    Accepted Types Should Be    2     Standard     boolean
     ...    string    integer    float    None
-    Accepted Types Should Be    2     Custom       CustomType
+    Accepted Types Should Be    3     Custom       CustomType
     ...    string    integer
-    Accepted Types Should Be    3     Custom       CustomType2
-    Accepted Types Should Be    6     TypedDict    GeoLocation
+    Accepted Types Should Be    4     Custom       CustomType2
+    Accepted Types Should Be    7     TypedDict    GeoLocation
     ...    string
-    Accepted Types Should Be    0     Enum         AssertionOperator
+    Accepted Types Should Be    1     Enum         AssertionOperator
     ...    string
-    Accepted Types Should Be    10    Enum         Small
+    Accepted Types Should Be    11    Enum         Small
     ...    string    integer
 
 Usages
-    Usages Should Be    1     Standard     boolean
-    ...    Funny Unions
-    Usages Should Be    4     Standard     dictionary
+    Usages Should Be    0     Standard     Any
     ...    Typing Types
-    Usages Should Be    2     Custom       CustomType
+    Usages Should Be    2     Standard     boolean
+    ...    Funny Unions
+    Usages Should Be    5     Standard     dictionary
+    ...    Typing Types
+    Usages Should Be    3     Custom       CustomType
     ...    Custom
-    Usages Should be    6     TypedDict    GeoLocation
+    Usages Should be    7     TypedDict    GeoLocation
     ...    Funny Unions    Set Location
-    Usages Should Be    10    Enum         Small
+    Usages Should Be    11    Enum         Small
     ...    __init__    Funny Unions
 
 Typedoc links in arguments
@@ -93,8 +100,10 @@ Typedoc links in arguments
     Typedoc links should be    0    2    str:string
     Typedoc links should be    1    0    CustomType
     Typedoc links should be    1    1    CustomType2
+    Typedoc links should be    1    2    CustomType
+    Typedoc links should be    1    3    Unknown:
     Typedoc links should be    2    0    bool:boolean    int:integer    float    str:string    AssertionOperator    Small    GeoLocation    None
     Typedoc links should be    4    0    List[str]:list
     Typedoc links should be    4    1    Dict[str, int]:dictionary
-    Typedoc links should be    4    2    Any:
+    Typedoc links should be    4    2    Any:Any
     Typedoc links should be    4    3    List[Any]:list

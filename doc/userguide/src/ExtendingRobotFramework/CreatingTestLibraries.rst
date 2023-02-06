@@ -1274,6 +1274,12 @@ Other types cause conversion failures.
    | None_       |               | NoneType   | str_         | String `NONE` (case-insensitive) is converted to the Python    | | `None`                             |
    |             |               |            |              | `None` object. Other values cause an error.                    |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | Any_        |               |            | Any          | Any value is accepted. No conversion is done.                  |                                      |
+   |             |               |            |              |                                                                |                                      |
+   |             |               |            |              | New in RF 6.1. Any_ was not recognized with earlier versions,  |                                      |
+   |             |               |            |              | but conversion may have been done based on `default values     |                                      |
+   |             |               |            |              | <Implicit argument types based on default values_>`__.         |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | list_       | Sequence_     |            | str_,        | Strings must be Python list literals. They are converted       | | `['one', 'two']`                   |
    |             |               |            | Sequence_    | to actual lists using the `ast.literal_eval`_ function.        | | `[('one', 1), ('two', 2)]`         |
    |             |               |            |              | They can contain any values `ast.literal_eval` supports,       |                                      |
@@ -1304,13 +1310,14 @@ Other types cause conversion failures.
    |             |               |            |              |                                                                | | `{'width': 1600, 'enabled': True}` |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
 
-.. note:: Starting from Robot Framework 5.0, types that are automatically converted are
+.. note:: Starting from Robot Framework 5.0, types that have a converted are
           automatically shown in Libdoc_ outputs.
 
 .. note:: Prior to Robot Framework 4.0, most types supported converting string `NONE` (case-insensitively) to Python
           `None`. That support has been removed and `None` conversion is only done if an argument has `None` as an
           explicit type or as a default value.
 
+.. _Any: https://docs.python.org/library/typing.html#typing.Any
 .. _bool: https://docs.python.org/library/functions.html#bool
 .. _int: https://docs.python.org/library/functions.html#int
 .. _Integral: https://docs.python.org/library/numbers.html#numbers.Integral
@@ -1795,7 +1802,6 @@ Adding documentation is in general recommended to provide users more
 information about conversion. It is especially important to document
 converter functions registered for existing types, because their own
 documentation is likely not very useful in this context.
-
 
 `@keyword` decorator
 ~~~~~~~~~~~~~~~~~~~~

@@ -23,7 +23,7 @@ Init docs
 Keyword Arguments
     [Template]    Verify Argument Models
     ${MODEL}[keywords][0][args]     value    operator: AssertionOperator | None = None    exp: str = something?
-    ${MODEL}[keywords][1][args]     arg: CustomType    arg2: CustomType2    arg3: CustomType
+    ${MODEL}[keywords][1][args]     arg: CustomType    arg2: CustomType2    arg3: CustomType    arg4: Unknown
     ${MODEL}[keywords][2][args]     funny: bool | int | float | str | AssertionOperator | Small | GeoLocation | None = equal
     ${MODEL}[keywords][3][args]     location: GeoLocation
     ${MODEL}[keywords][4][args]     list_of_str: List[str]    dict_str_int: Dict[str, int]    whatever: Any    *args: List[Any]
@@ -38,9 +38,9 @@ TypedDict
     ...    <li><code>accuracy</code> <b>Optional</b> Non-negative accuracy value. Defaults to 0.</li>
     ...    </ul>
     ...    <p>Example usage: <code>{'latitude': 59.95, 'longitude': 30.31667}</code></p>
-    ${MODEL}[typedocs][6][type]    TypedDict
-    ${MODEL}[typedocs][6][name]    GeoLocation
-    ${MODEL}[typedocs][6][doc]     <p>Defines the geolocation.</p>
+    ${MODEL}[typedocs][7][type]    TypedDict
+    ${MODEL}[typedocs][7][name]    GeoLocation
+    ${MODEL}[typedocs][7][doc]     <p>Defines the geolocation.</p>
     ...    <ul>
     ...    <li><code>latitude</code> Latitude between -90 and 90.</li>
     ...    <li><code>longitude</code> Longitude between -180 and 180.</li>
@@ -74,9 +74,9 @@ Enum
     ${MODEL}[dataTypes][enums][0][name]    AssertionOperator
     ${MODEL}[dataTypes][enums][0][doc]     <p>This is some Doc</p>
     ...   <p>This has was defined by assigning to __doc__.</p>
-    ${MODEL}[typedocs][0][type]    Enum
-    ${MODEL}[typedocs][0][name]    AssertionOperator
-    ${MODEL}[typedocs][0][doc]     <p>This is some Doc</p>
+    ${MODEL}[typedocs][1][type]    Enum
+    ${MODEL}[typedocs][1][name]    AssertionOperator
+    ${MODEL}[typedocs][1][doc]     <p>This is some Doc</p>
     ...   <p>This has was defined by assigning to __doc__.</p>
 
 Enum Members
@@ -85,66 +85,73 @@ Enum Members
     FOR   ${cur}    ${exp}    IN ZIP    ${MODEL}[dataTypes][enums][0][members]    ${exp_list}
         Dictionaries Should Be Equal    ${cur}    ${exp}
     END
-    FOR   ${cur}    ${exp}    IN ZIP    ${MODEL}[typedocs][0][members]    ${exp_list}
+    FOR   ${cur}    ${exp}    IN ZIP    ${MODEL}[typedocs][1][members]    ${exp_list}
         Dictionaries Should Be Equal    ${cur}    ${exp}
     END
 
 Custom types
-    ${MODEL}[typedocs][2][type]       Custom
-    ${MODEL}[typedocs][2][name]       CustomType
-    ${MODEL}[typedocs][2][doc]        <p>Converter method doc is used when defined.</p>
     ${MODEL}[typedocs][3][type]       Custom
-    ${MODEL}[typedocs][3][name]       CustomType2
-    ${MODEL}[typedocs][3][doc]        <p>Class doc is used when converter method has no doc.</p>
+    ${MODEL}[typedocs][3][name]       CustomType
+    ${MODEL}[typedocs][3][doc]        <p>Converter method doc is used when defined.</p>
+    ${MODEL}[typedocs][4][type]       Custom
+    ${MODEL}[typedocs][4][name]       CustomType2
+    ${MODEL}[typedocs][4][doc]        <p>Class doc is used when converter method has no doc.</p>
 
 Standard types
-    ${MODEL}[typedocs][1][type]       Standard
-    ${MODEL}[typedocs][1][name]       boolean
-    ${MODEL}[typedocs][1][doc]        <p>Strings <code>TRUE</code>, <code>YES</code>,   start=True
+    ${MODEL}[typedocs][0][type]       Standard
+    ${MODEL}[typedocs][0][name]       Any
+    ${MODEL}[typedocs][0][doc]        <p>Any value is accepted. No conversion is done.</p>
+    ${MODEL}[typedocs][2][type]       Standard
+    ${MODEL}[typedocs][2][name]       boolean
+    ${MODEL}[typedocs][2][doc]        <p>Strings <code>TRUE</code>, <code>YES</code>,   start=True
 
 Standard types with generics
-    ${MODEL}[typedocs][4][type]       Standard
-    ${MODEL}[typedocs][4][name]       dictionary
-    ${MODEL}[typedocs][4][doc]        <p>Strings must be Python <a    start=True
-    ${MODEL}[typedocs][8][type]       Standard
-    ${MODEL}[typedocs][8][name]       list
-    ${MODEL}[typedocs][8][doc]        <p>Strings must be Python <a    start=True
+    ${MODEL}[typedocs][5][type]       Standard
+    ${MODEL}[typedocs][5][name]       dictionary
+    ${MODEL}[typedocs][5][doc]        <p>Strings must be Python <a    start=True
+    ${MODEL}[typedocs][9][type]       Standard
+    ${MODEL}[typedocs][9][name]       list
+    ${MODEL}[typedocs][9][doc]        <p>Strings must be Python <a    start=True
 
 Accepted types
-    ${MODEL}[typedocs][1][type]       Standard
-    ${MODEL}[typedocs][1][accepts]    ['string', 'integer', 'float', 'None']
-    ${MODEL}[typedocs][2][type]       Custom
-    ${MODEL}[typedocs][2][accepts]    ['string', 'integer']
+    ${MODEL}[typedocs][0][type]       Standard
+    ${MODEL}[typedocs][0][accepts]    ['Any']
+    ${MODEL}[typedocs][2][type]       Standard
+    ${MODEL}[typedocs][2][accepts]    ['string', 'integer', 'float', 'None']
     ${MODEL}[typedocs][3][type]       Custom
-    ${MODEL}[typedocs][3][accepts]    []
-    ${MODEL}[typedocs][6][type]       TypedDict
-    ${MODEL}[typedocs][6][accepts]    ['string']
-    ${MODEL}[typedocs][0][type]       Enum
-    ${MODEL}[typedocs][0][accepts]    ['string']
-    ${MODEL}[typedocs][10][type]      Enum
-    ${MODEL}[typedocs][10][accepts]   ['string', 'integer']
+    ${MODEL}[typedocs][3][accepts]    ['string', 'integer']
+    ${MODEL}[typedocs][4][type]       Custom
+    ${MODEL}[typedocs][4][accepts]    []
+    ${MODEL}[typedocs][7][type]       TypedDict
+    ${MODEL}[typedocs][7][accepts]    ['string']
+    ${MODEL}[typedocs][1][type]       Enum
+    ${MODEL}[typedocs][1][accepts]    ['string']
+    ${MODEL}[typedocs][11][type]      Enum
+    ${MODEL}[typedocs][11][accepts]   ['string', 'integer']
 
 Usages
-    ${MODEL}[typedocs][1][type]       Standard
-    ${MODEL}[typedocs][1][usages]     ['Funny Unions']
-    ${MODEL}[typedocs][4][type]       Standard
-    ${MODEL}[typedocs][4][usages]     ['Typing Types']
-    ${MODEL}[typedocs][2][type]       Custom
-    ${MODEL}[typedocs][2][usages]     ['Custom']
-    ${MODEL}[typedocs][6][type]       TypedDict
-    ${MODEL}[typedocs][6][usages]     ['Funny Unions', 'Set Location']
-    ${MODEL}[typedocs][10][type]      Enum
-    ${MODEL}[typedocs][10][usages]    ['__init__', 'Funny Unions']
+    ${MODEL}[typedocs][2][type]       Standard
+    ${MODEL}[typedocs][2][usages]     ['Funny Unions']
+    ${MODEL}[typedocs][5][type]       Standard
+    ${MODEL}[typedocs][5][usages]     ['Typing Types']
+    ${MODEL}[typedocs][3][type]       Custom
+    ${MODEL}[typedocs][3][usages]     ['Custom']
+    ${MODEL}[typedocs][7][type]       TypedDict
+    ${MODEL}[typedocs][7][usages]     ['Funny Unions', 'Set Location']
+    ${MODEL}[typedocs][11][type]      Enum
+    ${MODEL}[typedocs][11][usages]    ['__init__', 'Funny Unions']
 
 Typedoc links in arguments
     ${MODEL}[keywords][0][args][1][typedocs]    {'AssertionOperator': 'AssertionOperator', 'None': 'None'}
     ${MODEL}[keywords][0][args][2][typedocs]    {'str': 'string'}
     ${MODEL}[keywords][1][args][0][typedocs]    {'CustomType': 'CustomType'}
     ${MODEL}[keywords][1][args][1][typedocs]    {'CustomType2': 'CustomType2'}
+    ${MODEL}[keywords][1][args][2][typedocs]    {'CustomType': 'CustomType'}
+    ${MODEL}[keywords][1][args][3][typedocs]    {}
     ${MODEL}[keywords][2][args][0][typedocs]    {'bool': 'boolean', 'int': 'integer', 'float': 'float', 'str': 'string', 'AssertionOperator': 'AssertionOperator', 'Small': 'Small', 'GeoLocation': 'GeoLocation', 'None': 'None'}
     ${MODEL}[keywords][4][args][0][typedocs]    {'List[str]': 'list'}
     ${MODEL}[keywords][4][args][1][typedocs]    {'Dict[str, int]': 'dictionary'}
-    ${MODEL}[keywords][4][args][2][typedocs]    {}
+    ${MODEL}[keywords][4][args][2][typedocs]    {'Any': 'Any'}
     ${MODEL}[keywords][4][args][3][typedocs]    {'List[Any]': 'list'}
 
 *** Keywords ***
