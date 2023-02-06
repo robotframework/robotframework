@@ -109,3 +109,11 @@ def union_with_invalid_types(argument: Union['nonex', 'references'], expected):
 
 def tuple_with_invalid_types(argument: ('invalid', 666), expected):
     assert argument == expected
+
+
+def union_without_types(argument: Union):
+    assert False
+
+
+def empty_tuple(argument: ()):
+    assert False

@@ -62,3 +62,6 @@ Union with invalid types
 
 Tuple with invalid types
     Check Test Case    ${TESTNAME}
+
+Union without types
+    Check Test Case    ${TESTNAME}

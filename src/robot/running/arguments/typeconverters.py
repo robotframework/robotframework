@@ -645,10 +645,12 @@ class CombinedConverter(TypeConverter):
             return ()
         if isinstance(union, tuple):
             return union
-        return union.__args__
+        return getattr(union, '__args__', ())
 
     @property
     def type_name(self):
+        if not self.used_type:
+            return 'union'
         return ' or '.join(type_name(t) for t in self.used_type)
 
     @classmethod
@@ -665,6 +667,8 @@ class CombinedConverter(TypeConverter):
         return False
 
     def _convert(self, value, explicit_type=True):
+        if not self.used_type:
+            raise ValueError('Cannot have union without types.')
         for converter in self.converters:
             if not converter:
                 return value

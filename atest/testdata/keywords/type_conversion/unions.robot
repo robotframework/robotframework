@@ -143,3 +143,8 @@ Tuple with invalid types
     [Template]    Tuple with invalid types
     xxx      xxx
     ${42}    ${42}
+
+Union without types
+    [Template]    Conversion should fail
+    Union without types    whatever    error=Cannot have union without types.    type=union
+    Empty tuple            ${666}      error=Cannot have union without types.    type=union    arg_type=integer
