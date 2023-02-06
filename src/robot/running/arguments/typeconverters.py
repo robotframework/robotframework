@@ -682,21 +682,32 @@ class CombinedConverter(TypeConverter):
         return True
 
     def no_conversion_needed(self, value):
-        for converter in self.converters:
-            if converter and converter.no_conversion_needed(value):
-                return True
+        for converter, type_ in zip(self.converters, self.used_type):
+            if converter:
+                if converter.no_conversion_needed(value):
+                    return True
+            else:
+                try:
+                    if isinstance(value, type_):
+                        return True
+                except TypeError:
+                    pass
         return False
 
     def _convert(self, value, explicit_type=True):
         if not self.used_type:
             raise ValueError('Cannot have union without types.')
+        unrecognized_types = False
         for converter in self.converters:
-            if not converter:
-                return value
-            try:
-                return converter.convert('', value, explicit_type)
-            except ValueError:
-                pass
+            if converter:
+                try:
+                    return converter.convert('', value, explicit_type)
+                except ValueError:
+                    pass
+            else:
+                unrecognized_types = True
+        if unrecognized_types:
+            return value
         raise ValueError
 
 

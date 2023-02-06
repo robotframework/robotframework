@@ -6,7 +6,7 @@ class MyObject:
     pass
 
 
-class UnexpectedObject:
+class AnotherObject:
     pass
 
 
@@ -21,10 +21,6 @@ class BadRational(Rational, metaclass=BadRationalMeta):
 
 def create_my_object():
     return MyObject()
-
-
-def create_unexpected_object():
-    return UnexpectedObject()
 
 
 def union_of_int_float_and_string(argument: int | float | str, expected):
@@ -68,7 +64,11 @@ def union_with_item_not_liking_isinstance(argument: BadRational | bool, expected
 
 
 def custom_type_in_union(argument: MyObject | str, expected_type):
-    assert isinstance(argument, eval(expected_type))
+    assert type(argument).__name__ == expected_type
+
+
+def only_custom_types_in_union(argument: MyObject | AnotherObject, expected_type):
+    assert type(argument).__name__ == expected_type
 
 
 def union_with_string_first(argument: str | None, expected):

@@ -1361,7 +1361,7 @@ has multiple possible types. In this situation argument conversion is attempted
 based on each type and the whole conversion fails if none of these conversions
 succeed.
 
-When using function annotations, the natural syntax to specify that argument
+When using function annotations, the natural syntax to specify that an argument
 has multiple possible types is using Union_:
 
 .. sourcecode:: python
@@ -1370,16 +1370,15 @@ has multiple possible types is using Union_:
 
 
   def example(length: Union[int, float], padding: Union[int, str, None] = None):
-      # ...
+      ...
 
-When using Python 3.10 or newer, it is possible to use the native `type1 | type2`
+When using Python 3.10 or newer, it is possible to use the native `type1 | type2`__
 syntax instead:
 
 .. sourcecode:: python
 
   def example(length: int | float, padding: int | str | None = None):
-      # ...
-
+      ...
 
 An alternative is specifying types as a tuple. It is not recommended with annotations,
 because that syntax is not supported by other tools, but it works well with
@@ -1392,7 +1391,7 @@ the `@keyword` decorator:
 
   @keyword(types={'length': (int, float), 'padding': (int, str, None)})
   def example(length, padding=None):
-      # ...
+      ...
 
 With the above examples the `length` argument would first be converted to an
 integer and if that fails then to a float. The `padding` would be first
@@ -1433,21 +1432,22 @@ attempted in the order types are specified. If any conversion succeeds, the
 resulting value is used without attempting remaining conversions. If no individual
 conversion succeeds, the whole conversion fails.
 
-If a specified type is not recognized by Robot Framework, then the original value
-is used as-is. For example, with this keyword conversion would first be attempted
-to an integer but if that fails the keyword would get the original given argument:
+If a specified type is not recognized by Robot Framework, then the original argument
+value is used as-is. For example, with this keyword conversion would first be attempted
+to an integer, but if that fails the keyword would get the original argument:
 
 .. sourcecode:: python
 
-  def example(argument: Union[int, MyCustomType]):
-      # ...
+  def example(argument: Union[int, Unrecognized]):
+      ...
 
-.. note:: In Robot Framework 4.0 argument conversion was done always, regardless
-          of the type of the given argument. It caused various__ problems__ and
-          was changed in Robot Framework 4.0.1.
+Starting from Robot Framework 6.1, the above logic works also if an unrecognized
+type is listed before a recognized type like `Union[Unrecognized, int]`.
+Also in this case `int` conversion is attempted, and the argument id passed as-is
+if it fails. With earlier Robot Framework versions, `int` conversion would not be
+attempted at all.
 
-__ https://github.com/robotframework/robotframework/issues/3897
-__ https://github.com/robotframework/robotframework/issues/3908
+__ https://peps.python.org/pep-0604/
 .. _Union: https://docs.python.org/3/library/typing.html#typing.Union
 
 Type conversion with generics
