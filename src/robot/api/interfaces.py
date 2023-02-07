@@ -39,32 +39,40 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-version-3
 """
 
+import sys
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 
-# Type aliases.
+# Need to use version check and not try/except to support Mypy's stubgen.
+if sys.version_info >= (3, 10):
+    from types import UnionType
+    Type = (type           # Actual type.
+            | str          # Type name or alias.
+            | UnionType    # Union syntax (e.g. `int | float`).
+            | tuple[       # Tuple of types. Behaves like union.
+                type | str, ...
+              ])
+else:
+    # Same as above but without UnionType.
+    Type = Union[type, str, Tuple[Union[type, str], ...]]
+
 Name = str
+PositArgs = List[Any]
+NamedArgs = Dict[str, Any]
 Documentation = str
-ArgumentSpec = List[
+Arguments = List[
     Union[
         str,               # Name with possible default like `arg` or `arg=1`.
         Tuple[str],        # Name without a default like `('arg',)`.
         Tuple[str, Any]    # Name and default like `('arg', 1)`.
     ]
 ]
-TypeSpec = Union[
-    Dict[                  # Types by name.
-        str,               # Name.
-        Union[
-            type,          # Actual type.
-            str            # Type name or alias.
-        ]
-    ],
+Types = Union[
+    Dict[str, Type],       # Types by name.
     List[                  # Types by position.
         Union[
-            type,          # Actual type.
-            str,           # Type name or alias.
+            Type,          # Type info.
             None           # No type info.
         ]
     ]
@@ -95,7 +103,7 @@ class DynamicLibrary(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def run_keywords(self, name: Name, args: List[Any], named: Dict[str, Any]) -> Any:
+    def run_keyword(self, name: Name, args: PositArgs, named: NamedArgs) -> Any:
         """Execute the specified keyword using the given arguments.
 
         :param name: Keyword name as a string.
@@ -127,7 +135,7 @@ class DynamicLibrary(ABC):
         """
         return None
 
-    def get_keyword_arguments(self, name: Name) -> Optional[ArgumentSpec]:
+    def get_keyword_arguments(self, name: Name) -> Optional[Arguments]:
         """Optional method to return keyword's argument specification.
 
         Returned information is used during execution for argument validation.
@@ -170,7 +178,7 @@ class DynamicLibrary(ABC):
         """
         return None
 
-    def get_keyword_types(self, name: Name) -> Optional[TypeSpec]:
+    def get_keyword_types(self, name: Name) -> Optional[Types]:
         """Optional method to return keyword's type specification.
 
         Type information is used for automatic argument conversion during
