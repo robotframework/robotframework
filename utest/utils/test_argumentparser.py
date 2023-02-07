@@ -102,6 +102,11 @@ class TestArgumentParserInit(unittest.TestCase):
         self.assert_short_opts('fB', ap)
         self.assert_long_opts(['foo', 'bar'], ap)
 
+    def test_long_options_with_hyphens(self):
+        ap = ArgumentParser(' -f --f-o-o\n -B --bar--\n')
+        self.assert_short_opts('fB', ap)
+        self.assert_long_opts(['foo', 'bar'], ap)
+
     def test_same_option_multiple_times(self):
         for usage in [' --foo\n --foo\n',
                       ' --foo\n -f --Foo\n',
@@ -196,6 +201,21 @@ class TestArgumentParserParseArgs(unittest.TestCase):
         assert_equal(opts['variable'], ['X:y', 'ZzZ'])
         assert_equal(args, [])
 
+    def test_long_options_with_hyphens(self):
+        opts, args = self.ap.parse_args('--var-i-a--ble x-y ----toggle---- arg'.split())
+        assert_equal(opts['variable'], ['x-y'])
+        assert_equal(opts['toggle'], True)
+        assert_equal(args, ['arg'])
+
+    def test_long_options_with_hyphens_with_equal_sign(self):
+        opts, args = self.ap.parse_args('--var-i-a--ble=x-y ----variable----=--z--'.split())
+        assert_equal(opts['variable'], ['x-y', '--z--'])
+        assert_equal(args, [])
+
+    def test_long_options_with_hyphens_only(self):
+        args = '-----=value1'.split()
+        assert_raises(DataError, self.ap.parse_args, args)
+
     def test_split_pythonpath(self):
         ap = ArgumentParser('ignored')
         data = [(['path'], ['path']),
@@ -236,7 +256,7 @@ class TestArgumentParserParseArgs(unittest.TestCase):
         ap = ArgumentParser('''Usage:
  -h --help
  -v --version
- --argumentfile path
+ --Argument-File path
  --option
 ''')
         opts, args = ap.parse_args(['--option'])

@@ -165,20 +165,20 @@ class ArgumentParser:
         return opts, args
 
     def _parse_args(self, args):
-        args = [self._lowercase_long_option(a) for a in args]
+        args = [self._normalize_long_option(a) for a in args]
         try:
             opts, args = getopt.getopt(args, self._short_opts, self._long_opts)
         except getopt.GetoptError as err:
             raise DataError(err.msg)
         return self._process_opts(opts), self._glob_args(args)
 
-    def _lowercase_long_option(self, opt):
+    def _normalize_long_option(self, opt):
         if not opt.startswith('--'):
             return opt
         if '=' not in opt:
-            return opt.lower()
+            return '--%s' % opt.lower().replace('-', '')
         opt, value = opt.split('=', 1)
-        return '%s=%s' % (opt.lower(), value)
+        return '--%s=%s' % (opt.lower().replace('-', ''), value)
 
     def _process_possible_argfile(self, args):
         options = ['--argumentfile']
@@ -232,7 +232,7 @@ class ArgumentParser:
             res = self._opt_line_re.match(line)
             if res:
                 self._create_option(short_opts=[o[1] for o in res.group(1).split()],
-                                    long_opt=res.group(3).lower(),
+                                    long_opt=res.group(3).lower().replace('-', ''),
                                     takes_arg=bool(res.group(4)),
                                     is_multi=bool(res.group(5)))
 
@@ -356,7 +356,9 @@ class ArgFileParser:
         for opt in self._options:
             start = opt + '=' if opt.startswith('--') else opt
             for index, arg in enumerate(args):
-                normalized_arg = arg.lower() if opt.startswith('--') else arg
+                normalized_arg = (
+                    '--' + arg.lower().replace('-', '') if opt.startswith('--') else arg
+                )
                 # Handles `--argumentfile foo` and `-A foo`
                 if normalized_arg == opt and index + 1 < len(args):
                     return args[index+1], slice(index, index+2)
