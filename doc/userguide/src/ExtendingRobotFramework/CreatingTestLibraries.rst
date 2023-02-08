@@ -1082,8 +1082,8 @@ below implementing the same keyword as in earlier examples:
 
 Regardless of the approach that is used, it is not necessarily to specify
 types for all arguments. When specifying types as a list, it is possible
-to use `None` to mark that a certain argument does not have a type, and
-arguments at the end can be omitted altogether. For example, both of these
+to use `None` to mark that a certain argument does not have type information
+and arguments at the end can be omitted altogether. For example, both of these
 keywords specify the type only for the second argument:
 
 .. sourcecode:: python
@@ -1274,6 +1274,12 @@ Other types cause conversion failures.
    | None_       |               | NoneType   | str_         | String `NONE` (case-insensitive) is converted to the Python    | | `None`                             |
    |             |               |            |              | `None` object. Other values cause an error.                    |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | Any_        |               |            | Any          | Any value is accepted. No conversion is done.                  |                                      |
+   |             |               |            |              |                                                                |                                      |
+   |             |               |            |              | New in RF 6.1. Any_ was not recognized with earlier versions,  |                                      |
+   |             |               |            |              | but conversion may have been done based on `default values     |                                      |
+   |             |               |            |              | <Implicit argument types based on default values_>`__.         |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | list_       | Sequence_     |            | str_,        | Strings must be Python list literals. They are converted       | | `['one', 'two']`                   |
    |             |               |            | Sequence_    | to actual lists using the `ast.literal_eval`_ function.        | | `[('one', 1), ('two', 2)]`         |
    |             |               |            |              | They can contain any values `ast.literal_eval` supports,       |                                      |
@@ -1304,13 +1310,14 @@ Other types cause conversion failures.
    |             |               |            |              |                                                                | | `{'width': 1600, 'enabled': True}` |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
 
-.. note:: Starting from Robot Framework 5.0, types that are automatically converted are
+.. note:: Starting from Robot Framework 5.0, types that have a converted are
           automatically shown in Libdoc_ outputs.
 
 .. note:: Prior to Robot Framework 4.0, most types supported converting string `NONE` (case-insensitively) to Python
           `None`. That support has been removed and `None` conversion is only done if an argument has `None` as an
           explicit type or as a default value.
 
+.. _Any: https://docs.python.org/library/typing.html#typing.Any
 .. _bool: https://docs.python.org/library/functions.html#bool
 .. _int: https://docs.python.org/library/functions.html#int
 .. _Integral: https://docs.python.org/library/numbers.html#numbers.Integral
@@ -1354,7 +1361,7 @@ has multiple possible types. In this situation argument conversion is attempted
 based on each type and the whole conversion fails if none of these conversions
 succeed.
 
-When using function annotations, the natural syntax to specify that argument
+When using function annotations, the natural syntax to specify that an argument
 has multiple possible types is using Union_:
 
 .. sourcecode:: python
@@ -1363,16 +1370,15 @@ has multiple possible types is using Union_:
 
 
   def example(length: Union[int, float], padding: Union[int, str, None] = None):
-      # ...
+      ...
 
-When using Python 3.10 or newer, it is possible to use the native `type1 | type2`
+When using Python 3.10 or newer, it is possible to use the native `type1 | type2`__
 syntax instead:
 
 .. sourcecode:: python
 
   def example(length: int | float, padding: int | str | None = None):
-      # ...
-
+      ...
 
 An alternative is specifying types as a tuple. It is not recommended with annotations,
 because that syntax is not supported by other tools, but it works well with
@@ -1385,7 +1391,7 @@ the `@keyword` decorator:
 
   @keyword(types={'length': (int, float), 'padding': (int, str, None)})
   def example(length, padding=None):
-      # ...
+      ...
 
 With the above examples the `length` argument would first be converted to an
 integer and if that fails then to a float. The `padding` would be first
@@ -1426,21 +1432,22 @@ attempted in the order types are specified. If any conversion succeeds, the
 resulting value is used without attempting remaining conversions. If no individual
 conversion succeeds, the whole conversion fails.
 
-If a specified type is not recognized by Robot Framework, then the original value
-is used as-is. For example, with this keyword conversion would first be attempted
-to an integer but if that fails the keyword would get the original given argument:
+If a specified type is not recognized by Robot Framework, then the original argument
+value is used as-is. For example, with this keyword conversion would first be attempted
+to an integer, but if that fails the keyword would get the original argument:
 
 .. sourcecode:: python
 
-  def example(argument: Union[int, MyCustomType]):
-      # ...
+  def example(argument: Union[int, Unrecognized]):
+      ...
 
-.. note:: In Robot Framework 4.0 argument conversion was done always, regardless
-          of the type of the given argument. It caused various__ problems__ and
-          was changed in Robot Framework 4.0.1.
+Starting from Robot Framework 6.1, the above logic works also if an unrecognized
+type is listed before a recognized type like `Union[Unrecognized, int]`.
+Also in this case `int` conversion is attempted, and the argument id passed as-is
+if it fails. With earlier Robot Framework versions, `int` conversion would not be
+attempted at all.
 
-__ https://github.com/robotframework/robotframework/issues/3897
-__ https://github.com/robotframework/robotframework/issues/3908
+__ https://peps.python.org/pep-0604/
 .. _Union: https://docs.python.org/3/library/typing.html#typing.Union
 
 Type conversion with generics
@@ -1795,7 +1802,6 @@ Adding documentation is in general recommended to provide users more
 information about conversion. It is especially important to document
 converter functions registered for existing types, because their own
 documentation is likely not very useful in this context.
-
 
 `@keyword` decorator
 ~~~~~~~~~~~~~~~~~~~~

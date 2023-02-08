@@ -31,8 +31,10 @@ available.
 Robot Framework requires Python 3.6 or newer. If you need to use Python 2,
 `Jython <http://jython.org>`_ or `IronPython <http://ironpython.net>`_,
 you can use `Robot Framework 4.1.3`__.
+The forthcoming Robot Framework 7.0 will require `Python 3.8 or newer`__.
 
-__ https://github.com/robotframework/robotframework/tree/v4.1.3#readme
+__ https://github.com/robotframework/robotframework/blob/v4.1.3/INSTALL.rst
+__ https://github.com/robotframework/robotframework/issues/4294
 
 Installing Python on Linux
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -92,7 +94,7 @@ added to `PATH`, you can open the command prompt and execute `python --version`:
   C:\>python --version
   Python 3.9.4
 
-If you install multiple Python versions on Windows, the Python that is used
+If you install multiple Python versions on Windows, the version that is used
 when you execute `python` is the one first in `PATH`. If you need to use others,
 the easiest way is using the `py launcher`__:
 

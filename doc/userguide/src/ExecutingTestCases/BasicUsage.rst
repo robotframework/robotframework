@@ -125,9 +125,12 @@ and shortened options are practical when executing test cases
 manually, but long options are recommended in `start-up scripts`_,
 because they are easier to understand.
 
-The long option format is case-insensitive, which facilitates writing option
-names in an easy-to-read format. For example, :option:`--SuiteStatLevel`
-is equivalent to, but easier to read than :option:`--suitestatlevel`.
+The long option names are case-insensitive and hyphen-insensitive,
+which facilitates writing option names in an easy-to-read format.
+For example, :option:`--SuiteStatLevel` and :option:`--suite-stat-level`
+are equivalent to, but easier to read than, :option:`--suitestatlevel`.
+
+.. note:: Long options being hyphen-insensitive is new in Robot Framework 6.1.
 
 Setting option values
 ~~~~~~~~~~~~~~~~~~~~~

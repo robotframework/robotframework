@@ -17,7 +17,7 @@ Console Colors On
     Outputs should have ANSI colors when not on Windows
 
 Console Colors ANSI
-    Run Tests With Colors    --ConsoleColors AnSi
+    Run Tests With Colors    --Console-Colors AnSi
     Outputs should have ANSI colors
 
 Invalid Console Colors

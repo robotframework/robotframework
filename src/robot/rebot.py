@@ -287,11 +287,9 @@ has precedence regardless of how many times options are used. For example,
 `--merge --merge --nomerge --nostatusrc --statusrc` would not activate the
 merge mode and would return a normal return code.
 
-Long option format is case-insensitive. For example, --SuiteStatLevel is
-equivalent to but easier to read than --suitestatlevel. Long options can
-also be shortened as long as they are unique. For example, `--logti Title`
-works while `--lo log.html` does not because the former matches only --logtitle
-but the latter matches both --log and --logtitle.
+Long option names are case and hyphen insensitive. For example, --TagStatLink
+and --tag-stat-link are equivalent to, but easier to read than, --tagstatlink.
+Long options can also be shortened as long as they are unique.
 
 Environment Variables
 =====================

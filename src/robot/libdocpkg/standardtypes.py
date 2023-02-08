@@ -16,9 +16,13 @@
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
+from typing import Any
 
 
 STANDARD_TYPE_DOCS = {
+    Any: '''\
+Any value is accepted. No conversion is done.
+''',
     bool: '''\
 Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to Boolean ``True``,
 the empty string as well as strings ``FALSE``, ``NO``, ``OFF`` and ``0``

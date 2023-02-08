@@ -483,7 +483,7 @@ class Keyword(model.Keyword, StatusMixin):
     def children(self):
         """List of child keywords and messages in creation order.
 
-        Deprecated since Robot Framework 4.0. Use :att:`body` instead.
+        Deprecated since Robot Framework 4.0. Use :attr:`body` instead.
         """
         warnings.warn("'Keyword.children' is deprecated. Use 'Keyword.body' instead.")
         return list(self.body)

@@ -16,13 +16,13 @@
 from ast import literal_eval
 from collections import OrderedDict
 from collections.abc import ByteString, Container, Mapping, Sequence, Set
-from typing import Any, Tuple, TypeVar, Union
 from datetime import datetime, date, timedelta
 from decimal import InvalidOperation, Decimal
 from enum import Enum
 from numbers import Integral, Real
 from os import PathLike
 from pathlib import Path, PurePath
+from typing import Any, Tuple, TypeVar, Union
 
 from robot.conf import Languages
 from robot.libraries.DateTime import convert_date, convert_time
@@ -214,6 +214,27 @@ class EnumConverter(TypeConverter):
         values = sorted(member.value for member in enum)
         raise ValueError(f"{self.type_name} does not have value '{value}'. "
                          f"Available: {seq2str(values)}")
+
+
+@TypeConverter.register
+class AnyConverter(TypeConverter):
+    type = Any
+    type_name = 'Any'
+    aliases = ('any',)
+    value_types = (Any,)
+
+    @classmethod
+    def handles(cls, type_):
+        return type_ is Any
+
+    def no_conversion_needed(self, value):
+        return True
+
+    def _convert(self, value, explicit_type=True):
+        return value
+
+    def _handles_value(self, value):
+        return True
 
 
 @TypeConverter.register
@@ -645,10 +666,12 @@ class CombinedConverter(TypeConverter):
             return ()
         if isinstance(union, tuple):
             return union
-        return union.__args__
+        return getattr(union, '__args__', ())
 
     @property
     def type_name(self):
+        if not self.used_type:
+            return 'union'
         return ' or '.join(type_name(t) for t in self.used_type)
 
     @classmethod
@@ -659,19 +682,32 @@ class CombinedConverter(TypeConverter):
         return True
 
     def no_conversion_needed(self, value):
-        for converter in self.converters:
-            if converter and converter.no_conversion_needed(value):
-                return True
+        for converter, type_ in zip(self.converters, self.used_type):
+            if converter:
+                if converter.no_conversion_needed(value):
+                    return True
+            else:
+                try:
+                    if isinstance(value, type_):
+                        return True
+                except TypeError:
+                    pass
         return False
 
     def _convert(self, value, explicit_type=True):
+        if not self.used_type:
+            raise ValueError('Cannot have union without types.')
+        unrecognized_types = False
         for converter in self.converters:
-            if not converter:
-                return value
-            try:
-                return converter.convert('', value, explicit_type)
-            except ValueError:
-                pass
+            if converter:
+                try:
+                    return converter.convert('', value, explicit_type)
+                except ValueError:
+                    pass
+            else:
+                unrecognized_types = True
+        if unrecognized_types:
+            return value
         raise ValueError
 
 

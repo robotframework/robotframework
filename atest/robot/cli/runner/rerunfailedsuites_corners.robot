@@ -7,7 +7,7 @@ ${RUN FAILED FROM}    %{TEMPDIR}${/}run-failed-output.xml
 
 *** Test Cases ***
 Runs everything when output is set to NONE
-    Run Tests  --ReRunFailedSuites NoNe  cli/runfailed/onlypassing
+    Run Tests  --Re-Run-Failed-Suites NoNe  cli/runfailed/onlypassing
     File Should Exist  ${OUTFILE}
     Check Test Case    Passing
 
