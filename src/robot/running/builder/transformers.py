@@ -36,6 +36,9 @@ class SettingsBuilder(NodeVisitor):
     def visit_Metadata(self, node):
         self.suite.metadata[node.name] = node.value
 
+    def visit_SuiteName(self, node):
+        self.suite.name = node.value
+
     def visit_SuiteSetup(self, node):
         self.suite.setup.config(name=node.name, args=node.args,
                                 lineno=node.lineno)

@@ -49,6 +49,7 @@ class Token:
     KEYWORD_NAME = 'KEYWORD NAME'
 
     DOCUMENTATION = 'DOCUMENTATION'
+    SUITE_NAME = "SUITE NAME"
     SUITE_SETUP = 'SUITE SETUP'
     SUITE_TEARDOWN = 'SUITE TEARDOWN'
     METADATA = 'METADATA'
@@ -115,6 +116,7 @@ class Token:
     ))
     SETTING_TOKENS = frozenset((
         DOCUMENTATION,
+        SUITE_NAME,
         SUITE_SETUP,
         SUITE_TEARDOWN,
         METADATA,
