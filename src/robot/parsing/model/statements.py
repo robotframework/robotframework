@@ -434,6 +434,18 @@ class KeywordTags(MultiValue):
 
 
 @Statement.register
+class SuiteName(Fixture):
+    type = Token.SUITE_NAME
+
+    def from_params(self, value, separator=FOUR_SPACES, eol=EOL):
+        ...
+
+    @property
+    def value(self):
+        return self.get_value(Token.ARGUMENT)
+
+
+@Statement.register
 class SuiteSetup(Fixture):
     type = Token.SUITE_SETUP
 
