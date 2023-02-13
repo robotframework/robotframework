@@ -703,8 +703,21 @@ class Arguments(MultiValue):
         self.errors = tuple(errors)
 
 
+# TODO: Change Return to mean ReturnStatement in RF 7.0
+# - Rename current Return to ReturnSetting
+# - Rename current ReturnStatement to Return
+# - Add backwards compatible ReturnStatement alias
+# - Change Token.RETURN to mean Token.RETURN_STATEMENT
+# - Update also ModelVisitor
 @Statement.register
 class Return(MultiValue):
+    """Represents the deprecated ``[Return]`` setting.
+
+    In addition to the ``[Return]`` setting itself, also the ``Return`` node
+    in the parsing model is deprecated. ``ReturnSetting`` (new in RF 6.1) should
+    be used instead. ``ReturnStatement`` will be renamed to ``Return`` in
+    the future, most likely already in RF 7.0.
+    """
     type = Token.RETURN
 
     @classmethod
@@ -716,6 +729,10 @@ class Return(MultiValue):
                            Token(Token.ARGUMENT, arg)])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
+
+
+# Forward compatible alias for Return.
+ReturnSetting = Return
 
 
 @Statement.register

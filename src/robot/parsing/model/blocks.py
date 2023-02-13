@@ -18,7 +18,7 @@ from contextlib import contextmanager
 
 from robot.utils import file_writer, is_pathlike, is_string
 
-from .statements import (Break, Continue, KeywordCall, Return, ReturnStatement,
+from .statements import (Break, Continue, KeywordCall, ReturnSetting, ReturnStatement,
                          Statement, TemplateArguments)
 from .visitor import ModelVisitor
 from ..lexer import Token
@@ -142,7 +142,7 @@ class Keyword(HeaderAndBody):
 
     def validate(self, ctx: 'ValidationContext'):
         if self._body_is_empty():
-            if not any(isinstance(node, Return) for node in self.body):
+            if not any(isinstance(node, ReturnSetting) for node in self.body):
                 self.errors += (f"User keyword '{self.name}' contains no keywords.",)
 
 
