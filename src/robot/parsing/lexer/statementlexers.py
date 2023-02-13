@@ -17,23 +17,24 @@ from robot.errors import DataError
 from robot.utils import normalize_whitespace
 from robot.variables import is_assign
 
+from .context import FileContext, LexingContext, TestOrKeywordContext
 from .tokens import Token
 
 
 class Lexer:
     """Base class for lexers."""
 
-    def __init__(self, ctx):
+    def __init__(self, ctx: LexingContext):
         self.ctx = ctx
 
     @classmethod
-    def handles(cls, statement, ctx):
+    def handles(cls, statement: list, ctx: LexingContext):
         return True
 
-    def accepts_more(self, statement):
+    def accepts_more(self, statement: list):
         raise NotImplementedError
 
-    def input(self, statement):
+    def input(self, statement: list):
         raise NotImplementedError
 
     def lex(self):
@@ -43,14 +44,14 @@ class Lexer:
 class StatementLexer(Lexer):
     token_type = None
 
-    def __init__(self, ctx):
+    def __init__(self, ctx: FileContext):
         super().__init__(ctx)
         self.statement = None
 
-    def accepts_more(self, statement):
+    def accepts_more(self, statement: list):
         return False
 
-    def input(self, statement):
+    def input(self, statement: list):
         self.statement = statement
 
     def lex(self):
@@ -73,9 +74,10 @@ class TypeAndArguments(StatementLexer):
 
 
 class SectionHeaderLexer(SingleType):
+    ctx: FileContext
 
     @classmethod
-    def handles(cls, statement, ctx):
+    def handles(cls, statement: list, ctx: FileContext):
         return statement[0].value.startswith('*')
 
 
@@ -114,8 +116,9 @@ class CommentLexer(SingleType):
 
 
 class ImplicitCommentLexer(CommentLexer):
+    ctx: FileContext
 
-    def input(self, statement):
+    def input(self, statement: list):
         super().input(statement)
         if len(statement) == 1 and statement[0].value.lower().startswith('language:'):
             lang = statement[0].value.split(':', 1)[1].strip()
@@ -144,7 +147,7 @@ class SettingLexer(StatementLexer):
 class TestOrKeywordSettingLexer(SettingLexer):
 
     @classmethod
-    def handles(cls, statement, ctx):
+    def handles(cls, statement: list, ctx: TestOrKeywordContext):
         marker = statement[0].value
         return marker and marker[0] == '[' and marker[-1] == ']'
 
@@ -154,6 +157,7 @@ class VariableLexer(TypeAndArguments):
 
 
 class KeywordCallLexer(StatementLexer):
+    ctx: TestOrKeywordContext
 
     def lex(self):
         if self.ctx.template_set:
@@ -181,7 +185,7 @@ class ForHeaderLexer(StatementLexer):
     separators = ('IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP')
 
     @classmethod
-    def handles(cls, statement, ctx):
+    def handles(cls, statement: list, ctx: TestOrKeywordContext):
         return statement[0].value == 'FOR'
 
     def lex(self):
@@ -201,7 +205,7 @@ class IfHeaderLexer(TypeAndArguments):
     token_type = Token.IF
 
     @classmethod
-    def handles(cls, statement, ctx):
+    def handles(cls, statement: list, ctx: TestOrKeywordContext):
         return statement[0].value == 'IF' and len(statement) <= 2
 
 
@@ -209,7 +213,7 @@ class InlineIfHeaderLexer(StatementLexer):
     token_type = Token.INLINE_IF
 
     @classmethod
-    def handles(cls, statement, ctx):
+    def handles(cls, statement: list, ctx: TestOrKeywordContext):
         for token in statement:
             if token.value == 'IF':
                 return True
@@ -233,7 +237,7 @@ class ElseIfHeaderLexer(TypeAndArguments):
     token_type = Token.ELSE_IF
 
     @classmethod
-    def handles(cls, statement, ctx):
+    def handles(cls, statement: list, ctx: TestOrKeywordContext):
         return normalize_whitespace(statement[0].value) == 'ELSE IF'
 
 
@@ -241,7 +245,7 @@ class ElseHeaderLexer(TypeAndArguments):
     token_type = Token.ELSE
 
     @classmethod
-    def handles(cls, statement, ctx):
+    def handles(cls, statement: list, ctx: TestOrKeywordContext):
         return statement[0].value == 'ELSE'
 
 
@@ -249,7 +253,7 @@ class TryHeaderLexer(TypeAndArguments):
     token_type = Token.TRY
 
     @classmethod
-    def handles(cls, statement, ctx):
+    def handles(cls, statement: list, ctx: TestOrKeywordContext):
         return statement[0].value == 'TRY'
 
 
@@ -257,7 +261,7 @@ class ExceptHeaderLexer(StatementLexer):
     token_type = Token.EXCEPT
 
     @classmethod
-    def handles(cls, statement, ctx):
+    def handles(cls, statement: list, ctx: TestOrKeywordContext):
         return statement[0].value == 'EXCEPT'
 
     def lex(self):
@@ -281,7 +285,7 @@ class FinallyHeaderLexer(TypeAndArguments):
     token_type = Token.FINALLY
 
     @classmethod
-    def handles(cls, statement, ctx):
+    def handles(cls, statement: list, ctx: TestOrKeywordContext):
         return statement[0].value == 'FINALLY'
 
 
@@ -289,7 +293,7 @@ class WhileHeaderLexer(StatementLexer):
     token_type = Token.WHILE
 
     @classmethod
-    def handles(cls, statement, ctx):
+    def handles(cls, statement: list, ctx: TestOrKeywordContext):
         return statement[0].value == 'WHILE'
 
     def lex(self):
@@ -304,7 +308,7 @@ class EndLexer(TypeAndArguments):
     token_type = Token.END
 
     @classmethod
-    def handles(cls, statement, ctx):
+    def handles(cls, statement: list, ctx: TestOrKeywordContext):
         return statement[0].value == 'END'
 
 
@@ -312,7 +316,7 @@ class ReturnLexer(TypeAndArguments):
     token_type = Token.RETURN_STATEMENT
 
     @classmethod
-    def handles(cls, statement, ctx):
+    def handles(cls, statement: list, ctx: TestOrKeywordContext):
         return statement[0].value == 'RETURN'
 
 
@@ -320,7 +324,7 @@ class ContinueLexer(TypeAndArguments):
     token_type = Token.CONTINUE
 
     @classmethod
-    def handles(cls, statement, ctx):
+    def handles(cls, statement: list, ctx: TestOrKeywordContext):
         return statement[0].value == 'CONTINUE'
 
 
@@ -328,5 +332,5 @@ class BreakLexer(TypeAndArguments):
     token_type = Token.BREAK
 
     @classmethod
-    def handles(cls, statement, ctx):
+    def handles(cls, statement: list, ctx: TestOrKeywordContext):
         return statement[0].value == 'BREAK'
