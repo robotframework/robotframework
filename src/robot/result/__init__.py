@@ -20,8 +20,8 @@ factory method, that returns :class:`~.Result` objects, and of the
 :class:`~.ResultVisitor` abstract class, that eases further processing
 the results.
 
-The model objects in the :mod:`~.model` module can also be considered to be
-part of the public API, because they can be found inside the :class:`~.Result`
+The model objects in the :mod:`robot.result.model` module can also be considered
+to be part of the public API, because they can be found inside the :class:`~.Result`
 object. They can also be inspected and modified as part of the normal test
 execution by `pre-Rebot modifiers`__ and `listeners`__.
 

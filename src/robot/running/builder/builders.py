@@ -36,14 +36,15 @@ class TestSuiteBuilder:
 
     - Inspect the suite to see, for example, what tests it has or what tags
       tests have. This can be more convenient than using the lower level
-      :mod:`~robot.parsing` APIs but does not allow saving modified data
-      back to the disk.
+      :mod:`~robot.parsing` APIs.
 
     Both modifying the suite and inspecting what data it contains are easiest
     done by using the :mod:`~robot.model.visitor` interface.
 
     This class is part of the public API and should be imported via the
-    :mod:`robot.api` package.
+    :mod:`robot.api` package. An alternative is using the
+    :meth:`TestSuite.from_file_system <robot.running.model.TestSuite.from_file_system>`
+    classmethod that uses this class internally.
     """
 
     def __init__(self, included_suites=None, included_extensions=('.robot', '.rbt'),
