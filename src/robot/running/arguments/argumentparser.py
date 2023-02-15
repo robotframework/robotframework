@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from abc import ABC, abstractmethod
 from inspect import isclass, signature, Parameter
 from typing import get_type_hints
 
@@ -23,12 +24,13 @@ from robot.variables import is_assign, is_scalar_assign
 from .argumentspec import ArgumentSpec
 
 
-class _ArgumentParser:
+class ArgumentParser(ABC):
 
     def __init__(self, type='Keyword', error_reporter=None):
         self._type = type
         self._error_reporter = error_reporter
 
+    @abstractmethod
     def parse(self, source, name=None):
         raise NotImplementedError
 
@@ -36,10 +38,10 @@ class _ArgumentParser:
         if self._error_reporter:
             self._error_reporter(error)
         else:
-            raise DataError('Invalid argument specification: %s' % error)
+            raise DataError(f'Invalid argument specification: {error}')
 
 
-class PythonArgumentParser(_ArgumentParser):
+class PythonArgumentParser(ArgumentParser):
 
     def parse(self, handler, name=None):
         spec = ArgumentSpec(name, self._type)
@@ -93,7 +95,7 @@ class PythonArgumentParser(_ArgumentParser):
             return getattr(handler, '__annotations__', {})
 
 
-class _ArgumentSpecParser(_ArgumentParser):
+class ArgumentSpecParser(ArgumentParser):
 
     def parse(self, argspec, name=None):
         spec = ArgumentSpec(name, self._type)
@@ -106,13 +108,13 @@ class _ArgumentSpecParser(_ArgumentParser):
                 arg, default = arg
                 arg = self._add_arg(spec, arg, named_only)
                 spec.defaults[arg] = default
-            elif self._is_kwargs(arg):
-                spec.var_named = self._format_kwargs(arg)
-            elif self._is_varargs(arg):
+            elif self._is_var_named(arg):
+                spec.var_named = self._format_var_named(arg)
+            elif self._is_var_positional(arg):
                 if named_only:
                     self._report_error('Cannot have multiple varargs.')
-                if not self._is_kw_only_separator(arg):
-                    spec.var_positional = self._format_varargs(arg)
+                if not self._is_named_only_separator(arg):
+                    spec.var_positional = self._format_var_positional(arg)
                 named_only = True
             elif spec.defaults and not named_only:
                 self._report_error('Non-default argument after default arguments.')
@@ -120,22 +122,28 @@ class _ArgumentSpecParser(_ArgumentParser):
                 self._add_arg(spec, arg, named_only)
         return spec
 
+    @abstractmethod
     def _validate_arg(self, arg):
         raise NotImplementedError
 
-    def _is_kwargs(self, arg):
+    @abstractmethod
+    def _is_var_named(self, arg):
         raise NotImplementedError
 
-    def _format_kwargs(self, kwargs):
+    @abstractmethod
+    def _format_var_named(self, kwargs):
         raise NotImplementedError
 
-    def _is_kw_only_separator(self, arg):
+    @abstractmethod
+    def _is_named_only_separator(self, arg):
         raise NotImplementedError
 
-    def _is_varargs(self, arg):
+    @abstractmethod
+    def _is_var_positional(self, arg):
         raise NotImplementedError
 
-    def _format_varargs(self, varargs):
+    @abstractmethod
+    def _format_var_positional(self, varargs):
         raise NotImplementedError
 
     def _format_arg(self, arg):
@@ -148,12 +156,12 @@ class _ArgumentSpecParser(_ArgumentParser):
         return arg
 
 
-class DynamicArgumentParser(_ArgumentSpecParser):
+class DynamicArgumentParser(ArgumentSpecParser):
 
     def _validate_arg(self, arg):
         if isinstance(arg, tuple):
             if self._is_invalid_tuple(arg):
-                self._report_error('Invalid argument "%s".' % (arg,))
+                self._report_error(f'Invalid argument "{arg}".')
             if len(arg) == 1:
                 return arg[0]
             return arg
@@ -166,49 +174,49 @@ class DynamicArgumentParser(_ArgumentSpecParser):
                 or not is_string(arg[0])
                 or (arg[0].startswith('*') and len(arg) > 1))
 
-    def _is_kwargs(self, arg):
-        return arg.startswith('**')
+    def _is_var_named(self, arg):
+        return arg[:2] == '**'
 
-    def _format_kwargs(self, kwargs):
+    def _format_var_named(self, kwargs):
         return kwargs[2:]
 
-    def _is_varargs(self, arg):
-        return arg.startswith('*')
+    def _is_var_positional(self, arg):
+        return arg and arg[0] == '*'
 
-    def _is_kw_only_separator(self, arg):
+    def _is_named_only_separator(self, arg):
         return arg == '*'
 
-    def _format_varargs(self, varargs):
+    def _format_var_positional(self, varargs):
         return varargs[1:]
 
 
-class UserKeywordArgumentParser(_ArgumentSpecParser):
+class UserKeywordArgumentParser(ArgumentSpecParser):
 
     def _validate_arg(self, arg):
         arg, default = split_from_equals(arg)
         if not (is_assign(arg) or arg == '@{}'):
-            self._report_error("Invalid argument syntax '%s'." % arg)
+            self._report_error(f"Invalid argument syntax '{arg}'.")
         if default is None:
             return arg
         if not is_scalar_assign(arg):
             typ = 'list' if arg[0] == '@' else 'dictionary'
-            self._report_error("Only normal arguments accept default values, "
-                               "%s arguments like '%s' do not." % (typ, arg))
+            self._report_error(f"Only normal arguments accept default values, "
+                               f"{typ} arguments like '{arg}' do not.")
         return arg, default
 
-    def _is_kwargs(self, arg):
+    def _is_var_named(self, arg):
         return arg and arg[0] == '&'
 
-    def _format_kwargs(self, kwargs):
+    def _format_var_named(self, kwargs):
         return kwargs[2:-1]
 
-    def _is_varargs(self, arg):
+    def _is_var_positional(self, arg):
         return arg and arg[0] == '@'
 
-    def _is_kw_only_separator(self, arg):
+    def _is_named_only_separator(self, arg):
         return arg == '@{}'
 
-    def _format_varargs(self, varargs):
+    def _format_var_positional(self, varargs):
         return varargs[2:-1]
 
     def _format_arg(self, arg):
