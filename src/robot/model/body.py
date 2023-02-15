@@ -58,22 +58,15 @@ class BodyItem(ModelObject):
 
     def _get_id(self, parent):
         steps = []
-        if parent.has_setup:
+        if getattr(parent, 'has_setup', False):
             steps.append(parent.setup)
         if hasattr(parent, 'body'):
             steps.extend(step for step in parent.body.flatten()
                          if step.type != self.MESSAGE)
-        if parent.has_teardown:
+        if getattr(parent, 'has_teardown', False):
             steps.append(parent.teardown)
-        return '%s-k%d' % (parent.id, steps.index(self) + 1)
-
-    @property
-    def has_setup(self):
-        return False
-
-    @property
-    def has_teardown(self):
-        return False
+        my_id = steps.index(self) + 1
+        return f'{parent.id}-k{my_id}'
 
     def to_dict(self):
         raise NotImplementedError

@@ -185,7 +185,7 @@ class SuiteVisitor:
         if self.start_keyword(keyword) is not False:
             if hasattr(keyword, 'body'):
                 keyword.body.visit(self)
-            if keyword.has_teardown:
+            if getattr(keyword, 'has_teardown', False):
                 keyword.teardown.visit(self)
             self.end_keyword(keyword)
 
