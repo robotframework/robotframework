@@ -1538,7 +1538,7 @@ a custom converter and registering it to handle date_ conversion:
     ROBOT_LIBRARY_CONVERTERS = {date: parse_fi_date}
 
 
-    # Keyword using custom converter. Converter is got based on argument type.
+    # Keyword using custom converter. Converter is resolved based on argument type.
     def keyword(arg: date):
         print(f'year: {arg.year}, month: {arg.month}, day: {arg.day}')
 
@@ -1767,6 +1767,44 @@ the code above:
 
 .. note:: Using `None` as a strict converter is new in Robot Framework 6.0.
           An explicit converter function needs to be used with earlier versions.
+
+Accessing the test library from converter
+`````````````````````````````````````````
+Starting from Robot Framework 6.1, it is possible to access the library
+instance from a converter function. This allows defining dynamic type conversions
+that depend on the library state. For example, if the library can be configured to
+test particular locale, you might use the library state to determine how a date
+should be parsed like this:
+
+.. sourcecode:: python
+
+    from datetime import date
+    import re
+
+
+    def parse_date(value, library):
+        # Validate input using regular expression and raise ValueError if not valid.
+        # Use locale based from library state to determine parsing format.
+        if library.locale == 'en_US':
+            match = re.match(r'(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<year>\d{4})$', value)
+            format = 'mm/dd/yyyy'
+        else:
+            match = re.match(r'(?P<day>\d{1,2})\.(?P<month>\d{1,2})\.(?P<year>\d{4})$', value)
+            format = 'dd.mm.yyyy'
+        if not match:
+            raise ValueError(f"Expected date in format '{format}', got '{value}'.")
+        return date(int(match.group('year')), int(match.group('month')), int(match.group('day')))
+
+
+    ROBOT_LIBRARY_CONVERTERS = {date: parse_date}
+
+
+    def keyword(arg: date):
+        print(f'year: {arg.year}, month: {arg.month}, day: {arg.day}')
+
+
+The `library` argument to converter function is optional, i.e. if the converter function
+only accepts one argument, the `library` argument is omitted.
 
 Converter documentation
 ```````````````````````

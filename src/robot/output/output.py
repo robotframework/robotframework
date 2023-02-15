@@ -16,9 +16,9 @@
 from . import pyloggingconf
 from .debugfile import DebugFile
 from .listeners import LibraryListeners, Listeners
-from .logger import LOGGER
+from .logger import LOGGER, LoggerProxy
 from .loggerhelper import AbstractLogger
-from .xmllogger import XmlLogger
+from .xmllogger import XmlLogger, FlatXmlLogger
 
 
 class Output(AbstractLogger):
@@ -27,10 +27,18 @@ class Output(AbstractLogger):
         AbstractLogger.__init__(self)
         self._xmllogger = XmlLogger(settings.output, settings.log_level,
                                     settings.rpa)
+        self._flat_xml_logger = None
         self.listeners = Listeners(settings.listeners, settings.log_level)
         self.library_listeners = LibraryListeners(settings.log_level)
         self._register_loggers(DebugFile(settings.debug_file))
         self._settings = settings
+        self._flatten_level = 0
+
+    @property
+    def flat_xml_logger(self):
+        if self._flat_xml_logger is None:
+            self._flat_xml_logger = FlatXmlLogger(self._xmllogger)
+        return self._flat_xml_logger
 
     def _register_loggers(self, debug_file):
         LOGGER.register_xml_logger(self._xmllogger)
@@ -61,12 +69,24 @@ class Output(AbstractLogger):
 
     def start_keyword(self, kw):
         LOGGER.start_keyword(kw)
+        if kw.tags.robot('flatten'):
+            self._flatten_level += 1
+            if self._flatten_level == 1:
+                LOGGER._xml_logger = LoggerProxy(self.flat_xml_logger)
 
     def end_keyword(self, kw):
+        if kw.tags.robot('flatten'):
+            self._flatten_level -= 1
+            if not self._flatten_level:
+                LOGGER._xml_logger = LoggerProxy(self._xmllogger)
         LOGGER.end_keyword(kw)
 
     def message(self, msg):
         LOGGER.log_message(msg)
+
+    def trace(self, msg, write_if_flat=True):
+        if write_if_flat or self._flatten_level == 0:
+            self.write(msg, 'TRACE')
 
     def set_log_level(self, level):
         pyloggingconf.set_level(level)
