@@ -170,7 +170,7 @@ class InitFileSettings(Settings):
     names = (
         'Documentation',
         'Metadata',
-        # 'Suite Name' # add if needed
+        'Suite Name',
         'Suite Setup',
         'Suite Teardown',
         'Test Setup',
