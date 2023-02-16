@@ -1,6 +1,7 @@
 *** Settings ***
-Documentation    Just a sample suite with a name took from the filename
+Documentation       Just a sample suite with a name took from the filename
+
 
 *** Test Cases ***
-Sample Test 0201
-    No Operation
+Verify suite name
+    Should Be Equal    ${SUITE_NAME}    Parent Init Suite.Child Tests02.Child0201
