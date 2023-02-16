@@ -511,6 +511,7 @@ from robot.parsing.model.statements import (
     VariablesImport,
     Documentation,
     Metadata,
+    SuiteName,
     SuiteSetup,
     SuiteTeardown,
     TestSetup,
