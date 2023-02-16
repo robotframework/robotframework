@@ -28,8 +28,7 @@ by custom scripts and tools. In such usage it is often easiest to inspect and
 modify these objects using the :mod:`visitor interface <robot.model.visitor>`.
 
 If classes defined here are needed, for example, as type hints, they can
-be imported directly from this :mod:`robot.running.model` module. This
-module is considered stable.
+be imported via the :mod:`robot.running` module.
 
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-interface
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#programmatic-modification-of-results
