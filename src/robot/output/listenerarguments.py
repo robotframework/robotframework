@@ -77,6 +77,8 @@ class _ListenerArgumentsFromItem(ListenerArguments):
 
     def _get_attribute_value(self, item, name):
         value = getattr(item, name)
+        if value is None:
+            return ''
         return self._take_copy_of_mutable_value(value)
 
     def _take_copy_of_mutable_value(self, value):
