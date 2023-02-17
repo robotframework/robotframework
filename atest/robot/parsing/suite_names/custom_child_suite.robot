@@ -4,7 +4,7 @@ Suite Name    Child Suite
 
 *** Test Cases ***
 Verify That Suite Name is not a file like name
-    Should Not Be Equal    ${SUITE_NAME}    Parent Init Suite.Custom Shild Suite
+    Should Not Be Equal    ${SUITE_NAME}    Robot.Parsing.Parent Init Suite.Custom Shild Suite
 
 Verify Suite Name
-    Should Be Equal    ${SUITE_NAME}    Parent Init Suite.Child Suite
+    Should Be Equal    ${SUITE_NAME}    Robot.Parsing.Parent Init Suite.Child Suite
