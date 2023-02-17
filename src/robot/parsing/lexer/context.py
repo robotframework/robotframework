@@ -16,7 +16,7 @@
 from robot.conf import Languages
 from robot.utils import normalize_whitespace
 
-from .settings import (InitFileSettings, TestCaseFileSettings, ResourceFileSettings,
+from .settings import (InitFileSettings, SuiteFileSettings, ResourceFileSettings,
                        TestCaseSettings, KeywordSettings)
 from .tokens import Token
 
@@ -76,15 +76,15 @@ class FileContext(LexingContext):
 
     def _handles_section(self, statement, header):
         marker = statement[0].value
-        return (marker[:1] == '*' and
+        return (marker and marker[0] == '*' and
                 self.languages.headers.get(self._normalize(marker)) == header)
 
     def _normalize(self, marker):
         return normalize_whitespace(marker).strip('* ').title()
 
 
-class TestCaseFileContext(FileContext):
-    settings_class = TestCaseFileSettings
+class SuiteFileContext(FileContext):
+    settings_class = SuiteFileSettings
 
     def test_case_context(self):
         return TestCaseContext(settings=TestCaseSettings(self.settings, self.languages))
@@ -129,15 +129,19 @@ class InitFileContext(FileContext):
         return message, False
 
 
-class TestCaseContext(LexingContext):
+class TestOrKeywordContext(LexingContext):
+
+    @property
+    def template_set(self):
+        return False
+
+
+class TestCaseContext(TestOrKeywordContext):
 
     @property
     def template_set(self):
         return self.settings.template_set
 
 
-class KeywordContext(LexingContext):
-
-    @property
-    def template_set(self):
-        return False
+class KeywordContext(TestOrKeywordContext):
+    pass

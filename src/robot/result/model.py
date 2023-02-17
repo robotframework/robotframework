@@ -16,7 +16,7 @@
 """Module implementing result related model objects.
 
 During test execution these objects are created internally by various runners.
-At that time they can inspected and modified by listeners__.
+At that time they can be inspected and modified by listeners__.
 
 When results are parsed from XML output files after execution to be able to
 create logs and reports, these objects are created by the
@@ -26,6 +26,10 @@ At that point they can be inspected and modified by `pre-Rebot modifiers`__.
 The :func:`~.resultbuilder.ExecutionResult` factory method can also be used
 by custom scripts and tools. In such usage it is often easiest to inspect and
 modify these objects using the :mod:`visitor interface <robot.model.visitor>`.
+
+If classes defined here are needed, for example, as type hints, they can
+be imported directly from this :mod:`robot.running.model` module. This
+module is considered stable.
 
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-interface
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#programmatic-modification-of-results

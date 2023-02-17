@@ -16,8 +16,8 @@
 """Module implementing test execution related model objects.
 
 When tests are executed normally, these objects are created based on the test
-data on the file system by :class:`~.builder.TestSuiteBuilder`, but external
-tools can also create an executable test suite model structure directly.
+data on the file system by :class:`~robot.running.builder.builders.TestSuiteBuilder`,
+but external tools can also create an executable test suite model structure directly.
 Regardless the approach to create it, the model is executed by calling
 :meth:`~TestSuite.run` method of the root test suite. See the
 :mod:`robot.running` package level documentation for more information and
@@ -26,8 +26,9 @@ examples.
 The most important classes defined in this module are :class:`TestSuite`,
 :class:`TestCase` and :class:`Keyword`. When tests are executed, these objects
 can be inspected and modified by `pre-run modifiers`__ and `listeners`__.
-The aforementioned objects are considered stable, but other objects in this
-module may still be changed in the future major releases.
+These three classes are exposed via the :mod:`robot.api` package. If other
+classes are needed, they can be imported directly from this
+:mod:`robot.running.model` module. This module is considered stable.
 
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#programmatic-modification-of-results
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-interface

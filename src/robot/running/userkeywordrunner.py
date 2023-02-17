@@ -116,7 +116,8 @@ class UserKeywordRunner:
         args, kwargs = self.arguments.map(positional, named,
                                           replace_defaults=False)
         self._set_variables(args, kwargs, variables)
-        context.output.trace(lambda: self._trace_log_args_message(variables))
+        context.output.trace(lambda: self._trace_log_args_message(variables),
+                             write_if_flat=False)
 
     def _set_variables(self, positional, kwargs, variables):
         spec = self.arguments
@@ -258,7 +259,8 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
         for name, value in self.embedded_args:
             variables['${%s}' % name] = value
         super()._set_arguments(args, context)
-        context.output.trace(lambda: self._trace_log_args_message(variables))
+        context.output.trace(lambda: self._trace_log_args_message(variables),
+                             write_if_flat=False)
 
     def _trace_log_args_message(self, variables):
         args = [f'${{{arg}}}' for arg in self._handler.embedded.args]

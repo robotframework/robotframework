@@ -335,18 +335,6 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             name='library_name.py'
         )
 
-        # Library    library_name.py    127.0.0.1    8080
-        tokens = [
-            Token(Token.LIBRARY, 'Library'),
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.NAME, 'library_name.py'),
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.ARGUMENT, '127.0.0.1'),
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.ARGUMENT, '8080'),
-            Token(Token.EOL, '\n')
-        ]
-
         # Library    library_name.py    WITH NAME    anothername
         tokens = [
             Token(Token.LIBRARY, 'Library'),
@@ -632,7 +620,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         ]
         assert_created_statement(
             tokens,
-            Return,
+            ReturnSetting,
             args=['${arg1}', '${arg2}=4']
         )
 

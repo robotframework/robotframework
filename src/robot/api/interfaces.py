@@ -47,15 +47,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 # Need to use version check and not try/except to support Mypy's stubgen.
 if sys.version_info >= (3, 10):
     from types import UnionType
-    Type = (type           # Actual type.
-            | str          # Type name or alias.
-            | UnionType    # Union syntax (e.g. `int | float`).
-            | tuple[       # Tuple of types. Behaves like union.
-                type | str, ...
-              ])
 else:
-    # Same as above but without UnionType.
-    Type = Union[type, str, Tuple[Union[type, str], ...]]
+    UnionType = type
 
 Name = str
 PositArgs = List[Any]
@@ -67,6 +60,12 @@ Arguments = List[
         Tuple[str],        # Name without a default like `('arg',)`.
         Tuple[str, Any]    # Name and default like `('arg', 1)`.
     ]
+]
+Type = Union[
+    type,                           # Actual type.
+    str,                            # Type name or alias.
+    UnionType,                      # Union syntax (e.g. `int | float`).
+    Tuple[Union[type, str], ...]    # Tuple of types. Behaves like union.
 ]
 Types = Union[
     Dict[str, Type],       # Types by name.

@@ -135,7 +135,7 @@ class Settings:
             token.type = Token.ARGUMENT
 
 
-class TestCaseFileSettings(Settings):
+class SuiteFileSettings(Settings):
     names = (
         'Documentation',
         'Metadata',

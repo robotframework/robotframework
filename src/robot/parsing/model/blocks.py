@@ -14,10 +14,12 @@
 #  limitations under the License.
 
 import ast
+from contextlib import contextmanager
 
 from robot.utils import file_writer, is_pathlike, is_string
 
-from .statements import KeywordCall, TemplateArguments, Continue, Break, Return, ReturnStatement
+from .statements import (Break, Continue, KeywordCall, ReturnSetting, ReturnStatement,
+                         Statement, TemplateArguments)
 from .visitor import ModelVisitor
 from ..lexer import Token
 
@@ -50,21 +52,23 @@ class Block(ast.AST):
     def validate_model(self):
         ModelValidator().visit(self)
 
-    def validate(self, context):
+    def validate(self, ctx: 'ValidationContext'):
         pass
-
-    def _body_is_empty(self):
-        valid = (KeywordCall, TemplateArguments, Continue, ReturnStatement, Break, For, If, While, Try)
-        return not any(isinstance(node, valid) for node in self.body)
 
 
 class HeaderAndBody(Block):
     _fields = ('header', 'body')
 
-    def __init__(self, header, body=None, errors=()):
+    def __init__(self, header=None, body=None, errors=()):
         self.header = header
         self.body = body or []
         self.errors = errors
+
+    def _body_is_empty(self):
+        # This works with tests, keywords and blocks inside them, not with sections.
+        valid = (KeywordCall, TemplateArguments, Continue, ReturnStatement, Break,
+                 Block)
+        return not any(isinstance(node, valid) for node in self.body)
 
 
 class File(Block):
@@ -90,12 +94,8 @@ class File(Block):
         ModelWriter(output).write(self)
 
 
-class Section(Block):
-    _fields = ('header', 'body')
-
-    def __init__(self, header=None, body=None):
-        self.header = header
-        self.body = body or []
+class Section(HeaderAndBody):
+    pass
 
 
 class SettingSection(Section):
@@ -106,7 +106,7 @@ class VariableSection(Section):
     pass
 
 
-# FIXME: should there be a separate TaskSection?
+# TODO: should there be a separate TaskSection?
 class TestCaseSection(Section):
 
     @property
@@ -122,42 +122,31 @@ class CommentSection(Section):
     pass
 
 
-class TestCase(Block):
-    _fields = ('header', 'body')
-
-    def __init__(self, header, body=None, errors=()):
-        self.header = header
-        self.body = body or []
-        self.errors = errors
+class TestCase(HeaderAndBody):
 
     @property
     def name(self):
         return self.header.name
 
-    def validate(self, context):
+    def validate(self, ctx: 'ValidationContext'):
         if self._body_is_empty():
+            # FIXME: Tasks!
             self.errors += ('Test contains no keywords.',)
 
 
-class Keyword(Block):
-    _fields = ('header', 'body')
-
-    def __init__(self, header, body=None, errors=()):
-        self.header = header
-        self.body = body or []
-        self.errors = errors
+class Keyword(HeaderAndBody):
 
     @property
     def name(self):
         return self.header.name
 
-    def validate(self, context):
+    def validate(self, ctx: 'ValidationContext'):
         if self._body_is_empty():
-            if not any(isinstance(node, Return) for node in self.body):
+            if not any(isinstance(node, ReturnSetting) for node in self.body):
                 self.errors += (f"User keyword '{self.name}' contains no keywords.",)
 
 
-class If(Block):
+class If(HeaderAndBody):
     """Represents IF structures in the model.
 
     Used with IF, Inline IF, ELSE IF and ELSE nodes. The :attr:`type` attribute
@@ -166,11 +155,9 @@ class If(Block):
     _fields = ('header', 'body', 'orelse', 'end')
 
     def __init__(self, header, body=None, orelse=None, end=None, errors=()):
-        self.header = header
-        self.body = body or []
+        super().__init__(header, body, errors)
         self.orelse = orelse
         self.end = end
-        self.errors = errors
 
     @property
     def type(self):
@@ -184,7 +171,7 @@ class If(Block):
     def assign(self):
         return self.header.assign
 
-    def validate(self, context):
+    def validate(self, ctx: 'ValidationContext'):
         self._validate_body()
         if self.type == Token.IF:
             self._validate_structure()
@@ -232,14 +219,12 @@ class If(Block):
             branch = branch.orelse
 
 
-class For(Block):
+class For(HeaderAndBody):
     _fields = ('header', 'body', 'end')
 
     def __init__(self, header, body=None, end=None, errors=()):
-        self.header = header
-        self.body = body or []
+        super().__init__(header, body, errors)
         self.end = end
-        self.errors = errors
 
     @property
     def variables(self):
@@ -253,22 +238,20 @@ class For(Block):
     def flavor(self):
         return self.header.flavor
 
-    def validate(self, context):
+    def validate(self, ctx: 'ValidationContext'):
         if self._body_is_empty():
             self.errors += ('FOR loop cannot be empty.',)
         if not self.end:
             self.errors += ('FOR loop must have closing END.',)
 
 
-class Try(Block):
+class Try(HeaderAndBody):
     _fields = ('header', 'body', 'next', 'end')
 
     def __init__(self, header, body=None, next=None, end=None, errors=()):
-        self.header = header
-        self.body = body or []
+        super().__init__(header, body, errors)
         self.next = next
         self.end = end
-        self.errors = errors
 
     @property
     def type(self):
@@ -286,7 +269,7 @@ class Try(Block):
     def variable(self):
         return getattr(self.header, 'variable', None)
 
-    def validate(self, context):
+    def validate(self, ctx: 'ValidationContext'):
         self._validate_body()
         if self.type == Token.TRY:
             self._validate_structure()
@@ -334,14 +317,12 @@ class Try(Block):
             self.errors += ('TRY must have closing END.',)
 
 
-class While(Block):
+class While(HeaderAndBody):
     _fields = ('header', 'body', 'end')
 
     def __init__(self, header, body=None, end=None, errors=()):
-        self.header = header
-        self.body = body or []
+        super().__init__(header, body, errors)
         self.end = end
-        self.errors = errors
 
     @property
     def condition(self):
@@ -351,7 +332,7 @@ class While(Block):
     def limit(self):
         return self.header.limit
 
-    def validate(self, context):
+    def validate(self, ctx: 'ValidationContext'):
         if self._body_is_empty():
             self.errors += ('WHILE loop cannot be empty.',)
         if not self.end:
@@ -368,14 +349,14 @@ class ModelWriter(ModelVisitor):
             self.writer = output
             self.close_writer = False
 
-    def write(self, model):
+    def write(self, model: Block):
         try:
             self.visit(model)
         finally:
             if self.close_writer:
                 self.writer.close()
 
-    def visit_Statement(self, statement):
+    def visit_Statement(self, statement: Statement):
         for token in statement.tokens:
             self.writer.write(token.value)
 
@@ -383,48 +364,46 @@ class ModelWriter(ModelVisitor):
 class ModelValidator(ModelVisitor):
 
     def __init__(self):
-        self._context = ValidationContext()
+        self.ctx = ValidationContext()
 
-    def visit_Block(self, node):
-        self._context.start_block(node)
-        node.validate(self._context)
-        ModelVisitor.generic_visit(self, node)
-        self._context.end_block()
+    def visit_Block(self, node: Block):
+        with self.ctx.block(node):
+            node.validate(self.ctx)
+            super().generic_visit(node)
 
-    def visit_Try(self, node):
-        if node.header.type == Token.FINALLY:
-            self._context.in_finally = True
-        self.visit_Block(node)
-        self._context.in_finally = False
-
-    def visit_Statement(self, node):
-        node.validate(self._context)
-        ModelVisitor.generic_visit(self, node)
+    def visit_Statement(self, node: Statement):
+        node.validate(self.ctx)
 
 
 class ValidationContext:
 
     def __init__(self):
-        self.roots = []
-        self.in_finally = False
+        self.blocks = []
 
-    def start_block(self, node):
-        self.roots.append(node)
+    @contextmanager
+    def block(self, node: Block):
+        self.blocks.append(node)
+        try:
+            yield
+        finally:
+            self.blocks.pop()
 
-    def end_block(self):
-        self.roots.pop()
+    @property
+    def parent_block(self):
+        return self.blocks[-1] if self.blocks else None
 
     @property
     def in_keyword(self):
-        return Keyword in [type(r) for r in self.roots]
+        return any(isinstance(b, Keyword) for b in self.blocks)
 
     @property
-    def in_for(self):
-        return For in [type(r) for r in self.roots]
+    def in_loop(self):
+        return any(isinstance(b, (For, While)) for b in self.blocks)
 
     @property
-    def in_while(self):
-        return While in [type(r) for r in self.roots]
+    def in_finally(self):
+        parent = self.parent_block
+        return isinstance(parent, Try) and parent.header.type == Token.FINALLY
 
 
 class FirstStatementFinder(ModelVisitor):

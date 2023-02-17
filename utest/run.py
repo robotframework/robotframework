@@ -32,7 +32,7 @@ if not sys.warnoptions:
 
 
 base = os.path.abspath(os.path.normpath(os.path.split(sys.argv[0])[0]))
-for path in ['../src', '../atest/testresources/testlibs']:
+for path in ['../src', '../atest/testresources/testlibs', '../utest/resources']:
     path = os.path.join(base, path.replace('/', os.sep))
     if path not in sys.path:
         sys.path.insert(0, path)

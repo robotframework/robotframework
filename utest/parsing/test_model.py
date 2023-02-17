@@ -12,8 +12,8 @@ from robot.parsing.model.blocks import (
 from robot.parsing.model.statements import (
     Arguments, Break, Comment, Config, Continue, Documentation, ForHeader, End, ElseHeader,
     ElseIfHeader, EmptyLine, Error, IfHeader, InlineIfHeader, TryHeader, ExceptHeader,
-    FinallyHeader, KeywordCall, KeywordName, ReturnStatement, SectionHeader,
-    TestCaseName, Variable, WhileHeader
+    FinallyHeader, KeywordCall, KeywordName, Return, ReturnSetting, ReturnStatement,
+    SectionHeader, TestCaseName, Variable, WhileHeader
 )
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
@@ -1265,6 +1265,28 @@ Example
             )
         ])
         assert_model(model, expected)
+
+    def test_visit_Return(self):
+        class VisitReturn(ModelVisitor):
+            def visit_Return(self, node):
+                self.node = node
+
+        for cls in Return, ReturnSetting:
+            visitor = VisitReturn()
+            ret = cls.from_params(())
+            visitor.visit(ret)
+            assert_equal(visitor.node, ret)
+
+    def test_visit_ReturnSetting(self):
+        class VisitReturnSetting(ModelVisitor):
+            def visit_ReturnSetting(self, node):
+                self.node = node
+
+        for cls in Return, ReturnSetting:
+            visitor = VisitReturnSetting()
+            ret = cls.from_params(())
+            visitor.visit(ret)
+            assert_equal(visitor.node, ret)
 
 
 class TestLanguageConfig(unittest.TestCase):

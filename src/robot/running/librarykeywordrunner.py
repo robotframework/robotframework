@@ -73,7 +73,8 @@ class LibraryKeywordRunner:
         variables = context.variables if not context.dry_run else None
         positional, named = self._handler.resolve_arguments(args, variables,
                                                             self.languages)
-        context.output.trace(lambda: self._trace_log_args(positional, named))
+        context.output.trace(lambda: self._trace_log_args(positional, named),
+                             write_if_flat=False)
         runner = self._runner_for(context, self._handler.current_handler(),
                                   positional, dict(named))
         return self._run_with_output_captured_and_signal_monitor(runner, context)

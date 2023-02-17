@@ -36,7 +36,7 @@ class VariableReplacer:
 
         'replace_until' can be used to limit replacing arguments to certain
         index from the beginning. Used with Run Keyword variants that only
-        want to resolve some of the arguments in the beginning and pass others
+        want to resolve some arguments in the beginning and pass others
         to called keywords unmodified.
         """
         items = list(items or [])
@@ -46,8 +46,8 @@ class VariableReplacer:
 
     def _replace_list_until(self, items, replace_until, ignore_errors):
         # @{list} variables can contain more or less arguments than needed.
-        # Therefore we need to go through items one by one, and escape possible
-        # extra items we got.
+        # Therefore, we need to go through items one by one, and escape
+        # possible extra items we got.
         replaced = []
         while len(replaced) < replace_until and items:
             replaced.extend(self._replace_list([items.pop(0)], ignore_errors))
@@ -74,7 +74,7 @@ class VariableReplacer:
         """Replaces variables from a scalar item.
 
         If the item is not a string it is returned as is. If it is a variable,
-        its value is returned. Otherwise possible variables are replaced with
+        its value is returned. Otherwise, possible variables are replaced with
         'replace_string'. Result may be any object.
         """
         match = self._search_variable(item, ignore_errors=ignore_errors)
@@ -118,8 +118,8 @@ class VariableReplacer:
         match.resolve_base(self, ignore_errors)
         # TODO: Do we anymore need to reserve `*{var}` syntax for anything?
         if match.identifier == '*':
-            logger.warn(r"Syntax '%s' is reserved for future use. Please "
-                        r"escape it like '\%s'." % (match, match))
+            logger.warn(rf"Syntax '{match}' is reserved for future use. Please "
+                        rf"escape it like '\{match}'.")
             return str(match)
         try:
             value = self._finder.find(match)
@@ -129,9 +129,9 @@ class VariableReplacer:
                 value = self._validate_value(match, value)
             except VariableError:
                 raise
-            except:
-                raise VariableError("Resolving variable '%s' failed: %s"
-                                    % (match, get_error_message()))
+            except Exception:
+                error = get_error_message()
+                raise VariableError(f"Resolving variable '{match}' failed: {error}")
         except DataError:
             if not ignore_errors:
                 raise
@@ -147,12 +147,12 @@ class VariableReplacer:
                 value = self._get_sequence_variable_item(name, value, item)
             else:
                 raise VariableError(
-                    "Variable '%s' is %s, which is not subscriptable, and "
-                    "thus accessing item '%s' from it is not possible. To use "
-                    "'[%s]' as a literal value, it needs to be escaped like "
-                    "'\\[%s]'." % (name, type_name(value), item, item, item)
+                    f"Variable '{name}' is {type_name(value)}, which is not "
+                    f"subscriptable, and thus accessing item '{item}' from it "
+                    f"is not possible. To use '[{item}]' as a literal value, "
+                    f"it needs to be escaped like '\\[{item}]'."
                 )
-            name = '%s[%s]' % (name, item)
+            name = f'{name}[{item}]'
         return value
 
     def _get_sequence_variable_item(self, name, variable, index):
@@ -163,19 +163,20 @@ class VariableReplacer:
             try:
                 return variable[index]
             except TypeError:
-                raise VariableError("%s '%s' used with invalid index '%s'. "
-                                    "To use '[%s]' as a literal value, it needs "
-                                    "to be escaped like '\\[%s]'."
-                                    % (type_name(variable, capitalize=True), name,
-                                       index, index, index))
-            except:
-                raise VariableError("Accessing '%s[%s]' failed: %s"
-                                    % (name, index, get_error_message()))
+                var_type = type_name(variable, capitalize=True)
+                raise VariableError(
+                    f"{var_type} '{name}' used with invalid index '{index}'. "
+                    f"To use '[{index}]' as a literal value, it needs to be "
+                    f"escaped like '\\[{index}]'."
+                )
+            except Exception:
+                error = get_error_message()
+                raise VariableError(f"Accessing '{name}[{index}]' failed: {error}")
         try:
             return variable[index]
         except IndexError:
-            raise VariableError("%s '%s' has no item in index %d."
-                                % (type_name(variable, capitalize=True), name, index))
+            var_type = type_name(variable, capitalize=True)
+            raise VariableError(f"{var_type} '{name}' has no item in index {index}.")
 
     def _parse_sequence_variable_index(self, index):
         if isinstance(index, (int, slice)):
@@ -193,21 +194,19 @@ class VariableReplacer:
         try:
             return variable[key]
         except KeyError:
-            raise VariableError("Dictionary '%s' has no key '%s'."
-                                % (name, key))
+            raise VariableError(f"Dictionary '{name}' has no key '{key}'.")
         except TypeError as err:
-            raise VariableError("Dictionary '%s' used with invalid key: %s"
-                                % (name, err))
+            raise VariableError(f"Dictionary '{name}' used with invalid key: {err}")
 
     def _validate_value(self, match, value):
         if match.identifier == '@':
             if not is_list_like(value):
-                raise VariableError("Value of variable '%s' is not list or "
-                                    "list-like." % match)
+                raise VariableError(f"Value of variable '{match}' is not list "
+                                    f"or list-like.")
             return list(value)
         if match.identifier == '&':
             if not is_dict_like(value):
-                raise VariableError("Value of variable '%s' is not dictionary "
-                                    "or dictionary-like." % match)
+                raise VariableError(f"Value of variable '{match}' is not dictionary "
+                                    f"or dictionary-like.")
             return DotDict(value)
         return value

@@ -116,6 +116,7 @@ Example
                 expected.tokens[0].lineno = 8
                 remove_non_data_nodes_and_assert(tryroot.next.next.body[0], expected, data_only)
                 expected.tokens[0].lineno = 10
+                expected.errors += ('RETURN cannot be used in FINALLY branch.',)
                 remove_non_data_nodes_and_assert(tryroot.next.next.next.body[0], expected, data_only)
 
     def test_in_finally_in_uk(self):

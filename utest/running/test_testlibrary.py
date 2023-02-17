@@ -526,7 +526,7 @@ class _FakeVariableScope:
 
 
 class _FakeOutput:
-    def trace(self, str):
+    def trace(self, str, write_if_flat=True):
         pass
     def log_output(self, output):
         pass

@@ -730,6 +730,9 @@ to be added in the future.
 `robot:exit`
     Added to tests automatically when `execution is stopped gracefully`__.
 
+`robot:flatten`
+    Enable `flattening keyword during execution time`_.
+
 __ `Enabling continue-on-failure using tags`_
 __ `Disabling continue-on-failure using tags`_
 __ `Automatically skipping failed tests`_
