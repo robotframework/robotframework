@@ -1,5 +1,6 @@
 *** Settings ***
-Documentation    Just a sample suite with a name took from the filename
+Documentation       Just a sample suite with a name took from the filename
+
 
 *** Test Cases ***
 Verify Suite Name

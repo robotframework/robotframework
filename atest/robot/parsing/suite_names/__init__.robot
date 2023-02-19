@@ -1,3 +1,4 @@
 *** Settings ***
-Suite Name    Parent Init Suite
-Task Tags    suite_naming
+Force Tags      suite_naming
+
+Suite Name      Parent Init Suite
