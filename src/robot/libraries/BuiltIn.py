@@ -2085,6 +2085,26 @@ class _RunKeyword(_BuiltInBase):
         status, message = self.run_keyword_and_ignore_error(name, *args)
         if status == 'FAIL':
             logger.warn("Executing keyword '%s' failed:\n%s" % (name, message))
+        return status, 
+        
+    @run_keyword_variant(resolve=0)
+    def run_keyword_and_warn_message(self, success_msg, failure_msg, name, *args):
+        """Runs the given keyword with given arguments and logs a warning.
+
+        This keyword is similar to `Run Keyword And Warn On Failure` but a message is 
+        always logged to the *Test Execution Errors* - wether the keyword fails or succeeds. 
+        It makes the result of this keyword more visible and gives quick access to it. 
+
+        The keyword name and arguments work as in `Run Keyword`.
+
+        Example:
+        | `Run Keyword And Warn Message` | SOLVED: 4663 | PENDING: https://github.com/robotframework/robotframework/issues/4663 | Keyword | args | 
+        """
+        status, message = self.run_keyword_and_ignore_error(name, *args)
+        if status == 'FAIL':
+            logger.warn("%s - Executing keyword '%s' failed: %s" % (failure_msg, name, message))
+        else:
+            logger.warn("%s" % (success_msg))
         return status, message
 
     @run_keyword_variant(resolve=0, dry_run=True)
