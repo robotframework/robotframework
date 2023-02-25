@@ -1,2 +1,2 @@
 *** Settings ***
-Suite Name      Child Suite01 Name
+Name    Child Suite01 Name

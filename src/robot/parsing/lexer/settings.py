@@ -36,7 +36,6 @@ class Settings:
     )
     name_and_arguments = (
         'Metadata',
-        # "Suite Name",
         'Suite Setup',
         'Suite Teardown',
         'Test Setup',
@@ -139,7 +138,7 @@ class SuiteFileSettings(Settings):
     names = (
         'Documentation',
         'Metadata',
-        'Suite Name',
+        'Name',     # Suite Name
         'Suite Setup',
         'Suite Teardown',
         'Test Setup',
@@ -170,7 +169,7 @@ class InitFileSettings(Settings):
     names = (
         'Documentation',
         'Metadata',
-        'Suite Name',
+        'Name',     # Suite Name
         'Suite Setup',
         'Suite Teardown',
         'Test Setup',

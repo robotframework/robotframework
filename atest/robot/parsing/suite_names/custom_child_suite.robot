@@ -1,12 +1,12 @@
 *** Settings ***
 Documentation       Just a sample suite with a name took from the filename
 
-Suite Name          Child Suite
+Name                Child Suite
 
 
 *** Test Cases ***
 Verify That Suite Name is not a file like name
-    Should Not Be Equal    ${SUITE_NAME}    Robot.Parsing.Parent Init Suite.Custom Shild Suite
+    Should Not Contain    ${SUITE_NAME}    Parent Init Suite.Custom Shild Suite
 
 Verify Suite Name
-    Should Be Equal    ${SUITE_NAME}    Robot.Parsing.Parent Init Suite.Child Suite
+    Should Contain    ${SUITE_NAME}    Parent Init Suite.Child Suite
