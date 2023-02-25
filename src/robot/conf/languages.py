@@ -168,6 +168,7 @@ class Language:
     variables_setting = None
     documentation_setting = None
     metadata_setting = None
+    name_setting = None
     suite_setup_setting = None
     suite_teardown_setting = None
     test_setup_setting = None
@@ -261,6 +262,7 @@ class Language:
             self.variables_setting: En.variables_setting,
             self.documentation_setting: En.documentation_setting,
             self.metadata_setting: En.metadata_setting,
+            self.name_setting: En.name_setting,
             self.suite_setup_setting: En.suite_setup_setting,
             self.suite_teardown_setting: En.suite_teardown_setting,
             self.test_setup_setting: En.test_setup_setting,
@@ -307,6 +309,7 @@ class En(Language):
     variables_setting = 'Variables'
     documentation_setting = 'Documentation'
     metadata_setting = 'Metadata'
+    name_setting = "Name"
     suite_setup_setting = 'Suite Setup'
     suite_teardown_setting = 'Suite Teardown'
     test_setup_setting = 'Test Setup'
@@ -469,6 +472,7 @@ class Fi(Language):
     variables_setting = 'Muuttujat'
     documentation_setting = 'Dokumentaatio'
     metadata_setting = 'Metatiedot'
+    name_setting = "Nimi"
     suite_setup_setting = 'Setin Alustus'
     suite_teardown_setting = 'Setin Alasajo'
     test_setup_setting = 'Testin Alustus'
@@ -713,6 +717,7 @@ class Pl(Language):
     variables_setting = 'Zmienne'
     documentation_setting = 'Dokumentacja'
     metadata_setting = 'Metadane'
+    name_setting = "Nazwa"
     suite_setup_setting = 'Inicjalizacja zestawu'
     suite_teardown_setting = 'Ukończenie zestawu'
     test_setup_setting = 'Inicjalizacja testu'
