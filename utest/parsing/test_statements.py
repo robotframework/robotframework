@@ -132,6 +132,20 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             args=['${arg1}', '${arg2}']
         )
 
+    def test_SuiteName(self):
+        # Name    Custom Suite Name
+        tokens = [
+            Token(Token.SUITE_NAME, 'Name'),
+            Token(Token.SEPARATOR, "    "),
+            Token(Token.ARGUMENT, "Custom Suite Name"),
+            Token(Token.EOL, "\n")
+        ]
+        assert_created_statement(
+            tokens,
+            SuiteName,
+            value="Custom Suite Name"
+        )
+
     def test_SuiteTeardown(self):
         # Suite Teardown    Teardown Keyword    ${arg1}    ${arg2}
         tokens = [
