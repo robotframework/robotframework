@@ -3002,7 +3002,7 @@ class _Misc(_BuiltInBase):
         See `Log Many` if you want to log multiple messages in one go, and
         `Log To Console` if you only want to write to the console.
 
-        Formatter options ``type`` and ``log`` are new in Robot Framework 5.0.
+        Formatter options ``type`` and ``len`` are new in Robot Framework 5.0.
         """
         # TODO: Remove `repr` altogether in RF 7.0. It was deprecated in RF 5.0.
         if repr == 'DEPRECATED':
