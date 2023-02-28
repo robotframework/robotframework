@@ -572,20 +572,37 @@ ${name}
   </div>
 {{/if}}
 
-{{if types.length}}
+{{if type}}
   <span class="arg-type">
-    {{each types}}
-      {{if $value in $data.typedocs}}
-          &lt;<a style="cursor: pointer;" class="type" title="Click to show type information" onclick="showModal(document.querySelector('#type-modal-${$data.typedocs[$value]}'))">${$value}</a>&gt;
-      {{else}}
-          &lt;<span class="type">${$value}</span>&gt;
-      {{/if}}
-      <span class="or"></span>
-    {{/each}}
+      {{tmpl(type) 'type-info-template'}}
   </span>
 {{/if}}
 </script>
 
+<script type="text/x-jquery-tmpl" id="type-info-template">
+  <!-- Store last index to variable. Checking it the 'each' loop didn't work. -->
+  ${$item.lastIndex=nested.length-1, ""}
+  {{if union}}
+    {{each nested}}
+      {{tmpl($value) 'type-info-template'}}
+      {{if $index < $item.lastIndex}}|{{/if}}
+    {{/each}}
+  {{else}}
+    {{if typedoc}}
+      <a style="cursor: pointer;" class="type" title="Click to show type information" onclick="showModal(document.querySelector('#type-modal-${typedoc}'))">${name}</a>
+    {{else}}
+      <span class="type">${name}</span>
+    {{/if}}
+    {{if nested.length}}
+      [
+      {{each nested}}
+        {{tmpl($value) 'type-info-template'}}
+        {{if $index < $item.lastIndex}},{{/if}}
+      {{/each}}
+      ]
+    {{/if}}
+  {{/if}}
+</script>
 
 <script type="text/x-jquery-tmpl" id="data-types-template">
   {{if typedocs.length}}
