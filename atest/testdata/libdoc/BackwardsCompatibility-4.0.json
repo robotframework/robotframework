@@ -2,7 +2,7 @@
   "name": "BackwardsCompatibility",
   "doc": "Library for testing backwards compatibility.\n\nEspecially testing argument type information that has been changing after RF 4.\nExamples are only using features compatible with all tested versions.",
   "version": "1.0",
-  "generated": "2023-02-28 14:13:40",
+  "generated": "2023-02-28 18:30:35",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
@@ -68,8 +68,8 @@
       "doc": "",
       "shortdoc": "",
       "tags": [],
-      "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/BackwardsCompatibility.py",
-      "lineno": 35
+      "source": "BackwardsCompatibility.py",
+      "lineno": 42
     },
     {
       "name": "Simple",
@@ -79,8 +79,8 @@
       "tags": [
         "example"
       ],
-      "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/BackwardsCompatibility.py",
-      "lineno": 27
+      "source": "BackwardsCompatibility.py",
+      "lineno": 34
     },
     {
       "name": "Special Types",
@@ -109,8 +109,8 @@
       "doc": "",
       "shortdoc": "",
       "tags": [],
-      "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/BackwardsCompatibility.py",
-      "lineno": 43
+      "source": "BackwardsCompatibility.py",
+      "lineno": 50
     },
     {
       "name": "Types",
@@ -139,8 +139,8 @@
       "doc": "",
       "shortdoc": "",
       "tags": [],
-      "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/BackwardsCompatibility.py",
-      "lineno": 39
+      "source": "BackwardsCompatibility.py",
+      "lineno": 46
     },
     {
       "name": "Union",
@@ -149,19 +149,19 @@
           "name": "a",
           "types": [
             "int",
-            "bool"
+            "float"
           ],
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "a: int | bool"
+          "repr": "a: int | float"
         }
       ],
       "doc": "",
       "shortdoc": "",
       "tags": [],
-      "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/BackwardsCompatibility.py",
-      "lineno": 47
+      "source": "BackwardsCompatibility.py",
+      "lineno": 54
     }
   ],
   "dataTypes": {

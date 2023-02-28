@@ -4,21 +4,28 @@ Especially testing argument type information that has been changing after RF 4.
 Examples are only using features compatible with all tested versions.
 """
 
-import enum
-import typing
+from enum import Enum
+from typing import Union
+try:
+    from typing_extensions import TypedDict
+except ImportError:
+    from typing import TypedDict
 
 
 ROBOT_LIBRARY_VERSION = '1.0'
 
 
-class Color(enum.Enum):
+__all__ = ['simple', 'arguments', 'types', 'special_types', 'union']
+
+
+class Color(Enum):
     """RGB colors."""
     RED = 'R'
     GREEN = 'G'
     BLUE = 'B'
 
 
-class Size(typing.TypedDict):
+class Size(TypedDict):
     """Some size."""
     width: int
     height: int
@@ -44,5 +51,5 @@ def special_types(a: Color, b: Size):
     pass
 
 
-def union(a: typing.Union[int, bool]):
+def union(a: Union[int, float]):
     pass

@@ -53,6 +53,7 @@ Validate library
     Doc Should Start With              Library for testing backwards compatibility.\n
     Type Should Be                     LIBRARY
     Scope Should Be                    GLOBAL
+    Format Should Be                   ROBOT
     Source Should Be                   ${source}
     Lineno Should Be                   1
     Generated Should Be Defined
@@ -64,36 +65,27 @@ Validate keyword 'Simple'
     Keyword Name Should Be             1    Simple
     Keyword Doc Should Be              1    Some doc.
     Keyword Tags Should Be             1    example
-    Keyword Lineno Should Be           1    27
+    Keyword Lineno Should Be           1    34
     Keyword Arguments Should Be        1
 
 Validate keyword 'Arguments'
     Keyword Name Should Be             0    Arguments
     Keyword Doc Should Be              0    ${EMPTY}
     Keyword Tags Should Be             0
-    Keyword Lineno Should Be           0    35
+    Keyword Lineno Should Be           0    42
     Keyword Arguments Should Be        0    a    b=2    *c    d=4    e    **f
 
 Validate keyword 'Types'
     Keyword Name Should Be             3    Types
-    Keyword Doc Should Be              3    ${EMPTY}
-    Keyword Tags Should Be             3
-    Keyword Lineno Should Be           3    39
     Keyword Arguments Should Be        3    a: int    b: bool = True
 
 Validate keyword 'Special Types'
     Keyword Name Should Be             2    Special Types
-    Keyword Doc Should Be              2    ${EMPTY}
-    Keyword Tags Should Be             2
-    Keyword Lineno Should Be           2    43
     Keyword Arguments Should Be        2    a: Color    b: Size
 
 Validate keyword 'Union'
     Keyword Name Should Be             4    Union
-    Keyword Doc Should Be              4    ${EMPTY}
-    Keyword Tags Should Be             4
-    Keyword Lineno Should Be           4    47
-    Keyword Arguments Should Be        4    a: int | bool
+    Keyword Arguments Should Be        4    a: int | float
 
 Validate typedocs
     [Arguments]    ${datatypes}=False
@@ -109,9 +101,11 @@ Validate typedocs
         Usages Should Be               1    TypedDict    Size
     ELSE
         DataType Standard Should Be    0    boolean      Strings ``TRUE``, ``YES``,
-        DataType Standard Should Be    1    integer      Conversion is done using
-        Usages Should Be               0    Standard     boolean    Types    Union
+        DataType Standard Should Be    1    float        Conversion is done using
+        DataType Standard Should Be    2    integer      Conversion is done using
+        Usages Should Be               0    Standard     boolean    Types
         Usages Should Be               1    Enum         Color      Special Types
-        Usages Should Be               2    Standard     integer    Types    Union
-        Usages Should Be               3    TypedDict    Size       Special Types
+        Usages Should Be               2    Standard     float      Union
+        Usages Should Be               3    Standard     integer    Types    Union
+        Usages Should Be               4    TypedDict    Size       Special Types
     END

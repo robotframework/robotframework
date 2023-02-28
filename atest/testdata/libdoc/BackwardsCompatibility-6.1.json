@@ -3,7 +3,7 @@
   "name": "BackwardsCompatibility",
   "doc": "Library for testing backwards compatibility.\n\nEspecially testing argument type information that has been changing after RF 4.\nExamples are only using features compatible with all tested versions.",
   "version": "1.0",
-  "generated": "2023-02-28T12:14:16+00:00",
+  "generated": "2023-02-28T16:25:49+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
@@ -81,8 +81,8 @@
       "doc": "",
       "shortdoc": "",
       "tags": [],
-      "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/BackwardsCompatibility.py",
-      "lineno": 35
+      "source": "BackwardsCompatibility.py",
+      "lineno": 42
     },
     {
       "name": "Simple",
@@ -92,8 +92,8 @@
       "tags": [
         "example"
       ],
-      "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/BackwardsCompatibility.py",
-      "lineno": 27
+      "source": "BackwardsCompatibility.py",
+      "lineno": 34
     },
     {
       "name": "Special Types",
@@ -140,8 +140,8 @@
       "doc": "",
       "shortdoc": "",
       "tags": [],
-      "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/BackwardsCompatibility.py",
-      "lineno": 43
+      "source": "BackwardsCompatibility.py",
+      "lineno": 50
     },
     {
       "name": "Types",
@@ -188,8 +188,8 @@
       "doc": "",
       "shortdoc": "",
       "tags": [],
-      "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/BackwardsCompatibility.py",
-      "lineno": 39
+      "source": "BackwardsCompatibility.py",
+      "lineno": 46
     },
     {
       "name": "Union",
@@ -207,8 +207,8 @@
                 "union": false
               },
               {
-                "name": "bool",
-                "typedoc": "boolean",
+                "name": "float",
+                "typedoc": "float",
                 "nested": [],
                 "union": false
               }
@@ -217,23 +217,23 @@
           },
           "types": [
             "int",
-            "bool"
+            "float"
           ],
           "typedocs": {
             "int": "integer",
-            "bool": "boolean"
+            "float": "float"
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "a: int | bool"
+          "repr": "a: int | float"
         }
       ],
       "doc": "",
       "shortdoc": "",
       "tags": [],
-      "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/BackwardsCompatibility.py",
-      "lineno": 47
+      "source": "BackwardsCompatibility.py",
+      "lineno": 54
     }
   ],
   "dataTypes": {
@@ -284,8 +284,7 @@
       "name": "boolean",
       "doc": "Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to Boolean ``True``,\nthe empty string as well as strings ``FALSE``, ``NO``, ``OFF`` and ``0``\nare converted to Boolean ``False``, and the string ``NONE`` is converted\nto the Python ``None`` object. Other strings and other accepted values are\npassed as-is, allowing keywords to handle them specially if\nneeded. All string comparisons are case-insensitive.\n\nExamples: ``TRUE`` (converted to ``True``), ``off`` (converted to ``False``),\n``example`` (used as-is)\n",
       "usages": [
-        "Types",
-        "Union"
+        "Types"
       ],
       "accepts": [
         "string",
@@ -317,6 +316,18 @@
           "name": "BLUE",
           "value": "B"
         }
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "float",
+      "doc": "Conversion is done using Python's\n[https://docs.python.org/library/functions.html#float|float] built-in function.\n\nStarting from RF 4.1, spaces and underscores can be used as visual separators\nfor digit grouping purposes.\n\nExamples: ``3.14``, ``2.9979e8``, ``10 000.000 01``\n",
+      "usages": [
+        "Union"
+      ],
+      "accepts": [
+        "string",
+        "Real"
       ]
     },
     {
