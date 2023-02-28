@@ -41,7 +41,7 @@ class BaseModel(PydanticBaseModel):
 
 class SpecVersion(int, Enum):
     """Version of the spec."""
-    VERSION = 1
+    VERSION = 2
 
 
 class DocumentationType(str, Enum):
@@ -77,11 +77,19 @@ class ArgumentKind(str, Enum):
     VAR_NAMED = 'VAR_NAMED'
 
 
+class ArgumentType(BaseModel):
+    name: str
+    typedoc: Union[str, None] = Field(description="Map type to info in 'typedocs'.")
+    nested: List['ArgumentType']
+    union: bool
+
+
 class Argument(BaseModel):
     """Keyword argument."""
     name: str
-    types: List[str]
-    typedocs: dict = Field(description="Maps types to type information in 'typedocs'.")
+    type: Union[ArgumentType, None]
+    types: List[str] = Field(description="Deprecated. Use 'type' instead.")
+    typedocs: dict = Field(description="Deprecated. Use 'type' instead.")
     defaultValue: Union[str, None] = Field(description="Possible default value or 'null'.")
     kind: ArgumentKind
     required: bool

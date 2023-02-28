@@ -18,7 +18,7 @@ import re
 from itertools import chain
 
 from robot.model import Tags
-from robot.running import ArgumentSpec
+from robot.running import ArgInfo, ArgumentSpec, TypeInfo
 from robot.utils import getshortdoc, Sortable, setter
 
 from .htmlutils import DocFormatter, DocToHtml, HtmlToText
@@ -113,7 +113,7 @@ class LibraryDoc:
 
     def to_dictionary(self, include_private=False, theme=None):
         data = {
-            'specversion': 1,
+            'specversion': 2,
             'name': self.name,
             'doc': self.doc,
             'version': self.version,
@@ -201,13 +201,23 @@ class KeywordDoc(Sortable):
             data['deprecated'] = True
         return data
 
-    def _arg_to_dict(self, arg):
+    def _arg_to_dict(self, arg: ArgInfo):
+        type_docs = self.type_docs.get(arg.name, {})
         return {
             'name': arg.name,
+            'type': self._type_to_dict(arg.type, type_docs),
             'types': arg.types_reprs,
-            'typedocs': self.type_docs.get(arg.name, {}),
+            'typedocs': type_docs,
             'defaultValue': arg.default_repr,
             'kind': arg.kind,
             'required': arg.required,
             'repr': str(arg)
         }
+
+    def _type_to_dict(self, type: TypeInfo, type_docs: dict):
+        if not type:
+            return None
+        return {'name': type.name,
+                'typedoc': type_docs.get(type.name),
+                'nested': [self._type_to_dict(t, type_docs) for t in type.nested],
+                'union': type.is_union}

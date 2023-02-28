@@ -102,7 +102,7 @@ Generated Should Be
     Element Attribute Should Be    ${LIBDOC}    generated    ${generated}
 
 Spec version should be correct
-    Element Attribute Should Be    ${LIBDOC}    specversion    4
+    Element Attribute Should Be    ${LIBDOC}    specversion    5
 
 Should Have No Init
     ${inits} =    Get Elements    ${LIBDOC}    xpath=inits/init
@@ -146,7 +146,14 @@ Verify Arguments Structure
         ${required}=    Get Element Attribute        ${arg_elem}    required
         ${repr}=        Get Element Attribute        ${arg_elem}    repr
         ${name}=        Get Element Optional Text    ${arg_elem}    name
-        ${type}=        Get Elements Texts           ${arg_elem}    type
+        ${types}=       Get Elements                 ${arg_elem}    type
+        IF    not $types
+            ${type}=    Set Variable                 ${EMPTY}
+        ELSE IF    len($types) == 1
+            ${type}=    Get Type                     ${types}[0]
+        ELSE
+            Fail        Cannot have more than one <type> element
+        END
         ${default}=     Get Element Optional Text    ${arg_elem}    default
         ${arg_model}=    Create Dictionary
         ...    kind=${kind}
@@ -158,6 +165,24 @@ Verify Arguments Structure
         Should Be Equal    ${repr}    ${exp_repr}
     END
     Should Be Equal    ${{len($arg_elems)}}    ${{len($expected)}}
+
+Get Type
+    [Arguments]    ${elem}
+    ${children} =    Get Elements    ${elem}    type
+    ${nested} =    Create List
+    FOR    ${child}    IN    @{children}
+        ${type} =    Get Type    ${child}
+        Append To List    ${nested}    ${type}
+    END
+    ${type} =    Get Element Attribute    ${elem}    name
+    IF    $elem.get('union') == 'true'
+        ${type} =    Catenate    SEPARATOR=${SPACE}|${SPACE}    @{nested}
+    ELSE IF    $nested
+        ${args} =    Catenate    SEPARATOR=,${SPACE}    @{nested}
+        ${type} =    Set Variable    ${type}\[${args}]
+    END
+    Should Be Equal    ${elem.text}    ${type}
+    RETURN    ${type}
 
 Get Element Optional Text
     [Arguments]    ${source}    ${xpath}
@@ -341,15 +366,21 @@ Accepted Types Should Be
     END
 
 Typedoc links should be
-    [Arguments]    ${kw}    ${arg}    @{typedocs}
-    ${types} =    Get Elements    ${LIBDOC}    keywords/kw[${${kw} + 1}]/arguments/arg[${${arg} + 1}]/type
-    Length Should Be    ${types}    ${{len($typedocs)}}
-    FOR    ${type}    ${typedoc}    IN ZIP    ${types}    ${typedocs}
-        IF    ':' in $typedoc
-            ${typename}    ${typedoc} =    Split String    ${typedoc}    :
-        ELSE
-            ${typename} =    Set Variable    ${typedoc}
-        END
-        Element Text Should Be    ${type}    ${typename}
-        Element Attribute Should Be    ${type}    typedoc    ${{$typedoc or None}}
+    [Arguments]    ${kw}    ${arg}    ${typedoc}    @{nested typedocs}
+    ${type} =    Get Element    ${LIBDOC}    keywords/kw[${${kw} + 1}]/arguments/arg[${${arg} + 1}]/type
+    Typedoc link should be    ${type}    ${typedoc}
+    ${nested} =    Get Elements    ${type}    type
+    Length Should Be    ${nested}    ${{len($nested_typedocs)}}
+    FOR    ${type}    ${typedoc}    IN ZIP    ${nested}    ${nested typedocs}
+        Typedoc link should be    ${type}    ${typedoc}
     END
+
+Typedoc link should be
+    [Arguments]    ${type}    ${typedoc}
+    IF    ':' in $typedoc
+        ${typename}    ${typedoc} =    Split String    ${typedoc}    :
+    ELSE
+        ${typename} =    Set Variable    ${typedoc}
+    END
+    Element Attribute Should Be    ${type}    name       ${typename}
+    Element Attribute Should Be    ${type}    typedoc    ${{$typedoc or None}}

@@ -174,8 +174,8 @@
     </xs:simpleType>
     <xs:simpleType name="SpecVersion">
         <xs:restriction base="xs:integer">
-            <xs:minInclusive value="4" />
-            <xs:maxInclusive value="4" />
+            <xs:minInclusive value="5" />
+            <xs:maxInclusive value="5" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="LibraryScope">
@@ -188,19 +188,20 @@
     <xs:complexType name="Argument">
         <xs:sequence>
             <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />
-            <xs:element name="type" type="ArgumentType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="type" type="ArgumentType" minOccurs="0" maxOccurs="1" />
             <xs:element name="default" type="xs:string" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
         <xs:attribute name="kind" type="Kind" use="required" />
         <xs:attribute name="required" type="xs:boolean" use="required" />
         <xs:attribute name="repr" type="xs:string" use="required" />
     </xs:complexType>
-    <xs:complexType name="ArgumentType">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="typedoc" type="xs:string" />
-            </xs:extension>
-        </xs:simpleContent>
+    <xs:complexType name="ArgumentType" mixed="true">
+        <xs:sequence>
+            <xs:element name="type" type="ArgumentType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="typedoc" type="xs:string" />
+        <xs:attribute name="union" type="xs:boolean" />
     </xs:complexType>
     <xs:simpleType name="Kind">
         <xs:restriction base="xs:string">

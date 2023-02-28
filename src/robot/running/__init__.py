@@ -101,7 +101,7 @@ the results is possible using the
     ResultWriter('skynet.xml').write_results()
 """
 
-from .arguments import ArgInfo, ArgumentSpec, TypeConverter
+from .arguments import ArgInfo, ArgumentSpec, TypeConverter, TypeInfo
 from .builder import ResourceFileBuilder, TestSuiteBuilder
 from .context import EXECUTION_CONTEXTS
 from .model import (Break, Continue, For, If, IfBranch, Keyword, Return, TestCase,
