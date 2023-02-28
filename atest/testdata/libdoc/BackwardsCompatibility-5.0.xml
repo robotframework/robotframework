@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<keywordspec name="BackwardsCompatibility" type="LIBRARY" format="ROBOT" scope="GLOBAL" generated="2023-02-28T12:05:25Z" specversion="4" source="/home/peke/Devel/robotframework/atest/testdata/libdoc/BackwardsCompatibility.py" lineno="1">
+<keywordspec name="BackwardsCompatibility" type="LIBRARY" format="ROBOT" scope="GLOBAL" generated="2023-02-28T12:05:25Z" specversion="4" source="BackwardsCompatibility.py" lineno="1">
 <version>1.0</version>
 <doc>Library for testing backwards compatibility.
 

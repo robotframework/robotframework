@@ -8,7 +8,7 @@ ${BASE}            ${TESTDATADIR}/BackwardsCompatibility
 
 *** Test Cases ***
 Latest
-    ${BASE}.py
+    ${BASE}.py    source=${BASE}.py
 
 RF 6.1 XML
     ${BASE}-6.1.xml
@@ -23,47 +23,42 @@ RF 5.0 JSON
     ${BASE}-5.0.json
 
 RF 4.0 XML
-    ${BASE}-4.0.xml    legacy=True
+    ${BASE}-4.0.xml    datatypes=True
 
 RF 4.0 JSON
-    ${BASE}-4.0.json    legacy=True
+    ${BASE}-4.0.json    datatypes=True
 
 *** Keywords ***
 Generate and validate
-    [Arguments]    ${source}    ${legacy}=False
+    [Arguments]    ${path}    ${source}=BackwardsCompatibility.py    ${datatypes}=False
     # JSON source files must be generated using RAW format as well.
-    Run Libdoc And Parse Output    --specdocformat RAW ${source}
-    Validate    ${legacy}    ${source.endswith('.xml')}
+    Run Libdoc And Parse Output    --specdocformat RAW ${path}
+    Validate    ${source}    ${datatypes}
 
 Validate
-    [Arguments]    ${legacy}=False    ${xml}=True
+    [Arguments]    ${source}    ${datatypes}=False
     [Tags]    robot:recursive-continue-on-failure
-    Validate library    ${legacy} and ${xml}
+    Validate library    ${source}
     Validate keyword 'Simple'
     Validate keyword 'Arguments'
     Validate keyword 'Types'
     Validate keyword 'Special Types'
     Validate keyword 'Union'
-    Validate typedocs    ${legacy}
+    Validate typedocs    ${datatypes}
 
 Validate library
-    [Arguments]    ${buggy source}=False
+    [Arguments]    ${source}
     Name Should Be                     BackwardsCompatibility
     Version Should Be                  1.0
     Doc Should Start With              Library for testing backwards compatibility.\n
     Type Should Be                     LIBRARY
     Scope Should Be                    GLOBAL
+    Source Should Be                   ${source}
+    Lineno Should Be                   1
     Generated Should Be Defined
     Spec Version Should Be Correct
     Should Have No Init
     Keyword Count Should Be            5
-    Lineno Should Be                   1
-    IF    ${buggy source}
-         ${dir}    ${file} =           Split Path    ${BASE}.py
-         Source Should Be              ${file}
-    ELSE
-         Source Should Be              ${BASE}.py
-    END
 
 Validate keyword 'Simple'
     Keyword Name Should Be             1    Simple
@@ -101,7 +96,7 @@ Validate keyword 'Union'
     Keyword Arguments Should Be        4    a: int | bool
 
 Validate typedocs
-    [Arguments]    ${legacy}=False
+    [Arguments]    ${datatypes}=False
     DataType Enum Should Be            0    Color    RGB colors.
     ...                                {"name": "RED", "value": "R"}
     ...                                {"name": "GREEN", "value": "G"}
@@ -109,12 +104,14 @@ Validate typedocs
     DataType TypedDict Should Be       0    Size     Some size.
     ...                                {"key": "width", "type": "int", "required": "true"}
     ...                                {"key": "height", "type": "int", "required": "true"}
-    IF    ${legacy}
+    IF    ${datatypes}
         Usages Should Be               0    Enum         Color
         Usages Should Be               1    TypedDict    Size
     ELSE
-        DataType Standard Should Be    0    boolean      Strings ``TRUE``,
+        DataType Standard Should Be    0    boolean      Strings ``TRUE``, ``YES``,
+        DataType Standard Should Be    1    integer      Conversion is done using
         Usages Should Be               0    Standard     boolean    Types    Union
         Usages Should Be               1    Enum         Color      Special Types
+        Usages Should Be               2    Standard     integer    Types    Union
         Usages Should Be               3    TypedDict    Size       Special Types
     END

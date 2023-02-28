@@ -7,7 +7,7 @@
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
-  "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/BackwardsCompatibility.py",
+  "source": "BackwardsCompatibility.py",
   "lineno": 1,
   "tags": [
     "example"
