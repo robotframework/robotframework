@@ -55,6 +55,28 @@ def run_keyword_variant(resolve, dry_run=False):
 class _BuiltInBase:
 
     @property
+    def robot_running(self) -> bool:
+        """Return True/False depending on is Robot Framework running or not.
+
+        Can be used by libraries and other extensions.
+
+        New in Robot Framework 6.1.
+        """
+        return EXECUTION_CONTEXTS.current is not None
+
+    @property
+    def dry_run_active(self) -> bool:
+        """Return True/False depending on is dry-run active or not.
+
+        Can be used by libraries and other extensions. Notice that library
+        keywords are not run at all in dry-run, but library ``__init__``
+        can utilize this information.
+
+        New in Robot Framework 6.1.
+        """
+        return self.robot_running and self._context.dry_run
+
+    @property
     def _context(self):
         return self._get_context()
 
