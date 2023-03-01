@@ -1905,9 +1905,8 @@ class TestReturn(unittest.TestCase):
         self._verify(data, expected)
 
     def test_in_test(self):
-        # This is not valid usage but that's not recognized during lexing.
         data = '    RETURN'
-        expected = [(T.RETURN_STATEMENT, 'RETURN', 3, 4),
+        expected = [(T.ERROR, 'RETURN', 3, 4,  'RETURN is not allowed in this context.'),
                     (T.EOS, '', 3, 10)]
         self._verify(data, expected, test=True)
 
@@ -1966,13 +1965,13 @@ class TestContinue(unittest.TestCase):
 
     def test_in_keyword(self):
         data = '    CONTINUE'
-        expected = [(T.CONTINUE, 'CONTINUE', 3, 4),
+        expected = [(T.ERROR, 'CONTINUE', 3, 4,  'CONTINUE is not allowed in this context.'),
                     (T.EOS, '', 3, 12)]
         self._verify(data, expected)
 
     def test_in_test(self):
         data = '    CONTINUE'
-        expected = [(T.CONTINUE, 'CONTINUE', 3, 4),
+        expected = [(T.ERROR, 'CONTINUE', 3, 4,  'CONTINUE is not allowed in this context.'),
                     (T.EOS, '', 3, 12)]
         self._verify(data, expected, test=True)
 
@@ -2082,13 +2081,13 @@ class TestBreak(unittest.TestCase):
 
     def test_in_keyword(self):
         data = '    BREAK'
-        expected = [(T.BREAK, 'BREAK', 3, 4),
+        expected = [(T.ERROR, 'BREAK', 3, 4,  'BREAK is not allowed in this context.'),
                     (T.EOS, '', 3, 9)]
         self._verify(data, expected)
 
     def test_in_test(self):
         data = '    BREAK'
-        expected = [(T.BREAK, 'BREAK', 3, 4),
+        expected = [(T.ERROR, 'BREAK', 3, 4,  'BREAK is not allowed in this context.'),
                     (T.EOS, '', 3, 9)]
         self._verify(data, expected, test=True)
 

@@ -47,65 +47,64 @@ Test Timeout
 
 Test [Documentation]
     ${tc} =    Check Test Case    Test Settings
-    Should Be Equal    ${tc.doc}    T1
-    Setting multiple times    12    32    Documentation
+    Check Keyword Data     ${tc.kws[0]}    ${EMPTY}    type=ERROR    status=FAIL
+    Should Be Equal     ${tc.kws[0].values[0]}    [Documentation]
+    Setting multiple times    12    40    Documentation
 
 Test [Tags]
     Check Test Tags    Test Settings
-    Setting multiple times    13    34    Tags
-    Setting multiple times    14    35    Tags
+    Setting multiple times    13    42    Tags
+    Setting multiple times    19    53    Tags
 
 Test [Setup]
     ${tc} =    Check Test Case    Test Settings
     Should Be Equal    ${tc.setup.name}    BuiltIn.Log Many
-    Setting multiple times    15    37    Setup
+    Setting multiple times    14    44    Setup
 
 Test [Teardown]
     ${tc} =    Check Test Case    Test Settings
     Teardown Should Not Be Defined     ${tc}
-    Setting multiple times    16    39    Teardown
-    Setting multiple times    17    40    Teardown
+    Setting multiple times    15    46    Teardown
+    Setting multiple times    16    47    Teardown
 
 Test [Template]
     ${tc} =    Check Test Case    Test Settings
-    Check Keyword Data     ${tc.kws[0]}    BuiltIn.Log    args=No Operation
-    Setting multiple times    18    42    Template
+    Check Keyword Data     ${tc.kws[7]}    BuiltIn.Log    args=No Operation
+    Setting multiple times    17    49    Template
 
 Test [Timeout]
     ${tc} =    Check Test Case    Test Settings
     Should Be Equal    ${tc.timeout}    2 seconds
-    Setting multiple times    19    44    Timeout
+    Setting multiple times    18    51    Timeout
 
 Keyword [Arguments]
     ${tc} =    Check Test Case    Keyword Settings
-    Check Keyword Data    ${tc.kws[0]}    Keyword Settings    assign=\${ret}    args=1, 2, 3    tags=K1
+    Check Keyword Data    ${tc.kws[0]}    Keyword Settings    assign=\${ret}    args=1, 2, 3    tags=K1    status=FAIL
     Check Log Message    ${tc.kws[0].msgs[0]}    Arguments: [ \${a1}='1' | \${a2}='2' | \${a3}='3' ]    TRACE
-    Setting multiple times    20    55    Arguments
+    Setting multiple times    20    64    Arguments
 
 Keyword [Documentation]
     ${tc} =    Check Test Case    Keyword Settings
     Should Be Equal    ${tc.kws[0].doc}    ${EMPTY}
-    Setting multiple times    21    57    Documentation
-    Setting multiple times    22    58    Documentation
+    Setting multiple times    21    66    Documentation
+    Setting multiple times    22    67    Documentation
 
 Keyword [Tags]
     ${tc} =    Check Test Case    Keyword Settings
     Should Be True    list($tc.kws[0].tags) == ['K1']
-    Setting multiple times    23    60    Tags
+    Setting multiple times    23    69    Tags
 
 Keyword [Timeout]
     ${tc} =    Check Test Case    Keyword Settings
     Should Be Equal    ${tc.kws[0].timeout}    ${NONE}
-    Setting multiple times    24    62    Timeout
-    Setting multiple times    25    63    Timeout
+    Setting multiple times    24    71    Timeout
+    Setting multiple times    25    72    Timeout
 
 Keyword [Return]
-    ${tc} =    Check Test Case    Keyword Settings
-    Check Log Message    ${tc.kws[0].msgs[1]}    Return: 'R0'    TRACE
-    Check Log Message    ${tc.kws[0].msgs[2]}    \${ret} = R0
-    Setting multiple times    26    66    Return
-    Setting multiple times    27    67    Return
-    Setting multiple times    28    68    Return
+    Check Test Case    Keyword Settings
+    Setting multiple times    26    75    Return
+    Setting multiple times    27    76    Return
+    Setting multiple times    28    77    Return
 
 *** Keywords ***
 Setting multiple times
