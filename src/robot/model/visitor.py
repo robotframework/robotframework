@@ -105,7 +105,8 @@ removed altogether if they get in the way.
 from typing import TYPE_CHECKING
 
 from .body import BodyItem
-from .control import Break, Continue, For, If, IfBranch, Return, Try, TryBranch, While
+from .control import (Break, Continue, Error, For, If, IfBranch, Return, Try,
+                      TryBranch, While)
 from .keyword import Keyword
 from .message import Message
 from .testcase import TestCase
@@ -489,6 +490,33 @@ class SuiteVisitor:
         By default, calls :meth:`end_body_item` which, by default, does nothing.
         """
         self.end_body_item(break_)
+
+    def visit_error(self, error: Error):
+        """Visits body items resulting from invalid syntax.
+
+        Examples include syntax like ``END`` or ``ELSE`` in wrong place and
+        invalid setting like ``[Invalid]``.
+        """
+        if self.start_error(error) is not False:
+            if hasattr(error, 'body'):
+                error.body.visit(self)
+            self.end_error(error)
+
+    def start_error(self, error: Error):
+        """Called when a ERROR element starts.
+
+        By default, calls :meth:`start_body_item` which, by default, does nothing.
+
+        Can return explicit ``False`` to stop visiting.
+        """
+        return self.start_body_item(error)
+
+    def end_error(self, error: Error):
+        """Called when a ERROR element ends.
+
+        By default, calls :meth:`end_body_item` which, by default, does nothing.
+        """
+        self.end_body_item(error)
 
     def visit_message(self, message: Message):
         """Implements visiting messages.

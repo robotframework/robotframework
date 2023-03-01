@@ -37,6 +37,7 @@ class BodyItem(ModelObject):
     RETURN = 'RETURN'
     CONTINUE = 'CONTINUE'
     BREAK = 'BREAK'
+    ERROR = 'ERROR'
     MESSAGE = 'MESSAGE'
     type = None
     __slots__ = ['parent']
@@ -85,6 +86,7 @@ class BaseBody(ItemList):
     continue_class = None
     break_class = None
     message_class = None
+    error_class = None
 
     def __init__(self, parent=None, items=None):
         super().__init__(BodyItem, {'parent': parent}, items)
@@ -148,6 +150,9 @@ class BaseBody(ItemList):
 
     def create_message(self, *args, **kwargs):
         return self._create(self.message_class, 'create_message', args, kwargs)
+
+    def create_error(self, *args, **kwargs):
+        return self._create(self.error_class, 'create_message', args, kwargs)
 
     def filter(self, keywords=None, messages=None, predicate=None):
         """Filter body items based on type and/or custom predicate.

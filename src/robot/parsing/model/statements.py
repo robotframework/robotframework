@@ -1107,6 +1107,10 @@ class Error(Statement):
     _errors = ()
 
     @property
+    def values(self):
+        return [t.value for t in self.data_tokens]
+
+    @property
     def errors(self):
         """Errors got from the underlying ``ERROR`` and ``FATAL_ERROR`` tokens.
 
