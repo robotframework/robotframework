@@ -747,7 +747,7 @@ class Import(ModelObject):
     @property
     def directory(self) -> Path:
         source = self.source
-        return source.parent if source and source.is_file() else source
+        return source.parent if source and not source.is_dir() else source
 
     @property
     def setting_name(self):

@@ -215,6 +215,19 @@ class TestLineNumberAndSource(unittest.TestCase):
     def test_import(self):
         self._assert_lineno_and_source(self.suite.resource.imports[0], 5)
 
+    def test_import_without_source(self):
+        suite = TestSuite()
+        suite.resource.imports.library('Example')
+        assert_equal(suite.resource.imports[0].source, None)
+        assert_equal(suite.resource.imports[0].directory, None)
+
+    def test_import_with_non_existing_source(self):
+        for source in Path('dummy!'), Path('dummy/example/path'):
+            suite = TestSuite(source=source)
+            suite.resource.imports.library('Example')
+            assert_equal(suite.resource.imports[0].source, source)
+            assert_equal(suite.resource.imports[0].directory, source.parent)
+
     def test_variable(self):
         self._assert_lineno_and_source(self.suite.resource.variables[0], 8)
 
