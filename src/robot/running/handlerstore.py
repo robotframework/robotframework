@@ -47,6 +47,8 @@ class HandlerStore:
     def __contains__(self, name):
         if name in self._normal:
             return True
+        if not self._embedded:
+            return False
         return any(template.matches(name) for template in self._embedded)
 
     def __getitem__(self, name):

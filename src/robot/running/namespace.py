@@ -311,10 +311,8 @@ class KeywordStore:
         return None
 
     def _get_implicit_runner(self, name):
-        runner = self._get_runner_from_resource_files(name)
-        if not runner:
-            runner = self._get_runner_from_libraries(name)
-        return runner
+        return (self._get_runner_from_resource_files(name) or
+                self._get_runner_from_libraries(name))
 
     def _get_runner_from_suite_file(self, name):
         if name not in self.user_keywords.handlers:
@@ -377,8 +375,8 @@ class KeywordStore:
                 handlers = self._select_best_matches(handlers)
                 if len(handlers) > 1:
                     handlers = self._filter_based_on_search_order(handlers)
-        if len(handlers) != 1:
-            self._raise_multiple_keywords_found(handlers, name)
+                    if len(handlers) > 1:
+                        self._raise_multiple_keywords_found(handlers, name)
         return handlers[0].create_runner(name, self.languages)
 
     def _get_runner_from_libraries(self, name):
@@ -393,8 +391,8 @@ class KeywordStore:
                 handlers = self._filter_based_on_search_order(handlers)
                 if len(handlers) > 1:
                     handlers, pre_run_message = self._filter_stdlib_handler(handlers)
-        if len(handlers) != 1:
-            self._raise_multiple_keywords_found(handlers, name)
+                    if len(handlers) > 1:
+                        self._raise_multiple_keywords_found(handlers, name)
         runner = handlers[0].create_runner(name, self.languages)
         if pre_run_message:
             runner.pre_run_messages += (pre_run_message,)
@@ -447,11 +445,12 @@ class KeywordStore:
         )
 
     def _get_explicit_runner(self, name):
-        handlers_and_names = [
-            (handler, kw_name)
-            for owner_name, kw_name in self._yield_owner_and_kw_names(name)
-            for handler in self._yield_handlers(owner_name, kw_name)
-        ]
+        handlers_and_names = []
+        for owner_name, kw_name in self._get_owner_and_kw_names(name):
+            for owner in chain(self.libraries.values(), self.resources.values()):
+                if eq(owner.name, owner_name) and kw_name in owner.handlers:
+                    for handler in owner.handlers.get_handlers(kw_name):
+                        handlers_and_names.append((handler, kw_name))
         if not handlers_and_names:
             return None
         if len(handlers_and_names) == 1:
@@ -464,15 +463,10 @@ class KeywordStore:
             handler, kw_name = handlers_and_names[handlers.index(matches[0])]
         return handler.create_runner(kw_name, self.languages)
 
-    def _yield_owner_and_kw_names(self, full_name):
+    def _get_owner_and_kw_names(self, full_name):
         tokens = full_name.split('.')
-        for i in range(1, len(tokens)):
-            yield '.'.join(tokens[:i]), '.'.join(tokens[i:])
-
-    def _yield_handlers(self, owner_name, name):
-        for owner in chain(self.libraries.values(), self.resources.values()):
-            if eq(owner.name, owner_name) and name in owner.handlers:
-                yield from owner.handlers.get_handlers(name)
+        return [('.'.join(tokens[:index]), '.'.join(tokens[index:]))
+                for index in range(1, len(tokens))]
 
     def _raise_multiple_keywords_found(self, handlers, name, implicit=True):
         if any(hand.supports_embedded_args for hand in handlers):

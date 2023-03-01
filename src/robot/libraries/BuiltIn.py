@@ -1865,23 +1865,20 @@ class _RunKeyword(_BuiltInBase):
         can be a variable and thus set dynamically, e.g. from a return value of
         another keyword or from the command line.
         """
-        ctx = self._context
-        if (is_string(name)
-                and not ctx.dry_run
-                and not self._accepts_embedded_arguments(name)):
-            name, args = self._replace_variables_in_name([name] + list(args))
         if not is_string(name):
             raise RuntimeError('Keyword name must be a string.')
+        ctx = self._context
+        if not (ctx.dry_run or self._accepts_embedded_arguments(name, ctx)):
+            name, args = self._replace_variables_in_name([name] + list(args))
         parent = ctx.steps[-1] if ctx.steps else (ctx.test or ctx.suite)
         kw = Keyword(name, args=args, parent=parent,
                      lineno=getattr(parent, 'lineno', None))
         return kw.run(ctx)
 
-    def _accepts_embedded_arguments(self, name):
+    def _accepts_embedded_arguments(self, name, ctx):
         if '{' in name:
-            runner = self._context.get_runner(name)
-            if hasattr(runner, 'embedded_args'):
-                return True
+            runner = ctx.get_runner(name)
+            return runner and hasattr(runner, 'embedded_args')
         return False
 
     def _replace_variables_in_name(self, name_and_args):
@@ -1890,6 +1887,8 @@ class _RunKeyword(_BuiltInBase):
         if not resolved:
             raise DataError(f'Keyword name missing: Given arguments {name_and_args} '
                             f'resolved to an empty list.')
+        if not is_string(resolved[0]):
+            raise RuntimeError('Keyword name must be a string.')
         return resolved[0], resolved[1:]
 
     @run_keyword_variant(resolve=0, dry_run=True)
