@@ -135,6 +135,46 @@ ELSE IF after ELSE
         Log    hei
     END
 
+Dangling ELSE
+    [Documentation]    FAIL    ELSE is not allowed in this context.
+    ELSE
+
+Dangling ELSE inside FOR
+    [Documentation]    FAIL    ELSE is not allowed in this context.
+    FOR    ${i}    IN    1    2
+        ELSE
+    END
+
+Dangling ELSE inside WHILE
+    [Documentation]    FAIL    ELSE is not allowed in this context.
+    WHILE    ${True}
+        ELSE
+    END
+
+Dangling ELSE IF
+    [Documentation]    FAIL    ELSE IF is not allowed in this context.
+    ELSE IF
+
+Dangling ELSE IF inside FOR
+    [Documentation]    FAIL    ELSE IF is not allowed in this context.
+    FOR    ${i}    IN    1    2
+        ELSE IF
+    END
+
+Dangling ELSE IF inside WHILE
+    [Documentation]    FAIL    ELSE IF is not allowed in this context.
+    WHILE    ${True}
+        ELSE IF
+    END
+
+Dangling ELSE IF inside TRY
+    [Documentation]    FAIL    ELSE IF is not allowed in this context.
+    TRY
+        Fail
+    EXCEPT
+        ELSE IF
+    END
+
 Invalid IF inside FOR
     [Documentation]    FAIL    ELSE IF not allowed after ELSE.
     FOR    ${value}    IN    1    2    3

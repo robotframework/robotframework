@@ -147,11 +147,6 @@ Template
 Timeout
     Verify Timeout    1 day
 
-Timeout with message
-    Verify Timeout    1 minute 39 seconds 999 milliseconds
-    Error In File    0    parsing/test_case_settings.robot    184
-    ...    Setting 'Timeout' accepts only one value, got 2.
-
 Default timeout
     Verify Timeout    1 minute 39 seconds 999 milliseconds
 
@@ -176,20 +171,20 @@ Multiple settings
 
 Invalid setting
     Check Test Case    ${TEST NAME}
-    Error In File    1    parsing/test_case_settings.robot    217
+    Error In File    0    parsing/test_case_settings.robot    214
     ...    Non-existing setting 'Invalid'.
 
 Setting not valid with tests
     Check Test Case    ${TEST NAME}
-    Error In File    2    parsing/test_case_settings.robot    221
+    Error In File    1    parsing/test_case_settings.robot    219
     ...    Setting 'Metadata' is not allowed with tests or tasks.
     Check Test Case    ${TEST NAME}
-    Error In File    3    parsing/test_case_settings.robot    222
+    Error In File    2    parsing/test_case_settings.robot    220
     ...    Setting 'Arguments' is not allowed with tests or tasks.
 
 Small typo should provide recommendation
-    Check Test Doc    ${TEST NAME}
-    Error In File    4    parsing/test_case_settings.robot    226
+    Check Test Case    ${TEST NAME}
+    Error In File    3    parsing/test_case_settings.robot    227
     ...    SEPARATOR=\n
     ...    Non-existing setting 'Doc U ment a tion'. Did you mean:
     ...    ${SPACE*4}Documentation

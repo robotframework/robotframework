@@ -1,7 +1,7 @@
 import unittest
 
 from robot.parsing import get_model, Token
-from robot.parsing.model.statements import ReturnStatement, Break, Continue
+from robot.parsing.model.statements import Break, Continue, Error, ReturnStatement
 
 from parsing_test_utils import assert_model, RemoveNonDataTokensVisitor
 
@@ -22,9 +22,8 @@ class TestReturn(unittest.TestCase):
 Example
     RETURN''', data_only=data_only)
                 node = model.sections[0].body[0].body[0]
-                expected = ReturnStatement(
-                    [Token(Token.RETURN_STATEMENT, 'RETURN', 3, 4)],
-                    errors=('RETURN can only be used inside a user keyword.',)
+                expected = Error(
+                    [Token(Token.ERROR, 'RETURN', 3, 4, 'RETURN is not allowed in this context.')],
                 )
                 remove_non_data_nodes_and_assert(node, expected, data_only)
 
@@ -173,9 +172,8 @@ class TestBreak(unittest.TestCase):
 Example
     BREAK''', data_only=data_only)
                 node = model.sections[0].body[0].body[0]
-                expected = Break(
-                    [Token(Token.BREAK, 'BREAK', 3, 4)],
-                    errors=('BREAK can only be used inside a loop.',)
+                expected = Error(
+                    [Token(Token.ERROR, 'BREAK', 3, 4, 'BREAK is not allowed in this context.')],
                 )
                 remove_non_data_nodes_and_assert(node, expected, data_only)
 
@@ -243,9 +241,8 @@ Example
 Example
     BREAK''', data_only=data_only)
                 node = model.sections[0].body[0].body[0]
-                expected = Break(
-                    [Token(Token.BREAK, 'BREAK', 3, 4)],
-                    errors=('BREAK can only be used inside a loop.',)
+                expected = Error(
+                    [Token(Token.ERROR, 'BREAK', 3, 4, 'BREAK is not allowed in this context.')],
                 )
                 remove_non_data_nodes_and_assert(node, expected, data_only)
 
@@ -294,9 +291,8 @@ class TestContinue(unittest.TestCase):
 Example
     CONTINUE''', data_only=data_only)
                 node = model.sections[0].body[0].body[0]
-                expected = Continue(
-                    [Token(Token.CONTINUE, 'CONTINUE', 3, 4)],
-                    errors=('CONTINUE can only be used inside a loop.',)
+                expected = Error(
+                    [Token(Token.ERROR, 'CONTINUE', 3, 4, 'CONTINUE is not allowed in this context.')],
                 )
                 remove_non_data_nodes_and_assert(node, expected, data_only)
 
@@ -364,9 +360,8 @@ Example
 Example
     CONTINUE''', data_only=data_only)
                 node = model.sections[0].body[0].body[0]
-                expected = Continue(
-                    [Token(Token.CONTINUE, 'CONTINUE', 3, 4)],
-                    errors=('CONTINUE can only be used inside a loop.',)
+                expected = Error(
+                    [Token(Token.ERROR, 'CONTINUE', 3, 4, 'CONTINUE is not allowed in this context.')],
                 )
                 remove_non_data_nodes_and_assert(node, expected, data_only)
 

@@ -102,7 +102,7 @@ Unnecessary END
     IF    False    Not run         ELSE    No operation    END
 
 Invalid END after inline header
-    [Documentation]    FAIL 'End' is a reserved keyword. It must be an upper case 'END' when used as a marker to close a block.
+    [Documentation]    FAIL END is not allowed in this context.
     IF    True    Log    Executed inside inline IF
         Log   Executed outside IF
     END

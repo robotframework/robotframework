@@ -9,7 +9,7 @@ Valid END after For
     ...
     ...    1) 'For' is a reserved keyword. It must be an upper case 'FOR' when used as a marker.
     ...
-    ...    2) 'End' is a reserved keyword. It must be an upper case 'END' when used as a marker to close a block.
+    ...    2) END is not allowed in this context.
     For    ${x}    IN    invalid
         Log    ${x}
     END
@@ -72,11 +72,11 @@ Reserved inside IF
     ...
     ...    2) 'If' is a reserved keyword. It must be an upper case 'IF' when used as a marker.
     ...
-    ...    3) 'End' is a reserved keyword. It must be an upper case 'END' when used as a marker to close a block.
+    ...    3) END is not allowed in this context.
     ...
     ...    4) 'Return' is a reserved keyword.
     ...
-    ...    5) 'End' is a reserved keyword. It must be an upper case 'END' when used as a marker to close a block.
+    ...    5) END is not allowed in this context.
     IF    True
         For    ${x}    IN    invalid
             Log     ${x}
