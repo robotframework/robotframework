@@ -618,6 +618,12 @@ class ErrorReporter(NodeVisitor):
     def __init__(self, source):
         self.source = source
 
+    def visit_TestCase(self, node):
+        pass
+
+    def visit_Keyword(self, node):
+        pass
+
     def visit_Error(self, node):
         fatal = node.get_token(Token.FATAL_ERROR)
         if fatal:

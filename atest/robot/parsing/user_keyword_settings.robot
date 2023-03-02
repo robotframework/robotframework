@@ -94,26 +94,15 @@ Multiple settings
 
 Invalid setting
     Check Test Case    ${TEST NAME}
-    Error In File    0    parsing/user_keyword_settings.robot    202
-    ...    Non-existing setting 'Invalid Setting'.
 
 Setting not valid with user keywords
     Check Test Case    ${TEST NAME}
-    Error In File    1    parsing/user_keyword_settings.robot    206
-    ...    Setting 'Metadata' is not allowed with user keywords.
-    Check Test Case    ${TEST NAME}
-    Error In File    2    parsing/user_keyword_settings.robot    207
-    ...    Setting 'Template' is not allowed with user keywords.
 
 Small typo should provide recommendation
     Check Test Case    ${TEST NAME}
-    Error In File    3    parsing/user_keyword_settings.robot    211
-    ...    SEPARATOR=\n
-    ...    Non-existing setting 'Doc Umentation'. Did you mean:
-    ...    ${SPACE*4}Documentation
 
 Invalid empty line continuation in arguments should throw an error
-    Error in File    4    parsing/user_keyword_settings.robot    214
+    Error in File    0    parsing/user_keyword_settings.robot    214
     ...    Creating keyword 'Invalid empty line continuation in arguments should throw an error' failed:
     ...    Invalid argument specification: Invalid argument syntax ''.
 
