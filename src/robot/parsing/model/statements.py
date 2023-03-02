@@ -430,14 +430,8 @@ class KeywordTags(MultiValue):
 class SuiteName(Fixture):
     type = Token.SUITE_NAME
 
-    @classmethod
-    def from_params(cls, value, separator=FOUR_SPACES, eol=EOL):
-        return cls([
-            Token(Token.SUITE_NAME, 'Name'),
-            Token(Token.SEPARATOR, separator),
-            Token(Token.ARGUMENT, value),
-            Token(Token.EOL, eol)
-        ])
+    def from_params(self, value, separator=FOUR_SPACES, eol=EOL):
+        ...
 
     @property
     def value(self):
