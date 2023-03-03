@@ -35,7 +35,10 @@ Union from typing
     Keyword Arguments Should Be     8    a: int | str | list | tuple
     Keyword Arguments Should Be     9    a: int | str | list | tuple | None = None
 
+Nested
+    Keyword Arguments Should Be    10    a: List[int]    b: List[int | float]    c: Tuple[Tuple[UnknownType], Dict[str, Tuple[float]]]
+
 Union syntax
     [Tags]    require-py3.10
-    Keyword Arguments Should Be     10   a: int | str | list | tuple
-    Keyword Arguments Should Be     11   a: int | str | list | tuple | None = None
+    Keyword Arguments Should Be    11    a: int | str | list | tuple
+    Keyword Arguments Should Be    12    a: int | str | list | tuple | None = None

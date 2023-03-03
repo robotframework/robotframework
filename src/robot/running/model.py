@@ -15,20 +15,20 @@
 
 """Module implementing test execution related model objects.
 
-When tests are executed normally, these objects are created based on the test
-data on the file system by :class:`~robot.running.builder.builders.TestSuiteBuilder`,
-but external tools can also create an executable test suite model structure directly.
-Regardless the approach to create it, the model is executed by calling
-:meth:`~TestSuite.run` method of the root test suite. See the
-:mod:`robot.running` package level documentation for more information and
-examples.
+When tests are executed by Robot Framework, a :class:`TestSuite` structure using
+classes defined in this module is created by
+:class:`~robot.running.builder.builders.TestSuiteBuilder`
+based on data on a file system. In addition to that, external tools can
+create executable suite structures programmatically.
 
-The most important classes defined in this module are :class:`TestSuite`,
-:class:`TestCase` and :class:`Keyword`. When tests are executed, these objects
-can be inspected and modified by `pre-run modifiers`__ and `listeners`__.
-These three classes are exposed via the :mod:`robot.api` package. If other
-classes are needed, they can be imported directly from this
-:mod:`robot.running.model` module. This module is considered stable.
+Regardless the approach to construct it, a :class:`TestSuite` object is executed
+by calling its :meth:`~TestSuite.run` method as shown in the example in
+the :mod:`robot.running` package level documentation. When a suite is run,
+test, keywords, and other objects it contains can be inspected and modified
+by using `pre-run modifiers`__ and `listeners`__.
+
+The :class:`TestSuite` class is exposed via the :mod:`robot.api` package. If other
+classes are needed, they can be imported from :mod:`robot.running`.
 
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#programmatic-modification-of-results
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-interface
@@ -747,7 +747,7 @@ class Import(ModelObject):
     @property
     def directory(self) -> Path:
         source = self.source
-        return source.parent if source and source.is_file() else source
+        return source.parent if source and not source.is_dir() else source
 
     @property
     def setting_name(self):

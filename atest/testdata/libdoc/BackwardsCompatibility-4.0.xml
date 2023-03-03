@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<keywordspec name="BackwardsCompatibility" type="LIBRARY" format="ROBOT" scope="GLOBAL" generated="2023-02-28T16:14:50Z" specversion="3" source="BackwardsCompatibility.py" lineno="1">
+<version>1.0</version>
+<doc>Library for testing backwards compatibility.
+
+Especially testing argument type information that has been changing after RF 4.
+Examples are only using features compatible with all tested versions.</doc>
+<tags>
+<tag>example</tag>
+</tags>
+<inits>
+</inits>
+<keywords>
+<kw name="Arguments" lineno="42">
+<arguments repr="a, b=2, *c, d=4, e, **f">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="a">
+<name>a</name>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="b=2">
+<name>b</name>
+<default>2</default>
+</arg>
+<arg kind="VAR_POSITIONAL" required="false" repr="*c">
+<name>c</name>
+</arg>
+<arg kind="NAMED_ONLY" required="false" repr="d=4">
+<name>d</name>
+<default>4</default>
+</arg>
+<arg kind="NAMED_ONLY" required="true" repr="e">
+<name>e</name>
+</arg>
+<arg kind="VAR_NAMED" required="false" repr="**f">
+<name>f</name>
+</arg>
+</arguments>
+<doc/>
+<shortdoc/>
+</kw>
+<kw name="Simple" lineno="34">
+<arguments repr="">
+</arguments>
+<doc>Some doc.</doc>
+<shortdoc>Some doc.</shortdoc>
+<tags>
+<tag>example</tag>
+</tags>
+</kw>
+<kw name="Special Types" lineno="50">
+<arguments repr="a: Color, b: Size">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="a: Color">
+<name>a</name>
+<type>Color</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="b: Size">
+<name>b</name>
+<type>Size</type>
+</arg>
+</arguments>
+<doc/>
+<shortdoc/>
+</kw>
+<kw name="Types" lineno="46">
+<arguments repr="a: int, b: bool = True">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="a: int">
+<name>a</name>
+<type>int</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="b: bool = True">
+<name>b</name>
+<type>bool</type>
+<default>True</default>
+</arg>
+</arguments>
+<doc/>
+<shortdoc/>
+</kw>
+<kw name="Union" lineno="54">
+<arguments repr="a: int | float">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="a: int | float">
+<name>a</name>
+<type>int</type>
+<type>float</type>
+</arg>
+</arguments>
+<doc/>
+<shortdoc/>
+</kw>
+</keywords>
+<datatypes>
+<enums>
+<enum name="Color">
+<doc>RGB colors.</doc>
+<members>
+<member name="RED" value="R"/>
+<member name="GREEN" value="G"/>
+<member name="BLUE" value="B"/>
+</members>
+</enum>
+</enums>
+<typeddicts>
+<typeddict name="Size">
+<doc>Some size.</doc>
+<items>
+<item key="width" type="int" required="true"/>
+<item key="height" type="int" required="true"/>
+</items>
+</typeddict>
+</typeddicts>
+</datatypes>
+</keywordspec>

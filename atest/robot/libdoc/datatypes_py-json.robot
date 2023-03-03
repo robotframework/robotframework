@@ -149,10 +149,10 @@ Typedoc links in arguments
     ${MODEL}[keywords][1][args][2][typedocs]    {'CustomType': 'CustomType'}
     ${MODEL}[keywords][1][args][3][typedocs]    {}
     ${MODEL}[keywords][2][args][0][typedocs]    {'bool': 'boolean', 'int': 'integer', 'float': 'float', 'str': 'string', 'AssertionOperator': 'AssertionOperator', 'Small': 'Small', 'GeoLocation': 'GeoLocation', 'None': 'None'}
-    ${MODEL}[keywords][4][args][0][typedocs]    {'List[str]': 'list'}
-    ${MODEL}[keywords][4][args][1][typedocs]    {'Dict[str, int]': 'dictionary'}
+    ${MODEL}[keywords][4][args][0][typedocs]    {'List': 'list', 'str': 'string'}
+    ${MODEL}[keywords][4][args][1][typedocs]    {'Dict': 'dictionary', 'str': 'string', 'int': 'integer'}
     ${MODEL}[keywords][4][args][2][typedocs]    {'Any': 'Any'}
-    ${MODEL}[keywords][4][args][3][typedocs]    {'List[Any]': 'list'}
+    ${MODEL}[keywords][4][args][3][typedocs]    {'List': 'list', 'Any': 'Any'}
 
 *** Keywords ***
 Verify Argument Models

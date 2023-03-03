@@ -63,22 +63,14 @@ class LibDocLib:
         with open(path) as f:
             self.json_schema.validate(json.load(f))
 
-    def relative_source(self, path, start):
-        if not exists(path):
-            return path
-        try:
-            return relpath(path, start)
-        except ValueError:
-            return normpath(path)
-
     def get_repr_from_arg_model(self, model):
         return str(ArgInfo(kind=model['kind'],
                            name=model['name'],
-                           types=tuple(model['type']),
+                           type=model['type'] or ArgInfo.NOTSET,
                            default=model['default'] or ArgInfo.NOTSET))
 
     def get_repr_from_json_arg_model(self, model):
         return str(ArgInfo(kind=model['kind'],
                            name=model['name'],
-                           types=tuple(model['types']),
+                           type=model['type'] or ArgInfo.NOTSET,
                            default=model['defaultValue'] or ArgInfo.NOTSET))

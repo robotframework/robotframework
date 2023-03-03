@@ -18,19 +18,15 @@
 The main public API of this package consists of the :func:`~.ExecutionResult`
 factory method, that returns :class:`~.Result` objects, and of the
 :class:`~.ResultVisitor` abstract class, that eases further processing
-the results.
+the results. It is recommended to import these public entry-points via the
+:mod:`robot.api` package like in the example below.
 
-The model objects in the :mod:`robot.result.model` module can also be considered
-to be part of the public API, because they can be found inside the :class:`~.Result`
-object. They can also be inspected and modified as part of the normal test
-execution by `pre-Rebot modifiers`__ and `listeners`__.
-
-It is highly recommended to import the public entry-points via the
-:mod:`robot.api` package like in the example below. In those rare cases
-where the aforementioned model objects are needed directly, they can be
-imported from this package.
-
-This package is considered stable.
+The model objects defined in the :mod:`robot.result.model` module are also
+part of the public API. They are used inside the :class:`~.Result` object,
+and they can also be inspected and modified as part of the normal test
+execution by using `pre-Rebot modifiers`__ and `listeners`__. These model
+objects are not exposed via :mod:`robot.api`, but they can be imported
+from :mod:`robot.result` if needed.
 
 Example
 -------
@@ -42,7 +38,7 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 """
 
 from .executionresult import Result
-from .model import (For, ForIteration, While, WhileIteration, If, IfBranch, Keyword,
-                    Message, TestCase, TestSuite, Try, TryBranch, Return, Continue, Break)
+from .model import (Break, Continue, For, ForIteration, If, IfBranch, Keyword, Message,
+                    Return, TestCase, TestSuite, Try, TryBranch, While, WhileIteration)
 from .resultbuilder import ExecutionResult, ExecutionResultBuilder
 from .visitor import ResultVisitor

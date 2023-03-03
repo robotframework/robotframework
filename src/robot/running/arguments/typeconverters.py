@@ -26,8 +26,9 @@ from typing import Any, Tuple, TypeVar, Union
 
 from robot.conf import Languages
 from robot.libraries.DateTime import convert_date, convert_time
-from robot.utils import (eq, get_error_message, is_string, is_union, plural_or_not as s,
-                         safe_str, seq2str, type_name, type_repr, typeddict_types)
+from robot.utils import (eq, get_error_message, has_args, is_string, is_union,
+                         plural_or_not as s, safe_str, seq2str, type_name, type_repr,
+                         typeddict_types)
 
 
 NoneType = type(None)
@@ -666,7 +667,9 @@ class CombinedConverter(TypeConverter):
             return ()
         if isinstance(union, tuple):
             return union
-        return getattr(union, '__args__', ())
+        if has_args(union):
+            return union.__args__
+        return ()
 
     @property
     def type_name(self):

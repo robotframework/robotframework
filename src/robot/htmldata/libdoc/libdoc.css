@@ -591,28 +591,13 @@ h4 {
     font-size: 1.1em;
 }
 
+.arg-type,
 span.type,
 a.type {
     font-size: 1em;
     background: none;
     padding: 0 0
 }
-
-.arg-type span.or::after {
-    content: ' or ';
-}
-
-span.or {
-    background: none;
-    font-size: 0.7em;
-    font-family: system-ui, -apple-system, sans-serif;
-}
-
-
-.arg-type span.or:nth-last-of-type(1) {
-    display: none;
-}
-
 
 .typed-dict-item .td-type::after {
     content: ',';

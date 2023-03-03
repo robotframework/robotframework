@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.running import TypeInfo
 from robot.utils import XmlWriter
 
 from .output import get_generation_time
@@ -37,7 +38,7 @@ class LibdocXmlWriter:
                  'format': libdoc.doc_format,
                  'scope': libdoc.scope,
                  'generated': get_generation_time(),
-                 'specversion': '4'}
+                 'specversion': '5'}
         self._add_source_info(attrs, libdoc)
         writer.start('keywordspec', attrs)
         writer.element('version', libdoc.version)
@@ -77,17 +78,26 @@ class LibdocXmlWriter:
                                  'repr': str(arg)})
             if arg.name:
                 writer.element('name', arg.name)
-            type_docs = kw.type_docs[arg.name]
-            for type_repr in arg.types_reprs:
-                if type_repr in type_docs:
-                    attrs = {'typedoc': type_docs[type_repr]}
-                else:
-                    attrs = {}
-                writer.element('type', type_repr, attrs)
+            if arg.type:
+                self._write_type_info(arg.type, kw.type_docs[arg.name], writer)
             if arg.default is not arg.NOTSET:
                 writer.element('default', arg.default_repr)
             writer.end('arg')
         writer.end('arguments')
+
+    def _write_type_info(self, type_info: TypeInfo, type_docs: dict, writer, top=True):
+        attrs = {'name': type_info.name}
+        if type_info.is_union:
+            attrs['union'] = 'true'
+        if type_info.name in type_docs:
+            attrs['typedoc'] = type_docs[type_info.name]
+        # Writing content, and omitting newlines, is backwards compatibility with
+        # specs created using RF < 6.1. TODO: Remove in RF 7.
+        writer.start('type', attrs, newline=False)
+        writer.content(str(type_info))
+        for nested in type_info.nested:
+            self._write_type_info(nested, type_docs, writer, top=False)
+        writer.end('type', newline=top)
 
     def _get_start_attrs(self, kw, lib_source):
         attrs = {'name': kw.name}
@@ -98,6 +108,7 @@ class LibdocXmlWriter:
         self._add_source_info(attrs, kw, lib_source)
         return attrs
 
+    # Write legacy 'datatypes'. TODO: Remove in RF 7.
     def _write_data_types(self, types, writer):
         enums = sorted(t for t in types if t.type == 'Enum')
         typed_dicts = sorted(t for t in types if t.type == 'TypedDict')

@@ -26,6 +26,15 @@ class TestBuiltInWhenRobotNotRunning(unittest.TestCase):
                                BuiltIn().set_suite_metadata, 'name', 'value')
 
 
+class TestBuiltInPropertys(unittest.TestCase):
+
+    def test_robot_running(self):
+        assert_equal(BuiltIn().robot_running, False)
+
+    def test_dry_run_active(self):
+        assert_equal(BuiltIn().dry_run_active, False)
+
+
 class TestDateTime(unittest.TestCase):
 
     def test_date_seconds(self):

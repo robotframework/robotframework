@@ -96,14 +96,19 @@ Usages
     ...    __init__    Funny Unions
 
 Typedoc links in arguments
-    Typedoc links should be    0    1    AssertionOperator    None
+    Typedoc links should be    0    1    Union:
+    ...    AssertionOperator    None
     Typedoc links should be    0    2    str:string
     Typedoc links should be    1    0    CustomType
     Typedoc links should be    1    1    CustomType2
     Typedoc links should be    1    2    CustomType
     Typedoc links should be    1    3    Unknown:
-    Typedoc links should be    2    0    bool:boolean    int:integer    float    str:string    AssertionOperator    Small    GeoLocation    None
-    Typedoc links should be    4    0    List[str]:list
-    Typedoc links should be    4    1    Dict[str, int]:dictionary
-    Typedoc links should be    4    2    Any:Any
-    Typedoc links should be    4    3    List[Any]:list
+    Typedoc links should be    2    0    Union:
+    ...    bool:boolean    int:integer    float    str:string    AssertionOperator    Small    GeoLocation    None
+    Typedoc links should be    4    0    List:list
+    ...    str:string
+    Typedoc links should be    4    1    Dict:dictionary
+    ...    str:string    int:integer
+    Typedoc links should be    4    2    Any
+    Typedoc links should be    4    3    List:list
+    ...    Any
