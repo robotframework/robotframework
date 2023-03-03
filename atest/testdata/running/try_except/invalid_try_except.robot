@@ -274,6 +274,12 @@ Invalid TRY/EXCEPT causes syntax error that cannot be caught
         Fail    Not run either
     END
 
+Dangling FINALLY
+    [Documentation]    FAIL FINALLY is not allowed in this context.
+    IF    ${True}
+        FINALLY
+    END
+
 *** Keywords ***
 RETURN in FINALLY
     TRY
