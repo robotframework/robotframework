@@ -43,8 +43,8 @@ class BaseParser:
         raise NotImplementedError
 
     @property
-    def included_extensions(self):
-        return self.extensions
+    def resource_extensions(self):
+        raise NotImplementedError
 
     def _get_curdir(self, source):
         return str(source.parent).replace('\\', '\\\\') if self.process_curdir else None
@@ -55,7 +55,8 @@ class BaseParser:
 
 class RobotParser(BaseParser):
 
-    extensions = ["robot"]
+    extensions = [".robot"]
+    resource_extensions = [".resource"]
 
     def parse_init_file(self, source, defaults=None):
         directory = source.parent
@@ -91,7 +92,7 @@ class RobotParser(BaseParser):
 
 class RestParser(RobotParser):
 
-    extensions = ["rst", "rest"]
+    extensions = [".rst", ".rest"]
 
     def _get_source(self, source):
         with FileReader(source) as reader:
@@ -100,7 +101,7 @@ class RestParser(RobotParser):
 
 class JsonParser(BaseParser):
 
-    extensions = ["json", "rbt"]
+    extensions = [".json", ".rbt"]
 
     def parse_suite_file(self, source: Path, defaults: Defaults = None):
         return TestSuite.from_json(source)

@@ -95,7 +95,7 @@ class TestSuiteBuilder:
         if self.parsers:
             for parser in self.parsers:
                 parser_instance = import_parser(parser, self.lang, self.process_curdir)
-                self.included_extensions += tuple(parser_instance.included_extensions)
+                self.included_extensions += tuple(parser_instance.extensions)
 
     def build(self, *paths):
         """
@@ -161,7 +161,7 @@ class SuiteStructureParser(SuiteStructureVisitor):
         try:
             return self.parsers[extension]
         except KeyError:
-            return self.parsers['robot']
+            return self.parsers['.robot']
 
     def parse(self, structure):
         structure.visit(self)
