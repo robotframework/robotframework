@@ -2976,7 +2976,7 @@ class _Misc(_BuiltInBase):
             repr='DEPRECATED', formatter='str'):
         r"""Logs the given message with the given level.
 
-        Valid levels are TRACE, DEBUG, INFO (default), HTML, WARN, and ERROR.
+        Valid levels are TRACE, DEBUG, INFO (default), CONSOLE, HTML, WARN, and ERROR.
         Messages below the current active log level are ignored. See
         `Set Log Level` keyword and ``--loglevel`` command line option
         for more details about setting the level.
@@ -2998,6 +2998,8 @@ class _Misc(_BuiltInBase):
         the log file. This keyword always uses the standard output stream
         and adds a newline after the written message. Use `Log To Console`
         instead if either of these is undesirable,
+    Mimic html section...
+        
 
         The ``formatter`` argument controls how to format the string
         representation of the message. Possible values are ``str`` (default),

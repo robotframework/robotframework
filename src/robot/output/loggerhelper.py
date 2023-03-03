@@ -13,9 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
+
 from robot.errors import DataError
 from robot.model import Message as BaseMessage
-from robot.utils import get_timestamp, is_string, safe_str
+from robot.utils import get_timestamp, is_string, safe_str, console_encode
 
 
 LEVELS = {
@@ -28,6 +30,15 @@ LEVELS = {
   'DEBUG' : 1,
   'TRACE' : 0,
 }
+
+
+def write_to_console(msg, newline=True, stream='stdout'):
+    msg = str(msg)
+    if newline:
+        msg += '\n'
+    stream = sys.__stdout__ if stream.lower() != 'stderr' else sys.__stderr__
+    stream.write(console_encode(msg, stream=stream))
+    stream.flush()
 
 
 class AbstractLogger:
@@ -96,6 +107,8 @@ class Message(BaseMessage):
         level = level.upper()
         if level == 'HTML':
             return 'INFO', True
+        if level == 'CONSOLE':
+            level = 'INFO'
         if level not in LEVELS:
             raise DataError("Invalid log level '%s'." % level)
         return level, html
