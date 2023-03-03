@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import asyncio
 from contextlib import contextmanager
 
 from robot.errors import DataError
@@ -22,6 +23,7 @@ class ExecutionContexts:
 
     def __init__(self):
         self._contexts = []
+        self.event_loop_ref = None
 
     @property
     def current(self):
@@ -39,12 +41,19 @@ class ExecutionContexts:
         return (context.namespace for context in self)
 
     def start_suite(self, suite, namespace, output, dry_run=False):
-        ctx = _ExecutionContext(suite, namespace, output, dry_run)
+        if self._contexts:
+            self.event_loop_ref = self._contexts[-1]._event_loop
+        ctx = _ExecutionContext(suite, namespace, output, dry_run, self.event_loop_ref)
         self._contexts.append(ctx)
         return ctx
 
     def end_suite(self):
-        self._contexts.pop()
+        ctx = self._contexts.pop()
+        if not self.event_loop_ref and ctx._event_loop:
+            # handle event loop being created after ctx creation
+            self.event_loop_ref = ctx._event_loop
+        if not self._contexts and self.event_loop_ref:
+            self.event_loop_ref.close()
 
 
 # This is ugly but currently needed e.g. by BuiltIn
@@ -54,7 +63,7 @@ EXECUTION_CONTEXTS = ExecutionContexts()
 class _ExecutionContext:
     _started_keywords_threshold = 100
 
-    def __init__(self, suite, namespace, output, dry_run=False):
+    def __init__(self, suite, namespace, output, dry_run=False, event_loop=None):
         self.suite = suite
         self.test = None
         self.timeouts = set()
@@ -67,6 +76,7 @@ class _ExecutionContext:
         self.timeout_occurred = False
         self.steps = []
         self.user_keywords = []
+        self._event_loop = event_loop
 
     @contextmanager
     def suite_teardown(self):
@@ -150,6 +160,12 @@ class _ExecutionContext:
             if step.type == 'KEYWORD' and step.libname != 'BuiltIn':
                 return False
         return False
+    
+    @property
+    def event_loop(self):
+        if self._event_loop is None:
+            self._event_loop = asyncio.new_event_loop()
+        return self._event_loop
 
     def end_suite(self, suite):
         for name in ['${PREV_TEST_NAME}',

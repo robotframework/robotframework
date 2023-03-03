@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import asyncio
+
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.result import Keyword as KeywordResult
@@ -104,7 +106,10 @@ class LibraryKeywordRunner:
     def _run_with_signal_monitoring(self, runner, context):
         try:
             STOP_SIGNAL_MONITOR.start_running_keyword(context.in_teardown)
-            return runner()
+            runner_result = runner()
+            if asyncio.iscoroutine(runner_result):
+                runner_result = context.event_loop.run_until_complete(runner_result)
+            return runner_result
         finally:
             STOP_SIGNAL_MONITOR.stop_running_keyword()
 
