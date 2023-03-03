@@ -163,7 +163,7 @@ class DocumentationOrMetadata(Statement):
     def _get_lines(self, tokens):
         lines = []
         line = None
-        lineno = -2  # quick hack to Documentation.from_params works correctly if I add them programmaticaly
+        lineno = -1
         for t in tokens:
             if t.lineno != lineno:
                 line = []
