@@ -13,9 +13,9 @@ LISTS = ['@{var}', '@{  v A  R }']
 DICTS = ['&{var}', '&{  v A  R }']
 NOKS = ['', 'nothing', '$not', '${not', '@not', '&{not', '${not}[oops',
         '%{not}', '*{not}', r'\${var}', r'\\\${var}', 42, None, ['${var}']]
-NOK_ASSIGNS = NOKS + ['${${internal}}', '${var}[item]',
-                      '@{${internal}}', '@{var}[item]',
-                      '&{${internal}}', '&{var}[item]']
+NOK_ASSIGNS = NOKS + ['${${internal}}',
+                      '@{${internal}}',
+                      '&{${internal}}']
 
 
 class TestIsVariable(unittest.TestCase):
@@ -87,11 +87,18 @@ class TestIsAssign(unittest.TestCase):
             assert search_variable(ok).is_assign()
             assert is_assign(ok + '=', allow_assign_mark=True)
             assert is_assign(ok + ' =', allow_assign_mark=True)
-            assert not is_assign(ok + '[item]')
             assert not is_assign(' ' + ok)
+        for ok in SCALARS + LISTS:
+            assert is_assign(ok + '[item]' + '[ i t e m ]' + '[${item}]', allow_items=True)
+            assert not is_assign(ok + '[item]' + '[ i t e m ]' + '[${item}]')
+            assert is_assign(ok + '[item]' + '[ i t e m ]' + '[${item}]', allow_items=True)
+            assert not is_assign(ok + '[item]' + '[ i t e m ]' + '[${item}]')
         for nok in NOK_ASSIGNS:
             assert not is_assign(nok)
             assert not search_variable(nok, ignore_errors=True).is_assign()
+        for nok in DICTS:
+            assert not is_assign(nok + '[item]' + '[ i t e m ]' + '[${item}]', allow_items=True)
+            assert not is_assign(nok + '[item]' + '[ i t e m ]' + '[${item}]')
 
     def test_is_scalar_assign(self):
         for ok in SCALARS:
@@ -99,7 +106,10 @@ class TestIsAssign(unittest.TestCase):
             assert search_variable(ok).is_scalar_assign()
             assert is_scalar_assign(ok + '=', allow_assign_mark=True)
             assert is_scalar_assign(ok + ' =', allow_assign_mark=True)
+            assert is_scalar_assign(ok + '[item]', allow_items=True)
+            assert is_scalar_assign(ok + '[item1][item2]', allow_items=True)
             assert not is_scalar_assign(ok + '[item]')
+            assert not is_scalar_assign(ok + '[item1][item2]')
             assert not is_scalar_assign(' ' + ok)
         for nok in NOK_ASSIGNS + LISTS + DICTS:
             assert not is_scalar_assign(nok)
@@ -111,7 +121,10 @@ class TestIsAssign(unittest.TestCase):
             assert search_variable(ok).is_list_assign()
             assert is_list_assign(ok + '=', allow_assign_mark=True)
             assert is_list_assign(ok + ' =', allow_assign_mark=True)
+            assert is_list_assign(ok + '[item]', allow_items=True)
+            assert is_list_assign(ok + '[item1][item2]', allow_items=True)
             assert not is_list_assign(ok + '[item]')
+            assert not is_list_assign(ok + '[item1][item2]')
             assert not is_list_assign(' ' + ok)
         for nok in NOK_ASSIGNS + SCALARS + DICTS:
             assert not is_list_assign(nok)
@@ -124,6 +137,7 @@ class TestIsAssign(unittest.TestCase):
             assert is_dict_assign(ok + '=', allow_assign_mark=True)
             assert is_dict_assign(ok + ' =', allow_assign_mark=True)
             assert not is_dict_assign(ok + '[item]')
+            assert not is_dict_assign(ok + '[item]', allow_items=True)
             assert not is_dict_assign(' ' + ok)
         for nok in NOK_ASSIGNS + SCALARS + LISTS:
             assert not is_dict_assign(nok)

@@ -79,12 +79,13 @@ def _count_virtual_line_length(line):
     return lines if not remainder else lines + 1
 
 
-def format_assign_message(variable, value, cut_long=True):
+def format_assign_message(variable, items, value, cut_long=True):
     formatter = {'$': safe_str, '@': seq2str2, '&': _dict_to_str}[variable[0]]
     value = formatter(value)
     if cut_long:
         value = cut_assign_value(value)
-    return '%s = %s' % (variable, value)
+    decorated_items = "".join(map(lambda item: "[%s]" % item, items or tuple()))
+    return '%s%s = %s' % (variable, decorated_items, value)
 
 def _dict_to_str(d):
     if not d:

@@ -1535,7 +1535,7 @@ class _Variables(_BuiltInBase):
         variables = self.get_variables()
         for name in sorted(variables, key=lambda s: s[2:-1].lower()):
             name, value = self._get_logged_variable(name, variables)
-            msg = format_assign_message(name, value, cut_long=False)
+            msg = format_assign_message(name, None, value, cut_long=False)
             self.log(msg, level)
 
     def _get_logged_variable(self, name, variables):
@@ -1846,7 +1846,7 @@ class _Variables(_BuiltInBase):
         return VariableTableValue(values, name).resolve(self._variables)
 
     def _log_set_variable(self, name, value):
-        self.log(format_assign_message(name, value))
+        self.log(format_assign_message(name, None, value))
 
 
 class _RunKeyword(_BuiltInBase):

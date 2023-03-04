@@ -19,6 +19,7 @@ from robot.errors import (DataError, ExecutionStatus, HandlerExecutionFailed,
                           VariableError)
 from robot.utils import (ErrorDetails, format_assign_message, get_error_message,
                          is_number, is_string, prepr, type_name)
+from robot.variables.search import VariableMatch, search_variable
 
 
 class VariableAssignment:
@@ -105,10 +106,12 @@ class VariableAssigner:
         context.output.trace(lambda: 'Return: %s' % prepr(return_value),
                              write_if_flat=False)
         resolver = ReturnValueResolver(self._assignment)
-        for name, value in resolver.resolve(return_value):
-            if not self._extended_assign(name, value, context.variables):
+        for name, items, value in resolver.resolve(return_value):
+            if items:
+                value = self._item_assign(name, items, value, context.variables)
+            elif not self._extended_assign(name, value, context.variables):
                 value = self._normal_assign(name, value, context.variables)
-            context.info(format_assign_message(name, value))
+            context.info(format_assign_message(name, items, value))
 
     def _extended_assign(self, name, value, variables):
         if name[0] != '$' or '.' not in name or name in variables:
@@ -134,6 +137,48 @@ class VariableAssigner:
     def _is_valid_extended_attribute(self, attr):
         return self._valid_extended_attr.match(attr) is not None
 
+    def _parse_list_index(self, index):
+        if isinstance(index, (int, slice)):
+            return index
+        if not is_string(index):
+            raise ValueError
+        if ':' not in index:
+            return int(index)
+        if index.count(':') > 2:
+            raise ValueError
+        return slice(*[int(i) if i else None for i in index.split(':')])
+
+    def _variable_type_supports_item_assign(self, var):
+        return (hasattr(var, "__setitem__") and callable(var.__setitem__))
+
+    def _item_assign(self, name, items, value, variables):
+        decorated_items = list(map(lambda item: "[%s]" % item, items))
+        var = variables.replace_scalar("%s%s" % ('$' + name[1:],
+                                                "".join(decorated_items[:-1])))
+
+        if not self._variable_type_supports_item_assign(var):
+            var_type = type_name(var)
+            raise VariableError(
+                f"Variable '{name}{''.join(decorated_items[:-1])}' of type {var_type} "
+                f"does not support item assignment: variable "
+                f"should be mutable and should support a '__setitem__' method."
+                )
+
+        selector = variables.replace_scalar(items[-1])
+
+        try:
+            if isinstance(var, list):
+                selector = self._parse_list_index(selector)
+            var[selector] = value
+        except (ValueError, IndexError, TypeError):
+            var_type = type_name(var)
+            raise VariableError(
+                f"Setting value to {var_type} variable "
+                f"'{name}{''.join(decorated_items[:-1])}' "
+                f"at index [{items[-1]}] failed: {get_error_message()}"
+                )
+        return value
+
     def _normal_assign(self, name, value, variables):
         variables[name] = value
         # Always return the actually assigned value.
@@ -158,21 +203,29 @@ class NoReturnValueResolver:
 
 class OneReturnValueResolver:
 
-    def __init__(self, variable):
-        self._variable = variable
+    def __init__(self, assignment):
+        match: VariableMatch = search_variable(assignment, ignore_errors=True)
+        # _assignment contains the tuple: (variable, tuple of corresponding selectors)
+        self._assignment = (match.name, match.items)
 
     def resolve(self, return_value):
         if return_value is None:
-            identifier = self._variable[0]
+            identifier = self._assignment[0][0]
             return_value = {'$': None, '@': [], '&': {}}[identifier]
-        return [(self._variable, return_value)]
+        # Return the list of tuples ([variables, item selectors, rv])
+        return [(*self._assignment, return_value)]
 
 
 class _MultiReturnValueResolver:
 
-    def __init__(self, variables):
-        self._variables = variables
-        self._min_count = len(variables)
+    def __init__(self, assignments):
+        # _assignment contains a list of
+        # ... tuples: (variable, tuple of corresponding selectors)
+        self._assignments = []
+        for assigment in assignments:
+            match: VariableMatch = search_variable(assigment, ignore_errors=True)
+            self._assignments.append((match.name, match.items))
+        self._min_count = len(assignments)
 
     def resolve(self, return_value):
         return_value = self._convert_to_list(return_value)
@@ -210,13 +263,15 @@ class ScalarsOnlyReturnValueResolver(_MultiReturnValueResolver):
                         % (self._min_count, return_count))
 
     def _resolve(self, return_value):
-        return list(zip(self._variables, return_value))
+        # Return the list of tuples ([variables, item selectors, rv])
+        return [(*self._assignments[i], return_value[i])
+                for i in range(self._min_count)]
 
 
 class ScalarsAndListReturnValueResolver(_MultiReturnValueResolver):
 
-    def __init__(self, variables):
-        _MultiReturnValueResolver.__init__(self, variables)
+    def __init__(self, assignments):
+        _MultiReturnValueResolver.__init__(self, assignments)
         self._min_count -= 1
 
     def _validate(self, return_count):
@@ -225,23 +280,26 @@ class ScalarsAndListReturnValueResolver(_MultiReturnValueResolver):
                         % (self._min_count, return_count))
 
     def _resolve(self, return_value):
-        before_vars, list_var, after_vars \
-            = self._split_variables(self._variables)
-        before_items, list_items, after_items \
-            = self._split_return(return_value, before_vars, after_vars)
-        before = list(zip(before_vars, before_items))
-        after = list(zip(after_vars, after_items))
-        return before + [(list_var, list_items)] + after
+        before_assignment, list_assignment, after_assignment, \
+            = self._split_assignments(self._assignments)
+        before_rv, list_rv, after_rv \
+            = self._split_return(return_value, before_assignment, after_assignment)
+        before = [(*before_assignment[i], before_rv[i])
+                  for i in range(len(before_assignment))]
+        after = [(*after_assignment[i], after_rv[i])
+                 for i in range(len(after_assignment))]
+        # Return the list of tuples ([variables, item selectors, rv])
+        return before + [(*list_assignment, list_rv)] + after
 
-    def _split_variables(self, variables):
-        list_index = [v[0] for v in variables].index('@')
-        return (variables[:list_index],
-                variables[list_index],
-                variables[list_index+1:])
+    def _split_assignments(self, assignments):
+        list_index = [a[0][0] for a in assignments].index('@')
+        return (assignments[:list_index],
+                assignments[list_index],
+                assignments[list_index+1:])
 
-    def _split_return(self, return_value, before_vars, after_vars):
-        list_start = len(before_vars)
-        list_end = len(return_value) - len(after_vars)
+    def _split_return(self, return_value, before_assignment, after_assignment):
+        list_start = len(before_assignment)
+        list_end = len(return_value) - len(after_assignment)
         return (return_value[:list_start],
                 return_value[list_start:list_end],
                 return_value[list_end:])
