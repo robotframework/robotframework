@@ -6,6 +6,7 @@ Variables        ..${/}variables${/}non_dict.json
 Variables        valid.json    arguments    not    accepted
 Variables        non_existing.Json
 Variables        invalid_encoding.json
+Variables        valid3.JSON
 Test Template    Should Be Equal
 
 *** Variables ***
@@ -20,8 +21,17 @@ Valid JSON file
     ${FLOAT}      ${3.14}
     ${LIST}       ${EXPECTED LIST}
     ${DICT}       ${EXPECTED DICT}
-    ${BOOL}    ${TRUE}
-    ${NULL}    ${NULL}
+    ${BOOL}       ${TRUE}
+    ${NULL}       ${NULL}
+
+Valid JSON file with uper case extension
+    ${STRING IN JSON}     Hello, YAML!
+    ${INTEGER IN JSON}    ${42}
+    ${FLOAT IN JSON}      ${3.14}
+    ${LIST IN JSON}       ${EXPECTED LIST}
+    ${DICT IN JSON}       ${EXPECTED DICT}
+    ${BOOL IN JSON}       ${TRUE}
+    ${NULL IN JSON}       ${NULL}
 
 Non-ASCII strings
     ${NON}    äscii

@@ -44,7 +44,7 @@ class VariableFileSetter:
                     % (path_or_variables, args))
         if path_or_variables.lower().endswith(('.yaml', '.yml')):
             importer = YamlImporter()
-        elif path_or_variables.endswith(('json',)):
+        elif path_or_variables.lower().endswith('.json'):
             importer = JsonImporter()
         else:
             importer = PythonImporter()

@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    --variablefile ${VARDIR}/cli.json -V ${VARDIR}/cli2.json --pythonpath ${VARDIR}
 ...              variables/json_variable_file.robot
-Force Tags       require-json
 Resource         atest_resource.robot
 
 *** Variables ***
@@ -9,6 +8,9 @@ ${VARDIR}        ${DATADIR}/../testresources/res_and_var_files
 
 *** Test Cases ***
 Valid JSON file
+    Check Test Case    ${TESTNAME}
+
+Valid JSON file with uper case extension
     Check Test Case    ${TESTNAME}
 
 Non-ASCII strings

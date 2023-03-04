@@ -1,0 +1,20 @@
+{
+  "string in JSON": "Hello, YAML!",
+  "integer in JSON": 42,
+  "float in JSON": 3.14,
+  "bool in JSON": true,
+  "null in JSON": null,
+  "list in JSON": [
+    "one",
+    2
+  ],
+  "dict in JSON": {
+    "a": "1",
+    "b": 2,
+    "3": [
+      "one",
+      2
+    ],
+    "key with spaces": "value with spaces"
+  }
+}
