@@ -58,6 +58,13 @@
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
+    <xs:complexType name="Error">
+        <xs:choice maxOccurs="unbounded">
+        <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+        <xs:element name="msg" type="Message" />
+        <xs:element name="status" type="Status" />
+        </xs:choice>
+    </xs:complexType>
     <xs:complexType name="Test">
         <xs:choice maxOccurs="unbounded">
             <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
@@ -65,6 +72,7 @@
             <xs:element name="if" type="If" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="try" type="Try" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="while" type="While" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="error" type="Error" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="doc" type="xs:string" minOccurs="0" />
             <xs:element name="tag" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
@@ -84,6 +92,7 @@
             <xs:element name="if" type="If" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="try" type="Try" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="while" type="While" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="error" type="Error" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="return" type="Return" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="var" type="xs:string" minOccurs="0" maxOccurs="unbounded" />  <!-- Assignment -->
@@ -136,6 +145,7 @@
             <xs:element name="return" type="Return" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="break" type="Break" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="continue" type="Continue" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="error" type="Error" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="doc" type="xs:string" minOccurs="0" />
             <xs:element name="status" type="BodyItemStatus" />
@@ -166,6 +176,7 @@
             <xs:element name="return" type="Return" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="break" type="Break" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="continue" type="Continue" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="error" type="Error" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="doc" type="xs:string" minOccurs="0" />
             <xs:element name="status" type="BodyItemStatus" />
@@ -199,6 +210,7 @@
             <xs:element name="return" type="Return" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="break" type="Break" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="continue" type="Continue" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="error" type="Error" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="doc" type="xs:string" minOccurs="0" />
             <xs:element name="status" type="BodyItemStatus" />
@@ -235,6 +247,7 @@
             <xs:element name="return" type="Return" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="break" type="Break" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="continue" type="Continue" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="error" type="Error" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="doc" type="xs:string" minOccurs="0" />
             <xs:element name="status" type="BodyItemStatus" />
