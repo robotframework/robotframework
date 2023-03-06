@@ -236,6 +236,7 @@
             <xs:element name="status" type="BodyItemStatus" />
         </xs:choice>
         <xs:attribute name="condition" type="xs:string" />
+        <xs:attribute name="limit" type="xs:string" />
     </xs:complexType>
     <xs:complexType name="WhileIteration">
         <xs:choice maxOccurs="unbounded">
@@ -311,6 +312,7 @@
             <xs:enumeration value="PASS" />
             <xs:enumeration value="FAIL" />
             <xs:enumeration value="SKIP" />
+            <xs:enumeration value="NOT RUN" />
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="BodyItemStatus">
