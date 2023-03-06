@@ -2169,7 +2169,8 @@ messages, specify the log level explicitly by embedding the level into
 the message in the format `*LEVEL* Actual log message`, where
 `*LEVEL*` must be in the beginning of a line and `LEVEL` is
 one of the available logging levels `TRACE`, `DEBUG`,
-`INFO`, `WARN`, `ERROR` and `HTML`.
+`INFO`, `WARN`, `ERROR`, `HTML` and `CONSOLE`. Log level `CONSOLE`
+is new in Robot Framework 6.1.
 
 Errors and warnings
 '''''''''''''''''''
@@ -2274,7 +2275,8 @@ In most cases, the `INFO` level is adequate. The levels below it,
 These messages are normally not shown, but they can facilitate debugging
 possible problems in the library itself. The `WARN` or `ERROR` level can
 be used to make messages more visible and `HTML` is useful if any
-kind of formatting is needed.
+kind of formatting is needed. Level `CONSOLE` can be used when the
+message needs to shown both in console and in the log file.
 
 The following examples clarify how logging with different levels
 works.
@@ -2288,6 +2290,7 @@ works.
    print('This will be part of the previous message.')
    print('*INFO* This is a new message.')
    print('*INFO* This is <b>normal text</b>.')
+   print('*CONSOLE* This logs into console and log file.')
    print('*HTML* This is <b>bold</b>.')
    print('*HTML* <a href="http://robotframework.org">Robot Framework</a>')
 
@@ -2323,6 +2326,11 @@ works.
        <td class="time">16:18:42.123</td>
        <td class="info level">INFO</td>
        <td class="msg">This is &lt;b&gt;normal text&lt;/b&gt;.</td>
+     </tr>
+     <tr>
+       <td class="time">16:18:42.123</td>
+       <td class="info level">INFO</td>
+       <td class="msg">This logs into console and log file.</td>
      </tr>
      <tr>
        <td class="time">16:18:42.123</td>
