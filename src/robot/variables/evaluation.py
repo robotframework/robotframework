@@ -48,7 +48,7 @@ def _evaluate(expression, variable_store, modules=None, namespace=None):
     # automatically as modules. It must be also be used as the global namespace
     # with `eval()` because lambdas and possibly other special constructs don't
     # see the local namespace at all.
-    namespace = dict(namespace) if namespace else {}
+    namespace = dict(namespace or ())
     if modules:
         namespace.update(_import_modules(modules))
     local_ns = EvaluationNamespace(variable_store, namespace)
