@@ -11,6 +11,9 @@ class Hanger:
             self.ticks.append('tick')
             await asyncio.sleep(2)
 
+async def just_wait():
+    await asyncio.sleep(2)
+
 class AsyncLib:
 
     def __init__(self) -> None:
@@ -28,7 +31,8 @@ class AsyncLib:
         return asyncio.run(inner())
     
     async def can_use_gather(self):
-        asyncio.gather()
+        tasks = [just_wait() for _ in range(5)]
+        await asyncio.gather(*tasks)
 
     async def create_hanger(self):
         hanger = Hanger()
