@@ -1,5 +1,5 @@
 from enum import Enum, IntEnum
-from typing import Optional, Union, Dict, Any, List
+from typing import Any, Dict, List, Optional, Union
 try:
     from typing_extensions import TypedDict
 except ImportError:

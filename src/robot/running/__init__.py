@@ -15,23 +15,28 @@
 
 """Implements the core test execution logic.
 
-The main public entry points of this package are of the following:
+The public API of this module consists of the following objects:
 
 * :class:`~robot.running.model.TestSuite` for creating an executable
   test suite structure programmatically.
+
+* :class:`~robot.running.builder.builders.TestSuiteBuilder` for creating
+  executable test suites based on data on a file system.
+  Instead of using this class directly, it is possible to use the
+  :meth:`TestSuite.from_file_system <robot.running.model.TestSuite.from_file_system>`
+  classmethod that uses it internally.
 
 * Classes used by :class:`~robot.running.model.TestSuite`, such as
   :class:`~robot.running.model.TestCase` and :class:`~robot.running.model.Keyword`,
   that are defined in the :mod:`robot.running.model` module.
 
-* :class:`~robot.running.builder.builders.TestSuiteBuilder` for creating
-  executable test suites based on existing test case files and directories. The
-  :meth:`TestSuite.from_file_system <robot.running.model.TestSuite.from_file_system>`
-  classmethod can be used for that purpose as well.
+:class:`~robot.running.model.TestSuite` and
+:class:`~robot.running.builder.builders.TestSuiteBuilder` can be imported via
+the :mod:`robot.api` package. If other classes are needed directly, they can be
+imported via :mod:`robot.running`.
 
-The classes mentioned above can be imported via the :mod:`robot.api` package
-as the examples below demonstrate. If other model objects are needed, they
-can be imported from the :mod:`robot.running.model` module.
+.. note:: Prior to Robot Framework 6.1, only some classes in
+          :mod:`robot.running.model` were exposed via :mod:`robot.running`.
 
 Examples
 --------
@@ -48,15 +53,13 @@ First, let's assume we have the following test suite in file
         [Setup]    Set Environment Variable    SKYNET    activated
         Environment Variable Should Be Set    SKYNET
 
-We can easily parse and create an executable test suite based on the above file
-using the :class:`~robot.running.builder.TestSuiteBuilder` class as follows::
+We can easily create an executable test suite based on the above file::
 
-    from robot.api import TestSuiteBuilder
+    from robot.api import TestSuite
 
-    suite = TestSuiteBuilder().build('path/to/activate_skynet.robot')
+    suite = TestSuite.from_file_system('path/to/activate_skynet.robot')
 
-That was easy. Let's next generate the same test suite from scratch
-using the :class:`~robot.running.model.TestSuite` class::
+That was easy. Let's next generate the same test suite from scratch::
 
     from robot.api import TestSuite
 
@@ -98,11 +101,12 @@ the results is possible using the
     ResultWriter('skynet.xml').write_results()
 """
 
-from .arguments import ArgInfo, ArgumentSpec, TypeConverter
-from .builder import TestSuiteBuilder, ResourceFileBuilder
+from .arguments import ArgInfo, ArgumentSpec, TypeConverter, TypeInfo
+from .builder import ResourceFileBuilder, TestSuiteBuilder
 from .context import EXECUTION_CONTEXTS
-from .model import Keyword, TestCase, TestSuite
+from .model import (Break, Continue, For, If, IfBranch, Keyword, Return, TestCase,
+                    TestSuite, Try, TryBranch, While)
+from .runkwregister import RUN_KW_REGISTER
 from .testlibraries import TestLibrary
 from .usererrorhandler import UserErrorHandler
 from .userkeyword import UserLibrary
-from .runkwregister import RUN_KW_REGISTER

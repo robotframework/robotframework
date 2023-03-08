@@ -375,6 +375,9 @@ class ProcessResults(ResultVisitor):
     def start_while_iteration(self, iteration):
         self._add_kws_and_msgs(iteration)
 
+    def visit_error(self, error):
+        pass
+
     def visit_errors(self, errors):
         errors.msgs = errors.messages
         errors.message_count = errors.msg_count = len(errors.messages)

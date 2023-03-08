@@ -28,8 +28,7 @@ by custom scripts and tools. In such usage it is often easiest to inspect and
 modify these objects using the :mod:`visitor interface <robot.model.visitor>`.
 
 If classes defined here are needed, for example, as type hints, they can
-be imported directly from this :mod:`robot.running.model` module. This
-module is considered stable.
+be imported via the :mod:`robot.running` module.
 
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-interface
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#programmatic-modification-of-results
@@ -413,6 +412,42 @@ class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
     @deprecated
     def args(self):
         return ()
+
+    @property
+    @deprecated
+    def doc(self):
+        return ''
+
+
+@Body.register
+class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
+    __slots__ = ['status', 'starttime', 'endtime']
+    body_class = Body
+
+    def __init__(self, values=(), status='FAIL', starttime=None, endtime=None, parent=None):
+        super().__init__(values, parent)
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.body = None
+
+    @setter
+    def body(self, body):
+        """Messages as a :class:`~.Body` object.
+
+        Typically contains the message that caused the error.
+        """
+        return self.body_class(self, body)
+
+    @property
+    @deprecated
+    def kwname(self):
+        return self.values[0]
+
+    @property
+    @deprecated
+    def args(self):
+        return self.values[1:]
 
     @property
     @deprecated

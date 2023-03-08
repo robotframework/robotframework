@@ -31,7 +31,8 @@ from .statementlexers import (Lexer,
                               InlineIfHeaderLexer, EndLexer,
                               TryHeaderLexer, ExceptHeaderLexer, FinallyHeaderLexer,
                               ForHeaderLexer, WhileHeaderLexer,
-                              ContinueLexer, BreakLexer, ReturnLexer)
+                              ContinueLexer, BreakLexer, ReturnLexer,
+                              SyntaxErrorLexer)
 
 
 class BlockLexer(Lexer):
@@ -197,11 +198,6 @@ class TestOrKeywordLexer(BlockLexer):
             while statement and not statement[0].value:
                 statement.pop(0).type = None  # These tokens will be ignored
 
-    def lexer_classes(self):
-        return (TestOrKeywordSettingLexer, BreakLexer, ContinueLexer,
-                ForLexer, InlineIfLexer, IfLexer, ReturnLexer, TryLexer,
-                WhileLexer, KeywordCallLexer)
-
 
 class TestCaseLexer(TestOrKeywordLexer):
     name_type = Token.TESTCASE_NAME
@@ -212,12 +208,20 @@ class TestCaseLexer(TestOrKeywordLexer):
     def lex(self):
         self._lex_with_priority(priority=TestOrKeywordSettingLexer)
 
+    def lexer_classes(self):
+        return (TestOrKeywordSettingLexer, ForLexer, InlineIfLexer, IfLexer,
+                TryLexer, WhileLexer, SyntaxErrorLexer, KeywordCallLexer)
+
 
 class KeywordLexer(TestOrKeywordLexer):
     name_type = Token.KEYWORD_NAME
 
     def __init__(self, ctx: FileContext):
         super().__init__(ctx.keyword_context())
+
+    def lexer_classes(self):
+        return (TestOrKeywordSettingLexer, ForLexer, InlineIfLexer, IfLexer,
+                ReturnLexer, TryLexer, WhileLexer, SyntaxErrorLexer, KeywordCallLexer)
 
 
 class NestedBlockLexer(BlockLexer):
@@ -246,7 +250,7 @@ class ForLexer(NestedBlockLexer):
 
     def lexer_classes(self):
         return (ForHeaderLexer, InlineIfLexer, IfLexer, TryLexer, WhileLexer, EndLexer,
-                ReturnLexer, ContinueLexer, BreakLexer, KeywordCallLexer)
+                ReturnLexer, ContinueLexer, BreakLexer, SyntaxErrorLexer, KeywordCallLexer)
 
 
 class WhileLexer(NestedBlockLexer):
@@ -257,7 +261,7 @@ class WhileLexer(NestedBlockLexer):
 
     def lexer_classes(self):
         return (WhileHeaderLexer, ForLexer, InlineIfLexer, IfLexer, TryLexer, EndLexer,
-                ReturnLexer, ContinueLexer, BreakLexer, KeywordCallLexer)
+                ReturnLexer, ContinueLexer, BreakLexer, SyntaxErrorLexer, KeywordCallLexer)
 
 
 class TryLexer(NestedBlockLexer):
@@ -269,7 +273,7 @@ class TryLexer(NestedBlockLexer):
     def lexer_classes(self):
         return (TryHeaderLexer, ExceptHeaderLexer, ElseHeaderLexer, FinallyHeaderLexer,
                 ForLexer, InlineIfLexer, IfLexer, WhileLexer, EndLexer, ReturnLexer,
-                BreakLexer, ContinueLexer, KeywordCallLexer)
+                BreakLexer, ContinueLexer, SyntaxErrorLexer, KeywordCallLexer)
 
 
 class IfLexer(NestedBlockLexer):
@@ -281,7 +285,7 @@ class IfLexer(NestedBlockLexer):
     def lexer_classes(self):
         return (InlineIfLexer, IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
                 ForLexer, TryLexer, WhileLexer, EndLexer, ReturnLexer, ContinueLexer,
-                BreakLexer, KeywordCallLexer)
+                BreakLexer, SyntaxErrorLexer, KeywordCallLexer)
 
 
 class InlineIfLexer(BlockLexer):

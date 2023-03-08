@@ -266,6 +266,10 @@ class TestCaseBuilder(NodeVisitor):
         self.test.body.create_break(lineno=node.lineno,
                                     error=format_error(node.errors))
 
+    def visit_Error(self, node):
+        self.test.body.create_error(lineno=node.lineno,
+                                    values=node.values, error=format_error(node.errors))
+
 
 class KeywordBuilder(NodeVisitor):
 
@@ -333,6 +337,10 @@ class KeywordBuilder(NodeVisitor):
     def visit_Try(self, node):
         TryBuilder(self.kw).build(node)
 
+    def visit_Error(self, node):
+        self.kw.body.create_error(lineno=node.lineno,
+                                  values=node.values, error=format_error(node.errors))
+
 
 class ForBuilder(NodeVisitor):
 
@@ -385,6 +393,10 @@ class ForBuilder(NodeVisitor):
     def visit_Break(self, node):
         self.model.body.create_break(lineno=node.lineno,
                                      error=format_error(node.errors))
+
+    def visit_Error(self, node):
+        self.model.body.create_error(lineno=node.lineno,
+                                    values=node.values, error=format_error(node.errors))
 
 
 class IfBuilder(NodeVisitor):
@@ -457,6 +469,10 @@ class IfBuilder(NodeVisitor):
         self.model.body.create_break(lineno=node.lineno,
                                      error=format_error(node.errors))
 
+    def visit_Error(self, node):
+        self.model.body.create_error(lineno=node.lineno,
+                                     values=node.values, error=format_error(node.errors))
+
 
 class TryBuilder(NodeVisitor):
 
@@ -520,6 +536,10 @@ class TryBuilder(NodeVisitor):
     def visit_TemplateArguments(self, node):
         self.template_error = 'Templates cannot be used with TRY.'
 
+    def visit_Error(self, node):
+        self.model.body.create_error(lineno=node.lineno,
+                                     values=node.values, error=format_error(node.errors))
+
 
 class WhileBuilder(NodeVisitor):
 
@@ -571,6 +591,10 @@ class WhileBuilder(NodeVisitor):
     def visit_Continue(self, node):
         self.model.body.create_continue(error=format_error(node.errors))
 
+    def visit_Error(self, node):
+        self.model.body.create_error(lineno=node.lineno,
+                                     values=node.values, error=format_error(node.errors))
+
 
 def format_error(errors):
     if not errors:
@@ -596,6 +620,12 @@ class ErrorReporter(NodeVisitor):
 
     def __init__(self, source):
         self.source = source
+
+    def visit_TestCase(self, node):
+        pass
+
+    def visit_Keyword(self, node):
+        pass
 
     def visit_Error(self, node):
         fatal = node.get_token(Token.FATAL_ERROR)

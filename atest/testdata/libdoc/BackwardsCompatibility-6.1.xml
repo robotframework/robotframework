@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<keywordspec name="BackwardsCompatibility" type="LIBRARY" format="ROBOT" scope="GLOBAL" generated="2023-02-28T16:10:30+00:00" specversion="5" source="BackwardsCompatibility.py" lineno="1">
+<version>1.0</version>
+<doc>Library for testing backwards compatibility.
+
+Especially testing argument type information that has been changing after RF 4.
+Examples are only using features compatible with all tested versions.</doc>
+<tags>
+<tag>example</tag>
+</tags>
+<inits>
+</inits>
+<keywords>
+<kw name="Arguments" lineno="42">
+<arguments repr="a, b=2, *c, d=4, e, **f">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="a">
+<name>a</name>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="b=2">
+<name>b</name>
+<default>2</default>
+</arg>
+<arg kind="VAR_POSITIONAL" required="false" repr="*c">
+<name>c</name>
+</arg>
+<arg kind="NAMED_ONLY" required="false" repr="d=4">
+<name>d</name>
+<default>4</default>
+</arg>
+<arg kind="NAMED_ONLY" required="true" repr="e">
+<name>e</name>
+</arg>
+<arg kind="VAR_NAMED" required="false" repr="**f">
+<name>f</name>
+</arg>
+</arguments>
+<doc/>
+<shortdoc/>
+</kw>
+<kw name="Simple" lineno="34">
+<arguments repr="">
+</arguments>
+<doc>Some doc.</doc>
+<shortdoc>Some doc.</shortdoc>
+<tags>
+<tag>example</tag>
+</tags>
+</kw>
+<kw name="Special Types" lineno="50">
+<arguments repr="a: Color, b: Size">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="a: Color">
+<name>a</name>
+<type name="Color" typedoc="Color">Color</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="b: Size">
+<name>b</name>
+<type name="Size" typedoc="Size">Size</type>
+</arg>
+</arguments>
+<doc/>
+<shortdoc/>
+</kw>
+<kw name="Types" lineno="46">
+<arguments repr="a: int, b: bool = True">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="a: int">
+<name>a</name>
+<type name="int" typedoc="integer">int</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="b: bool = True">
+<name>b</name>
+<type name="bool" typedoc="boolean">bool</type>
+<default>True</default>
+</arg>
+</arguments>
+<doc/>
+<shortdoc/>
+</kw>
+<kw name="Union" lineno="54">
+<arguments repr="a: int | float">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="a: int | float">
+<name>a</name>
+<type name="Union" union="true">int | float<type name="int" typedoc="integer">int</type><type name="float" typedoc="float">float</type></type>
+</arg>
+</arguments>
+<doc/>
+<shortdoc/>
+</kw>
+</keywords>
+<datatypes>
+<enums>
+<enum name="Color">
+<doc>RGB colors.</doc>
+<members>
+<member name="RED" value="R"/>
+<member name="GREEN" value="G"/>
+<member name="BLUE" value="B"/>
+</members>
+</enum>
+</enums>
+<typeddicts>
+<typeddict name="Size">
+<doc>Some size.</doc>
+<items>
+<item key="width" type="int" required="true"/>
+<item key="height" type="int" required="true"/>
+</items>
+</typeddict>
+</typeddicts>
+</datatypes>
+<typedocs>
+<type name="boolean" type="Standard">
+<doc>Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to Boolean ``True``,
+the empty string as well as strings ``FALSE``, ``NO``, ``OFF`` and ``0``
+are converted to Boolean ``False``, and the string ``NONE`` is converted
+to the Python ``None`` object. Other strings and other accepted values are
+passed as-is, allowing keywords to handle them specially if
+needed. All string comparisons are case-insensitive.
+
+Examples: ``TRUE`` (converted to ``True``), ``off`` (converted to ``False``),
+``example`` (used as-is)
+</doc>
+<accepts>
+<type>string</type>
+<type>integer</type>
+<type>float</type>
+<type>None</type>
+</accepts>
+<usages>
+<usage>Types</usage>
+</usages>
+</type>
+<type name="Color" type="Enum">
+<doc>RGB colors.</doc>
+<accepts>
+<type>string</type>
+</accepts>
+<usages>
+<usage>Special Types</usage>
+</usages>
+<members>
+<member name="RED" value="R"/>
+<member name="GREEN" value="G"/>
+<member name="BLUE" value="B"/>
+</members>
+</type>
+<type name="float" type="Standard">
+<doc>Conversion is done using Python's
+[https://docs.python.org/library/functions.html#float|float] built-in function.
+
+Starting from RF 4.1, spaces and underscores can be used as visual separators
+for digit grouping purposes.
+
+Examples: ``3.14``, ``2.9979e8``, ``10 000.000 01``
+</doc>
+<accepts>
+<type>string</type>
+<type>Real</type>
+</accepts>
+<usages>
+<usage>Union</usage>
+</usages>
+</type>
+<type name="integer" type="Standard">
+<doc>Conversion is done using Python's [https://docs.python.org/library/functions.html#int|int]
+built-in function. Floating point
+numbers are accepted only if they can be represented as integers exactly.
+For example, ``1.0`` is accepted and ``1.1`` is not.
+
+Starting from RF 4.1, it is possible to use hexadecimal, octal and binary
+numbers by prefixing values with ``0x``, ``0o`` and ``0b``, respectively.
+
+Starting from RF 4.1, spaces and underscores can be used as visual separators
+for digit grouping purposes.
+
+Examples: ``42``, ``-1``, ``0b1010``, ``10 000 000``, ``0xBAD_C0FFEE``
+</doc>
+<accepts>
+<type>string</type>
+<type>float</type>
+</accepts>
+<usages>
+<usage>Types</usage>
+<usage>Union</usage>
+</usages>
+</type>
+<type name="Size" type="TypedDict">
+<doc>Some size.</doc>
+<accepts>
+<type>string</type>
+</accepts>
+<usages>
+<usage>Special Types</usage>
+</usages>
+<items>
+<item key="width" type="int" required="true"/>
+<item key="height" type="int" required="true"/>
+</items>
+</type>
+</typedocs>
+</keywordspec>

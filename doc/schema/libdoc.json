@@ -100,7 +100,7 @@
       "title": "SpecVersion",
       "description": "Version of the spec.",
       "enum": [
-        1
+        2
       ],
       "type": "integer"
     },
@@ -135,6 +135,44 @@
       ],
       "type": "string"
     },
+    "ArgumentType": {
+      "title": "ArgumentType",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "typedoc": {
+          "title": "Typedoc",
+          "description": "Map type to info in 'typedocs'.",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "nested": {
+          "title": "Nested",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ArgumentType"
+          }
+        },
+        "union": {
+          "title": "Union",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "nested",
+        "union"
+      ]
+    },
     "ArgumentKind": {
       "title": "ArgumentKind",
       "description": "Argument kind: positional, named, vararg, etc.",
@@ -158,8 +196,20 @@
           "title": "Name",
           "type": "string"
         },
+        "type": {
+          "title": "ArgumentType",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ArgumentType"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "types": {
           "title": "Types",
+          "description": "Deprecated. Use 'type' instead.",
           "type": "array",
           "items": {
             "type": "string"
@@ -167,15 +217,19 @@
         },
         "typedocs": {
           "title": "Typedocs",
-          "description": "Maps types to type information in 'typedocs'.",
+          "description": "Deprecated. Use 'type' instead.",
           "type": "object"
         },
         "defaultValue": {
           "title": "Defaultvalue",
           "description": "Possible default value or 'null'.",
-          "type": [
-            "string",
-            "null"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "kind": {
@@ -231,11 +285,25 @@
         },
         "private": {
           "title": "Private",
-          "type": "boolean"
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "deprecated": {
           "title": "Deprecated",
-          "type": "boolean"
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "source": {
           "title": "Source",
@@ -300,9 +368,13 @@
         },
         "required": {
           "title": "Required",
-          "type": [
-            "boolean",
-            "null"
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
           ]
         }
       },
@@ -345,18 +417,32 @@
         "members": {
           "title": "Members",
           "description": "Used only with Enum type.",
-          "type": "array",
           "items": {
             "$ref": "#/definitions/EnumMember"
-          }
+          },
+          "anyOf": [
+            {
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "items": {
           "title": "Items",
           "description": "Used only with TypedDict type.",
-          "type": "array",
           "items": {
             "$ref": "#/definitions/TypedDictItem"
-          }
+          },
+          "anyOf": [
+            {
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [

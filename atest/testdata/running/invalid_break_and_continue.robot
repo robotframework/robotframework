@@ -1,12 +1,12 @@
 *** Test cases ***
 CONTINUE in test case
-    [Documentation]    FAIL CONTINUE can only be used inside a loop.
+    [Documentation]    FAIL CONTINUE is not allowed in this context.
     Log    all good
     CONTINUE
     Fail    Should not be executed
 
 CONTINUE in keyword
-    [Documentation]    FAIL CONTINUE can only be used inside a loop.
+    [Documentation]    FAIL CONTINUE is not allowed in this context.
     Continue in keyword
 
 CONTINUE in IF
@@ -73,13 +73,13 @@ CONTINUE with argument in WHILE
     Fail    Should not be executed
 
 BREAK in test case
-    [Documentation]    FAIL BREAK can only be used inside a loop.
+    [Documentation]    FAIL BREAK is not allowed in this context.
     Log    all good
     BREAK
     Fail    Should not be executed
 
 BREAK in keyword
-    [Documentation]    FAIL BREAK can only be used inside a loop.
+    [Documentation]    FAIL BREAK is not allowed in this context.
     Break in keyword
 
 BREAK in IF

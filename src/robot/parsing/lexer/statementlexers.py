@@ -334,3 +334,18 @@ class BreakLexer(TypeAndArguments):
     @classmethod
     def handles(cls, statement: list, ctx: TestOrKeywordContext):
         return statement[0].value == 'BREAK'
+
+
+class SyntaxErrorLexer(TypeAndArguments):
+    token_type = Token.ERROR
+
+    @classmethod
+    def handles(cls, statement: list, ctx: TestOrKeywordContext):
+        return statement[0].value in \
+               {'BREAK', 'CONTINUE', 'END', 'ELSE', 'ELSE IF','EXCEPT', 'FINALLY', 'RETURN'}
+
+    def lex(self):
+        token = self.statement[0]
+        token.set_error(f'{token.value} is not allowed in this context.')
+        for t in self.statement[1:]:
+            t.type = Token.ARGUMENT

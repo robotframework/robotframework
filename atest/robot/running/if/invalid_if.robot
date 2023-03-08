@@ -58,6 +58,34 @@ ELSE after ELSE
 ELSE IF after ELSE
     FAIL    NOT RUN    NOT RUN
 
+Dangling ELSE
+    [Template]    Check Test Case
+    ${TEST NAME}
+
+Dangling ELSE inside FOR
+    [Template]    Check Test Case
+    ${TEST NAME}
+
+Dangling ELSE inside WHILE
+    [Template]    Check Test Case
+    ${TEST NAME}
+
+Dangling ELSE IF
+    [Template]    Check Test Case
+    ${TEST NAME}
+
+Dangling ELSE IF inside FOR
+    [Template]    Check Test Case
+    ${TEST NAME}
+
+Dangling ELSE IF inside WHILE
+    [Template]    Check Test Case
+    ${TEST NAME}
+
+Dangling ELSE IF inside TRY
+    [Template]    Check Test Case
+    ${TEST NAME}
+
 Invalid IF inside FOR
     FAIL
 
@@ -65,16 +93,16 @@ Multiple errors
     FAIL    NOT RUN    NOT RUN    NOT RUN    NOT RUN
 
 Invalid data causes syntax error
-    [Template]    NONE
-    Check Test Case    ${TEST NAME}
+    [Template]    Check Test Case
+    ${TEST NAME}
 
 Invalid condition causes normal error
-    [Template]    NONE
-    Check Test Case    ${TEST NAME}
+    [Template]    Check Test Case
+    ${TEST NAME}
 
 Non-existing variable in condition causes normal error
-    [Template]    NONE
-    Check Test Case    ${TEST NAME}
+    [Template]    Check Test Case
+    ${TEST NAME}
 
 *** Keywords ***
 Branch statuses should be

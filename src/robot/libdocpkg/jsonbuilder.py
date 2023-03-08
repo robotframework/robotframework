@@ -83,11 +83,24 @@ class JsonDocBuilder:
             default = arg.get('defaultValue')
             if default is not None:
                 spec.defaults[name] = default
-            arg_types = arg['types']
-            if not spec.types:
-                spec.types = {}
-            spec.types[name] = tuple(arg_types)
-            kw.type_docs[name] = arg.get('typedocs', {})
+            if arg.get('type'):
+                type_docs = {}
+                type_info = self._parse_modern_type_info(arg['type'], type_docs)
+            else:    # Compatibility with RF < 6.1.
+                type_docs = arg.get('typedocs', {})
+                type_info = tuple(arg['types'])
+            if type_info:
+                if not spec.types:
+                    spec.types = {}
+                spec.types[name] = type_info
+            kw.type_docs[name] = type_docs
+
+    def _parse_modern_type_info(self, data, type_docs):
+        if data.get('typedoc'):
+            type_docs[data['name']] = data['typedoc']
+        return {'name': data['name'],
+                'nested': [self._parse_modern_type_info(nested, type_docs)
+                           for nested in data.get('nested', ())]}
 
     def _parse_type_docs(self, type_docs):
         for data in type_docs:

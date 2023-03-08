@@ -1,14 +1,14 @@
 {
-  "specversion": 1,
+  "specversion": 2,
   "name": "DataTypesLibrary",
-  "doc": "<p>This Library has Data Types.</p>\n<p>It has some in <code>__init__</code> and others in the <a href=\"#Keywords\" class=\"name\">Keywords</a>.</p>\n<p>The DataTypes are the following that should be linked. <span class=\"name\">HttpCredentials</span> , <a href=\"#GeoLocation\" class=\"name\">GeoLocation</a> , <a href=\"#Small\" class=\"name\">Small</a> and <a href=\"#AssertionOperator\" class=\"name\">AssertionOperator</a>.</p>",
+  "doc": "<p>This Library has Data Types.</p>\n<p>It has some in <code>__init__</code> and others in the <a href=\"#Keywords\" class=\"name\">Keywords</a>.</p>\n<p>The DataTypes are the following that should be linked. <span class=\"name\">HttpCredentials</span> , <a href=\"#type-GeoLocation\" class=\"name\">GeoLocation</a> , <a href=\"#type-Small\" class=\"name\">Small</a> and <a href=\"#type-AssertionOperator\" class=\"name\">AssertionOperator</a>.</p>",
   "version": "",
-  "generated": "2022-02-10 21:21:53",
+  "generated": "2023-02-27T14:41:19+00:00",
   "type": "LIBRARY",
   "scope": "TEST",
   "docFormat": "HTML",
   "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
-  "lineno": 84,
+  "lineno": 88,
   "tags": [],
   "inits": [
     {
@@ -16,6 +16,12 @@
       "args": [
         {
           "name": "credentials",
+          "type": {
+            "name": "Small",
+            "typedoc": "Small",
+            "nested": [],
+            "union": false
+          },
           "types": [
             "Small"
           ],
@@ -28,11 +34,11 @@
           "repr": "credentials: Small = one"
         }
       ],
-      "doc": "<p>This is the init Docs.</p>\n<p>It links to <a href=\"#Set%20Location\" class=\"name\">Set Location</a> keyword and to <a href=\"#GeoLocation\" class=\"name\">GeoLocation</a> data type.</p>",
+      "doc": "<p>This is the init Docs.</p>\n<p>It links to <a href=\"#Set%20Location\" class=\"name\">Set Location</a> keyword and to <a href=\"#type-GeoLocation\" class=\"name\">GeoLocation</a> data type.</p>",
       "shortdoc": "This is the init Docs.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
-      "lineno": 93
+      "lineno": 97
     }
   ],
   "keywords": [
@@ -41,6 +47,7 @@
       "args": [
         {
           "name": "value",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -50,6 +57,25 @@
         },
         {
           "name": "operator",
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "AssertionOperator",
+                "typedoc": "AssertionOperator",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "types": [
             "AssertionOperator",
             "None"
@@ -65,6 +91,12 @@
         },
         {
           "name": "exp",
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "types": [
             "str"
           ],
@@ -77,17 +109,23 @@
           "repr": "exp: str = something?"
         }
       ],
-      "doc": "<p>This links to <a href=\"#AssertionOperator\" class=\"name\">AssertionOperator</a> .</p>\n<p>This is the next Line that links to 'Set Location` .</p>",
+      "doc": "<p>This links to <a href=\"#type-AssertionOperator\" class=\"name\">AssertionOperator</a> .</p>\n<p>This is the next Line that links to <a href=\"#Set%20Location\" class=\"name\">Set Location</a> .</p>",
       "shortdoc": "This links to `AssertionOperator` .",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
-      "lineno": 103
+      "lineno": 107
     },
     {
       "name": "Custom",
       "args": [
         {
           "name": "arg",
+          "type": {
+            "name": "CustomType",
+            "typedoc": "CustomType",
+            "nested": [],
+            "union": false
+          },
           "types": [
             "CustomType"
           ],
@@ -101,6 +139,12 @@
         },
         {
           "name": "arg2",
+          "type": {
+            "name": "CustomType2",
+            "typedoc": "CustomType2",
+            "nested": [],
+            "union": false
+          },
           "types": [
             "CustomType2"
           ],
@@ -114,6 +158,12 @@
         },
         {
           "name": "arg3",
+          "type": {
+            "name": "CustomType",
+            "typedoc": "CustomType",
+            "nested": [],
+            "union": false
+          },
           "types": [
             "CustomType"
           ],
@@ -124,19 +174,91 @@
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "arg3: CustomType"
+        },
+        {
+          "name": "arg4",
+          "type": {
+            "name": "Unknown",
+            "typedoc": null,
+            "nested": [],
+            "union": false
+          },
+          "types": [
+            "Unknown"
+          ],
+          "typedocs": {},
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "arg4: Unknown"
         }
       ],
       "doc": "",
       "shortdoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
-      "lineno": 127
+      "lineno": 131
     },
     {
       "name": "Funny Unions",
       "args": [
         {
           "name": "funny",
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "bool",
+                "typedoc": "boolean",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "int",
+                "typedoc": "integer",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "float",
+                "typedoc": "float",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "AssertionOperator",
+                "typedoc": "AssertionOperator",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Small",
+                "typedoc": "Small",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "GeoLocation",
+                "typedoc": "GeoLocation",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "types": [
             "bool",
             "int",
@@ -167,13 +289,19 @@
       "shortdoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
-      "lineno": 110
+      "lineno": 114
     },
     {
       "name": "Set Location",
       "args": [
         {
           "name": "location",
+          "type": {
+            "name": "GeoLocation",
+            "typedoc": "GeoLocation",
+            "nested": [],
+            "union": false
+          },
           "types": [
             "GeoLocation"
           ],
@@ -190,18 +318,32 @@
       "shortdoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
-      "lineno": 100
+      "lineno": 104
     },
     {
       "name": "Typing Types",
       "args": [
         {
           "name": "list_of_str",
+          "type": {
+            "name": "List",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": false
+          },
           "types": [
             "List[str]"
           ],
           "typedocs": {
-            "List[str]": "list"
+            "List": "list",
+            "str": "string"
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -210,11 +352,32 @@
         },
         {
           "name": "dict_str_int",
+          "type": {
+            "name": "Dict",
+            "typedoc": "dictionary",
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "int",
+                "typedoc": "integer",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": false
+          },
           "types": [
             "Dict[str, int]"
           ],
           "typedocs": {
-            "Dict[str, int]": "dictionary"
+            "Dict": "dictionary",
+            "str": "string",
+            "int": "integer"
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -223,10 +386,18 @@
         },
         {
           "name": "whatever",
+          "type": {
+            "name": "Any",
+            "typedoc": "Any",
+            "nested": [],
+            "union": false
+          },
           "types": [
             "Any"
           ],
-          "typedocs": {},
+          "typedocs": {
+            "Any": "Any"
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -234,11 +405,25 @@
         },
         {
           "name": "args",
+          "type": {
+            "name": "List",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "Any",
+                "typedoc": "Any",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": false
+          },
           "types": [
             "List[Any]"
           ],
           "typedocs": {
-            "List[Any]": "list"
+            "List": "list",
+            "Any": "Any"
           },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -250,7 +435,7 @@
       "shortdoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
-      "lineno": 124
+      "lineno": 128
     }
   ],
   "dataTypes": {
@@ -337,6 +522,17 @@
   },
   "typedocs": [
     {
+      "type": "Standard",
+      "name": "Any",
+      "doc": "<p>Any value is accepted. No conversion is done.</p>",
+      "usages": [
+        "Typing Types"
+      ],
+      "accepts": [
+        "Any"
+      ]
+    },
+    {
       "type": "Enum",
       "name": "AssertionOperator",
       "doc": "<p>This is some Doc</p>\n<p>This has was defined by assigning to __doc__.</p>",
@@ -412,7 +608,7 @@
     {
       "type": "Standard",
       "name": "dictionary",
-      "doc": "<p>Strings must be Python <a href=\"https://docs.python.org/library/stdtypes.html#dict\">dictionary</a> literals. They are converted to actual dictionaries using the <a href=\"https://docs.python.org/library/ast.html#ast.literal_eval\">ast.literal_eval</a> function. They can contain any values <code>ast.literal_eval</code> supports, including dictionaries and other containers.</p>\n<p>Examples: <code>{'a': 1, 'b': 2}</code>, <code>{'key': 1, 'nested': {'key': 2}}</code></p>",
+      "doc": "<p>Strings must be Python <a href=\"https://docs.python.org/library/stdtypes.html#dict\">dictionary</a> literals. They are converted to actual dictionaries using the <a href=\"https://docs.python.org/library/ast.html#ast.literal_eval\">ast.literal_eval</a> function. They can contain any values <code>ast.literal_eval</code> supports, including dictionaries and other containers.</p>\n<p>If the type has nested types like <code>dict[str, int]</code>, items are converted to those types automatically. This in new in Robot Framework 6.0.</p>\n<p>Examples: <code>{'a': 1, 'b': 2}</code>, <code>{'key': 1, 'nested': {'key': 2}}</code></p>",
       "usages": [
         "Typing Types"
       ],
@@ -467,7 +663,8 @@
       "name": "integer",
       "doc": "<p>Conversion is done using Python's <a href=\"https://docs.python.org/library/functions.html#int\">int</a> built-in function. Floating point numbers are accepted only if they can be represented as integers exactly. For example, <code>1.0</code> is accepted and <code>1.1</code> is not.</p>\n<p>Starting from RF 4.1, it is possible to use hexadecimal, octal and binary numbers by prefixing values with <code>0x</code>, <code>0o</code> and <code>0b</code>, respectively.</p>\n<p>Starting from RF 4.1, spaces and underscores can be used as visual separators for digit grouping purposes.</p>\n<p>Examples: <code>42</code>, <code>-1</code>, <code>0b1010</code>, <code>10 000 000</code>, <code>0xBAD_C0FFEE</code></p>",
       "usages": [
-        "Funny Unions"
+        "Funny Unions",
+        "Typing Types"
       ],
       "accepts": [
         "string",
@@ -477,7 +674,7 @@
     {
       "type": "Standard",
       "name": "list",
-      "doc": "<p>Strings must be Python <a href=\"https://docs.python.org/library/stdtypes.html#list\">list</a> literals. They are converted to actual lists using the <a href=\"https://docs.python.org/library/ast.html#ast.literal_eval\">ast.literal_eval</a> function. They can contain any values <code>ast.literal_eval</code> supports, including lists and other containers.</p>\n<p>Examples: <code>['one', 'two']</code>, <code>[('one', 1), ('two', 2)]</code></p>",
+      "doc": "<p>Strings must be Python <a href=\"https://docs.python.org/library/stdtypes.html#list\">list</a> literals. They are converted to actual lists using the <a href=\"https://docs.python.org/library/ast.html#ast.literal_eval\">ast.literal_eval</a> function. They can contain any values <code>ast.literal_eval</code> supports, including lists and other containers.</p>\n<p>If the type has nested types like <code>list[int]</code>, items are converted to those types automatically. This in new in Robot Framework 6.0.</p>\n<p>Examples: <code>['one', 'two']</code>, <code>[('one', 1), ('two', 2)]</code></p>",
       "usages": [
         "Typing Types"
       ],
@@ -535,7 +732,8 @@
       "doc": "<p>All arguments are converted to Unicode strings.</p>",
       "usages": [
         "Assert Something",
-        "Funny Unions"
+        "Funny Unions",
+        "Typing Types"
       ],
       "accepts": [
         "Any"

@@ -320,3 +320,19 @@ class Break(BodyItem):
 
     def to_dict(self):
         return {'type': self.type}
+
+
+@Body.register
+class Error(BodyItem):
+    type = BodyItem.ERROR
+    __slots__ = ['values']
+
+    def __init__(self, values, parent=None):
+        self.values = values
+        self.parent = parent
+
+    def visit(self, visitor):
+        visitor.visit_error(self)
+
+    def to_dict(self):
+        return {'type': self.type, 'data': self.data}

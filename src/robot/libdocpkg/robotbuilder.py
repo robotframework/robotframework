@@ -18,9 +18,9 @@ import sys
 import re
 
 from robot.errors import DataError
-from robot.running import (ResourceFileBuilder, TestLibrary, TestSuiteBuilder,
-                           UserLibrary, UserErrorHandler)
-from robot.utils import is_string, split_tags_from_doc, type_repr, unescape
+from robot.running import (ArgInfo, ResourceFileBuilder, TestLibrary, TestSuiteBuilder,
+                           TypeInfo, UserLibrary, UserErrorHandler)
+from robot.utils import is_string, split_tags_from_doc, unescape
 from robot.variables import search_variable
 
 from .datatypes import TypeDoc
@@ -70,14 +70,20 @@ class LibraryDocBuilder:
         for kw in keywords:
             for arg in kw.args:
                 kw.type_docs[arg.name] = {}
-                for typ in arg.types:
-                    type_doc = TypeDoc.for_type(typ, custom_converters)
+                for type_info in self._yield_type_info(arg.type):
+                    type_doc = TypeDoc.for_type(type_info.type, custom_converters)
                     if type_doc:
-                        kw.type_docs[arg.name][type_repr(typ)] = type_doc.name
+                        kw.type_docs[arg.name][type_info.name] = type_doc.name
                         type_docs.setdefault(type_doc, set()).add(kw.name)
         for type_doc, usages in type_docs.items():
             type_doc.usages = sorted(usages, key=str.lower)
         return set(type_docs)
+
+    def _yield_type_info(self, info: TypeInfo):
+        if not info.is_union:
+            yield info
+        for nested in info.nested:
+            yield from self._yield_type_info(nested)
 
 
 class ResourceDocBuilder:

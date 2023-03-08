@@ -1,0 +1,370 @@
+{
+  "specversion": 2,
+  "name": "BackwardsCompatibility",
+  "doc": "Library for testing backwards compatibility.\n\nEspecially testing argument type information that has been changing after RF 4.\nExamples are only using features compatible with all tested versions.",
+  "version": "1.0",
+  "generated": "2023-02-28T16:25:49+00:00",
+  "type": "LIBRARY",
+  "scope": "GLOBAL",
+  "docFormat": "ROBOT",
+  "source": "BackwardsCompatibility.py",
+  "lineno": 1,
+  "tags": [
+    "example"
+  ],
+  "inits": [],
+  "keywords": [
+    {
+      "name": "Arguments",
+      "args": [
+        {
+          "name": "a",
+          "type": null,
+          "types": [],
+          "typedocs": {},
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "a"
+        },
+        {
+          "name": "b",
+          "type": null,
+          "types": [],
+          "typedocs": {},
+          "defaultValue": "2",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "b=2"
+        },
+        {
+          "name": "c",
+          "type": null,
+          "types": [],
+          "typedocs": {},
+          "defaultValue": null,
+          "kind": "VAR_POSITIONAL",
+          "required": false,
+          "repr": "*c"
+        },
+        {
+          "name": "d",
+          "type": null,
+          "types": [],
+          "typedocs": {},
+          "defaultValue": "4",
+          "kind": "NAMED_ONLY",
+          "required": false,
+          "repr": "d=4"
+        },
+        {
+          "name": "e",
+          "type": null,
+          "types": [],
+          "typedocs": {},
+          "defaultValue": null,
+          "kind": "NAMED_ONLY",
+          "required": true,
+          "repr": "e"
+        },
+        {
+          "name": "f",
+          "type": null,
+          "types": [],
+          "typedocs": {},
+          "defaultValue": null,
+          "kind": "VAR_NAMED",
+          "required": false,
+          "repr": "**f"
+        }
+      ],
+      "doc": "",
+      "shortdoc": "",
+      "tags": [],
+      "source": "BackwardsCompatibility.py",
+      "lineno": 42
+    },
+    {
+      "name": "Simple",
+      "args": [],
+      "doc": "Some doc.",
+      "shortdoc": "Some doc.",
+      "tags": [
+        "example"
+      ],
+      "source": "BackwardsCompatibility.py",
+      "lineno": 34
+    },
+    {
+      "name": "Special Types",
+      "args": [
+        {
+          "name": "a",
+          "type": {
+            "name": "Color",
+            "typedoc": "Color",
+            "nested": [],
+            "union": false
+          },
+          "types": [
+            "Color"
+          ],
+          "typedocs": {
+            "Color": "Color"
+          },
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "a: Color"
+        },
+        {
+          "name": "b",
+          "type": {
+            "name": "Size",
+            "typedoc": "Size",
+            "nested": [],
+            "union": false
+          },
+          "types": [
+            "Size"
+          ],
+          "typedocs": {
+            "Size": "Size"
+          },
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "b: Size"
+        }
+      ],
+      "doc": "",
+      "shortdoc": "",
+      "tags": [],
+      "source": "BackwardsCompatibility.py",
+      "lineno": 50
+    },
+    {
+      "name": "Types",
+      "args": [
+        {
+          "name": "a",
+          "type": {
+            "name": "int",
+            "typedoc": "integer",
+            "nested": [],
+            "union": false
+          },
+          "types": [
+            "int"
+          ],
+          "typedocs": {
+            "int": "integer"
+          },
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "a: int"
+        },
+        {
+          "name": "b",
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
+          "types": [
+            "bool"
+          ],
+          "typedocs": {
+            "bool": "boolean"
+          },
+          "defaultValue": "True",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "b: bool = True"
+        }
+      ],
+      "doc": "",
+      "shortdoc": "",
+      "tags": [],
+      "source": "BackwardsCompatibility.py",
+      "lineno": 46
+    },
+    {
+      "name": "Union",
+      "args": [
+        {
+          "name": "a",
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "int",
+                "typedoc": "integer",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "float",
+                "typedoc": "float",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
+          "types": [
+            "int",
+            "float"
+          ],
+          "typedocs": {
+            "int": "integer",
+            "float": "float"
+          },
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "a: int | float"
+        }
+      ],
+      "doc": "",
+      "shortdoc": "",
+      "tags": [],
+      "source": "BackwardsCompatibility.py",
+      "lineno": 54
+    }
+  ],
+  "dataTypes": {
+    "enums": [
+      {
+        "type": "Enum",
+        "name": "Color",
+        "doc": "RGB colors.",
+        "members": [
+          {
+            "name": "RED",
+            "value": "R"
+          },
+          {
+            "name": "GREEN",
+            "value": "G"
+          },
+          {
+            "name": "BLUE",
+            "value": "B"
+          }
+        ]
+      }
+    ],
+    "typedDicts": [
+      {
+        "type": "TypedDict",
+        "name": "Size",
+        "doc": "Some size.",
+        "items": [
+          {
+            "key": "width",
+            "type": "int",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "int",
+            "required": true
+          }
+        ]
+      }
+    ]
+  },
+  "typedocs": [
+    {
+      "type": "Standard",
+      "name": "boolean",
+      "doc": "Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to Boolean ``True``,\nthe empty string as well as strings ``FALSE``, ``NO``, ``OFF`` and ``0``\nare converted to Boolean ``False``, and the string ``NONE`` is converted\nto the Python ``None`` object. Other strings and other accepted values are\npassed as-is, allowing keywords to handle them specially if\nneeded. All string comparisons are case-insensitive.\n\nExamples: ``TRUE`` (converted to ``True``), ``off`` (converted to ``False``),\n``example`` (used as-is)\n",
+      "usages": [
+        "Types"
+      ],
+      "accepts": [
+        "string",
+        "integer",
+        "float",
+        "None"
+      ]
+    },
+    {
+      "type": "Enum",
+      "name": "Color",
+      "doc": "RGB colors.",
+      "usages": [
+        "Special Types"
+      ],
+      "accepts": [
+        "string"
+      ],
+      "members": [
+        {
+          "name": "RED",
+          "value": "R"
+        },
+        {
+          "name": "GREEN",
+          "value": "G"
+        },
+        {
+          "name": "BLUE",
+          "value": "B"
+        }
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "float",
+      "doc": "Conversion is done using Python's\n[https://docs.python.org/library/functions.html#float|float] built-in function.\n\nStarting from RF 4.1, spaces and underscores can be used as visual separators\nfor digit grouping purposes.\n\nExamples: ``3.14``, ``2.9979e8``, ``10 000.000 01``\n",
+      "usages": [
+        "Union"
+      ],
+      "accepts": [
+        "string",
+        "Real"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "integer",
+      "doc": "Conversion is done using Python's [https://docs.python.org/library/functions.html#int|int]\nbuilt-in function. Floating point\nnumbers are accepted only if they can be represented as integers exactly.\nFor example, ``1.0`` is accepted and ``1.1`` is not.\n\nStarting from RF 4.1, it is possible to use hexadecimal, octal and binary\nnumbers by prefixing values with ``0x``, ``0o`` and ``0b``, respectively.\n\nStarting from RF 4.1, spaces and underscores can be used as visual separators\nfor digit grouping purposes.\n\nExamples: ``42``, ``-1``, ``0b1010``, ``10 000 000``, ``0xBAD_C0FFEE``\n",
+      "usages": [
+        "Types",
+        "Union"
+      ],
+      "accepts": [
+        "string",
+        "float"
+      ]
+    },
+    {
+      "type": "TypedDict",
+      "name": "Size",
+      "doc": "Some size.",
+      "usages": [
+        "Special Types"
+      ],
+      "accepts": [
+        "string"
+      ],
+      "items": [
+        {
+          "key": "width",
+          "type": "int",
+          "required": true
+        },
+        {
+          "key": "height",
+          "type": "int",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

@@ -38,35 +38,44 @@ Custom
     ...    <p>Class doc is used when converter method has no doc.</p>
 
 Accepted types
-    Accepted Types Should Be    1     Standard     boolean
+    Accepted Types Should Be    0     Standard     Any
+    ...    Any
+    Accepted Types Should Be    2     Standard     boolean
     ...    string    integer    float    None
-    Accepted Types Should Be    2     Custom       CustomType
+    Accepted Types Should Be    3     Custom       CustomType
     ...    string    integer
-    Accepted Types Should Be    3     Custom       CustomType2
-    Accepted Types Should Be    6     TypedDict    GeoLocation
+    Accepted Types Should Be    4     Custom       CustomType2
+    Accepted Types Should Be    7     TypedDict    GeoLocation
     ...    string
-    Accepted Types Should Be    0     Enum         AssertionOperator
+    Accepted Types Should Be    1     Enum         AssertionOperator
     ...    string
-    Accepted Types Should Be    10    Enum         Small
+    Accepted Types Should Be    11    Enum         Small
     ...    string    integer
 
 Usages
-    Usages Should Be    1     Standard     boolean
+    Usages Should Be    2     Standard     boolean
     ...    Funny Unions
-    Usages Should Be    2     Custom       CustomType
+    Usages Should Be    3     Custom       CustomType
     ...    Custom
-    Usages Should be    6     TypedDict    GeoLocation
+    Usages Should be    7     TypedDict    GeoLocation
     ...    Funny Unions    Set Location
-    Usages Should Be    10    Enum         Small
+    Usages Should Be    11    Enum         Small
     ...    __init__    Funny Unions
+    Usages Should Be    12    Standard    string
+    ...    Assert Something    Funny Unions    Typing Types
 
 Typedoc links in arguments
-    Typedoc links should be    0    1    AssertionOperator    None
+    Typedoc links should be    0    1    Union:
+    ...    AssertionOperator    None
     Typedoc links should be    0    2    str:string
     Typedoc links should be    1    0    CustomType
     Typedoc links should be    1    1    CustomType2
-    Typedoc links should be    2    0    bool:boolean    int:integer    float    str:string    AssertionOperator    Small    GeoLocation    None
-    Typedoc links should be    4    0    List[str]:list
-    Typedoc links should be    4    1    Dict[str, int]:dictionary
-    Typedoc links should be    4    2    Any:
-    Typedoc links should be    4    3    List[Any]:list
+    Typedoc links should be    2    0    Union:
+    ...    bool:boolean    int:integer    float    str:string    AssertionOperator    Small    GeoLocation    None
+    Typedoc links should be    4    0    List:list
+    ...    str:string
+    Typedoc links should be    4    1    Dict:dictionary
+    ...    str:string    int:integer
+    Typedoc links should be    4    2    Any
+    Typedoc links should be    4    3    List:list
+    ...    Any
