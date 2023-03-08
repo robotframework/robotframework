@@ -1,5 +1,8 @@
 import asyncio
 
+from robot.libraries.BuiltIn import BuiltIn
+
+
 class Hanger:
 
     def __init__(self) -> None:
@@ -9,7 +12,7 @@ class Hanger:
     async def start_async_process(self):
         while True:
             self.ticks.append('tick')
-            await asyncio.sleep(2)
+            await asyncio.sleep(0.5)
 
 async def just_wait():
     await asyncio.sleep(2)
@@ -41,3 +44,6 @@ class AsyncLib:
     
     async def stop_task_from_hanger(self, hanger):
         hanger.task.cancel()
+
+    async def run_keyword_using_builtin(self):
+        return await BuiltIn().run_keyword("Basic Async Test")

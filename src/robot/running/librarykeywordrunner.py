@@ -108,7 +108,10 @@ class LibraryKeywordRunner:
             STOP_SIGNAL_MONITOR.start_running_keyword(context.in_teardown)
             runner_result = runner()
             if asyncio.iscoroutine(runner_result):
-                runner_result = context.event_loop.run_until_complete(runner_result)
+                try:
+                    asyncio.get_running_loop()
+                except RuntimeError:
+                    runner_result = context.event_loop.run_until_complete(runner_result)
             return runner_result
         finally:
             STOP_SIGNAL_MONITOR.stop_running_keyword()

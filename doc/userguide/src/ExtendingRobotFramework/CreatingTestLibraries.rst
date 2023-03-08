@@ -1994,8 +1994,8 @@ More examples of functionality:
 
 .. note:: RF will run the function until it completes, if you want to have a task that runs
           for a long time, use asyncio.create_task(). It's your responsibility to manage the
-          task, if the event loop closes and the task is still running, a log will be printed
-          in the console.
+          task and save a reference to avoid it being garbage collected. if the event loop
+          closes and the task is still pending, a log will be printed in the console.
 
 Communicating with Robot Framework
 ----------------------------------
