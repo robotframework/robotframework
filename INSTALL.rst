@@ -320,18 +320,3 @@ __ https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtua
 .. _PATH: `Configuring path`_
 .. _PyPI: https://pypi.org/project/robotframework
 .. _GitHub: https://github.com/robotframework/robotframework
-
-
-Zipapp 
---------------------
-For example to create a zipapp (https://docs.python.org/3/library/zipapp.html) using pdm 
-(https://pdm.fming.dev/latest/) with the packer extension (https://github.com/frostming/pdm-packer).
-
-.. sourcecode:: bash
-    
-    $ pdm init 
-    $ pdm add robotframework
-    $ #If the target is python 3.6: pdm add importlib_resources         
-    $ pdm pack -m robot:run_cli
-
-At this point you have created a zipapp.
