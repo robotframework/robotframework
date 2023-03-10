@@ -29,7 +29,7 @@ Notice also that libraries typically use the static API and do not need any
 base class.
 
 .. note:: These classes are not exposed via the top level :mod:`robot.api`
-          package. They need to imported via :mod:`robot.api.interfaces`.
+          package and need to imported via :mod:`robot.api.interfaces`.
 
 .. note:: Using :class:`ListenerV2` and :class:`ListenerV3` requires Python 3.8
           or newer.
