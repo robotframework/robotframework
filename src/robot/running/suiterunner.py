@@ -85,7 +85,18 @@ class SuiteRunner(SuiteVisitor):
                                                suites=suite.suites,
                                                test_count=suite.test_count))
         self._output.register_error_listener(self._suite_status.error_occurred)
-        self._run_setup(suite.setup, self._suite_status)
+        if self._any_test_run(suite):
+            self._run_setup(suite.setup, self._suite_status)
+
+    def _any_test_run(self, suite):
+        skipped_tags = self._skipped_tags
+        for test in suite.all_tests:
+            tags = test.tags
+            if not (skipped_tags.match(tags)
+                    or tags.robot('skip')
+                    or tags.robot('exclude')):
+                return True
+        return False
 
     def _resolve_setting(self, value):
         if is_list_like(value):
