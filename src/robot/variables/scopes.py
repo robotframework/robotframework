@@ -162,7 +162,7 @@ class VariableScopes:
 
 
 class GlobalVariables(Variables):
-    _import_by_path_ends = ('.py', '/', os.sep, '.yaml', '.yml')
+    _import_by_path_ends = ('.py', '/', os.sep, '.yaml', '.yml', '.json')
 
     def __init__(self, settings):
         super().__init__()
