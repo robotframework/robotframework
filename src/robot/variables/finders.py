@@ -29,14 +29,14 @@ NOT_FOUND = object()
 
 class VariableFinder:
 
-    def __init__(self, variable_store):
-        self._finders = (StoredFinder(variable_store),
+    def __init__(self, variables):
+        self._finders = (StoredFinder(variables.store),
                          NumberFinder(),
                          EmptyFinder(),
-                         InlinePythonFinder(variable_store),
+                         InlinePythonFinder(variables),
                          EnvironmentFinder(),
                          ExtendedFinder(self))
-        self._store = variable_store
+        self._store = variables.store
 
     def find(self, variable):
         match = self._get_match(variable)

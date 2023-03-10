@@ -103,7 +103,12 @@ Assign when ELSE IF branch is empty
 Assign when ELSE branch is empty
     FAIL    NOT RUN
 
-Assign with RETURN
+Control structures are allowed
+    [Template]    NONE
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check IF/ELSE Status    NOT RUN    PASS    root=${tc.body[0].body[0]}
+
+Control structures are not allowed with assignment
     [Template]    NONE
     ${tc} =    Check Test Case    ${TESTNAME}
     Check IF/ELSE Status    FAIL    NOT RUN    root=${tc.body[0].body[0]}

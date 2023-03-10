@@ -3432,7 +3432,7 @@ class _Misc(_BuiltInBase):
         ``modules=rootmod, rootmod.submod``.
         """
         try:
-            return evaluate_expression(expression, self._variables.current.store,
+            return evaluate_expression(expression, self._variables.current,
                                        modules, namespace)
         except DataError as err:
             raise RuntimeError(err.message)

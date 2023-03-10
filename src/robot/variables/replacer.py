@@ -24,8 +24,8 @@ from .search import VariableMatch, search_variable
 
 class VariableReplacer:
 
-    def __init__(self, variable_store):
-        self._finder = VariableFinder(variable_store)
+    def __init__(self, variables):
+        self._finder = VariableFinder(variables)
 
     def replace_list(self, items, replace_until=None, ignore_errors=False):
         """Replaces variables from a list of items.

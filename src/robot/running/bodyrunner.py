@@ -388,13 +388,11 @@ class WhileRunner:
 
     def _should_run(self, condition, variables):
         try:
-            condition = variables.replace_scalar(condition)
-            if is_string(condition):
-                return evaluate_expression(condition, variables.current.store)
-            return bool(condition)
+            return evaluate_expression(condition, variables.current,
+                                       resolve_variables=True)
         except Exception:
             msg = get_error_message()
-            raise DataError(f'Evaluating WHILE condition failed: {msg}')
+            raise DataError(f'Invalid WHILE condition: {msg}')
 
 
 class IfRunner:
@@ -464,13 +462,11 @@ class IfRunner:
         if condition is None:
             return True
         try:
-            condition = variables.replace_scalar(condition)
-            if is_string(condition):
-                return evaluate_expression(condition, variables.current.store)
-            return bool(condition)
+            return evaluate_expression(condition, variables.current,
+                                       resolve_variables=True)
         except Exception:
             msg = get_error_message()
-            raise DataError(f'Evaluating {branch.type} condition failed: {msg}')
+            raise DataError(f'Invalid {branch.type} condition: {msg}')
 
 
 class TryRunner:
