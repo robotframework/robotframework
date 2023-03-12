@@ -32,11 +32,11 @@ class Settings:
         'Test Timeout',
         'Test Template',
         'Timeout',
-        'Template'
+        'Template',
+        'Suite Name'
     )
     name_and_arguments = (
         'Metadata',
-        'Suite Name',
         'Suite Setup',
         'Suite Teardown',
         'Test Setup',
