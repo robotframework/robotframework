@@ -28,7 +28,7 @@ class TestJsonConverter(unittest.TestCase):
                      fullName='Misc',
                      doc='<p>My doc</p>',
                      metadata=[('1', '<p>2</p>'), ('abc', '<p>123</p>')],
-                     numberOfTests=190,
+                     numberOfTests=192,
                      tests=[],
                      keywords=[])
         test_convert(self.suite['suites'][0],
@@ -155,7 +155,7 @@ class TestJsonConverter(unittest.TestCase):
 
     def test_for_loops(self):
         test_convert(self.suite['suites'][1]['tests'][0]['keywords'][0],
-                     name='${pet} IN [ cat | dog | horse ]',
+                     name='${pet} IN [ @{ANIMALS} ]',
                      arguments='',
                      type='FOR')
         test_convert(self.suite['suites'][1]['tests'][1]['keywords'][0],

@@ -78,7 +78,7 @@ class KeywordType:
             if kwname == '':
                 source = os.path.basename(source)
                 if source == 'for_loops.robot':
-                    return 'BREAK' if lineno == 10 else 'CONTINUE'
+                    return 'BREAK' if lineno == 14 else 'CONTINUE'
                 return 'ELSE'
         expected = args[0] if libname == 'BuiltIn' else kwname
         return {'Suite Setup': 'SETUP', 'Suite Teardown': 'TEARDOWN',
