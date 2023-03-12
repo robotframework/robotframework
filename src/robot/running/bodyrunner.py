@@ -248,7 +248,7 @@ class ForInRangeRunner(ForInRunner):
             msg = get_error_message()
             raise DataError(f'Converting FOR IN RANGE values failed: {msg}.')
         values = frange(*values)
-        return ForInRunner._map_values_to_rounds(self, values, per_round)
+        return super()._map_values_to_rounds(values, per_round)
 
     def _to_number_with_arithmetic(self, item):
         if is_number(item):
