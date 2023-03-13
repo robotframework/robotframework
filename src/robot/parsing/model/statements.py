@@ -126,6 +126,10 @@ class Statement(ast.AST):
         """Return values of tokens having any of the given ``types``."""
         return tuple(t.value for t in self.tokens if t.type in types)
 
+    def get_option(self, name):
+        options = dict(opt.split('=', 1) for opt in self.get_values(Token.OPTION))
+        return options.get(name)
+
     @property
     def lines(self):
         line = []
@@ -821,11 +825,7 @@ class ForHeader(Statement):
 
     @property
     def start(self):
-        if self.flavor == 'IN ENUMERATE':
-            value = self.get_value(Token.OPTION)
-            if value:
-                return value[len('start='):]
-        return None
+        return self.get_option('start') if self.flavor == 'IN ENUMERATE' else None
 
     def validate(self, ctx: 'ValidationContext'):
         if not self.variables:
@@ -969,8 +969,7 @@ class ExceptHeader(Statement):
 
     @property
     def pattern_type(self):
-        value = self.get_value(Token.OPTION)
-        return value[len('type='):] if value else None
+        return self.get_option('type')
 
     @property
     def variable(self):
@@ -1021,8 +1020,7 @@ class WhileHeader(Statement):
 
     @property
     def limit(self):
-        value = self.get_value(Token.OPTION)
-        return value[len('limit='):] if value else None
+        return self.get_option('limit')
 
     def validate(self, ctx: 'ValidationContext'):
         values = self.get_values(Token.ARGUMENT)
