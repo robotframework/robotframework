@@ -348,7 +348,8 @@ class ForBuilder(NodeVisitor):
     def build(self, node):
         error = format_error(self._get_errors(node))
         self.model = self.parent.body.create_for(
-            node.variables, node.flavor, node.values, lineno=node.lineno, error=error
+            node.variables, node.flavor, node.values, node.start,
+            lineno=node.lineno, error=error
         )
         for step in node.body:
             self.visit(step)

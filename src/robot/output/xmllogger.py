@@ -100,7 +100,10 @@ class XmlLogger(ResultVisitor):
         self._writer.end('branch')
 
     def start_for(self, for_):
-        self._writer.start('for', {'flavor': for_.flavor})
+        attrs = {'flavor': for_.flavor}
+        if for_.start is not None:
+            attrs['start'] = for_.start
+        self._writer.start('for', attrs)
         for name in for_.variables:
             self._writer.element('var', name)
         for value in for_.values:

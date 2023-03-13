@@ -101,7 +101,7 @@ class ForInRunner:
                 error = DataError(data.error, syntax=True)
             else:
                 run = True
-        result = ForResult(data.variables, data.flavor, data.values)
+        result = ForResult(data.variables, data.flavor, data.values, data.start)
         with StatusReporter(data, result, self._context, run) as status:
             if run:
                 try:
@@ -261,7 +261,6 @@ class ForInRangeRunner(ForInRunner):
 
 class ForInZipRunner(ForInRunner):
     flavor = 'IN ZIP'
-    _start = 0
 
     def _resolve_dict_values(self, values):
         raise DataError('FOR IN ZIP loops do not support iterating over dictionaries.',
@@ -279,35 +278,23 @@ class ForInZipRunner(ForInRunner):
 
 class ForInEnumerateRunner(ForInRunner):
     flavor = 'IN ENUMERATE'
+    _start = 0
 
-    def _is_dict_iteration(self, values):
-        if values and values[-1].startswith('start='):
-            values = values[:-1]
-        return super()._is_dict_iteration(values)
+    def _get_values_for_rounds(self, data):
+        self._start = self._resolve_start(data.start)
+        return super()._get_values_for_rounds(data)
 
-    def _resolve_dict_values(self, values):
-        self._start, values = self._get_start(values)
-        return ForInRunner._resolve_dict_values(self, values)
-
-    def _resolve_values(self, values):
-        self._start, values = self._get_start(values)
-        return ForInRunner._resolve_values(self, values)
-
-    def _get_start(self, values):
-        if not values[-1].startswith('start='):
-            return 0, values
-        *values, start = values
-        if not values:
-            raise DataError('FOR loop has no loop values.', syntax=True)
+    def _resolve_start(self, start):
+        if not start or self._context.dry_run:
+            return 0
         try:
-            start = self._context.variables.replace_string(start[6:])
+            start = self._context.variables.replace_string(start)
             try:
-                start = int(start)
+                return int(start)
             except ValueError:
                 raise DataError(f"Start value must be an integer, got '{start}'.")
         except DataError as err:
             raise DataError(f'Invalid start value: {err}')
-        return start, values
 
     def _map_dict_values_to_rounds(self, values, per_round):
         if per_round > 3:
@@ -320,7 +307,7 @@ class ForInEnumerateRunner(ForInRunner):
 
     def _map_values_to_rounds(self, values, per_round):
         per_round = max(per_round-1, 1)
-        values = ForInRunner._map_values_to_rounds(self, values, per_round)
+        values = super()._map_values_to_rounds(values, per_round)
         return ([i] + v for i, v in enumerate(values, start=self._start))
 
     def _raise_wrong_variable_count(self, variables, values):

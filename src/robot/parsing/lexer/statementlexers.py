@@ -190,15 +190,18 @@ class ForHeaderLexer(StatementLexer):
 
     def lex(self):
         self.statement[0].type = Token.FOR
-        separator_seen = False
+        separator = None
         for token in self.statement[1:]:
-            if separator_seen:
+            if separator:
                 token.type = Token.ARGUMENT
             elif normalize_whitespace(token.value) in self.separators:
                 token.type = Token.FOR_SEPARATOR
-                separator_seen = True
+                separator = normalize_whitespace(token.value)
             else:
                 token.type = Token.VARIABLE
+        if (separator == 'IN ENUMERATE'
+                and self.statement[-1].value.startswith('start=')):
+            self.statement[-1].type = Token.OPTION
 
 
 class IfHeaderLexer(TypeAndArguments):

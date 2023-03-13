@@ -238,6 +238,10 @@ class For(HeaderAndBody):
     def flavor(self):
         return self.header.flavor
 
+    @property
+    def start(self):
+        return self.header.start
+
     def validate(self, ctx: 'ValidationContext'):
         if self._body_is_empty():
             self.errors += ('FOR loop cannot be empty.',)

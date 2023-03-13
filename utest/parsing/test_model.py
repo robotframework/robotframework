@@ -242,11 +242,37 @@ Example
         )
         get_and_assert_model(data, expected)
 
+    def test_enumerate_with_start(self):
+        data = '''
+*** Test Cases ***
+Example
+    FOR    ${x}    IN ENUMERATE    @{stuff}    start=1
+        Log    ${x}
+    END
+'''
+        expected = For(
+            header=ForHeader([
+                Token(Token.FOR, 'FOR', 3, 4),
+                Token(Token.VARIABLE, '${x}', 3, 11),
+                Token(Token.FOR_SEPARATOR, 'IN ENUMERATE', 3, 19),
+                Token(Token.ARGUMENT, '@{stuff}', 3, 35),
+                Token(Token.OPTION, 'start=1', 3, 47),
+            ]),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'Log', 4, 8),
+                             Token(Token.ARGUMENT, '${x}', 4, 15)])
+            ],
+            end=End([
+                Token(Token.END, 'END', 5, 4)
+            ])
+        )
+        get_and_assert_model(data, expected)
+
     def test_nested(self):
         data = '''
 *** Test Cases ***
 Example
-    FOR    ${x}    IN    1    2
+    FOR    ${x}    IN    1    start=has no special meaning here
         FOR    ${y}    IN RANGE    ${x}
             Log    ${y}
         END
@@ -258,7 +284,7 @@ Example
                 Token(Token.VARIABLE, '${x}', 3, 11),
                 Token(Token.FOR_SEPARATOR, 'IN', 3, 19),
                 Token(Token.ARGUMENT, '1', 3, 25),
-                Token(Token.ARGUMENT, '2', 3, 30),
+                Token(Token.ARGUMENT, 'start=has no special meaning here', 3, 30),
             ]),
             body=[
                 For(

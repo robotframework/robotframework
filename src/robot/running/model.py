@@ -94,9 +94,9 @@ class For(model.For):
     __slots__ = ['lineno', 'error']
     body_class = Body
 
-    def __init__(self, variables=(), flavor='IN', values=(), parent=None,
+    def __init__(self, variables=(), flavor='IN', values=(), start=None, parent=None,
                  lineno=None, error=None):
-        super().__init__(variables, flavor, values, parent)
+        super().__init__(variables, flavor, values, start, parent)
         self.lineno = lineno
         self.error = error
 

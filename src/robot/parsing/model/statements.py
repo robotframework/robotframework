@@ -819,6 +819,14 @@ class ForHeader(Statement):
         separator = self.get_token(Token.FOR_SEPARATOR)
         return normalize_whitespace(separator.value) if separator else None
 
+    @property
+    def start(self):
+        if self.flavor == 'IN ENUMERATE':
+            value = self.get_value(Token.OPTION)
+            if value:
+                return value[len('start='):]
+        return None
+
     def validate(self, ctx: 'ValidationContext'):
         if not self.variables:
             self._add_error('no loop variables')
