@@ -325,7 +325,8 @@ class TestCheckerLibrary:
         b = BuiltIn()
         matcher = b.should_match if pattern else b.should_be_equal
         matcher(message, expected.rstrip(), 'Wrong log message')
-        b.should_be_equal(item.level, 'INFO' if level == 'HTML' else level, 'Wrong log level')
+        if level != 'IGNORE':
+            b.should_be_equal(item.level, 'INFO' if level == 'HTML' else level, 'Wrong log level')
         b.should_be_equal(str(item.html), str(html or level == 'HTML'), 'Wrong HTML status')
 
 

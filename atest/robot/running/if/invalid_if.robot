@@ -116,8 +116,7 @@ Branch statuses should be
     ${tc} =    Check Test Case    ${TESTNAME}
     ${if} =    Set Variable    ${tc.body}[${index}]
     Should Be Equal    ${if.status}    FAIL
-    FOR    ${branch}    ${status}    IN ZIP    ${if.body}    ${statuses}
+    FOR    ${branch}    ${status}    IN ZIP    ${if.body}    ${statuses}    mode=STRICT
         Should Be Equal    ${branch.status}    ${status}
     END
-    Should Be Equal    ${{len($if.body)}}    ${{len($statuses)}}
     RETURN    ${tc}
