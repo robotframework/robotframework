@@ -15,6 +15,7 @@
 
 from collections import OrderedDict
 from contextlib import contextmanager
+from itertools import zip_longest
 import re
 import time
 
@@ -25,9 +26,8 @@ from robot.result import (For as ForResult, While as WhileResult, If as IfResult
                           TryBranch as TryBranchResult)
 from robot.output import librarylogger as logger
 from robot.utils import (cut_assign_value, frange, get_error_message, get_timestamp,
-                         is_string, is_list_like, is_number, plural_or_not as s,
-                         seq2str, split_from_equals, type_name, Matcher,
-                         timestr_to_secs)
+                         is_list_like, is_number, plural_or_not as s, seq2str,
+                         split_from_equals, type_name, Matcher, timestr_to_secs)
 from robot.variables import is_dict_variable, evaluate_expression
 
 from .statusreporter import StatusReporter
@@ -101,7 +101,8 @@ class ForInRunner:
                 error = DataError(data.error, syntax=True)
             else:
                 run = True
-        result = ForResult(data.variables, data.flavor, data.values, data.start)
+        result = ForResult(data.variables, data.flavor, data.values, data.start,
+                           data.mode, data.fill)
         with StatusReporter(data, result, self._context, run) as status:
             if run:
                 try:
@@ -261,19 +262,65 @@ class ForInRangeRunner(ForInRunner):
 
 class ForInZipRunner(ForInRunner):
     flavor = 'IN ZIP'
+    _mode = None
+    _fill = None
+
+    def _get_values_for_rounds(self, data):
+        self._mode = self._resolve_mode(data.mode)
+        self._fill = self._resolve_fill(data.fill)
+        return super()._get_values_for_rounds(data)
+
+    def _resolve_mode(self, mode):
+        if not mode or self._context.dry_run:
+            return None
+        try:
+            mode = self._context.variables.replace_string(mode).upper()
+            if mode in ('STRICT', 'SHORTEST', 'LONGEST'):
+                return mode
+            raise DataError(f"Mode must be 'STRICT', 'SHORTEST' or 'LONGEST', "
+                            f"got '{mode}'.")
+        except DataError as err:
+            raise DataError(f'Invalid mode: {err}')
+
+    def _resolve_fill(self, fill):
+        if not fill or self._context.dry_run:
+            return None
+        try:
+            return self._context.variables.replace_scalar(fill)
+        except DataError as err:
+            raise DataError(f'Invalid fill value: {err}')
 
     def _resolve_dict_values(self, values):
         raise DataError('FOR IN ZIP loops do not support iterating over dictionaries.',
                         syntax=True)
 
     def _map_values_to_rounds(self, values, per_round):
-        for item in values:
-            if not is_list_like(item):
-                raise DataError(f"FOR IN ZIP items must all be list-like, "
-                                f"got {type_name(item)} '{item}'.")
+        self._validate_types(values)
         if len(values) % per_round != 0:
             self._raise_wrong_variable_count(per_round, len(values))
-        return zip(*(list(item) for item in values))
+        if self._mode == 'LONGEST':
+            return zip_longest(*values, fillvalue=self._fill)
+        if self._mode == 'STRICT':
+            self._validate_strict_lengths(values)
+        return zip(*values)
+
+    def _validate_types(self, values):
+        for index, item in enumerate(values, start=1):
+            if not is_list_like(item):
+                raise DataError(f"FOR IN ZIP items must be list-like, but item {index} "
+                                f"is {type_name(item)}.")
+
+    def _validate_strict_lengths(self, values):
+        lengths = []
+        for index, item in enumerate(values, start=1):
+            try:
+                lengths.append(len(item))
+            except TypeError:
+                raise DataError(f"FOR IN ZIP items should have length in STRICT mode, "
+                                f"but item {index} does not.")
+        if len(set(lengths)) > 1:
+            raise DataError(f"FOR IN ZIP items should have equal lengths in STRICT "
+                            f"mode, but lengths are {seq2str(lengths, quote='')}.")
 
 
 class ForInEnumerateRunner(ForInRunner):

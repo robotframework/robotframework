@@ -179,7 +179,9 @@ class ForHandler(ElementHandler):
 
     def start(self, elem, result):
         return result.body.create_for(flavor=elem.get('flavor'),
-                                      start=elem.get('start'))
+                                      start=elem.get('start'),
+                                      mode=elem.get('mode'),
+                                      fill=elem.get('fill'))
 
 
 @ElementHandler.register

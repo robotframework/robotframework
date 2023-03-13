@@ -124,7 +124,9 @@
             <xs:element name="status" type="BodyItemStatus" />
         </xs:choice>
         <xs:attribute name="flavor" type="ForFlavor" />
-        <xs:attribute name="start" type="xs:string" />    <!-- Used if IN ENUMERATE uses `start=`. -->
+        <xs:attribute name="start" type="xs:string" />    <!-- Used if IN ENUMERATE has `start`. -->
+        <xs:attribute name="mode" type="xs:string" />     <!-- Used if IN ZIP has `mode`. -->
+        <xs:attribute name="fill" type="xs:string" />     <!-- Used if IN ZIP has `fill`. -->
     </xs:complexType>
     <xs:simpleType name="ForFlavor">
         <xs:restriction base="xs:string">

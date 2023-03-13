@@ -202,6 +202,11 @@ class ForHeaderLexer(StatementLexer):
         if (separator == 'IN ENUMERATE'
                 and self.statement[-1].value.startswith('start=')):
             self.statement[-1].type = Token.OPTION
+        elif separator == 'IN ZIP':
+            for token in reversed(self.statement):
+                if not token.value.startswith(('mode=', 'fill=')):
+                    break
+                token.type = Token.OPTION
 
 
 class IfHeaderLexer(TypeAndArguments):

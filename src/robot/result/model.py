@@ -172,9 +172,10 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
     iteration_class = ForIteration
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
-    def __init__(self, variables=(),  flavor='IN', values=(), start=None,
-                 status='FAIL', starttime=None, endtime=None, doc='', parent=None):
-        super().__init__(variables, flavor, values, start, parent)
+    def __init__(self, variables=(),  flavor='IN', values=(), start=None, mode=None,
+                 fill=None, status='FAIL', starttime=None, endtime=None, doc='',
+                 parent=None):
+        super().__init__(variables, flavor, values, start, mode, fill, parent)
         self.status = status
         self.starttime = starttime
         self.endtime = endtime
@@ -189,8 +190,11 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
     def name(self):
         variables = ' | '.join(self.variables)
         values = ' | '.join(self.values)
-        if self.start is not None:
-            values += f' | start={self.start}'
+        for name, value in [('start', self.start),
+                            ('mode', self.mode),
+                            ('fill', self.fill)]:
+            if value is not None:
+                values += f' | {name}={value}'
         return f'{variables} {self.flavor} [ {values} ]'
 
 

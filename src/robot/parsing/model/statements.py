@@ -827,6 +827,14 @@ class ForHeader(Statement):
     def start(self):
         return self.get_option('start') if self.flavor == 'IN ENUMERATE' else None
 
+    @property
+    def mode(self):
+        return self.get_option('mode') if self.flavor == 'IN ZIP' else None
+
+    @property
+    def fill(self):
+        return self.get_option('fill') if self.flavor == 'IN ZIP' else None
+
     def validate(self, ctx: 'ValidationContext'):
         if not self.variables:
             self._add_error('no loop variables')

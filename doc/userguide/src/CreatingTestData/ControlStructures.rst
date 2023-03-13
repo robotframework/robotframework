@@ -358,10 +358,9 @@ This may be easiest to show with an example:
 
 As the example above illustrates, `FOR-IN-ZIP` loops require their own custom
 separator `IN ZIP` (case-sensitive) between loop variables and values.
-Values used with `FOR-IN-ZIP` loops must be lists or list-like objects. Looping
-will stop when the shortest list is exhausted.
+Values used with `FOR-IN-ZIP` loops must be lists or list-like objects.
 
-Lists to iterate over must always be given either as `scalar variables`_ like
+Items to iterate over must always be given either as `scalar variables`_ like
 `${items}` or as `list variables`_ like `@{lists}` that yield the actual
 iterated lists. The former approach is more common and it was already
 demonstrated above. The latter approach works like this:
@@ -380,7 +379,7 @@ demonstrated above. The latter approach works like this:
        END
 
 The number of lists to iterate over is not limited, but it must match
-the number of loop variables. Alternatively there can be just one loop
+the number of loop variables. Alternatively, there can be just one loop
 variable that then becomes a Python tuple getting items from all lists.
 
 .. sourcecode:: robotframework
@@ -388,7 +387,7 @@ variable that then becomes a Python tuple getting items from all lists.
    *** Variables ***
    @{ABC}           a    b    c
    @{XYZ}           x    y    z
-   @{NUM}           1    2    3    4    5
+   @{NUM}           1    2    3
 
    *** Test Cases ***
    FOR-IN-ZIP with multiple lists
@@ -402,13 +401,63 @@ variable that then becomes a Python tuple getting items from all lists.
            Log Many    ${items}[0]    ${items}[1]    ${items}[2]
        END
 
-If lists have an unequal number of items, the shortest list defines how
-many iterations there are and values at the end of longer lists are ignored.
-For example, the above examples loop only three times and values `4` and `5`
-in the `${NUM}` list are ignored.
+Starting from Robot Framework 6.1, it is possible to configure what to do if
+lengths of the iterated items differ. By default, the shortest item defines how
+many iterations there are and values at the end of longer ones are ignored.
+This can be changed by using the `mode` option that has three possible values:
 
-.. note:: Getting lists to iterate over from list variables and using
-          just one loop variable are new features in Robot Framework 3.2.
+- `STRICT`: Items must have equal lengths. If not, execution fails. This is
+  the same as using `strict=True` with Python's zip__ function.
+- `SHORTEST`: Items in longer items are ignored. Infinite iterators are supported
+  in this mode as long as one of the items is exhausted. This is the default
+  behavior.
+- `LONGEST`: The longest item defines how many iterations there are. Missing
+  values in shorter items are filled-in with value specified using the `fill`
+  option or `None` if it is not used. This is the same as using Python's
+  zip_longest__ function except that it has `fillvalue` argument instead of
+  `fill`.
+
+All these modes are illustrated by the following examples:
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   @{CHARACTERS}     a    b    c    d    f
+   @{NUMBERS}        1    2    3
+
+   *** Test Cases ***
+   STRICT mode
+       [Documentation]    This loop fails due to lists lengths being different.
+       FOR    ${c}    ${n}    IN ZIP    ${CHARACTERS}    ${NUMBERS}    mode=STRICT
+           Log    ${c}: ${n}
+       END
+
+   SHORTEST mode
+       [Documentation]    This loop executes three times.
+       FOR    ${c}    ${n}    IN ZIP    ${CHARACTERS}    ${NUMBERS}    mode=SHORTEST
+           Log    ${c}: ${n}
+       END
+
+   LONGEST mode
+       [Documentation]    This loop executes five times.
+       ...                On last two rounds `${n}` has value `None`.
+       FOR    ${c}    ${n}    IN ZIP    ${CHARACTERS}    ${NUMBERS}    mode=LONGEST
+           Log    ${c}: ${n}
+       END
+
+   LONGEST mode with custom fill value
+       [Documentation]    This loop executes five times.
+       ...                On last two rounds `${n}` has value `0`.
+       FOR    ${c}    ${n}    IN ZIP    ${CHARACTERS}    ${NUMBERS}    mode=LONGEST    fill=0
+           Log    ${c}: ${n}
+       END
+
+.. note:: The behavior if list lengths differ will change in the future
+          so that the `STRICT` mode will be the default. If that is not desired,
+          the `SHORTEST` mode needs to be used explicitly.
+
+__ https://docs.python.org/library/functions.html#zip
+__ https://docs.python.org/library/itertools.html#itertools.zip_longest
 
 Dictionary iteration
 ~~~~~~~~~~~~~~~~~~~~

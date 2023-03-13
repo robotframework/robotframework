@@ -24,14 +24,16 @@ class For(BodyItem):
     type = BodyItem.FOR
     body_class = Body
     repr_args = ('variables', 'flavor', 'values')
-    __slots__ = ['variables', 'flavor', 'values', 'start']
+    __slots__ = ['variables', 'flavor', 'values', 'start', 'mode', 'fill']
 
-    def __init__(self, variables=(), flavor='IN', values=(), start=None,
-                 parent=None):
+    def __init__(self, variables=(), flavor='IN', values=(), start=None, mode=None,
+                 fill=None, parent=None):
         self.variables = variables
         self.flavor = flavor
         self.values = values
         self.start = start
+        self.mode = mode
+        self.fill = fill
         self.parent = parent
         self.body = None
 
@@ -62,8 +64,11 @@ class For(BodyItem):
                 'flavor': self.flavor,
                 'values': list(self.values),
                 'body': self.body.to_dicts()}
-        if self.start is not None:
-            data['start'] = self.start
+        for name, value in [('start', self.start),
+                            ('mode', self.mode),
+                            ('fill', self.fill)]:
+            if value is not None:
+                data[name] = value
         return data
 
 
