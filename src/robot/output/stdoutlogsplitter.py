@@ -33,7 +33,7 @@ class StdoutLogSplitter:
     def _get_messages(self, output):
         for level, timestamp, msg in self._split_output(output):
             if level == 'CONSOLE':
-                write_to_console(msg)
+                write_to_console(msg.lstrip())
                 level = 'INFO'
             if timestamp:
                 timestamp = self._format_timestamp(timestamp[1:])

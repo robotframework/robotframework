@@ -68,7 +68,8 @@ Logging HTML
 Logging CONSOLE
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    Hello info and console!
-    Stdout Should Contain    Hello info and console!
+    Check Log Message    ${tc.kws[1].msgs[0]}    Hello info and console!
+    Stdout Should Contain    Hello info and console!\nHello info and console!\n
 
 FAIL is not valid log level
     ${tc} =    Check Test Case    ${TEST NAME}
