@@ -329,3 +329,21 @@ List Should Not Contain Value, Value Found and Own Error Message Glob
 
 Check List Error
     Check Test Case    ${TEST NAME}
+
+Lists Should Be Equal With Ignore Case
+    Check Test Case    ${TEST NAME}
+
+List Should Contain Value With Ignore Case
+    Check Test Case    ${TEST NAME}
+
+List Should Not Contain Value With Ignore Case Does Contain Value
+    Check Test Case    ${TEST NAME}
+
+List Should Contain Sub List With Ignore Case
+    Check Test Case    ${TEST NAME}
+
+List Should Not Contain Duplicates With Ignore Case
+    Check Test Case    ${TEST NAME}
+
+List Should Contain Value With Ignore Case And Nested List and Dictionary
+    Check Test Case    ${TEST NAME}
