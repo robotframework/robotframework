@@ -2166,11 +2166,12 @@ Using log levels
 
 To use other log levels than `INFO`, or to create several
 messages, specify the log level explicitly by embedding the level into
-the message in the format `*LEVEL* Actual log message`, where
-`*LEVEL*` must be in the beginning of a line and `LEVEL` is
-one of the available logging levels `TRACE`, `DEBUG`,
-`INFO`, `WARN`, `ERROR`, `HTML` and `CONSOLE`. Log level `CONSOLE`
-is new in Robot Framework 6.1.
+the message in the format `*LEVEL* Actual log message`.
+In this formant `*LEVEL*` must be in the beginning of a line and `LEVEL`
+must be one of the available concrete log levels `TRACE`, `DEBUG`,
+`INFO`, `WARN` or `ERROR`, or a pseudo log level `HTML` or `CONSOLE`.
+The pseudo levels can be used for `logging HTML`_ and `logging to console`_,
+respectively.
 
 Errors and warnings
 '''''''''''''''''''
@@ -2235,12 +2236,23 @@ __ `Using log levels`_
 Logging to console
 ''''''''''''''''''
 
-If libraries need to write something to the console they have several
-options. As already discussed, warnings and all messages written to the
+Libraries have several options for writing messages to the console.
+As already discussed, warnings and all messages written to the
 standard error stream are written both to the log file and to the
 console. Both of these options have a limitation that the messages end
-up to the console only after the currently executing keyword
-finishes.
+up to the console only after the currently executing keyword finishes.
+
+Starting from Robot Framework 6.1, libraries can use a pseudo log level
+`CONSOLE` for logging messages *both* to the log file and to the console:
+
+.. sourcecode:: python
+
+   def my_keyword(arg):
+       print('*CONSOLE* Message both to log and to console.')
+
+These messages will be logged to the log file using the `INFO` level similarly
+as with the `HTML` pseudo log level. When using this approach, messages
+are logged to the console only after the keyword execution ends.
 
 Another option is writing messages to `sys.__stdout__` or `sys.__stderr__`.
 When using this approach, messages are written to the console immediately
@@ -2252,9 +2264,10 @@ and are not written to the log file at all:
 
 
    def my_keyword(arg):
-      sys.__stdout__.write('Got arg %s\n' % arg)
+       print('Message only to console.', file=sys.__stdout__)
 
-The final option is using the `public logging API`_:
+The final option is using the `public logging API`_. Also in with this approach
+messages are written to the console immediately:
 
 .. sourcecode:: python
 
@@ -2262,10 +2275,10 @@ The final option is using the `public logging API`_:
 
 
    def log_to_console(arg):
-      logger.console('Got arg %s' % arg)
+       logger.console('Message only to console.')
 
    def log_to_console_and_log_file(arg):
-      logger.info('Got arg %s' % arg, also_console=True)
+       logger.info('Message both to log and to console.', also_console=True)
 
 Logging example
 '''''''''''''''
