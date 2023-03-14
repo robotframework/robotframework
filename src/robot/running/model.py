@@ -763,10 +763,6 @@ class Import(ModelObject):
         self.parent = parent
         self.lineno = lineno
 
-    def _repr(self, repr_args):
-        repr_args = [a for a in repr_args if a in ('type', 'name') or getattr(self, a)]
-        return super()._repr(repr_args)
-
     @property
     def source(self) -> Path:
         return self.parent.source if self.parent is not None else None
@@ -803,6 +799,9 @@ class Import(ModelObject):
         if self.lineno:
             data['lineno'] = self.lineno
         return data
+
+    def _include_in_repr(self, name, value):
+        return name in ('type', 'name') or value
 
 
 class Imports(model.ItemList):

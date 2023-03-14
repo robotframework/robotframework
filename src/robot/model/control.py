@@ -23,7 +23,7 @@ from .keyword import Keywords
 class For(BodyItem):
     type = BodyItem.FOR
     body_class = Body
-    repr_args = ('variables', 'flavor', 'values')
+    repr_args = ('variables', 'flavor', 'values', 'start', 'mode', 'fill')
     __slots__ = ['variables', 'flavor', 'values', 'start', 'mode', 'fill']
 
     def __init__(self, variables=(), flavor='IN', values=(), start=None, mode=None,
@@ -54,9 +54,16 @@ class For(BodyItem):
         visitor.visit_for(self)
 
     def __str__(self):
-        variables = '    '.join(self.variables)
-        values = '    '.join(self.values)
-        return 'FOR    %s    %s    %s' % (variables, self.flavor, values)
+        parts = ['FOR', *self.variables, self.flavor, *self.values]
+        for name, value in [('start', self.start),
+                            ('mode', self.mode),
+                            ('fill', self.fill)]:
+            if value is not None:
+                parts.append(f'{name}={value}')
+        return '    '.join(parts)
+
+    def _include_in_repr(self, name, value):
+        return name not in ('start', 'mode', 'fill') or value is not None
 
     def to_dict(self):
         data = {'type': self.type,
@@ -93,7 +100,15 @@ class While(BodyItem):
         visitor.visit_while(self)
 
     def __str__(self):
-        return f'WHILE    {self.condition}' + (f'    {self.limit}' if self.limit else '')
+        parts = ['WHILE']
+        if self.condition is not None:
+            parts.append(self.condition)
+        if self.limit is not None:
+            parts.append(f'limit={self.limit}')
+        return '    '.join(parts)
+
+    def _include_in_repr(self, name, value):
+        return name == 'condition' or value is not None
 
     def to_dict(self):
         data = {'type': self.type}
@@ -208,16 +223,15 @@ class TryBranch(BodyItem):
     def __str__(self):
         if self.type != BodyItem.EXCEPT:
             return self.type
-        parts = ['EXCEPT'] + list(self.patterns)
+        parts = ['EXCEPT', *self.patterns]
         if self.pattern_type:
             parts.append(f'type={self.pattern_type}')
         if self.variable:
             parts.extend(['AS', self.variable])
         return '    '.join(parts)
 
-    def __repr__(self):
-        repr_args = self.repr_args if self.type == BodyItem.EXCEPT else ['type']
-        return self._repr(repr_args)
+    def _include_in_repr(self, name, value):
+        return name == 'type' or value
 
     def visit(self, visitor):
         visitor.visit_try_branch(self)
