@@ -13,7 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import asyncio
 import difflib
 import re
 import time
@@ -2527,64 +2526,6 @@ class _RunKeyword(_BuiltInBase):
                                % kwname)
         return self._context.suite
 
-    @run_keyword_variant(resolve=0, dry_run=True)
-    async def gather_async_keywords(self, *keywords):
-        """Executes all the given keywords concurrently.
-
-        This keyword is mainly useful to run multiple keywords concurrently
-        just like calling asyncio.gather() in python.
-        The keywords passed need to be async, else an error is raised.
-
-        By default all arguments are expected to be keywords to be executed.
-
-        Examples:
-        | `Run Keywords` | `Initialize database` | `Start servers` | `Clear logs` |
-        | `Run Keywords` | ${KW 1} | ${KW 2} |
-        | `Run Keywords` | @{KEYWORDS} |
-
-        Keywords can also be run with arguments using upper case ``AND`` as
-        a separator between keywords. The keywords are executed so that the
-        first argument is the first keyword and proceeding arguments until
-        the first ``AND`` are arguments to it. First argument after the first
-        ``AND`` is the second keyword and proceeding arguments until the next
-        ``AND`` are its arguments. And so on.
-
-        Examples:
-        | `Run Keywords` | `Initialize database` | db1 | AND | `Start servers` | server1 | server2 |
-        | `Run Keywords` | `Initialize database` | ${DB NAME} | AND | `Start servers` | @{SERVERS} | AND | `Clear logs` |
-        | `Run Keywords` | ${KW} | AND | @{KW WITH ARGS} |
-
-        Notice that the ``AND`` control argument must be used explicitly and
-        cannot itself come from a variable. If you need to use literal ``AND``
-        string as argument, you can either use variables or escape it with
-        a backslash like ``\\AND``.
-        """
-        return await self._gather_async_keywords(self._split_run_keywords(list(keywords)))
-    
-    async def _gather_async_keywords(self, iterable):
-        tasks = []
-        errors = []
-        try:
-            for kw, args in iterable:
-                try:
-                    task = self.run_keyword(kw, *args)
-                    if not asyncio.iscoroutine(task):
-                        raise DataError(f"Keyword '{kw}' is not async")
-                    tasks.append(task)
-                except ExecutionPassed as err:
-                    err.set_earlier_failures(errors)
-                    raise err
-                except ExecutionFailed as err:
-                    errors.extend(err.get_errors())
-                    if not err.can_continue(self._context):
-                        break
-            if errors:
-                raise ExecutionFailures(errors)
-        except Exception as err:
-            for t in tasks:
-                t.close()
-            raise err
-        return await asyncio.gather(*tasks)
 
 class _Control(_BuiltInBase):
 
@@ -3004,43 +2945,6 @@ class _Misc(_BuiltInBase):
             if remaining <= 0:
                 break
             time.sleep(min(remaining, 0.01))
-    
-    async def async_sleep(self, time_, reason=None):
-        """Pauses the test executed for the given time asynchronously.
-
-        ``time`` may be either a number or a time string. Time strings are in
-        a format such as ``1 day 2 hours 3 minutes 4 seconds 5milliseconds`` or
-        ``1d 2h 3m 4s 5ms``, and they are fully explained in an appendix of
-        Robot Framework User Guide. Providing a value without specifying minutes
-        or seconds, defaults to seconds.
-        Optional `reason` can be used to explain why
-        sleeping is necessary. Both the time slept and the reason are logged.
-
-        Examples:
-        | Sleep | 42                   |
-        | Sleep | 1.5                  |
-        | Sleep | 2 minutes 10 seconds |
-        | Sleep | 10s                  | Wait for a reply |
-        """
-        seconds = timestr_to_secs(time_)
-        # Python hangs with negative values
-        if seconds < 0:
-            seconds = 0
-        await self._async_sleep_in_parts(seconds)
-        self.log('Slept %s' % secs_to_timestr(seconds))
-        if reason:
-            self.log(reason)
-    
-    async def _async_sleep_in_parts(self, seconds):
-        # time.sleep can't be stopped in windows
-        # to ensure that we can signal stop (with timeout)
-        # split sleeping to small pieces
-        endtime = time.time() + float(seconds)
-        while True:
-            remaining = endtime - time.time()
-            if remaining <= 0:
-                break
-            await asyncio.sleep(min(remaining, 0.01))
 
     def catenate(self, *items):
         """Catenates the given items together and returns the resulted string.

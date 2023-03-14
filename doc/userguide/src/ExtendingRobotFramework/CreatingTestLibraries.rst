@@ -1946,7 +1946,7 @@ __ `Specifying argument types using @keyword decorator`_
 Asynchronous Keywords
 ~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 6.0.3, it is possible to run async functions
+Starting from Robot Framework 6.1, it is possible to run async functions
 from the test libraries just like normal functions. For example:
 
 .. sourcecode:: python
@@ -1974,6 +1974,7 @@ More examples of functionality:
 
     import asyncio
     from robot.api.deco import keyword
+    from robot.libraries.BuiltIn import BuiltIn
 
 
     async def task_async():
@@ -1987,7 +1988,9 @@ More examples of functionality:
         background_task = asyncio.create_task(task_async()) # create a task in background
         await background_task
 
-        # if running with python 3.10
+        await BuiltIn().run_keyword("Some async keyword")
+
+        # if running with python 3.10 or higher
         async with asyncio.TaskGroup() as tg:
             task1 = tg.create_task(task_async())
             task2 = tg.create_task(task_async())
