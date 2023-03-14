@@ -2976,10 +2976,11 @@ class _Misc(_BuiltInBase):
             repr='DEPRECATED', formatter='str'):
         r"""Logs the given message with the given level.
 
-        Valid levels are TRACE, DEBUG, INFO (default), HTML, WARN, and ERROR.
+        Valid levels are TRACE, DEBUG, INFO (default), CONSOLE, HTML, WARN, and ERROR.
         Messages below the current active log level are ignored. See
         `Set Log Level` keyword and ``--loglevel`` command line option
         for more details about setting the level.
+        Log level CONSOLE is new in Robot Framework 6.1.
 
         Messages logged with the WARN or ERROR levels will be automatically
         visible also in the console and in the Test Execution Errors section
@@ -2993,11 +2994,13 @@ class _Misc(_BuiltInBase):
         the ``html`` argument is using the HTML pseudo log level. It logs
         the message as HTML using the INFO level.
 
-        If the ``console`` argument is true, the message will be written to
-        the console where test execution was started from in addition to
-        the log file. This keyword always uses the standard output stream
-        and adds a newline after the written message. Use `Log To Console`
-        instead if either of these is undesirable,
+        If the ``console`` argument is true or the log level is ``CONSOLE``,
+        the message will be written to the console where test execution was
+        started from in addition to the log file. This keyword always uses the
+        standard output stream and adds a newline after the written message.
+        Use `Log To Console` instead if either of these is undesirable,
+    Mimic html section...
+        
 
         The ``formatter`` argument controls how to format the string
         representation of the message. Possible values are ``str`` (default),
@@ -3018,6 +3021,7 @@ class _Misc(_BuiltInBase):
         | Log | <b>Hello</b>, world! | HTML     |   | # Same as above.         |
         | Log | <b>Hello</b>, world! | DEBUG    | html=true | # DEBUG as HTML. |
         | Log | Hello, console!   | console=yes | | # Log also to the console. |
+        | Log | Hello, console!   | CONSOLE     | | # Log also to the console. |
         | Log | Null is \x00    | formatter=repr | | # Log ``'Null is \x00'``. |
 
         See `Log Many` if you want to log multiple messages in one go, and

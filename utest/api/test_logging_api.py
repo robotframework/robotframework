@@ -85,6 +85,9 @@ class TestRedirectToPythonLogging(unittest.TestCase):
         logger.write("Joo", 'HTML')
         assert_equal(self.handler.messages, ['Foo', 'Doo', 'Joo'])
 
+    def test_logger_to_python_with_console(self):
+        logger.write("Foo", 'CONSOLE')
+        assert_equal(self.handler.messages, ['Foo'])
 
 if __name__ == '__main__':
     unittest.main()
