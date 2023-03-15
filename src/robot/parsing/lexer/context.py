@@ -67,7 +67,8 @@ class FileContext(LexingContext):
 
     def lex_invalid_section(self, statement):
         message, fatal = self._get_invalid_section_error(statement[0].value)
-        statement[0].set_error(message, fatal)
+        statement[0].error = message
+        statement[0].type = Token.INVALID_HEADER if not fatal else Token.FATAL_INVALID_HEADER
         for token in statement[1:]:
             token.type = Token.COMMENT
 
