@@ -126,11 +126,11 @@ class UserKeywordRunner:
         for name, value in chain(zip(spec.positional, args), kwonly):
             if isinstance(value, DefaultValue):
                 value = value.resolve(variables)
-            variables['${%s}' % name] = value
+            variables[f'${{{name}}}'] = value
         if spec.var_positional:
-            variables['@{%s}' % spec.var_positional] = varargs
+            variables[f'@{{{spec.var_positional}}}'] = varargs
         if spec.var_named:
-            variables['&{%s}' % spec.var_named] = DotDict(kwargs)
+            variables[f'&{{{spec.var_named}}}'] = DotDict(kwargs)
 
     def _split_args_and_varargs(self, args):
         if not self.arguments.var_positional:
@@ -151,16 +151,16 @@ class UserKeywordRunner:
             self._format_args_for_trace_logging(), variables)
 
     def _format_args_for_trace_logging(self):
-        args = ['${%s}' % arg for arg in self.arguments.positional]
+        args = [f'${{{arg}}}' for arg in self.arguments.positional]
         if self.arguments.var_positional:
-            args.append('@{%s}' % self.arguments.var_positional)
+            args.append(f'@{{{self.arguments.var_positional}}}')
         if self.arguments.var_named:
-            args.append('&{%s}' % self.arguments.var_named)
+            args.append(f'&{{{self.arguments.var_named}}}')
         return args
 
     def _format_trace_log_args_message(self, args, variables):
-        args = ['%s=%s' % (name, prepr(variables[name])) for name in args]
-        return 'Arguments: [ %s ]' % ' | '.join(args)
+        args = ' | '.join(f'{name}={prepr(variables[name])}' for name in args)
+        return f'Arguments: [ {args} ]'
 
     def _execute(self, context):
         handler = self._handler
@@ -195,8 +195,8 @@ class UserKeywordRunner:
         try:
             ret = variables.replace_list(ret)
         except DataError as err:
-            raise VariableError('Replacing variables from keyword return '
-                                'value failed: %s' % err.message)
+            raise VariableError(f'Replacing variables from keyword return '
+                                f'value failed: {err}')
         if len(ret) != 1 or contains_list_var:
             return ret
         return ret[0]
@@ -257,7 +257,7 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
     def _set_arguments(self, args, context):
         variables = context.variables
         for name, value in self.embedded_args:
-            variables['${%s}' % name] = value
+            variables[f'${{{name}}}'] = value
         super()._set_arguments(args, context)
         context.output.trace(lambda: self._trace_log_args_message(variables),
                              write_if_flat=False)
