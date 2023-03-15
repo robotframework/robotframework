@@ -1125,7 +1125,6 @@ class Config(Statement):
 @Statement.register
 class Error(Statement):
     type = Token.ERROR
-    handles_types = (Token.ERROR, Token.FATAL_ERROR)
     _errors = ()
 
     @property
@@ -1134,12 +1133,12 @@ class Error(Statement):
 
     @property
     def errors(self):
-        """Errors got from the underlying ``ERROR`` and ``FATAL_ERROR`` tokens.
+        """Errors got from the underlying ``ERROR``token.
 
         Errors can be set also explicitly. When accessing errors, they are returned
         along with errors got from tokens.
         """
-        tokens = self.get_tokens(Token.ERROR, Token.FATAL_ERROR)
+        tokens = self.get_tokens(Token.ERROR)
         return tuple(t.error for t in tokens) + self._errors
 
     @errors.setter

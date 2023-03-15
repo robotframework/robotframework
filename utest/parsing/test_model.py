@@ -1019,24 +1019,6 @@ class TestError(unittest.TestCase):
         assert_equal(Error([Token('ERROR', error=e) for e in '0123456789']).errors,
                      tuple('0123456789'))
 
-    def test_get_fatal_errors_from_tokens(self):
-        assert_equal(Error([Token('FATAL ERROR', error='xxx')]).errors,
-                     ('xxx',))
-        assert_equal(Error([Token('FATAL ERROR', error='xxx'),
-                            Token('ARGUMENT'),
-                            Token('FATAL ERROR', error='yyy')]).errors,
-                     ('xxx', 'yyy'))
-        assert_equal(Error([Token('FATAL ERROR', error=e) for e in '0123456789']).errors,
-                     tuple('0123456789'))
-
-    def test_get_errors_and_fatal_errors_from_tokens(self):
-        assert_equal(Error([Token('ERROR', error='error'),
-                            Token('ARGUMENT'),
-                            Token('FATAL ERROR', error='fatal error')]).errors,
-                     ('error', 'fatal error'))
-        assert_equal(Error([Token('FATAL ERROR', error=e) for e in '0123456789']).errors,
-                     tuple('0123456789'))
-
     def test_model_error(self):
         model = get_model('''\
 *** Invalid ***
@@ -1125,12 +1107,11 @@ Documentation
         error = Error([])
         error.errors = ('explicitly set', 'errors')
         assert_equal(error.errors, ('explicitly set', 'errors'))
-        error.tokens = [Token('ERROR', error='normal error'),
-                        Token('FATAL ERROR', error='fatal error')]
-        assert_equal(error.errors, ('normal error', 'fatal error',
+        error.tokens = [Token('ERROR', error='normal error'),]
+        assert_equal(error.errors, ('normal error',
                                     'explicitly set', 'errors'))
         error.errors = ['errors', 'as', 'list']
-        assert_equal(error.errors, ('normal error', 'fatal error',
+        assert_equal(error.errors, ('normal error',
                                     'errors', 'as', 'list'))
 
 

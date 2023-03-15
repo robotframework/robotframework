@@ -106,6 +106,7 @@ class Token:
     EOS = 'EOS'
 
     ERROR = 'ERROR'
+    # TODO: FATAL_ERROR is no longer used, remove in RF 7.0
     FATAL_ERROR = 'FATAL ERROR'
 
     NON_DATA_TOKENS = frozenset((
@@ -183,8 +184,8 @@ class Token:
             return -1
         return self.col_offset + len(self.value)
 
-    def set_error(self, error, fatal=False):
-        self.type = Token.ERROR if not fatal else Token.FATAL_ERROR
+    def set_error(self, error):
+        self.type = Token.ERROR
         self.error = error
 
     def tokenize_variables(self):
