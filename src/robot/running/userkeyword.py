@@ -79,7 +79,7 @@ class UserKeywordHandler:
         self.timeout = keyword.timeout
         self.body = keyword.body
         self.return_value = tuple(keyword.return_)
-        self.teardown = keyword.teardown
+        self.teardown = keyword.teardown if keyword.has_teardown else None
 
     @property
     def longname(self):

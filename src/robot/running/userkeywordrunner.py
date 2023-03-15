@@ -181,8 +181,11 @@ class UserKeywordRunner:
                 error.continue_on_failure = False
         except ExecutionFailed as exception:
             error = exception
-        with context.keyword_teardown(error):
-            td_error = self._run_teardown(context)
+        if handler.teardown:
+            with context.keyword_teardown(error):
+                td_error = self._run_teardown(handler.teardown, context)
+        else:
+            td_error = None
         if error or td_error:
             error = UserKeywordExecutionFailed(error, td_error)
         return error or pass_, return_
@@ -201,11 +204,9 @@ class UserKeywordRunner:
             return ret
         return ret[0]
 
-    def _run_teardown(self, context):
-        if not self._handler.teardown:
-            return None
+    def _run_teardown(self, teardown, context):
         try:
-            name = context.variables.replace_string(self._handler.teardown.name)
+            name = context.variables.replace_string(teardown.name)
         except DataError as err:
             if context.dry_run:
                 return None
@@ -213,7 +214,7 @@ class UserKeywordRunner:
         if name.upper() in ('', 'NONE'):
             return None
         try:
-            KeywordRunner(context).run(self._handler.teardown, name)
+            KeywordRunner(context).run(teardown, name)
         except PassExecution:
             return None
         except ExecutionStatus as err:
