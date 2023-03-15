@@ -134,7 +134,7 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
     _type_attributes = {
         BodyItem.FOR: ('variables', 'flavor', 'values'),
         BodyItem.IF: ('condition',),
-        BodyItem.ELSE_IF: ('condition'),
+        BodyItem.ELSE_IF: ('condition',),
         BodyItem.EXCEPT: ('patterns', 'pattern_type', 'variable'),
         BodyItem.WHILE: ('condition', 'limit'),
         BodyItem.RETURN: ('values',),

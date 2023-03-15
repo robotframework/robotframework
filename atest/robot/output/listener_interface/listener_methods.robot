@@ -64,7 +64,7 @@ Keyword Arguments Are Always Strings
     Should Not Contain    ${status}    FAILED
 
 Keyword Attributes For Control Structures
-    Run Tests    --listener VerifyAttributes    misc/for_loops.robot misc/while.robot misc/try_except.robot
+    Run Tests    --listener VerifyAttributes    misc/for_loops.robot misc/while.robot misc/try_except.robot misc/if_else.robot
     Stderr Should Be Empty
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
     Should Not Contain    ${status}    FAILED
