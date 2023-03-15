@@ -122,6 +122,10 @@ class CommentSection(Section):
     pass
 
 
+class InvalidSection(Section):
+    pass
+
+
 class TestCase(HeaderAndBody):
 
     @property

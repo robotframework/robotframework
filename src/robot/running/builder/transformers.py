@@ -625,10 +625,14 @@ class ErrorReporter(NodeVisitor):
     def visit_Keyword(self, node):
         pass
 
-    def visit_Error(self, node):
-        fatal = node.get_token(Token.FATAL_ERROR)
+    def visit_SectionHeader(self, node):
+        fatal = node.get_token(Token.FATAL_INVALID_HEADER)
         if fatal:
             raise DataError(self._format_message(fatal))
+        if node.errors:
+            LOGGER.error(self._format_message(node.get_token(Token.INVALID_HEADER)))
+
+    def visit_Error(self, node):
         for error in node.get_tokens(Token.ERROR):
             LOGGER.error(self._format_message(error))
 

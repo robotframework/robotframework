@@ -6,7 +6,7 @@ from pathlib import Path
 
 from robot.parsing import get_model, get_resource_model, ModelVisitor, ModelTransformer, Token
 from robot.parsing.model.blocks import (
-    CommentSection, File, For, If, Try, While,
+    CommentSection, File, For, If, InvalidSection, Try, While,
     Keyword, KeywordSection, SettingSection, TestCase, TestCaseSection, VariableSection
 )
 from robot.parsing.model.statements import (
@@ -1050,10 +1050,12 @@ Documentation
         )
         inv_setting = "Non-existing setting 'Invalid'."
         expected = File([
-            CommentSection(
-                body=[
-                    Error([Token('ERROR', '*** Invalid ***', 1, 0, inv_header)])
-                ]
+            InvalidSection(
+                header=SectionHeader(
+                    [Token('INVALID HEADER', '*** Invalid ***', 1, 0, inv_header)],
+                    (inv_header,)
+                )
+
             ),
             SettingSection(
                 header=SectionHeader([
@@ -1073,10 +1075,9 @@ Documentation
 ''', data_only=True)
         inv_testcases = "Resource file with 'Test Cases' section is invalid."
         expected = File([
-            CommentSection(
-                body=[
-                    Error([Token('FATAL ERROR', '*** Test Cases ***', 1, 0, inv_testcases)])
-                ]
+            InvalidSection(
+                header=SectionHeader(
+                    [Token('FATAL INVALID HEADER', '*** Test Cases ***', 1, 0, inv_testcases)], (inv_testcases,))
             )
         ])
         assert_model(model, expected)
@@ -1096,10 +1097,11 @@ Documentation
         inv_setting = "Non-existing setting 'Invalid'."
         inv_testcases = "Resource file with 'Test Cases' section is invalid."
         expected = File([
-            CommentSection(
-                body=[
-                    Error([Token('ERROR', '*** Invalid ***', 1, 0, inv_header)])
-                ]
+            InvalidSection(
+                header=SectionHeader(
+                    [Token('INVALID HEADER', '*** Invalid ***', 1, 0, inv_header)],
+                    (inv_header,)
+                )
             ),
             SettingSection(
                 header=SectionHeader([
@@ -1108,9 +1110,14 @@ Documentation
                 body=[
                     Error([Token('ERROR', 'Invalid', 3, 0, inv_setting)]),
                     Documentation([Token('DOCUMENTATION', 'Documentation', 4, 0)]),
-                    Error([Token('FATAL ERROR', '*** Test Cases ***', 5, 0, inv_testcases)])
                 ]
-            )
+            ),
+            InvalidSection(
+                header=SectionHeader(
+                    [Token('FATAL INVALID HEADER', '*** Test Cases ***', 5, 0, inv_testcases)],
+                    (inv_testcases,)
+                )
+            ),
         ])
         assert_model(model, expected)
 
