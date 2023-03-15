@@ -140,6 +140,10 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
         BodyItem.RETURN: ('values',),
         BodyItem.ITERATION: ('variables',)
     }
+    _for_flavor_attributes = {
+        'IN ENUMERATE': ('start',),
+        'IN ZIP': ('mode', 'fill')
+    }
 
     def _get_extra_attributes(self, kw):
         attrs = {'kwname': kw.kwname or '',
@@ -147,9 +151,12 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
                  'args': [a if is_string(a) else safe_str(a) for a in kw.args],
                  'source': str(kw.source or '')}
         if kw.type in self._type_attributes:
-            attrs.update({name: self._get_attribute_value(kw, name)
-                          for name in self._type_attributes[kw.type]
-                          if hasattr(kw, name)})
+            for name in self._type_attributes[kw.type]:
+                if hasattr(kw, name):
+                    attrs[name] = self._get_attribute_value(kw, name)
+        if kw.type == BodyItem.FOR:
+            for name in self._for_flavor_attributes.get(kw.flavor, ()):
+                attrs[name] = self._get_attribute_value(kw, name)
         return attrs
 
 

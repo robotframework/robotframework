@@ -255,8 +255,13 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `flavor`: Type of loop (e.g. `IN RANGE`).                    |
    |                  |                  | * `values`: List of values being looped over                   |
    |                  |                  |   as a list or strings.                                        |
+   |                  |                  | * `start`: Start configuration. Only used with `IN ENUMERATE`  |
+   |                  |                  |   loops.                                                       |
+   |                  |                  | * `mode`: Mode configuration. Only used with `IN ZIP` loops.   |
+   |                  |                  | * `fill`: Fill value configuration. Only used with `IN ZIP`    |
+   |                  |                  |   loops.                                                       |
    |                  |                  |                                                                |
-   |                  |                  | Additional attributes for `ITERATION` types:                   |
+   |                  |                  | Additional attributes for `ITERATION` types with `FOR` loops:  |
    |                  |                  |                                                                |
    |                  |                  | * `variables`: Variables and string representations of their   |
    |                  |                  |   contents for one `FOR` loop iteration as a dictionary.       |
@@ -282,6 +287,8 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `values`: Return values from a keyword as a list or strings. |
    |                  |                  |                                                                |
    |                  |                  | Additional attributes for control structures are new in RF 6.0.|
+   |                  |                  | `ELSE IF` `condition` as well as `FOR` loop `start`, `mode`    |
+   |                  |                  | and `fill` are new in RF 6.1.                                  |
    +------------------+------------------+----------------------------------------------------------------+
    | end_keyword      | name, attributes | Called when a keyword ends.                                    |
    |                  |                  |                                                                |

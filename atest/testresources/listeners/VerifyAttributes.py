@@ -12,6 +12,8 @@ KW_TYPES = {'FOR': 'variables flavor values',
             'ELSE IF': 'condition',
             'EXCEPT': 'patterns pattern_type variable',
             'RETURN': 'values'}
+FOR_FLAVOR_EXTRA = {'IN ENUMERATE': ' start',
+                    'IN ZIP': ' mode fill'}
 EXPECTED_TYPES = {'tags': [str],
                   'args': [str],
                   'assign': [str],
@@ -36,8 +38,9 @@ def verify_attrs(method_name, attrs, names):
     names = set(names.split())
     OUTFILE.write(method_name + '\n')
     if len(names) != len(attrs):
-        OUTFILE.write('FAILED: wrong number of attributes\n')
-        OUTFILE.write('Expected: %s\nActual: %s\n' % (names, attrs.keys()))
+        OUTFILE.write(f'FAILED: wrong number of attributes\n')
+        OUTFILE.write(f'Expected: {sorted(names)}\n')
+        OUTFILE.write(f'Actual:   {sorted(attrs)}\n')
         return
     for name in names:
         value = attrs[name]
@@ -58,7 +61,7 @@ def verify_attrs(method_name, attrs, names):
 
 def verify_attr(name, value, exp_type):
     if isinstance(value, exp_type):
-        OUTFILE.write('PASSED | %s: %s\n' % (name, format_value(value)))
+        OUTFILE.write('passed | %s: %s\n' % (name, format_value(value)))
     else:
         OUTFILE.write('FAILED | %s: %r, Expected: %s, Actual: %s\n'
                       % (name, value, exp_type, type(value)))
@@ -113,6 +116,8 @@ class VerifyAttributes:
         extra = KW_TYPES.get(type_, '')
         if type_ == 'ITERATION' and self._keyword_stack[-1] == 'FOR':
             extra += ' variables'
+        if type_ == 'FOR':
+            extra += FOR_FLAVOR_EXTRA.get(attrs['flavor'], '')
         verify_attrs('START ' + type_, attrs, START + KW + extra)
         verify_name(name, **attrs)
         self._keyword_stack.append(type_)
@@ -123,6 +128,8 @@ class VerifyAttributes:
         extra = KW_TYPES.get(type_, '')
         if type_ == 'ITERATION' and self._keyword_stack[-1] == 'FOR':
             extra += ' variables'
+        if type_ == 'FOR':
+            extra += FOR_FLAVOR_EXTRA.get(attrs['flavor'], '')
         verify_attrs('END ' + type_, attrs, END + KW + extra)
         verify_name(name, **attrs)
 
