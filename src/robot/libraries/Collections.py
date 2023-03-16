@@ -1072,6 +1072,9 @@ class Collections(_List, _Dictionary):
     ignore_case equal to ``key``, ``value`` or ``both``. Ignoring case means that the values 
     to compare are normalized by lowercasing strings before comparison.
 
+    Additionally, be aware that list-like objects are converted to lists, and 
+    dictionary-like objects to dictionaries, for ease of comparison
+
     List Examples:
     | `Lists should be equal` | ${list1} | ${list} | ignore_case=True   | # String ``true`` is True.   |
     | `Lists should be equal` | ${list1} | ${list} | ignore_case=False  | # String ``false`` is False. |
