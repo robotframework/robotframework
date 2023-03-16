@@ -366,7 +366,7 @@ class Error(BodyItem):
     type = BodyItem.ERROR
     __slots__ = ['values']
 
-    def __init__(self, values, parent=None):
+    def __init__(self, values=(), parent=None):
         self.values = values
         self.parent = parent
 
@@ -374,4 +374,4 @@ class Error(BodyItem):
         visitor.visit_error(self)
 
     def to_dict(self):
-        return {'type': self.type, 'data': self.data}
+        return {'type': self.type, 'values': list(self.values)}

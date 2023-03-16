@@ -7,9 +7,9 @@ from pathlib import Path
 
 from robot import api, model
 from robot.model.modelobject import ModelObject
-from robot.running.model import (Break, Continue, For, If, IfBranch, Keyword,
-                                 ResourceFile, Return, TestCase, TestSuite, Try,
-                                 TryBranch, UserKeyword, While)
+from robot.running import (Break, Continue, Error, For, If, IfBranch, Keyword,
+                           Return, TestCase, TestSuite, Try, TryBranch, While)
+from robot.running.model import ResourceFile, UserKeyword
 from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal,
                                  assert_raises, assert_true)
 
@@ -246,7 +246,7 @@ class TestLineNumberAndSource(unittest.TestCase):
         assert_equal(item.lineno, lineno)
 
 
-class TestToFromDict(unittest.TestCase):
+class TestToFromDictAndJson(unittest.TestCase):
 
     def test_keyword(self):
         self._verify(Keyword(), name='')
@@ -329,6 +329,10 @@ class TestToFromDict(unittest.TestCase):
         self._verify(Break(), type='BREAK')
         self._verify(Break(lineno=11, error='E'),
                      type='BREAK', lineno=11, error='E')
+
+    def test_error(self):
+        self._verify(Error(), type='ERROR', values=[])
+        self._verify(Error(('bad', 'things')), type='ERROR', values=['bad', 'things'])
 
     def test_test(self):
         self._verify(TestCase(), name='', body=[])
