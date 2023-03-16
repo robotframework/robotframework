@@ -16,8 +16,8 @@
 import copy
 
 from robot.api import logger
-from robot.utils import (is_dict_like, is_list_like, is_string, is_truthy, Matcher,
-                         plural_or_not as s, seq2str, seq2str2, type_name)
+from robot.utils import (is_dict_like, is_list_like, is_string, is_truthy,
+                         Matcher, plural_or_not as s, seq2str, seq2str2, type_name)
 from robot.utils.asserts import assert_equal
 from robot.version import get_version
 
@@ -308,13 +308,15 @@ class _List:
         """Fails if the ``value`` is not found from ``list``.
 
         Use the ``msg`` argument to override the default error message.
+
+        See section `Ignore Case` for more information about ignoring case in lists.
         """
         self._validate_list(list_)
-        if ignore_case: 
-            check_list= list(item.lower() if isinstance(item,str) else item for item in list_)
-            check_value=value.lower()
-        else: 
-            check_list = copy.deepcopy(list_)
+        if ignore_case:
+            check_list = self._normalize(list_)
+            check_value = self._normalize(value)
+        else:
+            check_list = list_
             check_value = value
         _verify_condition(check_value in check_list,
                           f"{seq2str2(list_)} does not contain value '{value}'.",
@@ -324,13 +326,15 @@ class _List:
         """Fails if the ``value`` is found from ``list``.
 
         Use the ``msg`` argument to override the default error message.
+
+        See section `Ignore Case` for more information about ignoring case in lists.
         """
         self._validate_list(list_)
-        if ignore_case: 
-            check_list= list(item.lower() if isinstance(item,str) else item for item in list_)
-            check_value=value.lower()
-        else: 
-            check_list = copy.deepcopy(list_)
+        if ignore_case:
+            check_list = self._normalize(list_)
+            check_value = self._normalize(value)
+        else:
+            check_list = list_
             check_value = value
         _verify_condition(check_value not in check_list,
                           f"{seq2str2(list_)} contains value '{value}'.",
@@ -346,6 +350,8 @@ class _List:
 
         This keyword works with all iterables that can be converted to a list.
         The original iterable is never altered.
+
+        See section `Ignore Case` for more information about ignoring case in lists.
         """
         self._validate_list(list_)
         if not isinstance(list_, list):
@@ -353,11 +359,11 @@ class _List:
         dupes = []
         for item in list_:
             if ignore_case:
-                check_list = eval(str(list_).lower())
-                lowercase_value = item.lower() if isinstance(item,str) else eval(str(item).lower())
-                uppercase_value = item.upper() if isinstance(item,str) else eval(str(item).upper())
-                if lowercase_value not in dupes and uppercase_value not in dupes:
-                    count = check_list.count(lowercase_value)
+                check_list = self._normalize(list_)
+                normalized_dupes = self._normalize(dupes)
+                normalized_item = self._normalize(item)
+                if normalized_item not in normalized_dupes:
+                    count = check_list.count(normalized_item)
                     if count > 1:
                         logger.info(f"'{item}' found {count} times.")
                         dupes.append(item)
@@ -414,6 +420,8 @@ class _List:
         | ${list1} = | Create List | apple | cherry | banana |
         | ${list2} = | Create List | cherry | banana | apple |
         | Lists Should Be Equal | ${list1} | ${list2} | ignore_order=True |
+
+        See section `Ignore Case` for more information about ignoring case in lists.
         """
         self._validate_lists(list1, list2)
         len1 = len(list1)
@@ -426,8 +434,8 @@ class _List:
             list1 = sorted(list1)
             list2 = sorted(list2)
         if ignore_case:
-            list1 = list(str(list1).lower())
-            list2 = list(str(list2).lower())
+            list1 = self._normalize(list1)
+            list2 = self._normalize(list2)
         diffs = '\n'.join(self._yield_list_diffs(list1, list2, names))
         _verify_condition(not diffs,
                           f'Lists are different:\n{diffs}',
@@ -448,7 +456,8 @@ class _List:
             except AssertionError as err:
                 yield str(err)
 
-    def list_should_contain_sub_list(self, list1, list2, msg=None, values=True, ignore_case=False):
+    def list_should_contain_sub_list(self, list1, list2, msg=None,
+                                     values=True, ignore_case=False):
         """Fails if not all elements in ``list2`` are found in ``list1``.
 
         The order of values and the number of values are not taken into
@@ -456,11 +465,14 @@ class _List:
 
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
+
+        See section `Ignore Case` for more information about ignoring case in lists.
         """
         self._validate_lists(list1, list2)
         if ignore_case:
-            list1 = eval(str(list1).lower())
-            diffs = ', '.join(str(item) for item in list2 if (item.lower() if isinstance(item,str) else eval(str(item).lower())) not in list1)
+            list1 = self._normalize(list1)
+            diffs = ', '.join(str(item) for item in list2 if
+                              self._normalize(item) not in list1)
         else:
             diffs = ', '.join(str(item) for item in list2 if item not in list1)
         _verify_condition(not diffs,
@@ -507,6 +519,15 @@ class _List:
     def _validate_lists(self, *lists):
         for index, item in enumerate(lists, start=1):
             self._validate_list(item, index)
+
+    def _normalize(self,value):
+        if is_dict_like(value):
+            return {self._normalize(k): self._normalize(value[k]) for k in value}
+        if is_list_like(value):
+            return [self._normalize(v) for v in value]
+        if is_string(value):
+            return value.lower()
+        return value
 
 
 class _Dictionary:
@@ -727,84 +748,108 @@ class _Dictionary:
                 return default
             raise RuntimeError(f"Dictionary does not contain key '{key}'.")
 
-    def dictionary_should_contain_key(self, dictionary, key, msg=None, ignore_case=False):
+    def dictionary_should_contain_key(self, dictionary, key, msg=None,
+                                      ignore_case=False):
         """Fails if ``key`` is not found from ``dictionary``.
 
         Use the ``msg`` argument to override the default error message.
+        
+        See section `Ignore Case` for more information about how to use ignore_case 
+        as an argument
         """
         self._validate_dictionary(dictionary)
-        if ignore_case:
-            dictionary = dict((k.lower() if isinstance(k,str) else k, v) for k,v in dictionary.items())
-            key=key.lower()
+        should_ignore = self._is_ignore_case(ignore_case)
+        if should_ignore['key']:
+            dictionary=self._normalize(dictionary)
+            key=self._normalize(key)
         _verify_condition(key in dictionary,
                           f"Dictionary does not contain key '{key}'.",
                           msg)
 
-    def dictionary_should_not_contain_key(self, dictionary, key, msg=None, ignore_case=False):
+    def dictionary_should_not_contain_key(self, dictionary, key, msg=None,
+                                          ignore_case=False):
         """Fails if ``key`` is found from ``dictionary``.
 
         Use the ``msg`` argument to override the default error message.
+        
+        See section `Ignore Case` for more information about how to use ignore_case 
+        as an argument
         """
         self._validate_dictionary(dictionary)
-        if ignore_case: 
-            dictionary = dict((k.lower() if isinstance(k,str) else k, v) for k,v in dictionary.items())
-            key=key.lower()
+        should_ignore = self._is_ignore_case(ignore_case)
+        if should_ignore['key']:
+            dictionary=self._normalize(dictionary)
+            key=self._normalize(key)
         _verify_condition(key not in dictionary,
                           f"Dictionary contains key '{key}'.",
                           msg)
 
-    def dictionary_should_contain_item(self, dictionary, key, value, msg=None, ignore_case=False):
+    def dictionary_should_contain_item(self, dictionary, key, value, msg=None,
+                                       ignore_case=False):
         """An item of ``key`` / ``value`` must be found in a ``dictionary``.
 
         Value is converted to unicode for comparison.
 
         Use the ``msg`` argument to override the default error message.
+        
+        See section `Ignore Case` for more information about how to use ignore_case 
+        as an argument
         """
         self._validate_dictionary(dictionary)
-        ignore_case_key = True if ignore_case==True or ignore_case=="both" or ignore_case=="key" else False
-        ignore_case_value = True if ignore_case==True or ignore_case=="both" or ignore_case=="value" else False
-        self.dictionary_should_contain_key(dictionary, key, msg, ignore_case_key)
-        if ignore_case and ignore_case_key and ignore_case_value:
-            dictionary = eval(str(dictionary).lower())
-            key=key.lower()
-            value=value.lower() if isinstance(value,str) else eval(str(value).lower())
-        elif ignore_case_key:
-            dictionary = dict((k.lower() if isinstance(k,str) else k, v) for k,v in dictionary.items())
-            key=key.lower()
-        elif ignore_case_value:
-            dictionary = dict((k, v.lower() if isinstance(v,str) else eval(str(v).lower())) for k,v in dictionary.items())
-            value=value.lower() if isinstance(value,str) else eval(str(value).lower())
+        should_ignore = self._is_ignore_case(ignore_case)
+        self.dictionary_should_contain_key(dictionary, key, msg, should_ignore['key'])
+        if ignore_case is True or self._normalize(ignore_case)=="both":
+            dictionary = self._normalize(dictionary)
+            key=self._normalize(key)
+            value=self._normalize(value)
+        elif should_ignore['key']:
+            dictionary = {self._normalize(k): dictionary[k] for k in dictionary}
+            key=self._normalize(key)
+        elif should_ignore['value']:
+            dictionary = {k: self._normalize(dictionary[k]) for k in dictionary}
+            value=self._normalize(value)
         assert_equal(dictionary[key], value,
                      msg or f"Value of dictionary key '{key}' does not match",
                      values=not msg)
 
-    def dictionary_should_contain_value(self, dictionary, value, msg=None, ignore_case=False):
+    def dictionary_should_contain_value(self, dictionary, value, msg=None,
+                                        ignore_case=False):
         """Fails if ``value`` is not found from ``dictionary``.
 
         Use the ``msg`` argument to override the default error message.
+        
+        See section `Ignore Case` for more information about how to use ignore_case 
+        as an argument
         """
         self._validate_dictionary(dictionary)
-        if ignore_case:
-            dictionary = dict((k, v.lower() if isinstance(v,str) else eval(str(v).lower())) for k,v in dictionary.items())
-            value=value.lower() if isinstance(value,str) else eval(str(value).lower())
+        should_ignore = self._is_ignore_case(ignore_case)
+        if should_ignore['value']:
+            dictionary=self._normalize(dictionary)
+            value=self._normalize(value)
         _verify_condition(value in dictionary.values(),
                           f"Dictionary does not contain value '{value}'.",
                           msg)
 
-    def dictionary_should_not_contain_value(self, dictionary, value, msg=None, ignore_case=False):
+    def dictionary_should_not_contain_value(self, dictionary, value, msg=None,
+                                            ignore_case=False):
         """Fails if ``value`` is found from ``dictionary``.
 
         Use the ``msg`` argument to override the default error message.
+        
+        See section `Ignore Case` for more information about how to use ignore_case 
+        as an argument
         """
         self._validate_dictionary(dictionary)
-        if ignore_case:
-            dictionary = dict((k, v.lower() if isinstance(v,str) else eval(str(v).lower())) for k,v in dictionary.items())
-            value=value.lower()
+        should_ignore = self._is_ignore_case(ignore_case)
+        if should_ignore['value']:
+            dictionary = self._normalize(dictionary)
+            value=self._normalize(value)
         _verify_condition(value not in dictionary.values(),
                           f"Dictionary contains value '{value}'.",
                           msg)
 
-    def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True, ignore_case=False):
+    def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True,
+                                     ignore_case=False):
         """Fails if the given dictionaries are not equal.
 
         First the equality of dictionaries' keys is checked and after that all
@@ -814,15 +859,16 @@ class _Dictionary:
 
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
-
-        Possibility to add ignore_case = [key | value | both (True)]
+        
+        See section `Ignore Case` for more information about how to use ignore_case 
+        as an argument
         """
         self._validate_dictionary(dict1)
         self._validate_dictionary(dict2, 2)
-        ignore_case_key = True if ignore_case==True or ignore_case=="both" or ignore_case=="key" else False
-        ignore_case_value = True if ignore_case==True or ignore_case=="both" or ignore_case=="value" else False
-        keys = self._keys_should_be_equal(dict1, dict2, msg, values, ignore_case_key)
-        self._key_values_should_be_equal(keys, dict1, dict2, msg, values, ignore_case_value)
+        should_ignore = self._is_ignore_case(ignore_case)
+        self._keys_should_be_equal(dict1, dict2, msg, values, should_ignore['key'])
+        self._key_values_should_be_equal(dict1, dict2, msg,
+                                         values, ignore_case)
 
     def dictionary_should_contain_sub_dictionary(self, dict1, dict2, msg=None,
                                                  values=True, ignore_case=False):
@@ -830,20 +876,24 @@ class _Dictionary:
 
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
+        
+        See section `Ignore Case` for more information about how to use ignore_case 
+        as an argument
         """
         self._validate_dictionary(dict1)
         self._validate_dictionary(dict2, 2)
-        ignore_case_key = True if ignore_case==True or ignore_case=="both" or ignore_case=="key" else False
-        ignore_case_value = True if ignore_case==True or ignore_case=="both" or ignore_case=="value" else False
+        should_ignore = self._is_ignore_case(ignore_case)
         keys = self.get_dictionary_keys(dict2)
-        if ignore_case_key: 
-            diffs = ', '.join(str(k) for k in keys if k.lower() not in [k.lower() for k in dict1.keys()])
-        else:  
+        if should_ignore['key']:
+            diffs = ', '.join(str(k) for k in keys if self._normalize(k)
+                              not in self._normalize(dict1))
+        else:
             diffs = ', '.join(str(k) for k in keys if k not in dict1)
         _verify_condition(not diffs,
                           f"Following keys missing from first dictionary: {diffs}",
                           msg, values)
-        self._key_values_should_be_equal(keys, dict1, dict2, msg, values, ignore_case_value)
+        self._key_values_should_be_equal(dict1, dict2, msg,
+                                         values, ignore_case)
 
     def log_dictionary(self, dictionary, level='INFO'):
         """Logs the size and contents of the ``dictionary`` using given ``level``.
@@ -870,11 +920,12 @@ class _Dictionary:
         keys1 = self.get_dictionary_keys(dict1)
         keys2 = self.get_dictionary_keys(dict2)
         if ignore_case:
-            miss1 = ', '.join(str(k) for k in keys2 if k.lower() not in [k.lower() for k in dict1.keys()])
-            miss2 = ', '.join(str(k) for k in keys1 if k.lower() not in [k.lower() for k in dict2.keys()])
-        else:
-            miss1 = ', '.join(str(k) for k in keys2 if k not in dict1)
-            miss2 = ', '.join(str(k) for k in keys1 if k not in dict2)
+            keys1 = self._normalize(dict1)
+            keys2 = self._normalize(dict2)
+            dict1 = self._normalize(dict1)
+            dict2 = self._normalize(dict2)
+        miss1 = ', '.join(str(k) for k in keys2 if k not in dict1)
+        miss2 = ', '.join(str(k) for k in keys1 if k not in dict2)
         error = []
         if miss1:
             error += [f'Following keys missing from first dictionary: {miss1}']
@@ -883,21 +934,25 @@ class _Dictionary:
         _verify_condition(not error, '\n'.join(error), msg, values)
         return keys1
 
-    def _key_values_should_be_equal(self, keys, dict1, dict2, msg, values, ignore_case):
-        diffs = '\n'.join(self._yield_dict_diffs(keys, dict1, dict2, ignore_case))
+    def _key_values_should_be_equal(self, dict1, dict2, msg, values, ignore_case):
+        diffs = '\n'.join(self._yield_dict_diffs(dict1, dict2, ignore_case))
         _verify_condition(not diffs,
                           f'Following keys have different values:\n{diffs}',
                           msg, values)
 
-    def _yield_dict_diffs(self, keys, dict1, dict2, ignore_case):
-        for dict1_key, dict2_key in zip(dict1.keys(),dict2.keys()):
+    def _yield_dict_diffs(self, dict1, dict2, ignore_case):
+        should_ignore = self._is_ignore_case(ignore_case)
+        for key1, key2 in zip(dict1,dict2):
+            if should_ignore['value'] is True:
+                dict1 = {k: self._normalize(dict1[k]) for k in dict1}
+                dict2 = {k: self._normalize(dict2[k]) for k in dict2}
+            elif should_ignore['key'] is True:
+                key1 = self._normalize(key1)
+                key2 = self._normalize(key2)
+                dict1 = {self._normalize(k): dict1[k] for k in dict1}
+                dict2 = {self._normalize(k): dict2[k] for k in dict2}
             try:
-                if ignore_case:
-                    dict1_lower = dict((k.lower() if isinstance(k,str) else k, v.lower()if isinstance(v,str) else eval(str(v).lower())) for k,v in dict1.items())
-                    dict2_lower = dict((k.lower() if isinstance(k,str) else k, v.lower()if isinstance(v,str) else eval(str(v).lower())) for k,v in dict2.items())                    
-                    assert_equal(dict1_lower[dict1_key.lower()], dict2_lower[dict2_key.lower()], msg=f'Key {dict1_key}')
-                else:
-                    assert_equal(dict1[dict1_key], dict2[dict2_key], msg=f'Key {dict1_key}')
+                assert_equal(dict1[key1], dict2[key2], msg=f'Key {key1}')
             except AssertionError as err:
                 yield str(err)
 
@@ -906,6 +961,29 @@ class _Dictionary:
             raise TypeError(f"Expected argument {position} to be a dictionary or "
                             f"dictionary-like, got {type_name(dictionary)} instead.")
 
+    def _normalize(self,value):
+        if is_dict_like(value):
+            return {self._normalize(k): self._normalize(value[k]) for k in value}
+        if is_list_like(value):
+            return [self._normalize(v) for v in value]
+        if is_string(value):
+            return value.lower()
+        return value
+
+    def _is_ignore_case(self,ignore_case):
+        if self._normalize(ignore_case)=="key":
+            ignore_case_key=True
+            ignore_case_value=False
+        elif self._normalize(ignore_case)=="value":
+            ignore_case_key=False
+            ignore_case_value=True
+        elif self._normalize(ignore_case)=="both" or ignore_case is True:
+            ignore_case_key=True
+            ignore_case_value=True
+        else:
+            ignore_case_key=False
+            ignore_case_value=False
+        return {'key': ignore_case_key, 'value': ignore_case_value}
 
 class Collections(_List, _Dictionary):
     """A library providing keywords for handling lists and dictionaries.
@@ -985,7 +1063,27 @@ class Collections(_List, _Dictionary):
 
     Dictionary keywords use similar ``${Dx}`` variables. For example, ``${D1}``
     means ``{'a': 1}`` and ``${D3}`` means ``{'a': 1, 'b': 2, 'c': 3}``.
+
+    = Ignore case =
+
+    It is possible to ignore the case for elements in both dictionaries and lists.
+    In lists, this can be done by adding ``ignore_case=True``. For dictionaries,
+    there are additional options since they employ both keys and values, using
+    ignore_case equal to ``key``, ``value`` or ``both``. Ignoring case means that the values 
+    to compare are normalized by lowercasing strings before comparison.
+
+    List Examples:
+    | `Lists should be equal` | ${list1} | ${list} | ignore_case=True   | # String ``true`` is True.   |
+    | `Lists should be equal` | ${list1} | ${list} | ignore_case=False  | # String ``false`` is False. |
+
+    Dictionary Examples:
+    | `Dictionaries should be equal` | ${dict1} | ${dict2} | ignore_case=True   | # String ``true`` is True.   |
+    | `Dictionaries should be equal` | ${dict1} | ${dict2} | ignore_case=both   | # Case will be ignored on keys and values    |
+    | `Dictionaries should be equal` | ${dict1} | ${dict2} | ignore_case=key    | # Case will be ignored on keys, not values   |
+    | `Dictionaries should be equal` | ${dict1} | ${dict2} | ignore_case=value  | # Case will be ignored on values, not keys   |
+    | `Dictionaries should be equal` | ${dict1} | ${dict2} | ignore_case=False  | # String ``false`` is False. |
     """
+
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
 
