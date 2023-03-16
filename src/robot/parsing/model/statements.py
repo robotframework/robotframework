@@ -88,6 +88,7 @@ class Statement(ast.AST):
         settings header or test/keyword.
 
         Most implementations support following general properties:
+
         - ``separator`` whitespace inserted between each token. Default is four spaces.
         - ``indent`` whitespace inserted before first token. Default is four spaces.
         - ``eol`` end of line sign. Default is ``'\\n'``.
@@ -721,9 +722,11 @@ class Return(MultiValue):
     """Represents the deprecated ``[Return]`` setting.
 
     In addition to the ``[Return]`` setting itself, also the ``Return`` node
-    in the parsing model is deprecated. ``ReturnSetting`` (new in RF 6.1) should
-    be used instead. ``ReturnStatement`` will be renamed to ``Return`` in
-    the future, most likely already in RF 7.0.
+    in the parsing model is deprecated and :class:`ReturnSetting` (new in
+    Robot Framework 6.1) should be used instead. :class:`ReturnStatement` will
+    be renamed to ``Return`` in Robot Framework 7.0.
+
+    Eventually ``[Return]`` and ``ReturnSetting`` will be removed altogether.
     """
     type = Token.RETURN
 

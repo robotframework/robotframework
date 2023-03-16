@@ -21,6 +21,11 @@ from .keyword import Keywords
 
 @Body.register
 class For(BodyItem):
+    """Represents ``FOR`` loops.
+
+    :attr:`flavor` specifies the flavor, and it can be ``IN``, ``IN RANGE``,
+    ``IN ENUMERATE`` or ``IN ZIP``.
+    """
     type = BodyItem.FOR
     body_class = Body
     repr_args = ('variables', 'flavor', 'values', 'start', 'mode', 'fill')
@@ -81,6 +86,7 @@ class For(BodyItem):
 
 @Body.register
 class While(BodyItem):
+    """Represents ``WHILE`` loops."""
     type = BodyItem.WHILE
     body_class = Body
     repr_args = ('condition', 'limit')
@@ -121,6 +127,7 @@ class While(BodyItem):
 
 
 class IfBranch(BodyItem):
+    """Represents individual ``IF``, ``ELSE IF`` or ``ELSE`` branch."""
     body_class = Body
     repr_args = ('type', 'condition')
     __slots__ = ['type', 'condition']
@@ -192,6 +199,7 @@ class If(BodyItem):
 
 
 class TryBranch(BodyItem):
+    """Represents individual ``TRY``, ``EXCEPT``, ``ELSE`` or ``FINALLY`` branch."""
     body_class = Body
     repr_args = ('type', 'patterns', 'pattern_type', 'variable')
     __slots__ = ['type', 'patterns', 'pattern_type', 'variable']
@@ -301,6 +309,7 @@ class Try(BodyItem):
 
 @Body.register
 class Return(BodyItem):
+    """Represents ``RETURN``."""
     type = BodyItem.RETURN
     repr_args = ('values',)
     __slots__ = ['values']
@@ -318,6 +327,7 @@ class Return(BodyItem):
 
 @Body.register
 class Continue(BodyItem):
+    """Represents ``CONTINUE``."""
     type = BodyItem.CONTINUE
     __slots__ = []
 
@@ -333,6 +343,7 @@ class Continue(BodyItem):
 
 @Body.register
 class Break(BodyItem):
+    """Represents ``BREAK``."""
     type = BodyItem.BREAK
     __slots__ = []
 
@@ -348,6 +359,10 @@ class Break(BodyItem):
 
 @Body.register
 class Error(BodyItem):
+    """Represents syntax error in data.
+
+    For example, an invalid setting like ``[Setpu]`` or ``END`` in wrong place.
+    """
     type = BodyItem.ERROR
     __slots__ = ['values']
 
