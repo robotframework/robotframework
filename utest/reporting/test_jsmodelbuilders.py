@@ -183,6 +183,15 @@ class TestBuildTestSuite(unittest.TestCase):
         )
         self._verify_test(test, body=(exp_if, exp_else_if, exp_else))
 
+    def test_for(self):
+        test = TestSuite().tests.create()
+        test.body.create_for(variables=['${x}'], values=['a', 'b'])
+        test.body.create_for(['${x}'], 'IN ENUMERATE', ['a', 'b'], start='1')
+        end = ('', '', '', '', '', '', (0, None, 0), ())
+        exp_f1 = (3, '${x} IN [ a | b ]', *end)
+        exp_f2 = (3, '${x} IN ENUMERATE [ a | b | start=1 ]', *end)
+        self._verify_test(test, body=(exp_f1, exp_f2))
+
     def test_message_directly_under_test(self):
         test = TestSuite().tests.create()
         test.body.create_message('Hi from test')

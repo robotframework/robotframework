@@ -7,7 +7,7 @@ Resource    </script>
 *** Test Cases ***
 </script>
     [Documentation]    FAIL </script>
-    [Timeout]    10s    </script>
+    [Timeout]    10s
     Log    </script>
     </script>
 
@@ -18,5 +18,5 @@ HTML </script>
 *** Keywords ***
 </script>
     [Documentation]    </script>
-    [Timeout]    10s    </script>
+    [Timeout]    10s
     Fail    </script>

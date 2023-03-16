@@ -9,19 +9,15 @@ Default Test Timeout Message
 
 Test Timeout Message
     Check Test Case    ${TEST NAME}
-    Using more than one value with timeout should error    1    9     2
 
 Test Timeout Message In Multiple Columns
     Check Test Case    ${TEST NAME}
-    Using more than one value with timeout should error    2    13    7
 
 Keyword Timeout Message
     Check Test Case    ${TEST NAME}
-    Using more than one value with timeout should error    3    26    2
 
 Keyword Timeout Message In Multiple Columns
     Check Test Case    ${TEST NAME}
-    Using more than one value with timeout should error    4    30    7
 
 *** Keywords ***
 Using more than one value with timeout should error

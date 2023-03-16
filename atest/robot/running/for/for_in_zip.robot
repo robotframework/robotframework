@@ -48,9 +48,9 @@ One variable and two lists
 One variable and six lists
     ${loop} =    Check test and get loop    ${TEST NAME}
     Should be IN ZIP loop      ${loop}            3
-    Should be FOR iteration    ${loop.body[0]}    \${x}=('a', 'x', '1', '1', 'x', 'a')
-    Should be FOR iteration    ${loop.body[1]}    \${x}=('b', 'y', '2', '2', 'y', 'b')
-    Should be FOR iteration    ${loop.body[2]}    \${x}=('c', 'z', '3', '3', 'z', 'c')
+    Should be FOR iteration    ${loop.body[0]}    \${x}=('a', 'x', 1, 1, 'x', 'a')
+    Should be FOR iteration    ${loop.body[1]}    \${x}=('b', 'y', 2, 2, 'y', 'b')
+    Should be FOR iteration    ${loop.body[2]}    \${x}=('c', 'z', 3, 3, 'z', 'c')
 
 Other iterables
     Check Test Case    ${TEST NAME}
@@ -69,6 +69,46 @@ List variable with iterables can be empty
     Should be IN ZIP loop      ${tc.body[1]}            1         NOT RUN
     Should be FOR iteration    ${tc.body[1].body[0]}    \${x}=    \${y}=    \${z}=
     Check Log Message          ${tc.body[2].msgs[0]}    Executed!
+
+Strict mode
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should be IN ZIP loop      ${tc.body[0]}    3   PASS    mode=STRICT
+    Should be IN ZIP loop      ${tc.body[2]}    1   FAIL    mode=strict
+
+Strict mode requires items to have length
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should be IN ZIP loop      ${tc.body[0]}    1   FAIL    mode=STRICT
+
+Shortest mode
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should be IN ZIP loop      ${tc.body[0]}    3   PASS    mode=SHORTEST    fill=ignored
+    Should be IN ZIP loop      ${tc.body[3]}    3   PASS    mode=\${{'shortest'}}
+
+Shortest mode supports infinite iterators
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should be IN ZIP loop      ${tc.body[0]}    5   PASS    mode=SHORTEST
+
+Longest mode
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should be IN ZIP loop      ${tc.body[0]}    3   PASS    mode=LONGEST
+    Should be IN ZIP loop      ${tc.body[3]}    5   PASS    mode=LoNgEsT
+
+Longest mode with custom fill value
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should be IN ZIP loop      ${tc.body[0]}    5   PASS    mode=longest    fill=?
+    Should be IN ZIP loop      ${tc.body[3]}    5   PASS    mode=longest    fill=\${0}
+
+Invalid mode
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should be IN ZIP loop      ${tc.body[0]}    1   FAIL    mode=bad
+
+Non-existing variable in mode
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should be IN ZIP loop      ${tc.body[0]}    1   FAIL    mode=\${bad}    fill=\${ignored}
+
+Non-existing variable in fill value
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should be IN ZIP loop      ${tc.body[0]}    1   FAIL    mode=longest    fill=\${bad}
 
 Not iterable value
     Check test and failed loop    ${TEST NAME}    IN ZIP

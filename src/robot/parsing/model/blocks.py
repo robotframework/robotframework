@@ -18,8 +18,8 @@ from contextlib import contextmanager
 
 from robot.utils import file_writer, is_pathlike, is_string
 
-from .statements import (Break, Continue, KeywordCall, ReturnSetting, ReturnStatement,
-                         Statement, TemplateArguments)
+from .statements import (Break, Continue, Error, KeywordCall, ReturnSetting,
+                         ReturnStatement, Statement, TemplateArguments)
 from .visitor import ModelVisitor
 from ..lexer import Token
 
@@ -67,7 +67,7 @@ class HeaderAndBody(Block):
     def _body_is_empty(self):
         # This works with tests, keywords and blocks inside them, not with sections.
         valid = (KeywordCall, TemplateArguments, Continue, ReturnStatement, Break,
-                 Block)
+                 Block, Error)
         return not any(isinstance(node, valid) for node in self.body)
 
 
@@ -237,6 +237,18 @@ class For(HeaderAndBody):
     @property
     def flavor(self):
         return self.header.flavor
+
+    @property
+    def start(self):
+        return self.header.start
+
+    @property
+    def mode(self):
+        return self.header.mode
+
+    @property
+    def fill(self):
+        return self.header.fill
 
     def validate(self, ctx: 'ValidationContext'):
         if self._body_is_empty():

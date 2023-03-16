@@ -84,3 +84,7 @@ RETURN in FINALLY
 
 Invalid TRY/EXCEPT causes syntax error that cannot be caught
     TRY:FAIL    EXCEPT:NOT RUN    ELSE:NOT RUN
+
+Dangling FINALLY
+    [Template]    Check Test Case
+    ${TEST NAME}

@@ -43,7 +43,7 @@ from robot.errors import BreakLoop, ContinueLoop, DataError, ReturnFromKeyword
 from robot.model import BodyItem, create_fixture, Keywords, ModelObject
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.result import (Break as BreakResult, Continue as ContinueResult,
-                          Return as ReturnResult)
+                          Error as ErrorResult, Return as ReturnResult)
 from robot.utils import setter
 
 from .bodyrunner import ForRunner, IfRunner, KeywordRunner, TryRunner, WhileRunner
@@ -94,9 +94,9 @@ class For(model.For):
     __slots__ = ['lineno', 'error']
     body_class = Body
 
-    def __init__(self, variables=(), flavor='IN', values=(), parent=None,
-                 lineno=None, error=None):
-        super().__init__(variables, flavor, values, parent)
+    def __init__(self, variables=(), flavor='IN', values=(), start=None, mode=None,
+                 fill=None, parent=None, lineno=None, error=None):
+        super().__init__(variables, flavor, values, start, mode, fill, parent)
         self.lineno = lineno
         self.error = error
 
@@ -313,6 +313,33 @@ class Break(model.Break):
                     raise DataError(self.error, syntax=True)
                 if not context.dry_run:
                     raise BreakLoop()
+
+    def to_dict(self):
+        data = super().to_dict()
+        if self.lineno:
+            data['lineno'] = self.lineno
+        if self.error:
+            data['error'] = self.error
+        return data
+
+
+@Body.register
+class Error(model.Error):
+    __slots__ = ['lineno', 'error']
+
+    def __init__(self, values, parent=None, lineno=None, error=None):
+        super().__init__(values, parent)
+        self.lineno = lineno
+        self.error = error
+
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
+    def run(self, context, run=True, templated=False):
+        with StatusReporter(self, ErrorResult(self.values), context, run):
+            if run:
+                raise DataError(self.error)
 
     def to_dict(self):
         data = super().to_dict()
@@ -736,10 +763,6 @@ class Import(ModelObject):
         self.parent = parent
         self.lineno = lineno
 
-    def _repr(self, repr_args):
-        repr_args = [a for a in repr_args if a in ('type', 'name') or getattr(self, a)]
-        return super()._repr(repr_args)
-
     @property
     def source(self) -> Path:
         return self.parent.source if self.parent is not None else None
@@ -776,6 +799,9 @@ class Import(ModelObject):
         if self.lineno:
             data['lineno'] = self.lineno
         return data
+
+    def _include_in_repr(self, name, value):
+        return name in ('type', 'name') or value
 
 
 class Imports(model.ItemList):

@@ -190,15 +190,23 @@ class ForHeaderLexer(StatementLexer):
 
     def lex(self):
         self.statement[0].type = Token.FOR
-        separator_seen = False
+        separator = None
         for token in self.statement[1:]:
-            if separator_seen:
+            if separator:
                 token.type = Token.ARGUMENT
             elif normalize_whitespace(token.value) in self.separators:
                 token.type = Token.FOR_SEPARATOR
-                separator_seen = True
+                separator = normalize_whitespace(token.value)
             else:
                 token.type = Token.VARIABLE
+        if (separator == 'IN ENUMERATE'
+                and self.statement[-1].value.startswith('start=')):
+            self.statement[-1].type = Token.OPTION
+        elif separator == 'IN ZIP':
+            for token in reversed(self.statement):
+                if not token.value.startswith(('mode=', 'fill=')):
+                    break
+                token.type = Token.OPTION
 
 
 class IfHeaderLexer(TypeAndArguments):
@@ -334,3 +342,18 @@ class BreakLexer(TypeAndArguments):
     @classmethod
     def handles(cls, statement: list, ctx: TestOrKeywordContext):
         return statement[0].value == 'BREAK'
+
+
+class SyntaxErrorLexer(TypeAndArguments):
+    token_type = Token.ERROR
+
+    @classmethod
+    def handles(cls, statement: list, ctx: TestOrKeywordContext):
+        return statement[0].value in \
+               {'BREAK', 'CONTINUE', 'END', 'ELSE', 'ELSE IF','EXCEPT', 'FINALLY', 'RETURN'}
+
+    def lex(self):
+        token = self.statement[0]
+        token.set_error(f'{token.value} is not allowed in this context.')
+        for t in self.statement[1:]:
+            t.type = Token.ARGUMENT

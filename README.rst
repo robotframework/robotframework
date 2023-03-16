@@ -22,7 +22,7 @@ http://robotframework.org.
 Robot Framework project is hosted on GitHub_ where you can find source code,
 an issue tracker, and some further documentation. Downloads are hosted on PyPI_.
 
-Robot Framework development is sponsored by `Robot Framework Foundation
+Robot Framework development is sponsored by non-profit `Robot Framework Foundation
 <http://robotframework.org/foundation>`_. If you are using the framework
 and benefiting from it, consider joining the foundation to help maintaining
 the framework and developing it further.
@@ -113,8 +113,7 @@ Documentation
 Support and Contact
 -------------------
 
-- `Slack <https://robotframework.slack.com/>`_
-  (`click for invite <https://robotframework-slack-invite.herokuapp.com>`__)
+- `Slack <http://slack.robotframework.org/>`_
 - `Forum <https://forum.robotframework.org/>`_
 - `robotframework-users
   <https://groups.google.com/group/robotframework-users/>`_ mailing list

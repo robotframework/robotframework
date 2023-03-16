@@ -75,12 +75,10 @@ Flatten controls in keyword
     ...    3    2    1    BANG!
     ...    FOR: 0    1    FOR: 1    1    FOR: 2    1
     ...    WHILE: 2    1    \${i} = 1    WHILE: 1    1    \${i} = 0
+    ...    AssertionError    1    finally
     FOR    ${msg}    ${exp}    IN ZIP    ${tc.body[0].body}    ${expected}
-        Check Log Message    ${msg}    ${exp}
+        Check Log Message    ${msg}    ${exp}    level=IGNORE
     END
-    Check log message    ${tc.body[0].body[20]}    AssertionError    level=FAIL
-    Check log message    ${tc.body[0].body[21]}    1
-    Check log message    ${tc.body[0].body[22]}    finally
 
 Flatten for loops
     Run Rebot    --flatten For    ${OUTFILE COPY}

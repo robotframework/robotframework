@@ -16,15 +16,14 @@
 import re
 
 from robot.utils import format_time
-
-from .loggerhelper import Message
+from .loggerhelper import Message, write_to_console
 
 
 class StdoutLogSplitter:
     """Splits messages logged through stdout (or stderr) into Message objects"""
 
     _split_from_levels = re.compile(r'^(?:\*'
-                                    r'(TRACE|DEBUG|INFO|HTML|WARN|ERROR)'
+                                    r'(TRACE|DEBUG|INFO|CONSOLE|HTML|WARN|ERROR)'
                                     r'(:\d+(?:\.\d+)?)?'  # Optional timestamp
                                     r'\*)', re.MULTILINE)
 
@@ -33,6 +32,9 @@ class StdoutLogSplitter:
 
     def _get_messages(self, output):
         for level, timestamp, msg in self._split_output(output):
+            if level == 'CONSOLE':
+                write_to_console(msg.lstrip())
+                level = 'INFO'
             if timestamp:
                 timestamp = self._format_timestamp(timestamp[1:])
             yield Message(msg.strip(), level, timestamp=timestamp)

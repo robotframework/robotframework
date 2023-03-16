@@ -35,7 +35,7 @@ class XmlLogger(ResultVisitor):
         writer.start('robot', {'generator': get_full_version(generator),
                                'generated': get_timestamp(),
                                'rpa': 'true' if rpa else 'false',
-                               'schemaversion': '3'})
+                               'schemaversion': '4'})
         return writer
 
     def close(self):
@@ -100,7 +100,10 @@ class XmlLogger(ResultVisitor):
         self._writer.end('branch')
 
     def start_for(self, for_):
-        self._writer.start('for', {'flavor': for_.flavor})
+        self._writer.start('for', {'flavor': for_.flavor,
+                                   'start': for_.start,
+                                   'mode': for_.mode,
+                                   'fill': for_.fill})
         for name in for_.variables:
             self._writer.element('var', name)
         for value in for_.values:
@@ -183,6 +186,15 @@ class XmlLogger(ResultVisitor):
     def end_break(self, break_):
         self._write_status(break_)
         self._writer.end('break')
+
+    def start_error(self, error):
+        self._writer.start('error')
+        for value in error.values:
+            self._writer.element('value', value)
+
+    def end_error(self, error):
+        self._write_status(error)
+        self._writer.end('error')
 
     def start_test(self, test):
         self._writer.start('test', {'id': test.id, 'name': test.name,
@@ -331,4 +343,10 @@ class FlatXmlLogger(XmlLogger):
         pass
 
     def end_return(self, return_):
+        pass
+
+    def start_error(self, error):
+        pass
+
+    def end_error(self, error):
         pass

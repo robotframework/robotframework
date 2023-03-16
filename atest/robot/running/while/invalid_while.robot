@@ -14,11 +14,17 @@ Multiple conditions
 Invalid condition
     Check Invalid WHILE Test Case
 
-Invalid condition on second round
+Non-existing ${variable} in condition
+    Check Invalid WHILE Test Case
+
+Non-existing $variable in condition
+    Check Invalid WHILE Test Case
+
+Recommend $var syntax if invalid condition contains ${var}
     Check Test Case    ${TEST NAME}
 
-Non-existing variable in condition
-    Check Invalid WHILE Test Case
+Invalid condition on second round
+    Check Test Case    ${TEST NAME}
 
 No body
     Check Invalid WHILE Test Case    body=False

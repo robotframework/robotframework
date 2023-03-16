@@ -325,7 +325,8 @@ class TestCheckerLibrary:
         b = BuiltIn()
         matcher = b.should_match if pattern else b.should_be_equal
         matcher(message, expected.rstrip(), 'Wrong log message')
-        b.should_be_equal(item.level, 'INFO' if level == 'HTML' else level, 'Wrong log level')
+        if level != 'IGNORE':
+            b.should_be_equal(item.level, 'INFO' if level == 'HTML' else level, 'Wrong log level')
         b.should_be_equal(str(item.html), str(html or level == 'HTML'), 'Wrong HTML status')
 
 
@@ -374,6 +375,9 @@ class ProcessResults(ResultVisitor):
 
     def start_while_iteration(self, iteration):
         self._add_kws_and_msgs(iteration)
+
+    def visit_error(self, error):
+        pass
 
     def visit_errors(self, errors):
         errors.msgs = errors.messages

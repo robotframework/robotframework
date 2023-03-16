@@ -261,6 +261,9 @@ class TestToFromDict(unittest.TestCase):
         self._verify(For(['${i}'], 'IN RANGE', ['10'], lineno=2),
                      type='FOR', variables=['${i}'], flavor='IN RANGE', values=['10'],
                      body=[], lineno=2)
+        self._verify(For(['${i}', '${a}'], 'IN ENUMERATE', ['cat', 'dog'], start='1'),
+                     type='FOR', variables=['${i}', '${a}'], flavor='IN ENUMERATE',
+                     values=['cat', 'dog'], body=[], start='1')
 
     def test_while(self):
         self._verify(While(), type='WHILE', body=[])

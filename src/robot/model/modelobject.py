@@ -136,11 +136,13 @@ class ModelObject(metaclass=SetterAwareType):
         return copied
 
     def __repr__(self):
-        return self._repr(self.repr_args)
+        arguments = [(name, getattr(self, name)) for name in self.repr_args]
+        args_repr = ', '.join(f'{name}={value!r}' for name, value in arguments
+                              if self._include_in_repr(name, value))
+        return f"{full_name(self)}({args_repr})"
 
-    def _repr(self, repr_args):
-        args = ', '.join(f'{a}={getattr(self, a)!r}' for a in repr_args)
-        return f"{full_name(self)}({args})"
+    def _include_in_repr(self, name, value):
+        return True
 
 
 def full_name(obj):

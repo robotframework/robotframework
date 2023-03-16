@@ -43,7 +43,7 @@ FOR IN ENUMERATE loop with three variables
 
 FOR IN ENUMERATE loop with start
     ${loop} =    Check test and get loop    ${TESTNAME}
-    Should be IN ENUMERATE loop    ${loop}           3
+    Should be IN ENUMERATE loop    ${loop}            3          start=42
 
 FOR IN ENUMERATE loop with more than three variables is invalid
     Check test and failed loop    ${TESTNAME}    IN ENUMERATE

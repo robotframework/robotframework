@@ -43,11 +43,11 @@ In nested FOR/IF structure
     Should be equal    ${x}    ${6}
 
 In test
-    [Documentation]    FAIL RETURN can only be used inside a user keyword.
+    [Documentation]    FAIL RETURN is not allowed in this context.
     RETURN
 
 In test with values
-    [Documentation]    FAIL RETURN can only be used inside a user keyword.
+    [Documentation]    FAIL RETURN is not allowed in this context.
     RETURN    v1    v2
 
 In test inside IF
