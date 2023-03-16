@@ -1034,8 +1034,7 @@ Documentation
         expected = File([
             InvalidSection(
                 header=SectionHeader(
-                    [Token('INVALID HEADER', '*** Invalid ***', 1, 0, inv_header)],
-                    (inv_header,)
+                    [Token('INVALID HEADER', '*** Invalid ***', 1, 0, inv_header)]
                 )
 
             ),
@@ -1059,7 +1058,7 @@ Documentation
         expected = File([
             InvalidSection(
                 header=SectionHeader(
-                    [Token('FATAL INVALID HEADER', '*** Test Cases ***', 1, 0, inv_testcases)], (inv_testcases,))
+                    [Token('INVALID HEADER', '*** Test Cases ***', 1, 0, inv_testcases)])
             )
         ])
         assert_model(model, expected)
@@ -1081,8 +1080,7 @@ Documentation
         expected = File([
             InvalidSection(
                 header=SectionHeader(
-                    [Token('INVALID HEADER', '*** Invalid ***', 1, 0, inv_header)],
-                    (inv_header,)
+                    [Token('INVALID HEADER', '*** Invalid ***', 1, 0, inv_header)]
                 )
             ),
             SettingSection(
@@ -1096,8 +1094,7 @@ Documentation
             ),
             InvalidSection(
                 header=SectionHeader(
-                    [Token('FATAL INVALID HEADER', '*** Test Cases ***', 5, 0, inv_testcases)],
-                    (inv_testcases,)
+                    [Token('INVALID HEADER', '*** Test Cases ***', 5, 0, inv_testcases)]
                 )
             ),
         ])

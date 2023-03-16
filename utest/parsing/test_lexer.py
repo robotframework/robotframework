@@ -700,7 +700,7 @@ class TestSectionHeaders(unittest.TestCase):
 
     def test_case_section_causes_fatal_error_in_resource_file(self):
         assert_tokens('*** Test Cases ***', [
-            (T.FATAL_INVALID_HEADER, '*** Test Cases ***', 1, 0,
+            (T.INVALID_HEADER, '*** Test Cases ***', 1, 0,
              "Resource file with 'Test Cases' section is invalid."),
             (T.EOS, '', 1, 18),
         ], get_resource_tokens, data_only=True)

@@ -24,7 +24,7 @@ from .statementlexers import (Lexer,
                               TaskSectionHeaderLexer,
                               KeywordSectionHeaderLexer,
                               CommentSectionHeaderLexer, CommentLexer, ImplicitCommentLexer,
-                              InvalidSectionHeaderLexer, FatalInvalidSectionHeaderLexer,
+                              InvalidSectionHeaderLexer,
                               TestOrKeywordSettingLexer,
                               KeywordCallLexer,
                               IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
@@ -172,7 +172,7 @@ class InvalidSectionLexer(SectionLexer):
         return statement and statement[0].value.startswith('*')
 
     def lexer_classes(self):
-        return (InvalidSectionHeaderLexer, FatalInvalidSectionHeaderLexer, CommentLexer)
+        return (InvalidSectionHeaderLexer, CommentLexer)
 
 
 class TestOrKeywordLexer(BlockLexer):
