@@ -322,17 +322,33 @@ Dictionaries Should Be Equal With Ignore Case
     dict1=${D0}    dict2=${D2}    ignore_case=key
     dict1=${D0}    dict2=${D3}    ignore_case=value
 
+Dictionaries Should Be Equal Without Ignoring Wrong Case
+    [Documentation]  FAIL Following keys missing from first dictionary: A, B, C
+    ...   Following keys missing from second dictionary: a, b, c
+    [Setup]    Create Dictionaries For Testing Ignore Case
+    Dictionaries Should Be Equal    dict1=${D0}    dict2=${D1}
+
 Dictionary Should Contain Item With Ignore Case
     [Template]    Dictionary Should Contain Item
     [Setup]    Create Dictionaries For Testing Ignore Case
     dictionary=${D0}    key=A    value=x    ignore_case=${True}
-    dictionary=${D0}    key=A    value=x    ignore_case=both
-    dictionary=${D0}    key=A    value=X    ignore_case=key
-    dictionary=${D0}    key=a    value=x    ignore_case=value
+    dictionary=${D0}    key=A    value=x    ignore_case=BOTH
+    dictionary=${D0}    key=A    value=X    ignore_case=keY
+    dictionary=${D0}    key=a    value=x    ignore_case=VAlue
+
+Dictionary Should Contain Item Without Ignoring Wrong Case
+    [Documentation]  FAIL Dictionary does not contain key 'A'.
+    [Setup]    Create Dictionaries For Testing Ignore Case
+    Dictionary Should Contain Item    dictionary=${D0}    key=A    value=x
 
 Dictionary Should Contain Key With Ignore Case
     [Setup]    Create Dictionaries For Testing Ignore Case
     Dictionary Should Contain Key    dictionary=${D0}    key=A    ignore_case=${True}
+
+Dictionary Should Contain Key Without Ignoring Wrong Case
+    [Documentation]  FAIL Dictionary does not contain key 'A'.
+    [Setup]    Create Dictionaries For Testing Ignore Case
+    Dictionary Should Contain Key    dictionary=${D0}    key=A
 
 Dictionary Should Not Contain Key With Ignore Case Does Contain Key
     [Setup]    Create Dictionaries For Testing Ignore Case
@@ -344,6 +360,11 @@ Dictionary Should Contain Value With Ignore Case
     [Setup]    Create Dictionaries For Testing Ignore Case
     dictionary=${D0}    value=x    ignore_case=${True}
     dictionary=${D7}  value=${D1_lower}    ignore_case=${True}
+
+Dictionary Should Contain Value Without Ignoring Wrong Case
+    [Documentation]  FAIL Dictionary does not contain value 'x'.
+    [Setup]    Create Dictionaries For Testing Ignore Case
+    Dictionary Should Contain Value  dictionary=${D0}    value=x
 
 Dictionary Should Not Contain Value With Ignore Case Does Contain Value
     [Setup]    Create Dictionaries For Testing Ignore Case
@@ -358,10 +379,14 @@ Dictionary Should Contain Sub Dictionary With Ignore Case
     dict1=${D0}    dict2=${D5}    ignore_case=key
     dict1=${D0}    dict2=${D6}    ignore_case=value
 
+Dictionary Should Contain Sub Dictionary Without Ignoring Wrong Case
+    [Setup]    Create Dictionaries For Testing Ignore Case
+    [Documentation]  FAIL Following keys missing from first dictionary: A
+    Dictionary Should Contain Sub Dictionary   dict1=${D0}    dict2=${D4}
+
 Dictionary Should Contain Value With Ignore Case And Nested List and Dictionary
     [Setup]    Create Dictionaries For Testing Ignore Case
-    Dictionary Should Contain Value  ${D7}  value=B    ignore_case=${True}
-
+    Dictionary Should Contain Value  ${D7}  value=d    ignore_case=${True}
 
 *** Keywords ***
 Validate invalid argument error
@@ -406,5 +431,5 @@ Create Dictionaries For Testing Ignore Case
     ${D6}    Create Dictionary    a=x    b=Y
     Set Test Variable    \${D6}
     ${L0}    Create List  1  2  3
-    ${D7}    Create Dictionary    1=${D1}  2=B  c=${L0}  d=3
+    ${D7}    Create Dictionary    1=${D0}  2=D  c=${L0}  d=3
     Set Test Variable    \${D7}

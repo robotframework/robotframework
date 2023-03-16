@@ -192,10 +192,19 @@ Check invalid dictionary argument errors
 Dictionaries Should Be Equal With Ignore Case
     Check Test Case    ${TEST NAME}
 
+Dictionaries Should Be Equal Without Ignoring Wrong Case
+    Check Test Case    ${TEST NAME}
+
 Dictionary Should Contain Item With Ignore Case
     Check Test Case    ${TEST NAME}
 
+Dictionary Should Contain Item Without Ignoring Wrong Case
+    Check Test Case    ${TEST NAME}
+
 Dictionary Should Contain Key With Ignore Case
+    Check Test Case    ${TEST NAME}
+
+Dictionary Should Contain Key Without Ignoring Wrong Case
     Check Test Case    ${TEST NAME}
 
 Dictionary Should Not Contain Key With Ignore Case Does Contain Key
@@ -203,11 +212,17 @@ Dictionary Should Not Contain Key With Ignore Case Does Contain Key
 
 Dictionary Should Contain Value With Ignore Case
     Check Test Case    ${TEST NAME}
+    
+Dictionary Should Contain Value Without Ignoring Wrong Case
+    Check Test Case    ${TEST NAME}
 
 Dictionary Should Not Contain Value With Ignore Case Does Contain Value
     Check Test Case    ${TEST NAME}
 
 Dictionary Should Contain Sub Dictionary With Ignore Case
+    Check Test Case    ${TEST NAME}
+
+Dictionary Should Contain Sub Dictionary Without Ignoring Wrong Case
     Check Test Case    ${TEST NAME}
 
 Dictionary Should Contain Value With Ignore Case And Nested List and Dictionary
