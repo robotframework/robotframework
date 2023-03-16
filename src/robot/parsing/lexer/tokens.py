@@ -146,8 +146,7 @@ class Token:
         TASK_HEADER,
         KEYWORD_HEADER,
         COMMENT_HEADER,
-        INVALID_HEADER,
-        FATAL_INVALID_HEADER
+        INVALID_HEADER
     ))
     ALLOW_VARIABLES = frozenset((
         NAME,

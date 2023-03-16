@@ -132,7 +132,7 @@ class ResourceBuilder(NodeVisitor):
         self.defaults = Defaults()
 
     def build(self, model: File):
-        ErrorReporter(model.source).visit(model)
+        ErrorReporter(model.source, raise_on_invalid_header=True).visit(model)
         self.visit(model)
 
     def visit_Documentation(self, node):
@@ -616,8 +616,9 @@ def deprecate_tags_starting_with_hyphen(node, source):
 
 class ErrorReporter(NodeVisitor):
 
-    def __init__(self, source):
+    def __init__(self, source, raise_on_invalid_header=False):
         self.source = source
+        self.raise_on_invalid_header = raise_on_invalid_header
 
     def visit_TestCase(self, node):
         pass
@@ -626,11 +627,12 @@ class ErrorReporter(NodeVisitor):
         pass
 
     def visit_SectionHeader(self, node):
-        fatal = node.get_token(Token.FATAL_INVALID_HEADER)
-        if fatal:
-            raise DataError(self._format_message(fatal))
-        if node.errors:
-            LOGGER.error(self._format_message(node.get_token(Token.INVALID_HEADER)))
+        token = node.get_token(Token.INVALID_HEADER)
+        if token:
+            if self.raise_on_invalid_header:
+                raise DataError(self._format_message(token))
+            else:
+                LOGGER.error(self._format_message(token))
 
     def visit_Error(self, node):
         for error in node.get_tokens(Token.ERROR):

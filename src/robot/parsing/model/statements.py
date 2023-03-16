@@ -223,7 +223,7 @@ class SectionHeader(Statement):
     handles_types = (Token.SETTING_HEADER, Token.VARIABLE_HEADER,
                      Token.TESTCASE_HEADER, Token.TASK_HEADER,
                      Token.KEYWORD_HEADER, Token.COMMENT_HEADER,
-                     Token.INVALID_HEADER, Token.FATAL_INVALID_HEADER)
+                     Token.INVALID_HEADER)
 
     @classmethod
     def from_params(cls, type, name=None, eol=EOL):
@@ -247,11 +247,6 @@ class SectionHeader(Statement):
     def name(self):
         token = self.get_token(*self.handles_types)
         return normalize_whitespace(token.value).strip('* ')
-
-    def validate(self, context: 'ValidationContext'):
-        tokens = self.get_tokens(Token.INVALID_HEADER, Token.FATAL_INVALID_HEADER)
-        for t in tokens:
-            self.errors += (t.error, )
 
 
 @Statement.register

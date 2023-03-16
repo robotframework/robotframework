@@ -50,7 +50,6 @@ class FileParser(Parser):
             Token.KEYWORD_HEADER: KeywordSectionParser,
             Token.COMMENT_HEADER: CommentSectionParser,
             Token.INVALID_HEADER: InvalidSectionParser,
-            Token.FATAL_INVALID_HEADER: InvalidSectionParser,
             Token.CONFIG: ImplicitCommentSectionParser,
             Token.COMMENT: ImplicitCommentSectionParser,
             Token.ERROR: ImplicitCommentSectionParser,

@@ -112,13 +112,6 @@ class InvalidSectionHeaderLexer(SectionHeaderLexer):
         self.ctx.lex_invalid_section(self.statement)
 
 
-class FatalInvalidSectionHeaderLexer(SectionHeaderLexer):
-    token_type = Token.FATAL_INVALID_HEADER
-
-    def lex(self):
-        self.ctx.lex_invalid_section(self.statement)
-
-
 class CommentLexer(SingleType):
     token_type = Token.COMMENT
 
