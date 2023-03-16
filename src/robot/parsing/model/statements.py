@@ -433,7 +433,7 @@ class SuiteName(Fixture):
     @classmethod
     def from_params(cls, value, separator=FOUR_SPACES, eol=EOL):
         return cls([
-            Token(Token.SUITE_NAME, 'Suite Name'),
+            Token(Token.SUITE_NAME, 'Name'),
             Token(Token.SEPARATOR, separator),
             Token(Token.ARGUMENT, value),
             Token(Token.EOL, eol)

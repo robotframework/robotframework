@@ -33,7 +33,7 @@ class Settings:
         'Test Template',
         'Timeout',
         'Template',
-        'Suite Name'
+        'Name'
     )
     name_and_arguments = (
         'Metadata',
@@ -139,7 +139,7 @@ class SuiteFileSettings(Settings):
     names = (
         'Documentation',
         'Metadata',
-        'Suite Name',
+        'Name',
         'Suite Setup',
         'Suite Teardown',
         'Test Setup',
@@ -170,7 +170,7 @@ class InitFileSettings(Settings):
     names = (
         'Documentation',
         'Metadata',
-        'Suite Name',
+        'Name',
         'Suite Setup',
         'Suite Teardown',
         'Test Setup',
