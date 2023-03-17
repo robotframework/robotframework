@@ -15,11 +15,14 @@
 
 import os
 import pathlib
-import warnings
 
 
 try:
-    from importlib.resources import open_text
+    # Starting python 3.7 this is the recommended way to load resources 
+    from importlib.resources import files
+
+    def open_text(modulepath, resource_part, encoding='utf-8'):
+        return files(modulepath).joinpath(resource_part).open('r', encoding=encoding)
 except ImportError :
     try:
         # This code is here to optionally suport zipapps with python 3.6,
@@ -27,33 +30,16 @@ except ImportError :
         # installed.
         from importlib_resources import open_text
     except ImportError:
-        # use our own...
-
+        # Python 3.6 without importlib... role our own...
         def open_text(modulepath, resource_part, encoding='utf-8'):
             base_dir = pathlib.Path(__file__).parent.parent.parent
             resource_path = base_dir / modulepath.replace(".", os.sep) / resource_part
             return open(resource_path, "r", encoding=encoding)
 
 def HtmlTemplate(filename):
-    parts = pathlib.Path(filename).parts
-    resource_name = parts[-1]
-    parts = list(parts[:-1])
-
-    idx = 0
-    while idx < len(parts):
-        if parts[idx] == "..":
-            del parts[idx]
-            del parts[idx-1]
-            idx -= 1
-        else:
-            idx += 1
-
-    parts = ("." + item.replace(".", "") for item in parts)
-    modulepart = "robot.htmldata" + "".join(parts)
-    with warnings.catch_warnings():
-        # This is necessay as open_text is deprecated started from python 
-        # 3.11, but the alternatives given did create issues in zipapps...
-        warnings.simplefilter("ignore")
-        with open_text(modulepart, resource_name, encoding='utf-8') as f:
-            for item in f:
-                yield item.rstrip()
+    module, filename = os.path.split(os.path.normpath(filename))
+    module = 'robot.htmldata.' + module
+    
+    with open_text(module, filename, encoding='utf-8') as f:
+        for item in f:
+            yield item.rstrip()
