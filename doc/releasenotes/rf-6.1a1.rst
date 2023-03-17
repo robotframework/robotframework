@@ -36,7 +36,7 @@ to install exactly this version. Alternatively you can download the source
 distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
-Robot Framework 6.1 alpha 1 will be released on Friday March 17, 2023.
+Robot Framework 6.1 alpha 1 was released on Friday March 17, 2023.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -71,7 +71,7 @@ use cases:
 
 This feature is designed more for tool developers than for regular Robot Framework
 users and we expect new interesting tools to emerge in the future. The feature
-feature is not finalized yet, but the following things already work:
+is not finalized yet, but the following things already work:
 
 1. You can serialize a suite structure into JSON by using `TestSuite.to_json`__
    method. When used without arguments, it returns JSON data as a string, but
@@ -94,15 +94,15 @@ feature is not finalized yet, but the following things already work:
 
       suite = TestSuite.from_json('tests.rbt')
 
-3. When using `robot` normally, it parses files with the `.rbt` extension
-   automatically. This includes running individual JSON files like `robot tests.rbt`
-   and running directories containing `.rbt` files.
+3. When using the `robot` command normally, JSON files with the `.rbt` extension
+   are parsed automatically. This includes running individual JSON files like
+   `robot tests.rbt` and running directories containing `.rbt` files.
 
-We recommend everyone interested in this new API to test it and give us feedback.
-It is a lot easier for us to make change before the final release is out and we
-need to take backwards compatibility into account. If you encounter bugs or have
-enhancement ideas, you can comment the issue or start discussion on the `#devel`
-channel on our Slack_.
+We recommend everyone interested in this new functionality to test it and give
+us feedback. It is a lot easier for us to make changes before the final release
+is out and we need to take backwards compatibility into account. If you
+encounter bugs or have enhancement ideas, you can comment the issue or start
+discussion on the `#devel` channel on our Slack_.
 
 __ https://robot-framework.readthedocs.io/en/latest/autodoc/robot.running.html#robot.running.model.TestSuite.to_json
 __ https://robot-framework.readthedocs.io/en/latest/autodoc/robot.running.html#robot.running.model.TestSuite.from_json
@@ -148,19 +148,19 @@ creates this much content in output.xml:
 .. sourcecode:: xml
 
     <kw name="Keyword">
-    <kw name="Log" library="BuiltIn">
-    <arg>Robot</arg>
-    <doc>Logs the given message with the given level.</doc>
-    <msg timestamp="20230103 20:06:36.663" level="INFO">Robot</msg>
-    <status status="PASS" starttime="20230103 20:06:36.663" endtime="20230103 20:06:36.663"/>
-    </kw>
-    <kw name="Log" library="BuiltIn">
-    <arg>Framework</arg>
-    <doc>Logs the given message with the given level.</doc>
-    <msg timestamp="20230103 20:06:36.663" level="INFO">Framework</msg>
-    <status status="PASS" starttime="20230103 20:06:36.663" endtime="20230103 20:06:36.664"/>
-    </kw>
-    <status status="PASS" starttime="20230103 20:06:36.663" endtime="20230103 20:06:36.664"/>
+      <kw name="Log" library="BuiltIn">
+        <arg>Robot</arg>
+        <doc>Logs the given message with the given level.</doc>
+        <msg timestamp="20230103 20:06:36.663" level="INFO">Robot</msg>
+        <status status="PASS" starttime="20230103 20:06:36.663" endtime="20230103 20:06:36.663"/>
+      </kw>
+      <kw name="Log" library="BuiltIn">
+        <arg>Framework</arg>
+        <doc>Logs the given message with the given level.</doc>
+        <msg timestamp="20230103 20:06:36.663" level="INFO">Framework</msg>
+        <status status="PASS" starttime="20230103 20:06:36.663" endtime="20230103 20:06:36.664"/>
+      </kw>
+      <status status="PASS" starttime="20230103 20:06:36.663" endtime="20230103 20:06:36.664"/>
     </kw>
 
 We already have the `--flattenkeywords` option for "flattening" such structures
@@ -170,15 +170,15 @@ preserved. Using `--flattenkeywords` does not affect output.xml generated during
 execution, but flattening happens when output.xml files are parsed and can save
 huge amounts of memory. When `--flattenkeywords` is used with Rebot, it is
 possible to create a new flattened output.xml. For example, the above structure
-is converted into this if `Keyword` is flattened:
+is converted into this if `Keyword` is flattened using `--flattenkeywords`:
 
 .. sourcecode:: xml
 
     <kw name="Keyword">
-    <doc>_*Content flattened.*_</doc>
-    <msg timestamp="20230103 20:06:36.663" level="INFO">Robot</msg>
-    <msg timestamp="20230103 20:06:36.663" level="INFO">Framework</msg>
-    <status status="PASS" starttime="20230103 20:06:36.663" endtime="20230103 20:06:36.664"/>
+      <doc>_*Content flattened.*_</doc>
+      <msg timestamp="20230103 20:06:36.663" level="INFO">Robot</msg>
+      <msg timestamp="20230103 20:06:36.663" level="INFO">Framework</msg>
+      <status status="PASS" starttime="20230103 20:06:36.663" endtime="20230103 20:06:36.664"/>
     </kw>
 
 Starting from Robot Framework 6.1, this kind of flattening can be done also
@@ -200,23 +200,25 @@ the result in output.xml will be this:
 .. sourcecode:: xml
 
     <kw name="Keyword">
-    <tag>robot:flatten</tag>
-    <msg timestamp="20230317 00:54:34.772" level="INFO">Robot</msg>
-    <msg timestamp="20230317 00:54:34.772" level="INFO">Framework</msg>
-    <status status="PASS" starttime="20230317 00:54:34.771" endtime="20230317 00:54:34.772"/>
+      <tag>robot:flatten</tag>
+      <msg timestamp="20230317 00:54:34.772" level="INFO">Robot</msg>
+      <msg timestamp="20230317 00:54:34.772" level="INFO">Framework</msg>
+      <status status="PASS" starttime="20230317 00:54:34.771" endtime="20230317 00:54:34.772"/>
     </kw>
 
-A benefit of using `robot:flatten` instead of `--flattenkeywords` is that
-it used already during execution making the resulting output.xml file smaller
-without using Rebot separately afterwards.
+The main benefit of using `robot:flatten` instead of `--flattenkeywords` is that
+it is used already during execution making the resulting output.xml file
+smaller. `--flattenkeywords` has more configuration options than `robot:flatten`,
+though, but `robot:flatten` can be enhanced in that regard later if there are
+needs.
 
 Custom argument converters can access library
 ---------------------------------------------
 
 Support for custom argument converters was added in Robot Framework 5.0
 (`#4088`__) and they have turned out to be really useful. This functionality
-is now enhanced so that converters can easily get an access to the
-library containing the keyword that is used  and can thus do conversion
+is now enhanced so, that converters can easily get an access to the
+library containing the keyword that is used, and can thus do conversion
 based on the library state (`#4510`_). This can be done simply by creating
 a converter that accepts two values. The first value is the value used in
 the data, exactly as earlier, and the second is the library instance or module:
@@ -226,7 +228,7 @@ the data, exactly as earlier, and the second is the library instance or module:
     def converter(value, library):
         ...
 
-Converters accepting only one argument keep working as earlier and there are no
+Converters accepting only one argument keep working as earlier. There are no
 plans to require changing them to accept two values.
 
 __ https://github.com/robotframework/robotframework/issues/4088
@@ -278,8 +280,11 @@ suites as child suites. Earlier this virtual suite could be
 configured only by using command line options like `--name`, but now
 it is possible to use normal suite initialization files (`__init__.robot`)
 for that purpose (`#4015`_). If an initialization file is included
-in the call like `robot __init__.robot first.robot second.robot`, the root
-suite is configured based on data it contains.
+in the call like::
+
+    robot __init__.robot first.robot second.robot`
+
+the root suite is configured based on data it contains.
 
 The most important feature this enhancement allows is specifying suite
 setup and teardown to the root suite. Earlier that was not possible at all.
@@ -288,7 +293,7 @@ setup and teardown to the root suite. Earlier that was not possible at all.
 --------------------------------------------------------------------
 
 Robot Framework's `FOR IN ZIP` loop behaves like Python's zip__ function so
-that if lists lengths are not the same, items from longer ones ignored.
+that if lists lengths are not the same, items from longer ones are ignored.
 For example, the following loop would be executed only twice:
 
 .. sourcecode:: robotframework
@@ -307,7 +312,7 @@ This behavior can cause problems when iterating over items received from
 the automated system. For example, the following test would pass regardless
 how many things `Get something` returns as long as the returned items match
 the expected values. The example succeeds if `Get something` returns ten items
-if three first ones match. What's even worse, it succeeds even if `Get something`
+if three first ones match. What's even worse, it succeeds also if `Get something`
 returns nothing.
 
 .. sourcecode:: robotframework
@@ -331,7 +336,7 @@ same issue, and Python 3.10 added new optional `strict` argument to `zip`
 `zip_longest`__ function that loops over all values possibly filling-in
 values to shorter lists.
 
-To support all the same use cases as Python, Robot Framework's `FOR IN ZIP`
+To support the same features as Python, Robot Framework's `FOR IN ZIP`
 loops now have an optional `mode` configuration option that accepts three
 values (`#4682`_):
 
@@ -403,12 +408,12 @@ tools using Robot Framework may nevertheless be affected.
 Changes to output.xml
 ---------------------
 
-Syntax errors such as invalid settings and `END` or `ELSE` in wrong place
+Syntax errors such as invalid settings like `[Setpu]` or `END` in a wrong place
 are nowadays reported better (`#4683`_). Part of that change was storing
 invalid constructs in output.xml as `<error>` elements. Tools processing
-output.xml files so that they go through all elements need to take them into
-account, but tools just querying information using xpath expression or
-otherwise should not be affected.
+output.xml files so that they go through all elements need to take `<error>`
+elements into account, but tools just querying information using xpath
+expression or otherwise should not be affected.
 
 Another change is that with `FOR IN ENUMERATE` loops the `<for>` element
 may get `start` attribute (`#4684`_) and with `FOR IN ZIP` loops it may get
@@ -422,8 +427,8 @@ The aforementioned enhancements for handling invalid syntax better (`#4683`_)
 required changes also to the TestSuite__ model structure. Syntax errors are
 nowadays represented as Error__ objects and they can appear in the `body` of
 TestCase__, Keyword__, and other such model objects. Tools interacting with
-the `TestSuite` structure should in general take `Error` objects into account,
-but tools using the `visitor API`__ should nevertheless not be affected.
+the `TestSuite` structure should take `Error` objects into account, but tools
+using the `visitor API`__ should in general not be affected.
 
 Another related change is that `doc`, `tags`, `timeout` and `teardown` attributes
 were removed from the `robot.running.Keyword`__ object (`#4589`_). They were
@@ -449,8 +454,15 @@ Invalid section headers like `*** Bad ***` are nowadays represented in the
 parsing model as InvalidSection__ objects when they earlier were generic
 Error__ objects (`#4689`_).
 
+New ReturnSetting__ object has been introduced as an alias for Return__.
+This does not yet change anything, but in the future `Return` will be used
+for other purposes tools using it should be updated to use `ReturnSetting`
+instead (`#4656`_).
+
 __ https://robot-framework.readthedocs.io/en/latest/autodoc/robot.parsing.model.html#robot.parsing.model.blocks.InvalidSection
 __ https://robot-framework.readthedocs.io/en/latest/autodoc/robot.parsing.model.html#robot.parsing.model.statements.Error
+__ https://robot-framework.readthedocs.io/en/latest/autodoc/robot.parsing.model.html#robot.parsing.model.statements.Return
+__ https://robot-framework.readthedocs.io/en/latest/autodoc/robot.parsing.model.html#robot.parsing.model.statements.ReturnSetting
 
 Changes to Libdoc spec files
 ----------------------------
@@ -483,7 +495,7 @@ would be called like::
 
 the integer conversion would not be attempted and the keyword would get
 string `42`. This was changed so that unrecognized types are just skipped
-and in the above case integer conversion would be done (`#4648`_). That
+and in the above case integer conversion is nowadays done (`#4648`_). That
 obviously changes the value the keyword gets to an integer.
 
 Another argument conversion change is that the `Any` type is now recognized
@@ -499,9 +511,9 @@ typing in general.
 Changes affecting execution
 ---------------------------
 
-Invalid settings in tests and keywords are nowadays considered syntax
-errors that cause failures at execution time (`#4683`_). They were reported
-also earlier, but they did not affect execution.
+Invalid settings in tests and keywords like `[Tasg]` are nowadays considered
+syntax errors that cause failures at execution time (`#4683`_). They were
+reported also earlier, but they did not affect execution.
 
 All invalid sections in resource files are considered to be syntax errors that
 prevent importing the resource file (`#4689`_). Earlier having a `*** Test Cases ***`
