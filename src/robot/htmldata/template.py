@@ -12,25 +12,26 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-import pathlib
+
 import os
+import pathlib
 import warnings
 
 
 try:
     from importlib.resources import open_text
-except ModuleNotFoundError:
+except ImportError :
     try:
         # This code is here to optionally suport zipapps with python 3.6,
         # under the condition that the backport importlib-resources is
         # installed.
         from importlib_resources import open_text
-    except:
+    except ImportError:
         # use our own...
 
         def open_text(modulepath, resource_part, encoding='utf-8'):
             base_dir = pathlib.Path(__file__).parent.parent.parent
-            resource_path = base_dir / pathlib.Path(modulepath.replace(".", os.sep)) / pathlib.Path(resource_part)
+            resource_path = base_dir / modulepath.replace(".", os.sep) / resource_part
             return open(resource_path, "r", encoding=encoding)
 
 def HtmlTemplate(filename):
