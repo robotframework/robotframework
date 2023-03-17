@@ -166,9 +166,9 @@ class Language:
     library_setting = None
     resource_setting = None
     variables_setting = None
+    name_setting = None
     documentation_setting = None
     metadata_setting = None
-    name_setting = None
     suite_setup_setting = None
     suite_teardown_setting = None
     test_setup_setting = None

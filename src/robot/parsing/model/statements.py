@@ -434,7 +434,7 @@ class KeywordTags(MultiValue):
 
 
 @Statement.register
-class SuiteName(Fixture):
+class SuiteName(SingleValue):
     type = Token.SUITE_NAME
 
     @classmethod
@@ -442,13 +442,9 @@ class SuiteName(Fixture):
         return cls([
             Token(Token.SUITE_NAME, 'Name'),
             Token(Token.SEPARATOR, separator),
-            Token(Token.ARGUMENT, value),
+            Token(Token.NAME, value),
             Token(Token.EOL, eol)
         ])
-
-    @property
-    def value(self):
-        return self.get_value(Token.ARGUMENT)
 
 
 @Statement.register
