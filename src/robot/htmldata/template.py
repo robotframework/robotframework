@@ -18,18 +18,15 @@ import pathlib
 
 
 try:
-    # Starting python 3.7 this is the recommended way to load resources 
-    from importlib.resources import files
-
-    def open_text(modulepath, resource_part, encoding='utf-8'):
-        return files(modulepath).joinpath(resource_part).open('r', encoding=encoding)
-except ImportError :
     try:
-        # This code is here to optionally suport zipapps with python 3.6,
-        # under the condition that the backport importlib-resources is
-        # installed.
-        from importlib_resources import open_text
-    except ImportError:
+        # Starting python 3.7 this is the recommended way to load resources 
+        from importlib_resources import files
+    except ImportError :
+        from importlib.resources import files
+    finally:
+        def open_text(modulepath, resource_part, encoding='utf-8'):
+            return files(modulepath).joinpath(resource_part).open('r', encoding=encoding)
+except ImportError :
         # Python 3.6 without importlib... role our own...
         def open_text(modulepath, resource_part, encoding='utf-8'):
             base_dir = pathlib.Path(__file__).parent.parent.parent
