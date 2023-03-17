@@ -24,12 +24,14 @@ if sys.version_info < (3, 10) and not os.path.exists(__file__):
         from importlib_resources import files
     except ImportError:
         raise ImportError("robotframework outside of filesystem (zipapp?) requires importlib resources backport on python < 3.10")
-elif sys.version_info >= (3, 10):
-    from importlib.resources import files
 else:
-    def files(modulepath):
-        base_dir = pathlib.Path(__file__).parent.parent.parent
-        return base_dir / modulepath.replace(".", os.sep)
+    try:
+        from importlib.resources import files
+    except ImportError:
+        # python 3.8 or earlier:
+        def files(modulepath):
+            base_dir = pathlib.Path(__file__).parent.parent.parent
+            return base_dir / modulepath.replace(".", os.sep)
 
 def HtmlTemplate(filename):
     module, filename = os.path.split(os.path.normpath(filename))
