@@ -15,8 +15,11 @@
 
 """Module that adds directories needed by Robot to sys.path when imported.
 
-This is suposed to run if the robotframework is running but the robotframework is not in the module search path...
-This should not execute in a zipapp.
+By adapting the system configuration at runtime this module allows to use
+robotframework without installing it.
+
+This is only relevant if robotframework installation is not handled bythe 
+environment.
 """
 
 import sys
