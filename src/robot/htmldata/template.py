@@ -15,28 +15,26 @@
 
 import os
 import pathlib
+import sys
 
-
-try:
+if sys.version_info < (3, 10) and not os.path.exists(__file__):
+    # Try importlib resources backport as prior to python 3.10
+    # importlib.resources.files was not zipapp compatible...
     try:
-        # Starting python 3.7 this is the recommended way to load resources 
         from importlib_resources import files
-    except ImportError :
-        from importlib.resources import files
-    finally:
-        def open_text(modulepath, resource_part, encoding='utf-8'):
-            return files(modulepath).joinpath(resource_part).open('r', encoding=encoding)
-except ImportError :
-        # Python 3.6 without importlib... role our own...
-        def open_text(modulepath, resource_part, encoding='utf-8'):
-            base_dir = pathlib.Path(__file__).parent.parent.parent
-            resource_path = base_dir / modulepath.replace(".", os.sep) / resource_part
-            return open(resource_path, "r", encoding=encoding)
+    except ImportError:
+        raise ImportError("robotframework outside of filesystem (zipapp?) requires importlib resources backport on python < 3.10")
+elif sys.version_info >= (3, 10):
+    from importlib.resources import files
+else:
+    def files(modulepath):
+        base_dir = pathlib.Path(__file__).parent.parent.parent
+        return base_dir / modulepath.replace(".", os.sep)
 
 def HtmlTemplate(filename):
     module, filename = os.path.split(os.path.normpath(filename))
     module = 'robot.htmldata.' + module
     
-    with open_text(module, filename, encoding='utf-8') as f:
+    with files(module).joinpath(filename).open('r', encoding="utf-8") as f:
         for item in f:
             yield item.rstrip()
