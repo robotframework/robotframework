@@ -1804,7 +1804,8 @@ should be parsed like this:
 
 
 The `library` argument to converter function is optional, i.e. if the converter function
-only accepts one argument, the `library` argument is omitted.
+only accepts one argument, the `library` argument is omitted. Similar result can be achieved
+by making the converter function accept only variadic arguments, e.g. `def parse_date(*varargs)`.
 
 Converter documentation
 ```````````````````````
