@@ -13,8 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import setter
-
 from .body import Body, BodyItem, Branches
 from .keyword import Keywords
 
@@ -29,7 +27,7 @@ class For(BodyItem):
     type = BodyItem.FOR
     body_class = Body
     repr_args = ('variables', 'flavor', 'values', 'start', 'mode', 'fill')
-    __slots__ = ['variables', 'flavor', 'values', 'start', 'mode', 'fill']
+    __slots__ = ['variables', 'flavor', 'values', 'start', 'mode', 'fill', '_body']
 
     def __init__(self, variables=(), flavor='IN', values=(), start=None, mode=None,
                  fill=None, parent=None):
@@ -42,9 +40,14 @@ class For(BodyItem):
         self.parent = parent
         self.body = None
 
-    @setter
+    @property
+    def body(self):
+        """Test body as a :class:`~robot.model.body.Body` object."""
+        return self._body
+
+    @body.setter
     def body(self, body):
-        return self.body_class(self, body)
+        self._body = self.body_class(self, body)
 
     @property
     def keywords(self):
@@ -90,7 +93,7 @@ class While(BodyItem):
     type = BodyItem.WHILE
     body_class = Body
     repr_args = ('condition', 'limit')
-    __slots__ = ['condition', 'limit']
+    __slots__ = ['condition', 'limit', '_body']
 
     def __init__(self, condition=None, limit=None, parent=None):
         self.condition = condition
@@ -98,9 +101,14 @@ class While(BodyItem):
         self.parent = parent
         self.body = None
 
-    @setter
+    @property
+    def body(self):
+        """Test body as a :class:`~robot.model.body.Body` object."""
+        return self._body
+
+    @body.setter
     def body(self, body):
-        return self.body_class(self, body)
+        self._body = self.body_class(self, body)
 
     def visit(self, visitor):
         visitor.visit_while(self)
@@ -130,7 +138,7 @@ class IfBranch(BodyItem):
     """Represents individual ``IF``, ``ELSE IF`` or ``ELSE`` branch."""
     body_class = Body
     repr_args = ('type', 'condition')
-    __slots__ = ['type', 'condition']
+    __slots__ = ['type', 'condition', '_body']
 
     def __init__(self, type=BodyItem.IF, condition=None, parent=None):
         self.type = type
@@ -138,9 +146,14 @@ class IfBranch(BodyItem):
         self.parent = parent
         self.body = None
 
-    @setter
+    @property
+    def body(self):
+        """Test body as a :class:`~robot.model.body.Body` object."""
+        return self._body
+
+    @body.setter
     def body(self, body):
-        return self.body_class(self, body)
+        self._body = self.body_class(self, body)
 
     @property
     def id(self):
@@ -176,15 +189,20 @@ class If(BodyItem):
     type = BodyItem.IF_ELSE_ROOT
     branch_class = IfBranch
     branches_class = Branches
-    __slots__ = ['parent']
+    __slots__ = ['parent', '_body']
 
     def __init__(self, parent=None):
         self.parent = parent
         self.body = None
 
-    @setter
+    @property
+    def body(self):
+        """Test body as a :class:`~robot.model.body.Branches` object."""
+        return self._body
+
+    @body.setter
     def body(self, branches):
-        return self.branches_class(self.branch_class, self, branches)
+        self._body = self.branches_class(self.branch_class, self, branches)
 
     @property
     def id(self):
@@ -202,7 +220,7 @@ class TryBranch(BodyItem):
     """Represents individual ``TRY``, ``EXCEPT``, ``ELSE`` or ``FINALLY`` branch."""
     body_class = Body
     repr_args = ('type', 'patterns', 'pattern_type', 'variable')
-    __slots__ = ['type', 'patterns', 'pattern_type', 'variable']
+    __slots__ = ['type', 'patterns', 'pattern_type', 'variable', '_body']
 
     def __init__(self, type=BodyItem.TRY, patterns=(), pattern_type=None,
                  variable=None, parent=None):
@@ -215,9 +233,14 @@ class TryBranch(BodyItem):
         self.parent = parent
         self.body = None
 
-    @setter
+    @property
+    def body(self):
+        """Test body as a :class:`~robot.model.body.Body` object."""
+        return self._body
+
+    @body.setter
     def body(self, body):
-        return self.body_class(self, body)
+        self._body = self.body_class(self, body)
 
     @property
     def id(self):
@@ -262,15 +285,20 @@ class Try(BodyItem):
     type = BodyItem.TRY_EXCEPT_ROOT
     branch_class = TryBranch
     branches_class = Branches
-    __slots__ = []
+    __slots__ = ['_body']
 
     def __init__(self, parent=None):
         self.parent = parent
         self.body = None
 
-    @setter
+    @property
+    def body(self):
+        """Test body as a :class:`~robot.model.body.Branches` object."""
+        return self._body
+
+    @body.setter
     def body(self, branches):
-        return self.branches_class(self.branch_class, self, branches)
+        self._body = self.branches_class(self.branch_class, self, branches)
 
     @property
     def try_branch(self):

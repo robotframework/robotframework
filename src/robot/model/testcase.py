@@ -13,8 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import setter
-
 from .body import Body
 from .fixture import create_fixture
 from .itemlist import ItemList
@@ -32,7 +30,7 @@ class TestCase(ModelObject):
     body_class = Body
     fixture_class = Keyword
     repr_args = ('name',)
-    __slots__ = ['parent', 'name', 'doc', 'timeout', 'lineno', '_setup', '_teardown']
+    __slots__ = ['parent', 'name', 'doc', 'timeout', 'lineno', '_setup', '_teardown', '_tags', '_body']
 
     def __init__(self, name='', doc='', tags=None, timeout=None, lineno=None,
                  parent=None):
@@ -46,15 +44,26 @@ class TestCase(ModelObject):
         self._setup = None
         self._teardown = None
 
-    @setter
+    @property
+    def body(self):
+        """Test body as a :class:`~robot.model.body.Body` object."""
+        return self._body
+
+    @body.setter
     def body(self, body):
         """Test body as a :class:`~robot.model.body.Body` object."""
-        return self.body_class(self, body)
+        self._body = self.body_class(self, body)
 
-    @setter
+
+    @property
+    def tags(self):
+        """Test tags as a :class:`~.model.tags.Tags` object."""
+        return self._tags
+
+    @tags.setter
     def tags(self, tags):
         """Test tags as a :class:`~.model.tags.Tags` object."""
-        return Tags(tags)
+        self._tags = Tags(tags)
 
     @property
     def setup(self):

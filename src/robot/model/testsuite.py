@@ -15,8 +15,6 @@
 
 from pathlib import Path
 
-from robot.utils import setter
-
 from .configurer import SuiteConfigurer
 from .filter import Filter, EmptySuiteRemover
 from .fixture import create_fixture
@@ -38,7 +36,7 @@ class TestSuite(ModelObject):
     fixture_class = Keyword  #: Internal usage only.
     repr_args = ('name',)
     __slots__ = ['parent', '_name', 'doc', '_setup', '_teardown',  'rpa',
-                 '_my_visitors']
+                 '_my_visitors', '_source', '_metadata', '_suites', '_tests']
 
     def __init__(self, name: str = '', doc: str = '', metadata: dict = None,
                  source: Path = None, rpa: bool = False, parent: 'TestSuite' = None):
@@ -86,9 +84,13 @@ class TestSuite(ModelObject):
     def name(self, name):
         self._name = name
 
-    @setter
+    @property
+    def source(self):
+        return self._source
+
+    @source.setter
     def source(self, source):
-        return source if isinstance(source, (Path, type(None))) else Path(source)
+        self._source = source if isinstance(source, (Path, type(None))) else Path(source)
 
     @property
     def longname(self):
@@ -97,20 +99,35 @@ class TestSuite(ModelObject):
             return self.name
         return f'{self.parent.longname}.{self.name}'
 
-    @setter
+    @property
+    def metadata(self):
+        """Free test suite metadata as a dictionary."""
+        return self._metadata
+
+    @metadata.setter
     def metadata(self, metadata):
         """Free test suite metadata as a dictionary."""
-        return Metadata(metadata)
+        self._metadata = Metadata(metadata)
 
-    @setter
+    @property
+    def suites(self):
+        """Child suites as a :class:`~.TestSuites` object."""
+        return self._suites
+
+    @suites.setter
     def suites(self, suites):
         """Child suites as a :class:`~.TestSuites` object."""
-        return TestSuites(self.__class__, self, suites)
+        self._suites = TestSuites(self.__class__, self, suites)
 
-    @setter
+    @property
+    def tests(self):
+        """Tests as a :class:`~.TestCases` object."""
+        return self._tests
+
+    @tests.setter
     def tests(self, tests):
         """Tests as a :class:`~.TestCases` object."""
-        return TestCases(self.test_class, self, tests)
+        self._tests = TestCases(self.test_class, self, tests)
 
     @property
     def setup(self):

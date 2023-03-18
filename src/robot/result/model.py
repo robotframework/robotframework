@@ -41,7 +41,7 @@ import warnings
 
 from robot import model
 from robot.model import BodyItem, create_fixture, Keywords, Tags, TotalStatisticsBuilder
-from robot.utils import get_elapsed_time, setter
+from robot.utils import get_elapsed_time
 
 from .configurer import SuiteConfigurer
 from .messagefilter import MessageFilter
@@ -141,7 +141,7 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     type = BodyItem.ITERATION
     body_class = Body
     repr_args = ('variables',)
-    __slots__ = ['variables', 'status', 'starttime', 'endtime', 'doc']
+    __slots__ = ['variables', 'status', 'starttime', 'endtime', 'doc', '_body']
 
     def __init__(self, variables=None, status='FAIL', starttime=None, endtime=None,
                  doc='', parent=None):
@@ -153,9 +153,14 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
         self.doc = doc
         self.body = None
 
-    @setter
+    @property
+    def body(self):
+        """Test body as a :class:`~robot.model.body.Branches` object."""
+        return self._body
+
+    @body.setter
     def body(self, body):
-        return self.body_class(self, body)
+        self._body = self.body_class(self, body)
 
     def visit(self, visitor):
         visitor.visit_for_iteration(self)
@@ -170,7 +175,7 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
 class For(model.For, StatusMixin, DeprecatedAttributesMixin):
     iterations_class = Iterations
     iteration_class = ForIteration
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+    __slots__ = ['status', 'starttime', 'endtime', 'doc', '_body']
 
     def __init__(self, variables=(),  flavor='IN', values=(), start=None, mode=None,
                  fill=None, status='FAIL', starttime=None, endtime=None, doc='',
@@ -180,10 +185,16 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
         self.starttime = starttime
         self.endtime = endtime
         self.doc = doc
+        self.body = None
 
-    @setter
+    @property
+    def body(self):
+        """Test body as a :class:`~robot.model.body.ForIteration` object."""
+        return self._body
+
+    @body.setter
     def body(self, iterations):
-        return self.iterations_class(self.iteration_class, self, iterations)
+        self._body = self.iterations_class(self.iteration_class, self, iterations)
 
     @property
     @deprecated
@@ -202,7 +213,7 @@ class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     """Represents one WHILE loop iteration."""
     type = BodyItem.ITERATION
     body_class = Body
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+    __slots__ = ['status', 'starttime', 'endtime', 'doc', '_body']
 
     def __init__(self, status='FAIL', starttime=None, endtime=None,
                  doc='', parent=None):
@@ -213,9 +224,14 @@ class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
         self.doc = doc
         self.body = None
 
-    @setter
+    @property
+    def body(self):
+        """Test body as a :class:`~robot.model.body.Branches` object."""
+        return self._body
+
+    @body.setter
     def body(self, body):
-        return self.body_class(self, body)
+        self._body = self.body_class(self, body)
 
     def visit(self, visitor):
         visitor.visit_while_iteration(self)
@@ -230,7 +246,7 @@ class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
 class While(model.While, StatusMixin, DeprecatedAttributesMixin):
     iterations_class = Iterations
     iteration_class = WhileIteration
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+    __slots__ = ['status', 'starttime', 'endtime', 'doc', '_body']
 
     def __init__(self, condition=None, limit=None, parent=None, status='FAIL',
                  starttime=None, endtime=None, doc=''):
@@ -239,10 +255,17 @@ class While(model.While, StatusMixin, DeprecatedAttributesMixin):
         self.starttime = starttime
         self.endtime = endtime
         self.doc = doc
+        self.body = None
 
-    @setter
+    @property
+    def body(self):
+        """Test body as a :class:`~robot.model.body.WhileIteration` object."""
+        return self._body
+
+    @body.setter
     def body(self, iterations):
-        return self.iterations_class(self.iteration_class, self, iterations)
+        self._body = self.iterations_class(self.iteration_class, self, iterations)
+
 
     @property
     @deprecated
@@ -329,7 +352,7 @@ class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
 
 @Body.register
 class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
-    __slots__ = ['status', 'starttime', 'endtime']
+    __slots__ = ['status', 'starttime', 'endtime', '_body']
     body_class = Body
 
     def __init__(self, values=(), status='FAIL', starttime=None, endtime=None, parent=None):
@@ -339,15 +362,19 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
         self.endtime = endtime
         self.body = None
 
-    @setter
-    def body(self, body):
+    @property
+    def body(self):
         """Child keywords and messages as a :class:`~.Body` object.
 
         Typically empty. Only contains something if running RETURN has failed
         due to a syntax error or listeners have logged messages or executed
         keywords.
         """
-        return self.body_class(self, body)
+        return self._body
+
+    @body.setter
+    def body(self, body):
+        self._body = self.body_class(self, body)
 
     @property
     @deprecated
@@ -362,7 +389,7 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
 
 @Body.register
 class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
-    __slots__ = ['status', 'starttime', 'endtime']
+    __slots__ = ['status', 'starttime', 'endtime', '_body']
     body_class = Body
 
     def __init__(self, status='FAIL', starttime=None, endtime=None, parent=None):
@@ -372,15 +399,19 @@ class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
         self.endtime = endtime
         self.body = None
 
-    @setter
-    def body(self, body):
+    @property
+    def body(self):
         """Child keywords and messages as a :class:`~.Body` object.
 
         Typically empty. Only contains something if running CONTINUE has failed
         due to a syntax error or listeners have logged messages or executed
         keywords.
         """
-        return self.body_class(self, body)
+        return self._body
+
+    @body.setter
+    def body(self, body):
+        self._body = self.body_class(self, body)
 
     @property
     @deprecated
@@ -395,7 +426,7 @@ class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
 
 @Body.register
 class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
-    __slots__ = ['status', 'starttime', 'endtime']
+    __slots__ = ['status', 'starttime', 'endtime', '_body']
     body_class = Body
 
     def __init__(self, status='FAIL', starttime=None, endtime=None, parent=None):
@@ -405,15 +436,19 @@ class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
         self.endtime = endtime
         self.body = None
 
-    @setter
-    def body(self, body):
+    @property
+    def body(self):
         """Child keywords and messages as a :class:`~.Body` object.
 
         Typically empty. Only contains something if running BREAK has failed
         due to a syntax error or listeners have logged messages or executed
         keywords.
         """
-        return self.body_class(self, body)
+        return self._body
+
+    @body.setter
+    def body(self, body):
+        self._body = self.body_class(self, body)
 
     @property
     @deprecated
@@ -428,7 +463,7 @@ class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
 
 @Body.register
 class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
-    __slots__ = ['status', 'starttime', 'endtime']
+    __slots__ = ['status', 'starttime', 'endtime', '_body']
     body_class = Body
 
     def __init__(self, values=(), status='FAIL', starttime=None, endtime=None, parent=None):
@@ -438,13 +473,17 @@ class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
         self.endtime = endtime
         self.body = None
 
-    @setter
-    def body(self, body):
+    @property
+    def body(self):
         """Messages as a :class:`~.Body` object.
 
         Typically contains the message that caused the error.
         """
-        return self.body_class(self, body)
+        return self._body
+
+    @body.setter
+    def body(self, body):
+        self._body = self.body_class(self, body)
 
     @property
     @deprecated
@@ -469,7 +508,7 @@ class Keyword(model.Keyword, StatusMixin):
     """Represents an executed library or user keyword."""
     body_class = Body
     __slots__ = ['kwname', 'libname', 'doc', 'timeout', 'status', '_teardown',
-                 'starttime', 'endtime', 'message', 'sourcename']
+                 'starttime', 'endtime', 'message', 'sourcename', '_body', '_tags']
 
     def __init__(self, kwname='', libname='', doc='', args=(), assign=(), tags=(),
                  timeout=None, type=BodyItem.KEYWORD, status='FAIL', starttime=None,
@@ -492,14 +531,18 @@ class Keyword(model.Keyword, StatusMixin):
         self._teardown = None
         self.body = None
 
-    @setter
-    def body(self, body):
+    @property
+    def body(self):
         """Possible keyword body as a :class:`~.Body` object.
 
         Body can consist of child keywords, messages, and control structures
         such as IF/ELSE. Library keywords typically have an empty body.
         """
-        return self.body_class(self, body)
+        return self._body
+
+    @body.setter
+    def body(self, body):
+        self._body = self.body_class(self, body)
 
     @property
     def keywords(self):
@@ -608,10 +651,14 @@ class Keyword(model.Keyword, StatusMixin):
         """
         return bool(self._teardown)
 
-    @setter
-    def tags(self, tags):
+    @property
+    def tags(self):
         """Keyword tags as a :class:`~.model.tags.Tags` object."""
-        return Tags(tags)
+        return self._tags
+
+    @tags.setter
+    def tags(self, tags):
+        self._tags = Tags(tags)
 
 
 class TestCase(model.TestCase, StatusMixin):
