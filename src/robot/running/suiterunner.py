@@ -86,7 +86,7 @@ class SuiteRunner(SuiteVisitor):
                                                test_count=suite.test_count))
         self._output.register_error_listener(self._suite_status.error_occurred)
         if self._any_test_run(suite):
-            self._run_setup(suite.setup, self._suite_status)
+            self._run_setup(suite, self._suite_status)
 
     def _any_test_run(self, suite):
         skipped_tags = self._skipped_tags
@@ -108,7 +108,7 @@ class SuiteRunner(SuiteVisitor):
         self._context.report_suite_status(self._suite.status,
                                           self._suite.full_message)
         with self._context.suite_teardown():
-            failure = self._run_teardown(suite.teardown, self._suite_status)
+            failure = self._run_teardown(suite, self._suite_status)
             if failure:
                 if failure.skip:
                     self._suite.suite_teardown_skipped(str(failure))
@@ -156,7 +156,7 @@ class SuiteRunner(SuiteVisitor):
                 status.test_skipped(
                     test_or_task("{Test} skipped using '--skip' command line option.",
                                  settings.rpa))
-        self._run_setup(test.setup, status, result)
+        self._run_setup(test, status, result)
         if status.passed:
             try:
                 BodyRunner(self._context, templated=bool(test.template)).run(test.body)
@@ -175,7 +175,7 @@ class SuiteRunner(SuiteVisitor):
         result.status = status.status
         result.message = status.message or result.message
         with self._context.test_teardown(result):
-            self._run_teardown(test.teardown, status, result)
+            self._run_teardown(test, status, result)
         if status.passed and result.timeout and result.timeout.timed_out():
             status.test_failed(result.timeout.get_message())
             result.message = status.message
@@ -199,18 +199,24 @@ class SuiteRunner(SuiteVisitor):
             return None
         return TestTimeout(test.timeout, self._variables, rpa=test.parent.rpa)
 
-    def _run_setup(self, setup, status, result=None):
+    def _run_setup(self, item, status, result=None):
         if status.passed:
-            exception = self._run_setup_or_teardown(setup)
+            if item.has_setup:
+                exception = self._run_setup_or_teardown(item.setup)
+            else:
+                exception = None
             status.setup_executed(exception)
             if result and isinstance(exception, PassExecution):
                 result.message = exception.message
         elif status.parent and status.parent.skipped:
             status.skipped = True
 
-    def _run_teardown(self, teardown, status, result=None):
+    def _run_teardown(self, item, status, result=None):
         if status.teardown_allowed:
-            exception = self._run_setup_or_teardown(teardown)
+            if item.has_teardown:
+                exception = self._run_setup_or_teardown(item.teardown)
+            else:
+                exception = None
             status.teardown_executed(exception)
             failed = exception and not isinstance(exception, PassExecution)
             if result and exception:
@@ -223,8 +229,6 @@ class SuiteRunner(SuiteVisitor):
             return exception if failed else None
 
     def _run_setup_or_teardown(self, data):
-        if not data:
-            return None
         try:
             name = self._variables.replace_string(data.name)
         except DataError as err:

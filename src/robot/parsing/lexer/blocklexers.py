@@ -24,7 +24,7 @@ from .statementlexers import (Lexer,
                               TaskSectionHeaderLexer,
                               KeywordSectionHeaderLexer,
                               CommentSectionHeaderLexer, CommentLexer, ImplicitCommentLexer,
-                              ErrorSectionHeaderLexer,
+                              InvalidSectionHeaderLexer,
                               TestOrKeywordSettingLexer,
                               KeywordCallLexer,
                               IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
@@ -86,7 +86,7 @@ class FileLexer(BlockLexer):
         return (SettingSectionLexer, VariableSectionLexer,
                 TestCaseSectionLexer, TaskSectionLexer,
                 KeywordSectionLexer, CommentSectionLexer,
-                ErrorSectionLexer, ImplicitCommentSectionLexer)
+                InvalidSectionLexer, ImplicitCommentSectionLexer)
 
 
 class SectionLexer(BlockLexer):
@@ -165,14 +165,14 @@ class ImplicitCommentSectionLexer(SectionLexer):
         return (ImplicitCommentLexer,)
 
 
-class ErrorSectionLexer(SectionLexer):
+class InvalidSectionLexer(SectionLexer):
 
     @classmethod
     def handles(cls, statement: list, ctx: FileContext):
         return statement and statement[0].value.startswith('*')
 
     def lexer_classes(self):
-        return (ErrorSectionHeaderLexer, CommentLexer)
+        return (InvalidSectionHeaderLexer, CommentLexer)
 
 
 class TestOrKeywordLexer(BlockLexer):

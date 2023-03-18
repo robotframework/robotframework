@@ -6,7 +6,7 @@ from pathlib import Path
 
 from robot.parsing import get_model, get_resource_model, ModelVisitor, ModelTransformer, Token
 from robot.parsing.model.blocks import (
-    CommentSection, File, For, If, Try, While,
+    CommentSection, File, For, If, InvalidSection, Try, While,
     Keyword, KeywordSection, SettingSection, TestCase, TestCaseSection, VariableSection
 )
 from robot.parsing.model.statements import (
@@ -1019,24 +1019,6 @@ class TestError(unittest.TestCase):
         assert_equal(Error([Token('ERROR', error=e) for e in '0123456789']).errors,
                      tuple('0123456789'))
 
-    def test_get_fatal_errors_from_tokens(self):
-        assert_equal(Error([Token('FATAL ERROR', error='xxx')]).errors,
-                     ('xxx',))
-        assert_equal(Error([Token('FATAL ERROR', error='xxx'),
-                            Token('ARGUMENT'),
-                            Token('FATAL ERROR', error='yyy')]).errors,
-                     ('xxx', 'yyy'))
-        assert_equal(Error([Token('FATAL ERROR', error=e) for e in '0123456789']).errors,
-                     tuple('0123456789'))
-
-    def test_get_errors_and_fatal_errors_from_tokens(self):
-        assert_equal(Error([Token('ERROR', error='error'),
-                            Token('ARGUMENT'),
-                            Token('FATAL ERROR', error='fatal error')]).errors,
-                     ('error', 'fatal error'))
-        assert_equal(Error([Token('FATAL ERROR', error=e) for e in '0123456789']).errors,
-                     tuple('0123456789'))
-
     def test_model_error(self):
         model = get_model('''\
 *** Invalid ***
@@ -1050,10 +1032,11 @@ Documentation
         )
         inv_setting = "Non-existing setting 'Invalid'."
         expected = File([
-            CommentSection(
-                body=[
-                    Error([Token('ERROR', '*** Invalid ***', 1, 0, inv_header)])
-                ]
+            InvalidSection(
+                header=SectionHeader(
+                    [Token('INVALID HEADER', '*** Invalid ***', 1, 0, inv_header)]
+                )
+
             ),
             SettingSection(
                 header=SectionHeader([
@@ -1073,10 +1056,9 @@ Documentation
 ''', data_only=True)
         inv_testcases = "Resource file with 'Test Cases' section is invalid."
         expected = File([
-            CommentSection(
-                body=[
-                    Error([Token('FATAL ERROR', '*** Test Cases ***', 1, 0, inv_testcases)])
-                ]
+            InvalidSection(
+                header=SectionHeader(
+                    [Token('INVALID HEADER', '*** Test Cases ***', 1, 0, inv_testcases)])
             )
         ])
         assert_model(model, expected)
@@ -1096,10 +1078,10 @@ Documentation
         inv_setting = "Non-existing setting 'Invalid'."
         inv_testcases = "Resource file with 'Test Cases' section is invalid."
         expected = File([
-            CommentSection(
-                body=[
-                    Error([Token('ERROR', '*** Invalid ***', 1, 0, inv_header)])
-                ]
+            InvalidSection(
+                header=SectionHeader(
+                    [Token('INVALID HEADER', '*** Invalid ***', 1, 0, inv_header)]
+                )
             ),
             SettingSection(
                 header=SectionHeader([
@@ -1108,9 +1090,13 @@ Documentation
                 body=[
                     Error([Token('ERROR', 'Invalid', 3, 0, inv_setting)]),
                     Documentation([Token('DOCUMENTATION', 'Documentation', 4, 0)]),
-                    Error([Token('FATAL ERROR', '*** Test Cases ***', 5, 0, inv_testcases)])
                 ]
-            )
+            ),
+            InvalidSection(
+                header=SectionHeader(
+                    [Token('INVALID HEADER', '*** Test Cases ***', 5, 0, inv_testcases)]
+                )
+            ),
         ])
         assert_model(model, expected)
 
@@ -1118,12 +1104,11 @@ Documentation
         error = Error([])
         error.errors = ('explicitly set', 'errors')
         assert_equal(error.errors, ('explicitly set', 'errors'))
-        error.tokens = [Token('ERROR', error='normal error'),
-                        Token('FATAL ERROR', error='fatal error')]
-        assert_equal(error.errors, ('normal error', 'fatal error',
+        error.tokens = [Token('ERROR', error='normal error'),]
+        assert_equal(error.errors, ('normal error',
                                     'explicitly set', 'errors'))
         error.errors = ['errors', 'as', 'list']
-        assert_equal(error.errors, ('normal error', 'fatal error',
+        assert_equal(error.errors, ('normal error',
                                     'errors', 'as', 'list'))
 
 

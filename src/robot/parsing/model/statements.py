@@ -88,6 +88,7 @@ class Statement(ast.AST):
         settings header or test/keyword.
 
         Most implementations support following general properties:
+
         - ``separator`` whitespace inserted between each token. Default is four spaces.
         - ``indent`` whitespace inserted before first token. Default is four spaces.
         - ``eol`` end of line sign. Default is ``'\\n'``.
@@ -222,7 +223,8 @@ class Fixture(Statement):
 class SectionHeader(Statement):
     handles_types = (Token.SETTING_HEADER, Token.VARIABLE_HEADER,
                      Token.TESTCASE_HEADER, Token.TASK_HEADER,
-                     Token.KEYWORD_HEADER, Token.COMMENT_HEADER)
+                     Token.KEYWORD_HEADER, Token.COMMENT_HEADER,
+                     Token.INVALID_HEADER)
 
     @classmethod
     def from_params(cls, type, name=None, eol=EOL):
@@ -720,9 +722,11 @@ class Return(MultiValue):
     """Represents the deprecated ``[Return]`` setting.
 
     In addition to the ``[Return]`` setting itself, also the ``Return`` node
-    in the parsing model is deprecated. ``ReturnSetting`` (new in RF 6.1) should
-    be used instead. ``ReturnStatement`` will be renamed to ``Return`` in
-    the future, most likely already in RF 7.0.
+    in the parsing model is deprecated and :class:`ReturnSetting` (new in
+    Robot Framework 6.1) should be used instead. :class:`ReturnStatement` will
+    be renamed to ``Return`` in Robot Framework 7.0.
+
+    Eventually ``[Return]`` and ``ReturnSetting`` will be removed altogether.
     """
     type = Token.RETURN
 
@@ -1119,7 +1123,6 @@ class Config(Statement):
 @Statement.register
 class Error(Statement):
     type = Token.ERROR
-    handles_types = (Token.ERROR, Token.FATAL_ERROR)
     _errors = ()
 
     @property
@@ -1128,12 +1131,12 @@ class Error(Statement):
 
     @property
     def errors(self):
-        """Errors got from the underlying ``ERROR`` and ``FATAL_ERROR`` tokens.
+        """Errors got from the underlying ``ERROR``token.
 
         Errors can be set also explicitly. When accessing errors, they are returned
         along with errors got from tokens.
         """
-        tokens = self.get_tokens(Token.ERROR, Token.FATAL_ERROR)
+        tokens = self.get_tokens(Token.ERROR)
         return tuple(t.error for t in tokens) + self._errors
 
     @errors.setter

@@ -105,7 +105,8 @@ class CommentSectionHeaderLexer(SectionHeaderLexer):
     token_type = Token.COMMENT_HEADER
 
 
-class ErrorSectionHeaderLexer(SectionHeaderLexer):
+class InvalidSectionHeaderLexer(SectionHeaderLexer):
+    token_type = Token.INVALID_HEADER
 
     def lex(self):
         self.ctx.lex_invalid_section(self.statement)

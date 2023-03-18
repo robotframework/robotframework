@@ -693,21 +693,21 @@ class TestSectionHeaders(unittest.TestCase):
 
     def test_case_section_causes_error_in_init_file(self):
         assert_tokens('*** Test Cases ***', [
-            (T.ERROR, '*** Test Cases ***', 1, 0,
+            (T.INVALID_HEADER, '*** Test Cases ***', 1, 0,
              "'Test Cases' section is not allowed in suite initialization file."),
             (T.EOS, '', 1, 18),
         ], get_init_tokens, data_only=True)
 
     def test_case_section_causes_fatal_error_in_resource_file(self):
         assert_tokens('*** Test Cases ***', [
-            (T.FATAL_ERROR, '*** Test Cases ***', 1, 0,
+            (T.INVALID_HEADER, '*** Test Cases ***', 1, 0,
              "Resource file with 'Test Cases' section is invalid."),
             (T.EOS, '', 1, 18),
         ], get_resource_tokens, data_only=True)
 
     def test_invalid_section_in_test_case_file(self):
         assert_tokens('*** Invalid ***', [
-            (T.ERROR, '*** Invalid ***', 1, 0,
+            (T.INVALID_HEADER, '*** Invalid ***', 1, 0,
              "Unrecognized section header '*** Invalid ***'. Valid sections: "
              "'Settings', 'Variables', 'Test Cases', 'Tasks', 'Keywords' and 'Comments'."),
             (T.EOS, '', 1, 15),
@@ -715,7 +715,7 @@ class TestSectionHeaders(unittest.TestCase):
 
     def test_invalid_section_in_init_file(self):
         assert_tokens('*** S e t t i n g s ***', [
-            (T.ERROR, '*** S e t t i n g s ***', 1, 0,
+            (T.INVALID_HEADER, '*** S e t t i n g s ***', 1, 0,
              "Unrecognized section header '*** S e t t i n g s ***'. Valid sections: "
              "'Settings', 'Variables', 'Keywords' and 'Comments'."),
             (T.EOS, '', 1, 23),
@@ -723,7 +723,7 @@ class TestSectionHeaders(unittest.TestCase):
 
     def test_invalid_section_in_resource_file(self):
         assert_tokens('*', [
-            (T.ERROR, '*', 1, 0,
+            (T.INVALID_HEADER, '*', 1, 0,
              "Unrecognized section header '*'. Valid sections: "
              "'Settings', 'Variables', 'Keywords' and 'Comments'."),
             (T.EOS, '', 1, 1),

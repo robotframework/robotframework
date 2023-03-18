@@ -327,7 +327,7 @@ class Break(model.Break):
 class Error(model.Error):
     __slots__ = ['lineno', 'error']
 
-    def __init__(self, values, parent=None, lineno=None, error=None):
+    def __init__(self, values=(), parent=None, lineno=None, error=None):
         super().__init__(values, parent)
         self.lineno = lineno
         self.error = error
