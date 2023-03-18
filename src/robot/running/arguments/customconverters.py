@@ -87,7 +87,8 @@ class ConverterInfo:
             accepts = (arg_type.__origin__,)
         else:
             accepts = (arg_type,)
-        return cls(type_, converter, accepts, library if spec.minargs == 2 else None)
+        pass_library = spec.minargs == 2 or spec.var_positional
+        return cls(type_, converter, accepts, library if pass_library else None)
 
     @classmethod
     def _get_arg_spec(cls, converter):

@@ -81,6 +81,12 @@ class AcceptSubscriptedGenerics:
 class OnlyVarArg:
     def __init__(self, *varargs):
         self.value = varargs[0]
+        library = varargs[1]
+        if library is None:
+            raise AssertionError('Expected library, got none')
+        if not isinstance(library, ModuleType):
+            raise AssertionError(f'Expected library to be instance of {ModuleType}, was {type(library)}')
+
 
 
 class Strict:
