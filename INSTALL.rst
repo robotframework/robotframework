@@ -338,4 +338,6 @@ Zipapps (https://docs.python.org/3/library/zipapp.html) are technique to distrib
 
 At this point you have created a zipapp. This zipapp can be uesed like this.:
 
+.. sourcecode:: bash
+
     $ python zipappname.pyz example.robot
