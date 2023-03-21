@@ -163,28 +163,37 @@ class Statement(ast.AST):
 
 class DocumentationOrMetadata(Statement):
 
-    def _join_value(self, tokens):
-        lines = self._get_lines(tokens)
-        return ''.join(self._yield_lines_with_newlines(lines))
+    @property
+    def value(self):
+        return ''.join(self._get_lines_with_newlines()).rstrip()
 
-    def _get_lines(self, tokens):
-        lines = []
-        line = None
-        lineno = -1
-        for t in tokens:
-            if t.lineno != lineno:
-                line = []
-                lines.append(line)
-            line.append(t.value)
-            lineno = t.lineno
-        return [' '.join(line) for line in lines]
-
-    def _yield_lines_with_newlines(self, lines):
-        last_index = len(lines) - 1
-        for index, line in enumerate(lines):
+    def _get_lines_with_newlines(self):
+        for parts in self._get_line_parts():
+            line = ' '.join(parts)
             yield line
-            if index < last_index and not self._escaped_or_has_newline(line):
+            if not self._escaped_or_has_newline(line):
                 yield '\n'
+
+    def _get_line_parts(self):
+        line = []
+        lineno = -1
+        # There are no EOLs during execution or if data has been parsed with
+        # `data_only=True` otherwise, so we need to look at line numbers to
+        # know when lines change. If model is created programmatically using
+        # `from_params` or otherwise, line numbers may not be set, but there
+        # ought to be EOLs. If both EOLs and line numbers are missing,
+        # everything is considered to be on the same line.
+        for token in self.get_tokens(Token.ARGUMENT, Token.EOL):
+            eol = token.type == Token.EOL
+            if token.lineno != lineno or eol:
+                if line:
+                    yield line
+                line = []
+            if not eol:
+                line.append(token.value)
+            lineno = token.lineno
+        if line:
+            yield line
 
     def _escaped_or_has_newline(self, line):
         match = re.search(r'(\\+)n?$', line)
@@ -350,15 +359,10 @@ class Documentation(DocumentationOrMetadata):
                 tokens.append(Token(Token.SEPARATOR, indent))
             tokens.append(Token(Token.CONTINUATION))
             if line:
-                tokens.extend([Token(Token.SEPARATOR, multiline_separator),
-                               Token(Token.ARGUMENT, line)])
-            tokens.append(Token(Token.EOL, eol))
+                tokens.append(Token(Token.SEPARATOR, multiline_separator))
+            tokens.extend([Token(Token.ARGUMENT, line),
+                           Token(Token.EOL, eol)])
         return cls(tokens)
-
-    @property
-    def value(self):
-        tokens = self.get_tokens(Token.ARGUMENT)
-        return self._join_value(tokens)
 
 
 @Statement.register
@@ -385,11 +389,6 @@ class Metadata(DocumentationOrMetadata):
     @property
     def name(self):
         return self.get_value(Token.NAME)
-
-    @property
-    def value(self):
-        tokens = self.get_tokens(Token.ARGUMENT)
-        return self._join_value(tokens)
 
 
 @Statement.register
