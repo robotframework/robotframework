@@ -58,7 +58,7 @@ class TestSplitFromSpaces(unittest.TestCase):
                       (DATA, 'S p a c e s', 1, 17),
                       (EOL, '', 1, 28)])
 
-    def test_single_tab_is_enough_as_sepator(self):
+    def test_single_tab_is_enough_as_separator(self):
         verify_split('\tT\ta\t\t\tb\t\t',
                      [(DATA, '', 1, 0),
                       (SEPA, '\t', 1, 0),

@@ -1007,6 +1007,114 @@ Name
         get_and_assert_model(data, expected)
 
 
+class TestDocumentation(unittest.TestCase):
+
+    def test_empty(self):
+        data = '''\
+*** Settings ***
+Documentation
+'''
+        expected = Documentation(
+            tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
+                    Token(Token.EOL, '\n', 2, 13)]
+        )
+        self._verify_documentation(data, expected, '')
+
+    def test_one_line(self):
+        data = '''\
+*** Settings ***
+Documentation    Hello!
+'''
+        expected = Documentation(
+            tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
+                    Token(Token.SEPARATOR, '    ', 2, 13),
+                    Token(Token.ARGUMENT, 'Hello!', 2, 17),
+                    Token(Token.EOL, '\n', 2, 23)]
+        )
+        self._verify_documentation(data, expected, 'Hello!')
+
+    def test_multi_part(self):
+        data = '''\
+*** Settings ***
+Documentation    Hello    world
+'''
+        expected = Documentation(
+            tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
+                    Token(Token.SEPARATOR, '    ', 2, 13),
+                    Token(Token.ARGUMENT, 'Hello', 2, 17),
+                    Token(Token.SEPARATOR, '    ', 2, 22),
+                    Token(Token.ARGUMENT, 'world', 2, 26),
+                    Token(Token.EOL, '\n', 2, 31)]
+        )
+        self._verify_documentation(data, expected, 'Hello world')
+
+    def test_multi_line(self):
+        data = '''\
+*** Settings ***
+Documentation    Documentation
+...              in
+...              multiple lines    and parts
+'''
+        expected = Documentation(
+            tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
+                    Token(Token.SEPARATOR, '    ', 2, 13),
+                    Token(Token.ARGUMENT, 'Documentation', 2, 17),
+                    Token(Token.EOL, '\n', 2, 30),
+                    Token(Token.CONTINUATION, '...', 3, 0),
+                    Token(Token.SEPARATOR, '              ', 3, 3),
+                    Token(Token.ARGUMENT, 'in', 3, 17),
+                    Token(Token.EOL, '\n', 3, 19),
+                    Token(Token.CONTINUATION, '...', 4, 0),
+                    Token(Token.SEPARATOR, '              ', 4, 3),
+                    Token(Token.ARGUMENT, 'multiple lines', 4, 17),
+                    Token(Token.SEPARATOR, '    ', 4, 31),
+                    Token(Token.ARGUMENT, 'and parts', 4, 35),
+                    Token(Token.EOL, '\n', 4, 44)]
+        )
+        self._verify_documentation(data, expected,
+                                   'Documentation\nin\nmultiple lines and parts')
+
+    def test_multi_line_with_empty_lines(self):
+        data = '''\
+*** Settings ***
+Documentation    Documentation
+...
+...              with empty
+'''
+        expected = Documentation(
+            tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
+                    Token(Token.SEPARATOR, '    ', 2, 13),
+                    Token(Token.ARGUMENT, 'Documentation', 2, 17),
+                    Token(Token.EOL, '\n', 2, 30),
+                    Token(Token.CONTINUATION, '...', 3, 0),
+                    Token(Token.ARGUMENT, '', 3, 3),
+                    Token(Token.EOL, '\n', 3, 3),
+                    Token(Token.CONTINUATION, '...', 4, 0),
+                    Token(Token.SEPARATOR, '              ', 4, 3),
+                    Token(Token.ARGUMENT, 'with empty', 4, 17),
+                    Token(Token.EOL, '\n', 4, 27)]
+        )
+        self._verify_documentation(data, expected, 'Documentation\n\nwith empty')
+
+    def _verify_documentation(self, data, expected, value):
+        # Model has both EOLs and line numbers.
+        doc = get_model(data).sections[0].body[0]
+        assert_model(doc, expected)
+        assert_equal(doc.value, value)
+        # Model has only line numbers, no EOLs or other non-data tokens.
+        doc = get_model(data, data_only=True).sections[0].body[0]
+        expected.tokens = [token for token in expected.tokens
+                           if token.type not in Token.NON_DATA_TOKENS]
+        assert_model(doc, expected)
+        assert_equal(doc.value, value)
+        # Model has only EOLS, no line numbers.
+        doc = Documentation.from_params(value)
+        assert_equal(doc.value, value)
+        # Model has no EOLs nor line numbers. Everything is just one line.
+        doc.tokens = [token for token in doc.tokens if token.type != Token.EOL]
+        assert_equal(doc.value, ' '.join(value.splitlines()))
+
+
 class TestError(unittest.TestCase):
 
     def test_get_errors_from_tokens(self):
