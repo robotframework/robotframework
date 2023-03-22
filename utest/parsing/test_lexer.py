@@ -89,7 +89,7 @@ Name              Custom Suite Name
             (T.KEYWORD_TAGS, 'Keyword Tags', 12, 0),
             (T.ARGUMENT, 'tag', 12, 18),
             (T.EOS, '', 12, 21),
-            (T.SUITE_NAME, 'Name', 13, 0),
+            ('SUITE NAME', 'Name', 13, 0),
             (T.ARGUMENT, 'Custom Suite Name', 13, 18),
             (T.EOS, '', 13, 35)
         ]
@@ -397,7 +397,7 @@ Name              Ignored
             (T.ERROR, 'Default Tags', 19, 0,
              "Setting 'Default Tags' is allowed only once. Only the first value is used."),
             (T.EOS, '', 19, 12),
-            (T.SUITE_NAME, 'Name', 20, 0),
+            ("SUITE NAME", 'Name', 20, 0),
             (T.ARGUMENT, 'Used', 20, 18),
             (T.EOS, '', 20, 22),
             (T.ERROR, 'Name', 21, 0,

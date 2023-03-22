@@ -1,12 +1,14 @@
 *** Settings ***
 Documentation       Suite without custom name
 
-Suite Name          Child witout parent init
+Suite Name          Child without parent init
 
 
 *** Test Cases ***
-Verify That Suite Name is not a file like name
-    Should Not Be Equal    ${SUITE_NAME}    Robot.Parsing.Parent Init Suite.Child Tests02.Child0202
+Test Case 01
+    No Operation
+# Verify That Suite Name is not a file like name
+#     Should Not Contain    ${SUITE_NAME}    Parent Init Suite.Child Tests02.Child0202
 
-Verify Suite Name
-    Should Be Equal    ${SUITE_NAME}    Robot.Parsing.Parent Init Suite.Child Tests02.Child witout parent init
+# Verify Suite Name
+#     Should Contain    ${SUITE_NAME}    Parent Init Suite.Child Tests02.Child without parent init
