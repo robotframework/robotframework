@@ -110,7 +110,8 @@ class Settings:
     def _lex_setting(self, setting, values, name):
         self.settings[name] = values
         # TODO: Change token type from 'FORCE TAGS' to 'TEST TAGS' in RF 7.0.
-        setting.type = name.upper() if name != 'Test Tags' else 'FORCE TAGS'
+        setting_type_map = {'Test Tags': "FORCE TAGS", "Name": "SUITE NAME"}
+        setting.type = setting_type_map.get(name, name.upper())
         if name in self.name_and_arguments:
             self._lex_name_and_arguments(values)
         elif name in self.name_arguments_and_with_name:
