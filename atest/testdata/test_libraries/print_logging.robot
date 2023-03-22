@@ -45,5 +45,9 @@ Logging HTML
     Print Many HTML Lines
     Print HTML To Stderr
 
+Logging CONSOLE
+    Print Console
+    Print Console
+
 FAIL is not valid log level
     Print    *FAIL* is not failure

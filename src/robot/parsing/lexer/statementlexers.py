@@ -105,7 +105,8 @@ class CommentSectionHeaderLexer(SectionHeaderLexer):
     token_type = Token.COMMENT_HEADER
 
 
-class ErrorSectionHeaderLexer(SectionHeaderLexer):
+class InvalidSectionHeaderLexer(SectionHeaderLexer):
+    token_type = Token.INVALID_HEADER
 
     def lex(self):
         self.ctx.lex_invalid_section(self.statement)
@@ -190,15 +191,23 @@ class ForHeaderLexer(StatementLexer):
 
     def lex(self):
         self.statement[0].type = Token.FOR
-        separator_seen = False
+        separator = None
         for token in self.statement[1:]:
-            if separator_seen:
+            if separator:
                 token.type = Token.ARGUMENT
             elif normalize_whitespace(token.value) in self.separators:
                 token.type = Token.FOR_SEPARATOR
-                separator_seen = True
+                separator = normalize_whitespace(token.value)
             else:
                 token.type = Token.VARIABLE
+        if (separator == 'IN ENUMERATE'
+                and self.statement[-1].value.startswith('start=')):
+            self.statement[-1].type = Token.OPTION
+        elif separator == 'IN ZIP':
+            for token in reversed(self.statement):
+                if not token.value.startswith(('mode=', 'fill=')):
+                    break
+                token.type = Token.OPTION
 
 
 class IfHeaderLexer(TypeAndArguments):

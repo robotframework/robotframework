@@ -13,15 +13,29 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from typing import Any, Callable, Generic, overload, TypeVar
 
-class setter:
 
-    def __init__(self, method):
+T = TypeVar('T')
+V = TypeVar('V')
+
+
+class setter(Generic[V]):
+
+    def __init__(self, method: Callable[[T, Any], V]):
         self.method = method
         self.attr_name = '_setter__' + method.__name__
         self.__doc__ = method.__doc__
 
-    def __get__(self, instance, owner):
+    @overload
+    def __get__(self, instance: None, owner: 'type[T]') -> 'setter':
+        ...
+
+    @overload
+    def __get__(self, instance: T, owner: 'type[T]') -> V:
+        ...
+
+    def __get__(self, instance: 'T|None', owner: 'type[T]') -> 'V|setter':
         if instance is None:
             return self
         try:
@@ -29,10 +43,9 @@ class setter:
         except AttributeError:
             raise AttributeError(self.method.__name__)
 
-    def __set__(self, instance, value):
-        if instance is None:
-            return
-        setattr(instance, self.attr_name, self.method(instance, value))
+    def __set__(self, instance: T, value: Any):
+        if instance is not None:
+            setattr(instance, self.attr_name, self.method(instance, value))
 
 
 class SetterAwareType(type):

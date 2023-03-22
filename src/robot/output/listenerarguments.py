@@ -77,6 +77,8 @@ class _ListenerArgumentsFromItem(ListenerArguments):
 
     def _get_attribute_value(self, item, name):
         value = getattr(item, name)
+        if value is None:
+            return ''
         return self._take_copy_of_mutable_value(value)
 
     def _take_copy_of_mutable_value(self, value):
@@ -132,11 +134,15 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
     _type_attributes = {
         BodyItem.FOR: ('variables', 'flavor', 'values'),
         BodyItem.IF: ('condition',),
-        BodyItem.ELSE_IF: ('condition'),
+        BodyItem.ELSE_IF: ('condition',),
         BodyItem.EXCEPT: ('patterns', 'pattern_type', 'variable'),
         BodyItem.WHILE: ('condition', 'limit'),
         BodyItem.RETURN: ('values',),
         BodyItem.ITERATION: ('variables',)
+    }
+    _for_flavor_attributes = {
+        'IN ENUMERATE': ('start',),
+        'IN ZIP': ('mode', 'fill')
     }
 
     def _get_extra_attributes(self, kw):
@@ -145,9 +151,12 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
                  'args': [a if is_string(a) else safe_str(a) for a in kw.args],
                  'source': str(kw.source or '')}
         if kw.type in self._type_attributes:
-            attrs.update({name: self._get_attribute_value(kw, name)
-                          for name in self._type_attributes[kw.type]
-                          if hasattr(kw, name)})
+            for name in self._type_attributes[kw.type]:
+                if hasattr(kw, name):
+                    attrs[name] = self._get_attribute_value(kw, name)
+        if kw.type == BodyItem.FOR:
+            for name in self._for_flavor_attributes.get(kw.flavor, ()):
+                attrs[name] = self._get_attribute_value(kw, name)
         return attrs
 
 

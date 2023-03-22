@@ -75,7 +75,7 @@ In start_keyword and end_keyword with user keyword
     Length Should Be      ${tc.body[3].body}                       3
 
 In start_keyword and end_keyword with FOR loop
-    ${tc} =               Check Test Case                          FOR loop in test
+    ${tc} =               Check Test Case                          FOR
     ${for} =              Set Variable                             ${tc.body[1]}
     Should Be Equal       ${for.type}                              FOR
     Length Should Be      ${for.body}                              5

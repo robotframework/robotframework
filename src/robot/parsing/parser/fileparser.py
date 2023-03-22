@@ -19,7 +19,7 @@ from robot.utils import is_pathlike, is_string
 
 from ..lexer import Token
 from ..model import (File, CommentSection, SettingSection, VariableSection,
-                     TestCaseSection, KeywordSection)
+                     TestCaseSection, KeywordSection, InvalidSection)
 
 from .blockparsers import Parser, TestCaseParser, KeywordParser
 
@@ -49,6 +49,7 @@ class FileParser(Parser):
             Token.TASK_HEADER: TestCaseSectionParser,
             Token.KEYWORD_HEADER: KeywordSectionParser,
             Token.COMMENT_HEADER: CommentSectionParser,
+            Token.INVALID_HEADER: InvalidSectionParser,
             Token.CONFIG: ImplicitCommentSectionParser,
             Token.COMMENT: ImplicitCommentSectionParser,
             Token.ERROR: ImplicitCommentSectionParser,
@@ -83,6 +84,10 @@ class VariableSectionParser(SectionParser):
 
 class CommentSectionParser(SectionParser):
     model_class = CommentSection
+
+
+class InvalidSectionParser(SectionParser):
+    model_class = InvalidSection
 
 
 class ImplicitCommentSectionParser(SectionParser):

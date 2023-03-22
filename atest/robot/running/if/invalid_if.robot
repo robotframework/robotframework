@@ -16,11 +16,17 @@ IF with invalid condition
 IF with invalid condition with ELSE
     FAIL    NOT RUN
 
-IF condition with non-existing variable
+IF condition with non-existing ${variable}
+    FAIL    NOT RUN
+
+IF condition with non-existing $variable
     FAIL    NOT RUN
 
 ELSE IF with invalid condition
     NOT RUN    NOT RUN    FAIL    NOT RUN    NOT RUN
+
+Recommend $var syntax if invalid condition contains ${var}
+    FAIL    index=1
 
 IF without END
     FAIL
@@ -106,11 +112,11 @@ Non-existing variable in condition causes normal error
 
 *** Keywords ***
 Branch statuses should be
-    [Arguments]    @{statuses}
+    [Arguments]    @{statuses}    ${index}=0
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.body[0].status}    FAIL
-    FOR    ${branch}    ${status}    IN ZIP    ${tc.body[0].body}    ${statuses}
+    ${if} =    Set Variable    ${tc.body}[${index}]
+    Should Be Equal    ${if.status}    FAIL
+    FOR    ${branch}    ${status}    IN ZIP    ${if.body}    ${statuses}    mode=STRICT
         Should Be Equal    ${branch.status}    ${status}
     END
-    Should Be Equal    ${{len($tc.body[0].body)}}    ${{len($statuses)}}
     RETURN    ${tc}

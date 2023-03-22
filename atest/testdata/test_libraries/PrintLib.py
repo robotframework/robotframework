@@ -16,6 +16,10 @@ def print_html_to_stderr():
     print('*HTML* <i>Hello, stderr!!</i>', file=sys.stderr)
 
 
+def print_console():
+    print('*CONSOLE* Hello info and console!')
+
+
 def print_with_all_levels():
-    for level in 'TRACE DEBUG INFO HTML WARN ERROR'.split():
+    for level in 'TRACE DEBUG INFO CONSOLE HTML WARN ERROR'.split():
         print('*%s* %s message' % (level, level.title()))

@@ -51,6 +51,9 @@ Log also to console
     Log    Hello, console!    console=yepyep    html=false
     Log    ${HTML}    debug    enable both html    and console
 
+CONSOLE pseudo level
+    Log    Hello, info and console!    console
+
 repr=True
     [Setup]    Set Log Level    DEBUG
     Log    Nothing special here    repr=false

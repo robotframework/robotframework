@@ -49,7 +49,6 @@ class TestTestSuite(unittest.TestCase):
                 assert_equal(TestSuite(source=Path(inp)).name, exp)
                 assert_equal(TestSuite(source=Path(inp).resolve()).name, exp)
 
-
     def test_suite_name_from_source(self):
         suite = TestSuite(source='example.robot')
         assert_equal(suite.name, 'Example')
@@ -98,6 +97,18 @@ class TestTestSuite(unittest.TestCase):
         assert_equal(list(suite.tests[1].tags), ['a', 't1'])
         assert_equal(list(suite.tests[2].tags), ['a'])
         assert_equal(list(suite.suites[0].tests[0].tags), ['a'])
+
+    def test_all_tests_and_test_count(self):
+        root = TestSuite()
+        assert_equal(root.test_count, 0)
+        assert_equal(list(root.all_tests), [])
+        for i in range(10):
+            suite = root.suites.create()
+            for j in range(100):
+                suite.tests.create()
+        assert_equal(root.test_count, 1000)
+        assert_equal(len(list(root.all_tests)), 1000)
+        assert_equal(list(root.suites[0].all_tests), list(root.suites[0].tests))
 
     def test_configure_only_works_with_root_suite(self):
         for Suite in TestSuite, RunningTestSuite, ResultTestSuite:

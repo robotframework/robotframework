@@ -21,7 +21,7 @@ Values from list variable
 
 Start
     ${loop} =    Check test and get loop    ${TEST NAME}
-    Should be IN ENUMERATE loop    ${loop}            5
+    Should be IN ENUMERATE loop    ${loop}            5              start=1
     Should be FOR iteration        ${loop.body[0]}    \${index}=1    \${item}=1
     Should be FOR iteration        ${loop.body[1]}    \${index}=2    \${item}=2
     Should be FOR iteration        ${loop.body[2]}    \${index}=3    \${item}=3
@@ -33,10 +33,10 @@ Escape start
     Should be IN ENUMERATE loop    ${loop}    2
 
 Invalid start
-    Check test and failed loop    ${TEST NAME}    IN ENUMERATE
+    Check test and failed loop    ${TEST NAME}    IN ENUMERATE    start=invalid
 
 Invalid variable in start
-    Check test and failed loop    ${TEST NAME}    IN ENUMERATE
+    Check test and failed loop    ${TEST NAME}    IN ENUMERATE    start=\${invalid}
 
 Index and two items
     ${loop} =    Check test and get loop    ${TEST NAME}    1
@@ -64,4 +64,4 @@ No values
     Check test and failed loop    ${TEST NAME}    IN ENUMERATE
 
 No values with start
-    Check test and failed loop    ${TEST NAME}    IN ENUMERATE
+    Check test and failed loop    ${TEST NAME}    IN ENUMERATE    start=0
