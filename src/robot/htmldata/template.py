@@ -17,13 +17,16 @@ import os
 import pathlib
 import sys
 
-if sys.version_info < (3, 10) and not os.path.exists(__file__):
+if sys.version_info < (3, 10) and not pathlib.Path(__file__).exists():
     # Try importlib resources backport as prior to python 3.10
     # importlib.resources.files was not zipapp compatible...
     try:
         from importlib_resources import files
     except ImportError:
-        raise ImportError("robotframework outside of filesystem (zipapp?) requires importlib resources backport on python < 3.10")
+        err_msg = "Up to python <= 3.10 importlib-resources backport is "
+        err_msg += "required if __file__ does not exist (zipapps, "
+        err_msg += "pyodixizer etc...)"
+        raise ImportError(err_msg)
 else:
     try:
         from importlib.resources import files
