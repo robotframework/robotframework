@@ -324,11 +324,11 @@ __ https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtua
 Zipapp 
 --------------------
 
-Zipapps (_zipapp: https://docs.python.org/3/library/zipapp.html) are technique to 
-distribute all the python code of  asolution in a single file, which can 
+`Zipapps <https://docs.python.org/3/library/zipapp.html>`_ are a technique to 
+distribute all the python code of a solution in a single file, which can 
 be executed using a python interpreter. The same zipapp file can be run on
-multiple plattforms. An example of using pdm (_pdm:  https://pdm.fming.dev/latest/)
-with the packer extension to create a zipapp would be.
+multiple plattforms. An example of using  (`pdm <https://pdm.fming.dev/latest/>`_)
+with the packer extension to create a zipapp would be.:
 
 .. sourcecode:: bash
 
