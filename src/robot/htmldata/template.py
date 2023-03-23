@@ -33,10 +33,12 @@ else:
             base_dir = pathlib.Path(__file__).parent.parent.parent
             return base_dir / modulepath.replace(".", os.sep)
 
-def HtmlTemplate(filename):
-    module, filename = os.path.split(os.path.normpath(filename))
-    module = 'robot.htmldata.' + module
-    
-    with files(module).joinpath(filename).open('r', encoding="utf-8") as f:
-        for item in f:
-            yield item.rstrip()
+class HtmlTemplate:
+    def __init__(self, filename):
+        module, self.filename = os.path.split(os.path.normpath(filename))
+        self.module = 'robot.htmldata.' + module
+        
+    def __iter__(self):
+        with files(self.module).joinpath(self.filename).open('r', encoding="utf-8") as f:
+            for item in f:
+                yield item.rstrip()
