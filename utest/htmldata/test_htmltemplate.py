@@ -2,7 +2,7 @@ import unittest
 
 from robot.htmldata.template import HtmlTemplate
 from robot.htmldata import LOG, REPORT
-from robot.utils.asserts import assert_true, assert_equal, fail
+from robot.utils.asserts import assert_true, assert_equal, assert_raises
 
 
 class TestHtmlTemplate(unittest.TestCase):
@@ -17,17 +17,7 @@ class TestHtmlTemplate(unittest.TestCase):
             assert_true(not line.endswith('\n'))
 
     def test_non_existing(self):
-        def check_for_correct_exception(args):
-            try:
-                list(args)
-            except IOError:
-                pass
-            except ModuleNotFoundError:
-                pass
-            except Exception as e:
-                fail("unexpcected Exception: " + str(e))
-
-        check_for_correct_exception(HtmlTemplate('nonex.html'))
+        assert_raises((ImportError, IOError), list, HtmlTemplate('nonex.html'))
 
 
 if __name__ == "__main__":
