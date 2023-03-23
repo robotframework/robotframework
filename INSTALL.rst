@@ -321,23 +321,25 @@ __ https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtua
 .. _PyPI: https://pypi.org/project/robotframework
 .. _GitHub: https://github.com/robotframework/robotframework
 
-
-
-
 Zipapp 
 --------------------
-Zipapps (https://docs.python.org/3/library/zipapp.html) are technique to distribute all the python code of  asolution in a single file, which can be executed using a python interpreter. The same zipapp file can be run on multiple plattforms. An example of using pdm 
-(https://pdm.fming.dev/latest/) with the packer extension (https://github.com/frostming/pdm-packer) to create a zipapp would be.
+
+Zipapps (https://docs.python.org/3/library/zipapp.html) are technique to 
+distribute all the python code of  asolution in a single file, which can 
+be executed using a python interpreter. The same zipapp file can be run on
+multiple plattforms. An example of using pdm (https://pdm.fming.dev/latest/)
+with the packer extension (https://github.com/frostming/pdm-packer) to 
+create a zipapp would be.
 
 .. sourcecode:: bash
 
     $ pdm init 
     $ pdm add robotframework
-    $ #If the target is python 3.6: pdm add importlib_resources         
+    $ #If the target is python 3.9 or older: pdm add importlib_resources         
     $ pdm pack -m robot:run_cli
 
-At this point you have created a zipapp. This zipapp can be uesed like this.:
+At this point you have created a pyz file. This pyz file can be uesed like this.:
 
 .. sourcecode:: bash
 
-    $ python zipappname.pyz example.robot
+    $ python *.pyz example.robot
