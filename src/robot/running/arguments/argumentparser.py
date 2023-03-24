@@ -99,14 +99,18 @@ class ArgumentSpecParser(ArgumentParser):
 
     def parse(self, argspec, name=None):
         spec = ArgumentSpec(name, self._type)
+        positional_only = True if "/" in argspec else False
         named_only = False
         for arg in argspec:
             arg = self._validate_arg(arg)
+            if arg == "/":
+                positional_only = False
+                continue
             if spec.var_named:
                 self._report_error('Only last argument can be kwargs.')
             elif isinstance(arg, tuple):
                 arg, default = arg
-                arg = self._add_arg(spec, arg, named_only)
+                arg = self._add_arg(spec, arg, named_only, positional_only)
                 spec.defaults[arg] = default
             elif self._is_var_named(arg):
                 spec.var_named = self._format_var_named(arg)
@@ -119,7 +123,7 @@ class ArgumentSpecParser(ArgumentParser):
             elif spec.defaults and not named_only:
                 self._report_error('Non-default argument after default arguments.')
             else:
-                self._add_arg(spec, arg, named_only)
+                self._add_arg(spec, arg, named_only, positional_only)
         return spec
 
     @abstractmethod
@@ -149,10 +153,13 @@ class ArgumentSpecParser(ArgumentParser):
     def _format_arg(self, arg):
         return arg
 
-    def _add_arg(self, spec, arg, named_only=False):
+    def _add_arg(self, spec, arg, named_only=False, positional_only=False):
         arg = self._format_arg(arg)
-        target = spec.positional_or_named if not named_only else spec.named_only
-        target.append(arg)
+        if positional_only:
+            spec.positional_only.append(arg)
+        else:
+            target = spec.positional_or_named if not named_only else spec.named_only
+            target.append(arg)
         return arg
 
 
