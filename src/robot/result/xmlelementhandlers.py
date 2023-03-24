@@ -178,7 +178,10 @@ class ForHandler(ElementHandler):
     children = frozenset(('var', 'value', 'iter', 'status', 'doc', 'msg', 'kw'))
 
     def start(self, elem, result):
-        return result.body.create_for(flavor=elem.get('flavor'))
+        return result.body.create_for(flavor=elem.get('flavor'),
+                                      start=elem.get('start'),
+                                      mode=elem.get('mode'),
+                                      fill=elem.get('fill'))
 
 
 @ElementHandler.register
@@ -187,10 +190,8 @@ class WhileHandler(ElementHandler):
     children = frozenset(('iter', 'status', 'doc', 'msg', 'kw'))
 
     def start(self, elem, result):
-        return result.body.create_while(
-            condition=elem.get('condition'),
-            limit=elem.get('limit')
-        )
+        return result.body.create_while(condition=elem.get('condition'),
+                                        limit=elem.get('limit'))
 
 
 @ElementHandler.register

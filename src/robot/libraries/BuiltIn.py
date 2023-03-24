@@ -2976,28 +2976,31 @@ class _Misc(_BuiltInBase):
             repr='DEPRECATED', formatter='str'):
         r"""Logs the given message with the given level.
 
-        Valid levels are TRACE, DEBUG, INFO (default), HTML, WARN, and ERROR.
-        Messages below the current active log level are ignored. See
-        `Set Log Level` keyword and ``--loglevel`` command line option
-        for more details about setting the level.
+        Valid levels are TRACE, DEBUG, INFO (default), WARN and ERROR.
+        In addition to that, there are pseudo log levels HTML and CONSOLE that
+        both log messages using INFO.
 
-        Messages logged with the WARN or ERROR levels will be automatically
+        Messages below the current active log
+        level are ignored. See `Set Log Level` keyword and ``--loglevel``
+        command line option for more details about setting the level.
+
+        Messages logged with the WARN or ERROR levels are automatically
         visible also in the console and in the Test Execution Errors section
         in the log file.
 
         If the ``html`` argument is given a true value (see `Boolean
-        arguments`), the message will be considered HTML and special characters
+        arguments`) or the HTML pseudo log level is used, the message is
+        considered to be HTML and special characters
         such as ``<`` are not escaped. For example, logging
-        ``<img src="image.png">`` creates an image when ``html`` is true, but
-        otherwise the message is that exact string. An alternative to using
-        the ``html`` argument is using the HTML pseudo log level. It logs
-        the message as HTML using the INFO level.
+        ``<img src="image.png">`` creates an image in this case, but
+        otherwise the message is that exact string. When using the HTML pseudo
+        level, the messages is logged using the INFO level.
 
-        If the ``console`` argument is true, the message will be written to
-        the console where test execution was started from in addition to
-        the log file. This keyword always uses the standard output stream
-        and adds a newline after the written message. Use `Log To Console`
-        instead if either of these is undesirable,
+        If the ``console`` argument is true or the CONSOLE pseudo level is
+        used, the message is written both to the console and to the log file.
+        When using the CONSOLE pseudo level, the message is logged using the
+        INFO level. If the message should not be logged to the log file or there
+        are special formatting needs, use the `Log To Console` keyword instead.
 
         The ``formatter`` argument controls how to format the string
         representation of the message. Possible values are ``str`` (default),
@@ -3018,12 +3021,14 @@ class _Misc(_BuiltInBase):
         | Log | <b>Hello</b>, world! | HTML     |   | # Same as above.         |
         | Log | <b>Hello</b>, world! | DEBUG    | html=true | # DEBUG as HTML. |
         | Log | Hello, console!   | console=yes | | # Log also to the console. |
+        | Log | Hello, console!   | CONSOLE     | | # Log also to the console. |
         | Log | Null is \x00    | formatter=repr | | # Log ``'Null is \x00'``. |
 
         See `Log Many` if you want to log multiple messages in one go, and
         `Log To Console` if you only want to write to the console.
 
         Formatter options ``type`` and ``len`` are new in Robot Framework 5.0.
+        The CONSOLE level is new in Robot Framework 6.1.
         """
         # TODO: Remove `repr` altogether in RF 7.0. It was deprecated in RF 5.0.
         if repr == 'DEPRECATED':
@@ -3432,7 +3437,7 @@ class _Misc(_BuiltInBase):
         ``modules=rootmod, rootmod.submod``.
         """
         try:
-            return evaluate_expression(expression, self._variables.current.store,
+            return evaluate_expression(expression, self._variables.current,
                                        modules, namespace)
         except DataError as err:
             raise RuntimeError(err.message)

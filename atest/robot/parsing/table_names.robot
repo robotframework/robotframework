@@ -30,14 +30,14 @@ Section Names Are Space Sensitive
 Invalid Tables
     [Setup]    Run Tests    ${EMPTY}    parsing/invalid_table_names.robot
     ${tc} =    Check Test Case    Test in valid table
+    ${path} =    Normalize Path    ${DATADIR}/parsing/invalid_tables_resource.robot
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    Keyword in valid table
-    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    Keyword in valid table in resource
-    Length Should Be    ${ERRORS}    5
+    Length Should Be    ${ERRORS}    4
     Invalid Section Error    0    invalid_table_names.robot        1     *** Error ***
     Invalid Section Error    1    invalid_table_names.robot        8     *** ***
-    Invalid Section Error    2    invalid_table_names.robot        17    *one more table cause an error
-    Invalid Section Error    3    invalid_tables_resource.robot    1     *** ***                 test and task=
-    Invalid Section Error    4    invalid_tables_resource.robot    10    ***Resource Error***    test and task=
+    Invalid Section Error    2    invalid_table_names.robot        18    *one more table cause an error
+    Error In File    3    parsing/invalid_table_names.robot        6     Error in file '${path}' on line 1: Unrecognized section header '*** ***'. Valid sections: 'Settings', 'Variables', 'Keywords' and 'Comments'.
+
 
 *** Keywords ***
 Check First Log Entry

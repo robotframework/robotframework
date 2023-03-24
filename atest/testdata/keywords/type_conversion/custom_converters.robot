@@ -69,6 +69,9 @@ Failing conversion
     Conversion should fail    Strict    wrong type
     ...    type=Strict    error=TypeError: Only Strict instances are accepted, got string.
 
+Only vararg
+    Only var arg    10    10
+
 With library as argument to converter
     String    ${123}
 

@@ -25,7 +25,7 @@ class ModelModifier(SuiteVisitor):
         test.tags.add(self.config)
 
     def start_for(self, for_):
-        if for_.parent.name == 'FOR IN RANGE loop in test':
+        if for_.parent.name == 'FOR IN RANGE':
             for_.flavor = 'IN'
             for_.values = ['FOR', 'is', 'modified!']
 

@@ -19,13 +19,10 @@ This is exposed via :py:mod:`robot.api.logger`. Implementation must reside
 here to avoid cyclic imports.
 """
 
-import sys
 import threading
 
-from robot.utils import console_encode
-
 from .logger import LOGGER
-from .loggerhelper import Message
+from .loggerhelper import Message, write_to_console
 
 
 LOGGING_THREADS = ('MainThread', 'RobotFrameworkTimeoutThread')
@@ -38,7 +35,11 @@ def write(msg, level, html=False):
     if callable(msg):
         msg = str(msg)
     if level.upper() not in ('TRACE', 'DEBUG', 'INFO', 'HTML', 'WARN', 'ERROR'):
-        raise RuntimeError("Invalid log level '%s'." % level)
+        if level.upper() == 'CONSOLE':
+            level = 'INFO'
+            console(msg)
+        else:
+            raise RuntimeError("Invalid log level '%s'." % level)
     if threading.current_thread().name in LOGGING_THREADS:
         LOGGER.log_message(Message(msg, level, html))
 
@@ -66,9 +67,4 @@ def error(msg, html=False):
 
 
 def console(msg, newline=True, stream='stdout'):
-    msg = str(msg)
-    if newline:
-        msg += '\n'
-    stream = sys.__stdout__ if stream.lower() != 'stderr' else sys.__stderr__
-    stream.write(console_encode(msg, stream=stream))
-    stream.flush()
+    write_to_console(msg, newline, stream)

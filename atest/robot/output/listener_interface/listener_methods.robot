@@ -26,7 +26,7 @@ Correct Attributes To Listener Methods
 
 Keyword Tags
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
-    Should Contain X Times    ${status}    PASSED | tags: [force, keyword, tags]    6
+    Should Contain X Times    ${status}    passed | tags: [force, keyword, tags]    6
 
 Suite And Test Counts
     Run Tests    --listener listeners.SuiteAndTestCounts    misc/suites/subsuites misc/suites/subsuites2
@@ -64,7 +64,7 @@ Keyword Arguments Are Always Strings
     Should Not Contain    ${status}    FAILED
 
 Keyword Attributes For Control Structures
-    Run Tests    --listener VerifyAttributes    misc/for_loops.robot misc/while.robot misc/try_except.robot
+    Run Tests    --listener VerifyAttributes    misc/for_loops.robot misc/while.robot misc/try_except.robot misc/if_else.robot
     Stderr Should Be Empty
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
     Should Not Contain    ${status}    FAILED

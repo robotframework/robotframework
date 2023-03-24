@@ -66,8 +66,9 @@ class FileContext(LexingContext):
         return self._handles_section(statement, 'Comments')
 
     def lex_invalid_section(self, statement):
-        message, fatal = self._get_invalid_section_error(statement[0].value)
-        statement[0].set_error(message, fatal)
+        message = self._get_invalid_section_error(statement[0].value)
+        statement[0].error = message
+        statement[0].type = Token.INVALID_HEADER
         for token in statement[1:]:
             token.type = Token.COMMENT
 
@@ -98,7 +99,7 @@ class SuiteFileContext(FileContext):
     def _get_invalid_section_error(self, header):
         return (f"Unrecognized section header '{header}'. Valid sections: "
                 f"'Settings', 'Variables', 'Test Cases', 'Tasks', 'Keywords' "
-                f"and 'Comments'."), False
+                f"and 'Comments'.")
 
 
 class ResourceFileContext(FileContext):
@@ -107,13 +108,10 @@ class ResourceFileContext(FileContext):
     def _get_invalid_section_error(self, header):
         name = self._normalize(header)
         if self.languages.headers.get(name) in ('Test Cases', 'Tasks'):
-            message = f"Resource file with '{name}' section is invalid."
-            fatal = True
-        else:
-            message = (f"Unrecognized section header '{header}'. Valid sections: "
-                       f"'Settings', 'Variables', 'Keywords' and 'Comments'.")
-            fatal = False
-        return message, fatal
+            return f"Resource file with '{name}' section is invalid."
+        return (f"Unrecognized section header '{header}'. Valid sections: "
+                f"'Settings', 'Variables', 'Keywords' and 'Comments'.")
+
 
 
 class InitFileContext(FileContext):
@@ -122,11 +120,9 @@ class InitFileContext(FileContext):
     def _get_invalid_section_error(self, header):
         name = self._normalize(header)
         if self.languages.headers.get(name) in ('Test Cases', 'Tasks'):
-            message = f"'{name}' section is not allowed in suite initialization file."
-        else:
-            message = (f"Unrecognized section header '{header}'. Valid sections: "
-                       f"'Settings', 'Variables', 'Keywords' and 'Comments'.")
-        return message, False
+            return f"'{name}' section is not allowed in suite initialization file."
+        return (f"Unrecognized section header '{header}'. Valid sections: "
+                f"'Settings', 'Variables', 'Keywords' and 'Comments'.")
 
 
 class TestOrKeywordContext(LexingContext):

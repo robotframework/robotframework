@@ -19,8 +19,8 @@ Module contents:
 
 - :class:`DynamicLibrary` for libraries using the `dynamic library API`__.
 - :class:`HybridLibrary` for libraries using the `hybrid library API`__.
-- `ListenerV2` for `listener interface version 2`__. *TODO*.
-- `ListenerV3` for `listener interface version 3`__. *TODO*.
+- :class:`ListenerV2` for `listener interface version 2`__.
+- :class:`ListenerV3` for `listener interface version 3`__.
 - Type definitions used by the aforementioned classes.
 
 Main benefit of using these base classes is that editors can provide automatic
@@ -29,7 +29,10 @@ Notice also that libraries typically use the static API and do not need any
 base class.
 
 .. note:: These classes are not exposed via the top level :mod:`robot.api`
-          package. They need to imported via :mod:`robot.api.interfaces`.
+          package and need to imported via :mod:`robot.api.interfaces`.
+
+.. note:: Using :class:`ListenerV2` and :class:`ListenerV3` requires Python 3.8
+          or newer.
 
 New in Robot Framework 6.1.
 
@@ -42,14 +45,21 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 import sys
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Tuple, Union
-
-
 # Need to use version check and not try/except to support Mypy's stubgen.
+if sys.version_info >= (3, 8):
+    from typing import TypedDict
+else:
+    TypedDict = dict
 if sys.version_info >= (3, 10):
     from types import UnionType
 else:
     UnionType = type
 
+from robot import result, running
+from robot.model import Message
+
+
+# Type aliases used by DynamicLibrary and HybridLibrary.
 Name = str
 PositArgs = List[Any]
 NamedArgs = Dict[str, Any]
@@ -266,3 +276,287 @@ class HybridLibrary(ABC):
         Returned names must match names of the implemented keyword methods.
         """
         raise NotImplementedError
+
+
+# Attribute dictionary specifications used by ListenerV2.
+
+class StartSuiteAttributes(TypedDict):
+    """Attributes passed to listener v2 ``start_suite`` method.
+
+    See the User Guide for more information.
+    """
+    id: str
+    longname: str
+    doc: str
+    metadata: dict
+    source: str
+    suites: List[str]
+    tests: List[str]
+    totaltests: int
+    starttime: str
+
+
+class EndSuiteAttributes(StartSuiteAttributes):
+    """Attributes passed to listener v2 ``end_suite`` method.
+
+    See the User Guide for more information.
+    """
+    endtime: str
+    elapsedtime: int
+    status: str
+    statistics: str
+    message: str
+
+
+class StartTestAttributes(TypedDict):
+    """Attributes passed to listener v2 ``start_test`` method.
+
+    See the User Guide for more information.
+    """
+    id: str
+    longname: str
+    originalname: str
+    doc: str
+    tags: List[str]
+    template: str
+    source: str
+    lineno: int
+    starttime: str
+
+
+class EndTestAttributes(StartTestAttributes):
+    """Attributes passed to listener v2 ``end_test`` method.
+
+    See the User Guide for more information.
+    """
+    endtime: str
+    elapedtime: int
+    status: str
+    message: str
+
+
+class OptionalKeywordAttributes(TypedDict, total=False):
+    """Extra attributes passed to listener v2 ``start/end_keyword`` methods.
+
+    These attributes are included with control structures. For example, with
+    IF structures attributes include ``condition``.
+    """
+    # FOR
+    variables: List[str]
+    flavor: str
+    values: List[str]
+    # ITERATION with FOR
+    variables: Dict[str, str]
+    # WHILE and IF
+    condition: str
+    # WHILE
+    limit: str
+    # EXCEPT
+    patterns: List[str]
+    pattern_type: str
+    variable: str
+    # RETURN
+    values: List[str]
+
+
+class StartKeywordAttributes(OptionalKeywordAttributes):
+    """Attributes passed to listener v2 ``start_keyword`` method.
+
+    See the User Guide for more information.
+    """
+    type: str
+    kwname: str
+    libname: str
+    doc: str
+    args: List[str]
+    assign: List[str]
+    tags: List[str]
+    source: str
+    lineno: int
+    status: str
+    starttime: str
+
+
+class EndKeywordAttributes(StartKeywordAttributes):
+    """Attributes passed to listener v2 ``end_keyword`` method.
+
+    See the User Guide for more information.
+    """
+    endtime: str
+    elapsedtime: int
+
+
+class MessageAttributes(TypedDict):
+    """Attributes passed to listener v2 ``log_message`` and ``messages`` methods.
+
+    See the User Guide for more information.
+    """
+    message: str
+    level: str
+    timestamp: str
+    html: str
+
+
+class LibraryAttributes(TypedDict):
+    """Attributes passed to listener v2 ``library_import`` method.
+
+    See the User Guide for more information.
+    """
+    args: List[str]
+    originalname: str
+    source: str
+    importer: Union[str, None]
+
+
+class ResourceAttributes(TypedDict):
+    """Attributes passed to listener v2 ``resource_import`` method.
+
+    See the User Guide for more information.
+    """
+    source: str
+    importer: Union[str, None]
+
+
+class VariablesAttributes(TypedDict):
+    """Attributes passed to listener v2 ``variables_import`` method.
+
+    See the User Guide for more information.
+    """
+    args: List[str]
+    source: str
+    importer: Union[str, None]
+
+
+class ListenerV2:
+    """Optional base class for listeners using the listener API v2."""
+    ROBOT_LISTENER_API_VERSION = 2
+
+    def start_suite(self, name: str, attributes: StartSuiteAttributes):
+        """Called when a suite starts."""
+
+    def end_suite(self, name: str, attributes: EndSuiteAttributes):
+        """Called when a suite end."""
+
+    def start_test(self, name: str, attributes: StartTestAttributes):
+        """Called when a test or task starts."""
+
+    def end_test(self, name: str, attributes: EndTestAttributes):
+        """Called when a test or task ends."""
+
+    def start_keyword(self, name: str, attributes: StartKeywordAttributes):
+        """Called when a keyword or a control structure like IF starts.
+
+        The type of the started item is in ``attributes['type']``. Control
+        structures can contain extra attributes that are only relevant to them.
+        """
+
+    def end_keyword(self, name: str, attributes: EndKeywordAttributes):
+        """Called when a keyword or a control structure like IF ends.
+
+        The type of the started item is in ``attributes['type']``. Control
+        structures can contain extra attributes that are only relevant to them.
+        """
+
+    def log_message(self, message: MessageAttributes):
+        """Called when a normal log message are emitted.
+
+        The messages are typically logged by keywords, but also the framework
+        itself logs some messages. These messages end up to output.xml and
+        log.html.
+        """
+
+    def message(self, message: MessageAttributes):
+        """Called when framework's internal messages are emitted.
+
+        Only logged by the framework itself. These messages end up to the syslog
+        if it is enabled.
+        """
+
+    def library_import(self, name: str, attributes: LibraryAttributes):
+        """Called after a library has been imported."""
+
+    def resource_import(self, name: str, attributes: ResourceAttributes):
+        """Called after a resource file has been imported."""
+
+    def variables_import(self, name: str, attributes: VariablesAttributes):
+        """Called after a variable file has been imported."""
+
+    def output_file(self, path: str):
+        """Called after the output file has been created.
+
+        At this point the file is guaranteed to be closed.
+        """
+
+    def log_file(self, path: str):
+        """Called after the log file has been created."""
+
+    def report_file(self, path: str):
+        """Called after the report file has been created."""
+
+    def xunit_file(self, path: str):
+        """Called after the xunit compatible output file has been created."""
+
+    def debug_file(self, path: str):
+        """Called after the debug file has been created."""
+
+    def close(self):
+        """Called when the whole execution ends.
+
+        With library listeners called when the library goes out of scope.
+        """
+
+
+class ListenerV3:
+    """Optional base class for listeners using the listener API v2."""
+    ROBOT_LISTENER_API_VERSION = 3
+
+    def start_suite(self, data: running.TestSuite, result: result.TestSuite):
+        """Called when a suite starts."""
+
+    def end_suite(self, data: running.TestSuite, result: result.TestSuite):
+        """Called when a suite ends."""
+
+    def start_test(self, data: running.TestCase, result: result.TestCase):
+        """Called when a test or task starts."""
+
+    def end_test(self, data: running.TestCase, result: result.TestCase):
+        """Called when a test or ends starts."""
+
+    def log_message(self, message: Message):
+        """Called when a normal log message are emitted.
+
+        The messages are typically logged by keywords, but also the framework
+        itself logs some messages. These messages end up to output.xml and
+        log.html.
+        """
+
+    def message(self, message: Message):
+        """Called when framework's internal messages are emitted.
+
+        Only logged by the framework itself. These messages end up to the syslog
+        if it is enabled.
+        """
+
+    def output_file(self, path: str):
+        """Called after the output file has been created.
+
+        At this point the file is guaranteed to be closed.
+        """
+
+    def log_file(self, path: str):
+        """Called after the log file has been created."""
+
+    def report_file(self, path: str):
+        """Called after the report file has been created."""
+
+    def xunit_file(self, path: str):
+        """Called after the xunit compatible output file has been created."""
+
+    def debug_file(self, path: str):
+        """Called after the debug file has been created."""
+
+    def close(self):
+        """Called when the whole execution ends.
+
+        With library listeners called when the library goes out of scope.
+        """

@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from .blocks import (File, SettingSection, VariableSection, TestCaseSection,
-                     KeywordSection, CommentSection, TestCase, Keyword, For,
-                     If, Try, While)
+                     KeywordSection, CommentSection, InvalidSection,
+                     TestCase, Keyword, For, If, Try, While)
 from .statements import Statement
 from .visitor import ModelTransformer, ModelVisitor

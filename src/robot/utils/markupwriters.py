@@ -41,13 +41,13 @@ class _MarkupWriter:
         self._start(name, attrs, newline)
 
     def _start(self, name, attrs, newline):
-        self._write('<%s %s>' % (name, attrs) if attrs else '<%s>' % name, newline)
+        self._write(f'<{name} {attrs}>' if attrs else f'<{name}>', newline)
 
     def _format_attrs(self, attrs):
         if not attrs:
             return ''
         write_empty = self._write_empty
-        return ' '.join('%s="%s"' % (name, attribute_escape(value or ''))
+        return ' '.join(f"{name}=\"{attribute_escape(value or '')}\""
                         for name, value in self._order_attrs(attrs)
                         if write_empty or value)
 
@@ -62,7 +62,7 @@ class _MarkupWriter:
         raise NotImplementedError
 
     def end(self, name, newline=True):
-        self._write('</%s>' % name, newline)
+        self._write(f'</{name}>', newline)
 
     def element(self, name, content=None, attrs=None, escape=True, newline=True):
         attrs = self._format_attrs(attrs)
@@ -107,7 +107,7 @@ class XmlWriter(_MarkupWriter):
     def _self_closing_element(self, name, attrs, newline):
         attrs = self._format_attrs(attrs)
         if self._write_empty or attrs:
-            self._write('<%s %s/>' % (name, attrs) if attrs else '<%s/>' % name, newline)
+            self._write(f'<{name} {attrs}/>' if attrs else f'<{name}/>', newline)
 
 
 class NullMarkupWriter:

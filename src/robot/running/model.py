@@ -94,9 +94,9 @@ class For(model.For):
     __slots__ = ['lineno', 'error']
     body_class = Body
 
-    def __init__(self, variables=(), flavor='IN', values=(), parent=None,
-                 lineno=None, error=None):
-        super().__init__(variables, flavor, values, parent)
+    def __init__(self, variables=(), flavor='IN', values=(), start=None, mode=None,
+                 fill=None, parent=None, lineno=None, error=None):
+        super().__init__(variables, flavor, values, start, mode, fill, parent)
         self.lineno = lineno
         self.error = error
 
@@ -327,7 +327,7 @@ class Break(model.Break):
 class Error(model.Error):
     __slots__ = ['lineno', 'error']
 
-    def __init__(self, values, parent=None, lineno=None, error=None):
+    def __init__(self, values=(), parent=None, lineno=None, error=None):
         super().__init__(values, parent)
         self.lineno = lineno
         self.error = error
@@ -763,10 +763,6 @@ class Import(ModelObject):
         self.parent = parent
         self.lineno = lineno
 
-    def _repr(self, repr_args):
-        repr_args = [a for a in repr_args if a in ('type', 'name') or getattr(self, a)]
-        return super()._repr(repr_args)
-
     @property
     def source(self) -> Path:
         return self.parent.source if self.parent is not None else None
@@ -803,6 +799,9 @@ class Import(ModelObject):
         if self.lineno:
             data['lineno'] = self.lineno
         return data
+
+    def _include_in_repr(self, name, value):
+        return name in ('type', 'name') or value
 
 
 class Imports(model.ItemList):

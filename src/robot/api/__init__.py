@@ -30,8 +30,8 @@ Currently exposed APIs are:
   reporting failures and other events. These exceptions can be imported also directly
   via :mod:`robot.api` like ``from robot.api import SkipExecution``.
 
-* :mod:`.interfaces` that contains optional base classes that can be used
-  when creating libraries or listeners. New in RF 6.1.
+* :mod:`.interfaces` module containing optional base classes that can be used
+  when creating libraries or listeners. New in Robot Framework 6.1.
 
 * :mod:`.parsing` module exposing the parsing APIs. This module is new in Robot
   Framework 4.0. Various parsing related functions and classes were exposed

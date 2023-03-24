@@ -74,9 +74,12 @@ from robot.running.context import EXECUTION_CONTEXTS
 def write(msg, level='INFO', html=False):
     """Writes the message to the log file using the given level.
 
-    Valid log levels are ``TRACE``, ``DEBUG``, ``INFO`` (default), ``WARN``, and
-    ``ERROR``. Additionally it is possible to use ``HTML`` pseudo log level that
-    logs the message as HTML using the ``INFO`` level.
+    Valid log levels are ``TRACE``, ``DEBUG``, ``INFO`` (default), ``WARN``,
+    and ``ERROR``. In addition to that, there are pseudo log levels ``HTML``
+    and ``CONSOLE`` for logging messages as HTML and for logging messages
+    both to the log file and to the console, respectively. With both of these
+    pseudo levels the level in the log file will be ``INFO``. The ``CONSOLE``
+    level is new in Robot Framework 6.1.
 
     Instead of using this method, it is generally better to use the level
     specific methods such as ``info`` and ``debug`` that have separate
@@ -89,6 +92,7 @@ def write(msg, level='INFO', html=False):
         level = {'TRACE': logging.DEBUG // 2,
                  'DEBUG': logging.DEBUG,
                  'INFO': logging.INFO,
+                 'CONSOLE': logging.INFO,
                  'HTML': logging.INFO,
                  'WARN': logging.WARN,
                  'ERROR': logging.ERROR}[level]

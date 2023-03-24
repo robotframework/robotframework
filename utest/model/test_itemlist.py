@@ -265,9 +265,13 @@ class TestItemLists(unittest.TestCase):
         assert_equal(objects.count('whatever'), 0)
 
     def test_sort(self):
-        chars = ItemList(str, items='asdfg')
+        chars = ItemList(str, items='asDfG')
         chars.sort()
-        assert_equal(list(chars), sorted('asdfg'))
+        assert_equal(list(chars), ['D', 'G', 'a', 'f', 's'])
+        chars.sort(key=str.lower)
+        assert_equal(list(chars), ['a', 'D', 'f', 'G', 's'])
+        chars.sort(reverse=True)
+        assert_equal(list(chars), ['s', 'f', 'a', 'G', 'D'])
 
     def test_sorted(self):
         chars = ItemList(str, items='asdfg')

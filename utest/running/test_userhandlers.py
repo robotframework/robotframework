@@ -42,7 +42,7 @@ class HandlerDataMock:
         self.timeout = Fake()
         self.return_ = Fake()
         self.tags = ()
-        self.teardown = None
+        self.has_teardown = False
 
 
 def EAT(name, args=[]):

@@ -250,36 +250,45 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |                                                                |
    |                  |                  | Additional attributes for `FOR` types:                         |
    |                  |                  |                                                                |
-   |                  |                  | * `variables`: Assigned variables for each loop iteration.     |
+   |                  |                  | * `variables`: Assigned variables for each loop iteration      |
+   |                  |                  |   as a list or strings.                                        |
    |                  |                  | * `flavor`: Type of loop (e.g. `IN RANGE`).                    |
-   |                  |                  | * `values`: List of values being looped over.                  |
+   |                  |                  | * `values`: List of values being looped over                   |
+   |                  |                  |   as a list or strings.                                        |
+   |                  |                  | * `start`: Start configuration. Only used with `IN ENUMERATE`  |
+   |                  |                  |   loops.                                                       |
+   |                  |                  | * `mode`: Mode configuration. Only used with `IN ZIP` loops.   |
+   |                  |                  | * `fill`: Fill value configuration. Only used with `IN ZIP`    |
+   |                  |                  |   loops.                                                       |
    |                  |                  |                                                                |
-   |                  |                  | Additional attributes for `ITERATION` types:                   |
+   |                  |                  | Additional attributes for `ITERATION` types with `FOR` loops:  |
    |                  |                  |                                                                |
    |                  |                  | * `variables`: Variables and string representations of their   |
-   |                  |                  |   contents for one `FOR` loop iteration.                       |
+   |                  |                  |   contents for one `FOR` loop iteration as a dictionary.       |
    |                  |                  |                                                                |
    |                  |                  | Additional attributes for `WHILE` types:                       |
    |                  |                  |                                                                |
    |                  |                  | * `condition`: The looping condition.                          |
    |                  |                  | * `limit`: The maximum iteration limit.                        |
    |                  |                  |                                                                |
-   |                  |                  | Additional attributes for `IF` and `ELSE_IF` types:            |
+   |                  |                  | Additional attributes for `IF` and `ELSE IF` types:            |
    |                  |                  |                                                                |
    |                  |                  | * `condition`: The conditional expression being evaluated.     |
    |                  |                  |                                                                |
    |                  |                  | Additional attributes for `EXCEPT` types:                      |
    |                  |                  |                                                                |
-   |                  |                  | * `patterns`: The exception pattern being matched.             |
+   |                  |                  | * `patterns`: The exception patterns being matched             |
+   |                  |                  |   as a list or strings.                                        |
    |                  |                  | * `pattern_type`: The type of pattern match (e.g. `GLOB`).     |
    |                  |                  | * `variable`: The variable containing the captured exception.  |
    |                  |                  |                                                                |
    |                  |                  | Additional attributes for `RETURN` types:                      |
    |                  |                  |                                                                |
-   |                  |                  | * `values`: Return values from a keyword.                      |
+   |                  |                  | * `values`: Return values from a keyword as a list or strings. |
    |                  |                  |                                                                |
    |                  |                  | Additional attributes for control structures are new in RF 6.0.|
-   |                  |                  |                                                                |
+   |                  |                  | `ELSE IF` `condition` as well as `FOR` loop `start`, `mode`    |
+   |                  |                  | and `fill` are new in RF 6.1.                                  |
    +------------------+------------------+----------------------------------------------------------------+
    | end_keyword      | name, attributes | Called when a keyword ends.                                    |
    |                  |                  |                                                                |
@@ -343,7 +352,7 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |   if getting the                                               |
    |                  |                  |   source of the library failed for some reason.                |
    |                  |                  | * `importer`: An absolute path to the file importing the       |
-   |                  |                  |   library. `None` when BuiltIn_ is imported well as when       |
+   |                  |                  |   library. `None` when BuiltIn_ is imported as well as when    |
    |                  |                  |   using the :name:`Import Library` keyword.                    |
    +------------------+------------------+----------------------------------------------------------------+
    | resource_import  | name, attributes | Called when a resource file has been imported.                 |
@@ -731,8 +740,7 @@ acting as a listener itself:
        ROBOT_LIBRARY_SCOPE = 'GLOBAL'
        ROBOT_LISTENER_API_VERSION = 2
 
-       // actual library code here ...
-   }
+       # actual library code here ...
 
 .. sourcecode:: python
 

@@ -45,10 +45,10 @@ IF/ELSE in All mode
 
 FOR in All mode
     [Setup]    Previous test should have passed    IF/ELSE in All mode
-    ${tc} =    Check Test Case    FOR Loop In Test
+    ${tc} =    Check Test Case    FOR
     Length Should Be    ${tc.body}    1
     FOR Loop Should Be Empty    ${tc.body[0]}    IN
-    ${tc} =    Check Test Case    FOR IN RANGE Loop In Test
+    ${tc} =    Check Test Case    FOR IN RANGE
     Length Should Be    ${tc.body}    1
     FOR Loop Should Be Empty    ${tc.body[0]}    IN RANGE
 

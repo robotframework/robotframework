@@ -41,17 +41,20 @@ class ModelObject(metaclass=SetterAwareType):
     def from_json(cls, source):
         """Create this object based on JSON data.
 
-        The data is given as the ``source`` parameter. It can be
+        The data is given as the ``source`` parameter. It can be:
+
         - a string (or bytes) containing the data directly,
         - an open file object where to read the data, or
-        - a path (string or ``pathlib.Path``) to a UTF-8 encoded file to read.
+        - a path (string or `pathlib.Path`__) to a UTF-8 encoded file to read.
+
+        __ https://docs.python.org/3/library/pathlib.html
 
         The JSON data is first converted to a Python dictionary and the object
         created using the :meth:`from_dict` method.
 
-        Notice that ``source`` is considered to be JSON data if it is a string
-        and contains ``{``. If you need to use ``{`` in a file path, pass it in
-        as a ``pathlib.Path`` instance.
+        Notice that the ``source`` is considered to be JSON data if it is
+        a string and contains ``{``. If you need to use ``{`` in a file system
+        path, pass it in as a ``pathlib.Path`` instance.
         """
         try:
             data = JsonLoader().load(source)
@@ -74,14 +77,17 @@ class ModelObject(metaclass=SetterAwareType):
         :meth:`to_dict` method and then the dictionary is converted to JSON.
 
         The ``file`` parameter controls what to do with the resulting JSON data.
-        It can be
+        It can be:
+
         - ``None`` (default) to return the data as a string,
         - an open file object where to write the data, or
         - a path to a file where to write the data using UTF-8 encoding.
 
         JSON formatting can be configured using optional parameters that
-        are passed directly to the underlying ``json`` module. Notice that
+        are passed directly to the underlying json__ module. Notice that
         the defaults differ from what ``json`` uses.
+
+        __ https://docs.python.org/3/library/json.html
         """
         return JsonDumper(ensure_ascii=ensure_ascii, indent=indent,
                           separators=separators).dump(self.to_dict(), file)
@@ -100,20 +106,22 @@ class ModelObject(metaclass=SetterAwareType):
             except AttributeError as err:
                 # Ignore error setting attribute if the object already has it.
                 # Avoids problems with `to/from_dict` roundtrip with body items
-                # having unsettable `type` attribute that is needed in dict data.
+                # having un-settable `type` attribute that is needed in dict data.
                 if getattr(self, name, object()) != attributes[name]:
                     raise AttributeError(f"Setting attribute '{name}' failed: {err}")
         return self
 
     def copy(self, **attributes):
-        """Return shallow copy of this object.
+        """Return a shallow copy of this object.
 
-        :param attributes: Attributes to be set for the returned copy
-            automatically. For example, ``test.copy(name='New name')``.
+        :param attributes: Attributes to be set to the returned copy.
+            For example, ``obj.copy(name='New name')``.
 
-        See also :meth:`deepcopy`. The difference between these two is the same
-        as with the standard ``copy.copy`` and ``copy.deepcopy`` functions
-        that these methods also use internally.
+        See also :meth:`deepcopy`. The difference between ``copy`` and
+        ``deepcopy`` is the same as with the methods having same names in
+        the copy__ module.
+
+        __ https://docs.python.org/3/library/copy.html
         """
         copied = copy.copy(self)
         for name in attributes:
@@ -121,14 +129,16 @@ class ModelObject(metaclass=SetterAwareType):
         return copied
 
     def deepcopy(self, **attributes):
-        """Return deep copy of this object.
+        """Return a deep copy of this object.
 
-        :param attributes: Attributes to be set for the returned copy
-            automatically. For example, ``test.deepcopy(name='New name')``.
+        :param attributes: Attributes to be set to the returned copy.
+            For example, ``obj.deepcopy(name='New name')``.
 
-        See also :meth:`copy`. The difference between these two is the same
-        as with the standard ``copy.copy`` and ``copy.deepcopy`` functions
-        that these methods also use internally.
+        See also :meth:`copy`. The difference between ``deepcopy`` and
+        ``copy`` is the same as with the methods having same names in
+        the copy__ module.
+
+        __ https://docs.python.org/3/library/copy.html
         """
         copied = copy.deepcopy(self)
         for name in attributes:
@@ -136,11 +146,13 @@ class ModelObject(metaclass=SetterAwareType):
         return copied
 
     def __repr__(self):
-        return self._repr(self.repr_args)
+        arguments = [(name, getattr(self, name)) for name in self.repr_args]
+        args_repr = ', '.join(f'{name}={value!r}' for name, value in arguments
+                              if self._include_in_repr(name, value))
+        return f"{full_name(self)}({args_repr})"
 
-    def _repr(self, repr_args):
-        args = ', '.join(f'{a}={getattr(self, a)!r}' for a in repr_args)
-        return f"{full_name(self)}({args})"
+    def _include_in_repr(self, name, value):
+        return True
 
 
 def full_name(obj):

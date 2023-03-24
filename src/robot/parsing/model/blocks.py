@@ -122,6 +122,10 @@ class CommentSection(Section):
     pass
 
 
+class InvalidSection(Section):
+    pass
+
+
 class TestCase(HeaderAndBody):
 
     @property
@@ -237,6 +241,18 @@ class For(HeaderAndBody):
     @property
     def flavor(self):
         return self.header.flavor
+
+    @property
+    def start(self):
+        return self.header.start
+
+    @property
+    def mode(self):
+        return self.header.mode
+
+    @property
+    def fill(self):
+        return self.header.fill
 
     def validate(self, ctx: 'ValidationContext'):
         if self._body_is_empty():

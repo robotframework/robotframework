@@ -95,7 +95,7 @@ class TestSuite(ModelObject):
         """Suite name prefixed with the long name of the parent suite."""
         if not self.parent:
             return self.name
-        return '%s.%s' % (self.parent.longname, self.name)
+        return f'{self.parent.longname}.{self.name}'
 
     @setter
     def metadata(self, metadata):
@@ -206,16 +206,28 @@ class TestSuite(ModelObject):
         ..., ``s1-s2-s1``, ..., and so on.
 
         The first test in a suite has an id like ``s1-t1``, the second has an
-        id ``s1-t2``, and so on. Similarly keywords in suites (setup/teardown)
+        id ``s1-t2``, and so on. Similarly, keywords in suites (setup/teardown)
         and in tests get ids like ``s1-k1``, ``s1-t1-k1``, and ``s1-s4-t2-k5``.
         """
         if not self.parent:
             return 's1'
-        return '%s-s%d' % (self.parent.id, self.parent.suites.index(self)+1)
+        index = self.parent.suites.index(self)
+        return f'{self.parent.id}-s{index + 1}'
+
+    @property
+    def all_tests(self):
+        """Yields all tests this suite and its child suites contain.
+
+        New in Robot Framework 6.1.
+        """
+        yield from self.tests
+        for suite in self.suites:
+            yield from suite.all_tests
 
     @property
     def test_count(self):
-        """Number of the tests in this suite, recursively."""
+        """Total number of the tests in this suite and in its child suites."""
+        # This is considerably faster than `return len(list(self.all_tests))`.
         return len(self.tests) + sum(suite.test_count for suite in self.suites)
 
     @property

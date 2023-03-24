@@ -33,6 +33,9 @@ Failing conversion
 `None` as strict converter
     Check Test Case    ${TESTNAME}
 
+Only vararg
+    Check Test Case    ${TESTNAME}
+
 With library as argument to converter
     Check Test Case    ${TESTNAME}
 
@@ -81,6 +84,6 @@ Invalid converter dictionary
 *** Keywords ***
 Validate Errors
     [Arguments]    @{messages}
-    FOR    ${err}    ${msg}    IN ZIP    ${ERRORS}    ${messages}
+    FOR    ${err}    ${msg}    IN ZIP    ${ERRORS}    ${messages}    mode=SHORTEST
         Check Log Message    ${err}    Error in library 'CustomConverters': ${msg}    ERROR
     END

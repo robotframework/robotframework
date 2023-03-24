@@ -13,14 +13,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections.abc import MutableSequence
 from functools import total_ordering
+from typing import (Iterable, Iterator, List, MutableSequence, overload,
+                    TYPE_CHECKING, Type, TypeVar, Union)
 
 from robot.utils import type_name
 
+if TYPE_CHECKING:
+    from .visitor import SuiteVisitor
+
+
+T = TypeVar('T')
+Self = TypeVar('Self', bound='ItemList')
+
 
 @total_ordering
-class ItemList(MutableSequence):
+class ItemList(MutableSequence[T]):
     """List of items of a certain enforced type.
 
     New items can be created using the :meth:`create` method and existing items
@@ -36,23 +44,25 @@ class ItemList(MutableSequence):
 
     __slots__ = ['_item_class', '_common_attrs', '_items']
 
-    def __init__(self, item_class, common_attrs=None, items=None):
+    def __init__(self, item_class: Type[T],
+                 common_attrs: Union[dict, None] = None,
+                 items: Union[Iterable[Union[T, dict]], None] = None):
         self._item_class = item_class
         self._common_attrs = common_attrs
-        self._items = []
+        self._items: List[T] = []
         if items:
             self.extend(items)
 
-    def create(self, *args, **kwargs):
+    def create(self, *args, **kwargs) -> T:
         """Create a new item using the provided arguments."""
         return self.append(self._item_class(*args, **kwargs))
 
-    def append(self, item):
+    def append(self, item: Union[T, dict]):
         item = self._check_type_and_set_attrs(item)
         self._items.append(item)
         return item
 
-    def _check_type_and_set_attrs(self, item):
+    def _check_type_and_set_attrs(self, item: Union[T, dict]) -> T:
         if not isinstance(item, self._item_class):
             if isinstance(item, dict):
                 item = self._item_from_dict(item)
@@ -64,40 +74,48 @@ class ItemList(MutableSequence):
                 setattr(item, attr, value)
         return item
 
-    def _item_from_dict(self, data):
+    def _item_from_dict(self, data: dict) -> T:
         if hasattr(self._item_class, 'from_dict'):
-            return self._item_class.from_dict(data)
+            return self._item_class.from_dict(data)    # type: ignore
         return self._item_class(**data)
 
-    def extend(self, items):
+    def extend(self, items: Iterable[Union[T, dict]]):
         self._items.extend(self._check_type_and_set_attrs(i) for i in items)
 
-    def insert(self, index, item):
+    def insert(self, index: int, item: Union[T, dict]):
         item = self._check_type_and_set_attrs(item)
         self._items.insert(index, item)
 
-    def index(self, item, *start_and_end):
+    def index(self, item: T, *start_and_end) -> int:
         return self._items.index(item, *start_and_end)
 
     def clear(self):
         self._items = []
 
-    def visit(self, visitor):
+    def visit(self, visitor: 'SuiteVisitor'):
         for item in self:
-            item.visit(visitor)
+            item.visit(visitor)    # type: ignore
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[T]:
         index = 0
         while index < len(self._items):
             yield self._items[index]
             index += 1
+
+    @overload
+    def __getitem__(self, index: int) -> T:
+        ...
+
+    @overload
+    def __getitem__(self: Self, index: slice) -> Self:
+        ...
 
     def __getitem__(self, index):
         if isinstance(index, slice):
             return self._create_new_from(self._items[index])
         return self._items[index]
 
-    def _create_new_from(self, items):
+    def _create_new_from(self: Self, items: Iterable[T]) -> Self:
         # Cannot pass common_attrs directly to new object because all
         # subclasses don't have compatible __init__.
         new = type(self)(self._item_class)
@@ -105,85 +123,92 @@ class ItemList(MutableSequence):
         new.extend(items)
         return new
 
+    @overload
+    def __setitem__(self, index: int, item: Union[T, dict]):
+        ...
+
+    @overload
+    def __setitem__(self, index: slice, item: Iterable[Union[T, dict]]):
+        ...
+
     def __setitem__(self, index, item):
         if isinstance(index, slice):
-            item = [self._check_type_and_set_attrs(i) for i in item]
+            self._items[index] = [self._check_type_and_set_attrs(i) for i in item]
         else:
-            item = self._check_type_and_set_attrs(item)
-        self._items[index] = item
+            self._items[index] = self._check_type_and_set_attrs(item)
 
-    def __delitem__(self, index):
+    def __delitem__(self, index: Union[int, slice]):
         del self._items[index]
 
-    def __contains__(self, item):
+    def __contains__(self, item: object) -> bool:
         return item in self._items
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._items)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(list(self))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         class_name = type(self).__name__
         item_name = self._item_class.__name__
         return f'{class_name}(item_class={item_name}, items={self._items})'
 
-    def count(self, item):
+    def count(self, item: T) -> int:
         return self._items.count(item)
 
-    def sort(self):
-        self._items.sort()
+    def sort(self, **config):
+        self._items.sort(**config)
 
     def reverse(self):
         self._items.reverse()
 
-    def __reversed__(self):
+    def __reversed__(self) -> Iterator[T]:
         index = 0
         while index < len(self._items):
             yield self._items[len(self._items) - index - 1]
             index += 1
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         return (isinstance(other, ItemList)
                 and self._is_compatible(other)
                 and self._items == other._items)
 
-    def _is_compatible(self, other):
+    def _is_compatible(self, other) -> bool:
         return (self._item_class is other._item_class
                 and self._common_attrs == other._common_attrs)
 
-    def __lt__(self, other):
+    def __lt__(self, other: 'ItemList[T]') -> bool:
         if not isinstance(other, ItemList):
             raise TypeError(f'Cannot order ItemList and {type_name(other)}.')
         if not self._is_compatible(other):
             raise TypeError('Cannot order incompatible ItemLists.')
         return self._items < other._items
 
-    def __add__(self, other):
+    def __add__(self: Self, other: 'ItemList[T]') -> Self:
         if not isinstance(other, ItemList):
             raise TypeError(f'Cannot add ItemList and {type_name(other)}.')
         if not self._is_compatible(other):
             raise TypeError('Cannot add incompatible ItemLists.')
         return self._create_new_from(self._items + other._items)
 
-    def __iadd__(self, other):
+    def __iadd__(self: Self, other: Iterable[T]) -> Self:
         if isinstance(other, ItemList) and not self._is_compatible(other):
             raise TypeError('Cannot add incompatible ItemLists.')
         self.extend(other)
         return self
 
-    def __mul__(self, other):
-        return self._create_new_from(self._items * other)
+    def __mul__(self: Self, count: int) -> Self:
+        return self._create_new_from(self._items * count)
 
-    def __imul__(self, other):
-        self._items *= other
+    def __imul__(self: Self, count: int) -> Self:
+        self._items *= count
         return self
 
-    def __rmul__(self, other):
-        return self * other
+    def __rmul__(self: Self, count: int) -> Self:
+        return self * count
 
-    def to_dicts(self):
+    def to_dicts(self) -> List[dict]:
         """Return list of items converted to dictionaries.
 
         Items are converted to dictionaries using the ``to_dict`` method, if
@@ -193,4 +218,4 @@ class ItemList(MutableSequence):
         """
         if not hasattr(self._item_class, 'to_dict'):
             return [vars(item) for item in self]
-        return [item.to_dict() for item in self]
+        return [item.to_dict() for item in self]    # type: ignore

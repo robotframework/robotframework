@@ -6,7 +6,7 @@ from pathlib import Path
 
 from robot.parsing import get_model, get_resource_model, ModelVisitor, ModelTransformer, Token
 from robot.parsing.model.blocks import (
-    CommentSection, File, For, If, Try, While,
+    CommentSection, File, For, If, InvalidSection, Try, While,
     Keyword, KeywordSection, SettingSection, TestCase, TestCaseSection, VariableSection
 )
 from robot.parsing.model.statements import (
@@ -242,11 +242,37 @@ Example
         )
         get_and_assert_model(data, expected)
 
+    def test_enumerate_with_start(self):
+        data = '''
+*** Test Cases ***
+Example
+    FOR    ${x}    IN ENUMERATE    @{stuff}    start=1
+        Log    ${x}
+    END
+'''
+        expected = For(
+            header=ForHeader([
+                Token(Token.FOR, 'FOR', 3, 4),
+                Token(Token.VARIABLE, '${x}', 3, 11),
+                Token(Token.FOR_SEPARATOR, 'IN ENUMERATE', 3, 19),
+                Token(Token.ARGUMENT, '@{stuff}', 3, 35),
+                Token(Token.OPTION, 'start=1', 3, 47),
+            ]),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'Log', 4, 8),
+                             Token(Token.ARGUMENT, '${x}', 4, 15)])
+            ],
+            end=End([
+                Token(Token.END, 'END', 5, 4)
+            ])
+        )
+        get_and_assert_model(data, expected)
+
     def test_nested(self):
         data = '''
 *** Test Cases ***
 Example
-    FOR    ${x}    IN    1    2
+    FOR    ${x}    IN    1    start=has no special meaning here
         FOR    ${y}    IN RANGE    ${x}
             Log    ${y}
         END
@@ -258,7 +284,7 @@ Example
                 Token(Token.VARIABLE, '${x}', 3, 11),
                 Token(Token.FOR_SEPARATOR, 'IN', 3, 19),
                 Token(Token.ARGUMENT, '1', 3, 25),
-                Token(Token.ARGUMENT, '2', 3, 30),
+                Token(Token.ARGUMENT, 'start=has no special meaning here', 3, 30),
             ]),
             body=[
                 For(
@@ -981,6 +1007,114 @@ Name
         get_and_assert_model(data, expected)
 
 
+class TestDocumentation(unittest.TestCase):
+
+    def test_empty(self):
+        data = '''\
+*** Settings ***
+Documentation
+'''
+        expected = Documentation(
+            tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
+                    Token(Token.EOL, '\n', 2, 13)]
+        )
+        self._verify_documentation(data, expected, '')
+
+    def test_one_line(self):
+        data = '''\
+*** Settings ***
+Documentation    Hello!
+'''
+        expected = Documentation(
+            tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
+                    Token(Token.SEPARATOR, '    ', 2, 13),
+                    Token(Token.ARGUMENT, 'Hello!', 2, 17),
+                    Token(Token.EOL, '\n', 2, 23)]
+        )
+        self._verify_documentation(data, expected, 'Hello!')
+
+    def test_multi_part(self):
+        data = '''\
+*** Settings ***
+Documentation    Hello    world
+'''
+        expected = Documentation(
+            tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
+                    Token(Token.SEPARATOR, '    ', 2, 13),
+                    Token(Token.ARGUMENT, 'Hello', 2, 17),
+                    Token(Token.SEPARATOR, '    ', 2, 22),
+                    Token(Token.ARGUMENT, 'world', 2, 26),
+                    Token(Token.EOL, '\n', 2, 31)]
+        )
+        self._verify_documentation(data, expected, 'Hello world')
+
+    def test_multi_line(self):
+        data = '''\
+*** Settings ***
+Documentation    Documentation
+...              in
+...              multiple lines    and parts
+'''
+        expected = Documentation(
+            tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
+                    Token(Token.SEPARATOR, '    ', 2, 13),
+                    Token(Token.ARGUMENT, 'Documentation', 2, 17),
+                    Token(Token.EOL, '\n', 2, 30),
+                    Token(Token.CONTINUATION, '...', 3, 0),
+                    Token(Token.SEPARATOR, '              ', 3, 3),
+                    Token(Token.ARGUMENT, 'in', 3, 17),
+                    Token(Token.EOL, '\n', 3, 19),
+                    Token(Token.CONTINUATION, '...', 4, 0),
+                    Token(Token.SEPARATOR, '              ', 4, 3),
+                    Token(Token.ARGUMENT, 'multiple lines', 4, 17),
+                    Token(Token.SEPARATOR, '    ', 4, 31),
+                    Token(Token.ARGUMENT, 'and parts', 4, 35),
+                    Token(Token.EOL, '\n', 4, 44)]
+        )
+        self._verify_documentation(data, expected,
+                                   'Documentation\nin\nmultiple lines and parts')
+
+    def test_multi_line_with_empty_lines(self):
+        data = '''\
+*** Settings ***
+Documentation    Documentation
+...
+...              with empty
+'''
+        expected = Documentation(
+            tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
+                    Token(Token.SEPARATOR, '    ', 2, 13),
+                    Token(Token.ARGUMENT, 'Documentation', 2, 17),
+                    Token(Token.EOL, '\n', 2, 30),
+                    Token(Token.CONTINUATION, '...', 3, 0),
+                    Token(Token.ARGUMENT, '', 3, 3),
+                    Token(Token.EOL, '\n', 3, 3),
+                    Token(Token.CONTINUATION, '...', 4, 0),
+                    Token(Token.SEPARATOR, '              ', 4, 3),
+                    Token(Token.ARGUMENT, 'with empty', 4, 17),
+                    Token(Token.EOL, '\n', 4, 27)]
+        )
+        self._verify_documentation(data, expected, 'Documentation\n\nwith empty')
+
+    def _verify_documentation(self, data, expected, value):
+        # Model has both EOLs and line numbers.
+        doc = get_model(data).sections[0].body[0]
+        assert_model(doc, expected)
+        assert_equal(doc.value, value)
+        # Model has only line numbers, no EOLs or other non-data tokens.
+        doc = get_model(data, data_only=True).sections[0].body[0]
+        expected.tokens = [token for token in expected.tokens
+                           if token.type not in Token.NON_DATA_TOKENS]
+        assert_model(doc, expected)
+        assert_equal(doc.value, value)
+        # Model has only EOLS, no line numbers.
+        doc = Documentation.from_params(value)
+        assert_equal(doc.value, value)
+        # Model has no EOLs nor line numbers. Everything is just one line.
+        doc.tokens = [token for token in doc.tokens if token.type != Token.EOL]
+        assert_equal(doc.value, ' '.join(value.splitlines()))
+
+
 class TestError(unittest.TestCase):
 
     def test_get_errors_from_tokens(self):
@@ -991,24 +1125,6 @@ class TestError(unittest.TestCase):
                             Token('ERROR', error='yyy')]).errors,
                      ('xxx', 'yyy'))
         assert_equal(Error([Token('ERROR', error=e) for e in '0123456789']).errors,
-                     tuple('0123456789'))
-
-    def test_get_fatal_errors_from_tokens(self):
-        assert_equal(Error([Token('FATAL ERROR', error='xxx')]).errors,
-                     ('xxx',))
-        assert_equal(Error([Token('FATAL ERROR', error='xxx'),
-                            Token('ARGUMENT'),
-                            Token('FATAL ERROR', error='yyy')]).errors,
-                     ('xxx', 'yyy'))
-        assert_equal(Error([Token('FATAL ERROR', error=e) for e in '0123456789']).errors,
-                     tuple('0123456789'))
-
-    def test_get_errors_and_fatal_errors_from_tokens(self):
-        assert_equal(Error([Token('ERROR', error='error'),
-                            Token('ARGUMENT'),
-                            Token('FATAL ERROR', error='fatal error')]).errors,
-                     ('error', 'fatal error'))
-        assert_equal(Error([Token('FATAL ERROR', error=e) for e in '0123456789']).errors,
                      tuple('0123456789'))
 
     def test_model_error(self):
@@ -1024,10 +1140,11 @@ Documentation
         )
         inv_setting = "Non-existing setting 'Invalid'."
         expected = File([
-            CommentSection(
-                body=[
-                    Error([Token('ERROR', '*** Invalid ***', 1, 0, inv_header)])
-                ]
+            InvalidSection(
+                header=SectionHeader(
+                    [Token('INVALID HEADER', '*** Invalid ***', 1, 0, inv_header)]
+                )
+
             ),
             SettingSection(
                 header=SectionHeader([
@@ -1047,10 +1164,9 @@ Documentation
 ''', data_only=True)
         inv_testcases = "Resource file with 'Test Cases' section is invalid."
         expected = File([
-            CommentSection(
-                body=[
-                    Error([Token('FATAL ERROR', '*** Test Cases ***', 1, 0, inv_testcases)])
-                ]
+            InvalidSection(
+                header=SectionHeader(
+                    [Token('INVALID HEADER', '*** Test Cases ***', 1, 0, inv_testcases)])
             )
         ])
         assert_model(model, expected)
@@ -1070,10 +1186,10 @@ Documentation
         inv_setting = "Non-existing setting 'Invalid'."
         inv_testcases = "Resource file with 'Test Cases' section is invalid."
         expected = File([
-            CommentSection(
-                body=[
-                    Error([Token('ERROR', '*** Invalid ***', 1, 0, inv_header)])
-                ]
+            InvalidSection(
+                header=SectionHeader(
+                    [Token('INVALID HEADER', '*** Invalid ***', 1, 0, inv_header)]
+                )
             ),
             SettingSection(
                 header=SectionHeader([
@@ -1082,9 +1198,13 @@ Documentation
                 body=[
                     Error([Token('ERROR', 'Invalid', 3, 0, inv_setting)]),
                     Documentation([Token('DOCUMENTATION', 'Documentation', 4, 0)]),
-                    Error([Token('FATAL ERROR', '*** Test Cases ***', 5, 0, inv_testcases)])
                 ]
-            )
+            ),
+            InvalidSection(
+                header=SectionHeader(
+                    [Token('INVALID HEADER', '*** Test Cases ***', 5, 0, inv_testcases)]
+                )
+            ),
         ])
         assert_model(model, expected)
 
@@ -1092,12 +1212,11 @@ Documentation
         error = Error([])
         error.errors = ('explicitly set', 'errors')
         assert_equal(error.errors, ('explicitly set', 'errors'))
-        error.tokens = [Token('ERROR', error='normal error'),
-                        Token('FATAL ERROR', error='fatal error')]
-        assert_equal(error.errors, ('normal error', 'fatal error',
+        error.tokens = [Token('ERROR', error='normal error'),]
+        assert_equal(error.errors, ('normal error',
                                     'explicitly set', 'errors'))
         error.errors = ['errors', 'as', 'list']
-        assert_equal(error.errors, ('normal error', 'fatal error',
+        assert_equal(error.errors, ('normal error',
                                     'errors', 'as', 'list'))
 
 
