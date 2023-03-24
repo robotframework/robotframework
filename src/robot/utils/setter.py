@@ -13,29 +13,62 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Any, Callable, Generic, overload, TypeVar
+from typing import Callable, Generic, overload, TypeVar, Type, Union
 
 
 T = TypeVar('T')
 V = TypeVar('V')
+A = TypeVar('A')
 
 
-class setter(Generic[V]):
+class setter(Generic[T, V, A]):
+    """Modify instance attributes only when they are set, not when they are get.
 
-    def __init__(self, method: Callable[[T, Any], V]):
+    Usage::
+
+        @setter
+        def source(self, source: str|Path) -> Path:
+            return source if isinstance(source, Path) else Path(source)
+
+    The setter method is called when the attribute is assigned like::
+
+        instance.source = 'example.txt'
+
+    and the returned value is stored in the instance in an attribute like
+    ``_setter__source``. When the attribute is accessed, the stored value is
+    returned.
+
+    The above example is equivalent to using the standard ``property`` as
+    follows. The main benefit of using ``setter`` is that it avoids a dummy
+    getter method::
+
+        @property
+        def source(self) -> Path:
+            return self._source
+
+        @source.setter
+        def source(self, source: src|Path):
+            self._source = source if isinstance(source, Path) else Path(source)
+
+    When using ``setter`` with ``__slots__``, the special ``_setter__xxx``
+    attributes needs to be added to ``__slots__`` as well. The provided
+    :class:`SetterAwareType` metaclass can take care of that automatically.
+    """
+
+    def __init__(self, method: Callable[[T, V], A]):
         self.method = method
         self.attr_name = '_setter__' + method.__name__
         self.__doc__ = method.__doc__
 
     @overload
-    def __get__(self, instance: None, owner: 'type[T]') -> 'setter':
+    def __get__(self, instance: None, owner: Type[T]) -> 'setter':
         ...
 
     @overload
-    def __get__(self, instance: T, owner: 'type[T]') -> V:
+    def __get__(self, instance: T, owner: Type[T]) -> A:
         ...
 
-    def __get__(self, instance: 'T|None', owner: 'type[T]') -> 'V|setter':
+    def __get__(self, instance: Union[T, None], owner: Type[T]) -> Union[A, 'setter']:
         if instance is None:
             return self
         try:
@@ -43,12 +76,13 @@ class setter(Generic[V]):
         except AttributeError:
             raise AttributeError(self.method.__name__)
 
-    def __set__(self, instance: T, value: Any):
+    def __set__(self, instance: T, value: V):
         if instance is not None:
             setattr(instance, self.attr_name, self.method(instance, value))
 
 
 class SetterAwareType(type):
+    """Metaclass for adding attributes used by :class:`setter` to ``__slots__``."""
 
     def __new__(cls, name, bases, dct):
         if '__slots__' in dct:
