@@ -89,7 +89,7 @@ Name              Custom Suite Name
             (T.KEYWORD_TAGS, 'Keyword Tags', 12, 0),
             (T.ARGUMENT, 'tag', 12, 18),
             (T.EOS, '', 12, 21),
-            ('SUITE NAME', 'Name', 13, 0),
+            (T.SUITE_NAME, 'Name', 13, 0),
             (T.ARGUMENT, 'Custom Suite Name', 13, 18),
             (T.EOS, '', 13, 35)
         ]
