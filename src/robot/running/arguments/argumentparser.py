@@ -101,6 +101,8 @@ class ArgumentSpecParser(ArgumentParser):
         spec = ArgumentSpec(name, self._type)
         positional_only = True if "/" in argspec else False
         named_only = False
+        if argspec.count("/") > 1:
+            self._report_error('Too many positional only separators.')
         for arg in argspec:
             arg = self._validate_arg(arg)
             if arg == "/":
@@ -172,6 +174,8 @@ class DynamicArgumentParser(ArgumentSpecParser):
             if len(arg) == 1:
                 return arg[0]
             return arg
+        if "/" in arg and len(arg) > 1:
+            self._report_error(f'Invalid argument "{arg}".')
         if '=' in arg:
             return tuple(arg.split('=', 1))
         return arg

@@ -60,4 +60,9 @@ All args
     Should be equal    ${result}    all args kw-()
 
 Arg with separator
-    ${result} =    Arg with separator    /one=
+    [Documentation]    FAIL No keyword with name 'Arg with separator' found.
+    Arg with separator    /one=
+
+Arg with too may / separators
+    [Documentation]    FAIL No keyword with name 'Arg with too many / separators' found.
+    Arg with too many / separators    one    two

@@ -27,3 +27,6 @@ All args
 
 Arg with separator
     Check Test Case    ${TESTNAME}
+
+Arg with too may / separators
+    Check Test Case    ${TESTNAME}
