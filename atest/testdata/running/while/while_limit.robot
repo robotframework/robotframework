@@ -52,6 +52,12 @@ Limit can be disabled
         ${variable}=    Evaluate    $variable + 1
     END
 
+No condition with limit
+    [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 2 iterations. Use the 'limit' argument to increase or remove the limit if needed.
+    WHILE    limit=2
+        Log    Hello
+    END
+
 Invalid limit invalid suffix
     [Documentation]     FAIL Invalid WHILE loop limit: Invalid time string '1 times'.
     WHILE    $variable < 2    limit=1 times
