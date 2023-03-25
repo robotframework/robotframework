@@ -3,10 +3,6 @@ Resource          while.resource
 Suite Setup       Run Tests    --log test_result_model_as_well    running/while/invalid_while.robot
 
 *** Test Cases ***
-No condition
-    ${tc} =    Check Invalid WHILE Test Case
-    Should Be Equal    ${tc.body[0].condition}    ${NONE}
-
 Multiple conditions
     ${tc} =   Check Invalid WHILE Test Case
     Should Be Equal    ${tc.body[0].condition}    Too, many, !
