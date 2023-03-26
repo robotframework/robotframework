@@ -802,3 +802,9 @@ class String:
         if not message:
             message = default_template % tuple(safe_str(item) for item in items)
         raise AssertionError(message)
+
+    def convert_list_to_string(self, list, separator):
+        """Converts list to string.
+           | ${str1} = | Convert List To String | list=['a','c','e'] | separator=',' | 
+        """
+        return separator.join(list)    
