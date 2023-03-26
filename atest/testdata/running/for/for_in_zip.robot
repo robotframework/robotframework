@@ -2,7 +2,7 @@
 @{result}
 @{LIST1}         a    b    c
 @{LIST2}         x    y    z
-@{LIST3}         1    2    3    4    5
+@{LIST3}         ${1}    ${2}    ${3}    ${4}    ${5}
 
 *** Test Cases ***
 Two variables and lists
@@ -12,8 +12,8 @@ Two variables and lists
     Should Be True    ${result} == ['a:x', 'b:y', 'c:z']
 
 Uneven lists
-    [Documentation]    This will ignore any elements after the shortest
-    ...                list ends, just like with Python's zip().
+    [Documentation]    Items in longer lists are ignored.
+    ...                This behavior can be configured using `mode` option.
     FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST3}
         @{result} =    Create List    @{result}    ${x}:${y}
     END
@@ -46,9 +46,9 @@ One variable and two lists
     Should Be True    ${result} == ['a:x', 'b:y', 'c:z']
 
 One variable and six lists
-    FOR    ${x}    IN ZIP
-    ...    ${LIST1}    ${LIST2}    ${LIST3}    ${LIST3}    ${LIST2}    ${LIST1}
-        @{result} =    Create List    @{result}    ${{':'.join($x)}}
+    FOR    ${x}    IN ZIP    ${LIST1}    ${LIST2}    ${LIST3}
+    ...                      ${LIST3}    ${LIST2}    ${LIST1}
+        @{result} =    Create List    @{result}    ${{':'.join(str(i) for i in $x)}}
     END
     Should Be True    ${result} == ['a:x:1:1:x:a', 'b:y:2:2:y:b', 'c:z:3:3:z:c']
 
@@ -80,15 +80,88 @@ List variable with iterables can be empty
     END
     Log    Executed!
 
+Strict mode
+    [Documentation]    FAIL    FOR IN ZIP items should have equal lengths in STRICT mode, but lengths are 3, 3 and 5.
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}    mode=STRICT
+        @{result} =    Create List    @{result}    ${x}:${y}
+    END
+    Should Be True    ${result} == ['a:x', 'b:y', 'c:z']
+    FOR    ${x}    ${y}    ${z}    IN ZIP    ${LIST1}    ${LIST2}    ${LIST 3}    mode=strict
+        Fail    Not executed
+    END
+
+Strict mode requires items to have length
+    [Documentation]    FAIL    FOR IN ZIP items should have length in STRICT mode, but item 2 does not.
+    FOR    ${x}    ${y}    IN ZIP    ${LIST3}    ${{itertools.cycle(['A', 'B'])}}    mode=STRICT
+        Fail    Not executed
+    END
+
+Shortest mode
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}    mode=SHORTEST    fill=ignored
+        @{result} =    Create List    @{result}    ${x}:${y}
+    END
+    Should Be True    ${result} == ['a:x', 'b:y', 'c:z']
+    @{result} =    Create List
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST3}    mode=ignored    mode=${{'shortest'}}
+        @{result} =    Create List    @{result}    ${x}:${y}
+    END
+    Should Be True    ${result} == ['a:1', 'b:2', 'c:3']
+
+Shortest mode supports infinite iterators
+    FOR    ${x}    ${y}    IN ZIP    ${LIST3}    ${{itertools.cycle(['A', 'B'])}}    mode=SHORTEST
+        @{result} =    Create List    @{result}    ${x}:${y}
+    END
+    Should Be True    ${result} == ['1:A', '2:B', '3:A', '4:B', '5:A']
+
+Longest mode
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}    mode=LONGEST
+        @{result} =    Create List    @{result}    ${x}:${y}
+    END
+    Should Be True    ${result} == ['a:x', 'b:y', 'c:z']
+    @{result} =    Create List
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST3}    mode=LoNgEsT
+        @{result} =    Create List    @{result}    ${{($x, $y)}}
+    END
+    Should Be True    ${result} == [('a', 1), ('b', 2), ('c', 3), (None, 4), (None, 5)]
+
+Longest mode with custom fill value
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST3}    mode=longest    fill=?
+        @{result} =    Create List    @{result}    ${{($x, $y)}}
+    END
+    Should Be True    ${result} == [('a', 1), ('b', 2), ('c', 3), ('?', 4), ('?', 5)]
+    @{result} =    Create List
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST3}   fill=ignored    fill=${0}    mode=longest
+        @{result} =    Create List    @{result}    ${{($x, $y)}}
+    END
+    Should Be True    ${result} == [('a', 1), ('b', 2), ('c', 3), (0, 4), (0, 5)]
+
+Invalid mode
+    [Documentation]    FAIL    Invalid mode: Mode must be 'STRICT', 'SHORTEST' or 'LONGEST', got 'BAD'.
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}    mode=bad
+        @{result} =    Create List    @{result}    ${x}:${y}
+    END
+
+Non-existing variable in mode
+    [Documentation]    FAIL    Invalid mode: Variable '\${bad}' not found.
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}    mode=${bad}    fill=${ignored}
+        @{result} =    Create List    @{result}    ${x}:${y}
+    END
+
+Non-existing variable in fill value
+    [Documentation]    FAIL    Invalid fill value: Variable '\${bad}' not found.
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}    mode=longest    fill=${bad}
+        @{result} =    Create List    @{result}    ${x}:${y}
+    END
+
 Not iterable value
-    [Documentation]    FAIL    FOR IN ZIP items must all be list-like, got integer '42'.
+    [Documentation]    FAIL    FOR IN ZIP items must be list-like, but item 2 is integer.
     FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${42}
         Fail    This test case should die before running this.
     END
 
 Strings are not considered iterables
-    [Documentation]    FAIL    FOR IN ZIP items must all be list-like, got string 'not list'.
-    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    not list
+    [Documentation]    FAIL    FOR IN ZIP items must be list-like, but item 3 is string.
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}    not list
         Fail    This test case should die before running this.
     END
 

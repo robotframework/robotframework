@@ -1,7 +1,7 @@
 import base64
 import unittest
 import zlib
-from os.path import abspath, basename, dirname, join
+from pathlib import Path
 
 from robot.utils.asserts import assert_equal, assert_true
 from robot.result import Keyword, Message, TestCase, TestSuite
@@ -14,7 +14,7 @@ from robot.reporting.jsmodelbuilders import (
 from robot.reporting.stringcache import StringIndex
 
 
-CURDIR = dirname(abspath(__file__))
+CURDIR = Path(__file__).resolve().parent
 
 
 def decode_string(string):
@@ -47,10 +47,11 @@ class TestBuildTestSuite(unittest.TestCase):
                            message='Message', start=0, elapsed=42001)
 
     def test_relative_source(self):
-        self._verify_suite(TestSuite(source='non-existing'), source='non-existing')
-        source = join(CURDIR, 'test_jsmodelbuilders.py')
-        self._verify_suite(TestSuite(source=source), source=source,
-                           relsource=basename(source))
+        self._verify_suite(TestSuite(source='non-existing'),
+                           name='Non-Existing', source='non-existing')
+        source = CURDIR / 'test_jsmodelbuilders.py'
+        self._verify_suite(TestSuite(name='x', source=source),
+                           name='x', source=str(source), relsource=str(source.name))
 
     def test_suite_html_formatting(self):
         self._verify_suite(TestSuite(name='*xxx*', doc='*bold* <&>',
@@ -182,6 +183,15 @@ class TestBuildTestSuite(unittest.TestCase):
         )
         self._verify_test(test, body=(exp_if, exp_else_if, exp_else))
 
+    def test_for(self):
+        test = TestSuite().tests.create()
+        test.body.create_for(variables=['${x}'], values=['a', 'b'])
+        test.body.create_for(['${x}'], 'IN ENUMERATE', ['a', 'b'], start='1')
+        end = ('', '', '', '', '', '', (0, None, 0), ())
+        exp_f1 = (3, '${x} IN [ a | b ]', *end)
+        exp_f2 = (3, '${x} IN ENUMERATE [ a | b | start=1 ]', *end)
+        self._verify_test(test, body=(exp_f1, exp_f2))
+
     def test_message_directly_under_test(self):
         test = TestSuite().tests.create()
         test.body.create_message('Hi from test')
@@ -233,7 +243,7 @@ class TestBuildTestSuite(unittest.TestCase):
         assert_equal(self.context.min_level, expected)
 
     def _build_and_verify(self, builder_class, item, *expected):
-        self.context = JsBuildingContext(log_path=join(CURDIR, 'log.html'))
+        self.context = JsBuildingContext(log_path=CURDIR / 'log.html')
         model = builder_class(self.context).build(item)
         self._verify_mapped(model, self.context.strings, expected)
         return expected

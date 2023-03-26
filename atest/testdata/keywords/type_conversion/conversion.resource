@@ -1,3 +1,6 @@
+*** Variables ***
+${CUSTOM}         ${{type('Custom', (), {})()}}
+
 *** Keywords ***
 Conversion Should Fail
     [Arguments]    ${kw}    @{args}    ${error}=    ${type}=${kw.lower()}    ${arg_type}=    &{kwargs}

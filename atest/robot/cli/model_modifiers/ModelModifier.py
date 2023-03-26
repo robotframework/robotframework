@@ -13,7 +13,8 @@ class ModelModifier(SuiteVisitor):
         if config[0] == 'FAIL':
             raise RuntimeError(' '.join(self.config[1:]))
         elif config[0] == 'CREATE':
-            suite.tests.create(**dict(conf.split('-', 1) for conf in config[1:]))
+            tc = suite.tests.create(**dict(conf.split('-', 1) for conf in config[1:]))
+            tc.body.create_keyword('No operation')
             self.config = []
         elif config == ('REMOVE', 'ALL', 'TESTS'):
             suite.tests = []
@@ -24,7 +25,7 @@ class ModelModifier(SuiteVisitor):
         test.tags.add(self.config)
 
     def start_for(self, for_):
-        if for_.parent.name == 'FOR IN RANGE loop in test':
+        if for_.parent.name == 'FOR IN RANGE':
             for_.flavor = 'IN'
             for_.values = ['FOR', 'is', 'modified!']
 

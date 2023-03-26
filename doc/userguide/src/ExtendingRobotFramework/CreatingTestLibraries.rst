@@ -1082,8 +1082,8 @@ below implementing the same keyword as in earlier examples:
 
 Regardless of the approach that is used, it is not necessarily to specify
 types for all arguments. When specifying types as a list, it is possible
-to use `None` to mark that a certain argument does not have a type, and
-arguments at the end can be omitted altogether. For example, both of these
+to use `None` to mark that a certain argument does not have type information
+and arguments at the end can be omitted altogether. For example, both of these
 keywords specify the type only for the second argument:
 
 .. sourcecode:: python
@@ -1274,6 +1274,12 @@ Other types cause conversion failures.
    | None_       |               | NoneType   | str_         | String `NONE` (case-insensitive) is converted to the Python    | | `None`                             |
    |             |               |            |              | `None` object. Other values cause an error.                    |                                      |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | Any_        |               |            | Any          | Any value is accepted. No conversion is done.                  |                                      |
+   |             |               |            |              |                                                                |                                      |
+   |             |               |            |              | New in RF 6.1. Any_ was not recognized with earlier versions,  |                                      |
+   |             |               |            |              | but conversion may have been done based on `default values     |                                      |
+   |             |               |            |              | <Implicit argument types based on default values_>`__.         |                                      |
+   +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | list_       | Sequence_     |            | str_,        | Strings must be Python list literals. They are converted       | | `['one', 'two']`                   |
    |             |               |            | Sequence_    | to actual lists using the `ast.literal_eval`_ function.        | | `[('one', 1), ('two', 2)]`         |
    |             |               |            |              | They can contain any values `ast.literal_eval` supports,       |                                      |
@@ -1304,13 +1310,14 @@ Other types cause conversion failures.
    |             |               |            |              |                                                                | | `{'width': 1600, 'enabled': True}` |
    +-------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
 
-.. note:: Starting from Robot Framework 5.0, types that are automatically converted are
+.. note:: Starting from Robot Framework 5.0, types that have a converted are
           automatically shown in Libdoc_ outputs.
 
 .. note:: Prior to Robot Framework 4.0, most types supported converting string `NONE` (case-insensitively) to Python
           `None`. That support has been removed and `None` conversion is only done if an argument has `None` as an
           explicit type or as a default value.
 
+.. _Any: https://docs.python.org/library/typing.html#typing.Any
 .. _bool: https://docs.python.org/library/functions.html#bool
 .. _int: https://docs.python.org/library/functions.html#int
 .. _Integral: https://docs.python.org/library/numbers.html#numbers.Integral
@@ -1354,7 +1361,7 @@ has multiple possible types. In this situation argument conversion is attempted
 based on each type and the whole conversion fails if none of these conversions
 succeed.
 
-When using function annotations, the natural syntax to specify that argument
+When using function annotations, the natural syntax to specify that an argument
 has multiple possible types is using Union_:
 
 .. sourcecode:: python
@@ -1363,16 +1370,15 @@ has multiple possible types is using Union_:
 
 
   def example(length: Union[int, float], padding: Union[int, str, None] = None):
-      # ...
+      ...
 
-When using Python 3.10 or newer, it is possible to use the native `type1 | type2`
+When using Python 3.10 or newer, it is possible to use the native `type1 | type2`__
 syntax instead:
 
 .. sourcecode:: python
 
   def example(length: int | float, padding: int | str | None = None):
-      # ...
-
+      ...
 
 An alternative is specifying types as a tuple. It is not recommended with annotations,
 because that syntax is not supported by other tools, but it works well with
@@ -1385,7 +1391,7 @@ the `@keyword` decorator:
 
   @keyword(types={'length': (int, float), 'padding': (int, str, None)})
   def example(length, padding=None):
-      # ...
+      ...
 
 With the above examples the `length` argument would first be converted to an
 integer and if that fails then to a float. The `padding` would be first
@@ -1426,21 +1432,22 @@ attempted in the order types are specified. If any conversion succeeds, the
 resulting value is used without attempting remaining conversions. If no individual
 conversion succeeds, the whole conversion fails.
 
-If a specified type is not recognized by Robot Framework, then the original value
-is used as-is. For example, with this keyword conversion would first be attempted
-to an integer but if that fails the keyword would get the original given argument:
+If a specified type is not recognized by Robot Framework, then the original argument
+value is used as-is. For example, with this keyword conversion would first be attempted
+to an integer, but if that fails the keyword would get the original argument:
 
 .. sourcecode:: python
 
-  def example(argument: Union[int, MyCustomType]):
-      # ...
+  def example(argument: Union[int, Unrecognized]):
+      ...
 
-.. note:: In Robot Framework 4.0 argument conversion was done always, regardless
-          of the type of the given argument. It caused various__ problems__ and
-          was changed in Robot Framework 4.0.1.
+Starting from Robot Framework 6.1, the above logic works also if an unrecognized
+type is listed before a recognized type like `Union[Unrecognized, int]`.
+Also in this case `int` conversion is attempted, and the argument id passed as-is
+if it fails. With earlier Robot Framework versions, `int` conversion would not be
+attempted at all.
 
-__ https://github.com/robotframework/robotframework/issues/3897
-__ https://github.com/robotframework/robotframework/issues/3908
+__ https://peps.python.org/pep-0604/
 .. _Union: https://docs.python.org/3/library/typing.html#typing.Union
 
 Type conversion with generics
@@ -1531,7 +1538,7 @@ a custom converter and registering it to handle date_ conversion:
     ROBOT_LIBRARY_CONVERTERS = {date: parse_fi_date}
 
 
-    # Keyword using custom converter. Converter is got based on argument type.
+    # Keyword using custom converter. Converter is resolved based on argument type.
     def keyword(arg: date):
         print(f'year: {arg.year}, month: {arg.month}, day: {arg.day}')
 
@@ -1761,6 +1768,45 @@ the code above:
 .. note:: Using `None` as a strict converter is new in Robot Framework 6.0.
           An explicit converter function needs to be used with earlier versions.
 
+Accessing the test library from converter
+`````````````````````````````````````````
+Starting from Robot Framework 6.1, it is possible to access the library
+instance from a converter function. This allows defining dynamic type conversions
+that depend on the library state. For example, if the library can be configured to
+test particular locale, you might use the library state to determine how a date
+should be parsed like this:
+
+.. sourcecode:: python
+
+    from datetime import date
+    import re
+
+
+    def parse_date(value, library):
+        # Validate input using regular expression and raise ValueError if not valid.
+        # Use locale based from library state to determine parsing format.
+        if library.locale == 'en_US':
+            match = re.match(r'(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<year>\d{4})$', value)
+            format = 'mm/dd/yyyy'
+        else:
+            match = re.match(r'(?P<day>\d{1,2})\.(?P<month>\d{1,2})\.(?P<year>\d{4})$', value)
+            format = 'dd.mm.yyyy'
+        if not match:
+            raise ValueError(f"Expected date in format '{format}', got '{value}'.")
+        return date(int(match.group('year')), int(match.group('month')), int(match.group('day')))
+
+
+    ROBOT_LIBRARY_CONVERTERS = {date: parse_date}
+
+
+    def keyword(arg: date):
+        print(f'year: {arg.year}, month: {arg.month}, day: {arg.day}')
+
+
+The `library` argument to converter function is optional, i.e. if the converter function
+only accepts one argument, the `library` argument is omitted. Similar result can be achieved
+by making the converter function accept only variadic arguments, e.g. `def parse_date(*varargs)`.
+
 Converter documentation
 ```````````````````````
 
@@ -1795,7 +1841,6 @@ Adding documentation is in general recommended to provide users more
 information about conversion. It is especially important to document
 converter functions registered for existing types, because their own
 documentation is likely not very useful in this context.
-
 
 `@keyword` decorator
 ~~~~~~~~~~~~~~~~~~~~
@@ -2122,10 +2167,12 @@ Using log levels
 
 To use other log levels than `INFO`, or to create several
 messages, specify the log level explicitly by embedding the level into
-the message in the format `*LEVEL* Actual log message`, where
-`*LEVEL*` must be in the beginning of a line and `LEVEL` is
-one of the available logging levels `TRACE`, `DEBUG`,
-`INFO`, `WARN`, `ERROR` and `HTML`.
+the message in the format `*LEVEL* Actual log message`.
+In this formant `*LEVEL*` must be in the beginning of a line and `LEVEL`
+must be one of the available concrete log levels `TRACE`, `DEBUG`,
+`INFO`, `WARN` or `ERROR`, or a pseudo log level `HTML` or `CONSOLE`.
+The pseudo levels can be used for `logging HTML`_ and `logging to console`_,
+respectively.
 
 Errors and warnings
 '''''''''''''''''''
@@ -2190,12 +2237,23 @@ __ `Using log levels`_
 Logging to console
 ''''''''''''''''''
 
-If libraries need to write something to the console they have several
-options. As already discussed, warnings and all messages written to the
+Libraries have several options for writing messages to the console.
+As already discussed, warnings and all messages written to the
 standard error stream are written both to the log file and to the
 console. Both of these options have a limitation that the messages end
-up to the console only after the currently executing keyword
-finishes.
+up to the console only after the currently executing keyword finishes.
+
+Starting from Robot Framework 6.1, libraries can use a pseudo log level
+`CONSOLE` for logging messages *both* to the log file and to the console:
+
+.. sourcecode:: python
+
+   def my_keyword(arg):
+       print('*CONSOLE* Message both to log and to console.')
+
+These messages will be logged to the log file using the `INFO` level similarly
+as with the `HTML` pseudo log level. When using this approach, messages
+are logged to the console only after the keyword execution ends.
 
 Another option is writing messages to `sys.__stdout__` or `sys.__stderr__`.
 When using this approach, messages are written to the console immediately
@@ -2207,9 +2265,10 @@ and are not written to the log file at all:
 
 
    def my_keyword(arg):
-      sys.__stdout__.write('Got arg %s\n' % arg)
+       print('Message only to console.', file=sys.__stdout__)
 
-The final option is using the `public logging API`_:
+The final option is using the `public logging API`_. Also in with this approach
+messages are written to the console immediately:
 
 .. sourcecode:: python
 
@@ -2217,10 +2276,10 @@ The final option is using the `public logging API`_:
 
 
    def log_to_console(arg):
-      logger.console('Got arg %s' % arg)
+       logger.console('Message only to console.')
 
    def log_to_console_and_log_file(arg):
-      logger.info('Got arg %s' % arg, also_console=True)
+       logger.info('Message both to log and to console.', also_console=True)
 
 Logging example
 '''''''''''''''
@@ -2230,7 +2289,8 @@ In most cases, the `INFO` level is adequate. The levels below it,
 These messages are normally not shown, but they can facilitate debugging
 possible problems in the library itself. The `WARN` or `ERROR` level can
 be used to make messages more visible and `HTML` is useful if any
-kind of formatting is needed.
+kind of formatting is needed. Level `CONSOLE` can be used when the
+message needs to shown both in console and in the log file.
 
 The following examples clarify how logging with different levels
 works.
@@ -2244,6 +2304,7 @@ works.
    print('This will be part of the previous message.')
    print('*INFO* This is a new message.')
    print('*INFO* This is <b>normal text</b>.')
+   print('*CONSOLE* This logs into console and log file.')
    print('*HTML* This is <b>bold</b>.')
    print('*HTML* <a href="http://robotframework.org">Robot Framework</a>')
 
@@ -2279,6 +2340,11 @@ works.
        <td class="time">16:18:42.123</td>
        <td class="info level">INFO</td>
        <td class="msg">This is &lt;b&gt;normal text&lt;/b&gt;.</td>
+     </tr>
+     <tr>
+       <td class="time">16:18:42.123</td>
+       <td class="info level">INFO</td>
+       <td class="msg">This logs into console and log file.</td>
      </tr>
      <tr>
        <td class="time">16:18:42.123</td>

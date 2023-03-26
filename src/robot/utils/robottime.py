@@ -15,6 +15,7 @@
 
 import re
 import time
+import warnings
 from datetime import timedelta
 
 from .normalizing import normalize
@@ -54,6 +55,8 @@ def timestr_to_secs(timestr, round_to=3, accept_plain_values=True):
         if accept_plain_values:
             converters = [_number_to_secs, _timer_to_secs, _time_string_to_secs]
         else:
+            # TODO: Remove 'accept_plain_values' in 7.0
+            warnings.warn("'accept_plain_values' is deprecated and will be removed in RF 7.0.")
             converters = [_timer_to_secs, _time_string_to_secs]
         for converter in converters:
             secs = converter(timestr)

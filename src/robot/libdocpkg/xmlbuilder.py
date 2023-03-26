@@ -52,9 +52,9 @@ class XmlDocBuilder:
         if root.tag != 'keywordspec':
             raise DataError(f"Invalid spec file '{path}'.")
         version = root.get('specversion')
-        if version not in ('3', '4'):
+        if version not in ('3', '4', '5'):
             raise DataError(f"Invalid spec file version '{version}'. "
-                            f"Supported versions are 3 and 4.")
+                            f"Supported versions are 3, 4 and 5.")
         return root
 
     def _create_keywords(self, spec, path, lib_source):
@@ -94,14 +94,32 @@ class XmlDocBuilder:
                 spec.defaults[name] = default_elem.text or ''
             if not spec.types:
                 spec.types = {}
-            types = []
             type_docs = {}
-            for typ in arg.findall('type'):
-                types.append(typ.text)
-                if typ.get('typedoc'):
-                    type_docs[typ.text] = typ.get('typedoc')
-            spec.types[name] = tuple(types)
+            type_elems = arg.findall('type')
+            if len(type_elems) == 1 and 'name' in type_elems[0].attrib:
+                type_info = self._parse_modern_type_info(type_elems[0], type_docs)
+            else:
+                type_info = self._parse_legacy_type_info(type_elems, type_docs)
+            if type_info:
+                spec.types[name] = type_info
             kw.type_docs[name] = type_docs
+
+    def _parse_modern_type_info(self, type_elem, type_docs):
+        name = type_elem.get('name')
+        if type_elem.get('typedoc'):
+            type_docs[name] = type_elem.get('typedoc')
+        nested = tuple(self._parse_modern_type_info(child, type_docs)
+                       for child in type_elem.findall('type'))
+        return {'name': name, 'nested': nested}
+
+    def _parse_legacy_type_info(self, type_elems, type_docs):
+        types = []
+        for elem in type_elems:
+            name = elem.text
+            types.append(name)
+            if elem.get('typedoc'):
+                type_docs[name] = elem.get('typedoc')
+        return types
 
     def _parse_type_docs(self, spec):
         for elem in spec.findall('typedocs/type'):

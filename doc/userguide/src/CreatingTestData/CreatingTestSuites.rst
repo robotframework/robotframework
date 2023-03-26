@@ -72,6 +72,10 @@ file formats`_ (typically :file:`__init__.robot`).
 The name format is borrowed from Python, where files named in this manner
 denote that a directory is a module.
 
+Starting from Robot Framework 6.1, it is also possible to define a suite
+initialization file for automatically created suite when starting the test
+execution by giving multiple paths__.
+
 Initialization files have the same structure and syntax as test case files,
 except that they cannot have test case sections and not all settings are
 supported. Variables and keywords created or imported in initialization files
@@ -119,6 +123,7 @@ initialization files is explained below.
        Some Keyword    ${arg}
        Another Keyword
 
+__ `Specifying test data to be executed`_
 __ `Test case related settings in the Setting section`_
 
 Test suite name and documentation

@@ -28,11 +28,18 @@ Use Defaults
     Sleep    0.1s
 
 Test Settings
-    [Documentation]    T1
+    [Documentation]    FAIL Several failures occurred:\n\n
+    ...  1) Setting 'Documentation' is allowed only once. Only the first value is used.\n\n
+    ...  2) Setting 'Tags' is allowed only once. Only the first value is used.\n\n
+    ...  3) Setting 'Setup' is allowed only once. Only the first value is used.\n\n
+    ...  4) Setting 'Teardown' is allowed only once. Only the first value is used.\n\n
+    ...  5) Setting 'Teardown' is allowed only once. Only the first value is used.\n\n
+    ...  6) Setting 'Template' is allowed only once. Only the first value is used.\n\n
+    ...  7) Setting 'Timeout' is allowed only once. Only the first value is used.\n\n
+    ...  8) Setting 'Tags' is allowed only once. Only the first value is used.
     [Documentation]    FAIL 2 s
     [Tags]
     [Tags]    T1
-    [Tags]    T2
     [Setup]    Log Many    Own
     [Setup]    stuff    here
     [Teardown]
@@ -43,8 +50,10 @@ Test Settings
     [Timeout]    2 s
     [Timeout]    2 ms
     No Operation
+    [Tags]    T2
 
 Keyword Settings
+    [Documentation]    FAIL Setting 'Arguments' is allowed only once. Only the first value is used.
     [Template]    NONE
     ${ret} =    Keyword Settings    1   2   3
     Should Be Equal    ${ret}    R0

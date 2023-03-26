@@ -37,6 +37,7 @@ class BodyItem(ModelObject):
     RETURN = 'RETURN'
     CONTINUE = 'CONTINUE'
     BREAK = 'BREAK'
+    ERROR = 'ERROR'
     MESSAGE = 'MESSAGE'
     type = None
     __slots__ = ['parent']
@@ -58,47 +59,56 @@ class BodyItem(ModelObject):
 
     def _get_id(self, parent):
         steps = []
-        if parent.has_setup:
+        if getattr(parent, 'has_setup', False):
             steps.append(parent.setup)
         if hasattr(parent, 'body'):
             steps.extend(step for step in parent.body.flatten()
                          if step.type != self.MESSAGE)
-        if parent.has_teardown:
+        if getattr(parent, 'has_teardown', False):
             steps.append(parent.teardown)
-        return '%s-k%d' % (parent.id, steps.index(self) + 1)
+        my_id = steps.index(self) + 1
+        return f'{parent.id}-k{my_id}'
 
-    @property
-    def has_setup(self):
-        return False
-
-    @property
-    def has_teardown(self):
-        return False
+    def to_dict(self):
+        raise NotImplementedError
 
 
 class BaseBody(ItemList):
     """Base class for Body and Branches objects."""
     __slots__ = []
-    # Set using 'Body.register' when these classes are created.
+    # Set using 'BaseBody.register' when these classes are created.
     keyword_class = None
     for_class = None
+    while_class = None
     if_class = None
     try_class = None
-    while_class = None
     return_class = None
     continue_class = None
     break_class = None
     message_class = None
+    error_class = None
 
     def __init__(self, parent=None, items=None):
         super().__init__(BodyItem, {'parent': parent}, items)
+
+    def _item_from_dict(self, data):
+        item_type = data.get('type', None)
+        if not item_type:
+            item_class = self.keyword_class
+        elif item_type == BodyItem.IF_ELSE_ROOT:
+            item_class = self.if_class
+        elif item_type == BodyItem.TRY_EXCEPT_ROOT:
+            item_class = self.try_class
+        else:
+            item_class = getattr(self, item_type.lower() + '_class')
+        return item_class.from_dict(data)
 
     @classmethod
     def register(cls, item_class):
         name_parts = re.findall('([A-Z][a-z]+)', item_class.__name__) + ['class']
         name = '_'.join(name_parts).lower()
         if not hasattr(cls, name):
-            raise TypeError("Cannot register '%s'." % name)
+            raise TypeError(f"Cannot register '{name}'.")
         setattr(cls, name, item_class)
         return item_class
 
@@ -140,6 +150,9 @@ class BaseBody(ItemList):
 
     def create_message(self, *args, **kwargs):
         return self._create(self.message_class, 'create_message', args, kwargs)
+
+    def create_error(self, *args, **kwargs):
+        return self._create(self.error_class, 'create_message', args, kwargs)
 
     def filter(self, keywords=None, messages=None, predicate=None):
         """Filter body items based on type and/or custom predicate.
@@ -202,7 +215,7 @@ class BaseBody(ItemList):
 
 
 class Body(BaseBody):
-    """A list-like object representing body of a suite, a test or a keyword.
+    """A list-like object representing a body of a test, keyword, etc.
 
     Body contains the keywords and other structures such as FOR loops.
     """
@@ -210,12 +223,15 @@ class Body(BaseBody):
 
 
 class Branches(BaseBody):
-    """A list-like object representing branches IF and TRY objects contain."""
+    """A list-like object representing IF and TRY branches."""
     __slots__ = ['branch_class']
 
     def __init__(self, branch_class, parent=None, items=None):
         self.branch_class = branch_class
         super().__init__(parent, items)
+
+    def _item_from_dict(self, data):
+        return self.branch_class.from_dict(data)
 
     def create_branch(self, *args, **kwargs):
         return self.append(self.branch_class(*args, **kwargs))

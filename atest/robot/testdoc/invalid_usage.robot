@@ -7,7 +7,7 @@ Invalid usage
     Expected at least 2 arguments, got 1.
 
 Non-existing input
-    Parsing 'nonex.robot' failed: File or directory to execute does not exist.
+    Parsing '${EXECDIR}${/}nonex.robot' failed: File or directory to execute does not exist.
     ...    nonex.robot
 
 Invalid input

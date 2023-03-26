@@ -37,7 +37,7 @@ IMPORTER = Importer()
 class Namespace:
     _default_libraries = ('BuiltIn', 'Reserved', 'Easter')
     _library_import_by_path_ends = ('.py', '/', os.sep)
-    _variables_import_by_path_ends = _library_import_by_path_ends + ('.yaml', '.yml')
+    _variables_import_by_path_ends = _library_import_by_path_ends + ('.yaml', '.yml') + ('.json',)
 
     def __init__(self, variables, suite, resource, languages):
         LOGGER.info(f"Initializing namespace for suite '{suite.longname}'.")
@@ -65,19 +65,19 @@ class Namespace:
         for item in import_settings:
             try:
                 if not item.name:
-                    raise DataError(f'{item.type} setting requires value.')
+                    raise DataError(f'{item.setting_name} setting requires value.')
                 self._import(item)
             except DataError as err:
                 item.report_invalid_syntax(err.message)
 
     def _import(self, import_setting):
-        action = {'Library': self._import_library,
-                  'Resource': self._import_resource,
-                  'Variables': self._import_variables}[import_setting.type]
+        action = import_setting.select(self._import_library,
+                                       self._import_resource,
+                                       self._import_variables)
         action(import_setting)
 
     def import_resource(self, name, overwrite=True):
-        self._import_resource(Import('Resource', name), overwrite=overwrite)
+        self._import_resource(Import(Import.RESOURCE, name), overwrite=overwrite)
 
     def _import_resource(self, import_setting, overwrite=False):
         path = self._resolve_name(import_setting)
@@ -89,7 +89,7 @@ class Namespace:
             self._kw_store.resources[path] = user_library
             self._handle_imports(resource.imports)
             LOGGER.imported("Resource", user_library.name,
-                            importer=import_setting.source,
+                            importer=str(import_setting.source),
                             source=path)
         else:
             LOGGER.info(f"Resource file '{path}' already imported by "
@@ -102,7 +102,7 @@ class Namespace:
                             f"a resource file.")
 
     def import_variables(self, name, args, overwrite=False):
-        self._import_variables(Import('Variables', name, args), overwrite)
+        self._import_variables(Import(Import.VARIABLES, name, args), overwrite)
 
     def _import_variables(self, import_setting, overwrite=False):
         path = self._resolve_name(import_setting)
@@ -112,7 +112,7 @@ class Namespace:
             self.variables.set_from_file(path, args, overwrite)
             LOGGER.imported("Variables", os.path.basename(path),
                             args=list(args),
-                            importer=import_setting.source,
+                            importer=str(import_setting.source),
                             source=path)
         else:
             msg = f"Variable file '{path}'"
@@ -121,8 +121,7 @@ class Namespace:
             LOGGER.info(f"{msg} already imported by suite '{self._suite_name}'.")
 
     def import_library(self, name, args=(), alias=None, notify=True):
-        self._import_library(Import('Library', name, args, alias),
-                             notify=notify)
+        self._import_library(Import(Import.LIBRARY, name, args, alias), notify=notify)
 
     def _import_library(self, import_setting, notify=True):
         name = self._resolve_name(import_setting)
@@ -136,7 +135,7 @@ class Namespace:
             LOGGER.imported("Library", lib.name,
                             args=list(import_setting.args),
                             originalname=lib.orig_name,
-                            importer=import_setting.source,
+                            importer=str(import_setting.source),
                             source=lib.source)
         self._kw_store.libraries[lib.name] = lib
         lib.start_suite()
@@ -150,17 +149,18 @@ class Namespace:
         except DataError as err:
             self._raise_replacing_vars_failed(setting, err)
         if self._is_import_by_path(setting.type, name):
-            return find_file(name, setting.directory, file_type=setting.type)
+            file_type = setting.select('Library', 'Resource file', 'Variable file')
+            return find_file(name, setting.directory, file_type=file_type)
         return name
 
     def _raise_replacing_vars_failed(self, setting, error):
-        raise DataError(f"Replacing variables from setting '{setting.type}' "
+        raise DataError(f"Replacing variables from setting '{setting.setting_name}' "
                         f"failed: {error}")
 
     def _is_import_by_path(self, import_type, path):
-        if import_type == 'Library':
+        if import_type == Import.LIBRARY:
             return path.lower().endswith(self._library_import_by_path_ends)
-        if import_type == 'Variables':
+        if import_type == Import.VARIABLES:
             return path.lower().endswith(self._variables_import_by_path_ends)
         return True
 
@@ -311,10 +311,8 @@ class KeywordStore:
         return None
 
     def _get_implicit_runner(self, name):
-        runner = self._get_runner_from_resource_files(name)
-        if not runner:
-            runner = self._get_runner_from_libraries(name)
-        return runner
+        return (self._get_runner_from_resource_files(name) or
+                self._get_runner_from_libraries(name))
 
     def _get_runner_from_suite_file(self, name):
         if name not in self.user_keywords.handlers:
@@ -333,7 +331,7 @@ class KeywordStore:
                     f"Keyword '{caller.longname}' called keyword '{name}' that exists "
                     f"both in the same resource file as the caller and in the suite "
                     f"file using that resource. The keyword in the suite file is used "
-                    f"now, but this will change in Robot Framework 6.0."
+                    f"now, but this will change in Robot Framework 7.0."
                 )
                 runner.pre_run_messages += Message(message, level='WARN'),
         return runner
@@ -377,8 +375,8 @@ class KeywordStore:
                 handlers = self._select_best_matches(handlers)
                 if len(handlers) > 1:
                     handlers = self._filter_based_on_search_order(handlers)
-        if len(handlers) != 1:
-            self._raise_multiple_keywords_found(handlers, name)
+                    if len(handlers) > 1:
+                        self._raise_multiple_keywords_found(handlers, name)
         return handlers[0].create_runner(name, self.languages)
 
     def _get_runner_from_libraries(self, name):
@@ -393,8 +391,8 @@ class KeywordStore:
                 handlers = self._filter_based_on_search_order(handlers)
                 if len(handlers) > 1:
                     handlers, pre_run_message = self._filter_stdlib_handler(handlers)
-        if len(handlers) != 1:
-            self._raise_multiple_keywords_found(handlers, name)
+                    if len(handlers) > 1:
+                        self._raise_multiple_keywords_found(handlers, name)
         runner = handlers[0].create_runner(name, self.languages)
         if pre_run_message:
             runner.pre_run_messages += (pre_run_message,)
@@ -447,11 +445,12 @@ class KeywordStore:
         )
 
     def _get_explicit_runner(self, name):
-        handlers_and_names = [
-            (handler, kw_name)
-            for owner_name, kw_name in self._yield_owner_and_kw_names(name)
-            for handler in self._yield_handlers(owner_name, kw_name)
-        ]
+        handlers_and_names = []
+        for owner_name, kw_name in self._get_owner_and_kw_names(name):
+            for owner in chain(self.libraries.values(), self.resources.values()):
+                if eq(owner.name, owner_name) and kw_name in owner.handlers:
+                    for handler in owner.handlers.get_handlers(kw_name):
+                        handlers_and_names.append((handler, kw_name))
         if not handlers_and_names:
             return None
         if len(handlers_and_names) == 1:
@@ -464,15 +463,10 @@ class KeywordStore:
             handler, kw_name = handlers_and_names[handlers.index(matches[0])]
         return handler.create_runner(kw_name, self.languages)
 
-    def _yield_owner_and_kw_names(self, full_name):
+    def _get_owner_and_kw_names(self, full_name):
         tokens = full_name.split('.')
-        for i in range(1, len(tokens)):
-            yield '.'.join(tokens[:i]), '.'.join(tokens[i:])
-
-    def _yield_handlers(self, owner_name, name):
-        for owner in chain(self.libraries.values(), self.resources.values()):
-            if eq(owner.name, owner_name) and name in owner.handlers:
-                yield from owner.handlers.get_handlers(name)
+        return [('.'.join(tokens[:index]), '.'.join(tokens[index:]))
+                for index in range(1, len(tokens))]
 
     def _raise_multiple_keywords_found(self, handlers, name, implicit=True):
         if any(hand.supports_embedded_args for hand in handlers):

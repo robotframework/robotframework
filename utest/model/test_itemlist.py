@@ -11,6 +11,9 @@ class Object:
     def __init__(self, id=None):
         self.id = id
 
+    def __eq__(self, other):
+        return isinstance(other, Object) and self.id == other.id
+
 
 class CustomItems(ItemList):
     pass
@@ -66,6 +69,10 @@ class TestItemLists(unittest.TestCase):
         assert_raises_with_msg(TypeError,
                                'Only Object objects accepted, got integer.',
                                ItemList(Object).insert, 0, 42)
+
+    def test_initial_items(self):
+        assert_equal(list(ItemList(Object, items=[])), [])
+        assert_equal(list(ItemList(int, items=(1, 2, 3))), [1, 2, 3])
 
     def test_common_attrs(self):
         item1 = Object()
@@ -258,9 +265,13 @@ class TestItemLists(unittest.TestCase):
         assert_equal(objects.count('whatever'), 0)
 
     def test_sort(self):
-        chars = ItemList(str, items='asdfg')
+        chars = ItemList(str, items='asDfG')
         chars.sort()
-        assert_equal(list(chars), sorted('asdfg'))
+        assert_equal(list(chars), ['D', 'G', 'a', 'f', 's'])
+        chars.sort(key=str.lower)
+        assert_equal(list(chars), ['a', 'D', 'f', 'G', 's'])
+        chars.sort(reverse=True)
+        assert_equal(list(chars), ['s', 'f', 'a', 'G', 'D'])
 
     def test_sorted(self):
         chars = ItemList(str, items='asdfg')
@@ -383,6 +394,44 @@ class TestItemLists(unittest.TestCase):
         assert_equal(2 * ItemList(int, items=[1, 2, 3]),
                      ItemList(int, items=[1, 2, 3, 1, 2, 3]))
         assert_raises(TypeError, ItemList(int).__rmul__, ItemList(int))
+
+    def test_items_as_dicts_without_from_dict(self):
+        items = ItemList(Object, items=[{'id': 1}, {}])
+        items.append({'id': 3})
+        assert_equal(items[0].id, 1)
+        assert_equal(items[1].id, None)
+        assert_equal(items[2].id, 3)
+
+    def test_items_as_dicts_with_from_dict(self):
+        class ObjectWithFromDict(Object):
+            @classmethod
+            def from_dict(cls, data):
+                obj = cls()
+                for name in data:
+                    setattr(obj, name, data[name])
+                return obj
+
+        items = ItemList(ObjectWithFromDict, items=[{'id': 1, 'attr': 2}])
+        items.extend([{}, {'new': 3}])
+        assert_equal(items[0].id, 1)
+        assert_equal(items[0].attr, 2)
+        assert_equal(items[1].id, None)
+        assert_equal(items[1].attr, 1)
+        assert_equal(items[2].new, 3)
+
+    def test_to_dicts_without_to_dict(self):
+        items = ItemList(Object, items=[Object(1), Object(2)])
+        dicts = items.to_dicts()
+        assert_equal(dicts, [{'id': 1}, {'id': 2}])
+        assert_equal(ItemList(Object, items=dicts), items)
+
+    def test_to_dicts_with_to_dict(self):
+        class ObjectWithToDict(Object):
+            def to_dict(self):
+                return {'id': self.id, 'x': 42}
+
+        items = ItemList(ObjectWithToDict, items=[ObjectWithToDict(1)])
+        assert_equal(items.to_dicts(), [{'id': 1, 'x': 42}])
 
 
 if __name__ == '__main__':

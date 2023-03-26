@@ -162,9 +162,16 @@ Keyword with embedded args cannot be used as "normal" keyword
     [Documentation]    FAIL Variable '${user}' not found.
     User ${user} Selects ${item} From Webshop
 
-Creating keyword with both normal and embedded arguments fails
-    [Documentation]    FAIL Keyword cannot have both normal and embedded arguments.
-    Keyword with ${embedded} and normal args is invalid    arg1    arg2
+Keyword with both normal and embedded arguments
+    Number of horses should be    2
+    Number of dogs should be    count=3
+
+Keyword with both normal, positional and embedded arguments
+    Number of horses should be    2    swimming
+
+Keyword with both normal and embedded arguments with too few arguments
+    [Documentation]    FAIL Keyword 'Number of ${animals} should be' expected 1 to 2 arguments, got 0.
+    Number of horses should be
 
 Keyword Matching Multiple Keywords In Test Case File
     [Documentation]    FAIL
@@ -235,10 +242,6 @@ My embedded ${var}
 ${x:x} gets ${y:\w} from the ${z:.}
     Should Be Equal    ${x}-${y}-${z}    x-y-z
 
-Keyword with ${embedded} and normal args is invalid
-    [Arguments]    ${arg1}    ${arg2}
-    Fail    Creating keyword should fail. This should never be executed
-
 ${a}-tc-${b}
     Log    ${a}-tc-${b}
 
@@ -308,3 +311,7 @@ It is totally ${same}
 
 It is totally ${same}
     Fail    Not executed
+
+Number of ${animals} should be
+    [Arguments]    ${count}    ${activity}=walking
+    Log to console    Checking if ${count} ${animals} are ${activity}

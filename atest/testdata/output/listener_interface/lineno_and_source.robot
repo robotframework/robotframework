@@ -80,6 +80,22 @@ TRY in keyword
 TRY in resource
     TRY in resource
 
+Run Keyword
+    Run Keyword    Log    Hello
+    Run Keyword If    True
+    ...    User Keyword
+
+Run Keyword in keyword
+    Run Keyword in keyword
+
+Run Keyword in resource
+    Run Keyword in resource
+
+In setup and teardown
+    [Setup]    User Keyword
+    No operation
+    [Teardown]    Run Keyword    Log    Hello!
+
 *** Keywords ***
 User Keyword
     No Operation
@@ -107,3 +123,6 @@ TRY In Keyword
     EXCEPT
         Fail    Not executed!
     END
+
+Run Keyword in keyword
+    Run Keyword    No Operation

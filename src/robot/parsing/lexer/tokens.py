@@ -44,6 +44,8 @@ class Token:
     TASK_HEADER = 'TASK HEADER'
     KEYWORD_HEADER = 'KEYWORD HEADER'
     COMMENT_HEADER = 'COMMENT HEADER'
+    INVALID_HEADER = 'INVALID HEADER'
+    FATAL_INVALID_HEADER = 'FATAL INVALID HEADER'
 
     TESTCASE_NAME = 'TESTCASE NAME'
     KEYWORD_NAME = 'KEYWORD NAME'
@@ -104,6 +106,7 @@ class Token:
     EOS = 'EOS'
 
     ERROR = 'ERROR'
+    # TODO: FATAL_ERROR is no longer used, remove in RF 7.0
     FATAL_ERROR = 'FATAL ERROR'
 
     NON_DATA_TOKENS = frozenset((
@@ -142,7 +145,8 @@ class Token:
         TESTCASE_HEADER,
         TASK_HEADER,
         KEYWORD_HEADER,
-        COMMENT_HEADER
+        COMMENT_HEADER,
+        INVALID_HEADER
     ))
     ALLOW_VARIABLES = frozenset((
         NAME,
@@ -179,8 +183,8 @@ class Token:
             return -1
         return self.col_offset + len(self.value)
 
-    def set_error(self, error, fatal=False):
-        self.type = Token.ERROR if not fatal else Token.FATAL_ERROR
+    def set_error(self, error):
+        self.type = Token.ERROR
         self.error = error
 
     def tokenize_variables(self):

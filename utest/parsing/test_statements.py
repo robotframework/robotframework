@@ -7,24 +7,25 @@ from robot.utils import type_name
 
 
 def assert_created_statement(tokens, base_class, **params):
-    new_statement = base_class.from_params(**params)
+    statement = base_class.from_params(**params)
     assert_statements(
-        new_statement,
+        statement,
         base_class(tokens)
     )
     assert_statements(
-        new_statement,
+        statement,
         base_class.from_tokens(tokens)
     )
     assert_statements(
-        new_statement,
+        statement,
         Statement.from_tokens(tokens)
     )
-    if len(set(id(t) for t in new_statement.tokens)) != len(tokens):
+    if len(set(id(t) for t in statement.tokens)) != len(tokens):
         lines = '\n'.join(f'{i:18}{t}' for i, t in
                           [('ID', 'TOKEN')] +
-                          [(str(id(t)), repr(t)) for t in new_statement.tokens])
+                          [(str(id(t)), repr(t)) for t in statement.tokens])
         raise AssertionError(f'Tokens should not be reused!\n\n{lines}')
+    return statement
 
 
 def compare_statements(first, second):
@@ -335,18 +336,6 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             name='library_name.py'
         )
 
-        # Library    library_name.py    127.0.0.1    8080
-        tokens = [
-            Token(Token.LIBRARY, 'Library'),
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.NAME, 'library_name.py'),
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.ARGUMENT, '127.0.0.1'),
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.ARGUMENT, '8080'),
-            Token(Token.EOL, '\n')
-        ]
-
         # Library    library_name.py    WITH NAME    anothername
         tokens = [
             Token(Token.LIBRARY, 'Library'),
@@ -419,11 +408,12 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token(Token.ARGUMENT, 'Example documentation'),
             Token(Token.EOL, '\n')
         ]
-        assert_created_statement(
+        doc = assert_created_statement(
             tokens,
             Documentation,
             value='Example documentation'
         )
+        assert_equal(doc.value, 'Example documentation')
 
         # Documentation    First line.
         # ...              Second line aligned.
@@ -439,17 +429,19 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token(Token.ARGUMENT, 'Second line aligned.'),
             Token(Token.EOL),
             Token(Token.CONTINUATION),
+            Token(Token.ARGUMENT, ''),
             Token(Token.EOL),
             Token(Token.CONTINUATION),
             Token(Token.SEPARATOR, '              '),
             Token(Token.ARGUMENT, 'Second paragraph.'),
             Token(Token.EOL),
         ]
-        assert_created_statement(
+        doc = assert_created_statement(
             tokens,
             Documentation,
             value='First line.\nSecond line aligned.\n\nSecond paragraph.'
         )
+        assert_equal(doc.value, 'First line.\nSecond line aligned.\n\nSecond paragraph.')
 
         # Test/Keyword
         #     [Documentation]      First line
@@ -469,6 +461,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token(Token.EOL),
             Token(Token.SEPARATOR, '  '),
             Token(Token.CONTINUATION),
+            Token(Token.ARGUMENT, ''),
             Token(Token.EOL),
             Token(Token.SEPARATOR, '  '),
             Token(Token.CONTINUATION),
@@ -476,7 +469,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token(Token.ARGUMENT, 'Second paragraph.'),
             Token(Token.EOL),
         ]
-        assert_created_statement(
+        doc = assert_created_statement(
             tokens,
             Documentation,
             value='First line.\nSecond line aligned.\n\nSecond paragraph.\n',
@@ -484,6 +477,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             separator='      ',
             settings_section=False
         )
+        assert_equal(doc.value, 'First line.\nSecond line aligned.\n\nSecond paragraph.')
 
     def test_Metadata(self):
         tokens = [
@@ -632,7 +626,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         ]
         assert_created_statement(
             tokens,
-            Return,
+            ReturnSetting,
             args=['${arg1}', '${arg2}=4']
         )
 

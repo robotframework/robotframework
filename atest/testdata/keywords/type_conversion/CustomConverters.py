@@ -1,5 +1,6 @@
 from datetime import date, datetime
 from typing import Dict, List, Set, Tuple, Union
+from types import ModuleType
 try:
     from typing import TypedDict
 except ImportError:
@@ -20,6 +21,18 @@ def string_to_int(value: str) -> int:
         return ['zero', 'one', 'two', 'three', 'four'].index(value.lower())
     except ValueError:
         raise ValueError(f"Don't know number {value!r}.")
+
+
+class String:
+    pass
+
+
+def int_to_string_with_lib(value: int, library) -> str:
+    if library is None:
+        raise AssertionError('Expected library, got none')
+    if not isinstance(library, ModuleType):
+        raise AssertionError(f'Expected library to be instance of {ModuleType}, was {type(library)}')
+    return str(value)
 
 
 def parse_bool(value: Union[str, int, bool]):
@@ -65,6 +78,17 @@ class AcceptSubscriptedGenerics:
         self.sum = sum(numbers)
 
 
+class OnlyVarArg:
+    def __init__(self, *varargs):
+        self.value = varargs[0]
+        library = varargs[1]
+        if library is None:
+            raise AssertionError('Expected library, got none')
+        if not isinstance(library, ModuleType):
+            raise AssertionError(f'Expected library to be instance of {ModuleType}, was {type(library)}')
+
+
+
 class Strict:
     pass
 
@@ -78,12 +102,12 @@ class TooFewArgs:
 
 
 class TooManyArgs:
-    def __init__(self, one, two):
+    def __init__(self, one, two, three):
         pass
 
 
 class NoPositionalArg:
-    def __init__(self, *varargs):
+    def __init__(self, *, args):
         pass
 
 
@@ -94,11 +118,13 @@ class KwOnlyNotOk:
 
 ROBOT_LIBRARY_CONVERTERS = {Number: string_to_int,
                             bool: parse_bool,
+                            String: int_to_string_with_lib,
                             UsDate: UsDate.from_string,
                             FiDate: FiDate.from_string,
                             ClassAsConverter: ClassAsConverter,
                             ClassWithHintsAsConverter: ClassWithHintsAsConverter,
                             AcceptSubscriptedGenerics: AcceptSubscriptedGenerics,
+                            OnlyVarArg: OnlyVarArg,
                             Strict: None,
                             Invalid: 666,
                             TooFewArgs: TooFewArgs,
@@ -106,6 +132,11 @@ ROBOT_LIBRARY_CONVERTERS = {Number: string_to_int,
                             NoPositionalArg: NoPositionalArg,
                             KwOnlyNotOk: KwOnlyNotOk,
                             'Bad': int}
+
+
+def only_var_arg(argument: OnlyVarArg, expected):
+    assert isinstance(argument, OnlyVarArg)
+    assert argument.value == expected
 
 
 def number(argument: Number, expected: int = 0):
@@ -119,6 +150,11 @@ def true(argument: bool):
 
 def false(argument: bool):
     assert argument is False
+
+
+def string(argument: String, expected: str = '123'):
+    if argument != expected:
+        raise AssertionError
 
 
 def us_date(argument: UsDate, expected: date = None):
@@ -177,3 +213,30 @@ def invalid(a: Invalid, b: TooFewArgs, c: TooManyArgs, d: KwOnlyNotOk):
 
 def non_type_annotation(arg1: 'Hello, world!', arg2: 2 = 2):
     assert arg1 == arg2
+
+
+def multiplying_converter(value: str, library) -> int:
+    return library.counter * int(value)
+
+
+class StatefulLibrary:
+    ROBOT_LIBRARY_CONVERTERS = {Number: multiplying_converter}
+
+    def __init__(self):
+        self.counter = 1
+
+    def multiply(self, num: Number, expected: int):
+        self.counter += 1
+        assert num == int(expected)
+
+
+class StatefulGlobalLibrary:
+    ROBOT_LIBRARY_SCOPE = 'GLOBAL'
+    ROBOT_LIBRARY_CONVERTERS = {Number: multiplying_converter}
+
+    def __init__(self):
+        self.counter = 1
+
+    def global_multiply(self, num: Number, expected: int):
+        self.counter += 1
+        assert num == int(expected)

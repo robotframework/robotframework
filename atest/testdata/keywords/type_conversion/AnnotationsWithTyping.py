@@ -1,4 +1,4 @@
-from typing import (Dict, List, Mapping, MutableMapping, MutableSet, MutableSequence,
+from typing import (Any, Dict, List, Mapping, MutableMapping, MutableSet, MutableSequence,
                     Set, Sequence, Tuple, Union)
 try:
     from typing_extensions import TypedDict
@@ -113,7 +113,15 @@ def mutable_set_with_types(argument: MutableSet[float], expected=None):
     _validate_type(argument, expected)
 
 
+def any_(argument: Any = 1, expected=None):
+    _validate_type(argument, expected)
+
+
 def none_as_default(argument: List = None, expected=None):
+    _validate_type(argument, expected)
+
+
+def none_as_default_with_any(argument: Any = None, expected=None):
     _validate_type(argument, expected)
 
 

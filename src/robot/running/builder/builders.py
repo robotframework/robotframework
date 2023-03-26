@@ -13,13 +13,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
+from pathlib import Path
 
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.parsing import SuiteStructureBuilder, SuiteStructureVisitor
 
-from .parsers import RobotParser, NoInitFileDirectoryParser, RestParser
+from .parsers import JsonParser, RobotParser, NoInitFileDirectoryParser, RestParser
 from .settings import Defaults
 
 
@@ -36,19 +36,19 @@ class TestSuiteBuilder:
 
     - Inspect the suite to see, for example, what tests it has or what tags
       tests have. This can be more convenient than using the lower level
-      :mod:`~robot.parsing` APIs but does not allow saving modified data
-      back to the disk.
+      :mod:`~robot.parsing` APIs.
 
     Both modifying the suite and inspecting what data it contains are easiest
     done by using the :mod:`~robot.model.visitor` interface.
 
     This class is part of the public API and should be imported via the
-    :mod:`robot.api` package.
+    :mod:`robot.api` package. An alternative is using the
+    :meth:`TestSuite.from_file_system <robot.running.model.TestSuite.from_file_system>`
+    classmethod that uses this class internally.
     """
 
-    def __init__(self, included_suites=None, included_extensions=('robot',),
-                 rpa=None, lang=None, allow_empty_suite=False,
-                 process_curdir=True):
+    def __init__(self, included_suites=None, included_extensions=('.robot', '.rbt'),
+                 rpa=None, lang=None, allow_empty_suite=False, process_curdir=True):
         """
         :param include_suites:
             List of suite names to include. If ``None`` or an empty list, all
@@ -117,11 +117,14 @@ class SuiteStructureParser(SuiteStructureVisitor):
     def _get_parsers(self, extensions, lang, process_curdir):
         robot_parser = RobotParser(lang, process_curdir)
         rest_parser = RestParser(lang, process_curdir)
+        json_parser = JsonParser()
         parsers = {
             None: NoInitFileDirectoryParser(),
             'robot': robot_parser,
             'rst': rest_parser,
-            'rest': rest_parser
+            'rest': rest_parser,
+            'rbt': json_parser,
+            'json': json_parser
         }
         for ext in extensions:
             if ext not in parsers:
@@ -168,12 +171,14 @@ class SuiteStructureParser(SuiteStructureVisitor):
         defaults = Defaults(parent_defaults)
         parser = self._get_parser(structure.extension)
         try:
-            if structure.is_directory:
-                suite = parser.parse_init_file(structure.init_file or source, defaults)
-            else:
+            if structure.is_file:
                 suite = parser.parse_suite_file(source, defaults)
                 if not suite.tests:
                     LOGGER.info(f"Data source '{source}' has no tests or tasks.")
+            else:
+                suite = parser.parse_init_file(structure.init_file or source, defaults)
+                if not source:
+                    suite.config(name='', source=None)
             self._validate_execution_mode(suite)
         except DataError as err:
             raise DataError(f"Parsing '{source}' failed: {err.message}")
@@ -200,7 +205,9 @@ class ResourceFileBuilder:
         self.lang = lang
         self.process_curdir = process_curdir
 
-    def build(self, source):
+    def build(self, source: Path):
+        if not isinstance(source, Path):
+            source = Path(source)
         LOGGER.info(f"Parsing resource file '{source}'.")
         resource = self._parse(source)
         if resource.imports or resource.variables or resource.keywords:
@@ -211,6 +218,6 @@ class ResourceFileBuilder:
         return resource
 
     def _parse(self, source):
-        if os.path.splitext(source)[1].lower() in ('.rst', '.rest'):
+        if source.suffix.lower() in ('.rst', '.rest'):
             return RestParser(self.lang, self.process_curdir).parse_resource_file(source)
         return RobotParser(self.lang, self.process_curdir).parse_resource_file(source)

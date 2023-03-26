@@ -35,21 +35,6 @@ class TestKeyword(unittest.TestCase):
         assert_equal(test.setup.id, 's1-t1-k1')
         assert_equal(test.teardown.id, 's1-t1-k3')
 
-    def test_keyword_teardown(self):
-        kw = Keyword()
-        assert_true(not kw.has_teardown)
-        assert_true(not kw.teardown)
-        assert_equal(kw.teardown.name, None)
-        assert_equal(kw.teardown.type, 'TEARDOWN')
-        kw.teardown = Keyword()
-        assert_true(kw.has_teardown)
-        assert_true(kw.teardown)
-        assert_equal(kw.teardown.name, '')
-        assert_equal(kw.teardown.type, 'TEARDOWN')
-        kw.teardown = None
-        assert_true(not kw.has_teardown)
-        assert_true(not kw.teardown)
-
     def test_test_body_id(self):
         kws = [Keyword(), Keyword(), Keyword()]
         TestSuite().tests.create().body.extend(kws)
@@ -108,30 +93,29 @@ class TestKeyword(unittest.TestCase):
         assert_raises(AttributeError, setattr, Keyword(), 'attr', 'value')
 
     def test_copy(self):
-        kw = Keyword(name='Keyword')
+        kw = Keyword(name='Keyword', args=['args'])
         copy = kw.copy()
         assert_equal(kw.name, copy.name)
         copy.name += ' copy'
         assert_not_equal(kw.name, copy.name)
-        assert_equal(id(kw.tags), id(copy.tags))
+        assert_equal(id(kw.args), id(copy.args))
 
     def test_copy_with_attributes(self):
-        kw = Keyword(name='Orig', doc='Orig', tags=['orig'])
-        copy = kw.copy(name='New', doc='New', tags=['new'])
+        kw = Keyword(name='Orig', args=['orig'])
+        copy = kw.copy(name='New', args=['new'])
         assert_equal(copy.name, 'New')
-        assert_equal(copy.doc, 'New')
-        assert_equal(list(copy.tags), ['new'])
+        assert_equal(copy.args, ['new'])
 
     def test_deepcopy(self):
-        kw = Keyword(name='Keyword')
+        kw = Keyword(name='Keyword', args=['a'])
         copy = kw.deepcopy()
         assert_equal(kw.name, copy.name)
-        assert_not_equal(id(kw.tags), id(copy.tags))
+        assert_not_equal(id(kw.args), id(copy.args))
 
     def test_deepcopy_with_attributes(self):
-        copy = Keyword(name='Orig').deepcopy(name='New', doc='New')
+        copy = Keyword(name='Orig').deepcopy(name='New', args=['New'])
         assert_equal(copy.name, 'New')
-        assert_equal(copy.doc, 'New')
+        assert_equal(copy.args, ['New'])
 
 
 class TestKeywords(unittest.TestCase):

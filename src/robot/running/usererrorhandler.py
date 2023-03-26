@@ -22,10 +22,10 @@ from .statusreporter import StatusReporter
 
 
 class UserErrorHandler:
-    """Created if creating handlers fail -- running raises DataError.
+    """Created if creating handlers fail. Running it raises DataError.
 
     The idea is not to raise DataError at processing time and prevent all
-    tests in affected test case file from executing. Instead UserErrorHandler
+    tests in affected test case file from executing. Instead, UserErrorHandler
     is created and if it is ever run DataError is raised then.
     """
     supports_embedded_arguments = False
@@ -49,11 +49,11 @@ class UserErrorHandler:
 
     @property
     def longname(self):
-        return '%s.%s' % (self.libname, self.name) if self.libname else self.name
+        return f'{self.libname}.{self.name}' if self.libname else self.name
 
     @property
     def doc(self):
-        return '*Creating keyword failed:* %s' % self.error
+        return f'*Creating keyword failed:* {self.error}'
 
     @property
     def shortdoc(self):

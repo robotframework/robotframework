@@ -2,7 +2,6 @@ import os
 import unittest
 import tempfile
 from io import StringIO
-from os.path import join, dirname
 from pathlib import Path
 
 from robot.errors import DataError
@@ -10,14 +9,10 @@ from robot.result import ExecutionResult, ExecutionResultBuilder, Result, TestSu
 from robot.utils.asserts import assert_equal, assert_false, assert_true, assert_raises
 
 
-def _read_file(name):
-    with open(join(dirname(__file__), name)) as f:
-        return f.read()
-
-
-GOLDEN_XML = _read_file('golden.xml')
-GOLDEN_XML_TWICE = _read_file('goldenTwice.xml')
-SUITE_TEARDOWN_FAILED = _read_file('suite_teardown_failed.xml')
+CURDIR = Path(__file__).resolve().parent
+GOLDEN_XML = (CURDIR / 'golden.xml').read_text()
+GOLDEN_XML_TWICE = (CURDIR / 'goldenTwice.xml').read_text()
+SUITE_TEARDOWN_FAILED = (CURDIR / 'suite_teardown_failed.xml').read_text()
 
 
 class TestBuildingSuiteExecutionResult(unittest.TestCase):
@@ -28,7 +23,7 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         self.test = self.suite.tests[0]
 
     def test_suite_is_built(self):
-        assert_equal(self.suite.source, 'normal.html')
+        assert_equal(self.suite.source, Path('normal.html'))
         assert_equal(self.suite.name, 'Normal')
         assert_equal(self.suite.doc, 'Normal test cases')
         assert_equal(self.suite.metadata, {'Something': 'My Value'})
@@ -352,7 +347,7 @@ class TestUsingPathlibPath(unittest.TestCase):
 
     def test_suite_is_built(self, suite=None):
         suite = suite or self.result.suite
-        assert_equal(suite.source, 'normal.html')
+        assert_equal(suite.source, Path('normal.html'))
         assert_equal(suite.name, 'Normal')
         assert_equal(suite.doc, 'Normal test cases')
         assert_equal(suite.metadata, {'Something': 'My Value'})

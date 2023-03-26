@@ -84,14 +84,18 @@ Multiple settings
     Should Be Equal    ${ret}    Hello World!!
 
 Invalid setting
-    [Documentation]    FAIL Keywords are executed regardless invalid settings
-    Invalid passing
-    Invalid failing
+    [Documentation]    FAIL Non-existing setting 'Invalid Setting'.
+    Invalid
+    Invalid
 
 Setting not valid with user keywords
+    [Documentation]    FAIL Setting 'Metadata' is not allowed with user keywords.
     Setting not valid with user keywords
 
 Small typo should provide recommendation
+    [Documentation]    FAIL
+    ...    Non-existing setting 'Doc Umentation'. Did you mean:
+    ...    ${SPACE*4}Documentation
     Small typo should provide recommendation
 
 *** Keywords ***
@@ -194,13 +198,9 @@ Multiple settings
     [Teardown]    Log    Teardown ${name}
     [Return]    Hello ${name}!!
 
-Invalid passing
+Invalid
     [Invalid Setting]    This is invalid
     No Operation
-
-Invalid failing
-    [invalid]    Yes, this is also invalid
-    Fail    Keywords are executed regardless invalid settings
 
 Setting not valid with user keywords
     [Metadata]    Not valid.

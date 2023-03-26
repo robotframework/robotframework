@@ -1,17 +1,16 @@
 import unittest
-from os.path import abspath, dirname, normpath, join
+from pathlib import Path
 
 from robot.errors import DataError
 from robot.utils.asserts import assert_equal, assert_raises, assert_true
 from robot.running import TestSuite, TestSuiteBuilder
 
 
-CURDIR = dirname(abspath(__file__))
-DATADIR = join(CURDIR, '..', '..', 'atest', 'testdata', 'misc')
+DATADIR = (Path(__file__).parent / '../../atest/testdata/misc').resolve()
 
 
 def build(*paths, **config):
-    paths = [normpath(join(DATADIR, p)) for p in paths]
+    paths = [Path(DATADIR, p).resolve() for p in paths]
     suite = TestSuiteBuilder(**config).build(*paths)
     assert_true(isinstance(suite, TestSuite))
     assert_equal(suite.source, paths[0] if len(paths) == 1 else None)
@@ -35,7 +34,7 @@ class TestBuilding(unittest.TestCase):
 
     def test_imports(self):
         imp = build('dummy_lib_test.robot').resource.imports[0]
-        assert_equal(imp.type, 'Library')
+        assert_equal(imp.type, 'LIBRARY')
         assert_equal(imp.name, 'DummyLib')
         assert_equal(imp.args, ())
 
@@ -95,8 +94,6 @@ class TestBuilding(unittest.TestCase):
         test = build('setups_and_teardowns.robot').tests[0]
         assert_keyword(test.setup, name='${TEST SETUP}', type='SETUP')
         assert_keyword(test.teardown, name='${TEST TEARDOWN}', type='TEARDOWN')
-        assert_equal([kw.name for kw in test.body],
-                      ['Keyword'])
         assert_equal([kw.name for kw in test.body], ['Keyword'])
 
     def test_test_timeout(self):

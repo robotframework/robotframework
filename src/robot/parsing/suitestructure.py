@@ -13,146 +13,41 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os.path
+from os.path import normpath
+from pathlib import Path
+from typing import List
 
 from robot.errors import DataError
 from robot.model import SuiteNamePatterns
 from robot.output import LOGGER
-from robot.utils import abspath, get_error_message, safe_str
+from robot.utils import get_error_message, seq2str
 
 
 class SuiteStructure:
 
-    def __init__(self, source=None, init_file=None, children=None):
+    def __init__(self, source: Path = None, init_file: Path = None,
+                 children: List['SuiteStructure'] = None):
         self.source = source
         self.init_file = init_file
         self.children = children
-        self.extension = self._get_extension(source, init_file)
-
-    def _get_extension(self, source, init_file):
-        if self.is_directory and not init_file:
-            return None
-        source = init_file or source
-        return os.path.splitext(source)[1][1:].lower()
 
     @property
-    def is_directory(self):
-        return self.children is not None
+    def extension(self):
+        source = self.source if self.is_file else self.init_file
+        return source.suffix[1:].lower() if source else None
+
+    @property
+    def is_file(self):
+        return self.children is None
+
+    def add(self, child: 'SuiteStructure'):
+        self.children.append(child)
 
     def visit(self, visitor):
         if self.children is None:
             visitor.visit_file(self)
         else:
             visitor.visit_directory(self)
-
-
-class SuiteStructureBuilder:
-    ignored_prefixes = ('_', '.')
-    ignored_dirs = ('CVS',)
-
-    def __init__(self, included_extensions=('robot',), included_suites=None):
-        self.included_extensions = included_extensions
-        self.included_suites = included_suites
-
-    def build(self, paths):
-        paths = list(self._normalize_paths(paths))
-        if len(paths) == 1:
-            return self._build(paths[0], self.included_suites)
-        children = [self._build(p, self.included_suites) for p in paths]
-        return SuiteStructure(children=children)
-
-    def _normalize_paths(self, paths):
-        if not paths:
-            raise DataError('One or more source paths required.')
-        for path in paths:
-            path = os.path.normpath(path)
-            if not os.path.exists(path):
-                raise DataError("Parsing '%s' failed: File or directory to "
-                                "execute does not exist." % path)
-            yield abspath(path)
-
-    def _build(self, path, include_suites):
-        if os.path.isfile(path):
-            return SuiteStructure(path)
-        include_suites = self._get_include_suites(path, include_suites)
-        init_file, paths = self._get_child_paths(path, include_suites)
-        children = [self._build(p, include_suites) for p in paths]
-        return SuiteStructure(path, init_file, children)
-
-    def _get_include_suites(self, path, incl_suites):
-        if not incl_suites:
-            return None
-        if not isinstance(incl_suites, SuiteNamePatterns):
-            incl_suites = SuiteNamePatterns(
-                self._create_included_suites(incl_suites))
-        # If a directory is included, also all its children should be included.
-        if self._is_in_included_suites(os.path.basename(path), incl_suites):
-            return None
-        return incl_suites
-
-    def _create_included_suites(self, incl_suites):
-        for suite in incl_suites:
-            yield suite
-            while '.' in suite:
-                suite = suite.split('.', 1)[1]
-                yield suite
-
-    def _get_child_paths(self, dirpath, incl_suites=None):
-        init_file = None
-        paths = []
-        for path, is_init_file in self._list_dir(dirpath, incl_suites):
-            if is_init_file:
-                if not init_file:
-                    init_file = path
-                else:
-                    LOGGER.error("Ignoring second test suite init file '%s'."
-                                 % path)
-            else:
-                paths.append(path)
-        return init_file, paths
-
-    def _list_dir(self, dir_path, incl_suites):
-        try:
-            names = os.listdir(dir_path)
-        except:
-            raise DataError("Reading directory '%s' failed: %s"
-                            % (dir_path, get_error_message()))
-        for name in sorted(names, key=lambda item: item.lower()):
-            name = safe_str(name)  # Handles NFC normalization on OSX
-            path = os.path.join(dir_path, name)
-            base, ext = os.path.splitext(name)
-            ext = ext[1:].lower()
-            if self._is_init_file(path, base, ext):
-                yield path, True
-            elif self._is_included(path, base, ext, incl_suites):
-                yield path, False
-            else:
-                LOGGER.info("Ignoring file or directory '%s'." % path)
-
-    def _is_init_file(self, path, base, ext):
-        return (base.lower() == '__init__'
-                and ext in self.included_extensions
-                and os.path.isfile(path))
-
-    def _is_included(self, path, base, ext, incl_suites):
-        if base.startswith(self.ignored_prefixes):
-            return False
-        if os.path.isdir(path):
-            return base not in self.ignored_dirs or ext
-        if ext not in self.included_extensions:
-            return False
-        return self._is_in_included_suites(base, incl_suites)
-
-    def _is_in_included_suites(self, name, incl_suites):
-        if not incl_suites:
-            return True
-        return incl_suites.match(self._split_prefix(name))
-
-    def _split_prefix(self, name):
-        result = name.split('__', 1)[-1]
-        if result:
-            return result
-        return name
 
 
 class SuiteStructureVisitor:
@@ -171,3 +66,102 @@ class SuiteStructureVisitor:
 
     def end_directory(self, structure):
         pass
+
+
+class SuiteStructureBuilder:
+    ignored_prefixes = ('_', '.')
+    ignored_dirs = ('CVS',)
+
+    def __init__(self, included_extensions=('.robot', '.rbt'), included_suites=None):
+        self.included_extensions = included_extensions
+        self.included_suites = None if not included_suites else \
+            SuiteNamePatterns(self._create_included_suites(included_suites))
+
+    def _create_included_suites(self, included_suites):
+        for suite in included_suites:
+            yield suite
+            while '.' in suite:
+                suite = suite.split('.', 1)[1]
+                yield suite
+
+    def build(self, paths):
+        paths = list(self._normalize_paths(paths))
+        if len(paths) == 1:
+            return self._build(paths[0], self.included_suites)
+        return self._build_multi_source(paths)
+
+    def _normalize_paths(self, paths):
+        if not paths:
+            raise DataError('One or more source paths required.')
+        # Cannot use `Path.resolve()` here because it resolves all symlinks which
+        # isn't desired. `Path` doesn't have any methods for normalizing paths
+        # so need to use `os.path.normpath()`. Also that _may_ resolve symlinks,
+        # but we need to do it for backwards compatibility.
+        paths = [Path(normpath(p)).absolute() for p in paths]
+        non_existing = [p for p in paths if not p.exists()]
+        if non_existing:
+            raise DataError(f"Parsing {seq2str(non_existing)} failed: "
+                            f"File or directory to execute does not exist.")
+        return paths
+
+    def _build(self, path, included_suites):
+        if path.is_file():
+            return SuiteStructure(path)
+        return self._build_directory(path, included_suites)
+
+    def _build_directory(self, dir_path, included_suites):
+        structure = SuiteStructure(dir_path, children=[])
+        # If a directory is included, also its children are included.
+        if self._is_suite_included(dir_path.name, included_suites):
+            included_suites = None
+        for path in self._list_dir(dir_path):
+            if self._is_init_file(path):
+                if structure.init_file:
+                    LOGGER.error(f"Ignoring second test suite init file '{path}'.")
+                else:
+                    structure.init_file = path
+            elif self._is_included(path, included_suites):
+                structure.add(self._build(path, included_suites))
+            else:
+                LOGGER.info(f"Ignoring file or directory '{path}'.")
+        return structure
+
+    def _is_suite_included(self, name, included_suites):
+        if not included_suites:
+            return True
+        if '__' in name:
+            name = name.split('__', 1)[1] or name
+        return included_suites.match(name)
+
+    def _list_dir(self, path):
+        try:
+            return sorted(path.iterdir(), key=lambda p: p.name.lower())
+        except OSError:
+            raise DataError(f"Reading directory '{path}' failed: {get_error_message()}")
+
+    def _is_init_file(self, path: Path):
+        return (path.stem.lower() == '__init__'
+                and path.suffix.lower() in self.included_extensions
+                and path.is_file())
+
+    def _is_included(self, path: Path, included_suites):
+        if path.name.startswith(self.ignored_prefixes):
+            return False
+        if path.is_dir():
+            return path.name not in self.ignored_dirs
+        if not path.is_file():
+            return False
+        if path.suffix.lower() not in self.included_extensions:
+            return False
+        return self._is_suite_included(path.stem, included_suites)
+
+    def _build_multi_source(self, paths: List[Path]):
+        structure = SuiteStructure(children=[])
+        for path in paths:
+            if self._is_init_file(path):
+                if structure.init_file:
+                    raise DataError("Multiple init files not allowed.")
+                structure.init_file = path
+            else:
+                structure.add(self._build(path, self.included_suites))
+        return structure

@@ -153,11 +153,12 @@ two different approaches for creating variables:
 Alternatively variable files can be implemented as `classes`__
 that the framework will instantiate. Also in this case it is possible to create
 variables as attributes or get them dynamically from the `get_variables`
-method. Variable files can also be created as `YAML files`__.
+method. Variable files can also be created as YAML__ and JSON__.
 
 __ `Setting variables in command line`_
 __ `Implementing variable file as a class`_
 __ `Variable file as YAML`_
+__ `Variable file as JSON`_
 
 Taking variable files into use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -542,8 +543,9 @@ creates only one variable `${DYNAMIC VARIABLE}`.
 Variable file as YAML
 ~~~~~~~~~~~~~~~~~~~~~
 
-Variable files can also be implemented as `YAML <http://yaml.org>`_ files.
-YAML is a data serialization language with a simple and human-friendly syntax.
+Variable files can also be implemented as `YAML <https://yaml.org>`_ files.
+YAML is a data serialization language with a simple and human-friendly syntax
+that is nevertheless easy for machines to parse.
 The following example demonstrates a simple YAML file:
 
 .. sourcecode:: yaml
@@ -558,20 +560,11 @@ The following example demonstrates a simple YAML file:
       two: kaksi
       with spaces: kolme
 
-.. note:: Using YAML files with Robot Framework requires `PyYAML
-          <http://pyyaml.org>`_ module to be installed. If you have
-          pip_ installed, you can install it simply by running
-          `pip install pyyaml`.
-
-          YAML variable files must have either :file:`.yaml` or :file:`.yml`
-          extension. Support for the :file:`.yml` extension is new in
-          Robot Framework 3.2.
-
 YAML variable files can be used exactly like normal variable files
 from the command line using :option:`--variablefile` option, in the Settings
 section using :setting:`Variables` setting, and dynamically using the
-:name:`Import Variables` keyword.
-
+:name:`Import Variables` keyword. They are automatically recognized by their
+extension that must be either :file:`.yaml` or :file:`.yml`.
 If the above YAML file is imported, it will create exactly the same variables
 as this Variable section:
 
@@ -583,7 +576,7 @@ as this Variable section:
    @{LIST}       one         two
    &{DICT}       one=yksi    two=kaksi    with spaces=kolme
 
-YAML files used as variable files must always be mappings in the top level.
+YAML files used as variable files must always be mappings on the top level.
 As the above example demonstrates, keys and values in the mapping become
 variable names and values, respectively. Variable values can be any data
 types supported by YAML syntax. If names or values contain non-ASCII
@@ -595,5 +588,42 @@ Most importantly, values of these dictionaries are accessible as attributes
 like `${DICT.one}`, assuming their names are valid as Python attribute names.
 If the name contains spaces or is otherwise not a valid attribute name, it is
 always possible to access dictionary values using syntax like
-`${DICT}[with spaces]` syntax. The created dictionaries are also ordered, but
-unfortunately the original source order of in the YAML file is not preserved.
+`${DICT}[with spaces]` syntax.
+
+.. note:: Using YAML files with Robot Framework requires `PyYAML
+          <http://pyyaml.org>`_ module to be installed. You can typically
+          install it with pip_ like `pip install pyyaml`.
+
+Variable file as JSON
+~~~~~~~~~~~~~~~~~~~~~
+
+Variable files can also be implemented as `JSON <https://json.org>`_ files.
+Similarly as YAML discussed in the previous section, JSON is a data
+serialization format targeted both for humans and machines. It is based on
+JavaScript syntax and it is not as human-friendly as YAML, but it still
+relatively easy to understand and modify. The following example contains
+exactly the same data as the earlier YAML example:
+
+.. sourcecode:: json
+
+    {
+        "string": "Hello, world!",
+        "integer": 42,
+        "list": [
+            "one",
+            "two"
+        ],
+        "dict": {
+            "one": "yksi",
+            "two": "kaksi",
+            "with spaces": "kolme"
+        }
+    }
+
+JSON variable files are automatically recognized by their :file:`.json`
+extension and they can be used exactly like YAML variable files. They
+also have exactly same requirements for structure, encoding, and so on.
+Unlike YAML, Python supports JSON out-of-the-box so no extra modules need
+to be installed.
+
+.. note:: Support for JSON variable files is new in Robot Framework 6.1.

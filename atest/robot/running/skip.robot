@@ -119,7 +119,7 @@ Skipped with --SkipOnFailure when Failure in Test Teardown
     Check Test Case    ${TEST NAME}
 
 Skipped with --SkipOnFailure when Set Tags Used in Teardown
-    Check Test Case    Skipped with --SkipOnFailure when Set Tags Used in Teardown
+    Check Test Case    ${TEST NAME}
 
 Skipped although test fails since test is tagged with robot:skip-on-failure
     Check Test Case    ${TEST NAME}
@@ -127,3 +127,11 @@ Skipped although test fails since test is tagged with robot:skip-on-failure
 Using Skip Does Not Affect Passing And Failing Tests
     Check Test Case    Passing Test
     Check Test Case    Failing Test
+
+Suite setup and teardown are not run if all tests are unconditionally skipped or excluded
+    ${suite} =    Get Test Suite    All Skipped
+    Should Be True      not ($suite.setup or $suite.teardown)
+    Should Be True      not ($suite.suites[0].setup or $suite.suites[0].teardown)
+    Check Test Case     Skip using robot:skip
+    Check Test Case     Skip using --skip
+    Length Should Be    ${suite.suites[0].tests}    2

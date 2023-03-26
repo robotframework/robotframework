@@ -561,12 +561,18 @@ Invalid kwonly
 Return value annotation causes no error
     Return value annotation                    42    42
 
-None as default
+None as default with known type
     None as default
-    None as default                            []    []
+    None as default                            [1, 2]    [1, 2]
+    None as default                            None      None
+
+None as default with unknown type
+    None as default with unknown type
+    None as default with unknown type          hi!      'hi!'
+    None as default with unknown type          ${42}    42
+    None as default with unknown type          None     None
 
 Forward references
-    [Tags]    require-py3.5
     Forward referenced concrete type           42    42
     Forward referenced ABC                     []    []
 

@@ -15,6 +15,7 @@
 
 import ast
 import re
+from typing import TYPE_CHECKING
 
 from robot.conf import Language
 from robot.running.arguments import UserKeywordArgumentParser
@@ -22,6 +23,9 @@ from robot.utils import is_list_like, normalize_whitespace, seq2str, split_from_
 from robot.variables import is_scalar_assign, is_dict_variable, search_variable
 
 from ..lexer import Token
+
+if TYPE_CHECKING:
+    from .blocks import ValidationContext
 
 
 FOUR_SPACES = '    '
@@ -84,6 +88,7 @@ class Statement(ast.AST):
         settings header or test/keyword.
 
         Most implementations support following general properties:
+
         - ``separator`` whitespace inserted between each token. Default is four spaces.
         - ``indent`` whitespace inserted before first token. Default is four spaces.
         - ``eol`` end of line sign. Default is ``'\\n'``.
@@ -122,6 +127,10 @@ class Statement(ast.AST):
         """Return values of tokens having any of the given ``types``."""
         return tuple(t.value for t in self.tokens if t.type in types)
 
+    def get_option(self, name):
+        options = dict(opt.split('=', 1) for opt in self.get_values(Token.OPTION))
+        return options.get(name)
+
     @property
     def lines(self):
         line = []
@@ -133,7 +142,7 @@ class Statement(ast.AST):
         if line:
             yield line
 
-    def validate(self, context):
+    def validate(self, ctx: 'ValidationContext'):
         pass
 
     def __iter__(self):
@@ -146,34 +155,45 @@ class Statement(ast.AST):
         return self.tokens[item]
 
     def __repr__(self):
-        errors = '' if not self.errors else ', errors=%s' % list(self.errors)
-        return '%s(tokens=%s%s)' % (type(self).__name__, list(self.tokens), errors)
+        name = type(self).__name__
+        tokens = f'tokens={list(self.tokens)}'
+        errors = f', errors={list(self.errors)}' if self.errors else ''
+        return f'{name}({tokens}{errors})'
 
 
 class DocumentationOrMetadata(Statement):
 
-    def _join_value(self, tokens):
-        lines = self._get_lines(tokens)
-        return ''.join(self._yield_lines_with_newlines(lines))
+    @property
+    def value(self):
+        return ''.join(self._get_lines_with_newlines()).rstrip()
 
-    def _get_lines(self, tokens):
-        lines = []
-        line = None
-        lineno = -1
-        for t in tokens:
-            if t.lineno != lineno:
-                line = []
-                lines.append(line)
-            line.append(t.value)
-            lineno = t.lineno
-        return [' '.join(line) for line in lines]
-
-    def _yield_lines_with_newlines(self, lines):
-        last_index = len(lines) - 1
-        for index, line in enumerate(lines):
+    def _get_lines_with_newlines(self):
+        for parts in self._get_line_parts():
+            line = ' '.join(parts)
             yield line
-            if index < last_index and not self._escaped_or_has_newline(line):
+            if not self._escaped_or_has_newline(line):
                 yield '\n'
+
+    def _get_line_parts(self):
+        line = []
+        lineno = -1
+        # There are no EOLs during execution or if data has been parsed with
+        # `data_only=True` otherwise, so we need to look at line numbers to
+        # know when lines change. If model is created programmatically using
+        # `from_params` or otherwise, line numbers may not be set, but there
+        # ought to be EOLs. If both EOLs and line numbers are missing,
+        # everything is considered to be on the same line.
+        for token in self.get_tokens(Token.ARGUMENT, Token.EOL):
+            eol = token.type == Token.EOL
+            if token.lineno != lineno or eol:
+                if line:
+                    yield line
+                line = []
+            if not eol:
+                line.append(token.value)
+            lineno = token.lineno
+        if line:
+            yield line
 
     def _escaped_or_has_newline(self, line):
         match = re.search(r'(\\+)n?$', line)
@@ -212,7 +232,8 @@ class Fixture(Statement):
 class SectionHeader(Statement):
     handles_types = (Token.SETTING_HEADER, Token.VARIABLE_HEADER,
                      Token.TESTCASE_HEADER, Token.TASK_HEADER,
-                     Token.KEYWORD_HEADER, Token.COMMENT_HEADER)
+                     Token.KEYWORD_HEADER, Token.COMMENT_HEADER,
+                     Token.INVALID_HEADER)
 
     @classmethod
     def from_params(cls, type, name=None, eol=EOL):
@@ -221,7 +242,7 @@ class SectionHeader(Statement):
                      'Keywords', 'Comments')
             name = dict(zip(cls.handles_types, names))[type]
         if not name.startswith('*'):
-            name = '*** %s ***' % name
+            name = f'*** {name} ***'
         return cls([
             Token(type, name),
             Token('EOL', '\n')
@@ -338,15 +359,10 @@ class Documentation(DocumentationOrMetadata):
                 tokens.append(Token(Token.SEPARATOR, indent))
             tokens.append(Token(Token.CONTINUATION))
             if line:
-                tokens.extend([Token(Token.SEPARATOR, multiline_separator),
-                               Token(Token.ARGUMENT, line)])
-            tokens.append(Token(Token.EOL, eol))
+                tokens.append(Token(Token.SEPARATOR, multiline_separator))
+            tokens.extend([Token(Token.ARGUMENT, line),
+                           Token(Token.EOL, eol)])
         return cls(tokens)
-
-    @property
-    def value(self):
-        tokens = self.get_tokens(Token.ARGUMENT)
-        return self._join_value(tokens)
 
 
 @Statement.register
@@ -373,11 +389,6 @@ class Metadata(DocumentationOrMetadata):
     @property
     def name(self):
         return self.get_value(Token.NAME)
-
-    @property
-    def value(self):
-        tokens = self.get_tokens(Token.ARGUMENT)
-        return self._join_value(tokens)
 
 
 @Statement.register
@@ -540,11 +551,11 @@ class Variable(Statement):
     def value(self):
         return self.get_values(Token.ARGUMENT)
 
-    def validate(self, context):
+    def validate(self, ctx: 'ValidationContext'):
         name = self.get_value(Token.VARIABLE)
         match = search_variable(name, ignore_errors=True)
         if not match.is_assign(allow_assign_mark=True):
-            self.errors += ("Invalid variable name '%s'." % name,)
+            self.errors += (f"Invalid variable name '{name}'.",)
         if match.is_dict_assign(allow_assign_mark=True):
             self._validate_dict_items()
 
@@ -552,9 +563,9 @@ class Variable(Statement):
         for item in self.get_values(Token.ARGUMENT):
             if not self._is_valid_dict_item(item):
                 self.errors += (
-                    "Invalid dictionary variable item '%s'. "
-                    "Items must use 'name=value' syntax or be dictionary "
-                    "variables themselves." % item,
+                    f"Invalid dictionary variable item '{item}'. "
+                    f"Items must use 'name=value' syntax or be dictionary "
+                    f"variables themselves.",
                 )
 
     def _is_valid_dict_item(self, item):
@@ -576,6 +587,10 @@ class TestCaseName(Statement):
     @property
     def name(self):
         return self.get_value(Token.TESTCASE_NAME)
+
+    def validate(self, ctx: 'ValidationContext'):
+        if not self.name:
+            self.errors += ('Test name cannot be empty.',)
 
 
 @Statement.register
@@ -689,14 +704,29 @@ class Arguments(MultiValue):
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
-    def validate(self, context):
+    def validate(self, ctx: 'ValidationContext'):
         errors = []
         UserKeywordArgumentParser(error_reporter=errors.append).parse(self.values)
         self.errors = tuple(errors)
 
 
+# TODO: Change Return to mean ReturnStatement in RF 7.0
+# - Rename current Return to ReturnSetting
+# - Rename current ReturnStatement to Return
+# - Add backwards compatible ReturnStatement alias
+# - Change Token.RETURN to mean Token.RETURN_STATEMENT
+# - Update also ModelVisitor
 @Statement.register
 class Return(MultiValue):
+    """Represents the deprecated ``[Return]`` setting.
+
+    In addition to the ``[Return]`` setting itself, also the ``Return`` node
+    in the parsing model is deprecated and :class:`ReturnSetting` (new in
+    Robot Framework 6.1) should be used instead. :class:`ReturnStatement` will
+    be renamed to ``Return`` in Robot Framework 7.0.
+
+    Eventually ``[Return]`` and ``ReturnSetting`` will be removed altogether.
+    """
     type = Token.RETURN
 
     @classmethod
@@ -708,6 +738,10 @@ class Return(MultiValue):
                            Token(Token.ARGUMENT, arg)])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
+
+
+# Forward compatible alias for Return.
+ReturnSetting = Return
 
 
 @Statement.register
@@ -792,7 +826,19 @@ class ForHeader(Statement):
         separator = self.get_token(Token.FOR_SEPARATOR)
         return normalize_whitespace(separator.value) if separator else None
 
-    def validate(self, context):
+    @property
+    def start(self):
+        return self.get_option('start') if self.flavor == 'IN ENUMERATE' else None
+
+    @property
+    def mode(self):
+        return self.get_option('mode') if self.flavor == 'IN ZIP' else None
+
+    @property
+    def fill(self):
+        return self.get_option('fill') if self.flavor == 'IN ZIP' else None
+
+    def validate(self, ctx: 'ValidationContext'):
         if not self.variables:
             self._add_error('no loop variables')
         if not self.flavor:
@@ -800,12 +846,12 @@ class ForHeader(Statement):
         else:
             for var in self.variables:
                 if not is_scalar_assign(var):
-                    self._add_error("invalid loop variable '%s'" % var)
+                    self._add_error(f"invalid loop variable '{var}'")
             if not self.values:
                 self._add_error('no loop values')
 
     def _add_error(self, error):
-        self.errors += ('FOR loop has %s.' % error,)
+        self.errors += (f'FOR loop has {error}.',)
 
 
 class IfElseHeader(Statement):
@@ -840,12 +886,12 @@ class IfHeader(IfElseHeader):
             return ', '.join(values) if values else None
         return values[0]
 
-    def validate(self, context):
+    def validate(self, ctx: 'ValidationContext'):
         conditions = len(self.get_tokens(Token.ARGUMENT))
         if conditions == 0:
-            self.errors += ('%s must have a condition.' % self.type,)
+            self.errors += (f'{self.type} must have a condition.',)
         if conditions > 1:
-            self.errors += ('%s cannot have more than one condition.' % self.type,)
+            self.errors += (f'{self.type} cannot have more than one condition.',)
 
 
 @Statement.register
@@ -874,7 +920,7 @@ class ElseHeader(IfElseHeader):
             Token(Token.EOL, eol)
         ])
 
-    def validate(self, context):
+    def validate(self, ctx: 'ValidationContext'):
         if self.get_tokens(Token.ARGUMENT):
             values = self.get_values(Token.ARGUMENT)
             self.errors += (f'ELSE does not accept arguments, got {seq2str(values)}.',)
@@ -890,7 +936,7 @@ class NoArgumentHeader(Statement):
             Token(Token.EOL, eol)
         ])
 
-    def validate(self, context):
+    def validate(self, ctx: 'ValidationContext'):
         if self.get_tokens(Token.ARGUMENT):
             self.errors += (f'{self.type} does not accept arguments, got '
                             f'{seq2str(self.values)}.',)
@@ -934,14 +980,13 @@ class ExceptHeader(Statement):
 
     @property
     def pattern_type(self):
-        value = self.get_value(Token.OPTION)
-        return value[len('type='):] if value else None
+        return self.get_option('type')
 
     @property
     def variable(self):
         return self.get_value(Token.VARIABLE)
 
-    def validate(self, context):
+    def validate(self, ctx: 'ValidationContext'):
         as_token = self.get_token(Token.AS)
         if as_token:
             variables = self.get_tokens(Token.VARIABLE)
@@ -980,8 +1025,7 @@ class WhileHeader(Statement):
         if on_limit_message:
             tokens.extend([Token(Token.SEPARATOR, indent),
                            Token(Token.OPTION,
-                                 f'on_limit_message={on_limit_message}'
-                                 )])
+                                 f'on_limit_message={on_limit_message}')])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
@@ -991,31 +1035,18 @@ class WhileHeader(Statement):
 
     @property
     def limit(self):
-        values = self.get_values(Token.OPTION)
-        for value in values:
-            if value.startswith('limit='):
-                return value[len('limit='):]
-        return None
+        return self.get_option('limit')
 
     @property
     def on_limit_message(self):
-        values = self.get_values(Token.OPTION)
-        for value in values:
-            if value.startswith('on_limit_message='):
-                return value[len('on_limit_message='):]
-        return None
+        return self.get_option('on_limit_message')
 
-    def validate(self, context):
+    def validate(self, ctx: 'ValidationContext'):
         values = self.get_values(Token.ARGUMENT)
         if len(values) == 0:
             self.errors += ('WHILE must have a condition.',)
-        if len(values) == 2 or len(values) == 3:
-            self.errors += (
-                            f"WHILE loop arguments must be 'limit' "
-                            f"or 'on_limit_message', "
-                            f"got '{values[1]}'.",)
-        if len(values) > 3:
-            self.errors += ('WHILE cannot have more than one condition.',)
+        if len(values) > 1:
+            self.errors += (f'WHILE cannot have more than one condition, got {seq2str(values)}.',)
 
 
 @Statement.register
@@ -1036,21 +1067,21 @@ class ReturnStatement(Statement):
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
-    def validate(self, context):
-        if not context.in_keyword:
-            self.errors += ('RETURN can only be used inside a user keyword.', )
-        if context.in_keyword and context.in_finally:
-            self.errors += ('RETURN cannot be used in FINALLY branch.', )
+    def validate(self, ctx: 'ValidationContext'):
+        if not ctx.in_keyword:
+            self.errors += ('RETURN can only be used inside a user keyword.',)
+        if ctx.in_finally:
+            self.errors += ('RETURN cannot be used in FINALLY branch.',)
 
 
 class LoopControl(NoArgumentHeader):
 
-    def validate(self, context):
-        super(LoopControl, self).validate(context)
-        if not (context.in_for or context.in_while):
-            self.errors += (f'{self.type} can only be used inside a loop.', )
-        if context.in_finally:
-            self.errors += (f'{self.type} cannot be used in FINALLY branch.', )
+    def validate(self, ctx: 'ValidationContext'):
+        super().validate(ctx)
+        if not ctx.in_loop:
+            self.errors += (f'{self.type} can only be used inside a loop.',)
+        if ctx.in_finally:
+            self.errors += (f'{self.type} cannot be used in FINALLY branch.',)
 
 
 @Statement.register
@@ -1096,17 +1127,20 @@ class Config(Statement):
 @Statement.register
 class Error(Statement):
     type = Token.ERROR
-    handles_types = (Token.ERROR, Token.FATAL_ERROR)
     _errors = ()
 
     @property
+    def values(self):
+        return [t.value for t in self.data_tokens]
+
+    @property
     def errors(self):
-        """Errors got from the underlying ``ERROR`` and ``FATAL_ERROR`` tokens.
+        """Errors got from the underlying ``ERROR``token.
 
         Errors can be set also explicitly. When accessing errors, they are returned
         along with errors got from tokens.
         """
-        tokens = self.get_tokens(Token.ERROR, Token.FATAL_ERROR)
+        tokens = self.get_tokens(Token.ERROR)
         return tuple(t.error for t in tokens) + self._errors
 
     @errors.setter

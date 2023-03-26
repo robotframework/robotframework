@@ -16,7 +16,7 @@
 """Module implementing result related model objects.
 
 During test execution these objects are created internally by various runners.
-At that time they can inspected and modified by listeners__.
+At that time they can be inspected and modified by listeners__.
 
 When results are parsed from XML output files after execution to be able to
 create logs and reports, these objects are created by the
@@ -26,6 +26,9 @@ At that point they can be inspected and modified by `pre-Rebot modifiers`__.
 The :func:`~.resultbuilder.ExecutionResult` factory method can also be used
 by custom scripts and tools. In such usage it is often easiest to inspect and
 modify these objects using the :mod:`visitor interface <robot.model.visitor>`.
+
+If classes defined here are needed, for example, as type hints, they can
+be imported via the :mod:`robot.running` module.
 
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-interface
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#programmatic-modification-of-results
@@ -37,7 +40,7 @@ from itertools import chain
 import warnings
 
 from robot import model
-from robot.model import BodyItem, Keywords, TotalStatisticsBuilder
+from robot.model import BodyItem, create_fixture, Keywords, Tags, TotalStatisticsBuilder
 from robot.utils import get_elapsed_time, setter
 
 from .configurer import SuiteConfigurer
@@ -169,9 +172,10 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
     iteration_class = ForIteration
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
-    def __init__(self, variables=(),  flavor='IN', values=(), status='FAIL',
-                 starttime=None, endtime=None, doc='', parent=None):
-        super().__init__(variables, flavor, values, parent)
+    def __init__(self, variables=(),  flavor='IN', values=(), start=None, mode=None,
+                 fill=None, status='FAIL', starttime=None, endtime=None, doc='',
+                 parent=None):
+        super().__init__(variables, flavor, values, start, mode, fill, parent)
         self.status = status
         self.starttime = starttime
         self.endtime = endtime
@@ -184,8 +188,14 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
     @property
     @deprecated
     def name(self):
-        return '%s %s [ %s ]' % (' | '.join(self.variables), self.flavor,
-                                 ' | '.join(self.values))
+        variables = ' | '.join(self.variables)
+        values = ' | '.join(self.values)
+        for name, value in [('start', self.start),
+                            ('mode', self.mode),
+                            ('fill', self.fill)]:
+            if value is not None:
+                values += f' | {name}={value}'
+        return f'{variables} {self.flavor} [ {values} ]'
 
 
 class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
@@ -420,40 +430,78 @@ class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
 
 
 @Body.register
+class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
+    __slots__ = ['status', 'starttime', 'endtime']
+    body_class = Body
+
+    def __init__(self, values=(), status='FAIL', starttime=None, endtime=None, parent=None):
+        super().__init__(values, parent)
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+        self.body = None
+
+    @setter
+    def body(self, body):
+        """Messages as a :class:`~.Body` object.
+
+        Typically contains the message that caused the error.
+        """
+        return self.body_class(self, body)
+
+    @property
+    @deprecated
+    def kwname(self):
+        return self.values[0]
+
+    @property
+    @deprecated
+    def args(self):
+        return self.values[1:]
+
+    @property
+    @deprecated
+    def doc(self):
+        return ''
+
+
+@Body.register
 @Branches.register
 @Iterations.register
 class Keyword(model.Keyword, StatusMixin):
-    """Represents results of a single keyword.
-
-    See the base class for documentation of attributes not documented here.
-    """
+    """Represents an executed library or user keyword."""
     body_class = Body
-    __slots__ = ['kwname', 'libname', 'status', 'starttime', 'endtime', 'message',
-                 'sourcename']
+    __slots__ = ['kwname', 'libname', 'doc', 'timeout', 'status', '_teardown',
+                 'starttime', 'endtime', 'message', 'sourcename']
 
     def __init__(self, kwname='', libname='', doc='', args=(), assign=(), tags=(),
                  timeout=None, type=BodyItem.KEYWORD, status='FAIL', starttime=None,
                  endtime=None, parent=None, sourcename=None):
-        super().__init__(None, doc, args, assign, tags, timeout, type, parent)
+        super().__init__(None, args, assign, type, parent)
         #: Name of the keyword without library or resource name.
         self.kwname = kwname
         #: Name of the library or resource containing this keyword.
         self.libname = libname
-        #: Execution status as a string. ``PASS``, ``FAIL``, ``SKIP`` or ``NOT RUN``.
+        self.doc = doc
+        self.tags = tags
+        self.timeout = timeout
         self.status = status
-        #: Keyword execution start time in format ``%Y%m%d %H:%M:%S.%f``.
         self.starttime = starttime
-        #: Keyword execution end time in format ``%Y%m%d %H:%M:%S.%f``.
         self.endtime = endtime
         #: Keyword status message. Used only if suite teardowns fails.
         self.message = ''
         #: Original name of keyword with embedded arguments.
         self.sourcename = sourcename
+        self._teardown = None
         self.body = None
 
     @setter
     def body(self, body):
-        """Child keywords and messages as a :class:`~.Body` object."""
+        """Possible keyword body as a :class:`~.Body` object.
+
+        Body can consist of child keywords, messages, and control structures
+        such as IF/ELSE. Library keywords typically have an empty body.
+        """
         return self.body_class(self, body)
 
     @property
@@ -484,7 +532,7 @@ class Keyword(model.Keyword, StatusMixin):
     def children(self):
         """List of child keywords and messages in creation order.
 
-        Deprecated since Robot Framework 4.0. Use :att:`body` instead.
+        Deprecated since Robot Framework 4.0. Use :attr:`body` instead.
         """
         warnings.warn("'Keyword.children' is deprecated. Use 'Keyword.body' instead.")
         return list(self.body)
@@ -511,6 +559,62 @@ class Keyword(model.Keyword, StatusMixin):
                                  "Set 'kwname' and 'libname' separately instead.")
         self.kwname = None
         self.libname = None
+
+    @property    # Cannot use @setter because it would create teardowns recursively.
+    def teardown(self):
+        """Keyword teardown as a :class:`Keyword` object.
+
+        Teardown can be modified by setting attributes directly::
+
+            keyword.teardown.name = 'Example'
+            keyword.teardown.args = ('First', 'Second')
+
+        Alternatively the :meth:`config` method can be used to set multiple
+        attributes in one call::
+
+            keyword.teardown.config(name='Example', args=('First', 'Second'))
+
+        The easiest way to reset the whole teardown is setting it to ``None``.
+        It will automatically recreate the underlying ``Keyword`` object::
+
+            keyword.teardown = None
+
+        This attribute is a ``Keyword`` object also when a keyword has no teardown
+        but in that case its truth value is ``False``. If there is a need to just
+        check does a keyword have a teardown, using the :attr:`has_teardown`
+        attribute avoids creating the ``Keyword`` object and is thus more memory
+        efficient.
+
+        New in Robot Framework 4.0. Earlier teardown was accessed like
+        ``keyword.keywords.teardown``. :attr:`has_teardown` is new in Robot
+        Framework 4.1.2.
+        """
+        if self._teardown is None and self:
+            self._teardown = create_fixture(None, self, self.TEARDOWN)
+        return self._teardown
+
+    @teardown.setter
+    def teardown(self, teardown):
+        self._teardown = create_fixture(teardown, self, self.TEARDOWN)
+
+    @property
+    def has_teardown(self):
+        """Check does a keyword have a teardown without creating a teardown object.
+
+        A difference between using ``if kw.has_teardown:`` and ``if kw.teardown:``
+        is that accessing the :attr:`teardown` attribute creates a :class:`Keyword`
+        object representing a teardown even when the keyword actually does not
+        have one. This typically does not matter, but with bigger suite structures
+        having lots of keywords it can have a considerable effect on memory usage.
+
+        New in Robot Framework 4.1.2.
+        """
+        return bool(self._teardown)
+
+    @setter
+    def tags(self, tags):
+        """Keyword tags as a :class:`~.model.tags.Tags` object."""
+        return Tags(tags)
 
 
 class TestCase(model.TestCase, StatusMixin):

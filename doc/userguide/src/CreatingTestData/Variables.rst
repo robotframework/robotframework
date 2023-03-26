@@ -1212,7 +1212,7 @@ Extended variable syntax
 Extended variable syntax allows accessing attributes of an object assigned
 to a variable (for example, `${object.attribute}`) and even calling
 its methods (for example, `${obj.getName()}`). It works both with
-scalar and list variables, but is mainly useful with the former
+scalar and list variables, but is mainly useful with the former.
 
 Extended variable syntax is a powerful feature, but it should
 be used with care. Accessing attributes is normally not a problem, on

@@ -11,14 +11,15 @@ results are written over the original file.
 
 import sys
 from robot.api import ExecutionResult, ResultVisitor
+from robot.result.model import TestCase
 
 
 class ExecutionTimeChecker(ResultVisitor):
 
-    def __init__(self, max_seconds):
+    def __init__(self, max_seconds: float):
         self.max_milliseconds = max_seconds * 1000
 
-    def visit_test(self, test):
+    def visit_test(self, test: TestCase):
         if test.status == 'PASS' and test.elapsedtime > self.max_milliseconds:
             test.status = 'FAIL'
             test.message = 'Test execution took too long.'

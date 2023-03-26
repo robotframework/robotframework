@@ -66,6 +66,13 @@ Testing
 Make sure that adequate tests are executed before releases are created.
 See `<atest/README.rst>`_ for details.
 
+If output.xml `schema <doc/schema/README.rst>`_ has changed, remember to
+run tests also with `full schema validation`__ enabled::
+
+    atest/run.py --schema-validation
+
+__ https://github.com/robotframework/robotframework/tree/master/atest#schema-validation
+
 Preparation
 -----------
 

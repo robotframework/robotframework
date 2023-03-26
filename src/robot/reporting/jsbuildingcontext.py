@@ -14,11 +14,11 @@
 #  limitations under the License.
 
 from contextlib import contextmanager
-from os.path import exists, dirname
+from pathlib import Path
 
 from robot.output.loggerhelper import LEVELS
-from robot.utils import (attribute_escape, get_link_path, html_escape, is_string,
-                         safe_str, timestamp_to_secs)
+from robot.utils import (attribute_escape, get_link_path, html_escape, safe_str,
+                         timestamp_to_secs)
 
 from .expandkeywordmatcher import ExpandKeywordMatcher
 from .stringcache import StringCache
@@ -28,8 +28,7 @@ class JsBuildingContext:
 
     def __init__(self, log_path=None, split_log=False, expand_keywords=None,
                  prune_input=False):
-        # log_path can be a custom object in unit tests
-        self._log_dir = dirname(log_path) if is_string(log_path) else None
+        self._log_dir = self._get_log_dir(log_path)
         self._split_log = split_log
         self._prune_input = prune_input
         self._strings = self._top_level_strings = StringCache()
@@ -40,9 +39,17 @@ class JsBuildingContext:
         self._expand_matcher = ExpandKeywordMatcher(expand_keywords) \
             if expand_keywords else None
 
+    def _get_log_dir(self, log_path):
+        # log_path can be a custom object in unit tests
+        if isinstance(log_path, Path):
+            return log_path.parent
+        if isinstance(log_path, str):
+            return Path(log_path).parent
+        return None
+
     def string(self, string, escape=True, attr=False):
         if escape and string:
-            if not is_string(string):
+            if not isinstance(string, str):
                 string = safe_str(string)
             string = (html_escape if not attr else attribute_escape)(string)
         return self._strings.add(string)
@@ -51,8 +58,10 @@ class JsBuildingContext:
         return self._strings.add(string, html=True)
 
     def relative_source(self, source):
+        if isinstance(source, str):
+            source = Path(source)
         rel_source = get_link_path(source, self._log_dir) \
-            if self._log_dir and source and exists(source) else ''
+            if self._log_dir and source and source.exists() else ''
         return self.string(rel_source)
 
     def timestamp(self, time):

@@ -30,7 +30,10 @@ Union with item not liking isinstance
 Argument not matching union
     Check Test Case    ${TESTNAME}
 
-Union with custom type
+Union with unrecognized type
+    Check Test Case    ${TESTNAME}
+
+Union with only unrecognized types
     Check Test Case    ${TESTNAME}
 
 Multiple types using tuple
@@ -57,8 +60,17 @@ Avoid unnecessary conversion
 Avoid unnecessary conversion with ABC
     Check Test Case    ${TESTNAME}
 
+Default value type
+    Check Test Case    ${TESTNAME}
+
+Default value type with unrecognized type
+    Check Test Case    ${TESTNAME}
+
 Union with invalid types
     Check Test Case    ${TESTNAME}
 
 Tuple with invalid types
+    Check Test Case    ${TESTNAME}
+
+Union without types
     Check Test Case    ${TESTNAME}

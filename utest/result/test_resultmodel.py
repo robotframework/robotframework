@@ -2,7 +2,7 @@ import unittest
 import warnings
 
 from robot.model import Tags
-from robot.result import (Break, Continue, For, If, IfBranch, Keyword, Message,
+from robot.result import (Break, Continue, Error, For, If, IfBranch, Keyword, Message,
                           Return, TestCase, TestSuite, Try, While)
 from robot.utils.asserts import (assert_equal, assert_false, assert_raises,
                                  assert_raises_with_msg, assert_true)
@@ -166,19 +166,12 @@ class TestSlots(unittest.TestCase):
         self._verify(While())
         self._verify(While().body.create_iteration())
 
-    def test_while_name(self):
-        assert_equal(While().name, '')
-        assert_equal(While('$x > 0').name, '$x > 0')
-        assert_equal(While('True', '1 minute').name, 'True | limit=1 minute')
-        assert_equal(While(limit='1 minute').name, 'limit=1 minute')
-        assert_equal(While('True', '1 s', 'Error message').name,
-                     'True | limit=1 s | on_limit_message=Error message')
-        assert_equal(While(on_limit_message='Error message').name,
-                     'on_limit_message=Error message')
-
     def test_break_continue_return(self):
         for cls in Break, Continue, Return:
             self._verify(cls())
+
+    def test_error(self):
+        self._verify(Error())
 
     def test_message(self):
         self._verify(Message())
@@ -208,8 +201,10 @@ class TestModel(unittest.TestCase):
         self._verify_status_propertys(Keyword())
 
     def test_status_propertys_with_control_structures(self):
-        for obj in (Break(), Continue(), Return(), For(), For().body.create_iteration(),
-                    If(), If().body.create_branch(), Try(), Try().body.create_branch(),
+        for obj in (Break(), Continue(), Return(), Error(),
+                    For(), For().body.create_iteration(),
+                    If(), If().body.create_branch(),
+                    Try(), Try().body.create_branch(),
                     While(), While().body.create_iteration()):
             self._verify_status_propertys(obj)
 
@@ -269,6 +264,25 @@ class TestModel(unittest.TestCase):
             assert_equal(item.status, 'NOT RUN')
             assert_raises(ValueError, setattr, item, 'not_run', False)
 
+    def test_keyword_teardown(self):
+        kw = Keyword()
+        assert_true(not kw.has_teardown)
+        assert_true(not kw.teardown)
+        assert_equal(kw.teardown.name, None)
+        assert_equal(kw.teardown.type, 'TEARDOWN')
+        assert_true(not kw.has_teardown)
+        assert_true(not kw.teardown)
+        kw.teardown = Keyword()
+        assert_true(kw.has_teardown)
+        assert_true(kw.teardown)
+        assert_equal(kw.teardown.name, '')
+        assert_equal(kw.teardown.type, 'TEARDOWN')
+        kw.teardown = None
+        assert_true(not kw.has_teardown)
+        assert_true(not kw.teardown)
+        assert_equal(kw.teardown.name, None)
+        assert_equal(kw.teardown.type, 'TEARDOWN')
+
     def test_keywords_deprecation(self):
         kw = Keyword()
         kw.body = [Keyword(), Message(), Keyword(), Keyword(), Message()]
@@ -309,6 +323,16 @@ class TestModel(unittest.TestCase):
         assert_equal(branch.parent, if_)
         kw = branch.body.create_keyword()
         assert_equal(kw.parent, branch)
+
+    def test_while_name(self):
+        assert_equal(While().name, '')
+        assert_equal(While('$x > 0').name, '$x > 0')
+        assert_equal(While('True', '1 minute').name, 'True | limit=1 minute')
+        assert_equal(While(limit='1 minute').name, 'limit=1 minute')
+        assert_equal(While('True', '1 s', 'Error message').name,
+                     'True | limit=1 s | on_limit_message=Error message')
+        assert_equal(While(on_limit_message='Error message').name,
+                     'on_limit_message=Error message')
 
 
 class TestBody(unittest.TestCase):

@@ -69,7 +69,7 @@ Dotted does not show details for skipped after fatal error
 --Dotted --ExitOnFailure with empty test case
     Run tests    -X.    core/empty_testcase_and_uk.robot
     Stdout Should Be    dotted_exitonfailure_empty_test.txt
-    Stderr Should Be    empty.txt
+    Stderr Should Be    dotted_exitonfailure_empty_test_stderr.txt
     Check test tags    ${EMPTY}
     ${tc} =    Check test case    Empty Test Case    FAIL
     ...    Failure occurred and exit-on-failure mode is in use.

@@ -1,5 +1,6 @@
 import unittest
 import warnings
+from pathlib import Path
 
 from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal, assert_raises,
                                  assert_raises_with_msg, assert_true)
@@ -31,7 +32,7 @@ class TestTestCase(unittest.TestCase):
         assert_equal(test.source, None)
         suite.tests.append(test)
         suite.source = '/unit/tests'
-        assert_equal(test.source, '/unit/tests')
+        assert_equal(test.source, Path('/unit/tests'))
 
     def test_setup(self):
         assert_equal(self.test.setup.__class__, Keyword)

@@ -19,7 +19,7 @@ from robot.errors import DataError
 from robot.utils import get_error_message, FileReader
 
 from .blocklexers import FileLexer
-from .context import InitFileContext, TestCaseFileContext, ResourceFileContext
+from .context import InitFileContext, SuiteFileContext, ResourceFileContext
 from .tokenizer import Tokenizer
 from .tokens import EOS, END, Token
 
@@ -47,7 +47,7 @@ def get_tokens(source, data_only=False, tokenize_variables=False, lang=None):
     Returns a generator that yields :class:`~robot.parsing.lexer.tokens.Token`
     instances.
     """
-    lexer = Lexer(TestCaseFileContext(lang=lang), data_only, tokenize_variables)
+    lexer = Lexer(SuiteFileContext(lang=lang), data_only, tokenize_variables)
     lexer.input(source)
     return lexer.get_tokens()
 

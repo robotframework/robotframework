@@ -21,8 +21,7 @@ class TestVisitingSuite(unittest.TestCase):
         test = suite.tests.create()
         test.setup.config(name='TS')
         test.teardown.config(name='TT')
-        kw = test.body.create_keyword()
-        kw.teardown.config(name='KT')
+        test.body.create_keyword()
 
     def test_abstract_visitor(self):
         RESULT.suite.visit(SuiteVisitor())
@@ -40,10 +39,22 @@ class TestVisitingSuite(unittest.TestCase):
     def test_visit_setups_and_teardowns(self):
         visitor = VisitSetupsAndTeardowns()
         self.suite.visit(visitor)
+        assert_equal(visitor.visited, ['SS', 'TS', 'TT', 'ST'])
+
+    def test_visit_keyword_teardown(self):
+        suite = ResultSuite()
+        suite.setup.config(kwname='SS')
+        suite.teardown.config(kwname='ST')
+        test = suite.tests.create()
+        test.setup.config(kwname='TS')
+        test.teardown.config(kwname='TT')
+        test.body.create_keyword().teardown.config(kwname='KT')
+        visitor = VisitSetupsAndTeardowns()
+        suite.visit(visitor)
         assert_equal(visitor.visited, ['SS', 'TS', 'KT', 'TT', 'ST'])
 
     def test_dont_visit_inactive_setups_and_teardowns(self):
-        suite = TestSuite()
+        suite = ResultSuite()
         suite.tests.create().body.create_keyword()
         visitor = VisitSetupsAndTeardowns()
         suite.visit(visitor)

@@ -272,6 +272,7 @@ Default With Variable
 
 Default With Non-Existing Variable
     [Arguments]    ${arg}=${NON EXISTING}
+    No operation
 
 Default With None Variable
     [Arguments]    ${arg}=${None}
@@ -303,6 +304,7 @@ Default With List Variable
 
 Default With Invalid List Variable
     [Arguments]    ${invalid}=@{VAR}
+    No operation
 
 Default With Dict Variable
     [Arguments]    ${a}=&{EMPTY}    ${b}=&{DICT}
@@ -317,6 +319,7 @@ Default With Dict Variable
 
 Default With Invalid Dict Variable
     [Arguments]    ${invalid}=&{VAR}
+    No operation
 
 Argument With `=` In Name
     [Arguments]    ${=}    ${==}==    ${===}=${=}

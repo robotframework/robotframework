@@ -15,6 +15,7 @@
 
 import inspect
 import io
+import json
 try:
     import yaml
 except ImportError:
@@ -43,6 +44,8 @@ class VariableFileSetter:
                     % (path_or_variables, args))
         if path_or_variables.lower().endswith(('.yaml', '.yml')):
             importer = YamlImporter()
+        elif path_or_variables.lower().endswith('.json'):
+            importer = JsonImporter()
         else:
             importer = PythonImporter()
         try:
@@ -147,3 +150,27 @@ class PythonImporter:
         if name[0] == '&' and not is_dict_like(value):
             raise DataError("Invalid variable '%s': Expected dict-like value, "
                             "got %s." % (name, type_name(value)))
+
+
+class JsonImporter:
+    def import_variables(self, path, args=None):
+        if args:
+            raise DataError('JSON variable files do not accept arguments.')
+        variables = self._import(path)
+        return [('${%s}' % name, self._dot_dict(value))
+                for name, value in variables]
+
+    def _import(self, path):
+        with io.open(path, encoding='UTF-8') as stream:
+            variables = json.load(stream)
+        if not is_dict_like(variables):
+            raise DataError('JSON variable file must be a mapping, got %s.'
+                            % type_name(variables))
+        return variables.items()
+
+    def _dot_dict(self, value):
+        if is_dict_like(value):
+            return DotDict((k, self._dot_dict(v)) for k, v in value.items())
+        if is_list_like(value):
+            return [self._dot_dict(v) for v in value]
+        return value

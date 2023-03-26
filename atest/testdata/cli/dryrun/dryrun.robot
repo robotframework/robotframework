@@ -27,6 +27,8 @@ Passing keywords
 Keywords with embedded arguments
     Embedded arguments here
     Embedded args rock here
+    Some embedded and normal args    42
+    Some embedded and normal args    ${does not exist}
     This is validated
 
 Library keyword with embedded arguments
@@ -138,6 +140,10 @@ Avoid keyword in dry-run
 
 *** Keywords ***
 Embedded ${args} here
+    No Operation
+
+Some ${type} and normal args
+    [Arguments]    ${meaning of life}
     No Operation
 
 Keyword with Teardown

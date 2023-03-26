@@ -1392,9 +1392,9 @@ Boolean strings
     * - True/False
       - Values
     * - True
-      -
+      - Prawda, Tak, Włączone
     * - False
-      -
+      - Fałsz, Nie, Wyłączone, Nic
 
 Portuguese (pt)
 ---------------

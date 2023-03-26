@@ -180,10 +180,6 @@ Timeout
     [Timeout]    1d
     No Operation
 
-Timeout with message
-    [Timeout]    666    Message not supported since RF 3.2
-    No Operation
-
 Default timeout
     No Operation
 
@@ -203,7 +199,7 @@ Invalid timeout
     [Documentation]    FAIL Setup failed:
     ...    Setting test timeout failed: Invalid time string 'invalid'.
     [Timeout]    invalid
-    No Operation
+    Fail    Should not be run
 
 Multiple settings
     [Documentation]    Documentation for this test case
@@ -214,14 +210,19 @@ Multiple settings
     [Teardown]    Log    Test case teardown
 
 Invalid setting
+    [Documentation]    FAIL Non-existing setting 'Invalid'.
     [Invalid]    This is invalid
-    No Operation
+    Fail    Should not be run
 
 Setting not valid with tests
+    [Documentation]    FAIL Setting 'Metadata' is not allowed with tests or tasks.
     [Metadata]    Not valid.
     [Arguments]    Not valid.
-    No Operation
+    Fail    Should not be run
 
 Small typo should provide recommendation
+    [Documentation]    FAIL
+    ...    Non-existing setting 'Doc U ment a tion'. Did you mean:
+    ...    ${SPACE*4}Documentation
     [Doc U ment a tion]    This actually worked before RF 3.2.
-    No Operation
+    Fail    Should not be run

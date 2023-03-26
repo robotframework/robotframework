@@ -100,13 +100,13 @@ Non String Variable Is Accepted With Custom Regexp
 
 Regexp Extensions Are Not Supported
     Check Test Case    ${TEST NAME}
-    Creating Keyword Failed    1    291
+    Creating Keyword Failed    0    294
     ...    Regexp extensions like \${x:(?x)re} are not supported
     ...    Regexp extensions are not allowed in embedded arguments.
 
 Invalid Custom Regexp
     Check Test Case    ${TEST NAME}
-    Creating Keyword Failed    2    294
+    Creating Keyword Failed    1    297
     ...    Invalid \${x:(} Regexp
     ...    Compiling embedded arguments regexp failed: *
 
@@ -142,10 +142,13 @@ Embedded And Positional Arguments Do Not Work Together
 Keyword with embedded args cannot be used as "normal" keyword
     Check Test Case    ${TEST NAME}
 
-Creating keyword with both normal and embedded arguments fails
-    Creating Keyword Failed    0    238
-    ...    Keyword with \${embedded} and normal args is invalid
-    ...    Keyword cannot have both normal and embedded arguments.
+Keyword with both normal and embedded arguments
+    Check Test Case    ${TEST NAME}
+
+Keyword with both normal, positional and embedded arguments
+    Check Test Case    ${TEST NAME}
+
+Keyword with both normal and embedded arguments with too few arguments
     Check Test Case    ${TEST NAME}
 
 Keyword matching multiple keywords in test case file

@@ -169,16 +169,32 @@ class TestCase(ModelObject):
     def __str__(self):
         return self.name
 
+    def to_dict(self):
+        data = {'name': self.name}
+        if self.doc:
+            data['doc'] = self.doc
+        if self.tags:
+            data['tags'] = list(self.tags)
+        if self.timeout:
+            data['timeout'] = self.timeout
+        if self.lineno:
+            data['lineno'] = self.lineno
+        if self.has_setup:
+            data['setup'] = self.setup.to_dict()
+        if self.has_teardown:
+            data['teardown'] = self.teardown.to_dict()
+        data['body'] = self.body.to_dicts()
+        return data
+
 
 class TestCases(ItemList):
     __slots__ = []
 
     def __init__(self, test_class=TestCase, parent=None, tests=None):
-        ItemList.__init__(self, test_class, {'parent': parent}, tests)
+        super().__init__(test_class, {'parent': parent}, tests)
 
-    def _check_type_and_set_attrs(self, *tests):
-        tests = ItemList._check_type_and_set_attrs(self, *tests)
-        for test in tests:
-            for visitor in test.parent._visitors:
-                test.visit(visitor)
-        return tests
+    def _check_type_and_set_attrs(self, test):
+        test = super()._check_type_and_set_attrs(test)
+        for visitor in test.parent._visitors:
+            test.visit(visitor)
+        return test

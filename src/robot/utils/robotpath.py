@@ -135,11 +135,7 @@ def find_file(path, basedir='.', file_type=None):
         ret = _find_relative_path(path, basedir)
     if ret:
         return ret
-    default = file_type or 'File'
-    file_type = {'Library': 'Library',
-                 'Variables': 'Variable file',
-                 'Resource': 'Resource file'}.get(file_type, default)
-    raise DataError("%s '%s' does not exist." % (file_type, path))
+    raise DataError(f"{file_type or 'File'} '{path}' does not exist.")
 
 
 def _find_absolute_path(path):

@@ -15,12 +15,8 @@
 
 import warnings
 
-from robot.utils import setter
-
 from .body import Body, BodyItem
-from .fixture import create_fixture
 from .itemlist import ItemList
-from .tags import Tags
 
 
 @Body.register
@@ -31,18 +27,13 @@ class Keyword(BodyItem):
     :class:`robot.result.model.Keyword`.
     """
     repr_args = ('name', 'args', 'assign')
-    __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type', '_teardown']
+    __slots__ = ['_name', 'args', 'assign', 'type']
 
-    def __init__(self, name='', doc='', args=(), assign=(), tags=(),
-                 timeout=None, type=BodyItem.KEYWORD, parent=None):
+    def __init__(self, name='', args=(), assign=(), type=BodyItem.KEYWORD, parent=None):
         self._name = name
-        self.doc = doc
         self.args = args
         self.assign = assign
-        self.tags = tags
-        self.timeout = timeout
         self.type = type
-        self._teardown = None
         self.parent = parent
 
     @property
@@ -52,62 +43,6 @@ class Keyword(BodyItem):
     @name.setter
     def name(self, name):
         self._name = name
-
-    @property    # Cannot use @setter because it would create teardowns recursively.
-    def teardown(self):
-        """Keyword teardown as a :class:`Keyword` object.
-
-        Teardown can be modified by setting attributes directly::
-
-            keyword.teardown.name = 'Example'
-            keyword.teardown.args = ('First', 'Second')
-
-        Alternatively the :meth:`config` method can be used to set multiple
-        attributes in one call::
-
-            keyword.teardown.config(name='Example', args=('First', 'Second'))
-
-        The easiest way to reset the whole teardown is setting it to ``None``.
-        It will automatically recreate the underlying ``Keyword`` object::
-
-            keyword.teardown = None
-
-        This attribute is a ``Keyword`` object also when a keyword has no teardown
-        but in that case its truth value is ``False``. If there is a need to just
-        check does a keyword have a teardown, using the :attr:`has_teardown`
-        attribute avoids creating the ``Keyword`` object and is thus more memory
-        efficient.
-
-        New in Robot Framework 4.0. Earlier teardown was accessed like
-        ``keyword.keywords.teardown``. :attr:`has_teardown` is new in Robot
-        Framework 4.1.2.
-        """
-        if self._teardown is None and self:
-            self._teardown = create_fixture(None, self, self.TEARDOWN)
-        return self._teardown
-
-    @teardown.setter
-    def teardown(self, teardown):
-        self._teardown = create_fixture(teardown, self, self.TEARDOWN)
-
-    @property
-    def has_teardown(self):
-        """Check does a keyword have a teardown without creating a teardown object.
-
-        A difference between using ``if kw.has_teardown:`` and ``if kw.teardown:``
-        is that accessing the :attr:`teardown` attribute creates a :class:`Keyword`
-        object representing a teardown even when the keyword actually does not
-        have one. This typically does not matter, but with bigger suite structures
-        having lot of keywords it can have a considerable effect on memory usage.
-
-        New in Robot Framework 4.1.2.
-        """
-        return bool(self._teardown)
-
-    @setter
-    def tags(self, tags):
-        """Keyword tags as a :class:`~.model.tags.Tags` object."""
-        return Tags(tags)
 
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
@@ -120,6 +55,14 @@ class Keyword(BodyItem):
     def __str__(self):
         parts = list(self.assign) + [self.name] + list(self.args)
         return '    '.join(str(p) for p in parts)
+
+    def to_dict(self):
+        data = {'name': self.name}
+        if self.args:
+            data['args'] = list(self.args)
+        if self.assign:
+            data['assign'] = list(self.assign)
+        return data
 
 
 class Keywords(ItemList):

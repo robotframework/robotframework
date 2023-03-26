@@ -62,9 +62,9 @@ from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
                         get_time, get_timestamp, secs_to_timestamp,
                         secs_to_timestr, timestamp_to_secs, timestr_to_secs,
                         parse_time)
-from .robottypes import (is_bytes, is_dict_like, is_falsy, is_integer, is_list_like,
-                         is_number, is_pathlike, is_string, is_truthy, is_union,
-                         type_name, type_repr, typeddict_types)
+from .robottypes import (has_args, is_bytes, is_dict_like, is_falsy, is_integer,
+                         is_list_like, is_number, is_pathlike, is_string, is_truthy,
+                         is_union, type_name, type_repr, typeddict_types)
 from .setter import setter, SetterAwareType
 from .sortable import Sortable
 from .text import (cut_assign_value, cut_long_message, format_assign_message,

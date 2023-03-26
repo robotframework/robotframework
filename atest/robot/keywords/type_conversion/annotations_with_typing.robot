@@ -96,7 +96,13 @@ Set with incompatible types
 Invalid Set
     Check Test Case    ${TESTNAME}
 
+Any
+    Check Test Case    ${TESTNAME}
+
 None as default
+    Check Test Case    ${TESTNAME}
+
+None as default with Any
     Check Test Case    ${TESTNAME}
 
 Forward references

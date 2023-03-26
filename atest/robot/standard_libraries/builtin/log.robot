@@ -54,6 +54,11 @@ Log also to console
     Stdout Should Contain    Hello, console!\n
     Stdout Should Contain    ${HTML}\n
 
+CONSOLE pseudo level
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    Hello, info and console!
+    Stdout Should Contain    Hello, info and console!\n
+    
 repr=True
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    The 'repr' argument of 'BuiltIn.Log' is deprecated. Use 'formatter=repr' instead.    WARN

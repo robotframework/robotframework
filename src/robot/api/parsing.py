@@ -222,7 +222,8 @@ Statements:
 - :class:`~robot.parsing.model.statements.Template`
 - :class:`~robot.parsing.model.statements.Timeout`
 - :class:`~robot.parsing.model.statements.Arguments`
-- :class:`~robot.parsing.model.statements.Return`
+- :class:`~robot.parsing.model.statements.Return` (deprecated, will mean ``ReturnStatement`` in RF 7.0)
+- :class:`~robot.parsing.model.statements.ReturnSetting` (alias for ``Return``, new in RF 6.1)
 - :class:`~robot.parsing.model.statements.KeywordCall`
 - :class:`~robot.parsing.model.statements.TemplateArguments`
 - :class:`~robot.parsing.model.statements.IfHeader`
@@ -239,7 +240,7 @@ Statements:
 - :class:`~robot.parsing.model.statements.Break`
 - :class:`~robot.parsing.model.statements.Continue`
 - :class:`~robot.parsing.model.statements.Comment`
-- :class:`~robot.parsing.model.statements.Config` (new in 6.0)
+- :class:`~robot.parsing.model.statements.Config` (new in RF 6.0)
 - :class:`~robot.parsing.model.statements.Error`
 - :class:`~robot.parsing.model.statements.EmptyLine`
 
@@ -529,6 +530,7 @@ from robot.parsing.model.statements import (
     Timeout,
     Arguments,
     Return,
+    ReturnSetting,
     KeywordCall,
     TemplateArguments,
     IfHeader,

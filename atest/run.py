@@ -2,7 +2,7 @@
 
 """A script for running Robot Framework's own acceptance tests.
 
-Usage:  atest/run.py [--interpreter interpreter] [options] [data]
+Usage:  atest/run.py [--interpreter name] [--schema-validation [options] [data]
 
 `data` is path (or paths) of the file or directory under the `atest/robot`
 folder to execute. If `data` is not given, all tests except for tests tagged
@@ -12,10 +12,11 @@ Available `options` are the same that can be used with Robot Framework.
 See its help (e.g. `robot --help`) for more information.
 
 By default, uses the same Python interpreter for running tests that is used
-for running this script. That can be changed by using the `--interpreter` (`-I`)
-option. It can be the name of the interpreter (e.g. `pypy3`) or a path to the
-selected interpreter (e.g. `/usr/bin/python39`). If the interpreter itself needs
-arguments, the interpreter and its arguments need to be quoted (e.g. `"py -3"`).
+for running this script. That can be changed by using the `--interpreter`
+(`-I`) option. It can be the name of the interpreter like `pypy3` or a path
+to the selected interpreter like `/usr/bin/python39`. If the interpreter
+itself needs arguments, the interpreter and its arguments need to be quoted
+like `"py -3.9"`.
 
 To enable schema validation for all suites, use `--schema-validation` (`-S`)
 option. This is same as setting `ATEST_VALIDATE_OUTPUT` environment variable

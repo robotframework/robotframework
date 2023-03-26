@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, List, Union
+from typing import Any, Dict, List, Union, Tuple
 
 
 class UnknownType:
@@ -75,13 +75,19 @@ def J_union_from_typing_with_default(a: Union[int, str, Union[list, tuple]] = No
     pass
 
 
-try:
-    exec('''
-def K_union_syntax(a: int | str | list | tuple):
+def K_nested(a: List[int],
+             b: List[Union[int, float]],
+             c: Tuple[Tuple[UnknownType], Dict[str, Tuple[float]]]):
     pass
 
 
-def K_union_syntax_with_default(a: int | str | list | tuple = None):
+try:
+    exec('''
+def L_union_syntax(a: int | str | list | tuple):
+    pass
+
+
+def M_union_syntax_with_default(a: int | str | list | tuple = None):
     pass
 ''')
 except TypeError:    # Python < 3.10

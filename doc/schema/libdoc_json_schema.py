@@ -13,12 +13,35 @@ from enum import Enum
 from pathlib import Path
 from typing import List, Optional, Union
 
-from pydantic import BaseModel, Field, PositiveInt
+from pydantic import BaseModel as PydanticBaseModel, Field, PositiveInt
+
+
+class BaseModel(PydanticBaseModel):
+
+    # Workaround for Pydantic not supporting nullable types.
+    # https://github.com/pydantic/pydantic/issues/1270#issuecomment-729555558
+    class Config:
+        @staticmethod
+        def schema_extra(schema, model):
+            for prop, value in schema.get('properties', {}).items():
+                # retrieve right field from alias or name
+                field = [x for x in model.__fields__.values() if x.alias == prop][0]
+                if field.allow_none:
+                    # only one type e.g. {'type': 'integer'}
+                    if 'type' in value:
+                        value['anyOf'] = [{'type': value.pop('type')}]
+                    # only one $ref e.g. from other model
+                    elif '$ref' in value:
+                        if issubclass(field.type_, PydanticBaseModel):
+                            # add 'title' in schema to have the exact same behaviour as the rest
+                            value['title'] = field.type_.__config__.title or field.type_.__name__
+                        value['anyOf'] = [{'$ref': value.pop('$ref')}]
+                    value['anyOf'].append({'type': 'null'})
 
 
 class SpecVersion(int, Enum):
     """Version of the spec."""
-    VERSION = 1
+    VERSION = 2
 
 
 class DocumentationType(str, Enum):
@@ -54,22 +77,23 @@ class ArgumentKind(str, Enum):
     VAR_NAMED = 'VAR_NAMED'
 
 
+class ArgumentType(BaseModel):
+    name: str
+    typedoc: Union[str, None] = Field(description="Map type to info in 'typedocs'.")
+    nested: List['ArgumentType']
+    union: bool
+
+
 class Argument(BaseModel):
     """Keyword argument."""
     name: str
-    types: List[str]
-    typedocs: dict = Field(description="Maps types to type information in 'typedocs'.")
+    type: Union[ArgumentType, None]
+    types: List[str] = Field(description="Deprecated. Use 'type' instead.")
+    typedocs: dict = Field(description="Deprecated. Use 'type' instead.")
     defaultValue: Union[str, None] = Field(description="Possible default value or 'null'.")
     kind: ArgumentKind
     required: bool
     repr: str
-
-    # Workaround for Pydantic not supporting nullable types.
-    # https://github.com/samuelcolvin/pydantic/issues/1270
-    class Config:
-        @staticmethod
-        def schema_extra(schema, model):
-            schema['properties']['defaultValue']['type'] = ['string', 'null']
 
 
 class Keyword(BaseModel):
@@ -101,13 +125,6 @@ class TypedDictItem(BaseModel):
     key: str
     type: str
     required: Union[bool, None]    # This is overridden below.
-
-    # Workaround for Pydantic not supporting nullable types.
-    # https://github.com/samuelcolvin/pydantic/issues/1270
-    class Config:
-        @staticmethod
-        def schema_extra(schema, model):
-            schema['properties']['required']['type'] = ['boolean', 'null']
 
 
 class TypeDoc(BaseModel):

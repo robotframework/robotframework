@@ -12,7 +12,7 @@ On limit message without limit
     END
 
 Wrong WHILE argument
-    [Documentation]     FAIL WHILE loop arguments must be 'limit' or 'on_limit_message', got 'limit_exceed_messag=Custom error message'.
+    [Documentation]     FAIL WHILE cannot have more than one condition, got '$variable < 2', 'limit=5' and 'limit_exceed_messag=Custom error message'.
     WHILE    $variable < 2    limit=5    limit_exceed_messag=Custom error message
         Log     ${variable}
     END
@@ -57,7 +57,7 @@ On limit message before limit
 
 
 Wrong WHILE arguments
-    [Documentation]     FAIL WHILE loop arguments must be 'limit' or 'on_limit_message', got 'limite=5'.
+    [Documentation]     FAIL WHILE cannot have more than one condition, got '$variable < 2', 'limite=5' and 'limit_exceed_messag=Custom error message'.
     WHILE    $variable < 2    limite=5    limit_exceed_messag=Custom error message
         Log     ${variable}
     END

@@ -7,7 +7,7 @@ Variables         binary_list.py
 @{RESULT}
 ${WRONG VALUES}   Number of FOR loop values should be multiple of its variables.
 ${INVALID FOR}    'For' is a reserved keyword. It must be an upper case 'FOR' when used as a marker.
-${INVALID END}    'End' is a reserved keyword. It must be an upper case 'END' when used as a marker to close a block.
+${INVALID END}    END is not allowed in this context.
 
 *** Test Cases ***
 Simple loop
@@ -520,6 +520,7 @@ Nested For In UK 2
     Fail    This ought to be enough
 
 Invalid END usage in UK
+    No Operation
     END
 
 Header at the end of file

@@ -108,7 +108,7 @@ def type_name(item, capitalize=False):
     return name.capitalize() if capitalize and name.islower() else name
 
 
-def type_repr(typ):
+def type_repr(typ, nested=True):
     """Return string representation for types.
 
     Aims to look as much as the source code as possible. For example, 'List[Any]'
@@ -121,9 +121,9 @@ def type_repr(typ):
     if typ is Any:  # Needed with Python 3.6, with newer `Any._name` exists.
         return 'Any'
     if is_union(typ):
-        return ' | '.join(type_repr(a) for a in typ.__args__)
+        return ' | '.join(type_repr(a) for a in typ.__args__) if nested else 'Union'
     name = _get_type_name(typ)
-    if _has_args(typ):
+    if nested and has_args(typ):
         args = ', '.join(type_repr(a) for a in typ.__args__)
         return f'{name}[{args}]'
     return name
@@ -137,13 +137,19 @@ def _get_type_name(typ):
     return str(typ)
 
 
-def _has_args(typ):
-    args = getattr(typ, '__args__', ())
-    # __args__ contains TypeVars when accessed directly from typing.List and other
-    # such types withPython 3.7-3.8. With Python 3.6 __args__ is None in that case
-    # and with Python 3.9+ it doesn't exist at all. When using like List[int].__args__
-    # everything works the same way regardless the version.
-    return args and not all(isinstance(t, TypeVar) for t in args)
+def has_args(type):
+    """Helper to check has type valid ``__args__``.
+
+    ``__args__`` contains TypeVars when accessed directly from ``typing.List`` and
+    other such types with Python 3.7-3.8. With Python 3.6 ``__args__`` is None
+    in that case and with Python 3.9+ it doesn't exist at all. When using like
+    ``List[int].__args__``, everything works the same way regardless the version.
+
+    This helper can be removed in favor of using ``hasattr(type, '__args__')``
+    when we support only Python 3.9 and newer.
+    """
+    args = getattr(type, '__args__', None)
+    return args and not all(isinstance(a, TypeVar) for a in args)
 
 
 def is_truthy(item):
