@@ -33,9 +33,8 @@ import sys
 import time
 from pathlib import Path
 
-# Allows running as a script. __name__ check needed with multiprocessing:
-# https://github.com/robotframework/robotframework/issues/1137
-if 'robot' not in sys.modules and __name__ == '__main__':
+# Allows running as a script.
+if __name__ == '__main__':
     import pythonpathsetter
 
 from robot.conf import RobotSettings
