@@ -102,19 +102,15 @@ class InliningWriter(Writer, ABC):
 
 class JsFileWriter(InliningWriter):
     handles_line = '<script type="text/javascript" src='
-    source_file = re.compile('src=\"([^\"]+)\"')
 
     def write(self, line: str):
-        name = self.source_file.search(line).group(1)
-        self.inline_file(name, 'script', {'type': 'text/javascript'})
+        src = re.search('src="([^"]+)"', line).group(1)
+        self.inline_file(src, 'script', {'type': 'text/javascript'})
 
 
 class CssFileWriter(InliningWriter):
     handles_line = '<link rel="stylesheet"'
-    source_file = re.compile('href=\"([^\"]+)\"')
-    media_type = re.compile('media=\"([^\"]+)\"')
 
     def write(self, line: str):
-        name = self.source_file.search(line).group(1)
-        media = self.media_type.search(line).group(1)
-        self.inline_file(name, 'style', {'type': 'text/css', 'media': media})
+        href, media = re.search('href="([^"]+)" media="([^"]+)"', line).groups()
+        self.inline_file(href, 'style', {'type': 'text/css', 'media': media})
