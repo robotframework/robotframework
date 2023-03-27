@@ -635,12 +635,9 @@ class WhileLimit:
     @classmethod
     def create(cls, limit, on_limit_message, variables):
         if on_limit_message:
-            on_limit_message = variables.replace_string(
-                on_limit_message)
+            on_limit_message = variables.replace_string(on_limit_message)
         if not limit:
-            return IterationCountLimit(DEFAULT_WHILE_LIMIT,
-                                       on_limit_message
-                                       )
+            return IterationCountLimit(DEFAULT_WHILE_LIMIT, on_limit_message)
         value = variables.replace_string(limit)
         if value.upper() == 'NONE':
             return NoLimit()
