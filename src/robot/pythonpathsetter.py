@@ -13,7 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Module that adds directories needed by Robot to sys.path when imported."""
+"""Module that adds directories needed by Robot to sys.path when imported.
+
+By adapting the system configuration at runtime this module allows to use
+robotframework without installing it.
+
+This is only relevant if robotframework installation is not handled bythe 
+environment.
+"""
 
 import sys
 import fnmatch

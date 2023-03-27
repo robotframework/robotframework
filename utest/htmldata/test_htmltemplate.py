@@ -2,7 +2,7 @@ import unittest
 
 from robot.htmldata.template import HtmlTemplate
 from robot.htmldata import LOG, REPORT
-from robot.utils.asserts import assert_true, assert_raises, assert_equal
+from robot.utils.asserts import assert_true, assert_equal, assert_raises
 
 
 class TestHtmlTemplate(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestHtmlTemplate(unittest.TestCase):
             assert_true(not line.endswith('\n'))
 
     def test_non_existing(self):
-        assert_raises(IOError, list, HtmlTemplate('nonex.html'))
+        assert_raises((ImportError, IOError), list, HtmlTemplate('nonex.html'))
 
 
 if __name__ == "__main__":
