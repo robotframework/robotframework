@@ -13,35 +13,47 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
-import pathlib
 import sys
+from collections.abc import Iterable
+from os.path import normpath
+from pathlib import Path
 
-if sys.version_info < (3, 10) and not pathlib.Path(__file__).exists():
-    # Try importlib resources backport as prior to python 3.10
-    # importlib.resources.files was not zipapp compatible...
+
+if sys.version_info < (3, 10) and not Path(__file__).exists():
+    # `importlib.resources.files` is new in Python 3.9, but that version does
+    # not seem to be compatible with zipapp.
     try:
         from importlib_resources import files
     except ImportError:
-        err_msg = "Up to python <= 3.10 importlib-resources backport is "
-        err_msg += "required if __file__ does not exist (zipapps, "
-        err_msg += "pyodixizer etc...)"
-        raise ImportError(err_msg)
+        raise ImportError(
+            "'importlib_resources' backport module needs to be installed with "
+            "Python 3.9 and older when Robot Framework is distributed as a zip "
+            "package or '__file__' does not exist for other reasons."
+        )
 else:
     try:
         from importlib.resources import files
-    except ImportError:
-        # python 3.8 or earlier:
-        def files(modulepath):
-            base_dir = pathlib.Path(__file__).parent.parent.parent
-            return base_dir / modulepath.replace(".", os.sep)
+    except ImportError:    # Python 3.8 or older
+        BASE_DIR = Path(__file__).absolute().parent.parent.parent
 
-class HtmlTemplate:
-    def __init__(self, filename):
-        module, self.filename = os.path.split(os.path.normpath(filename))
+        def files(module):
+            return BASE_DIR / module.replace('.', '/')
+
+
+class HtmlTemplate(Iterable):
+
+    def __init__(self, path: 'Path|str'):
+        # Need to use `os.path.normpath` because `Path` does not support
+        # normalizing only `..` components.
+        path = Path(normpath(path))
+        try:
+            module, self.name = path.parts
+        except ValueError:
+            raise ValueError(f"HTML template path must contain only directory and "
+                             f"file names like 'rebot/log.html', got '{path}'.")
         self.module = 'robot.htmldata.' + module
-        
+
     def __iter__(self):
-        with files(self.module).joinpath(self.filename).open('r', encoding="utf-8") as f:
-            for item in f:
+        with files(self.module).joinpath(self.name).open(encoding='UTF-8') as file:
+            for item in file:
                 yield item.rstrip()
