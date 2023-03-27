@@ -637,6 +637,22 @@ Keywords in a loop are not forcefully stopped if the limit is exceeded. Instead
 the loop is exited similarly as if the loop condition would have become false.
 A major difference is that the loop status will be `FAIL` in this case.
 
+By default, the error message raised when the limit is reached is
+`WHILE loop was aborted because it did not finish within the limit of 0.5
+seconds. Use the 'limit' argument to increase or remove the limit if
+needed.`. The error message can be changed with the `on_limit_message`
+configuration parameter.
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Limit as iteration count
+        WHILE    True    limit=0.5s    on_limit_message=Custom While loop error message
+            Log    This is run 0.5 seconds.
+        END
+
+.. note:: `on_limit_message` configuration parameter is new in Robot Framework 6.1.
+
 __ `Time format`_
 
 Nesting `WHILE` loops

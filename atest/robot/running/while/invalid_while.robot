@@ -9,7 +9,7 @@ No condition
 
 Multiple conditions
     ${tc} =   Check Invalid WHILE Test Case
-    Should Be Equal    ${tc.body[0].condition}    Too, many, !
+    Should Be Equal    ${tc.body[0].condition}    Too, many, conditions, !
 
 Invalid condition
     Check Invalid WHILE Test Case

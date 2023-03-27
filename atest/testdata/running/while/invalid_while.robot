@@ -6,8 +6,8 @@ No condition
     END
 
 Multiple conditions
-    [Documentation]    FAIL    WHILE cannot have more than one condition.
-    WHILE    Too    many    !
+    [Documentation]    FAIL    WHILE cannot have more than one condition, got 'Too', 'many', 'conditions' and '!'.
+    WHILE    Too    many    conditions    !
         Fail    Not executed!
     END
 

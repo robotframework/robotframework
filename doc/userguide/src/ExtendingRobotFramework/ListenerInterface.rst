@@ -270,6 +270,8 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |                                                                |
    |                  |                  | * `condition`: The looping condition.                          |
    |                  |                  | * `limit`: The maximum iteration limit.                        |
+   |                  |                  | * `on_limit_message`: The custom error raised when the         |
+   |                  |                  |   limit of the WHILE loop is reached. New in RF 6.1.           |
    |                  |                  |                                                                |
    |                  |                  | Additional attributes for `IF` and `ELSE IF` types:            |
    |                  |                  |                                                                |

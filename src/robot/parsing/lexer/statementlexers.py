@@ -309,8 +309,10 @@ class WhileHeaderLexer(StatementLexer):
         self.statement[0].type = Token.WHILE
         for token in self.statement[1:]:
             token.type = Token.ARGUMENT
-        if self.statement[-1].value.startswith('limit='):
-            self.statement[-1].type = Token.OPTION
+        for token in reversed(self.statement):
+            if not token.value.startswith(('limit=', 'on_limit_message=')):
+                break
+            token.type = Token.OPTION
 
 
 class EndLexer(TypeAndArguments):

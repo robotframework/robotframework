@@ -348,6 +348,10 @@ class While(HeaderAndBody):
     def limit(self):
         return self.header.limit
 
+    @property
+    def on_limit_message(self):
+        return self.header.on_limit_message
+
     def validate(self, ctx: 'ValidationContext'):
         if self._body_is_empty():
             self.errors += ('WHILE loop cannot be empty.',)

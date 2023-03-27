@@ -65,13 +65,13 @@ Invalid limit invalid value
     END
 
 Invalid limit mistyped prefix
-    [Documentation]     FAIL Second WHILE loop argument must be 'limit', got 'limitation=-1x'.
+    [Documentation]     FAIL WHILE cannot have more than one condition, got '$variable < 2' and 'limitation=-1x'.
     WHILE    $variable < 2    limitation=-1x
         Log     ${variable}
     END
 
 Invalid values after limit
-    [Documentation]     FAIL WHILE cannot have more than one condition.
+    [Documentation]     FAIL WHILE cannot have more than one condition, got '$variable < 2', 'limit=-1x', 'invalid' and 'values'.
     WHILE    $variable < 2    limit=-1x    invalid    values
         Log     ${variable}
     END
