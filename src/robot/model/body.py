@@ -152,7 +152,7 @@ class BaseBody(ItemList):
         return self._create(self.message_class, 'create_message', args, kwargs)
 
     def create_error(self, *args, **kwargs):
-        return self._create(self.error_class, 'create_message', args, kwargs)
+        return self._create(self.error_class, 'create_error', args, kwargs)
 
     def filter(self, keywords=None, messages=None, predicate=None):
         """Filter body items based on type and/or custom predicate.

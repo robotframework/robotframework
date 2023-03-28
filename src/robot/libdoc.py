@@ -34,11 +34,10 @@ Libdoc itself is implemented in the :mod:`~robot.libdocpkg` package.
 """
 
 import sys
-import os
+from pathlib import Path
 
-# Allows running as a script. __name__ check needed with multiprocessing:
-# https://github.com/robotframework/robotframework/issues/1137
-if 'robot' not in sys.modules and __name__ == '__main__':
+# Allows running as a script.
+if __name__ == '__main__':
     import pythonpathsetter
 
 from robot.utils import Application, seq2str
@@ -198,13 +197,13 @@ class LibDoc(Application):
             libdoc.convert_docs_to_html()
         libdoc.save(output, format, self._validate_theme(theme, format))
         if not quiet:
-            self.console(os.path.abspath(output))
+            self.console(Path(output).absolute())
 
     def _get_docformat(self, docformat):
         return self._validate('Doc format', docformat, 'ROBOT', 'TEXT', 'HTML', 'REST')
 
     def _get_format_and_specdocformat(self, format, specdocformat, output):
-        extension = os.path.splitext(output)[1][1:]
+        extension = Path(output).suffix[1:]
         format = self._validate('Format', format or extension,
                                 'HTML', 'XML', 'JSON', 'LIBSPEC')
         specdocformat = self._validate('Spec doc format', specdocformat, 'RAW', 'HTML')

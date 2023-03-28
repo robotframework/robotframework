@@ -1,10 +1,4 @@
 *** Test Cases ***
-No condition
-    [Documentation]    FAIL    WHILE must have a condition.
-    WHILE
-        Fail    Not executed!
-    END
-
 Multiple conditions
     [Documentation]    FAIL    WHILE cannot have more than one condition, got 'Too', 'many', 'conditions' and '!'.
     WHILE    Too    many    conditions    !

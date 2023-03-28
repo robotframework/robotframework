@@ -425,6 +425,8 @@ class WhileRunner:
             runner.run(data.body)
 
     def _should_run(self, condition, variables):
+        if not condition:
+            return True
         try:
             return evaluate_expression(condition, variables.current,
                                        resolve_variables=True)

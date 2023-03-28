@@ -596,7 +596,11 @@ The latter approach is handy when the string representation of the variable cann
 used in the condition directly. For example, strings require quoting and multiline
 strings and string themselves containing quotes cause additional problems. See the
 `Evaluating expressions`_ appendix for more information and examples related to
-the evaluation syntax
+the evaluation syntax.
+
+Starting from Robot Framework 6.1, the condition in a `WHILE` statement can be omitted.
+This is interpreted as the condition always being true, which may be useful with the
+`limit` option described below.
 
 Limiting `WHILE` loop iterations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
