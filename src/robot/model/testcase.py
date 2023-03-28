@@ -149,14 +149,16 @@ class TestCase(ModelObject):
         """
         if not self.parent:
             return 't1'
-        return '%s-t%d' % (self.parent.id, self.parent.tests.index(self)+1)
+        tests = self.parent.tests
+        index = tests.index(self) if self in tests else len(tests)
+        return f'{self.parent.id}-t{index + 1}'
 
     @property
     def longname(self):
         """Test name prefixed with the long name of the parent suite."""
         if not self.parent:
             return self.name
-        return '%s.%s' % (self.parent.longname, self.name)
+        return f'{self.parent.longname}.{self.name}'
 
     @property
     def source(self):

@@ -154,7 +154,7 @@ class IfBranch(BodyItem):
         if not self.parent:
             return 'k1'
         if not self.parent.parent:
-            return 'k%d' % (self.parent.body.index(self) + 1)
+            return self._get_id(self.parent)
         return self._get_id(self.parent.parent)
 
     def __str__(self):
@@ -231,7 +231,7 @@ class TryBranch(BodyItem):
         if not self.parent:
             return 'k1'
         if not self.parent.parent:
-            return 'k%d' % (self.parent.body.index(self) + 1)
+            return self._get_id(self.parent)
         return self._get_id(self.parent.parent)
 
     def __str__(self):

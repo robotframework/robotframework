@@ -80,6 +80,9 @@ class TestIf(unittest.TestCase):
         assert_equal(root.body.create_branch().id, 'k1')
         assert_equal(root.body.create_branch().id, 'k2')
 
+    def test_branch_id_with_only_root_when_branch_not_in_root(self):
+        assert_equal(IfBranch(parent=If()).id, 'k1')
+
     def test_branch_id_with_real_parent(self):
         root = TestCase().body.create_if()
         assert_equal(root.body.create_branch().id, 't1-k1')
@@ -142,6 +145,9 @@ class TestTry(unittest.TestCase):
         root = Try()
         assert_equal(root.body.create_branch().id, 'k1')
         assert_equal(root.body.create_branch().id, 'k2')
+
+    def test_branch_id_with_only_root_when_branch_not_in_root(self):
+        assert_equal(TryBranch(parent=Try()).id, 'k1')
 
     def test_branch_id_with_real_parent(self):
         root = TestCase().body.create_try()
