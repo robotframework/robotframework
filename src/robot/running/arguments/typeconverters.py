@@ -100,11 +100,11 @@ class TypeConverter:
             return self._handle_error(name, value, kind, error, strict)
 
     def no_conversion_needed(self, value):
+        used_type = getattr(self.used_type, '__origin__', self.used_type)
         try:
-            return isinstance(value, self.used_type)
+            return isinstance(value, used_type)
         except TypeError:
-            # If the used type doesn't like `isinstance` (e.g. TypedDict),
-            # compare the value to the generic type instead.
+            # Used type wasn't a class. Compare to generic type instead.
             if self.type and self.type is not self.used_type:
                 return isinstance(value, self.type)
             raise
@@ -460,7 +460,7 @@ class ListConverter(TypeConverter):
         return super().handles(type_) and type_ is not Tuple
 
     def no_conversion_needed(self, value):
-        if isinstance(value, str):
+        if isinstance(value, str) or self.converter:
             return False
         return super().no_conversion_needed(value)
 
@@ -499,6 +499,9 @@ class TupleConverter(TypeConverter):
         self.type_name = type_repr(used_type)
         self.converters = tuple(self.converter_for(t, custom_converters, languages)
                                 for t in types)
+
+    def no_conversion_needed(self, value):
+        return super().no_conversion_needed(value) and not self.converters
 
     def _non_string_convert(self, value, explicit_type=True):
         return self._convert_items(tuple(value), explicit_type)
@@ -587,10 +590,17 @@ class DictionaryConverter(TypeConverter):
             self.converters = tuple(self.converter_for(t, custom_converters, languages)
                                     for t in types)
 
+    def no_conversion_needed(self, value):
+        return super().no_conversion_needed(value) and not self.converters
+
     def _non_string_convert(self, value, explicit_type=True):
-        if issubclass(self.used_type, dict) and not isinstance(value, dict):
+        if self._used_type_is_dict() and not isinstance(value, dict):
             value = dict(value)
         return self._convert_items(value, explicit_type)
+
+    def _used_type_is_dict(self):
+        used_type = getattr(self.used_type, '__origin__', self.used_type)
+        return issubclass(used_type, dict)
 
     def _convert(self, value, explicit_type=True):
         return self._convert_items(self._literal_eval(value, dict), explicit_type)
@@ -624,6 +634,9 @@ class SetConverter(TypeConverter):
         else:
             self.type_name = type_repr(used_type)
             self.converter = self.converter_for(types[0], custom_converters, languages)
+
+    def no_conversion_needed(self, value):
+        return super().no_conversion_needed(value) and not self.converter
 
     def _non_string_convert(self, value, explicit_type=True):
         return self._convert_items(set(value), explicit_type)
