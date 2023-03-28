@@ -23,7 +23,7 @@ class TestConsoleEncode(unittest.TestCase):
         assert_equal(console_encode(UNICODE), UNICODE)
 
     def test_force_encoding(self):
-        assert_equal(console_encode(UNICODE, force=True), ENCODED)
+        assert_equal(console_encode(UNICODE, 'UTF-8', force=True), b'hyv\xc3\xa4')
 
     def test_encoding_error(self):
         assert_equal(console_encode(UNICODE, 'ASCII'), 'hyv?')
