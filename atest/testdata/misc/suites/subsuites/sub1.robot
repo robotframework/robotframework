@@ -5,6 +5,7 @@ Default Tags      d1    d2
 Metadata          Something    My Value
 Suite Setup       ${SETUP}
 Suite Teardown    ${TEARDOWN}
+Name              Custom sub1 Name
 
 *** Variable ***
 ${SLEEP}          0.1

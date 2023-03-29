@@ -3,6 +3,7 @@ Documentation     Normal test cases
 Force Tags        f1
 Default Tags      d1    d2
 Metadata          Something    My Value
+Name              SubSuite333
 
 *** Test Case ***
 SubSuite3 First
