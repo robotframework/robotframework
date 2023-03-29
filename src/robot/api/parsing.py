@@ -207,6 +207,7 @@ Statements:
 - :class:`~robot.parsing.model.statements.Metadata`
 - :class:`~robot.parsing.model.statements.ForceTags`
 - :class:`~robot.parsing.model.statements.DefaultTags`
+- :class:`~robot.parsing.model.statements.SuiteName`
 - :class:`~robot.parsing.model.statements.SuiteSetup`
 - :class:`~robot.parsing.model.statements.SuiteTeardown`
 - :class:`~robot.parsing.model.statements.TestSetup`
