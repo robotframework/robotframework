@@ -89,7 +89,13 @@ class NormalizedDict(MutableMapping):
         return len(self._data)
 
     def __str__(self):
-        return '{%s}' % ', '.join('%r: %r' % (key, self[key]) for key in self)
+        items = ', '.join(f'{key!r}: {self[key]!r}' for key in self)
+        return f'{{{items}}}'
+
+    def __repr__(self):
+        name = type(self).__name__
+        params = str(self) if self else ''
+        return f'{name}({params})'
 
     def __eq__(self, other):
         if not is_dict_like(other):
