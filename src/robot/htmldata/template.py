@@ -19,7 +19,7 @@ from os.path import normpath
 from pathlib import Path
 
 
-if sys.version_info < (3, 10) and not Path(__file__).exists():
+if sys.version_info < (3, 9) and not Path(__file__).exists():
     # `importlib.resources.files` is new in Python 3.9, but that version does
     # not seem to be compatible with zipapp.
     try:
@@ -27,7 +27,7 @@ if sys.version_info < (3, 10) and not Path(__file__).exists():
     except ImportError:
         raise ImportError(
             "'importlib_resources' backport module needs to be installed with "
-            "Python 3.9 and older when Robot Framework is distributed as a zip "
+            "Python 3.8 and older when Robot Framework is distributed as a zip "
             "package or '__file__' does not exist for other reasons."
         )
 else:
@@ -54,6 +54,11 @@ class HtmlTemplate(Iterable):
         self.module = 'robot.htmldata.' + module
 
     def __iter__(self):
-        with files(self.module).joinpath(self.name).open(encoding='UTF-8') as file:
+        path = files(self.module).joinpath(self.name)
+        # Workaround for a bug on Windows with Python 3.9 when packaged to a zip:
+        # https://github.com/python/importlib_resources/issues/281
+        if hasattr(path, 'at') and '\\' in path.at:
+            path.at = path.at.replace('\\', '/')
+        with path.open(encoding='UTF-8') as file:
             for item in file:
                 yield item.rstrip()
