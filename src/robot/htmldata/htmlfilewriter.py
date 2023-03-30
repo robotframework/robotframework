@@ -13,8 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os.path
 import re
+from abc import ABC, abstractmethod
+from io import TextIOBase
+from pathlib import Path
 
 from robot.utils import HtmlWriter
 from robot.version import get_full_version
@@ -24,92 +26,91 @@ from .template import HtmlTemplate
 
 class HtmlFileWriter:
 
-    def __init__(self, output, model_writer):
-        self._output = output
-        self._model_writer = model_writer
+    def __init__(self, output: TextIOBase, model_writer: 'ModelWriter'):
+        self.output = output
+        self.model_writer = model_writer
 
-    def write(self, template):
-        writers = self._get_writers(os.path.dirname(template))
+    def write(self, template: 'Path|str'):
+        if not isinstance(template, Path):
+            template = Path(template)
+        writers = self._get_writers(template.parent)
         for line in HtmlTemplate(template):
             for writer in writers:
                 if writer.handles(line):
                     writer.write(line)
                     break
 
-    def _get_writers(self, base_dir):
-        html_writer = HtmlWriter(self._output)
-        return (self._model_writer,
-                JsFileWriter(html_writer, base_dir),
-                CssFileWriter(html_writer, base_dir),
-                GeneratorWriter(html_writer),
-                LineWriter(self._output))
+    def _get_writers(self, base_dir: Path):
+        writer = HtmlWriter(self.output)
+        return (self.model_writer,
+                JsFileWriter(writer, base_dir),
+                CssFileWriter(writer, base_dir),
+                GeneratorWriter(writer),
+                LineWriter(self.output))
 
 
-class _Writer:
-    _handles_line = None
+class Writer(ABC):
+    handles_line = None
 
-    def handles(self, line):
-        return line.startswith(self._handles_line)
+    def handles(self, line: str):
+        return line.startswith(self.handles_line)
 
-    def write(self, line):
+    @abstractmethod
+    def write(self, line: str):
         raise NotImplementedError
 
 
-class ModelWriter(_Writer):
-    _handles_line = '<!-- JS MODEL -->'
+class ModelWriter(Writer, ABC):
+    handles_line = '<!-- JS MODEL -->'
 
 
-class LineWriter(_Writer):
+class LineWriter(Writer):
 
-    def __init__(self, output):
-        self._output = output
+    def __init__(self, output: TextIOBase):
+        self.output = output
 
-    def handles(self, line):
+    def handles(self, line: str):
         return True
 
-    def write(self, line):
-        self._output.write(line + '\n')
+    def write(self, line: str):
+        self.output.write(line + '\n')
 
 
-class GeneratorWriter(_Writer):
-    _handles_line = '<meta name="Generator" content='
+class GeneratorWriter(Writer):
+    handles_line = '<meta name="Generator" content='
 
-    def __init__(self, html_writer):
-        self._html_writer = html_writer
+    def __init__(self, writer: HtmlWriter):
+        self.writer = writer
 
-    def write(self, line):
+    def write(self, line: str):
         version = get_full_version('Robot Framework')
-        self._html_writer.start('meta', {'name': 'Generator', 'content': version})
+        self.writer.start('meta', {'name': 'Generator', 'content': version})
 
 
-class _InliningWriter(_Writer):
+class InliningWriter(Writer, ABC):
 
-    def __init__(self, html_writer, base_dir):
-        self._html_writer = html_writer
-        self._base_dir = base_dir
+    def __init__(self, writer: HtmlWriter, base_dir: Path):
+        self.writer = writer
+        self.base_dir = base_dir
 
-    def _inline_file(self, filename, tag, attrs):
-        self._html_writer.start(tag, attrs)
-        for line in HtmlTemplate(os.path.join(self._base_dir, filename)):
-            self._html_writer.content(line, escape=False, newline=True)
-        self._html_writer.end(tag)
-
-
-class JsFileWriter(_InliningWriter):
-    _handles_line = '<script type="text/javascript" src='
-    _source_file = re.compile('src=\"([^\"]+)\"')
-
-    def write(self, line):
-        name = self._source_file.search(line).group(1)
-        self._inline_file(name, 'script', {'type': 'text/javascript'})
+    def inline_file(self, path: 'Path|str', tag: str, attrs: dict):
+        self.writer.start(tag, attrs)
+        for line in HtmlTemplate(self.base_dir / path):
+            self.writer.content(line, escape=False, newline=True)
+        self.writer.end(tag)
 
 
-class CssFileWriter(_InliningWriter):
-    _handles_line = '<link rel="stylesheet"'
-    _source_file = re.compile('href=\"([^\"]+)\"')
-    _media_type = re.compile('media=\"([^\"]+)\"')
+class JsFileWriter(InliningWriter):
+    handles_line = '<script type="text/javascript" src='
 
-    def write(self, line):
-        name = self._source_file.search(line).group(1)
-        media = self._media_type.search(line).group(1)
-        self._inline_file(name, 'style', {'type': 'text/css', 'media': media})
+    def write(self, line: str):
+        src = re.search('src="([^"]+)"', line).group(1)
+        self.inline_file(src, 'script', {'type': 'text/javascript'})
+
+
+class CssFileWriter(InliningWriter):
+    handles_line = '<link rel="stylesheet"'
+
+    def write(self, line: str):
+        href, media = re.search('href="([^"]+)" media="([^"]+)"', line).groups()
+        self.inline_file(href, 'style', {'type': 'text/css', 'media': media})

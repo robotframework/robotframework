@@ -13,29 +13,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Module that adds directories needed by Robot to sys.path when imported."""
+"""Modifies `sys.path` if Robot Framework's entry points are run as scripts.
+
+When, for example, `robot/run.py` or `robot/libdoc.py` is executed as a script,
+the `robot` directory is in `sys.path` but its parent directory is not.
+Importing this module adds the parent directory to `sys.path` to make it
+possible to import the `robot` module. The `robot` directory itself is removed
+to prevent importing internal modules directly.
+
+Does nothing if the `robot` module is already imported.
+"""
 
 import sys
-import fnmatch
-from os.path import abspath, dirname
+from pathlib import Path
 
-ROBOTDIR = dirname(abspath(__file__))
-
-def add_path(path, end=False):
-    if not end:
-        remove_path(path)
-        sys.path.insert(0, path)
-    elif not any(fnmatch.fnmatch(p, path) for p in sys.path):
-        sys.path.append(path)
-
-def remove_path(path):
-    sys.path = [p for p in sys.path if not fnmatch.fnmatch(p, path)]
-
-
-# When, for example, robot/run.py is executed as a script, the directory
-# containing the robot module is not added to sys.path automatically but
-# the robot directory itself is. Former is added to allow importing
-# the module and the latter removed to prevent accidentally importing
-# internal modules directly.
-add_path(dirname(ROBOTDIR))
-remove_path(ROBOTDIR)
+if 'robot' not in sys.modules:
+    robot_dir = Path(__file__).absolute().parent
+    sys.path = [str(robot_dir.parent)] + [p for p in sys.path if Path(p) != robot_dir]

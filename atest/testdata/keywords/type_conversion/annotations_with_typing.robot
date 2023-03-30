@@ -14,11 +14,14 @@ List with types
     List with types           []                          []
     List with types           [1, 2, 3, -42]              [1, 2, 3, -42]
     List with types           [1, '2', 3.0]               [1, 2, 3]
+    List with types           ${{[1, '2', 3.0]}}          [1, 2, 3]
 
 List with incompatible types
     [Template]                Conversion Should Fail
     List with types           ['foo', 'bar']              type=List[int]                error=Item '0' got value 'foo' that cannot be converted to integer.
     List with types           [0, 1, 2, 3, 4, 5, 6.1]     type=List[int]                error=Item '6' got value '6.1' (float) that cannot be converted to integer: Conversion would lose precision.
+    List with types           ${{[0.0, 1.1]}}             type=List[int]                error=Item '1' got value '1.1' (float) that cannot be converted to integer: Conversion would lose precision.
+    ...                       arg_type=list
 
 Invalid list
     [Template]                Conversion Should Fail
@@ -34,17 +37,22 @@ Tuple
 Tuple with types
     Tuple with types          ('true', 1)                 (True, 1)
     Tuple with types          ('ei', '2')                 (False, 2)    # 'ei' -> False is due to language config
+    Tuple with types          ${{('no', '3')}}            (False, 3)
 
 Tuple with homogenous types
     Homogenous tuple          ()                          ()
     Homogenous tuple          (1,)                        (1,)
-    Homogenous tuple          (1, 2)                      (1, 2)
-    Homogenous tuple          (1, 2, 3, 4, 5, 6, 7)       (1, 2, 3, 4, 5, 6, 7)
+    Homogenous tuple          ('1',)                      (1,)
+    Homogenous tuple          (1, '2')                    (1, 2)
+    Homogenous tuple          (1, '2', 3.0, 4, 5)         (1, 2, 3, 4, 5)
+    Homogenous tuple          ${{(1, '2', 3.0)}}          (1, 2, 3)
 
 Tuple with incompatible types
     [Template]                Conversion Should Fail
     Tuple with types          ('bad', 'values')           type=Tuple[bool, int]         error=Item '1' got value 'values' that cannot be converted to integer.
     Homogenous tuple          ('bad', 'values')           type=Tuple[int, ...]          error=Item '0' got value 'bad' that cannot be converted to integer.
+    Tuple with types          ${{('bad', 'values')}}      type=Tuple[bool, int]         error=Item '1' got value 'values' that cannot be converted to integer.
+    ...                       arg_type=tuple
 
 Tuple with wrong number of values
     [Template]                Conversion Should Fail
@@ -67,6 +75,7 @@ Sequence with types
     Sequence with types       [1, 2.3, '4', '5.6']        [1, 2.3, 4, 5.6]
     Mutable sequence with types
     ...                       [1, 2, 3.0, '4']            [1, 2, 3, 4]
+    Sequence with types       ${{[1, 2.3, '4', '5.6']}}   [1, 2.3, 4, 5.6]
 
 Sequence with incompatible types
     [Template]                Conversion Should Fail
@@ -88,6 +97,7 @@ Dict with types
     Dict with types           {}                          {}
     Dict with types           {1: 1.1, 2: 2.2}            {1: 1.1, 2: 2.2}
     Dict with types           {'1': '2', 3.0: 4}          {1: 2, 3: 4}
+    Dict with types           ${{{'1': '2', 3.0: 4}}}     {1: 2, 3: 4}
 
 Dict with incompatible types
     [Template]                Conversion Should Fail
@@ -110,7 +120,11 @@ Mapping
 Mapping with types
     Mapping with types        {}                          {}
     Mapping with types        {1: 2, '3': 4.0}            {1: 2, 3: 4}
-    Mutable mapping with types    {1: 2, '3': 4.0}        {1: 2, 3: 4}
+    Mapping with types        ${{{1: 2, '3': 4.0}}}       {1: 2, 3: 4}
+    Mutable mapping with types
+    ...                       {1: 2, '3': 4.0}            {1: 2, 3: 4}
+    Mutable mapping with types
+    ...                       ${{{1: 2, '3': 4.0}}}       {1: 2, 3: 4}
 
 Mapping with incompatible types
     [Template]                Conversion Should Fail
@@ -124,12 +138,14 @@ Invalid mapping
     Mapping with types        ooops                       type=Mapping[int, float]      error=Invalid expression.
 
 TypedDict
-    TypedDict                 {'x': 1, 'y': 2}            {'x': 1, 'y': 2}
+    TypedDict                 {'x': 1, 'y': 2.0}          {'x': 1, 'y': 2}
     TypedDict                 {'x': -10_000, 'y': '2'}    {'x': -10000, 'y': 2}
+    TypedDict                 ${{{'x': 1, 'y': '2'}}}     {'x': 1, 'y': 2}
     TypedDict with optional   {'x': 1, 'y': 2, 'z': 3}    {'x': 1, 'y': 2, 'z': 3}
 
 Optional TypedDict keys can be omitted
-    TypedDict with optional   {'x': 0, 'y': 0}            {'x': 0, 'y': 0}
+    TypedDict with optional   {'x': 0, 'y': '0'}          {'x': 0, 'y': 0}
+    TypedDict with optional   ${{{'x': 0, 'y': '0'}}}     {'x': 0, 'y': 0}
 
 Required TypedDict keys cannot be omitted
     [Documentation]           This test would fail if using Python 3.8 without typing_extensions!
@@ -160,7 +176,9 @@ Set
 Set with types
     Set with types            set()                       set()
     Set with types            {1, 2.0, '3'}               {1, 2, 3}
+    Set with types            ${{{1, 2.0, '3'}}}          {1, 2, 3}
     Mutable set with types    {1, 2, 3.14, -42}           {1, 2, 3.14, -42}
+    Mutable set with types    ${{{1, 2, 3.14, -42}}}      {1, 2, 3.14, -42}
 
 Set with incompatible types
     [Template]                Conversion Should Fail

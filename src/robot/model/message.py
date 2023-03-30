@@ -52,7 +52,9 @@ class Message(BodyItem):
     def id(self):
         if not self.parent:
             return 'm1'
-        return '%s-m%d' % (self.parent.id, self.parent.messages.index(self) + 1)
+        messages = self.parent.messages
+        index = messages.index(self) if self in messages else len(messages)
+        return f'{self.parent.id}-m{index + 1}'
 
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""

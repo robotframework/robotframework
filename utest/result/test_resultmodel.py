@@ -329,6 +329,10 @@ class TestModel(unittest.TestCase):
         assert_equal(While('$x > 0').name, '$x > 0')
         assert_equal(While('True', '1 minute').name, 'True | limit=1 minute')
         assert_equal(While(limit='1 minute').name, 'limit=1 minute')
+        assert_equal(While('True', '1 s', 'Error message').name,
+                     'True | limit=1 s | on_limit_message=Error message')
+        assert_equal(While(on_limit_message='Error message').name,
+                     'on_limit_message=Error message')
 
 
 class TestBody(unittest.TestCase):

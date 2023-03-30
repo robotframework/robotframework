@@ -375,14 +375,18 @@ class WhileRunner:
         error = None
         run = False
         limit = None
-        loop_result = WhileResult(data.condition, data.limit, starttime=get_timestamp())
+        loop_result = WhileResult(data.condition, data.limit,
+                                  data.on_limit_message,
+                                  starttime=get_timestamp())
         iter_result = loop_result.body.create_iteration(starttime=get_timestamp())
         if self._run:
             if data.error:
                 error = DataError(data.error, syntax=True)
             elif not ctx.dry_run:
                 try:
-                    limit = WhileLimit.create(data.limit, ctx.variables)
+                    limit = WhileLimit.create(data.limit,
+                                              data.on_limit_message,
+                                              ctx.variables)
                     run = self._should_run(data.condition, ctx.variables)
                 except DataError as err:
                     error = err
@@ -421,6 +425,8 @@ class WhileRunner:
             runner.run(data.body)
 
     def _should_run(self, condition, variables):
+        if not condition:
+            return True
         try:
             return evaluate_expression(condition, variables.current,
                                        resolve_variables=True)
@@ -625,10 +631,18 @@ class TryRunner:
 
 class WhileLimit:
 
+    def __init__(self, on_limit_message=None):
+        self.on_limit_message = on_limit_message
+
     @classmethod
-    def create(cls, limit, variables):
+    def create(cls, limit, on_limit_message, variables):
+        if on_limit_message:
+            on_limit_message = variables.replace_string(
+                on_limit_message)
         if not limit:
-            return IterationCountLimit(DEFAULT_WHILE_LIMIT)
+            return IterationCountLimit(DEFAULT_WHILE_LIMIT,
+                                       on_limit_message
+                                       )
         value = variables.replace_string(limit)
         if value.upper() == 'NONE':
             return NoLimit()
@@ -640,18 +654,23 @@ class WhileLimit:
             if count <= 0:
                 raise DataError(f"Invalid WHILE loop limit: Iteration count must be "
                                 f"a positive integer, got '{count}'.")
-            return IterationCountLimit(count)
+            return IterationCountLimit(count, on_limit_message)
         try:
             secs = timestr_to_secs(value)
         except ValueError as err:
             raise DataError(f'Invalid WHILE loop limit: {err.args[0]}')
         else:
-            return DurationLimit(secs)
+            return DurationLimit(secs, on_limit_message)
 
     def limit_exceeded(self):
-        raise ExecutionFailed(f"WHILE loop was aborted because it did not finish "
-                              f"within the limit of {self}. Use the 'limit' argument "
-                              f"to increase or remove the limit if needed.")
+        if self.on_limit_message:
+            raise ExecutionFailed(self.on_limit_message)
+        else:
+            raise ExecutionFailed(f"WHILE loop was aborted because "
+                                  f"it did not finish "
+                                  f"within the limit of {self}. "
+                                  f"Use the 'limit' argument to "
+                                  f"increase or remove the limit if needed.")
 
     def __enter__(self):
         raise NotImplementedError
@@ -662,7 +681,8 @@ class WhileLimit:
 
 class DurationLimit(WhileLimit):
 
-    def __init__(self, max_time):
+    def __init__(self, max_time, on_limit_message):
+        super().__init__(on_limit_message)
         self.max_time = max_time
         self.start_time = None
 
@@ -678,7 +698,8 @@ class DurationLimit(WhileLimit):
 
 class IterationCountLimit(WhileLimit):
 
-    def __init__(self, max_iterations):
+    def __init__(self, max_iterations, on_limit_message):
+        super().__init__(on_limit_message)
         self.max_iterations = max_iterations
         self.current_iterations = 0
 

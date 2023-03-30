@@ -27,6 +27,13 @@ class TestMessage(unittest.TestCase):
         assert_equal(errors.messages.create().id, 'errors-m1')
         assert_equal(errors.messages.create().id, 'errors-m2')
 
+    def test_id_when_item_not_in_parent(self):
+        kw = Keyword()
+        assert_equal(Message(parent=kw).id, 'k1-m1')
+        assert_equal(kw.body.create_message().id, 'k1-m1')
+        assert_equal(kw.body.create_message().id, 'k1-m2')
+        assert_equal(Message(parent=kw).id, 'k1-m3')
+
 
 class TestHtmlMessage(unittest.TestCase):
 

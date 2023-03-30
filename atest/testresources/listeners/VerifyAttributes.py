@@ -7,7 +7,7 @@ SUITE = 'id longname metadata source tests suites totaltests '
 TEST = 'id longname tags template originalname source lineno '
 KW = 'kwname libname args assign tags type lineno source status '
 KW_TYPES = {'FOR': 'variables flavor values',
-            'WHILE': 'condition limit',
+            'WHILE': 'condition limit on_limit_message',
             'IF': 'condition',
             'ELSE IF': 'condition',
             'EXCEPT': 'patterns pattern_type variable',
@@ -29,6 +29,7 @@ EXPECTED_TYPES = {'tags': [str],
                   'values': (list, dict),
                   'condition': str,
                   'limit': (str, type(None)),
+                  'on_limit_message': (str, type(None)),
                   'patterns': (str, list),
                   'pattern_type': (str, type(None)),
                   'variable': (str, type(None))}

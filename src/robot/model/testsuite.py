@@ -211,7 +211,8 @@ class TestSuite(ModelObject):
         """
         if not self.parent:
             return 's1'
-        index = self.parent.suites.index(self)
+        suites = self.parent.suites
+        index = suites.index(self) if self in suites else len(suites)
         return f'{self.parent.id}-s{index + 1}'
 
     @property

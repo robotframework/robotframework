@@ -17,6 +17,9 @@ Loop not executed
         Should Be Equal    ${item.status}    NOT RUN
     END
 
+No Condition
+    Check While Loop    PASS    5
+
 Execution fails on the first loop
     Check While Loop    FAIL    1
 
