@@ -3,6 +3,7 @@ Library          AsyncLib.py
 
 *** Test Cases ***
 Works With Asyncio Run
+    [Tags]    require-py3.7
     ${result} =    Async With Run Inside
     Should Be Equal    ${result}    Works
 
@@ -14,6 +15,7 @@ Works Using Gather
     Can Use Gather
 
 Long Async Tasks Run In Background
+    [Tags]    require-py3.7
     ${hanger} =     Create Hanger
     Basic Async Test
     Stop task From Hanger   ${hanger}
@@ -22,4 +24,8 @@ Long Async Tasks Run In Background
 
 Builtin Call From Library Works
     ${result} =    Run Keyword Using Builtin
+    Should Be Equal    ${result}    Got it
+
+Create Task With Loop Reference
+    ${result} =    Create Task With Loop
     Should Be Equal    ${result}    Got it

@@ -41,3 +41,8 @@ class AsyncLib:
 
     async def run_keyword_using_builtin(self):
         return await BuiltIn().run_keyword("Basic Async Test")
+
+    async def create_task_with_loop(self):
+        loop = asyncio.get_event_loop()
+        task = loop.create_task(self.basic_async_test())
+        return await task
