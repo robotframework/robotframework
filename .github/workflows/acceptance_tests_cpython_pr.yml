@@ -76,6 +76,11 @@ jobs:
           ${{ matrix.set_display }}
           ${{ env.ATEST_PYTHON }} atest/run.py --interpreter ${{ env.BASE_PYTHON }} --exclude no-ci ${{ matrix.atest_args }} atest/robot
 
+      - name: Run zipapptest
+        run: |
+          python -m zipapp -m "robot:run_cli" src -o robot.pyz -c
+          python robot.pyz --output NONE atest/testdata/core/test_suite_dir
+
       - name: Delete output.xml (on Win)
         run: |
           Get-ChildItem atest/results -Include output.xml -Recurse | Remove-Item
