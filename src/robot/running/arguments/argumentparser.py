@@ -99,20 +99,21 @@ class ArgumentSpecParser(ArgumentParser):
 
     def parse(self, argspec, name=None):
         spec = ArgumentSpec(name, self._type)
-        positional_only = True if "/" in argspec else False
+        positional_only_separator_seen = False
         named_only = False
-        if argspec.count("/") > 1:
-            self._report_error('Too many positional only separators.')
         for arg in argspec:
             arg = self._validate_arg(arg)
-            if arg == "/":
-                positional_only = False
+            if self._is_positional_only_separator(arg):
+                if positional_only_separator_seen:
+                    self._report_error('Too many positional only separators.')
+                positional_only_separator_seen = True
+                spec.positional_only, spec.positional_or_named = spec.positional_or_named, []
                 continue
             if spec.var_named:
                 self._report_error('Only last argument can be kwargs.')
             elif isinstance(arg, tuple):
                 arg, default = arg
-                arg = self._add_arg(spec, arg, named_only, positional_only)
+                arg = self._add_arg(spec, arg, named_only)
                 spec.defaults[arg] = default
             elif self._is_var_named(arg):
                 spec.var_named = self._format_var_named(arg)
@@ -125,7 +126,7 @@ class ArgumentSpecParser(ArgumentParser):
             elif spec.defaults and not named_only:
                 self._report_error('Non-default argument after default arguments.')
             else:
-                self._add_arg(spec, arg, named_only, positional_only)
+                self._add_arg(spec, arg, named_only)
         return spec
 
     @abstractmethod
@@ -152,16 +153,17 @@ class ArgumentSpecParser(ArgumentParser):
     def _format_var_positional(self, varargs):
         raise NotImplementedError
 
+    @abstractmethod
+    def _is_positional_only_separator(self, arg):
+        raise NotImplementedError
+
     def _format_arg(self, arg):
         return arg
 
-    def _add_arg(self, spec, arg, named_only=False, positional_only=False):
+    def _add_arg(self, spec, arg, named_only=False):
         arg = self._format_arg(arg)
-        if positional_only:
-            spec.positional_only.append(arg)
-        else:
-            target = spec.positional_or_named if not named_only else spec.named_only
-            target.append(arg)
+        target = spec.positional_or_named if not named_only else spec.named_only
+        target.append(arg)
         return arg
 
 
@@ -200,6 +202,9 @@ class DynamicArgumentParser(ArgumentSpecParser):
     def _format_var_positional(self, varargs):
         return varargs[1:]
 
+    def _is_positional_only_separator(self, arg):
+        return arg == "/"
+
 
 class UserKeywordArgumentParser(ArgumentSpecParser):
 
@@ -232,3 +237,6 @@ class UserKeywordArgumentParser(ArgumentSpecParser):
 
     def _format_arg(self, arg):
         return arg[2:-1]
+
+    def _is_positional_only_separator(self, arg):
+        return False
