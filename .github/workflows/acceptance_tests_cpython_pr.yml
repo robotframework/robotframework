@@ -80,7 +80,7 @@ jobs:
         run: |
           python -m zipapp -m "robot:run_cli" src -o robot.pyz -c
           python robot.pyz --output NONE atest/testdata/core/test_suite_dir
-        if:  ${{matrix.python-version >= 3.9 }}
+        if:  ${{matrix.python-version >= 3.9 || ${{matrix.python-version < 3.5 }}
 
       - name: Delete output.xml (on Win)
         run: |
