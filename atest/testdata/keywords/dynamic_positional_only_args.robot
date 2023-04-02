@@ -50,6 +50,8 @@ Pos with default
     Should be equal    ${result}    default tuple-('optional=b',)
     ${result} =    default tuple    optional=b    optional=c
     Should be equal    ${result}    default tuple-('optional=b', 'optional=c')
+    Arg with separator    /one=
+    Should be equal    ${result}    default tuple-('optional=b', 'optional=c')
 
 All args
     ${result} =    all args kw    other    value    1    2    kw1=1    kw2=2
@@ -58,10 +60,6 @@ All args
     Should be equal    ${result}    all args kw-('other',)
     ${result} =    all args kw
     Should be equal    ${result}    all args kw-()
-
-Arg with separator
-    [Documentation]    FAIL No keyword with name 'Arg with separator' found.
-    Arg with separator    /one=
 
 Arg with too may / separators
     [Documentation]    FAIL No keyword with name 'Arg with too many / separators' found.

@@ -176,8 +176,6 @@ class DynamicArgumentParser(ArgumentSpecParser):
             if len(arg) == 1:
                 return arg[0]
             return arg
-        if "/" in arg and len(arg) > 1:
-            self._report_error(f'Invalid argument "{arg}".')
         if '=' in arg:
             return tuple(arg.split('=', 1))
         return arg
