@@ -307,7 +307,7 @@ class En(Language):
     library_setting = 'Library'
     resource_setting = 'Resource'
     variables_setting = 'Variables'
-    name_setting = "Name"
+    name_setting = 'Name'
     documentation_setting = 'Documentation'
     metadata_setting = 'Metadata'
     suite_setup_setting = 'Suite Setup'
