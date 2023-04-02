@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation      Tests for --test and --suite options.
 Resource           atest_resource.robot
+Test Tags          4583    filter_by_names    # delete this tag after fixing all the tests
 
 *** Variables ***
 ${SUITE FILE}      misc/many_tests.robot
@@ -37,7 +38,7 @@ ${SUITE DIR}       misc/suites
 
 --suite with . in name
     Run Suites    --suite sub.suite.4
-    Should Contain Suites    ${SUITE}    Parent Suite Name
+    Should Contain Suites    ${SUITE}    Custom Parent Suite Name
     Should Contain Tests   ${SUITE}    Test From Sub Suite 4
     Should Not Contain Tests    ${SUITE}   SubSuite3 First    SubSuite3 Second
 
@@ -110,7 +111,7 @@ Unnecessary files are not parsed when --suite matches directory
     Should Contain Tests   ${SUITE}    SubSuite1 First    SubSuite2 First
 
 --suite with long name with . in name
-    Run Suites    --suite suites.subsuites2.sub.suite.4
+    Run Suites    --suite suites.Custom_Parent_Suite_Name.sub.suite.4
     Should Contain Suites    ${SUITE}    Subsuites2
     Should Contain Tests   ${SUITE}    Test From Sub Suite 4
     Should Not Contain Tests    ${SUITE}   SubSuite3 First    SubSuite3 Second

@@ -2,7 +2,7 @@
 Documentation       Run testdata and validate that suite names are set correctly
 Suite Setup         Run Tests    ${EMPTY}    misc/suites
 Resource            atest_resource.robot
-
+Test Tags           4583    filter_by_names    # delete thsi tatg after fixing all the tests
 
 *** Test Cases ***
 Custom Suite Name
@@ -14,7 +14,7 @@ Default File Suite Name
     Should Be Equal    ${SUITE.suites[2].suites[1].name}    Sub2
 
 Cutom Suite Name With Parent init
-    Should Be Equal    ${SUITE.suites[3]}    Parent Suite Name
+    Should Be Equal    ${SUITE.suites[3].name}    Custom Parent Suite Name
     Should Be Equal    ${SUITE.suites[3].suites[0].name}    Sub.Suite.4
     Should Be Equal    ${SUITE.suites[3].suites[2].name}    SubSuite333
 

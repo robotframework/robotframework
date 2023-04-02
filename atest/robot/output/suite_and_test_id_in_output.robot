@@ -1,6 +1,7 @@
 *** Settings ***
 Resource        atest_resource.robot
 Suite Setup     Run Tests    ${EMPTY}    misc/suites
+Test Tags    4583    #delete after debugging
 
 *** Test Cases ***
 Ids in output after test run
