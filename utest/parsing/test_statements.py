@@ -895,6 +895,25 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             condition='$cond',
             limit='100s'
         )
+        # WHILE    $cond    limit=10    on_limit_message=Error message
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.WHILE),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, '$cond'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.OPTION, 'limit=10'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.OPTION, 'on_limit_message=Error message'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            WhileHeader,
+            condition='$cond',
+            limit='10',
+            on_limit_message='Error message'
+        )
 
     def test_End(self):
         tokens = [

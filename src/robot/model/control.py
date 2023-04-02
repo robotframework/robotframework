@@ -89,12 +89,14 @@ class While(BodyItem):
     """Represents ``WHILE`` loops."""
     type = BodyItem.WHILE
     body_class = Body
-    repr_args = ('condition', 'limit')
-    __slots__ = ['condition', 'limit']
+    repr_args = ('condition', 'limit', 'on_limit_message')
+    __slots__ = ['condition', 'limit', 'on_limit_message']
 
-    def __init__(self, condition=None, limit=None, parent=None):
+    def __init__(self, condition=None, limit=None,
+                 on_limit_message=None, parent=None):
         self.condition = condition
         self.limit = limit
+        self.on_limit_message = on_limit_message
         self.parent = parent
         self.body = None
 
@@ -111,6 +113,8 @@ class While(BodyItem):
             parts.append(self.condition)
         if self.limit is not None:
             parts.append(f'limit={self.limit}')
+        if self.on_limit_message is not None:
+            parts.append(f'on_limit_message={self.on_limit_message}')
         return '    '.join(parts)
 
     def _include_in_repr(self, name, value):
@@ -122,6 +126,8 @@ class While(BodyItem):
             data['condition'] = self.condition
         if self.limit:
             data['limit'] = self.limit
+        if self.on_limit_message:
+            data['on_limit_message'] = self.on_limit_message
         data['body'] = self.body.to_dicts()
         return data
 
@@ -148,7 +154,7 @@ class IfBranch(BodyItem):
         if not self.parent:
             return 'k1'
         if not self.parent.parent:
-            return 'k%d' % (self.parent.body.index(self) + 1)
+            return self._get_id(self.parent)
         return self._get_id(self.parent.parent)
 
     def __str__(self):
@@ -225,7 +231,7 @@ class TryBranch(BodyItem):
         if not self.parent:
             return 'k1'
         if not self.parent.parent:
-            return 'k%d' % (self.parent.body.index(self) + 1)
+            return self._get_id(self.parent)
         return self._get_id(self.parent.parent)
 
     def __str__(self):
