@@ -1,6 +1,7 @@
 *** Settings ***
 Suite Setup       My Setup
 Resource          atest_resource.robot
+Test Tags    4583    #delete after debugging
 
 *** Test Cases ***
 Statistics Should Be Written to XML

@@ -1,13 +1,13 @@
-Running suite 'X' with 15 tests.
+Running suite 'X' with 16 tests.
 ==============================================================================
-.s.F...........
+.s.F............
 ------------------------------------------------------------------------------
 FAIL: X.Suites.Fourth.Suite4 First
 Expected
 ==============================================================================
-Run suite 'X' with 15 tests in *.
+Run suite 'X' with 16 tests in *.
 
 FAILED
-15 tests, 13 passed, 1 failed, 1 skipped
+16 tests, 14 passed, 1 failed, 1 skipped
 
 Output:  *.xml

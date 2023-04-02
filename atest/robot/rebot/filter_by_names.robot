@@ -4,6 +4,7 @@ Suite Setup       Create Input File
 Suite Teardown    Remove Temps
 Test Setup        Empty Directory    ${MYOUTDIR}
 Resource          rebot_resource.robot
+Test Tags    4583    #delete after debugging
 
 *** Variables ***
 ${SUITE FILE}     misc${/}many_tests.robot

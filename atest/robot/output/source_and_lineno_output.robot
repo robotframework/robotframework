@@ -1,6 +1,7 @@
 *** Settings ***
 Resource        atest_resource.robot
 Suite Setup     Run Tests    ${EMPTY}    misc/suites/subsuites2
+Test Tags    4583    #delete after debugging
 
 *** Variables ***
 ${SOURCE}       ${{pathlib.Path(r'${DATADIR}/misc/suites/subsuites2')}}
