@@ -15,14 +15,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
-
-# Allows running as a script. __name__ check needed with multiprocessing:
-# https://github.com/robotframework/robotframework/issues/1137
-if 'robot' not in sys.modules and __name__ == '__main__':
+# Allows running as a script.
+if __name__ == '__main__':
     import pythonpathsetter
 
 from robot import run_cli
 
-
-run_cli(sys.argv[1:])
+run_cli()

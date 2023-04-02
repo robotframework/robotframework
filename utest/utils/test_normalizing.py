@@ -184,9 +184,15 @@ class TestNormalizedDict(unittest.TestCase):
         assert_equal(cd._data, {'a': 1, 'b': 2})
 
     def test_str(self):
-        nd = NormalizedDict({'a': 1, 'B': 1, 'c': 3, 'd': 4, 'E': 5, 'F': 6})
-        expected = "{'a': 1, 'B': 1, 'c': 3, 'd': 4, 'E': 5, 'F': 6}"
+        nd = NormalizedDict({'a': 1, 'B': 2, 'c': '3', 'd': '"', 'E': 5, 'F': 6})
+        expected = "{'a': 1, 'B': 2, 'c': '3', 'd': '\"', 'E': 5, 'F': 6}"
         assert_equal(str(nd), expected)
+
+    def test_repr(self):
+        assert_equal(repr(NormalizedDict()), 'NormalizedDict()')
+        assert_equal(repr(NormalizedDict({'a': None, 'b': '"', 'A': 1})),
+                     "NormalizedDict({'a': 1, 'b': '\"'})")
+        assert_equal(repr(type('Extend', (NormalizedDict,), {})()), 'Extend()')
 
     def test_unicode(self):
         nd = NormalizedDict({'a': '\xe4', '\xe4': 'a'})

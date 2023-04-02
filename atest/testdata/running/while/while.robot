@@ -20,6 +20,14 @@ Loop not executed
         Not executed either
     END
 
+No condition
+    WHILE
+        ${variable}=    Evaluate    $variable + 1
+        IF    ${variable} > 5
+            BREAK
+        END
+    END
+
 Execution fails on the first loop
     [Documentation]    FAIL Oh no
     WHILE    $variable < 2

@@ -1,6 +1,6 @@
 import unittest
 
-from robot.model import Body, BodyItem, If, For, Keyword, Message, TestCase
+from robot.model import Body, BodyItem, If, For, Keyword, TestCase, TestSuite
 from robot.result.model import Body as ResultBody
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
@@ -76,6 +76,14 @@ class TestBodyItem(unittest.TestCase):
         assert_equal([item.id for item in tc.body], ['t1-k2', 't1-k3', 't1-k4'])
         assert_equal(tc.setup.id, 't1-k1')
         assert_equal(tc.teardown.id, 't1-k5')
+
+    def test_id_when_item_not_in_parent(self):
+        tc = TestCase(parent=TestSuite(parent=TestSuite()))
+        assert_equal(tc.id, 's1-s1-t1')
+        assert_equal(Keyword(parent=tc).id, 's1-s1-t1-k1')
+        tc.body.create_keyword()
+        tc.body.create_if().body.create_branch()
+        assert_equal(Keyword(parent=tc).id, 's1-s1-t1-k3')
 
     def test_id_with_if(self):
         tc = TestCase()

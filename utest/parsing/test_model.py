@@ -399,11 +399,37 @@ Example
         )
         get_and_assert_model(data, expected)
 
+    def test_on_limit_message(self):
+        data = '''
+*** Test Cases ***
+Example
+    WHILE    True    limit=10s    on_limit_message=Error message
+        Log    ${x}
+    END
+'''
+        expected = While(
+            header=WhileHeader([
+                Token(Token.WHILE, 'WHILE', 3, 4),
+                Token(Token.ARGUMENT, 'True', 3, 13),
+                Token(Token.OPTION, 'limit=10s', 3, 21),
+                Token(Token.OPTION, 'on_limit_message=Error message',
+                      3, 34)
+            ]),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'Log', 4, 8),
+                             Token(Token.ARGUMENT, '${x}', 4, 15)])
+            ],
+            end=End([
+                Token(Token.END, 'END', 5, 4)
+            ])
+        )
+        get_and_assert_model(data, expected)
+
     def test_invalid(self):
         data = '''
 *** Test Cases ***
 Example
-    WHILE    too    many    values
+    WHILE    too    many    values    !
         # Empty body
     END
 '''
@@ -412,8 +438,9 @@ Example
                 tokens=[Token(Token.WHILE, 'WHILE', 3, 4),
                         Token(Token.ARGUMENT, 'too', 3, 13),
                         Token(Token.ARGUMENT, 'many', 3, 20),
-                        Token(Token.ARGUMENT, 'values', 3, 28)],
-                errors=('WHILE cannot have more than one condition.',)
+                        Token(Token.ARGUMENT, 'values', 3, 28),
+                        Token(Token.ARGUMENT, '!', 3, 38)],
+                errors=('WHILE cannot have more than one condition, got \'too\', \'many\', \'values\' and \'!\'.',)
             ),
             end=End([
                 Token(Token.END, 'END', 5, 4)

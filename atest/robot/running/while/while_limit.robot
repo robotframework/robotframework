@@ -29,6 +29,9 @@ Part of limit from variable
 Limit can be disabled
     Check Test Case    ${TESTNAME}
 
+No Condition With Limit
+    Check Test Case    ${TESTNAME}
+
 Invalid limit invalid suffix
     Check Test Case    ${TESTNAME}
 

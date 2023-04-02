@@ -10,6 +10,7 @@ ${FRACTION 1/2}          ${{fractions.Fraction(1,2)}}
 ${DECIMAL 1/2}           ${{decimal.Decimal('0.5')}}
 ${DEQUE}                 ${{collections.deque([1, 2, 3])}}
 ${MAPPING}               ${{type('M', (collections.abc.Mapping,), {'__getitem__': lambda s, k: {'a': 1}[k], '__iter__': lambda s: iter({'a': 1}), '__len__': lambda s: 1})()}}
+${SEQUENCE}              ${{type('S', (collections.abc.Sequence,), {'__getitem__': lambda s, i: ['x'][i], '__len__': lambda s: 1})()}}
 ${PATH}                  ${{pathlib.Path('x/y')}}
 ${PUREPATH}              ${{pathlib.PurePath('x/y')}}
 
@@ -354,6 +355,7 @@ List
     List                 ${{[1, 2]}}               [1, 2]
     List                 ${{(1, 2)}}               [1, 2]
     List                 ${DEQUE}                  [1, 2, 3]
+    List                 ${SEQUENCE}               ['x']
 
 Invalid list
     [Template]           Conversion Should Fail
@@ -370,9 +372,11 @@ Sequence (abc)
     Sequence             []                        []
     Sequence             ['foo', 'bar']            ${LIST}
     Sequence             ${DEQUE}                  collections.deque([1, 2, 3])
+    Sequence             ${SEQUENCE}               ${SEQUENCE}
     Mutable sequence     [1, 2, 3.14, -42]         [1, 2, 3.14, -42]
     Mutable sequence     ['\\x00', '\\x52']        ['\\x00', 'R']
     Mutable sequence     ${DEQUE}                  collections.deque([1, 2, 3])
+    Mutable sequence     ${SEQUENCE}               ['x']
 
 Invalid sequence (abc)
     [Template]           Conversion Should Fail

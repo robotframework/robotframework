@@ -136,7 +136,7 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
         BodyItem.IF: ('condition',),
         BodyItem.ELSE_IF: ('condition',),
         BodyItem.EXCEPT: ('patterns', 'pattern_type', 'variable'),
-        BodyItem.WHILE: ('condition', 'limit'),
+        BodyItem.WHILE: ('condition', 'limit', 'on_limit_message'),
         BodyItem.RETURN: ('values',),
         BodyItem.ITERATION: ('variables',)
     }

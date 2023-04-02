@@ -190,8 +190,11 @@ class WhileHandler(ElementHandler):
     children = frozenset(('iter', 'status', 'doc', 'msg', 'kw'))
 
     def start(self, elem, result):
-        return result.body.create_while(condition=elem.get('condition'),
-                                        limit=elem.get('limit'))
+        return result.body.create_while(
+            condition=elem.get('condition'),
+            limit=elem.get('limit'),
+            on_limit_message=elem.get('on_limit_message')
+        )
 
 
 @ElementHandler.register

@@ -29,13 +29,12 @@ This module also provides :func:`testdoc` and :func:`testdoc_cli` functions
 that can be used programmatically. Other code is for internal usage.
 """
 
-import os.path
 import sys
 import time
+from pathlib import Path
 
-# Allows running as a script. __name__ check needed with multiprocessing:
-# https://github.com/robotframework/robotframework/issues/1137
-if 'robot' not in sys.modules and __name__ == '__main__':
+# Allows running as a script.
+if __name__ == '__main__':
     import pythonpathsetter
 
 from robot.conf import RobotSettings
@@ -186,7 +185,7 @@ class JsonConverter:
     def _get_relative_source(self, source):
         if not source or not self._output_path:
             return ''
-        return get_link_path(source, os.path.dirname(self._output_path))
+        return get_link_path(source, Path(self._output_path).parent)
 
     def _escape(self, item):
         return html_escape(item)
