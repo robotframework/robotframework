@@ -1,2 +1,2 @@
 *** Settings ***
-Name    Parent Suite Name
+Name    Custom Parent Suite Name

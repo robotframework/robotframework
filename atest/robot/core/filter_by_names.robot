@@ -1,7 +1,6 @@
 *** Settings ***
 Documentation      Tests for --test and --suite options.
 Resource           atest_resource.robot
-Test Tags    filter_by_names
 
 *** Variables ***
 ${SUITE FILE}      misc/many_tests.robot
