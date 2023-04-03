@@ -18,6 +18,6 @@ Cutom Suite Name With Parent init
     Should Be Equal    ${SUITE.suites[3].suites[0].name}    Sub.Suite.4
     Should Be Equal    ${SUITE.suites[3].suites[2].name}    SubSuite333
 
-Multi Init Custom Suite Name
+Custom Child Suite Name
     Should Be Equal    ${SUITE.suites[3].suites[1].name}    SubParentSuite3Name
     Should Be Equal    ${SUITE.suites[3].suites[1].suites[0].name}    Another Custom Sub Suite
