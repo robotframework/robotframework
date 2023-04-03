@@ -99,9 +99,16 @@ class ArgumentSpecParser(ArgumentParser):
 
     def parse(self, argspec, name=None):
         spec = ArgumentSpec(name, self._type)
+        positional_only_separator_seen = False
         named_only = False
         for arg in argspec:
             arg = self._validate_arg(arg)
+            if self._is_positional_only_separator(arg):
+                if positional_only_separator_seen:
+                    self._report_error('Too many positional only separators.')
+                positional_only_separator_seen = True
+                spec.positional_only, spec.positional_or_named = spec.positional_or_named, []
+                continue
             if spec.var_named:
                 self._report_error('Only last argument can be kwargs.')
             elif isinstance(arg, tuple):
@@ -144,6 +151,10 @@ class ArgumentSpecParser(ArgumentParser):
 
     @abstractmethod
     def _format_var_positional(self, varargs):
+        raise NotImplementedError
+
+    @abstractmethod
+    def _is_positional_only_separator(self, arg):
         raise NotImplementedError
 
     def _format_arg(self, arg):
@@ -189,6 +200,9 @@ class DynamicArgumentParser(ArgumentSpecParser):
     def _format_var_positional(self, varargs):
         return varargs[1:]
 
+    def _is_positional_only_separator(self, arg):
+        return arg == "/"
+
 
 class UserKeywordArgumentParser(ArgumentSpecParser):
 
@@ -221,3 +235,6 @@ class UserKeywordArgumentParser(ArgumentSpecParser):
 
     def _format_arg(self, arg):
         return arg[2:-1]
+
+    def _is_positional_only_separator(self, arg):
+        return False
