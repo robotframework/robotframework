@@ -24,7 +24,7 @@ that name, Robot Framework attempts to determine which keyword has the
 highest priority based on its scope. The keyword's scope is determined
 on the basis of how the keyword in question is created:
 
-1. Created as a user keyword in the currently executed `test case file`_.
+1. Created as a user keyword in the currently executed `suite file`_.
    These keywords have the highest priority and they are always used, even
    if there are other keywords with the same name elsewhere.
 

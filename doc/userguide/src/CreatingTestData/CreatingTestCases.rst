@@ -4,7 +4,7 @@ Creating test cases
 ===================
 
 This section describes the overall test case syntax. Organizing test
-cases into `test suites`_ using `test case files`_ and `test suite
+cases into `test suites`_ using `suite files`_ and `suite
 directories`_ is discussed in the next section.
 
 When using Robot Framework for other automation purposes than test

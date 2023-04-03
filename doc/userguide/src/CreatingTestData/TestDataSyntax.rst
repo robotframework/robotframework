@@ -15,11 +15,11 @@ Files and directories
 
 The hierarchical structure for arranging test cases is built as follows:
 
-- Test cases are created in `test case files`_.
+- Test cases are created in `suite files`_.
 - A test case file automatically creates a `test suite`_ containing
   the test cases in that file.
 - A directory containing test case files forms a higher-level test
-  suite. Such a `test suite directory`_ has suites created from test
+  suite. Such a `suite directory`_ has suites created from test
   case files as its child test suites.
 - A test suite directory can also contain other test suite directories,
   and this hierarchical structure can be as deeply nested as needed.
@@ -493,10 +493,10 @@ a space by default, but that can be changed by starting the value with
 Splitting lines is illustrated in the following two examples containing
 exactly same data without and with splitting.
 
-__ `Test suite documentation`_
+__ `Suite documentation`_
 __ `Test case documentation`_
 __ `User keyword documentation`_
-__ `Free test suite metadata`_
+__ `Free suite metadata`_
 __ `Newlines in test data`_
 
 .. sourcecode:: robotframework

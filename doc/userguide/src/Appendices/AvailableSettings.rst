@@ -34,7 +34,7 @@ importing libraries, resources, and variables.
    | Documentation   | Used for specifying a `test suite`__ or                |
    |                 | `resource file`__ documentation.                       |
    +-----------------+--------------------------------------------------------+
-   | Metadata        | Used for setting `free test suite metadata`_.          |
+   | Metadata        | Used for setting `free suite metadata`_.               |
    +-----------------+--------------------------------------------------------+
    | Suite Setup     | Used for specifying the `suite setup`_.                |
    +-----------------+--------------------------------------------------------+
@@ -64,7 +64,7 @@ importing libraries, resources, and variables.
    | Task Timeout    |                                                        |
    +-----------------+--------------------------------------------------------+
 
-__ `Test suite documentation`_
+__ `Suite documentation`_
 __ `Documenting resource files`_
 __ `Deprecation of Force Tags and Default Tags`_
 

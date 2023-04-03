@@ -18,13 +18,13 @@ Documentation can be created for:
 - libraries implemented using the normal static library API__,
 - libraries using the `dynamic API`__, including remote libraries,
 - `resource files`_,
-- `test case files`_, and
+- `suite files`_, and
 - `suite initialization files`_.
 
 Additionally it is possible to use XML and JSON spec files created by Libdoc
 earlier as an input.
 
-.. note:: Support for generating documentation for test case files and suite
+.. note:: Support for generating documentation for suite files and suite
           initialization files is new in Robot Framework 6.0.
 
 .. note:: The support for the JSON spec files is new in Robot Framework 4.0.
