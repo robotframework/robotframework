@@ -17,7 +17,7 @@ Executed suites and tests
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Test cases are always executed within a test suite. A test suite
-created from a `test case file`_ has tests directly, whereas suites
+created from a `suite file`_ has tests directly, whereas suites
 created from directories__ have child test suites which either have
 tests or their own child suites. By default all the tests in an
 executed suite are run, but it is possible to `select tests`__ using
@@ -34,7 +34,7 @@ of the keywords fails, but it is also possible to
 possible `setups and teardowns`_ affect the execution are discussed
 in the following sections.
 
-__ `Test suite directories`_
+__ `Suite directories`_
 __ `Selecting test cases`_
 __ `Continue on failure`_
 

@@ -45,7 +45,7 @@ would mean that other files in that format are skipped.
           parsed by default. Starting from Robot Framework 3.2 HTML files
           are not supported at all.
 
-__ `Test suite directories`_
+__ `Suite directories`_
 
 Selecting test cases
 --------------------
@@ -234,8 +234,8 @@ Setting metadata
 Setting the name
 ~~~~~~~~~~~~~~~~
 
-When Robot Framework parses test data, `test suite names are created
-from file and directory names`__. The name of the top-level test suite
+When Robot Framework parses test data, `test suite names`__ are created
+from file and directory names. The name of the top-level test suite
 can, however, be overridden with the command line option
 :option:`--name (-N)`.
 
@@ -243,8 +243,7 @@ can, however, be overridden with the command line option
           converted to spaces. Nowadays values containing spaces need
           to be escaped or quoted like, for example, `--name "My example"`.
 
-__ `Test suite name and documentation`_
-
+__ `Suite name`_
 
 Setting the documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -269,12 +268,12 @@ Examples::
           Prior to Robot Framework 3.1, underscores in documentation were
           converted to spaces same way as with the :option:`--name` option.
 
-__ `Test suite name and documentation`_
+__ `Suite documentation`_
 
 Setting free metadata
 ~~~~~~~~~~~~~~~~~~~~~
 
-`Free test suite metadata`_ may also be given from the command line with the
+`Free suite metadata`_ may also be given from the command line with the
 option :option:`--metadata (-M)`. The argument must be in the format
 `name:value`, where `name` the name of the metadata to set and
 `value` is its value. The value can contain simple `HTML formatting`_ and
@@ -470,7 +469,7 @@ Examples::
     robot --randomize tests my_test.robot
     robot --randomize all:12345 path/to/tests
 
-__ `Free test suite metadata`_
+__ `Free suite metadata`_
 
 .. _pre-run modifier:
 

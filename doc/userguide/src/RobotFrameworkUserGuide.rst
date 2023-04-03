@@ -136,14 +136,12 @@
 .. _keyword-driven: `Keyword-driven style`_
 .. _data-driven: `Data-driven style`_
 .. _data-driven approach: `Data-driven style`_
-.. _test case file: `Test case files`_
-.. _test suite directory: `Test suite directories`_
+.. _suite file: `Suite files`_
+.. _suite directory: `Suite directories`_
 .. _initialization file: `Suite initialization files`_
 .. _suite initialization file: `Suite initialization files`_
 .. _test case name: `Test case name and documentation`_
 .. _test case documentation: `Test case name and documentation`_
-.. _test suite name: `Test suite name and documentation`_
-.. _test suite documentation: `Test suite name and documentation`_
 .. _test setup: `Test setup and teardown`_
 .. _test teardown: `Test setup and teardown`_
 .. _test teardowns: `Test teardown`_
