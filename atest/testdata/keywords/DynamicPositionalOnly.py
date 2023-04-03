@@ -7,7 +7,10 @@ class DynamicPositionalOnly:
         "default tuple": ["required", ("optional", "default"), "/"],
         "all args kw": [("one", "value"), "/", ("named", "other"), "*varargs", "**kwargs"],
         "arg with separator": ["/one"],
-        "Arg with too many / separators": ["one", "/", "two", "/"]
+        "Too many markers": ["one", "/", "two", "/"],
+        "After varargs": ["*varargs", "/", "arg"],
+        "After named-only marker": ["*", "/", "arg"],
+        "After kwargs": ["**kws", "/"],
     }
 
     def get_keyword_names(self):
