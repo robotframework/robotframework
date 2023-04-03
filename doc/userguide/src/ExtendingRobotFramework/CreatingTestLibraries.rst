@@ -2901,6 +2901,11 @@ they are specified in Python and explained in the following table.
    |                    |   separate items. New in   |                            |
    |                    |   Robot Framework 3.2.     |                            |
    +--------------------+----------------------------+----------------------------+
+   | `Positional-only   | Arguments before `/`       | `['pos', '/']`,            |
+   | arguments`_        | marker are considered as   | `['pos', '/', 'named']`    |
+   |                    | positional only. New in    |                            |
+   |                    | Robot Framework 6.1.       |                            |
+   +--------------------+----------------------------+----------------------------+
    | `Variable number   | Argument after possible    | `['*varargs']`,            |
    | of arguments`_     | positional arguments and   | `['argument', '*rest']`,   |
    | (varargs)          | their defaults has `*`     | `['a', 'b=42', '*c']`      |
@@ -2912,7 +2917,7 @@ they are specified in Python and explained in the following table.
    |                    | free named arguments`__.   |                            |
    +--------------------+----------------------------+----------------------------+
    | `Named-only        | Arguments after varargs or | `['*varargs', 'named']`,   |
-   | arguments`_        | a lone `*` if there are no | `['*', 'named'],           |
+   | arguments`_        | a lone `*` if there are no | `['*', 'named']`,          |
    |                    | varargs. With or without   | `['*', 'x', 'y=default']`, |
    |                    | defaults. Requires         | `['a', '*b', 'c', '**d']`  |
    |                    | `run_keyword` to `support  |                            |
@@ -2948,7 +2953,8 @@ accepting all arguments. This automatic argument spec is either
 `run_keyword` `support free named arguments`__ or not.
 
 .. note:: Support to specify arguments as tuples like `('name', 'default')`
-          is new in Robot Framework 3.2.
+          is new in Robot Framework 3.2. Support for positional only arguments
+          in dynamic library API is new in Robot Framework 6.1.
 
 __ `Free named arguments with dynamic libraries`_
 __ `Named-only arguments with dynamic libraries`_
@@ -3063,6 +3069,34 @@ source path defined.
 
 .. note:: Returning source information for keywords is a new feature in
           Robot Framework 3.2.
+
+Positional only argument syntax with dynamic libraries
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The dynamic library API supports the
+`positional-only arguments`_. Python 3.8 introduced positional-only arguments
+that make it possible to specify that an argument can only be given as a
+positional argument, not as a named argument like name=value. Positional-only
+arguments are specified before normal arguments and a special / marker must
+be used after them:
+
+.. sourcecode:: python
+
+    def keyword(posonly, /, normal=None):
+        print(f"Got positional-only argument {posonly} and normal argument {normal}.")
+
+The above keyword could be used like this:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Positional-only argument        #args
+       Keyword    x                # posonly gets value "x" and normal uses default value.
+       Keyword    normal=x         # posonly gets value "normal=x" and normal uses default value.
+       Keyword    normal=x    y    # posonly gets value "normal=x" and normal gets value "y.
+
+
+.. note:: Positional-only argument support in dynamic libary API is a new
+          feature in Robot Framework 6.1.
 
 Named argument syntax with dynamic libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
