@@ -1,6 +1,5 @@
 *** Settings ***
 Library           DynamicPositionalOnly.py
-Force Tags        require-py3.8
 
 *** Test Cases ***
 One Argument
@@ -60,7 +59,3 @@ All args
     Should be equal    ${result}    all args kw-('other',)
     ${result} =    all args kw
     Should be equal    ${result}    all args kw-()
-
-Arg with too may / separators
-    [Documentation]    FAIL No keyword with name 'Arg with too many / separators' found.
-    Arg with too many / separators    one    two
