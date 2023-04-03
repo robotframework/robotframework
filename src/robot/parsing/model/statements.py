@@ -1049,7 +1049,7 @@ class WhileHeader(Statement):
     type = Token.WHILE
 
     @classmethod
-    def from_params(cls, condition, limit=None, on_limit_message=None,
+    def from_params(cls, condition, limit=None, on_limit=None, on_limit_message=None,
                     indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
         tokens = [Token(Token.SEPARATOR, indent),
                   Token(cls.type),
@@ -1074,6 +1074,10 @@ class WhileHeader(Statement):
         return self.get_option('limit')
 
     @property
+    def on_limit(self):
+        return self.get_option('on_limit')
+
+    @property
     def on_limit_message(self):
         return self.get_option('on_limit_message')
 
@@ -1081,6 +1085,8 @@ class WhileHeader(Statement):
         values = self.get_values(Token.ARGUMENT)
         if len(values) > 1:
             self.errors += (f'WHILE cannot have more than one condition, got {seq2str(values)}.',)
+        if self.on_limit and not self.limit:
+            self.errors += ('WHILE on_limit option cannot be used without limit.',)
 
 
 @Statement.register

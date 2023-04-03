@@ -89,12 +89,13 @@ class While(BodyItem):
     """Represents ``WHILE`` loops."""
     type = BodyItem.WHILE
     body_class = Body
-    repr_args = ('condition', 'limit', 'on_limit_message')
-    __slots__ = ['condition', 'limit', 'on_limit_message']
+    repr_args = ('condition', 'limit', 'on_limit', 'on_limit_message')
+    __slots__ = ['condition', 'limit', 'on_limit', 'on_limit_message']
 
-    def __init__(self, condition=None, limit=None,
+    def __init__(self, condition=None, limit=None, on_limit=None,
                  on_limit_message=None, parent=None):
         self.condition = condition
+        self.on_limit = on_limit
         self.limit = limit
         self.on_limit_message = on_limit_message
         self.parent = parent
@@ -113,6 +114,8 @@ class While(BodyItem):
             parts.append(self.condition)
         if self.limit is not None:
             parts.append(f'limit={self.limit}')
+        if self.on_limit is not None:
+            parts.append(f'limit={self.on_limit}')
         if self.on_limit_message is not None:
             parts.append(f'on_limit_message={self.on_limit_message}')
         return '    '.join(parts)
