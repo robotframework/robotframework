@@ -46,7 +46,7 @@ class ItemList(MutableSequence[T]):
 
     def __init__(self, item_class: Type[T],
                  common_attrs: Union[dict, None] = None,
-                 items: Union[Iterable[Union[T, dict]], None] = None):
+                 items: Iterable[Union[T, dict]] = ()):
         self._item_class = item_class
         self._common_attrs = common_attrs
         self._items: List[T] = []

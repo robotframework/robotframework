@@ -98,7 +98,7 @@ class ByTagKeywordRemover(_KeywordRemover):
 
     def __init__(self, pattern):
         _KeywordRemover.__init__(self)
-        self._pattern = TagPattern(pattern)
+        self._pattern = TagPattern.from_string(pattern)
 
     def start_keyword(self, kw):
         if self._pattern.match(kw.tags) and not self._warning_or_error(kw):

@@ -239,7 +239,7 @@ class TestTagPatterns(unittest.TestCase):
     def test_ands_and_ors(self):
         for pattern in AndOrPatternGenerator(max_length=5):
             expected = eval(pattern.lower())
-            assert_equal(TagPattern(pattern).match('1'), expected)
+            assert_equal(TagPattern.from_string(pattern).match('1'), expected)
 
     def test_not(self):
         patterns = TagPatterns(['xNOTy', '???NOT?'])

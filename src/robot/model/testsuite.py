@@ -13,8 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from collections.abc import Mapping
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterable
+from typing import Iterator, Sequence, Type, TYPE_CHECKING
 
 from robot.utils import setter
 
@@ -30,7 +31,7 @@ from .testcase import TestCase, TestCases
 
 if TYPE_CHECKING:
     from robot.model.visitor import SuiteVisitor
-    from robot.model.tags import Tags
+
 
 class TestSuite(ModelObject):
     """Base model for single suite.
@@ -44,24 +45,23 @@ class TestSuite(ModelObject):
     __slots__ = ['parent', '_name', 'doc', '_setup', '_teardown', 'rpa',
                  '_my_visitors']
 
-    def __init__(self, name: str = '', doc: str = '',
-                 metadata: 'Metadata | dict | None' = None,
-                 source: 'Path | str | None' = None, rpa: bool = False,
-                 parent: 'TestSuite | None' = None):
+    def __init__(self, name: str = '', doc: str = '', metadata: 'Mapping|None' = None,
+                 source: 'Path|str|None' = None, rpa: bool = False,
+                 parent: 'TestSuite|None' = None):
         self._name = name
         self.doc = doc
         self.metadata = metadata
         self.source = source
         self.parent = parent
-        self.rpa = rpa        #: ``True`` when RPA mode is enabled.
-        self.suites = None
-        self.tests = None
-        self._setup = None
-        self._teardown = None
-        self._my_visitors = []
+        self.rpa = rpa
+        self.suites = []
+        self.tests = []
+        self._setup: 'Keyword|None' = None
+        self._teardown: 'Keyword|None' = None
+        self._my_visitors: 'list[SuiteVisitor]' = []
 
     @staticmethod
-    def name_from_source(source: 'Path | str | None') -> str:
+    def name_from_source(source: 'Path|str|None') -> str:
         if not source:
             return ''
         if not isinstance(source, Path):
@@ -78,11 +78,12 @@ class TestSuite(ModelObject):
         return self._my_visitors + parent_visitors
 
     @property
-    def name(self):
-        """Test suite name.
+    def name(self) -> str:
+        """Suite name.
 
         If name is not set, it is constructed from source. If source is not set,
-        name is constructed from child suite names or.
+        name is constructed from child suite names by concatenating them with
+        `` & ``. If there are no child suites, name is an empty string.
         """
         return (self._name
                 or self.name_from_source(self.source)
@@ -93,7 +94,7 @@ class TestSuite(ModelObject):
         self._name = name
 
     @setter
-    def source(self, source: 'Path | str | None') -> 'Path | None':
+    def source(self, source: 'Path|str|None') -> 'Path|None':
         return source if isinstance(source, (Path, type(None))) else Path(source)
 
     @property
@@ -104,26 +105,25 @@ class TestSuite(ModelObject):
         return f'{self.parent.longname}.{self.name}'
 
     @setter
-    def metadata(self, metadata) -> Metadata:
-        """Free test suite metadata as a dictionary."""
+    def metadata(self, metadata: 'Mapping|None') -> Metadata:
+        """Free suite metadata as dictionary-like ``Metadata`` object."""
         return Metadata(metadata)
 
     @setter
-    def suites(self, suites) -> 'TestSuites':
-        """Child suites as a :class:`~.TestSuites` object."""
+    def suites(self, suites: Sequence['TestSuite']) -> 'TestSuites':
         return TestSuites(self.__class__, self, suites)
 
     @setter
-    def tests(self, tests) -> TestCases:
-        """Tests as a :class:`~.TestCases` object."""
+    def tests(self, tests: Sequence[TestCase]) -> TestCases:
         return TestCases(self.test_class, self, tests)
 
     @property
     def setup(self) -> Keyword:
-        """Suite setup as a :class:`~.model.keyword.Keyword` object.
+        """Suite setup.
 
         This attribute is a ``Keyword`` object also when a suite has no setup
-        but in that case its truth value is ``False``.
+        but in that case its truth value is ``False``. The preferred way to
+        check does a suite have a setup is using :attr:`has_setup`.
 
         Setup can be modified by setting attributes directly::
 
@@ -143,8 +143,8 @@ class TestSuite(ModelObject):
         New in Robot Framework 4.0. Earlier setup was accessed like
         ``suite.keywords.setup``.
         """
-        if self._setup is None and self:
-            self._setup : Keyword = create_fixture(None, self, Keyword.SETUP)
+        if self._setup is None:
+            self._setup = create_fixture(None, self, Keyword.SETUP)
         return self._setup
 
     @setup.setter
@@ -152,28 +152,27 @@ class TestSuite(ModelObject):
         self._setup = create_fixture(setup, self, Keyword.SETUP)
 
     @property
-    def has_setup(self):
+    def has_setup(self) -> bool:
         """Check does a suite have a setup without creating a setup object.
 
         A difference between using ``if suite.has_setup:`` and ``if suite.setup:``
         is that accessing the :attr:`setup` attribute creates a :class:`Keyword`
         object representing the setup even when the suite actually does not have
         one. This typically does not matter, but with bigger suite structures
-        containing a huge about of suites it can have some effect on memory usage.
+        it can have some effect on memory usage.
 
         New in Robot Framework 5.0.
         """
-
         return bool(self._setup)
 
     @property
     def teardown(self) -> Keyword:
-        """Suite teardown as a :class:`~.model.keyword.Keyword` object.
+        """Suite teardown.
 
         See :attr:`setup` for more information.
         """
-        if self._teardown is None and self:
-            self._teardown: Keyword = create_fixture(None, self, Keyword.TEARDOWN)
+        if self._teardown is None:
+            self._teardown = create_fixture(None, self, Keyword.TEARDOWN)
         return self._teardown
 
     @teardown.setter
@@ -181,7 +180,7 @@ class TestSuite(ModelObject):
         self._teardown = create_fixture(teardown, self, Keyword.TEARDOWN)
 
     @property
-    def has_teardown(self):
+    def has_teardown(self) -> bool:
         """Check does a suite have a teardown without creating a teardown object.
 
         See :attr:`has_setup` for more information.
@@ -191,8 +190,8 @@ class TestSuite(ModelObject):
         return bool(self._teardown)
 
     @property
-    def keywords(self):
-        """Deprecated since Robot Framework 4.0
+    def keywords(self) -> Keywords:
+        """Deprecated since Robot Framework 4.0.
 
         Use :attr:`setup` or :attr:`teardown` instead.
         """
@@ -204,7 +203,7 @@ class TestSuite(ModelObject):
         Keywords.raise_deprecation_error()
 
     @property
-    def id(self):
+    def id(self) -> str:
         """An automatically generated unique id.
 
         The root suite has id ``s1``, its child suites have ids ``s1-s1``,
@@ -222,7 +221,7 @@ class TestSuite(ModelObject):
         return f'{self.parent.id}-s{index + 1}'
 
     @property
-    def all_tests(self):
+    def all_tests(self) -> Iterator[TestCase]:
         """Yields all tests this suite and its child suites contain.
 
         New in Robot Framework 6.1.
@@ -232,21 +231,19 @@ class TestSuite(ModelObject):
             yield from suite.all_tests
 
     @property
-    def test_count(self):
+    def test_count(self) -> int:
         """Total number of the tests in this suite and in its child suites."""
         # This is considerably faster than `return len(list(self.all_tests))`.
         return len(self.tests) + sum(suite.test_count for suite in self.suites)
 
     @property
-    def has_tests(self):
+    def has_tests(self) -> bool:
         if self.tests:
             return True
         return any(s.has_tests for s in self.suites)
 
-    def set_tags(self,
-                  add: 'Tags | str | Iterable[str] | None' = None,
-                  remove: 'Tags | str | Iterable[str] | None' = None,
-                  persist: bool = False):
+    def set_tags(self, add: Sequence[str] = (), remove: Sequence[str] = (),
+                 persist: bool = False):
         """Add and/or remove specified tags to the tests in this suite.
 
         :param add: Tags to add as a list or, if adding only one,
@@ -261,10 +258,10 @@ class TestSuite(ModelObject):
         if persist:
             self._my_visitors.append(setter)
 
-    def filter(self, included_suites: 'str | Iterable[str] | None' = None,
-               included_tests: 'str | Iterable[str] | None' = None,
-               included_tags: 'str | Iterable[str] | None' = None,
-               excluded_tags: 'str | Iterable[str] | None' = None):
+    def filter(self, included_suites: 'Sequence[str]|None' = None,
+               included_tests: 'Sequence[str]|None' = None,
+               included_tags: 'Sequence[str]|None' = None,
+               excluded_tags: 'Sequence[str]|None' = None):
         """Select test cases and remove others from this suite.
 
         Parameters have the same semantics as ``--suite``, ``--test``,
@@ -302,19 +299,20 @@ class TestSuite(ModelObject):
         if options:
             self.visit(SuiteConfigurer(**options))
 
-    def remove_empty_suites(self, preserve_direct_children=False):
+    def remove_empty_suites(self, preserve_direct_children: bool = False):
         """Removes all child suites not containing any tests, recursively."""
         self.visit(EmptySuiteRemover(preserve_direct_children))
 
-    def visit(self, visitor):
+    def visit(self, visitor: 'SuiteVisitor'):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_suite(self)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
     def to_dict(self) -> dict:
-        data = {'name': self.name}
+        data = {}
+        data['name'] = self.name
         if self.doc:
             data['doc'] = self.doc
         if self.metadata:
@@ -337,5 +335,6 @@ class TestSuite(ModelObject):
 class TestSuites(ItemList[TestSuite]):
     __slots__ = []
 
-    def __init__(self, suite_class=TestSuite, parent=None, suites=None):
+    def __init__(self, suite_class: Type[TestSuite] = TestSuite,
+                 parent: 'TestSuite|None' = None, suites: Sequence[TestSuite] = ()):
         super().__init__(suite_class, {'parent': parent}, suites)
