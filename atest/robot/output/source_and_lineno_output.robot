@@ -20,5 +20,5 @@ Source info should be correct
     Should Be Equal    ${SUITE.suites[0].source}             ${SOURCE / 'sub.suite.4.robot'}
     Should Be Equal    ${SUITE.suites[0].tests[0].lineno}    ${2}
     Should Be Equal    ${SUITE.suites[1].source}             ${SOURCE / 'subsuite3.robot'}
-    Should Be Equal    ${SUITE.suites[1].tests[0].lineno}    ${8}
-    Should Be Equal    ${SUITE.suites[1].tests[1].lineno}    ${13}
+    Should Be Equal    ${SUITE.suites[1].tests[0].lineno}    ${9}
+    Should Be Equal    ${SUITE.suites[1].tests[1].lineno}    ${14}

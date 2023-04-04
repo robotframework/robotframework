@@ -1,22 +1,26 @@
 *** Settings ***
 Documentation       Run testdata and validate that suite names are set correctly
 Suite Setup         Run Tests    ${EMPTY}    misc/suites
+Test Template       Should Be Equal
 Resource            atest_resource.robot
 
 *** Test Cases ***
-Custom Suite Name
-    Should Be Equal    ${SUITE.suites[2].name}    Subsuites
-    Should Be Equal    ${SUITE.suites[2].suites[0].name}    Custom sub1 Name
+Default directory suite name
+    ${SUITE.name}                          Suites
 
-Default File Suite Name
-    Should Be Equal    ${SUITE.suites[2].name}    Subsuites
-    Should Be Equal    ${SUITE.suites[2].suites[1].name}    Sub2
+Default file suite name
+    ${SUITE.suites[1].name}                Fourth
 
-Cutom Suite Name With Parent init
-    Should Be Equal    ${SUITE.suites[3].name}    Custom Parent Suite Name
-    Should Be Equal    ${SUITE.suites[3].suites[0].name}    Sub.Suite.4
-    Should Be Equal    ${SUITE.suites[3].suites[2].name}    SubSuite333
+Default name with prefix
+    ${SUITE.suites[0].name}                Suite With Prefix
+    ${SUITE.suites[0].suites[0].name}      Tests With Prefix
 
-Custom Child Suite Name
-    Should Be Equal    ${SUITE.suites[3].suites[1].name}    SubParentSuite3Name
-    Should Be Equal    ${SUITE.suites[3].suites[1].suites[0].name}    Another Custom Sub Suite
+Name with double underscore at end
+    ${SUITE.suites[4].name}                Suite With Double Underscore
+    ${SUITE.suites[4].suites[0].name}      Tests With Double Underscore
+
+Custom directory suite name
+    ${SUITE.suites[3].name}                Custom name for 📂 'subsuites2'
+
+Custom file suite name
+    ${SUITE.suites[3].suites[1].name}      Custom name for 📜 'subsuite3.robot'

@@ -11,7 +11,7 @@ Top Level Suite End
     Stdout Should Contain  ${SEP_LINE1}\n${status}\n${MSG_211}\n${SEP_LINE1}\n
 
 Nested Suite Start
-    Stdout Should Contain  ${SEP_LINE1}\nSubsuites.Custom sub1 Name :: Normal test cases${SPACE * 31}\n${SEP_LINE1}\n
+    Stdout Should Contain  ${SEP_LINE1}\nSubsuites.Sub1 :: Normal test cases${SPACE * 43}\n${SEP_LINE1}\n
 
 Nested Suite End
     ${status} =  Create Status Line  Subsuites.Sub2 :: Normal test cases  35  PASS
