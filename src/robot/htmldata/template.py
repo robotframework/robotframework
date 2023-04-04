@@ -19,7 +19,7 @@ from os.path import normpath
 from pathlib import Path
 
 
-if sys.version_info < (3, 9) and not Path(__file__).exists():
+if sys.version_info < (3, 9) and not Path(__file__).exists():    # zipsafe
     # `importlib.resources.files` is new in Python 3.9, but that version does
     # not seem to be compatible with zipapp.
     try:
@@ -34,7 +34,7 @@ else:
     try:
         from importlib.resources import files
     except ImportError:    # Python 3.8 or older
-        BASE_DIR = Path(__file__).absolute().parent.parent.parent
+        BASE_DIR = Path(__file__).absolute().parent.parent.parent    # zipsafe
 
         def files(module):
             return BASE_DIR / module.replace('.', '/')

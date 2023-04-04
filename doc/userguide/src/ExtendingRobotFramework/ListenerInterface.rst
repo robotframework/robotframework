@@ -139,7 +139,7 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |   child, and so on.                                            |
    |                  |                  | * `longname`: Suite name including parent suites.              |
    |                  |                  | * `doc`: Suite documentation.                                  |
-   |                  |                  | * `metadata`: `Free test suite metadata`_ as a dictionary/map. |
+   |                  |                  | * `metadata`: `Free suite metadata`_ as a dictionary.          |
    |                  |                  | * `source`: An absolute path of the file/directory the suite   |
    |                  |                  |   was created from.                                            |
    |                  |                  | * `suites`: Names of the direct child suites this suite has    |

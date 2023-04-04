@@ -166,6 +166,7 @@ class Language:
     library_setting = None
     resource_setting = None
     variables_setting = None
+    name_setting = None
     documentation_setting = None
     metadata_setting = None
     suite_setup_setting = None
@@ -259,6 +260,7 @@ class Language:
             self.library_setting: En.library_setting,
             self.resource_setting: En.resource_setting,
             self.variables_setting: En.variables_setting,
+            self.name_setting: En.name_setting,
             self.documentation_setting: En.documentation_setting,
             self.metadata_setting: En.metadata_setting,
             self.suite_setup_setting: En.suite_setup_setting,
@@ -305,6 +307,7 @@ class En(Language):
     library_setting = 'Library'
     resource_setting = 'Resource'
     variables_setting = 'Variables'
+    name_setting = 'Name'
     documentation_setting = 'Documentation'
     metadata_setting = 'Metadata'
     suite_setup_setting = 'Suite Setup'
@@ -469,6 +472,7 @@ class Fi(Language):
     variables_setting = 'Muuttujat'
     documentation_setting = 'Dokumentaatio'
     metadata_setting = 'Metatiedot'
+    name_setting = "Nimi"
     suite_setup_setting = 'Setin Alustus'
     suite_teardown_setting = 'Setin Alasajo'
     test_setup_setting = 'Testin Alustus'
@@ -711,6 +715,7 @@ class Pl(Language):
     library_setting = 'Biblioteka'
     resource_setting = 'Zasób'
     variables_setting = 'Zmienne'
+    name_setting = "Nazwa"
     documentation_setting = 'Dokumentacja'
     metadata_setting = 'Metadane'
     suite_setup_setting = 'Inicjalizacja zestawu'

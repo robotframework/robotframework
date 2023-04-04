@@ -48,8 +48,8 @@ and they are executed by giving the path to the file or directory in
 question to the selected runner script. The path can be absolute or,
 more commonly, relative to the directory where tests are executed
 from. The given file or directory creates the top-level test suite,
-which gets its name, unless overridden with the :option:`--name` option__,
-from the `file or directory name`__. Different execution possibilities
+which, by default, gets its name from the `file or directory name`__.
+Different execution possibilities
 are illustrated in the examples below. Note that in these examples, as
 well as in other examples in this section, only the ``robot`` script
 is used, but other execution approaches could be used similarly.
@@ -70,7 +70,7 @@ directories at once, separated with spaces. In this case, Robot
 Framework creates the top-level test suite automatically, and
 the specified files and directories become its child test suites. The name
 of the created test suite is got from child suite names by
-catenating them together with an ampersand (&) and spaces. For example,
+concatenating them together with an ampersand (&) and spaces. For example,
 the name of the top-level suite in the first example below is
 :name:`My Tests & Your Tests`. These automatically created names are
 often quite long and complicated. In most cases, it is thus better to
@@ -87,11 +87,10 @@ test case files::
 
     robot __init__.robot my_tests.robot other_tests.robot
 
-__ `Test case files`_
-__ `Test suite directories`_
-__ `Setting the name`_
-__ `Test suite name and documentation`_
-__ `Test suite directories`_
+__ `Suite files`_
+__ `Suite directories`_
+__ `Suite name`_
+__ `Suite directories`_
 __ `Suite initialization files`_
 
 Using command line options

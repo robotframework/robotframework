@@ -4,13 +4,13 @@ Documentation formatting
 ========================
 
 It is possible to use simple HTML formatting with `test suite`__,
-`test case`__ and `user keyword`__ documentation and `free test suite
+`test case`__ and `user keyword`__ documentation and `free suite
 metadata`_ in the test data, as well as when `documenting test
 libraries`__.  The formatting is similar to the style used in most
 wikis, and it is designed to be understandable both as plain text and
 after the HTML transformation.
 
-__ `test suite documentation`_
+__ `suite documentation`_
 __ `test case documentation`_
 __ `user keyword documentation`_
 __ `Documenting libraries`_
