@@ -31,7 +31,9 @@ importing libraries, resources, and variables.
    +-----------------+--------------------------------------------------------+
    | Variables       | Used for `taking variable files into use`_.            |
    +-----------------+--------------------------------------------------------+
-   | Documentation   | Used for specifying a `test suite`__ or                |
+   | Name            | Used for setting a custom `suite name`_.               |
+   +-----------------+--------------------------------------------------------+
+   | Documentation   | Used for specifying a `suite`__ or                     |
    |                 | `resource file`__ documentation.                       |
    +-----------------+--------------------------------------------------------+
    | Metadata        | Used for setting `free suite metadata`_.               |

@@ -25,6 +25,9 @@ only one high-level keyword.
 
 The following settings in the Setting section can be used to customize the suite:
 
+`Name`:setting:
+   Used for setting a custom `suite name`_. The default name is created based
+   on the file or directory name.
 `Documentation`:setting:
    Used for specifying a `suite documentation`_.
 `Metadata`:setting:
@@ -88,8 +91,9 @@ settings similarly as in `suite files`_, but setting some `test case
 related settings`__ is also possible. How to use different settings in the
 initialization files is explained below.
 
-`Documentation`:setting:, `Metadata`:setting:, `Suite Setup`:setting:, `Suite Teardown`:setting:
-   These test suite specific settings work the same way as in test case files.
+`Name`:setting:, `Documentation`:setting:, `Metadata`:setting:, `Suite Setup`:setting:, `Suite Teardown`:setting:
+   These suite specific settings work the same way in suite initialization files
+   as in suite files.
 `Test Tags`:setting:
    Specified tags are unconditionally set to all tests in all suite files
    this directory contains, recursively. New in Robot Framework 6.1. The
@@ -112,7 +116,7 @@ initialization files is explained below.
    *** Settings ***
    Documentation    Example suite
    Suite Setup      Do Something    ${MESSAGE}
-   Force Tags       example
+   Test Tags        example
    Library          SomeLibrary
 
    *** Variables ***
@@ -130,8 +134,8 @@ __ `Test case related settings in the Setting section`_
 Suite name
 ----------
 
-The test suite name is constructed from the file or directory name. The name
-is created so that the extension is ignored, possible underscores are
+The test suite name is constructed from the file or directory name by default.
+The name is created so that the extension is ignored, possible underscores are
 replaced with spaces, and names fully in lower case are title cased. For
 example, :file:`some_tests.robot` becomes :name:`Some Tests` and
 :file:`My_test_directory` becomes :name:`My test directory`.
@@ -143,6 +147,14 @@ the prefix and underscores are removed. For example files
 :file:`01__some_tests.robot` and :file:`02__more_tests.robot` create test
 suites :name:`Some Tests` and :name:`More Tests`, respectively, and
 the former is executed before the latter.
+
+Starting from Robot Framework 6.1, it is also possible to give a custom name
+to a suite by using the :setting:`Name` setting in the Setting section:
+
+.. sourcecode:: robotframework
+
+   *** Settings ***
+   Name            Custom suite name
 
 Suite documentation
 -------------------
