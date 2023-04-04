@@ -7,7 +7,7 @@ Resource          atest_resource.robot
 
 *** Test Cases ***
 Suite Name
-    Should Be Equal    ${SUITE.name}    Suite Settings
+    Should Be Equal    ${SUITE.name}    Custom name
 
 Suite Documentation
     ${doc} =    Catenate    SEPARATOR=\n
@@ -30,8 +30,8 @@ Suite Documentation
     Should Be Equal    ${SUITE.doc}    ${doc}
 
 Suite Name And Documentation On Console
-    Stdout Should Contain    Suite Settings :: 1st logical line (i.e. paragraph) is shortdoc on console.${SPACE * 3}\n
-    Stdout Should Contain    Suite Settings :: 1st logical line (i.e. paragraph) is shortdoc on... | PASS |\n
+    Stdout Should Contain    Custom name :: 1st logical line (i.e. paragraph) is shortdoc on console.${SPACE * 6}\n
+    Stdout Should Contain    Custom name :: 1st logical line (i.e. paragraph) is shortdoc on co... | PASS |\n
 
 Test Setup
     ${test} =    Check Test Case    Test Case
@@ -51,11 +51,11 @@ Suite Teardown
     Verify Teardown    ${SUITE}    BuiltIn.Log    Default suite teardown
 
 Invalid Setting
-    Error In File    0    parsing/suite_settings.robot    27
+    Error In File    0    parsing/suite_settings.robot    28
     ...    Non-existing setting 'Invalid Setting'.
 
 Small typo should provide recommendation.
-    Error In File    1    parsing/suite_settings.robot    28
+    Error In File    1    parsing/suite_settings.robot    29
     ...    SEPARATOR=\n
     ...    Non-existing setting 'Megadata'. Did you mean:
     ...    ${SPACE*4}Metadata

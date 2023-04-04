@@ -37,7 +37,7 @@ ${SUITE DIR}       misc/suites
 
 --suite with . in name
     Run Suites    --suite sub.suite.4
-    Should Contain Suites    ${SUITE}    Subsuites2
+    Should Contain Suites    ${SUITE}    Custom name for 📂 'subsuites2'
     Should Contain Tests   ${SUITE}    Test From Sub Suite 4
     Should Not Contain Tests    ${SUITE}   SubSuite3 First    SubSuite3 Second
 
@@ -110,8 +110,8 @@ Unnecessary files are not parsed when --suite matches directory
     Should Contain Tests   ${SUITE}    SubSuite1 First    SubSuite2 First
 
 --suite with long name with . in name
-    Run Suites    --suite suites.subsuites2.sub.suite.4
-    Should Contain Suites    ${SUITE}    Subsuites2
+    Run Suites    --suite "suites.Custom name for 📂 'subsuites2'.sub.suite.4"
+    Should Contain Suites    ${SUITE}    Custom name for 📂 'subsuites2'
     Should Contain Tests   ${SUITE}    Test From Sub Suite 4
     Should Not Contain Tests    ${SUITE}   SubSuite3 First    SubSuite3 Second
 
@@ -121,7 +121,7 @@ Unnecessary files are not parsed when --suite matches directory
     Should Contain Tests   ${SUITE}   SubSuite1 First    SubSuite2 First
 
 --suite with long name when executing multiple suites
-    Run Suites    -s "Subsuites & Subsuites2.Subsuites.Sub1"    misc/suites/subsuites misc/suites/subsuites2
+    Run Suites    -s "Suite With Prefix & Subsuites.Subsuites.Sub1"    misc/suites/01__suite_with_prefix misc/suites/subsuites
     Should Contain Suites    ${SUITE}              Subsuites
     Should Contain Suites    ${SUITE.suites[0]}    Sub1
     Should Contain Tests     ${SUITE}              SubSuite1 First

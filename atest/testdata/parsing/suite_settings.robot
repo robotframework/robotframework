@@ -1,4 +1,5 @@
 *** Settings ***
+Name             Custom name
 Documentation    ${1}st logical line
 ...              (i.e. paragraph)
 ...              is shortdoc on console.

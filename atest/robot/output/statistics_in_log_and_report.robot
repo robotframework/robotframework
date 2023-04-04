@@ -66,7 +66,7 @@ Verify suite stats
     ...    id:s1-s2    pass:0    fail:1    skip:0
     Verify stat    ${stats[3]}    label:Suites.Subsuites    name:Subsuites
     ...    id:s1-s3    pass:2    fail:0    skip:0
-    Verify stat    ${stats[4]}    label:Suites.Subsuites2    name:Subsuites2
+    Verify stat    ${stats[4]}    label:Suites.Custom name for 📂 'subsuites2'    name:Custom name for 📂 'subsuites2'
     ...    id:s1-s4    pass:3    fail:0    skip:0
     Verify stat    ${stats[5]}    label:Suites.Suite With Double Underscore    name:Suite With Double Underscore
     ...    id:s1-s5    pass:1    fail:0    skip:0
