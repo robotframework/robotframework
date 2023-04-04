@@ -298,6 +298,7 @@ Libra ry      Smallish typo gives us recommendations!
 Resource         Too    many   values
 Test Timeout     Too    much
 Test Template    1    2    3    4    5
+NaMe             This    is    an    invalid    name
 '''
         # Values of invalid settings are ignored with `data_only=True`.
         expected = [
@@ -312,6 +313,9 @@ Test Template    1    2    3    4    5
             (T.ERROR, 'Test Template', 4, 0,
              "Setting 'Test Template' accepts only one value, got 5."),
             (T.EOS, '', 4, 13),
+            (T.ERROR, 'NaMe', 5, 0,
+             "Setting 'NaMe' accepts only one value, got 5."),
+            (T.EOS, '', 5, 4),
         ]
         assert_tokens(data, expected, data_only=True)
 
