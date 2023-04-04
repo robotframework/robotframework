@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from pathlib import Path
+from typing import TYPE_CHECKING, Iterable
 
 from robot.utils import setter
 
@@ -27,6 +28,9 @@ from .modelobject import ModelObject
 from .tagsetter import TagSetter
 from .testcase import TestCase, TestCases
 
+if TYPE_CHECKING:
+    from robot.model.visitor import SuiteVisitor
+    from robot.model.tags import Tags
 
 class TestSuite(ModelObject):
     """Base model for single suite.
@@ -37,11 +41,13 @@ class TestSuite(ModelObject):
     test_class = TestCase    #: Internal usage only.
     fixture_class = Keyword  #: Internal usage only.
     repr_args = ('name',)
-    __slots__ = ['parent', '_name', 'doc', '_setup', '_teardown',  'rpa',
+    __slots__ = ['parent', '_name', 'doc', '_setup', '_teardown', 'rpa',
                  '_my_visitors']
 
-    def __init__(self, name: str = '', doc: str = '', metadata: dict = None,
-                 source: Path = None, rpa: bool = False, parent: 'TestSuite' = None):
+    def __init__(self, name: str = '', doc: str = '',
+                 metadata: 'Metadata | dict | None' = None,
+                 source: 'Path | str | None' = None, rpa: bool = False,
+                 parent: 'TestSuite | None' = None):
         self._name = name
         self.doc = doc
         self.metadata = metadata
@@ -55,7 +61,7 @@ class TestSuite(ModelObject):
         self._my_visitors = []
 
     @staticmethod
-    def name_from_source(source: Path):
+    def name_from_source(source: 'Path | str | None') -> str:
         if not source:
             return ''
         if not isinstance(source, Path):
@@ -67,7 +73,7 @@ class TestSuite(ModelObject):
         return name.title() if name.islower() else name
 
     @property
-    def _visitors(self):
+    def _visitors(self) -> 'list[SuiteVisitor]':
         parent_visitors = self.parent._visitors if self.parent else []
         return self._my_visitors + parent_visitors
 
@@ -83,37 +89,37 @@ class TestSuite(ModelObject):
                 or ' & '.join(s.name for s in self.suites))
 
     @name.setter
-    def name(self, name):
+    def name(self, name: str):
         self._name = name
 
     @setter
-    def source(self, source):
+    def source(self, source: 'Path | str | None') -> 'Path | None':
         return source if isinstance(source, (Path, type(None))) else Path(source)
 
     @property
-    def longname(self):
+    def longname(self) -> str:
         """Suite name prefixed with the long name of the parent suite."""
         if not self.parent:
             return self.name
         return f'{self.parent.longname}.{self.name}'
 
     @setter
-    def metadata(self, metadata):
+    def metadata(self, metadata) -> Metadata:
         """Free test suite metadata as a dictionary."""
         return Metadata(metadata)
 
     @setter
-    def suites(self, suites):
+    def suites(self, suites) -> 'TestSuites':
         """Child suites as a :class:`~.TestSuites` object."""
         return TestSuites(self.__class__, self, suites)
 
     @setter
-    def tests(self, tests):
+    def tests(self, tests) -> TestCases:
         """Tests as a :class:`~.TestCases` object."""
         return TestCases(self.test_class, self, tests)
 
     @property
-    def setup(self):
+    def setup(self) -> Keyword:
         """Suite setup as a :class:`~.model.keyword.Keyword` object.
 
         This attribute is a ``Keyword`` object also when a suite has no setup
@@ -138,11 +144,11 @@ class TestSuite(ModelObject):
         ``suite.keywords.setup``.
         """
         if self._setup is None and self:
-            self._setup = create_fixture(None, self, Keyword.SETUP)
+            self._setup : Keyword = create_fixture(None, self, Keyword.SETUP)
         return self._setup
 
     @setup.setter
-    def setup(self, setup):
+    def setup(self, setup: 'Keyword | None'):
         self._setup = create_fixture(setup, self, Keyword.SETUP)
 
     @property
@@ -161,17 +167,17 @@ class TestSuite(ModelObject):
         return bool(self._setup)
 
     @property
-    def teardown(self):
+    def teardown(self) -> Keyword:
         """Suite teardown as a :class:`~.model.keyword.Keyword` object.
 
         See :attr:`setup` for more information.
         """
         if self._teardown is None and self:
-            self._teardown = create_fixture(None, self, Keyword.TEARDOWN)
+            self._teardown: Keyword = create_fixture(None, self, Keyword.TEARDOWN)
         return self._teardown
 
     @teardown.setter
-    def teardown(self, teardown):
+    def teardown(self, teardown: 'Keyword | None'):
         self._teardown = create_fixture(teardown, self, Keyword.TEARDOWN)
 
     @property
@@ -236,7 +242,10 @@ class TestSuite(ModelObject):
             return True
         return any(s.has_tests for s in self.suites)
 
-    def set_tags(self, add=None, remove=None, persist=False):
+    def set_tags(self,
+                  add: 'Tags | str | Iterable[str] | None' = None,
+                  remove: 'Tags | str | Iterable[str] | None' = None,
+                  persist: bool = False):
         """Add and/or remove specified tags to the tests in this suite.
 
         :param add: Tags to add as a list or, if adding only one,
@@ -251,8 +260,10 @@ class TestSuite(ModelObject):
         if persist:
             self._my_visitors.append(setter)
 
-    def filter(self, included_suites=None, included_tests=None,
-               included_tags=None, excluded_tags=None):
+    def filter(self, included_suites: 'str | Iterable[str] | None' = None,
+               included_tests: 'str | Iterable[str] | None' = None,
+               included_tags: 'str | Iterable[str] | None' = None,
+               excluded_tags: 'str | Iterable[str] | None' = None):
         """Select test cases and remove others from this suite.
 
         Parameters have the same semantics as ``--suite``, ``--test``,
@@ -301,7 +312,7 @@ class TestSuite(ModelObject):
     def __str__(self):
         return self.name
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         data = {'name': self.name}
         if self.doc:
             data['doc'] = self.doc
@@ -322,7 +333,7 @@ class TestSuite(ModelObject):
         return data
 
 
-class TestSuites(ItemList):
+class TestSuites(ItemList[TestSuite]):
     __slots__ = []
 
     def __init__(self, suite_class=TestSuite, parent=None, suites=None):
