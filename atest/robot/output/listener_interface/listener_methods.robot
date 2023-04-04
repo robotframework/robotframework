@@ -2,7 +2,6 @@
 Suite Setup       Run Tests With Listeners
 Suite Teardown    Remove Listener Files
 Resource          listener_resource.robot
-Test Tags    4583    #delete after debugging
 
 *** Test Cases ***
 Listen All

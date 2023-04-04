@@ -3,7 +3,6 @@ Documentation       Tests for xunit-compatible xml-output.
 Resource            atest_resource.robot
 Variables           unicode_vars.py
 Suite Setup         Run Tests    -x xunit.xml -l log.html --skiponfailure täg    ${TESTDATA}
-Test Tags    4583    #delete after debugging
 
 *** Variables ***
 ${TESTDATA}         misc/non_ascii.robot

@@ -1,6 +1,5 @@
 *** Settings ***
 Resource        testdoc_resource.robot
-Test Tags    4583    #delete after debugging
 
 *** Test Cases ***
 One input

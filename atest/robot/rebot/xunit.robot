@@ -4,7 +4,6 @@ Suite Teardown    Remove Temps
 Test Setup        Empty Directory    ${MYOUTDIR}
 Resource          rebot_resource.robot
 Variables         unicode_vars.py
-Test Tags    4583    #delete after debugging
 
 *** Variables ***
 ${MYOUTDIR}       %{TEMPDIR}${/}robot-test-xunit

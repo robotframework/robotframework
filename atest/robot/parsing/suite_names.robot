@@ -2,7 +2,6 @@
 Documentation       Run testdata and validate that suite names are set correctly
 Suite Setup         Run Tests    ${EMPTY}    misc/suites
 Resource            atest_resource.robot
-Test Tags           4583    filter_by_names    # delete thsi tatg after fixing all the tests
 
 *** Test Cases ***
 Custom Suite Name

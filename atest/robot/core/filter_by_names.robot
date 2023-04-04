@@ -1,7 +1,6 @@
 *** Settings ***
 Documentation      Tests for --test and --suite options.
 Resource           atest_resource.robot
-Test Tags          4583    filter_by_names    # delete this tag after fixing all the tests
 
 *** Variables ***
 ${SUITE FILE}      misc/many_tests.robot
