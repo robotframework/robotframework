@@ -28,6 +28,13 @@ class TestTags(unittest.TestCase):
     def test_init_with_none(self):
         assert_equal(list(Tags(None)), [])
 
+    def test_robot(self):
+        assert_equal(Tags().robot('x'), False)
+        assert_equal(Tags('robot:x').robot('x'), True)
+        assert_equal(Tags(['ROBOT : X']).robot('x'), True)
+        assert_equal(Tags('robot:x:y').robot('x:y'), True)
+        assert_equal(Tags('robot:x').robot('y'), False)
+
     def test_add_string(self):
         tags = Tags(['Y'])
         tags.add('x')

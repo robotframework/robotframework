@@ -62,12 +62,13 @@ class NormalizedDict(MutableMapping):
         self._keys = {}
         self._normalize = lambda s: normalize(s, ignore, caseless, spaceless)
         if initial:
-            self._add_initial(initial)
+            items = initial.items() if hasattr(initial, 'items') else initial
+            for key, value in items:
+                self[key] = value
 
-    def _add_initial(self, initial):
-        items = initial.items() if hasattr(initial, 'items') else initial
-        for key, value in items:
-            self[key] = value
+    @property
+    def normalized_keys(self):
+        return self._keys
 
     def __getitem__(self, key):
         return self._data[self._normalize(key)]

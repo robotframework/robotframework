@@ -26,7 +26,7 @@ class Tags(Sequence[str]):
         self._tags, self._reserved = self._init_tags(tags)
 
     def robot(self, name: str) -> bool:
-        """Check do tags contain a special tag in format `robot:<name>`.
+        """Check do tags contain a reserved tag in format `robot:<name>`.
 
         This is same as `'robot:<name>' in tags` but considerably faster.
         """
@@ -40,14 +40,13 @@ class Tags(Sequence[str]):
         return self._normalize(tags)
 
     def _normalize(self, tags):
-        normalized = NormalizedDict([(str(t), None) for t in tags], ignore='_')
-        if '' in normalized:
-            del normalized['']
-        if 'NONE' in normalized:
-            del normalized['NONE']
-        reserved = tuple(tag.split(':')[1] for tag in normalized._keys
-                         if tag[:6] == 'robot:')
-        return tuple(normalized), reserved
+        nd = NormalizedDict([(str(t), None) for t in tags], ignore='_')
+        if '' in nd:
+            del nd['']
+        if 'NONE' in nd:
+            del nd['NONE']
+        reserved = tuple(tag[6:] for tag in nd.normalized_keys if tag[:6] == 'robot:')
+        return tuple(nd), reserved
 
     def add(self, tags: Sequence[str]):
         self.__init__(tuple(self) + tuple(Tags(tags)))
