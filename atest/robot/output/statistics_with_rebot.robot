@@ -33,13 +33,13 @@ Tag statistics should be Correct
     Tag Node Should Be Correct    ${stats[7]}    XxX
     ...    12    1
 
-Suite statistics should be Correct
+Suite statistics should be correct
     ${stats} =    Get Element    ${OUTFILE}    statistics/suite
     Node Should Be Correct    ${stats[0]}    Suites    12    1
     Node Should Be Correct    ${stats[1]}    Suites.Suite With Prefix    1    0
     Node Should Be Correct    ${stats[2]}    Suites.Fourth    0    1
     Node Should Be Correct    ${stats[3]}    Suites.Subsuites    2    0
-    Node Should Be Correct    ${stats[4]}    Suites.Subsuites2    3    0
+    Node Should Be Correct    ${stats[4]}    Suites.Custom name for 📂 'subsuites2'    3    0
     Node Should Be Correct    ${stats[5]}    Suites.Suite With Double Underscore    1    0
     Node Should Be Correct    ${stats[6]}    Suites.Tsuite1    3    0
     Node Should Be Correct    ${stats[7]}    Suites.Tsuite2    1    0

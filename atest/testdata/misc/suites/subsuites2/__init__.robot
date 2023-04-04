@@ -1,2 +1,2 @@
 *** Settings ***
-Name    Custom Parent Suite Name
+Name            Custom name for 📂 'subsuites2'

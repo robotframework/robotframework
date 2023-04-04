@@ -81,7 +81,9 @@ Check Suite Defaults
 Check Suite Got From Misc/suites/ Directory
     Check Normal Suite Defaults    ${SUITE}    teardown=BuiltIn.Log
     Should Be Equal    ${SUITE.status}    FAIL
-    Should Contain Suites    ${SUITE}    Suite With Prefix    Fourth    Subsuites    Subsuites2    Suite With Double Underscore    Tsuite1    Tsuite2    Tsuite3
+    Should Contain Suites    ${SUITE}    Suite With Prefix    Fourth    Subsuites
+    ...    Custom name for 📂 'subsuites2'    Suite With Double Underscore
+    ...    Tsuite1    Tsuite2    Tsuite3
     Should Be Empty    ${SUITE.tests}
     Should Contain Suites    ${SUITE.suites[2]}    Sub1    Sub2
     FOR    ${s}    IN
