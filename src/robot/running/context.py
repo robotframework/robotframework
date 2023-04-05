@@ -23,9 +23,9 @@ from robot.errors import DataError
 
 class Asynchronous:
 
-    def __init__(self) -> None:
+    def __init__(self):
         self._loop_ref = None
-    
+
     @property
     def event_loop(self):
         if self._loop_ref is None:
@@ -40,23 +40,18 @@ class Asynchronous:
         return self.event_loop.run_until_complete(coroutine)
 
     def is_loop_required(self, obj):
-        return self.is_coroutine(obj) and not self.is_loop_running()
+        return inspect.iscoroutine(obj) and not self._is_loop_running()
 
-    def is_coroutine(self, obj):
-        # match native coroutines only
-        return inspect.iscoroutine(obj)
-
-    def is_loop_running(self):
+    def _is_loop_running(self):
         # ensure 3.6 compatibility
         if sys.version_info.minor == 6:
             return asyncio._get_running_loop() is not None
+        try:
+            asyncio.get_running_loop()
+        except RuntimeError:
+            return False
         else:
-            try:
-                asyncio.get_running_loop()
-            except RuntimeError:
-                return False
-            else:
-                return True
+            return True
 
 
 class ExecutionContexts:

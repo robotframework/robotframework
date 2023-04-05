@@ -32,3 +32,5 @@ Create Task With Loop Reference
 
 Generators Do Not Use Event Loop
     ${generator} =    Evaluate    (i for i in range(5))
+    Should Be Equal    ${{sum($generator)}}    ${10}
+    Should Be Equal    ${{sum($generator)}}    ${0}

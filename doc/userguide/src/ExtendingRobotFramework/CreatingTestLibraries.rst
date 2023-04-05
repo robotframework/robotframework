@@ -1948,7 +1948,7 @@ Asynchronous keywords
 ~~~~~~~~~~~~~~~~~~~~~
 
 Starting from Robot Framework 6.1, it is possible to run native asynchronous
-functions (created by async def) just like normal functions. For example:
+functions (created by `async def`) just like normal functions:
 
 .. sourcecode:: python
 
@@ -1962,9 +1962,9 @@ functions (created by async def) just like normal functions. For example:
 
 You can get the reference of the loop using `asyncio.get_running_loop()` or
 `asyncio.get_event_loop()`. Be careful when modifying how the loop runs, it is
-a global resource. For example: never call `loop.close()` because it will make it
+a global resource. For example, never call `loop.close()` because it will make it
 impossible to run any further coroutines. If you have any function or resource that
-requires the event loop, even though await is not used explicitly, you have to define
+requires the event loop, even though `await` is not used explicitly, you have to define
 your function as async to have the event loop available.
 
 More examples of functionality:
@@ -1983,18 +1983,18 @@ More examples of functionality:
         tasks = [task_async() for _ in range(10)]
         results = await asyncio.gather(*tasks)
 
-        background_task = asyncio.create_task(task_async()) # create a task in background
+        background_task = asyncio.create_task(task_async())
         await background_task
 
-        # If running with python 3.10 or higher
+        # If running with Python 3.10 or higher
         async with asyncio.TaskGroup() as tg:
             task1 = tg.create_task(task_async())
             task2 = tg.create_task(task_async())
 
-.. note:: Robot Framework waits for the function to complete, If you want to have a task that runs
-          for a long time, use `asyncio.create_task()` for example. It is your responsibility to
+.. note:: Robot Framework waits for the function to complete. If you want to have a task that runs
+          for a long time, use, for example, `asyncio.create_task()`. It is your responsibility to
           manage the task and save a reference to avoid it being garbage collected. If the event loop
-          closes and a task is still pending, a message will be printed in the console.
+          closes and a task is still pending, a message will be printed to the console.
 
 Communicating with Robot Framework
 ----------------------------------
