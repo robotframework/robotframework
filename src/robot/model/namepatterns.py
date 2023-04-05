@@ -13,28 +13,31 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from typing import Iterable, Iterator, Sequence
+
 from robot.utils import MultiMatcher
 
 
-class NamePatterns:
+class NamePatterns(Iterable[str]):
 
-    def __init__(self, patterns=None):
-        self._matcher = MultiMatcher(patterns, ignore='_')
+    def __init__(self, patterns: Sequence[str] = ()):
+        self.matcher = MultiMatcher(patterns, ignore='_')
 
-    def match(self, name, longname=None):
+    def match(self, name: str, longname: 'str|None' = None) -> bool:
         return self._match(name) or longname and self._match_longname(longname)
 
     def _match(self, name):
-        return self._matcher.match(name)
+        return self.matcher.match(name)
 
     def _match_longname(self, name):
         raise NotImplementedError
 
-    def __bool__(self):
-        return bool(self._matcher)
+    def __bool__(self) -> bool:
+        return bool(self.matcher)
 
-    def __iter__(self):
-        return iter(self._matcher)
+    def __iter__(self) -> Iterator[str]:
+        for matcher in self.matcher:
+            yield matcher.pattern
 
 
 class SuiteNamePatterns(NamePatterns):

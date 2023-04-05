@@ -180,9 +180,10 @@ class TestMultiMatcher(unittest.TestCase):
 
     def test_iter(self):
         assert_equal(tuple(MultiMatcher()), ())
-        assert_equal(list(MultiMatcher(['1', 'xxx', '3'])), ['1', 'xxx', '3'])
+        assert_equal([m.pattern for m in MultiMatcher(['1', 'xxx', '3'])],
+                     ['1', 'xxx', '3'])
         assert_equal(tuple(MultiMatcher(regexp=True)), ())
-        assert_equal(list(MultiMatcher(['1', 'xxx', '3'], regexp=True)),
+        assert_equal([m.pattern for m in MultiMatcher(['1', 'xxx', '3'], regexp=True)],
                      ['1', 'xxx', '3'])
 
     def test_single_string_is_converted_to_list(self):

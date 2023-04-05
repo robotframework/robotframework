@@ -148,15 +148,14 @@ Command line options for post-processing outputs
   -h, --help              Prints `usage instructions`_.
   --version               Prints the `version information`_.
 
-
 .. _generic automation: `Task execution`_
 .. _Parse only these files: `Selecting files to parse`_
 .. _Sets the name: `Setting the name`_
 .. _Sets the documentation: `Setting the documentation`_
 .. _Sets free metadata: `Setting free metadata`_
 .. _Sets the tag(s): `Setting tags`_
-.. _Selects the test cases by name: `By test suite and test case names`_
-.. _Selects the test suites: `Selects the test cases by name`_
+.. _Selects the test cases by name: `By test names`_
+.. _Selects the test suites: `By suite names`_
 .. _Selects failed test suites: `Re-executing failed test suites`_
 .. _Selects failed tests: `Re-executing failed test cases`_
 .. _Selects the test cases: `By tag names`_

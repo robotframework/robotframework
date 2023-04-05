@@ -165,7 +165,7 @@ class CombinedTagStat(TagStat):
 
     def __init__(self, pattern, name=None, doc='', links=None):
         TagStat.__init__(self, name or pattern, doc, links, combined=pattern)
-        self.pattern = TagPattern(pattern)
+        self.pattern = TagPattern.from_string(pattern)
 
     def match(self, tags):
         return self.pattern.match(tags)

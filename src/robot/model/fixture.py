@@ -15,8 +15,10 @@
 
 from collections.abc import Mapping
 
+from .keyword import Keyword
 
-def create_fixture(fixture, parent, fixture_type):
+
+def create_fixture(fixture, parent, fixture_type) -> Keyword:
     # TestCase and TestSuite have 'fixture_class', Keyword doesn't.
     fixture_class = getattr(parent, 'fixture_class', parent.__class__)
     if isinstance(fixture, fixture_class):

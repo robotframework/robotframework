@@ -14,8 +14,9 @@
 #  limitations under the License.
 
 from functools import total_ordering
-from typing import (Iterable, Iterator, List, MutableSequence, overload,
-                    TYPE_CHECKING, Type, TypeVar, Union)
+from collections.abc import Mapping
+from typing import (Iterable, Iterator, MutableSequence, overload, TYPE_CHECKING,
+                    Type, TypeVar)
 
 from robot.utils import type_name
 
@@ -45,11 +46,11 @@ class ItemList(MutableSequence[T]):
     __slots__ = ['_item_class', '_common_attrs', '_items']
 
     def __init__(self, item_class: Type[T],
-                 common_attrs: Union[dict, None] = None,
-                 items: Union[Iterable[Union[T, dict]], None] = None):
+                 common_attrs: 'Mapping|None' = None,
+                 items: 'Iterable[T|Mapping]' = ()):
         self._item_class = item_class
         self._common_attrs = common_attrs
-        self._items: List[T] = []
+        self._items: 'list[T]' = []
         if items:
             self.extend(items)
 
@@ -57,14 +58,14 @@ class ItemList(MutableSequence[T]):
         """Create a new item using the provided arguments."""
         return self.append(self._item_class(*args, **kwargs))
 
-    def append(self, item: Union[T, dict]):
+    def append(self, item: 'T|Mapping'):
         item = self._check_type_and_set_attrs(item)
         self._items.append(item)
         return item
 
-    def _check_type_and_set_attrs(self, item: Union[T, dict]) -> T:
+    def _check_type_and_set_attrs(self, item: 'T|Mapping') -> T:
         if not isinstance(item, self._item_class):
-            if isinstance(item, dict):
+            if isinstance(item, Mapping):
                 item = self._item_from_dict(item)
             else:
                 raise TypeError(f'Only {type_name(self._item_class)} objects '
@@ -74,15 +75,15 @@ class ItemList(MutableSequence[T]):
                 setattr(item, attr, value)
         return item
 
-    def _item_from_dict(self, data: dict) -> T:
+    def _item_from_dict(self, data: Mapping) -> T:
         if hasattr(self._item_class, 'from_dict'):
             return self._item_class.from_dict(data)    # type: ignore
         return self._item_class(**data)
 
-    def extend(self, items: Iterable[Union[T, dict]]):
+    def extend(self, items: 'Iterable[T|Mapping]'):
         self._items.extend(self._check_type_and_set_attrs(i) for i in items)
 
-    def insert(self, index: int, item: Union[T, dict]):
+    def insert(self, index: int, item: 'T|Mapping'):
         item = self._check_type_and_set_attrs(item)
         self._items.insert(index, item)
 
@@ -124,11 +125,11 @@ class ItemList(MutableSequence[T]):
         return new
 
     @overload
-    def __setitem__(self, index: int, item: Union[T, dict]):
+    def __setitem__(self, index: int, item: 'T|Mapping'):
         ...
 
     @overload
-    def __setitem__(self, index: slice, item: Iterable[Union[T, dict]]):
+    def __setitem__(self, index: slice, item: 'Iterable[T|Mapping]'):
         ...
 
     def __setitem__(self, index, item):
@@ -137,7 +138,7 @@ class ItemList(MutableSequence[T]):
         else:
             self._items[index] = self._check_type_and_set_attrs(item)
 
-    def __delitem__(self, index: Union[int, slice]):
+    def __delitem__(self, index: 'int|slice'):
         del self._items[index]
 
     def __contains__(self, item: object) -> bool:
@@ -208,7 +209,7 @@ class ItemList(MutableSequence[T]):
     def __rmul__(self: Self, count: int) -> Self:
         return self * count
 
-    def to_dicts(self) -> List[dict]:
+    def to_dicts(self) -> 'list[dict]':
         """Return list of items converted to dictionaries.
 
         Items are converted to dictionaries using the ``to_dict`` method, if

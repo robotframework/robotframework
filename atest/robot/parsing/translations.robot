@@ -62,6 +62,7 @@ Per file configuration bleeds to other files
 *** Keywords ***
 Validate Translations
     [Arguments]    ${suite}=${SUITE}
+    Should Be Equal    ${suite.name}                  Custom name
     Should Be Equal    ${suite.doc}                   Suite documentation.
     Should Be Equal    ${suite.metadata}[Metadata]    Value
     Should Be Equal    ${suite.setup.name}            Suite Setup

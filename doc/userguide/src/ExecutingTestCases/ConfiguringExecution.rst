@@ -54,48 +54,97 @@ Robot Framework offers several command line options for selecting
 which test cases to execute. The same options work also when `executing
 tasks`_ and when post-processing outputs with Rebot_.
 
-By test suite and test case names
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+By test names
+~~~~~~~~~~~~~
 
-Test suites and test cases can be selected by their names with the command
-line options :option:`--suite (-s)` and :option:`--test (-t)`,
-respectively.  Both of these options can be used several times to
-select several test suites or cases. Arguments to these options are
-case- and space-insensitive, and there can also be `simple
-patterns`_ matching multiple names.  If both the :option:`--suite` and
-:option:`--test` options are used, only test cases in matching suites
-with matching names are selected.
+The easiest way to select only some tests to be run is using the
+:option:`--test (-t)` option. As the name implies, it can be used for
+selecting tests by their names. Given names are case, space and underscore
+insensitive and they also support `simple patterns`_. The option can be
+used multiple times to match multiple tests::
 
-::
+  --test Example                   # Match only tests with name 'Example'.
+  --test example*                  # Match tests starting with 'example'.
+  --test first --test second       # Match tests with name 'first' or 'second'.
 
-  --test Example
-  --test mytest --test yourtest
-  --test example*
-  --test mysuite.mytest
-  --test *.suite.mytest
-  --suite example-??
-  --suite mysuite --test mytest --test your*
+To pinpoint a test more precisely, it is possible to prefix the test name
+with a suite name::
 
-Using the :option:`--suite` option is more or less the same as executing only
-the appropriate test case file or directory. One major benefit is the
-possibility to select the suite based on its parent suite. The syntax
-for this is specifying both the parent and child suite names separated
-with a dot. In this case, the possible setup and teardown of the parent
-suite are executed.
+  --test mysuite.mytest            # Match test 'mytest' in suite 'mysuite'.
+  --test root.sub.test             # Match test 'test' in suite 'sub' in suite 'root'.
+  --test *.sub.test                # Match test 'test' in suite 'sub' anywhere.
 
-::
+Notice that when the given name includes a suite name, it must match the whole
+suite name starting from the root suite. Using a wildcard as in the last example
+above allows matching suites anywhere.
 
-  --suite parent.child
-  --suite myhouse.myhousemusic --test jack*
-
-Selecting individual test cases with the :option:`--test` option is very
-practical when creating test cases, but quite limited when running tests
-automatically. The :option:`--suite` option can be useful in that
-case, but in general, selecting test cases by tag names is more
-flexible.
+Using the :option:`--test` option is convenient when only a few tests needs
+to be selected. A common use case is running just the test that is currently
+being worked on. If a bigger number of tests needs to be selected,
+it is typically easier to select them `by suite names`_ or `by tag names`_.
 
 When `executing tasks`_, it is possible to use the :option:`--task` option
 as an alias for :option:`--test`.
+
+By suite names
+~~~~~~~~~~~~~~
+
+Tests can be selected also by suite names with the :option:`--suite (-s)`
+option that selects all tests in matching suites. Similarly
+as with :option:`--test`, given names are case, space and underscore
+insensitive and support `simple patterns`_. To pinpoint a suite
+more precisely, it is possible to prefix the name with the parent suite
+name::
+
+  --suite Example                  # Match only suites with name 'Example'.
+  --suite example*                 # Match suites starting with 'example'.
+  --suite first --suite second     # Match suites with name 'first' or 'second'.
+  --suite parent.child             # Match suite 'child' in suite 'parent'.
+
+Unlike with :option:`--test`, the name does not need to match the whole
+suite name, starting from the root suite, when the name contains a parent
+suite name. This behavior `will be changed`__ in the future and should not be relied
+upon. It is recommended to use the full name like `--suite root.parent.child`
+or `--suite *.parent.child`.
+
+If both :option:`--suite` and :option:`--test` options are used, only the
+specified tests in specified suites are selected::
+
+  --suite mysuite --test mytest    # Match test 'mytest' if its inside suite 'mysuite'.
+
+Also this behavior `is likely to change`__ in the future and the above changed to mean
+selecting all tests in suite `mysuite` in addition to all tests with name `mytest`.
+A more reliable way to select a test in a suite is using `--test *.mysuite.mytest`
+or `--test *.mysuite.*.mytest` depending on should the test be directly inside
+the suite or not.
+
+Using the :option:`--suite` option is more or less the same as executing
+the appropriate suite file or directory directly. The main difference is
+that if a file or directory is run directly, possible suite setups and teardowns
+on higher level are not executed::
+
+  # Root suite is 'Tests' and its possible setup and teardown are run.
+  robot --suite example path/to/tests
+
+  # Root suite is 'Example' and possible higher level setups and teardowns are ignored.
+  robot path/to/tests/example.robot
+
+When using the :option:`--suite` option, Robot Framework does not parse
+files that do not match the given suite name. For example, when using
+`--suite example`, only files that have a name :file:`example.robot` or are in
+a directory :file:`example` are parsed. This is done for performance reasons
+to avoid the parsing overhead with larger directory structures. Unfortunately
+this approach does not work well with the new :setting:`Name` setting that can
+be used for setting a custom `suite name`_. In practice the new setting and
+the :option:`--suite` option are incompatible. This will be changed in Robot
+Framework 7.0 so that `files are not excluded`__ when using the :option:`--suite`
+option. The plan is to add an explicit option for `selecting files to parse`__
+before that.
+
+__ https://github.com/robotframework/robotframework/issues/4720
+__ https://github.com/robotframework/robotframework/issues/4721
+__ https://github.com/robotframework/robotframework/issues/4688
+__ https://github.com/robotframework/robotframework/issues/4687
 
 By tag names
 ~~~~~~~~~~~~
