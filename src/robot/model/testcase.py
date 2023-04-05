@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Sequence, Type
+from typing import Iterable, Mapping, Sequence, TYPE_CHECKING, Type
 
 from robot.utils import setter
 
@@ -50,12 +50,12 @@ class TestCase(ModelObject):
         self.timeout = timeout
         self.lineno = lineno
         self.parent = parent
-        self.body = None
+        self.body = []
         self._setup: 'Keyword|None' = None
         self._teardown: 'Keyword|None' = None
 
     @setter
-    def body(self, body) -> Body:
+    def body(self, body: 'Iterable[Keyword|Mapping]') -> Body:
         """Test body as a :class:`~robot.model.body.Body` object."""
         return self.body_class(self, body)
 
@@ -94,7 +94,7 @@ class TestCase(ModelObject):
         return self._setup
 
     @setup.setter
-    def setup(self, setup: 'Keyword|None'):
+    def setup(self, setup: 'Keyword|Mapping|None'):
         self._setup = create_fixture(setup, self, Keyword.SETUP)
 
     @property
@@ -176,10 +176,10 @@ class TestCase(ModelObject):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_test(self)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         data = {}
         data['name'] = self.name
         if self.doc:
@@ -202,7 +202,8 @@ class TestCases(ItemList[TestCase]):
     __slots__ = []
 
     def __init__(self, test_class: Type[TestCase]= TestCase,
-                 parent: 'TestSuite|None' = None, tests: Sequence[TestCase] = ()):
+                 parent: 'TestSuite|None' = None,
+                  tests: 'Sequence[TestCase|Mapping]' = ()):
         super().__init__(test_class, {'parent': parent}, tests)
 
     def _check_type_and_set_attrs(self, test):
