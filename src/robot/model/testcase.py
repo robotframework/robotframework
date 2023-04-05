@@ -122,7 +122,7 @@ class TestCase(ModelObject):
         return self._teardown
 
     @teardown.setter
-    def teardown(self, teardown: 'Keyword|None'):
+    def teardown(self, teardown: 'Keyword|Mapping|None'):
         self._teardown = create_fixture(teardown, self, Keyword.TEARDOWN)
 
     @property
@@ -201,9 +201,9 @@ class TestCase(ModelObject):
 class TestCases(ItemList[TestCase]):
     __slots__ = []
 
-    def __init__(self, test_class: Type[TestCase]= TestCase,
+    def __init__(self, test_class: Type[TestCase] = TestCase,
                  parent: 'TestSuite|None' = None,
-                  tests: 'Sequence[TestCase|Mapping]' = ()):
+                 tests: 'Sequence[TestCase|Mapping]' = ()):
         super().__init__(test_class, {'parent': parent}, tests)
 
     def _check_type_and_set_attrs(self, test):
