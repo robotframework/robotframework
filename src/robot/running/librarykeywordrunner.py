@@ -104,7 +104,10 @@ class LibraryKeywordRunner:
     def _run_with_signal_monitoring(self, runner, context):
         try:
             STOP_SIGNAL_MONITOR.start_running_keyword(context.in_teardown)
-            return runner()
+            runner_result = runner()
+            if context.asynchronous.is_loop_required(runner_result):
+                return context.asynchronous.run_until_complete(runner_result)
+            return runner_result
         finally:
             STOP_SIGNAL_MONITOR.stop_running_keyword()
 
