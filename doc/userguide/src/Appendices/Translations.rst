@@ -65,6 +65,8 @@ Settings
       - Ресурс
     * - Variables
       - Променлива
+    * - Name
+      -
     * - Documentation
       - Документация
     * - Metadata
@@ -190,6 +192,8 @@ Settings
       - Resursi
     * - Variables
       - Varijable
+    * - Name
+      -
     * - Documentation
       - Dokumentacija
     * - Metadata
@@ -315,6 +319,8 @@ Settings
       - Zdroj
     * - Variables
       - Proměnná
+    * - Name
+      -
     * - Documentation
       - Dokumentace
     * - Metadata
@@ -440,6 +446,8 @@ Settings
       - Ressource
     * - Variables
       - Variablen
+    * - Name
+      -
     * - Documentation
       - Dokumentation
     * - Metadata
@@ -565,6 +573,8 @@ Settings
       - Recursos
     * - Variables
       - Variable
+    * - Name
+      -
     * - Documentation
       - Documentación
     * - Metadata
@@ -690,6 +700,8 @@ Settings
       - Resurssi
     * - Variables
       - Muuttujat
+    * - Name
+      - Nimi
     * - Documentation
       - Dokumentaatio
     * - Metadata
@@ -815,6 +827,8 @@ Settings
       - Ressource
     * - Variables
       - Variable
+    * - Name
+      -
     * - Documentation
       - Documentation
     * - Metadata
@@ -940,6 +954,8 @@ Settings
       - संसाधन
     * - Variables
       - चर
+    * - Name
+      -
     * - Documentation
       - प्रलेखन
     * - Metadata
@@ -1065,6 +1081,8 @@ Settings
       - Risorsa
     * - Variables
       - Variabile
+    * - Name
+      -
     * - Documentation
       - Documentazione
     * - Metadata
@@ -1190,6 +1208,8 @@ Settings
       - Resource
     * - Variables
       - Variabele
+    * - Name
+      -
     * - Documentation
       - Documentatie
     * - Metadata
@@ -1315,6 +1335,8 @@ Settings
       - Zasób
     * - Variables
       - Zmienne
+    * - Name
+      - Nazwa
     * - Documentation
       - Dokumentacja
     * - Metadata
@@ -1440,6 +1462,8 @@ Settings
       - Recurso
     * - Variables
       - Variável
+    * - Name
+      -
     * - Documentation
       - Documentação
     * - Metadata
@@ -1565,6 +1589,8 @@ Settings
       - Recurso
     * - Variables
       - Variável
+    * - Name
+      -
     * - Documentation
       - Documentação
     * - Metadata
@@ -1690,6 +1716,8 @@ Settings
       - Resursa
     * - Variables
       - Variabila
+    * - Name
+      -
     * - Documentation
       - Documentatie
     * - Metadata
@@ -1815,6 +1843,8 @@ Settings
       - Ресурс
     * - Variables
       - Переменные
+    * - Name
+      -
     * - Documentation
       - Документация
     * - Metadata
@@ -1940,6 +1970,8 @@ Settings
       - Resurs
     * - Variables
       - Variabel
+    * - Name
+      -
     * - Documentation
       - Dokumentation
     * - Metadata
@@ -2065,6 +2097,8 @@ Settings
       - ไฟล์ที่ใช้
     * - Variables
       - ชุดตัวแปร
+    * - Name
+      -
     * - Documentation
       - เอกสาร
     * - Metadata
@@ -2190,6 +2224,8 @@ Settings
       - Kaynak
     * - Variables
       - Değişkenler
+    * - Name
+      -
     * - Documentation
       - Dokümantasyon
     * - Metadata
@@ -2315,6 +2351,8 @@ Settings
       - Ресурс
     * - Variables
       - Змінна
+    * - Name
+      -
     * - Documentation
       - Документація
     * - Metadata
@@ -2440,6 +2478,8 @@ Settings
       - 资源文件
     * - Variables
       - 变量文件
+    * - Name
+      -
     * - Documentation
       - 说明
     * - Metadata
@@ -2565,6 +2605,8 @@ Settings
       - 資源文件
     * - Variables
       - 變量文件
+    * - Name
+      -
     * - Documentation
       - 說明
     * - Metadata
