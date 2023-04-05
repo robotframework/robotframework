@@ -110,11 +110,11 @@ class TestSuite(ModelObject):
         return Metadata(metadata)
 
     @setter
-    def suites(self, suites: Sequence['TestSuite']) -> 'TestSuites':
+    def suites(self, suites: 'Sequence[TestSuite|Mapping]') -> 'TestSuites':
         return TestSuites(self.__class__, self, suites)
 
     @setter
-    def tests(self, tests: Sequence[TestCase]) -> TestCases:
+    def tests(self, tests: 'Sequence[TestCase|Mapping]') -> TestCases:
         return TestCases(self.test_class, self, tests)
 
     @property
@@ -336,5 +336,6 @@ class TestSuites(ItemList[TestSuite]):
     __slots__ = []
 
     def __init__(self, suite_class: Type[TestSuite] = TestSuite,
-                 parent: 'TestSuite|None' = None, suites: Sequence[TestSuite] = ()):
+                 parent: 'TestSuite|None' = None,
+                 suites: 'Sequence[TestSuite|Mapping]' = ()):
         super().__init__(suite_class, {'parent': parent}, suites)
