@@ -148,7 +148,7 @@ class TestSuite(ModelObject):
         return self._setup
 
     @setup.setter
-    def setup(self, setup: 'Keyword | None'):
+    def setup(self, setup: 'Keyword|None'):
         self._setup = create_fixture(setup, self, Keyword.SETUP)
 
     @property
@@ -176,7 +176,7 @@ class TestSuite(ModelObject):
         return self._teardown
 
     @teardown.setter
-    def teardown(self, teardown: 'Keyword | None'):
+    def teardown(self, teardown: 'Keyword|None'):
         self._teardown = create_fixture(teardown, self, Keyword.TEARDOWN)
 
     @property
