@@ -866,6 +866,7 @@ class TestVariables(unittest.TestCase):
 ${x}      value
 @{y}=     two    values
 &{z} =    one=item
+${x${y}}  nested name
 '''
         expected = VariableSection(
             header=SectionHeader(
@@ -879,6 +880,8 @@ ${x}      value
                           Token(Token.ARGUMENT, 'values', 3, 17)]),
                 Variable([Token(Token.VARIABLE, '&{z} =', 4, 0),
                           Token(Token.ARGUMENT, 'one=item', 4, 10)]),
+                Variable([Token(Token.VARIABLE, '${x${y}}', 5, 0),
+                          Token(Token.ARGUMENT, 'nested name', 5, 10)]),
             ]
         )
         get_and_assert_model(data, expected, depth=0)

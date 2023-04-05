@@ -114,23 +114,23 @@ class VariableMatch:
     def is_dict_variable(self):
         return self.identifier == '&' and self.is_variable()
 
-    def is_assign(self, allow_assign_mark=False):
+    def is_assign(self, allow_assign_mark=False, allow_nested=False):
         if allow_assign_mark and self.string.endswith('='):
             match = search_variable(self.string[:-1].rstrip(), ignore_errors=True)
             return match.is_assign()
         return (self.is_variable()
                 and self.identifier in '$@&'
                 and not self.items
-                and not search_variable(self.base))
+                and (allow_nested or not search_variable(self.base)))
 
-    def is_scalar_assign(self, allow_assign_mark=False):
-        return self.identifier == '$' and self.is_assign(allow_assign_mark)
+    def is_scalar_assign(self, allow_assign_mark=False, allow_nested=False):
+        return self.identifier == '$' and self.is_assign(allow_assign_mark, allow_nested)
 
-    def is_list_assign(self, allow_assign_mark=False):
-        return self.identifier == '@' and self.is_assign(allow_assign_mark)
+    def is_list_assign(self, allow_assign_mark=False, allow_nested=False):
+        return self.identifier == '@' and self.is_assign(allow_assign_mark, allow_nested)
 
-    def is_dict_assign(self, allow_assign_mark=False):
-        return self.identifier == '&' and self.is_assign(allow_assign_mark)
+    def is_dict_assign(self, allow_assign_mark=False, allow_nested=False):
+        return self.identifier == '&' and self.is_assign(allow_assign_mark, allow_nested)
 
     def __bool__(self):
         return self.identifier is not None

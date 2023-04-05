@@ -568,7 +568,7 @@ class Variable(Statement):
     def validate(self, ctx: 'ValidationContext'):
         name = self.get_value(Token.VARIABLE)
         match = search_variable(name, ignore_errors=True)
-        if not match.is_assign(allow_assign_mark=True):
+        if not match.is_assign(allow_assign_mark=True, allow_nested=True):
             self.errors += (f"Invalid variable name '{name}'.",)
         if match.is_dict_assign(allow_assign_mark=True):
             self._validate_dict_items()
