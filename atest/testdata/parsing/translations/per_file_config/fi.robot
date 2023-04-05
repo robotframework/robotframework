@@ -1,6 +1,7 @@
 language: fi
 
 *** Asetukset ***
+Nimi                Custom name
 Dokumentaatio       Suite documentation.
 Metatiedot          Metadata    Value
 Setin Alustus       Suite Setup
