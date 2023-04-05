@@ -29,3 +29,6 @@ Builtin Call From Library Works
 Create Task With Loop Reference
     ${result} =    Create Task With Loop
     Should Be Equal    ${result}    Got it
+
+Generators Do Not Use Event Loop
+    ${generator} =    Evaluate    (i for i in range(5))

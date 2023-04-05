@@ -22,3 +22,6 @@ Builtin Call From Library Works
 
 Create Task With Loop Reference
     Check Test Case    ${TESTNAME}
+
+Generators Do Not Use Event Loop
+    Check Test Case    ${TESTNAME}

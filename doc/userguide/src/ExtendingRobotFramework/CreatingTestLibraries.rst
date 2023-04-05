@@ -1972,7 +1972,6 @@ More examples of functionality:
 
     import asyncio
     from robot.api.deco import keyword
-    from robot.libraries.BuiltIn import BuiltIn
 
 
     async def task_async():
