@@ -105,12 +105,8 @@ class LibraryKeywordRunner:
         try:
             STOP_SIGNAL_MONITOR.start_running_keyword(context.in_teardown)
             runner_result = runner()
-            if (context.asynchronous.is_coroutine(runner_result) and not
-                context.asynchronous.is_loop_running()):
-                runner_result = (context
-                                 .asynchronous
-                                 .event_loop
-                                 .run_until_complete(runner_result))
+            if context.asynchronous.is_loop_required(runner_result):
+                return context.asynchronous.run_until_complete(runner_result)
             return runner_result
         finally:
             STOP_SIGNAL_MONITOR.stop_running_keyword()

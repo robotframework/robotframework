@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import sys
+import inspect
 import asyncio
 from contextlib import contextmanager
 
@@ -34,10 +35,17 @@ class Asynchronous:
     def close_loop(self):
         if self._loop_ref:
             self._loop_ref.close()
-    
+
+    def run_until_complete(self, coroutine):
+        return self.event_loop.run_until_complete(coroutine)
+
+    def is_loop_required(self, obj):
+        return self.is_coroutine(obj) and not self.is_loop_running()
+
     def is_coroutine(self, obj):
-        return asyncio.iscoroutine(obj)
-    
+        # match native coroutines only
+        return inspect.iscoroutine(obj)
+
     def is_loop_running(self):
         # ensure 3.6 compatibility
         if sys.version_info.minor == 6:
@@ -45,9 +53,10 @@ class Asynchronous:
         else:
             try:
                 asyncio.get_running_loop()
-                return True
             except RuntimeError:
                 return False
+            else:
+                return True
 
 
 class ExecutionContexts:

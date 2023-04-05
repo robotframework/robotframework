@@ -1946,8 +1946,8 @@ __ `Specifying argument types using @keyword decorator`_
 Asynchronous keywords
 ~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 6.1, it is possible to run async functions
-from the libraries just like normal functions. For example:
+Starting from Robot Framework 6.1, it is possible to run native asynchronous
+functions (created by async def) just like normal functions. For example:
 
 .. sourcecode:: python
 
@@ -1959,14 +1959,12 @@ from the libraries just like normal functions. For example:
     async def this_keyword_waits():
         await asyncio.sleep(5)
 
-Running an async function inside `asyncio.run()` works, but it is not recommended
-as this will close the event loop as soon as the function finishes. You can also
-get the reference of the loop by running `asyncio.get_running_loop()`, note however
-that you should be careful when modifying how the event loop runs, for example
-calling `close()` on it will make it impossible to run other coroutines, let Robot
-Framework manage the loop. If you have any function or resource that requires the
-event loop, even though await is not used, you have to define your function as
-async to have the event loop available.
+You can get the reference of the loop using `asyncio.get_running_loop()` or
+`asyncio.get_event_loop()`. Be careful when modifying how the loop runs, it is
+a global resource. For example: never call `loop.close()` because it will make it
+impossible to run any further coroutines. If you have any function or resource that
+requires the event loop, even though await is not used explicitly, you have to define
+your function as async to have the event loop available.
 
 More examples of functionality:
 
@@ -1988,17 +1986,15 @@ More examples of functionality:
         background_task = asyncio.create_task(task_async()) # create a task in background
         await background_task
 
-        await BuiltIn().run_keyword("Some async keyword")
-
-        # if running with python 3.10 or higher
+        # If running with python 3.10 or higher
         async with asyncio.TaskGroup() as tg:
             task1 = tg.create_task(task_async())
             task2 = tg.create_task(task_async())
 
-.. note:: Robot Framework waits for the function to complete, if you want to have a task that runs
-          for a long time, use `asyncio.create_task()`. It is your responsibility to manage the
-          task and save a reference to avoid it being garbage collected. if the event loop
-          closes and the task is still pending, a log will be printed in the console.
+.. note:: Robot Framework waits for the function to complete, If you want to have a task that runs
+          for a long time, use `asyncio.create_task()` for example. It is your responsibility to
+          manage the task and save a reference to avoid it being garbage collected. If the event loop
+          closes and a task is still pending, a message will be printed in the console.
 
 Communicating with Robot Framework
 ----------------------------------
