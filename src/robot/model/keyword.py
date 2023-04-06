@@ -13,16 +13,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Sequence, TYPE_CHECKING, Type
+from typing import Any, Sequence, Type, TYPE_CHECKING
 import warnings
 
 from .body import Body, BodyItem
 from .itemlist import ItemList
 
 if TYPE_CHECKING:
-    from robot.model.testcase import TestCase
-    from robot.model.testsuite import TestSuite
-    from robot.model.visitor import SuiteVisitor
+    from .testcase import TestCase
+    from .testsuite import TestSuite
+    from .visitor import SuiteVisitor
 
 
 @Body.register
@@ -64,8 +64,8 @@ class Keyword(BodyItem):
         parts = list(self.assign) + [self.name] + list(self.args)
         return '    '.join(str(p) for p in parts)
 
-    def to_dict(self) -> dict:
-        data: 'dict[str,list|str]' =  {'name': self.name}
+    def to_dict(self) -> 'dict[str, Any]':
+        data: 'dict[str, Any]' = {'name': self.name}
         if self.args:
             data['args'] = list(self.args)
         if self.assign:

@@ -15,7 +15,7 @@
 
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Iterator, Sequence, Type, TYPE_CHECKING
+from typing import Any, Iterator, Sequence, Type
 
 from robot.utils import setter
 
@@ -28,9 +28,7 @@ from .metadata import Metadata
 from .modelobject import ModelObject
 from .tagsetter import TagSetter
 from .testcase import TestCase, TestCases
-
-if TYPE_CHECKING:
-    from robot.model.visitor import SuiteVisitor
+from .visitor import SuiteVisitor
 
 
 class TestSuite(ModelObject):
@@ -303,16 +301,15 @@ class TestSuite(ModelObject):
         """Removes all child suites not containing any tests, recursively."""
         self.visit(EmptySuiteRemover(preserve_direct_children))
 
-    def visit(self, visitor: 'SuiteVisitor'):
+    def visit(self, visitor: SuiteVisitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_suite(self)
 
     def __str__(self) -> str:
         return self.name
 
-    def to_dict(self) -> dict:
-        data = {}
-        data['name'] = self.name
+    def to_dict(self) -> 'dict[str, Any]':
+        data: 'dict[str, Any]' = {'name': self.name}
         if self.doc:
             data['doc'] = self.doc
         if self.metadata:

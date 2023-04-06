@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from pathlib import Path
-from typing import Iterable, Mapping, Sequence, TYPE_CHECKING, Type
+from typing import Any, Iterable, Mapping, Sequence, Type, TYPE_CHECKING
 
 from robot.utils import setter
 
@@ -26,8 +26,8 @@ from .modelobject import ModelObject
 from .tags import Tags
 
 if TYPE_CHECKING:
-    from robot.model.testsuite import TestSuite
-    from robot.model.visitor import SuiteVisitor
+    from .testsuite import TestSuite
+    from .visitor import SuiteVisitor
 
 
 class TestCase(ModelObject):
@@ -179,9 +179,8 @@ class TestCase(ModelObject):
     def __str__(self) -> str:
         return self.name
 
-    def to_dict(self) -> dict:
-        data = {}
-        data['name'] = self.name
+    def to_dict(self) -> 'dict[str, Any]':
+        data: 'dict[str, Any]' = {'name': self.name}
         if self.doc:
             data['doc'] = self.doc
         if self.tags:
