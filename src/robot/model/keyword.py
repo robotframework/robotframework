@@ -65,8 +65,7 @@ class Keyword(BodyItem):
         return '    '.join(str(p) for p in parts)
 
     def to_dict(self) -> dict:
-        data = {}
-        data['name'] = self.name
+        data: 'dict[str,list|str]' =  {'name': self.name}
         if self.args:
             data['args'] = list(self.args)
         if self.assign:
