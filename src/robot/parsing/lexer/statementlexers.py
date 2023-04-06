@@ -352,8 +352,8 @@ class SyntaxErrorLexer(TypeAndArguments):
 
     @classmethod
     def handles(cls, statement: list, ctx: TestOrKeywordContext):
-        return statement[0].value in \
-               {'BREAK', 'CONTINUE', 'END', 'ELSE', 'ELSE IF','EXCEPT', 'FINALLY', 'RETURN'}
+        return statement[0].value in {'ELSE', 'ELSE IF', 'EXCEPT', 'FINALLY',
+                                      'BREAK', 'CONTINUE', 'RETURN', 'END'}
 
     def lex(self):
         token = self.statement[0]
