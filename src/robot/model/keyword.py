@@ -20,8 +20,9 @@ from .body import Body, BodyItem
 from .itemlist import ItemList
 
 if TYPE_CHECKING:
-    from robot.model.visitor import SuiteVisitor
+    from robot.model.testcase import TestCase
     from robot.model.testsuite import TestSuite
+    from robot.model.visitor import SuiteVisitor
 
 
 @Body.register
@@ -36,7 +37,7 @@ class Keyword(BodyItem):
 
     def __init__(self, name: str = '', args: Sequence[str] = (),
                  assign: Sequence[str] = (), type: str = BodyItem.KEYWORD,
-                 parent: 'TestSuite|None' = None):
+                 parent: 'TestSuite|TestCase|BodyItem|None' = None):
         self._name = name
         self.args = args
         self.assign = assign
