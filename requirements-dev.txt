@@ -7,3 +7,4 @@ wheel
 docutils
 pygments >= 2.8
 pydantic
+xmlschema
