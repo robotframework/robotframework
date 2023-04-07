@@ -111,6 +111,10 @@ class _List:
         | Set List Value | ${L3} | -1 | yyy |
         =>
         | ${L3} = ['a', 'xxx', 'yyy']
+
+        This keyword is equivalent to using the following syntax:
+        | ${L3}[1] =   | Set Variable | xxx |
+        | ${D1}[-1] =  | Set Variable | yyy |
         """
         self._validate_list(list_)
         try:
@@ -510,6 +514,10 @@ class _Dictionary:
         a limitation that keys must be strings.
 
         If given keys already exist in the dictionary, their values are updated.
+
+        This keyword is equivalent to using the following syntax:
+        | ${D1}[key] =    | Set Variable | value |
+        | ${D1}[second] = | Set Variable | ${2}  |
         """
         self._validate_dictionary(dictionary)
         if len(key_value_pairs) % 2 != 0:
