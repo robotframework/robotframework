@@ -768,10 +768,6 @@ It is an error if the returned list has more or less values than there are
 scalar variables to assign. Additionally, only one list variable is allowed
 and dictionary variables can only be assigned alone.
 
-Assigning multiple variables
-''''''''''''''''''''''''''''
-
-
 Automatically logging assigned variable value
 '''''''''''''''''''''''''''''''''''''''''''''
 
