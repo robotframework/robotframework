@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import List
 
 from robot.errors import DataError
-from robot.model import SuiteNamePatterns
+from robot.model import SuiteNamePatterns, FileNamePatterns
 from robot.output import LOGGER
 from robot.utils import get_error_message, seq2str
 
@@ -72,10 +72,13 @@ class SuiteStructureBuilder:
     ignored_prefixes = ('_', '.')
     ignored_dirs = ('CVS',)
 
-    def __init__(self, included_extensions=('.robot', '.rbt'), included_suites=None):
+    def __init__(self, included_extensions=('.robot', '.rbt'), included_suites=None,
+                 included_files=None):
         self.included_extensions = included_extensions
         self.included_suites = None if not included_suites else \
             SuiteNamePatterns(self._create_included_suites(included_suites))
+        self.included_files = None if not included_files else \
+            FileNamePatterns(included_files)
 
     def _create_included_suites(self, included_suites):
         for suite in included_suites:
@@ -133,6 +136,11 @@ class SuiteStructureBuilder:
             name = name.split('__', 1)[1] or name
         return included_suites.match(name)
 
+    def _is_file_included(self, name, included_files):
+        if not included_files:
+            return True
+        return included_files.match(name)
+
     def _list_dir(self, path):
         try:
             return sorted(path.iterdir(), key=lambda p: p.name.lower())
@@ -151,7 +159,10 @@ class SuiteStructureBuilder:
             return path.name not in self.ignored_dirs
         if not path.is_file():
             return False
-        if path.suffix.lower() not in self.included_extensions:
+        if (not self.included_files # `--files` overrules `--extension`
+                and path.suffix.lower() not in self.included_extensions):
+            return False
+        if not self._is_file_included(path.name, self.included_files):
             return False
         return self._is_suite_included(path.stem, included_suites)
 

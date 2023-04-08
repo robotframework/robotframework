@@ -48,13 +48,17 @@ class TestSuiteBuilder:
     """
 
     def __init__(self, included_suites=None, included_extensions=('.robot', '.rbt'),
-                 rpa=None, lang=None, allow_empty_suite=False, process_curdir=True):
+                 included_files=None, rpa=None, lang=None, allow_empty_suite=False,
+                 process_curdir=True):
         """
         :param include_suites:
             List of suite names to include. If ``None`` or an empty list, all
             suites are included. Same as using `--suite` on the command line.
         :param included_extensions:
             List of extensions of files to parse. Same as `--extension`.
+        :param included_files:
+            List of filename patterns to include. If ``None`` or an empty list, all
+            files are included. Same as `--files`.
         :param rpa: Explicit test execution mode. ``True`` for RPA and
             ``False`` for test automation. By default, mode is got from data file
             headers and possible conflicting headers cause an error.
@@ -76,6 +80,7 @@ class TestSuiteBuilder:
         self.lang = lang
         self.included_suites = included_suites
         self.included_extensions = included_extensions
+        self.included_files = included_files
         self.allow_empty_suite = allow_empty_suite
         self.process_curdir = process_curdir
 
@@ -85,7 +90,8 @@ class TestSuiteBuilder:
         :return: :class:`~robot.running.model.TestSuite` instance.
         """
         structure = SuiteStructureBuilder(self.included_extensions,
-                                          self.included_suites).build(paths)
+                                          self.included_suites,
+                                          self.included_files).build(paths)
         parser = SuiteStructureParser(self.included_extensions,
                                       self.rpa, self.lang, self.process_curdir)
         suite = parser.parse(structure)

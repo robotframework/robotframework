@@ -34,7 +34,7 @@ from .keyword import Keyword, Keywords
 from .message import Message, Messages
 from .modelobject import ModelObject
 from .modifier import ModelModifier
-from .namepatterns import SuiteNamePatterns, TestNamePatterns
+from .namepatterns import SuiteNamePatterns, TestNamePatterns, FileNamePatterns
 from .statistics import Statistics
 from .tags import Tags, TagPattern, TagPatterns
 from .testcase import TestCase
