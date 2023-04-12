@@ -497,7 +497,7 @@ __ `Suite documentation`_
 __ `Test case documentation`_
 __ `User keyword documentation`_
 __ `Free suite metadata`_
-__ `Newlines in test data`_
+__ `Newlines`_
 
 .. sourcecode:: robotframework
 

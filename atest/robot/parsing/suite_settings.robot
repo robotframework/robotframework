@@ -16,11 +16,14 @@ Suite Documentation
     ...    is shortdoc on console.
     ...
     ...    Documentation can have multiple rows
-    ...    and also multiple columns.
+    ...    and${SPACE*4}also${SPACE*4}multiple${SPACE*4}columns.
+    ...
     ...    Newlines can also be added literally with "\n".
+    ...    If a row ends with a newline
+    ...    or backslash no automatic newline is added.
     ...
     ...    | table | =header= |
-    ...    | foo | bar |
+    ...    | foo${SPACE*3}|${SPACE*4}bar${SPACE*3}|
     ...    | ragged |
     ...
     ...    Variables work since Robot 1.2 and doc_from_cli works too.
@@ -51,11 +54,11 @@ Suite Teardown
     Verify Teardown    ${SUITE}    BuiltIn.Log    Default suite teardown
 
 Invalid Setting
-    Error In File    0    parsing/suite_settings.robot    28
+    Error In File    0    parsing/suite_settings.robot    32
     ...    Non-existing setting 'Invalid Setting'.
 
 Small typo should provide recommendation.
-    Error In File    1    parsing/suite_settings.robot    29
+    Error In File    1    parsing/suite_settings.robot    33
     ...    SEPARATOR=\n
     ...    Non-existing setting 'Megadata'. Did you mean:
     ...    ${SPACE*4}Metadata

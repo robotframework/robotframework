@@ -1076,14 +1076,14 @@ Documentation    Hello    world
                     Token(Token.ARGUMENT, 'world', 2, 26),
                     Token(Token.EOL, '\n', 2, 31)]
         )
-        self._verify_documentation(data, expected, 'Hello world')
+        self._verify_documentation(data, expected, 'Hello    world')
 
     def test_multi_line(self):
         data = '''\
 *** Settings ***
 Documentation    Documentation
 ...              in
-...              multiple lines    and parts
+...              multiple lines
 '''
         expected = Documentation(
             tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
@@ -1097,12 +1097,9 @@ Documentation    Documentation
                     Token(Token.CONTINUATION, '...', 4, 0),
                     Token(Token.SEPARATOR, '              ', 4, 3),
                     Token(Token.ARGUMENT, 'multiple lines', 4, 17),
-                    Token(Token.SEPARATOR, '    ', 4, 31),
-                    Token(Token.ARGUMENT, 'and parts', 4, 35),
-                    Token(Token.EOL, '\n', 4, 44)]
+                    Token(Token.EOL, '\n', 4, 31)]
         )
-        self._verify_documentation(data, expected,
-                                   'Documentation\nin\nmultiple lines and parts')
+        self._verify_documentation(data, expected, 'Documentation\nin\nmultiple lines')
 
     def test_multi_line_with_empty_lines(self):
         data = '''\
@@ -1125,6 +1122,130 @@ Documentation    Documentation
                     Token(Token.EOL, '\n', 4, 27)]
         )
         self._verify_documentation(data, expected, 'Documentation\n\nwith empty')
+
+    def test_no_automatic_newline_after_literal_newline(self):
+        data = '''\
+*** Settings ***
+Documentation    No automatic\\n
+...              newline
+'''
+        expected = Documentation(
+            tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
+                    Token(Token.SEPARATOR, '    ', 2, 13),
+                    Token(Token.ARGUMENT, 'No automatic\\n', 2, 17),
+                    Token(Token.EOL, '\n', 2, 31),
+                    Token(Token.CONTINUATION, '...', 3, 0),
+                    Token(Token.SEPARATOR, '              ', 3, 3),
+                    Token(Token.ARGUMENT, 'newline', 3, 17),
+                    Token(Token.EOL, '\n', 3, 24)]
+        )
+        self._verify_documentation(data, expected, 'No automatic\\nnewline')
+
+    def test_no_automatic_newline_after_backlash(self):
+        data = '''\
+*** Settings ***
+Documentation    No automatic \\
+...              newline\\\\\\
+...              and remove\\    trailing\\\\    back\\slashes\\\\\\
+'''
+        expected = Documentation(
+            tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
+                    Token(Token.SEPARATOR, '    ', 2, 13),
+                    Token(Token.ARGUMENT, 'No automatic \\', 2, 17),
+                    Token(Token.EOL, '\n', 2, 31),
+                    Token(Token.CONTINUATION, '...', 3, 0),
+                    Token(Token.SEPARATOR, '              ', 3, 3),
+                    Token(Token.ARGUMENT, 'newline\\\\\\', 3, 17),
+                    Token(Token.EOL, '\n', 3, 27),
+                    Token(Token.CONTINUATION, '...', 4, 0),
+                    Token(Token.SEPARATOR, '              ', 4, 3),
+                    Token(Token.ARGUMENT, 'and remove\\', 4, 17),
+                    Token(Token.SEPARATOR, '    ', 4, 28),
+                    Token(Token.ARGUMENT, 'trailing\\\\', 4, 32),
+                    Token(Token.SEPARATOR, '    ', 4, 42),
+                    Token(Token.ARGUMENT, 'back\\slashes\\\\\\', 4, 46),
+                    Token(Token.EOL, '\n', 4, 61)]
+        )
+        self._verify_documentation(data, expected,
+                                   'No automatic newline\\\\'
+                                   'and remove    trailing\\\\    back\\slashes\\\\')
+
+    def test_preserve_indentation(self):
+        data = '''\
+*** Settings ***
+Documentation
+...    Example:
+...
+...        - list with
+...        - two
+...          items
+'''
+        expected = Documentation(
+            tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
+                    Token(Token.EOL, '\n', 2, 13),
+                    Token(Token.CONTINUATION, '...', 3, 0),
+                    Token(Token.SEPARATOR, '    ', 3, 3),
+                    Token(Token.ARGUMENT, 'Example:', 3, 7),
+                    Token(Token.EOL, '\n', 3, 15),
+                    Token(Token.CONTINUATION, '...', 4, 0),
+                    Token(Token.ARGUMENT, '', 4, 3),
+                    Token(Token.EOL, '\n', 4, 3),
+                    Token(Token.CONTINUATION, '...', 5, 0),
+                    Token(Token.SEPARATOR, '        ', 5, 3),
+                    Token(Token.ARGUMENT, '- list with', 5, 11),
+                    Token(Token.EOL, '\n', 5, 22),
+                    Token(Token.CONTINUATION, '...', 6, 0),
+                    Token(Token.SEPARATOR, '        ', 6, 3),
+                    Token(Token.ARGUMENT, '- two', 6, 11),
+                    Token(Token.EOL, '\n', 6, 16),
+                    Token(Token.CONTINUATION, '...', 7, 0),
+                    Token(Token.SEPARATOR, '          ', 7, 3),
+                    Token(Token.ARGUMENT, 'items', 7, 13),
+                    Token(Token.EOL, '\n', 7, 18)]
+        )
+        self._verify_documentation(data, expected, '''\
+Example:
+
+    - list with
+    - two
+      items''')
+
+    def test_preserve_indentation_with_data_on_first_doc_row(self):
+        data = '''\
+*** Settings ***
+Documentation    Example:
+...
+...      - list with
+...      - two
+...        items
+'''
+        expected = Documentation(
+            tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
+                    Token(Token.SEPARATOR, '    ', 2, 13),
+                    Token(Token.ARGUMENT, 'Example:', 2, 17),
+                    Token(Token.EOL, '\n', 2, 25),
+                    Token(Token.CONTINUATION, '...', 3, 0),
+                    Token(Token.ARGUMENT, '', 3, 3),
+                    Token(Token.EOL, '\n', 3, 3),
+                    Token(Token.CONTINUATION, '...', 4, 0),
+                    Token(Token.SEPARATOR, '      ', 4, 3),
+                    Token(Token.ARGUMENT, '- list with', 4, 9),
+                    Token(Token.EOL, '\n', 4, 20),
+                    Token(Token.CONTINUATION, '...', 5, 0),
+                    Token(Token.SEPARATOR, '      ', 5, 3),
+                    Token(Token.ARGUMENT, '- two', 5, 9),
+                    Token(Token.EOL, '\n', 5, 14),
+                    Token(Token.CONTINUATION, '...', 6, 0),
+                    Token(Token.SEPARATOR, '        ', 6, 3),
+                    Token(Token.ARGUMENT, 'items', 6, 11),
+                    Token(Token.EOL, '\n', 6, 16)]
+        )
+        self._verify_documentation(data, expected, '''\
+Example:
+
+- list with
+- two
+  items''')
 
     def _verify_documentation(self, data, expected, value):
         # Model has both EOLs and line numbers.

@@ -167,16 +167,17 @@ class DocumentationOrMetadata(Statement):
 
     @property
     def value(self):
-        return ''.join(self._get_lines_with_newlines()).rstrip()
+        return ''.join(self._get_lines()).rstrip()
 
-    def _get_lines_with_newlines(self):
-        for parts in self._get_line_parts():
-            line = ' '.join(parts)
-            yield line
-            if not self._escaped_or_has_newline(line):
-                yield '\n'
+    def _get_lines(self):
+        base_offset = -1
+        for tokens in self._get_line_tokens():
+            yield from self._get_line_values(tokens, base_offset)
+            first = tokens[0]
+            if base_offset < 0 or 0 < first.col_offset < base_offset and first.value:
+                base_offset = first.col_offset
 
-    def _get_line_parts(self):
+    def _get_line_tokens(self):
         line = []
         lineno = -1
         # There are no EOLs during execution or if data has been parsed with
@@ -192,12 +193,31 @@ class DocumentationOrMetadata(Statement):
                     yield line
                 line = []
             if not eol:
-                line.append(token.value)
+                line.append(token)
             lineno = token.lineno
         if line:
             yield line
 
-    def _escaped_or_has_newline(self, line):
+    def _get_line_values(self, tokens, offset):
+        token = None
+        for index, token in enumerate(tokens):
+            if token.col_offset > offset > 0:
+                yield ' ' * (token.col_offset - offset)
+            elif index > 0:
+                yield ' '
+            yield self._remove_trailing_backslash(token.value)
+            offset = token.end_col_offset
+        if token and not self._has_trailing_backslash_or_newline(token.value):
+            yield '\n'
+
+    def _remove_trailing_backslash(self, value):
+        if value and value[-1] == '\\':
+            match = re.search(r'(\\+)$', value)
+            if len(match.group(1)) % 2 == 1:
+                value = value[:-1]
+        return value
+
+    def _has_trailing_backslash_or_newline(self, line):
         match = re.search(r'(\\+)n?$', line)
         return match and len(match.group(1)) % 2 == 1
 

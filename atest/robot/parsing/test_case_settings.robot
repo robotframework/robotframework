@@ -42,17 +42,21 @@ Documentation
     Verify Documentation    Documentation in single line and column.
 
 Documentation in multiple columns
-    Verify Documentation    Documentation for this test case in multiple columns
+    Verify Documentation    Documentation${SPACE*4}for this test case${SPACE*4}in multiple columns
 
 Documentation in multiple rows
     Verify Documentation    1st logical line
     ...    is shortdoc.
     ...
     ...    This documentation has multiple rows
-    ...    and also multiple columns.
+    ...    and also${SPACE*4}multiple columns.
+    ...
+    ...    Newlines can also be added literally with "\n".
+    ...    If a row ends with a newline
+    ...    or backslash no automatic newline is added.
     ...
     ...    | table | =header= |
-    ...    | foo | bar |
+    ...    | foo${SPACE*3}|${SPACE*4}bar${SPACE*3}|
     ...    | ragged |
 
 Documentation with variables

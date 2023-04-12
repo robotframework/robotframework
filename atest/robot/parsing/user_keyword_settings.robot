@@ -20,7 +20,7 @@ Documentation
     Verify Documentation    Documentation for this user keyword
 
 Documentation in multiple columns
-    Verify Documentation    Documentation for this user keyword in multiple columns
+    Verify Documentation    Documentation${SPACE * 4}for this user keyword${SPACE*10}in multiple columns
 
 Documentation in multiple rows
     Verify Documentation    1st line is shortdoc.
