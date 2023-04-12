@@ -156,59 +156,65 @@ to a suite by using the :setting:`Name` setting in the Setting section:
    *** Settings ***
    Name            Custom suite name
 
+The name of the top-level suite `can be overridden`__ from the command line with
+the :option:`--name` option.
+
 .. note:: The :setting:`Name` setting is not compatible with the :option:`--suite`
           option that can be used to select tests `by suite names`_. This `will
           fixed`__ in Robot Framework 7.0.
 
+__ `Setting suite name`_
 __ https://github.com/robotframework/robotframework/issues/4688
 
 Suite documentation
 -------------------
 
 The documentation for a test suite is set using the :setting:`Documentation`
-setting in the Setting section. It can be used in test case files
-or, with higher-level suites, in test suite initialization files. Test
-suite documentation has exactly the same characteristics regarding to where
-it is shown and how it can be created as `test case
-documentation`_.
+setting in the Settings section. It can be used both in `suite files`_
+and in `suite initialization files`_. Suite documentation has exactly
+the same characteristics regarding to where it is shown and how it can
+be created as `test case documentation`_. For details about the syntax
+see the `Documentation formatting`_ appendix.
 
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Documentation    An example test suite documentation with *some* _formatting_.
-   ...              See test documentation for more documentation examples.
+   Documentation    An example suite documentation with *some* _formatting_.
+   ...              Long documentation can be split into multiple lines.
 
-Both the name and documentation of the top-level test suite can be
-overridden in test execution. This can be done with the command line
-options :option:`--name` and :option:`--doc`, respectively, as
-explained in section `Setting metadata`_.
+The documentation of the top-level suite `can be overridden`__ from
+the command line with the :option:`--doc` option.
+
+__ `Setting suite documentation`_
 
 Free suite metadata
 -------------------
 
-Test suites can also have other metadata than the documentation. This metadata
-is defined in the Setting section using the :setting:`Metadata` setting. Metadata
-set in this manner is shown in test reports and logs.
+In addition to documentation, suites can also have free metadata. This metadata
+is defined as name-value pairs in the Settings section using the :setting:`Metadata`
+setting. It is shown in reports and logs similarly as documentation.
 
-The name and value for the metadata are located in the columns following
-:setting:`Metadata`. The value is handled similarly as documentation, which means
-that it can be split `into several cells`__ (joined together with spaces)
-or `into several rows`__ (joined together with newlines),
-simple `HTML formatting`_ works and even variables_ can be used.
+Name of the metadata is the first argument given to the :setting:`Metadata` setting
+and the remaining arguments specify its value. The value is handled similarly as
+documentation, which means that it supports `HTML formatting`_ and variables_, and
+that longer values can be `split into multiple rows`__.
 
 __ `Dividing data to several rows`_
-__ `Newlines in test data`_
 
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Metadata    Version        2.0
-   Metadata    More Info      For more information about *Robot Framework* see http://robotframework.org
-   Metadata    Executed At    ${HOST}
+   Metadata        Version            2.0
+   Metadata        Robot Framework    http://robotframework.org
+   Metadata        Platform           ${PLATFORM}
+   Metadata        Longer Value
+   ...             Longer metadata values can be split into multiple
+   ...             rows. Also *simple* _formatting_ is supported.
 
-For top-level test suites, it is possible to set metadata also with the
-:option:`--metadata` command line option. This is discussed in more
-detail in section `Setting metadata`_.
+The free metadata of the top-level suite `can be set`__ from
+the command line with the :option:`--metadata` option.
+
+__ `Setting free suite metadata`_
 
 Suite setup and teardown
 ------------------------

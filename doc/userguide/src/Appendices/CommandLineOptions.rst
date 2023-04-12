@@ -150,10 +150,10 @@ Command line options for post-processing outputs
 
 .. _generic automation: `Task execution`_
 .. _Parse only these files: `Selecting files to parse`_
-.. _Sets the name: `Setting the name`_
-.. _Sets the documentation: `Setting the documentation`_
-.. _Sets free metadata: `Setting free metadata`_
-.. _Sets the tag(s): `Setting tags`_
+.. _Sets the name: `Setting suite name`_
+.. _Sets the documentation: `Setting suite documentation`_
+.. _Sets free metadata: `Setting free suite metadata`_
+.. _Sets the tag(s): `Setting test tags`_
 .. _Selects the test cases by name: `By test names`_
 .. _Selects the test suites: `By suite names`_
 .. _Selects failed test suites: `Re-executing failed test suites`_
