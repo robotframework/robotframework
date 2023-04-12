@@ -151,6 +151,7 @@ Command line options for post-processing outputs
 
 .. _generic automation: `Task execution`_
 .. _Parse only these files: `Selecting files to parse`_
+.. _Parse only matching files: `Selecting files to parse`_
 .. _Sets the name: `Setting the name`_
 .. _Sets the documentation: `Setting the documentation`_
 .. _Sets free metadata: `Setting free metadata`_
