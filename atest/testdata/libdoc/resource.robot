@@ -55,9 +55,9 @@ kw 5  [DocumeNtation]   foo bar `kw`.
 kw 6
     [Documentation]    Summary line
     ...
-    ...                 Another line.
-    ...                 Tags: foo, bar
-    [Tags]              foo    dar
+    ...                Another line.
+    ...                Tags: foo, bar
+    [Tags]             foo    dar
     No Operation
 
 Different argument types
