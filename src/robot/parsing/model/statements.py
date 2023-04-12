@@ -78,14 +78,10 @@ class Statement(ast.AST):
 
     @classmethod
     def from_params(cls, *args, **kwargs):
-        """Create statement from passed parameters.
+        """Create a statement from passed parameters.
 
-        Required and optional arguments should match class properties. Values are
-        used to create matching tokens.
-
-        There is one notable difference for `Documentation` statement where
-        ``settings_header`` flag is used to determine if statement belongs to
-        settings header or test/keyword.
+        Required and optional arguments in general match class properties.
+        Values are used to create matching tokens.
 
         Most implementations support following general properties:
 
@@ -100,7 +96,7 @@ class Statement(ast.AST):
         return [t for t in self.tokens if t.type not in Token.NON_DATA_TOKENS]
 
     def get_token(self, *types):
-        """Return a token with the given ``type``.
+        """Return a token with any of the given ``types``.
 
         If there are no matches, return ``None``. If there are multiple
         matches, return the first match.
@@ -127,9 +123,15 @@ class Statement(ast.AST):
         """Return values of tokens having any of the given ``types``."""
         return tuple(t.value for t in self.tokens if t.type in types)
 
-    def get_option(self, name):
+    def get_option(self, name, default=None):
+        """Return value of a configuration option with the given ``name``.
+
+        If the option has not been used, return ``default``.
+
+        New in Robot Framework 6.1.
+        """
         options = dict(opt.split('=', 1) for opt in self.get_values(Token.OPTION))
-        return options.get(name)
+        return options.get(name, default)
 
     @property
     def lines(self):
@@ -568,7 +570,7 @@ class Variable(Statement):
     def validate(self, ctx: 'ValidationContext'):
         name = self.get_value(Token.VARIABLE)
         match = search_variable(name, ignore_errors=True)
-        if not match.is_assign(allow_assign_mark=True):
+        if not match.is_assign(allow_assign_mark=True, allow_nested=True):
             self.errors += (f"Invalid variable name '{name}'.",)
         if match.is_dict_assign(allow_assign_mark=True):
             self._validate_dict_items()

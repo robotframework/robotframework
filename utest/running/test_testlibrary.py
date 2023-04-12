@@ -532,6 +532,11 @@ class _FakeOutput:
         pass
 
 
+class _FakeAsynchronous:
+    def is_loop_required(self, obj):
+        return False
+
+
 class _FakeContext:
     def __init__(self):
         self.output = _FakeOutput()
@@ -541,6 +546,7 @@ class _FakeContext:
         self.variables = _FakeVariableScope()
         self.timeouts = set()
         self.test = None
+        self.asynchronous = _FakeAsynchronous()
 
 
 if __name__ == '__main__':

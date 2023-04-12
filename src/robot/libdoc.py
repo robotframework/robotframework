@@ -36,8 +36,7 @@ Libdoc itself is implemented in the :mod:`~robot.libdocpkg` package.
 import sys
 from pathlib import Path
 
-# Allows running as a script.
-if __name__ == '__main__':
+if __name__ == '__main__' and 'robot' not in sys.modules:
     import pythonpathsetter
 
 from robot.utils import Application, seq2str

@@ -443,7 +443,7 @@ class FirstStatementFinder(ModelVisitor):
 
     def generic_visit(self, node):
         if self.statement is None:
-            ModelVisitor.generic_visit(self, node)
+            super().generic_visit(node)
 
 
 class LastStatementFinder(ModelVisitor):

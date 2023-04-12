@@ -13,15 +13,52 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
+import inspect
+import asyncio
 from contextlib import contextmanager
 
 from robot.errors import DataError
+
+
+class Asynchronous:
+
+    def __init__(self):
+        self._loop_ref = None
+
+    @property
+    def event_loop(self):
+        if self._loop_ref is None:
+            self._loop_ref = asyncio.new_event_loop()
+        return self._loop_ref
+
+    def close_loop(self):
+        if self._loop_ref:
+            self._loop_ref.close()
+
+    def run_until_complete(self, coroutine):
+        return self.event_loop.run_until_complete(coroutine)
+
+    def is_loop_required(self, obj):
+        return inspect.iscoroutine(obj) and not self._is_loop_running()
+
+    def _is_loop_running(self):
+        # ensure 3.6 compatibility
+        if sys.version_info.minor == 6:
+            return asyncio._get_running_loop() is not None
+        try:
+            asyncio.get_running_loop()
+        except RuntimeError:
+            return False
+        else:
+            return True
 
 
 class ExecutionContexts:
 
     def __init__(self):
         self._contexts = []
+        self._asynchronous = Asynchronous()
 
     @property
     def current(self):
@@ -39,12 +76,14 @@ class ExecutionContexts:
         return (context.namespace for context in self)
 
     def start_suite(self, suite, namespace, output, dry_run=False):
-        ctx = _ExecutionContext(suite, namespace, output, dry_run)
+        ctx = _ExecutionContext(suite, namespace, output, dry_run, self._asynchronous)
         self._contexts.append(ctx)
         return ctx
 
     def end_suite(self):
         self._contexts.pop()
+        if not self._contexts:
+            self._asynchronous.close_loop()
 
 
 # This is ugly but currently needed e.g. by BuiltIn
@@ -54,7 +93,7 @@ EXECUTION_CONTEXTS = ExecutionContexts()
 class _ExecutionContext:
     _started_keywords_threshold = 100
 
-    def __init__(self, suite, namespace, output, dry_run=False):
+    def __init__(self, suite, namespace, output, dry_run=False, asynchronous=None):
         self.suite = suite
         self.test = None
         self.timeouts = set()
@@ -67,6 +106,7 @@ class _ExecutionContext:
         self.timeout_occurred = False
         self.steps = []
         self.user_keywords = []
+        self.asynchronous = asynchronous
 
     @contextmanager
     def suite_teardown(self):
