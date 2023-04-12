@@ -12,14 +12,13 @@ Simple filename
 
 Filtering by extension
     --files *.robot                 27
-    --FILES *.txt                   23
+    --FILES s*                      20
 
 Multiple patterns
-    --files *.robot --files *.txt   50
+    --files sample.robot --files tests.robot    25
 
-Any extension is accepted
-    --files *.bar                   1
-    --files *.FoO --files *.bar     2
+Combine extension and files
+    --files sample.rst -F rst       18
 
 *** Keywords ***
 Expected number of tests should be run

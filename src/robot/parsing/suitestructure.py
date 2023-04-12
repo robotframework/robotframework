@@ -159,8 +159,7 @@ class SuiteStructureBuilder:
             return path.name not in self.ignored_dirs
         if not path.is_file():
             return False
-        if (not self.included_files # `--files` overrules `--extension`
-                and path.suffix.lower() not in self.included_extensions):
+        if path.suffix.lower() not in self.included_extensions:
             return False
         if not self._is_file_included(path.name, self.included_files):
             return False
