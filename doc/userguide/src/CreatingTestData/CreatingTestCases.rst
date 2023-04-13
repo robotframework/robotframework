@@ -535,45 +535,40 @@ the variable does not exist, its name is left unchanged.
     Amount cannot be larger than ${MAX AMOUNT}
         # ...
 
-The :setting:`[Documentation]` setting allows you to set a free
+The :setting:`[Documentation]` setting allows setting free form
 documentation for a test case. That text is shown in the command line
-output, as well as the resulting test logs and test reports.
-It is possible to use simple `HTML formatting`_ in documentation and
-variables_ can be used to make the documentation dynamic. Possible
-non-existing variables are left unchanged.
-
-If documentation is split into multiple columns, cells in one row are
-concatenated together with spaces. If documentation is `split
-into multiple rows`__, the created documentation lines themselves are
-`concatenated using newlines`__. Newlines are not added if a line
-already ends with a newline or an `escaping backslash`__.
+output and in the resulting logs and reports.
+If documentation gets long, it can be `split into multiple rows`__.
+It is possible to use simple `HTML formatting`_ and variables_ can
+be used to make the documentation dynamic. Possible non-existing
+variables are left unchanged.
 
 __ `Dividing data to several rows`_
-__ `Newlines in test data`_
-__ `Escaping`_
 
 .. sourcecode:: robotframework
 
    *** Test Cases ***
    Simple
-       [Documentation]    Simple documentation
+       [Documentation]    Simple and short documentation.
+       No Operation
+
+   Multiple lines
+       [Documentation]    First row of the documentation.
+       ...
+       ...                Documentation continues here. These rows form
+       ...                a paragraph when shown in HTML outputs.
        No Operation
 
    Formatting
-       [Documentation]    *This is bold*, _this is italic_  and here is a link: http://robotframework.org
+       [Documentation]
+       ...    This list has:
+       ...    - *bold*
+       ...    - _italics_
+       ...    - link: http://robotframework.org
        No Operation
 
    Variables
        [Documentation]    Executed at ${HOST} by ${USER}
-       No Operation
-
-   Splitting
-       [Documentation]    This documentation    is split    into multiple columns
-       No Operation
-
-   Many lines
-       [Documentation]    Here we have
-       ...                an automatic newline
        No Operation
 
 It is important that test cases have clear and descriptive names, and

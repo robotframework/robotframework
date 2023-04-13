@@ -280,22 +280,20 @@ running tests.
 Setting metadata
 ----------------
 
-Setting the name
-~~~~~~~~~~~~~~~~
+Setting suite name
+~~~~~~~~~~~~~~~~~~
 
-When Robot Framework parses test data, `test suite names`__ are created
+When Robot Framework parses test data, `suite names`__ are created
 from file and directory names. The name of the top-level test suite
 can, however, be overridden with the command line option
-:option:`--name (-N)`.
+:option:`--name (-N)`::
 
-.. note:: Prior to Robot Framework 3.1, underscores in the value were
-          converted to spaces. Nowadays values containing spaces need
-          to be escaped or quoted like, for example, `--name "My example"`.
+    robot --name "Custom name" tests.robot
 
 __ `Suite name`_
 
-Setting the documentation
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Setting suite documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In addition to `defining documentation in the test data`__, documentation
 of the top-level suite can be given from the command line with the
@@ -319,8 +317,8 @@ Examples::
 
 __ `Suite documentation`_
 
-Setting free metadata
-~~~~~~~~~~~~~~~~~~~~~
+Setting free suite metadata
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 `Free suite metadata`_ may also be given from the command line with the
 option :option:`--metadata (-M)`. The argument must be in the format
@@ -347,8 +345,8 @@ Examples::
           Prior to Robot Framework 3.1, underscores in the value were
           converted to spaces same way as with the :option:`--name` option.
 
-Setting tags
-~~~~~~~~~~~~
+Setting test tags
+~~~~~~~~~~~~~~~~~
 
 The command line option :option:`--settag (-G)` can be used to set
 the given tag to all executed test cases. This option may be used

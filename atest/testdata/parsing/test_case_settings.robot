@@ -54,6 +54,11 @@ Documentation in multiple rows
     ...                This documentation has multiple rows
     ...                and also    multiple columns.
     ...
+    ...                Newlines can also be added literally with "\n".
+    ...                If a row ends with a newline\n
+    ...                or backslash \
+    ...                no automatic newline is added.
+    ...
     ...                | table | =header= |
     ...                | foo   |    bar   |
     ...                | ragged |

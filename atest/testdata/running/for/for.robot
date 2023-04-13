@@ -284,7 +284,7 @@ Old :FOR syntax is not supported
 
 Escaping with backslash is not supported
     [Documentation]    FAIL
-    ...    No keyword with name '\\' found.  If it is used inside a for loop, remove escaping backslashes and end the loop with 'END'.
+    ...    No keyword with name '\\' found. If it is used inside a for loop, remove escaping backslashes and end the loop with 'END'.
     FOR    ${var}    IN    one    two
     \    Fail    Should not be executed
     END
