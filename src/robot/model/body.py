@@ -66,8 +66,9 @@ class BodyItem(ModelObject):
                          if step.type != self.MESSAGE)
         if getattr(parent, 'has_teardown', False):
             steps.append(parent.teardown)
-        my_id = steps.index(self) + 1
-        return f'{parent.id}-k{my_id}'
+        index = steps.index(self) if self in steps else len(steps)
+        parent_id = parent.id
+        return f'{parent_id}-k{index + 1}' if parent_id else f'k{index + 1}'
 
     def to_dict(self):
         raise NotImplementedError
@@ -152,7 +153,7 @@ class BaseBody(ItemList):
         return self._create(self.message_class, 'create_message', args, kwargs)
 
     def create_error(self, *args, **kwargs):
-        return self._create(self.error_class, 'create_message', args, kwargs)
+        return self._create(self.error_class, 'create_error', args, kwargs)
 
     def filter(self, keywords=None, messages=None, predicate=None):
         """Filter body items based on type and/or custom predicate.

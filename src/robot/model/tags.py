@@ -13,23 +13,26 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from abc import ABC, abstractmethod
+from typing import Iterator, overload, Sequence
+
 from robot.utils import is_string, normalize, NormalizedDict, Matcher
 
 
-class Tags:
+class Tags(Sequence[str]):
     __slots__ = ['_tags', '_reserved']
 
-    def __init__(self, tags=None):
+    def __init__(self, tags: Sequence[str] = ()):
         self._tags, self._reserved = self._init_tags(tags)
 
-    def robot(self, name):
-        """Check do tags contain a special tag in format `robot:<name>`.
+    def robot(self, name: str) -> bool:
+        """Check do tags contain a reserved tag in format `robot:<name>`.
 
         This is same as `'robot:<name>' in tags` but considerably faster.
         """
         return name in self._reserved
 
-    def _init_tags(self, tags):
+    def _init_tags(self, tags) -> 'tuple[tuple[str, ...], tuple[str, ...]]':
         if not tags:
             return (), ()
         if is_string(tags):
@@ -37,156 +40,181 @@ class Tags:
         return self._normalize(tags)
 
     def _normalize(self, tags):
-        normalized = NormalizedDict([(str(t), None) for t in tags], ignore='_')
-        if '' in normalized:
-            del normalized['']
-        if 'NONE' in normalized:
-            del normalized['NONE']
-        reserved = tuple(tag.split(':')[1] for tag in normalized._keys
-                         if tag[:6] == 'robot:')
-        return tuple(normalized), reserved
+        nd = NormalizedDict([(str(t), None) for t in tags], ignore='_')
+        if '' in nd:
+            del nd['']
+        if 'NONE' in nd:
+            del nd['NONE']
+        reserved = tuple(tag[6:] for tag in nd.normalized_keys if tag[:6] == 'robot:')
+        return tuple(nd), reserved
 
-    def add(self, tags):
+    def add(self, tags: Sequence[str]):
         self.__init__(tuple(self) + tuple(Tags(tags)))
 
-    def remove(self, tags):
-        tags = TagPatterns(tags)
-        self.__init__([t for t in self if not tags.match(t)])
+    def remove(self, tags: Sequence[str]):
+        match = TagPatterns(tags).match
+        self.__init__([t for t in self if not match(t)])
 
-    def match(self, tags):
+    def match(self, tags: Sequence[str]) -> bool:
         return TagPatterns(tags).match(self)
 
-    def __contains__(self, tags):
+    def __contains__(self, tags) -> bool:
         return self.match(tags)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._tags)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[str]:
         return iter(self._tags)
 
-    def __str__(self):
-        return '[%s]' % ', '.join(self)
+    def __str__(self) -> str:
+        tags = ', '.join(self)
+        return f'[{tags}]'
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return repr(list(self))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if not isinstance(other, Tags):
             other = Tags(other)
         self_normalized = [normalize(tag, ignore='_') for tag in self]
         other_normalized = [normalize(tag, ignore='_') for tag in other]
         return sorted(self_normalized) == sorted(other_normalized)
 
-    def __getitem__(self, index):
-        item = self._tags[index]
-        return item if not isinstance(index, slice) else Tags(item)
+    @overload
+    def __getitem__(self, index: int) -> str:
+        ...
 
-    def __add__(self, other):
+    @overload
+    def __getitem__(self, index: slice) -> 'Tags':
+        ...
+
+    def __getitem__(self, index: 'int|slice') -> 'str|Tags':
+        if isinstance(index, slice):
+            return Tags(self._tags[index])
+        return self._tags[index]
+
+    def __add__(self, other: Sequence[str]) -> 'Tags':
         return Tags(tuple(self) + tuple(Tags(other)))
 
 
-class TagPatterns:
+class TagPatterns(Sequence['TagPattern']):
 
-    def __init__(self, patterns):
-        self._patterns = tuple(TagPattern(p) for p in Tags(patterns))
+    def __init__(self, patterns: Sequence[str]):
+        self._patterns = tuple(TagPattern.from_string(p) for p in Tags(patterns))
 
-    def match(self, tags):
+    def match(self, tags: Sequence[str]) -> bool:
         if not self._patterns:
             return False
         tags = tags if isinstance(tags, Tags) else Tags(tags)
         return any(p.match(tags) for p in self._patterns)
 
-    def __contains__(self, tag):
+    def __contains__(self, tag: str) -> bool:
         return self.match(tag)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._patterns)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator['TagPattern']:
         return iter(self._patterns)
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: int) -> 'TagPattern':
         return self._patterns[index]
 
-    def __str__(self):
-        return '[%s]' % ', '.join(str(pattern) for pattern in self)
+    def __str__(self) -> str:
+        patterns = ', '.join(str(pattern) for pattern in self)
+        return f'[{patterns}]'
 
 
-def TagPattern(pattern):
-    pattern = pattern.replace(' ', '')
-    if 'NOT' in pattern:
-        return NotTagPattern(*pattern.split('NOT'))
-    if 'OR' in pattern:
-        return OrTagPattern(pattern.split('OR'))
-    if 'AND' in pattern or '&' in pattern:
-        return AndTagPattern(pattern.replace('&', 'AND').split('AND'))
-    return SingleTagPattern(pattern)
+class TagPattern(ABC):
+
+    @classmethod
+    def from_string(cls, pattern: str) -> 'TagPattern':
+        pattern = pattern.replace(' ', '')
+        if 'NOT' in pattern:
+            must_match, *must_not_match = pattern.split('NOT')
+            return NotTagPattern(must_match, must_not_match)
+        if 'OR' in pattern:
+            return OrTagPattern(pattern.split('OR'))
+        if 'AND' in pattern or '&' in pattern:
+            return AndTagPattern(pattern.replace('&', 'AND').split('AND'))
+        return SingleTagPattern(pattern)
+
+    @abstractmethod
+    def match(self, tags: Sequence[str]) -> bool:
+        raise NotImplementedError
+
+    @abstractmethod
+    def __iter__(self) -> Iterator['TagPattern']:
+        raise NotImplementedError
+
+    @abstractmethod
+    def __str__(self) -> str:
+        raise NotImplementedError
 
 
-class SingleTagPattern:
+class SingleTagPattern(TagPattern):
 
-    def __init__(self, pattern):
+    def __init__(self, pattern: str):
         self._matcher = Matcher(pattern, ignore='_')
 
-    def match(self, tags):
+    def match(self, tags: Sequence[str]) -> bool:
         return self._matcher.match_any(tags)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator['TagPattern']:
         yield self
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self._matcher.pattern
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return bool(self._matcher)
 
 
-class AndTagPattern:
+class AndTagPattern(TagPattern):
 
-    def __init__(self, patterns):
-        self._patterns = tuple(TagPattern(p) for p in patterns)
+    def __init__(self, patterns: Sequence[str]):
+        self._patterns = tuple(TagPattern.from_string(p) for p in patterns)
 
-    def match(self, tags):
+    def match(self, tags: Sequence[str]) -> bool:
         return all(p.match(tags) for p in self._patterns)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator['TagPattern']:
         return iter(self._patterns)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return ' AND '.join(str(pattern) for pattern in self)
 
 
-class OrTagPattern:
+class OrTagPattern(TagPattern):
 
-    def __init__(self, patterns):
-        self._patterns = tuple(TagPattern(p) for p in patterns)
+    def __init__(self, patterns: Sequence[str]):
+        self._patterns = tuple(TagPattern.from_string(p) for p in patterns)
 
-    def match(self, tags):
+    def match(self, tags: Sequence[str]) -> bool:
         return any(p.match(tags) for p in self._patterns)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator['TagPattern']:
         return iter(self._patterns)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return ' OR '.join(str(pattern) for pattern in self)
 
 
-class NotTagPattern:
+class NotTagPattern(TagPattern):
 
-    def __init__(self, must_match, *must_not_match):
-        self._first = TagPattern(must_match)
+    def __init__(self, must_match: str, must_not_match: Sequence[str]):
+        self._first = TagPattern.from_string(must_match)
         self._rest = OrTagPattern(must_not_match)
 
-    def match(self, tags):
+    def match(self, tags: Sequence[str]) -> bool:
         if not self._first:
             return not self._rest.match(tags)
         return self._first.match(tags) and not self._rest.match(tags)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator['TagPattern']:
         yield self._first
-        for pattern in self._rest:
-            yield pattern
+        yield from self._rest
 
-    def __str__(self):
+    def __str__(self) -> str:
         return ' NOT '.join(str(pattern) for pattern in self).lstrip()

@@ -139,7 +139,7 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |   child, and so on.                                            |
    |                  |                  | * `longname`: Suite name including parent suites.              |
    |                  |                  | * `doc`: Suite documentation.                                  |
-   |                  |                  | * `metadata`: `Free test suite metadata`_ as a dictionary/map. |
+   |                  |                  | * `metadata`: `Free suite metadata`_ as a dictionary.          |
    |                  |                  | * `source`: An absolute path of the file/directory the suite   |
    |                  |                  |   was created from.                                            |
    |                  |                  | * `suites`: Names of the direct child suites this suite has    |
@@ -255,8 +255,13 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `flavor`: Type of loop (e.g. `IN RANGE`).                    |
    |                  |                  | * `values`: List of values being looped over                   |
    |                  |                  |   as a list or strings.                                        |
+   |                  |                  | * `start`: Start configuration. Only used with `IN ENUMERATE`  |
+   |                  |                  |   loops.                                                       |
+   |                  |                  | * `mode`: Mode configuration. Only used with `IN ZIP` loops.   |
+   |                  |                  | * `fill`: Fill value configuration. Only used with `IN ZIP`    |
+   |                  |                  |   loops.                                                       |
    |                  |                  |                                                                |
-   |                  |                  | Additional attributes for `ITERATION` types:                   |
+   |                  |                  | Additional attributes for `ITERATION` types with `FOR` loops:  |
    |                  |                  |                                                                |
    |                  |                  | * `variables`: Variables and string representations of their   |
    |                  |                  |   contents for one `FOR` loop iteration as a dictionary.       |
@@ -265,6 +270,8 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |                                                                |
    |                  |                  | * `condition`: The looping condition.                          |
    |                  |                  | * `limit`: The maximum iteration limit.                        |
+   |                  |                  | * `on_limit_message`: The custom error raised when the         |
+   |                  |                  |   limit of the WHILE loop is reached. New in RF 6.1.           |
    |                  |                  |                                                                |
    |                  |                  | Additional attributes for `IF` and `ELSE IF` types:            |
    |                  |                  |                                                                |
@@ -282,6 +289,8 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `values`: Return values from a keyword as a list or strings. |
    |                  |                  |                                                                |
    |                  |                  | Additional attributes for control structures are new in RF 6.0.|
+   |                  |                  | `ELSE IF` `condition` as well as `FOR` loop `start`, `mode`    |
+   |                  |                  | and `fill` are new in RF 6.1.                                  |
    +------------------+------------------+----------------------------------------------------------------+
    | end_keyword      | name, attributes | Called when a keyword ends.                                    |
    |                  |                  |                                                                |

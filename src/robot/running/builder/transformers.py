@@ -36,6 +36,9 @@ class SettingsBuilder(NodeVisitor):
     def visit_Metadata(self, node):
         self.suite.metadata[node.name] = node.value
 
+    def visit_SuiteName(self, node):
+        self.suite.name = node.value
+
     def visit_SuiteSetup(self, node):
         self.suite.setup.config(name=node.name, args=node.args,
                                 lineno=node.lineno)
@@ -132,7 +135,7 @@ class ResourceBuilder(NodeVisitor):
         self.defaults = Defaults()
 
     def build(self, model: File):
-        ErrorReporter(model.source).visit(model)
+        ErrorReporter(model.source, raise_on_invalid_header=True).visit(model)
         self.visit(model)
 
     def visit_Documentation(self, node):
@@ -548,7 +551,8 @@ class WhileBuilder(NodeVisitor):
     def build(self, node):
         error = format_error(self._get_errors(node))
         self.model = self.parent.body.create_while(
-            node.condition, node.limit, lineno=node.lineno, error=error
+            node.condition, node.limit, node.on_limit_message,
+            lineno=node.lineno, error=error
         )
         for step in node.body:
             self.visit(step)
@@ -616,8 +620,9 @@ def deprecate_tags_starting_with_hyphen(node, source):
 
 class ErrorReporter(NodeVisitor):
 
-    def __init__(self, source):
+    def __init__(self, source, raise_on_invalid_header=False):
         self.source = source
+        self.raise_on_invalid_header = raise_on_invalid_header
 
     def visit_TestCase(self, node):
         pass
@@ -625,10 +630,15 @@ class ErrorReporter(NodeVisitor):
     def visit_Keyword(self, node):
         pass
 
+    def visit_SectionHeader(self, node):
+        token = node.get_token(Token.INVALID_HEADER)
+        if token:
+            if self.raise_on_invalid_header:
+                raise DataError(self._format_message(token))
+            else:
+                LOGGER.error(self._format_message(token))
+
     def visit_Error(self, node):
-        fatal = node.get_token(Token.FATAL_ERROR)
-        if fatal:
-            raise DataError(self._format_message(fatal))
         for error in node.get_tokens(Token.ERROR):
             LOGGER.error(self._format_message(error))
 

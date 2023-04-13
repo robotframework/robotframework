@@ -456,20 +456,19 @@ class XML:
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
-    _xml_declaration = re.compile('^<\?xml .*\?>')
 
     def __init__(self, use_lxml=False):
         """Import library with optionally lxml mode enabled.
 
-        By default this library uses Python's standard
+        This library uses Python's standard
         [http://docs.python.org/library/xml.etree.elementtree.html|ElementTree]
-        module for parsing XML. If ``use_lxml`` argument is given a true value
-        (see `Boolean arguments`), the library will use [http://lxml.de|lxml]
-        module instead. See `Using lxml` section for benefits provided by lxml.
+        module for parsing XML by default. If ``use_lxml`` argument is given
+        a true value (see `Boolean arguments`), the [http://lxml.de|lxml] module
+        is used instead. See the `Using lxml` section for benefits provided by lxml.
 
         Using lxml requires that the lxml module is installed on the system.
         If lxml mode is enabled but the module is not installed, this library
-        will emit a warning and revert back to using the standard ElementTree.
+        emits a warning and reverts back to using the standard ElementTree.
         """
         use_lxml = is_truthy(use_lxml)
         if use_lxml and lxml_etree:
@@ -1302,7 +1301,7 @@ class XML:
         ``xpath``. They have exactly the same semantics as with `Get Element`
         keyword.
 
-        By default the string is returned as Unicode. If ``encoding`` argument
+        The string is returned as Unicode by default. If ``encoding`` argument
         is given any value, the string is returned as bytes in the specified
         encoding. The resulting string never contains the XML declaration.
 
@@ -1310,7 +1309,7 @@ class XML:
         """
         source = self.get_element(source, xpath)
         string = self.etree.tostring(source, encoding='UTF-8').decode('UTF-8')
-        string = self._xml_declaration.sub('', string).strip()
+        string = re.sub(r'^<\?xml .*\?>', '', string).strip()
         if encoding:
             string = string.encode(encoding)
         return string

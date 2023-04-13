@@ -460,8 +460,8 @@ Variables can spring into existence from different sources.
 Variable section
 ~~~~~~~~~~~~~~~~
 
-The most common source for variables are Variable sections in `test case
-files`_ and `resource files`_. Variable sections are convenient, because they
+The most common source for variables are Variable sections in `suite files`_
+and `resource files`_. Variable sections are convenient, because they
 allow creating variables in the same place as the rest of the test
 data, and the needed syntax is very simple. Their main disadvantages are
 that values are always strings and they cannot be created dynamically.

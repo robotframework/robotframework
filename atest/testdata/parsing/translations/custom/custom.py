@@ -11,6 +11,7 @@ class Custom(Language):
     library_setting = 'L'
     resource_setting = 'R'
     variables_setting = 'V'
+    name_setting = 'N'
     documentation_setting = 'D'
     metadata_setting = 'M'
     suite_setup_setting = 'S S'

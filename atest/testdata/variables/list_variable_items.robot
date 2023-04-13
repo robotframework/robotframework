@@ -105,13 +105,13 @@ Empty index string
 Empty index bytes
     [Documentation]    FAIL
     ...    ${BYTES NAME} '\$\{BYTES}' used with invalid index ''. \
-    ...     To use '[]' as a literal value, it needs to be escaped like '\\[]'.
+    ...    To use '[]' as a literal value, it needs to be escaped like '\\[]'.
     Log    ${BYTES}[]
 
 Invalid slice list
     [Documentation]    FAIL
     ...    List '\${LIST}' used with invalid index '1:2:3:4'. \
-    ...    To use  '[1:2:3:4]' as a literal value, it needs to be escaped like '\\[1:2:3:4]'.
+    ...    To use '[1:2:3:4]' as a literal value, it needs to be escaped like '\\[1:2:3:4]'.
     Log    ${LIST}[1:2:3:4]
 
 Invalid slice string

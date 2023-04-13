@@ -100,6 +100,8 @@ Settings
       - {lang.resource_setting}
     * - Variables
       - {lang.variables_setting}
+    * - Name
+      - {lang.name_setting}
     * - Documentation
       - {lang.documentation_setting}
     * - Metadata

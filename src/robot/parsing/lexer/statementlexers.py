@@ -105,7 +105,8 @@ class CommentSectionHeaderLexer(SectionHeaderLexer):
     token_type = Token.COMMENT_HEADER
 
 
-class ErrorSectionHeaderLexer(SectionHeaderLexer):
+class InvalidSectionHeaderLexer(SectionHeaderLexer):
+    token_type = Token.INVALID_HEADER
 
     def lex(self):
         self.ctx.lex_invalid_section(self.statement)
@@ -308,8 +309,10 @@ class WhileHeaderLexer(StatementLexer):
         self.statement[0].type = Token.WHILE
         for token in self.statement[1:]:
             token.type = Token.ARGUMENT
-        if self.statement[-1].value.startswith('limit='):
-            self.statement[-1].type = Token.OPTION
+        for token in reversed(self.statement):
+            if not token.value.startswith(('limit=', 'on_limit_message=')):
+                break
+            token.type = Token.OPTION
 
 
 class EndLexer(TypeAndArguments):
@@ -349,8 +352,8 @@ class SyntaxErrorLexer(TypeAndArguments):
 
     @classmethod
     def handles(cls, statement: list, ctx: TestOrKeywordContext):
-        return statement[0].value in \
-               {'BREAK', 'CONTINUE', 'END', 'ELSE', 'ELSE IF','EXCEPT', 'FINALLY', 'RETURN'}
+        return statement[0].value in {'ELSE', 'ELSE IF', 'EXCEPT', 'FINALLY',
+                                      'BREAK', 'CONTINUE', 'RETURN', 'END'}
 
     def lex(self):
         token = self.statement[0]

@@ -17,12 +17,9 @@
 
 import sys
 
-# Allows running as a script. __name__ check needed with multiprocessing:
-# https://github.com/robotframework/robotframework/issues/1137
-if 'robot' not in sys.modules and __name__ == '__main__':
+if __name__ == '__main__' and 'robot' not in sys.modules:
     import pythonpathsetter
 
 from robot import run_cli
 
-
-run_cli(sys.argv[1:])
+run_cli()

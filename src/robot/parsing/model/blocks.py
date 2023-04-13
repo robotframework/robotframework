@@ -122,6 +122,10 @@ class CommentSection(Section):
     pass
 
 
+class InvalidSection(Section):
+    pass
+
+
 class TestCase(HeaderAndBody):
 
     @property
@@ -344,6 +348,10 @@ class While(HeaderAndBody):
     def limit(self):
         return self.header.limit
 
+    @property
+    def on_limit_message(self):
+        return self.header.on_limit_message
+
     def validate(self, ctx: 'ValidationContext'):
         if self._body_is_empty():
             self.errors += ('WHILE loop cannot be empty.',)
@@ -435,7 +443,7 @@ class FirstStatementFinder(ModelVisitor):
 
     def generic_visit(self, node):
         if self.statement is None:
-            ModelVisitor.generic_visit(self, node)
+            super().generic_visit(node)
 
 
 class LastStatementFinder(ModelVisitor):

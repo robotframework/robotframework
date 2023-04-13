@@ -43,6 +43,7 @@ TEST TEARDOWN     No Operation
 Test Timeout      1 day
 Force Tags        foo    bar
 Keyword Tags      tag
+Name              Custom Suite Name
 '''
         expected = [
             (T.SETTING_HEADER, '*** Settings ***', 1, 0),
@@ -88,6 +89,9 @@ Keyword Tags      tag
             (T.KEYWORD_TAGS, 'Keyword Tags', 12, 0),
             (T.ARGUMENT, 'tag', 12, 18),
             (T.EOS, '', 12, 21),
+            (T.SUITE_NAME, 'Name', 13, 0),
+            (T.ARGUMENT, 'Custom Suite Name', 13, 18),
+            (T.EOS, '', 13, 35)
         ]
         assert_tokens(data, expected, get_tokens, data_only=True)
         assert_tokens(data, expected, get_init_tokens, data_only=True)
@@ -143,6 +147,7 @@ Force Tags        foo    bar
 Default Tags      zap
 Task Tags         quux
 Documentation     Valid in all data files.
+Name              Bad Resource Name
 '''
         # Values of invalid settings are ignored with `data_only=True`.
         expected = [
@@ -180,7 +185,10 @@ Documentation     Valid in all data files.
             (T.EOS, '', 11, 9),
             (T.DOCUMENTATION, 'Documentation', 12, 0),
             (T.ARGUMENT, 'Valid in all data files.', 12, 18),
-            (T.EOS, '', 12, 42)
+            (T.EOS, '', 12, 42),
+            (T.ERROR, "Name", 13, 0,
+             "Setting 'Name' is not allowed in resource file."),
+            (T.EOS, '', 13, 4)
         ]
         assert_tokens(data, expected, get_resource_tokens, data_only=True)
 
@@ -290,6 +298,7 @@ Libra ry      Smallish typo gives us recommendations!
 Resource         Too    many   values
 Test Timeout     Too    much
 Test Template    1    2    3    4    5
+NaMe             This    is    an    invalid    name
 '''
         # Values of invalid settings are ignored with `data_only=True`.
         expected = [
@@ -304,6 +313,9 @@ Test Template    1    2    3    4    5
             (T.ERROR, 'Test Template', 4, 0,
              "Setting 'Test Template' accepts only one value, got 5."),
             (T.EOS, '', 4, 13),
+            (T.ERROR, 'NaMe', 5, 0,
+             "Setting 'NaMe' accepts only one value, got 5."),
+            (T.EOS, '', 5, 4),
         ]
         assert_tokens(data, expected, data_only=True)
 
@@ -328,6 +340,8 @@ Force Tags        Used
 Force Tags        Ignored
 Default Tags      Used
 Default Tags      Ignored
+Name              Used
+Name              Ignored
 '''
         # Values of invalid settings are ignored with `data_only=True`.
         expected = [
@@ -386,7 +400,13 @@ Default Tags      Ignored
             (T.EOS, '', 18, 22),
             (T.ERROR, 'Default Tags', 19, 0,
              "Setting 'Default Tags' is allowed only once. Only the first value is used."),
-            (T.EOS, '', 19, 12)
+            (T.EOS, '', 19, 12),
+            ("SUITE NAME", 'Name', 20, 0),
+            (T.ARGUMENT, 'Used', 20, 18),
+            (T.EOS, '', 20, 22),
+            (T.ERROR, 'Name', 21, 0,
+             "Setting 'Name' is allowed only once. Only the first value is used."),
+            (T.EOS, '', 21, 4)
         ]
         assert_tokens(data, expected, data_only=True)
 
@@ -693,21 +713,21 @@ class TestSectionHeaders(unittest.TestCase):
 
     def test_case_section_causes_error_in_init_file(self):
         assert_tokens('*** Test Cases ***', [
-            (T.ERROR, '*** Test Cases ***', 1, 0,
+            (T.INVALID_HEADER, '*** Test Cases ***', 1, 0,
              "'Test Cases' section is not allowed in suite initialization file."),
             (T.EOS, '', 1, 18),
         ], get_init_tokens, data_only=True)
 
     def test_case_section_causes_fatal_error_in_resource_file(self):
         assert_tokens('*** Test Cases ***', [
-            (T.FATAL_ERROR, '*** Test Cases ***', 1, 0,
+            (T.INVALID_HEADER, '*** Test Cases ***', 1, 0,
              "Resource file with 'Test Cases' section is invalid."),
             (T.EOS, '', 1, 18),
         ], get_resource_tokens, data_only=True)
 
     def test_invalid_section_in_test_case_file(self):
         assert_tokens('*** Invalid ***', [
-            (T.ERROR, '*** Invalid ***', 1, 0,
+            (T.INVALID_HEADER, '*** Invalid ***', 1, 0,
              "Unrecognized section header '*** Invalid ***'. Valid sections: "
              "'Settings', 'Variables', 'Test Cases', 'Tasks', 'Keywords' and 'Comments'."),
             (T.EOS, '', 1, 15),
@@ -715,7 +735,7 @@ class TestSectionHeaders(unittest.TestCase):
 
     def test_invalid_section_in_init_file(self):
         assert_tokens('*** S e t t i n g s ***', [
-            (T.ERROR, '*** S e t t i n g s ***', 1, 0,
+            (T.INVALID_HEADER, '*** S e t t i n g s ***', 1, 0,
              "Unrecognized section header '*** S e t t i n g s ***'. Valid sections: "
              "'Settings', 'Variables', 'Keywords' and 'Comments'."),
             (T.EOS, '', 1, 23),
@@ -723,7 +743,7 @@ class TestSectionHeaders(unittest.TestCase):
 
     def test_invalid_section_in_resource_file(self):
         assert_tokens('*', [
-            (T.ERROR, '*', 1, 0,
+            (T.INVALID_HEADER, '*', 1, 0,
              "Unrecognized section header '*'. Valid sections: "
              "'Settings', 'Variables', 'Keywords' and 'Comments'."),
             (T.EOS, '', 1, 1),

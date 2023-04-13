@@ -19,7 +19,7 @@ Documentation
     ...
     ...    | *TABLE* |
     ...    | \${NONEX} | $\{CURDIR} | \${TEMPDIR} |
-    ...    | foo | bar |
+    ...    | foo${SPACE*6}|${SPACE*4}bar${SPACE*4}|
     ...    tabs \t\t\t here
 
 Version
@@ -85,7 +85,7 @@ Keyword Documentation
     ...    -------------
     ...
     ...    | = first = | = second = |
-    ...    | foo | bar |
+    ...    | foo${SPACE*7}|${SPACE*4}bar${SPACE*5}|
     Keyword Doc Should Be           9
     ...    Summary line
     ...

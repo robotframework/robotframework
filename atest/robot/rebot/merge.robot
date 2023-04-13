@@ -15,11 +15,11 @@ ${MERGE 2}        %{TEMPDIR}/merge-2.xml
 ...               Suite1 First             Suite1 Second
 ...               Test With Double Underscore    Test With Prefix    Third In Suite1
 ...               Suite2 First             Suite3 First
-@{ALL SUITES}     Fourth                   Subsuites          Subsuites2
+@{ALL SUITES}     Fourth                   Subsuites          Custom name for 📂 'subsuites2'
 ...               Suite With Double Underscore    Suite With Prefix
 ...               Tsuite1                  Tsuite2            Tsuite3
 @{SUB SUITES 1}   Sub1                     Sub2
-@{SUB SUITES 2}   Sub.suite.4              Subsuite3
+@{SUB SUITES 2}   Sub.suite.4              Custom name for 📜 'subsuite3.robot'
 @{RERUN TESTS}    Suite4 First             SubSuite1 First
 @{RERUN SUITES}   Fourth                   Subsuites
 

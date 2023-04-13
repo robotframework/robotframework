@@ -46,7 +46,7 @@ values`_.
 
 __ `User keyword arguments`_
 
-User keywords can be created in `test case files`_, `resource files`_,
+User keywords can be created in `suite files`_, `resource files`_,
 and `suite initialization files`_. Keywords created in resource
 files are available for files using them, whereas other keywords are
 only available in the files where they are created.

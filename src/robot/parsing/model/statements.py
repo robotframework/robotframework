@@ -78,16 +78,13 @@ class Statement(ast.AST):
 
     @classmethod
     def from_params(cls, *args, **kwargs):
-        """Create statement from passed parameters.
+        """Create a statement from passed parameters.
 
-        Required and optional arguments should match class properties. Values are
-        used to create matching tokens.
-
-        There is one notable difference for `Documentation` statement where
-        ``settings_header`` flag is used to determine if statement belongs to
-        settings header or test/keyword.
+        Required and optional arguments in general match class properties.
+        Values are used to create matching tokens.
 
         Most implementations support following general properties:
+
         - ``separator`` whitespace inserted between each token. Default is four spaces.
         - ``indent`` whitespace inserted before first token. Default is four spaces.
         - ``eol`` end of line sign. Default is ``'\\n'``.
@@ -99,7 +96,7 @@ class Statement(ast.AST):
         return [t for t in self.tokens if t.type not in Token.NON_DATA_TOKENS]
 
     def get_token(self, *types):
-        """Return a token with the given ``type``.
+        """Return a token with any of the given ``types``.
 
         If there are no matches, return ``None``. If there are multiple
         matches, return the first match.
@@ -126,9 +123,15 @@ class Statement(ast.AST):
         """Return values of tokens having any of the given ``types``."""
         return tuple(t.value for t in self.tokens if t.type in types)
 
-    def get_option(self, name):
+    def get_option(self, name, default=None):
+        """Return value of a configuration option with the given ``name``.
+
+        If the option has not been used, return ``default``.
+
+        New in Robot Framework 6.1.
+        """
         options = dict(opt.split('=', 1) for opt in self.get_values(Token.OPTION))
-        return options.get(name)
+        return options.get(name, default)
 
     @property
     def lines(self):
@@ -162,30 +165,59 @@ class Statement(ast.AST):
 
 class DocumentationOrMetadata(Statement):
 
-    def _join_value(self, tokens):
-        lines = self._get_lines(tokens)
-        return ''.join(self._yield_lines_with_newlines(lines))
+    @property
+    def value(self):
+        return ''.join(self._get_lines()).rstrip()
 
-    def _get_lines(self, tokens):
-        lines = []
-        line = None
+    def _get_lines(self):
+        base_offset = -1
+        for tokens in self._get_line_tokens():
+            yield from self._get_line_values(tokens, base_offset)
+            first = tokens[0]
+            if base_offset < 0 or 0 < first.col_offset < base_offset and first.value:
+                base_offset = first.col_offset
+
+    def _get_line_tokens(self):
+        line = []
         lineno = -1
-        for t in tokens:
-            if t.lineno != lineno:
+        # There are no EOLs during execution or if data has been parsed with
+        # `data_only=True` otherwise, so we need to look at line numbers to
+        # know when lines change. If model is created programmatically using
+        # `from_params` or otherwise, line numbers may not be set, but there
+        # ought to be EOLs. If both EOLs and line numbers are missing,
+        # everything is considered to be on the same line.
+        for token in self.get_tokens(Token.ARGUMENT, Token.EOL):
+            eol = token.type == Token.EOL
+            if token.lineno != lineno or eol:
+                if line:
+                    yield line
                 line = []
-                lines.append(line)
-            line.append(t.value)
-            lineno = t.lineno
-        return [' '.join(line) for line in lines]
-
-    def _yield_lines_with_newlines(self, lines):
-        last_index = len(lines) - 1
-        for index, line in enumerate(lines):
+            if not eol:
+                line.append(token)
+            lineno = token.lineno
+        if line:
             yield line
-            if index < last_index and not self._escaped_or_has_newline(line):
-                yield '\n'
 
-    def _escaped_or_has_newline(self, line):
+    def _get_line_values(self, tokens, offset):
+        token = None
+        for index, token in enumerate(tokens):
+            if token.col_offset > offset > 0:
+                yield ' ' * (token.col_offset - offset)
+            elif index > 0:
+                yield ' '
+            yield self._remove_trailing_backslash(token.value)
+            offset = token.end_col_offset
+        if token and not self._has_trailing_backslash_or_newline(token.value):
+            yield '\n'
+
+    def _remove_trailing_backslash(self, value):
+        if value and value[-1] == '\\':
+            match = re.search(r'(\\+)$', value)
+            if len(match.group(1)) % 2 == 1:
+                value = value[:-1]
+        return value
+
+    def _has_trailing_backslash_or_newline(self, line):
         match = re.search(r'(\\+)n?$', line)
         return match and len(match.group(1)) % 2 == 1
 
@@ -222,7 +254,8 @@ class Fixture(Statement):
 class SectionHeader(Statement):
     handles_types = (Token.SETTING_HEADER, Token.VARIABLE_HEADER,
                      Token.TESTCASE_HEADER, Token.TASK_HEADER,
-                     Token.KEYWORD_HEADER, Token.COMMENT_HEADER)
+                     Token.KEYWORD_HEADER, Token.COMMENT_HEADER,
+                     Token.INVALID_HEADER)
 
     @classmethod
     def from_params(cls, type, name=None, eol=EOL):
@@ -348,15 +381,10 @@ class Documentation(DocumentationOrMetadata):
                 tokens.append(Token(Token.SEPARATOR, indent))
             tokens.append(Token(Token.CONTINUATION))
             if line:
-                tokens.extend([Token(Token.SEPARATOR, multiline_separator),
-                               Token(Token.ARGUMENT, line)])
-            tokens.append(Token(Token.EOL, eol))
+                tokens.append(Token(Token.SEPARATOR, multiline_separator))
+            tokens.extend([Token(Token.ARGUMENT, line),
+                           Token(Token.EOL, eol)])
         return cls(tokens)
-
-    @property
-    def value(self):
-        tokens = self.get_tokens(Token.ARGUMENT)
-        return self._join_value(tokens)
 
 
 @Statement.register
@@ -383,11 +411,6 @@ class Metadata(DocumentationOrMetadata):
     @property
     def name(self):
         return self.get_value(Token.NAME)
-
-    @property
-    def value(self):
-        tokens = self.get_tokens(Token.ARGUMENT)
-        return self._join_value(tokens)
 
 
 @Statement.register
@@ -430,6 +453,20 @@ class KeywordTags(MultiValue):
                            Token(Token.ARGUMENT, tag)])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
+
+
+@Statement.register
+class SuiteName(SingleValue):
+    type = Token.SUITE_NAME
+
+    @classmethod
+    def from_params(cls, value, separator=FOUR_SPACES, eol=EOL):
+        return cls([
+            Token(Token.SUITE_NAME, 'Name'),
+            Token(Token.SEPARATOR, separator),
+            Token(Token.NAME, value),
+            Token(Token.EOL, eol)
+        ])
 
 
 @Statement.register
@@ -553,7 +590,7 @@ class Variable(Statement):
     def validate(self, ctx: 'ValidationContext'):
         name = self.get_value(Token.VARIABLE)
         match = search_variable(name, ignore_errors=True)
-        if not match.is_assign(allow_assign_mark=True):
+        if not match.is_assign(allow_assign_mark=True, allow_nested=True):
             self.errors += (f"Invalid variable name '{name}'.",)
         if match.is_dict_assign(allow_assign_mark=True):
             self._validate_dict_items()
@@ -720,9 +757,11 @@ class Return(MultiValue):
     """Represents the deprecated ``[Return]`` setting.
 
     In addition to the ``[Return]`` setting itself, also the ``Return`` node
-    in the parsing model is deprecated. ``ReturnSetting`` (new in RF 6.1) should
-    be used instead. ``ReturnStatement`` will be renamed to ``Return`` in
-    the future, most likely already in RF 7.0.
+    in the parsing model is deprecated and :class:`ReturnSetting` (new in
+    Robot Framework 6.1) should be used instead. :class:`ReturnStatement` will
+    be renamed to ``Return`` in Robot Framework 7.0.
+
+    Eventually ``[Return]`` and ``ReturnSetting`` will be removed altogether.
     """
     type = Token.RETURN
 
@@ -1010,8 +1049,8 @@ class WhileHeader(Statement):
     type = Token.WHILE
 
     @classmethod
-    def from_params(cls, condition, limit=None, indent=FOUR_SPACES,
-                    separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, condition, limit=None, on_limit_message=None,
+                    indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
         tokens = [Token(Token.SEPARATOR, indent),
                   Token(cls.type),
                   Token(Token.SEPARATOR, separator),
@@ -1019,6 +1058,10 @@ class WhileHeader(Statement):
         if limit:
             tokens.extend([Token(Token.SEPARATOR, indent),
                            Token(Token.OPTION, f'limit={limit}')])
+        if on_limit_message:
+            tokens.extend([Token(Token.SEPARATOR, indent),
+                           Token(Token.OPTION,
+                                 f'on_limit_message={on_limit_message}')])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
@@ -1030,15 +1073,14 @@ class WhileHeader(Statement):
     def limit(self):
         return self.get_option('limit')
 
+    @property
+    def on_limit_message(self):
+        return self.get_option('on_limit_message')
+
     def validate(self, ctx: 'ValidationContext'):
         values = self.get_values(Token.ARGUMENT)
-        if len(values) == 0:
-            self.errors += ('WHILE must have a condition.',)
-        if len(values) == 2:
-            self.errors += (f"Second WHILE loop argument must be 'limit', "
-                            f"got '{values[1]}'.",)
-        if len(values) > 2:
-            self.errors += ('WHILE cannot have more than one condition.',)
+        if len(values) > 1:
+            self.errors += (f'WHILE cannot have more than one condition, got {seq2str(values)}.',)
 
 
 @Statement.register
@@ -1119,7 +1161,6 @@ class Config(Statement):
 @Statement.register
 class Error(Statement):
     type = Token.ERROR
-    handles_types = (Token.ERROR, Token.FATAL_ERROR)
     _errors = ()
 
     @property
@@ -1128,12 +1169,12 @@ class Error(Statement):
 
     @property
     def errors(self):
-        """Errors got from the underlying ``ERROR`` and ``FATAL_ERROR`` tokens.
+        """Errors got from the underlying ``ERROR``token.
 
         Errors can be set also explicitly. When accessing errors, they are returned
         along with errors got from tokens.
         """
-        tokens = self.get_tokens(Token.ERROR, Token.FATAL_ERROR)
+        tokens = self.get_tokens(Token.ERROR)
         return tuple(t.error for t in tokens) + self._errors
 
     @errors.setter

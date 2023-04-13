@@ -1,5 +1,6 @@
 language: custom
 *** H S ***
+N                  Custom name
 D                  Suite documentation.
 M                  Metadata    Value
 S S                Suite Setup

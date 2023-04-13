@@ -110,7 +110,7 @@ Documentation
     No Operation
 
 Documentation in multiple columns
-    [Documentation]    Documentation    for this user keyword    in multiple columns
+    [Documentation]    Documentation    for this user keyword          in multiple columns
     No Operation
 
 Documentation in multiple rows

@@ -15,11 +15,12 @@
 
 """Package for writing output files in HTML format.
 
-This package is considered stable but it is not part of the public API.
+This package is considered stable, but it is not part of the public API.
 """
 
 from .htmlfilewriter import HtmlFileWriter, ModelWriter
 from .jsonwriter import JsonWriter
+
 
 LOG = 'rebot/log.html'
 REPORT = 'rebot/report.html'

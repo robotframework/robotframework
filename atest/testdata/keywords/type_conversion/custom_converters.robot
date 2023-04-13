@@ -50,6 +50,11 @@ With generics
     ...    ('28.9.2022', '9/28/2022')
     ...    {'one': '28.9.2022'}
     ...    {'one', 'two', 'three'}
+    With generics
+    ...    ${{['one', 'two', 'three']}}
+    ...    ${{('28.9.2022', '9/28/2022')}}
+    ...    ${{{'one': '28.9.2022'}}}
+    ...    ${{{'one', 'two', 'three'}}}
 
 With TypedDict
     TypedDict    {'fi': '29.9.2022', 'us': '9/29/2022'}
@@ -68,6 +73,9 @@ Failing conversion
     Strict    ${{CustomConverters.Strict()}}
     Conversion should fail    Strict    wrong type
     ...    type=Strict    error=TypeError: Only Strict instances are accepted, got string.
+
+Only vararg
+    Only var arg    10    10
 
 With library as argument to converter
     String    ${123}

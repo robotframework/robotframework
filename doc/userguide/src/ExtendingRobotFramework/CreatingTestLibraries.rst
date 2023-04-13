@@ -1804,7 +1804,8 @@ should be parsed like this:
 
 
 The `library` argument to converter function is optional, i.e. if the converter function
-only accepts one argument, the `library` argument is omitted.
+only accepts one argument, the `library` argument is omitted. Similar result can be achieved
+by making the converter function accept only variadic arguments, e.g. `def parse_date(*varargs)`.
 
 Converter documentation
 ```````````````````````
@@ -1942,6 +1943,58 @@ __ `Specifying argument types using function annotations`_
 __ `Specifying argument types using @keyword decorator`_
 
 .. note:: Automatic type conversion is new in Robot Framework 3.1.
+
+Asynchronous keywords
+~~~~~~~~~~~~~~~~~~~~~
+
+Starting from Robot Framework 6.1, it is possible to run native asynchronous
+functions (created by `async def`) just like normal functions:
+
+.. sourcecode:: python
+
+    import asyncio
+    from robot.api.deco import keyword
+
+
+    @keyword
+    async def this_keyword_waits():
+        await asyncio.sleep(5)
+
+You can get the reference of the loop using `asyncio.get_running_loop()` or
+`asyncio.get_event_loop()`. Be careful when modifying how the loop runs, it is
+a global resource. For example, never call `loop.close()` because it will make it
+impossible to run any further coroutines. If you have any function or resource that
+requires the event loop, even though `await` is not used explicitly, you have to define
+your function as async to have the event loop available.
+
+More examples of functionality:
+
+.. sourcecode:: python
+
+    import asyncio
+    from robot.api.deco import keyword
+
+
+    async def task_async():
+        await asyncio.sleep(5)
+
+    @keyword
+    async def examples():
+        tasks = [task_async() for _ in range(10)]
+        results = await asyncio.gather(*tasks)
+
+        background_task = asyncio.create_task(task_async())
+        await background_task
+
+        # If running with Python 3.10 or higher
+        async with asyncio.TaskGroup() as tg:
+            task1 = tg.create_task(task_async())
+            task2 = tg.create_task(task_async())
+
+.. note:: Robot Framework waits for the function to complete. If you want to have a task that runs
+          for a long time, use, for example, `asyncio.create_task()`. It is your responsibility to
+          manage the task and save a reference to avoid it being garbage collected. If the event loop
+          closes and a task is still pending, a message will be printed to the console.
 
 Communicating with Robot Framework
 ----------------------------------
@@ -2879,45 +2932,48 @@ they are specified in Python and explained in the following table.
 .. table:: Representing different arguments with `get_keyword_arguments`
    :class: tabular
 
-   +--------------------+----------------------------+----------------------------+
-   |   Argument type    |      How to represent      |          Examples          |
-   +====================+============================+============================+
-   | No arguments       | Empty list.                | `[]`                       |
-   +--------------------+----------------------------+----------------------------+
-   | One or more        | List of strings containing | `['argument']`,            |
-   | `positional        | argument names.            | `['arg1', 'arg2', 'arg3']` |
-   | argument`_         |                            |                            |
-   +--------------------+----------------------------+----------------------------+
-   | `Default values`_  | Two ways how to represent  | `['name=default']`,        |
-   |                    | the argument name and the  | `['a', 'b=1', 'c=2']`      |
-   |                    | default value:             |                            |
-   |                    |                            | `[('name', 'default')]`,   |
-   |                    | - As a string where the    | `['a', ('b', 1), ('c', 2)]`|
-   |                    |   name and the default are |                            |
-   |                    |   separated with `=`.      |                            |
-   |                    | - As a tuple with the name |                            |
-   |                    |   and the default as       |                            |
-   |                    |   separate items. New in   |                            |
-   |                    |   Robot Framework 3.2.     |                            |
-   +--------------------+----------------------------+----------------------------+
-   | `Variable number   | Argument after possible    | `['*varargs']`,            |
-   | of arguments`_     | positional arguments and   | `['argument', '*rest']`,   |
-   | (varargs)          | their defaults has `*`     | `['a', 'b=42', '*c']`      |
-   |                    | prefix.                    |                            |
-   +--------------------+----------------------------+----------------------------+
-   | `Free named        | Last arguments has `**`    | `['**named']`,             |
-   | arguments`_        | prefix. Requires           | `['a', 'b=42', '**c']`,    |
-   | (kwargs)           | `run_keyword` to `support  | `['*varargs', '**kwargs']` |
-   |                    | free named arguments`__.   |                            |
-   +--------------------+----------------------------+----------------------------+
-   | `Named-only        | Arguments after varargs or | `['*varargs', 'named']`,   |
-   | arguments`_        | a lone `*` if there are no | `['*', 'named'],           |
-   |                    | varargs. With or without   | `['*', 'x', 'y=default']`, |
-   |                    | defaults. Requires         | `['a', '*b', 'c', '**d']`  |
-   |                    | `run_keyword` to `support  |                            |
-   |                    | named-only arguments`__.   |                            |
-   |                    | New in Robot Framework 3.1.|                            |
-   +--------------------+----------------------------+----------------------------+
+   +--------------------+----------------------------+------------------------------+
+   |   Argument type    |      How to represent      |          Examples            |
+   +====================+============================+==============================+
+   | No arguments       | Empty list.                | | `[]`                       |
+   +--------------------+----------------------------+------------------------------+
+   | One or more        | List of strings containing | | `['argument']`             |
+   | `positional        | argument names.            | | `['arg1', 'arg2', 'arg3']` |
+   | argument`_         |                            |                              |
+   +--------------------+----------------------------+------------------------------+
+   | `Default values`_  | Two ways how to represent  | String with `=` separator:   |
+   |                    | the argument name and the  |                              |
+   |                    | default value:             | | `['name=default']`         |
+   |                    |                            | | `['a', 'b=1', 'c=2']`      |
+   |                    | - As a string where the    |                              |
+   |                    |   name and the default are | Tuple:                       |
+   |                    |   separated with `=`.      |                              |
+   |                    | - As a tuple with the name | | `[('name', 'default')]`    |
+   |                    |   and the default as       | | `['a', ('b', 1), ('c', 2)]`|
+   |                    |   separate items. New in   |                              |
+   |                    |   Robot Framework 3.2.     |                              |
+   +--------------------+----------------------------+------------------------------+
+   | `Positional-only   | Arguments before the `/`   | | `['posonly', '/']`         |
+   | arguments`_        | marker. New in Robot       | | `['p', 'q', '/', 'normal']`|
+   |                    | Framework 6.1.             |                              |
+   +--------------------+----------------------------+------------------------------+
+   | `Variable number   | Argument after possible    | | `['*varargs']`             |
+   | of arguments`_     | positional arguments has   | | `['argument', '*rest']`    |
+   | (varargs)          | a `*` prefix               | | `['a', 'b=42', '*c']`      |
+   +--------------------+----------------------------+------------------------------+
+   | `Named-only        | Arguments after varargs or | | `['*varargs', 'named']`    |
+   | arguments`_        | a lone `*` if there are no | | `['*', 'named']`           |
+   |                    | varargs. With or without   | | `['*', 'x', 'y=default']`  |
+   |                    | defaults. Requires         | | `['a', '*b', ('c', 42)]`   |
+   |                    | `run_keyword` to `support  |                              |
+   |                    | named-only arguments`__.   |                              |
+   |                    | New in Robot Framework 3.1.|                              |
+   +--------------------+----------------------------+------------------------------+
+   | `Free named        | Last arguments has `**`    | | `['**named']`              |
+   | arguments`_        | prefix. Requires           | | `['a', ('b', 42), '**c']`  |
+   | (kwargs)           | `run_keyword` to `support  | | `['*varargs', '**kwargs']` |
+   |                    | free named arguments`__.   | | `['*', 'kwo', '**kws']`    |
+   +--------------------+----------------------------+------------------------------+
 
 When the `get_keyword_arguments` is used, Robot Framework automatically
 calculates how many positional arguments the keyword requires and does it
@@ -2947,7 +3003,8 @@ accepting all arguments. This automatic argument spec is either
 `run_keyword` `support free named arguments`__ or not.
 
 .. note:: Support to specify arguments as tuples like `('name', 'default')`
-          is new in Robot Framework 3.2.
+          is new in Robot Framework 3.2. Support for positional-only arguments
+          in dynamic library API is new in Robot Framework 6.1.
 
 __ `Free named arguments with dynamic libraries`_
 __ `Named-only arguments with dynamic libraries`_
@@ -3140,19 +3197,19 @@ the arguments that the `run_keyword` method is actually called with.
    No arguments
        Dynamic                         # [], {}
 
-   Positional only
+   Only positional
        Dynamic    x                    # [x], {}
        Dynamic    x      y             # [x, y], {}
 
-   Free named only
+   Only free named
        Dynamic    x=1                  # [], {x: 1}
        Dynamic    x=1    y=2    z=3    # [], {x: 1, y: 2, z: 3}
 
-   Free named with positional
+   Positional and free named
        Dynamic    x      y=2           # [x], {y: 2}
        Dynamic    x      y=2    z=3    # [x], {y: 2, z: 3}
 
-   Free named with normal named
+   Positional as named and free named
        Dynamic    a=1    x=1           # [], {a: 1, x: 1}
        Dynamic    b=2    x=1    a=1    # [], {a: 1, b: 2, x: 1}
 
@@ -3186,7 +3243,7 @@ shows the arguments that the `run_keyword` method is actually called with.
 .. sourcecode:: robotframework
 
    *** Test Cases ***                                  # args, kwargs
-   Named-only only
+   Only named-only
        Dynamic    named=value                          # [], {named: value}
        Dynamic    named=value    named2=2              # [], {named: value, named2: 2}
 
@@ -3194,7 +3251,7 @@ shows the arguments that the `run_keyword` method is actually called with.
        Dynamic    argument       named=xxx             # [argument], {named: xxx}
        Dynamic    a1             a2         named=3    # [a1, a2], {named: 3}
 
-   Named-only with normal named
+   Named-only with positional as named
        Dynamic    named=foo      positional=bar        # [], {positional: bar, named: foo}
 
    Named-only with free named

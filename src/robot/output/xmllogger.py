@@ -35,7 +35,7 @@ class XmlLogger(ResultVisitor):
         writer.start('robot', {'generator': get_full_version(generator),
                                'generated': get_timestamp(),
                                'rpa': 'true' if rpa else 'false',
-                               'schemaversion': '3'})
+                               'schemaversion': '4'})
         return writer
 
     def close(self):
@@ -100,13 +100,10 @@ class XmlLogger(ResultVisitor):
         self._writer.end('branch')
 
     def start_for(self, for_):
-        attrs = {'flavor': for_.flavor}
-        for name, value in [('start', for_.start),
-                            ('mode', for_.mode),
-                            ('fill', for_.fill)]:
-            if value is not None:
-                attrs[name] = value
-        self._writer.start('for', attrs)
+        self._writer.start('for', {'flavor': for_.flavor,
+                                   'start': for_.start,
+                                   'mode': for_.mode,
+                                   'fill': for_.fill})
         for name in for_.variables:
             self._writer.element('var', name)
         for value in for_.values:
@@ -151,7 +148,8 @@ class XmlLogger(ResultVisitor):
     def start_while(self, while_):
         self._writer.start('while', attrs={
             'condition': while_.condition,
-            'limit': while_.limit
+            'limit': while_.limit,
+            'on_limit_message': while_.on_limit_message
         })
         self._writer.element('doc', while_.doc)
 

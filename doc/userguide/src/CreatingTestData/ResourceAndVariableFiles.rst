@@ -1,7 +1,7 @@
 Resource and variable files
 ===========================
 
-User keywords and variables in `test case files`_ and `suite
+User keywords and variables in `suite files`_ and `suite
 initialization files`_ can only be used in files where they are
 created, but *resource files* provide a mechanism for sharing them.
 The high level syntax for creating resource files is exactly the same
@@ -85,17 +85,16 @@ Documenting resource files
 
 Keywords created in a resource file can be documented__ using
 :setting:`[Documentation]` setting. The resource file itself can have
-:setting:`Documentation` in the Setting section similarly as
-`test suites`__.
+:setting:`Documentation` in the Setting section similarly as suites__.
 
-Both Libdoc_ and RIDE_ use these documentations, and they
+Libdoc_ and various editors use these documentations, and they
 are naturally available for anyone opening resource files.  The
 first logical line of the documentation of a keyword, until the first
 empty line, is logged when the keyword is run, but otherwise resource
 file documentation is ignored during the test execution.
 
 __ `User keyword name and documentation`_
-__ `Test suite name and documentation`_
+__ `Suite name`_
 
 Example resource file
 ~~~~~~~~~~~~~~~~~~~~~

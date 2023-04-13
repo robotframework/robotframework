@@ -45,10 +45,6 @@ class BlockParser(Parser):
         }
 
     def handles(self, statement):
-        # FIXME: this needs to be handled better
-        if statement.type == Token.ERROR and \
-                statement.errors[0].startswith('Unrecognized section header'):
-            return False
         return statement.type not in self.unhandled_tokens
 
     def parse(self, statement):

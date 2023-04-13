@@ -21,9 +21,14 @@ from .keyword import Keywords
 
 @Body.register
 class For(BodyItem):
+    """Represents ``FOR`` loops.
+
+    :attr:`flavor` specifies the flavor, and it can be ``IN``, ``IN RANGE``,
+    ``IN ENUMERATE`` or ``IN ZIP``.
+    """
     type = BodyItem.FOR
     body_class = Body
-    repr_args = ('variables', 'flavor', 'values')
+    repr_args = ('variables', 'flavor', 'values', 'start', 'mode', 'fill')
     __slots__ = ['variables', 'flavor', 'values', 'start', 'mode', 'fill']
 
     def __init__(self, variables=(), flavor='IN', values=(), start=None, mode=None,
@@ -54,9 +59,16 @@ class For(BodyItem):
         visitor.visit_for(self)
 
     def __str__(self):
-        variables = '    '.join(self.variables)
-        values = '    '.join(self.values)
-        return 'FOR    %s    %s    %s' % (variables, self.flavor, values)
+        parts = ['FOR', *self.variables, self.flavor, *self.values]
+        for name, value in [('start', self.start),
+                            ('mode', self.mode),
+                            ('fill', self.fill)]:
+            if value is not None:
+                parts.append(f'{name}={value}')
+        return '    '.join(parts)
+
+    def _include_in_repr(self, name, value):
+        return name not in ('start', 'mode', 'fill') or value is not None
 
     def to_dict(self):
         data = {'type': self.type,
@@ -74,14 +86,17 @@ class For(BodyItem):
 
 @Body.register
 class While(BodyItem):
+    """Represents ``WHILE`` loops."""
     type = BodyItem.WHILE
     body_class = Body
-    repr_args = ('condition', 'limit')
-    __slots__ = ['condition', 'limit']
+    repr_args = ('condition', 'limit', 'on_limit_message')
+    __slots__ = ['condition', 'limit', 'on_limit_message']
 
-    def __init__(self, condition=None, limit=None, parent=None):
+    def __init__(self, condition=None, limit=None,
+                 on_limit_message=None, parent=None):
         self.condition = condition
         self.limit = limit
+        self.on_limit_message = on_limit_message
         self.parent = parent
         self.body = None
 
@@ -93,7 +108,17 @@ class While(BodyItem):
         visitor.visit_while(self)
 
     def __str__(self):
-        return f'WHILE    {self.condition}' + (f'    {self.limit}' if self.limit else '')
+        parts = ['WHILE']
+        if self.condition is not None:
+            parts.append(self.condition)
+        if self.limit is not None:
+            parts.append(f'limit={self.limit}')
+        if self.on_limit_message is not None:
+            parts.append(f'on_limit_message={self.on_limit_message}')
+        return '    '.join(parts)
+
+    def _include_in_repr(self, name, value):
+        return name == 'condition' or value is not None
 
     def to_dict(self):
         data = {'type': self.type}
@@ -101,11 +126,14 @@ class While(BodyItem):
             data['condition'] = self.condition
         if self.limit:
             data['limit'] = self.limit
+        if self.on_limit_message:
+            data['on_limit_message'] = self.on_limit_message
         data['body'] = self.body.to_dicts()
         return data
 
 
 class IfBranch(BodyItem):
+    """Represents individual ``IF``, ``ELSE IF`` or ``ELSE`` branch."""
     body_class = Body
     repr_args = ('type', 'condition')
     __slots__ = ['type', 'condition']
@@ -126,7 +154,7 @@ class IfBranch(BodyItem):
         if not self.parent:
             return 'k1'
         if not self.parent.parent:
-            return 'k%d' % (self.parent.body.index(self) + 1)
+            return self._get_id(self.parent)
         return self._get_id(self.parent.parent)
 
     def __str__(self):
@@ -177,6 +205,7 @@ class If(BodyItem):
 
 
 class TryBranch(BodyItem):
+    """Represents individual ``TRY``, ``EXCEPT``, ``ELSE`` or ``FINALLY`` branch."""
     body_class = Body
     repr_args = ('type', 'patterns', 'pattern_type', 'variable')
     __slots__ = ['type', 'patterns', 'pattern_type', 'variable']
@@ -202,22 +231,21 @@ class TryBranch(BodyItem):
         if not self.parent:
             return 'k1'
         if not self.parent.parent:
-            return 'k%d' % (self.parent.body.index(self) + 1)
+            return self._get_id(self.parent)
         return self._get_id(self.parent.parent)
 
     def __str__(self):
         if self.type != BodyItem.EXCEPT:
             return self.type
-        parts = ['EXCEPT'] + list(self.patterns)
+        parts = ['EXCEPT', *self.patterns]
         if self.pattern_type:
             parts.append(f'type={self.pattern_type}')
         if self.variable:
             parts.extend(['AS', self.variable])
         return '    '.join(parts)
 
-    def __repr__(self):
-        repr_args = self.repr_args if self.type == BodyItem.EXCEPT else ['type']
-        return self._repr(repr_args)
+    def _include_in_repr(self, name, value):
+        return name == 'type' or value
 
     def visit(self, visitor):
         visitor.visit_try_branch(self)
@@ -287,6 +315,7 @@ class Try(BodyItem):
 
 @Body.register
 class Return(BodyItem):
+    """Represents ``RETURN``."""
     type = BodyItem.RETURN
     repr_args = ('values',)
     __slots__ = ['values']
@@ -304,6 +333,7 @@ class Return(BodyItem):
 
 @Body.register
 class Continue(BodyItem):
+    """Represents ``CONTINUE``."""
     type = BodyItem.CONTINUE
     __slots__ = []
 
@@ -319,6 +349,7 @@ class Continue(BodyItem):
 
 @Body.register
 class Break(BodyItem):
+    """Represents ``BREAK``."""
     type = BodyItem.BREAK
     __slots__ = []
 
@@ -334,10 +365,14 @@ class Break(BodyItem):
 
 @Body.register
 class Error(BodyItem):
+    """Represents syntax error in data.
+
+    For example, an invalid setting like ``[Setpu]`` or ``END`` in wrong place.
+    """
     type = BodyItem.ERROR
     __slots__ = ['values']
 
-    def __init__(self, values, parent=None):
+    def __init__(self, values=(), parent=None):
         self.values = values
         self.parent = parent
 
@@ -345,4 +380,4 @@ class Error(BodyItem):
         visitor.visit_error(self)
 
     def to_dict(self):
-        return {'type': self.type, 'data': self.data}
+        return {'type': self.type, 'values': list(self.values)}

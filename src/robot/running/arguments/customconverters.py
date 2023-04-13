@@ -78,7 +78,7 @@ class ConverterInfo:
             raise TypeError(f'Custom converters must be callable, converter for '
                             f'{type_name(type_)} is {type_name(converter)}.')
         spec = cls._get_arg_spec(converter)
-        arg_type = spec.types.get(spec.positional[0])
+        arg_type = spec.types.get(spec.positional and spec.positional[0] or spec.var_positional)
         if arg_type is None:
             accepts = ()
         elif is_union(arg_type):
@@ -87,7 +87,8 @@ class ConverterInfo:
             accepts = (arg_type.__origin__,)
         else:
             accepts = (arg_type,)
-        return cls(type_, converter, accepts, library if spec.minargs == 2 else None)
+        pass_library = spec.minargs == 2 or spec.var_positional
+        return cls(type_, converter, accepts, library if pass_library else None)
 
     @classmethod
     def _get_arg_spec(cls, converter):
@@ -96,7 +97,7 @@ class ConverterInfo:
             required = seq2str([a for a in spec.positional if a not in spec.defaults])
             raise TypeError(f"Custom converters cannot have more than two mandatory "
                             f"arguments, '{converter.__name__}' has {required}.")
-        if not spec.positional:
+        if not spec.maxargs:
             raise TypeError(f"Custom converters must accept one positional argument, "
                             f"'{converter.__name__}' accepts none.")
         if spec.named_only and set(spec.named_only) - set(spec.defaults):
@@ -109,3 +110,4 @@ class ConverterInfo:
         if not self.library:
             return self.converter(value)
         return self.converter(value, self.library.get_instance())
+
