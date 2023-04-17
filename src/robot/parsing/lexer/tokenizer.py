@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import re
+from collections.abc import Iterator
 
 from .tokens import Token
 
@@ -22,7 +23,7 @@ class Tokenizer:
     _space_splitter = re.compile(r'(\s{2,}|\t)', re.UNICODE)
     _pipe_splitter = re.compile(r'((?:\A|\s+)\|(?:\s+|\Z))', re.UNICODE)
 
-    def tokenize(self, data, data_only=False):
+    def tokenize(self, data: str, data_only: bool = False) -> 'Iterator[list[Token]]':
         current = []
         for lineno, line in enumerate(data.splitlines(not data_only), start=1):
             tokens = self._tokenize_line(line, lineno, not data_only)
@@ -35,7 +36,7 @@ class Tokenizer:
                 current.extend(tokens)
         yield current
 
-    def _tokenize_line(self, line, lineno, include_separators=True):
+    def _tokenize_line(self, line: str, lineno: int, include_separators: bool):
         # Performance optimized code.
         tokens = []
         append = tokens.append
@@ -55,13 +56,13 @@ class Tokenizer:
             append(Token(Token.EOL, trailing_whitespace, lineno, offset))
         return tokens
 
-    def _split_from_spaces(self, line):
+    def _split_from_spaces(self, line: str) -> 'Iterator[tuple[str, bool]]':
         is_data = True
         for value in self._space_splitter.split(line):
             yield value, is_data
             is_data = not is_data
 
-    def _split_from_pipes(self, line):
+    def _split_from_pipes(self, line) -> 'Iterator[tuple[str, bool]]':
         splitter = self._pipe_splitter
         _, separator, rest = splitter.split(line, 1)
         yield separator, False

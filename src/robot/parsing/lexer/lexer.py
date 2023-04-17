@@ -13,18 +13,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from collections.abc import Iterator
 from itertools import chain
 
+from robot.conf import LanguagesLike
 from robot.errors import DataError
-from robot.utils import get_error_message, FileReader
+from robot.utils import get_error_message, FileReader, Source
 
 from .blocklexers import FileLexer
-from .context import InitFileContext, SuiteFileContext, ResourceFileContext
+from .context import (InitFileContext, LexingContext, SuiteFileContext,
+                      ResourceFileContext)
 from .tokenizer import Tokenizer
 from .tokens import EOS, END, Token
 
 
-def get_tokens(source, data_only=False, tokenize_variables=False, lang=None):
+def get_tokens(source: Source, data_only: bool = False,
+               tokenize_variables: bool = False,
+               lang: LanguagesLike = None) -> 'Iterator[Token]':
     """Parses the given source to tokens.
 
     :param source: The source where to read the data. Can be a path to
@@ -40,7 +45,7 @@ def get_tokens(source, data_only=False, tokenize_variables=False, lang=None):
         method for details.
     :param lang: Additional languages to be supported during parsing.
         Can be a string matching any of the supported language codes or names,
-        an initialized :class:`~robot.conf.languages.Language` subsclass,
+        an initialized :class:`~robot.conf.languages.Language` subclass,
         a list containing such strings or instances, or a
         :class:`~robot.conf.languages.Languages` instance.
 
@@ -52,7 +57,9 @@ def get_tokens(source, data_only=False, tokenize_variables=False, lang=None):
     return lexer.get_tokens()
 
 
-def get_resource_tokens(source, data_only=False, tokenize_variables=False, lang=None):
+def get_resource_tokens(source: Source, data_only: bool = False,
+                        tokenize_variables: bool = False,
+                        lang: LanguagesLike = None) -> 'Iterator[Token]':
     """Parses the given source to resource file tokens.
 
     Same as :func:`get_tokens` otherwise, but the source is considered to be
@@ -63,7 +70,9 @@ def get_resource_tokens(source, data_only=False, tokenize_variables=False, lang=
     return lexer.get_tokens()
 
 
-def get_init_tokens(source, data_only=False, tokenize_variables=False, lang=None):
+def get_init_tokens(source: Source, data_only: bool = False,
+                    tokenize_variables: bool = False,
+                    lang: LanguagesLike = None) -> 'Iterator[Token]':
     """Parses the given source to init file tokens.
 
     Same as :func:`get_tokens` otherwise, but the source is considered to be
@@ -77,15 +86,15 @@ def get_init_tokens(source, data_only=False, tokenize_variables=False, lang=None
 
 class Lexer:
 
-    def __init__(self, ctx, data_only=False, tokenize_variables=False):
+    def __init__(self, ctx: LexingContext, data_only: bool = False,
+                 tokenize_variables: bool = False):
         self.lexer = FileLexer(ctx)
         self.data_only = data_only
         self.tokenize_variables = tokenize_variables
-        self.statements = []
+        self.statements: 'list[list[Token]]' = []
 
-    def input(self, source):
-        for statement in Tokenizer().tokenize(self._read(source),
-                                              self.data_only):
+    def input(self, source: Source):
+        for statement in Tokenizer().tokenize(self._read(source), self.data_only):
             # Store all tokens but pass only data tokens to lexer.
             self.statements.append(statement)
             if self.data_only:
@@ -96,27 +105,28 @@ class Lexer:
             if data:
                 self.lexer.input(data)
 
-    def _read(self, source):
+    def _read(self, source: Source) -> str:
         try:
             with FileReader(source, accept_text=True) as reader:
                 return reader.read()
         except Exception:
             raise DataError(get_error_message())
 
-    def get_tokens(self):
+    def get_tokens(self) -> 'Iterator[Token]':
         self.lexer.lex()
-        statements = self.statements
-        if not self.data_only:
+        if self.data_only:
+            statements = self.statements
+        else:
             statements = chain.from_iterable(
-                self._split_trailing_commented_and_empty_lines(s)
-                for s in statements
+                self._split_trailing_commented_and_empty_lines(stmt)
+                for stmt in self.statements
             )
         tokens = self._get_tokens(statements)
         if self.tokenize_variables:
             tokens = self._tokenize_variables(tokens)
         return tokens
 
-    def _get_tokens(self, statements):
+    def _get_tokens(self, statements: 'list[list[Token]]') -> 'Iterator[Token]':
         if self.data_only:
             ignored_types = {None, Token.COMMENT_HEADER, Token.COMMENT}
         else:
@@ -143,7 +153,8 @@ class Lexer:
                 yield END.from_token(last, virtual=True)
                 yield EOS.from_token(last)
 
-    def _split_trailing_commented_and_empty_lines(self, statement):
+    def _split_trailing_commented_and_empty_lines(self, statement: 'list[Token]') \
+            -> 'list[list[Token]]':
         lines = self._split_to_lines(statement)
         commented_or_empty = []
         for line in reversed(lines):
@@ -156,7 +167,7 @@ class Lexer:
         statement = list(chain.from_iterable(lines))
         return [statement] + list(reversed(commented_or_empty))
 
-    def _split_to_lines(self, statement):
+    def _split_to_lines(self, statement: 'list[Token]') -> 'list[list[Token]]':
         lines = []
         current = []
         for token in statement:
@@ -168,7 +179,7 @@ class Lexer:
             lines.append(current)
         return lines
 
-    def _is_commented_or_empty(self, line):
+    def _is_commented_or_empty(self, line: 'list[Token]') -> bool:
         separator_or_ignore = (Token.SEPARATOR, None)
         comment_or_eol = (Token.COMMENT, Token.EOL)
         for token in line:
@@ -176,7 +187,6 @@ class Lexer:
                 return token.type in comment_or_eol
         return False
 
-    def _tokenize_variables(self, tokens):
+    def _tokenize_variables(self, tokens: 'Iterator[Token]') -> 'Iterator[Token]':
         for token in tokens:
-            for t in token.tokenize_variables():
-                yield t
+            yield from token.tokenize_variables()

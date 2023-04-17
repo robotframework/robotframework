@@ -43,7 +43,7 @@ from .encoding import (CONSOLE_ENCODING, SYSTEM_ENCODING, console_decode,
 from .error import (get_error_message, get_error_details, ErrorDetails)
 from .escaping import escape, glob_escape, unescape, split_from_equals
 from .etreewrapper import ET, ETSource
-from .filereader import FileReader
+from .filereader import FileReader, Source
 from .frange import frange
 from .markuputils import html_format, html_escape, xml_escape, attribute_escape
 from .markupwriters import HtmlWriter, XmlWriter, NullMarkupWriter

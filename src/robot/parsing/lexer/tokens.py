@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from collections.abc import Iterator
+
 from robot.variables import VariableIterator
 
 
@@ -26,16 +28,13 @@ class Token:
 
     Token types are declared as class attributes such as :attr:`SETTING_HEADER`
     and :attr:`EOL`. Values of these constants have changed slightly in Robot
-    Framework 4.0 and they may change again in the future. It is thus safer
+    Framework 4.0, and they may change again in the future. It is thus safer
     to use the constants, not their values, when types are needed. For example,
     use ``Token(Token.EOL)`` instead of ``Token('EOL')`` and
     ``token.type == Token.EOL`` instead of ``token.type == 'EOL'``.
 
-    If :attr:`value` is not given when :class:`Token` is initialized and
-    :attr:`type` is :attr:`IF`, :attr:`ELSE_IF`, :attr:`ELSE`, :attr:`FOR`,
-    :attr:`END`, :attr:`WITH_NAME` or :attr:`CONTINUATION`, the value is
-    automatically set to the correct marker value like ``'IF'`` or ``'ELSE IF'``.
-    If :attr:`type` is :attr:`EOL` in this case, the value is set to ``'\\n'``.
+    If :attr:`value` is not given and :attr:`type` is a special marker like
+    :attr:`IF` or `:attr:`EOL`, the value is set automatically.
     """
 
     SETTING_HEADER = 'SETTING HEADER'
@@ -155,11 +154,11 @@ class Token:
         TESTCASE_NAME,
         KEYWORD_NAME
     ))
-
     __slots__ = ['type', 'value', 'lineno', 'col_offset', 'error',
                  '_add_eos_before', '_add_eos_after']
 
-    def __init__(self, type=None, value=None, lineno=-1, col_offset=-1, error=None):
+    def __init__(self, type: 'str|None' = None, value: 'str|None' = None,
+                 lineno: int = -1, col_offset: int = -1, error: 'str|None' = None):
         self.type = type
         if value is None:
             value = {
@@ -179,21 +178,21 @@ class Token:
         self._add_eos_after = False
 
     @property
-    def end_col_offset(self):
+    def end_col_offset(self) -> int:
         if self.col_offset == -1:
             return -1
         return self.col_offset + len(self.value)
 
-    def set_error(self, error):
+    def set_error(self, error: str):
         self.type = Token.ERROR
         self.error = error
 
-    def tokenize_variables(self):
+    def tokenize_variables(self) -> 'Iterator[Token]':
         """Tokenizes possible variables in token value.
 
         Yields the token itself if the token does not allow variables (see
         :attr:`Token.ALLOW_VARIABLES`) or its value does not contain
-        variables. Otherwise yields variable tokens as well as tokens
+        variables. Otherwise, yields variable tokens as well as tokens
         before, after, or between variables so that they have the same
         type as the original token.
         """
@@ -220,16 +219,15 @@ class Token:
         if remaining:
             yield Token(self.type, remaining, lineno, col_offset)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.value
 
-    def __repr__(self):
-        type_ = self.type.replace(' ', '_') if self.type else 'None'
-        error = '' if not self.error else ', %r' % self.error
-        return 'Token(%s, %r, %s, %s%s)' % (type_, self.value, self.lineno,
-                                            self.col_offset, error)
+    def __repr__(self) -> str:
+        typ = self.type.replace(' ', '_') if self.type else 'None'
+        error = '' if not self.error else f', {self.error!r}'
+        return f'Token({typ}, {self.value!r}, {self.lineno}, {self.col_offset}{error})'
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         return (isinstance(other, Token)
                 and self.type == other.type
                 and self.value == other.value
@@ -242,13 +240,13 @@ class EOS(Token):
     """Token representing end of a statement."""
     __slots__ = []
 
-    def __init__(self, lineno=-1, col_offset=-1):
+    def __init__(self, lineno: int = -1, col_offset: int = -1):
         super().__init__(Token.EOS, '', lineno, col_offset)
 
     @classmethod
-    def from_token(cls, token, before=False):
+    def from_token(cls, token: Token, before: bool = False) -> 'EOS':
         col_offset = token.col_offset if before else token.end_col_offset
-        return EOS(token.lineno, col_offset)
+        return cls(token.lineno, col_offset)
 
 
 class END(Token):
@@ -259,10 +257,10 @@ class END(Token):
     """
     __slots__ = []
 
-    def __init__(self, lineno=-1, col_offset=-1, virtual=False):
+    def __init__(self, lineno: int = -1, col_offset: int = -1, virtual: bool = False):
         value = 'END' if not virtual else ''
         super().__init__(Token.END, value, lineno, col_offset)
 
     @classmethod
-    def from_token(cls, token, virtual=False):
-        return END(token.lineno, token.end_col_offset, virtual)
+    def from_token(cls, token: Token, virtual: bool = False) -> 'END':
+        return cls(token.lineno, token.end_col_offset, virtual)
