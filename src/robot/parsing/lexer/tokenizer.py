@@ -73,7 +73,8 @@ class Tokenizer:
         yield rest, True
 
     def _cleanup_tokens(self, tokens, data_only):
-        has_data, continues = self._handle_comments_and_continuation(tokens)
+        has_data, has_comments, continues \
+                = self._handle_comments_and_continuation(tokens)
         self._remove_trailing_empty(tokens)
         if continues:
             self._remove_leading_empty(tokens)
@@ -82,19 +83,19 @@ class Tokenizer:
             starts_new = False
         else:
             starts_new = has_data
-        if data_only:
-            tokens = self._remove_non_data(tokens)
+        if data_only and (has_comments or continues):
+            tokens = [t for t in tokens if t.type is None]
         return tokens, starts_new
 
     def _handle_comments_and_continuation(self, tokens):
         has_data = False
-        continues = False
         commented = False
-        for token in tokens:
+        continues = False
+        for index, token in enumerate(tokens):
             if token.type is None:
                 # lstrip needed to strip possible leading space from first token.
                 # Other leading/trailing spaces have been consumed as separators.
-                value = token.value.lstrip()
+                value = token.value if index else token.value.lstrip()
                 if commented:
                     token.type = Token.COMMENT
                 elif value:
@@ -107,7 +108,7 @@ class Tokenizer:
                             continues = True
                         else:
                             has_data = True
-        return has_data, continues
+        return has_data, commented, continues
 
     def _remove_trailing_empty(self, tokens):
         for token in reversed(tokens):
@@ -133,6 +134,3 @@ class Tokenizer:
         for token in tokens:
             if token.type == Token.CONTINUATION:
                 return token
-
-    def _remove_non_data(self, tokens):
-        return [t for t in tokens if t.type is None]
