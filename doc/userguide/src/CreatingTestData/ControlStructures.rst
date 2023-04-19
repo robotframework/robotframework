@@ -641,11 +641,35 @@ Keywords in a loop are not forcefully stopped if the limit is exceeded. Instead
 the loop is exited similarly as if the loop condition would have become false.
 A major difference is that the loop status will be `FAIL` in this case.
 
+Starting from Robot Framework 6.1, it is possible to use `on_limit` parameter to
+configure the behaviour when the limit is exceeded. It supports two values `pass`
+and `fail`, case insensitively. If the value is `pass`, the execution will continue
+normally when the limit is reached and the status of the `WHILE` loop will be `PASS`.
+The value `fail` works similarly as the default behaviour, e.g. the loop and the
+test will fail if the limit is exceeded.
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Continue when iteration limit is reached
+        WHILE    True    limit=5    on_limit=pass
+            Log    Loop will be executed five times
+        END
+        Log    This will be executed normally.
+
+    Continue when time limit is reached
+        WHILE    True    limit=10s    on_limit=pass
+            Log    Loop will be executed for 10 seconds.
+            Sleep   0.5s
+        END
+        Log    This will be executed normally.
+
+
 By default, the error message raised when the limit is reached is
 `WHILE loop was aborted because it did not finish within the limit of 0.5
 seconds. Use the 'limit' argument to increase or remove the limit if
-needed.`. The error message can be changed with the `on_limit_message`
-configuration parameter.
+needed.`. Starting from Robot Framework 6.1, the error message can be changed
+with the `on_limit_message` configuration parameter.
 
 .. sourcecode:: robotframework
 

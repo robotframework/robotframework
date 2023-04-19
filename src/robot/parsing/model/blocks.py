@@ -349,6 +349,10 @@ class While(HeaderAndBody):
         return self.header.limit
 
     @property
+    def on_limit(self):
+        return self.header.on_limit
+
+    @property
     def on_limit_message(self):
         return self.header.on_limit_message
 

@@ -36,18 +36,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           architecture: 'x64'
 
-      - name: Run unit tests with coverage
+      - name: Run unit tests
         run: |
-          python -m pip install coverage
           python -m pip install -r utest/requirements.txt
-          python -m coverage run --branch utest/run.py -v
-
-      - name: Prepare HTML/XML coverage report
-        run: |
-          python -m coverage xml -i
-        if: always()
-
-      - uses: codecov/codecov-action@d9f34f8cd5cb3b3eb79b3e4b5dae3a16df499a70
-        with:
-          name: ${{ matrix.python-version }}-${{ matrix.os }}
-        if: always()
+          python utest/run.py -v

@@ -376,7 +376,7 @@ class WhileRunner:
         run = False
         limit = None
         loop_result = WhileResult(data.condition, data.limit,
-                                  data.on_limit_message,
+                                  data.on_limit, data.on_limit_message,
                                   starttime=get_timestamp())
         iter_result = loop_result.body.create_iteration(starttime=get_timestamp())
         if self._run:
@@ -385,6 +385,7 @@ class WhileRunner:
             elif not ctx.dry_run:
                 try:
                     limit = WhileLimit.create(data.limit,
+                                              data.on_limit,
                                               data.on_limit_message,
                                               ctx.variables)
                     run = self._should_run(data.condition, ctx.variables)
@@ -410,6 +411,10 @@ class WhileRunner:
                     passed.set_earlier_failures(errors)
                     raise passed
                 except ExecutionFailed as failed:
+                    if isinstance(failed, LimitExceeded):
+                        if failed.on_limit_pass:
+                            self._context.info(failed.message)
+                            return
                     errors.extend(failed.get_errors())
                     if not failed.can_continue(ctx, self._templated):
                         break
@@ -631,18 +636,21 @@ class TryRunner:
 
 class WhileLimit:
 
-    def __init__(self, on_limit_message=None):
+    def __init__(self, on_limit=None, on_limit_message=None):
+        self.on_limit = on_limit
         self.on_limit_message = on_limit_message
 
     @classmethod
-    def create(cls, limit, on_limit_message, variables):
+    def create(cls, limit, on_limit, on_limit_message, variables):
         if on_limit_message:
-            on_limit_message = variables.replace_string(
-                on_limit_message)
+            try:
+                on_limit_message = variables.replace_string(on_limit_message)
+            except DataError as err:
+                raise DataError(f"Invalid WHILE loop 'on_limit_message': '{err}")
+        on_limit = cls.parse_on_limit(variables, on_limit)
         if not limit:
             return IterationCountLimit(DEFAULT_WHILE_LIMIT,
-                                       on_limit_message
-                                       )
+                                       on_limit, on_limit_message)
         value = variables.replace_string(limit)
         if value.upper() == 'NONE':
             return NoLimit()
@@ -654,23 +662,37 @@ class WhileLimit:
             if count <= 0:
                 raise DataError(f"Invalid WHILE loop limit: Iteration count must be "
                                 f"a positive integer, got '{count}'.")
-            return IterationCountLimit(count, on_limit_message)
+            return IterationCountLimit(count, on_limit, on_limit_message)
         try:
             secs = timestr_to_secs(value)
         except ValueError as err:
             raise DataError(f'Invalid WHILE loop limit: {err.args[0]}')
         else:
-            return DurationLimit(secs, on_limit_message)
+            return DurationLimit(secs, on_limit, on_limit_message)
+
+    @classmethod
+    def parse_on_limit(cls, variables, on_limit):
+        if on_limit is None:
+            return None
+        try:
+            on_limit = variables.replace_string(on_limit)
+            if on_limit.upper() not in ['PASS', 'FAIL']:
+                raise DataError("Value must be 'PASS' or 'FAIL'.")
+        except DataError as err:
+            raise DataError(f"Invalid WHILE loop 'on_limit' value '{on_limit}': {err}")
+        else:
+            return on_limit.lower()
 
     def limit_exceeded(self):
+        on_limit_pass = self.on_limit == 'pass'
         if self.on_limit_message:
-            raise ExecutionFailed(self.on_limit_message)
+            raise LimitExceeded(on_limit_pass, self.on_limit_message)
         else:
-            raise ExecutionFailed(f"WHILE loop was aborted because "
-                                  f"it did not finish "
-                                  f"within the limit of {self}. "
-                                  f"Use the 'limit' argument to "
-                                  f"increase or remove the limit if needed.")
+            raise LimitExceeded(
+                on_limit_pass,
+                f"WHILE loop was aborted because it did not finish within the limit of {self}. "
+                f"Use the 'limit' argument to increase or remove the limit if needed."
+            )
 
     def __enter__(self):
         raise NotImplementedError
@@ -681,8 +703,8 @@ class WhileLimit:
 
 class DurationLimit(WhileLimit):
 
-    def __init__(self, max_time, on_limit_message):
-        super().__init__(on_limit_message)
+    def __init__(self, max_time, on_limit, on_limit_message):
+        super().__init__(on_limit, on_limit_message)
         self.max_time = max_time
         self.start_time = None
 
@@ -698,8 +720,8 @@ class DurationLimit(WhileLimit):
 
 class IterationCountLimit(WhileLimit):
 
-    def __init__(self, max_iterations, on_limit_message):
-        super().__init__(on_limit_message)
+    def __init__(self, max_iterations, on_limit, on_limit_message):
+        super().__init__(on_limit, on_limit_message)
         self.max_iterations = max_iterations
         self.current_iterations = 0
 
@@ -716,3 +738,10 @@ class NoLimit(WhileLimit):
 
     def __enter__(self):
         pass
+
+
+class LimitExceeded(ExecutionFailed):
+
+    def __init__(self, on_limit_pass, message):
+        super().__init__(message)
+        self.on_limit_pass = on_limit_pass

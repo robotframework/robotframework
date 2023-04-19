@@ -193,6 +193,7 @@ class WhileHandler(ElementHandler):
         return result.body.create_while(
             condition=elem.get('condition'),
             limit=elem.get('limit'),
+            on_limit=elem.get('on_limit'),
             on_limit_message=elem.get('on_limit_message')
         )
 
