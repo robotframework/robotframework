@@ -69,9 +69,11 @@ class FileReader:  # FIXME: Rename to SourceReader
         if '\n' in source:
             return None
         path = Path(source)
-        if path.is_absolute() or path.exists():
-            return source
-        return None
+        try:
+            is_path = path.is_absolute() or path.exists()
+        except OSError:
+            is_path = False
+        return source if is_path else None
 
     @property
     def name(self) -> str:
