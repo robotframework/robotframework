@@ -100,7 +100,7 @@ class TestReadFile(unittest.TestCase):
         assert_closed(reader.file)
 
     def test_text_with_special_chars(self):
-        for text in '!"#¤%&/()=?', '*** Test Cases ***', '':
+        for text in '!"#¤%&/()=?', '*** Test Cases ***', 'in:va:lid':
             with FileReader(text, accept_text=True) as reader:
                 assert_equal(reader.read(), text)
 

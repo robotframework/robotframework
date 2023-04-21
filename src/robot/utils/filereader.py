@@ -71,7 +71,7 @@ class FileReader:  # FIXME: Rename to SourceReader
         path = Path(source)
         try:
             is_path = path.is_absolute() or path.exists()
-        except OSError:
+        except OSError:    # Can happen on Windows w/ Python < 3.10.
             is_path = False
         return source if is_path else None
 

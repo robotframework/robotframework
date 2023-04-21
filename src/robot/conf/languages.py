@@ -75,7 +75,7 @@ class Languages:
         """
         if isinstance(lang, Language):
             languages = [lang]
-        elif isinstance(lang, Path) or Path(lang).exists():
+        elif isinstance(lang, Path) or self._exists(Path(lang)):
             languages = self._import_language_module(Path(lang))
         else:
             try:
@@ -87,6 +87,12 @@ class Languages:
                     raise DataError(f'{err1} {err2}') from None
         for lang in languages:
             self._add_language(lang)
+
+    def _exists(self, path):
+        try:
+            return path.exists()
+        except OSError:    # Can happen on Windows w/ Python < 3.10.
+            return False
 
     def _add_language(self, lang):
         if lang in self.languages:
@@ -151,7 +157,7 @@ class Languages:
                     and member is not Language)
         if isinstance(name_or_path, Path):
             name_or_path = name_or_path.absolute()
-        elif Path(name_or_path).exists():
+        elif self._exists(Path(name_or_path)):
             name_or_path = Path(name_or_path).absolute()
         module = Importer('language file').import_module(name_or_path)
         return [value() for _, value in inspect.getmembers(module, is_language)]
