@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from itertools import chain
 from os.path import normpath
 from pathlib import Path
 from typing import Sequence
@@ -21,11 +22,11 @@ from robot.conf import LanguagesLike
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.parsing import SuiteStructure, SuiteStructureBuilder, SuiteStructureVisitor
-from robot.utils import seq2str
+from robot.utils import Importer, seq2str, split_args_from_name_or_path
 
 from ..model import ResourceFile, TestSuite
-from .parsers import (JsonParser, NoInitFileDirectoryParser, Parser, RestParser,
-                      RobotParser)
+from .parsers import (CustomParser, JsonParser, NoInitFileDirectoryParser, Parser,
+                      RestParser, RobotParser)
 from .settings import Defaults
 
 
@@ -55,6 +56,7 @@ class TestSuiteBuilder:
 
     def __init__(self, included_suites: Sequence[str] = (),
                  included_extensions: Sequence[str] = ('.robot', '.rbt'),
+                 custom_parsers: Sequence[str] = (),
                  rpa: 'bool|None' = None, lang: LanguagesLike = None,
                  allow_empty_suite: bool = False, process_curdir: bool = True):
         """
@@ -63,6 +65,8 @@ class TestSuiteBuilder:
             Same as using `--suite` on the command line.
         :param included_extensions:
             List of extensions of files to parse. Same as `--extension`.
+        :param custom_parsers:
+            FIXME: PARSER: Documentation.
         :param rpa: Explicit execution mode. ``True`` for RPA and
             ``False`` for test automation. By default, mode is got from data file
             headers and possible conflicting headers cause an error.
@@ -80,20 +84,39 @@ class TestSuiteBuilder:
             resolved already at parsing time by default, but that can be
             changed by giving this argument ``False`` value.
         """
+        self.standard_parsers = self._get_standard_parsers(lang, process_curdir)
+        self.custom_parsers = self._get_custom_parsers(custom_parsers)
+        self.included_suites = tuple(included_suites or ())
+        self.included_extensions = tuple(included_extensions or ())
+        self.rpa = rpa
+        self.allow_empty_suite = allow_empty_suite
+
+    def _get_standard_parsers(self, lang: LanguagesLike,
+                              process_curdir: bool) -> 'dict[str, Parser]':
         robot_parser = RobotParser(lang, process_curdir)
         rest_parser = RestParser(lang, process_curdir)
         json_parser = JsonParser()
-        self.standard_parsers = {
+        return {
             'robot': robot_parser,
             'rst': rest_parser,
             'rest': rest_parser,
             'rbt': json_parser,
             'json': json_parser
         }
-        self.included_suites = tuple(included_suites or ())
-        self.included_extensions = tuple(included_extensions)
-        self.rpa = rpa
-        self.allow_empty_suite = allow_empty_suite
+
+    def _get_custom_parsers(self, names: Sequence[str]) -> 'dict[str, CustomParser]':
+        parsers = {}
+        importer = Importer('parser', LOGGER)
+        for name in names:
+            name, args = split_args_from_name_or_path(name)
+            imported = importer.import_class_or_module(name, args)
+            try:
+                parser = CustomParser(imported)
+            except TypeError as err:
+                raise DataError(f"Importing parser '{name}' failed: {err}")
+            for ext in parser.extensions:
+                parsers[ext] = parser
+        return parsers
 
     def build(self, *paths: 'Path|str'):
         """
@@ -101,10 +124,11 @@ class TestSuiteBuilder:
         :return: :class:`~robot.running.model.TestSuite` instance.
         """
         paths = self._normalize_paths(paths)
-        parsers = self._get_parsers(self.included_extensions, paths)
-        structure = SuiteStructureBuilder(self.included_extensions,
+        extensions = chain(self.included_extensions, self.custom_parsers)
+        structure = SuiteStructureBuilder(extensions,
                                           self.included_suites).build(*paths)
-        suite = SuiteStructureParser(parsers, self.rpa).parse(structure)
+        suite = SuiteStructureParser(self._get_parsers(paths),
+                                     self.rpa).parse(structure)
         if not self.included_suites and not self.allow_empty_suite:
             self._validate_not_empty(suite, multi_source=len(paths) > 1)
         suite.remove_empty_suites(preserve_direct_children=len(paths) > 1)
@@ -124,12 +148,14 @@ class TestSuiteBuilder:
                             f"File or directory to execute does not exist.")
         return paths
 
-    def _get_parsers(self, extensions: 'tuple[str]', paths: 'tuple[Path]'):
-        parsers = {None: NoInitFileDirectoryParser()}
+    def _get_parsers(self, paths: 'tuple[Path]'):
+        parsers = {None: NoInitFileDirectoryParser(), **self.custom_parsers}
         robot_parser = self.standard_parsers['robot']
-        for ext in extensions + tuple(p.suffix for p in paths if p.is_file()):
+        for ext in chain(self.included_extensions,
+                         [p.suffix for p in paths if p.is_file()]):
             ext = ext.lstrip('.').lower()
-            parsers[ext] = self.standard_parsers.get(ext, robot_parser)
+            if ext not in parsers:
+                parsers[ext] = self.standard_parsers.get(ext, robot_parser)
         return parsers
 
     def _validate_not_empty(self, suite: TestSuite, multi_source: bool = False):

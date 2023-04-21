@@ -53,8 +53,7 @@ class _BaseSettings:
                  'TimestampOutputs' : ('timestampoutputs', False),
                  'LogTitle'         : ('logtitle', None),
                  'ReportTitle'      : ('reporttitle', None),
-                 'ReportBackground' : ('reportbackground',
-                                       ('#9e9', '#f66', '#fed84f')),
+                 'ReportBackground' : ('reportbackground', ('#9e9', '#f66', '#fed84f')),
                  'SuiteStatLevel'   : ('suitestatlevel', -1),
                  'TagStatInclude'   : ('tagstatinclude', []),
                  'TagStatExclude'   : ('tagstatexclude', []),
@@ -470,6 +469,7 @@ class RobotSettings(_BaseSettings):
                        'RunEmptySuite'      : ('runemptysuite', False),
                        'Variables'          : ('variable', []),
                        'VariableFiles'      : ('variablefile', []),
+                       'Parsers'            : ('parser', []),
                        'PreRunModifiers'    : ('prerunmodifier', []),
                        'Listeners'          : ('listener', []),
                        'ConsoleType'        : ('console', 'verbose'),
@@ -628,6 +628,10 @@ class RobotSettings(_BaseSettings):
     @property
     def max_assign_length(self):
         return self['MaxAssignLength']
+
+    @property
+    def parsers(self):
+        return self['Parsers']
 
     @property
     def pre_run_modifiers(self):

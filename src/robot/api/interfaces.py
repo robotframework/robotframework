@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Optional base classes for libraries and listeners.
+"""Optional base classes for libraries and other extensions.
 
 Module contents:
 
@@ -21,6 +21,7 @@ Module contents:
 - :class:`HybridLibrary` for libraries using the `hybrid library API`__.
 - :class:`ListenerV2` for `listener interface version 2`__.
 - :class:`ListenerV3` for `listener interface version 3`__.
+- :class:`Parser` for `custom parsers`__.
 - Type definitions used by the aforementioned classes.
 
 Main benefit of using these base classes is that editors can provide automatic
@@ -40,11 +41,13 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#hybrid-library-api
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-version-2
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-version-3
+__ FIXME: PARSER: Link to UG docs.
 """
 
 import sys
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Tuple, Union
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 # Need to use version check and not try/except to support Mypy's stubgen.
 if sys.version_info >= (3, 8):
     from typing import TypedDict
@@ -57,6 +60,12 @@ else:
 
 from robot import result, running
 from robot.model import Message
+from robot.running import TestSuite
+# FIXME: PARSER:
+# - Expose `Defaults` via `robot.running`.
+# - Consider better class name.
+# - Enhance its API (incl. docs and types).
+from robot.running.builder.settings import Defaults
 
 
 # Type aliases used by DynamicLibrary and HybridLibrary.
@@ -507,7 +516,7 @@ class ListenerV2:
 
 
 class ListenerV3:
-    """Optional base class for listeners using the listener API v2."""
+    """Optional base class for listeners using the listener API v3."""
     ROBOT_LISTENER_API_VERSION = 3
 
     def start_suite(self, data: running.TestSuite, result: result.TestSuite):
@@ -560,3 +569,40 @@ class ListenerV3:
 
         With library listeners called when the library goes out of scope.
         """
+
+
+class Parser(ABC):
+    """Optional base class for custom parsers.
+
+    Parsers do not need to explicitly extend this class and in simple cases
+    it is possible to implement them as modules. Regardless how a parser is
+    implemented, it must have :attr:`extension` attribute and :meth:`parse`
+    method. The :meth:`parse_init` method is optional and only needed if
+    a parser supports parsing suite initialization files.
+
+    The mandatory :attr:`extension` attribute specifies what file extension or
+    extensions a parser supports. It can be set either as a class or instance
+    attribute, and it can be either a string or a list/tuple of strings. The
+    attribute can also be named ``EXTENSION``, which typically works better
+    when a parser is implemented as a module.
+
+    The support for custom parsers is new in Robot Framework 6.1.
+    """
+    extension: Union[str, Sequence[str]]
+
+    @abstractmethod
+    def parse(self, source: Path, defaults: Defaults) -> TestSuite:
+        """Mandatory method for parsing suite files.
+
+        FIXME: PARSER: Better documentation (incl. parameter docs).
+        """
+        raise NotImplementedError
+
+    def parse_init(self, source: Path, defaults: Defaults) -> TestSuite:
+        """Optional method for parsing suite initialization files.
+
+        FIXME: PARSER: Better documentation (incl. parameter docs).
+
+        If not implemented, possible initialization files cause an error.
+        """
+        raise NotImplementedError

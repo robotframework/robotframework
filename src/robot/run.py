@@ -311,6 +311,7 @@ Options
                           The seed must be an integer.
                           Examples: --randomize all
                                     --randomize tests:1234
+    --parser parser       FIXME: PARSER: Documentation
     --prerunmodifier class *  Class to programmatically modify the suite
                           structure before execution.
     --prerebotmodifier class *  Class to programmatically modify the result
@@ -413,8 +414,8 @@ $ robot tests.robot
 class RobotFramework(Application):
 
     def __init__(self):
-        Application.__init__(self, USAGE, arg_limits=(1,), env_options='ROBOT_OPTIONS',
-                             logger=LOGGER)
+        super().__init__(USAGE, arg_limits=(1,), env_options='ROBOT_OPTIONS',
+                         logger=LOGGER)
 
     def main(self, datasources, **options):
         try:
@@ -429,6 +430,7 @@ class RobotFramework(Application):
             sys.path = settings.pythonpath + sys.path
         builder = TestSuiteBuilder(settings.suite_names,
                                    included_extensions=settings.extension,
+                                   custom_parsers=settings.parsers,
                                    rpa=settings.rpa,
                                    lang=settings.languages,
                                    allow_empty_suite=settings.run_empty_suite)

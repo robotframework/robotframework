@@ -17,8 +17,9 @@ from abc import ABC
 from pathlib import Path
 
 from robot.conf import Languages
+from robot.errors import DataError
 from robot.parsing import File, get_init_model, get_model, get_resource_model
-from robot.utils import FileReader, read_rest_data
+from robot.utils import FileReader, get_error_message, read_rest_data
 
 from .settings import Defaults
 from .transformers import ResourceBuilder, SuiteBuilder
@@ -27,14 +28,18 @@ from ..model import ResourceFile, TestSuite
 
 class Parser(ABC):
 
+    @property
+    def name(self) -> str:
+        return type(self).__name__
+
     def parse_suite_file(self, source: Path, defaults: Defaults) -> TestSuite:
-        raise TypeError(f'{type(self).__name__} does not support suite files')
+        raise DataError(f"'{self.name}' does not support parsing suite files.")
 
     def parse_init_file(self, source: Path, defaults: Defaults) -> TestSuite:
-        raise TypeError(f'{type(self).__name__} does not support initialization files')
+        raise DataError(f"'{self.name}' does not support parsing initialization files.")
 
     def parse_resource_file(self, source: Path) -> ResourceFile:
-        raise TypeError(f'{type(self).__name__} does not support resource files')
+        raise DataError(f"'{self.name}' does not support parsing resource files.")
 
 
 class RobotParser(Parser):
@@ -102,3 +107,48 @@ class NoInitFileDirectoryParser(Parser):
 
     def parse_init_file(self, source: Path, defaults: Defaults) -> TestSuite:
         return TestSuite(name=TestSuite.name_from_source(source), source=source)
+
+
+class CustomParser(Parser):
+
+    def __init__(self, parser):
+        self.parser = parser
+        if not callable(getattr(parser, 'parse', None)):
+            raise TypeError(f"'{self.name}' does not have mandatory 'parse' method.")
+        if not self.extensions:
+            raise TypeError(f"'{self.name}' does not have mandatory 'EXTENSION' "
+                            f"or 'extension' attribute set.")
+
+    @property
+    def name(self) -> str:
+        return type(self.parser).__name__
+
+    @property
+    def extensions(self) -> 'tuple[str]':
+        ext = (getattr(self.parser, 'EXTENSION', ())
+               or getattr(self.parser, 'extension', ()))
+        extensions = [ext] if isinstance(ext, str) else tuple(ext)
+        return tuple(ext.lower().lstrip('.') for ext in extensions)
+
+    def parse_suite_file(self, source: Path, defaults: Defaults) -> TestSuite:
+        return self._parse(self.parser.parse, source, defaults)
+
+    def parse_init_file(self, source: Path, defaults: Defaults) -> TestSuite:
+        parse_init = getattr(self.parser, 'parse_init', None)
+        try:
+            return self._parse(parse_init, source, defaults)
+        except NotImplementedError:
+            return super().parse_init_file(source, defaults)    # Raises DataError
+
+    def _parse(self, method, *args) -> TestSuite:
+        if not method:
+            raise NotImplementedError
+        try:
+            suite = method(*args)
+            if not isinstance(suite, TestSuite):
+                raise TypeError(f"Return value should be 'robot.running.TestSuite', "
+                                f"got '{type(suite).__name__}'.")
+        except Exception:
+            raise DataError(f"Calling '{self.name}.{method.__name__}()' failed: "
+                            f"{get_error_message()}")
+        return suite
