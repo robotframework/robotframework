@@ -19,7 +19,8 @@ from typing import TYPE_CHECKING
 
 from robot.conf import Language
 from robot.running.arguments import UserKeywordArgumentParser
-from robot.utils import is_list_like, normalize_whitespace, seq2str, split_from_equals
+from robot.utils import (is_list_like, normalize_whitespace, seq2str, split_from_equals,
+                         test_or_task)
 from robot.variables import is_scalar_assign, is_dict_variable, search_variable
 
 from ..lexer import Token
@@ -626,7 +627,7 @@ class TestCaseName(Statement):
 
     def validate(self, ctx: 'ValidationContext'):
         if not self.name:
-            self.errors += ('Test name cannot be empty.',)
+            self.errors += (test_or_task('{Test} name cannot be empty.', ctx.tasks),)
 
 
 @Statement.register
@@ -643,6 +644,10 @@ class KeywordName(Statement):
     @property
     def name(self):
         return self.get_value(Token.KEYWORD_NAME)
+
+    def validate(self, ctx: 'ValidationContext'):
+        if not self.name:
+            self.errors += ('User keyword name cannot be empty.',)
 
 
 @Statement.register

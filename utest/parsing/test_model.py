@@ -940,7 +940,64 @@ ${not     closed
         get_and_assert_model(data, expected, depth=0)
 
 
-class TestKeyword(unittest.TestCase):
+class TestTestCase(unittest.TestCase):
+
+    def test_empty_test(self):
+        data = '''
+*** Test Cases ***
+Empty
+    [Documentation]    Settings aren't enough.
+'''
+        expected = TestCase(
+            header=TestCaseName(
+                tokens=[Token(Token.TESTCASE_NAME, 'Empty', 2, 0)]
+            ),
+            body=[
+                Documentation(
+                    tokens=[Token(Token.DOCUMENTATION, '[Documentation]', 3, 4),
+                            Token(Token.ARGUMENT, "Settings aren't enough.", 3, 23)]
+                ),
+            ],
+            errors=('Test cannot be empty.',)
+        )
+        get_and_assert_model(data, expected, depth=1)
+
+    def test_empty_test_name(self):
+        data = '''
+*** Test Cases ***
+    Keyword
+'''
+        expected = TestCase(
+            header=TestCaseName(
+                tokens=[Token(Token.TESTCASE_NAME, '', 2, 0)],
+                errors=('Test name cannot be empty.',)
+            ),
+            body=[KeywordCall(tokens=[Token(Token.KEYWORD, 'Keyword', 2, 4)])]
+        )
+        get_and_assert_model(data, expected, depth=1)
+
+    def test_invalid_task(self):
+        data = '''
+*** Tasks ***
+    [Documentation]    Empty name and body.
+'''
+        expected = TestCase(
+            header=TestCaseName(
+                tokens=[Token(Token.TESTCASE_NAME, '', 2, 0)],
+                errors=('Task name cannot be empty.',)
+            ),
+            body=[
+                Documentation(
+                    tokens=[Token(Token.DOCUMENTATION, '[Documentation]', 2, 4),
+                            Token(Token.ARGUMENT, 'Empty name and body.', 2, 23)]
+                ),
+            ],
+            errors=('Task cannot be empty.',)
+        )
+        get_and_assert_model(data, expected, depth=1)
+
+
+class TestUserKeyword(unittest.TestCase):
 
     def test_invalid_arg_spec(self):
         data = '''
@@ -948,6 +1005,7 @@ class TestKeyword(unittest.TestCase):
 Invalid
     [Arguments]    ooops    ${optional}=default    ${required}
     ...    @{too}    @{many}    &{notlast}    ${x}
+    Keyword
 '''
         expected = Keyword(
             header=KeywordName(
@@ -967,9 +1025,44 @@ Invalid
                             'Non-default argument after default arguments.',
                             'Cannot have multiple varargs.',
                             'Only last argument can be kwargs.')
-                )
+                ),
+                KeywordCall(
+                    tokens=[Token(Token.KEYWORD, 'Keyword', 5, 4)])
             ],
-            errors=("User keyword 'Invalid' contains no keywords.",)
+        )
+        get_and_assert_model(data, expected, depth=1)
+
+    def test_empty(self):
+        data = '''
+*** Keywords ***
+Empty
+    [Arguments]    ${ok}
+'''
+        expected = Keyword(
+            header=KeywordName(
+                tokens=[Token(Token.KEYWORD_NAME, 'Empty', 2, 0)]
+            ),
+            body=[
+                Arguments(
+                    tokens=[Token(Token.ARGUMENTS, '[Arguments]', 3, 4),
+                            Token(Token.ARGUMENT, '${ok}', 3, 19)]
+                ),
+            ],
+            errors=('User keyword cannot be empty.',)
+        )
+        get_and_assert_model(data, expected, depth=1)
+
+    def test_empty_name(self):
+        data = '''
+*** Keywords ***
+    Keyword
+'''
+        expected = Keyword(
+            header=KeywordName(
+                tokens=[Token(Token.KEYWORD_NAME, '', 2, 0)],
+                errors=('User keyword name cannot be empty.',)
+            ),
+            body=[KeywordCall(tokens=[Token(Token.KEYWORD, 'Keyword', 2, 4)])]
         )
         get_and_assert_model(data, expected, depth=1)
 
@@ -1483,7 +1576,7 @@ Remove
                     TestCase(TestCaseName([
                         Token('TESTCASE NAME', 'EXAMPLE', 2, 0),
                         Token('EOL', '\n', 2, 7)
-                    ]), errors= ('Test contains no keywords.',)),
+                    ]), errors= ('Test cannot be empty.',)),
                     TestCase(TestCaseName([
                         Token('TESTCASE NAME', 'Added'),
                         Token('EOL', '\n')

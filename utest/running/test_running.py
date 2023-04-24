@@ -107,6 +107,18 @@ class TestRunning(unittest.TestCase):
         assert_test(result.tests[0], 'T1', 'FAIL', msg='Error message')
         assert_test(result.tests[1], 'T2', 'FAIL', ('added tag',), 'Error')
 
+    def test_test_cannot_be_empty(self):
+        suite = TestSuite()
+        suite.tests.create(name='Empty')
+        result = run(suite)
+        assert_test(result.tests[0], 'Empty', 'FAIL', msg='Test cannot be empty.')
+
+    def test_name_cannot_be_empty(self):
+        suite = TestSuite()
+        suite.tests.create().body.create_keyword('Not executed')
+        result = run(suite)
+        assert_test(result.tests[0], '', 'FAIL', msg='Test name cannot be empty.')
+
     def test_modifiers_are_not_used(self):
         # These options are valid but not used. Modifiers can be passed to
         # suite.visit() explicitly if needed.

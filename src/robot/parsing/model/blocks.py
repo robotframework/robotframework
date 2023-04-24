@@ -16,7 +16,7 @@
 import ast
 from contextlib import contextmanager
 
-from robot.utils import file_writer, is_pathlike, is_string
+from robot.utils import file_writer, is_pathlike, is_string, test_or_task
 
 from .statements import (Break, Continue, Error, KeywordCall, ReturnSetting,
                          ReturnStatement, Statement, TemplateArguments)
@@ -134,8 +134,7 @@ class TestCase(HeaderAndBody):
 
     def validate(self, ctx: 'ValidationContext'):
         if self._body_is_empty():
-            # FIXME: Tasks!
-            self.errors += ('Test contains no keywords.',)
+            self.errors += (test_or_task('{Test} cannot be empty.', ctx.tasks),)
 
 
 class Keyword(HeaderAndBody):
@@ -147,7 +146,7 @@ class Keyword(HeaderAndBody):
     def validate(self, ctx: 'ValidationContext'):
         if self._body_is_empty():
             if not any(isinstance(node, ReturnSetting) for node in self.body):
-                self.errors += (f"User keyword '{self.name}' contains no keywords.",)
+                self.errors += ("User keyword cannot be empty.",)
 
 
 class If(HeaderAndBody):
@@ -415,6 +414,13 @@ class ValidationContext:
     @property
     def parent_block(self):
         return self.blocks[-1] if self.blocks else None
+
+    @property
+    def tasks(self):
+        for parent in self.blocks:
+            if isinstance(parent, TestCaseSection):
+                return parent.tasks
+        return False
 
     @property
     def in_keyword(self):
