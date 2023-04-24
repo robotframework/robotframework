@@ -32,10 +32,7 @@ base class.
 .. note:: These classes are not exposed via the top level :mod:`robot.api`
           package and need to imported via :mod:`robot.api.interfaces`.
 
-.. note:: Using :class:`ListenerV2` and :class:`ListenerV3` requires Python 3.8
-          or newer.
-
-New in Robot Framework 6.1.
+New in Robot Framework 6.1. Requires Python 3.8 or newer.
 
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#dynamic-library-api
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#hybrid-library-api

@@ -2,7 +2,7 @@
 Resource          atest_resource.robot
 
 *** Variables ***
-${DIR}            ${DATADIR}/parsing/custom
+${DIR}            ${{pathlib.Path(r'${DATADIR}/parsing/custom')}}
 
 *** Test Cases ***
 Single file
@@ -39,10 +39,10 @@ Directory with init when parser does not support inits
 
 Incompatible parser
     Parsing Should Fail    parse=False
-    ...    Importing parser '${DIR}/CustomParser.py' failed:
+    ...    Importing parser '${DIR}${/}CustomParser.py' failed:
     ...    'CustomParser' does not have mandatory 'parse' method.
     Parsing Should Fail    extension=
-    ...    Importing parser '${DIR}/CustomParser.py' failed:
+    ...    Importing parser '${DIR}${/}CustomParser.py' failed:
     ...    'CustomParser' does not have mandatory 'EXTENSION' or 'extension' attribute.
 
 Failing parser
@@ -70,7 +70,7 @@ Validate Suite
     [Arguments]    ${suite}    ${name}    ${source}    ${custom}=True    &{tests}
     ${source} =    Normalize Path    ${source}
     Should Be Equal    ${suite.name}     ${name}
-    Should Be Equal As Strings   ${suite.source}    ${source}
+    Should Be Equal As Strings    ${suite.source}    ${source}
     IF    ${custom}
         Should Be Equal    ${suite.metadata}[Parser]    Custom
     ELSE

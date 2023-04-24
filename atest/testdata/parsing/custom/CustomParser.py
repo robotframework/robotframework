@@ -1,12 +1,12 @@
 from pathlib import Path
 
 from robot.api import TestSuite
-from robot.api.interfaces import Defaults, Parser
+from robot.running.builder.settings import Defaults
 
 import custom
 
 
-class CustomParser(Parser):
+class CustomParser:
 
     def __init__(self, extension='custom', parse=True, init=False, fail=False,
                  bad_return=False):
