@@ -40,8 +40,7 @@ class TestSuite(ModelObject):
     test_class = TestCase    #: Internal usage only.
     fixture_class = Keyword  #: Internal usage only.
     repr_args = ('name',)
-    __slots__ = ['parent', '_name', 'doc', '_setup', '_teardown', 'rpa',
-                 '_my_visitors']
+    __slots__ = ['parent', '_name', 'doc', '_setup', '_teardown', 'rpa', '_my_visitors']
 
     def __init__(self, name: str = '', doc: str = '', metadata: 'Mapping|None' = None,
                  source: 'Path|str|None' = None, rpa: bool = False,

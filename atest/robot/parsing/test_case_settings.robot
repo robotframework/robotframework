@@ -91,7 +91,7 @@ Empty and NONE tags are ignored
 
 Duplicate tags are ignored and first used format has precedence
     [Documentation]    Case, space and underscore insensitive
-    Verify Tags        FORCE-1    Test_1    test 2
+    Verify Tags        force-1    Test_1    test 2
 
 Tags in multiple rows
     Verify Tags        force-1    test-0    test-1    test-2    test-3    test-4    test-5

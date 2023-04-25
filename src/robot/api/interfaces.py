@@ -32,13 +32,17 @@ base class.
 .. note:: These classes are not exposed via the top level :mod:`robot.api`
           package and need to imported via :mod:`robot.api.interfaces`.
 
-New in Robot Framework 6.1. Requires Python 3.8 or newer.
+.. note:: Using this module requires having the typing_extensions__ module
+          installed with Python 3.6 and 3.7.
+
+New in Robot Framework 6.1.
 
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#dynamic-library-api
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#hybrid-library-api
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-version-2
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-version-3
 __ FIXME: PARSER: Link to UG docs.
+__ https://pypi.org/project/typing-extensions/
 """
 
 import sys
@@ -49,7 +53,11 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 if sys.version_info >= (3, 8):
     from typing import TypedDict
 else:
-    TypedDict = dict
+    try:
+        from typing_extensions import TypedDict
+    except ImportError:
+        raise ImportError("Using the 'robot.api.interfaces' module requires having "
+                          "the 'typing_extensions' module installed with Python < 3.8.")
 if sys.version_info >= (3, 10):
     from types import UnionType
 else:
@@ -57,12 +65,7 @@ else:
 
 from robot import result, running
 from robot.model import Message
-from robot.running import TestSuite
-# FIXME: PARSER:
-# - Expose `Defaults` via `robot.running`.
-# - Consider better class name.
-# - Enhance its API (incl. docs and types).
-from robot.running.builder.settings import Defaults
+from robot.running import TestDefaults, TestSuite
 
 
 # Type aliases used by DynamicLibrary and HybridLibrary.
@@ -588,14 +591,14 @@ class Parser(ABC):
     extension: Union[str, Sequence[str]]
 
     @abstractmethod
-    def parse(self, source: Path, defaults: Defaults) -> TestSuite:
+    def parse(self, source: Path, defaults: TestDefaults) -> TestSuite:
         """Mandatory method for parsing suite files.
 
         FIXME: PARSER: Better documentation (incl. parameter docs).
         """
         raise NotImplementedError
 
-    def parse_init(self, source: Path, defaults: Defaults) -> TestSuite:
+    def parse_init(self, source: Path, defaults: TestDefaults) -> TestSuite:
         """Optional method for parsing suite initialization files.
 
         FIXME: PARSER: Better documentation (incl. parameter docs).

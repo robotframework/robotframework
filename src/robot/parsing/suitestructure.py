@@ -24,7 +24,7 @@ from robot.utils import get_error_message
 
 class SuiteStructure:
 
-    def __init__(self, source: Path = None, init_file: Path = None,
+    def __init__(self, source: 'Path|None' = None, init_file: 'Path|None' = None,
                  children: 'list[SuiteStructure]|None' = None):
         self.source = source
         self.init_file = init_file
@@ -38,6 +38,10 @@ class SuiteStructure:
     @property
     def is_file(self) -> bool:
         return self.children is None
+
+    @property
+    def is_multi_source(self) -> bool:
+        return self.source is None
 
     def add(self, child: 'SuiteStructure'):
         self.children.append(child)

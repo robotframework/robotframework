@@ -34,7 +34,7 @@ Override Robot parser
 
 Directory with init when parser does not support inits
     Parsing Should Fail    init
-    ...    Parsing '${DIR}' failed:
+    ...    Parsing '${DIR}${/}__init__.init' failed:
     ...    'CustomParser' does not support parsing initialization files.
 
 Incompatible parser
@@ -51,7 +51,7 @@ Failing parser
     ...    Calling 'CustomParser.parse()' failed:
     ...    TypeError: Ooops!
     Parsing Should Fail    fail=True:init=True
-    ...    Parsing '${DIR}' failed:
+    ...    Parsing '${DIR}${/}__init__.init' failed:
     ...    Calling 'CustomParser.parse_init()' failed:
     ...    TypeError: Ooops in init!
 
@@ -61,7 +61,7 @@ Bad return value
     ...    Calling 'CustomParser.parse()' failed:
     ...    TypeError: Return value should be 'robot.running.TestSuite', got 'string'.
     Parsing Should Fail    bad_return=True:init=True
-    ...    Parsing '${DIR}' failed:
+    ...    Parsing '${DIR}${/}__init__.init' failed:
     ...    Calling 'CustomParser.parse_init()' failed:
     ...    TypeError: Return value should be 'robot.running.TestSuite', got 'integer'.
 

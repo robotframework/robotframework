@@ -27,7 +27,7 @@ from robot.utils import Importer, seq2str, split_args_from_name_or_path
 from ..model import ResourceFile, TestSuite
 from .parsers import (CustomParser, JsonParser, NoInitFileDirectoryParser, Parser,
                       RestParser, RobotParser)
-from .settings import Defaults
+from .settings import TestDefaults
 
 
 class TestSuiteBuilder:
@@ -173,7 +173,11 @@ class SuiteStructureParser(SuiteStructureVisitor):
         self.rpa = rpa
         self._rpa_given = rpa is not None
         self.suite: 'TestSuite|None' = None
-        self._stack: 'list[tuple[TestSuite, Defaults]]' = []
+        self._stack: 'list[tuple[TestSuite, TestDefaults]]' = []
+
+    @property
+    def parent_defaults(self) -> 'TestDefaults|None':
+        return self._stack[-1][-1] if self._stack else None
 
     def parse(self, structure: SuiteStructure) -> TestSuite:
         structure.visit(self)
@@ -182,7 +186,7 @@ class SuiteStructureParser(SuiteStructureVisitor):
 
     def visit_file(self, structure: SuiteStructure):
         LOGGER.info(f"Parsing file '{structure.source}'.")
-        suite, _ = self._build_suite(structure)
+        suite = self._build_suite_file(structure)
         if self.suite is None:
             self.suite = suite
         else:
@@ -191,7 +195,7 @@ class SuiteStructureParser(SuiteStructureVisitor):
     def start_directory(self, structure: SuiteStructure):
         if structure.source:
             LOGGER.info(f"Parsing directory '{structure.source}'.")
-        suite, defaults = self._build_suite(structure)
+        suite, defaults = self._build_suite_directory(structure)
         if self.suite is None:
             self.suite = suite
         else:
@@ -203,21 +207,27 @@ class SuiteStructureParser(SuiteStructureVisitor):
         if suite.rpa is None and suite.suites:
             suite.rpa = suite.suites[0].rpa
 
-    def _build_suite(self, structure: SuiteStructure) -> 'tuple[TestSuite, Defaults]':
-        parent_defaults = self._stack[-1][-1] if self._stack else None
+    def _build_suite_file(self, structure: SuiteStructure):
         source = structure.source
-        defaults = Defaults(parent_defaults)
+        defaults = self.parent_defaults or TestDefaults()
         parser = self.parsers[structure.extension]
         try:
-            if structure.is_file:
-                suite = parser.parse_suite_file(source, defaults)
-                if not suite.tests:
-                    LOGGER.info(f"Data source '{source}' has no tests or tasks.")
-            else:
-                suite = parser.parse_init_file(structure.init_file or source, defaults)
-                if not source:
-                    suite.config(name='', source=None)
+            suite = parser.parse_suite_file(source, defaults)
+            if not suite.tests:
+                LOGGER.info(f"Data source '{source}' has no tests or tasks.")
             self._validate_execution_mode(suite)
+        except DataError as err:
+            raise DataError(f"Parsing '{source}' failed: {err.message}")
+        return suite
+
+    def _build_suite_directory(self, structure: SuiteStructure):
+        source = structure.init_file or structure.source
+        defaults = TestDefaults(self.parent_defaults)
+        parser = self.parsers[structure.extension]
+        try:
+            suite = parser.parse_init_file(source, defaults)
+            if structure.is_multi_source:
+                suite.config(name='', source=None)
         except DataError as err:
             raise DataError(f"Parsing '{source}' failed: {err.message}")
         return suite, defaults

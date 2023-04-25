@@ -1,16 +1,15 @@
 from pathlib import Path
 
 from robot.api import TestSuite
-from robot.running.builder.settings import Defaults
+from robot.api.interfaces import Parser, TestDefaults
 
 import custom
 
 
-class CustomParser:
+class CustomParser(Parser):
 
     def __init__(self, extension='custom', parse=True, init=False, fail=False,
                  bad_return=False):
-        print(extension)
         self.extension = extension.split(',') if extension else None
         if not parse:
             self.parse = None
@@ -21,14 +20,14 @@ class CustomParser:
         self.fail = fail
         self.bad_return = bad_return
 
-    def parse(self, source: Path, defaults: Defaults) -> TestSuite:
+    def parse(self, source: Path, defaults: TestDefaults) -> TestSuite:
         if self.fail:
             raise TypeError('Ooops!')
         if self.bad_return:
             return 'bad'
         return custom.parse(source, defaults)
 
-    def parse_init(self, source: Path, defaults: Defaults) -> TestSuite:
+    def parse_init(self, source: Path, defaults: TestDefaults) -> TestSuite:
         if self.fail:
             raise TypeError('Ooops in init!')
         if self.bad_return:
