@@ -4,6 +4,7 @@ ${limit}       11
 ${number}      ${0.2}
 ${pass}        Pass
 ${errorMsg}    Error Message
+${USE LIMIT}   Use the 'limit' argument to increase or remove the limit if needed.
 
 *** Test Cases ***
 On limit pass with time limit defined
@@ -18,7 +19,7 @@ On limit pass with iteration limit defined
     END
 
 On limit fail
-    [Documentation]    FAIL WHILE loop was aborted because it did not finish within the limit of 5 iterations. Use the 'limit' argument to increase or remove the limit if needed.
+    [Documentation]    FAIL WHILE loop was aborted because it did not finish within the limit of 5 iterations. ${USE LIMIT}
     WHILE    True    limit=5    on_limit=FaIl
         No Operation
     END
@@ -30,21 +31,34 @@ On limit pass with failures in loop
     END
 
 On limit pass with continuable failure
-    [Documentation]    FAIL Third failure, this time a hard one.
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...   1) Continuable failure!
+    ...
+    ...   2) Continuable failure!
+    ...
+    ...   3) One more failure!
+    [Tags]    robot:continue-on-failure
     WHILE    limit=2    on_limit=pass
-        Run Keyword And Continue On Failure    Fail    Continuable failure!
+        Fail    Continuable failure!
     END
-    Fail    Third failure, this time a hard one.
+    Fail    One more failure!
 
 On limit fail with continuable failure
-    [Documentation]    FAIL Several failures occurred:\n\n
-    ...   1) Continuable failure!\n\n
-    ...   2) Continuable failure!\n\n
-    ...   3) WHILE loop was aborted because it did not finish within the limit of 2 iterations. Use the 'limit' argument to increase or remove the limit if needed.
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...   1) Continuable failure!
+    ...
+    ...   2) Continuable failure!
+    ...
+    ...   3) WHILE loop was aborted because it did not finish within the limit of 2 iterations. ${USE LIMIT}
+    ...
+    ...   4) One more failure!
+    [Tags]    robot:continue-on-failure
     WHILE    limit=2    on_limit=fail
-        Run Keyword And Continue On Failure    Fail    Continuable failure!
+        Fail    Continuable failure!
     END
-    Fail    Should not be executed!
+    Fail    One more failure!
 
 Invalid on_limit
     [Documentation]    FAIL Invalid WHILE loop 'on_limit' value 'inValid': Value must be 'PASS' or 'FAIL'.
@@ -59,7 +73,7 @@ On limit without limit defined
     END
 
 On limit with invalid variable
-    [Documentation]    FAIL Invalid WHILE loop 'on_limit' value '${does not exist}': Variable '${does not exist}' not found.
+    [Documentation]    FAIL Invalid WHILE loop 'on_limit' value '\${does not exist}': Variable '\${does not exist}' not found.
     WHILE    True    limit=5    on_limit=${does not exist}
         Fail   Oh no!
     END
@@ -114,12 +128,11 @@ On limit message before limit
         Log     ${variable}
     END
 
-On limit messge with invalid variable
+On limit message with invalid variable
     [Documentation]     FAIL Invalid WHILE loop 'on_limit_message': 'Variable '${nonExisting}' not found.
     WHILE    $variable < 2    on_limit_message=${nonExisting}    limit=5
         Log     ${variable}
     END
-
 
 Wrong WHILE arguments
     [Documentation]     FAIL WHILE cannot have more than one condition, got '$variable < 2', 'limite=5' and 'limit_exceed_messag=Custom error message'.

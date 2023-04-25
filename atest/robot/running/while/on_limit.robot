@@ -54,7 +54,7 @@ Nested while on limit message
 On limit message before limit
     Check Test Case    ${TESTNAME}
 
-On limit messge with invalid variable
+On limit message with invalid variable
     Check Test Case    ${TESTNAME}
 
 Wrong WHILE arguments

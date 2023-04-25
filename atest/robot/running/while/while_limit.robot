@@ -32,6 +32,15 @@ Limit can be disabled
 No Condition With Limit
     Check Test Case    ${TESTNAME}
 
+Limit exceeds in teardown
+    Check Test Case    ${TESTNAME}
+
+Limit exceeds after failures in teardown
+    Check Test Case    ${TESTNAME}
+
+Continue after limit in teardown
+    Check Test Case    ${TESTNAME}
+
 Invalid limit invalid suffix
     Check Test Case    ${TESTNAME}
 
