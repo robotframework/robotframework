@@ -25,11 +25,21 @@ class CustomParser(Parser):
             raise TypeError('Ooops!')
         if self.bad_return:
             return 'bad'
-        return custom.parse(source, defaults)
+        suite = custom.parse(source, None)
+        for test in suite.tests:
+            test.tags += defaults.tags
+            test.setup = defaults.setup
+            test.teardown = defaults.teardown
+            test.timeout = defaults.timeout
+        return suite
 
     def parse_init(self, source: Path, defaults: TestDefaults) -> TestSuite:
         if self.fail:
             raise TypeError('Ooops in init!')
         if self.bad_return:
             return 42
+        defaults.tags = ['tag from init']
+        defaults.setup = {'name': 'Log', 'args': ['setup from init']}
+        defaults.teardown = {'name': 'Log', 'args': ['teardown from init']}
+        defaults.timeout = '42s'
         return TestSuite(name='📁', source=source.parent, metadata={'Parser': 'Custom'})

@@ -20,7 +20,7 @@ Directory
 
 Directory with init
     Run Tests    --parser ${DIR}/CustomParser.py:init=True    ${DIR}
-    Validate Directory Suite    📁    custom=True
+    Validate Directory Suite    📁    custom=True    init=True
 
 Override Robot parser
     Run Tests    --parser ${DIR}/CustomParser.py:.robot    ${DIR}/tests.robot
@@ -79,7 +79,7 @@ Validate Suite
     Should Contain Tests    ${suite}    &{tests}
 
 Validate Directory Suite
-    [Arguments]    ${name}    ${custom}=True
+    [Arguments]    ${name}    ${custom}=True    ${init}=False
     Validate Suite    ${SUITE}    ${name}    ${DIR}    ${custom}
     ...    Passing=PASS
     ...    Failing=FAIL:Error message
@@ -94,6 +94,21 @@ Validate Directory Suite
     ...    Empty=FAIL:Test cannot be empty.
     Validate Suite    ${SUITE.suites[2]}    Tests    ${DIR}/tests.robot    custom=False
     ...    Test in Robot file=PASS
+    FOR    ${test}    IN    @{SUITE.all_tests}
+        IF    ${init}
+            Should Contain Tags    ${test}            tag from init
+            Should Be Equal        ${test.timeout}    42 seconds
+            IF    '${test.name}' != 'Empty'
+                Check Log Message    ${test.setup.msgs[0]}       setup from init
+                Check Log Message    ${test.teardown.msgs[0]}    teardown from init
+            END
+        ELSE
+            Should Not Be True    ${test.tags}
+            Should Not Be True    ${test.timeout}
+            Should Not Be True    ${test.setup}
+            Should Not Be True    ${test.teardown}
+        END
+    END
 
 Parsing should fail
     [Arguments]    ${config}    @{error}
