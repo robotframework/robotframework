@@ -7,7 +7,7 @@ EXTENSION = 'CUSTOM'
 extension = 'ignored'
 
 
-def parse(source, defaults):
+def parse(source):
     suite = TestSuite(source=source, metadata={'Parser': 'Custom'})
     for line in source.read_text().splitlines():
         if not line or line[0] in ('*', '#'):

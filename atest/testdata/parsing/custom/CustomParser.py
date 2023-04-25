@@ -25,7 +25,7 @@ class CustomParser(Parser):
             raise TypeError('Ooops!')
         if self.bad_return:
             return 'bad'
-        suite = custom.parse(source, None)
+        suite = custom.parse(source)
         for test in suite.tests:
             test.tags += defaults.tags
             test.setup = defaults.setup

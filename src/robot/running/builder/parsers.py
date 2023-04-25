@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from abc import ABC
+from inspect import signature
 from pathlib import Path
 
 from robot.conf import LanguagesLike
@@ -140,11 +141,12 @@ class CustomParser(Parser):
         except NotImplementedError:
             return super().parse_init_file(source, defaults)    # Raises DataError
 
-    def _parse(self, method, *args, init=False) -> TestSuite:
+    def _parse(self, method, source, defaults, init=False) -> TestSuite:
         if not method:
             raise NotImplementedError
+        accepts_defaults = len(signature(method).parameters) == 2
         try:
-            suite = method(*args)
+            suite = method(source, defaults) if accepts_defaults else method(source)
             if not isinstance(suite, TestSuite):
                 raise TypeError(f"Return value should be 'robot.running.TestSuite', "
                                 f"got '{type_name(suite)}'.")

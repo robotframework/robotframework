@@ -55,7 +55,7 @@ class TestDefaults:
 
     @property
     def setup(self) -> 'Keyword|None':
-        """Setup as a `Keyword` object or `None` when not set.
+        """Default setup as a ``Keyword`` object or ``None`` when not set.
 
         Can be set also using a dictionary.
         """
@@ -73,7 +73,7 @@ class TestDefaults:
 
     @property
     def teardown(self) -> 'Keyword|None':
-        """Teardown as a `Keyword` object or `None` when not set.
+        """Default teardown as a ``Keyword`` object or ``None`` when not set.
 
         Can be set also using a dictionary.
         """
@@ -91,6 +91,7 @@ class TestDefaults:
 
     @property
     def tags(self) -> Tags:
+        """Default tags. Can be set also as a sequence."""
         return self._tags + self.parent.tags if self.parent else self._tags
 
     @tags.setter
@@ -99,6 +100,7 @@ class TestDefaults:
 
     @property
     def timeout(self) -> 'str|None':
+        """Default timeout."""
         if self._timeout:
             return self._timeout
         if self.parent:

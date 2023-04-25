@@ -31,7 +31,7 @@ Currently exposed APIs are:
   via :mod:`robot.api` like ``from robot.api import SkipExecution``.
 
 * :mod:`.interfaces` module containing optional base classes that can be used
-  when creating libraries or listeners. New in Robot Framework 6.1.
+  when creating libraries and other extensions. New in Robot Framework 6.1.
 
 * :mod:`.parsing` module exposing the parsing APIs. This module is new in Robot
   Framework 4.0. Various parsing related functions and classes were exposed

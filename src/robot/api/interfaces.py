@@ -582,7 +582,7 @@ class Parser(ABC):
 
     The mandatory :attr:`extension` attribute specifies what file extension or
     extensions a parser supports. It can be set either as a class or instance
-    attribute, and it can be either a string or a list/tuple of strings. The
+    attribute, and it can be either a string or a sequence of strings. The
     attribute can also be named ``EXTENSION``, which typically works better
     when a parser is implemented as a module.
 
@@ -594,15 +594,24 @@ class Parser(ABC):
     def parse(self, source: Path, defaults: TestDefaults) -> TestSuite:
         """Mandatory method for parsing suite files.
 
-        FIXME: PARSER: Better documentation (incl. parameter docs).
+        :param source: Path to the file to parse.
+        :param defaults: Default values set for test in init files.
+
+        The ``defaults`` argument is optional. It is possible to implement
+        this method also so that it accepts only ``source``.
         """
         raise NotImplementedError
 
     def parse_init(self, source: Path, defaults: TestDefaults) -> TestSuite:
         """Optional method for parsing suite initialization files.
 
-        FIXME: PARSER: Better documentation (incl. parameter docs).
+        :param source: Path to the file to parse.
+        :param defaults: Default values to used with tests in child suites.
 
-        If not implemented, possible initialization files cause an error.
+        The ``defaults`` argument is optional. It is possible to implement
+        this method also so that it accepts only ``source``.
+
+        If this method is not implemented, possible initialization files cause
+        an error.
         """
         raise NotImplementedError
