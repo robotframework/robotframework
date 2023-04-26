@@ -24,7 +24,7 @@ except ImportError:
 
 from robot.model import Tags
 
-from ..model import Keyword
+from ..model import Keyword, TestCase
 
 
 class KeywordDict(TypedDict):
@@ -110,6 +110,21 @@ class TestDefaults:
     @timeout.setter
     def timeout(self, timeout: 'str|None'):
         self._timeout = timeout
+
+    def set_to(self, test: TestCase):
+        """Sets defaults to the given test.
+
+        Tags are always added to the test. Setup, teardown and timeout are
+        set only if the test does not have them set initially.
+        """
+        if self.tags:
+            test.tags += self.tags
+        if self.setup and not test.has_setup:
+            test.setup = self.setup
+        if self.teardown and not test.has_teardown:
+            test.teardown = self.teardown
+        if self.timeout and not test.timeout:
+            test.timeout = self.timeout
 
 
 class FileSettings:

@@ -27,10 +27,7 @@ class CustomParser(Parser):
             return 'bad'
         suite = custom.parse(source)
         for test in suite.tests:
-            test.tags += defaults.tags
-            test.setup = defaults.setup
-            test.teardown = defaults.teardown
-            test.timeout = defaults.timeout
+            defaults.set_to(test)
         return suite
 
     def parse_init(self, source: Path, defaults: TestDefaults) -> TestSuite:
