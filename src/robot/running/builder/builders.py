@@ -22,7 +22,7 @@ from robot.conf import LanguagesLike
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.parsing import SuiteStructure, SuiteStructureBuilder, SuiteStructureVisitor
-from robot.utils import Importer, seq2str, split_args_from_name_or_path
+from robot.utils import Importer, seq2str, split_args_from_name_or_path, type_name
 
 from ..model import ResourceFile, TestSuite
 from .parsers import (CustomParser, JsonParser, NoInitFileDirectoryParser, Parser,
@@ -62,15 +62,16 @@ class TestSuiteBuilder:
         """
         :param include_suites:
             List of suite names to include. If not given, all suites are included.
-            Same as using `--suite` on the command line.
+            Same as using ``--suite`` on the command line.
         :param included_extensions:
-            List of extensions of files to parse. Same as `--extension`.
+            List of extensions of files to parse. Same as ``--extension``.
         :param custom_parsers:
-            Custom parser names or paths. Same as `--parser`. New in RF 6.1.
+            Custom parsers as names or paths (same as ``--parser``) or as
+            parser objects. New in RF 6.1.
         :param rpa: Explicit execution mode. ``True`` for RPA and
             ``False`` for test automation. By default, mode is got from data file
             headers and possible conflicting headers cause an error.
-            Same as `--rpa` or `--norpa`.
+            Same as ``--rpa`` or ``--norpa``.
         :param lang: Additional languages to be supported during parsing.
             Can be a string matching any of the supported language codes or names,
             an initialized :class:`~robot.conf.languages.Language` subclass,
@@ -78,7 +79,7 @@ class TestSuiteBuilder:
             :class:`~robot.conf.languages.Languages` instance.
         :param allow_empty_suite:
             Specify is it an error if the built suite contains no tests.
-            Same as `--runemptysuite`.
+            Same as ``--runemptysuite``.
         :param process_curdir:
             Control processing the special ``${CURDIR}`` variable. It is
             resolved already at parsing time by default, but that can be
@@ -104,19 +105,22 @@ class TestSuiteBuilder:
             'json': json_parser
         }
 
-    def _get_custom_parsers(self, names: Sequence[str]) -> 'dict[str, CustomParser]':
-        parsers = {}
+    def _get_custom_parsers(self, parsers: Sequence[str]) -> 'dict[str, CustomParser]':
+        custom_parsers = {}
         importer = Importer('parser', LOGGER)
-        for name in names:
-            name, args = split_args_from_name_or_path(name)
-            imported = importer.import_class_or_module(name, args)
+        for parser in parsers:
+            if isinstance(parser, (str, Path)):
+                name, args = split_args_from_name_or_path(parser)
+                parser = importer.import_class_or_module(name, args)
+            else:
+                name = type_name(parser)
             try:
-                parser = CustomParser(imported)
+                custom_parser = CustomParser(parser)
             except TypeError as err:
                 raise DataError(f"Importing parser '{name}' failed: {err}")
-            for ext in parser.extensions:
-                parsers[ext] = parser
-        return parsers
+            for ext in custom_parser.extensions:
+                custom_parsers[ext] = custom_parser
+        return custom_parsers
 
     def build(self, *paths: 'Path|str'):
         """
