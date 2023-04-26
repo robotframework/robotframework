@@ -16,11 +16,11 @@ Single file
 Directory
     [Documentation]    Also tests parser implemented as a class.
     Run Tests    --parser ${DIR}/CustomParser.py    ${DIR}
-    Validate Directory Suite    Custom    custom=False
+    Validate Directory Suite
 
 Directory with init
     Run Tests    --parser ${DIR}/CustomParser.py:init=True    ${DIR}
-    Validate Directory Suite    📁    custom=True    init=True
+    Validate Directory Suite    init=True
 
 Override Robot parser
     Run Tests    --parser ${DIR}/CustomParser.py:.robot    ${DIR}/tests.robot
@@ -31,6 +31,10 @@ Override Robot parser
     ...    Test in Robot file=PASS
     Validate Suite    ${SUITE.suites[0]}    Tests    ${DIR}/tests.robot
     ...    Test in Robot file=PASS
+
+Multiple parsers
+    Run Tests    --parser ${DIR}/CustomParser.py:ROBOT --PARSER ${DIR}/custom.py    ${DIR}
+    Validate Directory Suite    custom_robot=True
 
 Directory with init when parser does not support inits
     Parsing Should Fail    init
@@ -79,8 +83,8 @@ Validate Suite
     Should Contain Tests    ${suite}    &{tests}
 
 Validate Directory Suite
-    [Arguments]    ${name}    ${custom}=True    ${init}=False
-    Validate Suite    ${SUITE}    ${name}    ${DIR}    ${custom}
+    [Arguments]    ${init}=False    ${custom_robot}=False
+    Validate Suite    ${SUITE}    ${{'📁' if ${init} else 'Custom'}}    ${DIR}    ${init}
     ...    Passing=PASS
     ...    Failing=FAIL:Error message
     ...    Empty=FAIL:Test cannot be empty.
@@ -92,7 +96,7 @@ Validate Directory Suite
     ...    Passing=PASS
     ...    Failing=FAIL:Error message
     ...    Empty=FAIL:Test cannot be empty.
-    Validate Suite    ${SUITE.suites[2]}    Tests    ${DIR}/tests.robot    custom=False
+    Validate Suite    ${SUITE.suites[2]}    Tests    ${DIR}/tests.robot    custom=${custom robot}
     ...    Test in Robot file=PASS
     FOR    ${test}    IN    @{SUITE.all_tests}
         IF    ${init}

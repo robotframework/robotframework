@@ -287,12 +287,6 @@ Options
                           tag:<pattern>:  flatten matched keywords using same
                                    matching rules as with
                                    `--removekeywords tag:<pattern>`
-    --listener class *    A class for monitoring test execution. Gets
-                          notifications e.g. when tests start and end.
-                          Arguments to the listener class can be given after
-                          the name using a colon or a semicolon as a separator.
-                          Examples: --listener MyListenerClass
-                                    --listener path/to/Listener.py:arg1:arg2
     --nostatusrc          Sets the return code to zero regardless of failures
                           in test cases. Error codes are returned normally.
     --dryrun              Verifies test data and runs tests so that library
@@ -311,11 +305,20 @@ Options
                           The seed must be an integer.
                           Examples: --randomize all
                                     --randomize tests:1234
-    --parser parser       FIXME: PARSER: Documentation
-    --prerunmodifier class *  Class to programmatically modify the suite
-                          structure before execution.
-    --prerebotmodifier class *  Class to programmatically modify the result
-                          model before creating reports and logs.
+    --listener listener *  Class or module for monitoring test execution.
+                          Gets notifications e.g. when tests start and end.
+                          Arguments to the listener class can be given after
+                          the name using a colon or a semicolon as a separator.
+                          Examples: --listener MyListener
+                                    --listener path/to/Listener.py:arg1:arg2
+    --prerunmodifier modifier *  Class to programmatically modify the suite
+                          structure before execution. Accepts arguments the
+                          same way as with --listener.
+    --prerebotmodifier modifier *  Class to programmatically modify the result
+                          model before creating reports and logs. Accepts
+                          arguments the same way as with --listener.
+    --parser parser *     Custom parser class or module. Parser classes accept
+                          arguments the same way as with --listener.
     --console type        How to report execution on the console.
                           verbose:  report every suite and test (default)
                           dotted:   only show `.` for passed test, `s` for
