@@ -66,7 +66,7 @@ class TestSuiteBuilder:
         :param included_extensions:
             List of extensions of files to parse. Same as `--extension`.
         :param custom_parsers:
-            FIXME: PARSER: Documentation.
+            Custom parser names or paths. Same as `--parser`. New in RF 6.1.
         :param rpa: Explicit execution mode. ``True`` for RPA and
             ``False`` for test automation. By default, mode is got from data file
             headers and possible conflicting headers cause an error.

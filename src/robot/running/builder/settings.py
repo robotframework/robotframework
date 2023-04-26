@@ -43,7 +43,15 @@ class TestDefaults:
     """Represents default values for test related settings set in init files.
 
     Parsers parsing suite files can read defaults and parsers parsing init
-    files can set them.
+    files can set them. The easiest way to set defaults to a test is using
+    the :meth:`set_to` method.
+
+    This class is part of the `public parser API`__. When implementing ``parse``
+    or ``parse_init`` method so that they accept two arguments, the second is
+    an instance of this class. If the class is needed as a type hint, it can
+    be imported via ``robot.running` or `robot.api.interfaces``.
+
+    __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#parser-interface
     """
 
     def __init__(self, parent: 'TestDefaults|None' = None):

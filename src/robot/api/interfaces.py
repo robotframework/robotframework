@@ -41,7 +41,7 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#hybrid-library-api
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-version-2
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-version-3
-__ FIXME: PARSER: Link to UG docs.
+__ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#parser-interface
 __ https://pypi.org/project/typing-extensions/
 """
 

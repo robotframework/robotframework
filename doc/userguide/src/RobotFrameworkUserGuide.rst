@@ -79,6 +79,7 @@
 .. include:: ExtendingRobotFramework/CreatingTestLibraries.rst
 .. include:: ExtendingRobotFramework/RemoteLibrary.rst
 .. include:: ExtendingRobotFramework/ListenerInterface.rst
+.. include:: ExtendingRobotFramework/ParserInterface.rst
 
 ~~~~~~~~~~~~~~~~~~~~
   Supporting Tools
