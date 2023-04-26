@@ -32,7 +32,6 @@ Other option is to give an absolute or a relative path to the listener file
 into use by using this option several times::
 
    robot --listener MyListener tests.robot
-   robot --listener com.company.package.Listener tests.robot
    robot --listener path/to/MyListener.py tests.robot
    robot --listener module.Listener --listener AnotherListener tests.robot
 
@@ -271,7 +270,7 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `condition`: The looping condition.                          |
    |                  |                  | * `limit`: The maximum iteration limit.                        |
    |                  |                  | * `on_limit`: What to do if the limit is exceeded.             |
-   |                  |                  | Valid values are `pass` and `fail`. New in RF 6.1.             |
+   |                  |                  |   Valid values are `pass` and `fail`. New in RF 6.1.           |
    |                  |                  | * `on_limit_message`: The custom error raised when the         |
    |                  |                  |   limit of the WHILE loop is reached. New in RF 6.1.           |
    |                  |                  |                                                                |
