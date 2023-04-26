@@ -45,10 +45,6 @@ __ FIXME: PARSER: Link to UG docs.
 __ https://pypi.org/project/typing-extensions/
 """
 
-class Test:
-    """Trying to figure out why this generating docs for this module fails in RTD."""
-
-'''
 import sys
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -619,4 +615,3 @@ class Parser(ABC):
         an error.
         """
         raise NotImplementedError
-'''
