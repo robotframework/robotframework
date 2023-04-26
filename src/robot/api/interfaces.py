@@ -33,7 +33,7 @@ base class.
           package and need to imported via :mod:`robot.api.interfaces`.
 
 .. note:: Using this module requires having the typing_extensions__ module
-          installed with Python 3.6 and 3.7.
+          installed when using Python 3.6 or 3.7.
 
 New in Robot Framework 6.1.
 
@@ -45,6 +45,10 @@ __ FIXME: PARSER: Link to UG docs.
 __ https://pypi.org/project/typing-extensions/
 """
 
+class Test:
+    """Trying to figure out why this generating docs for this module fails in RTD."""
+
+'''
 import sys
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -615,3 +619,4 @@ class Parser(ABC):
         an error.
         """
         raise NotImplementedError
+'''
