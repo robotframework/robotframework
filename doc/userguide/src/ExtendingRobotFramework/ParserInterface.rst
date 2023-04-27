@@ -106,7 +106,7 @@ actually parse anything.
     def parse(source):
         suite = TestSuite(name='Example', source=source)
         test = suite.tests.create(name='Test')
-        test.body.create_keyword('Log', args=['Hello!'])
+        test.body.create_keyword(name='Log', args=['Hello!'])
         return suite
 
 Parser implemented as class
@@ -131,7 +131,7 @@ from each line it contains.
             suite = TestSuite(TestSuite.name_from_source(source), source=source)
             for line in source.read_text().splitlines():
                 test = suite.tests.create(name=line)
-                test.body.create_keyword('Log', args=['Hello!'])
+                test.body.create_keyword(name='Log', args=['Hello!'])
             return suite
 
 Parser extending optional base class
@@ -154,8 +154,8 @@ initialization files, uses TestDefaults_ and registers multiple extensions.
             """Create a suite and set possible defaults from init files to tests."""
             suite = TestSuite(TestSuite.name_from_source(source), source=source)
             for line in source.read_text().splitlines():
-                test = suite.tests.create(name=line)
-                test.body.create_keyword('Log', args=['Hello!'])
+                test = suite.tests.create(name=line, doc='Example')
+                test.body.create_keyword(name='Log', args=['Hello!'])
                 defaults.set_to(test)
             return suite
 
@@ -165,7 +165,7 @@ initialization files, uses TestDefaults_ and registers multiple extensions.
             This method is called only if there is an initialization file with
             a supported extension.
             """
-            defaults.tags = ['tag from init']
+            defaults.tags = ('tags', 'from init')
             defaults.setup = {'name': 'Log', 'args': ['Hello from init!']}
             return TestSuite(TestSuite.name_from_source(source.parent), doc='Example',
                              source=source, metadata={'Example': 'Value'})

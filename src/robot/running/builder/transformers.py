@@ -179,16 +179,13 @@ class TestCaseBuilder(NodeVisitor):
                                             template=settings.test_template,
                                             error=error)
         if settings.test_setup:
-            self.test.setup.config(name=settings.test_setup.name,
-                                   args=settings.test_setup.args,
-                                   lineno=settings.test_setup.lineno)
+            self.test.setup.config(**settings.test_setup)
         if settings.test_teardown:
-            self.test.teardown.config(name=settings.test_teardown.name,
-                                      args=settings.test_teardown.args,
-                                      lineno=settings.test_teardown.lineno)
+            self.test.teardown.config(**settings.test_teardown)
         self.generic_visit(node)
         tags = self.tags if self.tags is not None else settings.default_tags
-        self.test.tags.add(tags)
+        if tags:
+            self.test.tags.add(tags)
         if self.test.template:
             self._set_template(self.test, self.test.template)
 
