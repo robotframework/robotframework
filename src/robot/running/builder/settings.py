@@ -54,12 +54,15 @@ class TestDefaults:
     __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#parser-interface
     """
 
-    def __init__(self, parent: 'TestDefaults|None' = None):
+    def __init__(self, parent: 'TestDefaults|None' = None,
+                 setup: 'Keyword|KeywordDict|None' = None,
+                 teardown: 'Keyword|KeywordDict|None' = None,
+                 tags: 'Sequence[str]' = (), timeout: 'str|None' = None):
         self.parent = parent
-        self.setup = None
-        self.teardown = None
-        self.tags = ()
-        self.timeout = None
+        self.setup = setup
+        self.teardown = teardown
+        self.tags = tags
+        self.timeout = timeout
 
     @property
     def setup(self) -> 'Keyword|None':

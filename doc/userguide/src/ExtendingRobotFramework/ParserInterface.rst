@@ -88,7 +88,12 @@ specification.
 Examples
 --------
 
-A simple parser implemented as a module and supporting one hard-coded extension:
+Parser implemented as module
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The first example demonstrates a simple parser implemented as a module and
+supporting one hard-coded extension. It just creates a dummy suite and does not
+actually parse anything.
 
 .. sourcecode:: python
 
@@ -99,14 +104,17 @@ A simple parser implemented as a module and supporting one hard-coded extension:
 
 
     def parse(source):
-        """Create a dummy suite without actually parsing anything."""
         suite = TestSuite(name='Example', source=source)
         test = suite.tests.create(name='Test')
         test.body.create_keyword('Log', args=['Hello!'])
         return suite
 
-A parser implemented as a class having type hints and accepting the used extension
-as an argument:
+Parser implemented as class
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The second parser is implemented as a class that accepts the extension to use
+as an argument. The parser reads the given source file and creates dummy tests
+from each line it contains.
 
 .. sourcecode:: python
 
@@ -120,15 +128,17 @@ as an argument:
             self.extension = extension
 
         def parse(self, source: Path) -> TestSuite:
-            """Create a suite with tests created from each line in the source file."""
             suite = TestSuite(TestSuite.name_from_source(source), source=source)
             for line in source.read_text().splitlines():
                 test = suite.tests.create(name=line)
                 test.body.create_keyword('Log', args=['Hello!'])
             return suite
 
-A parser extending the optional Parser_ base class, supporting multiple extensions,
-using TestDefaults_ and implementing also `parse_init`:
+Parser extending optional base class
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This parser extends the optional Parser_ base class. It supports parsing suite
+initialization files, uses TestDefaults_ and registers multiple extensions.
 
 .. sourcecode:: python
 
@@ -141,7 +151,7 @@ using TestDefaults_ and implementing also `parse_init`:
         extension = ('example', 'another')
 
         def parse(self, source: Path, defaults: TestDefaults) -> TestSuite:
-            """Create a suite and set defaults from init file to tests."""
+            """Create a suite and set possible defaults from init files to tests."""
             suite = TestSuite(TestSuite.name_from_source(source), source=source)
             for line in source.read_text().splitlines():
                 test = suite.tests.create(name=line)
@@ -159,3 +169,32 @@ using TestDefaults_ and implementing also `parse_init`:
             defaults.setup = {'name': 'Log', 'args': ['Hello from init!']}
             return TestSuite(TestSuite.name_from_source(source.parent), doc='Example',
                              source=source, metadata={'Example': 'Value'})
+
+Parser as preprocessor
+~~~~~~~~~~~~~~~~~~~~~~
+
+The final parser acts as a preprocessor for Robot Framework data files that
+supports headers in format `=== Test Cases ===` in addition to
+`*** Test Cases ***`. In this kind of usage it is convenient to use
+`TestSuite.from_string`__, `TestSuite.from_model`__ or
+`TestSuite.from_file_system`__ factory methods for constructing the returned suite.
+
+.. sourcecode:: python
+
+    from pathlib import Path
+    from robot.running import TestDefaults, TestSuite
+
+
+    class RobotPreprocessor:
+        extension = '.robot'
+
+        def parse(self, source: Path, defaults: TestDefaults) -> TestSuite:
+            name = TestSuite.name_from_source(source)
+            data = source.read_text()
+            for header in 'Settings', 'Variables', 'Test Cases', 'Keywords':
+                data = data.replace(f'=== {header} ===', f'*** {header} ***')
+            return TestSuite.from_string(data, defaults=defaults).config(name=name)
+
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.from_string
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.from_model
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.from_file_system

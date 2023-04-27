@@ -57,10 +57,11 @@ class TestSuiteBuilder:
     def __init__(self, included_suites: Sequence[str] = (),
                  included_extensions: Sequence[str] = ('.robot', '.rbt'),
                  custom_parsers: Sequence[str] = (),
+                 defaults: 'TestDefaults|None' = None,
                  rpa: 'bool|None' = None, lang: LanguagesLike = None,
                  allow_empty_suite: bool = False, process_curdir: bool = True):
         """
-        :param include_suites:
+        :param included_suites:
             List of suite names to include. If not given, all suites are included.
             Same as using ``--suite`` on the command line.
         :param included_extensions:
@@ -68,11 +69,15 @@ class TestSuiteBuilder:
         :param custom_parsers:
             Custom parsers as names or paths (same as ``--parser``) or as
             parser objects. New in RF 6.1.
-        :param rpa: Explicit execution mode. ``True`` for RPA and
-            ``False`` for test automation. By default, mode is got from data file
-            headers and possible conflicting headers cause an error.
-            Same as ``--rpa`` or ``--norpa``.
-        :param lang: Additional languages to be supported during parsing.
+        :param defaults:
+            Possible test specific defaults from suite initialization files.
+            New in RF 6.1.
+        :param rpa:
+            Explicit execution mode. ``True`` for RPA and ``False`` for test
+            automation. By default, mode is got from data file headers and possible
+            conflicting headers cause an error. Same as ``--rpa`` or ``--norpa``.
+        :param lang:
+            Additional languages to be supported during parsing.
             Can be a string matching any of the supported language codes or names,
             an initialized :class:`~robot.conf.languages.Language` subclass,
             a list containing such strings or instances, or a
@@ -87,6 +92,7 @@ class TestSuiteBuilder:
         """
         self.standard_parsers = self._get_standard_parsers(lang, process_curdir)
         self.custom_parsers = self._get_custom_parsers(custom_parsers)
+        self.defaults = defaults
         self.included_suites = tuple(included_suites or ())
         self.included_extensions = tuple(included_extensions or ())
         self.rpa = rpa
@@ -131,7 +137,7 @@ class TestSuiteBuilder:
         extensions = chain(self.included_extensions, self.custom_parsers)
         structure = SuiteStructureBuilder(extensions,
                                           self.included_suites).build(*paths)
-        suite = SuiteStructureParser(self._get_parsers(paths),
+        suite = SuiteStructureParser(self._get_parsers(paths), self.defaults,
                                      self.rpa).parse(structure)
         if not self.included_suites and not self.allow_empty_suite:
             self._validate_not_empty(suite, multi_source=len(paths) > 1)
@@ -172,16 +178,18 @@ class TestSuiteBuilder:
 
 class SuiteStructureParser(SuiteStructureVisitor):
 
-    def __init__(self, parsers: 'dict[str, Parser]', rpa: 'bool|None' = None):
+    def __init__(self, parsers: 'dict[str, Parser]',
+                 defaults: 'TestDefaults|None' = None, rpa: 'bool|None' = None):
         self.parsers = parsers
         self.rpa = rpa
+        self.defaults = defaults
         self._rpa_given = rpa is not None
         self.suite: 'TestSuite|None' = None
         self._stack: 'list[tuple[TestSuite, TestDefaults]]' = []
 
     @property
     def parent_defaults(self) -> 'TestDefaults|None':
-        return self._stack[-1][-1] if self._stack else None
+        return self._stack[-1][-1] if self._stack else self.defaults
 
     def parse(self, structure: SuiteStructure) -> TestSuite:
         structure.visit(self)

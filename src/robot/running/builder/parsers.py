@@ -64,10 +64,10 @@ class RobotParser(Parser):
         SuiteBuilder(suite, InitFileSettings(defaults)).build(model)
         return suite
 
-    def parse_model(self, model: File) -> TestSuite:
+    def parse_model(self, model: File, defaults: 'TestDefaults|None' = None) -> TestSuite:
         source = model.source
         suite = TestSuite(name=TestSuite.name_from_source(source), source=source)
-        SuiteBuilder(suite, FileSettings()).build(model)
+        SuiteBuilder(suite, FileSettings(defaults)).build(model)
         return suite
 
     def _get_curdir(self, source: Path) -> 'str|None':

@@ -36,6 +36,7 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 
 import warnings
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from robot import model
 from robot.conf import RobotSettings
@@ -49,6 +50,10 @@ from robot.utils import setter
 from .bodyrunner import ForRunner, IfRunner, KeywordRunner, TryRunner, WhileRunner
 from .randomizer import Randomizer
 from .statusreporter import StatusReporter
+
+if TYPE_CHECKING:
+    from robot.parsing import File
+    from .builder import TestDefaults
 
 
 class Body(model.Body):
@@ -398,65 +403,78 @@ class TestSuite(model.TestSuite):
         self.resource = ResourceFile(parent=self)
 
     @setter
-    def resource(self, resource):
+    def resource(self, resource: 'ResourceFile|dict') -> 'ResourceFile':
         if isinstance(resource, dict):
             resource = ResourceFile.from_dict(resource)
             resource.parent = self
         return resource
 
     @classmethod
-    def from_file_system(cls, *paths, **config):
+    def from_file_system(cls, *paths: 'Path|str', **config) -> 'TestSuite':
         """Create a :class:`TestSuite` object based on the given ``paths``.
 
-        ``paths`` are file or directory paths where to read the data from.
+        :param paths: File or directory paths where to read the data from.
+        :param config: Configuration parameters for :class:`~.builders.TestSuiteBuilder`
+            class that is used internally for building the suite.
 
-        Internally utilizes the :class:`~.builders.TestSuiteBuilder` class
-        and ``config`` can be used to configure how it is initialized.
-
-        New in Robot Framework 3.2.
+        See also :meth:`from_model` and :meth:`from_string`.
         """
         from .builder import TestSuiteBuilder
         return TestSuiteBuilder(**config).build(*paths)
 
     @classmethod
-    def from_model(cls, model, name=None):
+    def from_model(cls, model: 'File', name: 'str|None' = None, *,
+                   defaults: 'TestDefaults|None' = None) -> 'TestSuite':
         """Create a :class:`TestSuite` object based on the given ``model``.
+
+        :param model: Model to create the suite from.
+        :param name: Deprecated since Robot Framework 6.1.
+        :param defaults: Possible test specific defaults from suite
+            initialization files. New in Robot Framework 6.1.
 
         The model can be created by using the
         :func:`~robot.parsing.parser.parser.get_model` function and possibly
         modified by other tooling in the :mod:`robot.parsing` module.
 
-        The ``name`` argument is deprecated since Robot Framework 6.1. Users
-        should set the name and possible other attributes to the returned suite
-        separately. One easy way is using the :meth:`config` method like this::
+        Giving suite name is deprecated and users should set it and possible
+        other attributes to the returned suite separately. One easy way is using
+        the :meth:`config` method like this::
 
             suite = TestSuite.from_model(model).config(name='X', doc='Example')
 
-        New in Robot Framework 3.2.
+        See also :meth:`from_file_system` and :meth:`from_string`.
         """
         from .builder import RobotParser
-        suite = RobotParser().parse_model(model)
+        suite = RobotParser().parse_model(model, defaults)
         if name is not None:
-            # TODO: Change DeprecationWarning to more visible UserWarning in RF 6.2.
+            # TODO: Remove 'name' in RF 7.
             warnings.warn("'name' argument of 'TestSuite.from_model' is deprecated. "
-                          "Set the name to the returned suite separately.",
-                          DeprecationWarning)
+                          "Set the name to the returned suite separately.")
             suite.name = name
         return suite
 
     @classmethod
-    def from_string(cls, string, **config):
+    def from_string(cls, string: str, *, defaults: 'TestDefaults|None' = None,
+                    **config) -> 'TestSuite':
         """Create a :class:`TestSuite` object based on the given ``string``.
 
-        The string is internally parsed into a model by using the
-        :func:`~robot.parsing.parser.parser.get_model` function and ``config``
-        can be used to configure it. The model is then converted into a suite
-        by using :meth:`from_model`.
+        :param string: String to create the suite from.
+        :param defaults: Possible test specific defaults from suite
+            initialization files.
+        :param config: Configuration parameters for
+             :func:`~robot.parsing.parser.parser.get_model` used internally.
 
-        New in Robot Framework 6.1.
+        If suite name or other attributes need to be set, an easy way is using
+        the :meth:`config` method like this::
+
+            suite = TestSuite.from_string(string).config(name='X', doc='Example')
+
+        New in Robot Framework 6.1. See also :meth:`from_model` and
+        :meth:`from_file_system`.
         """
         from robot.parsing import get_model
-        return cls.from_model(get_model(string, data_only=True, **config))
+        model = get_model(string, data_only=True, **config)
+        return cls.from_model(model, defaults=defaults)
 
     def configure(self, randomize_suites=False, randomize_tests=False,
                   randomize_seed=None, **options):

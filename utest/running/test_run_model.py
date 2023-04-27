@@ -8,7 +8,8 @@ from pathlib import Path
 from robot import api, model
 from robot.model.modelobject import ModelObject
 from robot.running import (Break, Continue, Error, For, If, IfBranch, Keyword,
-                           Return, TestCase, TestSuite, Try, TryBranch, While)
+                           Return, TestCase, TestDefaults, TestSuite, Try, TryBranch,
+                           While)
 from robot.running.model import ResourceFile, UserKeyword
 from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal,
                                  assert_raises, assert_true)
@@ -64,6 +65,7 @@ ${VAR}           Value
 
 *** Test Cases ***
 Example
+    [Tags]    tag
     Keyword
 
 *** Keywords ***
@@ -94,6 +96,11 @@ Keyword
         suite = TestSuite.from_file_system(self.path, rpa=True)
         self._verify_suite(suite, rpa=True)
 
+    def test_from_file_system_with_defaults(self):
+        defaults = TestDefaults(tags=('from defaults',), timeout='10s')
+        suite = TestSuite.from_file_system(self.path, defaults=defaults)
+        self._verify_suite(suite, tags=('from defaults', 'tag'), timeout='10s')
+
     def test_from_model(self):
         model = api.get_model(self.data)
         suite = TestSuite.from_model(model)
@@ -103,6 +110,12 @@ Keyword
         model = api.get_model(self.path)
         suite = TestSuite.from_model(model)
         self._verify_suite(suite)
+
+    def test_from_model_with_defaults(self):
+        model = api.get_model(self.path)
+        defaults = TestDefaults(tags=('from defaults',), timeout='10s')
+        suite = TestSuite.from_model(model, defaults=defaults)
+        self._verify_suite(suite, tags=('from defaults', 'tag'), timeout='10s')
 
     def test_from_model_with_custom_name(self):
         for source in [self.data, self.path]:
@@ -118,12 +131,18 @@ Keyword
         suite = TestSuite.from_string(self.data)
         self._verify_suite(suite, name='')
 
-    def test_from_string_config(self):
+    def test_from_string_with_config(self):
         suite = TestSuite.from_string(self.data.replace('Test Cases', 'Testit'),
                                       lang='Finnish', curdir='.')
         self._verify_suite(suite, name='')
 
-    def _verify_suite(self, suite, name='Test Run Model', rpa=False):
+    def test_from_string_with_defaults(self):
+        defaults = TestDefaults(tags=('from defaults',), timeout='10s')
+        suite = TestSuite.from_string(self.data, defaults=defaults)
+        self._verify_suite(suite, name='', tags=('from defaults', 'tag'), timeout='10s')
+
+    def _verify_suite(self, suite, name='Test Run Model', tags=('tag',),
+                      timeout=None, rpa=False):
         assert_equal(suite.name, name)
         assert_equal(suite.doc, 'Some text.')
         assert_equal(suite.rpa, rpa)
@@ -135,6 +154,8 @@ Keyword
         assert_equal(suite.resource.keywords[0].body[0].name, 'Log')
         assert_equal(suite.resource.keywords[0].body[0].args, ('Hello!',))
         assert_equal(suite.tests[0].name, 'Example')
+        assert_equal(suite.tests[0].tags, tags)
+        assert_equal(suite.tests[0].timeout, timeout)
         assert_equal(suite.tests[0].setup.name, 'No Operation')
         assert_equal(suite.tests[0].body[0].name, 'Keyword')
 
