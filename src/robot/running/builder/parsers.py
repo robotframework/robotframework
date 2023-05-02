@@ -125,7 +125,7 @@ class CustomParser(Parser):
         return type_name(self.parser)
 
     @property
-    def extensions(self) -> 'tuple[str]':
+    def extensions(self) -> 'tuple[str, ...]':
         ext = (getattr(self.parser, 'EXTENSION', None)
                or getattr(self.parser, 'extension', None))
         extensions = [ext] if isinstance(ext, str) else list(ext or ())

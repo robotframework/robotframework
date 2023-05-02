@@ -16,7 +16,7 @@
 import inspect
 from itertools import chain
 from pathlib import Path
-from typing import Iterable, Iterator, Union
+from typing import cast, Iterable, Iterator, Union
 
 from robot.errors import DataError
 from robot.utils import classproperty, is_list_like, Importer, normalize
@@ -88,13 +88,13 @@ class Languages:
         for lang in languages:
             self._add_language(lang)
 
-    def _exists(self, path):
+    def _exists(self, path: Path):
         try:
             return path.exists()
         except OSError:    # Can happen on Windows w/ Python < 3.10.
             return False
 
-    def _add_language(self, lang):
+    def _add_language(self, lang: 'Language'):
         if lang in self.languages:
             return
         self.languages.append(lang)
@@ -104,10 +104,10 @@ class Languages:
         self.true_strings |= {s.title() for s in lang.true_strings}
         self.false_strings |= {s.title() for s in lang.false_strings}
 
-    def _get_languages(self, languages, add_english=True):
+    def _get_languages(self, languages, add_english=True) -> 'list[Language]':
         languages = self._resolve_languages(languages, add_english)
         available = self._get_available_languages()
-        returned = []
+        returned: 'list[Language]' = []
         for lang in languages:
             if isinstance(lang, Language):
                 returned.append(lang)
@@ -141,16 +141,16 @@ class Languages:
             }
         return languages
 
-    def _get_available_languages(self):
+    def _get_available_languages(self) -> 'dict[str, type[Language]]':
         available = {}
         for lang in Language.__subclasses__():
-            available[normalize(lang.code, ignore='-')] = lang
-            available[normalize(lang.name)] = lang
+            available[normalize(cast(str, lang.code), ignore='-')] = lang
+            available[normalize(cast(str, lang.name))] = lang
         if '' in available:
             available.pop('')
         return available
 
-    def _import_language_module(self, name_or_path):
+    def _import_language_module(self, name_or_path) -> 'list[Language]':
         def is_language(member):
             return (inspect.isclass(member)
                     and issubclass(member, Language)
@@ -244,7 +244,7 @@ class Language:
         """
         if cls is Language:
             return cls.__dict__['code']
-        code = cls.__name__.lower()
+        code = cast(type, cls).__name__.lower()
         if len(code) < 3:
             return code
         return f'{code[:2]}-{code[2:].upper()}'
@@ -262,7 +262,7 @@ class Language:
         return cls.__doc__.splitlines()[0] if cls.__doc__ else ''
 
     @property
-    def headers(self) -> 'dict[str, str]':
+    def headers(self) -> 'dict[str|None, str]':
         return {
             self.settings_header: En.settings_header,
             self.variables_header: En.variables_header,
@@ -273,7 +273,7 @@ class Language:
         }
 
     @property
-    def settings(self) -> 'dict[str, str]':
+    def settings(self) -> 'dict[str|None, str]':
         return {
             self.library_setting: En.library_setting,
             self.resource_setting: En.resource_setting,

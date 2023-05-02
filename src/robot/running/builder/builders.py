@@ -16,7 +16,7 @@
 from itertools import chain
 from os.path import normpath
 from pathlib import Path
-from typing import Sequence
+from typing import cast, Sequence
 
 from robot.conf import LanguagesLike
 from robot.errors import DataError
@@ -144,21 +144,21 @@ class TestSuiteBuilder:
         suite.remove_empty_suites(preserve_direct_children=len(paths) > 1)
         return suite
 
-    def _normalize_paths(self, paths: 'tuple[Path|str]') -> 'tuple[Path]':
+    def _normalize_paths(self, paths: 'Sequence[Path|str]') -> 'tuple[Path, ...]':
         if not paths:
             raise DataError('One or more source paths required.')
         # Cannot use `Path.resolve()` here because it resolves all symlinks which
         # isn't desired. `Path` doesn't have any methods for normalizing paths
         # so need to use `os.path.normpath()`. Also that _may_ resolve symlinks,
         # but we need to do it for backwards compatibility.
-        paths = tuple(Path(normpath(p)).absolute() for p in paths)
+        paths = [Path(normpath(p)).absolute() for p in paths]
         non_existing = [p for p in paths if not p.exists()]
         if non_existing:
             raise DataError(f"Parsing {seq2str(non_existing)} failed: "
                             f"File or directory to execute does not exist.")
-        return paths
+        return tuple(paths)
 
-    def _get_parsers(self, paths: 'tuple[Path]'):
+    def _get_parsers(self, paths: 'Sequence[Path]') -> 'dict[str|None, Parser]':
         parsers = {None: NoInitFileDirectoryParser(), **self.custom_parsers}
         robot_parser = self.standard_parsers['robot']
         for ext in chain(self.included_extensions,
@@ -178,7 +178,7 @@ class TestSuiteBuilder:
 
 class SuiteStructureParser(SuiteStructureVisitor):
 
-    def __init__(self, parsers: 'dict[str, Parser]',
+    def __init__(self, parsers: 'dict[str|None, Parser]',
                  defaults: 'TestDefaults|None' = None, rpa: 'bool|None' = None):
         self.parsers = parsers
         self.rpa = rpa
@@ -193,8 +193,9 @@ class SuiteStructureParser(SuiteStructureVisitor):
 
     def parse(self, structure: SuiteStructure) -> TestSuite:
         structure.visit(self)
-        self.suite.rpa = self.rpa
-        return self.suite
+        suite = cast(TestSuite, self.suite)
+        suite.rpa = self.rpa
+        return suite
 
     def visit_file(self, structure: SuiteStructure):
         LOGGER.info(f"Parsing file '{structure.source}'.")
@@ -220,7 +221,7 @@ class SuiteStructureParser(SuiteStructureVisitor):
             suite.rpa = suite.suites[0].rpa
 
     def _build_suite_file(self, structure: SuiteStructure):
-        source = structure.source
+        source = cast(Path, structure.source)
         defaults = self.parent_defaults or TestDefaults()
         parser = self.parsers[structure.extension]
         try:
@@ -233,7 +234,7 @@ class SuiteStructureParser(SuiteStructureVisitor):
         return suite
 
     def _build_suite_directory(self, structure: SuiteStructure):
-        source = structure.init_file or structure.source
+        source = cast(Path, structure.init_file or structure.source)
         defaults = TestDefaults(self.parent_defaults)
         parser = self.parsers[structure.extension]
         try:

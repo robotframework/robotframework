@@ -13,11 +13,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections.abc import MutableMapping
 import re
+from collections.abc import Mapping, MutableMapping, Sequence
+from typing import overload
 
-from .robottypes import is_dict_like, is_string
 
+@overload
+def normalize(string: str, ignore: 'Sequence[str]' = (), caseless: bool = True,
+              spaceless: bool = True) -> str:
+    ...
+
+@overload
+def normalize(string: bytes, ignore: 'Sequence[bytes]' = (), caseless: bool = True,
+              spaceless: bool = True) -> bytes:
+    ...
 
 def normalize(string, ignore=(), caseless=True, spaceless=True):
     """Normalizes given string according to given spec.
@@ -25,7 +34,7 @@ def normalize(string, ignore=(), caseless=True, spaceless=True):
     By default string is turned to lower case and all whitespace is removed.
     Additional characters can be removed by giving them in ``ignore`` list.
     """
-    empty = '' if is_string(string) else b''
+    empty = '' if isinstance(string, str) else b''
     if isinstance(ignore, bytes):
         # Iterating bytes in Python3 yields integers.
         ignore = [bytes([i]) for i in ignore]
@@ -99,7 +108,7 @@ class NormalizedDict(MutableMapping):
         return f'{name}({params})'
 
     def __eq__(self, other):
-        if not is_dict_like(other):
+        if not isinstance(other, Mapping):
             return False
         if not isinstance(other, NormalizedDict):
             other = NormalizedDict(other)

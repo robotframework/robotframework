@@ -43,7 +43,7 @@ class TestSuite(ModelObject):
     __slots__ = ['parent', '_name', 'doc', '_setup', '_teardown', 'rpa', '_my_visitors']
 
     def __init__(self, name: str = '', doc: str = '', metadata: 'Mapping|None' = None,
-                 source: 'Path|str|None' = None, rpa: bool = False,
+                 source: 'Path|str|None' = None, rpa: 'bool|None' = None,
                  parent: 'TestSuite|None' = None):
         self._name = name
         self.doc = doc

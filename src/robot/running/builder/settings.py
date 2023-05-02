@@ -13,27 +13,28 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 from collections.abc import Sequence
-try:
-    from typing import TypedDict
-except ImportError:
-    try:
-        from typing_extensions import TypedDict
-    except ImportError:
-        TypedDict = dict
 
 from ..model import TestCase
 
 
-class FixtureDict(TypedDict):
-    """Dictionary containing setup or teardown info.
+if sys.version_info >= (3, 8):
+    from typing import TypedDict
 
-    :attr:`args` is optional.
-    """
-    # `args` is not marked optional because that would be hard until we require
-    # Python 3.8 and ugly until Python 3.11.
-    name: str
-    args: 'Sequence[str]'
+
+    class FixtureDict(TypedDict):
+        """Dictionary containing setup or teardown info.
+
+        :attr:`args` and :attr:`lineno` are optional.
+        """
+        name: str
+        args: 'Sequence[str]'
+        lineno: int
+
+else:
+    class FixtureDict(dict):
+        pass
 
 
 class TestDefaults:
@@ -94,7 +95,7 @@ class TestDefaults:
         self._teardown = teardown
 
     @property
-    def tags(self) -> 'tuple[str]':
+    def tags(self) -> 'tuple[str, ...]':
         """Default tags. Can be set also as a sequence."""
         return self._tags + self.parent.tags if self.parent else self._tags
 
@@ -160,7 +161,7 @@ class FileSettings:
         self._test_teardown = teardown
 
     @property
-    def test_tags(self) -> 'tuple[str]':
+    def test_tags(self) -> 'tuple[str, ...]':
         return self._test_tags + self.test_defaults.tags
 
     @test_tags.setter
@@ -184,7 +185,7 @@ class FileSettings:
         self._test_template = template
 
     @property
-    def default_tags(self) -> 'tuple[str]':
+    def default_tags(self) -> 'tuple[str, ...]':
         return self._default_tags
 
     @default_tags.setter
@@ -192,7 +193,7 @@ class FileSettings:
         self._default_tags = tuple(tags)
 
     @property
-    def keyword_tags(self) -> 'tuple[str]':
+    def keyword_tags(self) -> 'tuple[str, ...]':
         return self._keyword_tags
 
     @keyword_tags.setter
