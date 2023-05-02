@@ -1,7 +1,7 @@
 import ast
 
 from robot.parsing import ModelTransformer
-from robot.parsing.model.blocks import Block
+from robot.parsing.model.blocks import Container
 from robot.parsing.model.statements import Statement
 
 from robot.utils.asserts import assert_equal
@@ -16,7 +16,7 @@ def assert_model(model, expected, **expected_attrs):
                      '%r != %r' % (model, expected), values=False)
         for m, e in zip(model, expected):
             assert_model(m, e)
-    elif isinstance(model, Block):
+    elif isinstance(model, Container):
         assert_block(model, expected, expected_attrs)
     elif isinstance(model, Statement):
         assert_statement(model, expected)

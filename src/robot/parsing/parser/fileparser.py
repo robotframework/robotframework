@@ -13,36 +13,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os.path
+from pathlib import Path
 
-from robot.utils import is_pathlike, is_string
+from robot.utils import Source
 
 from ..lexer import Token
-from ..model import (File, CommentSection, SettingSection, VariableSection,
-                     TestCaseSection, KeywordSection, InvalidSection)
-
-from .blockparsers import Parser, TestCaseParser, KeywordParser
+from ..model import (CommentSection, File, ImplicitCommentSection, InvalidSection,
+                     Keyword, KeywordSection, Section, SettingSection, Statement,
+                     TestCase, TestCaseSection, VariableSection)
+from .blockparsers import KeywordParser, Parser, TestCaseParser
 
 
 class FileParser(Parser):
+    model: File
 
-    def __init__(self, source=None):
+    def __init__(self, source: 'Source|None' = None):
         super().__init__(File(source=self._get_path(source)))
-
-    def _get_path(self, source):
-        if not source:
-            return None
-        if is_string(source) and '\n' not in source and os.path.isfile(source):
-            return source
-        if is_pathlike(source) and source.is_file():
-            return str(source)
-        return None
-
-    def handles(self, statement):
-        return True
-
-    def parse(self, statement):
-        parser_class = {
+        self.parsers: 'dict[str, type[SectionParser]]' = {
             Token.SETTING_HEADER: SettingSectionParser,
             Token.VARIABLE_HEADER: VariableSectionParser,
             Token.TESTCASE_HEADER: TestCaseSectionParser,
@@ -54,65 +41,79 @@ class FileParser(Parser):
             Token.COMMENT: ImplicitCommentSectionParser,
             Token.ERROR: ImplicitCommentSectionParser,
             Token.EOL: ImplicitCommentSectionParser
-        }[statement.type]
-        parser = parser_class(statement)
+        }
+
+    def _get_path(self, source: 'Source|None') -> 'Path|None':
+        if not source:
+            return None
+        if isinstance(source, str) and '\n' not in source:
+            source = Path(source)
+        try:
+            if isinstance(source, Path) and source.is_file():
+                return source
+        except OSError:    # Can happen on Windows w/ Python < 3.10.
+            pass
+        return None
+
+    def handles(self, statement: Statement) -> bool:
+        return True
+
+    def parse(self, statement: Statement) -> 'SectionParser':
+        parser_class = self.parsers[statement.type]
+        model_class: 'type[Section]' = parser_class.__annotations__['model']
+        parser = parser_class(model_class(statement))
         self.model.sections.append(parser.model)
         return parser
 
 
 class SectionParser(Parser):
-    model_class = None
+    model: Section
 
-    def __init__(self, header):
-        super().__init__(self.model_class(header))
-
-    def handles(self, statement):
+    def handles(self, statement: Statement) -> bool:
         return statement.type not in Token.HEADER_TOKENS
 
-    def parse(self, statement):
+    def parse(self, statement: Statement) -> 'Parser|None':
         self.model.body.append(statement)
         return None
 
 
 class SettingSectionParser(SectionParser):
-    model_class = SettingSection
+    model: SettingSection
 
 
 class VariableSectionParser(SectionParser):
-    model_class = VariableSection
+    model: VariableSection
 
 
 class CommentSectionParser(SectionParser):
-    model_class = CommentSection
-
-
-class InvalidSectionParser(SectionParser):
-    model_class = InvalidSection
+    model: CommentSection
 
 
 class ImplicitCommentSectionParser(SectionParser):
+    model: ImplicitCommentSection
 
-    def model_class(self, statement):
-        return CommentSection(body=[statement])
+
+class InvalidSectionParser(SectionParser):
+    model: InvalidSection
 
 
 class TestCaseSectionParser(SectionParser):
-    model_class = TestCaseSection
+    model: TestCaseSection
 
-    def parse(self, statement):
+    def parse(self, statement: Statement) -> 'Parser|None':
         if statement.type == Token.TESTCASE_NAME:
-            parser = TestCaseParser(statement)
+            parser = TestCaseParser(TestCase(statement))
             self.model.body.append(parser.model)
             return parser
-        return SectionParser.parse(self, statement)
+        return super().parse(statement)
 
 
 class KeywordSectionParser(SectionParser):
-    model_class = KeywordSection
+    model: KeywordSection
 
-    def parse(self, statement):
+    def parse(self, statement: Statement) -> 'Parser|None':
         if statement.type == Token.KEYWORD_NAME:
-            parser = KeywordParser(statement)
+            parser = KeywordParser(Keyword(statement))
             self.model.body.append(parser.model)
             return parser
-        return SectionParser.parse(self, statement)
+        return super().parse(statement)

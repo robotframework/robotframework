@@ -15,12 +15,13 @@
 
 import ast
 import re
-from typing import TYPE_CHECKING
+from abc import ABC, abstractmethod
+from collections.abc import Iterator, Sequence
+from typing import cast, ClassVar, overload, TYPE_CHECKING, Type, TypeVar
 
 from robot.conf import Language
 from robot.running.arguments import UserKeywordArgumentParser
-from robot.utils import (is_list_like, normalize_whitespace, seq2str, split_from_equals,
-                         test_or_task)
+from robot.utils import normalize_whitespace, seq2str, split_from_equals, test_or_task
 from robot.variables import is_scalar_assign, is_dict_variable, search_variable
 
 from ..lexer import Token
@@ -29,47 +30,64 @@ if TYPE_CHECKING:
     from .blocks import ValidationContext
 
 
+T = TypeVar('T', bound='Statement')
 FOUR_SPACES = '    '
 EOL = '\n'
 
 
-class Statement(ast.AST):
-    type = None
-    handles_types = ()
-    _fields = ('type', 'tokens')
+class Node(ast.AST, ABC):
     _attributes = ('lineno', 'col_offset', 'end_lineno', 'end_col_offset', 'errors')
-    _statement_handlers = {}
+    lineno: int
+    col_offset: int
+    end_lineno: int
+    end_col_offset: int
+    errors: 'tuple[str, ...]' = ()
 
-    def __init__(self, tokens, errors=()):
+
+class Statement(Node, ABC):
+    _fields = ('type', 'tokens')
+    type: str
+    handles_types: 'ClassVar[tuple[str, ...]]' = ()
+    statement_handlers: 'ClassVar[dict[str, Type[Statement]]]' = {}
+
+    def __init__(self, tokens: 'Sequence[Token]', errors: 'Sequence[str]' = ()):
         self.tokens = tuple(tokens)
-        self.errors = errors
+        self.errors = tuple(errors)
 
     @property
-    def lineno(self):
+    def lineno(self) -> int:
         return self.tokens[0].lineno if self.tokens else -1
 
     @property
-    def col_offset(self):
+    def col_offset(self) -> int:
         return self.tokens[0].col_offset if self.tokens else -1
 
     @property
-    def end_lineno(self):
+    def end_lineno(self) -> int:
         return self.tokens[-1].lineno if self.tokens else -1
 
     @property
-    def end_col_offset(self):
+    def end_col_offset(self) -> int:
         return self.tokens[-1].end_col_offset if self.tokens else -1
 
     @classmethod
-    def register(cls, subcls):
+    def register(cls, subcls: Type[T]) -> Type[T]:
         types = subcls.handles_types or (subcls.type,)
         for typ in types:
-            cls._statement_handlers[typ] = subcls
+            cls.statement_handlers[typ] = subcls
         return subcls
 
     @classmethod
-    def from_tokens(cls, tokens):
-        handlers = cls._statement_handlers
+    def from_tokens(cls, tokens: 'Sequence[Token]') -> 'Statement':
+        """Create a statement from given tokens.
+
+        Statement type is got automatically from token types.
+
+        This classmethod should be called from :class:`Statement`, not from
+        its subclasses. If you know the subclass to use, simply create an
+        instance of it directly.
+        """
+        handlers = cls.statement_handlers
         for token in tokens:
             if token.type in handlers:
                 return handlers[token.type](tokens)
@@ -78,7 +96,8 @@ class Statement(ast.AST):
         return EmptyLine(tokens)
 
     @classmethod
-    def from_params(cls, *args, **kwargs):
+    @abstractmethod
+    def from_params(cls, *args, **kwargs) -> 'Statement':
         """Create a statement from passed parameters.
 
         Required and optional arguments in general match class properties.
@@ -89,14 +108,18 @@ class Statement(ast.AST):
         - ``separator`` whitespace inserted between each token. Default is four spaces.
         - ``indent`` whitespace inserted before first token. Default is four spaces.
         - ``eol`` end of line sign. Default is ``'\\n'``.
+
+        This classmethod should be called from the :class:`Statement` subclass
+        to create, not from the :class:`Statement` class itself.
         """
         raise NotImplementedError
 
     @property
-    def data_tokens(self):
+    def data_tokens(self) -> 'list[Token]':
         return [t for t in self.tokens if t.type not in Token.NON_DATA_TOKENS]
 
-    def get_token(self, *types):
+    # TODO: Try raising an exception if three's no match.
+    def get_token(self, *types: str) -> 'Token|None':
         """Return a token with any of the given ``types``.
 
         If there are no matches, return ``None``. If there are multiple
@@ -107,11 +130,19 @@ class Statement(ast.AST):
                 return token
         return None
 
-    def get_tokens(self, *types):
+    def get_tokens(self, *types: str) -> 'list[Token]':
         """Return tokens having any of the given ``types``."""
         return [t for t in self.tokens if t.type in types]
 
-    def get_value(self, type, default=None):
+    @overload
+    def get_value(self, type: str, default: str) -> str:
+        ...
+
+    @overload
+    def get_value(self, type: str, default: None = None) -> 'str|None':
+        ...
+
+    def get_value(self, type: str, default: 'str|None' = None) -> 'str|None':
         """Return value of a token with the given ``type``.
 
         If there are no matches, return ``default``. If there are multiple
@@ -120,22 +151,28 @@ class Statement(ast.AST):
         token = self.get_token(type)
         return token.value if token else default
 
-    def get_values(self, *types):
+    def get_values(self, *types: str) -> 'tuple[str, ...]':
         """Return values of tokens having any of the given ``types``."""
         return tuple(t.value for t in self.tokens if t.type in types)
 
-    def get_option(self, name, default=None):
+    def get_option(self, name: str, default: 'str|None' = None) -> 'str|None':
         """Return value of a configuration option with the given ``name``.
 
         If the option has not been used, return ``default``.
 
         New in Robot Framework 6.1.
         """
-        options = dict(opt.split('=', 1) for opt in self.get_values(Token.OPTION))
-        return options.get(name, default)
+        # FIXME: Change the logic to return the first match, not the last.
+        # Also change validation so that only one option is allowed.
+        result = default
+        for option in self.get_values(Token.OPTION):
+            opt_name, opt_value = option.split('=', 1)
+            if opt_name == name:
+                result = opt_value
+        return result
 
     @property
-    def lines(self):
+    def lines(self) -> 'Iterator[list[Token]]':
         line = []
         for token in self.tokens:
             line.append(token)
@@ -148,16 +185,16 @@ class Statement(ast.AST):
     def validate(self, ctx: 'ValidationContext'):
         pass
 
-    def __iter__(self):
+    def __iter__(self) -> 'Iterator[Token]':
         return iter(self.tokens)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.tokens)
 
-    def __getitem__(self, item):
+    def __getitem__(self, item) -> Token:
         return self.tokens[item]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         name = type(self).__name__
         tokens = f'tokens={list(self.tokens)}'
         errors = f', errors={list(self.errors)}' if self.errors else ''
@@ -167,10 +204,10 @@ class Statement(ast.AST):
 class DocumentationOrMetadata(Statement):
 
     @property
-    def value(self):
+    def value(self) -> str:
         return ''.join(self._get_lines()).rstrip()
 
-    def _get_lines(self):
+    def _get_lines(self) -> 'Iterator[str]':
         base_offset = -1
         for tokens in self._get_line_tokens():
             yield from self._get_line_values(tokens, base_offset)
@@ -178,8 +215,8 @@ class DocumentationOrMetadata(Statement):
             if base_offset < 0 or 0 < first.col_offset < base_offset and first.value:
                 base_offset = first.col_offset
 
-    def _get_line_tokens(self):
-        line = []
+    def _get_line_tokens(self) -> 'Iterator[list[Token]]':
+        line: 'list[Token]' = []
         lineno = -1
         # There are no EOLs during execution or if data has been parsed with
         # `data_only=True` otherwise, so we need to look at line numbers to
@@ -199,7 +236,7 @@ class DocumentationOrMetadata(Statement):
         if line:
             yield line
 
-    def _get_line_values(self, tokens, offset):
+    def _get_line_values(self, tokens: 'list[Token]', offset: int) -> 'Iterator[str]':
         token = None
         for index, token in enumerate(tokens):
             if token.col_offset > offset > 0:
@@ -211,22 +248,22 @@ class DocumentationOrMetadata(Statement):
         if token and not self._has_trailing_backslash_or_newline(token.value):
             yield '\n'
 
-    def _remove_trailing_backslash(self, value):
+    def _remove_trailing_backslash(self, value: str) -> str:
         if value and value[-1] == '\\':
             match = re.search(r'(\\+)$', value)
-            if len(match.group(1)) % 2 == 1:
+            if match and len(match.group(1)) % 2 == 1:
                 value = value[:-1]
         return value
 
-    def _has_trailing_backslash_or_newline(self, line):
+    def _has_trailing_backslash_or_newline(self, line: str) -> bool:
         match = re.search(r'(\\+)n?$', line)
-        return match and len(match.group(1)) % 2 == 1
+        return bool(match and len(match.group(1)) % 2 == 1)
 
 
 class SingleValue(Statement):
 
     @property
-    def value(self):
+    def value(self) -> 'str|None':
         values = self.get_values(Token.NAME, Token.ARGUMENT)
         if values and values[0].upper() != 'NONE':
             return values[0]
@@ -236,18 +273,18 @@ class SingleValue(Statement):
 class MultiValue(Statement):
 
     @property
-    def values(self):
+    def values(self) -> 'tuple[str, ...]':
         return self.get_values(Token.ARGUMENT)
 
 
 class Fixture(Statement):
 
     @property
-    def name(self):
-        return self.get_value(Token.NAME)
+    def name(self) -> str:
+        return self.get_value(Token.NAME, '')
 
     @property
-    def args(self):
+    def args(self) -> 'tuple[str, ...]':
         return self.get_values(Token.ARGUMENT)
 
 
@@ -259,27 +296,28 @@ class SectionHeader(Statement):
                      Token.INVALID_HEADER)
 
     @classmethod
-    def from_params(cls, type, name=None, eol=EOL):
+    def from_params(cls, type: str, name: 'str|None' = None,
+                    eol: str = EOL) -> 'SectionHeader':
         if not name:
             names = ('Settings', 'Variables', 'Test Cases', 'Tasks',
                      'Keywords', 'Comments')
             name = dict(zip(cls.handles_types, names))[type]
-        if not name.startswith('*'):
-            name = f'*** {name} ***'
+        name = cast(str, name)
+        header = f'*** {name} ***' if not name.startswith('*') else name
         return cls([
-            Token(type, name),
-            Token('EOL', '\n')
+            Token(type, header),
+            Token(Token.EOL, eol)
         ])
 
     @property
-    def type(self):
+    def type(self) -> str:
         token = self.get_token(*self.handles_types)
-        return token.type
+        return token.type    # type: ignore
 
     @property
-    def name(self):
+    def name(self) -> str:
         token = self.get_token(*self.handles_types)
-        return normalize_whitespace(token.value).strip('* ')
+        return normalize_whitespace(token.value).strip('* ') if token else ''
 
 
 @Statement.register
@@ -287,7 +325,8 @@ class LibraryImport(Statement):
     type = Token.LIBRARY
 
     @classmethod
-    def from_params(cls, name, args=(), alias=None, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name: str, args: 'Sequence[str]' = (), alias: 'str|None' = None,
+                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'LibraryImport':
         tokens = [Token(Token.LIBRARY, 'Library'),
                   Token(Token.SEPARATOR, separator),
                   Token(Token.NAME, name)]
@@ -303,17 +342,17 @@ class LibraryImport(Statement):
         return cls(tokens)
 
     @property
-    def name(self):
-        return self.get_value(Token.NAME)
+    def name(self) -> str:
+        return self.get_value(Token.NAME, '')
 
     @property
-    def args(self):
+    def args(self) -> 'tuple[str, ...]':
         return self.get_values(Token.ARGUMENT)
 
     @property
-    def alias(self):
-        with_name = self.get_token(Token.WITH_NAME)
-        return self.get_tokens(Token.NAME)[-1].value if with_name else None
+    def alias(self) -> 'str|None':
+        separator = self.get_token(Token.WITH_NAME)
+        return self.get_tokens(Token.NAME)[-1].value if separator else None
 
 
 @Statement.register
@@ -321,7 +360,8 @@ class ResourceImport(Statement):
     type = Token.RESOURCE
 
     @classmethod
-    def from_params(cls, name, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name: str, separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'ResourceImport':
         return cls([
             Token(Token.RESOURCE, 'Resource'),
             Token(Token.SEPARATOR, separator),
@@ -330,8 +370,8 @@ class ResourceImport(Statement):
         ])
 
     @property
-    def name(self):
-        return self.get_value(Token.NAME)
+    def name(self) -> str:
+        return self.get_value(Token.NAME, '')
 
 
 @Statement.register
@@ -339,7 +379,8 @@ class VariablesImport(Statement):
     type = Token.VARIABLES
 
     @classmethod
-    def from_params(cls, name, args=(), separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name: str, args: 'Sequence[str]' = (),
+                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'VariablesImport':
         tokens = [Token(Token.VARIABLES, 'Variables'),
                   Token(Token.SEPARATOR, separator),
                   Token(Token.NAME, name)]
@@ -350,11 +391,11 @@ class VariablesImport(Statement):
         return cls(tokens)
 
     @property
-    def name(self):
-        return self.get_value(Token.NAME)
+    def name(self) -> str:
+        return self.get_value(Token.NAME, '')
 
     @property
-    def args(self):
+    def args(self) -> 'tuple[str, ...]':
         return self.get_values(Token.ARGUMENT)
 
 
@@ -363,8 +404,9 @@ class Documentation(DocumentationOrMetadata):
     type = Token.DOCUMENTATION
 
     @classmethod
-    def from_params(cls, value, indent=FOUR_SPACES, separator=FOUR_SPACES,
-                    eol=EOL, settings_section=True):
+    def from_params(cls, value: str, indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES, eol: str = EOL,
+                    settings_section: bool = True) -> 'Documentation':
         if settings_section:
             tokens = [Token(Token.DOCUMENTATION, 'Documentation'),
                       Token(Token.SEPARATOR, separator)]
@@ -393,7 +435,8 @@ class Metadata(DocumentationOrMetadata):
     type = Token.METADATA
 
     @classmethod
-    def from_params(cls, name, value, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name: str, value: str, separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'Metadata':
         tokens = [Token(Token.METADATA, 'Metadata'),
                   Token(Token.SEPARATOR, separator),
                   Token(Token.NAME, name)]
@@ -410,8 +453,8 @@ class Metadata(DocumentationOrMetadata):
         return cls(tokens)
 
     @property
-    def name(self):
-        return self.get_value(Token.NAME)
+    def name(self) -> str:
+        return self.get_value(Token.NAME, '')
 
 
 @Statement.register
@@ -419,7 +462,8 @@ class ForceTags(MultiValue):
     type = Token.FORCE_TAGS
 
     @classmethod
-    def from_params(cls, values, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, values: 'Sequence[str]', separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'ForceTags':
         tokens = [Token(Token.FORCE_TAGS, 'Force Tags')]
         for tag in values:
             tokens.extend([Token(Token.SEPARATOR, separator),
@@ -433,7 +477,8 @@ class DefaultTags(MultiValue):
     type = Token.DEFAULT_TAGS
 
     @classmethod
-    def from_params(cls, values, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, values: 'Sequence[str]', separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'DefaultTags':
         tokens = [Token(Token.DEFAULT_TAGS, 'Default Tags')]
         for tag in values:
             tokens.extend([Token(Token.SEPARATOR, separator),
@@ -447,7 +492,8 @@ class KeywordTags(MultiValue):
     type = Token.KEYWORD_TAGS
 
     @classmethod
-    def from_params(cls, values, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, values: 'Sequence[str]', separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'KeywordTags':
         tokens = [Token(Token.KEYWORD_TAGS, 'Keyword Tags')]
         for tag in values:
             tokens.extend([Token(Token.SEPARATOR, separator),
@@ -461,7 +507,8 @@ class SuiteName(SingleValue):
     type = Token.SUITE_NAME
 
     @classmethod
-    def from_params(cls, value, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, value: str, separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'SuiteName':
         return cls([
             Token(Token.SUITE_NAME, 'Name'),
             Token(Token.SEPARATOR, separator),
@@ -475,7 +522,8 @@ class SuiteSetup(Fixture):
     type = Token.SUITE_SETUP
 
     @classmethod
-    def from_params(cls, name, args=(), separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name: str, args: 'Sequence[str]' = (),
+                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'SuiteSetup':
         tokens = [Token(Token.SUITE_SETUP, 'Suite Setup'),
                   Token(Token.SEPARATOR, separator),
                   Token(Token.NAME, name)]
@@ -491,7 +539,8 @@ class SuiteTeardown(Fixture):
     type = Token.SUITE_TEARDOWN
 
     @classmethod
-    def from_params(cls, name, args=(), separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name: str, args: 'Sequence[str]' = (),
+                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'SuiteTeardown':
         tokens = [Token(Token.SUITE_TEARDOWN, 'Suite Teardown'),
                   Token(Token.SEPARATOR, separator),
                   Token(Token.NAME, name)]
@@ -507,7 +556,8 @@ class TestSetup(Fixture):
     type = Token.TEST_SETUP
 
     @classmethod
-    def from_params(cls, name, args=(), separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name: str, args: 'Sequence[str]' = (),
+                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'TestSetup':
         tokens = [Token(Token.TEST_SETUP, 'Test Setup'),
                   Token(Token.SEPARATOR, separator),
                   Token(Token.NAME, name)]
@@ -523,7 +573,8 @@ class TestTeardown(Fixture):
     type = Token.TEST_TEARDOWN
 
     @classmethod
-    def from_params(cls, name, args=(), separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name: str, args: 'Sequence[str]' = (),
+                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'TestTeardown':
         tokens = [Token(Token.TEST_TEARDOWN, 'Test Teardown'),
                   Token(Token.SEPARATOR, separator),
                   Token(Token.NAME, name)]
@@ -539,7 +590,8 @@ class TestTemplate(SingleValue):
     type = Token.TEST_TEMPLATE
 
     @classmethod
-    def from_params(cls, value, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, value: str, separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'TestTemplate':
         return cls([
             Token(Token.TEST_TEMPLATE, 'Test Template'),
             Token(Token.SEPARATOR, separator),
@@ -553,7 +605,8 @@ class TestTimeout(SingleValue):
     type = Token.TEST_TIMEOUT
 
     @classmethod
-    def from_params(cls, value, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, value: str, separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'TestTimeout':
         return cls([
             Token(Token.TEST_TIMEOUT, 'Test Timeout'),
             Token(Token.SEPARATOR, separator),
@@ -567,9 +620,9 @@ class Variable(Statement):
     type = Token.VARIABLE
 
     @classmethod
-    def from_params(cls, name, value, separator=FOUR_SPACES, eol=EOL):
-        """``value`` can be given either as a string or as a list of strings."""
-        values = value if is_list_like(value) else [value]
+    def from_params(cls, name: str, value: 'str|Sequence[str]',
+                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'Variable':
+        values = [value] if isinstance(value, str) else value
         tokens = [Token(Token.VARIABLE, name)]
         for value in values:
             tokens.extend([Token(Token.SEPARATOR, separator),
@@ -578,14 +631,14 @@ class Variable(Statement):
         return cls(tokens)
 
     @property
-    def name(self):
-        name = self.get_value(Token.VARIABLE)
+    def name(self) -> str:
+        name = self.get_value(Token.VARIABLE, '')
         if name.endswith('='):
             return name[:-1].rstrip()
         return name
 
     @property
-    def value(self):
+    def value(self) -> 'tuple[str, ...]':
         return self.get_values(Token.ARGUMENT)
 
     def validate(self, ctx: 'ValidationContext'):
@@ -605,7 +658,7 @@ class Variable(Statement):
                     f"variables themselves.",
                 )
 
-    def _is_valid_dict_item(self, item):
+    def _is_valid_dict_item(self, item: str) -> bool:
         name, value = split_from_equals(item)
         return value is not None or is_dict_variable(item)
 
@@ -615,15 +668,15 @@ class TestCaseName(Statement):
     type = Token.TESTCASE_NAME
 
     @classmethod
-    def from_params(cls, name, eol=EOL):
+    def from_params(cls, name: str, eol: str = EOL) -> 'TestCaseName':
         tokens = [Token(Token.TESTCASE_NAME, name)]
         if eol:
             tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
     @property
-    def name(self):
-        return self.get_value(Token.TESTCASE_NAME)
+    def name(self) -> str:
+        return self.get_value(Token.TESTCASE_NAME, '')
 
     def validate(self, ctx: 'ValidationContext'):
         if not self.name:
@@ -635,15 +688,15 @@ class KeywordName(Statement):
     type = Token.KEYWORD_NAME
 
     @classmethod
-    def from_params(cls, name, eol=EOL):
+    def from_params(cls, name: str, eol: str = EOL) -> 'KeywordName':
         tokens = [Token(Token.KEYWORD_NAME, name)]
         if eol:
             tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
     @property
-    def name(self):
-        return self.get_value(Token.KEYWORD_NAME)
+    def name(self) -> str:
+        return self.get_value(Token.KEYWORD_NAME, '')
 
     def validate(self, ctx: 'ValidationContext'):
         if not self.name:
@@ -655,8 +708,9 @@ class Setup(Fixture):
     type = Token.SETUP
 
     @classmethod
-    def from_params(cls, name, args=(), indent=FOUR_SPACES, separator=FOUR_SPACES,
-                    eol=EOL):
+    def from_params(cls, name: str, args: 'Sequence[str]' = (),
+                    indent: str = FOUR_SPACES, separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'Setup':
         tokens = [Token(Token.SEPARATOR, indent),
                   Token(Token.SETUP, '[Setup]'),
                   Token(Token.SEPARATOR, separator),
@@ -673,8 +727,9 @@ class Teardown(Fixture):
     type = Token.TEARDOWN
 
     @classmethod
-    def from_params(cls, name, args=(), indent=FOUR_SPACES, separator=FOUR_SPACES,
-                    eol=EOL):
+    def from_params(cls, name: str, args: 'Sequence[str]' = (),
+                    indent: str = FOUR_SPACES, separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'Teardown':
         tokens = [Token(Token.SEPARATOR, indent),
                   Token(Token.TEARDOWN, '[Teardown]'),
                   Token(Token.SEPARATOR, separator),
@@ -691,7 +746,8 @@ class Tags(MultiValue):
     type = Token.TAGS
 
     @classmethod
-    def from_params(cls, values, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, values: 'Sequence[str]', indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'Tags':
         tokens = [Token(Token.SEPARATOR, indent),
                   Token(Token.TAGS, '[Tags]')]
         for tag in values:
@@ -706,7 +762,8 @@ class Template(SingleValue):
     type = Token.TEMPLATE
 
     @classmethod
-    def from_params(cls, value, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, value: str, indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'Template':
         return cls([
             Token(Token.SEPARATOR, indent),
             Token(Token.TEMPLATE, '[Template]'),
@@ -721,7 +778,8 @@ class Timeout(SingleValue):
     type = Token.TIMEOUT
 
     @classmethod
-    def from_params(cls, value, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, value: str, indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'Timeout':
         return cls([
             Token(Token.SEPARATOR, indent),
             Token(Token.TIMEOUT, '[Timeout]'),
@@ -736,7 +794,8 @@ class Arguments(MultiValue):
     type = Token.ARGUMENTS
 
     @classmethod
-    def from_params(cls, args, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, args: 'Sequence[str]', indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'Arguments':
         tokens = [Token(Token.SEPARATOR, indent),
                   Token(Token.ARGUMENTS, '[Arguments]')]
         for arg in args:
@@ -746,7 +805,7 @@ class Arguments(MultiValue):
         return cls(tokens)
 
     def validate(self, ctx: 'ValidationContext'):
-        errors = []
+        errors: 'list[str]' = []
         UserKeywordArgumentParser(error_reporter=errors.append).parse(self.values)
         self.errors = tuple(errors)
 
@@ -771,7 +830,8 @@ class Return(MultiValue):
     type = Token.RETURN
 
     @classmethod
-    def from_params(cls, args, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, args: 'Sequence[str]', indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'Return':
         tokens = [Token(Token.SEPARATOR, indent),
                   Token(Token.RETURN, '[Return]')]
         for arg in args:
@@ -790,8 +850,9 @@ class KeywordCall(Statement):
     type = Token.KEYWORD
 
     @classmethod
-    def from_params(cls, name, assign=(), args=(), indent=FOUR_SPACES,
-                    separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, name: str, assign: 'Sequence[str]' = (),
+                    args: 'Sequence[str]' = (), indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'KeywordCall':
         tokens = [Token(Token.SEPARATOR, indent)]
         for assignment in assign:
             tokens.extend([Token(Token.ASSIGN, assignment),
@@ -804,15 +865,15 @@ class KeywordCall(Statement):
         return cls(tokens)
 
     @property
-    def keyword(self):
-        return self.get_value(Token.KEYWORD)
+    def keyword(self) -> str:
+        return self.get_value(Token.KEYWORD, '')
 
     @property
-    def args(self):
+    def args(self) -> 'tuple[str, ...]':
         return self.get_values(Token.ARGUMENT)
 
     @property
-    def assign(self):
+    def assign(self) -> 'tuple[str, ...]':
         return self.get_values(Token.ASSIGN)
 
 
@@ -821,7 +882,8 @@ class TemplateArguments(Statement):
     type = Token.ARGUMENT
 
     @classmethod
-    def from_params(cls, args, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, args: 'Sequence[str]', indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'TemplateArguments':
         tokens = []
         for index, arg in enumerate(args):
             tokens.extend([Token(Token.SEPARATOR, separator if index else indent),
@@ -830,7 +892,7 @@ class TemplateArguments(Statement):
         return cls(tokens)
 
     @property
-    def args(self):
+    def args(self) -> 'tuple[str, ...]':
         return self.get_values(self.type)
 
 
@@ -839,8 +901,9 @@ class ForHeader(Statement):
     type = Token.FOR
 
     @classmethod
-    def from_params(cls, variables, values, flavor='IN', indent=FOUR_SPACES,
-                    separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, variables: 'Sequence[str]', values: 'Sequence[str]',
+                    flavor: str = 'IN', indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'ForHeader':
         tokens = [Token(Token.SEPARATOR, indent),
                   Token(Token.FOR),
                   Token(Token.SEPARATOR, separator)]
@@ -855,28 +918,28 @@ class ForHeader(Statement):
         return cls(tokens)
 
     @property
-    def variables(self):
+    def variables(self) -> 'tuple[str, ...]':
         return self.get_values(Token.VARIABLE)
 
     @property
-    def values(self):
+    def values(self) -> 'tuple[str, ...]':
         return self.get_values(Token.ARGUMENT)
 
     @property
-    def flavor(self):
+    def flavor(self) -> 'str|None':
         separator = self.get_token(Token.FOR_SEPARATOR)
         return normalize_whitespace(separator.value) if separator else None
 
     @property
-    def start(self):
+    def start(self) -> 'str|None':
         return self.get_option('start') if self.flavor == 'IN ENUMERATE' else None
 
     @property
-    def mode(self):
+    def mode(self) -> 'str|None':
         return self.get_option('mode') if self.flavor == 'IN ZIP' else None
 
     @property
-    def fill(self):
+    def fill(self) -> 'str|None':
         return self.get_option('fill') if self.flavor == 'IN ZIP' else None
 
     def validate(self, ctx: 'ValidationContext'):
@@ -891,41 +954,20 @@ class ForHeader(Statement):
             if not self.values:
                 self._add_error('no loop values')
 
-    def _add_error(self, error):
+    def _add_error(self, error: str):
         self.errors += (f'FOR loop has {error}.',)
 
 
-class IfElseHeader(Statement):
+class IfElseHeader(Statement, ABC):
 
     @property
-    def condition(self):
-        return None
-
-    @property
-    def assign(self):
-        return None
-
-
-@Statement.register
-class IfHeader(IfElseHeader):
-    type = Token.IF
-
-    @classmethod
-    def from_params(cls, condition, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
-        tokens = [Token(Token.SEPARATOR, indent),
-                  Token(cls.type),
-                  Token(Token.SEPARATOR, separator),
-                  Token(Token.ARGUMENT, condition)]
-        if cls.type != Token.INLINE_IF:
-            tokens.append(Token(Token.EOL, eol))
-        return cls(tokens)
-
-    @property
-    def condition(self):
+    def condition(self) -> 'str|None':
         values = self.get_values(Token.ARGUMENT)
-        if len(values) != 1:
-            return ', '.join(values) if values else None
-        return values[0]
+        return ', '.join(values) if values else None
+
+    @property
+    def assign(self) -> 'tuple[str, ...]':
+        return self.get_values(Token.ASSIGN)
 
     def validate(self, ctx: 'ValidationContext'):
         conditions = len(self.get_tokens(Token.ARGUMENT))
@@ -936,17 +978,53 @@ class IfHeader(IfElseHeader):
 
 
 @Statement.register
-class InlineIfHeader(IfHeader):
-    type = Token.INLINE_IF
+class IfHeader(IfElseHeader):
+    type = Token.IF
 
-    @property
-    def assign(self):
-        return self.get_values(Token.ASSIGN)
+    @classmethod
+    def from_params(cls, condition: str, indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'IfHeader':
+        return cls([
+            Token(Token.SEPARATOR, indent),
+            Token(cls.type),
+            Token(Token.SEPARATOR, separator),
+            Token(Token.ARGUMENT, condition),
+            Token(Token.EOL, eol)
+        ])
 
 
 @Statement.register
-class ElseIfHeader(IfHeader):
+class InlineIfHeader(IfElseHeader):
+    type = Token.INLINE_IF
+
+    @classmethod
+    def from_params(cls, condition: str, assign: 'Sequence[str]' = (),
+                    indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES) -> 'InlineIfHeader':
+        tokens = [Token(Token.SEPARATOR, indent)]
+        for assignment in assign:
+            tokens.extend([Token(Token.ASSIGN, assignment),
+                           Token(Token.SEPARATOR, separator)])
+        tokens.extend([Token(Token.INLINE_IF),
+                       Token(Token.SEPARATOR, separator),
+                       Token(Token.ARGUMENT, condition)])
+        return cls(tokens)
+
+
+@Statement.register
+class ElseIfHeader(IfElseHeader):
     type = Token.ELSE_IF
+
+    @classmethod
+    def from_params(cls, condition: str, indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'ElseIfHeader':
+        return cls([
+            Token(Token.SEPARATOR, indent),
+            Token(Token.ELSE_IF),
+            Token(Token.SEPARATOR, separator),
+            Token(Token.ARGUMENT, condition),
+            Token(Token.EOL, eol)
+        ])
 
 
 @Statement.register
@@ -954,7 +1032,7 @@ class ElseHeader(IfElseHeader):
     type = Token.ELSE
 
     @classmethod
-    def from_params(cls, indent=FOUR_SPACES, eol=EOL):
+    def from_params(cls, indent: str = FOUR_SPACES, eol: str = EOL) -> 'ElseHeader':
         return cls([
             Token(Token.SEPARATOR, indent),
             Token(Token.ELSE),
@@ -967,10 +1045,10 @@ class ElseHeader(IfElseHeader):
             self.errors += (f'ELSE does not accept arguments, got {seq2str(values)}.',)
 
 
-class NoArgumentHeader(Statement):
+class NoArgumentHeader(Statement, ABC):
 
     @classmethod
-    def from_params(cls, indent=FOUR_SPACES, eol=EOL):
+    def from_params(cls, indent: str = FOUR_SPACES, eol: str = EOL):
         return cls([
             Token(Token.SEPARATOR, indent),
             Token(cls.type),
@@ -983,7 +1061,7 @@ class NoArgumentHeader(Statement):
                             f'{seq2str(self.values)}.',)
 
     @property
-    def values(self):
+    def values(self) -> 'tuple[str, ...]':
         return self.get_values(Token.ARGUMENT)
 
 
@@ -997,13 +1075,14 @@ class ExceptHeader(Statement):
     type = Token.EXCEPT
 
     @classmethod
-    def from_params(cls, patterns=(), type=None, variable=None, indent=FOUR_SPACES,
-                    separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, patterns: 'Sequence[str]' = (), type: 'str|None' = None,
+                    variable: 'str|None' = None, indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'ExceptHeader':
         tokens = [Token(Token.SEPARATOR, indent),
                   Token(Token.EXCEPT)]
         for pattern in patterns:
             tokens.extend([Token(Token.SEPARATOR, separator),
-                           Token(Token.ARGUMENT, pattern)]),
+                           Token(Token.ARGUMENT, pattern)])
         if type:
             tokens.extend([Token(Token.SEPARATOR, separator),
                            Token(Token.OPTION, f'type={type}')])
@@ -1016,15 +1095,15 @@ class ExceptHeader(Statement):
         return cls(tokens)
 
     @property
-    def patterns(self):
+    def patterns(self) -> 'tuple[str, ...]':
         return self.get_values(Token.ARGUMENT)
 
     @property
-    def pattern_type(self):
+    def pattern_type(self) -> 'str|None':
         return self.get_option('type')
 
     @property
-    def variable(self):
+    def variable(self) -> 'str|None':
         return self.get_value(Token.VARIABLE)
 
     def validate(self, ctx: 'ValidationContext'):
@@ -1054,36 +1133,40 @@ class WhileHeader(Statement):
     type = Token.WHILE
 
     @classmethod
-    def from_params(cls, condition, limit=None, on_limit=None, on_limit_message=None,
-                    indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, condition: str, limit: 'str|None' = None,
+                    on_limit: 'str|None ' = None, on_limit_message: 'str|None' = None,
+                    indent: str = FOUR_SPACES, separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'WhileHeader':
         tokens = [Token(Token.SEPARATOR, indent),
-                  Token(cls.type),
+                  Token(Token.WHILE),
                   Token(Token.SEPARATOR, separator),
                   Token(Token.ARGUMENT, condition)]
         if limit:
             tokens.extend([Token(Token.SEPARATOR, indent),
                            Token(Token.OPTION, f'limit={limit}')])
+        if on_limit:
+            tokens.extend([Token(Token.SEPARATOR, indent),
+                           Token(Token.OPTION, f'on_limit={on_limit}')])
         if on_limit_message:
             tokens.extend([Token(Token.SEPARATOR, indent),
-                           Token(Token.OPTION,
-                                 f'on_limit_message={on_limit_message}')])
+                           Token(Token.OPTION, f'on_limit_message={on_limit_message}')])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
     @property
-    def condition(self):
+    def condition(self) -> str:
         return ', '.join(self.get_values(Token.ARGUMENT))
 
     @property
-    def limit(self):
+    def limit(self) -> 'str|None':
         return self.get_option('limit')
 
     @property
-    def on_limit(self):
+    def on_limit(self) -> 'str|None':
         return self.get_option('on_limit')
 
     @property
-    def on_limit_message(self):
+    def on_limit_message(self) -> 'str|None':
         return self.get_option('on_limit_message')
 
     def validate(self, ctx: 'ValidationContext'):
@@ -1103,7 +1186,8 @@ class ReturnStatement(Statement):
         return self.get_values(Token.ARGUMENT)
 
     @classmethod
-    def from_params(cls, values=(), indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+    def from_params(cls, values: 'Sequence[str]' = (), indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'ReturnStatement':
         tokens = [Token(Token.SEPARATOR, indent),
                   Token(Token.RETURN_STATEMENT)]
         for value in values:
@@ -1119,7 +1203,7 @@ class ReturnStatement(Statement):
             self.errors += ('RETURN cannot be used in FINALLY branch.',)
 
 
-class LoopControl(NoArgumentHeader):
+class LoopControl(NoArgumentHeader, ABC):
 
     def validate(self, ctx: 'ValidationContext'):
         super().validate(ctx)
@@ -1144,7 +1228,8 @@ class Comment(Statement):
     type = Token.COMMENT
 
     @classmethod
-    def from_params(cls, comment, indent=FOUR_SPACES, eol=EOL):
+    def from_params(cls, comment: str, indent: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'Comment':
         return cls([
             Token(Token.SEPARATOR, indent),
             Token(Token.COMMENT, comment),
@@ -1157,14 +1242,14 @@ class Config(Statement):
     type = Token.CONFIG
 
     @classmethod
-    def from_params(cls, config, eol=EOL):
+    def from_params(cls, config: str, eol: str = EOL) -> 'Config':
         return cls([
             Token(Token.CONFIG, config),
             Token(Token.EOL, eol)
         ])
 
     @property
-    def language(self):
+    def language(self) -> 'Language|None':
         value = self.get_value(Token.CONFIG)
         return Language.from_name(value[len('language:'):]) if value else None
 
@@ -1172,24 +1257,33 @@ class Config(Statement):
 @Statement.register
 class Error(Statement):
     type = Token.ERROR
-    _errors = ()
+    _errors: 'tuple[str, ...]' = ()
+
+    @classmethod
+    def from_params(cls, error: str, value: str = '', indent: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'Error':
+        return cls([
+            Token(Token.SEPARATOR, indent),
+            Token(Token.ERROR, value, error=error),
+            Token(Token.EOL, eol)
+        ])
 
     @property
-    def values(self):
-        return [t.value for t in self.data_tokens]
+    def values(self) -> 'list[str]':
+        return [token.value for token in self.data_tokens]
 
     @property
-    def errors(self):
+    def errors(self) -> 'tuple[str, ...]':
         """Errors got from the underlying ``ERROR``token.
 
         Errors can be set also explicitly. When accessing errors, they are returned
         along with errors got from tokens.
         """
         tokens = self.get_tokens(Token.ERROR)
-        return tuple(t.error for t in tokens) + self._errors
+        return tuple(t.error or '' for t in tokens) + self._errors
 
     @errors.setter
-    def errors(self, errors):
+    def errors(self, errors: 'Sequence[str]'):
         self._errors = tuple(errors)
 
 
@@ -1197,5 +1291,5 @@ class EmptyLine(Statement):
     type = Token.EOL
 
     @classmethod
-    def from_params(cls, eol=EOL):
+    def from_params(cls, eol: str = EOL):
         return cls([Token(Token.EOL, eol)])

@@ -40,7 +40,7 @@ class TestExposedApi(unittest.TestCase):
         assert_equal(api_parsing.Token, parsing.Token)
 
     def test_parsing_model_statements(self):
-        for cls in parsing.model.Statement._statement_handlers.values():
+        for cls in parsing.model.Statement.statement_handlers.values():
             assert_equal(getattr(api_parsing, cls.__name__), cls)
         assert_true(not hasattr(api_parsing, 'Statement'))
 

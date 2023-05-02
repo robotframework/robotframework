@@ -13,90 +13,95 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.conf import Languages
+from typing import cast
+
+from robot.conf import Languages, LanguageLike, LanguagesLike
+from robot.parsing.lexer.settings import Settings
 from robot.utils import normalize_whitespace
 
-from .settings import (InitFileSettings, SuiteFileSettings, ResourceFileSettings,
-                       TestCaseSettings, KeywordSettings)
+from .settings import (InitFileSettings, Settings, SuiteFileSettings,
+                       ResourceFileSettings, TestCaseSettings, KeywordSettings)
 from .tokens import Token
 
 
+# TODO: Try making generic.
+# TODO: Add separate __init__s for FileContext (accepts only lang) and Test/KwContext (accepts only settings)
 class LexingContext:
-    settings_class = None
+    settings_class: 'type[Settings]'
 
-    def __init__(self, settings=None, lang=None):
-        if not settings:
-            self.languages = lang if isinstance(lang, Languages) else Languages(lang)
+    def __init__(self, settings: 'Settings|None' = None, lang: LanguagesLike = None):
+        if settings is None:
+            if not isinstance(lang, Languages):
+                lang = Languages(cast(LanguageLike, lang))
+            self.languages = lang
             self.settings = self.settings_class(self.languages)
         else:
             self.languages = settings.languages
             self.settings = settings
 
-    def lex_setting(self, statement):
+    def lex_setting(self, statement: 'list[Token]'):
         self.settings.lex(statement)
 
 
 class FileContext(LexingContext):
 
-    def __init__(self, settings=None, lang=None):
-        super().__init__(settings, lang)
-
-    def add_language(self, lang):
+    def add_language(self, lang: LanguageLike):
         self.languages.add_language(lang)
 
-    def keyword_context(self):
+    def keyword_context(self) -> 'KeywordContext':
         return KeywordContext(settings=KeywordSettings(self.languages))
 
-    def setting_section(self, statement):
+    def setting_section(self, statement: 'list[Token]') -> bool:
         return self._handles_section(statement, 'Settings')
 
-    def variable_section(self, statement):
+    def variable_section(self, statement: 'list[Token]') -> bool:
         return self._handles_section(statement, 'Variables')
 
-    def test_case_section(self, statement):
+    def test_case_section(self, statement: 'list[Token]') -> bool:
         return False
 
-    def task_section(self, statement):
+    def task_section(self, statement: 'list[Token]') -> bool:
         return False
 
-    def keyword_section(self, statement):
+    def keyword_section(self, statement: 'list[Token]') -> bool:
         return self._handles_section(statement, 'Keywords')
 
-    def comment_section(self, statement):
+    def comment_section(self, statement: 'list[Token]') -> bool:
         return self._handles_section(statement, 'Comments')
 
-    def lex_invalid_section(self, statement):
-        message = self._get_invalid_section_error(statement[0].value)
-        statement[0].error = message
-        statement[0].type = Token.INVALID_HEADER
+    def lex_invalid_section(self, statement: 'list[Token]'):
+        header = statement[0]
+        header.type = Token.INVALID_HEADER
+        header.error = self._get_invalid_section_error(header.value)
         for token in statement[1:]:
             token.type = Token.COMMENT
 
-    def _get_invalid_section_error(self, header):
+    def _get_invalid_section_error(self, header: str) -> str:
         raise NotImplementedError
 
-    def _handles_section(self, statement, header):
+    def _handles_section(self, statement: 'list[Token]', header: str) -> bool:
         marker = statement[0].value
-        return (marker and marker[0] == '*' and
-                self.languages.headers.get(self._normalize(marker)) == header)
+        return bool(marker and marker[0] == '*' and
+                    self.languages.headers.get(self._normalize(marker)) == header)
 
-    def _normalize(self, marker):
+    def _normalize(self, marker: str) -> str:
         return normalize_whitespace(marker).strip('* ').title()
 
 
 class SuiteFileContext(FileContext):
     settings_class = SuiteFileSettings
+    settings: SuiteFileSettings
 
-    def test_case_context(self):
+    def test_case_context(self) -> 'TestCaseContext':
         return TestCaseContext(settings=TestCaseSettings(self.settings, self.languages))
 
-    def test_case_section(self, statement):
+    def test_case_section(self, statement: 'list[Token]') -> bool:
         return self._handles_section(statement, 'Test Cases')
 
-    def task_section(self, statement):
+    def task_section(self, statement: 'list[Token]') -> bool:
         return self._handles_section(statement, 'Tasks')
 
-    def _get_invalid_section_error(self, header):
+    def _get_invalid_section_error(self, header: str) -> str:
         return (f"Unrecognized section header '{header}'. Valid sections: "
                 f"'Settings', 'Variables', 'Test Cases', 'Tasks', 'Keywords' "
                 f"and 'Comments'.")
@@ -105,7 +110,7 @@ class SuiteFileContext(FileContext):
 class ResourceFileContext(FileContext):
     settings_class = ResourceFileSettings
 
-    def _get_invalid_section_error(self, header):
+    def _get_invalid_section_error(self, header: str) -> str:
         name = self._normalize(header)
         if self.languages.headers.get(name) in ('Test Cases', 'Tasks'):
             return f"Resource file with '{name}' section is invalid."
@@ -113,11 +118,10 @@ class ResourceFileContext(FileContext):
                 f"'Settings', 'Variables', 'Keywords' and 'Comments'.")
 
 
-
 class InitFileContext(FileContext):
     settings_class = InitFileSettings
 
-    def _get_invalid_section_error(self, header):
+    def _get_invalid_section_error(self, header: str) -> str:
         name = self._normalize(header)
         if self.languages.headers.get(name) in ('Test Cases', 'Tasks'):
             return f"'{name}' section is not allowed in suite initialization file."
@@ -125,19 +129,21 @@ class InitFileContext(FileContext):
                 f"'Settings', 'Variables', 'Keywords' and 'Comments'.")
 
 
+# TODO: Try removing base class
 class TestOrKeywordContext(LexingContext):
 
     @property
-    def template_set(self):
+    def template_set(self) -> bool:
         return False
 
 
 class TestCaseContext(TestOrKeywordContext):
+    settings: TestCaseSettings
 
     @property
-    def template_set(self):
+    def template_set(self) -> bool:
         return self.settings.template_set
 
 
 class KeywordContext(TestOrKeywordContext):
-    pass
+    settings: KeywordSettings
