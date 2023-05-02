@@ -21,7 +21,8 @@ from typing import cast, Sequence
 from robot.conf import LanguagesLike
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.parsing import SuiteStructure, SuiteStructureBuilder, SuiteStructureVisitor
+from robot.parsing import (SuiteFile, SuiteDirectory, SuiteStructure,
+                           SuiteStructureBuilder, SuiteStructureVisitor)
 from robot.utils import Importer, seq2str, split_args_from_name_or_path, type_name
 
 from ..model import ResourceFile, TestSuite
@@ -197,7 +198,7 @@ class SuiteStructureParser(SuiteStructureVisitor):
         suite.rpa = self.rpa
         return suite
 
-    def visit_file(self, structure: SuiteStructure):
+    def visit_file(self, structure: SuiteFile):
         LOGGER.info(f"Parsing file '{structure.source}'.")
         suite = self._build_suite_file(structure)
         if self.suite is None:
@@ -205,7 +206,7 @@ class SuiteStructureParser(SuiteStructureVisitor):
         else:
             self._stack[-1][0].suites.append(suite)
 
-    def start_directory(self, structure: SuiteStructure):
+    def start_directory(self, structure: SuiteDirectory):
         if structure.source:
             LOGGER.info(f"Parsing directory '{structure.source}'.")
         suite, defaults = self._build_suite_directory(structure)
@@ -215,12 +216,12 @@ class SuiteStructureParser(SuiteStructureVisitor):
             self._stack[-1][0].suites.append(suite)
         self._stack.append((suite, defaults))
 
-    def end_directory(self, structure: SuiteStructure):
+    def end_directory(self, structure: SuiteDirectory):
         suite, _ = self._stack.pop()
         if suite.rpa is None and suite.suites:
             suite.rpa = suite.suites[0].rpa
 
-    def _build_suite_file(self, structure: SuiteStructure):
+    def _build_suite_file(self, structure: SuiteFile):
         source = cast(Path, structure.source)
         defaults = self.parent_defaults or TestDefaults()
         parser = self.parsers[structure.extension]
@@ -233,7 +234,7 @@ class SuiteStructureParser(SuiteStructureVisitor):
             raise DataError(f"Parsing '{source}' failed: {err.message}")
         return suite
 
-    def _build_suite_directory(self, structure: SuiteStructure):
+    def _build_suite_directory(self, structure: SuiteDirectory):
         source = cast(Path, structure.init_file or structure.source)
         defaults = TestDefaults(self.parent_defaults)
         parser = self.parsers[structure.extension]

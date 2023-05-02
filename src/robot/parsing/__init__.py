@@ -24,4 +24,5 @@ this module directly, issue should be submitted about exposing it explicitly via
 from .lexer import get_tokens, get_resource_tokens, get_init_tokens, Token
 from .model import File, ModelTransformer, ModelVisitor
 from .parser import get_model, get_resource_model, get_init_model
-from .suitestructure import SuiteStructure, SuiteStructureBuilder, SuiteStructureVisitor
+from .suitestructure import (SuiteFile, SuiteDirectory, SuiteStructure,
+                             SuiteStructureBuilder, SuiteStructureVisitor)
