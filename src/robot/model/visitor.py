@@ -178,11 +178,17 @@ class SuiteVisitor:
         the body of the keyword
         """
         if self.start_keyword(keyword) is not False:
-            if hasattr(keyword, 'body'):
-                keyword.body.visit(self)
-            if getattr(keyword, 'has_teardown', False):
-                keyword.teardown.visit(self)
+            self._possible_body(keyword)
+            self._possible_teardown(keyword)
             self.end_keyword(keyword)
+
+    def _possible_body(self, item: 'BodyItem'):
+        if hasattr(item, 'body'):
+            item.body.visit(self)    # type: ignore
+
+    def _possible_teardown(self, item: 'BodyItem'):
+        if getattr(item, 'has_teardown', False):
+            item.teardown.visit(self)    # type: ignore
 
     def start_keyword(self, keyword: 'Keyword'):
         """Called when a keyword starts.
@@ -419,8 +425,7 @@ class SuiteVisitor:
     def visit_return(self, return_: 'Return'):
         """Visits a RETURN elements."""
         if self.start_return(return_) is not False:
-            if hasattr(return_, 'body'):
-                return_.body.visit(self)
+            self._possible_body(return_)
             self.end_return(return_)
 
     def start_return(self, return_: 'Return'):
@@ -442,8 +447,7 @@ class SuiteVisitor:
     def visit_continue(self, continue_: 'Continue'):
         """Visits CONTINUE elements."""
         if self.start_continue(continue_) is not False:
-            if hasattr(continue_, 'body'):
-                continue_.body.visit(self)
+            self._possible_body(continue_)
             self.end_continue(continue_)
 
     def start_continue(self, continue_: 'Continue'):
@@ -465,8 +469,7 @@ class SuiteVisitor:
     def visit_break(self, break_: 'Break'):
         """Visits BREAK elements."""
         if self.start_break(break_) is not False:
-            if hasattr(break_, 'body'):
-                break_.body.visit(self)
+            self._possible_body(break_)
             self.end_break(break_)
 
     def start_break(self, break_: 'Break'):
@@ -492,8 +495,7 @@ class SuiteVisitor:
         invalid setting like ``[Invalid]``.
         """
         if self.start_error(error) is not False:
-            if hasattr(error, 'body'):
-                error.body.visit(self)
+            self._possible_body(error)
             self.end_error(error)
 
     def start_error(self, error: 'Error'):

@@ -48,12 +48,12 @@ class SettingsBuilder(NodeVisitor):
                                    lineno=node.lineno)
 
     def visit_TestSetup(self, node):
-        self.settings.test_setup = dict(name=node.name, args=node.args,
-                                        lineno=node.lineno)
+        self.settings.test_setup = {'name': node.name, 'args': node.args,
+                                    'lineno': node.lineno}
 
     def visit_TestTeardown(self, node):
-        self.settings.test_teardown = dict(name=node.name, args=node.args,
-                                           lineno=node.lineno)
+        self.settings.test_teardown = {'name': node.name, 'args': node.args,
+                                       'lineno': node.lineno}
 
     def visit_TestTimeout(self, node):
         self.settings.test_timeout = node.value
