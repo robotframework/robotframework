@@ -88,7 +88,7 @@ class Settings(ABC):
                              f"got {len(statement)-1}.")
 
     def _get_non_existing_setting_message(self, name: str, normalized: str) -> str:
-        if self._is_valid_somewhere(normalized):
+        if self._is_valid_somewhere(normalized, Settings.__subclasses__()):
             return self._not_valid_here(name)
         return RecommendationFinder(normalize).find_and_format(
             name=normalized,
@@ -96,9 +96,10 @@ class Settings(ABC):
             message=f"Non-existing setting '{name}'."
         )
 
-    def _is_valid_somewhere(self, normalized: str) -> bool:
-        for cls in Settings.__subclasses__():
-            if normalized in cls.names or normalized in cls.aliases:
+    def _is_valid_somewhere(self, name: str, classes: 'list[type[Settings]]') -> bool:
+        for cls in classes:
+            if (name in cls.names or name in cls.aliases
+                    or self._is_valid_somewhere(name, cls.__subclasses__())):
                 return True
         return False
 
@@ -140,7 +141,11 @@ class Settings(ABC):
             token.type = Token.ARGUMENT
 
 
-class SuiteFileSettings(Settings):
+class FileSettings(Settings, ABC):
+    pass
+
+
+class SuiteFileSettings(FileSettings):
     names = (
         'Documentation',
         'Metadata',
@@ -171,7 +176,7 @@ class SuiteFileSettings(Settings):
         return f"Setting '{name}' is not allowed in suite file."
 
 
-class InitFileSettings(Settings):
+class InitFileSettings(FileSettings):
     names = (
         'Documentation',
         'Metadata',
@@ -199,7 +204,7 @@ class InitFileSettings(Settings):
         return f"Setting '{name}' is not allowed in suite initialization file."
 
 
-class ResourceFileSettings(Settings):
+class ResourceFileSettings(FileSettings):
     names = (
         'Documentation',
         'Keyword Tags',
@@ -222,8 +227,8 @@ class TestCaseSettings(Settings):
         'Timeout'
     )
 
-    def __init__(self, parent: SuiteFileSettings, languages: Languages):
-        super().__init__(languages)
+    def __init__(self, parent: SuiteFileSettings):
+        super().__init__(parent.languages)
         self.parent = parent
 
     def _format_name(self, name: str) -> str:
@@ -258,6 +263,10 @@ class KeywordSettings(Settings):
         'Tags',
         'Return'
     )
+
+    def __init__(self, parent: FileSettings):
+        super().__init__(parent.languages)
+        self.parent = parent
 
     def _format_name(self, name: str) -> str:
         return name[1:-1].strip()

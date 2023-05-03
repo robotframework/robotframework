@@ -38,7 +38,7 @@ class Languages:
             print(lang.name, lang.code)
     """
 
-    def __init__(self, languages: 'Iterable[LanguageLike]|LanguageLike' = (),
+    def __init__(self, languages: 'Iterable[LanguageLike]|LanguageLike|None' = (),
                  add_english: bool = True):
         """
         :param languages: Initial language or list of languages.

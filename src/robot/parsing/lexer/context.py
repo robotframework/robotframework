@@ -13,43 +13,38 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import cast
-
 from robot.conf import Languages, LanguageLike, LanguagesLike
-from robot.parsing.lexer.settings import Settings
 from robot.utils import normalize_whitespace
 
-from .settings import (InitFileSettings, Settings, SuiteFileSettings,
+from .settings import (InitFileSettings, FileSettings, Settings, SuiteFileSettings,
                        ResourceFileSettings, TestCaseSettings, KeywordSettings)
 from .tokens import Token
 
 
-# TODO: Try making generic.
-# TODO: Add separate __init__s for FileContext (accepts only lang) and Test/KwContext (accepts only settings)
 class LexingContext:
-    settings_class: 'type[Settings]'
 
-    def __init__(self, settings: 'Settings|None' = None, lang: LanguagesLike = None):
-        if settings is None:
-            if not isinstance(lang, Languages):
-                lang = Languages(cast(LanguageLike, lang))
-            self.languages = lang
-            self.settings = self.settings_class(self.languages)
-        else:
-            self.languages = settings.languages
-            self.settings = settings
+    def __init__(self, settings: Settings, languages: Languages):
+        self.settings = settings
+        self.languages = languages
 
     def lex_setting(self, statement: 'list[Token]'):
         self.settings.lex(statement)
 
 
 class FileContext(LexingContext):
+    settings: FileSettings
+
+    def __init__(self, lang: LanguagesLike = None):
+        languages = lang if isinstance(lang, Languages) else Languages(lang)
+        settings_class: 'type[FileSettings]' = type(self).__annotations__['settings']
+        settings = settings_class(languages)
+        super().__init__(settings, languages)
 
     def add_language(self, lang: LanguageLike):
         self.languages.add_language(lang)
 
     def keyword_context(self) -> 'KeywordContext':
-        return KeywordContext(settings=KeywordSettings(self.languages))
+        return KeywordContext(KeywordSettings(self.settings))
 
     def setting_section(self, statement: 'list[Token]') -> bool:
         return self._handles_section(statement, 'Settings')
@@ -89,11 +84,10 @@ class FileContext(LexingContext):
 
 
 class SuiteFileContext(FileContext):
-    settings_class = SuiteFileSettings
     settings: SuiteFileSettings
 
     def test_case_context(self) -> 'TestCaseContext':
-        return TestCaseContext(settings=TestCaseSettings(self.settings, self.languages))
+        return TestCaseContext(TestCaseSettings(self.settings))
 
     def test_case_section(self, statement: 'list[Token]') -> bool:
         return self._handles_section(statement, 'Test Cases')
@@ -108,7 +102,7 @@ class SuiteFileContext(FileContext):
 
 
 class ResourceFileContext(FileContext):
-    settings_class = ResourceFileSettings
+    settings: ResourceFileSettings
 
     def _get_invalid_section_error(self, header: str) -> str:
         name = self._normalize(header)
@@ -119,7 +113,7 @@ class ResourceFileContext(FileContext):
 
 
 class InitFileContext(FileContext):
-    settings_class = InitFileSettings
+    settings: InitFileSettings
 
     def _get_invalid_section_error(self, header: str) -> str:
         name = self._normalize(header)
@@ -132,6 +126,9 @@ class InitFileContext(FileContext):
 class TestCaseContext(LexingContext):
     settings: TestCaseSettings
 
+    def __init__(self, settings: TestCaseSettings):
+        super().__init__(settings, settings.languages)
+
     @property
     def template_set(self) -> bool:
         return self.settings.template_set
@@ -139,6 +136,9 @@ class TestCaseContext(LexingContext):
 
 class KeywordContext(LexingContext):
     settings: KeywordSettings
+
+    def __init__(self, settings: KeywordSettings):
+        super().__init__(settings, settings.languages)
 
     @property
     def template_set(self) -> bool:
