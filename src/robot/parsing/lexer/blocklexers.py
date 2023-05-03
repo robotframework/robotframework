@@ -26,7 +26,7 @@ from .statementlexers import (BreakLexer, CommentLexer, CommentSectionHeaderLexe
                               InlineIfHeaderLexer, InvalidSectionHeaderLexer,
                               KeywordCallLexer, KeywordSectionHeaderLexer, Lexer,
                               ReturnLexer, SettingLexer, SettingSectionHeaderLexer,
-                              Statement, SyntaxErrorLexer, TaskSectionHeaderLexer,
+                              StatementTokens, SyntaxErrorLexer, TaskSectionHeaderLexer,
                               TestCaseSectionHeaderLexer, TestOrKeywordSettingLexer,
                               TryHeaderLexer, VariableLexer, VariableSectionHeaderLexer,
                               WhileHeaderLexer)
@@ -39,10 +39,10 @@ class BlockLexer(Lexer):
         super().__init__(ctx)
         self.lexers: 'list[Lexer]' = []
 
-    def accepts_more(self, statement: Statement) -> bool:
+    def accepts_more(self, statement: StatementTokens) -> bool:
         return True
 
-    def input(self, statement: Statement):
+    def input(self, statement: StatementTokens):
         if self.lexers and self.lexers[-1].accepts_more(statement):
             lexer = self.lexers[-1]
         else:
@@ -50,7 +50,7 @@ class BlockLexer(Lexer):
             self.lexers.append(lexer)
         lexer.input(statement)
 
-    def lexer_for(self, statement: Statement) -> Lexer:
+    def lexer_for(self, statement: StatementTokens) -> Lexer:
         for cls in self.lexer_classes():
             lexer = cls(self.ctx)
             if lexer.handles(statement):
@@ -89,13 +89,13 @@ class FileLexer(BlockLexer):
 class SectionLexer(BlockLexer):
     ctx: FileContext
 
-    def accepts_more(self, statement: Statement) -> bool:
+    def accepts_more(self, statement: StatementTokens) -> bool:
         return not statement[0].value.startswith('*')
 
 
 class SettingSectionLexer(SectionLexer):
 
-    def handles(self, statement: Statement) -> bool:
+    def handles(self, statement: StatementTokens) -> bool:
         return self.ctx.setting_section(statement)
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
@@ -104,7 +104,7 @@ class SettingSectionLexer(SectionLexer):
 
 class VariableSectionLexer(SectionLexer):
 
-    def handles(self, statement: Statement) -> bool:
+    def handles(self, statement: StatementTokens) -> bool:
         return self.ctx.variable_section(statement)
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
@@ -113,7 +113,7 @@ class VariableSectionLexer(SectionLexer):
 
 class TestCaseSectionLexer(SectionLexer):
 
-    def handles(self, statement: Statement) -> bool:
+    def handles(self, statement: StatementTokens) -> bool:
         return self.ctx.test_case_section(statement)
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
@@ -122,7 +122,7 @@ class TestCaseSectionLexer(SectionLexer):
 
 class TaskSectionLexer(SectionLexer):
 
-    def handles(self, statement: Statement) -> bool:
+    def handles(self, statement: StatementTokens) -> bool:
         return self.ctx.task_section(statement)
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
@@ -131,7 +131,7 @@ class TaskSectionLexer(SectionLexer):
 
 class KeywordSectionLexer(SettingSectionLexer):
 
-    def handles(self, statement: Statement) -> bool:
+    def handles(self, statement: StatementTokens) -> bool:
         return self.ctx.keyword_section(statement)
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
@@ -140,7 +140,7 @@ class KeywordSectionLexer(SettingSectionLexer):
 
 class CommentSectionLexer(SectionLexer):
 
-    def handles(self, statement: Statement) -> bool:
+    def handles(self, statement: StatementTokens) -> bool:
         return self.ctx.comment_section(statement)
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
@@ -149,7 +149,7 @@ class CommentSectionLexer(SectionLexer):
 
 class ImplicitCommentSectionLexer(SectionLexer):
 
-    def handles(self, statement: Statement) -> bool:
+    def handles(self, statement: StatementTokens) -> bool:
         return True
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
@@ -158,7 +158,7 @@ class ImplicitCommentSectionLexer(SectionLexer):
 
 class InvalidSectionLexer(SectionLexer):
 
-    def handles(self, statement: Statement) -> bool:
+    def handles(self, statement: StatementTokens) -> bool:
         return bool(statement and statement[0].value.startswith('*'))
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
@@ -169,15 +169,15 @@ class TestOrKeywordLexer(BlockLexer):
     name_type: str
     _name_seen = False
 
-    def accepts_more(self, statement: Statement) -> bool:
+    def accepts_more(self, statement: StatementTokens) -> bool:
         return not statement[0].value
 
-    def input(self, statement: Statement):
+    def input(self, statement: StatementTokens):
         self._handle_name_or_indentation(statement)
         if statement:
             super().input(statement)
 
-    def _handle_name_or_indentation(self, statement: Statement):
+    def _handle_name_or_indentation(self, statement: StatementTokens):
         if not self._name_seen:
             name_token = statement.pop(0)
             name_token.type = self.name_type
@@ -221,10 +221,10 @@ class NestedBlockLexer(BlockLexer):
         super().__init__(ctx)
         self._block_level = 0
 
-    def accepts_more(self, statement: Statement) -> bool:
+    def accepts_more(self, statement: StatementTokens) -> bool:
         return self._block_level > 0
 
-    def input(self, statement: Statement):
+    def input(self, statement: StatementTokens):
         super().input(statement)
         lexer = self.lexers[-1]
         if isinstance(lexer, (ForHeaderLexer, IfHeaderLexer, TryHeaderLexer,
@@ -236,7 +236,7 @@ class NestedBlockLexer(BlockLexer):
 
 class ForLexer(NestedBlockLexer):
 
-    def handles(self, statement: Statement) -> bool:
+    def handles(self, statement: StatementTokens) -> bool:
         return ForHeaderLexer(self.ctx).handles(statement)
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
@@ -246,7 +246,7 @@ class ForLexer(NestedBlockLexer):
 
 class WhileLexer(NestedBlockLexer):
 
-    def handles(self, statement: Statement) -> bool:
+    def handles(self, statement: StatementTokens) -> bool:
         return WhileHeaderLexer(self.ctx).handles(statement)
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
@@ -256,7 +256,7 @@ class WhileLexer(NestedBlockLexer):
 
 class TryLexer(NestedBlockLexer):
 
-    def handles(self, statement: Statement) -> bool:
+    def handles(self, statement: StatementTokens) -> bool:
         return TryHeaderLexer(self.ctx).handles(statement)
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
@@ -267,7 +267,7 @@ class TryLexer(NestedBlockLexer):
 
 class IfLexer(NestedBlockLexer):
 
-    def handles(self, statement: Statement) -> bool:
+    def handles(self, statement: StatementTokens) -> bool:
         return IfHeaderLexer(self.ctx).handles(statement)
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
@@ -278,24 +278,24 @@ class IfLexer(NestedBlockLexer):
 
 class InlineIfLexer(NestedBlockLexer):
 
-    def handles(self, statement: Statement) -> bool:
+    def handles(self, statement: StatementTokens) -> bool:
         if len(statement) <= 2:
             return False
         return InlineIfHeaderLexer(self.ctx).handles(statement)
 
-    def accepts_more(self, statement: Statement) -> bool:
+    def accepts_more(self, statement: StatementTokens) -> bool:
         return False
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
         return (InlineIfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
                 ReturnLexer, ContinueLexer, BreakLexer, KeywordCallLexer)
 
-    def input(self, statement: Statement):
+    def input(self, statement: StatementTokens):
         for part in self._split(statement):
             if part:
                 super().input(part)
 
-    def _split(self, statement: Statement) -> 'Iterator[list[Token]]':
+    def _split(self, statement: StatementTokens) -> 'Iterator[StatementTokens]':
         current = []
         expect_condition = False
         for token in statement:
