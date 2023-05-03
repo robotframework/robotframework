@@ -50,6 +50,10 @@ Invalid limit invalid value
 Invalid limit mistyped prefix
     Check Test Case    ${TESTNAME}
 
+Limit used multiple times
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.body[0].limit}    1, 2
+
 Invalid values after limit
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Be Equal    ${tc.body[0].condition}    $variable < 2, limit=-1x, invalid, values

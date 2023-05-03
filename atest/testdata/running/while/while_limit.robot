@@ -105,6 +105,12 @@ Invalid limit mistyped prefix
         Log     ${variable}
     END
 
+Limit used multiple times
+    [Documentation]     FAIL Option 'limit' allowed only once, got values '1' and '2'.
+    WHILE    True    limit=1    limit=2
+        Log     ${variable}
+    END
+
 Invalid values after limit
     [Documentation]     FAIL WHILE cannot have more than one condition, got '$variable < 2', 'limit=-1x', 'invalid' and 'values'.
     WHILE    $variable < 2    limit=-1x    invalid    values

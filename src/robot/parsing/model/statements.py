@@ -118,7 +118,6 @@ class Statement(Node, ABC):
     def data_tokens(self) -> 'list[Token]':
         return [t for t in self.tokens if t.type not in Token.NON_DATA_TOKENS]
 
-    # TODO: Try raising an exception if three's no match.
     def get_token(self, *types: str) -> 'Token|None':
         """Return a token with any of the given ``types``.
 
@@ -160,16 +159,20 @@ class Statement(Node, ABC):
 
         If the option has not been used, return ``default``.
 
+        If the option has been used multiple times, values are joined together.
+        This is typically an error situation and validated elsewhere.
+
         New in Robot Framework 6.1.
         """
-        # FIXME: Change the logic to return the first match, not the last.
-        # Also change validation so that only one option is allowed.
-        result = default
+        options = self._get_options()
+        return ', '.join(options[name]) if name in options else default
+
+    def _get_options(self) -> 'dict[str, list[str]]':
+        options: 'dict[str, list[str]]' = {}
         for option in self.get_values(Token.OPTION):
-            opt_name, opt_value = option.split('=', 1)
-            if opt_name == name:
-                result = opt_value
-        return result
+            name, value = option.split('=', 1)
+            options.setdefault(name, []).append(value)
+        return options
 
     @property
     def lines(self) -> 'Iterator[list[Token]]':
@@ -184,6 +187,12 @@ class Statement(Node, ABC):
 
     def validate(self, ctx: 'ValidationContext'):
         pass
+
+    def _validate_options(self):
+        for name, values in self._get_options().items():
+            if len(values) > 1:
+                self.errors += (f"Option '{name}' allowed only once, got values "
+                                f"{seq2str(values)}.",)
 
     def __iter__(self) -> 'Iterator[Token]':
         return iter(self.tokens)
@@ -943,6 +952,7 @@ class ForHeader(Statement):
         return self.get_option('fill') if self.flavor == 'IN ZIP' else None
 
     def validate(self, ctx: 'ValidationContext'):
+        self._validate_options()
         if not self.variables:
             self._add_error('no loop variables')
         if not self.flavor:
@@ -1107,6 +1117,7 @@ class ExceptHeader(Statement):
         return self.get_value(Token.VARIABLE)
 
     def validate(self, ctx: 'ValidationContext'):
+        self._validate_options()
         as_token = self.get_token(Token.AS)
         if as_token:
             variables = self.get_tokens(Token.VARIABLE)
@@ -1175,6 +1186,7 @@ class WhileHeader(Statement):
             self.errors += (f'WHILE cannot have more than one condition, got {seq2str(values)}.',)
         if self.on_limit and not self.limit:
             self.errors += ('WHILE on_limit option cannot be used without limit.',)
+        self._validate_options()
 
 
 @Statement.register

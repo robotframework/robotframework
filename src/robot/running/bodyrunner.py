@@ -544,7 +544,8 @@ class TryRunner:
     def _run_invalid(self, data):
         error_reported = False
         for branch in data.body:
-            result = TryBranchResult(branch.type, branch.patterns, branch.variable)
+            result = TryBranchResult(branch.type, branch.patterns, branch.pattern_type,
+                                     branch.variable)
             with StatusReporter(branch, result, self._context, run=False, suppress=True):
                 runner = BodyRunner(self._context, run=False, templated=self._templated)
                 runner.run(branch.body)

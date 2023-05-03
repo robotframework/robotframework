@@ -66,6 +66,12 @@ class StatementLexer(Lexer, ABC):
     def lex(self):
         raise NotImplementedError
 
+    def _lex_options(self, *names: str, end_index: 'int|None' = None):
+        for token in reversed(self.statement[:end_index]):
+            if not token.value.startswith(names):
+                break
+            token.type = Token.OPTION
+
 
 class SingleType(StatementLexer, ABC):
 
@@ -210,14 +216,10 @@ class ForHeaderLexer(StatementLexer):
                 separator = normalize_whitespace(token.value)
             else:
                 token.type = Token.VARIABLE
-        if (separator == 'IN ENUMERATE'
-                and self.statement[-1].value.startswith('start=')):
-            self.statement[-1].type = Token.OPTION
+        if separator == 'IN ENUMERATE':
+            self._lex_options('start=')
         elif separator == 'IN ZIP':
-            for token in reversed(self.statement):
-                if not token.value.startswith(('mode=', 'fill=')):
-                    break
-                token.type = Token.OPTION
+            self._lex_options('mode=', 'fill=')
 
 
 class IfHeaderLexer(TypeAndArguments):
@@ -285,19 +287,16 @@ class ExceptHeaderLexer(StatementLexer):
 
     def lex(self):
         self.statement[0].type = Token.EXCEPT
-        last_pattern = None
-        as_seen = False
-        for token in self.statement[1:]:
+        as_index: 'int|None' = None
+        for index, token in enumerate(self.statement[1:], start=1):
             if token.value == 'AS':
                 token.type = Token.AS
-                as_seen = True
-            elif as_seen:
+                as_index = index
+            elif as_index:
                 token.type = Token.VARIABLE
             else:
                 token.type = Token.ARGUMENT
-                last_pattern = token
-        if last_pattern and last_pattern.value.startswith('type='):
-            last_pattern.type = Token.OPTION
+        self._lex_options('type=', end_index=as_index)
 
 
 class FinallyHeaderLexer(TypeAndArguments):
@@ -319,11 +318,7 @@ class WhileHeaderLexer(StatementLexer):
         self.statement[0].type = Token.WHILE
         for token in self.statement[1:]:
             token.type = Token.ARGUMENT
-        for token in reversed(self.statement):
-            if not token.value.startswith(('limit=', 'on_limit=',
-                                           'on_limit_message=')):
-                break
-            token.type = Token.OPTION
+        self._lex_options('limit=', 'on_limit=', 'on_limit_message=')
 
 
 class EndLexer(TypeAndArguments):
