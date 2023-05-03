@@ -14,4 +14,4 @@
 #  limitations under the License.
 
 from .lexer import get_tokens, get_resource_tokens, get_init_tokens
-from .tokens import Token
+from .tokens import StatementTokens, Token

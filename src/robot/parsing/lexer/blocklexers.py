@@ -27,12 +27,11 @@ from .statementlexers import (BreakLexer, CommentLexer, CommentSectionHeaderLexe
                               InlineIfHeaderLexer, InvalidSectionHeaderLexer,
                               KeywordCallLexer, KeywordSectionHeaderLexer,
                               KeywordSettingLexer, Lexer, ReturnLexer, SettingLexer,
-                              SettingSectionHeaderLexer, StatementTokens,
-                              SyntaxErrorLexer, TaskSectionHeaderLexer,
-                              TestCaseSectionHeaderLexer, TestCaseSettingLexer,
-                              TryHeaderLexer, VariableLexer, VariableSectionHeaderLexer,
-                              WhileHeaderLexer)
-from .tokens import Token
+                              SettingSectionHeaderLexer, SyntaxErrorLexer,
+                              TaskSectionHeaderLexer, TestCaseSectionHeaderLexer,
+                              TestCaseSettingLexer, TryHeaderLexer, VariableLexer,
+                              VariableSectionHeaderLexer, WhileHeaderLexer)
+from .tokens import StatementTokens, Token
 
 
 class BlockLexer(Lexer, ABC):

@@ -14,9 +14,13 @@
 #  limitations under the License.
 
 from collections.abc import Iterator
-from typing import cast
+from typing import cast, List
 
 from robot.variables import VariableIterator
+
+
+# Type alias to ease typing elsewhere
+StatementTokens = List['Token']
 
 
 class Token:

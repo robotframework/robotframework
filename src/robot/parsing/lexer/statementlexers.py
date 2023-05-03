@@ -21,10 +21,7 @@ from robot.utils import normalize_whitespace
 from robot.variables import is_assign
 
 from .context import FileContext, LexingContext, KeywordContext, TestCaseContext
-from .tokens import Token
-
-
-StatementTokens = List[Token]
+from .tokens import StatementTokens, Token
 
 
 class Lexer(ABC):

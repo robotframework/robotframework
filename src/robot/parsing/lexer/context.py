@@ -18,7 +18,7 @@ from robot.utils import normalize_whitespace
 
 from .settings import (InitFileSettings, FileSettings, Settings, SuiteFileSettings,
                        ResourceFileSettings, TestCaseSettings, KeywordSettings)
-from .tokens import Token
+from .tokens import StatementTokens, Token
 
 
 class LexingContext:
@@ -27,7 +27,7 @@ class LexingContext:
         self.settings = settings
         self.languages = languages
 
-    def lex_setting(self, statement: 'list[Token]'):
+    def lex_setting(self, statement: StatementTokens):
         self.settings.lex(statement)
 
 
@@ -46,25 +46,25 @@ class FileContext(LexingContext):
     def keyword_context(self) -> 'KeywordContext':
         return KeywordContext(KeywordSettings(self.settings))
 
-    def setting_section(self, statement: 'list[Token]') -> bool:
+    def setting_section(self, statement: StatementTokens) -> bool:
         return self._handles_section(statement, 'Settings')
 
-    def variable_section(self, statement: 'list[Token]') -> bool:
+    def variable_section(self, statement: StatementTokens) -> bool:
         return self._handles_section(statement, 'Variables')
 
-    def test_case_section(self, statement: 'list[Token]') -> bool:
+    def test_case_section(self, statement: StatementTokens) -> bool:
         return False
 
-    def task_section(self, statement: 'list[Token]') -> bool:
+    def task_section(self, statement: StatementTokens) -> bool:
         return False
 
-    def keyword_section(self, statement: 'list[Token]') -> bool:
+    def keyword_section(self, statement: StatementTokens) -> bool:
         return self._handles_section(statement, 'Keywords')
 
-    def comment_section(self, statement: 'list[Token]') -> bool:
+    def comment_section(self, statement: StatementTokens) -> bool:
         return self._handles_section(statement, 'Comments')
 
-    def lex_invalid_section(self, statement: 'list[Token]'):
+    def lex_invalid_section(self, statement: StatementTokens):
         header = statement[0]
         header.type = Token.INVALID_HEADER
         header.error = self._get_invalid_section_error(header.value)
@@ -74,7 +74,7 @@ class FileContext(LexingContext):
     def _get_invalid_section_error(self, header: str) -> str:
         raise NotImplementedError
 
-    def _handles_section(self, statement: 'list[Token]', header: str) -> bool:
+    def _handles_section(self, statement: StatementTokens, header: str) -> bool:
         marker = statement[0].value
         return bool(marker and marker[0] == '*' and
                     self.languages.headers.get(self._normalize(marker)) == header)
@@ -89,10 +89,10 @@ class SuiteFileContext(FileContext):
     def test_case_context(self) -> 'TestCaseContext':
         return TestCaseContext(TestCaseSettings(self.settings))
 
-    def test_case_section(self, statement: 'list[Token]') -> bool:
+    def test_case_section(self, statement: StatementTokens) -> bool:
         return self._handles_section(statement, 'Test Cases')
 
-    def task_section(self, statement: 'list[Token]') -> bool:
+    def task_section(self, statement: StatementTokens) -> bool:
         return self._handles_section(statement, 'Tasks')
 
     def _get_invalid_section_error(self, header: str) -> str:

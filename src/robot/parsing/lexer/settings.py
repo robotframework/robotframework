@@ -18,7 +18,7 @@ from abc import ABC, abstractmethod
 from robot.conf import Languages
 from robot.utils import normalize, normalize_whitespace, RecommendationFinder
 
-from .tokens import Token
+from .tokens import StatementTokens, Token
 
 
 class Settings(ABC):
@@ -59,9 +59,8 @@ class Settings(ABC):
         self.settings: 'dict[str, list[Token]|None]' = {n: None for n in self.names}
         self.languages = languages
 
-    def lex(self, statement: 'list[Token]'):
-        setting = statement[0]
-        orig = self._format_name(setting.value)
+    def lex(self, statement: StatementTokens):
+        orig = self._format_name(statement[0].value)
         name = normalize_whitespace(orig).title()
         name = self.languages.settings.get(name, name)
         if name in self.aliases:
@@ -69,14 +68,14 @@ class Settings(ABC):
         try:
             self._validate(orig, name, statement)
         except ValueError as err:
-            self._lex_error(setting, statement[1:], err.args[0])
+            self._lex_error(statement, err.args[0])
         else:
-            self._lex_setting(setting, statement[1:], name)
+            self._lex_setting(statement, name)
 
     def _format_name(self, name: str) -> str:
         return name
 
-    def _validate(self, orig: str, name: str, statement: 'list[Token]'):
+    def _validate(self, orig: str, name: str, statement: StatementTokens):
         if name not in self.settings:
             message = self._get_non_existing_setting_message(orig, name)
             raise ValueError(message)
@@ -107,16 +106,16 @@ class Settings(ABC):
     def _not_valid_here(self, name: str) -> str:
         raise NotImplementedError
 
-    def _lex_error(self, setting: Token, values: 'list[Token]', error: str):
-        setting.set_error(error)
-        for token in values:
+    def _lex_error(self, statement: StatementTokens, error: str):
+        statement[0].set_error(error)
+        for token in statement[1:]:
             token.type = Token.COMMENT
 
-    def _lex_setting(self, setting: Token, values: 'list[Token]', name: str):
-        self.settings[name] = values
+    def _lex_setting(self, statement: StatementTokens, name: str):
         # TODO: Change token type from 'FORCE TAGS' to 'TEST TAGS' in RF 7.0.
-        setting_type_map = {'Test Tags': 'FORCE TAGS', 'Name': 'SUITE NAME'}
-        setting.type = setting_type_map.get(name, name.upper())
+        statement[0].type = {'Test Tags': Token.FORCE_TAGS,
+                             'Name': Token.SUITE_NAME}.get(name, name.upper())
+        self.settings[name] = values = statement[1:]
         if name in self.name_and_arguments:
             self._lex_name_and_arguments(values)
         elif name in self.name_arguments_and_with_name:
@@ -124,19 +123,19 @@ class Settings(ABC):
         else:
             self._lex_arguments(values)
 
-    def _lex_name_and_arguments(self, tokens: 'list[Token]'):
+    def _lex_name_and_arguments(self, tokens: StatementTokens):
         if tokens:
             tokens[0].type = Token.NAME
             self._lex_arguments(tokens[1:])
 
-    def _lex_name_arguments_and_with_name(self, tokens: 'list[Token]'):
+    def _lex_name_arguments_and_with_name(self, tokens: StatementTokens):
         self._lex_name_and_arguments(tokens)
         if len(tokens) > 1 and \
                 normalize_whitespace(tokens[-2].value) in ('WITH NAME', 'AS'):
             tokens[-2].type = Token.WITH_NAME
             tokens[-1].type = Token.NAME
 
-    def _lex_arguments(self, tokens: 'list[Token]'):
+    def _lex_arguments(self, tokens: StatementTokens):
         for token in tokens:
             token.type = Token.ARGUMENT
 
@@ -242,12 +241,12 @@ class TestCaseSettings(Settings):
         parent_template = self.parent.settings['Test Template']
         return self._has_value(template) or self._has_value(parent_template)
 
-    def _has_disabling_value(self, setting: 'list[Token]|None') -> bool:
+    def _has_disabling_value(self, setting: 'StatementTokens|None') -> bool:
         if setting is None:
             return False
         return setting == [] or setting[0].value.upper() == 'NONE'
 
-    def _has_value(self, setting: 'list[Token]|None') -> bool:
+    def _has_value(self, setting: 'StatementTokens|None') -> bool:
         return bool(setting and setting[0].value)
 
     def _not_valid_here(self, name: str) -> str:
