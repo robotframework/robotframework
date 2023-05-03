@@ -20,14 +20,13 @@ from robot.errors import DataError
 from robot.utils import normalize_whitespace
 from robot.variables import is_assign
 
-from .context import FileContext, LexingContext, TestOrKeywordContext
+from .context import FileContext, LexingContext, KeywordContext, TestCaseContext
 from .tokens import Token
 
 
 StatementTokens = List[Token]
 
 
-# TODO: Try making generic.
 class Lexer(ABC):
 
     def __init__(self, ctx: LexingContext):
@@ -52,7 +51,7 @@ class Lexer(ABC):
 class StatementLexer(Lexer, ABC):
     token_type: str
 
-    def __init__(self, ctx: 'FileContext|TestOrKeywordContext'):
+    def __init__(self, ctx: LexingContext):
         super().__init__(ctx)
         self.statement: StatementTokens = []
 
@@ -153,13 +152,28 @@ class ImplicitCommentLexer(CommentLexer):
 
 
 class SettingLexer(StatementLexer):
+    ctx: FileContext
 
     def lex(self):
         self.ctx.lex_setting(self.statement)
 
 
-# TODO: Try splitting to TestSettingLexer and KeywordSettingLexer. Same with Context.
-class TestOrKeywordSettingLexer(SettingLexer):
+class TestCaseSettingLexer(StatementLexer):
+    ctx: TestCaseContext
+
+    def lex(self):
+        self.ctx.lex_setting(self.statement)
+
+    def handles(self, statement: StatementTokens) -> bool:
+        marker = statement[0].value
+        return bool(marker and marker[0] == '[' and marker[-1] == ']')
+
+
+class KeywordSettingLexer(StatementLexer):
+    ctx: KeywordContext
+
+    def lex(self):
+        self.ctx.lex_setting(self.statement)
 
     def handles(self, statement: StatementTokens) -> bool:
         marker = statement[0].value
@@ -167,11 +181,12 @@ class TestOrKeywordSettingLexer(SettingLexer):
 
 
 class VariableLexer(TypeAndArguments):
+    ctx: FileContext
     token_type = Token.VARIABLE
 
 
 class KeywordCallLexer(StatementLexer):
-    ctx: TestOrKeywordContext
+    ctx: 'TestCaseContext|KeywordContext'
 
     def lex(self):
         if self.ctx.template_set:
@@ -196,7 +211,6 @@ class KeywordCallLexer(StatementLexer):
 
 
 class ForHeaderLexer(StatementLexer):
-    ctx: TestOrKeywordContext
     separators = ('IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP')
 
     def handles(self, statement: StatementTokens) -> bool:

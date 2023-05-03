@@ -13,27 +13,29 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from abc import ABC
 from collections.abc import Iterator
 
 from robot.utils import normalize_whitespace
 
-from .context import (FileContext, LexingContext, SuiteFileContext,
-                      TestOrKeywordContext)
+from .context import (FileContext, KeywordContext, LexingContext, SuiteFileContext,
+                      TestCaseContext)
 from .statementlexers import (BreakLexer, CommentLexer, CommentSectionHeaderLexer,
                               ContinueLexer, ElseHeaderLexer, ElseIfHeaderLexer,
                               EndLexer, ExceptHeaderLexer, FinallyHeaderLexer,
                               ForHeaderLexer, IfHeaderLexer, ImplicitCommentLexer,
                               InlineIfHeaderLexer, InvalidSectionHeaderLexer,
-                              KeywordCallLexer, KeywordSectionHeaderLexer, Lexer,
-                              ReturnLexer, SettingLexer, SettingSectionHeaderLexer,
-                              StatementTokens, SyntaxErrorLexer, TaskSectionHeaderLexer,
-                              TestCaseSectionHeaderLexer, TestOrKeywordSettingLexer,
+                              KeywordCallLexer, KeywordSectionHeaderLexer,
+                              KeywordSettingLexer, Lexer, ReturnLexer, SettingLexer,
+                              SettingSectionHeaderLexer, StatementTokens,
+                              SyntaxErrorLexer, TaskSectionHeaderLexer,
+                              TestCaseSectionHeaderLexer, TestCaseSettingLexer,
                               TryHeaderLexer, VariableLexer, VariableSectionHeaderLexer,
                               WhileHeaderLexer)
 from .tokens import Token
 
 
-class BlockLexer(Lexer):
+class BlockLexer(Lexer, ABC):
 
     def __init__(self, ctx: LexingContext):
         super().__init__(ctx)
@@ -86,7 +88,7 @@ class FileLexer(BlockLexer):
                 InvalidSectionLexer, ImplicitCommentSectionLexer)
 
 
-class SectionLexer(BlockLexer):
+class SectionLexer(BlockLexer, ABC):
     ctx: FileContext
 
     def accepts_more(self, statement: StatementTokens) -> bool:
@@ -165,7 +167,7 @@ class InvalidSectionLexer(SectionLexer):
         return (InvalidSectionHeaderLexer, CommentLexer)
 
 
-class TestOrKeywordLexer(BlockLexer):
+class TestOrKeywordLexer(BlockLexer, ABC):
     name_type: str
     _name_seen = False
 
@@ -196,10 +198,10 @@ class TestCaseLexer(TestOrKeywordLexer):
         super().__init__(ctx.test_case_context())
 
     def lex(self):
-        self._lex_with_priority(priority=TestOrKeywordSettingLexer)
+        self._lex_with_priority(priority=TestCaseSettingLexer)
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
-        return (TestOrKeywordSettingLexer, ForLexer, InlineIfLexer, IfLexer,
+        return (TestCaseSettingLexer, ForLexer, InlineIfLexer, IfLexer,
                 TryLexer, WhileLexer, SyntaxErrorLexer, KeywordCallLexer)
 
 
@@ -210,14 +212,14 @@ class KeywordLexer(TestOrKeywordLexer):
         super().__init__(ctx.keyword_context())
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
-        return (TestOrKeywordSettingLexer, ForLexer, InlineIfLexer, IfLexer,
-                ReturnLexer, TryLexer, WhileLexer, SyntaxErrorLexer, KeywordCallLexer)
+        return (KeywordSettingLexer, ForLexer, InlineIfLexer, IfLexer, ReturnLexer,
+                TryLexer, WhileLexer, SyntaxErrorLexer, KeywordCallLexer)
 
 
-class NestedBlockLexer(BlockLexer):
-    ctx: TestOrKeywordContext
+class NestedBlockLexer(BlockLexer, ABC):
+    ctx: 'TestCaseContext|KeywordContext'
 
-    def __init__(self, ctx: TestOrKeywordContext):
+    def __init__(self, ctx: 'TestCaseContext|KeywordContext'):
         super().__init__(ctx)
         self._block_level = 0
 

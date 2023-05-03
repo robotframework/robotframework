@@ -129,15 +129,7 @@ class InitFileContext(FileContext):
                 f"'Settings', 'Variables', 'Keywords' and 'Comments'.")
 
 
-# TODO: Try removing base class
-class TestOrKeywordContext(LexingContext):
-
-    @property
-    def template_set(self) -> bool:
-        return False
-
-
-class TestCaseContext(TestOrKeywordContext):
+class TestCaseContext(LexingContext):
     settings: TestCaseSettings
 
     @property
@@ -145,5 +137,9 @@ class TestCaseContext(TestOrKeywordContext):
         return self.settings.template_set
 
 
-class KeywordContext(TestOrKeywordContext):
+class KeywordContext(LexingContext):
     settings: KeywordSettings
+
+    @property
+    def template_set(self) -> bool:
+        return False
