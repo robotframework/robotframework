@@ -370,11 +370,11 @@ class KeywordStore:
         if not handlers:
             return None
         if len(handlers) > 1:
-            handlers = self._prioritize_same_file_or_public(handlers)
+            handlers = self._filter_based_on_search_order(handlers)
             if len(handlers) > 1:
-                handlers = self._select_best_matches(handlers)
+                handlers = self._prioritize_same_file_or_public(handlers)
                 if len(handlers) > 1:
-                    handlers = self._filter_based_on_search_order(handlers)
+                    handlers = self._select_best_matches(handlers)
                     if len(handlers) > 1:
                         self._raise_multiple_keywords_found(handlers, name)
         return handlers[0].create_runner(name, self.languages)
@@ -386,9 +386,9 @@ class KeywordStore:
             return None
         pre_run_message = None
         if len(handlers) > 1:
-            handlers = self._select_best_matches(handlers)
+            handlers = self._filter_based_on_search_order(handlers)
             if len(handlers) > 1:
-                handlers = self._filter_based_on_search_order(handlers)
+                handlers = self._select_best_matches(handlers)
                 if len(handlers) > 1:
                     handlers, pre_run_message = self._filter_stdlib_handler(handlers)
                     if len(handlers) > 1:
