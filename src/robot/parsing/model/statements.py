@@ -210,7 +210,7 @@ class Statement(Node, ABC):
         return f'{name}({tokens}{errors})'
 
 
-class DocumentationOrMetadata(Statement):
+class DocumentationOrMetadata(Statement, ABC):
 
     @property
     def value(self) -> str:
@@ -269,7 +269,7 @@ class DocumentationOrMetadata(Statement):
         return bool(match and len(match.group(1)) % 2 == 1)
 
 
-class SingleValue(Statement):
+class SingleValue(Statement, ABC):
 
     @property
     def value(self) -> 'str|None':
@@ -279,14 +279,14 @@ class SingleValue(Statement):
         return None
 
 
-class MultiValue(Statement):
+class MultiValue(Statement, ABC):
 
     @property
     def values(self) -> 'tuple[str, ...]':
         return self.get_values(Token.ARGUMENT)
 
 
-class Fixture(Statement):
+class Fixture(Statement, ABC):
 
     @property
     def name(self) -> str:
