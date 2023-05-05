@@ -21,7 +21,9 @@ Module contents:
 - :class:`HybridLibrary` for libraries using the `hybrid library API`__.
 - :class:`ListenerV2` for `listener interface version 2`__.
 - :class:`ListenerV3` for `listener interface version 3`__.
-- :class:`Parser` for `custom parsers`__.
+- :class:`Parser` for `custom parsers`__. Also
+  :class:`~robot.running.builder.settings.TestDefaults` used in ``Parser``
+  type hints can be imported via this module if needed.
 - Type definitions used by the aforementioned classes.
 
 Main benefit of using these base classes is that editors can provide automatic
@@ -35,7 +37,7 @@ base class.
 .. note:: Using this module requires having the typing_extensions__ module
           installed when using Python 3.6 or 3.7.
 
-New in Robot Framework 6.1.
+This module is new in Robot Framework 6.1.
 
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#dynamic-library-api
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#hybrid-library-api
@@ -585,6 +587,21 @@ class Parser(ABC):
     attribute, and it can be either a string or a sequence of strings. The
     attribute can also be named ``EXTENSION``, which typically works better
     when a parser is implemented as a module.
+
+    Example::
+
+        from pathlib import Path
+        from robot.api import TestSuite
+        from robot.api.interfaces import Parser, TestDefaults
+
+
+        class ExampleParser(Parser):
+            extension = '.example'
+
+            def parse(self, source: Path, defaults: TestDefaults) -> TestSuite:
+                suite = TestSuite(TestSuite.name_from_source(source), source=source)
+                # parse the source file and add tests to the created suite
+                return suite
 
     The support for custom parsers is new in Robot Framework 6.1.
     """

@@ -1,7 +1,7 @@
 Parser interface
 ================
 
-Robot Framework supports custom parsers that can handle custom data formats or
+Robot Framework supports external parsers that can handle custom data formats or
 even override Robot Framework's own parser.
 
 .. note:: Custom parsers are new in Robot Framework 6.1.
@@ -13,10 +13,10 @@ even override Robot Framework's own parser.
 Taking parsers into use
 -----------------------
 
-Parsers are taken into use from the command line using the :option:`--parser`
+Parsers are taken into use from the command line with the :option:`--parser`
 option using exactly the same semantics as with listeners__. This includes
-specifying a parser as a name or as a path, how arguments can be given to
-parser classes, and so on::
+specifying parsers as names or paths, giving arguments to parser classes, and
+so on::
 
     robot --parser MyParser tests.custom
     robot --parser path/to/MyParser.py tests.custom
@@ -37,7 +37,8 @@ This attribute specifies what file extension or extensions the parser supports.
 Both `EXTENSION` and `extension` names are accepted, and the former has precedence
 if both exist. That attribute can be either a string or a sequence of strings.
 Extensions are case-insensitive and can be specified with or without the leading
-dot.
+dot. If a parser is implemented as a class, it is possible to set this attribute
+either as a class attribute or as an instance attribute.
 
 If a parser supports the :file:`.robot` extension, it will be used for parsing
 these files instead of the standard parser.
@@ -62,7 +63,7 @@ accept two arguments. In that case the second argument is a TestDefaults_ object
 ~~~~~~~~~~~~~~~~~~~
 
 The optional `parse_init` method is responsible for parsing `suite initialization
-files`_ i.e. files in in format `__init__.ext` where `.ext` is an extension
+files`_ i.e. files in format `__init__.ext` where `.ext` is an extension
 supported by the parser. The method must return a `TestSuite <running.TestSuite_>`__
 object representing the whole directory. Suites created from child suite files
 and directories will be added to its child suites.
@@ -72,8 +73,7 @@ depending on is it interested in test related default values or not. If it
 accepts defaults, it can manipulate the passed TestDefaults_ object and changes
 are seen when parsing child suite files.
 
-This method is optional and only needed if a parser needs to support suite
-initialization files.
+This method is only needed if a parser needs to support suite initialization files.
 
 Optional base class
 ~~~~~~~~~~~~~~~~~~~
@@ -173,10 +173,10 @@ initialization files, uses TestDefaults_ and registers multiple extensions.
 Parser as preprocessor
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The final parser acts as a preprocessor for Robot Framework data files that
-supports headers in format `=== Test Cases ===` in addition to
+The final example parser acts as a preprocessor for Robot Framework data files
+that supports headers in format `=== Test Cases ===` in addition to
 `*** Test Cases ***`. In this kind of usage it is convenient to use
-`TestSuite.from_string`__, `TestSuite.from_model`__ or
+`TestSuite.from_string`__, `TestSuite.from_model`__ and
 `TestSuite.from_file_system`__ factory methods for constructing the returned suite.
 
 .. sourcecode:: python
