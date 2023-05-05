@@ -56,4 +56,4 @@ Limit used multiple times
 
 Invalid values after limit
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.body[0].condition}    $variable < 2, limit=-1x, invalid, values
+    Should Be Equal    ${tc.body[0].condition}    $variable < 2, limit=2, invalid

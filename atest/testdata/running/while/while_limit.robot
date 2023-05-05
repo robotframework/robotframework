@@ -100,8 +100,8 @@ Invalid limit invalid value
     END
 
 Invalid limit mistyped prefix
-    [Documentation]     FAIL WHILE cannot have more than one condition, got '$variable < 2' and 'limitation=-1x'.
-    WHILE    $variable < 2    limitation=-1x
+    [Documentation]     FAIL WHILE loop cannot have more than one condition, got '$variable < 2' and 'limitation=2'.
+    WHILE    $variable < 2    limitation=2
         Log     ${variable}
     END
 
@@ -112,8 +112,8 @@ Limit used multiple times
     END
 
 Invalid values after limit
-    [Documentation]     FAIL WHILE cannot have more than one condition, got '$variable < 2', 'limit=-1x', 'invalid' and 'values'.
-    WHILE    $variable < 2    limit=-1x    invalid    values
+    [Documentation]     FAIL WHILE loop cannot have more than one condition, got '$variable < 2', 'limit=2' and 'invalid'.
+    WHILE    $variable < 2    limit=2    invalid
         Log     ${variable}
     END
 

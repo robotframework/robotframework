@@ -441,7 +441,8 @@ Example
                         Token(Token.ARGUMENT, 'many', 3, 20),
                         Token(Token.ARGUMENT, 'values', 3, 28),
                         Token(Token.ARGUMENT, '!', 3, 38)],
-                errors=('WHILE cannot have more than one condition, got \'too\', \'many\', \'values\' and \'!\'.',)
+                errors=("WHILE loop cannot have more than one condition, "
+                        "got 'too', 'many', 'values' and '!'.",)
             ),
             end=End([
                 Token(Token.END, 'END', 5, 4)

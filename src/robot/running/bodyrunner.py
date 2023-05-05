@@ -439,7 +439,7 @@ class WhileRunner:
                                        resolve_variables=True)
         except Exception:
             msg = get_error_message()
-            raise DataError(f'Invalid WHILE condition: {msg}')
+            raise DataError(f'Invalid WHILE loop condition: {msg}')
 
 
 class IfRunner:

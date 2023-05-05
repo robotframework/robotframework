@@ -69,7 +69,6 @@ Recommend $var syntax if invalid condition contains ${var}
         Fail    Shouldn't be run
     END
 
-
 IF without END
     [Documentation]    FAIL    IF must have closing END.
     IF    ${True}
@@ -98,7 +97,7 @@ ELSE IF without condition
     END
 
 ELSE IF with multiple conditions
-    [Documentation]    FAIL    ELSE IF cannot have more than one condition.
+    [Documentation]    FAIL    ELSE IF cannot have more than one condition, got '\${False}', 'ooops' and '\${True}'.
     IF    'maa' == 'maa'
         Fail    Should not be run
     ELSE IF    ${False}    ooops    ${True}
@@ -216,16 +215,16 @@ Multiple errors
     ...    - ELSE IF not allowed after ELSE.
     ...    - Only one ELSE allowed.
     ...    - IF must have closing END.
-    ...    - ELSE IF cannot have more than one condition.
+    ...    - ELSE IF cannot have more than one condition, got 'too' and 'many'.
     ...    - ELSE IF branch cannot be empty.
-    ...    - ELSE does not accept arguments, got 'oops'.
+    ...    - ELSE does not accept arguments, got 'oops', 'i', 'did', 'it' and 'again'.
     ...    - ELSE branch cannot be empty.
     ...    - ELSE IF must have a condition.
     ...    - ELSE IF branch cannot be empty.
     ...    - ELSE branch cannot be empty.
     IF
     ELSE IF    too    many
-    ELSE    oops
+    ELSE    oops    i    did    it    again
     ELSE IF
     ELSE
 

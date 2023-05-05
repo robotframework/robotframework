@@ -980,11 +980,12 @@ class IfElseHeader(Statement, ABC):
         return self.get_values(Token.ASSIGN)
 
     def validate(self, ctx: 'ValidationContext'):
-        conditions = len(self.get_tokens(Token.ARGUMENT))
-        if conditions == 0:
+        conditions = self.get_tokens(Token.ARGUMENT)
+        if not conditions:
             self.errors += (f'{self.type} must have a condition.',)
-        if conditions > 1:
-            self.errors += (f'{self.type} cannot have more than one condition.',)
+        if len(conditions) > 1:
+            self.errors += (f'{self.type} cannot have more than one condition, '
+                            f'got {seq2str(c.value for c in conditions)}.',)
 
 
 @Statement.register
@@ -1181,12 +1182,16 @@ class WhileHeader(Statement):
         return self.get_option('on_limit_message')
 
     def validate(self, ctx: 'ValidationContext'):
-        values = self.get_values(Token.ARGUMENT)
-        if len(values) > 1:
-            self.errors += (f'WHILE cannot have more than one condition, got {seq2str(values)}.',)
+        conditions = self.get_tokens(Token.ARGUMENT)
+        if len(conditions) > 1:
+            self._add_error(f'cannot have more than one condition, got '
+                            f'{seq2str(c.value for c in conditions)}')
         if self.on_limit and not self.limit:
-            self.errors += ('WHILE on_limit option cannot be used without limit.',)
+            self._add_error("'on_limit' option cannot be used without 'limit'")
         self._validate_options()
+
+    def _add_error(self, error: str):
+        self.errors += (f'WHILE loop {error}.',)
 
 
 @Statement.register

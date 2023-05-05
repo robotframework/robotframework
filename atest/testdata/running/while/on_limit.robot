@@ -67,7 +67,7 @@ Invalid on_limit
     END
 
 On limit without limit defined
-    [Documentation]    FAIL WHILE on_limit option cannot be used without limit.
+    [Documentation]    FAIL WHILE loop 'on_limit' option cannot be used without 'limit'.
     WHILE    True    on_limit=PaSS
         No Operation
     END
@@ -85,7 +85,7 @@ On limit message without limit
     END
 
 Wrong WHILE argument
-    [Documentation]     FAIL WHILE cannot have more than one condition, got '$variable < 2', 'limit=5' and 'limit_exceed_messag=Custom error message'.
+    [Documentation]     FAIL WHILE loop cannot have more than one condition, got '$variable < 2', 'limit=5' and 'limit_exceed_messag=Custom error message'.
     WHILE    $variable < 2    limit=5    limit_exceed_messag=Custom error message
         Log     ${variable}
     END
@@ -135,7 +135,7 @@ On limit message with invalid variable
     END
 
 Wrong WHILE arguments
-    [Documentation]     FAIL WHILE cannot have more than one condition, got '$variable < 2', 'limite=5' and 'limit_exceed_messag=Custom error message'.
+    [Documentation]     FAIL WHILE loop cannot have more than one condition, got '$variable < 2', 'limite=5' and 'limit_exceed_messag=Custom error message'.
     WHILE    $variable < 2    limite=5    limit_exceed_messag=Custom error message
         Log     ${variable}
     END
