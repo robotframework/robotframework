@@ -8,7 +8,7 @@ Robot Framework 6.1 beta 1
 Robot Framework data to JSON and back, a new external parser API, and various
 other interesting new features both for normal users and for external tool
 developers. This beta release is especially targeted for tool developers
-interested to test the new APIs. It also contain all planned
+interested to test the new APIs. It also contains all planned
 `backwards incompatible changes`_ and `deprecated features`_, and everyone
 interested to make sure their tests, tasks or tools are compatible,
 should test it in their environment.
@@ -114,7 +114,7 @@ The parser API is another important new interface targeted for tool developers
 (`#1283`_). It makes it possible to create custom parsers that can handle their
 own data formats or even override Robot Framework's own parser.
 
-Parsers are taken into use from the command like using the new `--parser` option
+Parsers are taken into use from the command line using the new `--parser` option
 the same way as, for example, listeners. This includes specifying parsers as
 names or paths, giving arguments to parser classes, and so on::
 
@@ -264,7 +264,7 @@ Possibility to flatten keyword structures during execution
 ----------------------------------------------------------
 
 With nested keyword structures, especially with recursive keyword calls and with
-WHILE and FOR loops, the log file can get hard do understand with many different
+WHILE and FOR loops, the log file can get hard to understand with many different
 nesting levels. Such nested structures also increase the size of the output.xml
 file. For example, even a simple keyword like:
 
