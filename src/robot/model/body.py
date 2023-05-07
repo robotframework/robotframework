@@ -63,7 +63,7 @@ class BodyItem(ModelObject):
         # This algorithm must match the id creation algorithm in the JavaScript side
         # or linking to warnings and errors won't work.
         if not self:
-            return ""
+            return None
         if not self.parent:
             return 'k1'
         return self._get_id(self.parent)
