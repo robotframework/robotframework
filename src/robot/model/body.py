@@ -14,20 +14,20 @@
 #  limitations under the License.
 
 import re
-from typing import cast, Generic, Iterable, Mapping, Type, TypeVar, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Type, TypeVar, cast
 
 from .itemlist import ItemList
 from .modelobject import ModelObject, full_name
 
 if TYPE_CHECKING:
-    from .control import Break, Continue, Error, For, If, Return, Try, While
+    from .control import (
+        Break, Continue, Error, For, If, Return, Try, While, IfBranch, TryBranch)
     from .keyword import Keyword
     from .message import Message
     from .testcase import TestCase
     from .testsuite import TestSuite
 
-C = TypeVar('C', bound='BodyItem')
-T = TypeVar('T', 'Try', 'If')
+T = TypeVar("T", bound="BodyItem")
 
 
 class BodyItem(ModelObject):
@@ -54,7 +54,7 @@ class BodyItem(ModelObject):
     __slots__ = ['parent']
 
     @property
-    def id(self) -> 'str|None':
+    def id(self) -> 'str':
         """Item id in format like ``s1-t3-k1``.
 
         See :attr:`TestSuite.id <robot.model.testsuite.TestSuite.id>` for
@@ -63,23 +63,21 @@ class BodyItem(ModelObject):
         # This algorithm must match the id creation algorithm in the JavaScript side
         # or linking to warnings and errors won't work.
         if not self:
-            return None
+            return ""
         if not self.parent:
             return 'k1'
         return self._get_id(self.parent)
 
-    def _get_id(self, parent: 'TestSuite|TestCase|T') -> str:
+    def _get_id(self, parent: 'TestSuite|TestCase|BodyItem') -> str:
         steps = []
         if getattr(parent, 'has_setup', False):
-            parent = cast('TestSuite|TestCase', parent)
-            steps.append(parent.setup)
+            steps.append(parent.setup)  # type: ignore # Use Protocol with RF 7
         if hasattr(parent, 'body'):
-            parent = cast('T', parent)
-            steps.extend(step for step in parent.body.flatten()
+            steps.extend(step for step in
+                         parent.body.flatten()  # type: ignore # Use Protocol with RF 7
                          if step.type != self.MESSAGE)
         if getattr(parent, 'has_teardown', False):
-            parent = cast('TestSuite|TestCase', parent)
-            steps.append(parent.teardown)
+            steps.append(parent.teardown) # type: ignore # Use Protocol with RF 7
         index = steps.index(self) if self in steps else len(steps)
         parent_id = parent.id
         return f'{parent_id}-k{index + 1}' if parent_id else f'k{index + 1}'
@@ -92,19 +90,32 @@ class BaseBody(ItemList[BodyItem]):
     """Base class for Body and Branches objects."""
     __slots__ = []
     # Set using 'BaseBody.register' when these classes are created.
-    keyword_class = None
-    for_class = None
-    while_class = None
-    if_class = None
-    try_class = None
-    return_class = None
-    continue_class = None
-    break_class = None
-    message_class = None
-    error_class = None
+
+    if TYPE_CHECKING:
+        keyword_class = Keyword
+        for_class = For
+        while_class = While
+        if_class = If
+        try_class = Try
+        return_class = Return
+        continue_class = Continue
+        break_class = Break
+        message_class = Message
+        error_class = Error
+    else:
+        keyword_class = None
+        for_class = None
+        while_class = None
+        if_class = None
+        try_class = None
+        return_class = None
+        continue_class = None
+        break_class = None
+        message_class = None
+        error_class = None
 
     def __init__(self, parent: 'TestSuite|TestCase|BodyItem|None' = None,
-                 items: 'Iterable[C|Mapping]' = ()):
+                 items: 'Iterable[BodyItem|Mapping]' = ()):
         super().__init__(BodyItem, {'parent': parent}, items)
 
     def _item_from_dict(self, data: Mapping) -> BodyItem:
@@ -121,7 +132,7 @@ class BaseBody(ItemList[BodyItem]):
         return item_class.from_dict(data)
 
     @classmethod
-    def register(cls: 'Type[BaseBody]', item_class: Type[C]) -> Type[C]:
+    def register(cls, item_class: Type[T]) -> Type[T]:
         name_parts = re.findall('([A-Z][a-z]+)', item_class.__name__) + ['class']
         name = '_'.join(name_parts).lower()
         if not hasattr(cls, name):
@@ -136,13 +147,14 @@ class BaseBody(ItemList[BodyItem]):
             f"Use item specific methods like 'create_keyword' instead."
         )
 
-    def create_keyword(self, *args, **kwargs) -> 'Keyword':
-        return self._create(self.keyword_class, 'create_keyword', args, kwargs)
-
-    def _create(self, cls: 'Type[C]|None', name: str, args, kwargs) -> C:
+    def _create(self, cls: 'Type[T]', name: str, args: Iterable[Any],
+                kwargs: Mapping[str, Any]) -> T:
         if cls is None:
             raise TypeError(f"'{full_name(self)}' object does not support '{name}'.")
         return self.append(cls(*args, **kwargs))
+
+    def create_keyword(self, *args, **kwargs) -> 'Keyword':
+        return self._create(self.keyword_class, 'create_keyword', args, kwargs)
 
     def create_for(self, *args, **kwargs) -> 'For':
         return self._create(self.for_class, 'create_for', args, kwargs)
@@ -215,7 +227,7 @@ class BaseBody(ItemList[BodyItem]):
             items = [item for item in items if predicate(item)]
         return items
 
-    def flatten(self) -> 'list[BodyItem|Try|If]':
+    def flatten(self) -> 'list[BodyItem]':
         """Return steps so that IF and TRY structures are flattened.
 
         Basically the IF/ELSE and TRY/EXCEPT root elements are replaced
@@ -240,18 +252,18 @@ class Body(BaseBody):
     pass
 
 
-class Branches(BaseBody, Generic[T]):
+class Branches(BaseBody):
     """A list-like object representing IF and TRY branches."""
     __slots__ = ['branch_class']
 
-    def __init__(self, branch_class: Type[T],
+    def __init__(self, branch_class: 'Type[IfBranch|TryBranch]',
                  parent: 'TestSuite|TestCase|BodyItem|None' = None,
-                 items: 'Iterable[T|Mapping]' = ()):
+                 items: 'Iterable[BodyItem|Mapping]' = ()):
 
         self.branch_class = branch_class
         super().__init__(parent, items)
 
-    def _item_from_dict(self, data: Mapping) -> T:
+    def _item_from_dict(self, data: Mapping) -> BodyItem:
         return self.branch_class.from_dict(data)
 
     def create_branch(self, *args, **kwargs):
