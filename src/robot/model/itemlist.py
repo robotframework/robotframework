@@ -58,7 +58,7 @@ class ItemList(MutableSequence[T]):
         """Create a new item using the provided arguments."""
         return self.append(self._item_class(*args, **kwargs))
 
-    def append(self, item: 'T|Mapping'):
+    def append(self, item: 'T|Mapping') -> T:
         item = self._check_type_and_set_attrs(item)
         self._items.append(item)
         return item

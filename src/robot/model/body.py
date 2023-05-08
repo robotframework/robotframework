@@ -14,18 +14,19 @@
 #  limitations under the License.
 
 import re
-from typing import TYPE_CHECKING, Any, Iterable, Mapping, Type, TypeVar, cast
+from typing import Any, Callable, cast, Iterable, Mapping, Type, TYPE_CHECKING, TypeVar
 
 from .itemlist import ItemList
-from .modelobject import ModelObject, full_name
+from .modelobject import full_name, ModelObject
 
 if TYPE_CHECKING:
-    from .control import (
-        Break, Continue, Error, For, If, Return, Try, While, IfBranch, TryBranch)
+    from .control import (Break, Continue, Error, For, If, IfBranch, Return,
+                          Try, TryBranch, While)
     from .keyword import Keyword
     from .message import Message
     from .testcase import TestCase
     from .testsuite import TestSuite
+
 
 T = TypeVar("T", bound="BodyItem")
 
@@ -54,16 +55,21 @@ class BodyItem(ModelObject):
     __slots__ = ['parent']
 
     @property
-    def id(self) -> 'str':
+    def id(self) -> 'str|None':
         """Item id in format like ``s1-t3-k1``.
 
         See :attr:`TestSuite.id <robot.model.testsuite.TestSuite.id>` for
         more information.
+
+        ``id`` is ``None`` only in these special cases:
+
+        - Keyword uses a placeholder for ``setup`` or ``teardown`` when
+          a ``setup`` or ``teardown`` is not actually used.
+        - With :class:`~robot.model.control.If` and :class:`~robot.model.control.Try`
+          instances representing IF/TRY structure roots.
         """
         # This algorithm must match the id creation algorithm in the JavaScript side
         # or linking to warnings and errors won't work.
-        if not self:
-            return None
         if not self.parent:
             return 'k1'
         return self._get_id(self.parent)
@@ -71,13 +77,13 @@ class BodyItem(ModelObject):
     def _get_id(self, parent: 'TestSuite|TestCase|BodyItem') -> str:
         steps = []
         if getattr(parent, 'has_setup', False):
-            steps.append(parent.setup)  # type: ignore # Use Protocol with RF 7
+            steps.append(parent.setup)          # type: ignore - Use Protocol with RF 7.
         if hasattr(parent, 'body'):
             steps.extend(step for step in
-                         parent.body.flatten()  # type: ignore # Use Protocol with RF 7
+                         parent.body.flatten()  # type: ignore - Use Protocol with RF 7.
                          if step.type != self.MESSAGE)
         if getattr(parent, 'has_teardown', False):
-            steps.append(parent.teardown) # type: ignore # Use Protocol with RF 7
+            steps.append(parent.teardown)       # type: ignore - Use Protocol with RF 7.
         index = steps.index(self) if self in steps else len(steps)
         parent_id = parent.id
         return f'{parent_id}-k{index + 1}' if parent_id else f'k{index + 1}'
@@ -183,7 +189,8 @@ class BaseBody(ItemList[BodyItem]):
     def create_error(self, *args, **kwargs) -> 'Error':
         return self._create(self.error_class, 'create_error', args, kwargs)
 
-    def filter(self, keywords=None, messages=None, predicate=None):
+    def filter(self, keywords: 'bool|None' = None, messages: 'bool|None' = None,
+               predicate: 'Callable[[T], bool]|None' = None):
         """Filter body items based on type and/or custom predicate.
 
         To include or exclude items based on types, give matching arguments
@@ -263,8 +270,8 @@ class Branches(BaseBody):
         self.branch_class = branch_class
         super().__init__(parent, items)
 
-    def _item_from_dict(self, data: Mapping) -> BodyItem:
+    def _item_from_dict(self, data: Mapping) -> 'IfBranch|TryBranch':
         return self.branch_class.from_dict(data)
 
-    def create_branch(self, *args, **kwargs):
-        return self.append(self.branch_class(*args, **kwargs))
+    def create_branch(self, *args, **kwargs) -> 'IfBranch|TryBranch':
+        return self._create(self.branch_class, 'create_branch', args, kwargs)
