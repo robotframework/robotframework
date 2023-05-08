@@ -26,3 +26,7 @@ def match_in_both_libraries(match, both):
 def best_match_in_one_of_libraries(match, one_of):
     assert match == 'match'
     assert one_of == 'one of'
+
+@keyword('Follow search ${disorder} in libraries')
+def follow_search_order_in_libraries(disorder):
+    assert disorder == 'disorder should not happen'

@@ -52,13 +52,13 @@ Conflict in library with explicit usage
 Search order resolves conflict with resources
     Check Test Case    ${TESTNAME}
 
-Best match in resource wins over search order
+Search order wins over best match in resource
     Check Test Case    ${TESTNAME}
 
 Search order resolves conflict with libraries
     Check Test Case    ${TESTNAME}
 
-Best match in library wins over search order
+Search order wins over best match in libraries
     Check Test Case    ${TESTNAME}
 
 Search order cannot resolve conflict within resource

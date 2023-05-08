@@ -12,9 +12,8 @@ ${y:y} in resource
 ${match} in ${both} resources
     Fail    Should not be run due to search order
 
-Best ${match} in ${one of} resources
-    Should be equal    ${match}    match
-    Should be equal    ${one of}    one of
+Follow search ${disorder} in resources
+	Fail	Should not be run due to search order
 
 ${public} match
     Should be equal    ${public}    Better public
