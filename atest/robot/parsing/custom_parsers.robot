@@ -22,6 +22,14 @@ Directory with init
     Run Tests    --parser ${DIR}/CustomParser.py:init=True    ${DIR}
     Validate Directory Suite    init=True
 
+Extension with multiple parts
+    Run Tests    --parser ${DIR}/CustomParser.py:multi.part.ext    ${DIR}
+    Validate Suite    ${SUITE}    Custom    ${DIR}    custom=False
+    ...    Passing=PASS
+    ...    Test in Robot file=PASS
+    Validate Suite    ${SUITE.suites[0]}    Tests    ${DIR}/tests.multi.part.ext
+    ...    Passing=PASS
+
 Override Robot parser
     Run Tests    --parser ${DIR}/CustomParser.py:.robot    ${DIR}/tests.robot
     Validate Suite    ${SUITE}    Tests    ${DIR}/tests.robot

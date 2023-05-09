@@ -15,7 +15,7 @@
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Iterable, Sequence
+from typing import Iterable, Iterator, Sequence
 
 from robot.errors import DataError
 from robot.model import SuiteNamePatterns
@@ -23,20 +23,50 @@ from robot.output import LOGGER
 from robot.utils import get_error_message
 
 
+class ValidExtensions:
+
+    def __init__(self, extensions: Iterable[str]):
+        self.extensions = {ext.lstrip('.').lower() for ext in extensions}
+
+    def match(self, path: Path) -> bool:
+        for ext in self._extensions_from(path):
+            if ext in self.extensions:
+                return True
+        return False
+
+    def get_extension(self, path: Path) -> str:
+        for ext in self._extensions_from(path):
+            if ext in self.extensions:
+                return ext
+        return path.suffix.lower()[1:]
+
+    def _extensions_from(self, path: Path) -> Iterator[str]:
+        suffixes = path.suffixes
+        while suffixes:
+            yield ''.join(suffixes).lower()[1:]
+            suffixes.pop(0)
+
+
 class SuiteStructure(ABC):
     source: 'Path|None'
     init_file: 'Path|None'
     children: 'list[SuiteStructure]|None'
 
-    def __init__(self, source: 'Path|None', init_file: 'Path|None' = None,
+    def __init__(self, extensions: ValidExtensions, source: 'Path|None',
+                 init_file: 'Path|None' = None,
                  children: 'Sequence[SuiteStructure]|None' = None):
+        self._extensions = extensions
         self.source = source
         self.init_file = init_file
         self.children = list(children) if children is not None else None
 
     @property
-    @abstractmethod
     def extension(self) -> 'str|None':
+        source = self._get_source_file()
+        return self._extensions.get_extension(source) if source else None
+
+    @abstractmethod
+    def _get_source_file(self) -> 'Path|None':
         raise NotImplementedError
 
     @abstractmethod
@@ -47,12 +77,11 @@ class SuiteStructure(ABC):
 class SuiteFile(SuiteStructure):
     source: Path
 
-    def __init__(self, source: Path):
-        super().__init__(source)
+    def __init__(self, extensions: ValidExtensions, source: Path):
+        super().__init__(extensions, source)
 
-    @property
-    def extension(self) -> str:
-        return self.source.suffix[1:].lower()
+    def _get_source_file(self) -> Path:
+        return self.source
 
     def visit(self, visitor: 'SuiteStructureVisitor'):
         visitor.visit_file(self)
@@ -61,17 +90,17 @@ class SuiteFile(SuiteStructure):
 class SuiteDirectory(SuiteStructure):
     children: 'list[SuiteStructure]'
 
-    def __init__(self, source: 'Path|None' = None, init_file: 'Path|None' = None,
+    def __init__(self, extensions: ValidExtensions, source: 'Path|None' = None,
+                 init_file: 'Path|None' = None,
                  children: Sequence[SuiteStructure] = ()):
-        super().__init__(source, init_file, children)
+        super().__init__(extensions, source, init_file, children)
+
+    def _get_source_file(self) -> 'Path|None':
+        return self.init_file
 
     @property
     def is_multi_source(self) -> bool:
         return self.source is None
-
-    @property
-    def extension(self) -> 'str|None':
-        return self.init_file.suffix[1:].lower() if self.init_file else None
 
     def add(self, child: 'SuiteStructure'):
         self.children.append(child)
@@ -104,7 +133,7 @@ class SuiteStructureBuilder:
 
     def __init__(self, extensions: Iterable[str] = ('.robot', '.rbt'),
                  included_suites: Iterable[str] = ()):
-        self.extensions = {'.' + ext.lstrip('.').lower() for ext in extensions}
+        self.extensions = ValidExtensions(extensions)
         self.included_suites = SuiteNamePatterns(
             self._create_included_suites(included_suites)
         )
@@ -123,12 +152,12 @@ class SuiteStructureBuilder:
 
     def _build(self, path: Path, included_suites: SuiteNamePatterns) -> SuiteStructure:
         if path.is_file():
-            return SuiteFile(path)
+            return SuiteFile(self.extensions, path)
         return self._build_directory(path, included_suites)
 
     def _build_directory(self, path: Path,
                          included_suites: SuiteNamePatterns) -> SuiteStructure:
-        structure = SuiteDirectory(path)
+        structure = SuiteDirectory(self.extensions, path)
         # If a directory is included, also its children are included.
         if self._is_suite_included(path.name, included_suites):
             included_suites = SuiteNamePatterns()
@@ -159,7 +188,7 @@ class SuiteStructureBuilder:
 
     def _is_init_file(self, path: Path) -> bool:
         return (path.stem.lower() == '__init__'
-                and path.suffix.lower() in self.extensions
+                and self.extensions.match(path)
                 and path.is_file())
 
     def _is_included(self, path: Path, included_suites: SuiteNamePatterns) -> bool:
@@ -169,12 +198,12 @@ class SuiteStructureBuilder:
             return path.name not in self.ignored_dirs
         if not path.is_file():
             return False
-        if path.suffix.lower() not in self.extensions:
+        if not self.extensions.match(path):
             return False
         return self._is_suite_included(path.stem, included_suites)
 
     def _build_multi_source(self, paths: Iterable[Path]) -> SuiteStructure:
-        structure = SuiteDirectory()
+        structure = SuiteDirectory(self.extensions)
         for path in paths:
             if self._is_init_file(path):
                 if structure.init_file:

@@ -35,13 +35,16 @@ what attributes and methods they must contain.
 
 This attribute specifies what file extension or extensions the parser supports.
 Both `EXTENSION` and `extension` names are accepted, and the former has precedence
-if both exist. That attribute can be either a string or a sequence of strings.
+if both exist. The attribute can be either a string or a sequence of strings.
 Extensions are case-insensitive and can be specified with or without the leading
 dot. If a parser is implemented as a class, it is possible to set this attribute
 either as a class attribute or as an instance attribute.
 
-If a parser supports the :file:`.robot` extension, it will be used for parsing
-these files instead of the standard parser.
+Also extensions containing multiple parts like :file:`.example.ext` or
+:file:`.robot.zip` are supported.
+
+.. note:: If a parser supports the :file:`.robot` extension, it will be used
+          for parsing these files instead of the standard parser.
 
 `parse` method
 ~~~~~~~~~~~~~~
@@ -128,7 +131,8 @@ from each line it contains.
             self.extension = extension
 
         def parse(self, source: Path) -> TestSuite:
-            suite = TestSuite(TestSuite.name_from_source(source), source=source)
+            name = TestSuite.name_from_source(source, self.extension)
+            suite = TestSuite(name, source=source)
             for line in source.read_text().splitlines():
                 test = suite.tests.create(name=line)
                 test.body.create_keyword(name='Log', args=['Hello!'])

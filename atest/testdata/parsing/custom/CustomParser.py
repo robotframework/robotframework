@@ -26,6 +26,7 @@ class CustomParser(Parser):
         if self.bad_return:
             return 'bad'
         suite = custom.parse(source)
+        suite.name = TestSuite.name_from_source(source, self.extension)
         for test in suite.tests:
             defaults.set_to(test)
         return suite

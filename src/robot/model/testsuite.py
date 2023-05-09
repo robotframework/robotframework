@@ -17,7 +17,7 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any, Iterator, Sequence, Type
 
-from robot.utils import setter
+from robot.utils import seq2str, setter
 
 from .configurer import SuiteConfigurer
 from .filter import Filter, EmptySuiteRemover
@@ -59,16 +59,61 @@ class TestSuite(ModelObject):
         self._my_visitors: 'list[SuiteVisitor]' = []
 
     @staticmethod
-    def name_from_source(source: 'Path|str|None') -> str:
+    def name_from_source(source: 'Path|str|None', extension: Sequence[str] = ()) -> str:
+        """Create suite name based on the given ``source``.
+
+        This method is used by Robot Framework itself when it builds suites.
+        External parsers and other tools that want to produce suites with
+        names matching names created by Robot Framework can use this method as
+        well. This method is also used if :attr:`name` is not set and someone
+        accessess it.
+
+        The algorithm is as follows:
+
+        - If the source is ``None`` or empty, return an empty string.
+        - Get the base name of the source. Read more below.
+        - Remove possible prefix separated with ``__``.
+        - Convert underscrores to spaces.
+        - If the name is all lower case, title case it.
+
+        The base name of files is got by calling `Path.stem`__ that drops
+        the file extension. It typically works fine, but gives wrong result
+        if the extension has multiple parts like in ``tests.robot.zip``.
+        That problem can be avoided by giving valid file extension or extensions
+        as the optional ``extension`` argument.
+
+        Examples::
+
+            TestSuite.name_from_source(source)
+            TestSuite.name_from_source(source, extension='.robot.zip')
+            TestSuite.name_from_source(source, ('.robot', '.robot.zip'))
+
+        __ https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.stem
+        """
         if not source:
             return ''
         if not isinstance(source, Path):
             source = Path(source)
-        name = source.name if source.is_dir() else source.stem
+        name = TestSuite._get_base_name(source, extension)
         if '__' in name:
             name = name.split('__', 1)[1] or name
         name = name.replace('_', ' ').strip()
         return name.title() if name.islower() else name
+
+    @staticmethod
+    def _get_base_name(path: Path, extensions: Sequence[str]) -> str:
+        if path.is_dir():
+            return path.name
+        if not extensions:
+            return path.stem
+        if isinstance(extensions, str):
+            extensions = [extensions]
+        for ext in extensions:
+            ext = '.' + ext.lower().lstrip('.')
+            if path.name.endswith(ext):
+                return path.name[:-len(ext)]
+        raise ValueError(f"File '{path}' does not have extension "
+                         f"{seq2str(extensions, lastsep=' or ')}.")
 
     @property
     def _visitors(self) -> 'list[SuiteVisitor]':
