@@ -278,13 +278,13 @@ class TestToFromDictAndJson(unittest.TestCase):
                      name='Setup', lineno=1)
 
     def test_for(self):
-        self._verify(For(), type='FOR', variables=[], flavor='IN', values=[], body=[])
+        self._verify(For(), type='FOR', variables=(), flavor='IN', values=(), body=[])
         self._verify(For(['${i}'], 'IN RANGE', ['10'], lineno=2),
-                     type='FOR', variables=['${i}'], flavor='IN RANGE', values=['10'],
+                     type='FOR', variables=('${i}',), flavor='IN RANGE', values=('10',),
                      body=[], lineno=2)
         self._verify(For(['${i}', '${a}'], 'IN ENUMERATE', ['cat', 'dog'], start='1'),
-                     type='FOR', variables=['${i}', '${a}'], flavor='IN ENUMERATE',
-                     values=['cat', 'dog'], body=[], start='1')
+                     type='FOR', variables=('${i}', '${a}'), flavor='IN ENUMERATE',
+                     values=('cat', 'dog'), start='1', body=[])
 
     def test_while(self):
         self._verify(While(), type='WHILE', body=[])
@@ -321,9 +321,9 @@ class TestToFromDictAndJson(unittest.TestCase):
 
     def test_try_branch(self):
         self._verify(TryBranch(), type='TRY', body=[])
-        self._verify(TryBranch(Try.EXCEPT), type='EXCEPT', patterns=[], body=[])
+        self._verify(TryBranch(Try.EXCEPT), type='EXCEPT', patterns=(), body=[])
         self._verify(TryBranch(Try.EXCEPT, ['Pa*'], 'glob', '${err}'), type='EXCEPT',
-                     patterns=['Pa*'], pattern_type='glob', variable='${err}', body=[])
+                     patterns=('Pa*',), pattern_type='glob', variable='${err}', body=[])
         self._verify(TryBranch(Try.ELSE, lineno=7), type='ELSE', body=[], lineno=7)
         self._verify(TryBranch(Try.FINALLY, lineno=8), type='FINALLY', body=[], lineno=8)
 
@@ -336,14 +336,14 @@ class TestToFromDictAndJson(unittest.TestCase):
         self._verify(root,
                      type='TRY/EXCEPT ROOT',
                      body=[{'type': 'TRY', 'body': [{'name': 'K1'}]},
-                           {'type': 'EXCEPT', 'patterns': [], 'body': [{'name': 'K2'}]},
+                           {'type': 'EXCEPT', 'patterns': (), 'body': [{'name': 'K2'}]},
                            {'type': 'ELSE', 'body': [{'name': 'K3'}]},
                            {'type': 'FINALLY', 'body': [{'name': 'K4'}]}])
 
     def test_return_continue_break(self):
-        self._verify(Return(), type='RETURN', values=[])
+        self._verify(Return(), type='RETURN', values=())
         self._verify(Return(('x', 'y'), lineno=9, error='E'),
-                     type='RETURN', values=['x', 'y'], lineno=9, error='E')
+                     type='RETURN', values=('x', 'y'), lineno=9, error='E')
         self._verify(Continue(), type='CONTINUE')
         self._verify(Continue(lineno=10, error='E'),
                      type='CONTINUE', lineno=10, error='E')
@@ -352,13 +352,13 @@ class TestToFromDictAndJson(unittest.TestCase):
                      type='BREAK', lineno=11, error='E')
 
     def test_error(self):
-        self._verify(Error(), type='ERROR', values=[])
-        self._verify(Error(('bad', 'things')), type='ERROR', values=['bad', 'things'])
+        self._verify(Error(), type='ERROR', values=())
+        self._verify(Error(('bad', 'things')), type='ERROR', values=('bad', 'things'))
 
     def test_test(self):
         self._verify(TestCase(), name='', body=[])
         self._verify(TestCase('N', 'D', 'T', '1s', lineno=12),
-                     name='N', doc='D', tags=['T'], timeout='1s', lineno=12, body=[])
+                     name='N', doc='D', tags=('T',), timeout='1s', lineno=12, body=[])
         self._verify(TestCase(template='K'), name='', body=[], template='K')
 
     def test_test_structure(self):
@@ -400,12 +400,12 @@ class TestToFromDictAndJson(unittest.TestCase):
 
     def test_user_keyword(self):
         self._verify(UserKeyword(), name='', body=[])
-        self._verify(UserKeyword('N', 'a', 'd', 't', 'r', 't', 1, error='E'),
+        self._verify(UserKeyword('N', ('a',), 'd', 't', ('r',), 't', 1, error='E'),
                      name='N',
-                     args=['a'],
+                     args=('a',),
                      doc='d',
-                     tags=['t'],
-                     return_='r',
+                     tags=('t',),
+                     return_=('r',),
                      timeout='t',
                      lineno=1,
                      error='E',

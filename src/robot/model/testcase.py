@@ -184,7 +184,7 @@ class TestCase(ModelObject):
         if self.doc:
             data['doc'] = self.doc
         if self.tags:
-            data['tags'] = list(self.tags)
+            data['tags'] = tuple(self.tags)
         if self.timeout:
             data['timeout'] = self.timeout
         if self.lineno:

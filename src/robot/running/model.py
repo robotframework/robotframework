@@ -745,20 +745,15 @@ class UserKeyword(ModelObject):
 
     def to_dict(self):
         data = {'name': self.name}
-        if self.args:
-            data['args'] = list(self.args)
-        if self.doc:
-            data['doc'] = self.doc
-        if self.tags:
-            data['tags'] = list(self.tags)
-        if self.return_:
-            data['return_'] = self.return_
-        if self.timeout:
-            data['timeout'] = self.timeout
-        if self.lineno:
-            data['lineno'] = self.lineno
-        if self.error:
-            data['error'] = self.error
+        for name, value in [('args', self.args),
+                            ('doc', self.doc),
+                            ('tags', tuple(self.tags)),
+                            ('return_', self.return_),
+                            ('timeout', self.timeout),
+                            ('lineno', self.lineno),
+                            ('error', self.error)]:
+            if value:
+                data[name] = value
         data['body'] = self.body.to_dicts()
         if self.has_teardown:
             data['teardown'] = self.teardown.to_dict()
