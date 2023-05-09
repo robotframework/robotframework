@@ -58,9 +58,9 @@ Resource Search Order Is Case Insensitive
     Set Library Search Order    Resource1    resource2
     Active Resource Should Be    resource1
 
-Exact match wins over match containing embedded arguments regardless search order
+Search Order Controlled Match Containing Embedded Arguments Wins Over Exact Match
     Set Library Search Order    embedded    resource1
-    Active Resource Should Be    resource1
+    With Search Order Active Resource Should Be    embedded
 
 *** Keywords ***
 Active Resource Should Be
@@ -71,4 +71,9 @@ Active Resource Should Be
 Active Library Should Be
     [Arguments]    ${expected}
     ${name} =    Get Library Name
+    Should Be Equal    ${name}    ${expected}
+
+With Search Order Active Resource Should Be
+    [Arguments]    ${expected}
+    ${name} =    Get Name With Search Order
     Should Be Equal    ${name}    ${expected}
