@@ -23,14 +23,17 @@ if sys.version_info >= (3, 8):
     from typing import TypedDict
 
 
-    class FixtureDict(TypedDict):
+    class OptionalItems(TypedDict, total=False):
+        args: 'Sequence[str]'
+        lineno: int
+
+
+    class FixtureDict(OptionalItems):
         """Dictionary containing setup or teardown info.
 
         :attr:`args` and :attr:`lineno` are optional.
         """
         name: str
-        args: 'Sequence[str]'
-        lineno: int
 
 else:
     class FixtureDict(dict):
