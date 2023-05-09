@@ -14,10 +14,10 @@
 #  limitations under the License.
 
 import re
-from typing import Any, Callable, cast, Iterable, Mapping, Type, TYPE_CHECKING, TypeVar
+from typing import Any, Callable, cast, Iterable, Type, TYPE_CHECKING, TypeVar
 
 from .itemlist import ItemList
-from .modelobject import full_name, ModelObject
+from .modelobject import DataDict, full_name, ModelObject
 
 if TYPE_CHECKING:
     from .control import (Break, Continue, Error, For, If, IfBranch, Return,
@@ -88,7 +88,7 @@ class BodyItem(ModelObject):
         parent_id = parent.id
         return f'{parent_id}-k{index + 1}' if parent_id else f'k{index + 1}'
 
-    def to_dict(self):
+    def to_dict(self) -> DataDict:
         raise NotImplementedError
 
 
@@ -121,10 +121,10 @@ class BaseBody(ItemList[BodyItem]):
         error_class = None
 
     def __init__(self, parent: 'TestSuite|TestCase|BodyItem|None' = None,
-                 items: 'Iterable[BodyItem|Mapping]' = ()):
+                 items: 'Iterable[BodyItem|DataDict]' = ()):
         super().__init__(BodyItem, {'parent': parent}, items)
 
-    def _item_from_dict(self, data: Mapping) -> BodyItem:
+    def _item_from_dict(self, data: DataDict) -> BodyItem:
         item_type = data.get('type', None)
         if not item_type:
             item_class = self.keyword_class
@@ -153,8 +153,8 @@ class BaseBody(ItemList[BodyItem]):
             f"Use item specific methods like 'create_keyword' instead."
         )
 
-    def _create(self, cls: 'Type[T]', name: str, args: Iterable[Any],
-                kwargs: Mapping[str, Any]) -> T:
+    def _create(self, cls: 'Type[T]', name: str, args: 'tuple[Any]',
+                kwargs: 'dict[str, Any]') -> T:
         if cls is None:
             raise TypeError(f"'{full_name(self)}' object does not support '{name}'.")
         return self.append(cls(*args, **kwargs))
@@ -265,12 +265,12 @@ class Branches(BaseBody):
 
     def __init__(self, branch_class: 'Type[IfBranch|TryBranch]',
                  parent: 'TestSuite|TestCase|BodyItem|None' = None,
-                 items: 'Iterable[BodyItem|Mapping]' = ()):
+                 items: 'Iterable[BodyItem|DataDict]' = ()):
 
         self.branch_class = branch_class
         super().__init__(parent, items)
 
-    def _item_from_dict(self, data: Mapping) -> 'IfBranch|TryBranch':
+    def _item_from_dict(self, data: DataDict) -> 'IfBranch|TryBranch':
         return self.branch_class.from_dict(data)
 
     def create_branch(self, *args, **kwargs) -> 'IfBranch|TryBranch':

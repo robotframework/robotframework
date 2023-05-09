@@ -14,15 +14,15 @@
 #  limitations under the License.
 
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Sequence, Type, TYPE_CHECKING
+from typing import Any, Iterable, Sequence, Type, TYPE_CHECKING
 
 from robot.utils import setter
 
-from .body import Body
+from .body import Body, BodyItem
 from .fixture import create_fixture
 from .itemlist import ItemList
 from .keyword import Keyword, Keywords
-from .modelobject import ModelObject
+from .modelobject import DataDict, ModelObject
 from .tags import Tags
 
 if TYPE_CHECKING:
@@ -55,7 +55,7 @@ class TestCase(ModelObject):
         self._teardown: 'Keyword|None' = None
 
     @setter
-    def body(self, body: 'Iterable[Keyword|Mapping]') -> Body:
+    def body(self, body: 'Iterable[BodyItem|DataDict]') -> Body:
         """Test body as a :class:`~robot.model.body.Body` object."""
         return self.body_class(self, body)
 
@@ -94,7 +94,7 @@ class TestCase(ModelObject):
         return self._setup
 
     @setup.setter
-    def setup(self, setup: 'Keyword|Mapping|None'):
+    def setup(self, setup: 'Keyword|DataDict|None'):
         self._setup = create_fixture(setup, self, Keyword.SETUP)
 
     @property
@@ -122,7 +122,7 @@ class TestCase(ModelObject):
         return self._teardown
 
     @teardown.setter
-    def teardown(self, teardown: 'Keyword|Mapping|None'):
+    def teardown(self, teardown: 'Keyword|DataDict|None'):
         self._teardown = create_fixture(teardown, self, Keyword.TEARDOWN)
 
     @property
@@ -202,7 +202,7 @@ class TestCases(ItemList[TestCase]):
 
     def __init__(self, test_class: Type[TestCase] = TestCase,
                  parent: 'TestSuite|None' = None,
-                 tests: 'Sequence[TestCase|Mapping]' = ()):
+                 tests: 'Sequence[TestCase|DataDict]' = ()):
         super().__init__(test_class, {'parent': parent}, tests)
 
     def _check_type_and_set_attrs(self, test):

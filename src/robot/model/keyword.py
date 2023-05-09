@@ -13,11 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Any, Sequence, Type, TYPE_CHECKING
+from typing import cast, Sequence, Type, TYPE_CHECKING
 import warnings
 
 from .body import Body, BodyItem
 from .itemlist import ItemList
+from .modelobject import DataDict
 
 if TYPE_CHECKING:
     from .testcase import TestCase
@@ -70,8 +71,8 @@ class Keyword(BodyItem):
         parts = list(self.assign) + [self.name] + list(self.args)
         return '    '.join(str(p) for p in parts)
 
-    def to_dict(self) -> 'dict[str, Any]':
-        data: 'dict[str, Any]' = {'name': self.name}
+    def to_dict(self) -> DataDict:
+        data: DataDict = {'name': self.name}
         if self.args:
             data['args'] = list(self.args)
         if self.assign:
@@ -79,7 +80,8 @@ class Keyword(BodyItem):
         return data
 
 
-class Keywords(ItemList[Keyword]):
+# FIXME: Remote in RF 7.
+class Keywords(ItemList[BodyItem]):
     """A list-like object representing keywords in a suite, a test or a keyword.
 
     Read-only and deprecated since Robot Framework 4.0.
@@ -90,8 +92,8 @@ class Keywords(ItemList[Keyword]):
         "Use 'body', 'setup' or 'teardown' instead."
     )
 
-    def __init__(self, parent: 'TestSuite|None' = None,
-                 keywords: 'Sequence[Keyword]|Keywords' = ()):
+    def __init__(self, parent: 'TestSuite|TestCase|BodyItem|None' = None,
+                 keywords: Sequence[BodyItem] = ()):
         warnings.warn(self.deprecation_message, UserWarning)
         ItemList.__init__(self, object, {'parent': parent})
         if keywords:
@@ -99,7 +101,9 @@ class Keywords(ItemList[Keyword]):
 
     @property
     def setup(self) -> 'Keyword|None':
-        return self[0] if (self and self[0].type == 'SETUP') else None
+        if self and self[0].type == 'SETUP':
+            return cast(Keyword, self[0])
+        return None
 
     @setup.setter
     def setup(self, kw):
@@ -110,7 +114,9 @@ class Keywords(ItemList[Keyword]):
 
     @property
     def teardown(self) -> 'Keyword|None':
-        return self[-1] if (self and self[-1].type == 'TEARDOWN') else None
+        if self and self[-1].type == 'TEARDOWN':
+            return cast(Keyword, self[-1])
+        return None
 
     @teardown.setter
     def teardown(self, kw: Keyword):
@@ -125,7 +131,7 @@ class Keywords(ItemList[Keyword]):
         return self
 
     @property
-    def normal(self) -> 'list[Keyword]':
+    def normal(self) -> 'list[BodyItem]':
         """Iterates over normal keywords, omitting setup and teardown."""
         return [kw for kw in self if kw.type not in ('SETUP', 'TEARDOWN')]
 

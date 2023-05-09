@@ -25,7 +25,7 @@ from .fixture import create_fixture
 from .itemlist import ItemList
 from .keyword import Keyword, Keywords
 from .metadata import Metadata
-from .modelobject import ModelObject
+from .modelobject import DataDict, ModelObject
 from .tagsetter import TagSetter
 from .testcase import TestCase, TestCases
 from .visitor import SuiteVisitor
@@ -42,7 +42,8 @@ class TestSuite(ModelObject):
     repr_args = ('name',)
     __slots__ = ['parent', '_name', 'doc', '_setup', '_teardown', 'rpa', '_my_visitors']
 
-    def __init__(self, name: str = '', doc: str = '', metadata: 'Mapping|None' = None,
+    def __init__(self, name: str = '', doc: str = '',
+                 metadata: 'Mapping[str, str]|None' = None,
                  source: 'Path|str|None' = None, rpa: 'bool|None' = None,
                  parent: 'TestSuite|None' = None):
         self._name = name
@@ -102,16 +103,16 @@ class TestSuite(ModelObject):
         return f'{self.parent.longname}.{self.name}'
 
     @setter
-    def metadata(self, metadata: 'Mapping|None') -> Metadata:
+    def metadata(self, metadata: 'Mapping[str, str]|None') -> Metadata:
         """Free suite metadata as dictionary-like ``Metadata`` object."""
         return Metadata(metadata)
 
     @setter
-    def suites(self, suites: 'Sequence[TestSuite|Mapping]') -> 'TestSuites':
+    def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> 'TestSuites':
         return TestSuites(self.__class__, self, suites)
 
     @setter
-    def tests(self, tests: 'Sequence[TestCase|Mapping]') -> TestCases:
+    def tests(self, tests: 'Sequence[TestCase|DataDict]') -> TestCases:
         return TestCases(self.test_class, self, tests)
 
     @property
@@ -145,7 +146,7 @@ class TestSuite(ModelObject):
         return self._setup
 
     @setup.setter
-    def setup(self, setup: 'Keyword|Mapping|None'):
+    def setup(self, setup: 'Keyword|DataDict|None'):
         self._setup = create_fixture(setup, self, Keyword.SETUP)
 
     @property
@@ -173,7 +174,7 @@ class TestSuite(ModelObject):
         return self._teardown
 
     @teardown.setter
-    def teardown(self, teardown: 'Keyword|Mapping|None'):
+    def teardown(self, teardown: 'Keyword|DataDict|None'):
         self._teardown = create_fixture(teardown, self, Keyword.TEARDOWN)
 
     @property
@@ -333,5 +334,5 @@ class TestSuites(ItemList[TestSuite]):
 
     def __init__(self, suite_class: Type[TestSuite] = TestSuite,
                  parent: 'TestSuite|None' = None,
-                 suites: 'Sequence[TestSuite|Mapping]' = ()):
+                 suites: 'Sequence[TestSuite|DataDict]' = ()):
         super().__init__(suite_class, {'parent': parent}, suites)
