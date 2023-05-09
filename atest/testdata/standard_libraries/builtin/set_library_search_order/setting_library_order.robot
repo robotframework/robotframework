@@ -63,9 +63,9 @@ Library Search Order Is Case Insensitive
     Set Library Search Order    library3    Library1
     Active Library Should Be    Library3
 
-Exact match wins over match containing embedded arguments regardless search order
+Search Order Controlled Match Containing Embedded Arguments Wins Over Exact Match
     Set Library Search Order    embedded    Library1
-    Active Library Should Be    Library1
+    Active Library With Search Order Should Be    embedded
 
 *** Keywords ***
 Active Library Should Be
@@ -76,4 +76,9 @@ Active Library Should Be
 Own Library Should Be Used
     [Arguments]    ${expected}
     ${name} =    No Operation
+    Should Be Equal    ${name}    ${expected}
+
+Active Library With Search Order Should Be
+    [Arguments]    ${expected}
+    ${name} =    Get Name With Search Order
     Should Be Equal    ${name}    ${expected}
