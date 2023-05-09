@@ -214,7 +214,10 @@ class JsonLoader:
             return True
         if not isinstance(source, str) or '{' in source:
             return False
-        return Path(source).is_file()
+        try:
+            return Path(source).is_file()
+        except OSError:    # Can happen on Windows w/ Python < 3.10.
+            return False
 
 
 class JsonDumper:
