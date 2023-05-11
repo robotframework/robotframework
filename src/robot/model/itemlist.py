@@ -18,6 +18,7 @@ from typing import (Any, Iterable, Iterator, MutableSequence, overload, TYPE_CHE
                     Type, TypeVar)
 
 from robot.utils import type_name
+from ..utils import copy_signature
 
 from .modelobject import DataDict
 
@@ -45,6 +46,8 @@ class ItemList(MutableSequence[T]):
     """
 
     __slots__ = ['_item_class', '_common_attrs', '_items']
+    # TypeVar T needs to be applied to a variable to be compatible with @set_type_hints
+    item_type: Type[T] = Any
 
     def __init__(self, item_class: Type[T],
                  common_attrs: 'dict[str, Any]|None' = None,
@@ -55,8 +58,9 @@ class ItemList(MutableSequence[T]):
         if items:
             self.extend(items)
 
+    @copy_signature(item_type)
     def create(self, *args, **kwargs) -> T:
-        """Create a new item using the provided arguments."""
+        """Create a new item using the provided aguments."""
         return self.append(self._item_class(*args, **kwargs))
 
     def append(self, item: 'T|DataDict') -> T:
