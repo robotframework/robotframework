@@ -6,6 +6,9 @@ function toggleSuite(suiteId) {
 
 function toggleTest(testId) {
     toggleElement(testId, ['keyword']);
+    var test = window.testdata.findLoaded(testId);
+    if (test.status == "FAIL" || test.status == "SKIP")
+        expandFailed(test);
 }
 
 function toggleKeyword(kwId) {
@@ -79,7 +82,7 @@ function loadAndExpandElementIds(ids) {
 }
 
 function expandFailed(element) {
-    if (element.status == "FAIL") {
+    if (element.status == "FAIL" || (element.type == "test" && element.status == "SKIP")) {
         window.elementsToExpand = [element];
         window.expandDecider = function (e) {
             return e.status == "FAIL";
