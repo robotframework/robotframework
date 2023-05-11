@@ -15,7 +15,7 @@
 
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Iterator, Sequence, Type
+from typing import Any, Iterator, Sequence, Type, TypeVar
 
 from robot.utils import seq2str, setter
 
@@ -155,12 +155,12 @@ class TestSuite(ModelObject):
         return Metadata(metadata)
 
     @setter
-    def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> 'TestSuites':
-        return TestSuites(self.__class__, self, suites)
+    def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> 'TestSuites[TestSuite]':
+        return TestSuites["TestSuite"](self.__class__, self, suites)
 
     @setter
-    def tests(self, tests: 'Sequence[TestCase|DataDict]') -> TestCases:
-        return TestCases(self.test_class, self, tests)
+    def tests(self, tests: 'Sequence[TestCase|DataDict]') -> TestCases[TestCase]:
+        return TestCases[TestCase](self.test_class, self, tests)
 
     @property
     def setup(self) -> Keyword:
@@ -375,11 +375,12 @@ class TestSuite(ModelObject):
             data['suites'] = self.suites.to_dicts()
         return data
 
+TS = TypeVar("TS", bound=TestSuite)
 
-class TestSuites(ItemList[TestSuite]):
+class TestSuites(ItemList[TS]):
     __slots__ = []
 
-    def __init__(self, suite_class: Type[TestSuite] = TestSuite,
-                 parent: 'TestSuite|None' = None,
-                 suites: 'Sequence[TestSuite|DataDict]' = ()):
+    def __init__(self, suite_class: Type[TS] = TestSuite,
+                 parent: 'TS|None' = None,
+                 suites: 'Sequence[TS|DataDict]' = ()):
         super().__init__(suite_class, {'parent': parent}, suites)

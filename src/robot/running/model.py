@@ -45,6 +45,8 @@ from robot import model
 from robot.conf import RobotSettings
 from robot.errors import BreakLoop, ContinueLoop, DataError, ReturnFromKeyword
 from robot.model import BodyItem, create_fixture, DataDict, Keywords, ModelObject
+from robot.model.testcase import TestCases
+from robot.model.testsuite import TestSuites
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.result import (Break as BreakResult, Continue as ContinueResult,
                           Error as ErrorResult, Return as ReturnResult)
@@ -525,6 +527,14 @@ class TestSuite(model.TestSuite):
             to be re-created. Seed value is always shown in logs and reports.
         """
         self.visit(Randomizer(suites, tests, seed))
+
+    @setter
+    def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> 'TestSuites[TestSuite]':
+        return TestSuites['TestSuite'](self.__class__, self, suites)
+
+    @setter
+    def tests(self, tests: 'Sequence[TestCase|DataDict]') -> TestCases['TestCase']:
+        return TestCases['TestCase'](self.test_class, self, tests)
 
     def run(self, settings=None, **options):
         """Executes the suite based on the given ``settings`` or ``options``.
