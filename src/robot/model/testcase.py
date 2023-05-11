@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from pathlib import Path
-from typing import Any, Iterable, Sequence, Type, TYPE_CHECKING
+from typing import Any, Sequence, Type, TYPE_CHECKING
 
 from robot.utils import setter
 
@@ -41,8 +41,11 @@ class TestCase(ModelObject):
     repr_args = ('name',)
     __slots__ = ['parent', 'name', 'doc', 'timeout', 'lineno', '_setup', '_teardown']
 
-    def __init__(self, name: str = '', doc: str = '', tags: Sequence[str] = (),
-                 timeout: 'str|None' = None, lineno: 'int|None' = None,
+    def __init__(self, name: str = '',
+                 doc: str = '',
+                 tags: Sequence[str] = (),
+                 timeout: 'str|None' = None,
+                 lineno: 'int|None' = None,
                  parent: 'TestSuite|None' = None):
         self.name = name
         self.doc = doc
@@ -55,7 +58,7 @@ class TestCase(ModelObject):
         self._teardown: 'Keyword|None' = None
 
     @setter
-    def body(self, body: 'Iterable[BodyItem|DataDict]') -> Body:
+    def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
         """Test body as a :class:`~robot.model.body.Body` object."""
         return self.body_class(self, body)
 

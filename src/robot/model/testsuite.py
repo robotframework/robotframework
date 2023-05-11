@@ -42,9 +42,11 @@ class TestSuite(ModelObject):
     repr_args = ('name',)
     __slots__ = ['parent', '_name', 'doc', '_setup', '_teardown', 'rpa', '_my_visitors']
 
-    def __init__(self, name: str = '', doc: str = '',
+    def __init__(self, name: str = '',
+                 doc: str = '',
                  metadata: 'Mapping[str, str]|None' = None,
-                 source: 'Path|str|None' = None, rpa: 'bool|None' = None,
+                 source: 'Path|str|None' = None,
+                 rpa: 'bool|None' = None,
                  parent: 'TestSuite|None' = None):
         self._name = name
         self.doc = doc

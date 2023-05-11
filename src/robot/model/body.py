@@ -14,12 +14,13 @@
 #  limitations under the License.
 
 import re
-from typing import Any, Callable, cast, Iterable, Type, TYPE_CHECKING, TypeVar
+from typing import Any, Callable, cast, Iterable, Type, TYPE_CHECKING, TypeVar, Union
 
 from .itemlist import ItemList
 from .modelobject import DataDict, full_name, ModelObject
 
 if TYPE_CHECKING:
+    from robot.running.model import UserKeyword, ResourceFile
     from .control import (Break, Continue, Error, For, If, IfBranch, Return,
                           Try, TryBranch, While)
     from .keyword import Keyword
@@ -28,6 +29,8 @@ if TYPE_CHECKING:
     from .testsuite import TestSuite
 
 
+BodyItemParent = Union['TestSuite', 'TestCase', 'UserKeyword', 'For', 'If', 'IfBranch',
+                       'Try', 'TryBranch', 'While', None]
 T = TypeVar("T", bound="BodyItem")
 
 
@@ -68,13 +71,13 @@ class BodyItem(ModelObject):
         - With :class:`~robot.model.control.If` and :class:`~robot.model.control.Try`
           instances representing IF/TRY structure roots.
         """
-        # This algorithm must match the id creation algorithm in the JavaScript side
-        # or linking to warnings and errors won't work.
-        if not self.parent:
-            return 'k1'
         return self._get_id(self.parent)
 
-    def _get_id(self, parent: 'TestSuite|TestCase|BodyItem') -> str:
+    def _get_id(self, parent: 'BodyItemParent|ResourceFile') -> str:
+        if not parent:
+            return 'k1'
+        # This algorithm must match the id creation algorithm in the JavaScript side
+        # or linking to warnings and errors won't work.
         steps = []
         if getattr(parent, 'has_setup', False):
             steps.append(parent.setup)          # type: ignore - Use Protocol with RF 7.
@@ -85,7 +88,7 @@ class BodyItem(ModelObject):
         if getattr(parent, 'has_teardown', False):
             steps.append(parent.teardown)       # type: ignore - Use Protocol with RF 7.
         index = steps.index(self) if self in steps else len(steps)
-        parent_id = parent.id
+        parent_id = getattr(parent, 'id', None)
         return f'{parent_id}-k{index + 1}' if parent_id else f'k{index + 1}'
 
     def to_dict(self) -> DataDict:
@@ -120,7 +123,7 @@ class BaseBody(ItemList[BodyItem]):
         message_class = None
         error_class = None
 
-    def __init__(self, parent: 'TestSuite|TestCase|BodyItem|None' = None,
+    def __init__(self, parent: BodyItemParent = None,
                  items: 'Iterable[BodyItem|DataDict]' = ()):
         super().__init__(BodyItem, {'parent': parent}, items)
 
@@ -264,9 +267,8 @@ class Branches(BaseBody):
     __slots__ = ['branch_class']
 
     def __init__(self, branch_class: 'Type[IfBranch|TryBranch]',
-                 parent: 'TestSuite|TestCase|BodyItem|None' = None,
+                 parent: BodyItemParent = None,
                  items: 'Iterable[BodyItem|DataDict]' = ()):
-
         self.branch_class = branch_class
         super().__init__(parent, items)
 

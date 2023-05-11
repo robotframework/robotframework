@@ -38,7 +38,7 @@ class TestImports(unittest.TestCase):
             for test in result.tests:
                 full_msg.append('%s: %s' % (test, test.message))
             raise AssertionError('\n'.join(full_msg)) from e
-        
+
     def test_create(self):
         suite = TestSuite(name='Suite')
         suite.resource.imports.create('Library', 'OperatingSystem')
@@ -49,7 +49,7 @@ class TestImports(unittest.TestCase):
         test.body.create_keyword('My Test Keyword')
         test.body.create_keyword('Convert To Lower Case', args=['ROBOT'])
         self.run_and_check_pass(suite)
-        
+
 
     def test_library(self):
         suite = TestSuite(name='Suite')
@@ -85,7 +85,7 @@ class TestImports(unittest.TestCase):
         assert_equal(repr(Import(Import.LIBRARY, 'X')),
                      "robot.running.Import(type='LIBRARY', name='X')")
         assert_equal(repr(Import(Import.LIBRARY, 'X', ['a'], 'A')),
-                     "robot.running.Import(type='LIBRARY', name='X', args=['a'], alias='A')")
+                     "robot.running.Import(type='LIBRARY', name='X', args=('a',), alias='A')")
         assert_equal(repr(Import(Import.RESOURCE, 'X')),
                      "robot.running.Import(type='RESOURCE', name='X')")
         assert_equal(repr(Import(Import.VARIABLES, '')),

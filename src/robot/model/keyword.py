@@ -16,7 +16,7 @@
 from typing import cast, Sequence, Type, TYPE_CHECKING
 import warnings
 
-from .body import Body, BodyItem
+from .body import Body, BodyItem, BodyItemParent
 from .itemlist import ItemList
 from .modelobject import DataDict
 
@@ -38,7 +38,7 @@ class Keyword(BodyItem):
 
     def __init__(self, name: str = '', args: Sequence[str] = (),
                  assign: Sequence[str] = (), type: str = BodyItem.KEYWORD,
-                 parent: 'TestSuite|TestCase|BodyItem|None' = None):
+                 parent: BodyItemParent = None):
         self._name = name
         self.args = args
         self.assign = assign
@@ -92,7 +92,7 @@ class Keywords(ItemList[BodyItem]):
         "Use 'body', 'setup' or 'teardown' instead."
     )
 
-    def __init__(self, parent: 'TestSuite|TestCase|BodyItem|None' = None,
+    def __init__(self, parent: BodyItemParent = None,
                  keywords: Sequence[BodyItem] = ()):
         warnings.warn(self.deprecation_message, UserWarning)
         ItemList.__init__(self, object, {'parent': parent})

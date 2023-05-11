@@ -14,17 +14,15 @@
 #  limitations under the License.
 
 import sys
-from typing import Any, cast, Iterable, Sequence
+from typing import Any, cast, Sequence
 if sys.version_info >= (3, 8):
     from typing import Literal
 
 from robot.utils import setter
 
-from .body import Body, BodyItem, Branches
+from .body import Body, BodyItem, BodyItemParent, Branches
 from .keyword import Keywords
 from .modelobject import DataDict
-from .testcase import TestCase
-from .testsuite import TestSuite
 from .visitor import SuiteVisitor
 
 
@@ -42,9 +40,11 @@ class For(BodyItem):
 
     def __init__(self, variables: Sequence[str] = (),
                  flavor: "Literal['IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP']" = 'IN',
-                 values: Sequence[str] = (), start: 'str|None' = None,
-                 mode: 'str|None' = None, fill: 'str|None' = None,
-                 parent: 'TestSuite|TestCase|BodyItem|None' = None):
+                 values: Sequence[str] = (),
+                 start: 'str|None' = None,
+                 mode: 'str|None' = None,
+                 fill: 'str|None' = None,
+                 parent: BodyItemParent = None):
         self.variables = tuple(variables)
         self.flavor = flavor
         self.values = tuple(values)
@@ -55,7 +55,7 @@ class For(BodyItem):
         self.body = ()
 
     @setter
-    def body(self, body: 'Iterable[BodyItem|DataDict]') -> Body:
+    def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
         return self.body_class(self, body)
 
     @property
@@ -104,9 +104,11 @@ class While(BodyItem):
     repr_args = ('condition', 'limit', 'on_limit', 'on_limit_message')
     __slots__ = ['condition', 'limit', 'on_limit', 'on_limit_message']
 
-    def __init__(self, condition: 'str|None' = None, limit: 'str|None' = None,
-                 on_limit: 'str|None' = None, on_limit_message: 'str|None' = None,
-                 parent: 'TestSuite|TestCase|BodyItem|None' = None):
+    def __init__(self, condition: 'str|None' = None,
+                 limit: 'str|None' = None,
+                 on_limit: 'str|None' = None,
+                 on_limit_message: 'str|None' = None,
+                 parent: BodyItemParent = None):
         self.condition = condition
         self.on_limit = on_limit
         self.limit = limit
@@ -115,7 +117,7 @@ class While(BodyItem):
         self.body = ()
 
     @setter
-    def body(self, body: 'Iterable[BodyItem|DataDict]') -> Body:
+    def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
         return self.body_class(self, body)
 
     def visit(self, visitor: SuiteVisitor):
@@ -153,15 +155,16 @@ class IfBranch(BodyItem):
     repr_args = ('type', 'condition')
     __slots__ = ['type', 'condition']
 
-    def __init__(self, type: str = BodyItem.IF, condition: 'str|None' = None,
-                 parent: 'TestSuite|TestCase|BodyItem|None' = None):
+    def __init__(self, type: str = BodyItem.IF,
+                 condition: 'str|None' = None,
+                 parent: BodyItemParent = None):
         self.type = type
         self.condition = condition
         self.parent = parent
         self.body = ()
 
     @setter
-    def body(self, body: 'Iterable[BodyItem|DataDict]') -> Body:
+    def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
         return self.body_class(self, body)
 
     @property
@@ -200,12 +203,12 @@ class If(BodyItem):
     branches_class = Branches
     __slots__ = []
 
-    def __init__(self, parent: 'TestSuite|TestCase|BodyItem|None' = None):
+    def __init__(self, parent: BodyItemParent = None):
         self.parent = parent
         self.body = ()
 
     @setter
-    def body(self, branches: 'Iterable[BodyItem|DataDict]') -> Branches:
+    def body(self, branches: 'Sequence[BodyItem|DataDict]') -> Branches:
         return self.branches_class(self.branch_class, self, branches)
 
     @property
@@ -227,9 +230,11 @@ class TryBranch(BodyItem):
     repr_args = ('type', 'patterns', 'pattern_type', 'variable')
     __slots__ = ['type', 'patterns', 'pattern_type', 'variable']
 
-    def __init__(self, type: str = BodyItem.TRY, patterns: Sequence[str] = (),
-                 pattern_type: 'str|None' = None, variable: 'str|None' = None,
-                 parent: 'TestSuite|TestCase|BodyItem|None' = None):
+    def __init__(self, type: str = BodyItem.TRY,
+                 patterns: Sequence[str] = (),
+                 pattern_type: 'str|None' = None,
+                 variable: 'str|None' = None,
+                 parent: BodyItemParent = None):
         if (patterns or pattern_type or variable) and type != BodyItem.EXCEPT:
             raise TypeError(f"'{type}' branches do not accept patterns or variables.")
         self.type = type
@@ -240,7 +245,7 @@ class TryBranch(BodyItem):
         self.body = ()
 
     @setter
-    def body(self, body: 'Iterable[BodyItem|DataDict]') -> Body:
+    def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
         return self.body_class(self, body)
 
     @property
@@ -288,12 +293,12 @@ class Try(BodyItem):
     branches_class = Branches
     __slots__ = []
 
-    def __init__(self, parent: 'TestSuite|TestCase|BodyItem|None' = None):
+    def __init__(self, parent: BodyItemParent = None):
         self.parent = parent
         self.body = ()
 
     @setter
-    def body(self, branches: 'Iterable[TryBranch|DataDict]') -> Branches:
+    def body(self, branches: 'Sequence[TryBranch|DataDict]') -> Branches:
         return self.branches_class(self.branch_class, self, branches)
 
     @property
@@ -341,7 +346,7 @@ class Return(BodyItem):
     __slots__ = ['values']
 
     def __init__(self, values: Sequence[str] = (),
-                 parent: 'TestSuite|TestCase|BodyItem|None' = None):
+                 parent: BodyItemParent = None):
         self.values = tuple(values)
         self.parent = parent
 
@@ -359,7 +364,7 @@ class Continue(BodyItem):
     type = BodyItem.CONTINUE
     __slots__ = []
 
-    def __init__(self, parent: 'TestSuite|TestCase|BodyItem|None' = None):
+    def __init__(self, parent: BodyItemParent = None):
         self.parent = parent
 
     def visit(self, visitor: SuiteVisitor):
@@ -375,7 +380,7 @@ class Break(BodyItem):
     type = BodyItem.BREAK
     __slots__ = []
 
-    def __init__(self, parent: 'TestSuite|TestCase|BodyItem|None' = None):
+    def __init__(self, parent: BodyItemParent = None):
         self.parent = parent
 
     def visit(self, visitor: SuiteVisitor):
@@ -396,7 +401,7 @@ class Error(BodyItem):
     __slots__ = ['values']
 
     def __init__(self, values: Sequence[str] = (),
-                 parent: 'TestSuite|TestCase|BodyItem|None' = None):
+                 parent: BodyItemParent = None):
         self.values = tuple(values)
         self.parent = parent
 
