@@ -35,10 +35,11 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 
 """
 
+import warnings
 from collections import OrderedDict
+from datetime import datetime, timedelta
 from itertools import chain
 from typing import Sequence
-import warnings
 
 from robot import model
 from robot.model import (BodyItem, create_fixture, Keywords, Tags,
@@ -85,11 +86,43 @@ class StatusMixin:
     SKIP = 'SKIP'
     NOT_RUN = 'NOT RUN'
     NOT_SET = 'NOT SET'
+    starttime: 'str|None'
+    endtime: 'str|None'
 
     @property
     def elapsedtime(self):
         """Total execution time in milliseconds."""
         return get_elapsed_time(self.starttime, self.endtime)
+
+    @property
+    def elapsed_time(self) -> timedelta:
+        return timedelta(milliseconds=self.elapsedtime)
+
+    @property
+    def start_time(self) -> 'datetime|None':
+        return self._timestr_to_datetime(self.starttime) if self.starttime else None
+
+    @start_time.setter
+    def start_time(self, start_time: 'datetime|None'):
+        self.starttime = self._datetime_to_timestr(start_time) if start_time else None
+
+    @property
+    def end_time(self) -> 'datetime|None':
+        return self._timestr_to_datetime(self.endtime) if self.endtime else None
+
+    @end_time.setter
+    def end_time(self, end_time: 'datetime|None'):
+        self.endtime = self._datetime_to_timestr(end_time) if end_time else None
+
+    def _timestr_to_datetime(self, ts: str) -> datetime:
+        micro = int(ts[18:]) * 1000
+        return datetime(int(ts[:4]), int(ts[4:6]), int(ts[6:8]),
+                        int(ts[9:11]), int(ts[12:14]), int(ts[15:17]), micro)
+
+    def _datetime_to_timestr(self, dt: datetime) -> str:
+        millis = int(round(dt.microsecond, -3) / 1000)
+        return (f'{dt.year}{dt.month:02}{dt.day:02} '
+                f'{dt.hour:02}:{dt.minute:02}.{dt.second:02}.{millis}')
 
     @property
     def passed(self):
