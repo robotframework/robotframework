@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from pathlib import Path
-from typing import Any, Iterable, Sequence, Type, TYPE_CHECKING, TypeVar
+from typing import Any, Sequence, Type, TYPE_CHECKING, TypeVar
 
 from robot.utils import setter
 
@@ -28,6 +28,9 @@ from .tags import Tags
 if TYPE_CHECKING:
     from .testsuite import TestSuite
     from .visitor import SuiteVisitor
+
+
+TC = TypeVar("TC", bound="TestCase")
 
 
 class TestCase(ModelObject):
@@ -199,7 +202,6 @@ class TestCase(ModelObject):
         data['body'] = self.body.to_dicts()
         return data
 
-TC = TypeVar("TC", bound=TestCase)
 
 class TestCases(ItemList[TC]):
     __slots__ = []

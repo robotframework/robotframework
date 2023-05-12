@@ -44,7 +44,8 @@ if sys.version_info >= (3, 8):
 from robot import model
 from robot.conf import RobotSettings
 from robot.errors import BreakLoop, ContinueLoop, DataError, ReturnFromKeyword
-from robot.model import BodyItem, create_fixture, DataDict, Keywords, ModelObject
+from robot.model import (BodyItem, create_fixture, DataDict, Keywords, ModelObject,
+                         TestCases, TestSuites)
 from robot.model.testcase import TestCases
 from robot.model.testsuite import TestSuites
 from robot.output import LOGGER, Output, pyloggingconf
@@ -529,12 +530,12 @@ class TestSuite(model.TestSuite):
         self.visit(Randomizer(suites, tests, seed))
 
     @setter
-    def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> 'TestSuites[TestSuite]':
+    def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> TestSuites['TestSuite']:
         return TestSuites['TestSuite'](self.__class__, self, suites)
 
     @setter
-    def tests(self, tests: 'Sequence[TestCase|DataDict]') -> TestCases['TestCase']:
-        return TestCases['TestCase'](self.test_class, self, tests)
+    def tests(self, tests: 'Sequence[TestCase|DataDict]') -> TestCases[TestCase]:
+        return TestCases[TestCase](self.test_class, self, tests)
 
     def run(self, settings=None, **options):
         """Executes the suite based on the given ``settings`` or ``options``.

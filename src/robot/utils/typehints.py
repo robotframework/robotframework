@@ -13,10 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 from typing import Any, Callable, TypeVar, Generic
 
+
 T = TypeVar('T', bound=Callable[..., Any])
+
+# Type Alias for objects that are only known at runtime. This should be Used as a
+# default value for generic classes that also use `@copy_signature` decorator
+known_at_runtime = type(object)
 
 
 class copy_signature(Generic[T]):

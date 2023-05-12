@@ -41,10 +41,8 @@ from typing import Sequence
 import warnings
 
 from robot import model
-from robot.model import BodyItem, create_fixture, Keywords, Tags, TotalStatisticsBuilder
-from robot.model.modelobject import DataDict
-from robot.model.testcase import TestCases
-from robot.model.testsuite import TestSuites
+from robot.model import (BodyItem, create_fixture, Keywords, Tags,
+                         TotalStatisticsBuilder, DataDict, TestCases, TestSuites)
 from robot.utils import get_elapsed_time, setter
 
 from .configurer import SuiteConfigurer
@@ -745,12 +743,12 @@ class TestSuite(model.TestSuite, StatusMixin):
                    chain(self.suites, self.tests, (self.setup, self.teardown)))
 
     @setter
-    def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> 'TestSuites[TestSuite]':
+    def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> TestSuites['TestSuite']:
         return TestSuites['TestSuite'](self.__class__, self, suites)
 
     @setter
-    def tests(self, tests: 'Sequence[TestCase|DataDict]') -> TestCases['TestCase']:
-        return TestCases['TestCase'](self.test_class, self, tests)
+    def tests(self, tests: 'Sequence[TestCase|DataDict]') -> TestCases[TestCase]:
+        return TestCases[TestCase](self.test_class, self, tests)
 
     def remove_keywords(self, how):
         """Remove keywords based on the given condition.

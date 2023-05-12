@@ -156,7 +156,7 @@ class TestSuite(ModelObject):
 
     @setter
     def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> 'TestSuites[TestSuite]':
-        return TestSuites["TestSuite"](self.__class__, self, suites)
+        return TestSuites['TestSuite'](self.__class__, self, suites)
 
     @setter
     def tests(self, tests: 'Sequence[TestCase|DataDict]') -> TestCases[TestCase]:
@@ -375,7 +375,7 @@ class TestSuite(ModelObject):
             data['suites'] = self.suites.to_dicts()
         return data
 
-TS = TypeVar("TS", bound=TestSuite)
+TS = TypeVar('TS', bound=TestSuite)
 
 class TestSuites(ItemList[TS]):
     __slots__ = []
