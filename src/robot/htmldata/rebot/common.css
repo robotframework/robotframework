@@ -140,7 +140,7 @@ h2 {
 }
 /* Statistics table */
 .statistics {
-    width: 65em;
+    min-width: 65em;
     border-collapse: collapse;
     empty-cells: show;
     margin-bottom: 1em;
