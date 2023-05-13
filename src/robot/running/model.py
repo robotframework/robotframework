@@ -46,8 +46,6 @@ from robot.conf import RobotSettings
 from robot.errors import BreakLoop, ContinueLoop, DataError, ReturnFromKeyword
 from robot.model import (BodyItem, create_fixture, DataDict, Keywords, ModelObject,
                          TestCases, TestSuites)
-from robot.model.testcase import TestCases
-from robot.model.testsuite import TestSuites
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.result import (Break as BreakResult, Continue as ContinueResult,
                           Error as ErrorResult, Return as ReturnResult)
@@ -66,8 +64,9 @@ BodyItemParent = Union['TestSuite', 'TestCase', 'UserKeyword', 'For', 'If', 'IfB
                        'Try', 'TryBranch', 'While', None]
 
 
-class Body(model.Body):
-    __slots__ = ()
+class Body(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Return', 'Continue',
+                          'Break', 'model.Message', 'Error']):
+    __slots__ = []
 
 
 class WithSource:
@@ -398,6 +397,11 @@ class TestCase(model.TestCase):
         if self.error:
             data['error'] = self.error
         return data
+
+    @setter
+    def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
+        """Test body as a :class:`~robot.running.Body` object."""
+        return self.body_class(self, body)
 
 
 class TestSuite(model.TestSuite):

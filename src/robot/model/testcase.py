@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     from .visitor import SuiteVisitor
 
 
-TC = TypeVar("TC", bound="TestCase")
+TC = TypeVar('TC', bound='TestCase')
 
 
 class TestCase(ModelObject):
