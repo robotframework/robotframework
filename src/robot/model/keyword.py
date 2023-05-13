@@ -36,21 +36,23 @@ class Keyword(BodyItem):
     repr_args = ('name', 'args', 'assign')
     __slots__ = ['_name', 'args', 'assign', 'type']
 
-    def __init__(self, name: str = '', args: Sequence[str] = (),
-                 assign: Sequence[str] = (), type: str = BodyItem.KEYWORD,
+    def __init__(self, name: 'str|None' = '',
+                 args: Sequence[str] = (),
+                 assign: Sequence[str] = (),
+                 type: str = BodyItem.KEYWORD,
                  parent: BodyItemParent = None):
-        self._name = name
+        self.name = name
         self.args = args
         self.assign = assign
         self.type = type
         self.parent = parent
 
     @property
-    def name(self) -> str:
+    def name(self) -> 'str|None':
         return self._name
 
     @name.setter
-    def name(self, name: str):
+    def name(self, name: 'str|None'):
         self._name = name
 
     @property

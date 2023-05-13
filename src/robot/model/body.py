@@ -14,13 +14,16 @@
 #  limitations under the License.
 
 import re
-from typing import (Any, Callable, Generic, cast, Iterable, Type, TYPE_CHECKING,
+from typing import (Any, Callable, cast, Generic, Iterable, Type, TYPE_CHECKING,
                     TypeVar, Union)
-from .itemlist import ItemList
-from .modelobject import DataDict, full_name, ModelObject
+
 from robot.utils import copy_signature, KnownAtRuntime
 
+from .itemlist import ItemList
+from .modelobject import DataDict, full_name, ModelObject
+
 if TYPE_CHECKING:
+    from robot.result.model import ForIteration, WhileIteration
     from robot.running.model import UserKeyword, ResourceFile
     from .control import (Break, Continue, Error, For, If, IfBranch, Return,
                           Try, TryBranch, While)
@@ -30,8 +33,9 @@ if TYPE_CHECKING:
     from .testsuite import TestSuite
 
 
-BodyItemParent = Union['TestSuite', 'TestCase', 'UserKeyword', 'For', 'If', 'IfBranch',
-                       'Try', 'TryBranch', 'While', None]
+BodyItemParent = Union['TestSuite', 'TestCase', 'UserKeyword', 'For', 'ForIteration',
+                       'If', 'IfBranch', 'Try', 'TryBranch', 'While', 'WhileIteration',
+                       'Keyword', 'Return', 'Continue', 'Break', 'Error', None]
 BI = TypeVar('BI', bound='BodyItem')
 KW = TypeVar('KW', bound='Keyword')
 F = TypeVar('F', bound='For')
