@@ -13,23 +13,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Any, Callable, TypeVar, Generic
+from typing import Any, Callable, TypeVar
 
 
 T = TypeVar('T', bound=Callable[..., Any])
 
 # Type Alias for objects that are only known at runtime. This should be Used as a
 # default value for generic classes that also use `@copy_signature` decorator
-known_at_runtime = type(object)
+KnownAtRuntime = type(object)
 
 
-class copy_signature(Generic[T]):
-    """A decorator that applies the signature of `F` to any function that it decorates
+def copy_signature(target: T) -> Callable[..., T]:
+    """A decorator that applies the signature of `T` to any function that it decorates
     see https://github.com/python/typing/issues/270#issuecomment-555966301 for source
     and discussion.
     """
+    def decorator(func):
+        return func
 
-    def __init__(self, target: T) -> None: ...
-
-    def __call__(self, wrapped: Callable[..., Any]) -> T:
-        return wrapped  # type: ignore
+    return decorator

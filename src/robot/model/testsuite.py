@@ -31,6 +31,9 @@ from .testcase import TestCase, TestCases
 from .visitor import SuiteVisitor
 
 
+TS = TypeVar('TS', bound="TestSuite")
+
+
 class TestSuite(ModelObject):
     """Base model for single suite.
 
@@ -374,8 +377,6 @@ class TestSuite(ModelObject):
         if self.suites:
             data['suites'] = self.suites.to_dicts()
         return data
-
-TS = TypeVar('TS', bound=TestSuite)
 
 class TestSuites(ItemList[TS]):
     __slots__ = []

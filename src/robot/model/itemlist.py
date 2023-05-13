@@ -17,7 +17,7 @@ from functools import total_ordering
 from typing import (Any, Iterable, Iterator, MutableSequence, overload, TYPE_CHECKING,
                     Type, TypeVar)
 
-from robot.utils import copy_signature, known_at_runtime, type_name
+from robot.utils import copy_signature, KnownAtRuntime, type_name
 
 from .modelobject import DataDict
 
@@ -46,7 +46,7 @@ class ItemList(MutableSequence[T]):
 
     __slots__ = ['_item_class', '_common_attrs', '_items']
     # TypeVar T needs to be applied to a variable to be compatible with @copy_signature
-    item_type: Type[T] = known_at_runtime
+    item_type: Type[T] = KnownAtRuntime
 
     def __init__(self, item_class: Type[T],
                  common_attrs: 'dict[str, Any]|None' = None,
