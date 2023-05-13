@@ -110,29 +110,16 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, R, C, B, M, E]):
     """Base class for Body and Branches objects."""
     __slots__ = []
     # Set using 'BaseBody.register' when these classes are created.
-
-    if TYPE_CHECKING:
-        keyword_class: Type[KW] = KnownAtRuntime
-        for_class: Type[F] = KnownAtRuntime
-        while_class: Type[W] = KnownAtRuntime
-        if_class: Type[I] = KnownAtRuntime
-        try_class: Type[T] = KnownAtRuntime
-        return_class: Type[R] = KnownAtRuntime
-        continue_class: Type[C] = KnownAtRuntime
-        break_class: Type[B] = KnownAtRuntime
-        message_class: Type[M] = KnownAtRuntime
-        error_class: Type[E] = KnownAtRuntime
-    else:
-        keyword_class = None
-        for_class = None
-        while_class = None
-        if_class = None
-        try_class = None
-        return_class = None
-        continue_class = None
-        break_class = None
-        message_class = None
-        error_class = None
+    keyword_class: Type[KW] = KnownAtRuntime
+    for_class: Type[F] = KnownAtRuntime
+    while_class: Type[W] = KnownAtRuntime
+    if_class: Type[I] = KnownAtRuntime
+    try_class: Type[T] = KnownAtRuntime
+    return_class: Type[R] = KnownAtRuntime
+    continue_class: Type[C] = KnownAtRuntime
+    break_class: Type[B] = KnownAtRuntime
+    message_class: Type[M] = KnownAtRuntime
+    error_class: Type[E] = KnownAtRuntime
 
     def __init__(self, parent: BodyItemParent = None,
                  items: 'Iterable[BodyItem|DataDict]' = ()):
@@ -169,7 +156,7 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, R, C, B, M, E]):
 
     def _create(self, cls: 'Type[BI]', name: str, args: 'tuple[Any]',
                 kwargs: 'dict[str, Any]') -> BI:
-        if cls is None:
+        if not issubclass(cls, BodyItem):
             raise TypeError(f"'{full_name(self)}' object does not support '{name}'.")
         return self.append(cls(*args, **kwargs))
 
@@ -238,7 +225,7 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, R, C, B, M, E]):
         use ``body.filter(keywords=False``, messages=False)``. For more detailed
         filtering it is possible to use ``predicate``.
         """
-        if messages is not None and not self.message_class:
+        if messages is not None and not issubclass(self.message_class, BodyItem):
             raise TypeError(f"'{full_name(self)}' object does not support "
                             f"filtering by 'messages'.")
         return self._filter([(self.keyword_class, keywords),
