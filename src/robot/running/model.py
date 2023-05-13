@@ -64,8 +64,8 @@ BodyItemParent = Union['TestSuite', 'TestCase', 'UserKeyword', 'For', 'If', 'IfB
                        'Try', 'TryBranch', 'While', None]
 
 
-class Body(model.BaseBody["Keyword", "For", "While", "If", "Try", "Return", "Continue",
-                          "Break", "model.Message", "Error"]):
+class Body(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Return', 'Continue',
+                          'Break', 'model.Message', 'Error']):
     __slots__ = []
 
 

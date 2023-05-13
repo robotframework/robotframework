@@ -53,8 +53,8 @@ from .keywordremover import KeywordRemover
 from .suiteteardownfailed import SuiteTeardownFailed, SuiteTeardownFailureHandler
 
 
-class Body(model.BaseBody["Keyword", "For", "While", "If", "Try", "Return", "Continue",
-                          "Break", "Message", "Error"]):
+class Body(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Return', 'Continue',
+                          'Break', 'Message', 'Error']):
     __slots__ = []
 
 
