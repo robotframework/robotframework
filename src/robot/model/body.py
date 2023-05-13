@@ -32,17 +32,17 @@ if TYPE_CHECKING:
 
 BodyItemParent = Union['TestSuite', 'TestCase', 'UserKeyword', 'For', 'If', 'IfBranch',
                        'Try', 'TryBranch', 'While', None]
-BI = TypeVar("BI", bound="BodyItem")
-KW = TypeVar("KW", bound="Keyword")
-F = TypeVar("F", bound="For")
-W = TypeVar("W", bound="While")
-I = TypeVar("I", bound="If")
-T = TypeVar("T", bound="Try")
-R = TypeVar("R", bound="Return")
-C = TypeVar("C", bound="Continue")
-B = TypeVar("B", bound="Break")
-M = TypeVar("M", bound="Message")
-E = TypeVar("E", bound="Error")
+BI = TypeVar('BI', bound='BodyItem')
+KW = TypeVar('KW', bound='Keyword')
+F = TypeVar('F', bound='For')
+W = TypeVar('W', bound='While')
+I = TypeVar('I', bound='If')
+T = TypeVar('T', bound='Try')
+R = TypeVar('R', bound='Return')
+C = TypeVar('C', bound='Continue')
+B = TypeVar('B', bound='Break')
+M = TypeVar('M', bound='Message')
+E = TypeVar('E', bound='Error')
 
 
 class BodyItem(ModelObject):
