@@ -53,7 +53,8 @@ from .keywordremover import KeywordRemover
 from .suiteteardownfailed import SuiteTeardownFailed, SuiteTeardownFailureHandler
 
 
-class Body(model.Body):
+class Body(model.BaseBody["Keyword", "For", "While", "If", "Try", "Return", "Continue",
+                          "Break", "Message", "Error"]):
     __slots__ = []
 
 
@@ -685,6 +686,11 @@ class TestCase(model.TestCase, StatusMixin):
     def critical(self):
         warnings.warn("'TestCase.critical' is deprecated and always returns 'True'.")
         return True
+
+    @setter
+    def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
+        """Test body as a :class:`~robot.result.Body` object."""
+        return self.body_class(self, body)
 
 
 class TestSuite(model.TestSuite, StatusMixin):

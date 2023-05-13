@@ -14,10 +14,11 @@
 #  limitations under the License.
 
 import re
-from typing import Any, Callable, cast, Iterable, Type, TYPE_CHECKING, TypeVar, Union
-
+from typing import (Any, Callable, Generic, cast, Iterable, Type, TYPE_CHECKING,
+                    TypeVar, Union)
 from .itemlist import ItemList
 from .modelobject import DataDict, full_name, ModelObject
+from robot.utils import copy_signature, KnownAtRuntime
 
 if TYPE_CHECKING:
     from robot.running.model import UserKeyword, ResourceFile
@@ -31,7 +32,17 @@ if TYPE_CHECKING:
 
 BodyItemParent = Union['TestSuite', 'TestCase', 'UserKeyword', 'For', 'If', 'IfBranch',
                        'Try', 'TryBranch', 'While', None]
-T = TypeVar("T", bound="BodyItem")
+BI = TypeVar("BI", bound="BodyItem")
+KW = TypeVar("KW", bound="Keyword")
+F = TypeVar("F", bound="For")
+W = TypeVar("W", bound="While")
+I = TypeVar("I", bound="If")
+T = TypeVar("T", bound="Try")
+R = TypeVar("R", bound="Return")
+C = TypeVar("C", bound="Continue")
+B = TypeVar("B", bound="Break")
+M = TypeVar("M", bound="Message")
+E = TypeVar("E", bound="Error")
 
 
 class BodyItem(ModelObject):
@@ -95,22 +106,22 @@ class BodyItem(ModelObject):
         raise NotImplementedError
 
 
-class BaseBody(ItemList[BodyItem]):
+class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, R, C, B, M, E]):
     """Base class for Body and Branches objects."""
     __slots__ = []
     # Set using 'BaseBody.register' when these classes are created.
 
     if TYPE_CHECKING:
-        keyword_class = Keyword
-        for_class = For
-        while_class = While
-        if_class = If
-        try_class = Try
-        return_class = Return
-        continue_class = Continue
-        break_class = Break
-        message_class = Message
-        error_class = Error
+        keyword_class: Type[KW] = KnownAtRuntime
+        for_class: Type[F] = KnownAtRuntime
+        while_class: Type[W] = KnownAtRuntime
+        if_class: Type[I] = KnownAtRuntime
+        try_class: Type[T] = KnownAtRuntime
+        return_class: Type[R] = KnownAtRuntime
+        continue_class: Type[C] = KnownAtRuntime
+        break_class: Type[B] = KnownAtRuntime
+        message_class: Type[M] = KnownAtRuntime
+        error_class: Type[E] = KnownAtRuntime
     else:
         keyword_class = None
         for_class = None
@@ -141,7 +152,7 @@ class BaseBody(ItemList[BodyItem]):
         return item_class.from_dict(data)
 
     @classmethod
-    def register(cls, item_class: Type[T]) -> Type[T]:
+    def register(cls, item_class: Type[BI]) -> Type[BI]:
         name_parts = re.findall('([A-Z][a-z]+)', item_class.__name__) + ['class']
         name = '_'.join(name_parts).lower()
         if not hasattr(cls, name):
@@ -156,40 +167,50 @@ class BaseBody(ItemList[BodyItem]):
             f"Use item specific methods like 'create_keyword' instead."
         )
 
-    def _create(self, cls: 'Type[T]', name: str, args: 'tuple[Any]',
-                kwargs: 'dict[str, Any]') -> T:
+    def _create(self, cls: 'Type[BI]', name: str, args: 'tuple[Any]',
+                kwargs: 'dict[str, Any]') -> BI:
         if cls is None:
             raise TypeError(f"'{full_name(self)}' object does not support '{name}'.")
         return self.append(cls(*args, **kwargs))
 
-    def create_keyword(self, *args, **kwargs) -> 'Keyword':
+    @copy_signature(keyword_class)
+    def create_keyword(self, *args, **kwargs) -> keyword_class:
         return self._create(self.keyword_class, 'create_keyword', args, kwargs)
 
-    def create_for(self, *args, **kwargs) -> 'For':
+    @copy_signature(for_class)
+    def create_for(self, *args, **kwargs) -> for_class:
         return self._create(self.for_class, 'create_for', args, kwargs)
 
-    def create_if(self, *args, **kwargs) -> 'If':
+    @copy_signature(if_class)
+    def create_if(self, *args, **kwargs) -> if_class:
         return self._create(self.if_class, 'create_if', args, kwargs)
 
-    def create_try(self, *args, **kwargs) -> 'Try':
+    @copy_signature(try_class)
+    def create_try(self, *args, **kwargs) -> try_class:
         return self._create(self.try_class, 'create_try', args, kwargs)
 
-    def create_while(self, *args, **kwargs) -> 'While':
+    @copy_signature(while_class)
+    def create_while(self, *args, **kwargs) -> while_class:
         return self._create(self.while_class, 'create_while', args, kwargs)
 
-    def create_return(self, *args, **kwargs) -> 'Return':
+    @copy_signature(return_class)
+    def create_return(self, *args, **kwargs) -> return_class:
         return self._create(self.return_class, 'create_return', args, kwargs)
 
-    def create_continue(self, *args, **kwargs) -> 'Continue':
+    @copy_signature(continue_class)
+    def create_continue(self, *args, **kwargs) -> continue_class:
         return self._create(self.continue_class, 'create_continue', args, kwargs)
 
-    def create_break(self, *args, **kwargs) -> 'Break':
+    @copy_signature(break_class)
+    def create_break(self, *args, **kwargs) -> break_class:
         return self._create(self.break_class, 'create_break', args, kwargs)
 
-    def create_message(self, *args, **kwargs) -> 'Message':
+    @copy_signature(message_class)
+    def create_message(self, *args, **kwargs) -> message_class:
         return self._create(self.message_class, 'create_message', args, kwargs)
 
-    def create_error(self, *args, **kwargs) -> 'Error':
+    @copy_signature(error_class)
+    def create_error(self, *args, **kwargs) -> error_class:
         return self._create(self.error_class, 'create_error', args, kwargs)
 
     def filter(self, keywords: 'bool|None' = None, messages: 'bool|None' = None,
@@ -254,7 +275,8 @@ class BaseBody(ItemList[BodyItem]):
         return steps
 
 
-class Body(BaseBody):
+class Body(BaseBody["Keyword", "For", "While", "If", "Try", "Return", "Continue",
+                    "Break", "Message", "Error"]):
     """A list-like object representing a body of a test, keyword, etc.
 
     Body contains the keywords and other structures such as FOR loops.
