@@ -47,6 +47,7 @@ C = TypeVar('C', bound='Continue')
 B = TypeVar('B', bound='Break')
 M = TypeVar('M', bound='Message')
 E = TypeVar('E', bound='Error')
+BT = TypeVar('BT', 'IfBranch', 'TryBranch')
 
 
 class BodyItem(ModelObject):
@@ -275,18 +276,25 @@ class Body(BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Return', 'Continue'
     pass
 
 
-class Branches(BaseBody):
+class IterationType(Generic[BT]):
+    """Class that wrapps `Generic` as python doesn't allow multple generic inheritance"""
+    pass
+
+
+class BaseBranches(BaseBody[KW, F, W, I, T, R, C, B, M, E], IterationType[BT]):
     """A list-like object representing IF and TRY branches."""
     __slots__ = ['branch_class']
+    branch_type: Type[BT] = KnownAtRuntime
 
-    def __init__(self, branch_class: 'Type[IfBranch|TryBranch]',
+    def __init__(self, branch_class: Type[BT],
                  parent: BodyItemParent = None,
                  items: 'Iterable[BodyItem|DataDict]' = ()):
         self.branch_class = branch_class
         super().__init__(parent, items)
 
-    def _item_from_dict(self, data: DataDict) -> 'IfBranch|TryBranch':
+    def _item_from_dict(self, data: DataDict) -> BT:
         return self.branch_class.from_dict(data)
 
-    def create_branch(self, *args, **kwargs) -> 'IfBranch|TryBranch':
+    @copy_signature(branch_type)
+    def create_branch(self, *args, **kwargs) -> BT:
         return self._create(self.branch_class, 'create_branch', args, kwargs)
