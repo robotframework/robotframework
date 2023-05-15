@@ -477,6 +477,10 @@ Item assign to undeclared variable fails
     [Documentation]    FAIL    Variable '${undeclared_variable}' not found.
     ${undeclared_variable}[0]=  Set Variable   0
 
+Item assign to undeclared list variable fails
+    [Documentation]    FAIL    Variable '${undeclared_list}' not found.
+    @{undeclared_list}[0]=  Set Variable   0
+
 Empty item assign to list fails
     [Documentation]    FAIL
     ...    Setting value to list variable '${list_variable}' at index [] failed: \
@@ -513,6 +517,12 @@ Multiple item assigns to scalars and list slice
 
     Should Be Equal    ${list_variable}    ${{ [1, "list_element"] }}
     Should Be Equal    ${dict_variable}    ${{ {"abc": "first", "def": "second" } }}
+
+Multiple item assigns to list only
+    ${list_variable}=      Create List     ${1}    ${2}
+    @{list_variable}[1]=   Set Variable    ${{ [11, 12] }}
+
+    Should Be Equal    ${list_variable}    ${{ [1, [11, 12]] }}
 
 Item assign without assign mark
     ${dict_variable}        Create Dictionary

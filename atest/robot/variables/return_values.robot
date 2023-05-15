@@ -274,6 +274,9 @@ Index not found error when item assign to list
 Item assign to undeclared variable fails
     Check Test Case    ${TESTNAME}
 
+Item assign to undeclared list variable fails
+    Check Test Case    ${TESTNAME}
+
 Empty item assign to list fails
     Check Test Case    ${TESTNAME}
 
@@ -287,6 +290,9 @@ Multiple item assigns to scalars and list
     Check Test Case    ${TESTNAME}
 
 Multiple item assigns to scalars and list slice
+    Check Test Case    ${TESTNAME}
+
+Multiple item assigns to list only
     Check Test Case    ${TESTNAME}
 
 Item assign without assign mark
