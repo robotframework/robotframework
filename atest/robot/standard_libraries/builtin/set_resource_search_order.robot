@@ -41,3 +41,6 @@ Default Resource Order Should Be Suite Specific
 
 Search Order Controlled Match Containing Embedded Arguments Wins Over Exact Match
     Check Test Case  ${TEST NAME}
+
+Best Search Order Controlled Match Wins In Resource
+    Check Test Case  ${TEST NAME}

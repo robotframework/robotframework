@@ -3,6 +3,7 @@ Suite Setup       Set Library Search Order    resource1    resource2
 Resource          resource1.robot
 Resource          resource2.robot
 Resource          embedded.resource
+Resource          embedded2.resource
 Library           ../set_library_search_order/TestLibrary.py
 Library           ../set_library_search_order/TestLibrary.py    AnotherLibrary    WITH NAME    AnotherLibrary
 
@@ -62,6 +63,10 @@ Search Order Controlled Match Containing Embedded Arguments Wins Over Exact Matc
     Set Library Search Order    embedded    resource1
     With Search Order Active Resource Should Be    embedded
 
+Best Search Order Controlled Match Wins In Resource
+	Set Library Search Order    embedded2	embedded    resource1
+	With Search Order The Best Matching Keyword Should Be Run In    embedded2
+
 *** Keywords ***
 Active Resource Should Be
     [Arguments]    ${expected}
@@ -76,4 +81,9 @@ Active Library Should Be
 With Search Order Active Resource Should Be
     [Arguments]    ${expected}
     ${name} =    Get Name With Search Order
+    Should Be Equal    ${name}    ${expected}
+
+With Search Order The Best Matching Keyword Should Be Run In
+    [Arguments]    ${expected}
+    ${name} =    Get Best Match Ever With Search Order
     Should Be Equal    ${name}    ${expected}
