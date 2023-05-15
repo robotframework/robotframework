@@ -666,7 +666,7 @@ variable`_ if it has a dictionary-like value.
 Assigning variables with item values
 ''''''''''''''''''''''''''''''''''''
 
-Starting from Robot Framework 6.2, when working with variables that support
+Starting from Robot Framework 6.1, when working with variables that support
 item assignment such as lists or dictionaries, it is possible to set their values
 by specifying the index or key of the item using the syntax `${var}[index]=`:
 
