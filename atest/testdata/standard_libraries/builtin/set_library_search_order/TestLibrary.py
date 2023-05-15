@@ -14,3 +14,7 @@ class TestLibrary:
 def get_name_with_search_order(name):
     raise AssertionError('Should not be run due to search order '
                          'having higher precedence.')
+
+def get_best_match_ever_with_search_order():
+    raise AssertionError('Should not be run due to search order '
+                         'having higher precedence.')    

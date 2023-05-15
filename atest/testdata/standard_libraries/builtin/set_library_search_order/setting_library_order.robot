@@ -5,6 +5,7 @@ Library           TestLibrary.py    Library2    WITH NAME    Library2
 Library           TestLibrary.py    Library3    WITH NAME    Library3
 Library           TestLibrary.py    Library With Space    WITH NAME    Library With Space
 Library           embedded.py
+Library           embedded2.py
 
 *** Test Cases ***
 Library Order Set In Suite Setup Should Be Available In Test Cases
@@ -66,6 +67,10 @@ Library Search Order Is Case Insensitive
 Search Order Controlled Match Containing Embedded Arguments Wins Over Exact Match
     Set Library Search Order    embedded    Library1
     Active Library With Search Order Should Be    embedded
+    
+Best Search Order Controlled Match Wins In Library
+	Set Library Search Order    embedded2	embedded	Library1
+	With Search Order The Best Matching Keyword Should Be Run In    embedded2
 
 *** Keywords ***
 Active Library Should Be
@@ -81,4 +86,9 @@ Own Library Should Be Used
 Active Library With Search Order Should Be
     [Arguments]    ${expected}
     ${name} =    Get Name With Search Order
+    Should Be Equal    ${name}    ${expected}
+
+With Search Order The Best Matching Keyword Should Be Run In
+    [Arguments]    ${expected}
+    ${name} =    Get Best Match Ever With Search Order
     Should Be Equal    ${name}    ${expected}
