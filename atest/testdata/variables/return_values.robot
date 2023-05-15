@@ -448,16 +448,12 @@ Item assign to object with setitem capability
 
 Item assign to object without setitem capability fails
     [Documentation]    FAIL
-    ...     Variable '\${OBJECT_WITHOUT_SETITEM_CAP}' of type ObjectWithoutSetItemCap \
-    ...     does not support item assignment: variable should be mutable and should \
-    ...     support a '__setitem__' method.
+    ...     Variable '\${OBJECT_WITHOUT_SETITEM_CAP}' is ObjectWithoutSetItemCap and does not support item assignment.
     ${OBJECT_WITHOUT_SETITEM_CAP}[newKey]=    Set Variable        newVal
 
 Item assign to immutable object fails
     [Documentation]    FAIL
-    ...     Variable '${tuple_variable}' of type tuple \
-    ...     does not support item assignment: variable should be mutable and should \
-    ...     support a '__setitem__' method.
+    ...     Variable '${tuple_variable}' is tuple and does not support item assignment.
     ${tuple_variable}=       Evaluate        (1,)
     ${tuple_variable}[0]=    Set Variable    0
 
@@ -484,7 +480,7 @@ Item assign to undeclared variable fails
 Empty item assign to list fails
     [Documentation]    FAIL
     ...    Setting value to list variable '${list_variable}' at index [] failed: \
-    ...    ValueError: invalid literal for int() with base 10: ''
+    ...    TypeError: list indices must be integers or slices, not str
     ${list_variable}=       Create List    ${{ [1, 2] }}
     ${list_variable}[]=     Set Variable   3
 
