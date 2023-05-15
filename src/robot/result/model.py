@@ -41,7 +41,7 @@ from collections import OrderedDict
 from datetime import datetime, timedelta
 from itertools import chain
 from pathlib import Path
-from typing import cast, Generic, Mapping, Sequence, Type, Union, TypeVar
+from typing import Generic, Mapping, Sequence, Type, Union, TypeVar
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -736,15 +736,15 @@ class Keyword(model.Keyword, StatusMixin):
         ``keyword.keywords.teardown``. :attr:`has_teardown` is new in Robot
         Framework 4.1.2.
         """
-        if self._teardown is None and self:
-            self._teardown = create_fixture(None, self, self.TEARDOWN)
+        if self._teardown is None:
+            self._teardown = create_fixture(self.__class__, None, self, self.TEARDOWN)
         # Would be better to enhance `create_fixture` so that its return
         # type would match argument type.
-        return cast(Keyword, self._teardown)
+        return self._teardown
 
     @teardown.setter
     def teardown(self, teardown: 'Keyword|DataDict|None'):
-        self._teardown = create_fixture(teardown, self, self.TEARDOWN)
+        self._teardown = create_fixture(self.__class__, teardown, self, self.TEARDOWN)
 
     @property
     def has_teardown(self) -> bool:

@@ -21,8 +21,6 @@ from .itemlist import ItemList
 from .modelobject import DataDict
 
 if TYPE_CHECKING:
-    from .testcase import TestCase
-    from .testsuite import TestSuite
     from .visitor import SuiteVisitor
 
 
