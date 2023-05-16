@@ -30,3 +30,7 @@ def best_match_in_one_of_libraries(match, one_of):
 @keyword('Follow search ${disorder} in libraries')
 def follow_search_order_in_libraries(disorder):
     assert disorder == 'disorder should not happen'
+
+@keyword('Unresolvable conflict in library')
+def unresolvable_conflict_in_library():
+    assert False

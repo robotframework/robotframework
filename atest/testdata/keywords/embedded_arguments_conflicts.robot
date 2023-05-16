@@ -115,6 +115,15 @@ Search order cannot resolve conflict within resource
     Unresolvable conflict in resource
     [Teardown]    Disable search order
 
+Search order causes conflict within resource
+    [Documentation]    FAIL
+    ...    Multiple keywords matching name 'Unresolvable conflict in resource' found:
+    ...    ${INDENT}resource2.\${possible} conflict in resource
+    ...    ${INDENT}resource2.Unresolvable \${conflict} in resource
+    [Setup]    Enable search order
+    Cause unresolvable conflict in resource due to search order
+    [Teardown]    Disable search order
+
 Search order cannot resolve conflict within library
     [Documentation]    FAIL
     ...    Multiple keywords matching name 'Unresolvable conflict in library' found:
@@ -122,6 +131,15 @@ Search order cannot resolve conflict within library
     ...    ${INDENT}library2.Unresolvable \${conflict} in library
     [Setup]    Enable search order
     Unresolvable conflict in library
+    [Teardown]    Disable search order
+
+Search order causes conflict within library
+    [Documentation]    FAIL
+    ...    Multiple keywords matching name 'Unresolvable conflict in library' found:
+    ...    ${INDENT}library2.\${possible} conflict in library
+    ...    ${INDENT}library2.Unresolvable \${conflict} in library
+    [Setup]    Enable search order
+    Cause unresolvable conflict in library due to search order
     [Teardown]    Disable search order
 
 Public match wins over better private match in different resource

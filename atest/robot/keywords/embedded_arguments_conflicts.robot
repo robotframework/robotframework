@@ -64,7 +64,13 @@ Search order wins over best match in libraries
 Search order cannot resolve conflict within resource
     Check Test Case    ${TESTNAME}
 
+Search order causes conflict within resource
+    Check Test Case    ${TESTNAME}
+
 Search order cannot resolve conflict within library
+    Check Test Case    ${TESTNAME}
+
+Search order causes conflict within library
     Check Test Case    ${TESTNAME}
 
 Public match wins over better private match in different resource

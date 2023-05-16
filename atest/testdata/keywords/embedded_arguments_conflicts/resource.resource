@@ -32,3 +32,12 @@ Another match ${in both resource files}
 
 Match with and without embedded arguments in different files
     No operation
+
+Cause unresolvable conflict in resource due to search order
+	Unresolvable conflict in resource
+
+Cause unresolvable conflict in library due to search order
+	Unresolvable conflict in library
+
+Unresolvable conflict in resource
+	Fail	Should not be run due to search order	
