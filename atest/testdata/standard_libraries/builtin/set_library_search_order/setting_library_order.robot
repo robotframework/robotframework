@@ -67,10 +67,10 @@ Library Search Order Is Case Insensitive
 Search Order Controlled Match Containing Embedded Arguments Wins Over Exact Match
     Set Library Search Order    embedded    Library1
     Active Library With Search Order Should Be    embedded
-    
+
 Best Search Order Controlled Match Wins In Library
-	Set Library Search Order    embedded2	embedded	Library1
-	With Search Order The Best Matching Keyword Should Be Run In    embedded2
+    Set Library Search Order    embedded2    embedded    Library1
+    With Search Order The Best Matching Keyword Should Be Run In    embedded2
 
 *** Keywords ***
 Active Library Should Be

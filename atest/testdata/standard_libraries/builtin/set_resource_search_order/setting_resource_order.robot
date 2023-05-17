@@ -64,8 +64,8 @@ Search Order Controlled Match Containing Embedded Arguments Wins Over Exact Matc
     With Search Order Active Resource Should Be    embedded
 
 Best Search Order Controlled Match Wins In Resource
-	Set Library Search Order    embedded2	embedded    resource1
-	With Search Order The Best Matching Keyword Should Be Run In    embedded2
+    Set Library Search Order    embedded2    embedded    resource1
+    With Search Order The Best Matching Keyword Should Be Run In    embedded2
 
 *** Keywords ***
 Active Resource Should Be

@@ -15,7 +15,7 @@ Use Local Private Keyword Instead Of Keywords From Other Resources
     Private In Two Resources And Public In One
 
 Use Search Order Instead Of Private Keyword When Prioritized Resource Keyword Is Public
-	Private In Resource 1 And 3 And Public In Resource 2
+    Private In Resource 1 And 3 And Public In Resource 2
 
 Private Keyword In All Resources
     [Tags]    ROBOT: private

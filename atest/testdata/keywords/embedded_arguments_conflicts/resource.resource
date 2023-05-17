@@ -13,7 +13,7 @@ ${match} in ${both} resources
     Fail    Should not be run due to search order
 
 Follow search ${disorder} in resources
-	Fail	Should not be run due to search order
+    Fail    Should not be run due to search order
 
 ${public} match
     Should be equal    ${public}    Better public
@@ -34,10 +34,10 @@ Match with and without embedded arguments in different files
     No operation
 
 Cause unresolvable conflict in resource due to search order
-	Unresolvable conflict in resource
+    Unresolvable conflict in resource
 
 Cause unresolvable conflict in library due to search order
-	Unresolvable conflict in library
+    Unresolvable conflict in library
 
 Unresolvable conflict in resource
-	Fail	Should not be run due to search order	
+    Fail    Should not be run due to search order
