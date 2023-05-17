@@ -14,6 +14,9 @@ Use Local Private Keyword Instead Of Keywords From Other Resources
     Private Keyword In All Resources
     Private In Two Resources And Public In One
 
+Use Search Order Instead Of Private Keyword When Prioritized Resource Keyword Is Public
+	Private In Resource 1 And 3 And Public In Resource 2
+
 Private Keyword In All Resources
     [Tags]    ROBOT: private
     Log    private.resource
@@ -29,5 +32,9 @@ Call Private Keyword From Private 2 Resource
     Private Keyword In Resource 2
 
 Private In One Resource And Public In Two
+    [Tags]    robot:private
+    Fail    Not executed
+
+Private In Local And One Resource And Public In Another
     [Tags]    robot:private
     Fail    Not executed
