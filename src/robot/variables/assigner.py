@@ -26,7 +26,7 @@ from .search import search_variable, VariableMatch
 class VariableAssignment:
 
     def __init__(self, assignment):
-        validator = AssignmentValidator()
+        validator = AssignmentValidator(len(assignment))
         try:
             self.assignment = [validator.validate(var) for var in assignment]
             self.error = None
@@ -51,16 +51,17 @@ class VariableAssignment:
 
 class AssignmentValidator:
 
-    def __init__(self):
+    def __init__(self, assignement_count):
+        self._assignment_count = assignement_count
         self._seen_list = False
         self._seen_dict = False
-        self._seen_any_var = False
         self._seen_assign_mark = False
 
     def validate(self, variable):
         variable = self._validate_assign_mark(variable)
         self._validate_state(is_list=variable[0] == '@',
-                             is_dict=variable[0] == '&')
+                             is_dict=variable[0] == '&',
+                             has_items='[' in variable,)
         return variable
 
     def _validate_assign_mark(self, variable):
@@ -72,16 +73,17 @@ class AssignmentValidator:
             return variable[:-1].rstrip()
         return variable
 
-    def _validate_state(self, is_list, is_dict):
+    def _validate_state(self, is_list, is_dict, has_items):
         if is_list and self._seen_list:
             raise DataError('Assignment can contain only one list variable.',
                             syntax=True)
-        if self._seen_dict or is_dict and self._seen_any_var:
+        if is_dict and self._assignment_count > 1:
             raise DataError('Dictionary variable cannot be assigned with other '
                             'variables.', syntax=True)
+        if is_list and has_items and self._assignment_count == 1:
+            raise DataError('Cannot assign a list variable with items.', syntax=True)
         self._seen_list += is_list
         self._seen_dict += is_dict
-        self._seen_any_var = True
 
 
 class VariableAssigner:

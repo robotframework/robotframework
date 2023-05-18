@@ -274,9 +274,6 @@ Index not found error when item assign to list
 Item assign to undeclared variable fails
     Check Test Case    ${TESTNAME}
 
-Item assign to undeclared list variable fails
-    Check Test Case    ${TESTNAME}
-
 Empty item assign to list fails
     Check Test Case    ${TESTNAME}
 
@@ -292,8 +289,11 @@ Multiple item assigns to scalars and list
 Multiple item assigns to scalars and list slice
     Check Test Case    ${TESTNAME}
 
-Multiple item assigns to list only
+Item assign without assign mark
     Check Test Case    ${TESTNAME}
 
-Item assign without assign mark
+Single item assign to list should fail
+    Check Test Case    ${TESTNAME}
+
+Single item assign to dict should fail
     Check Test Case    ${TESTNAME}

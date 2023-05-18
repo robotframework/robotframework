@@ -477,10 +477,6 @@ Item assign to undeclared variable fails
     [Documentation]    FAIL    Variable '${undeclared_variable}' not found.
     ${undeclared_variable}[0]=  Set Variable   0
 
-Item assign to undeclared list variable fails
-    [Documentation]    FAIL    Variable '${undeclared_list}' not found.
-    @{undeclared_list}[0]=  Set Variable   0
-
 Empty item assign to list fails
     [Documentation]    FAIL
     ...    Setting value to list variable '${list_variable}' at index [] failed: \
@@ -518,16 +514,21 @@ Multiple item assigns to scalars and list slice
     Should Be Equal    ${list_variable}    ${{ [1, "list_element"] }}
     Should Be Equal    ${dict_variable}    ${{ {"abc": "first", "def": "second" } }}
 
-Multiple item assigns to list only
-    ${list_variable}=      Create List     ${1}    ${2}
-    @{list_variable}[1]=   Set Variable    ${{ [11, 12] }}
-
-    Should Be Equal    ${list_variable}    ${{ [1, [11, 12]] }}
-
 Item assign without assign mark
     ${dict_variable}        Create Dictionary
     ${dict_variable}[key]   Set Variable            val
     Should Be Equal         ${dict_variable}[key]   val
+
+Single item assign to list should fail
+    [Documentation]    FAIL
+    ...    Cannot assign a list variable with items.
+    @{list_variable}[0]=   Set Variable  ${1}
+
+Single item assign to dict should fail
+    [Documentation]    FAIL
+    ...    No keyword with name '&{dict_variable}[item]=' found.
+    &{dict_variable}[item]=  Set Variable  ${1}
+
 
 *** Keywords ***
 Assign multiple variables
