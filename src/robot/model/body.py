@@ -276,12 +276,12 @@ class Body(BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Return', 'Continue'
     pass
 
 
-class IterationType(Generic[BT]):
+class BranchType(Generic[BT]):
     """Class that wrapps `Generic` as python doesn't allow multple generic inheritance"""
     pass
 
 
-class BaseBranches(BaseBody[KW, F, W, I, T, R, C, B, M, E], IterationType[BT]):
+class BaseBranches(BaseBody[KW, F, W, I, T, R, C, B, M, E], BranchType[BT]):
     """A list-like object representing IF and TRY branches."""
     __slots__ = ['branch_class']
     branch_type: Type[BT] = KnownAtRuntime
