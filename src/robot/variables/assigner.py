@@ -18,7 +18,8 @@ from collections.abc import MutableSequence
 
 from robot.errors import (DataError, ExecutionStatus, HandlerExecutionFailed,
                           VariableError)
-from robot.utils import (ErrorDetails, format_assign_message, get_error_message,
+from robot.utils import (DotDict, ErrorDetails, format_assign_message,
+                         get_error_message, is_dict_like, is_list_like,
                          is_number, is_string, prepr, type_name)
 from .search import search_variable, VariableMatch
 
@@ -26,7 +27,7 @@ from .search import search_variable, VariableMatch
 class VariableAssignment:
 
     def __init__(self, assignment):
-        validator = AssignmentValidator(len(assignment))
+        validator = AssignmentValidator()
         try:
             self.assignment = [validator.validate(var) for var in assignment]
             self.error = None
@@ -51,17 +52,16 @@ class VariableAssignment:
 
 class AssignmentValidator:
 
-    def __init__(self, assignement_count):
-        self._assignment_count = assignement_count
+    def __init__(self):
         self._seen_list = False
         self._seen_dict = False
+        self._seen_any_var = False
         self._seen_assign_mark = False
 
     def validate(self, variable):
         variable = self._validate_assign_mark(variable)
         self._validate_state(is_list=variable[0] == '@',
-                             is_dict=variable[0] == '&',
-                             has_items='[' in variable,)
+                             is_dict=variable[0] == '&')
         return variable
 
     def _validate_assign_mark(self, variable):
@@ -73,17 +73,16 @@ class AssignmentValidator:
             return variable[:-1].rstrip()
         return variable
 
-    def _validate_state(self, is_list, is_dict, has_items):
+    def _validate_state(self, is_list, is_dict):
         if is_list and self._seen_list:
             raise DataError('Assignment can contain only one list variable.',
                             syntax=True)
-        if is_dict and self._assignment_count > 1:
+        if self._seen_dict or is_dict and self._seen_any_var:
             raise DataError('Dictionary variable cannot be assigned with other '
                             'variables.', syntax=True)
-        if is_list and has_items and self._assignment_count == 1:
-            raise DataError('Cannot assign a list variable with items.', syntax=True)
         self._seen_list += is_list
         self._seen_dict += is_dict
+        self._seen_any_var = True
 
 
 class VariableAssigner:
@@ -154,6 +153,21 @@ class VariableAssigner:
     def _variable_type_supports_item_assign(self, var):
         return (hasattr(var, '__setitem__') and callable(var.__setitem__))
 
+    def _raise_cannot_set_type(self, value, expected):
+        value_type = type_name(value)
+        raise VariableError(f"Expected {expected}-like value, got {value_type}.")
+
+    def _validate_item_assign(self, name, value):
+        if name[0] == '@':
+            if not is_list_like(value):
+                self._raise_cannot_set_type(value, 'list')
+            value = list(value)
+        if name[0] == '&':
+            if not is_dict_like(value):
+                self._raise_cannot_set_type(value, 'dictionary')
+            value = DotDict(value)
+        return value
+
     def _item_assign(self, name, items, value, variables):
         *nested, item = items
         decorated_nested_items = ''.join(f'[{item}]' for item in nested)
@@ -173,6 +187,7 @@ class VariableAssigner:
             except ValueError:
                 pass
         try:
+            value = self._validate_item_assign(name, value)
             var[selector] = value
         except (IndexError, TypeError, Exception):
             var_type = type_name(var)

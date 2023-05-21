@@ -354,7 +354,7 @@ Too many assign marks
     [Documentation]    FAIL No keyword with name '\${oops}==' found.
     ${oops}==    Set Variable    whatever
 
-Item assign to dictionary
+Item assign to scalar dictionary
     ${dict_variable}=             Create Dictionary     key_str1=initial_value    ${0}=${99}
 
     ${dict_variable}[key_str1]=   Set Variable          replaced_value
@@ -389,7 +389,7 @@ Nested item assign
     ${expected_dict}=               Evaluate        {"a": "c", "0": "zero_str", 0: "zero_int"}
     Should Be Equal                 ${dict_variable}[dict]     ${expected_dict}
 
-Item assign to list
+Item assign to scalar list
     ${list_variable}=       Create List    1    2    3
 
     ${list_variable}[0]=       Set Variable    100
@@ -401,7 +401,7 @@ Item assign to list
     Should Be Equal      ${list_variable}[2]    102
     Length Should Be     ${list_variable}       3
 
-Slice assign to list
+Slice assign to scalar list
     ${list_variable}=       Create List    1    2    3    4    5
     ${iterator1}=           Create List    101  102  103
     ${iterator2}=           Create List    104
@@ -473,9 +473,17 @@ Index not found error when item assign to list
     ${list_variable}=        Create List    ${{ [1, 2] }}
     ${list_variable}[0][2]=  Set Variable   3
 
-Item assign to undeclared variable fails
-    [Documentation]    FAIL    Variable '${undeclared_variable}' not found.
-    ${undeclared_variable}[0]=  Set Variable   0
+Item assign to undeclared scalar fails
+    [Documentation]    FAIL    Variable '${undeclared_scalar}' not found.
+    ${undeclared_scalar}[0]=  Set Variable   0
+
+Item assign to undeclared dict fails
+    [Documentation]    FAIL    Variable '${undeclared_dict}' not found.
+    &{undeclared_dict}[0]=  Set Variable   0
+
+Item assign to undeclared list fails
+    [Documentation]    FAIL    Variable '${undeclared_list}' not found.
+    @{undeclared_list}[0]=  Set Variable   0
 
 Empty item assign to list fails
     [Documentation]    FAIL
@@ -519,16 +527,44 @@ Item assign without assign mark
     ${dict_variable}[key]   Set Variable            val
     Should Be Equal         ${dict_variable}[key]   val
 
-Single item assign to list should fail
-    [Documentation]    FAIL
-    ...    Cannot assign a list variable with items.
-    @{list_variable}[0]=   Set Variable  ${1}
+Single item assign to list
+    @{list_variable}=         Create List    x  y  z
+    @{list_variable}[1]=      Create List    a  b  c
+    @{temp_list}=             Create List    0  1  2
+    @{list_variable}[1][-1]=  Set Variable   ${temp_list}
 
-Single item assign to dict should fail
-    [Documentation]    FAIL
-    ...    No keyword with name '&{dict_variable}[item]=' found.
-    &{dict_variable}[item]=  Set Variable  ${1}
+    Should Be Equal   ${list_variable}    ${{ ['x', ['a', 'b', ['0', '1', '2']], 'z'] }}
 
+    # Assert that the assigned list has been copied by changing the value of temp_list
+    ${temp_list}[0]=       Set Variable        -1
+    @{expected_list}=      Create List         0   1   2
+    @{inner_list}=         Set Variable        @{list_variable}[1][-1]
+    Lists Should Be Equal  ${inner_list}       ${expected_list}
+
+Single item assign to dict
+    &{dict_variable}=            Create Dictionary    x=y   a=b
+    &{dict_variable}[a]=         Evaluate             {0:1, 2:3}
+    &{dict_variable}[a][z]=      Evaluate             {'key': 'value'}
+
+    Should Be Equal       ${dict_variable}    ${{ {'x': 'y', 'a': {0: 1, 2: 3, 'z': {'key': 'value'}}} }}
+
+    # Assert that the dictionary is a DotDict (extended assign)
+    ${inner_dict}=        Set Variable        ${dict_variable.a.z}
+    Should Not Be Empty   ${inner_dict}
+
+Single item assign to list should fail if value is not list
+    [Documentation]    FAIL
+    ...    Setting value to list variable '@{list_variable}' at index [1] failed: \
+    ...    Expected list-like value, got string.
+    @{list_variable}=          Create List     x  y  z
+    @{list_variable}[1]=       Set Variable    abc
+
+Single item assign to dict should fail if value is not dict
+    [Documentation]    FAIL
+    ...    Setting value to DotDict variable '&{dict_variable}' at index [1] failed: \
+    ...    Expected dictionary-like value, got string.
+    &{dict_variable}=          Create Dictionary    x=y   a=b
+    &{dict_variable}[1]=       Set Variable         abc
 
 *** Keywords ***
 Assign multiple variables

@@ -121,7 +121,6 @@ class VariableMatch:
             return match.is_assign(allow_items=allow_items)
         return (self.is_variable()
                 and self.identifier in '$@&'
-                and not (self.identifier == '&' and self.items)
                 and (allow_items or not self.items)
                 and (allow_nested or not search_variable(self.base)))
 

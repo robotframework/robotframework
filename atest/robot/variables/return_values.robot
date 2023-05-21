@@ -226,7 +226,7 @@ Invalid assign with assign mark
 Too many assign marks
     Check Test Case    ${TESTNAME}
 
-Item assign to dictionary
+Item assign to scalar dictionary
     ${tc}=  Check Test Case    ${TESTNAME}
     Check Log Message          ${tc.kws[1].msgs[0]}    \${dict_variable}[key_str1] = replaced_value
     Check Log Message          ${tc.kws[2].msgs[0]}    \${dict_variable}[\${0}] = 100
@@ -238,13 +238,13 @@ Nested item assign
     Check Log Message          ${tc.kws[3].msgs[0]}    \${dict_variable}[list][\${1}] = 102
     Check Log Message          ${tc.kws[4].msgs[0]}    \${dict_variable}[list][-1] = 103
 
-Item assign to list
+Item assign to scalar list
     ${tc}=  Check Test Case    ${TESTNAME}
     Check Log Message          ${tc.kws[1].msgs[0]}    \${list_variable}[0] = 100
     Check Log Message          ${tc.kws[2].msgs[0]}    \${list_variable}[\${1}] = 101
     Check Log Message          ${tc.kws[3].msgs[0]}    \${list_variable}[-1] = 102
 
-Slice assign to list
+Slice assign to scalar list
     ${tc}=  Check Test Case    ${TESTNAME}
     Check Log Message          ${tc.kws[3].msgs[0]}    \${list_variable}[:2] = ['101', '102', '103']
     Check Log Message          ${tc.kws[4].msgs[0]}    \${list_variable}[-2:] = ['104']
@@ -271,7 +271,13 @@ Item assign expects iterable fails
 Index not found error when item assign to list
     Check Test Case    ${TESTNAME}
 
-Item assign to undeclared variable fails
+Item assign to undeclared scalar fails
+    Check Test Case    ${TESTNAME}
+
+Item assign to undeclared dict fails
+    Check Test Case    ${TESTNAME}
+
+Item assign to undeclared list fails
     Check Test Case    ${TESTNAME}
 
 Empty item assign to list fails
@@ -292,8 +298,16 @@ Multiple item assigns to scalars and list slice
 Item assign without assign mark
     Check Test Case    ${TESTNAME}
 
-Single item assign to list should fail
+Single item assign to list
+    ${tc}=  Check Test Case    ${TESTNAME}
+    Check Log Message          ${tc.kws[1].msgs[0]}    \@{list_variable}[1] = [ a | b | c ]
+
+Single item assign to dict
+    ${tc}=  Check Test Case    ${TESTNAME}
+    Check Log Message          ${tc.kws[1].msgs[0]}    \&{dict_variable}[a] = { 0=1 | 2=3 }
+
+Single item assign to list should fail if value is not list
     Check Test Case    ${TESTNAME}
 
-Single item assign to dict should fail
+Single item assign to dict should fail if value is not dict
     Check Test Case    ${TESTNAME}
