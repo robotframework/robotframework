@@ -161,9 +161,9 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, R, C, B, M, E]):
 
     def _create(self, cls: 'Type[BI]', name: str, args: 'tuple[Any]',
                 kwargs: 'dict[str, Any]') -> BI:
-        if not issubclass(cls, BodyItem):
+        if cls is KnownAtRuntime:
             raise TypeError(f"'{full_name(self)}' object does not support '{name}'.")
-        return self.append(cls(*args, **kwargs))
+        return self.append(cls(*args, **kwargs))  # type: ignore
 
     @copy_signature(keyword_class)
     def create_keyword(self, *args, **kwargs) -> keyword_class:
@@ -230,7 +230,7 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, R, C, B, M, E]):
         use ``body.filter(keywords=False``, messages=False)``. For more detailed
         filtering it is possible to use ``predicate``.
         """
-        if messages is not None and not issubclass(self.message_class, BodyItem):
+        if messages is not None and self.message_class is KnownAtRuntime:
             raise TypeError(f"'{full_name(self)}' object does not support "
                             f"filtering by 'messages'.")
         return self._filter([(self.keyword_class, keywords),
