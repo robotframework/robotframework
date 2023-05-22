@@ -28,11 +28,11 @@ from .visitor import SuiteVisitor
 if TYPE_CHECKING:
     from robot.model import Keyword, Message
 
-BT = TypeVar('BT', 'IfBranch', 'TryBranch')
+BT = TypeVar('BT', bound='IfBranch|TryBranch')
 
 
 class Branches(BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Return', 'Continue',
-                          'Break', 'Message', 'Error', BT]):
+                            'Break', 'Message', 'Error', BT]):
     pass
 
 

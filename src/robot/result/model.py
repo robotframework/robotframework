@@ -58,8 +58,8 @@ from .modeldeprecation import deprecated, DeprecatedAttributesMixin
 from .keywordremover import KeywordRemover
 from .suiteteardownfailed import SuiteTeardownFailed, SuiteTeardownFailureHandler
 
-BT = TypeVar('BT', 'IfBranch', 'TryBranch')
-IT = TypeVar('IT', 'ForIteration', 'WhileIteration')
+BT = TypeVar('BT', bound='IfBranch|TryBranch')
+IT = TypeVar('IT', bound='ForIteration|WhileIteration')
 
 BodyItemParent = Union['TestSuite', 'TestCase', 'For', 'ForIteration', 'If', 'IfBranch',
                        'Try', 'TryBranch', 'While', 'WhileIteration', None]

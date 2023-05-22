@@ -47,7 +47,7 @@ C = TypeVar('C', bound='Continue')
 B = TypeVar('B', bound='Break')
 M = TypeVar('M', bound='Message')
 E = TypeVar('E', bound='Error')
-BT = TypeVar('BT', 'IfBranch', 'TryBranch')
+BT = TypeVar('BT', bound='IfBranch|TryBranch')
 
 
 class BodyItem(ModelObject):
