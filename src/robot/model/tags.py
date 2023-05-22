@@ -23,7 +23,10 @@ class Tags(Sequence[str]):
     __slots__ = ['_tags', '_reserved']
 
     def __init__(self, tags: Sequence[str] = ()):
-        self._tags, self._reserved = self._init_tags(tags)
+        if isinstance(tags, Tags):
+            self._tags, self._reserved = tags._tags, tags._reserved
+        else:
+            self._tags, self._reserved = self._init_tags(tags)
 
     def robot(self, name: str) -> bool:
         """Check do tags contain a reserved tag in format `robot:<name>`.

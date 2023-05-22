@@ -15,10 +15,15 @@
 
 import copy
 import json
-import os
-import pathlib
+from io import IOBase
+from pathlib import Path
+from typing import Any, Dict, overload, Type, TypeVar
 
-from robot.utils import SetterAwareType, type_name
+from robot.utils import get_error_message, SetterAwareType, type_name
+
+
+T = TypeVar('T', bound='ModelObject')
+DataDict = Dict[str, Any]
 
 
 class ModelObject(metaclass=SetterAwareType):
@@ -26,28 +31,26 @@ class ModelObject(metaclass=SetterAwareType):
     __slots__ = []
 
     @classmethod
-    def from_dict(cls, data):
+    def from_dict(cls: Type[T], data: DataDict) -> T:
         """Create this object based on data in a dictionary.
 
         Data can be got from the :meth:`to_dict` method or created externally.
         """
         try:
             return cls().config(**data)
-        except AttributeError as err:
+        except (AttributeError, TypeError) as err:
             raise ValueError(f"Creating '{full_name(cls)}' object from dictionary "
                              f"failed: {err}")
 
     @classmethod
-    def from_json(cls, source):
+    def from_json(cls: Type[T], source: 'str|bytes|IOBase|Path') -> T:
         """Create this object based on JSON data.
 
         The data is given as the ``source`` parameter. It can be:
 
         - a string (or bytes) containing the data directly,
         - an open file object where to read the data, or
-        - a path (string or `pathlib.Path`__) to a UTF-8 encoded file to read.
-
-        __ https://docs.python.org/3/library/pathlib.html
+        - a path (``pathlib.Path`` or string) to a UTF-8 encoded file to read.
 
         The JSON data is first converted to a Python dictionary and the object
         created using the :meth:`from_dict` method.
@@ -58,19 +61,30 @@ class ModelObject(metaclass=SetterAwareType):
         """
         try:
             data = JsonLoader().load(source)
-        except ValueError as err:
+        except (TypeError, ValueError) as err:
             raise ValueError(f'Loading JSON data failed: {err}')
         return cls.from_dict(data)
 
-    def to_dict(self):
+    def to_dict(self) -> DataDict:
         """Serialize this object into a dictionary.
 
         The object can be later restored by using the :meth:`from_dict` method.
         """
         raise NotImplementedError
 
-    def to_json(self, file=None, *, ensure_ascii=False, indent=0,
-                separators=(',', ':')):
+    @overload
+    def to_json(self, file: None = None, *, ensure_ascii: bool = False,
+                indent: int = 0, separators: 'tuple[str, str]' = (',', ':')) -> str:
+        ...
+
+    @overload
+    def to_json(self, file: 'IOBase|Path|str', *, ensure_ascii: bool = False,
+                indent: int = 0, separators: 'tuple[str, str]' = (',', ':')) -> str:
+        ...
+
+    def to_json(self, file: 'None|IOBase|Path|str' = None, *,
+                ensure_ascii: bool = False, indent: int = 0,
+                separators: 'tuple[str, str]' = (',', ':')) -> 'None|str':
         """Serialize this object into JSON.
 
         The object is first converted to a Python dictionary using the
@@ -81,7 +95,8 @@ class ModelObject(metaclass=SetterAwareType):
 
         - ``None`` (default) to return the data as a string,
         - an open file object where to write the data, or
-        - a path to a file where to write the data using UTF-8 encoding.
+        - a path (``pathlib.Path`` or string) to a file where to write
+          the data using UTF-8 encoding.
 
         JSON formatting can be configured using optional parameters that
         are passed directly to the underlying json__ module. Notice that
@@ -92,7 +107,7 @@ class ModelObject(metaclass=SetterAwareType):
         return JsonDumper(ensure_ascii=ensure_ascii, indent=indent,
                           separators=separators).dump(self.to_dict(), file)
 
-    def config(self, **attributes):
+    def config(self: T, **attributes) -> T:
         """Configure model object with given attributes.
 
         ``obj.config(name='Example', doc='Something')`` is equivalent to setting
@@ -100,18 +115,30 @@ class ModelObject(metaclass=SetterAwareType):
 
         New in Robot Framework 4.0.
         """
-        for name in attributes:
+        for name, value in attributes.items():
             try:
-                setattr(self, name, attributes[name])
+                orig = getattr(self, name)
+            except AttributeError:
+                raise AttributeError(f"'{full_name(self)}' object does not have "
+                                     f"attribute '{name}'")
+            # Preserve tuples. Main motivation is converting lists with `from_json`.
+            if isinstance(orig, tuple) and not isinstance(value, tuple):
+                try:
+                    value = tuple(value)
+                except TypeError:
+                    raise TypeError(f"'{full_name(self)}' object attribute '{name}' "
+                                    f"is 'tuple', got '{type_name(value)}'.")
+            try:
+                setattr(self, name, value)
             except AttributeError as err:
                 # Ignore error setting attribute if the object already has it.
-                # Avoids problems with `to/from_dict` roundtrip with body items
-                # having un-settable `type` attribute that is needed in dict data.
-                if getattr(self, name, object()) != attributes[name]:
+                # Avoids problems with `from_dict` with body items having
+                # un-settable `type` attribute that is needed in dict data.
+                if value != orig:
                     raise AttributeError(f"Setting attribute '{name}' failed: {err}")
         return self
 
-    def copy(self, **attributes):
+    def copy(self: T, **attributes) -> T:
         """Return a shallow copy of this object.
 
         :param attributes: Attributes to be set to the returned copy.
@@ -128,7 +155,7 @@ class ModelObject(metaclass=SetterAwareType):
             setattr(copied, name, attributes[name])
         return copied
 
-    def deepcopy(self, **attributes):
+    def deepcopy(self: T, **attributes) -> T:
         """Return a deep copy of this object.
 
         :param attributes: Attributes to be set to the returned copy.
@@ -145,19 +172,19 @@ class ModelObject(metaclass=SetterAwareType):
             setattr(copied, name, attributes[name])
         return copied
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         arguments = [(name, getattr(self, name)) for name in self.repr_args]
         args_repr = ', '.join(f'{name}={value!r}' for name, value in arguments
                               if self._include_in_repr(name, value))
         return f"{full_name(self)}({args_repr})"
 
-    def _include_in_repr(self, name, value):
+    def _include_in_repr(self, name: str, value: Any) -> bool:
         return True
 
 
-def full_name(obj):
-    typ = type(obj) if not isinstance(obj, type) else obj
-    parts = typ.__module__.split('.') + [typ.__name__]
+def full_name(obj_or_cls):
+    cls = type(obj_or_cls) if not isinstance(obj_or_cls, type) else obj_or_cls
+    parts = cls.__module__.split('.') + [cls.__name__]
     if len(parts) > 1 and parts[0] == 'robot':
         parts[2:-1] = []
     return '.'.join(parts)
@@ -165,13 +192,13 @@ def full_name(obj):
 
 class JsonLoader:
 
-    def load(self, source):
+    def load(self, source: 'str|bytes|IOBase|Path') -> DataDict:
         try:
             data = self._load(source)
-        except (json.JSONDecodeError, TypeError) as err:
-            raise ValueError(f'Invalid JSON data: {err}')
+        except (json.JSONDecodeError, TypeError):
+            raise ValueError(f'Invalid JSON data: {get_error_message()}')
         if not isinstance(data, dict):
-            raise ValueError(f"Expected dictionary, got {type_name(data)}.")
+            raise TypeError(f"Expected dictionary, got {type_name(data)}.")
         return data
 
     def _load(self, source):
@@ -183,11 +210,14 @@ class JsonLoader:
         return json.loads(source)
 
     def _is_path(self, source):
-        if isinstance(source, os.PathLike):
+        if isinstance(source, Path):
             return True
         if not isinstance(source, str) or '{' in source:
             return False
-        return os.path.isfile(source)
+        try:
+            return Path(source).is_file()
+        except OSError:    # Can happen on Windows w/ Python < 3.10.
+            return False
 
 
 class JsonDumper:
@@ -195,10 +225,18 @@ class JsonDumper:
     def __init__(self, **config):
         self.config = config
 
-    def dump(self, data, output=None):
+    @overload
+    def dump(self, data: DataDict, output: None = None) -> 'str':
+        ...
+
+    @overload
+    def dump(self, data: DataDict, output: 'str|Path|IOBase') -> None:
+        ...
+
+    def dump(self, data: DataDict, output: 'None|IOBase|Path|str' = None) -> 'None|str':
         if not output:
             return json.dumps(data, **self.config)
-        elif isinstance(output, (str, pathlib.Path)):
+        elif isinstance(output, (str, Path)):
             with open(output, 'w', encoding='UTF-8') as file:
                 json.dump(data, file, **self.config)
         elif hasattr(output, 'write'):

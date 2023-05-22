@@ -44,18 +44,33 @@ class TestTestSuite(unittest.TestCase):
         for inp, exp in [(None, ''), ('', ''), ('name', 'Name'), ('name.robot', 'Name'),
                          ('naMe', 'naMe'), ('na_me', 'Na Me'), ('na_M_e_', 'na M e'),
                          ('prefix__name', 'Name'), ('__n', 'N'), ('naMe__', 'naMe')]:
-            assert_equal(TestSuite(source=inp).name, exp)
+            assert_equal(TestSuite.name_from_source(inp), exp)
+            suite = TestSuite(source=inp)
+            assert_equal(suite.name, exp)
+            suite.suites.create(name='xxx')
+            assert_equal(suite.name, exp or 'xxx')
+            suite.name = 'new name'
+            assert_equal(suite.name, 'new name')
             if inp:
                 assert_equal(TestSuite(source=Path(inp)).name, exp)
                 assert_equal(TestSuite(source=Path(inp).resolve()).name, exp)
 
-    def test_suite_name_from_source(self):
-        suite = TestSuite(source='example.robot')
-        assert_equal(suite.name, 'Example')
-        suite.suites.create(name='child')
-        assert_equal(suite.name, 'Example')
-        suite.name = 'new name'
-        assert_equal(suite.name, 'new name')
+    def test_name_from_source_with_extensions(self):
+        for ext, exp in [('z', 'X.Y'), ('.z', 'X.Y'), ('y.z', 'X'),
+                         (['x', 'y', 'z'], 'X.Y')]:
+            assert_equal(TestSuite.name_from_source('x.y.z', ext), exp)
+
+    def test_name_from_source_with_bad_extensions(self):
+        assert_raises_with_msg(
+            ValueError,
+            "File 'x.y' does not have extension 'z'.",
+            TestSuite.name_from_source, 'x.y', extension='z'
+        )
+        assert_raises_with_msg(
+            ValueError,
+            "File 'x.y' does not have extension 'a', 'b' or 'c'.",
+            TestSuite.name_from_source, 'x.y', ('a', 'b', 'c')
+        )
 
     def test_suite_name_from_child_suites(self):
         suite = TestSuite()

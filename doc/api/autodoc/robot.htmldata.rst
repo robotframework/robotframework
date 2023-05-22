@@ -6,6 +6,18 @@ robot.htmldata package
    :undoc-members:
    :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 2
+
+   robot.htmldata.common
+   robot.htmldata.lib
+   robot.htmldata.libdoc
+   robot.htmldata.rebot
+   robot.htmldata.testdoc
+
 Submodules
 ----------
 

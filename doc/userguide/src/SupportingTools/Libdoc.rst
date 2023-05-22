@@ -407,7 +407,7 @@ Possible variables in resource files can not be documented.
        ...    | Your Keyword | yyy |
        No Operation
 
-__ `Newlines in test data`_
+__ `Newlines`_
 
 Documentation syntax
 --------------------

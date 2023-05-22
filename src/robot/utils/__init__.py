@@ -43,7 +43,7 @@ from .encoding import (CONSOLE_ENCODING, SYSTEM_ENCODING, console_decode,
 from .error import (get_error_message, get_error_details, ErrorDetails)
 from .escaping import escape, glob_escape, unescape, split_from_equals
 from .etreewrapper import ET, ETSource
-from .filereader import FileReader
+from .filereader import FileReader, Source
 from .frange import frange
 from .markuputils import html_format, html_escape, xml_escape, attribute_escape
 from .markupwriters import HtmlWriter, XmlWriter, NullMarkupWriter
@@ -70,6 +70,7 @@ from .sortable import Sortable
 from .text import (cut_assign_value, cut_long_message, format_assign_message,
                    get_console_length, getdoc, getshortdoc, pad_console_length,
                    split_tags_from_doc, split_args_from_name_or_path)
+from .typehints import copy_signature, KnownAtRuntime
 from .unic import prepr, safe_str
 
 

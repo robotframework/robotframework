@@ -6,6 +6,9 @@ ${match} in ${both} resources
 ${match} resources
     Fail    Should not be run due to being worse match than above
 
+Follow search ${order} in resources
+	Should be equal    ${order}    order
+
 Unresolvable ${conflict} in resource
     Fail    Should not be run due to conflict
 

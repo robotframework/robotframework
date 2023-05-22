@@ -8,7 +8,8 @@ from pathlib import Path
 from robot import api, model
 from robot.model.modelobject import ModelObject
 from robot.running import (Break, Continue, Error, For, If, IfBranch, Keyword,
-                           Return, TestCase, TestSuite, Try, TryBranch, While)
+                           Return, TestCase, TestDefaults, TestSuite, Try, TryBranch,
+                           While)
 from robot.running.model import ResourceFile, UserKeyword
 from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal,
                                  assert_raises, assert_true)
@@ -64,6 +65,7 @@ ${VAR}           Value
 
 *** Test Cases ***
 Example
+    [Tags]    tag
     Keyword
 
 *** Keywords ***
@@ -94,6 +96,11 @@ Keyword
         suite = TestSuite.from_file_system(self.path, rpa=True)
         self._verify_suite(suite, rpa=True)
 
+    def test_from_file_system_with_defaults(self):
+        defaults = TestDefaults(tags=('from defaults',), timeout='10s')
+        suite = TestSuite.from_file_system(self.path, defaults=defaults)
+        self._verify_suite(suite, tags=('from defaults', 'tag'), timeout='10s')
+
     def test_from_model(self):
         model = api.get_model(self.data)
         suite = TestSuite.from_model(model)
@@ -103,6 +110,12 @@ Keyword
         model = api.get_model(self.path)
         suite = TestSuite.from_model(model)
         self._verify_suite(suite)
+
+    def test_from_model_with_defaults(self):
+        model = api.get_model(self.path)
+        defaults = TestDefaults(tags=('from defaults',), timeout='10s')
+        suite = TestSuite.from_model(model, defaults=defaults)
+        self._verify_suite(suite, tags=('from defaults', 'tag'), timeout='10s')
 
     def test_from_model_with_custom_name(self):
         for source in [self.data, self.path]:
@@ -118,12 +131,18 @@ Keyword
         suite = TestSuite.from_string(self.data)
         self._verify_suite(suite, name='')
 
-    def test_from_string_config(self):
+    def test_from_string_with_config(self):
         suite = TestSuite.from_string(self.data.replace('Test Cases', 'Testit'),
                                       lang='Finnish', curdir='.')
         self._verify_suite(suite, name='')
 
-    def _verify_suite(self, suite, name='Test Run Model', rpa=False):
+    def test_from_string_with_defaults(self):
+        defaults = TestDefaults(tags=('from defaults',), timeout='10s')
+        suite = TestSuite.from_string(self.data, defaults=defaults)
+        self._verify_suite(suite, name='', tags=('from defaults', 'tag'), timeout='10s')
+
+    def _verify_suite(self, suite, name='Test Run Model', tags=('tag',),
+                      timeout=None, rpa=False):
         assert_equal(suite.name, name)
         assert_equal(suite.doc, 'Some text.')
         assert_equal(suite.rpa, rpa)
@@ -135,6 +154,8 @@ Keyword
         assert_equal(suite.resource.keywords[0].body[0].name, 'Log')
         assert_equal(suite.resource.keywords[0].body[0].args, ('Hello!',))
         assert_equal(suite.tests[0].name, 'Example')
+        assert_equal(suite.tests[0].tags, tags)
+        assert_equal(suite.tests[0].timeout, timeout)
         assert_equal(suite.tests[0].setup.name, 'No Operation')
         assert_equal(suite.tests[0].body[0].name, 'Keyword')
 
@@ -257,13 +278,13 @@ class TestToFromDictAndJson(unittest.TestCase):
                      name='Setup', lineno=1)
 
     def test_for(self):
-        self._verify(For(), type='FOR', variables=[], flavor='IN', values=[], body=[])
+        self._verify(For(), type='FOR', variables=(), flavor='IN', values=(), body=[])
         self._verify(For(['${i}'], 'IN RANGE', ['10'], lineno=2),
-                     type='FOR', variables=['${i}'], flavor='IN RANGE', values=['10'],
+                     type='FOR', variables=('${i}',), flavor='IN RANGE', values=('10',),
                      body=[], lineno=2)
         self._verify(For(['${i}', '${a}'], 'IN ENUMERATE', ['cat', 'dog'], start='1'),
-                     type='FOR', variables=['${i}', '${a}'], flavor='IN ENUMERATE',
-                     values=['cat', 'dog'], body=[], start='1')
+                     type='FOR', variables=('${i}', '${a}'), flavor='IN ENUMERATE',
+                     values=('cat', 'dog'), start='1', body=[])
 
     def test_while(self):
         self._verify(While(), type='WHILE', body=[])
@@ -300,9 +321,9 @@ class TestToFromDictAndJson(unittest.TestCase):
 
     def test_try_branch(self):
         self._verify(TryBranch(), type='TRY', body=[])
-        self._verify(TryBranch(Try.EXCEPT), type='EXCEPT', patterns=[], body=[])
+        self._verify(TryBranch(Try.EXCEPT), type='EXCEPT', patterns=(), body=[])
         self._verify(TryBranch(Try.EXCEPT, ['Pa*'], 'glob', '${err}'), type='EXCEPT',
-                     patterns=['Pa*'], pattern_type='glob', variable='${err}', body=[])
+                     patterns=('Pa*',), pattern_type='glob', variable='${err}', body=[])
         self._verify(TryBranch(Try.ELSE, lineno=7), type='ELSE', body=[], lineno=7)
         self._verify(TryBranch(Try.FINALLY, lineno=8), type='FINALLY', body=[], lineno=8)
 
@@ -315,14 +336,14 @@ class TestToFromDictAndJson(unittest.TestCase):
         self._verify(root,
                      type='TRY/EXCEPT ROOT',
                      body=[{'type': 'TRY', 'body': [{'name': 'K1'}]},
-                           {'type': 'EXCEPT', 'patterns': [], 'body': [{'name': 'K2'}]},
+                           {'type': 'EXCEPT', 'patterns': (), 'body': [{'name': 'K2'}]},
                            {'type': 'ELSE', 'body': [{'name': 'K3'}]},
                            {'type': 'FINALLY', 'body': [{'name': 'K4'}]}])
 
     def test_return_continue_break(self):
-        self._verify(Return(), type='RETURN', values=[])
+        self._verify(Return(), type='RETURN', values=())
         self._verify(Return(('x', 'y'), lineno=9, error='E'),
-                     type='RETURN', values=['x', 'y'], lineno=9, error='E')
+                     type='RETURN', values=('x', 'y'), lineno=9, error='E')
         self._verify(Continue(), type='CONTINUE')
         self._verify(Continue(lineno=10, error='E'),
                      type='CONTINUE', lineno=10, error='E')
@@ -331,13 +352,13 @@ class TestToFromDictAndJson(unittest.TestCase):
                      type='BREAK', lineno=11, error='E')
 
     def test_error(self):
-        self._verify(Error(), type='ERROR', values=[])
-        self._verify(Error(('bad', 'things')), type='ERROR', values=['bad', 'things'])
+        self._verify(Error(), type='ERROR', values=())
+        self._verify(Error(('bad', 'things')), type='ERROR', values=('bad', 'things'))
 
     def test_test(self):
         self._verify(TestCase(), name='', body=[])
         self._verify(TestCase('N', 'D', 'T', '1s', lineno=12),
-                     name='N', doc='D', tags=['T'], timeout='1s', lineno=12, body=[])
+                     name='N', doc='D', tags=('T',), timeout='1s', lineno=12, body=[])
         self._verify(TestCase(template='K'), name='', body=[], template='K')
 
     def test_test_structure(self):
@@ -379,12 +400,12 @@ class TestToFromDictAndJson(unittest.TestCase):
 
     def test_user_keyword(self):
         self._verify(UserKeyword(), name='', body=[])
-        self._verify(UserKeyword('N', 'a', 'd', 't', 'r', 't', 1, error='E'),
+        self._verify(UserKeyword('N', ('a',), 'd', 't', ('r',), 't', 1, error='E'),
                      name='N',
-                     args=['a'],
+                     args=('a',),
                      doc='d',
-                     tags=['t'],
-                     return_='r',
+                     tags=('t',),
+                     return_=('r',),
                      timeout='t',
                      lineno=1,
                      error='E',
@@ -405,9 +426,9 @@ class TestToFromDictAndJson(unittest.TestCase):
     def test_resource_file(self):
         self._verify(ResourceFile())
         resource = ResourceFile('x.resource', doc='doc')
-        resource.imports.library('L', 'a', 'A', 1)
+        resource.imports.library('L', ['a'], 'A', 1)
         resource.imports.resource('R', 2)
-        resource.imports.variables('V', 'a', 3)
+        resource.imports.variables('V', ['a'], 3)
         resource.variables.create('${x}', ('value',))
         resource.variables.create('@{y}', ('v1', 'v2'), lineno=4)
         resource.variables.create('&{z}', ['k=v'], error='E')
@@ -415,14 +436,14 @@ class TestToFromDictAndJson(unittest.TestCase):
         self._verify(resource,
                      source='x.resource',
                      doc='doc',
-                     imports=[{'type': 'LIBRARY', 'name': 'L', 'args': ['a'],
+                     imports=[{'type': 'LIBRARY', 'name': 'L', 'args': ('a',),
                                'alias': 'A', 'lineno': 1},
                               {'type': 'RESOURCE', 'name': 'R', 'lineno': 2},
-                              {'type': 'VARIABLES', 'name': 'V', 'args': ['a'],
+                              {'type': 'VARIABLES', 'name': 'V', 'args': ('a',),
                                'lineno': 3}],
-                     variables=[{'name': '${x}', 'value': ['value']},
-                                {'name': '@{y}', 'value': ['v1', 'v2'], 'lineno': 4},
-                                {'name': '&{z}', 'value': ['k=v'], 'error': 'E'}],
+                     variables=[{'name': '${x}', 'value': ('value',)},
+                                {'name': '@{y}', 'value': ('v1', 'v2'), 'lineno': 4},
+                                {'name': '&{z}', 'value': ('k=v',), 'error': 'E'}],
                      keywords=[{'name': 'UK', 'body': [{'name': 'K'}]}])
 
     def test_bigger_suite_structure(self):

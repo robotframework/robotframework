@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Optional base classes for libraries and listeners.
+"""Optional base classes for libraries and other extensions.
 
 Module contents:
 
@@ -21,6 +21,9 @@ Module contents:
 - :class:`HybridLibrary` for libraries using the `hybrid library API`__.
 - :class:`ListenerV2` for `listener interface version 2`__.
 - :class:`ListenerV3` for `listener interface version 3`__.
+- :class:`Parser` for `custom parsers`__. Also
+  :class:`~robot.running.builder.settings.TestDefaults` used in ``Parser``
+  type hints can be imported via this module if needed.
 - Type definitions used by the aforementioned classes.
 
 Main benefit of using these base classes is that editors can provide automatic
@@ -31,25 +34,32 @@ base class.
 .. note:: These classes are not exposed via the top level :mod:`robot.api`
           package and need to imported via :mod:`robot.api.interfaces`.
 
-.. note:: Using :class:`ListenerV2` and :class:`ListenerV3` requires Python 3.8
-          or newer.
+.. note:: Using this module requires having the typing_extensions__ module
+          installed when using Python 3.6 or 3.7.
 
-New in Robot Framework 6.1.
+This module is new in Robot Framework 6.1.
 
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#dynamic-library-api
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#hybrid-library-api
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-version-2
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-version-3
+__ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#parser-interface
+__ https://pypi.org/project/typing-extensions/
 """
 
 import sys
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Tuple, Union
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 # Need to use version check and not try/except to support Mypy's stubgen.
 if sys.version_info >= (3, 8):
     from typing import TypedDict
 else:
-    TypedDict = dict
+    try:
+        from typing_extensions import TypedDict
+    except ImportError:
+        raise ImportError("Using the 'robot.api.interfaces' module requires having "
+                          "the 'typing_extensions' module installed with Python < 3.8.")
 if sys.version_info >= (3, 10):
     from types import UnionType
 else:
@@ -57,6 +67,7 @@ else:
 
 from robot import result, running
 from robot.model import Message
+from robot.running import TestDefaults, TestSuite
 
 
 # Type aliases used by DynamicLibrary and HybridLibrary.
@@ -507,7 +518,7 @@ class ListenerV2:
 
 
 class ListenerV3:
-    """Optional base class for listeners using the listener API v2."""
+    """Optional base class for listeners using the listener API v3."""
     ROBOT_LISTENER_API_VERSION = 3
 
     def start_suite(self, data: running.TestSuite, result: result.TestSuite):
@@ -560,3 +571,64 @@ class ListenerV3:
 
         With library listeners called when the library goes out of scope.
         """
+
+
+class Parser(ABC):
+    """Optional base class for custom parsers.
+
+    Parsers do not need to explicitly extend this class and in simple cases
+    it is possible to implement them as modules. Regardless how a parser is
+    implemented, it must have :attr:`extension` attribute and :meth:`parse`
+    method. The :meth:`parse_init` method is optional and only needed if
+    a parser supports parsing suite initialization files.
+
+    The mandatory :attr:`extension` attribute specifies what file extension or
+    extensions a parser supports. It can be set either as a class or instance
+    attribute, and it can be either a string or a sequence of strings. The
+    attribute can also be named ``EXTENSION``, which typically works better
+    when a parser is implemented as a module.
+
+    Example::
+
+        from pathlib import Path
+        from robot.api import TestSuite
+        from robot.api.interfaces import Parser, TestDefaults
+
+
+        class ExampleParser(Parser):
+            extension = '.example'
+
+            def parse(self, source: Path, defaults: TestDefaults) -> TestSuite:
+                suite = TestSuite(TestSuite.name_from_source(source), source=source)
+                # parse the source file and add tests to the created suite
+                return suite
+
+    The support for custom parsers is new in Robot Framework 6.1.
+    """
+    extension: Union[str, Sequence[str]]
+
+    @abstractmethod
+    def parse(self, source: Path, defaults: TestDefaults) -> TestSuite:
+        """Mandatory method for parsing suite files.
+
+        :param source: Path to the file to parse.
+        :param defaults: Default values set for test in init files.
+
+        The ``defaults`` argument is optional. It is possible to implement
+        this method also so that it accepts only ``source``.
+        """
+        raise NotImplementedError
+
+    def parse_init(self, source: Path, defaults: TestDefaults) -> TestSuite:
+        """Optional method for parsing suite initialization files.
+
+        :param source: Path to the file to parse.
+        :param defaults: Default values to used with tests in child suites.
+
+        The ``defaults`` argument is optional. It is possible to implement
+        this method also so that it accepts only ``source``.
+
+        If this method is not implemented, possible initialization files cause
+        an error.
+        """
+        raise NotImplementedError

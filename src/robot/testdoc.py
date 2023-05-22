@@ -33,8 +33,7 @@ import sys
 import time
 from pathlib import Path
 
-# Allows running as a script.
-if __name__ == '__main__':
+if __name__ == '__main__' and 'robot' not in sys.modules:
     import pythonpathsetter
 
 from robot.conf import RobotSettings

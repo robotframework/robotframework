@@ -15,9 +15,9 @@
 
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Iterator, Sequence, Type
+from typing import Any, Iterator, Sequence, Type, TypeVar
 
-from robot.utils import setter
+from robot.utils import seq2str, setter
 
 from .configurer import SuiteConfigurer
 from .filter import Filter, EmptySuiteRemover
@@ -25,10 +25,13 @@ from .fixture import create_fixture
 from .itemlist import ItemList
 from .keyword import Keyword, Keywords
 from .metadata import Metadata
-from .modelobject import ModelObject
+from .modelobject import DataDict, ModelObject
 from .tagsetter import TagSetter
 from .testcase import TestCase, TestCases
 from .visitor import SuiteVisitor
+
+
+TS = TypeVar('TS', bound="TestSuite")
 
 
 class TestSuite(ModelObject):
@@ -40,11 +43,13 @@ class TestSuite(ModelObject):
     test_class = TestCase    #: Internal usage only.
     fixture_class = Keyword  #: Internal usage only.
     repr_args = ('name',)
-    __slots__ = ['parent', '_name', 'doc', '_setup', '_teardown', 'rpa',
-                 '_my_visitors']
+    __slots__ = ['parent', '_name', 'doc', '_setup', '_teardown', 'rpa', '_my_visitors']
 
-    def __init__(self, name: str = '', doc: str = '', metadata: 'Mapping|None' = None,
-                 source: 'Path|str|None' = None, rpa: bool = False,
+    def __init__(self, name: str = '',
+                 doc: str = '',
+                 metadata: 'Mapping[str, str]|None' = None,
+                 source: 'Path|str|None' = None,
+                 rpa: 'bool|None' = None,
                  parent: 'TestSuite|None' = None):
         self._name = name
         self.doc = doc
@@ -59,16 +64,61 @@ class TestSuite(ModelObject):
         self._my_visitors: 'list[SuiteVisitor]' = []
 
     @staticmethod
-    def name_from_source(source: 'Path|str|None') -> str:
+    def name_from_source(source: 'Path|str|None', extension: Sequence[str] = ()) -> str:
+        """Create suite name based on the given ``source``.
+
+        This method is used by Robot Framework itself when it builds suites.
+        External parsers and other tools that want to produce suites with
+        names matching names created by Robot Framework can use this method as
+        well. This method is also used if :attr:`name` is not set and someone
+        accessess it.
+
+        The algorithm is as follows:
+
+        - If the source is ``None`` or empty, return an empty string.
+        - Get the base name of the source. Read more below.
+        - Remove possible prefix separated with ``__``.
+        - Convert underscrores to spaces.
+        - If the name is all lower case, title case it.
+
+        The base name of files is got by calling `Path.stem`__ that drops
+        the file extension. It typically works fine, but gives wrong result
+        if the extension has multiple parts like in ``tests.robot.zip``.
+        That problem can be avoided by giving valid file extension or extensions
+        as the optional ``extension`` argument.
+
+        Examples::
+
+            TestSuite.name_from_source(source)
+            TestSuite.name_from_source(source, extension='.robot.zip')
+            TestSuite.name_from_source(source, ('.robot', '.robot.zip'))
+
+        __ https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.stem
+        """
         if not source:
             return ''
         if not isinstance(source, Path):
             source = Path(source)
-        name = source.name if source.is_dir() else source.stem
+        name = TestSuite._get_base_name(source, extension)
         if '__' in name:
             name = name.split('__', 1)[1] or name
         name = name.replace('_', ' ').strip()
         return name.title() if name.islower() else name
+
+    @staticmethod
+    def _get_base_name(path: Path, extensions: Sequence[str]) -> str:
+        if path.is_dir():
+            return path.name
+        if not extensions:
+            return path.stem
+        if isinstance(extensions, str):
+            extensions = [extensions]
+        for ext in extensions:
+            ext = '.' + ext.lower().lstrip('.')
+            if path.name.endswith(ext):
+                return path.name[:-len(ext)]
+        raise ValueError(f"File '{path}' does not have extension "
+                         f"{seq2str(extensions, lastsep=' or ')}.")
 
     @property
     def _visitors(self) -> 'list[SuiteVisitor]':
@@ -103,17 +153,17 @@ class TestSuite(ModelObject):
         return f'{self.parent.longname}.{self.name}'
 
     @setter
-    def metadata(self, metadata: 'Mapping|None') -> Metadata:
+    def metadata(self, metadata: 'Mapping[str, str]|None') -> Metadata:
         """Free suite metadata as dictionary-like ``Metadata`` object."""
         return Metadata(metadata)
 
     @setter
-    def suites(self, suites: 'Sequence[TestSuite|Mapping]') -> 'TestSuites':
-        return TestSuites(self.__class__, self, suites)
+    def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> 'TestSuites[TestSuite]':
+        return TestSuites['TestSuite'](self.__class__, self, suites)
 
     @setter
-    def tests(self, tests: 'Sequence[TestCase|Mapping]') -> TestCases:
-        return TestCases(self.test_class, self, tests)
+    def tests(self, tests: 'Sequence[TestCase|DataDict]') -> TestCases[TestCase]:
+        return TestCases[TestCase](self.test_class, self, tests)
 
     @property
     def setup(self) -> Keyword:
@@ -146,7 +196,7 @@ class TestSuite(ModelObject):
         return self._setup
 
     @setup.setter
-    def setup(self, setup: 'Keyword|Mapping|None'):
+    def setup(self, setup: 'Keyword|DataDict|None'):
         self._setup = create_fixture(setup, self, Keyword.SETUP)
 
     @property
@@ -174,7 +224,7 @@ class TestSuite(ModelObject):
         return self._teardown
 
     @teardown.setter
-    def teardown(self, teardown: 'Keyword|Mapping|None'):
+    def teardown(self, teardown: 'Keyword|DataDict|None'):
         self._teardown = create_fixture(teardown, self, Keyword.TEARDOWN)
 
     @property
@@ -328,11 +378,10 @@ class TestSuite(ModelObject):
             data['suites'] = self.suites.to_dicts()
         return data
 
-
-class TestSuites(ItemList[TestSuite]):
+class TestSuites(ItemList[TS]):
     __slots__ = []
 
-    def __init__(self, suite_class: Type[TestSuite] = TestSuite,
-                 parent: 'TestSuite|None' = None,
-                 suites: 'Sequence[TestSuite|Mapping]' = ()):
+    def __init__(self, suite_class: Type[TS] = TestSuite,
+                 parent: 'TS|None' = None,
+                 suites: 'Sequence[TS|DataDict]' = ()):
         super().__init__(suite_class, {'parent': parent}, suites)

@@ -55,18 +55,18 @@ class Matcher:
 
 class MultiMatcher(Iterable[Matcher]):
 
-    def __init__(self, patterns: Sequence[str] = (), ignore: Sequence[str] = (),
+    def __init__(self, patterns: Iterable[str] = (), ignore: Sequence[str] = (),
                  caseless: bool = True, spaceless: bool = True,
                  match_if_no_patterns: bool = False, regexp: bool = False):
         self.matchers = [Matcher(pattern, ignore, caseless, spaceless, regexp)
-                         for pattern in self._ensure_list(patterns)]
+                         for pattern in self._ensure_iterable(patterns)]
         self.match_if_no_patterns = match_if_no_patterns
 
-    def _ensure_list(self, patterns):
+    def _ensure_iterable(self, patterns):
         if patterns is None:
-            return []
+            return ()
         if is_string(patterns):
-            return [patterns]
+            return (patterns,)
         return patterns
 
     def match(self, string: str) -> bool:

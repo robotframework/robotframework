@@ -19,12 +19,12 @@ import subprocess
 import time
 from tempfile import TemporaryFile
 
-from robot.utils import (abspath, cmdline2list, ConnectionCache, console_decode,
-                         console_encode, is_list_like, is_pathlike, is_string,
-                         is_truthy, NormalizedDict, secs_to_timestr, system_decode,
-                         system_encode, timestr_to_secs, WINDOWS)
-from robot.version import get_version
 from robot.api import logger
+from robot.utils import (cmdline2list, ConnectionCache, console_decode, console_encode,
+                         is_list_like, is_pathlike, is_string, is_truthy,
+                         NormalizedDict, secs_to_timestr, system_decode, system_encode,
+                         timestr_to_secs, WINDOWS)
+from robot.version import get_version
 
 
 class Process:
@@ -413,8 +413,8 @@ class Process:
     def _log_start(self, command, config):
         if is_list_like(command):
             command = self.join_command_line(command)
-        logger.info('Starting process:\n%s' % system_decode(command))
-        logger.debug('Process configuration:\n%s' % config)
+        logger.info(f'Starting process:\n{system_decode(command)}')
+        logger.debug(f'Process configuration:\n{config}')
 
     def is_process_running(self, handle=None):
         """Checks is the process running or not.
@@ -501,8 +501,7 @@ class Process:
         timeout = self._get_timeout(timeout)
         if timeout > 0:
             if not self._process_is_stopped(process, timeout):
-                logger.info('Process did not complete in %s.'
-                            % secs_to_timestr(timeout))
+                logger.info(f'Process did not complete in {secs_to_timestr(timeout)}.')
                 return self._manage_process_timeout(handle, on_timeout.lower())
         return self._wait(process)
 
@@ -640,7 +639,7 @@ class Process:
             raise RuntimeError('This keyword does not work on Windows.')
         process = self._processes[handle]
         signum = self._get_signal_number(signal)
-        logger.info('Sending signal %s (%d).' % (signal, signum))
+        logger.info(f'Sending signal {signal} ({signum}).')
         if is_truthy(group) and hasattr(os, 'killpg'):
             os.killpg(process.pid, signum)
         elif hasattr(process, 'send_signal'):
@@ -660,7 +659,7 @@ class Process:
             return getattr(signal_module,
                            name if name.startswith('SIG') else 'SIG' + name)
         except AttributeError:
-            raise RuntimeError("Unsupported signal '%s'." % name)
+            raise RuntimeError(f"Unsupported signal '{name}'.")
 
     def get_process_id(self, handle=None):
         """Returns the process ID (pid) of the process as an integer.
@@ -769,10 +768,12 @@ class Process:
         """Splits command line string into a list of arguments.
 
         String is split from spaces, but argument surrounded in quotes may
-        contain spaces in them. If ``escaping`` is given a true value, then
-        backslash is treated as an escape character. It can escape unquoted
-        spaces, quotes inside quotes, and so on, but it also requires using
-        double backslashes when using Windows paths.
+        contain spaces in them.
+
+        If ``escaping`` is given a true value, then backslash is treated as
+        an escape character. It can escape unquoted spaces, quotes inside
+        quotes, and so on, but it also requires using doubling backslashes
+        in Windows paths and elsewhere.
 
         Examples:
         | @{cmd} = | Split Command Line | --option "value with spaces" |
@@ -787,7 +788,7 @@ class Process:
         arguments containing spaces are surrounded with quotes, and possible
         quotes are escaped with a backslash.
 
-        If this keyword is given only one argument and that is a list like
+        If this keyword is given only one argument and that is a list-like
         object, then the values of that list are joined instead.
 
         Example:
@@ -796,7 +797,7 @@ class Process:
         """
         if len(args) == 1 and is_list_like(args[0]):
             args = args[0]
-        return subprocess.list2cmdline(args)
+        return subprocess.list2cmdline(str(a) for a in args)
 
 
 class ExecutionResult:
@@ -876,14 +877,14 @@ class ExecutionResult:
         return [stdin, stdout, stderr]
 
     def __str__(self):
-        return '<result object with rc %d>' % self.rc
+        return f'<result object with rc {self.rc}>'
 
 
 class ProcessConfiguration:
 
     def __init__(self, cwd=None, shell=False, stdout=None, stderr=None, stdin='PIPE',
                  output_encoding='CONSOLE', alias=None, env=None, **rest):
-        self.cwd = os.path.normpath(cwd) if cwd else abspath('.')
+        self.cwd = os.path.normpath(cwd) if cwd else os.path.abspath('.')
         self.shell = is_truthy(shell)
         self.alias = alias
         self.output_encoding = output_encoding
@@ -943,11 +944,11 @@ class ProcessConfiguration:
         return None
 
     def _add_to_env(self, env, extra):
-        for key in extra:
-            if not key.startswith('env:'):
-                raise RuntimeError("Keyword argument '%s' is not supported by "
-                                   "this keyword." % key)
-            env[system_encode(key[4:])] = system_encode(extra[key])
+        for name in extra:
+            if not name.startswith('env:'):
+                raise RuntimeError(f"Keyword argument '{name}' is not supported by "
+                                   f"this keyword.")
+            env[system_encode(name[4:])] = system_encode(extra[name])
 
     def get_command(self, command, arguments):
         command = [system_encode(item) for item in [command] + arguments]
@@ -986,20 +987,14 @@ class ProcessConfiguration:
                 'output_encoding': self.output_encoding}
 
     def __str__(self):
-        return """\
-cwd:     %s
-shell:   %s
-stdout:  %s
-stderr:  %s
-stdin:   %s
-alias:   %s
-env:     %s""" % (self.cwd,
-                  self.shell,
-                  self._stream_name(self.stdout_stream),
-                  self._stream_name(self.stderr_stream),
-                  self._stream_name(self.stdin_stream),
-                  self.alias,
-                  self.env)
+        return f'''\
+cwd:     {self.cwd}
+shell:   {self.shell}
+stdout:  {self._stream_name(self.stdout_stream)}
+stderr:  {self._stream_name(self.stderr_stream)}
+stdin:   {self._stream_name(self.stdin_stream)}
+alias:   {self.alias}
+env:     {self.env}'''
 
     def _stream_name(self, stream):
         if hasattr(stream, 'name'):

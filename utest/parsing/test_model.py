@@ -6,7 +6,7 @@ from pathlib import Path
 
 from robot.parsing import get_model, get_resource_model, ModelVisitor, ModelTransformer, Token
 from robot.parsing.model.blocks import (
-    CommentSection, File, For, If, InvalidSection, Try, While,
+    File, For, If, ImplicitCommentSection, InvalidSection, Try, While,
     Keyword, KeywordSection, SettingSection, TestCase, TestCaseSection, VariableSection
 )
 from robot.parsing.model.statements import (
@@ -37,9 +37,9 @@ Keyword
     Log    Got ${arg1} and ${arg}!
     RETURN    x
 '''
-PATH = os.path.join(os.getenv('TEMPDIR') or tempfile.gettempdir(), 'test_model.robot')
+PATH = Path(os.getenv('TEMPDIR') or tempfile.gettempdir(), 'test_model.robot')
 EXPECTED = File(sections=[
-    CommentSection(
+    ImplicitCommentSection(
         body=[
             EmptyLine([
                 Token('EOL', '\n', 1, 0)
@@ -145,23 +145,22 @@ class TestGetModel(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        with open(PATH, 'w') as f:
-            f.write(DATA)
+        PATH.write_text(DATA)
 
     @classmethod
     def tearDownClass(cls):
-        os.remove(PATH)
+        PATH.unlink()
 
     def test_from_string(self):
         model = get_model(DATA)
         assert_model(model, EXPECTED)
 
     def test_from_path_as_string(self):
-        model = get_model(PATH)
+        model = get_model(str(PATH))
         assert_model(model, EXPECTED, source=PATH)
 
     def test_from_path_as_path(self):
-        model = get_model(Path(PATH))
+        model = get_model(PATH)
         assert_model(model, EXPECTED, source=PATH)
 
     def test_from_open_file(self):
@@ -171,39 +170,41 @@ class TestGetModel(unittest.TestCase):
 
 
 class TestSaveModel(unittest.TestCase):
+    different_path = PATH.parent / 'different.robot'
 
     @classmethod
     def setUpClass(cls):
-        with open(PATH, 'w') as f:
-            f.write(DATA)
+        PATH.write_text(DATA)
 
     @classmethod
     def tearDownClass(cls):
-        os.remove(PATH)
+        PATH.unlink()
+        if cls.different_path.exists:
+            cls.different_path.unlink()
 
     def test_save_to_original_path(self):
         model = get_model(PATH)
-        os.remove(PATH)
+        PATH.unlink()
         model.save()
         assert_model(get_model(PATH), EXPECTED, source=PATH)
 
     def test_save_to_different_path(self):
         model = get_model(PATH)
-        different = PATH + '.robot'
-        model.save(different)
-        assert_model(get_model(different), EXPECTED, source=different)
+        path = self.different_path
+        model.save(path)
+        assert_model(get_model(path), EXPECTED, source=path)
 
-    def test_save_to_original_path_as_path(self):
-        model = get_model(Path(PATH))
-        os.remove(PATH)
+    def test_save_to_original_path_as_str(self):
+        model = get_model(str(PATH))
+        PATH.unlink()
         model.save()
         assert_model(get_model(PATH), EXPECTED, source=PATH)
 
-    def test_save_to_different_path_as_path(self):
+    def test_save_to_different_path_as_str(self):
         model = get_model(PATH)
-        different = PATH + '.robot'
-        model.save(Path(different))
-        assert_model(get_model(different), EXPECTED, source=different)
+        path = self.different_path
+        model.save(Path(path))
+        assert_model(get_model(path), EXPECTED, source=path)
 
     def test_save_to_original_fails_if_source_is_not_path(self):
         message = 'Saving model requires explicit output ' \
@@ -403,7 +404,7 @@ Example
         data = '''
 *** Test Cases ***
 Example
-    WHILE    True    limit=10s    on_limit_message=Error message
+    WHILE    True    limit=10s    on_limit=pass    on_limit_message=Error message
         Log    ${x}
     END
 '''
@@ -412,8 +413,8 @@ Example
                 Token(Token.WHILE, 'WHILE', 3, 4),
                 Token(Token.ARGUMENT, 'True', 3, 13),
                 Token(Token.OPTION, 'limit=10s', 3, 21),
-                Token(Token.OPTION, 'on_limit_message=Error message',
-                      3, 34)
+                Token(Token.OPTION, 'on_limit=pass', 3, 34),
+                Token(Token.OPTION, 'on_limit_message=Error message', 3, 51)
             ]),
             body=[
                 KeywordCall([Token(Token.KEYWORD, 'Log', 4, 8),
@@ -440,7 +441,8 @@ Example
                         Token(Token.ARGUMENT, 'many', 3, 20),
                         Token(Token.ARGUMENT, 'values', 3, 28),
                         Token(Token.ARGUMENT, '!', 3, 38)],
-                errors=('WHILE cannot have more than one condition, got \'too\', \'many\', \'values\' and \'!\'.',)
+                errors=("WHILE loop cannot have more than one condition, "
+                        "got 'too', 'many', 'values' and '!'.",)
             ),
             end=End([
                 Token(Token.END, 'END', 5, 4)
@@ -940,7 +942,64 @@ ${not     closed
         get_and_assert_model(data, expected, depth=0)
 
 
-class TestKeyword(unittest.TestCase):
+class TestTestCase(unittest.TestCase):
+
+    def test_empty_test(self):
+        data = '''
+*** Test Cases ***
+Empty
+    [Documentation]    Settings aren't enough.
+'''
+        expected = TestCase(
+            header=TestCaseName(
+                tokens=[Token(Token.TESTCASE_NAME, 'Empty', 2, 0)]
+            ),
+            body=[
+                Documentation(
+                    tokens=[Token(Token.DOCUMENTATION, '[Documentation]', 3, 4),
+                            Token(Token.ARGUMENT, "Settings aren't enough.", 3, 23)]
+                ),
+            ],
+            errors=('Test cannot be empty.',)
+        )
+        get_and_assert_model(data, expected, depth=1)
+
+    def test_empty_test_name(self):
+        data = '''
+*** Test Cases ***
+    Keyword
+'''
+        expected = TestCase(
+            header=TestCaseName(
+                tokens=[Token(Token.TESTCASE_NAME, '', 2, 0)],
+                errors=('Test name cannot be empty.',)
+            ),
+            body=[KeywordCall(tokens=[Token(Token.KEYWORD, 'Keyword', 2, 4)])]
+        )
+        get_and_assert_model(data, expected, depth=1)
+
+    def test_invalid_task(self):
+        data = '''
+*** Tasks ***
+    [Documentation]    Empty name and body.
+'''
+        expected = TestCase(
+            header=TestCaseName(
+                tokens=[Token(Token.TESTCASE_NAME, '', 2, 0)],
+                errors=('Task name cannot be empty.',)
+            ),
+            body=[
+                Documentation(
+                    tokens=[Token(Token.DOCUMENTATION, '[Documentation]', 2, 4),
+                            Token(Token.ARGUMENT, 'Empty name and body.', 2, 23)]
+                ),
+            ],
+            errors=('Task cannot be empty.',)
+        )
+        get_and_assert_model(data, expected, depth=1)
+
+
+class TestUserKeyword(unittest.TestCase):
 
     def test_invalid_arg_spec(self):
         data = '''
@@ -948,6 +1007,7 @@ class TestKeyword(unittest.TestCase):
 Invalid
     [Arguments]    ooops    ${optional}=default    ${required}
     ...    @{too}    @{many}    &{notlast}    ${x}
+    Keyword
 '''
         expected = Keyword(
             header=KeywordName(
@@ -967,9 +1027,44 @@ Invalid
                             'Non-default argument after default arguments.',
                             'Cannot have multiple varargs.',
                             'Only last argument can be kwargs.')
-                )
+                ),
+                KeywordCall(
+                    tokens=[Token(Token.KEYWORD, 'Keyword', 5, 4)])
             ],
-            errors=("User keyword 'Invalid' contains no keywords.",)
+        )
+        get_and_assert_model(data, expected, depth=1)
+
+    def test_empty(self):
+        data = '''
+*** Keywords ***
+Empty
+    [Arguments]    ${ok}
+'''
+        expected = Keyword(
+            header=KeywordName(
+                tokens=[Token(Token.KEYWORD_NAME, 'Empty', 2, 0)]
+            ),
+            body=[
+                Arguments(
+                    tokens=[Token(Token.ARGUMENTS, '[Arguments]', 3, 4),
+                            Token(Token.ARGUMENT, '${ok}', 3, 19)]
+                ),
+            ],
+            errors=('User keyword cannot be empty.',)
+        )
+        get_and_assert_model(data, expected, depth=1)
+
+    def test_empty_name(self):
+        data = '''
+*** Keywords ***
+    Keyword
+'''
+        expected = Keyword(
+            header=KeywordName(
+                tokens=[Token(Token.KEYWORD_NAME, '', 2, 0)],
+                errors=('User keyword name cannot be empty.',)
+            ),
+            body=[KeywordCall(tokens=[Token(Token.KEYWORD, 'Keyword', 2, 4)])]
         )
         get_and_assert_model(data, expected, depth=1)
 
@@ -1076,14 +1171,14 @@ Documentation    Hello    world
                     Token(Token.ARGUMENT, 'world', 2, 26),
                     Token(Token.EOL, '\n', 2, 31)]
         )
-        self._verify_documentation(data, expected, 'Hello world')
+        self._verify_documentation(data, expected, 'Hello    world')
 
     def test_multi_line(self):
         data = '''\
 *** Settings ***
 Documentation    Documentation
 ...              in
-...              multiple lines    and parts
+...              multiple lines
 '''
         expected = Documentation(
             tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
@@ -1097,12 +1192,9 @@ Documentation    Documentation
                     Token(Token.CONTINUATION, '...', 4, 0),
                     Token(Token.SEPARATOR, '              ', 4, 3),
                     Token(Token.ARGUMENT, 'multiple lines', 4, 17),
-                    Token(Token.SEPARATOR, '    ', 4, 31),
-                    Token(Token.ARGUMENT, 'and parts', 4, 35),
-                    Token(Token.EOL, '\n', 4, 44)]
+                    Token(Token.EOL, '\n', 4, 31)]
         )
-        self._verify_documentation(data, expected,
-                                   'Documentation\nin\nmultiple lines and parts')
+        self._verify_documentation(data, expected, 'Documentation\nin\nmultiple lines')
 
     def test_multi_line_with_empty_lines(self):
         data = '''\
@@ -1125,6 +1217,130 @@ Documentation    Documentation
                     Token(Token.EOL, '\n', 4, 27)]
         )
         self._verify_documentation(data, expected, 'Documentation\n\nwith empty')
+
+    def test_no_automatic_newline_after_literal_newline(self):
+        data = '''\
+*** Settings ***
+Documentation    No automatic\\n
+...              newline
+'''
+        expected = Documentation(
+            tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
+                    Token(Token.SEPARATOR, '    ', 2, 13),
+                    Token(Token.ARGUMENT, 'No automatic\\n', 2, 17),
+                    Token(Token.EOL, '\n', 2, 31),
+                    Token(Token.CONTINUATION, '...', 3, 0),
+                    Token(Token.SEPARATOR, '              ', 3, 3),
+                    Token(Token.ARGUMENT, 'newline', 3, 17),
+                    Token(Token.EOL, '\n', 3, 24)]
+        )
+        self._verify_documentation(data, expected, 'No automatic\\nnewline')
+
+    def test_no_automatic_newline_after_backlash(self):
+        data = '''\
+*** Settings ***
+Documentation    No automatic \\
+...              newline\\\\\\
+...              and remove\\    trailing\\\\    back\\slashes\\\\\\
+'''
+        expected = Documentation(
+            tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
+                    Token(Token.SEPARATOR, '    ', 2, 13),
+                    Token(Token.ARGUMENT, 'No automatic \\', 2, 17),
+                    Token(Token.EOL, '\n', 2, 31),
+                    Token(Token.CONTINUATION, '...', 3, 0),
+                    Token(Token.SEPARATOR, '              ', 3, 3),
+                    Token(Token.ARGUMENT, 'newline\\\\\\', 3, 17),
+                    Token(Token.EOL, '\n', 3, 27),
+                    Token(Token.CONTINUATION, '...', 4, 0),
+                    Token(Token.SEPARATOR, '              ', 4, 3),
+                    Token(Token.ARGUMENT, 'and remove\\', 4, 17),
+                    Token(Token.SEPARATOR, '    ', 4, 28),
+                    Token(Token.ARGUMENT, 'trailing\\\\', 4, 32),
+                    Token(Token.SEPARATOR, '    ', 4, 42),
+                    Token(Token.ARGUMENT, 'back\\slashes\\\\\\', 4, 46),
+                    Token(Token.EOL, '\n', 4, 61)]
+        )
+        self._verify_documentation(data, expected,
+                                   'No automatic newline\\\\'
+                                   'and remove    trailing\\\\    back\\slashes\\\\')
+
+    def test_preserve_indentation(self):
+        data = '''\
+*** Settings ***
+Documentation
+...    Example:
+...
+...        - list with
+...        - two
+...          items
+'''
+        expected = Documentation(
+            tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
+                    Token(Token.EOL, '\n', 2, 13),
+                    Token(Token.CONTINUATION, '...', 3, 0),
+                    Token(Token.SEPARATOR, '    ', 3, 3),
+                    Token(Token.ARGUMENT, 'Example:', 3, 7),
+                    Token(Token.EOL, '\n', 3, 15),
+                    Token(Token.CONTINUATION, '...', 4, 0),
+                    Token(Token.ARGUMENT, '', 4, 3),
+                    Token(Token.EOL, '\n', 4, 3),
+                    Token(Token.CONTINUATION, '...', 5, 0),
+                    Token(Token.SEPARATOR, '        ', 5, 3),
+                    Token(Token.ARGUMENT, '- list with', 5, 11),
+                    Token(Token.EOL, '\n', 5, 22),
+                    Token(Token.CONTINUATION, '...', 6, 0),
+                    Token(Token.SEPARATOR, '        ', 6, 3),
+                    Token(Token.ARGUMENT, '- two', 6, 11),
+                    Token(Token.EOL, '\n', 6, 16),
+                    Token(Token.CONTINUATION, '...', 7, 0),
+                    Token(Token.SEPARATOR, '          ', 7, 3),
+                    Token(Token.ARGUMENT, 'items', 7, 13),
+                    Token(Token.EOL, '\n', 7, 18)]
+        )
+        self._verify_documentation(data, expected, '''\
+Example:
+
+    - list with
+    - two
+      items''')
+
+    def test_preserve_indentation_with_data_on_first_doc_row(self):
+        data = '''\
+*** Settings ***
+Documentation    Example:
+...
+...      - list with
+...      - two
+...        items
+'''
+        expected = Documentation(
+            tokens=[Token(Token.DOCUMENTATION, 'Documentation', 2, 0),
+                    Token(Token.SEPARATOR, '    ', 2, 13),
+                    Token(Token.ARGUMENT, 'Example:', 2, 17),
+                    Token(Token.EOL, '\n', 2, 25),
+                    Token(Token.CONTINUATION, '...', 3, 0),
+                    Token(Token.ARGUMENT, '', 3, 3),
+                    Token(Token.EOL, '\n', 3, 3),
+                    Token(Token.CONTINUATION, '...', 4, 0),
+                    Token(Token.SEPARATOR, '      ', 4, 3),
+                    Token(Token.ARGUMENT, '- list with', 4, 9),
+                    Token(Token.EOL, '\n', 4, 20),
+                    Token(Token.CONTINUATION, '...', 5, 0),
+                    Token(Token.SEPARATOR, '      ', 5, 3),
+                    Token(Token.ARGUMENT, '- two', 5, 9),
+                    Token(Token.EOL, '\n', 5, 14),
+                    Token(Token.CONTINUATION, '...', 6, 0),
+                    Token(Token.SEPARATOR, '        ', 6, 3),
+                    Token(Token.ARGUMENT, 'items', 6, 11),
+                    Token(Token.EOL, '\n', 6, 16)]
+        )
+        self._verify_documentation(data, expected, '''\
+Example:
+
+- list with
+- two
+  items''')
 
     def _verify_documentation(self, data, expected, value):
         # Model has both EOLs and line numbers.
@@ -1307,7 +1523,7 @@ class TestModelVisitors(unittest.TestCase):
         assert_equal(visitor.test_names, ['Example'])
         assert_equal(visitor.kw_names, ['Keyword'])
         assert_equal(visitor.blocks,
-                     ['File', 'CommentSection', 'TestCaseSection', 'TestCase',
+                     ['ImplicitCommentSection', 'TestCaseSection', 'TestCase',
                       'KeywordSection', 'Keyword'])
         assert_equal(visitor.statements,
                      ['EOL', 'TESTCASE HEADER', 'EOL', 'TESTCASE NAME',
@@ -1362,7 +1578,7 @@ Remove
                     TestCase(TestCaseName([
                         Token('TESTCASE NAME', 'EXAMPLE', 2, 0),
                         Token('EOL', '\n', 2, 7)
-                    ]), errors= ('Test contains no keywords.',)),
+                    ]), errors= ('Test cannot be empty.',)),
                     TestCase(TestCaseName([
                         Token('TESTCASE NAME', 'Added'),
                         Token('EOL', '\n')
@@ -1452,7 +1668,7 @@ Dokumentaatio    Header is de and setting is fi.
         expected = File(
             languages=('fi', 'de'),
             sections=[
-                CommentSection(body=[
+                ImplicitCommentSection(body=[
                     Config([
                         Token('CONFIG', 'language: fi', 1, 0),
                         Token('EOL', '\n', 1, 12)

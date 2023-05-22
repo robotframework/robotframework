@@ -12,9 +12,8 @@ ${y:y} in resource
 ${match} in ${both} resources
     Fail    Should not be run due to search order
 
-Best ${match} in ${one of} resources
-    Should be equal    ${match}    match
-    Should be equal    ${one of}    one of
+Follow search ${disorder} in resources
+	Fail	Should not be run due to search order
 
 ${public} match
     Should be equal    ${public}    Better public
@@ -33,3 +32,12 @@ Another match ${in both resource files}
 
 Match with and without embedded arguments in different files
     No operation
+
+Cause unresolvable conflict in resource due to search order
+	Unresolvable conflict in resource
+
+Cause unresolvable conflict in library due to search order
+	Unresolvable conflict in library
+
+Unresolvable conflict in resource
+	Fail	Should not be run due to search order	

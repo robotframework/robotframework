@@ -38,6 +38,9 @@ Invalid start
 Invalid variable in start
     Check test and failed loop    ${TEST NAME}    IN ENUMERATE    start=\${invalid}
 
+Start multiple times
+    Check test and failed loop    ${TEST NAME}    IN ENUMERATE    start=1, 2, 3
+
 Index and two items
     ${loop} =    Check test and get loop    ${TEST NAME}    1
     Should be IN ENUMERATE loop    ${loop}           3

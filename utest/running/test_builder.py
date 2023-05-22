@@ -2,6 +2,7 @@ import unittest
 from pathlib import Path
 
 from robot.errors import DataError
+from robot.utils import Importer
 from robot.utils.asserts import assert_equal, assert_raises, assert_true
 from robot.running import TestSuite, TestSuiteBuilder
 
@@ -114,6 +115,36 @@ class TestBuilding(unittest.TestCase):
         self._validate_rpa(build('../rpa/tasks1.robot'), True)
         self._validate_rpa(build('../rpa/', rpa=False), False)
         assert_raises(DataError, build, '../rpa')
+
+    def test_custom_parser(self):
+        path = DATADIR / '../parsing/custom/CustomParser.py'
+        for parser in [path, str(path)]:
+            suite = build('../parsing/custom/tests.custom', custom_parsers=[parser])
+            assert_equal(suite.name, 'Tests')
+            assert_equal([t.name for t in suite.tests], ['Passing', 'Failing', 'Empty'])
+
+    def test_custom_parser_with_args(self):
+        path = DATADIR / '../parsing/custom/CustomParser.py:custom'
+        for parser in [path, str(path)]:
+            suite = build('../parsing/custom/tests.custom', custom_parsers=[parser])
+            assert_equal(suite.name, 'Tests')
+            assert_equal([t.name for t in suite.tests], ['Passing', 'Failing', 'Empty'])
+
+    def test_custom_parser_as_object(self):
+        path = DATADIR / '../parsing/custom/CustomParser.py'
+        parser = Importer().import_class_or_module(path, instantiate_with_args=())
+        suite = build('../parsing/custom/tests.custom', custom_parsers=[parser])
+        assert_equal(suite.name, 'Tests')
+        assert_equal([t.name for t in suite.tests], ['Passing', 'Failing', 'Empty'])
+
+    def test_failing_parser_import(self):
+        err = assert_raises(DataError, build, custom_parsers=['non_existing_mod'])
+        assert_true(err.message.startswith("Importing parser 'non_existing_mod' failed:"))
+
+    def test_incompatible_parser_object(self):
+        err = assert_raises(DataError, build, custom_parsers=[42])
+        assert_equal(err.message, "Importing parser 'integer' failed: "
+                                  "'integer' does not have mandatory 'parse' method.")
 
     def _validate_rpa(self, suite, expected):
         assert_equal(suite.rpa, expected, suite.name)

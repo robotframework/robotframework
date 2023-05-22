@@ -19,13 +19,13 @@ __ `Documenting libraries`_
    :depth: 2
    :local:
 
-Representing newlines
----------------------
+Handling whitespace in test data
+--------------------------------
 
-Newlines in test data
-~~~~~~~~~~~~~~~~~~~~~
+Newlines
+~~~~~~~~
 
-When documenting test suites, test cases and keywords or adding metadata
+When documenting test suites, test cases and user keywords or adding metadata
 to test suites, newlines can be added manually using `\n` `escape sequence`_.
 
 .. sourcecode:: robotframework
@@ -53,56 +53,59 @@ means that the above example could be written also as follows.
   ...
   ...    Second paragraph. This time
   ...    with multiple lines.
-  Metadata    Example list
+  Metadata
+  ...    Example list
   ...    - first item
   ...    - second item
   ...    - third
 
 No automatic newline is added if a line already ends with a literal newline
-or if it ends with an `escaping backslash`__. If documentation or metadata
-is defined in multiple columns, cells in a same row are concatenated together
-with a space. Different ways to split documentation are illustrated in the
-examples below where all test cases end up having the same two line
-documentation.
-
-__ `Dividing data to several rows`_
-__ Escaping_
+or if it ends with an `escaping backslash`__:
 
 .. sourcecode:: robotframework
 
   *** Test Cases ***
-   Example 1
-       [Documentation]    First line\n    Second line in    multiple parts
-       No Operation
+  Ends with newline
+      [Documentation]    Ends with a newline and\n
+      ...                automatic newline is not added.
 
-   Example 2
-       [Documentation]   First line
-       ...               Second line in    multiple parts
-       No Operation
+  Ends with backslash
+      [Documentation]    Ends with a backslash and \
+      ...                no newline is added.
 
-   Example 3
-       [Documentation]    First line\n
-       ...                Second line in\
-       ...                multiple parts
-       No Operation
+__ `Dividing data to several rows`_
+__ Escaping_
 
-Documentation in test libraries
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Spaces
+~~~~~~
 
-With library documentations normal newlines are enough, and for
-example the following keyword documentation would create same end result
-as the test suite documentation in the previous section.
+Unlike elsewhere in Robot Framework data, leading spaces and consecutive internal
+spaces are preserved in documentation and metadata. This makes it possible, for example,
+to split `list items`__ to multiple rows and have `preformatted text`_ with spaces:
 
-.. sourcecode:: python
+.. sourcecode:: robotframework
 
-  def example_keyword():
-      """First line.
+  *** Test Cases ***
+  Long list item
+      [Documentation]
+      ...    List:
+      ...    - Short item.
+      ...    - Second item is pretty long and it is split to
+      ...      multiple rows. Leading spaces are preserved.
+      ...    - Another short item.
 
-      Second paragraph, this time
-      with multiple lines.
-      """
-      pass
+  Preformatted text
+      [Documentation]
+      ...    Example with consecutive internal spaces:
+      ...
+      ...    | *** Test Cases ***
+      ...    | Example
+      ...    |     Keyword
 
+__ lists_
+
+.. note:: Preserving spaces in documentation and metadata is new in Robot Framework 6.1.
+          With earlier versions spaces need to be escaped with a backslash.
 
 Paragraphs
 ----------
@@ -354,15 +357,6 @@ The above documentation is formatted like this:
     some   additional whitespace</pre>
   <p>After block.</p>
   </div>
-
-When documenting suites, tests or keywords in Robot Framework test data,
-having multiple spaces requires escaping_ with a backslash to prevent
-ignoring spaces. The example above would thus be written like this::
-
-  Doc before block:
-  | inside block
-  | \ \ \ some \ \ additional whitespace
-  After block.
 
 Horizontal ruler
 ----------------

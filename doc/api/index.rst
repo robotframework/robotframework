@@ -6,16 +6,16 @@ This documentation describes the public API of `Robot Framework`__.
 Installation, basic usage and wealth of other topics are
 covered by the `Robot Framework User Guide`__.
 
-Main API entry points are documented here, but the lower level
-implementation details are not always that well documented. If the
-documentation is insufficient, it is possible to view the source code
-by clicking ``[source]`` link in the documentation. In case viewing the
-source is not helpful either, questions may be sent to the
-`robotframework-users`__ mailing list.
+If you have questions related to the APIs, you can ask them on
+Robot Framework Slack__, Forum__ or `mailing list`__. If you encounter
+bugs, please `submit an issue`__.
 
-__ http://robotframework.org
-__ http://robotframework.org/robotframework/#user-guide
-__ http://groups.google.com/group/robotframework-users
+__ https://robotframework.org
+__ https://robotframework.org/robotframework/#user-guide
+__ https://slack.robotframework.org
+__ https://forum.robotframework.org
+__ https://groups.google.com/group/robotframework-users
+__ https://issues.robotframework.org
 
 .. toctree::
     :maxdepth: 2

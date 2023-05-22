@@ -15,14 +15,19 @@
 
 import inspect
 from itertools import chain
-import os.path
+from pathlib import Path
+from typing import cast, Iterable, Iterator, Union
 
 from robot.errors import DataError
 from robot.utils import classproperty, is_list_like, Importer, normalize
 
 
+LanguageLike = Union['Language', str, Path]
+LanguagesLike = Union['Languages', LanguageLike, Iterable[LanguageLike], None]
+
+
 class Languages:
-    """Keeps a list of languages and unifies the translations in the properties.
+    """Stores languages and unifies translations.
 
     Example::
 
@@ -33,7 +38,8 @@ class Languages:
             print(lang.name, lang.code)
     """
 
-    def __init__(self, languages=None, add_english=True):
+    def __init__(self, languages: 'Iterable[LanguageLike]|LanguageLike|None' = (),
+                 add_english: bool = True):
         """
         :param languages: Initial language or list of languages.
             Languages can be given as language codes or names, paths or names of
@@ -43,20 +49,20 @@ class Languages:
 
         :meth:`add_language` can be used to add languages after initialization.
         """
-        self.languages = []
-        self.headers = {}
-        self.settings = {}
-        self.bdd_prefixes = set()
-        self.true_strings = {'True', '1'}
-        self.false_strings = {'False', '0', 'None', ''}
+        self.languages: 'list[Language]' = []
+        self.headers: 'dict[str, str]' = {}
+        self.settings: 'dict[str, str]' = {}
+        self.bdd_prefixes:  'set[str]' = set()
+        self.true_strings: 'set[str]' = {'True', '1'}
+        self.false_strings: 'set[str]' = {'False', '0', 'None', ''}
         for lang in self._get_languages(languages, add_english):
             self._add_language(lang)
 
-    def reset(self, languages=None, add_english=True):
+    def reset(self, languages: Iterable[LanguageLike] = (), add_english: bool = True):
         """Resets the instance to the given languages."""
         self.__init__(languages, add_english)
 
-    def add_language(self, lang):
+    def add_language(self, lang: LanguageLike):
         """Add new language.
 
         :param lang: Language to add. Can be a language code or name, name or
@@ -67,20 +73,28 @@ class Languages:
         Language modules are imported and :class:`Language` subclasses in them
         loaded.
         """
-        try:
-            if isinstance(lang, Language):
-                languages = [lang]
-            else:
-                languages = [Language.from_name(lang)]
-        except ValueError as err1:
+        if isinstance(lang, Language):
+            languages = [lang]
+        elif isinstance(lang, Path) or self._exists(Path(lang)):
+            languages = self._import_language_module(Path(lang))
+        else:
             try:
-                languages = self._import_languages(lang)
-            except DataError as err2:
-                raise DataError(f'{err1} {err2}')
+                languages = [Language.from_name(lang)]
+            except ValueError as err1:
+                try:
+                    languages = self._import_language_module(lang)
+                except DataError as err2:
+                    raise DataError(f'{err1} {err2}') from None
         for lang in languages:
             self._add_language(lang)
 
-    def _add_language(self, lang):
+    def _exists(self, path: Path):
+        try:
+            return path.exists()
+        except OSError:    # Can happen on Windows w/ Python < 3.10.
+            return False
+
+    def _add_language(self, lang: 'Language'):
         if lang in self.languages:
             return
         self.languages.append(lang)
@@ -90,19 +104,21 @@ class Languages:
         self.true_strings |= {s.title() for s in lang.true_strings}
         self.false_strings |= {s.title() for s in lang.false_strings}
 
-    def _get_languages(self, languages, add_english=True):
+    def _get_languages(self, languages, add_english=True) -> 'list[Language]':
         languages = self._resolve_languages(languages, add_english)
         available = self._get_available_languages()
-        returned = []
+        returned: 'list[Language]' = []
         for lang in languages:
             if isinstance(lang, Language):
                 returned.append(lang)
+            elif isinstance(lang, Path):
+                returned.extend(self._import_language_module(lang))
             else:
                 normalized = normalize(lang, ignore='-')
                 if normalized in available:
                     returned.append(available[normalized]())
                 else:
-                    returned.extend(self._import_languages(lang))
+                    returned.extend(self._import_language_module(lang))
         return returned
 
     def _resolve_languages(self, languages, add_english=True):
@@ -125,26 +141,28 @@ class Languages:
             }
         return languages
 
-    def _get_available_languages(self):
+    def _get_available_languages(self) -> 'dict[str, type[Language]]':
         available = {}
         for lang in Language.__subclasses__():
-            available[normalize(lang.code, ignore='-')] = lang
-            available[normalize(lang.name)] = lang
+            available[normalize(cast(str, lang.code), ignore='-')] = lang
+            available[normalize(cast(str, lang.name))] = lang
         if '' in available:
             available.pop('')
         return available
 
-    def _import_languages(self, lang):
+    def _import_language_module(self, name_or_path) -> 'list[Language]':
         def is_language(member):
             return (inspect.isclass(member)
                     and issubclass(member, Language)
                     and member is not Language)
-        if os.path.exists(lang):
-            lang = os.path.abspath(lang)
-        module = Importer('language file').import_module(lang)
+        if isinstance(name_or_path, Path):
+            name_or_path = name_or_path.absolute()
+        elif self._exists(Path(name_or_path)):
+            name_or_path = Path(name_or_path).absolute()
+        module = Importer('language file').import_module(name_or_path)
         return [value() for _, value in inspect.getmembers(module, is_language)]
 
-    def __iter__(self):
+    def __iter__(self) -> 'Iterator[Language]':
         return iter(self.languages)
 
 
@@ -197,7 +215,7 @@ class Language:
     false_strings = []
 
     @classmethod
-    def from_name(cls, name):
+    def from_name(cls, name) -> 'Language':
         """Return language class based on given `name`.
 
         Name can either be a language name (e.g. 'Finnish' or 'Brazilian Portuguese')
@@ -215,7 +233,7 @@ class Language:
         raise ValueError(f"No language with name '{name}' found.")
 
     @classproperty
-    def code(cls):
+    def code(cls) -> str:
         """Language code like 'fi' or 'pt-BR'.
 
         Got based on the class name. If the class name is two characters (or less),
@@ -226,13 +244,13 @@ class Language:
         """
         if cls is Language:
             return cls.__dict__['code']
-        code = cls.__name__.lower()
+        code = cast(type, cls).__name__.lower()
         if len(code) < 3:
             return code
         return f'{code[:2]}-{code[2:].upper()}'
 
     @classproperty
-    def name(cls):
+    def name(cls) -> str:
         """Language name like 'Finnish' or 'Brazilian Portuguese'.
 
         Got from the first line of the class docstring.
@@ -244,7 +262,7 @@ class Language:
         return cls.__doc__.splitlines()[0] if cls.__doc__ else ''
 
     @property
-    def headers(self):
+    def headers(self) -> 'dict[str|None, str]':
         return {
             self.settings_header: En.settings_header,
             self.variables_header: En.variables_header,
@@ -255,7 +273,7 @@ class Language:
         }
 
     @property
-    def settings(self):
+    def settings(self) -> 'dict[str|None, str]':
         return {
             self.library_setting: En.library_setting,
             self.resource_setting: En.resource_setting,
@@ -285,7 +303,7 @@ class Language:
         }
 
     @property
-    def bdd_prefixes(self):
+    def bdd_prefixes(self) -> 'set[str]':
         return set(chain(self.given_prefixes, self.when_prefixes, self.then_prefixes,
                          self.and_prefixes, self.but_prefixes))
 

@@ -32,8 +32,7 @@ that can be used programmatically. Other code is for internal usage.
 
 import sys
 
-# Allows running as a script.
-if __name__ == '__main__':
+if __name__ == '__main__' and 'robot' not in sys.modules:
     import pythonpathsetter
 
 from robot.conf import RebotSettings

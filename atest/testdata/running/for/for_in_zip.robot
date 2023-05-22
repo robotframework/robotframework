@@ -102,7 +102,7 @@ Shortest mode
     END
     Should Be True    ${result} == ['a:x', 'b:y', 'c:z']
     @{result} =    Create List
-    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST3}    mode=ignored    mode=${{'shortest'}}
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST3}    mode=${{'shortest'}}
         @{result} =    Create List    @{result}    ${x}:${y}
     END
     Should Be True    ${result} == ['a:1', 'b:2', 'c:3']
@@ -130,7 +130,7 @@ Longest mode with custom fill value
     END
     Should Be True    ${result} == [('a', 1), ('b', 2), ('c', 3), ('?', 4), ('?', 5)]
     @{result} =    Create List
-    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST3}   fill=ignored    fill=${0}    mode=longest
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST3}    fill=${0}    mode=longest
         @{result} =    Create List    @{result}    ${{($x, $y)}}
     END
     Should Be True    ${result} == [('a', 1), ('b', 2), ('c', 3), (0, 4), (0, 5)]
@@ -138,6 +138,18 @@ Longest mode with custom fill value
 Invalid mode
     [Documentation]    FAIL    Invalid mode: Mode must be 'STRICT', 'SHORTEST' or 'LONGEST', got 'BAD'.
     FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}    mode=bad
+        @{result} =    Create List    @{result}    ${x}:${y}
+    END
+
+Config more than once 1
+    [Documentation]    FAIL    Option 'mode' allowed only once, got values 'longest' and 'shortest'.
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}    mode=longest    mode=shortest
+        @{result} =    Create List    @{result}    ${x}:${y}
+    END
+
+Config more than once 2
+    [Documentation]    FAIL    Option 'fill' allowed only once, got values 'x', 'y' and 'z'.
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}    fill=x    mode=longest    fill=y    fill=z
         @{result} =    Create List    @{result}    ${x}:${y}
     END
 

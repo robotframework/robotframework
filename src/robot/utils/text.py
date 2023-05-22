@@ -13,10 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from itertools import takewhile
 import inspect
 import os.path
 import re
+from itertools import takewhile
+from pathlib import Path
 
 from .charwidth import get_char_width
 from .misc import seq2str2
@@ -132,6 +133,8 @@ def split_args_from_name_or_path(name):
     """
     if os.path.exists(name):
         return os.path.abspath(name), []
+    if isinstance(name, Path):
+        name = str(name)
     index = _get_arg_separator_index_from_name_or_path(name)
     if index == -1:
         return name, []

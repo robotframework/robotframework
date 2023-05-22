@@ -42,17 +42,21 @@ Documentation
     Verify Documentation    Documentation in single line and column.
 
 Documentation in multiple columns
-    Verify Documentation    Documentation for this test case in multiple columns
+    Verify Documentation    Documentation${SPACE*4}for this test case${SPACE*4}in multiple columns
 
 Documentation in multiple rows
     Verify Documentation    1st logical line
     ...    is shortdoc.
     ...
     ...    This documentation has multiple rows
-    ...    and also multiple columns.
+    ...    and also${SPACE*4}multiple columns.
+    ...
+    ...    Newlines can also be added literally with "\n".
+    ...    If a row ends with a newline
+    ...    or backslash no automatic newline is added.
     ...
     ...    | table | =header= |
-    ...    | foo | bar |
+    ...    | foo${SPACE*3}|${SPACE*4}bar${SPACE*3}|
     ...    | ragged |
 
 Documentation with variables
@@ -87,7 +91,7 @@ Empty and NONE tags are ignored
 
 Duplicate tags are ignored and first used format has precedence
     [Documentation]    Case, space and underscore insensitive
-    Verify Tags        FORCE-1    Test_1    test 2
+    Verify Tags        force-1    Test_1    test 2
 
 Tags in multiple rows
     Verify Tags        force-1    test-0    test-1    test-2    test-3    test-4    test-5

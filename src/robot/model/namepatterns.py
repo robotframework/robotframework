@@ -13,14 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Iterable, Iterator, Sequence
+from typing import Iterable, Iterator
 
 from robot.utils import MultiMatcher
 
 
 class NamePatterns(Iterable[str]):
 
-    def __init__(self, patterns: Sequence[str] = ()):
+    def __init__(self, patterns: Iterator[str] = ()):
         self.matcher = MultiMatcher(patterns, ignore='_')
 
     def match(self, name: str, longname: 'str|None' = None) -> bool:

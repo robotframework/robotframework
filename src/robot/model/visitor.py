@@ -134,7 +134,7 @@ class SuiteVisitor:
                 suite.teardown.visit(self)
             self.end_suite(suite)
 
-    def start_suite(self, suite: 'TestSuite'):
+    def start_suite(self, suite: 'TestSuite') -> 'bool|None':
         """Called when a suite starts. Default implementation does nothing.
 
         Can return explicit ``False`` to stop visiting.
@@ -159,7 +159,7 @@ class SuiteVisitor:
                 test.teardown.visit(self)
             self.end_test(test)
 
-    def start_test(self, test: 'TestCase'):
+    def start_test(self, test: 'TestCase') -> 'bool|None':
         """Called when a test starts. Default implementation does nothing.
 
         Can return explicit ``False`` to stop visiting.
@@ -178,13 +178,19 @@ class SuiteVisitor:
         the body of the keyword
         """
         if self.start_keyword(keyword) is not False:
-            if hasattr(keyword, 'body'):
-                keyword.body.visit(self)
-            if getattr(keyword, 'has_teardown', False):
-                keyword.teardown.visit(self)
+            self._possible_body(keyword)
+            self._possible_teardown(keyword)
             self.end_keyword(keyword)
 
-    def start_keyword(self, keyword: 'Keyword'):
+    def _possible_body(self, item: 'BodyItem'):
+        if hasattr(item, 'body'):
+            item.body.visit(self)    # type: ignore
+
+    def _possible_teardown(self, item: 'BodyItem'):
+        if getattr(item, 'has_teardown', False):
+            item.teardown.visit(self)    # type: ignore
+
+    def start_keyword(self, keyword: 'Keyword') -> 'bool|None':
         """Called when a keyword starts.
 
         By default, calls :meth:`start_body_item` which, by default, does nothing.
@@ -210,7 +216,7 @@ class SuiteVisitor:
             for_.body.visit(self)
             self.end_for(for_)
 
-    def start_for(self, for_: 'For'):
+    def start_for(self, for_: 'For') -> 'bool|None':
         """Called when a FOR loop starts.
 
         By default, calls :meth:`start_body_item` which, by default, does nothing.
@@ -240,7 +246,7 @@ class SuiteVisitor:
             iteration.body.visit(self)
             self.end_for_iteration(iteration)
 
-    def start_for_iteration(self, iteration: 'ForIteration'):
+    def start_for_iteration(self, iteration: 'ForIteration') -> 'bool|None':
         """Called when a FOR loop iteration starts.
 
         By default, calls :meth:`start_body_item` which, by default, does nothing.
@@ -270,7 +276,7 @@ class SuiteVisitor:
             if_.body.visit(self)
             self.end_if(if_)
 
-    def start_if(self, if_: 'If'):
+    def start_if(self, if_: 'If') -> 'bool|None':
         """Called when an IF/ELSE structure starts.
 
         By default, calls :meth:`start_body_item` which, by default, does nothing.
@@ -296,7 +302,7 @@ class SuiteVisitor:
             branch.body.visit(self)
             self.end_if_branch(branch)
 
-    def start_if_branch(self, branch: 'IfBranch'):
+    def start_if_branch(self, branch: 'IfBranch') -> 'bool|None':
         """Called when an IF/ELSE branch starts.
 
         By default, calls :meth:`start_body_item` which, by default, does nothing.
@@ -322,7 +328,7 @@ class SuiteVisitor:
             try_.body.visit(self)
             self.end_try(try_)
 
-    def start_try(self, try_: 'Try'):
+    def start_try(self, try_: 'Try') -> 'bool|None':
         """Called when a TRY/EXCEPT structure starts.
 
         By default, calls :meth:`start_body_item` which, by default, does nothing.
@@ -344,7 +350,7 @@ class SuiteVisitor:
             branch.body.visit(self)
             self.end_try_branch(branch)
 
-    def start_try_branch(self, branch: 'TryBranch'):
+    def start_try_branch(self, branch: 'TryBranch') -> 'bool|None':
         """Called when TRY, EXCEPT, ELSE or FINALLY branches start.
 
         By default, calls :meth:`start_body_item` which, by default, does nothing.
@@ -370,7 +376,7 @@ class SuiteVisitor:
             while_.body.visit(self)
             self.end_while(while_)
 
-    def start_while(self, while_: 'While'):
+    def start_while(self, while_: 'While') -> 'bool|None':
         """Called when a WHILE loop starts.
 
         By default, calls :meth:`start_body_item` which, by default, does nothing.
@@ -400,7 +406,7 @@ class SuiteVisitor:
             iteration.body.visit(self)
             self.end_while_iteration(iteration)
 
-    def start_while_iteration(self, iteration: 'WhileIteration'):
+    def start_while_iteration(self, iteration: 'WhileIteration') -> 'bool|None':
         """Called when a WHILE loop iteration starts.
 
         By default, calls :meth:`start_body_item` which, by default, does nothing.
@@ -419,11 +425,10 @@ class SuiteVisitor:
     def visit_return(self, return_: 'Return'):
         """Visits a RETURN elements."""
         if self.start_return(return_) is not False:
-            if hasattr(return_, 'body'):
-                return_.body.visit(self)
+            self._possible_body(return_)
             self.end_return(return_)
 
-    def start_return(self, return_: 'Return'):
+    def start_return(self, return_: 'Return') -> 'bool|None':
         """Called when a RETURN element starts.
 
         By default, calls :meth:`start_body_item` which, by default, does nothing.
@@ -442,11 +447,10 @@ class SuiteVisitor:
     def visit_continue(self, continue_: 'Continue'):
         """Visits CONTINUE elements."""
         if self.start_continue(continue_) is not False:
-            if hasattr(continue_, 'body'):
-                continue_.body.visit(self)
+            self._possible_body(continue_)
             self.end_continue(continue_)
 
-    def start_continue(self, continue_: 'Continue'):
+    def start_continue(self, continue_: 'Continue') -> 'bool|None':
         """Called when a CONTINUE element starts.
 
         By default, calls :meth:`start_body_item` which, by default, does nothing.
@@ -465,11 +469,10 @@ class SuiteVisitor:
     def visit_break(self, break_: 'Break'):
         """Visits BREAK elements."""
         if self.start_break(break_) is not False:
-            if hasattr(break_, 'body'):
-                break_.body.visit(self)
+            self._possible_body(break_)
             self.end_break(break_)
 
-    def start_break(self, break_: 'Break'):
+    def start_break(self, break_: 'Break') -> 'bool|None':
         """Called when a BREAK element starts.
 
         By default, calls :meth:`start_body_item` which, by default, does nothing.
@@ -492,11 +495,10 @@ class SuiteVisitor:
         invalid setting like ``[Invalid]``.
         """
         if self.start_error(error) is not False:
-            if hasattr(error, 'body'):
-                error.body.visit(self)
+            self._possible_body(error)
             self.end_error(error)
 
-    def start_error(self, error: 'Error'):
+    def start_error(self, error: 'Error') -> 'bool|None':
         """Called when a ERROR element starts.
 
         By default, calls :meth:`start_body_item` which, by default, does nothing.
@@ -521,7 +523,7 @@ class SuiteVisitor:
         if self.start_message(message) is not False:
             self.end_message(message)
 
-    def start_message(self, message: 'Message'):
+    def start_message(self, message: 'Message') -> 'bool|None':
         """Called when a message starts.
 
         By default, calls :meth:`start_body_item` which, by default, does nothing.
@@ -537,7 +539,7 @@ class SuiteVisitor:
         """
         self.end_body_item(message)
 
-    def start_body_item(self, item: 'BodyItem'):
+    def start_body_item(self, item: 'BodyItem') -> 'bool|None':
         """Called, by default, when keywords, messages or control structures start.
 
         More specific :meth:`start_keyword`, :meth:`start_message`, `:meth:`start_for`,

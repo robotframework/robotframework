@@ -91,9 +91,9 @@ Search order resolves conflict with resources
     Match in both resources
     [Teardown]    Disable search order
 
-Best match in resource wins over search order
+Search order wins over best match in resource
     [Setup]    Enable search order
-    Best match in one of resources
+    Follow search order in resources
     [Teardown]    Disable search order
 
 Search order resolves conflict with libraries
@@ -101,9 +101,9 @@ Search order resolves conflict with libraries
     Match in both libraries
     [Teardown]    Disable search order
 
-Best match in library wins over search order
+Search order wins over best match in libraries
     [Setup]    Enable search order
-    Best match in one of libraries
+    Follow search order in libraries
     [Teardown]    Disable search order
 
 Search order cannot resolve conflict within resource
@@ -115,6 +115,15 @@ Search order cannot resolve conflict within resource
     Unresolvable conflict in resource
     [Teardown]    Disable search order
 
+Search order causes conflict within resource
+    [Documentation]    FAIL
+    ...    Multiple keywords matching name 'Unresolvable conflict in resource' found:
+    ...    ${INDENT}resource2.\${possible} conflict in resource
+    ...    ${INDENT}resource2.Unresolvable \${conflict} in resource
+    [Setup]    Enable search order
+    Cause unresolvable conflict in resource due to search order
+    [Teardown]    Disable search order
+
 Search order cannot resolve conflict within library
     [Documentation]    FAIL
     ...    Multiple keywords matching name 'Unresolvable conflict in library' found:
@@ -122,6 +131,15 @@ Search order cannot resolve conflict within library
     ...    ${INDENT}library2.Unresolvable \${conflict} in library
     [Setup]    Enable search order
     Unresolvable conflict in library
+    [Teardown]    Disable search order
+
+Search order causes conflict within library
+    [Documentation]    FAIL
+    ...    Multiple keywords matching name 'Unresolvable conflict in library' found:
+    ...    ${INDENT}library2.\${possible} conflict in library
+    ...    ${INDENT}library2.Unresolvable \${conflict} in library
+    [Setup]    Enable search order
+    Cause unresolvable conflict in library due to search order
     [Teardown]    Disable search order
 
 Public match wins over better private match in different resource

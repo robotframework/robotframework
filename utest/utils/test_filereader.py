@@ -94,12 +94,17 @@ class TestReadFile(unittest.TestCase):
             assert_reader(reader, '<in-memory file>')
         assert_open(f)
 
-    def test_accept_text(self):
+    def test_text(self):
         with FileReader(STRING, accept_text=True) as reader:
             assert_reader(reader, '<in-memory file>')
         assert_closed(reader.file)
 
-    def test_no_accept_text(self):
+    def test_text_with_special_chars(self):
+        for text in '!"#¤%&/()=?', '*** Test Cases ***', 'in:va:lid':
+            with FileReader(text, accept_text=True) as reader:
+                assert_equal(reader.read(), text)
+
+    def test_text_when_text_is_not_accepted(self):
         assert_raises(IOError, FileReader, STRING)
 
     def test_readlines(self):

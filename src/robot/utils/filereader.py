@@ -13,20 +13,24 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from io import StringIO
-import os.path
+from collections.abc import Iterator
+from io import IOBase, StringIO
+from pathlib import Path
+from typing import Union
 
 from .robottypes import is_bytes, is_pathlike, is_string
 
 
-class FileReader:
-    """Utility to ease reading different kind of files.
+Source = Union[Path, str, IOBase]
+
+
+class FileReader:  # FIXME: Rename to SourceReader
+    """Utility to ease reading different kind of source files.
 
     Supports different sources where to read the data:
 
     - The source can be a path to a file, either as a string or as a
-      ``pathlib.Path`` instance in Python 3. The file itself must be
-      UTF-8 encoded.
+      ``pathlib.Path`` instance. The file itself must be UTF-8 encoded.
 
     - Alternatively the source can be an already opened file object,
       including a StringIO or BytesIO object. The file can contain either
@@ -39,10 +43,10 @@ class FileReader:
     BOM removed.
     """
 
-    def __init__(self, source, accept_text=False):
-        self.file, self.name, self._opened = self._get_file(source, accept_text)
+    def __init__(self, source: Source, accept_text: bool = False):
+        self.file, self._opened = self._get_file(source, accept_text)
 
-    def _get_file(self, source, accept_text):
+    def _get_file(self, source: Source, accept_text: bool) -> 'tuple[IOBase, bool]':
         path = self._get_path(source, accept_text)
         if path:
             file = open(path, 'rb')
@@ -53,10 +57,9 @@ class FileReader:
         else:
             file = source
             opened = False
-        name = getattr(file, 'name', '<in-memory file>')
-        return file, name, opened
+        return file, opened
 
-    def _get_path(self, source, accept_text):
+    def _get_path(self, source: Source, accept_text: bool):
         if is_pathlike(source):
             return str(source)
         if not is_string(source):
@@ -65,9 +68,16 @@ class FileReader:
             return source
         if '\n' in source:
             return None
-        if os.path.isabs(source) or os.path.exists(source):
-            return source
-        return None
+        path = Path(source)
+        try:
+            is_path = path.is_absolute() or path.exists()
+        except OSError:    # Can happen on Windows w/ Python < 3.10.
+            is_path = False
+        return source if is_path else None
+
+    @property
+    def name(self) -> str:
+        return getattr(self.file, 'name', '<in-memory file>')
 
     def __enter__(self):
         return self
@@ -76,16 +86,16 @@ class FileReader:
         if self._opened:
             self.file.close()
 
-    def read(self):
+    def read(self) -> str:
         return self._decode(self.file.read())
 
-    def readlines(self):
+    def readlines(self) -> 'Iterator[str]':
         first_line = True
         for line in self.file.readlines():
             yield self._decode(line, remove_bom=first_line)
             first_line = False
 
-    def _decode(self, content, remove_bom=True):
+    def _decode(self, content: 'str|bytes', remove_bom: bool = True) -> str:
         if is_bytes(content):
             content = content.decode('UTF-8')
         if remove_bom and content.startswith('\ufeff'):
@@ -93,8 +103,3 @@ class FileReader:
         if '\r\n' in content:
             content = content.replace('\r\n', '\n')
         return content
-
-    def _is_binary_file(self):
-        mode = getattr(self.file, 'mode', '')
-        encoding = getattr(self.file, 'encoding', 'ascii').lower()
-        return 'r' in mode and encoding == 'ascii'

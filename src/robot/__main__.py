@@ -15,8 +15,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# Allows running as a script.
-if __name__ == '__main__':
+import sys
+
+if __name__ == '__main__' and 'robot' not in sys.modules:
     import pythonpathsetter
 
 from robot import run_cli

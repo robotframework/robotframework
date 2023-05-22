@@ -118,9 +118,9 @@ XUnit File Testsuite Properties From Metadata
     Element Attribute Should be    ${property_elements}[0]    name     Escaping
     Element Attribute Should be    ${property_elements}[0]    value    Three backslashes \\\\\\\ & \${version}
     Element Attribute Should be    ${property_elements}[1]    name     Multiple columns
-    Element Attribute Should be    ${property_elements}[1]    value    Value in multiple columns
+    Element Attribute Should be    ${property_elements}[1]    value    Value in${SPACE*4}multiple${SPACE*4}columns
     Element Attribute Should be    ${property_elements}[2]    name     multiple lines
-    Element Attribute Should be    ${property_elements}[2]    value    Metadata in multiple lines\nis parsed using\nsame semantics as documentation.\n| table |\n| ! |
+    Element Attribute Should be    ${property_elements}[2]    value    Metadata in multiple lines\nis parsed using\nsame semantics${SPACE*4}as${SPACE*4}documentation.\n| table |\n|${SPACE*3}!${SPACE*3}|
     Element Attribute Should be    ${property_elements}[3]    name     Name
     Element Attribute Should be    ${property_elements}[3]    value    Value
     Element Attribute Should be    ${property_elements}[4]    name     Overridden
