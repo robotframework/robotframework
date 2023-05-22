@@ -31,11 +31,21 @@ extensions, the :option:`--extension (-F)` option must be used to explicitly
 tell the framework to parse also them. If there is a need to parse more
 than one kind of files, it is possible to use a colon `:` to separate
 extensions. Matching extensions is case insensitive and the leading `.`
-can be omitted::
+can be omitted. You can additionally filter files before parsing using
+the :option:`--files (-f)` option with a `simple pattern`_. The option
+can be used multiple times to match multiple patterns. Arguments to the
+:option:`--files (-f)` option are case- and space-insensitive.
+If the :option:`--files (-f)` option matches files with a non-default extension,
+the :option:`--extension (-F)` option must be added in order for those files
+to also be parsed.
+::
 
   robot path/to/tests/                   # Parse only *.robot files.
   robot --extension TSV path/to/tests    # Parse only *.tsv files.
   robot -F robot:rst path/to/tests       # Parse *.robot and *.rst files.
+  robot --files foo.robot path/to/tests  # Parse only files named foo.robot.
+  robot -f foo* path/to/tests            # Parse only .robot files starting with foo.
+  robot -f foo* -F txt path/to/tests     # Parse only .txt files starting with foo.
 
 If files in one format use different extensions like :file:`.rst` and
 :file:`.rest`, they must be specified separately. Using just one of them

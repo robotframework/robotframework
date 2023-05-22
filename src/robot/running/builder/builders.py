@@ -57,6 +57,7 @@ class TestSuiteBuilder:
 
     def __init__(self, included_suites: Sequence[str] = (),
                  included_extensions: Sequence[str] = ('.robot', '.rbt'),
+                 included_files: Sequence[str] = (),
                  custom_parsers: Sequence[str] = (),
                  defaults: 'TestDefaults|None' = None,
                  rpa: 'bool|None' = None, lang: LanguagesLike = None,
@@ -67,6 +68,9 @@ class TestSuiteBuilder:
             Same as using ``--suite`` on the command line.
         :param included_extensions:
             List of extensions of files to parse. Same as ``--extension``.
+        :param included_files:
+            List of filename patterns to include. If no files are specified, all
+            files are parsed. Same as `--files`. New in RF 6.1.
         :param custom_parsers:
             Custom parsers as names or paths (same as ``--parser``) or as
             parser objects. New in RF 6.1.
@@ -96,6 +100,7 @@ class TestSuiteBuilder:
         self.defaults = defaults
         self.included_suites = tuple(included_suites or ())
         self.included_extensions = tuple(included_extensions or ())
+        self.included_files = tuple(included_files or ())
         self.rpa = rpa
         self.allow_empty_suite = allow_empty_suite
 
@@ -137,7 +142,8 @@ class TestSuiteBuilder:
         paths = self._normalize_paths(paths)
         extensions = chain(self.included_extensions, self.custom_parsers)
         structure = SuiteStructureBuilder(extensions,
-                                          self.included_suites).build(*paths)
+                                          self.included_suites,
+                                          self.included_files).build(*paths)
         suite = SuiteStructureParser(self._get_parsers(paths), self.defaults,
                                      self.rpa).parse(structure)
         if not self.included_suites and not self.allow_empty_suite:

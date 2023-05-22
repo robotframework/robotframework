@@ -54,3 +54,12 @@ class TestNamePatterns(NamePatterns):
 
     def _match_longname(self, name):
         return self._match(name)
+
+
+class FileNamePatterns(NamePatterns):
+
+    def __init__(self, patterns=None):
+        self.matcher = MultiMatcher(patterns)
+
+    def _match_longname(self, name):
+        return self._match(name)
