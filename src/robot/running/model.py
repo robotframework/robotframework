@@ -756,8 +756,6 @@ class UserKeyword(ModelObject):
     def teardown(self) -> Keyword:
         if self._teardown is None:
             self._teardown = create_fixture(self.fixture_class, None, self, Keyword.TEARDOWN)
-        # Would be better to enhance `create_fixture` so that its return
-        # type would match argument type.
         return self._teardown
 
     @teardown.setter

@@ -17,30 +17,24 @@ from collections.abc import Mapping
 from typing import Type, TypeVar, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from robot.model.modelobject import DataDict
-    from robot.model.testcase import TestCase
-    from robot.model.testsuite import TestSuite
-    from robot.model.keyword import Keyword
+    from robot.model import DataDict, Keyword, TestCase, TestSuite
     from robot.running.model import UserKeyword
 
 T = TypeVar('T', bound='Keyword')
 
+
 def create_fixture(fixture_class: Type[T],
-                   fixture:'T|DataDict|None',
-                   parent:'TestCase|TestSuite|Keyword|UserKeyword',
+                   fixture: 'T|DataDict|None',
+                   parent: 'TestCase|TestSuite|Keyword|UserKeyword',
                    fixture_type: str) -> T:
     """ Configures or creates a `fixture_class`instance """
-
     # If a fixture instance has been passed in update the config
     if isinstance(fixture, fixture_class):
         return fixture.config(parent=parent, type=fixture_type)
-
     # If a Mapping has been passed in, create a fixture instance from it
     if isinstance(fixture, Mapping):
         return fixture_class.from_dict(fixture).config(parent=parent, type=fixture_type)
-
     # If nothing has been passed in then return a new fixture instance from it
     if fixture is None:
         return fixture_class(None, parent=parent, type=fixture_type)
-
     raise TypeError(f"Invalid fixture type '{type(fixture).__name__}'.")

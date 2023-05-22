@@ -214,7 +214,7 @@ class TestSuite(ModelObject):
         return bool(self._setup)
 
     @property
-    def teardown(self) -> fixture_class:
+    def teardown(self) -> Keyword:
         """Suite teardown.
 
         See :attr:`setup` for more information.
