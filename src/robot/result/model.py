@@ -58,8 +58,8 @@ from .modeldeprecation import deprecated, DeprecatedAttributesMixin
 from .keywordremover import KeywordRemover
 from .suiteteardownfailed import SuiteTeardownFailed, SuiteTeardownFailureHandler
 
-BT = TypeVar('BT', bound='IfBranch|TryBranch')
-IT = TypeVar('IT', bound='ForIteration|WhileIteration')
+IT = TypeVar('IT', bound='IfBranch|TryBranch')
+FW = TypeVar('FW', bound='ForIteration|WhileIteration')
 
 BodyItemParent = Union['TestSuite', 'TestCase', 'For', 'ForIteration', 'If', 'IfBranch',
                        'Try', 'TryBranch', 'While', 'WhileIteration', None]
@@ -71,28 +71,28 @@ class Body(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Return', 'Con
 
 
 class Branches(model.BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Return',
-                                  'Continue', 'Break', 'Message', 'Error', BT]):
+                                  'Continue', 'Break', 'Message', 'Error', IT]):
     __slots__ = []
 
 
-class IterationType(Generic[IT]):
+class IterationType(Generic[FW]):
     """Class that wrapps `Generic` as python doesn't allow multple generic inheritance"""
     pass
 
 
 class Iterations(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Return',
-                                'Continue', 'Break', 'Message', 'Error'], IterationType[IT]):
+                                'Continue', 'Break', 'Message', 'Error'], IterationType[FW]):
     __slots__ = ['iteration_class']
-    iteration_type: Type[IT] = KnownAtRuntime
+    iteration_type: Type[FW] = KnownAtRuntime
 
-    def __init__(self, iteration_class: Type[IT],
+    def __init__(self, iteration_class: Type[FW],
                  parent: BodyItemParent = None,
-                 items: 'Sequence[IT|DataDict]' = ()):
+                 items: 'Sequence[FW|DataDict]' = ()):
         self.iteration_class = iteration_class
         super().__init__(parent, items)
 
     @copy_signature(iteration_type)
-    def create_iteration(self, *args, **kwargs) -> IT:
+    def create_iteration(self, *args, **kwargs) -> FW:
         return self._create(self.iteration_class, 'iteration_class', args, kwargs)
 
 
