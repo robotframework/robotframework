@@ -14,16 +14,26 @@
 #  limitations under the License.
 
 import sys
-from typing import Any, cast, Sequence
+from typing import Any, cast, Sequence, TypeVar, TYPE_CHECKING
 if sys.version_info >= (3, 8):
     from typing import Literal
 
 from robot.utils import setter
 
-from .body import Body, BodyItem, BodyItemParent, Branches
+from .body import Body, BodyItem, BodyItemParent, BaseBranches
 from .keyword import Keywords
 from .modelobject import DataDict
 from .visitor import SuiteVisitor
+
+if TYPE_CHECKING:
+    from robot.model import Keyword, Message
+
+IT = TypeVar('IT', bound='IfBranch|TryBranch')
+
+
+class Branches(BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Return', 'Continue',
+                            'Break', 'Message', 'Error', IT]):
+    pass
 
 
 @Body.register
@@ -200,7 +210,7 @@ class If(BodyItem):
     """IF/ELSE structure root. Branches are stored in :attr:`body`."""
     type = BodyItem.IF_ELSE_ROOT
     branch_class = IfBranch
-    branches_class = Branches
+    branches_class = Branches[branch_class]
     __slots__ = []
 
     def __init__(self, parent: BodyItemParent = None):
@@ -208,7 +218,7 @@ class If(BodyItem):
         self.body = ()
 
     @setter
-    def body(self, branches: 'Sequence[BodyItem|DataDict]') -> Branches:
+    def body(self, branches: 'Sequence[BodyItem|DataDict]') -> branches_class:
         return self.branches_class(self.branch_class, self, branches)
 
     @property
@@ -290,7 +300,7 @@ class Try(BodyItem):
     """TRY/EXCEPT structure root. Branches are stored in :attr:`body`."""
     type = BodyItem.TRY_EXCEPT_ROOT
     branch_class = TryBranch
-    branches_class = Branches
+    branches_class = Branches[branch_class]
     __slots__ = []
 
     def __init__(self, parent: BodyItemParent = None):
@@ -298,7 +308,7 @@ class Try(BodyItem):
         self.body = ()
 
     @setter
-    def body(self, branches: 'Sequence[TryBranch|DataDict]') -> Branches:
+    def body(self, branches: 'Sequence[TryBranch|DataDict]') -> branches_class:
         return self.branches_class(self.branch_class, self, branches)
 
     @property

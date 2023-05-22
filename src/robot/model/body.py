@@ -47,6 +47,7 @@ C = TypeVar('C', bound='Continue')
 B = TypeVar('B', bound='Break')
 M = TypeVar('M', bound='Message')
 E = TypeVar('E', bound='Error')
+IT = TypeVar('IT', bound='IfBranch|TryBranch')
 
 
 class BodyItem(ModelObject):
@@ -160,9 +161,9 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, R, C, B, M, E]):
 
     def _create(self, cls: 'Type[BI]', name: str, args: 'tuple[Any]',
                 kwargs: 'dict[str, Any]') -> BI:
-        if not issubclass(cls, BodyItem):
+        if cls is KnownAtRuntime:
             raise TypeError(f"'{full_name(self)}' object does not support '{name}'.")
-        return self.append(cls(*args, **kwargs))
+        return self.append(cls(*args, **kwargs))  # type: ignore
 
     @copy_signature(keyword_class)
     def create_keyword(self, *args, **kwargs) -> keyword_class:
@@ -229,7 +230,7 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, R, C, B, M, E]):
         use ``body.filter(keywords=False``, messages=False)``. For more detailed
         filtering it is possible to use ``predicate``.
         """
-        if messages is not None and not issubclass(self.message_class, BodyItem):
+        if messages is not None and self.message_class is KnownAtRuntime:
             raise TypeError(f"'{full_name(self)}' object does not support "
                             f"filtering by 'messages'.")
         return self._filter([(self.keyword_class, keywords),
@@ -275,18 +276,25 @@ class Body(BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Return', 'Continue'
     pass
 
 
-class Branches(BaseBody):
+class BranchType(Generic[IT]):
+    """Class that wrapps `Generic` as python doesn't allow multple generic inheritance"""
+    pass
+
+
+class BaseBranches(BaseBody[KW, F, W, I, T, R, C, B, M, E], BranchType[IT]):
     """A list-like object representing IF and TRY branches."""
     __slots__ = ['branch_class']
+    branch_type: Type[IT] = KnownAtRuntime
 
-    def __init__(self, branch_class: 'Type[IfBranch|TryBranch]',
+    def __init__(self, branch_class: Type[IT],
                  parent: BodyItemParent = None,
                  items: 'Iterable[BodyItem|DataDict]' = ()):
         self.branch_class = branch_class
         super().__init__(parent, items)
 
-    def _item_from_dict(self, data: DataDict) -> 'IfBranch|TryBranch':
+    def _item_from_dict(self, data: DataDict) -> IT:
         return self.branch_class.from_dict(data)
 
-    def create_branch(self, *args, **kwargs) -> 'IfBranch|TryBranch':
+    @copy_signature(branch_type)
+    def create_branch(self, *args, **kwargs) -> IT:
         return self._create(self.branch_class, 'create_branch', args, kwargs)

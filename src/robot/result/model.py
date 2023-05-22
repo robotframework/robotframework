@@ -41,7 +41,8 @@ from collections import OrderedDict
 from datetime import datetime, timedelta
 from itertools import chain
 from pathlib import Path
-from typing import cast, Mapping, Sequence, Type, Union
+from typing import cast, Generic, Mapping, Sequence, Type, Union, TypeVar
+
 if sys.version_info >= (3, 8):
     from typing import Literal
 
@@ -49,7 +50,7 @@ from robot import model
 from robot.model import (BodyItem, create_fixture, DataDict, Keywords, Tags,
                          SuiteVisitor, TotalStatistics, TotalStatisticsBuilder,
                          TestCases, TestSuites)
-from robot.utils import get_elapsed_time, setter
+from robot.utils import copy_signature, get_elapsed_time, KnownAtRuntime, setter
 
 from .configurer import SuiteConfigurer
 from .messagefilter import MessageFilter
@@ -57,6 +58,8 @@ from .modeldeprecation import deprecated, DeprecatedAttributesMixin
 from .keywordremover import KeywordRemover
 from .suiteteardownfailed import SuiteTeardownFailed, SuiteTeardownFailureHandler
 
+IT = TypeVar('IT', bound='IfBranch|TryBranch')
+FW = TypeVar('FW', bound='ForIteration|WhileIteration')
 
 BodyItemParent = Union['TestSuite', 'TestCase', 'For', 'ForIteration', 'If', 'IfBranch',
                        'Try', 'TryBranch', 'While', 'WhileIteration', None]
@@ -67,20 +70,29 @@ class Body(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Return', 'Con
     __slots__ = []
 
 
-class Branches(model.Branches):
+class Branches(model.BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Return',
+                                  'Continue', 'Break', 'Message', 'Error', IT]):
     __slots__ = []
 
 
-class Iterations(model.BaseBody):
-    __slots__ = ['iteration_class']
+class IterationType(Generic[FW]):
+    """Class that wrapps `Generic` as python doesn't allow multple generic inheritance"""
+    pass
 
-    def __init__(self, iteration_class: Type['ForIteration|WhileIteration'],
+
+class Iterations(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Return',
+                                'Continue', 'Break', 'Message', 'Error'], IterationType[FW]):
+    __slots__ = ['iteration_class']
+    iteration_type: Type[FW] = KnownAtRuntime
+
+    def __init__(self, iteration_class: Type[FW],
                  parent: BodyItemParent = None,
-                 items: 'Sequence[ForIteration|WhileIteration|DataDict]' = ()):
+                 items: 'Sequence[FW|DataDict]' = ()):
         self.iteration_class = iteration_class
         super().__init__(parent, items)
 
-    def create_iteration(self, *args, **kwargs) -> 'ForIteration|WhileIteration':
+    @copy_signature(iteration_type)
+    def create_iteration(self, *args, **kwargs) -> FW:
         return self._create(self.iteration_class, 'iteration_class', args, kwargs)
 
 
@@ -240,8 +252,8 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
 
 @Body.register
 class For(model.For, StatusMixin, DeprecatedAttributesMixin):
-    iterations_class = Iterations
     iteration_class = ForIteration
+    iterations_class = Iterations[iteration_class]
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
     def __init__(self, variables: Sequence[str] = (),
@@ -262,7 +274,7 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
         self.doc = doc
 
     @setter
-    def body(self, iterations: 'Sequence[ForIteration|DataDict]') -> Iterations:
+    def body(self, iterations: 'Sequence[ForIteration|DataDict]') -> iterations_class:
         return self.iterations_class(self.iteration_class, self, iterations)
 
     @property
@@ -311,8 +323,8 @@ class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
 
 @Body.register
 class While(model.While, StatusMixin, DeprecatedAttributesMixin):
-    iterations_class = Iterations
     iteration_class = WhileIteration
+    iterations_class = Iterations[iteration_class]
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
     def __init__(self, condition: 'str|None' = None,
@@ -331,7 +343,7 @@ class While(model.While, StatusMixin, DeprecatedAttributesMixin):
         self.doc = doc
 
     @setter
-    def body(self, iterations: 'Sequence[WhileIteration|DataDict]') -> Iterations:
+    def body(self, iterations: 'Sequence[WhileIteration|DataDict]') -> iterations_class:
         return self.iterations_class(self.iteration_class, self, iterations)
 
     @property
@@ -375,7 +387,7 @@ class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
 @Body.register
 class If(model.If, StatusMixin, DeprecatedAttributesMixin):
     branch_class = IfBranch
-    branches_class = Branches
+    branches_class = Branches[branch_class]
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
     def __init__(self, status: str = 'FAIL',
@@ -426,7 +438,7 @@ class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
 @Body.register
 class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
     branch_class = TryBranch
-    branches_class = Branches
+    branches_class = Branches[branch_class]
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
     def __init__(self, status: str = 'FAIL',
