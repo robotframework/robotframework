@@ -755,14 +755,12 @@ class UserKeyword(ModelObject):
     @property
     def teardown(self) -> Keyword:
         if self._teardown is None:
-            self._teardown = create_fixture(None, self, Keyword.TEARDOWN)
-        # Would be better to enhance `create_fixture` so that its return
-        # type would match argument type.
-        return cast(Keyword, self._teardown)
+            self._teardown = create_fixture(self.fixture_class, None, self, Keyword.TEARDOWN)
+        return self._teardown
 
     @teardown.setter
     def teardown(self, teardown: 'Keyword|DataDict|None'):
-        self._teardown = create_fixture(teardown, self, Keyword.TEARDOWN)
+        self._teardown = create_fixture(self.fixture_class, teardown, self, Keyword.TEARDOWN)
 
     @property
     def has_teardown(self) -> bool:

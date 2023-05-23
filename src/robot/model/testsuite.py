@@ -192,12 +192,12 @@ class TestSuite(ModelObject):
         ``suite.keywords.setup``.
         """
         if self._setup is None:
-            self._setup = create_fixture(None, self, Keyword.SETUP)
+            self._setup = create_fixture(self.fixture_class, None, self, Keyword.SETUP)
         return self._setup
 
     @setup.setter
     def setup(self, setup: 'Keyword|DataDict|None'):
-        self._setup = create_fixture(setup, self, Keyword.SETUP)
+        self._setup = create_fixture(self.fixture_class, setup, self, Keyword.SETUP)
 
     @property
     def has_setup(self) -> bool:
@@ -220,12 +220,12 @@ class TestSuite(ModelObject):
         See :attr:`setup` for more information.
         """
         if self._teardown is None:
-            self._teardown = create_fixture(None, self, Keyword.TEARDOWN)
+            self._teardown = create_fixture(self.fixture_class, None, self, Keyword.TEARDOWN)
         return self._teardown
 
     @teardown.setter
     def teardown(self, teardown: 'Keyword|DataDict|None'):
-        self._teardown = create_fixture(teardown, self, Keyword.TEARDOWN)
+        self._teardown = create_fixture(self.fixture_class, teardown, self, Keyword.TEARDOWN)
 
     @property
     def has_teardown(self) -> bool:
