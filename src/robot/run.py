@@ -435,8 +435,7 @@ class RobotFramework(Application):
         LOGGER.info(f'Settings:\n{settings}')
         if settings.pythonpath:
             sys.path = settings.pythonpath + sys.path
-        builder = TestSuiteBuilder(included_suites=settings.suite_names,
-                                   included_extensions=settings.extension,
+        builder = TestSuiteBuilder(included_extensions=settings.extension,
                                    included_files=settings.file_patterns,
                                    custom_parsers=settings.parsers,
                                    rpa=settings.rpa,

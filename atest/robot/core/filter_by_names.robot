@@ -56,47 +56,10 @@ Parent suite init files are processed
     Should Be True    ${SUITE.teardown}
     Check log message    ${SUITE.teardown.msgs[0]}    Default suite teardown
 
-Unnecessary files are not parsed when --suite matches files
-    [Documentation]    Test that only files matching --suite are processed.
-    ...                Additionally __init__ files should never be ignored.
-    Previous Test Should Have Passed    Parent suite init files are processed
-    ${root} =    Normalize Path    ${DATA DIR}/${SUITE DIR}
-    Syslog Should Contain    Parsing directory '${root}'.
-    Syslog Should Contain    Parsing file '${root}${/}tsuite1.robot'.
-    Syslog Should Contain    Ignoring file or directory '${root}${/}tsuite2.robot'.
-    Syslog Should Contain    Parsing file '${root}${/}tsuite3.robot'.
-    Syslog Should Contain    Parsing file '${root}${/}fourth.robot'.
-    Syslog Should Contain    Parsing directory '${root}${/}subsuites'.
-    Syslog Should Contain    Ignoring file or directory '${root}${/}subsuites${/}sub1.robot'.
-    Syslog Should Contain    Ignoring file or directory '${root}${/}subsuites${/}sub2.robot'.
-    Syslog Should Contain    Parsing directory '${root}${/}subsuites2'.
-    Syslog Should Contain    Ignoring file or directory '${root}${/}subsuites2${/}subsuite3.robot'.
-    Syslog Should Contain    Ignoring file or directory '${root}${/}subsuites2${/}sub.suite.4.robot'.
-    Syslog Should Not Contain Regexp    Ignoring file or directory '.*__init__.robot'.
-
 --suite matching directory
     Run Suites    --suite sub?uit[efg]s
     Should Contain Suites    ${SUITE.suites[0]}    Sub1    Sub2
     Should Contain Tests   ${SUITE}    SubSuite1 First    SubSuite2 First
-
-Unnecessary files are not parsed when --suite matches directory
-    [Documentation]    Testing that only files matching to --suite are processed.
-    ...                This time --suite matches directory so all suites under it
-    ...                should be parsed regardless their names.
-    Previous Test Should Have Passed    --suite matching directory
-    ${root} =    Normalize Path    ${DATA DIR}/${SUITE DIR}
-    Syslog Should Contain    Parsing directory '${root}'.
-    Syslog Should Contain    Ignoring file or directory '${root}${/}tsuite1.robot'.
-    Syslog Should Contain    Ignoring file or directory '${root}${/}tsuite2.robot'.
-    Syslog Should Contain    Ignoring file or directory '${root}${/}tsuite3.robot'.
-    Syslog Should Contain    Ignoring file or directory '${root}${/}fourth.robot'.
-    Syslog Should Contain    Parsing directory '${root}${/}subsuites'.
-    Syslog Should Contain    Parsing file '${root}${/}subsuites${/}sub1.robot'.
-    Syslog Should Contain    Parsing file '${root}${/}subsuites${/}sub2.robot'.
-    Syslog Should Contain    Parsing directory '${root}${/}subsuites2'.
-    Syslog Should Contain    Ignoring file or directory '${root}${/}subsuites2${/}subsuite3.robot'.
-    Syslog Should Contain    Ignoring file or directory '${root}${/}subsuites2${/}sub.suite.4.robot'.
-    Syslog Should Not Contain Regexp    Ignoring file or directory '.*__init__.robot'.
 
 --suite with long name matching file
     Run Suites    --suite suites.fourth --suite suites.*.SUB?
