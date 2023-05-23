@@ -46,7 +46,7 @@ th {
     display: none;
 }
 /* Search */
-#search-suite, #search-test, #search-include, #search-exclude {
+#search-suite, #search-test, #search-include, #search-exclude, #search-status {
     width: 25em;
 }
 #search a:hover {
