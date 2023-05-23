@@ -738,8 +738,6 @@ class Keyword(model.Keyword, StatusMixin):
         """
         if self._teardown is None:
             self._teardown = create_fixture(self.__class__, None, self, self.TEARDOWN)
-        # Would be better to enhance `create_fixture` so that its return
-        # type would match argument type.
         return self._teardown
 
     @teardown.setter
