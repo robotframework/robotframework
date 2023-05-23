@@ -14,6 +14,12 @@ Set nested attribute
 Set nested attribute when parent uses item access
     Check Test Case    ${TESTNAME}
 
+Set item to list attribute
+    Check Test Case    ${TESTNAME}
+
+Set item to dict attribute
+    Check Test Case    ${TESTNAME}
+
 Trying to set un-settable attribute
     Check Test Case    ${TESTNAME}
 

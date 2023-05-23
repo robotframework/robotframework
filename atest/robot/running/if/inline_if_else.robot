@@ -48,6 +48,11 @@ Assign
     NOT RUN    PASS       NOT RUN    index=1
     NOT RUN    NOT RUN    PASS       index=2
 
+Assign with item
+    PASS       NOT RUN    NOT RUN    index=0
+    NOT RUN    PASS       NOT RUN    index=1
+    NOT RUN    NOT RUN    PASS       index=2
+
 Multi assign
     PASS       NOT RUN    index=0
     FAIL       NOT RUN    index=4
