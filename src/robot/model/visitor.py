@@ -110,6 +110,9 @@ if TYPE_CHECKING:
                              TryBranch, While)
     from robot.result import ForIteration, WhileIteration
 
+    # type aliases to reduce repititon
+    ModelTestCase = TestCase[Keyword]
+    ModelTestSuite = TestSuite[Keyword, ModelTestCase]
 
 class SuiteVisitor:
     """Abstract class to ease traversing through the suite structure.
@@ -118,7 +121,7 @@ class SuiteVisitor:
     information and an example.
     """
 
-    def visit_suite(self, suite: 'TestSuite'):
+    def visit_suite(self, suite: 'ModelTestSuite'):
         """Implements traversing through suites.
 
         Can be overridden to allow modifying the passed in ``suite`` without
@@ -134,18 +137,18 @@ class SuiteVisitor:
                 suite.teardown.visit(self)
             self.end_suite(suite)
 
-    def start_suite(self, suite: 'TestSuite') -> 'bool|None':
+    def start_suite(self, suite: 'ModelTestSuite') -> 'bool|None':
         """Called when a suite starts. Default implementation does nothing.
 
         Can return explicit ``False`` to stop visiting.
         """
         pass
 
-    def end_suite(self, suite: 'TestSuite'):
+    def end_suite(self, suite: 'ModelTestSuite'):
         """Called when a suite ends. Default implementation does nothing."""
         pass
 
-    def visit_test(self, test: 'TestCase'):
+    def visit_test(self, test: 'ModelTestCase'):
         """Implements traversing through tests.
 
         Can be overridden to allow modifying the passed in ``test`` without calling
@@ -159,14 +162,14 @@ class SuiteVisitor:
                 test.teardown.visit(self)
             self.end_test(test)
 
-    def start_test(self, test: 'TestCase') -> 'bool|None':
+    def start_test(self, test: 'ModelTestCase') -> 'bool|None':
         """Called when a test starts. Default implementation does nothing.
 
         Can return explicit ``False`` to stop visiting.
         """
         pass
 
-    def end_test(self, test: 'TestCase'):
+    def end_test(self, test: 'ModelTestCase'):
         """Called when a test ends. Default implementation does nothing."""
         pass
 

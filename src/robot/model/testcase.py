@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from pathlib import Path
-from typing import Any, Sequence, Type, TYPE_CHECKING, TypeVar
+from typing import Any, Generic, Sequence, Type, TYPE_CHECKING, TypeVar
 
 from robot.utils import setter
 
@@ -31,16 +31,18 @@ if TYPE_CHECKING:
 
 
 TC = TypeVar('TC', bound='TestCase')
+KW = TypeVar('KW', bound='Keyword', covariant=True)
 
 
-class TestCase(ModelObject):
+class TestCase(ModelObject, Generic[KW]):
     """Base model for a single test case.
 
     Extended by :class:`robot.running.model.TestCase` and
     :class:`robot.result.model.TestCase`.
     """
     body_class = Body
-    fixture_class = Keyword
+    # See model.TestSuite on removing the type ignore directive
+    fixture_class: Type[KW] = Keyword # type: ignore
     repr_args = ('name',)
     __slots__ = ['parent', 'name', 'doc', 'timeout', 'lineno', '_setup', '_teardown']
 
@@ -57,8 +59,8 @@ class TestCase(ModelObject):
         self.lineno = lineno
         self.parent = parent
         self.body = []
-        self._setup: 'Keyword|None' = None
-        self._teardown: 'Keyword|None' = None
+        self._setup: 'KW|None' = None
+        self._teardown: 'KW|None' = None
 
     @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
@@ -71,7 +73,7 @@ class TestCase(ModelObject):
         return Tags(tags)
 
     @property
-    def setup(self) -> Keyword:
+    def setup(self) -> KW:
         """Test setup as a :class:`~.model.keyword.Keyword` object.
 
         This attribute is a ``Keyword`` object also when a test has no setup
@@ -100,7 +102,7 @@ class TestCase(ModelObject):
         return self._setup
 
     @setup.setter
-    def setup(self, setup: 'Keyword|DataDict|None'):
+    def setup(self, setup: 'KW|DataDict|None'):
         self._setup = create_fixture(self.fixture_class, setup, self, Keyword.SETUP)
 
     @property
@@ -128,7 +130,7 @@ class TestCase(ModelObject):
         return self._teardown
 
     @teardown.setter
-    def teardown(self, teardown: 'Keyword|DataDict|None'):
+    def teardown(self, teardown: 'KW|DataDict|None'):
         self._teardown = create_fixture(self.fixture_class, teardown, self, Keyword.TEARDOWN)
 
     @property
