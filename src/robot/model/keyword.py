@@ -16,13 +16,11 @@
 from typing import cast, Sequence, Type, TYPE_CHECKING
 import warnings
 
-from .body import Body, BodyItem
+from .body import Body, BodyItem, BodyItemParent
 from .itemlist import ItemList
 from .modelobject import DataDict
 
 if TYPE_CHECKING:
-    from .testcase import TestCase
-    from .testsuite import TestSuite
     from .visitor import SuiteVisitor
 
 
@@ -36,21 +34,23 @@ class Keyword(BodyItem):
     repr_args = ('name', 'args', 'assign')
     __slots__ = ['_name', 'args', 'assign', 'type']
 
-    def __init__(self, name: str = '', args: Sequence[str] = (),
-                 assign: Sequence[str] = (), type: str = BodyItem.KEYWORD,
-                 parent: 'TestSuite|TestCase|BodyItem|None' = None):
-        self._name = name
+    def __init__(self, name: 'str|None' = '',
+                 args: Sequence[str] = (),
+                 assign: Sequence[str] = (),
+                 type: str = BodyItem.KEYWORD,
+                 parent: BodyItemParent = None):
+        self.name = name
         self.args = args
         self.assign = assign
         self.type = type
         self.parent = parent
 
     @property
-    def name(self) -> str:
+    def name(self) -> 'str|None':
         return self._name
 
     @name.setter
-    def name(self, name: str):
+    def name(self, name: 'str|None'):
         self._name = name
 
     @property
@@ -92,7 +92,7 @@ class Keywords(ItemList[BodyItem]):
         "Use 'body', 'setup' or 'teardown' instead."
     )
 
-    def __init__(self, parent: 'TestSuite|TestCase|BodyItem|None' = None,
+    def __init__(self, parent: BodyItemParent = None,
                  keywords: Sequence[BodyItem] = ()):
         warnings.warn(self.deprecation_message, UserWarning)
         ItemList.__init__(self, object, {'parent': parent})

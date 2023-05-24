@@ -16,3 +16,6 @@ Private In One Resource And Public In Another
 
 Private In One Resource And Public In Two
     Fail    Not executed
+    
+Private In Resource 1 And 3 And Public In Resource 2
+    Log    private2.resource

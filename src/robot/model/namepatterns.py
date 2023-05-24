@@ -13,23 +13,24 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Iterable, Iterator
+from typing import Iterable, Iterator, Sequence
 
 from robot.utils import MultiMatcher
 
 
 class NamePatterns(Iterable[str]):
 
-    def __init__(self, patterns: Iterator[str] = ()):
-        self.matcher = MultiMatcher(patterns, ignore='_')
+    def __init__(self, patterns: Sequence[str] = (), ignore: Sequence[str] = '_'):
+        self.matcher = MultiMatcher(patterns, ignore)
 
     def match(self, name: str, longname: 'str|None' = None) -> bool:
-        return self._match(name) or longname and self._match_longname(longname)
+        return bool(self._match(name) or
+                    longname and self._match_longname(longname))
 
-    def _match(self, name):
+    def _match(self, name: str) -> bool:
         return self.matcher.match(name)
 
-    def _match_longname(self, name):
+    def _match_longname(self, name: str) -> bool:
         raise NotImplementedError
 
     def __bool__(self) -> bool:
@@ -51,6 +52,15 @@ class SuiteNamePatterns(NamePatterns):
 
 
 class TestNamePatterns(NamePatterns):
+
+    def _match_longname(self, name):
+        return self._match(name)
+
+
+class FileNamePatterns(NamePatterns):
+
+    def __init__(self, patterns: Sequence[str] = ()):
+        super().__init__(patterns, ignore='')
 
     def _match_longname(self, name):
         return self._match(name)

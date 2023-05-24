@@ -1,5 +1,6 @@
 import unittest
 import warnings
+from datetime import datetime
 
 from robot.model import Tags
 from robot.result import (Break, Continue, Error, For, If, IfBranch, Keyword, Message,
@@ -120,23 +121,40 @@ class TestSuiteStatus(unittest.TestCase):
             assert_raises(AttributeError, setattr, suite, attr, True)
 
 
-class TestElapsedTime(unittest.TestCase):
+class TestTimes(unittest.TestCase):
 
     def test_suite_elapsed_time_when_start_and_end_given(self):
         suite = TestSuite()
         suite.starttime = '20010101 10:00:00.000'
         suite.endtime = '20010101 10:00:01.234'
-        assert_equal(suite.elapsedtime, 1234)
+        self.assert_elapsed(suite, 1234)
+
+    def assert_elapsed(self, obj, expected):
+        assert_equal(obj.elapsedtime, expected)
+        assert_equal(obj.elapsed_time.total_seconds() * 1000, expected)
 
     def test_suite_elapsed_time_is_zero_by_default(self):
-        suite = TestSuite()
-        assert_equal(suite.elapsedtime, 0)
+        self.assert_elapsed(TestSuite(), 0)
 
-    def _test_suite_elapsed_time_is_test_time(self):
+    def test_suite_elapsed_time_is_got_from_childen_if_suite_does_not_have_times(self):
         suite = TestSuite()
         suite.tests.create(starttime='19991212 12:00:00.010',
-                           endtime='19991212 13:00:01.010')
-        assert_equal(suite.elapsedtime, 3610000)
+                           endtime='19991212 12:00:00.011')
+        self.assert_elapsed(suite, 1)
+        assert_equal(suite.elapsedtime, 1)
+        suite.starttime = '19991212 12:00:00.010'
+        suite.endtime = '19991212 12:00:01.010'
+        self.assert_elapsed(suite, 1000)
+
+    def test_forward_compatibility(self):
+        for cls in (TestSuite, TestCase, Keyword, If, IfBranch, Try, For, While,
+                    Break, Continue, Return, Error):
+            obj = cls(starttime='20230512 16:40:00.001', endtime='20230512 16:40:01.001')
+            assert_equal(obj.starttime, '20230512 16:40:00.001')
+            assert_equal(obj.endtime, '20230512 16:40:01.001')
+            assert_equal(obj.start_time, datetime(2023, 5, 12, 16, 40, 0, 1000))
+            assert_equal(obj.end_time, datetime(2023, 5, 12, 16, 40, 1, 1000))
+            self.assert_elapsed(obj, 1000)
 
 
 class TestSlots(unittest.TestCase):

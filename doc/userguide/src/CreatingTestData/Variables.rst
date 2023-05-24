@@ -663,6 +663,31 @@ variable`_ if it has a dictionary-like value.
        Length Should Be    ${list}    3
        Log Many    @{list}
 
+Assigning variables with item values
+''''''''''''''''''''''''''''''''''''
+
+Starting from Robot Framework 6.1, when working with variables that support
+item assignment such as lists or dictionaries, it is possible to set their values
+by specifying the index or key of the item using the syntax `${var}[index]=`:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Item assignment to list
+      ${list} =          Create List      one    two    three    four
+      ${list}[0] =       Set Variable     first
+      ${list}[${1}] =    Set Variable     second
+      ${list}[2:3] =     Evaluate         ['third']
+      ${list}[-1] =      Set Variable     last
+      Log Many           @{list}          # Logs 'first', 'second', 'third' and 'last'
+
+   Item assignment to dictionary
+      ${dictionary} =                Create Dictionary    first_name=unknown
+      ${dictionary}[first_name] =    Set Variable         John
+      ${dictionary}[last_name] =     Set Variable         Doe
+      Log                            ${dictionary}        # Logs {'first_name': 'John', 'last_name': 'Doe'}
+
+
 Assigning list variables
 ''''''''''''''''''''''''
 

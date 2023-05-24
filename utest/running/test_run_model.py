@@ -426,9 +426,9 @@ class TestToFromDictAndJson(unittest.TestCase):
     def test_resource_file(self):
         self._verify(ResourceFile())
         resource = ResourceFile('x.resource', doc='doc')
-        resource.imports.library('L', 'a', 'A', 1)
+        resource.imports.library('L', ['a'], 'A', 1)
         resource.imports.resource('R', 2)
-        resource.imports.variables('V', 'a', 3)
+        resource.imports.variables('V', ['a'], 3)
         resource.variables.create('${x}', ('value',))
         resource.variables.create('@{y}', ('v1', 'v2'), lineno=4)
         resource.variables.create('&{z}', ['k=v'], error='E')
@@ -436,14 +436,14 @@ class TestToFromDictAndJson(unittest.TestCase):
         self._verify(resource,
                      source='x.resource',
                      doc='doc',
-                     imports=[{'type': 'LIBRARY', 'name': 'L', 'args': ['a'],
+                     imports=[{'type': 'LIBRARY', 'name': 'L', 'args': ('a',),
                                'alias': 'A', 'lineno': 1},
                               {'type': 'RESOURCE', 'name': 'R', 'lineno': 2},
-                              {'type': 'VARIABLES', 'name': 'V', 'args': ['a'],
+                              {'type': 'VARIABLES', 'name': 'V', 'args': ('a',),
                                'lineno': 3}],
-                     variables=[{'name': '${x}', 'value': ['value']},
-                                {'name': '@{y}', 'value': ['v1', 'v2'], 'lineno': 4},
-                                {'name': '&{z}', 'value': ['k=v'], 'error': 'E'}],
+                     variables=[{'name': '${x}', 'value': ('value',)},
+                                {'name': '@{y}', 'value': ('v1', 'v2'), 'lineno': 4},
+                                {'name': '&{z}', 'value': ('k=v',), 'error': 'E'}],
                      keywords=[{'name': 'UK', 'body': [{'name': 'K'}]}])
 
     def test_bigger_suite_structure(self):

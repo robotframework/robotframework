@@ -15,7 +15,7 @@
 
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Iterator, Sequence, Type
+from typing import Any, Iterator, Sequence, Type, TypeVar
 
 from robot.utils import seq2str, setter
 
@@ -31,6 +31,9 @@ from .testcase import TestCase, TestCases
 from .visitor import SuiteVisitor
 
 
+TS = TypeVar('TS', bound="TestSuite")
+
+
 class TestSuite(ModelObject):
     """Base model for single suite.
 
@@ -42,9 +45,11 @@ class TestSuite(ModelObject):
     repr_args = ('name',)
     __slots__ = ['parent', '_name', 'doc', '_setup', '_teardown', 'rpa', '_my_visitors']
 
-    def __init__(self, name: str = '', doc: str = '',
+    def __init__(self, name: str = '',
+                 doc: str = '',
                  metadata: 'Mapping[str, str]|None' = None,
-                 source: 'Path|str|None' = None, rpa: 'bool|None' = None,
+                 source: 'Path|str|None' = None,
+                 rpa: 'bool|None' = None,
                  parent: 'TestSuite|None' = None):
         self._name = name
         self.doc = doc
@@ -153,12 +158,12 @@ class TestSuite(ModelObject):
         return Metadata(metadata)
 
     @setter
-    def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> 'TestSuites':
-        return TestSuites(self.__class__, self, suites)
+    def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> 'TestSuites[TestSuite]':
+        return TestSuites['TestSuite'](self.__class__, self, suites)
 
     @setter
-    def tests(self, tests: 'Sequence[TestCase|DataDict]') -> TestCases:
-        return TestCases(self.test_class, self, tests)
+    def tests(self, tests: 'Sequence[TestCase|DataDict]') -> TestCases[TestCase]:
+        return TestCases[TestCase](self.test_class, self, tests)
 
     @property
     def setup(self) -> Keyword:
@@ -187,12 +192,12 @@ class TestSuite(ModelObject):
         ``suite.keywords.setup``.
         """
         if self._setup is None:
-            self._setup = create_fixture(None, self, Keyword.SETUP)
+            self._setup = create_fixture(self.fixture_class, None, self, Keyword.SETUP)
         return self._setup
 
     @setup.setter
     def setup(self, setup: 'Keyword|DataDict|None'):
-        self._setup = create_fixture(setup, self, Keyword.SETUP)
+        self._setup = create_fixture(self.fixture_class, setup, self, Keyword.SETUP)
 
     @property
     def has_setup(self) -> bool:
@@ -215,12 +220,12 @@ class TestSuite(ModelObject):
         See :attr:`setup` for more information.
         """
         if self._teardown is None:
-            self._teardown = create_fixture(None, self, Keyword.TEARDOWN)
+            self._teardown = create_fixture(self.fixture_class, None, self, Keyword.TEARDOWN)
         return self._teardown
 
     @teardown.setter
     def teardown(self, teardown: 'Keyword|DataDict|None'):
-        self._teardown = create_fixture(teardown, self, Keyword.TEARDOWN)
+        self._teardown = create_fixture(self.fixture_class, teardown, self, Keyword.TEARDOWN)
 
     @property
     def has_teardown(self) -> bool:
@@ -373,11 +378,10 @@ class TestSuite(ModelObject):
             data['suites'] = self.suites.to_dicts()
         return data
 
-
-class TestSuites(ItemList[TestSuite]):
+class TestSuites(ItemList[TS]):
     __slots__ = []
 
-    def __init__(self, suite_class: Type[TestSuite] = TestSuite,
-                 parent: 'TestSuite|None' = None,
-                 suites: 'Sequence[TestSuite|DataDict]' = ()):
+    def __init__(self, suite_class: Type[TS] = TestSuite,
+                 parent: 'TS|None' = None,
+                 suites: 'Sequence[TS|DataDict]' = ()):
         super().__init__(suite_class, {'parent': parent}, suites)

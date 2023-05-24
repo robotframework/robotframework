@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import warnings
 from itertools import chain
 from os.path import normpath
 from pathlib import Path
@@ -55,18 +56,26 @@ class TestSuiteBuilder:
     classmethod that uses this class internally.
     """
 
-    def __init__(self, included_suites: Sequence[str] = (),
+    def __init__(self, included_suites: str = 'DEPRECATED',
                  included_extensions: Sequence[str] = ('.robot', '.rbt'),
+                 included_files: Sequence[str] = (),
                  custom_parsers: Sequence[str] = (),
                  defaults: 'TestDefaults|None' = None,
-                 rpa: 'bool|None' = None, lang: LanguagesLike = None,
-                 allow_empty_suite: bool = False, process_curdir: bool = True):
+                 rpa: 'bool|None' = None,
+                 lang: LanguagesLike = None,
+                 allow_empty_suite: bool = False,
+                 process_curdir: bool = True):
         """
         :param included_suites:
-            List of suite names to include. If not given, all suites are included.
-            Same as using ``--suite`` on the command line.
+            This argument used to be used for limiting what suite file to parse.
+            It is deprecated and has no effect starting from RF 6.1. Use the
+            new ``included_files`` argument or filter the created suite after
+            parsing instead.
         :param included_extensions:
             List of extensions of files to parse. Same as ``--extension``.
+        :param included_files:
+            List of filename patterns to include. If no files are specified, all
+            files are parsed. Same as `--files`. New in RF 6.1.
         :param custom_parsers:
             Custom parsers as names or paths (same as ``--parser``) or as
             parser objects. New in RF 6.1.
@@ -94,10 +103,15 @@ class TestSuiteBuilder:
         self.standard_parsers = self._get_standard_parsers(lang, process_curdir)
         self.custom_parsers = self._get_custom_parsers(custom_parsers)
         self.defaults = defaults
-        self.included_suites = tuple(included_suites or ())
         self.included_extensions = tuple(included_extensions or ())
+        self.included_files = tuple(included_files or ())
         self.rpa = rpa
         self.allow_empty_suite = allow_empty_suite
+        # TODO: Remove in RF 7.
+        if included_suites != 'DEPRECATED':
+            warnings.warn("'TestSuiteBuilder' argument 'included_suites' is deprecated "
+                          "and has no effect. Use the new 'included_files' argument "
+                          "or filter the parsed suite instead.")
 
     def _get_standard_parsers(self, lang: LanguagesLike,
                               process_curdir: bool) -> 'dict[str, Parser]':
@@ -129,18 +143,18 @@ class TestSuiteBuilder:
                 custom_parsers[ext] = custom_parser
         return custom_parsers
 
-    def build(self, *paths: 'Path|str'):
+    def build(self, *paths: 'Path|str') -> TestSuite:
         """
         :param paths: Paths to test data files or directories.
         :return: :class:`~robot.running.model.TestSuite` instance.
         """
         paths = self._normalize_paths(paths)
-        extensions = chain(self.included_extensions, self.custom_parsers)
+        extensions = self.included_extensions + tuple(self.custom_parsers)
         structure = SuiteStructureBuilder(extensions,
-                                          self.included_suites).build(*paths)
+                                          self.included_files).build(*paths)
         suite = SuiteStructureParser(self._get_parsers(paths), self.defaults,
                                      self.rpa).parse(structure)
-        if not self.included_suites and not self.allow_empty_suite:
+        if not self.allow_empty_suite:
             self._validate_not_empty(suite, multi_source=len(paths) > 1)
         suite.remove_empty_suites(preserve_direct_children=len(paths) > 1)
         return suite

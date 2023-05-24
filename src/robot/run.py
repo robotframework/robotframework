@@ -96,6 +96,10 @@ Options
                           extension is needed, separate them with a colon.
                           Examples: `--extension txt`, `--extension robot:txt`
                           Only `*.robot` files are parsed by default.
+ -f --files pattern *     Parse only files with a name that matches one of the
+                          specified patterns when executing a directory.
+                          Has no effect when running individual files or when
+                          using resource files.
  -N --name name           Set the name of the top level suite. By default the
                           name is created based on the executed file or
                           directory.
@@ -431,8 +435,8 @@ class RobotFramework(Application):
         LOGGER.info(f'Settings:\n{settings}')
         if settings.pythonpath:
             sys.path = settings.pythonpath + sys.path
-        builder = TestSuiteBuilder(settings.suite_names,
-                                   included_extensions=settings.extension,
+        builder = TestSuiteBuilder(included_extensions=settings.extension,
+                                   included_files=settings.file_patterns,
                                    custom_parsers=settings.parsers,
                                    rpa=settings.rpa,
                                    lang=settings.languages,

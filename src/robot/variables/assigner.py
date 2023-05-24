@@ -14,11 +14,14 @@
 #  limitations under the License.
 
 import re
+from collections.abc import MutableSequence
 
 from robot.errors import (DataError, ExecutionStatus, HandlerExecutionFailed,
                           VariableError)
-from robot.utils import (ErrorDetails, format_assign_message, get_error_message,
+from robot.utils import (DotDict, ErrorDetails, format_assign_message,
+                         get_error_message, is_dict_like, is_list_like,
                          is_number, is_string, prepr, type_name)
+from .search import search_variable, VariableMatch
 
 
 class VariableAssignment:
@@ -105,10 +108,12 @@ class VariableAssigner:
         context.output.trace(lambda: 'Return: %s' % prepr(return_value),
                              write_if_flat=False)
         resolver = ReturnValueResolver(self._assignment)
-        for name, value in resolver.resolve(return_value):
-            if not self._extended_assign(name, value, context.variables):
+        for name, items, value in resolver.resolve(return_value):
+            if items:
+                value = self._item_assign(name, items, value, context.variables)
+            elif not self._extended_assign(name, value, context.variables):
                 value = self._normal_assign(name, value, context.variables)
-            context.info(format_assign_message(name, value))
+            context.info(format_assign_message(name, value, items))
 
     def _extended_assign(self, name, value, variables):
         if name[0] != '$' or '.' not in name or name in variables:
@@ -134,6 +139,65 @@ class VariableAssigner:
     def _is_valid_extended_attribute(self, attr):
         return self._valid_extended_attr.match(attr) is not None
 
+    def _parse_sequence_index(self, index):
+        if isinstance(index, (int, slice)):
+            return index
+        if not is_string(index):
+            raise ValueError
+        if ':' not in index:
+            return int(index)
+        if index.count(':') > 2:
+            raise ValueError
+        return slice(*[int(i) if i else None for i in index.split(':')])
+
+    def _variable_type_supports_item_assign(self, var):
+        return (hasattr(var, '__setitem__') and callable(var.__setitem__))
+
+    def _raise_cannot_set_type(self, value, expected):
+        value_type = type_name(value)
+        raise VariableError(f"Expected {expected}-like value, got {value_type}.")
+
+    def _validate_item_assign(self, name, value):
+        if name[0] == '@':
+            if not is_list_like(value):
+                self._raise_cannot_set_type(value, 'list')
+            value = list(value)
+        if name[0] == '&':
+            if not is_dict_like(value):
+                self._raise_cannot_set_type(value, 'dictionary')
+            value = DotDict(value)
+        return value
+
+    def _item_assign(self, name, items, value, variables):
+        *nested, item = items
+        decorated_nested_items = ''.join(f'[{item}]' for item in nested)
+        var = variables.replace_scalar(f'${name[1:]}{decorated_nested_items}')
+
+        if not self._variable_type_supports_item_assign(var):
+            var_type = type_name(var)
+            raise VariableError(
+                f"Variable '{name}{decorated_nested_items}' is {var_type} "
+                f"and does not support item assignment."
+                )
+
+        selector = variables.replace_scalar(item)
+        if isinstance(var, MutableSequence):
+            try:
+                selector = self._parse_sequence_index(selector)
+            except ValueError:
+                pass
+        try:
+            value = self._validate_item_assign(name, value)
+            var[selector] = value
+        except (IndexError, TypeError, Exception):
+            var_type = type_name(var)
+            raise VariableError(
+                f"Setting value to {var_type} variable "
+                f"'{name}{decorated_nested_items}' "
+                f"at index [{item}] failed: {get_error_message()}"
+                )
+        return value
+
     def _normal_assign(self, name, value, variables):
         variables[name] = value
         # Always return the actually assigned value.
@@ -158,21 +222,28 @@ class NoReturnValueResolver:
 
 class OneReturnValueResolver:
 
-    def __init__(self, variable):
-        self._variable = variable
+    def __init__(self, assignment):
+        match: VariableMatch = search_variable(assignment)
+        self._name = match.name
+        self._items = match.items
 
     def resolve(self, return_value):
         if return_value is None:
-            identifier = self._variable[0]
+            identifier = self._name[0]
             return_value = {'$': None, '@': [], '&': {}}[identifier]
-        return [(self._variable, return_value)]
+        return [(self._name, self._items, return_value)]
 
 
 class _MultiReturnValueResolver:
 
-    def __init__(self, variables):
-        self._variables = variables
-        self._min_count = len(variables)
+    def __init__(self, assignments):
+        self._names = []
+        self._items = []
+        for assigment in assignments:
+            match: VariableMatch = search_variable(assigment)
+            self._names.append(match.name)
+            self._items.append(match.items)
+        self._min_count = len(assignments)
 
     def resolve(self, return_value):
         return_value = self._convert_to_list(return_value)
@@ -210,13 +281,13 @@ class ScalarsOnlyReturnValueResolver(_MultiReturnValueResolver):
                         % (self._min_count, return_count))
 
     def _resolve(self, return_value):
-        return list(zip(self._variables, return_value))
+        return list(zip(self._names, self._items, return_value))
 
 
 class ScalarsAndListReturnValueResolver(_MultiReturnValueResolver):
 
-    def __init__(self, variables):
-        _MultiReturnValueResolver.__init__(self, variables)
+    def __init__(self, assignments):
+        _MultiReturnValueResolver.__init__(self, assignments)
         self._min_count -= 1
 
     def _validate(self, return_count):
@@ -225,23 +296,23 @@ class ScalarsAndListReturnValueResolver(_MultiReturnValueResolver):
                         % (self._min_count, return_count))
 
     def _resolve(self, return_value):
-        before_vars, list_var, after_vars \
-            = self._split_variables(self._variables)
-        before_items, list_items, after_items \
-            = self._split_return(return_value, before_vars, after_vars)
-        before = list(zip(before_vars, before_items))
-        after = list(zip(after_vars, after_items))
-        return before + [(list_var, list_items)] + after
+        list_index = [a[0][0] for a in self._names].index('@')
+        list_len = len(return_value) - len(self._names) + 1
 
-    def _split_variables(self, variables):
-        list_index = [v[0] for v in variables].index('@')
-        return (variables[:list_index],
-                variables[list_index],
-                variables[list_index+1:])
+        elements_before_list = list(zip(
+            self._names[:list_index],
+            self._items[:list_index],
+            return_value[:list_index],
+        ))
+        elements_after_list = list(zip(
+            self._names[list_index+1:],
+            self._items[list_index+1:],
+            return_value[list_index+list_len:],
+        ))
+        list_elements = [(
+            self._names[list_index],
+            self._items[list_index],
+            return_value[list_index:list_index+list_len],
+        )]
 
-    def _split_return(self, return_value, before_vars, after_vars):
-        list_start = len(before_vars)
-        list_end = len(return_value) - len(after_vars)
-        return (return_value[:list_start],
-                return_value[list_start:list_end],
-                return_value[list_end:])
+        return elements_before_list + list_elements + elements_after_list

@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from pathlib import Path
-from typing import Any, Iterable, Sequence, Type, TYPE_CHECKING
+from typing import Any, Sequence, Type, TYPE_CHECKING, TypeVar
 
 from robot.utils import setter
 
@@ -30,6 +30,9 @@ if TYPE_CHECKING:
     from .visitor import SuiteVisitor
 
 
+TC = TypeVar('TC', bound='TestCase')
+
+
 class TestCase(ModelObject):
     """Base model for a single test case.
 
@@ -41,8 +44,11 @@ class TestCase(ModelObject):
     repr_args = ('name',)
     __slots__ = ['parent', 'name', 'doc', 'timeout', 'lineno', '_setup', '_teardown']
 
-    def __init__(self, name: str = '', doc: str = '', tags: Sequence[str] = (),
-                 timeout: 'str|None' = None, lineno: 'int|None' = None,
+    def __init__(self, name: str = '',
+                 doc: str = '',
+                 tags: Sequence[str] = (),
+                 timeout: 'str|None' = None,
+                 lineno: 'int|None' = None,
                  parent: 'TestSuite|None' = None):
         self.name = name
         self.doc = doc
@@ -55,7 +61,7 @@ class TestCase(ModelObject):
         self._teardown: 'Keyword|None' = None
 
     @setter
-    def body(self, body: 'Iterable[BodyItem|DataDict]') -> Body:
+    def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
         """Test body as a :class:`~robot.model.body.Body` object."""
         return self.body_class(self, body)
 
@@ -90,12 +96,12 @@ class TestCase(ModelObject):
         ``test.keywords.setup``.
         """
         if self._setup is None:
-            self._setup = create_fixture(None, self, Keyword.SETUP)
+            self._setup = create_fixture(self.fixture_class, None, self, Keyword.SETUP)
         return self._setup
 
     @setup.setter
     def setup(self, setup: 'Keyword|DataDict|None'):
-        self._setup = create_fixture(setup, self, Keyword.SETUP)
+        self._setup = create_fixture(self.fixture_class, setup, self, Keyword.SETUP)
 
     @property
     def has_setup(self) -> bool:
@@ -118,12 +124,12 @@ class TestCase(ModelObject):
         See :attr:`setup` for more information.
         """
         if self._teardown is None:
-            self._teardown = create_fixture(None, self, Keyword.TEARDOWN)
+            self._teardown = create_fixture(self.fixture_class, None, self, Keyword.TEARDOWN)
         return self._teardown
 
     @teardown.setter
     def teardown(self, teardown: 'Keyword|DataDict|None'):
-        self._teardown = create_fixture(teardown, self, Keyword.TEARDOWN)
+        self._teardown = create_fixture(self.fixture_class, teardown, self, Keyword.TEARDOWN)
 
     @property
     def has_teardown(self) -> bool:
@@ -197,12 +203,12 @@ class TestCase(ModelObject):
         return data
 
 
-class TestCases(ItemList[TestCase]):
+class TestCases(ItemList[TC]):
     __slots__ = []
 
-    def __init__(self, test_class: Type[TestCase] = TestCase,
+    def __init__(self, test_class: Type[TC] = TestCase,
                  parent: 'TestSuite|None' = None,
-                 tests: 'Sequence[TestCase|DataDict]' = ()):
+                 tests: 'Sequence[TC|DataDict]' = ()):
         super().__init__(test_class, {'parent': parent}, tests)
 
     def _check_type_and_set_attrs(self, test):

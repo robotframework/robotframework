@@ -55,7 +55,7 @@ class Matcher:
 
 class MultiMatcher(Iterable[Matcher]):
 
-    def __init__(self, patterns: Iterable[str] = (), ignore: Sequence[str] = (),
+    def __init__(self, patterns: Sequence[str] = (), ignore: Sequence[str] = (),
                  caseless: bool = True, spaceless: bool = True,
                  match_if_no_patterns: bool = False, regexp: bool = False):
         self.matchers = [Matcher(pattern, ignore, caseless, spaceless, regexp)

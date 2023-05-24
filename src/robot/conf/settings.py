@@ -42,6 +42,7 @@ class _BaseSettings:
                  'TestNames'        : ('test', []),
                  'TaskNames'        : ('task', []),
                  'SuiteNames'       : ('suite', []),
+                 'FilePatterns'     : ('files', []),
                  'SetTag'           : ('settag', []),
                  'Include'          : ('include', []),
                  'Exclude'          : ('exclude', []),
@@ -392,6 +393,10 @@ class _BaseSettings:
     def suite_names(self):
         return self._filter_empty(self['SuiteNames'])
 
+    @property
+    def file_patterns(self):
+        return self._filter_empty(self['FilePatterns'])
+
     def _filter_empty(self, items):
         return [i for i in items if i] or None
 
@@ -484,8 +489,9 @@ class RobotSettings(_BaseSettings):
     def get_rebot_settings(self):
         settings = RebotSettings()
         settings.start_timestamp = self.start_timestamp
-        not_copied = {'Include', 'Exclude', 'TestNames', 'SuiteNames', 'Name', 'Doc',
-                      'Metadata', 'SetTag', 'Output', 'LogLevel', 'TimestampOutputs'}
+        not_copied = {'Include', 'Exclude', 'TestNames', 'SuiteNames', 'FilePatterns',
+                      'Name', 'Doc', 'Metadata', 'SetTag', 'Output', 'LogLevel',
+                      'TimestampOutputs'}
         for opt in settings._opts:
             if opt in self and opt not in not_copied:
                 settings._opts[opt] = self[opt]

@@ -18,6 +18,7 @@ Command line options for test execution
                           of a `built-in language <Translations_>`__, or a path
                           or a module name of a custom language file.
   -F, --extension <value>  `Parse only these files`_ when executing a directory.
+  -f, --files <pattern>   `Parse only matching files`_ when executing a directory.
   -N, --name <name>       `Sets the name`_ of the top-level test suite.
   -D, --doc <document>    `Sets the documentation`_ of the top-level test suite.
   -M, --metadata <name:value>  `Sets free metadata`_ for the top level test suite.
@@ -150,6 +151,7 @@ Command line options for post-processing outputs
 
 .. _generic automation: `Task execution`_
 .. _Parse only these files: `Selecting files to parse`_
+.. _Parse only matching files: `Selecting files to parse`_
 .. _Sets the name: `Setting suite name`_
 .. _Sets the documentation: `Setting suite documentation`_
 .. _Sets free metadata: `Setting free suite metadata`_

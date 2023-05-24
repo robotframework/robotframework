@@ -14,12 +14,17 @@
 #  limitations under the License.
 
 import re
-from typing import Any, Callable, cast, Iterable, Type, TYPE_CHECKING, TypeVar
+from typing import (Any, Callable, cast, Generic, Iterable, Type, TYPE_CHECKING,
+                    TypeVar, Union)
+
+from robot.utils import copy_signature, KnownAtRuntime
 
 from .itemlist import ItemList
 from .modelobject import DataDict, full_name, ModelObject
 
 if TYPE_CHECKING:
+    from robot.result.model import ForIteration, WhileIteration
+    from robot.running.model import UserKeyword, ResourceFile
     from .control import (Break, Continue, Error, For, If, IfBranch, Return,
                           Try, TryBranch, While)
     from .keyword import Keyword
@@ -28,7 +33,21 @@ if TYPE_CHECKING:
     from .testsuite import TestSuite
 
 
-T = TypeVar("T", bound="BodyItem")
+BodyItemParent = Union['TestSuite', 'TestCase', 'UserKeyword', 'For', 'ForIteration',
+                       'If', 'IfBranch', 'Try', 'TryBranch', 'While', 'WhileIteration',
+                       'Keyword', 'Return', 'Continue', 'Break', 'Error', None]
+BI = TypeVar('BI', bound='BodyItem')
+KW = TypeVar('KW', bound='Keyword')
+F = TypeVar('F', bound='For')
+W = TypeVar('W', bound='While')
+I = TypeVar('I', bound='If')
+T = TypeVar('T', bound='Try')
+R = TypeVar('R', bound='Return')
+C = TypeVar('C', bound='Continue')
+B = TypeVar('B', bound='Break')
+M = TypeVar('M', bound='Message')
+E = TypeVar('E', bound='Error')
+IT = TypeVar('IT', bound='IfBranch|TryBranch')
 
 
 class BodyItem(ModelObject):
@@ -68,13 +87,13 @@ class BodyItem(ModelObject):
         - With :class:`~robot.model.control.If` and :class:`~robot.model.control.Try`
           instances representing IF/TRY structure roots.
         """
-        # This algorithm must match the id creation algorithm in the JavaScript side
-        # or linking to warnings and errors won't work.
-        if not self.parent:
-            return 'k1'
         return self._get_id(self.parent)
 
-    def _get_id(self, parent: 'TestSuite|TestCase|BodyItem') -> str:
+    def _get_id(self, parent: 'BodyItemParent|ResourceFile') -> str:
+        if not parent:
+            return 'k1'
+        # This algorithm must match the id creation algorithm in the JavaScript side
+        # or linking to warnings and errors won't work.
         steps = []
         if getattr(parent, 'has_setup', False):
             steps.append(parent.setup)          # type: ignore - Use Protocol with RF 7.
@@ -85,42 +104,29 @@ class BodyItem(ModelObject):
         if getattr(parent, 'has_teardown', False):
             steps.append(parent.teardown)       # type: ignore - Use Protocol with RF 7.
         index = steps.index(self) if self in steps else len(steps)
-        parent_id = parent.id
+        parent_id = getattr(parent, 'id', None)
         return f'{parent_id}-k{index + 1}' if parent_id else f'k{index + 1}'
 
     def to_dict(self) -> DataDict:
         raise NotImplementedError
 
 
-class BaseBody(ItemList[BodyItem]):
+class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, R, C, B, M, E]):
     """Base class for Body and Branches objects."""
     __slots__ = []
     # Set using 'BaseBody.register' when these classes are created.
+    keyword_class: Type[KW] = KnownAtRuntime
+    for_class: Type[F] = KnownAtRuntime
+    while_class: Type[W] = KnownAtRuntime
+    if_class: Type[I] = KnownAtRuntime
+    try_class: Type[T] = KnownAtRuntime
+    return_class: Type[R] = KnownAtRuntime
+    continue_class: Type[C] = KnownAtRuntime
+    break_class: Type[B] = KnownAtRuntime
+    message_class: Type[M] = KnownAtRuntime
+    error_class: Type[E] = KnownAtRuntime
 
-    if TYPE_CHECKING:
-        keyword_class = Keyword
-        for_class = For
-        while_class = While
-        if_class = If
-        try_class = Try
-        return_class = Return
-        continue_class = Continue
-        break_class = Break
-        message_class = Message
-        error_class = Error
-    else:
-        keyword_class = None
-        for_class = None
-        while_class = None
-        if_class = None
-        try_class = None
-        return_class = None
-        continue_class = None
-        break_class = None
-        message_class = None
-        error_class = None
-
-    def __init__(self, parent: 'TestSuite|TestCase|BodyItem|None' = None,
+    def __init__(self, parent: BodyItemParent = None,
                  items: 'Iterable[BodyItem|DataDict]' = ()):
         super().__init__(BodyItem, {'parent': parent}, items)
 
@@ -138,7 +144,7 @@ class BaseBody(ItemList[BodyItem]):
         return item_class.from_dict(data)
 
     @classmethod
-    def register(cls, item_class: Type[T]) -> Type[T]:
+    def register(cls, item_class: Type[BI]) -> Type[BI]:
         name_parts = re.findall('([A-Z][a-z]+)', item_class.__name__) + ['class']
         name = '_'.join(name_parts).lower()
         if not hasattr(cls, name):
@@ -153,40 +159,50 @@ class BaseBody(ItemList[BodyItem]):
             f"Use item specific methods like 'create_keyword' instead."
         )
 
-    def _create(self, cls: 'Type[T]', name: str, args: 'tuple[Any]',
-                kwargs: 'dict[str, Any]') -> T:
-        if cls is None:
+    def _create(self, cls: 'Type[BI]', name: str, args: 'tuple[Any]',
+                kwargs: 'dict[str, Any]') -> BI:
+        if cls is KnownAtRuntime:
             raise TypeError(f"'{full_name(self)}' object does not support '{name}'.")
-        return self.append(cls(*args, **kwargs))
+        return self.append(cls(*args, **kwargs))  # type: ignore
 
-    def create_keyword(self, *args, **kwargs) -> 'Keyword':
+    @copy_signature(keyword_class)
+    def create_keyword(self, *args, **kwargs) -> keyword_class:
         return self._create(self.keyword_class, 'create_keyword', args, kwargs)
 
-    def create_for(self, *args, **kwargs) -> 'For':
+    @copy_signature(for_class)
+    def create_for(self, *args, **kwargs) -> for_class:
         return self._create(self.for_class, 'create_for', args, kwargs)
 
-    def create_if(self, *args, **kwargs) -> 'If':
+    @copy_signature(if_class)
+    def create_if(self, *args, **kwargs) -> if_class:
         return self._create(self.if_class, 'create_if', args, kwargs)
 
-    def create_try(self, *args, **kwargs) -> 'Try':
+    @copy_signature(try_class)
+    def create_try(self, *args, **kwargs) -> try_class:
         return self._create(self.try_class, 'create_try', args, kwargs)
 
-    def create_while(self, *args, **kwargs) -> 'While':
+    @copy_signature(while_class)
+    def create_while(self, *args, **kwargs) -> while_class:
         return self._create(self.while_class, 'create_while', args, kwargs)
 
-    def create_return(self, *args, **kwargs) -> 'Return':
+    @copy_signature(return_class)
+    def create_return(self, *args, **kwargs) -> return_class:
         return self._create(self.return_class, 'create_return', args, kwargs)
 
-    def create_continue(self, *args, **kwargs) -> 'Continue':
+    @copy_signature(continue_class)
+    def create_continue(self, *args, **kwargs) -> continue_class:
         return self._create(self.continue_class, 'create_continue', args, kwargs)
 
-    def create_break(self, *args, **kwargs) -> 'Break':
+    @copy_signature(break_class)
+    def create_break(self, *args, **kwargs) -> break_class:
         return self._create(self.break_class, 'create_break', args, kwargs)
 
-    def create_message(self, *args, **kwargs) -> 'Message':
+    @copy_signature(message_class)
+    def create_message(self, *args, **kwargs) -> message_class:
         return self._create(self.message_class, 'create_message', args, kwargs)
 
-    def create_error(self, *args, **kwargs) -> 'Error':
+    @copy_signature(error_class)
+    def create_error(self, *args, **kwargs) -> error_class:
         return self._create(self.error_class, 'create_error', args, kwargs)
 
     def filter(self, keywords: 'bool|None' = None, messages: 'bool|None' = None,
@@ -214,7 +230,7 @@ class BaseBody(ItemList[BodyItem]):
         use ``body.filter(keywords=False``, messages=False)``. For more detailed
         filtering it is possible to use ``predicate``.
         """
-        if messages is not None and not self.message_class:
+        if messages is not None and self.message_class is KnownAtRuntime:
             raise TypeError(f"'{full_name(self)}' object does not support "
                             f"filtering by 'messages'.")
         return self._filter([(self.keyword_class, keywords),
@@ -251,7 +267,8 @@ class BaseBody(ItemList[BodyItem]):
         return steps
 
 
-class Body(BaseBody):
+class Body(BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Return', 'Continue',
+                    'Break', 'Message', 'Error']):
     """A list-like object representing a body of a test, keyword, etc.
 
     Body contains the keywords and other structures such as FOR loops.
@@ -259,19 +276,25 @@ class Body(BaseBody):
     pass
 
 
-class Branches(BaseBody):
+class BranchType(Generic[IT]):
+    """Class that wrapps `Generic` as python doesn't allow multple generic inheritance"""
+    pass
+
+
+class BaseBranches(BaseBody[KW, F, W, I, T, R, C, B, M, E], BranchType[IT]):
     """A list-like object representing IF and TRY branches."""
     __slots__ = ['branch_class']
+    branch_type: Type[IT] = KnownAtRuntime
 
-    def __init__(self, branch_class: 'Type[IfBranch|TryBranch]',
-                 parent: 'TestSuite|TestCase|BodyItem|None' = None,
+    def __init__(self, branch_class: Type[IT],
+                 parent: BodyItemParent = None,
                  items: 'Iterable[BodyItem|DataDict]' = ()):
-
         self.branch_class = branch_class
         super().__init__(parent, items)
 
-    def _item_from_dict(self, data: DataDict) -> 'IfBranch|TryBranch':
+    def _item_from_dict(self, data: DataDict) -> IT:
         return self.branch_class.from_dict(data)
 
-    def create_branch(self, *args, **kwargs) -> 'IfBranch|TryBranch':
+    @copy_signature(branch_type)
+    def create_branch(self, *args, **kwargs) -> IT:
         return self._create(self.branch_class, 'create_branch', args, kwargs)

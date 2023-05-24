@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Iterable, Iterator, Sequence
 
 from robot.errors import DataError
-from robot.model import SuiteNamePatterns
+from robot.model import FileNamePatterns
 from robot.output import LOGGER
 from robot.utils import get_error_message
 
@@ -131,12 +131,11 @@ class SuiteStructureBuilder:
     ignored_prefixes = ('_', '.')
     ignored_dirs = ('CVS',)
 
-    def __init__(self, extensions: Iterable[str] = ('.robot', '.rbt'),
-                 included_suites: Iterable[str] = ()):
+    def __init__(self, extensions: Sequence[str] = ('.robot', '.rbt'),
+                 included_files: Sequence[str] = ()):
         self.extensions = ValidExtensions(extensions)
-        self.included_suites = SuiteNamePatterns(
-            self._create_included_suites(included_suites)
-        )
+        self.included_files = None if not included_files else \
+            FileNamePatterns(included_files)
 
     def _create_included_suites(self, included_suites):
         for suite in included_suites:
@@ -147,38 +146,32 @@ class SuiteStructureBuilder:
 
     def build(self, *paths: Path) -> SuiteStructure:
         if len(paths) == 1:
-            return self._build(paths[0], self.included_suites)
+            return self._build(paths[0])
         return self._build_multi_source(paths)
 
-    def _build(self, path: Path, included_suites: SuiteNamePatterns) -> SuiteStructure:
+    def _build(self, path: Path) -> SuiteStructure:
         if path.is_file():
             return SuiteFile(self.extensions, path)
-        return self._build_directory(path, included_suites)
+        return self._build_directory(path)
 
-    def _build_directory(self, path: Path,
-                         included_suites: SuiteNamePatterns) -> SuiteStructure:
+    def _build_directory(self, path: Path) -> SuiteStructure:
         structure = SuiteDirectory(self.extensions, path)
-        # If a directory is included, also its children are included.
-        if self._is_suite_included(path.name, included_suites):
-            included_suites = SuiteNamePatterns()
         for item in self._list_dir(path):
             if self._is_init_file(item):
                 if structure.init_file:
                     LOGGER.error(f"Ignoring second test suite init file '{item}'.")
                 else:
                     structure.init_file = item
-            elif self._is_included(item, included_suites):
-                structure.add(self._build(item, included_suites))
+            elif self._is_included(item):
+                structure.add(self._build(item))
             else:
                 LOGGER.info(f"Ignoring file or directory '{item}'.")
         return structure
 
-    def _is_suite_included(self, name: str, included_suites: SuiteNamePatterns) -> bool:
-        if not included_suites:
+    def _is_file_included(self, name, included_files):
+        if not included_files:
             return True
-        if '__' in name:
-            name = name.split('__', 1)[1] or name
-        return included_suites.match(name)
+        return included_files.match(name)
 
     def _list_dir(self, path: Path) -> 'list[Path]':
         try:
@@ -191,7 +184,7 @@ class SuiteStructureBuilder:
                 and self.extensions.match(path)
                 and path.is_file())
 
-    def _is_included(self, path: Path, included_suites: SuiteNamePatterns) -> bool:
+    def _is_included(self, path: Path) -> bool:
         if path.name.startswith(self.ignored_prefixes):
             return False
         if path.is_dir():
@@ -200,7 +193,7 @@ class SuiteStructureBuilder:
             return False
         if not self.extensions.match(path):
             return False
-        return self._is_suite_included(path.stem, included_suites)
+        return self._is_file_included(path.name, self.included_files)
 
     def _build_multi_source(self, paths: Iterable[Path]) -> SuiteStructure:
         structure = SuiteDirectory(self.extensions)
@@ -210,5 +203,5 @@ class SuiteStructureBuilder:
                     raise DataError("Multiple init files not allowed.")
                 structure.init_file = path
             else:
-                structure.add(self._build(path, self.included_suites))
+                structure.add(self._build(path))
         return structure

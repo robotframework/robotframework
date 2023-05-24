@@ -200,7 +200,7 @@ class KeywordCallLexer(StatementLexer):
         for token in self.statement:
             if keyword_seen:
                 token.type = Token.ARGUMENT
-            elif is_assign(token.value, allow_assign_mark=True):
+            elif is_assign(token.value, allow_assign_mark=True, allow_items=True):
                 token.type = Token.ASSIGN
             else:
                 token.type = Token.KEYWORD
@@ -244,7 +244,7 @@ class InlineIfHeaderLexer(StatementLexer):
         for token in statement:
             if token.value == 'IF':
                 return True
-            if not is_assign(token.value, allow_assign_mark=True):
+            if not is_assign(token.value, allow_assign_mark=True, allow_items=True):
                 return False
         return False
 

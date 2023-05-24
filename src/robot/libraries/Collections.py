@@ -111,6 +111,11 @@ class _List:
         | Set List Value | ${L3} | -1 | yyy |
         =>
         | ${L3} = ['a', 'xxx', 'yyy']
+
+        Starting from Robot Framework 6.1, it is also possible to use the native
+        item assignment syntax. This is equivalent to the above:
+        | ${L3}[1] =  | Set Variable | xxx |
+        | ${L3}[-1] = | Set Variable | yyy |
         """
         self._validate_list(list_)
         try:
@@ -495,21 +500,25 @@ class _Dictionary:
         return dict(item)
 
     def set_to_dictionary(self, dictionary, *key_value_pairs, **items):
-        """Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.
+        """Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.
 
-        Giving items as ``key_value_pairs`` means giving keys and values
-        as separate arguments:
+        If given items already exist in the dictionary, their values are updated.
 
-        | Set To Dictionary | ${D1} | key | value | second | ${2} |
+        It is easiest to specify items using the ``name=value`` syntax:
+        | Set To Dictionary | ${D1} | key=value | second=${2} |
         =>
         | ${D1} = {'a': 1, 'key': 'value', 'second': 2}
 
-        | Set To Dictionary | ${D1} | key=value | second=${2} |
+        A limitation of the above syntax is that keys must be strings.
+        That can be avoided by passing keys and values as separate arguments:
+        | Set To Dictionary | ${D1} | key | value | ${2} | value 2 |
+        =>
+        | ${D1} = {'a': 1, 'key': 'value', 2: 'value 2'}
 
-        The latter syntax is typically more convenient to use, but it has
-        a limitation that keys must be strings.
-
-        If given keys already exist in the dictionary, their values are updated.
+        Starting from Robot Framework 6.1, it is also possible to use the native
+        item assignment syntax. This is equivalent to the above:
+        | ${D1}[key] =  | Set Variable | value |
+        | ${D1}[${2}] = | Set Variable | value 2 |
         """
         self._validate_dictionary(dictionary)
         if len(key_value_pairs) % 2 != 0:
