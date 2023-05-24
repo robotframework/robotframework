@@ -106,13 +106,9 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from robot.model import (Break, BodyItem, Continue, Error, For, If, IfBranch,
-                             Keyword, Message, Return, TestCase, TestSuite, Try,
+                             Keyword, Message, Return, ModelTestCase, ModelTestSuite, Try,
                              TryBranch, While)
     from robot.result import ForIteration, WhileIteration
-
-    # type aliases to reduce repititon
-    ModelTestCase = TestCase[Keyword]
-    ModelTestSuite = TestSuite[Keyword, ModelTestCase]
 
 class SuiteVisitor:
     """Abstract class to ease traversing through the suite structure.
