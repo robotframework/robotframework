@@ -15,9 +15,8 @@
 
 import copy
 import json
-from io import IOBase
 from pathlib import Path
-from typing import Any, Dict, overload, Type, TypeVar
+from typing import Any, Dict, overload, TextIO, Type, TypeVar
 
 from robot.errors import DataError
 from robot.utils import get_error_message, SetterAwareType, type_name
@@ -44,7 +43,7 @@ class ModelObject(metaclass=SetterAwareType):
                             f"failed: {err}")
 
     @classmethod
-    def from_json(cls: Type[T], source: 'str|bytes|IOBase|Path') -> T:
+    def from_json(cls: Type[T], source: 'str|bytes|TextIO|Path') -> T:
         """Create this object based on JSON data.
 
         The data is given as the ``source`` parameter. It can be:
@@ -79,11 +78,11 @@ class ModelObject(metaclass=SetterAwareType):
         ...
 
     @overload
-    def to_json(self, file: 'IOBase|Path|str', *, ensure_ascii: bool = False,
-                indent: int = 0, separators: 'tuple[str, str]' = (',', ':')) -> str:
+    def to_json(self, file: 'TextIO|Path|str', *, ensure_ascii: bool = False,
+                indent: int = 0, separators: 'tuple[str, str]' = (',', ':')) -> None:
         ...
 
-    def to_json(self, file: 'None|IOBase|Path|str' = None, *,
+    def to_json(self, file: 'None|TextIO|Path|str' = None, *,
                 ensure_ascii: bool = False, indent: int = 0,
                 separators: 'tuple[str, str]' = (',', ':')) -> 'None|str':
         """Serialize this object into JSON.
@@ -193,7 +192,7 @@ def full_name(obj_or_cls):
 
 class JsonLoader:
 
-    def load(self, source: 'str|bytes|IOBase|Path') -> DataDict:
+    def load(self, source: 'str|bytes|TextIO|Path') -> DataDict:
         try:
             data = self._load(source)
         except (json.JSONDecodeError, TypeError):
@@ -227,14 +226,14 @@ class JsonDumper:
         self.config = config
 
     @overload
-    def dump(self, data: DataDict, output: None = None) -> 'str':
+    def dump(self, data: DataDict, output: None = None) -> str:
         ...
 
     @overload
-    def dump(self, data: DataDict, output: 'str|Path|IOBase') -> None:
+    def dump(self, data: DataDict, output: 'TextIO|Path|str') -> None:
         ...
 
-    def dump(self, data: DataDict, output: 'None|IOBase|Path|str' = None) -> 'None|str':
+    def dump(self, data: DataDict, output: 'None|TextIO|Path|str' = None) -> 'None|str':
         if not output:
             return json.dumps(data, **self.config)
         elif isinstance(output, (str, Path)):
