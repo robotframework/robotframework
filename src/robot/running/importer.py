@@ -26,7 +26,8 @@ from .handlerstore import HandlerStore
 from .testlibraries import TestLibrary
 
 
-RESOURCE_EXTENSIONS = ('.resource', '.robot', '.txt', '.tsv', '.rst', '.rest')
+RESOURCE_EXTENSIONS = {'.resource', '.robot', '.txt', '.tsv', '.rst', '.rest',
+                       '.json', '.rsrc'}
 
 
 class Importer:

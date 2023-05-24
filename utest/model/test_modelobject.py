@@ -5,6 +5,7 @@ import pathlib
 import unittest
 import tempfile
 
+from robot.errors import DataError
 from robot.model.modelobject import ModelObject
 from robot.utils import get_error_message
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
@@ -98,13 +99,13 @@ class TestFromDictAndJson(unittest.TestCase):
 
     def test_not_accepted_attribute(self):
         assert_raises_with_msg(
-            ValueError,
+            DataError,
             f"Creating '{__name__}.Example' object from dictionary failed: "
             f"'{__name__}.Example' object does not have attribute 'nonex'",
             Example.from_dict, {'nonex': 'attr'}
         )
         assert_raises_with_msg(
-            ValueError,
+            DataError,
             f"Creating '{__name__}.Example' object from dictionary failed: "
             f"Setting attribute 'a' failed: Ooops!",
             Example.from_dict, {'a': 'fail'}
@@ -136,7 +137,7 @@ class TestFromDictAndJson(unittest.TestCase):
     def test_invalid_json_type(self):
         error = self._get_json_load_error(None)
         assert_raises_with_msg(
-            ValueError,
+            DataError,
             f"Loading JSON data failed: Invalid JSON data: {error}",
             ModelObject.from_json, None
         )
@@ -144,14 +145,14 @@ class TestFromDictAndJson(unittest.TestCase):
     def test_invalid_json_syntax(self):
         error = self._get_json_load_error('bad')
         assert_raises_with_msg(
-            ValueError,
+            DataError,
             f"Loading JSON data failed: Invalid JSON data: {error}",
             ModelObject.from_json, 'bad'
         )
 
     def test_invalid_json_content(self):
         assert_raises_with_msg(
-            ValueError,
+            DataError,
             "Loading JSON data failed: Expected dictionary, got list.",
             ModelObject.from_json, '["bad"]'
         )
@@ -198,7 +199,7 @@ class TestToJson(unittest.TestCase):
 
     def test_invalid_output(self):
         assert_raises_with_msg(TypeError,
-                               "Output should be None, open file or path, got integer.",
+                               "Output should be None, path or open file, got integer.",
                                Example().to_json, 42)
 
 

@@ -1,0 +1,37 @@
+{
+"source":"atest/testdata/parsing/data_formats/resource_extensions/resource.json",
+"imports":[
+{
+"type":"RESOURCE",
+"name":"nested.resource",
+"lineno":3
+}
+],
+"variables":[
+{
+"name":"${JSON}",
+"value":[
+"resource.json"
+],
+"lineno":7
+}
+],
+"keywords":[
+{
+"name":"Keyword in resource.json",
+"lineno":11,
+"body":[
+{
+"name":"Should Be Equal",
+"args":["${NESTED}", "nested.resource"],
+"lineno":12
+},
+{
+"name":"Should Be Equal",
+"args":["${JSON}", "resource.json"],
+"lineno":13
+}
+]
+}
+]
+}

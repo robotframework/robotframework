@@ -6,16 +6,14 @@ Resource           atest_resource.robot
 ${DATA FORMATS}    ${DATADIR}/parsing/data_formats
 
 *** Test Cases ***
-
 Simple filename
     -f sample.robot                 18
 
-Filtering by extension
-    --files *.robot                 27
-    --FILES s*                      20
+Pattern
+    --files *.robot                 29
 
 Multiple patterns
-    --files sample.robot --files tests.robot    25
+    --files sample.robot --files tests.robot    27
 
 Combine extension and files
     --files sample.rst -F rst       18

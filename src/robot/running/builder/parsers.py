@@ -99,9 +99,11 @@ class JsonParser(Parser):
     def parse_init_file(self, source: Path, defaults: TestDefaults) -> TestSuite:
         return TestSuite.from_json(source)
 
-    # FIXME: Resource imports don't otherwise support JSON yet!
     def parse_resource_file(self, source: Path) -> ResourceFile:
-        return ResourceFile.from_json(source)
+        try:
+            return ResourceFile.from_json(source)
+        except DataError as err:
+            raise DataError(f"Parsing JSON resource file '{source}' failed: {err}")
 
 
 class NoInitFileDirectoryParser(Parser):

@@ -19,6 +19,7 @@ from io import IOBase
 from pathlib import Path
 from typing import Any, Dict, overload, Type, TypeVar
 
+from robot.errors import DataError
 from robot.utils import get_error_message, SetterAwareType, type_name
 
 
@@ -39,8 +40,8 @@ class ModelObject(metaclass=SetterAwareType):
         try:
             return cls().config(**data)
         except (AttributeError, TypeError) as err:
-            raise ValueError(f"Creating '{full_name(cls)}' object from dictionary "
-                             f"failed: {err}")
+            raise DataError(f"Creating '{full_name(cls)}' object from dictionary "
+                            f"failed: {err}")
 
     @classmethod
     def from_json(cls: Type[T], source: 'str|bytes|IOBase|Path') -> T:
@@ -62,7 +63,7 @@ class ModelObject(metaclass=SetterAwareType):
         try:
             data = JsonLoader().load(source)
         except (TypeError, ValueError) as err:
-            raise ValueError(f'Loading JSON data failed: {err}')
+            raise DataError(f'Loading JSON data failed: {err}')
         return cls.from_dict(data)
 
     def to_dict(self) -> DataDict:
@@ -242,5 +243,5 @@ class JsonDumper:
         elif hasattr(output, 'write'):
             json.dump(data, output, **self.config)
         else:
-            raise TypeError(f"Output should be None, open file or path, "
+            raise TypeError(f"Output should be None, path or open file, "
                             f"got {type_name(output)}.")

@@ -294,6 +294,11 @@ class ResourceFileBuilder:
         return resource
 
     def _parse(self, source: Path) -> ResourceFile:
-        if source.suffix.lower() in ('.rst', '.rest'):
-            return RestParser(self.lang, self.process_curdir).parse_resource_file(source)
-        return RobotParser(self.lang, self.process_curdir).parse_resource_file(source)
+        suffix = source.suffix.lower()
+        if suffix in ('.rst', '.rest'):
+            parser = RestParser(self.lang, self.process_curdir)
+        elif suffix in ('.json', '.rsrc'):
+            parser = JsonParser()
+        else:
+            parser = RobotParser(self.lang, self.process_curdir)
+        return parser.parse_resource_file(source)
