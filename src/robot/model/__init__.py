@@ -37,7 +37,7 @@ from .modifier import ModelModifier
 from .namepatterns import SuiteNamePatterns, TestNamePatterns, FileNamePatterns
 from .statistics import Statistics
 from .tags import Tags, TagPattern, TagPatterns
-from .testcase import TestCase, TestCases, ModelTestCase
-from .testsuite import TestSuite, TestSuites, ModelTestSuite
+from .testcase import TestCase, TestCases
+from .testsuite import TestSuite, TestSuites
 from .totalstatistics import TotalStatistics, TotalStatisticsBuilder
 from .visitor import SuiteVisitor

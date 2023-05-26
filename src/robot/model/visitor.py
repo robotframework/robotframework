@@ -106,7 +106,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from robot.model import (Break, BodyItem, Continue, Error, For, If, IfBranch,
-                             Keyword, Message, Return, ModelTestCase, ModelTestSuite, Try,
+                             Keyword, Message, Return, TestCase, TestSuite, Try,
                              TryBranch, While)
     from robot.result import ForIteration, WhileIteration
 
@@ -117,7 +117,7 @@ class SuiteVisitor:
     information and an example.
     """
 
-    def visit_suite(self, suite: 'ModelTestSuite'):
+    def visit_suite(self, suite: 'TestSuite'):
         """Implements traversing through suites.
 
         Can be overridden to allow modifying the passed in ``suite`` without
@@ -133,18 +133,18 @@ class SuiteVisitor:
                 suite.teardown.visit(self)
             self.end_suite(suite)
 
-    def start_suite(self, suite: 'ModelTestSuite') -> 'bool|None':
+    def start_suite(self, suite: 'TestSuite') -> 'bool|None':
         """Called when a suite starts. Default implementation does nothing.
 
         Can return explicit ``False`` to stop visiting.
         """
         pass
 
-    def end_suite(self, suite: 'ModelTestSuite'):
+    def end_suite(self, suite: 'TestSuite'):
         """Called when a suite ends. Default implementation does nothing."""
         pass
 
-    def visit_test(self, test: 'ModelTestCase'):
+    def visit_test(self, test: 'TestCase'):
         """Implements traversing through tests.
 
         Can be overridden to allow modifying the passed in ``test`` without calling
@@ -158,14 +158,14 @@ class SuiteVisitor:
                 test.teardown.visit(self)
             self.end_test(test)
 
-    def start_test(self, test: 'ModelTestCase') -> 'bool|None':
+    def start_test(self, test: 'TestCase') -> 'bool|None':
         """Called when a test starts. Default implementation does nothing.
 
         Can return explicit ``False`` to stop visiting.
         """
         pass
 
-    def end_test(self, test: 'ModelTestCase'):
+    def end_test(self, test: 'TestCase'):
         """Called when a test ends. Default implementation does nothing."""
         pass
 

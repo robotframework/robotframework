@@ -27,7 +27,7 @@ from .keyword import Keyword, Keywords
 from .metadata import Metadata
 from .modelobject import DataDict, ModelObject
 from .tagsetter import TagSetter
-from .testcase import ModelTestCase, TestCase, TestCases
+from .testcase import TestCase, TestCases
 from .visitor import SuiteVisitor
 
 TS = TypeVar('TS', bound='TestSuite')
@@ -392,8 +392,3 @@ class TestSuites(ItemList[TS]):
                  parent: 'TS|None' = None,
                  suites: 'Sequence[TS|DataDict]' = ()):
         super().__init__(suite_class, {'parent': parent}, suites)
-
-
-# Type Alias for the visitor API. Type Alias cannot use forward refrences: see PEP-0613.
-# Therefore it needs to be declared last
-ModelTestSuite = TestSuite[Keyword, ModelTestCase]
