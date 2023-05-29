@@ -34,8 +34,8 @@ class TestIncludedFiles(unittest.TestCase):
         self._test_match(Path('no_*.robot').absolute(), match=False)
 
     def test_recursive_glob(self):
-        self._test_match(Path('../../**/match.robot').absolute())
-        self._test_match(Path('../../*/match.robot').absolute(), match=False)
+        self._test_match('x/**/match.robot', path='x/y/z/match.robot')
+        self._test_match('x/*/match.robot', path='x/y/z/match.robot', match=False)
 
     def test_case_normalize(self):
         self._test_match('MATCH.robot')

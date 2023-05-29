@@ -221,7 +221,7 @@ class IncludedFiles:
 
     def _path_to_abs(self, pattern: str) -> str:
         if '/' in pattern or '.' not in pattern or os.path.exists(pattern):
-            pattern = os.path.abspath(pattern)
+            pattern = os.path.abspath(pattern).replace('\\', '/')
         return pattern
 
     def _dir_to_recursive(self, pattern: str) -> str:
