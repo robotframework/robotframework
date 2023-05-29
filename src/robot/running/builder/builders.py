@@ -74,8 +74,8 @@ class TestSuiteBuilder:
         :param included_extensions:
             List of extensions of files to parse. Same as ``--extension``.
         :param included_files:
-            List of filename patterns to include. If no files are specified, all
-            files are parsed. Same as `--files`. New in RF 6.1.
+            List of names, paths or directory paths of files to parse. All files
+            are parsed by default. Same as `--parse-include`. New in RF 6.1.
         :param custom_parsers:
             Custom parsers as names or paths (same as ``--parser``) or as
             parser objects. New in RF 6.1.
