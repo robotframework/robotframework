@@ -110,6 +110,7 @@ if TYPE_CHECKING:
                              TryBranch, While)
     from robot.result import ForIteration, WhileIteration
 
+
 class SuiteVisitor:
     """Abstract class to ease traversing through the suite structure.
 
