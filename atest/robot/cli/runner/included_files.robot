@@ -28,7 +28,7 @@ Directories are recursive
 Non-standard files matching patterns with extension are parsed
     --parse-include *.rst                                                20
     --parse-include ${DATADIR}/parsing/**/*.rst                          20
-    --parse-include ${DATADIR}/parsing/data_formats/rest                  0
+    --parse-include ${DATADIR}/parsing/data_formats/rest                  1
 
 *** Keywords ***
 Expected number of tests should be run

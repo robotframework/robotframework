@@ -71,14 +71,14 @@ class TestSuite(ModelObject):
         External parsers and other tools that want to produce suites with
         names matching names created by Robot Framework can use this method as
         well. This method is also used if :attr:`name` is not set and someone
-        accessess it.
+        accesses it.
 
         The algorithm is as follows:
 
         - If the source is ``None`` or empty, return an empty string.
         - Get the base name of the source. Read more below.
         - Remove possible prefix separated with ``__``.
-        - Convert underscrores to spaces.
+        - Convert underscores to spaces.
         - If the name is all lower case, title case it.
 
         The base name of files is got by calling `Path.stem`__ that drops
@@ -115,7 +115,7 @@ class TestSuite(ModelObject):
             extensions = [extensions]
         for ext in extensions:
             ext = '.' + ext.lower().lstrip('.')
-            if path.name.endswith(ext):
+            if path.name.lower().endswith(ext):
                 return path.name[:-len(ext)]
         raise ValueError(f"File '{path}' does not have extension "
                          f"{seq2str(extensions, lastsep=' or ')}.")

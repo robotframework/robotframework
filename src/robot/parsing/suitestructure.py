@@ -109,7 +109,7 @@ class SuiteStructureBuilder:
     ignored_prefixes = ('_', '.')
     ignored_dirs = ('CVS',)
 
-    def __init__(self, extensions: Sequence[str] = ('.robot', '.rbt'),
+    def __init__(self, extensions: Sequence[str] = ('.robot', '.rbt', '.robot.rst'),
                  included_files: Sequence[str] = ()):
         self.extensions = ValidExtensions(extensions, included_files)
         self.included_files = IncludedFiles(included_files)

@@ -57,7 +57,7 @@ class TestSuiteBuilder:
     """
 
     def __init__(self, included_suites: str = 'DEPRECATED',
-                 included_extensions: Sequence[str] = ('.robot', '.rbt'),
+                 included_extensions: Sequence[str] = ('.robot', '.rbt', '.robot.rst'),
                  included_files: Sequence[str] = (),
                  custom_parsers: Sequence[str] = (),
                  defaults: 'TestDefaults|None' = None,
@@ -122,6 +122,7 @@ class TestSuiteBuilder:
             'robot': robot_parser,
             'rst': rest_parser,
             'rest': rest_parser,
+            'robot.rst': rest_parser,
             'rbt': json_parser,
             'json': json_parser
         }
@@ -180,7 +181,7 @@ class TestSuiteBuilder:
                          [self._get_ext(pattern) for pattern in self.included_files],
                          [self._get_ext(pth) for pth in paths if pth.is_file()]):
             ext = ext.lstrip('.').lower()
-            if ext.isalnum() and ext not in parsers:
+            if ext not in parsers and ext.replace('.', '').isalnum():
                 parsers[ext] = self.standard_parsers.get(ext, robot_parser)
         return parsers
 
