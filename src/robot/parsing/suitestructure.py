@@ -25,36 +25,12 @@ from robot.output import LOGGER
 from robot.utils import get_error_message
 
 
-class ValidExtensions:
-
-    def __init__(self, extensions: Iterable[str]):
-        self.extensions = {ext.lstrip('.').lower() for ext in extensions}
-
-    def match(self, path: Path) -> bool:
-        for ext in self._extensions_from(path):
-            if ext in self.extensions:
-                return True
-        return False
-
-    def get_extension(self, path: Path) -> str:
-        for ext in self._extensions_from(path):
-            if ext in self.extensions:
-                return ext
-        return path.suffix.lower()[1:]
-
-    def _extensions_from(self, path: Path) -> Iterator[str]:
-        suffixes = path.suffixes
-        while suffixes:
-            yield ''.join(suffixes).lower()[1:]
-            suffixes.pop(0)
-
-
 class SuiteStructure(ABC):
     source: 'Path|None'
     init_file: 'Path|None'
     children: 'list[SuiteStructure]|None'
 
-    def __init__(self, extensions: ValidExtensions, source: 'Path|None',
+    def __init__(self, extensions: 'ValidExtensions', source: 'Path|None',
                  init_file: 'Path|None' = None,
                  children: 'Sequence[SuiteStructure]|None' = None):
         self._extensions = extensions
@@ -79,7 +55,7 @@ class SuiteStructure(ABC):
 class SuiteFile(SuiteStructure):
     source: Path
 
-    def __init__(self, extensions: ValidExtensions, source: Path):
+    def __init__(self, extensions: 'ValidExtensions', source: Path):
         super().__init__(extensions, source)
 
     def _get_source_file(self) -> Path:
@@ -92,7 +68,7 @@ class SuiteFile(SuiteStructure):
 class SuiteDirectory(SuiteStructure):
     children: 'list[SuiteStructure]'
 
-    def __init__(self, extensions: ValidExtensions, source: 'Path|None' = None,
+    def __init__(self, extensions: 'ValidExtensions', source: 'Path|None' = None,
                  init_file: 'Path|None' = None,
                  children: Sequence[SuiteStructure] = ()):
         super().__init__(extensions, source, init_file, children)
@@ -135,7 +111,7 @@ class SuiteStructureBuilder:
 
     def __init__(self, extensions: Sequence[str] = ('.robot', '.rbt'),
                  included_files: Sequence[str] = ()):
-        self.extensions = ValidExtensions(extensions)
+        self.extensions = ValidExtensions(extensions, included_files)
         self.included_files = IncludedFiles(included_files)
 
     def build(self, *paths: Path) -> SuiteStructure:
@@ -195,6 +171,35 @@ class SuiteStructureBuilder:
             else:
                 structure.add(self._build(path))
         return structure
+
+
+class ValidExtensions:
+
+    def __init__(self, extensions: Sequence[str],
+                 included_files: Sequence[str] = ()):
+        self.extensions = {ext.lstrip('.').lower() for ext in extensions}
+        for pattern in included_files:
+            ext = os.path.splitext(pattern)[1]
+            if ext:
+                self.extensions.add(ext.lstrip('.').lower())
+
+    def match(self, path: Path) -> bool:
+        for ext in self._extensions_from(path):
+            if ext in self.extensions:
+                return True
+        return False
+
+    def get_extension(self, path: Path) -> str:
+        for ext in self._extensions_from(path):
+            if ext in self.extensions:
+                return ext
+        return path.suffix.lower()[1:]
+
+    def _extensions_from(self, path: Path) -> Iterator[str]:
+        suffixes = path.suffixes
+        while suffixes:
+            yield ''.join(suffixes).lower()[1:]
+            suffixes.pop(0)
 
 
 class IncludedFiles:

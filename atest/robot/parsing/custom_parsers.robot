@@ -23,10 +23,10 @@ Directory with init
     Validate Directory Suite    init=True
 
 Extension with multiple parts
-    Run Tests    --parser ${DIR}/CustomParser.py:multi.part.ext    ${DIR}
+    [Documentation]    Also tests usage with `--parse-include`.
+    Run Tests    --parser ${DIR}/CustomParser.py:multi.part.ext --parse-include *.multi.part.ext    ${DIR}
     Validate Suite    ${SUITE}    Custom    ${DIR}    custom=False
     ...    Passing=PASS
-    ...    Test in Robot file=PASS
     Validate Suite    ${SUITE.suites[0]}    Tests    ${DIR}/tests.multi.part.ext
     ...    Passing=PASS
 

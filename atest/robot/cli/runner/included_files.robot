@@ -15,16 +15,23 @@ Pattern with name
 Pattern with path
     --parse-include ${DATADIR}/parsing/data_formats/*/[st]???le.ROBOT    18
 
-Recursive glob
+Single '*' is not recursive
+    --parse-include ${DATADIR}/*/sample.robot                             0
+
+Recursive glob requires '**'
     --parse-include ${DATADIR}/**/sample.robot                           18
-    --parse-include ${DATADIR}/*/sample.robot --run-empty-suite           0
 
 Directories are recursive
     --parse-include ${DATADIR}/parsing/data_formats/robot                20
-    --parse-include ${DATADIR}/parsing/data_formats/r*t -F robot:rst     40
+    --parse-include ${DATADIR}/parsing/*/robot                           20
+
+Non-standard files matching patterns with extension are parsed
+    --parse-include *.rst                                                20
+    --parse-include ${DATADIR}/parsing/**/*.rst                          20
+    --parse-include ${DATADIR}/parsing/data_formats/rest                  0
 
 *** Keywords ***
 Expected number of tests should be run
     [Arguments]    ${options}    ${expected}
-    Run Tests    ${options}    ${DATADIR}/parsing/data_formats
+    Run Tests    ${options} --run-empty-suite    ${DATADIR}/parsing/data_formats
     Should Be Equal As Integers    ${SUITE.test_count}    ${expected}

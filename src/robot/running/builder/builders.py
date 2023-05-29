@@ -177,11 +177,17 @@ class TestSuiteBuilder:
         parsers = {None: NoInitFileDirectoryParser(), **self.custom_parsers}
         robot_parser = self.standard_parsers['robot']
         for ext in chain(self.included_extensions,
-                         [p.suffix for p in paths if p.is_file()]):
+                         [self._get_ext(pattern) for pattern in self.included_files],
+                         [self._get_ext(pth) for pth in paths if pth.is_file()]):
             ext = ext.lstrip('.').lower()
-            if ext not in parsers:
+            if ext.isalnum() and ext not in parsers:
                 parsers[ext] = self.standard_parsers.get(ext, robot_parser)
         return parsers
+
+    def _get_ext(self, path: 'str|Path') -> str:
+        if not isinstance(path, Path):
+            path = Path(path)
+        return ''.join(path.suffixes)
 
     def _validate_not_empty(self, suite: TestSuite, multi_source: bool = False):
         if multi_source:
