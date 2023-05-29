@@ -2,24 +2,29 @@
 Test Template      Expected number of tests should be run
 Resource           atest_resource.robot
 
-*** Variables ***
-${DATA FORMATS}    ${DATADIR}/parsing/data_formats
-
 *** Test Cases ***
-Simple filename
-    -f sample.robot                 18
+File name
+    -f sample.robot                                                18
 
-Pattern
-    --files *.robot                 29
+File path
+    -f ${DATADIR}/parsing/data_formats${/}robot${/}SAMPLE.robot    18
 
-Multiple patterns
-    --files sample.robot --files tests.robot    27
+Pattern with name
+    --files *.robot --files sample.rb?                             47
 
-Combine extension and files
-    --files sample.rst -F rst       18
+Pattern with path
+    -f ${DATADIR}/parsing/data_formats/*/[st]???le.ROBOT           18
+
+Recursive glob
+    -f ${DATADIR}/**/sample.robot                                  18
+    -f ${DATADIR}/*/sample.robot --run-empty-suite                  0
+
+Directories are recursive
+    -f ${DATADIR}/parsing/data_formats/robot                       20
+    -f ${DATADIR}/parsing/data_formats/r*t -F robot:rst            40
 
 *** Keywords ***
 Expected number of tests should be run
-    [Arguments]    ${options}    ${expected}=0
-    Run Tests    ${options}    ${DATA FORMATS}
+    [Arguments]    ${options}    ${expected}
+    Run Tests    ${options}    ${DATADIR}/parsing/data_formats
     Should Be Equal As Integers    ${SUITE.test_count}    ${expected}

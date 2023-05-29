@@ -13,12 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import fnmatch
+import os.path
+import re
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Iterable, Iterator, Sequence
 
 from robot.errors import DataError
-from robot.model import FileNamePatterns
 from robot.output import LOGGER
 from robot.utils import get_error_message
 
@@ -134,8 +136,7 @@ class SuiteStructureBuilder:
     def __init__(self, extensions: Sequence[str] = ('.robot', '.rbt'),
                  included_files: Sequence[str] = ()):
         self.extensions = ValidExtensions(extensions)
-        self.included_files = None if not included_files else \
-            FileNamePatterns(included_files)
+        self.included_files = IncludedFiles(included_files)
 
     def _create_included_suites(self, included_suites):
         for suite in included_suites:
@@ -168,11 +169,6 @@ class SuiteStructureBuilder:
                 LOGGER.info(f"Ignoring file or directory '{item}'.")
         return structure
 
-    def _is_file_included(self, name, included_files):
-        if not included_files:
-            return True
-        return included_files.match(name)
-
     def _list_dir(self, path: Path) -> 'list[Path]':
         try:
             return sorted(path.iterdir(), key=lambda p: p.name.lower())
@@ -193,7 +189,7 @@ class SuiteStructureBuilder:
             return False
         if not self.extensions.match(path):
             return False
-        return self._is_file_included(path.name, self.included_files)
+        return self.included_files.match(path)
 
     def _build_multi_source(self, paths: Iterable[Path]) -> SuiteStructure:
         structure = SuiteDirectory(self.extensions)
@@ -205,3 +201,47 @@ class SuiteStructureBuilder:
             else:
                 structure.add(self._build(path))
         return structure
+
+
+class IncludedFiles:
+
+    def __init__(self, patterns: 'Sequence[str|Path]' = ()):
+        self.patterns = [self._compile(i) for i in patterns]
+
+    def _compile(self, pattern: 'str|Path') -> 're.Pattern':
+        pattern = self._dir_to_recursive(self._path_to_abs(self._normalize(pattern)))
+        # Handle recursive glob patterns.
+        parts = [self._translate(p) for p in pattern.split('**')]
+        return re.compile('.*'.join(parts), re.IGNORECASE)
+
+    def _normalize(self, pattern: 'str|Path') -> str:
+        if isinstance(pattern, Path):
+            pattern = str(pattern)
+        return os.path.normpath(pattern).replace('\\', '/')
+
+    def _path_to_abs(self, pattern: str) -> str:
+        if '/' in pattern or '.' not in pattern or os.path.exists(pattern):
+            pattern = os.path.abspath(pattern)
+        return pattern
+
+    def _dir_to_recursive(self, pattern: str) -> str:
+        if '.' not in os.path.basename(pattern) or os.path.isdir(pattern):
+            pattern += '/**'
+        return pattern
+
+    def _translate(self, glob_pattern: str) -> str:
+        # `fnmatch.translate` returns pattern in format `(?s:<pattern>)\Z` but we want
+        # only the `<pattern>` part. This is a bit risky because the format may change
+        # in future Python versions, but we have tests and ought to notice that.
+        re_pattern = fnmatch.translate(glob_pattern)[4:-3]
+        # Unlike `fnmatch`, we want `*` to match only a single path segment.
+        return re_pattern.replace('.*', '[^/]*')
+
+    def match(self, path: Path) -> bool:
+        if not self.patterns:
+            return True
+        return self._match(path.name) or self._match(str(path))
+
+    def _match(self, path: str) -> bool:
+        path = self._normalize(path)
+        return any(p.fullmatch(path) for p in self.patterns)
