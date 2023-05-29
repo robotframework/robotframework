@@ -15,7 +15,7 @@
 
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Iterator, Sequence, Type, TypeVar
+from typing import Any, Generic, Iterator, Sequence, Type, TypeVar
 
 from robot.utils import seq2str, setter
 
@@ -30,18 +30,24 @@ from .tagsetter import TagSetter
 from .testcase import TestCase, TestCases
 from .visitor import SuiteVisitor
 
+TS = TypeVar('TS', bound='TestSuite')
+KW = TypeVar('KW', bound=Keyword, covariant=True)
+TC = TypeVar('TC', bound=TestCase, covariant=True)
 
-TS = TypeVar('TS', bound="TestSuite")
 
-
-class TestSuite(ModelObject):
+class TestSuite(ModelObject, Generic[KW, TC]):
     """Base model for single suite.
 
     Extended by :class:`robot.running.model.TestSuite` and
     :class:`robot.result.model.TestSuite`.
     """
-    test_class = TestCase    #: Internal usage only.
-    fixture_class = Keyword  #: Internal usage only.
+    # FIXME: Type Ignore declarations: Typevars only accept subclasses of the bound class
+    # assiging `Type[KW]` to `Keyword` results in an error. In RF 7 the class should be
+    # made impossible to instantiate directly, and the assignments can be replaced with
+    # KnownAtRuntime
+    fixture_class: Type[KW] = Keyword  # type: ignore
+    test_class: Type[TC] = TestCase  # type: ignore
+
     repr_args = ('name',)
     __slots__ = ['parent', '_name', 'doc', '_setup', '_teardown', 'rpa', '_my_visitors']
 
@@ -59,8 +65,8 @@ class TestSuite(ModelObject):
         self.rpa = rpa
         self.suites = []
         self.tests = []
-        self._setup: 'Keyword|None' = None
-        self._teardown: 'Keyword|None' = None
+        self._setup: 'KW|None' = None
+        self._teardown: 'KW|None' = None
         self._my_visitors: 'list[SuiteVisitor]' = []
 
     @staticmethod
@@ -158,15 +164,15 @@ class TestSuite(ModelObject):
         return Metadata(metadata)
 
     @setter
-    def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> 'TestSuites[TestSuite]':
+    def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> 'TestSuites[TestSuite[KW, TC]]':
         return TestSuites['TestSuite'](self.__class__, self, suites)
 
     @setter
-    def tests(self, tests: 'Sequence[TestCase|DataDict]') -> TestCases[TestCase]:
-        return TestCases[TestCase](self.test_class, self, tests)
+    def tests(self, tests: 'Sequence[TC|DataDict]') -> TestCases[TC]:
+        return TestCases[TC](self.test_class, self, tests)
 
     @property
-    def setup(self) -> Keyword:
+    def setup(self) -> KW:
         """Suite setup.
 
         This attribute is a ``Keyword`` object also when a suite has no setup
@@ -196,7 +202,7 @@ class TestSuite(ModelObject):
         return self._setup
 
     @setup.setter
-    def setup(self, setup: 'Keyword|DataDict|None'):
+    def setup(self, setup: 'KW|DataDict|None'):
         self._setup = create_fixture(self.fixture_class, setup, self, Keyword.SETUP)
 
     @property
@@ -214,7 +220,7 @@ class TestSuite(ModelObject):
         return bool(self._setup)
 
     @property
-    def teardown(self) -> Keyword:
+    def teardown(self) -> KW:
         """Suite teardown.
 
         See :attr:`setup` for more information.
@@ -224,7 +230,7 @@ class TestSuite(ModelObject):
         return self._teardown
 
     @teardown.setter
-    def teardown(self, teardown: 'Keyword|DataDict|None'):
+    def teardown(self, teardown: 'KW|DataDict|None'):
         self._teardown = create_fixture(self.fixture_class, teardown, self, Keyword.TEARDOWN)
 
     @property
@@ -377,6 +383,7 @@ class TestSuite(ModelObject):
         if self.suites:
             data['suites'] = self.suites.to_dicts()
         return data
+
 
 class TestSuites(ItemList[TS]):
     __slots__ = []
