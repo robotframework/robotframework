@@ -138,13 +138,6 @@ class SuiteStructureBuilder:
         self.extensions = ValidExtensions(extensions)
         self.included_files = IncludedFiles(included_files)
 
-    def _create_included_suites(self, included_suites):
-        for suite in included_suites:
-            yield suite
-            while '.' in suite:
-                suite = suite.split('.', 1)[1]
-                yield suite
-
     def build(self, *paths: Path) -> SuiteStructure:
         if len(paths) == 1:
             return self._build(paths[0])
@@ -160,6 +153,7 @@ class SuiteStructureBuilder:
         for item in self._list_dir(path):
             if self._is_init_file(item):
                 if structure.init_file:
+                    # TODO: This error should fail parsing for good.
                     LOGGER.error(f"Ignoring second test suite init file '{item}'.")
                 else:
                     structure.init_file = item
