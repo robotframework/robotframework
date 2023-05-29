@@ -96,7 +96,7 @@ Options
                           extension is needed, separate them with a colon.
                           Examples: `--extension txt`, `--extension robot:txt`
                           Only `*.robot` files are parsed by default.
-    --parseinclude pattern *  Parse only files matching `pattern`. It can be:
+ -I --parseinclude pattern *  Parse only files matching `pattern`. It can be:
                           - a file name or pattern like `example.robot` or
                             `*.robot` to parse all files matching that name,
                           - a file path like `path/to/example.robot`, or

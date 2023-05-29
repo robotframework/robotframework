@@ -7,10 +7,10 @@ File name
     --parseinclude sample.robot                                          18
 
 File path
-    --ParseI ${DATADIR}/parsing/data_formats${/}robot${/}SAMPLE.robot    18
+    -I ${DATADIR}/parsing/data_formats${/}robot${/}SAMPLE.robot          18
 
 Pattern with name
-    --ParseInclude *.robot --parse-include sample.rb?                    47
+    --ParseInclude *.robot --parse-include sample.rb? -I no.match        47
 
 Pattern with path
     --parse-include ${DATADIR}/parsing/data_formats/*/[st]???le.ROBOT    18
