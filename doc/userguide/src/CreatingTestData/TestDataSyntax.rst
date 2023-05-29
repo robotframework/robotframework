@@ -311,6 +311,11 @@ when processing files using reStructuredText tooling normally.
 .. note:: Parsing :file:`.robot.rst` files automatically is new in
           Robot Framework 6.1.
 
+JSON format
+~~~~~~~~~~~
+
+FIXME
+
 Rules for parsing the data
 --------------------------
 
