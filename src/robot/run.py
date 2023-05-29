@@ -157,9 +157,9 @@ Options
                           given without `${}`. See --variablefile for a more
                           powerful variable setting mechanism.
                           Examples:
-                          --variable str:Hello       =>  ${str} = `Hello`
-                          -v hi:Hi_World -E space:_  =>  ${hi} = `Hi World`
-                          -v x: -v y:42              =>  ${x} = ``, ${y} = `42`
+                          --variable name:Robot  =>  ${name} = `Robot`
+                          -v "hello:Hello world" =>  ${hello} = `Hello world`
+                          -v x: -v y:42          =>  ${x} = ``, ${y} = `42`
  -V --variablefile path *  Python or YAML file file to read variables from.
                           Possible arguments to the variable file can be given
                           after the path using colon or semicolon as separator.
