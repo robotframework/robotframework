@@ -152,6 +152,44 @@ class TestSuite(ModelObject, Generic[KW, TC] if sys.version_info >= (3, 7)  else
     def source(self, source: 'Path|str|None') -> 'Path|None':
         return source if isinstance(source, (Path, type(None))) else Path(source)
 
+    def adjust_source(self, relative_to: 'Path|str|None' = None,
+                      root: 'Path|str|None' = None):
+        """Adjust suite source and child suite sources, recursively.
+
+        :param relative_to: Make suite source relative to the given path. Calls
+            `pathlib.Path.relative_to()`__ internally. Raises ``ValueError``
+            if creating a relative path is not possible.
+        :param root: Make given path a new root directory for the source. Raises
+            ``ValueError`` if suite source is absolute.
+
+        Adjusting the source is especially useful when moving data around as JSON::
+
+            from robot.running import TestSuite
+
+            # Create a suite, adjust source and convert to JSON.
+            suite = TestSuite.from_file_system('/path/to/data')
+            suite.adjust_source(relative_to='/path/to')
+            suite.to_json('data.json')
+
+            # Recreate suite elsewhere and adjust source accordingly.
+            suite = TestSuite.from_json('data.json')
+            suite.adjust_source(root='/new/path/to')
+
+        New in Robot Framework 6.1.
+
+        __ https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.relative_to
+        """
+        if not self.source:
+            raise ValueError('Suite has no source.')
+        if relative_to:
+            self.source = self.source.relative_to(relative_to)
+        if root:
+            if self.source.is_absolute():
+                raise ValueError(f"Cannot set root for absolute source '{self.source}'.")
+            self.source = root / self.source
+        for suite in self.suites:
+            suite.adjust_source(relative_to, root)
+
     @property
     def longname(self) -> str:
         """Suite name prefixed with the long name of the parent suite."""
@@ -161,7 +199,7 @@ class TestSuite(ModelObject, Generic[KW, TC] if sys.version_info >= (3, 7)  else
 
     @setter
     def metadata(self, metadata: 'Mapping[str, str]|None') -> Metadata:
-        """Free suite metadata as dictionary-like ``Metadata`` object."""
+        """Free suite metadata as a :class:`~.metadata.Metadata` object."""
         return Metadata(metadata)
 
     @setter

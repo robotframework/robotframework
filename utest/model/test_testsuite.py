@@ -91,6 +91,50 @@ class TestTestSuite(unittest.TestCase):
         assert_equal(list(suite.suites), [sub1])
         assert_equal(list(sub1.suites), [sub2])
 
+    def test_adjust_source(self):
+        absolute = Path('.').absolute()
+        suite = TestSuite(source='dir')
+        suite.suites = [TestSuite(source='dir/x.robot'),
+                        TestSuite(source='dir/y.robot')]
+        assert_equal(suite.source, Path('dir'))
+        assert_equal(suite.suites[0].source, Path('dir/x.robot'))
+        assert_equal(suite.suites[1].source, Path('dir/y.robot'))
+        suite.adjust_source(root=absolute)
+        assert_equal(suite.source, absolute / 'dir')
+        assert_equal(suite.suites[0].source, absolute / 'dir/x.robot')
+        assert_equal(suite.suites[1].source, absolute / 'dir/y.robot')
+        suite.adjust_source(relative_to=absolute)
+        assert_equal(suite.source, Path('dir'))
+        assert_equal(suite.suites[0].source, Path('dir/x.robot'))
+        assert_equal(suite.suites[1].source, Path('dir/y.robot'))
+        suite.adjust_source(root='relative')
+        assert_equal(suite.source, Path('relative/dir'))
+        assert_equal(suite.suites[0].source, Path('relative/dir/x.robot'))
+        assert_equal(suite.suites[1].source, Path('relative/dir/y.robot'))
+        suite.adjust_source(relative_to='relative/dir', root=str(absolute))
+        assert_equal(suite.source, absolute)
+        assert_equal(suite.suites[0].source, absolute / 'x.robot')
+        assert_equal(suite.suites[1].source, absolute / 'y.robot')
+
+    def test_adjust_source_failures(self):
+        absolute = Path('x.robot').absolute()
+        assert_raises_with_msg(
+            ValueError, 'Suite has no source.',
+            TestSuite().adjust_source
+        )
+        assert_raises_with_msg(
+            ValueError, f"Cannot set root for absolute source '{absolute}'.",
+            TestSuite(source=absolute).adjust_source, root='whatever'
+        )
+        assert_raises(
+            ValueError,
+            TestSuite(source=absolute).adjust_source, relative_to='relative'
+        )
+        assert_raises(
+            ValueError,
+            TestSuite(source='relative').adjust_source, relative_to=absolute,
+        )
+
     def test_set_tags(self):
         suite = TestSuite()
         suite.tests.create()
