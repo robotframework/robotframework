@@ -53,12 +53,13 @@ class TestTestSuite(unittest.TestCase):
             assert_equal(suite.name, 'new name')
             if inp:
                 assert_equal(TestSuite(source=Path(inp)).name, exp)
-                assert_equal(TestSuite(source=Path(inp).resolve()).name, exp)
+                assert_equal(TestSuite(source=Path(inp).absolute()).name, exp)
 
     def test_name_from_source_with_extensions(self):
-        for ext, exp in [('z', 'X.Y'), ('.z', 'X.Y'), ('y.z', 'X'),
-                         (['x', 'y', 'z'], 'X.Y')]:
+        for ext, exp in [('z', 'X.Y'), ('.z', 'X.Y'), ('Z', 'X.Y'), ('y.z', 'X'),
+                         ('Y.z', 'X'), (['x', 'y', 'z'], 'X.Y')]:
             assert_equal(TestSuite.name_from_source('x.y.z', ext), exp)
+            assert_equal(TestSuite.name_from_source('X.Y.Z', ext), exp)
 
     def test_name_from_source_with_bad_extensions(self):
         assert_raises_with_msg(
@@ -174,18 +175,18 @@ class TestStringRepresentation(unittest.TestCase):
     def setUp(self):
         self.empty = TestSuite()
         self.ascii = TestSuite(name='Kekkonen')
-        self.non_ascii = TestSuite(name=u'hyv\xe4 nimi')
+        self.non_ascii = TestSuite(name='hyvä nimi')
 
     def test_str(self):
         for tc, expected in [(self.empty, ''),
                              (self.ascii, 'Kekkonen'),
-                             (self.non_ascii, u'hyv\xe4 nimi')]:
+                             (self.non_ascii, 'hyvä nimi')]:
             assert_equal(str(tc), expected)
 
     def test_repr(self):
         for tc, expected in [(self.empty, "TestSuite(name='')"),
                              (self.ascii, "TestSuite(name='Kekkonen')"),
-                             (self.non_ascii, u"TestSuite(name=%r)" % u'hyv\xe4 nimi')]:
+                             (self.non_ascii, "TestSuite(name='hyvä nimi')")]:
             assert_equal(repr(tc), 'robot.model.' + expected)
 
 
