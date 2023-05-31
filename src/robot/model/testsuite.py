@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any, Generic, Iterator, Sequence, Type, TypeVar
@@ -35,7 +36,7 @@ KW = TypeVar('KW', bound=Keyword, covariant=True)
 TC = TypeVar('TC', bound=TestCase, covariant=True)
 
 
-class TestSuite(ModelObject, Generic[KW, TC]):
+class TestSuite(ModelObject, Generic[KW, TC] if sys.version_info >= (3, 7)  else object):
     """Base model for single suite.
 
     Extended by :class:`robot.running.model.TestSuite` and
