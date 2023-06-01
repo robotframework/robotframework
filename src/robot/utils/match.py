@@ -46,7 +46,7 @@ class Matcher:
     def match(self, string: str) -> bool:
         return self._regexp.match(self._normalize(string)) is not None
 
-    def match_any(self, strings: Sequence[str]) -> bool:
+    def match_any(self, strings: Iterable[str]) -> bool:
         return any(self.match(s) for s in strings)
 
     def __bool__(self) -> bool:
@@ -55,7 +55,7 @@ class Matcher:
 
 class MultiMatcher(Iterable[Matcher]):
 
-    def __init__(self, patterns: Sequence[str] = (), ignore: Sequence[str] = (),
+    def __init__(self, patterns: Iterable[str] = (), ignore: Sequence[str] = (),
                  caseless: bool = True, spaceless: bool = True,
                  match_if_no_patterns: bool = False, regexp: bool = False):
         self.matchers = [Matcher(pattern, ignore, caseless, spaceless, regexp)
@@ -74,7 +74,7 @@ class MultiMatcher(Iterable[Matcher]):
             return any(m.match(string) for m in self.matchers)
         return self.match_if_no_patterns
 
-    def match_any(self, strings: Sequence[str]) -> bool:
+    def match_any(self, strings: Iterable[str]) -> bool:
         return any(self.match(s) for s in strings)
 
     def __len__(self) -> int:
