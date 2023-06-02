@@ -30,6 +30,12 @@ def eq(str1: str, str2: str, ignore: Sequence[str] = (), caseless: bool = True,
 
 class Matcher:
 
+    match_2_cache = {}
+    """
+    https://pypi.org/project/orderedset/
+    from collections import OrderedDict
+    """
+
     def __init__(self, pattern: str, ignore: Sequence[str] = (), caseless: bool = True,
                  spaceless: bool = True, regexp: bool = False):
         self.pattern = pattern
@@ -37,7 +43,8 @@ class Matcher:
             self._normalize = lambda s: normalize(s, ignore, caseless, spaceless)
         else:
             self._normalize = lambda s: s
-        self._regexp = self._compile(self._normalize(pattern), regexp=regexp)
+        self._normalized_pattern = self._normalize(pattern)
+        self._regexp = self._compile(self._normalized_pattern, regexp=regexp)
 
     def _compile(self, pattern, regexp=False):
         if not regexp:
@@ -45,7 +52,26 @@ class Matcher:
         return re.compile(pattern, re.DOTALL)
 
     def match(self, string: str) -> bool:
-        return self._regexp.match(self._normalize(string)) is not None
+        normalized_string = self._normalize(string)
+        match_1_cache = self.match_2_cache.get(self._normalized_pattern, {})
+        if normalized_string in match_1_cache:
+            matching = match_1_cache.pop(normalized_string)
+            match_1_cache[normalized_string] = matching
+            return matching
+        matching = self._regexp.match(normalized_string) is not None
+        if 1:#matching:
+            if len(match_1_cache) > 32:
+                for lru_key in match_1_cache:
+                    match_1_cache.pop(lru_key)
+                    break
+            match_1_cache[normalized_string] = matching
+            if len(match_1_cache) <= 1:
+                if len(self.match_2_cache) > 32:
+                    for lru_key in self.match_2_cache:
+                        self.match_2_cache.pop(lru_key)
+                        break
+                self.match_2_cache[self._normalized_pattern] = match_1_cache
+        return matching
 
     def match_any(self, strings: Iterable[str]) -> bool:
         return any(self.match(s) for s in strings)
