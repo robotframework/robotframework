@@ -123,7 +123,7 @@ Accepted types
     ${MODEL}[typedocs][4][type]       Custom
     ${MODEL}[typedocs][4][accepts]    []
     ${MODEL}[typedocs][7][type]       TypedDict
-    ${MODEL}[typedocs][7][accepts]    ['string']
+    ${MODEL}[typedocs][7][accepts]    ['string', 'Mapping']
     ${MODEL}[typedocs][1][type]       Enum
     ${MODEL}[typedocs][1][accepts]    ['string']
     ${MODEL}[typedocs][11][type]      Enum
