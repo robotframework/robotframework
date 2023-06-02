@@ -306,7 +306,7 @@ class _Converter(_BuiltInBase):
     def convert_to_string(self, item):
         """Converts the given item to a Unicode string.
 
-        Strings are also [http://www.macchiato.com/unicode/nfc-faq|
+        Strings are also [https://en.wikipedia.org/wiki/Unicode_equivalence|
         NFC normalized].
 
         Use `Encode String To Bytes` and `Decode Bytes To String` keywords
@@ -835,7 +835,7 @@ class _Verify(_BuiltInBase):
         arguments are strings, the comparison is done with all white spaces replaced by
         a single space character.
 
-        Strings are always [http://www.macchiato.com/unicode/nfc-faq|
+        Strings are always [https://en.wikipedia.org/wiki/Unicode_equivalence|
         NFC normalized].
 
         ``strip_spaces`` is new in Robot Framework 4.0 and ``collapse_spaces`` is new
@@ -877,7 +877,7 @@ class _Verify(_BuiltInBase):
         arguments are strings, the comparison is done with all white spaces replaced by
         a single space character.
 
-        Strings are always [http://www.macchiato.com/unicode/nfc-faq| NFC normalized].
+        Strings are always [https://en.wikipedia.org/wiki/Unicode_equivalence|NFC normalized].
 
         ``strip_spaces`` is new in Robot Framework 4.0
         and ``collapse_spaces`` is new in Robot Framework 4.1.
