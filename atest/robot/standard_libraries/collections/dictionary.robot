@@ -116,6 +116,15 @@ Dictionaries Should Be Equal
 Dictionaries Of Different Type Should Be Equal
     Check Test Case    ${TEST NAME}
 
+Dictionaries Should Equal With Ignored Key
+    Check Test Case    ${TEST NAME}
+
+Dictionaries Should Equal With Ignored Key And Missing Key
+    Check Test Case    ${TEST NAME}
+
+Dictionaries Should Equal With Ignored Key And Missing Key And Own Error Message
+    Check Test Case    ${TEST NAME}
+
 Dictionaries Should Equal With First Dictionary Missing Keys
     Check Test Case    ${TEST NAME}
 
