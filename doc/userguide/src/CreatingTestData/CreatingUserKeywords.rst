@@ -157,11 +157,11 @@ Both user keywords and `library keywords`_ can have tags. Similarly as when
 
    *** Keywords ***
    No own tags
-       [Documentation]    This test has tag 'gui'.
+       [Documentation]    This keyword has tag 'gui'.
        No Operation
 
    Own tags
-       [Documentation]    This test has tags 'gui', 'own' and 'tags'.
+       [Documentation]    This keyword has tags 'gui', 'own' and 'tags'.
        [Tags]    own    tags
        No Operation
 

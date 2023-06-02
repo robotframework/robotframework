@@ -15,9 +15,8 @@
 
 from abc import ABC
 from contextlib import contextmanager
-from io import IOBase
 from pathlib import Path
-from typing import cast, Iterator, Sequence, Union
+from typing import cast, Iterator, Sequence, TextIO, Union
 
 from robot.utils import file_writer, test_or_task
 
@@ -74,7 +73,7 @@ class File(Container):
         self.source = source
         self.languages = list(languages)
 
-    def save(self, output: 'Path|str|IOBase|None' = None):
+    def save(self, output: 'Path|str|TextIO|None' = None):
         """Save model to the given ``output`` or to the original source file.
 
         The ``output`` can be a path to a file or an already opened file
@@ -387,7 +386,7 @@ class While(NestedBlock):
 
 class ModelWriter(ModelVisitor):
 
-    def __init__(self, output: 'Path|str|IOBase'):
+    def __init__(self, output: 'Path|str|TextIO'):
         if isinstance(output, (Path, str)):
             self.writer = file_writer(output)
             self.close_writer = True

@@ -57,7 +57,7 @@ class TestSuiteBuilder:
     """
 
     def __init__(self, included_suites: str = 'DEPRECATED',
-                 included_extensions: Sequence[str] = ('.robot', '.rbt'),
+                 included_extensions: Sequence[str] = ('.robot', '.rbt', '.robot.rst'),
                  included_files: Sequence[str] = (),
                  custom_parsers: Sequence[str] = (),
                  defaults: 'TestDefaults|None' = None,
@@ -74,8 +74,8 @@ class TestSuiteBuilder:
         :param included_extensions:
             List of extensions of files to parse. Same as ``--extension``.
         :param included_files:
-            List of filename patterns to include. If no files are specified, all
-            files are parsed. Same as `--files`. New in RF 6.1.
+            List of names, paths or directory paths of files to parse. All files
+            are parsed by default. Same as `--parse-include`. New in RF 6.1.
         :param custom_parsers:
             Custom parsers as names or paths (same as ``--parser``) or as
             parser objects. New in RF 6.1.
@@ -122,6 +122,7 @@ class TestSuiteBuilder:
             'robot': robot_parser,
             'rst': rest_parser,
             'rest': rest_parser,
+            'robot.rst': rest_parser,
             'rbt': json_parser,
             'json': json_parser
         }
@@ -177,11 +178,17 @@ class TestSuiteBuilder:
         parsers = {None: NoInitFileDirectoryParser(), **self.custom_parsers}
         robot_parser = self.standard_parsers['robot']
         for ext in chain(self.included_extensions,
-                         [p.suffix for p in paths if p.is_file()]):
+                         [self._get_ext(pattern) for pattern in self.included_files],
+                         [self._get_ext(pth) for pth in paths if pth.is_file()]):
             ext = ext.lstrip('.').lower()
-            if ext not in parsers:
+            if ext not in parsers and ext.replace('.', '').isalnum():
                 parsers[ext] = self.standard_parsers.get(ext, robot_parser)
         return parsers
+
+    def _get_ext(self, path: 'str|Path') -> str:
+        if not isinstance(path, Path):
+            path = Path(path)
+        return ''.join(path.suffixes)
 
     def _validate_not_empty(self, suite: TestSuite, multi_source: bool = False):
         if multi_source:
@@ -294,6 +301,11 @@ class ResourceFileBuilder:
         return resource
 
     def _parse(self, source: Path) -> ResourceFile:
-        if source.suffix.lower() in ('.rst', '.rest'):
-            return RestParser(self.lang, self.process_curdir).parse_resource_file(source)
-        return RobotParser(self.lang, self.process_curdir).parse_resource_file(source)
+        suffix = source.suffix.lower()
+        if suffix in ('.rst', '.rest'):
+            parser = RestParser(self.lang, self.process_curdir)
+        elif suffix in ('.json', '.rsrc'):
+            parser = JsonParser()
+        else:
+            parser = RobotParser(self.lang, self.process_curdir)
+        return parser.parse_resource_file(source)

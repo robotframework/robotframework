@@ -42,7 +42,7 @@ class _BaseSettings:
                  'TestNames'        : ('test', []),
                  'TaskNames'        : ('task', []),
                  'SuiteNames'       : ('suite', []),
-                 'FilePatterns'     : ('files', []),
+                 'ParseInclude'     : ('parseinclude', []),
                  'SetTag'           : ('settag', []),
                  'Include'          : ('include', []),
                  'Exclude'          : ('exclude', []),
@@ -393,10 +393,6 @@ class _BaseSettings:
     def suite_names(self):
         return self._filter_empty(self['SuiteNames'])
 
-    @property
-    def file_patterns(self):
-        return self._filter_empty(self['FilePatterns'])
-
     def _filter_empty(self, items):
         return [i for i in items if i] or None
 
@@ -411,6 +407,10 @@ class _BaseSettings:
     @property
     def exclude(self):
         return self._filter_empty(self['Exclude'])
+
+    @property
+    def parse_include(self):
+        return self['ParseInclude']
 
     @property
     def pythonpath(self):
@@ -457,7 +457,7 @@ class _BaseSettings:
 
 
 class RobotSettings(_BaseSettings):
-    _extra_cli_opts = {'Extension'          : ('extension', ('.robot', '.rbt')),
+    _extra_cli_opts = {'Extension'          : ('extension', ('.robot', '.rbt', '.robot.rst')),
                        'Output'             : ('output', 'output.xml'),
                        'LogLevel'           : ('loglevel', 'INFO'),
                        'MaxErrorLines'      : ('maxerrorlines', 40),
@@ -489,7 +489,7 @@ class RobotSettings(_BaseSettings):
     def get_rebot_settings(self):
         settings = RebotSettings()
         settings.start_timestamp = self.start_timestamp
-        not_copied = {'Include', 'Exclude', 'TestNames', 'SuiteNames', 'FilePatterns',
+        not_copied = {'Include', 'Exclude', 'TestNames', 'SuiteNames', 'ParseInclude',
                       'Name', 'Doc', 'Metadata', 'SetTag', 'Output', 'LogLevel',
                       'TimestampOutputs'}
         for opt in settings._opts:

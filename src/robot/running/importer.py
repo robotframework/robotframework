@@ -26,7 +26,8 @@ from .handlerstore import HandlerStore
 from .testlibraries import TestLibrary
 
 
-RESOURCE_EXTENSIONS = ('.resource', '.robot', '.txt', '.tsv', '.rst', '.rest')
+RESOURCE_EXTENSIONS = {'.resource', '.robot', '.txt', '.tsv', '.rst', '.rest',
+                       '.json', '.rsrc'}
 
 
 class Importer:
@@ -49,13 +50,13 @@ class Importer:
         if alias:
             alias = variables.replace_scalar(alias)
             lib = self._copy_library(lib, alias)
-            LOGGER.info("Imported library '%s' with name '%s'" % (name, alias))
+            LOGGER.info(f"Imported library '{name}' with name '{alias}'.")
         return lib
 
     def import_resource(self, path, lang=None):
         self._validate_resource_extension(path)
         if path in self._resource_cache:
-            LOGGER.info("Found resource file '%s' from cache" % path)
+            LOGGER.info(f"Found resource file '{path}' from cache.")
         else:
             resource = ResourceFileBuilder(lang=lang).build(path)
             self._resource_cache[path] = resource
@@ -64,16 +65,16 @@ class Importer:
     def _validate_resource_extension(self, path):
         extension = os.path.splitext(path)[1]
         if extension.lower() not in RESOURCE_EXTENSIONS:
-            raise DataError("Invalid resource file extension '%s'. "
-                            "Supported extensions are %s."
-                            % (extension, seq2str(RESOURCE_EXTENSIONS)))
+            extensions = seq2str(sorted(RESOURCE_EXTENSIONS))
+            raise DataError(f"Invalid resource file extension '{extension}'. "
+                            f"Supported extensions are {extensions}.")
 
     def _import_library(self, name, positional, named, lib):
-        args = positional + ['%s=%s' % arg for arg in named]
+        args = positional + [f'{name}={value}' for name, value in named]
         key = (name, positional, named)
         if key in self._library_cache:
-            LOGGER.info("Found library '%s' with arguments %s from cache."
-                        % (name, seq2str2(args)))
+            LOGGER.info(f"Found library '{name}' with arguments {seq2str2(args)} "
+                        f"from cache.")
             return self._library_cache[key]
         lib.create_handlers()
         self._library_cache[key] = lib
@@ -83,12 +84,11 @@ class Importer:
     def _log_imported_library(self, name, args, lib):
         type = lib.__class__.__name__.replace('Library', '').lower()[1:]
         listener = ', with listener' if lib.has_listener else ''
-        LOGGER.info("Imported library '%s' with arguments %s "
-                    "(version %s, %s type, %s scope, %d keywords%s)"
-                    % (name, seq2str2(args), lib.version or '<unknown>',
-                       type, lib.scope, len(lib), listener))
+        LOGGER.info(f"Imported library '{name}' with arguments {seq2str2(args)} "
+                    f"(version {lib.version or '<unknown>'}, {type} type, "
+                    f"{lib.scope} scope, {len(lib)} keywords{listener}).")
         if not lib:
-            LOGGER.warn("Imported library '%s' contains no keywords." % name)
+            LOGGER.warn(f"Imported library '{name}' contains no keywords.")
 
     def _copy_library(self, orig, name):
         # This is pretty ugly. Hopefully we can remove cache and copying

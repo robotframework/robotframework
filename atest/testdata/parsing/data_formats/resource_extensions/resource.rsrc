@@ -1,0 +1,37 @@
+{
+"source":"atest/testdata/parsing/data_formats/resource_extensions/resource.rsrc",
+"imports":[
+{
+"type":"RESOURCE",
+"name":"nested.resource",
+"lineno":3
+}
+],
+"variables":[
+{
+"name":"${RSRC}",
+"value":[
+"resource.rsrc"
+],
+"lineno":7
+}
+],
+"keywords":[
+{
+"name":"Keyword in resource.rsrc",
+"lineno":11,
+"body":[
+{
+"name":"Should Be Equal",
+"args":["${NESTED}", "nested.resource"],
+"lineno":12
+},
+{
+"name":"Should Be Equal",
+"args":["${RSRC}", "resource.rsrc"],
+"lineno":13
+}
+]
+}
+]
+}

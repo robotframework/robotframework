@@ -13,9 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Iterator, Sequence, Type, TypeVar
+from typing import Any, Generic, Iterator, Sequence, Type, TypeVar
 
 from robot.utils import seq2str, setter
 
@@ -30,18 +31,24 @@ from .tagsetter import TagSetter
 from .testcase import TestCase, TestCases
 from .visitor import SuiteVisitor
 
+TS = TypeVar('TS', bound='TestSuite')
+KW = TypeVar('KW', bound=Keyword, covariant=True)
+TC = TypeVar('TC', bound=TestCase, covariant=True)
 
-TS = TypeVar('TS', bound="TestSuite")
 
-
-class TestSuite(ModelObject):
+class TestSuite(ModelObject, Generic[KW, TC] if sys.version_info >= (3, 7)  else object):
     """Base model for single suite.
 
     Extended by :class:`robot.running.model.TestSuite` and
     :class:`robot.result.model.TestSuite`.
     """
-    test_class = TestCase    #: Internal usage only.
-    fixture_class = Keyword  #: Internal usage only.
+    # FIXME: Type Ignore declarations: Typevars only accept subclasses of the bound class
+    # assiging `Type[KW]` to `Keyword` results in an error. In RF 7 the class should be
+    # made impossible to instantiate directly, and the assignments can be replaced with
+    # KnownAtRuntime
+    fixture_class: Type[KW] = Keyword  # type: ignore
+    test_class: Type[TC] = TestCase  # type: ignore
+
     repr_args = ('name',)
     __slots__ = ['parent', '_name', 'doc', '_setup', '_teardown', 'rpa', '_my_visitors']
 
@@ -59,8 +66,8 @@ class TestSuite(ModelObject):
         self.rpa = rpa
         self.suites = []
         self.tests = []
-        self._setup: 'Keyword|None' = None
-        self._teardown: 'Keyword|None' = None
+        self._setup: 'KW|None' = None
+        self._teardown: 'KW|None' = None
         self._my_visitors: 'list[SuiteVisitor]' = []
 
     @staticmethod
@@ -71,14 +78,14 @@ class TestSuite(ModelObject):
         External parsers and other tools that want to produce suites with
         names matching names created by Robot Framework can use this method as
         well. This method is also used if :attr:`name` is not set and someone
-        accessess it.
+        accesses it.
 
         The algorithm is as follows:
 
         - If the source is ``None`` or empty, return an empty string.
         - Get the base name of the source. Read more below.
         - Remove possible prefix separated with ``__``.
-        - Convert underscrores to spaces.
+        - Convert underscores to spaces.
         - If the name is all lower case, title case it.
 
         The base name of files is got by calling `Path.stem`__ that drops
@@ -115,7 +122,7 @@ class TestSuite(ModelObject):
             extensions = [extensions]
         for ext in extensions:
             ext = '.' + ext.lower().lstrip('.')
-            if path.name.endswith(ext):
+            if path.name.lower().endswith(ext):
                 return path.name[:-len(ext)]
         raise ValueError(f"File '{path}' does not have extension "
                          f"{seq2str(extensions, lastsep=' or ')}.")
@@ -145,6 +152,44 @@ class TestSuite(ModelObject):
     def source(self, source: 'Path|str|None') -> 'Path|None':
         return source if isinstance(source, (Path, type(None))) else Path(source)
 
+    def adjust_source(self, relative_to: 'Path|str|None' = None,
+                      root: 'Path|str|None' = None):
+        """Adjust suite source and child suite sources, recursively.
+
+        :param relative_to: Make suite source relative to the given path. Calls
+            `pathlib.Path.relative_to()`__ internally. Raises ``ValueError``
+            if creating a relative path is not possible.
+        :param root: Make given path a new root directory for the source. Raises
+            ``ValueError`` if suite source is absolute.
+
+        Adjusting the source is especially useful when moving data around as JSON::
+
+            from robot.running import TestSuite
+
+            # Create a suite, adjust source and convert to JSON.
+            suite = TestSuite.from_file_system('/path/to/data')
+            suite.adjust_source(relative_to='/path/to')
+            suite.to_json('data.json')
+
+            # Recreate suite elsewhere and adjust source accordingly.
+            suite = TestSuite.from_json('data.json')
+            suite.adjust_source(root='/new/path/to')
+
+        New in Robot Framework 6.1.
+
+        __ https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.relative_to
+        """
+        if not self.source:
+            raise ValueError('Suite has no source.')
+        if relative_to:
+            self.source = self.source.relative_to(relative_to)
+        if root:
+            if self.source.is_absolute():
+                raise ValueError(f"Cannot set root for absolute source '{self.source}'.")
+            self.source = root / self.source
+        for suite in self.suites:
+            suite.adjust_source(relative_to, root)
+
     @property
     def longname(self) -> str:
         """Suite name prefixed with the long name of the parent suite."""
@@ -154,19 +199,19 @@ class TestSuite(ModelObject):
 
     @setter
     def metadata(self, metadata: 'Mapping[str, str]|None') -> Metadata:
-        """Free suite metadata as dictionary-like ``Metadata`` object."""
+        """Free suite metadata as a :class:`~.metadata.Metadata` object."""
         return Metadata(metadata)
 
     @setter
-    def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> 'TestSuites[TestSuite]':
+    def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> 'TestSuites[TestSuite[KW, TC]]':
         return TestSuites['TestSuite'](self.__class__, self, suites)
 
     @setter
-    def tests(self, tests: 'Sequence[TestCase|DataDict]') -> TestCases[TestCase]:
-        return TestCases[TestCase](self.test_class, self, tests)
+    def tests(self, tests: 'Sequence[TC|DataDict]') -> TestCases[TC]:
+        return TestCases[TC](self.test_class, self, tests)
 
     @property
-    def setup(self) -> Keyword:
+    def setup(self) -> KW:
         """Suite setup.
 
         This attribute is a ``Keyword`` object also when a suite has no setup
@@ -196,7 +241,7 @@ class TestSuite(ModelObject):
         return self._setup
 
     @setup.setter
-    def setup(self, setup: 'Keyword|DataDict|None'):
+    def setup(self, setup: 'KW|DataDict|None'):
         self._setup = create_fixture(self.fixture_class, setup, self, Keyword.SETUP)
 
     @property
@@ -214,7 +259,7 @@ class TestSuite(ModelObject):
         return bool(self._setup)
 
     @property
-    def teardown(self) -> Keyword:
+    def teardown(self) -> KW:
         """Suite teardown.
 
         See :attr:`setup` for more information.
@@ -224,7 +269,7 @@ class TestSuite(ModelObject):
         return self._teardown
 
     @teardown.setter
-    def teardown(self, teardown: 'Keyword|DataDict|None'):
+    def teardown(self, teardown: 'KW|DataDict|None'):
         self._teardown = create_fixture(self.fixture_class, teardown, self, Keyword.TEARDOWN)
 
     @property
@@ -377,6 +422,7 @@ class TestSuite(ModelObject):
         if self.suites:
             data['suites'] = self.suites.to_dicts()
         return data
+
 
 class TestSuites(ItemList[TS]):
     __slots__ = []

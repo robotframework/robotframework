@@ -1,0 +1,24 @@
+{
+"source":"atest/testdata/parsing/data_formats/resources/robot_resource2.robot",
+"variables":[
+{
+"name":"${JSON RESOURCE VAR 2}",
+"value":[
+"JSON Resource Variable From Recursive Resource"
+],
+"lineno":2
+}
+],
+"keywords":[
+{
+"name":"Keyword from JSON resource 2",
+"lineno":6,
+"body":[
+{
+"name":"No operation",
+"lineno":6
+}
+]
+}
+]
+}
