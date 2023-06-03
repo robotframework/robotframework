@@ -96,10 +96,12 @@ Options
                           extension is needed, separate them with a colon.
                           Examples: `--extension txt`, `--extension robot:txt`
                           Only `*.robot` files are parsed by default.
- -f --files pattern *     Parse only files with a name that matches one of the
-                          specified patterns when executing a directory.
-                          Has no effect when running individual files or when
-                          using resource files.
+ -I --parseinclude pattern *  Parse only files matching `pattern`. It can be:
+                          - a file name or pattern like `example.robot` or
+                            `*.robot` to parse all files matching that name,
+                          - a file path like `path/to/example.robot`, or
+                          - a directory path like `path/to/example` to parse
+                            all files in that directory, recursively.
  -N --name name           Set the name of the top level suite. By default the
                           name is created based on the executed file or
                           directory.
@@ -155,9 +157,9 @@ Options
                           given without `${}`. See --variablefile for a more
                           powerful variable setting mechanism.
                           Examples:
-                          --variable str:Hello       =>  ${str} = `Hello`
-                          -v hi:Hi_World -E space:_  =>  ${hi} = `Hi World`
-                          -v x: -v y:42              =>  ${x} = ``, ${y} = `42`
+                          --variable name:Robot  =>  ${name} = `Robot`
+                          -v "hello:Hello world" =>  ${hello} = `Hello world`
+                          -v x: -v y:42          =>  ${x} = ``, ${y} = `42`
  -V --variablefile path *  Python or YAML file file to read variables from.
                           Possible arguments to the variable file can be given
                           after the path using colon or semicolon as separator.
@@ -436,7 +438,7 @@ class RobotFramework(Application):
         if settings.pythonpath:
             sys.path = settings.pythonpath + sys.path
         builder = TestSuiteBuilder(included_extensions=settings.extension,
-                                   included_files=settings.file_patterns,
+                                   included_files=settings.parse_include,
                                    custom_parsers=settings.parsers,
                                    rpa=settings.rpa,
                                    lang=settings.languages,

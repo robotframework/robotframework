@@ -14,15 +14,15 @@
 #  limitations under the License.
 
 from abc import ABC, abstractmethod
-from typing import Iterator, overload, Sequence
+from typing import Any, Iterable, Iterator, overload, Sequence
 
-from robot.utils import is_string, normalize, NormalizedDict, Matcher
+from robot.utils import normalize, NormalizedDict, Matcher
 
 
 class Tags(Sequence[str]):
     __slots__ = ['_tags', '_reserved']
 
-    def __init__(self, tags: Sequence[str] = ()):
+    def __init__(self, tags: Iterable[str] = ()):
         if isinstance(tags, Tags):
             self._tags, self._reserved = tags._tags, tags._reserved
         else:
@@ -38,7 +38,7 @@ class Tags(Sequence[str]):
     def _init_tags(self, tags) -> 'tuple[tuple[str, ...], tuple[str, ...]]':
         if not tags:
             return (), ()
-        if is_string(tags):
+        if isinstance(tags, str):
             tags = (tags,)
         return self._normalize(tags)
 
@@ -51,17 +51,17 @@ class Tags(Sequence[str]):
         reserved = tuple(tag[6:] for tag in nd.normalized_keys if tag[:6] == 'robot:')
         return tuple(nd), reserved
 
-    def add(self, tags: Sequence[str]):
+    def add(self, tags: Iterable[str]):
         self.__init__(tuple(self) + tuple(Tags(tags)))
 
-    def remove(self, tags: Sequence[str]):
+    def remove(self, tags: Iterable[str]):
         match = TagPatterns(tags).match
         self.__init__([t for t in self if not match(t)])
 
-    def match(self, tags: Sequence[str]) -> bool:
+    def match(self, tags: Iterable[str]) -> bool:
         return TagPatterns(tags).match(self)
 
-    def __contains__(self, tags) -> bool:
+    def __contains__(self, tags: Iterable[str]) -> bool:
         return self.match(tags)
 
     def __len__(self) -> int:
@@ -77,7 +77,9 @@ class Tags(Sequence[str]):
     def __repr__(self) -> str:
         return repr(list(self))
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Iterable):
+            return False
         if not isinstance(other, Tags):
             other = Tags(other)
         self_normalized = [normalize(tag, ignore='_') for tag in self]
@@ -97,19 +99,19 @@ class Tags(Sequence[str]):
             return Tags(self._tags[index])
         return self._tags[index]
 
-    def __add__(self, other: Sequence[str]) -> 'Tags':
+    def __add__(self, other: Iterable[str]) -> 'Tags':
         return Tags(tuple(self) + tuple(Tags(other)))
 
 
 class TagPatterns(Sequence['TagPattern']):
 
-    def __init__(self, patterns: Sequence[str]):
+    def __init__(self, patterns: Iterable[str]):
         self._patterns = tuple(TagPattern.from_string(p) for p in Tags(patterns))
 
-    def match(self, tags: Sequence[str]) -> bool:
+    def match(self, tags: Iterable[str]) -> bool:
         if not self._patterns:
             return False
-        tags = tags if isinstance(tags, Tags) else Tags(tags)
+        tags = normalize_tags(tags)
         return any(p.match(tags) for p in self._patterns)
 
     def __contains__(self, tag: str) -> bool:
@@ -144,7 +146,7 @@ class TagPattern(ABC):
         return SingleTagPattern(pattern)
 
     @abstractmethod
-    def match(self, tags: Sequence[str]) -> bool:
+    def match(self, tags: Iterable[str]) -> bool:
         raise NotImplementedError
 
     @abstractmethod
@@ -159,9 +161,13 @@ class TagPattern(ABC):
 class SingleTagPattern(TagPattern):
 
     def __init__(self, pattern: str):
-        self._matcher = Matcher(pattern, ignore='_')
+        # Normalization is handled here, not in Matcher, for performance reasons.
+        # This way we can normalize tags only once.
+        self._matcher = Matcher(normalize(pattern, ignore='_'),
+                                caseless=False, spaceless=False)
 
-    def match(self, tags: Sequence[str]) -> bool:
+    def match(self, tags: Iterable[str]) -> bool:
+        tags = normalize_tags(tags)
         return self._matcher.match_any(tags)
 
     def __iter__(self) -> Iterator['TagPattern']:
@@ -176,10 +182,11 @@ class SingleTagPattern(TagPattern):
 
 class AndTagPattern(TagPattern):
 
-    def __init__(self, patterns: Sequence[str]):
+    def __init__(self, patterns: Iterable[str]):
         self._patterns = tuple(TagPattern.from_string(p) for p in patterns)
 
-    def match(self, tags: Sequence[str]) -> bool:
+    def match(self, tags: Iterable[str]) -> bool:
+        tags = normalize_tags(tags)
         return all(p.match(tags) for p in self._patterns)
 
     def __iter__(self) -> Iterator['TagPattern']:
@@ -191,10 +198,11 @@ class AndTagPattern(TagPattern):
 
 class OrTagPattern(TagPattern):
 
-    def __init__(self, patterns: Sequence[str]):
+    def __init__(self, patterns: Iterable[str]):
         self._patterns = tuple(TagPattern.from_string(p) for p in patterns)
 
-    def match(self, tags: Sequence[str]) -> bool:
+    def match(self, tags: Iterable[str]) -> bool:
+        tags = normalize_tags(tags)
         return any(p.match(tags) for p in self._patterns)
 
     def __iter__(self) -> Iterator['TagPattern']:
@@ -206,14 +214,14 @@ class OrTagPattern(TagPattern):
 
 class NotTagPattern(TagPattern):
 
-    def __init__(self, must_match: str, must_not_match: Sequence[str]):
+    def __init__(self, must_match: str, must_not_match: Iterable[str]):
         self._first = TagPattern.from_string(must_match)
         self._rest = OrTagPattern(must_not_match)
 
-    def match(self, tags: Sequence[str]) -> bool:
-        if not self._first:
-            return not self._rest.match(tags)
-        return self._first.match(tags) and not self._rest.match(tags)
+    def match(self, tags: Iterable[str]) -> bool:
+        tags = normalize_tags(tags)
+        return ((self._first.match(tags) or not self._first)
+                and not self._rest.match(tags))
 
     def __iter__(self) -> Iterator['TagPattern']:
         yield self._first
@@ -221,3 +229,16 @@ class NotTagPattern(TagPattern):
 
     def __str__(self) -> str:
         return ' NOT '.join(str(pattern) for pattern in self).lstrip()
+
+
+def normalize_tags(tags: Iterable[str]) -> Iterable[str]:
+    """Performance optimization to normalize tags only once."""
+    if isinstance(tags, NormalizedTags):
+        return tags
+    if isinstance(tags, str):
+        tags = [tags]
+    return NormalizedTags([normalize(t, ignore='_') for t in tags])
+
+
+class NormalizedTags(list):
+    pass

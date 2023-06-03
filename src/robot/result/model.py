@@ -764,7 +764,7 @@ class Keyword(model.Keyword, StatusMixin):
         return Tags(tags)
 
 
-class TestCase(model.TestCase, StatusMixin):
+class TestCase(model.TestCase[Keyword], StatusMixin):
     """Represents results of a single test case.
 
     See the base class for documentation of attributes not documented here.
@@ -809,7 +809,7 @@ class TestCase(model.TestCase, StatusMixin):
         return self.body_class(self, body)
 
 
-class TestSuite(model.TestSuite, StatusMixin):
+class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
     """Represents results of a single test suite.
 
     See the base class for documentation of attributes not documented here.
@@ -907,10 +907,6 @@ class TestSuite(model.TestSuite, StatusMixin):
     @setter
     def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> TestSuites['TestSuite']:
         return TestSuites['TestSuite'](self.__class__, self, suites)
-
-    @setter
-    def tests(self, tests: 'Sequence[TestCase|DataDict]') -> TestCases[TestCase]:
-        return TestCases[TestCase](self.test_class, self, tests)
 
     def remove_keywords(self, how: str):
         """Remove keywords based on the given condition.

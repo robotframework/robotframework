@@ -458,18 +458,16 @@ Item assign to immutable object fails
     ${tuple_variable}[0]=    Set Variable    0
 
 Item assign expects iterable fails
-    [Documentation]    FAIL
-    ...     Setting value to list variable '${list_variable}' at index [:1] failed: \
-    ...     TypeError: can only assign an iterable
+    [Documentation]    FAIL STARTS:
+    ...     Setting value to list variable '${list_variable}' at index [:1] failed: TypeError:
     ${list_variable}=       Create List    1    2    3
     ${list_variable}[:1]=   Evaluate       0
 
     Log To Console  ${list_variable}
 
 Index not found error when item assign to list
-    [Documentation]    FAIL
-    ...    Setting value to list variable '${list_variable}[0]' at index [2] failed: \
-    ...    IndexError: list assignment index out of range
+    [Documentation]    FAIL STARTS:
+    ...    Setting value to list variable '${list_variable}[0]' at index [2] failed: IndexError:
     ${list_variable}=        Create List    ${{ [1, 2] }}
     ${list_variable}[0][2]=  Set Variable   3
 

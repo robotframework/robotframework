@@ -294,10 +294,12 @@ marked using the `code` directive, but Robot Framework supports also
        def example():
            print('Hello, world!')
 
-Robot Framework supports reStructuredText files using both :file:`.rst` and
-:file:`.rest` extension. When executing a directory containing reStucturedText
-files, the :option:`--extension` option must be used to explicitly tell that
-`these files should be parsed`__.
+Robot Framework supports reStructuredText files using :file:`.robot.rst`,
+:file:`.rst` and :file:`.rest` extensions. To avoid parsing unrelated
+reStructuredText files, only files with the :file:`.robot.rst` extension
+are parsed by default when executing a directory. Parsing files with
+other extensions `can be enabled`__ by using either :option:`--parseinclude`
+or :option:`--extension` option.
 
 __ `Selecting files to parse`_
 
@@ -305,6 +307,14 @@ When Robot Framework parses reStructuredText files, errors below level
 `SEVERE` are ignored to avoid noise about possible non-standard directives
 and other such markup. This may hide also real errors, but they can be seen
 when processing files using reStructuredText tooling normally.
+
+.. note:: Parsing :file:`.robot.rst` files automatically is new in
+          Robot Framework 6.1.
+
+JSON format
+~~~~~~~~~~~
+
+FIXME
 
 Rules for parsing the data
 --------------------------

@@ -13,49 +13,138 @@ the next section.
 Selecting files to parse
 ------------------------
 
-When executing a single file, Robot Framework tries to parse and run it
-regardless the name or the file extension. The file is expected to use the `plain text
-format`__ or, if it has :file:`.rst` or :file:`.rest` extension,
-the `reStructuredText format`_::
+Executing individual files
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    robot example.robot    # Common case.
-    robot example.tsv      # Must be compatible with the plain text format.
-    robot example.rst      # reStructuredText format.
+When executing individual files, Robot Framework tries to parse and run them
+regardless the name or the file extension. What parser to use depends
+on the extension:
+
+- :file:`.robot` files and files that are not recognized are parsed using
+  the normal `Robot Framework parser`__.
+- :file:`.rst` and :file:`.rest` files are parsed using the `reStructuredText parser`__.
+- :file:`.rbt` and :file:`.json` files are parsed using the `JSON parser`__.
+- Files supported by `custom parsers`__ are parsed by a matching parser.
+
+Examples::
+
+    robot example.robot    # Standard Robot Framework parser.
+    robot example.tsv      # Must be compatible with the standard parser.
+    robot example.rst      # reStructuredText parser.
+    robot x.robot y.rst    # Parse both files using an appropriate parser.
 
 __ `Supported file formats`_
+__ `reStructuredText format`_
+__ `JSON format`_
+__ `Using custom parsers`_
 
-When executing a directory__, Robot Framework ignores all files and directories
-starting with a dot (:file:`.`) or an underscore (:file:`_`) and, by default,
-only parses files with the :file:`.robot` extension. If files use other
-extensions, the :option:`--extension (-F)` option must be used to explicitly
-tell the framework to parse also them. If there is a need to parse more
-than one kind of files, it is possible to use a colon `:` to separate
-extensions. Matching extensions is case insensitive and the leading `.`
-can be omitted. You can additionally filter files before parsing using
-the :option:`--files (-f)` option with a `simple pattern`_. The option
-can be used multiple times to match multiple patterns. Arguments to the
-:option:`--files (-f)` option are case- and space-insensitive.
-If the :option:`--files (-f)` option matches files with a non-default extension,
-the :option:`--extension (-F)` option must be added in order for those files
-to also be parsed.
-::
+Included and excluded files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  robot path/to/tests/                   # Parse only *.robot files.
-  robot --extension TSV path/to/tests    # Parse only *.tsv files.
-  robot -F robot:rst path/to/tests       # Parse *.robot and *.rst files.
-  robot --files foo.robot path/to/tests  # Parse only files named foo.robot.
-  robot -f foo* path/to/tests            # Parse only .robot files starting with foo.
-  robot -f foo* -F txt path/to/tests     # Parse only .txt files starting with foo.
+When executing a directory__, files and directories are parsed using
+the following rules:
 
-If files in one format use different extensions like :file:`.rst` and
-:file:`.rest`, they must be specified separately. Using just one of them
-would mean that other files in that format are skipped.
-
-.. note:: Prior to Robot Framework 3.1 also TXT, TSV and HTML files were
-          parsed by default. Starting from Robot Framework 3.2 HTML files
-          are not supported at all.
+- All files and directories starting with a dot (:file:`.`) or an underscore
+  (:file:`_`) are ignored.
+- :file:`.robot` files are parsed using the normal `Robot Framework parser`__.
+- :file:`.robot.rst` files are parsed using the `reStructuredText parser`__.
+- :file:`.rbt` files are parsed using the `JSON parser`__.
+- Files supported by `custom parsers`__ are parsed by a matching parser.
+- Other files are ignored unless parsing them has been enabled by using
+  the :option:`--parseinclude` or :option:`--extension` options discussed
+  in the subsequent sections.
 
 __ `Suite directories`_
+__ `Supported file formats`_
+__ `reStructuredText format`_
+__ `JSON format`_
+__ `Using custom parsers`_
+
+Selecting files by name or path
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When executing a directory, it is possible to parse only certain files based on
+their name or path by using the :option:`--parseinclude (-I)` option. This option
+has slightly different semantics depending on the value it is used with:
+
+- If the value is just a file name like `example.robot`, files matching
+  the name in all directories will be parsed.
+
+- To match only a certain file in a certain directory, files can be given
+  as relative or absolute paths like `path/to/tests.robot`.
+
+- If the value is a path to a directory, all files inside that directory are parsed,
+  recursively.
+
+Examples::
+
+    robot --parseinclude example.robot tests       # Parse `example.robot` files anywhere under `tests`.
+    robot -I example_*.robot -I ???.robot tests    # Parse files matching `example_*.robot` or `???.robot` under `tests`.
+    robot -I tests/example.robot tests             # Parse only `tests/example.robot`.
+    robot --parseinclude tests/example tests       # Parse files under `tests/example` directory, recursively.
+
+Values used with :option:`--parseinclude` are case-insensitive and support
+`glob patterns <Simple patterns_>`__ like `example_*.robot`. There are, however,
+two small differences compared to how patterns typically work with Robot Framework:
+
+- `*` matches only a single path segment. For example, `path/*/tests.robot`
+  matches :file:`path/to/tests.robot` but not :file:`path/to/nested/tests.robot`.
+
+- `**` can be used to enable recursive matching. For example, `path/**/tests.robot`
+  matches both :file:`path/to/tests.robot` and :file:`path/to/nested/tests.robot`.
+
+If the pattern contains an extension, files with that extension are parsed
+even if they by `default would not be`__. What parser to use depends on
+the used extension:
+
+- :file:`.rst` and :file:`.rest` files are parsed using the `reStructuredText parser`__.
+- :file:`.json` files are parsed using the `JSON parser`__.
+- Other files are parsed using the normal `Robot Framework parser`__.
+
+Notice that when you use a pattern like `*.robot` and there exists a file that
+matches the pattern in the execution directory, the shell may resolve
+the pattern before Robot Framework is called and the value passed to
+it is the file name, not the original pattern. In such cases you need
+to quote or escape the pattern like `'*.robot'` or `\*.robot`.
+
+__ `Included and excluded files`_
+__ `reStructuredText format`_
+__ `JSON format`_
+__ `Supported file formats`_
+
+.. note:: `--parseinclude` is new in Robot Framework 6.1.
+
+Selecting files by extension
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In addition to using the :option:`--parseinclude` option discussed in the
+previous section, it is also possible to enable parsing files that are `not
+parsed by default`__ by using the :option:`--extension (-F)` option.
+Matching extensions is case insensitive and the leading dot can be omitted.
+If there is a need to parse more than one kind of files, it is possible to
+use a colon `:` to separate extensions::
+
+    robot --extension rst path/to/tests    # Parse only *.rst files.
+    robot -F robot:rst path/to/tests       # Parse *.robot and *.rst files.
+
+The above is equivalent to the following :option:`--parseinclude` usage::
+
+    robot --parseinclude *.rst path/to/tests
+    robot -I *.robot -I *.rst path/to/tests
+
+Because the :option:`--parseinclude` option is more powerful and covers all
+same use cases as the :option:`--extension` option, the latter is likely to be
+deprecated in the future. Users are recommended to use :option:`--parseinclude`
+already now.
+
+__ `Included and excluded files`_
+
+Using custom parsers
+~~~~~~~~~~~~~~~~~~~~
+
+External parsers can parse files that Robot Framework does not recognize
+otherwise. For more information about creating and using such parsers see
+the `Parser interface`_ section.
 
 Selecting test cases
 --------------------
@@ -139,22 +228,16 @@ on higher level are not executed::
   # Root suite is 'Example' and possible higher level setups and teardowns are ignored.
   robot path/to/tests/example.robot
 
-When using the :option:`--suite` option, Robot Framework does not parse
-files that do not match the given suite name. For example, when using
-`--suite example`, only files that have a name :file:`example.robot` or are in
-a directory :file:`example` are parsed. This is done for performance reasons
-to avoid the parsing overhead with larger directory structures. Unfortunately
-this approach does not work well with the new :setting:`Name` setting that can
-be used for setting a custom `suite name`_. In practice the new setting and
-the :option:`--suite` option are incompatible. This will be changed in Robot
-Framework 7.0 so that `files are not excluded`__ when using the :option:`--suite`
-option. The plan is to add an explicit option for `selecting files to parse`__
-before that.
+Prior to Robot Framework 6.1, files not matching the :option:`--suite` option
+were not parsed at all for performance reasons. This optimization was not
+possible anymore after suites got a new :setting:`Name` setting that can override
+the default suite name got from the file or directory name. New
+:option:`--parseinclude` option has been added to `explicitly select which
+files are parsed`__ if this kind of parsing optimization is needed.
 
 __ https://github.com/robotframework/robotframework/issues/4720
 __ https://github.com/robotframework/robotframework/issues/4721
-__ https://github.com/robotframework/robotframework/issues/4688
-__ https://github.com/robotframework/robotframework/issues/4687
+__ `Selecting files by name or path`_
 
 By tag names
 ~~~~~~~~~~~~

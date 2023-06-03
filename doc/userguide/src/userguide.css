@@ -556,7 +556,7 @@ table.messages td.warn {
 
 /* Roles -- explained in roles.rst file */
 
-code, .codesc, .option {
+code, .codesc, .option, .file {
     background: var(--code-bg);
     font-family: monospace;
 }

@@ -1,0 +1,31 @@
+{
+"source":"atest/testdata/parsing/data_formats/resources/json_resource.json",
+"imports":[
+{
+"type":"RESOURCE",
+"name":"json_resource2.rsrc",
+"lineno":3
+}
+],
+"variables":[
+{
+"name":"${JSON RESOURCE VAR}",
+"value":[
+"JSON Resource Variable"
+],
+"lineno":7
+}
+],
+"keywords":[
+{
+"name":"Keyword from JSON resource",
+"lineno":11,
+"body":[
+{
+"name":"No operation",
+"lineno":11
+}
+]
+}
+]
+}

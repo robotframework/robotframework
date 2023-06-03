@@ -44,6 +44,7 @@ class Parser(ABC):
 
 
 class RobotParser(Parser):
+    extensions = ()
 
     def __init__(self, lang: LanguagesLike = None, process_curdir: bool = True):
         self.lang = lang
@@ -52,7 +53,8 @@ class RobotParser(Parser):
     def parse_suite_file(self, source: Path, defaults: TestDefaults) -> TestSuite:
         model = get_model(self._get_source(source), data_only=True,
                           curdir=self._get_curdir(source), lang=self.lang)
-        suite = TestSuite(name=TestSuite.name_from_source(source), source=source)
+        suite = TestSuite(name=TestSuite.name_from_source(source, self.extensions),
+                          source=source)
         SuiteBuilder(suite, FileSettings(defaults)).build(model)
         return suite
 
@@ -85,6 +87,7 @@ class RobotParser(Parser):
 
 
 class RestParser(RobotParser):
+    extensions = ('.robot.rst', '.rst', '.rest')
 
     def _get_source(self, source: Path) -> str:
         with FileReader(source) as reader:
@@ -99,9 +102,11 @@ class JsonParser(Parser):
     def parse_init_file(self, source: Path, defaults: TestDefaults) -> TestSuite:
         return TestSuite.from_json(source)
 
-    # FIXME: Resource imports don't otherwise support JSON yet!
     def parse_resource_file(self, source: Path) -> ResourceFile:
-        return ResourceFile.from_json(source)
+        try:
+            return ResourceFile.from_json(source)
+        except DataError as err:
+            raise DataError(f"Parsing JSON resource file '{source}' failed: {err}")
 
 
 class NoInitFileDirectoryParser(Parser):

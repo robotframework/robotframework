@@ -75,7 +75,7 @@ Accepted types
     ...    string    integer
     Accepted Types Should Be    4     Custom       CustomType2
     Accepted Types Should Be    7     TypedDict    GeoLocation
-    ...    string
+    ...    string    Mapping
     Accepted Types Should Be    1     Enum         AssertionOperator
     ...    string
     Accepted Types Should Be    11    Enum         Small

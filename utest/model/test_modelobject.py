@@ -5,6 +5,7 @@ import pathlib
 import unittest
 import tempfile
 
+from robot.errors import DataError
 from robot.model.modelobject import ModelObject
 from robot.utils import get_error_message
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
@@ -77,34 +78,27 @@ class TestConfig(unittest.TestCase):
 
 class TestFromDictAndJson(unittest.TestCase):
 
-    def test_init_args(self):
-        class X(ModelObject):
-            def __init__(self, a=1, b=2):
-                self.a = a
-                self.b = b
-        x = X.from_dict({'a': 3})
-        assert_equal(x.a, 3)
-        assert_equal(x.b, 2)
-        x = X.from_json('{"a": "A", "b": true}')
-        assert_equal(x.a, 'A')
-        assert_equal(x.b, True)
-
-    def test_other_attributes(self):
+    def test_attributes(self):
         obj = Example.from_dict({'a': 1})
         assert_equal(obj.a, 1)
-        obj = Example.from_json('{"a": null, "b": 42}')
+        assert_equal(obj.b, None)
+        assert_equal(obj.c, None)
+        obj = Example.from_json('{"a": null, "b": 42, "c": true}')
         assert_equal(obj.a, None)
         assert_equal(obj.b, 42)
+        assert_equal(obj.c, True)
 
-    def test_not_accepted_attribute(self):
+    def test_non_existing_attribute(self):
         assert_raises_with_msg(
-            ValueError,
+            DataError,
             f"Creating '{__name__}.Example' object from dictionary failed: "
             f"'{__name__}.Example' object does not have attribute 'nonex'",
             Example.from_dict, {'nonex': 'attr'}
         )
+
+    def test_setting_attribute_fails(self):
         assert_raises_with_msg(
-            ValueError,
+            DataError,
             f"Creating '{__name__}.Example' object from dictionary failed: "
             f"Setting attribute 'a' failed: Ooops!",
             Example.from_dict, {'a': 'fail'}
@@ -136,7 +130,7 @@ class TestFromDictAndJson(unittest.TestCase):
     def test_invalid_json_type(self):
         error = self._get_json_load_error(None)
         assert_raises_with_msg(
-            ValueError,
+            DataError,
             f"Loading JSON data failed: Invalid JSON data: {error}",
             ModelObject.from_json, None
         )
@@ -144,14 +138,14 @@ class TestFromDictAndJson(unittest.TestCase):
     def test_invalid_json_syntax(self):
         error = self._get_json_load_error('bad')
         assert_raises_with_msg(
-            ValueError,
+            DataError,
             f"Loading JSON data failed: Invalid JSON data: {error}",
             ModelObject.from_json, 'bad'
         )
 
     def test_invalid_json_content(self):
         assert_raises_with_msg(
-            ValueError,
+            DataError,
             "Loading JSON data failed: Expected dictionary, got list.",
             ModelObject.from_json, '["bad"]'
         )
@@ -198,7 +192,7 @@ class TestToJson(unittest.TestCase):
 
     def test_invalid_output(self):
         assert_raises_with_msg(TypeError,
-                               "Output should be None, open file or path, got integer.",
+                               "Output should be None, path or open file, got integer.",
                                Example().to_json, 42)
 
 

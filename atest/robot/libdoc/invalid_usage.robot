@@ -21,6 +21,7 @@ Invalid format
     --format XML:XXX BuiltIn ${OUT HTML}     Format must be 'HTML', 'XML', 'JSON' or 'LIBSPEC', got 'XML:XXX'.
     --format XML:HTML BuiltIn ${OUT HTML}    Format must be 'HTML', 'XML', 'JSON' or 'LIBSPEC', got 'XML:HTML'.
     BuiltIn out.ext                          Format must be 'HTML', 'XML', 'JSON' or 'LIBSPEC', got 'EXT'.
+    BuiltIn BuiltIn                          Format must be 'HTML', 'XML', 'JSON' or 'LIBSPEC', got ''.
 
 Invalid specdocformat
     -s XXX BuiltIn ${OUT HTML}                Spec doc format must be 'RAW' or 'HTML', got 'XXX'.
