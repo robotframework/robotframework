@@ -231,7 +231,7 @@ function searchExecuted(suite, test, include, exclude, status) {
 }
 
 function renderSearchSelector(suite, test, include, exclude, status) {
-    var args = {linkTarget: (suite || test || include || exclude || status) ?
+    var args = {linkTarget: (suite || test || include || exclude || (status && status.length > 0)) ?
                             ('search?suite=' + suite + '&test=' + test + '&include=' + include + '&exclude=' + exclude + '&status=' + status) :
                             'search',
                 searchTabStatus: 'detail-tab-selected'};
@@ -241,14 +241,14 @@ function renderSearchSelector(suite, test, include, exclude, status) {
 
 function renderSearchDetails(suite, test, include, exclude, status) {
     var tests = searchTests(util.escape(suite), util.escape(test),
-                            util.escape(include), util.escape(exclude), util.escape(status));
+                            util.escape(include), util.escape(exclude), status);
     var stats = calculateStats(tests);
     stats.totalTime = calculateTotalTime(tests);
     $.tmpl('tagOrTotalDetailsTemplate', stats).appendTo('#details-header');
     drawTestDetailsTable(tests, true);
 }
 
-function searchTests(suitePattern, testPattern, includePattern, excludePattern, statusPattern) {
+function searchTests(suitePattern, testPattern, includePattern, excludePattern, testStatus) {
     var tests;
     if (suitePattern)
         tests = window.testdata.suite().searchTestsInSuite(suitePattern);
@@ -259,7 +259,7 @@ function searchTests(suitePattern, testPattern, includePattern, excludePattern, 
             return false;
         if (includePattern && !test.matchesTagPattern(includePattern))
             return false;
-        if (statusPattern && test.status !== statusPattern)
+        if (testStatus && testStatus.length > 0 && !testStatus.includes(test.status))
             return false;
         return !(excludePattern && test.matchesTagPattern(excludePattern));
     });
@@ -571,8 +571,15 @@ function hideHiddenDetailsColumns(elem) {
         <td><input id="search-exclude" type="text" value="${exclude}"></td>
       </tr>
       <tr class="selector middle-selector">
-        <th><label for="search-status">Status:</label></th>
-        <td><input id="search-status" type="text" value="${status}"></td>
+        <th><label for="search-status">Test Status:</label></th>
+        <td>
+          <input id="search-status-pass" type="checkbox" name="search-status" value="PASS">
+          <label for="search-status-pass">PASS</label>
+          <input id="search-status-fail" type="checkbox" name="search-status" value="FAIL">
+          <label for="search-status-fail">FAIL</label>
+          <input id="search-status-skip" type="checkbox" name="search-status" value="SKIP">
+          <label for="search-status-skip">SKIP</label>
+        </td>
       </tr>
       <tr class="selector last-selector" id="search-buttons">
         <th></th>
@@ -582,18 +589,18 @@ function hideHiddenDetailsColumns(elem) {
                                          $('#search-test').val(),
                                          $('#search-include').val(),
                                          $('#search-exclude').val(),
-                                         $('#search-status').val());
-                          return false;">
+                                         $('input[name=\'search-status\']:checked').map(function() { return this.value; }).get());
+                                return false;">
           <input type="button" value="Clear"
                  onclick="$('#search-suite').val('');
                           $('#search-test').val('');
                           $('#search-include').val('');
                           $('#search-exclude').val('');
-                          $('#search-status').val('');">
+                          $('input[name=\'search-status\']').prop('checked', false);">
           <a href="javascript:void(0)" onclick="$('#search-help').toggle()"
              title="Toggle search help.">Help</a>
         </td>
-      </tr>
+      </tr>      
       <tr id="search-help" style="display: none">
         <th></th>
         <td>
@@ -652,13 +659,6 @@ function hideHiddenDetailsColumns(elem) {
                   not included.
                 </td>
                 <td>slow<br>feature-4?</td>
-              </tr>
-              <tr>
-                <td>Status</td>
-                <td>
-                  {{= testOrTask('{Test}')}}s status
-                </td>
-                <td>PASS<br>FAIL</td>
               </tr>
             </table>
             <h3>Patterns</h3>
