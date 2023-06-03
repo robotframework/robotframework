@@ -81,7 +81,7 @@ class TypeDoc(Sortable):
             required = key in required_keys if required_keys or optional_keys else None
             items.append(TypedDictItem(key, typ, required))
         return cls(cls.TYPED_DICT, typed_dict.__name__, getdoc(typed_dict),
-                   accepts=(str,), items=items)
+                   accepts=(str, 'Mapping'), items=items)
 
     def to_dictionary(self, legacy=False):
         data = {
