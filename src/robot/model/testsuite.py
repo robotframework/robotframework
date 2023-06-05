@@ -164,15 +164,15 @@ class TestSuite(ModelObject, Generic[KW, TC] if sys.version_info >= (3, 7)  else
 
         Adjusting the source is especially useful when moving data around as JSON::
 
-            from robot.running import TestSuite
+            from robot.api import TestSuite
 
             # Create a suite, adjust source and convert to JSON.
             suite = TestSuite.from_file_system('/path/to/data')
             suite.adjust_source(relative_to='/path/to')
-            suite.to_json('data.json')
+            suite.to_json('data.rbt')
 
             # Recreate suite elsewhere and adjust source accordingly.
-            suite = TestSuite.from_json('data.json')
+            suite = TestSuite.from_json('data.rbt')
             suite.adjust_source(root='/new/path/to')
 
         New in Robot Framework 6.1.

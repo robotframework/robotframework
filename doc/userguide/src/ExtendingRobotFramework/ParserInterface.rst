@@ -193,11 +193,11 @@ that supports headers in format `=== Test Cases ===` in addition to
         extension = '.robot'
 
         def parse(self, source: Path, defaults: TestDefaults) -> TestSuite:
-            name = TestSuite.name_from_source(source)
             data = source.read_text()
             for header in 'Settings', 'Variables', 'Test Cases', 'Keywords':
                 data = data.replace(f'=== {header} ===', f'*** {header} ***')
-            return TestSuite.from_string(data, defaults=defaults).config(name=name)
+            suite = TestSuite.from_string(data, defaults=defaults)
+            return suite.config(name=TestSuite.name_from_source(source), source=source)
 
 __ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.from_string
 __ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.from_model
