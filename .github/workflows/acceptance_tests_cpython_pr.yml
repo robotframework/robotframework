@@ -111,7 +111,7 @@ jobs:
           echo "JOB_STATUS=$(python -c "print('${{ job.status }}'.lower())")" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         if: always() && job.status == 'failure' && runner.os == 'Windows'
 
-      - uses: octokit/request-action@352d2ae93e1805721b5fe308598555ba3bd2c8e2
+      - uses: octokit/request-action@89697eb6635e52c6e1e5559f15b5c91ba5100cb0
         name: Update status with Github Status API
         id: update_status
         with:
