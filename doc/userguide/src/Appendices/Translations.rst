@@ -320,7 +320,7 @@ Settings
     * - Variables
       - Proměnná
     * - Name
-      -
+      - Název
     * - Documentation
       - Dokumentace
     * - Metadata
@@ -447,7 +447,7 @@ Settings
     * - Variables
       - Variablen
     * - Name
-      -
+      - Name
     * - Documentation
       - Dokumentation
     * - Metadata
@@ -574,7 +574,7 @@ Settings
     * - Variables
       - Variable
     * - Name
-      -
+      - Nombre
     * - Documentation
       - Documentación
     * - Metadata
@@ -828,7 +828,7 @@ Settings
     * - Variables
       - Variable
     * - Name
-      -
+      - Nom
     * - Documentation
       - Documentation
     * - Metadata
@@ -1082,7 +1082,7 @@ Settings
     * - Variables
       - Variabile
     * - Name
-      -
+      - Nome
     * - Documentation
       - Documentazione
     * - Metadata
@@ -1209,7 +1209,7 @@ Settings
     * - Variables
       - Variabele
     * - Name
-      -
+      - Naam
     * - Documentation
       - Documentatie
     * - Metadata
@@ -1463,7 +1463,7 @@ Settings
     * - Variables
       - Variável
     * - Name
-      -
+      - Nome
     * - Documentation
       - Documentação
     * - Metadata
@@ -1590,7 +1590,7 @@ Settings
     * - Variables
       - Variável
     * - Name
-      -
+      - Nome
     * - Documentation
       - Documentação
     * - Metadata
@@ -1717,7 +1717,7 @@ Settings
     * - Variables
       - Variabila
     * - Name
-      -
+      - Nume
     * - Documentation
       - Documentatie
     * - Metadata
@@ -1971,7 +1971,7 @@ Settings
     * - Variables
       - Variabel
     * - Name
-      -
+      - Namn
     * - Documentation
       - Dokumentation
     * - Metadata
