@@ -152,6 +152,7 @@ class While(BodyItem):
         data: DataDict = {'type': self.type}
         for name, value in [('condition', self.condition),
                             ('limit', self.limit),
+                            ('on_limit', self.on_limit),
                             ('on_limit_message', self.on_limit_message)]:
             if value is not None:
                 data[name] = value
@@ -197,11 +198,10 @@ class IfBranch(BodyItem):
         visitor.visit_if_branch(self)
 
     def to_dict(self) -> DataDict:
-        data = {'type': self.type,
-                'condition': self.condition,
-                'body': self.body.to_dicts()}
-        if self.type == self.ELSE:
-            data.pop('condition')
+        data = {'type': self.type}
+        if self.condition:
+            data['condition'] = self.condition
+        data['body'] = self.body.to_dicts()
         return data
 
 

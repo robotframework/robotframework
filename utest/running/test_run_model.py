@@ -1,9 +1,12 @@
 import copy
+import json
 import os
 import tempfile
 import unittest
 import warnings
 from pathlib import Path
+
+from jsonschema import Draft202012Validator
 
 from robot import api, model
 from robot.model.modelobject import ModelObject
@@ -14,7 +17,9 @@ from robot.running.model import ResourceFile, UserKeyword
 from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal,
                                  assert_raises, assert_true)
 
-MISC_DIR = (Path(__file__).parent / '../../atest/testdata/misc').resolve()
+
+CURDIR = Path(__file__).resolve().parent
+MISCDIR = (CURDIR / '../../atest/testdata/misc').resolve()
 
 
 class TestModelTypes(unittest.TestCase):
@@ -164,7 +169,7 @@ class TestCopy(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.suite = TestSuite.from_file_system(MISC_DIR)
+        cls.suite = TestSuite.from_file_system(MISCDIR)
 
     def test_copy(self):
         self.assert_copy(self.suite, self.suite.copy())
@@ -223,7 +228,7 @@ class TestCopy(unittest.TestCase):
 
 
 class TestLineNumberAndSource(unittest.TestCase):
-    source = MISC_DIR / 'pass_and_fail.robot'
+    source = MISCDIR / 'pass_and_fail.robot'
 
     @classmethod
     def setUpClass(cls):
@@ -269,6 +274,12 @@ class TestLineNumberAndSource(unittest.TestCase):
 
 class TestToFromDictAndJson(unittest.TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        with open(CURDIR / '../../doc/schema/running.json') as file:
+            schema = json.load(file)
+        cls.validator = Draft202012Validator(schema=schema)
+
     def test_keyword(self):
         self._verify(Keyword(), name='')
         self._verify(Keyword('Name'), name='Name')
@@ -290,8 +301,23 @@ class TestToFromDictAndJson(unittest.TestCase):
         self._verify(While(), type='WHILE', body=[])
         self._verify(While('1 > 0', '1 min'),
                      type='WHILE', condition='1 > 0', limit='1 min', body=[])
+        self._verify(While(limit='1', on_limit='PASS'),
+                     type='WHILE', limit='1', on_limit='PASS', body=[])
+        self._verify(While(limit='1', on_limit_message='Ooops!'),
+                     type='WHILE', limit='1', on_limit_message='Ooops!', body=[])
         self._verify(While('True', lineno=3, error='x'),
                      type='WHILE', condition='True', body=[], lineno=3, error='x')
+
+    def test_while_structure(self):
+        root = While('True')
+        root.body.create_keyword('K', 'a')
+        root.body.create_while('False').body.create_keyword('W')
+        root.body.create_break()
+        self._verify(root, type='WHILE', condition='True',
+                     body=[{'name': 'K', 'args': ('a',)},
+                           {'type': 'WHILE', 'condition': 'False',
+                            'body': [{'name': 'W'}]},
+                           {'type': 'BREAK'}])
 
     def test_if(self):
         self._verify(If(), type='IF/ELSE ROOT', body=[])
@@ -299,7 +325,7 @@ class TestToFromDictAndJson(unittest.TestCase):
                      type='IF/ELSE ROOT', body=[], lineno=4, error='E')
 
     def test_if_branch(self):
-        self._verify(IfBranch(), type='IF', condition=None, body=[])
+        self._verify(IfBranch(), type='IF', body=[])
         self._verify(IfBranch(If.ELSE_IF, '1 > 0'),
                      type='ELSE IF', condition='1 > 0', body=[])
         self._verify(IfBranch(If.ELSE, lineno=5),
@@ -352,8 +378,9 @@ class TestToFromDictAndJson(unittest.TestCase):
                      type='BREAK', lineno=11, error='E')
 
     def test_error(self):
-        self._verify(Error(), type='ERROR', values=())
-        self._verify(Error(('bad', 'things')), type='ERROR', values=('bad', 'things'))
+        self._verify(Error(), type='ERROR', values=(), error='')
+        self._verify(Error(('bad', 'things'), error='Bad things!'),
+                     type='ERROR', values=('bad', 'things'), error='Bad things!')
 
     def test_test(self):
         self._verify(TestCase(), name='', body=[])
@@ -447,7 +474,7 @@ class TestToFromDictAndJson(unittest.TestCase):
                      keywords=[{'name': 'UK', 'body': [{'name': 'K'}]}])
 
     def test_bigger_suite_structure(self):
-        suite = TestSuite.from_file_system(MISC_DIR)
+        suite = TestSuite.from_file_system(MISCDIR)
         self._verify(suite, **suite.to_dict())
 
     def _verify(self, obj, **expected):
@@ -458,6 +485,39 @@ class TestToFromDictAndJson(unittest.TestCase):
         self.assertDictEqual(roundtrip, expected)
         roundtrip = type(obj).from_json(obj.to_json()).to_dict()
         self.assertDictEqual(roundtrip, expected)
+        self._validate(obj)
+
+    def _validate(self, obj):
+        suite = self._create_suite_structure(obj)
+        self.validator.validate(instance=json.loads(suite.to_json()))
+        # Validating `suite.to_dict` directly doesn't work due to tuples not
+        # being accepted as arrays:
+        # https://github.com/python-jsonschema/jsonschema/issues/148
+        #self.validator.validate(instance=suite.to_dict())
+
+    def _create_suite_structure(self, obj):
+        suite = TestSuite()
+        test = suite.tests.create()
+        if isinstance(obj, TestSuite):
+            suite = obj
+        elif isinstance(obj, TestCase):
+            suite.tests = [obj]
+        elif isinstance(obj, (Keyword, For, While, If, Try, Error)):
+            test.body.append(obj)
+        elif isinstance(obj, (IfBranch, TryBranch)):
+            item = If() if isinstance(obj, IfBranch) else Try()
+            item.body.append(obj)
+            test.body.append(item)
+        elif isinstance(obj, (Break, Continue, Return)):
+            branch = test.body.create_if().body.create_branch()
+            branch.body.append(obj)
+        elif isinstance(obj, UserKeyword):
+            suite.resource.keywords.append(obj)
+        elif isinstance(obj, ResourceFile):
+            suite.resource = obj
+        else:
+            raise ValueError(obj)
+        return suite
 
 
 if __name__ == '__main__':

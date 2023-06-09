@@ -411,7 +411,7 @@ class TestSuite(ModelObject, Generic[KW, TC] if sys.version_info >= (3, 7)  else
             data['metadata'] = dict(self.metadata)
         if self.source:
             data['source'] = str(self.source)
-        if self.rpa:
+        if self.rpa is not None:
             data['rpa'] = self.rpa
         if self.has_setup:
             data['setup'] = self.setup.to_dict()

@@ -362,8 +362,7 @@ class Error(model.Error, WithSource):
         data = super().to_dict()
         if self.lineno:
             data['lineno'] = self.lineno
-        if self.error:
-            data['error'] = self.error
+        data['error'] = self.error
         return data
 
 
@@ -556,7 +555,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase]):
         If such an option is used only once, it can be given also as a single
         string like ``variable='VAR:value'``.
 
-        Additionally listener option allows passing object directly instead of
+        Additionally, listener option allows passing object directly instead of
         listener name, e.g. ``run('tests.robot', listener=Listener())``.
 
         To capture stdout and/or stderr streams, pass open file objects in as
