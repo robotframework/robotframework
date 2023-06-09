@@ -159,12 +159,7 @@ to a suite by using the :setting:`Name` setting in the Setting section:
 The name of the top-level suite `can be overridden`__ from the command line with
 the :option:`--name` option.
 
-.. note:: The :setting:`Name` setting is not compatible with the :option:`--suite`
-          option that can be used to select tests `by suite names`_. This `will
-          fixed`__ in Robot Framework 7.0.
-
 __ `Setting suite name`_
-__ https://github.com/robotframework/robotframework/issues/4688
 
 Suite documentation
 -------------------
