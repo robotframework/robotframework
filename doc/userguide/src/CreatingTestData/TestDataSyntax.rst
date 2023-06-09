@@ -657,6 +657,7 @@ to see the actual translations:
 - `Thai (th)`_
 - `Turkish (tr)`_
 - `Ukrainian (uk)`_
+- `Vietnamese (vi)`_
 - `Chinese Simplified (zh-CN)`_
 - `Chinese Traditional (zh-TW)`_
 

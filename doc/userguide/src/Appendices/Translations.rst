@@ -2434,6 +2434,133 @@ Boolean strings
     * - False
       -
 
+Vietnamese (vi)
+---------------
+
+Section headers
+~~~~~~~~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - Header
+      - Translation
+    * - Settings
+      - Cài Đặt
+    * - Variables
+      - Các biến số
+    * - Test Cases
+      - Các kịch bản kiểm thử
+    * - Tasks
+      - Các nghiệm vụ
+    * - Keywords
+      - Các từ khóa
+    * - Comments
+      - Các chú thích
+
+Settings
+~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - Setting
+      - Translation
+    * - Library
+      - Thư viện
+    * - Resource
+      - Tài nguyên
+    * - Variables
+      - Biến số
+    * - Name
+      - Tên
+    * - Documentation
+      - Tài liệu hướng dẫn
+    * - Metadata
+      - Dữ liệu tham chiếu
+    * - Suite Setup
+      - Tiền thiết lập bộ kịch bản kiểm thử
+    * - Suite Teardown
+      - Hậu thiết lập bộ kịch bản kiểm thử
+    * - Test Setup
+      - Tiền thiết lập kịch bản kiểm thử
+    * - Task Setup
+      - Tiền thiểt lập nhiệm vụ
+    * - Test Teardown
+      - Hậu thiết lập kịch bản kiểm thử
+    * - Task Teardown
+      - Hậu thiết lập nhiệm vụ
+    * - Test Template
+      - Mẫu kịch bản kiểm thử
+    * - Task Template
+      - Mẫu nhiễm vụ
+    * - Test Timeout
+      - Thời gian chờ kịch bản kiểm thử
+    * - Task Timeout
+      - Thời gian chờ nhiệm vụ
+    * - Test Tags
+      - Các nhãn kịch bản kiểm thử
+    * - Task Tags
+      - Các nhãn nhiệm vụ
+    * - Keyword Tags
+      - Các từ khóa nhãn
+    * - Tags
+      - Các thẻ
+    * - Setup
+      - Tiền thiết lập
+    * - Teardown
+      - Hậu thiết lập
+    * - Template
+      - Mẫu
+    * - Timeout
+      - Thời gian chờ
+    * - Arguments
+      - Các đối số
+
+BDD prefixes
+~~~~~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - Prefix
+      - Translation
+    * - Given
+      - Đã cho
+    * - When
+      - Khi
+    * - Then
+      - Thì
+    * - And
+      - Và
+    * - But
+      - Nhưng
+
+Boolean strings
+~~~~~~~~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - True/False
+      - Values
+    * - True
+      - Đúng, Vâng, Mở
+    * - False
+      - Sai, Không, Tắt, Không Có Gì
+
 Chinese Simplified (zh-CN)
 --------------------------
 
