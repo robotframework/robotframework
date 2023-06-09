@@ -1219,3 +1219,45 @@ class Hi(Language):
     but_prefixes = ['परंतु']
     true_strings = ['यथार्थ', 'निश्चित', 'हां', 'पर']
     false_strings = ['गलत', 'नहीं', 'हालाँकि', 'यद्यपि', 'नहीं', 'हैं']
+
+    
+class Vi(Language):
+    """Vietnamese"""
+    settings_header = 'Cài Đặt'
+    variables_header = 'Các biến số'
+    test_cases_header = 'Các kịch bản kiểm thử'
+    tasks_header = 'Các nghiệm vụ'
+    keywords_header = 'Các từ khóa'
+    comments_header = 'Các chú thích'
+    library_setting = 'Thư viện'
+    resource_setting = 'Tài nguyên'
+    variables_setting = 'Biến số'
+    name_setting = 'Tên'
+    documentation_setting = 'Tài liệu hướng dẫn'
+    metadata_setting = 'Dữ liệu tham chiếu'
+    suite_setup_setting = 'Tiền thiết lập bộ kịch bản kiểm thử'
+    suite_teardown_setting = 'Hậu thiết lập bộ kịch bản kiểm thử'
+    test_setup_setting = 'Tiền thiết lập kịch bản kiểm thử'
+    test_teardown_setting = 'Hậu thiết lập kịch bản kiểm thử'
+    test_template_setting = 'Mẫu kịch bản kiểm thử'
+    test_timeout_setting = 'Thời gian chờ kịch bản kiểm thử'
+    test_tags_setting = 'Các nhãn kịch bản kiểm thử'
+    task_setup_setting = 'Tiền thiểt lập nhiệm vụ'
+    task_teardown_setting = 'Hậu thiết lập nhiệm vụ'
+    task_template_setting = 'Mẫu nhiễm vụ'
+    task_timeout_setting = 'Thời gian chờ nhiệm vụ'
+    task_tags_setting = 'Các nhãn nhiệm vụ'
+    keyword_tags_setting = 'Các từ khóa nhãn'
+    tags_setting = 'Các thẻ'
+    setup_setting = 'Tiền thiết lập'
+    teardown_setting = 'Hậu thiết lập'
+    template_setting = 'Mẫu'
+    timeout_setting = 'Thời gian chờ'
+    arguments_setting = 'Các đối số'
+    given_prefixes = ['Đã cho']
+    when_prefixes = ['Khi']
+    then_prefixes = ['Thì']
+    and_prefixes = ['Và']
+    but_prefixes = ['Nhưng']
+    true_strings = ['Đúng', 'Vâng', 'Mở']
+    false_strings = ['Sai', 'Không', 'Tắt', 'Không Có Gì']
