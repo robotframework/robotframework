@@ -272,8 +272,8 @@ class TestToFromDictAndJson(unittest.TestCase):
     def test_keyword(self):
         self._verify(Keyword(), name='')
         self._verify(Keyword('Name'), name='Name')
-        self._verify(Keyword('N', tuple('args'), ('${result}',)),
-                     name='N', args=list('args'), assign=['${result}'])
+        self._verify(Keyword('N', 'args', ('${result}',)),
+                     name='N', args=tuple('args'), assign=('${result}',))
         self._verify(Keyword('Setup', type=Keyword.SETUP, lineno=1),
                      name='Setup', lineno=1)
 
@@ -312,7 +312,7 @@ class TestToFromDictAndJson(unittest.TestCase):
         self._verify(root,
                      type='IF/ELSE ROOT',
                      body=[{'type': 'IF', 'condition': '$c', 'body': [{'name': 'K1'}]},
-                           {'type': 'ELSE', 'body': [{'name': 'K2', 'args': ['a']}]}])
+                           {'type': 'ELSE', 'body': [{'name': 'K2', 'args': ('a',)}]}])
 
     def test_try(self):
         self._verify(Try(), type='TRY/EXCEPT ROOT', body=[])
@@ -365,15 +365,15 @@ class TestToFromDictAndJson(unittest.TestCase):
         test = TestCase('TC')
         test.setup.config(name='Setup')
         test.teardown.config(name='Teardown', args='a')
-        test.body.create_keyword('K1')
-        test.body.create_if().body.create_branch().body.create_keyword('K2')
+        test.body.create_keyword('K1', 'a')
+        test.body.create_if().body.create_branch('IF', '$c').body.create_keyword('K2')
         self._verify(test,
                      name='TC',
                      setup={'name': 'Setup'},
-                     teardown={'name': 'Teardown', 'args': ['a']},
-                     body=[{'name': 'K1'},
+                     teardown={'name': 'Teardown', 'args': ('a',)},
+                     body=[{'name': 'K1', 'args': ('a',)},
                            {'type': 'IF/ELSE ROOT',
-                            'body': [{'type': 'IF', 'condition': None,
+                            'body': [{'type': 'IF', 'condition': '$c',
                                       'body': [{'name': 'K2'}]}]}])
 
     def test_suite(self):
@@ -391,7 +391,7 @@ class TestToFromDictAndJson(unittest.TestCase):
         self._verify(suite,
                      name='Root',
                      setup={'name': 'Setup'},
-                     teardown={'name': 'Teardown', 'args': ['a']},
+                     teardown={'name': 'Teardown', 'args': ('a',)},
                      tests=[{'name': 'T1', 'body': [{'name': 'K'}]}],
                      suites=[{'name': 'Child',
                               'tests': [{'name': 'T2', 'body': []}],

@@ -150,10 +150,7 @@ class ModelObject(metaclass=SetterAwareType):
 
         __ https://docs.python.org/3/library/copy.html
         """
-        copied = copy.copy(self)
-        for name in attributes:
-            setattr(copied, name, attributes[name])
-        return copied
+        return copy.copy(self).config(**attributes)
 
     def deepcopy(self: T, **attributes) -> T:
         """Return a deep copy of this object.
@@ -167,10 +164,7 @@ class ModelObject(metaclass=SetterAwareType):
 
         __ https://docs.python.org/3/library/copy.html
         """
-        copied = copy.deepcopy(self)
-        for name in attributes:
-            setattr(copied, name, attributes[name])
-        return copied
+        return copy.deepcopy(self).config(**attributes)
 
     def __repr__(self) -> str:
         arguments = [(name, getattr(self, name)) for name in self.repr_args]

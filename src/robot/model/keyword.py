@@ -40,8 +40,8 @@ class Keyword(BodyItem):
                  type: str = BodyItem.KEYWORD,
                  parent: BodyItemParent = None):
         self.name = name
-        self.args = args
-        self.assign = assign
+        self.args = tuple(args)
+        self.assign = tuple(assign)
         self.type = type
         self.parent = parent
 
@@ -74,9 +74,9 @@ class Keyword(BodyItem):
     def to_dict(self) -> DataDict:
         data: DataDict = {'name': self.name}
         if self.args:
-            data['args'] = list(self.args)
+            data['args'] = self.args
         if self.assign:
-            data['assign'] = list(self.assign)
+            data['assign'] = self.assign
         return data
 
 

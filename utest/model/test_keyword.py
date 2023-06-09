@@ -78,13 +78,13 @@ class TestKeyword(unittest.TestCase):
              "Keyword(name='Name', args=(), assign=('${x}', '${y}'))"),
             (Keyword('Name', assign=['${x}='], args=['x']),
              '${x}=    Name    x',
-             "Keyword(name='Name', args=['x'], assign=['${x}='])"),
+             "Keyword(name='Name', args=('x',), assign=('${x}=',))"),
             (Keyword('Name', args=(1, 2, 3)),
              'Name    1    2    3',
              "Keyword(name='Name', args=(1, 2, 3), assign=())"),
-            (Keyword(assign=['${\xe3}'], name='\xe4', args=['\xe5']),
-             '${\xe3}    \xe4    \xe5',
-             'Keyword(name=%r, args=[%r], assign=[%r])' % ('\xe4', '\xe5', '${\xe3}'))
+            (Keyword(assign=['${ã}'], name='ä', args=['å']),
+             '${ã}    ä    å',
+             "Keyword(name='ä', args=('å',), assign=('${ã}',))")
         ]:
             assert_equal(str(kw), exp_str)
             assert_equal(repr(kw), 'robot.model.' + exp_repr)
@@ -98,24 +98,28 @@ class TestKeyword(unittest.TestCase):
         assert_equal(kw.name, copy.name)
         copy.name += ' copy'
         assert_not_equal(kw.name, copy.name)
-        assert_equal(id(kw.args), id(copy.args))
+        assert_equal(kw.args, copy.args)
 
     def test_copy_with_attributes(self):
-        kw = Keyword(name='Orig', args=['orig'])
+        kw = Keyword(name='Orig', args=('orig',))
         copy = kw.copy(name='New', args=['new'])
         assert_equal(copy.name, 'New')
-        assert_equal(copy.args, ['new'])
+        assert_equal(copy.args, ('new',))
 
     def test_deepcopy(self):
         kw = Keyword(name='Keyword', args=['a'])
         copy = kw.deepcopy()
         assert_equal(kw.name, copy.name)
-        assert_not_equal(id(kw.args), id(copy.args))
+        assert_equal(kw.args, copy.args)
 
     def test_deepcopy_with_attributes(self):
         copy = Keyword(name='Orig').deepcopy(name='New', args=['New'])
         assert_equal(copy.name, 'New')
-        assert_equal(copy.args, ['New'])
+        assert_equal(copy.args, ('New',))
+
+    def test_copy_and_deepcopy_with_non_existing_attributes(self):
+        assert_raises(AttributeError, Keyword().copy, bad='attr')
+        assert_raises(AttributeError, Keyword().deepcopy, bad='attr')
 
 
 class TestKeywords(unittest.TestCase):
