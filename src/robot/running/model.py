@@ -686,6 +686,50 @@ class ResourceFile(ModelObject):
     def keywords(self, keywords: Sequence['UserKeyword']) -> 'UserKeywords':
         return UserKeywords(self, keywords)
 
+    @classmethod
+    def from_file_system(cls, path: 'Path|str', **config) -> 'ResourceFile':
+        """Create a :class:`ResourceFile` object based on the give ``path``.
+
+        :param path: File path where to read the data from.
+        :param config: Configuration parameters for :class:`~.builders.ResourceFileBuilder`
+            class that is used internally for building the suite.
+
+        New in Robot Framework 6.1. See also :meth:`from_string` and :meth:`from_model`.
+        """
+        from .builder import ResourceFileBuilder
+        return ResourceFileBuilder(**config).build(path)
+
+    @classmethod
+    def from_string(cls, string: str, **config) -> 'ResourceFile':
+        """Create a :class:`ResourceFile` object based on the given ``string``.
+
+        :param string: String to create the resource file from.
+        :param config: Configuration parameters for
+             :func:`~robot.parsing.parser.parser.get_resource_model` used internally.
+
+        New in Robot Framework 6.1. See also :meth:`from_file_system` and
+        :meth:`from_model`.
+        """
+        from robot.parsing import get_resource_model
+        model = get_resource_model(string, data_only=True, **config)
+        return cls.from_model(model)
+
+    @classmethod
+    def from_model(cls, model: 'File') -> 'ResourceFile':
+        """Create a :class:`ResourceFile` object based on the given ``model``.
+
+        :param model: Model to create the suite from.
+
+        The model can be created by using the
+        :func:`~robot.parsing.parser.parser.get_resource_model` function and possibly
+        modified by other tooling in the :mod:`robot.parsing` module.
+
+        New in Robot Framework 6.1. See also :meth:`from_file_system` and
+        :meth:`from_string`.
+        """
+        from .builder import RobotParser
+        return RobotParser().parse_resource_model(model)
+
     def to_dict(self) -> DataDict:
         data = {}
         if self._source:

@@ -81,7 +81,12 @@ class RobotParser(Parser):
     def parse_resource_file(self, source: Path) -> ResourceFile:
         model = get_resource_model(self._get_source(source), data_only=True,
                                    curdir=self._get_curdir(source), lang=self.lang)
-        resource = ResourceFile(source=source)
+        resource = self.parse_resource_model(model)
+        resource.source = source
+        return resource
+
+    def parse_resource_model(self, model: File) -> ResourceFile:
+        resource = ResourceFile(source=model.source)
         ResourceBuilder(resource).build(model)
         return resource
 

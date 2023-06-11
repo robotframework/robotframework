@@ -10,10 +10,11 @@ from jsonschema import Draft202012Validator
 
 from robot import api, model
 from robot.model.modelobject import ModelObject
+from robot.parsing import get_resource_model
 from robot.running import (Break, Continue, Error, For, If, IfBranch, Keyword,
-                           Return, TestCase, TestDefaults, TestSuite, Try, TryBranch,
-                           While)
-from robot.running.model import ResourceFile, UserKeyword
+                           Return, ResourceFile, TestCase, TestDefaults, TestSuite,
+                           Try, TryBranch, While)
+from robot.running.model import UserKeyword
 from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal,
                                  assert_raises, assert_true)
 
@@ -518,6 +519,61 @@ class TestToFromDictAndJson(unittest.TestCase):
         else:
             raise ValueError(obj)
         return suite
+
+
+class TestResourceFile(unittest.TestCase):
+    path = CURDIR.parent / 'resources/test.resource'
+    data = '''
+*** Settings ***
+Library         Example
+Keyword Tags    common
+
+*** Variables ***
+${NAME}         Value
+
+*** Keywords ***
+Example
+    [Tags]    own
+    Log    Hello!
+'''
+
+    def test_from_file_system(self):
+        res = ResourceFile.from_file_system(self.path)
+        assert_equal(res.variables[0].name, '${PATH}')
+        assert_equal(res.variables[0].value, (str(self.path.parent).replace('\\', '\\\\'),))
+        assert_equal(res.keywords[0].name, 'My Test Keyword')
+
+    def test_from_file_system_with_config(self):
+        res = ResourceFile.from_file_system(self.path, process_curdir=False)
+        assert_equal(res.variables[0].name, '${PATH}')
+        assert_equal(res.variables[0].value, ('${CURDIR}',))
+        assert_equal(res.keywords[0].name, 'My Test Keyword')
+
+    def test_from_string(self):
+        res = ResourceFile.from_string(self.data)
+        assert_equal(res.imports[0].name, 'Example')
+        assert_equal(res.variables[0].name, '${NAME}')
+        assert_equal(res.variables[0].value, ('Value',))
+        assert_equal(res.keywords[0].name, 'Example')
+        assert_equal(res.keywords[0].tags, ['common', 'own'])
+        assert_equal(res.keywords[0].body[0].name, 'Log')
+        assert_equal(res.keywords[0].body[0].args, ('Hello!',))
+
+    def test_from_string_with_config(self):
+        res = ResourceFile.from_string('*** Muuttujat ***\n${NIMI}\tarvo', lang='fi')
+        assert_equal(res.variables[0].name, '${NIMI}')
+        assert_equal(res.variables[0].value, ('arvo',))
+
+    def test_from_model(self):
+        model = get_resource_model(self.data)
+        res = ResourceFile.from_model(model)
+        assert_equal(res.imports[0].name, 'Example')
+        assert_equal(res.variables[0].name, '${NAME}')
+        assert_equal(res.variables[0].value, ('Value',))
+        assert_equal(res.keywords[0].name, 'Example')
+        assert_equal(res.keywords[0].tags, ['common', 'own'])
+        assert_equal(res.keywords[0].body[0].name, 'Log')
+        assert_equal(res.keywords[0].body[0].args, ('Hello!',))
 
 
 if __name__ == '__main__':
