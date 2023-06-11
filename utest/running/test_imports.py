@@ -42,14 +42,13 @@ class TestImports(unittest.TestCase):
     def test_create(self):
         suite = TestSuite(name='Suite')
         suite.resource.imports.create('Library', 'OperatingSystem')
-        suite.resource.imports.create('RESOURCE', 'test_resource.txt')
+        suite.resource.imports.create('RESOURCE', 'test.resource')
         suite.resource.imports.create(type='LibRary', name='String')
         test = suite.tests.create(name='Test')
         test.body.create_keyword('Directory Should Exist', args=['.'])
         test.body.create_keyword('My Test Keyword')
         test.body.create_keyword('Convert To Lower Case', args=['ROBOT'])
         self.run_and_check_pass(suite)
-
 
     def test_library(self):
         suite = TestSuite(name='Suite')
@@ -60,7 +59,7 @@ class TestImports(unittest.TestCase):
 
     def test_resource(self):
         suite = TestSuite(name='Suite')
-        suite.resource.imports.resource('test_resource.txt')
+        suite.resource.imports.resource('test.resource')
         suite.tests.create(name='Test').body.create_keyword('My Test Keyword')
         assert_equal(suite.tests[0].body[0].name, 'My Test Keyword')
         self.run_and_check_pass(suite)
