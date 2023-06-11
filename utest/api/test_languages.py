@@ -1,5 +1,6 @@
+import inspect
 import unittest
-
+import re
 from pathlib import Path
 
 from robot.api import Language, Languages
@@ -7,6 +8,9 @@ from robot.conf.languages import En, Fi, PtBr, Th
 from robot.errors import DataError
 from robot.utils.asserts import (assert_equal, assert_not_equal, assert_raises,
                                  assert_raises_with_msg)
+
+
+STANDARD_LANGUAGES = Language.__subclasses__()
 
 
 class TestLanguage(unittest.TestCase):
@@ -41,12 +45,31 @@ class TestLanguage(unittest.TestCase):
         assert_equal(X().name, '')
         assert_equal(X.name, '')
 
-    def test_all_standard_languages_have_code_and_name(self):
-        for cls in Language.__subclasses__():
+    def test_standard_languages_have_code_and_name(self):
+        for cls in STANDARD_LANGUAGES:
             assert cls().code
             assert cls.code
             assert cls().name
             assert cls.name
+
+    def test_standard_language_doc_formatting(self):
+        added_in_rf60 = {'bg', 'bs', 'cs', 'de', 'en', 'es', 'fi', 'fr', 'hi',
+                         'it', 'nl', 'pl', 'pt', 'pt-BR', 'ro', 'ru', 'sv',
+                         'th', 'tr', 'uk', 'zh-CN', 'zh-TW'}
+        for cls in STANDARD_LANGUAGES:
+            doc = inspect.getdoc(cls)
+            if cls.code in added_in_rf60:
+                if doc != cls.name:
+                    raise AssertionError(
+                        f'Invalid docstring for {cls.name}. '
+                        f'Expected only language name, got:\n{doc}'
+                    )
+            else:
+                if not re.match(rf'{cls.name}\n\nNew in Robot Framework [\d.]+\.', doc):
+                    raise AssertionError(
+                        f'Invalid docstring for {cls.name}. '
+                        f'Expected language name and "New in" note, got:\n{doc}'
+                    )
 
     def test_code_and_name_of_Language_base_class_are_propertys(self):
         assert isinstance(Language.code, property)

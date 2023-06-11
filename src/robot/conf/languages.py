@@ -1220,9 +1220,12 @@ class Hi(Language):
     true_strings = ['यथार्थ', 'निश्चित', 'हां', 'पर']
     false_strings = ['गलत', 'नहीं', 'हालाँकि', 'यद्यपि', 'नहीं', 'हैं']
 
-    
+
 class Vi(Language):
-    """Vietnamese"""
+    """Vietnamese
+
+    New in Robot Framework 6.1.
+    """
     settings_header = 'Cài Đặt'
     variables_header = 'Các biến số'
     test_cases_header = 'Các kịch bản kiểm thử'

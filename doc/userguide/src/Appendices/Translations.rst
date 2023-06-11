@@ -2437,6 +2437,8 @@ Boolean strings
 Vietnamese (vi)
 ---------------
 
+New in Robot Framework 6.1.
+
 Section headers
 ~~~~~~~~~~~~~~~
 
