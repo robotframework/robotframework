@@ -324,8 +324,8 @@ meant to be edited manually. Its most important use cases are:
 
 - Transferring data between processes and machines. A suite can be converted
   to JSON in one machine and recreated somewhere else.
-- Saving a suite constructed from normal Robot Framework data into a single
-  JSON file that is faster to parse.
+- Saving a suite, possibly a nested suite, constructed from normal Robot Framework
+  data into a single JSON file that is faster to parse.
 - Alternative data format for external tools generating tests or tasks.
 
 .. note:: The JSON data support is new in Robot Framework 6.1 and it can be
@@ -350,8 +350,10 @@ configuration options related to JSON formatting:
 
    # Create suite based on data on the file system.
    suite = TestSuite.from_file_system('/path/to/data')
+
    # Get JSON data as a string.
    data = suite.to_json()
+
    # Save JSON data to a file with custom indentation.
    suite.to_json('data.rbt', indent=2)
 
@@ -374,6 +376,7 @@ method. It works both with JSON strings and paths to JSON files:
 
    # Create suite from JSON data in a file.
    suite = TestSuite.from_json('data.rbt')
+
    # Create suite from a JSON string.
    suite = TestSuite.from_json('{"name": "Suite", "tests": [{"name": "Test"}]}')
 
@@ -386,11 +389,11 @@ __ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#r
 Executing JSON files
 ''''''''''''''''''''
 
-When using the `robot` command normally, JSON files with the :file:`.rbt`
-extension are parsed automatically. This includes running individual JSON files
-like `robot tests.rbt` and running directories containing :file:`.rbt` files.
-If you would rather use the standard :file:`.json` extension, you need to
-`configure which files are parsed`__.
+When executing tests or tasks using the `robot` command, JSON files with
+the custom :file:`.rbt` extension are parsed automatically. This includes
+running individual JSON files like `robot tests.rbt` and running directories
+containing :file:`.rbt` files. If you would rather use the standard
+:file:`.json` extension, you need to `configure which files are parsed`__.
 
 __ `Selecting files to parse`_
 
