@@ -331,9 +331,7 @@ class TestSuite(ModelObject, Generic[KW, TC] if sys.version_info >= (3, 7)  else
 
     @property
     def has_tests(self) -> bool:
-        if self.tests:
-            return True
-        return any(s.has_tests for s in self.suites)
+        return bool(self.tests) or any(s.has_tests for s in self.suites)
 
     def set_tags(self, add: Sequence[str] = (), remove: Sequence[str] = (),
                  persist: bool = False):

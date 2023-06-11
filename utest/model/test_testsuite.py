@@ -160,15 +160,19 @@ class TestTestSuite(unittest.TestCase):
 
     def test_all_tests_and_test_count(self):
         root = TestSuite()
+        assert_equal(root.has_tests, False)
         assert_equal(root.test_count, 0)
         assert_equal(list(root.all_tests), [])
         for i in range(10):
             suite = root.suites.create()
             for j in range(100):
                 suite.tests.create()
+        assert_equal(root.has_tests, True)
         assert_equal(root.test_count, 1000)
         assert_equal(len(list(root.all_tests)), 1000)
-        assert_equal(list(root.suites[0].all_tests), list(root.suites[0].tests))
+        for suite in root.suites:
+            assert_equal(suite.has_tests, True)
+            assert_equal(list(suite.all_tests), list(suite.tests))
 
     def test_configure_only_works_with_root_suite(self):
         for Suite in TestSuite, RunningTestSuite, ResultTestSuite:
