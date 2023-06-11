@@ -60,10 +60,10 @@ The biggest new feature in Robot Framework 6.1 is the possibility to convert
 test/task data to JSON and back (`#3902`_). This functionality has three main
 use cases:
 
-- Transferring suites between processes and machines. A suite can be converted
+- Transferring data between processes and machines. A suite can be converted
   to JSON in one machine and recreated somewhere else.
-- Possibility to save a suite, possible a nested suite, constructed from data
-  on the file system into a single file that is faster to parse.
+- Saving a suite constructed from normal Robot Framework data into a single
+  JSON file that is faster to parse.
 - Alternative data format for external tools generating tests or tasks.
 
 This feature is designed more for tool developers than for regular Robot Framework
@@ -77,10 +77,14 @@ functionalities are explained below:
 
    .. sourcecode:: python
 
-      from robot.api import TestSuite
+      from robot.running import TestSuite
 
+      # Construct suite based on data on the file system.
       suite = TestSuite.from_file_system('/path/to/data')
-      suite.to_json('data.rbt')
+      # Get JSON data as a string.
+      data = suite.to_json()
+      # Save JSON data to a file with custom indentation.
+      suite.to_json('data.rbt', indent=2)
 
    If you would rather work with Python data and then convert that to JSON
    or some other format yourself, you can use `TestSuite.to_dict`__ instead.
@@ -90,11 +94,14 @@ functionalities are explained below:
 
    .. sourcecode:: python
 
-      from robot.api import TestSuite
+      from robot.running import TestSuite
 
+      # Create suite from JSON data in a file.
       suite = TestSuite.from_json('data.rbt')
+      # Create suite from a JSON string.
+      suite = TestSuite.from_json('{"name": "Suite", "tests": [{"name": "Test"}]}')
 
-   If you hava data as a Python dictionary, you can use `TestSuite.from_dict`__
+   If you have data as a Python dictionary, you can use `TestSuite.from_dict`__
    instead.
 
 3. When using the `robot` command normally, JSON files with the `.rbt` extension
@@ -111,7 +118,7 @@ recreated:
 
 .. sourcecode:: python
 
-   from robot.api import TestSuite
+   from robot.running import TestSuite
 
    # Create a suite, adjust source and convert to JSON.
    suite = TestSuite.from_file_system('/path/to/data')
@@ -123,16 +130,18 @@ recreated:
    suite.adjust_source(root='/new/path/to')
 
 Ths JSON serialization support can be enhanced in future Robot Framework versions.
-We try to keep the data format stable, but it is possible that some changes are
-needed. If you have an enhancement idea or believe you have encountered a bug,
-please submit an issue issue start a discussion thread on the `#devel` channel
+If you have an enhancement idea or believe you have encountered a bug,
+please submit an issue or start a discussion thread on the `#devel` channel
 on our Slack_.
+
+The JSON data format is documented using the `running.json` `schema file`__.
 
 __ https://robot-framework.readthedocs.io/en/latest/autodoc/robot.running.html#robot.running.model.TestSuite.to_json
 __ https://robot-framework.readthedocs.io/en/latest/autodoc/robot.running.html#robot.running.model.TestSuite.to_dict
 __ https://robot-framework.readthedocs.io/en/latest/autodoc/robot.running.html#robot.running.model.TestSuite.from_json
 __ https://robot-framework.readthedocs.io/en/latest/autodoc/robot.running.html#robot.running.model.TestSuite.from_dict
 __ https://robot-framework.readthedocs.io/en/latest/autodoc/robot.running.html#robot.running.model.TestSuite.adjust_source
+__ https://github.com/robotframework/robotframework/tree/master/doc/schema#readme
 
 External parser API
 -------------------
