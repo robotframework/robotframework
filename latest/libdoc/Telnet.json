@@ -1,9 +1,9 @@
 {
-  "specversion": 1,
+  "specversion": 2,
   "name": "Telnet",
   "doc": "A library providing communication over Telnet connections.\n\n``Telnet`` is Robot Framework's standard library that makes it possible to\nconnect to Telnet servers and execute commands on the opened connections.\n\n== Table of contents ==\n\n- `Connections`\n- `Writing and reading`\n- `Configuration`\n- `Terminal emulation`\n- `Logging`\n- `Time string format`\n- `Boolean arguments`\n- `Importing`\n- `Keywords`\n\n= Connections =\n\nThe first step of using ``Telnet`` is opening a connection with `Open\nConnection` keyword. Typically the next step is logging in with `Login`\nkeyword, and in the end the opened connection can be closed with `Close\nConnection`.\n\nIt is possible to open multiple connections and switch the active one\nusing `Switch Connection`. `Close All Connections` can be used to close\nall the connections, which is especially useful in suite teardowns to\nguarantee that all connections are always closed.\n\n= Writing and reading =\n\nAfter opening a connection and possibly logging in, commands can be\nexecuted or text written to the connection for other reasons using `Write`\nand `Write Bare` keywords. The main difference between these two is that\nthe former adds a [#Configuration|configurable newline] after the text\nautomatically.\n\nAfter writing something to the connection, the resulting output can be\nread using `Read`, `Read Until`, `Read Until Regexp`, and `Read Until\nPrompt` keywords. Which one to use depends on the context, but the latest\none is often the most convenient.\n\nAs a convenience when running a command, it is possible to use `Execute\nCommand` that simply uses `Write` and `Read Until Prompt` internally.\n`Write Until Expected Output` is useful if you need to wait until writing\nsomething produces a desired output.\n\nWritten and read text is automatically encoded/decoded using a\n[#Configuration|configured encoding].\n\nThe ANSI escape codes, like cursor movement and color codes, are\nnormally returned as part of the read operation. If an escape code occurs\nin middle of a search pattern it may also prevent finding the searched\nstring. `Terminal emulation` can be used to process these\nescape codes as they would be if a real terminal would be in use.\n\n= Configuration =\n\nMany aspects related the connections can be easily configured either\nglobally or per connection basis. Global configuration is done when\n[#Importing|library is imported], and these values can be overridden per\nconnection by `Open Connection` or with setting specific keywords\n`Set Timeout`, `Set Newline`, `Set Prompt`, `Set Encoding`,\n`Set Default Log Level` and `Set Telnetlib Log Level`.\n\nValues of ``environ_user``, ``window_size``, ``terminal_emulation``, and\n``terminal_type`` can not be changed after opening the connection.\n\n== Timeout ==\n\nTimeout defines how long is the maximum time to wait when reading\noutput. It is used internally by `Read Until`, `Read Until Regexp`,\n`Read Until Prompt`, and `Login` keywords. The default value is 3 seconds.\n\n== Connection Timeout ==\n\nConnection Timeout defines how long is the maximum time to wait when\nopening the telnet connection. It is used internally by `Open Connection`.\nThe default value is the system global default timeout.\n\n== Newline ==\n\nNewline defines which line separator `Write` keyword should use. The\ndefault value is ``CRLF`` that is typically used by Telnet connections.\n\nNewline can be given either in escaped format using ``\\n`` and ``\\r`` or\nwith special ``LF`` and ``CR`` syntax.\n\nExamples:\n| `Set Newline` | \\n  |\n| `Set Newline` | CRLF |\n\n== Prompt ==\n\nOften the easiest way to read the output of a command is reading all\nthe output until the next prompt with `Read Until Prompt`. It also makes\nit easier, and faster, to verify did `Login` succeed.\n\nPrompt can be specified either as a normal string or a regular expression.\nThe latter is especially useful if the prompt changes as a result of\nthe executed commands. Prompt can be set to be a regular expression\nby giving ``prompt_is_regexp`` argument a true value (see `Boolean\narguments`).\n\nExamples:\n| `Open Connection` | lolcathost | prompt=$              |\n| `Set Prompt`      | (> |# )    | prompt_is_regexp=true |\n\n== Encoding ==\n\nTo ease handling text containing non-ASCII characters, all written text is\nencoded and read text decoded by default. The default encoding is UTF-8\nthat works also with ASCII. Encoding can be disabled by using a special\nencoding value ``NONE``. This is mainly useful if you need to get the bytes\nreceived from the connection as-is.\n\nNotice that when writing to the connection, only Unicode strings are\nencoded using the defined encoding. Byte strings are expected to be already\nencoded correctly. Notice also that normal text in data is passed to\nthe library as Unicode and you need to use variables to use bytes.\n\nIt is also possible to configure the error handler to use if encoding or\ndecoding characters fails. Accepted values are the same that encode/decode\nfunctions in Python strings accept. In practice the following values are\nthe most useful:\n\n- ``ignore``: ignore characters that cannot be encoded (default)\n- ``strict``: fail if characters cannot be encoded\n- ``replace``: replace characters that cannot be encoded with a replacement\n  character\n\nExamples:\n| `Open Connection` | lolcathost | encoding=Latin1 | encoding_errors=strict |\n| `Set Encoding` | ISO-8859-15 |\n| `Set Encoding` | errors=ignore |\n\n== Default log level ==\n\nDefault log level specifies the log level keywords use for `logging` unless\nthey are given an explicit log level. The default value is ``INFO``, and\nchanging it, for example, to ``DEBUG`` can be a good idea if there is lot\nof unnecessary output that makes log files big.\n\n== Terminal type ==\n\nBy default the Telnet library does not negotiate any specific terminal type\nwith the server. If a specific terminal type, for example ``vt100``, is\ndesired, the terminal type can be configured in `importing` and with\n`Open Connection`.\n\n== Window size ==\n\nWindow size for negotiation with the server can be configured when\n`importing` the library and with `Open Connection`.\n\n== USER environment variable ==\n\nTelnet protocol allows the ``USER`` environment variable to be sent when\nconnecting to the server. On some servers it may happen that there is no\nlogin prompt, and on those cases this configuration option will allow still\nto define the desired username. The option ``environ_user`` can be used in\n`importing` and with `Open Connection`.\n\n= Terminal emulation =\n\nTelnet library supports terminal\nemulation with [http://pyte.readthedocs.io|Pyte]. Terminal emulation\nwill process the output in a virtual screen. This means that ANSI escape\ncodes, like cursor movements, and also control characters, like\ncarriage returns and backspaces, have the same effect on the result as they\nwould have on a normal terminal screen. For example the sequence\n``acdc\\x1b[3Dbba`` will result in output ``abba``.\n\nTerminal emulation is taken into use by giving ``terminal_emulation``\nargument a true value (see `Boolean arguments`) either in the library\ninitialization or with `Open Connection`.\n\nAs Pyte approximates vt-style terminal, you may also want to set the\nterminal type as ``vt100``. We also recommend that you increase the window\nsize, as the terminal emulation will break all lines that are longer than\nthe window row length.\n\nWhen terminal emulation is used, the `newline` and `encoding` can not be\nchanged anymore after opening the connection.\n\nExamples:\n| `Open Connection` | lolcathost | terminal_emulation=True | terminal_type=vt100 | window_size=400x100 |\n\nAs a prerequisite for using terminal emulation, you need to have Pyte\ninstalled. Due to backwards incompatible changes in Pyte, different\nRobot Framework versions support different Pyte versions:\n\n- Pyte 0.6 and newer are supported by Robot Framework 3.0.3.\n  Latest Pyte version can be installed (or upgraded) with\n  ``pip install --upgrade pyte``.\n- Pyte 0.5.2 and older are supported by Robot Framework 3.0.2 and earlier.\n  Pyte 0.5.2 can be installed with ``pip install pyte==0.5.2``.\n\n= Logging =\n\nAll keywords that read something log the output. These keywords take the\nlog level to use as an optional argument, and if no log level is specified\nthey use the [#Configuration|configured] default value.\n\nThe valid log levels to use are ``TRACE``, ``DEBUG``, ``INFO`` (default),\nand ``WARN``. Levels below ``INFO`` are not shown in log files by default\nwhereas warnings are shown more prominently.\n\nThe [http://docs.python.org/library/telnetlib.html|telnetlib module]\nused by this library has a custom logging system for logging content it\nsends and receives. By default these messages are written using ``TRACE``\nlevel, but the level is configurable with the ``telnetlib_log_level``\noption either in the library initialization, to the `Open Connection`\nor by using the `Set Telnetlib Log Level` keyword to the active\nconnection. Special level ``NONE`` con be used to disable the logging\naltogether.\n\n= Time string format =\n\nTimeouts and other times used must be given as a time string using format\nlike ``15 seconds`` or ``1min 10s``. If the timeout is given as just\na number, for example, ``10`` or ``1.5``, it is considered to be seconds.\nThe time string format is described in more detail in an appendix of\n[http://robotframework.org/robotframework/#user-guide|Robot Framework User Guide].\n\n= Boolean arguments =\n\nSome keywords accept arguments that are handled as Boolean values true or\nfalse. If such an argument is given as a string, it is considered false if\nit is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or\n``0``, case-insensitively. Other strings are considered true regardless\ntheir value, and other argument types are tested using the same\n[http://docs.python.org/library/stdtypes.html#truth|rules as in Python].\n\nTrue examples:\n| `Open Connection` | lolcathost | terminal_emulation=True    | # Strings are generally true.    |\n| `Open Connection` | lolcathost | terminal_emulation=yes     | # Same as the above.             |\n| `Open Connection` | lolcathost | terminal_emulation=${TRUE} | # Python ``True`` is true.       |\n| `Open Connection` | lolcathost | terminal_emulation=${42}   | # Numbers other than 0 are true. |\n\nFalse examples:\n| `Open Connection` | lolcathost | terminal_emulation=False    | # String ``false`` is false.   |\n| `Open Connection` | lolcathost | terminal_emulation=no       | # Also string ``no`` is false. |\n| `Open Connection` | lolcathost | terminal_emulation=${EMPTY} | # Empty string is false.       |\n| `Open Connection` | lolcathost | terminal_emulation=${FALSE} | # Python ``False`` is false.   |\n\nConsidering string ``NONE`` false is new in Robot Framework 3.0.3 and\nconsidering also ``OFF`` and ``0`` false is new in Robot Framework 3.1.",
-  "version": "6.0.2",
-  "generated": "2023-01-08T19:25:37+00:00",
+  "version": "6.1",
+  "generated": "2023-06-12T09:38:44+00:00",
   "type": "LIBRARY",
   "scope": "SUITE",
   "docFormat": "ROBOT",
@@ -16,6 +16,7 @@
       "args": [
         {
           "name": "timeout",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "3 seconds",
@@ -25,6 +26,7 @@
         },
         {
           "name": "newline",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "CRLF",
@@ -34,6 +36,7 @@
         },
         {
           "name": "prompt",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -43,6 +46,7 @@
         },
         {
           "name": "prompt_is_regexp",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -52,6 +56,7 @@
         },
         {
           "name": "encoding",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "UTF-8",
@@ -61,6 +66,7 @@
         },
         {
           "name": "encoding_errors",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "ignore",
@@ -70,6 +76,7 @@
         },
         {
           "name": "default_log_level",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "INFO",
@@ -79,6 +86,7 @@
         },
         {
           "name": "window_size",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -88,6 +96,7 @@
         },
         {
           "name": "environ_user",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -97,6 +106,7 @@
         },
         {
           "name": "terminal_emulation",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -106,6 +116,7 @@
         },
         {
           "name": "terminal_type",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -115,6 +126,7 @@
         },
         {
           "name": "telnetlib_log_level",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "TRACE",
@@ -124,6 +136,7 @@
         },
         {
           "name": "connection_timeout",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -154,6 +167,7 @@
       "args": [
         {
           "name": "loglevel",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -173,6 +187,7 @@
       "args": [
         {
           "name": "command",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -182,6 +197,7 @@
         },
         {
           "name": "loglevel",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -191,6 +207,7 @@
         },
         {
           "name": "strip_prompt",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -210,6 +227,7 @@
       "args": [
         {
           "name": "username",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -219,6 +237,7 @@
         },
         {
           "name": "password",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -228,6 +247,7 @@
         },
         {
           "name": "login_prompt",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "login: \\",
@@ -237,6 +257,7 @@
         },
         {
           "name": "password_prompt",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "Password: \\",
@@ -246,6 +267,7 @@
         },
         {
           "name": "login_timeout",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "1 second",
@@ -255,6 +277,7 @@
         },
         {
           "name": "login_incorrect",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "Login incorrect",
@@ -274,6 +297,7 @@
       "args": [
         {
           "name": "host",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -283,6 +307,7 @@
         },
         {
           "name": "alias",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -292,6 +317,7 @@
         },
         {
           "name": "port",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "23",
@@ -301,6 +327,7 @@
         },
         {
           "name": "timeout",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -310,6 +337,7 @@
         },
         {
           "name": "newline",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -319,6 +347,7 @@
         },
         {
           "name": "prompt",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -328,6 +357,7 @@
         },
         {
           "name": "prompt_is_regexp",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -337,6 +367,7 @@
         },
         {
           "name": "encoding",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -346,6 +377,7 @@
         },
         {
           "name": "encoding_errors",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -355,6 +387,7 @@
         },
         {
           "name": "default_log_level",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -364,6 +397,7 @@
         },
         {
           "name": "window_size",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -373,6 +407,7 @@
         },
         {
           "name": "environ_user",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -382,6 +417,7 @@
         },
         {
           "name": "terminal_emulation",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -391,6 +427,7 @@
         },
         {
           "name": "terminal_type",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -400,6 +437,7 @@
         },
         {
           "name": "telnetlib_log_level",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -409,6 +447,7 @@
         },
         {
           "name": "connection_timeout",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -428,6 +467,7 @@
       "args": [
         {
           "name": "loglevel",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -447,6 +487,7 @@
       "args": [
         {
           "name": "expected",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -456,6 +497,7 @@
         },
         {
           "name": "loglevel",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -475,6 +517,7 @@
       "args": [
         {
           "name": "loglevel",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -484,6 +527,7 @@
         },
         {
           "name": "strip_prompt",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -503,6 +547,7 @@
       "args": [
         {
           "name": "expected",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -522,6 +567,7 @@
       "args": [
         {
           "name": "level",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -541,6 +587,7 @@
       "args": [
         {
           "name": "encoding",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -550,6 +597,7 @@
         },
         {
           "name": "errors",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -569,6 +617,7 @@
       "args": [
         {
           "name": "newline",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -588,6 +637,7 @@
       "args": [
         {
           "name": "prompt",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -597,6 +647,7 @@
         },
         {
           "name": "prompt_is_regexp",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -616,6 +667,7 @@
       "args": [
         {
           "name": "level",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -635,6 +687,7 @@
       "args": [
         {
           "name": "timeout",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -654,6 +707,7 @@
       "args": [
         {
           "name": "index_or_alias",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -673,6 +727,7 @@
       "args": [
         {
           "name": "text",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -682,6 +737,7 @@
         },
         {
           "name": "loglevel",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -701,6 +757,7 @@
       "args": [
         {
           "name": "text",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -720,6 +777,7 @@
       "args": [
         {
           "name": "character",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -739,6 +797,7 @@
       "args": [
         {
           "name": "text",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -748,6 +807,7 @@
         },
         {
           "name": "expected",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -757,6 +817,7 @@
         },
         {
           "name": "timeout",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -766,6 +827,7 @@
         },
         {
           "name": "retry_interval",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -775,6 +837,7 @@
         },
         {
           "name": "loglevel",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",

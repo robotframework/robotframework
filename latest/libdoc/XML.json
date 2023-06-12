@@ -1,9 +1,9 @@
 {
-  "specversion": 1,
+  "specversion": 2,
   "name": "XML",
   "doc": "Robot Framework library for verifying and modifying XML documents.\n\nAs the name implies, _XML_ is a library for verifying contents of XML files.\nIn practice, it is a pretty thin wrapper on top of Python's\n[http://docs.python.org/library/xml.etree.elementtree.html|ElementTree XML API].\n\nThe library has the following main usages:\n\n- Parsing an XML file, or a string containing XML, into an XML element\n  structure and finding certain elements from it for for further analysis\n  (e.g. `Parse XML` and `Get Element` keywords).\n- Getting text or attributes of elements\n  (e.g. `Get Element Text` and `Get Element Attribute`).\n- Directly verifying text, attributes, or whole elements\n  (e.g `Element Text Should Be` and `Elements Should Be Equal`).\n- Modifying XML and saving it (e.g. `Set Element Text`, `Add Element`\n  and `Save XML`).\n\n== Table of contents ==\n\n- `Parsing XML`\n- `Using lxml`\n- `Example`\n- `Finding elements with xpath`\n- `Element attributes`\n- `Handling XML namespaces`\n- `Boolean arguments`\n- `Importing`\n- `Keywords`\n\n= Parsing XML =\n\nXML can be parsed into an element structure using `Parse XML` keyword.\nThe XML to be parsed can be specified using a path to an XML file or as\na string or bytes that contain XML directly. The keyword returns the root\nelement of the structure, which then contains other elements as its\nchildren and their children. Possible comments and processing instructions\nin the source XML are removed.\n\nXML is not validated during parsing even if has a schema defined. How\npossible doctype elements are handled otherwise depends on the used XML\nmodule and on the platform. The standard ElementTree strips doctypes\naltogether but when `using lxml` they are preserved when XML is saved.\n\nThe element structure returned by `Parse XML`, as well as elements\nreturned by keywords such as `Get Element`, can be used as the ``source``\nargument with other keywords. In addition to an already parsed XML\nstructure, other keywords also accept paths to XML files and strings\ncontaining XML similarly as `Parse XML`. Notice that keywords that modify\nXML do not write those changes back to disk even if the source would be\ngiven as a path to a file. Changes must always be saved explicitly using\n`Save XML` keyword.\n\nWhen the source is given as a path to a file, the forward slash character\n(``/``) can be used as the path separator regardless the operating system.\nOn Windows also the backslash works, but in the data it needs to be\nescaped by doubling it (``\\\\``). Using the built-in variable ``${/}``\nnaturally works too.\n\nNote: Support for XML as bytes is new in Robot Framework 3.2.\n\n= Using lxml =\n\nBy default, this library uses Python's standard\n[http://docs.python.org/library/xml.etree.elementtree.html|ElementTree]\nmodule for parsing XML, but it can be configured to use\n[http://lxml.de|lxml] module instead when `importing` the library.\nThe resulting element structure has same API regardless which module\nis used for parsing.\n\nThe main benefits of using lxml is that it supports richer xpath syntax\nthan the standard ElementTree and enables using `Evaluate Xpath` keyword.\nIt also preserves the doctype and possible namespace prefixes saving XML.\n\n= Example =\n\nThe following simple example demonstrates parsing XML and verifying its\ncontents both using keywords in this library and in _BuiltIn_ and\n_Collections_ libraries. How to use xpath expressions to find elements\nand what attributes the returned elements contain are discussed, with\nmore examples, in `Finding elements with xpath` and `Element attributes`\nsections.\n\nIn this example, as well as in many other examples in this documentation,\n``${XML}`` refers to the following example XML document. In practice\n``${XML}`` could either be a path to an XML file or it could contain the XML\nitself.\n\n| <example>\n|   <first id=\"1\">text</first>\n|   <second id=\"2\">\n|     <child/>\n|   </second>\n|   <third>\n|     <child>more text</child>\n|     <second id=\"child\"/>\n|     <child><grandchild/></child>\n|   </third>\n|   <html>\n|     <p>\n|       Text with <b>bold</b> and <i>italics</i>.\n|     </p>\n|   </html>\n| </example>\n\n| ${root} =                | `Parse XML`   | ${XML}  |       |             |\n| `Should Be Equal`        | ${root.tag}   | example |       |             |\n| ${first} =               | `Get Element` | ${root} | first |             |\n| `Should Be Equal`        | ${first.text} | text    |       |             |\n| `Dictionary Should Contain Key` | ${first.attrib}  | id    |             |\n| `Element Text Should Be` | ${first}      | text    |       |             |\n| `Element Attribute Should Be` | ${first} | id      | 1     |             |\n| `Element Attribute Should Be` | ${root}  | id      | 1     | xpath=first |\n| `Element Attribute Should Be` | ${XML}   | id      | 1     | xpath=first |\n\nNotice that in the example three last lines are equivalent. Which one to\nuse in practice depends on which other elements you need to get or verify.\nIf you only need to do one verification, using the last line alone would\nsuffice. If more verifications are needed, parsing the XML with `Parse XML`\nonly once would be more efficient.\n\n= Finding elements with xpath =\n\nElementTree, and thus also this library, supports finding elements using\nxpath expressions. ElementTree does not, however, support the full xpath\nstandard. The supported xpath syntax is explained below and\n[https://docs.python.org/library/xml.etree.elementtree.html#xpath-support|\nElementTree documentation] provides more details. In the examples\n``${XML}`` refers to the same XML structure as in the earlier example.\n\nIf lxml support is enabled when `importing` the library, the whole\n[http://www.w3.org/TR/xpath/|xpath 1.0 standard] is supported.\nThat includes everything listed below but also lot of other useful\nconstructs.\n\n== Tag names ==\n\nWhen just a single tag name is used, xpath matches all direct child\nelements that have that tag name.\n\n| ${elem} =          | `Get Element`  | ${XML}      | third |\n| `Should Be Equal`  | ${elem.tag}    | third       |       |\n| @{children} =      | `Get Elements` | ${elem}     | child |\n| `Length Should Be` | ${children}    | 2           |       |\n\n== Paths ==\n\nPaths are created by combining tag names with a forward slash (``/``). For\nexample, ``parent/child`` matches all ``child`` elements under ``parent``\nelement. Notice that if there are multiple ``parent`` elements that all\nhave ``child`` elements, ``parent/child`` xpath will match all these\n``child`` elements.\n\n| ${elem} =         | `Get Element` | ${XML}     | second/child            |\n| `Should Be Equal` | ${elem.tag}   | child      |                         |\n| ${elem} =         | `Get Element` | ${XML}     | third/child/grandchild  |\n| `Should Be Equal` | ${elem.tag}   | grandchild |                         |\n\n== Wildcards ==\n\nAn asterisk (``*``) can be used in paths instead of a tag name to denote\nany element.\n\n| @{children} =      | `Get Elements` | ${XML} | */child |\n| `Length Should Be` | ${children}    | 3      |         |\n\n== Current element ==\n\nThe current element is denoted with a dot (``.``). Normally the current\nelement is implicit and does not need to be included in the xpath.\n\n== Parent element ==\n\nThe parent element of another element is denoted with two dots (``..``).\nNotice that it is not possible to refer to the parent of the current\nelement.\n\n| ${elem} =         | `Get Element` | ${XML} | */second/.. |\n| `Should Be Equal` | ${elem.tag}   | third  |             |\n\n== Search all sub elements ==\n\nTwo forward slashes (``//``) mean that all sub elements, not only the\ndirect children, are searched. If the search is started from the current\nelement, an explicit dot is required.\n\n| @{elements} =      | `Get Elements` | ${XML} | .//second |\n| `Length Should Be` | ${elements}    | 2      |           |\n| ${b} =             | `Get Element`  | ${XML} | html//b   |\n| `Should Be Equal`  | ${b.text}      | bold   |           |\n\n== Predicates ==\n\nPredicates allow selecting elements using also other criteria than tag\nnames, for example, attributes or position. They are specified after the\nnormal tag name or path using syntax ``path[predicate]``. The path can have\nwildcards and other special syntax explained earlier. What predicates\nthe standard ElementTree supports is explained in the table below.\n\n|  = Predicate =  |             = Matches =           |    = Example =     |\n| @attrib         | Elements with attribute ``attrib``. | second[@id]        |\n| @attrib=\"value\" | Elements with attribute ``attrib`` having value ``value``. | *[@id=\"2\"] |\n| position        | Elements at the specified position. Position can be an integer (starting from 1), expression ``last()``, or relative expression like ``last() - 1``. | third/child[1] |\n| tag             | Elements with a child element named ``tag``. | third/child[grandchild] |\n\nPredicates can also be stacked like ``path[predicate1][predicate2]``.\nA limitation is that possible position predicate must always be first.\n\n= Element attributes =\n\nAll keywords returning elements, such as `Parse XML`, and `Get Element`,\nreturn ElementTree's\n[http://docs.python.org/library/xml.etree.elementtree.html#element-objects|Element objects].\nThese elements can be used as inputs for other keywords, but they also\ncontain several useful attributes that can be accessed directly using\nthe extended variable syntax.\n\nThe attributes that are both useful and convenient to use in the data\nare explained below. Also other attributes, including methods, can\nbe accessed, but that is typically better to do in custom libraries than\ndirectly in the data.\n\nThe examples use the same ``${XML}`` structure as the earlier examples.\n\n== tag ==\n\nThe tag of the element.\n\n| ${root} =         | `Parse XML` | ${XML}  |\n| `Should Be Equal` | ${root.tag} | example |\n\n== text ==\n\nThe text that the element contains or Python ``None`` if the element has no\ntext. Notice that the text _does not_ contain texts of possible child\nelements nor text after or between children. Notice also that in XML\nwhitespace is significant, so the text contains also possible indentation\nand newlines. To get also text of the possible children, optionally\nwhitespace normalized, use `Get Element Text` keyword.\n\n| ${1st} =          | `Get Element` | ${XML}  | first        |\n| `Should Be Equal` | ${1st.text}   | text    |              |\n| ${2nd} =          | `Get Element` | ${XML}  | second/child |\n| `Should Be Equal` | ${2nd.text}   | ${NONE} |              |\n| ${p} =            | `Get Element` | ${XML}  | html/p       |\n| `Should Be Equal` | ${p.text}     | \\n${SPACE*6}Text with${SPACE} |\n\n== tail ==\n\nThe text after the element before the next opening or closing tag. Python\n``None`` if the element has no tail. Similarly as with ``text``, also\n``tail`` contains possible indentation and newlines.\n\n| ${b} =            | `Get Element` | ${XML}  | html/p/b  |\n| `Should Be Equal` | ${b.tail}     | ${SPACE}and${SPACE} |\n\n== attrib ==\n\nA Python dictionary containing attributes of the element.\n\n| ${2nd} =          | `Get Element`       | ${XML} | second |\n| `Should Be Equal` | ${2nd.attrib['id']} | 2      |        |\n| ${3rd} =          | `Get Element`       | ${XML} | third  |\n| `Should Be Empty` | ${3rd.attrib}       |        |        |\n\n= Handling XML namespaces =\n\nElementTree and lxml handle possible namespaces in XML documents by adding\nthe namespace URI to tag names in so called Clark Notation. That is\ninconvenient especially with xpaths, and by default this library strips\nthose namespaces away and moves them to ``xmlns`` attribute instead. That\ncan be avoided by passing ``keep_clark_notation`` argument to `Parse XML`\nkeyword. Alternatively `Parse XML` supports stripping namespace information\naltogether by using ``strip_namespaces`` argument. The pros and cons of\ndifferent approaches are discussed in more detail below.\n\n== How ElementTree handles namespaces ==\n\nIf an XML document has namespaces, ElementTree adds namespace information\nto tag names in [http://www.jclark.com/xml/xmlns.htm|Clark Notation]\n(e.g. ``{http://ns.uri}tag``) and removes original ``xmlns`` attributes.\nThis is done both with default namespaces and with namespaces with a prefix.\nHow it works in practice is illustrated by the following example, where\n``${NS}`` variable contains this XML document:\n\n| <xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\n|                 xmlns=\"http://www.w3.org/1999/xhtml\">\n|   <xsl:template match=\"/\">\n|     <html></html>\n|   </xsl:template>\n| </xsl:stylesheet>\n\n| ${root} = | `Parse XML` | ${NS} | keep_clark_notation=yes |\n| `Should Be Equal` | ${root.tag} | {http://www.w3.org/1999/XSL/Transform}stylesheet |\n| `Element Should Exist` | ${root} | {http://www.w3.org/1999/XSL/Transform}template/{http://www.w3.org/1999/xhtml}html |\n| `Should Be Empty` | ${root.attrib} |\n\nAs you can see, including the namespace URI in tag names makes xpaths\nreally long and complex.\n\nIf you save the XML, ElementTree moves namespace information back to\n``xmlns`` attributes. Unfortunately it does not restore the original\nprefixes:\n\n| <ns0:stylesheet xmlns:ns0=\"http://www.w3.org/1999/XSL/Transform\">\n|   <ns0:template match=\"/\">\n|     <ns1:html xmlns:ns1=\"http://www.w3.org/1999/xhtml\"></ns1:html>\n|   </ns0:template>\n| </ns0:stylesheet>\n\nThe resulting output is semantically same as the original, but mangling\nprefixes like this may still not be desirable. Notice also that the actual\noutput depends slightly on ElementTree version.\n\n== Default namespace handling ==\n\nBecause the way ElementTree handles namespaces makes xpaths so complicated,\nthis library, by default, strips namespaces from tag names and moves that\ninformation back to ``xmlns`` attributes. How this works in practice is\nshown by the example below, where ``${NS}`` variable contains the same XML\ndocument as in the previous example.\n\n| ${root} = | `Parse XML` | ${NS} |\n| `Should Be Equal` | ${root.tag} | stylesheet |\n| `Element Should Exist` | ${root} | template/html |\n| `Element Attribute Should Be` | ${root} | xmlns | http://www.w3.org/1999/XSL/Transform |\n| `Element Attribute Should Be` | ${root} | xmlns | http://www.w3.org/1999/xhtml | xpath=template/html |\n\nNow that tags do not contain namespace information, xpaths are simple again.\n\nA minor limitation of this approach is that namespace prefixes are lost.\nAs a result the saved output is not exactly same as the original one in\nthis case either:\n\n| <stylesheet xmlns=\"http://www.w3.org/1999/XSL/Transform\">\n|   <template match=\"/\">\n|     <html xmlns=\"http://www.w3.org/1999/xhtml\"></html>\n|   </template>\n| </stylesheet>\n\nAlso this output is semantically same as the original. If the original XML\nhad only default namespaces, the output would also look identical.\n\n== Namespaces when using lxml ==\n\nThis library handles namespaces same way both when `using lxml` and when\nnot using it. There are, however, differences how lxml internally handles\nnamespaces compared to the standard ElementTree. The main difference is\nthat lxml stores information about namespace prefixes and they are thus\npreserved if XML is saved. Another visible difference is that lxml includes\nnamespace information in child elements got with `Get Element` if the\nparent element has namespaces.\n\n== Stripping namespaces altogether ==\n\nBecause namespaces often add unnecessary complexity, `Parse XML` supports\nstripping them altogether by using ``strip_namespaces=True``. When this\noption is enabled, namespaces are not shown anywhere nor are they included\nif XML is saved.\n\n== Attribute namespaces ==\n\nAttributes in XML documents are, by default, in the same namespaces as\nthe element they belong to. It is possible to use different namespaces\nby using prefixes, but this is pretty rare.\n\nIf an attribute has a namespace prefix, ElementTree will replace it with\nClark Notation the same way it handles elements. Because stripping\nnamespaces from attributes could cause attribute conflicts, this library\ndoes not handle attribute namespaces at all. Thus the following example\nworks the same way regardless how namespaces are handled.\n\n| ${root} = | `Parse XML` | <root id=\"1\" ns:id=\"2\" xmlns:ns=\"http://my.ns\"/> |\n| `Element Attribute Should Be` | ${root} | id | 1 |\n| `Element Attribute Should Be` | ${root} | {http://my.ns}id | 2 |\n\n= Boolean arguments =\n\nSome keywords accept arguments that are handled as Boolean values true or\nfalse. If such an argument is given as a string, it is considered false if\nit is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or\n``0``, case-insensitively. Other strings are considered true regardless\ntheir value, and other argument types are tested using the same\n[http://docs.python.org/library/stdtypes.html#truth|rules as in Python].\n\nTrue examples:\n| `Parse XML` | ${XML} | keep_clark_notation=True    | # Strings are generally true.    |\n| `Parse XML` | ${XML} | keep_clark_notation=yes     | # Same as the above.             |\n| `Parse XML` | ${XML} | keep_clark_notation=${TRUE} | # Python ``True`` is true.       |\n| `Parse XML` | ${XML} | keep_clark_notation=${42}   | # Numbers other than 0 are true. |\n\nFalse examples:\n| `Parse XML` | ${XML} | keep_clark_notation=False    | # String ``false`` is false.   |\n| `Parse XML` | ${XML} | keep_clark_notation=no       | # Also string ``no`` is false. |\n| `Parse XML` | ${XML} | keep_clark_notation=${EMPTY} | # Empty string is false.       |\n| `Parse XML` | ${XML} | keep_clark_notation=${FALSE} | # Python ``False`` is false.   |\n\nConsidering ``OFF`` and ``0`` false is new in Robot Framework 3.1.\n\n== Pattern matching ==\n\nSome keywords, for example `Elements Should Match`, support so called\n[http://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:\n\n| ``*``        | matches any string, even an empty string                |\n| ``?``        | matches any single character                            |\n| ``[chars]``  | matches one character in the bracket                    |\n| ``[!chars]`` | matches one character not in the bracket                |\n| ``[a-z]``    | matches one character from the range in the bracket     |\n| ``[!a-z]``   | matches one character not from the range in the bracket |\n\nUnlike with glob patterns normally, path separator characters ``/`` and\n``\\`` and the newline character ``\\n`` are matches by the above\nwildcards.\n\nSupport for brackets like ``[abc]`` and ``[!a-z]`` is new in\nRobot Framework 3.1",
-  "version": "6.0.2",
-  "generated": "2023-01-08T19:25:37+00:00",
+  "version": "6.1",
+  "generated": "2023-06-12T09:38:44+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
@@ -16,6 +16,7 @@
       "args": [
         {
           "name": "use_lxml",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -24,11 +25,11 @@
           "repr": "use_lxml=False"
         }
       ],
-      "doc": "Import library with optionally lxml mode enabled.\n\nBy default this library uses Python's standard\n[http://docs.python.org/library/xml.etree.elementtree.html|ElementTree]\nmodule for parsing XML. If ``use_lxml`` argument is given a true value\n(see `Boolean arguments`), the library will use [http://lxml.de|lxml]\nmodule instead. See `Using lxml` section for benefits provided by lxml.\n\nUsing lxml requires that the lxml module is installed on the system.\nIf lxml mode is enabled but the module is not installed, this library\nwill emit a warning and revert back to using the standard ElementTree.",
+      "doc": "Import library with optionally lxml mode enabled.\n\nThis library uses Python's standard\n[http://docs.python.org/library/xml.etree.elementtree.html|ElementTree]\nmodule for parsing XML by default. If ``use_lxml`` argument is given\na true value (see `Boolean arguments`), the [http://lxml.de|lxml] module\nis used instead. See the `Using lxml` section for benefits provided by lxml.\n\nUsing lxml requires that the lxml module is installed on the system.\nIf lxml mode is enabled but the module is not installed, this library\nemits a warning and reverts back to using the standard ElementTree.",
       "shortdoc": "Import library with optionally lxml mode enabled.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 461
+      "lineno": 460
     }
   ],
   "keywords": [
@@ -37,6 +38,7 @@
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -46,6 +48,7 @@
         },
         {
           "name": "element",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -55,6 +58,7 @@
         },
         {
           "name": "index",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -64,6 +68,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -76,13 +81,14 @@
       "shortdoc": "Adds a child element to the specified element.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1135
+      "lineno": 1134
     },
     {
       "name": "Clear Element",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -92,6 +98,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -101,6 +108,7 @@
         },
         {
           "name": "clear_tail",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -113,13 +121,14 @@
       "shortdoc": "Clears the contents of the specified element.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1244
+      "lineno": 1243
     },
     {
       "name": "Copy Element",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -129,6 +138,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -141,13 +151,14 @@
       "shortdoc": "Returns a copy of the specified element.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1277
+      "lineno": 1276
     },
     {
       "name": "Element Attribute Should Be",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -157,6 +168,7 @@
         },
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -166,6 +178,7 @@
         },
         {
           "name": "expected",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -175,6 +188,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -184,6 +198,7 @@
         },
         {
           "name": "message",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -196,13 +211,14 @@
       "shortdoc": "Verifies that the specified attribute is ``expected``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 815
+      "lineno": 814
     },
     {
       "name": "Element Attribute Should Match",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -212,6 +228,7 @@
         },
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -221,6 +238,7 @@
         },
         {
           "name": "pattern",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -230,6 +248,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -239,6 +258,7 @@
         },
         {
           "name": "message",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -251,13 +271,14 @@
       "shortdoc": "Verifies that the specified attribute matches ``expected``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 840
+      "lineno": 839
     },
     {
       "name": "Element Should Exist",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -267,6 +288,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -276,6 +298,7 @@
         },
         {
           "name": "message",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -288,13 +311,14 @@
       "shortdoc": "Verifies that one or more element match the given ``xpath``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 626
+      "lineno": 625
     },
     {
       "name": "Element Should Not Exist",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -304,6 +328,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -313,6 +338,7 @@
         },
         {
           "name": "message",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -325,13 +351,14 @@
       "shortdoc": "Verifies that no element match the given ``xpath``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 641
+      "lineno": 640
     },
     {
       "name": "Element Should Not Have Attribute",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -341,6 +368,7 @@
         },
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -350,6 +378,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -359,6 +388,7 @@
         },
         {
           "name": "message",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -371,13 +401,14 @@
       "shortdoc": "Verifies that the specified element does not have attribute ``name``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 861
+      "lineno": 860
     },
     {
       "name": "Element Text Should Be",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -387,6 +418,7 @@
         },
         {
           "name": "expected",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -396,6 +428,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -405,6 +438,7 @@
         },
         {
           "name": "normalize_whitespace",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -414,6 +448,7 @@
         },
         {
           "name": "message",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -426,13 +461,14 @@
       "shortdoc": "Verifies that the text of the specified element is ``expected``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 725
+      "lineno": 724
     },
     {
       "name": "Element Text Should Match",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -442,6 +478,7 @@
         },
         {
           "name": "pattern",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -451,6 +488,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -460,6 +498,7 @@
         },
         {
           "name": "normalize_whitespace",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -469,6 +508,7 @@
         },
         {
           "name": "message",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -481,13 +521,14 @@
       "shortdoc": "Verifies that the text of the specified element matches ``expected``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 752
+      "lineno": 751
     },
     {
       "name": "Element To String",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -497,6 +538,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -506,6 +548,7 @@
         },
         {
           "name": "encoding",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -514,17 +557,18 @@
           "repr": "encoding=None"
         }
       ],
-      "doc": "Returns the string representation of the specified element.\n\nThe element to convert to a string is specified using ``source`` and\n``xpath``. They have exactly the same semantics as with `Get Element`\nkeyword.\n\nBy default the string is returned as Unicode. If ``encoding`` argument\nis given any value, the string is returned as bytes in the specified\nencoding. The resulting string never contains the XML declaration.\n\nSee also `Log Element` and `Save XML`.",
+      "doc": "Returns the string representation of the specified element.\n\nThe element to convert to a string is specified using ``source`` and\n``xpath``. They have exactly the same semantics as with `Get Element`\nkeyword.\n\nThe string is returned as Unicode by default. If ``encoding`` argument\nis given any value, the string is returned as bytes in the specified\nencoding. The resulting string never contains the XML declaration.\n\nSee also `Log Element` and `Save XML`.",
       "shortdoc": "Returns the string representation of the specified element.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1298
+      "lineno": 1297
     },
     {
       "name": "Elements Should Be Equal",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -534,6 +578,7 @@
         },
         {
           "name": "expected",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -543,6 +588,7 @@
         },
         {
           "name": "exclude_children",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -552,6 +598,7 @@
         },
         {
           "name": "normalize_whitespace",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -564,13 +611,14 @@
       "shortdoc": "Verifies that the given ``source`` element is equal to ``expected``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 883
+      "lineno": 882
     },
     {
       "name": "Elements Should Match",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -580,6 +628,7 @@
         },
         {
           "name": "expected",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -589,6 +638,7 @@
         },
         {
           "name": "exclude_children",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -598,6 +648,7 @@
         },
         {
           "name": "normalize_whitespace",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -610,13 +661,14 @@
       "shortdoc": "Verifies that the given ``source`` element matches ``expected``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 923
+      "lineno": 922
     },
     {
       "name": "Evaluate Xpath",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -626,6 +678,7 @@
         },
         {
           "name": "expression",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -635,6 +688,7 @@
         },
         {
           "name": "context",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -647,13 +701,14 @@
       "shortdoc": "Evaluates the given xpath expression and returns results.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1372
+      "lineno": 1371
     },
     {
       "name": "Get Child Elements",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -663,6 +718,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -675,13 +731,14 @@
       "shortdoc": "Returns the child elements of the specified element as a list.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 596
+      "lineno": 595
     },
     {
       "name": "Get Element",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -691,6 +748,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -703,13 +761,14 @@
       "shortdoc": "Returns an element in the ``source`` matching the ``xpath``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 531
+      "lineno": 530
     },
     {
       "name": "Get Element Attribute",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -719,6 +778,7 @@
         },
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -728,6 +788,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -737,6 +798,7 @@
         },
         {
           "name": "default",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -749,13 +811,14 @@
       "shortdoc": "Returns the named attribute of the specified element.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 773
+      "lineno": 772
     },
     {
       "name": "Get Element Attributes",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -765,6 +828,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -777,13 +841,14 @@
       "shortdoc": "Returns all attributes of the specified element.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 795
+      "lineno": 794
     },
     {
       "name": "Get Element Count",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -793,6 +858,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -805,13 +871,14 @@
       "shortdoc": "Returns and logs how many elements the given ``xpath`` matches.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 614
+      "lineno": 613
     },
     {
       "name": "Get Element Text",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -821,6 +888,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -830,6 +898,7 @@
         },
         {
           "name": "normalize_whitespace",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -842,13 +911,14 @@
       "shortdoc": "Returns all text of the element, possibly whitespace normalized.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 656
+      "lineno": 655
     },
     {
       "name": "Get Elements",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -858,6 +928,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -870,13 +941,14 @@
       "shortdoc": "Returns a list of elements in the ``source`` matching the ``xpath``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 574
+      "lineno": 573
     },
     {
       "name": "Get Elements Texts",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -886,6 +958,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -895,6 +968,7 @@
         },
         {
           "name": "normalize_whitespace",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -907,13 +981,14 @@
       "shortdoc": "Returns text of all elements matching ``xpath`` as a list.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 705
+      "lineno": 704
     },
     {
       "name": "Log Element",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -923,6 +998,7 @@
         },
         {
           "name": "level",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "INFO",
@@ -932,6 +1008,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -944,13 +1021,14 @@
       "shortdoc": "Logs the string representation of the specified element.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1318
+      "lineno": 1317
     },
     {
       "name": "Parse Xml",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -960,6 +1038,7 @@
         },
         {
           "name": "keep_clark_notation",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -969,6 +1048,7 @@
         },
         {
           "name": "strip_namespaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -981,13 +1061,14 @@
       "shortdoc": "Parses the given XML file or string into an element structure.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 488
+      "lineno": 487
     },
     {
       "name": "Remove Element",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -997,6 +1078,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "",
@@ -1006,6 +1088,7 @@
         },
         {
           "name": "remove_tail",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -1018,13 +1101,14 @@
       "shortdoc": "Removes the element matching ``xpath`` from the ``source`` structure.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1171
+      "lineno": 1170
     },
     {
       "name": "Remove Element Attribute",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1034,6 +1118,7 @@
         },
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1043,6 +1128,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -1055,13 +1141,14 @@
       "shortdoc": "Removes attribute ``name`` from the specified element.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1066
+      "lineno": 1065
     },
     {
       "name": "Remove Element Attributes",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1071,6 +1158,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -1083,13 +1171,14 @@
       "shortdoc": "Removes all attributes from the specified element.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1102
+      "lineno": 1101
     },
     {
       "name": "Remove Elements",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1099,6 +1188,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "",
@@ -1108,6 +1198,7 @@
         },
         {
           "name": "remove_tail",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -1120,13 +1211,14 @@
       "shortdoc": "Removes all elements matching ``xpath`` from the ``source`` structure.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1197
+      "lineno": 1196
     },
     {
       "name": "Remove Elements Attribute",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1136,6 +1228,7 @@
         },
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1145,6 +1238,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -1157,13 +1251,14 @@
       "shortdoc": "Removes attribute ``name`` from the specified elements.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1091
+      "lineno": 1090
     },
     {
       "name": "Remove Elements Attributes",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1173,6 +1268,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -1185,13 +1281,14 @@
       "shortdoc": "Removes all attributes from the specified elements.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1124
+      "lineno": 1123
     },
     {
       "name": "Save Xml",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1201,6 +1298,7 @@
         },
         {
           "name": "path",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1210,6 +1308,7 @@
         },
         {
           "name": "encoding",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "UTF-8",
@@ -1222,13 +1321,14 @@
       "shortdoc": "Saves the given element to the specified file.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1331
+      "lineno": 1330
     },
     {
       "name": "Set Element Attribute",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1238,6 +1338,7 @@
         },
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1247,6 +1348,7 @@
         },
         {
           "name": "value",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1256,6 +1358,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -1268,13 +1371,14 @@
       "shortdoc": "Sets attribute ``name`` of the specified element to ``value``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1028
+      "lineno": 1027
     },
     {
       "name": "Set Element Tag",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1284,6 +1388,7 @@
         },
         {
           "name": "tag",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1293,6 +1398,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -1305,13 +1411,14 @@
       "shortdoc": "Sets the tag of the specified element.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 951
+      "lineno": 950
     },
     {
       "name": "Set Element Text",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1321,6 +1428,7 @@
         },
         {
           "name": "text",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -1330,6 +1438,7 @@
         },
         {
           "name": "tail",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -1339,6 +1448,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -1351,13 +1461,14 @@
       "shortdoc": "Sets text and/or tail text of the specified element.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 985
+      "lineno": 984
     },
     {
       "name": "Set Elements Attribute",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1367,6 +1478,7 @@
         },
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1376,6 +1488,7 @@
         },
         {
           "name": "value",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1385,6 +1498,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -1397,13 +1511,14 @@
       "shortdoc": "Sets attribute ``name`` of the specified elements to ``value``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1055
+      "lineno": 1054
     },
     {
       "name": "Set Elements Tag",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1413,6 +1528,7 @@
         },
         {
           "name": "tag",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1422,6 +1538,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -1434,13 +1551,14 @@
       "shortdoc": "Sets the tag of the specified elements.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 973
+      "lineno": 972
     },
     {
       "name": "Set Elements Text",
       "args": [
         {
           "name": "source",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1450,6 +1568,7 @@
         },
         {
           "name": "text",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -1459,6 +1578,7 @@
         },
         {
           "name": "tail",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -1468,6 +1588,7 @@
         },
         {
           "name": "xpath",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": ".",
@@ -1480,7 +1601,7 @@
       "shortdoc": "Sets text and/or tail text of the specified elements.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/XML.py",
-      "lineno": 1017
+      "lineno": 1016
     }
   ],
   "dataTypes": {

@@ -1,9 +1,9 @@
 {
-  "specversion": 1,
+  "specversion": 2,
   "name": "String",
   "doc": "A library for string manipulation and verification.\n\n``String`` is Robot Framework's standard library for manipulating\nstrings (e.g. `Replace String Using Regexp`, `Split To Lines`) and\nverifying their contents (e.g. `Should Be String`).\n\nFollowing keywords from ``BuiltIn`` library can also be used with strings:\n\n- `Catenate`\n- `Get Length`\n- `Length Should Be`\n- `Should (Not) Be Empty`\n- `Should (Not) Be Equal (As Strings/Integers/Numbers)`\n- `Should (Not) Match (Regexp)`\n- `Should (Not) Contain`\n- `Should (Not) Start With`\n- `Should (Not) End With`\n- `Convert To String`\n- `Convert To Bytes`",
-  "version": "6.0.2",
-  "generated": "2023-01-08T19:25:37+00:00",
+  "version": "6.1",
+  "generated": "2023-06-12T09:38:44+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
@@ -17,6 +17,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -36,6 +37,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -45,6 +47,7 @@
         },
         {
           "name": "exclude",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -64,6 +67,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -83,6 +87,7 @@
       "args": [
         {
           "name": "bytes",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -92,6 +97,7 @@
         },
         {
           "name": "encoding",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -101,6 +107,7 @@
         },
         {
           "name": "errors",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "strict",
@@ -120,6 +127,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -129,6 +137,7 @@
         },
         {
           "name": "encoding",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -138,6 +147,7 @@
         },
         {
           "name": "errors",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "strict",
@@ -157,6 +167,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -166,6 +177,7 @@
         },
         {
           "name": "marker",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -185,6 +197,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -194,6 +207,7 @@
         },
         {
           "name": "marker",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -213,6 +227,7 @@
       "args": [
         {
           "name": "template",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -222,6 +237,7 @@
         },
         {
           "name": "positional",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -231,6 +247,7 @@
         },
         {
           "name": "named",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -250,6 +267,7 @@
       "args": [
         {
           "name": "length",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "8",
@@ -259,6 +277,7 @@
         },
         {
           "name": "chars",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "[LETTERS][NUMBERS]",
@@ -278,6 +297,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -287,6 +307,7 @@
         },
         {
           "name": "line_number",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -306,6 +327,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -325,6 +347,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -334,6 +357,7 @@
         },
         {
           "name": "pattern",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -343,6 +367,7 @@
         },
         {
           "name": "case_insensitive",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -362,6 +387,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -371,6 +397,7 @@
         },
         {
           "name": "pattern",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -380,6 +407,7 @@
         },
         {
           "name": "case_insensitive",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -399,6 +427,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -408,6 +437,7 @@
         },
         {
           "name": "pattern",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -417,6 +447,7 @@
         },
         {
           "name": "partial_match",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -426,6 +457,7 @@
         },
         {
           "name": "flags",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -445,6 +477,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -454,6 +487,7 @@
         },
         {
           "name": "pattern",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -463,6 +497,7 @@
         },
         {
           "name": "groups",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -472,6 +507,7 @@
         },
         {
           "name": "flags",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -491,6 +527,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -500,6 +537,7 @@
         },
         {
           "name": "start",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -509,6 +547,7 @@
         },
         {
           "name": "end",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -528,6 +567,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -537,6 +577,7 @@
         },
         {
           "name": "removables",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -556,6 +597,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -565,6 +607,7 @@
         },
         {
           "name": "patterns",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -574,6 +617,7 @@
         },
         {
           "name": "flags",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -593,6 +637,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -602,6 +647,7 @@
         },
         {
           "name": "search_for",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -611,6 +657,7 @@
         },
         {
           "name": "replace_with",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -620,6 +667,7 @@
         },
         {
           "name": "count",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "-1",
@@ -639,6 +687,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -648,6 +697,7 @@
         },
         {
           "name": "pattern",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -657,6 +707,7 @@
         },
         {
           "name": "replace_with",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -666,6 +717,7 @@
         },
         {
           "name": "count",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "-1",
@@ -675,6 +727,7 @@
         },
         {
           "name": "flags",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -694,6 +747,7 @@
       "args": [
         {
           "name": "item",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -703,6 +757,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -722,6 +777,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -731,6 +787,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -750,6 +807,7 @@
       "args": [
         {
           "name": "item",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -759,6 +817,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -778,6 +837,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -787,6 +847,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -796,6 +857,7 @@
         },
         {
           "name": "exclude",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -815,6 +877,7 @@
       "args": [
         {
           "name": "item",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -824,6 +887,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -843,6 +907,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -852,6 +917,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -871,6 +937,7 @@
       "args": [
         {
           "name": "item",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -880,6 +947,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -899,6 +967,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -908,6 +977,7 @@
         },
         {
           "name": "separator",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -917,6 +987,7 @@
         },
         {
           "name": "max_split",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "-1",
@@ -936,6 +1007,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -945,6 +1017,7 @@
         },
         {
           "name": "separator",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -954,6 +1027,7 @@
         },
         {
           "name": "max_split",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "-1",
@@ -973,6 +1047,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -992,6 +1067,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1001,6 +1077,7 @@
         },
         {
           "name": "start",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "0",
@@ -1010,6 +1087,7 @@
         },
         {
           "name": "end",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -1029,6 +1107,7 @@
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1038,6 +1117,7 @@
         },
         {
           "name": "mode",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "both",
@@ -1047,6 +1127,7 @@
         },
         {
           "name": "characters",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",

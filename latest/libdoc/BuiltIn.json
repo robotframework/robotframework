@@ -1,14 +1,14 @@
 {
-  "specversion": 1,
+  "specversion": 2,
   "name": "BuiltIn",
   "doc": "An always available standard library with often needed keywords.\n\n``BuiltIn`` is Robot Framework's standard library that provides a set\nof generic keywords needed often. It is imported automatically and\nthus always available. The provided keywords can be used, for example,\nfor verifications (e.g. `Should Be Equal`, `Should Contain`),\nconversions (e.g. `Convert To Integer`) and for various other purposes\n(e.g. `Log`, `Sleep`, `Run Keyword If`, `Set Global Variable`).\n\n== Table of contents ==\n\n- `HTML error messages`\n- `Using variables with keywords creating or accessing variables`\n- `Evaluating expressions`\n- `Boolean arguments`\n- `Pattern matching`\n- `Multiline string comparison`\n- `String representations`\n- `Keywords`\n\n= HTML error messages =\n\nMany of the keywords accept an optional error message to use if the keyword\nfails, and it is possible to use HTML in these messages by prefixing them\nwith ``*HTML*``. See `Fail` keyword for a usage example. Notice that using\nHTML in messages is not limited to BuiltIn library but works with any\nerror message.\n\n= Using variables with keywords creating or accessing variables =\n\nThis library has special keywords `Set Global Variable`, `Set Suite Variable`,\n`Set Test Variable` and `Set Local Variable` for creating variables in\ndifferent scopes. These keywords take the variable name and its value as\narguments. The name can be given using the normal ``${variable}`` syntax or\nin escaped format either like ``$variable`` or ``\\${variable}``. For example,\nthese are typically equivalent and create new suite level variable\n``${name}`` with value ``value``:\n\n| Set Suite Variable    ${name}     value\n| Set Suite Variable    $name       value\n| Set Suite Variable    \\${name}    value\n\nA problem with using the normal ``${variable}`` syntax is that these\nkeywords cannot easily know is the idea to create a variable with exactly\nthat name or does that variable actually contain the name of the variable\nto create. If the variable does not initially exist, it will always be\ncreated. If it exists and its value is a variable name either in the normal\nor in the escaped syntax, variable with _that_ name is created instead.\nFor example, if ``${name}`` variable would exist and contain value\n``$example``, these examples would create different variables:\n\n| Set Suite Variable    ${name}     value    # Creates ${example}.\n| Set Suite Variable    $name       value    # Creates ${name}.\n| Set Suite Variable    \\${name}    value    # Creates ${name}.\n\nBecause the behavior when using the normal ``${variable}`` syntax depends\non the possible existing value of the variable, it is *highly recommended\nto use the escaped ``$variable`` or ``\\${variable}`` format instead*.\n\nThis same problem occurs also with special keywords for accessing variables\n`Get Variable Value`, `Variable Should Exist` and `Variable Should Not Exist`.\n\n= Evaluating expressions =\n\nMany keywords, such as `Evaluate`, `Run Keyword If` and `Should Be True`,\naccept an expression that is evaluated in Python.\n\n== Evaluation namespace ==\n\nExpressions are evaluated using Python's\n[http://docs.python.org/library/functions.html#eval|eval] function so\nthat all Python built-ins like ``len()`` and ``int()`` are available.\nIn addition to that, all unrecognized variables are considered to be\nmodules that are automatically imported. It is possible to use all\navailable Python modules, including the standard modules and the installed\nthird party modules.\n\nExamples:\n| `Should Be True`    len('${result}') > 3\n| `Run Keyword If`    os.sep == '/'    Non-Windows Keyword\n| ${version} =    `Evaluate`    robot.__version__\n\n`Evaluate` also allows configuring the execution namespace with a custom\nnamespace and with custom modules to be imported. The latter functionality\nis useful in special cases where the automatic module import does not work\nsuch as when using nested modules like ``rootmod.submod`` or list\ncomprehensions. See the documentation of the `Evaluate` keyword for mode\ndetails.\n\n== Variables in expressions ==\n\nWhen a variable is used in the expressing using the normal ``${variable}``\nsyntax, its value is replaced before the expression is evaluated. This\nmeans that the value used in the expression will be the string\nrepresentation of the variable value, not the variable value itself.\nThis is not a problem with numbers and other objects that have a string\nrepresentation that can be evaluated directly, but with other objects\nthe behavior depends on the string representation. Most importantly,\nstrings must always be quoted, and if they can contain newlines, they must\nbe triple quoted.\n\nExamples:\n| `Should Be True`    ${rc} < 10                   Return code greater than 10\n| `Run Keyword If`    '${status}' == 'PASS'        Log    Passed\n| `Run Keyword If`    'FAIL' in '''${output}'''    Log    Output contains FAIL\n\nActual variables values are also available in the evaluation namespace.\nThey can be accessed using special variable syntax without the curly\nbraces like ``$variable``. These variables should never be quoted.\n\nExamples:\n| `Should Be True`    $rc < 10             Return code greater than 10\n| `Run Keyword If`    $status == 'PASS'    `Log`    Passed\n| `Run Keyword If`    'FAIL' in $output    `Log`    Output contains FAIL\n| `Should Be True`    len($result) > 1 and $result[1] == 'OK'\n| `Should Be True`    $result is not None\n\nUsing the ``$variable`` syntax slows down expression evaluation a little.\nThis should not typically matter, but should be taken into account if\ncomplex expressions are evaluated often and there are strict time\nconstrains.\n\nNotice that instead of creating complicated expressions, it is often better\nto move the logic into a library. That eases maintenance and can also\nenhance execution speed.\n\n= Boolean arguments =\n\nSome keywords accept arguments that are handled as Boolean values true or\nfalse. If such an argument is given as a string, it is considered false if\nit is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or\n``0``, case-insensitively. Keywords verifying something that allow dropping\nactual and expected values from the possible error message also consider\nstring ``no values`` to be false. Other strings are considered true unless\nthe keyword documentation explicitly states otherwise, and other argument\ntypes are tested using the same\n[http://docs.python.org/library/stdtypes.html#truth|rules as in Python].\n\nTrue examples:\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=True         # Strings are generally true.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=yes          # Same as the above.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=${TRUE}      # Python ``True`` is true.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=${42}        # Numbers other than 0 are true.\n\nFalse examples:\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=False        # String ``false`` is false.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=no           # Also string ``no`` is false.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=${EMPTY}     # Empty string is false.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=${FALSE}     # Python ``False`` is false.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=no values    # ``no values`` works with ``values`` argument\n\n= Pattern matching =\n\nMany keywords accept arguments as either glob or regular expression patterns.\n\n== Glob patterns ==\n\nSome keywords, for example `Should Match`, support so called\n[http://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:\n\n| ``*``        | matches any string, even an empty string                |\n| ``?``        | matches any single character                            |\n| ``[chars]``  | matches one character in the bracket                    |\n| ``[!chars]`` | matches one character not in the bracket                |\n| ``[a-z]``    | matches one character from the range in the bracket     |\n| ``[!a-z]``   | matches one character not from the range in the bracket |\n\nUnlike with glob patterns normally, path separator characters ``/`` and\n``\\`` and the newline character ``\\n`` are matches by the above\nwildcards.\n\n== Regular expressions ==\n\nSome keywords, for example `Should Match Regexp`, support\n[http://en.wikipedia.org/wiki/Regular_expression|regular expressions]\nthat are more powerful but also more complicated that glob patterns.\nThe regular expression support is implemented using Python's\n[http://docs.python.org/library/re.html|re module] and its documentation\nshould be consulted for more information about the syntax.\n\nBecause the backslash character (``\\``) is an escape character in\nRobot Framework test data, possible backslash characters in regular\nexpressions need to be escaped with another backslash like ``\\\\d\\\\w+``.\nStrings that may contain special characters but should be handled\nas literal strings, can be escaped with the `Regexp Escape` keyword.\n\n= Multiline string comparison =\n\n`Should Be Equal` and `Should Be Equal As Strings` report the failures using\n[http://en.wikipedia.org/wiki/Diff_utility#Unified_format|unified diff\nformat] if both strings have more than two lines.\n\nExample:\n| ${first} =     `Catenate`    SEPARATOR=\\n    Not in second    Same    Differs    Same\n| ${second} =    `Catenate`    SEPARATOR=\\n    Same    Differs2    Same    Not in first\n| `Should Be Equal`    ${first}    ${second}\n\nResults in the following error message:\n\n| Multiline strings are different:\n| --- first\n| +++ second\n| @@ -1,4 +1,4 @@\n| -Not in second\n|  Same\n| -Differs\n| +Differs2\n|  Same\n| +Not in first\n\n= String representations =\n\nSeveral keywords log values explicitly (e.g. `Log`) or implicitly (e.g.\n`Should Be Equal` when there are failures). By default, keywords log values\nusing human-readable string representation, which means that strings\nlike ``Hello`` and numbers like ``42`` are logged as-is. Most of the time\nthis is the desired behavior, but there are some problems as well:\n\n- It is not possible to see difference between different objects that\n  have the same string representation like string ``42`` and integer ``42``.\n  `Should Be Equal` and some other keywords add the type information to\n  the error message in these cases, though.\n\n- Non-printable characters such as the null byte are not visible.\n\n- Trailing whitespace is not visible.\n\n- Different newlines (``\\r\\n`` on Windows, ``\\n`` elsewhere) cannot\n  be separated from each others.\n\n- There are several Unicode characters that are different but look the\n  same. One example is the Latin ``a`` (``\\u0061``) and the Cyrillic\n  ``\u0430`` (``\\u0430``). Error messages like ``a != \u0430`` are not very helpful.\n\n- Some Unicode characters can be represented using\n  [https://en.wikipedia.org/wiki/Unicode_equivalence|different forms].\n  For example, ``\u00e4`` can be represented either as a single code point\n  ``\\u00e4`` or using two combined code points ``\\u0061`` and ``\\u0308``.\n  Such forms are considered canonically equivalent, but strings\n  containing them are not considered equal when compared in Python. Error\n  messages like ``\u00e4 != \u00e4`` are not that helpful either.\n\n- Containers such as lists and dictionaries are formatted into a single\n  line making it hard to see individual items they contain.\n\nTo overcome the above problems, some keywords such as `Log` and\n`Should Be Equal` have an optional ``formatter`` argument that can be\nused to configure the string representation. The supported values are\n``str`` (default), ``repr``, and ``ascii`` that work similarly as\n[https://docs.python.org/library/functions.html|Python built-in functions]\nwith same names. More detailed semantics are explained below.\n\n== str ==\n\nUse the human-readable string representation. Equivalent to using ``str()``\nin Python. This is the default.\n\n== repr ==\n\nUse the machine-readable string representation. Similar to using ``repr()``\nin Python, which means that strings like ``Hello`` are logged like\n``'Hello'``, newlines and non-printable characters are escaped like ``\\n``\nand ``\\x00``, and so on. Non-ASCII characters are shown as-is like ``\u00e4``.\n\nIn this mode bigger lists, dictionaries and other containers are\npretty-printed so that there is one item per row.\n\n== ascii ==\n\nSame as using ``ascii()`` in Python. Similar to using ``repr`` explained above\nbut with the following differences:\n\n- Non-ASCII characters are escaped like ``\\xe4`` instead of\n  showing them as-is like ``\u00e4``. This makes it easier to see differences\n  between Unicode characters that look the same but are not equal.\n- Containers are not pretty-printed.",
-  "version": "6.0.2",
-  "generated": "2023-01-08T19:25:37+00:00",
+  "version": "6.1",
+  "generated": "2023-06-12T09:38:43+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
   "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-  "lineno": 3668,
+  "lineno": 3697,
   "tags": [],
   "inits": [],
   "keywords": [
@@ -17,6 +17,7 @@
       "args": [
         {
           "name": "object",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -26,6 +27,7 @@
         },
         {
           "name": "method_name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -35,6 +37,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -44,6 +47,7 @@
         },
         {
           "name": "kwargs",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -56,13 +60,14 @@
       "shortdoc": "Calls the named method of the given object with the provided arguments.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3416
+      "lineno": 3445
     },
     {
       "name": "Catenate",
       "args": [
         {
           "name": "items",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -75,13 +80,14 @@
       "shortdoc": "Catenates the given items together and returns the resulted string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2925
+      "lineno": 2949
     },
     {
       "name": "Comment",
       "args": [
         {
           "name": "messages",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -94,7 +100,7 @@
       "shortdoc": "Displays the given messages in the log file as keyword arguments.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3090
+      "lineno": 3119
     },
     {
       "name": "Continue For Loop",
@@ -103,13 +109,14 @@
       "shortdoc": "Skips the current FOR loop iteration and continues from the next.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2528
+      "lineno": 2552
     },
     {
       "name": "Continue For Loop If",
       "args": [
         {
           "name": "condition",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -122,13 +129,14 @@
       "shortdoc": "Skips the current FOR loop iteration if the ``condition`` is true.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2564
+      "lineno": 2588
     },
     {
       "name": "Convert To Binary",
       "args": [
         {
           "name": "item",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -138,6 +146,7 @@
         },
         {
           "name": "base",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -147,6 +156,7 @@
         },
         {
           "name": "prefix",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -156,6 +166,7 @@
         },
         {
           "name": "length",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -168,13 +179,14 @@
       "shortdoc": "Converts the given item to a binary string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 151
+      "lineno": 173
     },
     {
       "name": "Convert To Boolean",
       "args": [
         {
           "name": "item",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -187,13 +199,14 @@
       "shortdoc": "Converts the given item to Boolean true or false.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 298
+      "lineno": 320
     },
     {
       "name": "Convert To Bytes",
       "args": [
         {
           "name": "input",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -203,6 +216,7 @@
         },
         {
           "name": "input_type",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "text",
@@ -215,13 +229,14 @@
       "shortdoc": "Converts the given ``input`` to bytes according to the ``input_type``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 314
+      "lineno": 336
     },
     {
       "name": "Convert To Hex",
       "args": [
         {
           "name": "item",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -231,6 +246,7 @@
         },
         {
           "name": "base",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -240,6 +256,7 @@
         },
         {
           "name": "prefix",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -249,6 +266,7 @@
         },
         {
           "name": "length",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -258,6 +276,7 @@
         },
         {
           "name": "lowercase",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -270,13 +289,14 @@
       "shortdoc": "Converts the given item to a hexadecimal string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 195
+      "lineno": 217
     },
     {
       "name": "Convert To Integer",
       "args": [
         {
           "name": "item",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -286,6 +306,7 @@
         },
         {
           "name": "base",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -298,13 +319,14 @@
       "shortdoc": "Converts the given item to an integer number.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 98
+      "lineno": 120
     },
     {
       "name": "Convert To Number",
       "args": [
         {
           "name": "item",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -314,6 +336,7 @@
         },
         {
           "name": "precision",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -326,13 +349,14 @@
       "shortdoc": "Converts the given item to a floating point number.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 234
+      "lineno": 256
     },
     {
       "name": "Convert To Octal",
       "args": [
         {
           "name": "item",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -342,6 +366,7 @@
         },
         {
           "name": "base",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -351,6 +376,7 @@
         },
         {
           "name": "prefix",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -360,6 +386,7 @@
         },
         {
           "name": "length",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -372,13 +399,14 @@
       "shortdoc": "Converts the given item to an octal string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 173
+      "lineno": 195
     },
     {
       "name": "Convert To String",
       "args": [
         {
           "name": "item",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -387,17 +415,18 @@
           "repr": "item"
         }
       ],
-      "doc": "Converts the given item to a Unicode string.\n\nStrings are also [http://www.macchiato.com/unicode/nfc-faq|\nNFC normalized].\n\nUse `Encode String To Bytes` and `Decode Bytes To String` keywords\nin ``String`` library if you need to convert between Unicode and byte\nstrings using different encodings. Use `Convert To Bytes` if you just\nwant to create byte strings.",
+      "doc": "Converts the given item to a Unicode string.\n\nStrings are also [https://en.wikipedia.org/wiki/Unicode_equivalence|\nNFC normalized].\n\nUse `Encode String To Bytes` and `Decode Bytes To String` keywords\nin ``String`` library if you need to convert between Unicode and byte\nstrings using different encodings. Use `Convert To Bytes` if you just\nwant to create byte strings.",
       "shortdoc": "Converts the given item to a Unicode string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 284
+      "lineno": 306
     },
     {
       "name": "Create Dictionary",
       "args": [
         {
           "name": "items",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -410,13 +439,14 @@
       "shortdoc": "Creates and returns a dictionary based on the given ``items``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 420
+      "lineno": 442
     },
     {
       "name": "Create List",
       "args": [
         {
           "name": "items",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -429,13 +459,14 @@
       "shortdoc": "Returns a list containing given items.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 406
+      "lineno": 428
     },
     {
       "name": "Evaluate",
       "args": [
         {
           "name": "expression",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -445,6 +476,7 @@
         },
         {
           "name": "modules",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -454,6 +486,7 @@
         },
         {
           "name": "namespace",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -466,7 +499,7 @@
       "shortdoc": "Evaluates the given expression in Python and returns the result.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3360
+      "lineno": 3389
     },
     {
       "name": "Exit For Loop",
@@ -475,13 +508,14 @@
       "shortdoc": "Stops executing the enclosing FOR loop.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2595
+      "lineno": 2619
     },
     {
       "name": "Exit For Loop If",
       "args": [
         {
           "name": "condition",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -494,13 +528,14 @@
       "shortdoc": "Stops executing the enclosing FOR loop if the ``condition`` is true.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2631
+      "lineno": 2655
     },
     {
       "name": "Fail",
       "args": [
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -510,6 +545,7 @@
         },
         {
           "name": "tags",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -522,13 +558,14 @@
       "shortdoc": "Fails the test with the given message and optionally alters its tags.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 484
+      "lineno": 506
     },
     {
       "name": "Fatal Error",
       "args": [
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -541,13 +578,14 @@
       "shortdoc": "Stops the whole test execution.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 510
+      "lineno": 532
     },
     {
       "name": "Get Count",
       "args": [
         {
           "name": "container",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -557,6 +595,7 @@
         },
         {
           "name": "item",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -569,13 +608,14 @@
       "shortdoc": "Returns and logs how many times ``item`` is found from ``container``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1251
+      "lineno": 1273
     },
     {
       "name": "Get Length",
       "args": [
         {
           "name": "item",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -588,13 +628,14 @@
       "shortdoc": "Returns and logs the length of the given item as an integer.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1366
+      "lineno": 1388
     },
     {
       "name": "Get Library Instance",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -604,6 +645,7 @@
         },
         {
           "name": "all",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -616,13 +658,14 @@
       "shortdoc": "Returns the currently active instance of the specified library.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3633
+      "lineno": 3662
     },
     {
       "name": "Get Time",
       "args": [
         {
           "name": "format",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "timestamp",
@@ -632,6 +675,7 @@
         },
         {
           "name": "time_",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "NOW",
@@ -644,13 +688,14 @@
       "shortdoc": "Returns the given time in the requested format.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3277
+      "lineno": 3306
     },
     {
       "name": "Get Variable Value",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -660,6 +705,7 @@
         },
         {
           "name": "default",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -672,13 +718,14 @@
       "shortdoc": "Returns variable value or ``default`` if the variable does not exist.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1488
+      "lineno": 1510
     },
     {
       "name": "Get Variables",
       "args": [
         {
           "name": "no_decoration",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -691,13 +738,14 @@
       "shortdoc": "Returns a dictionary containing all variables in the current scope.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1458
+      "lineno": 1480
     },
     {
       "name": "Import Library",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -707,6 +755,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -719,13 +768,14 @@
       "shortdoc": "Imports a library with the given name and optional arguments.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3134
+      "lineno": 3163
     },
     {
       "name": "Import Resource",
       "args": [
         {
           "name": "path",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -738,13 +788,14 @@
       "shortdoc": "Imports a resource file with the given path.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3195
+      "lineno": 3224
     },
     {
       "name": "Import Variables",
       "args": [
         {
           "name": "path",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -754,6 +805,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -766,13 +818,14 @@
       "shortdoc": "Imports a variable file with the given path and optional arguments.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3170
+      "lineno": 3199
     },
     {
       "name": "Keyword Should Exist",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -782,6 +835,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -794,13 +848,14 @@
       "shortdoc": "Fails unless the given keyword exists in the current scope.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3259
+      "lineno": 3288
     },
     {
       "name": "Length Should Be",
       "args": [
         {
           "name": "item",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -810,6 +865,7 @@
         },
         {
           "name": "length",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -819,6 +875,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -831,13 +888,14 @@
       "shortdoc": "Verifies that the length of the given item is correct.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1414
+      "lineno": 1436
     },
     {
       "name": "Log",
       "args": [
         {
           "name": "message",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -847,6 +905,7 @@
         },
         {
           "name": "level",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "INFO",
@@ -856,6 +915,7 @@
         },
         {
           "name": "html",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -865,6 +925,7 @@
         },
         {
           "name": "console",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -874,6 +935,7 @@
         },
         {
           "name": "repr",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "DEPRECATED",
@@ -883,6 +945,7 @@
         },
         {
           "name": "formatter",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "str",
@@ -891,17 +954,18 @@
           "repr": "formatter=str"
         }
       ],
-      "doc": "Logs the given message with the given level.\n\nValid levels are TRACE, DEBUG, INFO (default), HTML, WARN, and ERROR.\nMessages below the current active log level are ignored. See\n`Set Log Level` keyword and ``--loglevel`` command line option\nfor more details about setting the level.\n\nMessages logged with the WARN or ERROR levels will be automatically\nvisible also in the console and in the Test Execution Errors section\nin the log file.\n\nIf the ``html`` argument is given a true value (see `Boolean\narguments`), the message will be considered HTML and special characters\nsuch as ``<`` are not escaped. For example, logging\n``<img src=\"image.png\">`` creates an image when ``html`` is true, but\notherwise the message is that exact string. An alternative to using\nthe ``html`` argument is using the HTML pseudo log level. It logs\nthe message as HTML using the INFO level.\n\nIf the ``console`` argument is true, the message will be written to\nthe console where test execution was started from in addition to\nthe log file. This keyword always uses the standard output stream\nand adds a newline after the written message. Use `Log To Console`\ninstead if either of these is undesirable,\n\nThe ``formatter`` argument controls how to format the string\nrepresentation of the message. Possible values are ``str`` (default),\n``repr``, ``ascii``, ``len``, and ``type``. They work similarly to\nPython built-in functions with same names. When using ``repr``, bigger\nlists, dictionaries and other containers are also pretty-printed so\nthat there is one item per row. For more details see `String\nrepresentations`.\n\nThe old way to control string representation was using the ``repr``\nargument. This argument has been deprecated and ``formatter=repr``\nshould be used instead.\n\nExamples:\n| Log | Hello, world!        |          |   | # Normal INFO message.   |\n| Log | Warning, world!      | WARN     |   | # Warning.               |\n| Log | <b>Hello</b>, world! | html=yes |   | # INFO message as HTML.  |\n| Log | <b>Hello</b>, world! | HTML     |   | # Same as above.         |\n| Log | <b>Hello</b>, world! | DEBUG    | html=true | # DEBUG as HTML. |\n| Log | Hello, console!   | console=yes | | # Log also to the console. |\n| Log | Null is \\x00    | formatter=repr | | # Log ``'Null is \\x00'``. |\n\nSee `Log Many` if you want to log multiple messages in one go, and\n`Log To Console` if you only want to write to the console.\n\nFormatter options ``type`` and ``log`` are new in Robot Framework 5.0.",
+      "doc": "Logs the given message with the given level.\n\nValid levels are TRACE, DEBUG, INFO (default), WARN and ERROR.\nIn addition to that, there are pseudo log levels HTML and CONSOLE that\nboth log messages using INFO.\n\nMessages below the current active log\nlevel are ignored. See `Set Log Level` keyword and ``--loglevel``\ncommand line option for more details about setting the level.\n\nMessages logged with the WARN or ERROR levels are automatically\nvisible also in the console and in the Test Execution Errors section\nin the log file.\n\nIf the ``html`` argument is given a true value (see `Boolean\narguments`) or the HTML pseudo log level is used, the message is\nconsidered to be HTML and special characters\nsuch as ``<`` are not escaped. For example, logging\n``<img src=\"image.png\">`` creates an image in this case, but\notherwise the message is that exact string. When using the HTML pseudo\nlevel, the messages is logged using the INFO level.\n\nIf the ``console`` argument is true or the CONSOLE pseudo level is\nused, the message is written both to the console and to the log file.\nWhen using the CONSOLE pseudo level, the message is logged using the\nINFO level. If the message should not be logged to the log file or there\nare special formatting needs, use the `Log To Console` keyword instead.\n\nThe ``formatter`` argument controls how to format the string\nrepresentation of the message. Possible values are ``str`` (default),\n``repr``, ``ascii``, ``len``, and ``type``. They work similarly to\nPython built-in functions with same names. When using ``repr``, bigger\nlists, dictionaries and other containers are also pretty-printed so\nthat there is one item per row. For more details see `String\nrepresentations`.\n\nThe old way to control string representation was using the ``repr``\nargument. This argument has been deprecated and ``formatter=repr``\nshould be used instead.\n\nExamples:\n| Log | Hello, world!        |          |   | # Normal INFO message.   |\n| Log | Warning, world!      | WARN     |   | # Warning.               |\n| Log | <b>Hello</b>, world! | html=yes |   | # INFO message as HTML.  |\n| Log | <b>Hello</b>, world! | HTML     |   | # Same as above.         |\n| Log | <b>Hello</b>, world! | DEBUG    | html=true | # DEBUG as HTML. |\n| Log | Hello, console!   | console=yes | | # Log also to the console. |\n| Log | Hello, console!   | CONSOLE     | | # Log also to the console. |\n| Log | Null is \\x00    | formatter=repr | | # Log ``'Null is \\x00'``. |\n\nSee `Log Many` if you want to log multiple messages in one go, and\n`Log To Console` if you only want to write to the console.\n\nFormatter options ``type`` and ``len`` are new in Robot Framework 5.0.\nThe CONSOLE level is new in Robot Framework 6.1.",
       "shortdoc": "Logs the given message with the given level.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2951
+      "lineno": 2975
     },
     {
       "name": "Log Many",
       "args": [
         {
           "name": "messages",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -914,13 +978,14 @@
       "shortdoc": "Logs the given messages as separate entries using the INFO level.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3028
+      "lineno": 3057
     },
     {
       "name": "Log To Console",
       "args": [
         {
           "name": "message",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -930,6 +995,7 @@
         },
         {
           "name": "stream",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "STDOUT",
@@ -939,6 +1005,7 @@
         },
         {
           "name": "no_newline",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -948,6 +1015,7 @@
         },
         {
           "name": "format",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "",
@@ -960,13 +1028,14 @@
       "shortdoc": "Logs the given message to the console.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3056
+      "lineno": 3085
     },
     {
       "name": "Log Variables",
       "args": [
         {
           "name": "level",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "INFO",
@@ -979,7 +1048,7 @@
       "shortdoc": "Logs all variables in the current scope with given log level.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1511
+      "lineno": 1533
     },
     {
       "name": "No Operation",
@@ -988,13 +1057,14 @@
       "shortdoc": "Does absolutely nothing.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2885
+      "lineno": 2909
     },
     {
       "name": "Pass Execution",
       "args": [
         {
           "name": "message",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1004,6 +1074,7 @@
         },
         {
           "name": "tags",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1016,13 +1087,14 @@
       "shortdoc": "Skips rest of the current test, setup, or teardown with PASS status.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2811
+      "lineno": 2835
     },
     {
       "name": "Pass Execution If",
       "args": [
         {
           "name": "condition",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1032,6 +1104,7 @@
         },
         {
           "name": "message",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1041,6 +1114,7 @@
         },
         {
           "name": "tags",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1053,13 +1127,14 @@
       "shortdoc": "Conditionally skips rest of the current test, setup, or teardown with PASS status.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2863
+      "lineno": 2887
     },
     {
       "name": "Regexp Escape",
       "args": [
         {
           "name": "patterns",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1072,13 +1147,14 @@
       "shortdoc": "Returns each argument string escaped for use as a regular expression.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3447
+      "lineno": 3476
     },
     {
       "name": "Reload Library",
       "args": [
         {
           "name": "name_or_instance",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1091,13 +1167,14 @@
       "shortdoc": "Rechecks what keywords the specified library provides.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3119
+      "lineno": 3148
     },
     {
       "name": "Remove Tags",
       "args": [
         {
           "name": "tags",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1110,13 +1187,14 @@
       "shortdoc": "Removes given ``tags`` from the current test or all tests in a suite.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3605
+      "lineno": 3634
     },
     {
       "name": "Repeat Keyword",
       "args": [
         {
           "name": "repeat",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1126,6 +1204,7 @@
         },
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1135,6 +1214,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1147,13 +1227,14 @@
       "shortdoc": "Executes the specified keyword multiple times.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2205
+      "lineno": 2229
     },
     {
       "name": "Replace Variables",
       "args": [
         {
           "name": "text",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1166,13 +1247,14 @@
       "shortdoc": "Replaces variables in the given text with their current values.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1574
+      "lineno": 1596
     },
     {
       "name": "Return From Keyword",
       "args": [
         {
           "name": "return_values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1185,13 +1267,14 @@
       "shortdoc": "Returns from the enclosing user keyword.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2663
+      "lineno": 2687
     },
     {
       "name": "Return From Keyword If",
       "args": [
         {
           "name": "condition",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1201,6 +1284,7 @@
         },
         {
           "name": "return_values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1213,13 +1297,14 @@
       "shortdoc": "Returns from the enclosing user keyword if ``condition`` is true.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2728
+      "lineno": 2752
     },
     {
       "name": "Run Keyword",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1229,6 +1314,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1241,13 +1327,14 @@
       "shortdoc": "Executes the given keyword with the given arguments.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1839
+      "lineno": 1861
     },
     {
       "name": "Run Keyword And Continue On Failure",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1257,6 +1344,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1269,13 +1357,14 @@
       "shortdoc": "Runs the keyword and continues execution even if a failure occurs.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2109
+      "lineno": 2133
     },
     {
       "name": "Run Keyword And Expect Error",
       "args": [
         {
           "name": "expected_error",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1285,6 +1374,7 @@
         },
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1294,6 +1384,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1306,13 +1397,14 @@
       "shortdoc": "Runs the keyword and checks that the expected error occurred.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2129
+      "lineno": 2153
     },
     {
       "name": "Run Keyword And Ignore Error",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1322,6 +1414,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1334,13 +1427,14 @@
       "shortdoc": "Runs the given keyword with the given arguments and ignores possible error.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2043
+      "lineno": 2067
     },
     {
       "name": "Run Keyword And Return",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1350,6 +1444,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1362,13 +1457,14 @@
       "shortdoc": "Runs the specified keyword and returns from the enclosing user keyword.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2767
+      "lineno": 2791
     },
     {
       "name": "Run Keyword And Return If",
       "args": [
         {
           "name": "condition",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1378,6 +1474,7 @@
         },
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1387,6 +1484,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1399,13 +1497,14 @@
       "shortdoc": "Runs the specified keyword and returns from the enclosing user keyword.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2793
+      "lineno": 2817
     },
     {
       "name": "Run Keyword And Return Status",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1415,6 +1514,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1427,13 +1527,14 @@
       "shortdoc": "Runs the given keyword with given arguments and returns the status as a Boolean value.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2088
+      "lineno": 2112
     },
     {
       "name": "Run Keyword And Warn On Failure",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1443,6 +1544,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1455,13 +1557,14 @@
       "shortdoc": "Runs the specified keyword logs a warning if the keyword fails.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2069
+      "lineno": 2093
     },
     {
       "name": "Run Keyword If",
       "args": [
         {
           "name": "condition",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1471,6 +1574,7 @@
         },
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1480,6 +1584,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1492,13 +1597,14 @@
       "shortdoc": "Runs the given keyword with the given arguments, if ``condition`` is true.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1949
+      "lineno": 1973
     },
     {
       "name": "Run Keyword If All Tests Passed",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1508,6 +1614,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1520,13 +1627,14 @@
       "shortdoc": "Runs the given keyword with the given arguments, if all tests passed.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2472
+      "lineno": 2496
     },
     {
       "name": "Run Keyword If Any Tests Failed",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1536,6 +1644,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1548,13 +1657,14 @@
       "shortdoc": "Runs the given keyword with the given arguments, if one or more tests failed.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2486
+      "lineno": 2510
     },
     {
       "name": "Run Keyword If Test Failed",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1564,6 +1674,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1576,13 +1687,14 @@
       "shortdoc": "Runs the given keyword with the given arguments, if the test failed.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2424
+      "lineno": 2448
     },
     {
       "name": "Run Keyword If Test Passed",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1592,6 +1704,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1604,13 +1717,14 @@
       "shortdoc": "Runs the given keyword with the given arguments, if the test passed.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2438
+      "lineno": 2462
     },
     {
       "name": "Run Keyword If Timeout Occurred",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1620,6 +1734,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1632,13 +1747,14 @@
       "shortdoc": "Runs the given keyword if either a test or a keyword timeout has occurred.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2452
+      "lineno": 2476
     },
     {
       "name": "Run Keyword Unless",
       "args": [
         {
           "name": "condition",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1648,6 +1764,7 @@
         },
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1657,6 +1774,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1669,7 +1787,7 @@
       "shortdoc": "*DEPRECATED since RF 5.0. Use Native IF/ELSE or `Run Keyword If` instead.*",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2031,
+      "lineno": 2055,
       "deprecated": true
     },
     {
@@ -1677,6 +1795,7 @@
       "args": [
         {
           "name": "keywords",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1689,13 +1808,14 @@
       "shortdoc": "Executes all the given keywords in a sequence.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1871
+      "lineno": 1895
     },
     {
       "name": "Set Global Variable",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1705,6 +1825,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1717,13 +1838,14 @@
       "shortdoc": "Makes a variable available globally in all tests and suites.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1754
+      "lineno": 1776
     },
     {
       "name": "Set Library Search Order",
       "args": [
         {
           "name": "search_order",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1736,13 +1858,14 @@
       "shortdoc": "Sets the resolution order to use when a name matches multiple keywords.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3217
+      "lineno": 3246
     },
     {
       "name": "Set Local Variable",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1752,6 +1875,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1764,13 +1888,14 @@
       "shortdoc": "Makes a variable available everywhere within the local scope.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1621
+      "lineno": 1643
     },
     {
       "name": "Set Log Level",
       "args": [
         {
           "name": "level",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1783,13 +1908,14 @@
       "shortdoc": "Sets the log threshold to the specified level and returns the old level.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3101
+      "lineno": 3130
     },
     {
       "name": "Set Suite Documentation",
       "args": [
         {
           "name": "doc",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1799,6 +1925,7 @@
         },
         {
           "name": "append",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -1808,6 +1935,7 @@
         },
         {
           "name": "top",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -1820,13 +1948,14 @@
       "shortdoc": "Sets documentation for the current test suite.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3537
+      "lineno": 3566
     },
     {
       "name": "Set Suite Metadata",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1836,6 +1965,7 @@
         },
         {
           "name": "value",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1845,6 +1975,7 @@
         },
         {
           "name": "append",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -1854,6 +1985,7 @@
         },
         {
           "name": "top",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -1866,13 +1998,14 @@
       "shortdoc": "Sets metadata for the current test suite.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3557
+      "lineno": 3586
     },
     {
       "name": "Set Suite Variable",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1882,6 +2015,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1894,13 +2028,14 @@
       "shortdoc": "Makes a variable available everywhere within the scope of the current suite.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1693
+      "lineno": 1715
     },
     {
       "name": "Set Tags",
       "args": [
         {
           "name": "tags",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1913,13 +2048,14 @@
       "shortdoc": "Adds given ``tags`` for the current test or all tests in a suite.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3580
+      "lineno": 3609
     },
     {
       "name": "Set Task Variable",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1929,6 +2065,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1941,13 +2078,14 @@
       "shortdoc": "Makes a variable available everywhere within the scope of the current task.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1684
+      "lineno": 1706
     },
     {
       "name": "Set Test Documentation",
       "args": [
         {
           "name": "doc",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1957,6 +2095,7 @@
         },
         {
           "name": "append",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -1969,13 +2108,14 @@
       "shortdoc": "Sets documentation for the current test case.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3518
+      "lineno": 3547
     },
     {
       "name": "Set Test Message",
       "args": [
         {
           "name": "message",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -1985,6 +2125,7 @@
         },
         {
           "name": "append",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -1997,13 +2138,14 @@
       "shortdoc": "Sets message for the current test case.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3465
+      "lineno": 3494
     },
     {
       "name": "Set Test Variable",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2013,6 +2155,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2025,13 +2168,14 @@
       "shortdoc": "Makes a variable available everywhere within the scope of the current test.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1658
+      "lineno": 1680
     },
     {
       "name": "Set Variable",
       "args": [
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2044,13 +2188,14 @@
       "shortdoc": "Returns the given values which can then be assigned to a variables.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1593
+      "lineno": 1615
     },
     {
       "name": "Set Variable If",
       "args": [
         {
           "name": "condition",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2060,6 +2205,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2072,13 +2218,14 @@
       "shortdoc": "Sets variable based on the given condition.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2366
+      "lineno": 2390
     },
     {
       "name": "Should Be Empty",
       "args": [
         {
           "name": "item",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2088,6 +2235,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -2100,13 +2248,14 @@
       "shortdoc": "Verifies that the given item is empty.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1426
+      "lineno": 1448
     },
     {
       "name": "Should Be Equal",
       "args": [
         {
           "name": "first",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2116,6 +2265,7 @@
         },
         {
           "name": "second",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2125,6 +2275,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -2134,6 +2285,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "True",
@@ -2143,6 +2295,7 @@
         },
         {
           "name": "ignore_case",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -2152,6 +2305,7 @@
         },
         {
           "name": "formatter",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "str",
@@ -2161,6 +2315,7 @@
         },
         {
           "name": "strip_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -2170,6 +2325,7 @@
         },
         {
           "name": "collapse_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -2182,13 +2338,14 @@
       "shortdoc": "Fails if the given objects are unequal.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 563
+      "lineno": 585
     },
     {
       "name": "Should Be Equal As Integers",
       "args": [
         {
           "name": "first",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2198,6 +2355,7 @@
         },
         {
           "name": "second",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2207,6 +2365,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -2216,6 +2375,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "True",
@@ -2225,6 +2385,7 @@
         },
         {
           "name": "base",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -2237,13 +2398,14 @@
       "shortdoc": "Fails if objects are unequal after converting them to integers.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 720
+      "lineno": 742
     },
     {
       "name": "Should Be Equal As Numbers",
       "args": [
         {
           "name": "first",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2253,6 +2415,7 @@
         },
         {
           "name": "second",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2262,6 +2425,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -2271,6 +2435,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "True",
@@ -2280,6 +2445,7 @@
         },
         {
           "name": "precision",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "6",
@@ -2292,13 +2458,14 @@
       "shortdoc": "Fails if objects are unequal after converting them to real numbers.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 757
+      "lineno": 779
     },
     {
       "name": "Should Be Equal As Strings",
       "args": [
         {
           "name": "first",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2308,6 +2475,7 @@
         },
         {
           "name": "second",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2317,6 +2485,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -2326,6 +2495,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "True",
@@ -2335,6 +2505,7 @@
         },
         {
           "name": "ignore_case",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -2344,6 +2515,7 @@
         },
         {
           "name": "strip_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -2353,6 +2525,7 @@
         },
         {
           "name": "formatter",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "str",
@@ -2362,6 +2535,7 @@
         },
         {
           "name": "collapse_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -2370,17 +2544,18 @@
           "repr": "collapse_spaces=False"
         }
       ],
-      "doc": "Fails if objects are unequal after converting them to strings.\n\nSee `Should Be Equal` for an explanation on how to override the default\nerror message with ``msg``, ``values`` and ``formatter``.\n\nIf ``ignore_case`` is given a true value (see `Boolean arguments`),\ncomparison is done case-insensitively. If both arguments are\nmultiline strings, this keyword uses `multiline string comparison`.\n\nIf ``strip_spaces`` is given a true value (see `Boolean arguments`)\nand both arguments are strings, the comparison is done without leading\nand trailing spaces. If ``strip_spaces`` is given a string value\n``LEADING`` or ``TRAILING`` (case-insensitive), the comparison is done\nwithout leading or trailing spaces, respectively.\n\nIf ``collapse_spaces`` is given a true value (see `Boolean arguments`) and both\narguments are strings, the comparison is done with all white spaces replaced by\na single space character.\n\nStrings are always [http://www.macchiato.com/unicode/nfc-faq| NFC normalized].\n\n``strip_spaces`` is new in Robot Framework 4.0\nand ``collapse_spaces`` is new in Robot Framework 4.1.",
+      "doc": "Fails if objects are unequal after converting them to strings.\n\nSee `Should Be Equal` for an explanation on how to override the default\nerror message with ``msg``, ``values`` and ``formatter``.\n\nIf ``ignore_case`` is given a true value (see `Boolean arguments`),\ncomparison is done case-insensitively. If both arguments are\nmultiline strings, this keyword uses `multiline string comparison`.\n\nIf ``strip_spaces`` is given a true value (see `Boolean arguments`)\nand both arguments are strings, the comparison is done without leading\nand trailing spaces. If ``strip_spaces`` is given a string value\n``LEADING`` or ``TRAILING`` (case-insensitive), the comparison is done\nwithout leading or trailing spaces, respectively.\n\nIf ``collapse_spaces`` is given a true value (see `Boolean arguments`) and both\narguments are strings, the comparison is done with all white spaces replaced by\na single space character.\n\nStrings are always [https://en.wikipedia.org/wiki/Unicode_equivalence|NFC normalized].\n\n``strip_spaces`` is new in Robot Framework 4.0\nand ``collapse_spaces`` is new in Robot Framework 4.1.",
       "shortdoc": "Fails if objects are unequal after converting them to strings.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 836
+      "lineno": 858
     },
     {
       "name": "Should Be True",
       "args": [
         {
           "name": "condition",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2390,6 +2565,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -2402,13 +2578,14 @@
       "shortdoc": "Fails if the given condition is not true.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 532
+      "lineno": 554
     },
     {
       "name": "Should Contain",
       "args": [
         {
           "name": "container",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2418,6 +2595,7 @@
         },
         {
           "name": "item",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2427,6 +2605,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -2436,6 +2615,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "True",
@@ -2445,6 +2625,7 @@
         },
         {
           "name": "ignore_case",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -2454,6 +2635,7 @@
         },
         {
           "name": "strip_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -2463,6 +2645,7 @@
         },
         {
           "name": "collapse_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -2475,13 +2658,14 @@
       "shortdoc": "Fails if ``container`` does not contain ``item`` one or more times.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1020
+      "lineno": 1042
     },
     {
       "name": "Should Contain Any",
       "args": [
         {
           "name": "container",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2491,6 +2675,7 @@
         },
         {
           "name": "items",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2500,6 +2685,7 @@
         },
         {
           "name": "configuration",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2512,13 +2698,14 @@
       "shortdoc": "Fails if ``container`` does not contain any of the ``*items``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1076
+      "lineno": 1098
     },
     {
       "name": "Should Contain X Times",
       "args": [
         {
           "name": "container",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2528,6 +2715,7 @@
         },
         {
           "name": "item",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2537,6 +2725,7 @@
         },
         {
           "name": "count",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2546,6 +2735,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -2555,6 +2745,7 @@
         },
         {
           "name": "ignore_case",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -2564,6 +2755,7 @@
         },
         {
           "name": "strip_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -2573,6 +2765,7 @@
         },
         {
           "name": "collapse_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -2585,13 +2778,14 @@
       "shortdoc": "Fails if ``container`` does not contain ``item`` ``count`` times.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1193
+      "lineno": 1215
     },
     {
       "name": "Should End With",
       "args": [
         {
           "name": "str1",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2601,6 +2795,7 @@
         },
         {
           "name": "str2",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2610,6 +2805,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -2619,6 +2815,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "True",
@@ -2628,6 +2825,7 @@
         },
         {
           "name": "ignore_case",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -2637,6 +2835,7 @@
         },
         {
           "name": "strip_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -2646,6 +2845,7 @@
         },
         {
           "name": "collapse_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -2658,13 +2858,14 @@
       "shortdoc": "Fails if the string ``str1`` does not end with the string ``str2``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 942
+      "lineno": 964
     },
     {
       "name": "Should Match",
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2674,6 +2875,7 @@
         },
         {
           "name": "pattern",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2683,6 +2885,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -2692,6 +2895,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "True",
@@ -2701,6 +2905,7 @@
         },
         {
           "name": "ignore_case",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -2713,13 +2918,14 @@
       "shortdoc": "Fails if the given ``string`` does not match the given ``pattern``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1289
+      "lineno": 1311
     },
     {
       "name": "Should Match Regexp",
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2729,6 +2935,7 @@
         },
         {
           "name": "pattern",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2738,6 +2945,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -2747,6 +2955,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "True",
@@ -2756,6 +2965,7 @@
         },
         {
           "name": "flags",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -2768,13 +2978,14 @@
       "shortdoc": "Fails if ``string`` does not match ``pattern`` as a regular expression.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1308
+      "lineno": 1330
     },
     {
       "name": "Should Not Be Empty",
       "args": [
         {
           "name": "item",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2784,6 +2995,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -2796,13 +3008,14 @@
       "shortdoc": "Verifies that the given item is not empty.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1435
+      "lineno": 1457
     },
     {
       "name": "Should Not Be Equal",
       "args": [
         {
           "name": "first",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2812,6 +3025,7 @@
         },
         {
           "name": "second",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2821,6 +3035,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -2830,6 +3045,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "True",
@@ -2839,6 +3055,7 @@
         },
         {
           "name": "ignore_case",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -2848,6 +3065,7 @@
         },
         {
           "name": "strip_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -2857,6 +3075,7 @@
         },
         {
           "name": "collapse_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -2869,13 +3088,14 @@
       "shortdoc": "Fails if the given objects are equal.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 663
+      "lineno": 685
     },
     {
       "name": "Should Not Be Equal As Integers",
       "args": [
         {
           "name": "first",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2885,6 +3105,7 @@
         },
         {
           "name": "second",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2894,6 +3115,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -2903,6 +3125,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "True",
@@ -2912,6 +3135,7 @@
         },
         {
           "name": "base",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -2924,13 +3148,14 @@
       "shortdoc": "Fails if objects are equal after converting them to integers.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 703
+      "lineno": 725
     },
     {
       "name": "Should Not Be Equal As Numbers",
       "args": [
         {
           "name": "first",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2940,6 +3165,7 @@
         },
         {
           "name": "second",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2949,6 +3175,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -2958,6 +3185,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "True",
@@ -2967,6 +3195,7 @@
         },
         {
           "name": "precision",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "6",
@@ -2979,13 +3208,14 @@
       "shortdoc": "Fails if objects are equal after converting them to real numbers.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 740
+      "lineno": 762
     },
     {
       "name": "Should Not Be Equal As Strings",
       "args": [
         {
           "name": "first",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -2995,6 +3225,7 @@
         },
         {
           "name": "second",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3004,6 +3235,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -3013,6 +3245,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "True",
@@ -3022,6 +3255,7 @@
         },
         {
           "name": "ignore_case",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -3031,6 +3265,7 @@
         },
         {
           "name": "strip_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -3040,6 +3275,7 @@
         },
         {
           "name": "collapse_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -3048,17 +3284,18 @@
           "repr": "collapse_spaces=False"
         }
       ],
-      "doc": "Fails if objects are equal after converting them to strings.\n\nSee `Should Be Equal` for an explanation on how to override the default\nerror message with ``msg`` and ``values``.\n\nIf ``ignore_case`` is given a true value (see `Boolean arguments`),\ncomparison is done case-insensitively.\n\nIf ``strip_spaces`` is given a true value (see `Boolean arguments`)\nand both arguments are strings, the comparison is done without leading\nand trailing spaces. If ``strip_spaces`` is given a string value\n``LEADING`` or ``TRAILING`` (case-insensitive), the comparison is done\nwithout leading or trailing spaces, respectively.\n\nIf ``collapse_spaces`` is given a true value (see `Boolean arguments`) and both\narguments are strings, the comparison is done with all white spaces replaced by\na single space character.\n\nStrings are always [http://www.macchiato.com/unicode/nfc-faq|\nNFC normalized].\n\n``strip_spaces`` is new in Robot Framework 4.0 and ``collapse_spaces`` is new\nin Robot Framework 4.1.",
+      "doc": "Fails if objects are equal after converting them to strings.\n\nSee `Should Be Equal` for an explanation on how to override the default\nerror message with ``msg`` and ``values``.\n\nIf ``ignore_case`` is given a true value (see `Boolean arguments`),\ncomparison is done case-insensitively.\n\nIf ``strip_spaces`` is given a true value (see `Boolean arguments`)\nand both arguments are strings, the comparison is done without leading\nand trailing spaces. If ``strip_spaces`` is given a string value\n``LEADING`` or ``TRAILING`` (case-insensitive), the comparison is done\nwithout leading or trailing spaces, respectively.\n\nIf ``collapse_spaces`` is given a true value (see `Boolean arguments`) and both\narguments are strings, the comparison is done with all white spaces replaced by\na single space character.\n\nStrings are always [https://en.wikipedia.org/wiki/Unicode_equivalence|\nNFC normalized].\n\n``strip_spaces`` is new in Robot Framework 4.0 and ``collapse_spaces`` is new\nin Robot Framework 4.1.",
       "shortdoc": "Fails if objects are equal after converting them to strings.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 795
+      "lineno": 817
     },
     {
       "name": "Should Not Be True",
       "args": [
         {
           "name": "condition",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3068,6 +3305,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -3080,13 +3318,14 @@
       "shortdoc": "Fails if the given condition is true.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 523
+      "lineno": 545
     },
     {
       "name": "Should Not Contain",
       "args": [
         {
           "name": "container",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3096,6 +3335,7 @@
         },
         {
           "name": "item",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3105,6 +3345,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -3114,6 +3355,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "True",
@@ -3123,6 +3365,7 @@
         },
         {
           "name": "ignore_case",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -3132,6 +3375,7 @@
         },
         {
           "name": "strip_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -3141,6 +3385,7 @@
         },
         {
           "name": "collapse_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -3153,13 +3398,14 @@
       "shortdoc": "Fails if ``container`` contains ``item`` one or more times.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 963
+      "lineno": 985
     },
     {
       "name": "Should Not Contain Any",
       "args": [
         {
           "name": "container",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3169,6 +3415,7 @@
         },
         {
           "name": "items",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3178,6 +3425,7 @@
         },
         {
           "name": "configuration",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3190,13 +3438,14 @@
       "shortdoc": "Fails if ``container`` contains one or more of the ``*items``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1135
+      "lineno": 1157
     },
     {
       "name": "Should Not End With",
       "args": [
         {
           "name": "str1",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3206,6 +3455,7 @@
         },
         {
           "name": "str2",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3215,6 +3465,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -3224,6 +3475,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "True",
@@ -3233,6 +3485,7 @@
         },
         {
           "name": "ignore_case",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -3242,6 +3495,7 @@
         },
         {
           "name": "strip_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -3251,6 +3505,7 @@
         },
         {
           "name": "collapse_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -3263,13 +3518,14 @@
       "shortdoc": "Fails if the string ``str1`` ends with the string ``str2``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 920
+      "lineno": 942
     },
     {
       "name": "Should Not Match",
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3279,6 +3535,7 @@
         },
         {
           "name": "pattern",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3288,6 +3545,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -3297,6 +3555,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "True",
@@ -3306,6 +3565,7 @@
         },
         {
           "name": "ignore_case",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -3318,13 +3578,14 @@
       "shortdoc": "Fails if the given ``string`` matches the given ``pattern``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1271
+      "lineno": 1293
     },
     {
       "name": "Should Not Match Regexp",
       "args": [
         {
           "name": "string",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3334,6 +3595,7 @@
         },
         {
           "name": "pattern",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3343,6 +3605,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -3352,6 +3615,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "True",
@@ -3361,6 +3625,7 @@
         },
         {
           "name": "flags",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -3373,13 +3638,14 @@
       "shortdoc": "Fails if ``string`` matches ``pattern`` as a regular expression.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1357
+      "lineno": 1379
     },
     {
       "name": "Should Not Start With",
       "args": [
         {
           "name": "str1",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3389,6 +3655,7 @@
         },
         {
           "name": "str2",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3398,6 +3665,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -3407,6 +3675,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "True",
@@ -3416,6 +3685,7 @@
         },
         {
           "name": "ignore_case",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -3425,6 +3695,7 @@
         },
         {
           "name": "strip_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -3434,6 +3705,7 @@
         },
         {
           "name": "collapse_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -3446,13 +3718,14 @@
       "shortdoc": "Fails if the string ``str1`` starts with the string ``str2``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 877
+      "lineno": 899
     },
     {
       "name": "Should Start With",
       "args": [
         {
           "name": "str1",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3462,6 +3735,7 @@
         },
         {
           "name": "str2",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3471,6 +3745,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -3480,6 +3755,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "True",
@@ -3489,6 +3765,7 @@
         },
         {
           "name": "ignore_case",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -3498,6 +3775,7 @@
         },
         {
           "name": "strip_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -3507,6 +3785,7 @@
         },
         {
           "name": "collapse_spaces",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -3519,13 +3798,14 @@
       "shortdoc": "Fails if the string ``str1`` does not start with the string ``str2``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 899
+      "lineno": 921
     },
     {
       "name": "Skip",
       "args": [
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "Skipped with Skip keyword.",
@@ -3538,13 +3818,14 @@
       "shortdoc": "Skips the rest of the current test.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2508
+      "lineno": 2532
     },
     {
       "name": "Skip If",
       "args": [
         {
           "name": "condition",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3554,6 +3835,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -3566,13 +3848,14 @@
       "shortdoc": "Skips the rest of the current test if the ``condition`` is True.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2516
+      "lineno": 2540
     },
     {
       "name": "Sleep",
       "args": [
         {
           "name": "time_",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3582,6 +3865,7 @@
         },
         {
           "name": "reason",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -3594,13 +3878,14 @@
       "shortdoc": "Pauses the test executed for the given time.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2888
+      "lineno": 2912
     },
     {
       "name": "Variable Should Exist",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3610,6 +3895,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -3622,13 +3908,14 @@
       "shortdoc": "Fails unless the given variable exists within the current scope.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1533
+      "lineno": 1555
     },
     {
       "name": "Variable Should Not Exist",
       "args": [
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3638,6 +3925,7 @@
         },
         {
           "name": "msg",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "None",
@@ -3650,13 +3938,14 @@
       "shortdoc": "Fails if the given variable exists within the current scope.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1553
+      "lineno": 1575
     },
     {
       "name": "Wait Until Keyword Succeeds",
       "args": [
         {
           "name": "retry",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3666,6 +3955,7 @@
         },
         {
           "name": "retry_interval",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3675,6 +3965,7 @@
         },
         {
           "name": "name",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3684,6 +3975,7 @@
         },
         {
           "name": "args",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -3696,7 +3988,7 @@
       "shortdoc": "Runs the specified keyword and retries if it fails.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2284
+      "lineno": 2308
     }
   ],
   "dataTypes": {

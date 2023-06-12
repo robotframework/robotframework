@@ -1,9 +1,9 @@
 {
-  "specversion": 1,
+  "specversion": 2,
   "name": "Dialogs",
   "doc": "A library providing dialogs for interacting with users.\n\n``Dialogs`` is Robot Framework's standard library that provides means\nfor pausing the test or task execution and getting input from users.\n\nLong lines in the provided messages are wrapped automatically. If you want\nto wrap lines manually, you can add newlines using the ``\\n`` character\nsequence.\n\nThe library has a known limitation that it cannot be used with timeouts.",
-  "version": "6.0.2",
-  "generated": "2023-01-08T19:25:37+00:00",
+  "version": "6.1",
+  "generated": "2023-06-12T09:38:44+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
@@ -17,6 +17,7 @@
       "args": [
         {
           "name": "message",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -26,6 +27,7 @@
         },
         {
           "name": "default_error",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "",
@@ -45,6 +47,7 @@
       "args": [
         {
           "name": "message",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -54,6 +57,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -73,6 +77,7 @@
       "args": [
         {
           "name": "message",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -82,6 +87,7 @@
         },
         {
           "name": "values",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -101,6 +107,7 @@
       "args": [
         {
           "name": "message",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": null,
@@ -110,6 +117,7 @@
         },
         {
           "name": "default_value",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "",
@@ -119,6 +127,7 @@
         },
         {
           "name": "hidden",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "False",
@@ -138,6 +147,7 @@
       "args": [
         {
           "name": "message",
+          "type": null,
           "types": [],
           "typedocs": {},
           "defaultValue": "Execution paused. Press OK to continue.",
