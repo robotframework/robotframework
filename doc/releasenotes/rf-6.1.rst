@@ -912,8 +912,8 @@ In addition to that, the community has provided several great contributions:
 - `Yuri Verweij <https://github.com/yuriverweij>`__ enhanced `Dictionaries Should Be Equal`
   so that it supports ignoring keys (`#2717`_).
 
-- Hưng Trịnh provided Vietnamese translation (`#4792`_) and
-  `Elout van Leeuwen <https://github.com/leeuwe>`__ helped otherwise with localization.
+- `Hưng Trịnh <https://github.com/hungtrinh>`__ provided Vietnamese translation (`#4792`_)
+  and `Elout van Leeuwen <https://github.com/leeuwe>`__ helped with localization otherwise.
 
 Big thanks to Robot Framework Foundation for the continued support, to community
 members listed above for their valuable contributions, and to everyone else who
