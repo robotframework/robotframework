@@ -318,15 +318,9 @@ class _List:
         See section `Ignore Case` for more information about ignoring case in lists.
         """
         self._validate_list(list_)
-        if ignore_case:
-            check_list = self._normalize(list_)
-            check_value = self._normalize(value)
-        else:
-            check_list = list_
-            check_value = value
-        _verify_condition(check_value in check_list,
-                          f"{seq2str2(list_)} does not contain value '{value}'.",
-                          msg)
+        normalize = Normalizer(ignore_case).normalize
+        _verify_condition(normalize(value) in normalize(list_), 
+                          f"{seq2str2(list_)} does not contain value '{value}'.", msg)
 
     def list_should_not_contain_value(self, list_, value, msg=None, ignore_case=False):
         """Fails if the ``value`` is found from ``list``.
@@ -336,13 +330,8 @@ class _List:
         See section `Ignore Case` for more information about ignoring case in lists.
         """
         self._validate_list(list_)
-        if ignore_case:
-            check_list = self._normalize(list_)
-            check_value = self._normalize(value)
-        else:
-            check_list = list_
-            check_value = value
-        _verify_condition(check_value not in check_list,
+        normalize = Normalizer(ignore_case).normalize
+        _verify_condition(normalize(value) not in normalize(list_),
                           f"{seq2str2(list_)} contains value '{value}'.",
                           msg)
 
@@ -363,22 +352,13 @@ class _List:
         if not isinstance(list_, list):
             list_ = list(list_)
         dupes = []
-        for item in list_:
-            if ignore_case:
-                check_list = self._normalize(list_)
-                normalized_dupes = self._normalize(dupes)
-                normalized_item = self._normalize(item)
-                if normalized_item not in normalized_dupes:
-                    count = check_list.count(normalized_item)
-                    if count > 1:
-                        logger.info(f"'{item}' found {count} times.")
-                        dupes.append(item)
-            else:
-                if item not in dupes:
-                    count = list_.count(item)
-                    if count > 1:
-                        logger.info(f"'{item}' found {count} times.")
-                        dupes.append(item)
+        normalize = Normalizer(ignore_case).normalize
+        for item in normalize(list_):
+            if item not in dupes:
+                count = normalize(list_).count(item)
+                if count > 1:
+                    logger.info(f"'{item}' found {count} times.")
+                    dupes.append(item)
         if dupes:
             raise AssertionError(msg or f'{seq2str(dupes)} found multiple times.')
 
@@ -439,10 +419,9 @@ class _List:
         if ignore_order:
             list1 = sorted(list1)
             list2 = sorted(list2)
-        if ignore_case:
-            list1 = self._normalize(list1)
-            list2 = self._normalize(list2)
-        diffs = '\n'.join(self._yield_list_diffs(list1, list2, names))
+        normalize = Normalizer(ignore_case).normalize
+        diffs = '\n'.join(self._yield_list_diffs(normalize(list1), normalize(list2),
+                                                 names))
         _verify_condition(not diffs,
                           f'Lists are different:\n{diffs}',
                           msg, values)
@@ -475,12 +454,10 @@ class _List:
         See section `Ignore Case` for more information about ignoring case in lists.
         """
         self._validate_lists(list1, list2)
-        if ignore_case:
-            list1 = self._normalize(list1)
-            diffs = ', '.join(str(item) for item in list2 if
-                              self._normalize(item) not in list1)
-        else:
-            diffs = ', '.join(str(item) for item in list2 if item not in list1)
+        normalize = Normalizer(ignore_case).normalize
+        list1 = normalize(list1)
+        diffs = ', '.join(str(item) for item in list2 if
+                              normalize(item) not in list1)
         _verify_condition(not diffs,
                           f'Following values were not found from first list: {diffs}',
                           msg, values)
@@ -525,16 +502,6 @@ class _List:
     def _validate_lists(self, *lists):
         for index, item in enumerate(lists, start=1):
             self._validate_list(item, index)
-
-    def _normalize(self,value):
-        if is_dict_like(value):
-            return {self._normalize(k): self._normalize(value[k]) for k in value}
-        if is_list_like(value):
-            return [self._normalize(v) for v in value]
-        if is_string(value):
-            return value.lower()
-        return value
-
 
 class _Dictionary:
 
@@ -768,11 +735,8 @@ class _Dictionary:
         as an argument
         """
         self._validate_dictionary(dictionary)
-        should_ignore = self._is_ignore_case(ignore_case)
-        if should_ignore['key']:
-            dictionary=self._normalize(dictionary)
-            key=self._normalize(key)
-        _verify_condition(key in dictionary,
+        normalize = Normalizer(ignore_case).normalize
+        _verify_condition(normalize(key) in normalize(dictionary),
                           f"Dictionary does not contain key '{key}'.",
                           msg)
 
@@ -786,11 +750,8 @@ class _Dictionary:
         as an argument
         """
         self._validate_dictionary(dictionary)
-        should_ignore = self._is_ignore_case(ignore_case)
-        if should_ignore['key']:
-            dictionary=self._normalize(dictionary)
-            key=self._normalize(key)
-        _verify_condition(key not in dictionary,
+        normalize = Normalizer(ignore_case).normalize
+        _verify_condition(normalize(key) not in normalize(dictionary),
                           f"Dictionary contains key '{key}'.",
                           msg)
 
@@ -806,19 +767,9 @@ class _Dictionary:
         as an argument
         """
         self._validate_dictionary(dictionary)
-        should_ignore = self._is_ignore_case(ignore_case)
-        self.dictionary_should_contain_key(dictionary, key, msg, should_ignore['key'])
-        if ignore_case is True or self._normalize(ignore_case)=="both":
-            dictionary = self._normalize(dictionary)
-            key=self._normalize(key)
-            value=self._normalize(value)
-        elif should_ignore['key']:
-            dictionary = {self._normalize(k): dictionary[k] for k in dictionary}
-            key=self._normalize(key)
-        elif should_ignore['value']:
-            dictionary = {k: self._normalize(dictionary[k]) for k in dictionary}
-            value=self._normalize(value)
-        assert_equal(dictionary[key], value,
+        normalize = Normalizer(ignore_case).normalize
+        self.dictionary_should_contain_key(normalize(dictionary), normalize(key), msg)
+        assert_equal(normalize(dictionary[normalize(key)]), normalize(value),
                      msg or f"Value of dictionary key '{key}' does not match",
                      values=not msg)
 
@@ -832,11 +783,8 @@ class _Dictionary:
         as an argument
         """
         self._validate_dictionary(dictionary)
-        should_ignore = self._is_ignore_case(ignore_case)
-        if should_ignore['value']:
-            dictionary=self._normalize(dictionary)
-            value=self._normalize(value)
-        _verify_condition(value in dictionary.values(),
+        normalize = Normalizer(ignore_case).normalize
+        _verify_condition(normalize(value) in normalize(dictionary).values(),
                           f"Dictionary does not contain value '{value}'.",
                           msg)
 
@@ -850,11 +798,8 @@ class _Dictionary:
         as an argument
         """
         self._validate_dictionary(dictionary)
-        should_ignore = self._is_ignore_case(ignore_case)
-        if should_ignore['value']:
-            dictionary = self._normalize(dictionary)
-            value=self._normalize(value)
-        _verify_condition(value not in dictionary.values(),
+        normalize = Normalizer(ignore_case).normalize
+        _verify_condition(normalize(value) not in normalize(dictionary).values(),
                           f"Dictionary contains value '{value}'.",
                           msg)
 
@@ -884,7 +829,6 @@ class _Dictionary:
         """
         self._validate_dictionary(dict1)
         self._validate_dictionary(dict2, 2)
-        should_ignore = self._is_ignore_case(ignore_case)
         if ignore_keys:
             if isinstance(ignore_keys, str):
                 try:
@@ -897,7 +841,7 @@ class _Dictionary:
                                  f"got {type_name(ignore_keys)}.")
             dict1 = {k: v for k, v in dict1.items() if k not in ignore_keys}
             dict2 = {k: v for k, v in dict2.items() if k not in ignore_keys}
-        keys = self._keys_should_be_equal(dict1, dict2, msg, values, should_ignore['key'])
+        keys = self._keys_should_be_equal(dict1, dict2, msg, values, ignore_case)
         self._key_values_should_be_equal(keys, dict1, dict2, msg, values, ignore_case)
 
     def dictionary_should_contain_sub_dictionary(self, dict1, dict2, msg=None,
@@ -912,13 +856,10 @@ class _Dictionary:
         """
         self._validate_dictionary(dict1)
         self._validate_dictionary(dict2, 2)
-        should_ignore = self._is_ignore_case(ignore_case)
+        normalize = Normalizer(ignore_case).normalize
         keys = self.get_dictionary_keys(dict2)
-        if should_ignore['key']:
-            diffs = ', '.join(str(k) for k in keys if self._normalize(k)
-                              not in self._normalize(dict1))
-        else:
-            diffs = ', '.join(str(k) for k in keys if k not in dict1)
+        diffs = ', '.join(str(k) for k in normalize(keys) if normalize(k)
+                          not in normalize(dict1))
         _verify_condition(not diffs,
                           f"Following keys missing from first dictionary: {diffs}",
                           msg, values)
@@ -949,13 +890,11 @@ class _Dictionary:
     def _keys_should_be_equal(self, dict1, dict2, msg, values, ignore_case):
         keys1 = self.get_dictionary_keys(dict1)
         keys2 = self.get_dictionary_keys(dict2)
-        if ignore_case:
-            keys1 = self._normalize(dict1)
-            keys2 = self._normalize(dict2)
-            dict1 = self._normalize(dict1)
-            dict2 = self._normalize(dict2)
-        miss1 = ', '.join(str(k) for k in keys2 if k not in dict1)
-        miss2 = ', '.join(str(k) for k in keys1 if k not in dict2)
+        normalize = Normalizer(ignore_case).normalize
+        miss1 = ', '.join(str(k) for k in normalize(keys2) if normalize(k)
+                          not in normalize(dict1))
+        miss2 = ', '.join(str(k) for k in normalize(keys1) if normalize(k)
+                          not in normalize(dict2))
         error = []
         if miss1:
             error += [f'Following keys missing from first dictionary: {miss1}']
@@ -965,24 +904,19 @@ class _Dictionary:
         return keys1
 
     def _key_values_should_be_equal(self, keys, dict1, dict2, msg, values, ignore_case):
-        diffs = '\n'.join(self._yield_dict_diffs(dict1, dict2, ignore_case))
+        normalize = Normalizer(ignore_case).normalize
+        diffs = '\n'.join(self._yield_dict_diffs(normalize(dict1),
+                                normalize(dict2), ignore_case))
         _verify_condition(not diffs,
                           f'Following keys have different values:\n{diffs}',
                           msg, values)
 
     def _yield_dict_diffs(self, dict1, dict2, ignore_case):
-        should_ignore = self._is_ignore_case(ignore_case)
+        normalize = Normalizer(ignore_case).normalize
         for key1, key2 in zip(dict1,dict2):
-            if should_ignore['value'] is True:
-                dict1 = {k: self._normalize(dict1[k]) for k in dict1}
-                dict2 = {k: self._normalize(dict2[k]) for k in dict2}
-            elif should_ignore['key'] is True:
-                key1 = self._normalize(key1)
-                key2 = self._normalize(key2)
-                dict1 = {self._normalize(k): dict1[k] for k in dict1}
-                dict2 = {self._normalize(k): dict2[k] for k in dict2}
             try:
-                assert_equal(dict1[key1], dict2[key2], msg=f'Key {key1}')
+                assert_equal(normalize(dict1[normalize(key1)]),
+                             normalize(dict2[normalize(key2)]), msg=f'Key {key1}')
             except AssertionError as err:
                 yield str(err)
 
@@ -990,30 +924,6 @@ class _Dictionary:
         if not is_dict_like(dictionary):
             raise TypeError(f"Expected argument {position} to be a dictionary or "
                             f"dictionary-like, got {type_name(dictionary)} instead.")
-
-    def _normalize(self,value):
-        if is_dict_like(value):
-            return {self._normalize(k): self._normalize(value[k]) for k in value}
-        if is_list_like(value):
-            return [self._normalize(v) for v in value]
-        if is_string(value):
-            return value.lower()
-        return value
-
-    def _is_ignore_case(self,ignore_case):
-        if self._normalize(ignore_case)=="key":
-            ignore_case_key=True
-            ignore_case_value=False
-        elif self._normalize(ignore_case)=="value":
-            ignore_case_key=False
-            ignore_case_value=True
-        elif self._normalize(ignore_case)=="both" or ignore_case is True:
-            ignore_case_key=True
-            ignore_case_value=True
-        else:
-            ignore_case_key=False
-            ignore_case_value=False
-        return {'key': ignore_case_key, 'value': ignore_case_value}
 
 class Collections(_List, _Dictionary):
     """A library providing keywords for handling lists and dictionaries.
@@ -1236,3 +1146,24 @@ def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
                       spaceless=is_truthy(whitespace_insensitive),
                       regexp=regexp)
     return [item for item in iterable if isinstance(item, str) and matcher.match(item)]
+
+class Normalizer:
+    def __init__(self, ignore_case=False):
+        self.ignore_case = ignore_case
+
+    def normalize(self, value):
+        if not self.ignore_case:
+            return value
+        normalize = self.normalize
+        if is_dict_like(value):
+            if normalize(self.ignore_case)=="key":
+                return {normalize(k): value[k] for k in value}
+            elif normalize(self.ignore_case)=="value":
+                return {k: normalize(value[k]) for k in value}
+            elif normalize(self.ignore_case)=="both" or self.ignore_case is True:
+                return {normalize(k): normalize(value[k]) for k in value}
+        if is_list_like(value):
+            return [normalize(v) for v in value]
+        if is_string(value):
+            return value.lower()
+        return value
