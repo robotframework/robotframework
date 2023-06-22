@@ -922,7 +922,7 @@ class _Dictionary:
         _verify_condition(not diffs,
                           f"Following keys missing from first dictionary: {diffs}",
                           msg, values)
-        self._key_values_should_be_equal(dict1, dict2, msg,
+        self._key_values_should_be_equal(keys, dict1, dict2, msg,
                                          values, ignore_case)
 
     def log_dictionary(self, dictionary, level='INFO'):
@@ -964,7 +964,7 @@ class _Dictionary:
         _verify_condition(not error, '\n'.join(error), msg, values)
         return keys1
 
-    def _key_values_should_be_equal(self, dict1, dict2, msg, values, ignore_case):
+    def _key_values_should_be_equal(self, keys, dict1, dict2, msg, values, ignore_case):
         diffs = '\n'.join(self._yield_dict_diffs(dict1, dict2, ignore_case))
         _verify_condition(not diffs,
                           f'Following keys have different values:\n{diffs}',
