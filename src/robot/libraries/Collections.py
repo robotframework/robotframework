@@ -113,7 +113,7 @@ class _List:
         =>
         | ${L3} = ['a', 'xxx', 'yyy']
 
-        Starting from Robot Framework 6.2, it is also possible to use the native
+        Starting from Robot Framework 6.1, it is also possible to use the native
         item assignment syntax. This is equivalent to the above:
         | ${L3}[1] =  | Set Variable | xxx |
         | ${L3}[-1] = | Set Variable | yyy |
@@ -460,9 +460,8 @@ class _List:
         """
         self._validate_lists(list1, list2)
         normalize = Normalizer(ignore_case).normalize
-        list1 = normalize(list1)
-        diffs = ', '.join(str(item) for item in list2 if
-                              normalize(item) not in list1)
+        diffs = ', '.join(str(item) for item in normalize(list2) if
+                          item not in normalize(list1))
         _verify_condition(not diffs,
                           f'Following values were not found from first list: {diffs}',
                           msg, values)
@@ -736,8 +735,8 @@ class _Dictionary:
 
         Use the ``msg`` argument to override the default error message.
         
-        See section `Ignore Case` for more information about how to use ignore_case 
-        as an argument
+        The ignore_case argument can be used to make comparison case-insensitive. 
+        See the Ignore case section for more details. It is new in Robot Framework 6.2.
         """
         self._validate_dictionary(dictionary)
         normalize = Normalizer(ignore_case).normalize
@@ -751,8 +750,8 @@ class _Dictionary:
 
         Use the ``msg`` argument to override the default error message.
         
-        See section `Ignore Case` for more information about how to use ignore_case 
-        as an argument
+        The ignore_case argument can be used to make comparison case-insensitive. 
+        See the Ignore case section for more details. It is new in Robot Framework 6.2.
         """
         self._validate_dictionary(dictionary)
         normalize = Normalizer(ignore_case).normalize
@@ -768,8 +767,8 @@ class _Dictionary:
 
         Use the ``msg`` argument to override the default error message.
         
-        See section `Ignore Case` for more information about how to use ignore_case 
-        as an argument
+        The ignore_case argument can be used to make comparison case-insensitive. 
+        See the Ignore case section for more details. It is new in Robot Framework 6.2.
         """
         self._validate_dictionary(dictionary)
         normalize = Normalizer(ignore_case).normalize
@@ -784,8 +783,8 @@ class _Dictionary:
 
         Use the ``msg`` argument to override the default error message.
         
-        See section `Ignore Case` for more information about how to use ignore_case 
-        as an argument
+        The ignore_case argument can be used to make comparison case-insensitive. 
+        See the Ignore case section for more details. It is new in Robot Framework 6.2.
         """
         self._validate_dictionary(dictionary)
         normalize = Normalizer(ignore_case).normalize
@@ -799,8 +798,8 @@ class _Dictionary:
 
         Use the ``msg`` argument to override the default error message.
         
-        See section `Ignore Case` for more information about how to use ignore_case 
-        as an argument
+        The ignore_case argument can be used to make comparison case-insensitive. 
+        See the Ignore case section for more details. It is new in Robot Framework 6.2.
         """
         self._validate_dictionary(dictionary)
         normalize = Normalizer(ignore_case).normalize
@@ -819,7 +818,7 @@ class _Dictionary:
 
         ``ignore_keys`` can be used to provide a list of keys to ignore in the
         comparison. It can be an actual list or a Python list literal. This
-        option is new in Robot Framework 6.2.
+        option is new in Robot Framework 6.1.
 
         Examples:
         | Dictionaries Should Be Equal | ${dict} | ${expected} |
@@ -829,8 +828,8 @@ class _Dictionary:
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
         
-        See section `Ignore Case` for more information about how to use ignore_case 
-        as an argument
+        The ignore_case argument can be used to make comparison case-insensitive. 
+        See the Ignore case section for more details. It is new in Robot Framework 6.2.
         """
         self._validate_dictionary(dict1)
         self._validate_dictionary(dict2, 2)
@@ -856,14 +855,14 @@ class _Dictionary:
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
         
-        See section `Ignore Case` for more information about how to use ignore_case 
-        as an argument
+        The ignore_case argument can be used to make comparison case-insensitive. 
+        See the Ignore case section for more details. It is new in Robot Framework 6.2.
         """
         self._validate_dictionary(dict1)
         self._validate_dictionary(dict2, 2)
         normalize = Normalizer(ignore_case).normalize
         keys = self.get_dictionary_keys(dict2)
-        diffs = ', '.join(str(k) for k in normalize(keys) if normalize(k)
+        diffs = ', '.join(str(k) for k in normalize(keys) if k
                           not in normalize(dict1))
         _verify_condition(not diffs,
                           f"Following keys missing from first dictionary: {diffs}",
@@ -896,9 +895,9 @@ class _Dictionary:
         keys1 = self.get_dictionary_keys(dict1)
         keys2 = self.get_dictionary_keys(dict2)
         normalize = Normalizer(ignore_case).normalize
-        miss1 = ', '.join(str(k) for k in normalize(keys2) if normalize(k)
+        miss1 = ', '.join(str(k) for k in normalize(keys2) if k
                           not in normalize(dict1))
-        miss2 = ', '.join(str(k) for k in normalize(keys1) if normalize(k)
+        miss2 = ', '.join(str(k) for k in normalize(keys1) if k
                           not in normalize(dict2))
         error = []
         if miss1:
@@ -918,10 +917,9 @@ class _Dictionary:
 
     def _yield_dict_diffs(self, dict1, dict2, ignore_case):
         normalize = Normalizer(ignore_case).normalize
-        for key1, key2 in zip(dict1,dict2):
+        for key1, key2 in zip(normalize(dict1), normalize(dict2)):
             try:
-                assert_equal(normalize(dict1[normalize(key1)]),
-                             normalize(dict2[normalize(key2)]), msg=f'Key {key1}')
+                assert_equal(dict1[key1], dict2[key2], msg=f'Key {key1}')
             except AssertionError as err:
                 yield str(err)
 
