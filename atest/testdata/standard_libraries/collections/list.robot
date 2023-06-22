@@ -628,7 +628,7 @@ List Should Contain Sub List With Ignore Case
 
 List Should Not Contain Duplicates With Ignore Case
     [Setup]    Create Lists For Testing Ignore Case
-    [Documentation]    FAIL 'A' and 'c' found multiple times.
+    [Documentation]    FAIL 'a' and 'c' found multiple times.
     List Should Not Contain Duplicates  ${L3}    ignore_case=${True}
 
 List Should Contain Value With Ignore Case And Nested List and Dictionary

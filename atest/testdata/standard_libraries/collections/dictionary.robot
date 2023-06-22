@@ -378,7 +378,7 @@ Dictionary Should Contain Key Without Ignoring Wrong Case
 
 Dictionary Should Not Contain Key With Ignore Case Does Contain Key
     [Setup]    Create Dictionaries For Testing Ignore Case
-    [Documentation]  FAIL Dictionary contains key 'a'.
+    [Documentation]  FAIL Dictionary contains key 'A'.
     Dictionary Should Not Contain Key    dictionary=${D0}    key=A    ignore_case=${True}
 
 Dictionary Should Contain Value With Ignore Case
