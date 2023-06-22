@@ -225,6 +225,32 @@ Dictionaries Should Be Equal With Different Values And Own And Default Error Mes
     ...    Key b: 2 != x
     Dictionaries Should Be Equal    ${D2}    ${D2B}    My error message!
 
+Dictionaries Should Equal With Ignored Keys
+    ${x}    ${y}     ${z} =    Evaluate    dict(a=1, b=2), dict(a=1, b=2, d=4), list('d')
+    Dictionaries Should Be Equal    ${x}    ${y}    ignore_keys=${z}
+
+Dictionaries Should Equal With Ignored Keys And Missing Key
+    [Documentation]    FAIL
+    ...    Following keys missing from first dictionary: c
+    ${x}    ${y}     ${z} =    Evaluate    dict(a=1, b=2), dict(a=1, b=2, c=3, d=4), list('d')
+    Dictionaries Should Be Equal    ${x}    ${y}    ignore_keys=${z}
+
+Dictionaries Should Equal With Ignored Keys And Missing Key And Own Error Message
+    [Documentation]    FAIL My error message!
+    ...    Following keys missing from first dictionary: c
+    ${x}    ${y}     ${z} =    Evaluate    dict(a=1, b=2), dict(a=1, b=2, c=3, d=4), list('d')
+    Dictionaries Should Be Equal    ${x}    ${y}    My error message!    ignore_keys=${z}
+
+Dictionaries Should Equal with non-list ignored keys
+    [Documentation]    FAIL ValueError: 'ignore_keys' must be list-like, got integer.
+    ${x}    ${y} =    Evaluate    dict(a=1, b=2), dict(a=1, b=2, d=4)
+    Dictionaries Should Be Equal    ${x}    ${y}    ignore_keys=42
+
+Dictionaries Should Equal with invalid ignored keys
+    [Documentation]    FAIL STARTS: ValueError: Converting 'ignore_keys' to a list failed: SyntaxError:
+    ${x}    ${y} =    Evaluate    dict(a=1, b=2), dict(a=1, b=2, d=4)
+    Dictionaries Should Be Equal    ${x}    ${y}    ignore_keys=!?#
+
 Dictionary Should Contain Sub Dictionary
     Dictionary Should Contain Sub Dictionary    ${D3}    ${D2}
     Dictionary Should Contain Sub Dictionary    ${D3}    ${D0}

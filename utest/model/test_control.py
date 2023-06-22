@@ -27,13 +27,13 @@ class TestFor(unittest.TestCase):
              "For(variables=('${x}', '${y}'), flavor='IN ENUMERATE', values=('a', 'b'))"),
             (For(['${x}'], 'IN ENUMERATE', ['@{stuff}'], start='1'),
              'FOR    ${x}    IN ENUMERATE    @{stuff}    start=1',
-             "For(variables=['${x}'], flavor='IN ENUMERATE', values=['@{stuff}'], start='1')"),
+             "For(variables=('${x}',), flavor='IN ENUMERATE', values=('@{stuff}',), start='1')"),
             (For(('${x}', '${y}'), 'IN ZIP', ('${xs}', '${ys}'), mode='LONGEST', fill='-'),
              'FOR    ${x}    ${y}    IN ZIP    ${xs}    ${ys}    mode=LONGEST    fill=-',
              "For(variables=('${x}', '${y}'), flavor='IN ZIP', values=('${xs}', '${ys}'), mode='LONGEST', fill='-')"),
             (For(['${ü}'], 'IN', ['föö']),
              'FOR    ${ü}    IN    föö',
-             "For(variables=['${ü}'], flavor='IN', values=['föö'])")
+             "For(variables=('${ü}',), flavor='IN', values=('föö',))")
         ]:
             assert_equal(str(for_), exp_str)
             assert_equal(repr(for_), 'robot.model.' + exp_repr)

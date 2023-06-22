@@ -15,14 +15,19 @@
 
 import inspect
 from itertools import chain
-import os.path
+from pathlib import Path
+from typing import cast, Iterable, Iterator, Union
 
 from robot.errors import DataError
 from robot.utils import classproperty, is_list_like, Importer, normalize
 
 
+LanguageLike = Union['Language', str, Path]
+LanguagesLike = Union['Languages', LanguageLike, Iterable[LanguageLike], None]
+
+
 class Languages:
-    """Keeps a list of languages and unifies the translations in the properties.
+    """Stores languages and unifies translations.
 
     Example::
 
@@ -33,7 +38,8 @@ class Languages:
             print(lang.name, lang.code)
     """
 
-    def __init__(self, languages=None, add_english=True):
+    def __init__(self, languages: 'Iterable[LanguageLike]|LanguageLike|None' = (),
+                 add_english: bool = True):
         """
         :param languages: Initial language or list of languages.
             Languages can be given as language codes or names, paths or names of
@@ -43,20 +49,20 @@ class Languages:
 
         :meth:`add_language` can be used to add languages after initialization.
         """
-        self.languages = []
-        self.headers = {}
-        self.settings = {}
-        self.bdd_prefixes = set()
-        self.true_strings = {'True', '1'}
-        self.false_strings = {'False', '0', 'None', ''}
+        self.languages: 'list[Language]' = []
+        self.headers: 'dict[str, str]' = {}
+        self.settings: 'dict[str, str]' = {}
+        self.bdd_prefixes:  'set[str]' = set()
+        self.true_strings: 'set[str]' = {'True', '1'}
+        self.false_strings: 'set[str]' = {'False', '0', 'None', ''}
         for lang in self._get_languages(languages, add_english):
             self._add_language(lang)
 
-    def reset(self, languages=None, add_english=True):
+    def reset(self, languages: Iterable[LanguageLike] = (), add_english: bool = True):
         """Resets the instance to the given languages."""
         self.__init__(languages, add_english)
 
-    def add_language(self, lang):
+    def add_language(self, lang: LanguageLike):
         """Add new language.
 
         :param lang: Language to add. Can be a language code or name, name or
@@ -67,20 +73,28 @@ class Languages:
         Language modules are imported and :class:`Language` subclasses in them
         loaded.
         """
-        try:
-            if isinstance(lang, Language):
-                languages = [lang]
-            else:
-                languages = [Language.from_name(lang)]
-        except ValueError as err1:
+        if isinstance(lang, Language):
+            languages = [lang]
+        elif isinstance(lang, Path) or self._exists(Path(lang)):
+            languages = self._import_language_module(Path(lang))
+        else:
             try:
-                languages = self._import_languages(lang)
-            except DataError as err2:
-                raise DataError(f'{err1} {err2}')
+                languages = [Language.from_name(lang)]
+            except ValueError as err1:
+                try:
+                    languages = self._import_language_module(lang)
+                except DataError as err2:
+                    raise DataError(f'{err1} {err2}') from None
         for lang in languages:
             self._add_language(lang)
 
-    def _add_language(self, lang):
+    def _exists(self, path: Path):
+        try:
+            return path.exists()
+        except OSError:    # Can happen on Windows w/ Python < 3.10.
+            return False
+
+    def _add_language(self, lang: 'Language'):
         if lang in self.languages:
             return
         self.languages.append(lang)
@@ -90,19 +104,21 @@ class Languages:
         self.true_strings |= {s.title() for s in lang.true_strings}
         self.false_strings |= {s.title() for s in lang.false_strings}
 
-    def _get_languages(self, languages, add_english=True):
+    def _get_languages(self, languages, add_english=True) -> 'list[Language]':
         languages = self._resolve_languages(languages, add_english)
         available = self._get_available_languages()
-        returned = []
+        returned: 'list[Language]' = []
         for lang in languages:
             if isinstance(lang, Language):
                 returned.append(lang)
+            elif isinstance(lang, Path):
+                returned.extend(self._import_language_module(lang))
             else:
                 normalized = normalize(lang, ignore='-')
                 if normalized in available:
                     returned.append(available[normalized]())
                 else:
-                    returned.extend(self._import_languages(lang))
+                    returned.extend(self._import_language_module(lang))
         return returned
 
     def _resolve_languages(self, languages, add_english=True):
@@ -125,26 +141,28 @@ class Languages:
             }
         return languages
 
-    def _get_available_languages(self):
+    def _get_available_languages(self) -> 'dict[str, type[Language]]':
         available = {}
         for lang in Language.__subclasses__():
-            available[normalize(lang.code, ignore='-')] = lang
-            available[normalize(lang.name)] = lang
+            available[normalize(cast(str, lang.code), ignore='-')] = lang
+            available[normalize(cast(str, lang.name))] = lang
         if '' in available:
             available.pop('')
         return available
 
-    def _import_languages(self, lang):
+    def _import_language_module(self, name_or_path) -> 'list[Language]':
         def is_language(member):
             return (inspect.isclass(member)
                     and issubclass(member, Language)
                     and member is not Language)
-        if os.path.exists(lang):
-            lang = os.path.abspath(lang)
-        module = Importer('language file').import_module(lang)
+        if isinstance(name_or_path, Path):
+            name_or_path = name_or_path.absolute()
+        elif self._exists(Path(name_or_path)):
+            name_or_path = Path(name_or_path).absolute()
+        module = Importer('language file').import_module(name_or_path)
         return [value() for _, value in inspect.getmembers(module, is_language)]
 
-    def __iter__(self):
+    def __iter__(self) -> 'Iterator[Language]':
         return iter(self.languages)
 
 
@@ -197,7 +215,7 @@ class Language:
     false_strings = []
 
     @classmethod
-    def from_name(cls, name):
+    def from_name(cls, name) -> 'Language':
         """Return language class based on given `name`.
 
         Name can either be a language name (e.g. 'Finnish' or 'Brazilian Portuguese')
@@ -215,7 +233,7 @@ class Language:
         raise ValueError(f"No language with name '{name}' found.")
 
     @classproperty
-    def code(cls):
+    def code(cls) -> str:
         """Language code like 'fi' or 'pt-BR'.
 
         Got based on the class name. If the class name is two characters (or less),
@@ -226,13 +244,13 @@ class Language:
         """
         if cls is Language:
             return cls.__dict__['code']
-        code = cls.__name__.lower()
+        code = cast(type, cls).__name__.lower()
         if len(code) < 3:
             return code
         return f'{code[:2]}-{code[2:].upper()}'
 
     @classproperty
-    def name(cls):
+    def name(cls) -> str:
         """Language name like 'Finnish' or 'Brazilian Portuguese'.
 
         Got from the first line of the class docstring.
@@ -244,7 +262,7 @@ class Language:
         return cls.__doc__.splitlines()[0] if cls.__doc__ else ''
 
     @property
-    def headers(self):
+    def headers(self) -> 'dict[str|None, str]':
         return {
             self.settings_header: En.settings_header,
             self.variables_header: En.variables_header,
@@ -255,7 +273,7 @@ class Language:
         }
 
     @property
-    def settings(self):
+    def settings(self) -> 'dict[str|None, str]':
         return {
             self.library_setting: En.library_setting,
             self.resource_setting: En.resource_setting,
@@ -285,7 +303,7 @@ class Language:
         }
 
     @property
-    def bdd_prefixes(self):
+    def bdd_prefixes(self) -> 'set[str]':
         return set(chain(self.given_prefixes, self.when_prefixes, self.then_prefixes,
                          self.and_prefixes, self.but_prefixes))
 
@@ -349,6 +367,7 @@ class Cs(Language):
     library_setting = 'Knihovna'
     resource_setting = 'Zdroj'
     variables_setting = 'Proměnná'
+    name_setting = 'Název'
     documentation_setting = 'Dokumentace'
     metadata_setting = 'Metadata'
     suite_setup_setting = 'Příprava sady'
@@ -390,6 +409,7 @@ class Nl(Language):
     library_setting = 'Bibliotheek'
     resource_setting = 'Resource'
     variables_setting = 'Variabele'
+    name_setting = 'Naam'
     documentation_setting = 'Documentatie'
     metadata_setting = 'Metadata'
     suite_setup_setting = 'Suite Preconditie'
@@ -512,6 +532,7 @@ class Fr(Language):
     library_setting = 'Bibliothèque'
     resource_setting = 'Ressource'
     variables_setting = 'Variable'
+    name_setting = 'Nom'
     documentation_setting = 'Documentation'
     metadata_setting = 'Méta-donnée'
     suite_setup_setting = 'Mise en place de suite'
@@ -553,6 +574,7 @@ class De(Language):
     library_setting = 'Bibliothek'
     resource_setting = 'Ressource'
     variables_setting = 'Variablen'
+    name_setting = 'Name'
     documentation_setting = 'Dokumentation'
     metadata_setting = 'Metadaten'
     suite_setup_setting = 'Suitevorbereitung'
@@ -594,6 +616,7 @@ class PtBr(Language):
     library_setting = 'Biblioteca'
     resource_setting = 'Recurso'
     variables_setting = 'Variável'
+    name_setting = 'Nome'
     documentation_setting = 'Documentação'
     metadata_setting = 'Metadados'
     suite_setup_setting = 'Configuração da Suíte'
@@ -635,6 +658,7 @@ class Pt(Language):
     library_setting = 'Biblioteca'
     resource_setting = 'Recurso'
     variables_setting = 'Variável'
+    name_setting = 'Nome'
     documentation_setting = 'Documentação'
     metadata_setting = 'Metadados'
     suite_setup_setting = 'Inicialização de Suíte'
@@ -715,7 +739,7 @@ class Pl(Language):
     library_setting = 'Biblioteka'
     resource_setting = 'Zasób'
     variables_setting = 'Zmienne'
-    name_setting = "Nazwa"
+    name_setting = 'Nazwa'
     documentation_setting = 'Dokumentacja'
     metadata_setting = 'Metadane'
     suite_setup_setting = 'Inicjalizacja zestawu'
@@ -796,6 +820,7 @@ class Es(Language):
     library_setting = 'Biblioteca'
     resource_setting = 'Recursos'
     variables_setting = 'Variable'
+    name_setting = 'Nombre'
     documentation_setting = 'Documentación'
     metadata_setting = 'Metadatos'
     suite_setup_setting = 'Configuración de la Suite'
@@ -999,6 +1024,7 @@ class Sv(Language):
     library_setting = 'Bibliotek'
     resource_setting = 'Resurs'
     variables_setting = 'Variabel'
+    name_setting = 'Namn'
     documentation_setting = 'Dokumentation'
     metadata_setting = 'Metadata'
     suite_setup_setting = 'Svit konfigurering'
@@ -1081,6 +1107,7 @@ class Ro(Language):
     library_setting = 'Librarie'
     resource_setting = 'Resursa'
     variables_setting = 'Variabila'
+    name_setting = 'Nume'
     documentation_setting = 'Documentatie'
     metadata_setting = 'Metadate'
     suite_setup_setting = 'Configurare De Suita'
@@ -1122,6 +1149,7 @@ class It(Language):
     library_setting = 'Libreria'
     resource_setting = 'Risorsa'
     variables_setting = 'Variabile'
+    name_setting = 'Nome'
     documentation_setting = 'Documentazione'
     metadata_setting = 'Metadati'
     suite_setup_setting = 'Configurazione Suite'
@@ -1191,3 +1219,48 @@ class Hi(Language):
     but_prefixes = ['परंतु']
     true_strings = ['यथार्थ', 'निश्चित', 'हां', 'पर']
     false_strings = ['गलत', 'नहीं', 'हालाँकि', 'यद्यपि', 'नहीं', 'हैं']
+
+
+class Vi(Language):
+    """Vietnamese
+
+    New in Robot Framework 6.1.
+    """
+    settings_header = 'Cài Đặt'
+    variables_header = 'Các biến số'
+    test_cases_header = 'Các kịch bản kiểm thử'
+    tasks_header = 'Các nghiệm vụ'
+    keywords_header = 'Các từ khóa'
+    comments_header = 'Các chú thích'
+    library_setting = 'Thư viện'
+    resource_setting = 'Tài nguyên'
+    variables_setting = 'Biến số'
+    name_setting = 'Tên'
+    documentation_setting = 'Tài liệu hướng dẫn'
+    metadata_setting = 'Dữ liệu tham chiếu'
+    suite_setup_setting = 'Tiền thiết lập bộ kịch bản kiểm thử'
+    suite_teardown_setting = 'Hậu thiết lập bộ kịch bản kiểm thử'
+    test_setup_setting = 'Tiền thiết lập kịch bản kiểm thử'
+    test_teardown_setting = 'Hậu thiết lập kịch bản kiểm thử'
+    test_template_setting = 'Mẫu kịch bản kiểm thử'
+    test_timeout_setting = 'Thời gian chờ kịch bản kiểm thử'
+    test_tags_setting = 'Các nhãn kịch bản kiểm thử'
+    task_setup_setting = 'Tiền thiểt lập nhiệm vụ'
+    task_teardown_setting = 'Hậu thiết lập nhiệm vụ'
+    task_template_setting = 'Mẫu nhiễm vụ'
+    task_timeout_setting = 'Thời gian chờ nhiệm vụ'
+    task_tags_setting = 'Các nhãn nhiệm vụ'
+    keyword_tags_setting = 'Các từ khóa nhãn'
+    tags_setting = 'Các thẻ'
+    setup_setting = 'Tiền thiết lập'
+    teardown_setting = 'Hậu thiết lập'
+    template_setting = 'Mẫu'
+    timeout_setting = 'Thời gian chờ'
+    arguments_setting = 'Các đối số'
+    given_prefixes = ['Đã cho']
+    when_prefixes = ['Khi']
+    then_prefixes = ['Thì']
+    and_prefixes = ['Và']
+    but_prefixes = ['Nhưng']
+    true_strings = ['Đúng', 'Vâng', 'Mở']
+    false_strings = ['Sai', 'Không', 'Tắt', 'Không Có Gì']

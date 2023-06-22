@@ -13,23 +13,26 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import MultiMatcher, is_list_like
+from collections.abc import Sequence
+
+from robot.result import Keyword
+from robot.utils import MultiMatcher
 
 
 class ExpandKeywordMatcher:
 
-    def __init__(self, expand_keywords):
-        self.matched_ids = []
+    def __init__(self, expand_keywords: 'str|Sequence[str]'):
+        self.matched_ids: 'list[str]' = []
         if not expand_keywords:
             expand_keywords = []
-        elif not is_list_like(expand_keywords):
+        elif isinstance(expand_keywords, str):
             expand_keywords = [expand_keywords]
         names = [n[5:] for n in expand_keywords if n[:5].lower() == 'name:']
         tags  = [p[4:] for p in expand_keywords if p[:4].lower() == 'tag:']
         self._match_name = MultiMatcher(names).match
         self._match_tags = MultiMatcher(tags).match_any
 
-    def match(self, kw):
-        if ((kw.passed or kw.skipped)
-                and (self._match_name(kw.name or '') or self._match_tags(kw.tags))):
+    def match(self, kw: Keyword):
+        if (self._match_name(kw.name or '')
+                or self._match_tags(kw.tags)) and not kw.not_run:
             self.matched_ids.append(kw.id)

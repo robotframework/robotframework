@@ -13,16 +13,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Sequence, Type, TYPE_CHECKING
+from typing import Any, Generic, Sequence, Type, TYPE_CHECKING, TypeVar
 
 from robot.utils import setter
 
-from .body import Body
+from .body import Body, BodyItem
 from .fixture import create_fixture
 from .itemlist import ItemList
 from .keyword import Keyword, Keywords
-from .modelobject import ModelObject
+from .modelobject import DataDict, ModelObject
 from .tags import Tags
 
 if TYPE_CHECKING:
@@ -30,19 +31,27 @@ if TYPE_CHECKING:
     from .visitor import SuiteVisitor
 
 
-class TestCase(ModelObject):
+TC = TypeVar('TC', bound='TestCase')
+KW = TypeVar('KW', bound='Keyword', covariant=True)
+
+
+class TestCase(ModelObject, Generic[KW] if sys.version_info >= (3, 7) else object):
     """Base model for a single test case.
 
     Extended by :class:`robot.running.model.TestCase` and
     :class:`robot.result.model.TestCase`.
     """
     body_class = Body
-    fixture_class = Keyword
+    # See model.TestSuite on removing the type ignore directive
+    fixture_class: Type[KW] = Keyword # type: ignore
     repr_args = ('name',)
     __slots__ = ['parent', 'name', 'doc', 'timeout', 'lineno', '_setup', '_teardown']
 
-    def __init__(self, name: str = '', doc: str = '', tags: Sequence[str] = (),
-                 timeout: 'str|None' = None, lineno: 'int|None' = None,
+    def __init__(self, name: str = '',
+                 doc: str = '',
+                 tags: Sequence[str] = (),
+                 timeout: 'str|None' = None,
+                 lineno: 'int|None' = None,
                  parent: 'TestSuite|None' = None):
         self.name = name
         self.doc = doc
@@ -51,11 +60,11 @@ class TestCase(ModelObject):
         self.lineno = lineno
         self.parent = parent
         self.body = []
-        self._setup: 'Keyword|None' = None
-        self._teardown: 'Keyword|None' = None
+        self._setup: 'KW|None' = None
+        self._teardown: 'KW|None' = None
 
     @setter
-    def body(self, body: 'Iterable[Keyword|Mapping]') -> Body:
+    def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
         """Test body as a :class:`~robot.model.body.Body` object."""
         return self.body_class(self, body)
 
@@ -65,7 +74,7 @@ class TestCase(ModelObject):
         return Tags(tags)
 
     @property
-    def setup(self) -> Keyword:
+    def setup(self) -> KW:
         """Test setup as a :class:`~.model.keyword.Keyword` object.
 
         This attribute is a ``Keyword`` object also when a test has no setup
@@ -90,12 +99,12 @@ class TestCase(ModelObject):
         ``test.keywords.setup``.
         """
         if self._setup is None:
-            self._setup = create_fixture(None, self, Keyword.SETUP)
+            self._setup = create_fixture(self.fixture_class, None, self, Keyword.SETUP)
         return self._setup
 
     @setup.setter
-    def setup(self, setup: 'Keyword|Mapping|None'):
-        self._setup = create_fixture(setup, self, Keyword.SETUP)
+    def setup(self, setup: 'KW|DataDict|None'):
+        self._setup = create_fixture(self.fixture_class, setup, self, Keyword.SETUP)
 
     @property
     def has_setup(self) -> bool:
@@ -118,12 +127,12 @@ class TestCase(ModelObject):
         See :attr:`setup` for more information.
         """
         if self._teardown is None:
-            self._teardown = create_fixture(None, self, Keyword.TEARDOWN)
+            self._teardown = create_fixture(self.fixture_class, None, self, Keyword.TEARDOWN)
         return self._teardown
 
     @teardown.setter
-    def teardown(self, teardown: 'Keyword|Mapping|None'):
-        self._teardown = create_fixture(teardown, self, Keyword.TEARDOWN)
+    def teardown(self, teardown: 'KW|DataDict|None'):
+        self._teardown = create_fixture(self.fixture_class, teardown, self, Keyword.TEARDOWN)
 
     @property
     def has_teardown(self) -> bool:
@@ -184,7 +193,7 @@ class TestCase(ModelObject):
         if self.doc:
             data['doc'] = self.doc
         if self.tags:
-            data['tags'] = list(self.tags)
+            data['tags'] = tuple(self.tags)
         if self.timeout:
             data['timeout'] = self.timeout
         if self.lineno:
@@ -197,12 +206,12 @@ class TestCase(ModelObject):
         return data
 
 
-class TestCases(ItemList[TestCase]):
+class TestCases(ItemList[TC]):
     __slots__ = []
 
-    def __init__(self, test_class: Type[TestCase] = TestCase,
+    def __init__(self, test_class: Type[TC] = TestCase,
                  parent: 'TestSuite|None' = None,
-                 tests: 'Sequence[TestCase|Mapping]' = ()):
+                 tests: 'Sequence[TC|DataDict]' = ()):
         super().__init__(test_class, {'parent': parent}, tests)
 
     def _check_type_and_set_attrs(self, test):

@@ -20,16 +20,17 @@ from robot.utils import MultiMatcher
 
 class NamePatterns(Iterable[str]):
 
-    def __init__(self, patterns: Sequence[str] = ()):
-        self.matcher = MultiMatcher(patterns, ignore='_')
+    def __init__(self, patterns: Sequence[str] = (), ignore: Sequence[str] = '_'):
+        self.matcher = MultiMatcher(patterns, ignore)
 
     def match(self, name: str, longname: 'str|None' = None) -> bool:
-        return self._match(name) or longname and self._match_longname(longname)
+        return bool(self._match(name) or
+                    longname and self._match_longname(longname))
 
-    def _match(self, name):
+    def _match(self, name: str) -> bool:
         return self.matcher.match(name)
 
-    def _match_longname(self, name):
+    def _match_longname(self, name: str) -> bool:
         raise NotImplementedError
 
     def __bool__(self) -> bool:

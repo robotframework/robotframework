@@ -1,12 +1,16 @@
+import inspect
 import unittest
-
-from os.path import abspath, dirname, join
+import re
+from pathlib import Path
 
 from robot.api import Language, Languages
 from robot.conf.languages import En, Fi, PtBr, Th
 from robot.errors import DataError
-from robot.utils.asserts import (assert_equal, assert_not_equal, assert_true,
+from robot.utils.asserts import (assert_equal, assert_not_equal, assert_raises,
                                  assert_raises_with_msg)
+
+
+STANDARD_LANGUAGES = Language.__subclasses__()
 
 
 class TestLanguage(unittest.TestCase):
@@ -41,12 +45,31 @@ class TestLanguage(unittest.TestCase):
         assert_equal(X().name, '')
         assert_equal(X.name, '')
 
-    def test_all_standard_languages_have_code_and_name(self):
-        for cls in Language.__subclasses__():
+    def test_standard_languages_have_code_and_name(self):
+        for cls in STANDARD_LANGUAGES:
             assert cls().code
             assert cls.code
             assert cls().name
             assert cls.name
+
+    def test_standard_language_doc_formatting(self):
+        added_in_rf60 = {'bg', 'bs', 'cs', 'de', 'en', 'es', 'fi', 'fr', 'hi',
+                         'it', 'nl', 'pl', 'pt', 'pt-BR', 'ro', 'ru', 'sv',
+                         'th', 'tr', 'uk', 'zh-CN', 'zh-TW'}
+        for cls in STANDARD_LANGUAGES:
+            doc = inspect.getdoc(cls)
+            if cls.code in added_in_rf60:
+                if doc != cls.name:
+                    raise AssertionError(
+                        f'Invalid docstring for {cls.name}. '
+                        f'Expected only language name, got:\n{doc}'
+                    )
+            else:
+                if not re.match(rf'{cls.name}\n\nNew in Robot Framework [\d.]+\.', doc):
+                    raise AssertionError(
+                        f'Invalid docstring for {cls.name}. '
+                        f'Expected language name and "New in" note, got:\n{doc}'
+                    )
 
     def test_code_and_name_of_Language_base_class_are_propertys(self):
         assert isinstance(Language.code, property)
@@ -114,6 +137,16 @@ class TestLanguages(unittest.TestCase):
         assert_equal(list(Languages(['fi'], add_english=False)), [Fi()])
         assert_equal(list(Languages(['fi', PtBr()], add_english=False)), [Fi(), PtBr()])
 
+    def test_init_with_custom_language(self):
+        path = Path(__file__).absolute().parent / 'orcish_languages.py'
+        cwd = Path('.').absolute()
+        for lang in (path, path.relative_to(cwd),
+                     str(path), str(path.relative_to(cwd)),
+                     [str(path)], [path]):
+            langs = Languages(lang, add_english=False)
+            assert_equal([("Orcish Loud", "or-CLOU"), ("Orcish Quiet", "or-CQUI")],
+                         [(v.name, v.code) for v in langs])
+
     def test_reset(self):
         langs = Languages(['fi'])
         langs.reset()
@@ -141,19 +174,26 @@ class TestLanguages(unittest.TestCase):
         assert_equal(list(langs), [Fi(), En(), PtBr(), Th()])
 
     def test_add_language_using_custom_module(self):
-        data = join(abspath(dirname(__file__)), 'orcish_languages.py')
-        langs = Languages()
-        langs.add_language(data)
-        self.assertIn(("Orcish Loud", "or-CLOU"), [(v.name, v.code) for v in langs])
-        self.assertIn(("Orcish Quiet", "or-CQUI"), [(v.name, v.code) for v in langs])
+        path = Path(__file__).absolute().parent / 'orcish_languages.py'
+        cwd = Path('.').absolute()
+        for lang in [path, path.relative_to(cwd), str(path), str(path.relative_to(cwd))]:
+            langs = Languages(add_english=False)
+            langs.add_language(lang)
+            assert_equal([("Orcish Loud", "or-CLOU"), ("Orcish Quiet", "or-CQUI")],
+                         [(v.name, v.code) for v in langs])
 
     def test_add_language_using_invalid_custom_module(self):
-        with self.assertRaises(DataError) as context:
-            Languages().add_language('invalid')
-        assert_true(context.exception.args[0].startswith(
-            "No language with name 'invalid' found. "
-            "Importing language file 'invalid' failed: "
-        ))
+        error = assert_raises(DataError, Languages().add_language, 'non_existing_a23l4j')
+        assert_equal(error.message.split(':')[0],
+                     "No language with name 'non_existing_a23l4j' found. "
+                     "Importing language file 'non_existing_a23l4j' failed")
+
+    def test_add_language_using_invalid_custom_module_as_Path(self):
+        invalid = Path('non_existing_a23l4j')
+        assert_raises_with_msg(DataError,
+                               f"Importing language file '{invalid.absolute()}' failed: "
+                               f"File or directory does not exist.",
+                               Languages().add_language, invalid)
 
     def test_add_language_using_Language_instance(self):
         languages = Languages(add_english=False)

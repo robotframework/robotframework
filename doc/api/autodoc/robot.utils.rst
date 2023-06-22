@@ -273,6 +273,14 @@ robot.utils.text module
    :undoc-members:
    :show-inheritance:
 
+robot.utils.typehints module
+----------------------------
+
+.. automodule:: robot.utils.typehints
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.utils.unic module
 -----------------------
 

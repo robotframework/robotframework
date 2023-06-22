@@ -122,6 +122,14 @@ Non-string pattern type
         Fail   Should not be executed
     END
 
+Pattern type multiple times
+    [Documentation]    FAIL    Option 'type' allowed only once, got values 'glob' and 'start'.
+    TRY
+        Fail    failure
+    EXCEPT    x    type=glob    type=start
+        Fail   Should not be executed
+    END
+
 Pattern type without patterns
     TRY
         Fail   oh no

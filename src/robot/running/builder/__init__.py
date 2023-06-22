@@ -15,3 +15,4 @@
 
 from .builders import TestSuiteBuilder, ResourceFileBuilder
 from .parsers import RobotParser
+from .settings import TestDefaults

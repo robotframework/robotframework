@@ -1,19 +1,26 @@
 import copy
+import json
 import os
 import tempfile
 import unittest
 import warnings
 from pathlib import Path
 
+from jsonschema import Draft202012Validator
+
 from robot import api, model
 from robot.model.modelobject import ModelObject
+from robot.parsing import get_resource_model
 from robot.running import (Break, Continue, Error, For, If, IfBranch, Keyword,
-                           Return, TestCase, TestSuite, Try, TryBranch, While)
-from robot.running.model import ResourceFile, UserKeyword
+                           Return, ResourceFile, TestCase, TestDefaults, TestSuite,
+                           Try, TryBranch, While)
+from robot.running.model import UserKeyword
 from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal,
                                  assert_raises, assert_true)
 
-MISC_DIR = (Path(__file__).parent / '../../atest/testdata/misc').resolve()
+
+CURDIR = Path(__file__).resolve().parent
+MISCDIR = (CURDIR / '../../atest/testdata/misc').resolve()
 
 
 class TestModelTypes(unittest.TestCase):
@@ -64,6 +71,7 @@ ${VAR}           Value
 
 *** Test Cases ***
 Example
+    [Tags]    tag
     Keyword
 
 *** Keywords ***
@@ -94,6 +102,11 @@ Keyword
         suite = TestSuite.from_file_system(self.path, rpa=True)
         self._verify_suite(suite, rpa=True)
 
+    def test_from_file_system_with_defaults(self):
+        defaults = TestDefaults(tags=('from defaults',), timeout='10s')
+        suite = TestSuite.from_file_system(self.path, defaults=defaults)
+        self._verify_suite(suite, tags=('from defaults', 'tag'), timeout='10s')
+
     def test_from_model(self):
         model = api.get_model(self.data)
         suite = TestSuite.from_model(model)
@@ -103,6 +116,12 @@ Keyword
         model = api.get_model(self.path)
         suite = TestSuite.from_model(model)
         self._verify_suite(suite)
+
+    def test_from_model_with_defaults(self):
+        model = api.get_model(self.path)
+        defaults = TestDefaults(tags=('from defaults',), timeout='10s')
+        suite = TestSuite.from_model(model, defaults=defaults)
+        self._verify_suite(suite, tags=('from defaults', 'tag'), timeout='10s')
 
     def test_from_model_with_custom_name(self):
         for source in [self.data, self.path]:
@@ -118,12 +137,18 @@ Keyword
         suite = TestSuite.from_string(self.data)
         self._verify_suite(suite, name='')
 
-    def test_from_string_config(self):
+    def test_from_string_with_config(self):
         suite = TestSuite.from_string(self.data.replace('Test Cases', 'Testit'),
                                       lang='Finnish', curdir='.')
         self._verify_suite(suite, name='')
 
-    def _verify_suite(self, suite, name='Test Run Model', rpa=False):
+    def test_from_string_with_defaults(self):
+        defaults = TestDefaults(tags=('from defaults',), timeout='10s')
+        suite = TestSuite.from_string(self.data, defaults=defaults)
+        self._verify_suite(suite, name='', tags=('from defaults', 'tag'), timeout='10s')
+
+    def _verify_suite(self, suite, name='Test Run Model', tags=('tag',),
+                      timeout=None, rpa=False):
         assert_equal(suite.name, name)
         assert_equal(suite.doc, 'Some text.')
         assert_equal(suite.rpa, rpa)
@@ -135,6 +160,8 @@ Keyword
         assert_equal(suite.resource.keywords[0].body[0].name, 'Log')
         assert_equal(suite.resource.keywords[0].body[0].args, ('Hello!',))
         assert_equal(suite.tests[0].name, 'Example')
+        assert_equal(suite.tests[0].tags, tags)
+        assert_equal(suite.tests[0].timeout, timeout)
         assert_equal(suite.tests[0].setup.name, 'No Operation')
         assert_equal(suite.tests[0].body[0].name, 'Keyword')
 
@@ -143,7 +170,7 @@ class TestCopy(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.suite = TestSuite.from_file_system(MISC_DIR)
+        cls.suite = TestSuite.from_file_system(MISCDIR)
 
     def test_copy(self):
         self.assert_copy(self.suite, self.suite.copy())
@@ -202,7 +229,7 @@ class TestCopy(unittest.TestCase):
 
 
 class TestLineNumberAndSource(unittest.TestCase):
-    source = MISC_DIR / 'pass_and_fail.robot'
+    source = MISCDIR / 'pass_and_fail.robot'
 
     @classmethod
     def setUpClass(cls):
@@ -248,29 +275,50 @@ class TestLineNumberAndSource(unittest.TestCase):
 
 class TestToFromDictAndJson(unittest.TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        with open(CURDIR / '../../doc/schema/running.json') as file:
+            schema = json.load(file)
+        cls.validator = Draft202012Validator(schema=schema)
+
     def test_keyword(self):
         self._verify(Keyword(), name='')
         self._verify(Keyword('Name'), name='Name')
-        self._verify(Keyword('N', tuple('args'), ('${result}',)),
-                     name='N', args=list('args'), assign=['${result}'])
+        self._verify(Keyword('N', 'args', ('${result}',)),
+                     name='N', args=tuple('args'), assign=('${result}',))
         self._verify(Keyword('Setup', type=Keyword.SETUP, lineno=1),
                      name='Setup', lineno=1)
 
     def test_for(self):
-        self._verify(For(), type='FOR', variables=[], flavor='IN', values=[], body=[])
+        self._verify(For(), type='FOR', variables=(), flavor='IN', values=(), body=[])
         self._verify(For(['${i}'], 'IN RANGE', ['10'], lineno=2),
-                     type='FOR', variables=['${i}'], flavor='IN RANGE', values=['10'],
+                     type='FOR', variables=('${i}',), flavor='IN RANGE', values=('10',),
                      body=[], lineno=2)
         self._verify(For(['${i}', '${a}'], 'IN ENUMERATE', ['cat', 'dog'], start='1'),
-                     type='FOR', variables=['${i}', '${a}'], flavor='IN ENUMERATE',
-                     values=['cat', 'dog'], body=[], start='1')
+                     type='FOR', variables=('${i}', '${a}'), flavor='IN ENUMERATE',
+                     values=('cat', 'dog'), start='1', body=[])
 
     def test_while(self):
         self._verify(While(), type='WHILE', body=[])
         self._verify(While('1 > 0', '1 min'),
                      type='WHILE', condition='1 > 0', limit='1 min', body=[])
+        self._verify(While(limit='1', on_limit='PASS'),
+                     type='WHILE', limit='1', on_limit='PASS', body=[])
+        self._verify(While(limit='1', on_limit_message='Ooops!'),
+                     type='WHILE', limit='1', on_limit_message='Ooops!', body=[])
         self._verify(While('True', lineno=3, error='x'),
                      type='WHILE', condition='True', body=[], lineno=3, error='x')
+
+    def test_while_structure(self):
+        root = While('True')
+        root.body.create_keyword('K', 'a')
+        root.body.create_while('False').body.create_keyword('W')
+        root.body.create_break()
+        self._verify(root, type='WHILE', condition='True',
+                     body=[{'name': 'K', 'args': ('a',)},
+                           {'type': 'WHILE', 'condition': 'False',
+                            'body': [{'name': 'W'}]},
+                           {'type': 'BREAK'}])
 
     def test_if(self):
         self._verify(If(), type='IF/ELSE ROOT', body=[])
@@ -278,7 +326,7 @@ class TestToFromDictAndJson(unittest.TestCase):
                      type='IF/ELSE ROOT', body=[], lineno=4, error='E')
 
     def test_if_branch(self):
-        self._verify(IfBranch(), type='IF', condition=None, body=[])
+        self._verify(IfBranch(), type='IF', body=[])
         self._verify(IfBranch(If.ELSE_IF, '1 > 0'),
                      type='ELSE IF', condition='1 > 0', body=[])
         self._verify(IfBranch(If.ELSE, lineno=5),
@@ -291,7 +339,7 @@ class TestToFromDictAndJson(unittest.TestCase):
         self._verify(root,
                      type='IF/ELSE ROOT',
                      body=[{'type': 'IF', 'condition': '$c', 'body': [{'name': 'K1'}]},
-                           {'type': 'ELSE', 'body': [{'name': 'K2', 'args': ['a']}]}])
+                           {'type': 'ELSE', 'body': [{'name': 'K2', 'args': ('a',)}]}])
 
     def test_try(self):
         self._verify(Try(), type='TRY/EXCEPT ROOT', body=[])
@@ -300,9 +348,9 @@ class TestToFromDictAndJson(unittest.TestCase):
 
     def test_try_branch(self):
         self._verify(TryBranch(), type='TRY', body=[])
-        self._verify(TryBranch(Try.EXCEPT), type='EXCEPT', patterns=[], body=[])
+        self._verify(TryBranch(Try.EXCEPT), type='EXCEPT', patterns=(), body=[])
         self._verify(TryBranch(Try.EXCEPT, ['Pa*'], 'glob', '${err}'), type='EXCEPT',
-                     patterns=['Pa*'], pattern_type='glob', variable='${err}', body=[])
+                     patterns=('Pa*',), pattern_type='glob', variable='${err}', body=[])
         self._verify(TryBranch(Try.ELSE, lineno=7), type='ELSE', body=[], lineno=7)
         self._verify(TryBranch(Try.FINALLY, lineno=8), type='FINALLY', body=[], lineno=8)
 
@@ -315,14 +363,14 @@ class TestToFromDictAndJson(unittest.TestCase):
         self._verify(root,
                      type='TRY/EXCEPT ROOT',
                      body=[{'type': 'TRY', 'body': [{'name': 'K1'}]},
-                           {'type': 'EXCEPT', 'patterns': [], 'body': [{'name': 'K2'}]},
+                           {'type': 'EXCEPT', 'patterns': (), 'body': [{'name': 'K2'}]},
                            {'type': 'ELSE', 'body': [{'name': 'K3'}]},
                            {'type': 'FINALLY', 'body': [{'name': 'K4'}]}])
 
     def test_return_continue_break(self):
-        self._verify(Return(), type='RETURN', values=[])
+        self._verify(Return(), type='RETURN', values=())
         self._verify(Return(('x', 'y'), lineno=9, error='E'),
-                     type='RETURN', values=['x', 'y'], lineno=9, error='E')
+                     type='RETURN', values=('x', 'y'), lineno=9, error='E')
         self._verify(Continue(), type='CONTINUE')
         self._verify(Continue(lineno=10, error='E'),
                      type='CONTINUE', lineno=10, error='E')
@@ -331,28 +379,29 @@ class TestToFromDictAndJson(unittest.TestCase):
                      type='BREAK', lineno=11, error='E')
 
     def test_error(self):
-        self._verify(Error(), type='ERROR', values=[])
-        self._verify(Error(('bad', 'things')), type='ERROR', values=['bad', 'things'])
+        self._verify(Error(), type='ERROR', values=(), error='')
+        self._verify(Error(('bad', 'things'), error='Bad things!'),
+                     type='ERROR', values=('bad', 'things'), error='Bad things!')
 
     def test_test(self):
         self._verify(TestCase(), name='', body=[])
         self._verify(TestCase('N', 'D', 'T', '1s', lineno=12),
-                     name='N', doc='D', tags=['T'], timeout='1s', lineno=12, body=[])
+                     name='N', doc='D', tags=('T',), timeout='1s', lineno=12, body=[])
         self._verify(TestCase(template='K'), name='', body=[], template='K')
 
     def test_test_structure(self):
         test = TestCase('TC')
         test.setup.config(name='Setup')
         test.teardown.config(name='Teardown', args='a')
-        test.body.create_keyword('K1')
-        test.body.create_if().body.create_branch().body.create_keyword('K2')
+        test.body.create_keyword('K1', 'a')
+        test.body.create_if().body.create_branch('IF', '$c').body.create_keyword('K2')
         self._verify(test,
                      name='TC',
                      setup={'name': 'Setup'},
-                     teardown={'name': 'Teardown', 'args': ['a']},
-                     body=[{'name': 'K1'},
+                     teardown={'name': 'Teardown', 'args': ('a',)},
+                     body=[{'name': 'K1', 'args': ('a',)},
                            {'type': 'IF/ELSE ROOT',
-                            'body': [{'type': 'IF', 'condition': None,
+                            'body': [{'type': 'IF', 'condition': '$c',
                                       'body': [{'name': 'K2'}]}]}])
 
     def test_suite(self):
@@ -370,7 +419,7 @@ class TestToFromDictAndJson(unittest.TestCase):
         self._verify(suite,
                      name='Root',
                      setup={'name': 'Setup'},
-                     teardown={'name': 'Teardown', 'args': ['a']},
+                     teardown={'name': 'Teardown', 'args': ('a',)},
                      tests=[{'name': 'T1', 'body': [{'name': 'K'}]}],
                      suites=[{'name': 'Child',
                               'tests': [{'name': 'T2', 'body': []}],
@@ -379,12 +428,12 @@ class TestToFromDictAndJson(unittest.TestCase):
 
     def test_user_keyword(self):
         self._verify(UserKeyword(), name='', body=[])
-        self._verify(UserKeyword('N', 'a', 'd', 't', 'r', 't', 1, error='E'),
+        self._verify(UserKeyword('N', ('a',), 'd', 't', ('r',), 't', 1, error='E'),
                      name='N',
-                     args=['a'],
+                     args=('a',),
                      doc='d',
-                     tags=['t'],
-                     return_='r',
+                     tags=('t',),
+                     return_=('r',),
                      timeout='t',
                      lineno=1,
                      error='E',
@@ -405,9 +454,9 @@ class TestToFromDictAndJson(unittest.TestCase):
     def test_resource_file(self):
         self._verify(ResourceFile())
         resource = ResourceFile('x.resource', doc='doc')
-        resource.imports.library('L', 'a', 'A', 1)
+        resource.imports.library('L', ['a'], 'A', 1)
         resource.imports.resource('R', 2)
-        resource.imports.variables('V', 'a', 3)
+        resource.imports.variables('V', ['a'], 3)
         resource.variables.create('${x}', ('value',))
         resource.variables.create('@{y}', ('v1', 'v2'), lineno=4)
         resource.variables.create('&{z}', ['k=v'], error='E')
@@ -415,18 +464,18 @@ class TestToFromDictAndJson(unittest.TestCase):
         self._verify(resource,
                      source='x.resource',
                      doc='doc',
-                     imports=[{'type': 'LIBRARY', 'name': 'L', 'args': ['a'],
+                     imports=[{'type': 'LIBRARY', 'name': 'L', 'args': ('a',),
                                'alias': 'A', 'lineno': 1},
                               {'type': 'RESOURCE', 'name': 'R', 'lineno': 2},
-                              {'type': 'VARIABLES', 'name': 'V', 'args': ['a'],
+                              {'type': 'VARIABLES', 'name': 'V', 'args': ('a',),
                                'lineno': 3}],
-                     variables=[{'name': '${x}', 'value': ['value']},
-                                {'name': '@{y}', 'value': ['v1', 'v2'], 'lineno': 4},
-                                {'name': '&{z}', 'value': ['k=v'], 'error': 'E'}],
+                     variables=[{'name': '${x}', 'value': ('value',)},
+                                {'name': '@{y}', 'value': ('v1', 'v2'), 'lineno': 4},
+                                {'name': '&{z}', 'value': ('k=v',), 'error': 'E'}],
                      keywords=[{'name': 'UK', 'body': [{'name': 'K'}]}])
 
     def test_bigger_suite_structure(self):
-        suite = TestSuite.from_file_system(MISC_DIR)
+        suite = TestSuite.from_file_system(MISCDIR)
         self._verify(suite, **suite.to_dict())
 
     def _verify(self, obj, **expected):
@@ -437,6 +486,94 @@ class TestToFromDictAndJson(unittest.TestCase):
         self.assertDictEqual(roundtrip, expected)
         roundtrip = type(obj).from_json(obj.to_json()).to_dict()
         self.assertDictEqual(roundtrip, expected)
+        self._validate(obj)
+
+    def _validate(self, obj):
+        suite = self._create_suite_structure(obj)
+        self.validator.validate(instance=json.loads(suite.to_json()))
+        # Validating `suite.to_dict` directly doesn't work due to tuples not
+        # being accepted as arrays:
+        # https://github.com/python-jsonschema/jsonschema/issues/148
+        #self.validator.validate(instance=suite.to_dict())
+
+    def _create_suite_structure(self, obj):
+        suite = TestSuite()
+        test = suite.tests.create()
+        if isinstance(obj, TestSuite):
+            suite = obj
+        elif isinstance(obj, TestCase):
+            suite.tests = [obj]
+        elif isinstance(obj, (Keyword, For, While, If, Try, Error)):
+            test.body.append(obj)
+        elif isinstance(obj, (IfBranch, TryBranch)):
+            item = If() if isinstance(obj, IfBranch) else Try()
+            item.body.append(obj)
+            test.body.append(item)
+        elif isinstance(obj, (Break, Continue, Return)):
+            branch = test.body.create_if().body.create_branch()
+            branch.body.append(obj)
+        elif isinstance(obj, UserKeyword):
+            suite.resource.keywords.append(obj)
+        elif isinstance(obj, ResourceFile):
+            suite.resource = obj
+        else:
+            raise ValueError(obj)
+        return suite
+
+
+class TestResourceFile(unittest.TestCase):
+    path = CURDIR.parent / 'resources/test.resource'
+    data = '''
+*** Settings ***
+Library         Example
+Keyword Tags    common
+
+*** Variables ***
+${NAME}         Value
+
+*** Keywords ***
+Example
+    [Tags]    own
+    Log    Hello!
+'''
+
+    def test_from_file_system(self):
+        res = ResourceFile.from_file_system(self.path)
+        assert_equal(res.variables[0].name, '${PATH}')
+        assert_equal(res.variables[0].value, (str(self.path.parent).replace('\\', '\\\\'),))
+        assert_equal(res.keywords[0].name, 'My Test Keyword')
+
+    def test_from_file_system_with_config(self):
+        res = ResourceFile.from_file_system(self.path, process_curdir=False)
+        assert_equal(res.variables[0].name, '${PATH}')
+        assert_equal(res.variables[0].value, ('${CURDIR}',))
+        assert_equal(res.keywords[0].name, 'My Test Keyword')
+
+    def test_from_string(self):
+        res = ResourceFile.from_string(self.data)
+        assert_equal(res.imports[0].name, 'Example')
+        assert_equal(res.variables[0].name, '${NAME}')
+        assert_equal(res.variables[0].value, ('Value',))
+        assert_equal(res.keywords[0].name, 'Example')
+        assert_equal(res.keywords[0].tags, ['common', 'own'])
+        assert_equal(res.keywords[0].body[0].name, 'Log')
+        assert_equal(res.keywords[0].body[0].args, ('Hello!',))
+
+    def test_from_string_with_config(self):
+        res = ResourceFile.from_string('*** Muuttujat ***\n${NIMI}\tarvo', lang='fi')
+        assert_equal(res.variables[0].name, '${NIMI}')
+        assert_equal(res.variables[0].value, ('arvo',))
+
+    def test_from_model(self):
+        model = get_resource_model(self.data)
+        res = ResourceFile.from_model(model)
+        assert_equal(res.imports[0].name, 'Example')
+        assert_equal(res.variables[0].name, '${NAME}')
+        assert_equal(res.variables[0].value, ('Value',))
+        assert_equal(res.keywords[0].name, 'Example')
+        assert_equal(res.keywords[0].tags, ['common', 'own'])
+        assert_equal(res.keywords[0].body[0].name, 'Log')
+        assert_equal(res.keywords[0].body[0].args, ('Hello!',))
 
 
 if __name__ == '__main__':

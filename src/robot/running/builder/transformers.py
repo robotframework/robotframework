@@ -20,15 +20,15 @@ from robot.output import LOGGER
 from robot.parsing import File, Token
 from robot.variables import VariableIterator
 
-from .settings import Defaults, TestSettings
+from .settings import FileSettings
 from ..model import ResourceFile, TestSuite
 
 
 class SettingsBuilder(NodeVisitor):
 
-    def __init__(self, suite: TestSuite, defaults: Defaults):
+    def __init__(self, suite: TestSuite, settings: FileSettings):
         self.suite = suite
-        self.defaults = defaults
+        self.settings = settings
 
     def visit_Documentation(self, node):
         self.suite.doc = node.value
@@ -48,29 +48,27 @@ class SettingsBuilder(NodeVisitor):
                                    lineno=node.lineno)
 
     def visit_TestSetup(self, node):
-        self.defaults.setup = {
-            'name': node.name, 'args': node.args, 'lineno': node.lineno
-        }
+        self.settings.test_setup = {'name': node.name, 'args': node.args,
+                                    'lineno': node.lineno}
 
     def visit_TestTeardown(self, node):
-        self.defaults.teardown = {
-            'name': node.name, 'args': node.args, 'lineno': node.lineno
-        }
+        self.settings.test_teardown = {'name': node.name, 'args': node.args,
+                                       'lineno': node.lineno}
 
     def visit_TestTimeout(self, node):
-        self.defaults.timeout = node.value
+        self.settings.test_timeout = node.value
 
     def visit_DefaultTags(self, node):
-        self.defaults.default_tags = node.values
+        self.settings.default_tags = node.values
 
     def visit_ForceTags(self, node):
-        self.defaults.force_tags = node.values
+        self.settings.test_tags = node.values
 
     def visit_KeywordTags(self, node):
-        self.defaults.keyword_tags = node.values
+        self.settings.keyword_tags = node.values
 
     def visit_TestTemplate(self, node):
-        self.defaults.template = node.value
+        self.settings.test_template = node.value
 
     def visit_LibraryImport(self, node):
         self.suite.resource.imports.library(node.name, node.args, node.alias, node.lineno)
@@ -93,14 +91,14 @@ class SettingsBuilder(NodeVisitor):
 
 class SuiteBuilder(NodeVisitor):
 
-    def __init__(self, suite: TestSuite, defaults: Defaults = None):
+    def __init__(self, suite: TestSuite, settings: FileSettings):
         self.suite = suite
-        self.defaults = defaults or Defaults()
+        self.settings = settings
         self.rpa = None
 
     def build(self, model: File):
         ErrorReporter(model.source).visit(model)
-        SettingsBuilder(self.suite, self.defaults).visit(model)
+        SettingsBuilder(self.suite, self.settings).visit(model)
         self.visit(model)
         if self.rpa is not None:
             self.suite.rpa = self.rpa
@@ -122,17 +120,17 @@ class SuiteBuilder(NodeVisitor):
         self.generic_visit(node)
 
     def visit_TestCase(self, node):
-        TestCaseBuilder(self.suite, self.defaults).visit(node)
+        TestCaseBuilder(self.suite, self.settings).visit(node)
 
     def visit_Keyword(self, node):
-        KeywordBuilder(self.suite.resource, self.defaults).visit(node)
+        KeywordBuilder(self.suite.resource, self.settings).visit(node)
 
 
 class ResourceBuilder(NodeVisitor):
 
     def __init__(self, resource: ResourceFile):
         self.resource = resource
-        self.defaults = Defaults()
+        self.settings = FileSettings()
 
     def build(self, model: File):
         ErrorReporter(model.source, raise_on_invalid_header=True).visit(model)
@@ -142,7 +140,7 @@ class ResourceBuilder(NodeVisitor):
         self.resource.doc = node.value
 
     def visit_KeywordTags(self, node):
-        self.defaults.keyword_tags = node.values
+        self.settings.keyword_tags = node.values
 
     def visit_LibraryImport(self, node):
         self.resource.imports.library(node.name, node.args, node.alias, node.lineno)
@@ -160,34 +158,36 @@ class ResourceBuilder(NodeVisitor):
                                        error=format_error(node.errors))
 
     def visit_Keyword(self, node):
-        KeywordBuilder(self.resource, self.defaults).visit(node)
+        KeywordBuilder(self.resource, self.settings).visit(node)
 
 
 class TestCaseBuilder(NodeVisitor):
 
-    def __init__(self, suite: TestSuite, defaults: Defaults):
+    def __init__(self, suite: TestSuite, settings: FileSettings):
         self.suite = suite
-        self.settings = TestSettings(defaults)
+        self.settings = settings
         self.test = None
+        self.tags = None
 
     def visit_TestCase(self, node):
-        self.test = self.suite.tests.create(name=node.name, lineno=node.lineno,
-                                            error=format_error(node.errors + node.header.errors))
+        error = format_error(node.errors + node.header.errors)
+        settings = self.settings
+        self.test = self.suite.tests.create(name=node.name,
+                                            lineno=node.lineno,
+                                            tags=settings.test_tags,
+                                            timeout=settings.test_timeout,
+                                            template=settings.test_template,
+                                            error=error)
+        if settings.test_setup:
+            self.test.setup.config(**settings.test_setup)
+        if settings.test_teardown:
+            self.test.teardown.config(**settings.test_teardown)
         self.generic_visit(node)
-        self._set_settings(self.test, self.settings)
-
-    def _set_settings(self, test, settings):
-        if settings.setup:
-            test.setup.config(**settings.setup)
-        if settings.teardown:
-            test.teardown.config(**settings.teardown)
-        if settings.timeout:
-            test.timeout = settings.timeout
-        if settings.tags:
-            test.tags = settings.tags
-        if settings.template:
-            test.template = settings.template
-            self._set_template(test, settings.template)
+        tags = self.tags if self.tags is not None else settings.default_tags
+        if tags:
+            self.test.tags.add(tags)
+        if self.test.template:
+            self._set_template(self.test, self.test.template)
 
     def _set_template(self, parent, template):
         for item in parent.body:
@@ -231,24 +231,20 @@ class TestCaseBuilder(NodeVisitor):
         self.test.doc = node.value
 
     def visit_Setup(self, node):
-        self.settings.setup = {
-            'name': node.name, 'args': node.args, 'lineno': node.lineno
-        }
+        self.test.setup.config(name=node.name, args=node.args, lineno=node.lineno)
 
     def visit_Teardown(self, node):
-        self.settings.teardown = {
-            'name': node.name, 'args': node.args, 'lineno': node.lineno
-        }
+        self.test.teardown.config(name=node.name, args=node.args, lineno=node.lineno)
 
     def visit_Timeout(self, node):
-        self.settings.timeout = node.value
+        self.test.timeout = node.value
 
     def visit_Tags(self, node):
         deprecate_tags_starting_with_hyphen(node, self.suite.source)
-        self.settings.tags = node.values
+        self.tags = node.values
 
     def visit_Template(self, node):
-        self.settings.template = node.value
+        self.test.template = node.value
 
     def visit_KeywordCall(self, node):
         self.test.body.create_keyword(name=node.keyword, args=node.args,
@@ -273,15 +269,15 @@ class TestCaseBuilder(NodeVisitor):
 
 class KeywordBuilder(NodeVisitor):
 
-    def __init__(self, resource: ResourceFile, defaults: Defaults):
+    def __init__(self, resource: ResourceFile, settings: FileSettings):
         self.resource = resource
-        self.defaults = defaults
+        self.settings = settings
         self.kw = None
 
     def visit_Keyword(self, node):
         error = format_error(node.errors + node.header.errors)
         self.kw = self.resource.keywords.create(name=node.name,
-                                                tags=self.defaults.keyword_tags,
+                                                tags=self.settings.keyword_tags,
                                                 lineno=node.lineno,
                                                 error=error)
         self.generic_visit(node)
@@ -551,8 +547,8 @@ class WhileBuilder(NodeVisitor):
     def build(self, node):
         error = format_error(self._get_errors(node))
         self.model = self.parent.body.create_while(
-            node.condition, node.limit, node.on_limit_message,
-            lineno=node.lineno, error=error
+            node.condition, node.limit, node.on_limit,
+            node.on_limit_message, lineno=node.lineno, error=error
         )
         for step in node.body:
             self.visit(step)

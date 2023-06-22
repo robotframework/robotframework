@@ -96,6 +96,12 @@ Options
                           extension is needed, separate them with a colon.
                           Examples: `--extension txt`, `--extension robot:txt`
                           Only `*.robot` files are parsed by default.
+ -I --parseinclude pattern *  Parse only files matching `pattern`. It can be:
+                          - a file name or pattern like `example.robot` or
+                            `*.robot` to parse all files matching that name,
+                          - a file path like `path/to/example.robot`, or
+                          - a directory path like `path/to/example` to parse
+                            all files in that directory, recursively.
  -N --name name           Set the name of the top level suite. By default the
                           name is created based on the executed file or
                           directory.
@@ -151,9 +157,9 @@ Options
                           given without `${}`. See --variablefile for a more
                           powerful variable setting mechanism.
                           Examples:
-                          --variable str:Hello       =>  ${str} = `Hello`
-                          -v hi:Hi_World -E space:_  =>  ${hi} = `Hi World`
-                          -v x: -v y:42              =>  ${x} = ``, ${y} = `42`
+                          --variable name:Robot  =>  ${name} = `Robot`
+                          -v "hello:Hello world" =>  ${hello} = `Hello world`
+                          -v x: -v y:42          =>  ${x} = ``, ${y} = `42`
  -V --variablefile path *  Python or YAML file file to read variables from.
                           Possible arguments to the variable file can be given
                           after the path using colon or semicolon as separator.
@@ -287,12 +293,6 @@ Options
                           tag:<pattern>:  flatten matched keywords using same
                                    matching rules as with
                                    `--removekeywords tag:<pattern>`
-    --listener class *    A class for monitoring test execution. Gets
-                          notifications e.g. when tests start and end.
-                          Arguments to the listener class can be given after
-                          the name using a colon or a semicolon as a separator.
-                          Examples: --listener MyListenerClass
-                                    --listener path/to/Listener.py:arg1:arg2
     --nostatusrc          Sets the return code to zero regardless of failures
                           in test cases. Error codes are returned normally.
     --dryrun              Verifies test data and runs tests so that library
@@ -311,10 +311,20 @@ Options
                           The seed must be an integer.
                           Examples: --randomize all
                                     --randomize tests:1234
-    --prerunmodifier class *  Class to programmatically modify the suite
-                          structure before execution.
-    --prerebotmodifier class *  Class to programmatically modify the result
-                          model before creating reports and logs.
+    --listener listener *  Class or module for monitoring test execution.
+                          Gets notifications e.g. when tests start and end.
+                          Arguments to the listener class can be given after
+                          the name using a colon or a semicolon as a separator.
+                          Examples: --listener MyListener
+                                    --listener path/to/Listener.py:arg1:arg2
+    --prerunmodifier modifier *  Class to programmatically modify the suite
+                          structure before execution. Accepts arguments the
+                          same way as with --listener.
+    --prerebotmodifier modifier *  Class to programmatically modify the result
+                          model before creating reports and logs. Accepts
+                          arguments the same way as with --listener.
+    --parser parser *     Custom parser class or module. Parser classes accept
+                          arguments the same way as with --listener.
     --console type        How to report execution on the console.
                           verbose:  report every suite and test (default)
                           dotted:   only show `.` for passed test, `s` for
@@ -413,8 +423,8 @@ $ robot tests.robot
 class RobotFramework(Application):
 
     def __init__(self):
-        Application.__init__(self, USAGE, arg_limits=(1,), env_options='ROBOT_OPTIONS',
-                             logger=LOGGER)
+        super().__init__(USAGE, arg_limits=(1,), env_options='ROBOT_OPTIONS',
+                         logger=LOGGER)
 
     def main(self, datasources, **options):
         try:
@@ -427,8 +437,9 @@ class RobotFramework(Application):
         LOGGER.info(f'Settings:\n{settings}')
         if settings.pythonpath:
             sys.path = settings.pythonpath + sys.path
-        builder = TestSuiteBuilder(settings.suite_names,
-                                   included_extensions=settings.extension,
+        builder = TestSuiteBuilder(included_extensions=settings.extension,
+                                   included_files=settings.parse_include,
+                                   custom_parsers=settings.parsers,
                                    rpa=settings.rpa,
                                    lang=settings.languages,
                                    allow_empty_suite=settings.run_empty_suite)

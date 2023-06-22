@@ -1,0 +1,669 @@
+{
+"name":"Sample",
+"doc":"A complex testdata file in rbt format.",
+"source":"atest/testdata/parsing/data_formats/json/sample.rbt",
+"setup":{
+"name":"Log",
+"args":[
+"Setup"
+],
+"lineno":10
+},
+"tests":[
+{
+"name":"Passing",
+"tags":[
+"default1",
+"force1",
+"force2"
+],
+"lineno":33,
+"teardown":{
+"name":"Log",
+"args":[
+"Test Teardown"
+],
+"lineno":11
+},
+"body":[
+{
+"name":"Log",
+"args":[
+"Passing test case."
+],
+"lineno":33
+}
+]
+},
+{
+"name":"Failing",
+"doc":"FAIL    Failing test case.",
+"tags":[
+"default1",
+"force1",
+"force2"
+],
+"lineno":35,
+"teardown":{
+"name":"Log",
+"args":[
+"Test Teardown"
+],
+"lineno":11
+},
+"body":[
+{
+"name":"Fail",
+"args":[
+"Failing test case."
+],
+"lineno":36
+}
+]
+},
+{
+"name":"User Keyword",
+"doc":"FAIL    A cunning argument. != something",
+"tags":[
+"default1",
+"force1",
+"force2"
+],
+"lineno":37,
+"teardown":{
+"name":"Log",
+"args":[
+"Test Teardown"
+],
+"lineno":11
+},
+"body":[
+{
+"name":"My Keyword With Arg",
+"args":[
+"A cunning argument."
+],
+"lineno":38
+}
+]
+},
+{
+"name":"Nön-äscïï",
+"doc":"FAIL Nön-äscïï error",
+"tags":[
+"default1",
+"force1",
+"force2"
+],
+"lineno":39,
+"teardown":{
+"name":"Log",
+"args":[
+"Test Teardown"
+],
+"lineno":11
+},
+"body":[
+{
+"name":"Fail",
+"args":[
+"Nön-äscïï error"
+],
+"lineno":41
+}
+]
+},
+{
+"name":"Own Tags",
+"tags":[
+"force1",
+"force2",
+"own1",
+"own2"
+],
+"lineno":42,
+"teardown":{
+"name":"Log",
+"args":[
+"Test Teardown"
+],
+"lineno":11
+},
+"body":[
+{
+"name":"Log",
+"args":[
+"tags test"
+],
+"lineno":43
+}
+]
+},
+{
+"name":"Default Tags",
+"tags":[
+"default1",
+"force1",
+"force2"
+],
+"lineno":45,
+"teardown":{
+"name":"Log",
+"args":[
+"Test Teardown"
+],
+"lineno":11
+},
+"body":[
+{
+"name":"No Operation",
+"lineno":45
+}
+]
+},
+{
+"name":"Variable Table",
+"tags":[
+"default1",
+"force1",
+"force2"
+],
+"lineno":47,
+"teardown":{
+"name":"Log",
+"args":[
+"Test Teardown"
+],
+"lineno":11
+},
+"body":[
+{
+"name":"Should Be Equal",
+"args":[
+"${table_var}",
+"foo"
+],
+"lineno":47
+},
+{
+"name":"Should Be Equal",
+"args":[
+"${table_listvar}[0]",
+"bar"
+],
+"lineno":48
+},
+{
+"name":"Should Be Equal",
+"args":[
+"${table_listvar}[1]",
+"foo"
+],
+"lineno":49
+}
+]
+},
+{
+"name":"Resource File",
+"tags":[
+"default1",
+"force1",
+"force2"
+],
+"lineno":52,
+"teardown":{
+"name":"Log",
+"args":[
+"Test Teardown"
+],
+"lineno":11
+},
+"body":[
+{
+"name":"Keyword from JSON resource",
+"lineno":52
+},
+{
+"name":"Keyword from JSON resource 2",
+"lineno":53
+},
+{
+"name":"Should Be Equal",
+"args":[
+"${json_resource_var}",
+"JSON Resource Variable"
+],
+"lineno":54
+},
+{
+"name":"Should Be Equal",
+"args":[
+"${json_resource_var2}",
+"JSON Resource Variable From Recursive Resource"
+],
+"lineno":55
+}
+]
+},
+{
+"name":"Variable File",
+"tags":[
+"default1",
+"force1",
+"force2"
+],
+"lineno":57,
+"teardown":{
+"name":"Log",
+"args":[
+"Test Teardown"
+],
+"lineno":11
+},
+"body":[
+{
+"name":"Should Be Equal",
+"args":[
+"${file_listvar}[0]",
+"${True}"
+],
+"lineno":57
+},
+{
+"name":"Should Be Equal",
+"args":[
+"${file_listvar}[1]",
+"${3.14}"
+],
+"lineno":58
+},
+{
+"name":"Should Be Equal",
+"args":[
+"${file_listvar}[2]",
+"Hello, world!!"
+],
+"lineno":59
+},
+{
+"name":"Should Be Equal",
+"args":[
+"${file_var1}",
+"${-314}"
+],
+"lineno":60
+},
+{
+"name":"Should Be Equal",
+"args":[
+"${file_var2}",
+"file variable 2"
+],
+"lineno":61
+}
+]
+},
+{
+"name":"Library Import",
+"tags":[
+"default1",
+"force1",
+"force2"
+],
+"lineno":64,
+"teardown":{
+"name":"Log",
+"args":[
+"Test Teardown"
+],
+"lineno":11
+},
+"body":[
+{
+"name":"Directory Should Not Be Empty",
+"args":[
+"atest/testdata/parsing/data_formats/json"
+],
+"lineno":64
+}
+]
+},
+{
+"name":"Test Timeout",
+"doc":"FAIL   Test timeout 10 milliseconds exceeded.",
+"tags":[
+"default1",
+"force1",
+"force2"
+],
+"timeout":"0.01second",
+"lineno":70,
+"teardown":{
+"name":"Log",
+"args":[
+"Test Teardown"
+],
+"lineno":11
+},
+"body":[
+{
+"name":"Sleep",
+"args":[
+"1"
+],
+"lineno":72
+}
+]
+},
+{
+"name":"Keyword Timeout",
+"doc":"FAIL   Keyword timeout 2 milliseconds exceeded.",
+"tags":[
+"default1",
+"force1",
+"force2"
+],
+"lineno":74,
+"teardown":{
+"name":"Log",
+"args":[
+"Test Teardown"
+],
+"lineno":11
+},
+"body":[
+{
+"name":"Timeouted Keyword",
+"lineno":75
+}
+]
+},
+{
+"name":"Empty Rows",
+"doc":"Testing that empty rows are ignored.   FAIL Expected failure.",
+"tags":[
+"default1",
+"force1",
+"force2"
+],
+"lineno":83,
+"teardown":{
+"name":"Log",
+"args":[
+"Test Teardown"
+],
+"lineno":11
+},
+"body":[
+{
+"name":"No operation",
+"lineno":87
+},
+{
+"name":"Fail",
+"args":[
+"Expected failure."
+],
+"lineno":89
+}
+]
+},
+{
+"name":"Document",
+"doc":"Testing the metadata parsing.",
+"tags":[
+"default1",
+"force1",
+"force2"
+],
+"lineno":91,
+"teardown":{
+"name":"Log",
+"args":[
+"Test Teardown"
+],
+"lineno":11
+},
+"body":[
+{
+"name":"no operation",
+"lineno":92
+}
+]
+},
+{
+"name":"Default Fixture",
+"tags":[
+"default1",
+"force1",
+"force2"
+],
+"lineno":94,
+"teardown":{
+"name":"Log",
+"args":[
+"Test Teardown"
+],
+"lineno":11
+},
+"body":[
+{
+"name":"No operation",
+"lineno":94
+}
+]
+},
+{
+"name":"Overridden Fixture",
+"doc":"FAIL   Teardown failed:\\nFailing Teardown",
+"tags":[
+"default1",
+"force1",
+"force2"
+],
+"lineno":96,
+"setup":{
+"name":"Log",
+"args":[
+"Own Setup"
+],
+"lineno":97
+},
+"teardown":{
+"name":"Fail",
+"args":[
+"Failing Teardown"
+],
+"lineno":96
+},
+"body":[
+{
+"name":"No Operation",
+"lineno":99
+}
+]
+},
+{
+"name":"Quotes",
+"tags":[
+"default1",
+"force1",
+"force2"
+],
+"lineno":101,
+"teardown":{
+"name":"Log",
+"args":[
+"Test Teardown"
+],
+"lineno":11
+},
+"body":[
+{
+"name":"Should Be Equal",
+"args":[
+"${quoted}",
+"\"\"\"this has \"\"\"\"many \"\" quotes \"\"\"\"\""
+],
+"lineno":101
+},
+{
+"name":"Should Be Equal",
+"args":[
+"${single_quoted}",
+"s'ingle'qu'ot'es''"
+],
+"lineno":102
+}
+]
+},
+{
+"name":"Escaping",
+"tags":[
+"default1",
+"force1",
+"force2"
+],
+"lineno":104,
+"teardown":{
+"name":"Log",
+"args":[
+"Test Teardown"
+],
+"lineno":11
+},
+"body":[
+{
+"name":"Should Be Equal",
+"args":[
+"-c:\\\\temp-\\t-\\x00-\\${x}-",
+"${ESCAPING}"
+],
+"lineno":105
+}
+]
+}
+],
+"resource":{
+"imports":[
+{
+"type":"RESOURCE",
+"name":"../resources/json_resource.json",
+"lineno":12
+},
+{
+"type":"RESOURCE",
+"name":"_invalid.json",
+"lineno":12
+},
+{
+"type":"VARIABLES",
+"name":"../resources/variables.py",
+"lineno":13
+},
+{
+"type":"LIBRARY",
+"name":"OperatingSystem",
+"lineno":14
+}
+],
+"variables":[
+{
+"name":"${table_var}",
+"value":[
+"foo"
+],
+"lineno":25
+},
+{
+"name":"@{table_listvar}",
+"value":[
+"bar",
+"${table_var}"
+],
+"lineno":26
+},
+{
+"name":"${quoted}",
+"value":[
+"\"\"\"this has \"\"\"\"many \"\" quotes \"\"\"\"\""
+],
+"lineno":27
+},
+{
+"name":"${single_quoted}",
+"value":[
+"s'ingle'qu'ot'es''"
+],
+"lineno":28
+}
+],
+"keywords":[
+{
+"name":"My Keyword With Arg",
+"args":[
+"${arg1}"
+],
+"lineno":110,
+"body":[
+{
+"name":"Keyword with no arguments",
+"lineno":112
+},
+{
+"name":"Another Keyword",
+"args":[
+"${arg1}"
+],
+"lineno":113
+}
+]
+},
+{
+"name":"Another Keyword",
+"args":[
+"${arg1}",
+"${arg2}=something"
+],
+"lineno":117,
+"body":[
+{
+"name":"Should Be Equal",
+"args":[
+"${arg1}",
+"${arg2}"
+],
+"lineno":119
+}
+]
+},
+{
+"name":"Timeouted Keyword",
+"timeout":"2ms",
+"lineno":121,
+"body":[
+{
+"name":"Sleep",
+"args":[
+"0.1"
+],
+"lineno":122
+}
+]
+},
+{
+"name":"Keyword With No Arguments",
+"lineno":124,
+"body":[
+{
+"name":"Log",
+"args":[
+"Hello world!"
+],
+"lineno":124
+}
+]
+}
+]
+}
+}

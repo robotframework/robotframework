@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from collections.abc import Iterator
+
 from robot.utils import test_or_task
 
 from .stats import TotalStat
@@ -22,7 +24,7 @@ from .visitor import SuiteVisitor
 class TotalStatistics:
     """Container for total statistics."""
 
-    def __init__(self, rpa=False):
+    def __init__(self, rpa: bool = False):
         #: Instance of :class:`~robot.model.stats.TotalStat` for all the tests.
         self._stat = TotalStat(test_or_task('All {Test}s', rpa))
         self._rpa = rpa
@@ -30,30 +32,30 @@ class TotalStatistics:
     def visit(self, visitor):
         visitor.visit_total_statistics(self._stat)
 
-    def __iter__(self):
+    def __iter__(self) -> 'Iterator[TotalStat]':
         yield self._stat
 
     @property
-    def total(self):
+    def total(self) -> int:
         return self._stat.total
 
     @property
-    def passed(self):
+    def passed(self) -> int:
         return self._stat.passed
 
     @property
-    def skipped(self):
+    def skipped(self) -> int:
         return self._stat.skipped
 
     @property
-    def failed(self):
+    def failed(self) -> int:
         return self._stat.failed
 
     def add_test(self, test):
         self._stat.add_test(test)
 
     @property
-    def message(self):
+    def message(self) -> str:
         """String representation of the statistics.
 
         For example::

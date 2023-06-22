@@ -140,6 +140,21 @@ Dictionaries Should Be Equal With Different Values And Own Error Message
 Dictionaries Should Be Equal With Different Values And Own And Default Error Messages
     Check Test Case    ${TEST NAME}
 
+Dictionaries Should Equal With Ignored Keys
+    Check Test Case    ${TEST NAME}
+
+Dictionaries Should Equal With Ignored Keys And Missing Key
+    Check Test Case    ${TEST NAME}
+
+Dictionaries Should Equal With Ignored Keys And Missing Key And Own Error Message
+    Check Test Case    ${TEST NAME}
+
+Dictionaries Should Equal with non-list ignored keys
+    Check Test Case    ${TEST NAME}
+
+Dictionaries Should Equal with invalid ignored keys
+    Check Test Case    ${TEST NAME}
+
 Dictionary Should Contain Sub Dictionary
     Check Test Case    ${TEST NAME}
 

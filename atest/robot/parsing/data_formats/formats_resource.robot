@@ -7,6 +7,7 @@ ${TSV DIR}         ${FORMATS DIR}/tsv
 ${TXT DIR}         ${FORMATS DIR}/txt
 ${ROBOT DIR}       ${FORMATS DIR}/robot
 ${REST DIR}        ${FORMATS DIR}/rest
+${JSON DIR}        ${FORMATS DIR}/json
 ${MIXED DIR}       ${FORMATS DIR}/mixed_data
 ${RESOURCE DIR}    ${FORMATS DIR}/resources
 @{SAMPLE TESTS}    Passing    Failing    User Keyword    Nön-äscïï    Own Tags    Default Tags    Variable Table
@@ -51,8 +52,10 @@ Run Suite Dir And Check Results
     Should Contain Suites    ${SUITE.suites[1]}    Sub Suite1    Sub Suite2
     Should Contain Tests    ${SUITE}    @{SAMPLE_TESTS}    @{SUBSUITE_TESTS}
     ${path} =    Normalize Path    ${path}
-    Syslog Should Contain    | INFO \ | Data source '${path}${/}invalid.${type}' has no tests or tasks.
-    Syslog Should Contain    | INFO \ | Data source '${path}${/}empty.${type}' has no tests or tasks.
+    IF    $type != 'json'
+        Syslog Should Contain    | INFO \ | Data source '${path}${/}invalid.${type}' has no tests or tasks.
+        Syslog Should Contain    | INFO \ | Data source '${path}${/}empty.${type}' has no tests or tasks.
+    END
     Syslog Should Contain    | INFO \ | Ignoring file or directory '${path}${/}not_a_picture.jpg'.
 
 Check Suite With Init

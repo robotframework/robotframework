@@ -5,19 +5,19 @@ Test Template     Verify try except and block statuses
 
 *** Test Cases ***
 Equals is the default matcher
-    FAIL    PASS
+    FAIL    PASS               pattern_types=[None]
 
 Equals with whitespace
     FAIL    PASS
 
 Glob matcher
-    FAIL    NOT RUN    PASS
+    FAIL    NOT RUN    PASS    pattern_types=['GloB', 'gloB']
 
 Startswith matcher
-    FAIL    PASS
+    FAIL    PASS               pattern_types=['start']
 
 Regexp matcher
-    FAIL    NOT RUN    PASS
+    FAIL    NOT RUN    PASS    pattern_types=['REGEXP', 'REGEXP']
 
 Regexp escapes
     FAIL    PASS
@@ -35,16 +35,19 @@ Non-string pattern
     FAIL    NOT RUN    NOT RUN    NOT RUN    NOT RUN
 
 Variable in pattern type
-    FAIL    PASS
+    FAIL    PASS               pattern_types=['\${regexp}']
 
 Invalid variable in pattern type
-    FAIL    FAIL    PASS
+    FAIL    FAIL    PASS       pattern_types=['\${does not exist}']
 
 Invalid pattern type
-    FAIL    FAIL
+    FAIL    FAIL               pattern_types=['invalid']
 
 Non-string pattern type
-    FAIL    FAIL
+    FAIL    FAIL               pattern_types=['\${42}']
+
+Pattern type multiple times
+    FAIL    NOT RUN            pattern_types=['glob, start']
 
 Pattern type without patterns
     FAIL    PASS
@@ -53,7 +56,7 @@ Skip cannot be caught
     SKIP    NOT RUN    PASS    tc_status=SKIP
 
 Return cannot be caught
-    PASS    NOT RUN    PASS       path=body[0].body[0]
+    PASS    NOT RUN    PASS    path=body[0].body[0]
 
 AS gets the message
     FAIL    PASS

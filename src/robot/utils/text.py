@@ -13,10 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from itertools import takewhile
 import inspect
 import os.path
 import re
+from itertools import takewhile
+from pathlib import Path
 
 from .charwidth import get_char_width
 from .misc import seq2str2
@@ -79,12 +80,13 @@ def _count_virtual_line_length(line):
     return lines if not remainder else lines + 1
 
 
-def format_assign_message(variable, value, cut_long=True):
+def format_assign_message(variable, value, items=None, cut_long=True):
     formatter = {'$': safe_str, '@': seq2str2, '&': _dict_to_str}[variable[0]]
     value = formatter(value)
     if cut_long:
         value = cut_assign_value(value)
-    return '%s = %s' % (variable, value)
+    decorated_items = ''.join(f'[{item}]' for item in items) if items else ''
+    return f'{variable}{decorated_items} = {value}'
 
 def _dict_to_str(d):
     if not d:
@@ -132,6 +134,8 @@ def split_args_from_name_or_path(name):
     """
     if os.path.exists(name):
         return os.path.abspath(name), []
+    if isinstance(name, Path):
+        name = str(name)
     index = _get_arg_separator_index_from_name_or_path(name)
     if index == -1:
         return name, []

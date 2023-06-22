@@ -21,6 +21,7 @@ import shlex
 import sys
 import string
 import warnings
+from pathlib import Path
 
 from robot.errors import DataError, Information, FrameworkError
 from robot.version import get_full_version
@@ -32,6 +33,8 @@ from .robottypes import is_falsy, is_integer, is_string
 
 
 def cmdline2list(args, escaping=False):
+    if isinstance(args, Path):
+        return [str(args)]
     lexer = shlex.shlex(args, posix=True)
     if is_falsy(escaping):
         lexer.escape = ''

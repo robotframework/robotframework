@@ -15,6 +15,8 @@
 
 import ast
 
+from .statements import Node
+
 
 class VisitorFinder:
 
@@ -26,7 +28,7 @@ class VisitorFinder:
             return getattr(self, method)
         # Forward-compatibility.
         if method == 'visit_Return' and hasattr(self, 'visit_ReturnSetting'):
-            return self.visit_ReturnSetting
+            return getattr(self, 'visit_ReturnSetting')
         for base in cls.__bases__:
             visitor = self._find_visitor(base)
             if visitor:
@@ -47,7 +49,7 @@ class ModelVisitor(ast.NodeVisitor, VisitorFinder):
             ...
     """
 
-    def visit(self, node):
+    def visit(self, node: Node):
         visitor = self._find_visitor(type(node)) or self.generic_visit
         visitor(node)
 
@@ -60,6 +62,6 @@ class ModelTransformer(ast.NodeTransformer, VisitorFinder):
     <https://docs.python.org/library/ast.html#ast.NodeTransformer>`__.
     """
 
-    def visit(self, node):
+    def visit(self, node: Node):
         visitor = self._find_visitor(type(node)) or self.generic_visit
         return visitor(node)

@@ -15,6 +15,9 @@ Split command line with unbalanced quotes
 Split command line with escaping
     Check Test Case    ${TESTNAME}
 
+Split command line with pathlib.Path
+    Check Test Case    ${TESTNAME}
+
 Join command line basics
     Check Test Case    ${TESTNAME}
 
@@ -22,4 +25,7 @@ Join command line with internal quotes
     Check Test Case    ${TESTNAME}
 
 Join command line with escaping
+    Check Test Case    ${TESTNAME}
+
+Join command line with non-strings
     Check Test Case    ${TESTNAME}

@@ -1,8 +1,8 @@
 Robot Framework and Libdoc schema definitions
 =============================================
 
-This directory contains schema definitions for Robot Frameworks XML output files
-as well as for XML and JSON spec files created by Libdoc_.
+This directory contains schema definitions for various Robot Framework and
+Libdoc_ output files.
 
 Only the latest schema versions are directly available and they may not be
 compatible with older Robot Framework versions. If you need to access old
@@ -13,6 +13,7 @@ Schema files
 ------------
 
 - `<robot.xsd>`_ - Robot Framework XML output schema in XSD_ format.
+- `<running.json>`_ - `JSON Schema`_ for ``robot.running.TestSuite`` model structure.
 - `<libdoc.xsd>`_ - Libdoc XML spec schema in XSD_ format.
 - `<libdoc.json>`_ - Libdoc JSON spec schema in `JSON Schema`_ format.
 
@@ -24,16 +25,18 @@ Schema files themselves contain embedded documentation and comments explaining
 the structure in more detail. They also contain instructions how to make them
 XSD 1.1 compatible if needed.
 
-Libdoc's JSON schema uses JSON Schema Draft 2020-12.
+JSON schemas use JSON Schema Draft 2020-12.
 
 Updating schemas
 ----------------
 
 XSD schemas are created by hand and updates need to be done directly to them.
 
-Libdoc's JSON schema is generated based on a model created using pydantic_.
-To modify the schema, update the model in `<libdoc_json_schema.py>`_ file
-and execute the file to regenerate `<libdoc.json>`_.
+JSON schemas are generated based on models created using pydantic_.
+To modify these schemas, first update the appropriate pydantic model either
+in `<running_json_schema.py>`_ or `<libdoc_json_schema.py>`_
+and then execute that file to regenerate the actual schema file in
+`<running.json>`_ or `<libdoc.json>`_, respectively.
 
 Testing schemas
 ---------------

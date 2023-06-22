@@ -81,10 +81,16 @@ class TestNormalizedDict(unittest.TestCase):
         assert_equal(nd['K EY'], 'value')
         assert_equal(nd['foo'], 'bar')
 
+    def test_initial_values_as_generator(self):
+        nd = NormalizedDict((item for item in [('key', 'value'), ('F O\tO', 'bar')]))
+        assert_equal(nd['key'], 'value')
+        assert_equal(nd['K EY'], 'value')
+        assert_equal(nd['foo'], 'bar')
+
     def test_setdefault(self):
         nd = NormalizedDict({'a': NormalizedDict()})
-        nd.setdefault('a', 'whatever').setdefault('B', []).append(1)
-        nd.setdefault('A', 'everwhat').setdefault('b', []).append(2)
+        nd.setdefault('a').setdefault('B', []).append(1)
+        nd.setdefault('A', 'whatever').setdefault('b', []).append(2)
         assert_equal(nd['a']['b'], [1, 2])
         assert_equal(list(nd), ['a'])
         assert_equal(list(nd['a']), ['B'])
@@ -162,7 +168,7 @@ class TestNormalizedDict(unittest.TestCase):
     def test_len(self):
         nd = NormalizedDict()
         assert_equal(len(nd), 0)
-        nd['a'] = nd['b'] = nd['c'] = 1
+        nd['a'] = nd['b'] = nd['B'] = nd['c'] = 'x'
         assert_equal(len(nd), 3)
 
     def test_truth_value(self):
@@ -182,6 +188,11 @@ class TestNormalizedDict(unittest.TestCase):
         assert_equal(nd._data, {'a': 1, 'b': 1, 'c': 1})
         assert_equal(cd._keys, {'a': 'a', 'b': 'B'})
         assert_equal(cd._data, {'a': 1, 'b': 2})
+
+    def test_copy_with_subclass(self):
+        class SubClass(NormalizedDict):
+            pass
+        assert_true(isinstance(SubClass().copy(), SubClass))
 
     def test_str(self):
         nd = NormalizedDict({'a': 1, 'B': 2, 'c': '3', 'd': '"', 'E': 5, 'F': 6})
@@ -242,6 +253,7 @@ class TestNormalizedDict(unittest.TestCase):
     def test_keys_are_sorted(self):
         nd = NormalizedDict((c, None) for c in 'aBcDeFg123XyZ___')
         assert_equal(list(nd.keys()), list('123_aBcDeFgXyZ'))
+        assert_equal(list(nd), list('123_aBcDeFgXyZ'))
 
     def test_keys_values_and_items_are_returned_in_same_order(self):
         nd = NormalizedDict()

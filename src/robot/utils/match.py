@@ -15,7 +15,6 @@
 
 import re
 import fnmatch
-from functools import partial
 from typing import Iterable, Iterator, Sequence
 
 from .normalizing import normalize
@@ -34,8 +33,10 @@ class Matcher:
     def __init__(self, pattern: str, ignore: Sequence[str] = (), caseless: bool = True,
                  spaceless: bool = True, regexp: bool = False):
         self.pattern = pattern
-        self._normalize = partial(normalize, ignore=ignore, caseless=caseless,
-                                  spaceless=spaceless)
+        if caseless or spaceless or ignore:
+            self._normalize = lambda s: normalize(s, ignore, caseless, spaceless)
+        else:
+            self._normalize = lambda s: s
         self._regexp = self._compile(self._normalize(pattern), regexp=regexp)
 
     def _compile(self, pattern, regexp=False):
@@ -46,7 +47,7 @@ class Matcher:
     def match(self, string: str) -> bool:
         return self._regexp.match(self._normalize(string)) is not None
 
-    def match_any(self, strings: Sequence[str]) -> bool:
+    def match_any(self, strings: Iterable[str]) -> bool:
         return any(self.match(s) for s in strings)
 
     def __bool__(self) -> bool:
@@ -55,18 +56,18 @@ class Matcher:
 
 class MultiMatcher(Iterable[Matcher]):
 
-    def __init__(self, patterns: Sequence[str] = (), ignore: Sequence[str] = (),
+    def __init__(self, patterns: Iterable[str] = (), ignore: Sequence[str] = (),
                  caseless: bool = True, spaceless: bool = True,
                  match_if_no_patterns: bool = False, regexp: bool = False):
         self.matchers = [Matcher(pattern, ignore, caseless, spaceless, regexp)
-                         for pattern in self._ensure_list(patterns)]
+                         for pattern in self._ensure_iterable(patterns)]
         self.match_if_no_patterns = match_if_no_patterns
 
-    def _ensure_list(self, patterns):
+    def _ensure_iterable(self, patterns):
         if patterns is None:
-            return []
+            return ()
         if is_string(patterns):
-            return [patterns]
+            return (patterns,)
         return patterns
 
     def match(self, string: str) -> bool:
@@ -74,7 +75,7 @@ class MultiMatcher(Iterable[Matcher]):
             return any(m.match(string) for m in self.matchers)
         return self.match_if_no_patterns
 
-    def match_any(self, strings: Sequence[str]) -> bool:
+    def match_any(self, strings: Iterable[str]) -> bool:
         return any(self.match(s) for s in strings)
 
     def __len__(self) -> int:
