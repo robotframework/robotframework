@@ -113,7 +113,7 @@ class _List:
         =>
         | ${L3} = ['a', 'xxx', 'yyy']
 
-        Starting from Robot Framework 6.1, it is also possible to use the native
+        Starting from Robot Framework 6.2, it is also possible to use the native
         item assignment syntax. This is equivalent to the above:
         | ${L3}[1] =  | Set Variable | xxx |
         | ${L3}[-1] = | Set Variable | yyy |
@@ -315,7 +315,8 @@ class _List:
 
         Use the ``msg`` argument to override the default error message.
 
-        See section `Ignore Case` for more information about ignoring case in lists.
+        The ignore_case argument can be used to make comparison case-insensitive. 
+        See the Ignore case section for more details. It is new in Robot Framework 6.2.
         """
         self._validate_list(list_)
         normalize = Normalizer(ignore_case).normalize
@@ -327,7 +328,8 @@ class _List:
 
         Use the ``msg`` argument to override the default error message.
 
-        See section `Ignore Case` for more information about ignoring case in lists.
+        The ignore_case argument can be used to make comparison case-insensitive. 
+        See the Ignore case section for more details. It is new in Robot Framework 6.2.
         """
         self._validate_list(list_)
         normalize = Normalizer(ignore_case).normalize
@@ -346,7 +348,8 @@ class _List:
         This keyword works with all iterables that can be converted to a list.
         The original iterable is never altered.
 
-        See section `Ignore Case` for more information about ignoring case in lists.
+        The ignore_case argument can be used to make comparison case-insensitive. 
+        See the Ignore case section for more details. It is new in Robot Framework 6.2.
         """
         self._validate_list(list_)
         if not isinstance(list_, list):
@@ -407,7 +410,8 @@ class _List:
         | ${list2} = | Create List | cherry | banana | apple |
         | Lists Should Be Equal | ${list1} | ${list2} | ignore_order=True |
 
-        See section `Ignore Case` for more information about ignoring case in lists.
+        The ignore_case argument can be used to make comparison case-insensitive. 
+        See the Ignore case section for more details. It is new in Robot Framework 6.2.
         """
         self._validate_lists(list1, list2)
         len1 = len(list1)
@@ -451,7 +455,8 @@ class _List:
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
 
-        See section `Ignore Case` for more information about ignoring case in lists.
+        The ignore_case argument can be used to make comparison case-insensitive. 
+        See the Ignore case section for more details. It is new in Robot Framework 6.2.
         """
         self._validate_lists(list1, list2)
         normalize = Normalizer(ignore_case).normalize
@@ -533,7 +538,7 @@ class _Dictionary:
         =>
         | ${D1} = {'a': 1, 'key': 'value', 2: 'value 2'}
 
-        Starting from Robot Framework 6.1, it is also possible to use the native
+        Starting from Robot Framework 6.2, it is also possible to use the native
         item assignment syntax. This is equivalent to the above:
         | ${D1}[key] =  | Set Variable | value |
         | ${D1}[${2}] = | Set Variable | value 2 |
@@ -814,7 +819,7 @@ class _Dictionary:
 
         ``ignore_keys`` can be used to provide a list of keys to ignore in the
         comparison. It can be an actual list or a Python list literal. This
-        option is new in Robot Framework 6.1.
+        option is new in Robot Framework 6.2.
 
         Examples:
         | Dictionaries Should Be Equal | ${dict} | ${expected} |
@@ -1009,8 +1014,8 @@ class Collections(_List, _Dictionary):
     It is possible to ignore the case for elements in both dictionaries and lists.
     In lists, this can be done by adding ``ignore_case=True``. For dictionaries,
     there are additional options since they employ both keys and values, using
-    ignore_case equal to ``key``, ``value`` or ``both``. Ignoring case means that the values 
-    to compare are normalized by lowercasing strings before comparison.
+    ignore_case equal to ``key``, ``value`` or ``both``. Ignoring case means that the
+    values to compare are normalized by lowercasing strings before comparison.
 
     Additionally, be aware that list-like objects are converted to lists, and 
     dictionary-like objects to dictionaries, for ease of comparison
