@@ -130,7 +130,6 @@ class Namespace:
         if lib.name in self._kw_store.libraries:
             LOGGER.info(f"Library '{lib.name}' already imported by suite "
                         f"'{self._suite_name}'.")
-            return
         if notify:
             LOGGER.imported("Library", lib.name,
                             args=list(import_setting.args),

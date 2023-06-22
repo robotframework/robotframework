@@ -6,7 +6,7 @@ Resource          atest_resource.robot
 Import Library Normally Before Importing With Name In Another Suite
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0]}    OperatingSystem.Should Exist    args=.
-    Check Keyword Data    ${tc.kws[1]}    ParameterLibrary.Parameters Should Be    args=before1, before2
+    Check Keyword Data    ${tc.kws[1]}    ParameterLibrary.Parameters Should Be    args=\${1}, 2
     Syslog Should Contain    Imported library 'OperatingSystem' with arguments [ ] (version ${ROBOT VERSION}, class type, GLOBAL scope,
     Syslog Should Contain    Imported library 'ParameterLibrary' with arguments [ before1 | before2 ] (version <unknown>, class type, TEST scope,
 
