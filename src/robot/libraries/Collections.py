@@ -538,7 +538,7 @@ class _Dictionary:
         =>
         | ${D1} = {'a': 1, 'key': 'value', 2: 'value 2'}
 
-        Starting from Robot Framework 6.2, it is also possible to use the native
+        Starting from Robot Framework 6.1, it is also possible to use the native
         item assignment syntax. This is equivalent to the above:
         | ${D1}[key] =  | Set Variable | value |
         | ${D1}[${2}] = | Set Variable | value 2 |
