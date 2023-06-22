@@ -772,7 +772,7 @@ class _Dictionary:
         """
         self._validate_dictionary(dictionary)
         normalize = Normalizer(ignore_case).normalize
-        self.dictionary_should_contain_key(normalize(dictionary), normalize(key), msg)
+        self.dictionary_should_contain_key(dictionary, key, msg, ignore_case)
         assert_equal(normalize(dictionary[normalize(key)]), normalize(value),
                      msg or f"Value of dictionary key '{key}' does not match",
                      values=not msg)
