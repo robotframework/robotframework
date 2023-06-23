@@ -332,7 +332,8 @@ class ForInZipRunner(ForInRunner):
             except TypeError:
                 logger.warn(f"SHORTEST as default mode is deprecated and will be "
                             f"replaced by STRICT in the future. Cannot check length "
-                            f"for item in index {index}. Please apply "
+                            f"for item in index {index}, but this check is neccessary "
+                            f"when STRICT mode is applied. Please apply "
                             f"mode=SHORTEST to disable this warning.")
         if len(set(lengths)) > 1:
             logger.warn("SHORTEST as default mode is deprecated and will be "
