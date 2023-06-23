@@ -302,6 +302,8 @@ class ForInZipRunner(ForInRunner):
             return zip_longest(*values, fillvalue=self._fill)
         if self._mode == 'STRICT':
             self._validate_strict_lengths(values)
+        if self._mode == None: 
+            self._check_mode_for_deprecation(values)
         return zip(*values)
 
     def _validate_types(self, values):
@@ -322,6 +324,21 @@ class ForInZipRunner(ForInRunner):
             raise DataError(f"FOR IN ZIP items should have equal lengths in STRICT "
                             f"mode, but lengths are {seq2str(lengths, quote='')}.")
 
+    def _check_mode_for_deprecation(self, values):
+        lengths = []
+        for index, item in enumerate(values, start=1):
+            try:
+                lengths.append(len(item))
+            except TypeError:
+                logger.warn(f"SHORTEST as default mode is deprecated and will be "
+                            f"replaced by STRICT in the future. Cannot check length "
+                            f"for item in index {index}. Please apply "
+                            f"mode=SHORTEST to disable this warning.")
+        if len(set(lengths)) > 1:
+            logger.warn("SHORTEST as default mode is deprecated and will be "
+                        "replaced by STRICT in the future. Current "
+                        "input lists are of different lengths. Please apply "
+                        "mode=SHORTEST to disable this warning.")
 
 class ForInEnumerateRunner(ForInRunner):
     flavor = 'IN ENUMERATE'
