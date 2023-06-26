@@ -124,7 +124,7 @@ Too many variables
     Check test and failed loop    ${TEST NAME} 1    IN ZIP    0
     Check test and failed loop    ${TEST NAME} 2    IN ZIP    1
 
-Deprecation message of SHORTEST as default is shown
+Deprecation message of SHORTEST as default is shown when length differs
     ${loop} =    Check test and get loop    ${TEST NAME}    0
     ${logMessage}  Catenate  SEPARATOR=${SPACE}
     ...    SHORTEST as default mode is deprecated and will be
@@ -133,6 +133,11 @@ Deprecation message of SHORTEST as default is shown
     ...    mode=SHORTEST to disable this warning.
     Should be FOR iteration   ${loop.body[1]}   \${x}=a   \${y}=1
     Check log message   ${loop.msgs[0]}   ${logMessage}  level=WARN
+
+Deprecation message of SHORTEST as default is not shown when length is equal
+    ${loop} =    Check test and get loop    ${TEST NAME}    0
+    Should be FOR iteration   ${loop.body[0]}   \${x}=a   \${y}=x
+    Should Be Empty   ${loop.msgs}
 
 Deprecation message of SHORTEST is not shown when mode is SHORTEST
     ${loop} =    Check test and get loop    ${TEST NAME}    0

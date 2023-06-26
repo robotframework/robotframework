@@ -199,8 +199,13 @@ Too many variables 2
         Fail    This test case should die before running this.
     END
 
-Deprecation message of SHORTEST as default is shown
+Deprecation message of SHORTEST as default is shown when length differs
     FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST3}
+        @{result} =    Create List    @{result}    ${x}:${y}
+    END
+
+Deprecation message of SHORTEST as default is not shown when length is equal
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}
         @{result} =    Create List    @{result}    ${x}:${y}
     END
 
