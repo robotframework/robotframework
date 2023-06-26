@@ -215,7 +215,7 @@ Deprecation message of SHORTEST is not shown when mode is STRICT
     END
 
 Deprecation message of SHORTEST is not shown when mode is LONGEST
-    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}  mode=LONGEST
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST3}  mode=LONGEST
         @{result} =    Create List    @{result}    ${x}:${y}
     END
 
