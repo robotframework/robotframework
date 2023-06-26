@@ -198,3 +198,8 @@ Too many variables 2
     FOR    ${too}    ${many}    ${variables}    ${again}    IN ZIP    @{items}
         Fail    This test case should die before running this.
     END
+
+Deprecation for shortest as default mode
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST3}
+        @{result} =    Create List    @{result}    ${x}:${y}
+    END

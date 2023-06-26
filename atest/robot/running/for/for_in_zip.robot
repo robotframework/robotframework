@@ -123,3 +123,12 @@ Too few variables
 Too many variables
     Check test and failed loop    ${TEST NAME} 1    IN ZIP    0
     Check test and failed loop    ${TEST NAME} 2    IN ZIP    1
+
+Deprecation for shortest as default mode
+    ${tc}=  Check Test Case  ${TESTNAME}
+    ${logMessage}  Catenate  SEPARATOR=${SPACE}
+    ...    SHORTEST as default mode is deprecated and will be
+    ...    replaced by STRICT in the future. Current
+    ...    input lists are of different lengths. Please apply
+    ...    mode=SHORTEST to disable this warning.
+    Check log message   ${tc.body[0].msgs[0]}   ${logMessage}  level=WARN
