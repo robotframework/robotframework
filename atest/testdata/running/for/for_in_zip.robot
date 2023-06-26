@@ -199,7 +199,34 @@ Too many variables 2
         Fail    This test case should die before running this.
     END
 
-Deprecation for shortest as default mode
+Deprecation message of SHORTEST as default is shown
     FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST3}
+        @{result} =    Create List    @{result}    ${x}:${y}
+    END
+
+Deprecation message of SHORTEST is not shown when mode is SHORTEST
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST3}  mode=SHORTEST
+        @{result} =    Create List    @{result}    ${x}:${y}
+    END
+
+Deprecation message of SHORTEST is not shown when mode is STRICT
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}  mode=STRICT
+        @{result} =    Create List    @{result}    ${x}:${y}
+    END
+
+Deprecation message of SHORTEST is not shown when mode is LONGEST
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}  mode=LONGEST
+        @{result} =    Create List    @{result}    ${x}:${y}
+    END
+
+Deprecation message of SHORTEST is shown when item has no length
+    ${generator} =    Evaluate    (i for i in range(10))
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${generator}
+        @{result} =    Create List    @{result}    ${x}:${y}
+    END
+
+Deprecation message of SHORTEST is not shown when item has no length and mode is set
+    ${generator} =    Evaluate    (i for i in range(10))
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${generator}  mode=SHORTEST
         @{result} =    Create List    @{result}    ${x}:${y}
     END

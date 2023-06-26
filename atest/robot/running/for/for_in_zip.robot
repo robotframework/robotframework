@@ -124,7 +124,7 @@ Too many variables
     Check test and failed loop    ${TEST NAME} 1    IN ZIP    0
     Check test and failed loop    ${TEST NAME} 2    IN ZIP    1
 
-Deprecation for shortest as default mode
+Deprecation message of SHORTEST as default is shown
     ${tc}=  Check Test Case  ${TESTNAME}
     ${logMessage}  Catenate  SEPARATOR=${SPACE}
     ...    SHORTEST as default mode is deprecated and will be
@@ -132,3 +132,29 @@ Deprecation for shortest as default mode
     ...    input lists are of different lengths. Please apply
     ...    mode=SHORTEST to disable this warning.
     Check log message   ${tc.body[0].msgs[0]}   ${logMessage}  level=WARN
+
+Deprecation message of SHORTEST is not shown when mode is SHORTEST
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Should Be Empty  ${tc.body[0].msgs}
+
+Deprecation message of SHORTEST is not shown when mode is STRICT
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Should Be Empty  ${tc.body[0].msgs}
+
+Deprecation message of SHORTEST is not shown when mode is LONGEST
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Should Be Empty  ${tc.body[0].msgs}
+
+Deprecation message of SHORTEST is shown when item has no length
+    ${tc}=  Check Test Case  ${TESTNAME}
+    ${logMessage}  Catenate  SEPARATOR=${SPACE}
+    ...    SHORTEST as default mode is deprecated and will be replaced by STRICT in the
+    ...    future. Cannot check length for item in index 2, but this check is neccessary
+    ...    when STRICT mode is applied. Please apply mode=SHORTEST
+    ...    to disable this warning.
+    Log  ${tc.body[1].msgs[0]}
+    Check log message   ${tc.body[1].msgs[0]}   ${logMessage}  level=WARN
+
+Deprecation message of SHORTEST is not shown when item has no length and mode is set
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Should Be Empty  ${tc.body[1].msgs}
