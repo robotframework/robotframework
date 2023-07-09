@@ -76,7 +76,7 @@ Example
 
 *** Keywords ***
 Keyword
-    Log    Hello!
+    Log    ${CURDIR}
 '''
 
     @classmethod
@@ -90,22 +90,23 @@ Keyword
 
     def test_from_file_system(self):
         suite = TestSuite.from_file_system(self.path)
-        self._verify_suite(suite)
+        self._verify_suite(suite, curdir=str(self.path.parent))
 
     def test_from_file_system_with_multiple_paths(self):
         suite = TestSuite.from_file_system(self.path, self.path)
         assert_equal(suite.name, 'Test Run Model & Test Run Model')
-        self._verify_suite(suite.suites[0])
-        self._verify_suite(suite.suites[1])
+        self._verify_suite(suite.suites[0], curdir=str(self.path.parent))
+        self._verify_suite(suite.suites[1], curdir=str(self.path.parent))
 
     def test_from_file_system_with_config(self):
-        suite = TestSuite.from_file_system(self.path, rpa=True)
-        self._verify_suite(suite, rpa=True)
+        suite = TestSuite.from_file_system(self.path, process_curdir=False)
+        self._verify_suite(suite)
 
     def test_from_file_system_with_defaults(self):
         defaults = TestDefaults(tags=('from defaults',), timeout='10s')
         suite = TestSuite.from_file_system(self.path, defaults=defaults)
-        self._verify_suite(suite, tags=('from defaults', 'tag'), timeout='10s')
+        self._verify_suite(suite, tags=('from defaults', 'tag'), timeout='10s',
+                           curdir=str(self.path.parent))
 
     def test_from_model(self):
         model = api.get_model(self.data)
@@ -140,7 +141,7 @@ Keyword
     def test_from_string_with_config(self):
         suite = TestSuite.from_string(self.data.replace('Test Cases', 'Testit'),
                                       lang='Finnish', curdir='.')
-        self._verify_suite(suite, name='')
+        self._verify_suite(suite, name='', curdir='.')
 
     def test_from_string_with_defaults(self):
         defaults = TestDefaults(tags=('from defaults',), timeout='10s')
@@ -148,17 +149,17 @@ Keyword
         self._verify_suite(suite, name='', tags=('from defaults', 'tag'), timeout='10s')
 
     def _verify_suite(self, suite, name='Test Run Model', tags=('tag',),
-                      timeout=None, rpa=False):
+                      timeout=None, curdir='${CURDIR}'):
         assert_equal(suite.name, name)
         assert_equal(suite.doc, 'Some text.')
-        assert_equal(suite.rpa, rpa)
+        assert_equal(suite.rpa, False)
         assert_equal(suite.resource.imports[0].type, 'LIBRARY')
         assert_equal(suite.resource.imports[0].name, 'ExampleLibrary')
         assert_equal(suite.resource.variables[0].name, '${VAR}')
         assert_equal(suite.resource.variables[0].value, ('Value',))
         assert_equal(suite.resource.keywords[0].name, 'Keyword')
         assert_equal(suite.resource.keywords[0].body[0].name, 'Log')
-        assert_equal(suite.resource.keywords[0].body[0].args, ('Hello!',))
+        assert_equal(suite.resource.keywords[0].body[0].args, (curdir,))
         assert_equal(suite.tests[0].name, 'Example')
         assert_equal(suite.tests[0].tags, tags)
         assert_equal(suite.tests[0].timeout, timeout)
