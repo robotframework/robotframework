@@ -27,6 +27,7 @@ class TkDialog(Toplevel):
     def __init__(self, message, value=None, **config):
         self._prevent_execution_with_timeouts()
         self.root = self._get_root()
+        self._button_bindings = {}
         super().__init__(self.root)
         self._initialize_dialog()
         self.widget = self._create_body(message, value, **config)
@@ -92,8 +93,9 @@ class TkDialog(Toplevel):
         if label:
             button = Button(parent, text=label, width=10, command=callback, underline=0)
             button.pack(side=LEFT, padx=5, pady=5)
-            self.bind(label[0], callback)
-            self.bind(label[0].lower(), callback)
+            for char in label[0].upper(), label[0].lower():
+                self.bind(char, callback)
+                self._button_bindings[char] = callback
 
     def _left_button_clicked(self, event=None):
         if self._validate_value():
@@ -135,7 +137,17 @@ class InputDialog(TkDialog):
         widget = Entry(parent, show='*' if hidden else '')
         widget.insert(0, default)
         widget.select_range(0, END)
+        widget.bind('<FocusIn>', self._unbind_buttons)
+        widget.bind('<FocusOut>', self._rebind_buttons)
         return widget
+
+    def _unbind_buttons(self, event):
+        for char in self._button_bindings:
+            self.unbind(char)
+
+    def _rebind_buttons(self, event):
+        for char, callback in self._button_bindings.items():
+            self.bind(char, callback)
 
     def _get_value(self) -> str:
         return self.widget.get()

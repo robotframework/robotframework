@@ -50,7 +50,7 @@ with open(INPATH) as input:
             TESTS.append(TestCase(line.split('  ')[0]))
         elif parsing_tests and line.strip().startswith('[Tags]'):
             TESTS[-1].tags = line.split('[Tags]', 1)[1].split()
-        elif parsing_settings and line.startswith(('Force Tags', 'Default Tags')):
+        elif parsing_settings and line.startswith(('Force Tags', 'Default Tags', 'Test Tags')):
             name, value = line.split('  ', 1)
             SETTINGS.append((name, value.strip()))
 
