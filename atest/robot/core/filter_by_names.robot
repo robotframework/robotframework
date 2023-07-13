@@ -138,10 +138,14 @@ Parent suite init files are processed
     Should Contain Suites    ${SUITE}   Sub.Suite.1    Suite5    Suite6
     Should Contain Suites    ${SUITE.suites[0]}   .Sui.te.2.    Suite4
 
+Suite containing tasks is ok if only tests are selected
+    Run And Check Tests    --test test      Test    sources=rpa/tasks rpa/tests.robot
+    Run And Check Tests    --suite tests    Test    sources=rpa/tasks rpa/tests.robot
+
 *** Keywords ***
 Run And Check Tests
-    [Arguments]    ${params}    @{tests}
-    Run Tests    ${params}    ${SUITE FILE}
+    [Arguments]    ${params}    @{tests}    ${sources}=${SUITE FILE}
+    Run Tests    ${params}    ${sources}
     Stderr Should Be Empty
     Should Contain Tests    ${suite}    @{tests}
 
