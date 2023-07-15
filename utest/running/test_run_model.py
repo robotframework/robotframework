@@ -150,6 +150,7 @@ Keyword
 
     def _verify_suite(self, suite, name='Test Run Model', tags=('tag',),
                       timeout=None, curdir='${CURDIR}'):
+        curdir = curdir.replace('\\', '\\\\')
         assert_equal(suite.name, name)
         assert_equal(suite.doc, 'Some text.')
         assert_equal(suite.rpa, False)
