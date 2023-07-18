@@ -61,7 +61,7 @@ class LibraryDocBuilder:
         return lib.doc or f"Documentation for library ``{lib.name}``."
 
     def _get_initializers(self, lib):
-        if lib.init.arguments.maxargs:
+        if lib.init.arguments:
             return [KeywordDocBuilder().build_keyword(lib.init)]
         return []
 

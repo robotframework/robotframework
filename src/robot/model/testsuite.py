@@ -18,6 +18,7 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any, Generic, Iterator, Sequence, Type, TypeVar
 
+from robot.errors import DataError
 from robot.utils import seq2str, setter
 
 from .configurer import SuiteConfigurer
@@ -56,7 +57,7 @@ class TestSuite(ModelObject, Generic[KW, TC] if sys.version_info >= (3, 7)  else
                  doc: str = '',
                  metadata: 'Mapping[str, str]|None' = None,
                  source: 'Path|str|None' = None,
-                 rpa: 'bool|None' = None,
+                 rpa: 'bool|None' = False,
                  parent: 'TestSuite|None' = None):
         self._name = name
         self.doc = doc
@@ -201,6 +202,32 @@ class TestSuite(ModelObject, Generic[KW, TC] if sys.version_info >= (3, 7)  else
     def metadata(self, metadata: 'Mapping[str, str]|None') -> Metadata:
         """Free suite metadata as a :class:`~.metadata.Metadata` object."""
         return Metadata(metadata)
+
+    def validate_execution_mode(self) -> 'bool|None':
+        """Validate that suite execution mode is set consistently.
+
+        Raise an exception if the execution mode is not set (i.e. the :attr:`rpa`
+        attribute is ``None``) and child suites have conflicting execution modes.
+
+        The execution mode is returned. New in RF 6.1.1.
+        """
+        if self.rpa is None:
+            rpa = name = None
+            for suite in self.suites:
+                suite.validate_execution_mode()
+                if rpa is None:
+                    rpa = suite.rpa
+                    name = suite.longname
+                elif rpa is not suite.rpa:
+                    mode1, mode2 = ('tasks', 'tests') if rpa else ('tests', 'tasks')
+                    raise DataError(
+                        f"Conflicting execution modes: Suite '{name}' has {mode1} but "
+                        f"suite '{suite.longname}' has {mode2}. Resolve the conflict "
+                        f"or use '--rpa' or '--norpa' options to set the execution "
+                        f"mode explicitly."
+                    )
+            self.rpa = rpa
+        return self.rpa
 
     @setter
     def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> 'TestSuites[TestSuite[KW, TC]]':
@@ -409,7 +436,7 @@ class TestSuite(ModelObject, Generic[KW, TC] if sys.version_info >= (3, 7)  else
             data['metadata'] = dict(self.metadata)
         if self.source:
             data['source'] = str(self.source)
-        if self.rpa is not None:
+        if self.rpa:
             data['rpa'] = self.rpa
         if self.has_setup:
             data['setup'] = self.setup.to_dict()

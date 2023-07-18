@@ -380,11 +380,20 @@ method. It works both with JSON strings and paths to JSON files:
    # Create suite from a JSON string.
    suite = TestSuite.from_json('{"name": "Suite", "tests": [{"name": "Test"}]}')
 
+   # Execute suite. Notice that log and report needs to be created separately.
+   suite.run(output='example.xml')
+
 If you have data as a Python dictionary, you can use `TestSuite.from_dict`__
-instead.
+instead. Regardless of how a suite is recreated, it exists only in memory and
+original data files on the file system are not recreated.
+
+As the above example demonstrates, the created suite can be executed using
+the `TestSuite.run`__ method. It may, however, be easier to execute a JSON file
+directly as explained in the following section.
 
 __ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.from_json
 __ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.from_dict
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.run
 
 Executing JSON files
 ''''''''''''''''''''

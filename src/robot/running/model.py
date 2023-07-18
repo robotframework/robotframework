@@ -416,7 +416,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase]):
                  doc: str = '',
                  metadata: 'Mapping[str, str]|None' = None,
                  source: 'Path|str|None' = None,
-                 rpa: 'bool|None' = None,
+                 rpa: 'bool|None' = False,
                  parent: 'TestSuite|None' = None):
         super().__init__(name, doc, metadata, source, rpa, parent)
         #: :class:`ResourceFile` instance containing imports, variables and

@@ -53,10 +53,10 @@ Keyword Names
 
 Keyword Arguments
     Keyword Arguments Should Be      0
-    Keyword Arguments Should Be      1     loglevel=None
+    Keyword Arguments Should Be      1    loglevel=None
 
 Keyword Documentation
-    Keyword Doc Should Start With    0   Closes all open connections
+    Keyword Doc Should Start With    0    Closes all open connections
     Keyword Doc Should Start With    2
     ...    Executes the given ``command`` and reads, logs, and returns everything until the prompt.
     ...
@@ -113,6 +113,11 @@ Decorators
 Documentation set in __init__
     Run Libdoc And Parse Output      ${TESTDATADIR}/DocSetInInit.py
     Doc Should Be                    Doc set in __init__!!
+
+__init__ with only named-only arguments
+    Run Libdoc And Parse Output      ${TESTDATADIR}/InitWithOnlyNamedOnlyArgs.py::b=2
+    Init Arguments Should Be         0    *    a=1    b
+    Init Doc Should Be               0    xxx
 
 Deprecation
     Run Libdoc And Parse Output          ${TESTDATADIR}/Deprecation.py

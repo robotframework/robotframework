@@ -62,7 +62,8 @@ class RobotParser(Parser):
         model = get_init_model(self._get_source(source), data_only=True,
                                curdir=self._get_curdir(source), lang=self.lang)
         directory = source.parent
-        suite = TestSuite(name=TestSuite.name_from_source(directory), source=directory)
+        suite = TestSuite(name=TestSuite.name_from_source(directory),
+                          source=directory, rpa=None)
         SuiteBuilder(suite, InitFileSettings(defaults)).build(model)
         return suite
 
@@ -117,7 +118,8 @@ class JsonParser(Parser):
 class NoInitFileDirectoryParser(Parser):
 
     def parse_init_file(self, source: Path, defaults: TestDefaults) -> TestSuite:
-        return TestSuite(name=TestSuite.name_from_source(source), source=source)
+        return TestSuite(name=TestSuite.name_from_source(source),
+                         source=source, rpa=None)
 
 
 class CustomParser(Parser):

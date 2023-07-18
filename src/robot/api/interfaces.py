@@ -179,7 +179,7 @@ class DynamicLibrary(ABC):
         - If keyword does not accept varargs, a lone ``*`` can be used
           a separator between normal and named-only arguments like
           ``['normal', '*', 'named']``.
-        - Kwargs must have a ``**``  prefix like [``**config``]. There can
+        - Kwargs must have a ``**``  prefix like ``['**config']``. There can
           be only one kwargs, and it must be last.
 
         Both normal arguments and named-only arguments can have default values:

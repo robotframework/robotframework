@@ -444,11 +444,11 @@ class RobotFramework(Application):
                                    lang=settings.languages,
                                    allow_empty_suite=settings.run_empty_suite)
         suite = builder.build(*datasources)
-        settings.rpa = suite.rpa
         if settings.pre_run_modifiers:
             suite.visit(ModelModifier(settings.pre_run_modifiers,
                                       settings.run_empty_suite, LOGGER))
         suite.configure(**settings.suite_config)
+        settings.rpa = suite.validate_execution_mode()
         with pyloggingconf.robot_handler_enabled(settings.log_level):
             old_max_error_lines = text.MAX_ERROR_LINES
             old_max_assign_length = text.MAX_ASSIGN_LENGTH

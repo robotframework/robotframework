@@ -27,8 +27,8 @@ Task header with --norpa
 
 Conflicting headers cause error
     [Template]    Run and validate conflict
-    rpa/tests.robot rpa/tasks    rpa/tasks/aliases.robot    tasks    tests
-    rpa/                         rpa/tests.robot            tests    tasks
+    rpa/tests.robot rpa/tasks    Rpa.Tests           Rpa.Tasks    tests    tasks
+    rpa/                         Rpa.Task Aliases    Rpa.Tests    tasks    tests
     ...    [[] ERROR ] Error in file '*[/\\]task_aliases.robot' on line 7:
     ...    Non-existing setting 'Tesk Setup'. Did you mean:\n
     ...    ${SPACE*3}Test Setup\n
@@ -66,11 +66,15 @@ Conflicting headers in same file cause error when executing directory
     --task task                            rpa/tasks    Task
     --rpa --task Test --test "An* T???"    rpa/         Another task    Test
 
+Suite containing tests is ok if only tasks are selected
+    --task task      rpa/tasks rpa/tests.robot    Task
+    --suite stuff    rpa/tasks rpa/tests.robot    Task    Another task
+
 Error message is correct if no task match --task or other options
     [Template]    Run and validate no task found
-    --task nonex                   matching name 'nonex'
-    --include xxx --exclude yyy    matching tag 'xxx' and not matching tag 'yyy'
-    --suite nonex --task task      matching name 'task' in suite 'nonex'
+    --rpa --task nonex                     no tasks matching name 'nonex'
+    --norpa --include xxx --exclude yyy    no tests matching tag 'xxx' and not matching tag 'yyy'
+    --suite nonex --task task              no tests or tasks matching name 'task' in suite 'nonex'
 
 Error message is correct if task name is empty or task contains no keywords
     [Template]    NONE
@@ -92,20 +96,19 @@ Run and validate test cases
     Should contain tests    ${SUITE}    @{tasks}
 
 Run and validate conflict
-    [Arguments]    ${paths}    ${conflicting}    ${this}    ${that}    @{extra errors}
-    Run tests without processing output    ${EMPTY}    ${paths}
-    ${conflicting} =    Normalize path    ${DATADIR}/${conflicting}
+    [Arguments]    ${paths}    ${suite1}    ${suite2}    ${mode1}    ${mode2}    @{extra errors}
+    Run tests without processing output    --name Rpa    ${paths}
     ${extra} =    Catenate    @{extra errors}
     ${error} =    Catenate
-    ...    [[] ERROR ] Parsing '${conflicting}' failed: Conflicting execution modes.
-    ...    File has ${this} but files parsed earlier have ${that}.
-    ...    Fix headers or use '--rpa' or '--norpa' options to set the execution mode explicitly.
+    ...    [[] ERROR ] Conflicting execution modes:
+    ...    Suite '${suite1}' has ${mode1} but suite '${suite2}' has ${mode2}.
+    ...    Resolve the conflict or use '--rpa' or '--norpa' options to set the execution mode explicitly.
     Stderr Should Match    ${extra}${error}${USAGE TIP}\n
 
 Run and validate no task found
     [Arguments]    ${options}    ${message}
-    Run tests without processing output    --rpa ${options}    rpa/tasks
-    Stderr Should Be Equal To    [ ERROR ] Suite 'Tasks' contains no tasks ${message}.${USAGE TIP}\n
+    Run tests without processing output    ${options}    rpa/tasks rpa/tests.robot
+    Stderr Should Be Equal To    [ ERROR ] Suite 'Tasks & Tests' contains ${message}.${USAGE TIP}\n
 
 Outputs should contain correct mode information
     [Arguments]    ${rpa}

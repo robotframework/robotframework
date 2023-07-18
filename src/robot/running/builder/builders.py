@@ -84,8 +84,8 @@ class TestSuiteBuilder:
             New in RF 6.1.
         :param rpa:
             Explicit execution mode. ``True`` for RPA and ``False`` for test
-            automation. By default, mode is got from data file headers and possible
-            conflicting headers cause an error. Same as ``--rpa`` or ``--norpa``.
+            automation. By default, mode is got from data file headers.
+            Same as ``--rpa`` or ``--norpa``.
         :param lang:
             Additional languages to be supported during parsing.
             Can be a string matching any of the supported language codes or names,
@@ -111,7 +111,7 @@ class TestSuiteBuilder:
         if included_suites != 'DEPRECATED':
             warnings.warn("'TestSuiteBuilder' argument 'included_suites' is deprecated "
                           "and has no effect. Use the new 'included_files' argument "
-                          "or filter the parsed suite instead.")
+                          "or filter the created suite instead.")
 
     def _get_standard_parsers(self, lang: LanguagesLike,
                               process_curdir: bool) -> 'dict[str, Parser]':
@@ -201,11 +201,11 @@ class TestSuiteBuilder:
 class SuiteStructureParser(SuiteStructureVisitor):
 
     def __init__(self, parsers: 'dict[str|None, Parser]',
-                 defaults: 'TestDefaults|None' = None, rpa: 'bool|None' = None):
+                 defaults: 'TestDefaults|None' = None,
+                 rpa: 'bool|None' = None):
         self.parsers = parsers
         self.rpa = rpa
         self.defaults = defaults
-        self._rpa_given = rpa is not None
         self.suite: 'TestSuite|None' = None
         self._stack: 'list[tuple[TestSuite, TestDefaults]]' = []
 
@@ -215,13 +215,13 @@ class SuiteStructureParser(SuiteStructureVisitor):
 
     def parse(self, structure: SuiteStructure) -> TestSuite:
         structure.visit(self)
-        suite = cast(TestSuite, self.suite)
-        suite.rpa = self.rpa
-        return suite
+        return cast(TestSuite, self.suite)
 
     def visit_file(self, structure: SuiteFile):
         LOGGER.info(f"Parsing file '{structure.source}'.")
         suite = self._build_suite_file(structure)
+        if self.rpa is not None:
+            suite.rpa = self.rpa
         if self.suite is None:
             self.suite = suite
         else:
@@ -239,8 +239,13 @@ class SuiteStructureParser(SuiteStructureVisitor):
 
     def end_directory(self, structure: SuiteDirectory):
         suite, _ = self._stack.pop()
-        if suite.rpa is None and suite.suites:
-            suite.rpa = suite.suites[0].rpa
+        if self.rpa is not None:
+            suite.rpa = self.rpa
+        elif suite.rpa is None and suite.suites:
+            if all(s.rpa is False for s in suite.suites):
+                suite.rpa = False
+            elif all(s.rpa is True for s in suite.suites):
+                suite.rpa = True
 
     def _build_suite_file(self, structure: SuiteFile):
         source = cast(Path, structure.source)
@@ -250,7 +255,6 @@ class SuiteStructureParser(SuiteStructureVisitor):
             suite = parser.parse_suite_file(source, defaults)
             if not suite.tests:
                 LOGGER.info(f"Data source '{source}' has no tests or tasks.")
-            self._validate_execution_mode(suite)
         except DataError as err:
             raise DataError(f"Parsing '{source}' failed: {err.message}")
         return suite
@@ -266,20 +270,6 @@ class SuiteStructureParser(SuiteStructureVisitor):
         except DataError as err:
             raise DataError(f"Parsing '{source}' failed: {err.message}")
         return suite, defaults
-
-    def _validate_execution_mode(self, suite: TestSuite):
-        if self._rpa_given:
-            suite.rpa = self.rpa
-        elif suite.rpa is None:
-            pass
-        elif self.rpa is None:
-            self.rpa = suite.rpa
-        elif self.rpa is not suite.rpa:
-            this, that = ('tasks', 'tests') if suite.rpa else ('tests', 'tasks')
-            raise DataError(f"Conflicting execution modes. File has {this} "
-                            f"but files parsed earlier have {that}. Fix headers "
-                            f"or use '--rpa' or '--norpa' options to set the "
-                            f"execution mode explicitly.")
 
 
 class ResourceFileBuilder:
