@@ -37,7 +37,7 @@ for path in ['../src', '../atest/testresources/testlibs', '../utest/resources']:
     if path not in sys.path:
         sys.path.insert(0, path)
 
-testfile = re.compile("^test_.*\.py$", re.IGNORECASE)
+testfile = re.compile(r"^test_.*\.py$", re.IGNORECASE)
 imported = {}
 
 

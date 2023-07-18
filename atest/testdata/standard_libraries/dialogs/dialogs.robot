@@ -1,6 +1,7 @@
 *** Settings ***
-Library         Dialogs
-Library         Collections
+Library           Dialogs
+Library           Collections
+Test Tags         manual    no-ci
 
 *** Variable ***
 ${FILLER} =     Wräp < & シ${SPACE}
@@ -32,8 +33,8 @@ Execute Manual Step Exit
     Execute Manual Step    Press <Esc>.    This should not be shown!!
 
 Get Value From User
-    ${value} =    Get Value From User    Type 'value' and press OK.    Overwrite me
-    Should Be Equal    ${value}    value
+    ${value} =    Get Value From User    Type 'robot' and press OK.    Overwrite me
+    Should Be Equal    ${value}    robot
 
 Get Non-ASCII Value From User
     ${value} =    Get Value From User    Press <Enter>.    ʕ•ᴥ•ʔ
@@ -44,8 +45,8 @@ Get Empty Value From User
     Should Be Equal    ${value}    ${EMPTY}
 
 Get Hidden Value From User
-    ${value} =    Get Value From User    Type 'value' and press OK or <Enter>.    hidden=yes
-    Should Be Equal    ${value}    value
+    ${value} =    Get Value From User    Type 'c' and press OK or <Enter>.    hidden=yes
+    Should Be Equal    ${value}    c
     ${value} =    Get Value From User    Press OK or <Enter>.    initial value    hide
     Should Be Equal    ${value}    initial value
 
@@ -59,6 +60,11 @@ Get Value From User Exited
     [Documentation]  FAIL No value provided by user.
     Get Value From User
     ...    Press <Esc>.\n\nAlso verify that the long text below is wrapped nicely.\n\n${FILLER*200}
+
+Get Value From User Shortcuts
+    ${value} =    Get Value From User
+    ...    1. Type 'oc'.\n2. Press <tab> to move focus.\n3. Press <o> to close the dialog.
+    Should Be Equal    ${value}    oc
 
 Get Selection From User
     ${value} =    Get Selection From User

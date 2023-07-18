@@ -39,10 +39,10 @@ Local keyword in resource file has precedence over keywords in other resource fi
     Check Log Message    ${tc.body[0].body[0].body[0].msgs[0]}    Keyword in resource 1
     Check Log Message    ${tc.body[1].body[0].body[0].msgs[0]}    Keyword in resource 2
 
-Local keyword in resource file has precedence even if search order is set
+Search order has precedence over local keyword in resource file
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.body[0].body[0].body[0].msgs[0]}    Keyword in resource 1
-    Check Log Message    ${tc.body[1].body[0].body[0].msgs[0]}    Keyword in resource 2
+    Check Log Message    ${tc.body[1].body[0].body[0].msgs[0]}    Keyword in resource 1
 
 Keyword From Custom Library Overrides Keywords From Standard Library
     ${tc} =    Check Test Case    ${TEST NAME}

@@ -1,5 +1,6 @@
-from pathlib import Path
+import re
 import sys
+from pathlib import Path
 
 
 CURDIR = Path(__file__).absolute().parent
@@ -20,6 +21,11 @@ class LanguageWrapper:
     def __getattr__(self, name):
         value = getattr(self.lang, name)
         return value if value is not None else ''
+
+    @property
+    def new_in(self):
+        new_in = re.search(r'(New in Robot Framework [\d.]+\.)', self.lang.__doc__)
+        return ('\n' + new_in.group(1) + '\n') if new_in else ''
 
     @property
     def underline(self):
@@ -58,7 +64,7 @@ class LanguageWrapper:
 TEMPLATE = '''
 {lang.name} ({lang.code})
 {lang.underline}
-
+{lang.new_in}
 Section headers
 ~~~~~~~~~~~~~~~
 

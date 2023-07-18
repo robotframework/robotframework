@@ -25,19 +25,19 @@ elsewhere.
 This package is considered stable.
 """
 
-from .body import BaseBody, Body, BodyItem, Branches
+from .body import BaseBody, Body, BodyItem, BaseBranches
 from .configurer import SuiteConfigurer
 from .control import Break, Continue, Error, For, If, IfBranch, Return, Try, TryBranch, While
 from .fixture import create_fixture
 from .itemlist import ItemList
 from .keyword import Keyword, Keywords
 from .message import Message, Messages
-from .modelobject import ModelObject
+from .modelobject import DataDict, ModelObject
 from .modifier import ModelModifier
 from .namepatterns import SuiteNamePatterns, TestNamePatterns
 from .statistics import Statistics
 from .tags import Tags, TagPattern, TagPatterns
-from .testcase import TestCase
-from .testsuite import TestSuite
-from .totalstatistics import TotalStatisticsBuilder
+from .testcase import TestCase, TestCases
+from .testsuite import TestSuite, TestSuites
+from .totalstatistics import TotalStatistics, TotalStatisticsBuilder
 from .visitor import SuiteVisitor

@@ -5,7 +5,7 @@ User keywords and variables in `suite files`_ and `suite
 initialization files`_ can only be used in files where they are
 created, but *resource files* provide a mechanism for sharing them.
 The high level syntax for creating resource files is exactly the same
-as when creating test case files and `supported file formats`_ are the same
+as when creating suite files and `supported file formats`_ are the same
 as well. The main difference is that resource files cannot have tests.
 
 *Variable files* provide a powerful mechanism for creating and sharing
@@ -21,13 +21,20 @@ also makes them somewhat more complicated than `Variable sections`_.
 Resource files
 --------------
 
+Resource files are typically created using the plain text format, but also
+`reStructuredText format`__ and `JSON format`__ are supported.
+
+__ `Resource files using reStructured text format`_
+__ `Resource files using JSON format`_
+
 Taking resource files into use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Resource files are imported using the :setting:`Resource` setting in the
 Settings section so that the path to the resource file is given as an argument
-to the setting. The recommended extension for resource files is
-:file:`.resource`, but also the normal :file:`.robot` extension works.
+to the setting. The recommended extension for resource files is :file:`.resource`.
+For backwards compatibility reasons also :file:`.robot`, :file:`.txt` and
+:file:`.tsv` work, but using :file:`.resource` may be mandated in the future.
 
 If the resource file path is absolute, it is used directly. Otherwise,
 the resource file is first searched relatively to the directory
@@ -47,7 +54,7 @@ are automatically changed to backslashes (:codesc:`\\`) on Windows.
 
    *** Settings ***
    Resource    example.resource
-   Resource    ../data/resources.robot
+   Resource    ../resources/login.resource
    Resource    package/example.resource
    Resource    ${RESOURCES}/common.resource
 
@@ -65,11 +72,12 @@ Resource file structure
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The higher-level structure of resource files is the same as that of
-test case files otherwise, but, of course, they cannot contain Test
-Case sections. Additionally, the Setting section in resource files can
-contain only import settings (:setting:`Library`, :setting:`Resource`,
-:setting:`Variables`) and :setting:`Documentation`. The Variable section and
-Keyword section are used exactly the same way as in test case files.
+suite files otherwise, but they cannot contain tests or tasks.
+Additionally, the Setting section in resource files can contain only imports
+(:setting:`Library`, :setting:`Resource`, :setting:`Variables`),
+:setting:`Documentation` and :setting:`Keyword Tags`.
+The Variable section and Keyword section are used exactly the same way
+as in suite files.
 
 If several resource files have a user keyword with the same name, they
 must be used so that the `keyword name is prefixed with the resource
@@ -125,6 +133,87 @@ Example resource file
    Input Password
        [Arguments]    ${password}
        Input Text    password_field    ${password}
+
+Resource files using reStructured text format
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `reStructuredText format`_ that can be used with `suite files`_  works
+also with resource files. Such resource files can use either :file:`.rst`
+or :file:`.rest` extension and they are otherwise imported exactly as
+normal resource files:
+
+.. sourcecode:: robotframework
+
+   *** Settings ***
+   Resource         example.rst
+
+When parsing resource files using the reStructuredText format, Robot Framework
+ignores all data outside code blocks containing Robot Framework data exactly
+the same way as when parsing `reStructuredText suite files`__.
+For example, the following resource file imports :name:`OperatingSystem` library,
+defines `${MESSAGE}` variable and creates :name:`My Keyword` keyword:
+
+.. sourcecode:: rest
+
+    Resource file using reStructuredText
+    ------------------------------------
+
+    This text is outside code blocks and thus ignored.
+
+    .. code:: robotframework
+
+       *** Settings ***
+       Library          OperatingSystem
+
+       *** Variables ***
+       ${MESSAGE}       Hello, world!
+
+    Also this text is outside code blocks and ignored. Code blocks not
+    containing Robot Framework data are ignored as well.
+
+    .. code:: robotframework
+
+       # Both space and pipe separated formats are supported.
+
+       | *** Keywords ***  |                        |         |
+       | My Keyword        | [Arguments]            | ${path} |
+       |                   | Directory Should Exist | ${path} |
+
+__ `reStructuredText format`_
+
+Resource files using JSON format
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Resource files can be created using JSON_ the `same way as suite files`__.
+Such JSON resource files must use either the standard :file:`.json` extension
+or the custom :file:`.rsrc` extension. They are otherwise imported exactly as
+normal resource files:
+
+.. sourcecode:: robotframework
+
+   *** Settings ***
+   Resource         example.rsrc
+
+Resource files can be converted to JSON using `ResourceFile.to_json`__ and
+recreated using `ResourceFile.from_json`__:
+
+.. sourcecode:: python
+
+   from robot.running import ResourceFile
+
+
+   # Create resource file based on data on the file system.
+   resource = ResourceFile.from_file_system('example.resource')
+
+   # Save JSON data to a file.
+   resource.to_json('example.rsrc')
+
+   # Recreate resource from JSON data.
+   resource = ResourceFile.from_json('example.rsrc')
+
+__ `JSON format`_
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.ResourceFile.to_json
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.ResourceFile.from_json
 
 Variable files
 --------------

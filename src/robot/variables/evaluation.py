@@ -71,20 +71,22 @@ def _decorate_variables(expression, variable_store):
     variable_started = False
     variable_found = False
     tokens = []
+    prev_toknum = None
     for toknum, tokval, _, _, _ in generate_tokens(StringIO(expression).readline):
         if variable_started:
             if toknum == token.NAME:
                 if tokval not in variable_store:
-                    variable_not_found('$%s' % tokval,
+                    variable_not_found(f'${tokval}',
                                        variable_store.as_dict(decoration=False),
                                        deco_braces=False)
                 tokval = 'RF_VAR_' + tokval
                 variable_found = True
             else:
-                tokens.append((token.ERRORTOKEN, '$'))
+                tokens.append((prev_toknum, '$'))
             variable_started = False
-        if toknum == token.ERRORTOKEN and tokval == '$':
+        if tokval == '$':
             variable_started = True
+            prev_toknum = toknum
         else:
             tokens.append((toknum, tokval))
     return untokenize(tokens).strip() if variable_found else expression

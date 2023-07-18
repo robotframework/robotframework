@@ -240,6 +240,8 @@
         </xs:choice>
         <xs:attribute name="condition" type="xs:string" />
         <xs:attribute name="limit" type="xs:string" />
+        <xs:attribute name="on_limit" type="xs:string" />
+        <xs:attribute name="on_limit_message" type="xs:string" />
     </xs:complexType>
     <xs:complexType name="WhileIteration">
         <xs:choice maxOccurs="unbounded">

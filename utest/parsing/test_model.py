@@ -6,7 +6,7 @@ from pathlib import Path
 
 from robot.parsing import get_model, get_resource_model, ModelVisitor, ModelTransformer, Token
 from robot.parsing.model.blocks import (
-    CommentSection, File, For, If, InvalidSection, Try, While,
+    File, For, If, ImplicitCommentSection, InvalidSection, Try, While,
     Keyword, KeywordSection, SettingSection, TestCase, TestCaseSection, VariableSection
 )
 from robot.parsing.model.statements import (
@@ -37,9 +37,9 @@ Keyword
     Log    Got ${arg1} and ${arg}!
     RETURN    x
 '''
-PATH = os.path.join(os.getenv('TEMPDIR') or tempfile.gettempdir(), 'test_model.robot')
+PATH = Path(os.getenv('TEMPDIR') or tempfile.gettempdir(), 'test_model.robot')
 EXPECTED = File(sections=[
-    CommentSection(
+    ImplicitCommentSection(
         body=[
             EmptyLine([
                 Token('EOL', '\n', 1, 0)
@@ -145,23 +145,22 @@ class TestGetModel(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        with open(PATH, 'w') as f:
-            f.write(DATA)
+        PATH.write_text(DATA)
 
     @classmethod
     def tearDownClass(cls):
-        os.remove(PATH)
+        PATH.unlink()
 
     def test_from_string(self):
         model = get_model(DATA)
         assert_model(model, EXPECTED)
 
     def test_from_path_as_string(self):
-        model = get_model(PATH)
+        model = get_model(str(PATH))
         assert_model(model, EXPECTED, source=PATH)
 
     def test_from_path_as_path(self):
-        model = get_model(Path(PATH))
+        model = get_model(PATH)
         assert_model(model, EXPECTED, source=PATH)
 
     def test_from_open_file(self):
@@ -171,39 +170,41 @@ class TestGetModel(unittest.TestCase):
 
 
 class TestSaveModel(unittest.TestCase):
+    different_path = PATH.parent / 'different.robot'
 
     @classmethod
     def setUpClass(cls):
-        with open(PATH, 'w') as f:
-            f.write(DATA)
+        PATH.write_text(DATA)
 
     @classmethod
     def tearDownClass(cls):
-        os.remove(PATH)
+        PATH.unlink()
+        if cls.different_path.exists:
+            cls.different_path.unlink()
 
     def test_save_to_original_path(self):
         model = get_model(PATH)
-        os.remove(PATH)
+        PATH.unlink()
         model.save()
         assert_model(get_model(PATH), EXPECTED, source=PATH)
 
     def test_save_to_different_path(self):
         model = get_model(PATH)
-        different = PATH + '.robot'
-        model.save(different)
-        assert_model(get_model(different), EXPECTED, source=different)
+        path = self.different_path
+        model.save(path)
+        assert_model(get_model(path), EXPECTED, source=path)
 
-    def test_save_to_original_path_as_path(self):
-        model = get_model(Path(PATH))
-        os.remove(PATH)
+    def test_save_to_original_path_as_str(self):
+        model = get_model(str(PATH))
+        PATH.unlink()
         model.save()
         assert_model(get_model(PATH), EXPECTED, source=PATH)
 
-    def test_save_to_different_path_as_path(self):
+    def test_save_to_different_path_as_str(self):
         model = get_model(PATH)
-        different = PATH + '.robot'
-        model.save(Path(different))
-        assert_model(get_model(different), EXPECTED, source=different)
+        path = self.different_path
+        model.save(Path(path))
+        assert_model(get_model(path), EXPECTED, source=path)
 
     def test_save_to_original_fails_if_source_is_not_path(self):
         message = 'Saving model requires explicit output ' \
@@ -440,7 +441,8 @@ Example
                         Token(Token.ARGUMENT, 'many', 3, 20),
                         Token(Token.ARGUMENT, 'values', 3, 28),
                         Token(Token.ARGUMENT, '!', 3, 38)],
-                errors=('WHILE cannot have more than one condition, got \'too\', \'many\', \'values\' and \'!\'.',)
+                errors=("WHILE loop cannot have more than one condition, "
+                        "got 'too', 'many', 'values' and '!'.",)
             ),
             end=End([
                 Token(Token.END, 'END', 5, 4)
@@ -1521,7 +1523,7 @@ class TestModelVisitors(unittest.TestCase):
         assert_equal(visitor.test_names, ['Example'])
         assert_equal(visitor.kw_names, ['Keyword'])
         assert_equal(visitor.blocks,
-                     ['File', 'CommentSection', 'TestCaseSection', 'TestCase',
+                     ['ImplicitCommentSection', 'TestCaseSection', 'TestCase',
                       'KeywordSection', 'Keyword'])
         assert_equal(visitor.statements,
                      ['EOL', 'TESTCASE HEADER', 'EOL', 'TESTCASE NAME',
@@ -1666,7 +1668,7 @@ Dokumentaatio    Header is de and setting is fi.
         expected = File(
             languages=('fi', 'de'),
             sections=[
-                CommentSection(body=[
+                ImplicitCommentSection(body=[
                     Config([
                         Token('CONFIG', 'language: fi', 1, 0),
                         Token('EOL', '\n', 1, 12)

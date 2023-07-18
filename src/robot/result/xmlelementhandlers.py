@@ -48,9 +48,8 @@ class ElementHandler:
     def get_child_handler(self, tag):
         if tag not in self.children:
             if not self.tag:
-                raise DataError("Incompatible root element '%s'." % tag)
-            raise DataError("Incompatible child element '%s' for '%s'."
-                            % (tag, self.tag))
+                raise DataError(f"Incompatible root element '{tag}'.")
+            raise DataError(f"Incompatible child element '{tag}' for '{self.tag}'.")
         return self.element_handlers[tag]
 
     def start(self, elem, result):
@@ -129,7 +128,7 @@ class KeywordHandler(ElementHandler):
         if not elem_type:
             creator = self._create_keyword
         else:
-            creator = getattr(self, '_create_%s' % elem_type.lower().replace(' ', '_'))
+            creator = getattr(self, '_create_' + elem_type.lower())
         return creator(elem, result)
 
     def _create_keyword(self, elem, result):
@@ -150,7 +149,7 @@ class KeywordHandler(ElementHandler):
         kw_type = 'teardown' if result.tests or result.suites else 'setup'
         keyword = getattr(result, kw_type)
         if not keyword:
-            keyword.config(kwname='Implicit %s' % kw_type, status=keyword.PASS)
+            keyword.config(kwname=f'Implicit {kw_type}', status=keyword.PASS)
         return keyword.body
 
     def _create_setup(self, elem, result):
@@ -380,7 +379,7 @@ class VarHandler(ElementHandler):
         elif result.type == result.ITERATION:
             result.variables[elem.get('name')] = value
         else:
-            raise DataError("Invalid element '%s' for result '%r'." % (elem, result))
+            raise DataError(f"Invalid element '{elem}' for result '{result!r}'.")
 
 
 @ElementHandler.register

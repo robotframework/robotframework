@@ -24,7 +24,7 @@ class Tokenizer:
     _pipe_splitter = re.compile(r'((?:\A|\s+)\|(?:\s+|\Z))', re.UNICODE)
 
     def tokenize(self, data: str, data_only: bool = False) -> 'Iterator[list[Token]]':
-        current = []
+        current: 'list[Token]' = []
         for lineno, line in enumerate(data.splitlines(not data_only), start=1):
             tokens = self._tokenize_line(line, lineno, not data_only)
             tokens, starts_new = self._cleanup_tokens(tokens, data_only)
@@ -38,7 +38,7 @@ class Tokenizer:
 
     def _tokenize_line(self, line: str, lineno: int, include_separators: bool):
         # Performance optimized code.
-        tokens = []
+        tokens: 'list[Token]' = []
         append = tokens.append
         offset = 0
         if line[:1] == '|' and line[:2].strip() == '|':
@@ -72,7 +72,7 @@ class Tokenizer:
             yield separator, False
         yield rest, True
 
-    def _cleanup_tokens(self, tokens, data_only):
+    def _cleanup_tokens(self, tokens: 'list[Token]', data_only: bool):
         has_data, has_comments, continues \
                 = self._handle_comments_and_continuation(tokens)
         self._remove_trailing_empty(tokens)
@@ -87,7 +87,8 @@ class Tokenizer:
             tokens = [t for t in tokens if t.type is None]
         return tokens, starts_new
 
-    def _handle_comments_and_continuation(self, tokens):
+    def _handle_comments_and_continuation(self, tokens: 'list[Token]') \
+            -> 'tuple[bool, bool, bool]':
         has_data = False
         commented = False
         continues = False
@@ -110,14 +111,14 @@ class Tokenizer:
                             has_data = True
         return has_data, commented, continues
 
-    def _remove_trailing_empty(self, tokens):
+    def _remove_trailing_empty(self, tokens: 'list[Token]'):
         for token in reversed(tokens):
             if not token.value and token.type != Token.EOL:
                 tokens.remove(token)
             elif token.type is None:
                 break
 
-    def _remove_leading_empty(self, tokens):
+    def _remove_leading_empty(self, tokens: 'list[Token]'):
         data_or_continuation = (None, Token.CONTINUATION)
         for token in list(tokens):
             if not token.value:
@@ -125,12 +126,13 @@ class Tokenizer:
             elif token.type in data_or_continuation:
                 break
 
-    def _ensure_data_after_continuation(self, tokens):
+    def _ensure_data_after_continuation(self, tokens: 'list[Token]'):
         cont = self._find_continuation(tokens)
         token = Token(lineno=cont.lineno, col_offset=cont.end_col_offset)
         tokens.insert(tokens.index(cont) + 1, token)
 
-    def _find_continuation(self, tokens):
+    def _find_continuation(self, tokens: 'list[Token]') -> Token:
         for token in tokens:
             if token.type == Token.CONTINUATION:
                 return token
+        raise ValueError('Continuation not found.')

@@ -14,14 +14,14 @@
 #  limitations under the License.
 
 from collections.abc import Iterator
-from io import IOBase, StringIO
+from io import StringIO
 from pathlib import Path
-from typing import Union
+from typing import TextIO, Union
 
 from .robottypes import is_bytes, is_pathlike, is_string
 
 
-Source = Union[Path, str, IOBase]
+Source = Union[Path, str, TextIO]
 
 
 class FileReader:  # FIXME: Rename to SourceReader
@@ -46,7 +46,7 @@ class FileReader:  # FIXME: Rename to SourceReader
     def __init__(self, source: Source, accept_text: bool = False):
         self.file, self._opened = self._get_file(source, accept_text)
 
-    def _get_file(self, source: Source, accept_text: bool) -> 'tuple[IOBase, bool]':
+    def _get_file(self, source: Source, accept_text: bool) -> 'tuple[TextIO, bool]':
         path = self._get_path(source, accept_text)
         if path:
             file = open(path, 'rb')

@@ -14,10 +14,11 @@
 #  limitations under the License.
 
 import copy
+from ast import literal_eval
 
 from robot.api import logger
-from robot.utils import (is_dict_like, is_list_like, is_string, is_truthy, Matcher,
-                         plural_or_not as s, seq2str, seq2str2, type_name)
+from robot.utils import (get_error_message, is_dict_like, is_list_like, is_truthy,
+                         Matcher, plural_or_not as s, seq2str, seq2str2, type_name)
 from robot.utils.asserts import assert_equal
 from robot.version import get_version
 
@@ -111,6 +112,11 @@ class _List:
         | Set List Value | ${L3} | -1 | yyy |
         =>
         | ${L3} = ['a', 'xxx', 'yyy']
+
+        Starting from Robot Framework 6.1, it is also possible to use the native
+        item assignment syntax. This is equivalent to the above:
+        | ${L3}[1] =  | Set Variable | xxx |
+        | ${L3}[-1] = | Set Variable | yyy |
         """
         self._validate_list(list_)
         try:
@@ -495,21 +501,25 @@ class _Dictionary:
         return dict(item)
 
     def set_to_dictionary(self, dictionary, *key_value_pairs, **items):
-        """Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.
+        """Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.
 
-        Giving items as ``key_value_pairs`` means giving keys and values
-        as separate arguments:
+        If given items already exist in the dictionary, their values are updated.
 
-        | Set To Dictionary | ${D1} | key | value | second | ${2} |
+        It is easiest to specify items using the ``name=value`` syntax:
+        | Set To Dictionary | ${D1} | key=value | second=${2} |
         =>
         | ${D1} = {'a': 1, 'key': 'value', 'second': 2}
 
-        | Set To Dictionary | ${D1} | key=value | second=${2} |
+        A limitation of the above syntax is that keys must be strings.
+        That can be avoided by passing keys and values as separate arguments:
+        | Set To Dictionary | ${D1} | key | value | ${2} | value 2 |
+        =>
+        | ${D1} = {'a': 1, 'key': 'value', 2: 'value 2'}
 
-        The latter syntax is typically more convenient to use, but it has
-        a limitation that keys must be strings.
-
-        If given keys already exist in the dictionary, their values are updated.
+        Starting from Robot Framework 6.1, it is also possible to use the native
+        item assignment syntax. This is equivalent to the above:
+        | ${D1}[key] =  | Set Variable | value |
+        | ${D1}[${2}] = | Set Variable | value 2 |
         """
         self._validate_dictionary(dictionary)
         if len(key_value_pairs) % 2 != 0:
@@ -751,7 +761,8 @@ class _Dictionary:
                           f"Dictionary contains value '{value}'.",
                           msg)
 
-    def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True):
+    def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True,
+                                     ignore_keys=None):
         """Fails if the given dictionaries are not equal.
 
         First the equality of dictionaries' keys is checked and after that all
@@ -759,11 +770,32 @@ class _Dictionary:
         are listed in the error message. The types of the dictionaries do not
         need to be same.
 
+        ``ignore_keys`` can be used to provide a list of keys to ignore in the
+        comparison. It can be an actual list or a Python list literal. This
+        option is new in Robot Framework 6.1.
+
+        Examples:
+        | Dictionaries Should Be Equal | ${dict} | ${expected} |
+        | Dictionaries Should Be Equal | ${dict} | ${expected} | ignore_keys=${ignored} |
+        | Dictionaries Should Be Equal | ${dict} | ${expected} | ignore_keys=['key1', 'key2'] |
+
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
         """
         self._validate_dictionary(dict1)
         self._validate_dictionary(dict2, 2)
+        if ignore_keys:
+            if isinstance(ignore_keys, str):
+                try:
+                    ignore_keys = literal_eval(ignore_keys)
+                except Exception:
+                    raise ValueError("Converting 'ignore_keys' to a list failed: "
+                                     + get_error_message())
+            if not is_list_like(ignore_keys):
+                raise ValueError(f"'ignore_keys' must be list-like, "
+                                 f"got {type_name(ignore_keys)}.")
+            dict1 = {k: v for k, v in dict1.items() if k not in ignore_keys}
+            dict2 = {k: v for k, v in dict2.items() if k not in ignore_keys}
         keys = self._keys_should_be_equal(dict1, dict2, msg, values)
         self._key_values_should_be_equal(keys, dict1, dict2, msg, values)
 
@@ -1021,7 +1053,7 @@ def _verify_condition(condition, default_msg, msg, values=False):
 
 def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
                              whitespace_insensitive=False):
-    if not is_string(pattern):
+    if not isinstance(pattern, str):
         raise TypeError(f"Pattern must be string, got '{type_name(pattern)}'.")
     regexp = False
     if pattern.startswith('regexp='):
@@ -1033,5 +1065,4 @@ def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
                       caseless=is_truthy(case_insensitive),
                       spaceless=is_truthy(whitespace_insensitive),
                       regexp=regexp)
-    return [string for string in iterable
-            if is_string(string) and matcher.match(string)]
+    return [item for item in iterable if isinstance(item, str) and matcher.match(item)]

@@ -98,7 +98,7 @@ class TestRunning(unittest.TestCase):
 
     def test_variables(self):
         suite = TestSuite(name='Suite')
-        suite.resource.variables.create('${ERROR}', 'Error message')
+        suite.resource.variables.create('${ERROR}', ['Error message'])
         suite.resource.variables.create('@{LIST}', ['Error', 'added tag'])
         suite.tests.create(name='T1').body.create_keyword('Fail', args=['${ERROR}'])
         suite.tests.create(name='T2').body.create_keyword('Fail', args=['@{LIST}'])
@@ -240,7 +240,7 @@ class TestCustomStreams(RunningTestCase):
 
     def _run(self, stdout=None, stderr=None, **options):
         suite = TestSuite(name='My Suite')
-        suite.resource.variables.create('${MESSAGE}', 'Hello, world!')
+        suite.resource.variables.create('${MESSAGE}', ['Hello, world!'])
         suite.tests.create(name='My Test')\
             .body.create_keyword('Log', args=['${MESSAGE}', 'WARN'])
         run(suite, stdout=stdout, stderr=stderr, **options)

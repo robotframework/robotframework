@@ -6,6 +6,9 @@ def match_in_both_libraries(match, both):
     assert match == 'Match'
     assert both == 'both'
 
+@keyword('Follow search ${order} in libraries')
+def follow_search_order_in_libraries(order):
+    assert order == 'order'
 
 @keyword('${match} libraries')
 def match_libraries(match):

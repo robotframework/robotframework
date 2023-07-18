@@ -13,8 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .blocks import (File, SettingSection, VariableSection, TestCaseSection,
-                     KeywordSection, CommentSection, InvalidSection,
-                     TestCase, Keyword, For, If, Try, While)
-from .statements import Statement
+from .blocks import (Block, CommentSection, Container, File, For, If,
+                     ImplicitCommentSection, InvalidSection, Keyword,
+                     KeywordSection, NestedBlock, Section, SettingSection,
+                     TestCase, TestCaseSection, Try, VariableSection, While)
+from .statements import Config, End, Statement
 from .visitor import ModelTransformer, ModelVisitor

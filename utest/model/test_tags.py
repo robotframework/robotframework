@@ -158,6 +158,10 @@ class TestTags(unittest.TestCase):
         assert_equal(Tags(['X']), 'x')
         assert_not_equal(Tags(['X']), 'y')
 
+    def test__eq__with_other_that_cannot_be_converted_to_tags(self):
+        assert_not_equal(Tags(), 1)
+        assert_not_equal(Tags(), None)
+
     def test__eq__normalized(self):
         assert_equal(Tags(['Hello world', 'Foo', 'Not_world']),
                      Tags(['nOT WORLD', 'FOO', 'hello world']))

@@ -729,6 +729,24 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             condition='$x > 0'
         )
 
+    def test_InlineIfHeader_with_assign(self):
+        # Test/Keyword
+        #     ${y} =    IF    $x > 0
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ASSIGN, '${y}'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.INLINE_IF),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, '$x > 0')
+        ]
+        assert_created_statement(
+            tokens,
+            InlineIfHeader,
+            condition='$x > 0',
+            assign=['${y}']
+        )
+
     def test_ElseIfHeader(self):
         # Test/Keyword
         #     ELSE IF    ${var} not in [@{list}]

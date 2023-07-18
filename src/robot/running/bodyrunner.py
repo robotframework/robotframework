@@ -26,8 +26,8 @@ from robot.result import (For as ForResult, While as WhileResult, If as IfResult
                           TryBranch as TryBranchResult)
 from robot.output import librarylogger as logger
 from robot.utils import (cut_assign_value, frange, get_error_message, get_timestamp,
-                         is_list_like, is_number, plural_or_not as s, seq2str,
-                         split_from_equals, type_name, Matcher, timestr_to_secs)
+                         is_list_like, is_number, plural_or_not as s, secs_to_timestr,
+                         seq2str, split_from_equals, type_name, Matcher, timestr_to_secs)
 from robot.variables import is_dict_variable, evaluate_expression
 
 from .statusreporter import StatusReporter
@@ -428,11 +428,13 @@ class WhileRunner:
                 except ExecutionPassed as passed:
                     passed.set_earlier_failures(errors)
                     raise passed
+                except LimitExceeded as exceeded:
+                    if exceeded.on_limit_pass:
+                        self._context.info(exceeded.message)
+                    else:
+                        errors.append(exceeded)
+                    break
                 except ExecutionFailed as failed:
-                    if isinstance(failed, LimitExceeded):
-                        if failed.on_limit_pass:
-                            self._context.info(failed.message)
-                            return
                     errors.extend(failed.get_errors())
                     if not failed.can_continue(ctx, self._templated):
                         break
@@ -455,7 +457,7 @@ class WhileRunner:
                                        resolve_variables=True)
         except Exception:
             msg = get_error_message()
-            raise DataError(f'Invalid WHILE condition: {msg}')
+            raise DataError(f'Invalid WHILE loop condition: {msg}')
 
 
 class IfRunner:
@@ -560,7 +562,8 @@ class TryRunner:
     def _run_invalid(self, data):
         error_reported = False
         for branch in data.body:
-            result = TryBranchResult(branch.type, branch.patterns, branch.variable)
+            result = TryBranchResult(branch.type, branch.patterns, branch.pattern_type,
+                                     branch.variable)
             with StatusReporter(branch, result, self._context, run=False, suppress=True):
                 runner = BodyRunner(self._context, run=False, templated=self._templated)
                 runner.run(branch.body)
@@ -733,7 +736,7 @@ class DurationLimit(WhileLimit):
             self.limit_exceeded()
 
     def __str__(self):
-        return f'{self.max_time} seconds'
+        return secs_to_timestr(self.max_time)
 
 
 class IterationCountLimit(WhileLimit):

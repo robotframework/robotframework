@@ -32,6 +32,15 @@ Limit can be disabled
 No Condition With Limit
     Check Test Case    ${TESTNAME}
 
+Limit exceeds in teardown
+    Check Test Case    ${TESTNAME}
+
+Limit exceeds after failures in teardown
+    Check Test Case    ${TESTNAME}
+
+Continue after limit in teardown
+    Check Test Case    ${TESTNAME}
+
 Invalid limit invalid suffix
     Check Test Case    ${TESTNAME}
 
@@ -41,6 +50,10 @@ Invalid limit invalid value
 Invalid limit mistyped prefix
     Check Test Case    ${TESTNAME}
 
+Limit used multiple times
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.body[0].limit}    1, 2
+
 Invalid values after limit
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.body[0].condition}    $variable < 2, limit=-1x, invalid, values
+    Should Be Equal    ${tc.body[0].condition}    $variable < 2, limit=2, invalid

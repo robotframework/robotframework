@@ -22,9 +22,9 @@ Invalid Usage In Resource file
 Local Private Keyword In Resource File Has Precedence Over Keywords In Another Resource
     Use Local Private Keyword Instead Of Keywords From Other Resources
 
-Local Private Keyword In Resource File Has Precedence Even If Search Order Is Set
+Search Order Has Precedence Over Local Private Keyword In Resource File
     [Setup]    Set Library Search Order    private2    private3
-    Use Local Private Keyword Instead Of Keywords From Other Resources
+    Use Search Order Instead Of Private Keyword When Prioritized Resource Keyword Is Public
     [Teardown]    Set Library Search Order
 
 Imported Public Keyword Has Precedence Over Imported Private Keywords

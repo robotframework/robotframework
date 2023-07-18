@@ -112,10 +112,14 @@ Non Matching When Running Multiple Suites
     --include nonex    tag 'nonex'    Pass And Fail & Normal
     --include nonex --name MyName   tag 'nonex'    MyName
 
+Suite containing tasks is ok if only tests are selected
+    --include test    Test    sources=rpa/tasks rpa/tests.robot
+    --exclude task    Test    sources=rpa/tasks rpa/tests.robot
+
 *** Keywords ***
 Run And Check Include And Exclude
-    [Arguments]    ${params}    @{tests}
-    Run Tests    ${params}    ${DATA SOURCES}
+    [Arguments]    ${params}    @{tests}    ${sources}=${DATA SOURCES}
+    Run Tests    ${params}    ${sources}
     Stderr Should Be Empty
     Should Contain Tests    ${SUITE}    @{tests}
 

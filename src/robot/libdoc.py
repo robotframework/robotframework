@@ -204,17 +204,18 @@ class LibDoc(Application):
     def _get_format_and_specdocformat(self, format, specdocformat, output):
         extension = Path(output).suffix[1:]
         format = self._validate('Format', format or extension,
-                                'HTML', 'XML', 'JSON', 'LIBSPEC')
+                                'HTML', 'XML', 'JSON', 'LIBSPEC', allow_none=False)
         specdocformat = self._validate('Spec doc format', specdocformat, 'RAW', 'HTML')
         if format == 'HTML' and specdocformat:
             raise DataError("The --specdocformat option is not applicable with "
                             "HTML outputs.")
         return format, specdocformat
 
-    def _validate(self, kind, value, *valid):
-        if not value:
+    def _validate(self, kind, value, *valid, allow_none=True):
+        if value:
+            value = value.upper()
+        elif allow_none:
             return None
-        value = value.upper()
         if value not in valid:
             raise DataError(f"{kind} must be {seq2str(valid, lastsep=' or ')}, "
                             f"got '{value}'.")

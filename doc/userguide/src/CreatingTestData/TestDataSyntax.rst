@@ -106,17 +106,21 @@ and their arguments, are separated from each others with two or more spaces.
 An alternative is using the `pipe separated format`_ where the separator is
 the pipe character surrounded with spaces (:codesc:`\ |\ `).
 
-Executed files typically use the :file:`.robot` extension, but that `can be
-configured`__ with the :option:`--extension` option. `Resource files`_
-can use the :file:`.robot` extension as well, but using the dedicated
-:file:`.resource` extension is recommended. Files containing non-ASCII
+Suite files typically use the :file:`.robot` extension, but what files are
+parsed `can be configured`__. `Resource files`_ can use the :file:`.robot`
+extension as well, but using the dedicated :file:`.resource` extension is
+recommended and may be mandated in the future. Files containing non-ASCII
 characters must be saved using the UTF-8 encoding.
 
-Robot Framework also supports reStructuredText_ files so that normal
-Robot Framework data is `embedded into code blocks`__. It is possible to
-use either :file:`.rst` or :file:`.rest` extension with reStructuredText
-files, but the aforementioned :option:`--extension` option `must be used`__
-to enable parsing them when executing a directory.
+Robot Framework supports also reStructuredText_ files so that normal
+Robot Framework data is `embedded into code blocks`__. Only files with
+the :file:`.robot.rst` extension are parsed by default. If you would
+rather use just :file:`.rst` or :file:`.rest` extension, that needs to be
+configured separately.
+
+Robot Framework data can also be created in `JSON format`_ that is targeted
+more for tool developers than normal Robot Framework users. Only JSON files
+with the custom :file:`.rbt` extension are parsed by default.
 
 Earlier Robot Framework versions supported data also in HTML and TSV formats.
 The TSV format still works if the data is compatible with the `space separated
@@ -129,9 +133,9 @@ format at all.
 
 __ `Selecting files to parse`_
 __ `reStructuredText format`_
-__ `Selecting files to parse`_
 
 .. _space separated plain text format:
+.. _plain text format:
 
 Space separated format
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -294,10 +298,12 @@ marked using the `code` directive, but Robot Framework supports also
        def example():
            print('Hello, world!')
 
-Robot Framework supports reStructuredText files using both :file:`.rst` and
-:file:`.rest` extension. When executing a directory containing reStucturedText
-files, the :option:`--extension` option must be used to explicitly tell that
-`these files should be parsed`__.
+Robot Framework supports reStructuredText files using :file:`.robot.rst`,
+:file:`.rst` and :file:`.rest` extensions. To avoid parsing unrelated
+reStructuredText files, only files with the :file:`.robot.rst` extension
+are parsed by default when executing a directory. Parsing files with
+other extensions `can be enabled`__ by using either :option:`--parseinclude`
+or :option:`--extension` option.
 
 __ `Selecting files to parse`_
 
@@ -305,6 +311,135 @@ When Robot Framework parses reStructuredText files, errors below level
 `SEVERE` are ignored to avoid noise about possible non-standard directives
 and other such markup. This may hide also real errors, but they can be seen
 when processing files using reStructuredText tooling normally.
+
+.. note:: Parsing :file:`.robot.rst` files automatically is new in
+          Robot Framework 6.1.
+
+JSON format
+~~~~~~~~~~~
+
+Robot Framework supports data also in JSON_ format. This format is designed
+more for tool developers than for regular Robot Framework users and it is not
+meant to be edited manually. Its most important use cases are:
+
+- Transferring data between processes and machines. A suite can be converted
+  to JSON in one machine and recreated somewhere else.
+- Saving a suite, possibly a nested suite, constructed from normal Robot Framework
+  data into a single JSON file that is faster to parse.
+- Alternative data format for external tools generating tests or tasks.
+
+.. note:: The JSON data support is new in Robot Framework 6.1 and it can be
+          enhanced in future Robot Framework versions. If you have an enhancement
+          idea or believe you have encountered a bug, please submit an issue__
+          or start a discussion thread on the `#devel` channel on our Slack_.
+
+__ https://issues.robotframework.org
+
+Converting suite to JSON
+''''''''''''''''''''''''
+
+A suite structure can be serialized into JSON by using the `TestSuite.to_json`__
+method. When used without arguments, it returns JSON data as a string, but
+it also accepts a path or an open file where to write JSON data along with
+configuration options related to JSON formatting:
+
+.. sourcecode:: python
+
+   from robot.running import TestSuite
+
+
+   # Create suite based on data on the file system.
+   suite = TestSuite.from_file_system('/path/to/data')
+
+   # Get JSON data as a string.
+   data = suite.to_json()
+
+   # Save JSON data to a file with custom indentation.
+   suite.to_json('data.rbt', indent=2)
+
+If you would rather work with Python data and then convert that to JSON
+or some other format yourself, you can use `TestSuite.to_dict`__ instead.
+
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.to_json
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.to_dict
+
+Creating suite from JSON
+''''''''''''''''''''''''
+
+A suite can be constructed from JSON data using the `TestSuite.from_json`__
+method. It works both with JSON strings and paths to JSON files:
+
+.. sourcecode:: python
+
+   from robot.running import TestSuite
+
+
+   # Create suite from JSON data in a file.
+   suite = TestSuite.from_json('data.rbt')
+
+   # Create suite from a JSON string.
+   suite = TestSuite.from_json('{"name": "Suite", "tests": [{"name": "Test"}]}')
+
+   # Execute suite. Notice that log and report needs to be created separately.
+   suite.run(output='example.xml')
+
+If you have data as a Python dictionary, you can use `TestSuite.from_dict`__
+instead. Regardless of how a suite is recreated, it exists only in memory and
+original data files on the file system are not recreated.
+
+As the above example demonstrates, the created suite can be executed using
+the `TestSuite.run`__ method. It may, however, be easier to execute a JSON file
+directly as explained in the following section.
+
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.from_json
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.from_dict
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.run
+
+Executing JSON files
+''''''''''''''''''''
+
+When executing tests or tasks using the `robot` command, JSON files with
+the custom :file:`.rbt` extension are parsed automatically. This includes
+running individual JSON files like `robot tests.rbt` and running directories
+containing :file:`.rbt` files. If you would rather use the standard
+:file:`.json` extension, you need to `configure which files are parsed`__.
+
+__ `Selecting files to parse`_
+
+Adjusting suite source
+''''''''''''''''''''''
+
+Suite source in the data got from `TestSuite.to_json` and `TestSuite.to_dict`
+is in absolute format. If a suite is recreated later on a different machine,
+the source may thus not match the directory structure on that machine. To
+avoid that, it is possible to use the `TestSuite.adjust_source`__ method to
+make the suite source relative before getting the data and add a correct root
+directory after the suite is recreated:
+
+.. sourcecode:: python
+
+   from robot.running import TestSuite
+
+
+   # Create a suite, adjust source and convert to JSON.
+   suite = TestSuite.from_file_system('/path/to/data')
+   suite.adjust_source(relative_to='/path/to')
+   suite.to_json('data.rbt')
+
+   # Recreate suite elsewhere and adjust source accordingly.
+   suite = TestSuite.from_json('data.rbt')
+   suite.adjust_source(root='/new/path/to')
+
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.adjust_source
+
+JSON structure
+''''''''''''''
+
+Imports, variables and keywords created in suite files are included in the
+generated JSON along with tests and tasks. The exact JSON structure is documented
+in the :file:`running.json` `schema file`__.
+
+__ https://github.com/robotframework/robotframework/tree/master/doc/schema#readme
 
 Rules for parsing the data
 --------------------------
@@ -647,6 +782,7 @@ to see the actual translations:
 - `Thai (th)`_
 - `Turkish (tr)`_
 - `Ukrainian (uk)`_
+- `Vietnamese (vi)`_
 - `Chinese Simplified (zh-CN)`_
 - `Chinese Traditional (zh-TW)`_
 

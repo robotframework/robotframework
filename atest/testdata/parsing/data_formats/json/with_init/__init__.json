@@ -1,0 +1,85 @@
+{
+"name":"With Init",
+"doc":"Testing suite init file",
+"source":"atest/testdata/parsing/data_formats/json/with_init",
+"setup":{
+"name":"Suite Setup",
+"lineno":2
+},
+"suites":[
+{
+"name":"Sub Suite1",
+"source":"atest/testdata/parsing/data_formats/json/with_init/sub_suite1.ROBOT",
+"tests":[
+{
+"name":"Suite1 Test",
+"lineno":23,
+"body":[
+{
+"name":"No Operation",
+"lineno":23
+}
+]
+}
+],
+"resource":{}
+},
+{
+"name":"Sub Suite2",
+"source":"atest/testdata/parsing/data_formats/json/with_init/sub_suite2.robot",
+"tests":[
+{
+"name":"Suite2 Test",
+"doc":"FAIL       Expected failure",
+"lineno":4,
+"body":[
+{
+"name":"Fail",
+"args":[
+"${msg}"
+],
+"lineno":5
+}
+]
+}
+],
+"resource":{
+"variables":[
+{
+"name":"${msg}",
+"value":[
+"Expected failure"
+],
+"lineno":11
+}
+]
+}
+}
+],
+"resource":{
+"variables":[
+{
+"name":"${msg}",
+"value":[
+"Running suite setup"
+],
+"lineno":6
+}
+],
+"keywords":[
+{
+"name":"Suite Setup",
+"lineno":9,
+"body":[
+{
+"name":"Log",
+"args":[
+"${msg}"
+],
+"lineno":9
+}
+]
+}
+]
+}
+}

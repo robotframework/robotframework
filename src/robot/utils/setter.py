@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 from typing import Callable, Generic, overload, TypeVar, Type, Union
 
 
@@ -92,3 +93,7 @@ class SetterAwareType(type):
                     slots.append(item.attr_name)
             dct['__slots__'] = slots
         return type.__new__(cls, name, bases, dct)
+
+    if sys.version_info < (3, 7):
+        def __getitem__(self, item):
+            return self

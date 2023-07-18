@@ -34,13 +34,18 @@ Tag as pattern
 Keywords with skip status are expanded
     s1-s9-t1-k2    s1-s9-t2-k2-k1                 # NAME:BuiltIn.Skip
 
+Keywords with fail status are expanded
+    [Documentation]    Expanding happens regardless is test skipped or not.
+    s1-s1-t2-k2    s1-s2-t7-k1    s1-s7-t1-k1-k1-k1-k1-k1-k1    # NAME:BuiltIn.Fail
+
 *** Keywords ***
 Run tests with expanding
     ${options} =    Catenate
     ...    --log log.html
+    ...    --skiponfailure fail
     ...    --expandkeywords name:MyKeyword
     ...    --ExpandKeywords NAME:BuiltIn.Sleep
-    ...    --ExpandKeywords NAME:BuiltIn.Fail    # Failed and not run keywords aren't expanded so this doesn't match anything.
+    ...    --ExpandKeywords NAME:BuiltIn.Fail
     ...    --ExpandKeywords NAME:BuiltIn.Skip
     ...    --expand "Name:???-Ä* K?ywörd Näm?"
     ...    --expandkeywords name:<blink>NO</blink>

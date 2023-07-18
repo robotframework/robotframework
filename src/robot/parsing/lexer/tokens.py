@@ -14,8 +14,13 @@
 #  limitations under the License.
 
 from collections.abc import Iterator
+from typing import cast, List
 
 from robot.variables import VariableIterator
+
+
+# Type alias to ease typing elsewhere
+StatementTokens = List['Token']
 
 
 class Token:
@@ -74,12 +79,15 @@ class Token:
     RETURN = 'RETURN'
     RETURN_SETTING = RETURN
 
+    # TODO: Change WITH_NAME value to AS in RF 7.0. Remove WITH_NAME in RF 8.
+    WITH_NAME = 'WITH NAME'
+    AS = 'AS'
+
     NAME = 'NAME'
     VARIABLE = 'VARIABLE'
     ARGUMENT = 'ARGUMENT'
     ASSIGN = 'ASSIGN'
     KEYWORD = 'KEYWORD'
-    WITH_NAME = 'WITH NAME'
     FOR = 'FOR'
     FOR_SEPARATOR = 'FOR SEPARATOR'
     END = 'END'
@@ -90,7 +98,6 @@ class Token:
     TRY = 'TRY'
     EXCEPT = 'EXCEPT'
     FINALLY = 'FINALLY'
-    AS = 'AS'
     WHILE = 'WHILE'
     RETURN_STATEMENT = 'RETURN STATEMENT'
     CONTINUE = 'CONTINUE'
@@ -168,8 +175,8 @@ class Token:
                 Token.END: 'END', Token.CONTINUE: 'CONTINUE', Token.BREAK: 'BREAK',
                 Token.RETURN_STATEMENT: 'RETURN', Token.CONTINUATION: '...',
                 Token.EOL: '\n', Token.WITH_NAME: 'WITH NAME', Token.AS: 'AS'
-            }.get(type, '')
-        self.value = value
+            }.get(type, '')    # type: ignore
+        self.value = cast(str, value)
         self.lineno = lineno
         self.col_offset = col_offset
         self.error = error
@@ -203,10 +210,10 @@ class Token:
             return self._tokenize_no_variables()
         return self._tokenize_variables(variables)
 
-    def _tokenize_no_variables(self):
+    def _tokenize_no_variables(self) -> 'Iterator[Token]':
         yield self
 
-    def _tokenize_variables(self, variables):
+    def _tokenize_variables(self, variables) -> 'Iterator[Token]':
         lineno = self.lineno
         col_offset = self.col_offset
         remaining = ''

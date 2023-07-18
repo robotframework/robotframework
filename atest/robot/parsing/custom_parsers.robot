@@ -16,11 +16,19 @@ Single file
 Directory
     [Documentation]    Also tests parser implemented as a class.
     Run Tests    --parser ${DIR}/CustomParser.py    ${DIR}
-    Validate Directory Suite    Custom    custom=False
+    Validate Directory Suite
 
 Directory with init
     Run Tests    --parser ${DIR}/CustomParser.py:init=True    ${DIR}
-    Validate Directory Suite    📁    custom=True
+    Validate Directory Suite    init=True
+
+Extension with multiple parts
+    [Documentation]    Also tests usage with `--parse-include`.
+    Run Tests    --parser ${DIR}/CustomParser.py:multi.part.ext --parse-include *.multi.part.ext    ${DIR}
+    Validate Suite    ${SUITE}    Custom    ${DIR}    custom=False
+    ...    Passing=PASS
+    Validate Suite    ${SUITE.suites[0]}    Tests    ${DIR}/tests.multi.part.ext
+    ...    Passing=PASS
 
 Override Robot parser
     Run Tests    --parser ${DIR}/CustomParser.py:.robot    ${DIR}/tests.robot
@@ -32,9 +40,13 @@ Override Robot parser
     Validate Suite    ${SUITE.suites[0]}    Tests    ${DIR}/tests.robot
     ...    Test in Robot file=PASS
 
+Multiple parsers
+    Run Tests    --parser ${DIR}/CustomParser.py:ROBOT --PARSER ${DIR}/custom.py    ${DIR}
+    Validate Directory Suite    custom_robot=True
+
 Directory with init when parser does not support inits
     Parsing Should Fail    init
-    ...    Parsing '${DIR}' failed:
+    ...    Parsing '${DIR}${/}__init__.init' failed:
     ...    'CustomParser' does not support parsing initialization files.
 
 Incompatible parser
@@ -51,7 +63,7 @@ Failing parser
     ...    Calling 'CustomParser.parse()' failed:
     ...    TypeError: Ooops!
     Parsing Should Fail    fail=True:init=True
-    ...    Parsing '${DIR}' failed:
+    ...    Parsing '${DIR}${/}__init__.init' failed:
     ...    Calling 'CustomParser.parse_init()' failed:
     ...    TypeError: Ooops in init!
 
@@ -61,7 +73,7 @@ Bad return value
     ...    Calling 'CustomParser.parse()' failed:
     ...    TypeError: Return value should be 'robot.running.TestSuite', got 'string'.
     Parsing Should Fail    bad_return=True:init=True
-    ...    Parsing '${DIR}' failed:
+    ...    Parsing '${DIR}${/}__init__.init' failed:
     ...    Calling 'CustomParser.parse_init()' failed:
     ...    TypeError: Return value should be 'robot.running.TestSuite', got 'integer'.
 
@@ -79,8 +91,8 @@ Validate Suite
     Should Contain Tests    ${suite}    &{tests}
 
 Validate Directory Suite
-    [Arguments]    ${name}    ${custom}=True
-    Validate Suite    ${SUITE}    ${name}    ${DIR}    ${custom}
+    [Arguments]    ${init}=False    ${custom_robot}=False
+    Validate Suite    ${SUITE}    ${{'📁' if ${init} else 'Custom'}}    ${DIR}    ${init}
     ...    Passing=PASS
     ...    Failing=FAIL:Error message
     ...    Empty=FAIL:Test cannot be empty.
@@ -92,8 +104,23 @@ Validate Directory Suite
     ...    Passing=PASS
     ...    Failing=FAIL:Error message
     ...    Empty=FAIL:Test cannot be empty.
-    Validate Suite    ${SUITE.suites[2]}    Tests    ${DIR}/tests.robot    custom=False
+    Validate Suite    ${SUITE.suites[2]}    Tests    ${DIR}/tests.robot    custom=${custom robot}
     ...    Test in Robot file=PASS
+    FOR    ${test}    IN    @{SUITE.all_tests}
+        IF    ${init}
+            Should Contain Tags    ${test}            tag from init
+            Should Be Equal        ${test.timeout}    42 seconds
+            IF    '${test.name}' != 'Empty'
+                Check Log Message    ${test.setup.msgs[0]}       setup from init
+                Check Log Message    ${test.teardown.msgs[0]}    teardown from init
+            END
+        ELSE
+            Should Not Be True    ${test.tags}
+            Should Not Be True    ${test.timeout}
+            Should Not Be True    ${test.setup}
+            Should Not Be True    ${test.teardown}
+        END
+    END
 
 Parsing should fail
     [Arguments]    ${config}    @{error}

@@ -157,11 +157,11 @@ Both user keywords and `library keywords`_ can have tags. Similarly as when
 
    *** Keywords ***
    No own tags
-       [Documentation]    This test has tag 'gui'.
+       [Documentation]    This keyword has tag 'gui'.
        No Operation
 
    Own tags
-       [Documentation]    This test has tags 'gui', 'own' and 'tags'.
+       [Documentation]    This keyword has tags 'gui', 'own' and 'tags'.
        [Tags]    own    tags
        No Operation
 
@@ -702,9 +702,9 @@ succeeds:
 
 Before looking which match is best, Robot Framework checks are some of the matching
 keywords implemented in the same file as the caller keyword. If there are such keywords,
-they are given precedence over other keywords. If there are still conflicts
-after looking for best matches, Robot Framework checks can they be
-resolved based on the `library search order`_.
+they are given precedence over other keywords. Alternatively, `library search order`_
+can be used to control the order in which Robot Framework looks for keywords in resources
+and libraries.
 
 .. note:: Automatically resolving conflicts if multiple keywords with embedded
           arguments match is a new feature in Robot Framework 6.0. With older

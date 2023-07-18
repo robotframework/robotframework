@@ -13,15 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Any, Sequence, Type, TYPE_CHECKING
+from typing import cast, Sequence, Type, TYPE_CHECKING
 import warnings
 
-from .body import Body, BodyItem
+from .body import Body, BodyItem, BodyItemParent
 from .itemlist import ItemList
+from .modelobject import DataDict
 
 if TYPE_CHECKING:
-    from .testcase import TestCase
-    from .testsuite import TestSuite
     from .visitor import SuiteVisitor
 
 
@@ -35,22 +34,30 @@ class Keyword(BodyItem):
     repr_args = ('name', 'args', 'assign')
     __slots__ = ['_name', 'args', 'assign', 'type']
 
-    def __init__(self, name: str = '', args: Sequence[str] = (),
-                 assign: Sequence[str] = (), type: str = BodyItem.KEYWORD,
-                 parent: 'TestSuite|TestCase|BodyItem|None' = None):
-        self._name = name
-        self.args = args
-        self.assign = assign
+    def __init__(self, name: 'str|None' = '',
+                 args: Sequence[str] = (),
+                 assign: Sequence[str] = (),
+                 type: str = BodyItem.KEYWORD,
+                 parent: BodyItemParent = None):
+        self.name = name
+        self.args = tuple(args)
+        self.assign = tuple(assign)
         self.type = type
         self.parent = parent
 
     @property
-    def name(self) -> str:
+    def name(self) -> 'str|None':
         return self._name
 
     @name.setter
-    def name(self, name: str):
+    def name(self, name: 'str|None'):
         self._name = name
+
+    @property
+    def id(self) -> 'str|None':
+        if not self:
+            return None
+        return super().id
 
     def visit(self, visitor: 'SuiteVisitor'):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
@@ -64,16 +71,17 @@ class Keyword(BodyItem):
         parts = list(self.assign) + [self.name] + list(self.args)
         return '    '.join(str(p) for p in parts)
 
-    def to_dict(self) -> 'dict[str, Any]':
-        data: 'dict[str, Any]' = {'name': self.name}
+    def to_dict(self) -> DataDict:
+        data: DataDict = {'name': self.name}
         if self.args:
-            data['args'] = list(self.args)
+            data['args'] = self.args
         if self.assign:
-            data['assign'] = list(self.assign)
+            data['assign'] = self.assign
         return data
 
 
-class Keywords(ItemList[Keyword]):
+# FIXME: Remote in RF 7.
+class Keywords(ItemList[BodyItem]):
     """A list-like object representing keywords in a suite, a test or a keyword.
 
     Read-only and deprecated since Robot Framework 4.0.
@@ -84,8 +92,8 @@ class Keywords(ItemList[Keyword]):
         "Use 'body', 'setup' or 'teardown' instead."
     )
 
-    def __init__(self, parent: 'TestSuite|None' = None,
-                 keywords: 'Sequence[Keyword]|Keywords' = ()):
+    def __init__(self, parent: BodyItemParent = None,
+                 keywords: Sequence[BodyItem] = ()):
         warnings.warn(self.deprecation_message, UserWarning)
         ItemList.__init__(self, object, {'parent': parent})
         if keywords:
@@ -93,7 +101,9 @@ class Keywords(ItemList[Keyword]):
 
     @property
     def setup(self) -> 'Keyword|None':
-        return self[0] if (self and self[0].type == 'SETUP') else None
+        if self and self[0].type == 'SETUP':
+            return cast(Keyword, self[0])
+        return None
 
     @setup.setter
     def setup(self, kw):
@@ -104,7 +114,9 @@ class Keywords(ItemList[Keyword]):
 
     @property
     def teardown(self) -> 'Keyword|None':
-        return self[-1] if (self and self[-1].type == 'TEARDOWN') else None
+        if self and self[-1].type == 'TEARDOWN':
+            return cast(Keyword, self[-1])
+        return None
 
     @teardown.setter
     def teardown(self, kw: Keyword):
@@ -119,7 +131,7 @@ class Keywords(ItemList[Keyword]):
         return self
 
     @property
-    def normal(self) -> 'list[Keyword]':
+    def normal(self) -> 'list[BodyItem]':
         """Iterates over normal keywords, omitting setup and teardown."""
         return [kw for kw in self if kw.type not in ('SETUP', 'TEARDOWN')]
 

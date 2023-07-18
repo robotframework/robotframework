@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator
 from itertools import chain
 
 from robot.conf import LanguagesLike
@@ -126,7 +126,7 @@ class Lexer:
             tokens = self._tokenize_variables(tokens)
         return tokens
 
-    def _get_tokens(self, statements: 'list[list[Token]]') -> 'Iterator[Token]':
+    def _get_tokens(self, statements: 'Iterable[list[Token]]') -> 'Iterator[Token]':
         if self.data_only:
             ignored_types = {None, Token.COMMENT_HEADER, Token.COMMENT}
         else:
@@ -147,11 +147,12 @@ class Lexer:
                 if token_type == inline_if_type:
                     inline_if = True
                 last = token
-            if last and not last._add_eos_after:
-                yield EOS.from_token(last)
-            if inline_if:
-                yield END.from_token(last, virtual=True)
-                yield EOS.from_token(last)
+            if last:
+                if not last._add_eos_after:
+                    yield EOS.from_token(last)
+                if inline_if:
+                    yield END.from_token(last, virtual=True)
+                    yield EOS.from_token(last)
 
     def _split_trailing_commented_and_empty_lines(self, statement: 'list[Token]') \
             -> 'list[list[Token]]':

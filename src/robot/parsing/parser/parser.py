@@ -13,12 +13,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from typing import Callable, Iterator
+
 from robot.conf import LanguagesLike
 from robot.utils import Source
 
 from ..lexer import get_init_tokens, get_resource_tokens, get_tokens, Token
-from ..model import File, ModelVisitor, Statement
+from ..model import File, Config, ModelVisitor, Statement
 
+from .blockparsers import Parser
 from .fileparser import FileParser
 
 
@@ -75,15 +78,18 @@ def get_init_model(source: Source, data_only: bool = False, curdir: 'str|None' =
     return _get_model(get_init_tokens, source, data_only, curdir, lang)
 
 
-def _get_model(token_getter, source, data_only=False, curdir=None, lang=None):
+def _get_model(token_getter: Callable[..., Iterator[Token]], source: Source,
+               data_only: bool, curdir: 'str|None', lang: LanguagesLike):
     tokens = token_getter(source, data_only, lang=lang)
     statements = _tokens_to_statements(tokens, curdir)
     model = _statements_to_model(statements, source)
+    ConfigParser.parse(model)
     model.validate_model()
     return model
 
 
-def _tokens_to_statements(tokens, curdir=None):
+def _tokens_to_statements(tokens: Iterator[Token],
+                          curdir: 'str|None') -> Iterator[Statement]:
     statement = []
     EOS = Token.EOS
     for t in tokens:
@@ -96,26 +102,30 @@ def _tokens_to_statements(tokens, curdir=None):
             statement = []
 
 
-def _statements_to_model(statements, source=None):
-    parser = FileParser(source=source)
-    model = parser.model
-    stack = [parser]
+def _statements_to_model(statements: Iterator[Statement], source: Source) -> File:
+    root = FileParser(source=source)
+    stack: 'list[Parser]' = [root]
     for statement in statements:
         while not stack[-1].handles(statement):
             stack.pop()
         parser = stack[-1].parse(statement)
         if parser:
             stack.append(parser)
-    # Implicit comment sections have no header.
-    if model.sections and model.sections[0].header is None:
-        SetLanguages(model).visit(model.sections[0])
-    return model
+    return root.model
 
 
-class SetLanguages(ModelVisitor):
+class ConfigParser(ModelVisitor):
 
-    def __init__(self, file):
-        self.file = file
+    def __init__(self, model: File):
+        self.model = model
 
-    def visit_Config(self, node):
-        self.file.languages += (node.language.code,)
+    @classmethod
+    def parse(cls, model: File):
+        # Only implicit comment sections can contain configs. They have no header.
+        if model.sections and model.sections[0].header is None:
+            cls(model).visit(model.sections[0])
+
+    def visit_Config(self, node: Config):
+        language = node.language
+        if language:
+            self.model.languages.append(language.code)

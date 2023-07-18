@@ -51,7 +51,7 @@ Error Message In Log Should Not Have Been Cut
 
 Should Match Non Empty Regexp
     [Arguments]    ${message}    ${pattern}
-    Run Keyword If    '${pattern}'    Should Match Regexp    ${message}    ${pattern}
+    IF    $pattern    Should Match Regexp    ${message}    ${pattern}
 
 Has Not Been Cut
     [Arguments]    ${testname}

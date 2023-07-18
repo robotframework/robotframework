@@ -27,13 +27,19 @@ The public API of this module consists of the following objects:
   classmethod that uses it internally.
 
 * Classes used by :class:`~robot.running.model.TestSuite`, such as
-  :class:`~robot.running.model.TestCase` and :class:`~robot.running.model.Keyword`,
-  that are defined in the :mod:`robot.running.model` module.
+  :class:`~robot.running.model.TestCase`, :class:`~robot.running.model.Keyword`
+  and :class:`~robot.running.model.If` that are defined in the
+  :mod:`robot.running.model` module. These classes are typically only needed
+  in type hints.
+
+* :class:`~robot.running.builder.settings.TestDefaults` that is part of the
+  `external parsing API`__ and also typically needed only in type hints.
+
+__ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#parser-interface
 
 :class:`~robot.running.model.TestSuite` and
-:class:`~robot.running.builder.builders.TestSuiteBuilder` can be imported via
-the :mod:`robot.api` package. If other classes are needed directly, they can be
-imported via :mod:`robot.running`.
+:class:`~robot.running.builder.builders.TestSuiteBuilder` can be imported also via
+the :mod:`robot.api` package.
 
 .. note:: Prior to Robot Framework 6.1, only some classes in
           :mod:`robot.running.model` were exposed via :mod:`robot.running`.
@@ -102,10 +108,10 @@ the results is possible using the
 """
 
 from .arguments import ArgInfo, ArgumentSpec, TypeConverter, TypeInfo
-from .builder import ResourceFileBuilder, TestSuiteBuilder
+from .builder import ResourceFileBuilder, TestDefaults, TestSuiteBuilder
 from .context import EXECUTION_CONTEXTS
 from .model import (Break, Continue, Error, For, If, IfBranch, Keyword, Return,
-                    TestCase, TestSuite, Try, TryBranch, While)
+                    ResourceFile, TestCase, TestSuite, Try, TryBranch, While)
 from .runkwregister import RUN_KW_REGISTER
 from .testlibraries import TestLibrary
 from .usererrorhandler import UserErrorHandler

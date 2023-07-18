@@ -245,7 +245,7 @@ def create_distribution():
         print(f'Copying {source!r} -> {dest!r}')
         shutil.copy(source, dest)
 
-    link_regexp = re.compile('''
+    link_regexp = re.compile(r'''
 (<(a|img)\s+.*?)
 (\s+(href|src)="(.*?)"|>)
 ''', re.VERBOSE | re.DOTALL | re.IGNORECASE)

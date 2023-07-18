@@ -14,11 +14,12 @@
 #  limitations under the License.
 
 from functools import total_ordering
-from collections.abc import Mapping
-from typing import (Iterable, Iterator, MutableSequence, overload, TYPE_CHECKING,
+from typing import (Any, Iterable, Iterator, MutableSequence, overload, TYPE_CHECKING,
                     Type, TypeVar)
 
-from robot.utils import type_name
+from robot.utils import copy_signature, KnownAtRuntime, type_name
+
+from .modelobject import DataDict
 
 if TYPE_CHECKING:
     from .visitor import SuiteVisitor
@@ -44,28 +45,31 @@ class ItemList(MutableSequence[T]):
     """
 
     __slots__ = ['_item_class', '_common_attrs', '_items']
+    # TypeVar T needs to be applied to a variable to be compatible with @copy_signature
+    item_type: Type[T] = KnownAtRuntime
 
     def __init__(self, item_class: Type[T],
-                 common_attrs: 'Mapping|None' = None,
-                 items: 'Iterable[T|Mapping]' = ()):
+                 common_attrs: 'dict[str, Any]|None' = None,
+                 items: 'Iterable[T|DataDict]' = ()):
         self._item_class = item_class
         self._common_attrs = common_attrs
         self._items: 'list[T]' = []
         if items:
             self.extend(items)
 
+    @copy_signature(item_type)
     def create(self, *args, **kwargs) -> T:
         """Create a new item using the provided arguments."""
         return self.append(self._item_class(*args, **kwargs))
 
-    def append(self, item: 'T|Mapping'):
+    def append(self, item: 'T|DataDict') -> T:
         item = self._check_type_and_set_attrs(item)
         self._items.append(item)
         return item
 
-    def _check_type_and_set_attrs(self, item: 'T|Mapping') -> T:
+    def _check_type_and_set_attrs(self, item: 'T|DataDict') -> T:
         if not isinstance(item, self._item_class):
-            if isinstance(item, Mapping):
+            if isinstance(item, dict):
                 item = self._item_from_dict(item)
             else:
                 raise TypeError(f'Only {type_name(self._item_class)} objects '
@@ -75,15 +79,15 @@ class ItemList(MutableSequence[T]):
                 setattr(item, attr, value)
         return item
 
-    def _item_from_dict(self, data: Mapping) -> T:
+    def _item_from_dict(self, data: DataDict) -> T:
         if hasattr(self._item_class, 'from_dict'):
             return self._item_class.from_dict(data)    # type: ignore
         return self._item_class(**data)
 
-    def extend(self, items: 'Iterable[T|Mapping]'):
+    def extend(self, items: 'Iterable[T|DataDict]'):
         self._items.extend(self._check_type_and_set_attrs(i) for i in items)
 
-    def insert(self, index: int, item: 'T|Mapping'):
+    def insert(self, index: int, item: 'T|DataDict'):
         item = self._check_type_and_set_attrs(item)
         self._items.insert(index, item)
 
@@ -125,11 +129,11 @@ class ItemList(MutableSequence[T]):
         return new
 
     @overload
-    def __setitem__(self, index: int, item: 'T|Mapping'):
+    def __setitem__(self, index: int, item: 'T|DataDict'):
         ...
 
     @overload
-    def __setitem__(self, index: slice, item: 'Iterable[T|Mapping]'):
+    def __setitem__(self, index: slice, item: 'Iterable[T|DataDict]'):
         ...
 
     def __setitem__(self, index, item):
@@ -209,7 +213,7 @@ class ItemList(MutableSequence[T]):
     def __rmul__(self: Self, count: int) -> Self:
         return self * count
 
-    def to_dicts(self) -> 'list[dict]':
+    def to_dicts(self) -> 'list[DataDict]':
         """Return list of items converted to dictionaries.
 
         Items are converted to dictionaries using the ``to_dict`` method, if

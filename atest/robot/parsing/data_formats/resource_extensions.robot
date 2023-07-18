@@ -33,9 +33,15 @@ Resource with '*.rest' extension
     [Tags]    require-docutils
     Check Test Case    ${TESTNAME}
 
+Resource with '*.rsrc' extension
+    Check Test Case    ${TESTNAME}
+
+Resource with '*.json' extension
+    Check Test Case    ${TESTNAME}
+
 Resource with invalid extension
     Check Test Case    ${TESTNAME}
-    Error in file    0    parsing/data_formats/resource_extensions/tests.robot    6
+    Error in file    0    parsing/data_formats/resource_extensions/tests.robot    10
     ...    Invalid resource file extension '.invalid'.
-    ...    Supported extensions are '.resource', '.robot', '.txt', '.tsv', '.rst' and '.rest'.
+    ...    Supported extensions are '.json', '.resource', '.rest', '.robot', '.rsrc', '.rst', '.tsv' and '.txt'.
     Length should be    ${ERRORS}    1

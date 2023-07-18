@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from jsonschema import validate
+from jsonschema import Draft202012Validator
 
 from robot.utils import PY_VERSION
 from robot.utils.asserts import assert_equal
@@ -18,6 +18,9 @@ get_text = HtmlToText().html_to_plain_text
 CURDIR = Path(__file__).resolve().parent
 DATADIR = (CURDIR / '../../atest/testdata/libdoc/').resolve()
 TEMPDIR = Path(os.getenv('TEMPDIR') or tempfile.gettempdir())
+VALIDATOR = Draft202012Validator(
+    json.loads((CURDIR / '../../doc/schema/libdoc.json').read_text())
+)
 
 try:
     from typing_extensions import TypedDict
@@ -41,9 +44,7 @@ def verify_keyword_shortdoc(doc_format, doc_input, expected):
 def run_libdoc_and_validate_json(filename):
     library = DATADIR / filename
     json_spec = LibraryDocumentation(library).to_json()
-    with open(CURDIR / '../../doc/schema/libdoc.json') as file:
-        schema = json.load(file)
-    validate(instance=json.loads(json_spec), schema=schema)
+    VALIDATOR.validate(instance=json.loads(json_spec))
 
 
 class TestHtmlToDoc(unittest.TestCase):
