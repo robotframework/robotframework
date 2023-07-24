@@ -85,8 +85,7 @@ class SuiteRunner(SuiteVisitor):
                                                suites=suite.suites,
                                                test_count=suite.test_count))
         self._output.register_error_listener(self._suite_status.error_occurred)
-        if self._any_test_run(suite):
-            self._run_setup(suite, self._suite_status)
+        self._run_setup(suite, self._suite_status, run=self._any_test_run(suite))
 
     def _any_test_run(self, suite):
         skipped_tags = self._skipped_tags
@@ -205,8 +204,8 @@ class SuiteRunner(SuiteVisitor):
             return None
         return TestTimeout(test.timeout, self._variables, rpa=test.parent.rpa)
 
-    def _run_setup(self, item, status, result=None):
-        if status.passed:
+    def _run_setup(self, item, status, result=None, run=True):
+        if run and status.passed:
             if item.has_setup:
                 exception = self._run_setup_or_teardown(item.setup)
             else:
