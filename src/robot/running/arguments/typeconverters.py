@@ -460,9 +460,11 @@ class ListConverter(TypeConverter):
         return super().handles(type_) and type_ is not Tuple
 
     def no_conversion_needed(self, value):
-        if isinstance(value, str) or self.converter:
+        if isinstance(value, str) or not super().no_conversion_needed(value):
             return False
-        return super().no_conversion_needed(value)
+        if not self.converter:
+            return True
+        return all(self.converter.no_conversion_needed(v) for v in value)
 
     def _non_string_convert(self, value, explicit_type=True):
         return self._convert_items(list(value), explicit_type)
@@ -498,10 +500,18 @@ class TupleConverter(TypeConverter):
             self.homogenous = True
         self.type_name = type_repr(used_type)
         self.converters = tuple(self.converter_for(t, custom_converters, languages)
-                                for t in types)
+                                or NullConverter() for t in types)
 
     def no_conversion_needed(self, value):
-        return super().no_conversion_needed(value) and not self.converters
+        if isinstance(value, str) or not super().no_conversion_needed(value):
+            return False
+        if not self.converters:
+            return True
+        if self.homogenous:
+            return all(self.converters[0].no_conversion_needed(v) for v in value)
+        if len(value) != len(self.converters):
+            return False
+        return all(c.no_conversion_needed(v) for c, v in zip(self.converters, value))
 
     def _non_string_convert(self, value, explicit_type=True):
         return self._convert_items(tuple(value), explicit_type)
@@ -588,10 +598,17 @@ class DictionaryConverter(TypeConverter):
         else:
             self.type_name = type_repr(used_type)
             self.converters = tuple(self.converter_for(t, custom_converters, languages)
-                                    for t in types)
+                                    or NullConverter() for t in types)
 
     def no_conversion_needed(self, value):
-        return super().no_conversion_needed(value) and not self.converters
+        if isinstance(value, str) or not super().no_conversion_needed(value):
+            return False
+        if not self.converters:
+            return True
+        no_key_conversion_needed = self.converters[0].no_conversion_needed
+        no_value_conversion_needed = self.converters[1].no_conversion_needed
+        return all(no_key_conversion_needed(k) and no_value_conversion_needed(v)
+                   for k, v in value.items())
 
     def _non_string_convert(self, value, explicit_type=True):
         if self._used_type_is_dict() and not isinstance(value, dict):
@@ -608,13 +625,11 @@ class DictionaryConverter(TypeConverter):
     def _convert_items(self, value, explicit_type):
         if not self.converters:
             return value
-        convert_key = self.__get_converter(self.converters[0], explicit_type, 'Key')
-        convert_value = self.__get_converter(self.converters[1], explicit_type, 'Item')
-        return {convert_key(None, k): convert_value(str(k), v) for k, v in value.items()}
+        convert_key = self._get_converter(self.converters[0], explicit_type, 'Key')
+        convert_value = self._get_converter(self.converters[1], explicit_type, 'Item')
+        return {convert_key(None, k): convert_value(k, v) for k, v in value.items()}
 
-    def __get_converter(self, converter, explicit_type, kind):
-        if not converter:
-            return lambda name, value: value
+    def _get_converter(self, converter, explicit_type, kind):
         return lambda name, value: converter.convert(name, value, explicit_type,
                                                      kind=kind)
 
@@ -636,7 +651,11 @@ class SetConverter(TypeConverter):
             self.converter = self.converter_for(types[0], custom_converters, languages)
 
     def no_conversion_needed(self, value):
-        return super().no_conversion_needed(value) and not self.converter
+        if isinstance(value, str) or not super().no_conversion_needed(value):
+            return False
+        if not self.converter:
+            return True
+        return all(self.converter.no_conversion_needed(v) for v in value)
 
     def _non_string_convert(self, value, explicit_type=True):
         return self._convert_items(set(value), explicit_type)
@@ -755,3 +774,12 @@ class CustomConverter(TypeConverter):
             raise
         except Exception:
             raise ValueError(get_error_message())
+
+
+class NullConverter:
+
+    def convert(self, name, value, explicit_type=True, strict=True, kind='Argument'):
+        return value
+
+    def no_conversion_needed(self, value):
+        return True

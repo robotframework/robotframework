@@ -33,20 +33,20 @@ def list_(argument: List, expected=None):
     _validate_type(argument, expected)
 
 
-def list_with_types(argument: List[int], expected=None):
-    _validate_type(argument, expected)
+def list_with_types(argument: List[int], expected=None, same=False):
+    _validate_type(argument, expected, same)
 
 
 def tuple_(argument: Tuple, expected=None):
     _validate_type(argument, expected)
 
 
-def tuple_with_types(argument: Tuple[bool, int], expected=None):
-    _validate_type(argument, expected)
+def tuple_with_types(argument: Tuple[bool, int], expected=None, same=False):
+    _validate_type(argument, expected, same)
 
 
-def homogenous_tuple(argument: Tuple[int, ...], expected=None):
-    _validate_type(argument, expected)
+def homogenous_tuple(argument: Tuple[int, ...], expected=None, same=False):
+    _validate_type(argument, expected, same)
 
 
 def sequence(argument: Sequence, expected=None):
@@ -69,8 +69,8 @@ def dict_(argument: Dict, expected=None):
     _validate_type(argument, expected)
 
 
-def dict_with_types(argument: Dict[int, float], expected=None):
-    _validate_type(argument, expected)
+def dict_with_types(argument: Dict[int, float], expected=None, same=False):
+    _validate_type(argument, expected, same)
 
 
 def mapping(argument: Mapping, expected=None):
@@ -101,8 +101,8 @@ def set_(argument: Set, expected=None):
     _validate_type(argument, expected)
 
 
-def set_with_types(argument: Set[int], expected=None):
-    _validate_type(argument, expected)
+def set_with_types(argument: Set[int], expected=None, same=False):
+    _validate_type(argument, expected, same)
 
 
 def mutable_set(argument: MutableSet, expected=None):
@@ -137,10 +137,13 @@ def not_liking_isinstance(argument: BadInt, expected=None):
     _validate_type(argument, expected)
 
 
-def _validate_type(argument, expected):
+def _validate_type(argument, expected, same=False):
     if isinstance(expected, str):
         expected = eval(expected)
     if argument != expected or type(argument) != type(expected):
         atype = type(argument).__name__
         etype = type(expected).__name__
         raise AssertionError(f'{argument!r} ({atype}) != {expected!r} ({etype})')
+    if same and argument is not expected:
+        raise AssertionError(f'{argument} (id: {id(argument)}) is not same '
+                             f'as {expected} (id: {id(expected)})')

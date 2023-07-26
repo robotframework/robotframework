@@ -15,6 +15,8 @@ List with types
     List with types           [1, 2, 3, -42]              [1, 2, 3, -42]
     List with types           [1, '2', 3.0]               [1, 2, 3]
     List with types           ${{[1, '2', 3.0]}}          [1, 2, 3]
+    ${obj} =                  Evaluate                    list(range(100))
+    List with types           ${obj}                      ${obj}                       same=True
 
 List with incompatible types
     [Template]                Conversion Should Fail
@@ -38,6 +40,8 @@ Tuple with types
     Tuple with types          ('true', 1)                 (True, 1)
     Tuple with types          ('ei', '2')                 (False, 2)    # 'ei' -> False is due to language config
     Tuple with types          ${{('no', '3')}}            (False, 3)
+    ${obj} =                  Evaluate                    (True, 42)
+    Tuple with types          ${obj}                      ${obj}                        same=True
 
 Tuple with homogenous types
     Homogenous tuple          ()                          ()
@@ -46,6 +50,8 @@ Tuple with homogenous types
     Homogenous tuple          (1, '2')                    (1, 2)
     Homogenous tuple          (1, '2', 3.0, 4, 5)         (1, 2, 3, 4, 5)
     Homogenous tuple          ${{(1, '2', 3.0)}}          (1, 2, 3)
+    ${obj} =                  Evaluate                    tuple(range(100))
+    Homogenous tuple          ${obj}                      ${obj}                        same=True
 
 Tuple with incompatible types
     [Template]                Conversion Should Fail
@@ -98,6 +104,8 @@ Dict with types
     Dict with types           {1: 1.1, 2: 2.2}            {1: 1.1, 2: 2.2}
     Dict with types           {'1': '2', 3.0: 4}          {1: 2, 3: 4}
     Dict with types           ${{{'1': '2', 3.0: 4}}}     {1: 2, 3: 4}
+    ${obj} =                  Evaluate                    {i: float(i) for i in range(100)}
+    Dict with types           ${obj}                      ${obj}                        same=True
 
 Dict with incompatible types
     [Template]                Conversion Should Fail
@@ -179,6 +187,8 @@ Set with types
     Set with types            ${{{1, 2.0, '3'}}}          {1, 2, 3}
     Mutable set with types    {1, 2, 3.14, -42}           {1, 2, 3.14, -42}
     Mutable set with types    ${{{1, 2, 3.14, -42}}}      {1, 2, 3.14, -42}
+    ${obj} =                  Evaluate                    set(range(100))
+    Set with types            ${obj}                      ${obj}                        same=True
 
 Set with incompatible types
     [Template]                Conversion Should Fail
