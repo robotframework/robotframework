@@ -30,6 +30,7 @@ distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
 Robot Framework 6.1 was released on Monday June 12, 2023.
+It was superseded by `Robot Framework 6.1.1 <rf-6.1.1.rst>`_.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
