@@ -48,13 +48,15 @@ CURDIR = Path(__file__).parent
 ARGUMENTS = '''
 --doc Robot Framework acceptance tests
 --metadata interpreter:{interpreter}
---variablefile {variable_file};{interpreter.path};{interpreter.name};{interpreter.version}
+--variable-file {variable_file};{interpreter.path};{interpreter.name};{interpreter.version}
 --pythonpath {pythonpath}
---outputdir {outputdir}
+--output-dir {outputdir}
 --splitlog
 --console dotted
---consolewidth 100
---SuiteStatLevel 3
+--console-width 100
+--suite-stat-Level 3
+--log NONE
+--report NONE
 '''.strip()
 
 
@@ -65,7 +67,8 @@ def atests(interpreter, arguments, schema_validation=False):
         sys.exit(err)
     outputdir, tempdir = _get_directories(interpreter)
     arguments = list(_get_arguments(interpreter, outputdir)) + list(arguments)
-    return _run(arguments, tempdir, interpreter, schema_validation)
+    rc = _run(arguments, tempdir, interpreter, schema_validation)
+    _rebot(rc, outputdir)
 
 
 def _get_directories(interpreter):
@@ -105,6 +108,15 @@ def _run(args, tempdir, interpreter, schema_validation):
     sys.stdout.flush()
     signal.signal(signal.SIGINT, signal.SIG_IGN)
     return subprocess.call(command, env=environ)
+
+
+def _rebot(rc, outputdir):
+    if rc == 0:
+        print('All tests passed, not generating log and report.')
+    elif rc < 251:
+        command = [sys.executable, str(CURDIR.parent / 'src/robot/rebot.py'),
+                   '--output-dir', str(outputdir), str(outputdir / 'output.xml')]
+        subprocess.call(command)
 
 
 if __name__ == '__main__':
