@@ -1310,11 +1310,11 @@ Section headers
     * - Variables
       - Zmienne
     * - Test Cases
-      - Przypadki testowe
+      - Przypadki Testowe
     * - Tasks
       - Zadania
     * - Keywords
-      - Słowa kluczowe
+      - Słowa Kluczowe
     * - Comments
       - Komentarze
 
@@ -1342,31 +1342,31 @@ Settings
     * - Metadata
       - Metadane
     * - Suite Setup
-      - Inicjalizacja zestawu
+      - Inicjalizacja Zestawu
     * - Suite Teardown
-      - Ukończenie zestawu
+      - Ukończenie Zestawu
     * - Test Setup
-      - Inicjalizacja testu
+      - Inicjalizacja Testu
     * - Task Setup
-      - Inicjalizacja zadania
+      - Inicjalizacja Zadania
     * - Test Teardown
-      - Ukończenie testu
+      - Ukończenie Testu
     * - Task Teardown
-      - Ukończenie zadania
+      - Ukończenie Zadania
     * - Test Template
-      - Szablon testu
+      - Szablon Testu
     * - Task Template
-      - Szablon zadania
+      - Szablon Zadania
     * - Test Timeout
-      - Limit czasowy testu
+      - Limit Czasowy Testu
     * - Task Timeout
-      - Limit czasowy zadania
+      - Limit Czasowy Zadania
     * - Test Tags
-      - Znaczniki testu
+      - Znaczniki Testu
     * - Task Tags
-      - Znaczniki zadania
+      - Znaczniki Zadania
     * - Keyword Tags
-      - Znaczniki słowa kluczowego
+      - Znaczniki Słowa Kluczowego
     * - Tags
       - Znaczniki
     * - Setup
@@ -1376,7 +1376,7 @@ Settings
     * - Template
       - Szablon
     * - Timeout
-      - Limit czasowy
+      - Limit Czasowy
     * - Arguments
       - Argumenty
 
