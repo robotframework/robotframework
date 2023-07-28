@@ -59,11 +59,11 @@ Most important enhancements
   `--exclude`, `--test` or `--task`. (`#4807`_)
 
 - Argument conversion does not anymore unnecessarily convert containers
-  with nested items when using parameterized types like `list[str]` if items
+  with nested items when using parameterized types like `list[str]` and items
   have correct types. Most importantly, this fixes a bug when using such types
   in an union with `str` like `str | list[str]`. (`#4809`_)
 
-_ A library using `@classmethod` and `@property` together does not anymore
+- A library using `@classmethod` and `@property` together does not anymore
   crash the whole execution. (`#4802`_)
 
 __ https://robotframework.org/robotframework/latest/libraries/Dialogs.html
