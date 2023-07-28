@@ -53,12 +53,17 @@ def _get_encoding(platform_getters, default):
 
 
 def _get_python_system_encoding():
-    return locale.getpreferredencoding(False)
+    # ValueError occurs with PyPy 3.10 if language config is invalid.
+    # https://foss.heptapod.net/pypy/pypy/-/issues/3975
+    try:
+        return locale.getpreferredencoding(False)
+    except ValueError:
+        return None
 
 
 def _get_unixy_encoding():
-    # Cannot use `locale.getdefaultlocale()` because it raises ValueError
-    # if encoding is invalid. Using same environment variables here anyway.
+    # Cannot use `locale.getdefaultlocale()` because it is deprecated.
+    # Using same environment variables here anyway.
     # https://docs.python.org/3/library/locale.html#locale.getdefaultlocale
     for name in 'LC_ALL', 'LC_CTYPE', 'LANG', 'LANGUAGE':
         if name in os.environ:
