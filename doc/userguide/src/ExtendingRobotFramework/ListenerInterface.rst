@@ -637,7 +637,7 @@ adds a new test to each executed test suite and a new keyword to each test.
        suite.tests.create(name='New test')
 
    def start_test(test, result):
-       test.keywords.create(name='Log', args=['Keyword added by listener!'])
+       test.body.create_keyword(name='Log', args=['Keyword added by listener!'])
 
 Trying to modify execution in `end_suite` or `end_test` methods does not work,
 simply because that suite or test has already been executed. Trying to modify
