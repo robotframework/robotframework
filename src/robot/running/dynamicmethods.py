@@ -16,6 +16,7 @@
 from robot.errors import DataError
 from robot.utils import get_error_message, is_bytes, is_list_like, is_string, type_name
 
+from .context import EXECUTION_CONTEXTS
 from .arguments import PythonArgumentParser
 
 
@@ -47,7 +48,11 @@ class _DynamicMethod:
 
     def __call__(self, *args):
         try:
-            return self._handle_return_value(self.method(*args))
+            ctx = EXECUTION_CONTEXTS.current
+            result = self.method(*args)
+            if ctx and ctx.asynchronous.is_loop_required(result):
+                result = ctx.asynchronous.run_until_complete(result)
+            return self._handle_return_value(result)
         except:
             raise DataError("Calling dynamic method '%s' failed: %s"
                             % (self.name, get_error_message()))
