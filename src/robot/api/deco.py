@@ -14,9 +14,23 @@
 #  limitations under the License.
 
 import inspect
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Mapping,
+    Optional,
+    Sequence,
+    Type,
+    TypeVar,
+    Union,
+    overload,
+)
+
+F = TypeVar("F", bound=Callable[..., Any])
 
 
-def not_keyword(func):
+def not_keyword(func: F) -> F:
     """Decorator to disable exposing functions or methods as keywords.
 
     Examples::
@@ -41,8 +55,28 @@ def not_keyword(func):
 not_keyword.robot_not_keyword = True
 
 
+# Decorator used without arguments, i.e. @keyword()
+@overload
+def keyword(name: F) -> F:
+    ...
+
+
+# Decorator used with arguments, e.g. @keyword("Custom Keyword Name")
+@overload
+def keyword(
+    name: Optional[str] = None,
+    tags: Sequence[str] = (),
+    types: Union[Sequence[str], Mapping[str, Any]] = (),
+) -> Callable[[F], F]:
+    ...
+
+
 @not_keyword
-def keyword(name=None, tags=(), types=()):
+def keyword(
+    name: Optional[Union[str, Callable[..., Any]]] = None,
+    tags: Sequence[str] = (),
+    types: Union[Sequence[str], Mapping[str, Any]] = (),
+) -> Union[F, Callable[[F], F]]:
     """Decorator to set custom name, tags and argument types to keywords.
 
     This decorator creates ``robot_name``, ``robot_tags`` and ``robot_types``
@@ -87,7 +121,7 @@ def keyword(name=None, tags=(), types=()):
     if inspect.isroutine(name):
         return keyword()(name)
 
-    def decorator(func):
+    def decorator(func: F) -> F:
         func.robot_name = name
         func.robot_tags = tags
         func.robot_types = types
@@ -96,9 +130,38 @@ def keyword(name=None, tags=(), types=()):
     return decorator
 
 
+C = TypeVar('C')
+
+
+# Decorator used without arguments, i.e. @library()
+@overload
+def library(scope: Type[C]) -> Type[C]:
+    ...
+
+
+# Decorator used with arguments, e.g. @library(version="1.0.0")
+@overload
+def library(
+    scope: Optional[str] = None,
+    version: Optional[str] = None,
+    converters: Optional[Dict[Any, Callable[..., Any]]] = None,
+    doc_format: Optional[str] = None,
+    listener: Optional[Type[Any]] = None,
+    auto_keywords: bool = False,
+) -> Callable[[Type[C]], Type[C]]:
+    ...
+
+
+
 @not_keyword
-def library(scope=None, version=None, converters=None, doc_format=None, listener=None,
-            auto_keywords=False):
+def library(
+    scope: Optional[Union[Type[Any], str]] = None,
+    version: Optional[str] = None,
+    converters: Optional[Dict[Any, Callable[..., Any]]] = None,
+    doc_format: Optional[str] = None,
+    listener: Optional[Type[Any]] = None,
+    auto_keywords: bool = False,
+) -> Union[Type[C], Callable[[Type[C]], Type[C]]]:
     """Class decorator to control keyword discovery and other library settings.
 
     By default disables automatic keyword detection by setting class attribute
@@ -138,7 +201,7 @@ def library(scope=None, version=None, converters=None, doc_format=None, listener
     if inspect.isclass(scope):
         return library()(scope)
 
-    def decorator(cls):
+    def decorator(cls: Type[C]) -> Type[C]:
         if scope is not None:
             cls.ROBOT_LIBRARY_SCOPE = scope
         if version is not None:
