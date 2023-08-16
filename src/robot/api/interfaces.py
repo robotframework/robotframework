@@ -299,7 +299,7 @@ class StartSuiteAttributes(TypedDict):
     id: str
     longname: str
     doc: str
-    metadata: dict
+    metadata: Dict[str, Any]
     source: str
     suites: List[str]
     tests: List[str]
@@ -352,12 +352,11 @@ class OptionalKeywordAttributes(TypedDict, total=False):
     These attributes are included with control structures. For example, with
     IF structures attributes include ``condition``.
     """
-    # FOR
-    variables: List[str]
+    # FOR / ITERATION with FOR
+    variables: Union[List[str], Dict[str, str]]
     flavor: str
+    # RETURN
     values: List[str]
-    # ITERATION with FOR
-    variables: Dict[str, str]
     # WHILE and IF
     condition: str
     # WHILE
@@ -366,8 +365,6 @@ class OptionalKeywordAttributes(TypedDict, total=False):
     patterns: List[str]
     pattern_type: str
     variable: str
-    # RETURN
-    values: List[str]
 
 
 class StartKeywordAttributes(OptionalKeywordAttributes):
@@ -442,33 +439,33 @@ class ListenerV2:
     """Optional base class for listeners using the listener API v2."""
     ROBOT_LISTENER_API_VERSION = 2
 
-    def start_suite(self, name: str, attributes: StartSuiteAttributes):
+    def start_suite(self, name: str, attributes: StartSuiteAttributes) -> None:
         """Called when a suite starts."""
 
-    def end_suite(self, name: str, attributes: EndSuiteAttributes):
+    def end_suite(self, name: str, attributes: EndSuiteAttributes) -> None:
         """Called when a suite end."""
 
-    def start_test(self, name: str, attributes: StartTestAttributes):
+    def start_test(self, name: str, attributes: StartTestAttributes) -> None:
         """Called when a test or task starts."""
 
-    def end_test(self, name: str, attributes: EndTestAttributes):
+    def end_test(self, name: str, attributes: EndTestAttributes) -> None:
         """Called when a test or task ends."""
 
-    def start_keyword(self, name: str, attributes: StartKeywordAttributes):
+    def start_keyword(self, name: str, attributes: StartKeywordAttributes) -> None:
         """Called when a keyword or a control structure like IF starts.
 
         The type of the started item is in ``attributes['type']``. Control
         structures can contain extra attributes that are only relevant to them.
         """
 
-    def end_keyword(self, name: str, attributes: EndKeywordAttributes):
+    def end_keyword(self, name: str, attributes: EndKeywordAttributes) -> None:
         """Called when a keyword or a control structure like IF ends.
 
         The type of the started item is in ``attributes['type']``. Control
         structures can contain extra attributes that are only relevant to them.
         """
 
-    def log_message(self, message: MessageAttributes):
+    def log_message(self, message: MessageAttributes) -> None:
         """Called when a normal log message are emitted.
 
         The messages are typically logged by keywords, but also the framework
@@ -476,41 +473,41 @@ class ListenerV2:
         log.html.
         """
 
-    def message(self, message: MessageAttributes):
+    def message(self, message: MessageAttributes) -> None:
         """Called when framework's internal messages are emitted.
 
         Only logged by the framework itself. These messages end up to the syslog
         if it is enabled.
         """
 
-    def library_import(self, name: str, attributes: LibraryAttributes):
+    def library_import(self, name: str, attributes: LibraryAttributes) -> None:
         """Called after a library has been imported."""
 
-    def resource_import(self, name: str, attributes: ResourceAttributes):
+    def resource_import(self, name: str, attributes: ResourceAttributes) -> None:
         """Called after a resource file has been imported."""
 
-    def variables_import(self, name: str, attributes: VariablesAttributes):
+    def variables_import(self, name: str, attributes: VariablesAttributes) -> None:
         """Called after a variable file has been imported."""
 
-    def output_file(self, path: str):
+    def output_file(self, path: str) -> None:
         """Called after the output file has been created.
 
         At this point the file is guaranteed to be closed.
         """
 
-    def log_file(self, path: str):
+    def log_file(self, path: str) -> None:
         """Called after the log file has been created."""
 
-    def report_file(self, path: str):
+    def report_file(self, path: str) -> None:
         """Called after the report file has been created."""
 
-    def xunit_file(self, path: str):
+    def xunit_file(self, path: str) -> None:
         """Called after the xunit compatible output file has been created."""
 
-    def debug_file(self, path: str):
+    def debug_file(self, path: str) -> None:
         """Called after the debug file has been created."""
 
-    def close(self):
+    def close(self) -> None:
         """Called when the whole execution ends.
 
         With library listeners called when the library goes out of scope.
@@ -521,19 +518,19 @@ class ListenerV3:
     """Optional base class for listeners using the listener API v3."""
     ROBOT_LISTENER_API_VERSION = 3
 
-    def start_suite(self, data: running.TestSuite, result: result.TestSuite):
+    def start_suite(self, data: running.TestSuite, result: result.TestSuite) -> None:
         """Called when a suite starts."""
 
-    def end_suite(self, data: running.TestSuite, result: result.TestSuite):
+    def end_suite(self, data: running.TestSuite, result: result.TestSuite) -> None:
         """Called when a suite ends."""
 
-    def start_test(self, data: running.TestCase, result: result.TestCase):
+    def start_test(self, data: running.TestCase, result: result.TestCase) -> None:
         """Called when a test or task starts."""
 
-    def end_test(self, data: running.TestCase, result: result.TestCase):
+    def end_test(self, data: running.TestCase, result: result.TestCase) -> None:
         """Called when a test or ends starts."""
 
-    def log_message(self, message: Message):
+    def log_message(self, message: Message) -> None:
         """Called when a normal log message are emitted.
 
         The messages are typically logged by keywords, but also the framework
@@ -541,32 +538,32 @@ class ListenerV3:
         log.html.
         """
 
-    def message(self, message: Message):
+    def message(self, message: Message) -> None:
         """Called when framework's internal messages are emitted.
 
         Only logged by the framework itself. These messages end up to the syslog
         if it is enabled.
         """
 
-    def output_file(self, path: str):
+    def output_file(self, path: str) -> None:
         """Called after the output file has been created.
 
         At this point the file is guaranteed to be closed.
         """
 
-    def log_file(self, path: str):
+    def log_file(self, path: str) -> None:
         """Called after the log file has been created."""
 
-    def report_file(self, path: str):
+    def report_file(self, path: str) -> None:
         """Called after the report file has been created."""
 
-    def xunit_file(self, path: str):
+    def xunit_file(self, path: str) -> None:
         """Called after the xunit compatible output file has been created."""
 
-    def debug_file(self, path: str):
+    def debug_file(self, path: str) -> None:
         """Called after the debug file has been created."""
 
-    def close(self):
+    def close(self) -> None:
         """Called when the whole execution ends.
 
         With library listeners called when the library goes out of scope.
