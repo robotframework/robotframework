@@ -19,11 +19,9 @@ from typing import (
     Callable,
     Dict,
     Mapping,
-    Optional,
     Sequence,
     Type,
     TypeVar,
-    Union,
     overload,
 )
 
@@ -64,19 +62,19 @@ def keyword(name: F) -> F:
 # Decorator used with arguments, e.g. @keyword("Custom Keyword Name")
 @overload
 def keyword(
-    name: Optional[str] = None,
+    name: 'str | None' = None,
     tags: Sequence[str] = (),
-    types: Union[Sequence[str], Mapping[str, Any]] = (),
+    types: 'Sequence[str] | Mapping[str, Any]' = (),
 ) -> Callable[[F], F]:
     ...
 
 
 @not_keyword
 def keyword(
-    name: Optional[Union[str, Callable[..., Any]]] = None,
+    name: 'str | Callable[..., Any] | None' = None,
     tags: Sequence[str] = (),
-    types: Union[Sequence[str], Mapping[str, Any]] = (),
-) -> Union[F, Callable[[F], F]]:
+    types: 'Sequence[str] | Mapping[str, Any]' = (),
+) -> 'F | Callable[[F], F]':
     """Decorator to set custom name, tags and argument types to keywords.
 
     This decorator creates ``robot_name``, ``robot_tags`` and ``robot_types``
@@ -142,11 +140,11 @@ def library(scope: Type[C]) -> Type[C]:
 # Decorator used with arguments, e.g. @library(version="1.0.0")
 @overload
 def library(
-    scope: Optional[str] = None,
-    version: Optional[str] = None,
-    converters: Optional[Dict[Any, Callable[..., Any]]] = None,
-    doc_format: Optional[str] = None,
-    listener: Optional[Type[Any]] = None,
+    scope: 'str | None' = None,
+    version: 'str| None' = None,
+    converters: 'Dict[Any, Callable[..., Any]] | None' = None,
+    doc_format: 'str | None' = None,
+    listener: 'Type[Any] | None' = None,
     auto_keywords: bool = False,
 ) -> Callable[[Type[C]], Type[C]]:
     ...
@@ -155,13 +153,13 @@ def library(
 
 @not_keyword
 def library(
-    scope: Optional[Union[Type[Any], str]] = None,
-    version: Optional[str] = None,
-    converters: Optional[Dict[Any, Callable[..., Any]]] = None,
-    doc_format: Optional[str] = None,
-    listener: Optional[Type[Any]] = None,
+    scope: 'Type[Any] | str | None' = None,
+    version: 'str | None' = None,
+    converters: 'Dict[Any, Callable[..., Any]] | None' = None,
+    doc_format: 'str | None' = None,
+    listener: 'Type[Any] | None' = None,
     auto_keywords: bool = False,
-) -> Union[Type[C], Callable[[Type[C]], Type[C]]]:
+) -> 'Type[C] | Callable[[Type[C]], Type[C]]':
     """Class decorator to control keyword discovery and other library settings.
 
     By default disables automatic keyword detection by setting class attribute
