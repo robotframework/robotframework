@@ -69,6 +69,7 @@ def atests(interpreter, arguments, schema_validation=False):
     arguments = list(_get_arguments(interpreter, outputdir)) + list(arguments)
     rc = _run(arguments, tempdir, interpreter, schema_validation)
     _rebot(rc, outputdir)
+    return rc
 
 
 def _get_directories(interpreter):
@@ -112,7 +113,7 @@ def _run(args, tempdir, interpreter, schema_validation):
 
 def _rebot(rc, outputdir):
     if rc == 0:
-        print('All tests passed, not generating log and report.')
+        print('All tests passed, not generating log or report.')
     elif rc < 251:
         command = [sys.executable, str(CURDIR.parent / 'src/robot/rebot.py'),
                    '--output-dir', str(outputdir), str(outputdir / 'output.xml')]
