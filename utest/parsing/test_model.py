@@ -227,7 +227,7 @@ Example
         expected = For(
             header=ForHeader([
                 Token(Token.FOR, 'FOR', 3, 4),
-                Token(Token.VARIABLE, '${x}', 3, 11),
+                Token(Token.ASSIGN, '${x}', 3, 11),
                 Token(Token.FOR_SEPARATOR, 'IN', 3, 19),
                 Token(Token.ARGUMENT, 'a', 3, 25),
                 Token(Token.ARGUMENT, 'b', 3, 30),
@@ -254,7 +254,7 @@ Example
         expected = For(
             header=ForHeader([
                 Token(Token.FOR, 'FOR', 3, 4),
-                Token(Token.VARIABLE, '${x}', 3, 11),
+                Token(Token.ASSIGN, '${x}', 3, 11),
                 Token(Token.FOR_SEPARATOR, 'IN ENUMERATE', 3, 19),
                 Token(Token.ARGUMENT, '@{stuff}', 3, 35),
                 Token(Token.OPTION, 'start=1', 3, 47),
@@ -282,7 +282,7 @@ Example
         expected = For(
             header=ForHeader([
                 Token(Token.FOR, 'FOR', 3, 4),
-                Token(Token.VARIABLE, '${x}', 3, 11),
+                Token(Token.ASSIGN, '${x}', 3, 11),
                 Token(Token.FOR_SEPARATOR, 'IN', 3, 19),
                 Token(Token.ARGUMENT, '1', 3, 25),
                 Token(Token.ARGUMENT, 'start=has no special meaning here', 3, 30),
@@ -291,7 +291,7 @@ Example
                 For(
                     header=ForHeader([
                         Token(Token.FOR, 'FOR', 4, 8),
-                        Token(Token.VARIABLE, '${y}', 4, 15),
+                        Token(Token.ASSIGN, '${y}', 4, 15),
                         Token(Token.FOR_SEPARATOR, 'IN RANGE', 4, 23),
                         Token(Token.ARGUMENT, '${x}', 4, 35),
                     ]),
@@ -339,7 +339,7 @@ Example
         expected2 = For(
             header=ForHeader(
                 tokens=[Token(Token.FOR, 'FOR', 3, 4),
-                        Token(Token.VARIABLE, 'wrong', 3, 11),
+                        Token(Token.ASSIGN, 'wrong', 3, 11),
                         Token(Token.FOR_SEPARATOR, 'IN', 3, 20)],
                 errors=("FOR loop has invalid loop variable 'wrong'.",
                         "FOR loop has no loop values."),
@@ -792,7 +792,7 @@ Example
                 next=Try(
                     header=ExceptHeader((Token(Token.EXCEPT, 'EXCEPT', 7, 4),
                                          Token(Token.AS, 'AS', 7, 14),
-                                         Token(Token.VARIABLE, '${exp}', 7, 20))),
+                                         Token(Token.ASSIGN, '${exp}', 7, 20))),
                     body=[KeywordCall((Token(Token.KEYWORD, 'Log', 8, 8),
                                        Token(Token.ARGUMENT, 'Catch', 8, 15)))],
                     next=Try(
@@ -845,7 +845,7 @@ Example
                         header=ExceptHeader(
                             tokens=[Token(Token.EXCEPT, 'EXCEPT', 8, 4),
                                     Token(Token.AS, 'AS', 8, 14),
-                                    Token(Token.VARIABLE, 'invalid', 8, 20)],
+                                    Token(Token.ASSIGN, 'invalid', 8, 20)],
                             errors=("EXCEPT's AS variable 'invalid' is invalid.",)
                         ),
                         errors=('EXCEPT branch cannot be empty.',)
@@ -1121,7 +1121,7 @@ Name
 '''
         expected = For(
             header=ForHeader([Token(Token.FOR, 'FOR', 3, 4),
-                              Token(Token.VARIABLE, '${x}', 3, 11),
+                              Token(Token.ASSIGN, '${x}', 3, 11),
                               Token(Token.FOR_SEPARATOR, 'IN', 3, 19),
                               Token(Token.ARGUMENT, '@{stuff}', 3, 25)]),
             body=[KeywordCall([Token(Token.KEYWORD, 'Continue', 4, 8),

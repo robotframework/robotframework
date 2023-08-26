@@ -678,9 +678,9 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token(Token.SEPARATOR, '    '),
             Token(Token.FOR),
             Token(Token.SEPARATOR, '  '),
-            Token(Token.VARIABLE, '${value1}'),
+            Token(Token.ASSIGN, '${value1}'),
             Token(Token.SEPARATOR, '  '),
-            Token(Token.VARIABLE, '${value2}'),
+            Token(Token.ASSIGN, '${value2}'),
             Token(Token.SEPARATOR, '  '),
             Token(Token.FOR_SEPARATOR, 'IN ZIP'),
             Token(Token.SEPARATOR, '  '),
@@ -823,7 +823,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token(Token.SEPARATOR, '    '),
             Token(Token.AS, 'AS'),
             Token(Token.SEPARATOR, '    '),
-            Token(Token.VARIABLE, '${var}'),
+            Token(Token.ASSIGN, '${var}'),
             Token(Token.EOL, '\n')
         ]
         assert_created_statement(
@@ -861,7 +861,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token(Token.SEPARATOR, '    '),
             Token(Token.AS, 'AS'),
             Token(Token.SEPARATOR, '    '),
-            Token(Token.VARIABLE, '${var}'),
+            Token(Token.ASSIGN, '${var}'),
             Token(Token.EOL, '\n')]
         assert_created_statement(
             tokens,

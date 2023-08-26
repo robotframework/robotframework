@@ -917,7 +917,7 @@ class ForHeader(Statement):
                   Token(Token.FOR),
                   Token(Token.SEPARATOR, separator)]
         for variable in variables:
-            tokens.extend([Token(Token.VARIABLE, variable),
+            tokens.extend([Token(Token.ASSIGN, variable),
                            Token(Token.SEPARATOR, separator)])
         tokens.append(Token(Token.FOR_SEPARATOR, flavor))
         for value in values:
@@ -928,7 +928,7 @@ class ForHeader(Statement):
 
     @property
     def variables(self) -> 'tuple[str, ...]':
-        return self.get_values(Token.VARIABLE)
+        return self.get_values(Token.ASSIGN)
 
     @property
     def values(self) -> 'tuple[str, ...]':
@@ -1101,7 +1101,7 @@ class ExceptHeader(Statement):
             tokens.extend([Token(Token.SEPARATOR, separator),
                            Token(Token.AS),
                            Token(Token.SEPARATOR, separator),
-                           Token(Token.VARIABLE, variable)])
+                           Token(Token.ASSIGN, variable)])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
@@ -1115,13 +1115,13 @@ class ExceptHeader(Statement):
 
     @property
     def variable(self) -> 'str|None':
-        return self.get_value(Token.VARIABLE)
+        return self.get_value(Token.ASSIGN)
 
     def validate(self, ctx: 'ValidationContext'):
         self._validate_options()
         as_token = self.get_token(Token.AS)
         if as_token:
-            variables = self.get_tokens(Token.VARIABLE)
+            variables = self.get_tokens(Token.ASSIGN)
             if not variables:
                 self.errors += ("EXCEPT's AS requires variable.",)
             elif len(variables) > 1:
